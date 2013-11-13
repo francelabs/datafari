@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-codec-1.6.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/fluent-hc-4.2.3.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/httpclient-4.2.3.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/httpclient-cache-4.2.3.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/httpcore-4.2.2.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/httpmime-4.2.3.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/json-simple.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/json.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jstl.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/mcf-agents.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/mcf-core.jar" sourcepath="/MCF1.2-SOURCE/framework/core/src/main/java"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/mcf-crawler-ui.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/mcf-pull-agent.jar" sourcepath="/MCF1.2-SOURCE/framework/pull-agent/src/main/java"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/mcf-ui-core.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/postgresql.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/serializer.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-collections.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-el.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-fileupload.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-io.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-lang.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/hsqldb.jar"/>
+	<classpathentry kind="output" path="build/classes"/>
+</classpath>

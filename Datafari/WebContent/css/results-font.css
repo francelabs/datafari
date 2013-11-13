@@ -1,0 +1,52 @@
+#result_information { font-weight:bold; }
+
+/**************************************/
+/*******	>>> Widgets <<<		*******/
+/**************************************/
+
+.searchBarWidget .searchMode label { font-size: 90%; }
+
+.collectionWidget .title { font-weight: bold; text-transform: uppercase; }
+.collectionWidget .content li { font-size: 90%; }
+.collectionWidget .content li.selected { font-weight: bold; }
+
+.tableWidget .facetName { font-size: 120%; font-weight: bold; text-transform: capitalize; }
+.tableWidget .facetSort { font-size: 90%; font-weight: normal; }
+.tableWidget ul li { font-size: 90%; }
+
+.resultWidget .res .title { font-weight: bold; text-decoration: underline; }
+
+.resultWidget .doc .res .address { font-size: 80%; }
+
+.resultWidget .doc .res .description { font-size: 90%; }
+.resultWidget .res .moreLikeThis { font-weight: bold; text-decoration: underline; }
+
+
+.resultWidget .res .em { font-weight: bold; }
+
+.resultWidget .res .title { text-decoration:none;}
+.resultWidget .res .title:hover { text-decoration:underline;}
+
+
+.videoResultWidget .res .title { font-size: 1.3em; font-weight: bold; }
+.videoResultWidget .res .title:hover { text-decoration: underline; }
+.videoResultWidget .video_list.mosaic .title { font-size: 0.9em; }
+
+.pagerModule .pages .page, .pagerModule .fn { font-weight: bold; }
+
+.advancedSearchWidget .advTable .right { font-size: 11px; }
+.advancedSearchWidget .advTable .left { font-size: 13px; }
+.advancedSearchWidget .advTable .title .right { font-size: 13px; }
+.advancedSearchWidget .advTable .title .left { font-size: 16px; }
+.advancedSearchWidget .advTable .title { font-weight: bold; }
+.advancedSearchWidget .addInput:hover { text-decoration: underline; }
+
+.capsuleWidget .title{ font-weight: bold; }
+
+.spellcheckerWidget .result { font-weight: bold; text-decoration: underline; }
+
+.menuWidget .menu li:hover { font-weight: bold; }
+
+.ui-menu .ui-menu-item a { text-decoration:none; }
+
+.hl { font-weight: bold; }

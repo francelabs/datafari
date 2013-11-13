@@ -1,0 +1,263 @@
+/**
+ *********************************************
+ * Prototype of styles for horizontal CSS-menu
+ * @data 30.06.2009
+ *********************************************
+ * (X)HTML-scheme:
+ *  <div id="menu">
+ *      <ul class="menu">
+ *          <li><a href="#" class="parent"><span>level 1</span></a>
+ *              <div><ul>
+ *                  <li><a href="#" class="parent"><span>level 2</span></a>
+ *                      <div><ul><li><a href="#"><span>level 3</span></a></li></ul></div>
+ *                  </li>
+ *              </ul></div>
+ *          </li>
+ *          <li class="last"><a href="#"><span>level 1</span></a></li>
+ *      </ul>
+ *  </div>
+ *********************************************
+ */
+
+/* menu::base */
+nav#menu {
+    height: 46px;
+    padding-left: 10px;
+    width:798px;
+}
+
+nav#menu ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    float: left;
+}
+nav#menu ul.menu {
+    padding-right: 0px;
+}
+
+nav#menu li {
+    position: relative;
+    margin: 0;
+    padding: 0 0 0 0;
+    display: block;
+    float: left;
+    z-index: 9;
+    width: auto;
+}
+nav#menu ul ul li {
+    z-index: 9;
+}
+nav#menu li div {
+    list-style: none;
+    float: left;
+    position: absolute;
+    z-index: 11;
+    top: 36px;
+    left: 0;
+    visibility: hidden;
+    width: 187px;
+    padding: 0 0 11px 7px;
+    background: url(../images/menu/submenu-bottom.png) no-repeat 7px bottom;
+    _background-image: url(../images/menu/submenu-bottom.gif);
+    margin: 0px 0 0 -4px;
+}
+nav#menu li:hover>div {
+    visibility: visible;
+}
+
+nav#menu a {
+    position: relative;
+    z-index: 10;
+    height: 41px;
+    display: block;
+    float: left;
+    line-height: 41px;
+    text-decoration: none;
+    margin-top: 1px;
+    white-space: nowrap;
+    width: auto;
+    padding-right: 5px;
+    text-align: center;
+}
+nav#menu span {
+    display: block;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-position: 95% 0;
+    text-align: center;
+}
+
+/* menu::level1 */
+nav#menu a {
+    padding: 0 15px 0 0;
+    line-height: 40px;
+    height: 46px;
+    margin-right: 5px;
+    _margin-right: 1px;
+    background: none;
+}
+nav#menu span {
+    margin-top: 2px;
+    padding-left: 15px;
+    color: #fff;
+    font: bold 12px Trebuchet MS,Arial,san-serif;
+    background: none;
+    line-height: 40px;
+}
+nav#menu a:hover,
+nav#menu a.over {
+    background:  url(../images/menu/selected-right-sub.png)  no-repeat right -1px;
+    _background-image: url(../images/menu/selected-right-sub.gif);
+}
+nav#menu a:hover span,
+nav#menu a.over span {
+    background: url(../images/menu/selected-left-sub.png) no-repeat 0 -3px;
+    _background-image: url(../images/menu/selected-left-sub.gif);
+}
+nav#menu li.current a,
+nav#menu ul.menu>li:hover>a {
+    background: url(../images/menu/selected-right-sub.png) no-repeat right -1px;
+    _background-image: url(../images/menu/selected-right-sub.gif);
+}
+nav#menu li.current a span,
+nav#menu ul.menu>li:hover>a span {
+    background: url(../images/menu/selected-left-sub.png) no-repeat 0 -3px;
+    _background-image: url(../images/menu/selected-left-sub.gif);
+}
+nav#menu ul.menu>li:hover>a span {
+    color: #515151;
+}
+nav#menu li {  }
+nav#menu li.last { background: none; }
+
+nav#menu li.current a,
+nav#menu li.current a span,
+nav#menu.js-active a:hover,
+nav#menu.js-active a:hover span,
+nav#menu.js-active a,
+nav#menu.js-active span {
+    background:none;
+}
+nav#menu.js-active ul.menu>li:hover>a,
+nav#menu.js-active ul.menu>li:hover>a span {
+    background:none;
+}
+nav#menu li.current a.over {
+    background: url(../images/menu/selected-right-sub.png)  no-repeat right -1px;
+    _background-image: url(../images/menu/selected-right-sub.gif);
+}
+nav#menu li.current a.over span {
+    background: url(../images/menu/selected-left-sub.png) no-repeat 0 -3px;
+    _background-image: url(../images/menu/selected-left-sub.gif);
+}
+nav#menu a.over span {
+    color: #515151;
+}
+
+/* menu::level2 */
+nav#menu ul ul li {
+    background: none;
+    padding: 0;
+}
+nav#menu ul ul {
+    padding-top: 10px;
+}
+nav#menu ul ul a {
+    padding: 0;
+    height: auto;
+    float: none;
+    display: block;
+    line-height: 26px;
+    font-size: 11px;
+    color: #ffffff;
+    z-index: -1;
+    padding-left: 5px;
+    white-space: normal;
+    width: 160px;
+    margin: 0 5px;
+    text-transform: none;
+}
+    
+nav#menu ul ul a span {
+    padding: 0 15px;
+    line-height: 26px;
+    font-size: 11px;
+}
+nav#menu li.current ul a,
+nav#menu li.current ul a span {
+    background:none;
+}
+nav#menu ul ul a:hover {
+    background: url(../images/menu/submenu-selected-bottom.png) no-repeat 5px bottom;
+}
+nav#menu ul ul a:hover span {
+    background: url(../images/menu/submenu-selected-top.png) no-repeat 0 0;
+}
+nav#menu ul ul a.parent {
+    background: url(../images/menu/submenu-pointer-bottom.gif) no-repeat 5px bottom;
+}
+nav#menu ul ul a.parent span {
+    background: url(../images/menu/submenu-pointer-top.png) no-repeat 0 0;
+}
+nav#menu ul ul a.parent:hover {
+    background: url(../images/menu/submenu-pointer-selected-bottom.png) no-repeat 5px bottom;
+}
+nav#menu ul ul a.parent:hover span {
+    background: url(../images/menu/submenu-selected-top.png) no-repeat 0 0;
+}
+nav#menu ul ul span {
+    margin-top: 0;
+    text-align: left;
+}
+nav#menu ul ul li.last { background: none; }
+nav#menu ul ul li {
+    width: 100%;
+}
+
+/* menu::level3 */
+nav#menu ul ul div {
+    width: 180px;
+    padding: 15px 0px 8px 0px;
+    margin: -44px 0 0 169px !important;
+    background: url(../images/menu/subsubmenu-top.png) no-repeat 0px 0;
+    _background-image: url(../images/menu/subsubmenu-top.gif);
+}
+*+html nav#menu ul ul div { height:10px }
+*+html nav#menu.ie7 ul ul div { height:auto }
+nav#menu ul ul ul {
+    padding: 0 4px 5px 1px;
+    background: url(../images/menu/submenu-bottom.png) no-repeat 0px bottom;
+    _background-image: url(../images/menu/submenu-bottom.gif);
+}
+nav#menu ul ul div li {
+    position:relative;
+    top:-5px;
+}
+
+/* lava lamp */
+nav#menu li.back {
+    background: url(../images/menu/lavalamp-left.png) no-repeat 0 0;
+    _background-image: url(../images/menu/lavalamp-left.gif);
+    width: 10px;
+    height: 46px;
+    z-index: 8;
+    position: absolute;
+    padding: 0;
+    margin: 0;
+}
+
+nav#menu li.back .left {
+    padding:0;
+    width:auto;
+    background: url(../images/menu/lavalamp-right.png) no-repeat right 0;
+    _background-image: url(../images/menu/lavalamp-right.gif);
+    height: 46px;
+    margin: 0 5px 0 10px;
+    _margin-right: 2px;
+    float: none;
+    position: relative;
+    top: 0;
+    left: 0;
+    visibility: visible;
+}

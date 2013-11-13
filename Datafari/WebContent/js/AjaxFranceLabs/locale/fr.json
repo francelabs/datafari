@@ -1,0 +1,19 @@
+{
+"result" : "R&eacute;sultats",
+"of" : "sur",
+"for" : "pour",
+"seconds" : "secondes",
+"allWords" : "Tous les mots",
+"atLeastOneWord" : "Au moins un mot",
+"exactExpression" : "Expression exacte",
+"noResult" : "Aucun fichier trouv&eacute;",
+"tryWith" : "Essayer avec : ",
+"type" : "Format",
+"source" : "Source",
+"category" : "Cat&eacute;gorie",
+"lastModification" : "Derni&egrave;re modification",
+"lessThanOneMonth" : "Moins%20de%20un%20mois",
+"lessThanOneYear" : "Moins%20de%20un%20an",
+"lessThanFiveYears" : "Moins%20de%205%20ans",
+"language" : "Langage"
+}

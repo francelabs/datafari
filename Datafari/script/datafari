@@ -1,0 +1,36 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:  Datafari
+# Required-Start:    $ALL
+# Required-Stop:     $remote_fs $syslog postgresql
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start and stop Datafari Search Engine
+# Description: Start and stop Datafari Search Engine
+# processname: datafari
+### END INIT INFO
+export JAVA_HOME=/opt/datafari-server/jvm
+cd /opt/datafari-server/bin
+
+case $1 in
+start)  
+  $JAVA_HOME/bin/java -cp /opt/datafari-server/bin/DatafariAutoConfigurationScripts.jar com.francelabs.datafari.script.PreDeploymentConfigurationScript
+  /opt/datafari-server/ManifoldCF/ManifoldCFHome/lock-clean.sh
+  sleep 1
+  /opt/datafari-server/tomcat/bin/startup.sh
+  /opt/datafari-server/ManifoldCF/ManifoldCFHome/start-agents.sh
+  $JAVA_HOME/bin/java -cp /opt/datafari-server/bin/DatafariAutoConfigurationScripts.jar com.francelabs.datafari.script.PostDeploymentConfigurationScript
+  sleep 4
+  ;;
+stop)
+  /opt/datafari-server/ManifoldCF/ManifoldCFHome/stop-agents.sh
+  /opt/datafari-server/tomcat/bin/shutdown.sh
+  sleep 4
+;;
+clean)
+  /opt/datafari-server/ManifoldCF/ManifoldCFHome/lock-clean.sh
+  sleep 1
+  ;;
+esac
+exit 0
+

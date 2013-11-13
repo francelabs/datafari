@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Created-By: France Labs
+Specification-Title: Datafari
+Specification-Version: V.0.6.9-Alpha
+Implementation-Vendor: France Labs
+Class-Path: 
+

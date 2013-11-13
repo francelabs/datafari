@@ -1,0 +1,18 @@
+cd /opt/datafari-server/tomcat/
+unzip -o Tomcat.zip
+chmod -R 755 *
+cd /opt/datafari-server/ManifoldCF/ManifoldCFHome
+unzip -o ManifoldCFHome.zip
+chmod -R 755 *
+cd /opt/datafari-server/Solr/SolrHome
+unzip -o SolrHome.zip
+chmod -R 755 *
+cd /opt/datafari-server/jvm
+unzip -o JVM.zip
+chmod -R 755 *
+cd /opt/datafari-server/bin
+unzip -o Bin.zip
+chmod -R 755 *
+cd /etc/init.d
+chmod -R 755 *
+export JAVA_HOME=/opt/datafari-server/jvm
