@@ -14,12 +14,12 @@ cd /opt/datafari-server/bin
 
 case $1 in
 start)  
-  $JAVA_HOME/bin/java -cp /opt/datafari-server/bin/DatafariAutoConfigurationScripts.jar com.francelabs.datafari.script.PreDeploymentConfigurationScript
+  $JAVA_HOME/bin/java -cp /opt/datafari-server/bin/DatafariScripts.jar com.francelabs.datafari.script.PreDeploymentConfigurationScript
   /opt/datafari-server/ManifoldCF/ManifoldCFHome/lock-clean.sh
   sleep 1
   /opt/datafari-server/tomcat/bin/startup.sh
   /opt/datafari-server/ManifoldCF/ManifoldCFHome/start-agents.sh
-  $JAVA_HOME/bin/java -cp /opt/datafari-server/bin/DatafariAutoConfigurationScripts.jar com.francelabs.datafari.script.PostDeploymentConfigurationScript
+  $JAVA_HOME/bin/java -cp /opt/datafari-server/bin/DatafariScripts.jar com.francelabs.datafari.script.PostDeploymentConfigurationScript
   sleep 4
   ;;
 stop)

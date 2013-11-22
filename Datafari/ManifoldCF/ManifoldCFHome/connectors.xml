@@ -23,32 +23,43 @@
 -->
 <connectors>
     <!-- Add your output connectors here -->
-	<!--
   <outputconnector name="ElasticSearch" class="org.apache.manifoldcf.agents.output.elasticsearch.ElasticSearchConnector"/>
-  <outputconnector name="MetaCarta GTS" class="org.apache.manifoldcf.agents.output.gts.GTSConnector"/>
   <outputconnector name="OpenSearchServer" class="org.apache.manifoldcf.agents.output.opensearchserver.OpenSearchServerConnector"/>
-  <outputconnector name="Null" class="org.apache.manifoldcf.agents.output.nullconnector.NullConnector"/>-->
+  <outputconnector name="Null" class="org.apache.manifoldcf.agents.output.nullconnector.NullConnector"/>
   <outputconnector name="Solr" class="org.apache.manifoldcf.agents.output.solr.SolrConnector"/>
+  <outputconnector name="MetaCarta GTS" class="org.apache.manifoldcf.agents.output.gts.GTSConnector"/>
+  <outputconnector name="HDFS" class="org.apache.manifoldcf.agents.output.hdfs.HDFSOutputConnector"/>
+  <outputconnector name="File system" class="org.apache.manifoldcf.agents.output.filesystem.FileOutputConnector"/>
+    <!-- Add your mapping connectors here -->
+  <mappingconnector name="Regular expression mapper" class="org.apache.manifoldcf.authorities.mappers.regexp.RegexpMapper"/>
     <!-- Add your authority connectors here -->
-  <!--<authorityconnector name="Meridio" class="org.apache.manifoldcf.crawler.connectors.meridio.MeridioAuthority"/>-->
+  <authorityconnector name="Meridio" class="org.apache.manifoldcf.crawler.connectors.meridio.MeridioAuthority"/>
   <!--authorityconnector name="LiveLink" class="org.apache.manifoldcf.crawler.connectors.livelink.LivelinkAuthority"/-->
   <!--authorityconnector name="Documentum" class="org.apache.manifoldcf.crawler.authorities.DCTM.AuthorityConnector"/-->
-  <!--<authorityconnector name="CMIS" class="org.apache.manifoldcf.crawler.connectors.cmis.CmisAuthorityConnector"/>-->
-  <!--  <authorityconnector name="LDAP" class="org.apache.manifoldcf.authorities.authorities.ldap.LDAPAuthority"/>
+  <authorityconnector name="JDBC" class="org.apache.manifoldcf.authorities.authorities.jdbc.JDBCAuthority"/>
+  <authorityconnector name="CMIS" class="org.apache.manifoldcf.crawler.connectors.cmis.CmisAuthorityConnector"/>
+  <authorityconnector name="LDAP" class="org.apache.manifoldcf.authorities.authorities.ldap.LDAPAuthority"/>
   <authorityconnector name="Active Directory" class="org.apache.manifoldcf.authorities.authorities.activedirectory.ActiveDirectoryAuthority"/>
-  <authorityconnector name="Null" class="org.apache.manifoldcf.authorities.authorities.nullauthority.NullAuthority"/>-->
+  <authorityconnector name="Null" class="org.apache.manifoldcf.authorities.authorities.nullauthority.NullAuthority"/>
+  <authorityconnector name="Jira" class="org.apache.manifoldcf.authorities.authorities.jira.JiraAuthorityConnector"/>
+  <authorityconnector name="Generic" class="org.apache.manifoldcf.authorities.authorities.generic.GenericAuthority"/>
     <!-- Add your repository connectors here -->
-  <!-- <repositoryconnector name="SharePoint" class="org.apache.manifoldcf.crawler.connectors.sharepoint.SharePointRepository"/>-->
-   <!--<repositoryconnector name="Meridio" class="org.apache.manifoldcf.crawler.connectors.meridio.MeridioConnector"/>-->
+  <repositoryconnector name="SharePoint" class="org.apache.manifoldcf.crawler.connectors.sharepoint.SharePointRepository"/>
+  <repositoryconnector name="Meridio" class="org.apache.manifoldcf.crawler.connectors.meridio.MeridioConnector"/>
   <!--repositoryconnector name="LiveLink" class="org.apache.manifoldcf.crawler.connectors.livelink.LivelinkConnector"/-->
   <!--repositoryconnector name="FileNet" class="org.apache.manifoldcf.crawler.connectors.filenet.FilenetConnector"/-->
   <!--repositoryconnector name="Documentum" class="org.apache.manifoldcf.crawler.connectors.DCTM.DCTM"/-->
-  <repositoryconnector name="Windows shares" class="org.apache.manifoldcf.crawler.connectors.sharedrive.SharedDriveConnector"/>
-   <repositoryconnector name="JDBC" class="org.apache.manifoldcf.crawler.connectors.jdbc.JDBCConnector"/>
-   <!--<repositoryconnector name="Wiki" class="org.apache.manifoldcf.crawler.connectors.wiki.WikiConnector"/>-->
-   <repositoryconnector name="Web" class="org.apache.manifoldcf.crawler.connectors.webcrawler.WebcrawlerConnector"/>
-   <!--<repositoryconnector name="RSS" class="org.apache.manifoldcf.crawler.connectors.rss.RSSConnector"/>-->
-   <repositoryconnector name="File system" class="org.apache.manifoldcf.crawler.connectors.filesystem.FileConnector"/>
-   <!--<repositoryconnector name="CMIS" class="org.apache.manifoldcf.crawler.connectors.cmis.CmisRepositoryConnector"/>-->
-  <!-- <repositoryconnector name="Alfresco" class="org.apache.manifoldcf.crawler.connectors.alfresco.AlfrescoRepositoryConnector"/> -->
+  <!--repositoryconnector name="Windows shares" class="org.apache.manifoldcf.crawler.connectors.sharedrive.SharedDriveConnector"/-->
+  <repositoryconnector name="JDBC" class="org.apache.manifoldcf.crawler.connectors.jdbc.JDBCConnector"/>
+  <repositoryconnector name="Wiki" class="org.apache.manifoldcf.crawler.connectors.wiki.WikiConnector"/>
+  <repositoryconnector name="Web" class="org.apache.manifoldcf.crawler.connectors.webcrawler.WebcrawlerConnector"/>
+  <repositoryconnector name="RSS" class="org.apache.manifoldcf.crawler.connectors.rss.RSSConnector"/>
+  <repositoryconnector name="HDFS" class="org.apache.manifoldcf.crawler.connectors.hdfs.HDFSRepositoryConnector"/>
+  <repositoryconnector name="File system" class="org.apache.manifoldcf.crawler.connectors.filesystem.FileConnector"/>
+  <repositoryconnector name="CMIS" class="org.apache.manifoldcf.crawler.connectors.cmis.CmisRepositoryConnector"/>
+  <!--repositoryconnector name="Alfresco" class="org.apache.manifoldcf.crawler.connectors.alfresco.AlfrescoRepositoryConnector"/-->
+  <repositoryconnector name="DropBox" class="org.apache.manifoldcf.crawler.connectors.dropbox.DropboxRepositoryConnector"/>
+  <repositoryconnector name="GoogleDrive" class="org.apache.manifoldcf.crawler.connectors.googledrive.GoogleDriveRepositoryConnector"/>
+  <repositoryconnector name="Jira" class="org.apache.manifoldcf.crawler.connectors.jira.JiraRepositoryConnector"/>
+  <repositoryconnector name="Generic" class="org.apache.manifoldcf.crawler.connectors.generic.GenericConnector"/>
 </connectors>

@@ -1,0 +1,10 @@
+ManifoldCF requires
+------------------
+* JRE 1.7 or above
+* Many other libraries, available from the ManifoldCF XXX-lib distribution
+
+For running ManifoldCF:
+----------------------
+* Read the "how-to-build-and-deploy.html" documentation page
+
+
