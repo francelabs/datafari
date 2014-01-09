@@ -1,18 +1,34 @@
+cd /usr/bin
+chmod +x unzip
 cd /opt/datafari-server/tomcat/
 unzip -o Tomcat.zip
+rm Tomcat.zip
 chmod -R 755 *
 cd /opt/datafari-server/ManifoldCF/ManifoldCFHome
 unzip -o ManifoldCFHome.zip
+rm ManifoldCFHome.zip
 chmod -R 755 *
 cd /opt/datafari-server/Solr/SolrHome
 unzip -o SolrHome.zip
+rm SolrHome.zip
 chmod -R 755 *
 cd /opt/datafari-server/jvm
 unzip -o JVM.zip
+rm JVM.zip
 chmod -R 755 *
 cd /opt/datafari-server/bin
 unzip -o Bin.zip
+rm Bin.zip
+chmod -R 755 *
+cd /opt/datafari-server/pgsql
+unzip -o PGSQL.zip
+rm PGSQL.zip
 chmod -R 755 *
 cd /etc/init.d
 chmod -R 755 *
-export JAVA_HOME=/opt/datafari-server/jvm
+useradd -g users -m -s /bin/bash -p $(echo postgres | openssl passwd -1 -stdin) postgres
+chown -R postgres /opt/datafari-server/pgsql
+su - postgres -c '/opt/datafari-server/pgsql/bin/initdb -D /opt/datafari-server/pgsql/data'
+service postgresql start
+cd /opt/datafari-server/ManifoldCF/ManifoldCFHome/
+./initialize.sh

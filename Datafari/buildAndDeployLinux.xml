@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<project name="datafari_deploymentscript" default="deployAll" basedir=".">
+<project name="datafari_deploymentscript" default="deployDatafari" basedir=".">
 
 	<!-- ========================= PROPERTIES ============================= -->
 
     <!-- Deployment properties -->
 	<property name="ftp-userid" value="root" />
-	<property name="ftp-password" value="password" />
-	<property name="ftp-server" value="DATAFARI_HOST" />
+	<property name="ftp-password" value="wooxoadmin83+" />
+	<property name="ftp-server" value="wooxo-desktop" />
 	<property name="ftp-port" value="22" />
 	
 	
@@ -18,6 +18,7 @@
 	<property name="dist.dir" value="${project.dir}/dist" />
 	<property name="tomcat.dir" value="${project.dir}/tomcat" />
 	<property name="jvm.dir" value="${project.dir}/jvm" />
+	<property name="pgsql.dir" value="${project.dir}/pgsql" />
 	<property name="bin.dir" value="${project.dir}/bin" />
 	<property name="script.dir" value="${project.dir}/script" />
 	<property name="deploy.dir" value="${project.dir}/deploy" />
@@ -37,13 +38,27 @@
 		<fileset dir="${project.dir}/WebContent/WEB-INF/lib/">
 			<include name="*.jar" />
 		</fileset>
-		<pathelement path="${project.dir}/bin/" />
 	</path>
+	
+
+	<path id="bin.class.path">
+		<fileset dir="${bin.dir}/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+	
+
+	<pathconvert property="lib.bin.manifest.classpath" pathsep=" ">
+		<path refid="bin.class.path" />
+		<flattenmapper />
+		<map from="" to="lib/" />
+	</pathconvert>
 
 	<!-- deployment dir -->
 	<property name="datafari.dist.dir" value="/opt/datafari-server" />
 	<property name="tomcat.dist.dir" value="${datafari.dist.dir}/tomcat" />
 	<property name="jvm.dist.dir" value="${datafari.dist.dir}/jvm" />
+	<property name="pgsql.dist.dir" value="${datafari.dist.dir}/pgsql" />
 	<property name="bin.dist.dir" value="${datafari.dist.dir}/bin" />
 	<property name="datafariwebapp.dist.dir" value="${tomcat.dist.dir}/webapps/Datafari" />
 	<property name="manifoldcf.dist.dir" value="${datafari.dist.dir}/ManifoldCF" />
@@ -64,10 +79,52 @@
 		<delete includeemptydirs="true">
 			<fileset dir="${deploy.dir}" includes="**/*" />
 		</delete>
+		<delete includeemptydirs="true">
+			<fileset dir="${bin.dir}/build" includes="**/*" />
+		</delete>
+		<delete includeemptydirs="true">
+			<fileset dir="${bin.dir}/dist" includes="**/*" />
+		</delete>
 	</target>
 
 
-	<target name="compile" depends="clean">
+	
+	<target name="compileBin" depends="clean">
+			<echo message="${build.classes.dir}" />
+			<mkdir dir="${bin.dir}/build" />
+			<copy todir="${bin.dir}/build">
+				<fileset dir="${bin.dir}/src" />
+			</copy>
+			<javac destdir="${bin.dir}/build" debug="on" debuglevel="lines,vars,source" verbose="off" source="1.7" target="1.7">
+				<classpath refid="bin.class.path" />
+				<src path="${bin.dir}/src" />
+			</javac>
+		</target>
+	
+
+	<target name="distBin" depends="compileBin">
+
+		<mkdir dir="${bin.dir}/dist/logs" />
+		<jar destfile="${bin.dir}/dist/DatafariScripts.jar" basedir="${bin.dir}/build">
+			<manifest>
+				<attribute name="Class-Path" value="${lib.bin.manifest.classpath}" />
+			</manifest>
+			<fileset dir="${bin.dir}\lib" includes="**" />
+		</jar>
+
+		<copy todir="${bin.dir}/dist/lib">
+			<fileset dir="${bin.dir}/lib" />
+		</copy>
+		<copy todir="${bin.dir}/dist/config">
+			<fileset dir="${bin.dir}/config" />
+		</copy>
+		<copy todir="${bin.dir}/dist">
+			<fileset dir="${bin.dir}/main" />
+		</copy>
+
+	</target>
+
+	<target name="compileCore" depends="distBin">
 		<echo message="${build.classes.dir}" />
 		<mkdir dir="${build.classes.dir}" />
 		<copy todir="${build.classes.dir}">
@@ -79,7 +136,7 @@
 		</javac>
 	</target>
 
-	<target name="dist" depends="compile">
+	<target name="distCore" depends="compileCore">
 
 		<copy todir="${dist.dir}">
 			<fileset dir="${webcontent.dir}/">
@@ -95,7 +152,7 @@
 
 	</target>
 
-	<target name="prepareDeployment" depends="dist">
+	<target name="prepareDeployment" depends="distCore">
 		<!-- Create directory for deployment -->
 		<exec executable="putty.exe">
 			<arg value="-P" />
@@ -193,7 +250,8 @@
 		<zip destfile="${deploy.dir}/SolrHome.zip" basedir="${solr.dir}/SolrHome" />
 		<zip destfile="${deploy.dir}/Tomcat.zip" basedir="${tomcat.dir}" />
 		<zip destfile="${deploy.dir}/JVM.zip" basedir="${jvm.dir}" />
-		<zip destfile="${deploy.dir}/Bin.zip" basedir="${bin.dir}" />
+		<zip destfile="${deploy.dir}/PGSQL.zip" basedir="${pgsql.dir}" />
+		<zip destfile="${deploy.dir}/Bin.zip" basedir="${bin.dir}/dist" />
 
 		
 		
@@ -228,6 +286,16 @@
 				</exec>
 		
 		<exec executable="pscp.exe">
+							<arg value="-P" />
+							<arg value="${ftp-port}" />
+							<arg value="-v" />
+							<arg value="-pw" />
+							<arg value="${ftp-password}" />
+							<arg value="${project.dir}/unzip" />
+							<arg value="${ftp-userid}@${ftp-server}:/usr/bin" />
+						</exec>
+		
+		<exec executable="pscp.exe">
 			<arg value="-P" />
 			<arg value="${ftp-port}" />
 			<arg value="-v" />
@@ -258,6 +326,15 @@
 					<arg value="${ftp-userid}@${ftp-server}:${jvm.dist.dir}" />
 				</exec>
 		
+		<exec executable="pscp.exe">
+							<arg value="-P" />
+							<arg value="${ftp-port}" />
+							<arg value="-v" />
+							<arg value="-pw" />
+							<arg value="${ftp-password}" />
+							<arg value="${deploy.dir}/PGSQL.zip" />
+							<arg value="${ftp-userid}@${ftp-server}:${pgsql.dist.dir}" />
+						</exec>
 		
 		<exec executable="pscp.exe">
 					<arg value="-P" />

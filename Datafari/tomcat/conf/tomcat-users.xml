@@ -27,5 +27,6 @@
   <!.. ..> that surrounds them.
 -->
   <role rolename="manager-gui"/>
-  <user username="admin" password="tomcat" roles="manager-gui"/>
+  <role rolename="datafari-admin"/>
+  <user username="admin" password="tomcat" roles="manager-gui,datafari-admin"/>
 </tomcat-users>

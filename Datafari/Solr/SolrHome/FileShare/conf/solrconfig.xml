@@ -970,7 +970,12 @@
 
        https://wiki.apache.org/solr/SolrCloud/
     -->
-  <requestHandler name="/replication" class="solr.ReplicationHandler" > 
+  <requestHandler name="/backup" class="solr.ReplicationHandler" >
+  	<lst name="defaults">
+  		<str name="command">backup</str>
+  		<int name="numberToKeep">1</int>
+  		<str name="location">/opt/datafari-server/backup</str>
+  	</lst>
     <!--
        To enable simple master/slave replication, uncomment one of the 
        sections below, depending on whether this solr instance should be

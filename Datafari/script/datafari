@@ -10,7 +10,6 @@
 # processname: datafari
 ### END INIT INFO
 export JAVA_HOME=/opt/datafari-server/jvm
-cd /opt/datafari-server/bin
 
 case $1 in
 start)  
@@ -18,12 +17,12 @@ start)
   /opt/datafari-server/ManifoldCF/ManifoldCFHome/lock-clean.sh
   sleep 1
   /opt/datafari-server/tomcat/bin/startup.sh
-  /opt/datafari-server/ManifoldCF/ManifoldCFHome/start-agents.sh
+  /opt/datafari-server/ManifoldCF/ManifoldCFHome/start-agents.sh &
   $JAVA_HOME/bin/java -cp /opt/datafari-server/bin/DatafariScripts.jar com.francelabs.datafari.script.PostDeploymentConfigurationScript
   sleep 4
   ;;
 stop)
-  /opt/datafari-server/ManifoldCF/ManifoldCFHome/stop-agents.sh
+  /opt/datafari-server/ManifoldCF/ManifoldCFHome/stop-agents.sh &
   /opt/datafari-server/tomcat/bin/shutdown.sh
   sleep 4
 ;;

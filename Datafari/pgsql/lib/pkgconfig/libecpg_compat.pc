@@ -1,0 +1,9 @@
+Name: libecpg_compat
+Description: PostgreSQL libecpg_compat library
+Url: http://www.postgresql.org/
+Version: 9.3.1
+Requires: 
+Requires.private: libecpg libpgtypes
+Cflags: -I/opt/datafari-server/pgsql/include
+Libs: -L/opt/datafari-server/pgsql/lib -lecpg_compat
+Libs.private:  -lpq -lm -lpthread
