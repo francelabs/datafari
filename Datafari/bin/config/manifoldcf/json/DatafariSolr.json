@@ -24,7 +24,7 @@
           "_attribute_name": "Server port"
         },
         {
-          "_value_": "DatafariSolr",
+          "_value_": "datafari-solr",
           "_attribute_name": "Server web application"
         },
         {

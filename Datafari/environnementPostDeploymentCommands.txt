@@ -24,6 +24,9 @@ cd /opt/datafari-server/pgsql
 unzip -o PGSQL.zip
 rm PGSQL.zip
 chmod -R 755 *
+cd /opt/datafari-server/tomcat/webapps/Datafari
+unzip -o Datafari.zip
+chmod -R 755 *
 cd /etc/init.d
 chmod -R 755 *
 useradd -g users -m -s /bin/bash -p $(echo postgres | openssl passwd -1 -stdin) postgres

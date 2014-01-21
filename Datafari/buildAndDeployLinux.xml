@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<project name="datafari_deploymentscript" default="deployDatafari" basedir=".">
+<project name="datafari_deploymentscript" default="deployAll" basedir=".">
 
 	<!-- ========================= PROPERTIES ============================= -->
 
     <!-- Deployment properties -->
 	<property name="ftp-userid" value="root" />
-	<property name="ftp-password" value="wooxoadmin83+" />
-	<property name="ftp-server" value="wooxo-desktop" />
+	<property name="ftp-password" value="password" />
+	<property name="ftp-server" value="host" />
 	<property name="ftp-port" value="22" />
 	
 	
@@ -165,7 +165,7 @@
 		</exec>
 	</target>
 	
-	<target name="deployDatafari" depends="prepareDeployment">
+	<target name="deployDatafari" >
 		<zip destfile="${deploy.dir}/${project.name}.zip" basedir="${dist.dir}" />
 
 		<exec executable="pscp.exe">
@@ -244,7 +244,12 @@
 			
 		</target>
 	
-	<target name="deployAll" depends="deployDatafari">
+	<target name="deployAll" depends="prepareDeployment">
+		
+
+
+		
+		
 		<echo message="Zipping dist directory" />
 		<zip destfile="${deploy.dir}/ManifoldCFHome.zip" basedir="${manifoldcf.dir}/ManifoldCFHome" />
 		<zip destfile="${deploy.dir}/SolrHome.zip" basedir="${solr.dir}/SolrHome" />
@@ -252,6 +257,7 @@
 		<zip destfile="${deploy.dir}/JVM.zip" basedir="${jvm.dir}" />
 		<zip destfile="${deploy.dir}/PGSQL.zip" basedir="${pgsql.dir}" />
 		<zip destfile="${deploy.dir}/Bin.zip" basedir="${bin.dir}/dist" />
+		<zip destfile="${deploy.dir}/${project.name}.zip" basedir="${dist.dir}" />
 
 		
 		
@@ -355,6 +361,18 @@
 					<arg value="${deploy.dir}/Bin.zip" />
 					<arg value="${ftp-userid}@${ftp-server}:${bin.dist.dir}" />
 				</exec>
+		
+
+
+		<exec executable="pscp.exe">
+			<arg value="-P" />
+			<arg value="${ftp-port}" />
+			<arg value="-v" />
+			<arg value="-pw" />
+			<arg value="${ftp-password}" />
+			<arg value="${deploy.dir}/${project.name}.zip" />
+			<arg value="${ftp-userid}@${ftp-server}:${datafariwebapp.dist.dir}" />
+		</exec>
 		
 
 		<exec executable="putty.exe">

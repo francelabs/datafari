@@ -31,8 +31,5 @@
     <!--
     <Valve className="org.apache.catalina.valves.CometConnectionManagerValve" />
     -->
-   
-   <Valve className="com.francelabs.tomcat.valve.RemoteHostAutoAuthentication" trustedHost="localhost" username="admin" password="tomcat" />
-    
 
 </Context>

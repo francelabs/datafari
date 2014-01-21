@@ -13,7 +13,7 @@
 		</init-param>
 		<init-param>
 			<param-name>targetUri</param-name>
-			<param-value>http://192.168.0.75:8080/datafari-solr/FileShare</param-value>
+			<param-value>http://localhost:8080/datafari-solr/FileShare</param-value>
 		</init-param>
 		<init-param>
 			<param-name>domain</param-name>
