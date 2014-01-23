@@ -18,21 +18,18 @@
 			<script type ="text/javascript" src ="js/AjaxFranceLabs/core/Core.js"></script>
 			<script type ="text/javascript" src ="js/AjaxFranceLabs/core/AbstractModule.js"></script>
 			<script type ="text/javascript" src ="js/AjaxFranceLabs/core/AbstractWidget.js"></script>
-			<script type ="text/javascript" src ="js/AjaxFranceLabs/core/AbstractFacetWidget.js"></script>
 			<script type ="text/javascript" src ="js/AjaxFranceLabs/core/Parameter.js"></script>
 			<script type ="text/javascript" src ="js/AjaxFranceLabs/core/ParameterStore.js"></script>
-
 			<script type="text/javascript" src="js/AjaxFranceLabs/i18njs.js"></script>
+			<script type="text/javascript" src="js/AjaxFranceLabs/uuid.core.js"></script>
 			<script type ="text/javascript" src ="js/AjaxFranceLabs/core/AbstractManager.js"></script>
 			<script type ="text/javascript" src ="js/AjaxFranceLabs/manager/Manager.js"></script>
 			<script type ="text/javascript" src ="js/AjaxFranceLabs/modules/Pager.module.js"></script>
 			<script type ="text/javascript" src ="js/AjaxFranceLabs/modules/Autocomplete.module.js"></script>
-			<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/Result.widget.js"></script>
 			<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/SearchBar.widget.js"></script>
 
 
 			<script type ="text/javascript" src ="js/main.js"></script>
-
 			<script type ="text/javascript" src ="js/searchBar.js"></script>
 		
 
