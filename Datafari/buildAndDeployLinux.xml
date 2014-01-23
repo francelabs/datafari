@@ -38,6 +38,11 @@
 		<fileset dir="${project.dir}/WebContent/WEB-INF/lib/">
 			<include name="*.jar" />
 		</fileset>
+		
+
+		<fileset dir="${project.dir}/tomcat/lib/">
+			<include name="*.jar" />
+		</fileset>
 	</path>
 	
 

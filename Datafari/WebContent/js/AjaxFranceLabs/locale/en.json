@@ -1,0 +1,19 @@
+{
+"result" : "Result",
+"of" : "of",
+"for" : "for",
+"seconds" : "seconds",
+"allWords" : "All words",
+"atLeastOneWord" : "At least one word",
+"exactExpression" : "Exact expression",
+"noResult" : "No result found",
+"tryWith" : "Try with : ",
+"type" : "Type",
+"source" : "Source",
+"category" : "Category",
+"lastModification" : "Last modification",
+"lessThanOneMonth" : "Less%20than%201%20month",
+"lessThanOneYear" : "Less%20than%201%20year",
+"lessThanFiveYears" : "Less%20than%205%20years",
+"language" : "Language"
+}

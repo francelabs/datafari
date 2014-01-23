@@ -1,0 +1,43 @@
+.searchBarWidget .searchBar { background-color: white; }
+.searchBarWidget .searchBar input[type=button] { background-color: #FFa0a0; }
+
+.collectionWidget { background-color: #B92221; border-color: #930B0B; }
+.collectionWidget .title { color: #ffffff; }
+.collectionWidget .content li { border-top-color: #930B0B; color: #ffffff; }
+.collectionWidget .content li.last { border-bottom-color: #930B0B; }
+.collectionWidget .content li.selected { background-color: #DB3131; }
+
+.tableWidget .facetName { border-bottom-color: #b5b5b5; color: #3d3c3a; }
+.tableWidget .facetSort { background-color: #ebebeb; border-bottom-color: #b5b5b5; }
+.tableWidget ul li { border-bottom-color: #b5b5b5; }
+
+.resultWidget .res .title { color: #000000; }
+.resultWidget .doc .res .address { color: #3d3c3a; }
+.resultWidget .doc .res .tags a span { color: #CF242A; font-style: italic; }
+
+.videoResultWidget .video:hover { background-color: #ffffff; }
+.videoResultWidget .video:hover a { color: #1f64b9; }
+.videoResultWidget .video .title { color: #333333; }
+.videoResultWidget .video .length { background-color: black; color: white; }
+.videoResultWidget .video .res .address { color: #3d3c3a; }
+.videoResultWidget .video .res .tags a span { color: #CF242A; font-style: italic; }
+
+.pagerModule .pages .page { border-color: #3d3c3a; color: #FFa0a0; }
+.pagerModule .pages .page.selected { color: #3d3c3a; }
+
+.advancedSearchWidget .advTable .field input { border-color: #D9D9D9; border-top-color: #A1A1A1; }
+.advancedSearchWidget .separator { border-bottom-color: #D9D9D9; }
+.advancedSearchWidget button { color: #474D52; border-color: #D9D9D9; border-top-color: #A1A1A1; }
+.advancedSearchWidget button:hover { border-color:#A1A1A1; }
+.capsuleWidget { border-color: #666666; }
+
+.spellcheckerWidget .result { color: #B92221; }
+
+.menuWidget .menu { border-color: #666666; }
+.menuWidget .menu li { background-color: white; }
+.menuWidget .menu li:hover { background-color: #DB3131; color: white; }
+
+.ui-widget-content { border-color: #eeeeee; background-color: #ffffff; color: #333333; }
+.ui-autocomplete .ui-state-hover { background-color: #FFE0E0; border-color: #FFA0A0; }
+
+.ui-resizable-handle { background-color: #333333; }
