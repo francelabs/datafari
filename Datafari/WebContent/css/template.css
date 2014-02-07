@@ -5,8 +5,7 @@ html, body, #container { height:100%; }
 header { background:transparent url(../images/header-bg-2.png) repeat-x 0 0; display: block; position:relative; width:100%; }
 label { cursor:pointer; }
 #header-wrapper { margin:0 auto; width:850px; height:85px;} 
-#logo { background:transparent url(../images/logo-header.png) no-repeat center center; float:left; height:85px; width:101px; }
-#fl { background:transparent url(../images/datafari.png) no-repeat 0 0; height:85px; float:left; width:229px; margin-left:30px;}
+#logo { background:transparent url(../images/datafari.png) no-repeat 0 0; height:85px; float:left; width:229px; margin-left:30px;}
 #userSpace { background:transparent  height:85px;  float:right;  margin-top:68px;}
 #bar { background:#3D3C3A; height:3px; }
 #lang { bottom:5px; position:absolute; right:10px; height:25px; width:16px; }

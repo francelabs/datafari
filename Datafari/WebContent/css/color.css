@@ -4,21 +4,22 @@ body {
     margin: 0;
     width: 100%;
     height:100%;
+    
     background-repeat:no-repeat !important;
     background: #FFFFFF;
     background-attachment: fixed;
-	background: -webkit-linear-gradient(top, #FFF4F4 0%, #FFFFFF 60%) repeat
+	background: -webkit-linear-gradient(top, #F5F7C5 0%, #FFFFFF 60%) repeat
 		scroll 0 0 transparent;
-	background: -moz-linear-gradient(top, #FFF4F4 0%, #FFFFFF 60%) repeat
+	background: -moz-linear-gradient(top, #F5F7C5 0%, #FFFFFF 60%) repeat
 		scroll 0 0 transparent;
-	background: -ms-linear-gradient(top, #FFF4F4 0%, #FFFFFF 60%) repeat
+	background: -ms-linear-gradient(top, #F5F7C5 0%, #FFFFFF 60%) repeat
 		scroll 0 0 transparent;
-	background: -o-linear-gradient(top, #FFF4F4 0%, #FFFFFF 60%) repeat
+	background: -o-linear-gradient(top, #F5F7C5 0%, #FFFFFF 60%) repeat
 		scroll 0 0 transparent;
 }
 
 header {
-	background-color: #FFE0E0;
+	background-color: #DDE27C;
 }
 
 a {
@@ -72,8 +73,8 @@ a {
 
 footer {
 	background-color: #3D3C3A;
-	border-top-color: #FFEDED;
-	color: #FFEDED;
+	border-top-color: #F5F7C7;
+	color: #F5F7C7;
 }
 
 footer .links a {

@@ -4,7 +4,6 @@
 	<div id="header-wrapper">
 
 		<div id="logo"></div>
-		<div id="fl"></div>
 		<%
 			if (request.getUserPrincipal() != null) {
 				String username = request.getUserPrincipal().getName();
