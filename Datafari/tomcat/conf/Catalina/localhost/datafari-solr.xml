@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Context docBase="/opt/datafari-server/Solr/war/solr-4.5.1.war" crossContext="true">
-  <Environment name="solr/home" type="java.lang.String" value="/opt/datafari-server/Solr/SolrHome" override="true"/>
-</Context>

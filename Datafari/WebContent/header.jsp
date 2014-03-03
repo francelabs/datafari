@@ -4,19 +4,9 @@
 	<div id="header-wrapper">
 
 		<div id="logo"></div>
-		<%
-			if (request.getUserPrincipal() != null) {
-				String username = request.getUserPrincipal().getName();
-		%>
 		<div id="userSpace">
-			<span class="em"> <%=username%>
-			</span>
-			<% 
 			
-			if (request.getSession().getAttribute("SSOFailure") != null){%>
-			 &nbsp;<a href="<%=request.getContextPath()%>/logout.jsp">(D&eacute;connexion)</a>
-			<% } 
-			if (username.equals("admin")){ 
+			<%
 			
 			if (request.getRequestURL().toString().contains("admin")){
 
@@ -29,16 +19,10 @@
 			 &nbsp;<a href="<%=request.getContextPath()%>/admin">Administration</a>
 			<% 
 			}
-			
-			
-			}
 			%>
 			
 			
 		</div>
-		<%
-			}
-		%>
 	</div>
 
 	<div id="bar"></div>

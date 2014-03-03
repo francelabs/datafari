@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<!-- The connectors registry file permits registration of domains and connectors upon the
+      startup of the jetty-based ManifoldCF example.  In a real installation, this registration
+      step would be done ideally just once, but in the example the connectors
+      are all reregistered on every startup.
+-->
+<connectors>
+    <!-- Add any authorization domains here -->
+    <!-- authorizationdomain domain="AD" name="ActiveDirectory"/-->
+    <!-- authorizationdomain domain="SHP" name="SharePoint"/-->
+    <!-- authorizationdomain domain="FB" name="FaceBook"/-->
+
+    <!-- Add your output connectors here -->
+  <outputconnector name="ElasticSearch" class="org.apache.manifoldcf.agents.output.elasticsearch.ElasticSearchConnector"/>
+  <outputconnector name="OpenSearchServer" class="org.apache.manifoldcf.agents.output.opensearchserver.OpenSearchServerConnector"/>
+  <outputconnector name="Null" class="org.apache.manifoldcf.agents.output.nullconnector.NullConnector"/>
+  <outputconnector name="Solr" class="org.apache.manifoldcf.agents.output.solr.SolrConnector"/>
+  <outputconnector name="MetaCarta GTS" class="org.apache.manifoldcf.agents.output.gts.GTSConnector"/>
+  <outputconnector name="HDFS" class="org.apache.manifoldcf.agents.output.hdfs.HDFSOutputConnector"/>
+  <outputconnector name="File system" class="org.apache.manifoldcf.agents.output.filesystem.FileOutputConnector"/>
+    
+    <!-- Add your mapping connectors here -->
+  <mappingconnector name="Regular expression mapper" class="org.apache.manifoldcf.authorities.mappers.regexp.RegexpMapper"/>
+    
+    <!-- Add your authority connectors here -->
+  <authorityconnector name="SharePoint/Native" class="org.apache.manifoldcf.authorities.authorities.sharepoint.SharePointAuthority"/>
+  <authorityconnector name="SharePoint/ActiveDirectory" class="org.apache.manifoldcf.authorities.authorities.sharepoint.SharePointADAuthority"/>
+  <authorityconnector name="Meridio" class="org.apache.manifoldcf.crawler.connectors.meridio.MeridioAuthority"/>
+  <!--authorityconnector name="LiveLink" class="org.apache.manifoldcf.crawler.connectors.livelink.LivelinkAuthority"/-->
+  <!--authorityconnector name="Documentum" class="org.apache.manifoldcf.crawler.authorities.DCTM.AuthorityConnector"/-->
+  <authorityconnector name="JDBC" class="org.apache.manifoldcf.authorities.authorities.jdbc.JDBCAuthority"/>
+  <authorityconnector name="CMIS" class="org.apache.manifoldcf.crawler.connectors.cmis.CmisAuthorityConnector"/>
+  <authorityconnector name="LDAP" class="org.apache.manifoldcf.authorities.authorities.ldap.LDAPAuthority"/>
+  <authorityconnector name="Active Directory" class="org.apache.manifoldcf.authorities.authorities.activedirectory.ActiveDirectoryAuthority"/>
+  <authorityconnector name="Null" class="org.apache.manifoldcf.authorities.authorities.nullauthority.NullAuthority"/>
+  <authorityconnector name="Jira" class="org.apache.manifoldcf.authorities.authorities.jira.JiraAuthorityConnector"/>
+  <authorityconnector name="Generic" class="org.apache.manifoldcf.authorities.authorities.generic.GenericAuthority"/>
+    
+    <!-- Add your repository connectors here -->
+  <repositoryconnector name="SharePoint" class="org.apache.manifoldcf.crawler.connectors.sharepoint.SharePointRepository"/>
+  <repositoryconnector name="Meridio" class="org.apache.manifoldcf.crawler.connectors.meridio.MeridioConnector"/>
+  <!--repositoryconnector name="LiveLink" class="org.apache.manifoldcf.crawler.connectors.livelink.LivelinkConnector"/-->
+  <!--repositoryconnector name="FileNet" class="org.apache.manifoldcf.crawler.connectors.filenet.FilenetConnector"/-->
+  <!--repositoryconnector name="Documentum" class="org.apache.manifoldcf.crawler.connectors.DCTM.DCTM"/-->
+  <!--repositoryconnector name="Windows shares" class="org.apache.manifoldcf.crawler.connectors.sharedrive.SharedDriveConnector"/-->
+  <repositoryconnector name="JDBC" class="org.apache.manifoldcf.crawler.connectors.jdbc.JDBCConnector"/>
+  <repositoryconnector name="Wiki" class="org.apache.manifoldcf.crawler.connectors.wiki.WikiConnector"/>
+  <repositoryconnector name="Web" class="org.apache.manifoldcf.crawler.connectors.webcrawler.WebcrawlerConnector"/>
+  <repositoryconnector name="RSS" class="org.apache.manifoldcf.crawler.connectors.rss.RSSConnector"/>
+  <repositoryconnector name="HDFS" class="org.apache.manifoldcf.crawler.connectors.hdfs.HDFSRepositoryConnector"/>
+  <repositoryconnector name="File system" class="org.apache.manifoldcf.crawler.connectors.filesystem.FileConnector"/>
+  <repositoryconnector name="CMIS" class="org.apache.manifoldcf.crawler.connectors.cmis.CmisRepositoryConnector"/>
+  <!--repositoryconnector name="Alfresco" class="org.apache.manifoldcf.crawler.connectors.alfresco.AlfrescoRepositoryConnector"/-->
+  <repositoryconnector name="DropBox" class="org.apache.manifoldcf.crawler.connectors.dropbox.DropboxRepositoryConnector"/>
+  <repositoryconnector name="GoogleDrive" class="org.apache.manifoldcf.crawler.connectors.googledrive.GoogleDriveRepositoryConnector"/>
+  <repositoryconnector name="Jira" class="org.apache.manifoldcf.crawler.connectors.jira.JiraRepositoryConnector"/>
+  <repositoryconnector name="Generic" class="org.apache.manifoldcf.crawler.connectors.generic.GenericConnector"/>
+  <repositoryconnector name="EMail" class="org.apache.manifoldcf.crawler.connectors.email.EmailConnector"/>
+    
+</connectors>

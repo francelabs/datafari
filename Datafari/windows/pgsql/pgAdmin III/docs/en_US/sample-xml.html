@@ -1,0 +1,132 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso8859_1" />
+    
+    <title>Sample XML Data</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="top" title="pgAdmin III 1.18.1 documentation" href="index.html" />
+    <link rel="up" title="Default XSL Stylesheet" href="default-xsl.html" />
+    <link rel="next" title="Database Server Status" href="status.html" />
+    <link rel="prev" title="Default XSL Stylesheet" href="default-xsl.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="status.html" title="Database Server Status"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="default-xsl.html" title="Default XSL Stylesheet"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">pgAdmin III 1.18.1 documentation</a> &raquo;</li>
+          <li><a href="using.html" >Using pgAdmin III</a> &raquo;</li>
+          <li><a href="reports.html" >Report Tool</a> &raquo;</li>
+          <li><a href="default-xsl.html" accesskey="U">Default XSL Stylesheet</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="sample-xml-data">
+<span id="sample-xml"></span><h1><span class="target" id="index-0"></span>Sample XML Data</h1>
+<p>The sample report below demonstrates the XML format that the
+pgadmin <a class="reference internal" href="reports.html#reports"><em>Report Tool</em></a> will produce.</p>
+<div class="highlight-python"><pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;?xml-stylesheet type="text/xsl" href="C:\stylesheet.xsl" ?&gt;
+
+&lt;report&gt;
+
+  &lt;header&gt;
+
+    &lt;!-- All the values in the header section are optional, apart from the title. --&gt;
+
+    &lt;title&gt;Sample XML file&lt;/title&gt;
+    &lt;notes&gt;This is a sample XML file.&lt;/notes&gt;
+    &lt;generated&gt;10/05/2006 11:21:23&lt;/generated&gt;
+    &lt;server&gt;localhost:5432&lt;/database&gt;
+    &lt;database&gt;postgres&lt;/database&gt;
+    &lt;schema&gt;public&lt;/schema&gt;
+    &lt;table&gt;pg_ts_cfg&lt;/table&gt;
+    &lt;job&gt;&lt;/job&gt;
+  &lt;/header&gt;
+
+  &lt;!-- Multiple report sections may be present, and must have a name --&gt;
+
+  &lt;section id="s1" number="1" name="Query results"&gt;
+
+    &lt;!-- A table is optional within a section. If present, the number --&gt;
+    &lt;!-- of columns should be appropriate for the attributes specified --&gt;
+    &lt;!-- in each row. A row needn't specify every value however. --&gt;
+
+    &lt;table&gt;
+      &lt;columns&gt;
+        &lt;column id="c1" number="1" name="oid" /&gt;
+        &lt;column id="c2" number="2" name="ts_name" /&gt;
+        &lt;column id="c3" number="3" name="prs_name" /&gt;
+        &lt;column id="c4" number="4" name="locale" /&gt;
+      &lt;/columns&gt;
+      &lt;rows&gt;
+        &lt;row id="r1" number="1" c1="17108" c2="default" c3="default" c4="C" /&gt;
+        &lt;row id="r2" number="2" c1="17109" c2="default_russian" c3="default" c4="ru_RU.KOI8-R" /&gt;
+        &lt;row id="r3" number="3" c1="17110" c2="simple" c3="default" c4="" /&gt;
+      &lt;/rows&gt;
+
+      &lt;!-- Additional section specific info may be supplied. --&gt;
+
+      &lt;info&gt;3 rows with 4 columns retrieved.&lt;/info&gt;
+
+    &lt;/table&gt;
+
+    &lt;!-- Each section may also contain some related SQL. --&gt;
+
+    &lt;sql&gt;SELECT oid, * FROM pg_ts_cfg&lt;/sql&gt;
+
+  &lt;/section&gt;
+
+&lt;/report&gt;</pre>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="status.html" title="Database Server Status"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="default-xsl.html" title="Default XSL Stylesheet"
+             >previous</a> |</li>
+        <li><a href="index.html">pgAdmin III 1.18.1 documentation</a> &raquo;</li>
+          <li><a href="using.html" >Using pgAdmin III</a> &raquo;</li>
+          <li><a href="reports.html" >Report Tool</a> &raquo;</li>
+          <li><a href="default-xsl.html" >Default XSL Stylesheet</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2002 - 2013, The pgAdmin Development Team.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

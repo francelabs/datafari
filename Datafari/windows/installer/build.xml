@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<project name="datafari_deploymentscript" default="buildInstaller" basedir=".">
+
+	<!-- ========================= PROPERTIES ============================= -->
+
+	
+	
+	
+	<!-- local dir -->
+	<property name="project.dir" value=".." />
+	<property name="dist.dir" value="${project.dir}/dist" />
+	<property name="installer.dir" value="${project.dir}/WindowsInstaller" />
+	<property name="installer.build.dir" value="${installer.dir}/build" />
+	<property name="installer.dist.dir" value="${installer.dir}/dist" />
+	<property name="innosetup.dir" value="${installer.dir}/InnoSetup5" />
+	<property name="innosetup.script" value="${installer.dir}/DatafariInstallerSource.iss" />
+	<property name="lib.dir" value="${project.dir}/lib" />
+	<property name="tomcat.dir" value="${project.dir}/tomcat" />
+	<property name="script.dir" value="${project.dir}/script" />
+	<property name="deploy.dir" value="${project.dir}/deploy" />
+	<property name="mcf.dir" value="${project.dir}/mcf" />
+	<property name="solr.dir" value="${project.dir}/solr" />
+	<property name="jvm.dir" value="${project.dir}/windows/jvm" />
+	<property name="pgsql.dir" value="${project.dir}/windows/pgsql" />
+	<property name="bin.dir" value="${project.dir}/windows/bin" />
+	<property name="project.name" value="Datafari" />
+
+	<path id="project.class.path">
+		<fileset dir="${project.dir}/WebContent/WEB-INF/lib/">
+			<include name="*.jar" />
+		</fileset>
+		<fileset dir="${tomcat.dir}/lib/">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<target name="clean">
+		<delete includeemptydirs="true">
+			<fileset dir="${dist.dir}" includes="**/*" />
+			<fileset dir="${installer.dist.dir}" includes="**/*" />
+			<fileset dir="${installer.build.dir}" includes="**/*" />
+		</delete>
+	</target>
+
+	<target name="compileDatafariWebApp" depends="clean">
+		<mkdir dir="${dist.dir}/WEB-INF/classes" />
+		
+		<javac destdir="${dist.dir}/WEB-INF/classes" debug="on" debuglevel="lines,vars,source" verbose="off" source="1.7" target="1.7">
+			<classpath refid="project.class.path" />
+			<src path="${project.dir}/src" />
+		</javac>
+		
+
+		<copy todir="${dist.dir}">
+			<fileset dir="${project.dir}/WebContent">
+				<include name="**" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="copyBinaries" depends="compileDatafariWebApp">
+
+		<mkdir dir="${installer.build.dir}/logs" />
+
+			<copy todir="${installer.build.dir}/tomcat">
+				<fileset dir="${tomcat.dir}">
+					<include name="**" />
+				</fileset>
+			</copy>
+		
+		<copy todir="${installer.build.dir}/solr">
+						<fileset dir="${solr.dir}">
+							<include name="**" />
+						</fileset>
+					</copy>
+		
+		<copy todir="${installer.build.dir}/mcf">
+								<fileset dir="${mcf.dir}">
+									<include name="**" />
+								</fileset>
+							</copy>
+		
+		<copy todir="${installer.build.dir}/pgsql">
+										<fileset dir="${pgsql.dir}">
+											<include name="**" />
+										</fileset>
+									</copy>
+			
+			<copy todir="${installer.build.dir}/jvm">
+											<fileset dir="${jvm.dir}">
+												<include name="**" />
+											</fileset>
+										</copy>
+		
+		<copy todir="${installer.build.dir}/bin">
+													<fileset dir="${bin.dir}">
+														<include name="**" />
+													</fileset>
+												</copy>
+		
+		<copy todir="${installer.build.dir}/tomcat/webapps/Datafari">
+													<fileset dir="${dist.dir}">
+														<include name="**" />
+													</fileset>
+												</copy>
+		
+			
+		</target>
+
+	<target name="buildInstaller" depends="copyBinaries">
+		<exec executable="${innosetup.dir}/ISCC.exe">
+		    <arg value="${innosetup.script}"/>
+		    <arg value="/O${installer.dist.dir}"/>
+		    <arg value="/DSourceDirectory=${installer.build.dir}"/>
+		  </exec>
+				
+			</target>
+	
+	
+
+</project>

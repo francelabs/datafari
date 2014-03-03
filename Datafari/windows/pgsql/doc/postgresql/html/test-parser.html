@@ -1,0 +1,260 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>test_parser</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="PostgreSQL 9.3.3 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Additional Supplied Modules"
+HREF="contrib.html"><LINK
+REL="PREVIOUS"
+TITLE="tcn"
+HREF="tcn.html"><LINK
+REL="NEXT"
+TITLE="tsearch2"
+HREF="tsearch2.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2014-02-17T19:50:18"></HEAD
+><BODY
+CLASS="SECT1"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>PostgreSQL 9.3.3 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="tcn"
+HREF="tcn.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="contrib.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+>Appendix F. Additional Supplied Modules</TD
+><TD
+WIDTH="20%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="tsearch2"
+HREF="tsearch2.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="TEST-PARSER"
+>F.38. test_parser</A
+></H1
+><P
+>  <TT
+CLASS="FILENAME"
+>test_parser</TT
+> is an example of a custom parser for full-text
+  search.  It doesn't do anything especially useful, but can serve as
+  a starting point for developing your own parser.
+ </P
+><P
+>  <TT
+CLASS="FILENAME"
+>test_parser</TT
+> recognizes words separated by white space,
+  and returns just two token types:
+
+</P><PRE
+CLASS="PROGRAMLISTING"
+>mydb=# SELECT * FROM ts_token_type('testparser');
+ tokid | alias |  description
+-------+-------+---------------
+     3 | word  | Word
+    12 | blank | Space symbols
+(2 rows)</PRE
+><P>
+
+  These token numbers have been chosen to be compatible with the default
+  parser's numbering.  This allows us to use its <CODE
+CLASS="FUNCTION"
+>headline()</CODE
+>
+  function, thus keeping the example simple.
+ </P
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN153063"
+>F.38.1. Usage</A
+></H2
+><P
+>   Installing the <TT
+CLASS="LITERAL"
+>test_parser</TT
+> extension creates a text search
+   parser <TT
+CLASS="LITERAL"
+>testparser</TT
+>.  It has no user-configurable parameters.
+  </P
+><P
+>   You can test the parser with, for example,
+
+</P><PRE
+CLASS="PROGRAMLISTING"
+>mydb=# SELECT * FROM ts_parse('testparser', 'That''s my first own parser');
+ tokid | token
+-------+--------
+     3 | That's
+    12 |
+     3 | my
+    12 |
+     3 | first
+    12 |
+     3 | own
+    12 |
+     3 | parser</PRE
+><P>
+  </P
+><P
+>   Real-world use requires setting up a text search configuration
+   that uses the parser.  For example,
+
+</P><PRE
+CLASS="PROGRAMLISTING"
+>mydb=# CREATE TEXT SEARCH CONFIGURATION testcfg ( PARSER = testparser );
+CREATE TEXT SEARCH CONFIGURATION
+
+mydb=# ALTER TEXT SEARCH CONFIGURATION testcfg
+mydb-#   ADD MAPPING FOR word WITH english_stem;
+ALTER TEXT SEARCH CONFIGURATION
+
+mydb=#  SELECT to_tsvector('testcfg', 'That''s my first own parser');
+          to_tsvector
+-------------------------------
+ 'that':1 'first':3 'parser':5
+(1 row)
+
+mydb=# SELECT ts_headline('testcfg', 'Supernovae stars are the brightest phenomena in galaxies',
+mydb(#                    to_tsquery('testcfg', 'star'));
+                           ts_headline
+-----------------------------------------------------------------
+ Supernovae &lt;b&gt;stars&lt;/b&gt; are the brightest phenomena in galaxies
+(1 row)</PRE
+><P>
+  </P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="tcn.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="tsearch2.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>tcn</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="contrib.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>tsearch2</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

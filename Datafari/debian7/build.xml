@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<project name="Datafari_Debian7" default="configure" basedir=".">
+
+	<!-- ========================= PROPERTIES ============================= -->
+
+
+
+	<import file="../build.xml" />
+
+
+	<property name="mcf.password" value="password" />
+	<property name="datafari.password" value="password" />
+
+
+
+	<property name="debian.dir" value="${project.dir}/debian7" />
+	<property name="debian.dist.dir" value="${debian.dir}/dist" />
+	<property name="jvm.dir" value="${debian.dir}/jvm" />
+	<property name="pgsql.dir" value="${debian.dir}/pgsql" />
+	<property name="bin.dir" value="${debian.dir}/bin" />
+
+
+	<target name="Datafari_Debian7.clean" depends="Datafari_WebApp.compileDatafariWebApp">
+		<delete includeemptydirs="true">
+			<fileset dir="${debian.dist.dir}" includes="**/*" />
+		</delete>
+	</target>
+
+
+	<target name="copyBinaries" depends="Datafari_Debian7.clean">
+		<mkdir dir="${debian.dist.dir}/logs" />
+		<copy todir="${debian.dist.dir}/tomcat">
+			<fileset dir="${tomcat.dir}">
+				<include name="**" />
+			</fileset>
+		</copy>
+
+		<copy todir="${debian.dist.dir}/solr">
+			<fileset dir="${solr.dir}">
+				<include name="**" />
+			</fileset>
+		</copy>
+
+		<copy todir="${debian.dist.dir}/mcf">
+			<fileset dir="${mcf.dir}">
+				<include name="**" />
+			</fileset>
+		</copy>
+
+		<copy todir="${debian.dist.dir}/pgsql">
+			<fileset dir="${pgsql.dir}">
+				<include name="**" />
+			</fileset>
+		</copy>
+
+		<copy todir="${debian.dist.dir}/jvm">
+			<fileset dir="${jvm.dir}">
+				<include name="**" />
+			</fileset>
+		</copy>
+
+		<copy todir="${debian.dist.dir}/bin">
+			<fileset dir="${bin.dir}">
+				<include name="**" />
+			</fileset>
+		</copy>
+
+		<copy todir="${debian.dist.dir}/tomcat/webapps/Datafari">
+			<fileset dir="${dist.dir}">
+				<include name="**" />
+			</fileset>
+		</copy>
+	</target>
+
+
+	<target name="configure" depends="copyBinaries">
+		<replace file="${debian.dist.dir}/tomcat/conf/tomcat-users.xml" token="@PASSWORD@" value="${datafari.password}" />
+		<replace file="${debian.dist.dir}/mcf/mcf_home/properties.xml" token="@PASSWORD@" value="${mcf.password}" />
+	</target>
+
+
+</project>

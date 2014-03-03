@@ -11,12 +11,12 @@
   
 */
 body{
-		background: #FFF4F4;
+		background: #F8FAD9;
 }
 .box
 {
-    background:#FFF9F9;
-    border: 1px solid #FFD4DB;
+    background:#FDFDF1;
+    border: 1px solid #DDE27C;
 	border-top:1px;
     -webkit-border-radius:5px;
     -moz-border-radius:5px;
@@ -40,7 +40,7 @@ body{
 }
 .boxBody
 {
-    background:#FFF9F9;
+    background:#FDFDF1;
     border-top:1px solid #E7E0E8;
     border-bottom:1px solid #E7E0E8;
     padding:10px 20px;
@@ -90,7 +90,7 @@ body{
 .txtField:focus,
 .cjComboBox:focus
 {
-    border:6px solid #FFF4F4;
+    border:6px solid #F8F9D8;
     -moz-box-shadow:2px 3px 3px rgba(0, 0, 0, 0.04) inset, 0 0 1px #FF7777 inset;
     -webkit-box-shadow:2px 3px 3px rgba(0, 0, 0, 0.04) inset, 0 0 1px #FF7777 inset;
     box-shadow:2px 3px 3px rgba(0, 0, 0, 0.04) inset, 0 0 1px #FF7777 inset;

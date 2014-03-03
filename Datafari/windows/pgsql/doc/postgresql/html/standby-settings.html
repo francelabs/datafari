@@ -1,0 +1,299 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Standby Server Settings</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="PostgreSQL 9.3.3 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Recovery Configuration"
+HREF="recovery-config.html"><LINK
+REL="PREVIOUS"
+TITLE="Recovery Target Settings"
+HREF="recovery-target-settings.html"><LINK
+REL="NEXT"
+TITLE="Monitoring Database Activity"
+HREF="monitoring.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2014-02-17T19:50:18"></HEAD
+><BODY
+CLASS="SECT1"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>PostgreSQL 9.3.3 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="Recovery Target Settings"
+HREF="recovery-target-settings.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="recovery-config.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 26. Recovery Configuration</TD
+><TD
+WIDTH="20%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Monitoring Database Activity"
+HREF="monitoring.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="STANDBY-SETTINGS"
+>26.3. Standby Server Settings</A
+></H1
+><P
+></P
+><DIV
+CLASS="VARIABLELIST"
+><DL
+><DT
+><A
+NAME="STANDBY-MODE"
+></A
+><TT
+CLASS="VARNAME"
+>standby_mode</TT
+> (<TT
+CLASS="TYPE"
+>boolean</TT
+>)</DT
+><DD
+><P
+>          Specifies whether to start the <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> server as
+          a standby. If this parameter is <TT
+CLASS="LITERAL"
+>on</TT
+>, the server will
+          not stop recovery when the end of archived WAL is reached, but
+          will keep trying to continue recovery by fetching new WAL segments
+          using <TT
+CLASS="VARNAME"
+>restore_command</TT
+>
+          and/or by connecting to the primary server as specified by the
+          <TT
+CLASS="VARNAME"
+>primary_conninfo</TT
+> setting.
+         </P
+></DD
+><DT
+><A
+NAME="PRIMARY-CONNINFO"
+></A
+><TT
+CLASS="VARNAME"
+>primary_conninfo</TT
+> (<TT
+CLASS="TYPE"
+>string</TT
+>)</DT
+><DD
+><P
+>          Specifies a connection string to be used for the standby server
+          to connect with the primary. This string is in the format
+          described in <A
+HREF="libpq-connect.html#LIBPQ-CONNSTRING"
+>Section 31.1.1</A
+>. If any option is
+          unspecified in this string, then the corresponding environment
+          variable (see <A
+HREF="libpq-envars.html"
+>Section 31.14</A
+>) is checked. If the
+          environment variable is not set either, then
+          defaults are used.
+         </P
+><P
+>          The connection string should specify the host name (or address)
+          of the primary server, as well as the port number if it is not
+          the same as the standby server's default.
+          Also specify a user name corresponding to a suitably-privileged role
+          on the primary (see
+          <A
+HREF="warm-standby.html#STREAMING-REPLICATION-AUTHENTICATION"
+>Section 25.2.5.1</A
+>).
+          A password needs to be provided too, if the primary demands password
+          authentication.  It can be provided in the
+          <TT
+CLASS="VARNAME"
+>primary_conninfo</TT
+> string, or in a separate
+          <TT
+CLASS="FILENAME"
+>~/.pgpass</TT
+> file on the standby server (use
+          <TT
+CLASS="LITERAL"
+>replication</TT
+> as the database name).
+          Do not specify a database name in the
+          <TT
+CLASS="VARNAME"
+>primary_conninfo</TT
+> string.
+         </P
+><P
+>          This setting has no effect if <TT
+CLASS="VARNAME"
+>standby_mode</TT
+> is <TT
+CLASS="LITERAL"
+>off</TT
+>.
+         </P
+></DD
+><DT
+><A
+NAME="TRIGGER-FILE"
+></A
+><TT
+CLASS="VARNAME"
+>trigger_file</TT
+> (<TT
+CLASS="TYPE"
+>string</TT
+>)</DT
+><DD
+><P
+>          Specifies a trigger file whose presence ends recovery in the
+          standby.  Even if this value is not set, you can still promote
+          the standby using <TT
+CLASS="COMMAND"
+>pg_ctl promote</TT
+>.
+          This setting has no effect if <TT
+CLASS="VARNAME"
+>standby_mode</TT
+> is <TT
+CLASS="LITERAL"
+>off</TT
+>.
+         </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="recovery-target-settings.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="monitoring.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Recovery Target Settings</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="recovery-config.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Monitoring Database Activity</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

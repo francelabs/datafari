@@ -1,0 +1,436 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Background Worker Processes</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="PostgreSQL 9.3.3 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Server Programming"
+HREF="server-programming.html"><LINK
+REL="PREVIOUS"
+TITLE="Examples"
+HREF="spi-examples.html"><LINK
+REL="NEXT"
+TITLE="Reference"
+HREF="reference.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2014-02-17T19:50:18"></HEAD
+><BODY
+CLASS="CHAPTER"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="5"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>PostgreSQL 9.3.3 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="Examples"
+HREF="spi-examples.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="server-programming.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="20%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Reference"
+HREF="reference.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="BGWORKER"
+></A
+>Chapter 45. Background Worker Processes</H1
+><P
+>  PostgreSQL can be extended to run user-supplied code in separate processes.
+  Such processes are started, stopped and monitored by <TT
+CLASS="COMMAND"
+>postgres</TT
+>,
+  which permits them to have a lifetime closely linked to the server's status.
+  These processes have the option to attach to <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+>'s
+  shared memory area and to connect to databases internally; they can also run
+  multiple transactions serially, just like a regular client-connected server
+  process.  Also, by linking to <SPAN
+CLASS="APPLICATION"
+>libpq</SPAN
+> they can connect to the
+  server and behave like a regular client application.
+ </P
+><DIV
+CLASS="WARNING"
+><P
+></P
+><TABLE
+CLASS="WARNING"
+BORDER="1"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="CENTER"
+><B
+>Warning</B
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+><P
+>   There are considerable robustness and security risks in using background
+   worker processes because, being written in the <TT
+CLASS="LITERAL"
+>C</TT
+> language,
+   they have unrestricted access to data.  Administrators wishing to enable
+   modules that include background worker process should exercise extreme
+   caution.  Only carefully audited modules should be permitted to run
+   background worker processes.
+  </P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+>  Only modules listed in <TT
+CLASS="VARNAME"
+>shared_preload_libraries</TT
+> can run
+  background workers.  A module wishing to run a background worker needs
+  to register it by calling
+  <CODE
+CLASS="FUNCTION"
+>RegisterBackgroundWorker(<TT
+CLASS="TYPE"
+>BackgroundWorker *worker</TT
+>)</CODE
+>
+  from its <CODE
+CLASS="FUNCTION"
+>_PG_init()</CODE
+>.
+  The structure <TT
+CLASS="STRUCTNAME"
+>BackgroundWorker</TT
+> is defined thus:
+</P><PRE
+CLASS="PROGRAMLISTING"
+>typedef void (*bgworker_main_type)(void *main_arg);
+typedef struct BackgroundWorker
+{
+    char        bgw_name[BGW_MAXLEN];
+    int         bgw_flags;
+    BgWorkerStartTime bgw_start_time;
+    int         bgw_restart_time;       /* in seconds, or BGW_NEVER_RESTART */
+    bgworker_main_type bgw_main;
+    Datum       bgw_main_arg;
+} BackgroundWorker;</PRE
+><P>
+  </P
+><P
+>   <TT
+CLASS="STRUCTFIELD"
+>bgw_name</TT
+> is a string to be used in log messages, process
+   listings and similar contexts.
+  </P
+><P
+>   <TT
+CLASS="STRUCTFIELD"
+>bgw_flags</TT
+> is a bitwise-or'd bitmask indicating the
+   capabilities that the module wants.  Possible values are
+   <TT
+CLASS="LITERAL"
+>BGWORKER_SHMEM_ACCESS</TT
+> (requesting shared memory access)
+   and <TT
+CLASS="LITERAL"
+>BGWORKER_BACKEND_DATABASE_CONNECTION</TT
+> (requesting the
+   ability to establish a database connection, through which it can later run
+   transactions and queries). A background worker using
+   <TT
+CLASS="LITERAL"
+>BGWORKER_BACKEND_DATABASE_CONNECTION</TT
+> to connect to
+   a database must also attach shared memory using
+   <TT
+CLASS="LITERAL"
+>BGWORKER_SHMEM_ACCESS</TT
+>, or worker start-up will fail.
+  </P
+><P
+>   <TT
+CLASS="STRUCTFIELD"
+>bgw_start_time</TT
+> is the server state during which
+   <TT
+CLASS="COMMAND"
+>postgres</TT
+> should start the process; it can be one of
+   <TT
+CLASS="LITERAL"
+>BgWorkerStart_PostmasterStart</TT
+> (start as soon as
+   <TT
+CLASS="COMMAND"
+>postgres</TT
+> itself has finished its own initialization; processes
+   requesting this are not eligible for database connections),
+   <TT
+CLASS="LITERAL"
+>BgWorkerStart_ConsistentState</TT
+> (start as soon as a consistent state
+   has been reached in a hot standby, allowing processes to connect to
+   databases and run read-only queries), and
+   <TT
+CLASS="LITERAL"
+>BgWorkerStart_RecoveryFinished</TT
+> (start as soon as the system has
+   entered normal read-write state).  Note the last two values are equivalent
+   in a server that's not a hot standby.  Note that this setting only indicates
+   when the processes are to be started; they do not stop when a different state
+   is reached.
+  </P
+><P
+>   <TT
+CLASS="STRUCTFIELD"
+>bgw_restart_time</TT
+> is the interval, in seconds, that
+   <TT
+CLASS="COMMAND"
+>postgres</TT
+> should wait before restarting the process, in
+   case it crashes.  It can be any positive value,
+   or <TT
+CLASS="LITERAL"
+>BGW_NEVER_RESTART</TT
+>, indicating not to restart the
+   process in case of a crash.
+  </P
+><P
+>   <TT
+CLASS="STRUCTFIELD"
+>bgw_main</TT
+> is a pointer to the function to run when
+   the process is started.  This function must take a single argument of type
+   <TT
+CLASS="TYPE"
+>void *</TT
+> and return <TT
+CLASS="TYPE"
+>void</TT
+>.
+   <TT
+CLASS="STRUCTFIELD"
+>bgw_main_arg</TT
+> will be passed to it as its only
+   argument.  Note that the global variable <TT
+CLASS="LITERAL"
+>MyBgworkerEntry</TT
+>
+   points to a copy of the <TT
+CLASS="STRUCTNAME"
+>BackgroundWorker</TT
+> structure
+   passed at registration time.
+  </P
+><P
+>Once running, the process can connect to a database by calling
+   <CODE
+CLASS="FUNCTION"
+>BackgroundWorkerInitializeConnection(<TT
+CLASS="PARAMETER"
+>char *dbname</TT
+>, <TT
+CLASS="PARAMETER"
+>char *username</TT
+>)</CODE
+>.
+   This allows the process to run transactions and queries using the
+   <TT
+CLASS="LITERAL"
+>SPI</TT
+> interface.  If <TT
+CLASS="VARNAME"
+>dbname</TT
+> is NULL,
+   the session is not connected to any particular database, but shared catalogs
+   can be accessed.  If <TT
+CLASS="VARNAME"
+>username</TT
+> is NULL, the process will run as
+   the superuser created during <TT
+CLASS="COMMAND"
+>initdb</TT
+>.
+   BackgroundWorkerInitializeConnection can only be called once per background
+   process, it is not possible to switch databases.
+  </P
+><P
+>   Signals are initially blocked when control reaches the
+   <TT
+CLASS="STRUCTFIELD"
+>bgw_main</TT
+> function, and must be unblocked by it; this is to
+   allow the process to customize its signal handlers, if necessary.
+   Signals can be unblocked in the new process by calling
+   <CODE
+CLASS="FUNCTION"
+>BackgroundWorkerUnblockSignals</CODE
+> and blocked by calling
+   <CODE
+CLASS="FUNCTION"
+>BackgroundWorkerBlockSignals</CODE
+>.
+  </P
+><P
+>   Background workers are expected to be continuously running; if they exit
+   cleanly, <TT
+CLASS="COMMAND"
+>postgres</TT
+> will restart them immediately.  Consider doing
+   interruptible sleep when they have nothing to do; this can be achieved by
+   calling <CODE
+CLASS="FUNCTION"
+>WaitLatch()</CODE
+>.  Make sure the
+   <TT
+CLASS="LITERAL"
+>WL_POSTMASTER_DEATH</TT
+> flag is set when calling that function, and
+   verify the return code for a prompt exit in the emergency case that
+   <TT
+CLASS="COMMAND"
+>postgres</TT
+> itself has terminated.
+  </P
+><P
+>   The <TT
+CLASS="FILENAME"
+>worker_spi</TT
+> contrib module contains a working example,
+   which demonstrates some useful techniques.
+  </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="spi-examples.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="reference.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Examples</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="server-programming.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Reference</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

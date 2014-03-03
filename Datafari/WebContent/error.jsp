@@ -4,8 +4,8 @@
 <html>
 <head>
 <title>User Login</title>
-<link rel="stylesheet" type="text/css" href="css/reset.css">
-<link rel="stylesheet" type="text/css" href="css/login.css">
+<link rel="stylesheet" type="text/css" href="/Datafari/css/reset.css">
+<link rel="stylesheet" type="text/css" href="/Datafari/css/login.css">
 </head>
 <br>
 <body>
