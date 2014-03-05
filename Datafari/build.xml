@@ -38,8 +38,6 @@
 			<classpath refid="project.class.path" />
 			<src path="${project.dir}/src" />
 		</javac>
-
-
 		<copy todir="${dist.dir}">
 			<fileset dir="${project.dir}/WebContent">
 				<include name="**" />

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<project name="Datafari_Bin" default="buildJar" basedir=".">
+
+	<!-- ========================= PROPERTIES ============================= -->
+
+
+
+	<dirname property="bin.dir" file="${ant.file.Datafari_Bin}" />
+
+
+
+
+	<path id="bin.class.path">
+		<fileset dir="${bin.dir}/lib/">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+	
+
+	<pathconvert property="lib.bin.manifest.classpath" pathsep=" ">
+		<path refid="bin.class.path" />
+		<flattenmapper />
+		<map from="" to="lib/" />
+	</pathconvert>
+
+	<target name="Datafari_Bin.clean">
+		<delete includeemptydirs="true">
+			<fileset dir="${bin.dir}/dist" includes="**/*" />
+			<fileset dir="${bin.dir}/build" includes="**/*" />
+		</delete>
+	</target>
+
+	<target name="compileDatafariBin" depends="Datafari_Bin.clean">
+
+		<javac destdir="${bin.dir}/build" debug="on" debuglevel="lines,vars,source" verbose="off" source="1.7" target="1.7">
+			<classpath refid="bin.class.path" />
+			<src path="${bin.dir}/src" />
+		</javac>
+	</target>
+	
+	<target name="buildJar" depends="compileDatafariBin">
+
+			<jar destfile="${bin.dir}/dist/DatafariScripts.jar" basedir="${bin.dir}/build">
+				<manifest>
+					<attribute name="Class-Path" value="${lib.bin.manifest.classpath}" />
+				</manifest>
+				<fileset dir="${bin.dir}/lib" includes="**" />
+			</jar>
+
+		
+		
+		</target>
+
+
+</project>

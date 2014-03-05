@@ -6,6 +6,7 @@
 
 
 	<import file="../build.xml" />
+	<import file="../bin/build.xml" />
 
 
 	<property name="mcf.password" value="password" />
@@ -17,10 +18,10 @@
 	<property name="debian.dist.dir" value="${debian.dir}/dist" />
 	<property name="jvm.dir" value="${debian.dir}/jvm" />
 	<property name="pgsql.dir" value="${debian.dir}/pgsql" />
-	<property name="bin.dir" value="${debian.dir}/bin" />
+	<property name="debian.bin.dir" value="${debian.dir}/bin" />
 
 
-	<target name="Datafari_Debian7.clean" depends="Datafari_WebApp.compileDatafariWebApp">
+	<target name="Datafari_Debian7.clean" depends="Datafari_WebApp.compileDatafariWebApp,Datafari_Bin.buildJar">
 		<delete includeemptydirs="true">
 			<fileset dir="${debian.dist.dir}" includes="**/*" />
 		</delete>
@@ -60,7 +61,7 @@
 		</copy>
 
 		<copy todir="${debian.dist.dir}/bin">
-			<fileset dir="${bin.dir}">
+			<fileset dir="${debian.bin.dir}">
 				<include name="**" />
 			</fileset>
 		</copy>
@@ -70,6 +71,24 @@
 				<include name="**" />
 			</fileset>
 		</copy>
+		
+		<copy todir="${debian.dist.dir}/bin/common/config">
+			<fileset dir="${bin.dir}/config" />
+		</copy>
+
+				
+					<copy todir="${debian.dist.dir}/bin/common/lib">
+						<fileset dir="${bin.dir}/lib" />
+					</copy>
+				
+
+					<copy todir="${debian.dist.dir}/bin/common">
+								<fileset file="${bin.dir}/init_state.properties" />
+					</copy>
+				
+					<copy todir="${debian.dist.dir}/bin/common">
+						<fileset file="${bin.dir}/dist/DatafariScripts.jar" />
+					</copy>
 	</target>
 
 

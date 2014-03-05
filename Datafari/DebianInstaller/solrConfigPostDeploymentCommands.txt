@@ -1,3 +1,0 @@
-cd /opt/datafari-server/Solr/SolrHome/FileShare/conf
-unzip -o SolrConfig.zip
-chmod -R 755 *

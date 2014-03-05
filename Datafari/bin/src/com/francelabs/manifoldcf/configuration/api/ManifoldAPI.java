@@ -15,7 +15,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.francelabs.datafari.script.ScriptConfiguration;
 
 public class ManifoldAPI {
 
@@ -31,14 +30,7 @@ public class ManifoldAPI {
 		static public String JOBS = "jobs";
 	}
 
-	static private String urlManifoldCFAPI = null;
-
-	static private String getMCFAPIUrl() throws IOException{
-		if (urlManifoldCFAPI==null){
-			urlManifoldCFAPI = ScriptConfiguration.getProperty("URLManifoldCFAPI")+"/json/";
-		}
-		return urlManifoldCFAPI;
-	}
+	static private String urlManifoldCFAPI = "http://localhost:8080/datafari-mcf-api-service/json/";
 	
 	public JSONObject readConfiguration() {
 		return null;
@@ -102,7 +94,7 @@ public class ManifoldAPI {
 			throws Exception {
 
 		LOGGER.info("Deleting connector " + paramName);
-		String url = getMCFAPIUrl() + command + "/" + paramName;
+		String url = urlManifoldCFAPI + command + "/" + paramName;
 		JSONObject result = executeCommand(url, "DELETE", null);
 
 		if (result.length() != 0)
@@ -114,14 +106,14 @@ public class ManifoldAPI {
 
 	static public JSONObject getInfo(String command) throws IOException {
 
-		String url = getMCFAPIUrl() + command;
+		String url = urlManifoldCFAPI + command;
 		return executeCommand(url, "GET", null);
 	}
 
 	static public JSONObject readConfig(String command, String paramName)
 			throws IOException {
 
-		String url = getMCFAPIUrl() + command + "/" + paramName;
+		String url = urlManifoldCFAPI + command + "/" + paramName;
 		return executeCommand(url, "GET", null);
 	}
 
@@ -164,7 +156,7 @@ public class ManifoldAPI {
 			JSONObject configuration) throws Exception {
 
 		LOGGER.info("Putting new config for " + paramName);
-		String url = getMCFAPIUrl() + command + "/" + paramName;
+		String url = urlManifoldCFAPI + command + "/" + paramName;
 		JSONObject result = executeCommand(url, "PUT", configuration);
 		if (result.length() != 0)
 			throw new Exception(result.toString());
@@ -176,7 +168,7 @@ public class ManifoldAPI {
 			throws Exception {
 
 		LOGGER.info("Getting configuration for " + paramName);
-		String url = getMCFAPIUrl() + command + "/" + paramName;
+		String url = urlManifoldCFAPI + command + "/" + paramName;
 		JSONObject result = executeCommand(url, "GET", null);
 		if (result.length() != 0)
 			throw new Exception(result.toString());
@@ -250,6 +242,56 @@ public class ManifoldAPI {
 
 		return responseObject;
 
+	}
+	
+
+	public static void waitUntilManifoldIsStarted() throws InterruptedException {
+
+		HttpURLConnection connection = null;
+		URL commandURL;
+		JSONObject responseObject;
+
+		boolean exception = true;
+
+		do {
+
+			try {
+
+				// Create connection
+				commandURL = new URL(urlManifoldCFAPI+"jobstatuses");
+				connection = (HttpURLConnection) commandURL.openConnection();
+
+				connection.setConnectTimeout(1000);
+				connection.setRequestMethod("GET");
+
+				// Get Response
+				InputStream is = connection.getInputStream();
+				BufferedReader rd = new BufferedReader(
+						new InputStreamReader(is));
+				String line;
+
+				StringBuffer response = new StringBuffer();
+				while ((line = rd.readLine()) != null) {
+					response.append(line);
+					response.append('\r');
+				}
+				rd.close();
+
+				
+				exception = false;
+
+			} catch (Exception e) {
+				LOGGER.info("Waiting for mcf-api-service start");
+			} finally {
+
+				if (connection != null) {
+					connection.disconnect();
+				}
+			}
+		
+		Thread.sleep(1000);
+			
+		} while (exception);
 	}
 
 }

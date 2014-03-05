@@ -1,0 +1,31 @@
+#!/bin/bash
+getPassword(){
+OK=false
+while [ $OK = false ]
+do
+OK=true
+echo -n "Please enter password for $1: " 
+read -s password
+echo
+echo -n "Please retype password: "
+read -s password2
+echo
+if ! [ $password =  $password2 ]
+then
+OK=false
+echo "Passwords are not equal"
+fi
+if [ -z $password ]
+then
+OK=false
+echo "Password must not be blanck"
+fi
+done
+}
+getPassword "ManifoldCF (document crawler) admin "
+sed -i -e "s/@PASSWORD@/${password}/g" /opt/datafari/mcf/mcf_home/properties.xml
+getPassword "Datafari"
+sed -i -e "s/@PASSWORD@/${password}/g" /opt/datafari/tomcat/conf/tomcat-users.xml
+chmod -R 755 /opt/datafari
+echo "Datafari successfully installed"
+

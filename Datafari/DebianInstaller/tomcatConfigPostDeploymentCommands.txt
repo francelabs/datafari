@@ -1,3 +1,0 @@
-cd /opt/datafari-server/tomcat
-unzip -o Tomcat.zip
-chmod -R 755 *

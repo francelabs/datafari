@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<project name="Datafari_Debian7_Installer" default="buildInstaller" basedir=".">
+
+	<!-- ========================= PROPERTIES ============================= -->
+
+
+
+	<import file="../build.xml" />
+
+	<!-- local dir -->
+	<property name="installer.dir" value="${debian.dir}/installer" />
+	<property name="installer.build.dir" value="${installer.dir}/build" />
+	<property name="installer.dist.dir" value="${installer.dir}/dist" />
+
+
+	<target name="Datafari_Debian7_Installer.clean">
+		<delete includeemptydirs="true">
+			<fileset dir="${installer.dist.dir}" includes="**/*" />
+			<fileset dir="${installer.build.dir}" includes="**/*" />
+		</delete>
+	</target>
+	
+
+	<target name="buildInstaller" depends="Datafari_Debian7.copyBinaries,Datafari_Debian7_Installer.clean">
+		<copy todir="${installer.build.dir}/datafari/opt/datafari">
+				<fileset dir="${debian.dist.dir}">
+					<include name="**" />
+				</fileset>
+		</copy>
+		<copy todir="${installer.build.dir}/datafari/DEBIAN">
+						<fileset dir="${installer.dir}/DEBIAN">
+							<include name="**" />
+						</fileset>
+		</copy>
+		<exec executable="chmod">
+				    <arg value="755"/>
+				    <arg value="${installer.build.dir}/datafari/DEBIAN/postinst"/>
+				  </exec>
+		<exec executable="dpkg-deb">
+		    <arg value="-b"/>
+		    <arg value="${installer.build.dir}/datafari"/>
+		  </exec>
+		<move file="${installer.build.dir}/datafari.deb" todir="${installer.dist.dir}"/>
+	</target>
+	
+</project>

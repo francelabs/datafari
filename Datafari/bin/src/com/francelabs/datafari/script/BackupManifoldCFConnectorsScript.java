@@ -17,7 +17,7 @@ import com.francelabs.manifoldcf.configuration.api.ManifoldAPI;
 
 public class BackupManifoldCFConnectorsScript {
 
-	private static String configPropertiesFileName = "/opt/datafari-server/bin/config/log4j.properties";
+	private static String configPropertiesFileName = "config/log4j.properties";
 
 	private final static Logger LOGGER = Logger
 			.getLogger(BackupManifoldCFConnectorsScript.class.getName());
@@ -58,6 +58,9 @@ public class BackupManifoldCFConnectorsScript {
 			File jobsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.JOBS);
 
 			if (args[0].equals("BACKUP")) {
+
+				ManifoldAPI.waitUntilManifoldIsStarted();
+				
 				prepareDirectory(outputConnectionsDir);
 				saveAllConnections(
 						ManifoldAPI
@@ -86,6 +89,7 @@ public class BackupManifoldCFConnectorsScript {
 			}
 
 			if (args[0].equals("RESTORE")) {
+				ManifoldAPI.waitUntilManifoldIsStarted();
 				ManifoldAPI.cleanAll();
 
 				restoreAllConnections(outputConnectionsDir,
