@@ -23,6 +23,11 @@
 	</target>
 
 	<target name="buildInstaller" depends="Datafari_Windows.copyBinaries,Datafari_Windows_Installer.clean">
+		<copy todir="${installer.build.dir}">
+						<fileset dir="${windows.dist.dir}">
+							<include name="**" />
+						</fileset>
+				</copy>
 		<exec executable="${innosetup.dir}/ISCC.exe">
 			<arg value="${innosetup.script}" />
 			<arg value="/O${installer.dist.dir}" />
