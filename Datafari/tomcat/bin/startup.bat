@@ -27,7 +27,6 @@ rem ---------------------------------------------------------------------------
 
 rem Guess CATALINA_HOME if not defined
 set "CURRENT_DIR=%cd%"
-if not "%CATALINA_HOME%" == "" goto gotHome
 set "CATALINA_HOME=%CURRENT_DIR%"
 if exist "%CATALINA_HOME%\bin\catalina.bat" goto okHome
 cd ..
