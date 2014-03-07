@@ -11,7 +11,7 @@
 
 
 	<path id="bin.class.path">
-		<fileset dir="${bin.dir}/lib/">
+		<fileset dir="${bin.dir}/common/lib/">
 			<include name="*.jar" />
 		</fileset>
 	</path>
@@ -44,7 +44,7 @@
 				<manifest>
 					<attribute name="Class-Path" value="${lib.bin.manifest.classpath}" />
 				</manifest>
-				<fileset dir="${bin.dir}/lib" includes="**" />
+				<fileset dir="${bin.dir}/common/lib" includes="**" />
 			</jar>
 
 		
