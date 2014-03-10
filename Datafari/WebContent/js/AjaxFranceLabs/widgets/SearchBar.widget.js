@@ -41,16 +41,8 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 					searchType = radio.value;
 				}
 			});
-			
-
-			try {
-					var query = $('.searchBar input[type=text]').val();
-					window.history.pushState('Object', 'Title', window.location.pathname+'?searchType='+searchType+'&query='+query);
-				}
-				catch (e) {
-				}
-
-			
+			var query = $('.searchBar input[type=text]').val();
+			window.history.pushState('Object', 'Title', window.location.pathname+'?searchType='+searchType+'&query='+query);
 		}
 	},
 	
@@ -67,7 +59,7 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 	
 	buildWidget : function() {
 		var self = this, elm = $(this.elm);
-		elm.addClass('searchBarWidget').addClass('widget').append('<div class="searchBar">').append('<div class="searchMode">');
+		elm.addClass('searchBarWidget').addClass('widget').append('<div class="searchBar">').append('<div class="searchMode">').append('<div id="sortMode">');
 		elm.find('.searchBar').append('<input type="text" />').append('<input class="search" type="button" />');
 		if(this.removeContentButton)
 			elm.find('.searchBar').append('<span class="removeContent" />').find('.removeContent').css('display', 'none').append('<span>X</span>').click(function(){
@@ -77,24 +69,22 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 				self.manager.makeRequest();
 			});
 		
-
 		
-		elm.find('.searchMode').append('<div>').append('<div>').append('<div>');
+		
+		elm.find('.searchMode').append('<div>').append('<div>').append('<div>').append('<div>');
 		elm.find('.searchMode div').attr('style','display: inline').append('<input type="radio" name="searchType" class="radio" />').append('<label>');
 		elm.find('.searchMode div:eq(0)').find('input').attr('value', 'allWords').attr('checked','true').attr('id', 'allWords').parent().find('label').attr('for', 'allWords').append('<span>&nbsp;</span>').append(window.i18n.msgStore['allWords']);
 		elm.find('.searchMode div:eq(1)').find('input').attr('value', 'atLeastOneWord').attr('id', 'atLeastOneWord').parent().find('label').attr('for', 'atLeastOneWord').append('<span>&nbsp;</span>').append(window.i18n.msgStore['atLeastOneWord']);
 		elm.find('.searchMode div:eq(2)').find('input').attr('value', 'exactExpression').attr('id', 'exactExpression').parent().find('label').attr('for', 'exactExpression').append('<span>&nbsp;</span>').append(window.i18n.msgStore['exactExpression']);
 		
+		
 		elm.find('.searchBar input[type=text]').keypress(function(event) {
 				if (event.keyCode === 13) {
-					if(self.autocomplete){
-						try{
+					if(self.autocomplete)
 						self.elm.find('.searchBar input[type=text]').autocomplete("close");
-						} catch (e){
-							
-						}
-						}
-					self.makeNewRequest();
+					self.clean();
+					self.updateAddressBar();
+					self.manager.makeRequest();
 				}
 		}).keyup(function(){
 			if(self.removeContentButton){
@@ -105,7 +95,10 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 			}
 		});
 		elm.find('.searchBar input[type=button]').click(function() {
-			self.makeNewRequest();
+			self.clean();
+			self.updateAddressBar();
+			self.manager.makeRequest();
+
 		});
 		if (this.autocomplete === true) {
 			this.autocompleteOptions.elm = elm.find('.searchBar input[type=text]');
@@ -118,17 +111,40 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 			this.autocomplete.manager = this.manager;
 			this.autocomplete.init();
 		}
-	},
-	
-	makeNewRequest : function(){
-
-		this.clean();
-		this.manager.generateAndSetQueryID();
-		this.manager.makeRequest();
+		var sortModeDiv = document.getElementById("sortMode");
+		var textSort = document.createTextNode(window.i18n.msgStore['sortType']);
+		sortModeDiv.appendChild(textSort);
+		var selectList = document.createElement("select");
+		selectList.id = "mySelect";
+		selectList.onchange = function() {self.manager.makeRequest();};
+		sortModeDiv.appendChild(selectList);
+		
+		var optionScore = document.createElement("option");
+	    optionScore.setAttribute("value", "score");
+	    optionScore.setAttribute("selected", "");
+	    optionScore.text = window.i18n.msgStore['score'];
+	    
+	    
+	    selectList.appendChild(optionScore);
+	    
+	    var optionDate = document.createElement("option");
+	    optionDate.setAttribute("value", "date");
+	    optionDate.text = window.i18n.msgStore['date'];
+	    selectList.appendChild(optionDate);
+		
 	},
 
 	beforeRequest : function() {
 		var search = (AjaxFranceLabs.empty(AjaxFranceLabs.trim($(this.elm).find('.searchBar input').val()))) ? '*:*' : AjaxFranceLabs.trim($(this.elm).find('.searchBar input').val());
+		var testSelect = document.getElementById("mySelect");
+		if (testSelect.options[testSelect.selectedIndex].value == 'date'){
+			Manager.store.addByValue("sort", 'last_modified desc');
+		}
+		else {
+			Manager.store.addByValue("sort", 'score desc');
+		}
+			
+		
 		if (this.autocomplete)
 			search = search.replace(/\u200c/g, '');
 		switch($(this.elm).find('input[name=searchType]:checked').val()){
@@ -149,19 +165,13 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 	},
 	
 	afterRequest : function(){
-		
-		this.updateAddressBar();
 		/*
 		 * It appeared that sometimes when making a request, the autocomplete was displayed,
 		 * this part of the code has been made to counter this little glitch, after a request,
 		 * we close the autocomplete
 		 */
-		if(this.autocomplete){
-			try{
-				this.elm.find('.searchBar input[type=text]').autocomplete("close");
-			} catch(e){
-			}
-		}
+		if(this.autocomplete)
+			this.elm.find('.searchBar input[type=text]').autocomplete("close");
 	}
 	
 });

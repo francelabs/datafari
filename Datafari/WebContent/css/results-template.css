@@ -29,6 +29,7 @@
 .searchBarWidget .searchMode { clear:both; margin-top: 3px; text-align: right; width: 624px; }
 .searchBarWidget .searchMode label { cursor:pointer; display: inline-block; height: 20px; line-height: 20px; margin-left: 5px; }
 .searchBarWidget .searchMode label input { margin-right: 3px; position: relative; top: 2px; }
+.searchBarWidget #sortMode {clear:both;margin-top:3px;text-align:right;width:624px}
 /**************************************/
 
 /***	>>> Search Bar Widget <<<	***/

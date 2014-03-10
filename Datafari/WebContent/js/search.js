@@ -140,12 +140,15 @@ $(function($) {
 				
 				var query = getParamValue('query', decodeURIComponent(window.location.search));
 				var searchType = getParamValue('searchType', window.location.search);
-				
+				var sortType = getParamValue('sortType', window.location.search);
 
 				Manager.store.addByValue("id", UUID.generate());
 				
 				if (searchType === ''){
 					searchType = 'allWords';
+				}
+				if (sortType === ''){
+					sortType = 'score';
 				}
 				$('#searchBar').find('.searchBar input[type=text]').val(query);
 				

@@ -15,5 +15,8 @@
 "lessThanOneMonth" : "Less%20than%201%20month",
 "lessThanOneYear" : "Less%20than%201%20year",
 "lessThanFiveYears" : "Less%20than%205%20years",
-"language" : "Language"
+"language" : "Language",
+"sortType" : "Sort by : ",
+"score" : "Relevancy",
+"date" : "Date"
 }

@@ -15,5 +15,8 @@
 "lessThanOneMonth" : "Moins%20de%20un%20mois",
 "lessThanOneYear" : "Moins%20de%20un%20an",
 "lessThanFiveYears" : "Moins%20de%205%20ans",
-"language" : "Langage"
+"language" : "Langage",
+"sortType" : "Tri par : ",
+"score" : "Pertinence",
+"date" : "Date"
 }
