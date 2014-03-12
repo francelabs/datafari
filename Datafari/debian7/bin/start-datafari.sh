@@ -28,5 +28,6 @@ sed -i "s/\(STATE *= *\).*/\1initialized/" $CONFIG_FILE
 fi
 cd "${DATAFARI_HOME}/mcf/mcf_home"
 bash "lock-clean.sh"
-bash "start-agents.sh"
+bash "start-agents.sh" &
+sleep 3
 
