@@ -76,7 +76,9 @@
 			<fileset dir="${bin.dir}/config" />
 		</copy>
 
-				
+
+		<mkdir dir="${bin.dir}/lib" />
+		
 					<copy todir="${debian.dist.dir}/bin/common/lib">
 						<fileset dir="${bin.dir}/common/lib" />
 					</copy>
