@@ -13,7 +13,7 @@
 	<property name="installer.dist.dir" value="${installer.dir}/dist" />
 
 
-	<target name="Datafari_Debian7_Installer.clean">
+	<target name="Datafari_Debian7_Installer.clean" depends="Datafari_Debian7.clean">
 		<delete includeemptydirs="true">
 			<fileset dir="${installer.dist.dir}" includes="**/*" />
 			<fileset dir="${installer.build.dir}" includes="**/*" />
@@ -21,7 +21,7 @@
 	</target>
 	
 
-	<target name="buildInstaller" depends="Datafari_Debian7.copyBinaries,Datafari_Debian7_Installer.clean">
+	<target name="buildInstaller" depends="Datafari_Debian7.copyBinaries">
 		<copy todir="${installer.build.dir}/datafari/opt/datafari">
 				<fileset dir="${debian.dist.dir}">
 					<include name="**" />

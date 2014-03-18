@@ -21,14 +21,14 @@
 	<property name="debian.bin.dir" value="${debian.dir}/bin" />
 
 
-	<target name="Datafari_Debian7.clean" depends="Datafari_WebApp.compileDatafariWebApp,Datafari_Bin.buildJar">
+	<target name="Datafari_Debian7.clean" depends="Datafari_WebApp.clean,Datafari_Bin.clean">
 		<delete includeemptydirs="true">
 			<fileset dir="${debian.dist.dir}" includes="**/*" />
 		</delete>
 	</target>
 
 
-	<target name="copyBinaries" depends="Datafari_Debian7.clean">
+	<target name="copyBinaries" depends="Datafari_WebApp.compileDatafariWebApp,Datafari_Bin.buildJar">
 		<mkdir dir="${debian.dist.dir}/logs" />
 		<copy todir="${debian.dist.dir}/tomcat">
 			<fileset dir="${tomcat.dir}">
@@ -78,7 +78,7 @@
 
 				
 					<copy todir="${debian.dist.dir}/bin/common/lib">
-						<fileset dir="${bin.dir}/lib" />
+						<fileset dir="${bin.dir}/common/lib" />
 					</copy>
 				
 

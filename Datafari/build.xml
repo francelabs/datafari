@@ -31,7 +31,7 @@
 		</delete>
 	</target>
 
-	<target name="compileDatafariWebApp" depends="clean">
+	<target name="compileDatafariWebApp">
 		<mkdir dir="${dist.dir}/WEB-INF/classes" />
 
 		<javac destdir="${dist.dir}/WEB-INF/classes" debug="on" debuglevel="lines,vars,source" verbose="off" source="1.7" target="1.7">
