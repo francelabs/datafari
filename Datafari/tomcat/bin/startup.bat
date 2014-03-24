@@ -14,8 +14,7 @@ rem WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 rem See the License for the specific language governing permissions and
 rem limitations under the License.
 
-set CATALINA_OPTS="-Dorg.apache.manifoldcf.configfile=..\..\mcf\mcf_home\properties.xml"
-rem -server -Xms256m -Xmx1024m 
+set CATALINA_OPTS=""-Dorg.apache.manifoldcf.configfile=..\..\mcf\mcf_home\properties.xml -server -Xms256m -Xmx1024m""
 
 
 if "%OS%" == "Windows_NT" setlocal
