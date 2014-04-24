@@ -38,6 +38,6 @@
 .menuWidget .menu li:hover { background-color: #DB3131; color: white; }
 
 .ui-widget-content { border-color: #eeeeee; background-color: #ffffff; color: #333333; }
-.ui-autocomplete .ui-state-hover { background-color: #FFE0E0; border-color: #FFA0A0; }
+.ui-autocomplete .ui-state-hover { background-color: #F2FFD0; border-color: #D8FF6E; }
 
 .ui-resizable-handle { background-color: #333333; }
