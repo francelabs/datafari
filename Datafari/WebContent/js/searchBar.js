@@ -3,6 +3,7 @@ $(function($) {
 		elm : $('#searchBar'),
 		id : 'searchBar',
 		autocomplete : true,
+		noRequest : true,
 		updateBrowserAddressBar : false
 	}));
 
