@@ -11,7 +11,7 @@
 			if (request.getRequestURL().toString().contains("admin")){
 
 				%>
-				 &nbsp;<a href="<%=request.getContextPath()%>">Recherche</a>
+				 &nbsp;<a href="<%=request.getContextPath()%>">Search</a>
 				<% 
 			} else {
 			

@@ -5,7 +5,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-		<title>Recherche</title>
+		<title>Search</title>
 			<link rel="icon" type="image/png" href="images/bullet.png">
 		<link rel="stylesheet" type="text/css" href="css/main.css" media="screen" />
 			<link rel ="stylesheet" type ="text/css" href ="css/results.css" />

@@ -4,12 +4,12 @@
 	<ul id="sddm">
     <li><a href="#" 
         onmouseover="mopen('m1')" 
-        onmouseout="mclosetime()">Moteur de recherche</a>
+        onmouseout="mclosetime()">Search Engine</a>
         <div id="m1" 
             onmouseover="mcancelclosetime()" 
             onmouseout="mclosetime()">
         <a href="solr.jsp">Solr Admin</a>
-        <a href="stats.jsp">Statistiques</a>
+        <a href="stats.jsp">Stats</a>
         </div>
     </li>
     <li><a href="#" 
@@ -23,7 +23,7 @@
     </li>
     <li><a href="#" 
         onmouseover="mopen('m3')" 
-        onmouseout="mclosetime()">Serveur</a>
+        onmouseout="mclosetime()">Server</a>
         <div id="m3" 
             onmouseover="mcancelclosetime()" 
             onmouseout="mclosetime()">
