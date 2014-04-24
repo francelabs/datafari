@@ -838,13 +838,14 @@
       		<str name="scan">false</str>
       		<str name="captureAttr">true</str>
 			<str name="lowernames">true</str>
-			<str name="fmap.title">ignored_</str>
 			<str name="fmap.language">ignored_</str>
 			<str name="uprefix">ignored_</str>
-			<str name="update.chain">fileshare</str>
+			<str name="update.chain">datafari</str>
 			<bool name="ignoreTikaException">true</bool>
     </lst>
   </requestHandler>
+  
+  
 
 
   <!-- Field Analysis Request Handler
@@ -1277,41 +1278,14 @@
      <queryResponseWriter name="schema.xml" class="solr.SchemaXmlResponseWriter"/>
     -->
 
-
-	<updateRequestProcessorChain name="fileshare">
+	<updateRequestProcessorChain name="datafari">
 	
 	
-
-		<processor class="solr.CloneFieldUpdateProcessorFactory">
-			<str name="source">id</str>
-			<str name="dest">url</str>
-		</processor>
-
-		<processor class="solr.CloneFieldUpdateProcessorFactory">
-			<str name="source">url</str>
-			<str name="dest">title</str>
-		</processor>
+		
+		<processor class="com.francelabs.datafari.updateprocessor.DatafariUpdateProcessorFactory" />
 
 
-		<processor class="solr.RegexReplaceProcessorFactory">
-			<str name="fieldName">title</str>
-			<str name="pattern">^.*/</str>
-			<str name="replacement"></str>
-		</processor>
-
-<!-- 
-		<processor class="solr.CloneFieldUpdateProcessorFactory">
-			<str name="source">title</str>
-			<str name="dest">extension</str>
-		</processor>
-
-
-		<processor class="solr.RegexReplaceProcessorFactory">
-			<str name="fieldName">extension</str>
-			<str name="pattern">.*\.</str>
-			<str name="replacement"></str>
-		</processor>
- -->
+	
 		<processor
 			class="org.apache.solr.update.processor.LangDetectLanguageIdentifierUpdateProcessorFactory">
 			<str name="langid.fl">content,title</str>
@@ -1320,17 +1294,12 @@
 			<str name="langid.whitelist">en,fr</str>
 			<str name="langid.fallback">en</str>
 		</processor>
-
 	
-		<processor
-			class="com.francelabs.francellio.solr.plugin.updateprocessor.FileShareProcessorFactory">
-			<int name="rootLevel">2</int>
-		</processor>
-
 		<processor class="solr.LogUpdateProcessorFactory" />
 		<processor class="solr.RunUpdateProcessorFactory" />
 	</updateRequestProcessorChain>
-
+	
+	
   <queryResponseWriter name="json" class="solr.JSONResponseWriter">
      <!-- For the purposes of the tutorial, JSON responses are written as
       plain text so that they are easy to read in *any* browser.

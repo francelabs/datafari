@@ -78,10 +78,9 @@
   <field name="title_en" type="text_en" indexed="true" stored="true" multiValued="true"/>
    <field name="title_fr" type="text_fr" indexed="true" stored="true" multiValued="true"/>
 
-   <field name="filename" type="text_en" indexed="true" stored="true"/>
    <field name="extension" type="lowerCasedString" indexed="true" stored="true"/>
    <field name="language" type="string" indexed="true" stored="true"/>
-   <field name="root" type="string" indexed="true" stored="true"/>
+   <field name="source" type="string" indexed="true" stored="true"/>
    <field name="url" type="text_en" indexed="true" stored="true"/>
    <field name="last_modified" type="tdate" indexed="true" stored="true"/>
    <field name="content" type="text_en" indexed="true" stored="true" multiValued="true"/>

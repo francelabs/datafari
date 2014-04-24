@@ -26,7 +26,7 @@ $(function($) {
 	Manager.addWidget(new AjaxFranceLabs.TableWidget({
 		elm : $('#facet_source'),
 		id : 'facet_source',
-		field : 'root',
+		field : 'source',
 		name : window.i18n.msgStore['source'],
 		pagination : true,
 		selectionType : 'OR',
@@ -110,7 +110,7 @@ $(function($) {
 													elm.find('.doc:last .icon').append('<object data="images/icons/'+ extension.toLowerCase() +'-icon-24x24.png"><img src="images/icons/default-icon-24x24.png" /></object>&nbsp;');
 
 									                var urlRedirect = 'URL?url='+ url + '&id='+Manager.store.get("id").value + '&q=' + Manager.store.get("q").value + '&position='+position;
-													elm.find('.doc:last .res').append('<a class="title" target="_blank" href="'+urlRedirect+'"></a>');													elm.find('.doc:last .title').append('<span>' +decodeURIComponent(doc.filename) + '</span>'); 
+													elm.find('.doc:last .res').append('<a class="title" target="_blank" href="'+urlRedirect+'"></a>');													elm.find('.doc:last .title').append('<span>' +decodeURIComponent(doc.title) + '</span>'); 
 													elm.find('.doc:last .res').append('<p class="description">');
 													elm.find('.doc:last .description').append('<span>'+ description+ '</span>');
 													elm.find('.doc:last .description').append('<p class="address">');
