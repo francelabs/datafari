@@ -44,8 +44,8 @@ AjaxFranceLabs.StatsQueryWidget = AjaxFranceLabs.AbstractWidget.extend({
 	
 	buildWidget : function() {
 		var self = this, elm = $(this.elm);
-		elm.addClass('searchBarWidget').addClass('widget').append('<div class="searchType">').append('<div class="filterBar">').append('<div class="searchDate">').append('<input class="search" type="button" value="Calculer statistiques"/>');
-		elm.find('.filterBar').append('Filtre par mot cl&eacute; : <input type="text" />');
+		elm.addClass('searchBarWidget').addClass('widget').append('<div class="searchType">').append('<div class="filterBar">').append('<div class="searchDate">').append('<input class="search" type="button" value="'+window.i18n.msgStore['processStats']+'"/>');
+		elm.find('.filterBar').append('Filter by keyword : <input type="text" />');
 		if(this.removeContentButton)
 			elm.find('.filterBar').append('<span class="removeContent" />').find('.removeContent').css('display', 'none').append('<span>X</span>').click(function(){
 				elm.find('.filterBar input[type=text]').val('');
@@ -58,20 +58,20 @@ AjaxFranceLabs.StatsQueryWidget = AjaxFranceLabs.AbstractWidget.extend({
 		
 		elm.find('.searchType').append('Type : ').append('<div>').append('<div>').append('<div>').append('<div>');
 		elm.find('.searchType div').attr('style','display: inline').append('<input type="radio" name="searchType" class="radio" />').append('<label>');
-		elm.find('.searchType div:eq(0)').find('input').attr('value', 'topQueries').attr('checked','true').attr('id', 'topQueries').parent().find('label').attr('for', 'topQueries').append('<span>&nbsp;</span>').append('Top requ&ecirc;tes');
-		elm.find('.searchType div:eq(1)').find('input').attr('value', 'notHitsQueries').attr('id', 'notHitsQueries').parent().find('label').attr('for', 'notHitsQueries').append('<span>&nbsp;</span>').append('Requ&ecirc;tes sans r&eacute;sultats');
-		elm.find('.searchType div:eq(2)').find('input').attr('value', 'noClicksQueries').attr('id', 'noClicksQueries').parent().find('label').attr('for', 'noClicksQueries').append('<span>&nbsp;</span>').append('Requ&ecirc;tes sans clics');
-		elm.find('.searchType div:eq(3)').find('input').attr('value', 'abnormalQueryTime').attr('id', 'abnormalQueryTime').parent().find('label').attr('for', 'abnormalQueryTime').append('<span>&nbsp;</span>').append('Requ&ecirc;tes avec QTime anormal');
+		elm.find('.searchType div:eq(0)').find('input').attr('value', 'topQueries').attr('checked','true').attr('id', 'topQueries').parent().find('label').attr('for', 'topQueries').append('<span>&nbsp;</span>').append(window.i18n.msgStore['topQueries']);
+		elm.find('.searchType div:eq(1)').find('input').attr('value', 'notHitsQueries').attr('id', 'notHitsQueries').parent().find('label').attr('for', 'notHitsQueries').append('<span>&nbsp;</span>').append(window.i18n.msgStore['notHitsQueries']);
+		elm.find('.searchType div:eq(2)').find('input').attr('value', 'noClicksQueries').attr('id', 'noClicksQueries').parent().find('label').attr('for', 'noClicksQueries').append('<span>&nbsp;</span>').append(window.i18n.msgStore['noClicksQueries']);
+		elm.find('.searchType div:eq(3)').find('input').attr('value', 'abnormalQueryTime').attr('id', 'abnormalQueryTime').parent().find('label').attr('for', 'abnormalQueryTime').append('<span>&nbsp;</span>').append(window.i18n.msgStore['abnormalQueryTime']);
 		
 		
 
-		elm.find('.searchDate').append('Filtre par date : ').append('<div>').append('<div>').append('<div>').append('<div>');
+		elm.find('.searchDate').append('Filter by date : ').append('<div>').append('<div>').append('<div>').append('<div>');
 		elm.find('.searchDate div').attr('style','display: inline').append('<input type="radio" name="dateRange" class="radio" />').append('<label>');
-		elm.find('.searchDate div:eq(0)').find('input').attr('value', 'all').attr('checked','true').attr('id', 'all').parent().find('label').attr('for', 'all').append('<span>&nbsp;</span>').append('Toutes');
-		elm.find('.searchDate div:eq(1)').find('input').attr('value', 'last12months').attr('id', 'last12months').parent().find('label').attr('for', 'last12months').append('<span>&nbsp;</span>').append('12 derniers mois');
-		elm.find('.searchDate div:eq(2)').find('input').attr('value', 'last6months').attr('id', 'last6months').parent().find('label').attr('for', 'last6months').append('<span>&nbsp;</span>').append('6 derniers mois');
-		elm.find('.searchDate div:eq(3)').find('input').attr('value', 'last30days').attr('id', 'last30days').parent().find('label').attr('for', 'last30days').append('<span>&nbsp;</span>').append('30 derniers jours');
-		elm.find('.searchDate div:eq(4)').find('input').attr('value', 'last24hours').attr('id', 'last24hours').parent().find('label').attr('for', 'last24hours').append('<span>&nbsp;</span>').append('Derni&egrave;re 24 heures');
+		elm.find('.searchDate div:eq(0)').find('input').attr('value', 'all').attr('checked','true').attr('id', 'all').parent().find('label').attr('for', 'all').append('<span>&nbsp;</span>').append(window.i18n.msgStore['all']);
+		elm.find('.searchDate div:eq(1)').find('input').attr('value', 'last12months').attr('id', 'last12months').parent().find('label').attr('for', 'last12months').append('<span>&nbsp;</span>').append(window.i18n.msgStore['last12months']);
+		elm.find('.searchDate div:eq(2)').find('input').attr('value', 'last6months').attr('id', 'last6months').parent().find('label').attr('for', 'last6months').append('<span>&nbsp;</span>').append(window.i18n.msgStore['last6months']);
+		elm.find('.searchDate div:eq(3)').find('input').attr('value', 'last30days').attr('id', 'last30days').parent().find('label').attr('for', 'last30days').append('<span>&nbsp;</span>').append(window.i18n.msgStore['last30days']);
+		elm.find('.searchDate div:eq(4)').find('input').attr('value', 'last24hours').attr('id', 'last24hours').parent().find('label').attr('for', 'last24hours').append('<span>&nbsp;</span>').append(window.i18n.msgStore['last24hours']);
 		elm.find('input[type=button].search').click(function() {
 			self.makeNewRequest();
 		});

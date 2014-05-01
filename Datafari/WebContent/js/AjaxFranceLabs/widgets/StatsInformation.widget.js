@@ -38,17 +38,17 @@ AjaxFranceLabs.StatsInformationWidget = AjaxFranceLabs.AbstractWidget.extend({
 			start = 0;
 		
 		if (this.mode === 'allQueries'){
-			elm.find('#result_information_search').append('<span>Statistiques sur les '+numFound+' requ&ecirc;tes distinctes effectu&eacute;es</span>');
+			elm.find('#result_information_search').append('<span>'+window.i18n.msgStore['statsOn']+' '+numFound+' '+window.i18n.msgStore['distinctsQuery']+'</span>');
 		} 
 		
 
 		if (this.mode === 'query'){
-			elm.find('#result_information_search').append('<span>Statistique sur la requ&ecirc;te '+this.manager.store.get('q').val()+'</span>');
+			elm.find('#result_information_search').append('<span>'+window.i18n.msgStore['statsOn']+' '+this.manager.store.get('q').val()+'</span>');
 		} 
 		
 
 		if (this.mode === 'queryID'){
-			elm.find('#result_information_search').append('<span>D&eacute;tails de la requ&ecirc;te</span>');
+			elm.find('#result_information_search').append('<span>'+window.i18n.msgStore['detailsOnQuery']+'</span>');
 		} 
 		
 		

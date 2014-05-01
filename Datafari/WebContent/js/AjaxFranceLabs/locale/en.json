@@ -18,5 +18,18 @@
 "language" : "Language",
 "sortType" : "Sort by : ",
 "score" : "Relevancy",
-"date" : "Date"
+"date" : "Date",
+"topQueries" : "Top Queries",
+"notHitsQueries" : "No Hits Queries",
+"noClicksQueries" : "No Clicks Queries",
+"abnormalQueryTime": "Too long Queries",
+"all": "All",
+"last12months": "Last 12 months",
+"last6months": "Last 6 months",
+"last30days": "Last 30 days",
+"last24hours": "Last 24 hours",
+"processStats": "Process",
+"distinctsQuery": "distinct queries",
+"statsOn": "Statistics on",
+"detailsOnQuery": "Query details"
 }
