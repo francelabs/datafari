@@ -772,7 +772,7 @@
 			<str name="hl">on</str>
 			<str name="hl.encoder">html</str>
 			<str name="hl.fragsize">200</str>
-			<str name="hl.maxAlternateFieldLength">200</str>
+			<str name="hl.maxAnalyzedChars">40000</str>
 			<int name="facet.mincount">1</int>
 		</lst>
 		<!-- 
@@ -1052,6 +1052,7 @@
 				[default, jaspell-based] org.apache.solr.spelling.suggest.tst.TSTLookup [ternary 
 				trees] -->
 			<str name="field">suggest</str>  <!-- the indexed field to derive suggestions from -->
+			<float name="threshold">0.005</float>
 			<str name="buildOnCommit">true</str>
 
 		</lst>
