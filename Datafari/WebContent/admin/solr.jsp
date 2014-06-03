@@ -18,7 +18,7 @@
 	
 <body style="height: 100%">
     <div style="width:100%; height:100%; background-color:#FFFFF;">
-    <iframe src="/datafari-solr" width="100%" height="100%" frameborder="0" scrolling="yes"></iframe>
+    <iframe src="proxy/solr/" width="100%" height="100%" frameborder="0" scrolling="yes"></iframe>
   </div>
 	<jsp:include page="../footer.jsp" />
 </body>
