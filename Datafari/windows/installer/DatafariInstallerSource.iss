@@ -62,17 +62,17 @@ begin
   { Create the pages }
 
   MCFAdminPasswordPage := CreateInputQueryPage(wpWelcome,
-    'Configuration', 'Compte "admin" du crawler ManifoldCF',
-    'Spécifier le mot de passe du compte "admin" du crawler ManifoldCF');
-  MCFAdminPasswordPage.Add('Mot de passe :', True);
-  MCFAdminPasswordPage.Add('Confirmer le mot de passe :', True);
+    'Configuration', 'ManifoldCF Crawler',
+    'Please enter password for the "admin" account of ManifoldCF');
+  MCFAdminPasswordPage.Add('Password:', True);
+  MCFAdminPasswordPage.Add('Please confirm password:', True);
 
     
   AdminPasswordPage := CreateInputQueryPage(wpWelcome,
-    'Configuration', 'Compte "admin" de Datafari',
-    'Spécifier le mot de passe du compte "admin" de Datafari');
-  AdminPasswordPage.Add('Mot de passe :', True);
-  AdminPasswordPage.Add('Confirmer le mot de passe :', True);
+    'Configuration', 'Datafari',
+    'Please enter password for the "admin" account of Datafari');
+  AdminPasswordPage.Add('Password:', True);
+  AdminPasswordPage.Add('Please confirm password:', True);
 
 end;
 
@@ -88,12 +88,12 @@ begin
   AdminPassword2 := AdminPasswordPage.Values[1];
   if AdminPassword <>  AdminPassword2 then
   begin
-    MsgBox('Attention : les mots de passe doivent être identiques', mbInformation, MB_OK);
+    MsgBox('Warning : values are not equal', mbInformation, MB_OK);
     Result := False;  
   end 
   if AdminPassword = '' then
   begin
-    MsgBox('Attention : le mot de passe ne doit pas être vide', mbInformation, MB_OK);
+    MsgBox('Warning : password can not be blank', mbInformation, MB_OK);
     Result := False;  
   end
 end
@@ -110,12 +110,12 @@ begin
   AdminPassword2 := MCFAdminPasswordPage.Values[1];
   if MCFAdminPassword <>  AdminPassword2 then
   begin
-    MsgBox('Attention : les mots de passe doivent être identiques', mbInformation, MB_OK);
+    MsgBox('Warning : values are not equal', mbInformation, MB_OK);
     Result := False;  
   end 
   if MCFAdminPassword = '' then
   begin
-    MsgBox('Attention : le mot de passe ne doit pas être vide', mbInformation, MB_OK);
+    MsgBox('Warning : password can not be blank', mbInformation, MB_OK);
     Result := False;  
   end
 end
