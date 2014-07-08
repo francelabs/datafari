@@ -1,31 +1,99 @@
 #!/bin/bash
 getPassword(){
-OK=false
-while [ $OK = false ]
-do
-OK=true
-echo -n "Please enter password for $1: " 
-read -s password
-echo
-echo -n "Please retype password: "
-read -s password2
-echo
-if ! [ $password =  $password2 ]
-then
-OK=false
-echo "Passwords are not equal"
-fi
-if [ -z $password ]
-then
-OK=false
-echo "Password must not be blanck"
-fi
-done
+	OK=false
+	while [ $OK = false ]
+	do
+		OK=true
+		echo -n "Please enter password for $1: " 
+		read -s password
+		echo
+		echo -n "Please retype password: "
+		read -s password2
+		echo
+		if ! [ $password =  $password2 ]
+		then
+			OK=false
+			echo "Passwords are not equal"
+		fi
+		if [ -z $password ]
+		then
+			OK=false
+			echo "Password must not be blanck"
+		fi
+	done
 }
-getPassword "ManifoldCF (document crawler) admin "
-sed -i -e "s/@PASSWORD@/${password}/g" /opt/datafari/mcf/mcf_home/properties.xml
-getPassword "Datafari"
-sed -i -e "s/@PASSWORD@/${password}/g" /opt/datafari/tomcat/conf/tomcat-users.xml
+
+getNumshards(){
+	OK=false
+	while [ $OK = false ]
+	do
+		OK=true
+		echo -n "Please enter the number of shards you want for your index: " 
+		read numshards
+		re='^[0-9]+([.][0-9]+)?$'
+		if ! [[ $numshards =~ $re ]] ; then
+			echo -n "Please enter a valid number"  
+			OK=false
+		fi
+	done
+}
+
+yesno()
+{
+	yes=$2
+	read -p "$1" yn
+	case $yn in
+		[Yy]* ) yes=true;;
+		[Nn]* ) yes=false;;
+	esac
+}
+
+#start script
+yesno "Use Solr Cloud [y/N]: " false
+if $yes
+then
+	echo -n "Specify the current node address: " 
+	read nodehost
+	sed -i -e "s/@NODEHOST@/${nodehost}/g" /opt/datafari/solr/solr_home/solr.xml
+	sed -i -e "s/@SOLRCLOUD@/true/g" /opt/datafari/conf/datafari.properties
+	yesno "Is this the main node [Y/n]: " true
+	if $yes
+	then
+		getNumshards
+		sed -i -e "s/@NUMSHARDS@/${numshards}/g" /opt/datafari/conf/datafari.properties
+		sed -i -e "s/@ISMAINNODE@/true/g" /opt/datafari/conf/datafari.properties
+		mkdir /opt/datafari/solr/solrcloud
+		mv /opt/datafari/solr/solr_home/FileShare /opt/datafari/solr/solrcloud
+		mv /opt/datafari/solr/solr_home/Statistics /opt/datafari/solr/solrcloud
+		getPassword "ManifoldCF (document crawler) admin"
+		sed -i -e "s/@PASSWORD@/${password}/g" /opt/datafari/mcf/mcf_home/properties.xml
+		getPassword "Datafari"
+		sed -i -e "s/@PASSWORD@/${password}/g" /opt/datafari/tomcat/conf/tomcat-users.xml
+	else
+		echo -n "Specify main node address: " 
+		read mainnodehost
+		sed -i -e "s/@MAINNODEHOST@/${mainnodehost}/g" /opt/datafari/conf/datafari.properties
+		sed -i -e "s/@ISMAINNODE@/false/g" /opt/datafari/conf/datafari.properties
+		rm -r /opt/datafari/mcf
+		rm -r /opt/datafari/solr/solr_home/FileShare
+		rm -r /opt/datafari/solr/solr_home/Statistics
+		rm -r /opt/datafari/zookeeper
+		rm -r /opt/datafari/pgsql
+		rm -r /opt/datafari/tomcat/webapps/Datafari
+		rm /opt/datafari/tomcat/conf/Catalina/localhost/datafari-mcf-*
+		getPassword "Tomcat"
+		sed -i -e "s/@PASSWORD@/${password}/g" /opt/datafari/tomcat/conf/tomcat-users.xml
+	fi
+else
+	getPassword "ManifoldCF (document crawler) admin"
+	sed -i -e "s/@PASSWORD@/${password}/g" /opt/datafari/mcf/mcf_home/properties.xml
+	getPassword "Datafari"
+	sed -i -e "s/@PASSWORD@/${password}/g" /opt/datafari/tomcat/conf/tomcat-users.xml
+	sed -i -e "s/@SOLRCLOUD@/false/g" /opt/datafari/conf/datafari.properties
+fi
+
+
+
+
 chmod -R 755 /opt/datafari
 echo "Datafari successfully installed"
-

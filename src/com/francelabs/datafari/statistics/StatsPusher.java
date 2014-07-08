@@ -10,12 +10,9 @@ import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.ModifiableSolrParams;
-import org.apache.solr.common.util.NamedList;
-import org.apache.solr.common.util.SimpleOrderedMap;
 
 import com.francelabs.datafari.solrj.SolrServers;
 import com.francelabs.datafari.solrj.SolrServers.Core;
@@ -33,7 +30,7 @@ public class StatsPusher {
 	public static void pushDocument(ModifiableSolrParams params) {
 		try {
 
-			HttpSolrServer solrServer = SolrServers
+			SolrServer solrServer = SolrServers
 					.getSolrServer(Core.STATISTICS);
 
 			Map increment = new HashMap();
@@ -94,7 +91,7 @@ public class StatsPusher {
 	public static void pushQuery(ModifiableSolrParams params) {
 		try {
 
-			HttpSolrServer solrServer = SolrServers
+			SolrServer solrServer = SolrServers
 					.getSolrServer(Core.STATISTICS);
 
 			SolrQuery query = new SolrQuery();

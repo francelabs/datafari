@@ -793,6 +793,11 @@
   </requestHandler>
 
 
+	<requestHandler name="/select" class="solr.SearchHandler" >
+			<str name="defType">edismax</str>
+			<str name="q.alt">*:*</str>
+			<str name="qf">q_search</str>
+	</requestHandler>
 
 	<requestHandler name="/stats" class="solr.SearchHandler">
 		<!-- default values for query parameters can be specified, these will be 

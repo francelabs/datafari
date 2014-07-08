@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
@@ -67,7 +67,7 @@ public class SearchProxy extends HttpServlet {
 			return;
 		}
 
-		HttpSolrServer solr;
+		SolrServer solr;
 		QueryResponse queryResponse = null;
 		SolrQuery query = new SolrQuery();
 

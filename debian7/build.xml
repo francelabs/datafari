@@ -17,6 +17,8 @@
 	<property name="debian.dir" value="${project.dir}/debian7" />
 	<property name="debian.dist.dir" value="${debian.dir}/dist" />
 	<property name="jvm.dir" value="${debian.dir}/jvm" />
+	<property name="zookeeper.dir" value="${debian.dir}/zookeeper" />
+	<property name="command.dir" value="${debian.dir}/command" />
 	<property name="pgsql.dir" value="${debian.dir}/pgsql" />
 	<property name="debian.bin.dir" value="${debian.dir}/bin" />
 
@@ -59,6 +61,21 @@
 				<include name="**" />
 			</fileset>
 		</copy>
+		
+
+		<copy todir="${debian.dist.dir}/zookeeper">
+			<fileset dir="${zookeeper.dir}">
+				<include name="**" />
+			</fileset>
+		</copy>
+		
+
+		<copy todir="${debian.dist.dir}/command">
+			<fileset dir="${command.dir}">
+				<include name="**" />
+			</fileset>
+		</copy>
+
 
 		<copy todir="${debian.dist.dir}/bin">
 			<fileset dir="${debian.bin.dir}">
@@ -87,6 +104,12 @@
 					<copy todir="${debian.dist.dir}/bin/common">
 								<fileset file="${bin.dir}/init_state.properties" />
 					</copy>
+		
+		<mkdir dir="${debian.dist.dir}/conf"/>
+
+		<copy todir="${debian.dist.dir}/conf">
+					<fileset file="${bin.dir}/datafari.properties" />
+		</copy>
 				
 					<copy todir="${debian.dist.dir}/bin/common">
 						<fileset file="${bin.dir}/dist/DatafariScripts.jar" />
