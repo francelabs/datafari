@@ -1,4 +1,4 @@
--------------------------------------------------- DATAFARI V. 0.6.9.1-ALPHA --------------------------------------------------
+-------------------------------------------------- DATAFARI V. 0.7.1-ALPHA --------------------------------------------------
 
 Datafari is the perfect product for anyone who needs to search within its corporate big data,
 based on the most advanced open source technologies.
@@ -9,13 +9,16 @@ Available as community and enterprise edition, Datafari is different from the co
 you just need to mention that you are using it. 
 - It combines two renowned Apache projects, namely ManifoldCF and Solr, which gives Datafari a long term vision.
 
-How to install Datafari :
+Pre-Requirements:
 
-+ Pre-Requirements:
-
-- Windows Environment
-- Processor : 1GHZ and RAM : 2GB)
+- Windows Environment (32 or 64 bits) or Debian Environment (64 bits)
+- Processor : 1GHZ and RAM : 2GB
 - Ports 8080 and 5432 are opened
+
+How to install and  start Datafari :
+
+You can build the Windows installer with the ant script Datafari/windows/installer/build.xml or Datafari/windows/installer/build.xml 
+for the windows installer. You can download both installer from www.datafari.com.
 
 Start Datafari server with start-datafari.bat. Always stop it with stop-datafari.bat. You don't have to (but you can) use the init-datafari.bat
 script if you installed Datafari with the installer.
@@ -26,7 +29,14 @@ http://localhost:8080/Datafari/
 - Admin UI :
 http://localhost:8080/Datafari/admin
 
-You have to configure your Repository connector and job to add documents to Datafari
+You can find video tutorials on how to install and start Datafari from the installer :
+- Debian : https://www.youtube.com/watch?v=cekFICeTTTs
+- Windows : https://www.youtube.com/watch?v=BB95WFtL7n4
+
+
+You have to configure your Repository connector and job to add documents to Datafari.
+You can find a video tutorial on how to index local file share here :
+https://www.youtube.com/watch?v=w0FtsvZO9SI
 You can find documentation on how to create connectors and jobs here : 
 http://manifoldcf.apache.org/release/trunk/en_US/end-user-documentation.html
 
