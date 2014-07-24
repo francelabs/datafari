@@ -1,4 +1,10 @@
 #!/bin/bash -e
+
+if (( EUID != 0 )); then
+   echo "You need to be root to run this script." 1>&2
+   exit 100
+fi
+
 export DATAFARI_HOME=$(pwd)/..
 export JAVA_HOME=${DATAFARI_HOME}/jvm
 export LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib
