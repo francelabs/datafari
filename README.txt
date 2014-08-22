@@ -33,11 +33,13 @@ You can find video tutorials on how to install and start Datafari from the insta
 - Debian : https://www.youtube.com/watch?v=cekFICeTTTs
 - Windows : https://www.youtube.com/watch?v=BB95WFtL7n4
 
+If you want to use the jcifs connector in ManifoldCF, download  jcifs-1.3.xx.jar from http://jcifs.samba.org/src/ to DATAFARI_SOURCE_DIR\mcf\mcf_home\connector-lib-proprietary
 
 You have to configure your Repository connector and job to add documents to Datafari.
 You can find a video tutorial on how to index local file share here :
 https://www.youtube.com/watch?v=w0FtsvZO9SI
 You can find documentation on how to create connectors and jobs here : 
 http://manifoldcf.apache.org/release/trunk/en_US/end-user-documentation.html
+
 
 Enjoy :-)
