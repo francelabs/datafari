@@ -1,0 +1,118 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>nunix</groupId>
+  <artifactId>datafari</artifactId>
+  <packaging>war</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>datafari Maven Webapp</name>
+  <url>http://maven.apache.org</url>
+<repositories>
+  <repository>
+    <id>mvn-repo</id>
+    <url>file://${basedir}/mvn-repo</url>
+  </repository>
+</repositories>
+
+
+  <dependencies>
+    <dependency>
+        <groupId>org.apache.solr</groupId>
+        <artifactId>solr-solrj</artifactId>
+        <version>4.9.0</version>
+    </dependency>
+
+
+<dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-core</artifactId>
+    <version>2.0.2</version>
+</dependency>
+
+<dependency>
+    <groupId>javax.servlet</groupId>
+    <artifactId>javax.servlet-api</artifactId>
+    <version>3.1.0</version>
+    <scope>provided</scope> <!-- to avoid conflict with mvn tomcat -->
+</dependency>
+
+
+<!-- compatibility for j2ep -->
+<dependency>
+    <groupId>commons-digester</groupId>
+    <artifactId>commons-digester</artifactId>
+    <version>1.7</version>
+</dependency>
+
+
+
+<dependency>
+    <groupId>org.apache.solr</groupId>
+    <artifactId>solr-core</artifactId>
+    <version>4.9.0</version>
+    <exclusions>
+        <exclusion>  
+          <groupId>org.eclipse.jetty.orbit</groupId>
+          <artifactId>javax.servlet</artifactId>
+        </exclusion>
+      </exclusions> 
+</dependency>
+
+<!-- to install in local repo -->
+<dependency>
+    <groupId>net.sf.j2ep</groupId>
+    <artifactId>j2ep-datafari</artifactId>
+    <version>1.0.0</version>
+</dependency>
+
+<!-- old dependency for j2ep -->
+<dependency>
+    <groupId>commons-httpclient</groupId>
+    <artifactId>commons-httpclient</artifactId>
+    <version>3.1</version>
+</dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+
+  <build>
+    <finalName>Datafari</finalName>
+     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+        </configuration>
+      </plugin>
+
+    <plugin>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat7-maven-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
+        <webapps>
+            <webapp>
+                <groupId>org.apache.solr</groupId>
+                <artifactId>solr</artifactId>
+                <version>4.9.0</version>
+                <type>war</type>
+                <asWebapp>true</asWebapp>
+                <contextPath>/datafari-solr</contextPath>
+            </webapp>
+        </webapps>
+                    <path>/Datafari</path>
+                    <port>8080</port>
+        </configuration>
+    </plugin>
+    </plugins>
+  </build>
+</project>
