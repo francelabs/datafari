@@ -17,8 +17,8 @@ Pre-Requirements:
 
 How to install and  start Datafari :
 
-You can build the Windows installer with the ant script Datafari/windows/installer/build.xml or Datafari/windows/installer/build.xml 
-for the windows installer. You can download both installer from www.datafari.com.
+You can build the Windows installer with the ant script Datafari/windows/installer/build.xml or Datafari/debian7/build.xml 
+for the Debian installer. You can download both installers from www.datafari.com.
 
 Start Datafari server with start-datafari.bat. Always stop it with stop-datafari.bat. You don't have to (but you can) use the init-datafari.bat
 script if you installed Datafari with the installer.
