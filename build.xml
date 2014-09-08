@@ -31,6 +31,14 @@
 		</delete>
 	</target>
 
+	<target name="eclipse">
+		<copy todir="${project.dir}">
+			<fileset dir="${project.dir}/dev-tools/eclipse">
+				<include name="**" />
+			</fileset>
+		</copy>
+	</target>
+
 	<target name="compileDatafariWebApp">
 		<mkdir dir="${dist.dir}/WEB-INF/classes" />
 
@@ -44,6 +52,4 @@
 			</fileset>
 		</copy>
 	</target>
-
-
 </project>
