@@ -21,6 +21,15 @@ public class ScriptConfiguration {
 	private static ScriptConfiguration instance;
 	private Properties properties;
 
+	public static boolean isConfigAvailable(){
+		try{
+			getInstance();
+			return true;
+		} catch (IOException e){
+			return false;
+		}
+	}
+	
 	public static void setProperty(String key, String value) throws IOException {
 		getInstance().properties.setProperty(key, value);
 		getInstance().properties.store(new FileOutputStream(configPropertiesFileName), null);

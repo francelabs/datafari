@@ -4,7 +4,7 @@
 <header>
 	<div id="header-wrapper">
 		<%
-			if (ScriptConfiguration.getProperty("SOLRCLOUD").equals("false")){
+			if (ScriptConfiguration.isConfigAvailable() || ScriptConfiguration.getProperty("SOLRCLOUD").equals("false")){
 		%>
 		<div id="logo"></div>
 		<%
