@@ -105,11 +105,6 @@
 								<fileset file="${bin.dir}/init_state.properties" />
 					</copy>
 		
-		<mkdir dir="${debian.dist.dir}/conf"/>
-
-		<copy todir="${debian.dist.dir}/conf">
-					<fileset file="${bin.dir}/datafari.properties" />
-		</copy>
 				
 					<copy todir="${debian.dist.dir}/bin/common">
 						<fileset file="${bin.dir}/dist/DatafariScripts.jar" />

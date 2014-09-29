@@ -3,7 +3,7 @@ export DATAFARI_HOME=$(pwd)/..
 export JAVA_HOME=${DATAFARI_HOME}/jvm
 export LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib
 export INIT_STATE_FILE=${DATAFARI_HOME}/bin/common/init_state.properties
-export CONFIG_FILE=${DATAFARI_HOME}/conf/datafari.properties
+export CONFIG_FILE=${DATAFARI_HOME}/tomcat/conf/datafari.properties
 source $INIT_STATE_FILE
 source $CONFIG_FILE
 nodes(){
