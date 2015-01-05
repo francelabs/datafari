@@ -54,7 +54,7 @@ public class ScriptConfiguration {
 	 * 
 	 */
 	private ScriptConfiguration() throws IOException {
-		File configDir = new File(System.getProperty("catalina.base"), "conf");
+		File configDir = new File(System.getProperty("CATALINA_HOME"), "conf");
 		File configFile = new File(configDir, configPropertiesFileName);
 		InputStream stream = new FileInputStream(configFile);
 		properties = new Properties();
