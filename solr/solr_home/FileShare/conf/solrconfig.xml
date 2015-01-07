@@ -798,6 +798,10 @@
 			<str name="spellcheck.count">1</str>
 			<str name="spellcheck.collate">true</str>       <!-- Highlighting defaults -->
 			<str name="hl">on</str>
+			<str name="hl.fl">content_fr content_en</str>
+			<str name="hl.alternateField">content_en</str>
+			<str name="hl.alternateField">content_fr</str>
+			<str name="hl.maxAlternateFieldLength">100</str>
 			<str name="hl.encoder">html</str>
 			<str name="hl.fragsize">200</str>
 			<str name="hl.maxAnalyzedChars">40000</str>
