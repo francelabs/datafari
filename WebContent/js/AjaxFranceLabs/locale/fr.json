@@ -18,5 +18,6 @@
 "language" : "Langage",
 "sortType" : "Tri par : ",
 "score" : "Pertinence",
-"date" : "Date"
+"date" : "Date",
+"sortFacet" : "Tri par : "
 }

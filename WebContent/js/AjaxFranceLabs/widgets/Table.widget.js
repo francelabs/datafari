@@ -31,7 +31,7 @@ AjaxFranceLabs.TableWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 
 	buildWidget : function() {
 		var self = this, elm = $(this.elm);
-		elm.addClass('facet').addClass('tableWidget').addClass('widget').attr('widgetId', this.id).append('<div class="facetSort">').append('<ul>');
+		elm.addClass('facet').addClass('tableWidget').addClass('widget').attr('widgetId', this.id).append('<ul>');
 		if(this.name != null){
 			elm.prepend('<div class="facetName">')
 				.find('.facetName').append('<span class="hide_show">').append('<span class="label">')
@@ -44,8 +44,8 @@ AjaxFranceLabs.TableWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 					$(this).removeClass('close');
 				});
 		}
-		elm.find('.facetSort').append('<label>').find('label').append('Sort: ').append('<select>').find('select').append('<option><span>A/Z</span></option>').append('<option><span>Z/A</span></option>').append('<option><span>Occurences</span></option>').change(function(event) {
-			switch($('option:selected', this).index()) {
+		elm.find('.facetSort').append('<label>').find('label').append(window.i18n.msgStore['sortFacet']).append('<select>').find('select').append('<option><span>A/Z</span></option>').append('<option><span>Z/A</span></option>').append('<option><span>Occurences</span></option>').change(function(event) {
+				switch($('option:selected', this).index()) {
 				case 0:
 					self.sort = 'AtoZ';
 					break;
@@ -165,7 +165,7 @@ AjaxFranceLabs.TableWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 				}
 				break;
 			case 'ZtoA':
-				if (this.checkedOnTop === true) {
+				/*
 					elm.find('ul').prepend($('ul li .filterFacetCheck input:checked', elm).parents('li'));
 					elm.find('ul li .filterFacetCheck input:checked').parents('li').each(function() {
 						var $this = this;
@@ -181,7 +181,8 @@ AjaxFranceLabs.TableWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 								$(this).after($($this).detach());
 						});
 					});
-				} else {
+				*/
+				
 					elm.find('ul li').each(function() {
 						var $this = this;
 						$(this).nextAll().each(function() {
@@ -189,7 +190,7 @@ AjaxFranceLabs.TableWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 								$(this).after($($this).detach());
 						});
 					});
-				}
+				
 				break;
 			case 'occurences':
 				elm.find('ul li').each(function() {

@@ -31,5 +31,6 @@
 "processStats": "Process",
 "distinctsQuery": "distinct queries",
 "statsOn": "Statistics on",
-"detailsOnQuery": "Query details"
+"detailsOnQuery": "Query details",
+"sortFacet" : "Sort : "
 }
