@@ -73,6 +73,7 @@
 			</div>
 		</div>
 		<div class="col right">
+			<div id="capsule"></div>
 			<div id="spellchecker"></div>
 			<div id="results"></div>
 		</div>

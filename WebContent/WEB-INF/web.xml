@@ -27,6 +27,12 @@
         <url-pattern>/admin/proxy/*</url-pattern>
     </filter-mapping>
 
+
+<context-param> 
+    <description>Location to store uploaded file</description> 
+    <param-name>file-upload</param-name> 
+    <param-value>../../solr/solr_home/FileShare/conf/</param-value> 
+</context-param>
  
 <security-constraint>
   <web-resource-collection>

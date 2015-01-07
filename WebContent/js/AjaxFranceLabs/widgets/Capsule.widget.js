@@ -15,16 +15,7 @@ AjaxFranceLabs.CapsuleWidget = AjaxFranceLabs.AbstractWidget.extend({
 
 	//Methods
 
-	init : function() {
-		if (!this.initialized) {
-			this.initialized = true;
-			if (this.manager.connectionInfo.capsule === undefined)
-				throw 'CapsuleWidget: connectionInfo not defined in Manager';
-			else
-				this.connectionInfo = this.manager.connectionInfo.capsule;
-			this.buildWidget();
-		}
-	},
+	
 
 	buildWidget : function() {
 		$(this.elm).addClass('capsuleWidget').addClass('widget');
@@ -36,9 +27,9 @@ AjaxFranceLabs.CapsuleWidget = AjaxFranceLabs.AbstractWidget.extend({
 
 	afterRequest : function() {
 		var self = this;
-		this.manager.executeRequest(this.connectionInfo.serverUrl, this.connectionInfo.servlet, (this.manager.constellio ? 'collectionName='+this.manager.collection+'&' : '')+this.connectionInfo.queryString + this.manager.store.get('q').val(), function(data) {
-			if (data)
-				$(self.elm).append('<span class="title">' + data.title + '</span>').append('<span class="tips">' + data.description + '</span>').show();
-		});
+		var data = this.manager.response, elm = $(this.elm);
+			if (data.capsuleSearchComponent !== undefined && data.capsuleSearchComponent.title.length > 0)
+				$(self.elm).append('<span class="title">' + data.capsuleSearchComponent.title + '</span>').append('<span class="tips">' + data.capsuleSearchComponent.body + '</span>').show();
+		
 	}
 });

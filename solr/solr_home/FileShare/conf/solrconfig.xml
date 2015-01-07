@@ -814,6 +814,7 @@
  -->
 		<arr name="last-components">
 			<str>spellcheck</str>
+			<str>capsulecomponent</str>
 		</arr>
 	</requestHandler>
 
@@ -1072,6 +1073,11 @@
        always be executed after the "last-components" 
        
      -->
+	 
+	 <searchComponent name="capsulecomponent" class="com.francelabs.datafari.solr.CapsuleSearchComponent">
+	  <str name="file">capsules.txt</str>
+	 
+	  </searchComponent>
   
 	<searchComponent class="solr.SpellCheckComponent" name="suggest">
 		<lst name="spellchecker">

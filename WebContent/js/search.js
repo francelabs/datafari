@@ -132,6 +132,11 @@ $(function($) {
 		id : 'spellchecker'
 	}));
 	
+	Manager.addWidget(new AjaxFranceLabs.CapsuleWidget({
+		elm : $('#capsule'),
+		id : 'capsule'
+	}));
+	
 	Manager.store.addByValue('facet', true);
 
 
