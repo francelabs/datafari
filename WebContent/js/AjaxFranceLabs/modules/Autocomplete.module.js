@@ -112,6 +112,7 @@ AjaxFranceLabs.AutocompleteModule = AjaxFranceLabs.AbstractModule
 										.valueSelectFormat(ui.item.value));
 								terms.push("");
 								this.value = terms.join("\u200c ");
+								this.value = this.value.slice(0,-2);
 							}
 							return false;
 						},
