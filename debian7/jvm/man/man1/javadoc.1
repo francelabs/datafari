@@ -1,25 +1,6 @@
 ." Copyright (c) 1994, 2011, Oracle and/or its affiliates. All rights reserved.
-." ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
 ."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-.TH javadoc 1 "16 Mar 2012"
+.TH javadoc 1 "18 Jul 2013"
 .SH "Name"
 javadoc \- The Java API Documentation Generator
 .LP
@@ -143,7 +124,7 @@ o
 .na
 \f2Javadoc FAQ\fP @
 .fi
-http://java.sun.com/j2se/javadoc/faq/index.html for answers to common questions, information about Javadoc\-related tools, and workarounds for bugs. 
+http://www.oracle.com/technetwork/java/javase/documentation/index\-137483.html for answers to common questions, information about Javadoc\-related tools, and workarounds for bugs. 
 .TP 2
 o
 .na
@@ -155,25 +136,13 @@ o
 .na
 \f2Requirements for Writing API Specifications\fP @
 .fi
-http://java.sun.com/j2se/javadoc/writingapispecs/index.html \- Standard requirements used when writing the Java SE Platform Specification. It can be useful whether you are writing API specifications in source file documentation comments or in other formats. It covers requirements for packages, classes, interfaces, fields and methods to satisfy testable assertions. 
+http://www.oracle.com/technetwork/java/javase/documentation/index\-142372.html \- Standard requirements used when writing the Java SE Platform Specification. It can be useful whether you are writing API specifications in source file documentation comments or in other formats. It covers requirements for packages, classes, interfaces, fields and methods to satisfy testable assertions. 
 .TP 2
 o
 .na
 \f2Documentation Comment Specification\fP @
 .fi
-http://java.sun.com/docs/books/jls/first_edition/html/18.doc.html \- The original specification on documentation comments, Chapter 18, Documentation Comments, in the \f2Java Language Specification\fP, First Edition, by James Gosling, Bill Joy, and Guy Steele. (This chapter was removed from the second edition.)  
-.TP 2
-o
-.na
-\f2DocCheck Doclet\fP @
-.fi
-http://www.oracle.com/technetwork/java/javase/documentation/index\-141437.html \- Checks doc comments in source files and generates a report listing the errors and irregularities it finds. It is part of the Doc Check Utilities. 
-.TP 2
-o
-.na
-\f2MIF Doclet\fP @
-.fi
-http://java.sun.com/j2se/javadoc/mifdoclet/ \- Can automate the generation of API documentation in MIF, FrameMaker and PDF formats. MIF is Adobe FrameMaker's interchange format. 
+http://docs.oracle.com/javase/specs/ \- The original specification on documentation comments, Chapter 18, Documentation Comments, in the \f2Java Language Specification\fP, First Edition, by James Gosling, Bill Joy, and Guy Steele. (This chapter was removed from the second edition.)  
 .RE
 .SS 
 Terminology
@@ -820,12 +789,6 @@ o
 \f3Inline tags\fP \- Can be placed anywhere in the main description or in the comments for block tags. Inline tags are denoted by curly braces: \f2{@tag}\fP. 
 .RE
 .LP
-For information about tags we might introduce in future releases, see 
-.na
-\f2Proposed Tags\fP @
-.fi
-http://java.sun.com/j2se/javadoc/proposed\-tags.html.
-.LP
 The current tags are:
 .LP
 .TS
@@ -939,7 +902,7 @@ The current tags are:
 .nr 41 \n(80+(3*\n(38)
 .nr 81 +\n(41
 .nr TW \n(81
-.if t .if \n(TW>\n(.li .tm Table at line 873 file Input is too wide - \n(TW units
+.if t .if \n(TW>\n(.li .tm Table at line 836 file Input is too wide - \n(TW units
 .fc  
 .nr #T 0-1
 .nr #a 0-1
@@ -1616,7 +1579,7 @@ Of course the advantage of providing shorter, "partially\-qualified" names is th
 .nr 40 \n(79+(0*\n(38)
 .nr 80 +\n(40
 .nr TW \n(80
-.if t .if \n(TW>\n(.li .tm Table at line 1364 file Input is too wide - \n(TW units
+.if t .if \n(TW>\n(.li .tm Table at line 1327 file Input is too wide - \n(TW units
 .fc  
 .nr #T 0-1
 .nr #a 0-1
@@ -1962,7 +1925,7 @@ Use \-noqualifier to globally remove the package names.
 .nr 42 \n(81+(3*\n(38)
 .nr 82 +\n(42
 .nr TW \n(82
-.if t .if \n(TW>\n(.li .tm Table at line 1440 file Input is too wide - \n(TW units
+.if t .if \n(TW>\n(.li .tm Table at line 1403 file Input is too wide - \n(TW units
 .fc  
 .nr #T 0-1
 .nr #a 0-1
@@ -2170,11 +2133,11 @@ http://docs.oracle.com/javase/7/docs/platform/serialization/spec/serial\-arch.ht
 .na
 \f2Serialization FAQ\fP @
 .fi
-http://java.sun.com/javase/technologies/core/basic/serializationFAQ.jsp#javadoc_warn_missing, which covers common questions, such as "Why do I see javadoc warnings stating that I am missing @serial tags for private fields if I am not running javadoc with the \-private switch?". Also see 
+http://www.oracle.com/technetwork/java/javase/tech/serializationfaq\-jsp\-136699.html#javadoc_warn_missing, which covers common questions, such as "Why do I see javadoc warnings stating that I am missing @serial tags for private fields if I am not running javadoc with the \-private switch?". Also see 
 .na
-\f2Sun's criteria\fP @
+\f2Oracle's criteria\fP @
 .fi
-http://java.sun.com/j2se/javadoc/writingapispecs/serialized\-criteria.html for including classes in the serialized form specification. 
+http://www.oracle.com/technetwork/java/javase/documentation/serialized\-criteria\-137781.html for including classes in the serialized form specification. 
 .LP
 .TP 3
 @serialField\  field\-name\  field\-type\  field\-description 
@@ -2761,7 +2724,7 @@ The options are:
 .nr 42 \n(81+(3*\n(38)
 .nr 82 +\n(42
 .nr TW \n(82
-.if t .if \n(TW>\n(.li .tm Table at line 2015 file Input is too wide - \n(TW units
+.if t .if \n(TW>\n(.li .tm Table at line 1978 file Input is too wide - \n(TW units
 .fc  
 .nr #T 0-1
 .nr #a 0-1
@@ -2858,45 +2821,21 @@ Displays the online help, which lists these javadoc and doclet command line opti
 Specifies the class file that starts the doclet used in generating the documentation. Use the fully\-qualified name. This doclet defines the content and formats the output. If the \f4\-doclet\fP option is not used, javadoc uses the standard doclet for generating the default HTML format. This class must contain the \f2start(Root)\fP method. The path to this starting class is defined by the \f2\-docletpath\fP option.
 .br
 .br
-For example, to call the MIF doclet, use: 
-.nf
-\f3
-.fl
-    \-doclet com.sun.tools.doclets.mif.MIFDoclet
-.fl
-\fP
-.fi
-For full, working examples of running a particular doclet, see the 
+See 
 .na
-\f2MIF Doclet documentation\fP @
+\f2Doclet Overview\fP @
 .fi
-http://java.sun.com/j2se/javadoc/mifdoclet/docs/mifdoclet.html.  
+http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/doclet/overview.html for more information..  
 .TP 3
 \-docletpath\  classpathlist 
 Specifies the path to the doclet starting class file (specified with the \f2\-doclet\fP option) and any jar files it depends on. If the starting class file is in a jar file, then this specifies the path to that jar file, as shown in the example below. You can specify an absolute path or a path relative to the current directory. If \f2classpathlist\fP contains multiple paths or jar files, they should be separated with a colon (:) on Solaris and a semi\-colon (;) on Windows. This option is not necessary if the doclet starting class is already in the search path.
 .br
 .br
-Example of path to jar file that contains the starting doclet class file. Notice the jar filename is included. 
-.nf
-\f3
-.fl
-   \-docletpath /home/user/mifdoclet/lib/mifdoclet.jar
-.fl
-\fP
-.fi
-Example of path to starting doclet class file. Notice the class filename is omitted. 
-.nf
-\f3
-.fl
-   \-docletpath /home/user/mifdoclet/classes/com/sun/tools/doclets/mif/
-.fl
-\fP
-.fi
-For full, working examples of running a particular doclet, see the 
+See 
 .na
-\f2MIF Doclet documentation\fP @
+\f2Doclet Overview\fP @
 .fi
-http://java.sun.com/j2se/javadoc/mifdoclet/docs/mifdoclet.html.  
+http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/doclet/overview.html for more information.  
 .TP 3
 \-1.1 
 \f2This feature has been removed from Javadoc 1.4. There is no replacement for it. This option created documentation with the appearance and functionality of documentation generated by Javadoc 1.1 (it never supported nested classes). If you need this option, use Javadoc 1.2 or 1.3 instead.\fP  
@@ -3230,7 +3169,7 @@ http://docs.oracle.com/javase/7/docs/api/. The following command generates docum
 Notice the \f2\-link\fP argument is relative to the destination directory (\f2docs/spi\fP).
 .br
 .br
-\f3Details\fP \- The \f2\-link\fP option enables you to link to classes referenced to by your code but \f2not\fP documented in the current javadoc run. For these links to go to valid pages, you must know where those HTML pages are located, and specify that location with \f2extdocURL\fP. This allows, for instance, third party documentation to link to \f2java.*\fP documentation on \f2http://java.sun.com\fP.
+\f3Details\fP \- The \f2\-link\fP option enables you to link to classes referenced to by your code but \f2not\fP documented in the current javadoc run. For these links to go to valid pages, you must know where those HTML pages are located, and specify that location with \f2extdocURL\fP. This allows, for instance, third party documentation to link to \f2java.*\fP documentation on \f2http://docs.oracle.com\fP.
 .br
 .br
 Omit the \f2\-link\fP option for javadoc to create links only to API within the documentation it is generating in the current run. (Without the \f2\-link\fP option, the Javadoc tool does not create links to documentation for external references, because it does not know if or where that documentation exists.)
@@ -3910,11 +3849,11 @@ Running
 .fi
 http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/standard\-doclet.html#runningprogrammatically.
 .LP
-\f3Running Doclets\fP \- The instructions given below are for invoking the standard HTML doclet. To invoke a custom doclet, use the \-doclet and \-docletpath options. For full, working examples of running a particular doclet, see the 
+\f3Running Doclets\fP \- The instructions given below are for invoking the standard HTML doclet. To invoke a custom doclet, use the \-doclet and \-docletpath options. See 
 .na
-\f2MIF Doclet documentation\fP @
+\f2Doclet Overview\fP @
 .fi
-http://java.sun.com/j2se/javadoc/mifdoclet/docs/mifdoclet.html.
+http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/doclet/overview.html for more information.
 .SH "SIMPLE EXAMPLES"
 .LP
 You can run javadoc on entire packages or individual source files. Each package name has a corresponding directory name. In the following examples, the source files are located at \f2/home/src/java/awt/*.java\fP. The destination directory is \f2/home/html\fP.
@@ -4077,7 +4016,7 @@ This is an example of a GNU makefile. For an example of a Windows makefile, see
 .na
 \f2creating a makefile for Windows\fP @
 .fi
-http://java.sun.com/j2se/javadoc/faq/index.html#makefiles.
+http://www.oracle.com/technetwork/java/javase/documentation/index\-137483.html#makefiles.
 .nf
 \f3
 .fl
@@ -4162,7 +4101,7 @@ o
 .na
 \f2Javadoc FAQ\fP @
 .fi
-http://java.sun.com/j2se/javadoc/faq/index.html#B 
+http://www.oracle.com/technetwork/java/javase/documentation/index\-137483.html 
 .TP 2
 o
 \f3Bugs and Limitations\fP \- You can also see some bugs listed at Important Bug Fixes and Changes. 

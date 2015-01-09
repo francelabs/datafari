@@ -64,7 +64,7 @@ fi
 
 javafx_home=`dirname "$PRG"`/..
 
-classpath="$javafx_home/lib/ant-javafx.jar"
+classpath=".:$javafx_home/lib/ant-javafx.jar"
 
 if [ -e "$javafx_home/jre/lib/jfxrt.jar" ] ; then
   classpath="$classpath:$javafx_home/jre/lib/javafxrt.jar"

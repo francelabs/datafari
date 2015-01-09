@@ -1,25 +1,6 @@
-." Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
-." ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+." Copyright (c) 2004, 2012, Oracle and/or its affiliates. All rights reserved.
 ."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-.TH jstat 1 "16 Mar 2012"
+.TH jstat 1 "18 Jul 2013"
 
 .LP
 .SH "Name"
@@ -40,7 +21,7 @@ jstat \- Java Virtual Machine Statistics Monitoring Tool
 .RS 3
 .TP 3
 generalOption 
-A single general command\-line option (\-help, \-options, or \-version) 
+A single general command\-line option (\-help or \-options) 
 .TP 3
 outputOptions 
 One or more output options, consisting of a single \f2statOption\fP, plus any of the \-t, \-h, and \-J options. 
@@ -126,9 +107,6 @@ If you specify one of the general options, you cannot specify any other option o
 .TP 3
 \-help 
 Display help message. 
-.TP 3
-\-version 
-Display version information. 
 .TP 3
 \-options 
 Display list of statistics options. See the Output Options section below. 
@@ -442,7 +420,7 @@ HotSpot compilation method statistics.
 .nr 41 \n(80+(3*\n(38)
 .nr 81 +\n(41
 .nr TW \n(81
-.if t .if \n(TW>\n(.li .tm Table at line 215 file Input is too wide - \n(TW units
+.if t .if \n(TW>\n(.li .tm Table at line 193 file Input is too wide - \n(TW units
 .fc  
 .nr #T 0-1
 .nr #a 0-1
@@ -674,7 +652,7 @@ HotSpot compilation method statistics.
 \-h n 
 Display a column header every \f2n\fP samples (output rows), where \f2n\fP is a positive integer. Default value is 0, which displays the column header above the first row of data. 
 .TP 3
-\-t n 
+\-t 
 Display a timestamp column as the first column of output. The timestamp is the time since the start time of the target JVM. 
 .TP 3
 \-JjavaOption 
@@ -806,7 +784,7 @@ Time spent performing class load and unload operations.
 .nr 41 \n(80+(3*\n(38)
 .nr 81 +\n(41
 .nr TW \n(81
-.if t .if \n(TW>\n(.li .tm Table at line 261 file Input is too wide - \n(TW units
+.if t .if \n(TW>\n(.li .tm Table at line 239 file Input is too wide - \n(TW units
 .fc  
 .nr #T 0-1
 .nr #a 0-1
@@ -1063,7 +1041,7 @@ Class name and method for the last failed compilation.
 .nr 41 \n(80+(3*\n(38)
 .nr 81 +\n(41
 .nr TW \n(81
-.if t .if \n(TW>\n(.li .tm Table at line 297 file Input is too wide - \n(TW units
+.if t .if \n(TW>\n(.li .tm Table at line 275 file Input is too wide - \n(TW units
 .fc  
 .nr #T 0-1
 .nr #a 0-1
@@ -1527,7 +1505,7 @@ Total garbage collection time.
 .nr 41 \n(80+(3*\n(38)
 .nr 81 +\n(41
 .nr TW \n(81
-.if t .if \n(TW>\n(.li .tm Table at line 367 file Input is too wide - \n(TW units
+.if t .if \n(TW>\n(.li .tm Table at line 345 file Input is too wide - \n(TW units
 .fc  
 .nr #T 0-1
 .nr #a 0-1
@@ -2151,7 +2129,7 @@ Number of Young generation GC Events.
 .nr 41 \n(80+(3*\n(38)
 .nr 81 +\n(41
 .nr TW \n(81
-.if t .if \n(TW>\n(.li .tm Table at line 441 file Input is too wide - \n(TW units
+.if t .if \n(TW>\n(.li .tm Table at line 419 file Input is too wide - \n(TW units
 .fc  
 .nr #T 0-1
 .nr #a 0-1
@@ -2531,7 +2509,7 @@ Cause of current Garbage Collection.
 .nr 41 \n(80+(3*\n(38)
 .nr 81 +\n(41
 .nr TW \n(81
-.if t .if \n(TW>\n(.li .tm Table at line 464 file Input is too wide - \n(TW units
+.if t .if \n(TW>\n(.li .tm Table at line 442 file Input is too wide - \n(TW units
 .fc  
 .nr #T 0-1
 .nr #a 0-1
@@ -2847,7 +2825,7 @@ Young generation garbage collection time.
 .nr 41 \n(80+(3*\n(38)
 .nr 81 +\n(41
 .nr TW \n(81
-.if t .if \n(TW>\n(.li .tm Table at line 518 file Input is too wide - \n(TW units
+.if t .if \n(TW>\n(.li .tm Table at line 496 file Input is too wide - \n(TW units
 .fc  
 .nr #T 0-1
 .nr #a 0-1
@@ -3303,7 +3281,7 @@ Number of young generation GC events.
 .nr 41 \n(80+(3*\n(38)
 .nr 81 +\n(41
 .nr TW \n(81
-.if t .if \n(TW>\n(.li .tm Table at line 572 file Input is too wide - \n(TW units
+.if t .if \n(TW>\n(.li .tm Table at line 550 file Input is too wide - \n(TW units
 .fc  
 .nr #T 0-1
 .nr #a 0-1
@@ -3699,7 +3677,7 @@ Total garbage collection time.
 .nr 41 \n(80+(3*\n(38)
 .nr 81 +\n(41
 .nr TW \n(81
-.if t .if \n(TW>\n(.li .tm Table at line 614 file Input is too wide - \n(TW units
+.if t .if \n(TW>\n(.li .tm Table at line 592 file Input is too wide - \n(TW units
 .fc  
 .nr #T 0-1
 .nr #a 0-1
@@ -4044,7 +4022,7 @@ Total garbage collection time.
 .nr 41 \n(80+(3*\n(38)
 .nr 81 +\n(41
 .nr TW \n(81
-.if t .if \n(TW>\n(.li .tm Table at line 656 file Input is too wide - \n(TW units
+.if t .if \n(TW>\n(.li .tm Table at line 634 file Input is too wide - \n(TW units
 .fc  
 .nr #T 0-1
 .nr #a 0-1
@@ -4389,7 +4367,7 @@ Total garbage collection time.
 .nr 41 \n(80+(3*\n(38)
 .nr 81 +\n(41
 .nr TW \n(81
-.if t .if \n(TW>\n(.li .tm Table at line 698 file Input is too wide - \n(TW units
+.if t .if \n(TW>\n(.li .tm Table at line 676 file Input is too wide - \n(TW units
 .fc  
 .nr #T 0-1
 .nr #a 0-1
@@ -4774,7 +4752,7 @@ Total garbage collection time.
 .nr 41 \n(80+(3*\n(38)
 .nr 81 +\n(41
 .nr TW \n(81
-.if t .if \n(TW>\n(.li .tm Table at line 748 file Input is too wide - \n(TW units
+.if t .if \n(TW>\n(.li .tm Table at line 726 file Input is too wide - \n(TW units
 .fc  
 .nr #T 0-1
 .nr #a 0-1
@@ -4993,7 +4971,7 @@ Total garbage collection time.
 .ll \n(34u*1u/3u
 .if \n(.l<\n(81 .ll \n(81u
 .in 0
-Number of compilation tasks performed.
+Number of compilation tasks performed by the most recently compiled method.
 .br
 .di
 .nr a| \n(dn
@@ -5009,7 +4987,7 @@ Number of compilation tasks performed.
 .ll \n(34u*1u/3u
 .if \n(.l<\n(81 .ll \n(81u
 .in 0
-Number of bytes of bytecode for the method.
+Number of bytes of bytecode of the most recently compiled method.
 .br
 .di
 .nr b| \n(dn
@@ -5025,11 +5003,27 @@ Number of bytes of bytecode for the method.
 .ll \n(34u*1u/3u
 .if \n(.l<\n(81 .ll \n(81u
 .in 0
-Class name and method name identifying the compiled method. Class name uses "/" instead of "." as namespace separator. Method name is the method within the given class. The format for these two fields is consistent with the HotSpot \- \f3XX:+PrintComplation\fP option.
+Compilation type of the most recently compiled method.
 .br
 .di
 .nr c| \n(dn
 .nr c- \n(dl
+..
+.ec \
+.eo
+.am 81
+.br
+.di d+
+.35
+.ft \n(.f
+.ll \n(34u*1u/3u
+.if \n(.l<\n(81 .ll \n(81u
+.in 0
+Class name and method name identifying the most recently compiled method. Class name uses "/" instead of "." as namespace separator. Method name is the method within the given class. The format for these two fields is consistent with the HotSpot \- \f3XX:+PrintComplation\fP option.
+.br
+.di
+.nr d| \n(dn
+.nr d- \n(dl
 ..
 .ec \
 .35
@@ -5053,8 +5047,6 @@ Class name and method name identifying the compiled method. Class name uses "/" 
 .nr 81 0
 .nr 38 \w\f3Description\fP
 .if \n(81<\n(38 .nr 81 \n(38
-.nr 38 \wCompilation type.
-.if \n(81<\n(38 .nr 81 \n(38
 .81
 .rm 81
 .nr 38 \n(a-
@@ -5062,6 +5054,8 @@ Class name and method name identifying the compiled method. Class name uses "/" 
 .nr 38 \n(b-
 .if \n(81<\n(38 .nr 81 \n(38
 .nr 38 \n(c-
+.if \n(81<\n(38 .nr 81 \n(38
+.nr 38 \n(d-
 .if \n(81<\n(38 .nr 81 \n(38
 .35
 .nf
@@ -5073,7 +5067,7 @@ Class name and method name identifying the compiled method. Class name uses "/" 
 .nr 41 \n(80+(3*\n(38)
 .nr 81 +\n(41
 .nr TW \n(81
-.if t .if \n(TW>\n(.li .tm Table at line 774 file Input is too wide - \n(TW units
+.if t .if \n(TW>\n(.li .tm Table at line 754 file Input is too wide - \n(TW units
 .fc  
 .nr #T 0-1
 .nr #a 0-1
@@ -5127,12 +5121,24 @@ Class name and method name identifying the compiled method. Class name uses "/" 
 .mk 32
 .if \n(32>\n(31 .nr 31 \n(32
 .sp |\n(31u
+.ne \n(c|u+\n(.Vu
+.if (\n(c|+\n(#^-1v)>\n(#- .nr #- +(\n(c|+\n(#^-\n(#--1v)
 .ta \n(80u \n(81u 
 .nr 31 \n(.f
 .nr 35 1m
-\&\h'|\n(40u'Type\h'|\n(41u'Compilation type.
-.ne \n(c|u+\n(.Vu
-.if (\n(c|+\n(#^-1v)>\n(#- .nr #- +(\n(c|+\n(#^-\n(#--1v)
+\&\h'|\n(40u'Type\h'|\n(41u'
+.mk ##
+.nr 31 \n(##
+.sp |\n(##u-1v
+.nr 37 \n(41u
+.in +\n(37u
+.c+
+.in -\n(37u
+.mk 32
+.if \n(32>\n(31 .nr 31 \n(32
+.sp |\n(31u
+.ne \n(d|u+\n(.Vu
+.if (\n(d|+\n(#^-1v)>\n(#- .nr #- +(\n(d|+\n(#^-\n(#--1v)
 .ta \n(80u \n(81u 
 .nr 31 \n(.f
 .nr 35 1m
@@ -5142,7 +5148,7 @@ Class name and method name identifying the compiled method. Class name uses "/" 
 .sp |\n(##u-1v
 .nr 37 \n(41u
 .in +\n(37u
-.c+
+.d+
 .in -\n(37u
 .mk 32
 .if \n(32>\n(31 .nr 31 \n(32
@@ -5154,8 +5160,9 @@ Class name and method name identifying the compiled method. Class name uses "/" 
 .rm a+
 .rm b+
 .rm c+
+.rm d+
 .TE
-.if \n-(b.=0 .nr c. \n(.c-\n(d.-19
+.if \n-(b.=0 .nr c. \n(.c-\n(d.-21
 
 .LP
 .SH "EXAMPLES"
