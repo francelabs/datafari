@@ -2,9 +2,7 @@
 % WARNING: this file is auto-generated; do not edit
 % UNSUPPORTED: this file and its format may change and/or
 %   may be removed in a future release
-! access-bridge-32.jar
-com/sun/java/accessibility/
-! access-bridge.jar
+! access-bridge-64.jar
 com/sun/java/accessibility/
 # dnsns.jar
 META-INF/services/sun.net.spi.nameservice.NameServiceDescriptor
@@ -23,10 +21,6 @@ com/sun/crypto/
 META-INF/ORACLE_J.RSA
 META-INF/ORACLE_J.SF
 # sunmscapi.jar
-sun/security
-META-INF/ORACLE_J.RSA
-META-INF/ORACLE_J.SF
-# sunpkcs11.jar
 sun/security
 META-INF/ORACLE_J.RSA
 META-INF/ORACLE_J.SF
