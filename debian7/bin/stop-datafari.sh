@@ -8,7 +8,7 @@ fi
 export DATAFARI_HOME=$(pwd)/..
 export JAVA_HOME=${DATAFARI_HOME}/jvm
 export LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib
-export CONFIG_FILE=${DATAFARI_HOME}/conf/datafari.properties
+export CONFIG_FILE=${DATAFARI_HOME}/tomcat/conf/datafari.properties
 source $CONFIG_FILE
 cd ${DATAFARI_HOME}/tomcat/bin
 sh "shutdown.sh"
