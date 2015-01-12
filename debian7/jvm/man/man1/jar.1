@@ -1,25 +1,6 @@
 ." Copyright (c) 1997, 2011, Oracle and/or its affiliates. All rights reserved.
-." ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
 ."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-.TH jar 1 "16 Mar 2012"
+.TH jar 1 "18 Jul 2013"
 
 .LP
 .SH "Name"
@@ -192,7 +173,7 @@ To review command samples which use \f2jar\fP to opeate on jar files and jar fil
 .na
 \f2Java Tutorial\fP @
 .fi
-http://docs.oracle.com/javase/tutorial/deployment/jar.
+http://docs.oracle.com/javase/tutorial/deployment/jar/.
 .LP
 .SH "OPTIONS"
 .LP
@@ -264,9 +245,9 @@ jar cmf myManifestFile myFile.jar *.class
 .fi
 You can add special\-purpose \f2name\ :\ value\fP attribute pairs to the manifest that aren't contained in the default manifest. For example, you can add attributes specifying vendor information, version information, package sealing, or to make JAR\-bundled applications executable. See the 
 .na
-\f2JAR Files\fP @
+\f2Packaging Programs in JAR Files\fP @
 .fi
-http://docs.oracle.com/javase/tutorial/deployment/jar/ trail in the Java Tutorial  for examples of using the \f4\-m\fP option. 
+http://docs.oracle.com/javase/tutorial/deployment/jar/ lesson in the Java Tutorial for examples of using the \f4\-m\fP option. 
 .TP 3
 e 
 Sets \f2entrypoint\fP as the application entry point for stand\-alone applications bundled into executable jar file. The use of this option creates or overrides the \f2Main\-Class\fP attribute value in the manifest file. This option can be used during creation of jar file or while updating the jar file. This option specifies the application entry point without editing or creating the manifest file.

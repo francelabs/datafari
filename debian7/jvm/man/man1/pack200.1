@@ -1,25 +1,6 @@
 ." Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
-." ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
 ."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-."
-.TH pack200 1 "16 Mar 2012"
+.TH pack200 1 "18 Jul 2013"
 
 .LP
 .SH "Name"
@@ -178,7 +159,7 @@ Indicates that a file should be passed through bytewise with no compression. By 
 \f4\-Uaction \-\-unknown\-attribute=\fP\f2action\fP
 .LP
 .LP
-Overrides the default behavior; i.e., the classfile containing the unknown attribute will be passed through with the specified action. The possible values for actions are:
+Overrides the default behavior; i.e., the class file containing the unknown attribute will be passed through with the specified action. The possible values for actions are:
 .LP
 .RS 3
 .TP 3
@@ -217,11 +198,14 @@ Upon encountering this attribute, the pack200 operation will fail with a suitabl
 .TP 3
 strip 
 Upon encountering this attribute, the attribute will be removed from the output. Note: removing VM\-required attributes may cause Class Loader failures. 
+.TP 3
+pass 
+Upon encountering this attribute, the entire class will be transmitted as though it is a resource. 
 .RE
 
 .LP
 .LP
-Example: \f2\-\-class\-attribute=CompilationID=pass\fP will cause the class file containing this attribute to be passed through without further action by the packer.
+Example: \f2\-\-class\-attribute=CompilationID=pass\fP will cause the class file containing the attribute \f2CompilationID\fP to be passed through without further action by the packer.
 .LP
 .LP
 \f4\-f\fP\f2 \fP\f2pack.properties\fP \f3\-\-config\-file=\fP\f2pack.properties\fP

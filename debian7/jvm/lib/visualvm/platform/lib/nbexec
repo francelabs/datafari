@@ -112,13 +112,26 @@ if [ -z "$jdkhome" ] ; then
 
     case "`uname`" in
         Darwin*)
-        if [ -f "/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/bin/java" ] ; then
+        # read Java Preferences
+        if [ -x "/usr/libexec/java_home" ]; then
+            jdkhome=`/usr/libexec/java_home --version 1.7.0_10+ --failfast`
+            if [ -z $jdkhome ]; then 
+                jdkhome=`/usr/libexec/java_home --version 1.6 --failfast`
+            fi
+
+        # JDK1.7 Update 10 as a fallback
+        elif [ -f "/Library/Java/JavaVirtualMachines/jdk1.7.0_10.jdk/Contents/Home/bin/java" ] ; then
+            jdkhome="/Library/Java/JavaVirtualMachines/jdk1.7.0_10.jdk/Contents/Home"
+
+        # JDK1.6
+        elif [ -f "/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/bin/java" ] ; then
             jdkhome="/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home"
         elif [ -f "/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home/bin/java" ] ; then
             jdkhome="/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home"
         elif [ -f "/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home/bin/java" ] ; then
             jdkhome="/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home"
         fi
+        echo Found jdkhome=$jdkhome
         ;;
         *) javac=`which javac`
         if [ -z "$javac" ] ; then
@@ -139,6 +152,10 @@ if [ ! -x "${jdkhome}/bin/java" ] ; then
     echo "Cannot find java. Please use the --jdkhome switch." >&2
     exit 2
 fi
+
+# Make sure native code libraries of jdk7 are found
+LD_LIBRARY_PATH=${jdkhome}/jre/lib/amd64:${jdkhome}/jre/lib/i386:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH
 
 # if the Java option for heap dump on OOME is supported enable it
 if "${jdkhome}/bin/java" -XX:+HeapDumpOnOutOfMemoryError -cp "${progdir}/boot.jar" org.netbeans.NbExecJavaStartTry > /dev/null 2>&1 ; then
@@ -308,6 +325,44 @@ detect_system_proxy () {
 }
 
 detect_gnome_proxy () {
+    gsettings=/usr/bin/gsettings   
+    if [ -x $gsettings ] ; then 
+        translate=/usr/bin/tr
+               
+        proxy_mode=`$gsettings get org.gnome.system.proxy mode 2>/dev/null`
+        if [ "$proxy_mode" = "'manual'" ] ; then
+            http_proxy_host=`$gsettings get org.gnome.system.proxy.http host 2>/dev/null | $translate -d "'"`
+            http_proxy_port=`$gsettings get org.gnome.system.proxy.http port 2>/dev/null`
+            http_proxy_tmp=$http_proxy_host:$http_proxy_port
+            http_non_proxy_hosts=`$gsettings get org.gnome.system.proxy ignore-hosts 2>/dev/null`
+            if [ $? ] ; then
+                http_non_proxy_hosts=`echo $http_non_proxy_hosts | $translate -d "[]' "`
+            fi
+            socks_proxy_host=`$gsettings get org.gnome.system.proxy.socks host 2>/dev/null | $translate -d "'"`
+            socks_proxy_port=`$gsettings get org.gnome.system.proxy.socks port 2>/dev/null`
+            socks_proxy_tmp=$socks_proxy_host:$socks_proxy_port
+
+            return 0
+        else
+            if [ "$proxy_mode" = "'none'" ] ; then
+                detect_system_proxy
+                if [ -z "$http_proxy_tmp" ]; then
+                    http_proxy_tmp="DIRECT"
+                fi
+                return 0
+            else
+                if [ "$proxy_mode" = "'auto'" ] ; then
+                    detect_system_proxy
+                    pac_file=`$gsettings get org.gnome.system.proxy autoconfig-url 2>/dev/null | $translate -d "'"`
+                    if [ ! -z "$pac_file" ]; then
+                        http_proxy_tmp="PAC "$pac_file
+                    fi
+                    return 0
+                fi
+            fi
+        fi
+    fi
+
     gconftool=/usr/bin/gconftool-2
     if [ -x  $gconftool ] ; then
         proxy_mode=`$gconftool --get /system/proxy/mode 2>/dev/null`
@@ -392,7 +447,7 @@ EOF
 
     if /usr/bin/grep "ProxyAuto.*: *1" ${scutil_out} >/dev/null 2>&1; then
         if  /usr/bin/grep "ProxyAutoConfigEnable.*: *1" ${scutil_out} >/dev/null 2>&1; then
-            http_proxy_tmp="PAC `/usr/bin/grep ProxyAutoConfigURLString ${scutil_out} | /usr/bin/awk '{print $3}'`"
+            http_proxy_tmp="PAC `/usr/bin/grep ProxyAutoConfigURLString ${scutil_out} | /usr/bin/awk 'END{print $3}'`"
             rm ${scutil_out}
             return 0
         fi
@@ -402,8 +457,8 @@ EOF
     fi
 
     if /usr/bin/grep "HTTPEnable *: *1" ${scutil_out} >/dev/null 2>&1; then
-	http_proxy_host=`/usr/bin/grep HTTPProxy ${scutil_out} | /usr/bin/awk '{print $3}'`
-	http_proxy_port=`/usr/bin/grep HTTPPort ${scutil_out} | /usr/bin/awk '{print $3} '`
+	http_proxy_host=`/usr/bin/grep HTTPProxy ${scutil_out} | /usr/bin/awk 'END{print $3}'`
+	http_proxy_port=`/usr/bin/grep HTTPPort ${scutil_out} | /usr/bin/awk 'END{print $3} '`
         http_proxy_tmp=$http_proxy_host:$http_proxy_port
         rm ${scutil_out}
         return 0
@@ -439,6 +494,11 @@ fi
 
 if [ ! -z "$socks_proxy_tmp" ] ; then
 	jargs="-Dnetbeans.system_socks_proxy=\"$socks_proxy_tmp\" $jargs"
+fi
+
+if [ ! -z "${DEFAULT_USERDIR_ROOT}" ] ; then
+	jargs="-Dnetbeans.default_userdir_root=\"${DEFAULT_USERDIR_ROOT}\" $jargs"
+        unset DEFAULT_USERDIR_ROOT
 fi
 
 # http://java.sun.com/j2se/1.5.0/docs/guide/2d/flags.html#pixmaps
