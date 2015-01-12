@@ -872,6 +872,7 @@
       		<str name="captureAttr">true</str>
 			<str name="lowernames">true</str>
 			<str name="fmap.language">ignored_</str>
+			<str name="fmap.source">ignored_</str>
 			<str name="uprefix">ignored_</str>
 			<str name="update.chain">datafari</str>
 			<bool name="ignoreTikaException">true</bool>
