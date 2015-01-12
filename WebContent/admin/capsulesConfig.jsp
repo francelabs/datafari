@@ -46,6 +46,10 @@ bar;Awesome;Hey <br /> <br />
 <br /> <br />
 <input type="submit" value="<%= resourceBundle.getString("capsuleTexte5") %>" />
 </form>
+
+<br /> <br /> <br /> 
+<%= resourceBundle.getString("capsuleTexte6") %>
+<a href="download.jsp">capsules.txt</a>  
  
 	<jsp:include page="../footer.jsp" />
 </body>

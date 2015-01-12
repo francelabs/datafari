@@ -4,6 +4,7 @@
 <%@ page import="org.apache.commons.fileupload.disk.*" %>
 <%@ page import="org.apache.commons.fileupload.servlet.*" %>
 <%@ page import="org.apache.commons.io.output.*" %>
+<%@ page import="java.util.ResourceBundle"  %>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
@@ -25,6 +26,8 @@
 
 <%
 if (request.getContentType()!=null) {
+
+	ResourceBundle resourceBundle = ResourceBundle.getBundle("com.francelabs.i18n.text", request.getLocale()); 
    File file ;
    int maxFileSize = 5000 * 1024;
    int maxMemSize = 5000 * 1024;
@@ -67,8 +70,10 @@ if (request.getContentType()!=null) {
             
             file = new File( filePath +"capsules.txt");
             fi.write( file ) ;
-            out.println("The file was succesfully uploaded <br/>");
-			out.println("Please restart Datafari in order to activate the new feature");
+			
+            out.println(resourceBundle.getString("capsuleTexte7"));
+			out.println("<br />");
+			
             }
          }
          
