@@ -1,4 +1,4 @@
--------------------------------------------------- DATAFARI V. 0.7.1-ALPHA --------------------------------------------------
+-------------------------------------------------- DATAFARI V. 0.9 --------------------------------------------------
 
 Datafari is the perfect product for anyone who needs to search within its corporate big data,
 based on the most advanced open source technologies.
