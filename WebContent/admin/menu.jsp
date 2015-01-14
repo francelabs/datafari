@@ -9,6 +9,7 @@
             onmouseover="mcancelclosetime()" 
             onmouseout="mclosetime()">
         <a href="solr.jsp">Solr Admin</a>
+		<a href="banana.jsp">Graphical Stats</a>
         <a href="stats.jsp">Stats</a>
 		<a href="capsulesConfig.jsp">Capsules</a>
         </div>
