@@ -49,6 +49,7 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 			window.history.pushState('Object', 'Title',
 					window.location.pathname + '?searchType=' + searchType
 							+ '&query=' + query);
+			Manager.store.addByValue("id", UUID.generate());
 		}
 	},
 

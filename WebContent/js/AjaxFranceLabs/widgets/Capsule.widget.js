@@ -28,7 +28,7 @@ AjaxFranceLabs.CapsuleWidget = AjaxFranceLabs.AbstractWidget.extend({
 	afterRequest : function() {
 		var self = this;
 		var data = this.manager.response, elm = $(this.elm);
-			if (data.capsuleSearchComponent !== undefined && data.capsuleSearchComponent.title.length > 0)
+			if (data.capsuleSearchComponent.title !== undefined && data.capsuleSearchComponent.title.length > 0)
 				$(self.elm).append('<span class="title">' + data.capsuleSearchComponent.title + '</span>').append('<span class="tips">' + data.capsuleSearchComponent.body + '</span>').show();
 		
 	}
