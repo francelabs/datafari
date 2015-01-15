@@ -29,13 +29,13 @@
 <h3><%= resourceBundle.getString("capsuleTitre") %></h3>
 <p>
 <%= resourceBundle.getString("capsuleTexte1") %> <br />
-query;title;text 
+<h4>query=title;text </h4>
 </p>
 
 <p>
 <%= resourceBundle.getString("capsuleTexte2") %> <br />
-foo;Great;Hello world <br />
-bar;Awesome;Hey <br /> <br />
+foo=Great;Hello world <br />
+bar=Awesome;Hey <br /> <br />
 
 <%= resourceBundle.getString("capsuleTexte3") %>
 </p> <br />
