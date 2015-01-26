@@ -11,7 +11,7 @@ you just need to mention that you are using it.
 
 Pre-Requirements:
 
-- Windows Environment (32 or 64 bits) or Debian Environment (64 bits)
+- Windows Environment 64 bits or Debian Environment 64 bits
 - Processor : 1GHZ and RAM : 2GB
 - Ports 8080 and 5432 are opened
 - Debian environment : requires curl
