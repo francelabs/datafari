@@ -1,4 +1,5 @@
 #!/bin/bash -e
+
 export DATAFARI_HOME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/..
 export JAVA_HOME=${DATAFARI_HOME}/jvm
 export LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib
