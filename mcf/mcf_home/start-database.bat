@@ -16,10 +16,16 @@ rem limitations under the License.
 
 rem check that JAVA_HOME is set, and that the current directory is correct
 if not exist "%JAVA_HOME%\bin\java.exe" goto nojavahome
-rem invoke java with the database class
-"%JAVA_HOME%\bin\java" -cp ..\lib\hsqldb.jar org.hsqldb.Server -database.0 file:extdb;hsqldb.tx=mvcc;hsqldb.cache_file_scale=512 -dbname.0 xdb
+if not exist ".\properties.xml" goto nolcfhome
+set JAVAOPTIONS=
+for /f "delims=" %%a in ('type hsqldb-options.env.win') do call setjavaoption.bat "%%a"
+rem invoke java with the jetty class
+"%JAVA_HOME%\bin\java" %JAVAOPTIONS% org.hsqldb.Server -database.0 file:extdb;hsqldb.tx=mvcc;hsqldb.cache_file_scale=512 -dbname.0 xdb
 goto done
 :nojavahome
 echo Environment variable JAVA_HOME is not set properly.
+goto done
+:nolcfhome
+echo Current working directory does not contain a properties.xml file.
 goto done
 :done
