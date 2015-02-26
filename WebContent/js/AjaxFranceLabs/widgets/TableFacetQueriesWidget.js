@@ -46,7 +46,7 @@ AjaxFranceLabs.TableFacetQueriesWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 		elm.addClass('facet').addClass('TableFacetQueriesWidget').addClass('tableWidget').addClass('widget').attr('widgetId', this.id).append('<div class="facetSort">').append('<ul>');
 		if(this.name != null){
 			elm.prepend('<div class="facetName">')
-				.find('.facetName').append('<span class="hide_show">').append('<span class="label">')
+				.find('.facetName').append('<span class="hide_show close">').append('<span class="label">')
 				.find('.label').append(this.name)
 				.parent('.facetName').find('.hide_show').toggle(function() {
 					$('.facetSort, ul, .PagerModule', $(this).parents('.tableWidget')).hide();

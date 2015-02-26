@@ -5,6 +5,7 @@
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Search</title>
 <link rel="icon" type="image/png" href="images/bullet.png">
 <link rel="stylesheet" type="text/css" href="css/main.css"
@@ -52,6 +53,9 @@
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/Capsule.widget.js"></script>
 	<script type="text/javascript"
+		src="js/AjaxFranceLabs/widgets/TableMobile.widget.js"></script>
+	<script type="text/javascript"
+	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/Spellchecker.widget.js"></script>
 
 	<script type="text/javascript" src="js/main.js"></script>
@@ -59,7 +63,8 @@
 	<script type="text/javascript" src="js/search.js"></script>
 
 
-	<jsp:include page="header.jsp" />
+	<jsp:include page="header.jsp" /> 
+	
 	<div id="solr">
 		<div id="searchBar"></div>
 		<div id="result_information"></div>
@@ -75,11 +80,15 @@
 		<div class="col right">
 			<div id="capsule"></div>
 			<div id="spellchecker"></div>
+			<div id="facets_mobile">
+				<div id="facet_source_mobile"></div>
+				<div id="facet_type_mobile"></div>
+			</div>
 			<div id="results"></div>
 		</div>
 		<div class="clear"></div>
 	</div>
-	<jsp:include page="footer.jsp" />
+	<jsp:include page="footer.jsp" /> 
 
 </body>
 </html>

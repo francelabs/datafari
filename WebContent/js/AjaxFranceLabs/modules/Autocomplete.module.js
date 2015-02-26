@@ -43,7 +43,7 @@ AjaxFranceLabs.AutocompleteModule = AjaxFranceLabs.AbstractModule
 						delay : 50,
 						minLength : 0,
 						source : function(request, response) {
-							var term = AjaxFranceLabs.extractLast(request.term);
+							var term = AjaxFranceLabs.extractLast(request.term).toLowerCase();
 							if (term in self.cache) {
 								response(self.cache[term]);
 								return;
@@ -104,7 +104,7 @@ AjaxFranceLabs.AutocompleteModule = AjaxFranceLabs.AbstractModule
 							if (self.singleValue === true) {
 								this.value = self
 										.valueSelectFormat(ui.item.value);
-								this.value += ("\u200c");
+								this.value +=  ("\u200c");
 							} else {
 								var terms = AjaxFranceLabs.split(this.value);
 								terms.pop();

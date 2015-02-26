@@ -49,6 +49,7 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 			window.history.pushState('Object', 'Title',
 					window.location.pathname + '?searchType=' + searchType
 							+ '&query=' + query);
+			Manager.store.addByValue("id", UUID.generate());
 		}
 	},
 
@@ -68,7 +69,7 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 		elm.addClass('searchBarWidget').addClass('widget').append(
 				'<div class="searchBar">').append('<div class="searchMode">')
 				.append('<div id="sortMode">');
-		elm.find('.searchBar').append('<input type="text" />').append(
+		elm.find('.searchBar').append('<input type="text" autocorrect="off" autocapitalize="off"/>').append(
 				'<input class="search" type="button" />');
 		if (this.removeContentButton)
 			elm.find('.searchBar').append('<span class="removeContent" />')
