@@ -15,11 +15,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+if [[ $OSTYPE == "cygwin" ]] ; then
+    OPTIONSFILE="hsqldb-options.env.win"
+else
+    OPTIONSFILE="hsqldb-options.env.unix"
+fi
+
 #Make sure environment variables are properly set
 if [ -e "$JAVA_HOME"/bin/java ] ; then
-    "$JAVA_HOME"/bin/java -cp ../lib/hsqldb.jar org.hsqldb.Server -database.0 "file:extdb;hsqldb.tx=mvcc;hsqldb.cache_file_scale=512" -dbname.0 xdb
-    exit $?
+    if [ -f ./properties.xml ] ; then
+        # Build the global options
+        OPTIONS=$(cat "$OPTIONSFILE")
         
+        "$JAVA_HOME/bin/java" $OPTIONS org.hsqldb.Server -database.0 "file:extdb;hsqldb.tx=mvcc;hsqldb.cache_file_scale=512" -dbname.0 xdb
+        exit $?
+        
+    else
+        echo "Working directory contains no properties.xml file." 1>&2
+        exit 1
+    fi
+
 else
     echo "Environment variable JAVA_HOME is not properly set." 1>&2
     exit 1

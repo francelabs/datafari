@@ -1,9 +1,9 @@
--------------------------------------------------- DATAFARI V. 0.7.1-ALPHA --------------------------------------------------
+-------------------------------------------------- DATAFARI V. 0.9 --------------------------------------------------
 
 Datafari is the perfect product for anyone who needs to search within its corporate big data,
 based on the most advanced open source technologies.
 Datafari combines both the Apache ManifoldCF and Solr products, and proposes to its users to search into file shares,
-cloud shares (dropbox, google drive�), databases, but also emails and many more sources. 
+cloud shares (dropbox, google drive), databases, but also emails and many more sources. 
 Available as community and enterprise edition, Datafari is different from the competition : 
 - Its open source license is not aggressive, as it uses the Apache v2 license: you are free to do whatever you want with it,
 you just need to mention that you are using it. 
@@ -11,7 +11,7 @@ you just need to mention that you are using it.
 
 Pre-Requirements:
 
-- Windows Environment (32 or 64 bits) or Debian Environment (64 bits)
+- Windows Environment 64 bits or Debian Environment 64 bits
 - Processor : 1GHZ and RAM : 2GB
 - Ports 8080 and 5432 are opened
 - Debian environment : requires curl

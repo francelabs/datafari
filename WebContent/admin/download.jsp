@@ -24,8 +24,13 @@ try {
 in = new BufferedInputStream
 (new FileInputStream(fileToDownload));
 int ch;
+char caractere;
 while ((ch = in.read()) != -1) {
-outs.print((char) ch);
+	caractere = (char) ch;
+	if (caractere == '\\')
+		continue;
+		
+outs.print(caractere);
 }
 }
 finally {

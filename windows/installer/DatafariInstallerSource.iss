@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Datafari"
-#define MyAppVersion "0.71"
+#define MyAppVersion "0.9"
 #define MyAppPublisher "France Labs"
 #define MyAppURL "http://www.datafari.com/"
 

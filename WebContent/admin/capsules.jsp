@@ -5,6 +5,12 @@
 <%@ page import="org.apache.commons.fileupload.servlet.*" %>
 <%@ page import="org.apache.commons.io.output.*" %>
 <%@ page import="java.util.ResourceBundle"  %>
+<%@ page import="java.nio.charset.StandardCharsets" %>
+<%@ page import="java.nio.charset.Charset" %>
+<%@ page import="java.nio.file.Path" %>
+<%@ page import="java.nio.file.Paths" %>
+<%@ page import="java.nio.file.Files" %>
+
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
@@ -71,8 +77,16 @@ if (request.getContentType()!=null) {
             file = new File( filePath +"capsules.txt");
             fi.write( file ) ;
 			
+			
+			Charset charset = StandardCharsets.UTF_8;
+			Path path = Paths.get(filePath +"capsules.txt");
+			String content = new String(Files.readAllBytes(path), charset);
+			content = content.replaceAll(" ", "\\\\ ");
+			Files.write(path, content.getBytes(charset));
+			
             out.println(resourceBundle.getString("capsuleTexte7"));
 			out.println("<br />");
+			 out.println(resourceBundle.getString("capsuleTexte8"));
 			
             }
          }
