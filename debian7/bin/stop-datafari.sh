@@ -5,7 +5,7 @@ if (( EUID != 0 )); then
    exit 100
 fi
 
-export DATAFARI_HOME=$(pwd)/..
+export DATAFARI_HOME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/..
 export JAVA_HOME=${DATAFARI_HOME}/jvm
 export LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib
 export CONFIG_FILE=${DATAFARI_HOME}/tomcat/conf/datafari.properties
@@ -23,5 +23,6 @@ then
 		bash zkServer.sh stop
 	fi
 fi
+
 
 

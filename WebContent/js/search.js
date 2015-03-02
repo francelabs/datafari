@@ -60,6 +60,27 @@ $(function($) {
 		selectionType : 'OR',
 		returnUnselectedFacetValues : true
 	}));
+	
+	Manager.addWidget(new AjaxFranceLabs.TableMobileWidget({
+		elm : $('#facet_type_mobile'),
+		id : 'facet_type_mobile',
+		field : 'extension',
+		name : window.i18n.msgStore['type'],
+		pagination : true,
+		selectionType : 'OR',
+		returnUnselectedFacetValues : true
+	}));
+
+	Manager.addWidget(new AjaxFranceLabs.TableMobileWidget({
+		elm : $('#facet_source_mobile'),
+		id : 'facet_source_mobile',
+		field : 'source',
+		name : window.i18n.msgStore['source'],
+		pagination : true,
+		selectionType : 'OR',
+		sort : 'ZtoA',
+		returnUnselectedFacetValues : true
+	}));
 
 	
 	Manager.addWidget(new AjaxFranceLabs.ResultWidget(
@@ -112,8 +133,8 @@ $(function($) {
 									                var urlRedirect = 'URL?url='+ url + '&id='+Manager.store.get("id").value + '&q=' + Manager.store.get("q").value + '&position='+position;
 													elm.find('.doc:last .res').append('<a class="title" target="_blank" href="'+urlRedirect+'"></a>');													elm.find('.doc:last .title').append('<span>' +decodeURIComponent(doc.title) + '</span>'); 
 													elm.find('.doc:last .res').append('<p class="description">');
-													elm.find('.doc:last .description').append('<span>'+ description+ '</span>');
-													elm.find('.doc:last .description').append('<p class="address">');
+													elm.find('.doc:last .description').append('<div id="snippet">'+ description+ '</div>');
+							elm.find('.doc:last .description').append('<div id="urlMobile"><p class="address">');
 													elm.find('.doc:last .address').append('<span>' + AjaxFranceLabs.tinyUrl(decodeURIComponent(url)) + '</span>');
 													
 												});

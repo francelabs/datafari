@@ -4,9 +4,7 @@
 <html>
 <head>
 <title>Redirect</title>
-<meta HTTP-EQUIV="Pragma" CONTENT="no-cache" />
-<meta HTTP-EQUIV="Expires" CONTENT="-1" />
-<meta HTTP-EQUIV="refresh" CONTENT="0;URL='<%= request.getParameter("url") %>'">
+<meta http-equiv="refresh" content="0;URL=<%= request.getParameter("url") %>">
 </head>
 <body>
 </body>
