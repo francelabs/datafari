@@ -94,11 +94,6 @@ AjaxFranceLabs.AutocompleteModule = AjaxFranceLabs.AbstractModule
 														
 														
 														
-														src = src.reverse();
-														src
-																.push(AjaxFranceLabs
-																		.extractLast(request.term));
-														src = src.reverse();
 														self.cache[term] = src;
 														if (xhr === self.lastXhr) {
 															response(src);
