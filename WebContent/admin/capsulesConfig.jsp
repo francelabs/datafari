@@ -23,34 +23,32 @@
 
     
 <br /> <br />
-
+<div class="adminConfig">
 <% ResourceBundle resourceBundle = ResourceBundle.getBundle("com.francelabs.i18n.text", request.getLocale()); %>
 	
-<h3><%= resourceBundle.getString("capsuleTitre") %></h3>
-<p>
-<%= resourceBundle.getString("capsuleTexte1") %> <br />
-<h4>query=title;text </h4>
-</p>
+<h3><%= resourceBundle.getString("capsuleTitle") %></h3>
+<div id="capsuleLeft">
+<%= resourceBundle.getString("capsuleIntro") %><br/><br/>
+<%= resourceBundle.getString("capsuleTechno") %><br/><br/>
 
-<p>
-<%= resourceBundle.getString("capsuleTexte2") %> <br />
-foo=Great;Hello world <br />
-bar=Awesome;Hey <br /> <br />
-
-<%= resourceBundle.getString("capsuleTexte3") %>
-</p> <br />
-<b><%= resourceBundle.getString("capsuleTexte4") %></b>
 <form action="capsules.jsp" method="post"
                         enctype="multipart/form-data">
-<input type="file" name="file" size="50" />
-<br /> <br />
-<input type="submit" value="<%= resourceBundle.getString("capsuleTexte5") %>" />
-</form>
+<input type="file" name="file" size="30" />
+<br />
+<input type="submit" value="<%= resourceBundle.getString("capsuleSend") %>" id="submitCapsule" />
+<%= resourceBundle.getString("capsuleSelection") %>
+</form><br /><br />
 
-<br /> <br /> <br /> 
-<%= resourceBundle.getString("capsuleTexte6") %>
-<a href="download.jsp">capsules.txt</a>  
+<form action="download.jsp">
+    <input type="submit" value="<%= resourceBundle.getString("capsuleDownloadButton") %>" id="downloadCapsule" >
+    <%= resourceBundle.getString("capsuleDownload") %> <br/>
+</form> 
+
  
+</div>
+
+</div>
+
 	<jsp:include page="../footer.jsp" />
 </body>
 </html>
