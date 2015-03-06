@@ -498,9 +498,9 @@ height:18px; width:18px;
 /**************************************/
 
 /***	>>> Search Bar Widget <<<	***/
-.searchBarWidget { clear: both; margin: 0 auto 20px; width: 550px; }
-.searchBarWidget .searchBar { border: 1px solid; padding: 5px 0 5px 2px; width: 420px; }
-.searchBarWidget .searchBar input[type=text] { border: none; height: 100%; width:350px;  }
+.searchBarWidget { clear: both; margin: 0 auto 20px; width: 624px; }
+.searchBarWidget .searchBar { border: 1px solid; padding: 5px 0 5px 2px; width: 620px; }
+.searchBarWidget .searchBar input[type=text] { border: none; height: 100%; width: 593px; }
 .searchBarWidget .searchBar input[type=button].search { background: url('../js/AjaxFranceLabs/images/search_ico.png') no-repeat 0 0; border: none; cursor: pointer; display: block; float: right; height: 17px; margin-right: 5px; width: 20px; }
 .searchBarWidget .searchMode { clear:both; margin-top: 3px; text-align: right; width: 420px; }
 .searchBarWidget .searchMode label { cursor:pointer; display: inline-block; height: 20px; line-height: 20px; margin-left: 5px; }

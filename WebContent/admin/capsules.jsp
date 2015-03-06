@@ -84,9 +84,9 @@ if (request.getContentType()!=null) {
 			content = content.replaceAll(" ", "\\\\ ");
 			Files.write(path, content.getBytes(charset));
 			
-            out.println(resourceBundle.getString("capsuleTexte7"));
+            out.println(resourceBundle.getString("capsuleSuccess"));
 			out.println("<br />");
-			 out.println(resourceBundle.getString("capsuleTexte8"));
+			out.println(resourceBundle.getString("capsuleRestart"));
 			
             }
          }

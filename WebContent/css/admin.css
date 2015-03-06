@@ -64,3 +64,24 @@ h4 {
 	#sddm div a:hover
 	{	background: #D5ED29;
 		color: #FFF}
+		
+#capsuleLeft {
+	float:left;
+	width:40%;
+	display:inline-block;
+	text-align:justify;
+	padding-top:5px;
+}
+
+
+#submitCapsule {
+	width: 85px;  	
+}
+
+#downloadCapsule { 
+	width: 85px;  
+}
+
+.adminConfig {
+	padding-left:10px;
+}
