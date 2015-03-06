@@ -603,22 +603,7 @@
 
         
      -->
-    <!-- QuerySenderListener takes an array of NamedList and executes a
-         local query request for each NamedList in sequence. 
-      -->
-		<listener event="firstSearcher" class="solr.QuerySenderListener">
-			<arr name="queries">
 
-				<lst>
-					<str name="q">rapport</str>
-				</lst>
-
-				<lst>
-					<str name="spellcheck.build">true</str>
-					<str name="qt">suggest</str>
-				</lst>
-			</arr>
-		</listener>
 
     <!-- Use Cold Searcher
 
