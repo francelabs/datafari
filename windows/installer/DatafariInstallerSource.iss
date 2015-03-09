@@ -36,6 +36,26 @@ Source: "{#SourceDirectory}\*"; DestDir: "{app}"; Flags: ignoreversion recursesu
 var
   AdminPasswordPage, MCFAdminPasswordPage: TInputQueryWizardPage;
   AdminPassword, MCFAdminPassword: String;
+  isVerySilent: Boolean;
+  
+
+function InitializeSetup(): Boolean;
+var
+  j: Integer;
+begin
+  isVerySilent := False;
+  for j := 1 to ParamCount do
+    if CompareText(ParamStr(j), '/verysilent') = 0 then
+    begin
+      isVerySilent := True;
+      Break;
+    end; 
+
+  if isVerySilent then
+    Log ('VerySilent')
+  else
+    Log ('not VerySilent');
+end;
   
 procedure FileReplace(SrcFile, sFrom, sTo: String);
 var
@@ -93,8 +113,14 @@ begin
   end 
   if AdminPassword = '' then
   begin
-    MsgBox('Warning : password can not be blank', mbInformation, MB_OK);
-    Result := False;  
+  	if isVerySilent then
+  	begin
+  		AdminPassword = 'password';
+    	Result := True;
+  	else
+    	MsgBox('Warning : password can not be blank', mbInformation, MB_OK);
+    	Result := False;
+    end  
   end
 end
 else 
