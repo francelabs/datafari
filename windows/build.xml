@@ -71,6 +71,45 @@
 				<include name="**" />
 			</fileset>
 		</copy>
+		
+
+		<mkdir dir="${windows.dist.dir}/bin/common/lib" />
+
+		<copy todir="${windows.dist.dir}/bin/common/config">
+			<fileset dir="${bin.dir}/config" />
+		</copy>
+		
+
+		<copy todir="${windows.dist.dir}/bin/common/lib">
+			<fileset dir="${bin.dir}/common/lib" />
+		</copy>
+						
+						
+		<copy todir="${windows.dist.dir}/bin/common">
+			  <fileset file="${bin.dir}/dist/DatafariScripts.jar" />
+		</copy>
+		
+
+		<copy todir="${windows.dist.dir}/bin/common/config">
+			<fileset dir="${bin.dir}/config" />
+		</copy>
+
+
+		<mkdir dir="${bin.dir}/lib" />
+		
+		<copy todir="${windows.dist.dir}/bin/common/lib">
+			<fileset dir="${bin.dir}/common/lib" />
+		</copy>
+				
+
+		<copy todir="${windows.dist.dir}/bin/common">
+			<fileset file="${bin.dir}/init_state.properties" />
+		</copy>
+		
+		<copy todir="${windows.dist.dir}/bin/common">
+			<fileset file="${bin.dir}/dist/DatafariScripts.jar" />
+		</copy>
+					
 	</target>
 
 

@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Datafari"
-#define MyAppVersion "0.9"
+#define MyAppVersion "1.0"
 #define MyAppPublisher "France Labs"
 #define MyAppURL "http://www.datafari.com/"
 
@@ -29,14 +29,16 @@ SolidCompression=yes
 Name: "english"; MessagesFile: "compiler:Default.isl"
     
 [Files]
-Source: "{#SourceDirectory}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Users\mazoyer\Desktop\datafari\windows\installer\build*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Code]
 var
   AdminPasswordPage, MCFAdminPasswordPage: TInputQueryWizardPage;
   AdminPassword, MCFAdminPassword: String;
+  isVerySilent: Boolean;
   
+
 procedure FileReplace(SrcFile, sFrom, sTo: String);
 var
 		FileContent: String;
@@ -57,9 +59,24 @@ procedure CurPageChanged(CurPageID: Integer);
   end;
 
   
-procedure InitializeWizard;
+procedure InitializeWizard; 
+var
+  j: Integer;
 begin
   { Create the pages }
+  
+  isVerySilent := False;
+  for j := 1 to ParamCount do
+    if CompareText(ParamStr(j), '/verysilent') = 0 then
+    begin
+      isVerySilent := True;
+      Break;
+    end; 
+
+  if isVerySilent then
+    Log ('VerySilent')
+  else
+    Log ('not VerySilent');
 
   MCFAdminPasswordPage := CreateInputQueryPage(wpWelcome,
     'Configuration', 'ManifoldCF Crawler',
@@ -93,8 +110,16 @@ begin
   end 
   if AdminPassword = '' then
   begin
-    MsgBox('Warning : password can not be blank', mbInformation, MB_OK);
-    Result := False;  
+  	if isVerySilent then
+		begin
+			AdminPassword := 'password';
+			Result := True;
+		end
+  	else
+		begin
+			MsgBox('Warning : password can not be blank', mbInformation, MB_OK);
+			Result := False;
+		end  
   end
 end
 else 
@@ -115,8 +140,16 @@ begin
   end 
   if MCFAdminPassword = '' then
   begin
-    MsgBox('Warning : password can not be blank', mbInformation, MB_OK);
-    Result := False;  
+    if isVerySilent then
+		begin
+			MCFAdminPassword := 'password';
+			Result := True;
+		end
+  	else
+		begin
+			MsgBox('Warning : password can not be blank', mbInformation, MB_OK);
+			Result := False;
+		end   
   end
 end
 else 
@@ -128,4 +161,5 @@ end;
 
 
 [Run]
+Filename: "{app}\bin\initialize.bat"
 Filename: "EXPLORER.EXE"; Parameters: "/select,{app}\bin\start-datafari.bat"
