@@ -29,7 +29,7 @@ SolidCompression=yes
 Name: "english"; MessagesFile: "compiler:Default.isl"
     
 [Files]
-Source: "C:\Users\mazoyer\Desktop\datafari\windows\installer\build*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#SourceDirectory}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Code]
