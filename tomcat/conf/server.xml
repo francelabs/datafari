@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -14,23 +14,21 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
--->
-<!-- Note:  A "Server" is not itself a "Container", so you may not
+--><!-- Note:  A "Server" is not itself a "Container", so you may not
      define subcomponents such as "Valves" at this level.
      Documentation at /docs/config/server.html
- -->
-<Server port="8005" shutdown="SHUTDOWN">
+ --><Server port="8005" shutdown="SHUTDOWN">
   <!-- Security listener. Documentation at /docs/config/listeners.html
   <Listener className="org.apache.catalina.security.SecurityListener" />
   -->
   <!--APR library loader. Documentation at /docs/apr.html -->
-  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+  <Listener SSLEngine="on" className="org.apache.catalina.core.AprLifecycleListener"/>
   <!--Initialize Jasper prior to webapps are loaded. Documentation at /docs/jasper-howto.html -->
-  <Listener className="org.apache.catalina.core.JasperListener" />
+  <Listener className="org.apache.catalina.core.JasperListener"/>
   <!-- Prevent memory leaks due to use of particular java/javax APIs-->
   <!-- <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" /> -->
-  <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
-  <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+  <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener"/>
+  <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener"/>
 
   <!-- Global JNDI resources
        Documentation at /docs/jndi-resources-howto.html
@@ -39,11 +37,7 @@
     <!-- Editable user database that can also be used by
          UserDatabaseRealm to authenticate users
     -->
-    <Resource name="UserDatabase" auth="Container"
-              type="org.apache.catalina.UserDatabase"
-              description="User database that can be updated and saved"
-              factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
-              pathname="conf/tomcat-users.xml" />
+    <Resource auth="Container" description="User database that can be updated and saved" factory="org.apache.catalina.users.MemoryUserDatabaseFactory" name="UserDatabase" pathname="conf/tomcat-users.xml" type="org.apache.catalina.UserDatabase"/>
   </GlobalNamingResources>
 
   <!-- A "Service" is a collection of one or more "Connectors" that share
@@ -67,10 +61,7 @@
          APR (HTTP/AJP) Connector: /docs/apr.html
          Define a non-SSL HTTP/1.1 Connector on port 8080
     -->
-    <Connector port="8080" protocol="HTTP/1.1"
-               connectionTimeout="20000"
-               redirectPort="8443" 
-               URIEncoding="UTF-8" />
+    <Connector URIEncoding="UTF-8" connectionTimeout="20000" port="8080" protocol="HTTP/1.1" redirectPort="8443"/>
     <!-- A "Connector" using the shared thread pool-->
     <!--
     <Connector executor="tomcatThreadPool"
@@ -89,7 +80,7 @@
     -->
 
     <!-- Define an AJP 1.3 Connector on port 8009 -->
-    <Connector port="8009" protocol="AJP/1.3" redirectPort="8443" />
+    <Connector port="8009" protocol="AJP/1.3" redirectPort="8443"/>
 
 
     <!-- An Engine represents the entry point (within Catalina) that processes
@@ -101,7 +92,7 @@
     <!-- You should set jvmRoute to support load-balancing via AJP ie :
     <Engine name="Catalina" defaultHost="localhost" jvmRoute="jvm1">
     -->
-    <Engine name="Catalina" defaultHost="localhost">
+    <Engine defaultHost="localhost" name="Catalina">
 
       <!--For clustering, please take a look at documentation at:
           /docs/cluster-howto.html  (simple how to)
@@ -117,12 +108,10 @@
              resources under the key "UserDatabase".  Any edits
              that are performed against this UserDatabase are immediately
              available for use by the Realm.  -->
-        <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
-               resourceName="UserDatabase"/>
+        <Realm className="org.apache.catalina.realm.UserDatabaseRealm" resourceName="UserDatabase"/>
       </Realm>
 
-      <Host name="localhost"  appBase="webapps"
-            unpackWARs="true" autoDeploy="true">
+      <Host appBase="webapps" autoDeploy="true" name="localhost" unpackWARs="true">
 
         <!-- SingleSignOn valve, share authentication between web applications
              Documentation at: /docs/config/valve.html -->
@@ -133,11 +122,25 @@
         <!-- Access log processes all example.
              Documentation at: /docs/config/valve.html
              Note: The pattern used is equivalent to using pattern="common" -->
-        <Valve className="org.apache.catalina.valves.AccessLogValve" directory="../logs"
-               prefix="localhost_access_log." suffix=".txt"
-               pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+        <Valve className="org.apache.catalina.valves.AccessLogValve" directory="../logs" pattern="%h %l %u %t &quot;%r&quot; %s %b" prefix="localhost_access_log." suffix=".txt"/>
 
-      </Host>
+      <Context docBase="/home/youp/git/datafari-master/tomcat/wtpwebapps/datafari-mcf-api-service" path="/datafari-mcf-api-service" reloadable="true" source="org.eclipse.jst.jee.server:datafari-mcf-api-service"/><Context docBase="/home/youp/git/datafari-master/tomcat/wtpwebapps/datafari-mcf-authority-service" path="/datafari-mcf-authority-service" reloadable="true" source="org.eclipse.jst.jee.server:datafari-mcf-authority-service"/><Context docBase="/home/youp/git/datafari-master/tomcat/wtpwebapps/datafari-mcf-crawler-ui" path="/datafari-mcf-crawler-ui" reloadable="true" source="org.eclipse.jst.jee.server:datafari-mcf-crawler-ui"/><Context docBase="/home/youp/git/datafari-master/tomcat/wtpwebapps/datafari-solr" path="/datafari-solr" reloadable="true" source="org.eclipse.jst.jee.server:datafari-solr"/><Context docBase="/home/youp/git/datafari-master/tomcat/wtpwebapps/Datafari" path="/Datafari" reloadable="true" source="org.eclipse.jst.jee.server:Datafari">
+<!--
+       <Valve className="fr.doume.jna.authenticator.SSPAuthenticator" /> 
+       <Realm className ="fr.doume.jna.realm.WindowsRealm" /> 
+-->
+
+	<!-- -->
+	<!-- Not recommended: You do not use Spnego, but only ntlm. -->
+	<!-- <Parameter name="onlyntlm" value="" override="false"/> -->
+	<!-- Life Time in ms of the translation of the names of roles into Sids: 
+		By Default without limit -->
+	<!-- <Parameter name="timelifemaprolesintosids" value="-1" override="false" 
+		/> -->
+	<!-- By default, not used -->
+	<!-- <Parameter name="nogroupsinad" value="" override="false" /> -->
+
+</Context></Host>
     </Engine>
   </Service>
 </Server>

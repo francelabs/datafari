@@ -42,6 +42,11 @@ public class SolrServers {
 			public String toString() {
 				return "Statistics";
 			}
+		},
+		CAPSULE {
+			public String toString() {
+				return "Capsule";
+			}
 		}
 	}
 

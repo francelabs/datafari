@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="./../plugins/jquery/jquery.min.js" type="text/javascript"></script>
+    <script src="./../plugins/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<!--Start Breadcrumb-->
+<div class="row">
+	<div id="breadcrumb" class="col-xs-12">
+		<a href="#" class="show-sidebar"> <i class="fa fa-bars"></i>
+		</a>
+		<ol class="breadcrumb pull-left">
+			<li><a href="index.html">Home</a></li>
+			<li><a href="#">Search engine configuration</a></li>
+			<li><a href="#">Synonyms</a></li>
+		</ol>
+		<div id="social" class="pull-right">
+			<a href="#"><i class="fa fa-google-plus"></i></a> <a href="#"><i
+				class="fa fa-facebook"></i></a> <a href="#"><i class="fa fa-twitter"></i></a>
+			<a href="#"><i class="fa fa-linkedin"></i></a> <a href="#"><i
+				class="fa fa-youtube"></i></a>
+		</div>
+	</div>
+</div>
+<!--End Breadcrumb-->
+
+<!-- TODO get the list of language in the list_language.txt  --> 
+<form >
+	<fieldset>
+	<legend>Modify the file</legend>
+	<select id ="language" onclick="javascript: getFile()"">
+	<OPTION 	></OPTION>								
+	<OPTION >fr	</OPTION>
+	<OPTION >en	</OPTION>
+	</select>
+    </fieldset>
+</form>
+<form action="Synonyms" method="get">
+	<fieldset>
+		<legend>Download the file</legend>
+	<select id ="languagebis" name="languagebis">
+	<OPTION>	</OPTION>
+	<OPTION>fr	</OPTION>
+	<OPTION>en 	</OPTION>
+	</select> 
+	<input type="submit" id="submit" value="Download"/>
+	</fieldset>
+</form>
+<div id="anotherSection" >
+			<fieldset>
+			<legend>Contextual Menu</legend>
+			<div id="ajaxResponse"></div>
+		</fieldset>
+	</div>
+</body>
+<script type="text/javascript">
+	$(document).ready(function() {
+		//If the user refresh the page  
+		$(window).bind('beforeunload', function(){  								
+			 cleanSem();
+		  });
+		//If the user loads an other page
+		$("a").click(function(){										
+			cleanSem();
+			$("#ajaxResponse").empty();
+		});
+
+	});
+function getFile(){
+	//clean the response area
+	$("#ajaxResponse").empty();
+	//get the language
+	var language = document.getElementById("language").value;
+	//if a language has been selected
+	if(language != ""){
+    var dataString = "language=" + language;
+	$.ajax({									//Ajax request to get the content
+		url : './../admin/Synonyms', 
+		type : 'GET',
+		data : dataString,
+		success: function( data, textStatus, jqXHR) {
+			//If the semaphore was already acquired
+			if(data==="File already in use"){
+				$("#ajaxResponse").append("<div class=col-xs-5></div>");
+				$("#ajaxResponse").append("<h3 class=col-xs-2>"+data+"</h3>");
+				$("#ajaxResponse").append("<div class=col-xs-5></div>");
+			}
+			//Else print the content of the file in a textArea
+			else{
+			//Prevent the user from selecting an other file until he passed by one of the way to release the semaphore
+			$('#language').attr("disabled", true);
+			$("#ajaxResponse").append("<form id=\"res\">");
+			$("#res").append("<fieldset id=\"fields\">");
+			$("#fields").append("<textarea id=\"synContent\" style=\"height: 200px; width: 400px;\">"+data+"</textarea>"); //hardcoded size
+			$("#fields").append("<input type=\"Submit\" id=\"submit\" value=\"applyModifications\"/>");
+			$("#res").append("</fieldset>");
+			$("#ajaxResponse").append("</form>");
+			//On submit send the value of the textArea to upload()
+			$("#res").submit(function(e){
+				upload(document.getElementById("synContent").value);
+			});
+		}
+		},
+       error: function(jqXHR, textStatus, errorThrown){
+            console.log("Something really bad happened " + textStatus);
+             $("#ajaxResponse").html(jqXHR.responseText);
+       },
+       //capture the request before it was sent to server
+       beforeSend: function(jqXHR, settings){
+           //disable the button until we get the response
+           $('#myButton').attr("disabled", true);
+       },
+       //this is called after the response or error functions are finsihed
+       complete: function(jqXHR, textStatus){
+           //enable the button 
+           $('#myButton').attr("disabled", false);
+       },
+	});
+	}
+}
+function upload(text){
+	//Get the language and the content
+	var language = document.getElementById("language").value
+	var content = text;
+	$.ajax({										//Ajax request to rewrite the file
+		url : './Synonyms',
+		type : 'POST',
+		// Form data
+		data : {content: content, language: language},	
+		datetype : "text",
+		contenttype: "text-plain/utf-8",
+		success: function( data, textStatus, jqXHR) {
+			$("#ajaxResponse").empty();
+			$("#ajaxResponse").append("Modifications done");
+		},
+	 	error: function(jqXHR, textStatus, errorThrown){
+         	console.log("Something really bad happened " + textStatus);
+         	$("#ajaxResponse").html(jqXHR.responseText);
+    	},  
+   	 //capture the request before it was sent to server
+    	beforeSend: function(jqXHR, settings){
+        //disable the button until we get the response
+        	$('#myButton').attr("disabled", true);
+    	},  
+    	//this is called after the response or error functions are finsihed
+    	complete: function(jqXHR, textStatus){
+        	//enable the button 
+        	$('#myButton').attr("disabled", false);
+        	//allow the user to select a language
+        	$('#language').attr("disabled", false);
+    	}
+	});
+}
+function cleanSem(){
+	var language = document.getElementById("language").value;
+	if(language != "" && document.getElementById("synContent").value != null){	//If the user was editing a file
+    	var dataString = "language=" + language;
+    	$.ajax({													//Post request to release the semaphore
+    		url : './Synonyms', 
+    		type : 'POST',
+    		data : dataString,
+    		async : false
+    	});
+	}
+}
+
+</script>
+</html>

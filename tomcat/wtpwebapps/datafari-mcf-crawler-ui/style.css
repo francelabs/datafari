@@ -1,0 +1,763 @@
+/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements. See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file excepx in compliance with
+the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+/* 
+    Created on : Dec 4, 2013, 11:11:44 AM
+    Author     : Modified By Eranda Bandaranaike eragroove@gmail.com
+*/
+
+body
+{
+    font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+    color: #444;
+}
+.tabtable
+{
+    height: 100%;
+    width: 100%;
+    border: 0 solid #fff;
+    margin: 0;
+    padding: 0;
+    border-collapse: collapse;
+}
+
+.tabspacerrow
+{
+    height: 3px;
+}
+
+.spacertab
+{
+    background: #f8f8f8;
+    border-style: solid;
+    border-width: 1px 0 0 1px;
+    border-color: #ccc #ccc #ccc #ccc;
+    margin: 0;
+    padding: 0px 0px 0px 0px;
+    vertical-align: top;
+    height: 3px;
+}
+
+.tabsequencerow
+{
+    height: 8px;
+    font-size: 8px;
+    line-height: 8px;
+}
+
+.blanksequencetab
+{
+    background: #f8f8f8;
+    border-style: solid;
+    border-width: 0 0 0 1px;
+    border-color: #ccc #ccc #229ddb #ccc;
+    margin: 0;
+    padding: 2px 10px 3px 10px;
+    vertical-align: top;
+    height: 8px;
+}
+
+.sequencetab
+{
+    background: #fcfcfc;
+    border-style: solid;
+    border-width: 1px 1px 0 1px;
+    border-color: #ccc #ccc #229ddb #ccc;
+    margin: 0;
+    padding: 2px 10px 3px 10px;
+    height: 8px;
+    vertical-align: top;
+	text-align: center;
+}
+
+.tabrow
+{
+    height: 20px;
+    font-size: 12px;
+    line-height: 12px;
+}
+
+.tabbodyrow
+{
+    height: 100%;
+}
+
+.passivetab
+{
+    background: #fcfcfc;
+    border: solid 1px;
+    border-color: #ccc #ccc #229ddb #ccc;
+    margin: 0;
+    padding: 4px 10px 5px 10px;
+    vertical-align: top;
+    height: 20px;
+}
+.passivetab a{
+    text-decoration: none;
+}
+.activetab
+{
+    background: #fff;
+    border-style: solid;
+    border-width: 1px 1px 0 2px;
+    border-color: #229ddb;
+    margin: 0;
+    padding: 4px 10px 5px 10px;
+    height: 20px;
+    vertical-align: top;
+}
+
+.remaindertab
+{
+    width: 100%;
+    background: #f8f8f8;
+    border-style: solid;
+    border-width: 1px 1px 1px 0;
+    border-color: #ccc #ccc #229ddb;
+    padding: 18px 10px 2px 10px;
+    height: 28px;
+    vertical-align: top;
+    text-align: right;
+	font-size: 12px;
+    color: #555;
+}
+
+.tabbody
+{
+    height: 100%;
+    border-left: #229ddb solid 2px;
+    margin: 0;
+    padding: 10px;
+    vertical-align: top;
+}
+
+.standardbody
+{
+    background: #404040;
+    padding: 0;
+    margin: 0;
+}
+
+.standardform
+{
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.page
+{
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    border-width: 0 !important;
+}
+
+.banner
+{
+    width: 100%;
+    min-height: 45px;
+    background: #fff;
+    color: black;
+}
+
+.bannertable
+{
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border-style: none;
+    border-width: 0;
+    border-collapse: collapse;
+    border-bottom: 1px solid #ddd;
+    background: #f8f8f8;
+}
+
+.bannerrow
+{
+	width: 100%;
+	height: 100%;
+}
+
+.headerimage
+{
+    width: 50px;
+    text-align: left;
+    vertical-align: top;
+    padding: 0;
+    margin: 0;
+}
+.headerimage img{
+    margin: 12px;
+}
+
+.headertable
+{
+    margin: 0;
+    padding: 0;
+    border-style: none;
+    border-width: 0;
+    border-collapse: collapse;
+	width: 100%;
+	height: 100%;
+}
+
+.headerdaterow
+{
+	width: 100%;
+	text-align: right !important;
+}
+
+.headerrow
+{
+	width: 100%;
+	height: 100%;
+	vertical-align: middle !important;
+	text-align: left !important;
+}
+
+.headercell
+{
+	vertical-align: top;
+	width: 100%;
+	height: 100%;
+}
+
+.header
+{
+    color: black;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.headerdate
+{
+    color: black;
+    font-weight: 200;
+    font-size: 10px;
+}
+
+.navigation
+{
+    width: 17%;
+    height: 100%;
+    vertical-align: top;
+    border-top-width: 0;
+    border-right: solid #c0c0c0 1px;
+}
+
+.menumain
+{
+    border-color: #E5E5E5;
+    border-width: 1px 0;
+    border-style: solid;
+    padding: 10px;
+    background: #f8f8f8;
+    margin: 0 0 -1px 0;
+}
+
+.menusecond
+{
+    font-size: 12px;
+    list-style: none;
+    text-indent: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.menuitem
+{
+    margin-left: 16px;
+    padding: 5px;
+    text-indent: 0;
+    border: dotted #e8e8e8;
+    border-width: 1px 0;
+    margin-bottom: -1px;
+}
+
+.menulink
+{
+
+    text-decoration: none;
+    color: #202020;
+}
+
+.menulink:link
+{
+
+    text-decoration: none;
+    color: #202020;
+}
+
+.menulink:active
+{
+
+    text-decoration: none;
+    color: #202020;
+}
+
+.menulink:visited
+{
+
+    text-decoration: none;
+    color: #202020;
+}
+
+.darkwindow
+{
+    width: 100%;
+    height: 100%;
+    color: black;
+    vertical-align: top;
+}
+
+.window
+{
+    width: 83%;
+    height: 100%;
+    background: #fff;
+    color: black;
+    vertical-align: top;
+    padding: 10px;
+}
+
+.windowtitle
+{
+    border-bottom: 1px solid #c5e4ff;
+    font-size: 16px;
+    padding: 0 0 10px 10px;
+}
+
+.datatable
+{
+    width: 100%;
+    margin: 0 -1px;
+    padding: 0;
+    border-style: none;
+    border-width: 0;
+    border-collapse: collapse;
+}
+
+.headerrow
+{
+    padding: 0;
+    margin: 0;
+    border-style: none;
+    border-width: 0;
+    vertical-align: middle;
+}
+
+.datarow
+{
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background-color: #f0f0f0;
+    vertical-align: top;
+}
+
+.evendatarow
+{
+    margin: 0;
+    padding: 0;
+    border-style: none;
+    border-width: 0;
+    vertical-align: top;
+}
+
+.odddatarow
+{
+    padding: 0;
+    margin: 0;
+    border-style: none;
+    border-width: 0;
+    vertical-align: top;
+    background-color: #fafafa;
+}
+
+.columnheader
+{
+    padding: 8px;
+    border: solid 1px;
+    border-color: #c5e4ff #eee #eee #ccc;
+    font-size: 13px;
+    font-weight: 700;
+}
+.columnheader:first-child, .evendatarow:first-child, .odddatarow:first-child{
+    border-left-width: 0;
+}
+.columnheader:last-child, .evendatarow:last-child, .odddatarow:last-child{
+    border-right-width: 0;
+}
+
+.columncell
+{
+    margin: 0;
+    padding: 7px;
+    font-size: 12px;
+    border: 1px solid #eee;
+
+}
+.columncell a{
+    border: solid 1px #ccc;
+    padding: 1px 4px;
+    margin: 0;
+    display: block;
+    float: left;
+    text-decoration: none;
+    margin-left: -1px;
+    background: #eee;
+    font-size: 11px;
+}
+.columncell a:hover{
+    background: #ddd;
+}
+
+.reportcolumnheader
+{
+    padding:0 5px;
+    margin: 0;
+    color: #404040;
+    font-size: 10px;
+
+}
+
+.reportcolumncell
+{
+    padding:0 5px;
+    margin: 0;
+    border: 0;
+    color: black;
+    font-size: 8px;
+
+}
+
+.reportfootertable
+{
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-collapse: collapse;
+}
+
+.reportfooterrow
+{
+	width: 100%;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background-color: #f0f0f0;
+    vertical-align: center;
+}
+
+.reportfootercell
+{
+    padding-left: 5px;
+	padding-right:5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	margin: 0
+    border: 0;
+    color: black;
+    font-size: 10px;
+}
+
+.formtable
+{
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-collapse: collapse;
+}
+
+.formheaderrow
+{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background-color: #f9f9f9;
+    vertical-align: middle;
+}
+
+.formcolumnheader
+{
+    padding: 5px;
+    color: #404040;
+    font-size: 10px;
+
+}
+
+.evenformrow
+{
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background-color: #f8f8f8;
+    vertical-align: top;
+}
+
+.oddformrow
+{
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background-color: #f8f8f8;
+    vertical-align: top;
+}
+
+.formrow
+{
+    padding: 0;
+    margin: 0;
+    border-style: none;
+    border-width: 0;
+    vertical-align: top;
+    background-color: #f6f6f6;
+}
+
+.formcolumncell
+{
+    padding:5px;
+    margin: 0;
+    border-style: none;
+    border-width: 0;
+    color: black;
+    font-size: 8px;
+}
+
+.formcolumncell input[type="button"]
+{
+    min-height: 22px;
+    padding: 0 10px;
+}
+
+.formcolumnmessage
+{
+    padding:0 5px;
+    margin: 0;
+    border-style: none;
+    border-width: 0;
+    color: black;
+    font-size: 8px;
+    text-align: center;
+}
+
+.formseparator
+{
+    padding: 0;
+    margin:0;
+    border-bottom: solid 1px #eee;
+    color: #808080;
+    font-size: 5px;
+}
+
+.formseparator hr
+{
+    display: none;
+}
+
+.displaytable
+{
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-collapse: collapse;
+}
+
+.description
+{
+    padding-left: 0;
+	padding-right:5px;
+	padding-top: 0;
+	padding-bottom: 0;
+	margin-left: 0;
+	margin-right: 0;
+	margin-top: 5px;
+	margin-bottom: 0;
+	border: 0;
+    color: #404040;
+    font-size: 12px;
+    text-align: left;
+}
+
+.description input[type="button"], .formcolumncell input[type="button"]
+{
+    min-height: 30px;
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+    padding: 10px;
+    border: #6FB3E0 2px solid;
+    background-color: #6FB3E0 !important;
+    color: #fff;
+}
+
+.description a input[type="button"]{
+    border: none;
+    background: none transparent;
+    margin: -4px;
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+    padding: 0 10px;
+}
+
+.message
+{
+    padding: 10px 0;
+    margin: 0;
+    border-style: none;
+    border-width: 0;
+    font-size: 14px;
+}
+
+.message a
+{
+    padding: 10px;
+    border-right: #6FB3E0 2px solid;
+    background-color: #6FB3E0 !important;
+    text-decoration: none;
+    color: #fff;
+    cursor: pointer;
+    margin: 0 5px 0 0;
+}
+
+.message input[type="button"], .formcolumncell input[type="button"]
+{
+    min-height: 30px;
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+    padding: 10px;
+    border: #6FB3E0 2px solid;
+    background-color: #6FB3E0 !important;
+    color: #fff;
+}
+
+.message a input[type="button"]{
+    border: none;
+    background: none transparent;
+    margin: -4px;
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+    padding: 0 10px;
+}
+
+.value
+{
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+    margin-left: 0;
+	margin-right: 0;
+	margin-top: 5px;
+	margin-bottom: 0;
+    border: 0;
+    color: black;
+    font-size: 12px;
+    text-align: left;
+}
+
+.value input[type="text"], .value input[type="password"]
+{
+    border: 1px solid #bbb;
+    padding: 5px;
+    margin-top: 10px;
+}
+
+.boxcell
+{
+    margin: 0 2px;
+    padding: 0;
+    border: solid 1px #e0e0e0;
+}
+
+.separator
+{
+    padding: 5px 0;
+    color: #f0f0f0;
+    font-size: 5px;
+    border-bottom: dotted 1px #eee;
+}
+.separator hr{
+    display: none;
+}
+
+.lightseparator
+{
+    padding: 0;
+    margin: 1px 5px;
+    border-width: 1px;
+    border-color: #808080;
+    color: #808080;
+    font-size: 5px;
+    background-color: #e0e0e0;
+}
+.lightseparator hr{
+    display: none;
+}
+.schedulepulldown, .value select
+{
+    margin-top: 10px;
+    font-size: 12px;
+    border: solid #bbb 1px;
+}
+H1, H2, H3, H4, H5, H6, P, UL, OL, DIR, MENU, DIV, 
+DT, DD, ADDRESS, BLOCKQUOTE, PRE, BR, HR, FORM, DL { 
+    display: block }
+
+B, STRONG, I, EM, CITE, VAR, TT, CODE, KBD, SAMP, 
+IMG, SPAN { display: inline }
+
+LI { display: list-item }
+
+H1, H2, H3, H4 { margin-top: 1em; margin-bottom: 1em }
+H5, H6 { margin-top: 1em }
+H1 { text-align: center }
+H1, H2, H4, H6 { font-weight: bold }
+H3, H5 { font-style: italic }
+
+H1 { font-size: xx-large }
+H2 { font-size: x-large }
+H3 { font-size: large }
+
+B, STRONG { font-weight: bolder }  /* relative to the parent */
+I, CITE, EM, VAR, ADDRESS, BLOCKQUOTE { font-style: italic }
+PRE, TT, CODE, KBD, SAMP { font-family: monospace }
+
+PRE { white-space: pre }
+
+ADDRESS { margin-left: 3em }
+BLOCKQUOTE { margin-left: 3em; margin-right: 3em }
+
+UL, DIR { list-style: disc }
+OL { list-style: decimal }
+MENU { margin: 0 }              /* tight formatting */
+LI { margin-left: 3em }
+
+DT { margin-bottom: 0 }
+DD { margin-top: 0; margin-left: 3em }
+

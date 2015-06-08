@@ -1,0 +1,447 @@
+{
+  "title": "Datafari Statistics",
+  "services": {
+    "query": {
+      "idQueue": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "list": {
+        "0": {
+          "query": "*:*",
+          "alias": "",
+          "color": "#E0752D",
+          "id": 0,
+          "pin": false,
+          "type": "lucene"
+        }
+      },
+      "ids": [
+        0
+      ]
+    },
+    "filter": {
+      "idQueue": [
+        1,
+        2,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "list": {
+        "0": {
+          "from": "NOW/DAY-30DAY",
+          "to": "NOW/DAY%2B1DAY",
+          "field": "date",
+          "type": "time",
+          "fromDateObj": "2014-12-16T12:18:48.631Z",
+          "toDateObj": "2015-01-15T12:18:48.632Z",
+          "mandate": "must",
+          "active": true,
+          "alias": "",
+          "id": 0
+        },
+        "3": {
+          "type": "querystring",
+          "query": "*",
+          "mandate": "must",
+          "active": true,
+          "alias": "",
+          "id": 3
+        }
+      },
+      "ids": [
+        3,
+        0
+      ]
+    }
+  },
+  "rows": [
+    {
+      "title": "Query and Time Window",
+      "height": "50px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "error": false,
+          "span": 6,
+          "editable": true,
+          "group": [
+            "default"
+          ],
+          "type": "query",
+          "label": "Search",
+          "history": [
+            "*:*",
+            "con",
+            "montpellier",
+            "langue",
+            "pole emploi",
+            "arabe",
+            "mairie",
+            "olivier",
+            "etat"
+          ],
+          "remember": 10,
+          "pinned": true,
+          "query": "*:*",
+          "title": "Search",
+          "spyable": true,
+          "def_type": ""
+        },
+        {
+          "span": 6,
+          "editable": true,
+          "type": "hits",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=*%3A*&df=q_search&fq=date:[NOW/DAY-30DAY%20TO%20NOW/DAY%2B1DAY]&fq=*&wt=json&rows=0",
+            "basic_query": "",
+            "custom": ""
+          },
+          "style": {
+            "font-size": "14pt"
+          },
+          "arrangement": "horizontal",
+          "chart": "total",
+          "counter_pos": "above",
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "spyable": true,
+          "title": "Total Hits",
+          "show_help_message": true,
+          "info_mode": "html",
+          "show_queries": false
+        }
+      ]
+    },
+    {
+      "title": "Filters",
+      "height": "50px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "error": false,
+          "span": 6,
+          "editable": true,
+          "spyable": true,
+          "group": [
+            "default"
+          ],
+          "type": "filtering"
+        },
+        {
+          "error": "",
+          "span": 6,
+          "editable": true,
+          "type": "timepicker",
+          "loadingEditor": false,
+          "status": "Stable",
+          "mode": "relative",
+          "time_options": [
+            "5m",
+            "15m",
+            "1h",
+            "6h",
+            "12h",
+            "24h",
+            "2d",
+            "7d",
+            "30d"
+          ],
+          "timespan": "30d",
+          "timefield": "date",
+          "timeformat": "",
+          "spyable": true,
+          "refresh": {
+            "enable": false,
+            "interval": 30,
+            "min": 3
+          },
+          "filter_id": 0
+        }
+      ]
+    },
+    {
+      "title": "Graph",
+      "height": "250px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 6,
+          "editable": true,
+          "type": "histogram",
+          "loadingEditor": false,
+          "mode": "count",
+          "time_field": "date",
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=*%3A*&df=q_search&wt=json&rows=0&fq=date:[NOW/DAY-30DAY%20TO%20NOW/DAY%2B1DAY]&fq=*&facet=true&facet.range=date&facet.range.start=NOW/DAY-30DAY&facet.range.end=NOW/DAY%2B1DAY&facet.range.gap=%2B12HOUR",
+            "custom": ""
+          },
+          "max_rows": 100000,
+          "value_field": null,
+          "group_field": null,
+          "auto_int": true,
+          "resolution": 100,
+          "interval": "12h",
+          "intervals": [
+            "auto",
+            "1s",
+            "1m",
+            "5m",
+            "10m",
+            "30m",
+            "1h",
+            "3h",
+            "12h",
+            "1d",
+            "1w",
+            "1M",
+            "1y"
+          ],
+          "fill": 0,
+          "linewidth": 3,
+          "timezone": "browser",
+          "spyable": true,
+          "zoomlinks": true,
+          "bars": true,
+          "stack": true,
+          "points": true,
+          "lines": true,
+          "legend": true,
+          "x-axis": true,
+          "y-axis": true,
+          "percentage": false,
+          "interactive": true,
+          "options": true,
+          "tooltip": {
+            "value_type": "cumulative",
+            "query_as_alias": true
+          },
+          "title": "Event Counts",
+          "lines_smooth": false,
+          "show_queries": true
+        },
+        {
+          "error": false,
+          "span": 6,
+          "editable": true,
+          "type": "terms",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=*%3A*&df=q_search&wt=json&rows=0&fq=date:[NOW/DAY-30DAY%20TO%20NOW/DAY%2B1DAY]&fq=*&fq=-q_search:de&fq=-q_search:à&fq=-q_search:le&fq=-q_search:la&fq=-q_search:les&fq=-q_search:des&fq=-q_search:de&fq=-q_search:du&facet=true&facet.field=q_search&facet.limit=10",
+            "custom": ""
+          },
+          "mode": "count",
+          "field": "q_search",
+          "stats_field": "",
+          "decimal_points": 0,
+          "exclude": [
+            "de",
+            "à",
+            "le",
+            "la",
+            "les",
+            "des",
+            "de",
+            "du"
+          ],
+          "missing": true,
+          "other": true,
+          "size": 10,
+          "order": "descending",
+          "style": {
+            "font-size": "10pt"
+          },
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "arrangement": "horizontal",
+          "chart": "bar",
+          "counter_pos": "below",
+          "lastColor": "rgb(126,178,109)",
+          "spyable": true,
+          "chartColors": [
+            "#7EB26D",
+            "#EAB839",
+            "#6ED0E0",
+            "#EF843C",
+            "#E24D42",
+            "#1F78C1",
+            "#BA43A9",
+            "#705DA0",
+            "#508642",
+            "#CCA300",
+            "#447EBC",
+            "#C15C17",
+            "#890F02",
+            "#0A437C",
+            "#6D1F62",
+            "#584477",
+            "#B7DBAB",
+            "#F4D598",
+            "#70DBED",
+            "#F9BA8F",
+            "#F29191",
+            "#82B5D8",
+            "#E5A8E2",
+            "#AEA2E0",
+            "#629E51",
+            "#E5AC0E",
+            "#64B0C8",
+            "#E0752D",
+            "#BF1B00",
+            "#0A50A1",
+            "#962D82",
+            "#614D93",
+            "#9AC48A",
+            "#F2C96D",
+            "#65C5DB",
+            "#F9934E",
+            "#EA6460",
+            "#5195CE",
+            "#D683CE",
+            "#806EB7",
+            "#3F6833",
+            "#967302",
+            "#2F575E",
+            "#99440A",
+            "#58140C",
+            "#052B51",
+            "#511749",
+            "#3F2B5B",
+            "#E0F9D7",
+            "#FCEACA",
+            "#CFFAFF",
+            "#F9E2D2",
+            "#FCE2DE",
+            "#BADFF4",
+            "#F9D9F9",
+            "#DEDAF7"
+          ],
+          "useColorFromField": false
+        }
+      ]
+    },
+    {
+      "title": "Table",
+      "height": "150px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "error": false,
+          "span": 12,
+          "editable": true,
+          "type": "table",
+          "loadingEditor": false,
+          "status": "Stable",
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=*%3A*&df=q_search&fq=date:[NOW/DAY-30DAY%20TO%20NOW/DAY%2B1DAY]&fq=*&sort=date desc&wt=json&rows=50",
+            "basic_query": "q=*%3A*&df=q_search&fq=date:[NOW/DAY-30DAY%20TO%20NOW/DAY%2B1DAY]&fq=*&sort=date desc",
+            "custom": ""
+          },
+          "size": 10,
+          "pages": 5,
+          "offset": 0,
+          "sort": [
+            "date",
+            "desc"
+          ],
+          "group": "default",
+          "style": {
+            "font-size": "9pt"
+          },
+          "overflow": "min-height",
+          "fields": [
+            null,
+            "date",
+            "q_search",
+            "noHits",
+            "numFound",
+            "numClicks",
+            "QTime"
+          ],
+          "highlight": [],
+          "sortable": true,
+          "header": true,
+          "paging": true,
+          "field_list": true,
+          "trimFactor": 300,
+          "normTimes": true,
+          "spyable": true,
+          "saveOption": "json",
+          "exportSize": 50,
+          "exportAll": true,
+          "displayLinkIcon": true,
+          "imageFields": [],
+          "imgFieldWidth": "auto",
+          "imgFieldHeight": "85px",
+          "title": "Queries"
+        }
+      ]
+    }
+  ],
+  "editable": true,
+  "index": {
+    "interval": "none",
+    "pattern": "[logstash-]YYYY.MM.DD",
+    "default": "_all"
+  },
+  "style": "dark",
+  "failover": false,
+  "panel_hints": true,
+  "loader": {
+    "save_gist": false,
+    "save_elasticsearch": true,
+    "save_local": true,
+    "save_default": true,
+    "save_temp": true,
+    "save_temp_ttl_enable": true,
+    "save_temp_ttl": "30d",
+    "load_gist": true,
+    "load_elasticsearch": true,
+    "load_elasticsearch_size": 20,
+    "load_local": true,
+    "hide": false,
+    "dropdown_collections": false
+  },
+  "solr": {
+    "server": "/Datafari/admin/proxy/solr/",
+    "core_name": "Statistics",
+    "core_list": [
+      "FileShare",
+      "Statistics"
+    ],
+    "global_params": "&df=q_search"
+  }
+}

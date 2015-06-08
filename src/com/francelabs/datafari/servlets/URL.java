@@ -51,7 +51,7 @@ public class URL extends HttpServlet {
 	 */
 	public URL() {
 		super();
-		// TODO Auto-generated constructor stub
+	
 	}
 
 	/**
@@ -63,7 +63,6 @@ public class URL extends HttpServlet {
 		ModifiableSolrParams params = new ModifiableSolrParams(
 				request.getParameterMap());
 		StatsPusher.pushDocument(params);
-
 		String surl = request.getParameter("url");
 
 		if (ScriptConfiguration.getProperty("ALLOWLOCALFILEREADING").equals(
@@ -96,6 +95,7 @@ public class URL extends HttpServlet {
 
 			RequestDispatcher rd = request.getRequestDispatcher(redirectUrl);
 			rd.forward(request, response);
+			System.out.println("p");
 		}
 	}
 }
