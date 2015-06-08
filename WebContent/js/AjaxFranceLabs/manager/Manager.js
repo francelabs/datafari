@@ -14,6 +14,7 @@
  * limitations under the License.
  *******************************************************************************/
 AjaxFranceLabs.Manager = AjaxFranceLabs.AbstractManager.extend({
+	
 
 	executeRequest : function(server, servlet, string, handler) {
 		var self = this;

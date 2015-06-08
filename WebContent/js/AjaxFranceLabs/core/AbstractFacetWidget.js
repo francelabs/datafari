@@ -22,6 +22,10 @@ AjaxFranceLabs.AbstractFacetWidget = AjaxFranceLabs.AbstractWidget.extend({
 	returnUnselectedFacetValues: false,
 	
 	selectionType : 'AND',
+	
+	mincount : 0, //used to change the parameter "mincount" of a facet
+	
+	
 
 	//Methods
 
@@ -34,8 +38,13 @@ AjaxFranceLabs.AbstractFacetWidget = AjaxFranceLabs.AbstractWidget.extend({
 	},
 
 	initStore : function() {
+		
+		//here we declare the parameters of the facet, as an example we declared the min-count
+		this['facet.mincount'] = this.mincount;
+
 		var parameters = ['facet.prefix', 'facet.sort', 'facet.limit', 'facet.offset', 'facet.mincount', 'facet.missing', 'facet.method', 'facet.enum.cache.minDf'], p;
 		this.manager.store.addByValue('facet', true);
+		this.manager.store.addByValue('facet.mincount', this.mincount);
 		if (this['facet.field'] !== undefined && this['facet.field'] !== false) {
 			p = this.manager.store.addByValue('facet.field', this.field);
 		} else if (this['facet.date'] !== undefined && this['facet.date'] !== false) {
