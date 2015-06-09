@@ -32,11 +32,6 @@ AjaxFranceLabs.TableWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 	type : 'table',
 
 	'facet.field' : true,
-	
-	
-	
-	
-	
 
 	//Methods
 

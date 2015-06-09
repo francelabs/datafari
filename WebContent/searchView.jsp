@@ -48,15 +48,13 @@
 		src="js/AjaxFranceLabs/widgets/SearchInformation.widget.js"></script>
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/Table.widget.js"></script>
-		<script type="text/javascript"
-		src="js/AjaxFranceLabs/widgets/FacetDuplicates.js"></script>
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/TableFacetQueriesWidget.js"></script>
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/Capsule.widget.js"></script>
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/TableMobile.widget.js"></script>
-	
+	<script type="text/javascript"
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/Spellchecker.widget.js"></script>
 
@@ -77,7 +75,6 @@
 				<div id="facet_type"></div>
 				<div id="facet_source"></div>
 				<div id="facet_language"></div>
-				<div id="facet_signature"></div>
 			</div>
 		</div>
 		<div class="col right">

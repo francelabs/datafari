@@ -842,11 +842,11 @@
          updateRequestProcessorChains that can be used by name 
          on each Update Request
       -->
-   
+    <!--
        <lst name="defaults">
          <str name="update.chain">dedupe</str>
        </lst>
-       
+       -->
   </requestHandler>
 
   <requestHandler name="/update/extract" 
@@ -1222,9 +1222,19 @@
        uniqueness based on that anyway.  
        
     -->
-  
-   
-    
+  <!--
+     <updateRequestProcessorChain name="dedupe">
+       <processor class="solr.processor.SignatureUpdateProcessorFactory">
+         <bool name="enabled">true</bool>
+         <str name="signatureField">id</str>
+         <bool name="overwriteDupes">false</bool>
+         <str name="fields">name,features,cat</str>
+         <str name="signatureClass">solr.processor.Lookup3Signature</str>
+       </processor>
+       <processor class="solr.LogUpdateProcessorFactory" />
+       <processor class="solr.RunUpdateProcessorFactory" />
+     </updateRequestProcessorChain>
+    -->
   
   <!-- Language identification
 
@@ -1309,19 +1319,7 @@
 			<str name="langid.whitelist">en,fr</str>
 			<str name="langid.fallback">en</str>
 		</processor>
-
-	    <processor class="solr.processor.SignatureUpdateProcessorFactory">
-	      <bool name="enabled">true</bool>
-	      <str name="signatureField">signature</str>
-		  <bool name="overwriteDupes">false</bool>	
-	      <str name="fields">title,content,content_en,content_fr</str>
-	      <str name="signatureClass">solr.processor.MD5Signature</str>
-	    </processor>
-	    <processor class="solr.LogUpdateProcessorFactory" />
-	    <processor class="solr.RunUpdateProcessorFactory" />
-
-  
-		
+	
 		<processor class="solr.LogUpdateProcessorFactory" />
 		<processor class="solr.RunUpdateProcessorFactory" />
 	</updateRequestProcessorChain>

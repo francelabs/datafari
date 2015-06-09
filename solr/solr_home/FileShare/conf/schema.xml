@@ -90,9 +90,6 @@
    <field name="suggest" type="text_auto" indexed="true" stored="false" multiValued="true" />
    <field name="spell" type="textSpell" indexed="true" stored="false" multiValued="true" />
    
-   <!-- For the hash, added by rsabir -->
-    <field name="signature" type="string" stored="true" indexed="true" multiValued="false" />
-   
    
    <field name="allow_token_document" type="string" indexed="true" stored="true" multiValued="true" required="false" default="__nosecurity__"/>
    <field name="allow_token_share" type="string" indexed="true" stored="true" multiValued="true" required="false" default="__nosecurity__"/>

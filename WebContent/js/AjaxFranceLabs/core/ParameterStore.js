@@ -22,7 +22,6 @@ AjaxFranceLabs.ParameterStore = AjaxFranceLabs.Class.extend({
 	//Methods
 
 	isMultiple : function(name) {
-		// // Changed by rsabir to consider the mincount parameter
 		return name.match(/^(?:bf|bq|facet\.date|facet\.date\.other|facet\.date\.include|facet\.field|facet\.pivot|facet\.range|facet\.range\.other|facet\.range\.include|facet\.query|fq|group\.field|group\.func|group\.query|pf|qf)$/);
 	},
 
