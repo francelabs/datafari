@@ -12,18 +12,6 @@ $(function($) {
 	}));
 
 	
-
-	Manager.addWidget(new AjaxFranceLabs.FacetDuplicates({
-		elm : $('#facet_signature'),
-		id : 'facet_signature',
-		field : 'signature',
-		name : "Doublons",
-		mincount : 2,
-		pagination : true,
-		selectionType : 'OR',
-		returnUnselectedFacetValues : true
-	}));
-	
 	
 	Manager.addWidget(new AjaxFranceLabs.TableWidget({
 		elm : $('#facet_type'),
@@ -142,7 +130,7 @@ $(function($) {
 													}
 													elm.find('.doc:last .icon').append('<object data="images/icons/'+ extension.toLowerCase() +'-icon-24x24.png"><img src="images/icons/default-icon-24x24.png" /></object>&nbsp;');
 
-									                var urlRedirect = 'URL?url='+ url + '&id='+Manager.store.get("id").value + '&q=' + Manager.store.get("q").value + '&position='+position;
+									                var urlRedirect = 'URL?url='+ (encodeURIComponent(url)) + '&id='+Manager.store.get("id").value + '&q=' + Manager.store.get("q").value + '&position='+position;
 													elm.find('.doc:last .res').append('<a class="title" target="_blank" href="'+urlRedirect+'"></a>');													elm.find('.doc:last .title').append('<span>' +decodeURIComponent(doc.title) + '</span>'); 
 													elm.find('.doc:last .res').append('<p class="description">');
 													elm.find('.doc:last .description').append('<div id="snippet">'+ description+ '</div>');
