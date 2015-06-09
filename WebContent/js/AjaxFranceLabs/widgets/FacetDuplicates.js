@@ -15,21 +15,25 @@
  *******************************************************************************/
 AjaxFranceLabs.FacetDuplicates = AjaxFranceLabs.TableWidget.extend({
 
-	//Methods
+	/* 
+	 * this method is used to build the HTML of the facet
+	 */
 
 	update : function() {
-		var self = this, data = this.assocTags(this.manager.response.facet_counts.facet_fields[this.field]), max = (data.length > this.maxDisplay) ? this.maxDisplay : data.length, elm = $(this.elm), compteur = 0;
-		// compteur is a counter used to iterate all hashes that should be converted in names
+		var self = this, data = this.assocTags(this.manager.response.facet_counts.facet_fields[this.field]), max = (data.length > this.maxDisplay) ? this.maxDisplay : data.length, elm = $(this.elm), compteur = 0, names = [];
+		// compteur is a counter used to iterate in all hashes that should be converted in names
 		if (data.length!==0){
-			$.get(self.manager.serverUrl+'select?q=*%3A*&rows=1&fl=title&wt=json&indent=true&hl=off&_=1433765381298&fq=signature%3A%22'+data[compteur].name+'%22',function(responseJSON){
-				data[compteur].name=responseJSON.response.docs[0].title[0]; // we save the response in the same array
+			//show the facet signature if we have a duplicated file
+			$("#facet_signature").show();
+			$.get(self.manager.serverUrl+'select?q=*%3A*&rows=1&fl=title&wt=json&indent=true&hl=off&_=1433765381298&fq=signature%3A%22'+data[compteur].name+'%22',function recursive(responseJSON){
+				names[compteur]=responseJSON.response.docs[0].title[0]; // we save the response in array
 				compteur++;
 				if (compteur<data.length)
-					$.get(self.manager.serverUrl+'select?q=*%3A*&rows=1&fl=title&wt=json&indent=true&hl=off&_=1433765381298&fq=signature%3A%22'+data[compteur].name+'%22',this);
+					$.get(self.manager.serverUrl+'select?q=*%3A*&rows=1&fl=title&wt=json&indent=true&hl=off&_=1433765381298&fq=signature%3A%22'+data[compteur].name+'%22',recursive);
 				else{
 					elm.find('ul').empty();
 					for (var i = 0; i < max; i++) {
-						if (data[i].name !== ''){
+						if (names[i] !== ''){
 							elm.find('ul').append('<li>');
 							elm.find('ul li:last').append('<label>');
 							
@@ -41,7 +45,7 @@ AjaxFranceLabs.FacetDuplicates = AjaxFranceLabs.TableWidget.extend({
 								elm.find('ul li:last .filterFacetCheck input').attr('checked', 'checked').parents('li').addClass('selected');
 							elm.find('ul li:last .filterFacetCheck input').change(function() {
 								if ($(this).attr('checked') == 'checked') {
-									if(self.selectionType === 'ONE' && elm.find('ul li .filterFacetCheck input:checked').not(this).length)
+									if(self.selectionType === 'ONE' && elm.find('ul li .filterFacetCheck input:checked').not(self).length)
 										self.remove(elm.find('ul li .filterFacetCheck input:checked').not(this).val());
 									self.clickHandler();
 									self.selectHandler($(this).val().replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"));
@@ -51,17 +55,20 @@ AjaxFranceLabs.FacetDuplicates = AjaxFranceLabs.TableWidget.extend({
 								}
 							});
 							elm.find('ul li:last .filterFacetCheck').append('<label>');
-							elm.find('ul li:last .filterFacetCheck label').attr('for', data[i].name).append('<span class="checkboxIcon">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(data[i].name, 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + data[i].nb + '</span>)</span>');
+							elm.find('ul li:last .filterFacetCheck label').attr('for', data[i].name).append('<span class="checkboxIcon">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(names[i], 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + data[i].nb + '</span>)</span>');
 						}
-					}			
+					}
+					if (self.pagination) {
+						self.pagination.source = $('ul', self.elm);
+						self.pagination.updatePages();
+					}
+					self.sortBy(self.sort);
 				}
 			});
+		}else{
+			// if there's no duplicated file, hide the facet
+			$("#facet_signature").hide();
 		}
-	
-		if (this.pagination) {
-			this.pagination.source = $('ul', this.elm);
-			this.pagination.updatePages();
-		}
-		this.sortBy(this.sort);
 	},
+		
 });
