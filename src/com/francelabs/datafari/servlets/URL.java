@@ -15,7 +15,11 @@
  *******************************************************************************/
 package com.francelabs.datafari.servlets;
 
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLDecoder;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -26,10 +30,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.solr.common.params.ModifiableSolrParams;
 
 import com.francelabs.datafari.statistics.StatsPusher;
-import com.francelabs.datafari.utils.LocalFileReader;
 import com.francelabs.datafari.utils.ScriptConfiguration;
 
 
@@ -42,7 +46,7 @@ import com.francelabs.datafari.utils.ScriptConfiguration;
 @WebServlet("/URL")
 public class URL extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	
+
 	private static final String redirectUrl = "/url.jsp";
 
 
@@ -60,37 +64,69 @@ public class URL extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
+		
+		request.setCharacterEncoding("UTF-8");
+		
+		
 		ModifiableSolrParams params = new ModifiableSolrParams(
 				request.getParameterMap());
 		StatsPusher.pushDocument(params);
-
+		
+		//String surl = URLDecoder.decode(request.getParameter("url"), "ISO-8859-1");
 		String surl = request.getParameter("url");
+		//System.out.println(surl);
+		
 
 		if (ScriptConfiguration.getProperty("ALLOWLOCALFILEREADING").equals(
-				"true")
-				&& LocalFileReader.isLocalFile(surl)) {
+				"true")) {
 
-		    /** File Display/Download -->
+			int BUFSIZE = 4096;
+			String fileName = null ;
+			
+			
+			
+			/** File Display/Download -->
 		    <!-- Written by Rick Garcia -->
-		    */
+			 */
+			if (SystemUtils.IS_OS_LINUX) {
 			// try to open the file locally
-			ServletOutputStream outStream = response.getOutputStream();
-			long length = LocalFileReader.readFile(surl, outStream);
+			String fileNameA[] = surl.split(":");
+			fileName= URLDecoder.decode(fileNameA[1], "UTF-8");
+			
+			}
+			else if (SystemUtils.IS_OS_WINDOWS){
+				fileName = URLDecoder.decode(surl, "UTF-8").replaceFirst("file:/", "");
+			}
+			
+			
 
-			ServletContext context = getServletConfig().getServletContext();
-			String mimetype = context.getMimeType(surl);
+			File file = new File(fileName);
+			int length   = 0;
+			ServletOutputStream outStream = response.getOutputStream();
+			ServletContext context  = getServletConfig().getServletContext();
+			String mimetype = context.getMimeType(fileName);
 
 			// sets response content type
 			if (mimetype == null) {
 				mimetype = "application/octet-stream";
+				
 			}
 			response.setContentType(mimetype);
-			response.setContentLength((int) length);
+			response.setContentLength((int)file.length());
 
 			// sets HTTP header
-			response.setHeader("Content-Disposition", "inline; fileName=\""
-					+ surl + "\"");
+			response.setHeader("Content-Disposition", "inline; fileName=\"" + fileName + "\"");
 
+			byte[] byteBuffer = new byte[BUFSIZE];
+			DataInputStream in = new DataInputStream(new FileInputStream(file));
+
+			// reads the file's bytes and writes them to the response stream
+			while ((in != null) && ((length = in.read(byteBuffer)) != -1))
+			{
+				outStream.write(byteBuffer,0,length);
+			}
+
+			in.close();
 			outStream.close();
 		} else {
 
