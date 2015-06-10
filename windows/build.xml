@@ -109,7 +109,10 @@
 		<copy todir="${windows.dist.dir}/bin/common">
 			<fileset file="${bin.dir}/dist/DatafariScripts.jar" />
 		</copy>
-					
+		
+		<copy file="${project.dir}/LICENSE.txt" todir="${windows.dist.dir}/"> </copy>
+		<copy file="${project.dir}/README.txt" todir="${windows.dist.dir}/">  </copy>
+		
 	</target>
 
 
