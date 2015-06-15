@@ -13,9 +13,9 @@
 		<a href="#" class="show-sidebar"> <i class="fa fa-bars"></i>
 		</a>
 		<ol class="breadcrumb pull-left">
-			<li><a href="index.html">Home</a></li>
-			<li><a href="#">Search engine configuration</a></li>
-			<li><a href="#">Stopwords</a></li>
+				<li><a id="topbar1" href="index.html"></a></li>
+				<li><a id="topbar2" href="#"></a></li>
+				<li><a id="topbar3" href="#"></a></li>
 		</ol>
 		<div id="social" class="pull-right">
 			<a href="#"><i class="fa fa-google-plus"></i></a> <a href="#"><i
@@ -29,7 +29,7 @@
 <!-- TODO get the list of language in the list_language.txt  --> 
 <form >
 	<fieldset>
-	<legend>Modify the file</legend>
+	<legend id="Modify"></legend>
 	<select id ="language" onclick="javascript: getFile()">
 	<OPTION "></OPTION>
 	<OPTION ">fr	</OPTION>
@@ -39,7 +39,7 @@
 </form>
 <form action="Stopwords" method="get">
 	<fieldset>
-		<legend>Download the file</legend>
+		<legend id="Download"></legend>
 	<select id ="languagebis" name="languagebis">
 	<OPTION>	</OPTION>
 	<OPTION>fr	</OPTION>
@@ -50,7 +50,7 @@
 </form>
 <div id="anotherSection" >
 			<fieldset>
-			<legend>Contextual Menu</legend>
+			<legend id="contextMenu"></legend>
 			<div id="ajaxResponse"></div>
 		</fieldset>
 	</div>
@@ -66,6 +66,12 @@
 			cleanSem();
 			$("#ajaxResponse").empty();
 		});
+		 document.getElementById("Modify").innerHTML = window.i18n.msgStore['modify'];
+		 document.getElementById("Download").innerHTML = window.i18n.msgStore['download'];
+		 document.getElementById("contextMenu").innerHTML = window.i18n.msgStore['contextualMenu'];
+		    document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
+		    document.getElementById("topbar2").innerHTML = window.i18n.msgStore['conf'];
+		    document.getElementById("topbar3").innerHTML = window.i18n.msgStore['stopwords'];
 	});
 function getFile(){
 	//clean the response area
@@ -83,7 +89,7 @@ function getFile(){
 			//If the semaphore was already acquired
 			if(data==="File already in use"){
 				$("#ajaxResponse").append("<div class=col-xs-5></div>");
-				$("#ajaxResponse").append("<h3 class=col-xs-2>"+data+"</h3>");
+				$("#ajaxResponse").append("<h3 class=col-xs-2>"+window.i18n.msgStore['usedFile']+"</h3>");
 				$("#ajaxResponse").append("<div class=col-xs-5></div>");
 			}
 			//Else print the content of the file in a textArea
@@ -93,7 +99,7 @@ function getFile(){
 				$("#ajaxResponse").append("<form id=\"res\">");
 				$("#res").append("<fieldset id=\"fields\">");
 				$("#fields").append("<textarea id=\"stopContent\" style=\"height: 200px; width: 400px;\">"+data+"</textarea>"); //hardcoded size
-				$("#fields").append("<input type=\"Submit\" id=\"submit\" value=\"applyModifications\"/>");
+				$("#fields").append("<input type=\"Submit\" id=\"submit\"value="+window.i18n.msgStore['confirm']+">");
 				$("#res").append("</fieldset>");
 				$("#ajaxResponse").append("</form>");
 				//On submit send the value of the textArea to upload()
@@ -132,7 +138,7 @@ function upload(text){
 		contenttype: "text-plain/utf-8",
 		success: function( data, textStatus, jqXHR) {
 			$("#ajaxResponse").empty();
-			$("#ajaxResponse").append("Modifications done");
+			$("#ajaxResponse").append(window.i18n.msgStore['modifDone']);
 		},
 	 	error: function(jqXHR, textStatus, errorThrown){
          	console.log("Something really bad happened " + textStatus);

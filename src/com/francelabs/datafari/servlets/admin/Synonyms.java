@@ -1,24 +1,19 @@
 package com.francelabs.datafari.servlets.admin;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.concurrent.Semaphore;
+import java.util.ResourceBundle;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -27,9 +22,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.francelabs.datafari.solrj.SolrServers.Core;
 
@@ -66,7 +58,7 @@ public class Synonyms extends HttpServlet {
 	 * If called to print it will return plain text
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String relativeWebPath = "./";
+		String relativeWebPath = "./"; 
 		absoluteDiskPath = getServletContext().getRealPath(relativeWebPath);
 		absoluteDiskPath = absoluteDiskPath.substring(0,absoluteDiskPath.indexOf("tomcat"));
 		String content = readFile(absoluteDiskPath+"solr/solr_home/"+server+"/conf/list_language.txt", StandardCharsets.UTF_8);
@@ -97,7 +89,7 @@ public class Synonyms extends HttpServlet {
 						out.close();
 					}else{												//if not available
 						PrintWriter out = response.getWriter();
-						out.append("File already in use"); 				//print hardcoded error message
+						out.append("File already in use"); 	
 						out.close();
 					}
 				}
@@ -148,8 +140,6 @@ public class Synonyms extends HttpServlet {
 			}
 		}else{															//The user clicked on confirm modification
 			File file ;
-			int maxFileSize = 5000 * 1024;
-			int maxMemSize = 5000 * 1024;
 			String filePath = absoluteDiskPath+"solr/solr_home/"+server+"/conf/synonyms_"+request.getParameter("language")+".txt"; 			//hardcoded path
 			file = new File(filePath);										
 			FileOutputStream fooStream = new FileOutputStream(file, false); // true to append false to overwrite.

@@ -10,6 +10,10 @@ import java.util.concurrent.Semaphore;
  */
 
 public class SemaphoreLn extends Semaphore {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String language;
 	private String type;
 	public SemaphoreLn(String lang, String type) {

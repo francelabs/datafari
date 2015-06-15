@@ -238,14 +238,14 @@ public class SearchProxy extends HttpServlet {
 			res.setAllValues(queryResponse.getResponse());
 			JSONResponseWriter jsonWriter = new JSONResponseWriter();
 			StringWriter s = new StringWriter();
-
-			jsonWriter.write(s, req, res); 															//Write the results of the query on FileShare
+			
+			jsonWriter.write(s, req, res); 		
+			System.out.println(s.toString());//Write the results of the query on FileShare
 			JSONObject json = new JSONObject(s.toString().substring(s.toString().indexOf("{")));	//Creating a valid json object from the results
 			
 			res.setAllValues(queryResponseBis.getResponse());
 			s = new StringWriter();
 			jsonWriter.write(s, req, res); 															//Write the result of the query on Capsule
-			System.out.println(s.toString());
 			
 			if ((s.toString().charAt(10+s.toString().indexOf("numFound")))!='0'){ 					//If there are a result for the Capsule
 				JSONObject jsonTmp = new JSONObject(s.toString().substring(7+s.toString().indexOf("docs"), s.toString().length()-3)); //Taking just the results without the header

@@ -1,18 +1,3 @@
-/*******************************************************************************
- * Copyright 2015 France Labs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
 AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 
 	// Variables
@@ -93,17 +78,17 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 				'allWords').attr('checked', 'true').attr('id', 'allWords')
 				.parent().find('label').attr('for', 'allWords').append(
 						'<span>&nbsp;</span>').append(
-						'Tous les mots');
+						window.i18n.msgStore['allWords']);
 		elm.find('.searchMode div:eq(1)').find('input').attr('value',
 				'atLeastOneWord').attr('id', 'atLeastOneWord').parent().find(
 				'label').attr('for', 'atLeastOneWord').append(
 				'<span>&nbsp;</span>').append(
-				'Au moins un mot');
+				window.i18n.msgStore['atLeastOneWord']);
 		elm.find('.searchMode div:eq(2)').find('input').attr('value',
 				'exactExpression').attr('id', 'exactExpression').parent().find(
 				'label').attr('for', 'exactExpression').append(
 				'<span>&nbsp;</span>').append(
-				'Expression exacte');
+				window.i18n.msgStore['exactExpression']);
 
 		elm.find('.searchBar input[type=text]').keypress(
 				function(event) {
@@ -143,7 +128,7 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 		}
 		var sortModeDiv = document.getElementById("sortMode");
 		var textSort = document
-				.createTextNode('Trier par : ');
+				.createTextNode(window.i18n.msgStore['sortType']);
 		sortModeDiv.appendChild(textSort);
 		var selectList = document.createElement("select");
 		selectList.id = "mySelect";
@@ -155,7 +140,7 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 		var optionScore = document.createElement("option");
 		optionScore.setAttribute("value", "score");
 		optionScore.setAttribute("selected", "");
-		optionScore.text = 'Pertinence';
+		optionScore.text = window.i18n.msgStore['score'];
 
 		selectList.appendChild(optionScore);
 

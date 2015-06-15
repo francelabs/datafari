@@ -37,6 +37,7 @@ public class Alerts extends HttpServlet {
 	 * @see HttpServlet#HttpServlet()
 	 * Connect with the database
 	 */
+	@SuppressWarnings("deprecation")
 	public Alerts() {
 		super();
 		mongoClient = new MongoClient("localhost", 27017);			//Hardcoded address/port of the database
@@ -100,7 +101,7 @@ public class Alerts extends HttpServlet {
 		if(request.getParameter("_id")!=null){								//Deleting part
 			BasicDBObject query = new BasicDBObject();						
 			query.put("_id", new ObjectId(request.getParameter("_id")));	//Create a query where we put the id of the alerts that must be deleted
-			DBObject dbObj = coll1.findAndRemove(query);					//Execute the query in the collection
+			coll1.findAndRemove(query);										//Execute the query in the collection
 		}
 		if(request.getParameter("keyword")!=null){							//Adding part
 			BasicDBObject obj = new BasicDBObject();

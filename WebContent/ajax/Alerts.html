@@ -35,13 +35,13 @@
 		</div>
 	</div>
 	<!--End Breadcrumb-->
-		<form id="addCaps">
+		<form id="addAlerts">
 			<fieldset>
 				<legend> Add a alert</legend>
 				<input id="addAlert" type="Submit" value="Add" />
 			</fieldset>
 		</form>
-	<form id="getCaps">
+	<form id="getAlerts">
 		<fieldset>
 			<legend>Search Alerts by keyword</legend>
 			<input id="keyword" type="text" name="keyword" /> 
@@ -59,11 +59,11 @@
 var d;
 $(document).ready(function() {
     //Stops the submit request
-    $("#getCaps").submit(function(e){
+    $("#getAlerts").submit(function(e){
            e.preventDefault();
     });
   	//Stops the submit request
-    $("#addCaps").submit(function(e){
+    $("#addAlerts").submit(function(e){
         e.preventDefault();
  	});
     //checks for the button click event
@@ -72,7 +72,7 @@ $(document).ready(function() {
     });
     //checks for the button click event
     $("#addAlert").click(function(e){
-      	addCaps();        
+      	addAlerts();        
 	});  
 });
 function getTab(){
@@ -113,7 +113,7 @@ function getTab(){
         }
     });      
 }
-function addCaps(){
+function addAlerts(){
 	//Clean the response area
 	$("#ajaxResponse").empty();
 	//Print the add form in the response area
@@ -136,7 +136,7 @@ function addCaps(){
 	$("#fieldsAdd").append("</div>");
 	$("#fieldsAdd").append("<div class=\"form-group\" id=\"div4\">");
 	$("#div4").append("<div class=\"col-sm-5\"></div>");
-	$("#div4").append("<input type=\"Submit\" id=\"newCaps\" name=\"AddAlert\" value=\"Add Alert\" class=\"col-sm-2\"/>");
+	$("#div4").append("<input type=\"Submit\" id=\"newAlerts\" name=\"AddAlert\" value=\"Add Alert\" class=\"col-sm-2\"/>");
 	$("#fieldsAdd").append("</div>");
 	$("#add").append("</fieldset>");
 	$("#ajaxResponse").append("</form>");
@@ -208,7 +208,7 @@ function edit(i){
 	$("#fields").append("</div>");
 	$("#fields").append("<div class=\"form-group\" id=\"div4\">");
 	$("#div4").append("<div class=\"col-sm-5\"></div>");
-	$("#div4").append("<input type=\"Submit\" id=\"newCaps\" name=\"AddAlert\" value=\"Add Alert\" class=\"col-sm-2\"/>");
+	$("#div4").append("<input type=\"Submit\" id=\"newAlerts\" name=\"AddAlert\" value=\"Edit Alert\" class=\"col-sm-2\"/>");
 	$("#fields").append("</div>");
 	$("#modify").append("</fieldset>");
 	$("#ajaxResponse").append("</form>");

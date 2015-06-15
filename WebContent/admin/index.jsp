@@ -1,3 +1,7 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+<%@ page import="java.util.ResourceBundle"  %>
+<%@ page import="java.util.Locale" %>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -25,6 +29,7 @@
 		<![endif]-->
 	</head>
 <body>
+<% ResourceBundle resourceBundle = ResourceBundle.getBundle("com.francelabs.i18n.text", request.getLocale()); %>
 <!--Start Header-->
 <div id="screensaver">
 	<canvas id="canvas"></canvas>
@@ -60,7 +65,7 @@
 						<!--  <img src="../images/datafari.png" width=50% height=50% > -->
 					</div>
 					<div class="col-xs-4 col-sm-8 top-panel-right">
-						<a href="#" class="about">about</a>
+<!-- 						<a href="#" class="about">about</a> -->
 						<ul class="nav navbar-nav pull-right panel-menu" style="display:none"><!-- when user management will be available those shall be too -->
 							<li class="hidden-xs">
 								<a href="index.html" class="modal-link">
@@ -144,30 +149,18 @@
 		<div id="sidebar-left" class="col-xs-2 col-sm-2">
 			<ul class="nav main-menu">
 				<li>
-					<a href="../ajax/dashboard.html" class="ajax-link">
-						<i class="fa fa-dashboard"></i>
-						<span class="hidden-xs">Dashboard</span>
-					</a>
-						<a href="../ajax/manifoldcf.html" class="ajax-link">
+<!-- 					<a href="../ajax/dashboard.html" class="ajax-link"> <i -->
+<!-- 							class="fa fa-dashboard"></i> <span class="hidden-xs">Dashboard</span> -->
+					</a> <a href="../ajax/manifoldcf.html" class="ajax-link">
 						<i class="fa fa-bar-chart-o"></i>
-						<span class="hidden-xs">Connectors</span>
+						<span class="hidden-xs"><%= resourceBundle.getString("connectors")%></span>
 					</a>
 				</li>
-				<li class="dropdown">
-					<ul class="dropdown-menu">
-						<li><a class="ajax-link" href="../ajax/charts_xcharts.html">xCharts</a></li>
-						<li><a class="ajax-link" href="../ajax/charts_flot.html">Flot Charts</a></li>
-						<li><a class="ajax-link" href="../ajax/charts_google.html">Google Charts</a></li>
-						<li><a class="ajax-link" href="../ajax/charts_morris.html">Morris Charts</a></li>
-						<li><a class="ajax-link" href="../ajax/charts_amcharts.html">AmCharts</a></li>
-						<li><a class="ajax-link" href="../ajax/charts_chartist.html">Chartist</a></li>
-						<li><a class="ajax-link" href="../ajax/charts_coindesk.html">CoinDesk realtime</a></li>
-					</ul>
-				</li>
+
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle">
 						<i class="fa fa-table"></i>
-						 <span class="hidden-xs">Statistics</span>
+						 <span class="hidden-xs"><%= resourceBundle.getString("statistics")%></span>
 					</a>
 					<ul class="dropdown-menu">
 						<li><a class="ajax-link" href="../ajax/usageStatistics.html">Usage statistics</a></li>
@@ -178,50 +171,50 @@
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle">
 						<i class="fa 	"></i>
-						 <span class="hidden-xs">Search engine admin</span>
+						 <span class="hidden-xs"><%= resourceBundle.getString("admin")%></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li><a class="ajax-link" href="../ajax/solr.html">Solr Admin</a></li>
-						<li><a class="ajax-link" href="../ajax/forms_layouts.html">Layouts</a></li>
-						<li><a class="ajax-link" href="../ajax/forms_file_uploader.html">File Uploader</a></li>
+						<li><a class="ajax-link" href="../ajax/solr.html"><%= resourceBundle.getString("solrAdmin")%></a></li>
+<!-- 						<li><a class="ajax-link" href="../ajax/forms_layouts.html">Layouts</a></li> -->
+<!-- 						<li><a class="ajax-link" href="../ajax/forms_file_uploader.html">File Uploader</a></li> -->
 					</ul>
 				</li>
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle">
 						<i class="fa fa-desktop"></i>
-						 <span class="hidden-xs">Search engine configuration</span>
+						 <span class="hidden-xs"><%= resourceBundle.getString("conf")%></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li><a class="ajax-link" href="../ajax/Capsules.html">Capsules</a></li>
-						<li><a class="ajax-link" href="../ajax/Synonyms.html">Synonyms</a></li>
-						<li><a class="ajax-link" href="../ajax/StopWords.html">Stopwords</a></li>
-						<li><a class="ajax-link" href="../ajax/ui_jquery-ui.html">Query based boots</a></li>
-						<li><a class="ajax-link" href="../ajax/ui_icons.html">Document based boosts</a></li>
-						<li><a class="ajax-link" href="../ajax/ui_icons.html">OCR: On/Off</a></li>
-						<li><a class="ajax-link" href="../ajax/ui_icons.html">Duplicate identifiers</a></li>
-						<li><a class="ajax-link" href="../ajax/ui_icons.html">User Management</a></li>
-						<li><a class="ajax-link" href="../ajax/ui_icons.html">Autocomplete configuration</a></li>
+						<li><a class="ajax-link" href="../ajax/Capsules.html"><%= resourceBundle.getString("capsules")%></a></li>
+						<li><a class="ajax-link" href="../ajax/Synonyms.html"><%= resourceBundle.getString("synonyms")%></a></li>
+						<li><a class="ajax-link" href="../ajax/StopWords.html"><%= resourceBundle.getString("stopwords")%></a></li>
+<!-- 						<li><a class="ajax-link" href="../ajax/ui_jquery-ui.html">Query based boots</a></li> -->
+<!-- 						<li><a class="ajax-link" href="../ajax/ui_icons.html">Document based boosts</a></li> -->
+<!-- 						<li><a class="ajax-link" href="../ajax/ui_icons.html">OCR: On/Off</a></li> -->
+<!-- 						<li><a class="ajax-link" href="../ajax/ui_icons.html">Duplicate identifiers</a></li> -->
+<!-- 						<li><a class="ajax-link" href="../ajax/ui_icons.html">User Management</a></li> -->
+<!-- 						<li><a class="ajax-link" href="../ajax/ui_icons.html">Autocomplete configuration</a></li> -->
 					</ul>
 				</li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle">
-						<i class="fa fa-map-marker"></i>
-						<span class="hidden-xs">Search engine users</span>
-					</a>
-					<ul class="dropdown-menu">
-						<li><a class="ajax-link" href="../ajax/maps.html">Save search queries</a></li>
-						<li><a class="ajax-link" href="../ajax/Alerts.html">Create alerts</a></li>
-						<li><a class="ajax-link" href="../ajax/map_leaflet.html">Favorite documents</a></li>
-					</ul>
-				</li>
+<!-- 				<li class="dropdown"> -->
+<!-- 					<a href="#" class="dropdown-toggle"> -->
+<!-- 						<i class="fa fa-map-marker"></i> -->
+<!-- 						<span class="hidden-xs">Search engine users</span> -->
+<!-- 					</a> -->
+<!-- 					<ul class="dropdown-menu"> -->
+<!-- 						<li><a class="ajax-link" href="../ajax/maps.html">Save search queries</a></li> -->
+<!-- 						<li><a class="ajax-link" href="../ajax/Alerts.html">Create alerts</a></li> -->
+<!-- 						<li><a class="ajax-link" href="../ajax/map_leaflet.html">Favorite documents</a></li> -->
+<!-- 					</ul> -->
+<!-- 				</li> -->
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle">
 						<i class="fa fa-picture-o"></i>
-						 <span class="hidden-xs">Servers</span>
+						 <span class="hidden-xs"><%= resourceBundle.getString("servers")%></span>
 					</a>
 					<ul class="dropdown-menu">
 						<li><a class="ajax-link" href="../ajax/Tomcat.html">Tomcat</a></li>
-						<li><a class="ajax-link" href="../ajax/Jetty.html">Jetty</a></li>
+<!-- 						<li><a class="ajax-link" href="../ajax/Jetty.html">Jetty</a></li> -->
 					</ul>
 				</li>
 			</ul>
@@ -238,20 +231,21 @@
 					<p>Donate - BTC 123Ci1ZFK5V7gyLsyVU36yPNWSB5TDqKn3</p>
 				</div>
 			</div>
-			<div class="preloader">
-				<img src="../img/devoops_getdata.gif" class="devoops-getdata" alt="preloader"/>
-			</div>
 			<div id="ajax-content"></div>
 		</div>
 		<!--End Content-->
 		<jsp:include page="../footer.jsp"  />
 	</div>
 </div>
+<script>
+</script>
 <!--End Container-->
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <!--<script src="http://code.jquery.com/jquery.js"></script>-->
 <script src="../plugins/jquery/jquery.min.js"></script>
 <script src="../plugins/jquery-ui/jquery-ui.min.js"></script>
+<script src="./i18nInit.js"></script>
+<script src="./../js/AjaxFranceLabs/i18njs.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="../plugins/bootstrap/bootstrap.min.js"></script>
 <script src="../plugins/justified-gallery/jquery.justifiedGallery.min.js"></script>

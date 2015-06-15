@@ -8,7 +8,7 @@ body {
     background-repeat:no-repeat !important;
     background: #FFFFFF;
     background-attachment: fixed;
-	background: -webkit-linear-gradient(top, #ffffff 0%, #FFFFFF 60%) repeat
+	background: -webkit-linear-gradient(top, #F5F7C5 0%, #FFFFFF 60%) repeat
 		scroll 0 0 transparent;
 	background: -moz-linear-gradient(top, #F5F7C5 0%, #FFFFFF 60%) repeat
 		scroll 0 0 transparent;
@@ -19,7 +19,7 @@ body {
 }
 
 header {
-	background-color: #ffffff;
+	background-color: #DDE27C;
 }
 a {
 	color: #3D3C3A;

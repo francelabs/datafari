@@ -849,47 +849,20 @@
   </requestHandler>
 
 
-<requestHandler name="/update/extract" startup="lazy"
-class="com.francelabs.handler.html.HTMLRequestHandler">
-	<lst name="defaults">
+  <requestHandler name="/update/extract" 
+                  startup="lazy"
+                  class="solr.extraction.ExtractingRequestHandler" >
+    <lst name="defaults">
+      		<str name="scan">false</str>
       		<str name="captureAttr">true</str>
-		<str name="field">content_fr</str>
-		<str name="field">title_fr</str>
-		<str name="f.content_fr.selector">.view-article-body</str>
-		<str name="f.title_fr.selector">.view-article-content</str>
-		<str name="field">last_modified</str>
-		<str name="f.last_modified.selector">.view-article-date</str>
-		<str name="update.chain">datafari</str>
-	</lst>
-</requestHandler> 
-<requestHandler name="/update/extractbis" startup="lazy"
-class="com.francelabs.handler.html.HTMLRequestHandler">
-	<lst name="defaults">
-      		<str name="captureAttr">true</str>
-		<str name="field">content_fr</str>
-		<str name="field">title_fr</str>
-		<str name="f.content_fr.selector">.view-article-body-abstract</str>
-		<str name="f.title_fr.selector">.view-article-content</str>
-		<str name="field">last_modified</str>
-		<str name="f.last_modified.selector">.view-article-date</str>
-		<str name="update.chain">datafari</str>
-	</lst>
-</requestHandler>
-<requestHandler name="/update/extractTier" startup="lazy"
-class="com.francelabs.handler.html.HTMLRequestHandler">
-	<lst name="defaults">
-      		<str name="captureAttr">true</str>
-		<str name="field">content_fr</str>
-		<str name="field">title_fr</str>
-		<str name="f.content_fr.selector">.summary</str>
-		<str name="f.title_fr.selector">.vdo_viewer_soustitre</str>
-		<str name="field">last_modified</str>
-		<str name="f.last_modified.selector">.v_viewer_bloc_info</str>
-		<str name="update.chain">datafari</str>
-	</lst>
-</requestHandler>  
-  
-  
+			<str name="lowernames">true</str>
+			<str name="fmap.language">ignored_</str>
+			<str name="fmap.source">ignored_</str>
+			<str name="uprefix">ignored_</str>
+			<str name="update.chain">datafari</str>
+			<bool name="ignoreTikaException">true</bool>
+    </lst>
+  </requestHandler>
   
 
 

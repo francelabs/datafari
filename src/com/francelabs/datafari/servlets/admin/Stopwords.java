@@ -12,8 +12,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -22,13 +22,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
-
-import com.francelabs.datafari.solrj.SolrServers;
 import com.francelabs.datafari.solrj.SolrServers.Core;
 
 /** Javadoc
@@ -94,7 +87,7 @@ public class Stopwords extends HttpServlet {
 						out.close();
 					}else{												//if not available
 						PrintWriter out = response.getWriter();
-						out.append("File already in use"); 				//print hardcoded error message
+						out.append("File already in use"); 	
 						out.close();
 					}
 				}
@@ -145,8 +138,6 @@ public class Stopwords extends HttpServlet {
 			}
 		}else{															//The user clicked on confirm modification
 			File file ;
-			int maxFileSize = 5000 * 1024;
-			int maxMemSize = 5000 * 1024;
 			String filePath =  absoluteDiskPath+"solr/solr_home/"+server+"/conf/stopwords_"+request.getParameter("language")+".txt";
 			file = new File(filePath);										
 			FileOutputStream fooStream = new FileOutputStream(file, false); // true to append, false to overwrite.

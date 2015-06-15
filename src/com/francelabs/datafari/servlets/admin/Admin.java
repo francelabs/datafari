@@ -1,15 +1,9 @@
 package com.francelabs.datafari.servlets.admin;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
-
-
-import java.util.Enumeration;
 import java.util.Map;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -29,7 +23,6 @@ import org.apache.solr.response.JSONResponseWriter;
 import org.apache.solr.response.SolrQueryResponse;
 import org.apache.solr.schema.IndexSchema;
 import org.apache.solr.search.SolrIndexSearcher;
-import org.json.JSONObject;
 
 import com.francelabs.datafari.solrj.SolrServers;
 import com.francelabs.datafari.solrj.SolrServers.Core;
@@ -47,6 +40,7 @@ import com.francelabs.datafari.solrj.SolrServers.Core;
 public class Admin extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private SolrInputDocument doc;
+	private int maxCaps = 100;
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -137,7 +131,7 @@ public class Admin extends HttpServlet {
 				query.setParam("q", "\""+request.getParameter("keyword").toString()+"\"");	//else set the a research query with the keyword typed in the search field
 				query.setParam("q.op", "AND");
 			}
-			query.setParam("rows", "10000");											//Hardcoded limit of 100 results
+			query.setParam("rows", String.valueOf(maxCaps));							//Hardcoded limit of 100 results
 		}
 		query.setRequestHandler("/select");											
 		try {
@@ -168,69 +162,8 @@ public String formatDate(String date, String time){										//format date to th
 		if( request.getParameter("title")!=null && request.getParameter("keyword")!=null && request.getParameter("contentCaps")!=null){ //If it's an edit or an add
 			Object key = request.getParameter("keyword"), title = request.getParameter("title"), value = request.getParameter("contentCaps"), oldKey = request.getParameter("oldKey");
 			String dateB = formatDate(request.getParameter("dateB").toString(),"T00:00:00Z"), dateE = formatDate(request.getParameter("dateE").toString(),"T23:59:59Z"); //Get all the parameters & format the Date
-			final SolrQuery query = new SolrQuery();
-			QueryResponse queryResponse = null;
 			doc = new SolrInputDocument();
-			SolrQueryRequest req = new SolrQueryRequest() {
-				@Override
-				public SolrParams getParams() {
-					return query;
-				}
 
-				@Override
-				public void setParams(SolrParams params) {
-				}
-
-				@Override
-				public Iterable<ContentStream> getContentStreams() {
-					return null;
-				}
-
-				@Override
-				public SolrParams getOriginalParams() {
-					return null;
-				}
-
-				@Override
-				public Map<Object, Object> getContext() {
-					return null;
-				}
-
-				@Override
-				public void close() {
-				}
-
-				@Override
-				public long getStartTime() {
-					return 0;
-				}
-
-				@Override
-				public SolrIndexSearcher getSearcher() {
-					return null;
-				}
-
-				@Override
-				public SolrCore getCore() {
-					return null;
-				}
-
-				@Override
-				public IndexSchema getSchema() {
-					return null;
-				}
-
-				@Override
-				public String getParamString() {
-					return null;
-				}
-
-				@Override
-				public void updateSchemaToLatest() {
-
-				}
-
-			};
 
 			try {
 				doc.addField("keyword", key);					//add the keyword to the Solrdoc						

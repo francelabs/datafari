@@ -17,7 +17,7 @@
 .tableWidget .facetSort { background-color: #ebebeb; border-bottom-color: #b5b5b5; }
 .tableWidget ul li { border-bottom-color: #b5b5b5; }
 
-.resultWidget .res .title { color: #008AA3; }
+.resultWidget .res .title { color: #000000; }
 .resultWidget .doc .res .address { color: #3d3c3a; }
 .resultWidget .doc .res .tags a span { color: #CF242A; font-style: italic; }
 
