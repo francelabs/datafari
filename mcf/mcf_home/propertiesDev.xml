@@ -19,7 +19,7 @@
 <configuration>
 
   <property name="org.apache.manifoldcf.login.name" value="admin"/>
-  <property name="org.apache.manifoldcf.login.password" value="password"/>
+  <property name="org.apache.manifoldcf.login.password" value="youp"/>
 
 
   <!-- Point to the synchronization area -->

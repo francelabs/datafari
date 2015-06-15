@@ -773,8 +773,7 @@
 		<lst name="defaults">
 			<str name="echoParams">explicit</str>
 			<str name="defType">edismax</str>
-			<str name="qf">title_en^50 title_fr^50 content_fr^10 content_en^10 source^20 extension^20
-			</str>
+			<str name="qf">title_en^50 title_fr^50 content_fr^10 content_en^10 categorie^20 extension^20</str>
 			<str name="pf">title_en^500 title_fr^500 content_fr^100 content_en^100</str>
 			<int name="rows">10</int>
 			<str name="spellcheck">true</str>
@@ -849,6 +848,7 @@
        -->
   </requestHandler>
 
+
   <requestHandler name="/update/extract" 
                   startup="lazy"
                   class="solr.extraction.ExtractingRequestHandler" >
@@ -863,7 +863,6 @@
 			<bool name="ignoreTikaException">true</bool>
     </lst>
   </requestHandler>
-  
   
 
 
@@ -1309,8 +1308,7 @@
 		
 		<processor class="com.francelabs.datafari.updateprocessor.DatafariUpdateProcessorFactory" />
 
-
-	
+			
 		<processor
 			class="org.apache.solr.update.processor.LangDetectLanguageIdentifierUpdateProcessorFactory">
 			<str name="langid.fl">content,title</str>

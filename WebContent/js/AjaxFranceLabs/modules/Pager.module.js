@@ -48,6 +48,7 @@ AjaxFranceLabs.PagerModule = AjaxFranceLabs.AbstractModule.extend({
 	init : function() {
 		if (!this.initialized) {
 			this.initialized = true;
+
 			var self = this, elm = $(this.elm);
 			this.nbPageDisplayed = (this.nbPageDisplayed < 4) ? 4 : this.nbPageDisplayed;
 			elm.append('<div>');
@@ -73,7 +74,7 @@ AjaxFranceLabs.PagerModule = AjaxFranceLabs.AbstractModule.extend({
 	},
 
 	updatePages : function() {
-		
+
 		$(this.elm).find('.pagerModule').css('display', 'block');
 		var self = this, elm = $(this.elm);
 		this.nbElements = (this.source !== null) ? this.source.children().length : this.nbElements;

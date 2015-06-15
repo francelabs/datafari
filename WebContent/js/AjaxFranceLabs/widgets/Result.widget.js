@@ -26,8 +26,10 @@ AjaxFranceLabs.ResultWidget = AjaxFranceLabs.AbstractWidget.extend({
 	buildWidget : function() {
 		var elm = $(this.elm);
 		elm.addClass('resultWidget').addClass('widget').attr('widgetId', this.id).append('<div class="doc_list">');
-		if (this.pagination)
+		
+		if (this.pagination){
 			$(this.elm).append('<div class="doc_list_pagination">');
+		}
 		if (this.pagination === true) {
 			var self = this;
 			this.pagination = new AjaxFranceLabs.PagerModule({

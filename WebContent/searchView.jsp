@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
+<meta charset="UTF-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Search</title>
@@ -54,7 +54,7 @@
 		src="js/AjaxFranceLabs/widgets/Capsule.widget.js"></script>
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/TableMobile.widget.js"></script>
-	<script type="text/javascript"
+	<!-- <script type="text/javascript" -->
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/Spellchecker.widget.js"></script>
 
@@ -73,7 +73,7 @@
 			<div id="facets">
 				<div id="facet_date"></div>
 				<div id="facet_type"></div>
-				<div id="facet_source"></div>
+				<div id="facet_categorie"></div>
 				<div id="facet_language"></div>
 			</div>
 		</div>
@@ -88,7 +88,6 @@
 		</div>
 		<div class="clear"></div>
 	</div>
-	<jsp:include page="footer.jsp" /> 
-
+	
 </body>
 </html>

@@ -1,0 +1,5 @@
+core = FileShare;
+search = cannes;
+address = karassev.alexis@gmail.com;
+object = new;
+

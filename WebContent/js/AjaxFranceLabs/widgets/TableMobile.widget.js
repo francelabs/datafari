@@ -88,9 +88,9 @@ AjaxFranceLabs.TableMobileWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 				elm : this.elm,
 				updateList : function() {
 					if (this.nbPage > 1) {
-						$(this.source).children().css('display', 'none').slice(this.pageSelected * this.nbElmToDisplay, (this.pageSelected + 1) * this.nbElmToDisplay).css('display', this.display);
-						AjaxFranceLabs.clearMultiElementClasses($('li', this.source));
-						AjaxFranceLabs.addMultiElementClasses($('li:visible', this.source));
+						$(this.categorie).children().css('display', 'none').slice(this.pageSelected * this.nbElmToDisplay, (this.pageSelected + 1) * this.nbElmToDisplay).css('display', this.display);
+						AjaxFranceLabs.clearMultiElementClasses($('li', this.categorie));
+						AjaxFranceLabs.addMultiElementClasses($('li:visible', this.categorie));
 					}
 				}
 			});
@@ -130,7 +130,7 @@ AjaxFranceLabs.TableMobileWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 			}
 		}
 		if (this.pagination) {
-			this.pagination.source = $('ul', this.elm);
+			this.pagination.categorie = $('ul', this.elm);
 			this.pagination.updatePages();
 		}
 		this.sortBy(this.sort);

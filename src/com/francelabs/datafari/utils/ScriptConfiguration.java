@@ -38,8 +38,7 @@ import com.francelabs.datafari.statistics.StatsPusher;
 public class ScriptConfiguration {
 
 	
-	//TODO switch to relative path
-	public static String configPropertiesFileName = "datafari.properties";
+		public static String configPropertiesFileName = "datafari.properties";
 
 	private static ScriptConfiguration instance;
 	private Properties properties;

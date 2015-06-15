@@ -41,8 +41,8 @@ AjaxFranceLabs.SearchInformationWidget = AjaxFranceLabs.AbstractWidget.extend({
 		if (numFound === 0)
 			start = 0;
 		
-		elm.find('#result_information_numberOfResults').append('<span>' + window.i18n.msgStore['result'] + ' ' + start + ' - ' + end + ' '+window.i18n.msgStore['of']+' ' + numFound + '</span>');
-		elm.find('#result_information_search').append('<span> '+window.i18n.msgStore['for']+' ' + this.manager.store.get('q').val() + '</span>');
-		elm.find('#result_information_requestTime').append('<span> (' + (data.responseHeader.QTime / 1000) + ' '+window.i18n.msgStore['seconds']+')</span>');
+		elm.find('#result_information_numberOfResults').append('<span>' + 'R&eacute;sultats' + ' ' + start + ' - ' + end + ' '+'de'+' ' + numFound + '</span>');
+		elm.find('#result_information_search').append('<span> '+'pour'+' ' + this.manager.store.get('q').val() + '</span>');
+		elm.find('#result_information_requestTime').append('<span> (' + (data.responseHeader.QTime / 1000) + ' '+'seconde(s)'+')</span>');
 	}
 });

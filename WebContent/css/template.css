@@ -1,4 +1,5 @@
-@media all and (min-width : 320px) and (max-width : 480px){
+
+ @media all and (min-width : 320px) and (max-width : 480px){
 html, body, #container { height:100%; }
 #container { position:relative; }
 #content { background:transparent url(../images/content-bg.png) repeat-x 0 0; top:131px; bottom:31px; left:0; right:0; position:absolute; }
@@ -151,10 +152,10 @@ html, body, #container { height:100%; }
 #container { position:relative; }
 #content { background:transparent url(../images/content-bg.png) repeat-x 0 0; top:131px; bottom:31px; left:0; right:0; position:absolute; }
 
-header { background:transparent url(../images/header-bg-2.png) repeat-x 0 0; display: block; position:relative; width:100%; }
+
 label { cursor:pointer; }
 #header-wrapper { margin:0 auto; width:850px; height:85px;} 
-#logo { background:transparent url(../images/datafari.png) no-repeat 0 0; height:85px; float:left; width:229px; margin-left:30px;}
+
 #biglogo { background:transparent url(../images/bigdatafari.png) no-repeat 0 0; height:85px; float:left; width:370px; margin-left:30px;}
 #userSpace { background:transparent  height:85px;  float:right;  margin-top:68px;}
 #bar { background:#3D3C3A; height:3px; }
@@ -223,3 +224,4 @@ p { clear:both; }
  .ressourcesList li { margin-bottom: 10px; }
  
  }
+ 

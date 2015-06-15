@@ -1,0 +1,10 @@
+mcf/mcf_home/syncharea/**
+/mcf/mcf_home/syncharea/**
+mcf/mcf_home/syncharea/*
+/mcf/mcf_home/syncharea/*
+mcf/mcf_home/syncharea/
+/mcf/mcf_home/syncharea/
+solr/solr_home/FileShare/data/**
+solr/solr_home/Statistics/data/**
+solr/solr_home/Capsule/data/**
+

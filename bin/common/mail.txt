@@ -1,0 +1,4 @@
+smtpHost =smtp.gmail.com;
+from =datafari.test@gmail.com;
+username =datafari.test@gmail.com;
+password =Datafari1;
