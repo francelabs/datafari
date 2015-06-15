@@ -15,7 +15,6 @@
 		<link href="../plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet">
 		<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 		<link href='http://fonts.googleapis.com/css?family=Righteous' rel='stylesheet' type='text/css'>
-		<link href="../plugins/fancybox/jquery.fancybox.css" rel="stylesheet">
 		<link href="../plugins/fullcalendar/fullcalendar.css" rel="stylesheet">
 		<link href="../plugins/xcharts/xcharts.min.css" rel="stylesheet">
 		<link href="../plugins/select2/select2.css" rel="stylesheet">
@@ -56,7 +55,7 @@
 <header class="navbar">
 	<div class="container-fluid expanded-panel">
 		<div class="row">
-			<div id="logo" class="col-xs-12 col-sm-2">
+			<div id="Datafari" class="col-xs-12 col-sm-2">
 				<a href="../index.jsp">Datafari</a>
 			</div>
 			<div id="top-panel" class="col-xs-12 col-sm-10">
@@ -88,7 +87,7 @@
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle account" data-toggle="dropdown">
 									<div class="avatar">
-										<img src="img/avatar.jpg" class="img-circle" alt="avatar" />
+										
 									</div>
 									<i class="fa fa-angle-down pull-right"></i>
 									<div class="user-mini pull-right">
