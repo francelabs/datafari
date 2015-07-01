@@ -1,4 +1,4 @@
-	<%@ page import="com.francelabs.datafari.utils.ScriptConfiguration" %>
+<%@ page import="com.francelabs.datafari.utils.ScriptConfiguration" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -103,16 +103,16 @@
 	<div id="facets_mobile" style="">
 		<div id="nav_mobile" class="bc-color">
 		<!-- Faut mettre un truc dynamique par rapport à la langue -->
-			<a href="#previous_mobile"><i class="fa fa-chevron-left"></i> Previous</a>
+			<a href="#previous_mobile"><i class="fa fa-chevron-left"></i> </a>
 		</div>
 		<div id="facet_source_mobile"></div>
 		<div id="facet_type_mobile"></div>
     </div>
 	<div id="solr">
-		<div id="searchBar"><img src="css/images/logo_zebre.png"/></div>
-		<div id="results_nav_mobile"  class="bc-color">
-			<div id="number_results_mobile"><span></span> résultats</div>
-			<div id="nav_facets_mobile"><a href="#facets_mobile"><i class="fa fa-bars"></i> Filtrer</a></div>
+		<div id="searchBar"> <a href="../Datafari/"><img src="css/images/logo_zebre.png"/></a></div>
+		<div id="results_nav_mobile"  class="bc-color"> 
+			<div id="number_results_mobile"><span></span></div>
+			<div id="nav_facets_mobile"><a href="#facets_mobile"><i class="fa fa-bars"></i> </a></div>
 		</div>
 		<div id="result_information"></div>
 

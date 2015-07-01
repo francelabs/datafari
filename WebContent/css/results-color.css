@@ -60,17 +60,16 @@ body{background-color : #F0F0F0F0;}
 .searchBarWidget .searchBar .search:active {	background-color:#63B069;  }
 .resultWidget .bar-loader {background-image: url(../images/loader-000000-circle.gif)}
 .advancedSearchWidget button, .page { background: none;}
-.spellcheckerWidget { background:white}
 .ui-autocomplete .ui-state-hover { background-image: none;}
 .ui-slider .ui-widget-header { background-image: none; }
  .col.left .pagerModule {background:white}
  
  @media all and (min-width: 799px){
 	.advancedSearchWidget button { background: none;}
-	.spellcheckerWidget {background-color:white;}
 	.searchBarWidget #sortMode select{background:transparent;}
  }
   @media all and (max-width: 799px){
   .resultWidget .doc,#capsule { background:white}
+  .spellcheckerWidget { background:white}
   }
  

@@ -50,5 +50,8 @@
 "stopwords" : "Stopwords", 
 "servers" : "Serveurs", 
 "home" : "Home" ,
-"usedFile" : "Fichier en cours d'utilisation"
+"usedFile" : "Fichier en cours d'utilisation",
+"previous": "Précédent",
+"results" : "resultats", 
+"filter" : "filtrer"
 }

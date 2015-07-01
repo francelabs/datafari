@@ -19,7 +19,9 @@ $(document).ready(function(){
 			facetsDiv.removeClass(animationOut);
 			});
 	});
-	
+	$("#nav_mobile a").append(' '+window.i18n.msgStore['previous'].charAt(0).toUpperCase() + window.i18n.msgStore['previous'].substr(1));
+	$("#nav_facets_mobile a").append(' '+window.i18n.msgStore['filter'].charAt(0).toUpperCase() + window.i18n.msgStore['filter'].substr(1));
+	$("#number_results_mobile").append(' '+window.i18n.msgStore['results'].charAt(0).toUpperCase() + window.i18n.msgStore['results'].substr(1));
 	// left: 37, up: 38, right: 39, down: 40,
 	// spacebar: 32, pageup: 33, pagedown: 34, end: 35, home: 36
 

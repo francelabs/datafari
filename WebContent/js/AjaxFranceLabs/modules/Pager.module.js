@@ -75,14 +75,14 @@ AjaxFranceLabs.PagerModule = AjaxFranceLabs.AbstractModule.extend({
 
 	updatePages : function() {
 
-		$(this.elm).find('.pagerModule').css('display', 'block');
 		var self = this, elm = $(this.elm);
 		this.nbElements = (this.source !== null) ? this.source.children().length : this.nbElements;
 		this.nbPage = Math.ceil(this.nbElements / this.nbElmToDisplay);
-		if (this.nbPage == 1) {
+		if (this.nbPage <= 1) {
 			$(this.elm).find('.pagerModule').css('display', 'none');
 			return false;
 		}
+		$(this.elm).find('.pagerModule').css('display', 'block').addClass('show');
 		elm.find('.pages').empty();
 		var firstPage = this.pageSelected - 10;
 		if (firstPage < 0){

@@ -45,13 +45,13 @@ AjaxFranceLabs.TableWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 				.find('.facetName').append('<i class="label fa fa-chevron-down"></i>').append('<span class="label la"></span>')
 				.find('.label.la').append(this.name);
 			elm.find('.facetName').toggle(function() {
-					$('.facetSort, ul, .PagerModule', $(this).parents('.tableWidget')).hide();
-					elm.find("i").removeClass('fa-chevron-down').addClass('fa-chevron-up '+animation).on(endAnimationEvents,function(){
+					$('.facetSort, ul, .pagerModule.show', $(this).parents('.tableWidget')).hide();
+					elm.find(".facetName i").removeClass('fa-chevron-down').addClass('fa-chevron-up '+animation).on(endAnimationEvents,function(){
 						$(this).removeClass(animation);
 					});
 				}, function() {
-					$('.facetSort, ul, .PagerModule', $(this).parents('.tableWidget')).show();
-					elm.find("i").removeClass('fa-chevron-up').addClass(animation+ ' fa-chevron-down').on(endAnimationEvents,function(){
+					$('.facetSort, ul, .pagerModule.show', $(this).parents('.tableWidget')).show();
+					elm.find(".facetName i").removeClass('fa-chevron-up').addClass(animation+ ' fa-chevron-down').on(endAnimationEvents,function(){
 						$(this).removeClass(animation);
 					});
 				});

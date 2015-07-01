@@ -63,5 +63,8 @@
 "stopwords" : "Stopwords", 
 "servers" : "Servers", 
 "home" : "Home" ,
-"usedFile" : "File already in use"
+"usedFile" : "File already in use",
+"previous" : "previous",
+"results": "results",
+"filter" :"filter"
 }

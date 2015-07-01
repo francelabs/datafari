@@ -30,24 +30,23 @@ AjaxFranceLabs.TableMobileWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 	//Methods
 
 	buildWidget : function() {
-		// The animation are written in animate.min.css. The javascript is used only to toggle the classes
+		// The animations are written in animate.min.css. The javascript is used only to toggle the classes
 		var endAnimationEvents= 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
 		var animation = 'animated rotateIn';
 		var self = this, elm = $(this.elm);
-		elm.addClass('facet').addClass('tableWidget').addClass('widget').attr('widgetId', this.id).append('<ul class="ultest""></ul>');
+		elm.addClass('facet').addClass('tableWidget').addClass('widget').attr('widgetId', this.id).append('<ul class="ultest"">');
 		if(this.name != null){
-			elm.prepend('<div class="facetName label"></div>')
-				.find('.facetName').append('<i class="label fa fa-chevron-down"></i>').append('<span class="label la"></span>')
+			elm.prepend('<div class="facetName label">')
+				.find('.facetName').append('<i class="label fa fa-chevron-down">').append('<span class="label la">')
 				.find('.label.la').append(this.name);
-				
-				elm.find('.label').toggle(function() {
-					$('.facetSort, ul, .PagerModule', $(this).parents('.tableWidget')).show();
-					elm.find("i").removeClass('fa-chevron-down').addClass('fa-chevron-up '+animation).on(endAnimationEvents,function(){
+			elm.find('.facetName').toggle(function() {
+					$('.facetSort, ul, .pagerModule.show', $(this).parents('.tableWidget')).show();
+					elm.find(".facetName i").removeClass('fa-chevron-down').addClass('fa-chevron-up '+animation).on(endAnimationEvents,function(){
 						$(this).removeClass(animation);
 					});
 				}, function() {
-					$('.facetSort, ul, .PagerModule', $(this).parents('.tableWidget')).hide();
-					elm.find("i").removeClass('fa-chevron-up').addClass(animation+ ' fa-chevron-down').on(endAnimationEvents,function(){
+					$('.facetSort, ul, .pagerModule.show', $(this).parents('.tableWidget')).hide();
+					elm.find(".facetName i").removeClass('fa-chevron-up').addClass(animation+ ' fa-chevron-down').on(endAnimationEvents,function(){
 						$(this).removeClass(animation);
 					});
 				}
@@ -55,10 +54,10 @@ AjaxFranceLabs.TableMobileWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 				
 				elm.find('.hide_show')
 				.toggle(function() {
-					$('.facetSort, ul, .PagerModule', $(this).parents('.tableWidget')).show();
+					$('.facetSort, ul, .pagerModule', $(this).parents('.tableWidget')).show();
 					$(this).addClass('close');
 				}, function() {
-					$('.facetSort, ul, .PagerModule', $(this).parents('.tableWidget')).hide();
+					$('.facetSort, ul, .pagerModule', $(this).parents('.tableWidget')).hide();
 					$(this).removeClass('close');
 				}
 				);
@@ -98,6 +97,8 @@ AjaxFranceLabs.TableMobileWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 						$(this.categorie).children().css('display', 'none').slice(this.pageSelected * this.nbElmToDisplay, (this.pageSelected + 1) * this.nbElmToDisplay).css('display', this.display);
 						AjaxFranceLabs.clearMultiElementClasses($('li', this.categorie));
 						AjaxFranceLabs.addMultiElementClasses($('li:visible', this.categorie));
+					}else{
+						$(this).hide();
 					}
 				}
 			});

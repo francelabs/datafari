@@ -87,7 +87,7 @@ padding-top : 10px;
 #facets_mobile .checkboxIcon, #facets_mobile input[type="checkbox"]:checked + label span.checkboxIcon{
 	font-size: 1.6em;
 }
-#facets_mobile .facet.tableWidget.widget i{
+#facets_mobile .facet.tableWidget.widget .facetName i{
 	-webkit-transform: translateY(-50%);
 	-ms-transform: translateY(-50%);
 	transform: translateY(-50%);
@@ -188,8 +188,8 @@ ul{
 
 /***	>>> Search Bar Widget <<<	***/
 .searchBarWidget { clear: both; margin: 5% 2%; ; width: 95%; height:3em; position:relative; }
-.searchBarWidget > img{
-	width:10%;
+.searchBarWidget  img{
+	width:3em;
 	position: absolute;
 	top: 50%;
 	transform: translateY(-50%);
@@ -200,10 +200,10 @@ ul{
 	position:relative;
 	border: 1px solid #ffffff;
 	padding: 0px;
-	width: 86%;
+	width: 88%;
 	height: 100%;
 	display:inline-block;
-	margin-left:13%;
+	margin-left:9%;
 	vertical-align:top;
 	box-shadow:0 2px 1px rgba(0,0,0,0.1), 0 0 1px rgba(0,0,0,0.1);
 }
@@ -432,7 +432,7 @@ line-height:20px;
 
 @media all and (max-width : 340px){
 	
-	.searchBarWidget > img{
+	.searchBarWidget  img{
 		width:10%;
 	}
 	.searchBarWidget .searchBar{
@@ -454,6 +454,21 @@ line-height:20px;
 
 }
 
+@media all and (max-width : 799px) and (min-width:701px){
+	.searchBarWidget .searchBar{
+		margin-left: 9%;
+	}	
+	.searchBarWidget  img{
+		width:4em;
+	}
+}
+
+@media all and (min-width : 337px) and (max-width:522px){
+	.searchBarWidget .searchBar{
+	width:87%;
+	margin-left:13%;
+	}
+}
 
 
 /* VERSION DESKTOP 
@@ -511,7 +526,7 @@ line-height:20px;
 #facets .facet.tableWidget.widget{
 	position:relative;
 	min-width:86%;
-	margin:7% 5% 5% 0%;
+	margin:0% 5% 5% 0%;
 	padding-bottom:0px;
 	box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1), 0px 0px 1px rgba(0, 0, 0, 0.1);
 }	
@@ -530,8 +545,8 @@ line-height:20px;
 }
 #solr { margin:0 auto; margin-bottom:3%;  width:100%;}
 #result_information { padding:0.6em 2%; padding-right:0px;height:16px; width : 98%;box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1), 0px 0px 1px rgba(0, 0, 0, 0.1);}
-#solr .col.left { display:inline-block; width:15%; margin-left:1em;min-width:250px; }
-#solr .col.right { position:relative; padding:0 10px; width:40%; float:left;margin-top: 0.5em; }
+#solr .col.left { display:inline-block; width:15%; margin-left:1em;min-width:250px; margin-top:1%; }
+#solr .col.right { position:relative; padding:0 10px; width:40%; float:left;margin-top:1%; }
 
 
 #logo-search { 
@@ -657,7 +672,7 @@ line-height:20px;
 /**************************************/
 
 /******	>>> Pager Widget <<<	*******/
-.col.left .pagerModule { padding-top: 10px; text-align: center;}
+.col.left .pagerModule { padding-top: 10px; text-align: center;padding-bottom:10px;}
 .pagerModule{text-align:center;}
 .pagerModule .pages .page, .pagerModule .fn { cursor: pointer; display: inline-table; margin-right: 5px; min-width: 15px; padding: 0 2px; text-align: center; }
 .pagerModule .pages { display: inline-block; overflow: hidden; vertical-align:middle}
@@ -730,7 +745,7 @@ line-height:20px;
 /**************************************/
 
 .ui-resizable-handle { height: 10px; }
-	.searchBarWidget > img{
+	.searchBarWidget  img{
 	margin-left: 3%;
 	width: 2.9em;
 	}
