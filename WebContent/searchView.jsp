@@ -109,7 +109,7 @@
 		<div id="facet_type_mobile"></div>
     </div>
 	<div id="solr">
-		<div id="searchBar"> <a href="../Datafari/"><img src="css/images/logo_zebre.png"/></a></div>
+		<div id="searchBar"> <a href="../Datafari/Search"><img src="css/images/logo_zebre.png"/></a></div>
 		<div id="results_nav_mobile"  class="bc-color"> 
 			<div id="number_results_mobile"><span></span></div>
 			<div id="nav_facets_mobile"><a href="#facets_mobile"><i class="fa fa-bars"></i> </a></div>
