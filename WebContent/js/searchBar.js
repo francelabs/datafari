@@ -25,6 +25,7 @@ $(function($) {
 });
 
 function search() {
+
 	var searchType = 'allWords';
 	var radios = $('#searchBar').find('.searchMode input[type=radio]');
 	$.each(radios, function(key, radio) {

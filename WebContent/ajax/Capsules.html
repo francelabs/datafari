@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="./../plugins/jquery/jquery.min.js" type="text/javascript"></script>
+<script src="./../plugins/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
+<script src="./i18nInit.js" type="text/javascript"></script>
+<script type="text/javascript" src="./../js/AjaxFranceLabs/i18njs.js"></script>
+<style src="./../css/style_v2.css" type="text/css"></style>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<!--Start Breadcrumb-->
+	<div class="row">
+		<div id="breadcrumb" class="col-xs-12">
+			<a href="#" class="show-sidebar"> <i class="fa fa-bars"></i>
+			</a>
+			<ol class="breadcrumb pull-left">
+				<li><a id="topbar1" href="index.html"></a></li>
+				<li><a id="topbar2" href="#"></a></li>
+				<li><a id="topbar3" href="#"></a></li>
+			</ol>
+			<div id="social" class="pull-right">
+				<a href="#"><i class="fa fa-google-plus"></i></a> <a href="#"><i
+					class="fa fa-facebook"></i></a> <a href="#"><i
+					class="fa fa-twitter"></i></a> <a href="#"><i
+					class="fa fa-linkedin"></i></a> <a href="#"><i
+					class="fa fa-youtube"></i></a>
+			</div>
+		</div>
+	</div>
+	<!--End Breadcrumb-->
+		<form id="addCaps">
+			<fieldset>
+				<legend id="legendAdd"></legend>
+				<input id="addCapsule" type="Submit" value="Add" />
+			</fieldset>
+		</form>
+	<form id="getCaps">
+		<fieldset>
+			<legend id="legendSearch"></legend>
+			<input id="keywordSearch" type="text" name="keyword" /> 
+			<input id="myButton" type="Submit" value="Submit" />
+		</fieldset>
+	</form>
+	<div id="anotherSection">
+		<fieldset>
+			<legend id="contextMenu"></legend>
+			<div id="ajaxResponse" class="form-group" role="form" style="margin-right: 15px;">
+			</div><div id="ajaxResponseBis"></div>
+		</fieldset>
+	</div>
+</body>
+<script>
+var d;
+var formData;
+$(document).ready(function() {
+    //Stops the submit request
+    $("#getCaps").submit(function(e){
+           e.preventDefault();
+    });
+  	//Stops the submit request
+    $("#addCaps").submit(function(e){
+        e.preventDefault();
+ 	});
+    //checks for the button click event
+    $("#myButton").click(function(e){
+         getTab();          
+    });
+    //checks for the button click event
+    $("#addCapsule").click(function(e){
+      	addCaps();        
+	});
+    document.getElementById("legendAdd").innerHTML = window.i18n.msgStore['capsuleAdd'];
+    document.getElementById("legendSearch").innerHTML = window.i18n.msgStore['capsuleSearch'];
+    document.getElementById("contextMenu").innerHTML = window.i18n.msgStore['contextualMenu'];
+    document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
+    document.getElementById("topbar2").innerHTML = window.i18n.msgStore['conf'];
+    document.getElementById("topbar3").innerHTML = window.i18n.msgStore['capsules'];
+});
+function getTab(){
+	//Clean both responses area
+	$("#ajaxResponseBis").empty();
+    $("#ajaxResponse").empty();
+    
+ 	//get the search field value
+    var keyword = $("input#keywordSearch").val(); 
+    dataString = "keyword=" + keyword;
+   
+    $.ajax({							//Ajax request to the doGet of the Admin servlet
+        type: "GET",
+        url: "./../admin/Admin",
+        data: dataString,
+        //if received a response from the server
+        success: function( data, textStatus, jqXHR) {
+        	//Put the response into a global variable
+        	d = data;
+        	//If there is result then print the head of the table
+        	var numb = data.response.docs.length;
+             if(numb!=0){
+            	 var i = 0;
+                 $("#ajaxResponse").append("<table id=\"table\" class=\"table table-striped table-bordered table-hover table-condensed\">");
+                 $("#table").append("<thead><tr><th>#</th><th>"+window.i18n.msgStore['keyword']+"</th><th>"+window.i18n.msgStore['title']+" </th><th>"+window.i18n.msgStore['content']+" </th><th>"+window.i18n.msgStore['dateStart']+"</th><th>"+window.i18n.msgStore['dateEnd']+"</th> </tr></thead><tbody>");
+                 //for each result add a line to the table
+                 while(i<numb){
+                	 var key = data.response.docs[i].keyword;
+					 $("#table").append("<tr id=\""+i+"\"><th>"+i+"</th><th><a href=\"javascript: edit("+i+")\">"+key+"</a></th><th>"+data.response.docs[i].title+"</th><th>"+data.response.docs[i].content+"</th><th>"+formatDate(data.response.docs[i].dateBeginning)+"</th><th>"+formatDate(data.response.docs[i].dateEnd)+"</th></tr>");
+					 $("#"+i+"").append("<a href=\"javascript: remove("+i+")\" style=\"color: inherit; text-decoration: inherit;\"><button class=\"fa fa-ban\" ></button></a>");
+					i++;
+				}
+				$("#table").append("</tbody></table>");
+             } 
+             //If there is no result
+             else {	 	
+                 $("#ajaxResponse").html("<div><b>"+window.i18n.msgStore['noCaps']+"</b></div>");
+             }
+        },
+        //If there was no resonse from the server
+        error: function(jqXHR, textStatus, errorThrown){
+             console.log("Something really bad happened " + textStatus);
+              $("#ajaxResponse").html(jqXHR.responseText);
+        },
+        //capture the request before it was sent to server
+        beforeSend: function(jqXHR, settings){
+            //disable the button until we get the response
+            $('#myButton').attr("disabled", true);
+        },   
+        //this is called after the response or error functions are finsihed
+        complete: function(jqXHR, textStatus){
+            //enable the button 
+            $('#myButton').attr("disabled", false);
+        }  
+    });      
+}
+function addCaps(){
+	//print the add capsule form
+	$("#ajaxResponseBis").empty();
+	$("#ajaxResponse").empty();
+	$("#ajaxResponse").append("<form id=\"add\" class=\"form-horizontal\" role=\"form\">");
+	$("#add").append("<fieldset id=\"fieldsAdd\" >");
+	$("#fieldsAdd").append("<div class=\"form-group\" id=\"div1\">");
+	$("#div1").append("<label class=\"col-sm-2 control-label\">"+window.i18n.msgStore['keyword']+"</label>");
+	$("#div1").append("<input required type=\"text\" id=\"keyword\" name=\"keyword\" placeholder=\"Keyword\" class=col-sm-4 >");
+	$("#div1").append("<label class=\"col-sm-2 control-label\">"+window.i18n.msgStore['title']+"</label>");
+	$("#div1").append("<input required type=\"text\" id=\"title\" name=\"title\" placeholder=\"Title\" class=col-sm-4 >");
+	$("#fieldsAdd").append("</div>");
+	$("#fieldsAdd").append("<div class=\"form-group\" id=\"div2\">");
+	$("#div2").append("<label class=\"col-sm-2 control-label\">"+window.i18n.msgStore['content']+"</label>");
+	$("#div2").append("<textarea required type=\"text\" id=\"contentCaps\" name=\"contentCaps\" placeholder=\"Content\"  required=\"required\" class=\"col-sm-10\"></textarea>");
+	$("#fieldsAdd").append("</div>");
+	$("#fieldsAdd").append("<div class=\"form-group\" id=\"div3\">");
+	$("#div3").append("<label class=\"col-sm-2 control-label\">"+window.i18n.msgStore['dateStart']+"</label>");
+	$("#div3").append("<div class=\"col-sm-2\" id=\"div31\">");	
+	$("#div31").append("<input type=\"text\" id=\"dateB\" name=\"dateB\" class=\"form-control\" placeholder=\"Date\">");
+	$("#div31").append("<span class=\"fa fa-calendar form-control-feedback\"></span>");
+	$('#dateB').datepicker({setDate: new Date()});
+	$("#div3").append("</div>");
+	$("#div3").append("<div class=\"col-sm-2\"></div>");
+	$("#div3").append("<label class=\"col-sm-2 control-label\">"+window.i18n.msgStore['dateEnd']+"</label>");
+	$("#div3").append("<div class=\"col-sm-2\" id=\"div32\">");	
+	$("#div32").append("<input type=\"text\" id=\"dateE\" name=\"dateE\" class=\"form-control\" placeholder=\"Date\">");
+	$("#div32").append("<span class=\"fa fa-calendar form-control-feedback\"></span>");
+	$('#dateE').datepicker({setDate: new Date()});
+	$("#div3").append("</div>");
+	$("#fieldsAdd").append("</div>");
+	$("#fieldsAdd").append("<div class=\"form-group\" id=\"div4\">");
+	$("#div4").append("<div class=\"col-sm-5\"></div>");
+	$("#div4").append("<input type=\"Submit\" id=\"newCaps\" name=\"AddCapsule\" value="+window.i18n.msgStore['confirm']+" class=\"col-sm-2\"/>");
+	$("#fieldsAdd").append("</div>");
+	$("#add").append("</fieldset>");
+	$("#ajaxResponse").append("</form>");
+	//Stops the submit request
+	$("#add").submit(function(e){
+        e.preventDefault();
+ 	});
+	//redefines the submit request
+	 $("#add").submit(function(e){
+		 //Put the Data of the form into a global variable and serialize it
+		 formData = $("#add").serialize();
+		 $.ajax({							//Ajax Request to the doGet of Admin to check if there is already a capsule with this keyword
+		        type: "GET",
+		        url: "./../admin/Admin",
+		        data: formData,
+		        //if received a response from the server
+		        success: function(data, textStatus, jqXHR) {
+		        	//if there is already a capsule ask for confirm and print the attributes of this capsule
+		        	if(data.response.docs.length>0){
+		        		$("#ajaxResponseBis").empty();
+		        		$("#ajaxResponseBis").append(window.i18n.msgStore['capsuleAlready']+"</br>");
+		        		$("#ajaxResponseBis").append(window.i18n.msgStore['title']+data.response.docs[0].title+window.i18n.msgStore['content']+data.response.docs[0].content+" ");
+		 				if (data.response.docs[0].dateBeginning != undefined){
+		 					$("#ajaxResponseBis").append(window.i18n.msgStore['dateStart']+data.response.docs[0].dateBeginning+" ");
+		 				}
+		 				if(data.response.docs[0].dateEnd != undefined){
+		 					$("#ajaxResponseBis").append(window.i18n.msgStore['dateEnd']+data.response.docs[0].dateEnd+" ");
+		 				}
+		 				$("#ajaxResponseBis").append("</br>");
+		        		$("#ajaxResponseBis").append("<a href=\"javascript: add()\" style=\"color: inherit; text-decoration: inherit;\"><button id=\"confirm\">"+window.i18n.msgStore['replace']+"</button></a>");
+		        	}
+		        	//If there are no results then just add the capsule
+		        	else{
+		        		add();
+		        	}
+		        },
+		        error: function(jqXHR, textStatus, errorThrown){
+		             console.log("Something really bad happened " + textStatus);
+		              $("#ajaxResponse").html(jqXHR.responseText);
+		        },
+		        //capture the request before it was sent to server
+		        beforeSend: function(jqXHR, settings){
+		            //disable the button until we get the response
+		            $('#add').attr("disabled", true);
+		        },
+		        //this is called after the response or error functions are finsihed
+		        complete: function(jqXHR, textStatus){
+		            //enable the button 
+		            $('#add').attr("disabled", false);
+		        }  
+		 });
+	 });
+}
+function add(){
+	//Clean an eventual confirm button
+	$("#ajaxResponseBis").empty();
+	//Get the data of the add form
+	var data = formData;
+	//Get the Dates
+	var dateB = data.substring(data.indexOf("dateB")+6, data.indexOf("dateE")-1);
+	var dateE = data.substring(data.indexOf("dateE")+6, data.length);
+	//If there are both dates
+	if(dateB != "" && dateE != ""){
+	 	//Format them and compare them
+		var dateOne = new Date();
+	 	dateOne.setFullYear(dateB.substring(10,14),dateB.substring(0,2),dateB.substring(5,7));
+	 	var dateTwo = new Date();
+	 	dateTwo.setFullYear(dateE.substring(10,14),dateE.substring(0,2),dateE.substring(5,7));
+	 	//If the ending date is posterior to the starting date or if it's the same day
+	 	if(isGreater(dateTwo, dateOne)){
+	 		$.ajax({							//Ajax request to the doPost of Admin to add the capsule
+	       		type: "POST",
+	        	url: "./../admin/Admin",
+	       	 	data: data,
+	        	//if received a response from the server
+	        	success: function(data, textStatus, jqXHR) {
+	        		//Clean the reponse Area and the global variable
+	        		$("#ajaxResponse").empty();
+	        		formData = null;
+	    	 		//Print Success
+	        		$("#ajaxResponse").append("<div class=col-xs-5></div>");
+	    			$("#ajaxResponse").append("<h2 class=col-xs-2>"+window.i18n.msgStore['success']+"</h2>");
+	    			$("#ajaxResponse").append("<div class=col-xs-5></div>");
+	        	},
+	        	error: function(jqXHR, textStatus, errorThrown){
+	            	 console.log("Something really bad happened " + textStatus);
+	              	$("#ajaxResponse").html(jqXHR.responseText);
+	        	},
+	        	//capture the request before it was sent to server
+	        	beforeSend: function(jqXHR, settings){
+	            	//disable the button until we get the response
+	            	$('#add').attr("disabled", true);
+	        	},
+	        	//this is called after the response or error functions are finsihed
+	        	complete: function(jqXHR, textStatus){
+	            	//enable the button 
+	            	$('#add').attr("disabled", false);
+	        	}  
+	 		});
+	 	}
+	 	//If the starting date is posterior to the ending date
+	 	else{
+	 		//Clean the seconde part of the response area
+	 		$("#ajaxResponseBis").empty();
+	 		//Print the error message
+	 		$("#ajaxResponseBis").append("<div class=col-xs-4></div>");
+			$("#ajaxResponseBis").append("<h3 class=col-xs-4>"+window.i18n.msgStore['errorDate']+"</h3>");
+			$("#ajaxResponseBis").append("<div class=col-xs-4></div>");
+	 	}
+	 }
+	 //If there is a date or none
+	 else{
+		$.ajax({							//Ajax request to the doPost of Admin to add the capsule
+		 	type: "POST",
+	     	url: "./../admin/Admin",
+		    data: data,
+		    //if received a response from the server
+		    success: function(data, textStatus, jqXHR) {
+		    	//Clean the reponse Area and the global variable
+		    	$("#ajaxResponse").empty();
+			   	formData = null;
+			    //Print Success
+		       	$("#ajaxResponse").append("<div class=col-xs-5></div>");
+	    		$("#ajaxResponse").append("<h2 class=col-xs-2>"+window.i18n.msgStore['success']+"</h2>");
+	   			$("#ajaxResponse").append("<div class=col-xs-5></div>");
+	        },
+	        error: function(jqXHR, textStatus, errorThrown){
+				console.log("Something really bad happened " + textStatus);
+		        $("#ajaxResponse").html(jqXHR.responseText);
+		    },
+		   	beforeSend: function(jqXHR, settings){
+	        //disable the button until we get the response
+		    $('#add').attr("disabled", true);
+		    },	       
+		    //this is called after the response or error functions are finsihed
+		    complete: function(jqXHR, textStatus){
+		     	//enable the button 
+		      	$('#add').attr("disabled", false);
+		  	 }  
+		 });
+	 }
+}
+function edit(i){
+	//Print the edit Form
+	var data = d;
+	$("#ajaxResponse").empty();
+	$("#ajaxResponse").append("<form id=\"modify\" class=\"form-horizontal\" role=\"form\">");
+	$("#modify").append("<fieldset id=\"fields\" >");
+	$("#fields").append("<div class=\"form-group\" id=\"div1\">");
+	$("#div1").append("<label class=\"col-sm-2 control-label\">"+window.i18n.msgStore['keyword']+"</label>");
+	$("#div1").append("<input required type=\"text\" id=\"keyword\" name=\"keyword\" placeholder=\"Keyword\" value="+data.response.docs[i].keyword+" class=col-sm-4 >");
+	$("#div1").append("<label class=\"col-sm-2 control-label\">"+window.i18n.msgStore['title']+"</label>");
+	$("#div1").append("<input required type=\"text\" id=\"title\" name=\"title\" placeholder=\"Title\" value="+data.response.docs[i].title+" class=col-sm-4 >");
+	$("#fields").append("</div>");
+	$("#fields").append("<div class=\"form-group\" id=\"div2\">");
+	$("#div2").append("<label class=\"col-sm-2 control-label\">"+window.i18n.msgStore['content']+"</label>");
+	$("#div2").append("<textarea required type=\"text\" id=\"contentCaps\" name=\"contentCaps\" placeholder=\"Content\" class=\"col-sm-10\">"+data.response.docs[i].content+"</textarea>");
+	$("#fields").append("</div>");
+	$("#fields").append("<div class=\"form-group\" id=\"div3\">");
+	$("#div3").append("<label class=\"col-sm-2 control-label\">"+window.i18n.msgStore['dateStart']+"</label>");
+	$("#div3").append("<div class=\"col-sm-2\" id=\"div31\">");	
+	if(d.response.docs[i].dateBeginning!=undefined){
+		var date = formatDate(d.response.docs[i].dateBeginning);
+		$("#div31").append("<input type=\"text\" id=\"dateB\" name=\"dateB\" class=\"form-control\" placeholder=\"Date\" value=\""+date+"\">");
+		$('#dateB').datepicker({setDate: new Date()});
+	}else{
+		$("#div31").append("<input type=\"text\" id=\"dateB\" name=\"dateB\" class=\"form-control\" placeholder=\"Date\">");
+		$('#dateB').datepicker({setDate: new Date()});
+	}
+	$("#div31").append("<span class=\"fa fa-calendar form-control-feedback\"></span>");
+	$("#div3").append("</div>");
+	$("#div3").append("<div class=\"col-sm-2\"></div>");
+	$("#div3").append("<label class=\"col-sm-2 control-label\">"+window.i18n.msgStore['dateEnd']+"</label>");
+	$("#div3").append("<div class=\"col-sm-2\" id=\"div32\">");
+	if(d.response.docs[i].dateEnd!=undefined){
+		var date = formatDate(d.response.docs[i].dateEnd);
+		$("#div32").append("<input type=\"text\" id=\"dateE\" name=\"dateE\" class=\"form-control\" placeholder=\"Date\" value=\""+date+"\">");
+		$('#dateE').datepicker({setDate: new Date()});
+	}else{
+		$("#div32").append("<input type=\"text\" id=\"dateE\" name=\"dateE\" class=\"form-control\" placeholder=\"Date\" >");
+		$('#dateE').datepicker({setDate: new Date()});
+	}
+	$("#div32").append("<span class=\"fa fa-calendar form-control-feedback\"></span>");
+	$("fields").append("</div>");
+	$("#fields").append("<div class=\"form-group\" id=\"div4\">");
+	$("#div4").append("<div class=\"col-sm-5\"></div>");
+	$("#div4").append("<input type=\"Submit\" id=\"newCaps\" name=\"AddCapsule\" value="+window.i18n.msgStore['capsuleEdit']+" class=\"col-sm-2\"/>");
+	$("#fieldsAdd").append("</div>");
+	$("#modify").append("</fieldset>");
+	$("#ajaxResponse").append("</form>");
+	//Stops the submit request
+	$("#modify").submit(function(e){
+        e.preventDefault();
+ 	});
+	//Redefines the submit request
+	$("#modify").submit(function(e){
+		//Get the edit form's data and serialize it 
+		var data=$("#modify").serialize();
+		//Get the dates
+		var dateB = data.substring(data.indexOf("dateB")+6, data.indexOf("dateE")-1);
+		var dateE = data.substring(data.indexOf("dateE")+6, data.length);
+		//If there are both dates
+		if(dateB != "" && dateE != ""){
+			//Format the dates and compare them
+			var dateOne = new Date();
+		 	dateOne.setFullYear(dateB.substring(10,14),dateB.substring(0,2),dateB.substring(5,7));
+		 	var dateTwo = new Date();
+		 	dateTwo.setFullYear(dateE.substring(10,14),dateE.substring(0,2),dateE.substring(5,7));
+		 	//If the ending date is posterior to the starting date or if it's the same day
+		 	if(isGreater(dateTwo, dateOne)){
+		 		//Add the oldKey to the serialized data and serialize it (if the keyword has not been changed the oldKey will be the same as the current one)
+		 		var datastring = "oldKey="+d.response.docs[i].keyword+"&"+$("#modify").serialize();
+				$.ajax({								//Ajax request to the doPost of Admin to edit the capsule
+		        	type: "POST",
+		        	url: "./../admin/Admin",			
+		        	data: datastring,
+		        	//if received a response from the server
+		        	success: function(data, textStatus, jqXHR) {
+		        		//Clean the response area and print all the capsules
+		        		$("#ajaxResponse").empty();
+		        		document.getElementById('keywordSearch').value = "";
+		        		getTab();
+		        	},
+		        	error: function(jqXHR, textStatus, errorThrown){
+		        	     console.log("Something really bad happened " + textStatus);
+		        	      $("#ajaxResponse").html(jqXHR.responseText);
+		        	},
+		        	//capture the request before it was sent to server
+		        	beforeSend: function(jqXHR, settings){
+		        	    //disable the button until we get the response
+		        	    $('#modify').attr("disabled", true);
+		        	},
+		        	//this is called after the response or error functions are finsihed
+		        	complete: function(jqXHR, textStatus){
+		        	    //enable the button 
+		        	    $('#modify').attr("disabled", false);
+		        	}  
+		 	});
+		 	}
+		 	//If the starting date is posterior to the ending date
+		 	else{
+			 	//Clean the second response area
+		 		$("#ajaxResponseBis").empty(); 
+		 		//Print error message
+			 	$("#ajaxResponseBis").append("<div class=col-xs-4></div>");
+				$("#ajaxResponseBis").append("<h3 class=col-xs-4>"+window.i18n.msgStore['errorDate']+"e</h3>");
+				$("#ajaxResponseBis").append("<div class=col-xs-4></div>");
+			}
+		}
+		//If there is one date or none
+		else{
+			//Add the oldKey to the serialized data and serialize it (if the keyword has not been changed the oldKey will be the same as the current one)
+			var datastring = "oldKey="+d.response.docs[i].keyword+"&"+$("#modify").serialize();
+			$.ajax({								//Ajax request to the doPost of Admin to edit the capsule
+				type: "POST",
+			    url: "./../admin/Admin",
+			    data: datastring,
+			    //if received a response from the server
+			    success: function(data, textStatus, jqXHR) {
+			    	//Clean the response area and print all the capsules
+	        		$("#ajaxResponse").empty();
+	        		document.getElementById('keywordSearch').value = "";
+	        		getTab();
+			  	 },
+			    error: function(jqXHR, textStatus, errorThrown){
+		             console.log("Something really bad happened " + textStatus);
+		              $("#ajaxResponse").html(jqXHR.responseText);
+		        },			       
+			    //capture the request before it was sent to server
+			  	beforeSend: function(jqXHR, settings){
+			        //disable the button until we get the response
+			        $('#modify').attr("disabled", true);
+		        },
+			     //this is called after the response or error functions are finsihed
+			    complete: function(jqXHR, textStatus){
+			       //enable the button 
+			   	   $('#modify').attr("disabled", false);
+			    }  
+			 });	
+		 }
+	 });
+	 
+}
+function remove(i){
+	//Get the keyword of the selected capsule and serialize it
+	var keyword = d.response.docs[i].keyword; 
+	var datastring = "keyword="+keyword;
+	$.ajax({							//Ajax request to the doPost of Admin to delete a capsule
+        type: "POST",
+        url: "./../admin/Admin",
+        data: datastring,
+        //if received a response from the server
+        success: function(textStatus, jqXHR) {
+        	//Suppress the row of the deleted capsule
+        	var line = document.getElementById(i);
+            line.parentNode.removeChild(line);
+        },
+        //If there was no resonse from the server
+        error: function(jqXHR, textStatus, errorThrown){
+             console.log("Something really bad happened " + textStatus);
+              $("#ajaxResponse").html(jqXHR.responseText);
+        },
+        //capture the request before it was sent to server
+        beforeSend: function(jqXHR, settings){
+            //disable the button until we get the response
+            $('#myButton').attr("disabled", true);
+        }, 
+        //this is called after the response or error functions are finsihed
+        complete: function(jqXHR, textStatus){
+            //enable the button 
+            $('#myButton').attr("disabled", false);
+        }  
+    });
+}
+function formatDate(date){						//Format the date
+	var res =""+date;
+	res = res.substring(5,7)+"/"+res.substring(8,10)+"/"+res.substring(0,4);
+	if(res=="in/d/unde"){
+		return undefined;
+	}
+	return res;
+}
+function isGreater(biggerDate, smallerDate){	//Compare two dates
+    if(biggerDate.getTime() >= smallerDate.getTime()){
+        return true;
+    }
+    else{
+    return false;
+    }
+}
+</script>
+</html>

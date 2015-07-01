@@ -41,7 +41,7 @@ AjaxFranceLabs.SpellcheckerWidget = AjaxFranceLabs.AbstractWidget.extend({
 						res = data.spellcheck.suggestions[i+1];
 					}
 				});
-				$(self.elm).append('<span>').find('span').append(window.i18n.msgStore['tryWith'] + '<span class="result">' + res + '</span> ?').find('.result').click(function() {
+				$(self.elm).append('<span>').find('span').append('Essayer avec ' + '<span class="result">' + res + '</span> ?').find('.result').click(function() {
 					self.manager.store.get('q').val(res);
 					for (var w in self.manager.widgets) {
 						if (self.manager.widgets[w].type === 'searchBar') {

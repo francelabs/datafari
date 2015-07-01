@@ -93,6 +93,8 @@
 			<fileset dir="${bin.dir}/config" />
 		</copy>
 
+		<copy file="${project.dir}/LICENSE.txt" todir="${debian.dist.dir}/"></copy>
+		<copy file="${project.dir}/README.txt" todir="${debian.dist.dir}/"></copy>
 
 		<mkdir dir="${bin.dir}/lib" />
 		

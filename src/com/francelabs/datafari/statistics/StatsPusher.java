@@ -77,7 +77,7 @@ public class StatsPusher {
 				}
 			}
 
-			// TODO clean this!
+			
 			String history = "";
 			history += "///";
 			history += "///";
@@ -135,7 +135,7 @@ public class StatsPusher {
 				}
 			}
 
-			// TODO clean this!
+			
 			String history = "" + paramsMap.get("q");
 			history += "///";
 			if (paramsMap.get("fq") != null) {

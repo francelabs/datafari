@@ -1,1 +1,3 @@
-# Synonyms
+i-pod, i pod => ipod,
+sea biscuit, sea biscit => seabiscuit,
+mcf => manifold

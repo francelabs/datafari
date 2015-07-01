@@ -12,6 +12,9 @@
 		<a href="banana.jsp">Graphical Stats</a>
         <a href="stats.jsp">Stats</a>
 		<a href="capsulesConfig.jsp">Capsules</a>
+		<a href="synonymConfig.jsp">Synonyms</a>
+		<a href="stopWordsConfig.jsp">StopWords</a>
+		<a href="alertsConfig.jsp">Alerts</a>
         </div>
     </li>
     <li><a href="#" 

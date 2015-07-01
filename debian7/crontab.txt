@@ -1,0 +1,3 @@
+0 * * * * java -jar /home/youp/git/datafari-master/bin/common/Alerts.jar Hourly
+0 2 * * * java -jar /home/youp/git/datafari-master/bin/common/Alerts.jar Daily
+0 2 * * 7 java -jar /home/youp/git/datafari-master/bin/common/Alerts.jar Weekly

@@ -773,8 +773,7 @@
 		<lst name="defaults">
 			<str name="echoParams">explicit</str>
 			<str name="defType">edismax</str>
-			<str name="qf">title_en^50 title_fr^50 content_fr^10 content_en^10 source^20 extension^20
-			</str>
+			<str name="qf">title_en^50 title_fr^50 content_fr^10 content_en^10 categorie^20 extension^20</str>
 			<str name="pf">title_en^500 title_fr^500 content_fr^100 content_en^100</str>
 			<int name="rows">10</int>
 			<str name="spellcheck">true</str>
@@ -842,12 +841,13 @@
          updateRequestProcessorChains that can be used by name 
          on each Update Request
       -->
-   
+    <!--
        <lst name="defaults">
          <str name="update.chain">dedupe</str>
        </lst>
-       
+       -->
   </requestHandler>
+
 
   <requestHandler name="/update/extract" 
                   startup="lazy"
@@ -863,7 +863,6 @@
 			<bool name="ignoreTikaException">true</bool>
     </lst>
   </requestHandler>
-  
   
 
 
@@ -1222,9 +1221,19 @@
        uniqueness based on that anyway.  
        
     -->
-  
-   
-    
+  <!--
+     <updateRequestProcessorChain name="dedupe">
+       <processor class="solr.processor.SignatureUpdateProcessorFactory">
+         <bool name="enabled">true</bool>
+         <str name="signatureField">id</str>
+         <bool name="overwriteDupes">false</bool>
+         <str name="fields">name,features,cat</str>
+         <str name="signatureClass">solr.processor.Lookup3Signature</str>
+       </processor>
+       <processor class="solr.LogUpdateProcessorFactory" />
+       <processor class="solr.RunUpdateProcessorFactory" />
+     </updateRequestProcessorChain>
+    -->
   
   <!-- Language identification
 
@@ -1299,8 +1308,7 @@
 		
 		<processor class="com.francelabs.datafari.updateprocessor.DatafariUpdateProcessorFactory" />
 
-
-	
+			
 		<processor
 			class="org.apache.solr.update.processor.LangDetectLanguageIdentifierUpdateProcessorFactory">
 			<str name="langid.fl">content,title</str>
@@ -1309,19 +1317,7 @@
 			<str name="langid.whitelist">en,fr</str>
 			<str name="langid.fallback">en</str>
 		</processor>
-
-	    <processor class="solr.processor.SignatureUpdateProcessorFactory">
-	      <bool name="enabled">true</bool>
-	      <str name="signatureField">signature</str>
-		  <bool name="overwriteDupes">false</bool>	
-	      <str name="fields">title,content,content_en,content_fr</str>
-	      <str name="signatureClass">solr.processor.MD5Signature</str>
-	    </processor>
-	    <processor class="solr.LogUpdateProcessorFactory" />
-	    <processor class="solr.RunUpdateProcessorFactory" />
-
-  
-		
+	
 		<processor class="solr.LogUpdateProcessorFactory" />
 		<processor class="solr.RunUpdateProcessorFactory" />
 	</updateRequestProcessorChain>
