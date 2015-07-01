@@ -24,7 +24,7 @@ AjaxFranceLabs.StatsInformationWidget = AjaxFranceLabs.AbstractWidget.extend({
 	//Methods
 
 	buildWidget : function() {
-		$(this.elm).addClass('searchInformationWidget').addClass('widget').attr('widgetId', this.id).append('<span class="information" id="result_information_collectionName">').append('<span class="information" id="result_information_numberOfResults"></span>').append('<span class="information" id="result_information_search"></span>').append('<span class="information" id="result_information_requestTime"></span>');
+		$(this.elm).addClass('searchInformationWidget').addClass('widget').attr('widgetId', this.id).append('<span class="information" id="result_information_collectionName"></span>').append('<span class="information" id="result_information_numberOfResults"></span>').append('<span class="information" id="result_information_search"></span>').append('<span class="information" id="result_information_requestTime"></span>');
 	},
 
 	beforeRequest : function() {

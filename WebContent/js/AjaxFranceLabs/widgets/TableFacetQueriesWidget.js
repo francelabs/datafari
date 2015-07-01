@@ -46,21 +46,27 @@ AjaxFranceLabs.TableFacetQueriesWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 	
 	
 	buildWidget : function() {
+		var endAnimationEvents= 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
+		var animation = 'animated rotateIn';
 		var self = this, elm = $(this.elm);
 		$.each(this.queries, function(i, query){
 			self.manager.store.addByValue('facet.query', '{!key='+self.labels[i]+' ex=query}'+self.field+':'+query);
 		});
-		elm.addClass('facet').addClass('TableFacetQueriesWidget').addClass('tableWidget').addClass('widget').attr('widgetId', this.id).append('<div class="facetSort">').append('<ul>');
+		elm.addClass('facet').addClass('TableFacetQueriesWidget').addClass('tableWidget').addClass('widget').attr('widgetId', this.id).append('<div class="facetSort"></div>').append('<ul></ul>');
 		if(this.name != null){
-			elm.prepend('<div class="facetName">')
-				.find('.facetName').append('<span class="hide_show close">').append('<span class="label">')
-				.find('.label').append(this.name)
-				.parent('.facetName').find('.hide_show').toggle(function() {
+			elm.prepend('<div class="facetName"></div>')
+				.find('.facetName').append('<i class="label fa fa-chevron-down"></i>').append('<span class="la label"></span>')
+				.find('.la.label').append(this.name);
+				elm.find('.facetName').toggle(function() {
 					$('.facetSort, ul, .PagerModule', $(this).parents('.tableWidget')).hide();
-					$(this).addClass('close');
+					elm.find("i").removeClass('fa-chevron-down').addClass('fa-chevron-up '+animation).on(endAnimationEvents,function(){
+						$(this).removeClass(animation);
+					});
 				}, function() {
 					$('.facetSort, ul, .PagerModule', $(this).parents('.tableWidget')).show();
-					$(this).removeClass('close');
+					elm.find("i").removeClass('fa-chevron-up').addClass(animation+ ' fa-chevron-down').on(endAnimationEvents,function(){
+						$(this).removeClass(animation);
+					});
 				});
 		}
 		if (this.pagination === true) {
@@ -84,11 +90,11 @@ AjaxFranceLabs.TableFacetQueriesWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 		var self = this, data = this.assocTags(this.manager.response.facet_counts.facet_queries), max = (data.length > this.maxDisplay) ? this.maxDisplay : data.length, elm = $(this.elm);
 		elm.find('ul').empty();
 		for (var i = 0; i < max; i++) {
-			elm.find('ul').append('<li>');
-			elm.find('ul li:last').append('<label>');
+			elm.find('ul').append('<li></li>');
+			elm.find('ul li:last').append('<label></label>');
 			
 			
-			elm.find('ul li:last label').append('<div class="filterFacetCheck">').append('<div class="filterFacetLabel">');
+			elm.find('ul li:last label').append('<div class="filterFacetCheck"></div>').append('<div class="filterFacetLabel"></div>');
 			elm.find('ul li:last .filterFacetCheck').append('<input type="checkbox" value="' + data[i].name + '"/>');
 			elm.find('ul li:last .filterFacetCheck input').attr('id',data[i].name);
 			var filter =  new RegExp(self.field + ':' + self.queries[i].replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"));
@@ -121,8 +127,11 @@ AjaxFranceLabs.TableFacetQueriesWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 			});
 			
 			
-			elm.find('ul li:last .filterFacetCheck').append('<label>');
-			elm.find('ul li:last .filterFacetCheck label').attr('for', data[i].name).append('<span class="checkboxIcon">&nbsp;</span>'+AjaxFranceLabs.tinyString(decodeURIComponent(data[i].name))).append('&nbsp;(' + data[i].nb + ')');
+			elm.find('ul li:last .filterFacetCheck').append('<label></label>');
+			if (elm.find('ul li:last .filterFacetCheck input').attr('checked')== 'checked' )
+				elm.find('ul li:last .filterFacetCheck label').attr('for', data[i].name).append('<span class="checkboxIcon fa fa-check-square-o">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(decodeURIComponent(data[i].name), 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + data[i].nb + '</span>)</span>');
+			else 
+				elm.find('ul li:last .filterFacetCheck label').attr('for', data[i].name).append('<span class="checkboxIcon fa fa-square-o">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(decodeURIComponent(data[i].name), 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + data[i].nb + '</span>)</span>');
 		}
 		if (this.pagination) {
 			this.pagination.source = $('ul', this.elm);

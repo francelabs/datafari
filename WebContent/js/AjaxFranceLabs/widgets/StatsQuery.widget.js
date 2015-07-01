@@ -50,10 +50,10 @@ AjaxFranceLabs.StatsQueryWidget = AjaxFranceLabs.AbstractWidget.extend({
 	
 	buildWidget : function() {
 		var self = this, elm = $(this.elm);
-		elm.addClass('searchBarWidget').addClass('widget').append('<div class="searchType">').append('<div class="filterBar">').append('<div class="searchDate">').append('<input class="search" type="button" value="'+window.i18n.msgStore['processStats']+'"/>');
+		elm.addClass('searchBarWidget').addClass('widget').append('<div class="searchType"></div>').append('<div class="filterBar"></div>').append('<div class="searchDate"></div>').append('<input class="search" type="button" value="'+window.i18n.msgStore['processStats']+'"/>');
 		elm.find('.filterBar').append('Filter by keyword : <input type="text" />');
 		if(this.removeContentButton)
-			elm.find('.filterBar').append('<span class="removeContent" />').find('.removeContent').css('display', 'none').append('<span>X</span>').click(function(){
+			elm.find('.filterBar').append('<span class="removeContent"></span>').find('.removeContent').css('display', 'none').append('<span>X</span>').click(function(){
 				elm.find('.filterBar input[type=text]').val('');
 				$(this).css('display', 'none');
 				self.clean();
@@ -62,8 +62,8 @@ AjaxFranceLabs.StatsQueryWidget = AjaxFranceLabs.AbstractWidget.extend({
 		
 
 		
-		elm.find('.searchType').append('Type : ').append('<div>').append('<div>').append('<div>').append('<div>');
-		elm.find('.searchType div').attr('style','display: inline').append('<input type="radio" name="searchType" class="radio" />').append('<label>');
+		elm.find('.searchType').append('Type : ').append('<div></div>').append('<div></div>').append('<div></div>').append('<div></div>');
+		elm.find('.searchType div').attr('style','display: inline').append('<input type="radio" name="searchType" class="radio" />').append('<label></label>');
 		elm.find('.searchType div:eq(0)').find('input').attr('value', 'topQueries').attr('checked','true').attr('id', 'topQueries').parent().find('label').attr('for', 'topQueries').append('<span>&nbsp;</span>').append(window.i18n.msgStore['topQueries']);
 		elm.find('.searchType div:eq(1)').find('input').attr('value', 'notHitsQueries').attr('id', 'notHitsQueries').parent().find('label').attr('for', 'notHitsQueries').append('<span>&nbsp;</span>').append(window.i18n.msgStore['notHitsQueries']);
 		elm.find('.searchType div:eq(2)').find('input').attr('value', 'noClicksQueries').attr('id', 'noClicksQueries').parent().find('label').attr('for', 'noClicksQueries').append('<span>&nbsp;</span>').append(window.i18n.msgStore['noClicksQueries']);
@@ -71,8 +71,8 @@ AjaxFranceLabs.StatsQueryWidget = AjaxFranceLabs.AbstractWidget.extend({
 		
 		
 
-		elm.find('.searchDate').append('Filter by date : ').append('<div>').append('<div>').append('<div>').append('<div>');
-		elm.find('.searchDate div').attr('style','display: inline').append('<input type="radio" name="dateRange" class="radio" />').append('<label>');
+		elm.find('.searchDate').append('Filter by date : ').append('<div></div>').append('<div></div>').append('<div></div>').append('<div></div>');
+		elm.find('.searchDate div').attr('style','display: inline').append('<input type="radio" name="dateRange" class="radio" />').append('<label></label>');
 		elm.find('.searchDate div:eq(0)').find('input').attr('value', 'all').attr('checked','true').attr('id', 'all').parent().find('label').attr('for', 'all').append('<span>&nbsp;</span>').append(window.i18n.msgStore['all']);
 		elm.find('.searchDate div:eq(1)').find('input').attr('value', 'last12months').attr('id', 'last12months').parent().find('label').attr('for', 'last12months').append('<span>&nbsp;</span>').append(window.i18n.msgStore['last12months']);
 		elm.find('.searchDate div:eq(2)').find('input').attr('value', 'last6months').attr('id', 'last6months').parent().find('label').attr('for', 'last6months').append('<span>&nbsp;</span>').append(window.i18n.msgStore['last6months']);

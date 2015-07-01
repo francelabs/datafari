@@ -14,6 +14,8 @@ $(function($) {
 
 	Manager.init();
 
+	$('.search').click(search);
+	$('.search i').click(search);
 	$('.searchBar input[type=button]').click(search);
 	$('.searchBar input[type=text]').keypress(function(event) {
 		if (event.keyCode === 13) {

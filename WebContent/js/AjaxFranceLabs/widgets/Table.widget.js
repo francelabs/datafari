@@ -41,21 +41,27 @@ AjaxFranceLabs.TableWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 	//Methods
 
 	buildWidget : function() {
+		var endAnimationEvents= 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
+		var animation = 'animated rotateIn';
 		var self = this, elm = $(this.elm);
-		elm.addClass('facet').addClass('tableWidget').addClass('widget').attr('widgetId', this.id).append('<ul>');
+		elm.addClass('facet').addClass('tableWidget').addClass('widget').attr('widgetId', this.id).append('<ul></ul>');
 		if(this.name != null){
 			elm.prepend('<div class="facetName">')
-				.find('.facetName').append('<span class="hide_show">').append('<span class="label">')
-				.find('.label').append(this.name)
-				.parent('.facetName').find('.hide_show').toggle(function() {
+				.find('.facetName').append('<i class="label fa fa-chevron-down"></i>').append('<span class="label la"></span>')
+				.find('.label.la').append(this.name);
+			elm.find('.facetName').toggle(function() {
 					$('.facetSort, ul, .PagerModule', $(this).parents('.tableWidget')).hide();
-					$(this).addClass('close');
+					elm.find("i").removeClass('fa-chevron-down').addClass('fa-chevron-up '+animation).on(endAnimationEvents,function(){
+						$(this).removeClass(animation);
+					});
 				}, function() {
 					$('.facetSort, ul, .PagerModule', $(this).parents('.tableWidget')).show();
-					$(this).removeClass('close');
+					elm.find("i").removeClass('fa-chevron-up').addClass(animation+ ' fa-chevron-down').on(endAnimationEvents,function(){
+						$(this).removeClass(animation);
+					});
 				});
 		}
-		elm.find('.facetSort').append('<label>').find('label').append(window.i18n.msgStore['sortFacet']).append('<select>').find('select').append('<option><span>A/Z</span></option>').append('<option><span>Z/A</span></option>').append('<option><span>Occurences</span></option>').change(function(event) {
+		elm.find('.facetSort').append('<label></label>').find('label').append(window.i18n.msgStore['sortFacet']).append('<select></select>').find('select').append('<option><span>A/Z</span></option>').append('<option><span>Z/A</span></option>').append('<option><span>Occurences</span></option>').change(function(event) {
 				switch($('option:selected', this).index()) {
 				case 0:
 					self.sort = 'AtoZ';
@@ -102,16 +108,21 @@ AjaxFranceLabs.TableWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 		elm.find('ul').empty();
 		for (var i = 0; i < max; i++) {
 			if (data[i].name !== ''){
-			elm.find('ul').append('<li>');
-			elm.find('ul li:last').append('<label>');
+			elm.find('ul').append('<li></li>');
+			elm.find('ul li:last').append('<label></label>');
 			
 			
-			elm.find('ul li:last label').append('<div class="filterFacetCheck">').append('<div class="filterFacetLabel">');
+			elm.find('ul li:last label').append('<div class="filterFacetCheck"></div>').append('<div class="filterFacetLabel"></div>');
 			elm.find('ul li:last .filterFacetCheck').append('<input type="checkbox" value="' + data[i].name + '"/>');
 			elm.find('ul li:last .filterFacetCheck input').attr('id',data[i].name);
 			if (this.manager.store.find('fq', new RegExp(self.field + ':' + AjaxFranceLabs.Parameter.escapeValue(data[i].name.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&").replace(/\\/g,"\\\\")) + '[ )]')))
 				elm.find('ul li:last .filterFacetCheck input').attr('checked', 'checked').parents('li').addClass('selected');
-			elm.find('ul li:last .filterFacetCheck input').change(function() {
+			elm.find('ul li:last .filterFacetCheck input').click(function () {
+		        // Cause the change() event
+		        // to be fired in IE8 
+		        this.blur();
+		        this.focus();
+		   }).change(function() {
 				if ($(this).attr('checked') == 'checked') {
 					if(self.selectionType === 'ONE' && elm.find('ul li .filterFacetCheck input:checked').not(this).length)
 						self.remove(elm.find('ul li .filterFacetCheck input:checked').not(this).val());
@@ -122,10 +133,14 @@ AjaxFranceLabs.TableWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 					self.unselectHandler($(this).val().replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"));
 				}
 			});
-			elm.find('ul li:last .filterFacetCheck').append('<label>');
-			elm.find('ul li:last .filterFacetCheck label').attr('for', data[i].name).append('<span class="checkboxIcon">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(data[i].name, 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + data[i].nb + '</span>)</span>');
+			elm.find('ul li:last .filterFacetCheck').append('<label></label>');
+			if (elm.find('ul li:last .filterFacetCheck input').attr('checked')== 'checked' )
+				elm.find('ul li:last .filterFacetCheck label').attr('for', data[i].name).append('<span class="checkboxIcon fa fa-check-square-o">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(data[i].name, 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + data[i].nb + '</span>)</span>');
+			else 
+				elm.find('ul li:last .filterFacetCheck label').attr('for', data[i].name).append('<span class="checkboxIcon fa fa-square-o">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(data[i].name, 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + data[i].nb + '</span>)</span>');
 			}
 		}
+
 		if (this.pagination) {
 			this.pagination.source = $('ul', this.elm);
 			this.pagination.updatePages();

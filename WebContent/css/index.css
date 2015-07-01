@@ -1,0 +1,59 @@
+@CHARSET "UTF-8";
+@media all{
+	#logo-search{
+		margin-top:0px;
+		margin-bottom:10%;
+		margin-right:auto;
+		margin-left:auto;
+		width:auto;
+		display:block;
+	}
+	
+	#content_index{
+		position: fixed;
+		transform: translate(-50%, -50%);
+		-webkit-transform: translate(-50%, -50%);
+		-ms-transform: translate(-50%, -50%);
+		left: 50%;
+		top: 35%;
+	}
+	header{
+		display:none;
+	}
+	.searchBarWidget .searchBar{
+		width:100%;
+		margin-left:0px;
+	}
+	.searchBar input{
+		width:70%;
+	}
+	#solr .searchBarWidget{
+		margin-left:0px;
+		margin-top:10%;
+	}
+	#sortMode{
+		display:none;
+	}
+	.searchMode{
+		display:none;
+	}
+	
+}
+
+
+
+@media all and (max-width:880px){
+	.searchBarWidget .searchBar input[type="text"]{
+	width:80%;
+	}
+	.searchBarWidget{
+		width:100%;
+		height:4em;
+	}
+	#solr .searchBarWidget .searchBar .search {
+		width:4em;
+	}
+	#content_index{
+	width:90%;
+	}
+}

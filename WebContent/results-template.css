@@ -569,6 +569,7 @@ line-height:20px;
       content: "\f078";
       font-family: 'FontAwesome';
       font-size: 12px;
+//      z-index: ;
 }
 .searchBarWidget #sortMode select{
 	 appearance: none;

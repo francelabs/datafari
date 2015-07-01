@@ -24,6 +24,7 @@ AjaxFranceLabs.SpellcheckerWidget = AjaxFranceLabs.AbstractWidget.extend({
 
 	buildWidget : function() {
 		$(this.elm).addClass('spellcheckerWidget').addClass('widget');
+		$(this.elm).hide();
 	},
 
 	beforeRequest : function() {
@@ -34,6 +35,7 @@ AjaxFranceLabs.SpellcheckerWidget = AjaxFranceLabs.AbstractWidget.extend({
 		var self = this, res = '';
 		var data = this.manager.response, elm = $(this.elm);
 			if (data.spellcheck !== undefined && data.spellcheck.suggestions.length > 0) {
+				$(self.elm).show();
 				$(data.spellcheck.suggestions).each(function(i, elm) {
 					if (elm === 'collation'){
 						res = data.spellcheck.suggestions[i+1];
@@ -49,6 +51,8 @@ AjaxFranceLabs.SpellcheckerWidget = AjaxFranceLabs.AbstractWidget.extend({
 					self.manager.generateAndSetQueryID();
 					self.manager.makeRequest();
 				});
+			}else{
+				$(self.elm).hide();
 			}
 		
 	},

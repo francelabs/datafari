@@ -1,0 +1,373 @@
+#spinner_mobile {display:none;}
+#header-wrapper { display:inline-block;  } 
+#results_nav_mobile{
+	display:none;
+}
+#facets_mobile,#facets{
+        display:none;
+}
+#facets ul{
+	position:relative;
+	margin-top: 2px;
+	padding-left: 8%;
+	border:0px;
+	border-bottom:0px;
+}
+#facets li{
+	width:100%;
+	border:0px;
+	border-bottom:0px;
+}
+#facets #nav_mobile a {
+	width : 100%;
+	vertical-align: middle;
+	display: inline-block;
+	line-height: 3.7;
+	margin-left: 5%;
+	outline: 0px;
+}
+#facets #nav_mobile i{
+	margin-right:3%;
+}
+#facets .facet.tableWidget.widget .facetName{
+	position:relative;
+	width:90%;
+	padding:5%;
+	font-size:1.1em;
+}
+#facets .facet.tableWidget.widget{
+	position:relative;
+	min-width:86%;
+	margin:7% 5% 5% 0%;
+	padding-bottom:0px;
+	box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1), 0px 0px 1px rgba(0, 0, 0, 0.1);
+}	
+#facets .checkboxIcon, #facets_mobile input[type="checkbox"]:checked + label span.checkboxIcon{
+	font-size: 1.6em;
+}
+#facets .facet.tableWidget.widget .facetName i{
+	-webkit-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
+	top: 50%;
+	position: absolute;
+	right:5%;
+	-webkit-animation-duration: 0.2s; /* Chrome, Safari, Opera */
+    animation-duration: 0.2s;
+}
+#solr { margin:0 auto; margin-bottom:3%;  width:100%;}
+#result_information { padding:0.6em 2%; padding-right:0px;height:16px; width : 98%;box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1), 0px 0px 1px rgba(0, 0, 0, 0.1);}
+#solr .col.left { display:inline-block; width:15%; margin-left:1em;min-width:250px; }
+#solr .col.right { position:relative; padding:0 10px; width:50%; float:left;margin-top: 0.5em; padding-left:2%; }
+
+
+#logo-search { 
+  	 margin-right: auto;
+     margin-bottom: 0pt;
+     margin-left: auto;
+     height:118px;
+     display:block;
+}
+
+/* Reset page */
+.page { margin:0; min-height:0; padding:0; width:0; }
+
+/**************************************/
+/*******	>>> Widgets <<<		*******/
+/**************************************/
+
+/***	>>> Search Bar Widget <<<	***/
+#searchBarContent{
+	display: inline-block;
+	width: 70%;
+	height:100%;
+	vertical-align: top;
+	margin-left: 2%;
+}
+.searchBarWidget { clear: both; margin-bottom: 20px; width: 80%; height:3em; position:relative;padding-bottom:2.2em;}
+.searchBarWidget .searchBar { border: 1px solid; padding: 5px 0 5px 2px; width: 620px; }
+.searchBarWidget .searchBar input[type=text] { border: none; height: 100%; width: 593px; }
+.searchBarWidget .searchBar input[type=button].search {  border: none; cursor: pointer; display: block; float: right; height: 17px; margin-right: 5px; width: 20px; }
+.searchBarWidget .searchMode { display:none;clear:both; margin-top: 3px; text-align: right; width: 420px; }
+.searchBarWidget .searchMode label { cursor:pointer; display: inline-block; height: 20px; line-height: 20px; margin-left: 5px; }
+.searchBarWidget .searchMode label input { margin-right: 3px; position: relative; top: 2px; }
+.searchBarWidget #sortMode {	position:absolute;top:7em;right:-24%;clear:both;;text-align:right;padding-right:0.3em;}
+.searchBarWidget #sortMode:after{
+      content: "\f078";
+      font-family: 'FontAwesome';
+      font-size: 12px;
+//      z-index: ;
+}
+.searchBarWidget #sortMode select{
+	 appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      border: none;
+      outline: none;
+      padding: 6px;
+      padding-right:0px;
+      text-indent: 0.01px;
+      text-overflow: "";
+      cursor:pointer;
+      outline: none;
+}
+.searchBarWidget #sortMode{
+
+}
+ /* This hides dropdown button arrow in IE */
+   .searchBarWidget  select::-ms-expand {
+      display: none;
+    }
+    /* This hides focus around selected option in FF */
+    .searchBarWidget select:-moz-focusring {
+      text-shadow: 0 0 0 #000;
+    }
+    
+    .doc_list_pagination{
+    margin-top:12px;
+    }
+/**************************************/
+
+/***	>>> Search Bar Widget <<<	***/
+.searchInformationWidget { margin-bottom:10px; }
+/**************************************/
+
+/***	>>> Collection Widget <<<	***/
+.collectionWidget { border: 1px solid; width: 210px; }
+.collectionWidget .title { margin: 5px 10px; }
+.collectionWidget .content { margin: 5px 0; }
+.collectionWidget .content li { border-top: 1px solid; cursor: pointer; display: block; padding: 3px 0 3px 15px; width: 195px; }
+.collectionWidget .content li.last { border-bottom: 1px solid; }
+/**************************************/
+
+/***	>>> Table Facet Widget <<<	***/
+.tableWidget { margin-bottom: 20px; }
+.tableWidget .facetName {  cursor: pointer; margin: 0; min-height: 21px; padding-bottom: 3px; width: 100%; }
+.tableWidget .facetName .hide_show {  display: inline-block; height: 11px; margin-right: 3px; width: 11px; }
+.tableWidget .facetName .hide_show.close {  }
+.tableWidget ul li { border-bottom: 1px solid; height: 20px; padding: 3px 0 3px 0; }
+.tableWidget ul li .filterFacetCheck { float: left; vertical-align: top; cursor: pointer; float: left; line-height: 20px; margin-left: 1%; width: 99%;}
+
+
+/**************************************/
+
+/******	>>> Result Widget <<<	*******/
+.resultWidget .doc { display: inline-block; margin-bottom: 20px; width: 100%; }
+.resultWidget .doc .connector { float: left; height: 100%; width: 18px; }
+.resultWidget .doc .res { float: left; height: 100%; width:100%; padding-left: 5px;  position:relative;line-height: 20px; }
+.resultWidget .res .description { margin-top: 3px; }
+.resultWidget .doc .res .address { margin-top: 6px; }
+.resultWidget .doc .res .tags { margin-top: 6px; }
+.resultWidget .bar-loader { display:block; height:32px; margin: auto; width:32px; }
+.resultWidget .res .moreLikeThis { cursor:pointer; }
+/**************************************/
+
+/***	>>> VideoResult Widget <<<	***/
+.videoResultWidget .video { display: inline-block; padding: 10px; width: 600px; }
+.videoResultWidget .video .thumbnail { display: block; float: left; }
+.videoResultWidget .video .length { border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px; float: left; opacity: 0.8; padding: 1px; position: absolute; margin-top: 2px; margin-left: 2px; }
+.videoResultWidget .video .res { float: left; height: 100%; padding-left: 5px; width: 440px; }
+.videoResultWidget .video .title { height: 20px; overflow: hidden; word-wrap: normal; white-space: nowrap; }
+.videoResultWidget .res .description { height: 45px; margin-top: 3px; overflow: hidden; }
+.videoResultWidget .video .res .address { margin-top: 6px; overflow: hidden; word-wrap: normal; white-space: nowrap; }
+.videoResultWidget .video .res .tags { margin-top: 6px; }
+.videoResultWidget .video:hover { border-radius: 2px; box-shadow: 1px 1px 3px #a1a1a1; cursor: pointer; }
+
+.videoResultWidget .video_list.mosaic .video { display: inline-block; margin-right: 4px; padding: 3px; width: 145px; }
+.videoResultWidget .video_list.mosaic .thumbnail { margin: auto; }
+.videoResultWidget .video_list.mosaic .res { padding-left: 0; width: 145px; }
+.videoResultWidget .video_list.mosaic .res .description { display: none; }
+.videoResultWidget .video_list.mosaic .res .address { display: none; }
+.videoResultWidget .video_list.mosaic .res .tags { display: none; }
+.videoResultWidget .video_list.mosaic .res a span { display: block; height: 30px; width: 145px; }
+/**************************************/
+
+/******	>>> Pager Widget <<<	*******/
+.col.left .pagerModule { padding-top: 10px; text-align: center;}
+.pagerModule{text-align:center;}
+.pagerModule .pages .page, .pagerModule .fn { cursor: pointer; display: inline-table; margin-right: 5px; min-width: 15px; padding: 0 2px; text-align: center; }
+.pagerModule .pages { display: inline-block; overflow: hidden; vertical-align:middle}
+.pagerModule span{ vertical-align:middle;}
+.pagerModule i{ vertical-align:bottom;}
+.pagerModule .pages .page { /*border: 1px solid; border-radius: 4px;*/ height: 15px; }
+.pagerModule .fn { height: 17px; }
+/**************************************/
+
+/**	>>> advancedSearchWidget Widget <<<	***/
+.advancedSearchWidget { width: 1000px; }
+.advancedSearchWidget .advTable { width: 100%; }
+.advancedSearchWidget .separator { border-bottom: 1px solid; display: inline-block; margin: 15px 0; width: 100%; }
+.advancedSearchWidget .advTable .title,
+.advancedSearchWidget .advTable .field { display: block; height: 40px; width: 100%; }
+.advancedSearchWidget .advTable .left { width: 650px; }
+.advancedSearchWidget .advTable .left label { display: inline-block; width: 180px; }
+.advancedSearchWidget .advTable .inputs { float: right; width: 470px; }
+.advancedSearchWidget .advTable .field input { border: 1px solid; display: inline-block; height: 25px; margin-bottom: 5px; width: 450px; border-radius: 1px; -moz-border-radius: 1px; -webkit-border-radius: 1px; }
+.advancedSearchWidget .advTable .field.range input { display: inline-block; width: 200px; }
+.advancedSearchWidget .advTable .field.range .to { display: inline-block; text-align: center; width: 46px; }
+.advancedSearchWidget .advTable .right { width: 350px; }
+.advancedSearchWidget button {  border: 1px solid; cursor: pointer; float: right; margin-bottom: 15px; padding: 5px; border-radius: 1px; -moz-border-radius: 1px; -webkit-border-radius: 1px; width: 150px; }
+.advancedSearchWidget .addInput { clear: both; cursor: pointer; float: right; margin-right: 18px; margin-top: 5px; }
+.advancedSearchWidget .removeInput { cursor: pointer; float: right; height: 29px; line-height: 29px; text-align: center; width: 18px; }
+/**************************************/
+
+/**	>>> capsuleWidget Widget <<<	***/
+.capsuleWidget { -moz-border-radius: 4px; border-radius: 4px; margin-bottom: 15px; padding: 10px; }
+.widgetContainer .annonce {padding: 3px;font-size: 0.6em;vertical-align:middle;}
+.capsuleWidget .title { display: block;  }
+.capsuleWidget .tips { display: block; text-align: justify;line-height: 1.6em;margin-top: 10px; }
+/**************************************/
+
+/**	>>> spellcheckerWidget Widget <<<**/
+.spellcheckerWidget { margin: 15px 0; width: 480px; }
+.spellcheckerWidget .result { cursor: pointer; }
+/**************************************/
+
+/**	>>> userMenuWidget Widget <<<	**/
+.menuWidget .menu { border: 1px solid; position: absolute; }
+.menuWidget .menu li { cursor: pointer; padding: 3px 10px; position: relative; z-index: 100; }
+.menuWidget .menuLink { cursor: default; }
+/**************************************/
+
+/******		>>> jQuery UI <<<	*******/
+/******	>>> Autocomplete <<<	*******/
+* html .ui-autocomplete { width:1px; }
+.ui-autocomplete { position: absolute; cursor: default; }
+.ui-autocomplete .ui-state-hover { cursor:pointer; }
+/**************************************/
+
+
+/******		>>> Slider <<<		*******/
+.ui-slider { position: relative; text-align: left; }
+.ui-slider .ui-slider-handle { position: absolute; z-index: 2; width: 1.2em; height: 1.2em; cursor: default; }
+.ui-slider .ui-slider-range { position: absolute; z-index: 1; font-size: .7em; display: block; border: 0; background-position: 0 0; }
+
+.ui-slider-horizontal { height: .8em; }
+.ui-slider-horizontal .ui-slider-handle { top: -.3em; margin-left: -.6em; }
+.ui-slider-horizontal .ui-slider-range { top: 0; height: 100%; }
+.ui-slider-horizontal .ui-slider-range-min { left: 0; }
+.ui-slider-horizontal .ui-slider-range-max { right: 0; }
+
+.ui-slider-vertical { width: .8em; height: 100px; }
+.ui-slider-vertical .ui-slider-handle { left: -.3em; margin-left: 0; margin-bottom: -.6em; }
+.ui-slider-vertical .ui-slider-range { left: 0; width: 100%; }
+.ui-slider-vertical .ui-slider-range-min { bottom: 0; }
+.ui-slider-vertical .ui-slider-range-max { top: 0; }
+/**************************************/
+
+.ui-resizable-handle { height: 10px; }
+	.searchBarWidget > img{
+	margin-left: 3%;
+	width: 2.9em;
+	}
+	.searchBarWidget .searchBar { 
+	border: 1px solid #ffffff;
+	padding: 0px;
+	width: 100%;
+	height: 100%;
+	display:inline-block;
+	vertical-align:top;
+	box-shadow:0 2px 1px rgba(0,0,0,0.05), 0 0 1px rgba(0,0,0,0.05);
+	position:relative;
+	}
+	#searchBarContent{
+		min-width:550px;
+	}
+.searchBarWidget .searchBar input[type=text] { border: none;  width:92%; padding:0px;padding-left: 1%;  height:100%; position:absolute;  }
+
+.searchBarWidget .searchBar .search {  border: none; cursor: pointer; display: block; float: right;-webkit-appearance: none; border-radius: 0;
+	height:100%; width:7%;
+	text-align:center;
+	-webkit-border-radius:0px;
+	line-height:2.5em; 	
+	position:absolute;
+	right:0px;
+	z-index:3;
+	}
+.searchBarWidget .searchBar .search .fa-search{
+	vertical-align:middle;
+	font-size:1.3em;
+}
+
+.searchBarWidget .searchMode {float:right;}
+
+#header-wrapper #logo{
+	display:none;
+}
+#header-wrapper #userSpace{
+	position: absolute;
+	top: 1em;
+	right: 1em;
+}
+
+header #bar{
+	display:none;
+}
+header{
+	display:inline-block;
+}
+#results .doc_list{
+	box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.1), 0px 0px 0px rgba(0, 0, 0, 0.1);
+}
+	.advancedSearchWidget button { background: none;}
+	.spellcheckerWidget {background-color:white;}
+	.searchBarWidget #sortMode select{background:transparent;}
+	#result_information,#sortMode { font-weight:bold; }
+
+#sortMode{font-size:1.1em;}
+
+/**************************************/
+/*******	>>> Widgets <<<		*******/
+/**************************************/
+
+.searchBarWidget .searchType label { font-size: 90%; }
+.searchBarWidget .searchMode label { font-size: 90%; }
+.searchBarWidget .searchDate label { font-size: 90%; }
+
+.collectionWidget .title { font-weight: bold; text-transform: uppercase; }
+.collectionWidget .content li { font-size: 90%; }
+.collectionWidget .content li.selected { font-weight: bold; }
+
+.tableWidget .facetName { font-size: 120%; font-weight: bold; text-transform: capitalize; }
+.tableWidget .facetSort { font-size: 90%; font-weight: normal; }
+.tableWidget ul li { font-size: 90%; }
+
+.resultWidget .res .title,#capsule .title { font-weight: bold; text-decoration: underline; }
+
+.resultWidget .doc .res .address {  }
+
+.resultWidget .doc .res .description { font-size: 90%; }
+.resultWidget .res .moreLikeThis { font-weight: bold; text-decoration: underline; }
+
+
+.em { font-weight: bold; }
+
+.resultWidget .res .title,#capsule .title { text-decoration:none;}
+.resultWidget .res .title:hover { text-decoration:underline; color:#D37324; }
+.result-body {  font-size: 90%;   }
+
+.videoResultWidget .res .title { font-size: 1.3em; font-weight: bold; }
+.videoResultWidget .res .title:hover { text-decoration: underline; }
+.videoResultWidget .video_list.mosaic .title { font-size: 0.9em; }
+
+.pagerModule .pages .page, .pagerModule .fn { font-weight: bold; }
+
+.advancedSearchWidget .advTable .right { font-size: 11px; }
+.advancedSearchWidget .advTable .left { font-size: 13px; }
+.advancedSearchWidget .advTable .title .right { font-size: 13px; }
+.advancedSearchWidget .advTable .title .left { font-size: 16px; }
+.advancedSearchWidget .advTable .title { font-weight: bold; }
+.advancedSearchWidget .addInput:hover { text-decoration: underline; }
+
+.capsuleWidget .title{ font-weight: bold; }
+
+.spellcheckerWidget .result { font-weight: bold; text-decoration: underline; }
+
+.menuWidget .menu li:hover { font-weight: bold; }
+
+.ui-menu .ui-menu-item a { text-decoration:none; }
+
+.hl { font-weight: bold; }
+#solr #sortMode{display:none;}
+
+	

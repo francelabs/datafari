@@ -34,8 +34,10 @@ AjaxFranceLabs.CapsuleWidget = AjaxFranceLabs.AbstractWidget.extend({
 	afterRequest : function() {
 		var self = this;
 		var data = this.manager.response, elm = $(this.elm);
-			if (data.capsuleSearchComponent.title !== undefined && data.capsuleSearchComponent.title.length > 0)
-				$(self.elm).append('<span class="title">' + data.capsuleSearchComponent.title + '</span>').append('<span class="tips">' + data.capsuleSearchComponent.body + '</span>').show();
+			if (data.capsuleSearchComponent.title !== undefined && data.capsuleSearchComponent.title.length > 0){
+				$(self.elm).append('<div class="widgetContainer"></div>').show();
+				$(self.elm).find('.widgetContainer').append('<span class="title">' + '<span class="annonce">Annonce</span> '+ data.capsuleSearchComponent.title + '</span>').append('<span class="tips" id="snippet">' + data.capsuleSearchComponent.body + '</span>').show();
+			}
 		
 	}
 });
