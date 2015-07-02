@@ -65,6 +65,7 @@
 "home" : "Home" ,
 "usedFile" : "File already in use",
 "previous" : "previous",
-"results": "results",
-"filter" :"filter"
+"results" : "results",
+"filter" : "filter",
+"duplicates" : "Duplicates" 
 }

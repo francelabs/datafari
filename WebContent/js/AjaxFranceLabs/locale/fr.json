@@ -53,5 +53,6 @@
 "usedFile" : "Fichier en cours d'utilisation",
 "previous": "Précédent",
 "results" : "resultats", 
-"filter" : "filtrer"
+"filter" : "filtrer",
+"duplicates" : "Doublons"
 }

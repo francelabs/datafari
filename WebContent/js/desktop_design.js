@@ -8,7 +8,6 @@ $(document).ready(function(){
 		var animationCssDown = 'fadeOutDown animated';
 		var endAnimation = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
 		var footer_is_showed = false;
-		var timer = null;
 		footerDiv.hide();
 		 //Firefox
 		 $(window).bind('DOMMouseScroll', function(e){
@@ -17,54 +16,64 @@ $(document).ready(function(){
 		         //console.log('Down');
 		    	 if (!footer_is_showed){
 			    	 footer_is_showed = true;
-			    	 footerDiv.show().removeClass(animationCssDown).addClass(animationCssUp).one(endAnimation,function(){
-			    		 timer = setTimeout(function(){
-			    			footerDiv.removeClass(animationCssUp).addClass(animationCssDown).one(endAnimation,function(){
+		    		 clearTimeout(window.globtimer);
+			    	 footerDiv.off(endAnimation).removeClass(animationCssDown).addClass(animationCssUp).show();
+			    	 footerDiv.one(endAnimation,function(){
+			    		 window.globtimer = setTimeout(function(){
+			    			footerDiv.off(endAnimation).removeClass(animationCssUp).addClass(animationCssDown);
+			    			footerDiv.one(endAnimation,function(){
 			    				footerDiv.hide().removeClass(animationCssDown);
 			    				footer_is_showed = false;
 			    			});
 			    		 },1000);
 			    	 });
 		    	 }else{
-		    		 clearTimeout(timer);
-		       		 timer = setTimeout(function(){
-			    			footerDiv.removeClass(animationCssUp).addClass(animationCssDown).one(endAnimation,function(){
-			    				footerDiv.hide().removeClass(animationCssDown);
-			    				footer_is_showed = false;
-			    			});
-		       		 },1000);
+		    		 delay_hide();
 		    	 }
 		     }else {
 		         //scroll up
 		     }
 		 });
-		
 		 //IE, Opera, Safari
 		 $(window).bind('mousewheel', function(e){
 		     if(e.originalEvent.wheelDelta < 0) {
 		         //scroll down
 		    	 if (!footer_is_showed){
+		    		 clearTimeout(window.globtimer);
 			    	 footer_is_showed = true;
-			    	 footerDiv.show().addClass(animationCssUp).one(endAnimation,function(){
-			    		 timer = setTimeout(function(){
-			    			footerDiv.removeClass(animationCssUp).addClass(animationCssDown).one(endAnimation,function(){
+			    	 footerDiv.off(endAnimation).removeClass(animationCssDown).addClass(animationCssUp).show();
+			    	 footerDiv.one(endAnimation,function(){
+			    		 window.globtimer = setTimeout(function(){
+			    			footerDiv.off(endAnimation).removeClass(animationCssUp).addClass(animationCssDown);
+			    			footerDiv.one(endAnimation,function(){
 			    				footerDiv.hide().removeClass(animationCssDown);
 			    				footer_is_showed = false;
 			    			});
 			    		 },1000);
 			    	 });
 		    	 }else{
-		    		 clearTimeout(timer);
-		       		 timer = setTimeout(function(){
-			    			footerDiv.removeClass(animationCssUp).addClass(animationCssDown).one(endAnimation,function(){
-			    				footerDiv.hide().removeClass(animationCssDown);
-			    				footer_is_showed = false;
-			    			});
-		       		 },1000);
+		    		delay_hide()
 		    	 }
 		     }else {
 		         //scroll up
 		     }
 	 });
+		 function delay_hide(){
+			 clearTimeout(window.globtimer);
+       		 window.globtimer = setTimeout(function(){
+	    			footerDiv.off(endAnimation).removeClass(animationCssUp).addClass(animationCssDown);
+	    			footerDiv.one(endAnimation,function(){
+	    				footerDiv.hide().removeClass(animationCssDown);
+	    				footer_is_showed = false;
+	    			});
+       		 },1000);
+		 }
+		 $('footer').mouseover(function(){
+			 footer_is_showed=true;
+			 clearTimeout(window.globtimer);
+			 $('footer').mouseout(function(){
+				 delay_hide();
+			 });
+		 });
 	}
 });

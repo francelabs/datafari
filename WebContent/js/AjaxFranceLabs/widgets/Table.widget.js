@@ -86,9 +86,9 @@ AjaxFranceLabs.TableWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 				elm : this.elm,
 				updateList : function() {
 					if (this.nbPage > 1) {
-						$(this.categorie).children().css('display', 'none').slice(this.pageSelected * this.nbElmToDisplay, (this.pageSelected + 1) * this.nbElmToDisplay).css('display', this.display);
-						AjaxFranceLabs.clearMultiElementClasses($('li', this.categorie));
-						AjaxFranceLabs.addMultiElementClasses($('li:visible', this.categorie));
+						$(this.source).children().css('display', 'none').slice(this.pageSelected * this.nbElmToDisplay, (this.pageSelected + 1) * this.nbElmToDisplay).css('display', this.display);
+						AjaxFranceLabs.clearMultiElementClasses($('li', this.source));
+						AjaxFranceLabs.addMultiElementClasses($('li:visible', this.source));
 					}
 				}
 			});
@@ -112,12 +112,7 @@ AjaxFranceLabs.TableWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 			elm.find('ul li:last .filterFacetCheck input').attr('id',data[i].name);
 			if (this.manager.store.find('fq', new RegExp(self.field + ':' + AjaxFranceLabs.Parameter.escapeValue(data[i].name.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&").replace(/\\/g,"\\\\")) + '[ )]')))
 				elm.find('ul li:last .filterFacetCheck input').attr('checked', 'checked').parents('li').addClass('selected');
-			elm.find('ul li:last .filterFacetCheck input').click(function () {
-		        // Cause the change() event
-		        // to be fired in IE8 
-		        this.blur();
-		        this.focus();
-		   }).change(function() {
+			elm.find('ul li:last .filterFacetCheck input').change(function() {
 				if ($(this).attr('checked') == 'checked') {
 					if(self.selectionType === 'ONE' && elm.find('ul li .filterFacetCheck input:checked').not(this).length)
 						self.remove(elm.find('ul li .filterFacetCheck input:checked').not(this).val());
