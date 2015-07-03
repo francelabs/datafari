@@ -70,7 +70,7 @@
 			 cleanSem();
 		  });
 		//If the user loads an other page
-		$("a").click(function(){										
+		$("a").click(function(){
 			cleanSem();
 			$("#ajaxResponse").empty();
 		});
@@ -166,7 +166,7 @@ function upload(text){
 }
 function cleanSem(){
 	var language = document.getElementById("language").value;
-	if(language != "" && document.getElementById("synContent").value != null){	//If the user was editing a file
+	if(language != "" && document.getElementById("input").value != null){	//If the user was editing a file
     	var dataString = "language=" + language;
     	$.ajax({													//Post request to release the semaphore
     		url : './Synonyms', 
