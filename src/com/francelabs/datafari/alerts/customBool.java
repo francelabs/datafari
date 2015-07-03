@@ -13,33 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.francelabs.datafari.servlets.admin;
+package com.francelabs.datafari.alerts;
 
-import java.util.concurrent.Semaphore;
-/**Javadoc
- * 
- * This class is a mutex semaphore that only applies to one of the many files they can be applied to.
- * To create one you have to provide a language and a type (for now Stop for stopwords and Syn for Synonyms)
- * @author Alexis Karassev
- *
- */
-
-public class SemaphoreLn extends Semaphore {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private String language;
-	private String type;
-	public SemaphoreLn(String lang, String type) {
-		super(1);
-		this.language = lang;
-		this.type=type;
+public class customBool {
+	private String frequency;
+	private boolean bool;
+	public customBool(String frequency, boolean bool) {
+		super();
+		this.frequency = frequency;
+		this.bool = bool;
 	}
-	public String getLanguage(){
-		return this.language;
+	public String getFrequency() {
+		return frequency;
 	}
-	public String getType(){
-		return this.type;
+	public void setFrequency(String frequency) {
+		this.frequency = frequency;
+	}
+	public boolean isBool() {
+		return bool;
+	}
+	public void setBool(boolean bool) {
+		this.bool = bool;
 	}
 }

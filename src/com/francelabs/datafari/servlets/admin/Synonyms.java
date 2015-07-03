@@ -1,19 +1,36 @@
+/*******************************************************************************
+ * Copyright 2015 France Labs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package com.francelabs.datafari.servlets.admin;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -21,7 +38,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 
 import com.francelabs.datafari.solrj.SolrServers.Core;
 
@@ -32,7 +48,7 @@ import com.francelabs.datafari.solrj.SolrServers.Core;
  * It is only called by the Synonyms.html.
  * doGet is used to print the content of the file or download it.
  * doPost is used to confirm the modifications of the file.
- * The semaphores (one for each language) are created in the constructor.
+ * The semaphores (one for each language) are created in the doGet.
  * @author Alexis Karassev
  *
  */
@@ -41,8 +57,8 @@ public class Synonyms extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final List<SemaphoreLn> listMutex = new ArrayList<SemaphoreLn>();
 	private String server = Core.FILESHARE.toString();
-	private String absoluteDiskPath;
-	/**
+	private String env;
+	/** 
      * @throws IOException 
      * @see HttpServlet#HttpServlet()
      * Gets the list of the languages
@@ -58,10 +74,16 @@ public class Synonyms extends HttpServlet {
 	 * If called to print it will return plain text
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String relativeWebPath = "./"; 
-		absoluteDiskPath = getServletContext().getRealPath(relativeWebPath);
-		absoluteDiskPath = absoluteDiskPath.substring(0,absoluteDiskPath.indexOf("tomcat"));
-		String content = readFile(absoluteDiskPath+"solr/solr_home/"+server+"/conf/list_language.txt", StandardCharsets.UTF_8);
+		env = System.getenv("DATAFARI_HOME");									//Gets the directory of installation if in standard environment
+		if(env==null){															//If in development environment	
+			RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();	//Gets the D.solr.solr.home variable given in arguments to the VM
+			List<String> arguments = runtimeMxBean.getInputArguments();
+			for(String s : arguments){
+				if(s.startsWith("-Dsolr.solr.home"))
+					env = s.substring(s.indexOf("=")+1, s.indexOf("solr_home")-5);
+			}
+		}
+		String content = readFile(env+"solr/solr_home/"+server+"/conf/list_language.txt", StandardCharsets.UTF_8);	//Read the various languages
 		String[] lines = content.split(System.getProperty("line.separator"));						//There is one language per line
 		if(listMutex.size()==0){																	//If it's the first time
 			for(int i=0;i<lines.length;i++){														//For each line
@@ -79,8 +101,8 @@ public class Synonyms extends HttpServlet {
 							e.printStackTrace();
 						}
 						String filename = "synonyms_"+request.getParameter("language").toString()+".txt";
-						response.setContentType("application/octet-stream");
-						String filepath = absoluteDiskPath+"solr/solr_home/"+server+"/conf/";			//hardcoded path
+						response.setContentType("application/octet-stream"); 
+						String filepath = env+"solr/solr_home/"+server+"/conf/";			//hardcoded path
 						String synContent = readFile(filepath+filename, StandardCharsets.UTF_8);
 																		//get the file and put its content into a string
 						response.setContentType("text/html");
@@ -94,35 +116,6 @@ public class Synonyms extends HttpServlet {
 					}
 				}
 			}
-		}else{															//Download the file
-			String filename = "synonyms_"+request.getParameter("languagebis")+".txt";
-			response.setContentType("application/octet-stream");
-			String filepath = absoluteDiskPath+"solr/solr_home/"+server+"/conf/";			//hardcoded path
-			String disHeader = "Attachment; Filename=\"" + filename + "\"";
-			response.setHeader("Content-Disposition", disHeader);
-			File fileToDownload = new File(filepath + filename);
-			InputStream in = null;
-			ServletOutputStream outs = response.getOutputStream();
-			try {
-				in = new BufferedInputStream(
-						new FileInputStream(fileToDownload));
-				int ch;
-				char caractere;
-				while ((ch = in.read()) != -1) {
-					caractere = (char) ch;
-					if (caractere == '\\')
-						continue;
-
-					outs.print(caractere);
-				}
-			} finally {
-				if (in != null){
-					in.close();
-				}
-			}
-			outs.flush();
-			outs.close();
-			in.close(); 
 		}
 	}
 
@@ -140,10 +133,10 @@ public class Synonyms extends HttpServlet {
 			}
 		}else{															//The user clicked on confirm modification
 			File file ;
-			String filePath = absoluteDiskPath+"solr/solr_home/"+server+"/conf/synonyms_"+request.getParameter("language")+".txt"; 			//hardcoded path
+			String filePath = env+"solr/solr_home/"+server+"/conf/synonyms_"+request.getParameter("language")+".txt"; 			//hardcoded path
 			file = new File(filePath);										
 			FileOutputStream fooStream = new FileOutputStream(file, false); // true to append false to overwrite.
-			byte[] myBytes = request.getParameter("content").getBytes();
+			byte[] myBytes = request.getParameter("content").replaceAll("&gt;", ">").replaceAll("<div>|<br>|<br >", "\n").replaceAll("</div>|</lines>|&nbsp;", "").getBytes();
 			fooStream.write(myBytes);										//rewrite the file
 			fooStream.close();
 			for(SemaphoreLn sem : listMutex){ 								//Get the correct semaphore and check if it was not already released

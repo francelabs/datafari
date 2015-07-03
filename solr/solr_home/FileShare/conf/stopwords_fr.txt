@@ -1,3 +1,6 @@
-i-pod, i pod => ipod,
-sea biscuit, sea biscit => seabiscuit
-manifold => mcf
+#Standard english stop words taken from Lucene's StopAnalyzer
+#a
+#an
+#and
+#are
+#as

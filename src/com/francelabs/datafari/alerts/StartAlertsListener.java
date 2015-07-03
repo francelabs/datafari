@@ -13,33 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.francelabs.datafari.servlets.admin;
-
-import java.util.concurrent.Semaphore;
-/**Javadoc
+package com.francelabs.datafari.alerts;
+/**
  * 
- * This class is a mutex semaphore that only applies to one of the many files they can be applied to.
- * To create one you have to provide a language and a type (for now Stop for stopwords and Syn for Synonyms)
+ * This class is used to launch the alerts (if they are activated) at Datafari's start.
+ * Also avoid accumulating scheduled task on reloading Datafari (useful only on development environment
  * @author Alexis Karassev
  *
  */
 
-public class SemaphoreLn extends Semaphore {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private String language;
-	private String type;
-	public SemaphoreLn(String lang, String type) {
-		super(1);
-		this.language = lang;
-		this.type=type;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
+@WebListener
+public class StartAlertsListener implements ServletContextListener {
+
+	@Override
+	public void contextDestroyed(ServletContextEvent arg0) {
+		AlertsManager.getInstance().turnOff();
 	}
-	public String getLanguage(){
-		return this.language;
-	}
-	public String getType(){
-		return this.type;
+
+	@Override
+	public void contextInitialized(ServletContextEvent arg0) {
+		AlertsManager.getInstance().getParameter();
 	}
 }

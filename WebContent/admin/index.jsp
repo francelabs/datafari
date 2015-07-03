@@ -21,6 +21,7 @@
 		<link href="../plugins/justified-gallery/justifiedGallery.css" rel="stylesheet">
 		<link href="../css/style_v2.css" rel="stylesheet">
 		<link href="../plugins/chartist/chartist.min.css" rel="stylesheet">
+		<link href="../plugins/CLEditor/jquery.cleditor.css" rel="stylesheet">
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
 				<script src="http://getbootstrap.com/docs-assets/js/html5shiv.js"></script>
@@ -87,7 +88,7 @@
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle account" data-toggle="dropdown">
 									<div class="avatar">
-										
+<!-- 										<img src="img/avatar.jpg" class="img-circle" alt="avatar" /> -->
 									</div>
 									<i class="fa fa-angle-down pull-right"></i>
 									<div class="user-mini pull-right">
@@ -163,18 +164,18 @@
 					</a>
 					<ul class="dropdown-menu">
 						<li><a class="ajax-link" href="../ajax/usageStatistics.html">Usage statistics</a></li>
-						<li><a class="ajax-link" href="../ajax/corpusStatistics.html">Corpus statistics</a></li>
-						<li><a class="ajax-link" href="../ajax/systemStatistics.html">System statistics</a></li>
+<!-- 						<li><a class="ajax-link" href="../ajax/corpusStatistics.html">Corpus statistics</a></li> -->
+<!-- 						<li><a class="ajax-link" href="../ajax/systemStatistics.html">System statistics</a></li> -->
 					</ul>
 				</li>
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle">
-						<i class="fa 	"></i>
+						<i class="fa fa-wrench"></i>
 						 <span class="hidden-xs"><%= resourceBundle.getString("admin")%></span>
 					</a>
 					<ul class="dropdown-menu">
 						<li><a class="ajax-link" href="../ajax/solr.html"><%= resourceBundle.getString("solrAdmin")%></a></li>
-<!-- 						<li><a class="ajax-link" href="../ajax/forms_layouts.html">Layouts</a></li> -->
+						<li><a class="ajax-link" href="../ajax/alertsAdmin.html"><%= resourceBundle.getString("alertAdmin")%></a></li>
 <!-- 						<li><a class="ajax-link" href="../ajax/forms_file_uploader.html">File Uploader</a></li> -->
 					</ul>
 				</li>
@@ -195,17 +196,17 @@
 <!-- 						<li><a class="ajax-link" href="../ajax/ui_icons.html">Autocomplete configuration</a></li> -->
 					</ul>
 				</li>
-<!-- 				<li class="dropdown"> -->
-<!-- 					<a href="#" class="dropdown-toggle"> -->
-<!-- 						<i class="fa fa-map-marker"></i> -->
-<!-- 						<span class="hidden-xs">Search engine users</span> -->
-<!-- 					</a> -->
-<!-- 					<ul class="dropdown-menu"> -->
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle">
+						<i class="fa fa-male"></i>
+						<span class="hidden-xs"><%= resourceBundle.getString("user")%></span>
+					</a>
+					<ul class="dropdown-menu">
 <!-- 						<li><a class="ajax-link" href="../ajax/maps.html">Save search queries</a></li> -->
-<!-- 						<li><a class="ajax-link" href="../ajax/Alerts.html">Create alerts</a></li> -->
+						<li><a class="ajax-link" href="../ajax/Alerts.html"><%= resourceBundle.getString("alerts")%></a></li>
 <!-- 						<li><a class="ajax-link" href="../ajax/map_leaflet.html">Favorite documents</a></li> -->
-<!-- 					</ul> -->
-<!-- 				</li> -->
+					</ul>
+				</li>
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle">
 						<i class="fa fa-picture-o"></i>
@@ -243,13 +244,14 @@
 <!--<script src="http://code.jquery.com/jquery.js"></script>-->
 <script src="../plugins/jquery/jquery.min.js"></script>
 <script src="../plugins/jquery-ui/jquery-ui.min.js"></script>
+<script src="../plugins/CLEditor/jquery.cleditor.js"></script>
+<script src="../plugins/CLEditor/jquery.cleditor.min.js"></script>
+<script src="./../plugins/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.js"></script>
 <script src="./i18nInit.js"></script>
 <script src="./../js/AjaxFranceLabs/i18njs.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="../plugins/bootstrap/bootstrap.min.js"></script>
 <script src="../plugins/justified-gallery/jquery.justifiedGallery.min.js"></script>
-<script src="../plugins/tinymce/tinymce.min.js"></script>
-<script src="../plugins/tinymce/jquery.tinymce.min.js"></script>
 <!-- All functions for this theme + document.ready processing -->
 <script src="../js/devoops.js"></script>
 </body>
