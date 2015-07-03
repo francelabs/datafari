@@ -340,7 +340,7 @@ a.show-sidebar:hover {
   border-radius: 0;
 }
 .box-header {
-  color: #DDE27C;
+  color: #000000;
   position:relative;
   overflow: hidden;
   height: 24px;
@@ -406,7 +406,7 @@ a.show-sidebar:hover {
   display: block;
   float: left;
   text-align: center;
-  color: #DDE27C;
+  color: #000000;
   -webkit-transition: 0.2s;
   -moz-transition: 0.2s;
   -o-transition: 0.2s;
