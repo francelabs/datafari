@@ -78,7 +78,7 @@ public class Stopwords extends HttpServlet {
 					env = s.substring(s.indexOf("=")+1, s.indexOf("solr_home")-5);
 			}
 		}
-		String content = readFile(env+"solr/solr_home/"+server+"/conf/list_language.txt", StandardCharsets.UTF_8);	//Read the various languages
+		String content = readFile(env+"/solr/solr_home/"+server+"/conf/list_language.txt", StandardCharsets.UTF_8);	//Read the various languages
 		String[] lines = content.split(System.getProperty("line.separator"));						//There is one language per line
 		if(listMutex.size()==0){		 															//If it's the first time
 			for(int i=0;i<lines.length;i++){														//For each line
@@ -96,7 +96,7 @@ public class Stopwords extends HttpServlet {
 						}
 						String filename = "stopwords_"+request.getParameter("language").toString()+".txt";
 						response.setContentType("application/octet-stream");
-						String filepath = env+"solr/solr_home/"+server+"/conf/";	
+						String filepath = env+"/solr/solr_home/"+server+"/conf/";	
 						String stopContent = readFile(filepath+filename, StandardCharsets.UTF_8);
 						//get the file and put its content into a string
 						response.setContentType("text/html");
@@ -127,7 +127,7 @@ public class Stopwords extends HttpServlet {
 			}
 		}else{															//The user clicked on confirm modification
 			File file ;
-			String filePath =  env+"solr/solr_home/"+server+"/conf/stopwords_"+request.getParameter("language")+".txt";
+			String filePath =  env+"/solr/solr_home/"+server+"/conf/stopwords_"+request.getParameter("language")+".txt";
 			file = new File(filePath);										
 			FileOutputStream fooStream = new FileOutputStream(file, false); // true to append, false to overwrite.
 			byte[] myBytes = request.getParameter("content").replaceAll("&gt;", ">").replaceAll("<div>|<br>|<br >", "\n").replaceAll("</div>|</lines>|&nbsp;", "").getBytes();
