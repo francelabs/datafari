@@ -68,14 +68,14 @@ public class alertsAdmin extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)  {
 		env = System.getenv("DATAFARI_HOME");							//Gets the directory of installation if in standard environment	
 		if(env==null){													//If in development environment
-			env = "/home/youp/workspace/Servers/Datafari-config/datafari.properties";	//Hardcoded path
+			env = "/home/youp/workspaceTest/Servers/Datafari-config/datafari.properties";	//Hardcoded path
 		}else{
 			env = env+"tomcat/conf/datafari.properties";
 		}
 		String content ="";
 		PrintWriter pw = null;
 		try {
-			content = readFile(env, StandardCharsets.UTF_8);
+			content = readFile(env, StandardCharsets.UTF_8); 
 			pw = response.getWriter();
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -102,7 +102,7 @@ public class alertsAdmin extends HttpServlet {
 					json.put("collection", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()));
 				}
 			}catch(Exception e){
-				e.printStackTrace();
+				e.printStackTrace(); 
 			}
 		}
 		try {

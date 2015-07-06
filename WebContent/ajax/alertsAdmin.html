@@ -46,12 +46,12 @@
 			<div class="no-move"></div>
 		</div>
 		<div class="box-content">
-			<form class="form-horizontal" role="form">
+			<form class="form-horizontal" id="form" role="form">
 				<fieldset>
 				<legend id="delayLegend"></legend>
 				<div class="form-group">
 					<label id=HourlyLabel class="col-sm-2 control-label"></label>
-					<input type="text" class="col-sm-2" id="HourlyDelay">
+					<input type="text" class="col-sm-2" id="HourlyDelay" >
 				</div>
 				<div class="form-group">
 					<label id=DailyLabel class="col-sm-2 control-label"></label>
@@ -70,7 +70,7 @@
 					</div>
 					<div class="form-group">
 						<label id="PortLabel" class="col-sm-2 control-label"></label>
-						<input type="number" id="Port" name="Port" class="col-sm-2" />
+						<input type="text" id="Port" name="Port" class="col-sm-2" />
 					</div>
 				</fieldset>
 				<fieldset>
@@ -111,55 +111,57 @@
 </body>
 <script type="text/javascript">
 	doGet();
-	$(document)
-			.ready(
-					function() {
-						// Load TimePicker plugin and callback all time and date pickers
-						LoadTimePickerScript(AllTimePickers);
-						var icons = {
-							header : "ui-icon-circle-arrow-e",
-							activeHeader : "ui-icon-circle-arrow-s"
-						};
-						$('#HourlyDelay').datetimepicker({
-							dateFormat : 'yy-mm-dd'
-						});
-						$('#HourlyDelay').datetimepicker('setDate', new Date());
-						$('#DailyDelay').datetimepicker({
-							dateFormat : 'yy-mm-dd'
-						});
-						$('#DailyDelay').datetimepicker('setDate', new Date());
-						$('#WeeklyDelay').datetimepicker({
-							dateFormat : 'yy-mm-dd'
-						});
-						$('#WeeklyDelay').datepicker('setDate', new Date());
-						document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
-						document.getElementById("topbar2").innerHTML = window.i18n.msgStore['admin'];
-						document.getElementById("topbar3").innerHTML = window.i18n.msgStore['alertAdmin'];
-						document.getElementById("boxname").innerHTML = "\r"+ window.i18n.msgStore['alertAdmin'];
-						document.getElementById("HourlyLabel").innerHTML = window.i18n.msgStore['hourlyDelay'];
-						document.getElementById("DailyLabel").innerHTML = window.i18n.msgStore['dailyDelay'];
-						document.getElementById("WeeklyLabel").innerHTML = window.i18n.msgStore['weeklyDelay'];
-						document.getElementById("HostLabel").innerHTML = window.i18n.msgStore['host'];
-						document.getElementById("PortLabel").innerHTML = window.i18n.msgStore['port'];
-						document.getElementById("delayLegend").innerHTML = window.i18n.msgStore['alertsDelay'];
-						document.getElementById("connLegend").innerHTML = window.i18n.msgStore['connConf'];
-						document.getElementById("dbLegend").innerHTML = window.i18n.msgStore['dbConf'];
-						document.getElementById("DatabaseLabel").innerHTML = window.i18n.msgStore['database'];
-						document.getElementById("CollectionLabel").innerHTML = window.i18n.msgStore['collection'];
-						document.getElementById("paramRegtext").innerHTML = window.i18n.msgStore['paramReg'];
-					});
-	function doGet() {
-		$
-				.ajax({ //Ajax request to the doGet of the AlertsAdmin servlet
+	$(document).ready(function() {
+		var icons = {
+			header : "ui-icon-circle-arrow-e",
+			activeHeader : "ui-icon-circle-arrow-s"
+		};
+		document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
+		document.getElementById("topbar2").innerHTML = window.i18n.msgStore['admin'];
+		document.getElementById("topbar3").innerHTML = window.i18n.msgStore['alertAdmin'];
+		document.getElementById("boxname").innerHTML = "\r"+ window.i18n.msgStore['alertAdmin'];
+		document.getElementById("HourlyLabel").innerHTML = window.i18n.msgStore['hourlyDelay'];
+		document.getElementById("DailyLabel").innerHTML = window.i18n.msgStore['dailyDelay'];
+		document.getElementById("WeeklyLabel").innerHTML = window.i18n.msgStore['weeklyDelay'];
+		document.getElementById("HostLabel").innerHTML = window.i18n.msgStore['host'];
+		document.getElementById("PortLabel").innerHTML = window.i18n.msgStore['port'];
+		document.getElementById("delayLegend").innerHTML = window.i18n.msgStore['alertsDelay'];
+		document.getElementById("connLegend").innerHTML = window.i18n.msgStore['connConf'];
+		document.getElementById("dbLegend").innerHTML = window.i18n.msgStore['dbConf'];
+		document.getElementById("DatabaseLabel").innerHTML = window.i18n.msgStore['database'];
+		document.getElementById("CollectionLabel").innerHTML = window.i18n.msgStore['collection'];
+		document.getElementById("paramRegtext").innerHTML = window.i18n.msgStore['paramReg'];
+		//Creates date pickers et get current dates
+		$('#HourlyDelay').datetimepicker({
+			dateFormat : 'yy-mm-dd'
+		});
+		$('#HourlyDelay').datepicker('setDate', new Date());
+		$('#DailyDelay').datetimepicker({
+			dateFormat : 'yy-mm-dd'
+		});
+		$('#DailyDelay').datepicker('setDate', new Date());
+		$('#WeeklyDelay').datetimepicker({
+			dateFormat : 'yy-mm-dd'
+		});
+		$('#WeeklyDelay').datepicker('setDate', new Date());
+		//Remove the div of selection, useful on second load of date pickers
+		$("a").click(function(){
+			var element = document.getElementById("ui-datepicker-div");
+			element.parentNode.removeChild(element);
+		 });
+		});
+	function doGet() {$.ajax({			//Ajax request to the doGet of the AlertsAdmin servlet
 					type : "GET",
 					url : "./../admin/alertsAdmin",
 					//if received a response from the server
 					success : function(data, textStatus, jqXHR) {
+						//Set the button
 						if (data.on === "on") {
 							document.getElementById("on/off").checked = true;
 						} else {
 							document.getElementById("on/off").checked = false;
 						}
+						//Set the parameter
 						document.getElementById("Host").value = data.host;
 						document.getElementById("Port").value = data.port;
 						document.getElementById("Database").value = data.database;
@@ -167,7 +169,7 @@
 
 					}
 				});
-	}
+	}	
 	function onOff() {
 		var data = "on/off=" + document.getElementById("on/off").innerHTML
 		$.ajax({ //Ajax request to the doGet of the Alerts servlet
@@ -184,9 +186,9 @@
 		var data = "hourlyDelay="
 				+ document.getElementById("HourlyDelay").value + "&dailyDelay="
 				+ document.getElementById("DailyDelay").value + "&weeklyDelay="
-				+ "" + document.getElementById("WeeklyDelay").value + "&host="
+				+ document.getElementById("WeeklyDelay").value + "&host="
 				+ document.getElementById("Host").value + "&port="
-				+ document.getElementById("Port").value + "" + "&database="
+				+ document.getElementById("Port").value  + "&database="
 				+ document.getElementById("Database").value + "&collection="
 				+ document.getElementById("Collection").value;
 		if (data.indexOf("=&") != -1) {

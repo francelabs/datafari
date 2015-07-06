@@ -89,7 +89,7 @@ public class AlertsManager {
 	public void getParameter(){
 		filePath = System.getenv("DATAFARI_HOME");		//Gets the installation directory if in standard environment 
 		if(filePath==null)								//If development environment
-			filePath = "/home/youp/workspace/Servers/Datafari-config/datafari.properties";	//hardcoded path
+			filePath = "/home/youp/workspaceTest/Servers/Datafari-config/datafari.properties";	//hardcoded path
 		else
 			filePath += "tomcat/conf/datafari.properties";	//completing the path 
 		String content;

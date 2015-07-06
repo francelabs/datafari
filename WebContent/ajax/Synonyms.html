@@ -70,9 +70,12 @@
 			 cleanSem();
 		  });
 		//If the user loads an other page
-		$("a").click(function(){
-			cleanSem();
-			$("#ajaxResponse").empty();
+		$("a").click(function(e){
+			if(e.target.className==="ajax-link"){
+				cleanSem();
+				$('#language').attr("disabled", false);
+				$("#ajaxResponse").empty();
+			}
 		});
 		document.getElementById("Modify").innerHTML = window.i18n.msgStore['selectLang'];
 	    document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
