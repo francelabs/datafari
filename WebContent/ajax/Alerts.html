@@ -4,7 +4,7 @@
 <script src="./../plugins/jquery/jquery.min.js" type="text/javascript"></script>
 <script src="./../plugins/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
 <script src="./i18nInit.js"></script>
-<style src="./../css/style_v2.css" type="text/css"></style>
+<link href="./../css/style_v2.css" rel="stylesheet"></link>
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
@@ -197,6 +197,7 @@ function edit(i){
 	data = d;
 	document.getElementById("keyword").value = d.alerts[i].keyword;
 	document.getElementById("subject").value = d.alerts[i].subject;
+	document.getElementById("mail").value = d.alerts[i].mail;
 	document.getElementById("core").value = d.alerts[i].core;
 	document.getElementById("frequency").value = d.alerts[i].frequency;
 	 //Redefines the submit request
