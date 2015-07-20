@@ -34,7 +34,7 @@
 		</copy>
 		<exec executable="chmod">
 				    <arg value="755"/>
-				    <arg value="${installer.build.dir}/datafari/DEBIAN/postinst"/>
+				    <arg value="${installer.build.dir}/datafari/DEBIAN/*"/>
 				  </exec>
 		<exec executable="dpkg-deb">
 		    <arg value="-b"/>
