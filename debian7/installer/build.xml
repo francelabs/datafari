@@ -33,8 +33,9 @@
 						</fileset>
 		</copy>
 		<exec executable="chmod">
+		    		<arg value="-R"/>
 				    <arg value="755"/>
-				    <arg value="${installer.build.dir}/datafari/DEBIAN/*"/>
+				    <arg value="${installer.build.dir}/datafari/DEBIAN"/>
 				  </exec>
 		<exec executable="dpkg-deb">
 		    <arg value="-b"/>
