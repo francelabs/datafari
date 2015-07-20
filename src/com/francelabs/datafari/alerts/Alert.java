@@ -52,7 +52,6 @@ public class Alert {
 	 */
 	public Alert(String subject, String address, SolrServer solr,
 			String keyword, String frequency, Mail mail, String user) {
-		super();
 		this.subject = subject;
 		this.address = address;
 		this.solr = solr;
@@ -116,7 +115,5 @@ public class Alert {
 			//Sends the mail (the last parameter is "" because other destinations are not necessary but you can add a String)														
 			mail.sendMessage(subject, message, address, "");
 		}
-
-
 	}
 }

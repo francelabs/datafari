@@ -73,6 +73,7 @@ public class AlertsManager {
 	private ScheduledFuture<?> alertHandleH, alertHandleD, alertHandleW;
 	private ScheduledExecutorService scheduler;
 	private Mail mail;
+	private Alert alert;
 	private final static Logger LOGGER = Logger.getLogger(AlertsManager.class
 			.getName());
 	private AlertsManager(){							//Booleans to know if there has been a previous execution for a given frequency
@@ -150,7 +151,6 @@ public class AlertsManager {
 				Weekly.setBool(true);
 				WeeklyHour = lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1);
 			}
-
 		}
 		return onOff;
 	}
@@ -193,10 +193,9 @@ public class AlertsManager {
 			throw e;
 		}
 		DateTime currentDate = new DateTime();	
-		launch(Hourly, delayH, alertHandleH, currentDate,"Hourly", HourlyHour, alertHourly, 60);		//Launches the alerts according to their previous execution and the date typed by the user
-		launch(Daily, delayD, alertHandleD, currentDate,"Daily", DailyHour, alertDaily, 1440);
-		launch(Weekly, delayW, alertHandleW, currentDate,"Weekly", WeeklyHour, alertWeekly, 10080);
-		
+		alertHandleH = launch(Hourly, delayH, alertHandleH, currentDate,"Hourly", HourlyHour, alertHourly, 60);		//Launches the alerts according to their previous execution and the date typed by the user
+		alertHandleD = launch(Daily, delayD, alertHandleD, currentDate,"Daily", DailyHour, alertDaily, 1440);
+		alertHandleW = launch(Weekly, delayW, alertHandleW, currentDate,"Weekly", WeeklyHour, alertWeekly, 10080);
 	}
 	/**
 	 * Launches the alerts
@@ -209,17 +208,18 @@ public class AlertsManager {
 	 * @param run		The runnable that run the alerts
 	 * @param loop 		The number of minutes between each execution
 	 */
-	public void launch(customBool custom, DateTime delay, ScheduledFuture<?> Handle, DateTime current, String frequency, String Hour, Runnable run, long loop){
+	public ScheduledFuture<?> launch(customBool custom, DateTime delay, ScheduledFuture<?> Handle, DateTime current, String frequency, String Hour, Runnable run, long loop){
 		if((custom.isBool()) && (delay.plusMinutes(5).isBefore(current)))								//If there has been a previous execution and the date typed in the UI was more than 5 minutes before the current date			
 			Handle = scheduler.scheduleAtFixedRate(run, calculateDelays(frequency, loop, Hour), loop, TimeUnit.MINUTES);	//Launches alerts() every hour with the "Hourly" parameter and as an initial delay, the difference calculated previously 
 		else if(custom.isBool() && (delay.minusMinutes(10).isAfter(current)))
 			Handle = scheduler.scheduleAtFixedRate(run, calculateDelays(frequency, delay), loop, TimeUnit.MINUTES);//Launches alerts() every hour with the "Hourly" parameter and as an initial delay, the difference between the current date and the date set in the UI 
 		else
 			Handle = scheduler.scheduleAtFixedRate(run, 0, loop, TimeUnit.MINUTES);		//Launches alerts() every hour with the "Hourly" parameter instantly
+		return Handle;
 	}
 	/**
 	 * Calculates the initial delays according to the frequency, and the previous execution
-	 * Only called when one of the hours typed in the UI (or more) was prior to the current date and if there has been a previous execution
+	 * Only called when one of the hours typed in the UI (or more) was prior to the current date or invalid and if there has been a previous execution
 	 * @param frequency 
 	 * @param minutes the number of minutes corresponding to an hour, a day, a week, according to the frequency
 	 * @param hour the last execution of the alert according to the frequency
@@ -321,11 +321,10 @@ public class AlertsManager {
 						}
 					}
 				}//Creates an alert with the attributes of the element found in the database.
-				Alert alert = new Alert(d.get("subject").toString(), d.get("address").toString(), solr, d.get("keyword").toString(), d.get("frequency").toString(), mail, d.get("user").toString());
+				alert = new Alert(d.get("subject").toString(), d.get("mail").toString(), solr, d.get("keyword").toString(), d.get("frequency").toString(), mail, d.get("user").toString());
 				alert.run();													//Makes the request and send the mail if they are some results
 			}
 		}
-
 	}
 	/**
 	 * Gets the parameters
