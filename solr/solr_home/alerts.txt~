@@ -1,8 +1,0 @@
-alert = 1;
-core = fileshare;
-search = cannes;
-frequency = hour;
-address = karassev.alexis@gmail.com;
-message = new doc;
-object = new;
-
