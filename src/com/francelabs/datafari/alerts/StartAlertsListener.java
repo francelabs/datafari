@@ -17,17 +17,22 @@ package com.francelabs.datafari.alerts;
 /**
  * 
  * This class is used to launch the alerts (if they are activated) at Datafari's start.
- * Also avoid accumulating scheduled task on reloading Datafari (useful only on development environment
+ * Also avoid cumulating scheduled task on reloading Datafari (useful only in development environment)
  * @author Alexis Karassev
  *
  */
 
+import java.io.IOException;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+
+import org.apache.log4j.Logger;
 @WebListener
 public class StartAlertsListener implements ServletContextListener {
-
+	private final static Logger LOGGER = Logger.getLogger(StartAlertsListener.class
+			.getName());
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
 		AlertsManager.getInstance().turnOff();
@@ -35,6 +40,10 @@ public class StartAlertsListener implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
-		AlertsManager.getInstance().getParameter();
+		try {
+			AlertsManager.getInstance().turnOn();
+		} catch (IOException e) {
+			LOGGER.error("Error while turning on the alerts during instantiation, StartAlertsListener", e);
+		}
 	}
 }

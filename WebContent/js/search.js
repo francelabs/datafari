@@ -190,9 +190,9 @@ $(function($) {
 	
 
 	
-	Manager.addWidget(new AjaxFranceLabs.CapsuleWidget({
-		elm : $('#capsule'),
-		id : 'capsule'
+	Manager.addWidget(new AjaxFranceLabs.PromolinkWidget({
+		elm : $('#promolink'),
+		id : 'promolink'
 	}));
 
 	Manager.addWidget(new AjaxFranceLabs.SpellcheckerWidget({

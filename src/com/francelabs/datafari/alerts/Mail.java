@@ -30,6 +30,8 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.log4j.Logger;
+
 /**Javadoc
  * 
  * 
@@ -44,6 +46,8 @@ public class Mail {
 	private String username;
 	private String password;
 	private BufferedReader inputStream;
+	private final static Logger LOGGER = Logger.getLogger(Mail.class
+			.getName());
 	public Mail() throws IOException{
 		smtpHost = "smtp.gmail.com";												//Default address/smtp used
 		from = "datafari.test@gmail.com";
@@ -58,23 +62,30 @@ public class Mail {
 					filePath = s.substring(s.indexOf("=")+1, s.indexOf("solr_home")-5);
 			}
 		}
-		inputStream = new BufferedReader(new FileReader(filePath+"bin/common/mail.txt")); //Get the configuration file
-		String l;
-		while ((l=inputStream.readLine()) != null) {
-			l = ""+l.replaceAll("\\s","");
-			if(l.startsWith("smtp")){									//Get the host
-				smtpHost = l.substring(l.indexOf("=")+1,l.length()-1);
+		try{
+			inputStream = new BufferedReader(new FileReader(filePath+"bin/common/mail.txt")); //Get the configuration file
+			String l;
+			while ((l=inputStream.readLine()) != null) {
+				l = ""+l.replaceAll("\\s","");
+				if(l.startsWith("smtp")){									//Get the host
+					smtpHost = l.substring(l.indexOf("=")+1,l.length()).trim();
+				}
+				else if(l.startsWith("from")){								//Get the address			
+					from = l.substring(l.indexOf("=")+1,l.length()).trim();
+				}
+				else if(l.startsWith("user")){								//Get the user name
+					username = l.substring(l.indexOf("=")+1,l.length()).trim();
+				}
+				else if(l.startsWith("pass")){								//Get the password
+					password = l.substring(l.indexOf("=")+1,l.length()).trim();
+				}
 			}
-			else if(l.startsWith("from")){								//Get the address			
-				from = l.substring(l.indexOf("=")+1,l.length()-1);
-			}
-			else if(l.startsWith("user")){								//Get the user name
-				username = l.substring(l.indexOf("=")+1,l.length()-1);
-			}
-			else if(l.startsWith("pass")){								//Get the password
-				password = l.substring(l.indexOf("=")+1,l.length()-1);
-			}
+			inputStream.close();
+		}catch (IOException e){
+			LOGGER.error("Error while reading the mail configuration in the Mail constructor", e);
+			throw e;
 		}
+
 	}
 	/** Javadoc
 	 * 
@@ -83,12 +94,12 @@ public class Mail {
 	 * @param text : the text of the mail
 	 * @param dest : the destination address
 	 * @param copyDest : (optionnal set to "" if not wanted) an other destination
+	 * @throws IOException,  
 	 * @throws AddressException
 	 * @throws MessagingException
 	 * 
 	 */
-	public void sendMessage(String subject, String text, String dest, String copyDest) { 
-		try{
+	public void sendMessage(String subject, String text, String dest, String copyDest)  { 
 		Properties props = new Properties();
 		props.put("mail.smtp.host", smtpHost);
 		props.put("mail.smtp.auth", "true");				
@@ -97,27 +108,29 @@ public class Mail {
 		session.setDebug(true);
 
 		MimeMessage message = new MimeMessage(session);   
-		message.setFrom(from);											//Set the destination and copy Destination if there are some
-		if(copyDest!=""){
-			message.addRecipients(Message.RecipientType.TO, new InternetAddress[] { new InternetAddress(dest), 
-					new InternetAddress(copyDest) });
-		}
-		else{
-			message.addRecipient(Message.RecipientType.TO ,new InternetAddress(dest));
-		}
-		message.setSubject(subject);
-		message.setText(text);											//Set the content of the mail
+		try{
+			message.setFrom(from);											//Set the destination and copy Destination if there are some
+			if(copyDest!=""){
+				message.addRecipients(Message.RecipientType.TO, new InternetAddress[] { new InternetAddress(dest), 
+						new InternetAddress(copyDest) });
+			}
+			else{
+				message.addRecipient(Message.RecipientType.TO ,new InternetAddress(dest));
+			}
+			message.setSubject(subject);
+			message.setText(text);											//Set the content of the mail
 
-		Transport tr = session.getTransport("smtps");
-		tr.connect(smtpHost, username, password);						//Connect to the address
-		message.saveChanges();
+			Transport tr = session.getTransport("smtps");
+			tr.connect(smtpHost, username, password);						//Connect to the address
+			message.saveChanges();
 
-		tr.sendMessage(message,message.getAllRecipients());				//Send the message
-		tr.close();
-		inputStream.close();
-		}catch(Exception e){
-			e.printStackTrace();
+			tr.sendMessage(message,message.getAllRecipients());				//Send the message
+			tr.close();
+		}catch(MessagingException e){	
+			LOGGER.error("Error while sending the mail ", e);
+			throw new RuntimeException();
 		}
+
 	}
 
 }

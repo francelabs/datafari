@@ -77,7 +77,7 @@
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/TableFacetQueriesWidget.js"></script>
 	<script type="text/javascript"
-		src="js/AjaxFranceLabs/widgets/Capsule.widget.js"></script>
+		src="js/AjaxFranceLabs/widgets/Promolink.widget.js"></script>
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/TableMobile.widget.js"></script>
 	
@@ -126,7 +126,7 @@
 			</div>
 		</div>
 		<div class="col right">
-			<div id="capsule"></div>
+			<div id="promolink"></div>
 			<div id="spellchecker"></div>
 			<div id="results"></div>
 		</div>

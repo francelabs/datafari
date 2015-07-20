@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-AjaxFranceLabs.CapsuleWidget = AjaxFranceLabs.AbstractWidget.extend({
+AjaxFranceLabs.PromolinkWidget = AjaxFranceLabs.AbstractWidget.extend({
 
 	//Variables
 
-	type : 'capsule',
+	type : 'promolink',
 
 	//Methods
 
 	
 
 	buildWidget : function() {
-		$(this.elm).addClass('capsuleWidget').addClass('widget');
+		$(this.elm).addClass('promolinkWidget').addClass('widget');
 	},
 
 	beforeRequest : function() {
@@ -34,9 +34,9 @@ AjaxFranceLabs.CapsuleWidget = AjaxFranceLabs.AbstractWidget.extend({
 	afterRequest : function() {
 		var self = this;
 		var data = this.manager.response, elm = $(this.elm);
-			if (data.capsuleSearchComponent.title !== undefined && data.capsuleSearchComponent.title.length > 0){
+			if (data.promolinkSearchComponent.title !== undefined && data.promolinkSearchComponent.title.length > 0){
 				$(self.elm).append('<div class="widgetContainer"></div>').show();
-				$(self.elm).find('.widgetContainer').append('<span class="title">' + '<span class="annonce">Annonce</span> '+ data.capsuleSearchComponent.title + '</span>').append('<span class="tips" id="snippet">' + data.capsuleSearchComponent.body + '</span>').show();
+				$(self.elm).find('.widgetContainer').append('<span class="title">' + '<span class="annonce">Annonce</span> '+ data.promolinkSearchComponent.title + '</span>').append('<span class="tips" id="snippet">' + data.promolinkSearchComponent.content + '</span>').show();
 			}
 		
 	}

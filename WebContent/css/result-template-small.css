@@ -167,10 +167,10 @@ height:18px; width:18px;
 .advancedSearchWidget .removeInput { cursor: pointer; float: right; height: 29px; line-height: 29px; text-align: center; width: 18px; }
 /**************************************/
 
-/**	>>> capsuleWidget Widget <<<	***/
-.capsuleWidget { border: 1px solid; -moz-border-radius: 4px; border-radius: 4px; margin-bottom: 15px; padding: 10px; }
-.capsuleWidget .title { display: block; width: 460px; }
-.capsuleWidget .tips { display: block; width: 460px; }
+/**	>>> promolinkWidget Widget <<<	***/
+.promolinkWidget { border: 1px solid; -moz-border-radius: 4px; border-radius: 4px; margin-bottom: 15px; padding: 10px; }
+.promolinkWidget .title { display: block; width: 460px; }
+.promolinkWidget .tips { display: block; width: 460px; }
 /**************************************/
 
 /**	>>> spellcheckerWidget Widget <<<**/

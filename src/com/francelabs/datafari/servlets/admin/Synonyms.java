@@ -15,13 +15,9 @@
  *******************************************************************************/
 package com.francelabs.datafari.servlets.admin;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
@@ -33,11 +29,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
 
 import com.francelabs.datafari.solrj.SolrServers.Core;
 
@@ -58,22 +55,16 @@ public class Synonyms extends HttpServlet {
 	private static final List<SemaphoreLn> listMutex = new ArrayList<SemaphoreLn>();
 	private String server = Core.FILESHARE.toString();
 	private String env;
+	private String content;
+	private final static Logger LOGGER = Logger.getLogger(Synonyms.class
+			.getName());
 	/** 
-     * @throws IOException 
-     * @see HttpServlet#HttpServlet()
-     * Gets the list of the languages
-     * Creates a semaphore for each of them
-     */
-	public Synonyms() throws IOException {
-		super();
-	}
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 * used to print the content of the file or to download it
-	 * If called to print it will return plain text
+	 * @throws IOException 
+	 * @see HttpServlet#HttpServlet()
+	 * Gets the list of the languages
+	 * Creates a semaphore for each of them
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public Synonyms() {
 		env = System.getenv("DATAFARI_HOME");									//Gets the directory of installation if in standard environment
 		if(env==null){															//If in development environment	
 			RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();	//Gets the D.solr.solr.home variable given in arguments to the VM
@@ -83,36 +74,66 @@ public class Synonyms extends HttpServlet {
 					env = s.substring(s.indexOf("=")+1, s.indexOf("solr_home")-5);
 			}
 		}
-		String content = readFile(env+"/solr/solr_home/"+server+"/conf/list_language.txt", StandardCharsets.UTF_8);	//Read the various languages
-		String[] lines = content.split(System.getProperty("line.separator"));						//There is one language per line
-		if(listMutex.size()==0){																	//If it's the first time
-			for(int i=0;i<lines.length;i++){														//For each line
-				listMutex.add(new SemaphoreLn(lines[i], "Syn"));									//create a semaphore and add it to the list
+		content="";
+		try {
+			if(new File(env+"/solr/solr_home/"+server+"/conf/list_language.txt").exists())
+					content = readFile(env+"/solr/solr_home/"+server+"/conf/list_language.txt", StandardCharsets.UTF_8);  //Read the various languages
+			else{
+				content = "";
+				return;
 			}
+		} catch (IOException e1) {
+			LOGGER.error("Error while opening list_language.txt in Synonyms Servlet's Constructor", e1);
+		}	
+		String[] lines = content.split(System.getProperty("line.separator"));						//There is one language per line
+		for(int i=0;i<lines.length;i++){														//For each line
+			listMutex.add(new SemaphoreLn(lines[i], "Syn"));									//create a semaphore and add it to the list
 		}
-		if(request.getParameter("language")!=null){						//Print the content of the file
+	}
+
+	/**
+	 * @throws IOException 
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * used to print the content of the file or to download it
+	 * If called to print it will return plain text
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if(content.equals("")){
+			PrintWriter out = response.getWriter();
+			out.append("Error while getting the list of the languages"); 	
+			out.close();
+		}
+		else if(request.getParameter("language")!=null){						//Print the content of the file
 			for(SemaphoreLn sem : listMutex){							//For all the semaphores
 				if (sem.getLanguage().equals(request.getParameter("language")) && sem.getType().equals("Syn")){ //if it has the good language and type(stopwords or Synonyms for now)
-					if(sem.availablePermits()!=0){						//If it is available
-						try {
-							sem.acquire();								//Acquire it
-						} catch (InterruptedException e) {
-
-							e.printStackTrace();
+					try{
+						if(sem.availablePermits()!=0){						//If it is available
+							try {
+								sem.acquire();								//Acquire it
+							} catch (InterruptedException e) {
+								LOGGER.error("Error while acquiring semaphore in Synonyms Servlet's doGet", e);
+								throw new RuntimeException();
+							}
+							String filename = "synonyms_"+request.getParameter("language").toString()+".txt";
+							response.setContentType("application/octet-stream"); 
+							String filepath = env+"/solr/solr_home/"+server+"/conf/";			//hardcoded path
+							String synContent = readFile(filepath+filename, StandardCharsets.UTF_8);
+							//get the file and put its content into a string
+							response.setContentType("text/html");
+							PrintWriter out = response.getWriter();
+							out.append(synContent);							//returns the content of the file
+							out.close();
+						}else{												//if not available
+							PrintWriter out = response.getWriter();
+							out.append("File already in use"); 	
+							out.close();
 						}
-						String filename = "synonyms_"+request.getParameter("language").toString()+".txt";
-						response.setContentType("application/octet-stream"); 
-						String filepath = env+"/solr/solr_home/"+server+"/conf/";			//hardcoded path
-						String synContent = readFile(filepath+filename, StandardCharsets.UTF_8);
-																		//get the file and put its content into a string
-						response.setContentType("text/html");
+					}catch(IOException e){
 						PrintWriter out = response.getWriter();
-						out.append(synContent);							//returns the content of the file
+						out.append("Error while reading the file"); 	
 						out.close();
-					}else{												//if not available
-						PrintWriter out = response.getWriter();
-						out.append("File already in use"); 	
-						out.close();
+						LOGGER.error("Error while reading the synonyms_"+request.getParameter("language")+".txt file in Synonyms Servlet's doGet", e);
+						throw e;
 					}
 				}
 			}
@@ -120,25 +141,34 @@ public class Synonyms extends HttpServlet {
 	}
 
 	/**
+	 * @throws IOException 
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 * used to confirm the modifications and/or release the semaphore
-	 * called by the confirm modification or by the user loading an other page
+	 * called by the confirm modification or if the user loads an other page, refreshes the page or switches language
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		if (request.getParameter("content")==null){  					//the user load an other page  
 			for(SemaphoreLn sem : listMutex){  							//Get the correct semaphore and check if it was not already released
 				if (sem.getLanguage().equals(request.getParameter("language")) && sem.getType().equals("Syn") && sem.availablePermits()<1){
 					sem.release();										//Release the semaphore
-				}
+				} 
 			}
 		}else{															//The user clicked on confirm modification
 			File file ;
 			String filePath = env+"/solr/solr_home/"+server+"/conf/synonyms_"+request.getParameter("language")+".txt"; 			//hardcoded path
-			file = new File(filePath);										
-			FileOutputStream fooStream = new FileOutputStream(file, false); // true to append false to overwrite.
-			byte[] myBytes = request.getParameter("content").replaceAll("&gt;", ">").replaceAll("<div>|<br>|<br >", "\n").replaceAll("</div>|</lines>|&nbsp;", "").getBytes();
-			fooStream.write(myBytes);										//rewrite the file
-			fooStream.close();
+			file = new File(filePath);
+			try{
+				FileOutputStream fooStream = new FileOutputStream(file, false); // true to append false to overwrite.
+				byte[] myBytes = request.getParameter("content").replaceAll("&gt;", ">").replaceAll("<div>|<br>|<br >", "\n").replaceAll("</div>|</lines>|&nbsp;", "").getBytes();
+				fooStream.write(myBytes);										//rewrite the file
+				fooStream.close();
+			}catch(IOException e){
+				PrintWriter out = response.getWriter();
+				out.append("Error while rewriting the file"); 	
+				out.close();
+				LOGGER.error("Error while rewriting the file synonyms_"+request.getParameter("language")+" Synonyms Servlet's doPost", e);
+				throw e;
+			}
 			for(SemaphoreLn sem : listMutex){ 								//Get the correct semaphore and check if it was not already released
 				if (sem.getLanguage().equals(request.getParameter("language")) && sem.getType().equals("Syn") && sem.availablePermits()<1){
 					sem.release();											//Release the semaphore
@@ -149,7 +179,12 @@ public class Synonyms extends HttpServlet {
 	static String readFile(String path, Charset encoding) 					//Read the file
 			throws IOException 
 	{
-		byte[] encoded = Files.readAllBytes(Paths.get(path));
-		return new String(encoded, encoding);
+		try{
+			byte[] encoded = Files.readAllBytes(Paths.get(path));
+			return new String(encoded, encoding);
+		}catch(IOException e){
+			LOGGER.error("Error while reading the datafari.properties file in readFile, Synonyms Servlet", e);
+			throw e;
+		}
 	}
 }

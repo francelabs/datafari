@@ -18,16 +18,13 @@ package com.francelabs.datafari.servlets.admin;
 import java.util.concurrent.Semaphore;
 /**Javadoc
  * 
- * This class is a mutex semaphore that only applies to one of the many files they can be applied to.
+ * This class is a mutex semaphore that only applies to a stopword, or synonym file, with a specified language
  * To create one you have to provide a language and a type (for now Stop for stopwords and Syn for Synonyms)
+ * Used in both Synonyms and Stopwords Servlets.
  * @author Alexis Karassev
  *
  */
-
 public class SemaphoreLn extends Semaphore {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private String language;
 	private String type;

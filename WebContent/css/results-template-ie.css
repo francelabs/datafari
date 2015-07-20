@@ -211,11 +211,11 @@
 .advancedSearchWidget .removeInput { cursor: pointer; float: right; height: 29px; line-height: 29px; text-align: center; width: 18px; }
 /**************************************/
 
-/**	>>> capsuleWidget Widget <<<	***/
-.capsuleWidget { -moz-border-radius: 4px; border-radius: 4px; margin-bottom: 15px; padding: 10px; }
+/**	>>> promolinkWidget Widget <<<	***/
+.promolinkWidget { -moz-border-radius: 4px; border-radius: 4px; margin-bottom: 15px; padding: 10px; }
 .widgetContainer .annonce {padding: 3px;font-size: 0.6em;vertical-align:middle;}
-.capsuleWidget .title { display: block;  }
-.capsuleWidget .tips { display: block; text-align: justify;line-height: 1.6em;margin-top: 10px; }
+.promolinkWidget .title { display: block;  }
+.promolinkWidget .tips { display: block; text-align: justify;line-height: 1.6em;margin-top: 10px; }
 /**************************************/
 
 /**	>>> spellcheckerWidget Widget <<<**/
@@ -332,7 +332,7 @@ header{
 .tableWidget .facetSort { font-size: 90%; font-weight: normal; }
 .tableWidget ul li { font-size: 90%; }
 
-.resultWidget .res .title,#capsule .title { font-weight: bold; text-decoration: underline; }
+.resultWidget .res .title,#promolink .title { font-weight: bold; text-decoration: underline; }
 
 .resultWidget .doc .res .address {  }
 
@@ -342,7 +342,7 @@ header{
 
 .em { font-weight: bold; }
 
-.resultWidget .res .title,#capsule .title { text-decoration:none;}
+.resultWidget .res .title,#promolink .title { text-decoration:none;}
 .resultWidget .res .title:hover { text-decoration:underline; color:#D37324; }
 .result-body {  font-size: 90%;   }
 
@@ -359,7 +359,7 @@ header{
 .advancedSearchWidget .advTable .title { font-weight: bold; }
 .advancedSearchWidget .addInput:hover { text-decoration: underline; }
 
-.capsuleWidget .title{ font-weight: bold; }
+.promolinkWidget .title{ font-weight: bold; }
 
 .spellcheckerWidget .result { font-weight: bold; text-decoration: underline; }
 

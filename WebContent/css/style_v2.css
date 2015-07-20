@@ -104,7 +104,8 @@ a.show-sidebar:hover {
   background: #FBFCE7;
   box-shadow: 0 0 6px #000;
   padding-bottom: 3000px !important;
-  margin-bottom: -2980px !important;
+  // bug with mcf UI when adding repository path if an other fix have been found set back margin-bottom to -2980px
+  margin-bottom: -45% !important;
   overflow: hidden;
   -webkit-transition: 0.1s;
   -moz-transition: 0.1s;

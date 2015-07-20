@@ -22,12 +22,20 @@ package com.francelabs.datafari.alerts;
  * @author Alexis Karassev
  *
  */
+import java.util.ResourceBundle;
+
+import javax.mail.MessagingException;
+
+import org.apache.commons.logging.impl.Log4JLogger;
+import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 
 import com.francelabs.datafari.alerts.Mail;
+
 
 public class Alert {
 	private String subject;
@@ -35,18 +43,23 @@ public class Alert {
 	private SolrServer solr; 
 	private String keyword;
 	private String frequency;
-	
+	private Mail mail;
+	private String user;
+	private final static Logger LOGGER = Logger.getLogger(Alert.class
+			.getName());
 	/**
 	 * Initializes all the attributes
 	 */
 	public Alert(String subject, String address, SolrServer solr,
-			String keyword, String frequency ) {
+			String keyword, String frequency, Mail mail, String user) {
 		super();
 		this.subject = subject;
 		this.address = address;
 		this.solr = solr;
 		this.keyword = keyword;
 		this.frequency = frequency;
+		this.mail = mail;
+		this.user = user;
 	}
 
 	/**
@@ -55,42 +68,55 @@ public class Alert {
 	 * Send the mail
 	 */
 	public void run() {
-		try{
-			SolrQuery query = new SolrQuery();
-			switch(this.frequency){											//The fq parameter depends of the frequency of the alerts
-			case "Hourly" :
-				query.setParam("fq", "last_modified:[NOW-1HOUR TO NOW]");
-			case "Daily" :
-				query.setParam("fq", "last_modified:[NOW-1DAY TO NOW]");
-			case "Weekly" :
-				query.setParam("fq", "last_modified:[NOW-7DAY TO NOW]");
-			default :
-				query.setParam("fq", "last_modified:[NOW-1DAY TO NOW]");
-			}
-			query.setParam("rows", "10");										//Sets the maximum number of results that will be sent in the email
-			query.setParam("q.op", "AND");												
-			query.setParam("q", keyword);										//Sets the q parameters according to the attribute
-			QueryResponse queryResponse = solr.query(query);	
-			Mail mail = new Mail();
-			String message = "";
-			SolrDocumentList list = queryResponse.getResults();					//Gets the results
-			if(list.getNumFound()!=0){											//If there are some results
-				message += list.getNumFound()+" new or modified document(s) has/have been found for the key "+query.get("q"); //First sentence of the mail
-				if(Integer.parseInt(query.get("rows"))<list.size()){			//If there are more than 10 results(can be modified in the setParam("rows","X") line) only the first ten will be printed
-					for(int i=0; i<Integer.parseInt(query.get("rows")); i++){	//For the ten first results puts the title in the mail
-						message += "\n"+list.get(i).getFieldValue("title");
-					}
-				}
-				else {
-					for(int i=0; i<list.size(); i++){							//Else puts the title of all the results
-						message += "\n"+list.get(i).getFieldValue("title");
-					}
-				}
-				mail.sendMessage(subject, message, address, "");			//Sends the mail (the last parameter is "" because other destinations are not necessary but you can add a String)
-			}
-		}catch(Exception e){
-			e.printStackTrace();
+		ResourceBundle res = ResourceBundle.getBundle("com.francelabs.i18n.text");
+		SolrQuery query = new SolrQuery();
+		switch(this.frequency){											//The fq parameter depends of the frequency of the alerts
+		default :
+			query.setParam("fq", "last_modified:[NOW-1DAY TO NOW]");
+			break;
+		case "Hourly" :
+			query.setParam("fq", "last_modified:[NOW-1HOUR TO NOW]");
+			break;
+		case "Daily" :
+			query.setParam("fq", "last_modified:[NOW-1DAY TO NOW]");
+			break;
+		case "Weekly" :
+			query.setParam("fq", "last_modified:[NOW-7DAY TO NOW]");
+			break;
 		}
+		query.setParam("rows", "10");										//Sets the maximum number of results that will be sent in the email
+		query.setParam("q.op", "AND");												
+		query.setParam("q", keyword);										//Sets the q parameters according to the attribute
+		query.setParam("AuthenticatedUserName", user);
+		QueryResponse queryResponse;
+		try {
+			queryResponse = solr.query(query);
+		} catch (SolrServerException e) {
+			LOGGER.error("Error getting the results of the solr query in the Alert's run()", e);
+			throw new RuntimeException();
+		}		
+		String message = "";
+		SolrDocumentList list = queryResponse.getResults();					//Gets the results
+		if(list.getNumFound()!=0){											//If there are some results
+			message += list.getNumFound()+" "+res.getString("alertsMessage")+" : "+query.get("q"); //First sentence of the mail
+			if(Integer.parseInt(query.get("rows"))<list.size()){			//If there are more than 10 results(can be modified in the setParam("rows","X") line) only the first ten will be printed
+				for(int i=0; i<Integer.parseInt(query.get("rows")); i++){	//For the ten first results puts the title in the mail
+					message += "\n"+list.get(i).getFieldValue("title");
+					message += "\n"+list.get(i).getFieldValue("url");
+					message += "\n"+list.get(i).getFieldValue("last_modified")+"\n";
+				}
+			}
+			else {
+				for(int i=0; i<list.size(); i++){							//Else puts the title of all the results
+					message += "\n"+list.get(i).getFieldValue("title");
+					message += "\n"+list.get(i).getFieldValue("url");
+					message += "\n"+list.get(i).getFieldValue("last_modified")+"\n";
+				}
+			}
+			//Sends the mail (the last parameter is "" because other destinations are not necessary but you can add a String)														
+			mail.sendMessage(subject, message, address, "");
+		}
+
 
 	}
 }

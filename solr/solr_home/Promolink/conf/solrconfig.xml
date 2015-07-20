@@ -1049,7 +1049,6 @@
        always be executed after the "last-components" 
        
      -->
-	 
 	 <searchComponent name="capsulecomponent" class="com.francelabs.datafari.solr.CapsuleSearchComponent">
 	  <str name="file">capsules.txt</str>
 	 

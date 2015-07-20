@@ -43,9 +43,9 @@ public class SolrServers {
 				return "Statistics";
 			}
 		},
-		CAPSULE {
+		PROMOLINK {
 			public String toString() {
-				return "Capsule";
+				return "Promolink";
 			}
 		}
 	}

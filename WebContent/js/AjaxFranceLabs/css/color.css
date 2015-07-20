@@ -29,7 +29,7 @@
 .advancedSearchWidget .separator { border-bottom-color: #D9D9D9; }
 .advancedSearchWidget button { color: #474D52; border-color: #D9D9D9; border-top-color: #A1A1A1; }
 .advancedSearchWidget button:hover { border-color:#A1A1A1; }
-.capsuleWidget { border-color: #666666; }
+.promolinkWidget { border-color: #666666; }
 
 .spellcheckerWidget .result { color: #B92221; }
 

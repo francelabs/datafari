@@ -185,7 +185,7 @@
 						 <span class="hidden-xs"><%= resourceBundle.getString("conf")%></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li><a class="ajax-link" href="../ajax/Capsules.html"><%= resourceBundle.getString("capsules")%></a></li>
+						<li><a class="ajax-link" href="../ajax/promoLinks.html"><%= resourceBundle.getString("promoLink")%></a></li>
 						<li><a class="ajax-link" href="../ajax/Synonyms.html"><%= resourceBundle.getString("synonyms")%></a></li>
 						<li><a class="ajax-link" href="../ajax/StopWords.html"><%= resourceBundle.getString("stopwords")%></a></li>
 <!-- 						<li><a class="ajax-link" href="../ajax/ui_jquery-ui.html">Query based boots</a></li> -->
@@ -237,7 +237,7 @@
 		<jsp:include page="../footer.jsp"  />
 	</div>
 </div>
-<script>
+<script> 
 </script>
 <!--End Container-->
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -247,11 +247,11 @@
 <script src="../plugins/CLEditor/jquery.cleditor.js"></script>
 <script src="../plugins/CLEditor/jquery.cleditor.min.js"></script>
 <script src="./../plugins/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.js"></script>
-<script src="./i18nInit.js"></script>
-<script src="./../js/AjaxFranceLabs/i18njs.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="../plugins/bootstrap/bootstrap.min.js"></script>
 <script src="../plugins/justified-gallery/jquery.justifiedGallery.min.js"></script>
+<script src="./../admin/i18nInit.js" ></script>
+<script type="text/javascript" src="./../js/AjaxFranceLabs/i18njs.js"></script>
 <!-- All functions for this theme + document.ready processing -->
 <script src="../js/devoops.js"></script>
 </body>

@@ -35,12 +35,10 @@
 				<i class="fa fa-table"></i><span></span>
 			</div>
 			<div class="box-icons">
-				<a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-				<a class="expand-link"><i class="fa fa-expand"></i></a>
 			</div>
 			<div class="no-move"></div>
 		</div>
-		<div id="modBox" class="box-content no-padding">
+		<div id="modBox" class="box-content">
 			<form>
 				<fieldset>
 					<legend id="Modify"></legend>
@@ -64,17 +62,22 @@
 		</div>
 	</div>
 <script type="text/javascript">
+var previous="";
 	$(document).ready(function() {
 		//If the user refresh the page  
 		$(window).bind('beforeunload', function(){  								
-			 cleanSem();
+			if(document.getElementById("language")!== null){
+				  cleanSem(document.getElementById("language").value);
+			}
 		  });
 		//If the user loads an other page
 		$("a").click(function(e){
 			if(e.target.className==="ajax-link"){
-				cleanSem();
-				$('#language').attr("disabled", false);
-				$("#ajaxResponse").empty();
+				if(document.getElementById("language")!== null){
+					cleanSem(document.getElementById("language").value);
+					$("#ajaxResponse").empty();
+					$('#language').attr("disabled", false);
+				}
 			}
 		});
 		document.getElementById("Modify").innerHTML = window.i18n.msgStore['selectLang'];
@@ -84,10 +87,16 @@
 
 	});
 function getFile(){
+	//If the language has been changed while a file has been opened
+	if(previous!==""){
+		//Clean the previous semaphore
+		cleanSem(previous);
+	}
 	//clean the response area
 	$("#ajaxResponse").empty();
 	//get the language
 	var language = document.getElementById("language").value;
+	previous = language;
 	//if a language has been selected
 	if(language != ""){
     var dataString = "language=" + language;
@@ -96,12 +105,20 @@ function getFile(){
 		type : 'GET',
 		data : dataString,
 		success: function( data, textStatus, jqXHR) {
+			//If the semaphore was already acquired
 			if(data==="File already in use"){
-				$("#ajaxResponse").append("<div class=col-xs-5></div>");
-				$("#ajaxResponse").append("<h3 class=col-xs-2>"+window.i18n.msgStore['usedFile']+"</h3>");
-				$("#ajaxResponse").append("<div class=col-xs-5></div>");
-			}else{
-				$('#language').attr("disabled", true);
+				$("#ajaxResponse").append("<div class=col-sm-4></div>");
+				$("#ajaxResponse").append("<h3 class=col-sm-4>"+window.i18n.msgStore['usedFile']+"</h3>");
+				$("#ajaxResponse").append("<div class=col-sm-4></div>");
+			}
+			//If the servlet catched an exception
+			else if (data==="Error while reading the file" || data==="Error while getting the list of the languages"){
+				$("#ajaxResponse").append("<div class=col-sm-4></div>");
+				$("#ajaxResponse").append("<h3 class=col-sm-4>"+data+"</h3>");
+				$("#ajaxResponse").append("<div class=col-sm-4></div>");
+			}
+			//Else print the content of the file in a textArea
+			else {
 				$("#ajaxResponse").append("<legend>"+window.i18n.msgStore['synonyms']+"</legend>");
 				$("#ajaxResponse").append("<div class=\"col-sm-1\"</div>");
 				$("#ajaxResponse").append("<form class=\"col-sm-11\" id=\"res\">");
@@ -130,6 +147,9 @@ function getFile(){
 				$("#res").append("</div>");
 				$("#ajaxResponse").append("</form>");
 				//On submit send the value of the textArea to upload()
+				$("#res").submit(function(e){
+        			e.preventDefault();
+ 				});
 				$("#res").submit(function(e){
 					upload(document.getElementById("input").value);
 				});
@@ -167,9 +187,9 @@ function upload(text){
     	}
 	});
 }
-function cleanSem(){
-	var language = document.getElementById("language").value;
-	if(language != "" && document.getElementById("input").value != null){	//If the user was editing a file
+function cleanSem(lang){
+	var language = lang;
+	if(language != "" ){	//If the user was editing a file
     	var dataString = "language=" + language;
     	$.ajax({													//Post request to release the semaphore
     		url : './Synonyms', 

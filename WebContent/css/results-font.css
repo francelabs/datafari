@@ -17,7 +17,7 @@
 .tableWidget .facetSort { font-size: 90%; font-weight: normal; }
 .tableWidget ul li { font-size: 90%; }
 
-.resultWidget .res .title,#capsule .title { font-weight: normal;  font-size:18px;color: #4C76B6;font-weight: normal;}
+.resultWidget .res .title,#promolink .title { font-weight: normal;  font-size:18px;color: #4C76B6;font-weight: normal;}
 
 .resultWidget .res .icon span{font-weight: normal; font-size: x-small;margin: 0px 3px 0px 0px;font-weight:bold;text-transform: uppercase;color: #4C76B6;}
 .resultWidget .doc .res .address span{
@@ -47,7 +47,7 @@
 .advancedSearchWidget .advTable .title { font-weight: bold; }
 .advancedSearchWidget .addInput:hover { text-decoration: underline; }
 
-.capsuleWidget .title{ font-weight: bold; }
+.promolinkWidget .title{ font-weight: bold; }
 
 .spellcheckerWidget .result { font-weight: bold; text-decoration: underline; }
 
@@ -108,7 +108,7 @@
 .advancedSearchWidget .advTable .title { font-weight: bold; }
 .advancedSearchWidget .addInput:hover { text-decoration: underline; }
 
-.capsuleWidget .title{ font-weight: bold; }
+.promolinkWidget .title{ font-weight: bold; }
 
 .spellcheckerWidget .result { font-weight: bold; text-decoration: underline; }
 
@@ -166,7 +166,7 @@
 .tableWidget .facetSort { font-size: 90%; font-weight: normal; }
 .tableWidget ul li { font-size: 90%; }
 
-.resultWidget .res .title,#capsule .title { font-weight: bold; text-decoration: underline; }
+.resultWidget .res .title,#promolink .title { font-weight: bold; text-decoration: underline; }
 
 .resultWidget .doc .res .address {  }
 
@@ -176,7 +176,7 @@
 
 .em { font-weight: bold; }
 
-.resultWidget .res .title,#capsule .title { text-decoration:none;}
+.resultWidget .res .title,#promolink .title { text-decoration:none;}
 .resultWidget .res .title:hover { text-decoration:underline; color:#D37324; }
 .result-body {  font-size: 90%;   }
 
@@ -193,7 +193,7 @@
 .advancedSearchWidget .advTable .title { font-weight: bold; }
 .advancedSearchWidget .addInput:hover { text-decoration: underline; }
 
-.capsuleWidget .title{ font-weight: bold; }
+.promolinkWidget .title{ font-weight: bold; }
 
 .spellcheckerWidget .result { font-weight: bold; text-decoration: underline; }
 

@@ -259,7 +259,7 @@ ul{
 /**************************************/
 
 /******	>>> Result Widget <<<	*******/
-.resultWidget .doc,#capsule { 
+.resultWidget .doc,#promolink { 
 	width: 95%;
 	margin-left: auto;
 	margin-right: auto;
@@ -273,8 +273,8 @@ ul{
 line-height:20px;
 }
 
-.resultWidget .res .description , #capsule #snippet { margin-top: 3px;  }
-.resultWidget .res .title,#capsule .title {  word-wrap: break-word; }
+.resultWidget .res .description , #promolink #snippet { margin-top: 3px;  }
+.resultWidget .res .title,#promolink .title {  word-wrap: break-word; }
 .resultWidget .res .icon span{vertical-align:top;}
 
 #snippet{
@@ -368,13 +368,13 @@ line-height:20px;
 .advancedSearchWidget .removeInput { cursor: pointer; float: right; height: 29px; line-height: 29px; text-align: center; width: 18px; }
 /**************************************/
 
-/**	>>> capsuleWidget Widget <<<	***/
+/**	>>> promolinkWidget Widget <<<	***/
 
-#capsule{margin-top:3%;}
-.capsuleWidget {padding-top: 1%;}
-.capsuleWidget .widgetContainer{padding-left:10px;}
-.capsuleWidget .title { display: block;  }
-.capsuleWidget .tips { display: block;  }
+#promolink{margin-top:3%;}
+.promolinkWidget {padding-top: 1%;}
+.promolinkWidget .widgetContainer{padding-left:10px;}
+.promolinkWidget .title { display: block;  }
+.promolinkWidget .tips { display: block;  }
 /**************************************/
 
 /**	>>> spellcheckerWidget Widget <<<**/
@@ -700,11 +700,11 @@ line-height:20px;
 .advancedSearchWidget .removeInput { cursor: pointer; float: right; height: 29px; line-height: 29px; text-align: center; width: 18px; }
 /**************************************/
 
-/**	>>> capsuleWidget Widget <<<	***/
-.capsuleWidget { -moz-border-radius: 4px; border-radius: 4px; margin-bottom: 15px; padding: 10px; }
+/**	>>> promolinkWidget Widget <<<	***/
+.promolinkWidget { -moz-border-radius: 4px; border-radius: 4px; margin-bottom: 15px; padding: 10px; }
 .widgetContainer .annonce {padding: 3px;font-size: 0.6em;vertical-align:middle;}
-.capsuleWidget .title { display: block;  }
-.capsuleWidget .tips { display: block; text-align: justify;line-height: 1.6em;margin-top: 10px; }
+.promolinkWidget .title { display: block;  }
+.promolinkWidget .tips { display: block; text-align: justify;line-height: 1.6em;margin-top: 10px; }
 /**************************************/
 
 /**	>>> spellcheckerWidget Widget <<<**/
