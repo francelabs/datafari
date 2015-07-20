@@ -139,7 +139,7 @@
 		document.getElementById("paramRegtext").innerHTML = window.i18n.msgStore['paramReg'];
 		//Creates date pickers et get current dates
 		$('#HourlyDelay').datetimepicker({
-			dateFormat : 'dd/mm/yy/'
+			dateFormat : 'dd/mm/yy/ '
 		});
 		$('#DailyDelay').datetimepicker({
 			dateFormat : 'dd/mm/yy/'
@@ -162,8 +162,8 @@
 			//if received a response from the server
 			success : function(data, textStatus, jqXHR) {
 				$("#prevNext").empty();
-				if(data==="Datafari.properties unreachable, please make sure the file exists"){
-					$("#printError").append("<label>Datafari.properties unreachable, please make sure the file exists</label>");
+				if(data.error.indexOf("Datafari.properties unreachable, please make sure the file exists")===0){
+					$("#errorPrint").append("<label>Datafari.properties unreachable, please make sure the file exists</label>");
 					document.getElementById("on/off").disabled = true;
 					document.getElementById("paramReg").disabled = true;
 				}else{

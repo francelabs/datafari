@@ -73,26 +73,31 @@ public class alertsAdmin extends HttpServlet {
 		if(env==null){													//If in development environment
 			env = "/home/youp/workspaceTest/Servers/Datafari-config/datafari.properties";	//Hardcoded path
 		}else{
-			env = env+"tomcat/conf/datafari.properties";
+			env = env+"/tomcat/conf/datafari.properties";
 		}
 		String content ="";
-		PrintWriter pw = null;
+		PrintWriter pw = null;						
+		JSONObject json = new JSONObject();
 		try {
 			pw = response.getWriter();
 			if(new File(env).exists()){
-				content = readFile(env, StandardCharsets.UTF_8); 
+				content = readFile(env, StandardCharsets.UTF_8);
+				json.put("error", "");
 			}else{
-				pw.append("Datafari.properties unreachable, please make sure the file exists at the following path : "+env);
-				pw.close();
+				json.put("error", "Datafari.properties unreachable, please make sure the file exists at the following path : "+env);
+				pw.write(json.toString());	
+				response.setStatus(200);
+				response.setContentType("text/json;charset=UTF-8");
 				return;
 			}
 		} catch (IOException e1) {
 			LOGGER.error("Error while reading the datafari.properties in the doGet of the alerts administration Servlet ", e1);
 			throw e1;
+		} catch (JSONException e) {
+			LOGGER.error("Error while creating the error answer of the doGet of the alerts administration Servlet ", e);
+			throw new RuntimeException();
 		}
 		String[] lines = content.split(System.getProperty("line.separator"));	//read the file line by line
-		JSONObject SuperJson = new JSONObject();						
-		JSONObject json = new JSONObject();
 		DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy/HH:mm");
 		DateTimeFormatter formatterbis = DateTimeFormat.forPattern("dd/MM/yyyy/ HH:mm");
 		for(int i = 0 ; i < lines.length ; i++){				//for each line
@@ -104,11 +109,11 @@ public class alertsAdmin extends HttpServlet {
 						json.put("on", "off");					//If the alerts are deactivated puts "off" in the JSON (so the button will print "turn on" in the UI)
 					}
 				}else if(lines[i].startsWith("HOURLYDELAY"))	//Gets the date for the hourly alerts
-						json.put("hourlyDate", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()));
+					json.put("hourlyDate", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()));
 				else if(lines[i].startsWith("DAILYDELAY"))		//Gets the date for the daily alerts
-						json.put("dailyDate", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()));
+					json.put("dailyDate", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()));
 				else if(lines[i].startsWith("WEEKLYDELAY"))		//Gets the date for the weekly alerts
-						json.put("weeklyDate", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()));
+					json.put("weeklyDate", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()));
 				else if(lines[i].startsWith("HOST"))			//Gets the address of the host
 					json.put("host", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()));
 				else if(lines[i].startsWith("PORT"))			//Gets the port
@@ -138,13 +143,7 @@ public class alertsAdmin extends HttpServlet {
 				throw new RuntimeException();
 			}
 		}
-		try {
-			SuperJson.put("response", json);
-			pw.write(json.toString());						//Send all the parameters to the client
-		} catch (JSONException e) {
-			LOGGER.error("Error while creating the answer of the doGet of the alerts administration Servlet ", e);
-			throw new RuntimeException();
-		}
+		pw.write(json.toString());						//Send all the parameters to the client
 		response.setStatus(200);
 		response.setContentType("text/json;charset=UTF-8");
 	}
