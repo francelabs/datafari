@@ -26,7 +26,11 @@
   and thus are ignored when reading this file. Do not forget to remove
   <!.. ..> that surrounds them.
 -->
-  <role rolename="manager-gui"/>
-  <role rolename="datafari-admin"/>
-  <user username="admin" password="@PASSWORD@" roles="manager-gui,datafari-admin"/>
+  <role rolename="ConnectedSearchUser"/>
+  <role rolename="SearchExpert"/>
+  <role rolename="SearchAdministrator"/>
+  <user password="admin" roles="SearchAdministrator" username="admin"/>
+  <user password="ConnectedSearchUser" roles="ConnectedSearchUser" username="ConnectedSearchUser"/>
+  <user password="SearchExpert" roles="SearchExpert" username="SearchExpert"/>
+  <user password="SearchAdministrator" roles="SearchAdministrator" username="SearchAdministrator"/>
 </tomcat-users>

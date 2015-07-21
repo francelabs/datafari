@@ -41,6 +41,7 @@
 "hourly" : "Horaire",
 "daily" : "Quotidiennes",
 "weekly" : "Hebdomadaires",
+"user" : "Utilisateurs",
 "dateStart" : "Date de début : ",
 "dateEnd" : "Date de fin : ",
 "errorDate" : "La date de début est postérieure à la date de fin",
@@ -81,7 +82,7 @@
 "port" : "Numéro du port",
 "database" : "Nom de la base de données",
 "collection" : "Nom de la collection",
-"missingParameter" : "Certains parametres sont vides, des valeurs par défault seront utilisée à leur place",
+"missingParameter" : "Certains paramètres sont vides, des valeurs par défault seront utilisées à leur place",
 "createAlerts" : "Ajouter ou éditer une alerte",
 "addAlerts" : "Ajouter des alertes",
 "alertsList" : "Liste des alertes",
@@ -99,5 +100,6 @@
 "mandatoryField" : "Champs obligatoires",
 "previousExecution" : "Ces alertes ont été éxécutés la dernière fois le : ",
 "nextExecution" : "La prochaine éxécution est prévue le : ",
-"takingAccount" : " ne tient pas compte d'éventuelles modifications postérieures à la dernière éxecution"     
+"takingAccount" : " ne tient pas compte d'éventuelles modifications postérieures à la dernière éxecution",
+"parameterSaved" : "Paramètres sauvegardés!"      
 }

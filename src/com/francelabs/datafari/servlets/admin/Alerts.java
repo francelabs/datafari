@@ -32,11 +32,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.mongodb.*;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
 /** Javadoc
  * 
@@ -56,8 +60,8 @@ public class Alerts extends HttpServlet {
 	private String database;
 	private String collection;
 	private MongoClient mongoClient;
-	private DB db;
-	private DBCollection coll1;
+	private MongoDatabase db;
+	private MongoCollection<Document> coll1;
 	private String env;
 	private final static Logger LOGGER = Logger.getLogger(Alerts.class
 			.getName());
@@ -66,12 +70,12 @@ public class Alerts extends HttpServlet {
 	 * @see HttpServlet#HttpServlet()
 	 * Connect with the database
 	 */
-	@SuppressWarnings("deprecation")
 	public Alerts() throws IOException {
 		super();
-		mongoClient = new MongoClient("localhost", 27017);			//Default address/port of the database
-		db = 	mongoClient.getDB("Datafari");						//Default name of the Database
-		coll1 = db.getCollection("Alerts");							//Default name of the collection
+		host = "localhost";
+		port = 27017;													//Default address/port of the database
+		database = "Datafari";											//Default name of the Database
+		collection = "Alerts";											//Default name of the collection
 		env = System.getenv("DATAFARI_HOME");							//Gets the directory of installation if in standard environment	
 		if(env==null){													//If in development environment
 			env = "/home/youp/workspaceTest/Servers/Datafari-config/datafari.properties";	//Hardcoded path
@@ -101,11 +105,10 @@ public class Alerts extends HttpServlet {
 				collection = lines[i].substring(lines[i].indexOf("=")+1, lines[i].length());
 			}
 		}
-		mongoClient = new MongoClient(host, port);			
-		db = 	mongoClient.getDB(database);						
-		coll1 = db.getCollection(collection);							
-	}
-
+		mongoClient = new MongoClient(host, port);						//Connect to the mongoDB database
+		db = mongoClient.getDatabase(database);							//Switch to the right Database
+		coll1 = db.getCollection(collection);								
+	} 
 	/**
 	 * @throws IOException 
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -121,42 +124,28 @@ public class Alerts extends HttpServlet {
 			throw e1;
 		}
 		int i=0;
-		JSONObject json;
 		JSONObject superJson = new JSONObject();
 		try{
-			DBCursor cursor = coll1.find();								//Get all the existing Alerts
-			while (cursor.hasNext()) {
-				DBObject db = cursor.next();							//Get the next Alert
+			FindIterable<Document> cursor = coll1.find();								//Get all the existing Alerts
+			for (Document d : cursor) {										//Get the next Alert
 				if(!request.getParameter("keyword").equals("")){		//If the user have typed something in the search field
-					if(db.get("keyword").equals(request.getParameter("keyword"))){	//then only the Alerts with a corresponding keyword are put into the Json
-						if(request.getRemoteUser().equals(db.get("user"))){
+					if(d.get("keyword").equals(request.getParameter("keyword"))){	//then only the Alerts with a corresponding keyword are put into the Json		
+						if(request.getRemoteUser().equals(d.get("user")) || request.isUserInRole("SearchAdministrator")){	//Only the Alerts with the correct user, except if it's the admin
 							try{
-								json = new JSONObject();					//Creates a json object
-								json.put("_id", db.get("_id"));				//gets the id
-								json.put("keyword",db.get("keyword"));		//gets the keyword
-								json.put("subject",db.get("subject"));		//gets the subject
-								json.put("core",db.get("core"));			//gets the core
-								json.put("frequency",db.get("frequency"));	//gets the frequency
-								json.put("mail",db.get("mail"));			//gets the mail
-								superJson.append("alerts", json);			//put the jsonObject in an other so that this superJSON will contain all the Alerts
+								superJson.append("alerts", put(d, request.isUserInRole("SearchAdministrator")));			//put the jsonObject in an other so that this superJSON will contain all the Alerts
 								i++;										//count the number of alerts
 							}catch(JSONException e){
 								LOGGER.error("Error while building the JSON answer in the Alerts Servlet's doGet ", e);
 								continue;
-							}
+							} 
 						}
 					}
 				}else{													//If nothing was typed in the search field
 					try{
-						json = new JSONObject();						//put all the alerts in a jsonObject the same way as higher
-						json.put("_id", db.get("_id"));
-						json.put("keyword",db.get("keyword"));
-						json.put("subject",db.get("subject"));
-						json.put("core",db.get("core"));
-						json.put("frequency",db.get("frequency"));
-						json.put("mail",db.get("mail"));			
-						superJson.append("alerts", json);
-						i++;
+						if(request.getRemoteUser().equals(d.get("user")) || request.isUserInRole("SearchAdministrator")){	//Only the Alerts with the correct user, except if it's the admin		
+							superJson.append("alerts", put(d, request.isUserInRole("SearchAdministrator")));
+							i++;
+						}
 					}catch(JSONException e){
 						LOGGER.error("Error while building the JSON answer in the Alerts Servlet's doGet ", e);
 						continue;
@@ -178,8 +167,27 @@ public class Alerts extends HttpServlet {
 			response.setStatus(200);
 			response.setContentType("text/json;charset=UTF-8");
 			throw new RuntimeException();
-		}
+		} 
 	} 
+
+	private Object put(Document db, boolean admin) {
+		try{
+			JSONObject json = new JSONObject();					//Creates a json object
+			json.put("_id", db.get("_id"));				//gets the id
+			json.put("keyword",db.get("keyword"));		//gets the keyword
+			json.put("subject",db.get("subject"));		//gets the subject
+			json.put("core",db.get("core"));			//gets the core
+			json.put("frequency",db.get("frequency"));	//gets the frequency
+			json.put("mail",db.get("mail"));			//gets the mail
+			if(admin){
+				json.put("user",db.get("user"));			//gets the user
+			}
+			return json;
+		}catch(JSONException e){
+			LOGGER.error("", e);
+			throw new RuntimeException();
+		}
+	}
 
 	/**
 	 * @throws IOException 
@@ -199,18 +207,18 @@ public class Alerts extends HttpServlet {
 			if(request.getParameter("_id")!=null){								//Deleting part
 				BasicDBObject query = new BasicDBObject();						
 				query.put("_id", new ObjectId(request.getParameter("_id")));	//Create a query where we put the id of the alerts that must be deleted
-				coll1.findAndRemove(query);										//Execute the query in the collection
+				coll1.findOneAndDelete(query);										//Execute the query in the collection
 			}
 			if(request.getParameter("keyword")!=null){							//Adding part
-				BasicDBObject obj = new BasicDBObject();
+				Document obj = new Document();
 				for(Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();){	//For all the parameters passed, we put the parameter name as the key and the content as the value
 					String elem = e.nextElement();
 					if(!elem.equals("_id")){									//Do not put the _id manually so if the parameter is "_id" we do not put it in,
 						obj.put(elem, request.getParameter(elem));				//otherwise there will be an exception at the 2nd modification or at a removal after a modification.
 					}															//This loop can only be triggered by an edit.
-				}
+				} 
 				obj.put("user", request.getRemoteUser());
-				coll1.insert(obj);												//insert the object composed of all the parameters
+				coll1.insertOne(obj);												//insert the object composed of all the parameters
 			}
 			//If this is an edit the two parts (Delete and Add) will be executed successively
 		} catch(MongoSocketOpenException | MongoTimeoutException e){
