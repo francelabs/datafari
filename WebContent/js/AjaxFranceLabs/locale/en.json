@@ -54,7 +54,7 @@
 "hourly" : "Hourly",
 "daily" : "Daily",
 "weekly" : "Weekly",
-"user" : "User",
+"user" : "User : ",
 "dateStart" : "Starting date : ",
 "dateEnd" : "Ending date : ",
 "errorDate" : "Starting date is posterior to ending date",

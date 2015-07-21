@@ -41,7 +41,7 @@
 "hourly" : "Horaire",
 "daily" : "Quotidiennes",
 "weekly" : "Hebdomadaires",
-"user" : "Utilisateurs",
+"user" : "Utilisateurs : ",
 "dateStart" : "Date de début : ",
 "dateEnd" : "Date de fin : ",
 "errorDate" : "La date de début est postérieure à la date de fin",
