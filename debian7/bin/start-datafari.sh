@@ -14,7 +14,7 @@ export CONFIG_FILE=${DATAFARI_HOME}/tomcat/conf/datafari.properties
 source $INIT_STATE_FILE
 source $CONFIG_FILE
 nodes(){
-        numrunningsolrnodes="`${DATAFARI_HOME}/command/curl --silent 'http://localhost:8080/datafari-solr/zookeeper?detail=true&path=/live_nodes' | ${DATAFARI_HOME}/command/jq .znode.prop.children_count`"
+        numrunningsolrnodes="`curl --silent 'http://localhost:8080/datafari-solr/zookeeper?detail=true&path=/live_nodes' | ${DATAFARI_HOME}/command/jq .znode.prop.children_count`"
 }
 
 NUMSHARDS="`echo ${NUMSHARDS} | tr -d '\r'`"
@@ -56,9 +56,9 @@ fi
 cd "${DATAFARI_HOME}/tomcat/bin"
 bash "startup.sh"
 echo "Wait until Solr is started"
-until [ "`${DATAFARI_HOME}/command/curl --silent --connect-timeout 1 -I http://localhost:8080/datafari-solr/ | grep '200 OK'`" != "" ];
+until [ "`curl --silent --connect-timeout 2 -I http://localhost:8080/datafari-solr/ | grep '200 OK'`" != "" ];
 do
-	sleep 5
+	sleep 3
 done
 
 if  [[ "$SOLRCLOUD" = *true* ]];
@@ -85,8 +85,8 @@ if  [[ "$STATE" = *installed* ]];
 			echo "Uploading configuration to zookeeper"
 			"${JAVA_HOME}/bin/java" -cp "${DATAFARI_HOME}/solr/lib/*" org.apache.solr.cloud.ZkCLI -cmd upconfig -zkhost localhost:9080 -confdir "${DATAFARI_HOME}/solr/solrcloud/FileShare/conf" -confname FileShare
 			"${JAVA_HOME}/bin/java" -cp "${DATAFARI_HOME}/solr/lib/*" org.apache.solr.cloud.ZkCLI -cmd upconfig -zkhost localhost:9080 -confdir "${DATAFARI_HOME}/solr/solrcloud/Statistics/conf" -confname Statistics
-			"${DATAFARI_HOME}/command/curl" "http://localhost:8080/datafari-solr/admin/collections?action=CREATE&name=FileShare&numShards=${NUMSHARDS}&replicationFactor=1"
-			"${DATAFARI_HOME}/command/curl" "http://localhost:8080/datafari-solr/admin/collections?action=CREATE&name=Statistics&numShards=1&replicationFactor=1"
+			"curl" "http://localhost:8080/datafari-solr/admin/collections?action=CREATE&name=FileShare&numShards=${NUMSHARDS}&replicationFactor=1"
+			"curl" "http://localhost:8080/datafari-solr/admin/collections?action=CREATE&name=Statistics&numShards=1&replicationFactor=1"
 			echo "Configuring ManifoldCF Connectors"
 			cd "${DATAFARI_HOME}/bin/common"
 			"${JAVA_HOME}/bin/java" -cp DatafariScripts.jar com.francelabs.datafari.script.BackupManifoldCFConnectorsScript RESTORE config/manifoldcf/solrcloud
