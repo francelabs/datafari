@@ -85,7 +85,7 @@ public class alertsAdmin extends HttpServlet {
 				json.put("error", "");
 			}else{
 				json.put("error", "Datafari.properties unreachable, please make sure the file exists at the following path : "+env);
-				pw.write(json.toString());	
+				pw.write(json.toString()); 
 				response.setStatus(200);
 				response.setContentType("text/json;charset=UTF-8");
 				return;

@@ -148,7 +148,21 @@
 	<div class="row">
 		<div id="sidebar-left" class="col-xs-2 col-sm-2">
 			<ul class="nav main-menu">
-				<li>
+<li class="dropdown" id="User">
+					<a href="#" class="dropdown-toggle">
+						<i class="fa fa-male"></i>
+						<span class="hidden-xs"><%= resourceBundle.getString("user")%></span>
+					</a>
+					<ul class="dropdown-menu">
+<!-- 						<li><a class="ajax-link" href="../ajax/maps.html">Save search queries</a></li> -->
+						<li id="Alerts"><a class="ajax-link" href="../ajax/Alerts.html"><%= resourceBundle.getString("alerts")%></a></li>
+<!-- 						<li><a class="ajax-link" href="../ajax/map_leaflet.html">Favorite documents</a></li> -->
+					</ul>
+				</li>
+<%
+if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrator")){
+%>
+				<li id="Connectors">
 <!-- 					<a href="../ajax/dashboard.html" class="ajax-link"> <i -->
 <!-- 							class="fa fa-dashboard"></i> <span class="hidden-xs">Dashboard</span> -->
 					</a> <a href="../ajax/manifoldcf.html" class="ajax-link">
@@ -157,37 +171,37 @@
 					</a>
 				</li>
 
-				<li class="dropdown">
+				<li class="dropdown" id="Statistics">
 					<a href="#" class="dropdown-toggle">
 						<i class="fa fa-table"></i>
 						 <span class="hidden-xs"><%= resourceBundle.getString("statistics")%></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li><a class="ajax-link" href="../ajax/usageStatistics.html">Usage statistics</a></li>
+						<li id="UsageStatistics"><a class="ajax-link" href="../ajax/usageStatistics.html">Usage statistics</a></li>
 <!-- 						<li><a class="ajax-link" href="../ajax/corpusStatistics.html">Corpus statistics</a></li> -->
 <!-- 						<li><a class="ajax-link" href="../ajax/systemStatistics.html">System statistics</a></li> -->
 					</ul>
 				</li>
-				<li class="dropdown">
+				<li class="dropdown" id="Admin">
 					<a href="#" class="dropdown-toggle">
 						<i class="fa fa-wrench"></i>
 						 <span class="hidden-xs"><%= resourceBundle.getString("admin")%></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li><a class="ajax-link" href="../ajax/solr.html"><%= resourceBundle.getString("solrAdmin")%></a></li>
-						<li><a class="ajax-link" href="../ajax/alertsAdmin.html"><%= resourceBundle.getString("alertAdmin")%></a></li>
+						<li id="SolrAdmin"><a class="ajax-link" href="../ajax/solr.html"><%= resourceBundle.getString("solrAdmin")%></a></li>
+						<li id="AlertAdmin"><a class="ajax-link" href="../ajax/alertsAdmin.html"><%= resourceBundle.getString("alertAdmin")%></a></li>
 <!-- 						<li><a class="ajax-link" href="../ajax/forms_file_uploader.html">File Uploader</a></li> -->
 					</ul>
 				</li>
-				<li class="dropdown">
+				<li class="dropdown" id="Conf">
 					<a href="#" class="dropdown-toggle">
 						<i class="fa fa-desktop"></i>
 						 <span class="hidden-xs"><%= resourceBundle.getString("conf")%></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li><a class="ajax-link" href="../ajax/promoLinks.html"><%= resourceBundle.getString("promoLink")%></a></li>
-						<li><a class="ajax-link" href="../ajax/Synonyms.html"><%= resourceBundle.getString("synonyms")%></a></li>
-						<li><a class="ajax-link" href="../ajax/StopWords.html"><%= resourceBundle.getString("stopwords")%></a></li>
+						<li id="PromoLink"><a class="ajax-link" href="../ajax/promoLinks.html"><%= resourceBundle.getString("promoLink")%></a></li>
+						<li id="Synonyms"><a class="ajax-link" href="../ajax/Synonyms.html"><%= resourceBundle.getString("synonyms")%></a></li>
+						<li id="Stopwords"><a class="ajax-link" href="../ajax/StopWords.html"><%= resourceBundle.getString("stopwords")%></a></li>
 <!-- 						<li><a class="ajax-link" href="../ajax/ui_jquery-ui.html">Query based boots</a></li> -->
 <!-- 						<li><a class="ajax-link" href="../ajax/ui_icons.html">Document based boosts</a></li> -->
 <!-- 						<li><a class="ajax-link" href="../ajax/ui_icons.html">OCR: On/Off</a></li> -->
@@ -196,27 +210,26 @@
 <!-- 						<li><a class="ajax-link" href="../ajax/ui_icons.html">Autocomplete configuration</a></li> -->
 					</ul>
 				</li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle">
-						<i class="fa fa-male"></i>
-						<span class="hidden-xs"><%= resourceBundle.getString("user")%></span>
-					</a>
-					<ul class="dropdown-menu">
-<!-- 						<li><a class="ajax-link" href="../ajax/maps.html">Save search queries</a></li> -->
-						<li><a class="ajax-link" href="../ajax/Alerts.html"><%= resourceBundle.getString("alerts")%></a></li>
-<!-- 						<li><a class="ajax-link" href="../ajax/map_leaflet.html">Favorite documents</a></li> -->
-					</ul>
-				</li>
-				<li class="dropdown">
+<% 
+	if(request.isUserInRole("SearchAdministrator")){
+%>
+			<li class="dropdown" id="Servers">
 					<a href="#" class="dropdown-toggle">
 						<i class="fa fa-picture-o"></i>
 						 <span class="hidden-xs"><%= resourceBundle.getString("servers")%></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li><a class="ajax-link" href="../ajax/Tomcat.html">Tomcat</a></li>
+						<li id="Tomcat"><a class="ajax-link" href="../ajax/Tomcat.html">Tomcat</a></li>
 <!-- 						<li><a class="ajax-link" href="../ajax/Jetty.html">Jetty</a></li> -->
 					</ul>
 				</li>
+<%
+	}
+}
+%>
+				
+				
+				
 			</ul>
 		</div>
 		<!--Start Content-->
@@ -237,6 +250,8 @@
 		<jsp:include page="../footer.jsp"  />
 	</div>
 </div>
+<%
+%>
 <script> 
 </script>
 <!--End Container-->

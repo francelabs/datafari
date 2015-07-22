@@ -81,7 +81,7 @@
 						<input type="text" id="Collection" name="Collection" class="col-sm-2"  style="min-width : 150px;"/>
 					</div>
 					</fieldset>
-					<div class="form-group">
+					<div class="form-group"  id="divParam">
 					<div class="col-sm-3"></div>
 						<button type="button" class="btn btn-primary btn-label-left"
 							id="paramReg" onclick="javascript : parameters()">
@@ -231,6 +231,8 @@
 			data : data,
 			//if received a response from the server
 			success : function(data, textStatus, jqXHR) {
+				$("#parameterSaved").empty();
+				$("#divParam").append("<label id=\"parameterSaved\">"+window.i18n.msgStore["parameterSaved"]+"</label>");
 				doGet();
 			},
 			error : function(jqXHR, textStatus, errorThrown) {
