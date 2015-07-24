@@ -101,5 +101,8 @@
 "previousExecution" : "Ces alertes ont été éxécutés la dernière fois le : ",
 "nextExecution" : "La prochaine éxécution est prévue le : ",
 "takingAccount" : " ne tient pas compte d'éventuelles modifications postérieures à la dernière éxecution",
-"parameterSaved" : "Paramètres sauvegardés!"      
+"parameterSaved" : "Paramètres sauvegardés!",
+"fieldWeight" : "Pondération des champs",
+"pf" : "Requêtes à mots multiples",
+"qf" : "Requêtes à mot unique"        
 }

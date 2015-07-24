@@ -113,5 +113,8 @@
 "previousExecution" : "Previous executions",
 "nextExecution" : "Next planned executions",
 "takingAccount" : "not taking account of potential modifications since the last execution",
-"parameterSaved" : "Parameters saved!" 
+"parameterSaved" : "Parameters saved!",
+"fieldWeight" : "Field weight",
+"pf" : "Multiple words queries",
+"qf" : "One word queries" 
 }
