@@ -202,7 +202,8 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						<li id="PromoLink"><a class="ajax-link" href="../ajax/promoLinks.html"><%= resourceBundle.getString("promoLink")%></a></li>
 						<li id="Synonyms"><a class="ajax-link" href="../ajax/Synonyms.html"><%= resourceBundle.getString("synonyms")%></a></li>
 						<li id="Stopwords"><a class="ajax-link" href="../ajax/StopWords.html"><%= resourceBundle.getString("stopwords")%></a></li>
-<!-- 						<li><a class="ajax-link" href="../ajax/ui_jquery-ui.html">Query based boots</a></li> -->
+						<li id="FieldWeight"><a class="ajax-link" href="../ajax/FieldWeight.html"><%= resourceBundle.getString("fieldWeight")%></a></li>
+<!-- 						<li><a class="ajax-link" href="../ajax/ui_jquery-ui.html">Query based boosts</a></li> -->
 <!-- 						<li><a class="ajax-link" href="../ajax/ui_icons.html">Document based boosts</a></li> -->
 <!-- 						<li><a class="ajax-link" href="../ajax/ui_icons.html">OCR: On/Off</a></li> -->
 <!-- 						<li><a class="ajax-link" href="../ajax/ui_icons.html">Duplicate identifiers</a></li> -->

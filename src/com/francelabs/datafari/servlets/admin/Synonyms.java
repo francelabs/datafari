@@ -45,14 +45,14 @@ import com.francelabs.datafari.solrj.SolrServers.Core;
  * It is only called by the Synonyms.html.
  * doGet is used to print the content of the file or download it.
  * doPost is used to confirm the modifications of the file.
- * The semaphores (one for each language) are created in the doGet.
+ * The semaphores (one for each language) are created in the constructor.
  * @author Alexis Karassev
  *
  */
 @WebServlet("/admin/Synonyms")
 public class Synonyms extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final List<SemaphoreLn> listMutex = new ArrayList<SemaphoreLn>();
+	private static final List<SemaphoreLn> listMutex = new ArrayList<SemaphoreLn>(); 
 	private String server = Core.FILESHARE.toString();
 	private String env;
 	private String content;

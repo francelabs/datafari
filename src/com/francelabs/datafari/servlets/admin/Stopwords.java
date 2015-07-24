@@ -44,7 +44,7 @@ import com.francelabs.datafari.solrj.SolrServers.Core;
  * It is only called by the Stopwords.html.
  * doGet is used to print the content of the file or download it.
  * doPost is used to confirm the modifications of the file.
- * The semaphores (one for each language) are created in the doGet.
+ * The semaphores (one for each language) are created in the constructor.
  * @author Alexis Karassev
  *
  */
@@ -84,7 +84,7 @@ public class Stopwords extends HttpServlet {
 		} catch (IOException e1) {
 			LOGGER.error("Error while opening list_language.txt in StopWords Servlet's Constructor", e1);
 		}	
-		String[] lines = content.split(System.getProperty("line.separator"));						//There is one language per line
+		String[] lines = content.split(System.getProperty("line.separator"));					//There is one language per line
 		for(int i=0;i<lines.length;i++){														//For each line
 			listMutex.add(new SemaphoreLn(lines[i], "Stop"));									//create a semaphore and add it to the list
 		}

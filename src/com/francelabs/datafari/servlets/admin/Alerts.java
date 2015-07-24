@@ -116,7 +116,7 @@ public class Alerts extends HttpServlet {
 	 * Makes a request and put the results into a JSON file.
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		PrintWriter pw = null;
+		PrintWriter pw = null; 
 		try {
 			pw = response.getWriter();
 		} catch (IOException e1) {
@@ -166,7 +166,6 @@ public class Alerts extends HttpServlet {
 			LOGGER.error("Error connecting to the database", e);
 			response.setStatus(200);
 			response.setContentType("text/json;charset=UTF-8");
-			throw new RuntimeException();
 		} 
 	} 
 
