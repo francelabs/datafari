@@ -69,8 +69,6 @@ function getFields(){										//Get the fields from the schema.xml
 	        	if(data === "Error while opening the configuration files" || data === "Something bad happened, please retry, if the problem persists contact your system administrator"){
 	        		//print it and disable the selection
 	        		document.getElementById("globalAnswer").innerHTML = data;
-	        		$('#selectpf').attr("disabled", true);
-	        		$('#selectqf').attr("disabled", true);
 	        	}else{		//else add the options to the select
 	        		list = data;
 	        		//add a table to print all the info
@@ -97,8 +95,6 @@ function getFields(){										//Get the fields from the schema.xml
 	        				$("#"+i).append("<th>"+data.field[i].multiValued+"</th>");
 	        			}
 	        			$("#tbody").append("</tr>");
-	        			$("#selectpf").append("<OPTION>"+data.field[i].name+"</OPTION>");
-	        			$("#selectqf").append("<OPTION>"+data.field[i].name+"</OPTION>");
 	        		}
 	        	}
 	        }
