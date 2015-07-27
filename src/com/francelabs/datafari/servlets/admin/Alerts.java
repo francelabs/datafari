@@ -80,7 +80,7 @@ public class Alerts extends HttpServlet {
 		if(env==null){													//If in development environment
 			env = "/home/youp/workspaceTest/Servers/Datafari-config/datafari.properties";	//Hardcoded path
 		}else{
-			env = env+"tomcat/conf/datafari.properties";
+			env = env+"/tomcat/conf/datafari.properties";
 		}
 		String content ="";
 		try {
