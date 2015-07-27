@@ -112,5 +112,6 @@
 "required" : "Requis",
 "name" : "Nom",
 "type" : "Type",
-"indexField" : "Champs de l'index"         
+"indexField" : "Champs de l'index",
+"deduplication" : "Deduplication"         
 }

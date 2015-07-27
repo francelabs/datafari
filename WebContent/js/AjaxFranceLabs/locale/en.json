@@ -124,5 +124,6 @@
 "required" : "Required",
 "name" : "Name",
 "type" : "Type",
-"indexField" : "Index fields" 
+"indexField" : "Index fields",
+"deduplication" : "Deduplication"
 }

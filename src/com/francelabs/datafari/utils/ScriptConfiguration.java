@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 import com.francelabs.datafari.statistics.StatsPusher;
@@ -38,7 +39,9 @@ import com.francelabs.datafari.statistics.StatsPusher;
 public class ScriptConfiguration {
 
 	
-		public static String configPropertiesFileName = "datafari.properties";
+	public static String configPropertiesFileName = "datafari.properties";
+	
+	public static String configPropertiesFileNameRealPath;
 
 	private static ScriptConfiguration instance;
 	private Properties properties;
@@ -46,16 +49,41 @@ public class ScriptConfiguration {
 	private final static Logger LOGGER = Logger.getLogger(ScriptConfiguration.class
 			.getName());
 
-	/*
-	public static void setProperty(String key, String value) throws IOException {
-		getInstance().properties.setProperty(key, value);
-		getInstance().properties.store(new FileOutputStream(configPropertiesFileName), null);
-	}*/
+
+	/**
+	 * Set a property and save it the datafar.properties
+	 * @param key : the key that should be change
+	 * @param value : the new value of the key
+	 * @return : true if there's an error and false if not
+	 */
+	public static boolean setProperty(String key, String value) {
+			try {
+				String env = System.getenv("DATAFARI_HOME");		//Gets the directory of installation if in standard environment	
+				if(env==null){										//If in development environment
+					String path;
+				path = new File(".").getCanonicalPath();
+				env = path+"/workspace/datafari/tomcat/conf/"+configPropertiesFileName;	//Hardcoded path
+				}else{
+					env = env+"/tomcat/conf/"+configPropertiesFileName;
+				}
+				getInstance().properties.setProperty(key, value);
+				FileOutputStream fileOutputStream = new FileOutputStream(configPropertiesFileNameRealPath);
+				instance.properties.store(fileOutputStream, null);
+				fileOutputStream = new FileOutputStream(env);
+				instance.properties.store(fileOutputStream, null);
+				fileOutputStream.close();
+				return false;
+			} catch (IOException e) {
+				LOGGER.error(e);
+				return true;		
+			}
+	}
 
 	public static String getProperty(String key) throws IOException {
 		return (String) getInstance().properties.get(key);
 	}
 
+	
 	/**
 	 * 
 	 * Get the instance
@@ -74,9 +102,10 @@ public class ScriptConfiguration {
 	 * 
 	 */
 	private ScriptConfiguration() throws IOException {
-		
-		File configFile = new File(System.getProperty("catalina.base") + File.separator + "conf" + File.separator + configPropertiesFileName);
-		
+		BasicConfigurator.configure();
+		configPropertiesFileNameRealPath = System.getProperty("catalina.base") + File.separator + "conf" + File.separator + configPropertiesFileName;
+		File configFile = new File(configPropertiesFileNameRealPath);
+		//System.out.println(configPropertiesFileNameRealPath);
 		InputStream stream = new FileInputStream(configFile);
 		properties = new Properties();
 		try {
