@@ -190,7 +190,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 					<ul class="dropdown-menu">
 						<li id="SolrAdmin"><a class="ajax-link" href="../ajax/solr.html"><%= resourceBundle.getString("solrAdmin")%></a></li>
 						<li id="AlertAdmin"><a class="ajax-link" href="../ajax/alertsAdmin.html"><%= resourceBundle.getString("alertAdmin")%></a></li>
-<!-- 						<li><a class="ajax-link" href="../ajax/forms_file_uploader.html">File Uploader</a></li> -->
+						<li id="IndexField"><a class="ajax-link" href="../ajax/IndexField.html"><%= resourceBundle.getString("indexField")%></a></li>
 					</ul>
 				</li>
 				<li class="dropdown" id="Conf">

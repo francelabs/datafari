@@ -104,5 +104,13 @@
 "parameterSaved" : "Paramètres sauvegardés!",
 "fieldWeight" : "Pondération des champs",
 "pf" : "Requêtes à mots multiples",
-"qf" : "Requêtes à mot unique"        
+"qf" : "Requêtes à mot unique",
+"fieldList" : "Liste des champs",
+"indexed" : "Indexé",
+"multivalued" : "Valeurs multiples",
+"stored" : "Stocké",
+"required" : "Requis",
+"name" : "Nom",
+"type" : "Type",
+"indexField" : "Champs de l'index"         
 }

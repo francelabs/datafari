@@ -116,5 +116,13 @@
 "parameterSaved" : "Parameters saved!",
 "fieldWeight" : "Field weight",
 "pf" : "Multiple words queries",
-"qf" : "One word queries" 
+"qf" : "One word queries",
+"fieldList" : "List of the fields",
+"indexed" : "Indexed",
+"multivalued" : "Multivalued",
+"stored" : "Stored",
+"required" : "Required",
+"name" : "Name",
+"type" : "Type",
+"indexField" : "Index fields" 
 }
