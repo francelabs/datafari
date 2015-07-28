@@ -116,6 +116,6 @@
 "schemaAnalysis" : "Analyse du schéma",
 "sizeLimitation" : "Limitation des tailles",
 "autocompleteConf" : "Configuration de l'autocompletion" ,
-"labelhl" : "Maximum number of analyzed chars by the highlight"           
+"labelhl" : "Maximum number of analyzed chars by the highlight" ,          
 "deduplication" : "Deduplication"         
 }

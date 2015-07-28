@@ -128,6 +128,6 @@
 "schemaAnalysis" : "Schema analysis",
 "sizeLimitation" : "Size limitations",
 "autocompleteConf" : "Autocomplete configuration",
-"labelhl" : "Maximum number of analyzed chars by the highlight"  
+"labelhl" : "Maximum number of analyzed chars by the highlight" ,
 "deduplication" : "Deduplication"
 }
