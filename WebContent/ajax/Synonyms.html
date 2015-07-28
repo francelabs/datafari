@@ -56,21 +56,21 @@
 		</div>
 	</div>
 <script type="text/javascript">
+
 var previous="";
 	$(document).ready(function() {
 		//If the user refresh the page  
 		$(window).bind('beforeunload', function(){  								
-			if(document.getElementById("language")!== null){
+			if(document.getElementById("input")!== null){
 				  cleanSem(document.getElementById("language").value);
 			}
 		  });
 		//If the user loads an other page
 		$("a").click(function(e){
-			if(e.target.className==="ajax-link"){
-				if(document.getElementById("language")!== null){
+			if(e.target.className==="ajax-link" || e.target.className==="ajax-link active-parent active"){
+				if(document.getElementById("input")!== null){
 					cleanSem(document.getElementById("language").value);
 					$("#ajaxResponse").empty();
-					$('#language').attr("disabled", false);
 				}
 			}
 		});
@@ -78,7 +78,7 @@ var previous="";
 	    document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
 	    document.getElementById("topbar2").innerHTML = window.i18n.msgStore['conf'];
 	    document.getElementById("topbar3").innerHTML = window.i18n.msgStore['synonyms'];
-
+	    //document.getElementById("Synonyms")
 	});
 function getFile(){
 	//If the language has been changed while a file has been opened

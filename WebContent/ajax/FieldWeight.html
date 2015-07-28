@@ -107,21 +107,29 @@ $(document).ready(function() {
 	});
 	//If the user refresh the page  
 	$(window).bind('beforeunload', function(){  								
-		if(!document.getElementById("weightpf").getAttribute('disabled')){
-			  cleanSem("pf");
+		if(document.getElementById("weightpf")!==null){
+			if(!document.getElementById("weightpf").getAttribute('disabled')){
+				  cleanSem("pf");
+			}
 		}
-		if(!document.getElementById("weightqf").getAttribute('disabled')){
-			  cleanSem("qf");
+		if(document.getElementById("weightqf")!==null){
+			if(!document.getElementById("weightqf").getAttribute('disabled')){
+				  cleanSem("qf");
+			}
 		}
 	 });
 	//If the user loads an other page
 	$("a").click(function(e){
-		if(e.target.className==="ajax-link"){
-			if(!document.getElementById("weightpf").getAttribute('disabled')){
-				  cleanSem("pf");
+		if(e.target.className==="ajax-link" || e.target.className==="ajax-link active-parent active"){
+			if(document.getElementById("weightpf")!==null){
+				if(!document.getElementById("weightpf").getAttribute('disabled')){
+					  cleanSem("pf");
+				}
 			}
-			if(!document.getElementById("weightqf").getAttribute('disabled')){
-				  cleanSem("qf");
+			if(document.getElementById("weightqf")!==null){
+				if(!document.getElementById("weightqf").getAttribute('disabled')){
+					  cleanSem("qf");
+				}
 			}
 		}
 	});

@@ -267,7 +267,7 @@ public class FieldWeight extends HttpServlet {
 					NamedNodeMap map = n.getAttributes();
 					for(int j=0; j<map.getLength() ; j++){
 						if(map.item(j).getNodeName().equals("name")){//Get the name
-							name = map.item(j).getNodeValue();
+							name = map.item(j).getNodeValue(); 
 						}
 					}
 					if(name.equals(type)){	//If it's pf or qf according to what the user selected
