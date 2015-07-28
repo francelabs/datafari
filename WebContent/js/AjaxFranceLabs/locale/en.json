@@ -125,12 +125,9 @@
 "name" : "Name",
 "type" : "Type",
 "indexField" : "Index fields",
-<<<<<<< HEAD
 "schemaAnalysis" : "Schema analysis",
 "sizeLimitation" : "Size limitations",
 "autocompleteConf" : "Autocomplete configuration",
 "labelhl" : "Maximum number of analyzed chars by the highlight"  
-=======
 "deduplication" : "Deduplication"
->>>>>>> branch 'master' of https://github.com/francelabs/datafari.git
 }
