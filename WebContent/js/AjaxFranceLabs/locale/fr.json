@@ -113,8 +113,12 @@
 "name" : "Nom",
 "type" : "Type",
 "indexField" : "Champs de l'index",
+<<<<<<< HEAD
 "schemaAnalysis" : "Analyse du schéma",
 "sizeLimitation" : "Limitation des tailles",
 "autocompleteConf" : "Configuration de l'autocompletion" ,
 "labelhl" : "Maximum number of analyzed chars by the highlight"           
+=======
+"deduplication" : "Deduplication"         
+>>>>>>> branch 'master' of https://github.com/francelabs/datafari.git
 }

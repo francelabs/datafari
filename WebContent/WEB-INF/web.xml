@@ -31,10 +31,19 @@
       <web-resource-name>Admin</web-resource-name>
       <url-pattern>/admin/*</url-pattern>
     </web-resource-collection>
+    <user-data-constraint>
+		<transport-guarantee>NONE</transport-guarantee><!-- Change NONE to CONFIDENTIAL to force ssl -->
+	</user-data-constraint>
     <auth-constraint>
+<<<<<<< HEAD
       <role-name>ConnectedSearchUser</role-name>
       <role-name>SearchAdministrator</role-name>
       <role-name>SearchExpert</role-name>
+=======
+		<role-name>ConnectedSearchUser</role-name>
+		<role-name>SearchAdministrator</role-name>
+		<role-name>SearchExpert</role-name>
+>>>>>>> branch 'master' of https://github.com/francelabs/datafari.git
     </auth-constraint>
   </security-constraint>
   <security-role>
