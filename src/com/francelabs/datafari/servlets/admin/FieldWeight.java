@@ -103,165 +103,141 @@ public class FieldWeight extends HttpServlet {
 	 * Gets the weight of a field in a type of query
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if(request.getParameter("sem") != null){									//If it's called just to clean the semaphore
-			if(request.getParameter("type").equals("pf") && semaphoreConfigPf.availablePermits()<1)
-				semaphoreConfigPf.release(); 
-			else if(semaphoreConfigQf.availablePermits()<1)
-				semaphoreConfigQf.release();
-			return;
-		}
-		if( schema == null || config == null || !new File(env+"/solr/solr_home/"+server+"/conf/schema.xml").exists() || !new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml").exists()){//If the files did not existed when the constructor was runned
-			//Checks if they exist now
-			if(!new File(env+"/solr/solr_home/"+server+"/conf/schema.xml").exists() || !new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml").exists()){
-				LOGGER.error("Error while opening the configuration files");		//If not an error is printed
-				PrintWriter out = response.getWriter();
-				out.append("Error while opening the configuration files"); 	
-				out.close();
+		try{
+			if(request.getParameter("sem") != null){									//If it's called just to clean the semaphore
+				if(request.getParameter("type").equals("pf") && semaphoreConfigPf.availablePermits()<1)
+					semaphoreConfigPf.release(); 
+				else if(semaphoreConfigQf.availablePermits()<1)
+					semaphoreConfigQf.release();
 				return;
-			}else{
-				schema = new File(env+"/solr/solr_home/"+server+"/conf/schema.xml");//Else they are prepared to be parsed
-				config = new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml");
 			}
-		}
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		if(request.getParameter("type")==null){						//If called at the creation of the HTML
-			try{
-				JSONObject Superjson = new JSONObject();
-				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-				Document docSchem = dBuilder.parse(schema);					//Parse the schema
-				NodeList fields = docSchem.getElementsByTagName("field");	//Get the "field" Nodes
-				try{
-					for(int i = 0 ; i < fields.getLength() ; i ++){			
-						JSONObject json = new JSONObject(); 
-						Element elem = (Element)fields.item(i);				//Get a field node
-						NamedNodeMap map = elem.getAttributes();
-						for(int j=0; j<map.getLength() ; j++){
-							json.append(map.item(j).getNodeName(), map.item(j).getNodeValue());
-						}
-						Superjson.append("field", json);
-					}
-				}catch(JSONException e){
-					LOGGER.error("Error while appending values into the JSONObject", e);
+			if( schema == null || config == null || !new File(env+"/solr/solr_home/"+server+"/conf/schema.xml").exists() || !new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml").exists()){//If the files did not existed when the constructor was runned
+				//Checks if they exist now
+				if(!new File(env+"/solr/solr_home/"+server+"/conf/schema.xml").exists() || !new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml").exists()){
+					LOGGER.error("Error while opening the configuration files, solrconfig.xml and/or schema.xml, in FieldWeight doGet, please make sure those files exist at "+env+"/solr/solr_home/"+server+"/conf/ . Error 69025");		//If not an error is printed
 					PrintWriter out = response.getWriter();
-					out.append("Something bad happened, please retry, if the problem persists contact your system administrator"); 	
+					out.append("Error while opening the configuration files, please retry, if the problem persists contact your system administrator. Error Code : 69025"); 	
 					out.close();
-					throw new RuntimeException();
-				}
-				response.getWriter().write(Superjson.toString());			//Answer to the request
-				response.setStatus(200);
-				response.setContentType("text/json;charset=UTF-8");
-			}catch(SAXException | ParserConfigurationException e){
-				LOGGER.error("Error while parsing the schema.xml", e);
-				PrintWriter out = response.getWriter();
-				out.append("Something bad happened, please retry, if the problem persists contact your system administrator"); 	
-				out.close();
-				throw new RuntimeException();
-			}
-		}else{															//If the weight of a field has been requested
-			try{
-				String type = request.getParameter("type");
-				if(type.equals("pf")){									//Select a semaphore according to the type and acquire it because the file can be now modified in a click
-					if(semaphoreConfigPf.availablePermits()>0)
-						semaphoreConfigPf.acquire();
-					else{												//If the selected Semaphore is already acquired return "File already in use"
-						PrintWriter out = response.getWriter();
-						out.append("File already in use"); 	
-						out.close();
-						return;
-					}
+					return;
 				}else{
-					if(semaphoreConfigQf.availablePermits()>0)
-						semaphoreConfigQf.acquire();
-					else{
+					schema = new File(env+"/solr/solr_home/"+server+"/conf/schema.xml");//Else they are prepared to be parsed
+					config = new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml");
+				}
+			}
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			if(request.getParameter("type")==null){						//If called at the creation of the HTML
+				try{
+					JSONObject Superjson = new JSONObject();
+					DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+					Document docSchem = dBuilder.parse(schema);					//Parse the schema
+					NodeList fields = docSchem.getElementsByTagName("field");	//Get the "field" Nodes
+					try{
+						for(int i = 0 ; i < fields.getLength() ; i ++){			
+							JSONObject json = new JSONObject(); 
+							Element elem = (Element)fields.item(i);				//Get a field node
+							NamedNodeMap map = elem.getAttributes();
+							for(int j=0; j<map.getLength() ; j++){				//Get its attributes
+								json.append(map.item(j).getNodeName(), map.item(j).getNodeValue());
+							}
+							Superjson.append("field", json);
+						}
+					}catch(JSONException e){
+						LOGGER.error("Error while putting the parameters of a field into a JSON Object in FieldWeight doGet , make sure the schema.xml is valid. Error 69026", e);
 						PrintWriter out = response.getWriter();
-						out.append("File already in use"); 	
+						out.append("Error while retrieving the fields from the schema.xml, please retry, if the problem persists contact your system administrator. Error Code : 69026"); 	
 						out.close();
 						return;
 					}
+					response.getWriter().write(Superjson.toString());			//Answer to the request
+					response.setStatus(200);
+					response.setContentType("text/json;charset=UTF-8");
+				}catch(SAXException | ParserConfigurationException e){
+					LOGGER.error("Error while parsing the schema.xml, in FieldWeight doGet, make sure the file is valid. Error 69027", e);
+					PrintWriter out = response.getWriter();
+					out.append("Error while parsing the schema.xml, please retry, if the problem persists contact your system administrator. Error Code : 69027"); 	
+					out.close();
+					return;
 				}
-				String field = request.getParameter("field").toString();//Parse the solrconfig.xml document
-				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-				doc = dBuilder.parse(config);
-				Node n = null;
-				NodeList fields = (doc.getElementsByTagName("requestHandler"));//Get the requestHandler Noes
-				for(int i = 0 ; i < fields.getLength() ; i++){			//Select the "/select" one
-					Element elem = (Element)fields.item(i);
-					if(elem.getAttribute("name").equals("/select")){
-						n = fields.item(i);
-						break;
-					}
-				}
-				childList = n.getChildNodes();					//Get his childs
-				for(int i=0;i<childList.getLength();i++){				//Get the lst node
-					if(childList.item(i).getNodeName().equals("lst")){
-						n = childList.item(i);
-						break;
-					}
-				}
-				childList = n.getChildNodes();							//Get his childs
-				for(int i=0;i<childList.getLength();i++){				//Get the str node	
-					n = childList.item(i);
-					if(n.getNodeName().equals("str")){
-						String name ="";								//Get it's attributes
-						NamedNodeMap map = n.getAttributes();
-						for(int j=0; j<map.getLength() ; j++){
-							if(map.item(j).getNodeName().equals("name")){//Get the name
-								name = map.item(j).getNodeValue();
-							}
+			}else{															//If the weight of a field has been requested
+				try{
+					String type = request.getParameter("type");
+					if(type.equals("pf")){									//Select a semaphore according to the type and acquire it because the file can be now modified in a click
+						if(semaphoreConfigPf.availablePermits()>0)
+							semaphoreConfigPf.acquire();
+						else{												//If the selected Semaphore is already acquired return "File already in use"
+							PrintWriter out = response.getWriter();
+							out.append("File already in use"); 	
+							out.close();
+							return;
 						}
-						if(name.equals(type)){							//If it's pf or qf according to what the user selected
-							//Get the value of the node, search for the requested field, if it is there return the weight, if not return 0
-							String elemValue = n.getTextContent();		//Get the text content of the node
-							int index = elemValue.indexOf(field+"^");
-							if(index!=-1){								//If the field is weighted
-								index += field.length()+1;				//Gets the number of the char that is the first figure of the number
-								String elemValueCut = elemValue.substring(index);//Get the text content cutting everything before the requested field
-								if(elemValueCut.indexOf(" ")!=-1)		//If it's not the last field, returns what's between the "^" and the next whitespace
-									response.getWriter().write(elemValue.substring(index, index+elemValueCut.indexOf(" ")));
-								else									//If it is the last field, return everything that is after the "field^"
-									response.getWriter().write(elemValue.substring(index));
-							}else										//If the field is not present return 0
-								response.getWriter().write("0");
-							response.setStatus(200);
-							response.setContentType("text;charset=UTF-8");
+					}else{
+						if(semaphoreConfigQf.availablePermits()>0)
+							semaphoreConfigQf.acquire();
+						else{
+							PrintWriter out = response.getWriter();
+							out.append("File already in use"); 	
+							out.close();
 							return;
 						}
 					}
-				}
-			}catch(SAXException | ParserConfigurationException | InterruptedException e){
-				LOGGER.error("Error while parsing the solrconfig.xml", e);
-				PrintWriter out = response.getWriter();
-				out.append("Something bad happened, please retry, if the problem persists contact your system administrator"); 	
-				out.close();
-				throw new RuntimeException();
-			}
+					String field = request.getParameter("field").toString();//Parse the solrconfig.xml document
+					DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+					doc = dBuilder.parse(config);
+					NodeList fields = (doc.getElementsByTagName("requestHandler"));//Get the requestHandler Node
+					Node n = run(fields, type);
+					childList = n.getParentNode().getChildNodes();
+					String elemValue = n.getTextContent();		//Get the text content of the node
+					int index = elemValue.indexOf(field+"^");
+					if(index!=-1){								//If the field is weighted
+						index += field.length()+1;				//Gets the number of the char that is the first figure of the number
+						String elemValueCut = elemValue.substring(index);//Get the text content cutting everything before the requested field
+						if(elemValueCut.indexOf(" ")!=-1)		//If it's not the last field, returns what's between the "^" and the next whitespace
+							response.getWriter().write(elemValue.substring(index, index+elemValueCut.indexOf(" ")));
+						else									//If it is the last field, return everything that is after the "field^"
+							response.getWriter().write(elemValue.substring(index));
+					}else										//If the field is not present return 0
+						response.getWriter().write("0");
+					response.setStatus(200);
+					response.setContentType("text;charset=UTF-8");
+					return;
+		}catch(SAXException | ParserConfigurationException | InterruptedException e){
+			LOGGER.error("Error while parsing the solrconfig.xml, in FieldWeight doGet, make sure the file is valid. Error 69028", e);
+			PrintWriter out = response.getWriter();
+			out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69028"); 	
+			out.close();
+			return;
 		}
 	}
+}catch(Exception e){
+	PrintWriter out = response.getWriter();
+	out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69510");
+	out.close();
+	LOGGER.error("Unindentified error in FieldWeight doGet. Error 69510", e);
+}
+}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 * Checks if the files still exist
-	 * Used to modify the weight of a field
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if(config == null || !new File(env+"/solr/solr_home/"+server+"/conf/schema.xml").exists() || !new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml").exists()){//If the files did not existed when the constructor was runned
-			//Checks if they exist now
-			if(!new File(env+"/solr/solr_home/"+server+"/conf/schema.xml").exists() || !new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml").exists()){
-				LOGGER.error("Error while opening the solrconfig file");		//If not an error is printed
+/**
+ * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+ * Checks if the files still exist
+ * Used to modify the weight of a field
+ */
+protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	try{
+		if(config == null || !new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml").exists()){//If the files did not existed when the constructor was runned
+			if(!new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml").exists()){
+				LOGGER.error("Error while opening the configuration file, solrconfig.xml, in FieldWeight doPost, please make sure this file exists at "+env+"/solr/solr_home/"+server+"/conf/ . Error 69029");		//If not an error is printed
 				PrintWriter out = response.getWriter();
-				out.append("Error while opening the solrconfig file"); 	
+				out.append("Error while opening the configuration file, please retry, if the problem persists contact your system administrator. Error Code : 69029"); 	
 				out.close();
 				return;
 			}else{
-				schema = new File(env+"/solr/solr_home/"+server+"/conf/schema.xml");//Else they are prepared to be parsed
 				config = new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml");
 			}
 		}
 		try{
 			String type = request.getParameter("type");
-			Node n = null;
 			for(int i=0; i<childList.getLength(); i++){				//Get the str node	
-				n = childList.item(i);
+				Node n = childList.item(i);
 				if(n.getNodeName().equals("str")){
 					String name ="";								//Get it's attributes
 					NamedNodeMap map = n.getAttributes();
@@ -312,11 +288,38 @@ public class FieldWeight extends HttpServlet {
 				semaphoreConfigQf.release();
 
 		}catch(TransformerException e){
-			LOGGER.error("Error while modifying the solrconfig.xml", e);
+			LOGGER.error("Error while modifying the solrconfig.xml, in FieldWeight doPost, pls make sure the file is valid. Error 69030", e);
 			PrintWriter out = response.getWriter();
-			out.append("Something bad happened, please retry, if the problem persists contact your system administrator"); 	
+			out.append("Error while modifying the config file, please retry, if the problem persists contact your system administrator. Error Code : 69030"); 	
 			out.close();
-			throw new RuntimeException();
+			return;
 		}
+
+	}catch(Exception e){
+		PrintWriter out = response.getWriter();
+		out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69511");
+		out.close();
+		LOGGER.error("Unindentified error in FieldWeight doPost. Error 69511", e);
 	}
+}
+
+private Node run(NodeList child, String type){
+	for(int i = 0 ; i<child.getLength(); i ++){
+		String name = "";
+		if(child.item(i).hasAttributes()){
+			NamedNodeMap map = child.item(i).getAttributes();
+			for(int j = 0 ; j < map.getLength() ; j++){
+				if (map.item(j).getNodeName().equals("name"))
+					name = map.item(j).getNodeValue();
+			}
+			if(name.equals(type))
+				return child.item(i);
+		}
+		if(child.item(i).hasChildNodes())
+			if(run(child.item(i).getChildNodes(), type)!=null)
+				return run(child.item(i).getChildNodes(), type);
+	}
+	return null;
+}
+
 }

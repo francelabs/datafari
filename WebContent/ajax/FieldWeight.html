@@ -3,7 +3,7 @@
 <head>
 <script src="./../plugins/jquery/jquery.min.js" type="text/javascript"></script>
 <script src="./../plugins/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
-<script src="./i18nInit.js"></script>
+<script src="./../admin/i18nInit.js"></script>
 <link href="./../css/style_v2.css" rel="stylesheet"></link>
 <meta charset="UTF-8">
 <title>Insert title here</title>
@@ -149,9 +149,9 @@ function getFields(){										//Get the fields from the schema.xml
 	        //if received a response from the server
 	        success: function( data, textStatus, jqXHR) {	
 	        	//If they're was an error print the error
-	        	if(data === "Error while opening the configuration files" || data === "Something bad happened, please retry, if the problem persists contact your system administrator"){
+	        	if(data.toString().indexOf("Error code : ")!==-1){
 	        		//print it and disable the selection
-	        		document.getElementById("globalAnswer").innerHTML = data;
+	        		document.getElementById("globalAnswer").innerHTML = data.toString();
 	        		$('#selectpf').attr("disabled", true);
 	        		$('#selectqf').attr("disabled", true);
 	        	}else{		//else add the options to the select
@@ -194,7 +194,7 @@ function getValue(type){
 	        //if received a response from the server
 	        success: function( data, textStatus, jqXHR) {
 	        	//If the file was already in use
-	        	if(data === "File already in use"){
+	        	if(data.toString().indexOf("Error code : ")!==-1){
 	        		//Print it and disable the input field
 	        		document.getElementById("answer"+type).innerHTML = window.i18n.msgStore['usedFile'];
 	        		document.getElementById("weight"+type).value = "";
@@ -235,8 +235,8 @@ function setValue(type){
 	        	//if received a response from the server
 	        	success: function( data, textStatus, jqXHR) {
 	        		//If they're was an error
-	        		if(data === "Error while opening the configuration files" || data === "Something bad happened, please retry, if the problem persists contact your system administrator"){
-		        		//print it and disable the selection
+	        		if(data.toString().indexOf("Error code : ")!==-1){
+	        			//print it and disable the selection
 	        			document.getElementById("globalAnswer").innerHTML = data;
 		        		$('#selectpf').attr("disabled", true);
 		        		$('#selectqf').attr("disabled", true);

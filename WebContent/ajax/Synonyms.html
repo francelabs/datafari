@@ -106,11 +106,11 @@ function getFile(){
 				$("#ajaxResponse").append("<div class=col-sm-4></div>");
 			}
 			//If the servlet catched an exception
-			else if (data==="Error while reading the file" || data==="Error while getting the list of the languages"){
-				$("#ajaxResponse").append("<div class=col-sm-4></div>");
-				$("#ajaxResponse").append("<h3 class=col-sm-4>"+data+"</h3>");
-				$("#ajaxResponse").append("<div class=col-sm-4></div>");
-			}
+			else if(data.toString().indexOf("Error code : ")!==-1){
+        		$("#ajaxResponse").append("<div class=col-xs-3></div>");
+				$("#ajaxResponse").append("<h3 class=col-xs-6>"+data+"</h3>");
+				$("#ajaxResponse").append("<div class=col-xs-3></div>");
+        	}
 			//Else print the content of the file in a textArea
 			else {
 				$("#ajaxResponse").append("<legend>"+window.i18n.msgStore['synonyms']+"</legend>");
@@ -168,8 +168,14 @@ function upload(text){
 		datetype : "text",
 		contenttype: "text-plain/utf-8",
 		success: function( data, textStatus, jqXHR) {
-			$("#ajaxResponse").empty();
-			$("#ajaxResponse").append(window.i18n.msgStore['modifDone']);
+        	if(data.toString().indexOf("Error code : ")!==-1){
+        		$("#ajaxResponse").append("<div class=col-xs-3></div>");
+				$("#ajaxResponse").append("<h3 class=col-xs-6>"+data+"</h3>");
+				$("#ajaxResponse").append("<div class=col-xs-3></div>");
+        	}else{
+				$("#ajaxResponse").empty();
+				$("#ajaxResponse").append(window.i18n.msgStore['modifDone']);
+        	}
 		},
 	 	error: function(jqXHR, textStatus, errorThrown){
          	console.log("Something really bad happened " + textStatus);

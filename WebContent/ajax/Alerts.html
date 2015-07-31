@@ -73,7 +73,13 @@ function getTab(){
         //if received a response from the server
         success: function( data, textStatus, jqXHR) {
         	$('#newAlerts').attr("disabled", false);
-        	if(data.alerts!=undefined){
+        	if(data.toString().indexOf("Error code : ")!==-1){
+        		$("#ajaxResponse").append("<div class=col-xs-3></div>");
+				$("#ajaxResponse").append("<h3 class=col-xs-6>"+data+"</h3>");
+				$("#ajaxResponse").append("<div class=col-xs-3></div>");
+				$('#newAlerts').attr("disabled", true);
+        	} 
+        	else if(data.alerts!=undefined){
         		//get the data in a global var so it can be used in edit() or remove() 
         		d=data;
         		var numb = data.alerts.length;
@@ -172,9 +178,16 @@ function addAlerts(){
 	       	 	data: datastring,
 	        	//if received a response from the server
 	        	success: function(data, textStatus, jqXHR) {
-	        		getTab();
-	        		$("#addAlertsForm").empty();
-	        		addAlerts();
+	        		if(data.toString().indexOf("Error code : ")!==-1){
+	            		$("#ajaxResponse").append("<div class=col-xs-3></div>");
+	    				$("#ajaxResponse").append("<h3 class=col-xs-6>"+data+"</h3>");
+	    				$("#ajaxResponse").append("<div class=col-xs-3></div>");
+	    				$('#newAlerts').attr("disabled", true);
+	            	}else{
+	        			getTab();
+	        			$("#addAlertsForm").empty();
+	        			addAlerts();
+	            	}
 	        	},
 	        	error: function(jqXHR, textStatus, errorThrown){
 	        		 if(jqXHR.responseText==="error connecting to the database"){
@@ -222,9 +235,16 @@ function edit(i){
 		        success: function(data, textStatus, jqXHR) {
 		        	//Clean the responseArea
 		        	$("#ajaxResponse").empty();
-		        	//Print the alerts with the modifications made 
-		        	getTab();
-		        	addAlerts();
+		        	if(data.toString().indexOf("Error code : ")!==-1){
+		        		$("#ajaxResponse").append("<div class=col-xs-3></div>");
+						$("#ajaxResponse").append("<h3 class=col-xs-6>"+data+"</h3>");
+						$("#ajaxResponse").append("<div class=col-xs-3></div>");
+						$('#newAlerts').attr("disabled", true);
+		        	}else{
+		        		//Print the alerts with the modifications made 
+		        		getTab();
+		        		addAlerts();
+		        	}
 		        },
 		        error: function(jqXHR, textStatus, errorThrown){
 		             console.log("Something really bad happened " + textStatus);
@@ -254,10 +274,17 @@ function remove(i){
         url: "./../admin/Alerts",
         data: id,
         //if received a response from the server
-        success: function(textStatus, jqXHR) {
-        	//Suppress the row of the tab that was show the now removed alert
-        	var row = document.getElementById(i);
-            row.parentNode.removeChild(row);
+        success: function(data, textStatus, jqXHR) {
+        	if(data.toString().indexOf("Error code : ")!==-1){
+        		$("#ajaxResponse").append("<div class=col-xs-3></div>");
+				$("#ajaxResponse").append("<h3 class=col-xs-6>"+data+"</h3>");
+				$("#ajaxResponse").append("<div class=col-xs-3></div>");
+				$('#newAlerts').attr("disabled", true);
+        	}else{
+        		//Suppress the row of the tab that was show the now removed alert
+        		var row = document.getElementById(i);
+            	row.parentNode.removeChild(row);
+        	}        
         },
         //If there was no resonse from the server
         error: function(jqXHR, textStatus, errorThrown){
@@ -267,6 +294,4 @@ function remove(i){
 	});
 }
 </script>
-</html>
-</body>
 </html>

@@ -129,5 +129,12 @@
 "sizeLimitation" : "Size limitations",
 "autocompleteConf" : "Autocomplete configuration",
 "labelhl" : "Maximum number of analyzed chars by the highlight" ,
-"deduplication" : "Deduplication"
+"mailConf" : "Mail configuration ",
+"address" : "Address : ",
+"pass" : "Password : ",
+"deduplication" : "Deduplication",
+"limitHL" : "Limitation of the fields size for highlighting",
+"autocompleteConf" : "Autcomplete configuration",
+"labelth" : "Fraction",
+"limitTH" : "Minimum fraction of documents, where a term should appear"
 }

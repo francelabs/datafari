@@ -31,17 +31,17 @@
       <web-resource-name>Admin</web-resource-name>
       <url-pattern>/admin/*</url-pattern>
     </web-resource-collection>
-    <user-data-constraint>
-		<transport-guarantee>NONE</transport-guarantee><!-- Change NONE to CONFIDENTIAL to force ssl -->
-	</user-data-constraint>
     <auth-constraint>
       <role-name>ConnectedSearchUser</role-name>
       <role-name>SearchAdministrator</role-name>
       <role-name>SearchExpert</role-name>
-		<role-name>ConnectedSearchUser</role-name>
-		<role-name>SearchAdministrator</role-name>
-		<role-name>SearchExpert</role-name>
+      <role-name>ConnectedSearchUser</role-name>
+      <role-name>SearchAdministrator</role-name>
+      <role-name>SearchExpert</role-name>
     </auth-constraint>
+    <user-data-constraint>
+      <transport-guarantee>NONE</transport-guarantee>
+    </user-data-constraint>
   </security-constraint>
   <security-role>
     <role-name>ConnectedSearchUser</role-name>

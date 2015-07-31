@@ -79,7 +79,7 @@ function getTab(){
         data: dataString,
         //if received a response from the server
         success: function( data, textStatus, jqXHR) {
-        	if(data==="Unavailable core, please check if the core has booted up"){
+        	if(data.toString().indexOf("Error code : ")!==-1){
         		$("#ajaxResponse").append("<div class=col-xs-3></div>");
 				$("#ajaxResponse").append("<h3 class=col-xs-6>"+data+"</h3>");
 				$("#ajaxResponse").append("<div class=col-xs-3></div>");
@@ -186,8 +186,12 @@ function verifAdd(){	//Used to check if ther's already a promoLink with the spec
 	        data: formData,
 	        //if received a response from the server
 	        success: function(data, textStatus, jqXHR) {
-	        	//if there is already a promoLink ask for confirm and print the attributes of this promoLink
-	        	if(data.response.docs.length>0){
+	        	if(data.toString().indexOf("Error code : ")!==-1){
+	        		$("#ajaxResponse").append("<div class=col-xs-3></div>");
+					$("#ajaxResponse").append("<h3 class=col-xs-6>"+data+"</h3>");
+					$("#ajaxResponse").append("<div class=col-xs-3></div>");
+					$('#newPromoLink').attr("disabled", true);
+	        	}else if(data.response.docs.length>0){//if there is already a promoLink ask for confirm and print the attributes of this promoLink
 	        		$("#addPromFormBis").empty();
 	        		$("#addPromFormBis").append("<div class=\"col-sm-2\"></div>");
 	        		$("#addPromFormBis").append("<h3>"+window.i18n.msgStore['promoLinkAlready']+"</h3><div class=\"col-sm-2\"></div><br />");
@@ -245,8 +249,8 @@ function add(){
 		 data = "oldKey="+oldKey+"&"+data;
 	 }
 	//Get the Dates
-	var dateB = data.substring(data.indexOf("dateB")+6, data.indexOf("dateE")-1);
-	var dateE = data.substring(data.indexOf("dateE")+6, data.length);
+	var dateB = data.substring(data.toString().indexOf("dateB")+6, data.toString().indexOf("dateE")-1);
+	var dateE = data.substring(data.toString().indexOf("dateE")+6, data.length);
 	//If there are both dates
 	if(dateB != "" && dateE != ""){
 	 	//Format them and compare them
@@ -262,13 +266,21 @@ function add(){
 	       	 	data: data,
 	        	//if received a response from the server
 	        	success: function(data, textStatus, jqXHR) {
-	        		//Clean the reponse Area and the global variable
-	        		$("#addPromForm").empty();
-	        		$("#addPromFormBis").empty();
-	        		formData = null;
-	        		getTab();
-	    	 		addProm();	
-	    	 		oldKey=null;
+	        		if(data.toString().indexOf("Error code : ")!==-1){
+		        		$("#ajaxResponse").append("<div class=col-xs-3></div>");
+						$("#ajaxResponse").append("<h3 class=col-xs-6>"+data+"</h3>");
+						$("#ajaxResponse").append("<div class=col-xs-3></div>");
+						$('#newPromoLink').attr("disabled", true);
+		        	}else{
+	        			//Clean the reponse Area and the global variable
+	        			$("#addPromForm").empty();
+	        			$("#addPromFormBis").empty();
+	        			document.getElementById('searchBar').value = "";
+	        			formData = null;
+	        			getTab();
+	    	 			addProm();	
+	    	 			oldKey=null;
+		        	}
 	        	},
 	        	error: function(jqXHR, textStatus, errorThrown){
 	            	 console.log("Something really bad happened " + textStatus);
@@ -304,12 +316,20 @@ function add(){
 		    data: data,
 		    //if received a response from the server
 		    success: function(data, textStatus, jqXHR) {
-		    	//Clean the reponse Area and the global variable
-			   	$("#addPromFormBis").empty();
-		    	formData = null;
-		       	getTab();
-			    addProm();
-			    oldKey=null;
+		    	if(data.toString().indexOf("Error code : ")!==-1){
+	        		$("#ajaxResponse").append("<div class=col-xs-3></div>");
+					$("#ajaxResponse").append("<h3 class=col-xs-6>"+data+"</h3>");
+					$("#ajaxResponse").append("<div class=col-xs-3></div>");
+					$('#newPromoLink').attr("disabled", true);
+	        	}else{
+		    		//Clean the reponse Area and the global variable
+			   		$("#addPromFormBis").empty();
+        			document.getElementById('searchBar').value = "";
+		    		formData = null;
+		       		getTab();
+			    	addProm();
+			    	oldKey=null;
+	        	}
 	        },
 	        error: function(jqXHR, textStatus, errorThrown){
 				console.log("Something really bad happened " + textStatus);
@@ -373,14 +393,21 @@ function edit(i){
 		        	data: datastring,
 		        	//if received a response from the server
 		        	success: function(data, textStatus, jqXHR) {
-		        		//Clean the response area and print all the promoLinks
-		        		$("#ajaxResponse").empty();
-		        		$("#addPromForm").empty();
-		        		$("#addPromFormBis").empty();
-		        		document.getElementById('searchBar').value = "";
-		        		getTab();
-		        		addProm();
-		        		oldKey=null;
+		        		if(data.toString().indexOf("Error code : ")!==-1){
+			        		$("#ajaxResponse").append("<div class=col-xs-3></div>");
+							$("#ajaxResponse").append("<h3 class=col-xs-6>"+data+"</h3>");
+							$("#ajaxResponse").append("<div class=col-xs-3></div>");
+							$('#newPromoLink').attr("disabled", true);
+			        	}else{
+		        			//Clean the response area and print all the promoLinks
+		        			$("#ajaxResponse").empty();
+		        			$("#addPromForm").empty();
+		        			$("#addPromFormBis").empty();
+		        			document.getElementById('searchBar').value = "";
+		        			getTab();
+		        			addProm();
+		        			oldKey=null;
+			        	}
 		        	},
 		        	error: function(jqXHR, textStatus, errorThrown){
 		        	     console.log("Something really bad happened " + textStatus);
@@ -418,14 +445,21 @@ function edit(i){
 			    data: datastring,
 			    //if received a response from the server
 			    success: function(data, textStatus, jqXHR) {
+			    	if(data.toString().indexOf("Error code : ")!==-1){
+		        		$("#ajaxResponse").append("<div class=col-xs-3></div>");
+						$("#ajaxResponse").append("<h3 class=col-xs-6>"+data+"</h3>");
+						$("#ajaxResponse").append("<div class=col-xs-3></div>");
+						$('#newPromoLink').attr("disabled", true);
+		        	}else{
 			    	//Clean the response area and print all the promoLinks
-	        		$("#ajaxResponse").empty();
-	        		$("#addPromForm").empty();
-	        		$("#addPromFormBis").empty();
-	        		document.getElementById('searchBar').value = "";
-	        		getTab();
-	        		addProm();
-	        		oldKey=null;
+	        			$("#ajaxResponse").empty();
+	        			$("#addPromForm").empty();
+	        			$("#addPromFormBis").empty();
+	        			document.getElementById('searchBar').value = "";
+	        			getTab();
+	        			addProm();
+	        			oldKey=null;
+		        	}
 			  	 },
 			    error: function(jqXHR, textStatus, errorThrown){
 		             console.log("Something really bad happened " + textStatus);

@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -91,68 +92,73 @@ public class AlertsManager {
 	 * @throws ParseException 
 	 */
 	public boolean getParameter() throws IOException, ParseException{
-		onOff=false;
-		filePath = System.getenv("DATAFARI_HOME");		//Gets the installation directory if in standard environment 
-		if(filePath==null)								//If development environment
-			filePath = "/home/youp/workspaceTest/Servers/Datafari-config/datafari.properties";	//hardcoded path
-		else
-			filePath += "/tomcat/conf/datafari.properties";	//completing the path 
-		String content;
-		String[] lines = new String[0];
-		try {
-			content = readFile(filePath, StandardCharsets.UTF_8);
+		try{
+			onOff=false;
+			filePath = System.getenv("DATAFARI_HOME");		//Gets the installation directory if in standard environment 
+			if(filePath==null)								//If development environment
+				filePath = "/home/youp/workspaceTest/Servers/Datafari-config/datafari.properties";	//hardcoded path
+			else
+				filePath += "/tomcat/conf/datafari.properties";	//completing the path 
+			String content;
+			String[] lines = new String[0];
+			try {
+				content = readFile(filePath, StandardCharsets.UTF_8);
+			} catch (NoSuchFileException e1) {
+				LOGGER.error("Error while reading the datafari.properties in the AlertsManager getParameter(), make sure the file exists at : "+filePath+" . Error 69037 ", e1);
+				return false;
+			}
 			lines = content.split(System.getProperty("line.separator"));	//Read the file line by line
-		} catch (IOException e1) {
-			LOGGER.error("Error while reading the datafari.properties in the Alerts Manager ", e1);
-			throw e1;
-		}
-		for(int i = 0; i < lines.length ; i++){							//For each line
-			if(lines[i].startsWith("ALERTS") && lines[i].substring(lines[i].indexOf("=")+1).equals("on"))
-				onOff = true;
-			else if(lines[i].startsWith("HOURLYDELAY"))	{				//Gets the delay for the hourly alerts
-				try{	
-					delayH = new DateTime(df.parse(lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1)));
-				}catch(ParseException e){
-					LOGGER.error("Error parsing the Hourly Date, default value will be used, AlertsManager",e);
-					delayH = new DateTime(df.parse("01/01/0001/00:00"));
+			for(int i = 0; i < lines.length ; i++){							//For each line
+				if(lines[i].startsWith("ALERTS") && lines[i].substring(lines[i].indexOf("=")+1).equals("on"))
+					onOff = true;
+				else if(lines[i].startsWith("HOURLYDELAY"))	{				//Gets the delay for the hourly alerts
+					try{	
+						delayH = new DateTime(df.parse(lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1)));
+					}catch(ParseException e){
+						LOGGER.warn("Error parsing the Hourly Date, default value will be used, AlertsManage getParameter()r",e);
+						delayH = new DateTime(df.parse("01/01/0001/00:00"));
+					}
+				}
+				else if(lines[i].startsWith("DAILYDELAY"))	{					//Gets the delay for the daily alerts
+					try{	
+						delayD = new DateTime(df.parse(lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1)));
+					}catch(ParseException e){
+						LOGGER.warn("Error parsing the Daily Date, default value will be used, AlertsManager getParameter()",e);
+						delayD = new DateTime(df.parse("01/01/0001/00:00"));
+					}				
+				}
+				else if(lines[i].startsWith("WEEKLYDELAY"))	{					//Gets the delay for the weekly alerts
+					try{	
+						delayW = new DateTime(df.parse(lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1)));
+					}catch(ParseException e){
+						LOGGER.warn("Error parsing the Weekly Date, default value will be used, AlertsManager getParameter()",e);
+						delayW = new DateTime(df.parse("01/01/0001/00:00"));
+					}				
+				}
+				else if(lines[i].startsWith("HOST"))							//Gets the address of the host
+					IP = lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1);
+				else if(lines[i].startsWith("PORT"))							//Gets the port
+					port = Integer.parseInt(lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1));
+				else if(lines[i].startsWith("DATABASE"))						//Gets the name of the database
+					database = lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1);
+				else if(lines[i].startsWith("COLLECTION"))						//Gets the name of the collection
+					collection = lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1);
+				else if(lines[i].startsWith("Hourly=")){						//Checks if there has been a previous execution for hourly alerts
+					Hourly.setBool(true);
+					HourlyHour = lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1);
+				}else if(lines[i].startsWith("Daily=")){						//Checks if there has been a previous execution for daily alerts
+					Daily.setBool(true);
+					DailyHour = lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1);
+				}else if(lines[i].startsWith("Weekly=")){						//Checks if there has been a previous execution for weekly alerts
+					Weekly.setBool(true);
+					WeeklyHour = lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1);
 				}
 			}
-			else if(lines[i].startsWith("DAILYDELAY"))	{					//Gets the delay for the daily alerts
-				try{	
-					delayD = new DateTime(df.parse(lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1)));
-				}catch(ParseException e){
-					LOGGER.error("Error parsing the Daily Date, default value will be used, AlertsManager",e);
-					delayD = new DateTime(df.parse("01/01/0001/00:00"));
-				}				
-			}
-			else if(lines[i].startsWith("WEEKLYDELAY"))	{					//Gets the delay for the weekly alerts
-				try{	
-					delayW = new DateTime(df.parse(lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1)));
-				}catch(ParseException e){
-					LOGGER.error("Error parsing the Weekly Date, default value will be used, AlertsManager",e);
-					delayW = new DateTime(df.parse("01/01/0001/00:00"));
-				}				
-			}
-			else if(lines[i].startsWith("HOST"))							//Gets the address of the host
-				IP = lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1);
-			else if(lines[i].startsWith("PORT"))							//Gets the port
-				port = Integer.parseInt(lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1));
-			else if(lines[i].startsWith("DATABASE"))						//Gets the name of the database
-				database = lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1);
-			else if(lines[i].startsWith("COLLECTION"))						//Gets the name of the collection
-				collection = lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1);
-			else if(lines[i].startsWith("Hourly=")){						//Checks if there has been a previous execution for hourly alerts
-				Hourly.setBool(true);
-				HourlyHour = lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1);
-			}else if(lines[i].startsWith("Daily=")){						//Checks if there has been a previous execution for daily alerts
-				Daily.setBool(true);
-				DailyHour = lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1);
-			}else if(lines[i].startsWith("Weekly=")){						//Checks if there has been a previous execution for weekly alerts
-				Weekly.setBool(true);
-				WeeklyHour = lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1);
-			}
+			return onOff;
+		}catch(Exception e){
+			LOGGER.error("Unindentified error in the AlertsManager getParameter(). Error 69516 ", e);
+			return false;
 		}
-		return onOff;
 	}
 	/**
 	 * Creates the runnables
@@ -161,41 +167,46 @@ public class AlertsManager {
 	 * @throws IOException 
 	 */
 	private void startScheduled() throws IOException {
-		scheduler = Executors.newScheduledThreadPool(1);
-		final Runnable alertHourly = new Runnable() {					//Runnable that runs every hour
-			public void run() {
-				try {
-					alerts("Hourly");
-				} catch (IOException e) {
-					LOGGER.error("Error while running the hourly alerts in startScheduled(), alerts manager", e);
-				} }
-		};
-		final Runnable alertDaily = new Runnable() {					//Runnable that runs every Day
-			public void run() {
-				try {
-					alerts("Daily");
-				} catch (IOException e) {
-					LOGGER.error("Error while running the daily alerts in startScheduled(), alerts manager", e);
-				} }
-		};
-		final Runnable alertWeekly = new Runnable() {					//Runnable that runs every Week
-			public void run() {
-				try {
-					alerts("Weekly");
-				} catch (IOException e) {
-					LOGGER.error("Error while running the weekly alerts in startScheduled(), alerts manager", e);
-				} }
-		};
-		try {
-			mail = new Mail();
-		} catch (IOException e) {
-			LOGGER.error("Error instantiating the mail in startScheduled in the AlertManager", e);
-			throw e;
+		try{
+			scheduler = Executors.newScheduledThreadPool(1);
+			final Runnable alertHourly = new Runnable() {					//Runnable that runs every hour
+				public void run() {
+					try {
+						alerts("Hourly");
+					} catch (Exception e) {
+						LOGGER.error("Unindentified error while running the hourly alerts in startScheduled(), AlertsManager. Error 69518", e);
+					} }
+			};
+			final Runnable alertDaily = new Runnable() {					//Runnable that runs every Day
+				public void run() {
+					try {
+						alerts("Daily");
+					} catch (Exception e) {
+						LOGGER.error("Unindentified error while running the daily alerts in startScheduled(), AlertsManager. Error 69519", e);
+					} }
+			};
+			final Runnable alertWeekly = new Runnable() {					//Runnable that runs every Week
+				public void run() {
+					try {
+						alerts("Weekly");
+					} catch (Exception e) {
+						LOGGER.error("Unindentified error while running the weekly alerts in startScheduled(), AlertsManager. Error 69520", e);
+					} }
+			};
+			try {
+				mail = new Mail();
+			} catch (IOException e) {
+				LOGGER.error("Error instantiating the mail in startScheduled in the AlertsManager", e);
+				return;
+			}
+			DateTime currentDate = new DateTime();	
+			alertHandleH = launch(Hourly, delayH, alertHandleH, currentDate,"Hourly", HourlyHour, alertHourly, 60);		//Launches the alerts according to their previous execution and the date typed by the user
+			alertHandleD = launch(Daily, delayD, alertHandleD, currentDate,"Daily", DailyHour, alertDaily, 1440);
+			alertHandleW = launch(Weekly, delayW, alertHandleW, currentDate,"Weekly", WeeklyHour, alertWeekly, 10080);
+		}catch(Exception e){
+			LOGGER.error("Unindentified error in the AlertsManager startScheduled(). Error 69517", e);
+			return;
 		}
-		DateTime currentDate = new DateTime();	
-		alertHandleH = launch(Hourly, delayH, alertHandleH, currentDate,"Hourly", HourlyHour, alertHourly, 60);		//Launches the alerts according to their previous execution and the date typed by the user
-		alertHandleD = launch(Daily, delayD, alertHandleD, currentDate,"Daily", DailyHour, alertDaily, 1440);
-		alertHandleW = launch(Weekly, delayW, alertHandleW, currentDate,"Weekly", WeeklyHour, alertWeekly, 10080);
 	}
 	/**
 	 * Launches the alerts
@@ -209,13 +220,18 @@ public class AlertsManager {
 	 * @param loop 		The number of minutes between each execution
 	 */
 	public ScheduledFuture<?> launch(customBool custom, DateTime delay, ScheduledFuture<?> Handle, DateTime current, String frequency, String Hour, Runnable run, long loop){
-		if((custom.isBool()) && (delay.plusMinutes(5).isBefore(current)))								//If there has been a previous execution and the date typed in the UI was more than 5 minutes before the current date			
-			Handle = scheduler.scheduleAtFixedRate(run, calculateDelays(frequency, loop, Hour), loop, TimeUnit.MINUTES);	//Launches alerts() every hour with the "Hourly" parameter and as an initial delay, the difference calculated previously 
-		else if(custom.isBool() && (delay.minusMinutes(10).isAfter(current)))
-			Handle = scheduler.scheduleAtFixedRate(run, calculateDelays(frequency, delay), loop, TimeUnit.MINUTES);//Launches alerts() every hour with the "Hourly" parameter and as an initial delay, the difference between the current date and the date set in the UI 
-		else
-			Handle = scheduler.scheduleAtFixedRate(run, 0, loop, TimeUnit.MINUTES);		//Launches alerts() every hour with the "Hourly" parameter instantly
-		return Handle;
+		try{
+			if((custom.isBool()) && (delay.plusMinutes(5).isBefore(current)))								//If there has been a previous execution and the date typed in the UI was more than 5 minutes before the current date			
+				Handle = scheduler.scheduleAtFixedRate(run, calculateDelays(frequency, loop, Hour), loop, TimeUnit.MINUTES);	//Launches alerts() every hour with the "Hourly" parameter and as an initial delay, the difference calculated previously 
+			else if(custom.isBool() && (delay.minusMinutes(10).isAfter(current)))
+				Handle = scheduler.scheduleAtFixedRate(run, calculateDelays(frequency, delay), loop, TimeUnit.MINUTES);//Launches alerts() every hour with the "Hourly" parameter and as an initial delay, the difference between the current date and the date set in the UI 
+			else
+				Handle = scheduler.scheduleAtFixedRate(run, 0, loop, TimeUnit.MINUTES);		//Launches alerts() every hour with the "Hourly" parameter instantly
+			return Handle;
+		}catch (Exception e){
+			LOGGER.error("Unindentified error while calculating the delay to launch the "+frequency+" alerts in the AlertsManager launch(). Error 69038", e);
+			return null;
+		}
 	}
 	/**
 	 * Calculates the initial delays according to the frequency, and the previous execution
@@ -226,23 +242,27 @@ public class AlertsManager {
 	 * @return the initial delay
 	 */
 	private long calculateDelays(String frequency, long minutes, String hour){
-		try{
+		try {
 			long diff = 0;
-			DateTime dt1 = new DateTime(df.parse(hour));				//Parses the previous execution date
-			String now = df.format(new Date());		
-			DateTime dt2 = new DateTime(df.parse(now));					//Gets the current date
-			Interval interval = new Interval(dt1, dt2);					//Gets the interval
-			Duration duration = interval.toDuration();
-			diff = duration.getStandardMinutes();						
+			try{
+				DateTime dt1 = new DateTime(df.parse(hour));				//Parses the previous execution date
+				String now = df.format(new Date());		
+				DateTime dt2 = new DateTime(df.parse(now));					//Gets the current date
+				Interval interval = new Interval(dt1, dt2);					//Gets the interval
+				Duration duration = interval.toDuration();
+				diff = duration.getStandardMinutes();	
+			}catch(ParseException e){
+				LOGGER.error("Error while parsing the dates to schedule the "+frequency+" alerts in calculateDelays(), AlertsManager. Error 69039", e);
+				throw new RuntimeException();
+			}
 			diff = minutes - diff;										//Calculates the number of minutes that has still to go before launch
 			if(diff<0){													//if it's under 0 the it is set to 0
 				diff = 0;
 			}
 			return diff;
-		}
-		catch(ParseException e){
-			LOGGER.error("Error while parsing the dates to schedule the "+frequency+" alerts in startScheduled(), alerts manager", e);
-			throw new RuntimeException();
+		}catch (Exception e){
+			LOGGER.error("Unindentified error while calculating the delay to launch the "+frequency+" alerts in the AlertsManager calculateDelays(). Error 69518", e);
+			return 0;
 		}
 	}
 	/**
@@ -253,18 +273,23 @@ public class AlertsManager {
 	 * @return the initial delay
 	 */
 	private long calculateDelays(String frequency, DateTime hour){
-		try{
-			long diff = 0;		
-			String now = df.format(new Date());		
-			DateTime dt2 = new DateTime(df.parse(now));					//Gets the current date
-			Interval interval = new Interval(dt2, hour);					//Gets the interval
-			Duration duration = interval.toDuration();
-			diff = duration.getStandardMinutes();						
-			return diff;
-		}
-		catch(ParseException e){
-			LOGGER.error("Error while parsing the dates to schedule the "+frequency+" alerts in startScheduled(), alerts manager", e);
-			throw new RuntimeException();
+		try {
+			try{
+				long diff = 0;		
+				String now = df.format(new Date());		
+				DateTime dt2 = new DateTime(df.parse(now));					//Gets the current date
+				Interval interval = new Interval(dt2, hour);					//Gets the interval
+				Duration duration = interval.toDuration();
+				diff = duration.getStandardMinutes();						
+				return diff;
+			}
+			catch(ParseException e){
+				LOGGER.error("Error while parsing the dates to schedule the "+frequency+" alerts in calculateDelays(), AlertsManager. Error 69040", e);
+				throw new RuntimeException();
+			}
+		}catch (Exception e){
+			LOGGER.error("Unindentified error while calculating the delay to launch the "+frequency+" alerts in the AlertsManager calculateDelays(). Error 69519", e);
+			return 0;
 		}
 	}
 	/**
@@ -272,58 +297,63 @@ public class AlertsManager {
 	 * Run the alerts with the correct frequency
 	 * @param frequency : Hourly/Daily/Weekly
 	 */
-	private void alerts(String frequency) throws IOException{
-		boolean bool = false;
-		for(customBool c : HDW){								//Checks if alerts with the correct frequency have already run at least once
-			if(c.getFrequency().equals(frequency) && c.isBool()){
-				bool = true;
-			}
-		}
-		Date date = new Date();
-		try {													//Append the current d
-			if(bool){											//If alerts have already run
-				String content = readFile(filePath, StandardCharsets.UTF_8);
-				String[] lines = content.split(System.getProperty("line.separator"));
-				String linesBis = "";							//Reads the file line by line
-				for(int i = 0 ; i < lines.length ; i++){
-					if(lines[i].startsWith(frequency)){			//If it's the correct frequency line
-						linesBis += lines[i].substring(0, lines[i].indexOf("=")+1)+df.format(date).toString()+"\n";	//Replace the date by the current one
-					}else{
-						linesBis += lines[i]+"\n";				//Else just keeps the line
-					}
+	private void alerts(String frequency){
+		try{
+			boolean bool = false;
+			for(customBool c : HDW){								//Checks if alerts with the correct frequency have already run at least once
+				if(c.getFrequency().equals(frequency) && c.isBool()){
+					bool = true;
 				}
-				FileOutputStream fooStream = new FileOutputStream(new File(filePath), false); 
-				byte[] myBytes = linesBis.getBytes();
-				fooStream.write(myBytes);						//rewrite the file
-				fooStream.close();
-			}else{												//Else just appends the frequency and the current date
-				FileOutputStream fooStream = new FileOutputStream(new File(filePath), true);
-				byte[] myBytes = (frequency+"="+df.format(date)+"\n").getBytes();
-				fooStream.write(myBytes);						//Append to the file
-				fooStream.close();
 			}
-		} catch (IOException e) {
-			LOGGER.error("Error while appending the moment of execution to the datafari.properties file in alerts(), AlertsManager ", e);
-			throw e;
-		}
-		FindIterable<Document> cursor = coll1.find();							//Get all the elements in the collection
-		SolrServer solr=null;
-		Core[] core = Core.values();
-		for (Document d : cursor) {												//Get the next Object in the collection
-			if(frequency.equals(d.get("frequency").toString())){	
-				for(int i=0; i<core.length;i++){								//Get the right core by comparing all the return of the Enum Type Core to the one in the database
-					if(d.get("core").toString().toUpperCase().equals(""+core[i].toString().toUpperCase())){
-						try {
-							solr = SolrServers.getSolrServer(core[i]);
-						} catch (IOException e) {
-							LOGGER.error("Error while getting the Solr core in alerts(), AlertsManager ", e);
-							throw e;
+			Date date = new Date();
+			try {													//Append the current d
+				if(bool){											//If alerts have already run
+					String content = readFile(filePath, StandardCharsets.UTF_8);
+					String[] lines = content.split(System.getProperty("line.separator"));
+					String linesBis = "";							//Reads the file line by line
+					for(int i = 0 ; i < lines.length ; i++){
+						if(lines[i].startsWith(frequency)){			//If it's the correct frequency line
+							linesBis += lines[i].substring(0, lines[i].indexOf("=")+1)+df.format(date).toString()+"\n";	//Replace the date by the current one
+						}else{
+							linesBis += lines[i]+"\n";				//Else just keeps the line
 						}
 					}
-				}//Creates an alert with the attributes of the element found in the database.
-				alert = new Alert(d.get("subject").toString(), d.get("mail").toString(), solr, d.get("keyword").toString(), d.get("frequency").toString(), mail, d.get("user").toString());
-				alert.run();													//Makes the request and send the mail if they are some results
+					FileOutputStream fooStream = new FileOutputStream(new File(filePath), false); 
+					byte[] myBytes = linesBis.getBytes();
+					fooStream.write(myBytes);						//rewrite the file
+					fooStream.close();
+				}else{												//Else just appends the frequency and the current date
+					FileOutputStream fooStream = new FileOutputStream(new File(filePath), true);
+					byte[] myBytes = (frequency+"="+df.format(date)+"\n").getBytes();
+					fooStream.write(myBytes);						//Append to the file
+					fooStream.close();
+				}
+			} catch (IOException e) {
+				LOGGER.error("Error while appending the moment of execution to the datafari.properties file in alerts(), AlertsManager. Error 69043 ", e);
+				return;
 			}
+			FindIterable<Document> cursor = coll1.find();							//Get all the elements in the collection
+			Core[] core = Core.values();
+			for (Document d : cursor) {												//Get the next Object in the collection
+				if(frequency.equals(d.get("frequency").toString())){	
+					SolrServer solr=null;
+					for(int i=0; i<core.length;i++){								//Get the right core by comparing all the return of the Enum Type Core to the one in the database
+						if(d.get("core").toString().toUpperCase().equals(""+core[i].toString().toUpperCase())){
+							try {
+								solr = SolrServers.getSolrServer(core[i]);
+							} catch (IOException e) {
+								LOGGER.error("Error while getting the Solr core in alerts(), AlertsManager. Error 69044 ", e);
+								return;
+							}
+						}
+					}//Creates an alert with the attributes of the element found in the database.
+					alert = new Alert(d.get("subject").toString(), d.get("mail").toString(), solr, d.get("keyword").toString(), d.get("frequency").toString(), mail, d.get("user").toString());
+					alert.run();													//Makes the request and send the mail if they are some results
+				}
+			}
+		}catch(Exception e){
+			LOGGER.error("Unindentified error while running  the "+frequency+" alerts in the AlertsManager alerts(). Error 69520", e);
+			return;
 		}
 	}
 	/**
@@ -342,7 +372,7 @@ public class AlertsManager {
 				this.startScheduled();											//Starts the scheduled task
 			}
 		} catch (ParseException e) {
-			LOGGER.error("Error while turning on the alerts during instantiation, StartAlertsListener", e);
+			LOGGER.error("Error while turning on the alerts during instantiation, AlertsManager turnOn(). Error 69045", e);
 		}
 	}
 	/**
@@ -367,12 +397,7 @@ public class AlertsManager {
 	static String readFile(String path, Charset encoding) 					//Read the file
 			throws IOException 
 	{
-		try{
-			byte[] encoded = Files.readAllBytes(Paths.get(path));
-			return new String(encoded, encoding);
-		}catch(IOException e){
-			LOGGER.error("Error while reading the datafari.properties file in readFile, alerts manager", e);
-			throw e;
-		}
+		byte[] encoded = Files.readAllBytes(Paths.get(path));
+		return new String(encoded, encoding);
 	}
 }
