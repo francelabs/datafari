@@ -6,14 +6,13 @@
 	type="text/javascript"></script>
 <script
 	src="./../plugins/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.js"></script>
-<script src="./i18nInit.js" type="text/javascript"></script>
+<script src="./../admin/i18nInit.js" type="text/javascript"></script>
 <script type="text/javascript" src="./../js/AjaxFranceLabs/i18njs.js"></script>
 <link href="./../css/style_v2.css" rel="stylesheet"></link>
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
 <body >
-	<script src="./i18nInit.js" type="text/javascript"></script>
 	<script type="text/javascript" src="./../js/AjaxFranceLabs/i18njs.js"></script>
 	<div class="row">
 		<div id="breadcrumb" class="col-xs-12">
@@ -74,12 +73,15 @@
 						<input type="text" id="Collection" name="Collection" class="col-sm-2"  style="min-width : 150px;"/>
 					</div>
 					</fieldset>
+					<div id="mailForm" class="form-group">
+					</div>
 					<div class="form-group"  id="divParam">
 					<div class="col-sm-3"></div>
 						<button type="button" class="btn btn-primary btn-label-left"
 							id="paramReg" onclick="javascript : parameters()">
 							<span><i class="fa fa-clock-o" id="paramRegtext"></i></span>
 						</button>
+						<label id="parameterSaved"></label>
 					</div>
 					<div class="form-group">
 					<div class="col-sm-3"></div>
@@ -130,6 +132,7 @@
 		document.getElementById("DatabaseLabel").innerHTML = window.i18n.msgStore['database'];
 		document.getElementById("CollectionLabel").innerHTML = window.i18n.msgStore['collection'];
 		document.getElementById("paramRegtext").innerHTML = window.i18n.msgStore['paramReg'];
+
 		//Creates date pickers et get current dates
 		$('#HourlyDelay').datetimepicker({
 			dateFormat : 'dd/mm/yy/ '
@@ -149,14 +152,15 @@
 		 });
 		});
 	function doGet() {
+		mailConfGet();
 		$.ajax({			//Ajax request to the doGet of the AlertsAdmin servlet
 			type : "GET",
 			url : "./../admin/alertsAdmin",
 			//if received a response from the server
 			success : function(data, textStatus, jqXHR) {
 				$("#prevNext").empty();
-				if(data.error.indexOf("Datafari.properties unreachable, please make sure the file exists")===0){
-					$("#errorPrint").append("<label>Datafari.properties unreachable, please make sure the file exists</label>");
+				if(data.toString().indexOf("Error code : ")!==-1){
+					$("#errorPrint").append("<label>"+data.toString()+"</label>");
 					document.getElementById("on/off").disabled = true;
 					document.getElementById("paramReg").disabled = true;
 				}else{
@@ -208,6 +212,7 @@
 		});
 	}
 	function parameters() {
+		mailConfPost();
 		var data = "hourlyDelay=" + document.getElementById("HourlyDelay").value 
 				+ "&dailyDelay=" + document.getElementById("DailyDelay").value 
 				+ "&weeklyDelay=" + document.getElementById("WeeklyDelay").value
@@ -224,8 +229,12 @@
 			data : data,
 			//if received a response from the server
 			success : function(data, textStatus, jqXHR) {
-				$("#parameterSaved").empty();
-				$("#divParam").append("<label id=\"parameterSaved\">"+window.i18n.msgStore["parameterSaved"]+"</label>");
+				if(data.toString().indexOf("Error code : ")!==-1){
+					$("#errorPrint").append("<label>"+data.toString()+"</label>");
+					document.getElementById("on/off").disabled = true;
+					document.getElementById("paramReg").disabled = true;
+				}
+				document.getElementById("parameterSaved").innerHTML = window.i18n.msgStore["parameterSaved"];
 				doGet();
 			},
 			error : function(jqXHR, textStatus, errorThrown) {
@@ -243,5 +252,54 @@
 				$('#add').attr("disabled", false);
 			}
 		});
+	}
+	function mailConfGet(){
+		if(document.getElementById("fieldForm")!==null){
+			$("#fieldForm").empty();
+		}
+		$.ajax({			//Ajax request to the doGet of the AlertsAdmin servlet
+			type : "GET",
+			url : "./../admin/MailConf",
+			//if received a response from the server
+			success : function(data, textStatus, jqXHR) {
+				if(data === "Insufficiant permission to print mail configuration" ){
+					$("#errorPrint").append("<label>"+data.toString()+"</label>");
+				}else {
+					if(data.toString().indexOf("Error code : ")!==-1){
+						$("#errorPrint").append("<label>"+data.toString()+"</label>");
+						document.getElementById("on/off").disabled = true;
+						document.getElementById("paramReg").disabled = true;
+					}else{
+						$("#mailForm").append("<fieldset id=\"fieldForm\" class=\"col-sm-12\">");
+						$("#fieldForm").append("<legend id=\"mailLegend\">"+window.i18n.msgStore["mailConf"]+"</legend><div class=\"form-group\"><label id=SMPTLabel class=\"col-sm-5 control-label\">SMTP : </label><input type=\"text\" class=\"col-sm-2\" id=\"SMTP\"  style=\"min-width : 150px;\" value="+"\""+data.smtp+"\""+"></div>");
+						$("#fieldForm").append("<div class=\"form-group\"><label id=AddressLabel class=\"col-sm-5 control-label\">"+window.i18n.msgStore["address"]+"</label><input type=\"text\" class=\"col-sm-2\" id=\"Address\" style=\"min-width : 150px;\"  value="+"\""+data.from+"\""+"></div>");
+						$("#fieldForm").append("<div class=\"form-group\"><label id=UserLabel class=\"col-sm-5 control-label\">"+window.i18n.msgStore["user"]+"</label><input type=\"text\" class=\"col-sm-2\" id=\"UserName\" style=\"min-width : 150px;\"  value="+"\""+data.user+"\""+"></div>");
+						$("#fieldForm").append("<div class=\"form-group\"><label id=PassLabel class=\"col-sm-5 control-label\">"+window.i18n.msgStore["pass"]+"</label><input type=\"text\" class=\"col-sm-2\" id=\"Pass\" style=\"min-width : 150px;\"  value="+"\""+data.pass+"\""+"></div>");
+						$("#mailForm").append("</fieldset>");
+					}
+				}
+			}
+		});
+	}
+	function mailConfPost(){
+		if(document.getElementById("fieldForm")!==null){
+			var data = "SMTP=" + document.getElementById("SMTP").value 
+			+ "&address=" + document.getElementById("Address").value 
+			+ "&user=" + document.getElementById("UserName").value
+			+ "&pass=" + document.getElementById("Pass").value
+			$.ajax({			//Ajax request to the doGet of the AlertsAdmin servlet
+				type : "POST",
+				url : "./../admin/MailConf",
+				data : data,
+				//if received a response from the server
+				success : function(data, textStatus, jqXHR) {
+					if(data.toString().indexOf("Error code : ")!==-1){
+						$("#errorPrint").append("<label>"+data.toString()+"</label>");
+						document.getElementById("on/off").disabled = true;
+						document.getElementById("paramReg").disabled = true;
+					}
+				}
+			});
+		}
 	}
 </script>

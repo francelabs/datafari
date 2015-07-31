@@ -77,13 +77,13 @@ public class Synonyms extends HttpServlet {
 		content="";
 		try {
 			if(new File(env+"/solr/solr_home/"+server+"/conf/list_language.txt").exists())
-					content = readFile(env+"/solr/solr_home/"+server+"/conf/list_language.txt", StandardCharsets.UTF_8);  //Read the various languages
+				content = readFile(env+"/solr/solr_home/"+server+"/conf/list_language.txt", StandardCharsets.UTF_8);  //Read the various languages
 			else{
 				content = "";
 				return;
 			}
 		} catch (IOException e1) {
-			LOGGER.error("Error while opening list_language.txt in Synonyms Servlet's Constructor", e1);
+			LOGGER.error("Error while opening list_language.txt in Synonyms Servlet's Constructor, please make sure the file exists and is located in "+env+"/solr/solr_home/"+server+"/conf/"+".. Error code : 69016", e1);
 		}	
 		String[] lines = content.split(System.getProperty("line.separator"));						//There is one language per line
 		for(int i=0;i<lines.length;i++){														//For each line
@@ -98,45 +98,59 @@ public class Synonyms extends HttpServlet {
 	 * If called to print it will return plain text
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if(content.equals("")){
-			PrintWriter out = response.getWriter();
-			out.append("Error while getting the list of the languages"); 	
-			out.close();
-		}
-		else if(request.getParameter("language")!=null){						//Print the content of the file
-			for(SemaphoreLn sem : listMutex){							//For all the semaphores
-				if (sem.getLanguage().equals(request.getParameter("language")) && sem.getType().equals("Syn")){ //if it has the good language and type(stopwords or Synonyms for now)
-					try{
-						if(sem.availablePermits()!=0){						//If it is available
-							try {
-								sem.acquire();								//Acquire it
-							} catch (InterruptedException e) {
-								LOGGER.error("Error while acquiring semaphore in Synonyms Servlet's doGet", e);
-								throw new RuntimeException();
+		try{
+			if(content.equals("")){
+				PrintWriter out = response.getWriter();
+				out.append("Error while opening the list of languages, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69016"); 	
+				out.close();
+				return;
+			}
+			else if(request.getParameter("language")!=null){						//Print the content of the file
+				for(SemaphoreLn sem : listMutex){							//For all the semaphores
+					System.out.println(sem.getType());
+					if (sem.getLanguage().equals(request.getParameter("language")) && sem.getType().equals("Syn")){ //if it has the good language and type(stopwords or Synonyms for now)
+						try{
+							if(sem.availablePermits()!=0){						//If it is available
+								try {
+									sem.acquire();								//Acquire it
+								} catch (InterruptedException e) {
+									LOGGER.error("Error while acquiring semaphore in Synonyms Servlet's doGet. Error 69017", e);
+									PrintWriter out = response.getWriter();
+									out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69017"); 	
+									out.close();
+									return;
+								}
+								String filename = "synonyms_"+request.getParameter("language").toString()+".txt";
+								response.setContentType("application/octet-stream"); 
+								String filepath = env+"/solr/solr_home/"+server+"/conf/";			
+								String synContent = readFile(filepath+filename, StandardCharsets.UTF_8);
+								//get the file and put its content into a string
+								response.setContentType("text/html");
+								PrintWriter out = response.getWriter();
+								out.append(synContent);							//returns the content of the file
+								out.close();
+								return;
+							}else{												//if not available
+								PrintWriter out = response.getWriter();
+								out.append("File already in use"); 	
+								out.close();
+								return;
 							}
-							String filename = "synonyms_"+request.getParameter("language").toString()+".txt";
-							response.setContentType("application/octet-stream"); 
-							String filepath = env+"/solr/solr_home/"+server+"/conf/";			//hardcoded path
-							String synContent = readFile(filepath+filename, StandardCharsets.UTF_8);
-							//get the file and put its content into a string
-							response.setContentType("text/html");
+						}catch(IOException e){
+							LOGGER.error("Error while reading the synonyms_"+request.getParameter("language")+".txt file in Synonyms servlet, please make sure the file exists and is located in "+env+"/solr/solr_home/"+server+"/conf/"+". Error 69018", e);
 							PrintWriter out = response.getWriter();
-							out.append(synContent);							//returns the content of the file
+							out.append("Error while reading the synonyms file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69018"); 	
 							out.close();
-						}else{												//if not available
-							PrintWriter out = response.getWriter();
-							out.append("File already in use"); 	
-							out.close();
+							return;
 						}
-					}catch(IOException e){
-						PrintWriter out = response.getWriter();
-						out.append("Error while reading the file"); 	
-						out.close();
-						LOGGER.error("Error while reading the synonyms_"+request.getParameter("language")+".txt file in Synonyms Servlet's doGet", e);
-						throw e;
 					}
 				}
 			}
+		}catch(Exception e){
+			PrintWriter out = response.getWriter();
+			out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69506");
+			out.close();
+			LOGGER.error("Unindentified error in Synonyms doGet. Error 69506", e);
 		}
 	}
 
@@ -147,44 +161,46 @@ public class Synonyms extends HttpServlet {
 	 * called by the confirm modification or if the user loads an other page, refreshes the page or switches language
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if (request.getParameter("content")==null){  					//the user load an other page  
-			for(SemaphoreLn sem : listMutex){  							//Get the correct semaphore and check if it was not already released
-				if (sem.getLanguage().equals(request.getParameter("language")) && sem.getType().equals("Syn") && sem.availablePermits()<1){
-					sem.release();										//Release the semaphore
-				} 
-			}
-		}else{															//The user clicked on confirm modification
-			File file ;
-			String filePath = env+"/solr/solr_home/"+server+"/conf/synonyms_"+request.getParameter("language")+".txt"; 			//hardcoded path
-			file = new File(filePath);
-			try{
-				FileOutputStream fooStream = new FileOutputStream(file, false); // true to append false to overwrite.
-				byte[] myBytes = request.getParameter("content").replaceAll("&gt;", ">").replaceAll("<div>|<br>|<br >", "\n").replaceAll("</div>|</lines>|&nbsp;", "").getBytes();
-				fooStream.write(myBytes);										//rewrite the file
-				fooStream.close();
-			}catch(IOException e){
-				PrintWriter out = response.getWriter();
-				out.append("Error while rewriting the file"); 	
-				out.close();
-				LOGGER.error("Error while rewriting the file synonyms_"+request.getParameter("language")+" Synonyms Servlet's doPost", e);
-				throw e;
-			}
-			for(SemaphoreLn sem : listMutex){ 								//Get the correct semaphore and check if it was not already released
-				if (sem.getLanguage().equals(request.getParameter("language")) && sem.getType().equals("Syn") && sem.availablePermits()<1){
-					sem.release();											//Release the semaphore
+		try{
+			if (request.getParameter("content")==null){  					//the user load an other page  
+				for(SemaphoreLn sem : listMutex){  							//Get the correct semaphore and check if it was not already released
+					if (sem.getLanguage().equals(request.getParameter("language")) && sem.getType().equals("Syn") && sem.availablePermits()<1){
+						sem.release();										//Release the semaphore
+					} 
+				}
+			}else{															//The user clicked on confirm modification
+				File file ;
+				String filePath = env+"/solr/solr_home/"+server+"/conf/synonyms_"+request.getParameter("language")+".txt"; 		
+				file = new File(filePath);
+				try{
+					FileOutputStream fooStream = new FileOutputStream(file, false); // true to append false to overwrite.
+					byte[] myBytes = request.getParameter("content").replaceAll("&gt;", ">").replaceAll("<div>|<br>|<br >", "\n").replaceAll("</div>|</lines>|&nbsp;", "").getBytes();
+					fooStream.write(myBytes);										//rewrite the file
+					fooStream.close();
+				}catch(IOException e){
+					LOGGER.error("Error while rewriting the file synonyms_"+request.getParameter("language")+" Synonyms Servlet's doPost. Error 69019", e);
+					PrintWriter out = response.getWriter();
+					out.append("Error while rewriting the synonyms file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69015"); 	
+					out.close();
+					return;
+				}
+				for(SemaphoreLn sem : listMutex){ 								//Get the correct semaphore and check if it was not already released
+					if (sem.getLanguage().equals(request.getParameter("language")) && sem.getType().equals("Syn") && sem.availablePermits()<1){
+						sem.release();											//Release the semaphore
+					}
 				}
 			}
+		}catch (Exception e){
+			PrintWriter out = response.getWriter();
+			out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69507");
+			out.close();
+			LOGGER.error("Unindentified error in Synonyms doPost. Error 69507", e);
 		}
 	}
 	static String readFile(String path, Charset encoding) 					//Read the file
 			throws IOException 
 	{
-		try{
 			byte[] encoded = Files.readAllBytes(Paths.get(path));
 			return new String(encoded, encoding);
-		}catch(IOException e){
-			LOGGER.error("Error while reading the datafari.properties file in readFile, Synonyms Servlet", e);
-			throw e;
-		}
 	}
 }

@@ -113,5 +113,14 @@
 "name" : "Nom",
 "type" : "Type",
 "indexField" : "Champs de l'index",
-"deduplication" : "Deduplication"         
+"schemaAnalysis" : "Analyse du schéma",
+"sizeLimitation" : "Limitation des tailles",
+"autocompleteConf" : "Configuration de l'autocompletion" ,
+"labelhl" : "Nombre maximum de caractères analysés par le surlignage",  
+"mailConf" : "Configuration du mail",
+"address" : "Address : ",
+"pass" : "Password : ",        
+"deduplication" : "Deduplication",
+"limitHL" : "Limitation de la taille des champs pour le surlignage"
+}         
 }

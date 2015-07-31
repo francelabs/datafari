@@ -67,53 +67,58 @@ public class Alert {
 	 * Send the mail
 	 */
 	public void run() {
-		ResourceBundle res = ResourceBundle.getBundle("com.francelabs.i18n.text");
-		SolrQuery query = new SolrQuery();
-		switch(this.frequency){											//The fq parameter depends of the frequency of the alerts
-		default :
-			query.setParam("fq", "last_modified:[NOW-1DAY TO NOW]");
-			break;
-		case "Hourly" :
-			query.setParam("fq", "last_modified:[NOW-1HOUR TO NOW]");
-			break;
-		case "Daily" :
-			query.setParam("fq", "last_modified:[NOW-1DAY TO NOW]");
-			break;
-		case "Weekly" :
-			query.setParam("fq", "last_modified:[NOW-7DAY TO NOW]");
-			break;
-		}
-		query.setParam("rows", "10");										//Sets the maximum number of results that will be sent in the email
-		query.setParam("q.op", "AND");												
-		query.setParam("q", keyword);										//Sets the q parameters according to the attribute
-		query.setParam("AuthenticatedUserName", user);
-		QueryResponse queryResponse;
 		try {
-			queryResponse = solr.query(query);
-		} catch (SolrServerException e) {
-			LOGGER.error("Error getting the results of the solr query in the Alert's run()", e);
-			throw new RuntimeException();
-		}		
-		String message = "";
-		SolrDocumentList list = queryResponse.getResults();					//Gets the results
-		if(list.getNumFound()!=0){											//If there are some results
-			message += list.getNumFound()+" "+res.getString("alertsMessage")+" : "+query.get("q"); //First sentence of the mail
-			if(Integer.parseInt(query.get("rows"))<list.size()){			//If there are more than 10 results(can be modified in the setParam("rows","X") line) only the first ten will be printed
-				for(int i=0; i<Integer.parseInt(query.get("rows")); i++){	//For the ten first results puts the title in the mail
-					message += "\n"+list.get(i).getFieldValue("title");
-					message += "\n"+list.get(i).getFieldValue("url");
-					message += "\n"+list.get(i).getFieldValue("last_modified")+"\n";
-				}
+			ResourceBundle res = ResourceBundle.getBundle("com.francelabs.i18n.text");
+			SolrQuery query = new SolrQuery();
+			switch(this.frequency){											//The fq parameter depends of the frequency of the alerts
+			default :
+				query.setParam("fq", "last_modified:[NOW-1DAY TO NOW]");
+				break;
+			case "Hourly" :
+				query.setParam("fq", "last_modified:[NOW-1HOUR TO NOW]");
+				break;
+			case "Daily" :
+				query.setParam("fq", "last_modified:[NOW-1DAY TO NOW]");
+				break;
+			case "Weekly" :
+				query.setParam("fq", "last_modified:[NOW-7DAY TO NOW]");
+				break;
 			}
-			else {
-				for(int i=0; i<list.size(); i++){							//Else puts the title of all the results
-					message += "\n"+list.get(i).getFieldValue("title");
-					message += "\n"+list.get(i).getFieldValue("url");
-					message += "\n"+list.get(i).getFieldValue("last_modified")+"\n";
+			query.setParam("rows", "10");										//Sets the maximum number of results that will be sent in the email
+			query.setParam("q.op", "AND");												
+			query.setParam("q", keyword);										//Sets the q parameters according to the attribute
+			query.setParam("AuthenticatedUserName", user);
+			QueryResponse queryResponse;
+			try {
+				queryResponse = solr.query(query);
+			} catch (SolrServerException | NullPointerException e) {
+				LOGGER.error("Error getting the results of the solr query in the Alert's run(), check the name of the core in the alert. Error 69046", e);
+				return;
+			}		
+			String message = "";
+			SolrDocumentList list = queryResponse.getResults();					//Gets the results
+			if(list.getNumFound()!=0){											//If there are some results
+				message += list.getNumFound()+" "+res.getString("alertsMessage")+" : "+query.get("q"); //First sentence of the mail
+				if(Integer.parseInt(query.get("rows"))<list.size()){			//If there are more than 10 results(can be modified in the setParam("rows","X") line) only the first ten will be printed
+					for(int i=0; i<Integer.parseInt(query.get("rows")); i++){	//For the ten first results puts the title in the mail
+						message += "\n"+list.get(i).getFieldValue("title");
+						message += "\n"+list.get(i).getFieldValue("url");
+						message += "\n"+list.get(i).getFieldValue("last_modified")+"\n";
+					}
 				}
+				else {
+					for(int i=0; i<list.size(); i++){							//Else puts the title of all the results
+						message += "\n"+list.get(i).getFieldValue("title");
+						message += "\n"+list.get(i).getFieldValue("url");
+						message += "\n"+list.get(i).getFieldValue("last_modified")+"\n";
+					}
+				}
+				//Sends the mail (the last parameter is "" because other destinations are not necessary but you can add a String)														
+				mail.sendMessage(subject, message, address, "");
 			}
-			//Sends the mail (the last parameter is "" because other destinations are not necessary but you can add a String)														
-			mail.sendMessage(subject, message, address, "");
+		}catch(Exception e){
+			LOGGER.error("Unindentified error in Alert's run(). Error 69521", e);
+			return;
 		}
 	}
 }

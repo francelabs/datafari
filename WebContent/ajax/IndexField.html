@@ -3,7 +3,7 @@
 <head>
 <script src="./../plugins/jquery/jquery.min.js" type="text/javascript"></script>
 <script src="./../plugins/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
-<script src="./i18nInit.js"></script>
+<script src="./../admin/i18nInit.js"></script>
 <link href="./../css/style_v2.css" rel="stylesheet"></link>
 <meta charset="UTF-8">
 <title>Insert title here</title>
@@ -66,8 +66,7 @@ function getFields(){										//Get the fields from the schema.xml
 	        success: function( data, textStatus, jqXHR) {	
 	        	
 	        	//If they're was an error print the error
-	        	if(data === "Error while opening the configuration files" || data === "Something bad happened, please retry, if the problem persists contact your system administrator"){
-	        		//print it and disable the selection
+	        	if(data.toString().indexOf("Error code : ")!==-1){
 	        		document.getElementById("globalAnswer").innerHTML = data;
 	        	}else{		//else add the options to the select
 	        		list = data;
