@@ -1282,7 +1282,7 @@
 
 
 	    <processor class="solr.processor.SignatureUpdateProcessorFactory">
-	      <bool name="enabled">true</bool>
+	      <bool name="enabled">${deduplication.factory.enabled:false}</bool>
 	      <str name="signatureField">signature</str>
 		  <bool name="overwriteDupes">false</bool>	
 	      <str name="fields">content,content_en,content_fr</str>
