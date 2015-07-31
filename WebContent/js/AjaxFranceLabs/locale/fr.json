@@ -121,6 +121,8 @@
 "address" : "Address : ",
 "pass" : "Password : ",        
 "deduplication" : "Deduplication",
-"limitHL" : "Limitation de la taille des champs pour le surlignage"
+"limitHL" : "Limitation de la taille des champs pour le surlignage",
+"autocompleteConf" : "Configuration de l'autocompletion",
+"labelth" : "Fraction",
+"limitTH" : "Pourcentage minimal de documents, où le terme doit apparaître"
 }         
-
