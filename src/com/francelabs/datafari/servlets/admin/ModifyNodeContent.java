@@ -35,6 +35,7 @@ import com.francelabs.datafari.solrj.SolrServers.Core;
 /**
  * This Servlet is used to print and modify the textContent of various nodes of the solrConfig.xml
  * It is called by SizeLimitations.html and by AutocompleteConfiguration.html
+ * You must give as a parameter "type" the content of the attribute "name" of the node you search
  * DoGet is used to get the value of the requested node cleans and creates the semaphores
  * DoPost is used to modify the value of the requested node
  * There is one semaphore by node requested since the start/restart of Datafari
@@ -185,10 +186,7 @@ public class ModifyNodeContent extends HttpServlet {
 			out.close();
 			LOGGER.error("Unindentified error in ModifyNodeContent doPost. Error 69515", e);
 		}
-
-
 	}
-
 	private Node run(NodeList child, String type){
 		for(int i = 0 ; i<child.getLength(); i ++){
 			String name = "";
