@@ -16,7 +16,6 @@
 package com.francelabs.datafari.servlets.admin;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -34,9 +33,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FileExistsException;
 import org.apache.log4j.Logger;
-import org.apache.solr.schema.ManagedIndexSchema.FieldExistsException;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -86,8 +83,8 @@ public class alertsAdmin extends HttpServlet {
 			try {
 				content = readFile(env, StandardCharsets.UTF_8);
 			} catch (NoSuchFileException e1) {
-				LOGGER.error("Error while reading the datafari.properties in the doGet of the alerts administration Servlet . Error 69020 ", e1);
-				out.append("Error while reading the datafari.properties, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69020");
+				LOGGER.error("Error while reading the datafari.properties file in the doGet of the alerts administration Servlet . Error 69020 ", e1);
+				out.append("Error while reading the datafari.properties file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69020");
 				out.close();
 				return;
 			}
@@ -133,7 +130,7 @@ public class alertsAdmin extends HttpServlet {
 						json.put("weekly", previous.toString(formatterbis));
 					}
 				}catch(JSONException | IllegalArgumentException e){
-					LOGGER.error("Error while creating the json in the doGet of the alerts administration servlets, make sure the fields are filled correctly and have the correct encoding(UTF_8). Error 69021", e);
+					LOGGER.error("Error while building the JSON answer in the doGet of the alerts administration servlets, make sure the fields are filled correctly and that datafari.properties have the correct encoding charset(UTF_8). Error 69021", e);
 					out.append("Error while getting the parameters, please retry, if the problem persists contact your system administrator. Error code : 69021");
 					out.close();
 					return;

@@ -111,7 +111,7 @@ public class FieldWeight extends HttpServlet {
 					semaphoreConfigQf.release();
 				return;
 			}
-			if( schema == null || config == null || !new File(env+"/solr/solr_home/"+server+"/conf/schema.xml").exists() || !new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml").exists()){//If the files did not existed when the constructor was runned
+			if( schema == null || config == null || !new File(env+"/solr/solr_home/"+server+"/conf/schema.xml").exists() || !new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml").exists()){//If the files did not existed when the constructor was run
 				//Checks if they exist now
 				if(!new File(env+"/solr/solr_home/"+server+"/conf/schema.xml").exists() || !new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml").exists()){
 					LOGGER.error("Error while opening the configuration files, solrconfig.xml and/or schema.xml, in FieldWeight doGet, please make sure those files exist at "+env+"/solr/solr_home/"+server+"/conf/ . Error 69025");		//If not an error is printed

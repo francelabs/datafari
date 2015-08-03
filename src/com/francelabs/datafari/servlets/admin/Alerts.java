@@ -88,7 +88,7 @@ public class Alerts extends HttpServlet {
 		try {
 			content = readFile(env, StandardCharsets.UTF_8); 
 		} catch (NoSuchFileException e1) {
-			LOGGER.error("Error while reading the datafari.properties in the Alerts Servlet's constructor Default values will be used. Error 69006", e1);
+			LOGGER.error("Error while reading the datafari.properties file in the Alerts Servlet's constructor Default values will be used. Error 69006", e1);
 		}
 		String[] lines = content.split(System.getProperty("line.separator"));	//read the file line by line
 		for(int i = 0 ; i < lines.length ; i++){				//for each line
