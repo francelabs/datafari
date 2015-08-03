@@ -61,7 +61,9 @@ public class MailConf extends HttpServlet {
 			} catch (NoSuchFileException e1) {
 				PrintWriter out = response.getWriter();				
 				LOGGER.error("Error while reading the mail.txt in the doGet of the MailConf Servlet. Error 69031 ", e1);
-				out.append("Error while reading the mail.txt, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69031");
+				if(request.isUserInRole("SearchAdministrator")){
+					out.append("Error while reading the mail.txt, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69031");
+				}
 				out.close();
 				return;
 			}

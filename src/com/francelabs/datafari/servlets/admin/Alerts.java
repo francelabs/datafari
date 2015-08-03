@@ -169,7 +169,7 @@ public class Alerts extends HttpServlet {
 				response.setStatus(200);
 				response.setContentType("text/json;charset=UTF-8");
 			} catch(MongoSocketOpenException | MongoTimeoutException e){
-				pw.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69010"); 	
+				pw.append("Error connecting to the database, please retry, if the problem persists contact your system administrator. Error code : 69010"); 	
 				pw.close();
 				LOGGER.error("Error connecting to the Mongo database in Alerts Servlet's doGet. Error 69010", e);
 				return;
