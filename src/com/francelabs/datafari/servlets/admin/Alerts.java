@@ -78,12 +78,8 @@ public class Alerts extends HttpServlet {
 		port = 27017;													//Default address/port of the database
 		database = "Datafari";											//Default name of the Database
 		collection = "Alerts";											//Default name of the collection
-		env = System.getenv("DATAFARI_HOME");							//Gets the directory of installation if in standard environment	
-		if(env==null){													//If in development environment
-			env = "/home/youp/workspaceTest/Servers/Datafari-config/datafari.properties";	//Hardcoded path
-		}else{
-			env = env+"/tomcat/conf/datafari.properties";
-		}
+		env = System.getProperty("catalina.home");		//Gets the installation directory if in standard environment 
+		env += "/datafari.properties";
 		content ="";
 		try {
 			content = readFile(env, StandardCharsets.UTF_8); 

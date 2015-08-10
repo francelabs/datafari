@@ -93,12 +93,10 @@ public class AlertsManager {
 	 */
 	public boolean getParameter() throws IOException, ParseException{
 		try{
+			
 			onOff=false;
-			filePath = System.getenv("DATAFARI_HOME");		//Gets the installation directory if in standard environment 
-			if(filePath==null)								//If development environment
-				filePath = "/home/youp/workspaceTest/Servers/Datafari-config/datafari.properties";	//hardcoded path
-			else
-				filePath += "/tomcat/conf/datafari.properties";	//completing the path 
+			filePath = System.getProperty("catalina.home");		//Gets the installation directory if in standard environment 
+			filePath += "/datafari.properties";	//completing the path 
 			String content;
 			String[] lines = new String[0];
 			try {

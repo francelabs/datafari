@@ -58,14 +58,8 @@ public class ScriptConfiguration {
 	 */
 	public static boolean setProperty(String key, String value) {
 			try {
-				String env = System.getenv("DATAFARI_HOME");		//Gets the directory of installation if in standard environment	
-				if(env==null){										//If in development environment
-					String path;
-				path = new File(".").getCanonicalPath();
-				env = path+"/workspace/datafari/tomcat/conf/"+configPropertiesFileName;	//Hardcoded path
-				}else{
-					env = env+"/tomcat/conf/"+configPropertiesFileName;
-				}
+				String env = System.getProperty("catalina.home");		//Gets the installation directory if in standard environment 
+				env += "/"+configPropertiesFileName ;
 				getInstance().properties.setProperty(key, value);
 				FileOutputStream fileOutputStream = new FileOutputStream(configPropertiesFileNameRealPath);
 				instance.properties.store(fileOutputStream, null);
@@ -102,10 +96,7 @@ public class ScriptConfiguration {
 	 * 
 	 */
 	private ScriptConfiguration() throws IOException {
-		BasicConfigurator.configure();
-		configPropertiesFileNameRealPath = System.getProperty("catalina.base") + File.separator + "conf" + File.separator + configPropertiesFileName;
-		File configFile = new File(configPropertiesFileNameRealPath);
-		//System.out.println(configPropertiesFileNameRealPath);
+		File configFile = new File(System.getProperty("catalina.home") + File.separator + "conf" + File.separator + configPropertiesFileName);
 		InputStream stream = new FileInputStream(configFile);
 		properties = new Properties();
 		try {

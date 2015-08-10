@@ -58,14 +58,11 @@ public class CorePropertiesConfiguration {
 	 */
 	public static boolean setProperty(String key, String value) {
 			try {
-				String env = System.getenv("DATAFARI_HOME");		//Gets the directory of installation if in standard environment	
-				if(env==null){										//If in development environment
-					String path;
-				path = new File(".").getCanonicalPath();
-				env = "/home/oliv/code/datafari/solr/solr_home/FileShare/"+configPropertiesFileName;	//Hardcoded path
-				}else{
-					env = env+"/solr/solr_home/FileShare/"+configPropertiesFileName;
+				String env = System.getenv("DATAFARI_HOME") + "/solr/solr_home";
+				if(env==null){
+					env = System.getProperty("solr.solr.home");
 				}
+				env += "/FileShare/"+configPropertiesFileName ;
 				getInstance().properties.setProperty(key, value);
 				FileOutputStream fileOutputStream = new FileOutputStream(configPropertiesFileNameRealPath);
 				instance.properties.store(fileOutputStream, null);
@@ -103,14 +100,12 @@ public class CorePropertiesConfiguration {
 	 */
 	private CorePropertiesConfiguration() throws IOException {
 		BasicConfigurator.configure();
-		String env = System.getenv("DATAFARI_HOME");		//Gets the directory of installation if in standard environment	
-		if(env==null){										//If in development environment
-			String path;
-		path = new File(".").getCanonicalPath();
-		env = "/home/oliv/code/datafari/solr/solr_home/FileShare/"+configPropertiesFileName;	//Hardcoded path
-		}else{
-			env = env+"/solr/solr_home/FileShare/"+configPropertiesFileName;
+		String env = System.getenv("DATAFARI_HOME")+"/solr/solr_home";
+		if(env==null){
+			env = System.getProperty("solr.solr.home");
 		}
+		env += "/FileShare/"+configPropertiesFileName ;
+		
 		configPropertiesFileNameRealPath = env;
 		File configFile = new File(configPropertiesFileNameRealPath);
 		//System.out.println(configPropertiesFileNameRealPath);
