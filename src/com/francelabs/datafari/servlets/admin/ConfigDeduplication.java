@@ -54,17 +54,17 @@ public class ConfigDeduplication extends HttpServlet {
 			if (id==1){
 				if (enable!=null){
 					if (enable.equals("true")){
-						error = ScriptConfiguration.setProperty("DEDUPLICATION_IS_ENABLED", "true");
+						error = CorePropertiesConfiguration.setProperty("DEDUPLICATION_IS_ENABLED", "true");
 					}
 					else
-						error = ScriptConfiguration.setProperty("DEDUPLICATION_IS_ENABLED", "false");
+						error = CorePropertiesConfiguration.setProperty("DEDUPLICATION_IS_ENABLED", "false");
 				}
 			}else if (id==2){
 				if (enable!=null){
 					if (enable.equals("true"))
-						error = ScriptConfiguration.setProperty("deduplication.factory.enabled", "true");
+						error = CorePropertiesConfiguration.setProperty("deduplication.factory.enabled", "true");
 					else
-						error = ScriptConfiguration.setProperty("deduplication.factory.enabled", "false");
+						error = CorePropertiesConfiguration.setProperty("deduplication.factory.enabled", "false");
 				}
 			}
 			try {
@@ -79,13 +79,13 @@ public class ConfigDeduplication extends HttpServlet {
 			}
 		}else if (request.getParameter("initiate")!=null){
 			String checked,checked_factory;
-			if (ScriptConfiguration.getProperty("DEDUPLICATION_IS_ENABLED")!=null && ScriptConfiguration.getProperty("DEDUPLICATION_IS_ENABLED").equals("true") ){
+			if (CorePropertiesConfiguration.getProperty("DEDUPLICATION_IS_ENABLED")!=null && CorePropertiesConfiguration.getProperty("DEDUPLICATION_IS_ENABLED").equals("true") ){
 				checked="checked";
 			 }else{
 				 checked="";
 			 }
 			
-			if (ScriptConfiguration.getProperty("deduplication.factory.enabled")!=null && ScriptConfiguration.getProperty("deduplication.factory.enabled").equals("true") ){
+			if (CorePropertiesConfiguration.getProperty("deduplication.factory.enabled")!=null && CorePropertiesConfiguration.getProperty("deduplication.factory.enabled").equals("true") ){
 				checked_factory="checked";
 			}else{
 				checked_factory="";
