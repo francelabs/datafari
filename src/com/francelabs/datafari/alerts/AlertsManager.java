@@ -96,7 +96,7 @@ public class AlertsManager {
 			
 			onOff=false;
 			filePath = System.getProperty("catalina.home");		//Gets the installation directory if in standard environment 
-			filePath += "/datafari.properties";	//completing the path 
+			filePath += "/conf/datafari.properties";	//completing the path 
 			String content;
 			String[] lines = new String[0];
 			try {
@@ -113,7 +113,7 @@ public class AlertsManager {
 					try{	
 						delayH = new DateTime(df.parse(lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1)));
 					}catch(ParseException e){
-						LOGGER.warn("Error parsing the Hourly Date, default value will be used, AlertsManage getParameter()r",e);
+						LOGGER.warn("Error parsing the Hourly Date, default value will be used, AlertsManager getParameter()",e);
 						delayH = new DateTime(df.parse("01/01/0001/00:00"));
 					}
 				}

@@ -79,7 +79,7 @@ public class Alerts extends HttpServlet {
 		database = "Datafari";											//Default name of the Database
 		collection = "Alerts";											//Default name of the collection
 		env = System.getProperty("catalina.home");		//Gets the installation directory if in standard environment 
-		env += "/datafari.properties";
+		env += "/conf/datafari.properties";
 		content ="";
 		try {
 			content = readFile(env, StandardCharsets.UTF_8); 

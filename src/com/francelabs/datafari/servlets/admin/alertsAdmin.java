@@ -72,7 +72,7 @@ public class alertsAdmin extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException  {
 		try{
 			env = System.getProperty("catalina.home");		//Gets the installation directory if in standard environment 
-			env += "/datafari.properties";
+			env += "/conf/datafari.properties";
 			String content ="";
 			PrintWriter out = response.getWriter();				
 			JSONObject json = new JSONObject();
