@@ -1,6 +1,49 @@
 $(function($) {
-    var location = window.history.location || window.location;
 
+	
+	Manager.addWidget(new AjaxFranceLabs.TableWidget({
+		elm : $('#facet_extension'),
+		id : 'facet_extension',
+		field : 'extension',
+		name : window.i18n.msgStore['facetextension'],
+		pagination : true,
+		selectionType : 'OR',
+		returnUnselectedFacetValues : true
+	}));
+
+	Manager.addWidget(new AjaxFranceLabs.TableWidget({
+		elm : $('#facet_language'),
+		id : 'facet_language',
+		field : 'language',
+		name : window.i18n.msgStore['facetlanguage'],
+		pagination : false,
+		selectionType : 'ONE',
+		returnUnselectedFacetValues : true
+	}));
+
+	Manager.addWidget(new AjaxFranceLabs.TableWidget({
+		elm : $('#facet_source'),
+		id : 'facet_source',
+		field : 'source',
+		name : window.i18n.msgStore['facetsource'],
+		pagination : false,
+		selectionType : 'ONE',
+		returnUnselectedFacetValues : true
+	}));
+	
+	Manager.addWidget(new AjaxFranceLabs.TableFacetQueriesWidget({
+		elm : $('#facet_last_modified'),
+		id : 'facet_last_modified',
+		field : 'last_modified',
+		name : window.i18n.msgStore['facetlast_modified'],
+		pagination : true,
+		selectionType : 'ONE',
+		queries : [ '[NOW-1MONTH TO NOW]',  '[NOW-1YEAR TO NOW]',  '[NOW-5YEARS TO NOW]'
+		],
+		labels : [ window.i18n.msgStore['facetlast_modified0'], window.i18n.msgStore['facetlast_modified1'], window.i18n.msgStore['facetlast_modified2']]
+	}));
+
+    var location = window.history.location || window.location;
 
 	Manager.addWidget(new AjaxFranceLabs.SearchBarWidget({
 		elm : $('#searchBar'),
@@ -13,57 +56,6 @@ $(function($) {
 		id : 'searchInformation'
 	}));
 
-	
-	
-	
-	Manager.addWidget(new AjaxFranceLabs.TableWidget({
-		elm : $('#facet_type'),
-		id : 'facet_type',
-		field : 'extension',
-		name : window.i18n.msgStore['type'],
-		pagination : true,
-		selectionType : 'OR',
-		returnUnselectedFacetValues : true
-	}));
-	
-	Manager.addWidget(new AjaxFranceLabs.TableWidget({
-		elm : $('#facet_source'),
-		id : 'facet_source',
-		field : 'source',
-		name : window.i18n.msgStore['source'],
-		pagination : true,
-		selectionType : 'OR',
-		returnUnselectedFacetValues : true
-	}));
-	
-	
-	
-
-	Manager.addWidget(new AjaxFranceLabs.TableFacetQueriesWidget({
-		elm : $('#facet_date'),
-		id : 'facet_date',
-		name : window.i18n.msgStore['lastModification'],
-		selectionType : 'ONE',
-		field : 'last_modified',
-		pagination : true,
-		queries : [ '[NOW-1MONTH TO NOW]', '[NOW-1YEAR TO NOW]',
-				'[NOW-5YEARS TO NOW]'
-
-		],
-		labels : [ window.i18n.msgStore['lessThanOneMonth'], window.i18n.msgStore['lessThanOneYear'], window.i18n.msgStore['lessThanFiveYears']]
-	}));
-	
-
-	Manager.addWidget(new AjaxFranceLabs.TableWidget({
-		elm : $('#facet_language'),
-		id : 'facet_language',
-		field : 'language',
-		name : window.i18n.msgStore['language'],
-		pagination : true,
-		selectionType : 'OR',
-		returnUnselectedFacetValues : true
-	}));
-	
 	Manager.addWidget(new AjaxFranceLabs.TableMobileWidget({
 		elm : $('#facet_type_mobile'),
 		id : 'facet_type_mobile',
@@ -85,7 +77,6 @@ $(function($) {
 		returnUnselectedFacetValues : true
 	}));
 
-	
 	Manager.addWidget(new AjaxFranceLabs.ResultWidget(
 					{
 						elm : $('#results'),
@@ -187,9 +178,6 @@ $(function($) {
 						}
 					}));
 
-	
-
-	
 	Manager.addWidget(new AjaxFranceLabs.PromolinkWidget({
 		elm : $('#promolink'),
 		id : 'promolink'

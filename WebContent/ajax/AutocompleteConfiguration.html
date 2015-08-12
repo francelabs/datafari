@@ -35,7 +35,7 @@
 					
 					<div>
 						<label id="labelth" class="col-sm-5 control-label"></label>
-						<input type="number" min="0"id="maxth" name="maxth" class="col-sm-1">
+						<input type="number" step="0.001" min="0" max="1" id="maxth" name="maxth" class="col-sm-1">
 						<div class="col-sm-1"></div>
 						<button id="submitth" name="submitth" class="btn btn-primary btn-label-left  col-sm-2"></button>
 					</div><br/>
@@ -94,7 +94,7 @@ function get(type){
 	$.ajax({			//Ajax request to the doGet of the ModifyNodeContent servlet
         type: "GET",
         url: "./../admin/ModifyNodeContent",
-        data : "type="+type,
+        data : "type="+type+"&attr=name",
         //if received a response from the server
         success: function( data, textStatus, jqXHR) {	
         	//If the semaphore was already acquired
@@ -120,29 +120,33 @@ function get(type){
 function set(type){
 	var typ = type.substring(0,2);
 	var value = document.getElementById("max"+typ).value;
-	$.ajax({			//Ajax request to the doGet of the ModifyNodeContent servlet to modify the solrconfig file
-        type: "POST",
-        url: "./../admin/ModifyNodeContent",
-        data : "type="+type+"&value="+value,
-        //if received a response from the server
-        success: function( data, textStatus, jqXHR) {	
-        	//If the semaphore was already acquired
-        	if(data === "File already in use"){
-        		//Print it and disable the input and submit
-        		document.getElementById("answer"+typ).innerHTML = window.i18n.msgStore['usedFile'];
-        		$('#submit'+typ).attr("disabled", true);
-        		$('#max'+typ).attr("disabled", true);
-        	}//If they're was an error
-        	else if(data.toString().indexOf("Error code : ")!==-1){
-        		//print it and disable the input and submit
-        		document.getElementById("globalAnswer").innerHTML = data;
-        		$('#submit'+typ).attr("disabled", true);
-        		$('#max'+typ).attr("disabled", true);
-        	}else{		//else add the options to the select
-        		document.getElementById("answer"+typ).innerHTML = window.i18n.msgStore['modifDone']
-        	}
-        }
- 	});
+	if(value<=1 && value>=0){
+		$.ajax({			//Ajax request to the doGet of the ModifyNodeContent servlet to modify the solrconfig file
+        	type: "POST",
+        	url: "./../admin/ModifyNodeContent",
+        	data : "type="+type+"&value="+value+"&attr=name",
+        	//if received a response from the server
+        	success: function( data, textStatus, jqXHR) {	
+        		//If the semaphore was already acquired
+        		if(data === "File already in use"){
+        			//Print it and disable the input and submit
+       		 		document.getElementById("answer"+typ).innerHTML = window.i18n.msgStore['usedFile'];
+       		 		$('#submit'+typ).attr("disabled", true);
+    	    		$('#max'+typ).attr("disabled", true);
+    	    	}//If they're was an error
+    	    	else if(data.toString().indexOf("Error code : ")!==-1){
+    	    		//print it and disable the input and submit
+    	    		document.getElementById("globalAnswer").innerHTML = data;
+    	    		$('#submit'+typ).attr("disabled", true);
+    	    		$('#max'+typ).attr("disabled", true);
+    	    	}else{		//else add the options to the select
+    	    		document.getElementById("answer"+typ).innerHTML = window.i18n.msgStore['modifDone'];
+    	    	}
+    	    }
+ 		});
+	}else{
+		document.getElementById("answer"+typ).innerHTML = window.i18n.msgStore['inputMust'];
+	}
 }
 function cleanSem(type){
 	$.ajax({			//Ajax request to the doGet of the ModifyNodeContent servlet to release the semaphore

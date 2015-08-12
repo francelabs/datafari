@@ -116,11 +116,12 @@ public class ModifyNodeContent extends HttpServlet {
 					listMutex.add(new SemaphoreLn("", type));
 					listMutex.get(listMutex.size()-1).acquire();
 				}
+				String attr = request.getParameter("attr");
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 				doc = dBuilder.parse(config);							//Parse the solrconfig.xml
 				NodeList childNodes = doc.getChildNodes();
-				Element elem = (Element) run(childNodes, type, "name");	//Search for the requested node
+				Element elem = (Element) run(childNodes, type, attr);	//Search for the requested node
 				PrintWriter out = response.getWriter();
 				out.append(elem.getTextContent()); 						//Return it's content
 				out.close();
@@ -147,13 +148,14 @@ public class ModifyNodeContent extends HttpServlet {
 		try{
 			String type = request.getParameter("type");
 			String value = request.getParameter("value");
+			String attr = request.getParameter("attr");
 			Element elem;
 			try {
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 				doc = dBuilder.parse(config);							//Parse the solrconfig.xml
 				NodeList childNodes = doc.getChildNodes();
-				elem = (Element) run(childNodes, type, "name");					//Get the requested Node
+				elem = (Element) run(childNodes, type, attr);			//Get the requested Node
 			}catch (ParserConfigurationException | SAXException e) {
 				LOGGER.error("Error while parsing the solrconfig.xml, in ModifyNodeContent doPost, make sure the file is valid. Error 69035", e);
 				PrintWriter out = response.getWriter();

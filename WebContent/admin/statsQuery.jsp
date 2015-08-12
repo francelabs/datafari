@@ -11,7 +11,7 @@
 		<link rel="icon" type="image/png" href="images/bullet.png">
 		<link rel="stylesheet" type="text/css" href="../css/main.css" media="screen" />
 		<link rel="stylesheet" type="text/css" href="../css/admin.css" media="screen" />
-<link rel="stylesheet" type="text/css" href="../css/results.css" />
+<link rel="stylesheet" type="text/css" href="../css/style_v2.css" />
 <link rel="stylesheet" type="text/css" href="../css/checkbox.css" />
 <link rel="stylesheet" type="text/css" href="../css/flexigrid.pack.css" />
 	    <script type="text/javascript" src="../js/jquery-1.8.1.min.js"></script>
@@ -55,20 +55,20 @@
 	<script type="text/javascript"
 		src="../js/AjaxFranceLabs/widgets/TableFacetQueriesWidget.js"></script>
 	<script type="text/javascript"
-		src="../js/AjaxFranceLabs/widgets/Capsule.widget.js"></script>
+		src="../js/AjaxFranceLabs/widgets/Promolink.widget.js"></script>
 	<script type="text/javascript"
 		src="../js/AjaxFranceLabs/widgets/Spellchecker.widget.js"></script>
 	<script type="text/javascript" src="../js/statsQuery.js"></script>
 	<script type="text/javascript" src="../js/flexigrid.pack.js"></script>
 	<script type="text/javascript" src="../js/menu.js"></script>
 
-	<jsp:include page="../header.jsp" />
-	<jsp:include page="menu.jsp" />
+<%-- 	<jsp:include page="../header.jsp" /> --%>
+<%-- 	<jsp:include page="menu.jsp" /> --%>
 	<div id="solr">
 		<div id="result_information"></div>
 		<div id="results"></div>			
 		<div class="clear"></div>
 		</div>
-	<jsp:include page="../footer.jsp" />
+<%-- 	<jsp:include page="../footer.jsp" /> --%>
 </body>
 </html>

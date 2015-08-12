@@ -156,7 +156,6 @@ function getFields(){										//Get the fields from the schema.xml
 	        		$('#selectqf').attr("disabled", true);
 	        	}else{		//else add the options to the select
 	        		list = data;
-	        		//add a table to print all the info
 	        		for(var i = 0 ; i < data.field.length ; i++){
 	        			$("#selectpf").append("<OPTION>"+data.field[i].name+"</OPTION>");
 	        			$("#selectqf").append("<OPTION>"+data.field[i].name+"</OPTION>");

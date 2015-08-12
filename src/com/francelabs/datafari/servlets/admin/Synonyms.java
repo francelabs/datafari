@@ -107,7 +107,6 @@ public class Synonyms extends HttpServlet {
 			}
 			else if(request.getParameter("language")!=null){						//Print the content of the file
 				for(SemaphoreLn sem : listMutex){							//For all the semaphores
-					System.out.println(sem.getType());
 					if (sem.getLanguage().equals(request.getParameter("language")) && sem.getType().equals("Syn")){ //if it has the good language and type(stopwords or Synonyms for now)
 						try{
 							if(sem.availablePermits()!=0){						//If it is available

@@ -102,7 +102,7 @@
 	<jsp:include page="header.jsp" /> 
 	<div id="facets_mobile" style="">
 		<div id="nav_mobile" class="bc-color">
-		<!-- Faut mettre un truc dynamique par rapport à la langue -->
+		<!-- Faut mettre un truc dynamique par rapport ï¿½ la langue -->
 			<a href="#previous_mobile"><i class="fa fa-chevron-left"></i> </a>
 		</div>
 		<div id="facet_source_mobile"></div>
@@ -118,8 +118,8 @@
 
 		<div class="col left">
 			<div id="facets">
-				<div id="facet_date"></div>
-				<div id="facet_type"></div>
+				<div id="facet_last_modified"></div>
+				<div id="facet_extension"></div>
 				<div id="facet_source"></div>
 				<div id="facet_language"></div>
 				<div id="facet_signature"></div>
@@ -137,4 +137,3 @@
 
 </body>
 </html>
-

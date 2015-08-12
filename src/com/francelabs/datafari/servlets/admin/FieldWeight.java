@@ -51,7 +51,7 @@ import com.francelabs.datafari.solrj.SolrServers.Core;
 /**Javadoc
  * 
  * This servlet is used to see the various fields or modify the weight of those fields of a Solr core
- * It is only called by the FieldWeight.html.
+ * It is called by the FieldWeight.html, IndexField.html and FacetConfig.
  * doGet is used to get the fields and the informations about the fields, also used to clean the semaphore
  * doPost is used to modify the weight of a field
  * The semaphores (one for each type of query) are created in the constructor.
@@ -61,8 +61,8 @@ import com.francelabs.datafari.solrj.SolrServers.Core;
 public class FieldWeight extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private String server = Core.FILESHARE.toString();
-	private SemaphoreLn semaphoreConfigPf = new SemaphoreLn("", "pf");
-	private SemaphoreLn semaphoreConfigQf = new SemaphoreLn("", "qf");
+	private SemaphoreLn semaphoreConfigPf;
+	private SemaphoreLn semaphoreConfigQf;
 	private String env;
 	private NodeList childList;
 	private Document doc;
