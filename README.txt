@@ -35,6 +35,9 @@ You can find video tutorials on how to install and start Datafari from the insta
 - Windows : https://www.youtube.com/watch?v=BB95WFtL7n4
 
 If you want to use the jcifs connector in ManifoldCF, download  jcifs-1.3.xx.jar from http://jcifs.samba.org/src/ to DATAFARI_SOURCE_DIR\mcf\mcf_home\connector-lib-proprietary
+Then edit the file Datafari/mcf/mcf_home/connectors.xml and uncomment the line :
+ <!--repositoryconnector name="Windows shares" class="org.apache.manifoldcf.crawler.connectors.sharedrive.SharedDriveConnector"/-->
+ And restart Datafari
 
 You have to configure your Repository connector and job to add documents to Datafari.
 You can find a video tutorial on how to index local file share here :
