@@ -105,13 +105,13 @@ public class Favorite {
 			Document myDoc = coll.find(doc).first();
 			if (myDoc!=null){
 				ArrayList<Object> favoritesListDB = (ArrayList<Object>) myDoc.get(StringsUser.FAVORITECOLUMN);
-				ArrayList<String> favoritesList = new ArrayList<String>();
-				for (int i=0 ; i<favoritesListDB.size(); i++){
-					favoritesList.add(((Document)favoritesListDB.get(i)).get(StringsUser.DOCUMENTIDCOLUMN).toString());
+				if (favoritesListDB != null){
+					ArrayList<String> favoritesList = new ArrayList<String>();
+					for (int i=0 ; i<favoritesListDB.size(); i++){
+						favoritesList.add(((Document)favoritesListDB.get(i)).get(StringsUser.DOCUMENTIDCOLUMN).toString());
+					}
+					return favoritesList;
 				}
-				return favoritesList;
-			}else{
-				return null;
 			}
 		}
 		return null;

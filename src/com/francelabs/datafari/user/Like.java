@@ -110,13 +110,15 @@ public class Like {
 			Document myDoc = coll.find(doc).first();
 			if (myDoc!=null){
 				ArrayList<Document> likesListDB = (ArrayList<Document>) myDoc.get(StringsUser.LIKESCOLUMN);
-				ArrayList<String> likesList = new ArrayList<String>();
-				for (int i=0 ; i<likesListDB.size(); i++){
-					//constructing the likesList
-					Document tmp =((Document)likesListDB.get(i));
-					likesList.add(tmp.get(StringsUser.DOCUMENTIDCOLUMN).toString());
+				if (likesListDB != null){
+					ArrayList<String> likesList = new ArrayList<String>();
+					for (int i=0 ; i<likesListDB.size(); i++){
+						//constructing the likesList
+						Document tmp =((Document)likesListDB.get(i));
+						likesList.add(tmp.get(StringsUser.DOCUMENTIDCOLUMN).toString());
+					}
+					return likesList;
 				}
-				return likesList;
 			}
 		}
 		return null;
