@@ -79,16 +79,16 @@ public class ModifyNodeContent extends HttpServlet {
 			String type = request.getParameter("type");
 			try {
 				if(request.getParameter("sem") != null){									//If it's called just to clean the semaphore
-					for ( int i = 0 ; i < listMutex.size() ; i++){
+					for ( int i = 0 ; i < listMutex.size() ; i++){							//Get the one corresponding to the parameter "type" and checks if it has not already been released
 						if(listMutex.get(i).getType().equals(type) && listMutex.get(i).availablePermits()<1){
-							listMutex.get(i).release();
+							listMutex.get(i).release();												
 							return;
 						}
 					}
 					return;
 				}
-				if( config == null || !new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml").exists()){//If the files did not existed when the constructor was runned
-					//Checks if they exist now
+				if( config == null || !new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml").exists()){//If the file did not existed when the constructor was run
+					//Checks if it exists now
 					if(!new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml").exists()){
 						LOGGER.error("Error while opening the configuration file, solrconfig.xml, in ModifyNodeContent doGet, please make sure this file exists at "+env+"/solr/solr_home/"+server+"/conf/ . Error 69033");		//If not an error is printed
 						PrintWriter out = response.getWriter();
@@ -99,11 +99,11 @@ public class ModifyNodeContent extends HttpServlet {
 						config = new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml");
 				}
 				boolean mutex = false;
-				for (int i = 0 ; i < listMutex.size() ; i++) {
+				for (int i = 0 ; i < listMutex.size() ; i++) {			//If the right semaphore exists and is available, acquire it.
 					if (listMutex.get(i).getType().equals(type)){
 						if(listMutex.get(i).availablePermits()>0){
 							listMutex.get(i).acquire();
-						}else{
+						}else{											//If not available return "File already in use"
 							PrintWriter out = response.getWriter();
 							out.append("File already in use"); 	
 							out.close();
@@ -112,17 +112,18 @@ public class ModifyNodeContent extends HttpServlet {
 						mutex = true;
 					}
 				}
-				if(!mutex){
+				if(!mutex){												//If not existing then create it and acquire it
 					listMutex.add(new SemaphoreLn("", type));
 					listMutex.get(listMutex.size()-1).acquire();
 				}
+				String attr = request.getParameter("attr");
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-				doc = dBuilder.parse(config);
+				doc = dBuilder.parse(config);							//Parse the solrconfig.xml
 				NodeList childNodes = doc.getChildNodes();
-				Element elem = (Element) run(childNodes, type);
+				Element elem = (Element) run(childNodes, type, attr);	//Search for the requested node
 				PrintWriter out = response.getWriter();
-				out.append(elem.getTextContent()); 	
+				out.append(elem.getTextContent()); 						//Return it's content
 				out.close();
 			} catch ( ParserConfigurationException | SAXException e) {
 				LOGGER.error("Error while parsing the solrconfig.xml, in ModifyNodeContent doGet, make sure the file is valid. Error 69034", e);
@@ -147,13 +148,14 @@ public class ModifyNodeContent extends HttpServlet {
 		try{
 			String type = request.getParameter("type");
 			String value = request.getParameter("value");
+			String attr = request.getParameter("attr");
 			Element elem;
 			try {
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-				doc = dBuilder.parse(config);
+				doc = dBuilder.parse(config);							//Parse the solrconfig.xml
 				NodeList childNodes = doc.getChildNodes();
-				elem = (Element) run(childNodes, type);
+				elem = (Element) run(childNodes, type, attr);			//Get the requested Node
 			}catch (ParserConfigurationException | SAXException e) {
 				LOGGER.error("Error while parsing the solrconfig.xml, in ModifyNodeContent doPost, make sure the file is valid. Error 69035", e);
 				PrintWriter out = response.getWriter();
@@ -162,14 +164,14 @@ public class ModifyNodeContent extends HttpServlet {
 				return;
 			}
 			try {
-				elem.setTextContent(value);
+				elem.setTextContent(value);								//Set the value of the node
 				TransformerFactory transformerFactory = TransformerFactory.newInstance();
 				Transformer transformer;
 				transformer = transformerFactory.newTransformer();
 				DOMSource source = new DOMSource(doc);
 				StreamResult result = new StreamResult(config);
-				transformer.transform(source, result);
-				for(int i = 0 ; i < listMutex.size() ; i++){
+				transformer.transform(source, result);					//Modify the file
+				for(int i = 0 ; i < listMutex.size() ; i++){			//Release the semaphore
 					if(listMutex.get(i).getType().equals(type) && listMutex.get(i).availablePermits()<1)
 						listMutex.get(i).release();
 				}
@@ -187,21 +189,21 @@ public class ModifyNodeContent extends HttpServlet {
 			LOGGER.error("Unindentified error in ModifyNodeContent doPost. Error 69515", e);
 		}
 	}
-	private Node run(NodeList child, String type){
+	private Node run(NodeList child, String type, String attr){		//Function to search for a node by it's attribute "name" in a childList and 
 		for(int i = 0 ; i<child.getLength(); i ++){
 			String name = "";
 			if(child.item(i).hasAttributes()){
 				NamedNodeMap map = child.item(i).getAttributes();
 				for(int j = 0 ; j < map.getLength() ; j++){
-					if (map.item(j).getNodeName().equals("name"))
+					if (map.item(j).getNodeName().equals(attr))
 						name = map.item(j).getNodeValue();
 				}
 				if(name.equals(type))
 					return child.item(i);
 			}
 			if(child.item(i).hasChildNodes())
-				if(run(child.item(i).getChildNodes(), type)!=null)
-					return run(child.item(i).getChildNodes(), type);
+				if(run(child.item(i).getChildNodes(), type, attr)!=null)
+					return run(child.item(i).getChildNodes(), type, attr);
 		}
 		return null;
 	}

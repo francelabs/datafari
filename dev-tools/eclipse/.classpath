@@ -31,5 +31,6 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/solr-solrj-4.8.1.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/wstx-asl-3.2.7.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/zookeeper-3.4.6.jar"/>
+	<classpathentry kind="lib" path="solr/solr_home/lib/tika-core-1.5.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

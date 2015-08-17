@@ -74,7 +74,7 @@
        "content_type": From the HTTP headers of incoming stream
        "resourcename": From SolrCell request param resource.name
    -->
-  <field name="keyword" type="string" indexed="true" stored="true" multiValued="false"/>
+  <field name="keyword" type="capsuleType" indexed="true" stored="true" multiValued="false"/>
   <field name="title" type="string" indexed="true" stored="true" multiValued="true"/>
   <field name="content" type="text_en" indexed="true" stored="true" multiValued="true"/>
   <field name="dateBeginning" type="tdate" indexed="true" stored="true" multiValued="true"/>
@@ -169,6 +169,15 @@
 			<analyzer>
 				<tokenizer class="solr.KeywordTokenizerFactory" />
 				<filter class="solr.LowerCaseFilterFactory" />
+			</analyzer>
+	</fieldType>
+	
+	<fieldType name="capsuleType" class="solr.TextField"
+			positionIncrementGap="100">
+			<analyzer>
+				<tokenizer class="solr.WhitespaceTokenizerFactory"/>
+				<filter class="solr.LowerCaseFilterFactory" />
+				<filter class="solr.ASCIIFoldingFilterFactory"/>
 			</analyzer>
 	</fieldType>
   

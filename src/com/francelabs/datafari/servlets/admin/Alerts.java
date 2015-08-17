@@ -78,17 +78,13 @@ public class Alerts extends HttpServlet {
 		port = 27017;													//Default address/port of the database
 		database = "Datafari";											//Default name of the Database
 		collection = "Alerts";											//Default name of the collection
-		env = System.getenv("DATAFARI_HOME");							//Gets the directory of installation if in standard environment	
-		if(env==null){													//If in development environment
-			env = "/home/youp/workspaceTest/Servers/Datafari-config/datafari.properties";	//Hardcoded path
-		}else{
-			env = env+"/tomcat/conf/datafari.properties";
-		}
+		env = System.getProperty("catalina.home");		//Gets the installation directory if in standard environment 
+		env += "/conf/datafari.properties";
 		content ="";
 		try {
 			content = readFile(env, StandardCharsets.UTF_8); 
 		} catch (NoSuchFileException e1) {
-			LOGGER.error("Error while reading the datafari.properties in the Alerts Servlet's constructor Default values will be used. Error 69006", e1);
+			LOGGER.error("Error while reading the datafari.properties file in the Alerts Servlet's constructor Default values will be used. Error 69006", e1);
 		}
 		String[] lines = content.split(System.getProperty("line.separator"));	//read the file line by line
 		for(int i = 0 ; i < lines.length ; i++){				//for each line

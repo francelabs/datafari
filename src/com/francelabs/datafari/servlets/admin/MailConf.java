@@ -1,9 +1,7 @@
 package com.francelabs.datafari.servlets.admin;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.management.ManagementFactory;
@@ -26,7 +24,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Servlet implementation class MailConf
+ * This Servlet is used to print and modify mail.txt file
+ * It is called by alertsAdmin.html
+ * DoGet is used to get the value of the fields
+ * DoPost is used to modify the value of the fields
+ * @author Alexis Karassev
  */
 @WebServlet("/admin/MailConf")
 public class MailConf extends HttpServlet {
@@ -37,6 +39,7 @@ public class MailConf extends HttpServlet {
 			.getName());       
 	/**
 	 * @see HttpServlet#HttpServlet()
+	 * Gets the path
 	 */
 	public MailConf() {
 		env = System.getenv("DATAFARI_HOME");									//Gets the directory of installation if in standard environment
@@ -52,11 +55,14 @@ public class MailConf extends HttpServlet {
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+ 	 * Checks if the required file exist
+ 	 * Checks if it's the administrator that went on alertsAdmin.html
+ 	 * Read the file and return the values after the "="
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try{
 			content="";
-			try {
+			try {																		//Read the file if it exists
 				content = readFile(env+"/bin/common/mail.txt", StandardCharsets.UTF_8);
 			} catch (NoSuchFileException e1) {
 				PrintWriter out = response.getWriter();				
@@ -68,8 +74,8 @@ public class MailConf extends HttpServlet {
 				return;
 			}
 			try{
-				if(request.isUserInRole("SearchAdministrator")){
-					JSONObject json = new JSONObject();
+				if(request.isUserInRole("SearchAdministrator")){							//If the user is an Admin
+					JSONObject json = new JSONObject();										//Put in a JSON all the values
 					String[] lines = content.split(System.getProperty("line.separator"));
 					for(int i=0; i<lines.length ; i++){
 						if(lines[i].startsWith("smtp"))										//Get the host
@@ -81,10 +87,10 @@ public class MailConf extends HttpServlet {
 						else if(lines[i].startsWith("pass"))								//Get the password
 							json.put("pass", lines[i].substring(lines[i].indexOf("=")+1,lines[i].length()).trim());
 					}
-					response.getWriter().write(json.toString());
+					response.getWriter().write(json.toString());							//Send the answer
 					response.setStatus(200);
 					response.setContentType("text/json;charset=UTF-8");
-				}else{
+				}else{																		//Else send insufficiant permission
 					PrintWriter out = response.getWriter();
 					out.append("Insufficiant permission to print mail configuration"); 	
 					out.close();
@@ -107,19 +113,20 @@ public class MailConf extends HttpServlet {
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * Modify the values according to the parameters
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try{
-			String[] lines = content.split(System.getProperty("line.separator"));
+			String[] lines = content.split(System.getProperty("line.separator"));	//Get the content
 			String linesBis = "";
 			for(int i=0; i<lines.length ; i++){
-				if(lines[i].startsWith("smtp"))										//Get the host
+				if(lines[i].startsWith("smtp"))										//Set the host
 					linesBis += lines[i].substring(0 ,lines[i].indexOf("=")+1)+request.getParameter("SMTP").trim()+"\n";
-				else if(lines[i].startsWith("from"))								//Get the address			
+				else if(lines[i].startsWith("from"))								//Set the address			
 					linesBis += lines[i].substring(0 ,lines[i].indexOf("=")+1)+request.getParameter("address").trim()+"\n";
-				else if(lines[i].startsWith("user"))								//Get the user name
+				else if(lines[i].startsWith("user"))								//Set the user name
 					linesBis += lines[i].substring(0 ,lines[i].indexOf("=")+1)+request.getParameter("user").trim()+"\n";
-				else if(lines[i].startsWith("pass"))								//Get the password
+				else if(lines[i].startsWith("pass"))								//Set the password
 					linesBis += lines[i].substring(0 ,lines[i].indexOf("=")+1)+request.getParameter("pass").trim()+"\n";
 				else
 					linesBis += lines[i]+"\n";

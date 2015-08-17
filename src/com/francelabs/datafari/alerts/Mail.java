@@ -83,7 +83,7 @@ public class Mail {
 				}
 				inputStream.close();
 			}catch (IOException | IndexOutOfBoundsException e){
-				LOGGER.error("Error while reading the mail configuration in the Mail constructor. Error 69047", e);
+				LOGGER.error("Error while reading the mail configuration in the Mail constructor. Error 69045", e);
 				return;
 			}
 		}catch(Exception e){
@@ -133,7 +133,7 @@ public class Mail {
 				tr.sendMessage(message,message.getAllRecipients());				//Send the message
 				tr.close();
 			}catch(MessagingException e){	
-				LOGGER.error("Error while sending the mail. Error 69048 ", e);
+				LOGGER.error("Error while sending the mail. Error 69046", e);
 				return;
 			}
 

@@ -1,7 +1,8 @@
 $(function($) {
-    var location = window.history.location || window.location;
 
-    Manager.addWidget(new AjaxFranceLabs.TableWidget({
+
+	
+	Manager.addWidget(new AjaxFranceLabs.TableWidget({
 		elm : $('#facet_extension'),
 		id : 'facet_extension',
 		field : 'extension',
@@ -56,27 +57,6 @@ $(function($) {
 		id : 'searchInformation'
 	}));
 	
-	Manager.addWidget(new AjaxFranceLabs.TableMobileWidget({
-		elm : $('#facet_type_mobile'),
-		id : 'facet_type_mobile',
-		field : 'extension',
-		name : window.i18n.msgStore['type'],
-		pagination : true,
-		selectionType : 'OR',
-		returnUnselectedFacetValues : true
-	}));
-
-	Manager.addWidget(new AjaxFranceLabs.TableMobileWidget({
-		elm : $('#facet_source_mobile'),
-		id : 'facet_source_mobile',
-		field : 'source',
-		name : window.i18n.msgStore['source'],
-		pagination : true,
-		selectionType : 'OR',
-		sort : 'ZtoA',
-		returnUnselectedFacetValues : true
-	}));
-
 	if (window.isLikesAndFavoritesEnabled)
 		Manager.addWidget(new AjaxFranceLabs.LikesAndFavoritesWidget());
 	else
@@ -88,7 +68,8 @@ $(function($) {
 		firstTimeWaypoint : true,
 		isMobile : $(window).width()<800,
 		mutex_locked:false,
-		}));/*new AjaxFranceLabs.ResultWidget(
+		}));
+		/*new AjaxFranceLabs.ResultWidget(
 					{
 						elm : $('#results'),
 						id : 'documents',
@@ -194,8 +175,7 @@ $(function($) {
 	 		
 	/*
 
-	
-	Manager.addWidget(new AjaxFranceLabs.PromolinkWidget({
+		Manager.addWidget(new AjaxFranceLabs.PromolinkWidget({
 		elm : $('#promolink'),
 		id : 'promolink'
 	}));

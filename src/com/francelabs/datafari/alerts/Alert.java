@@ -24,9 +24,7 @@ package com.francelabs.datafari.alerts;
  */
 import java.util.ResourceBundle;
 
-import javax.mail.MessagingException;
 
-import org.apache.commons.logging.impl.Log4JLogger;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
@@ -92,7 +90,7 @@ public class Alert {
 			try {
 				queryResponse = solr.query(query);
 			} catch (SolrServerException | NullPointerException e) {
-				LOGGER.error("Error getting the results of the solr query in the Alert's run(), check the name of the core in the alert. Error 69046", e);
+				LOGGER.error("Error getting the results of the solr query in the Alert's run(), check the name of the core in the alert with the followind attributes, keyword : "+this.keyword+", frequency : "+this.frequency+", user : "+this.user+". Error 69044", e);
 				return;
 			}		
 			String message = "";

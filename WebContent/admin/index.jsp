@@ -66,6 +66,7 @@
 					</div>
 					<div class="col-xs-4 col-sm-8 top-panel-right">
 <!-- 						<a href="#" class="about">about</a> -->
+
 					<!-- 	<ul class="nav navbar-nav pull-right panel-menu" style="display:none"><!-- when user management will be available those shall be too 
 							<li class="hidden-xs">
 								<a href="index.html" class="modal-link">
@@ -85,15 +86,20 @@
 									<span class="badge">7</span>
 								</a>
 							</li> -->
+
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle account" data-toggle="dropdown">
 									<div class="avatar">
 <!-- 										<img src="img/avatar.jpg" class="img-circle" alt="avatar" /> -->
 									</div>
+
 									<!-- <i class="fa fa-angle-down pull-right"></i> -->
+
 									<div class="user-mini pull-right">
 										<span class="welcome">Welcome,</span>
+
 									<span><% out.print(request.getUserPrincipal().getName());%></span>
+
 									</div>
 								</a>
 <!-- 								<ul class="dropdown-menu"> -->
@@ -134,8 +140,10 @@
 <!-- 										</a> -->
 <!-- 									</li> -->
 <!-- 								</ul> -->
+
 <!-- 							</li> -->
 <!-- 						</ul> -->
+
 					</div>
 				</div>
 			</div>
@@ -216,6 +224,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						<li id="FieldWeight"><a class="ajax-link" href="../ajax/FieldWeight.html"><%= resourceBundle.getString("fieldWeight")%></a></li>
 						<li id="FacetConfig"><a class="ajax-link" href="../ajax/FacetConfig.html"><%= resourceBundle.getString("facetConfig")%></a></li>
 						<li id="Deduplication"><a class="ajax-link" href="../ajax/config_deduplication.html"><%= resourceBundle.getString("deduplication")%></a></li>
+
 						<li id="LikesAndFavorites"><a class="ajax-link" href="../ajax/config_likesAndFavorites.html"><%= resourceBundle.getString("likesAndFavorites")%></a></li>
 <!-- 						<li><a class="ajax-link" href="../ajax/ui_jquery-ui.html">Query based boosts</a></li> -->
 <!-- 						<li><a class="ajax-link" href="../ajax/ui_icons.html">Document based boosts</a></li> -->

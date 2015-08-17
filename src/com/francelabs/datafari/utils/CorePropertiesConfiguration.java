@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-
 package com.francelabs.datafari.utils;
 
 import java.io.BufferedReader;
@@ -37,17 +36,17 @@ import com.francelabs.datafari.statistics.StatsPusher;
  * @author France Labs
  * 
  */
-public class ScriptConfiguration {
+public class CorePropertiesConfiguration {
 
 	
-	public static String configPropertiesFileName = "datafari.properties";
+	public static String configPropertiesFileName = "core.properties";
 	
 	public static String configPropertiesFileNameRealPath;
 
-	private static ScriptConfiguration instance;
+	private static CorePropertiesConfiguration instance;
 	private Properties properties;
 
-	private final static Logger LOGGER = Logger.getLogger(ScriptConfiguration.class
+	private final static Logger LOGGER = Logger.getLogger(CorePropertiesConfiguration.class
 			.getName());
 
 
@@ -59,8 +58,11 @@ public class ScriptConfiguration {
 	 */
 	public static boolean setProperty(String key, String value) {
 			try {
-				String env = System.getProperty("catalina.home");		//Gets the installation directory if in standard environment 
-				env += "/"+configPropertiesFileName ;
+				String env = System.getenv("DATAFARI_HOME") + "/solr/solr_home";
+				if(env==null){
+					env = System.getProperty("solr.solr.home");
+				}
+				env += "/FileShare/"+configPropertiesFileName ;
 				getInstance().properties.setProperty(key, value);
 				FileOutputStream fileOutputStream = new FileOutputStream(configPropertiesFileNameRealPath);
 				instance.properties.store(fileOutputStream, null);
@@ -84,9 +86,9 @@ public class ScriptConfiguration {
 	 * Get the instance
 	 * 
 	 */
-	private static ScriptConfiguration getInstance() throws IOException {
+	private static CorePropertiesConfiguration getInstance() throws IOException {
 		if (null == instance) {
-			instance = new ScriptConfiguration();
+			instance = new CorePropertiesConfiguration();
 		}
 		return instance;
 	}
@@ -96,8 +98,17 @@ public class ScriptConfiguration {
 	 * Read the properties file to get the parameters to create  instance
 	 * 
 	 */
-	private ScriptConfiguration() throws IOException {
-		File configFile = new File(System.getProperty("catalina.home") + File.separator + "conf" + File.separator + configPropertiesFileName);
+	private CorePropertiesConfiguration() throws IOException {
+		BasicConfigurator.configure();
+		String env = System.getenv("DATAFARI_HOME")+"/solr/solr_home";
+		if(env==null){
+			env = System.getProperty("solr.solr.home");
+		}
+		env += "/FileShare/"+configPropertiesFileName ;
+		
+		configPropertiesFileNameRealPath = env;
+		File configFile = new File(configPropertiesFileNameRealPath);
+		//System.out.println(configPropertiesFileNameRealPath);
 		InputStream stream = new FileInputStream(configFile);
 		properties = new Properties();
 		try {

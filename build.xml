@@ -23,6 +23,10 @@
 		<fileset dir="${tomcat.dir}/lib/">
 			<include name="*.jar" />
 		</fileset>
+		<fileset dir="${project.dir}/solr/solr_home/lib/">
+					<include name="tika-core-*.jar" />
+				</fileset>
+		
 	</path>
 
 	<target name="clean">

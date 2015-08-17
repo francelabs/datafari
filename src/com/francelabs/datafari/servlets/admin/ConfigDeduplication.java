@@ -60,9 +60,11 @@ public class ConfigDeduplication extends HttpServlet {
 					else
 						error = ScriptConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION, "false");
 				}
+				
 			}else if (id==2){
 				if (enable!=null){
 					if (enable.equals("true"))
+
 						error = ScriptConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY, "true");
 					else
 						error = ScriptConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY, "false");

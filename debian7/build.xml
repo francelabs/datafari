@@ -111,6 +111,10 @@
 					<copy todir="${debian.dist.dir}/bin/common">
 						<fileset file="${bin.dir}/dist/DatafariScripts.jar" />
 					</copy>
+		
+					<copy todir="${debian.dist.dir}/bin/common">
+								<fileset file="${bin.dir}/common/mail.txt" />
+							</copy>
 	</target>
 
 

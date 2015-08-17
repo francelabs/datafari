@@ -113,7 +113,7 @@ public class AlertsManager {
 					try{	
 						delayH = new DateTime(df.parse(lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1)));
 					}catch(ParseException e){
-						LOGGER.warn("Error parsing the Hourly Date, default value will be used, AlertsManage getParameter()",e);
+						LOGGER.warn("Error parsing the Hourly Date, default value will be used, AlertsManager getParameter()",e);
 						delayH = new DateTime(df.parse("01/01/0001/00:00"));
 					}
 				}

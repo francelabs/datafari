@@ -51,7 +51,7 @@ import com.francelabs.datafari.solrj.SolrServers.Core;
 /**Javadoc
  * 
  * This servlet is used to see the various fields or modify the weight of those fields of a Solr core
- * It is only called by the FieldWeight.html.
+ * It is called by the FieldWeight.html, IndexField.html and FacetConfig.
  * doGet is used to get the fields and the informations about the fields, also used to clean the semaphore
  * doPost is used to modify the weight of a field
  * The semaphores (one for each type of query) are created in the constructor.
@@ -61,8 +61,8 @@ import com.francelabs.datafari.solrj.SolrServers.Core;
 public class FieldWeight extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private String server = Core.FILESHARE.toString();
-	private SemaphoreLn semaphoreConfigPf = new SemaphoreLn("", "pf");
-	private SemaphoreLn semaphoreConfigQf = new SemaphoreLn("", "qf");
+	private SemaphoreLn semaphoreConfigPf;
+	private SemaphoreLn semaphoreConfigQf;
 	private String env;
 	private NodeList childList;
 	private Document doc;
@@ -111,7 +111,7 @@ public class FieldWeight extends HttpServlet {
 					semaphoreConfigQf.release();
 				return;
 			}
-			if( schema == null || config == null || !new File(env+"/solr/solr_home/"+server+"/conf/schema.xml").exists() || !new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml").exists()){//If the files did not existed when the constructor was runned
+			if( schema == null || config == null || !new File(env+"/solr/solr_home/"+server+"/conf/schema.xml").exists() || !new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml").exists()){//If the files did not existed when the constructor was run
 				//Checks if they exist now
 				if(!new File(env+"/solr/solr_home/"+server+"/conf/schema.xml").exists() || !new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml").exists()){
 					LOGGER.error("Error while opening the configuration files, solrconfig.xml and/or schema.xml, in FieldWeight doGet, please make sure those files exist at "+env+"/solr/solr_home/"+server+"/conf/ . Error 69025");		//If not an error is printed

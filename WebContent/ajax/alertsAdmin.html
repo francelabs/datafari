@@ -152,6 +152,7 @@
 		 });
 		});
 	function doGet() {
+		$("#errorPrint").empty();
 		mailConfGet();
 		$.ajax({			//Ajax request to the doGet of the AlertsAdmin servlet
 			type : "GET",
