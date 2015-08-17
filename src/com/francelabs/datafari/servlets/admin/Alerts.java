@@ -164,7 +164,7 @@ public class Alerts extends HttpServlet {
 				pw.write(superJson.toString());								//Send the JSON back to the HTML page
 				response.setStatus(200);
 				response.setContentType("text/json;charset=UTF-8");
-			} catch(MongoSocketOpenException | MongoTimeoutException e){
+			} catch(MongoException e){
 				pw.append("Error connecting to the database, please retry, if the problem persists contact your system administrator. Error code : 69010"); 	
 				pw.close();
 				LOGGER.error("Error connecting to the Mongo database in Alerts Servlet's doGet. Error 69010", e);
@@ -179,7 +179,7 @@ public class Alerts extends HttpServlet {
 	} 
 
 	private Object put(Document db, boolean admin) throws JSONException {
-		JSONObject json = new JSONObject();					//Creates a json object
+		JSONObject json = new JSONObject();			//Creates a json object
 		json.put("_id", db.get("_id"));				//gets the id
 		json.put("keyword",db.get("keyword"));		//gets the keyword
 		json.put("subject",db.get("subject"));		//gets the subject
@@ -187,7 +187,7 @@ public class Alerts extends HttpServlet {
 		json.put("frequency",db.get("frequency"));	//gets the frequency
 		json.put("mail",db.get("mail"));			//gets the mail
 		if(admin){
-			json.put("user",db.get("user"));			//gets the user
+			json.put("user",db.get("user"));		//gets the user
 		}
 		return json;
 
@@ -220,7 +220,7 @@ public class Alerts extends HttpServlet {
 					coll1.insertOne(obj);												//insert the object composed of all the parameters
 				}
 				//If this is an edit the two parts (Delete and Add) will be executed successively
-			} catch(MongoSocketOpenException | MongoTimeoutException e){
+			} catch(MongoException e){
 				pw.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69011"); 	
 				pw.close();
 				LOGGER.error("Error connecting to the Mongo database in Alerts Servlet's doPost. Error 69011", e);

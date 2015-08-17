@@ -71,6 +71,9 @@ line-height: 50px;
   border-bottom:1px solid #242424;
   z-index: 2000;
 }
+.bar-loader {
+	background-image: url(../images/loader-000000-circle.gif)
+}
 .body-expanded .navbar {
   z-index: 9;
 }
@@ -84,6 +87,7 @@ a.show-sidebar {
   -o-transition: 0.2s;
   transition: 0.2s;
 }
+
 a.show-sidebar:hover {
   color:#A8A8A8;
 }

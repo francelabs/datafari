@@ -33,7 +33,7 @@
 	<div id="anotherSection">
 		<fieldset>
 			<legend id="contextMenu"></legend>
-			<div id="ajaxResponse" class="form-group" role="form" ></div>
+			<div id="ajaxResponse" class="form-group" role="form" style="min-height : 50px;"></div>
 		</fieldset>
 	</div>
 	<div id="addAlerts">
@@ -67,19 +67,21 @@ function getTab(){
         url: "./../admin/Alerts",
         data: dataString,
     	beforeSend: function(jqXHR, settings){
-        	//disable the button until we get the response
+    		$("#ajaxResponse").append("<center><div class=\"bar-loader\" style=\"display : block; height : 32px; width : 32px;\"></div></center>");
         	$('#newAlerts').attr("disabled", true);
     	},
         //if received a response from the server
         success: function( data, textStatus, jqXHR) {
         	$('#newAlerts').attr("disabled", false);
         	if(data.toString().indexOf("Error code : ")!==-1){
+        		$("#ajaxResponse").empty();
         		$("#ajaxResponse").append("<div class=col-xs-3></div>");
 				$("#ajaxResponse").append("<h3 class=col-xs-6>"+data+"</h3>");
 				$("#ajaxResponse").append("<div class=col-xs-3></div>");
 				$('#newAlerts').attr("disabled", true);
         	} 
         	else if(data.alerts!=undefined){
+        		$("#ajaxResponse").empty();
         		//get the data in a global var so it can be used in edit() or remove() 
         		d=data;
         		var numb = data.alerts.length;
