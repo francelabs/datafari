@@ -103,12 +103,16 @@ public class Favorite {
 		BasicDBObject doc = new BasicDBObject(StringsUser.USERNAMECOLUMN, username);
 		if (getInstance().coll!=null){
 			Document myDoc = coll.find(doc).first();
-			ArrayList<Object> favoritesListDB = (ArrayList<Object>) myDoc.get(StringsUser.FAVORITECOLUMN);
-			ArrayList<String> favoritesList = new ArrayList<String>();
-			for (int i=0 ; i<favoritesListDB.size(); i++){
-				favoritesList.add(((Document)favoritesListDB.get(i)).get(StringsUser.DOCUMENTIDCOLUMN).toString());
+			if (myDoc!=null){
+				ArrayList<Object> favoritesListDB = (ArrayList<Object>) myDoc.get(StringsUser.FAVORITECOLUMN);
+				ArrayList<String> favoritesList = new ArrayList<String>();
+				for (int i=0 ; i<favoritesListDB.size(); i++){
+					favoritesList.add(((Document)favoritesListDB.get(i)).get(StringsUser.DOCUMENTIDCOLUMN).toString());
+				}
+				return favoritesList;
+			}else{
+				return null;
 			}
-			return favoritesList;
 		}
 		return null;
 	}

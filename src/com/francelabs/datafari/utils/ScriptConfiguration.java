@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-
 package com.francelabs.datafari.utils;
 
 import java.io.BufferedReader;
@@ -61,6 +60,7 @@ public class ScriptConfiguration {
 			try {
 				String env = System.getProperty("catalina.home");		//Gets the installation directory if in standard environment 
 				env += "/"+configPropertiesFileName ;
+				LOGGER.info(env);
 				getInstance().properties.setProperty(key, value);
 				FileOutputStream fileOutputStream = new FileOutputStream(configPropertiesFileNameRealPath);
 				instance.properties.store(fileOutputStream, null);
@@ -97,7 +97,8 @@ public class ScriptConfiguration {
 	 * 
 	 */
 	private ScriptConfiguration() throws IOException {
-		File configFile = new File(System.getProperty("catalina.home") + File.separator + "conf" + File.separator + configPropertiesFileName);
+		configPropertiesFileNameRealPath  = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + configPropertiesFileName;
+		File configFile = new File(configPropertiesFileNameRealPath);
 		InputStream stream = new FileInputStream(configFile);
 		properties = new Properties();
 		try {
