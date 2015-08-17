@@ -171,8 +171,10 @@ $(document).ready(function() {
 	//If the user click on a link
 	$("a").click(function(e){
 		if(e.target.className==="ajax-link" || e.target.className==="ajax-link active-parent active"){
-			if(document.getElementById("fileAlready").innerHTML===""){
-				cleanSem();
+			if(document.getElementById("fileAlready")!==null){
+				if(document.getElementById("fileAlready").innerHTML===""){
+					cleanSem();
+				}
 			}
 		}
 	});
@@ -206,9 +208,6 @@ $(document).ready(function() {
 	document.getElementById("query1Legend").innerHTML = window.i18n.msgStore['queryNumber']+"1 :";
 	document.getElementById("query1LabelLegendEn").innerHTML = window.i18n.msgStore['queryLabel']+" (en) :";
 	document.getElementById("query1LabelLegendFr").innerHTML = window.i18n.msgStore['queryLabel']+" (fr) :";
-	document.getElementById("query2Legend").innerHTML = window.i18n.msgStore['queryNumber']+"2 :";
-	document.getElementById("query2LabelLegendEn").innerHTML = window.i18n.msgStore['queryLabel']+" (en) :";
-	document.getElementById("query2LabelLegendFr").innerHTML = window.i18n.msgStore['queryLabel']+" (fr) :";
 	document.getElementById("addqueryLegend").innerHTML = window.i18n.msgStore['addQuerySlot']+" :";
 	//Custom behaviour for buttons
 	$("#addsubmit").click(function(e){
