@@ -5,4 +5,4 @@
 #Examples: 
 #i-pod, i pod => ipod, 
 #sea biscuit, sea biscit => seabiscuit 
-Internet<BR>Web
+Internet => Web

@@ -53,16 +53,16 @@ import com.francelabs.datafari.solrj.SolrServers.Core;
  * @author Alexis Karassev
  *
  */
-@WebServlet("/admin/Admin")
-public class Admin extends HttpServlet {
+@WebServlet("/admin/PromoLink")
+public class PromoLink extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private SolrInputDocument doc;
-	private final static Logger LOGGER = Logger.getLogger(Admin.class
+	private final static Logger LOGGER = Logger.getLogger(PromoLink.class
 			.getName());
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public Admin() {
+	public PromoLink() {
 		super();
 	}
 	/**

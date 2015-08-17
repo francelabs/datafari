@@ -51,8 +51,7 @@
 				<label class="control-label" id="selectTypeLegend"></label>
 				<input type="checkbox" id="selectType">
 				</div>
-				
-			</div>
+				</div>
 			<div class="form-group">
 				<div class="col-sm-4">
 				<label class="control-label" id="frNameLegend"></label>
@@ -122,20 +121,6 @@
 						<input type="text" id="query1LabelFr" >
 					</div>
 				</div>
-				<div class="form-group">
-					<div class="col-sm-4">
-						<label class="control-label" id="query2Legend"></label>
-						<input type="text" id="query2" >
-					</div>
-					<div class="col-sm-4">
-						<label class="control-label" id="query2LabelLegendEn"></label>
-						<input type="text" id="query2LabelEn" >
-					</div>
-					<div class="col-sm-4">
-						<label class="control-label" id="query2LabelLegendFr"></label>
-						<input type="text" id="query2LabelFr" >
-					</div>
-				</div>
 			</div>
 			<div class="form-group">
 				<div class="col-sm-4">
@@ -174,7 +159,7 @@
 </body>
 <script>
 var list;
-var i = 2;
+var i = 1;
 var dragSrcEl = null;
 $(document).ready(function() {
 	//Get the table with the facets
@@ -346,22 +331,28 @@ function createSimpleFacet(){
         		document.getElementById("addselect").value="";
         		document.getElementById("enName").value="";
         		document.getElementById("frName").value="";
+        		document.getElementById("frName").value="";
+        		document.getElementById("pagination").checked=false;
+        		document.getElementById("selectType").checked=false;
         	}
         }
 	});
 }
 function createQueryFacet(){
+	//Get basic parameters
 	var datastring = "field="+document.getElementById("addqueryselect").value+"&pagination="+document.getElementById("queryPagination").checked+"&selectType="+document.getElementById("querySelectType").checked;
 	datastring = datastring+"&enName="+document.getElementById("queryEnName").value+"&frName="+document.getElementById("queryFrName").value;
 	var allElements = document.getElementsByTagName("*");
 	var patt = /^query[0-9]*\b/;
 	var pattbis = /^query[0-9]*Label[A-Za-z]{2}\b/; 
+	//for each query slot and queryLabel slot
 	for(var i = 0 ; i < allElements.length ; i ++){
 		if(patt.test(allElements[i].id) || pattbis.test(allElements[i].id)){
+			//Get the value
 			datastring = datastring +"&"+allElements[i].id+"="+allElements[i].value
 		}
 	}
-	$.ajax({			//Ajax request to the doGet of the FieldWeight servlet
+	$.ajax({			//Ajax request to the doPost of the FacetConfig servlet
         type: "POST",
         url: "./../admin/FacetConfig",
         data: datastring,  
@@ -374,7 +365,14 @@ function createQueryFacet(){
         		$('#addsubmit').attr("disabled", true);
         		$('#addqueryselect').attr("disabled", true);
         		$('#queryaddsubmit').attr("disabled", true);
+        	}else if(data.toString()==="Not enough queries"){
+        		document.getElementById("globalAnswer").innerHTML += "\n"+data.toString();
+        		$('#queryaddsubmit').attr("disabled", true);
+        		document.getElementById("addqueryselect").value="";
+        		document.getElementById("enName").value="";
+        		document.getElementById("frName").value="";
         	}else{
+        		//Update the table, empty the input fields
         		getExistingFacets();
         		$('#queryaddsubmit').attr("disabled", true);
         		document.getElementById("addqueryselect").value="";
@@ -385,11 +383,13 @@ function createQueryFacet(){
         				allElements[i].value="";
         			}
         		}
+        		document.getElementById("queryPagination").checked=false;
+        		document.getElementById("querySelectType").checked=false;
         	}
         }
 	});
 }
-
+//Add a query field and the fields for the i18n
 function addQuerySlot(){
 	i++;
 	$("#queries").append("<div class=\"form-group\" id="+i+">");
@@ -401,28 +401,29 @@ function addQuerySlot(){
 	document.getElementById("query"+i+"LabelLegendEn").innerHTML = window.i18n.msgStore['queryLabel']+" (en) :";
 	document.getElementById("query"+i+"LabelLegendFr").innerHTML = window.i18n.msgStore['queryLabel']+" (fr) :";
 }
+//Remove a facet
 function remove(i){
-	$.ajax({			//Ajax request to the doGet of the FieldWeight servlet
+	$.ajax({			//Ajax request to the doPost of the FacetConfig servlet
         type: "POST",
         url: "./../admin/FacetConfig",
         data : "divName="+list.facet[i].div,
         //if received a response from the server
         success: function( data, textStatus, jqXHR) {
         	if(data.toString().indexOf("Error code : ")!==-1){
+        		//print it and disable the selection
         		document.getElementById("globalAnswer").innerHTML = data.toString();
         		$('#addselect').attr("disabled", true);
         		$('#addsubmit').attr("disabled", true);
         		$('#addqueryselect').attr("disabled", true);
         		$('#queryaddsubmit').attr("disabled", true);
         	}else{
-        		//Suppress the row of the tab that was show the now removed alert
-        		var row = document.getElementById("id"+i);
-            	row.parentNode.parentNode.removeChild(row.parentNode);
-            	getFields();
+				//Get the new List of facet	
+        		getExistingFacets();
         	}        
         }
 	});
 }
+//managing drag and drop to modify the order of the facets
 function allowDrop(ev) {
     ev.preventDefault();
 }
@@ -440,7 +441,9 @@ function drop(ev) {
        	ev.target.parentNode.innerHTML = ev.dataTransfer.getData('text/html');       
     }
 }
+//modify the order of the divs in the jsp
 function switchOrder(){
+	//Get the current order
 	var data="";
 	var newOrder = document.getElementById("tbody").childNodes;
 	for(var i = 0 ; i < newOrder.length ; i++){
@@ -448,13 +451,14 @@ function switchOrder(){
 			data+="&";
 		data += i+"="+newOrder[i].cells[1].innerText;
 	}
-	$.ajax({			//Ajax request to the doGet of the FieldWeight servlet
+	$.ajax({			//Ajax request to the doPost of the FacetConfig servlet
         type: "POST",
         url: "./../admin/FacetConfig",
         data : data,
         //if received a response from the server
         success: function( data, textStatus, jqXHR) {
         	if(data.toString().indexOf("Error code : ")!==-1){
+        		//print it and disable the selection
         		document.getElementById("globalAnswer").innerHTML += "\n"+data.toString();
         		$('#addselect').attr("disabled", true);
         		$('#addsubmit').attr("disabled", true);
@@ -466,8 +470,9 @@ function switchOrder(){
         }
 	});
 }
+//Clean the semaphore
 function cleanSem(){
-	$.ajax({			//Ajax request to the doGet of the FieldWeight servlet
+	$.ajax({			//Ajax request to the doGet of the FacetConfig servlet
         type: "GET",
         url: "./../admin/FacetConfig",
         data : "sem=sem",
@@ -477,7 +482,6 @@ function cleanSem(){
         	if(data.toString().indexOf("Error code : ")!==-1){
         		//print it and disable the selection
         		document.getElementById("globalAnswer").innerHTML += "\n"+data.toString();
-        		$('#changeOrder').attr("disabled", true);
         	}
         }
 	});

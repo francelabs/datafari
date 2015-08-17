@@ -75,7 +75,7 @@ function getTab(){
    
     $.ajax({							//Ajax request to the doGet of the Admin servlet
         type: "GET",
-        url: "./../admin/Admin",
+        url: "./../admin/PromoLink",
         data: dataString,
         //if received a response from the server
         success: function( data, textStatus, jqXHR) {
@@ -182,7 +182,7 @@ function verifAdd(){	//Used to check if ther's already a promoLink with the spec
 	 formData = $("#add").serialize();
 	 $.ajax({							//Ajax Request to the doGet of Admin to check if there is already a promoLink with this keyword
 	        type: "GET",
-	        url: "./../admin/Admin",
+	        url: "./../admin/PromoLink",
 	        data: formData,
 	        //if received a response from the server
 	        success: function(data, textStatus, jqXHR) {
@@ -262,7 +262,7 @@ function add(){
 	 	if(isGreater(dateTwo, dateOne)){
 	 		$.ajax({							//Ajax request to the doPost of Admin to add the promoLink
 	       		type: "POST",
-	        	url: "./../admin/Admin",
+	        	url: "./../admin/PromoLink",
 	       	 	data: data,
 	        	//if received a response from the server
 	        	success: function(data, textStatus, jqXHR) {
@@ -312,7 +312,7 @@ function add(){
 	 else{
 		$.ajax({							//Ajax request to the doPost of Admin to add the promoLink
 		 	type: "POST",
-	     	url: "./../admin/Admin",
+	     	url: "./../admin/PromoLink",
 		    data: data,
 		    //if received a response from the server
 		    success: function(data, textStatus, jqXHR) {
@@ -389,7 +389,7 @@ function edit(i){
 		 		var datastring = "oldKey="+oldKey+"&"+$("#add").serialize();
 				$.ajax({								//Ajax request to the doPost of Admin to edit the promoLink
 		        	type: "POST",
-		        	url: "./../admin/Admin",			
+		        	url: "./../admin/PromoLink",			
 		        	data: datastring,
 		        	//if received a response from the server
 		        	success: function(data, textStatus, jqXHR) {
@@ -441,7 +441,7 @@ function edit(i){
 			var datastring = "oldKey="+oldKey+"&"+$("#add").serialize();
 			$.ajax({								//Ajax request to the doPost of Admin to edit the promoLink
 				type: "POST",
-			    url: "./../admin/Admin",
+			    url: "./../admin/PromoLink",
 			    data: datastring,
 			    //if received a response from the server
 			    success: function(data, textStatus, jqXHR) {
@@ -487,7 +487,7 @@ function remove(i){
 	var datastring = "keyword="+keyword;
 	$.ajax({							//Ajax request to the doPost of Admin to delete a promoLink
         type: "POST",
-        url: "./../admin/Admin",
+        url: "./../admin/PromoLink",
         data: datastring,
         //if received a response from the server
         success: function(textStatus, jqXHR) {
