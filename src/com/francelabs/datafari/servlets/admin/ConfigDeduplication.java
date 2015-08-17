@@ -55,19 +55,19 @@ public class ConfigDeduplication extends HttpServlet {
 			if (id==1){
 				if (enable!=null){
 					if (enable.equals("true")){
-						error = ScriptConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION, "true");
+						error = CorePropertiesConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION, "true");
 					}
 					else
-						error = ScriptConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION, "false");
+						error = CorePropertiesConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION, "false");
 				}
 				
 			}else if (id==2){
 				if (enable!=null){
 					if (enable.equals("true"))
 
-						error = ScriptConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY, "true");
+						error = CorePropertiesConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY, "true");
 					else
-						error = ScriptConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY, "false");
+						error = CorePropertiesConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY, "false");
 				}
 			}
 			try {
@@ -82,13 +82,13 @@ public class ConfigDeduplication extends HttpServlet {
 			}
 		}else if (request.getParameter("initiate")!=null){
 			String checked,checked_factory;
-			if (ScriptConfiguration.getProperty(StringsDatafariProperties.DEDUPLICATION)!=null && ScriptConfiguration.getProperty(StringsDatafariProperties.DEDUPLICATION).equals("true") ){
+			if (CorePropertiesConfiguration.getProperty(StringsDatafariProperties.DEDUPLICATION)!=null && CorePropertiesConfiguration.getProperty(StringsDatafariProperties.DEDUPLICATION).equals("true") ){
 				checked="checked";
 			 }else{
 				 checked="";
 			 }
 			
-			if (ScriptConfiguration.getProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY)!=null && ScriptConfiguration.getProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY).equals("true") ){
+			if (CorePropertiesConfiguration.getProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY)!=null && CorePropertiesConfiguration.getProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY).equals("true") ){
 				checked_factory="checked";
 			}else{
 				checked_factory="";
