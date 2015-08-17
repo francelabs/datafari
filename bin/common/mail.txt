@@ -1,4 +1,3 @@
-
 smtp =smtp.gmail.com
 from =datafari.test@gmail.com
 user =datafari.test@gmail.com
