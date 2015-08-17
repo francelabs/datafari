@@ -1,0 +1,51 @@
+.resultWidget .doc{
+	position:relative;
+}
+@media  (min-width : 799px){
+	.doc_list .doc img{
+		width: 14%;
+		display: inline-block;	
+		left: 0%;
+		float:left;
+	} 
+}
+.doc_list .doc .res{
+	width: 85%;
+	margin-top: -3px;
+}
+.ui-autocomplete li img{
+	width:30px;
+	margin-right: 4px;
+}
+
+@media  (max-width : 799px){
+	.doc_list .doc img {
+	    display: inline-block;
+	    vertical-align: middle;
+	    width: 14%;
+	    position: absolute;
+	    top: 10%;
+	    right: 1%;
+	}
+}
+
+@media  (max-width : 320px){
+	.doc_list .doc .res{
+		width: 82%;
+	}
+	.doc_list .doc img {
+		width:18%;
+	}
+}
+
+
+@media  (max-width : 470px){
+	.doc_list .doc .res{
+		width: 70%;
+	}
+	.doc_list .doc img {
+		width:24%;
+	}
+}
+.resultWidget .res .title{margin-left: 1%;}
+.resultWidget .res .description {margin-left: 1%;}
