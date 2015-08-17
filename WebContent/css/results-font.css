@@ -17,7 +17,7 @@
 .tableWidget .facetSort { font-size: 90%; font-weight: normal; }
 .tableWidget ul li { font-size: 90%; }
 
-.resultWidget .res .title,#promolink .title { font-weight: normal;  font-size:18px;color: #4C76B6;font-weight: normal;}
+.resultWidget .res .title,#capsule .title { font-weight: normal;  font-size:18px;color: #4C76B6;font-weight: normal;}
 
 .resultWidget .res .icon span{font-weight: normal; font-size: x-small;margin: 0px 3px 0px 0px;font-weight:bold;text-transform: uppercase;color: #4C76B6;}
 .resultWidget .doc .res .address span{
@@ -47,7 +47,7 @@
 .advancedSearchWidget .advTable .title { font-weight: bold; }
 .advancedSearchWidget .addInput:hover { text-decoration: underline; }
 
-.promolinkWidget .title{ font-weight: bold; }
+.capsuleWidget .title{ font-weight: bold; }
 
 .spellcheckerWidget .result { font-weight: bold; text-decoration: underline; }
 
@@ -108,7 +108,7 @@
 .advancedSearchWidget .advTable .title { font-weight: bold; }
 .advancedSearchWidget .addInput:hover { text-decoration: underline; }
 
-.promolinkWidget .title{ font-weight: bold; }
+.capsuleWidget .title{ font-weight: bold; }
 
 .spellcheckerWidget .result { font-weight: bold; text-decoration: underline; }
 
@@ -121,6 +121,34 @@
 }
 */
 
+@media all and (max-width : 430px){
+	.resultWidget .res .title, #capsule .title {
+    	font-size: 12px;
+	}
+	.resultWidget .doc .res .description {
+   		 font-size: 10px;
+	}
+	.resultWidget .doc .res .address span {
+    	font-size: 9px;
+	}
+}
+@media all and (max-width : 191px){
+	.resultWidget .res .title, #capsule .title {
+    	font-size: 10px;
+	}
+	.resultWidget .doc .res .description {
+   		 font-size: 8px;
+	}
+	.resultWidget .doc .res .address span {
+    	font-size: 7px;
+	}
+	#number_results_mobile {
+ 	   font-size: 10px;
+	}
+	#results_nav_mobile #nav_facets_mobile a {
+    	font-size: 10px;
+	}
+}
 @media all and (max-width : 260px){
 	#results_nav_mobile #nav_facets_mobile a{
 		font-size:1em;
@@ -131,6 +159,7 @@
 	.searchBarWidget .searchBar input[type="text"]{
 		font-size:1em;	
 	}
+
 }
 
 
@@ -166,7 +195,7 @@
 .tableWidget .facetSort { font-size: 90%; font-weight: normal; }
 .tableWidget ul li { font-size: 90%; }
 
-.resultWidget .res .title,#promolink .title { font-weight: bold; text-decoration: underline; }
+.resultWidget .res .title,#capsule .title { font-weight: bold; text-decoration: underline; }
 
 .resultWidget .doc .res .address {  }
 
@@ -176,7 +205,7 @@
 
 .em { font-weight: bold; }
 
-.resultWidget .res .title,#promolink .title { text-decoration:none;}
+.resultWidget .res .title,#capsule .title { text-decoration:none;}
 .resultWidget .res .title:hover { text-decoration:underline; color:#D37324; }
 .result-body {  font-size: 90%;   }
 
@@ -193,7 +222,7 @@
 .advancedSearchWidget .advTable .title { font-weight: bold; }
 .advancedSearchWidget .addInput:hover { text-decoration: underline; }
 
-.promolinkWidget .title{ font-weight: bold; }
+.capsuleWidget .title{ font-weight: bold; }
 
 .spellcheckerWidget .result { font-weight: bold; text-decoration: underline; }
 

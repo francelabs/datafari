@@ -93,12 +93,10 @@ public class AlertsManager {
 	 */
 	public boolean getParameter() throws IOException, ParseException{
 		try{
+			
 			onOff=false;
-			filePath = System.getenv("DATAFARI_HOME");		//Gets the installation directory if in standard environment 
-			if(filePath==null)								//If development environment
-				filePath = "/home/youp/workspaceTest/Servers/Datafari-config/datafari.properties";	//hardcoded path
-			else
-				filePath += "/tomcat/conf/datafari.properties";	//completing the path 
+			filePath = System.getProperty("catalina.home");		//Gets the installation directory if in standard environment 
+			filePath += "/conf/datafari.properties";	//completing the path 
 			String content;
 			String[] lines = new String[0];
 			try {
@@ -115,7 +113,7 @@ public class AlertsManager {
 					try{	
 						delayH = new DateTime(df.parse(lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("=")+1)));
 					}catch(ParseException e){
-						LOGGER.warn("Error parsing the Hourly Date, default value will be used, AlertsManage getParameter()r",e);
+						LOGGER.warn("Error parsing the Hourly Date, default value will be used, AlertsManage getParameter()",e);
 						delayH = new DateTime(df.parse("01/01/0001/00:00"));
 					}
 				}
@@ -193,12 +191,8 @@ public class AlertsManager {
 						LOGGER.error("Unindentified error while running the weekly alerts in startScheduled(), AlertsManager. Error 69520", e);
 					} }
 			};
-			try {
-				mail = new Mail();
-			} catch (IOException e) {
-				LOGGER.error("Error instantiating the mail in startScheduled in the AlertsManager", e);
-				return;
-			}
+			mail = new Mail();
+			
 			DateTime currentDate = new DateTime();	
 			alertHandleH = launch(Hourly, delayH, alertHandleH, currentDate,"Hourly", HourlyHour, alertHourly, 60);		//Launches the alerts according to their previous execution and the date typed by the user
 			alertHandleD = launch(Daily, delayD, alertHandleD, currentDate,"Daily", DailyHour, alertDaily, 1440);
@@ -261,7 +255,7 @@ public class AlertsManager {
 			}
 			return diff;
 		}catch (Exception e){
-			LOGGER.error("Unindentified error while calculating the delay to launch the "+frequency+" alerts in the AlertsManager calculateDelays(). Error 69518", e);
+			LOGGER.error("Error while calculating the delay to launch the "+frequency+" alerts in the AlertsManager calculateDelays(). Error 69518", e);
 			return 0;
 		}
 	}
@@ -288,7 +282,7 @@ public class AlertsManager {
 				throw new RuntimeException();
 			}
 		}catch (Exception e){
-			LOGGER.error("Unindentified error while calculating the delay to launch the "+frequency+" alerts in the AlertsManager calculateDelays(). Error 69519", e);
+			LOGGER.error("Error while calculating the delay to launch the "+frequency+" alerts in the AlertsManager calculateDelays(). Error 69519", e);
 			return 0;
 		}
 	}
@@ -329,7 +323,7 @@ public class AlertsManager {
 					fooStream.close();
 				}
 			} catch (IOException e) {
-				LOGGER.error("Error while appending the moment of execution to the datafari.properties file in alerts(), AlertsManager. Error 69043 ", e);
+				LOGGER.error("Error while appending the moment of execution to the datafari.properties file in alerts(), AlertsManager. Error 69041 ", e);
 				return;
 			}
 			FindIterable<Document> cursor = coll1.find();							//Get all the elements in the collection
@@ -342,7 +336,7 @@ public class AlertsManager {
 							try {
 								solr = SolrServers.getSolrServer(core[i]);
 							} catch (IOException e) {
-								LOGGER.error("Error while getting the Solr core in alerts(), AlertsManager. Error 69044 ", e);
+								LOGGER.error("Error while getting the Solr core in alerts(), AlertsManager. Error 69042 ", e);
 								return;
 							}
 						}
@@ -372,7 +366,7 @@ public class AlertsManager {
 				this.startScheduled();											//Starts the scheduled task
 			}
 		} catch (ParseException e) {
-			LOGGER.error("Error while turning on the alerts during instantiation, AlertsManager turnOn(). Error 69045", e);
+			LOGGER.error("Error while turning on the alerts during instantiation, AlertsManager turnOn(). Error 69043", e);
 		}
 	}
 	/**

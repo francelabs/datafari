@@ -59,4 +59,9 @@
       <form-error-page>/error.jsp</form-error-page>
     </form-login-config>
   </login-config>
+  <servlet>
+    <servlet-name>LikesLauncher</servlet-name>
+    <servlet-class>com.francelabs.datafari.startup.LikesLauncher</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
 </web-app>

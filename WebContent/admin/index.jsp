@@ -66,7 +66,7 @@
 					</div>
 					<div class="col-xs-4 col-sm-8 top-panel-right">
 <!-- 						<a href="#" class="about">about</a> -->
-						<ul class="nav navbar-nav pull-right panel-menu" style="display:none"><!-- when user management will be available those shall be too -->
+					<!-- 	<ul class="nav navbar-nav pull-right panel-menu" style="display:none"><!-- when user management will be available those shall be too 
 							<li class="hidden-xs">
 								<a href="index.html" class="modal-link">
 									<i class="fa fa-bell"></i>
@@ -84,58 +84,58 @@
 									<i class="fa fa-envelope"></i>
 									<span class="badge">7</span>
 								</a>
-							</li>
+							</li> -->
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle account" data-toggle="dropdown">
 									<div class="avatar">
 <!-- 										<img src="img/avatar.jpg" class="img-circle" alt="avatar" /> -->
 									</div>
-									<i class="fa fa-angle-down pull-right"></i>
+									<!-- <i class="fa fa-angle-down pull-right"></i> -->
 									<div class="user-mini pull-right">
 										<span class="welcome">Welcome,</span>
-										<span>Jane Devoops</span>
+									<span><% out.print(request.getUserPrincipal().getName());%></span>
 									</div>
 								</a>
-								<ul class="dropdown-menu">
-									<li>
-										<a href="#">
-											<i class="fa fa-user"></i>
-											<span>Profile</span>
-										</a>
-									</li>
-									<li>
-										<a href="ajax/page_messages.html" class="ajax-link">
-											<i class="fa fa-envelope"></i>
-											<span>Messages</span>
-										</a>
-									</li>
-									<li>
-										<a href="ajax/gallery_simple.html" class="ajax-link">
-											<i class="fa fa-picture-o"></i>
-											<span>Albums</span>
-										</a>
-									</li>
-									<li>
-										<a href="ajax/calendar.html" class="ajax-link">
-											<i class="fa fa-tasks"></i>
-											<span>Tasks</span>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<i class="fa fa-cog"></i>
-											<span>Settings</span>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<i class="fa fa-power-off"></i>
-											<span>Logout</span>
-										</a>
-									</li>
-								</ul>
-							</li>
-						</ul>
+<!-- 								<ul class="dropdown-menu"> -->
+<!-- 									<li> -->
+<!-- 										<a href="#"> -->
+<!-- 											<i class="fa fa-user"></i> -->
+<!-- 											<span>Profile</span> -->
+<!-- 										</a> -->
+<!-- 									</li> -->
+<!-- 									<li> -->
+<!-- 										<a href="ajax/page_messages.html" class="ajax-link"> -->
+<!-- 											<i class="fa fa-envelope"></i> -->
+<!-- 											<span>Messages</span> -->
+<!-- 										</a> -->
+<!-- 									</li> -->
+<!-- 									<li> -->
+<!-- 										<a href="ajax/gallery_simple.html" class="ajax-link"> -->
+<!-- 											<i class="fa fa-picture-o"></i> -->
+<!-- 											<span>Albums</span> -->
+<!-- 										</a> -->
+<!-- 									</li> -->
+<!-- 									<li> -->
+<!-- 										<a href="ajax/calendar.html" class="ajax-link"> -->
+<!-- 											<i class="fa fa-tasks"></i> -->
+<!-- 											<span>Tasks</span> -->
+<!-- 										</a> -->
+<!-- 									</li> -->
+<!-- 									<li> -->
+<!-- 										<a href="#"> -->
+<!-- 											<i class="fa fa-cog"></i> -->
+<!-- 											<span>Settings</span> -->
+<!-- 										</a> -->
+<!-- 									</li> -->
+<!-- 									<li> -->
+<!-- 										<a href="#"> -->
+<!-- 											<i class="fa fa-power-off"></i> -->
+<!-- 											<span>Logout</span> -->
+<!-- 										</a> -->
+<!-- 									</li> -->
+<!-- 								</ul> -->
+<!-- 							</li> -->
+<!-- 						</ul> -->
 					</div>
 				</div>
 			</div>
@@ -156,14 +156,15 @@
 					<ul class="dropdown-menu">
 <!-- 						<li><a class="ajax-link" href="../ajax/maps.html">Save search queries</a></li> -->
 						<li id="Alerts"><a class="ajax-link" href="../ajax/Alerts.html"><%= resourceBundle.getString("alerts")%></a></li>
+						<li id="LikesAndFavorites"><a class="ajax-link" href="../ajax/getFavorites.html"><%= resourceBundle.getString("Favorites")%></a></li>
 <!-- 						<li><a class="ajax-link" href="../ajax/map_leaflet.html">Favorite documents</a></li> -->
 					</ul>
 				</li>
 <%
 if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrator")){
 %>
-				<li id="Connectors">
 <!-- 					<a href="../ajax/dashboard.html" class="ajax-link"> <i -->
+				<li id="Connectors">
 <!-- 							class="fa fa-dashboard"></i> <span class="hidden-xs">Dashboard</span> -->
 					</a> <a href="../ajax/manifoldcf.html" class="ajax-link">
 						<i class="fa fa-bar-chart-o"></i>
@@ -177,7 +178,8 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						 <span class="hidden-xs"><%= resourceBundle.getString("statistics")%></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li id="UsageStatistics"><a class="ajax-link" href="../ajax/usageStatistics.html">Usage statistics</a></li>
+						<li id="UsageStatistics"><a class="ajax-link" href="../ajax/usageStatistics.html"><%= resourceBundle.getString("useStats")%></a></li>
+						<li><a class="ajax-link" href="../ajax/StatsQuery.html"><%= resourceBundle.getString("queryStats")%></a></li> 
 <!-- 						<li><a class="ajax-link" href="../ajax/corpusStatistics.html">Corpus statistics</a></li> -->
 <!-- 						<li><a class="ajax-link" href="../ajax/systemStatistics.html">System statistics</a></li> -->
 					</ul>
@@ -212,7 +214,9 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						<li id="Synonyms" ><a class="ajax-link" href="../ajax/Synonyms.html"><%= resourceBundle.getString("synonyms")%></a></li>
 						<li id="Stopwords"><a class="ajax-link" href="../ajax/StopWords.html"><%= resourceBundle.getString("stopwords")%></a></li>
 						<li id="FieldWeight"><a class="ajax-link" href="../ajax/FieldWeight.html"><%= resourceBundle.getString("fieldWeight")%></a></li>
+						<li id="FacetConfig"><a class="ajax-link" href="../ajax/FacetConfig.html"><%= resourceBundle.getString("facetConfig")%></a></li>
 						<li id="Deduplication"><a class="ajax-link" href="../ajax/config_deduplication.html"><%= resourceBundle.getString("deduplication")%></a></li>
+						<li id="LikesAndFavorites"><a class="ajax-link" href="../ajax/config_likesAndFavorites.html"><%= resourceBundle.getString("likesAndFavorites")%></a></li>
 <!-- 						<li><a class="ajax-link" href="../ajax/ui_jquery-ui.html">Query based boosts</a></li> -->
 <!-- 						<li><a class="ajax-link" href="../ajax/ui_icons.html">Document based boosts</a></li> -->
 <!-- 						<li><a class="ajax-link" href="../ajax/ui_icons.html">OCR: On/Off</a></li> -->
@@ -270,6 +274,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 <script src="../plugins/jquery-ui/jquery-ui.min.js"></script>
 <script src="../plugins/CLEditor/jquery.cleditor.js"></script>
 <script src="../plugins/CLEditor/jquery.cleditor.min.js"></script>
+
 <script src="./../plugins/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="../plugins/bootstrap/bootstrap.min.js"></script>

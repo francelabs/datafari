@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.francelabs.datafari.utils.*;
+import com.francelabs.datafari.servlets.admin.StringsDatafariProperties.*;
 
 /**
  * Servlet implementation class ConfigDeduplication
@@ -54,17 +55,17 @@ public class ConfigDeduplication extends HttpServlet {
 			if (id==1){
 				if (enable!=null){
 					if (enable.equals("true")){
-						error = ScriptConfiguration.setProperty("DEDUPLICATION_IS_ENABLED", "true");
+						error = ScriptConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION, "true");
 					}
 					else
-						error = ScriptConfiguration.setProperty("DEDUPLICATION_IS_ENABLED", "false");
+						error = ScriptConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION, "false");
 				}
 			}else if (id==2){
 				if (enable!=null){
 					if (enable.equals("true"))
-						error = ScriptConfiguration.setProperty("deduplication.factory.enabled", "true");
+						error = ScriptConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY, "true");
 					else
-						error = ScriptConfiguration.setProperty("deduplication.factory.enabled", "false");
+						error = ScriptConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY, "false");
 				}
 			}
 			try {
@@ -79,13 +80,13 @@ public class ConfigDeduplication extends HttpServlet {
 			}
 		}else if (request.getParameter("initiate")!=null){
 			String checked,checked_factory;
-			if (ScriptConfiguration.getProperty("DEDUPLICATION_IS_ENABLED")!=null && ScriptConfiguration.getProperty("DEDUPLICATION_IS_ENABLED").equals("true") ){
+			if (ScriptConfiguration.getProperty(StringsDatafariProperties.DEDUPLICATION)!=null && ScriptConfiguration.getProperty(StringsDatafariProperties.DEDUPLICATION).equals("true") ){
 				checked="checked";
 			 }else{
 				 checked="";
 			 }
 			
-			if (ScriptConfiguration.getProperty("deduplication.factory.enabled")!=null && ScriptConfiguration.getProperty("deduplication.factory.enabled").equals("true") ){
+			if (ScriptConfiguration.getProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY)!=null && ScriptConfiguration.getProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY).equals("true") ){
 				checked_factory="checked";
 			}else{
 				checked_factory="";

@@ -1,6 +1,49 @@
 $(function($) {
     var location = window.history.location || window.location;
 
+    Manager.addWidget(new AjaxFranceLabs.TableWidget({
+		elm : $('#facet_extension'),
+		id : 'facet_extension',
+		field : 'extension',
+		name : window.i18n.msgStore['facetextension'],
+		pagination : true,
+		selectionType : 'OR',
+		returnUnselectedFacetValues : true
+	}));
+
+	Manager.addWidget(new AjaxFranceLabs.TableWidget({
+		elm : $('#facet_language'),
+		id : 'facet_language',
+		field : 'language',
+		name : window.i18n.msgStore['facetlanguage'],
+		pagination : false,
+		selectionType : 'ONE',
+		returnUnselectedFacetValues : true
+	}));
+
+	Manager.addWidget(new AjaxFranceLabs.TableWidget({
+		elm : $('#facet_source'),
+		id : 'facet_source',
+		field : 'source',
+		name : window.i18n.msgStore['facetsource'],
+		pagination : false,
+		selectionType : 'ONE',
+		returnUnselectedFacetValues : true
+	}));
+	
+	Manager.addWidget(new AjaxFranceLabs.TableFacetQueriesWidget({
+		elm : $('#facet_last_modified'),
+		id : 'facet_last_modified',
+		field : 'last_modified',
+		name : window.i18n.msgStore['facetlast_modified'],
+		pagination : true,
+		selectionType : 'ONE',
+		queries : [ '[NOW-1MONTH TO NOW]',  '[NOW-1YEAR TO NOW]',  '[NOW-5YEARS TO NOW]'
+		],
+		labels : [ window.i18n.msgStore['facetlast_modified0'], window.i18n.msgStore['facetlast_modified1'], window.i18n.msgStore['facetlast_modified2']]
+	}));
+
+    var location = window.history.location || window.location;
 
 	Manager.addWidget(new AjaxFranceLabs.SearchBarWidget({
 		elm : $('#searchBar'),
@@ -11,57 +54,6 @@ $(function($) {
 	Manager.addWidget(new AjaxFranceLabs.SearchInformationWidget({
 		elm : $('#result_information'),
 		id : 'searchInformation'
-	}));
-
-	
-	
-	
-	Manager.addWidget(new AjaxFranceLabs.TableWidget({
-		elm : $('#facet_type'),
-		id : 'facet_type',
-		field : 'extension',
-		name : window.i18n.msgStore['type'],
-		pagination : true,
-		selectionType : 'OR',
-		returnUnselectedFacetValues : true
-	}));
-	
-	Manager.addWidget(new AjaxFranceLabs.TableWidget({
-		elm : $('#facet_source'),
-		id : 'facet_source',
-		field : 'source',
-		name : window.i18n.msgStore['source'],
-		pagination : true,
-		selectionType : 'OR',
-		returnUnselectedFacetValues : true
-	}));
-	
-	
-	
-
-	Manager.addWidget(new AjaxFranceLabs.TableFacetQueriesWidget({
-		elm : $('#facet_date'),
-		id : 'facet_date',
-		name : window.i18n.msgStore['lastModification'],
-		selectionType : 'ONE',
-		field : 'last_modified',
-		pagination : true,
-		queries : [ '[NOW-1MONTH TO NOW]', '[NOW-1YEAR TO NOW]',
-				'[NOW-5YEARS TO NOW]'
-
-		],
-		labels : [ window.i18n.msgStore['lessThanOneMonth'], window.i18n.msgStore['lessThanOneYear'], window.i18n.msgStore['lessThanFiveYears']]
-	}));
-	
-
-	Manager.addWidget(new AjaxFranceLabs.TableWidget({
-		elm : $('#facet_language'),
-		id : 'facet_language',
-		field : 'language',
-		name : window.i18n.msgStore['language'],
-		pagination : true,
-		selectionType : 'OR',
-		returnUnselectedFacetValues : true
 	}));
 	
 	Manager.addWidget(new AjaxFranceLabs.TableMobileWidget({
@@ -85,8 +77,18 @@ $(function($) {
 		returnUnselectedFacetValues : true
 	}));
 
-	
-	Manager.addWidget(new AjaxFranceLabs.ResultWidget(
+	if (window.isLikesAndFavoritesEnabled)
+		Manager.addWidget(new AjaxFranceLabs.LikesAndFavoritesWidget());
+	else
+		Manager.addWidget(new AjaxFranceLabs.SubClassResultWidget());
+	/*new  AjaxFranceLabs.ResultIllustratedWidget({
+		elm : $('#results'),
+		id : 'documents',
+		pagination : true,
+		firstTimeWaypoint : true,
+		isMobile : $(window).width()<800,
+		mutex_locked:false,
+		}));/*new AjaxFranceLabs.ResultWidget(
 					{
 						elm : $('#results'),
 						id : 'documents',
@@ -146,10 +148,13 @@ $(function($) {
 														elm.find('.doc:last .icon').append('<object data="images/icons/'+ extension.toLowerCase() +'-icon-24x24.png"><img src="images/icons/default-icon-24x24.png" /></object>&nbsp;');
 
 									                var urlRedirect = 'URL?url='+ url + '&id='+Manager.store.get("id").value + '&q=' + Manager.store.get("q").value + '&position='+position;
-													elm.find('.doc:last .res').append('<a class="title" target="_blank" href="'+urlRedirect+'"></a>');													elm.find('.doc:last .title').append('<span>' +decodeURIComponent(doc.title) + '</span>'); 
+													elm.find('.doc:last .res').append('<a class="title" target="_blank" href="'+urlRedirect+'"></a>');										
+													elm.find('.doc:last .title').append('<span>' +decodeURIComponent(doc.title) + '</span>')
+													.append('<span class="favorite"><i class="fa fa-bookmark-o"></i></span>'); 
 													elm.find('.doc:last .res').append('<p class="description">');
 													elm.find('.doc:last .description').append('<div id="snippet">'+ description+ '</div>');
-													elm.find('.doc:last .description').append('<div id="urlMobile"><p class="address">');
+													elm.find('.doc:last .description').append('<div id="urlMobile"><p class="address">')
+													.append('<div class="metadonne"><span class="liker">Like</span>  <i class="fa fa-thumbs-up"></i><span class="likes">12</span></div>');
 													elm.find('.doc:last .address').append('<span>' + AjaxFranceLabs.tinyUrl(decodeURIComponent(url)) + '</span>');
 													
 												});
@@ -185,9 +190,9 @@ $(function($) {
 								}
 							}
 						}
-					}));
-
-	
+					}));*/
+	 		
+	/*
 
 	
 	Manager.addWidget(new AjaxFranceLabs.PromolinkWidget({
@@ -195,6 +200,8 @@ $(function($) {
 		id : 'promolink'
 	}));
 
+	*/
+	
 	Manager.addWidget(new AjaxFranceLabs.SpellcheckerWidget({
 		elm : $('#spellchecker'),
 		id : 'spellchecker'

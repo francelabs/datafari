@@ -26,14 +26,14 @@
 .videoResultWidget .video .res .address { color: #3d3c3a; }
 .videoResultWidget .video .res .tags a span { color: #CF242A; font-style: italic; }
 
-.pagerModule .pages .page, .pagerModule i {  color: #64AE7F; }
-.pagerModule .pages .page.selected { color: #3d3c3a; }
+
+
 
 .advancedSearchWidget .advTable .field input { border-color: #D9D9D9; border-top-color: #A1A1A1; }
 .advancedSearchWidget .separator { border-bottom-color: #D9D9D9; }
 .advancedSearchWidget button { color: #474D52; border-color: #D9D9D9; border-top-color: #A1A1A1; }
 .advancedSearchWidget button:hover { border-color:#A1A1A1; }
-.promolinkWidget { border-color: #666666; }
+.capsuleWidget { border-color: #666666; }
 
 .spellcheckerWidget .result { color: #B92221; }
 
@@ -45,7 +45,6 @@
 .ui-autocomplete .ui-state-hover { background-color: #F2FFD0; border-color: #D8FF6E; }
 
 .ui-resizable-handle { background-color: #333333; }
-footer.bc-color{background:rgb(133, 159, 9);}
 #spinner_mobile{background: rgba(0, 0, 0, 0.4) none repeat scroll 0% 0%;}
 .widgetContainer .annonce{background: rgb(255, 218, 16) none repeat scroll 0% 0%;}
 #facets_mobile{  background-color:#F0F0F0;}
@@ -63,6 +62,10 @@ body{background-color : #F0F0F0F0;}
 .ui-autocomplete .ui-state-hover { background-image: none;}
 .ui-slider .ui-widget-header { background-image: none; }
  .col.left .pagerModule {background:white}
+ .searchBarWidget #sortMode:after{color: #1455A2;}
+.searchBarWidget #sortMode select{color: #1455A2;}
+.searchBarWidget #sortMode{color: white;}
+ .searchBarWidget select:-moz-focusring {color: transparent;}
  
  @media all and (min-width: 799px){
 	.advancedSearchWidget button { background: none;}

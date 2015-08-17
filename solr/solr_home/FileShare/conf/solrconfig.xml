@@ -349,7 +349,7 @@
      <autoSoftCommit> 
        <maxTime>${solr.autoSoftCommit.maxTime:-1}</maxTime> 
      </autoSoftCommit>
-
+ 
     <!-- Update Related Event Listeners
          
          Various IndexWriter related events can trigger Listeners to
@@ -568,7 +568,7 @@
      -->
    <queryResultMaxDocsCached>200</queryResultMaxDocsCached>
    
-   <listener class="solr.QuerySenderListener" event="firstSearcher">
+ <listener class="solr.QuerySenderListener" event="firstSearcher">
       <arr name="queries">
         <lst>
           <str name="q">*:*</str>
@@ -578,6 +578,14 @@
         </lst>
       </arr>
     </listener>
+
+	<!-- Listener for External Filed used for likes -->
+	
+	<listener event="newSearcher" 
+	          class="org.apache.solr.schema.ExternalFileFieldReloader"/>
+	<listener event="firstSearcher" 
+	          class="org.apache.solr.schema.ExternalFileFieldReloader"/>
+
 
    <!-- Query Related Event Listeners
 
@@ -755,6 +763,11 @@
        of SearchComponents (see below) and supports distributed
        queries across multiple shards
     -->
+	    
+ <requestHandler  name="/reloadCache" 
+	  class="org.apache.solr.search.function.FileFloatSource$ReloadCacheRequestHandler" 
+	/>
+	 
 
 	<requestHandler class="solr.SearchHandler" name="/select">
 		<!-- default values for query parameters can be specified, these will be 
@@ -777,7 +790,7 @@
 			<str name="hl.maxAlternateFieldLength">100</str>
 			<str name="hl.encoder">html</str>
 			<str name="hl.fragsize">200</str>
-			<str name="hl.maxAnalyzedChars">40003</str>
+			<str name="hl.maxAnalyzedChars">40000</str>
 			<int name="facet.mincount">1</int>
 		</lst>
 		<!-- 

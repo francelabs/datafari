@@ -1,4 +1,5 @@
 <%@ page import="com.francelabs.datafari.utils.ScriptConfiguration" %>
+<%@ page import="com.francelabs.datafari.servlets.admin.StringsDatafariProperties" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +14,9 @@
 <link rel="stylesheet" type="text/css" href="css/results.css" />
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 <script type="text/javascript" src="js/history.ielte7.min.js"></script>
-	<script type="text/javascript" src="js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.1.min.js"></script>
+<!-- comment the tag bellow if you don't use illustrate mode for desktop and mobile -->	
+<!-- <link rel="stylesheet" type="text/css" href="css/results-illustrate.css" />  --> 
 <!--[if lt IE 9]>
 	<script type="text/javascript" src="js/html5shiv-printshiv.js"></script>	
 	<link rel="stylesheet" type="text/css" media="all" href="css/results-template-ie.css"/>
@@ -83,7 +86,18 @@
 	
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/Spellchecker.widget.js"></script>
-
+	<!-- comment the tag bellow if you don't use illustrate mode for desktop and mobile -->	
+	<script type="text/javascript"
+		src="js/AjaxFranceLabs/widgets/ResultIllustrated.widget.js"></script>
+	<script type="text/javascript"
+		src="js/AjaxFranceLabs/widgets/SubClassResult.widget.js"></script>
+	<script type="text/javascript"
+		src="js/AjaxFranceLabs/widgets/LikesAndFavorites.widget.js"></script>
+	<!-- comment the two script tag bellow if you autocompleteIllustrated isn't used -->
+	<script type="text/javascript"
+		src="js/AjaxFranceLabs/widgets/SearchBarIllustrated.widget.js"></script>
+	<script type="text/javascript"
+		src="js/AjaxFranceLabs/modules/AutocompleteIllustrated.module.js"></script>		
 	<script type="text/javascript" src="js/main.js"></script>
 	<script type="text/javascript" src="js/desktop_design.js"></script>
 	
@@ -91,13 +105,19 @@
 
 
 <%
- if (ScriptConfiguration.getProperty("DEDUPLICATION_IS_ENABLED")!=null && ScriptConfiguration.getProperty("DEDUPLICATION_IS_ENABLED").equals("true") ){
+ if (ScriptConfiguration.getProperty(StringsDatafariProperties.DEDUPLICATION)!=null && ScriptConfiguration.getProperty(StringsDatafariProperties.DEDUPLICATION ).equals("true") ){
 %>
 	<script type="text/javascript" src="js/doublon.js"></script>
-	<%} %>
+	<%}%>
+<%
+ if (ScriptConfiguration.getProperty(StringsDatafariProperties.LIKESANDFAVORTES)!=null && ScriptConfiguration.getProperty(StringsDatafariProperties.LIKESANDFAVORTES).equals("true") ){
+%>
+	<script type="text/javascript"> window.isLikesAndFavoritesEnabled = true</script>
+<%}else{ %>
+	<script type="text/javascript"> window.isLikesAndFavoritesEnabled = false</script>
+<%}%>
 	<script type="text/javascript" src="js/search.js"></script>
-	<script type="text/javascript"
-		src="js/nav_mobile.js"></script>
+	<script type="text/javascript" src="js/nav_mobile.js"></script>
 
 	<jsp:include page="header.jsp" /> 
 	<div id="facets_mobile" style="">
@@ -118,8 +138,8 @@
 
 		<div class="col left">
 			<div id="facets">
-				<div id="facet_date"></div>
-				<div id="facet_type"></div>
+				<div id="facet_last_modified"></div>
+				<div id="facet_extension"></div>
 				<div id="facet_source"></div>
 				<div id="facet_language"></div>
 				<div id="facet_signature"></div>
