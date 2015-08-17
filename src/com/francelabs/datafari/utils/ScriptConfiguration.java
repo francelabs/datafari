@@ -61,6 +61,7 @@ public class ScriptConfiguration {
 				String env = System.getProperty("catalina.home");		//Gets the installation directory if in standard environment 
 				env += "/"+configPropertiesFileName ;
 				LOGGER.info(env);
+				System.out.println(env);
 				getInstance().properties.setProperty(key, value);
 				FileOutputStream fileOutputStream = new FileOutputStream(configPropertiesFileNameRealPath);
 				instance.properties.store(fileOutputStream, null);
