@@ -4,7 +4,7 @@
 <header>
 	<div id="header-wrapper">
 		<%
-			if (ScriptConfiguration.getProperty("SOLRCLOUD").equals("true")){
+			if (ScriptConfiguration.getProperty("SOLRCLOUD")!= null && ScriptConfiguration.getProperty("SOLRCLOUD").equals("true")){
 		%>
 		
 		
@@ -14,7 +14,7 @@
 		%>
 		
 		
-		<div id="logo"></div>
+		<!-- <div id="logo"></div> -->
 		
 		<%
 			}
