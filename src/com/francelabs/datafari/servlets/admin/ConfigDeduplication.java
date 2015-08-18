@@ -57,17 +57,21 @@ public class ConfigDeduplication extends HttpServlet {
 					if (enable.equals("true")){
 						error = CorePropertiesConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION, "true");
 					}
-					else
+					else{
 						error = CorePropertiesConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION, "false");
+					}
 				}
 				
 			}else if (id==2){
 				if (enable!=null){
-					if (enable.equals("true"))
-
+					if (enable.equals("true")){
 						error = CorePropertiesConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY, "true");
-					else
+						//error = CorePropertiesConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION, "true");
+					}
+					else{
 						error = CorePropertiesConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY, "false");
+						error = CorePropertiesConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION, "false");
+					}
 				}
 			}
 			try {

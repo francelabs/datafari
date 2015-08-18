@@ -24,7 +24,7 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 		//var isConneted = true;
 		var self = this;
 		var docs = self.manager.response.response.docs;
-		$("#loginSettings").text(window.i18n.msgStore['settings']);
+		$("#loginSettings").text(window.i18n.msgStore['settings']).after('<a id="logout" href="/Datafari/SignOut">'+window.i18n.msgStore['signout']+'</a>');
 		if (window.globalVariableLikes===undefined || window.globalVariableFavorites===undefined){
 			// if the likes and Favorites aren't yet gotten from the server
 			$.post("./getLikesFavorites",function(data){
@@ -34,6 +34,7 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 					self.afterGettingLikes(docs);
 				}else if (data.code == self.SERVERNOTCONNECTED ){
 					$("#loginSettings").text(window.i18n.msgStore['signin']);
+					$("#logout").hide();
 				}else{
 					// if there's a probleme we CAN'T call self.afterGettingLikes
 					self.showError(data.code);

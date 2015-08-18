@@ -155,5 +155,6 @@
 "SERVERGENERALERROR" : "Une erreur s'est produite. Veuillez ressayer plus tard",
 "DESCRIPTIONGETFAVORITES" : "Tout vos favoris sont enregistrés dans cette page.<br/>Vous pouvez cliquer sur le nom du fichier si vous voulez l'ouvrir ou vous pouvez le supprimer des favoris en cliquant sur ",
 "signin" : "Se Connecter",
-"settings" : "Paramètres" 
+"settings" : "Paramètres",
+"signout" : "Se Deconnecter"
 }         
