@@ -1,28 +1,61 @@
 #!/bin/bash -e
+#
+#
+# Shutdown script for Datafari
+#
+#
+
+source "set-datafari-env.sh"
+source "utils.sh"
+source $INIT_STATE_FILE
+source $CONFIG_FILE
 
 if (( EUID != 0 )); then
    echo "You need to be root to run this script." 1>&2
    exit 100
 fi
 
-export DATAFARI_HOME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/..
-export JAVA_HOME=${DATAFARI_HOME}/jvm
-export LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib
-export CONFIG_FILE=${DATAFARI_HOME}/tomcat/conf/datafari.properties
-source $CONFIG_FILE
-cd ${DATAFARI_HOME}/tomcat/bin
-sh "shutdown.sh"
-if [[ "$SOLRCLOUD" = *false* ]] || [[ "$ISMAINNODE" = *true* ]];
-then
-	cd ${DATAFARI_HOME}/mcf/mcf_home
-	sh "stop-agents.sh"
-	su postgres -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_HOME}/logs/pgsql.log stop"
-	if [[ "$SOLRCLOUD" = *true* ]];
-	then
-		cd "${DATAFARI_HOME}/zookeeper/bin"
-		bash zkServer.sh stop
-	fi
+
+isMCFRunning=true
+isTomcatRunning=true
+isSolrRunning=true
+#isCassandraRunning=true
+
+
+if is_running $MCF_PID_FILE; then
+    cd $MCF_HOME/../bin
+    bash mcf_crawler_agent.sh stop
+    forceStopIfNecessary $MCF_PID_FILE McfCrawlerAgent
+else
+    echo "Warn: MCF Agent does not seem to be running."
 fi
 
+if is_running $CATALINA_PID; then
+    cd $TOMCAT_HOME
+    waitTomcat
+    bash bin/shutdown.sh 30
+    forceStopIfNecessary $CATALINA_PID Tomcat
+else
+    echo "Warn: Tomcat does not seem to be running."
+fi
+
+#if is_running $SOLR_PID_FILE; then
+#   SOLR_INCLUDE=$SOLR_ENV $SOLR_INSTALL_DIR/bin/solr stop
+#else
+#   echo "Warn : Solr does not seem to be running."
+#fi
+
+#if is_running $CASSANDRA_PID_FILE; then
+#   kill $(cat $CASSANDRA_PID_FILE)
+#   rm $CASSANDRA_PID_FILE
+#else
+#   echo "Warn : Cassandra does not seem to be running."
+#fi
+
+if is_running $POSTGRES_PID_FILE; then
+	su postgres -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_HOME}/logs/pgsql.log stop"
+else
+   echo "Warn : Postgres does not seem to be running."
+fi
 
 

@@ -64,8 +64,4 @@
     <servlet-class>com.francelabs.datafari.startup.LikesLauncher</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
-  <!--   <listener>
-        <listener-class>com.francelabs.datafari.startup.ListenerLikes</listener-class>
-    </listener>
-    -->
 </web-app>
