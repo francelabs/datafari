@@ -15,13 +15,18 @@
 	</div> 		
 </div>
 <!--End Breadcrumb-->
-<div id="divFrame" > <!-- QUICK AND DIRTY, must be another way using configuration of bootstrap mixins-->
-	<iframe src="/datafari-mcf-crawler-ui" width="100%" height="100%"></iframe>
+<div id="divFrame" style="background-color : #FBFCE7 ;"> 
+	<iframe src="/datafari-mcf-crawler-ui" id="iFrame" scrolling="no" width="100%" style="background-color : #FBFCE7 ;"></iframe>
 </div>
 </body>
 <script>
- var totalHeight =  document.getElementById("content").offsetHeight;
- document.getElementById("divFrame").style.height = (totalHeight/100)*25.15+"px";
  document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
  document.getElementById("topbar2").innerHTML = window.i18n.msgStore['connectors'];
+
+ function autoResize(){
+ 	document.getElementById("iFrame").setAttribute("height", document.getElementById("iFrame").contentWindow.document.childNodes[2].offsetHeight);
+ 	document.getElementById("iFrame").setAttribute("height", $("#iFrame").contents().height());
+ }
+setInterval(autoResize, 1);	
+	
  </script>

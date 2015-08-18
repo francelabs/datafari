@@ -11,11 +11,33 @@
 	</div>
 </div>
 <!--End Breadcrumb-->
-<div class="row-fluid" style="height: 840px;"> <!-- QUICK AND DIRTY, must be another way using configuration of bootstrap mixins-->
-    <iframe src="proxy/banana/" width="100%" height="100%" frameborder="0" scrolling="yes"></iframe>
+<div  class="row-fluid" style="height: 100%;"> <!-- QUICK AND DIRTY, must be another way using configuration of bootstrap mixins-->
+    <iframe src="proxy/banana/" id="iFrame" width="100%" height="100%" frameborder="0" scrolling="no" ></iframe>
  </div>
-<script> 
+<script>
 document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
 document.getElementById("topbar2").innerHTML = window.i18n.msgStore['statistics'];
 document.getElementById("topbar3").innerHTML = window.i18n.msgStore['useStats'];
+document.getElementById("content").setAttribute('style',"background-color : #272b30");
+var previous = 0;
+var id;
+var compt = 0 ;
+function autoResize(){
+	if (previous!==$("#iFrame").contents().height()){
+		previous = $("#iFrame").contents().height();
+		document.getElementById("iFrame").setAttribute("height", $("#iFrame").contents().height());
+	}else{
+		compt++;
+		if(compt>20){
+			window.clearInterval(id);
+		}
+	}
+}
+id = setInterval(autoResize, 100);	
+$("a").click(function(e){
+	if(e.target.className==="ajax-link" || e.target.className==="ajax-link active-parent active"){
+		document.getElementById("content").setAttribute('style',"background-color : #FBFCE7");
+		window.clearInterval(id);
+	}
+});
 </script>

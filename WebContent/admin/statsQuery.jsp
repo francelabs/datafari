@@ -17,7 +17,7 @@
 	    <script type="text/javascript" src="../js/jquery-1.8.1.min.js"></script>
 		<script type="text/javascript" src="../js/menu.js"></script>
 </head>
-<body class="gecko win">
+<body class="gecko win" style="background-color : #FBFCE7 ;">
 
 	<script type="text/javascript" src="../js/jquery-1.8.1.min.js"></script>
 	<script type="text/javascript" src="../js/function/empty.func.js"></script>
@@ -47,6 +47,8 @@
 	<script type="text/javascript"
 		src="../js/AjaxFranceLabs/widgets/ResultStatsQuery.widget.js"></script>
 	<script type="text/javascript"
+		src="../js/AjaxFranceLabs/widgets/ResultStats.widget.js"></script>
+	<script type="text/javascript"
 		src="../js/AjaxFranceLabs/widgets/StatsQuery.widget.js"></script>
 	<script type="text/javascript"
 		src="../js/AjaxFranceLabs/widgets/StatsInformation.widget.js"></script>
@@ -58,17 +60,19 @@
 		src="../js/AjaxFranceLabs/widgets/Promolink.widget.js"></script>
 	<script type="text/javascript"
 		src="../js/AjaxFranceLabs/widgets/Spellchecker.widget.js"></script>
-	<script type="text/javascript" src="../js/statsQuery.js"></script>
+<!-- 	<script type="text/javascript" src="../js/statsQuery.js"></script> -->
+	<script type="text/javascript" src="../js/stats.js"></script>
 	<script type="text/javascript" src="../js/flexigrid.pack.js"></script>
 	<script type="text/javascript" src="../js/menu.js"></script>
 
 <%-- 	<jsp:include page="../header.jsp" /> --%>
 <%-- 	<jsp:include page="menu.jsp" /> --%>
 	<div id="solr">
+		<div id="searchBar"></div>
 		<div id="result_information"></div>
 		<div id="results"></div>			
 		<div class="clear"></div>
-		</div>
+	</div>
 <%-- 	<jsp:include page="../footer.jsp" /> --%>
 </body>
 </html>
