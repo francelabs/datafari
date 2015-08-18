@@ -37,10 +37,9 @@
 				<include name="**" />
 			</fileset>
 		</copy>
-
 		<copy todir="${debian.dist.dir}/solr">
 			<fileset dir="${solr.dir}">
-				<include name="**" />
+				<exclude name="**/**/data/**" />
 			</fileset>
 		</copy>
 
