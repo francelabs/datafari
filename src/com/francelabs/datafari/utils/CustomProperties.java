@@ -13,7 +13,7 @@ public class CustomProperties extends Properties{
 	private static final long serialVersionUID = 1L;
 	public void store(OutputStream out)
 	        throws IOException{
-	        store0(new BufferedWriter(new OutputStreamWriter(out, "8859_1")));
+	        store0(new BufferedWriter(new OutputStreamWriter(out, "UTF8")));
 	    }
 	 private void store0(BufferedWriter bw)
 		        throws IOException

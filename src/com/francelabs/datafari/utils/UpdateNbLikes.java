@@ -7,7 +7,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.Properties;
 import java.util.concurrent.Semaphore;
 
@@ -34,9 +37,10 @@ public class UpdateNbLikes {
         configFile = new File(System.getProperty("catalina.home") + File.separator + ".." + File.separator + "solr" + File.separator +"solr_home" +
         File.separator + "FileShare"+ File.separator + "data"+ File.separator + configPropertiesFileName);
 		InputStream stream = new FileInputStream(configFile);
+		Reader reader = new InputStreamReader(stream, "UTF-8");
 		properties = new CustomProperties();
 		try {
-			properties.load(stream);
+			properties.load(reader);
 		} catch (IOException e){
 			LOGGER.error("Cannot read file : "+ configFile.getAbsolutePath(),e );
 			throw e;
@@ -93,7 +97,7 @@ public class UpdateNbLikes {
 	}
 	
 	
-	private static void saveProperty(){
+	public static void saveProperty(){
 		FileOutputStream fileOutputStream;
 		try {
 			fileOutputStream = new FileOutputStream(UpdateNbLikes.configFile);

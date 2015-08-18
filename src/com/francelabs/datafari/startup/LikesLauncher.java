@@ -2,6 +2,7 @@ package com.francelabs.datafari.startup;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -15,8 +16,12 @@ import javax.servlet.http.HttpServlet;
 import org.apache.log4j.Logger;
 
 import com.francelabs.datafari.servlets.admin.StringsDatafariProperties;
+import com.francelabs.datafari.user.Like;
+import com.francelabs.datafari.user.NbLikes;
+import com.francelabs.datafari.utils.CustomProperties;
 import com.francelabs.datafari.utils.ScriptConfiguration;
 import com.francelabs.datafari.utils.SendHttpRequest;
+import com.francelabs.datafari.utils.UpdateNbLikes;
 
 public class LikesLauncher extends HttpServlet{
 	
@@ -26,6 +31,7 @@ public class LikesLauncher extends HttpServlet{
 	private static Semaphore semaphore;
 	private static ScheduledFuture<?> handler;
 	private static boolean doReload = false;
+	private static boolean isThreadUpdateNbLikesStarted = false;
 	
 	public void init() throws ServletException{
 	
@@ -35,20 +41,10 @@ public class LikesLauncher extends HttpServlet{
 		} catch (IOException e) {
 			LOGGER.error(e);
 		}
-		if (isEnabled !=null && isEnabled.equals("true"))
+		if (isEnabled !=null && isEnabled.equals("true")){
+			updateNbLikes();
 			startScheduler();
-		/*			
- 	    String filename = "reloadCache.sh";
-			  String env = System.getenv("DATAFARI_HOME");		//Gets the directory of installation if in standard environment	
-			  if(env==null){										//If in development environment
-				  String path;
-				  path = new File(".").getCanonicalPath();
-				  env = path+"/workspace/datafari/tomcat/bin/"+filename;	//Hardcoded path
-			  }else{
-				  env = env+"/tomcat/bin/"+filename;
-			  }
-			 Runtime.getRuntime().exec(env);
-		*/ 
+		}
 		System.out.println("----------");
 		System.out.println("---------- LikesLauncher Servlet Initialized successfully ----------");
 		System.out.println("----------");	
@@ -56,6 +52,30 @@ public class LikesLauncher extends HttpServlet{
 	        
 	}
 	
+	private void updateNbLikes(){
+		if (!LikesLauncher.isThreadUpdateNbLikesStarted){
+			LikesLauncher.isThreadUpdateNbLikesStarted = true;
+			new Thread(new Runnable(){
+				public void run(){
+					ArrayList<NbLikes> listLikes = Like.getNbLikes();
+				
+					CustomProperties properties = new CustomProperties();
+					for (int i=0; i<listLikes.size() ; i++){
+						NbLikes doc = listLikes.get(i);
+						properties.put(doc.documentId,doc.nbLikes);
+					}
+					try {
+						UpdateNbLikes.getInstance();
+						UpdateNbLikes.properties = properties;
+						UpdateNbLikes.saveProperty();
+						LOGGER.info("updateNbLikes finished it's work");
+					} catch (IOException e) {
+						LOGGER.error(e);
+					}
+				}
+			}).start();
+		}
+	}
 	public static void startScheduler(){
 		if (!islaunched){
 			islaunched=true;

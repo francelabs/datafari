@@ -28,7 +28,7 @@
 			<%
 				} else {
 			%>
-			&nbsp;<a href="<%=request.getContextPath()%>/admin">Administration</a>
+			&nbsp;<a id="loginSettings" href="<%=request.getContextPath()%>/admin"></a>
 			<%
 				}
 			%>

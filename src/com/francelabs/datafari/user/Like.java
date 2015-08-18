@@ -6,18 +6,25 @@ import org.bson.Document;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
+import com.mongodb.Block;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.realm.MongoDBRunning;
+
+import static java.util.Arrays.asList;
+
 import com.francelabs.datafari.user.CodesUser.*;
 
 public class Like {
 
 	private static Like instance;
 	private static MongoCollection<Document> coll;
+	
+
 	
 	/**
 	 * Add a document to the list of documents liked by the user
@@ -108,22 +115,34 @@ public class Like {
 		Document doc = new Document(StringsUser.USERNAMECOLUMN, username);
 		if (getInstance().coll!=null){
 			Document myDoc = coll.find(doc).first();
-			if (myDoc!=null){
-				ArrayList<Document> likesListDB = (ArrayList<Document>) myDoc.get(StringsUser.LIKESCOLUMN);
-				if (likesListDB != null){
-					ArrayList<String> likesList = new ArrayList<String>();
-					for (int i=0 ; i<likesListDB.size(); i++){
-						//constructing the likesList
-						Document tmp =((Document)likesListDB.get(i));
-						likesList.add(tmp.get(StringsUser.DOCUMENTIDCOLUMN).toString());
-					}
-					return likesList;
-				}
+			ArrayList<Document> likesListDB = (ArrayList<Document>) myDoc.get(StringsUser.LIKESCOLUMN);
+			ArrayList<String> likesList = new ArrayList<String>();
+			for (int i=0 ; i<likesListDB.size(); i++){
+				//constructing the likesList
+				Document tmp =((Document)likesListDB.get(i));
+				likesList.add(tmp.get(StringsUser.DOCUMENTIDCOLUMN).toString());
 			}
+			return likesList;
 		}
 		return null;
 	}
 
+	public static ArrayList<NbLikes> getNbLikes(){
+	
+	AggregateIterable<Document> iterable = Like.getInstance().coll.aggregate(asList(
+		    	new Document("$project", (new Document("username", 1)).append("likes", 1)),
+		        new Document("$unwind","$likes"),
+		        new Document("$group",new Document("_id","$likes.document_id").append(StringsUser.NBLIKESCOLUMN,new Document("$sum",1))),
+		        new Document("$project",new Document("_id",0).append(StringsUser.DOCUMENTIDCOLUMN,"$_id").append(StringsUser.NBLIKESCOLUMN,1))));
+		final ArrayList<NbLikes> fetchNbLikes = new ArrayList<NbLikes> ();   
+		iterable.forEach(new Block<Document>() {
+		    @Override
+		    public void apply(final Document document) {
+		    	fetchNbLikes.add(new NbLikes(document.get(StringsUser.DOCUMENTIDCOLUMN).toString(),document.get(StringsUser.NBLIKESCOLUMN).toString())); 
+		    }
+		});
+		return fetchNbLikes;
+	}
 
 	/**
 	 * Get the instance

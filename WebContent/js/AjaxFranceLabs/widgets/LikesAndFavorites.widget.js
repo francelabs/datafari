@@ -21,10 +21,10 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 	},
 	afterRequest : function() {
 		this._super();
-		$(".doc_list .res").append('<span class="favorite"><i class="fa fa-bookmark-o"></i></span>').find(".description")
-				.append('<div class="metadonne"><span class="liker">Like</span>  <i class="fa fa-thumbs-up"></i><span class="likes">0</span></div>');
+		//var isConneted = true;
 		var self = this;
 		var docs = self.manager.response.response.docs;
+		$("#loginSettings").text(window.i18n.msgStore['settings']);
 		if (window.globalVariableLikes===undefined || window.globalVariableFavorites===undefined){
 			// if the likes and Favorites aren't yet gotten from the server
 			$.post("./getLikesFavorites",function(data){
@@ -32,6 +32,8 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 					window.globalVariableLikes = data.likes;
 					window.globalVariableFavorites = data.favorites;
 					self.afterGettingLikes(docs);
+				}else if (data.code == self.SERVERNOTCONNECTED ){
+					$("#loginSettings").text(window.i18n.msgStore['signin']);
 				}else{
 					// if there's a probleme we CAN'T call self.afterGettingLikes
 					self.showError(data.code);
@@ -49,6 +51,8 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 	},
 	
 	afterGettingLikes : function(docs){
+		$(".doc_list .res").append('<span class="favorite"><i class="fa fa-bookmark-o"></i></span>').find(".description")
+		.append('<div class="metadonne"><span class="liker">Like</span>  <i class="fa fa-thumbs-up"></i><span class="likes">0</span></div>');
 		$(".doc_list > div").data("isLiked",false).data("isFavorite",false);
 		var self = this;
 		if (docs.length!=0){ 
