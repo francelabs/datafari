@@ -77,8 +77,7 @@ public class URL extends HttpServlet {
 		//System.out.println(surl);
 		
 
-		if (ScriptConfiguration.getProperty("ALLOWLOCALFILEREADING").equals(
-				"true")) {
+		if ((ScriptConfiguration.getProperty("ALLOWLOCALFILEREADING").equals("true")) && !(surl.startsWith("file://///"))) {
 
 			int BUFSIZE = 4096;
 			String fileName = null ;
