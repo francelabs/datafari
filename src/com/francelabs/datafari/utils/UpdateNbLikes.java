@@ -26,7 +26,7 @@ public class UpdateNbLikes {
 	private final static Logger LOGGER = Logger.getLogger(UpdateNbLikes.class
 			.getName());
 	public final static String configPropertiesFileName = "external_nbLikes";
-	private  static String nbLikesFilePath;
+	private static String nbLikesFilePath;
 	private static File configFile;
 	private static Semaphore semaphore;
 
@@ -36,16 +36,20 @@ public class UpdateNbLikes {
         BasicConfigurator.configure();
         configFile = new File(System.getProperty("catalina.home") + File.separator + ".." + File.separator + "solr" + File.separator +"solr_home" +
         File.separator + "FileShare"+ File.separator + "data"+ File.separator + configPropertiesFileName);
-		InputStream stream = new FileInputStream(configFile);
-		Reader reader = new InputStreamReader(stream, "UTF-8");
-		properties = new CustomProperties();
-		try {
-			properties.load(reader);
-		} catch (IOException e){
-			LOGGER.error("Cannot read file : "+ configFile.getAbsolutePath(),e );
-			throw e;
-		} finally {
-			stream.close();
+		if(configFile.exists()){
+	        InputStream stream = new FileInputStream(configFile);
+			Reader reader = new InputStreamReader(stream, "UTF-8");
+			properties = new CustomProperties();
+			try {
+				properties.load(reader);
+			} catch (IOException e){
+				LOGGER.error("Cannot read file : "+ configFile.getAbsolutePath(),e );
+				throw e;
+			} finally {
+				stream.close();
+			}
+		}else{
+			properties = new CustomProperties();
 		}
 	}
 	
@@ -110,6 +114,10 @@ public class UpdateNbLikes {
 			// TODO Auto-generated catch block
 			LOGGER.error(e);
 		}
+	}
+	
+	public File getConfigFile(){
+		return this.configFile;
 	}
 	
 }
