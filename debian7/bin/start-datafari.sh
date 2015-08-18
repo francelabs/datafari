@@ -40,7 +40,7 @@ fi
 if  [[ "$STATE" = *installed* ]];
 then
 	echo "Start postgres and add ManifoldCF database"
-	rm -r "${DATAFARI_HOME}/pgsql/data"
+	rm -rf "${DATAFARI_HOME}/pgsql/data"
 	mkdir "${DATAFARI_HOME}/pgsql/data"
 	id -u postgres &>/dev/null || useradd postgres
 	chown -R postgres "${DATAFARI_HOME}/pgsql"
