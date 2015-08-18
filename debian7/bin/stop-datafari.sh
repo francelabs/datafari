@@ -5,15 +5,17 @@
 #
 #
 
-source "set-datafari-env.sh"
-source "utils.sh"
-source $INIT_STATE_FILE
-source $CONFIG_FILE
-
 if (( EUID != 0 )); then
    echo "You need to be root to run this script." 1>&2
    exit 100
 fi
+
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+source "${DIR}/set-datafari-env.sh"
+source "${DIR}/utils.sh"
+source $INIT_STATE_FILE
+source $CONFIG_FILE
 
 
 isMCFRunning=true

@@ -5,17 +5,18 @@
 #
 #
 
-source "set-datafari-env.sh"
-source "utils.sh"
-source $INIT_STATE_FILE
-source $CONFIG_FILE
-
-
-
 if (( EUID != 0 )); then
    echo "You need to be root to run this script." 1>&2
    exit 100
 fi
+
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+source "${DIR}/set-datafari-env.sh"
+source "${DIR}/utils.sh"
+source $INIT_STATE_FILE
+source $CONFIG_FILE
+
 
 if is_running $CATALINA_PID; then
     echo "Error: Tomcat seems to be running already with PID $(cat $TOMCAT_PID_FILE)"
@@ -40,7 +41,7 @@ fi
 if  [[ "$STATE" = *installed* ]];
 then
 	echo "Start postgres and add ManifoldCF database"
-	rm -r "${DATAFARI_HOME}/pgsql/data"
+	rm -rf "${DATAFARI_HOME}/pgsql/data"
 	mkdir "${DATAFARI_HOME}/pgsql/data"
 	id -u postgres &>/dev/null || useradd postgres
 	chown -R postgres "${DATAFARI_HOME}/pgsql"
