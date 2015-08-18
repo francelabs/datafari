@@ -66,7 +66,6 @@ public class ConfigDeduplication extends HttpServlet {
 				if (enable!=null){
 					if (enable.equals("true")){
 						error = CorePropertiesConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY, "true");
-						//error = CorePropertiesConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION, "true");
 					}
 					else{
 						error = CorePropertiesConfiguration.setProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY, "false");

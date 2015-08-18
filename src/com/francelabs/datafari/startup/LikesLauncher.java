@@ -41,6 +41,12 @@ public class LikesLauncher extends HttpServlet{
 		} catch (IOException e) {
 			LOGGER.error(e);
 		}
+		try {
+			File externalFile = UpdateNbLikes.getInstance().getConfigFile();
+			externalFile.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		if (isEnabled !=null && isEnabled.equals("true")){
 			updateNbLikes();
 			startScheduler();
@@ -64,14 +70,15 @@ public class LikesLauncher extends HttpServlet{
 						NbLikes doc = listLikes.get(i);
 						properties.put(doc.documentId,doc.nbLikes);
 					}
-					try {
-						UpdateNbLikes.getInstance();
 						UpdateNbLikes.properties = properties;
 						UpdateNbLikes.saveProperty();
+						try {
+							SendHttpRequest.sendGET("http://localhost:8080/datafari-solr/FileShare/reloadCache");
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 						LOGGER.info("updateNbLikes finished it's work");
-					} catch (IOException e) {
-						LOGGER.error(e);
-					}
+					
 				}
 			}).start();
 		}
