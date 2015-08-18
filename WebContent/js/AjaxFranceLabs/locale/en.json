@@ -164,5 +164,7 @@
 "SERVERPROBLEMCONNECTIONMONGODB" : "The database doesn't respond to server. Please retry later",
 "PROBLEMECONNECTIONSERVER" : "The server doesn't respond. Please check your connection to internet and retry later",
 "SERVERGENERALERROR" : "Error occurred. Please retry later",
-"DESCRIPTIONGETFAVORITES" : "All your favorites that you have saved are listed in this page.</br>You can click on the name if you want to see it or you can delete it from the favorites by clicking on "
+"DESCRIPTIONGETFAVORITES" : "All your favorites that you have saved are listed in this page.</br>You can click on the name if you want to see it or you can  it from the favorites by clicking on ",
+"settings":"Settings",
+"login" : "Log In"
 }
