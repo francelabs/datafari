@@ -28,7 +28,7 @@ font-family: "Righteous",cursive;
 display: block;
 font-size: 20px;
 line-height: 50px;
-  background: url(../img/logo.png) right 42px no-repeat;
+  /* background: url(../img/logo.png) right 42px no-repeat; */
   -webkit-transition: 0.5s;
   -moz-transition: 0.5s;
   -o-transition: 0.5s;
@@ -48,7 +48,7 @@ font-family: "Righteous",cursive;
 display: block;
 font-size: 20px;
 line-height: 50px;
-  background: url(../img/logo.png) right 42px no-repeat;
+  /* background: url(../img/logo.png) right 42px no-repeat; */
   -webkit-transition: 0.5s;
   -moz-transition: 0.5s;
   -o-transition: 0.5s;

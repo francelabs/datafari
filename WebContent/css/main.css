@@ -2,7 +2,9 @@
 @import "reset.css";
 @import "generic.css";
 
-@import "menu.css";
+/*
+@import "menu.css"; 
+*/
 
 @import "checkbox.css";
 @import "template.css";
