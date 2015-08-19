@@ -1,4 +1,4 @@
-package com.francelabs.datafari.Update;
+package com.francelabs.datafari.updateprocessor;
 
 import java.io.IOException;
 import java.util.regex.Matcher;

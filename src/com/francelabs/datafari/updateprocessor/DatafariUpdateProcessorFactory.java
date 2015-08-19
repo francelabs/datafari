@@ -1,4 +1,4 @@
-package com.francelabs.datafari.Update;
+package com.francelabs.datafari.updateprocessor;
 
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.response.SolrQueryResponse;
