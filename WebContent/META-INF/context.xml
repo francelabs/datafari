@@ -14,5 +14,29 @@
 		/> -->
 	<!-- By default, not used -->
 	<!-- <Parameter name="nogroupsinad" value="" override="false" /> -->
+	
+	<Realm className="com.francelabs.realm.CustomCombinedRealm" >
+		<Realm 
+		    authDB="db-containing"
+		    authCollection="users" 
+		    authUserField="username" 
+		    authPasswordField="password" 
+		    authRoleField="role" 
+		    className="com.francelabs.realm.GenericMongoRealm" 
+		    defaultDbHost="localhost" 
+		    defaultDbPass="" 
+		    defaultDbUser="" 
+		    defaultRole="user"
+		    digest = "SHA-256"/>
+		    
+		    	
+	
+		<Realm   className="org.apache.catalina.realm.JNDIRealm"
+		     connectionURL="ldap://ldap.forumsys.com:389"
+		       userPattern="uid={0},dc=example,dc=com"
+		    connectionName="cn=read-only-admin,dc=example,dc=com"
+		connectionPassword="password"/>
+		    
+	</Realm>
 
 </Context>

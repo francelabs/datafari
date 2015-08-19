@@ -13,11 +13,11 @@ import com.mongodb.DBObject;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.realm.MongoDBRunning;
 
 import static java.util.Arrays.asList;
 
 import com.francelabs.datafari.user.CodesUser.*;
+import com.francelabs.realm.MongoDBRunning;
 
 public class Like {
 
@@ -115,25 +115,30 @@ public class Like {
 		Document doc = new Document(StringsUser.USERNAMECOLUMN, username);
 		if (getInstance().coll!=null){
 			Document myDoc = coll.find(doc).first();
-			ArrayList<Document> likesListDB = (ArrayList<Document>) myDoc.get(StringsUser.LIKESCOLUMN);
-			ArrayList<String> likesList = new ArrayList<String>();
-			for (int i=0 ; i<likesListDB.size(); i++){
-				//constructing the likesList
-				Document tmp =((Document)likesListDB.get(i));
-				likesList.add(tmp.get(StringsUser.DOCUMENTIDCOLUMN).toString());
+			if (myDoc!=null){
+				ArrayList<Document> likesListDB = (ArrayList<Document>) myDoc.get(StringsUser.LIKESCOLUMN);
+				ArrayList<String> likesList = new ArrayList<String>();
+				for (int i=0 ; i<likesListDB.size(); i++){
+					//constructing the likesList
+					Document tmp =((Document)likesListDB.get(i));
+					likesList.add(tmp.get(StringsUser.DOCUMENTIDCOLUMN).toString());
+				}
+				return likesList;
 			}
-			return likesList;
 		}
 		return null;
 	}
 
+	/**
+	 * get the number of Likes of each document from MongoDB. If a document is not returned, it would mean that he hasn't a like.
+	 * @return array containing the id of document and the correspoding likes
+	 */
 	public static ArrayList<NbLikes> getNbLikes(){
-	
-	AggregateIterable<Document> iterable = Like.getInstance().coll.aggregate(asList(
-		    	new Document("$project", (new Document("username", 1)).append("likes", 1)),
-		        new Document("$unwind","$likes"),
-		        new Document("$group",new Document("_id","$likes.document_id").append(StringsUser.NBLIKESCOLUMN,new Document("$sum",1))),
-		        new Document("$project",new Document("_id",0).append(StringsUser.DOCUMENTIDCOLUMN,"$_id").append(StringsUser.NBLIKESCOLUMN,1))));
+		AggregateIterable<Document> iterable = Like.getInstance().coll.aggregate(asList(
+			    	new Document("$project", (new Document("username", 1)).append("likes", 1)),
+			        new Document("$unwind","$likes"),
+			        new Document("$group",new Document("_id","$likes.document_id").append(StringsUser.NBLIKESCOLUMN,new Document("$sum",1))),
+			        new Document("$project",new Document("_id",0).append(StringsUser.DOCUMENTIDCOLUMN,"$_id").append(StringsUser.NBLIKESCOLUMN,1))));
 		final ArrayList<NbLikes> fetchNbLikes = new ArrayList<NbLikes> ();   
 		iterable.forEach(new Block<Document>() {
 		    @Override
