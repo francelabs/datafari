@@ -18,7 +18,7 @@ import com.francelabs.datafari.servlets.admin.ConfigDeduplication;
 import com.francelabs.datafari.user.CodesUser;
 import com.francelabs.datafari.user.Favorite;
 import com.francelabs.datafari.user.Like;
-import com.mongodb.realm.MongoDBRunning;
+import com.francelabs.realm.MongoDBRunning;
 
 /**
  * Servlet implementation class GetLikesFavorites

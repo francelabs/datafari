@@ -12,8 +12,8 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.realm.MongoDBRunning;
 import com.francelabs.datafari.user.StringsUser.*;
+import com.francelabs.realm.MongoDBRunning;
 
 public class Favorite {
 	public static String FAVORITEDB = StringsUser.FAVORITEDB;

@@ -64,4 +64,9 @@
     <servlet-class>com.francelabs.datafari.startup.LikesLauncher</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
+    <servlet>
+    <servlet-name>UserManagement</servlet-name>
+    <servlet-class>com.francelabs.datafari.startup.UserManagement</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
 </web-app>

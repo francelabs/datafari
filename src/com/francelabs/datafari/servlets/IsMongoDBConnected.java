@@ -13,7 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.francelabs.datafari.user.Favorite;
-import com.mongodb.realm.MongoDBRunning;
+import com.francelabs.realm.MongoDBRunning;
 
 /**
  * Servlet implementation class IsMongoDBConnected

@@ -18,7 +18,7 @@ import org.json.JSONObject;
 import com.francelabs.datafari.user.CodesUser;
 import com.francelabs.datafari.user.Favorite;
 import com.francelabs.datafari.user.StringsUser;
-import com.mongodb.realm.MongoDBRunning;
+import com.francelabs.realm.MongoDBRunning;
 
 /**
  * Servlet implementation class GetFavorites
