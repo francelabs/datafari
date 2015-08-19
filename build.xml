@@ -51,6 +51,8 @@
 			<src path="${project.dir}/src" />
 		</javac>
 		
+		<jar destfile="${solr.dir}/solr_home/lib/datafariupdateprocessor.jar" basedir="${dist.dir}/WEB-INF/classes" includes="com/francelabs/datafari/Update/**"/>
+		
 		<copy todir="${dist.dir}/WEB-INF/classes/com/francelabs/i18n">
 					<fileset dir="${project.dir}/src/com/francelabs/i18n">
 						<include name="**" />
