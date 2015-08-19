@@ -67,33 +67,33 @@
 					<div class="col-xs-4 col-sm-8 top-panel-right">
 <!-- 						<a href="#" class="about">about</a> -->
 
-					<!-- 	<ul class="nav navbar-nav pull-right panel-menu" style="display:none"><!-- when user management will be available those shall be too 
-							<li class="hidden-xs">
-								<a href="index.html" class="modal-link">
-									<i class="fa fa-bell"></i>
-									<span class="badge">7</span>
-								</a>
-							</li>
-							<li class="hidden-xs"  >
-								<a class="ajax-link" href="ajax/calendar.html">
-									<i class="fa fa-calendar"></i>
-									<span class="badge">7</span>
-								</a>
-							</li>
-							<li class="hidden-xs">
-								<a href="ajax/page_messages.html" class="ajax-link">
-									<i class="fa fa-envelope"></i>
-									<span class="badge">7</span>
-								</a>
-							</li> -->
+					 	<ul class="nav navbar-nav pull-right panel-menu" >
+<!-- 							<li class="hidden-xs"> -->
+<!-- 								<a href="index.html" class="modal-link"> -->
+<!-- 									<i class="fa fa-bell"></i> -->
+<!-- 									<span class="badge">7</span> -->
+<!-- 								</a> -->
+<!-- 							</li> -->
+<!-- 							<li class="hidden-xs"  > -->
+<!-- 								<a class="ajax-link" href="ajax/calendar.html"> -->
+<!-- 									<i class="fa fa-calendar"></i> -->
+<!-- 									<span class="badge">7</span> -->
+<!-- 								</a> -->
+<!-- 							</li> -->
+<!-- 							<li class="hidden-xs"> -->
+<!-- 								<a href="ajax/page_messages.html" class="ajax-link"> -->
+<!-- 									<i class="fa fa-envelope"></i> -->
+<!-- 									<span class="badge">7</span> -->
+<!-- 								</a> -->
+<!-- 							</li>  -->
 
-<!-- 							<li class="dropdown" > -->
-<!-- 								<a href="#" class="dropdown-toggle account" data-toggle="dropdown"> -->
-<!-- 									<div class="avatar"> -->
-<!-- 										<img src="../images/pic-aurelien.jpg" class="img-circle" alt="avatar" />  -->
-<!-- 									</div> -->
+							<li class="dropdown" >
+								<a href="#" class="dropdown-toggle account" data-toggle="dropdown">
+									<div class="avatar">
+										<img src="../images/pic.jpg" class="img-circle" alt="avatar" /> 
+									</div>
 
-									<!-- <i class="fa fa-angle-down pull-right"></i> -->
+<!-- 									<i class="fa fa-angle-down pull-right"></i> -->
 
 									<div class="user-mini pull-right" >
 										<span class="welcome">Welcome,</span>
@@ -101,7 +101,7 @@
 									<span><% out.print(request.getUserPrincipal().getName());%></span>
 
 									</div>
-<!-- 								</a> -->
+								</a>
 <!-- 								<ul class="dropdown-menu"> -->
 <!-- 									<li> -->
 <!-- 										<a href="#"> -->
@@ -141,8 +141,8 @@
 <!-- 									</li> -->
 <!-- 								</ul> -->
 
-<!-- 								</li>  -->
-<!-- 						</ul> -->
+								</li> 
+						</ul>
 
 					</div>
 				</div>
