@@ -28,10 +28,4 @@ var id;
  	document.getElementById("iFrame").setAttribute("height", $("#iFrame").contents().height());
  }
 id = setInterval(autoResize, 100);
-$("a").click(function(e){
-	if(e.target.className==="ajax-link" || e.target.className==="ajax-link active-parent active"){
-		document.getElementById("content").setAttribute('style',"background-color : #FBFCE7");
-		window.clearInterval(id);
-	}
-});	
  </script>
