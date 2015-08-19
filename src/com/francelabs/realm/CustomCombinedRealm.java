@@ -28,7 +28,7 @@ public class CustomCombinedRealm extends CombinedRealm{
         GenericPrincipal newauthenticatedUser = null;
         for (Realm realm : realms) {
            if (log.isDebugEnabled()) {
-                log.debug(sm.getString("combinedRealm.authStart", username,
+                log.debug(this.sm.getString("combinedRealm.authStart", username,
                         realm.getClass().getName()));
             }
 
@@ -38,7 +38,7 @@ public class CustomCombinedRealm extends CombinedRealm{
             	// if authentification fails
             	newauthenticatedUser = authenticatedUser;
             		if (log.isDebugEnabled()) {
-                    log.debug(sm.getString("combinedRealm.authFail", username,
+                    log.debug(this.sm.getString("combinedRealm.authFail", username,
                             realm.getClass().getName()));
             	}
             } else {
@@ -47,7 +47,7 @@ public class CustomCombinedRealm extends CombinedRealm{
             	// then we create a new principal with the roles that we got form MongoDB
             	newauthenticatedUser = new GenericPrincipal(authenticatedUser.getName(),authenticatedUser.getPassword(),roleGetter.getRoles());
                 if (log.isDebugEnabled()) {
-                    log.debug(sm.getString("combinedRealm.authSuccess",
+                    log.debug(this.sm.getString("combinedRealm.authSuccess",
                             username, realm.getClass().getName()));
                 }
                 break;
@@ -74,7 +74,7 @@ public class CustomCombinedRealm extends CombinedRealm{
         
         for (Realm realm : realms) {
             if (log.isDebugEnabled()) {
-                log.debug(sm.getString("combinedRealm.authStart", username, realm.getInfo()));
+                log.debug(this.sm.getString("combinedRealm.authStart", username, realm.getInfo()));
             }
 
             authenticatedUser = (GenericPrincipal) realm.authenticate(certs);
@@ -83,7 +83,7 @@ public class CustomCombinedRealm extends CombinedRealm{
             	//if authentification fails
             	newauthenticatedUser = authenticatedUser;
                 if (log.isDebugEnabled()) {
-                    log.debug(sm.getString("combinedRealm.authFail", username,
+                    log.debug(this.sm.getString("combinedRealm.authFail", username,
                             realm.getClass().getName()));
                 }
             } else {
@@ -92,7 +92,7 @@ public class CustomCombinedRealm extends CombinedRealm{
             	// then we create a new principal with the roles that we got form MongoDB
             	newauthenticatedUser = new GenericPrincipal(authenticatedUser.getName(),authenticatedUser.getPassword(),roleGetter.getRoles());
                 if (log.isDebugEnabled()) {
-                    log.debug(sm.getString("combinedRealm.authSuccess",
+                    log.debug(this.sm.getString("combinedRealm.authSuccess",
                             username, realm.getClass().getName()));
                 }
                 break;
@@ -122,7 +122,7 @@ public class CustomCombinedRealm extends CombinedRealm{
         
         for (Realm realm : realms) {
             if (log.isDebugEnabled()) {
-                log.debug(sm.getString("combinedRealm.authStart", username, realm.getInfo()));
+                log.debug(this.sm.getString("combinedRealm.authStart", username, realm.getInfo()));
             }
 
             authenticatedUser = (GenericPrincipal) realm.authenticate(username, clientDigest, nonce,
@@ -133,7 +133,7 @@ public class CustomCombinedRealm extends CombinedRealm{
             	// if authentification fails
             	newauthenticatedUser = authenticatedUser;
                 if (log.isDebugEnabled()) {
-                    log.debug(sm.getString("combinedRealm.authFail", username,
+                    log.debug(this.sm.getString("combinedRealm.authFail", username,
                             realm.getClass().getName()));
                 }
             } else {
@@ -142,7 +142,7 @@ public class CustomCombinedRealm extends CombinedRealm{
             	// then we create a new principal with the roles that we got form MongoDB
             	newauthenticatedUser = new GenericPrincipal(authenticatedUser.getName(),authenticatedUser.getPassword(),roleGetter.getRoles());
             	if (log.isDebugEnabled()) {
-                    log.debug(sm.getString("combinedRealm.authSuccess",
+                    log.debug(this.sm.getString("combinedRealm.authSuccess",
                             username, realm.getClass().getName()));
                 }
                 break;
