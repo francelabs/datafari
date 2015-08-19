@@ -40,7 +40,7 @@ line-height: 50px;
 }
 #Datafari {
 	  position:relative;
-  background:#DDE27C;
+  background:#A8C900;
 }
 #Datafari a{
 	  color: #3D3C3A;
@@ -96,7 +96,7 @@ a.show-sidebar:hover {
   z-index: inherit;
   padding-bottom: 3000px !important;
   margin-bottom: -3000px !important;
-  background:#BDC831;
+  background:#A8C900;
   -webkit-transition: 0.1s;
   -moz-transition: 0.1s;
   -o-transition: 0.1s;
@@ -105,7 +105,7 @@ a.show-sidebar:hover {
 #content {
   position: relative;
   z-index: 10;
-  background: #FBFCE7;
+  background: #F0F0F0;
   box-shadow: 0 0 6px #000;
   padding-bottom: 3000px !important;
   // bug with mcf UI when adding repository path if an other fix have been found set back margin-bottom to -2980px
@@ -198,7 +198,7 @@ a.show-sidebar:hover {
 #top-panel {
   line-height: 20px;
   height: 50px;
-  background:#DDE27C;
+  background:#A8C900;
 }
 #main {
   margin-top: 50px;
@@ -388,7 +388,7 @@ a.show-sidebar:hover {
 .box-content {
   position: relative;
   padding: 15px;
-  background: #FBFBF0;
+  background: #F0F0F0;
 }
 .box-content.dropbox, .box-content.sortablebox {
   overflow: hidden;

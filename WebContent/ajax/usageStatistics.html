@@ -1,3 +1,4 @@
+
 <!--Start Breadcrumb-->
 <div class="row">
 	<div id="breadcrumb" class="col-xs-12">
@@ -36,7 +37,7 @@ function autoResize(){
 id = setInterval(autoResize, 100);	
 $("a").click(function(e){
 	if(e.target.className==="ajax-link" || e.target.className==="ajax-link active-parent active"){
-		document.getElementById("content").setAttribute('style',"background-color : #FBFCE7");
+		document.getElementById("content").setAttribute('style',"background-color : #F0F0F0");
 		window.clearInterval(id);
 	}
 });
