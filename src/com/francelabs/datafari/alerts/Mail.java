@@ -64,7 +64,7 @@ public class Mail {
 				}
 			}
 			try{
-				inputStream = new BufferedReader(new FileReader(filePath+"bin/common/mail.txt")); //Get the configuration file
+				inputStream = new BufferedReader(new FileReader(filePath+"/bin/common/mail.txt")); //Get the configuration file
 				String l;
 				while ((l=inputStream.readLine()) != null) {
 					l = ""+l.replaceAll("\\s","");
