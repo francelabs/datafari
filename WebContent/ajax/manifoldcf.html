@@ -20,13 +20,18 @@
 </div>
 </body>
 <script>
- document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
- document.getElementById("topbar2").innerHTML = window.i18n.msgStore['connectors'];
-
+document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
+document.getElementById("topbar2").innerHTML = window.i18n.msgStore['connectors'];
+var id;
  function autoResize(){
  	document.getElementById("iFrame").setAttribute("height", document.getElementById("iFrame").contentWindow.document.childNodes[2].offsetHeight);
  	document.getElementById("iFrame").setAttribute("height", $("#iFrame").contents().height());
  }
-setInterval(autoResize, 1);	
-	
+id = setInterval(autoResize, 100);
+$("a").click(function(e){
+	if(e.target.className==="ajax-link" || e.target.className==="ajax-link active-parent active"){
+		document.getElementById("content").setAttribute('style',"background-color : #FBFCE7");
+		window.clearInterval(id);
+	}
+});	
  </script>
