@@ -17,7 +17,7 @@
 	    <script type="text/javascript" src="../js/jquery-1.8.1.min.js"></script>
 		<script type="text/javascript" src="../js/menu.js"></script>
 </head>
-<body class="gecko win" style="background-color : #FBFCE7 ;">
+<body class="gecko win" style="background-color : #F0F0F0 ;">
 
 	<script type="text/javascript" src="../js/jquery-1.8.1.min.js"></script>
 	<script type="text/javascript" src="../js/function/empty.func.js"></script>
