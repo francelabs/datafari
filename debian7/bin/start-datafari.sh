@@ -33,10 +33,10 @@ if is_running $SOLR_PID_FILE; then
    exit 1
 fi
 
-#if is_running $CASSANDRA_PID_FILE; then
-#   echo "Error : Cassandra seems to be running already with PID $(cat $CASSANDRA_PID_FILE)"
-#   exit 1
-#fi
+if is_running $CASSANDRA_PID_FILE; then
+   echo "Error : Cassandra seems to be running already with PID $(cat $CASSANDRA_PID_FILE)"
+   exit 1
+fi
 
 if  [[ "$STATE" = *installed* ]];
 then
@@ -58,7 +58,7 @@ else
 fi
 
 
-#CASSANDRA_INCLUDE=$CASSANDRA_ENV $CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE 1>/dev/null
+CASSANDRA_INCLUDE=$CASSANDRA_ENV $CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE 1>/dev/null
 cd $MCF_HOME/../bin
 bash mcf_crawler_agent.sh start
 cd $TOMCAT_HOME/bin

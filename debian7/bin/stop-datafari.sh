@@ -21,7 +21,7 @@ source $CONFIG_FILE
 isMCFRunning=true
 isTomcatRunning=true
 isSolrRunning=true
-#isCassandraRunning=true
+isCassandraRunning=true
 
 
 if is_running $MCF_PID_FILE; then
@@ -47,12 +47,12 @@ else
    echo "Warn : Solr does not seem to be running."
 fi
 
-#if is_running $CASSANDRA_PID_FILE; then
-#   kill $(cat $CASSANDRA_PID_FILE)
-#   rm $CASSANDRA_PID_FILE
-#else
-#   echo "Warn : Cassandra does not seem to be running."
-#fi
+if is_running $CASSANDRA_PID_FILE; then
+   kill $(cat $CASSANDRA_PID_FILE)
+   rm $CASSANDRA_PID_FILE
+else
+   echo "Warn : Cassandra does not seem to be running."
+fi
 
 if is_running $POSTGRES_PID_FILE; then
 	su postgres -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_HOME}/logs/pgsql.log stop"

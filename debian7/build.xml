@@ -55,6 +55,12 @@
 				<include name="**" />
 			</fileset>
 		</copy>
+		
+		<copy todir="${debian.dist.dir}/cassandra">
+			<fileset dir="${cassandra.dir}">
+				<include name="**" />
+			</fileset>
+		</copy>
 
 		<copy todir="${debian.dist.dir}/pgsql">
 			<fileset dir="${pgsql.dir}">

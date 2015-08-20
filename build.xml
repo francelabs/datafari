@@ -12,6 +12,7 @@
 	<property name="dist.dir" value="${project.dir}/dist" />
 	<property name="lib.dir" value="${project.dir}/lib" />
 	<property name="tomcat.dir" value="${project.dir}/tomcat" />
+	<property name="cassandra.dir" value="${project.dir}/cassandra" />
 	<property name="script.dir" value="${project.dir}/script" />
 	<property name="mcf.dir" value="${project.dir}/mcf" />
 	<property name="solr.dir" value="${project.dir}/solr" />
