@@ -19,6 +19,7 @@
 	<property name="jvm.dir" value="${debian.dir}/jvm" />
 	<property name="zookeeper.dir" value="${debian.dir}/zookeeper" />
 	<property name="command.dir" value="${debian.dir}/command" />
+	<property name="ocr.dir" value="${debian.dir}/ocr" />
 	<property name="pgsql.dir" value="${debian.dir}/pgsql" />
 	<property name="debian.bin.dir" value="${debian.dir}/bin" />
 
@@ -35,6 +36,11 @@
 		<mkdir dir="${debian.dist.dir}/pid" />
 		<copy todir="${debian.dist.dir}/tomcat">
 			<fileset dir="${tomcat.dir}">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<copy todir="${debian.dist.dir}/ocr">
+			<fileset dir="${ocr.dir}">
 				<include name="**" />
 			</fileset>
 		</copy>
