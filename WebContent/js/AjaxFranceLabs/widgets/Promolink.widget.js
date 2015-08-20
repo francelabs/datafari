@@ -37,7 +37,7 @@ AjaxFranceLabs.PromolinkWidget = AjaxFranceLabs.AbstractWidget.extend({
 		if(data.promolinkSearchComponent!==undefined){	
 			if (data.promolinkSearchComponent.title !== undefined && data.promolinkSearchComponent.title.length > 0){
 				$(self.elm).append('<div class="widgetContainer"></div>').show();
-				$(self.elm).find('.widgetContainer').append('<span class="title">' + '<span class="annonce">Annonce</span> '+ data.promolinkSearchComponent.title + '</span>').append('<span class="tips" id="snippet">' + data.promolinkSearchComponent.content + '</span>').show();
+				$(self.elm).find('.widgetContainer').append('<span class="title">' + '<span class="annonce">Annonce</span> '+ data.promolinkSearchComponent.title + '</span></br>').append('<span class="tips" id="snippet">' + data.promolinkSearchComponent.content + '</span>').show();
 			}
 		}
 	}

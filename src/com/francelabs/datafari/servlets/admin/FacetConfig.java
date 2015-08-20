@@ -141,7 +141,7 @@ public class FacetConfig extends HttpServlet {
 				if( jsp == null || js == null || en == null || fr == null){
 					//Check if it still doesn't exists
 					if(!(new File(env+"/WebContent/searchView.jsp").exists() || new File(env+"/WebContent/js/search.js").exists() || new File(env+"/WebContent/js/AjaxFranceLabs/locale/en.json").exists() || new File(env+"/WebContent/js/AjaxFranceLabs/locale/fr.json").exists())){
-						LOGGER.error("Error while opening searchView.jsp or search.js or en.json or fr.json, in FacetConfig doGet. Check those paths "+jsp.getAbsolutePath()+", "+js.getAbsolutePath()+", "+en.getAbsolutePath()+", "+fr.getAbsolutePath()+", Error 69047");		//If not an error is printed
+						LOGGER.error("Error while opening searchView.jsp or search.js or en.json or fr.json, in FacetConfig doGet. Check those paths "+env+"/WebContent/searchView.jsp"+", "+env+"/WebContent/js/search.js"+", "+env+"/WebContent/js/AjaxFranceLabs/locale/en.json"+", "+env+"/WebContent/js/AjaxFranceLabs/locale/fr.json"+", Error 69047");		//If not an error is printed
 						PrintWriter out = response.getWriter();
 						out.append("Error while opening the configuration files, please retry, if the problem persists contact your system administrator. Error Code : 69047"); 	
 						out.close();
