@@ -145,7 +145,7 @@ public class FacetConfig extends HttpServlet {
 						if(!(new File(env+"/WebContent/searchView.jsp").exists() || new File(env+"/WebContent/js/search.js").exists() || new File(env+"/WebContent/js/AjaxFranceLabs/locale/en.json").exists() || new File(env+"/WebContent/js/AjaxFranceLabs/locale/fr.json").exists())){
 							LOGGER.error("Error while opening searchView.jsp or search.js or en.json or fr.json, in FacetConfig doGet. Check those paths "+env+"/WebContent/searchView.jsp"+", "+env+"/WebContent/js/search.js"+", "+env+"/WebContent/js/AjaxFranceLabs/locale/en.json"+", "+env+"/WebContent/js/AjaxFranceLabs/locale/fr.json"+", Error 69047");		//If not an error is printed
 							PrintWriter out = response.getWriter();
-							out.append("Error while opening the configuration files, please retry, if the problem persists contact your system administrator. Error Code : 69047"); 	
+							out.append("Error while opening the configuration files, please retry, if the problem persists contact your system administrator. Error code : 69047"); 	
 							out.close();
 							return;
 						}else{
@@ -159,7 +159,7 @@ public class FacetConfig extends HttpServlet {
 						if(!(new File(env+"/tomcat/webapps/Datafari/searchView.jsp").exists() || new File(env+"/tomcat/webapps/Datafari/js/search.js").exists() || new File(env+"/tomcat/webapps/Datafari/js/AjaxFranceLabs/locale/en.json").exists() || new File(env+"/tomcat/webapps/Datafari/js/AjaxFranceLabs/locale/fr.json").exists())){
 							LOGGER.error("Error while opening searchView.jsp or search.js or en.json or fr.json, in FacetConfig doGet. Check those paths "+env+"/tomcat/webapps/Datafari/searchView.jsp"+", "+env+"/tomcat/webapps/Datafari/js/search.js"+", "+env+"/tomcat/webapps/Datafari/js/AjaxFranceLabs/locale/en.json"+", "+env+"/tomcat/webapps/Datafari/js/AjaxFranceLabs/locale/fr.json"+", Error 69047");		//If not an error is printed
 							PrintWriter out = response.getWriter();
-							out.append("Error while opening the configuration files, please retry, if the problem persists contact your system administrator. Error Code : 69047"); 	
+							out.append("Error while opening the configuration files, please retry, if the problem persists contact your system administrator. Error code : 69047"); 	
 							out.close();
 							return;
 						}else{
