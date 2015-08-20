@@ -426,28 +426,25 @@ public class FacetConfig extends HttpServlet {
 				myBytes = jsContent.getBytes();
 				fooStream.write(myBytes);										//rewrite the file
 				fooStream.close();	
-			}else{
+			}else if(request.getParameter("0")!=null){
 				//If it's a modify printing order request
-				int i = 0;
-				String[] tab = new String[request.getParameterMap().size()];
 				//Get all the divName passed as parameters
-				for(Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();){
-					String next = e.nextElement();
-					if(next.matches("^[0-9]\\b"))
-						tab[i]=request.getParameter(next);
-					i++;
+				String[] tab = new String[request.getParameterMap().size()];
+				for(int i = 0; i< request.getParameterMap().size() ; i++){
+					tab[i]=request.getParameter(""+i+"");
 				}
 				//Find the "facets" div in the jsp
 				Source source = new Source(jsp);
 				String sourceString = source.getSource().toString();
 				int pas = sourceString.indexOf("<div id=\"facets\">")+("<div id=\"facets\">").length();
 				//Find it's end
-				int end = sourceString.substring(pas).indexOf("\t</div>\n");
+				int end = sourceString.substring(pas).indexOf("<div id=\"facet_signature\"></div>")+("<div id=\"facet_signature\"></div>").length();
 				String newJsp = sourceString.substring(0,pas)+"\n";
 				end += newJsp.length();
 				//Remove everything that is after the declaration of this div
-				for(int j = tab.length-1 ; j >-1 ; j--){
+				for(int j = 0 ; j <tab.length ; j++){
 					//Add the facets div in the requested order
+					System.out.println(tab[j]);
 					newJsp += "\t\t\t\t<div id=\"facet_"+tab[j]+"\"></div>\n";
 				}
 				//Add the end of the file
