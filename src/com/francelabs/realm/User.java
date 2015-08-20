@@ -11,9 +11,11 @@ import org.bson.Document;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
+import com.mongodb.Block;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
@@ -139,9 +141,17 @@ public class User {
 		// to have more informations, we can try to query by using only the user, so we can know 
 		// in a failure if the user exist or not, and if it's the password which is incorrect 
 		Document myDoc = coll.find(doc).first();
+		return getRoles(myDoc);
+	}
+	/**
+	 * Returns the roles of a user containing in the myDoc
+	 * @param myDoc the document containing the user with the roles
+	 * @return an arrayList of roles of the user
+	 */
+	private static ArrayList<String> getRoles(Document myDoc){
 		if(myDoc==null)
 			return null;
-		ArrayList<Document> rolesList = (ArrayList<Document>) myDoc.get(this.ROLECOLUMN);
+		ArrayList<Document> rolesList = (ArrayList<Document>) myDoc.get(User.ROLECOLUMN);
 		ArrayList <String> result = new ArrayList<String>();
 		for (int i = 0 ; i < rolesList.size() ; i++)
 			result.add( (String)((Document)(rolesList.get(i))).get("name"));
@@ -179,6 +189,27 @@ public class User {
 		public boolean isInBase(){
 			BasicDBObject doc = new BasicDBObject(this.USERNAMECOLUMN, this.userName);
 			return coll.find(doc).first()!=null;
+		}
+		
+		/**
+		 * get all user with the corresponding roles
+		 * @param db instance of the database that contains the identifier collection	
+		 * @return array list of array list containing at index 0 the username and the index 1 an array list of the user's roles
+		 */
+		public static ArrayList<ArrayList<Object>> getAllUsers(MongoDatabase db){
+			MongoCollection<Document> collection = db.getCollection(User.IDENTIFIERSCOLLECTION);
+			FindIterable<Document> iterable = collection.find().sort(new Document("username",1));
+			final ArrayList<ArrayList<Object>> results = new ArrayList<ArrayList<Object>>();
+			iterable.forEach(new Block<Document>() {
+			    @Override
+			    public void apply(final Document document) {
+			    	ArrayList<Object> arrayList = new ArrayList<Object>();
+			    	arrayList.add(document.get(User.USERNAMECOLUMN).toString());
+			    	arrayList.add(User.getRoles(document));
+			        results.add(arrayList);
+			    }
+			});
+			return results;
 		}
 		
 		/**

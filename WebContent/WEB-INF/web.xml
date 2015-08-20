@@ -43,6 +43,18 @@
       <transport-guarantee>NONE</transport-guarantee>
     </user-data-constraint>
   </security-constraint>
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Admin Privilege</web-resource-name>
+      <url-pattern>/SearchAdministrator/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>SearchAdministrator</role-name>
+    </auth-constraint>
+    <user-data-constraint>
+      <transport-guarantee>NONE</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
   <security-role>
     <role-name>ConnectedSearchUser</role-name>
   </security-role>
@@ -64,7 +76,7 @@
     <servlet-class>com.francelabs.datafari.startup.LikesLauncher</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
-    <servlet>
+  <servlet>
     <servlet-name>UserManagement</servlet-name>
     <servlet-class>com.francelabs.datafari.startup.UserManagement</servlet-class>
     <load-on-startup>1</load-on-startup>
