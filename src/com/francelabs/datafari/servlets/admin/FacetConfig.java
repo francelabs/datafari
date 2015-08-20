@@ -1,3 +1,18 @@
+/*******************************************************************************
+ *  * Copyright 2015 France Labs
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  * 
+ *  *      http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *******************************************************************************/
 package com.francelabs.datafari.servlets.admin;
 
 import java.io.File;
@@ -94,15 +109,16 @@ public class FacetConfig extends HttpServlet {
 				if(s.startsWith("-Dsolr.solr.home"))
 					env = s.substring(s.indexOf("=")+1, s.indexOf("solr_home")-5);
 			}
-		}
-		if(new File(env+"/WebContent/searchView.jsp").exists())	//Check if the files exists
 			jsp = new File(env+"/WebContent/searchView.jsp");
-		if(new File(env+"/WebContent/js/search.js").exists())
 			js = new File(env+"/WebContent/js/search.js");
-		if(new File(env+"/WebContent/js/AjaxFranceLabs/locale/en.json").exists())	//Check if the files exists
 			en = new File(env+"/WebContent/js/AjaxFranceLabs/locale/en.json");
-		if(new File(env+"/WebContent/js/AjaxFranceLabs/locale/fr.json").exists())
 			fr = new File(env+"/WebContent/js/AjaxFranceLabs/locale/fr.json");
+		}else{
+			jsp = new File(env+"/tomcat/webapps/Datafari/searchView.jsp");
+			js = new File(env+"/tomcat/webapps/Datafari/js/search.js");
+			en = new File(env+"/tomcat/webapps/Datafari/js/AjaxFranceLabs/locale/en.json");
+			fr = new File(env+"/tomcat/webapps/Datafari/js/AjaxFranceLabs/locale/fr.json");
+		}
 	}
 
 	/**
@@ -125,18 +141,34 @@ public class FacetConfig extends HttpServlet {
 				//If one of the files has not been found
 				if( jsp == null || js == null || en == null || fr == null){
 					//Check if it still doesn't exists
-					if(!(new File(env+"/WebContent/searchView.jsp").exists() || new File(env+"/WebContent/js/search.js").exists() || new File(env+"/WebContent/js/AjaxFranceLabs/locale/en.json").exists() || new File(env+"/WebContent/js/AjaxFranceLabs/locale/fr.json").exists())){
-						LOGGER.error("Error while opening searchView.jsp or search.js or en.json or fr.json, in FacetConfig doGet. Check those paths "+jsp.getAbsolutePath()+", "+js.getAbsolutePath()+", "+en.getAbsolutePath()+", "+fr.getAbsolutePath()+", Error 69047");		//If not an error is printed
-						PrintWriter out = response.getWriter();
-						out.append("Error while opening the configuration files, please retry, if the problem persists contact your system administrator. Error Code : 69047"); 	
-						out.close();
-						return;
+					if(System.getenv("DATAFARI_HOME")==null){
+						if(!(new File(env+"/WebContent/searchView.jsp").exists() || new File(env+"/WebContent/js/search.js").exists() || new File(env+"/WebContent/js/AjaxFranceLabs/locale/en.json").exists() || new File(env+"/WebContent/js/AjaxFranceLabs/locale/fr.json").exists())){
+							LOGGER.error("Error while opening searchView.jsp or search.js or en.json or fr.json, in FacetConfig doGet. Check those paths "+env+"/WebContent/searchView.jsp"+", "+env+"/WebContent/js/search.js"+", "+env+"/WebContent/js/AjaxFranceLabs/locale/en.json"+", "+env+"/WebContent/js/AjaxFranceLabs/locale/fr.json"+", Error 69047");		//If not an error is printed
+							PrintWriter out = response.getWriter();
+							out.append("Error while opening the configuration files, please retry, if the problem persists contact your system administrator. Error code : 69047"); 	
+							out.close();
+							return;
+						}else{
+							//If it exists now get it.
+							jsp = new File(env+"/WebContent/searchView.jsp");
+							js = new File(env+"/WebContent/js/search.js");
+							en = new File(env+"/WebContent/js/AjaxFranceLabs/locale/en.json");
+							fr = new File(env+"/WebContent/js/AjaxFranceLabs/locale/fr.json");
+						}
 					}else{
-						//If it exists now get it.
-						jsp = new File(env+"/WebContent/searchView.jsp");
-						js = new File(env+"/WebContent/js/search.js");
-						en = new File(env+"/WebContent/js/AjaxFranceLabs/locale/en.json");
-						fr = new File(env+"/WebContent/js/AjaxFranceLabs/locale/fr.json");
+						if(!(new File(env+"/tomcat/webapps/Datafari/searchView.jsp").exists() || new File(env+"/tomcat/webapps/Datafari/js/search.js").exists() || new File(env+"/tomcat/webapps/Datafari/js/AjaxFranceLabs/locale/en.json").exists() || new File(env+"/tomcat/webapps/Datafari/js/AjaxFranceLabs/locale/fr.json").exists())){
+							LOGGER.error("Error while opening searchView.jsp or search.js or en.json or fr.json, in FacetConfig doGet. Check those paths "+env+"/tomcat/webapps/Datafari/searchView.jsp"+", "+env+"/tomcat/webapps/Datafari/js/search.js"+", "+env+"/tomcat/webapps/Datafari/js/AjaxFranceLabs/locale/en.json"+", "+env+"/tomcat/webapps/Datafari/js/AjaxFranceLabs/locale/fr.json"+", Error 69047");		//If not an error is printed
+							PrintWriter out = response.getWriter();
+							out.append("Error while opening the configuration files, please retry, if the problem persists contact your system administrator. Error code : 69047"); 	
+							out.close();
+							return;
+						}else{
+							//If it exists now get it.
+							jsp = new File(env+"/tomcat/webapps/Datafari/searchView.jsp");
+							js = new File(env+"/tomcat/webapps/Datafari/js/search.js");
+							en = new File(env+"/tomcat/webapps/Datafari/js/AjaxFranceLabs/locale/en.json");
+							fr = new File(env+"/tomcat/webapps/Datafari/js/AjaxFranceLabs/locale/fr.json");
+						}
 					}
 				}
 				//Make sure the sem was not already acquired, before acquiring it

@@ -48,19 +48,18 @@ AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
 																	'<div class="res"></div>');
 
 													elm.find('.doc:last .res').append('<span class="icon"></span>');
-													var extension;
-													if (typeof doc.extension === "undefined"){
-														extension = doc.source;
-													} else {
-														extension = doc.extension;
-													}
+													var extension = doc.extension;
+													
 													if (self.isMobile){
 														if (extension.toLowerCase()!==undefined && extension.toLowerCase()!="")
 															elm.find('.doc:last .icon').append('<span>['+ extension.toUpperCase() +']</span> ');
 													}	
-													else
-														elm.find('.doc:last .icon').append('<object data="images/icons/'+ extension.toLowerCase() +'-icon-24x24.png"><img src="images/icons/default-icon-24x24.png" /></object>&nbsp;');
-
+													else {
+														if (extension !==undefined && extension !="")
+															elm.find('.doc:last .icon').append('<object data="images/icons/'+ extension.toLowerCase() +'-icon-24x24.png"></object>&nbsp;');
+														else
+															elm.find('.doc:last .icon').append('<object data="images/icons/default-icon-24x24.png"></object>&nbsp;');
+													}
 									                var urlRedirect = 'URL?url='+ url + '&id='+Manager.store.get("id").value + '&q=' + Manager.store.get("q").value + '&position='+position;
 													elm.find('.doc:last .res').append('<a class="title" target="_blank" href="'+urlRedirect+'"></a>');										
 													elm.find('.doc:last .title').append('<span>' +decodeURIComponent(doc.title) + '</span>');
