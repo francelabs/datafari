@@ -31,7 +31,13 @@
        that you fully re-index after changing this setting as it can
        affect both how text is indexed and queried.
   -->
-  <luceneMatchVersion>4.8</luceneMatchVersion>
+  <luceneMatchVersion>5.2.1</luceneMatchVersion>
+
+	<lib dir="./lib/extraction"/>
+	<lib dir="./lib/langid"/>
+	<lib dir="./lib/MCF"/>
+	<lib dir="./lib/custom"/>
+
 
   <!-- <lib/> directives can be used to instruct Solr to load an Jars
        identified and use them to resolve any "plugins" specified in
@@ -85,7 +91,8 @@
        solr.RAMDirectoryFactory is memory based, not
        persistent, and doesn't work with replication.
     -->
-  <directoryFactory class="${solr.directoryFactory:solr.NRTCachingDirectoryFactory}" name="DirectoryFactory"/> 
+  <directoryFactory class="${solr.directoryFactory:solr.NRTCachingDirectoryFactory}" name="DirectoryFactory">
+  </directoryFactory> 
 
   <!-- The CodecFactory for defining the format of the inverted index.
        The default implementation is SchemaCodecFactory, which is the official Lucene
@@ -309,9 +316,17 @@
          uncommitted changes to the index, so use of a hard autoCommit
          is recommended (see below).
          "dir" - the target directory for transaction logs, defaults to the
-                solr data directory.  --> 
+                solr data directory.
+         "numVersionBuckets" - sets the number of buckets used to keep
+                track of max version values when checking for re-ordered
+                updates; increase this value to reduce the cost of
+                synchronizing access to version buckets during high-volume
+                indexing, this requires 8 bytes (long) * numVersionBuckets
+                of heap space per Solr core.
+    -->
     <updateLog>
       <str name="dir">${solr.ulog.dir:}</str>
+      <int name="numVersionBuckets">${solr.ulog.numVersionBuckets:65536}</int>
     </updateLog>
  
     <!-- AutoCommit
@@ -384,42 +399,6 @@
 
   </updateHandler>
   
-  <!-- IndexReaderFactory
-
-       Use the following format to specify a custom IndexReaderFactory,
-       which allows for alternate IndexReader implementations.
-
-       ** Experimental Feature **
-
-       Please note - Using a custom IndexReaderFactory may prevent
-       certain other features from working. The API to
-       IndexReaderFactory may change without warning or may even be
-       removed from future releases if the problems cannot be
-       resolved.
-
-
-       ** Features that may not work with custom IndexReaderFactory **
-
-       The ReplicationHandler assumes a disk-resident index. Using a
-       custom IndexReader implementation may cause incompatibility
-       with ReplicationHandler and may cause replication to not work
-       correctly. See SOLR-1366 for details.
-
-    -->
-  <!--
-  <indexReaderFactory name="IndexReaderFactory" class="package.class">
-    <str name="someArg">Some Value</str>
-  </indexReaderFactory >
-  -->
-  <!-- By explicitly declaring the Factory, the termIndexDivisor can
-       be specified.
-    -->
-  <!--
-     <indexReaderFactory name="IndexReaderFactory" 
-                         class="solr.StandardIndexReaderFactory">
-       <int name="setTermIndexDivisor">12</int>
-     </indexReaderFactory >
-    -->
 
   <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
        Query section - these settings control query time things like caches
@@ -492,38 +471,6 @@
     <!-- custom cache currently used by block join --> 
     <cache autowarmCount="10" class="solr.search.LRUCache" initialSize="0" name="perSegFilter" regenerator="solr.NoOpRegenerator" size="10"/>
 
-    <!-- Field Value Cache
-         
-         Cache used to hold field values that are quickly accessible
-         by document id.  The fieldValueCache is created by default
-         even if not configured here.
-      -->
-    <!--
-       <fieldValueCache class="solr.FastLRUCache"
-                        size="512"
-                        autowarmCount="128"
-                        showItems="32" />
-      -->
-
-    <!-- Custom Cache
-
-         Example of a generic cache.  These caches may be accessed by
-         name through SolrIndexSearcher.getCache(),cacheLookup(), and
-         cacheInsert().  The purpose is to enable easy caching of
-         user/application level data.  The regenerator argument should
-         be specified as an implementation of solr.CacheRegenerator 
-         if autowarming is desired.  
-      -->
-    <!--
-       <cache name="myUserCache"
-              class="solr.LRUCache"
-              size="4096"
-              initialSize="1024"
-              autowarmCount="1024"
-              regenerator="com.mycompany.MyRegenerator"
-              />
-      -->
-
 
     <!-- Lazy Field Loading
 
@@ -581,10 +528,8 @@
 
 	<!-- Listener for External Filed used for likes -->
 	
-	<listener event="newSearcher" 
-	          class="org.apache.solr.schema.ExternalFileFieldReloader"/>
-	<listener event="firstSearcher" 
-	          class="org.apache.solr.schema.ExternalFileFieldReloader"/>
+	<listener class="org.apache.solr.schema.ExternalFileFieldReloader" event="newSearcher"/>
+	<listener class="org.apache.solr.schema.ExternalFileFieldReloader" event="firstSearcher"/>
 
 
    <!-- Query Related Event Listeners
@@ -688,51 +633,7 @@
          related headers
       -->
     <httpCaching never304="true"/>
-    <!-- If you include a <cacheControl> directive, it will be used to
-         generate a Cache-Control header (as well as an Expires header
-         if the value contains "max-age=")
-         
-         By default, no Cache-Control header is generated.
-         
-         You can use the <cacheControl> option even if you have set
-         never304="true"
-      -->
-    <!--
-       <httpCaching never304="true" >
-         <cacheControl>max-age=30, public</cacheControl> 
-       </httpCaching>
-      -->
-    <!-- To enable Solr to respond with automatically generated HTTP
-         Caching headers, and to response to Cache Validation requests
-         correctly, set the value of never304="false"
-         
-         This will cause Solr to generate Last-Modified and ETag
-         headers based on the properties of the Index.
-
-         The following options can also be specified to affect the
-         values of these headers...
-
-         lastModFrom - the default value is "openTime" which means the
-         Last-Modified value (and validation against If-Modified-Since
-         requests) will all be relative to when the current Searcher
-         was opened.  You can change it to lastModFrom="dirLastMod" if
-         you want the value to exactly correspond to when the physical
-         index was last modified.
-
-         etagSeed="..." is an option you can change to force the ETag
-         header (and validation against If-None-Match requests) to be
-         different even if the index has not changed (ie: when making
-         significant changes to your config file)
-
-         (lastModifiedFrom and etagSeed are both ignored if you use
-         the never304="true" option)
-      -->
-    <!--
-       <httpCaching lastModifiedFrom="openTime"
-                    etagSeed="Solr">
-         <cacheControl>max-age=30, public</cacheControl> 
-       </httpCaching>
-      -->
+ 
   </requestDispatcher>
 
   <!-- Request Handlers 
@@ -764,9 +665,7 @@
        queries across multiple shards
     -->
 	    
- <requestHandler  name="/reloadCache" 
-	  class="org.apache.solr.search.function.FileFloatSource$ReloadCacheRequestHandler" 
-	/>
+ <requestHandler class="org.apache.solr.search.function.FileFloatSource$ReloadCacheRequestHandler" name="/reloadCache"/>
 	 
 
 	<requestHandler class="solr.SearchHandler" name="/select">
@@ -775,7 +674,7 @@
 		<lst name="defaults">
 			<str name="echoParams">explicit</str>
 			<str name="defType">edismax</str>
-			<str name="qf">title_fr^50 title_en^50 content_fr^10 content_en^10 source^20 extension^30</str>
+			<str name="qf">title_fr^50 title_en^50 content_fr^10 content_en^10 source^20 extension^30 id^3</str>
 			<str name="pf">title_en^500 title_fr^500 content_fr^100 content_en^100</str>
 			<int name="rows">10</int>
 			<str name="spellcheck">true</str>
@@ -918,50 +817,6 @@
   -->
   <requestHandler class="solr.DocumentAnalysisRequestHandler" name="/analysis/document" startup="lazy"/>
 
-  <!-- Admin Handlers
-
-       Admin Handlers - This will register all the standard admin
-       RequestHandlers.  
-    -->
-  <requestHandler class="solr.admin.AdminHandlers" name="/admin/"/>
-  <!-- This single handler is equivalent to the following... -->
-  <!--
-     <requestHandler name="/admin/luke"       class="solr.admin.LukeRequestHandler" />
-     <requestHandler name="/admin/system"     class="solr.admin.SystemInfoHandler" />
-     <requestHandler name="/admin/plugins"    class="solr.admin.PluginInfoHandler" />
-     <requestHandler name="/admin/threads"    class="solr.admin.ThreadDumpHandler" />
-     <requestHandler name="/admin/properties" class="solr.admin.PropertiesRequestHandler" />
-     <requestHandler name="/admin/file"       class="solr.admin.ShowFileRequestHandler" >
-    -->
-  <!-- If you wish to hide files under ${solr.home}/conf, explicitly
-       register the ShowFileRequestHandler using: 
-    -->
-  <!--
-     <requestHandler name="/admin/file" 
-                     class="solr.admin.ShowFileRequestHandler" >
-       <lst name="invariants">
-         <str name="hidden">synonyms.txt</str> 
-         <str name="hidden">anotherfile.txt</str> 
-       </lst>
-     </requestHandler>
-    -->
-
-  <!-- ping/healthcheck -->
-  <requestHandler class="solr.PingRequestHandler" name="/admin/ping">
-    <lst name="invariants">
-      <str name="q">solrpingquery</str>
-    </lst>
-    <lst name="defaults">
-      <str name="echoParams">all</str>
-    </lst>
-    <!-- An optional feature of the PingRequestHandler is to configure the 
-         handler with a "healthcheckFile" which can be used to enable/disable 
-         the PingRequestHandler.
-         relative paths are resolved against the data dir 
-      -->
-    <!-- <str name="healthcheckFile">server-enabled.txt</str> -->
-  </requestHandler>
-
   <!-- Echo the request contents back to the client -->
   <requestHandler class="solr.DumpRequestHandler" name="/debug/dump">
     <lst name="defaults">
@@ -969,46 +824,7 @@
      <str name="echoHandler">true</str>
     </lst>
   </requestHandler>
-  
-  <!-- Solr Replication
-
-       The SolrReplicationHandler supports replicating indexes from a
-       "master" used for indexing and "slaves" used for queries.
-
-       http://wiki.apache.org/solr/SolrReplication 
-
-       It is also necessary for SolrCloud to function (in Cloud mode, the
-       replication handler is used to bulk transfer segments when nodes 
-       are added or need to recover).
-
-       https://wiki.apache.org/solr/SolrCloud/
-    -->
-  <requestHandler class="solr.ReplicationHandler" name="/backup">
-  	<lst name="defaults">
-  		<str name="command">backup</str>
-  		<int name="numberToKeep">1</int>
-  		<str name="location">/opt/datafari-server/backup</str>
-  	</lst>
-    <!--
-       To enable simple master/slave replication, uncomment one of the 
-       sections below, depending on whether this solr instance should be
-       the "master" or a "slave".  If this instance is a "slave" you will 
-       also need to fill in the masterUrl to point to a real machine.
-    -->
-    <!--
-       <lst name="master">
-         <str name="replicateAfter">commit</str>
-         <str name="replicateAfter">startup</str>
-         <str name="confFiles">schema.xml,stopwords.txt</str>
-       </lst>
-    -->
-    <!--
-       <lst name="slave">
-         <str name="masterUrl">http://your-master-hostname:8983/solr</str>
-         <str name="pollInterval">00:00:60</str>
-       </lst>
-    -->
-  </requestHandler>
+ 
 
   <!-- Search Components
 
@@ -1023,35 +839,17 @@
        <searchComponent name="highlight" class="solr.HighlightComponent" />
        <searchComponent name="stats"     class="solr.StatsComponent" />
        <searchComponent name="debug"     class="solr.DebugComponent" />
-   
-       Default configuration in a requestHandler would look like:
-
-       <arr name="components">
-         <str>query</str>
-         <str>facet</str>
-         <str>mlt</str>
-         <str>highlight</str>
-         <str>stats</str>
-         <str>debug</str>
-       </arr>
-
-       If you register a searchComponent to one of the standard names, 
-       that will be used instead of the default.
-
-       To insert components before or after the 'standard' components, use:
-    
-       <arr name="first-components">
-         <str>myFirstComponentName</str>
-       </arr>
-    
-       <arr name="last-components">
-         <str>myLastComponentName</str>
-       </arr>
-
-       NOTE: The component registered with the name "debug" will
-       always be executed after the "last-components" 
        
      -->
+
+  <!-- Terms Component
+
+       http://wiki.apache.org/solr/TermsComponent
+
+       A component to return terms and document frequency of those
+       terms
+    -->
+  <searchComponent class="solr.TermsComponent" name="terms"/>
 	 
 	 <searchComponent class="com.francelabs.datafari.solr.CapsuleSearchComponent" name="capsulecomponent">
 	  <str name="file">capsules.txt</str>

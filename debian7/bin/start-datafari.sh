@@ -63,4 +63,4 @@ cd $MCF_HOME/../bin
 bash mcf_crawler_agent.sh start
 cd $TOMCAT_HOME/bin
 bash startup.sh
-#SOLR_INCLUDE=$SOLR_ENV $SOLR_INSTALL_DIR/bin/solr start
+SOLR_INCLUDE=$SOLR_ENV $SOLR_INSTALL_DIR/bin/solr start

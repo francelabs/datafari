@@ -32,9 +32,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
-
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
@@ -45,10 +45,12 @@ import org.apache.solr.response.JSONResponseWriter;
 import org.apache.solr.response.SolrQueryResponse;
 import org.apache.solr.schema.IndexSchema;
 import org.apache.solr.search.SolrIndexSearcher;
+import org.apache.solr.util.RTimer;
 import org.json.JSONException;
 import org.json.JSONObject;
-import com.francelabs.datafari.solrj.SolrServers;
-import com.francelabs.datafari.solrj.SolrServers.Core;
+
+import com.francelabs.datafari.service.search.SolrServers;
+import com.francelabs.datafari.service.search.SolrServers.Core;
 import com.francelabs.datafari.statistics.StatsProcessor;
 import com.francelabs.datafari.statistics.StatsPusher;
 
@@ -89,8 +91,8 @@ public class SearchProxy extends HttpServlet {
 			return;
 		}
 
-		SolrServer solr;
-		SolrServer solrBis = null;
+		SolrClient solr;
+		SolrClient promolinkCore = null;
 		QueryResponse queryResponse = null;
 		QueryResponse queryResponseBis = null;
 		SolrQuery query = new SolrQuery();
@@ -106,7 +108,7 @@ public class SearchProxy extends HttpServlet {
 				break;
 			default:
 				solr = SolrServers.getSolrServer(Core.FILESHARE);
-				solrBis = SolrServers.getSolrServer(Core.PROMOLINK); 
+				promolinkCore = SolrServers.getSolrServer(Core.PROMOLINK); 
 				/*
 				 * if (request.getUserPrincipal() != null) { String
 				 * AuthenticatedUserName = request.getUserPrincipal()
@@ -128,14 +130,14 @@ public class SearchProxy extends HttpServlet {
 			query.add(params);
 			query.setRequestHandler(handler);
 			queryResponse = solr.query(query);
-			if(solrBis != null && !(params.get("q").toString().equals("*:*"))){ //launch a request in the promolink core only if it's a request on the FileShare core
+			if(promolinkCore != null && !(params.get("q").toString().equals("*:*"))){ //launch a request in the promolink core only if it's a request on the FileShare core
 				if(params.get("q").startsWith("\"")){							//and if it's not an empty request
 					queryBis.setQuery(params.get("q"));
 				}else{
 					queryBis.setQuery("\""+params.get("q")+"\""); 
 					queryBis.set("q.op", "AND");								// Ensure that all queries on the promolink core will be in exact expression	
 				}
-				queryResponseBis = solrBis.query(queryBis);
+				queryResponseBis = promolinkCore.query(queryBis);
 			}
 			switch (handler) {
 			case "/select":
@@ -156,7 +158,7 @@ public class SearchProxy extends HttpServlet {
 				break;
 			}
 
-			if(solrBis != null){
+			if(promolinkCore != null){
 				writeSolrJResponse(request, response, query, queryResponse, queryBis, queryResponseBis);
 			}
 			else {
@@ -230,6 +232,24 @@ public class SearchProxy extends HttpServlet {
 			@Override
 			public void updateSchemaToLatest() {
 
+			}
+
+			@Override
+			public Map<String, Object> getJSON() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public RTimer getRequestTimer() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public void setJSON(Map<String, Object> arg0) {
+				// TODO Auto-generated method stub
+				
 			}
 
 		};

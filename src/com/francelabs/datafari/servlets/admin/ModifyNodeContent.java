@@ -45,7 +45,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.francelabs.datafari.solrj.SolrServers.Core;
+import com.francelabs.datafari.service.search.SolrServers.Core;
 
 /**
  * This Servlet is used to print and modify the textContent of various nodes of the solrConfig.xml

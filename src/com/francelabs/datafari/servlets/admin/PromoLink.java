@@ -40,9 +40,10 @@ import org.apache.solr.response.JSONResponseWriter;
 import org.apache.solr.response.SolrQueryResponse;
 import org.apache.solr.schema.IndexSchema;
 import org.apache.solr.search.SolrIndexSearcher;
+import org.apache.solr.util.RTimer;
 
-import com.francelabs.datafari.solrj.SolrServers;
-import com.francelabs.datafari.solrj.SolrServers.Core;
+import com.francelabs.datafari.service.search.SolrServers;
+import com.francelabs.datafari.service.search.SolrServers.Core;
 
 /**
  * 
@@ -145,6 +146,24 @@ public class PromoLink extends HttpServlet {
 				@Override
 				public void updateSchemaToLatest() {
 
+				}
+
+				@Override
+				public Map<String, Object> getJSON() {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public RTimer getRequestTimer() {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public void setJSON(Map<String, Object> arg0) {
+					// TODO Auto-generated method stub
+					
 				}
 
 			};
