@@ -23,7 +23,7 @@
 		<fileset dir="${tomcat.dir}/lib/">
 			<include name="*.jar" />
 		</fileset>
-		<fileset dir="${project.dir}/solr/solr_home/lib/">
+		<fileset dir="${project.dir}/solr/solr_home/FileShare/lib/extraction">
 					<include name="tika-core-*.jar" />
 				</fileset>
 		
@@ -51,8 +51,8 @@
 			<src path="${project.dir}/src" />
 		</javac>
 		
-		<jar destfile="${solr.dir}/solr_home/lib/datafariupdateprocessor.jar" basedir="${dist.dir}/WEB-INF/classes" includes="com/francelabs/datafari/updateprocessor/**"/>
-		<jar destfile="${tomcat.dir}/lib/FranceLabsRealm.jar" basedir="${dist.dir}/WEB-INF/classes" includes="com/francelabs/realm/**"/>
+		<jar destfile="${solr.dir}/solr_home/FileShare/lib/custom/datafariupdateprocessor.jar" basedir="${dist.dir}/WEB-INF/classes" includes="com/francelabs/datafari/updateprocessor/**"/>
+		<jar destfile="${tomcat.dir}/lib/DatafariRealm.jar" basedir="${dist.dir}/WEB-INF/classes" includes="com/francelabs/realm/**"/>
 		
 		<copy todir="${dist.dir}/WEB-INF/classes/com/francelabs/i18n">
 					<fileset dir="${project.dir}/src/com/francelabs/i18n">
