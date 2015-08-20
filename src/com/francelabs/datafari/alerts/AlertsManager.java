@@ -40,6 +40,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -420,12 +421,12 @@ public class AlertsManager {
 					ScriptConfiguration.setProperty(frequency, df.format(new Date()).toString());
 				}
 			}
-			FindIterable<Document> cursor = DBService.getInstance().getCollection().find(); // Get all the
+			List<Properties> alertList = DBService.getInstance().getAlerts(); // Get all the
 															// elements in the
 															// collection
 			Core[] core = Core.values();
-			for (Document d : cursor) { // Get the next Object in the collection
-				if (frequency.equals(d.get("frequency").toString())) {
+			for (Properties alertProp : alertList) { // Get the next Object in the collection
+				if (frequency.equals(alertProp.get("frequency").toString())) {
 					SolrClient solr = null;
 					for (int i = 0; i < core.length; i++) { // Get the right
 															// core by comparing
@@ -433,7 +434,7 @@ public class AlertsManager {
 															// the Enum Type
 															// Core to the one
 															// in the database
-						if (d.get("core").toString().toUpperCase()
+						if (alertProp.get("core").toString().toUpperCase()
 								.equals("" + core[i].toString().toUpperCase())) {
 							try {
 								solr = SolrServers.getSolrServer(core[i]);
@@ -446,9 +447,9 @@ public class AlertsManager {
 						}
 					}// Creates an alert with the attributes of the element
 						// found in the database.
-					alert = new Alert(d.get("subject").toString(), d
-							.get("mail").toString(), solr, d.get("keyword")
-							.toString(), d.get("frequency").toString(), mail, d
+					alert = new Alert(alertProp.get("subject").toString(), alertProp
+							.get("mail").toString(), solr, alertProp.get("keyword")
+							.toString(), alertProp.get("frequency").toString(), mail, alertProp
 							.get("user").toString());
 					alert.run(); // Makes the request and send the mail if they
 									// are some results
