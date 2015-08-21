@@ -70,7 +70,13 @@ public class DBService {
 		for (Document alert : cursor) {
 			Properties p = new Properties();
 			for(Entry<String, Object> entry : alert.entrySet()){
-				p.put(entry.getKey(), (String)entry.getValue()) ;
+				/*
+				if (entry.getValue() instanceof ObjectId){
+					p.put(entry.getKey(), ((ObjectId)entry.getValue()).) ;
+					
+				} else {*/
+					p.put(entry.getKey(), (String)entry.getValue().toString()) ;
+				//}
 			}
 			prop.add(p);
 		}
