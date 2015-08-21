@@ -201,12 +201,12 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						<li id="SolrAdmin"><a class="ajax-link" href="../ajax/solr.html"><%= resourceBundle.getString("solrAdmin")%></a></li>
 						<li id="AlertAdmin"><a class="ajax-link" href="../ajax/alertsAdmin.html"><%= resourceBundle.getString("alertAdmin")%></a></li>
 						<li id="IndexField"><a class="ajax-link" href="../ajax/IndexField.html"><%= resourceBundle.getString("indexField")%></a></li>
-						<li id="SchemaAnalysis"><a class="ajax-link" href="./../ajax/SchemaAnalysis.html"><%= resourceBundle.getString("schemaAnalysis")%></a></li>
+						<li id="SchemaAnalysis"><a class="ajax-link" href="../ajax/SchemaAnalysis.html"><%= resourceBundle.getString("schemaAnalysis")%></a></li>
 <% 
 	if(request.isUserInRole("SearchAdministrator")){
 %>
-						<li id="SizeLimitation"><a class="ajax-link" href="./../ajax/SizeLimitations.html"><%= resourceBundle.getString("sizeLimitation")%></a></li>
-						<li id="AutocompleteConfiguration"><a class="ajax-link" href="./../ajax/AutocompleteConfiguration.html"><%= resourceBundle.getString("autocompleteConfiguration")%></a></li>
+						<li id="SizeLimitation"><a class="ajax-link" href="../ajax/SizeLimitations.html"><%= resourceBundle.getString("sizeLimitation")%></a></li>
+						<li id="AutocompleteConfiguration"><a class="ajax-link" href="../ajax/AutocompleteConfiguration.html"><%= resourceBundle.getString("autocompleteConfiguration")%></a></li>
 <%
 	}
 %>
@@ -220,7 +220,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 					<ul class="dropdown-menu">
 						<li id="PromoLink"><a class="ajax-link" href="../ajax/promoLinks.html"><%= resourceBundle.getString("promoLink")%></a></li>
 						<li id="Synonyms" ><a class="ajax-link" href="../ajax/Synonyms.html"><%= resourceBundle.getString("synonyms")%></a></li>
-						<li id="Stopwords"><a class="ajax-link" href="../ajax/StopWords.html"><%= resourceBundle.getString("stopwords")%></a></li>
+<%-- 						<li id="Stopwords"><a class="ajax-link" href="../ajax/StopWords.html"><%= resourceBundle.getString("stopwords")%></a></li> --%>
 						<li id="FieldWeight"><a class="ajax-link" href="../ajax/FieldWeight.html"><%= resourceBundle.getString("fieldWeight")%></a></li>
 						<li id="FacetConfig"><a class="ajax-link" href="../ajax/FacetConfig.html"><%= resourceBundle.getString("facetConfig")%></a></li>
 						<li id="Deduplication"><a class="ajax-link" href="../ajax/config_deduplication.html"><%= resourceBundle.getString("deduplication")%></a></li>
