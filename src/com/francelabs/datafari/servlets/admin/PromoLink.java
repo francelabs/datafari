@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
@@ -77,9 +78,9 @@ public class PromoLink extends HttpServlet {
 			final SolrQuery query = new SolrQuery();
 			QueryResponse queryResponse = null;
 			doc = new SolrInputDocument();
-			HttpSolrServer server=null;
+			SolrClient server=null;
 			try {
-				server = (HttpSolrServer) SolrServers			//Select the right core
+				server = SolrServers			//Select the right core
 						.getSolrServer(Core.PROMOLINK);
 			} catch (IOException e1) {
 				PrintWriter out = response.getWriter();
@@ -225,9 +226,9 @@ public class PromoLink extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try{
-			HttpSolrServer server=null;
+			SolrClient server=null;
 			try {
-				server = (HttpSolrServer) SolrServers						//Select the right core
+				server =  SolrServers						//Select the right core
 						.getSolrServer(Core.PROMOLINK);
 			} catch (IOException e1) {
 				PrintWriter out = response.getWriter();
