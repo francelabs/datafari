@@ -51,7 +51,6 @@ import com.francelabs.datafari.service.db.DBService;
 @WebServlet("/admin/Alerts") 
 public class Alerts extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private String content;
 	private final static Logger LOGGER = Logger.getLogger(Alerts.class
 			.getName());
 	/**
@@ -71,11 +70,7 @@ public class Alerts extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		try{
 			PrintWriter pw = response.getWriter();
-			if(content.equals("")){
-				pw.append("Configuration error, please retry, if the problem persists contact your system administrator. Error code : 69006"); 	
-				pw.close();
-				return;
-			}
+
 			int i=0;
 			JSONObject superJson = new JSONObject();
 			try{
