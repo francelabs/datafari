@@ -1,0 +1,12 @@
+CREATE KEYSPACE datafari
+WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
+use datafari;
+CREATE TABLE alerts (
+  id varchar PRIMARY KEY,
+  keyword varchar,
+  core varchar,
+  frequency varchar,
+  mail varchar,
+  subject varchar,
+  user varchar
+);
