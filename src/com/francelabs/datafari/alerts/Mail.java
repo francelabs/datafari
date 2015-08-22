@@ -14,12 +14,7 @@
  * limitations under the License.
  *******************************************************************************/
 package com.francelabs.datafari.alerts;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.util.List;
 import java.util.Properties;
 
 import javax.mail.Message;

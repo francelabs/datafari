@@ -46,7 +46,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import com.francelabs.datafari.service.db.DBService;
+import com.francelabs.datafari.service.db.AlertData;
 import com.francelabs.datafari.service.search.SolrServers;
 import com.francelabs.datafari.service.search.SolrServers.Core;
 import com.francelabs.datafari.utils.ScriptConfiguration;
@@ -421,7 +421,7 @@ public class AlertsManager {
 					ScriptConfiguration.setProperty(frequency, df.format(new Date()).toString());
 				}
 			}
-			List<Properties> alertList = DBService.getInstance().getAlerts(); // Get all the
+			List<Properties> alertList = AlertData.getInstance().getAlerts(); // Get all the
 															// elements in the
 															// collection
 			Core[] core = Core.values();

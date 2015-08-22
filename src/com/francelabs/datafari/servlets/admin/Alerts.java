@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.francelabs.datafari.service.db.DBService;
+import com.francelabs.datafari.service.db.AlertData;
 
 /** Javadoc
  * 
@@ -74,7 +74,7 @@ public class Alerts extends HttpServlet {
 			int i=0;
 			JSONObject superJson = new JSONObject();
 			try{
-				List<Properties> alerts = DBService.getInstance().getAlerts();								//Get all the existing Alerts
+				List<Properties> alerts = AlertData.getInstance().getAlerts();								//Get all the existing Alerts
 				for (Properties alert : alerts) {										//Get the next Alert
 					if(!request.getParameter("keyword").equals("")){		//If the user have typed something in the search field
 						if(alert.get("keyword").equals(request.getParameter("keyword"))){	//then only the Alerts with a corresponding keyword are put into the Json		
@@ -155,7 +155,7 @@ public class Alerts extends HttpServlet {
 			PrintWriter pw = response.getWriter();
 			try{
 				if(request.getParameter("_id")!=null){
-					DBService.getInstance().deleteObj(request.getParameter("_id"));//Deleting part									//Execute the query in the collection
+					AlertData.getInstance().deleteAlert(request.getParameter("_id"));//Deleting part									//Execute the query in the collection
 				}
 				if(request.getParameter("keyword")!=null){	
 					Properties alert = new Properties();//Adding part
@@ -166,7 +166,7 @@ public class Alerts extends HttpServlet {
 						}															//This loop can only be triggered by an edit.
 					} 
 					alert.put("user", request.getRemoteUser());
-					DBService.getInstance().addObject(alert);
+					AlertData.getInstance().addAlert(alert);
 					//insert the object composed of all the parameters
 				}
 				//If this is an edit the two parts (Delete and Add) will be executed successively
