@@ -27,11 +27,8 @@ package com.francelabs.datafari.alerts;
  * @author Alexis Karassev
  *
  */
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
@@ -46,19 +43,17 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import com.francelabs.datafari.service.db.AlertData;
+import com.francelabs.datafari.service.db.cassandra.CassandraAlertDataService;
 import com.francelabs.datafari.service.search.SolrServers;
 import com.francelabs.datafari.service.search.SolrServers.Core;
 import com.francelabs.datafari.utils.ScriptConfiguration;
 
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
-import org.bson.Document;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.Interval;
 
-import com.mongodb.client.FindIterable;
 
 public class AlertsManager {
 	private static AlertsManager INSTANCE = new AlertsManager();
@@ -413,7 +408,6 @@ public class AlertsManager {
 	 */
 	private void alerts(String frequency) {
 		try {
-			boolean bool = false;
 			for (AlertFrequencyFirstExecution c : HDW) { // Checks if alerts with the correct
 										// frequency have already run at least
 										// once
@@ -421,7 +415,7 @@ public class AlertsManager {
 					ScriptConfiguration.setProperty(frequency, df.format(new Date()).toString());
 				}
 			}
-			List<Properties> alertList = AlertData.getInstance().getAlerts(); // Get all the
+			List<Properties> alertList = CassandraAlertDataService.getInstance().getAlerts(); // Get all the
 															// elements in the
 															// collection
 			Core[] core = Core.values();

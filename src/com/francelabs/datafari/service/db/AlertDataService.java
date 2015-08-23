@@ -15,23 +15,23 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
-public class AlertData {
+public class AlertDataService {
 	private MongoDatabase db;
 	private MongoCollection<Document> alertCollection;
 	private String database;
 
 
-	private static AlertData instance;
+	private static AlertDataService instance;
 	
-	public static synchronized AlertData getInstance() throws IOException
+	public static synchronized AlertDataService getInstance() throws IOException
 	{
 		if (instance == null){
-			instance = new AlertData();
+			instance = new AlertDataService();
 		}
 		return instance;
 	}
 	
-	public AlertData() throws IOException{
+	public AlertDataService() throws IOException{
 			// Gets the name of the database
 		database = ScriptConfiguration.getProperty("DATABASE");
 		// Gets the name of the collection
