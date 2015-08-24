@@ -65,29 +65,26 @@ public class GetLikesFavorites extends HttpServlet {
 		JSONObject jsonResponse = new JSONObject();
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
-			try {
-				if (request.getUserPrincipal()!=null){
-					if (new MongoDBRunning(Favorite.FAVORITEDB).isConnected()){
-						String username = request.getUserPrincipal().getName();
-						ArrayList<String> likeList = Like.getLikes(username);	
-						ArrayList<String> favoritesList = Favorite.getFavorites(username);	
-						jsonResponse.put("favorites", favoritesList)
-							.put("code", 0)
-							.put("likes", likeList);
-					}else{
-						jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB)
-						.put("statut", "MongoDB Doesn't respound");		
-					}
-				}else{
-					jsonResponse.put("code", CodesReturned.NOTCONNECTED)
-						.put("statut","Not connected yet");
-				}
-			} catch (JSONException e) {
-					logger.error(e);
-			}			
-
-			PrintWriter out = response.getWriter();
-			out.print(jsonResponse);
+		try {
+			if (request.getUserPrincipal()!=null){	
+				String username = request.getUserPrincipal().getName();
+				ArrayList<String> likeList = Like.getLikes(username);	
+				ArrayList<String> favoritesList = Favorite.getFavorites(username);
+				if (likeList == null && favoritesList == null)
+					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB)
+					 .put("statut", "MongoDB Doesn't respound");		
+				else
+					jsonResponse.put("favorites", favoritesList)
+						.put("code", 0)
+						.put("likes", likeList);
+			}else{
+				jsonResponse.put("code", CodesReturned.NOTCONNECTED)
+					.put("statut","Not connected yet");
+			}
+		} catch (JSONException e) {
+			logger.error(e);
+		}			
+		PrintWriter out = response.getWriter();
+		out.print(jsonResponse);
 	}
-
 }

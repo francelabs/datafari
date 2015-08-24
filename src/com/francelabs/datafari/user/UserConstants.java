@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.francelabs.datafari.user;
 
-public final class StringsUser {
+public final class UserConstants {
 	public static final String USERNAMECOLUMN = "username";
 	public static final String FAVORITECOLUMN = "favorites";
 	public static final String DOCUMENTIDCOLUMN = "document_id";

@@ -25,6 +25,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
@@ -42,7 +44,7 @@ import com.francelabs.datafari.utils.ScriptConfiguration;
 import com.francelabs.datafari.utils.SendHttpRequest;
 import com.francelabs.datafari.utils.UpdateNbLikes;
 
-public class LikesLauncher extends HttpServlet{
+public class LikesLauncher implements ServletContextListener {
 	
 	private static boolean islaunched = false;
 	private static ScheduledExecutorService scheduler;
@@ -52,7 +54,8 @@ public class LikesLauncher extends HttpServlet{
 	private static boolean doReload = false;
 	private static boolean isThreadUpdateNbLikesStarted = false;
 	
-	public void init() throws ServletException{
+	@Override
+	public void contextInitialized(ServletContextEvent arg0) {
 	
 		String isEnabled = null;
 		try {
@@ -73,14 +76,17 @@ public class LikesLauncher extends HttpServlet{
 		System.out.println("----------");
 		System.out.println("---------- LikesLauncher Servlet Initialized successfully ----------");
 		System.out.println("----------");	
-		
-	        
+	}
+	
+	@Override
+	public void contextDestroyed(ServletContextEvent arg0) {
+		LikesLauncher.shutDown();
 	}
 	
 	private void updateNbLikes(){
 		if (!LikesLauncher.isThreadUpdateNbLikesStarted){
 			LikesLauncher.isThreadUpdateNbLikesStarted = true;
-			new Thread(new Runnable(){
+			 new Thread(new Runnable(){
 				public void run(){
 					ArrayList<NbLikes> listLikes = Like.getNbLikes();
 				
@@ -108,8 +114,8 @@ public class LikesLauncher extends HttpServlet{
 	public static void startScheduler(){
 		if (!islaunched){
 			islaunched=true;
-		   scheduler = Executors.newScheduledThreadPool(1);
-		   handler = scheduler.scheduleAtFixedRate(reloadCache, 1, 10, TimeUnit.SECONDS);
+			scheduler = Executors.newScheduledThreadPool(1);
+			handler = scheduler.scheduleAtFixedRate(reloadCache, 1, 10, TimeUnit.SECONDS);
 		}
 	}
 	public static void saveChange(){
@@ -121,8 +127,6 @@ public class LikesLauncher extends HttpServlet{
 		public void run() {
 			if (LikesLauncher.doReload){
 				try {
-
-
 					SolrClient solrClient = SolrServers.getSolrServer(Core.FILESHARE);
 					SolrQuery refreshQuery = new SolrQuery();
 					refreshQuery.set("qt", "reloadCache");

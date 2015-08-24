@@ -74,7 +74,7 @@ public class Unlike extends HttpServlet {
 				// checking if the user is connected
 				if (userPrincipal == null){
 					jsonResponse.put("code", CodesReturned.NOTCONNECTED)
-					.put("statut", "Please reload the page, you'r not connected");
+						.put("statut", "Please reload the page, you'r not connected");
 				}else{
 					String username = request.getUserPrincipal().getName();
 					int returnResult = Like.unlike(username, documentId);

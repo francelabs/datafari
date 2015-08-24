@@ -71,8 +71,8 @@ public class DeleteFavorite extends HttpServlet {
 					.put("statut", "Please reload the page, you'r not connected");
 				}else{
 					String username = request.getUserPrincipal().getName();
-					if (Favorite.deleteFavorite(username, request.getParameter("idDocument"))){
-						jsonResponse.put("code", 0);
+					if (Favorite.deleteFavorite(username, request.getParameter("idDocument")) == CodesReturned.ALLOK){
+						jsonResponse.put("code", CodesReturned.ALLOK);
 					}else{
 						jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB)
 						.put("statut", "Problem while connecting to database");

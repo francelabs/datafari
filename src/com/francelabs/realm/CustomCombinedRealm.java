@@ -58,7 +58,7 @@ public class CustomCombinedRealm extends CombinedRealm{
             	}
             } else {
             	// else we get the role of the user in MongoDb
-            	RoleGetter roleGetter = new RoleGetter(authenticatedUser.getName(),(new MongoDBRunning(User.IDENTIFIERSDB).getDb()));
+            	RoleGetter roleGetter = new RoleGetter(authenticatedUser.getName(),(new MongoDBRunning(UserRealm.IDENTIFIERSDB).getDb()));
             	// then we create a new principal with the roles that we got form MongoDB
             	newauthenticatedUser = new GenericPrincipal(authenticatedUser.getName(),authenticatedUser.getPassword(),roleGetter.getRoles());
                 if (log.isDebugEnabled()) {
@@ -103,7 +103,7 @@ public class CustomCombinedRealm extends CombinedRealm{
                 }
             } else {
             	// else we get the role of the user in MongoDb
-            	RoleGetter roleGetter = new RoleGetter(authenticatedUser.getName(),(new MongoDBRunning(User.IDENTIFIERSDB).getDb()));
+            	RoleGetter roleGetter = new RoleGetter(authenticatedUser.getName(),(new MongoDBRunning(UserRealm.IDENTIFIERSDB).getDb()));
             	// then we create a new principal with the roles that we got form MongoDB
             	newauthenticatedUser = new GenericPrincipal(authenticatedUser.getName(),authenticatedUser.getPassword(),roleGetter.getRoles());
                 if (log.isDebugEnabled()) {
@@ -153,7 +153,7 @@ public class CustomCombinedRealm extends CombinedRealm{
                 }
             } else {
             	// else we get the role of the user in MongoDb
-            	RoleGetter roleGetter = new RoleGetter(authenticatedUser.getName(),(new MongoDBRunning(User.IDENTIFIERSDB).getDb())); 
+            	RoleGetter roleGetter = new RoleGetter(authenticatedUser.getName(),(new MongoDBRunning(UserRealm.IDENTIFIERSDB).getDb())); 
             	// then we create a new principal with the roles that we got form MongoDB
             	newauthenticatedUser = new GenericPrincipal(authenticatedUser.getName(),authenticatedUser.getPassword(),roleGetter.getRoles());
             	if (log.isDebugEnabled()) {

@@ -32,8 +32,7 @@ import org.json.JSONObject;
 
 import com.francelabs.datafari.constants.CodesReturned;
 import com.francelabs.datafari.user.Favorite;
-import com.francelabs.datafari.user.StringsUser;
-import com.francelabs.realm.MongoDBRunning;
+import com.francelabs.datafari.user.UserConstants;
 
 /**
  * Servlet implementation class GetFavorites
@@ -74,14 +73,12 @@ public class GetFavorites extends HttpServlet {
 				.put("statut", "Please reload the page, you'r not connected");
 			}else{
 				String username = userPrincipal.getName();
-				if (!(new MongoDBRunning(StringsUser.FAVORITEDB).isConnected())){
+				ArrayList<String> favoritesList = Favorite.getFavorites(username);
+				if (favoritesList==null){
 					jsonResponse.put("code",CodesReturned.PROBLEMCONNECTIONMONGODB);
-				}
-				else{
-					ArrayList<String> favoritesList = Favorite.getFavorites(username);
+				}else{
 					jsonResponse.put("code",CodesReturned.ALLOK);
-					if (favoritesList!=null)
-						jsonResponse.put("favoritesList", favoritesList);
+					jsonResponse.put("favoritesList", favoritesList);
 				}
 			}
 		}catch (JSONException e) {

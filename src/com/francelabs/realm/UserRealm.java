@@ -36,7 +36,7 @@ import com.mongodb.client.MongoDatabase;
 
 import static com.mongodb.client.model.Filters.*;
 
-public class User {
+public class UserRealm {
 	final static Logger logger = Logger.getLogger(MongoDBRunning.class.getName());
 	public final static String USERNAMECOLUMN = "username";
 	public final static String PASSWORDCOLUMN = "password";
@@ -55,7 +55,7 @@ public class User {
 	
 	
 	 
-	public User(String username,String password, MongoDatabase db){
+	public UserRealm(String username,String password, MongoDatabase db){
 		this.userName = username;
 		this.password = digest(password);
 		if (db!=null){
@@ -88,7 +88,7 @@ public class User {
 				.append(this.PASSWORDCOLUMN, this.password);
 			ArrayList<Document> roleDBList =  new ArrayList<Document> ();
 			for (int i = 0 ; i < role.length ; i++){
-				roleDBList.add(new Document(User.ROLEATTRIBUTE, role[i]));
+				roleDBList.add(new Document(UserRealm.ROLEATTRIBUTE, role[i]));
 			}
 			doc.append(this.ROLECOLUMN,roleDBList);
 			Document userDoc =  new Document(this.USERNAMECOLUMN,this.userName);
@@ -165,10 +165,10 @@ public class User {
 	private static ArrayList<String> getRoles(Document myDoc){
 		if(myDoc==null)
 			return null;
-		ArrayList<Document> rolesList = (ArrayList<Document>) myDoc.get(User.ROLECOLUMN);
+		ArrayList<Document> rolesList = (ArrayList<Document>) myDoc.get(UserRealm.ROLECOLUMN);
 		ArrayList <String> result = new ArrayList<String>();
 		for (int i = 0 ; i < rolesList.size() ; i++)
-			result.add( (String)((Document)(rolesList.get(i))).get(User.ROLEATTRIBUTE));
+			result.add( (String)((Document)(rolesList.get(i))).get(UserRealm.ROLEATTRIBUTE));
 		return result;
 	}
 		
@@ -192,7 +192,7 @@ public class User {
 			// in a failure if the user exist or not, and if it's the password which is incorrect 
 			Document myDoc = coll.find(doc).first();
 			ArrayList<Object> rolesList = (ArrayList<Object>) myDoc.get(this.ROLECOLUMN);
-			rolesList.add(new BasicDBObject(User.ROLEATTRIBUTE, role));
+			rolesList.add(new BasicDBObject(UserRealm.ROLEATTRIBUTE, role));
 			BasicDBObject newDocument = new BasicDBObject();
 			newDocument.append("$set", new BasicDBObject().append(this.ROLECOLUMN, rolesList));
 		 
@@ -212,10 +212,10 @@ public class User {
 				ArrayList<Object> rolesList = (ArrayList<Object>) myDoc.get(this.ROLECOLUMN);
 				ArrayList<Object> rolesResult =  new ArrayList<Object>();
 				for (int i=0; i<rolesList.size() ; i++){
-					if (((Document) rolesList.get(i)).get(User.ROLEATTRIBUTE).toString().equals(role)){
+					if (((Document) rolesList.get(i)).get(UserRealm.ROLEATTRIBUTE).toString().equals(role)){
 						continue;
 					}
-					rolesResult.add(new Document(User.ROLEATTRIBUTE,((Document) rolesList.get(i)).get(User.ROLEATTRIBUTE)));
+					rolesResult.add(new Document(UserRealm.ROLEATTRIBUTE,((Document) rolesList.get(i)).get(UserRealm.ROLEATTRIBUTE)));
 				}
 				BasicDBObject newDocument = new BasicDBObject();
 				newDocument.append("$set", new BasicDBObject().append(this.ROLECOLUMN, rolesResult));
@@ -239,16 +239,16 @@ public class User {
 		 * @return array list of array list containing at index 0 the username and the index 1 an array list of the user's roles
 		 */
 		public static ArrayList<ArrayList<Object>> getAllUsers(MongoDatabase db){
-			MongoCollection<Document> collection = db.getCollection(User.IDENTIFIERSCOLLECTION);
+			MongoCollection<Document> collection = db.getCollection(UserRealm.IDENTIFIERSCOLLECTION);
 			FindIterable<Document> iterable = collection.find().sort(new Document("username",1));
 			final ArrayList<ArrayList<Object>> results = new ArrayList<ArrayList<Object>>();
 			iterable.forEach(new Block<Document>() {
 			    @Override
 			    public void apply(final Document document) {
 			    	ArrayList<Object> arrayList = new ArrayList<Object>();
-			    	if (document.get(User.USERNAMECOLUMN)!=null && document.get(User.ROLECOLUMN)!=null){
-				    	arrayList.add(document.get(User.USERNAMECOLUMN).toString());
-				    	arrayList.add(User.getRoles(document));
+			    	if (document.get(UserRealm.USERNAMECOLUMN)!=null && document.get(UserRealm.ROLECOLUMN)!=null){
+				    	arrayList.add(document.get(UserRealm.USERNAMECOLUMN).toString());
+				    	arrayList.add(UserRealm.getRoles(document));
 				        results.add(arrayList);
 			    	}
 			    }

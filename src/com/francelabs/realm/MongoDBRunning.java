@@ -66,7 +66,7 @@ public class MongoDBRunning extends GenericMongoRealm{
 			connect();
 		}
 		/**
-		 * this purpose of this function is to try to connect to the database. If it success, it will set isConnected to true
+		 * the purpose of this function is to try to connect to the database. If it success, it will set isConnected to true
 		 */
 		private boolean connect(){
 			BasicConfigurator.configure();

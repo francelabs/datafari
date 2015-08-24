@@ -73,7 +73,8 @@ public class AddFavorite extends HttpServlet {
 					.put("statut", "Please reload the page, you'r not connected");
 				}else{
 					String username = request.getUserPrincipal().getName();
-					if (Favorite.addFavorite(username, request.getParameter("idDocument"))){
+					int code = Favorite.addFavorite(username, request.getParameter("idDocument"));
+					if (code == CodesReturned.ALLOK){
 						jsonResponse.put("code", 0);
 					}else{
 						// MongoDB is not running
