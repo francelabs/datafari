@@ -31,7 +31,7 @@ import com.mongodb.client.MongoDatabase;
 
 import static java.util.Arrays.asList;
 
-import com.francelabs.datafari.user.CodesUser.*;
+import com.francelabs.datafari.constants.CodesReturned;
 import com.francelabs.realm.MongoDBRunning;
 
 public class Like {
@@ -58,7 +58,7 @@ public class Like {
 					for (int i=0; i<likeList.size(); i++){
 						if (((Document)likeList.get(i)).get(StringsUser.DOCUMENTIDCOLUMN).toString().equals(idDocument)){
 							// the user has already liked the document
-							return CodesUser.ALREADYPERFORMED;
+							return CodesReturned.ALREADYPERFORMED;
 						}
 					}
 				else
@@ -79,9 +79,9 @@ public class Like {
 				.append(StringsUser.LIKESCOLUMN, dbList );
 				coll.insertOne(docAdd);	
 			}
-			return CodesUser.ALLOK;
+			return CodesReturned.ALLOK;
 		}
-		return CodesUser.PROBLEMCONNECTIONMONGODB;
+		return CodesReturned.PROBLEMCONNECTIONMONGODB;
 	}
 	
 	
@@ -90,7 +90,7 @@ public class Like {
 	 * @param username of the user who unlike a document
 	 * @param idDocument the id that should be unliked
 	 * @return Like.ALREADYPERFORMED if the like was already done, Like.ALLOK 
-	 * if all was ok and Like.CodesUser.PROBLEMCONNECTIONMONGODB if there's an error
+	 * if all was ok and Like.CodesReturned.PROBLEMCONNECTIONMONGODB if there's an error
 	 */
 	public static int unlike(String username, String idDocument){
 		BasicDBObject doc = new BasicDBObject(StringsUser.USERNAMECOLUMN, username);
@@ -112,13 +112,13 @@ public class Like {
 				newDocument.append("$set", new BasicDBObject().append(StringsUser.LIKESCOLUMN, likeList));
 				BasicDBObject searchQuery = new BasicDBObject().append(StringsUser.USERNAMECOLUMN, username);
 				coll.updateOne(searchQuery, newDocument);
-				return CodesUser.ALLOK;
+				return CodesReturned.ALLOK;
 			}else{
 				// if we didn't found it in the like List
-				return CodesUser.ALREADYPERFORMED;
+				return CodesReturned.ALREADYPERFORMED;
 			}
 		}
-		return CodesUser.PROBLEMCONNECTIONMONGODB;
+		return CodesReturned.PROBLEMCONNECTIONMONGODB;
 	}
 	
 	/**
@@ -139,6 +139,8 @@ public class Like {
 					likesList.add(tmp.get(StringsUser.DOCUMENTIDCOLUMN).toString());
 				}
 				return likesList;
+			}else{
+				return new ArrayList<String>();
 			}
 		}
 		return null;
@@ -162,6 +164,32 @@ public class Like {
 		    }
 		});
 		return fetchNbLikes;
+	}
+	
+	/**
+	 * Delete all likes of a user without deleting also his favorites
+	 * @param username
+	 * @return CodesReturned.ALLOK if the operation was success and CodesReturned.PROBLEMCONNECTIONMONGODB if the mongoDB isn't running	
+	 */
+	public static int removeLikes(String username){
+		BasicDBObject doc = new BasicDBObject(StringsUser.USERNAMECOLUMN, username);
+		if (getInstance().coll!=null){
+			Document myDoc = coll.find(doc).first();
+			if (myDoc != null){
+					ArrayList<Object> likeList = (ArrayList<Object>) myDoc.get(StringsUser.LIKESCOLUMN);
+					if (likeList!=null){
+						likeList = new BasicDBList();
+						BasicDBObject newDocument = new BasicDBObject();					 
+						newDocument.append("$set", new BasicDBObject().append(StringsUser.LIKESCOLUMN, likeList));
+						coll.updateOne(doc, newDocument);
+					}
+					return CodesReturned.ALLOK;
+			}else{
+				return CodesReturned.ALLOK;
+			}
+		}else{
+			return CodesReturned.PROBLEMCONNECTIONMONGODB;
+		}
 	}
 
 	/**

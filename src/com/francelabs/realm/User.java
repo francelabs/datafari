@@ -41,6 +41,7 @@ public class User {
 	public final static String USERNAMECOLUMN = "username";
 	public final static String PASSWORDCOLUMN = "password";
 	public final static String ROLECOLUMN = "role";
+	public final static String ROLEATTRIBUTE = "name";
 	public final static String IDENTIFIERSCOLLECTION = "users";
 	public final static String IDENTIFIERSDB = "db-containing";
 	private String algorithmHash = "SHA-256";
@@ -87,7 +88,7 @@ public class User {
 				.append(this.PASSWORDCOLUMN, this.password);
 			ArrayList<Document> roleDBList =  new ArrayList<Document> ();
 			for (int i = 0 ; i < role.length ; i++){
-				roleDBList.add(new Document("name", role[i]));
+				roleDBList.add(new Document(User.ROLEATTRIBUTE, role[i]));
 			}
 			doc.append(this.ROLECOLUMN,roleDBList);
 			Document userDoc =  new Document(this.USERNAMECOLUMN,this.userName);
@@ -125,9 +126,8 @@ public class User {
 	public void changePassword(String password){
 		Document newDocument = new Document();
 		newDocument.append("$set", new Document(this.PASSWORDCOLUMN,digest(password)));		
-		Document searchQuery = new Document(this.USERNAMECOLUMN, this.userName).append(this.PASSWORDCOLUMN, this.password);
+		Document searchQuery = new Document(this.USERNAMECOLUMN, this.userName);
 		coll.updateOne(searchQuery, newDocument);
-		
 	}
 	
 	/**
@@ -136,8 +136,7 @@ public class User {
 	 */
 	public boolean deleteUser(){
 		if (coll!=null){
-			Document doc = new Document(this.USERNAMECOLUMN, this.userName)
-				.append(this.PASSWORDCOLUMN, this.password);		
+			Document doc = new Document(this.USERNAMECOLUMN, this.userName);
 			if (coll.deleteOne(doc).getDeletedCount()>0)
 				return true;
 			else
@@ -169,7 +168,7 @@ public class User {
 		ArrayList<Document> rolesList = (ArrayList<Document>) myDoc.get(User.ROLECOLUMN);
 		ArrayList <String> result = new ArrayList<String>();
 		for (int i = 0 ; i < rolesList.size() ; i++)
-			result.add( (String)((Document)(rolesList.get(i))).get("name"));
+			result.add( (String)((Document)(rolesList.get(i))).get(User.ROLEATTRIBUTE));
 		return result;
 	}
 		
@@ -183,18 +182,46 @@ public class User {
 			return password;
 		}
 		
+		/**
+		 * Add a role to the user
+		 * @param role string representing the role that we want to add
+		 */
 		public void addRole(String role){
 			Document doc = new Document(this.USERNAMECOLUMN, this.userName);
 			// to have more informations, we can try to query by using only the user, so we can know 
 			// in a failure if the user exist or not, and if it's the password which is incorrect 
 			Document myDoc = coll.find(doc).first();
 			ArrayList<Object> rolesList = (ArrayList<Object>) myDoc.get(this.ROLECOLUMN);
-			rolesList.add(new BasicDBObject("name", role));
+			rolesList.add(new BasicDBObject(User.ROLEATTRIBUTE, role));
 			BasicDBObject newDocument = new BasicDBObject();
 			newDocument.append("$set", new BasicDBObject().append(this.ROLECOLUMN, rolesList));
 		 
-			BasicDBObject searchQuery = new BasicDBObject().append(this.USERNAMECOLUMN, this.userName).append(this.PASSWORDCOLUMN, this.password);
+			BasicDBObject searchQuery = new BasicDBObject().append(this.USERNAMECOLUMN, this.userName);
 			coll.updateOne(searchQuery, newDocument);
+		}
+	
+	
+		/**
+		 * Delete a role from the user
+		 * @param role string representing the role that we want to delete
+		 */
+		public void deleteRole(String role){
+			Document doc = new Document(this.USERNAMECOLUMN, this.userName);
+			Document myDoc = coll.find(doc).first();
+			if (myDoc!=null){
+				ArrayList<Object> rolesList = (ArrayList<Object>) myDoc.get(this.ROLECOLUMN);
+				ArrayList<Object> rolesResult =  new ArrayList<Object>();
+				for (int i=0; i<rolesList.size() ; i++){
+					if (((Document) rolesList.get(i)).get(User.ROLEATTRIBUTE).toString().equals(role)){
+						continue;
+					}
+					rolesResult.add(new Document(User.ROLEATTRIBUTE,((Document) rolesList.get(i)).get(User.ROLEATTRIBUTE)));
+				}
+				BasicDBObject newDocument = new BasicDBObject();
+				newDocument.append("$set", new BasicDBObject().append(this.ROLECOLUMN, rolesResult));
+				BasicDBObject searchQuery = new BasicDBObject().append(this.USERNAMECOLUMN, this.userName);
+				coll.updateOne(searchQuery, newDocument);
+			}
 		}
 		
 		/**
@@ -219,9 +246,11 @@ public class User {
 			    @Override
 			    public void apply(final Document document) {
 			    	ArrayList<Object> arrayList = new ArrayList<Object>();
-			    	arrayList.add(document.get(User.USERNAMECOLUMN).toString());
-			    	arrayList.add(User.getRoles(document));
-			        results.add(arrayList);
+			    	if (document.get(User.USERNAMECOLUMN)!=null && document.get(User.ROLECOLUMN)!=null){
+				    	arrayList.add(document.get(User.USERNAMECOLUMN).toString());
+				    	arrayList.add(User.getRoles(document));
+				        results.add(arrayList);
+			    	}
 			    }
 			});
 			return results;

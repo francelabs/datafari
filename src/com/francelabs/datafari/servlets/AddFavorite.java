@@ -30,7 +30,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.francelabs.datafari.user.CodesUser;
+import com.francelabs.datafari.constants.CodesReturned;
 import com.francelabs.datafari.user.Favorite;
 
 
@@ -69,7 +69,7 @@ public class AddFavorite extends HttpServlet {
 				Principal userPrincipal = request.getUserPrincipal(); 
 				//checking if the user is connected
 				if (userPrincipal == null){
-					jsonResponse.put("code", CodesUser.NOTCONNECTED)
+					jsonResponse.put("code", CodesReturned.NOTCONNECTED)
 					.put("statut", "Please reload the page, you'r not connected");
 				}else{
 					String username = request.getUserPrincipal().getName();
@@ -77,7 +77,7 @@ public class AddFavorite extends HttpServlet {
 						jsonResponse.put("code", 0);
 					}else{
 						// MongoDB is not running
-						jsonResponse.put("code", CodesUser.PROBLEMCONNECTIONMONGODB)
+						jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB)
 						.append("statut", "Problem while connecting to database");
 					}
 				}

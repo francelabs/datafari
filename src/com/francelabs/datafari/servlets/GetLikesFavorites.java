@@ -29,8 +29,8 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.francelabs.datafari.constants.CodesReturned;
 import com.francelabs.datafari.servlets.admin.ConfigDeduplication;
-import com.francelabs.datafari.user.CodesUser;
 import com.francelabs.datafari.user.Favorite;
 import com.francelabs.datafari.user.Like;
 import com.francelabs.realm.MongoDBRunning;
@@ -75,11 +75,11 @@ public class GetLikesFavorites extends HttpServlet {
 							.put("code", 0)
 							.put("likes", likeList);
 					}else{
-						jsonResponse.put("code", CodesUser.PROBLEMCONNECTIONMONGODB)
+						jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB)
 						.put("statut", "MongoDB Doesn't respound");		
 					}
 				}else{
-					jsonResponse.put("code", CodesUser.NOTCONNECTED)
+					jsonResponse.put("code", CodesReturned.NOTCONNECTED)
 						.put("statut","Not connected yet");
 				}
 			} catch (JSONException e) {

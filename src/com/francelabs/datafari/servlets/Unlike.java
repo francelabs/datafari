@@ -30,7 +30,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.francelabs.datafari.user.CodesUser;
+import com.francelabs.datafari.constants.CodesReturned;
 import com.francelabs.datafari.user.Favorite;
 import com.francelabs.datafari.user.Like;
 import com.francelabs.datafari.utils.UpdateNbLikes;
@@ -73,19 +73,19 @@ public class Unlike extends HttpServlet {
 				Principal userPrincipal = request.getUserPrincipal();
 				// checking if the user is connected
 				if (userPrincipal == null){
-					jsonResponse.put("code", CodesUser.NOTCONNECTED)
+					jsonResponse.put("code", CodesReturned.NOTCONNECTED)
 					.put("statut", "Please reload the page, you'r not connected");
 				}else{
 					String username = request.getUserPrincipal().getName();
 					int returnResult = Like.unlike(username, documentId);
-					if (returnResult == CodesUser.ALLOK){
+					if (returnResult == CodesReturned.ALLOK){
 						UpdateNbLikes.decrement(documentId);
 						jsonResponse.put("code", returnResult);
-					}else if(returnResult == CodesUser.ALREADYPERFORMED) {
+					}else if(returnResult == CodesReturned.ALREADYPERFORMED) {
 						// the document isn't liked (attempt to decrease the likes of a document)
 						jsonResponse.put("code", returnResult);
 					}else{
-						jsonResponse.put("code", CodesUser.PROBLEMCONNECTIONMONGODB)
+						jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB)
 						.put("statut", "Problem while connecting to database");
 					}
 				}

@@ -247,6 +247,17 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 <!-- 						<li><a class="ajax-link" href="../ajax/Jetty.html">Jetty</a></li> -->
 					</ul>
 				</li>
+				
+				<li class="dropdown" id="userManagement">
+					<a href="#" class="dropdown-toggle">
+					<i class="fa fa-users"></i>
+						 <span class="hidden-xs"><%= resourceBundle.getString("userManagement")%></span>
+					</a>
+					<ul class="dropdown-menu">
+						<li id="modifyUser"><a class="ajax-link" href="../ajax/modifyUsers.html"><%=resourceBundle.getString("modifyUsers")%></a></li>
+						<li id="addUser"><a class="ajax-link" href="../ajax/addUser.html"><%=resourceBundle.getString("addUser")%></a></li>
+					</ul>
+				</li>
 <%
 	}
 }

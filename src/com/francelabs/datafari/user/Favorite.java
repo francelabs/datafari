@@ -27,6 +27,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.francelabs.datafari.constants.CodesReturned;
 import com.francelabs.datafari.user.StringsUser.*;
 import com.francelabs.realm.MongoDBRunning;
 
@@ -42,8 +43,8 @@ public class Favorite {
 	 * @return true if it was success and false if not
 	 */
 	public static boolean addFavorite(String username, String idDocument){
-		BasicDBObject doc = new BasicDBObject(StringsUser.USERNAMECOLUMN, username);
 		if (getInstance().coll!=null){
+			BasicDBObject doc = new BasicDBObject(StringsUser.USERNAMECOLUMN, username);
 			Document myDoc = coll.find(doc).first(); // getting the doc of the username 
 			if (myDoc != null){
 				// if the doc exists in the collection (had already liked a document or saved a document as a favrorite
@@ -88,8 +89,8 @@ public class Favorite {
 	 * @return true if it was success and false if not
 	 */
 	public static boolean deleteFavorite(String username, String idDocument){
-		BasicDBObject doc = new BasicDBObject(StringsUser.USERNAMECOLUMN, username);
 		if (getInstance().coll!=null){
+			BasicDBObject doc = new BasicDBObject(StringsUser.USERNAMECOLUMN, username);
 			Document myDoc = coll.find(doc).first();
 			ArrayList<Object> favoriteList = (ArrayList<Object>) myDoc.get(StringsUser.FAVORITECOLUMN);
 			for (int i=0; i<favoriteList.size(); i++){
@@ -115,8 +116,8 @@ public class Favorite {
 	 * @return an array list of all the favorites document of the user. Return null if there's an error.
 	 */
 	public static ArrayList<String> getFavorites(String username){
-		BasicDBObject doc = new BasicDBObject(StringsUser.USERNAMECOLUMN, username);
 		if (getInstance().coll!=null){
+			BasicDBObject doc = new BasicDBObject(StringsUser.USERNAMECOLUMN, username);
 			Document myDoc = coll.find(doc).first();
 			if (myDoc!=null){
 				ArrayList<Object> favoritesListDB = (ArrayList<Object>) myDoc.get(StringsUser.FAVORITECOLUMN);
@@ -127,10 +128,39 @@ public class Favorite {
 					}
 					return favoritesList;
 				}
+			}else{
+				return new ArrayList<String>();
 			}
 		}
 		return null;
 	}
+	
+	/**
+	 * Delete all favorites of a user without deleting also his likes
+	 * @param username
+	 * @return CodesReturned.ALLOK if the operation was success and CodesReturned.PROBLEMCONNECTIONMONGODB if the mongoDB isn't running	
+	 */
+	public static int removeFavorites(String username){
+		if (getInstance().coll!=null){
+			BasicDBObject doc = new BasicDBObject(StringsUser.USERNAMECOLUMN, username);
+			Document myDoc = coll.find(doc).first();
+			if (myDoc != null){
+					ArrayList<Object> favoritesList = (ArrayList<Object>) myDoc.get(StringsUser.FAVORITECOLUMN);
+					if (favoritesList!=null){
+						favoritesList = new BasicDBList();
+						BasicDBObject newDocument = new BasicDBObject();					 
+						newDocument.append("$set", new BasicDBObject().append(StringsUser.FAVORITECOLUMN, favoritesList));
+						coll.updateOne(doc, newDocument);
+					}
+					return CodesReturned.ALLOK;
+			}else{
+				return CodesReturned.ALLOK;
+			}
+		}else{
+			return CodesReturned.PROBLEMCONNECTIONMONGODB;
+		}
+	}
+	
 	/**
 	 * change the database of Favorites and Likes
 	 * @param db the new database
@@ -139,6 +169,20 @@ public class Favorite {
 		Favorite.FAVORITEDB = db;
 	}
 
+	/**
+	 * Remove a user from the collection favorites. This will delete his likes and his favorites
+	 * @param username
+	 * @return 
+	 */
+	public static int removeUserFromFavoriteDB(String username){
+		if (getInstance().coll!=null){
+			BasicDBObject doc = new BasicDBObject(StringsUser.USERNAMECOLUMN, username);
+			coll.deleteOne(doc);
+			return CodesReturned.ALLOK;
+		}else{
+			return CodesReturned.PROBLEMCONNECTIONMONGODB;
+		}
+	}
 
 	/**
 	 * Get the instance

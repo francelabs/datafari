@@ -30,7 +30,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.francelabs.datafari.user.CodesUser;
+import com.francelabs.datafari.constants.CodesReturned;
 import com.francelabs.datafari.user.Favorite;
 
 /**
@@ -67,14 +67,14 @@ public class DeleteFavorite extends HttpServlet {
 			try {
 				Principal userPrincipal = request.getUserPrincipal();
 				if (userPrincipal == null){
-					jsonResponse.put("code", CodesUser.NOTCONNECTED)
+					jsonResponse.put("code", CodesReturned.NOTCONNECTED)
 					.put("statut", "Please reload the page, you'r not connected");
 				}else{
 					String username = request.getUserPrincipal().getName();
 					if (Favorite.deleteFavorite(username, request.getParameter("idDocument"))){
 						jsonResponse.put("code", 0);
 					}else{
-						jsonResponse.put("code", CodesUser.PROBLEMCONNECTIONMONGODB)
+						jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB)
 						.put("statut", "Problem while connecting to database");
 					}
 				}

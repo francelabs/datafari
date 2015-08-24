@@ -35,9 +35,6 @@
       <role-name>ConnectedSearchUser</role-name>
       <role-name>SearchAdministrator</role-name>
       <role-name>SearchExpert</role-name>
-      <role-name>ConnectedSearchUser</role-name>
-      <role-name>SearchAdministrator</role-name>
-      <role-name>SearchExpert</role-name>
     </auth-constraint>
     <user-data-constraint>
       <transport-guarantee>NONE</transport-guarantee>
