@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
@@ -63,6 +64,8 @@ public class SearchProxy extends HttpServlet {
 
 	private static final List<String> allowedHandlers = Arrays.asList(
 			"/select", "/suggest", "/stats", "/statsQuery");
+	
+	private static final Logger LOGGER = Logger.getLogger(SearchProxy.class.getName());
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -260,7 +263,7 @@ public class SearchProxy extends HttpServlet {
 			StringWriter s = new StringWriter();
 			
 			jsonWriter.write(s, req, res); 		
-			System.out.println(s.toString());//Write the results of the query on FileShare
+			LOGGER.debug(s.toString());//Write the results of the query on FileShare
 			JSONObject json = new JSONObject(s.toString().substring(s.toString().indexOf("{")));	//Creating a valid json object from the results
 			
 			res.setAllValues(queryResponseBis.getResponse());

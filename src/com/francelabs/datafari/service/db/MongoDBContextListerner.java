@@ -39,7 +39,6 @@ public class MongoDBContextListerner implements ServletContextListener {
 		try {
 			MongoClientOptions.Builder options= new MongoClientOptions.Builder();
 			options = options.connectTimeout(1000).maxWaitTime(1).serverSelectionTimeout(3000);
-			System.out.println(options.build().getConnectTimeout());
 			
 			// Gets the address of the host
 			String host = ScriptConfiguration.getProperty("HOST");

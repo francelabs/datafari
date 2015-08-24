@@ -49,7 +49,6 @@ public class LikesLauncher implements ServletContextListener {
 	private static boolean islaunched = false;
 	private static ScheduledExecutorService scheduler;
 	private static Logger LOGGER = Logger.getLogger(LikesLauncher.class.getName());
-	private static Semaphore semaphore;
 	private static ScheduledFuture<?> handler;
 	private static boolean doReload = false;
 	private static boolean isThreadUpdateNbLikesStarted = false;
@@ -73,9 +72,7 @@ public class LikesLauncher implements ServletContextListener {
 			updateNbLikes();
 			startScheduler();
 		}
-		System.out.println("----------");
-		System.out.println("---------- LikesLauncher Servlet Initialized successfully ----------");
-		System.out.println("----------");	
+		LOGGER.debug("LikesLauncher Servlet Initialized successfully");
 	}
 	
 	@Override
@@ -141,9 +138,8 @@ public class LikesLauncher implements ServletContextListener {
 	};
 		
 	public static void shutDown(){
-		System.out.println("-----------------Trying to ShutDown the scheduler---------------------");
+		LOGGER.debug("-----------------Trying to ShutDown the scheduler---------------------");
 		if (islaunched){
-			System.out.println("-----------------*******************************---------------------");
 			handler.cancel(true);
 			scheduler.shutdown();
 		}

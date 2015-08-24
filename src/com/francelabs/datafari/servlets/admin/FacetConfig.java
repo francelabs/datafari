@@ -293,7 +293,7 @@ public class FacetConfig extends HttpServlet {
 						jsonFr.put("facet"+field,request.getParameter("frName"));
 					else
 						jsonFr.put("facet"+field, field);
-					System.out.println(jsonEn);
+					LOGGER.debug(jsonEn);
 				} catch (JSONException e) {
 					LOGGER.error("Error while adding the labels to the json files in the FacetConfig doPost. Check that the json files are valid, aso if the parameters passed are valid. Error 69050", e);		//If not an error is printed
 					PrintWriter out = response.getWriter();
@@ -444,7 +444,7 @@ public class FacetConfig extends HttpServlet {
 				//Remove everything that is after the declaration of this div
 				for(int j = 0 ; j <tab.length ; j++){
 					//Add the facets div in the requested order
-					System.out.println(tab[j]);
+					LOGGER.debug(tab[j]);
 					newJsp += "\t\t\t\t<div id=\"facet_"+tab[j]+"\"></div>\n";
 				}
 				//Add the end of the file

@@ -67,7 +67,6 @@ public class Unlike extends HttpServlet {
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		String documentId = request.getParameter("idDocument"); 
-		System.out.println("here");
 		if (documentId!=null ){
 			try {
 				Principal userPrincipal = request.getUserPrincipal();

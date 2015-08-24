@@ -74,7 +74,6 @@ public class URL extends HttpServlet {
 		
 		//String surl = URLDecoder.decode(request.getParameter("url"), "ISO-8859-1");
 		String surl = request.getParameter("url");
-		//System.out.println(surl);
 		
 
 		if ((ScriptConfiguration.getProperty("ALLOWLOCALFILEREADING").equals("true")) && !(surl.startsWith("file://///"))) {

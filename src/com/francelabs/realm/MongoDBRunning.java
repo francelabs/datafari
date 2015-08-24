@@ -75,7 +75,7 @@ public class MongoDBRunning extends GenericMongoRealm{
 			try{
 				MongoClientOptions.Builder options= new MongoClientOptions.Builder();
 				options = options.connectTimeout(1000).maxWaitTime(1).serverSelectionTimeout(3000);
-				System.out.println(options.build().getConnectTimeout());
+				logger.debug(options.build().getConnectTimeout());
 				
 				if (pass!=null && user!=null && !pass.equals("") && !user.equals("") && !user.isEmpty()){
 					MongoCredential credential = MongoCredential.createCredential(

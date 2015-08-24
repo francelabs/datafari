@@ -110,7 +110,6 @@ public class CorePropertiesConfiguration {
 		
 		configPropertiesFileNameRealPath = env;
 		File configFile = new File(configPropertiesFileNameRealPath);
-		//System.out.println(configPropertiesFileNameRealPath);
 		InputStream stream = new FileInputStream(configFile);
 		properties = new Properties();
 		try {

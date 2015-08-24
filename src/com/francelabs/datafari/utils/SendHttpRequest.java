@@ -21,6 +21,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.apache.log4j.Logger;
+
 public class SendHttpRequest {
 	
 	public final static String USERAGENT = "Mozilla/5.0";
@@ -28,6 +30,7 @@ public class SendHttpRequest {
 	public static void sendGET(String url) throws IOException {
 		sendGET(url,USERAGENT);
 	}
+	private static Logger logger = Logger.getLogger(SendHttpRequest.class);
 	
 	public static void sendGET(String url,String userAgent) throws IOException {
         URL obj = new URL(url);
@@ -35,7 +38,7 @@ public class SendHttpRequest {
         con.setRequestMethod("GET");
         con.setRequestProperty("User-Agent", userAgent);
         int responseCode = con.getResponseCode();
-        System.out.println("GET Response Code :: " + responseCode);
+        logger.debug("GET Response Code :: " + responseCode);
         if (responseCode == HttpURLConnection.HTTP_OK) { // success
             BufferedReader in = new BufferedReader(new InputStreamReader(
                     con.getInputStream()));
@@ -48,9 +51,9 @@ public class SendHttpRequest {
             in.close();
  
             // print result
-            System.out.println(response.toString());
+            logger.debug(response.toString());
         } else {
-            System.out.println("GET request not worked");
+        	logger.debug("GET request not worked");
         }
  
     }
