@@ -34,7 +34,7 @@ cassandra_bin="$cassandra_bin:$CASSANDRA_HOME/build/classes/thrift"
 cassandra_storagedir="$CASSANDRA_HOME/data"
 
 # JAVA_HOME can optionally be set here
-JAVA_HOME=${DATAFARI_HOME}/jvm
+#JAVA_HOME=${DATAFARI_HOME}/jvm
 
 # The java classpath (required)
 CLASSPATH="$CASSANDRA_CONF:$cassandra_bin"

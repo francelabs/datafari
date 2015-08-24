@@ -21,3 +21,10 @@ if is_running $SOLR_PID_FILE; then
 else
    echo "Warn : Solr does not seem to be running."
 fi
+
+if is_running $CASSANDRA_PID_FILE; then
+   kill $(cat $CASSANDRA_PID_FILE)
+   rm $CASSANDRA_PID_FILE
+else
+   echo "Warn : Cassandra does not seem to be running."
+fi

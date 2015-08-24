@@ -82,6 +82,8 @@ elif [ -r "$CASSANDRA_INCLUDE" ]; then
     . "$CASSANDRA_INCLUDE"
 fi
 
+echo "$JAVA_HOME"/bin/java
+
 # Use JAVA_HOME if set, otherwise look for java in PATH
 if [ -n "$JAVA_HOME" ]; then
     # Why we can't have nice things: Solaris combines x86 and x86_64
