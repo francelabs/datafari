@@ -84,10 +84,10 @@ AjaxFranceLabs.AutocompleteModule = AjaxFranceLabs.AbstractModule
 													// function(data) {
 													if (data.spellcheck.suggestions.length > 1) {
 														
-														$.each(data.spellcheck.suggestions, function(index, value) {
-																if (value === 'collation'){
-																	src.push(data.spellcheck.suggestions[index+1][1].replace(/"/g, ''));
-																}
+														$.each(data.spellcheck.suggestions[1].suggestion, function(index, value) {
+																//if (value === 'collation'){
+																	src.push(value.replace(/"/g, ''));
+																//}
 															});
 														
 										

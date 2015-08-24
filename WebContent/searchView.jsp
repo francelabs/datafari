@@ -16,7 +16,7 @@
 <script type="text/javascript" src="js/history.ielte7.min.js"></script>
 <script type="text/javascript" src="js/jquery-1.8.1.min.js"></script>
 <!-- comment the tag bellow if you don't use illustrate mode for desktop and mobile -->	
-<!-- <link rel="stylesheet" type="text/css" href="css/results-illustrate.css" />  --> 
+<!-- <link rel="stylesheet" type="text/css" href="css/results-illustrate.css" />  -->   
 <!--[if lt IE 9]>
 	<script type="text/javascript" src="js/html5shiv-printshiv.js"></script>	
 	<link rel="stylesheet" type="text/css" media="all" href="css/results-template-ie.css"/>

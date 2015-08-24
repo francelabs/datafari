@@ -132,13 +132,18 @@ AjaxFranceLabs.AutocompleteIllustratedModule = AjaxFranceLabs.AbstractModule
 													// function(data) {
 													if (data.spellcheck.suggestions.length > 1) {
 														
-														$.each(data.spellcheck.suggestions, function(index, value) {
+														/*$.each(data.spellcheck.suggestions, function(index, value) {
 																if (value === 'collation'){
 																	var value = data.spellcheck.suggestions[index+1][1].replace(/"/g, '');
 																	src.push({srcIcon:"images/feuille.jpg",value:value,label:value});
 																}
-															});
-														
+															});*/
+														$.each(data.spellcheck.suggestions[1].suggestion, function(index, value) {
+															//if (value === 'collation'){
+																src.push({srcIcon:"images/feuille.jpg",value:value.replace(/"/g, ''),label:value});
+															//}
+														});
+													
 														
 														self.cache[term] = src;
 														if (xhr === self.lastXhr) {
