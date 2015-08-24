@@ -52,11 +52,11 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 	},
 	
 	afterGettingLikes : function(docs){
-		$(".doc_list .res").append('<span class="favorite"><i class="fa fa-bookmark-o"></i></span>').find(".description")
-		.append('<div class="metadonne"><span class="liker">Like</span>  <i class="fa fa-thumbs-up"></i><span class="likes">0</span></div>');
-		$(".doc_list > div").data("isLiked",false).data("isFavorite",false);
 		var self = this;
 		if (docs.length!=0){ 
+			$(".doc_list .res").append('<span class="favorite"><i class="fa fa-bookmark-o"></i></span>').find(".description")
+			.append('<div class="metadonne"><span class="liker">Like</span>  <i class="fa fa-thumbs-up"></i><span class="likes">0</span></div>');
+			$(".doc_list > div").data("isLiked",false).data("isFavorite",false);
 			$.each(docs,function(index,doc){
 				if ($.inArray(docs[index].id,window.globalVariableLikes)!==-1){
 					// the document is liked
