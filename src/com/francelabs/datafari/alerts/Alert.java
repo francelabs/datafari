@@ -24,10 +24,9 @@ package com.francelabs.datafari.alerts;
  */
 import java.util.ResourceBundle;
 
-
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
@@ -38,7 +37,7 @@ import com.francelabs.datafari.alerts.Mail;
 public class Alert {
 	private String subject;
 	private String address;
-	private SolrServer solr; 
+	private SolrClient solr; 
 	private String keyword;
 	private String frequency;
 	private Mail mail;
@@ -48,11 +47,11 @@ public class Alert {
 	/**
 	 * Initializes all the attributes
 	 */
-	public Alert(String subject, String address, SolrServer solr,
+	public Alert(String subject, String address, SolrClient solr2,
 			String keyword, String frequency, Mail mail, String user) {
 		this.subject = subject;
 		this.address = address;
-		this.solr = solr;
+		this.solr = solr2;
 		this.keyword = keyword;
 		this.frequency = frequency;
 		this.mail = mail;

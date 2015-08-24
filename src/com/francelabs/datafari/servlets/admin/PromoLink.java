@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
@@ -40,9 +41,10 @@ import org.apache.solr.response.JSONResponseWriter;
 import org.apache.solr.response.SolrQueryResponse;
 import org.apache.solr.schema.IndexSchema;
 import org.apache.solr.search.SolrIndexSearcher;
+import org.apache.solr.util.RTimer;
 
-import com.francelabs.datafari.solrj.SolrServers;
-import com.francelabs.datafari.solrj.SolrServers.Core;
+import com.francelabs.datafari.service.search.SolrServers;
+import com.francelabs.datafari.service.search.SolrServers.Core;
 
 /**
  * 
@@ -76,9 +78,9 @@ public class PromoLink extends HttpServlet {
 			final SolrQuery query = new SolrQuery();
 			QueryResponse queryResponse = null;
 			doc = new SolrInputDocument();
-			HttpSolrServer server=null;
+			SolrClient server=null;
 			try {
-				server = (HttpSolrServer) SolrServers			//Select the right core
+				server = SolrServers			//Select the right core
 						.getSolrServer(Core.PROMOLINK);
 			} catch (IOException e1) {
 				PrintWriter out = response.getWriter();
@@ -147,6 +149,24 @@ public class PromoLink extends HttpServlet {
 
 				}
 
+				@Override
+				public Map<String, Object> getJSON() {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public RTimer getRequestTimer() {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public void setJSON(Map<String, Object> arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+
 			};
 			if(request.getParameter("title")!=null){										//If the servlet has been called to check if there was an existing promolink with this keyword
 				query.setParam("q", "\""+request.getParameter("keyword").toString()+"\"");	//set the keyword to what was sent
@@ -206,9 +226,9 @@ public class PromoLink extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try{
-			HttpSolrServer server=null;
+			SolrClient server=null;
 			try {
-				server = (HttpSolrServer) SolrServers						//Select the right core
+				server =  SolrServers						//Select the right core
 						.getSolrServer(Core.PROMOLINK);
 			} catch (IOException e1) {
 				PrintWriter out = response.getWriter();

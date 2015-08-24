@@ -20,11 +20,11 @@ package com.francelabs.datafari.servlets.admin;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -33,15 +33,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.bson.Document;
-import org.bson.types.ObjectId;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.mongodb.*;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.francelabs.datafari.service.db.cassandra.CassandraAlertDataService;
 
 /** Javadoc
  * 
@@ -56,15 +51,6 @@ import com.mongodb.client.MongoDatabase;
 @WebServlet("/admin/Alerts") 
 public class Alerts extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private String host;
-	private int port;
-	private String content;
-	private String database;
-	private String collection;
-	private MongoClient mongoClient;
-	private MongoDatabase db;
-	private MongoCollection<Document> coll1;
-	private String env;
 	private final static Logger LOGGER = Logger.getLogger(Alerts.class
 			.getName());
 	/**
@@ -73,38 +59,7 @@ public class Alerts extends HttpServlet {
 	 * Connect with the database
 	 */
 	public Alerts() throws IOException {
-		super();
-		host = "localhost";
-		port = 27017;													//Default address/port of the database
-		database = "Datafari";											//Default name of the Database
-		collection = "Alerts";											//Default name of the collection
-		env = System.getProperty("catalina.home");		//Gets the installation directory if in standard environment 
-		env += "/conf/datafari.properties";
-		content ="";
-		try {
-			content = readFile(env, StandardCharsets.UTF_8); 
-		} catch (NoSuchFileException e1) {
-			LOGGER.error("Error while reading the datafari.properties file in the Alerts Servlet's constructor Default values will be used. Error 69006", e1);
-		}
-		String[] lines = content.split(System.getProperty("line.separator"));	//read the file line by line
-		for(int i = 0 ; i < lines.length ; i++){				//for each line
-			if(lines[i].startsWith("HOST")){			//Gets the address of the host
-				host = lines[i].substring(lines[i].indexOf("=")+1, lines[i].length());
-			}else if(lines[i].startsWith("PORT")){	//Gets the port
-				try{
-					port = Integer.parseInt(lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()));
-				}catch(NumberFormatException e){
-					LOGGER.warn("Error while parsing the \"port\" line of datafari.properties in the Alerts Servlet's constructor, now using default port ", e);
-				}
-			}else if(lines[i].startsWith("DATABASE")){		//Gets the name of the database
-				database = lines[i].substring(lines[i].indexOf("=")+1, lines[i].length());
-			}else if(lines[i].startsWith("COLLECTION")){	//Gets the name of the collection
-				collection = lines[i].substring(lines[i].indexOf("=")+1, lines[i].length());
-			}
-		}
-		mongoClient = new MongoClient(host, port);						//Connect to the mongoDB database
-		db = mongoClient.getDatabase(database);							//Switch to the right Database
-		coll1 = db.getCollection(collection);								
+		super();							
 	} 
 	/**
 	 * @throws IOException 
@@ -115,21 +70,17 @@ public class Alerts extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		try{
 			PrintWriter pw = response.getWriter();
-			if(content.equals("")){
-				pw.append("Configuration error, please retry, if the problem persists contact your system administrator. Error code : 69006"); 	
-				pw.close();
-				return;
-			}
+
 			int i=0;
 			JSONObject superJson = new JSONObject();
 			try{
-				FindIterable<Document> cursor = coll1.find();								//Get all the existing Alerts
-				for (Document d : cursor) {										//Get the next Alert
+				List<Properties> alerts = CassandraAlertDataService.getInstance().getAlerts();								//Get all the existing Alerts
+				for (Properties alert : alerts) {										//Get the next Alert
 					if(!request.getParameter("keyword").equals("")){		//If the user have typed something in the search field
-						if(d.get("keyword").equals(request.getParameter("keyword"))){	//then only the Alerts with a corresponding keyword are put into the Json		
-							if(request.getRemoteUser().equals(d.get("user")) || request.isUserInRole("SearchAdministrator")){	//Only the Alerts with the correct user, except if it's the admin
+						if(alert.get("keyword").equals(request.getParameter("keyword"))){	//then only the Alerts with a corresponding keyword are put into the Json		
+							if(request.getRemoteUser().equals(alert.get("user")) || request.isUserInRole("SearchAdministrator")){	//Only the Alerts with the correct user, except if it's the admin
 								try{
-									superJson.append("alerts", put(d, request.isUserInRole("SearchAdministrator")));			//put the jsonObject in an other so that this superJSON will contain all the Alerts
+									superJson.append("alerts", put(alert, request.isUserInRole("SearchAdministrator")));			//put the jsonObject in an other so that this superJSON will contain all the Alerts
 									i++;										//count the number of alerts
 								}catch(JSONException e){
 									pw.append("Error while getting one or more alerts, please retry, if the problem persists contact your system administrator. Error code : 69007"); 	
@@ -141,8 +92,8 @@ public class Alerts extends HttpServlet {
 						}
 					}else{													//If nothing was typed in the search field
 						try{
-							if(request.getRemoteUser().equals(d.get("user")) || request.isUserInRole("SearchAdministrator")){	//Only the Alerts with the correct user, except if it's the admin		
-								superJson.append("alerts", put(d, request.isUserInRole("SearchAdministrator")));
+							if(request.getRemoteUser().equals(alert.get("user")) || request.isUserInRole("SearchAdministrator")){	//Only the Alerts with the correct user, except if it's the admin		
+								superJson.append("alerts", put(alert, request.isUserInRole("SearchAdministrator")));
 								i++;
 							}
 						}catch(JSONException e){
@@ -164,7 +115,7 @@ public class Alerts extends HttpServlet {
 				pw.write(superJson.toString());								//Send the JSON back to the HTML page
 				response.setStatus(200);
 				response.setContentType("text/json;charset=UTF-8");
-			} catch(MongoException e){
+			} catch(Exception e){
 				pw.append("Error connecting to the database, please retry, if the problem persists contact your system administrator. Error code : 69010"); 	
 				pw.close();
 				LOGGER.error("Error connecting to the Mongo database in Alerts Servlet's doGet. Error 69010", e);
@@ -178,16 +129,16 @@ public class Alerts extends HttpServlet {
 		}
 	} 
 
-	private Object put(Document db, boolean admin) throws JSONException {
+	private Object put(Properties alert, boolean admin) throws JSONException {
 		JSONObject json = new JSONObject();			//Creates a json object
-		json.put("_id", db.get("_id"));				//gets the id
-		json.put("keyword",db.get("keyword"));		//gets the keyword
-		json.put("subject",db.get("subject"));		//gets the subject
-		json.put("core",db.get("core"));			//gets the core
-		json.put("frequency",db.get("frequency"));	//gets the frequency
-		json.put("mail",db.get("mail"));			//gets the mail
+		json.put("_id", alert.get("_id"));				//gets the id
+		json.put("keyword",alert.get("keyword"));		//gets the keyword
+		json.put("subject",alert.get("subject"));		//gets the subject
+		json.put("core",alert.get("core"));			//gets the core
+		json.put("frequency",alert.get("frequency"));	//gets the frequency
+		json.put("mail",alert.get("mail"));			//gets the mail
 		if(admin){
-			json.put("user",db.get("user"));		//gets the user
+			json.put("user",alert.get("user"));		//gets the user
 		}
 		return json;
 
@@ -203,24 +154,23 @@ public class Alerts extends HttpServlet {
 		try{
 			PrintWriter pw = response.getWriter();
 			try{
-				if(request.getParameter("_id")!=null){								//Deleting part
-					BasicDBObject query = new BasicDBObject();						
-					query.put("_id", new ObjectId(request.getParameter("_id")));	//Create a query where we put the id of the alerts that must be deleted
-					coll1.findOneAndDelete(query);										//Execute the query in the collection
+				if(request.getParameter("_id")!=null){
+					CassandraAlertDataService.getInstance().deleteAlert(request.getParameter("_id"));//Deleting part									//Execute the query in the collection
 				}
-				if(request.getParameter("keyword")!=null){							//Adding part
-					Document obj = new Document();
+				if(request.getParameter("keyword")!=null){	
+					Properties alert = new Properties();//Adding part
 					for(Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();){	//For all the parameters passed, we put the parameter name as the key and the content as the value
 						String elem = e.nextElement();
 						if(!elem.equals("_id")){									//Do not put the _id manually so if the parameter is "_id" we do not put it in,
-							obj.put(elem, request.getParameter(elem));				//otherwise there will be an exception at the 2nd modification or at a removal after a modification.
+							alert.put(elem, request.getParameter(elem));				//otherwise there will be an exception at the 2nd modification or at a removal after a modification.
 						}															//This loop can only be triggered by an edit.
 					} 
-					obj.put("user", request.getRemoteUser());
-					coll1.insertOne(obj);												//insert the object composed of all the parameters
+					alert.put("user", request.getRemoteUser());
+					CassandraAlertDataService.getInstance().addAlert(alert);
+					//insert the object composed of all the parameters
 				}
 				//If this is an edit the two parts (Delete and Add) will be executed successively
-			} catch(MongoException e){
+			} catch(Exception e){
 				pw.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69011"); 	
 				pw.close();
 				LOGGER.error("Error connecting to the Mongo database in Alerts Servlet's doPost. Error 69011", e);

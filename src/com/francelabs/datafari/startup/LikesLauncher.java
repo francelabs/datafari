@@ -29,7 +29,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrQuery;
 
+import com.francelabs.datafari.service.search.SolrServers;
+import com.francelabs.datafari.service.search.SolrServers.Core;
 import com.francelabs.datafari.servlets.admin.StringsDatafariProperties;
 import com.francelabs.datafari.user.Like;
 import com.francelabs.datafari.user.NbLikes;
@@ -88,9 +92,12 @@ public class LikesLauncher extends HttpServlet{
 						UpdateNbLikes.properties = properties;
 						UpdateNbLikes.saveProperty();
 						try {
-							SendHttpRequest.sendGET("http://localhost:8080/datafari-solr/FileShare/reloadCache");
-						} catch (IOException e) {
-							e.printStackTrace();
+							SolrClient solrClient = SolrServers.getSolrServer(Core.FILESHARE);
+							SolrQuery refreshQuery = new SolrQuery();
+							refreshQuery.set("qt", "reloadCache");
+							solrClient.query(refreshQuery);
+						} catch (Exception e) {
+							LOGGER.error("Cannot send refresh request", e);
 						}
 						LOGGER.info("updateNbLikes finished it's work");
 					
@@ -114,10 +121,16 @@ public class LikesLauncher extends HttpServlet{
 		public void run() {
 			if (LikesLauncher.doReload){
 				try {
-					SendHttpRequest.sendGET("http://localhost:8080/datafari-solr/FileShare/reloadCache");
+
+
+					SolrClient solrClient = SolrServers.getSolrServer(Core.FILESHARE);
+					SolrQuery refreshQuery = new SolrQuery();
+					refreshQuery.set("qt", "reloadCache");
+					solrClient.query(refreshQuery);
 					LikesLauncher.doReload = false;
-				} catch (IOException e) {
-					LOGGER.error(e);
+				} catch (Exception e) {
+
+					LOGGER.error("Cannot reload cache", e);
 				}
 			}
 		}

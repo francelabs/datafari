@@ -2,9 +2,9 @@
 <config>
 
 	<server className="net.sf.j2ep.servers.BaseServer" 
-		domainName="localhost:8080" 
+		domainName="localhost:8983" 
 		isRewriting="true"
-		path="/datafari-solr">
+		path="/solr">
 		
 		<rule className="net.sf.j2ep.rules.DirectoryRule"
 	  		directory="/admin/proxy/solr"

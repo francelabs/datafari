@@ -15,20 +15,13 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
-
-import com.francelabs.datafari.statistics.StatsPusher;
 
 /**
  * Configuration reader
@@ -56,12 +49,11 @@ public class ScriptConfiguration {
 	 * @param value : the new value of the key
 	 * @return : true if there's an error and false if not
 	 */
-	public static boolean setProperty(String key, String value) {
+	public static synchronized boolean setProperty(String key, String value) {
 			try {
 				String env = System.getProperty("catalina.home");		//Gets the installation directory if in standard environment 
 				env += "/"+configPropertiesFileName ;
 				LOGGER.info(env);
-				System.out.println(env);
 				getInstance().properties.setProperty(key, value);
 				FileOutputStream fileOutputStream = new FileOutputStream(configPropertiesFileNameRealPath);
 				instance.properties.store(fileOutputStream, null);
@@ -75,7 +67,7 @@ public class ScriptConfiguration {
 			}
 	}
 
-	public static String getProperty(String key) throws IOException {
+	public static synchronized String getProperty(String key) throws IOException {
 		return (String) getInstance().properties.get(key);
 	}
 

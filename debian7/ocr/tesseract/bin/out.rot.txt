@@ -1,0 +1,50 @@
+ 
+
+YCXDFIND
+
+Solution de recherche documentalre
+
+RECHERCHER
+
+YooFind trouve tous les documents heberges sur votre serveur de ﬁchiers aussi
+facilement qu'un moteur de recherche internet. La recherche setfectue par mots
+
+cles contenus dans le titre eta l'interieur des documents, quel que soit le format de
+ﬁchier. Simple et intuitive, la solution YooFind respecte les habitudes de travail
+des collaborateurs de l'entreprise et leurs droits d'acces conﬁgures pour une
+productivite accrue sans compromis sur la conﬁdentialite des informations.
+
+Simplicité 8 confort d'utilisation
+
+Recherche par mots cles et expressions
+contenus dans le titre et dans le corps du
+document.
+
+indexation et recherche dans tous les
+formats de ﬁchiers, y compris les ﬁchiers
+scannes et les PDF (Suite Otﬁce,
+OpenOfﬁce, ﬁchiers textes, images...)
+
+Sécurité 8 conﬁdentialité garanties
+
+Respect des droits d'accés au>< documents
+trouves et atﬁches en se synchronisant au
+systeme de securite de l'appliance ou Nas
+Wooxo ou via l'Active Directory.
+
+ 
+
+a Gain de temps I productivité accrue
+
+Aucune reorganisation prealable du mode
+de classement des ﬁchiers pour une prise
+en main immediate.
+
+Afﬁchage instantane des reponses.
+
+Deploiement simple et rapide.
+
+ND
+
+ 
+

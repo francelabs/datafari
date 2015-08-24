@@ -195,7 +195,7 @@ function getValue(type){
 	        	//If the file was already in use
 	        	if(data.toString().indexOf("Error code : ")!==-1){
 	        		//Print it and disable the input field
-	        		document.getElementById("answer"+type).innerHTML = window.i18n.msgStore['usedFile'];
+	        		document.getElementById("answer"+type).innerHTML = data.toString();
 	        		document.getElementById("weight"+type).value = "";
 	        		$('#weight'+type).attr("disabled", true);
 	        	}//If they're was an error
@@ -204,7 +204,11 @@ function getValue(type){
 	        		document.getElementById("globalAnswer").innerHTML = data;
 	        		$('#selectpf').attr("disabled", true);
 	        		$('#selectqf').attr("disabled", true);
-	        	}else{//print the value of the field 
+	        	}else if(data.toString() === "File already in use"){
+	        		document.getElementById("answer"+type).innerHTML = data.toString();
+	        		$('#weight'+type).attr("disabled", true);
+	        	}
+	        	else{//print the value of the field 
 	        		document.getElementById("weight"+type).value=data;
 	        		$('#weight'+type).attr("disabled", false);
 	        		$('#submit'+type).attr("disabled", false);

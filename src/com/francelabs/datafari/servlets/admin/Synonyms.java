@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import com.francelabs.datafari.solrj.SolrServers.Core;
+import com.francelabs.datafari.service.search.SolrServers.Core;
 
 
 /** Javadoc

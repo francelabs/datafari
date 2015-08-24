@@ -235,6 +235,7 @@ a.show-sidebar:hover {
 #search > input:focus {
   width:100%;
   outline:none;
+  border-color : #F0F0F0;
 }
 #search > input:focus + i {
   opacity:1;

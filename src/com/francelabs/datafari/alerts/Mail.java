@@ -14,12 +14,7 @@
  * limitations under the License.
  *******************************************************************************/
 package com.francelabs.datafari.alerts;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.util.List;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -32,6 +27,8 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.log4j.Logger;
 
+import com.francelabs.datafari.utils.ScriptConfiguration;
+
 /**Javadoc
  * 
  * 
@@ -41,53 +38,24 @@ import org.apache.log4j.Logger;
  * @author Alexis Karassev
  */
 public class Mail {
-	private String smtpHost;
-	private String from;
-	private String username;
-	private String password;
-	private BufferedReader inputStream;
+	
+	
+	private String smtpHost = "smtp.gmail.com";												//Default address/smtp used
+	private String from = "datafari.test@gmail.com";
+	private String username = "datafari.test@gmail.com";
+	private String password = "Datafari1";			
+	
+	
 	private final static Logger LOGGER = Logger.getLogger(Mail.class
 			.getName());
 	public Mail() throws IOException{
 		try{
-			smtpHost = "smtp.gmail.com";												//Default address/smtp used
-			from = "datafari.test@gmail.com";
-			username = "datafari.test@gmail.com";
-			password = "Datafari1";			
-			String filePath = System.getenv("DATAFARI_HOME");							//Gets the directory of installation if in standard environment
-			if(filePath==null){															//If in development environment	
-				RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();		//Gets the D.solr.solr.home variable given in arguments to the VM
-				List<String> arguments = runtimeMxBean.getInputArguments();
-				for(String s : arguments){
-					if(s.startsWith("-Dsolr.solr.home"))
-						filePath = s.substring(s.indexOf("=")+1, s.indexOf("solr_home")-5);
-				}
-			}
-			try{
-				inputStream = new BufferedReader(new FileReader(filePath+"/bin/common/mail.txt")); //Get the configuration file
-				String l;
-				while ((l=inputStream.readLine()) != null) {
-					l = ""+l.replaceAll("\\s","");
-					if(l.startsWith("smtp")){									//Get the host
-						smtpHost = l.substring(l.indexOf("=")+1,l.length()).trim();
-					}
-					else if(l.startsWith("from")){								//Get the address			
-						from = l.substring(l.indexOf("=")+1,l.length()).trim();
-					}
-					else if(l.startsWith("user")){								//Get the user name
-						username = l.substring(l.indexOf("=")+1,l.length()).trim();
-					}
-					else if(l.startsWith("pass")){								//Get the password
-						password = l.substring(l.indexOf("=")+1,l.length()).trim();
-					}
-				}
-				inputStream.close();
-			}catch (IOException | IndexOutOfBoundsException e){
-				LOGGER.error("Error while reading the mail configuration in the Mail constructor. Error 69045", e);
-				return;
-			}
-		}catch(Exception e){
-			LOGGER.error("Unindentified error while in the Mail constructor. Error 69522", e);
+			smtpHost = ScriptConfiguration.getProperty("smtp");
+			from = ScriptConfiguration.getProperty("from");
+			username = ScriptConfiguration.getProperty("user");
+			password = ScriptConfiguration.getProperty("pass");
+		}catch(IOException e){
+			LOGGER.error("Error while reading the mail configuration in the Mail constructor. Error 69045", e);
 			return;
 		}
 
