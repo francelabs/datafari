@@ -35,7 +35,7 @@ public class UserManagement extends HttpServlet {
 	public void init() throws ServletException{
 			
 			User admin = new User("admin","admin");
-			admin.deleteUser();
+			//admin.deleteUser();
 			int code = admin.isInBase();
 			if (code == CodesReturned.PROBLEMCONNECTIONDATABASE){
 				LOGGER.error("Mongodb is not running, please start it. UserManagement Failed to start");

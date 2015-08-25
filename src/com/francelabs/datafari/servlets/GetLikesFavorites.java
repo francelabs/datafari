@@ -72,7 +72,7 @@ public class GetLikesFavorites extends HttpServlet {
 				ArrayList<String> favoritesList = Favorite.getFavorites(username);
 				if (likeList == null && favoritesList == null)
 					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB)
-					 .put("statut", "MongoDB Doesn't respound");		
+					 .put("statut", "Database doesn't respound");		
 				else
 					jsonResponse.put("favorites", favoritesList)
 						.put("code", 0)

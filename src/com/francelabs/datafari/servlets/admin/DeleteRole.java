@@ -14,8 +14,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.francelabs.datafari.constants.CodesReturned;
-import com.francelabs.realm.MongoDBRunning;
-import com.francelabs.realm.User;
+import com.francelabs.datafari.service.db.DatabaseConstants;
+import com.francelabs.datafari.user.User;
+
 
 /**
  * Servlet implementation class getAllUsersAndRoles
@@ -40,23 +41,20 @@ public class DeleteRole extends HttpServlet {
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		try{
-			if (request.getParameter(User.USERNAMECOLUMN)!=null && request.getParameter(User.ROLECOLUMN)!=null){
-				MongoDBRunning mongoDBRunning = new MongoDBRunning(User.IDENTIFIERSDB);
-				if (mongoDBRunning.isConnected()){
-					User user = new User(request.getParameter(User.USERNAMECOLUMN).toString(),"",mongoDBRunning.getDb());
-					user.deleteRole(request.getParameter(User.ROLECOLUMN).toString());
+			if (request.getParameter(DatabaseConstants.USERNAMECOLUMN)!=null && request.getParameter(DatabaseConstants.ROLECOLUMN)!=null){
+				User user = new User(request.getParameter(DatabaseConstants.USERNAMECOLUMN).toString(),"");
+				int code = user.deleteRole(request.getParameter(DatabaseConstants.ROLECOLUMN).toString());
+				if (code == CodesReturned.ALLOK)
 					jsonResponse.put("code", CodesReturned.ALLOK).put("statut", "User deleted with success");
-				}else{
+				else
 					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB).put("statut", "Datafari isn't connected to MongoDB");
-				}	
 			}else{
 				jsonResponse.put("code", CodesReturned.PROBLEMQUERY).put("statut", "Problem with query");
 			}
 		}catch (JSONException e) {
-			// TODO Auto-generated catch block
 			logger.error(e);
 		}
-			PrintWriter out = response.getWriter();
-			out.print(jsonResponse);
+		PrintWriter out = response.getWriter();
+		out.print(jsonResponse);
 	}
 }

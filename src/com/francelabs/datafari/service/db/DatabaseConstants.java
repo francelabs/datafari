@@ -23,4 +23,9 @@ public final class DatabaseConstants {
 	public static final String FAVORTIECOLLECTION = "favorites";
 	public static final String FAVORITEDB = "db-containing";
 	public static final String NBLIKESCOLUMN = "nblikes";
+	public final static String PASSWORDCOLUMN = "password";
+	public final static String ROLECOLUMN = "role";
+	public final static String ROLEATTRIBUTE = "name";
+	public final static String IDENTIFIERSCOLLECTION = "users";
+	public final static String IDENTIFIERSDB = "db-containing";
 }

@@ -14,8 +14,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.francelabs.datafari.constants.CodesReturned;
-import com.francelabs.realm.MongoDBRunning;
-import com.francelabs.realm.User;
+import com.francelabs.datafari.service.db.DatabaseConstants;
+import com.francelabs.datafari.user.User;
 
 /**
  * Servlet implementation class getAllUsersAndRoles
@@ -40,15 +40,13 @@ public class AddUser extends HttpServlet {
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		try{
-			if (request.getParameter(User.USERNAMECOLUMN)!=null && request.getParameter(User.PASSWORDCOLUMN)!=null && request.getParameter(User.ROLECOLUMN+"[]")!=null){
-				MongoDBRunning mongoDBRunning = new MongoDBRunning(User.IDENTIFIERSDB);
-				if (mongoDBRunning.isConnected()){
-					User user = new User(request.getParameter(User.USERNAMECOLUMN).toString(),request.getParameter(User.PASSWORDCOLUMN).toString(),mongoDBRunning.getDb());
-					if ( user.signup((String[])request.getParameterValues(User.ROLECOLUMN+"[]")) ){
-						jsonResponse.put("code", CodesReturned.ALLOK).put("statut", "User deleted with success");
-					}else{
-						jsonResponse.put("code", CodesReturned.USERALREADYINBASE).put("statut", "User already Signed up");
-					}
+			if (request.getParameter(DatabaseConstants.USERNAMECOLUMN)!=null && request.getParameter(DatabaseConstants.PASSWORDCOLUMN)!=null && request.getParameter(DatabaseConstants.ROLECOLUMN+"[]")!=null){
+				User user = new User(request.getParameter(DatabaseConstants.USERNAMECOLUMN).toString(),request.getParameter(DatabaseConstants.PASSWORDCOLUMN).toString());
+				int code = user.signup((String[])request.getParameterValues(DatabaseConstants.ROLECOLUMN+"[]"));
+				if ( code == CodesReturned.ALLOK ){
+					jsonResponse.put("code", CodesReturned.ALLOK).put("statut", "User deleted with success");
+				}else if ( code == CodesReturned.USERALREADYINBASE){
+					jsonResponse.put("code", CodesReturned.USERALREADYINBASE).put("statut", "User already Signed up");
 				}else{
 					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB).put("statut", "Problem with database");
 				}
@@ -56,11 +54,10 @@ public class AddUser extends HttpServlet {
 				jsonResponse.put("code", CodesReturned.PROBLEMQUERY).put("statut", "Problem with query");
 			}
 		}catch (JSONException e) {
-			// TODO Auto-generated catch block
 			logger.error(e);
 		}
-			PrintWriter out = response.getWriter();
-			out.print(jsonResponse);
+		PrintWriter out = response.getWriter();
+		out.print(jsonResponse);
 	}
 
 }

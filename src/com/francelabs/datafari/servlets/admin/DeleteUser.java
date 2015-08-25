@@ -14,9 +14,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.francelabs.datafari.constants.CodesReturned;
+import com.francelabs.datafari.service.db.DatabaseConstants;
 import com.francelabs.datafari.user.Favorite;
-import com.francelabs.realm.MongoDBRunning;
-import com.francelabs.realm.User;
+import com.francelabs.datafari.user.User;
+
 
 /**
  * Servlet implementation class getAllUsersAndRoles
@@ -41,13 +42,15 @@ public class DeleteUser extends HttpServlet {
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		try{
-			if (request.getParameter(User.USERNAMECOLUMN)!=null){
-				MongoDBRunning mongoDBRunning = new MongoDBRunning(User.IDENTIFIERSDB);
-				if (mongoDBRunning.isConnected()){
-					User user = new User(request.getParameter(User.USERNAMECOLUMN).toString(),"",mongoDBRunning.getDb());
-					user.deleteUser();
-					Favorite.removeUserFromFavoriteDB(request.getParameter(User.USERNAMECOLUMN).toString());
-					jsonResponse.put("code", CodesReturned.ALLOK).put("statut", "User deleted with success");
+			if (request.getParameter(DatabaseConstants.USERNAMECOLUMN)!=null){
+				User user = new User(request.getParameter(DatabaseConstants.USERNAMECOLUMN).toString(),"");
+				int code = user.deleteUser();
+				if ( code == CodesReturned.ALLOK ){
+					code = Favorite.removeUserFromFavoriteDB(request.getParameter(DatabaseConstants.USERNAMECOLUMN).toString());
+					if ( code == CodesReturned.ALLOK )
+						jsonResponse.put("code", CodesReturned.ALLOK).put("statut", "User deleted with success");
+					else
+						jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB).put("statut", "Problem with database");
 				}else{
 					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB).put("statut", "Problem with database");
 				}
@@ -58,8 +61,7 @@ public class DeleteUser extends HttpServlet {
 			// TODO Auto-generated catch block
 			logger.error(e);
 		}
-			PrintWriter out = response.getWriter();
-			out.print(jsonResponse);
+		PrintWriter out = response.getWriter();
+		out.print(jsonResponse);
 	}
-
 }

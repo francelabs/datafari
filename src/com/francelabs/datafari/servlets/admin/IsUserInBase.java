@@ -14,8 +14,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.francelabs.datafari.constants.CodesReturned;
-import com.francelabs.realm.MongoDBRunning;
-import com.francelabs.realm.User;
+import com.francelabs.datafari.service.db.DatabaseConstants;
+import com.francelabs.datafari.user.User;
 
 /**
  * Servlet implementation class getAllUsersAndRoles
@@ -40,23 +40,22 @@ public class IsUserInBase extends HttpServlet {
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		try{
-			if (request.getParameter(User.USERNAMECOLUMN)!=null){
-				MongoDBRunning mongoDBRunning = new MongoDBRunning(User.IDENTIFIERSDB);
-				if (mongoDBRunning.isConnected()){
-					User user = new User(request.getParameter(User.USERNAMECOLUMN).toString(),"",mongoDBRunning.getDb());
-					String result;
-					if (user.isInBase()){
-						result = "true";
-					}else{
-						result = "false";
-					}
-					jsonResponse.put("code", CodesReturned.ALLOK).put("statut", result);
-				}else{
-					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB).put("statut", "Problem with database");
+			if (request.getParameter(DatabaseConstants.USERNAMECOLUMN)!=null){
+				User user = new User(request.getParameter(DatabaseConstants.USERNAMECOLUMN).toString(),"");
+				int code = user.isInBase();
+				String result = null;
+				if (code == CodesReturned.TRUE){
+					result = "true";
+				}else if (code == CodesReturned.FALSE){
+					result = "false";
 				}
-			}else{
-				jsonResponse.put("code", CodesReturned.PROBLEMQUERY).put("statut", "Problem with query");
-			}
+				if (code != CodesReturned.PROBLEMCONNECTIONDATABASE)
+					jsonResponse.put("code", CodesReturned.ALLOK).put("statut", result);
+				else
+					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB).put("statut", "Problem with database");
+		}else{
+			jsonResponse.put("code", CodesReturned.PROBLEMQUERY).put("statut", "Problem with query");
+		}
 		}catch (JSONException e) {
 			// TODO Auto-generated catch block
 			logger.error(e);

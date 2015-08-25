@@ -14,8 +14,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.francelabs.datafari.constants.CodesReturned;
-import com.francelabs.realm.MongoDBRunning;
-import com.francelabs.realm.User;
+import com.francelabs.datafari.service.db.DatabaseConstants;
+import com.francelabs.datafari.user.User;
+import com.francelabs.datafari.user.UserConstants;
+
 
 /**
  * Servlet implementation class getAllUsersAndRoles
@@ -40,15 +42,13 @@ public class ChangePassword extends HttpServlet {
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		try{
-			if (request.getParameter(User.USERNAMECOLUMN)!=null && request.getParameter(User.PASSWORDCOLUMN)!=null){
-				MongoDBRunning mongoDBRunning = new MongoDBRunning(User.IDENTIFIERSDB);
-				if (mongoDBRunning.isConnected()){
-					User user = new User(request.getParameter(User.USERNAMECOLUMN).toString(),"",mongoDBRunning.getDb());
-					user.changePassword(request.getParameter(User.PASSWORDCOLUMN).toString());
-					jsonResponse.put("code", CodesReturned.ALLOK).put("statut", "User deleted with success");
-				}else{
-					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB).put("statut", "Datafari isn't connected to MongoDB");
-				}	
+			if (request.getParameter(DatabaseConstants.USERNAMECOLUMN)!=null && request.getParameter(DatabaseConstants.PASSWORDCOLUMN)!=null){
+					User user = new User(request.getParameter(DatabaseConstants.USERNAMECOLUMN).toString(),"");
+					int code = user.changePassword(request.getParameter(DatabaseConstants.PASSWORDCOLUMN).toString());
+					if (code == CodesReturned.ALLOK)
+						jsonResponse.put("code", CodesReturned.ALLOK).put("statut", "User deleted with success");
+					else
+						jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB).put("statut", "Datafari isn't connected to MongoDB");
 			}else{
 				jsonResponse.put("code", CodesReturned.PROBLEMQUERY).put("statut", "Problem with query");
 			}
