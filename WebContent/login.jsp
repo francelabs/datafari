@@ -11,6 +11,14 @@
 <link rel="stylesheet" type="text/css" href="/Datafari/css/login.css">
 <link href="../plugins/bootstrap/bootstrap.css" rel="stylesheet">
 <link href="/Datafari/css/style_v2.css" rel="stylesheet">
+<style>
+input[type="submit"]{
+    margin-top: 4px;
+    position: absolute;
+    bottom: 0px;
+    right: 12px;
+}
+</style>
 </head>
 <br>
 <body style="background-color : #F0F0F0;">
