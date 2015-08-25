@@ -23,12 +23,12 @@ public class RoleGetter {
 	
 	public final static String DefautRole = "normalUser";
 	private MongoDatabase db;
-	private User user;
+	private UserRealm user;
 	private ArrayList<String> roles; 
 	
 	public RoleGetter(String username,MongoDatabase db){
 		this.db = db;
-		user = new User(username,"",db);
+		user = new UserRealm(username,"",db);
 		if (user.isInBase()){
 			// if the user exists already in MongoDb
 			roles = user.getRoles();
