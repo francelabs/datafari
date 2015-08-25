@@ -159,7 +159,7 @@
 <li class="dropdown" id="User">
 					<a href="#" class="dropdown-toggle">
 						<i class="fa fa-male"></i>
-						<span class="hidden-xs"><%= resourceBundle.getString("user")%></span>
+						<span class="hidden-xs"><%= resourceBundle.getString("myaccount")%></span>
 					</a>
 					<ul class="dropdown-menu">
 <!-- 						<li><a class="ajax-link" href="../ajax/maps.html">Save search queries</a></li> -->
@@ -175,14 +175,14 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 				<li id="Connectors">
 <!-- 							class="fa fa-dashboard"></i> <span class="hidden-xs">Dashboard</span> -->
 					</a> <a href="../ajax/manifoldcf.html" class="ajax-link">
-						<i class="fa fa-bar-chart-o"></i>
+						<i class="fa fa-arrows-alt"></i>
 						<span class="hidden-xs"><%= resourceBundle.getString("connectors")%></span>
 					</a>
 				</li>
 
 				<li class="dropdown" id="Statistics">
 					<a href="#" class="dropdown-toggle">
-						<i class="fa fa-table"></i>
+						<i class="fa fa-bar-chart"></i>
 						 <span class="hidden-xs"><%= resourceBundle.getString("statistics")%></span>
 					</a>
 					<ul class="dropdown-menu">
@@ -239,7 +239,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 %>
 			<li class="dropdown" id="Servers">
 					<a href="#" class="dropdown-toggle">
-						<i class="fa fa-picture-o"></i>
+						<i class="fa fa-database"></i>
 						 <span class="hidden-xs"><%= resourceBundle.getString("servers")%></span>
 					</a>
 					<ul class="dropdown-menu">
