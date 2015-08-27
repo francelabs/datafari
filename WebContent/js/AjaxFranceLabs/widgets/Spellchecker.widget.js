@@ -36,11 +36,7 @@ AjaxFranceLabs.SpellcheckerWidget = AjaxFranceLabs.AbstractWidget.extend({
 		var data = this.manager.response, elm = $(this.elm);
 			if (data.spellcheck !== undefined && data.spellcheck.suggestions.length > 0) {
 				$(self.elm).show();
-				$(data.spellcheck.suggestions).each(function(i, elm) {
-					if (elm === 'collation'){
-						res = data.spellcheck.suggestions[i+1];
-					}
-				});
+				res = data.spellcheck.collations[1];
 				$(self.elm).append('<span>').find('span').append('Essayer avec ' + '<span class="result">' + res + '</span> ?').find('.result').click(function() {
 					self.manager.store.get('q').val(res);
 					for (var w in self.manager.widgets) {

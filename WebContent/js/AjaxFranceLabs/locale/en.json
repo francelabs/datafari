@@ -169,5 +169,7 @@
 "signin" : "Log In",
 "signout" : "Sign Out",
 "userManagement" : "User Management",
-"modifyUser" : "Modify A User"
+"modifyUser" : "Modify A User",
+"save" : "save",
+"ldapConfig" : "LDAP Configuration"
 }

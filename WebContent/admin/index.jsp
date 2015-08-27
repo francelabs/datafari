@@ -207,6 +207,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 %>
 						<li id="SizeLimitation"><a class="ajax-link" href="../ajax/SizeLimitations.html"><%= resourceBundle.getString("sizeLimitation")%></a></li>
 						<li id="AutocompleteConfiguration"><a class="ajax-link" href="../ajax/AutocompleteConfiguration.html"><%= resourceBundle.getString("autocompleteConfiguration")%></a></li>
+						<li id="ldapConfiguration"><a class="ajax-link" href="../ajax/ldapConfiguration.html"><%= resourceBundle.getString("ldapConfiguration")%></a></li>
 <%
 	}
 %>

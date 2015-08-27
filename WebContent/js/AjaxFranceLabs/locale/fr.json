@@ -158,5 +158,7 @@
 "settings" : "Paramètres",
 "signout" : "Se Deconnecter",
 "userManagement" : "Gestion des utilisateurs",
-"modifyUser" : "Modifer Un User"
+"modifyUser" : "Modifer Un User",
+"save" : "Enregistrer",
+"ldapConfig" : "Configuration de LDAP"
 }         
