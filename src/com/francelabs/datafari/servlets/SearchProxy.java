@@ -64,8 +64,9 @@ public class SearchProxy extends HttpServlet {
 
 	private static final List<String> allowedHandlers = Arrays.asList(
 			"/select", "/suggest", "/stats", "/statsQuery");
-	
-	private static final Logger LOGGER = Logger.getLogger(SearchProxy.class.getName());
+
+	private static final Logger LOGGER = Logger.getLogger(SearchProxy.class
+			.getName());
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -73,7 +74,6 @@ public class SearchProxy extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-
 
 		String handler = getHandler(request);
 
@@ -111,15 +111,17 @@ public class SearchProxy extends HttpServlet {
 				break;
 			default:
 				solr = SolrServers.getSolrServer(Core.FILESHARE);
-				promolinkCore = SolrServers.getSolrServer(Core.PROMOLINK); 
-				/*
-				 * if (request.getUserPrincipal() != null) { String
-				 * AuthenticatedUserName = request.getUserPrincipal()
-				 * .getName().replaceAll("[^\\\\]*\\\\", ""); if
-				 * (!domain.equals("")) { AuthenticatedUserName += "@" + domain;
-				 * } params.set("AuthenticatedUserName", AuthenticatedUserName);
-				 * }
-				 */
+				promolinkCore = SolrServers.getSolrServer(Core.PROMOLINK);
+
+				// Add authentication
+				if (request.getUserPrincipal() != null) {
+					String AuthenticatedUserName = request.getUserPrincipal()
+							.getName().replaceAll("[^\\\\]*\\\\", "");
+					/*if (!domain.equals("")) {
+						AuthenticatedUserName += "@" + domain;
+					}*/
+					params.set("AuthenticatedUserName", AuthenticatedUserName);
+				}
 
 				String queryParam = params.get("query");
 				if (queryParam != null) {
@@ -133,12 +135,31 @@ public class SearchProxy extends HttpServlet {
 			query.add(params);
 			query.setRequestHandler(handler);
 			queryResponse = solr.query(query);
-			if(promolinkCore != null && !(params.get("q").toString().equals("*:*"))){ //launch a request in the promolink core only if it's a request on the FileShare core
-				if(params.get("q").startsWith("\"")){							//and if it's not an empty request
+			if (promolinkCore != null
+					&& !(params.get("q").toString().equals("*:*"))) { // launch
+																		// a
+																		// request
+																		// in
+																		// the
+																		// promolink
+																		// core
+																		// only
+																		// if
+																		// it's
+																		// a
+																		// request
+																		// on
+																		// the
+																		// FileShare
+																		// core
+				if (params.get("q").startsWith("\"")) { // and if it's not an
+														// empty request
 					queryBis.setQuery(params.get("q"));
-				}else{
-					queryBis.setQuery("\""+params.get("q")+"\""); 
-					queryBis.set("q.op", "AND");								// Ensure that all queries on the promolink core will be in exact expression	
+				} else {
+					queryBis.setQuery("\"" + params.get("q") + "\"");
+					queryBis.set("q.op", "AND"); // Ensure that all queries on
+													// the promolink core will
+													// be in exact expression
 				}
 				queryResponseBis = promolinkCore.query(queryBis);
 			}
@@ -161,11 +182,12 @@ public class SearchProxy extends HttpServlet {
 				break;
 			}
 
-			if(promolinkCore != null){
-				writeSolrJResponse(request, response, query, queryResponse, queryBis, queryResponseBis);
-			}
-			else {
-				writeSolrJResponse(request, response, query, queryResponse, null, null);
+			if (promolinkCore != null) {
+				writeSolrJResponse(request, response, query, queryResponse,
+						queryBis, queryResponseBis);
+			} else {
+				writeSolrJResponse(request, response, query, queryResponse,
+						null, null);
 			}
 
 		} catch (Exception e) {
@@ -177,7 +199,8 @@ public class SearchProxy extends HttpServlet {
 	private void writeSolrJResponse(HttpServletRequest request,
 			HttpServletResponse response, final SolrQuery query,
 			QueryResponse queryResponse, final SolrQuery queryBis,
-			QueryResponse queryResponseBis)throws IOException, JSONException, ParseException {
+			QueryResponse queryResponseBis) throws IOException, JSONException,
+			ParseException {
 		SolrQueryRequest req = new SolrQueryRequest() {
 			@Override
 			public SolrParams getParams() {
@@ -252,63 +275,126 @@ public class SearchProxy extends HttpServlet {
 			@Override
 			public void setJSON(Map<String, Object> arg0) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 		};
-		if(queryResponseBis != null){ 																//If it was a request on FileShare therefore on promolink
+		if (queryResponseBis != null) { // If it was a request on FileShare
+										// therefore on promolink
 			SolrQueryResponse res = new SolrQueryResponse();
 			res.setAllValues(queryResponse.getResponse());
 			JSONResponseWriter jsonWriter = new JSONResponseWriter();
 			StringWriter s = new StringWriter();
-			
-			jsonWriter.write(s, req, res); 		
-			LOGGER.debug(s.toString());//Write the results of the query on FileShare
-			JSONObject json = new JSONObject(s.toString().substring(s.toString().indexOf("{")));	//Creating a valid json object from the results
-			
+
+			jsonWriter.write(s, req, res);
+			LOGGER.debug(s.toString());// Write the results of the query on
+										// FileShare
+			JSONObject json = new JSONObject(s.toString().substring(
+					s.toString().indexOf("{"))); // Creating a valid json object
+													// from the results
+
 			res.setAllValues(queryResponseBis.getResponse());
 			s = new StringWriter();
-			jsonWriter.write(s, req, res); 															//Write the result of the query on promolink
-			
-			if ((s.toString().charAt(10+s.toString().indexOf("numFound")))!='0'){ 					//If there are a result for the promolink
-				JSONObject jsonTmp = new JSONObject(s.toString().substring(7+s.toString().indexOf("docs"), s.toString().length()-3)); //Taking just the results without the header
-				if(jsonTmp.toString().indexOf("dateBeginning")==-1 && jsonTmp.toString().indexOf("dateEnd")==-1) //If there is not a single date then we put the promolink in the results
-					json.put("promolinkSearchComponent", jsonTmp);									//Put the promolink into the results of the first query
-				else if(jsonTmp.toString().indexOf("dateBeginning")!=-1){ 							//If there is a starting date
-					DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+			jsonWriter.write(s, req, res); // Write the result of the query on
+											// promolink
+
+			if ((s.toString().charAt(10 + s.toString().indexOf("numFound"))) != '0') { // If
+																						// there
+																						// are
+																						// a
+																						// result
+																						// for
+																						// the
+																						// promolink
+				JSONObject jsonTmp = new JSONObject(s.toString().substring(
+						7 + s.toString().indexOf("docs"),
+						s.toString().length() - 3)); // Taking just the results
+														// without the header
+				if (jsonTmp.toString().indexOf("dateBeginning") == -1
+						&& jsonTmp.toString().indexOf("dateEnd") == -1) // If
+																		// there
+																		// is
+																		// not a
+																		// single
+																		// date
+																		// then
+																		// we
+																		// put
+																		// the
+																		// promolink
+																		// in
+																		// the
+																		// results
+					json.put("promolinkSearchComponent", jsonTmp); // Put the
+																	// promolink
+																	// into the
+																	// results
+																	// of the
+																	// first
+																	// query
+				else if (jsonTmp.toString().indexOf("dateBeginning") != -1) { // If
+																				// there
+																				// is
+																				// a
+																				// starting
+																				// date
+					DateFormat dateFormat = new SimpleDateFormat(
+							"yyyy-MM-dd'T'HH:mm:ss");
 					String d1 = jsonTmp.get("dateBeginning").toString();
-					d1 = d1.substring(2,d1.length()-3);
-					Date date = new Date();															//Get the current date
-					Date date1 = dateFormat.parse(d1); 												//Parse the starting date to a valid format
-					if(jsonTmp.toString().indexOf("dateEnd")!=-1){ 									//If there is an ending date
+					d1 = d1.substring(2, d1.length() - 3);
+					Date date = new Date(); // Get the current date
+					Date date1 = dateFormat.parse(d1); // Parse the starting
+														// date to a valid
+														// format
+					if (jsonTmp.toString().indexOf("dateEnd") != -1) { // If
+																		// there
+																		// is an
+																		// ending
+																		// date
 						String d2 = jsonTmp.get("dateEnd").toString();
-						d2 = d2.substring(2,d2.length()-3);
-						Date date2 = dateFormat.parse(d2);											//Parse it to a valid format
-						if(date.compareTo(date1)>0 && date.compareTo(date2)<0) 						//If the starting date is prior to the current date
-							json.put("promolinkSearchComponent", jsonTmp);							//And the ending date is after the current date
-					}
-					else{																			//If there is no ending date
-						if(date.compareTo(date1)>0)													//If the starting date is prior to the current date
+						d2 = d2.substring(2, d2.length() - 3);
+						Date date2 = dateFormat.parse(d2); // Parse it to a
+															// valid format
+						if (date.compareTo(date1) > 0
+								&& date.compareTo(date2) < 0) // If the starting
+																// date is prior
+																// to the
+																// current date
+							json.put("promolinkSearchComponent", jsonTmp); // And
+																			// the
+																			// ending
+																			// date
+																			// is
+																			// after
+																			// the
+																			// current
+																			// date
+					} else { // If there is no ending date
+						if (date.compareTo(date1) > 0) // If the starting date
+														// is prior to the
+														// current date
 							json.put("promolinkSearchComponent", jsonTmp);
 					}
-				}
-				else{																				//If there is no starting date
-					DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+				} else { // If there is no starting date
+					DateFormat dateFormat = new SimpleDateFormat(
+							"yyyy-MM-dd'T'HH:mm:ss");
 					String d1 = jsonTmp.get("dateEnd").toString();
-					d1 = d1.substring(2,d1.length()-3);
-					Date date = new Date();															//Get the current date
-					Date date1 = dateFormat.parse(d1);												//Parse the ending date to a valid format
-					if(date.compareTo(date1)<0)														//If the ending date is after the current date
+					d1 = d1.substring(2, d1.length() - 3);
+					Date date = new Date(); // Get the current date
+					Date date1 = dateFormat.parse(d1); // Parse the ending date
+														// to a valid format
+					if (date.compareTo(date1) < 0) // If the ending date is
+													// after the current date
 						json.put("promolinkSearchComponent", jsonTmp);
 				}
 			}
 			String wrapperFunction = request.getParameter("json.wrf");
 			String finalString = wrapperFunction + "(" + json.toString() + ")";
-			response.getWriter().write(finalString);												//Send the answer to the jsp page
+			response.getWriter().write(finalString); // Send the answer to the
+														// jsp page
 			response.setStatus(200);
 			response.setContentType("text/json;charset=UTF-8");
-		}
-		else{
+		} else {
 			SolrQueryResponse res = new SolrQueryResponse();
 			JSONResponseWriter json = new JSONResponseWriter();
 			res.setAllValues(queryResponse.getResponse());
