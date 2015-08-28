@@ -30,52 +30,52 @@
 								var self = this;
 								$.each(data.response.docs,
 												function(i, doc) {
-
-									                var url = doc.url.replace("localhost",window.location.hostname); 
-									                var positionString = Manager.store.get("start").value;
-									                var position = 1;
-									                
-									                if (positionString !== null){
-									                	position += parseInt(positionString);
-									                }
-									               
-									                position += i;
-													var description = '';
-													if (data.highlighting[doc.id]) {
-														$.each( data.highlighting[doc.id], function( key, value ) {
-															description += value;
-															});
+													if (doc.url != undefined){
+										                var url = doc.url.replace("localhost",window.location.hostname); 
+										                var positionString = Manager.store.get("start").value;
+										                var position = 1;
+										                
+										                if (positionString !== null){
+										                	position += parseInt(positionString);
+										                }
+										               
+										                position += i;
+														var description = '';
+														if (data.highlighting[doc.id]) {
+															$.each( data.highlighting[doc.id], function( key, value ) {
+																description += value;
+																});
+														}
+														elm.find('.doc_list').append(
+																		'<div class="doc e-'+ i + '" id="'+ doc.id+ '"></div>');
+														elm.find('.doc:last').append(
+																		'<img src="images/feuille.jpg"/><div class="res"></div>');
+														//for putting an image to illustrate the document
+														//elm.find('.doc:last').append('<img src="images/feuille.jpg"/><div class="res"></div>');
+	
+	
+														elm.find('.doc:last .res').append('<span ="icon"></span>');
+														var extension;
+														if (typeof doc.extension === "undefined"){
+															extension = doc.source;
+														} else {
+															extension = doc.extension;
+														}
+														if (self.isMobile){
+															if (extension.toLowerCase()!==undefined && extension.toLowerCase()!="")
+																elm.find('.doc:last .icon').append('<span>['+ extension.toUpperCase() +']</span> ');
+														}	
+														else
+															elm.find('.doc:last .icon').append('<object data="images/icons/'+ extension.toLowerCase() +'-icon-24x24.png"><img src="images/icons/default-icon-24x24.png" /></object>&nbsp;');
+	
+										                var urlRedirect = 'URL?url='+ url + '&id='+Manager.store.get("id").value + '&q=' + Manager.store.get("q").value + '&position='+position;
+														elm.find('.doc:last .res').append('<a class="title" target="_blank" href="'+urlRedirect+'"></a>');
+														elm.find('.doc:last .title').append('<span>' +decodeURIComponent(doc.title) + '</span>');
+														elm.find('.doc:last .res').append('<p class="description"></p>');
+														elm.find('.doc:last .description').append('<div id="snippet">'+ description+ '</div>');
+														elm.find('.doc:last .description').append('<div id="urlMobile"><p class="address"></p></div>');
+														elm.find('.doc:last .address').append('<a href="'+urlRedirect+'" title="'+decodeURIComponent(url)+'">' + AjaxFranceLabs.tinyUrl(decodeURIComponent(url)) + '</a>');
 													}
-													elm.find('.doc_list').append(
-																	'<div class="doc e-'+ i + '" id="'+ doc.id+ '"></div>');
-													elm.find('.doc:last').append(
-																	'<img src="images/feuille.jpg"/><div class="res"></div>');
-													//for putting an image to illustrate the document
-													//elm.find('.doc:last').append('<img src="images/feuille.jpg"/><div class="res"></div>');
-
-
-													elm.find('.doc:last .res').append('<span ="icon"></span>');
-													var extension;
-													if (typeof doc.extension === "undefined"){
-														extension = doc.source;
-													} else {
-														extension = doc.extension;
-													}
-													if (self.isMobile){
-														if (extension.toLowerCase()!==undefined && extension.toLowerCase()!="")
-															elm.find('.doc:last .icon').append('<span>['+ extension.toUpperCase() +']</span> ');
-													}	
-													else
-														elm.find('.doc:last .icon').append('<object data="images/icons/'+ extension.toLowerCase() +'-icon-24x24.png"><img src="images/icons/default-icon-24x24.png" /></object>&nbsp;');
-
-									                var urlRedirect = 'URL?url='+ url + '&id='+Manager.store.get("id").value + '&q=' + Manager.store.get("q").value + '&position='+position;
-													elm.find('.doc:last .res').append('<a class="title" target="_blank" href="'+urlRedirect+'"></a>');
-													elm.find('.doc:last .title').append('<span>' +decodeURIComponent(doc.title) + '</span>');
-													elm.find('.doc:last .res').append('<p class="description"></p>');
-													elm.find('.doc:last .description').append('<div id="snippet">'+ description+ '</div>');
-													elm.find('.doc:last .description').append('<div id="urlMobile"><p class="address"></p></div>');
-													elm.find('.doc:last .address').append('<a href="'+urlRedirect+'" title="'+decodeURIComponent(url)+'">' + AjaxFranceLabs.tinyUrl(decodeURIComponent(url)) + '</a>');
-													
 												});
 								
 								AjaxFranceLabs.addMultiElementClasses(elm

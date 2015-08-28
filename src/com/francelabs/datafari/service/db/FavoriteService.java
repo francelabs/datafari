@@ -180,6 +180,6 @@ public class FavoriteService {
 	}
 	
 	private FavoriteService(){
-		coll = MongoDBContextListerner.getInstance().getDatabase(FavoriteService.FAVORITEDB).getCollection(DatabaseConstants.LIKESCOLUMN);
+		coll = MongoDBContextListerner.getInstance().getDatabase(FavoriteService.FAVORITEDB).getCollection(DatabaseConstants.FAVORITECOLLECTION);
 	}
 }

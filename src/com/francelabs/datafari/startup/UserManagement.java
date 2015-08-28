@@ -38,7 +38,7 @@ public class UserManagement extends HttpServlet {
 			//admin.deleteUser();
 			int code = admin.isInBase();
 			if (code == CodesReturned.PROBLEMCONNECTIONDATABASE){
-				LOGGER.error("Mongodb is not running, please start it. UserManagement Failed to start");
+				LOGGER.error("Database is not running, please start it. UserManagement Failed to start");
 			}else if (code==CodesReturned.TRUE){
 				if (admin.signIn()==CodesReturned.TRUE){
 					LOGGER.info("WARNING : The account admin have the default password");
@@ -47,7 +47,7 @@ public class UserManagement extends HttpServlet {
 				if (admin.signup("SearchAdministrator")==CodesReturned.ALLOK)
 					LOGGER.info("The accound admin was created in database. Please change the password");
 				else{
-					LOGGER.error("Mongodb is not running, please start it. UserManagement Failed to start");
+					LOGGER.error("Database is not running, please start it. UserManagement Failed to start");
 				}
 			}
 		

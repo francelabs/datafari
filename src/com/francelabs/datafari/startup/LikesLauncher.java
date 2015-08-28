@@ -86,12 +86,12 @@ public class LikesLauncher implements ServletContextListener {
 			 new Thread(new Runnable(){
 				public void run(){
 					ArrayList<NbLikes> listLikes = Like.getNbLikes();
-				
-					CustomProperties properties = new CustomProperties();
-					for (int i=0; i<listLikes.size() ; i++){
-						NbLikes doc = listLikes.get(i);
-						properties.put(doc.documentId,doc.nbLikes);
-					}
+					if (listLikes != null){
+						CustomProperties properties = new CustomProperties();
+						for (int i=0; i<listLikes.size() ; i++){
+							NbLikes doc = listLikes.get(i);
+							properties.put(doc.documentId,doc.nbLikes);
+						}
 						UpdateNbLikes.properties = properties;
 						UpdateNbLikes.saveProperty();
 						try {
@@ -103,6 +103,9 @@ public class LikesLauncher implements ServletContextListener {
 							LOGGER.error("Cannot send refresh request", e);
 						}
 						LOGGER.info("updateNbLikes finished it's work");
+					}else{
+						LOGGER.error("Database isn't running");
+					}
 					
 				}
 			}).start();

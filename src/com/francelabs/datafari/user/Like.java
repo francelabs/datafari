@@ -17,12 +17,14 @@ package com.francelabs.datafari.user;
 
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
 import com.francelabs.datafari.constants.CodesReturned;
 import com.francelabs.datafari.service.db.LikeService;
 
 public class Like {
 
-	
+	private final static Logger logger = Logger.getLogger(Like.class);
 
 	
 	/**
@@ -36,6 +38,8 @@ public class Like {
 		try{
 			return LikeService.addLike(username, idDocument);
 		}catch(Exception e){
+			logger.error(e);
+			e.printStackTrace();
 			return CodesReturned.PROBLEMCONNECTIONDATABASE;
 		}
 	}
@@ -52,6 +56,8 @@ public class Like {
 		try{
 			return LikeService.unlike(username, idDocument);
 		}catch(Exception e){
+			logger.error(e);
+			e.printStackTrace();
 			return CodesReturned.PROBLEMCONNECTIONDATABASE;
 		}
 	}
@@ -65,18 +71,22 @@ public class Like {
 		try{
 			return LikeService.getLikes(username);
 		}catch(Exception e){
+			logger.error(e);
+			e.printStackTrace();
 			return null;
 		}
 	}
 
 	/**
-	 * get the number of Likes of each document from MongoDB. If a document is not returned, it would mean that he hasn't a like.
+	 * get the number of Likes of each document from database. If a document is not returned, it would mean that he hasn't a like.
 	 * @return array containing the id of document and the correspoding likes
 	 */
 	public static ArrayList<NbLikes> getNbLikes(){
 		try{
 			return LikeService.getNbLikes();
 		}catch(Exception e){
+			logger.error(e);
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -84,12 +94,13 @@ public class Like {
 	/**
 	 * Delete all likes of a user without deleting also his favorites
 	 * @param username
-	 * @return CodesReturned.ALLOK if the operation was success and CodesReturned.PROBLEMCONNECTIONDATABASE if the mongoDB isn't running	
+	 * @return CodesReturned.ALLOK if the operation was success and CodesReturned.PROBLEMCONNECTIONDATABASE if the database isn't running	
 	 */
 	public static int removeLikes(String username){
 		try{
 			return LikeService.removeLikes(username);
 		}catch(Exception e){
+			logger.error(e);
 			return CodesReturned.PROBLEMCONNECTIONDATABASE;
 		}
 	}

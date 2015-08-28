@@ -92,7 +92,7 @@ public class User {
 	
 	public int changePassword(String password){
 		try {
-			UserDataService.changePassword(password,this.username);
+			UserDataService.changePassword(digest(password),this.username);
 			return CodesReturned.ALLOK;
 		} catch (Exception e) {
 			return CodesReturned.PROBLEMCONNECTIONDATABASE;
@@ -180,6 +180,7 @@ public class User {
 		try {
 			return UserDataService.getAllUsers();
 		} catch (Exception e) {
+			logger.error(e);
 			return null;
 		}
 	}

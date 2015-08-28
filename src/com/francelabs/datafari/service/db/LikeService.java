@@ -25,6 +25,7 @@ import com.mongodb.Block;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -198,6 +199,9 @@ public class LikeService {
 	}
 	
 	private LikeService(){
-		coll = MongoDBContextListerner.getInstance().getDatabase(FavoriteService.FAVORITEDB).getCollection(DatabaseConstants.FAVORITECOLUMN);
+		 MongoClient tmp = MongoDBContextListerner.getInstance();
+		if (tmp == null)
+			System.out.println("Mochkila!");
+		coll = tmp.getDatabase(FavoriteService.FAVORITEDB).getCollection(DatabaseConstants.FAVORITECOLLECTION);
 	}
 }

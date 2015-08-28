@@ -50,9 +50,9 @@ public class DeleteUser extends HttpServlet {
 					if ( code == CodesReturned.ALLOK )
 						jsonResponse.put("code", CodesReturned.ALLOK).put("statut", "User deleted with success");
 					else
-						jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB).put("statut", "Problem with database");
+						jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE).put("statut", "Problem with database");
 				}else{
-					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB).put("statut", "Problem with database");
+					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE).put("statut", "Problem with database");
 				}
 			}else{
 				jsonResponse.put("code", CodesReturned.PROBLEMQUERY).put("statut", "Problem with query");

@@ -10,6 +10,8 @@ public class CodesReturned {
 	public static final int PROBLEMCONNECTIONMONGODB = -3;
 	public static final int PROBLEMCONNECTIONDATABASE = -3;
 	public static final int PROBLEMQUERY=-4;
+	public static final int PARAMETERNOTWELLSET = -5;
+	public static final int PROBLEMCONNECTIONLDAP = -6;
 	public static final int FAILTOSIGNIN = -101;
 	public static final int USERALREADYINBASE = -800;
 }

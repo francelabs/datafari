@@ -47,7 +47,7 @@ public class DeleteRole extends HttpServlet {
 				if (code == CodesReturned.ALLOK)
 					jsonResponse.put("code", CodesReturned.ALLOK).put("statut", "User deleted with success");
 				else
-					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB).put("statut", "Datafari isn't connected to MongoDB");
+					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB).put("statut", "Datafari isn't connected to Database");
 			}else{
 				jsonResponse.put("code", CodesReturned.PROBLEMQUERY).put("statut", "Problem with query");
 			}

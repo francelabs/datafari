@@ -21,7 +21,7 @@ import com.mongodb.client.MongoDatabase;
 
 public class RoleGetter {
 	
-	public final static String DefautRole = "normalUser";
+	public final static String DefautRole = "ConnectedSearchUser";
 	private MongoDatabase db;
 	private UserRealm user;
 	private ArrayList<String> roles; 

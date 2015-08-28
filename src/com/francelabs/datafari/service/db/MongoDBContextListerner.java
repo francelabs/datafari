@@ -25,6 +25,12 @@ public class MongoDBContextListerner implements ServletContextListener {
 	private static MongoClient client;
 	
 	public static MongoClient getInstance(){
+		while (client == null){
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+			}
+		}
 		return client;
 	}
 

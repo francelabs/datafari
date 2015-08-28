@@ -46,7 +46,7 @@ public class UserDataService {
 	
 
 	private static void initiate(){
-		if (coll!=null)
+		if (coll==null)
 			coll = MongoDBContextListerner.getInstance().getDatabase(DatabaseConstants.IDENTIFIERSDB)
 				.getCollection(DatabaseConstants.IDENTIFIERSCOLLECTION);
 	}
@@ -86,7 +86,8 @@ public class UserDataService {
 	public static ArrayList<String> getRoles(String username) throws Exception{
 		initiate();
 		Document doc = new Document(DatabaseConstants.USERNAMECOLUMN, username);
-		ArrayList<Document> rolesList = (ArrayList<Document>) doc.get(DatabaseConstants.ROLECOLUMN);
+		Document myDoc = coll.find(doc).first();
+		ArrayList<Document> rolesList = (ArrayList<Document>) myDoc.get(DatabaseConstants.ROLECOLUMN);
 		ArrayList <String> result = new ArrayList<String>();
 		for (int i = 0 ; i < rolesList.size() ; i++)
 			result.add( (String)((Document)(rolesList.get(i))).get(DatabaseConstants.ROLEATTRIBUTE));
