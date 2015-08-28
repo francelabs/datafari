@@ -61,6 +61,8 @@ import com.francelabs.datafari.statistics.StatsPusher;
 @WebServlet("/SearchProxy/*")
 public class SearchProxy extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	
+	private static String domain = "corp.francelabs.com";
 
 	private static final List<String> allowedHandlers = Arrays.asList(
 			"/select", "/suggest", "/stats", "/statsQuery");
@@ -101,8 +103,7 @@ public class SearchProxy extends HttpServlet {
 		SolrQuery query = new SolrQuery();
 		SolrQuery queryBis = new SolrQuery();
 
-		ModifiableSolrParams params = new ModifiableSolrParams(
-				request.getParameterMap());
+		ModifiableSolrParams params = new ModifiableSolrParams();
 		try {
 			switch (handler) {
 			case "/stats":
@@ -117,9 +118,9 @@ public class SearchProxy extends HttpServlet {
 				if (request.getUserPrincipal() != null) {
 					String AuthenticatedUserName = request.getUserPrincipal()
 							.getName().replaceAll("[^\\\\]*\\\\", "");
-					/*if (!domain.equals("")) {
+					if (!domain.equals("")) {
 						AuthenticatedUserName += "@" + domain;
-					}*/
+					}
 					params.set("AuthenticatedUserName", AuthenticatedUserName);
 				}
 
@@ -128,10 +129,16 @@ public class SearchProxy extends HttpServlet {
 					params.set("q", queryParam);
 					params.remove("query");
 				}
+				
+				
 				break;
 			}
 
+			params.add(new ModifiableSolrParams(request.getParameterMap()));
+			
 			// perform query
+			
+			
 			query.add(params);
 			query.setRequestHandler(handler);
 			queryResponse = solr.query(query);
