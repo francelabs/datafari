@@ -98,6 +98,7 @@ AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
 									}
 								}else{
 									$("#results .doc_list_pagination").hide();
+									$("#spinner_mobile").hide();
 								}
 							}
 						}

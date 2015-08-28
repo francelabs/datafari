@@ -207,7 +207,6 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 %>
 						<li id="SizeLimitation"><a class="ajax-link" href="../ajax/SizeLimitations.html"><%= resourceBundle.getString("sizeLimitation")%></a></li>
 						<li id="AutocompleteConfiguration"><a class="ajax-link" href="../ajax/AutocompleteConfiguration.html"><%= resourceBundle.getString("autocompleteConfiguration")%></a></li>
-						<li id="ldapConfiguration"><a class="ajax-link" href="../ajax/ldapConfiguration.html"><%= resourceBundle.getString("ldapConfiguration")%></a></li>
 <%
 	}
 %>
@@ -255,6 +254,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						 <span class="hidden-xs"><%= resourceBundle.getString("userManagement")%></span>
 					</a>
 					<ul class="dropdown-menu">
+						<li id="ldapConfiguration"><a class="ajax-link" href="../ajax/ldapConfiguration.html"><%= resourceBundle.getString("ldapConfiguration")%></a></li>
 						<li id="modifyUser"><a class="ajax-link" href="../ajax/modifyUsers.html"><%=resourceBundle.getString("modifyUsers")%></a></li>
 						<li id="addUser"><a class="ajax-link" href="../ajax/addUser.html"><%=resourceBundle.getString("addUser")%></a></li>
 					</ul>

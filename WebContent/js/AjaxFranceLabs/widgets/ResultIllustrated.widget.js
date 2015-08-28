@@ -106,6 +106,7 @@
 									}
 								}else{
 									$("#results .doc_list_pagination").hide();
+									$("#spinner_mobile").hide();
 								}
 							}
 						}

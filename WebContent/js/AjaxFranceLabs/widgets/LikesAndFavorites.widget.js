@@ -7,12 +7,15 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 	SERVERPROBLEMCONNECTIONMONGODB : -3,
 	PROBLEMECONNECTIONSERVER : -404,
 	SERVERTESTPING : "www.google.com",
+	isMobile : $(window).width()<800,
 	
 	buildWidget : function() {
 		this._super();
-		if ($("#containerError").length==0){
-			// appending the alert message that will be displayed if there's an error
-			$("body").append('<div id="containerError" style="display:none"><div id="smallContainerError"><div id="error_title">Error :</div><span id="messageError"></span></div></div>');
+		if (!this.isMobile){
+			if ($("#containerError").length==0){
+				// appending the alert message that will be displayed if there's an error
+				$("body").append('<div id="containerError" style="display:none"><div id="smallContainerError"><div id="error_title">Error :</div><span id="messageError"></span></div></div>');
+			}
 		}
 	},
 	beforeRequest: function() {
@@ -21,33 +24,35 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 	},
 	afterRequest : function() {
 		this._super();
-		//var isConneted = true;
-		var self = this;
-		var docs = self.manager.response.response.docs;
-		if (window.globalVariableLikes===undefined || window.globalVariableFavorites===undefined){
-			// if the likes and Favorites aren't yet gotten from the server
-			$.post("./getLikesFavorites",function(data){
-				$("#loginSettings").text(window.i18n.msgStore['settings']).after('<a id="logout" href="/Datafari/SignOut">'+window.i18n.msgStore['signout']+'</a>');
-				if (data.code==0){
-					window.globalVariableLikes = data.likes;
-					window.globalVariableFavorites = data.favorites;
-					self.afterGettingLikes(docs);
-				}else if (data.code == self.SERVERNOTCONNECTED ){
-					$("#loginSettings").text(window.i18n.msgStore['signin']);
-					$("#logout").hide();
-				}else{
-					// if there's a probleme we CAN'T call self.afterGettingLikes
-					self.showError(data.code);
-				}
-			},"json")
-			.fail(function(){
-				// if the query failed, then there's two possibilities : Connexion to Internet isn't working 
-				// or the server is down.
-				self.showError(self.PROBLEMECONNECTIONSERVER );	
-			});;
-		}else{
-			// the Likes and Favorites are already saved (it's the case when we use the pagination or use a facet) 
-			self.afterGettingLikes(docs);
+		if (!this.isMobile){
+			//var isConneted = true;
+			var self = this;
+			var docs = self.manager.response.response.docs;
+			if (window.globalVariableLikes===undefined || window.globalVariableFavorites===undefined){
+				// if the likes and Favorites aren't yet gotten from the server
+				$.post("./getLikesFavorites",function(data){
+					$("#loginSettings").text(window.i18n.msgStore['settings']).after('<a id="logout" href="/Datafari/SignOut">'+window.i18n.msgStore['signout']+'</a>');
+					if (data.code==0){
+						window.globalVariableLikes = data.likes;
+						window.globalVariableFavorites = data.favorites;
+						self.afterGettingLikes(docs);
+					}else if (data.code == self.SERVERNOTCONNECTED ){
+						$("#loginSettings").text(window.i18n.msgStore['signin']);
+						$("#logout").hide();
+					}else{
+						// if there's a probleme we CAN'T call self.afterGettingLikes
+						self.showError(data.code);
+					}
+				},"json")
+				.fail(function(){
+					// if the query failed, then there's two possibilities : Connexion to Internet isn't working 
+					// or the server is down.
+					self.showError(self.PROBLEMECONNECTIONSERVER );	
+				});;
+			}else{
+				// the Likes and Favorites are already saved (it's the case when we use the pagination or use a facet) 
+				self.afterGettingLikes(docs);
+			}
 		}
 	},
 	
