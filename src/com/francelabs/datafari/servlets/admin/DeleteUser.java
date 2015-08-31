@@ -14,7 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.francelabs.datafari.constants.CodesReturned;
-import com.francelabs.datafari.service.db.DatabaseConstants;
+import com.francelabs.datafari.service.db.UserDataService;
 import com.francelabs.datafari.user.Favorite;
 import com.francelabs.datafari.user.User;
 
@@ -42,11 +42,11 @@ public class DeleteUser extends HttpServlet {
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		try{
-			if (request.getParameter(DatabaseConstants.USERNAMECOLUMN)!=null){
-				User user = new User(request.getParameter(DatabaseConstants.USERNAMECOLUMN).toString(),"");
+			if (request.getParameter(UserDataService.USERNAMECOLUMN)!=null){
+				User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(),"");
 				int code = user.deleteUser();
 				if ( code == CodesReturned.ALLOK ){
-					code = Favorite.removeUserFromFavoriteDB(request.getParameter(DatabaseConstants.USERNAMECOLUMN).toString());
+					code = Favorite.removeFavoritesAndLikesDB(request.getParameter(UserDataService.USERNAMECOLUMN).toString());
 					if ( code == CodesReturned.ALLOK )
 						jsonResponse.put("code", CodesReturned.ALLOK).put("statut", "User deleted with success");
 					else

@@ -78,13 +78,13 @@ public class AddLikes extends HttpServlet {
 					String username = request.getUserPrincipal().getName(); //get the username  
 					int returnResult = Like.addLike(username, documentId); 
 					if (returnResult == CodesReturned.ALLOK){
-						UpdateNbLikes.increment(documentId);
+						UpdateNbLikes.getInstance().increment(documentId);
 						jsonResponse.put("code", 0);
 					}else if (returnResult == CodesReturned.ALREADYPERFORMED){
 						// if the like was already done (attempt to increase illegaly the likes)
 						jsonResponse.put("code", CodesReturned.ALREADYPERFORMED);
 					}else{
-						jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB)
+						jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE)
 						.put("statut", "Problem while connecting to database");
 					}
 				}

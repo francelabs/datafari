@@ -17,6 +17,7 @@ package com.francelabs.realm;
 
 import java.security.Principal;
 import java.security.cert.X509Certificate;
+import java.util.List;
 
 import org.apache.catalina.Realm;
 import org.apache.catalina.realm.CombinedRealm;
@@ -27,6 +28,7 @@ import org.apache.log4j.Logger;
 public class CustomCombinedRealm extends CombinedRealm{
 
 	private static final Logger log = Logger.getLogger(CombinedRealm.class);
+	GenericCassandraRealm cassandraCombinedRealm = new GenericCassandraRealm();
 	
 	 /**
      * Return the Principal associated with the specified username and
@@ -57,10 +59,10 @@ public class CustomCombinedRealm extends CombinedRealm{
                             realm.getClass().getName()));
             	}
             } else {
-            	// else we get the role of the user in MongoDb
-            	RoleGetter roleGetter = new RoleGetter(authenticatedUser.getName(),(new MongoDBRunning(UserRealm.IDENTIFIERSDB).getDb()));
-            	// then we create a new principal with the roles that we got form MongoDB
-            	newauthenticatedUser = new GenericPrincipal(authenticatedUser.getName(),authenticatedUser.getPassword(),roleGetter.getRoles());
+            	// else we get the role of the user in Cassandra
+            	List<String> roles = cassandraCombinedRealm.getRole(authenticatedUser.getName());
+            	// then we create a new principal with the roles that we got form Cassandra
+            	newauthenticatedUser = new GenericPrincipal(authenticatedUser.getName(),authenticatedUser.getPassword(),roles);
                 if (log.isDebugEnabled()) {
                     log.debug(this.sm.getString("combinedRealm.authSuccess",
                             username, realm.getClass().getName()));
@@ -102,10 +104,10 @@ public class CustomCombinedRealm extends CombinedRealm{
                             realm.getClass().getName()));
                 }
             } else {
-            	// else we get the role of the user in MongoDb
-            	RoleGetter roleGetter = new RoleGetter(authenticatedUser.getName(),(new MongoDBRunning(UserRealm.IDENTIFIERSDB).getDb()));
-            	// then we create a new principal with the roles that we got form MongoDB
-            	newauthenticatedUser = new GenericPrincipal(authenticatedUser.getName(),authenticatedUser.getPassword(),roleGetter.getRoles());
+            	// then we create a new principal with the roles that we got form Cassandra
+            	List<String> roles = cassandraCombinedRealm.getRole(authenticatedUser.getName());
+
+            	newauthenticatedUser = new GenericPrincipal(authenticatedUser.getName(),authenticatedUser.getPassword(),roles);
                 if (log.isDebugEnabled()) {
                     log.debug(this.sm.getString("combinedRealm.authSuccess",
                             username, realm.getClass().getName()));
@@ -152,10 +154,10 @@ public class CustomCombinedRealm extends CombinedRealm{
                             realm.getClass().getName()));
                 }
             } else {
-            	// else we get the role of the user in MongoDb
-            	RoleGetter roleGetter = new RoleGetter(authenticatedUser.getName(),(new MongoDBRunning(UserRealm.IDENTIFIERSDB).getDb())); 
-            	// then we create a new principal with the roles that we got form MongoDB
-            	newauthenticatedUser = new GenericPrincipal(authenticatedUser.getName(),authenticatedUser.getPassword(),roleGetter.getRoles());
+            	// else we get the role of the user in Cassandra
+            	List<String> roles = cassandraCombinedRealm.getRole(authenticatedUser.getName());
+            	// then we create a new principal with the roles that we got form Cassandra
+            	newauthenticatedUser = new GenericPrincipal(authenticatedUser.getName(),authenticatedUser.getPassword(),roles);
             	if (log.isDebugEnabled()) {
                     log.debug(this.sm.getString("combinedRealm.authSuccess",
                             username, realm.getClass().getName()));

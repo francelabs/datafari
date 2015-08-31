@@ -14,7 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.francelabs.datafari.constants.CodesReturned;
-import com.francelabs.datafari.service.db.DatabaseConstants;
+import com.francelabs.datafari.service.db.UserDataService;
 import com.francelabs.datafari.user.User;
 
 /**
@@ -40,8 +40,8 @@ public class IsUserInBase extends HttpServlet {
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		try{
-			if (request.getParameter(DatabaseConstants.USERNAMECOLUMN)!=null){
-				User user = new User(request.getParameter(DatabaseConstants.USERNAMECOLUMN).toString(),"");
+			if (request.getParameter(UserDataService.USERNAMECOLUMN)!=null){
+				User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(),"");
 				int code = user.isInBase();
 				String result = null;
 				if (code == CodesReturned.TRUE){
@@ -52,7 +52,7 @@ public class IsUserInBase extends HttpServlet {
 				if (code != CodesReturned.PROBLEMCONNECTIONDATABASE)
 					jsonResponse.put("code", CodesReturned.ALLOK).put("statut", result);
 				else
-					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB).put("statut", "Problem with database");
+					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE).put("statut", "Problem with database");
 		}else{
 			jsonResponse.put("code", CodesReturned.PROBLEMQUERY).put("statut", "Problem with query");
 		}

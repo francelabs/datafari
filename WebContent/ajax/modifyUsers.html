@@ -109,7 +109,7 @@
 	var SERVERALLOK = 0;
 	var SERVERGENERALERROR = -1;
 	var SERVERNOTCONNECTED = -2;
-	var SERVERPROBLEMCONNECTIONMONGODB = -3;
+	var SERVERPROBLEMCONNECTIONDB = -3;
 	var PROBLEMECONNECTIONSERVER = -404;
 	var admin_messageDiv = $("#Message");
 	var elementDiv;
@@ -129,8 +129,8 @@
 				case SERVERNOTCONNECTED:	
 					message = window.i18n.msgStore["SERVERNOTCONNECTED"];
 					break;
-				case SERVERPROBLEMCONNECTIONMONGODB:
-					message = window.i18n.msgStore["SERVERPROBLEMCONNECTIONMONGODB"];
+				case SERVERPROBLEMCONNECTIONDB:
+					message = window.i18n.msgStore["SERVERPROBLEMCONNECTIONDB"];
 					break;
 				case PROBLEMECONNECTIONSERVER:
 					message = window.i18n.msgStore["PROBLEMECONNECTIONSERVER"];

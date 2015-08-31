@@ -18,9 +18,7 @@ import org.json.JSONObject;
 import org.xml.sax.SAXException;
 
 import com.francelabs.datafari.constants.CodesReturned;
-import com.francelabs.datafari.service.db.DatabaseConstants;
 import com.francelabs.datafari.service.ldap.LDAPService;
-import com.francelabs.datafari.user.User;
 import com.francelabs.datafari.utils.LdapMcfConfig;
 import com.francelabs.datafari.utils.RealmLdapConfiguration;
 

@@ -1,4 +1,4 @@
-package com.francelabs.datafari.service.db.cassandra;
+package com.francelabs.realm;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -8,9 +8,7 @@ import org.apache.log4j.Logger;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
-import com.francelabs.datafari.service.db.MongoDBContextListerner;
 import com.francelabs.datafari.utils.ScriptConfiguration;
-import com.mongodb.MongoClient;
 
 /**
  * Application Lifecycle Listener implementation class CassandraDBContextListerner
@@ -21,7 +19,9 @@ public class CassandraDBContextListerner implements ServletContextListener {
 
 
 	private final static Logger LOGGER = Logger
-			.getLogger(MongoDBContextListerner.class.getName());
+			.getLogger(CassandraDBContextListerner.class.getName());
+	
+	private static final String host = "127.0.0.1";
 
 	private static final String KEYSPACE = "datafari";
 
@@ -41,16 +41,18 @@ public class CassandraDBContextListerner implements ServletContextListener {
 
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
+		if (cluster != null){
 		cluster.close();
 		LOGGER.info("Cassandra closed successfully");
+		}
+
+		LOGGER.warn("Cassandra cluster was not initialized");
 	}
 	
 
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		try {
-			// Gets the address of the host
-			String host = ScriptConfiguration.getProperty("HOST");
 
 			// Connect to the cluster and keyspace "demo"
 			cluster = Cluster.builder().addContactPoint(host).build();

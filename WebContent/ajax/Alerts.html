@@ -120,7 +120,7 @@ function getTab(){
         //If there was no response from the server
         error: function(jqXHR, textStatus, errorThrown){
               if(jqXHR.responseText==="error connecting to the database"){
-          		$("#ajaxResponse").append(window.i18n.msgStore['mongoError'])
+          		$("#ajaxResponse").append(window.i18n.msgStore['dbError'])
           	}else {
                 console.log("Something really bad happened " + textStatus);
                 $("#ajaxResponse").html(jqXHR.responseText);
@@ -193,7 +193,7 @@ function addAlerts(){
 	        	},
 	        	error: function(jqXHR, textStatus, errorThrown){
 	        		 if(jqXHR.responseText==="error connecting to the database"){
-	               		$("#addAlertsForm").append(window.i18n.msgStore['mongoError'])
+	               		$("#addAlertsForm").append(window.i18n.msgStore['dbError'])
 	               	}else {
 	                     console.log("Something really bad happened " + textStatus);
 	                     $("#addAlertsForm").html(jqXHR.responseText);

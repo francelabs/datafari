@@ -15,12 +15,12 @@
  *******************************************************************************/
 package com.francelabs.datafari.user;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import com.francelabs.datafari.constants.CodesReturned;
-import com.francelabs.datafari.service.db.LikeService;
+import com.francelabs.datafari.service.db.DocumentDataService;
 
 public class Like {
 
@@ -36,7 +36,7 @@ public class Like {
 	 */
 	public static int addLike(String username, String idDocument){
 		try{
-			return LikeService.addLike(username, idDocument);
+			return DocumentDataService.getInstance().addLike(username, idDocument);
 		}catch(Exception e){
 			logger.error(e);
 			e.printStackTrace();
@@ -54,7 +54,7 @@ public class Like {
 	 */
 	public static int unlike(String username, String idDocument){
 		try{
-			return LikeService.unlike(username, idDocument);
+			return DocumentDataService.getInstance().unlike(username, idDocument);
 		}catch(Exception e){
 			logger.error(e);
 			e.printStackTrace();
@@ -67,9 +67,9 @@ public class Like {
 	 * @param username of the user
 	 * @return an array list of all the the likes of the user. Return null if there's an error.
 	 */
-	public static ArrayList<String> getLikes(String username){
+	public static List<String> getLikes(String username){
 		try{
-			return LikeService.getLikes(username);
+			return DocumentDataService.getInstance().getLikes(username);
 		}catch(Exception e){
 			logger.error(e);
 			e.printStackTrace();
@@ -77,19 +77,7 @@ public class Like {
 		}
 	}
 
-	/**
-	 * get the number of Likes of each document from database. If a document is not returned, it would mean that he hasn't a like.
-	 * @return array containing the id of document and the correspoding likes
-	 */
-	public static ArrayList<NbLikes> getNbLikes(){
-		try{
-			return LikeService.getNbLikes();
-		}catch(Exception e){
-			logger.error(e);
-			e.printStackTrace();
-			return null;
-		}
-	}
+
 	
 	/**
 	 * Delete all likes of a user without deleting also his favorites
@@ -98,12 +86,14 @@ public class Like {
 	 */
 	public static int removeLikes(String username){
 		try{
-			return LikeService.removeLikes(username);
+			return DocumentDataService.getInstance().removeLikes(username);
 		}catch(Exception e){
 			logger.error(e);
 			return CodesReturned.PROBLEMCONNECTIONDATABASE;
 		}
 	}
+
+
 
 
 }

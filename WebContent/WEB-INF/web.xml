@@ -68,14 +68,4 @@
       <form-error-page>/error.jsp</form-error-page>
     </form-login-config>
   </login-config>
-  <listener>
-	<listener-class>
-             com.francelabs.datafari.startup.LikesLauncher
-        </listener-class>
-   </listener>
-  <servlet>
-    <servlet-name>UserManagement</servlet-name>
-    <servlet-class>com.francelabs.datafari.startup.UserManagement</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
 </web-app>

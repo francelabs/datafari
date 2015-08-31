@@ -20,7 +20,7 @@ package com.francelabs.datafari.alerts;
  * This class is used to get the parameters for the alerts and then launch them.
  * It is called at the start of Datafari and when you turn off or on the alerts in the Alerts Administration UI
  * It is a singleton
- * getParameter reads the file and take what it needs then if necessary make the connection with the mongoDB database
+ * getParameter reads the file and take what it needs then if necessary make the connection with the db
  * startScheduled creates the runnable calculates the delays or the first launch and starts the schedules the tasks
  * alerts is used to run all the alerts of a given frequency
  * If you are in development environment the path to the datafari.properties is hardcoded
@@ -43,7 +43,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import com.francelabs.datafari.service.db.cassandra.CassandraAlertDataService;
+import com.francelabs.datafari.service.db.AlertDataService;
 import com.francelabs.datafari.service.search.SolrServers;
 import com.francelabs.datafari.service.search.SolrServers.Core;
 import com.francelabs.datafari.utils.ScriptConfiguration;
@@ -92,7 +92,7 @@ public class AlertsManager {
 	/**
 	 * Gets the path of datafari.properties file Reads the file to fill the
 	 * variables if the ALERTS line was set to true, then it establishes the
-	 * connection with the MongoDB database
+	 * connection with the  database
 	 * 
 	 * @throws ParseException
 	 */
@@ -415,7 +415,7 @@ public class AlertsManager {
 					ScriptConfiguration.setProperty(frequency, df.format(new Date()).toString());
 				}
 			}
-			List<Properties> alertList = CassandraAlertDataService.getInstance().getAlerts(); // Get all the
+			List<Properties> alertList = AlertDataService.getInstance().getAlerts(); // Get all the
 															// elements in the
 															// collection
 			Core[] core = Core.values();
@@ -492,7 +492,6 @@ public class AlertsManager {
 			alertHandleH.cancel(true);
 			alertHandleW.cancel(true);
 			scheduler.shutdownNow();
-			//TODO shutdown mongo client
 			Hourly.setHasBeenExecuted(false);
 			Daily.setHasBeenExecuted(false);
 			Weekly.setHasBeenExecuted(false);

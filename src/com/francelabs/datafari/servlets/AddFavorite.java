@@ -77,8 +77,7 @@ public class AddFavorite extends HttpServlet {
 					if (code == CodesReturned.ALLOK){
 						jsonResponse.put("code", 0);
 					}else{
-						// MongoDB is not running
-						jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB)
+						jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE)
 						.append("statut", "Problem while connecting to database");
 					}
 				}

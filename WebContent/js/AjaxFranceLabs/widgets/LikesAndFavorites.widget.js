@@ -4,7 +4,7 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 	SERVERALLOK : 0,
 	SERVERGENERALERROR : -1,
 	SERVERNOTCONNECTED : -2,
-	SERVERPROBLEMCONNECTIONMONGODB : -3,
+	SERVERPROBLEMCONNECTIONDB : -3,
 	PROBLEMECONNECTIONSERVER : -404,
 	SERVERTESTPING : "www.google.com",
 	isMobile : $(window).width()<800,
@@ -166,7 +166,7 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 		case this.SERVERNOTCONNECTED :
 			messageError =  "You're not connected yet. Please Reload the page";
 			break;
-		case this.SERVERPROBLEMCONNECTIONMONGODB:
+		case this.SERVERPROBLEMCONNECTIONDB:
 			messageError = "A problem occured while trying to connect to database. Please retry later"
 			break;
 		case this.PROBLEMECONNECTIONSERVER:

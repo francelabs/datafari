@@ -16,12 +16,11 @@
 package com.francelabs.datafari.user;
 
 import java.util.ArrayList;
-
+import java.util.List;
 
 import com.francelabs.datafari.constants.CodesReturned;
-import com.francelabs.datafari.service.db.FavoriteService;
+import com.francelabs.datafari.service.db.DocumentDataService;
 public class Favorite {
-	public static String FAVORITEDB = UserConstants.FAVORITEDB;
 	
 	/**
 	 * Add a document to the favorites list of the user
@@ -31,7 +30,7 @@ public class Favorite {
 	 */
 	public static int addFavorite(String username, String idDocument){
 		try{
-			FavoriteService.addFavorite(username, idDocument);
+			DocumentDataService.getInstance().addFavorite(username, idDocument);
 			return CodesReturned.ALLOK;
 		}catch(Exception e){
 			return CodesReturned.PROBLEMCONNECTIONDATABASE;
@@ -47,7 +46,7 @@ public class Favorite {
 	 */
 	public static int deleteFavorite(String username, String idDocument){
 		try{
-			FavoriteService.deleteFavorite(username, idDocument);
+			DocumentDataService.getInstance().deleteFavorite(username, idDocument);
 			return CodesReturned.ALLOK;
 		}catch(Exception e){
 			return CodesReturned.PROBLEMCONNECTIONDATABASE;
@@ -59,9 +58,9 @@ public class Favorite {
 	 * @param username of the user
 	 * @return an array list of all the favorites document of the user. Return null if there's an error.
 	 */
-	public static ArrayList<String> getFavorites(String username){
+	public static List<String> getFavorites(String username){
 		try{
-			return FavoriteService.getFavorites(username);
+			return DocumentDataService.getInstance().getFavorites(username);
 		}catch(Exception e){
 			return null;
 		}
@@ -70,32 +69,26 @@ public class Favorite {
 	/**
 	 * Delete all favorites of a user without deleting also his likes
 	 * @param username
-	 * @return CodesReturned.ALLOK if the operation was success and CodesReturned.PROBLEMCONNECTIONDATABASE if the mongoDB isn't running	
+	 * @return CodesReturned.ALLOK if the operation was success and CodesReturned.PROBLEMCONNECTIONDATABASE if the db isn't running	
 	 */
 	public static int removeFavorites(String username){
 		try{
-			return FavoriteService.removeFavorites(username);
+			return DocumentDataService.getInstance().removeFavorites(username);
 		}catch(Exception e){
 			return CodesReturned.PROBLEMCONNECTIONDATABASE;
 		}
 	}
 	
-	/**
-	 * change the database of Favorites and Likes
-	 * @param db the new database
-	 */
-	public static void setFavoriteDB(String db){
-		Favorite.FAVORITEDB = db;
-	}
 
 	/**
 	 * Remove a user from the collection favorites. This will delete his likes and his favorites
 	 * @param username
 	 * @return 
 	 */
-	public static int removeUserFromFavoriteDB(String username){
+	public static int removeFavoritesAndLikesDB(String username){
 		try{
-			return FavoriteService.removeUserFromFavoriteDB(username);
+			DocumentDataService.getInstance().removeFavoritesAndLikeDB(username);
+			return CodesReturned.ALLOK;
 		}catch(Exception e){
 			return CodesReturned.PROBLEMCONNECTIONDATABASE;
 		}

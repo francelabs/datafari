@@ -2,6 +2,8 @@ package com.francelabs.datafari.servlets.admin;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,7 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.francelabs.datafari.constants.CodesReturned;
-import com.francelabs.datafari.service.db.DatabaseConstants;
+import com.francelabs.datafari.service.db.UserDataService;
 import com.francelabs.datafari.user.User;
 
 /**
@@ -40,15 +42,16 @@ public class AddUser extends HttpServlet {
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		try{
-			if (request.getParameter(DatabaseConstants.USERNAMECOLUMN)!=null && request.getParameter(DatabaseConstants.PASSWORDCOLUMN)!=null && request.getParameter(DatabaseConstants.ROLECOLUMN+"[]")!=null){
-				User user = new User(request.getParameter(DatabaseConstants.USERNAMECOLUMN).toString(),request.getParameter(DatabaseConstants.PASSWORDCOLUMN).toString());
-				int code = user.signup((String[])request.getParameterValues(DatabaseConstants.ROLECOLUMN+"[]"));
+			if (request.getParameter(UserDataService.USERNAMECOLUMN)!=null && request.getParameter(UserDataService.PASSWORDCOLUMN)!=null && request.getParameter(UserDataService.ROLECOLUMN+"[]")!=null){
+				User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(),request.getParameter(UserDataService.PASSWORDCOLUMN).toString());
+				
+				int code = user.signup(Arrays.asList(request.getParameterValues(UserDataService.ROLECOLUMN)));
 				if ( code == CodesReturned.ALLOK ){
 					jsonResponse.put("code", CodesReturned.ALLOK).put("statut", "User deleted with success");
 				}else if ( code == CodesReturned.USERALREADYINBASE){
 					jsonResponse.put("code", CodesReturned.USERALREADYINBASE).put("statut", "User already Signed up");
 				}else{
-					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB).put("statut", "Problem with database");
+					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE).put("statut", "Problem with database");
 				}
 			}else{
 				jsonResponse.put("code", CodesReturned.PROBLEMQUERY).put("statut", "Problem with query");

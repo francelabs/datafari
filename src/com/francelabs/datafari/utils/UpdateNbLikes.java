@@ -15,19 +15,12 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
 import java.util.Properties;
-import java.util.concurrent.Semaphore;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -36,41 +29,28 @@ import com.francelabs.datafari.startup.LikesLauncher;
 
 public class UpdateNbLikes {
 	
-	public  static UpdateNbLikes instance;
-	public  static CustomProperties properties;
+	public static  UpdateNbLikes instance;
 	private final static Logger LOGGER = Logger.getLogger(UpdateNbLikes.class
 			.getName());
 	public final static String configPropertiesFileName = "external_nbLikes";
-	private static String nbLikesFilePath;
 	private static File configFile;
-	private static Semaphore semaphore;
-
+	private Properties properties = new Properties();
 	
-	public UpdateNbLikes()throws IOException {
+	
+	private UpdateNbLikes()throws IOException {
         super();
         BasicConfigurator.configure();
         configFile = new File(System.getProperty("catalina.home") + File.separator + ".." + File.separator + "solr" + File.separator +"solr_home" +
         File.separator + "FileShare"+ File.separator + "data"+ File.separator + configPropertiesFileName);
 		if(configFile.exists()){
-	        InputStream stream = new FileInputStream(configFile);
-			Reader reader = new InputStreamReader(stream, "UTF-8");
-			properties = new CustomProperties();
-			try {
-				properties.load(reader);
-			} catch (IOException e){
-				LOGGER.error("Cannot read file : "+ configFile.getAbsolutePath(),e );
-				throw e;
-			} finally {
-				stream.close();
-			}
-		}else{
-			properties = new CustomProperties();
+			properties.load(new FileInputStream(configFile));
 		}
 	}
 	
-	public static UpdateNbLikes getInstance() throws IOException{
-		if (instance == null)
-			return instance = new UpdateNbLikes();
+	public static synchronized UpdateNbLikes getInstance() throws IOException{
+		if (instance == null){
+			instance = new UpdateNbLikes();
+		}
 		return instance;
 	}
 	
@@ -78,7 +58,7 @@ public class UpdateNbLikes {
 	 * increment the likes of a document
 	 * @param document the id of the document that have to be which likes has to be incremented
 	 */
-	public static void increment(String document){
+	public void increment(String document){
 		try {
 			String nbLikes = (String) UpdateNbLikes.getInstance().properties.get(document);
 			if (nbLikes==null){
@@ -99,7 +79,7 @@ public class UpdateNbLikes {
 	 * decrement the likes of a document
 	 * @param document the id of the document that have to be which likes has to be decremented
 	 */
-	public static void decrement(String document){
+	public void decrement(String document){
 		try {
 			String nbLikes = (String) UpdateNbLikes.getInstance().properties.get(document);
 			if (nbLikes==null || Integer.parseInt(nbLikes) <= 0){
@@ -116,11 +96,11 @@ public class UpdateNbLikes {
 	}
 	
 	
-	public static void saveProperty(){
+	public  void saveProperty(){
 		FileOutputStream fileOutputStream;
 		try {
 			fileOutputStream = new FileOutputStream(UpdateNbLikes.configFile);
-			UpdateNbLikes.properties.store(fileOutputStream);
+			properties.store(fileOutputStream, "");
 			fileOutputStream.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

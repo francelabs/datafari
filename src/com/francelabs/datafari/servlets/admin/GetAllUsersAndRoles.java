@@ -3,6 +3,8 @@ package com.francelabs.datafari.servlets.admin;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -41,11 +43,11 @@ public class GetAllUsersAndRoles extends HttpServlet {
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		try {
-			ArrayList<ArrayList<Object>> usersList = User.getAllUsers();
+			Map<String, List<String>> usersList = User.getAllUsers();
 			if (usersList!=null)
 				jsonResponse.put("code",CodesReturned.ALLOK).put("statut",User.getAllUsers());
 			else
-				jsonResponse.put("code",CodesReturned.PROBLEMCONNECTIONMONGODB).put("statut","Datafari isn't connected to MongoDB");
+				jsonResponse.put("code",CodesReturned.PROBLEMCONNECTIONDATABASE).put("statut","Datafari isn't connected to Cassandra");
 		}catch (JSONException e) {
 				logger.error(e);
 		}

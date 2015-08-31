@@ -19,6 +19,9 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -50,8 +53,7 @@ public class User {
 	 * @return true if the signup was successful and false if not
 	 */
 	public int signup(String role){
-		String[] roleArray = {role};
-			return signup(roleArray);
+			return signup(Collections.singletonList(role));
 	}
 		
 	/**
@@ -59,9 +61,9 @@ public class User {
 	 * @param role is the array containing the roles of the user
 	 * @return true if the sign up was successful and false if not
 	 */	
-	public int signup(String[] role){
+	public int signup(List<String> role){
 		try {
-			if (UserDataService.addUser(this.username, this.passwordHashed, role)){
+			if (UserDataService.getInstance().addUser(this.username, this.passwordHashed, role)){
 				this.isSignedUp = true;
 				return CodesReturned.ALLOK;
 			}else{
@@ -79,7 +81,7 @@ public class User {
 	 */
 	public int signIn(){
 		try {
-			String passwordDatabaseHashed = UserDataService.getPassword(this.username);
+			String passwordDatabaseHashed = UserDataService.getInstance().getPassword(this.username);
 			if (passwordHashed.equals(passwordDatabaseHashed)){
 				return CodesReturned.ALLOK;
 			}else{
@@ -92,7 +94,7 @@ public class User {
 	
 	public int changePassword(String password){
 		try {
-			UserDataService.changePassword(digest(password),this.username);
+			UserDataService.getInstance().changePassword(digest(password),this.username);
 			return CodesReturned.ALLOK;
 		} catch (Exception e) {
 			return CodesReturned.PROBLEMCONNECTIONDATABASE;
@@ -105,7 +107,7 @@ public class User {
 	 */
 	public int deleteUser(){
 		try {
-			UserDataService.deleteUser(this.username);
+			UserDataService.getInstance().deleteUser(this.username);
 			return CodesReturned.ALLOK;
 		} catch (Exception e) {
 			return CodesReturned.PROBLEMCONNECTIONDATABASE;
@@ -116,9 +118,9 @@ public class User {
 	 * Returns the roles of a user
 	 * @return arrayList containing the roles
 	 */
-	public ArrayList<String> getRoles(){
+	public List<String> getRoles(){
 		try {
-			return UserDataService.getRoles(this.username);
+			return UserDataService.getInstance().getRoles(this.username);
 		} catch (Exception e) {
 			return null;
 		}
@@ -133,7 +135,7 @@ public class User {
 	 */
 	public int addRole(String role){
 		try {
-			UserDataService.addRole(role, this.username);
+			UserDataService.getInstance().addRole(role, this.username);
 			return CodesReturned.ALLOK;
 		} catch (Exception e) {
 			return CodesReturned.PROBLEMCONNECTIONDATABASE;
@@ -147,7 +149,7 @@ public class User {
 	 */
 	public int deleteRole(String role){
 		try {
-			UserDataService.deleteRole(role, this.username);
+			UserDataService.getInstance().deleteRole(role, this.username);
 			return CodesReturned.ALLOK;
 		} catch (Exception e) {
 			return CodesReturned.PROBLEMCONNECTIONDATABASE;
@@ -160,7 +162,7 @@ public class User {
 	 */
 	public int isInBase(){
 		try {
-			boolean bool = UserDataService.isInBase(this.username);
+			boolean bool = UserDataService.getInstance().isInBase(this.username);
 			if (bool)
 				return CodesReturned.TRUE;
 			else
@@ -176,11 +178,11 @@ public class User {
 	 * @return array list of array list containing at index 0 the username and the index 1 an array list of the user's roles
 	 * and null if there's problem with database
 	 */
-	public static ArrayList<ArrayList<Object>> getAllUsers(){	
+	public static Map<String, List<String>> getAllUsers(){	
 		try {
-			return UserDataService.getAllUsers();
+			return UserDataService.getInstance().getAllUsers();
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 			return null;
 		}
 	}

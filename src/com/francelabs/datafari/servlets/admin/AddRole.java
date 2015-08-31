@@ -14,7 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.francelabs.datafari.constants.CodesReturned;
-import com.francelabs.datafari.service.db.DatabaseConstants;
+import com.francelabs.datafari.service.db.UserDataService;
 import com.francelabs.datafari.user.User;
 import com.francelabs.datafari.user.UserConstants;
 
@@ -42,12 +42,12 @@ public class AddRole extends HttpServlet {
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		try {		
-			if (request.getParameter(DatabaseConstants.USERNAMECOLUMN)!=null && request.getParameter(DatabaseConstants.ROLECOLUMN)!=null){
+			if (request.getParameter(UserDataService.USERNAMECOLUMN)!=null && request.getParameter(UserDataService.ROLECOLUMN)!=null){
 				User user = new User(request.getParameter(UserConstants.USERNAMECOLUMN).toString(),"");
-				if (user.addRole(request.getParameter(DatabaseConstants.ROLECOLUMN).toString()) == CodesReturned.ALLOK){
+				if (user.addRole(request.getParameter(UserDataService.ROLECOLUMN).toString()) == CodesReturned.ALLOK){
 						jsonResponse.put("code", CodesReturned.ALLOK).put("statut", "Role add  with success to "+request.getParameter(UserConstants.USERNAMECOLUMN).toString());
 				}else{
-					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB).put("statut", "Datafari isn't connected to MongoDB");
+					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE).put("statut", "Datafari isn't connected to DB");
 				}	
 			}else{
 					jsonResponse.put("code", CodesReturned.PROBLEMQUERY).put("statut", "Problem with query");

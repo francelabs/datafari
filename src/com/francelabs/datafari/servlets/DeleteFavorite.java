@@ -74,7 +74,7 @@ public class DeleteFavorite extends HttpServlet {
 					if (Favorite.deleteFavorite(username, request.getParameter("idDocument")) == CodesReturned.ALLOK){
 						jsonResponse.put("code", CodesReturned.ALLOK);
 					}else{
-						jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB)
+						jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE)
 						.put("statut", "Problem while connecting to database");
 					}
 				}

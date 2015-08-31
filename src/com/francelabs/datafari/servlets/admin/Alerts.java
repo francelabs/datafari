@@ -36,15 +36,15 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.francelabs.datafari.service.db.cassandra.CassandraAlertDataService;
+import com.francelabs.datafari.service.db.AlertDataService;
 
 /** Javadoc
  * 
- * This servlet is used to add new alerts and print/edit/delete the existing alerts in the MongoDB database.
+ * This servlet is used to add new alerts and print/edit/delete the existing alerts in the database.
  * It is only called by the Alerts.html.
  * doGet is used to print the Alerts.
  * doPost is used to add/edit/delete Alerts.
- * The connection with the mongoDB database is made in the constructor.
+ * The connection with the database is made in the constructor.
  * @author Alexis Karassev
  *
  */
@@ -74,7 +74,7 @@ public class Alerts extends HttpServlet {
 			int i=0;
 			JSONObject superJson = new JSONObject();
 			try{
-				List<Properties> alerts = CassandraAlertDataService.getInstance().getAlerts();								//Get all the existing Alerts
+				List<Properties> alerts = AlertDataService.getInstance().getAlerts();								//Get all the existing Alerts
 				for (Properties alert : alerts) {										//Get the next Alert
 					if(!request.getParameter("keyword").equals("")){		//If the user have typed something in the search field
 						if(alert.get("keyword").equals(request.getParameter("keyword"))){	//then only the Alerts with a corresponding keyword are put into the Json		
@@ -118,7 +118,7 @@ public class Alerts extends HttpServlet {
 			} catch(Exception e){
 				pw.append("Error connecting to the database, please retry, if the problem persists contact your system administrator. Error code : 69010"); 	
 				pw.close();
-				LOGGER.error("Error connecting to the Mongo database in Alerts Servlet's doGet. Error 69010", e);
+				LOGGER.error("Error connecting to the database in Alerts Servlet's doGet. Error 69010", e);
 				return;
 			} 
 		}catch(Exception e){
@@ -155,7 +155,7 @@ public class Alerts extends HttpServlet {
 			PrintWriter pw = response.getWriter();
 			try{
 				if(request.getParameter("_id")!=null){
-					CassandraAlertDataService.getInstance().deleteAlert(request.getParameter("_id"));//Deleting part									//Execute the query in the collection
+					AlertDataService.getInstance().deleteAlert(request.getParameter("_id"));//Deleting part									//Execute the query in the collection
 				}
 				if(request.getParameter("keyword")!=null){	
 					Properties alert = new Properties();//Adding part
@@ -166,14 +166,14 @@ public class Alerts extends HttpServlet {
 						}															//This loop can only be triggered by an edit.
 					} 
 					alert.put("user", request.getRemoteUser());
-					CassandraAlertDataService.getInstance().addAlert(alert);
+					AlertDataService.getInstance().addAlert(alert);
 					//insert the object composed of all the parameters
 				}
 				//If this is an edit the two parts (Delete and Add) will be executed successively
 			} catch(Exception e){
 				pw.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69011"); 	
 				pw.close();
-				LOGGER.error("Error connecting to the Mongo database in Alerts Servlet's doPost. Error 69011", e);
+				LOGGER.error("Error connecting to the database in Alerts Servlet's doPost. Error 69011", e);
 			}
 		}catch(Exception e){
 			PrintWriter out = response.getWriter();

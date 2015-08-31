@@ -294,8 +294,6 @@ public class SearchProxy extends HttpServlet {
 			StringWriter s = new StringWriter();
 
 			jsonWriter.write(s, req, res);
-			LOGGER.debug(s.toString());// Write the results of the query on
-										// FileShare
 			JSONObject json = new JSONObject(s.toString().substring(
 					s.toString().indexOf("{"))); // Creating a valid json object
 													// from the results

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -73,9 +74,9 @@ public class GetFavorites extends HttpServlet {
 				.put("statut", "Please reload the page, you'r not connected");
 			}else{
 				String username = userPrincipal.getName();
-				ArrayList<String> favoritesList = Favorite.getFavorites(username);
+				List<String> favoritesList = Favorite.getFavorites(username);
 				if (favoritesList==null){
-					jsonResponse.put("code",CodesReturned.PROBLEMCONNECTIONMONGODB);
+					jsonResponse.put("code",CodesReturned.PROBLEMCONNECTIONDATABASE);
 				}else{
 					jsonResponse.put("code",CodesReturned.ALLOK);
 					jsonResponse.put("favoritesList", favoritesList);

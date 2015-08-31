@@ -78,13 +78,13 @@ public class Unlike extends HttpServlet {
 					String username = request.getUserPrincipal().getName();
 					int returnResult = Like.unlike(username, documentId);
 					if (returnResult == CodesReturned.ALLOK){
-						UpdateNbLikes.decrement(documentId);
+						UpdateNbLikes.getInstance().decrement(documentId);
 						jsonResponse.put("code", returnResult);
 					}else if(returnResult == CodesReturned.ALREADYPERFORMED) {
 						// the document isn't liked (attempt to decrease the likes of a document)
 						jsonResponse.put("code", returnResult);
 					}else{
-						jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB)
+						jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE)
 						.put("statut", "Problem while connecting to database");
 					}
 				}

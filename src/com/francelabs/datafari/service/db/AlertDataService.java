@@ -3,22 +3,18 @@ package com.francelabs.datafari.service.db;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.UUID;
 
-import org.bson.Document;
-import org.bson.types.ObjectId;
-
-import com.francelabs.datafari.utils.ScriptConfiguration;
-import com.mongodb.BasicDBObject;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Session;
 
 public class AlertDataService {
-	private MongoDatabase db;
-	private MongoCollection<Document> alertCollection;
-	private String database;
+
+	public static final String ALERTCOLLECTION = "alerts";
+
+	private Session session;
 
 
 	private static AlertDataService instance;
@@ -32,39 +28,69 @@ public class AlertDataService {
 	}
 	
 	public AlertDataService() throws IOException{
-			// Gets the name of the database
-		database = ScriptConfiguration.getProperty("DATABASE");
+		
 		// Gets the name of the collection
-		db = MongoDBContextListerner.getInstance().getDatabase(database);							//Switch to the right Database
-		alertCollection = db.getCollection(ScriptConfiguration.getProperty("COLLECTION"));							//Switch to the right Collection
+		session = DBContextListerner.getSession();
 	}
 
 	
-	public void deleteAlert(String id){
-		BasicDBObject query = new BasicDBObject();						
-		query.put("_id", new ObjectId(id));	//Create a query where we put the id of the alerts that must be deleted
-		alertCollection.findOneAndDelete(query);	
+	public void deleteAlert(String id){	
+		String query = "DELETE FROM "+ALERTCOLLECTION+" WHERE id ="+ id +";";
+		session.execute(query);
+
 	}
 
-	public void addAlert(Properties properties) {
-		Document obj = new Document();
-		for(Entry<Object, Object> entry : properties.entrySet()){
-				obj.put((String) entry.getKey(), (String) entry.getValue());				//otherwise there will be an exception at the 2nd modification or at a removal after a modification.
-			}	
-		alertCollection.insertOne(obj);
+	public void addAlert(Properties alertProp) {
+		/*
+		 * 
+			 * id varchar PRIMARY KEY,
+			 * keyword varchar,
+			 * core varchar,
+			 * frequency varchar,
+			 * mail varchar,
+			 * subject varchar,
+			 * user varchar
+		 * 
+		 */
+		String query = 
+		"insert into "+ALERTCOLLECTION+" (id, keyword, core, frequency, mail, subject, user) values ("
+		+   "uuid(),"
+		+ 	"'" + alertProp.getProperty("keyword") + "',"
+		+ 	"'" + alertProp.getProperty("core") + "',"
+		+ 	"'" + alertProp.getProperty("frequency") + "',"
+		+ 	"'" + alertProp.getProperty("mail") + "',"
+		+ 	"'" + alertProp.getProperty("subject") + "',"
+		+ 	"'" + alertProp.getProperty("user") + "');";
+		session.execute(query);
 	}
 
 	public List<Properties> getAlerts() {
-		List<Properties> prop = new ArrayList<Properties>();
-		FindIterable<Document> cursor = alertCollection.find();								//Get all the existing Alerts
-		for (Document alert : cursor) {
-			Properties p = new Properties();
-			for(Entry<String, Object> entry : alert.entrySet()){
-					p.put(entry.getKey(), (String)entry.getValue().toString()) ;
-			}
-			prop.add(p);
+		List<Properties> alerts = new ArrayList<Properties>();
+		ResultSet results = session.execute("SELECT * FROM "+ALERTCOLLECTION);
+		for (Row row : results) {
+			/*
+			 * 
+  			 * id varchar PRIMARY KEY,
+  			 * keyword varchar,
+  			 * core varchar,
+  			 * frequency varchar,
+  			 * mail varchar,
+  			 * subject varchar,
+  			 * user varchar
+			 * 
+			 */
+			Properties alertProp = new Properties();
+			UUID id = row.getUUID("id");
+			alertProp.put("_id", id.toString());
+			alertProp.put("keyword", row.getString("keyword"));
+			alertProp.put("core", row.getString("core"));
+			alertProp.put("frequency", row.getString("frequency"));
+			alertProp.put("mail", row.getString("mail"));
+			alertProp.put("subject", row.getString("subject"));
+			alertProp.put("user", row.getString("user"));
+			alerts.add(alertProp);
 		}
-		return prop;
+		return alerts;
 	}
 
 }

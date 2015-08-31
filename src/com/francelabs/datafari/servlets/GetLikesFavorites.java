@@ -18,6 +18,7 @@ package com.francelabs.datafari.servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -33,7 +34,6 @@ import com.francelabs.datafari.constants.CodesReturned;
 import com.francelabs.datafari.servlets.admin.ConfigDeduplication;
 import com.francelabs.datafari.user.Favorite;
 import com.francelabs.datafari.user.Like;
-import com.francelabs.realm.MongoDBRunning;
 
 /**
  * Servlet implementation class GetLikesFavorites
@@ -68,10 +68,10 @@ public class GetLikesFavorites extends HttpServlet {
 		try {
 			if (request.getUserPrincipal()!=null){	
 				String username = request.getUserPrincipal().getName();
-				ArrayList<String> likeList = Like.getLikes(username);	
-				ArrayList<String> favoritesList = Favorite.getFavorites(username);
+				List<String> likeList = Like.getLikes(username);	
+				List<String> favoritesList = Favorite.getFavorites(username);
 				if (likeList == null && favoritesList == null)
-					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONMONGODB)
+					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE)
 					 .put("statut", "Database doesn't respound");		
 				else
 					jsonResponse.put("favorites", favoritesList)

@@ -16,7 +16,7 @@
 	
 	<Realm className="com.francelabs.realm.CustomCombinedRealm">
 		
-		<Realm authCollection="users" authDB="db-containing" authPasswordField="password" authRoleField="role" authUserField="username" className="com.francelabs.realm.GenericMongoRealm" defaultDbHost="localhost" defaultDbPass="" defaultDbUser="" defaultRole="user" digest="SHA-256"/>
+		<Realm className="com.francelabs.realm.GenericCassandraRealm"/>
 			    
 		    	
 	
