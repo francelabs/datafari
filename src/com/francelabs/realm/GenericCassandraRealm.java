@@ -104,7 +104,7 @@ public class GenericCassandraRealm extends RealmBase {
     public List<String> getRole(String username) {
     	List<String> roles = new ArrayList<String>();
 		ResultSet results = session.execute("SELECT " + ROLECOLUMN + " FROM "
-				+ ROLECOLLECTION + " where " + USERNAMECOLUMN + "='" + username
+				+ ROLECOLLECTION + " where " + USERNAMECOLUMN + " = '" + username
 				+ "'");
 
 		for (Row row : results) {

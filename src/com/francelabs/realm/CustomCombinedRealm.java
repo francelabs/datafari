@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
 public class CustomCombinedRealm extends CombinedRealm{
 
 	private static final Logger log = Logger.getLogger(CombinedRealm.class);
-	GenericCassandraRealm cassandraCombinedRealm = new GenericCassandraRealm();
+	GenericCassandraRealm cassandraCombinedRealm;
 	
 	 /**
      * Return the Principal associated with the specified username and
@@ -44,6 +44,10 @@ public class CustomCombinedRealm extends CombinedRealm{
         GenericPrincipal authenticatedUser = null;
         GenericPrincipal newauthenticatedUser = null;
         for (Realm realm : realms) {
+        	if (realm instanceof GenericCassandraRealm){
+        		cassandraCombinedRealm = (GenericCassandraRealm) realm;
+        	}
+        	
            if (log.isDebugEnabled()) {
                 log.debug(this.sm.getString("combinedRealm.authStart", username,
                         realm.getClass().getName()));

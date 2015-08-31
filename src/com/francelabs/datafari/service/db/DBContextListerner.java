@@ -11,30 +11,41 @@ import com.datastax.driver.core.Session;
 import com.francelabs.datafari.utils.ScriptConfiguration;
 
 /**
- * Application Lifecycle Listener implementation class CassandraDBContextListerner
+ * Application Lifecycle Listener implementation class
+ * CassandraDBContextListerner
  *
  */
 @WebListener
 public class DBContextListerner implements ServletContextListener {
 
+	private static Object lock = new Object();
 
 	private final static Logger LOGGER = Logger
 			.getLogger(DBContextListerner.class.getName());
 
 	private static final String KEYSPACE = "datafari";
+	private static final String host = "127.0.0.1";
 
 	private static Cluster cluster;
 	private static Session session;
-	
-	public static Session getSession(){
-		while  (session == null){
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				LOGGER.error("Unknow error");
+
+	public static Session getSession() {
+		synchronized (lock) {
+			if (session == null) {
+				initDB();
 			}
 		}
 		return session;
+	}
+
+	@Override
+	public void contextInitialized(ServletContextEvent sce) {
+		synchronized (lock) {
+			if (session == null) {
+				initDB();
+			}
+		}
+
 	}
 
 	@Override
@@ -42,14 +53,9 @@ public class DBContextListerner implements ServletContextListener {
 		cluster.close();
 		LOGGER.info("Cassandra closed successfully");
 	}
-	
 
-	@Override
-	public void contextInitialized(ServletContextEvent sce) {
+	private static void initDB() {
 		try {
-			// Gets the address of the host
-			String host = ScriptConfiguration.getProperty("HOST");
-
 			// Connect to the cluster and keyspace "demo"
 			cluster = Cluster.builder().addContactPoint(host).build();
 			session = cluster.connect(KEYSPACE);
@@ -58,5 +64,5 @@ public class DBContextListerner implements ServletContextListener {
 			LOGGER.error("Error initializing Cassandra client", e);
 		}
 	}
-	
+
 }
