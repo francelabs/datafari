@@ -40,6 +40,8 @@
         <Set name="acceptorPriorityDelta"><Property name="solr.jetty.http.acceptorPriorityDelta" default="0"/></Set>
         <Set name="selectorPriorityDelta"><Property name="solr.jetty.http.selectorPriorityDelta" default="0"/></Set>
         <Set name="acceptQueueSize"><Property name="solr.jetty.http.acceptQueueSize" default="0"/></Set>
+        <Set name="Host">127.0.0.1</Set>
+       
       </New>
     </Arg>
   </Call>
