@@ -11,7 +11,7 @@
 "score":"Pertinence",
 "addQuerySlot":"Ajouter une requête",
 "labelhl":"Nombre maximum de caractères analysés par le surlignage",
-dbError":"Le serveur n'a pas pu se connecter à la base de données, assurez-vous que la configuration soit correcte.",
+"dbError":"Le serveur n'a pas pu se connecter à la base de données, assurez-vous que la configuration soit correcte.",
 "of":"sur",
 "mandatoryField":"Champs obligatoires",
 "searchUser":"Utilisateurs",
