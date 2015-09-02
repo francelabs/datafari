@@ -99,7 +99,7 @@
 				</tbody>
 			</table>
 		</div>
-	</div>
+	
 	<div title="Delete A User" class="dialogue">Are you sure you want to delete the user?</div>
 	
 	<script>
@@ -200,18 +200,20 @@
 				window.globalVariableUser = data.statut;
 				var html = "";
 				$.each(window.globalVariableUser,function(index,element){
-					 html+= '<tr class="root" data-user="'+element[0]+'">'+
-							"<th>"+element[0]+"</th>"+
-							'<th><input data-user="'+element[0]+'" placeHolder="change password" class="password"/></th>'+
+					 html+= '<tr class="root" data-user="'+index+'">'+
+							"<th>"+index+"</th>"+
+							'<th><input data-user="'+index+'" placeHolder="change password" class="password"/></th>'+
 							'<th>';
-					for (var i = 0; i<element[1].length; i++){
-						html+=htmlRole(element[1][i],element[0]);
+					for (var i = 0; i<element.length; i++){
+						html+=htmlRole(element[i],i);
 					}
-					html+='<input data-user="'+element[0]+'" class="add_role" placeHolder="Add a Role"/></th>'+
+					
+					html+='<input data-user="'+index+'" class="add_role" placeHolder="Add a Role"/></th>'+
 							'<th><span class="delete_user"><i class="fa fa-times"></i></span></th>'+
 							'</tr>';
 				});
 				$("tbody").append(html);
+		
 				$(".password").keydown(function(e){
 					if (e.keyCode == 13){
 						var element = $(e.target);
@@ -244,10 +246,10 @@
 					source : listRoles,
 					select : function(event,ui){
 						var role = ui.item.value;
-						console.log(role);
+						//console.log(role);
 						var element = $(event.target);
 						element.val("");
-						console.log("."+element.data("user")+" ."+role);
+						console.log("test user and role "+element.data("user")+" ."+role);
 						if ($("."+element.data("user")+" ."+role).length==0){
 							$.post("../SearchAdministrator/addRole",{username:element.data("user"),role:role},function(data){
 								if (data.code==SERVERALLOK){
