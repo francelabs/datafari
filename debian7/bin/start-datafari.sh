@@ -55,6 +55,8 @@ then
 	su postgres -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_HOME}/logs/pgsql.log start"
 	cd "${DATAFARI_HOME}/mcf/mcf_home"
 	bash "initialize.sh"
+	cd "${DATAFARI_HOME}/bin/common"
+	"${JAVA_HOME}/bin/java" -cp DatafariScripts.jar com.francelabs.datafari.script.BackupManifoldCFConnectorsScript RESTORE config/manifoldcf/monoinstance
 	$CASSANDRA_HOME/bin/cqlsh -f ${DATAFARI_HOME}/bin/common/config/cassandra/tables 
 	sed -i "s/\(STATE *= *\).*/\1initialized/" $INIT_STATE_FILE
 else
