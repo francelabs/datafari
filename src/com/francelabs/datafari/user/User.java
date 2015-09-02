@@ -81,7 +81,7 @@ public class User {
 	 */
 	public int signIn(){
 		try {
-			String passwordDatabaseHashed = UserDataService.getInstance().getPassword(this.username);
+			String passwordDatabaseHashed = UserDataService.getInstance().getPassword(digest(this.username));
 			if (passwordHashed.equals(passwordDatabaseHashed)){
 				return CodesReturned.ALLOK;
 			}else{
@@ -221,6 +221,5 @@ public class User {
 			return isSignedIn;
 		}
 		
-	
 		 
 }

@@ -15,14 +15,18 @@
  *******************************************************************************/
 package com.francelabs.datafari.startup;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
 
+import com.francelabs.datafari.constants.CodesReturned;
 import com.francelabs.datafari.service.db.UserDataService;
+import com.francelabs.datafari.user.User;
 
 public class UserManagementLauncher implements ServletContextListener {
 
@@ -33,9 +37,16 @@ public class UserManagementLauncher implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
 		try {
+			LOGGER.info("UserManagement info");
 			if (!UserDataService.getInstance().isInBase("admin")){
+				LOGGER.info("UserManagement admin");
+				User user = new User("admin","admin");
+				List<String> roleAdmin = Collections.singletonList(UserDataService.SEARCHADMINISTRATOR);
+				int code = user.signup(roleAdmin);
+				if ( code == CodesReturned.ALLOK ){
+					LOGGER.info("Admin user created");
+				}
 				
-				UserDataService.getInstance().addUser("admin", "admin", Collections.singletonList(UserDataService.SEARCHADMINISTRATOR));
 			}
 		} catch (Exception e) {
 			LOGGER.error("Cannot create admin account",e);
