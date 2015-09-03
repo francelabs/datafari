@@ -35,7 +35,7 @@ public class ActivateLDAPSolr {
 	private ActivateLDAPSolr(){
 		String filePath = System.getProperty("catalina.home")+ File.separator +".." + File.separator +"solr"+File.separator+"solr_home"+File.separator+"FileShare"+File.separator+"conf"+File.separator+"solrconfig.xml";
 		solrConfig = new File(filePath);
-		String filePathJSON = System.getProperty("catalina.home") + File.separator +".." + File.separator + "bin" + File.separator + "config" 
+		String filePathJSON = System.getProperty("catalina.home") + File.separator +".." + File.separator + "bin" + File.separator + "common" + "config" 
 				+ File.separator + "manifoldcf" + File.separator + "monoinstance" + File.separator + "authorityconnections" + File.separator + "authorityConnection.json";
 		authorityconnectionJSON = new File(filePathJSON);
 	}
