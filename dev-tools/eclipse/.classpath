@@ -87,5 +87,6 @@
 	<classpathentry kind="lib" path="tomcat/lib/netty-handler-4.0.27.Final.jar"/>
 	<classpathentry kind="lib" path="tomcat/lib/netty-transport-4.0.27.Final.jar"/>
 	<classpathentry kind="lib" path="tomcat/lib/snappy-java-1.0.5.jar"/>
+	<classpathentry kind="lib" path="solr/solr_home/FileShare/lib/extraction/tika-core-1.7.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
