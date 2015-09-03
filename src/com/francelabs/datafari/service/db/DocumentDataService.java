@@ -50,6 +50,14 @@ public class DocumentDataService {
 		}
 		return instance;
 	}
+	
+
+	public DocumentDataService() throws IOException {
+
+		// Gets the name of the collection
+		session = DBContextListerner.getSession();
+
+	}
 
 	/**
 	 * Add a document to the list of documents liked by the user
