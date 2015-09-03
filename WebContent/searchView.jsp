@@ -153,7 +153,7 @@
 		<div class="clear"></div>
 	</div>
 	<jsp:include page="footer.jsp"/> 
-	<div id="spinner_mobile"><i class="fa fa-spinner fa-spin"></i></div>
+	<!--  <div id="spinner_mobile"><i class="fa fa-spinner fa-spin"></i></div>-->
 
 </body>
 </html>
