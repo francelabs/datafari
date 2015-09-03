@@ -168,7 +168,7 @@ public class DocumentDataService {
 	 */
 	public int deleteFavorite(String username, String idDocument) {
 		String query = "DELETE FROM " + FAVORITECOLLECTION + " WHERE "
-				+ DOCUMENTIDCOLUMN + " = " + idDocument;
+				+ DOCUMENTIDCOLUMN + " = '" + idDocument +"' AND "+USERNAMECOLUMN+ " = '"+username + "'";
 		session.execute(query);
 		return CodesReturned.ALLOK;
 	}
