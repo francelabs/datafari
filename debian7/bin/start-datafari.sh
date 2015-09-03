@@ -55,10 +55,18 @@ then
 	su postgres -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_HOME}/logs/pgsql.log start"
 	cd "${DATAFARI_HOME}/mcf/mcf_home"
 	bash "initialize.sh"
+	$CASSANDRA_HOME/bin/cqlsh -f ${DATAFARI_HOME}/bin/common/config/cassandra/tables 
+fi
+
+cd $TOMCAT_HOME/bin
+bash startup.sh
+
+if  [[ "$STATE" = *installed* ]];
+then
 	cd "${DATAFARI_HOME}/bin/common"
 	"${JAVA_HOME}/bin/java" -cp DatafariScripts.jar com.francelabs.datafari.script.BackupManifoldCFConnectorsScript RESTORE config/manifoldcf/monoinstance
-	$CASSANDRA_HOME/bin/cqlsh -f ${DATAFARI_HOME}/bin/common/config/cassandra/tables 
 	sed -i "s/\(STATE *= *\).*/\1initialized/" $INIT_STATE_FILE
+
 else
 	su postgres -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_HOME}/logs/pgsql.log start"
 	CASSANDRA_INCLUDE=$CASSANDRA_ENV $CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE 1>/dev/null
@@ -68,6 +76,5 @@ fi
 
 cd $MCF_HOME/../bin
 bash mcf_crawler_agent.sh start
-cd $TOMCAT_HOME/bin
-bash startup.sh
+
 SOLR_INCLUDE=$SOLR_ENV $SOLR_INSTALL_DIR/bin/solr start
