@@ -29,15 +29,17 @@ import com.francelabs.manifoldcf.configuration.api.ManifoldAPI;
 public class ActivateLDAPSolr {
 	private static File solrConfig;
 	private static File authorityconnectionJSON;
+	private static File authoritygroupJSON;
 	private static ActivateLDAPSolr instance;
 	private final static Logger logger = Logger.getLogger(ActivateLDAPSolr.class); 
 	
 	private ActivateLDAPSolr(){
 		String filePath = System.getProperty("catalina.home")+ File.separator +".." + File.separator +"solr"+File.separator+"solr_home"+File.separator+"FileShare"+File.separator+"conf"+File.separator+"solrconfig.xml";
 		solrConfig = new File(filePath);
-		String filePathJSON = System.getProperty("catalina.home") + File.separator +".." + File.separator + "bin" + File.separator + "common" + File.separator + "config" 
-				+ File.separator + "manifoldcf" + File.separator + "monoinstance" + File.separator + "authorityconnections" + File.separator + "authorityConnection.json";
+		String filePathJSON = System.getProperty("catalina.home") + File.separator +".." + File.separator + "bin"  + File.separator +"config" + File.separator + "manifoldcf" + File.separator + "monoinstance" + File.separator + "authorityconnections" + File.separator + "authorityConnection.json";
+		String filePathGroupJSON = System.getProperty("catalina.home") + File.separator +".." + File.separator + "bin"  + File.separator +"config" + File.separator + "manifoldcf" + File.separator + "monoinstance" + File.separator + "authorityconnections" + File.separator + "authorityGroups.json";
 		authorityconnectionJSON = new File(filePathJSON);
+		authoritygroupJSON = new File(filePathGroupJSON);
 	}
 	private static ActivateLDAPSolr getInstance(){
 		if (instance == null){
@@ -83,12 +85,24 @@ public class ActivateLDAPSolr {
 				item.appendChild(elementRoot);
 				XMLTOFile(solrConfig,docSchem);
 				JSONObject json = JSONUtils.readJSON(authorityconnectionJSON);
+				JSONObject jsonGroup = JSONUtils.readJSON(authoritygroupJSON);
 				try {
-					ManifoldAPI.putConfig("authorityconnections", "DatafariAD",json);
+					ManifoldAPI.deleteConfig("authorityconnections", "DatafariAD");
+					ManifoldAPI.deleteConfig("authoritygroups", "DatafariAuthorityGroup");
 				} catch (Exception e) {
-					JSONObject domainController = json.getJSONObject(LdapMcfConfig.autorityConnectionElement);
-					domainController.put("isnew", "true");
-					ManifoldAPI.putConfig("authorityconnections", "DatafariAD",json);
+					logger.error("FATAL ERROR",e);
+				}
+				
+				try {
+					ManifoldAPI.putConfig("authoritygroups", "DatafariAuthorityGroup",jsonGroup);
+							
+				} catch (Exception e) {
+					
+				}
+				try {
+					ManifoldAPI.putConfig("authorityconnections", "DatafariAD",json);					
+				} catch (Exception e) {
+					
 				}
 			}
 		}
@@ -114,6 +128,7 @@ public class ActivateLDAPSolr {
 				XMLTOFile(solrConfig,docSchem);		
 				try {
 					ManifoldAPI.deleteConfig("authorityconnections", "DatafariAD");
+					ManifoldAPI.deleteConfig("authoritygroups", "DatafariAuthorityGroup");
 				} catch (Exception e) {
 					logger.error("FATAL ERROR",e);
 					return CodesReturned.GENERALERROR;

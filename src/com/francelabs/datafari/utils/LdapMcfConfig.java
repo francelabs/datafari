@@ -23,6 +23,7 @@ public class LdapMcfConfig{
 	private static File authorityconnectionJSON;
 	private static LdapMcfConfig instance;
 	public final  static String autorityConnectionElement = "authorityconnection";
+	public final  static String autorityGroupElement = "authoritygroup";
 	public final static String configurationElement = "configuration";
 	public final  static String domainControllerElement = "domaincontroller";
 	public final static String attributeUsername = "_attribute_username";
@@ -57,6 +58,12 @@ public class LdapMcfConfig{
 				//					logger.error(e);
 				//					return CodesReturned.GENERALERROR;
 				//				}
+				try {
+					ManifoldAPI.deleteConfig("authorityconnections", "DatafariAD");
+				}
+				catch (Exception e){
+					
+				}
 				ManifoldAPI.putConfig("authorityconnections","DatafariAD",json);
 				//				urlParameters.add(new BasicNameValuePair("parameter", authorityconnection.toString()));
 				//				urlParameters.add(new BasicNameValuePair("caller", ""));
