@@ -1,5 +1,5 @@
 AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.extend({
-	
+
 	SERVERALREADYPERFORMED : 1,
 	SERVERALLOK : 0,
 	SERVERGENERALERROR : -1,
@@ -8,7 +8,7 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 	PROBLEMECONNECTIONSERVER : -404,
 	SERVERTESTPING : "www.google.com",
 	isMobile : $(window).width()<800,
-	
+
 	buildWidget : function() {
 		this._super();
 		if (!this.isMobile){
@@ -31,14 +31,12 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 			if (window.globalVariableLikes===undefined || window.globalVariableFavorites===undefined){
 				// if the likes and Favorites aren't yet gotten from the server
 				$.post("./getLikesFavorites",function(data){
-					$("#loginSettings").text(window.i18n.msgStore['settings']).after('<a id="logout" href="/Datafari/SignOut">'+window.i18n.msgStore['signout']+'</a>');
 					if (data.code==0){
 						window.globalVariableLikes = data.likes;
 						window.globalVariableFavorites = data.favorites;
 						self.afterGettingLikes(docs);
-					}else if (data.code == self.SERVERNOTCONNECTED ){
-						$("#loginSettings").text(window.i18n.msgStore['signin']);
-						$("#logout").hide();
+					}
+					else if (data.code == self.SERVERNOTCONNECTED ){
 					}else{
 						// if there's a probleme we CAN'T call self.afterGettingLikes
 						self.showError(data.code);
@@ -55,7 +53,7 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 			}
 		}
 	},
-	
+
 	afterGettingLikes : function(docs){
 		var self = this;
 		if (docs.length!=0){ 
@@ -136,10 +134,10 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 						self.showError(data.code);
 					}
 				},"json")
-					.fail(function(){
-						self.showError(self.PROBLEMECONNECTIONSERVER );	
-					});
-					
+				.fail(function(){
+					self.showError(self.PROBLEMECONNECTIONSERVER );	
+				});
+
 			}else{
 				$.post('./addLikes',{"idDocument":element.attr('id')},function(data){
 					if (data.code >= 0){
@@ -159,7 +157,7 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 			}
 		});
 	},
-	
+
 	showError : function(codeError){
 		var messageError;
 		switch(codeError){
@@ -168,13 +166,13 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 			break;
 		case this.SERVERPROBLEMCONNECTIONDB:
 			messageError = "A problem occured while trying to connect to database. Please retry later"
-			break;
+				break;
 		case this.PROBLEMECONNECTIONSERVER:
 			messageError = "The server doesn't respound. Please check your connection and retry later";
 			break;
 		default :
 			messageError=  "An undefined problem ocurred. Please retry later by reloading the page";
-			break;
+		break;
 		}
 		$("#smallContainerError #messageError").text(messageError);
 		$("#containerError").show();

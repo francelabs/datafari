@@ -98,7 +98,7 @@
 <!-- 									<i class="fa fa-angle-down pull-right"></i> -->
 
 									<div class="user-mini pull-right" >
-										<span class="welcome">Welcome,</span>
+										<span class="welcome"><% out.print(resourceBundle.getString("welcome")); %>,</span>
 
 									<span><% out.print(request.getUserPrincipal().getName());%></span>
 
@@ -138,7 +138,7 @@
  									<li> 
  										<a href="/Datafari/SignOut"> 
  											<i class="fa fa-power-off"></i> 
- 											<span>Logout</span> 
+ 											<span><% out.print(resourceBundle.getString("logout")); %></span> 
  										</a> 
  									</li> 
  								</ul> 
