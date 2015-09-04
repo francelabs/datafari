@@ -27,6 +27,10 @@ import com.francelabs.datafari.servlets.admin.ModifyRealmLdap;
 public class RealmLdapConfiguration {
 	private String configFilePath;
 	public static final String fileName = "context.xml" ;
+	
+	//TODO resolve name automatically
+	public static final String webAppName = "Datafari";
+	
 	 private static final Logger logger = Logger.getLogger(ModifyRealmLdap.class.getName());  
 	private static File fileContext;
 	private static RealmLdapConfiguration instance; 
@@ -38,7 +42,7 @@ public class RealmLdapConfiguration {
 	
 	private RealmLdapConfiguration(){
 		String env = System.getProperty("catalina.home");	
-		configFilePath = env+ File.separator + ".." + File.separator + "WebContent" + File.separator + "META-INF" + File.separator + fileName;
+		configFilePath = env+ File.separator + "webapps" + File.separator + webAppName  + File.separator + "META-INF" + File.separator + fileName;
 		fileContext = new File(configFilePath); 
 	}
 	
