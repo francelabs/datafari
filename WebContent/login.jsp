@@ -3,7 +3,6 @@
 <%@ page contentType="text/html;charset=iso-8859-1"%>
 <%@ page import="java.util.ResourceBundle"  %>
 <%@ page import="com.francelabs.datafari.utils.*" %>
-<%@ page import="java.security.MessageDigest" %>
 <html>
 <head>
 <title>Login Page</title>
@@ -34,23 +33,9 @@ input[type="submit"]{
 		//if request is not the url, redirect to the url of this jsp
 	%>
 	
-	<%!
-	public String digest(String password) {
-		try {
-			String algorithmHash = "SHA-256";
-			MessageDigest md = MessageDigest.getInstance(algorithmHash);
-			byte[] digest = md.digest(password.getBytes("UTF-8"));
-			return HexUtils.convert(digest);
-		} catch (Exception ex) {
-			
-			return null;
-		}
-		
-	}
-	%>
 	<%
 		String j_username = request.getParameter("j_username");
-		String j_password = digest(request.getParameter("j_password"));
+		String j_password = (request.getParameter("j_password"));
 		if (j_username != null && j_username.length() != 0
 				&& j_password != null && j_password.length() != 0) {
 			try {
