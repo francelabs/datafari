@@ -2027,6 +2027,10 @@ ul.DTTT_dropdown.dropdown-menu > li:hover > a {
   font-size: 30px;
   color: #fcfcfc;
 }
+
+.searchPageLink {
+	color : #3d3c3a;
+}
 .likebox {
   overflow: hidden;
 }

@@ -68,6 +68,8 @@
 <!-- 						<a href="#" class="about">about</a> -->
 
 					 	<ul class="nav navbar-nav pull-right panel-menu" >
+					 	
+					 	<li class="searchLink"><a class="searchPageLink" href="/Datafari/Search"><% out.print(resourceBundle.getString("searchPage")); %></a></li>
 <!-- 							<li class="hidden-xs"> -->
 <!-- 								<a href="index.html" class="modal-link"> -->
 <!-- 									<i class="fa fa-bell"></i> -->
@@ -102,7 +104,7 @@
 
 									</div>
 								</a>
-<!-- 								<ul class="dropdown-menu"> -->
+ 								<ul class="dropdown-menu"> 
 <!-- 									<li> -->
 <!-- 										<a href="#"> -->
 <!-- 											<i class="fa fa-user"></i> -->
@@ -133,13 +135,13 @@
 <!-- 											<span>Settings</span> -->
 <!-- 										</a> -->
 <!-- 									</li> -->
-<!-- 									<li> -->
-<!-- 										<a href="#"> -->
-<!-- 											<i class="fa fa-power-off"></i> -->
-<!-- 											<span>Logout</span> -->
-<!-- 										</a> -->
-<!-- 									</li> -->
-<!-- 								</ul> -->
+ 									<li> 
+ 										<a href="/Datafari/SignOut"> 
+ 											<i class="fa fa-power-off"></i> 
+ 											<span>Logout</span> 
+ 										</a> 
+ 									</li> 
+ 								</ul> 
 
 								</li> 
 						</ul>
