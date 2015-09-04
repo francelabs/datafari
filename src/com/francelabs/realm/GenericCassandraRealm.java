@@ -22,6 +22,8 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 
 import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -128,37 +130,28 @@ public class GenericCassandraRealm extends RealmBase {
      * @param credentials Password or other credentials to use in authenticating this username
      */
     @Override
-    protected String digest(String credentials) {
+    protected String digest(String password) {
+    		try {
+    			MessageDigest md = MessageDigest.getInstance("SHA-256");
+    			byte[] digest = md.digest(password.getBytes("UTF-8"));
+    			return HexUtils.convert(digest);
+    		} catch (UnsupportedEncodingException ex) {
+    			return null;
+    			
+    		} catch (NoSuchAlgorithmException ex) {
+    			return null;
+    			
+    		}
+    	}
 
-    	logger.info("--- Password:"+credentials);
-        // If no MessageDigest instance is specified, return unchanged
-        if (hasMessageDigest() == false) {
-            return (credentials);
-        }
+    @Override
+	public Principal authenticate(String arg0, String arg1) {
+		// TODO Auto-generated method stub
+    	arg1 = digest(arg1);
+		return super.authenticate(arg0,arg1);
+	}
 
-        // Digest the user credentials and return as hexadecimal
-        synchronized (this) {
-            try {
-                md.reset();
-
-                byte[] bytes = null;
-                try {
-                    bytes = credentials.getBytes(getDigestCharset());
-                } catch (UnsupportedEncodingException uee) {
-                    logger.fatal("Illegal digestEncoding: " + getDigestEncoding(), uee);
-                    throw new IllegalArgumentException(uee.getMessage());
-                }
-                md.update(bytes);
-
-                return (HexUtils.toHexString(md.digest()));
-            } catch (Exception e) {
-                logger.fatal(sm.getString("realmBase.digest"), e);
-                return (credentials);
-            }
-        }
-
-    }
-    public void closeConnexion(){
+	public void closeConnexion(){
 		cluster.close();
     }
     
