@@ -36,8 +36,14 @@ public class ActivateLDAPSolr {
 	private ActivateLDAPSolr(){
 		String filePath = System.getProperty("catalina.home")+ File.separator +".." + File.separator +"solr"+File.separator+"solr_home"+File.separator+"FileShare"+File.separator+"conf"+File.separator+"solrconfig.xml";
 		solrConfig = new File(filePath);
-		String filePathJSON = System.getProperty("catalina.home") + File.separator +".." + File.separator + "bin"  + File.separator +"config" + File.separator + "manifoldcf" + File.separator + "monoinstance" + File.separator + "authorityconnections" + File.separator + "authorityConnection.json";
-		String filePathGroupJSON = System.getProperty("catalina.home") + File.separator +".." + File.separator + "bin"  + File.separator +"config" + File.separator + "manifoldcf" + File.separator + "monoinstance" + File.separator + "authorityconnections" + File.separator + "authorityGroups.json";
+		//TODO : adjust code for dev mode too
+		//If in development mode correct paths are  : 
+		// String filePathJSON = System.getProperty("catalina.home") + File.separator +".." + File.separator + "bin"  + File.separator +"config" + File.separator + "manifoldcf" + File.separator + "monoinstance" + File.separator + "authorityconnections" + File.separator + "authorityConnection.json";
+		//String filePathGroupJSON = System.getProperty("catalina.home") + File.separator +".." + File.separator + "bin"  + File.separator +"config" + File.separator + "manifoldcf" + File.separator + "monoinstance" + File.separator + "authorityconnections" + File.separator + "authorityGroups.json";
+		String filePathJSON = System.getProperty("catalina.home") + File.separator +".." + File.separator + "bin" + File.separator + "common" + "config" 
+				+ File.separator + "manifoldcf" + File.separator + "monoinstance" + File.separator + "authorityconnections" + File.separator + "authorityConnection.json";
+		String filePathGroupJSON = System.getProperty("catalina.home") + File.separator +".." + File.separator + "bin" + File.separator + "common" + "config" 
+				+ File.separator + "manifoldcf" + File.separator + "monoinstance" + File.separator + "authorityconnections" + File.separator + "authorityGroups.json";
 		authorityconnectionJSON = new File(filePathJSON);
 		authoritygroupJSON = new File(filePathGroupJSON);
 	}
