@@ -138,7 +138,7 @@
  									<li> 
  										<a href="/Datafari/SignOut"> 
  											<i class="fa fa-power-off"></i> 
- 											<span><% out.print(resourceBundle.getString("logout")); %></span> 
+ 											<span><% out.print(resourceBundle.getString("signout")); %></span> 
  										</a> 
  									</li> 
  								</ul> 
