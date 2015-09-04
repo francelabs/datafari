@@ -91,8 +91,10 @@ public class LdapMcfConfig{
 	}
 	
 	private LdapMcfConfig(){
-		String filePath = System.getProperty("catalina.home") + File.separator +".." + File.separator + "bin" + File.separator + "config" 
+		// TODO : change path for dev environment
+		String filePath = System.getProperty("catalina.home") + File.separator +".." + File.separator + "bin" + File.separator + "common" + File.separator + "config" 
 				+ File.separator + "manifoldcf" + File.separator + "monoinstance" + File.separator + "authorityconnections" + File.separator + "authorityConnection.json";
+		
 		authorityconnectionJSON = new File(filePath);
 	}
 }
