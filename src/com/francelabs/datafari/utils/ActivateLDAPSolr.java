@@ -40,9 +40,9 @@ public class ActivateLDAPSolr {
 		//If in development mode correct paths are  : 
 		// String filePathJSON = System.getProperty("catalina.home") + File.separator +".." + File.separator + "bin"  + File.separator +"config" + File.separator + "manifoldcf" + File.separator + "monoinstance" + File.separator + "authorityconnections" + File.separator + "authorityConnection.json";
 		//String filePathGroupJSON = System.getProperty("catalina.home") + File.separator +".." + File.separator + "bin"  + File.separator +"config" + File.separator + "manifoldcf" + File.separator + "monoinstance" + File.separator + "authorityconnections" + File.separator + "authorityGroups.json";
-		String filePathJSON = System.getProperty("catalina.home") + File.separator +".." + File.separator + "bin" + File.separator + "common" + "config" 
+		String filePathJSON = System.getProperty("catalina.home") + File.separator +".." + File.separator + "bin" + File.separator + "common" + File.separator + "config" 
 				+ File.separator + "manifoldcf" + File.separator + "monoinstance" + File.separator + "authorityconnections" + File.separator + "authorityConnection.json";
-		String filePathGroupJSON = System.getProperty("catalina.home") + File.separator +".." + File.separator + "bin" + File.separator + "common" + "config" 
+		String filePathGroupJSON = System.getProperty("catalina.home") + File.separator +".." + File.separator + "bin" + File.separator + "common" + File.separator + "config" 
 				+ File.separator + "manifoldcf" + File.separator + "monoinstance" + File.separator + "authorityconnections" + File.separator + "authorityGroups.json";
 		authorityconnectionJSON = new File(filePathJSON);
 		authoritygroupJSON = new File(filePathGroupJSON);
