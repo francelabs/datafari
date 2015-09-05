@@ -32,7 +32,7 @@ Description: Please enter the ManifoldCF (document crawler) admin password:
 Template: datafari/datafari_password
 Type: password
 Default: admin
-Description: Please enter the ManifoldCF (document crawler) admin password:
+Description: Please enter the Datafari password:
 
 
 Template: datafari/tomcat_password

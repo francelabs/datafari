@@ -6,22 +6,22 @@
 
 #start script
 
-db_input medium datafari/solr_cloud || true
+db_input high datafari/solr_cloud || true
 db_go
 db_get datafari/solr_cloud
 if [ "$RET" = "true" ];
 then
-	db_input medium datafari/node_host || true
+	db_input high datafari/node_host || true
 	db_go
 	db_get datafari/node_host
 	sed -i -e "s/@NODEHOST@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
 	sed -i -e "s/@SOLRCLOUD@/true/g" /opt/datafari/tomcat/conf/datafari.properties
-	db_input medium datafari/main_node || true
+	db_input high datafari/main_node || true
 	db_go
 	db_get datafari/main_node
 	if [ "$RET" = "true" ];
 	then
-		db_input medium datafari/num_shards || true
+		db_input high datafari/num_shards || true
 		db_go
 		db_get datafari/num_shards
 		sed -i -e "s/@NUMSHARDS@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
@@ -29,16 +29,16 @@ then
 		mkdir /opt/datafari/solr/solrcloud
 		mv /opt/datafari/solr/solr_home/FileShare /opt/datafari/solr/solrcloud
 		mv /opt/datafari/solr/solr_home/Statistics /opt/datafari/solr/solrcloud
-		db_input medium datafari/mcf_password || true
+		db_input high datafari/mcf_password || true
 		db_go
 		db_get datafari/mcf_password
 		sed -i -e "s/@PASSWORD@/${RET}/g" /opt/datafari/mcf/mcf_home/properties.xml
-		db_input medium datafari/datafari_password || true
+		db_input high datafari/datafari_password || true
 		db_go
 		db_get datafari/datafari_password
 		sed -i -e "s/@PASSWORD@/${RET}/g" /opt/datafari/tomcat/conf/tomcat-users.xml
 	else
-		db_input medium datafari/main_node_host || true
+		db_input high datafari/main_node_host || true
 		db_go
 		db_get datafari/main_node_host
 		sed -i -e "s/@MAINNODEHOST@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
@@ -50,13 +50,13 @@ then
 		rm -r /opt/datafari/pgsql
 		rm -r /opt/datafari/tomcat/webapps/Datafari
 		rm /opt/datafari/tomcat/conf/Catalina/localhost/datafari-mcf-*
-		db_input medium datafari/tomcat_password || true
+		db_input high datafari/tomcat_password || true
 		db_go
 		db_get datafari/tomcat_password
 		sed -i -e "s/@PASSWORD@/${RET}/g" /opt/datafari/tomcat/conf/tomcat-users.xml
 	fi
 else
-	db_input medium datafari/datafari_password || true
+	db_input high datafari/datafari_password || true
 	db_go
 	db_get datafari/datafari_password
 	sed -i -e "s/@PASSWORD@/${RET}/g" /opt/datafari/mcf/mcf_home/properties.xml
