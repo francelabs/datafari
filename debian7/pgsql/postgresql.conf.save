@@ -515,14 +515,14 @@ timezone = 'Europe/Paris'
 					# encoding
 
 # These settings are initialized by initdb, but they can be changed.
-lc_messages = 'fr_FR.UTF-8'			# locale for system error message
+#lc_messages = 'fr_FR.UTF-8'			# locale for system error message
 					# strings
-lc_monetary = 'fr_FR.UTF-8'			# locale for monetary formatting
-lc_numeric = 'C'			# locale for number formatting
-lc_time = 'fr_FR.UTF-8'				# locale for time formatting
+#lc_monetary = 'fr_FR.UTF-8'			# locale for monetary formatting
+#lc_numeric = 'C'			# locale for number formatting
+#lc_time = 'fr_FR.UTF-8'				# locale for time formatting
 
 # default configuration for text search
-default_text_search_config = 'pg_catalog.french'
+#default_text_search_config = 'pg_catalog.french'
 
 # - Other Defaults -
 
