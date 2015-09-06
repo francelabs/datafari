@@ -60,7 +60,7 @@ else
 	db_go
 	db_get datafari/datafari_password
 	sed -i -e "s/@PASSWORD@/${RET}/g" /opt/datafari/mcf/mcf_home/properties.xml
-	sed -i -e "s/@PASSWORD@/${RET}/g" /opt/datafari/tomcat/conf/tomcat-users.xml
+	sed -i -e "s/@TEMPADMINPASSWORD@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
 	sed -i -e "s/@SOLRCLOUD@/false/g" /opt/datafari/tomcat/conf/datafari.properties
 fi
 chmod -R 755 /opt/datafari
