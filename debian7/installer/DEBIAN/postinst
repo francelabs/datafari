@@ -36,7 +36,7 @@ then
 		db_input high datafari/datafari_password || true
 		db_go
 		db_get datafari/datafari_password
-		sed -i -e "s/@PASSWORD@/${RET}/g" /opt/datafari/tomcat/conf/tomcat-users.xml
+		sed -i -e "s/@TEMPADMINPASSWORD@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
 	else
 		db_input high datafari/main_node_host || true
 		db_go

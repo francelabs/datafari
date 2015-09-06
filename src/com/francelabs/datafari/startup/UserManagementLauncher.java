@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import com.francelabs.datafari.constants.CodesReturned;
 import com.francelabs.datafari.service.db.UserDataService;
 import com.francelabs.datafari.user.User;
+import com.francelabs.datafari.utils.ScriptConfiguration;
 
 public class UserManagementLauncher implements ServletContextListener {
 
@@ -40,7 +41,7 @@ public class UserManagementLauncher implements ServletContextListener {
 			LOGGER.info("UserManagement info");
 			if (!UserDataService.getInstance().isInBase("admin")){
 				LOGGER.info("UserManagement admin");
-				User user = new User("admin","admin");
+				User user = new User("admin",ScriptConfiguration.getProperty("TEMPADMINPASSWORD"));
 				List<String> roleAdmin = Collections.singletonList(UserDataService.SEARCHADMINISTRATOR);
 				int code = user.signup(roleAdmin);
 				if ( code == CodesReturned.ALLOK ){
@@ -50,7 +51,8 @@ public class UserManagementLauncher implements ServletContextListener {
 			}
 		} catch (Exception e) {
 			LOGGER.error("Cannot create admin account",e);
-		}
+		} 
+		ScriptConfiguration.setProperty("TEMPADMINPASSWORD", "");
 	}
 
 	@Override
