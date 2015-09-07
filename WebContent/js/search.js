@@ -17,8 +17,8 @@ $(function($) {
 		id : 'facet_language',
 		field : 'language',
 		name : window.i18n.msgStore['facetlanguage'],
-		pagination : false,
-		selectionType : 'ONE',
+		pagination : true,
+		selectionType : 'OR',
 		returnUnselectedFacetValues : true
 	}));
 
@@ -27,8 +27,8 @@ $(function($) {
 		id : 'facet_source',
 		field : 'source',
 		name : window.i18n.msgStore['facetsource'],
-		pagination : false,
-		selectionType : 'ONE',
+		pagination : true,
+		selectionType : 'OR',
 		returnUnselectedFacetValues : true
 	}));
 	
