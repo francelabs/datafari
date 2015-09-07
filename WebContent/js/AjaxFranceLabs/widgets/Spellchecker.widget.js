@@ -24,6 +24,7 @@ AjaxFranceLabs.SpellcheckerWidget = AjaxFranceLabs.AbstractWidget.extend({
 
 	buildWidget : function() {
 		$(this.elm).addClass('spellcheckerWidget').addClass('widget');
+		$(this.elm).hide();
 	},
 
 	beforeRequest : function() {
@@ -34,12 +35,9 @@ AjaxFranceLabs.SpellcheckerWidget = AjaxFranceLabs.AbstractWidget.extend({
 		var self = this, res = '';
 		var data = this.manager.response, elm = $(this.elm);
 			if (data.spellcheck !== undefined && data.spellcheck.suggestions.length > 0) {
-				$(data.spellcheck.suggestions).each(function(i, elm) {
-					if (elm === 'collation'){
-						res = data.spellcheck.suggestions[i+1];
-					}
-				});
-				$(self.elm).append('<span>').find('span').append(window.i18n.msgStore['tryWith'] + '<span class="result">' + res + '</span> ?').find('.result').click(function() {
+				$(self.elm).show();
+				res = data.spellcheck.collations[1];
+				$(self.elm).append('<span>').find('span').append('Essayer avec ' + '<span class="result">' + res + '</span> ?').find('.result').click(function() {
 					self.manager.store.get('q').val(res);
 					for (var w in self.manager.widgets) {
 						if (self.manager.widgets[w].type === 'searchBar') {
@@ -49,6 +47,8 @@ AjaxFranceLabs.SpellcheckerWidget = AjaxFranceLabs.AbstractWidget.extend({
 					self.manager.generateAndSetQueryID();
 					self.manager.makeRequest();
 				});
+			}else{
+				$(self.elm).hide();
 			}
 		
 	},

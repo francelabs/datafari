@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<!--Start Breadcrumb-->
+<div class="row">
+	<div id="breadcrumb" class="col-xs-12">
+		<a href="#" class="show-sidebar"> <i class="fa fa-bars"></i>
+		</a>
+		<ol class="breadcrumb pull-left">
+				<li><a id="topbar1" href="./../admin/index.jsp"></a></li>
+				<li><a id="topbar2" href="#"></a></li>
+		</ol>
+	</div> 		
+</div>
+<!--End Breadcrumb-->
+<div id="divFrame" style="background-color : #F0F0F0 ;"> 
+	<iframe src="/datafari-mcf-crawler-ui" id="iFrame" scrolling="no" width="100%" style="background-color : #FBFCE7 ;"></iframe>
+</div>
+</body>
+<script>
+document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
+document.getElementById("topbar2").innerHTML = window.i18n.msgStore['connectors'];
+var id;
+ function autoResize(){
+ 	document.getElementById("iFrame").setAttribute("height", document.getElementById("iFrame").contentWindow.document.childNodes[2].offsetHeight);
+ 	document.getElementById("iFrame").setAttribute("height", $("#iFrame").contents().height());
+ }
+id = setInterval(autoResize, 100);
+ </script>

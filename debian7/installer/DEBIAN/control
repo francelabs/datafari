@@ -1,8 +1,8 @@
 Package: datafari
-Version: 1.1.1
+Version: 2.0
 Section: base
 Priority: optional
 Architecture: all
-Depends: bash,curl
+Depends: bash,curl,debconf,jq
 Maintainer: France Labs (aurelien.mazoyer@francelabs.com)
 Description: Datafari search solution

@@ -6,7 +6,7 @@ a:link { text-decoration: none; font-weight:bold; }
 nav a { font-weight: bold; }
 */
 #search .search-bar input[type=text] { font-size: 1.5em; }
-.page > .title { font-size:32px; }
+.page > .title { font-size:66px; }
 .page p > .title { font-weight:bold; }
 .page ul li a { font-weight:bold; }
 .page p a { font-weight:bold; }

@@ -23,14 +23,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.ModifiableSolrParams;
 
-import com.francelabs.datafari.solrj.SolrServers;
-import com.francelabs.datafari.solrj.SolrServers.Core;
+import com.francelabs.datafari.service.search.SolrServers;
+import com.francelabs.datafari.service.search.SolrServers.Core;
 
 public class StatsPusher {
 
@@ -45,7 +46,7 @@ public class StatsPusher {
 	public static void pushDocument(ModifiableSolrParams params) {
 		try {
 
-			SolrServer solrServer = SolrServers
+			SolrClient solrServer = SolrServers
 					.getSolrServer(Core.STATISTICS);
 
 			Map increment = new HashMap();
@@ -77,7 +78,7 @@ public class StatsPusher {
 				}
 			}
 
-			// TODO clean this!
+			
 			String history = "";
 			history += "///";
 			history += "///";
@@ -106,7 +107,7 @@ public class StatsPusher {
 	public static void pushQuery(ModifiableSolrParams params) {
 		try {
 
-			SolrServer solrServer = SolrServers
+			SolrClient solrServer = SolrServers
 					.getSolrServer(Core.STATISTICS);
 
 			SolrQuery query = new SolrQuery();
@@ -135,7 +136,7 @@ public class StatsPusher {
 				}
 			}
 
-			// TODO clean this!
+			
 			String history = "" + paramsMap.get("q");
 			history += "///";
 			if (paramsMap.get("fq") != null) {

@@ -22,7 +22,7 @@
 # -----------------------------------------------------------------------------
 
 set JPDA_SUSPEND=n
-export CATALINA_OPTS="${SOLRCLOUDOPTION}-Dorg.apache.manifoldcf.configfile=../../mcf/mcf_home/properties.xml -server -Xms256m -Xmx1024m"
+export CATALINA_OPTS="${SOLRCLOUDOPTION}-Dorg.apache.manifoldcf.configfile=../../mcf/mcf_home/properties.xml -server -Xms2048m -Xmx2048m"
 
 
 # Better OS/400 detection: see Bugzilla 31132

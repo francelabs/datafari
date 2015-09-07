@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
-<Context>
+<?xml version="1.0" encoding="utf-8" standalone="no"?><Context>
 <!--
        <Valve className="fr.doume.jna.authenticator.SSPAuthenticator" /> 
        <Realm className ="fr.doume.jna.realm.WindowsRealm" /> 
@@ -14,5 +13,31 @@
 		/> -->
 	<!-- By default, not used -->
 	<!-- <Parameter name="nogroupsinad" value="" override="false" /> -->
+	
+	<Realm className="com.francelabs.realm.CustomCombinedRealm">
+		
+		<Realm className="com.francelabs.realm.GenericCassandraRealm"/>
+			    
+		    	
+	
+		<!--  <Realm   className="org.apache.catalina.realm.JNDIRealm"
+		     connectionURL="ldap://52.16.74.128:389"
+		       userPattern="uid={0},dc=example,dc=com"
+		    connectionName="cn=read-only-admin,dc=example,dc=com"
+		connectionPassword="password"/>
+		     -->
+	<!-- 
+		adminUser = admin
+		adminPassword = Jailesdoirs
+		url = 53.43243243..432
+		port = 69
+		domain = corp.francelabs.com
+	
+	
+	
+	 -->
+		<Realm className="org.apache.catalina.realm.JNDIRealm" connectionName="admin@corp.francelabs.com" connectionPassword="Jailesdroits69!" connectionURL="ldap://52.16.74.128:389" debug="99" roleBase="cn=Users,dc=corp,dc=francelabs,dc=com" roleName="cn" roleSearch="(member={0})" roleSubtree="false" userBase="cn=Users,dc=corp,dc=francelabs,dc=com" userRoleName="member" userSearch="(sAMAccountName={0})" userSubtree="true"/>
+			     
+	</Realm>
 
 </Context>

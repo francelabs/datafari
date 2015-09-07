@@ -40,7 +40,7 @@ body{
 }
 .boxBody
 {
-    background:#FDFDF1;
+    background:#F0F0F0;
     border-top:1px solid #E7E0E8;
     border-bottom:1px solid #E7E0E8;
     padding:10px 20px;
@@ -73,7 +73,7 @@ body{
 .txtField,
 .cjComboBox
 {
-    border:6px solid #F9F7F7;
+    border:6px solid #F0F0F0;
     -webkit-border-radius:3px;
     -moz-border-radius:3px;
     border-radius:3px;

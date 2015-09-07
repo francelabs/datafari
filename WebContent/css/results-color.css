@@ -1,11 +1,8 @@
-#result_information { background-color: #3D3C3A; color: white;}
+#result_information { color: white;}
 
 /**************************************/
 /*******	>>> Widgets <<<		*******/
 /**************************************/
-
-.searchBarWidget .searchBar { background-color: white; border: 1px solid; border-radius: 4px;}
-.searchBarWidget .searchBar input[type=button].search { background-color: #FFa0a0; }
 
 .collectionWidget { background-color: #B92221; border-color: #930B0B; }
 .collectionWidget .title { color: #ffffff; }
@@ -13,12 +10,13 @@
 .collectionWidget .content li.last { border-bottom-color: #930B0B; }
 .collectionWidget .content li.selected { background-color: #DB3131; }
 
+}
 .tableWidget .facetName { border-bottom-color: #b5b5b5; color: #3d3c3a; }
 .tableWidget .facetSort { background-color: #ebebeb; border-bottom-color: #b5b5b5; }
 .tableWidget ul li { border-bottom-color: #b5b5b5; }
 
 .resultWidget .res .title { color: #000000; }
-.resultWidget .doc .res .address { color: #3d3c3a; }
+.resultWidget .doc .res .address { color: #378140;; }
 .resultWidget .doc .res .tags a span { color: #CF242A; font-style: italic; }
 
 .videoResultWidget .video:hover { background-color: #ffffff; }
@@ -28,8 +26,8 @@
 .videoResultWidget .video .res .address { color: #3d3c3a; }
 .videoResultWidget .video .res .tags a span { color: #CF242A; font-style: italic; }
 
-.pagerModule .pages .page { border-color: #3d3c3a; color: #FFa0a0; }
-.pagerModule .pages .page.selected { color: #3d3c3a; }
+
+
 
 .advancedSearchWidget .advTable .field input { border-color: #D9D9D9; border-top-color: #A1A1A1; }
 .advancedSearchWidget .separator { border-bottom-color: #D9D9D9; }
@@ -47,3 +45,34 @@
 .ui-autocomplete .ui-state-hover { background-color: #F2FFD0; border-color: #D8FF6E; }
 
 .ui-resizable-handle { background-color: #333333; }
+#spinner_mobile{background: rgba(0, 0, 0, 0.4) none repeat scroll 0% 0%;}
+.widgetContainer .annonce{background: rgb(255, 218, 16) none repeat scroll 0% 0%;}
+#facets_mobile{  background-color:#F0F0F0;}
+#facets_mobile ul,#facets ul{	background: white none repeat scroll 0% 0%;}
+#facets_mobile .facet.tableWidget.widget .facetName,#facets .facet.tableWidget.widget .facetName,
+#facets .checkboxIcon, #facets_mobile input[type="checkbox"]:checked + label span.checkboxIcon{background : white;}
+#facets_mobile .checkboxIcon, #facets_mobile input[type="checkbox"]:checked + label span.checkboxIcon,
+#facets .checkboxIcon, #facets_mobile input[type="checkbox"]:checked + label span.checkboxIcon{background:transparent}
+#results_nav_mobile #nav_facets_mobile a:active{background-color:#63B069;}
+body{background-color : #F0F0F0F0;}
+.searchBarWidget .searchBar {background:white}
+.searchBarWidget .searchBar .search:active {	background-color:#63B069;  }
+.resultWidget .bar-loader {background-image: url(../images/loader-000000-circle.gif)}
+.advancedSearchWidget button, .page { background: none;}
+.ui-autocomplete .ui-state-hover { background-image: none;}
+.ui-slider .ui-widget-header { background-image: none; }
+ .col.left .pagerModule {background:white}
+ .searchBarWidget #sortMode:after{color: #1455A2;}
+.searchBarWidget #sortMode select{color: #1455A2;}
+.searchBarWidget #sortMode{color: white;}
+ .searchBarWidget select:-moz-focusring {color: transparent;}
+ 
+ @media all and (min-width: 799px){
+	.advancedSearchWidget button { background: none;}
+	.searchBarWidget #sortMode select{background:transparent;}
+ }
+  @media all and (max-width: 799px){
+  .resultWidget .doc,#capsule { background:white}
+  .spellcheckerWidget { background:white}
+  }
+ 

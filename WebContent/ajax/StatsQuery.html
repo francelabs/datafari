@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+<!--Start Breadcrumb-->
+<div class="row">
+	<div id="breadcrumb" class="col-xs-12">
+		<a href="#" class="show-sidebar"> <i class="fa fa-bars"></i>
+		</a>
+		<ol class="breadcrumb pull-left">
+				<li><a id="topbar1" href="./../admin/index.jsp"></a></li>
+				<li><a id="topbar2" href="#"></a></li>
+				<li><a id="topbar3" href="#"></a></li>
+		</ol>
+	</div>
+</div>
+<!--End Breadcrumb-->
+<!-- <div class="row"> -->
+<!-- 	<div class="col-xs-8 col-sm-4"> -->
+<!-- 		<div id="search"> -->
+<!-- 			<input type="text" id="searchBar" style="background-color: #FFFFFF;" onchange="javascript : getTab()"/> -->
+<!-- 			<i style="color : #000000; top : 10px;" class="text-center fa fa-search" onclick="javascript : getTab()"></i> -->
+<!-- 		</div> -->
+<!-- 	</div> -->
+<!-- </div> -->
+<!-- <div id="solr"> -->
+<!-- 	<div id="result_information"></div> -->
+<!-- 	<div id="results" class="table table-striped table-bordered table-hover table-heading no-border-bottom"></div>			 -->
+<!-- 	<div class="clear"></div> -->
+<!-- </div> -->
+<div id="iframe" class="row-fluid" style="height: 840px;"> <!-- QUICK AND DIRTY, must be another way using configuration of bootstrap mixins -->
+	<iframe src="./../admin/statsQuery.jsp" width="100%" height="100%" frameborder="0" scrolling="yes" padding="none"></iframe>
+</div>
+</body>
+<script> 
+document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
+document.getElementById("topbar2").innerHTML = window.i18n.msgStore['admin'];
+document.getElementById("topbar3").innerHTML = window.i18n.msgStore['statsQuery'];
+
+</script>
+</html>

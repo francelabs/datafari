@@ -6,9 +6,9 @@ body {
     height:100%;
     
     background-repeat:no-repeat !important;
-    background: #FFFFFF;
+    background: #F0F0F0;
     background-attachment: fixed;
-	background: -webkit-linear-gradient(top, #F5F7C5 0%, #FFFFFF 60%) repeat
+	/*background: -webkit-linear-gradient(top, #F5F7C5 0%, #FFFFFF 60%) repeat
 		scroll 0 0 transparent;
 	background: -moz-linear-gradient(top, #F5F7C5 0%, #FFFFFF 60%) repeat
 		scroll 0 0 transparent;
@@ -16,14 +16,17 @@ body {
 		scroll 0 0 transparent;
 	background: -o-linear-gradient(top, #F5F7C5 0%, #FFFFFF 60%) repeat
 		scroll 0 0 transparent;
+		*/
 }
 
 header {
-	background-color: #DDE27C;
+	background-color: #70B776;
 }
-
 a {
-	color: #3D3C3A;
+	color: #456548;
+}
+a:hover{
+	color: #6B956F;	
 }
 
 #nav {
@@ -72,14 +75,24 @@ a {
 }
 
 footer {
-	background-color: #3D3C3A;
-	border-top-color: #F5F7C7;
+	background-color:rgb(93, 152, 98);;
 	color: #F5F7C7;
+	-moz-box-shadow: 0px -1px 10px -2px #656565;
+	-webkit-box-shadow: 0px -1px 10px -2px #656565;
+	-o-box-shadow: 0px -1px 10px -2px #656565;
+	box-shadow: 0px -1px 10px -2px #656565;
+	filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=90, Strength=10);
 }
 
-footer .links a {
+footer .links a,footer  a {
 	color: white;
+	opacity:0.8;
 }
+footer a:hover {
+	color: white;
+	opacity:1;
+}
+
 
 #contactForm form [type=button] {
 	color: #474D52;
@@ -90,3 +103,26 @@ footer .links a {
 #contactForm form [type=button]:hover {
 	border-color: #A1A1A1;
 }
+
+.bc-color{
+	background:#A8C900;
+}
+footer.bc-color{background:rgb(133, 159, 9);}
+
+#spinner_mobile{color: #FFF;}
+.noResult{color:red}
+.widgetContainer .annonce {color: white;}
+#facets_mobile #nav_mobile a {color : white;}
+#facets_mobile .checkboxIcon, #facets_mobile input[type="checkbox"]:checked + label span.checkboxIcon{color: #70B776;}
+#results_nav_mobile #nav_facets_mobile a{color:white;}
+#results .doc_list .doc .res .noResult{color: #000;}
+#results .doc_list .doc .res .noResult:hover{color:black;}
+#number_results_mobile{color:white;}
+.searchBarWidget .searchBar .search { color:white}
+#facets #nav_mobile a {color : white;}
+.pagerModule .pages .page.selected{
+	color: #3d3c3a; 
+}
+ #facets .checkboxIcon, #facets_mobile input[type="checkbox"]:checked + label span.checkboxIcon,.pagerModule .pages .page, .pagerModule i {  
+ 	color: #64AE7F; 
+ }

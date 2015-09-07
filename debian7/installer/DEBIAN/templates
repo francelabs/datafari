@@ -1,0 +1,42 @@
+Template: datafari/solr_cloud
+Type: boolean
+Default: false
+Description: Use Solr Cloud?
+
+Template: datafari/main_node
+Type: boolean
+Default: true
+Description: Is this the main node?
+
+Template: datafari/node_host
+Type: text
+Default: localhost
+Description: Specify the current node hostname:
+
+Template: datafari/main_node_host
+Type: text
+Default: localhost
+Description: Specify the main node host:
+
+Template: datafari/num_shards
+Type: text
+Default: 2
+Description: Please enter the number of shards you want for your index: 
+
+Template: datafari/mcf_password
+Type: password
+Default: admin
+Description: Please enter the ManifoldCF (document crawler) admin password:
+
+
+Template: datafari/datafari_password
+Type: password
+Default: admin
+Description: Please enter the Datafari password:
+
+
+Template: datafari/tomcat_password
+Type: password
+Default: admin
+Description: Please enter the Tomcat password:
+

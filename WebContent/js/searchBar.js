@@ -14,6 +14,8 @@ $(function($) {
 
 	Manager.init();
 
+	$('.search').click(search);
+	$('.search i').click(search);
 	$('.searchBar input[type=button]').click(search);
 	$('.searchBar input[type=text]').keypress(function(event) {
 		if (event.keyCode === 13) {
@@ -23,6 +25,7 @@ $(function($) {
 });
 
 function search() {
+
 	var searchType = 'allWords';
 	var radios = $('#searchBar').find('.searchMode input[type=radio]');
 	$.each(radios, function(key, radio) {

@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -74,11 +74,9 @@ public class URL extends HttpServlet {
 		
 		//String surl = URLDecoder.decode(request.getParameter("url"), "ISO-8859-1");
 		String surl = request.getParameter("url");
-		//System.out.println(surl);
 		
 
-		if (ScriptConfiguration.getProperty("ALLOWLOCALFILEREADING").equals(
-				"true")) {
+		if ((ScriptConfiguration.getProperty("ALLOWLOCALFILEREADING").equals("true")) && !(surl.startsWith("file://///"))) {
 
 			int BUFSIZE = 4096;
 			String fileName = null ;

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<!--Start Breadcrumb-->
+<div class="row">
+	<div id="breadcrumb" class="col-xs-12">
+		<a href="#" class="show-sidebar"> <i class="fa fa-bars"></i>
+		</a>
+		<ol class="breadcrumb pull-left">
+				<li><a id="topbar1" href="./../admin/index.jsp"></a></li>
+				<li><a id="topbar2" href="#"></a></li>
+				<li><a id="topbar3" href="#"></a></li>
+		</ol>
+	</div>
+</div>
+<!--End Breadcrumb-->
+	<div class="row-fluid" style="height: 840px;"> <!-- QUICK AND DIRTY, must be another way using configuration of bootstrap mixins-->
+    <iframe src="proxy/solr/" width="100%" height="100%" frameborder="0" scrolling="yes" padding="none"></iframe>
+    </div>
+</body>
+<script> 
+document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
+document.getElementById("topbar2").innerHTML = window.i18n.msgStore['admin'];
+document.getElementById("topbar3").innerHTML = window.i18n.msgStore['solrAdmin'];
+</script>
+</html>

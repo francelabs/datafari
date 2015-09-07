@@ -1,18 +1,3 @@
-/*******************************************************************************
- * Copyright 2015 France Labs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
 AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 
 	// Variables
@@ -70,13 +55,18 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 
 	buildWidget : function() {
 		var self = this, elm = $(this.elm);
-		elm.addClass('searchBarWidget').addClass('widget').append(
-				'<div class="searchBar">').append('<div class="searchMode">')
-				.append('<div id="sortMode">');
+		if ($(window).width()>800){
+			elm.addClass('searchBarWidget').addClass('widget').append(
+					'<div id="searchBarContent"></div>')
+					.append('<div id="sortMode"></div>');
+			elm.find('#searchBarContent').append('<div class="searchBar"></div>').append('<div class="searchMode"></div>');
+		}else{
+			elm.addClass('searchBarWidget').addClass('widget').append('<div class="searchBar"></div>').append('<div class="searchMode"></div>').append('<div id="sortMode"></div>');
+		}
 		elm.find('.searchBar').append('<input type="text" autocorrect="off" autocapitalize="off"/>').append(
-				'<input class="search" type="button" />');
+				'<div class="search bc-color"><i class="fa fa-search"></i></div>');
 		if (this.removeContentButton)
-			elm.find('.searchBar').append('<span class="removeContent" />')
+			elm.find('.searchBar').append('<span class="removeContent"></span>')
 					.find('.removeContent').css('display', 'none').append(
 							'<span>X</span>').click(function() {
 						elm.find('.searchBar input[type=text]').val('');
@@ -84,11 +74,11 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 						self.makeRequest();
 					});
 
-		elm.find('.searchMode').append('<div>').append('<div>').append('<div>')
-				.append('<div>');
+		elm.find('.searchMode').append('<div></div>').append('<div></div>').append('<div></div>')
+				.append('<div></div>');
 		elm.find('.searchMode div').attr('style', 'display: inline').append(
 				'<input type="radio" name="searchType" class="radio" />')
-				.append('<label>');
+				.append('<label></label>');
 		elm.find('.searchMode div:eq(0)').find('input').attr('value',
 				'allWords').attr('checked', 'true').attr('id', 'allWords')
 				.parent().find('label').attr('for', 'allWords').append(
@@ -125,7 +115,7 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 									'display', 'block');
 					}
 				});
-		elm.find('.searchBar input[type=button]').click(function() {
+		elm.find('.searchBar .search').click(function() {
 			self.makeRequest();
 
 		});
@@ -181,6 +171,7 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 			search = search.replace(/\u200c/g, '');
 		switch ($(this.elm).find('input[name=searchType]:checked').val()) {
 		case "allWords":
+			//alert("a");
 			Manager.store.addByValue("q.op", 'AND');
 			break;
 		case "atLeastOneWord":
@@ -194,6 +185,7 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 			break
 		}
 		this.manager.store.get('q').val(search);
+		
 	},
 
 	afterRequest : function() {
@@ -211,6 +203,7 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 			this.clean();
 			this.updateAddressBar();
 			this.manager.makeRequest();
+			$("#results .doc_list").empty();
 		}
 
 	}

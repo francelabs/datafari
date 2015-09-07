@@ -1,0 +1,179 @@
+
+<html>
+	<head>
+		<style>
+		
+		    #message_info.bs-callout{
+		        padding: 20px;
+			    margin: 20px 0px;
+			    border-width: 1px 1px 1px 5px;
+			    border-style: solid;
+			    border-color: #EEE;
+			    -moz-border-top-colors: none;
+			    -moz-border-right-colors: none;
+			    -moz-border-bottom-colors: none;
+			    -moz-border-left-colors: none;
+			    border-image: none;
+			    border-radius: 3px;
+			    background: transparent;
+			}
+			#message_info{
+				display:none;
+			}
+			
+		    #message_info.bt-callout-success{
+		    	border-left-color:#6AB77B;
+		    }
+		    #message_info.bt-callout-success h4{
+		    color : #6AB77B;
+		    }
+		    #message_info.bt-callout-danger{
+		    border-left-color:rgb(255, 124, 124);
+		    }
+		    #message_info.bt-callout-danger h4{
+		    color:rgb(255, 124, 124);
+		    }
+    	</style>
+    	<style>
+    	i.error_deduplication{
+    		color : red;
+    		display: none;
+    	}
+    	</style>
+    
+		<!--		
+			<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+			<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+		 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
+    	  	<link rel="stylesheet" href="http://getbootstrap.com/assets/css/docs.min.css"/> 
+    	-->
+ 	</head>
+	<body>
+		<div class="row">
+		<div id="breadcrumb" class="col-xs-12">
+			<a href="#" class="show-sidebar"> <i class="fa fa-bars"></i>
+			</a>
+			<ol class="breadcrumb pull-left">
+				<li><a id="topbar1" href="index.jsp"></a></li>
+				<li><a id="topbar2" href="#"></a></li>
+				<li><a id="topbar3" href="#"></a></li>
+			</ol>
+		
+		</div>
+	</div>
+		
+		<div class="col-xs-6 col-lg-offset-3">
+		
+		<h4>!! This feature is experimental. It will be fully supported in Datafari 2.1 !!</h4>
+			    	
+		<h4>Likes And Favorites</h4> 
+		
+		
+		<p>
+			 This is the place where you can enable or disable the Likes and Favorites Functionality.<br/>
+			 All you need is to use the switcher bellow.
+		</p>
+
+			<!-- 
+		  <div id="deduplication_factory" class="deduplication onoffswitch">
+		        
+		        <input type="checkbox" name="onoffswitch" class="deduplication onoffswitch-checkbox" id="deduplication_factory">
+		        <label class="onoffswitch-label" for="myonoffswitch">
+		            <span class="onoffswitch-inner"></span>
+		            <span class="onoffswitch-switch"></span>
+		        </label>
+	    	</div>
+	    				-->
+	    	<div id="likesAndFavorites" class="likesAndFavorites toggle-switch toggle-switch-success">
+					<label>
+						<input type="checkbox">
+						<div class="toggle-switch-inner"></div>
+						<div class="toggle-switch-switch"><i class="fa fa-check"></i></div>
+					</label>
+			</div> 
+ 
+	    	<div class="bs-callout bs-callout-danger" id="message_info">
+			    <h4>s</h4>
+			    <p></p>
+	  		</div>
+  		</div>
+	
+	</div>
+	
+	<script>
+	   document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
+	   document.getElementById("topbar2").innerHTML = window.i18n.msgStore['conf'];
+	   document.getElementById("topbar3").innerHTML = window.i18n.msgStore['likesAndFavorites'];
+	   
+		
+		var message_info = $("#message_info");
+		var message_info_title = $("#message_info h4");
+		var message_info_contenue = $("#message_info p");
+		var CLASSMESSAGE = "bs-callout";
+		var CLASSMESSAGEDANGER = CLASSMESSAGE+" bt-callout-danger";
+		var CLASSMESSAGESUCCESS = CLASSMESSAGE+" bt-callout-success";
+		var MESSAGESERVERDOWN = "The server doesn't respond. Please try again or contact your system adminstrator";
+		var TITLESERVERDOWN = "The server doesn't respond";
+		var MESSAGEERRORINTERN = "A problem was encountered while trying to submit your request. The server sent back an error message. Please try again " 
+		                       + "or contact your system adminstrator ";
+		var TITLEERRORINTERN  = "A problem was encountered";
+		var TITLESUCCESS  = "Success";
+		var MESSAGESUCCESS = "The change was saved"
+		
+		$.post("../ConfigureLikesAndFavorites",{initiate:"true"},function(data){
+			if (data.code == 0){
+				$("#likesAndFavorites input").prop("checked",data.isEnabled=="true");
+				$("#likesAndFavorites").click(function click_handler(e){
+					e.preventDefault();
+					var element = $(e.target);
+			
+					while (element.find('input').length==0){
+						element = element.parent();
+					}
+					element = element.find('input');
+					var parent = element.parent().parent();
+					
+					var enable = "true";
+					if (element.is(':checked')){
+						enable="false";
+					}
+					
+					$.post("../ConfigureLikesAndFavorites",{enable:enable},function(data){
+						if (data.code == 0){
+							// if all was ok
+							message_info.hide();
+							message_info.removeClass().addClass(CLASSMESSAGESUCCESS);
+							message_info_contenue.text(MESSAGESUCCESS);
+							message_info_title.text(TITLESUCCESS);
+							message_info.show("slow");
+							element.prop("checked",!element.is(":checked"));		
+						}else{
+							// if the server say that there's an error (probably camed from datafarie.properties)
+							message_info.hide();
+							message_info.removeClass().addClass(CLASSMESSAGEDANGER);
+							message_info_contenue.text(MESSAGEERRORINTERN);
+							message_info_title.text(TITLEERRORINTERN);
+							message_info.show("slow");
+						}
+					},"json").fail(function(){
+						message_info.hide();
+						message_info.removeClass().addClass(CLASSMESSAGEDANGER);
+						message_info_contenue.text(MESSAGESERVERDOWN);
+						message_info_title.text(TITLESERVERDOWN);
+						message_info.show("slow");
+					});
+	
+			});
+		}else{
+				message_info.hide();
+				message_info.removeClass().addClass(CLASSMESSAGEDANGER);
+				message_info_contenue.text(MESSAGEERRORINTERN);
+				message_info_title.text(TITLEERRORINTERN);
+				message_info.show("slow");
+		}
+			
+	},"json");
+	</script>	
+	</body>
+	
+</html>

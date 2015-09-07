@@ -15,19 +15,14 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-
-import com.francelabs.datafari.statistics.StatsPusher;
 
 /**
  * Configuration reader
@@ -38,8 +33,9 @@ import com.francelabs.datafari.statistics.StatsPusher;
 public class ScriptConfiguration {
 
 	
-	//TODO switch to relative path
 	public static String configPropertiesFileName = "datafari.properties";
+	
+	public static String configPropertiesFileNameRealPath;
 
 	private static ScriptConfiguration instance;
 	private Properties properties;
@@ -47,16 +43,36 @@ public class ScriptConfiguration {
 	private final static Logger LOGGER = Logger.getLogger(ScriptConfiguration.class
 			.getName());
 
-	/*
-	public static void setProperty(String key, String value) throws IOException {
-		getInstance().properties.setProperty(key, value);
-		getInstance().properties.store(new FileOutputStream(configPropertiesFileName), null);
-	}*/
 
-	public static String getProperty(String key) throws IOException {
+	/**
+	 * Set a property and save it the datafar.properties
+	 * @param key : the key that should be change
+	 * @param value : the new value of the key
+	 * @return : true if there's an error and false if not
+	 */
+	public static synchronized boolean setProperty(String key, String value) {
+			try {
+				String env = System.getProperty("catalina.home");		//Gets the installation directory if in standard environment 
+				env += "/"+configPropertiesFileName ;
+				LOGGER.info(env);
+				getInstance().properties.setProperty(key, value);
+				FileOutputStream fileOutputStream = new FileOutputStream(configPropertiesFileNameRealPath);
+				instance.properties.store(fileOutputStream, null);
+				fileOutputStream = new FileOutputStream(env);
+				instance.properties.store(fileOutputStream, null);
+				fileOutputStream.close();
+				return false;
+			} catch (IOException e) {
+				LOGGER.error(e);
+				return true;		
+			}
+	}
+
+	public static synchronized String getProperty(String key) throws IOException {
 		return (String) getInstance().properties.get(key);
 	}
 
+	
 	/**
 	 * 
 	 * Get the instance
@@ -75,9 +91,8 @@ public class ScriptConfiguration {
 	 * 
 	 */
 	private ScriptConfiguration() throws IOException {
-		
-		File configFile = new File(System.getProperty("catalina.base") + File.separator + "conf" + File.separator + configPropertiesFileName);
-		
+		configPropertiesFileNameRealPath  = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + configPropertiesFileName;
+		File configFile = new File(configPropertiesFileNameRealPath);
 		InputStream stream = new FileInputStream(configFile);
 		properties = new Properties();
 		try {

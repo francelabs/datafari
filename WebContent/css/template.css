@@ -1,4 +1,4 @@
-@media all and (min-width : 320px) and (max-width : 480px){
+@media all /*and (min-width : 320px)*/ and (max-width : 799px){
 html, body, #container { height:100%; }
 #container { position:relative; }
 #content { background:transparent url(../images/content-bg.png) repeat-x 0 0; top:131px; bottom:31px; left:0; right:0; position:absolute; }
@@ -70,7 +70,7 @@ p { clear:both; }
 
 }
 
-
+/*
 
 @media all and (min-width : 320px) and (max-width : 480px){
 html, body, #container { height:100%; }
@@ -143,20 +143,20 @@ p { clear:both; }
 
 
 }
+*/
 
-
-@media all and (min-width: 481px){
+@media all and (min-width: 800px){
 
 html, body, #container { height:100%; }
 #container { position:relative; }
 #content { background:transparent url(../images/content-bg.png) repeat-x 0 0; top:131px; bottom:31px; left:0; right:0; position:absolute; }
 
-header { background:transparent url(../images/header-bg-2.png) repeat-x 0 0; display: block; position:relative; width:100%; }
+//header { }
 label { cursor:pointer; }
-#header-wrapper { margin:0 auto; width:850px; height:85px;} 
+#header-wrapper { margin:0 auto; width:96%;display:inline-block;  } 
 #logo { background:transparent url(../images/datafari.png) no-repeat 0 0; height:85px; float:left; width:229px; margin-left:30px;}
 #biglogo { background:transparent url(../images/bigdatafari.png) no-repeat 0 0; height:85px; float:left; width:370px; margin-left:30px;}
-#userSpace { background:transparent  height:85px;  float:right;  margin-top:68px;}
+#userSpace { float:right;  }
 #bar { background:#3D3C3A; height:3px; }
 #lang { bottom:5px; position:absolute; right:10px; height:25px; width:16px; }
 #lang a { display:block; cursor:pointer; height:11px; width:16px; }
@@ -185,7 +185,7 @@ nav#menu > .menu li.first a:hover .loupe { background:transparent url(../images/
 .download { background:transparent url(../images/download.png) no-repeat 0 0; cursor:pointer; display:block; height:45px; width:150px; }
 .download span { display:none; }
 
-footer { border-top:1px solid; bottom:0; height:30px; line-height:30px; position:fixed; text-align:center; width:100%; }
+footer {  bottom:0; height:30px; line-height:30px; position:fixed; text-align:center; width:100%; }
 footer .links, footer .copyrights { display:inline-block; margin-top:5px; position:relative; height:22px; line-height:22px; }
 footer .copyrights { margin-left:15px; top:-5px; }
 footer .links .social-ico { display:inline-block; height:20px; width:20px; }

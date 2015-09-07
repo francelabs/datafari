@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="./../admin/i18nInit.js"></script>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<div class="row">
+		<div id="breadcrumb" class="col-xs-12">
+			<a href="#" class="show-sidebar"> <i class="fa fa-bars"></i>
+			</a>
+			<ol class="breadcrumb pull-left">
+				<li><a id="topbar1" href="./../admin/index.jsp"></a></li>
+				<li><a id="topbar2" href="#"></a></li>
+				<li><a id="topbar3" href="#"></a></li>
+			</ol>
+		</div>
+	</div>
+	<div class="col-sm-12"><span id="globalAnswer"></span></div><br/>
+	<div class="col-sm-12"></div>
+	<div class="box">
+		<div class="box-header">
+			<div class="box-name">
+				<i class="fa fa-table"></i><span  id="thname"></span>
+			</div>
+			<div class="box-icons">
+				<a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+			</div>
+			<div class="no-move"></div>
+		</div>
+		<div id="thBox" class="box-content">
+			<form class="form-horizontal" role="form">
+				<div class="form-group" >
+					
+					<div>
+						<label id="labelth" class="col-sm-5 control-label"></label>
+						<input type="number" step="0.001" min="0" max="1" id="maxth" name="maxth" class="col-sm-1">
+						<div class="col-sm-1"></div>
+						<button id="submitth" name="submitth" class="btn btn-primary btn-label-left  col-sm-2"></button>
+					</div><br/>
+					<div class="col-sm-12"><span id="answerth"></span></div>
+				</div>
+			</form>
+		</div>
+	</div>
+</body>
+<script> 
+$(document).ready(function() {
+	//Internationalize content
+	document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
+	document.getElementById("topbar2").innerHTML = window.i18n.msgStore['admin'];
+	document.getElementById("topbar3").innerHTML = window.i18n.msgStore['autocompleteConf'];
+	document.getElementById("labelth").innerHTML = window.i18n.msgStore['labelth']+" : ";
+	document.getElementById("submitth").innerHTML = window.i18n.msgStore['confirm'];
+	document.getElementById("thname").innerHTML = window.i18n.msgStore['limitTH'];
+	//Disable the input and submit
+	$('#submitth').attr("disabled", true);
+	$('#maxth').attr("disabled", true);
+	//If the semaphore was for this page and the user leaves it release the semaphores
+	//On refresh
+	$(window).bind('beforeunload', function(){  								
+		if(document.getElementById("submitth")!==null){
+			if(!document.getElementById("submitth").getAttribute('disabled')){
+				  cleanSem("threshold");
+			}
+		}
+	 });
+	//If the user loads an other page
+	$("a").click(function(e){
+		if(e.target.className==="ajax-link" || e.target.className==="ajax-link active-parent active"){
+			if(document.getElementById("submitth")!==null){
+				if(!document.getElementById("submitth").getAttribute('disabled')){
+					  cleanSem("threshold");
+				}
+			}
+		}
+	});
+	//Get threshold value
+	getValues();
+	//Sert the button to call the function set with the threshold parameter
+	$("#submitth").click(function(e){
+		e.preventDefault();
+		set("threshold");
+	});
+});
+//Call the get function with the correct parameter
+function getValues(){
+	get("threshold");
+}
+function get(type){
+	var typ = type.substring(0,2);
+	document.getElementById("max"+typ).value = "";
+	$.ajax({			//Ajax request to the doGet of the ModifyNodeContent servlet
+        type: "GET",
+        url: "./../admin/ModifyNodeContent",
+        data : "type="+type+"&attr=name",
+        //if received a response from the server
+        success: function( data, textStatus, jqXHR) {	
+        	//If the semaphore was already acquired
+        	if(data === "File already in use"){
+        		//Print it and disable the input and submit
+        		document.getElementById("answer"+typ).innerHTML = window.i18n.msgStore['usedFile'];
+        		$('#submit'+typ).attr("disabled", true);
+        		$('#max'+typ).attr("disabled", true);
+        	}//If they're was an error
+        	else if(data.toString().indexOf("Error code : ")!==-1){
+        		//print it and disable the input and submit
+        		document.getElementById("globalAnswer").innerHTML = data;
+        		$('#submit'+typ).attr("disabled", true);
+        		$('#max'+typ).attr("disabled", true);
+        	}else{		//else add the options to the select
+        		document.getElementById("max"+typ).value = data;    
+        		$('#submit'+typ).attr("disabled", false);
+        		$('#max'+typ).attr("disabled", false);
+        	}
+        }
+ 	});
+}
+function set(type){
+	var typ = type.substring(0,2);
+	var value = document.getElementById("max"+typ).value;
+	if(value<=1 && value>=0){
+		$.ajax({			//Ajax request to the doGet of the ModifyNodeContent servlet to modify the solrconfig file
+        	type: "POST",
+        	url: "./../admin/ModifyNodeContent",
+        	data : "type="+type+"&value="+value+"&attr=name",
+        	//if received a response from the server
+        	success: function( data, textStatus, jqXHR) {	
+        		//If the semaphore was already acquired
+        		if(data === "File already in use"){
+        			//Print it and disable the input and submit
+       		 		document.getElementById("answer"+typ).innerHTML = window.i18n.msgStore['usedFile'];
+       		 		$('#submit'+typ).attr("disabled", true);
+    	    		$('#max'+typ).attr("disabled", true);
+    	    	}//If they're was an error
+    	    	else if(data.toString().indexOf("Error code : ")!==-1){
+    	    		//print it and disable the input and submit
+    	    		document.getElementById("globalAnswer").innerHTML = data;
+    	    		$('#submit'+typ).attr("disabled", true);
+    	    		$('#max'+typ).attr("disabled", true);
+    	    	}else{		//else add the options to the select
+    	    		document.getElementById("answer"+typ).innerHTML = window.i18n.msgStore['modifDone'];
+    	    	}
+    	    }
+ 		});
+	}else{
+		document.getElementById("answer"+typ).innerHTML = window.i18n.msgStore['inputMust'];
+	}
+}
+function cleanSem(type){
+	$.ajax({			//Ajax request to the doGet of the ModifyNodeContent servlet to release the semaphore
+        type: "GET",
+        url: "./../admin/ModifyNodeContent",
+        data : "sem=sem&type="+type
+	 });
+}
+</script>
+</html>

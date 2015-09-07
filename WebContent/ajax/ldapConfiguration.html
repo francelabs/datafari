@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="./../admin/i18nInit.js"></script>
+<meta charset="UTF-8">
+<title>Ldap Configuration</title>
+<style>
+#submit{
+	text-transform:uppercase;
+}
+#message{
+	display:none;
+	text-align:center;
+	margin-bottom:1%;
+}
+.error{
+	color:red;
+}
+.success{
+	color:green;
+}
+#ldap_activation{
+	margin-left: auto;
+	margin-bottom : 2%;
+}
+.box{
+	padding-bottom : 5%;
+}
+</style>
+<Link rel="stylesheet" href="../css/animate.min.css"/>
+</head>
+<body>
+	<div class="row">
+		<div id="breadcrumb" class="col-xs-12">
+			<a href="#" class="show-sidebar"> <i class="fa fa-bars"></i>
+			</a>
+			<ol class="breadcrumb pull-left">
+				<li><a id="topbar1" href="./../admin/index.jsp"></a></li>
+				<li><a id="topbar2" href="#"></a></li>
+				<li><a id="topbar3" href="#"></a></li>
+			</ol>
+		</div>
+	</div>
+	<fieldset id="alphafeature"><legend>!! This feature is experimental. It will be fully supported in Datafari 2.1 !!</legend></fieldset>
+	<div class="col-sm-12"><span id="globalAnswer"></span></div><br/>
+	<div class="col-sm-12"></div>
+	<div class="box">
+		<div class="box-header">
+			<div class="box-name">
+				<i class="fa fa-table"></i><span  id="title"></span>
+			</div>
+			<div class="box-icons">
+				<a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+			</div>
+			<div class="no-move"></div>
+		</div>
+		<div id="thBox" class="box-content">
+			<form class="form-horizontal" role="form">
+					
+					<div class="row">
+						<div class="col-sm-9">
+							<div id="ldap_activation" class="ldap toggle-switch toggle-switch-success">
+								<label>
+									<input type="checkbox">
+									<div class="toggle-switch-inner"></div>
+									<div class="toggle-switch-switch"><i class="fa fa-check"></i></div>
+								</label>
+							</div> 
+						</div>	
+					</div>
+					<div>
+					<div class="row">
+						<label id="connectionURLLabel" class="col-sm-4 control-label">Connection URL</label>
+						<input type="text"  id="connectionURL" name="connectionURL" class="col-sm-5">
+					</div>
+					<div class="row">
+						<label id="connectionNameLabel" class="col-sm-4 control-label">Connection Username</label>
+						<input type="text" id="connectionName" name="connectionName" class="col-sm-5">
+					</div>
+					<div class="row">
+						<label id="connectionPasswordLabel" class="col-sm-4 control-label">Connection Password</label>
+						<input type="password"id="connectionPassword" name="connectionPassword" class="col-sm-5">
+					</div>
+					<div class="row">
+						<label id="userBaseLabel" class="col-sm-4 control-label">UserBase</label>
+						<input type="text"  id="userBase" name="userBase" class="col-sm-5">
+					</div ><br/>
+					<div class="row">
+						<button id="submit" name="submitth" class="btn btn-primary btn-label-left col-sm-offset-7 col-sm-2" style="margin-left: 58.3333%;"></button>
+					</div>
+					
+					<br/>
+					
+				</div>
+			</form>
+			<div class="col-sm-11" id="message"></div>
+		</div>
+	</div>
+</body>
+<script> 
+$(document).ready(function() {
+	//Internationalize content
+	$("#topbar1").text(window.i18n.msgStore['home']);
+	$("#topbar2").text(window.i18n.msgStore['admin']);
+	$("#topbar3").text(window.i18n.msgStore['ldapConfig']);
+	$("#submit").text(window.i18n.msgStore['save']);
+	$("#title").text(window.i18n.msgStore['ldapConfig']);
+	var input = $("#ldap_activation input");
+	var PROBLEMSERVERLDAPCONNECTION = -6;
+	var regexConnectionURL = /ldap:\/\/.+\:[0-9]+/;
+	var ENDOFANIMATION = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
+	$.get("../SearchAdministrator/isLdapConfig",function(data){
+		inputActivation(data,input);
+	},"json");
+	
+	function inputActivation(data){
+		if (data.code == 0 ){
+			if (data.isActivated=="true"){
+				var bool = true;
+				$("input").prop('disabled', false);
+				$("button").prop('disabled',false);
+			}else{
+				var bool = false;
+				$("input").prop('disabled', true);
+				$("button").prop('disabled',true);
+			}
+			input.prop('checked',bool);		
+		}else{
+			$("#message").html('<i class="fa fa-times"></i> An error occured, Please try again')
+				.addClass("error").removeClass("success").show();
+		}
+	}
+	
+	$("#connectionURL").keyup(function(){
+		if (!regexConnectionURL.test($("#connectionURL").val())){
+			$("#message").html('<i class="fa fa-times"></i> The connectionURL should be like this ldap://IPTOSERVER:PORT ').addClass("error").removeClass("success").show();
+		}else{
+			$("#message").html("").removeClass("error");
+		}
+	});
+	$("#ldap_activation").click(function(e){
+		e.preventDefault();
+		if (!input.is(':checked')){
+			var bool="true";             
+		}else{
+			var bool="false";
+		}
+		$.post("../SearchAdministrator/isLdapConfig",{
+			isLdapActivated : bool
+		},function(data){
+			inputActivation(data,input);
+		},"json");
+	});
+		
+	
+
+	$.get("../SearchAdministrator/modifyRealmLdap",function(data){
+		if (data.code == 0){
+			$("#connectionURL").val(data.connectionURL);
+			$("#connectionName").val(data.connectionName);
+			$("#connectionPassword").val(data.connectionPassword);
+			$("#userBase").val(data.userBase);
+		}else{
+			$("#message").html('<i class="fa fa-times"></i> An error occured, Please try again')
+				.addClass("error").removeClass("success").show();
+			setTimeout(function(){
+				$("#message").addClass("animated fadeOut").one(ENDOFANIMATION,function(){
+					$("#message").hide().removeClass("animated fadeOut");
+				});
+			},5000);
+		}
+	},"json");
+	
+
+	$("form").submit(function(e){
+		e.preventDefault();
+		if ($("#connectionURL").val() !="" && $("#connectionURL").val() != undefined && $("#connectionName").val()!="" && $("#connectionName").val() != undefined &&
+				$("#connectionPassword").val()!="" && $("#connectionPassword").val() != undefined && $("#userBase").val()!="" && $("#userBase").val() != undefined){ 
+			$.post("../SearchAdministrator/modifyRealmLdap",{
+				connectionURL :  $("#connectionURL").val() ,
+				connectionName : $("#connectionName").val() ,
+				connectionPassword : $("#connectionPassword").val() ,
+				userBase : $("#userBase").val() 
+			},function(data){
+				if (data!=undefined && data.code!= undefined){
+					if (data.code==0){
+						$("#message").html('<i class="fa fa-check"></i> Well Saved').addClass("success").removeClass("error").show();
+					}else if (data.code == PROBLEMSERVERLDAPCONNECTION){
+						$("#message").html('<i class="fa fa-times"></i> '+data.statut).addClass("error").removeClass("success").show();
+					}else{
+						$("#message").html('<i class="fa fa-times"></i> An error occured, Please try again').addClass("error").removeClass("success").show();
+					}
+				}else{
+					$("#message").html('<i class="fa fa-times"></i> An error occured, Please try again').addClass("error").removeClass("success").show();
+				}
+				setTimeout(function(){
+					$("#message").addClass("animated fadeOut").one(ENDOFANIMATION,function(){
+						$("#message").hide().removeClass("animated fadeOut");
+					});
+				},2000);
+			},"json");
+		}else{
+			$("#message").html('<i class="fa fa-times"></i> Please fill in all the fields').addClass("error").removeClass("success").show();
+			setTimeout(function(){
+				$("#message").addClass("animated fadeOut").one(ENDOFANIMATION,function(){
+					$("#message").hide().removeClass("animated fadeOut");
+				});
+			},2000);
+		}
+		return false;
+	});
+	
+});
+</script>
+</html>

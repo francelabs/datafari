@@ -85,3 +85,13 @@ h4 {
 .adminConfig {
 	padding-left:10px;
 }
+.alertConfig {
+	padding-left:10px;
+}
+#alertLeft {
+	float:left;
+	width:60%;
+	display:inline-block;
+	text-align:justify;
+	padding-top:5px;
+}

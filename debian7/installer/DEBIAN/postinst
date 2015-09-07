@@ -1,80 +1,47 @@
-#!/bin/bash
-getPassword(){
-	OK=false
-	while [ $OK = false ]
-	do
-		OK=true
-		echo -n "Please enter password for $1: " 
-		read -s password
-		echo
-		echo -n "Please retype password: "
-		read -s password2
-		echo
-		if ! [ $password =  $password2 ]
-		then
-			OK=false
-			echo "Passwords are not equal"
-		fi
-		if [ -z $password ]
-		then
-			OK=false
-			echo "Password must not be blanck"
-		fi
-	done
-}
-
-getNumshards(){
-	OK=false
-	while [ $OK = false ]
-	do
-		OK=true
-		echo -n "Please enter the number of shards you want for your index: " 
-		read numshards
-		re='^[0-9]+([.][0-9]+)?$'
-		if ! [[ $numshards =~ $re ]] ; then
-			echo -n "Please enter a valid number"  
-			OK=false
-		fi
-	done
-}
-
-yesno()
-{
-	yes=$2
-	read -p "$1" yn
-	case $yn in
-		[Yy]* ) yes=true;;
-		[Nn]* ) yes=false;;
-	esac
-}
+#!/bin/sh -e
 
 
+# Source debconf library.
+. /usr/share/debconf/confmodule
 
 #start script
-yesno "Use Solr Cloud [y/N]: " false
-if $yes
+
+db_input high datafari/solr_cloud || true
+db_go
+db_get datafari/solr_cloud
+if [ "$RET" = "true" ];
 then
-	echo -n "Specify the current node address: " 
-	read nodehost
-	sed -i -e "s/@NODEHOST@/${nodehost}/g" /opt/datafari/tomcat/conf/datafari.properties
+	db_input high datafari/node_host || true
+	db_go
+	db_get datafari/node_host
+	sed -i -e "s/@NODEHOST@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
 	sed -i -e "s/@SOLRCLOUD@/true/g" /opt/datafari/tomcat/conf/datafari.properties
-	yesno "Is this the main node [Y/n]: " true
-	if $yes
+	db_input high datafari/main_node || true
+	db_go
+	db_get datafari/main_node
+	if [ "$RET" = "true" ];
 	then
-		getNumshards
-		sed -i -e "s/@NUMSHARDS@/${numshards}/g" /opt/datafari/tomcat/conf/datafari.properties
+		db_input high datafari/num_shards || true
+		db_go
+		db_get datafari/num_shards
+		sed -i -e "s/@NUMSHARDS@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
 		sed -i -e "s/@ISMAINNODE@/true/g" /opt/datafari/tomcat/conf/datafari.properties
 		mkdir /opt/datafari/solr/solrcloud
 		mv /opt/datafari/solr/solr_home/FileShare /opt/datafari/solr/solrcloud
 		mv /opt/datafari/solr/solr_home/Statistics /opt/datafari/solr/solrcloud
-		getPassword "ManifoldCF (document crawler) admin"
-		sed -i -e "s/@PASSWORD@/${password}/g" /opt/datafari/mcf/mcf_home/properties.xml
-		getPassword "Datafari"
-		sed -i -e "s/@PASSWORD@/${password}/g" /opt/datafari/tomcat/conf/tomcat-users.xml
+		db_input high datafari/mcf_password || true
+		db_go
+		db_get datafari/mcf_password
+		sed -i -e "s/@PASSWORD@/${RET}/g" /opt/datafari/mcf/mcf_home/properties.xml
+		db_input high datafari/datafari_password || true
+		db_go
+		db_get datafari/datafari_password
+		sed -i -e "s/@TEMPADMINPASSWORD@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
 	else
-		echo -n "Specify main node address: " 
-		read mainnodehost
-		sed -i -e "s/@MAINNODEHOST@/${mainnodehost}/g" /opt/datafari/tomcat/conf/datafari.properties
+		db_input high datafari/main_node_host || true
+		db_go
+		db_get datafari/main_node_host
+		sed -i -e "s/@MAINNODEHOST@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
 		sed -i -e "s/@ISMAINNODE@/false/g" /opt/datafari/tomcat/conf/datafari.properties
 		rm -r /opt/datafari/mcf
 		rm -r /opt/datafari/solr/solr_home/FileShare
@@ -83,19 +50,17 @@ then
 		rm -r /opt/datafari/pgsql
 		rm -r /opt/datafari/tomcat/webapps/Datafari
 		rm /opt/datafari/tomcat/conf/Catalina/localhost/datafari-mcf-*
-		getPassword "Tomcat"
-		sed -i -e "s/@PASSWORD@/${password}/g" /opt/datafari/tomcat/conf/tomcat-users.xml
+		db_input high datafari/tomcat_password || true
+		db_go
+		db_get datafari/tomcat_password
+		sed -i -e "s/@PASSWORD@/${RET}/g" /opt/datafari/tomcat/conf/tomcat-users.xml
 	fi
 else
-	getPassword "ManifoldCF (document crawler) admin"
-	sed -i -e "s/@PASSWORD@/${password}/g" /opt/datafari/mcf/mcf_home/properties.xml
-	getPassword "Datafari"
-	sed -i -e "s/@PASSWORD@/${password}/g" /opt/datafari/tomcat/conf/tomcat-users.xml
+	db_input high datafari/datafari_password || true
+	db_go
+	db_get datafari/datafari_password
+	sed -i -e "s/@PASSWORD@/${RET}/g" /opt/datafari/mcf/mcf_home/properties.xml
+	sed -i -e "s/@TEMPADMINPASSWORD@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
 	sed -i -e "s/@SOLRCLOUD@/false/g" /opt/datafari/tomcat/conf/datafari.properties
 fi
-
-
-
-
 chmod -R 755 /opt/datafari
-echo "Datafari successfully installed"

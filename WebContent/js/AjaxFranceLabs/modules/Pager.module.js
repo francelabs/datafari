@@ -19,13 +19,13 @@ AjaxFranceLabs.PagerModule = AjaxFranceLabs.AbstractModule.extend({
 
 	source : null,
 
-	prevLabel : '<',
+	prevLabel : '<i class="fa fa-chevron-left"></i>',
 
-	nextLabel : '>',
+	nextLabel : '<i class="fa fa-chevron-right"></i>',
 
-	firstLabel : '<<',
+	firstLabel : '<i class="fa fa-chevron-left"></i><i class="fa fa-chevron-left"></i>',
 
-	lastLabel : '>>',
+	lastLabel : '<i class="fa fa-chevron-right"></i><i class="fa fa-chevron-right"></i>',
 
 	nbElmToDisplay : 10,
 
@@ -48,10 +48,11 @@ AjaxFranceLabs.PagerModule = AjaxFranceLabs.AbstractModule.extend({
 	init : function() {
 		if (!this.initialized) {
 			this.initialized = true;
+
 			var self = this, elm = $(this.elm);
 			this.nbPageDisplayed = (this.nbPageDisplayed < 4) ? 4 : this.nbPageDisplayed;
-			elm.append('<div>');
-			elm.find('div:last').addClass('pagerModule').addClass('module').append('<span class="go_f fn fl">').append('<span class="go_p fn pn">').append('<div class="pages">').append('<span class="go_n fn pn">').append('<span class="go_l fn fl">');
+			elm.append('<div></div>');
+			elm.find('div:last').addClass('pagerModule').addClass('module').append('<span class="go_f fn fl"></span>').append('<span class="go_p fn pn"></span>').append('<div class="pages"></div>').append('<span class="go_n fn pn"></span>').append('<span class="go_l fn fl"></span>');
 			elm.find('.go_f').append('<span>' + this.firstLabel + '</span>');
 			elm.find('.go_p').append('<span>' + this.prevLabel + '</span>');
 			elm.find('.go_n').append('<span>' + this.nextLabel + '</span>');
@@ -73,15 +74,15 @@ AjaxFranceLabs.PagerModule = AjaxFranceLabs.AbstractModule.extend({
 	},
 
 	updatePages : function() {
-		
-		$(this.elm).find('.pagerModule').css('display', 'block');
+
 		var self = this, elm = $(this.elm);
 		this.nbElements = (this.source !== null) ? this.source.children().length : this.nbElements;
 		this.nbPage = Math.ceil(this.nbElements / this.nbElmToDisplay);
-		if (this.nbPage == 1) {
+		if (this.nbPage <= 1) {
 			$(this.elm).find('.pagerModule').css('display', 'none');
 			return false;
 		}
+		$(this.elm).find('.pagerModule').css('display', 'block').addClass('show');
 		elm.find('.pages').empty();
 		var firstPage = this.pageSelected - 10;
 		if (firstPage < 0){

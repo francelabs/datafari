@@ -19,6 +19,7 @@
 	<property name="jvm.dir" value="${debian.dir}/jvm" />
 	<property name="zookeeper.dir" value="${debian.dir}/zookeeper" />
 	<property name="command.dir" value="${debian.dir}/command" />
+	<property name="ocr.dir" value="${debian.dir}/ocr" />
 	<property name="pgsql.dir" value="${debian.dir}/pgsql" />
 	<property name="debian.bin.dir" value="${debian.dir}/bin" />
 
@@ -32,20 +33,31 @@
 
 	<target name="copyBinaries" depends="Datafari_WebApp.compileDatafariWebApp,Datafari_Bin.buildJar">
 		<mkdir dir="${debian.dist.dir}/logs" />
+		<mkdir dir="${debian.dist.dir}/pid" />
 		<copy todir="${debian.dist.dir}/tomcat">
 			<fileset dir="${tomcat.dir}">
 				<include name="**" />
 			</fileset>
 		</copy>
-
+		<copy todir="${debian.dist.dir}/ocr">
+			<fileset dir="${ocr.dir}">
+				<include name="**" />
+			</fileset>
+		</copy>
 		<copy todir="${debian.dist.dir}/solr">
 			<fileset dir="${solr.dir}">
-				<include name="**" />
+				<exclude name="**/**/data/**" />
 			</fileset>
 		</copy>
 
 		<copy todir="${debian.dist.dir}/mcf">
 			<fileset dir="${mcf.dir}">
+				<include name="**" />
+			</fileset>
+		</copy>
+		
+		<copy todir="${debian.dist.dir}/cassandra">
+			<fileset dir="${cassandra.dir}">
 				<include name="**" />
 			</fileset>
 		</copy>
@@ -111,6 +123,10 @@
 					<copy todir="${debian.dist.dir}/bin/common">
 						<fileset file="${bin.dir}/dist/DatafariScripts.jar" />
 					</copy>
+		
+					<copy todir="${debian.dist.dir}/bin/common">
+								<fileset file="${bin.dir}/common/mail.txt" />
+							</copy>
 	</target>
 
 

@@ -20,14 +20,23 @@ AjaxFranceLabs.ResultWidget = AjaxFranceLabs.AbstractWidget.extend({
 	pagination : false,
 
 	type : 'result',
+	
+	isMobile : false, // use to know if we delete the res bloc before adding the next page's result or not (loading on scroll)
 
 	//Methods
 
+	nextPage : function(){
+		this.manager.store.get('start').val(this.pagination.pageSelected * this.pagination.nbElmToDisplay);
+		this.manager.makeRequest();
+	},
 	buildWidget : function() {
 		var elm = $(this.elm);
+		var sel = this;
 		elm.addClass('resultWidget').addClass('widget').attr('widgetId', this.id).append('<div class="doc_list">');
-		if (this.pagination)
+		
+		if (this.pagination){
 			$(this.elm).append('<div class="doc_list_pagination">');
+		}
 		if (this.pagination === true) {
 			var self = this;
 			this.pagination = new AjaxFranceLabs.PagerModule({
@@ -42,8 +51,7 @@ AjaxFranceLabs.ResultWidget = AjaxFranceLabs.AbstractWidget.extend({
 					}
 				},
 				clickHandler : function() {
-					self.manager.store.get('start').val(this.pageSelected * this.nbElmToDisplay);
-					self.manager.makeRequest();
+					self.nextPage(this);
 				}
 			});
 		}
@@ -54,7 +62,9 @@ AjaxFranceLabs.ResultWidget = AjaxFranceLabs.AbstractWidget.extend({
 	beforeRequest : function() {
 		var elm = $(this.elm);
 		elm.find('.doc_list_pagination').css('visibility', 'hidden');
-		elm.find('.doc_list').empty().append('<div class="bar-loader" />');
+		if (!this.isMobile)
+			elm.find('.doc_list').empty();
+		elm.find('.doc_list').append('<div class="bar-loader" />');
 		if (this.pagination)
 			this.pagination.beforeRequest();
 	},
@@ -62,9 +72,10 @@ AjaxFranceLabs.ResultWidget = AjaxFranceLabs.AbstractWidget.extend({
 	afterRequest : function() {
 		//This is an example, this method must be overide using your own results
 		var data = this.manager.response, elm = $(this.elm);
-		elm.find('.doc_list').empty();
+		if (!this.isMobile)	
+			elm.find('.doc_list').empty(); //if we're in desktop mode 
 		if (data.response.numFound === 0) {
-			elm.find('.doc_list').append('<span class="noResult">No document found.</span>');
+			elm.find('.doc_list').append('<div class="doc"><span class="noResult description">Aucun document ne correspond aux termes de recherche spécifiés </span></div>');
 		} else {
 			var self = this;
 			$.each(data.response.docs, function(i, doc) {

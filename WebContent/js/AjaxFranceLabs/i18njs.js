@@ -23,7 +23,7 @@
                     i18n.persistMsgStore(data);
                 },
                 error: function(error) {
-                    $.getJSON(this.languageUrl+"en.json", function(data) {
+                    $.getJSON(this.languageUrl + lang + ".json", function(data) {
                         i18n.persistMsgStore(data);
                     });
                 }

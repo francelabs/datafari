@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Modify Users</title>
+	<style>
+		.role{
+			width:180px;
+		}	
+		.inline_block .form-control{
+			font-size:12px;
+			cursor:default;
+		}
+		.delete_user{
+			cursor:pointer;
+		}
+		.delete_user:hover{
+		 	color: #F58376;
+		}
+		.inline_block{
+			display:inline-block;
+			vertical-align:middle;
+			margin-right:20px;
+			margin-top:5px;
+			margin-bottom:5px;
+		}
+		.inline_block .input-group-addon.delete{
+			color:white;
+			background: #F58376;
+			cursor:pointer;
+		}
+		input{
+			padding-left:10px;
+			margin-top: 5px;
+			margin-bottom: 5px;
+		}
+		th{
+			text-align:center;
+		}
+		#Message{
+		 	text-align:center
+		}
+		#Message.danger i{
+			font-size: 3em;
+			margin-bottom: 2%;
+		}
+		#Message.danger{
+			color: #F00;
+		}
+		#Message{
+			color : #929292;
+		}
+		.ui-dialog-titlebar.ui-widget-header{
+			background:#F58376;
+		}
+		.success{
+			color:green;
+		}
+		.dialogue{
+		display:none;
+		},
+		.ui-widget-header,.ui-state-default, ui-button{
+            background:#b9cd6d;
+            border: 1px solid #b9cd6d;
+            color: #FFFFFF;
+            font-weight: bold;
+         }
+	</style>
+	<Link rel="stylesheet" href="../css/animate.min.css"/>
+</head>
+<body>
+	<div class="row">
+		<div id="breadcrumb" class="col-xs-12">
+			<a href="#" class="show-sidebar"> <i class="fa fa-bars"></i>
+			</a>
+			<ol class="breadcrumb pull-left">
+				<li><a id="topbar1" href="index.jsp"></a></li>
+				<li><a id="topbar2" href="#"></a></li>
+				<li><a id="topbar3" href="#"></a></li>
+			</ol>
+		</div>
+	</div>
+		
+		<div class="col-xs-8 col-lg-offset-1">
+			<h1>Modify a User  <i style="color:#A8C900" class="fa fa-users"></i></h1><br/>
+			<p>Here you can change the password of a user, his roles or delete him from database</p><br/>
+			<div id="Message" style="display:none;">No Document Saved Yet</div>
+			<table id="tableResult" class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<th>Username</th>
+						<th>Change Password</th>
+						<th>Roles</th>
+						<th>Delete</th>
+					</tr>
+				</thead>
+				<tbody>
+							
+				</tbody>
+			</table>
+		</div>
+	
+	<div title="Delete A User" class="dialogue">Are you sure you want to delete the user?</div>
+	
+	<script>
+
+	var NOFAVORITESFOUND = 101;
+	var SERVERALREADYPERFORMED = 1;
+	var SERVERALLOK = 0;
+	var SERVERGENERALERROR = -1;
+	var SERVERNOTCONNECTED = -2;
+	var SERVERPROBLEMCONNECTIONDB = -3;
+	var PROBLEMECONNECTIONSERVER = -404;
+	var admin_messageDiv = $("#Message");
+	var elementDiv;
+	var ENDOFANIMATION = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
+	var listRoles = ["ConnectedSearchUser","SearchAdministrator","SearchExpert"];
+	$("#topbar1").text(window.i18n.msgStore['home']);
+	$("#topbar2").text(window.i18n.msgStore['userManagement']);
+	$("#topbar3").text(window.i18n.msgStore['modifyUser']);
+	function showError(code){
+			var message;
+			var danger = true;
+			switch(code){
+				case NOFAVORITESFOUND:
+					danger = false;
+					message = window.i18n.msgStore["NOFAVORITESFOUND"];
+					break;
+				case SERVERNOTCONNECTED:	
+					message = window.i18n.msgStore["SERVERNOTCONNECTED"];
+					break;
+				case SERVERPROBLEMCONNECTIONDB:
+					message = window.i18n.msgStore["SERVERPROBLEMCONNECTIONDB"];
+					break;
+				case PROBLEMECONNECTIONSERVER:
+					message = window.i18n.msgStore["PROBLEMECONNECTIONSERVER"];
+					break;
+				default :
+					message = window.i18n.msgStore["SERVERGENERALERROR"];
+					break;
+			}
+			$("#tableResult").hide();
+			admin_messageDiv.text(message).show();
+			if (danger){
+					admin_messageDiv.addClass("danger").prepend('<i class="fa fa-exclamation-triangle"></i><br/>');
+			}else{
+				admin_messageDiv.removeClass("danger");
+			}
+	}
+	
+	function htmlRole(role,username){
+		return '<div class="inline_block '+username+'" data-user="'+username+'"><div class="input-group role">'+
+		  '<span class="input-group-addon delete notyet"><i class="fa fa-times"></i></span>'+
+		  '<input class="form-control '+role+'" value="'+role+'" type="text" disabled/>'+
+		  '</div></div>';
+	}
+	function deleteRoleListener (e){
+		var element = $(e.target);
+		while(!element.hasClass("inline_block")){
+			element = element.parent();
+		}
+		var role = element.find("input").val();
+		$.post("../SearchAdministrator/deleteRole",{
+			username : element.data("user"),
+			role:role
+		},function(data){
+			if (data.code == SERVERALLOK){
+				element.remove();
+			}else{
+				showError(data.code);
+			}
+		},"json");
+	}
+	if (window.dialogue == undefined){
+		window.dialogue = $(".dialogue").dialog({
+			 autoOpen: false,
+			buttons:{
+				Delete: function(){
+						while(!elementDiv.hasClass("root")){
+							elementDiv = elementDiv.parent();
+						}
+						$.post("../SearchAdministrator/deleteUser",{username:elementDiv.data("user")},function(data){
+							if (data.code == SERVERALLOK){
+								elementDiv.remove();
+							}else{
+								showError(data.code);
+							}
+						},"json");
+						$( this ).dialog( "close" );		
+				},
+				Cancel: function(){
+					$( this ).dialog( "close" );					                                		 	                                		 
+				}
+			}
+		});
+	}
+	
+	$.get("../SearchAdministrator/getAllUsersAndRoles",function(data){
+			if (data.code == SERVERALLOK){
+				window.globalVariableUser = data.statut;
+				var html = "";
+				$.each(window.globalVariableUser,function(index,element){
+					 html+= '<tr class="root" data-user="'+index+'">'+
+							"<th>"+index+"</th>"+
+							'<th><input data-user="'+index+'" placeHolder="change password" class="password"/></th>'+
+							'<th>';
+					for (var i = 0; i<element.length; i++){
+						html+=htmlRole(element[i],i);
+					}
+					
+					html+='<input data-user="'+index+'" class="add_role" placeHolder="Add a Role"/></th>'+
+							'<th><span class="delete_user"><i class="fa fa-times"></i></span></th>'+
+							'</tr>';
+				});
+				$("tbody").append(html);
+		
+				$(".password").keydown(function(e){
+					if (e.keyCode == 13){
+						var element = $(e.target);
+						while(!element.hasClass("root")){
+							element = element.parent();
+						}
+						$.post("../SearchAdministrator/changePassword",{username:element.data("user"),password:$(e.target).val()},function(data){
+							console.log(data.code);
+							if (data.code == SERVERALLOK){
+								$(e.target).before('<i class="fa fa-check success"></i>');
+								setTimeout(function(){
+									$(e.target).prev().addClass("animated fadeOut").one(ENDOFANIMATION,function(){
+										$(e.target).val("").prev().remove();
+									});
+								},1500);
+							}else{
+								showError(data.code);
+							}
+						})
+						return false;
+					}
+				});				
+		
+				$(".delete_user").click(function(e){
+					elementDiv = $(e.target);
+					window.dialogue.dialog("open");
+			     });
+					
+				$(".add_role").autocomplete({
+					source : listRoles,
+					select : function(event,ui){
+						var role = ui.item.value;
+						//console.log(role);
+						var element = $(event.target);
+						element.val("");
+						console.log("test user and role "+element.data("user")+" ."+role);
+						if ($("."+element.data("user")+" ."+role).length==0){
+							$.post("../SearchAdministrator/addRole",{username:element.data("user"),role:role},function(data){
+								if (data.code==SERVERALLOK){
+									var html = $(htmlRole(role,element.data("user")));
+									element.before(html);
+									$(".inline_block .delete.notyet").click(deleteRoleListener).removeClass("notyet");
+								}else{
+									showError(data.code);
+								}
+								element.val("");
+							});
+						}
+						return false;
+					},
+					autoFocus:1
+				});
+				$(".inline_block .delete.notyet").click(deleteRoleListener).removeClass("notyet");
+				
+			}else{
+				showError(data.code);
+			}
+		},"json");
+	</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+#searchBarContent{
+		min-width:400px;
+	}	
+	#solr .resultWidget .doc{
+		max-width:300px;
+	}
+	#solr .col.right{
+		max-width:300px;
+	}	
