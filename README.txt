@@ -11,18 +11,23 @@ you just need to mention that you are using it.
 
 Pre-Requirements:
 
-- Windows Environment 64 bits or Debian Environment 64 bits
+- Debian Environment 64 bits (a Docker image is available if you are on Windows environment)
 - Processor : 1GHZ and RAM : 2GB
 - Ports 8080 and 5432 are opened
-- Debian environment : requires curl
+- Debian environment : requires curl, jq
 
 How to install and  start Datafari :
 
-You can build the Windows installer with the ant script Datafari/windows/installer/build.xml or Datafari/debian7/build.xml 
-for the Debian installer. You can download both installers from www.datafari.com.
+You can build the Debian installer with the ant script Datafari/debian7/build.xml. You can download Debian installer and Docker image from www.datafari.com.
 
-Start Datafari server with start-datafari.bat. Always stop it with stop-datafari.bat. You don't have to (but you can) use the init-datafari.bat
-script if you installed Datafari with the installer.
+1) Install Datafari :
+# dpkg -i datafari.deb
+2) Start Datafari : 
+# cd /opt/datafari/bin
+# bash start-datafari.sh
+3) Stop Datafari :
+# cd /opt/datafari/bin
+# bash stop-datafari.sh
 
 - Search UI :
 http://localhost:8080/Datafari/
@@ -32,7 +37,7 @@ http://localhost:8080/Datafari/admin
 
 You can find video tutorials on how to install and start Datafari from the installer :
 - Debian : https://www.youtube.com/watch?v=cekFICeTTTs
-- Windows : https://www.youtube.com/watch?v=BB95WFtL7n4
+
 
 If you want to use the jcifs connector in ManifoldCF, download  jcifs-1.3.xx.jar from http://jcifs.samba.org/src/ to DATAFARI_SOURCE_DIR\mcf\mcf_home\connector-lib-proprietary
 Then edit the file Datafari/mcf/mcf_home/connectors.xml and uncomment the line :
