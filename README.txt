@@ -1,13 +1,14 @@
--------------------------------------------------- DATAFARI V. 2.0 --------------------------------------------------
+--------------------------- DATAFARI V. 2.0 ------------------------
 
-Datafari is the perfect product for anyone who needs to search within its corporate big data,
-based on the most advanced open source technologies.
-Datafari combines both the Apache ManifoldCF and Solr products, and proposes to its users to search into file shares,
-cloud shares (dropbox, google drive), databases, but also emails and many more sources. 
+NOTE: For the major changes compared to DATAFARI V1.x, please check at the bottom of this page.
+
+Datafari is the perfect product for anyone who needs to search within its corporate big data, based on the most advanced open source technologies.
+Datafari 2.0 combines the Apache Solr, Cassandra and ManifoldCF products. It allows its users to search into file shares, cloud shares (dropbox, google drive), databases, but also emails and many more sources. 
+
 Available as community and enterprise edition, Datafari is different from the competition : 
 - Its open source license is not aggressive, as it uses the Apache v2 license: you are free to do whatever you want with it,
 you just need to mention that you are using it. 
-- It combines two renowned Apache projects, namely ManifoldCF and Solr, which gives Datafari a long term vision.
+- It combines three renowned Apache projects, namely Cassandra, Solr and ManifoldCF, which gives Datafari a long term vision.
 
 Pre-Requirements:
 
@@ -16,7 +17,7 @@ Pre-Requirements:
 - Ports 8080 and 5432 are opened
 - Debian environment : requires curl, jq
 
-How to install and  start Datafari :
+How to install and start Datafari :
 
 You can build the Debian installer with the ant script Datafari/debian7/build.xml. You can download Debian installer and Docker image from www.datafari.com.
 
@@ -50,5 +51,16 @@ https://www.youtube.com/watch?v=w0FtsvZO9SI
 You can find documentation on how to create connectors and jobs here : 
 http://manifoldcf.apache.org/release/trunk/en_US/end-user-documentation.html
 
+Major changes compared to v1.0
+- Integration of Apache Cassandra
+- Proper user management including an admin UI
+- Complete overhaul of the admin UI, using the great Devoops v2 template.
+- Complete overhaul of the Ajaxfrancelabs search UI, with new widgets and a cool responsive design
+- Migration to Apache Solr 5
+- Admin UI to configure connection to an Active Directory
+- Admin UI to manage promolinks
+- Admin UI to boost Solr fields at search time
+- Admin UI to configure the autocomplete
+- Admin UI to configure the synonyms
 
 Enjoy :-)
