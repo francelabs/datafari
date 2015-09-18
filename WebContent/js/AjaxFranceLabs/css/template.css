@@ -60,9 +60,9 @@
 .advancedSearchWidget button{background:0;border:1px solid;cursor:pointer;float:right;margin-bottom:15px;padding:5px;border-radius:1px;-moz-border-radius:1px;-webkit-border-radius:1px;width:150px}
 .advancedSearchWidget .addInput{clear:both;cursor:pointer;float:right;margin-right:18px;margin-top:5px}
 .advancedSearchWidget .removeInput{cursor:pointer;float:right;height:29px;line-height:29px;text-align:center;width:18px}
-.capsuleWidget{border:1px solid;-moz-border-radius:4px;border-radius:4px;margin-bottom:15px;padding:10px}
-.capsuleWidget .title{display:block;width:460px}
-.capsuleWidget .tips{display:block;width:460px}
+.promolinkWidget{border:1px solid;-moz-border-radius:4px;border-radius:4px;margin-bottom:15px;padding:10px}
+.promolinkWidget .title{display:block;width:460px}
+.promolinkWidget .tips{display:block;width:460px}
 .spellcheckerWidget{margin:15px 0;width:480px}
 .spellcheckerWidget .result{cursor:pointer}
 .menuWidget .menu{border:1px solid;position:absolute}
