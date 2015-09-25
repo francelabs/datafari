@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:ms-ose="http://schemas.microsoft.com/opensearchext/2009/">
+<ShortName>Datafari</ShortName>
+<Description>Datafari Search</Description>
+<Url type="application/rss+xml" template="http://localhost:8983/solr/FileShare/opensearch?q={searchTerms}&amp;wt=xslt&amp;tr=opensearch.xsl"/>
+<Url type="text/html" template="http://localhost:8983/solr/FileShare/opensearch?q={searchTerms}"/></OpenSearchDescription> 
+
+
