@@ -87,7 +87,7 @@ public class LikesLauncher implements ServletContextListener {
 					} catch (Exception e) {
 						LOGGER.error("Cannot send refresh request", e);
 					}
-					LOGGER.info("updateNbLikes finished it's work");
+					LOGGER.info("updateNbLikes finished its work");
 				}
 
 			}).start();

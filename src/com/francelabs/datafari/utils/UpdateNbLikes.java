@@ -64,7 +64,7 @@ public class UpdateNbLikes {
 			if (nbLikes==null){
 				UpdateNbLikes.getInstance().properties.setProperty(document,"1");
 			}else{
-				UpdateNbLikes.getInstance().properties.setProperty(document,String.valueOf(Integer.parseInt(nbLikes)+1));
+				UpdateNbLikes.getInstance().properties.setProperty(document,String.valueOf(Float.parseFloat(nbLikes)+1));
 			}
 			saveProperty();
 			LikesLauncher.saveChange();
@@ -85,7 +85,7 @@ public class UpdateNbLikes {
 			if (nbLikes==null || Integer.parseInt(nbLikes) <= 0){
 				UpdateNbLikes.getInstance().properties.setProperty(document,"0");
 			}else{
-				UpdateNbLikes.getInstance().properties.setProperty(document,String.valueOf(Integer.parseInt(nbLikes)-1));
+				UpdateNbLikes.getInstance().properties.setProperty(document,String.valueOf(Float.parseFloat(nbLikes)-1));
 			}
 			saveProperty();
 			LikesLauncher.saveChange();
