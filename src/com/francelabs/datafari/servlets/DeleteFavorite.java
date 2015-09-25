@@ -68,7 +68,7 @@ public class DeleteFavorite extends HttpServlet {
 				Principal userPrincipal = request.getUserPrincipal();
 				if (userPrincipal == null){
 					jsonResponse.put("code", CodesReturned.NOTCONNECTED)
-					.put("statut", "Please reload the page, you'r not connected");
+					.put("statut", "Please reload the page, you're not connected");
 				}else{
 					String username = request.getUserPrincipal().getName();
 					if (Favorite.deleteFavorite(username, request.getParameter("idDocument")) == CodesReturned.ALLOK){

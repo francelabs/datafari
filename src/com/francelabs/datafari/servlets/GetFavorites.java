@@ -71,7 +71,7 @@ public class GetFavorites extends HttpServlet {
 			//checking if the user is connected
 			if (userPrincipal == null){
 				jsonResponse.put("code", CodesReturned.NOTCONNECTED)
-				.put("statut", "Please reload the page, you'r not connected");
+				.put("statut", "Please reload the page, you're not connected");
 			}else{
 				String username = userPrincipal.getName();
 				List<String> favoritesList = Favorite.getFavorites(username);
