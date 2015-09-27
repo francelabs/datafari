@@ -10,7 +10,7 @@ if (( EUID != 0 )); then
    exit 100
 fi
 
-DIR=../../debian7/bin
+DIR=../../../macosx/bin
 
 source "set-datafari-env-devmode.sh"
 source "${DIR}/utils.sh"
