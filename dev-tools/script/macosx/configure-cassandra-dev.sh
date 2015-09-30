@@ -13,5 +13,3 @@ fi
 
 ../../../cassandra/bin/cqlsh -f ../../../bin/config/cassandra/tables
 ../../../cassandra/bin/cqlsh -f create-admin-dev.txt
-
-echo test
