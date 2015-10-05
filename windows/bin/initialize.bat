@@ -16,7 +16,7 @@ if '%errorlevel%' NEQ '0' (
 
     "%temp%\getadmin.vbs"
     del "%temp%\getadmin.vbs"
-    exit /B
+    exit 
 
 :gotAdmin
     pushd "%CD%"
@@ -30,6 +30,8 @@ set DATAFARI_HOME=%CD%\..
 set JAVA_HOME=%DATAFARI_HOME%\jvm
 set CASSANDRA_HOME=%DATAFARI_HOME%\cassandra
 set CASSANDRA_ENV=%CASSANDRA_HOME%\bin\cassandra.in.bat
+set PYTHONPATH=%DATAFARI_HOME%\python
+set PATH=%PATH%;%PYTHONPATH%
 set TOMCATAPP=Bootstrap
 
 
@@ -63,3 +65,6 @@ cmd /c "shutdown.bat"
 cmd /c "for /f "tokens=1" %%i in ('jps -m ^| find "%TOMCATAPP%"') do ( taskkill /F /PID %%i )"
 cmd /c "%DATAFARI_HOME%\pgsql\bin\pg_ctl -D %DATAFARI_HOME%\pgsql\data -l %DATAFARI_HOME%\logs\pgsql.log stop"
 cmd /c %CASSANDRA_HOME%\bin\stop-server -p %CASSANDRA_HOME%\pid.txt -f
+
+
+exit
