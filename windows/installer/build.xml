@@ -9,11 +9,13 @@
 
 	<!-- local dir -->
 	<property name="installer.dir" value="${windows.dir}/installer" />
+	<property name="installer.cassandra.dir" value="${installer.dir}/cassandra" />
 	<property name="installer.build.dir" value="${installer.dir}/build" />
 	<property name="installer.dist.dir" value="${installer.dir}/dist" />
 	<property name="innosetup.dir" value="${installer.dir}/InnoSetup5" />
 	<property name="innosetup.script" value="${installer.dir}/DatafariInstallerSource.iss" />
 
+	
 
 	<target name="Datafari_Windows_Installer.clean" depends="Datafari_Windows.clean">
 		<delete includeemptydirs="true">
@@ -21,6 +23,9 @@
 			<fileset dir="${installer.build.dir}" includes="**/*" />
 		</delete>
 	</target>
+	
+	<copy file="${installer.cassandra.dir}/cassandra.yaml" todir="${windows.dist.dir}/cassandra/conf/" overwrite="true"> </copy>
+	<copy file="${installer.dir}/README_WINDOWS_VERSION.txt" todir="${windows.dist.dir}/" overwrite="true"> </copy>
 
 	<target name="buildInstaller" depends="Datafari_Windows.copyBinaries">
 		<copy todir="${installer.build.dir}">

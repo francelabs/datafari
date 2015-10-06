@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Datafari"
-#define MyAppVersion "1.1.1"
+#define MyAppVersion "2.0"
 #define MyAppPublisher "France Labs"
 #define MyAppURL "http://www.datafari.com/"
 
@@ -162,4 +162,4 @@ end;
 
 
 [Run]
-Filename: "EXPLORER.EXE"; Parameters: "/select,{app}\bin\initialize.bat"
+Filename: "EXPLORER.EXE"; Parameters: "/select,{app}\bin\launch_me_first_after_install.bat"
