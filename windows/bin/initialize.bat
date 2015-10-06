@@ -45,7 +45,7 @@ cmd /c "%DATAFARI_HOME%\pgsql\bin\initdb -U postgres -A password --pwfile=%DATAF
 cmd /c "%DATAFARI_HOME%\pgsql\bin\pg_ctl -D %DATAFARI_HOME%\pgsql\data -l %DATAFARI_HOME%\logs\pgsql.log start"
 cd "%DATAFARI_HOME%\mcf\mcf_home"
 cmd /c "initialize.bat"
-cmd /c start /b %CASSANDRA_HOME%\bin\cassandra 
+cmd /c %CASSANDRA_HOME%\bin\cassandra 
 cmd /c ping 192.168.0.1 -n 1 -w 5000 > nul
 cmd /c %CASSANDRA_HOME%\bin\cqlsh -f %DATAFARI_HOME%\bin\common\config\cassandra\tables 
 cmd /c %CASSANDRA_HOME%\bin\cqlsh -f %DATAFARI_HOME%\bin\common\config\cassandra\create-admin-dev 

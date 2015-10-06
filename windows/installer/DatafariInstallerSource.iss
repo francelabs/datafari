@@ -24,6 +24,7 @@ DisableProgramGroupPage=yes
 OutputBaseFilename=Datafari_Setup
 Compression=lzma
 SolidCompression=yes
+PrivilegesRequired=admin
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -161,5 +162,4 @@ end;
 
 
 [Run]
-Filename: "{app}\bin\initialize.bat"
-Filename: "EXPLORER.EXE"; Parameters: "/select,{app}\bin\start-datafari.bat"
+Filename: "EXPLORER.EXE"; Parameters: "/select,{app}\bin\initialize.bat"
