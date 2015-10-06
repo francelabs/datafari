@@ -55,6 +55,12 @@
 			</fileset>
 		</copy>
 		
+		<copy todir="${windows.dist.dir}/cassandra">
+					<fileset dir="${cassandra.dir}">
+						<include name="**" />
+					</fileset>
+				</copy>
+		
 		<copy todir="${windows.dist.dir}/python">
 					<fileset dir="${python.dir}">
 						<include name="**" />
