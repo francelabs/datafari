@@ -47,7 +47,6 @@ then
 	mkdir "${DATAFARI_HOME}/cassandra/data"
 	CASSANDRA_INCLUDE=$CASSANDRA_ENV $CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE 1>/dev/null
 	id -u postgres &>/dev/null || useradd postgres
-	chown -R root:root "{$DATAFARI_HOME}"
 	chown -R postgres "${DATAFARI_HOME}/pgsql"
 	chmod -R 777 "${DATAFARI_HOME}/logs"
 	chmod -R 777 "${DATAFARI_HOME}/pid"

@@ -22,7 +22,7 @@ REM affecting other Java applications on your server/workstation.
 REM set SOLR_JAVA_HOME=
 
 REM Increase Java Min/Max Heap as needed to support your indexing / query needs
-set SOLR_JAVA_MEM=-Xms512m -Xmx512m
+set SOLR_JAVA_MEM=-Xms256m -Xmx1024m
 
 REM Enable verbose GC logging
 set GC_LOG_OPTS=-verbose:gc -XX:+PrintHeapAtGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+PrintGCApplicationStoppedTime
@@ -47,7 +47,7 @@ REM Set the ZooKeeper connection string if using an external ZooKeeper ensemble
 REM e.g. host1:2181,host2:2181/chroot
 REM Leave empty if not using SolrCloud
 REM set ZK_HOST=
-
+set SOLR_LOGS_DIR=%DATAFARI_HOME%/logs
 REM Set the ZooKeeper client timeout (for SolrCloud mode)
 REM set ZK_CLIENT_TIMEOUT=15000
 
@@ -95,3 +95,8 @@ REM set SOLR_SSL_CLIENT_KEY_STORE=
 REM set SOLR_SSL_CLIENT_KEY_STORE_PASSWORD=
 REM setSOLR_SSL_CLIENT_TRUST_STORE=
 REM setSOLR_SSL_CLIENT_TRUST_STORE_PASSWORD=
+
+
+set SOLR_HOME=%DATAFARI_HOME%/solr/solr_home
+set LOG4J_PROPS=%DATAFARI_HOME%/solr/conf/log4j.properties
+set SOLR_PORT=8983
