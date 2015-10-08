@@ -41,7 +41,7 @@ cd %DATAFARI_HOME%\mcf\mcf_home
 cmd /c "stop-agents.bat"
 cd %DATAFARI_HOME%\tomcat\bin
 cmd /c "shutdown.bat"
-cmd /c "for /f "tokens=1" %%i in ('jps -m ^| find "%TOMCATAPP%"') do ( taskkill /F /PID %%i )"
+cmd /c "for /f "tokens=1" %%i in ('%JAVA_HOME%\bin\jps -m ^| find "%TOMCATAPP%"') do ( taskkill /F /PID %%i )"
 
 cmd /c "%DATAFARI_HOME%\pgsql\bin\pg_ctl -D %DATAFARI_HOME%\pgsql\data -l %DATAFARI_HOME%\logs\pgsql.log stop"
 cmd /c %CASSANDRA_HOME%\bin\stop-server -p %CASSANDRA_HOME%\pid.txt -f

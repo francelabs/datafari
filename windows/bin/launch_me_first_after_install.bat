@@ -48,7 +48,7 @@ cmd /c "initialize.bat"
 cmd /c %CASSANDRA_HOME%\bin\cassandra 
 cmd /c ping 192.168.0.1 -n 1 -w 5000 > nul
 cmd /c %CASSANDRA_HOME%\bin\cqlsh -f %DATAFARI_HOME%\bin\common\config\cassandra\tables 
-cmd /c %CASSANDRA_HOME%\bin\cqlsh -f %DATAFARI_HOME%\bin\common\config\cassandra\create-admin-dev 
+
 
 
 cd %DATAFARI_HOME%\tomcat\bin
@@ -62,7 +62,7 @@ cmd /c ping 192.168.0.1 -n 1 -w 5000 > nul
 cmd /c "shutdown.bat"
 
 
-cmd /c "for /f "tokens=1" %%i in ('%JAVA_HOME%\jps -m ^| find "%TOMCATAPP%"') do ( taskkill /F /PID %%i )"
+cmd /c "for /f "tokens=1" %%i in ('%JAVA_HOME%\bin\jps -m ^| find "%TOMCATAPP%"') do ( taskkill /F /PID %%i )"
 cmd /c "%DATAFARI_HOME%\pgsql\bin\pg_ctl -D %DATAFARI_HOME%\pgsql\data -l %DATAFARI_HOME%\logs\pgsql.log stop"
 cmd /c %CASSANDRA_HOME%\bin\stop-server -p %CASSANDRA_HOME%\pid.txt -f
 
