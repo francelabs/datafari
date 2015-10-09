@@ -25,7 +25,6 @@ OutputBaseFilename=Datafari_Setup
 Compression=lzma
 SolidCompression=yes
 PrivilegesRequired=admin
-InfoAfterFile=infoafter.txt
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -55,7 +54,7 @@ procedure CurPageChanged(CurPageID: Integer);
   begin
   if CurPageID = 14 then 
   begin  
-    FileReplace(ExpandConstant('{app}\tomcat\conf\datafari.properties'),'@TEMPADMINPASSWORD@',AdminPassword);
+    FileReplace(ExpandConstant('{app}\tomcat\conf\tomcat-users.xml'),'@PASSWORD@',AdminPassword);
     FileReplace(ExpandConstant('{app}\mcf\mcf_home\properties.xml'),'@PASSWORD@',MCFAdminPassword);
   end
   end;
