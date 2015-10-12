@@ -20,6 +20,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Properties;
 
 import org.apache.log4j.BasicConfigurator;
@@ -45,6 +48,8 @@ public class UpdateNbLikes {
 		if(configFile.exists()){
 			properties.load(new FileInputStream(configFile));
 		}
+		else
+			configFile.createNewFile();
 	}
 	
 	public static synchronized UpdateNbLikes getInstance() throws IOException{
