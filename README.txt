@@ -15,7 +15,7 @@ Pre-Requirements:
 - Debian Environment 64 bits (a Docker image is available if you are on Windows environment)
 - Processor : 1GHZ and RAM : 2GB
 - Ports 8080 and 5432 are opened
-- Debian environment : requires curl, jq
+- Debian environment : requires curl, debconf, unzip
 
 How to install and start Datafari :
 
