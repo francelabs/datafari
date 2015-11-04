@@ -17,13 +17,10 @@
 
 # -----------------------------------------------------------------------------
 # Start Script for the CATALINA Server
-#
-# $Id: startup.sh 1202062 2011-11-15 06:50:02Z mturk $
 # -----------------------------------------------------------------------------
 
 set JPDA_SUSPEND=n
 export CATALINA_OPTS="${SOLRCLOUDOPTION}-Dorg.apache.manifoldcf.configfile=../../mcf/mcf_home/properties.xml -server -Xms2048m -Xmx2048m"
-
 
 # Better OS/400 detection: see Bugzilla 31132
 os400=false

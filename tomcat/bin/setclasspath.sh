@@ -19,8 +19,6 @@
 #  Set JAVA_HOME or JRE_HOME if not already set, ensure any provided settings
 #  are valid and consistent with the selected start-up options and set up the
 #  endorsed directory.
-#
-#  $Id: setclasspath.sh 1430568 2013-01-08 22:08:57Z schultz $
 # -----------------------------------------------------------------------------
 
 # Make sure prerequisite environment variables are set
@@ -85,8 +83,12 @@ if [ -z "$JAVA_ENDORSED_DIRS" ]; then
   JAVA_ENDORSED_DIRS="$CATALINA_HOME"/endorsed
 fi
 
-# Set standard commands for invoking Java.
-_RUNJAVA="$JRE_HOME"/bin/java
+# Set standard commands for invoking Java, if not already set.
+if [ -z "$_RUNJAVA" ]; then
+  _RUNJAVA="$JRE_HOME"/bin/java
+fi
 if [ "$os400" != "true" ]; then
-  _RUNJDB="$JAVA_HOME"/bin/jdb
+  if [ -z "$_RUNJDB" ]; then
+    _RUNJDB="$JAVA_HOME"/bin/jdb
+  fi
 fi
