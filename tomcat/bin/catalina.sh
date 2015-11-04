@@ -93,6 +93,8 @@
 #   LOGGING_MANAGER (Optional) Override Tomcat's logging manager
 #                   Example (all one line)
 #                   LOGGING_MANAGER="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager"
+#
+# $Id: catalina.sh 1449412 2013-02-23 21:31:48Z kkolinko $
 # -----------------------------------------------------------------------------
 
 # OS specific support.  $var _must_ be set to either true or false.
@@ -182,7 +184,7 @@ fi
 CLASSPATH="$CLASSPATH""$CATALINA_HOME"/bin/bootstrap.jar
 
 if [ -z "$CATALINA_OUT" ] ; then
-  CATALINA_OUT="$CATALINA_BASE"/logs/catalina.out
+  CATALINA_OUT=../../logs/catalina.out
 fi
 
 if [ -z "$CATALINA_TMPDIR" ] ; then
@@ -307,20 +309,20 @@ elif [ "$1" = "run" ]; then
       echo "Using Security Manager"
     fi
     shift
-    eval exec "\"$_RUNJAVA\"" "\"$LOGGING_CONFIG\"" $LOGGING_MANAGER $JAVA_OPTS $CATALINA_OPTS \
-      -Djava.endorsed.dirs="\"$JAVA_ENDORSED_DIRS\"" -classpath "\"$CLASSPATH\"" \
+    eval exec \"$_RUNJAVA\" \"$LOGGING_CONFIG\" $LOGGING_MANAGER $JAVA_OPTS $CATALINA_OPTS \
+      -Djava.endorsed.dirs=\"$JAVA_ENDORSED_DIRS\" -classpath \"$CLASSPATH\" \
       -Djava.security.manager \
-      -Djava.security.policy=="\"$CATALINA_BASE/conf/catalina.policy\"" \
-      -Dcatalina.base="\"$CATALINA_BASE\"" \
-      -Dcatalina.home="\"$CATALINA_HOME\"" \
-      -Djava.io.tmpdir="\"$CATALINA_TMPDIR\"" \
+      -Djava.security.policy==\"$CATALINA_BASE/conf/catalina.policy\" \
+      -Dcatalina.base=\"$CATALINA_BASE\" \
+      -Dcatalina.home=\"$CATALINA_HOME\" \
+      -Djava.io.tmpdir=\"$CATALINA_TMPDIR\" \
       org.apache.catalina.startup.Bootstrap "$@" start
   else
-    eval exec "\"$_RUNJAVA\"" "\"$LOGGING_CONFIG\"" $LOGGING_MANAGER $JAVA_OPTS $CATALINA_OPTS \
-      -Djava.endorsed.dirs="\"$JAVA_ENDORSED_DIRS\"" -classpath "\"$CLASSPATH\"" \
-      -Dcatalina.base="\"$CATALINA_BASE\"" \
-      -Dcatalina.home="\"$CATALINA_HOME\"" \
-      -Djava.io.tmpdir="\"$CATALINA_TMPDIR\"" \
+    eval exec \"$_RUNJAVA\" \"$LOGGING_CONFIG\" $LOGGING_MANAGER $JAVA_OPTS $CATALINA_OPTS \
+      -Djava.endorsed.dirs=\"$JAVA_ENDORSED_DIRS\" -classpath \"$CLASSPATH\" \
+      -Dcatalina.base=\"$CATALINA_BASE\" \
+      -Dcatalina.home=\"$CATALINA_HOME\" \
+      -Djava.io.tmpdir=\"$CATALINA_TMPDIR\" \
       org.apache.catalina.startup.Bootstrap "$@" start
   fi
 
@@ -335,8 +337,6 @@ elif [ "$1" = "start" ] ; then
           ps -p $PID >/dev/null 2>&1
           if [ $? -eq 0 ] ; then
             echo "Tomcat appears to still be running with PID $PID. Start aborted."
-            echo "If the following process is not a Tomcat process, remove the PID file and try again:"
-            ps -f -p $PID
             exit 1
           else
             echo "Removing/clearing stale PID file."
@@ -373,22 +373,22 @@ elif [ "$1" = "start" ] ; then
       echo "Using Security Manager"
     fi
     shift
-    eval "\"$_RUNJAVA\"" "\"$LOGGING_CONFIG\"" $LOGGING_MANAGER $JAVA_OPTS $CATALINA_OPTS \
-      -Djava.endorsed.dirs="\"$JAVA_ENDORSED_DIRS\"" -classpath "\"$CLASSPATH\"" \
+    eval \"$_RUNJAVA\" \"$LOGGING_CONFIG\" $LOGGING_MANAGER $JAVA_OPTS $CATALINA_OPTS \
+      -Djava.endorsed.dirs=\"$JAVA_ENDORSED_DIRS\" -classpath \"$CLASSPATH\" \
       -Djava.security.manager \
-      -Djava.security.policy=="\"$CATALINA_BASE/conf/catalina.policy\"" \
-      -Dcatalina.base="\"$CATALINA_BASE\"" \
-      -Dcatalina.home="\"$CATALINA_HOME\"" \
-      -Djava.io.tmpdir="\"$CATALINA_TMPDIR\"" \
+      -Djava.security.policy==\"$CATALINA_BASE/conf/catalina.policy\" \
+      -Dcatalina.base=\"$CATALINA_BASE\" \
+      -Dcatalina.home=\"$CATALINA_HOME\" \
+      -Djava.io.tmpdir=\"$CATALINA_TMPDIR\" \
       org.apache.catalina.startup.Bootstrap "$@" start \
       >> "$CATALINA_OUT" 2>&1 "&"
 
   else
-    eval "\"$_RUNJAVA\"" "\"$LOGGING_CONFIG\"" $LOGGING_MANAGER $JAVA_OPTS $CATALINA_OPTS \
-      -Djava.endorsed.dirs="\"$JAVA_ENDORSED_DIRS\"" -classpath "\"$CLASSPATH\"" \
-      -Dcatalina.base="\"$CATALINA_BASE\"" \
-      -Dcatalina.home="\"$CATALINA_HOME\"" \
-      -Djava.io.tmpdir="\"$CATALINA_TMPDIR\"" \
+    eval \"$_RUNJAVA\" \"$LOGGING_CONFIG\" $LOGGING_MANAGER $JAVA_OPTS $CATALINA_OPTS \
+      -Djava.endorsed.dirs=\"$JAVA_ENDORSED_DIRS\" -classpath \"$CLASSPATH\" \
+      -Dcatalina.base=\"$CATALINA_BASE\" \
+      -Dcatalina.home=\"$CATALINA_HOME\" \
+      -Djava.io.tmpdir=\"$CATALINA_TMPDIR\" \
       org.apache.catalina.startup.Bootstrap "$@" start \
       >> "$CATALINA_OUT" 2>&1 "&"
 
@@ -397,8 +397,6 @@ elif [ "$1" = "start" ] ; then
   if [ ! -z "$CATALINA_PID" ]; then
     echo $! > "$CATALINA_PID"
   fi
-
-  echo "Tomcat started."
 
 elif [ "$1" = "stop" ] ; then
 
@@ -436,20 +434,12 @@ elif [ "$1" = "stop" ] ; then
     fi
   fi
 
-  eval "\"$_RUNJAVA\"" $LOGGING_MANAGER $JAVA_OPTS \
-    -Djava.endorsed.dirs="\"$JAVA_ENDORSED_DIRS\"" -classpath "\"$CLASSPATH\"" \
-    -Dcatalina.base="\"$CATALINA_BASE\"" \
-    -Dcatalina.home="\"$CATALINA_HOME\"" \
-    -Djava.io.tmpdir="\"$CATALINA_TMPDIR\"" \
+  eval \"$_RUNJAVA\" $LOGGING_MANAGER $JAVA_OPTS \
+    -Djava.endorsed.dirs=\"$JAVA_ENDORSED_DIRS\" -classpath \"$CLASSPATH\" \
+    -Dcatalina.base=\"$CATALINA_BASE\" \
+    -Dcatalina.home=\"$CATALINA_HOME\" \
+    -Djava.io.tmpdir=\"$CATALINA_TMPDIR\" \
     org.apache.catalina.startup.Bootstrap "$@" stop
-
-  # stop failed. Shutdown port disabled? Try a normal kill.
-  if [ $? != 0 ]; then
-    if [ ! -z "$CATALINA_PID" ]; then
-      echo "The stop command failed. Attempting to signal the process to stop through OS signal."
-      kill -15 `cat "$CATALINA_PID"` >/dev/null 2>&1
-    fi
-  fi
 
   if [ ! -z "$CATALINA_PID" ]; then
     if [ -f "$CATALINA_PID" ]; then
@@ -460,32 +450,25 @@ elif [ "$1" = "stop" ] ; then
           if [ $? != 0 ]; then
             if [ -w "$CATALINA_PID" ]; then
               cat /dev/null > "$CATALINA_PID"
-              # If Tomcat has stopped don't try and force a stop with an empty PID file
-              FORCE=0
             else
-              echo "The PID file could not be removed or cleared."
+              echo "Tomcat stopped but the PID file could not be removed or cleared."
             fi
           fi
-          echo "Tomcat stopped."
           break
         fi
         if [ $SLEEP -gt 0 ]; then
           sleep 1
         fi
         if [ $SLEEP -eq 0 ]; then
-          echo "Tomcat did not stop in time."
           if [ $FORCE -eq 0 ]; then
-            echo "PID file was not removed."
+            echo "Tomcat did not stop in time. PID file was not removed."
           fi
-          echo "To aid diagnostics a thread dump has been written to standard out."
-          kill -3 `cat "$CATALINA_PID"`
         fi
         SLEEP=`expr $SLEEP - 1 `
       done
     fi
   fi
 
-  KILL_SLEEP_INTERVAL=5
   if [ $FORCE -eq 1 ]; then
     if [ -z "$CATALINA_PID" ]; then
       echo "Kill failed: \$CATALINA_PID not set"
@@ -494,27 +477,9 @@ elif [ "$1" = "stop" ] ; then
         PID=`cat "$CATALINA_PID"`
         echo "Killing Tomcat with the PID: $PID"
         kill -9 $PID
-        while [ $KILL_SLEEP_INTERVAL -ge 0 ]; do
-            kill -0 `cat "$CATALINA_PID"` >/dev/null 2>&1
-            if [ $? -gt 0 ]; then
-                rm -f "$CATALINA_PID" >/dev/null 2>&1
-                if [ $? != 0 ]; then
-                    if [ -w "$CATALINA_PID" ]; then
-                        cat /dev/null > "$CATALINA_PID"
-                    else
-                        echo "The PID file could not be removed."
-                    fi
-                fi
-                echo "The Tomcat process has been killed."
-                break
-            fi
-            if [ $KILL_SLEEP_INTERVAL -gt 0 ]; then
-                sleep 1
-            fi
-            KILL_SLEEP_INTERVAL=`expr $KILL_SLEEP_INTERVAL - 1 `
-        done
-        if [ $KILL_SLEEP_INTERVAL -lt 0 ]; then
-            echo "Tomcat has not been killed completely yet. The process might be waiting on some system call or might be UNINTERRUPTIBLE."
+        rm -f "$CATALINA_PID" >/dev/null 2>&1
+        if [ $? != 0 ]; then
+          echo "Tomcat was killed but the PID file could not be removed."
         fi
       fi
     fi
@@ -522,11 +487,11 @@ elif [ "$1" = "stop" ] ; then
 
 elif [ "$1" = "configtest" ] ; then
 
-    eval "\"$_RUNJAVA\"" $LOGGING_MANAGER $JAVA_OPTS \
-      -Djava.endorsed.dirs="\"$JAVA_ENDORSED_DIRS\"" -classpath "\"$CLASSPATH\"" \
-      -Dcatalina.base="\"$CATALINA_BASE\"" \
-      -Dcatalina.home="\"$CATALINA_HOME\"" \
-      -Djava.io.tmpdir="\"$CATALINA_TMPDIR\"" \
+    eval \"$_RUNJAVA\" $LOGGING_MANAGER $JAVA_OPTS \
+      -Djava.endorsed.dirs=\"$JAVA_ENDORSED_DIRS\" -classpath \"$CLASSPATH\" \
+      -Dcatalina.base=\"$CATALINA_BASE\" \
+      -Dcatalina.home=\"$CATALINA_HOME\" \
+      -Djava.io.tmpdir=\"$CATALINA_TMPDIR\" \
       org.apache.catalina.startup.Bootstrap configtest
     result=$?
     if [ $result -ne 0 ]; then
