@@ -16,13 +16,61 @@
 package com.francelabs.datafari.statistics;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.solr.common.SolrDocument;
 
 public class StatsUtils {
 
-	public static double round(double unrounded, int precision,
-			int roundingMode) {
-		BigDecimal bd = new BigDecimal(unrounded);
-		BigDecimal rounded = bd.setScale(precision, roundingMode);
+	/** Statistic fields to put in the logs. */
+	public static final List<String> statFields = new ArrayList<String>(Arrays.asList("id", "date", "q", "noHits", "numFound", "numClicks", "QTime",
+			"positionClickTot", "click", "history", "spell", "suggest", "url"));
+
+	public static double round(final double unrounded, final int precision, final int roundingMode) {
+		final BigDecimal bd = new BigDecimal(unrounded);
+		final BigDecimal rounded = bd.setScale(precision, roundingMode);
 		return rounded.doubleValue();
+	}
+
+	/**
+	 * Format the statFields values (extracted from the input Solr document)
+	 * into a String. The generated String will be used to generate a statistic
+	 * log
+	 * <p>
+	 * Each statField value is separated by a '|', if a value is null or empty
+	 * the '|' separator is still put
+	 *
+	 * @param solrDocStat
+	 * @return
+	 */
+	public static String createStatLog(final SolrDocument solrDocStat) {
+		String stat = "";
+		int cpt = 0;
+		for (final String statField : statFields) {
+			if (cpt > 0) {
+				stat += "|";
+			} else {
+				cpt++;
+			}
+			final Object value = solrDocStat.getFieldValue(statField);
+			if (value != null) {
+				if (value instanceof Date) {
+					// Create an instance of SimpleDateFormat used for
+					// formatting
+					// the string representation of date
+					final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+					final Date date = (Date) value;
+					stat += df.format(date);
+				} else {
+					stat += value.toString();
+				}
+			}
+		}
+		return stat;
 	}
 }

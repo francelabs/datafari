@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.francelabs.datafari.statistics;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,60 +26,55 @@ import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.ModifiableSolrParams;
 
+import com.francelabs.datafari.logs.StatLevel;
 import com.francelabs.datafari.service.search.SolrServers;
 import com.francelabs.datafari.service.search.SolrServers.Core;
 
 public class StatsPusher {
 
-	private static final List<String> queryParams = Arrays.asList("q",
-			"numFound", "noHits", "QTime");
-	private static final List<String> documentParams = Arrays.asList("url",
-			"id");
+	private static final List<String> queryParams = Arrays.asList("q", "numFound", "noHits", "QTime");
+	private static final List<String> documentParams = Arrays.asList("url", "id");
 
-	private final static Logger LOGGER = Logger.getLogger(StatsPusher.class
-			.getName());
+	private final static Logger LOGGER = Logger.getLogger(StatsPusher.class.getName());
 
-	public static void pushDocument(ModifiableSolrParams params) {
+	public static void pushDocument(final ModifiableSolrParams params) {
 		try {
 
-			SolrClient solrServer = SolrServers
-					.getSolrServer(Core.STATISTICS);
+			final SolrClient solrServer = SolrServers.getSolrServer(Core.STATISTICS);
 
-			Map increment = new HashMap();
+			final Map<String, Integer> increment = new HashMap<String, Integer>();
 			increment.put("inc", 1);
 
-			Map setToOne = new HashMap();
+			final Map<String, Integer> setToOne = new HashMap<String, Integer>();
 			setToOne.put("set", 1);
 
-			Map incrementPosition = new HashMap();
-			incrementPosition.put("inc", params.get("position"));
+			final Map<String, Integer> incrementPosition = new HashMap<String, Integer>();
+			incrementPosition.put("inc", Integer.parseInt(params.get("position")));
 
-			SolrInputDocument doc = new SolrInputDocument();
+			final SolrInputDocument doc = new SolrInputDocument();
 			doc.addField("click", setToOne);
 			doc.addField("numClicks", increment);
 			doc.addField("positionClickTot", incrementPosition);
 
-			Map<String, String> paramsMap = new HashMap<String, String>();
+			final Map<String, String> paramsMap = new HashMap<String, String>();
 
-			for (String paramName : params.getParameterNames()) {
-				for (String paramValue : params.getParams(paramName)) {
-					paramsMap.put(paramName,
-							normalizeParameterValue(paramName, paramValue));
+			for (final String paramName : params.getParameterNames()) {
+				for (final String paramValue : params.getParams(paramName)) {
+					paramsMap.put(paramName, normalizeParameterValue(paramName, paramValue));
 				}
 			}
 
-			for (Entry<String, String> entry : paramsMap.entrySet()) {
+			for (final Entry<String, String> entry : paramsMap.entrySet()) {
 				if (documentParams.contains(entry.getKey())) {
 					doc.addField(entry.getKey(), entry.getValue());
 				}
 			}
 
-			
 			String history = "";
 			history += "///";
 			history += "///";
@@ -87,56 +83,53 @@ public class StatsPusher {
 			history += "///" + paramsMap.get("url");
 			history += "///" + paramsMap.get("position");
 
-			Map addValue = new HashMap();
+			final Map<String, String> addValue = new HashMap<String, String>();
 			addValue.put("add", history);
 
 			doc.addField("history", addValue);
 
 			solrServer.add(doc, 10000);
 
+			final SolrDocument insertedSolrDoc = solrServer.getById(doc.getFieldValue("id").toString());
 
-		} catch (Exception e) {
-			LOGGER.error(
-					"Cannot add doc for statistic component : "
-							+ e.getMessage(), e);
+			LOGGER.log(StatLevel.STAT, StatsUtils.createStatLog(insertedSolrDoc));
+
+		} catch (final Exception e) {
+			LOGGER.error("Cannot add doc for statistic component : " + e.getMessage(), e);
 			e.printStackTrace();
 		}
 	}
 
-
-	public static void pushQuery(ModifiableSolrParams params) {
+	public static void pushQuery(final ModifiableSolrParams params) {
 		try {
 
-			SolrClient solrServer = SolrServers
-					.getSolrServer(Core.STATISTICS);
+			final SolrClient solrServer = SolrServers.getSolrServer(Core.STATISTICS);
 
-			SolrQuery query = new SolrQuery();
+			final SolrQuery query = new SolrQuery();
 			query.setRequestHandler("/get");
 			query.add("id", params.get("id"));
 			query.add("fl", "id");
-			QueryResponse queryResponse = solrServer.query(query);
+			final QueryResponse queryResponse = solrServer.query(query);
 
-			SolrInputDocument doc = new SolrInputDocument();
+			final SolrInputDocument doc = new SolrInputDocument();
 			doc.addField("id", params.get("id"));
 
-			Map<String, String> paramsMap = new HashMap<String, String>();
+			final Map<String, String> paramsMap = new HashMap<String, String>();
 
-			for (String paramName : params.getParameterNames()) {
-				for (String paramValue : params.getParams(paramName)) {
-					paramsMap.put(paramName,
-							normalizeParameterValue(paramName, paramValue));
+			for (final String paramName : params.getParameterNames()) {
+				for (final String paramValue : params.getParams(paramName)) {
+					paramsMap.put(paramName, normalizeParameterValue(paramName, paramValue));
 				}
 			}
 
 			if (queryResponse.getResponse().get("doc") == null) {
-				for (Entry<String, String> entry : paramsMap.entrySet()) {
+				for (final Entry<String, String> entry : paramsMap.entrySet()) {
 					if (queryParams.contains(entry.getKey())) {
 						doc.addField(entry.getKey(), entry.getValue());
 					}
 				}
 			}
 
-			
 			String history = "" + paramsMap.get("q");
 			history += "///";
 			if (paramsMap.get("fq") != null) {
@@ -147,7 +140,7 @@ public class StatsPusher {
 			history += "///" + paramsMap.get("QTime");
 			history += "///";
 			if (paramsMap.get("start") != null && paramsMap.get("rows") != null) {
-				history += (int)(Double.parseDouble(paramsMap.get("start")) / Double.parseDouble(paramsMap.get("rows"))+1);
+				history += (int) (Double.parseDouble(paramsMap.get("start")) / Double.parseDouble(paramsMap.get("rows")) + 1);
 			} else {
 				history += 1;
 			}
@@ -155,27 +148,26 @@ public class StatsPusher {
 			history += "///";
 			history += "///";
 
-			Map addValue = new HashMap();
+			final Map<String, String> addValue = new HashMap<String, String>();
 			addValue.put("add", history);
 
 			doc.addField("history", addValue);
 
 			solrServer.add(doc, 10000);
-			
 
-		} catch (Exception e) {
-			LOGGER.error(
-					"Cannot add query for statistic component : "
-							+ e.getMessage(), e);
+			final SolrDocument insertedSolrDoc = solrServer.getById(doc.getFieldValue("id").toString());
+
+			LOGGER.log(StatLevel.STAT, StatsUtils.createStatLog(insertedSolrDoc));
+
+		} catch (final Exception e) {
+			LOGGER.error("Cannot add query for statistic component : " + e.getMessage(), e);
 			e.printStackTrace();
 		}
-		
+
 	}
-	
 
-
-	private static String normalizeParameterValue(String param, String value) {
-		value = URLDecoder.decode(value);
+	private static String normalizeParameterValue(final String param, String value) throws UnsupportedEncodingException {
+		value = URLDecoder.decode(value, "UTF-8");
 		value = value.replaceAll("\\{\\!tag=[^}]*\\}", "");
 		return value;
 	}
