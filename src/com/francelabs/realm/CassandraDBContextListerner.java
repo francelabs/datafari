@@ -28,13 +28,13 @@ public class CassandraDBContextListerner implements ServletContextListener {
 	public static synchronized Session getSession() {
 
 		try {
-			if (cluster != null || cluster.isClosed()) {
+			if (cluster == null || cluster.isClosed()) {
 				// Connect to the cluster and keyspace "demo"
 				cluster = Cluster.builder().addContactPoint(host).build();
 				LOGGER.info("Cassandra cluster initialized successfully");
 
 			}
-			if (session != null || session.isClosed()){
+			if (session == null || session.isClosed()){
 				session = cluster.connect(KEYSPACE);
 				LOGGER.info("Cassandra" + KEYSPACE + " session initialized successfully");
 
@@ -50,7 +50,7 @@ public class CassandraDBContextListerner implements ServletContextListener {
 	public void contextDestroyed(ServletContextEvent sce) {
 		if (session != null) {
 			session.close();
-			LOGGER.info("Cassandra" + KEYSPACE + " session closed successfully");
+			LOGGER.info("Cassandra " + KEYSPACE + " session closed successfully");
 		}
 
 		if (cluster != null) {
