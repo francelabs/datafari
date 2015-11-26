@@ -29,7 +29,7 @@ public class StatsUtils {
 
 	/** Statistic fields to put in the logs. */
 	public static final List<String> statFields = new ArrayList<String>(Arrays.asList("id", "date", "q", "noHits", "numFound", "numClicks", "QTime",
-			"positionClickTot", "click", "history", "spell", "suggest", "url"));
+			"positionClickTot", "click", "history", "url"));
 
 	public static double round(final double unrounded, final int precision, final int roundingMode) {
 		final BigDecimal bd = new BigDecimal(unrounded);

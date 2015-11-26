@@ -2,9 +2,12 @@ package com.francelabs.datafari.monitoring;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -35,20 +38,25 @@ public class IndexMonitoring {
 	/** The scheduler. */
 	private ScheduledExecutorService scheduler;
 	/** The selected monitoring frequency unit. */
-	private final MonitoringFrequencyUnit selectedMonitoringFrequencyUnit;
+	private final MonitoringLogFrequencyUnit selectedMonitoringLogFrequencyUnit;
 	/** The frequency value. */
 	private final int frequencyValue;
 
-	/** Period Rate Enum. */
-	public static enum MonitoringFrequencyUnit {
+	/** Monitoring Log Frequency Enum. */
+	public static enum MonitoringLogFrequencyUnit {
 		MINUTE, HOUR, DAY
+	}
+
+	/** Monitoring Event Frequency Enum. */
+	public static enum MonitoringEventFrequency {
+		MINUTELY, HOURLY, DAILY
 	}
 
 	/**
 	 * Constructor
 	 */
 	private IndexMonitoring() {
-		selectedMonitoringFrequencyUnit = MonitoringFrequencyUnit.HOUR;
+		selectedMonitoringLogFrequencyUnit = MonitoringLogFrequencyUnit.HOUR;
 		frequencyValue = 1;
 	}
 
@@ -70,8 +78,7 @@ public class IndexMonitoring {
 	public void startIndexMonitoring() {
 		scheduler = Executors.newScheduledThreadPool(1);
 		final FileShareMonitoringLog logger = new FileShareMonitoringLog();
-		logger.run();
-		scheduler.scheduleAtFixedRate(logger, secondsBetweenNextEvent(), getPeriod(), TimeUnit.SECONDS);
+		scheduler.scheduleAtFixedRate(logger, millisecondsBetweenNextEvent(), getPeriod(), TimeUnit.MILLISECONDS);
 	}
 
 	/**
@@ -85,11 +92,11 @@ public class IndexMonitoring {
 	 * Calculates the period according to the selected monitoring frequency unit
 	 * and value
 	 *
-	 * @return the calculated period in seconds
+	 * @return the calculated period in milliseconds
 	 */
 	private long getPeriod() {
 		long multiplicator;
-		switch (selectedMonitoringFrequencyUnit) {
+		switch (selectedMonitoringLogFrequencyUnit) {
 		case HOUR:
 			multiplicator = 60 * 60;
 			break;
@@ -103,32 +110,22 @@ public class IndexMonitoring {
 			multiplicator = 60 * 60;
 			break;
 		}
-		return multiplicator * frequencyValue;
+		return 1000 * multiplicator * frequencyValue;
 	}
 
 	/**
-	 * Calculates the number of seconds between the current date time and the
-	 * date time of the next monitoring event
+	 * Calculates the number of milliseconds between the current date time and
+	 * the date time of the next monitoring event
 	 *
-	 * @return the number of seconds
+	 * @return the number of milliseconds
 	 */
-	private long secondsBetweenNextEvent() {
+	private long millisecondsBetweenNextEvent() {
 		final Calendar nextMinute = new GregorianCalendar();
-		switch (selectedMonitoringFrequencyUnit) {
-		case MINUTE:
-			nextMinute.add(Calendar.MINUTE, frequencyValue);
-			break;
-		case HOUR:
-			nextMinute.add(Calendar.HOUR, frequencyValue);
-			break;
-		case DAY:
-			nextMinute.add(Calendar.HOUR, frequencyValue);
-			break;
-		default:
-			break;
-		}
+		nextMinute.add(Calendar.MINUTE, frequencyValue);
+		nextMinute.set(Calendar.SECOND, 0);
+		nextMinute.set(Calendar.MILLISECOND, 0);
 		final long diffInMilliseconds = nextMinute.getTimeInMillis() - new GregorianCalendar().getTimeInMillis();
-		return (diffInMilliseconds / 1000L);
+		return diffInMilliseconds;
 	}
 
 	/**
@@ -160,9 +157,32 @@ public class IndexMonitoring {
 		/** facet fields to add to the query. */
 		private final List<String> facetFields = new ArrayList<String>(Arrays.asList("extension", "language", "source"));
 
+		private final MonitoringEventFrequency eventFrequency;
+
+		/**
+		 * Constructor
+		 */
+		public FileShareMonitoringLog() {
+			this.eventFrequency = MonitoringEventFrequency.DAILY;
+		}
+
+		/**
+		 * Constructor
+		 *
+		 * @param eventFrequency
+		 */
+		public FileShareMonitoringLog(final MonitoringEventFrequency eventFrequency) {
+			this.eventFrequency = eventFrequency;
+		}
+
 		@Override
 		public void run() {
 			try {
+				// Create an instance of SimpleDateFormat used for
+				// formatting
+				// the string representation of date
+				final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+				final String currentDate = df.format(new Date());
 				String log = "";
 				final SolrClient solrServer = SolrServers.getSolrServer(Core.FILESHARE);
 				final SolrQuery query = new SolrQuery();
@@ -174,7 +194,7 @@ public class IndexMonitoring {
 				final QueryResponse queryResponse = solrServer.query(query);
 				final SolrDocumentList response = (SolrDocumentList) queryResponse.getResponse().get("response");
 				// Generate the global num of docs log
-				log = generateID("no", "no") + "|" + response.getNumFound() + "|no|no";
+				log = generateID("no", "no") + "|" + currentDate + "|" + response.getNumFound() + "|no|no";
 				LOGGER.log(MonitoringLevel.MONITORING, log);
 
 				// Then generate the logs for each facet
@@ -183,7 +203,7 @@ public class IndexMonitoring {
 					for (final Count facet : facetField.getValues()) {
 						final String facetValue = facet.getName();
 						final String id = generateID(facetValue, facetType);
-						log = id + "|" + facet.getCount() + "|" + facetValue + "|" + facetType;
+						log = id + "|" + currentDate + "|" + facet.getCount() + "|" + facetValue + "|" + facetType;
 						LOGGER.log(MonitoringLevel.MONITORING, log);
 					}
 				}
@@ -197,23 +217,28 @@ public class IndexMonitoring {
 		 * Generates an ID for the log, which is needed to exploit the
 		 * monitoring logs with ELK (Elasticsearch Logstash Kibana).
 		 * <p>
-		 * The ID must be UNIQUE per day, per facet value. This is the reason
-		 * why the facet value and the facet type are required. The ID is a MD5
-		 * calculated on a string composed by the currentDate(midnight), the
-		 * facet value and the facet type.
+		 * The ID must be UNIQUE per monitoring event, per facet value. This is
+		 * the reason why the facet value and the facet type are required. The
+		 * ID is a MD5 calculated on a string composed by the
+		 * currentDate(midnight), the facet value and the facet type.
 		 *
 		 * @param facetValue
 		 *            the facet value
 		 * @param facetType
-		 *            facet ype
+		 *            facet type
 		 * @return the generated ID
 		 * @throws NoSuchAlgorithmException .
 		 */
 		private String generateID(final String facetValue, final String facetType) throws NoSuchAlgorithmException {
-			// Set the current date to midnight
+			// Set the current date according to the selected monitoring event
+			// frequency
 			final Calendar currentDate = new GregorianCalendar();
-			currentDate.set(Calendar.HOUR, 0);
-			currentDate.set(Calendar.MINUTE, 0);
+			if (eventFrequency != MonitoringEventFrequency.HOURLY && eventFrequency != MonitoringEventFrequency.MINUTELY) {
+				currentDate.set(Calendar.HOUR, 0);
+			}
+			if (eventFrequency != MonitoringEventFrequency.MINUTELY) {
+				currentDate.set(Calendar.MINUTE, 0);
+			}
 			currentDate.set(Calendar.SECOND, 0);
 			currentDate.set(Calendar.MILLISECOND, 0);
 			currentDate.set(Calendar.HOUR_OF_DAY, 0);
