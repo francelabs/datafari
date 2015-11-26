@@ -132,7 +132,7 @@ AjaxFranceLabs.TableWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 		}
 
 		if (this.pagination) {
-			this.pagination.categorie = $('ul', this.elm);
+			this.pagination.source = $('ul', this.elm);
 			this.pagination.updatePages();
 		}
 		this.sortBy(this.sort);
