@@ -28,4 +28,4 @@ fi
 
 
 CASSANDRA_INCLUDE=$CASSANDRA_ENV $CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE
-SOLR_INCLUDE=$SOLR_ENV $SOLR_INSTALL_DIR/bin/solr start
+SOLR_INCLUDE=$SOLR_ENV $SOLR_INSTALL_DIR/bin/solr start -a "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=4044"
