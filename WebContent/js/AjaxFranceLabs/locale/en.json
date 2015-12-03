@@ -1,6 +1,7 @@
 {
 "fieldWeight":"Field weight",
 "facetlanguage":"Language",
+"facethierarchicalurl":"Path",
 "atLeastOneWord":"At least one word",
 "weeklyDelay":"When to launch the weekly alerts",
 "facetName":"Name of the facet",

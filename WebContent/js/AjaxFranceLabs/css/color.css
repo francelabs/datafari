@@ -11,6 +11,10 @@
 .tableWidget .facetSort { background-color: #ebebeb; border-bottom-color: #b5b5b5; }
 .tableWidget ul li { border-bottom-color: #b5b5b5; }
 
+.hierarchicalWidget .facetName { border-bottom-color: #b5b5b5; color: #3d3c3a; }
+.hierarchicalWidget .facetSort { background-color: #ebebeb; border-bottom-color: #b5b5b5; }
+.hierarchicalWidget ul li { border-bottom-color: #b5b5b5; }
+
 .resultWidget .res .title { color: #000000; }
 .resultWidget .doc .res .address { color: #3d3c3a; }
 .resultWidget .doc .res .tags a span { color: #CF242A; font-style: italic; }

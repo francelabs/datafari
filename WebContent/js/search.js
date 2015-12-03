@@ -11,6 +11,19 @@ $(function($) {
 		selectionType : 'OR',
 		returnUnselectedFacetValues : true
 	}));
+	
+	Manager.addWidget(new AjaxFranceLabs.HierarchicalFacetWidget({
+		elm : $('#facet_hierarchical_url'),
+		id : 'facet_hierarchical',
+		field : 'urlHierarchy',
+		name : window.i18n.msgStore['facethierarchicalurl'],
+		pagination : false,
+		selectionType : 'OR',
+		returnUnselectedFacetValues : true,
+		rootLevel : 0,
+		maxDepth : 3,
+		separator : '/'
+	}));
 
 	Manager.addWidget(new AjaxFranceLabs.TableWidget({
 		elm : $('#facet_language'),

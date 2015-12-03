@@ -2,6 +2,7 @@
 
 "fieldWeight":"Pondération des champs",
 "facetlanguage":"Langue",
+"facethierarchicalurl":"Path",
 "atLeastOneWord":"Au moins un mot",
 "weeklyDelay":"Quand lancer les alertes hebdomadaires",
 "facetName":"Nom de la facette",
