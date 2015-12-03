@@ -2,5 +2,6 @@
 @import "results-template.css";
 @import "results-color.css";
 @import "results-font.css";
+@import "results-animation.css";
 
 body { overflow-y: scroll; }
