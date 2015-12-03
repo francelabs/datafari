@@ -13,7 +13,7 @@ $(function($){
                 language = window.navigator.language;
 
 	var language = language.substring(0, 2);
-	if (language != 'fr'){
+	if (language != 'fr' && language != 'it'){
 		language = 'en';
 		
 	}
