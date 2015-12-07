@@ -44,23 +44,23 @@ public class ModifyRealmLdap extends HttpServlet {
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		try{
-			if (request.getParameter(RealmLdapConfiguration.attributeConnectionName)!=null && request.getParameter(RealmLdapConfiguration.attributeConnectionPassword)!=null
-					&& request.getParameter(RealmLdapConfiguration.attributeConnectionURL)!=null && request.getParameter(RealmLdapConfiguration.attributeDomainName)!=null ){
+			if (request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_NAME)!=null && request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_PW)!=null
+					&& request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_URL)!=null && request.getParameter(RealmLdapConfiguration.ATTR_DOMAIN_NAME)!=null ){
 				boolean isConnected = true;
 				try {
-					LDAPService.getInstance().testLDAPConnection(request.getParameter(RealmLdapConfiguration.attributeConnectionURL),
-							request.getParameter(RealmLdapConfiguration.attributeConnectionName), request.getParameter(RealmLdapConfiguration.attributeConnectionPassword));
+					LDAPService.getInstance().testLDAPConnection(request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_URL),
+							request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_NAME), request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_PW));
 				} catch (NamingException e1) {
 					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONLDAP).put("statut", "Fail to connect to LDAP with the setting given");
 					isConnected = false;
 				}
 				if (isConnected){
 					HashMap<String,String> h = new HashMap<String,String>();
-					h.put(RealmLdapConfiguration.attributeConnectionURL , request.getParameter(RealmLdapConfiguration.attributeConnectionURL).toString());
-					h.put(RealmLdapConfiguration.attributeConnectionName , request.getParameter(RealmLdapConfiguration.attributeConnectionName).toString());
-					h.put(RealmLdapConfiguration.attributeConnectionPassword , request.getParameter(RealmLdapConfiguration.attributeConnectionPassword).toString());
-					h.put(RealmLdapConfiguration.attributeDomainName, request.getParameter(RealmLdapConfiguration.attributeDomainName).toString());
-					String[] listOfNode = request.getParameter(RealmLdapConfiguration.attributeDomainName).toString().split(",");
+					h.put(RealmLdapConfiguration.ATTR_CONNECTION_URL , request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_URL).toString());
+					h.put(RealmLdapConfiguration.ATTR_CONNECTION_NAME , request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_NAME).toString());
+					h.put(RealmLdapConfiguration.ATTR_CONNECTION_PW , request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_PW).toString());
+					h.put(RealmLdapConfiguration.ATTR_DOMAIN_NAME, request.getParameter(RealmLdapConfiguration.ATTR_DOMAIN_NAME).toString());
+					String[] listOfNode = request.getParameter(RealmLdapConfiguration.ATTR_DOMAIN_NAME).toString().split(",");
 					StringBuilder suffixAttribute = new StringBuilder();
 					for (int i=0; i<listOfNode.length ; i++){
 						String [] element = listOfNode[i].split("=");
@@ -70,14 +70,14 @@ public class ModifyRealmLdap extends HttpServlet {
 						if (i<listOfNode.length-1)
 							suffixAttribute.append(".");
 					}
-					String urlPort = request.getParameter(RealmLdapConfiguration.attributeConnectionURL).toString().split("ldap://")[1];
+					String urlPort = request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_URL).toString().split("ldap://")[1];
 					String url = urlPort.split(":")[0];
-					h.put(LdapMcfConfig.attributeUsername,request.getParameter(RealmLdapConfiguration.attributeConnectionName).toString());
+					h.put(LdapMcfConfig.attributeUsername,request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_NAME).toString());
 					h.put(LdapMcfConfig.attributeDomainController,url);
-					h.put(LdapMcfConfig.attributePassword, request.getParameter(RealmLdapConfiguration.attributeConnectionPassword));
+					h.put(LdapMcfConfig.attributePassword, request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_PW));
 					h.put(LdapMcfConfig.attributeSuffix, suffixAttribute.toString());
 					try {
-						if (CodesReturned.ALLOK == RealmLdapConfiguration.setConfig(h)){
+						if (CodesReturned.ALLOK == RealmLdapConfiguration.setConfig(h, request)){
 							if (CodesReturned.ALLOK == LdapMcfConfig.update(h))
 								jsonResponse.put("code", CodesReturned.ALLOK).put("statut", "200 ALL OK");
 							else
@@ -109,12 +109,12 @@ public class ModifyRealmLdap extends HttpServlet {
 			resp.setContentType("application/json");
 			try {
 				try{
-					HashMap<String,String> h = RealmLdapConfiguration.getConfig();
+					HashMap<String,String> h = RealmLdapConfiguration.getConfig(req);
 					jsonResponse.put("code",CodesReturned.ALLOK);
-					jsonResponse.put(RealmLdapConfiguration.attributeConnectionURL, h.get(RealmLdapConfiguration.attributeConnectionURL));
-					jsonResponse.put(RealmLdapConfiguration.attributeConnectionName, h.get(RealmLdapConfiguration.attributeConnectionName));
-					jsonResponse.put(RealmLdapConfiguration.attributeConnectionPassword, h.get(RealmLdapConfiguration.attributeConnectionPassword));
-					jsonResponse.put(RealmLdapConfiguration.attributeDomainName, h.get(RealmLdapConfiguration.attributeDomainName));
+					jsonResponse.put(RealmLdapConfiguration.ATTR_CONNECTION_URL, h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL));
+					jsonResponse.put(RealmLdapConfiguration.ATTR_CONNECTION_NAME, h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME));
+					jsonResponse.put(RealmLdapConfiguration.ATTR_CONNECTION_PW, h.get(RealmLdapConfiguration.ATTR_CONNECTION_PW));
+					jsonResponse.put(RealmLdapConfiguration.ATTR_DOMAIN_NAME, h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME));
 				} catch (SAXException | ParserConfigurationException e) {
 					jsonResponse.put("code", CodesReturned.GENERALERROR).put("statut", "Problem with XML Manipulation");
 					logger.error(e);

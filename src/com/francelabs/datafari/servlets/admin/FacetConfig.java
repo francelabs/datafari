@@ -53,6 +53,8 @@ import org.mozilla.javascript.ast.ExpressionStatement;
 import org.mozilla.javascript.ast.NodeVisitor;
 
 import com.ctc.wstx.io.CharsetNames;
+import com.francelabs.datafari.utils.ExecutionEnvironment;
+import com.google.common.base.Strings;
 /**
  * This Servlet is used to add, delete facets, and modify the printing order.
  * It is called by FacetConfig.html
@@ -92,32 +94,38 @@ public class FacetConfig extends HttpServlet {
 	private File js = null;
 	private File en = null;
 	private File fr = null;
-	private static JSONObject jsonEn;
-	private static JSONObject jsonFr;
-	private final static Logger LOGGER = Logger.getLogger(FacetConfig.class
-			.getName());
+	private File it = null;
+	private final static Logger LOGGER = Logger.getLogger(FacetConfig.class);
+	
+	// TODO To be moved to a property file
+	private static final String LOCALE_PATH_DEV = "/WebContent/js/AjaxFranceLabs/locale/";
+	private static final String LOCALE_PATH_PROD = "js/AjaxFranceLabs/locale/";
+	private static final String DATAFARI_PATH_PROD = "/tomcat/webapps/Datafari/";
+	
+	private static final String IT_JSON = "it.json";
+	private static final String EN_JSON = "en.json";
+	private static final String FR_JSON = "fr.json";
+	
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
 	public FacetConfig() {
 		//gets the files
+		// TODO DATAFARI_HOME to be moved to a property file
 		env = System.getenv("DATAFARI_HOME");									//Gets the directory of installation if in standard environment
 		if(env==null){															//If in development environment	
-			RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();	//Gets the D.solr.solr.home variable given in arguments to the VM
-			List<String> arguments = runtimeMxBean.getInputArguments();
-			for(String s : arguments){
-				if(s.startsWith("-Dsolr.solr.home"))
-					env = s.substring(s.indexOf("=")+1, s.indexOf("solr_home")-5);
-			}
+			env = ExecutionEnvironment.getDevExecutionEnvironment();
 			jsp = new File(env+"/WebContent/searchView.jsp");
 			js = new File(env+"/WebContent/js/search.js");
-			en = new File(env+"/WebContent/js/AjaxFranceLabs/locale/en.json");
-			fr = new File(env+"/WebContent/js/AjaxFranceLabs/locale/fr.json");
+			en = new File(env + LOCALE_PATH_DEV + EN_JSON);
+			fr = new File(env + LOCALE_PATH_DEV + FR_JSON);
+			it = new File(env + LOCALE_PATH_DEV + IT_JSON);
 		}else{
-			jsp = new File(env+"/tomcat/webapps/Datafari/searchView.jsp");
-			js = new File(env+"/tomcat/webapps/Datafari/js/search.js");
-			en = new File(env+"/tomcat/webapps/Datafari/js/AjaxFranceLabs/locale/en.json");
-			fr = new File(env+"/tomcat/webapps/Datafari/js/AjaxFranceLabs/locale/fr.json");
+			jsp = new File(env + DATAFARI_PATH_PROD + "searchView.jsp");
+			js = new File(env + DATAFARI_PATH_PROD + "js/search.js");
+			en = new File(env + DATAFARI_PATH_PROD + LOCALE_PATH_PROD + EN_JSON);
+			fr = new File(env + DATAFARI_PATH_PROD + LOCALE_PATH_PROD + FR_JSON);
+			it = new File(env + DATAFARI_PATH_PROD + LOCALE_PATH_PROD + IT_JSON);
 		}
 	}
 
@@ -142,32 +150,82 @@ public class FacetConfig extends HttpServlet {
 				if( jsp == null || js == null || en == null || fr == null){
 					//Check if it still doesn't exists
 					if(System.getenv("DATAFARI_HOME")==null){
-						if(!(new File(env+"/WebContent/searchView.jsp").exists() || new File(env+"/WebContent/js/search.js").exists() || new File(env+"/WebContent/js/AjaxFranceLabs/locale/en.json").exists() || new File(env+"/WebContent/js/AjaxFranceLabs/locale/fr.json").exists())){
-							LOGGER.error("Error while opening searchView.jsp or search.js or en.json or fr.json, in FacetConfig doGet. Check those paths "+env+"/WebContent/searchView.jsp"+", "+env+"/WebContent/js/search.js"+", "+env+"/WebContent/js/AjaxFranceLabs/locale/en.json"+", "+env+"/WebContent/js/AjaxFranceLabs/locale/fr.json"+", Error 69047");		//If not an error is printed
+						if(!(new File(env+"/WebContent/searchView.jsp").exists() 
+								|| new File(env+"/WebContent/js/search.js").exists() 
+								|| new File(env + LOCALE_PATH_DEV + EN_JSON).exists() 
+								|| new File(env + LOCALE_PATH_DEV + FR_JSON).exists()
+								|| new File(env + LOCALE_PATH_DEV + IT_JSON).exists())){
+							
+							StringBuilder strBuilder = new StringBuilder();
+							strBuilder.append("Error while opening searchView.jsp or search.js or")
+										.append(EN_JSON)
+										.append(" or ")
+										.append(FR_JSON)
+										.append(" or ")
+										.append(IT_JSON)
+										.append(", in FacetConfig doGet. Check these paths ")
+										.append(env+"/WebContent/searchView.jsp")
+										.append(", ")
+										.append(env+"/WebContent/js/search.js")
+										.append(", ")
+										.append(env + LOCALE_PATH_DEV + EN_JSON)
+										.append(", ")
+										.append(env + LOCALE_PATH_DEV + FR_JSON)
+										.append(", ")
+										.append(env + LOCALE_PATH_DEV + IT_JSON)
+										.append(", Error 69047");
+							
+							LOGGER.error(strBuilder.toString());		//If not an error is printed
 							PrintWriter out = response.getWriter();
 							out.append("Error while opening the configuration files, please retry, if the problem persists contact your system administrator. Error code : 69047"); 	
 							out.close();
 							return;
 						}else{
-							//If it exists now get it.
+							//If it exists now get it.			
 							jsp = new File(env+"/WebContent/searchView.jsp");
 							js = new File(env+"/WebContent/js/search.js");
-							en = new File(env+"/WebContent/js/AjaxFranceLabs/locale/en.json");
-							fr = new File(env+"/WebContent/js/AjaxFranceLabs/locale/fr.json");
+							en = new File(env + LOCALE_PATH_DEV + EN_JSON);
+							fr = new File(env + LOCALE_PATH_DEV + FR_JSON);
+							it = new File(env + LOCALE_PATH_DEV + IT_JSON);
 						}
 					}else{
-						if(!(new File(env+"/tomcat/webapps/Datafari/searchView.jsp").exists() || new File(env+"/tomcat/webapps/Datafari/js/search.js").exists() || new File(env+"/tomcat/webapps/Datafari/js/AjaxFranceLabs/locale/en.json").exists() || new File(env+"/tomcat/webapps/Datafari/js/AjaxFranceLabs/locale/fr.json").exists())){
-							LOGGER.error("Error while opening searchView.jsp or search.js or en.json or fr.json, in FacetConfig doGet. Check those paths "+env+"/tomcat/webapps/Datafari/searchView.jsp"+", "+env+"/tomcat/webapps/Datafari/js/search.js"+", "+env+"/tomcat/webapps/Datafari/js/AjaxFranceLabs/locale/en.json"+", "+env+"/tomcat/webapps/Datafari/js/AjaxFranceLabs/locale/fr.json"+", Error 69047");		//If not an error is printed
+						if(!(new File(env + DATAFARI_PATH_PROD + "searchView.jsp").exists() 
+								|| new File(env + DATAFARI_PATH_PROD + "js/search.js").exists() 
+								|| new File(env + DATAFARI_PATH_PROD + LOCALE_PATH_PROD + EN_JSON).exists() 
+								|| new File(env + DATAFARI_PATH_PROD + LOCALE_PATH_PROD + FR_JSON).exists()
+								|| new File(env + DATAFARI_PATH_PROD + LOCALE_PATH_PROD + IT_JSON).exists())){
+							
+							StringBuilder strBuilder = new StringBuilder();
+							strBuilder.append("Error while opening searchView.jsp or search.js or")
+										.append(EN_JSON)
+										.append(" or ")
+										.append(FR_JSON)
+										.append(" or ")
+										.append(IT_JSON)
+										.append(", in FacetConfig doGet. Check these paths ")
+										.append(env + DATAFARI_PATH_PROD + "searchView.jsp")
+										.append(", ")
+										.append(env + DATAFARI_PATH_PROD + "js/search.js")
+										.append(", ")
+										.append(env + DATAFARI_PATH_PROD + LOCALE_PATH_PROD + EN_JSON)
+										.append(", ")
+										.append(env + DATAFARI_PATH_PROD + LOCALE_PATH_PROD + FR_JSON)
+										.append(", ")
+										.append(env + DATAFARI_PATH_PROD + LOCALE_PATH_PROD + IT_JSON)
+										.append(", Error 69047");
+							
+							LOGGER.error(strBuilder.toString());		//If not an error is printed
 							PrintWriter out = response.getWriter();
 							out.append("Error while opening the configuration files, please retry, if the problem persists contact your system administrator. Error code : 69047"); 	
 							out.close();
 							return;
 						}else{
 							//If it exists now get it.
-							jsp = new File(env+"/tomcat/webapps/Datafari/searchView.jsp");
-							js = new File(env+"/tomcat/webapps/Datafari/js/search.js");
-							en = new File(env+"/tomcat/webapps/Datafari/js/AjaxFranceLabs/locale/en.json");
-							fr = new File(env+"/tomcat/webapps/Datafari/js/AjaxFranceLabs/locale/fr.json");
+							jsp = new File(env + DATAFARI_PATH_PROD + "searchView.jsp");
+							js = new File(env + DATAFARI_PATH_PROD + "js/search.js");
+							en = new File(env + DATAFARI_PATH_PROD + LOCALE_PATH_PROD + EN_JSON);
+							fr = new File(env + DATAFARI_PATH_PROD + LOCALE_PATH_PROD + FR_JSON);
+							it = new File(env + DATAFARI_PATH_PROD + LOCALE_PATH_PROD + IT_JSON);
 						}
 					}
 				}
@@ -278,22 +336,39 @@ public class FacetConfig extends HttpServlet {
 				//Read the json files
 				String jsonEnContent = readFile(en.getAbsolutePath(), StandardCharsets.UTF_8);
 				String jsonFrContent = readFile(fr.getAbsolutePath(), StandardCharsets.UTF_8);
+				String jsonItContent = readFile(it.getAbsolutePath(), StandardCharsets.UTF_8);
 				JSONObject jsonEn;
 				JSONObject jsonFr;
+				JSONObject jsonIt;
 				try {
 					//If names have been typed by the user, we use the parameters otherwise the name of the facet will just be the name of the field
 					//We put the content of the files into jsonObject to easily add the new entries
+					
 					jsonEn = new JSONObject(jsonEnContent);
-					if(request.getParameter("enName")!="")
+					if(!Strings.isNullOrEmpty(request.getParameter("enName"))){
 						jsonEn.put("facet"+field,request.getParameter("enName"));
-					else
+					}
+					else {
 						jsonEn.put("facet"+field, field);
+					
+					}
+					
 					jsonFr = new JSONObject(jsonFrContent);
-					if(request.getParameter("frName")!="")
+					if(!Strings.isNullOrEmpty(request.getParameter("frName"))){
 						jsonFr.put("facet"+field,request.getParameter("frName"));
-					else
+					}
+					else{
 						jsonFr.put("facet"+field, field);
-					LOGGER.debug(jsonEn);
+					}
+					
+					jsonIt = new JSONObject(jsonItContent);
+					if(!Strings.isNullOrEmpty(request.getParameter("itName"))){
+						jsonIt.put("facet"+field,request.getParameter("itName"));
+					}
+					else{
+						jsonIt.put("facet"+field, field);
+					}
+					
 				} catch (JSONException e) {
 					LOGGER.error("Error while adding the labels to the json files in the FacetConfig doPost. Check that the json files are valid, aso if the parameters passed are valid. Error 69050", e);		//If not an error is printed
 					PrintWriter out = response.getWriter();
@@ -318,14 +393,16 @@ public class FacetConfig extends HttpServlet {
 					List<String> listQueries = new ArrayList<String>();
 					List<String> listLabelsFr = new ArrayList<String>();
 					List<String> listLabelsEn = new ArrayList<String>();
+					List<String> listLabelsIt = new ArrayList<String>();
 					String reg1 = "^query[0-9]*\\b";
 					//Get as much queries and as much labels as provided by the user
 					for(Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();){
 						String name = e.nextElement();
-						if(name.matches(reg1) && request.getParameter(name)!=""){
+						if(name.matches(reg1) && !Strings.isNullOrEmpty(request.getParameter(name))){
 							listQueries.add(request.getParameter(name));
 							listLabelsFr.add(request.getParameter(name+"LabelFr"));
 							listLabelsEn.add(request.getParameter(name+"LabelEn"));
+							listLabelsIt.add(request.getParameter(name+"LabelIt"));
 						}
 					}
 					if(listQueries.size()<1){
@@ -355,14 +432,28 @@ public class FacetConfig extends HttpServlet {
 					try {
 						//Put all the required labels in the json under the tag "facet_fieldNamei"  
 						for (int i = 0 ; i < listQueries.size() ; i++ ){
-							if(request.getParameter("query"+(i+1)+"LabelEn")!="")
+							
+							if(!Strings.isNullOrEmpty(request.getParameter("query"+(i+1)+"LabelEn"))){
 								jsonEn.put("facet"+field+i,request.getParameter("query"+(i+1)+"LabelEn").replaceAll("\\s+", "%20"));
-							else
+							}
+							else {
 								jsonEn.put("facet"+field+i, field);
-							if(request.getParameter("query"+(i+1)+"LabelFr")!="")
+							}
+							
+							if(!Strings.isNullOrEmpty(request.getParameter("query"+(i+1)+"LabelFr"))){
 								jsonFr.put("facet"+field+i,request.getParameter("query"+(i+1)+"LabelFr").replaceAll("\\s+", "%20"));
-							else
+							}
+							else{
 								jsonFr.put("facet"+field+i, field);
+							}
+							
+							if(!Strings.isNullOrEmpty(request.getParameter("query"+(i+1)+"LabelIt"))){
+								jsonIt.put("facet"+field+i,request.getParameter("query"+(i+1)+"LabelIt").replaceAll("\\s+", "%20"));
+							}
+							else{
+								jsonIt.put("facet"+field+i, field);
+							}
+							
 							//Add the reference to those labels in the expression statement
 							newWidget +=  "window.i18n.msgStore[\'facet"+field+i+"\'], ";
 						}
@@ -379,25 +470,29 @@ public class FacetConfig extends HttpServlet {
 					}
 				}
 				FileOutputStream fooStream = new FileOutputStream(jsp, false); // true to append false to overwrite.
-				byte[] myBytes = newJsp.getBytes();
-				fooStream.write(myBytes);										//rewrite the file
+				fooStream.write(newJsp.getBytes());										//rewrite the file
 				fooStream.close();
+				
 				//Rewrite the js file adding the new statement at the beginning.
 				String jsContent = readFile(js.getAbsolutePath(), StandardCharsets.UTF_8);
 				jsContent = jsContent.substring(0, jsContent.indexOf("$(function($) {")+16)+newWidget+jsContent.substring(jsContent.lastIndexOf("$(function($) {")+16, jsContent.length());
 				fooStream = new FileOutputStream(js, false); // true to append false to overwrite.
-				myBytes = jsContent.getBytes();
-				fooStream.write(myBytes);										//rewrite the file
+				fooStream.write(jsContent.getBytes());										//rewrite the file
 				fooStream.close();
-				//rewrite both json files, replacing certain characters to keept the newlines so it can still be readable by a human.
+				
+				//rewrite both json files, replacing certain characters to keep the newlines so it can still be readable by a human.
 				fooStream = new FileOutputStream(en, false); // true to append false to overwrite.
-				myBytes = jsonEn.toString().replaceAll(",\"", ",\n\"").replaceAll("\\{", "\\{\n").replaceAll("\\}", "\n\\}").getBytes();
-				fooStream.write(myBytes);										//rewrite the file
+				fooStream.write(jsonEn.toString().replaceAll(",\"", ",\n\"").replaceAll("\\{", "\\{\n").replaceAll("\\}", "\n\\}").getBytes());										//rewrite the file
 				fooStream.close();
+				
 				fooStream = new FileOutputStream(fr, false); // true to append false to overwrite.
-				myBytes = jsonFr.toString().replaceAll(",\"", ",\n\"").replaceAll("\\{", "\\{\n").replaceAll("\\}", "\n\\}").getBytes();
-				fooStream.write(myBytes);										//rewrite the file
+				fooStream.write(jsonFr.toString().replaceAll(",\"", ",\n\"").replaceAll("\\{", "\\{\n").replaceAll("\\}", "\n\\}").getBytes());										//rewrite the file
 				fooStream.close();
+				
+				fooStream = new FileOutputStream(it, false); // true to append false to overwrite.
+				fooStream.write(jsonIt.toString().replaceAll(",\"", ",\n\"").replaceAll("\\{", "\\{\n").replaceAll("\\}", "\n\\}").getBytes());										//rewrite the file
+				fooStream.close();
+				
 			}else if(request.getParameter("divName")!=null){
 				//If it's a delete request
 				//We get the parameter
@@ -468,6 +563,7 @@ public class FacetConfig extends HttpServlet {
 			LOGGER.error("Unindentified error in FacetConfig doPost. Error 69525", e);
 		}
 	}
+	
 	static String readFile(String path, Charset encoding) 					//Read the file
 			throws IOException 
 	{
