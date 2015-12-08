@@ -107,8 +107,9 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 			});
 			this.pagination.manager = this.manager;
 		}
-		if (this.pagination)
+		if (this.pagination) {
 			this.pagination.init();
+		}
 	},
 
 	update : function() {
@@ -118,7 +119,7 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 		} else {
 			elm.show(); // show the widget
 			elm.find('ul').empty(); // empty the widget content
-			var ul = elm.find('ul:last-child'); // select the list element
+			var ul = elm.children('ul'); // select the list element
 			
 			var realMaxDepth = this.rootLevel + this.maxDepth;
 			
@@ -128,13 +129,23 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 			}
 			
 			for (var i = 0; i < max; i++) { // For each facet result, determines the level depth, creates the corresponding level object and stock it in the LevelsHashMap 
-				var levelDepth = data[i].name.substring(0,1); // determines the depth of the current level
-				var levelName = data[i].name.substring(1); // determines the level name
+				var levelDepth = data[i].name.substring(0,data[i].name.indexOf(this.separator)); // determines the depth of the current level
+				var levelName = data[i].name.substring(data[i].name.indexOf(this.separator)); // determines the level name
 				if(levelDepth == this.rootLevel) { // it is a root level (it's depth corresponds to the defined rootLevel depth)
 					this.LevelsHashMap["level" + levelDepth][levelName] = {"array":[], "nb":data[i].nb, "original":data[i].name};
 				} else if (this.rootLevel < levelDepth && levelDepth < realMaxDepth){ // check that the depth is allowed (between the rootLevel depth and the maximum depth defined), otherwise, the current level is ignored
 					var parentLevel = levelName.substring(0, levelName.lastIndexOf(this.separator)); // determines the parent level
-					this.LevelsHashMap["level" + levelDepth][levelName] = {"array":[], "nb":data[i].nb, "original":data[i].name};
+					
+					if(this.LevelsHashMap["level" + levelDepth][levelName] == null) { // If level does not exist, creates it
+						this.LevelsHashMap["level" + levelDepth][levelName] = {"array":[], "nb":data[i].nb, "original":data[i].name};
+					} else { // Otherwise set values
+						this.LevelsHashMap["level" + levelDepth][levelName].nb = data[i].nb;
+						this.LevelsHashMap["level" + levelDepth][levelName].original = data[i].name;
+					}
+					
+					if(this.LevelsHashMap["level" + (levelDepth - 1)][parentLevel] == null) { // If parent level does not exist, creates it
+						this.LevelsHashMap["level" + (levelDepth - 1)][parentLevel] = {"array":[], "nb":0, "original":""};
+					}
 					var parentLevelChildrenArray = this.LevelsHashMap["level" + (levelDepth - 1)][parentLevel].array; // retrieve the parent level children list
 					parentLevelChildrenArray[parentLevelChildrenArray.length] = levelName; // add the name of the current level in the parent level children list as a reference
 				}
@@ -254,6 +265,7 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 		if(levelDepth > widget.rootLevel) { // trick to keep the entire name of root levels but only the last part for non root levels (matter of label display) 
 			checkboxValue = checkboxValue.substring(checkboxValue.lastIndexOf(widget.separator));
 		}
+		
 		currentUl.append('<li></li>');
 		var currentLi = currentUl.find('li:lastchild');
 		// Constructs the checkbox and its  attached label
@@ -261,14 +273,17 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 		currentLi.find('label').append('<span class="filterFacetCheck"></span>');
 		currentLi.find('.filterFacetCheck').append('<input type="checkbox" value="' + level.original + '"/>');
 		currentLi.find('.filterFacetCheck input').attr('id',checkboxValue);
+		
 		if (this.manager.store.find('fq', new RegExp(widget.field + ':' + AjaxFranceLabs.Parameter.escapeValue(level.original.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&").replace(/\\/g,"\\\\")) + '[ )]'))) {
 			// The checkbox value is used in the search query, so the checked attribute of the checkbox is set to 'checked'
 			currentLi.find('.filterFacetCheck input').attr('checked', 'checked').parents('li').addClass('selected');   
 		}
+		
 		if(currentUl.prev('label').find('.filterFacetCheck input').attr('checked') == 'checked') { // check if the parent level checkbox is checked
 			// the parent level checkbox is checked so, as a child, this checkbox must be checked too
 			currentLi.find('.filterFacetCheck input').attr('checked', 'checked').parents('li').addClass('selected');
 		}
+		
 		currentLi.find('.filterFacetCheck input').change(function() { // sets the onChange function of the checkbox
 			if ($(this).attr('checked') == 'checked') {
 				// the checkbox is checked so the value must be added as a filter of the search query
@@ -293,6 +308,7 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 				widget.manager.makeRequest(); // forces the request to update the results and facets
 			}
 		});
+		
 		currentLi.find('.filterFacetCheck').append('<label></label>');
 		// Apply the correct checkbox image regarding the checkbox state (checked or not checked)
 		if (currentLi.find('.filterFacetCheck input').attr('checked')== 'checked' ) {
