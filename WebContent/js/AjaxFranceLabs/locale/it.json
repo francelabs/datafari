@@ -1,6 +1,7 @@
 {
 "fieldWeight":"Peso del campo",
 "facetlanguage":"Lingua",
+"facethierarchicalurl":"Path",
 "atLeastOneWord":"Almeno una parola",
 "weeklyDelay":"Quando inviare gli allarmi settimanali",
 "facetName":"Nome dell'aspetto",
