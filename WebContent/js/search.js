@@ -21,8 +21,9 @@ $(function($) {
 		selectionType : 'OR',
 		returnUnselectedFacetValues : true,
 		rootLevel : 0,
-		maxDepth : 3,
-		separator : '/'
+		maxDepth : 20,
+		separator : '/',
+		maxDisplay : 100
 	}));
 
 	Manager.addWidget(new AjaxFranceLabs.TableWidget({
