@@ -17,7 +17,7 @@ $(function($) {
 		id : 'facet_hierarchical',
 		field : 'urlHierarchy',
 		name : window.i18n.msgStore['facethierarchicalurl'],
-		pagination : false,
+		pagination : true,
 		selectionType : 'OR',
 		returnUnselectedFacetValues : true,
 		rootLevel : 0,
