@@ -65,6 +65,8 @@
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/modules/Pager.module.js"></script>
 	<script type="text/javascript"
+		src="js/AjaxFranceLabs/modules/HierarchicalPager.module.js"></script>
+	<script type="text/javascript"
 		src="js/AjaxFranceLabs/modules/Autocomplete.module.js"></script>
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/Result.widget.js"></script>

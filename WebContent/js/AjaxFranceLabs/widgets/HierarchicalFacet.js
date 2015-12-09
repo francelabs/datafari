@@ -95,14 +95,33 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 				break;
 		}
 		if (this.pagination === true) {
-			this.pagination = new AjaxFranceLabs.PagerModule({
+			this.pagination = new AjaxFranceLabs.HierarchicalPagerModule({
 				elm : this.elm,
 				updateList : function() {
-					if (this.nbPage > 1) {
-						$(this.source).children().css('display', 'none').slice(this.pageSelected * this.nbElmToDisplay, (this.pageSelected + 1) * this.nbElmToDisplay).css('display', this.display);
-						AjaxFranceLabs.clearMultiElementClasses($('li', this.source));
-						AjaxFranceLabs.addMultiElementClasses($('li:visible', this.source));
-					}
+					var nbEl = 0;
+					var currentPage = 0;
+					var nbByPage = this.nbElmToDisplay;
+					var pageSel = this.pageSelected;
+					var display = this.display;
+					this.source.children('li').each(function() {
+						if(nbEl > 0) {
+							nbEl += $(this).find('ul').children().length + 1;
+							if(nbEl > nbByPage) {
+								currentPage++;
+								nbEl = $(this).find('ul').children().length + 1;
+							}
+						}else {
+							nbEl += $(this).find('ul').children().length + 1;
+						}
+						if(currentPage == pageSel) {
+							$(this).css('display', display);
+						} else {
+							$(this).css('display', 'none');
+						}
+					});
+					
+					AjaxFranceLabs.clearMultiElementClasses($('li', this.source));
+					AjaxFranceLabs.addMultiElementClasses($('li:visible', this.source));
 				}
 			});
 			this.pagination.manager = this.manager;
@@ -157,8 +176,7 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 			
 		}
 		if (this.pagination) {
-			this.pagination.source = $('ul', this.elm);
-			this.pagination.updatePages();
+			this.pagination.source = $(this.elm).children('ul');
 		}
 		this.sortBy(this.sort);
 	},
@@ -219,14 +237,17 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 				elm.find('ul li').each(function() {
 					var $this = this;
 					$(this).nextAll().each(function() {
-						if (parseInt($('.filterFacetCheck .filterFacetLinkCount span', $this).text()) < parseInt($('.filterFacetCheck .filterFacetLinkCount span', this).text()))
+						if (parseInt($($this).children('label').find('.filterFacetLinkCount span').text()) < parseInt($(this).children('label').find('.filterFacetLinkCount span').text())) {
 							$(this).after($($this).detach());
+						}
 					});
 				});
 				break;
 		}
-		if (this.pagination)
+		if (this.pagination) {
 			this.pagination.updateList();
+			this.pagination.updatePages();
+		}
 		AjaxFranceLabs.clearMultiElementClasses($(this.elm).find('ul li'));
 		AjaxFranceLabs.addMultiElementClasses($(this.elm).find('ul li:visible'));
 	},
@@ -287,22 +308,35 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 		currentLi.find('.filterFacetCheck input').change(function() { // sets the onChange function of the checkbox
 			if ($(this).attr('checked') == 'checked') {
 				// the checkbox is checked so the value must be added as a filter of the search query
-				$(this).closest('li').children('ul').children('li').each(function() { // if the current checkbox has children, removes all the children filters from the search query as the parent filter covers the children ones  
-					widget.unselectNoRequest($(this).find('.filterFacetCheck input').val().replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"));
+				
+				// optional functionality, depending on the chosen facet behavior (must be commented if a selected facet must not includes all children)
+				$(this).closest('li').children('ul').find('li').each(function() { // if the current checkbox has children, removes all the children filters from the search query as the parent filter covers the children ones  
+					if($(this).children('label').find('.filterFacetCheck input').attr('checked') == 'checked') {
+						widget.unselectNoRequest($(this).children('label').find('.filterFacetCheck input').val().replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"));
+					}
 				});
+				
+				// standard functionality
 				widget.clickHandler();
 				widget.selectHandler($(this).val().replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")); // add the checkbox value as a filter for the search query
 			} else {
 				// the checkbox is not checked so the value must be removed from the search query filters
-				if(currentUl.prev('label').find('.filterFacetCheck input').attr('checked') == 'checked') { // if the parent of the checkbox is checked, removes the parent value from the search query filters and adds the other children values as filter to fit to the behavior expected by the user 
-					widget.unselectNoRequest(currentUl.prev('label').find('.filterFacetCheck input').val().replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")); // removes the parent value from the search query filters
-					currentUl.children('li').each(function() {
-						// for each checked children, adds their values to the search query filters 
-						if($(this).find('.filterFacetCheck input').attr('checked') == 'checked') {
-							widget.selectNoRequest($(this).find('.filterFacetCheck input').val().replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"));
-						}
-					});
-				} 
+				
+				// optional functionality, depending on the chosen facet behavior (must be commented if a selected facet must not includes all children)
+				$(this).parents('ul').each(function() { // if the parents of the checkbox are checked, removes the parents values from the search query filters and adds the other children values to the filter to fit to the behavior expected by the user 
+					if($(this).prev('label').find('.filterFacetCheck input').attr('checked') == 'checked') { 
+						widget.unselectNoRequest($(this).prev('label').find('.filterFacetCheck input').val().replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")); // removes the parent value from the search query filters
+						$(this).prev('label').find('.filterFacetCheck input').attr('checked', false);
+						$(this).children('li').each(function() {
+							// for each checked children, adds their values to the search query filters 
+							if($(this).children('label').find('.filterFacetCheck input').attr('checked') == 'checked') {
+								widget.selectNoRequest($(this).children('label').find('.filterFacetCheck input').val().replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"));
+							}
+						});
+					} 
+				});
+				
+				// standard functionality
 				widget.clickHandler();
 				widget.unselectNoRequest($(this).val().replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")); // removes the value of the checkbox from the search query filters
 				widget.manager.makeRequest(); // forces the request to update the results and facets
@@ -312,9 +346,9 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 		currentLi.find('.filterFacetCheck').append('<label></label>');
 		// Apply the correct checkbox image regarding the checkbox state (checked or not checked)
 		if (currentLi.find('.filterFacetCheck input').attr('checked')== 'checked' ) {
-			currentLi.find('.filterFacetCheck label').attr('for', checkboxValue).append('<span class="checkboxIcon fa fa-check-square-o">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(checkboxValue, 39)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + count + '</span>)</span>');
+			currentLi.find('.filterFacetCheck label').attr('for', checkboxValue).append('<span class="checkboxIcon fa fa-check-square-o">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(checkboxValue, 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + count + '</span>)</span>');
 		} else {
-			currentLi.find('.filterFacetCheck label').attr('for', checkboxValue).append('<span class="checkboxIcon fa fa-square-o">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(checkboxValue, 39)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + count + '</span>)</span>');
+			currentLi.find('.filterFacetCheck label').attr('for', checkboxValue).append('<span class="checkboxIcon fa fa-square-o">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(checkboxValue, 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + count + '</span>)</span>');
 		}
 		
 		// If the current level has children, makes a recursive call to this method in order to display the children levels
