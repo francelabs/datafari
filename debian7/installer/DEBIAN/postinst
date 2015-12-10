@@ -64,3 +64,5 @@ else
 	sed -i -e "s/@SOLRCLOUD@/false/g" /opt/datafari/tomcat/conf/datafari.properties
 fi
 chmod -R 755 /opt/datafari
+chmod -R 777 /opt/datafari/pid
+chmod -R 777 /opt/datafari/elk

@@ -1,0 +1,4 @@
+source 'https://rubygems.org'
+gemspec
+gem "logstash-core", "2.0.0.beta3"
+# gem "logstash-core", "1.5.4"

@@ -65,6 +65,8 @@
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/modules/Pager.module.js"></script>
 	<script type="text/javascript"
+		src="js/AjaxFranceLabs/modules/HierarchicalPager.module.js"></script>
+	<script type="text/javascript"
 		src="js/AjaxFranceLabs/modules/Autocomplete.module.js"></script>
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/Result.widget.js"></script>
@@ -75,6 +77,8 @@
 		src="js/AjaxFranceLabs/widgets/SearchInformation.widget.js"></script>
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/Table.widget.js"></script>
+	<script type="text/javascript"
+		src="js/AjaxFranceLabs/widgets/HierarchicalFacet.js"></script>
 		<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/FacetDuplicates.js"></script>
 	<script type="text/javascript"
@@ -140,6 +144,7 @@
 			<div id="facets">
 				<div id="facet_last_modified"></div>
 				<div id="facet_extension"></div>
+				<div id="facet_hierarchical_url"></div>
 				<div id="facet_source"></div>
 				<div id="facet_language"></div>
 				<div id="facet_signature"></div>

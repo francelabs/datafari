@@ -84,6 +84,19 @@ padding-top : 10px;
 	margin:7% 7% 5% 7%;
 	padding-bottom:0px;
 	box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1), 0px 0px 1px rgba(0, 0, 0, 0.1);
+}
+#facets_mobile .facet.hierarchicalWidget.widget .facetName{
+	position:relative;
+	width:90%;
+	padding:5%;
+	font-size:1.1em;
+}
+#facets_mobile .facet.hierarchicalWidget.widget{
+	position:relative;
+	min-width:86%;
+	margin:7% 7% 5% 7%;
+	padding-bottom:0px;
+	box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1), 0px 0px 1px rgba(0, 0, 0, 0.1);
 }	
 #facets_mobile .facet.tableWidget.widget .label{
 
@@ -92,6 +105,16 @@ padding-top : 10px;
 	font-size: 1.6em;
 }
 #facets_mobile .facet.tableWidget.widget .facetName i{
+	-webkit-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
+	top: 50%;
+	position: absolute;
+	right:5%;
+	-webkit-animation-duration: 0.2s; /* Chrome, Safari, Opera */
+    animation-duration: 0.2s;
+}
+#facets_mobile .facet.hierarchicalWidget.widget .facetName i{
 	-webkit-transform: translateY(-50%);
 	-ms-transform: translateY(-50%);
 	transform: translateY(-50%);
@@ -262,8 +285,44 @@ ul{
 .tableWidget ul li .filterFacetCheck { float: left; vertical-align: top; cursor: pointer; float: left; line-height: 20px; margin-left: 5px; width: 182px;}
 /**************************************/
 
+/***	>>> Hierarchical Facet Widget <<<	***/
+.hierarchicalWidget { margin-bottom: 20px; }
+.hierarchicalWidget .facetName {  margin: 0; min-height: 21px; padding-bottom: 3px; width: 50%; cursor:pointer; }
+.hierarchicalWidget .facetName .label { cursor:pointer;}
+.hierarchicalWidget .facetName .hide_show {  display: inline-block; height: 11px; margin-right: 3px; width: 11px; }
+.hierarchicalWidget .facetName .hide_show.close {  cursor: pointer; }
+.hierarchicalWidget .facetSort { border-bottom: 1px solid; padding: 3px 0px; text-align: left; width: 100%; }
+.hierarchicalWidget li { border-bottom: 1px solid; padding: 3px 0 3px 0; }
+.hierarchicalWidget li .filterFacetCheck { cursor: pointer; }
+
+.hierarchicalWidget .expand {
+	cursor: pointer;
+	display: inline-block;
+	width: 10px;
+}
+
+.hierarchicalWidget .collapse {
+	cursor: pointer;
+	display: inline-block;
+	width: 10px;
+	transform: rotate(90deg);
+}
+
+.hierarchicalWidget .collapse2expand {
+	animation-name: col2ex;
+   	animation-duration: 0.2s;
+   	-webkit-animation-timing-function: linear;
+}
+
+.hierarchicalWidget .expand2collapse {
+	animation-name: ex2col;
+   	animation-duration: 0.2s;
+   	-webkit-animation-timing-function: linear;
+}
+/**************************************/
+
 /******	>>> Result Widget <<<	*******/
-.resultWidget .doc,#capsule { 
+.resultWidget .doc,#promolink { 
 	width: 95%;
 	margin-left: auto;
 	margin-right: auto;
@@ -277,8 +336,8 @@ ul{
 line-height:20px;
 }
 
-.resultWidget .res .description , #capsule #snippet { margin-top: 3px;  }
-.resultWidget .res .title,#capsule .title {  word-wrap: break-word; }
+.resultWidget .res .description , #promolink #snippet { margin-top: 3px;  }
+.resultWidget .res .title,#promolink .title {  word-wrap: break-word; }
 .resultWidget .res .icon span{vertical-align:top;}
 
 #snippet{
@@ -372,13 +431,13 @@ line-height:20px;
 .advancedSearchWidget .removeInput { cursor: pointer; float: right; height: 29px; line-height: 29px; text-align: center; width: 18px; }
 /**************************************/
 
-/**	>>> capsuleWidget Widget <<<	***/
+/**	>>> promolinkWidget Widget <<<	***/
 
-#capsule{margin-top:3%;}
-.capsuleWidget {padding-top: 1%;}
-.capsuleWidget .widgetContainer{padding-left:10px;}
-.capsuleWidget .title { display: block;  }
-.capsuleWidget .tips { display: block;  }
+#promolink{margin-top:3%;}
+.promolinkWidget {padding-top: 1%;}
+.promolinkWidget .widgetContainer{padding-left:10px;}
+.promolinkWidget .title { display: block;  }
+.promolinkWidget .tips { display: block;  }
 /**************************************/
 
 /**	>>> spellcheckerWidget Widget <<<**/
@@ -435,12 +494,12 @@ line-height:20px;
 }
 
 @media all and (max-width : 430px){
-	.resultWidget .doc, #capsule{
+	.resultWidget .doc, #promolink{
 		height:7em;
 	}
 }
 @media all and (max-width : 221px){
-	.resultWidget .doc, #capsule{
+	.resultWidget .doc, #promolink{
 		height:6em;
 	}
 }
@@ -568,6 +627,29 @@ line-height:20px;
 		-webkit-animation-duration: 0.2s; /* Chrome, Safari, Opera */
 	    animation-duration: 0.2s;
 	}
+	#facets .facet.hierarchicalWidget.widget .facetName{
+		position:relative;
+		width:90%;
+		padding:5%;
+		font-size:1.1em;
+	}
+	#facets .facet.hierarchicalWidget.widget{
+		position:relative;
+		min-width:86%;
+		margin:0% 5% 5% 0%;
+		padding-bottom:0px;
+		box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1), 0px 0px 1px rgba(0, 0, 0, 0.1);
+	}
+	#facets .facet.hierarchicalWidget.widget .facetName i{
+		-webkit-transform: translateY(-50%);
+		-ms-transform: translateY(-50%);
+		transform: translateY(-50%);
+		top: 50%;
+		position: absolute;
+		right:5%;
+		-webkit-animation-duration: 0.2s; /* Chrome, Safari, Opera */
+	    animation-duration: 0.2s;
+	}
 	#solr { margin:0 auto; margin-bottom:3%;  width:100%;}
 	#result_information { padding:0.6em 2%; padding-right:0px;height:16px; width : 98%;box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1), 0px 0px 1px rgba(0, 0, 0, 0.1);}
 	#solr .col.left { display:inline-block; width:15%; margin-left:1em;min-width:250px; margin-top:1%; }
@@ -665,6 +747,42 @@ line-height:20px;
 	
 	/**************************************/
 	
+	/***	>>> Hierarchical Facet Widget <<<	***/
+	.hierarchicalWidget { margin-bottom: 20px; }
+	.hierarchicalWidget .facetName {  cursor: pointer; margin: 0; min-height: 21px; padding-bottom: 3px; width: 100%; }
+	.hierarchicalWidget .facetName .hide_show {  display: inline-block; height: 11px; margin-right: 3px; width: 11px; }
+	.hierarchicalWidget .facetName .hide_show.close {  }
+	.hierarchicalWidget li { border-bottom: 1px solid; padding: 3px 0 3px 0; }
+	.hierarchicalWidget li .filterFacetCheck { cursor: pointer; }
+	
+	.hierarchicalWidget .expand {
+		cursor: pointer;
+		display: inline-block;
+		width: 10px;
+	}
+	
+	.hierarchicalWidget .collapse {
+		cursor: pointer;
+		display: inline-block;
+		width: 10px;
+		transform: rotate(90deg);
+	}
+	
+	.hierarchicalWidget .collapse2expand {
+		animation-name: col2ex;
+    	animation-duration: 0.2s;
+    	-webkit-animation-timing-function: linear;
+	}
+	
+	.hierarchicalWidget .expand2collapse {
+		animation-name: ex2col;
+    	animation-duration: 0.2s;
+    	-webkit-animation-timing-function: linear;
+	}
+	
+	
+	/**************************************/
+	
 	/******	>>> Result Widget <<<	*******/
 	.resultWidget .doc { display: inline-block; margin-bottom: 20px; width: 100%; }
 	.resultWidget .doc .connector { float: left; height: 100%; width: 18px; }
@@ -727,11 +845,11 @@ line-height:20px;
 	.advancedSearchWidget .removeInput { cursor: pointer; float: right; height: 29px; line-height: 29px; text-align: center; width: 18px; }
 	/**************************************/
 	
-	/**	>>> capsuleWidget Widget <<<	***/
-	.capsuleWidget { -moz-border-radius: 4px; border-radius: 4px; margin-bottom: 15px; padding: 10px; }
+	/**	>>> promolinkWidget Widget <<<	***/
+	.promolinkWidget { -moz-border-radius: 4px; border-radius: 4px; margin-bottom: 15px; padding: 10px; }
 	.widgetContainer .annonce {padding: 3px;font-size: 0.6em;vertical-align:middle;}
-	.capsuleWidget .title { display: block;  }
-	.capsuleWidget .tips { display: block; text-align: justify;line-height: 1.6em;margin-top: 10px; }
+	.promolinkWidget .title { display: block;  }
+	.promolinkWidget .tips { display: block; text-align: justify;line-height: 1.6em;margin-top: 10px; }
 	/**************************************/
 	
 	/**	>>> spellcheckerWidget Widget <<<**/

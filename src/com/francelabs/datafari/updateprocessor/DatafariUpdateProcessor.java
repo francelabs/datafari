@@ -5,7 +5,7 @@
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
  *  * You may obtain a copy of the License at
- *  * 
+ *  *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
  *  *
  *  * Unless required by applicable law or agreed to in writing, software
@@ -17,6 +17,8 @@
 package com.francelabs.datafari.updateprocessor;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,15 +31,37 @@ import org.apache.tika.mime.MimeTypes;
 
 public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 
-	public DatafariUpdateProcessor(UpdateRequestProcessor next) {
+	public DatafariUpdateProcessor(final UpdateRequestProcessor next) {
 		super(next);
 		// TODO Auto-generated constructor stub
 	}
 
-	public void processAdd(AddUpdateCommand cmd) throws IOException {
-		SolrInputDocument doc = cmd.getSolrInputDocument();
+	@Override
+	public void processAdd(final AddUpdateCommand cmd) throws IOException {
+		final SolrInputDocument doc = cmd.getSolrInputDocument();
 
-		String url = (String) doc.getFieldValue("id");
+		final String url = (String) doc.getFieldValue("id");
+
+		// Create path hierarchy for facet
+		final List<String> urlHierarchy = new ArrayList<String>();
+
+		final String path = url.replace("file:", "");
+		int previousIndex = 1;
+		int depth = 0;
+		// Tokenize the path and add the depth as first character for each token
+		// (like: 0/home, 1/home/project ...)
+		for (int i = 0; i < path.split("/").length - 2; i++) {
+			int endIndex = path.indexOf('/', previousIndex);
+			if (endIndex == -1) {
+				endIndex = path.length() - 1;
+			}
+			urlHierarchy.add(depth + path.substring(0, endIndex));
+			depth++;
+			previousIndex = endIndex + 1;
+		}
+
+		// Add the tokens to the urlHierarchy field
+		doc.addField("urlHierarchy", urlHierarchy);
 
 		doc.addField("url", url);
 
@@ -105,9 +129,8 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 			// ignored_content_type=text/html; charset=UTF-8,
 			// ignored_resourcename=docname, ignored_dc_title=Datafari de France
 			// Labs - Open Search, language=fr, content_fr=
-			if (doc.get("title") == null){
-				String filename = (String) doc.get("ignored_stream_name")
-						.getFirstValue();
+			if (doc.get("title") == null) {
+				final String filename = (String) doc.get("ignored_stream_name").getFirstValue();
 				doc.addField("title", filename);
 			}
 			doc.addField("source", "web");
@@ -157,15 +180,13 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 			// content_fr=
 
 			doc.removeField("title");
-			String filename = (String) doc.get("ignored_stream_name")
-					.getFirstValue();
+			final String filename = (String) doc.get("ignored_stream_name").getFirstValue();
 			doc.addField("title", filename);
 			doc.addField("source", "file");
 		}
 
-		String mimeType = (String) doc.get("ignored_stream_content_type")
-				.getFirstValue();
-		MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
+		final String mimeType = (String) doc.get("ignored_stream_content_type").getFirstValue();
+		final MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
 		MimeType type;
 
 		String extension = "";
@@ -175,9 +196,9 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 			if (extension.length() > 1) {
 				extension = extension.substring(1);
 			}
-		} catch (MimeTypeException e) {
-			Pattern pattern = Pattern.compile("[^\\.]*$");
-			Matcher matcher = pattern.matcher(url);
+		} catch (final MimeTypeException e) {
+			final Pattern pattern = Pattern.compile("[^\\.]*$");
+			final Matcher matcher = pattern.matcher(url);
 			if (matcher.find()) {
 				extension = matcher.group();
 			}

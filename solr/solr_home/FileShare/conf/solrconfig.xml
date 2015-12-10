@@ -715,6 +715,46 @@
        <str name="indent">true</str>
      </lst>
   </requestHandler>
+  
+  <!--  SearchHandler used to send Solr response compliant with OpenSearch format -->
+  	<requestHandler class="solr.SearchHandler" name="/opensearch">
+		<!-- default values for query parameters can be specified, these will be 
+			overridden by parameters in the request -->
+		<lst name="defaults">
+			<str name="echoParams">explicit</str>
+			<str name="defType">edismax</str>
+			<str name="qf">title_fr^50 title_en^50 content_fr^10 content_en^10 source^20 extension^500 id^3</str>
+			<str name="pf">title_en^500 title_fr^500 content_fr^100 content_en^100</str>
+			<int name="rows">10</int>
+			<str name="spellcheck">true</str>
+			<str name="hl.simple.pre">&lt;span class="em"&gt;</str>
+			<str name="hl.simple.post">&lt;/span&gt;</str>
+			<str name="spellcheck.count">1</str>
+			<str name="spellcheck.collate">true</str>       <!-- Highlighting defaults -->
+			<str name="hl">on</str>
+			<str name="hl.fl">content_fr content_en</str>
+			<str name="hl.alternateField">content_en</str>
+			<str name="hl.alternateField">content_fr</str>
+			<str name="hl.maxAlternateFieldLength">100</str>
+			<str name="hl.encoder">html</str>
+			<str name="hl.fragsize">200</str>
+			<str name="hl.maxAnalyzedChars">40000</str>
+			<int name="facet.mincount">1</int>
+			<str name="wt">xslt</str>
+			<str name="tr">opensearch.xsl</str>
+			<str name="fl">*</str>
+		</lst>
+		<!-- 
+		<lst name="appends">
+			<str name="fq">{!manifoldCFSecurity}</str>
+		</lst>
+ -->
+		
+	
+	
+	</requestHandler>
+	
+  
 
  
 

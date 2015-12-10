@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Datafari"
-#define MyAppVersion "1.1.1"
+#define MyAppVersion "2.0"
 #define MyAppPublisher "France Labs"
 #define MyAppURL "http://www.datafari.com/"
 
@@ -24,6 +24,8 @@ DisableProgramGroupPage=yes
 OutputBaseFilename=Datafari_Setup
 Compression=lzma
 SolidCompression=yes
+PrivilegesRequired=admin
+InfoAfterFile=infoafter.txt
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -53,7 +55,7 @@ procedure CurPageChanged(CurPageID: Integer);
   begin
   if CurPageID = 14 then 
   begin  
-    FileReplace(ExpandConstant('{app}\tomcat\conf\tomcat-users.xml'),'@PASSWORD@',AdminPassword);
+    FileReplace(ExpandConstant('{app}\tomcat\conf\datafari.properties'),'@TEMPADMINPASSWORD@',AdminPassword);
     FileReplace(ExpandConstant('{app}\mcf\mcf_home\properties.xml'),'@PASSWORD@',MCFAdminPassword);
   end
   end;
@@ -161,5 +163,4 @@ end;
 
 
 [Run]
-Filename: "{app}\bin\initialize.bat"
-Filename: "EXPLORER.EXE"; Parameters: "/select,{app}\bin\start-datafari.bat"
+Filename: "EXPLORER.EXE"; Parameters: "/select,{app}\bin\launch_me_first_after_install.bat"

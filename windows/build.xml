@@ -18,6 +18,7 @@
 	<property name="windows.dist.dir" value="${windows.dir}/dist" />
 	<property name="jvm.dir" value="${windows.dir}/jvm" />
 	<property name="pgsql.dir" value="${windows.dir}/pgsql" />
+	<property name="python.dir" value="${windows.dir}/python" />
 	<property name="windows.bin.dir" value="${windows.dir}/bin" />
 
 
@@ -52,6 +53,18 @@
 			<fileset dir="${pgsql.dir}">
 				<include name="**" />
 			</fileset>
+		</copy>
+		
+		<copy todir="${windows.dist.dir}/cassandra">
+					<fileset dir="${cassandra.dir}">
+						<include name="**" />
+					</fileset>
+				</copy>
+		
+		<copy todir="${windows.dist.dir}/python">
+					<fileset dir="${python.dir}">
+						<include name="**" />
+					</fileset>
 		</copy>
 
 		<copy todir="${windows.dist.dir}/jvm">

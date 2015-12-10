@@ -46,6 +46,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.francelabs.datafari.service.search.SolrServers.Core;
+import com.francelabs.datafari.utils.ExecutionEnvironment;
 
 /**
  * This Servlet is used to print and modify the textContent of various nodes of the solrConfig.xml
@@ -74,12 +75,7 @@ public class ModifyNodeContent extends HttpServlet {
 	public ModifyNodeContent() {
 		env = System.getenv("DATAFARI_HOME");									//Gets the directory of installation if in standard environment
 		if(env==null){															//If in development environment	
-			RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();	//Gets the D.solr.solr.home variable given in arguments to the VM
-			List<String> arguments = runtimeMxBean.getInputArguments();
-			for(String s : arguments){
-				if(s.startsWith("-Dsolr.solr.home"))
-					env = s.substring(s.indexOf("=")+1, s.indexOf("solr_home")-5);
-			}
+			env = ExecutionEnvironment.getDevExecutionEnvironment();
 		}
 		if(new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml").exists())
 			config = new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml");

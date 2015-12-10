@@ -20,6 +20,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Properties;
 
 import org.apache.log4j.BasicConfigurator;
@@ -45,6 +48,8 @@ public class UpdateNbLikes {
 		if(configFile.exists()){
 			properties.load(new FileInputStream(configFile));
 		}
+		else
+			configFile.createNewFile();
 	}
 	
 	public static synchronized UpdateNbLikes getInstance() throws IOException{
@@ -64,7 +69,7 @@ public class UpdateNbLikes {
 			if (nbLikes==null){
 				UpdateNbLikes.getInstance().properties.setProperty(document,"1");
 			}else{
-				UpdateNbLikes.getInstance().properties.setProperty(document,String.valueOf(Integer.parseInt(nbLikes)+1));
+				UpdateNbLikes.getInstance().properties.setProperty(document,String.valueOf(Float.parseFloat(nbLikes)+1));
 			}
 			saveProperty();
 			LikesLauncher.saveChange();
@@ -85,7 +90,7 @@ public class UpdateNbLikes {
 			if (nbLikes==null || Integer.parseInt(nbLikes) <= 0){
 				UpdateNbLikes.getInstance().properties.setProperty(document,"0");
 			}else{
-				UpdateNbLikes.getInstance().properties.setProperty(document,String.valueOf(Integer.parseInt(nbLikes)-1));
+				UpdateNbLikes.getInstance().properties.setProperty(document,String.valueOf(Float.parseFloat(nbLikes)-1));
 			}
 			saveProperty();
 			LikesLauncher.saveChange();

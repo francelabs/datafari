@@ -19,22 +19,22 @@ source $CONFIG_FILE
 
 
 if is_running $CATALINA_PID; then
-    echo "Error: Tomcat seems to be running already with PID $(cat $TOMCAT_PID_FILE)"
+    echo "Error: Tomcat seems to be already running with PID $(cat $TOMCAT_PID_FILE)"
     exit 1
 fi
 
 if is_running $MCF_PID_FILE; then
-    echo "Error: MCF Agent seems to be running already with PID $(cat $MCF_PID_FILE)"
+    echo "Error: MCF Agent seems to be already running with PID $(cat $MCF_PID_FILE)"
     exit 1
 fi
 
 if is_running $SOLR_PID_FILE; then
-   echo "Error : Solr seems to be running already with PID $(cat $SOLR_PID_FILE)"
+   echo "Error : Solr seems to be already running with PID $(cat $SOLR_PID_FILE)"
    exit 1
 fi
 
 if is_running $CASSANDRA_PID_FILE; then
-   echo "Error : Cassandra seems to be running already with PID $(cat $CASSANDRA_PID_FILE)"
+   echo "Error : Cassandra seems to be already running with PID $(cat $CASSANDRA_PID_FILE)"
    exit 1
 fi
 

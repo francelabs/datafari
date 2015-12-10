@@ -1,0 +1,61 @@
+= GMetric
+
+A pure Ruby client for generating Ganglia 3.1.x+ gmetric meta and metric packets and talking to your gmond / gmetad nodes over UDP protocol. Supports host spoofing, and all the same parameters as the gmetric command line executable.
+
+- http://www.igvita.com/2010/01/28/cluster-monitoring-with-ganglia-ruby/
+
+== Example: Sending a gmetric to a gmond over UDP
+
+  Ganglia::GMetric.send("127.0.0.1", 8670, {
+    :name => 'pageviews',
+    :units => 'req/min',
+    :type => 'uint8',
+    :value => 7000,
+    :tmax => 60,
+    :dmax => 300
+  })
+
+== Example: Generating the Meta and Metric packets
+
+  g = Ganglia::GMetric.pack(
+    :slope => 'positive',
+    :name => 'ruby',
+    :value => rand(100),
+    :tmax => 60,
+    :units => '',
+    :dmax => 60,
+    :type => 'uint8'
+  )
+
+  # g[0] = meta packet
+  # g[1] = gmetric packet
+  
+  s = UDPSocket.new
+  s.connect("127.0.0.1", 8670)
+  s.send g[0], 0
+  s.send g[1], 0
+
+== License
+
+(The MIT License)
+
+Copyright (c) 2009 Ilya Grigorik
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

@@ -14,18 +14,16 @@ rem WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 rem See the License for the specific language governing permissions and
 rem limitations under the License.
 
-set CATALINA_OPTS=""-Dorg.apache.manifoldcf.configfile=..\..\mcf\mcf_home\properties.xml -server -Xms256m -Xmx1024m""
-
-
-if "%OS%" == "Windows_NT" setlocal
 rem ---------------------------------------------------------------------------
 rem Start script for the CATALINA Server
-rem
-rem $Id: startup.bat 895392 2010-01-03 14:02:31Z kkolinko $
 rem ---------------------------------------------------------------------------
+
+setlocal
+set CATALINA_OPTS=""-Dorg.apache.manifoldcf.configfile=..\..\mcf\mcf_home\properties.xml -server -Xms256m -Xmx1024m""
 
 rem Guess CATALINA_HOME if not defined
 set "CURRENT_DIR=%cd%"
+if not "%CATALINA_HOME%" == "" goto gotHome
 set "CATALINA_HOME=%CURRENT_DIR%"
 if exist "%CATALINA_HOME%\bin\catalina.bat" goto okHome
 cd ..

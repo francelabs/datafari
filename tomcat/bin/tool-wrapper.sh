@@ -38,8 +38,6 @@
 #                   created outside of the JCP (i.e. DOM and SAX from W3C).
 #                   It can also be used to update the XML parser implementation.
 #                   Defaults to $CATALINA_HOME/endorsed.
-#
-# $Id: tool-wrapper.sh 1138835 2011-06-23 11:27:57Z rjung $
 # -----------------------------------------------------------------------------
 
 # OS specific support.  $var _must_ be set to either true or false.

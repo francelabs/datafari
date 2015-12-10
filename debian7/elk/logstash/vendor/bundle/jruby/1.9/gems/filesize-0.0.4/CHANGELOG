@@ -1,0 +1,3 @@
+Version 0.0.2 -- 2010-10-04
+* Fixing float handling
+* Use yardoc for documentation

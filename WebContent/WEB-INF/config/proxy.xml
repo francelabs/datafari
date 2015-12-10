@@ -20,5 +20,15 @@
 	  		directory="/admin/proxy/banana"
 	  	/>
 	</server>
+	
+	<server className="net.sf.j2ep.servers.BaseServer" 
+		domainName="localhost:5601" 
+		isRewriting="false"
+		path="/app/kibana">
+		
+		<rule className="net.sf.j2ep.rules.DirectoryRule"
+	  		directory="/admin/proxy/usagestats"
+	  	/>
+	</server>
 
 </config>

@@ -22,6 +22,7 @@
 	<property name="ocr.dir" value="${debian.dir}/ocr" />
 	<property name="pgsql.dir" value="${debian.dir}/pgsql" />
 	<property name="debian.bin.dir" value="${debian.dir}/bin" />
+	<property name="elk.dir" value="${debian.dir}/elk" />
 
 
 	<target name="Datafari_Debian7.clean" depends="Datafari_WebApp.clean,Datafari_Bin.clean">
@@ -34,6 +35,7 @@
 	<target name="copyBinaries" depends="Datafari_WebApp.compileDatafariWebApp,Datafari_Bin.buildJar">
 		<mkdir dir="${debian.dist.dir}/logs" />
 		<mkdir dir="${debian.dist.dir}/pid" />
+		
 		<copy todir="${debian.dist.dir}/tomcat">
 			<fileset dir="${tomcat.dir}">
 				<include name="**" />
@@ -74,6 +76,12 @@
 			</fileset>
 		</copy>
 		
+		<copy todir="${debian.dist.dir}/elk">
+					<fileset dir="${elk.dir}">
+						<include name="**" />
+					</fileset>
+				</copy>
+		
 
 		<copy todir="${debian.dist.dir}/zookeeper">
 			<fileset dir="${zookeeper.dir}">
@@ -107,6 +115,7 @@
 
 		<copy file="${project.dir}/LICENSE.txt" todir="${debian.dist.dir}/"></copy>
 		<copy file="${project.dir}/README.txt" todir="${debian.dist.dir}/"></copy>
+		<copy file="${project.dir}/CHANGES.txt" todir="${debian.dist.dir}/"></copy>
 
 		<mkdir dir="${bin.dir}/lib" />
 		

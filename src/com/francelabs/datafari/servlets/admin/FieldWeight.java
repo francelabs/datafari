@@ -47,6 +47,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.francelabs.datafari.service.search.SolrServers.Core;
+import com.francelabs.datafari.utils.ExecutionEnvironment;
 
 /**Javadoc
  * 
@@ -80,12 +81,7 @@ public class FieldWeight extends HttpServlet {
 	public FieldWeight() {
 		env = System.getenv("DATAFARI_HOME");									//Gets the directory of installation if in standard environment
 		if(env==null){															//If in development environment	
-			RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();	//Gets the D.solr.solr.home variable given in arguments to the VM
-			List<String> arguments = runtimeMxBean.getInputArguments();
-			for(String s : arguments){
-				if(s.startsWith("-Dsolr.solr.home"))
-					env = s.substring(s.indexOf("=")+1, s.indexOf("solr_home")-5);
-			}
+			env = ExecutionEnvironment.getDevExecutionEnvironment();
 		}
 		semaphoreConfigPf = new SemaphoreLn("", "pf");
 		semaphoreConfigQf = new SemaphoreLn("", "qf");

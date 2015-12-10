@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>io.netty</groupId>
+  <artifactId>netty</artifactId>
+  <versioning>
+    <release>3.7.0.Final</release>
+    <versions>
+      <version>3.7.0.Final</version>
+    </versions>
+    <lastUpdated>20150320203556</lastUpdated>
+  </versioning>
+</metadata>
