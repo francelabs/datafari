@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+require 'ruby-maven'
+
+args = ARGV.dup
+ARGV.clear # clean up in case another script gets executed it gets a clear ARGV
+
+RubyMaven.exec(*args)

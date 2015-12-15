@@ -28,7 +28,7 @@ if [ -e "$JAVA_HOME"/bin/java ] ; then
         # Build the global options
         OPTIONS=$(cat "$OPTIONSFILE")
         
-        "$JAVA_HOME/bin/java" $OPTIONS $@
+        "$JAVA_HOME/bin/java" -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=1044 $OPTIONS $@
         exit $?
         
     else

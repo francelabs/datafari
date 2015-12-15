@@ -8,6 +8,11 @@
 .tableWidget .facetSort { font-size: 90%; font-weight: normal; }
 .tableWidget ul li { font-size: 90%; }
 
+.hierarchicalWidget .facetName { font-size: 120%; font-weight: bold; text-transform: capitalize; }
+.hierarchicalWidget .facetSort { font-size: 90%; font-weight: normal; }
+.hierarchicalWidget ul { font-size: 90%; }
+.hierarchicalWidget ul ul { font-size: 100%; }
+
 .resultWidget .res .title { font-weight: bold; text-decoration: underline; }
 
 .videoResultWidget .res .title { font-size: 1.3em; font-weight: bold; }
