@@ -7,7 +7,6 @@
 
 export DATAFARI_HOME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../..
 
-export JAVA_HOME=${DATAFARI_HOME}/debian7/jvm
 echo $JAVA_HOME
 export LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib:${DATAFARI_HOME}/debian7/ocr/tesseract/lib:${DATAFARI_HOME}/debian7/ocr/leptonica/lib
 export INIT_STATE_FILE=${DATAFARI_HOME}/bin/common/init_state.properties

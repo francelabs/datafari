@@ -5,10 +5,7 @@
 #
 #
 
-if (( EUID != 0 )); then
-   echo "You need to be root to run this script." 1>&2
-   exit 100
-fi
+
 
 DIR=../../../debian7/bin
 
