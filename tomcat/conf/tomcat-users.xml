@@ -29,7 +29,7 @@
   <role rolename="ConnectedSearchUser"/>
   <role rolename="SearchExpert"/>
   <role rolename="SearchAdministrator"/>
-  <user password="admin" roles="manager-gui,SearchAdministrator" username="admin"/>
+  <user password="@PASSWORD@" roles="manager-gui,SearchAdministrator" username="admin"/>
   <user password="ConnectedSearchUser" roles="ConnectedSearchUser" username="ConnectedSearchUser"/>
   <user password="SearchExpert" roles="SearchExpert" username="SearchExpert"/>
   <user password="SearchAdministrator" roles="SearchAdministrator" username="SearchAdministrator"/>
