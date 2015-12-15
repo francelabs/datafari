@@ -4,7 +4,7 @@
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
  *  * You may obtain a copy of the License at
- *  * 
+ *  *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
  *  *
  *  * Unless required by applicable law or agreed to in writing, software
@@ -28,10 +28,8 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 
 public class UserDataService {
-	final static Logger logger = Logger
-			.getLogger(UserDataService.class.getName());
+	final static Logger logger = Logger.getLogger(UserDataService.class.getName());
 	private static UserDataService instance;
-	
 
 	public final static String SEARCHADMINISTRATOR = "SearchAdministrator";
 	public final static String USERCOLLECTION = "user";
@@ -40,13 +38,10 @@ public class UserDataService {
 	public static final String USERNAMECOLUMN = "username";
 	public final static String PASSWORDCOLUMN = "password";
 	public final static String ROLECOLUMN = "role";
-	
-	
 
-	private Session session;
+	private final Session session;
 
-	public static synchronized UserDataService getInstance()
-			throws IOException {
+	public static synchronized UserDataService getInstance() throws IOException {
 		if (instance == null) {
 			instance = new UserDataService();
 		}
@@ -62,14 +57,13 @@ public class UserDataService {
 
 	/**
 	 * Inform if the user exists already in the database
-	 * 
+	 *
 	 * @return true if is exists and false if not
 	 * @throws Exception
 	 *             if there's a problem with Cassandra
 	 */
-	public boolean isInBase(String username) throws Exception {
-		ResultSet results = session.execute("SELECT * FROM " + USERCOLLECTION
-				+ " where " + USERNAMECOLUMN + " = '" + username + "'");
+	public boolean isInBase(final String username) throws Exception {
+		final ResultSet results = session.execute("SELECT * FROM " + USERCOLLECTION + " where " + USERNAMECOLUMN + " = '" + username + "'");
 		if (results.one() != null) {
 			return true;
 		} else {
@@ -80,16 +74,15 @@ public class UserDataService {
 
 	/**
 	 * Get the password of a user
-	 * 
+	 *
 	 * @param username
 	 * @return the password of the user
 	 * @throws Exception
 	 *             if there's a problem with Cassandra
 	 */
-	public String getPassword(String username) throws Exception {
-		ResultSet results = session.execute("SELECT * FROM " + USERCOLLECTION
-				+ " where " + USERNAMECOLUMN + " = '" + username + "'");
-		Row entry = results.one();
+	public String getPassword(final String username) throws Exception {
+		final ResultSet results = session.execute("SELECT * FROM " + USERCOLLECTION + " where " + USERNAMECOLUMN + " = '" + username + "'");
+		final Row entry = results.one();
 		if (entry == null) {
 			return null;
 		} else {
@@ -99,20 +92,19 @@ public class UserDataService {
 
 	/**
 	 * Returns the roles of a user containing in the myDoc
-	 * 
+	 *
 	 * @param myDoc
 	 *            the document containing the user with the roles
 	 * @return an arrayList of roles of the user
 	 * @throws Exception
 	 *             if there's a probleme with database
 	 */
-	public List<String> getRoles(String username) throws Exception {
-		List<String> roles = new ArrayList<String>();
-		ResultSet results = session.execute("SELECT " + ROLECOLUMN + " FROM "
-				+ ROLECOLLECTION + " where " + USERNAMECOLUMN + " = '" + username
-				+ "'");
+	public List<String> getRoles(final String username) throws Exception {
+		final List<String> roles = new ArrayList<String>();
+		final ResultSet results = session
+				.execute("SELECT " + ROLECOLUMN + " FROM " + ROLECOLLECTION + " where " + USERNAMECOLUMN + " = '" + username + "'");
 
-		for (Row row : results) {
+		for (final Row row : results) {
 			roles.add(row.getString(ROLECOLUMN));
 		}
 		return roles;
@@ -120,7 +112,7 @@ public class UserDataService {
 
 	/**
 	 * get all user with the corresponding roles
-	 * 
+	 *
 	 * @param db
 	 *            instance of the database that contains the identifier
 	 *            collection
@@ -129,23 +121,32 @@ public class UserDataService {
 	 *             if there's a problem with Cassandra
 	 */
 	public Map<String, List<String>> getAllUsers() throws Exception {
-		Map<String, List<String>> users = new HashMap<String, List<String>>();
+		final Map<String, List<String>> users = new HashMap<String, List<String>>();
 
-		ResultSet results = session.execute("SELECT * FROM " + ROLECOLLECTION);
+		final ResultSet userResults = session.execute("SELECT * FROM " + USERCOLLECTION);
+		for (final Row row : userResults) {
+			final String user = row.getString(USERNAMECOLUMN);
+			if (!users.containsKey(user)) {
+				users.put(user, new ArrayList<String>());
+			}
+		}
 
-		for (Row row : results) {
-			String user = row.getString(USERNAMECOLUMN);
+		final ResultSet roleResults = session.execute("SELECT * FROM " + ROLECOLLECTION);
+
+		for (final Row row : roleResults) {
+			final String user = row.getString(USERNAMECOLUMN);
 			if (!users.containsKey(user)) {
 				users.put(user, new ArrayList<String>());
 			}
 			users.get(user).add(row.getString(ROLECOLUMN));
 		}
+
 		return users;
 	}
 
 	/**
 	 * Change a password of username with the "password"
-	 * 
+	 *
 	 * @param password
 	 *            new password hashed
 	 * @param username
@@ -153,54 +154,49 @@ public class UserDataService {
 	 * @throws Exception
 	 *             if there's a problem with Cassandra
 	 */
-	public void changePassword(String passwordHashed, String username)
-			throws Exception {
+	public void changePassword(final String passwordHashed, final String username) throws Exception {
 
-		String query = "update " + USERCOLLECTION + " set " + PASSWORDCOLUMN
-				+ " = '" + passwordHashed + "' where " + USERNAMECOLUMN
-				+ " = '" + username + "'";
+		final String query = "update " + USERCOLLECTION + " set " + PASSWORDCOLUMN + " = '" + passwordHashed + "' where " + USERNAMECOLUMN + " = '"
+				+ username + "'";
 		session.execute(query);
 	}
 
 	/**
 	 * Add a role to the user
-	 * 
+	 *
 	 * @param role
 	 *            string representing the role that we want to add
 	 * @throws Exception
 	 *             if there's a problem with Cassandra
 	 */
-	public void addRole(String role, String username) throws Exception {
-		String query = "insert into " + ROLECOLLECTION + " (" + USERNAMECOLUMN
-				+ "," + ROLECOLUMN + ")" + " values ('" + username + "','"
-				+ role + "')";
+	public void addRole(final String role, final String username) throws Exception {
+		final String query = "insert into " + ROLECOLLECTION + " (" + USERNAMECOLUMN + "," + ROLECOLUMN + ")" + " values ('" + username + "','" + role
+				+ "')";
 		session.execute(query);
 	}
 
 	/**
 	 * Add a user
-	 * 
+	 *
 	 * @param username
 	 * @param password
 	 * @param role
 	 *            is the array containing the roles of the user that we want to
 	 *            add
-	 * @return 
+	 * @return
 	 * @throws Exception
 	 *             if there's a problem with Cassandra
 	 */
-	public boolean addUser(String username, String password, List<String> roles)
-			throws Exception {
+	public boolean addUser(final String username, final String password, final List<String> roles) throws Exception {
 		try {
-		String query = "insert into " + USERCOLLECTION + " (" + USERNAMECOLUMN
-				+ "," + PASSWORDCOLUMN + ")" + " values ('" + username + "','"
-				+ password + "')";
-		session.execute(query);
-		for (String role : roles) {
-			this.addRole(role, username);
-		}
-		//TODO correctly catch already in base database
-		} catch (Exception e){
+			final String query = "insert into " + USERCOLLECTION + " (" + USERNAMECOLUMN + "," + PASSWORDCOLUMN + ")" + " values ('" + username
+					+ "','" + password + "')";
+			session.execute(query);
+			for (final String role : roles) {
+				this.addRole(role, username);
+			}
+			// TODO correctly catch already in base database
+		} catch (final Exception e) {
 			logger.warn(e.getMessage());
 			return false;
 		}
@@ -209,35 +205,31 @@ public class UserDataService {
 
 	/**
 	 * Delete a user
-	 * 
+	 *
 	 * @param username
 	 *            the user to delete
 	 * @throws Exception
 	 *             if there's a problem with Cassandra
 	 */
-	public void deleteUser(String username) throws Exception {
-		String queryUser = "DELETE FROM " + USERCOLLECTION + " WHERE "
-				+ USERNAMECOLUMN + " = '" + username+"'";
+	public void deleteUser(final String username) throws Exception {
+		final String queryUser = "DELETE FROM " + USERCOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
 		session.execute(queryUser);
-	
-		String queryRole = "DELETE FROM " + ROLECOLLECTION + " WHERE "
-				+ USERNAMECOLUMN + " = '" + username+"'";
+
+		final String queryRole = "DELETE FROM " + ROLECOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
 		session.execute(queryRole);
 	}
 
 	/**
 	 * Delete a role from the user
-	 * 
+	 *
 	 * @param role
 	 *            string representing the role that we want to delete
 	 * @throws Exception
 	 *             if there's a problem with Cassandra
 	 */
-	public  void deleteRole(String role, String username)
-			throws Exception {
-		String query = "DELETE FROM " + ROLECOLLECTION + " WHERE "
-				+ USERNAMECOLUMN + " = '" + username + "'"
-				+ " AND "+ROLECOLUMN + " = '"+role+"'";
+	public void deleteRole(final String role, final String username) throws Exception {
+		final String query = "DELETE FROM " + ROLECOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "'" + " AND " + ROLECOLUMN + " = '"
+				+ role + "'";
 		session.execute(query);
 	}
 
