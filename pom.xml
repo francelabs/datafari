@@ -1,0 +1,470 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.francelabs.datafari</groupId>
+	<artifactId>datafari-parent</artifactId>
+	<!-- Main POM of datafari -->
+	<packaging>pom</packaging>
+	<version>2.0-SNAPSHOT</version>
+	<name>Datafari Enterprise Search - Parent POM</name>
+	<modules>
+		<module>datafari-core</module>
+		<module>datafari-updateprocessor</module>
+		<module>datafari-realm</module>
+	</modules>
+	<prerequisites>
+		<!-- Force minimum Maven version -->
+		<maven>3.0.5</maven>
+	</prerequisites>
+	<dependencies>
+		<!-- Local Maven repo dependencies -->
+
+		<!-- Remote Maven repo dependencies -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-solrj</artifactId>
+			<version>5.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.8</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail-api</artifactId>
+			<version>1.5.3</version>
+		</dependency>
+		<!-- Javax.servlet: We were using version 3.0.FR -->
+		<!-- <dependency> <groupId>javax.servlet</groupId> <artifactId>javax.servlet-api</artifactId> 
+			<version>3.0.1</version> </dependency> -->
+		<!-- Replaced by version 3.1.0 to try to fix the Java Verify exception 
+			on classes AlertsAdmin, GetAllUsersAndRoles, GetFavorites, GetLikesFavorites -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.datastax.cassandra</groupId>
+			<artifactId>cassandra-driver-core</artifactId>
+			<version>2.1.8</version>
+		</dependency>
+		<!-- Use JSON compiled with Java 7, otherwise we get UnsupportedVersion 
+			exception or even Verify exceptioni -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20131018</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.8.2</version>
+		</dependency>
+		<!-- Jericho: Not sure which version was used by datafari (no info about 
+			it and size of jar is completely different from the one in Maven -->
+		<dependency>
+			<groupId>net.htmlparser.jericho</groupId>
+			<artifactId>jericho-html</artifactId>
+			<version>3.4</version>
+		</dependency>
+		<!-- The content of js.jar it's included into the Opend JDK under rhino.jar 
+			otherwise, import dependencies anyway -->
+		<dependency>
+			<groupId>org.mozilla</groupId>
+			<artifactId>rhino</artifactId>
+			<version>1.7.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-core</artifactId>
+			<version>5.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-core</artifactId>
+			<version>1.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-util</artifactId>
+			<version>7.0.65</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-catalina</artifactId>
+			<version>7.0.65</version>
+		</dependency>
+		<!-- HttpClient and HttpCore dependencies added to avoid warning at mvn 
+			dependency:analyze time -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.4.1</version>
+		</dependency>
+
+		<!-- Needed for Cassandra -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.13</version>
+		</dependency>
+		<!-- Needed at runtime -->
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-digester</groupId>
+			<artifactId>commons-digester</artifactId>
+			<version>2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+		</dependency>
+		<!-- wstx-asl relocated to woodstox-core-asl -->
+
+		<!-- Tools.jar missing issue fix -->
+		<dependency>
+			<groupId>com.sun</groupId>
+			<artifactId>tools</artifactId>
+			<version>1.7.0</version>
+			<scope>system</scope>
+			<!-- If the java.home variable is not correctly set, change the -vm argument 
+				in the eclipse.ini to point to the JDK -->
+			<systemPath>${java.home}/../lib/tools.jar</systemPath>
+		</dependency>
+
+	</dependencies>
+	<build>
+		<!-- DefaultGoal is the same used to run the children POMs -->
+		<defaultGoal>package</defaultGoal>
+
+		<sourceDirectory>../src/main/java</sourceDirectory>
+		<outputDirectory>../dist/WEB-INF/classes</outputDirectory>
+
+		<pluginManagement>
+			<plugins>
+				<!-- Disable resources plugin -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>2.7</version>
+					<executions>
+						<execution>
+							<id>default-resources</id>
+							<phase />
+							<goals>
+								<goal>default-resources</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>default-testResources</id>
+							<phase />
+							<goals>
+								<goal>default-testResources</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<!-- Disable compiler plugin -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.3</version>
+					<executions>
+						<execution>
+							<id>default-compile</id>
+							<phase />
+							<goals>
+								<goal>default-compile</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>default-testCompile</id>
+							<phase />
+							<goals>
+								<goal>default-testCompile</goal>
+							</goals>
+						</execution>
+
+					</executions>
+				</plugin>
+				<!-- Disable test plugin -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.19</version>
+					<executions>
+						<execution>
+							<id>default-test</id>
+							<phase />
+							<goals>
+								<goal>default-test</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<!-- Disable package JAR plugin -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>2.6</version>
+					<executions>
+						<execution>
+							<id>default-jar</id>
+							<phase />
+							<goals>
+								<goal>default-jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<!-- Disable WAR package plugin -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-war-plugin</artifactId>
+					<version>2.6</version>
+					<executions>
+						<execution>
+							<id>default-war</id>
+							<phase />
+							<goals>
+								<goal>default-war</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.10</version>
+				<!-- Don't propagate configuration to child POMs -->
+				<inherited>false</inherited>
+				<executions>
+					<execution> <!-- Copy dependencies transitively (if not transitively, use copy goal) -->
+						<id>copy-dependencies</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>dist/WEB-INF/lib</outputDirectory>
+							<includeGroupIds> org.apache.commons, commons-httpclient,
+								commons-logging, commons-codec, commons-digester,
+								commons-beanutils, commons-io, log4j,
+								org.slf4j, org.apache.solr,
+								org.json,
+								org.jsoup,
+								org.apache.httpcomponents,
+								org.apache.zookeeper,
+								net.htmlparser.jericho,
+								javax.mail,
+								joda-time,
+								org.hamcrest, junit, org.noggit,
+								org.codehaus.woodstox, org.mozilla, org.apache.lucene
+							</includeGroupIds>
+							<!-- Do not include org.apache.tomcat group, otherwise java.lang.NoSuchMethodException: 
+								org.apache.catalina.deploy.WebXml addFilter at Tomcat startup -->
+
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<!-- Don't propagate configuration to child POMs -->
+				<inherited>false</inherited>
+				<executions>
+					<!-- This execution of the resources plugin is NOT run by the main pom.xml 
+						lifecycle, it's intended to be run standalone by command line: resources:copy-resources@setup-eclipse -->
+					<!-- <execution> <id>setup-eclipse</id> <goals> <goal>copy-resources</goal> 
+						</goals> <configuration> <outputDirectory>.</outputDirectory> <resources> 
+						<resource> <directory>./dev-tools/eclipse</directory> </resource> </resources> 
+						</configuration> </execution> -->
+					<!-- This execution of the resources plugin is run by the main pom.xml 
+						lifecycle -->
+					<execution>
+						<id>copy-resources</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>dist</outputDirectory>
+							<resources>
+								<resource>
+									<directory>WebContent</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- HTTP download plugin -->
+			<plugin>
+				<groupId>com.googlecode.maven-download-plugin</groupId>
+				<artifactId>download-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<!-- Don't propagate configuration to child POMs -->
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>install-solr</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<!-- Version of Solr should be retrieved from a property file as well 
+								as the SHA1 -->
+							<url>http://archive.apache.org/dist/lucene/solr/5.2.1/solr-5.2.1.tgz</url>
+							<sha1>0351906cdeef48cdc85b3fe75dc5c038a90bae5f</sha1>
+							<unpack>true</unpack>
+							<outputDirectory>temp</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>install-cassandra</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<!-- Version of Cassandra should be retrieved from a property file 
+								as well as the SHA1 -->
+							<url>http://archive.apache.org/dist/cassandra/2.1.8/apache-cassandra-2.1.8-bin.tar.gz</url>
+							<sha1>8fc0b4763487656793e9cb6016b939e0260e057e</sha1>
+							<unpack>true</unpack>
+							<outputDirectory>temp</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<!-- Don't propagate configuration to child POMs -->
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>ant-tasks</id>
+						<phase>validate</phase>
+						<configuration>
+							<target>
+								<ant antfile="maven-ant-tasks.xml" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+	<description>
+Datafari is the ideal product for those who want to search through their data, while using advanced open source technologies. Datafari combines Apache ManifoldCF and Apache Solr, to allow its users to search through many different and diverse data sources: their file shares, their cloud shares (dropbox, google drive…), their databases, but also their emails and many more.
+    </description>
+	<url>http://www.datafari.com/en/</url>
+	<inceptionYear>2011</inceptionYear>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<organization>
+		<name>France Labs - Search Experts</name>
+		<url>http://www.francelabs.com/en/</url>
+	</organization>
+	<developers>
+		<developer>
+			<id>culmer</id>
+			<name>Cedric Ulmer</name>
+			<email>cedric.ulmer@francelabs.com</email>
+			<organization>France Labs</organization>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>Europe/Paris</timezone>
+		</developer>
+		<developer>
+			<id>otavard</id>
+			<name>Olivier Tavard</name>
+			<email>olivier.tavard@francelabs.com</email>
+			<organization>France Labs</organization>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>Europe/Paris</timezone>
+		</developer>
+		<developer>
+			<id>amazoyer</id>
+			<name>Aurelien Mazoyer</name>
+			<email>aurelien.mazoyer@francelabs.com</email>
+			<organization>France Labs</organization>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>Europe/Paris</timezone>
+		</developer>
+		<developer>
+			<id>jmassiera</id>
+			<name>Julien Massiera</name>
+			<email>julien.massiera@francelabs.com</email>
+			<organization>France Labs</organization>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>Europe/Paris</timezone>
+		</developer>
+		<developer>
+			<id>gusai</id>
+			<name>Giovanni Usai</name>
+			<email>giovanni.usai@francelabs.com</email>
+			<organization>France Labs</organization>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>Europe/Paris</timezone>
+		</developer>
+	</developers>
+	<issueManagement>
+		<system>JIRA</system>
+		<url>https://datafari.atlassian.net/secure/Dashboard.jspa</url>
+	</issueManagement>
+	<scm>
+		<connection>scm:git:https://github.com/francelabs/datafari.git</connection>
+		<tag>HEAD</tag>
+		<url>https://github.com/francelabs/datafari</url>
+	</scm>
+</project>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-ant-tasks" default="all"
+	basedir=".">
+	
+	<!-- Here we specify all the Ant tasks executed by Maven build -->
+
+	<target name="all" depends="misc,setup-solr,setup-cassandra,clean" />
+
+	<target name="misc">
+		<!-- Create PID directory, at the root of datafari project -->
+		<mkdir dir="pid" />
+		<!-- Affect enough privileges for this folder -->
+		<chmod dir="pid" perm="777" />
+
+		<!-- Copy Tomcat Admin interface resources and Banana webapp to Eclipse's 
+			deploy directory NOT NEEDED -->
+		<!-- <copy -->
+		<!-- toDir="../.metadata/.plugins/org.eclipse.wst.server.core/tmp0/webapps/"> -->
+		<!-- <fileset dir="./tomcat/webapps" includes="ROOT/,manager/" /> -->
+		<!-- <file file="./tomcat/webapps/banana.war" /> -->
+		<!-- </copy> -->
+
+		<!-- Copy Manifold CF to Tomcat auto-deploy directory -->
+		<copy toDir="tomcat/webapps" overwrite="true" force="true">
+			<fileset dir="mcf/war" />
+			<globmapper from="*.war" to="datafari-*.war" />
+		</copy>
+
+		<!-- Copy Datafari properties file -->
+		<copy file="tomcat/conf/datafari.properties" toDir="../Servers/Datafari-config"
+			overwrite="true" force="true" />
+
+		<!-- Copy Log4j.properties file -->
+		<copy file="tomcat/conf/log4j.properties" toDir="tomcat/lib"
+			overwrite="true" force="true" />
+	</target>
+
+	<target name="setup-solr">
+		<!-- Copy only useful Solr server directories stripping the parent Solr 
+			directory (to avoid Solr version inclusion) -->
+		<copy toDir="solr" overwrite="true" force="true">
+			<fileset dir="temp" includes="*solr*/bin/**,*solr*/server/**" />
+			<cutdirsmapper dirs="1" />
+		</copy>
+
+		<!-- Overwrite with Datafari specific scripts -->
+		<copy toDir="solr/bin" overwrite="true" force="true">
+			<fileset dir="datafari-solr/bin" />
+		</copy>
+
+		<!-- Copy conf and solr_home directories -->
+		<copy toDir="solr" overwrite="true" force="true">
+			<fileset dir="datafari-solr" includes="conf/**,solr_home/**" />
+		</copy>
+
+		<!-- Affect enough privileges for Solr executables (Ant copy doesn't preserve 
+			execution rights!) -->
+		<!-- All files under solr/bin at any level must have 775 permissions -->
+		<chmod dir="solr/bin" perm="775" includes="**" />
+		<!-- Only .sh files at any level under solr/server/scripts -->
+		<chmod dir="solr/server/scripts" perm="775" includes="**/*.sh" />
+	</target>
+
+	<target name="setup-cassandra">
+		<!-- Copy only useful Cassandra directories stripping the parent Cassandra 
+			directory (to avoid Cassandra version inclusion) -->
+		<copy toDir="cassandra" overwrite="true" force="true">
+			<fileset dir="temp">
+				<include name="*cassandra*/bin/**" />
+				<include name="*cassandra*/conf/**" />
+				<include name="*cassandra*/interface/**" />
+				<include name="*cassandra*/lib/**" />
+				<include name="*cassandra*/pylib/**" />
+				<include name="*cassandra*/tools/**" />
+			</fileset>
+			<cutdirsmapper dirs="1" />
+		</copy>
+
+		<!-- Overwrite with Datafari specific scripts -->
+		<copy toDir="cassandra/bin" overwrite="true" force="true">
+			<fileset dir="datafari-cassandra/bin" />
+		</copy>
+
+		<!-- Copy conf directory -->
+		<copy toDir="cassandra/conf" overwrite="true" force="true">
+			<fileset dir="datafari-cassandra/conf" />
+		</copy>
+
+		<!-- Affect enough privileges for Cassandra executables (Ant copy doesn't 
+			preserve execution rights!) -->
+		<!-- All files under cassandra/bin at any level must have 775 permissions -->
+		<chmod dir="cassandra/bin" perm="775" includes="**" />
+		<!-- All files under cassandra/tools/bin at any level must have 775 permissions -->
+		<chmod dir="cassandra/tools/bin" perm="775" includes="**" />
+	</target>
+
+	<target name="clean">
+		<!-- Delete the directory used for storing downloaded resources -->
+		<delete dir="temp" />
+	</target>
+
+</project>

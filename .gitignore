@@ -1,0 +1,8 @@
+/cassandra/
+/dist/
+/logs/
+/pid/
+/solr/
+/target/
+/temp/
+
