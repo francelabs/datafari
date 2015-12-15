@@ -1,0 +1,9 @@
+# blank lines and lines starting with pound are comments.
+#Explicit mappings match any token sequence on the LHS of "=>" 
+#and replace with all alternatives on the RHS.  These types of mappings 
+#ignore the expand parameter in the schema. 
+#Examples: 
+#i-pod, i pod => ipod, 
+#sea biscuit, sea biscit => seabiscuit 
+Internet
+Web
