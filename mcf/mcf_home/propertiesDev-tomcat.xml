@@ -40,7 +40,7 @@
   <!-- Point to a specific (common) logging file -->
   <!-- TODO When migrated to log4j v2: use a single ini file and reference env variable DATAFARI_SRC 
   to have an absolute path instead of ../../ (for bash initialize-dev.sh) and ./datafari/ (for Tomcat server)-->
-  <property name="org.apache.manifoldcf.logconfigfile" value="./logging-dev.ini"/>
+  <property name="org.apache.manifoldcf.logconfigfile" value="./logging-dev-tomcat.ini"/>
   <!-- Specify the connectors to be loaded -->
   <property name="org.apache.manifoldcf.connectorsconfigurationfile" value="./connectors.xml"/>
 
