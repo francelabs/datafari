@@ -15,6 +15,16 @@
 		<!-- Force minimum Maven version -->
 		<maven>3.0.5</maven>
 	</prerequisites>
+	
+	<dependencies>
+          <dependency>
+            <groupId>com.francelabs.datafari</groupId>
+            <artifactId>datafari-dependencies</artifactId>
+            <version>2.0-SNAPSHOT</version>
+            <type>pom</type>
+        </dependency>
+    </dependencies>
+	
 	<build>
 	
 		<!-- defaultGoal defined in the parent POM -->
@@ -30,7 +40,7 @@
 					<source>1.7</source>
 					<target>1.7</target>
 					<includes>
-						<include>**/updateprocessor/**</include>
+						<include>**/datafari/updateprocessor/**</include>
 					</includes>
 				</configuration>
 				<executions>
@@ -50,7 +60,7 @@
 				<version>2.6</version>
 				<configuration>
 					<includes>
-						<include>**/updateprocessor/**</include>
+						<include>**/datafari/updateprocessor/**</include>
 					</includes>
 					<outputDirectory>../solr/solr_home/FileShare/lib/custom</outputDirectory>
 				</configuration>
