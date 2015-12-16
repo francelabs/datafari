@@ -30,7 +30,7 @@
 					<source>1.7</source>
 					<target>1.7</target>
 					<includes>
-						<include>**/realm/*</include>
+						<include>**/realm/**</include>
 					</includes>
 				</configuration>
 				<executions>
@@ -50,7 +50,7 @@
 				<version>2.6</version>
 				<configuration>
 					<includes>
-						<include>**/realm/*</include>
+						<include>**/realm/**</include>
 					</includes>
 					<outputDirectory>../tomcat/lib</outputDirectory>
 				</configuration>

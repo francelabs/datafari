@@ -52,8 +52,8 @@
 					<source>1.7</source>
 					<target>1.7</target>
 					<excludes>
-						<exclude>**/realm/*</exclude>
-						<exclude>**/updateprocessor/*</exclude>
+						<exclude>**/realm/**</exclude>
+						<exclude>**/updateprocessor/**</exclude>
 					</excludes>
 				</configuration>
 				<executions>

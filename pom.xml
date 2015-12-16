@@ -10,6 +10,7 @@
 	<modules>
 		<module>datafari-core</module>
 		<module>datafari-updateprocessor</module>
+		<module>datafari-searchcomp-capsule</module>
 		<module>datafari-realm</module>
 	</modules>
 	<prerequisites>
