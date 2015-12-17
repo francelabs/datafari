@@ -32,9 +32,7 @@
       <url-pattern>/admin/*</url-pattern>
     </web-resource-collection>
     <auth-constraint>
-      <role-name>ConnectedSearchUser</role-name>
-      <role-name>SearchAdministrator</role-name>
-      <role-name>SearchExpert</role-name>
+      <role-name>*</role-name>
     </auth-constraint>
     <user-data-constraint>
       <transport-guarantee>NONE</transport-guarantee>
