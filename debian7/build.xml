@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<project name="Datafari_Debian7" default="configure" basedir=".">
+<project name="Datafari_Debian7" default="configure">
 
 	<!-- ========================= PROPERTIES ============================= -->
-
-
-
-	<import file="../build.xml" />
-	<import file="../bin/build.xml" />
-
 
 	<property name="mcf.password" value="password" />
 	<property name="datafari.password" value="password" />
 
+	<!-- Source directories -->
+	<property name="tomcat.src.dir" value="${project.dir}/tomcat" />
+	<property name="solr.src.dir" value="${project.dir}/solr" />
+	<property name="mcf.src.dir" value="${project.dir}/mcf" />
+	<property name="cassandra.src.dir" value="${project.dir}/cassandra" />
+	<property name="dist.src.dir" value="${project.dir}/dist" />
+	<property name="bin.src.dir" value="${project.dir}/bin" />
+	<property name="devtools.src.dir" value="${project.dir}/dev-tools" />
 
-
+	<!-- Output directories and self contained Datafari's Debian components -->
 	<property name="debian.dir" value="${project.dir}/debian7" />
 	<property name="debian.dist.dir" value="${debian.dir}/dist" />
 	<property name="jvm.dir" value="${debian.dir}/jvm" />
@@ -24,42 +26,63 @@
 	<property name="debian.bin.dir" value="${debian.dir}/bin" />
 	<property name="elk.dir" value="${debian.dir}/elk" />
 
+	<target name="copyBinaries">
 
-	<target name="Datafari_Debian7.clean" depends="Datafari_WebApp.clean,Datafari_Bin.clean">
-		<delete includeemptydirs="true">
-			<fileset dir="${debian.dist.dir}" includes="**/*" />
-		</delete>
-	</target>
+		<echoproperties />
 
-
-	<target name="copyBinaries" depends="Datafari_WebApp.compileDatafariWebApp,Datafari_Bin.buildJar">
 		<mkdir dir="${debian.dist.dir}/logs" />
 		<mkdir dir="${debian.dist.dir}/pid" />
-		
+
+		<!-- These components need a build with Maven -->
+
+		<!-- Copy Tomcat admin UI and external webapps like ManifoldCF -->
 		<copy todir="${debian.dist.dir}/tomcat">
-			<fileset dir="${tomcat.dir}">
+			<fileset dir="${tomcat.src.dir}">
 				<include name="**" />
 			</fileset>
 		</copy>
-		<copy todir="${debian.dist.dir}/ocr">
-			<fileset dir="${ocr.dir}">
-				<include name="**" />
-			</fileset>
-		</copy>
+
 		<copy todir="${debian.dist.dir}/solr">
-			<fileset dir="${solr.dir}">
-				<exclude name="**/**/data/**" />
+			<fileset dir="${solr.src.dir}">
+				<exclude name="**/data/**" />
 			</fileset>
 		</copy>
 
 		<copy todir="${debian.dist.dir}/mcf">
-			<fileset dir="${mcf.dir}">
+			<fileset dir="${mcf.src.dir}">
 				<include name="**" />
 			</fileset>
 		</copy>
-		
+
 		<copy todir="${debian.dist.dir}/cassandra">
-			<fileset dir="${cassandra.dir}">
+			<fileset dir="${cassandra.src.dir}">
+				<include name="**" />
+			</fileset>
+		</copy>
+
+		<!-- Copy Datafari web application sources -->
+		<copy todir="${debian.dist.dir}/tomcat/webapps/Datafari">
+			<fileset dir="${dist.src.dir}">
+				<include name="**" />
+			</fileset>
+		</copy>
+
+		<copy todir="${debian.dist.dir}/bin/common/config">
+			<fileset dir="${bin.src.dir}/config" />
+		</copy>
+
+		<copy todir="${debian.dist.dir}/bin/common">
+			<fileset file="${bin.src.dir}/common/init_state.properties" />
+			<fileset file="${bin.src.dir}/common/mail.txt" />
+			<fileset dir="${devtools.src.dir}/script/mcf-conf">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<!-- Self-contained Debian components -->
+
+		<copy todir="${debian.dist.dir}/ocr">
+			<fileset dir="${ocr.dir}">
 				<include name="**" />
 			</fileset>
 		</copy>
@@ -75,20 +98,20 @@
 				<include name="**" />
 			</fileset>
 		</copy>
-		
+
 		<copy todir="${debian.dist.dir}/elk">
-					<fileset dir="${elk.dir}">
-						<include name="**" />
-					</fileset>
-				</copy>
-		
+			<fileset dir="${elk.dir}">
+				<include name="**" />
+			</fileset>
+		</copy>
+
 
 		<copy todir="${debian.dist.dir}/zookeeper">
 			<fileset dir="${zookeeper.dir}">
 				<include name="**" />
 			</fileset>
 		</copy>
-		
+
 
 		<copy todir="${debian.dist.dir}/command">
 			<fileset dir="${command.dir}">
@@ -103,39 +126,9 @@
 			</fileset>
 		</copy>
 
-		<copy todir="${debian.dist.dir}/tomcat/webapps/Datafari">
-			<fileset dir="${dist.dir}">
-				<include name="**" />
-			</fileset>
-		</copy>
-		
-		<copy todir="${debian.dist.dir}/bin/common/config">
-			<fileset dir="${bin.dir}/config" />
-		</copy>
-
-		<copy file="${project.dir}/LICENSE.txt" todir="${debian.dist.dir}/"></copy>
-		<copy file="${project.dir}/README.txt" todir="${debian.dist.dir}/"></copy>
-		<copy file="${project.dir}/CHANGES.txt" todir="${debian.dist.dir}/"></copy>
-
-		<mkdir dir="${bin.dir}/lib" />
-		
-					<copy todir="${debian.dist.dir}/bin/common/lib">
-						<fileset dir="${bin.dir}/common/lib" />
-					</copy>
-				
-
-					<copy todir="${debian.dist.dir}/bin/common">
-								<fileset file="${bin.dir}/init_state.properties" />
-					</copy>
-		
-				
-					<copy todir="${debian.dist.dir}/bin/common">
-						<fileset file="${bin.dir}/dist/DatafariScripts.jar" />
-					</copy>
-		
-					<copy todir="${debian.dist.dir}/bin/common">
-								<fileset file="${bin.dir}/common/mail.txt" />
-							</copy>
+		<copy file="${project.dir}/LICENSE.txt" todir="${debian.dist.dir}/" />
+		<copy file="${project.dir}/README.txt" todir="${debian.dist.dir}/" />
+		<copy file="${project.dir}/CHANGES.txt" todir="${debian.dist.dir}/" />
 	</target>
 
 
@@ -143,6 +136,5 @@
 		<replace file="${debian.dist.dir}/tomcat/conf/tomcat-users.xml" token="@PASSWORD@" value="${datafari.password}" />
 		<replace file="${debian.dist.dir}/mcf/mcf_home/properties.xml" token="@PASSWORD@" value="${mcf.password}" />
 	</target>
-
 
 </project>
