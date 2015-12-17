@@ -100,7 +100,6 @@
 			</ol>
 		</div>
 	</div>
-	<fieldset id="alphafeature"><legend>!! This feature is in beta. It will be fully supported in Datafari 2.2 !!</legend></fieldset>
 	<div class="col-sm-12"><span id="globalAnswer"></span></div><br/>
 	<div class="col-sm-12"></div>
 	<div class="box">
@@ -129,15 +128,15 @@
 					</div>
 					<div>
 					<div class="row">
-						<label id="connectionURLLabel" class="col-sm-4 control-label">Connection URL</label>
+						<label id="connectionURLLabel" class="col-sm-4 control-label"></label>
 						<input type="text"  id="connectionURL" name="connectionURL" class="col-sm-5">
 					</div>
 					<div class="row">
-						<label id="connectionNameLabel" class="col-sm-4 control-label">Connection Username</label>
+						<label id="connectionNameLabel" class="col-sm-4 control-label"></label>
 						<input type="text" id="connectionName" name="connectionName" class="col-sm-5">
 					</div>
 					<div class="row">
-						<label id="connectionPasswordLabel" class="col-sm-4 control-label">Connection Password</label>
+						<label id="connectionPasswordLabel" class="col-sm-4 control-label"></label>
 						<input type="password"id="connectionPassword" name="connectionPassword" class="col-sm-5">
 					</div>
 					<div class="row">
@@ -156,13 +155,13 @@
 		</div>
 	</div>
 	<div class="col-xs-8 col-lg-offset-1 assign_role">
-		<h1>Assign Datafari Roles to Active Directory Users  <i style="color:#A8C900" class="fa fa-users"></i></h1><br/>
-		<p class="note">Here you can add Datafari roles to AD users. Note that in order to display this list of AD users, you MUST provide in the configuration, a user who has the sufficient rights.</br>The below list ONLY DISPLAYS the ENABLED USERS of the Active Directory !</p><br/>
+		<h1><span id="ad_roles"></span>   <i style="color:#A8C900" class="fa fa-users"></i></h1><br/>
+		<p id="ad_note"></p><br/>
 		<table id="tableResult" class="table table-bordered table-striped">
 			<thead>
 				<tr>
-					<th>Username</th>
-					<th>Roles</th>
+					<th id="thUsername"></th>
+					<th id="thRoles"></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -178,12 +177,20 @@ $(document).ready(function() {
 	var SERVERGENERALERROR = -1;
 	var PROBLEMSERVERLDAPCONNECTION = -6;
 	var listRoles = ["ConnectedSearchUser","SearchAdministrator","SearchExpert"];
+	
 	//Internationalize content
 	$("#topbar1").text(window.i18n.msgStore['home']);
 	$("#topbar2").text(window.i18n.msgStore['admin']);
 	$("#topbar3").text(window.i18n.msgStore['ldapConfig']);
 	$("#submit").text(window.i18n.msgStore['save']);
 	$("#title").text(window.i18n.msgStore['ldapConfig']);
+	$("#ad_roles").html(window.i18n.msgStore['adRoles']);
+	$("#ad_note").html(window.i18n.msgStore['adNote']);
+	$("#connectionURLLabel").html(window.i18n.msgStore['adURLLabel']);
+	$("#connectionNameLabel").html(window.i18n.msgStore['adUsernameLabel']);
+	$("#connectionPasswordLabel").html(window.i18n.msgStore['adPasswordLabel']);
+	$("#thUsername").html(window.i18n.msgStore['username']);
+	$("#thRoles").html(window.i18n.msgStore['roles']);
 	var input = $("#ldap_activation input");
 	var regexConnectionURL = /ldap:\/\/.+\:[0-9]+/;
 	var ENDOFANIMATION = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';

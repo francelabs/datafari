@@ -173,5 +173,12 @@
 "userManagement" : "Gestione degli utlizzatori",
 "modifyUser" : "Modifica un utilizzatore",
 "save" : "Salvare",
-"ldapConfig" : "Configurazione LDAP"
+"ldapConfig" : "Configurazione LDAP",
+"adRoles" : "Assign Datafari Roles to Active Directory Users",
+"adNote" : "Here you can add Datafari roles to AD users. Note that in order to display this list of AD users, you MUST provide in the configuration, a user who has the sufficient rights.</br>The below list ONLY DISPLAYS the ENABLED USERS of the Active Directory !",
+"adURLLabel" : "Connection URL",
+"adUsernameLabel" : "Connection Username",
+"adPasswordLabel" : "Connection Pasword",
+"username" : "Username",
+"roles" : "Roles"
 }
