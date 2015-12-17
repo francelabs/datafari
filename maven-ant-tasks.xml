@@ -3,7 +3,7 @@
 
 	<!-- Here we specify all the Ant tasks executed by Maven build -->
 
-	<target name="all" depends="misc,setup-solr,setup-cassandra,clean" />
+	<target name="all" depends="setup-solr,setup-cassandra,setup-mcf,misc,clean" />
 
 	<target name="misc">
 		<!-- Create PID directory, at the root of datafari project -->
@@ -49,7 +49,7 @@
 				<cutdirsmapper dirs="2" />
 				<filtermapper>
 					<!-- Strip lib directory under each group of Jars-->
-					<replacestring from="lib" to=""/>
+					<replacestring from="lib" to="" />
 				</filtermapper>
 			</chainedmapper>
 		</copy>
@@ -103,6 +103,43 @@
 		<chmod dir="cassandra/bin" perm="775" includes="**" />
 		<!-- All files under cassandra/tools/bin at any level must have 775 permissions -->
 		<chmod dir="cassandra/tools/bin" perm="775" includes="**" />
+	</target>
+
+	<target name="setup-mcf">
+		<!-- Copy only useful ManifoldCF directories and files stripping the parent MCF 
+			directory (to avoid MCF version inclusion) -->
+		<copy toDir="mcf" overwrite="true" force="true">
+			<fileset dir="temp">
+				<include name="*manifoldcf*/connector-common-lib/**" />
+				<include name="*manifoldcf*/connector-lib/**" />
+				<include name="*manifoldcf*/connector-lib-proprietary/**" />
+				<include name="*manifoldcf*/lib/**" />
+				<include name="*manifoldcf*/connectors.xml" />
+			</fileset>
+			<cutdirsmapper dirs="1" />
+		</copy>
+
+		<!-- Copy war directory stripping the parent MCF 
+			directory (to avoid MCF version inclusion) and web directory -->
+		<copy toDir="mcf" overwrite="true" force="true">
+			<fileset dir="temp">
+				<include name="*manifoldcf*/**/mcf-api-service.war" />
+				<include name="*manifoldcf*/**/mcf-authority-service.war" />
+				<include name="*manifoldcf*/**/mcf-crawler-ui.war" />
+			</fileset>
+			<cutdirsmapper dirs="2" />
+		</copy>
+
+		<!-- Copy bin and mcf_home directories -->
+		<copy toDir="mcf" overwrite="true" force="true">
+			<fileset dir="datafari-mcf" includes="bin/**,mcf_home/**" />
+		</copy>
+
+		<!-- Affect enough privileges for MCF executables (Ant copy doesn't 
+			preserve execution rights!) -->
+		<!-- All files under mcf/bin at any level must have 775 permissions -->
+		<chmod dir="mcf/bin" perm="775" includes="**" />
+
 	</target>
 
 	<target name="clean">

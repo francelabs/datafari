@@ -230,6 +230,21 @@
 							<outputDirectory>temp</outputDirectory>
 						</configuration>
 					</execution>
+					<execution>
+						<id>install-mcf</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<!-- Version of MCF should be retrieved from a property file 
+								as well as the MD5 -->
+							<url>http://archive.apache.org/dist/manifoldcf/apache-manifoldcf-2.2/apache-manifoldcf-2.2-bin.tar.gz</url>
+							<md5>0cdb536d98a89e9e1847ad72ad8ea3a9</md5>
+							<unpack>true</unpack>
+							<outputDirectory>temp</outputDirectory>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>

@@ -1,6 +1,7 @@
 /cassandra/
 /dist/
 /logs/
+/mcf/
 /pid/
 /solr/
 /target/
