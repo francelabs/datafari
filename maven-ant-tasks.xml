@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<project name="maven-ant-tasks" default="all"
-	basedir=".">
-	
+<project name="maven-ant-tasks" default="all" basedir=".">
+
 	<!-- Here we specify all the Ant tasks executed by Maven build -->
 
 	<target name="all" depends="misc,setup-solr,setup-cassandra,clean" />
@@ -27,12 +26,10 @@
 		</copy>
 
 		<!-- Copy Datafari properties file -->
-		<copy file="tomcat/conf/datafari.properties" toDir="../Servers/Datafari-config"
-			overwrite="true" force="true" />
+		<copy file="tomcat/conf/datafari.properties" toDir="../Servers/Datafari-config" overwrite="true" force="true" />
 
 		<!-- Copy Log4j.properties file -->
-		<copy file="tomcat/conf/log4j.properties" toDir="tomcat/lib"
-			overwrite="true" force="true" />
+		<copy file="tomcat/conf/log4j.properties" toDir="tomcat/lib" overwrite="true" force="true" />
 	</target>
 
 	<target name="setup-solr">
@@ -41,6 +38,20 @@
 		<copy toDir="solr" overwrite="true" force="true">
 			<fileset dir="temp" includes="*solr*/bin/**,*solr*/server/**" />
 			<cutdirsmapper dirs="1" />
+		</copy>
+
+		<!-- Copy contrib Jars to solr_home/FileShare lib directory -->
+		<copy toDir="solr/solr_home/FileShare/lib" overwrite="true" force="true">
+			<!-- Copy only Jars -->
+			<fileset dir="temp" includes="*solr*/contrib/**/*.jar" />
+			<chainedmapper>
+				<!-- Strip solr*/contrib directory -->
+				<cutdirsmapper dirs="2" />
+				<filtermapper>
+					<!-- Strip lib directory under each group of Jars-->
+					<replacestring from="lib" to=""/>
+				</filtermapper>
+			</chainedmapper>
 		</copy>
 
 		<!-- Overwrite with Datafari specific scripts -->

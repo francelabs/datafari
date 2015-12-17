@@ -80,6 +80,7 @@
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
+					<outputDirectory>../dev-tools/script/mcf-conf</outputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>

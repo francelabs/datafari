@@ -7,19 +7,22 @@
 	<packaging>pom</packaging>
 	<version>2.0-SNAPSHOT</version>
 	<name>Datafari Enterprise Search - Parent POM</name>
+	<!-- The order of modules execution is important -->
 	<modules>
+		<module>datafari-dependencies</module>
 		<module>datafari-core</module>
 		<module>datafari-updateprocessor</module>
 		<module>datafari-searchcomp-capsule</module>
 		<module>datafari-realm</module>
+		<module>datafari-manifoldcf-scripts</module>
 	</modules>
 	<prerequisites>
 		<!-- Force minimum Maven version -->
 		<maven>3.0.5</maven>
 	</prerequisites>
-	
+
 	<!-- Dependencies defined in Datafari-dependencies POM -->
-	
+
 	<build>
 		<!-- DefaultGoal is the same used to run the children POMs -->
 		<defaultGoal>package</defaultGoal>
