@@ -140,6 +140,9 @@
 		<!-- All files under mcf/bin at any level must have 775 permissions -->
 		<chmod dir="mcf/bin" perm="775" includes="**" />
 
+		<!-- All bash files under mcf/mcf_home at any level must have 775 permissions -->
+		<chmod dir="mcf/mcf_home" perm="775" includes="**/*.sh" />
+
 	</target>
 
 	<target name="clean">
