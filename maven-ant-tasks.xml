@@ -108,7 +108,7 @@
 	<target name="setup-mcf">
 		<!-- Copy only useful ManifoldCF directories and files stripping the parent MCF 
 			directory (to avoid MCF version inclusion) -->
-		<copy toDir="mcf" overwrite="true" force="true">
+		<copy toDir="mcf/mcf_home" overwrite="true" force="true">
 			<fileset dir="temp">
 				<include name="*manifoldcf*/connector-common-lib/**" />
 				<include name="*manifoldcf*/connector-lib/**" />
@@ -140,8 +140,11 @@
 		<!-- All files under mcf/bin at any level must have 775 permissions -->
 		<chmod dir="mcf/bin" perm="775" includes="**" />
 
-		<!-- All bash files under mcf/mcf_home at any level must have 775 permissions -->
-		<chmod dir="mcf/mcf_home" perm="775" includes="**/*.sh" />
+		<!-- All bash files under mcf/mcf_home must have 775 permissions -->
+		<chmod dir="mcf/mcf_home" perm="775" includes="*.sh" />
+		
+		<!-- Create syncharea directory, otherwise we get an exception while running bash initialize-dev.sh -->
+		<mkdir dir="mcf/mcf_home/syncharea"/>
 
 	</target>
 
