@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<project name="Datafari_Debian7" default="configure">
+<project name="Datafari_Debian7" default="buildInstaller" basedir="../..">
 
 	<!-- ========================= PROPERTIES ============================= -->
 
 	<property name="mcf.password" value="password" />
 	<property name="datafari.password" value="password" />
+
+	<!-- If project.dir not set, set it as basedir (datafari directory) -->
+	<condition property="project.dir" else="${basedir}">
+		<isset property="project.dir" />
+	</condition>
 
 	<!-- Source directories -->
 	<property name="tomcat.src.dir" value="${project.dir}/tomcat" />
@@ -18,13 +23,60 @@
 	<!-- Output directories and self contained Datafari's Debian components -->
 	<property name="debian.dir" value="${project.dir}/debian7" />
 	<property name="debian.dist.dir" value="${debian.dir}/dist" />
+	<property name="debian.bin.dir" value="${debian.dir}/bin" />
+
 	<property name="jvm.dir" value="${debian.dir}/jvm" />
 	<property name="zookeeper.dir" value="${debian.dir}/zookeeper" />
 	<property name="command.dir" value="${debian.dir}/command" />
 	<property name="ocr.dir" value="${debian.dir}/ocr" />
 	<property name="pgsql.dir" value="${debian.dir}/pgsql" />
-	<property name="debian.bin.dir" value="${debian.dir}/bin" />
 	<property name="elk.dir" value="${debian.dir}/elk" />
+
+	<!-- Installer directories -->
+	<property name="installer.dir" value="${debian.dir}/installer" />
+	<property name="installer.build.dir" value="${installer.dir}/build" />
+	<!-- Debian installer direcotry -->
+	<property name="installer.dist.dir" value="${installer.dir}/dist" />
+
+	<target name="clean">
+		<delete includeemptydirs="true">
+			<fileset dir="${installer.dist.dir}" includes="**/*" />
+			<fileset dir="${installer.build.dir}" includes="**/*" />
+		</delete>
+	</target>
+
+	<target name="buildInstaller" depends="configure">
+		<copy todir="${installer.build.dir}/datafari/opt/datafari">
+			<fileset dir="${debian.dist.dir}">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<copy todir="${installer.build.dir}/datafari/DEBIAN">
+			<fileset dir="${installer.dir}/DEBIAN">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<exec executable="chmod">
+			<arg value="-R" />
+			<arg value="755" />
+			<arg value="${installer.build.dir}/datafari/DEBIAN" />
+		</exec>
+		<exec executable="dpkg-deb">
+			<arg value="-b" />
+			<arg value="${installer.build.dir}/datafari" />
+		</exec>
+
+		<!-- Output file -->
+		<move file="${installer.build.dir}/datafari.deb" todir="${installer.dist.dir}" />
+
+		<!-- Clean-up the intermediate directory -->
+		<delete dir="${installer.build.dir}/datafari" />
+	</target>
+
+	<target name="configure" depends="copyBinaries">
+		<replace file="${debian.dist.dir}/tomcat/conf/tomcat-users.xml" token="@PASSWORD@" value="${datafari.password}" />
+		<replace file="${debian.dist.dir}/mcf/mcf_home/properties.xml" token="@PASSWORD@" value="${mcf.password}" />
+	</target>
 
 	<target name="copyBinaries">
 
@@ -129,12 +181,6 @@
 		<copy file="${project.dir}/LICENSE.txt" todir="${debian.dist.dir}/" />
 		<copy file="${project.dir}/README.txt" todir="${debian.dist.dir}/" />
 		<copy file="${project.dir}/CHANGES.txt" todir="${debian.dist.dir}/" />
-	</target>
-
-
-	<target name="configure" depends="copyBinaries">
-		<replace file="${debian.dist.dir}/tomcat/conf/tomcat-users.xml" token="@PASSWORD@" value="${datafari.password}" />
-		<replace file="${debian.dist.dir}/mcf/mcf_home/properties.xml" token="@PASSWORD@" value="${mcf.password}" />
 	</target>
 
 </project>
