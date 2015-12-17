@@ -11,6 +11,21 @@ $(function($) {
 		selectionType : 'OR',
 		returnUnselectedFacetValues : true
 	}));
+	/*
+	Manager.addWidget(new AjaxFranceLabs.HierarchicalFacetWidget({
+		elm : $('#facet_hierarchical_url'),
+		id : 'facet_hierarchical',
+		field : 'urlHierarchy',
+		name : window.i18n.msgStore['facethierarchicalurl'],
+		pagination : true,
+		selectionType : 'OR',
+		returnUnselectedFacetValues : true,
+		rootLevel : 0,
+		maxDepth : 20,
+		separator : '/',
+		maxDisplay : 100
+	}));
+	*/
 
 	Manager.addWidget(new AjaxFranceLabs.TableWidget({
 		elm : $('#facet_language'),
@@ -43,6 +58,28 @@ $(function($) {
 		],
 		labels : [ window.i18n.msgStore['facetlast_modified0'], window.i18n.msgStore['facetlast_modified1'], window.i18n.msgStore['facetlast_modified2']]
 	}));
+	
+	Manager.addWidget(new AjaxFranceLabs.TableMobileWidget({
+		elm : $('#facet_type_mobile'),
+		id : 'facet_type_mobile',
+		field : 'extension',
+		name : window.i18n.msgStore['type'],
+		pagination : true,
+		selectionType : 'OR',
+		returnUnselectedFacetValues : true
+	}));
+
+	Manager.addWidget(new AjaxFranceLabs.TableMobileWidget({
+		elm : $('#facet_source_mobile'),
+		id : 'facet_source_mobile',
+		field : 'source',
+		name : window.i18n.msgStore['source'],
+		pagination : true,
+		selectionType : 'OR',
+		sort : 'ZtoA',
+		returnUnselectedFacetValues : true
+	}));
+
 
     var location = window.history.location || window.location;
 

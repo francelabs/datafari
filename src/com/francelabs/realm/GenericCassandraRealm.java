@@ -49,9 +49,6 @@ public class GenericCassandraRealm extends RealmBase {
     // use this as a default role
     static String defaultRole = "";
 
-    // db connection 
-	private  Cluster cluster;
-	private  Session session;
 
     // db constants
 	public final static String USERCOLLECTION = "user";
@@ -62,30 +59,8 @@ public class GenericCassandraRealm extends RealmBase {
 	public final static String ROLECOLUMN = "role";
     
 
-    @Override
-    protected void startInternal() throws LifecycleException {
-        initConnection();
-        super.startInternal();
-    }
 
-    void initConnection() {
-    	try {
-			// Connect to the cluster and keyspace "demo"
-			cluster = Cluster.builder().addContactPoint(defaultDbHost).build();
-			session = cluster.connect(KEYROLENAME);
-			logger.info("Cassandra client initialized successfully");
-		} catch (Exception e) {
-			logger.error("Error initializing Cassandra client", e);
-		}
-    }
-    
-    @Override
-    protected void stopInternal() throws LifecycleException {
-		cluster.close();
-		logger.info("Cassandra closed successfully");
-    }
-
-
+	
 	@Override
     protected String getName() {
         return this.getClass().getSimpleName();
@@ -93,7 +68,7 @@ public class GenericCassandraRealm extends RealmBase {
 
     @Override
     protected String getPassword(final String username) {
-    	ResultSet results = session.execute("SELECT * FROM " + USERCOLLECTION
+    	ResultSet results = CassandraDBContextListerner.getSession().execute("SELECT * FROM " + USERCOLLECTION
 				+ " where " + USERNAMECOLUMN + "='" + username + "'");
 		Row entry = results.one();
 		if (entry == null) {
@@ -105,7 +80,7 @@ public class GenericCassandraRealm extends RealmBase {
 
     public List<String> getRole(String username) {
     	List<String> roles = new ArrayList<String>();
-		ResultSet results = session.execute("SELECT " + ROLECOLUMN + " FROM "
+		ResultSet results = CassandraDBContextListerner.getSession().execute("SELECT " + ROLECOLUMN + " FROM "
 				+ ROLECOLLECTION + " where " + USERNAMECOLUMN + " = '" + username
 				+ "'");
 
@@ -145,15 +120,10 @@ public class GenericCassandraRealm extends RealmBase {
     	}
 
     @Override
-	public Principal authenticate(String arg0, String arg1) {
-		// TODO Auto-generated method stub
-    	arg1 = digest(arg1);
-		return super.authenticate(arg0,arg1);
+	public Principal authenticate(String username, String password) {
+    	String hashedPassword = digest(password);
+		return super.authenticate(username,hashedPassword);
 	}
-
-	public void closeConnexion(){
-		cluster.close();
-    }
     
 
     public String getDefaultDbHost() {

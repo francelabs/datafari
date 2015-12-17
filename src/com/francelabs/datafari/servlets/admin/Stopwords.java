@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import com.francelabs.datafari.service.search.SolrServers.Core;
+import com.francelabs.datafari.utils.ExecutionEnvironment;
 
 /** Javadoc
  * 
@@ -66,12 +67,7 @@ public class Stopwords extends HttpServlet {
 	public Stopwords() throws IOException {
 		env = System.getenv("DATAFARI_HOME");									//Gets the directory of installation if in standard environment
 		if(env==null){															//If in development environment	
-			RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();	//Gets the D.solr.solr.home variable given in arguments to the VM
-			List<String> arguments = runtimeMxBean.getInputArguments();
-			for(String s : arguments){
-				if(s.startsWith("-Dsolr.solr.home"))
-					env = s.substring(s.indexOf("=")+1, s.indexOf("solr_home")-5);
-			}
+			env = ExecutionEnvironment.getDevExecutionEnvironment();
 		}
 		content="";
 		try {

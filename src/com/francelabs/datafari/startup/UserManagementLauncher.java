@@ -52,7 +52,9 @@ public class UserManagementLauncher implements ServletContextListener {
 		} catch (Exception e) {
 			LOGGER.error("Cannot create admin account",e);
 		} 
-		ScriptConfiguration.setProperty("TEMPADMINPASSWORD", "");
+		
+		// Keep TEMPADMINPASSWORD in datafari.properties : should be changed by user anyway
+		//ScriptConfiguration.setProperty("TEMPADMINPASSWORD", "");
 	}
 
 	@Override

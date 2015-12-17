@@ -88,8 +88,10 @@ AjaxFranceLabs.AbstractFacetWidget = AjaxFranceLabs.AbstractWidget.extend({
 				fq.val(fq.val().substring(0, fq.val().length-4) + ')');
 			if(fq.val().substr(1, 3) == 'OR ')
 				fq.val('(' + fq.val().substring(4, fq.val().length));
-			if(fq.val() == '()')
+			if(fq.val() == '()') {
 				fq.val('');
+				this.manager.store.remove('fq');
+			}
 			return fq;
 		}
 	},

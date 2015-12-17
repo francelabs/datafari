@@ -82,12 +82,12 @@ public class LikesLauncher implements ServletContextListener {
 						SolrClient solrClient = SolrServers
 								.getSolrServer(Core.FILESHARE);
 						SolrQuery refreshQuery = new SolrQuery();
-						refreshQuery.set("qt", "reloadCache");
+						refreshQuery.setRequestHandler("/reloadCache");
 						solrClient.query(refreshQuery);
 					} catch (Exception e) {
 						LOGGER.error("Cannot send refresh request", e);
 					}
-					LOGGER.info("updateNbLikes finished it's work");
+					LOGGER.info("updateNbLikes finished its work");
 				}
 
 			}).start();
@@ -115,7 +115,7 @@ public class LikesLauncher implements ServletContextListener {
 					SolrClient solrClient = SolrServers
 							.getSolrServer(Core.FILESHARE);
 					SolrQuery refreshQuery = new SolrQuery();
-					refreshQuery.set("qt", "reloadCache");
+					refreshQuery.setRequestHandler("/reloadCache");
 					solrClient.query(refreshQuery);
 					LikesLauncher.doReload = false;
 				} catch (Exception e) {

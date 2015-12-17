@@ -91,6 +91,17 @@ height:18px; width:18px;
 .tableWidget ul li .filterFacetCheck { float: left; vertical-align: top; cursor: pointer; float: left; line-height: 20px; margin-left: 5px; width: 182px;}
 /**************************************/
 
+/***	>>> Hierarchical Facet Widget <<<	***/
+.hierarchicalWidget { margin-bottom: 20px; }
+.hierarchicalWidget .facetName {  margin: 0; min-height: 21px; padding-bottom: 3px; width: 50%; }
+.hierarchicalWidget .facetName .label { cursor:pointer;}
+.hierarchicalWidget .facetName .hide_show { background-image: url('../js/AjaxFranceLabs/images/open_ico.png'); display: inline-block; height: 11px; margin-right: 3px; width: 11px; }
+.hierarchicalWidget .facetName .hide_show.close { background-image: url('../js/AjaxFranceLabs/images/open_ico.png'); cursor: pointer; }
+.hierarchicalWidget .facetSort { border-bottom: 1px solid; padding: 3px 0px; text-align: left; width: 100%; }
+.hierarchicalWidget li { border-bottom: 1px solid; padding: 3px 0 3px 0; }
+.hierarchicalWidget li .filterFacetCheck { cursor: pointer; }}
+/**************************************/
+
 /******	>>> Result Widget <<<	*******/
 .resultWidget .doc { display: inline-block; margin-bottom: 20px; width: 95%; }
 .resultWidget .doc .connector { float: left; height: 100%; width: 5%; }

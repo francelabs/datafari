@@ -17,6 +17,10 @@
 .tableWidget .facetSort { font-size: 90%; font-weight: normal; }
 .tableWidget ul li { font-size: 90%; }
 
+.hierarchicalWidget .facetName { font-size: 90%; font-weight: bold; text-transform: capitalize; }
+.hierarchicalWidget .facetSort { font-size: 90%; font-weight: normal; }
+.hierarchicalWidget ul li { font-size: 90%; }
+
 .resultWidget .res .title,#capsule .title { font-weight: normal;  font-size:18px;color: #4C76B6;font-weight: normal;}
 
 .resultWidget .res .icon span{font-weight: normal; font-size: x-small;margin: 0px 3px 0px 0px;font-weight:bold;text-transform: uppercase;color: #4C76B6;}
@@ -194,6 +198,11 @@
 .tableWidget .facetName { font-size: 120%; font-weight: bold; text-transform: capitalize; }
 .tableWidget .facetSort { font-size: 90%; font-weight: normal; }
 .tableWidget ul li { font-size: 90%; }
+
+.hierarchicalWidget .facetName { font-size: 120%; font-weight: bold; text-transform: capitalize; }
+.hierarchicalWidget .facetSort { font-size: 90%; font-weight: normal; }
+.hierarchicalWidget ul { font-size: 90%; }
+.hierarchicalWidget ul ul { font-size: 100%; }
 
 .resultWidget .res .title,#capsule .title { font-weight: bold; text-decoration: underline; }
 

@@ -33,7 +33,7 @@
   <property name="org.apache.manifoldcf.dbsuperuserpassword" value=""/>
   
   
-  
+    <property name="org.apache.manifoldcf.connectors" value="DEBUG"/>
   <property name="org.apache.manifoldcf.database.maxhandles" value="100"/>
   <property name="org.apache.manifoldcf.crawler.threads" value="50"/>
   

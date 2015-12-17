@@ -10,10 +10,13 @@
 .collectionWidget .content li.last { border-bottom-color: #930B0B; }
 .collectionWidget .content li.selected { background-color: #DB3131; }
 
-}
 .tableWidget .facetName { border-bottom-color: #b5b5b5; color: #3d3c3a; }
 .tableWidget .facetSort { background-color: #ebebeb; border-bottom-color: #b5b5b5; }
 .tableWidget ul li { border-bottom-color: #b5b5b5; }
+
+.hierarchicalWidget .facetName { border-bottom-color: #b5b5b5; color: #3d3c3a; }
+.hierarchicalWidget .facetSort { background-color: #ebebeb; border-bottom-color: #b5b5b5; }
+.hierarchicalWidget ul li { border-bottom-color: #b5b5b5; }
 
 .resultWidget .res .title { color: #000000; }
 .resultWidget .doc .res .address { color: #378140;; }
@@ -49,7 +52,8 @@
 .widgetContainer .annonce{background: rgb(255, 218, 16) none repeat scroll 0% 0%;}
 #facets_mobile{  background-color:#F0F0F0;}
 #facets_mobile ul,#facets ul{	background: white none repeat scroll 0% 0%;}
-#facets_mobile .facet.tableWidget.widget .facetName,#facets .facet.tableWidget.widget .facetName,
+#facets_mobile .facet.tableWidget.widget .facetName,#facets .facet.tableWidget.widget .facetName, 
+#facets_mobile .facet.hierarchicalWidget.widget .facetName,#facets .facet.hierarchicalWidget.widget .facetName,
 #facets .checkboxIcon, #facets_mobile input[type="checkbox"]:checked + label span.checkboxIcon{background : white;}
 #facets_mobile .checkboxIcon, #facets_mobile input[type="checkbox"]:checked + label span.checkboxIcon,
 #facets .checkboxIcon, #facets_mobile input[type="checkbox"]:checked + label span.checkboxIcon{background:transparent}

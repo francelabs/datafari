@@ -15,6 +15,29 @@ you just need to mention that you are using it.
 See http://wiki.datafari.com for more information.
 
 
+==================  2.1 ==================
+
+[DATAFARI-42] Fix "Impossible to login after several restarts" issue
+Tomcat version is 7.0.65 instead of 7.0.40
+Hierarchical Facet feature added :
+	- [DATAFARI-61] Hierarchical facet pagination
+	- [DATAFARI-46] Hierarchical facet pagination
+Facet fixes :
+- [DATAFARI-55] Hide facets when they have no content
+- [DATAFARI-45]Facet pager not displayed
+OpenSearch compatible format
+Development environment for Mac OS X supported
+Italian translation
+Active Directory feature fix :
+	- [DATAFARI-47] Domain hardcoded in the servlet SearchProxy
+	- [DATAFARI-50] 403 error after login of an basic AD user
+	- [DATAFARI-77] Cannot assign several roles to a datafari user
+	- [DATAFARI-48] Add AD/LDAP user role by the UI
+	- [DATAFARI-76] The "Modify a user"  admin UI shows role table users
+	- [DATAFARI-75] User suppression shows error
+	- [DATAFARI-74] User roles suppression
+	
+
 ==================  2.0 ==================
 
 - New User Interface with responsive design :
