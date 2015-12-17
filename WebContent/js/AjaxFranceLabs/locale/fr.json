@@ -162,5 +162,12 @@
 "userManagement" : "Gestion des utilisateurs",
 "modifyUser" : "Modifer un utilisateur",
 "save" : "Enregistrer",
-"ldapConfig" : "Configuration de LDAP"
+"ldapConfig" : "Configuration de l'Active Directory",
+"adRoles" : "Assigner des rôles Datafari à des utilisateurs Active Directory",
+"adNote" : "Ici vous pouvez ajouter des rôles Datafari à des utilisateurs de l'AD. Il est à noter que pour afficher la liste des utilisateurs de l'AD, vous DEVEZ renseigner dans la partie configuration, un utilisateur disposant des droits suffisants.</br>La liste ci-dessous AFFICHE UNIQUEMENT les UTILISATEURS ACTIVÉS de l'Active Directory !",
+"adURLLabel" : "URL de connexion",
+"adUsernameLabel" : "Utilisateur",
+"adPasswordLabel" : "Mot de passe",
+"username" : "Nom d'utilisateur",
+"roles" : "Rôles"
 }         
