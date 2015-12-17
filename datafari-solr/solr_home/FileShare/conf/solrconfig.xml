@@ -891,7 +891,7 @@
     -->
   <searchComponent class="solr.TermsComponent" name="terms"/>
 	 
-	 <searchComponent class="com.francelabs.datafari.solr.CapsuleSearchComponent" name="capsulecomponent">
+	 <searchComponent class="com.francelabs.datafari.searchcomp.capsule.CapsuleSearchComponent" name="capsulecomponent">
 	  <str name="file">capsules.txt</str>
 	 
 	  </searchComponent>
