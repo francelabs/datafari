@@ -77,9 +77,9 @@
 				<configuration>
 					<!-- Remove jar-with-dependencies from assembly Jar name -->
 					<appendAssemblyId>false</appendAssemblyId>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
+					<!-- Use custom assembly descriptor -->
+					<descriptor>datafari-mcf-scripts-assembly.xml</descriptor>
+					<attach>false</attach>
 					<outputDirectory>../dev-tools/script/mcf-conf</outputDirectory>
 				</configuration>
 			</plugin>
