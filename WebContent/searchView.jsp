@@ -144,7 +144,7 @@
 			<div id="facets">
 				<div id="facet_last_modified"></div>
 				<div id="facet_extension"></div>
-				<div id="facet_hierarchical_url"></div>
+				<!--  <div id="facet_hierarchical_url"></div> -->
 				<div id="facet_source"></div>
 				<div id="facet_language"></div>
 				<div id="facet_signature"></div>

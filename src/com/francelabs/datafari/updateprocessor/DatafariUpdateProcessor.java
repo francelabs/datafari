@@ -41,8 +41,9 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 		final SolrInputDocument doc = cmd.getSolrInputDocument();
 
 		final String url = (String) doc.getFieldValue("id");
-
+		/*
 		// Create path hierarchy for facet
+		
 		final List<String> urlHierarchy = new ArrayList<String>();
 
 		final String path = url.replace("file:", "");
@@ -62,6 +63,7 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 
 		// Add the tokens to the urlHierarchy field
 		doc.addField("urlHierarchy", urlHierarchy);
+		*/
 
 		doc.addField("url", url);
 
