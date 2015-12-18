@@ -6,4 +6,6 @@
 /solr/
 /target/
 /temp/
-
+/.settings/
+/.classpath
+/.project
