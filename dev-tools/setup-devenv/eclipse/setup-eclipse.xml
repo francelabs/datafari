@@ -2,12 +2,10 @@
 <project name="Datafari-setup-eclipse" default="eclipse"
 	basedir=".">
 
-	<dirname property="project.dir" file="${ant.file.Datafari-setup-eclipse}" />
-
 	<!-- Copy .project, .classpath and .settings directory to the root of the 
 		Eclipse project directory -->
 	<target name="eclipse">
-		<copy todir="${project.dir}">
+		<copy todir="../../../" overwrite="true" force="true" >
 			<fileset dir="./conf" />
 		</copy>
 	</target>
