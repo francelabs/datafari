@@ -131,7 +131,7 @@ public class GetAllLDAPUsersAndRoles extends HttpServlet {
 			final List<String> ldapUsersList = getUsersList(ctx, h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME), false);
 			ctx.close();
 			if (ldapUsersList.isEmpty()) {
-				jsonResponse.put("code", CodesReturned.GENERALERROR).put("statut", "No LDAP users found !");
+				jsonResponse.put("code", CodesReturned.GENERALERROR).put("statut", "No users found !");
 			} else {
 				final Map<String, List<String>> usersRoles = User.getAllUsers();
 				final Map<String, List<String>> ldapUsersRoles = new HashMap<>();
@@ -144,9 +144,16 @@ public class GetAllLDAPUsersAndRoles extends HttpServlet {
 				}
 				jsonResponse.put("code", CodesReturned.ALLOK).put("statut", ldapUsersRoles);
 			}
-		} catch (SAXException | ParserConfigurationException | NamingException | JSONException e) {
+		} catch (SAXException | ParserConfigurationException | JSONException e) {
 			try {
 				jsonResponse.put("code", CodesReturned.GENERALERROR).put("statut", "Problem with XML Manipulation");
+				logger.error(e);
+			} catch (final JSONException e1) {
+				logger.error(e);
+			}
+		} catch (final NamingException e) {
+			try {
+				jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONLDAP).put("statut", "Problem with AD connection");
 				logger.error(e);
 			} catch (final JSONException e1) {
 				logger.error(e);

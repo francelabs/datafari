@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>Modify Users</title>
+	<title>Add Users</title>
 	<style>
 		.role{
 			width:180px;
@@ -113,7 +113,22 @@
 	
 	<script>
 	var roles = [];
+	var timeouts = [];
+	
+	var clearTimeouts = function() {
+ 		for (var i = 0; i < timeouts.length; i++) {
+ 		    clearTimeout(timeouts[i]);
+ 		   console.log("timeout cleared")
+ 		}
+ 		
+ 		//quick reset of the timer array you just cleared
+ 		timeouts = [];
+ 		
+ 		$('#main').unbind('DOMNodeRemoved');
+ 	}
+	
 	$(document).ready(function(){
+	$('#main').bind('DOMNodeRemoved', clearTimeouts);
 	var NOFAVORITESFOUND = 101;
 	var SERVERALREADYPERFORMED = 1;
 	var SERVERALLOK = 0;
@@ -133,10 +148,12 @@
 	var password;
 	var error=[];
 	var sourceError;
-	setTimeout(function(){$('input[type="text"],input[type="password"]').val("")},200);
+	timeouts.push(setTimeout(function(){$('input[type="text"],input[type="password"]').val("");},200));
 	$("#topbar1").text(window.i18n.msgStore['home']);
 	$("#topbar2").text(window.i18n.msgStore['userManagement']);
  	$("#topbar3").text(window.i18n.msgStore['addUser']);
+ 	
+ 	
 	function htmlRole(role){
 		return '<div class="inline_block"><div class="input-group role">'+
 		  '<span class="input-group-addon delete"><i class="fa fa-times"></i></span>'+
@@ -272,7 +289,7 @@
 	});
 	$('form').submit(function(e){
 		e.preventDefault();
-		if (username==null || username=="" || password==null || password=="" || roles==null || roles.length==0){
+		if (username==null || username=="" || password==null || password=="" || roles==null || roles.length==0){
 			showError(FIELDNOTFILLED,"all");
 			return false;
 		}
@@ -290,7 +307,7 @@
 		},function(data){
 			if (data.code == SERVERALLOK){
 				$("#MessageSuccess").show().removeClass("animated fadeOut");
-				setTimeout(function(){
+				timeouts.push(setTimeout(function(){
 					$("#MessageSuccess").addClass("animated fadeOut");
 					$('input[type="text"],input[type="password"]').val("");
 					$("#roles").empty();
@@ -298,7 +315,7 @@
 					username = null;
 					password = null;
 					
-				},1500);		
+				},1500));		
 			}else{
 				showError(data.code,"all");
 			}
@@ -309,9 +326,9 @@
 		source : listRoles,
 		select : function(event,ui){
 			var role = ui.item.value;
-			setTimeout(function(){
+			timeouts.push(setTimeout(function(){
 				$('.input_roles').val("");
-			},500);
+			},500));
 			console.log(role);
 			console.log(roles.indexOf(role));
 			if (roles.indexOf(role)==-1){
