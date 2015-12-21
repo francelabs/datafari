@@ -35,6 +35,7 @@
 
 	<lib dir="./lib/extraction"/>
 	<lib dir="./lib/langid"/>
+	<lib dir="./lib/solr"/>
 	<lib dir="./lib/MCF"/>
 	<lib dir="./lib/custom"/>
 
