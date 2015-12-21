@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<project name="Datafari_Debian7" default="buildInstaller" basedir="../..">
+<project name="Datafari_Debian7" default="clean-build" basedir="../..">
 
 	<!-- ========================= PROPERTIES ============================= -->
 
@@ -38,10 +38,12 @@
 	<!-- Debian installer direcotry -->
 	<property name="installer.dist.dir" value="${installer.dir}/dist" />
 
+	<target name="clean-build" depends="clean,buildInstaller" />
+
 	<target name="clean">
 		<delete includeemptydirs="true">
-			<fileset dir="${installer.dist.dir}" includes="**/*" />
-			<fileset dir="${installer.build.dir}" includes="**/*" />
+			<fileset dir="${installer.dist.dir}" />
+			<fileset dir="${installer.build.dir}" />
 		</delete>
 	</target>
 
@@ -50,7 +52,7 @@
 			<fileset dir="${debian.dist.dir}" />
 		</copy>
 		<copy todir="${installer.build.dir}/datafari/DEBIAN">
-			<fileset dir="${installer.dir}/DEBIAN"/>
+			<fileset dir="${installer.dir}/DEBIAN" />
 		</copy>
 		<exec executable="chmod">
 			<arg value="-R" />
@@ -85,26 +87,27 @@
 
 		<!-- Copy Tomcat admin UI and external webapps like ManifoldCF -->
 		<copy todir="${debian.dist.dir}/tomcat">
-			<fileset dir="${tomcat.src.dir}"/>
+			<fileset dir="${tomcat.src.dir}" />
 		</copy>
 
 		<copy todir="${debian.dist.dir}/solr">
 			<fileset dir="${solr.src.dir}">
+				<!-- Exclude already existing data (i.e. coming from dev environment) -->
 				<exclude name="**/data/**" />
 			</fileset>
 		</copy>
 
 		<copy todir="${debian.dist.dir}/mcf">
-			<fileset dir="${mcf.src.dir}"/>
+			<fileset dir="${mcf.src.dir}" />
 		</copy>
 
 		<copy todir="${debian.dist.dir}/cassandra">
-			<fileset dir="${cassandra.src.dir}"/>
+			<fileset dir="${cassandra.src.dir}" />
 		</copy>
 
 		<!-- Copy Datafari web application sources -->
 		<copy todir="${debian.dist.dir}/tomcat/webapps/Datafari">
-			<fileset dir="${dist.src.dir}"/>
+			<fileset dir="${dist.src.dir}" />
 		</copy>
 
 		<copy todir="${debian.dist.dir}/bin/common/config">
@@ -122,34 +125,34 @@
 		<!-- Self-contained Debian components -->
 
 		<copy todir="${debian.dist.dir}/ocr">
-			<fileset dir="${ocr.dir}"/>
+			<fileset dir="${ocr.dir}" />
 		</copy>
 
 		<copy todir="${debian.dist.dir}/pgsql">
-			<fileset dir="${pgsql.dir}"/>
+			<fileset dir="${pgsql.dir}" />
 		</copy>
 
 		<copy todir="${debian.dist.dir}/jvm">
-			<fileset dir="${jvm.dir}"/>
+			<fileset dir="${jvm.dir}" />
 		</copy>
 
 		<copy todir="${debian.dist.dir}/elk">
-			<fileset dir="${elk.dir}"/>
+			<fileset dir="${elk.dir}" />
 		</copy>
 
 
 		<copy todir="${debian.dist.dir}/zookeeper">
-			<fileset dir="${zookeeper.dir}"/>
+			<fileset dir="${zookeeper.dir}" />
 		</copy>
 
 
 		<copy todir="${debian.dist.dir}/command">
-			<fileset dir="${command.dir}"/>
+			<fileset dir="${command.dir}" />
 		</copy>
 
 
 		<copy todir="${debian.dist.dir}/bin">
-			<fileset dir="${debian.bin.dir}"/>
+			<fileset dir="${debian.bin.dir}" />
 		</copy>
 
 		<copy file="${project.dir}/LICENSE.txt" todir="${debian.dist.dir}/" />
