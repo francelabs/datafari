@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<project name="Datafari_Windows_Installer" default="buildInstaller" basedir=".">
+<project name="Datafari_Windows_Installer" default="buildInstaller" basedir="../..">
 
 	<!-- ========================= PROPERTIES ============================= -->
-
-
 
 	<import file="../build.xml" />
 
@@ -15,29 +13,27 @@
 	<property name="innosetup.dir" value="${installer.dir}/InnoSetup5" />
 	<property name="innosetup.script" value="${installer.dir}/DatafariInstallerSource.iss" />
 
-	
-
 	<target name="Datafari_Windows_Installer.clean" depends="Datafari_Windows.clean">
 		<delete includeemptydirs="true">
-			<fileset dir="${installer.dist.dir}" includes="**/*" />
-			<fileset dir="${installer.build.dir}" includes="**/*" />
+			<fileset dir="${installer.dist.dir}" />
+			<fileset dir="${installer.build.dir}" />
 		</delete>
 	</target>
-	
-	<copy file="${installer.cassandra.dir}/cassandra.yaml" todir="${windows.dist.dir}/cassandra/conf/" overwrite="true"> </copy>
-	<copy file="${installer.dir}/README_WINDOWS_VERSION.txt" todir="${windows.dist.dir}/" overwrite="true"> </copy>
 
 	<target name="buildInstaller" depends="Datafari_Windows.copyBinaries">
+		
+		<copy file="${installer.cassandra.dir}/cassandra.yaml" todir="${windows.dist.dir}/cassandra/conf/" overwrite="true" />
+		<copy file="${installer.dir}/README_WINDOWS_VERSION.txt" todir="${windows.dist.dir}/" overwrite="true" />
+		
 		<copy todir="${installer.build.dir}">
-						<fileset dir="${windows.dist.dir}">
-							<include name="**" />
-						</fileset>
-				</copy>
+			<fileset dir="${windows.dist.dir}" />
+		</copy>
+		
 		<exec executable="${innosetup.dir}/ISCC.exe">
 			<arg value="${innosetup.script}" />
 			<arg value="/O${installer.dist.dir}" />
 			<arg value="/DSourceDirectory=${installer.build.dir}" />
 		</exec>
 	</target>
-	
+
 </project>
