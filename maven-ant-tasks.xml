@@ -40,10 +40,14 @@
 			<cutdirsmapper dirs="1" />
 		</copy>
 
-		<!-- Copy contrib Jars to solr_home/FileShare lib directory -->
+		<!-- Copy contrib Jars to solr_home/FileShare/lib/FEATURE_DIR_NAME directory -->
 		<copy toDir="solr/solr_home/FileShare/lib" overwrite="true" force="true">
-			<!-- Copy only Jars -->
-			<fileset dir="temp" includes="*solr*/contrib/**/*.jar" />
+			<!-- Copy Jars that are inside contrib directory -->
+			<!-- Copy Extraction and LangId -->
+			<fileset dir="temp">
+				<include name="*solr*/contrib/extraction/**/*.jar" />
+				<include name="*solr*/contrib/langid/**/*.jar" />
+			</fileset>
 			<chainedmapper>
 				<!-- Strip solr*/contrib directory -->
 				<cutdirsmapper dirs="2" />
@@ -51,6 +55,17 @@
 					<!-- Strip lib directory under each group of Jars-->
 					<replacestring from="lib" to="" />
 				</filtermapper>
+			</chainedmapper>
+		</copy>
+
+		<!-- Copy Solr dist Jars to solr_home/FileShare/lib/solr directory -->
+		<copy toDir="solr/solr_home/FileShare/lib/solr" overwrite="true" force="true">
+			<!-- Copy Jars that are inside dist directory -->
+			<!-- Copy only Jars that we need -->
+			<fileset dir="temp" includes="*solr*/dist/solr-langid-*.jar" />
+			<chainedmapper>
+				<!-- Strip solr*/dist directory -->
+				<cutdirsmapper dirs="2" />
 			</chainedmapper>
 		</copy>
 
@@ -142,9 +157,9 @@
 
 		<!-- All bash files under mcf/mcf_home must have 775 permissions -->
 		<chmod dir="mcf/mcf_home" perm="775" includes="*.sh" />
-		
+
 		<!-- Create syncharea directory, otherwise we get an exception while running bash initialize-dev.sh -->
-		<mkdir dir="mcf/mcf_home/syncharea"/>
+		<mkdir dir="mcf/mcf_home/syncharea" />
 
 	</target>
 

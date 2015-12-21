@@ -1,6 +1,7 @@
 @echo off
 set DATAFARI_HOME=%CD%\..
 set JAVA_HOME=%DATAFARI_HOME%\jvm
+set CATALINA_HOME=%DATAFARI_HOME%\tomcat
 set CASSANDRA_HOME=%DATAFARI_HOME%\cassandra
 set CASSANDRA_ENV=%CASSANDRA_HOME%\bin\cassandra.in.bat
 set SOLR_INSTALL_DIR=%DATAFARI_HOME%\solr
