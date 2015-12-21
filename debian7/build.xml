@@ -47,14 +47,10 @@
 
 	<target name="buildInstaller" depends="configure">
 		<copy todir="${installer.build.dir}/datafari/opt/datafari">
-			<fileset dir="${debian.dist.dir}">
-				<include name="**" />
-			</fileset>
+			<fileset dir="${debian.dist.dir}" />
 		</copy>
 		<copy todir="${installer.build.dir}/datafari/DEBIAN">
-			<fileset dir="${installer.dir}/DEBIAN">
-				<include name="**" />
-			</fileset>
+			<fileset dir="${installer.dir}/DEBIAN"/>
 		</copy>
 		<exec executable="chmod">
 			<arg value="-R" />
@@ -89,9 +85,7 @@
 
 		<!-- Copy Tomcat admin UI and external webapps like ManifoldCF -->
 		<copy todir="${debian.dist.dir}/tomcat">
-			<fileset dir="${tomcat.src.dir}">
-				<include name="**" />
-			</fileset>
+			<fileset dir="${tomcat.src.dir}"/>
 		</copy>
 
 		<copy todir="${debian.dist.dir}/solr">
@@ -101,22 +95,16 @@
 		</copy>
 
 		<copy todir="${debian.dist.dir}/mcf">
-			<fileset dir="${mcf.src.dir}">
-				<include name="**" />
-			</fileset>
+			<fileset dir="${mcf.src.dir}"/>
 		</copy>
 
 		<copy todir="${debian.dist.dir}/cassandra">
-			<fileset dir="${cassandra.src.dir}">
-				<include name="**" />
-			</fileset>
+			<fileset dir="${cassandra.src.dir}"/>
 		</copy>
 
 		<!-- Copy Datafari web application sources -->
 		<copy todir="${debian.dist.dir}/tomcat/webapps/Datafari">
-			<fileset dir="${dist.src.dir}">
-				<include name="**" />
-			</fileset>
+			<fileset dir="${dist.src.dir}"/>
 		</copy>
 
 		<copy todir="${debian.dist.dir}/bin/common/config">
@@ -134,48 +122,34 @@
 		<!-- Self-contained Debian components -->
 
 		<copy todir="${debian.dist.dir}/ocr">
-			<fileset dir="${ocr.dir}">
-				<include name="**" />
-			</fileset>
+			<fileset dir="${ocr.dir}"/>
 		</copy>
 
 		<copy todir="${debian.dist.dir}/pgsql">
-			<fileset dir="${pgsql.dir}">
-				<include name="**" />
-			</fileset>
+			<fileset dir="${pgsql.dir}"/>
 		</copy>
 
 		<copy todir="${debian.dist.dir}/jvm">
-			<fileset dir="${jvm.dir}">
-				<include name="**" />
-			</fileset>
+			<fileset dir="${jvm.dir}"/>
 		</copy>
 
 		<copy todir="${debian.dist.dir}/elk">
-			<fileset dir="${elk.dir}">
-				<include name="**" />
-			</fileset>
+			<fileset dir="${elk.dir}"/>
 		</copy>
 
 
 		<copy todir="${debian.dist.dir}/zookeeper">
-			<fileset dir="${zookeeper.dir}">
-				<include name="**" />
-			</fileset>
+			<fileset dir="${zookeeper.dir}"/>
 		</copy>
 
 
 		<copy todir="${debian.dist.dir}/command">
-			<fileset dir="${command.dir}">
-				<include name="**" />
-			</fileset>
+			<fileset dir="${command.dir}"/>
 		</copy>
 
 
 		<copy todir="${debian.dist.dir}/bin">
-			<fileset dir="${debian.bin.dir}">
-				<include name="**" />
-			</fileset>
+			<fileset dir="${debian.bin.dir}"/>
 		</copy>
 
 		<copy file="${project.dir}/LICENSE.txt" todir="${debian.dist.dir}/" />
