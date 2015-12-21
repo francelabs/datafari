@@ -44,7 +44,7 @@ public class AddUser extends HttpServlet {
 		try{
 			if (request.getParameter(UserDataService.USERNAMECOLUMN)!=null && request.getParameter(UserDataService.PASSWORDCOLUMN)!=null && request.getParameter(UserDataService.ROLECOLUMN+"[]")!=null){
 				User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(),request.getParameter(UserDataService.PASSWORDCOLUMN).toString());
-				int code = user.signup(Arrays.asList(request.getParameter(UserDataService.ROLECOLUMN+"[]")));
+				int code = user.signup(Arrays.asList(request.getParameterValues(UserDataService.ROLECOLUMN+"[]")));
 				if ( code == CodesReturned.ALLOK ){
 					jsonResponse.put("code", CodesReturned.ALLOK).put("statut", "User deleted with success");
 				}else if ( code == CodesReturned.USERALREADYINBASE){
