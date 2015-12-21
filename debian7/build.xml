@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<project name="Datafari_Debian7" default="clean-build" basedir="../..">
+<project name="Datafari_Debian7" default="clean-build" basedir=".">
 
 	<!-- ========================= PROPERTIES ============================= -->
 
@@ -7,7 +7,7 @@
 	<property name="datafari.password" value="password" />
 
 	<!-- If project.dir not set, set it as basedir (datafari directory) -->
-	<condition property="project.dir" else="${basedir}">
+	<condition property="project.dir" else="${basedir}/..">
 		<isset property="project.dir" />
 	</condition>
 
@@ -41,13 +41,16 @@
 	<target name="clean-build" depends="clean,buildInstaller" />
 
 	<target name="clean">
-		<delete includeemptydirs="true">
+		<delete includeemptydirs="true" quiet="true">
 			<fileset dir="${installer.dist.dir}" />
 			<fileset dir="${installer.build.dir}" />
 		</delete>
 	</target>
 
 	<target name="buildInstaller" depends="configure">
+		
+		<echoproperties />
+		
 		<copy todir="${installer.build.dir}/datafari/opt/datafari">
 			<fileset dir="${debian.dist.dir}" />
 		</copy>
@@ -77,8 +80,6 @@
 	</target>
 
 	<target name="copyBinaries">
-
-		<echoproperties />
 
 		<mkdir dir="${debian.dist.dir}/logs" />
 		<mkdir dir="${debian.dist.dir}/pid" />
