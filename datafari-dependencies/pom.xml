@@ -168,7 +168,7 @@
 						<id>default-install</id>
 						<phase>install</phase>
 						<goals>
-							<goal>default-install</goal>
+							<goal>install</goal>
 						</goals>
 					</execution>
 				</executions>

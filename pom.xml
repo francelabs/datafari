@@ -9,8 +9,7 @@
 	<name>Datafari Enterprise Search - Parent POM</name>
 	<!-- The order of modules execution is important -->
 	<modules>
-		<!-- Child module datafari-dependencies added to install automatically 
-			project dependencies in Maven repo -->
+	<!-- Child module datafari-dependencies added to install project dependencies in Maven repo -->
 		<module>datafari-dependencies</module>
 		<module>datafari-core</module>
 		<module>datafari-updateprocessor</module>
