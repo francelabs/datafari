@@ -112,7 +112,7 @@
 		</copy>
 
 		<copy todir="${debian.dist.dir}/bin/common/config">
-			<fileset dir="${bin.src.dir}/config" />
+			<fileset dir="${bin.src.dir}/common/config" />
 		</copy>
 
 		<copy todir="${debian.dist.dir}/bin/common">
