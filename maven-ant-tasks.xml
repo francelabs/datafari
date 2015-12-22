@@ -3,7 +3,7 @@
 
 	<!-- Here we specify all the Ant tasks executed by Maven build -->
 
-	<target name="all" depends="setup-solr,setup-cassandra,setup-mcf,misc,clean" />
+	<target name="all" depends="clean-all,setup-solr,setup-cassandra,setup-mcf,misc,clean-temp" />
 
 	<target name="misc">
 		<!-- Create PID directory, at the root of datafari project -->
@@ -163,9 +163,16 @@
 
 	</target>
 
-	<target name="clean">
+	<target name="clean-temp">
 		<!-- Delete the directory used for storing downloaded resources -->
 		<delete dir="temp" />
+	</target>
+
+	<target name="clean-all">
+		<delete dir="cassandra" />
+		<delete dir="dist" />
+		<delete dir="mcf" />
+		<delete dir="solr" />
 	</target>
 
 </project>
