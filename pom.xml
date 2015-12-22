@@ -9,6 +9,9 @@
 	<name>Datafari Enterprise Search - Parent POM</name>
 	<!-- The order of modules execution is important -->
 	<modules>
+		<!-- Child module datafari-dependencies added to install automatically 
+			project dependencies in Maven repo -->
+		<module>datafari-dependencies</module>
 		<module>datafari-core</module>
 		<module>datafari-updateprocessor</module>
 		<module>datafari-searchcomp-capsule</module>
@@ -22,17 +25,17 @@
 
 	<!-- Dependencies defined in Datafari-dependencies POM -->
 	<dependencies>
-          <dependency>
-            <groupId>com.francelabs.datafari</groupId>
-            <artifactId>datafari-dependencies</artifactId>
-            <version>2.0-SNAPSHOT</version>
-            <type>pom</type>
-        </dependency>
-    </dependencies>
+		<dependency>
+			<groupId>com.francelabs.datafari</groupId>
+			<artifactId>datafari-dependencies</artifactId>
+			<version>2.0-SNAPSHOT</version>
+			<type>pom</type>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<!-- DefaultGoal is the same used to run the children POMs -->
-		<defaultGoal>package</defaultGoal>
+		<defaultGoal>install</defaultGoal>
 
 		<sourceDirectory>../src/main/java</sourceDirectory>
 		<outputDirectory>../dist/WEB-INF/classes</outputDirectory>
@@ -129,6 +132,21 @@
 						</execution>
 					</executions>
 				</plugin>
+				<!-- Disable Install package plugin -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>2.5.2</version>
+					<executions>
+						<execution>
+							<id>default-install</id>
+							<phase />
+							<goals>
+								<goal>default-install</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -208,8 +226,8 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<!-- Version of MCF should be retrieved from a property file 
-								as well as the MD5 -->
+							<!-- Version of MCF should be retrieved from a property file as well 
+								as the MD5 -->
 							<url>http://archive.apache.org/dist/manifoldcf/apache-manifoldcf-2.2/apache-manifoldcf-2.2-bin.tar.gz</url>
 							<md5>0cdb536d98a89e9e1847ad72ad8ea3a9</md5>
 							<unpack>true</unpack>
