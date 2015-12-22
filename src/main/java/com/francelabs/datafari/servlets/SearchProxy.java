@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
@@ -54,6 +54,7 @@ import com.francelabs.datafari.service.search.SolrServers;
 import com.francelabs.datafari.service.search.SolrServers.Core;
 import com.francelabs.datafari.statistics.StatsProcessor;
 import com.francelabs.datafari.statistics.StatsPusher;
+import com.francelabs.datafari.utils.RealmLdapConfiguration;
 
 /**
  * Servlet implementation class SearchProxy
@@ -61,35 +62,33 @@ import com.francelabs.datafari.statistics.StatsPusher;
 @WebServlet("/SearchProxy/*")
 public class SearchProxy extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	
+
 	private static String domain = "corp.francelabs.com";
 
-	private static final List<String> allowedHandlers = Arrays.asList(
-			"/select", "/suggest", "/stats", "/statsQuery");
+	private static final List<String> allowedHandlers = Arrays.asList("/select", "/suggest", "/stats", "/statsQuery");
 
-	private static final Logger LOGGER = Logger.getLogger(SearchProxy.class
-			.getName());
+	private static final Logger LOGGER = Logger.getLogger(SearchProxy.class.getName());
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+	@Override
+	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
-		String handler = getHandler(request);
+		final String handler = getHandler(request);
 
 		if (!allowedHandlers.contains(handler)) {
 			log("Unauthorized handler");
 			response.setStatus(401);
 			response.setContentType("text/html");
-			PrintWriter out = response.getWriter();
+			final PrintWriter out = response.getWriter();
 			out.println("<HTML>");
 			out.println("<HEAD><TITLE>Unauthorized Handler</TITLE></HEAD>");
 			out.println("<BODY>");
 			out.println("The handler is not authorized.");
 			out.print("Only these handlers are authorized : ");
-			for (String allowedHandler : allowedHandlers) {
+			for (final String allowedHandler : allowedHandlers) {
 				out.print(allowedHandler + " ");
 			}
 			out.println("</BODY></HTML>");
@@ -100,11 +99,29 @@ public class SearchProxy extends HttpServlet {
 		SolrClient promolinkCore = null;
 		QueryResponse queryResponse = null;
 		QueryResponse queryResponseBis = null;
-		SolrQuery query = new SolrQuery();
-		SolrQuery queryBis = new SolrQuery();
+		final SolrQuery query = new SolrQuery();
+		final SolrQuery queryBis = new SolrQuery();
 
-		ModifiableSolrParams params = new ModifiableSolrParams();
+		final ModifiableSolrParams params = new ModifiableSolrParams();
 		try {
+			// get the AD domain
+			final HashMap<String, String> h = RealmLdapConfiguration.getConfig(request);
+			if (h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME) != null) {
+				final String userBase = h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME);
+				final String[] parts = userBase.split(",");
+				domain = "";
+				for (int i = 0; i < parts.length; i++) {
+					if (parts[i].indexOf("dc=") != -1) { // Check if the current
+															// part is a domain
+															// component
+						if (!domain.isEmpty()) {
+							domain += ".";
+						}
+						domain += parts[i].substring(parts[i].indexOf('=') + 1);
+					}
+				}
+			}
+
 			switch (handler) {
 			case "/stats":
 			case "/statsQuery":
@@ -116,49 +133,45 @@ public class SearchProxy extends HttpServlet {
 
 				// Add authentication
 				if (request.getUserPrincipal() != null) {
-					String AuthenticatedUserName = request.getUserPrincipal()
-							.getName().replaceAll("[^\\\\]*\\\\", "");
+					String AuthenticatedUserName = request.getUserPrincipal().getName().replaceAll("[^\\\\]*\\\\", "");
 					if (!domain.equals("")) {
 						AuthenticatedUserName += "@" + domain;
 					}
 					params.set("AuthenticatedUserName", AuthenticatedUserName);
 				}
 
-				String queryParam = params.get("query");
+				final String queryParam = params.get("query");
 				if (queryParam != null) {
 					params.set("q", queryParam);
 					params.remove("query");
 				}
-				
-				
+
 				break;
 			}
 
 			params.add(new ModifiableSolrParams(request.getParameterMap()));
-			
+
 			// perform query
-			
-			
+
 			query.add(params);
 			query.setRequestHandler(handler);
 			queryResponse = solr.query(query);
-			if (promolinkCore != null
-					&& !(params.get("q").toString().equals("*:*"))) { // launch
-																		// a
-																		// request
-																		// in
-																		// the
-																		// promolink
-																		// core
-																		// only
-																		// if
-																		// it's
-																		// a
-																		// request
-																		// on
-																		// the
-																		// FileShare
-																		// core
+			if (promolinkCore != null && !(params.get("q").toString().equals("*:*"))) { // launch
+																						// a
+																						// request
+																						// in
+																						// the
+																						// promolink
+																						// core
+																						// only
+																						// if
+																						// it's
+																						// a
+																						// request
+																						// on
+																						// the
+																						// FileShare
+																						// core
 				if (params.get("q").startsWith("\"")) { // and if it's not an
 														// empty request
 					queryBis.setQuery(params.get("q"));
@@ -173,10 +186,9 @@ public class SearchProxy extends HttpServlet {
 			switch (handler) {
 			case "/select":
 				// index
-				long numFound = queryResponse.getResults().getNumFound();
-				int QTime = queryResponse.getQTime();
-				ModifiableSolrParams statsParams = new ModifiableSolrParams(
-						params);
+				final long numFound = queryResponse.getResults().getNumFound();
+				final int QTime = queryResponse.getQTime();
+				final ModifiableSolrParams statsParams = new ModifiableSolrParams(params);
 				statsParams.add("numFound", Long.toString(numFound));
 				if (numFound == 0) {
 					statsParams.add("noHits", "1");
@@ -190,32 +202,28 @@ public class SearchProxy extends HttpServlet {
 			}
 
 			if (promolinkCore != null) {
-				writeSolrJResponse(request, response, query, queryResponse,
-						queryBis, queryResponseBis);
+				writeSolrJResponse(request, response, query, queryResponse, queryBis, queryResponseBis);
 			} else {
-				writeSolrJResponse(request, response, query, queryResponse,
-						null, null);
+				writeSolrJResponse(request, response, query, queryResponse, null, null);
 			}
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	private void writeSolrJResponse(HttpServletRequest request,
-			HttpServletResponse response, final SolrQuery query,
-			QueryResponse queryResponse, final SolrQuery queryBis,
-			QueryResponse queryResponseBis) throws IOException, JSONException,
-			ParseException {
-		SolrQueryRequest req = new SolrQueryRequest() {
+	private void writeSolrJResponse(final HttpServletRequest request, final HttpServletResponse response, final SolrQuery query,
+			final QueryResponse queryResponse, final SolrQuery queryBis, final QueryResponse queryResponseBis)
+					throws IOException, JSONException, ParseException {
+		final SolrQueryRequest req = new SolrQueryRequest() {
 			@Override
 			public SolrParams getParams() {
 				return query;
 			}
 
 			@Override
-			public void setParams(SolrParams params) {
+			public void setParams(final SolrParams params) {
 			}
 
 			@Override
@@ -280,7 +288,7 @@ public class SearchProxy extends HttpServlet {
 			}
 
 			@Override
-			public void setJSON(Map<String, Object> arg0) {
+			public void setJSON(final Map<String, Object> arg0) {
 				// TODO Auto-generated method stub
 
 			}
@@ -288,15 +296,20 @@ public class SearchProxy extends HttpServlet {
 		};
 		if (queryResponseBis != null) { // If it was a request on FileShare
 										// therefore on promolink
-			SolrQueryResponse res = new SolrQueryResponse();
+			final SolrQueryResponse res = new SolrQueryResponse();
 			res.setAllValues(queryResponse.getResponse());
-			JSONResponseWriter jsonWriter = new JSONResponseWriter();
+			final JSONResponseWriter jsonWriter = new JSONResponseWriter();
 			StringWriter s = new StringWriter();
 
 			jsonWriter.write(s, req, res);
-			JSONObject json = new JSONObject(s.toString().substring(
-					s.toString().indexOf("{"))); // Creating a valid json object
-													// from the results
+			final JSONObject json = new JSONObject(s.toString().substring(s.toString().indexOf("{"))); // Creating
+																										// a
+																										// valid
+																										// json
+																										// object
+																										// from
+																										// the
+																										// results
 
 			res.setAllValues(queryResponseBis.getResponse());
 			s = new StringWriter();
@@ -311,25 +324,28 @@ public class SearchProxy extends HttpServlet {
 																						// for
 																						// the
 																						// promolink
-				JSONObject jsonTmp = new JSONObject(s.toString().substring(
-						7 + s.toString().indexOf("docs"),
-						s.toString().length() - 3)); // Taking just the results
-														// without the header
-				if (jsonTmp.toString().indexOf("dateBeginning") == -1
-						&& jsonTmp.toString().indexOf("dateEnd") == -1) // If
-																		// there
-																		// is
-																		// not a
-																		// single
-																		// date
-																		// then
-																		// we
-																		// put
-																		// the
-																		// promolink
-																		// in
-																		// the
-																		// results
+				final JSONObject jsonTmp = new JSONObject(s.toString().substring(7 + s.toString().indexOf("docs"), s.toString().length() - 3)); // Taking
+																																				// just
+																																				// the
+																																				// results
+																																				// without
+																																				// the
+																																				// header
+				if (jsonTmp.toString().indexOf("dateBeginning") == -1 && jsonTmp.toString().indexOf("dateEnd") == -1) // If
+																														// there
+																														// is
+																														// not
+																														// a
+																														// single
+																														// date
+																														// then
+																														// we
+																														// put
+																														// the
+																														// promolink
+																														// in
+																														// the
+																														// results
 					json.put("promolinkSearchComponent", jsonTmp); // Put the
 																	// promolink
 																	// into the
@@ -343,14 +359,14 @@ public class SearchProxy extends HttpServlet {
 																				// a
 																				// starting
 																				// date
-					DateFormat dateFormat = new SimpleDateFormat(
-							"yyyy-MM-dd'T'HH:mm:ss");
+					final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 					String d1 = jsonTmp.get("dateBeginning").toString();
 					d1 = d1.substring(2, d1.length() - 3);
-					Date date = new Date(); // Get the current date
-					Date date1 = dateFormat.parse(d1); // Parse the starting
-														// date to a valid
-														// format
+					final Date date = new Date(); // Get the current date
+					final Date date1 = dateFormat.parse(d1); // Parse the
+																// starting
+					// date to a valid
+					// format
 					if (jsonTmp.toString().indexOf("dateEnd") != -1) { // If
 																		// there
 																		// is an
@@ -358,13 +374,19 @@ public class SearchProxy extends HttpServlet {
 																		// date
 						String d2 = jsonTmp.get("dateEnd").toString();
 						d2 = d2.substring(2, d2.length() - 3);
-						Date date2 = dateFormat.parse(d2); // Parse it to a
-															// valid format
-						if (date.compareTo(date1) > 0
-								&& date.compareTo(date2) < 0) // If the starting
-																// date is prior
-																// to the
-																// current date
+						final Date date2 = dateFormat.parse(d2); // Parse it to
+																	// a
+						// valid format
+						if (date.compareTo(date1) > 0 && date.compareTo(date2) < 0) // If
+																					// the
+																					// starting
+																					// date
+																					// is
+																					// prior
+																					// to
+																					// the
+																					// current
+																					// date
 							json.put("promolinkSearchComponent", jsonTmp); // And
 																			// the
 																			// ending
@@ -381,27 +403,27 @@ public class SearchProxy extends HttpServlet {
 							json.put("promolinkSearchComponent", jsonTmp);
 					}
 				} else { // If there is no starting date
-					DateFormat dateFormat = new SimpleDateFormat(
-							"yyyy-MM-dd'T'HH:mm:ss");
+					final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 					String d1 = jsonTmp.get("dateEnd").toString();
 					d1 = d1.substring(2, d1.length() - 3);
-					Date date = new Date(); // Get the current date
-					Date date1 = dateFormat.parse(d1); // Parse the ending date
-														// to a valid format
+					final Date date = new Date(); // Get the current date
+					final Date date1 = dateFormat.parse(d1); // Parse the ending
+																// date
+					// to a valid format
 					if (date.compareTo(date1) < 0) // If the ending date is
 													// after the current date
 						json.put("promolinkSearchComponent", jsonTmp);
 				}
 			}
-			String wrapperFunction = request.getParameter("json.wrf");
-			String finalString = wrapperFunction + "(" + json.toString() + ")";
+			final String wrapperFunction = request.getParameter("json.wrf");
+			final String finalString = wrapperFunction + "(" + json.toString() + ")";
 			response.getWriter().write(finalString); // Send the answer to the
 														// jsp page
 			response.setStatus(200);
 			response.setContentType("text/json;charset=UTF-8");
 		} else {
-			SolrQueryResponse res = new SolrQueryResponse();
-			JSONResponseWriter json = new JSONResponseWriter();
+			final SolrQueryResponse res = new SolrQueryResponse();
+			final JSONResponseWriter json = new JSONResponseWriter();
 			res.setAllValues(queryResponse.getResponse());
 			json.write(response.getWriter(), req, res);
 			response.setStatus(200);
@@ -409,8 +431,8 @@ public class SearchProxy extends HttpServlet {
 		}
 	}
 
-	private String getHandler(HttpServletRequest servletRequest) {
-		String pathInfo = servletRequest.getPathInfo();
+	private String getHandler(final HttpServletRequest servletRequest) {
+		final String pathInfo = servletRequest.getPathInfo();
 		return pathInfo.substring(pathInfo.lastIndexOf("/"), pathInfo.length());
 	}
 
