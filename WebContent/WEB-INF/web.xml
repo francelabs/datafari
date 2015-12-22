@@ -51,6 +51,9 @@
     </user-data-constraint>
   </security-constraint>
   <security-role>
+    <role-name>*</role-name>
+  </security-role>
+  <security-role>
     <role-name>ConnectedSearchUser</role-name>
   </security-role>
   <security-role>
