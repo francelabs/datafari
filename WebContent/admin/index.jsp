@@ -136,7 +136,7 @@
 <!-- 										</a> -->
 <!-- 									</li> -->
  									<li> 
- 										<a href="/Datafari/SignOut"> 
+ 										<a onclick="logout();" style="cursor: pointer;"> 
  											<i class="fa fa-power-off"></i> 
  											<span><% out.print(resourceBundle.getString("signout")); %></span> 
  										</a> 
@@ -288,8 +288,6 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 		<jsp:include page="../footer.jsp"  />
 	</div>
 </div>
-<script> 
-</script>
 <!--End Container-->
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <!--<script src="http://code.jquery.com/jquery.js"></script>-->
@@ -297,7 +295,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 <script src="../plugins/jquery-ui/jquery-ui.min.js"></script>
 <script src="../plugins/CLEditor/jquery.cleditor.js"></script>
 <script src="../plugins/CLEditor/jquery.cleditor.min.js"></script>
-
+<script type="text/javascript" src="./../js/logout.js"></script>
 <script src="./../plugins/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="../plugins/bootstrap/bootstrap.min.js"></script>
