@@ -44,7 +44,6 @@
 	<target name="clean">
 		<delete includeemptydirs="true" quiet="true">
 			<fileset dir="${installer.dist.dir}" />
-			<fileset dir="${installer.build.dir}" />
 		</delete>
 	</target>
 

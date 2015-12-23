@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<project name="Datafari_Windows" default="clean-configure" basedir=".">
+<project name="Datafari_Windows" basedir=".">
+	
+	<!-- Ant script to be run by ./installer/build.xml -->
 
 	<!-- ========================= PROPERTIES ============================= -->
 
@@ -8,7 +10,7 @@
 	<property name="datafari.context.app" value="Datafari" />
 
 	<!-- If project.dir not set, set it as basedir (datafari directory) -->
-	<condition property="project.dir" else="${basedir}/..">
+	<condition property="project.dir" else="${basedir}/../..">
 		<isset property="project.dir" />
 	</condition>
 
@@ -30,11 +32,8 @@
 	<property name="pgsql.dir" value="${windows.dir}/pgsql" />
 	<property name="python.dir" value="${windows.dir}/python" />
 
-
-	<target name="clean-configure" depends="clean,configure" />
-
 	<target name="clean">
-		<delete includeemptydirs="true">
+		<delete includeemptydirs="true" quiet="true">
 			<!-- Remove all directory tree starting from windows.dist.dir -->
 			<fileset dir="${windows.dist.dir}" />
 		</delete>
