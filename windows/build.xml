@@ -5,6 +5,7 @@
 
 	<property name="mcf.password" value="password" />
 	<property name="datafari.password" value="password" />
+	<property name="datafari.context.app" value="Datafari" />
 
 	<!-- If project.dir not set, set it as basedir (datafari directory) -->
 	<condition property="project.dir" else="${basedir}">
@@ -53,13 +54,16 @@
 		<!-- Copy Tomcat admin UI and external webapps like ManifoldCF -->
 		<copy todir="${windows.dist.dir}/tomcat">
 			<fileset dir="${tomcat.src.dir}">
-				<!-- Exclude already existing data (i.e. coming from dev environment) -->
-				<exclude name="**/data/**" />
+				<!-- Exclude already deployed (d/D)atafari app, if present -->
+				<exclude name="**/*atafari/**" />
 			</fileset>
 		</copy>
 
 		<copy todir="${windows.dist.dir}/solr">
-			<fileset dir="${solr.src.dir}" />
+			<fileset dir="${solr.src.dir}">
+				<!-- Exclude already existing data (i.e. coming from dev environment) -->
+				<exclude name="**/data/**" />
+			</fileset>
 		</copy>
 
 		<copy todir="${windows.dist.dir}/mcf">
@@ -71,17 +75,15 @@
 		</copy>
 
 		<!-- Copy Datafari web application sources -->
-		<copy todir="${windows.dist.dir}/tomcat/webapps/Datafari">
+		<copy todir="${windows.dist.dir}/tomcat/webapps/${datafari.context.app}">
 			<fileset dir="${dist.src.dir}" />
 		</copy>
 
-		<copy todir="${windows.dist.dir}/bin/common/config">
-			<fileset dir="${bin.src.dir}/config" />
+		<copy todir="${windows.dist.dir}/bin">
+			<fileset dir="${bin.src.dir}" />
 		</copy>
 
 		<copy todir="${windows.dist.dir}/bin/common">
-			<fileset file="${bin.src.dir}/init_state.properties" />
-			<fileset file="${bin.src.dir}/common/mail.txt" />
 			<fileset dir="${devtools.src.dir}/script/mcf-conf">
 				<include name="*.jar" />
 			</fileset>

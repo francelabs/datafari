@@ -5,6 +5,7 @@
 
 	<property name="mcf.password" value="password" />
 	<property name="datafari.password" value="password" />
+	<property name="datafari.context.app" value="Datafari" />
 
 	<!-- If project.dir not set, set it as basedir (datafari directory) -->
 	<condition property="project.dir" else="${basedir}/..">
@@ -48,9 +49,9 @@
 	</target>
 
 	<target name="buildInstaller" depends="configure">
-		
+
 		<echoproperties />
-		
+
 		<copy todir="${installer.build.dir}/datafari/opt/datafari">
 			<fileset dir="${debian.dist.dir}" />
 		</copy>
@@ -88,7 +89,10 @@
 
 		<!-- Copy Tomcat admin UI and external webapps like ManifoldCF -->
 		<copy todir="${debian.dist.dir}/tomcat">
-			<fileset dir="${tomcat.src.dir}" />
+			<fileset dir="${tomcat.src.dir}">
+				<!-- Exclude already deployed (d/D)atafari app, if present -->
+				<exclude name="**/*atafari/**" />
+			</fileset>
 		</copy>
 
 		<copy todir="${debian.dist.dir}/solr">
@@ -107,17 +111,15 @@
 		</copy>
 
 		<!-- Copy Datafari web application sources -->
-		<copy todir="${debian.dist.dir}/tomcat/webapps/Datafari">
+		<copy todir="${debian.dist.dir}/tomcat/webapps/${datafari.context.app}">
 			<fileset dir="${dist.src.dir}" />
 		</copy>
 
-		<copy todir="${debian.dist.dir}/bin/common/config">
-			<fileset dir="${bin.src.dir}/common/config" />
+		<copy todir="${debian.dist.dir}/bin">
+			<fileset dir="${bin.src.dir}" />
 		</copy>
 
 		<copy todir="${debian.dist.dir}/bin/common">
-			<fileset file="${bin.src.dir}/common/init_state.properties" />
-			<fileset file="${bin.src.dir}/common/mail.txt" />
 			<fileset dir="${devtools.src.dir}/script/mcf-conf">
 				<include name="*.jar" />
 			</fileset>
