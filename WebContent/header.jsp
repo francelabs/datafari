@@ -2,6 +2,7 @@
 	pageEncoding="ISO-8859-1"%>
 <%@ page import="com.francelabs.datafari.utils.*"%>
 <%@ page import="java.util.ResourceBundle"  %>
+<script type="text/javascript" src="js/logout.js"></script>
 <header>
 <% ResourceBundle resourceBundle = ResourceBundle.getBundle("com.francelabs.i18n.text", request.getLocale()); %>
 	<div id="header-wrapper">
@@ -33,7 +34,7 @@
 						if (request.getUserPrincipal().getName() != null) {
 				%>
 				<a id="adminLink" href="/Datafari/admin"><% out.print(resourceBundle.getString("settings")); %></a>
-				<a id="logout" href="/Datafari/SignOut"><% out.print(resourceBundle.getString("signout")); %></a>
+				<a id="logout" onclick="logout();" style="cursor: pointer; font-weight: bold;"><% out.print(resourceBundle.getString("signout")); %></a>
 
 				<%
 					} 
