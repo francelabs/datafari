@@ -71,8 +71,11 @@
 		<!-- Output file -->
 		<move file="${installer.build.dir}/datafari.deb" todir="${installer.dist.dir}" />
 
-		<!-- Clean-up the intermediate directory -->
-		<delete dir="${installer.build.dir}/datafari" />
+		<!-- Clean-up the installer intermediate directory -->
+		<delete dir="${installer.build.dir}" />
+		
+		<!-- Clean-up the dist intermediate directory -->
+		<delete dir="${debian.dist.dir}" />
 	</target>
 
 	<target name="configure" depends="copyBinaries">
