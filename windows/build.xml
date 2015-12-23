@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<project name="Datafari_Windows" default="clean-configure" basedir="../..">
+<project name="Datafari_Windows" default="clean-configure" basedir=".">
 
 	<!-- ========================= PROPERTIES ============================= -->
 
@@ -8,7 +8,7 @@
 	<property name="datafari.context.app" value="Datafari" />
 
 	<!-- If project.dir not set, set it as basedir (datafari directory) -->
-	<condition property="project.dir" else="${basedir}">
+	<condition property="project.dir" else="${basedir}/..">
 		<isset property="project.dir" />
 	</condition>
 
