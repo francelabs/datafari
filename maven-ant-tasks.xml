@@ -25,8 +25,10 @@
 			<globmapper from="*.war" to="datafari-*.war" />
 		</copy>
 
-		<!-- Copy Datafari properties file -->
-		<copy file="tomcat/conf/datafari.properties" toDir="../Servers/Datafari-config" overwrite="true" force="true" />
+		<!-- Copy Tomcat config files, that may change if dev env under Eclipse -->
+		<copy toDir="tomcat/conf" overwrite="true" force="true">
+			<fileset dir="datafari-tomcat/conf" />
+		</copy>
 
 		<!-- Copy Log4j.properties file -->
 		<copy file="tomcat/conf/log4j.properties" toDir="tomcat/lib" overwrite="true" force="true" />

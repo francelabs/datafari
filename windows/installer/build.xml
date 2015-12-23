@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<project name="Datafari_Windows_Installer" default="buildInstaller" basedir="../..">
+<project name="Datafari_Windows_Installer" default="clean-build" basedir=".">
 
 	<!-- ========================= PROPERTIES ============================= -->
 
@@ -12,15 +12,17 @@
 	<property name="installer.dist.dir" value="${installer.dir}/dist" />
 	<property name="innosetup.dir" value="${installer.dir}/InnoSetup5" />
 	<property name="innosetup.script" value="${installer.dir}/DatafariInstallerSource.iss" />
+	
+	<target name="clean-build" depends="clean,buildInstaller" />
 
-	<target name="Datafari_Windows_Installer.clean" depends="Datafari_Windows.clean">
-		<delete includeemptydirs="true">
+	<target name="clean" depends="Datafari_Windows.clean">
+		<delete includeemptydirs="true" quiet="true">
 			<fileset dir="${installer.dist.dir}" />
 			<fileset dir="${installer.build.dir}" />
 		</delete>
 	</target>
 
-	<target name="buildInstaller" depends="Datafari_Windows.copyBinaries">
+	<target name="buildInstaller" depends="Datafari_Windows.configure">
 		
 		<copy file="${installer.cassandra.dir}/cassandra.yaml" todir="${windows.dist.dir}/cassandra/conf/" overwrite="true" />
 		<copy file="${installer.dir}/README_WINDOWS_VERSION.txt" todir="${windows.dist.dir}/" overwrite="true" />

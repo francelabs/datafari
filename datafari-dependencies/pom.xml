@@ -153,4 +153,28 @@
 		) -->
 	<properties />
 
+	<build>
+
+		<!-- defaultGoal defined in the parent POM -->
+
+		<plugins>
+			<!-- Enable all dependencies to be installed in Maven repo -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.5.2</version>
+				<executions>
+					<execution>
+						<id>default-install</id>
+						<phase>install</phase>
+						<goals>
+							<goal>install</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+
 </project>
