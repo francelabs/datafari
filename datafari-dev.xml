@@ -5,7 +5,7 @@ It only rebuilds the Java classes of Datafari web application and copies the web
 of Maven full build. -->
 
 <!-- Pre-requisite: having run once Maven on pom.xml of datafari root -->
-	
+
 <project name="datafari-deploy" default="all" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
 
 	<!-- Add a Ant taskdef to be able to reference Maven repo from Ant (needed as classpath for compilation) -->
@@ -33,6 +33,12 @@ of Maven full build. -->
 
 	<target name="configure">
 		<replace file="tomcat/conf/tomcat-users.xml" token="@PASSWORD@" value="${tomcat.pw}" />
+
+		<!-- Useful if we run Tomcat from Eclipse: base dir is the Eclipse workspace -->
+		<copy file="dev-tools/setup-devenv/eclipse/tomcat/log4j.properties" todir="tomcat/conf" overwrite="true" force="true" />
+
+		<!-- Copy Log4j.properties file, needed to use log4j instead of common logging (logging.properties in tomcat/conf) -->
+		<copy file="tomcat/conf/log4j.properties" toDir="tomcat/lib" overwrite="true" force="true" />
 	</target>
 
 	<target name="deploy">
