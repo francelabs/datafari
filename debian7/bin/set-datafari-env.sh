@@ -7,6 +7,9 @@
 
 export DATAFARI_HOME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/..
 export JAVA_HOME=${DATAFARI_HOME}/jvm
+
+echo $JAVA_HOME
+
 export LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib:${DATAFARI_HOME}/ocr/tesseract/lib:${DATAFARI_HOME}/ocr/leptonica/lib
 export INIT_STATE_FILE=${DATAFARI_HOME}/bin/common/init_state.properties
 export CONFIG_FILE=${DATAFARI_HOME}/tomcat/conf/datafari.properties

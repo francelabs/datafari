@@ -65,6 +65,8 @@
 					<descriptor>datafari-mcf-scripts-assembly.xml</descriptor>
 					<attach>false</attach>
 					<outputDirectory>../dev-tools/script/mcf-conf</outputDirectory>
+					<!-- Name is used in installer scripts -->
+					<finalName>DatafariScripts</finalName>
 				</configuration>
 			</plugin>
 		</plugins>

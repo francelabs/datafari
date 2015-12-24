@@ -46,6 +46,7 @@
 
 	<target name="copyBinaries">
 
+		<mkdir dir="${windows.dist.dir}/pid" />
 		<mkdir dir="${windows.dist.dir}/logs" />
 
 		<!-- These components need a build with Maven -->
