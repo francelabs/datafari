@@ -28,7 +28,7 @@ ping 127.0.0.1 -n 6 > nul
 cd %DATAFARI_HOME%\tomcat\bin
 cmd /c "startup.bat"
 cd "%DATAFARI_HOME%\bin\common"
-cmd /c "%JAVA_HOME%\bin\java -cp DatafariScripts.jar com.francelabs.datafari.script.BackupManifoldCFConnectorsScript RESTORE config\manifoldcf\monoinstance
+cmd /c "%JAVA_HOME%\bin\java -cp DatafariScripts.jar com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript RESTORE config\manifoldcf\monoinstance
 
 cmd /c %CASSANDRA_HOME%\bin\cqlsh -f %DATAFARI_HOME%\bin\common\config\cassandra\tables 
 cmd /c echo Creation tables Cassandra OK

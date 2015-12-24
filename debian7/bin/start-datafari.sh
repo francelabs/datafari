@@ -64,7 +64,7 @@ bash startup.sh
 if  [[ "$STATE" = *installed* ]];
 then
 	cd "${DATAFARI_HOME}/bin/common"
-	"${JAVA_HOME}/bin/java" -cp DatafariScripts.jar com.francelabs.datafari.script.BackupManifoldCFConnectorsScript RESTORE config/manifoldcf/monoinstance
+	"${JAVA_HOME}/bin/java" -cp DatafariScripts.jar com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript RESTORE config/manifoldcf/monoinstance
 	sed -i "s/\(STATE *= *\).*/\1initialized/" $INIT_STATE_FILE
 
 else
