@@ -8,6 +8,6 @@
 
 
 
-../../../cassandra/bin/cqlsh -f ../../../cassandra/conf/dev-env/tables
+../../../cassandra/bin/cqlsh -f ../../../datafari-cassandra/conf/dev-env/tables
 ../../../cassandra/bin/cqlsh -f create-admin-dev.txt
 

@@ -32,6 +32,11 @@
 
 		<!-- Copy Log4j.properties file, needed to use log4j instead of common logging (logging.properties in tomcat/conf) -->
 		<copy file="tomcat/conf/log4j.properties" toDir="tomcat/lib" overwrite="true" force="true" />
+
+		<!-- Copy files needed for installed Datafari -->
+		<copy todir="bin/common/config/cassandra" overwrite="true" force="true">
+			<fileset dir="datafari-cassandra/conf/dev-env" />
+		</copy>
 	</target>
 
 	<target name="setup-solr">
@@ -71,14 +76,9 @@
 			</chainedmapper>
 		</copy>
 
-		<!-- Overwrite with Datafari specific scripts -->
-		<copy toDir="solr/bin" overwrite="true" force="true">
-			<fileset dir="datafari-solr/bin" />
-		</copy>
-
-		<!-- Copy conf and solr_home directories -->
+		<!-- Overwrite with Datafari specific scripts and copy conf and solr_home directories -->
 		<copy toDir="solr" overwrite="true" force="true">
-			<fileset dir="datafari-solr" includes="conf/**,solr_home/**" />
+			<fileset dir="datafari-solr" />
 		</copy>
 
 		<!-- Affect enough privileges for Solr executables (Ant copy doesn't preserve 
@@ -104,14 +104,12 @@
 			<cutdirsmapper dirs="1" />
 		</copy>
 
-		<!-- Overwrite with Datafari specific scripts -->
-		<copy toDir="cassandra/bin" overwrite="true" force="true">
-			<fileset dir="datafari-cassandra/bin" />
-		</copy>
-
-		<!-- Copy conf directory -->
-		<copy toDir="cassandra/conf" overwrite="true" force="true">
-			<fileset dir="datafari-cassandra/conf" />
+		<!-- Overwrite with Datafari specific scripts and copy conf directory-->
+		<copy toDir="cassandra" overwrite="true" force="true">
+			<fileset dir="datafari-cassandra">
+				<!-- Exclude files used for dev-environment -->
+				<exclude name="**/dev-env/**" />
+			</fileset>
 		</copy>
 
 		<!-- Affect enough privileges for Cassandra executables (Ant copy doesn't 
