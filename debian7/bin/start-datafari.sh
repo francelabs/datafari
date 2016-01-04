@@ -41,11 +41,16 @@ fi
 if  [[ "$STATE" = *installed* ]];
 then
 	echo "Start postgres and cassandra and add ManifoldCF database"
+	
 	rm -rf "${DATAFARI_HOME}/pgsql/data"
 	mkdir "${DATAFARI_HOME}/pgsql/data"
+	
 	rm -rf "${DATAFARI_HOME}/cassandra/data"
 	mkdir "${DATAFARI_HOME}/cassandra/data"
-	CASSANDRA_INCLUDE=$CASSANDRA_ENV $CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE 1>/dev/null
+	
+	CASSANDRA_INCLUDE=$CASSANDRA_ENV 
+	$CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE &>$DATAFARI_LOGS/cassandra-startup.log
+	
 	id -u postgres &>/dev/null || useradd postgres
 	chown -R postgres "${DATAFARI_HOME}/pgsql"
 	chmod -R 777 "${DATAFARI_HOME}/logs"
@@ -55,7 +60,10 @@ then
 	su postgres -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_HOME}/logs/pgsql.log start"
 	cd "${DATAFARI_HOME}/mcf/mcf_home"
 	bash "initialize.sh"
-	$CASSANDRA_HOME/bin/cqlsh -f ${DATAFARI_HOME}/bin/common/config/cassandra/tables 
+	
+	echo "Waiting Cassandra startup to finish ..."
+	sleep 5s
+	$CASSANDRA_HOME/bin/cqlsh -f $DATAFARI_HOME/bin/common/config/cassandra/tables 
 fi
 
 cd $TOMCAT_HOME/bin
