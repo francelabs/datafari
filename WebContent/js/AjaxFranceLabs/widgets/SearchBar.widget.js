@@ -1,3 +1,19 @@
+/*******************************************************************************
+ * Copyright 2015 - 2016 France Labs
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+
 AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 
 	// Variables
@@ -157,34 +173,46 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 	},
 
 	beforeRequest : function() {
-		var search = (AjaxFranceLabs.empty(AjaxFranceLabs.trim($(this.elm)
-				.find('.searchBar input').val()))) ? '*:*' : AjaxFranceLabs
-				.trim($(this.elm).find('.searchBar input').val());
-		var testSelect = document.getElementById("mySelect");
-		if (testSelect.options[testSelect.selectedIndex].value == 'date') {
-			Manager.store.addByValue("sort", 'last_modified desc');
-		} else {
-			Manager.store.addByValue("sort", 'score desc');
-		}
 
-		if (this.autocomplete)
-			search = search.replace(/\u200c/g, '');
-		switch ($(this.elm).find('input[name=searchType]:checked').val()) {
-		case "allWords":
-			//alert("a");
-			Manager.store.addByValue("q.op", 'AND');
-			break;
-		case "atLeastOneWord":
-			Manager.store.addByValue("q.op", 'OR');
-			break;
-		case 'exactExpression':
-			search = '"' + search + '"';
-			break;
-		default:
-			Manager.store.addByValue("q.op", 'AND');
-			break
+		/* 
+		 * Check if we are executing a synthetic request, built by spellChecker widget after a misspelled search term or not.
+		 * If it is a "normal" request, update the Q parameter with the value from searchBar and do other useful stuff.
+		 * Else, it is a "synthetic" request; do nothing as the spellchecker itself has already replaced the Q parameter with 
+		 * the corrected search term.
+		 */
+		if (this.manager.store.isParamDefined('original_query') !== true) {
+			
+			var search = (AjaxFranceLabs.empty(AjaxFranceLabs.trim($(this.elm)
+					.find('.searchBar input').val()))) ? '*:*' : AjaxFranceLabs
+					.trim($(this.elm).find('.searchBar input').val());
+			var testSelect = document.getElementById("mySelect");
+			if (testSelect.options[testSelect.selectedIndex].value == 'date') {
+				Manager.store.addByValue("sort", 'last_modified desc');
+			} else {
+				Manager.store.addByValue("sort", 'score desc');
+			}
+
+			if (this.autocomplete)
+				search = search.replace(/\u200c/g, '');
+			switch ($(this.elm).find('input[name=searchType]:checked').val()) {
+			case "allWords":
+				//alert("a");
+				Manager.store.addByValue("q.op", 'AND');
+				break;
+			case "atLeastOneWord":
+				Manager.store.addByValue("q.op", 'OR');
+				break;
+			case 'exactExpression':
+				search = '"' + search + '"';
+				break;
+			default:
+				Manager.store.addByValue("q.op", 'AND');
+				break
+			}
+			
+			this.manager.store.get('q').val(search);
+			
 		}
-		this.manager.store.get('q').val(search);
 		
 	},
 
@@ -194,8 +222,9 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 		 * was displayed, this part of the code has been made to counter this
 		 * little glitch, after a request, we close the autocomplete
 		 */
-		if (this.autocomplete)
+		if (this.autocomplete){
 			this.elm.find('.searchBar input[type=text]').autocomplete("close");
+		}
 	},
 
 	makeRequest : function() {
