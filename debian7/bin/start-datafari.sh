@@ -68,11 +68,11 @@ then
 	
 	id -u postgres &>/dev/null || useradd postgres
 	chown -R postgres "${DATAFARI_HOME}/pgsql"
-	chmod -R 777 "${DATAFARI_HOME}/logs"
+	chmod -R 777 "${DATAFARI_LOGS}"
 	chmod -R 777 "${DATAFARI_HOME}/pid"
 	su postgres -c "${DATAFARI_HOME}/pgsql/bin/initdb -U postgres -A password --pwfile=${DATAFARI_HOME}/pgsql/pwd.conf -E utf8 -D ${DATAFARI_HOME}/pgsql/data"
 	cp "${DATAFARI_HOME}/pgsql/postgresql.conf.save" "${DATAFARI_HOME}/pgsql/data/postgresql.conf"
-	su postgres -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_HOME}/logs/pgsql.log start"
+	su postgres -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_LOGS}/pgsql.log start"
 	cd "${DATAFARI_HOME}/mcf/mcf_home"
 	bash "initialize.sh"
 	
@@ -122,7 +122,7 @@ then
 	sed -i "s/\(STATE *= *\).*/\1initialized/" $INIT_STATE_FILE
 
 else
-	su postgres -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_HOME}/logs/pgsql.log start"
+	su postgres -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_LOGS}/pgsql.log start"
 	CASSANDRA_INCLUDE=$CASSANDRA_ENV $CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE 1>/dev/null
 fi
 
