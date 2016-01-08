@@ -3,7 +3,7 @@
 
 	<!-- Here we specify all the Ant tasks executed by Maven build -->
 
-	<target name="all" depends="clean-all,setup-solr,setup-cassandra,setup-mcf,misc,clean-temp" />
+	<target name="all" depends="clean-all,setup-solr,setup-cassandra,setup-mcf,setup-elk,misc,clean-temp" />
 
 	<target name="misc">
 		<!-- Create PID directory, at the root of datafari project -->
@@ -163,6 +163,81 @@
 
 	</target>
 
+	<!-- Right now we use ELK (Elasticsearch - Logstash - Kibana stack) only for Debian distribution of Datafari -->
+	<target name="setup-elk">
+
+		<!-- *** Setup Elasticsearch *** -->
+
+		<!-- Copy Elasticsearch directories and files stripping the parent Elasticsearch 
+				directory (to avoid Elasticsearch version inclusion) -->
+		<copy toDir="debian7/elk/elasticsearch" overwrite="true" force="true">
+			<fileset dir="temp">
+				<include name="*elasticsearch*/**" />
+			</fileset>
+			<cutdirsmapper dirs="1" />
+		</copy>
+
+		<!-- Copy data directory -->
+		<copy toDir="debian7/elk/elasticsearch" overwrite="true" force="true">
+			<fileset dir="datafari-elk/elasticsearch" />
+		</copy>
+
+		<!-- Affect enough privileges for Elasticsearch executables (Ant copy doesn't 
+				preserve execution rights!) -->
+		<!-- All files under elasticsearch at any level must have 775 permissions -->
+		<!-- Not needed <chmod dir="debian7/elk/elasticsearch" perm="775" includes="**" /> -->
+
+		<!-- *** Setup Kibana *** -->
+
+		<!-- We unzip and untar Kibana here instead of Maven's plugin Wget (like done for the other components)
+		 as it doesn't handle correctly duplicated directory names in the path: e.g. A/B/C/B/D -->
+		<gunzip>
+			<fileset dir="temp">
+				<include name="*kibana*.tar.gz" />
+			</fileset>
+		</gunzip>
+
+		<untar dest="debian7/elk/kibana">
+			<fileset dir="temp">
+				<include name="*kibana*.tar" />
+			</fileset>
+			<cutdirsmapper dirs="1" />
+		</untar>
+
+		<!-- Affect enough privileges for Kibana executables (Ant copy doesn't 
+						preserve execution rights!) -->
+		<!-- All files under kibana at any level must have 775 permissions -->
+		<!-- Not needed <chmod dir="debian7/elk/kibana" perm="775" includes="**" /> -->
+
+		<!-- *** Setup Logstash *** -->
+
+		<!-- We unzip and untar Logstash here instead of Maven's plugin Wget (like done for the other components)
+				 as it doesn't handle correctly duplicated directory names in the path: e.g. A/B/C/B/D -->
+		<gunzip>
+			<fileset dir="temp">
+				<include name="*logstash*.tar.gz" />
+			</fileset>
+		</gunzip>
+
+		<untar dest="debian7/elk/logstash">
+			<fileset dir="temp">
+				<include name="*logstash*.tar" />
+			</fileset>
+			<cutdirsmapper dirs="1" />
+		</untar>
+
+		<!-- Copy Datafari-specific directories and files -->
+		<copy toDir="debian7/elk/logstash" overwrite="true" force="true">
+			<fileset dir="datafari-elk/logstash" />
+		</copy>
+
+		<!-- Affect enough privileges for Logstash executables (Ant copy doesn't 
+								preserve execution rights!) -->
+		<!-- All files under logstash at any level must have 775 permissions -->
+		<!-- Not needed <chmod dir="debian7/elk/logstash" perm="775" includes="**" /> -->
+
+	</target>
+
 	<target name="clean-temp">
 		<!-- Delete the directory used for storing downloaded resources -->
 		<delete dir="temp" />
@@ -173,6 +248,7 @@
 		<delete dir="dist" />
 		<delete dir="mcf" />
 		<delete dir="solr" />
+		<delete dir="debian7/elk" />
 	</target>
 
 </project>
