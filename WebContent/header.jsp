@@ -26,6 +26,23 @@
 		%>
 		<div id="userSpace">
 
+			<!-- Show the localized language section -->
+
+			<div id="selectLang">
+
+				<%
+					out.print(resourceBundle.getString("selectLang"));
+				%>
+
+				<select>
+					<option value="en"> <% out.print(resourceBundle.getString("english_locale")); %> </option>
+					<option value="fr"> <% out.print(resourceBundle.getString("french_locale")); %> </option>
+					<option value="it"> <% out.print(resourceBundle.getString("italian_locale")); %> </option>
+				</select>
+
+			</div>
+
+
 
 			<div id="loginSettings">
 
