@@ -185,6 +185,8 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 			var search = (AjaxFranceLabs.empty(AjaxFranceLabs.trim($(this.elm)
 					.find('.searchBar input').val()))) ? '*:*' : AjaxFranceLabs
 					.trim($(this.elm).find('.searchBar input').val());
+			// Make spellchecker case insensitive
+			Manager.store.addByValue("spellcheck.q",search);
 			var testSelect = document.getElementById("mySelect");
 			if (testSelect.options[testSelect.selectedIndex].value == 'date') {
 				Manager.store.addByValue("sort", 'last_modified desc');
