@@ -1,8 +1,13 @@
 (function(window, undefined) {
     var i18n = {
+    		
         /* The loaded JSON message store will be set on this object */
         msgStore: {},
         languageUrl : null,
+        
+        // Keep the selected language variable to update the languageSelector widget
+        language : null,
+        
         persistMsgStore: function(data) {
             if(window.localStorage) {
                 localStorage.setItem("msgStore", JSON.stringify(data));
@@ -11,10 +16,18 @@
                 this.msgStore = data;
             }
         },
+        
+        // Called by i18nInit.js
         setLanguageUrl: function(languageUrl) {
             this.languageUrl = languageUrl;
         },
+        
+        // Called by i18nInit.js
         setLanguage: function(lang) {
+        	
+        	// Set the language selected, to update the languageSelector widget
+        	this.language = lang;
+        	
             $.ajax({
                 url: this.languageUrl + lang + ".json",
                 dataType: "json",
@@ -29,6 +42,7 @@
                 }
             });
         },
+        
         initMsgStore: function(options) {
 
             var lang = "en-US";
@@ -45,9 +59,18 @@
                 }
             });
         },
+        
+        // Function called by languageSelector widget on language change event
         userSelected: function(lang) {
+        	
             this.setLanguage(lang);
+            
+            // Update the manager and the widgets with the new language
+            // TODO
+            // Manager = new AjaxFranceLabs.Manager();
+            // Manager.init();
         },
+        
         init: function(options) {
 
             var localMsgStore = "";

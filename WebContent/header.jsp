@@ -3,6 +3,8 @@
 <%@ page import="com.francelabs.datafari.utils.*"%>
 <%@ page import="java.util.ResourceBundle"  %>
 <script type="text/javascript" src="js/logout.js"></script>
+<script type="text/javascript"
+		src="js/AjaxFranceLabs/widgets/LanguageSelector.widget.js"></script>
 <header>
 <% ResourceBundle resourceBundle = ResourceBundle.getBundle("com.francelabs.i18n.text", request.getLocale()); %>
 	<div id="header-wrapper">
@@ -28,7 +30,7 @@
 
 			<!-- Show the localized language section -->
 
-			<div id="selectLang">
+			<div id="languageSelector">
 
 				<%
 					out.print(resourceBundle.getString("selectLang"));
