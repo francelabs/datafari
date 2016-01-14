@@ -8,6 +8,12 @@
         // Keep the selected language variable to update the languageSelector widget
         language : null,
         
+        // Available languages for Datafari
+        availableLanguages : [ 'en' , 'fr', 'it' ],
+        
+        // Default language for Datafari
+        defaultLanguage : 'en',
+        
         persistMsgStore: function(data) {
             if(window.localStorage) {
                 localStorage.setItem("msgStore", JSON.stringify(data));
@@ -62,13 +68,10 @@
         
         // Function called by languageSelector widget on language change event
         userSelected: function(lang) {
-        	
-            this.setLanguage(lang);
             
             // Update the manager and the widgets with the new language
-            // TODO
-            // Manager = new AjaxFranceLabs.Manager();
-            // Manager.init();
+            // Reinit all the application, go to index page, cleaning its cache to force the rebuild of widgets
+            location.assign(window.location.origin + '/Datafari/?lang=' + lang);
         },
         
         init: function(options) {

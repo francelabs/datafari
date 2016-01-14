@@ -5,6 +5,8 @@
 <script type="text/javascript" src="js/logout.js"></script>
 <script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/LanguageSelector.widget.js"></script>
+<!-- JS library useful to extract parameters value from URL  -->
+<script type ="text/javascript" src ="js/url.min.js"/>
 <header>
 <% ResourceBundle resourceBundle = ResourceBundle.getBundle("com.francelabs.i18n.text", request.getLocale()); %>
 	<div id="header-wrapper">
