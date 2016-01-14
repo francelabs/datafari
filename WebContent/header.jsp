@@ -3,6 +3,10 @@
 <%@ page import="com.francelabs.datafari.utils.*"%>
 <%@ page import="java.util.ResourceBundle"  %>
 <script type="text/javascript" src="js/logout.js"></script>
+<script type="text/javascript"
+		src="js/AjaxFranceLabs/widgets/LanguageSelector.widget.js"></script>
+<!-- JS library useful to extract parameters value from URL  -->
+<script type ="text/javascript" src ="js/url.min.js"></script>
 <header>
 <% ResourceBundle resourceBundle = ResourceBundle.getBundle("com.francelabs.i18n.text", request.getLocale()); %>
 	<div id="header-wrapper">
@@ -25,6 +29,23 @@
 			}
 		%>
 		<div id="userSpace">
+
+			<!-- Show the localized language section -->
+
+			<div id="languageSelector">
+
+				<%
+					out.print(resourceBundle.getString("selectLang"));
+				%>
+
+				<select>
+					<option value="en"> <% out.print(resourceBundle.getString("english_locale")); %> </option>
+					<option value="fr"> <% out.print(resourceBundle.getString("french_locale")); %> </option>
+					<option value="it"> <% out.print(resourceBundle.getString("italian_locale")); %> </option>
+				</select>
+
+			</div>
+
 
 
 			<div id="loginSettings">
