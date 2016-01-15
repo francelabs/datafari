@@ -81,5 +81,11 @@ $(function($) {
 		elm : $('#languageSelector'),
 		id : 'languageSelector'
 	}));
+	
+	Manager.addWidget(new AjaxFranceLabs.LoginSettingsWidget({
+		// Take the loginSettings element by ID.
+		elm : $('#loginSettings'),
+		id : 'loginSettings'
+	}));
 
 });

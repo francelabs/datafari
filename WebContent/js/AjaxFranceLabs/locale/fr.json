@@ -171,5 +171,12 @@
 "adPasswordLabel" : "Mot de passe",
 "username" : "Nom d'utilisateur",
 "roles" : "Rôles",
-"spellcheckerResults" : "Résultats pour: "
+"spellcheckerResults" : "Résultats pour: ",
+"selectLang" : "Choisir la langue",
+"english_locale" : "English",
+"french_locale" : "Français",
+"italian_locale" : "Italiano",
+"adminUiLink" : "Administration",
+"loginAdminUiLink" : "Connexion",
+"logoutAdminUiLink" : "Déconnexion"
 }         

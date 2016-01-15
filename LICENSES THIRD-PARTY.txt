@@ -8,19 +8,19 @@ reference into the Datafari Software License Agreement.
 ===========================  Embedded Components  ===========================
 
 ~~~ Apache Cassandra ~~~
-Apache license
+Apache license V2
 
 ~~~ Apache Tomcat ~~~
-Apache license
+Apache license V2
 
 ~~~ Apache Solr/Lucene ~~~
-Apache license
+Apache license V2
 
 ~~~ Apache ManifoldCF ~~~
-Apache license
+Apache license V2
 
 ~~~ Apache Tika ~~~
-Apache license
+Apache license V2
 
 ~~~ ELK stack (Elasticsearch, Logstash, Kibana) ~~~
 Apache 2 Open Source license
