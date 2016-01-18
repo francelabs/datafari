@@ -35,7 +35,9 @@
 .advancedSearchWidget button:hover { border-color:#A1A1A1; }
 .promolinkWidget { border-color: #666666; }
 
-.spellcheckerWidget .result { color: #B92221; }
+.spellcheckerWidget .result { color: #204a87; }
+
+.suggestionWidget .result { color: #B92221; }
 
 .menuWidget .menu { border-color: #666666; }
 .menuWidget .menu li { background-color: white; }

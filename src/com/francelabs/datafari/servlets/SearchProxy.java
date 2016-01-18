@@ -15,7 +15,9 @@
  *******************************************************************************/
 package com.francelabs.datafari.servlets;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormat;
@@ -26,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -150,6 +153,41 @@ public class SearchProxy extends HttpServlet {
 			}
 
 			params.add(new ModifiableSolrParams(request.getParameterMap()));
+
+			// Ontology labels facet
+			String env = System.getProperty("catalina.home"); // Gets the
+																// installation
+																// directory if
+																// in standard
+																// environment
+			env += "/conf/datafari.properties";
+			final Properties prop = new Properties();
+			try {
+				InputStream input = null;
+				input = new FileInputStream(env);
+
+				// load a properties file
+				prop.load(input);
+
+				if (prop.containsKey("ontologyEnabled") && prop.getProperty("ontologyEnabled").toLowerCase().equals("true")
+						&& handler.equals("/select")) {
+					final boolean languageSelection = Boolean.valueOf(prop.getProperty("ontologyLanguageSelection", "false"));
+					String parentsLabels = prop.getProperty("ontologyParentsLabels", "ontology_parents_labels");
+					String childrenLabels = prop.getProperty("ontologyChildrenLabels", "ontology_children_labels");
+					if (languageSelection) {
+						parentsLabels += "_fr";
+						childrenLabels += "_fr";
+					}
+					final int facetFieldLength = params.getParams("facet.field").length;
+					final String[] facetFields = Arrays.copyOf(params.getParams("facet.field"), facetFieldLength + 2);
+					facetFields[facetFieldLength] = "{!ex=" + parentsLabels + "}" + parentsLabels;
+					facetFields[facetFieldLength + 1] = "{!ex=" + childrenLabels + "}" + childrenLabels;
+					params.set("facet.field", facetFields);
+				}
+				input.close();
+			} catch (final IOException e) {
+				LOGGER.warn("Ignored ontology facets because of error: " + e.toString());
+			}
 
 			// perform query
 

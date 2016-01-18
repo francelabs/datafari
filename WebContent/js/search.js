@@ -224,6 +224,14 @@ $(function($) {
 		id : 'spellchecker'
 	}));
 	
+	Manager.addWidget(new AjaxFranceLabs.OntologySuggestionWidget({
+		elm : $('#suggestion'),
+		id : 'suggestion',
+		parentLabelsField : 'ontology_parents_labels',
+		childLabelsField : 'ontology_children_labels',
+		useLanguage : true
+	}));
+	
 	Manager.store.addByValue('facet', true);
 
 

@@ -40,6 +40,8 @@
 
 .spellcheckerWidget .result { color: #B92221; }
 
+.suggestionWidget .result { color: #204a87; }
+
 .menuWidget .menu { border-color: #666666; }
 .menuWidget .menu li { background-color: white; }
 .menuWidget .menu li:hover { background-color: #DB3131; color: white; }
@@ -78,5 +80,6 @@ body{background-color : #F0F0F0F0;}
   @media all and (max-width: 799px){
   .resultWidget .doc,#capsule { background:white}
   .spellcheckerWidget { background:white}
+  .suggestionWidget { background:white}
   }
  
