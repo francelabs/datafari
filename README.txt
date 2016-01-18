@@ -1,4 +1,4 @@
---------------------------- DATAFARI V. 2.1.1 ------------------------
+--------------------------- DATAFARI V. 2.1.2 ------------------------
 
 NOTE: For the major changes compared to DATAFARI V1.x, please check at the bottom of this page.
 

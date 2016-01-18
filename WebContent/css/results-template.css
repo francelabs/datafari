@@ -228,7 +228,8 @@ ul{
 	border: 1px solid #ffffff;
 	padding: 0px;
 	width: 88%;
-	height: 100%;
+	/* Height changed from 100% to 3em to display correctly when resized */
+	height: 3em;
 	display:inline-block;
 	margin-left:9%;
 	vertical-align:top;
@@ -448,11 +449,13 @@ line-height:20px;
 	display: block;
 	margin-bottom: 5px;
 	padding-top: 1%;
-	height: 2em;
+	/* The height has been changed from 2em to 4em to contain the spellchecker corrected result */
+	height: 4em;
 	box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1), 0px 0px 1px rgba(0, 0, 0, 0.1);
 }
 .spellcheckerWidget > span{
-	margin-left:1em;
+	/* Margin-left changed from 1em to 3% to align original results and spellchecker results */
+	margin-left:3%;
 }
 .spellcheckerWidget .result { cursor: pointer; }
 /**************************************/

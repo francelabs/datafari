@@ -107,6 +107,7 @@
 "promoLinkAlready":"Un promolien avec ce mot clef existe déjà, la remplacer?",
 "hourly":"Horaire",
 "Results":"R&eacute;sultats",
+"notHitsQueries":"Aucun fichier trouvé pour la requête: ",
 "stopwords":"Stopwords",
 "filter":"filtrer",
 "result":"R&eacute;sultat",
@@ -169,5 +170,6 @@
 "adUsernameLabel" : "Utilisateur",
 "adPasswordLabel" : "Mot de passe",
 "username" : "Nom d'utilisateur",
-"roles" : "Rôles"
+"roles" : "Rôles",
+"spellcheckerResults" : "Résultats pour: "
 }         
