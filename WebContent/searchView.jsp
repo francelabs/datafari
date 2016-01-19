@@ -1,5 +1,6 @@
 <%@ page import="com.francelabs.datafari.utils.ScriptConfiguration" %>
 <%@ page import="com.francelabs.datafari.servlets.admin.StringsDatafariProperties" %>
+<%@page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -96,7 +97,7 @@
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/ResultIllustrated.widget.js"></script>
 	<script type="text/javascript"
-		src="js/AjaxFranceLabs/widgets/SubClassResult.widget.js"></script>
+		src="js/AjaxFranceLabs/widgets/SubClassResult.widget.js" charset="utf-8"></script>
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/LikesAndFavorites.widget.js"></script>
 	<!-- comment the two script tag bellow if you autocompleteIllustrated isn't used -->
@@ -128,7 +129,7 @@
 	<jsp:include page="header.jsp" /> 
 	<div id="facets_mobile" style="">
 		<div id="nav_mobile" class="bc-color">
-		<!-- Faut mettre un truc dynamique par rapport à la langue -->
+		<!-- Faut mettre un truc dynamique par rapport Ã  la langue -->
 			<a href="#previous_mobile"><i class="fa fa-chevron-left"></i> </a>
 		</div>
 		<div id="facet_source_mobile"></div>

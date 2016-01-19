@@ -458,14 +458,18 @@ public class SearchProxy extends HttpServlet {
 			response.getWriter().write(finalString); // Send the answer to the
 														// jsp page
 			response.setStatus(200);
-			response.setContentType("text/json;charset=UTF-8");
+			response.setCharacterEncoding("utf-8");
+			response.setContentType("text/json;charset=utf-8");
+			response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
 		} else {
 			final SolrQueryResponse res = new SolrQueryResponse();
 			final JSONResponseWriter json = new JSONResponseWriter();
 			res.setAllValues(queryResponse.getResponse());
 			json.write(response.getWriter(), req, res);
 			response.setStatus(200);
-			response.setContentType("text/json;charset=UTF-8");
+			response.setCharacterEncoding("utf-8");
+			response.setContentType("text/json;charset=utf-8");
+			response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
 		}
 	}
 

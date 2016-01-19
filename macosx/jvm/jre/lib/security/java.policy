@@ -22,9 +22,6 @@ grant {
         // allows anyone to listen on dynamic ports
         permission java.net.SocketPermission "localhost:0", "listen";
 
-        // permission for standard RMI registry port
-        permission java.net.SocketPermission "localhost:1099", "listen";
-
         // "standard" properies that can be read by anyone
 
         permission java.util.PropertyPermission "java.version", "read";

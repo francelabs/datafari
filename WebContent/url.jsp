@@ -1,6 +1,6 @@
 <%-- Prevent the creation of a session --%>
 <%@ page session="false"%>
-<%@ page contentType="text/html;charset=ISO-8859-1"%>
+<%@ page contentType="text/html;charset=utf-8"%>
 <%@page import="java.net.URLEncoder"%>
 <%
 
