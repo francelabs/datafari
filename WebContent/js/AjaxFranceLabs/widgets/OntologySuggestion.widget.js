@@ -30,7 +30,7 @@ AjaxFranceLabs.OntologySuggestionWidget = AjaxFranceLabs.AbstractWidget.extend({
 		$(this.elm).addClass('suggestionWidget').addClass('widget');
 		$(this.elm).hide();
 		if(this.useLanguage) { // Check if we need to use the language
-			var userLang = navigator.language || navigator.userLanguage;
+			var userLang = window.i18n.language;
 			if(userLang.toLowerCase().startsWith('en')) { // Unify the english language
 				userLang = "en";
 			}
