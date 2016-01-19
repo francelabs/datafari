@@ -1,5 +1,8 @@
 
-#loginSettings {
-	cursor: pointer; 
-	font-weight: bold;
+.languageSelectorWidget {
+	margin-bottom: 10px;
+}
+
+.languageSelectorWidget .languageSelectorWidget-select {
+	margin-left: 10px;
 }

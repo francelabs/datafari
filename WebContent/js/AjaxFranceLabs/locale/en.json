@@ -188,5 +188,9 @@
 "italian_locale" : "Italiano",
 "adminUiLink" : "Admin",
 "loginAdminUiLink" : "Login",
-"logoutAdminUiLink" : "Logout"
+"logoutAdminUiLink" : "Logout",
+"labelFormAdminUi" : "Access Datafari administration",
+"loginAdminUi" : "Login :",
+"passwordAdminUi" : "Password :",
+"loginErrorAdminUi" : "User and/or password not correct"
 }

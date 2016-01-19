@@ -1,12 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <%@ page import="com.francelabs.datafari.utils.*"%>
-<!-- Logout.js to be merged into LoginSettings.widget.js -->
+<!-- Logout.js to be merged into LoginDatafariLinks.widget.js -->
 <script type="text/javascript" src="js/logout.js"></script>
 <script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/LanguageSelector.widget.js"></script>
 <script type="text/javascript"
-		src="js/AjaxFranceLabs/widgets/LoginSettings.widget.js"></script>
+		src="js/AjaxFranceLabs/widgets/LoginDatafariLinks.widget.js"></script>
+<script type="text/javascript"
+		src="js/AjaxFranceLabs/widgets/LoginDatafariForm.widget.js"></script>
 <!-- JS library useful to extract parameters value from URL  -->
 <script type ="text/javascript" src ="js/url.min.js"></script>
 <header>
@@ -33,20 +35,20 @@
 			<!-- Show the localized language section -->
 			<div id="languageSelector"></div>
 
-			<div id="loginSettings">
+			<div id="loginDatafariLinks">
 
 				<%
 					if (request.getUserPrincipal() != null) {
 						if (request.getUserPrincipal().getName() != null) {
 				%>
-						<a id="adminLink" href="/Datafari/admin"></a>
+						<a id="adminLink"></a>
 						<a id="logout" onclick="logout();"></a>
 				<%
 						} 
 					}
 					else {
 				%>
-						<a id="loginLink" href="/Datafari/admin"></a>
+						<a id="loginLink"></a>
 				<% 
 					}					
 				%>
