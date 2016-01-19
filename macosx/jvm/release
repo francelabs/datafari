@@ -1,6 +1,6 @@
-JAVA_VERSION="1.7.0"
+JAVA_VERSION="1.8.0_66"
 OS_NAME="Darwin"
 OS_VERSION="11.2"
 OS_ARCH="x86_64"
-SOURCE=" .:127bfeeddc9c corba:59faa5249393 deploy:19f9d3c1ce63 hotspot:78dcbf58e349 hotspot/make/closed:2506a0848a86 hotspot/src/closed:69033fdf2743 hotspot/test/closed:74a7b688d797 install:d20733adfc0a jaxp:6abf26813c3b jaxws:4ed47474a15a jdk:ea77b684d424 jdk/make/closed:af7aa2f49416 jdk/src/closed:fc5a7a474f5d jdk/test/closed:e51e5f32324e langtools:e5e807700ff8 pubs:6e03d0e27bd9 sponsors:e9d372c43b8f"
-BUILD_TYPE=commercial
+SOURCE=" .:6eab3ce957aa corba:c53412824d4e deploy:00d3ed554351 hotspot:a6f2a7ba2812 hotspot/make/closed:d55ee33074f6 hotspot/src/closed:f6416466fb9b hotspot/test/closed:288bf84d697d install:6d8f06d6494e jaxp:fc348901e958 jaxws:78c988a427d7 jdk:e6d562c0f079 jdk/make/closed:c6fa44339ffd jdk/src/closed:e6e91fc8bef9 jdk/test/closed:719bec30a87c langtools:ad3f528335b4 nashorn:3cc16ff2735c pubs:e5f3f480d2f1 sponsors:d396500ee3e7"
+BUILD_TYPE="commercial"
