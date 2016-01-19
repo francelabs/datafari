@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
 <%@ page import="java.util.ResourceBundle"  %>
 <%@ page import="java.util.Locale" %>
 <!DOCTYPE html>
@@ -13,7 +13,7 @@
 		<link rel="stylesheet" type="text/css" href="../css/mainbis.css" media="screen" />
 		<link href="../plugins/bootstrap/bootstrap.css" rel="stylesheet">
 		<link href="../plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet">
-		<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+		<link rel="stylesheet" type ="text/css" href="../css/font-awesome/font-awesome.min.css">
 		<link href='http://fonts.googleapis.com/css?family=Righteous' rel='stylesheet' type='text/css'>
 		<link href="../plugins/fullcalendar/fullcalendar.css" rel="stylesheet">
 		<link href="../plugins/xcharts/xcharts.min.css" rel="stylesheet">

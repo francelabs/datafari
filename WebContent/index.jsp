@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -12,7 +12,7 @@
 		<link rel ="stylesheet" type ="text/css" href ="css/results.css" />
 		<link rel ="stylesheet" type ="text/css" href ="css/index.css" />
 		<link rel ="stylesheet" type ="text/css" href ="css/animate.min.css" />
-		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+		<link rel="stylesheet" type ="text/css" href="css/font-awesome/font-awesome.min.css">
 	</head>
 	<body class="gecko win">
 		
