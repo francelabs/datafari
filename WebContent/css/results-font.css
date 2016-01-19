@@ -122,6 +122,16 @@
 	}
 	/* End Spellchecker Widget */
 	
+	/* Suggestion Widget font */
+	.suggestionWidget .result {
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	.suggestionWidget .suggestionResult {
+		font-size: medium;
+	}
+	/* End Suggestion Widget */
+	
 	.menuWidget .menu li:hover {
 		font-weight: bold;
 	}
@@ -371,6 +381,16 @@
 		font-size: medium;
 	}
 	/* End Spellchecker Widget */
+	
+	/* Suggestion Widget font */
+	.suggestionWidget .result {
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	.suggestionWidget .suggestionResult {
+		font-size: medium;
+	}
+	/* End Suggestion Widget */
 	
 	.menuWidget .menu li:hover {
 		font-weight: bold;

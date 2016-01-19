@@ -281,6 +281,11 @@
 .spellcheckerWidget .result { cursor: pointer; }
 /**************************************/
 
+/**	>>> suggestionWidget Widget <<<**/
+.suggestionWidget { margin: 15px 0; width: 480px; }
+.suggestionWidget .result { cursor: pointer; }
+/**************************************/
+
 /**	>>> userMenuWidget Widget <<<	**/
 .menuWidget .menu { border: 1px solid; position: absolute; }
 .menuWidget .menu li { cursor: pointer; padding: 3px 10px; position: relative; z-index: 100; }
@@ -369,6 +374,7 @@ header{
 }
 	.advancedSearchWidget button { background: none;}
 	.spellcheckerWidget {background-color:white;}
+	.suggestionWidget {background-color:white;}
 	.searchBarWidget #sortMode select{background:transparent;}
 	#result_information,#sortMode { font-weight:bold; }
 
@@ -449,6 +455,8 @@ header{
 .promolinkWidget .title{ font-weight: bold; }
 
 .spellcheckerWidget .result { font-weight: bold; text-decoration: underline; }
+
+.suggestionWidget .result { font-weight: bold; text-decoration: underline; }
 
 .menuWidget .menu li:hover { font-weight: bold; }
 

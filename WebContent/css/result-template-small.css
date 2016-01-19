@@ -189,6 +189,11 @@ height:18px; width:18px;
 .spellcheckerWidget .result { cursor: pointer; }
 /**************************************/
 
+/**	>>> suggestionWidget Widget <<<**/
+.suggestionWidget { margin: 15px 0; width: 480px; }
+.suggestionWidget .result { cursor: pointer; }
+/**************************************/
+
 /**	>>> userMenuWidget Widget <<<	**/
 .menuWidget .menu { border: 1px solid; position: absolute; }
 .menuWidget .menu li { cursor: pointer; padding: 3px 10px; position: relative; z-index: 100; }

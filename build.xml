@@ -16,12 +16,16 @@
 	<property name="script.dir" value="${project.dir}/script" />
 	<property name="mcf.dir" value="${project.dir}/mcf" />
 	<property name="solr.dir" value="${project.dir}/solr" />
+	<property name="jena.dir" value="${project.dir}/jena" />
 
 	<path id="project.class.path">
 		<fileset dir="${project.dir}/WebContent/WEB-INF/lib/">
 			<include name="*.jar" />
 		</fileset>
 		<fileset dir="${tomcat.dir}/lib/">
+			<include name="*.jar" />
+		</fileset>
+		<fileset dir="${jena.dir}/lib/">
 			<include name="*.jar" />
 		</fileset>
 		<fileset dir="${project.dir}/solr/solr_home/FileShare/lib/extraction">

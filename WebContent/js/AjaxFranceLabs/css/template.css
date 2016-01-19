@@ -74,6 +74,8 @@
 .promolinkWidget .tips{display:block;width:460px}
 .spellcheckerWidget{margin:15px 0;width:480px}
 .spellcheckerWidget .result{cursor:pointer}
+.suggestionWidget{margin:15px 0;width:480px}
+.suggestionWidget .result{cursor:pointer}
 .menuWidget .menu{border:1px solid;position:absolute}
 .menuWidget .menu li{cursor:pointer;padding:3px 10px;position:relative;z-index:100}
 .menuWidget .menuLink{cursor:default}
