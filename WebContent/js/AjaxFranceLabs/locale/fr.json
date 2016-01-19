@@ -178,5 +178,9 @@
 "italian_locale" : "Italiano",
 "adminUiLink" : "Administration",
 "loginAdminUiLink" : "Connexion",
-"logoutAdminUiLink" : "Déconnexion"
+"logoutAdminUiLink" : "Déconnexion",
+"labelFormAdminUi" : "Acceder à Datafari",
+"loginAdminUi" : "Nom d'utilisateur :",
+"passwordAdminUi" : "Mot de passe :",
+"loginErrorAdminUi" : "Utilisateur et/ou password invalide"
 }         

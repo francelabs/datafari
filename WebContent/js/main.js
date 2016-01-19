@@ -1,6 +1,11 @@
 $(function($) {
 
-	window.i18n.setLanguageUrl('js/AjaxFranceLabs/locale/');
+	/*
+	 * Absolute path instead of js/Ajax.. from the root of the context, to be able to be used for:
+	 * - search.jsp (context in /Datafari)
+	 * - and login.jsp (context in /Datafari/admin)
+	 */ 
+	window.i18n.setLanguageUrl('/Datafari/js/AjaxFranceLabs/locale/');
 	var agent = window.navigator.userAgent;
 	var msie = agent.indexOf("MSIE ");
 
@@ -75,17 +80,5 @@ $(function($) {
 	});
 
 	Manager.store.addByValue("fl", 'title,url,id,extension');
-
-	Manager.addWidget(new AjaxFranceLabs.LanguageSelectorWidget({
-		// Take the languageSelector element by ID.
-		elm : $('#languageSelector'),
-		id : 'languageSelector'
-	}));
-	
-	Manager.addWidget(new AjaxFranceLabs.LoginSettingsWidget({
-		// Take the loginSettings element by ID.
-		elm : $('#loginSettings'),
-		id : 'loginSettings'
-	}));
 
 });

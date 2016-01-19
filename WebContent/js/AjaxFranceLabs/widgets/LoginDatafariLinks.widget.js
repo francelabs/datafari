@@ -14,11 +14,11 @@
  * the License.
  ******************************************************************************/
 
-AjaxFranceLabs.LoginSettingsWidget = AjaxFranceLabs.AbstractWidget.extend({
+AjaxFranceLabs.LoginDatafariLinksWidget = AjaxFranceLabs.AbstractWidget.extend({
 
 	// Variables
 
-	type : 'loginSettings',
+	type : 'loginDatafariLinks',
 
 	// Methods
 
@@ -29,21 +29,23 @@ AjaxFranceLabs.LoginSettingsWidget = AjaxFranceLabs.AbstractWidget.extend({
 	buildWidget : function() {
 		
 		// If user is already connected
-		var loginSettingsDOMElement = $(this.elm).find('a#adminLink');
-		if (loginSettingsDOMElement.length > 0){
-			loginSettingsDOMElement.append(window.i18n.msgStore['adminUiLink']);
+		var loginDatafariLinksDOMElement = $(this.elm).find('a#adminLink');
+		if (loginDatafariLinksDOMElement.length > 0){
+			loginDatafariLinksDOMElement.append(window.i18n.msgStore['adminUiLink']);
+			loginDatafariLinksDOMElement.prop('href', '/Datafari/admin/?lang=' + window.i18n.language);
 		}
 		
 		// If user is already connected
-		loginSettingsDOMElement = $(this.elm).find('a#logout');
-		if (loginSettingsDOMElement.length > 0){
-			loginSettingsDOMElement.append(window.i18n.msgStore['logoutAdminUiLink']);
+		loginDatafariLinksDOMElement = $(this.elm).find('a#logout');
+		if (loginDatafariLinksDOMElement.length > 0){
+			loginDatafariLinksDOMElement.append(window.i18n.msgStore['logoutAdminUiLink']);
 		}
 		
 		// If user is not yet connected
-		loginSettingsDOMElement = $(this.elm).find('a#loginLink');
-		if (loginSettingsDOMElement.length > 0){
-			loginSettingsDOMElement.append(window.i18n.msgStore['loginAdminUiLink']);
+		loginDatafariLinksDOMElement = $(this.elm).find('a#loginLink');
+		if (loginDatafariLinksDOMElement.length > 0){
+			loginDatafariLinksDOMElement.append(window.i18n.msgStore['loginAdminUiLink']);
+			loginDatafariLinksDOMElement.prop('href', '/Datafari/admin/?lang=' + window.i18n.language);
 		}
 	}
 });
