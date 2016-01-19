@@ -1,3 +1,0 @@
-module Kafka
-
-end

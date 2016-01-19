@@ -33,6 +33,8 @@ function search() {
 			searchType = radio.value;
 		}
 	});
+
 	window.open('Search?searchType=' + searchType + '&query='
-			+ encodeURIComponent($('.searchBar input[type=text]').val()), '_self');
+			+ encodeURIComponent($('.searchBar input[type=text]').val())
+			+ '&lang=' + window.i18n.language, '_self');
 };

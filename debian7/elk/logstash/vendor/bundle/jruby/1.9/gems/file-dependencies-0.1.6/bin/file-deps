@@ -1,5 +1,0 @@
-#!/usr/bin/env ruby
-
-require 'file-dependencies'
-current_dir = Dir.pwd
-FileDependencies.process_vendor(current_dir)

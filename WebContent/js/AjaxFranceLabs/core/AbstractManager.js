@@ -45,8 +45,9 @@ AjaxFranceLabs.AbstractManager = AjaxFranceLabs.Class.extend({
 		if (this.initialized) {
 			return $.Deferred().resolve;
 		}
-		if (this.constellio && this.connectionInfo.collection === undefined)
+		if (this.constellio && this.connectionInfo.collection === undefined) {
 			throw 'AbstractManager: connectionInfo.collection not defined';
+		}
 		var self = this;
 		this.initialized = true;
 		this.store.addByValue('q', '*:*');

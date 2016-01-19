@@ -1,0 +1,46 @@
+
+This document contains Third Party Software Notices and/or Additional Terms and Conditions 
+for licensed third party software components included within FranceLabs software products.
+ 
+These notices and/or additional terms and conditions are made a part of and incorporated by 
+reference into the Datafari Software License Agreement.
+
+===========================  Embedded Components  ===========================
+
+~~~ Apache Cassandra ~~~
+Apache license V2
+
+~~~ Apache Tomcat ~~~
+Apache license V2
+
+~~~ Apache Solr/Lucene ~~~
+Apache license V2
+
+~~~ Apache ManifoldCF ~~~
+Apache license V2
+
+~~~ Apache Tika ~~~
+Apache license V2
+
+~~~ ELK stack (Elasticsearch, Logstash, Kibana) ~~~
+Apache 2 Open Source license
+
+~~~ PostgreSQL ~~~
+PostgreSQL license, a liberal Open Source license, similar to the BSD or MIT licenses
+[http://www.postgresql.org/about/licence/]
+
+
+=========================== 	Jar Artifacts 	  ===========================
+
+
+=========================== JavaScript Libraries  ===========================
+
+~~~ jQuery ~~~
+MIT license
+
+~~~ js-url ~~~ 
+A simple, lightweight url parser for JavaScript
+MIT license
+[https://github.com/websanova/js-url]
+
+=============================================================================

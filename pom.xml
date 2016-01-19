@@ -9,7 +9,8 @@
 	<name>Datafari Enterprise Search - Parent POM</name>
 	<!-- The order of modules execution is important -->
 	<modules>
-	<!-- Child module datafari-dependencies added to install project dependencies in Maven repo -->
+		<!-- Child module datafari-dependencies added to install project dependencies 
+			in Maven repo -->
 		<module>datafari-dependencies</module>
 		<module>datafari-core</module>
 		<module>datafari-updateprocessor</module>
@@ -230,6 +231,58 @@
 							<url>http://archive.apache.org/dist/manifoldcf/apache-manifoldcf-2.2/apache-manifoldcf-2.2-bin.tar.gz</url>
 							<md5>0cdb536d98a89e9e1847ad72ad8ea3a9</md5>
 							<unpack>true</unpack>
+							<outputDirectory>temp</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>install-elastic</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<!-- Version of Elastic should be retrieved from a property file as 
+								well as the SHA1 -->
+							<url>https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.0.2/elasticsearch-2.0.2.tar.gz</url>
+							<sha1>525c06705ca98934cd92ce5fd1a312fc03e20b8b</sha1>
+							<unpack>true</unpack>
+							<outputDirectory>temp</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>install-kibana</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<!-- Version of Kibana should be retrieved from a property file as 
+								well as the SHA1 -->
+							<!-- We use 64bits version of Kibana -->
+							<url>https://download.elastic.co/kibana/kibana/kibana-4.2.2-linux-x64.tar.gz</url>
+							<sha1>f0daf9cd0b949c0ec7a3be300ee876fba17d1570</sha1>
+							<!-- We unzip and untar Kibana by Ant in maven-ant-tasks.xml instead 
+								of here as the Maven's wget plugin doesn't handle correctly duplicated directory 
+								names in the path: e.g. A/B/C/B/D -->
+							<unpack>false</unpack>
+							<outputDirectory>temp</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>install-logstash</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<!-- Version of Logstash should be retrieved from a property file 
+								as well as the SHA1 -->
+							<url>https://download.elastic.co/logstash/logstash/logstash-2.0.0.tar.gz</url>
+							<sha1>f0961520dd9590d3b600c877be66f79f94a05f80</sha1>
+							<!-- We unzip and untar Logstash by Ant in maven-ant-tasks.xml instead 
+								of here as the Maven's wget plugin doesn't handle correctly duplicated directory 
+								names in the path: e.g. A/B/C/B/D -->
+							<unpack>false</unpack>
 							<outputDirectory>temp</outputDirectory>
 						</configuration>
 					</execution>

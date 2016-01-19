@@ -113,7 +113,7 @@
 "promoLinkAlready":"There is already a promolink with this keyword, are you sure you want to replace it?",
 "alertList":"List of the alerts",
 "Results":"Results",
-"notHitsQueries":"No Hits Queries",
+"notHitsQueries":"No results for query: ",
 "hourly":"Hourly",
 "stopwords":"Stopwords",
 "filter":"filter",
@@ -180,5 +180,13 @@
 "adUsernameLabel" : "Connection Username",
 "adPasswordLabel" : "Connection Password",
 "username" : "Username",
-"roles" : "Roles"
+"roles" : "Roles",
+"spellcheckerResults" : "Results for: ",
+"selectLang" : "Choose the language",
+"english_locale" : "English",
+"french_locale" : "Français",
+"italian_locale" : "Italiano",
+"adminUiLink" : "Admin",
+"loginAdminUiLink" : "Login",
+"logoutAdminUiLink" : "Logout"
 }
