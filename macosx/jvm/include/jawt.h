@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2001, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -154,9 +154,9 @@ typedef struct jawt_DrawingSurfaceInfo {
     /*
      * Pointer to the platform-specific information.  This can be safely
      * cast to a JAWT_Win32DrawingSurfaceInfo on Windows or a
-     * JAWT_X11DrawingSurfaceInfo on Solaris. On Mac OS X, when using the
-     * native Cocoa toolkit this is a pointer to a NSObject that conforms
-     * to the JAWT_SurfaceLayers protocol. See jawt_md.h for details.
+     * JAWT_X11DrawingSurfaceInfo on Solaris. On Mac OS X this is a
+     * pointer to a NSObject that conforms to the JAWT_SurfaceLayers
+     * protocol. See jawt_md.h for details.
      */
     void* platformInfo;
     /* Cached pointer to the underlying drawing surface */
