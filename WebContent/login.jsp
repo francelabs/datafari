@@ -1,8 +1,8 @@
 <%-- Prevent the creation of a session --%>
 <%@ page session="false"%>
 <%@ page contentType="text/html;charset=iso-8859-1"%>
-<%@ page import="java.util.ResourceBundle"%>
 <%@ page import="com.francelabs.datafari.utils.*"%>
+<%@ page import="java.util.regex.*" %>
 <html>
 <head>
 <title>Login Page</title>
@@ -50,11 +50,35 @@
 
 		request.setCharacterEncoding("UTF-8");
 		//if request is not the url, redirect to the url of this jsp
-	%>
+		
+		String langParam = null;
+		
+		// If the language parameter is defined take it, othwerwise use the referrer in the message header
+		String lang = request.getParameter("lang");
+		
+		if (lang != null){
+			
+			langParam = "?lang=" + lang;
+			
+		} else {
+			
+			String referer = request.getHeader("referer");
+			
+			// If referer is defined and contains language parameter
+			if (referer != null && referer.length() != 0 && referer.contains("lang=")){
+				
+				Matcher langMatcher = Pattern.compile("lang=\\w{2}").matcher(referer);
+				
+				// If matcher has found the lang parameter, extract it
+				if (langMatcher.find()){
+					langParam = '?' + langMatcher.group();
+				}			
+			}
+		}		
 
-	<%
 		String j_username = request.getParameter("j_username");
 		String j_password = (request.getParameter("j_password"));
+		
 		if (j_username != null && j_username.length() != 0 && j_password != null && j_password.length() != 0) {
 			try {
 				request.login(j_username, j_password);
@@ -69,14 +93,22 @@
 
 		String mainPage = request.getContextPath();
 		String loginPage = mainPage + request.getServletPath();
-
+		
+		// If the language param was defined in the source URL, append the language 
+		// selection to the adminUi login page URL to be able to display it in the correct language
+		if (langParam != null){
+			loginPage = loginPage + langParam;
+		}
+		
+		// User is not logged in
 		if (request.getUserPrincipal() == null) {
 	%>
 
 	<form id="loginDatafariForm" class="box login" method="POST"
 		action='<%=loginPage%>' accept-charset='utf-8'>
 		<fieldset class="boxBody">
-			<label id="loginFormAdminUiLabel"></label> 
+			<label id="loginFormAdminUiLabel"></label>
+			 
 			<label id="loginAdminUiLabel"></label> 
 			<input type="text" tabindex="1" name="j_username" required>
 
@@ -88,7 +120,7 @@
 		<%
 			if (error) {
 		%>
-		<span class="invalid"><label id="invalidLoginAdminUiLabel"></label></span>
+				<span class="invalid"><label id="invalidLoginAdminUiLabel"></label></span>
 		<%
 			}
 		%>
@@ -97,10 +129,18 @@
 			class="btn btn-primary col-sm-3" value="Login" tabindex="4">
 	</form>
 
-	<!-- -->
 	<%
 		} else {
-			response.sendRedirect(mainPage + "/admin");
+			
+			String urlRedirect = mainPage + "/admin/";
+			
+			// If the language param was defined in the source URL, append the language 
+			// selection to the adminUi page URL to be able to display it in the correct language
+			if (langParam != null){
+				urlRedirect = urlRedirect + langParam;
+			}
+			
+			response.sendRedirect(urlRedirect);
 		}
 	%>
 </body>
