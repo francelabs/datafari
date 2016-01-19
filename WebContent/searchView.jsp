@@ -13,7 +13,7 @@
 	media="screen" />
 <link rel="stylesheet" type="text/css" href="css/animate.min.css" />
 <link rel="stylesheet" type="text/css" href="css/results.css" />
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+<link rel="stylesheet" type ="text/css" href="css/font-awesome/font-awesome.min.css">
 <script type="text/javascript" src="js/history.ielte7.min.js"></script>
 <script type="text/javascript" src="js/jquery-1.8.1.min.js"></script>
 <!-- comment the tag bellow if you don't use illustrate mode for desktop and mobile -->	
