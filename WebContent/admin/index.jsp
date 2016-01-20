@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
-<%@ page import="java.util.ResourceBundle"  %>
 <%@ page import="java.util.Locale" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,7 +28,6 @@
 		<![endif]-->
 	</head>
 <body>
-<% ResourceBundle resourceBundle = ResourceBundle.getBundle("com.francelabs.i18n.text", request.getLocale()); %>
 <!--Start Header-->
 <div id="screensaver">
 	<canvas id="canvas"></canvas>
