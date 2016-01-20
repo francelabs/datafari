@@ -3,7 +3,7 @@
 
 	<!-- Here we specify all the Ant tasks executed by Maven build -->
 
-	<target name="all" depends="clean-all,setup-solr,setup-cassandra,setup-mcf,setup-elk,misc,clean-temp" />
+	<target name="all" depends="clean-all,setup-solr,setup-jena,setup-cassandra,setup-mcf,setup-elk,misc,clean-temp" />
 
 	<target name="misc">
 		<!-- Create PID directory, at the root of datafari project -->
@@ -236,6 +236,25 @@
 		<!-- All files under logstash at any level must have 775 permissions -->
 		<!-- Not needed <chmod dir="debian7/elk/logstash" perm="775" includes="**" /> -->
 
+	</target>
+	
+	<target name="setup-jena">
+		<!-- Create jena directory in Solr FileShare core directory -->
+		<!-- <mkdir dir="solr/solr_home/FileShare/lib/jena" /> -->
+		
+		<!-- Copy only useful Jena libraries to Solr FileShare core directory -->
+		<copy toDir="solr/solr_home/FileShare/lib/jena" overwrite="true" force="true">
+			<fileset dir="temp">
+				<include name="*apache-jena*/lib/jena*" />
+				<include name="*apache-jena*/lib/jackson*" />
+				<include name="*apache-jena*/lib/commons-cli*" />
+				<include name="*apache-jena*/lib/commons-csv*" />
+				<include name="*apache-jena*/lib/dexx-collections*" />
+				<include name="*apache-jena*/lib/jsonld*" />
+				<include name="*apache-jena*/lib/libthrift*" />
+			</fileset>
+			<cutdirsmapper dirs="2" />
+		</copy>
 	</target>
 
 	<target name="clean-temp">

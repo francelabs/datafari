@@ -22,6 +22,9 @@ Apache license V2
 ~~~ Apache Tika ~~~
 Apache license V2
 
+~~~ Apache Jena ~~~
+Apache license V2
+
 ~~~ ELK stack (Elasticsearch, Logstash, Kibana) ~~~
 Apache 2 Open Source license
 
