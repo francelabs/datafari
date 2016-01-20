@@ -286,6 +286,21 @@
 							<outputDirectory>temp</outputDirectory>
 						</configuration>
 					</execution>
+					<execution>
+						<id>install-jena</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<!-- Version of Jena should be retrieved from a property file as well 
+								as the MD5 -->
+							<url>http://apache.crihan.fr/dist/jena/binaries/apache-jena-3.0.1.tar.gz</url>
+							<md5>b8ee1ecfb47849550f9412450606c606</md5>
+							<unpack>true</unpack>
+							<outputDirectory>temp</outputDirectory>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
