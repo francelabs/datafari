@@ -304,5 +304,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 <script type="text/javascript" src="./../js/AjaxFranceLabs/i18njs.js"></script>
 <!-- All functions for this theme + document.ready processing -->
 <script src="../js/devoops.js"></script>
+<!-- JS library useful to extract parameters value from URL  -->
+<script type ="text/javascript" src ="../js/url.min.js"></script>
 </body>
 </html>
