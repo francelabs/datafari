@@ -57,7 +57,7 @@
 	<div class="container-fluid expanded-panel">
 		<div class="row">
 			<div id="Datafari" class="col-xs-12 col-sm-2">
-				<a href="../index.jsp">Datafari</a>
+				<a id="datafariHomePageSearchUiLink">Datafari</a>
 			</div>
 			<div id="top-panel" class="col-xs-12 col-sm-10">
 				<div class="row">
@@ -69,7 +69,7 @@
 
 					 	<ul class="nav navbar-nav pull-right panel-menu" >
 					 	
-					 	<li class="searchLink"><a class="searchPageLink" href="/Datafari/Search"><% out.print(resourceBundle.getString("searchPage")); %></a></li>
+					 	<li class="searchLink"><a id="datafariSearchUiLink" class="searchPageLink"></a></li>
 <!-- 							<li class="hidden-xs"> -->
 <!-- 								<a href="index.html" class="modal-link"> -->
 <!-- 									<i class="fa fa-bell"></i> -->
@@ -98,7 +98,7 @@
 <!-- 									<i class="fa fa-angle-down pull-right"></i> -->
 
 									<div class="user-mini pull-right" >
-										<span class="welcome"><% out.print(resourceBundle.getString("welcome")); %>,</span>
+										<span id="welcomeAdminUiMsg" class="welcome"></span>
 
 									<span><% out.print(request.getUserPrincipal().getName());%></span>
 
@@ -138,7 +138,7 @@
  									<li> 
  										<a onclick="logout();" style="cursor: pointer;"> 
  											<i class="fa fa-power-off"></i> 
- 											<span><% out.print(resourceBundle.getString("signout")); %></span> 
+ 											<span id="logout-AdminUI"></span> 
  										</a> 
  									</li> 
  								</ul> 
@@ -161,12 +161,12 @@
 <li class="dropdown" id="User">
 					<a href="#" class="dropdown-toggle">
 						<i class="fa fa-male"></i>
-						<span class="hidden-xs"><%= resourceBundle.getString("myaccount")%></span>
+						<span id="myAccount-AdminUI" class="hidden-xs"></span>
 					</a>
 					<ul class="dropdown-menu">
 <!-- 						<li><a class="ajax-link" href="../ajax/maps.html">Save search queries</a></li> -->
-						<li id="Alerts"><a class="ajax-link" href="../ajax/Alerts.html"><%= resourceBundle.getString("alerts")%></a></li>
-						<li id="LikesAndFavorites"><a class="ajax-link" href="../ajax/getFavorites.html"><%= resourceBundle.getString("Favorites")%></a></li>
+						<li id="Alerts"><a id="alerts-AdminUI" class="ajax-link" href="../ajax/Alerts.html"></a></li>
+						<li id="LikesAndFavorites"><a id="favorites-AdminUI" class="ajax-link" href="../ajax/getFavorites.html"></a></li>
 <!-- 						<li><a class="ajax-link" href="../ajax/map_leaflet.html">Favorite documents</a></li> -->
 					</ul>
 				</li>
@@ -175,21 +175,21 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 %>
 <!-- 					<a href="../ajax/dashboard.html" class="ajax-link"> <i -->
 				<li id="Connectors">
-<!-- 							class="fa fa-dashboard"></i> <span class="hidden-xs">Dashboard</span> -->
-					</a> <a href="../ajax/manifoldcf.html" class="ajax-link">
+<!-- 							class="fa fa-dashboard"></i> <span class="hidden-xs">Dashboard</span> </a>-->
+					 <a href="../ajax/manifoldcf.html" class="ajax-link">
 						<i class="fa fa-arrows-alt"></i>
-						<span class="hidden-xs"><%= resourceBundle.getString("connectors")%></span>
+						<span id="connectors-AdminUI" class="hidden-xs"></span>
 					</a>
 				</li>
 
 				<li class="dropdown" id="Statistics">
 					<a href="#" class="dropdown-toggle">
 						<i class="fa fa-bar-chart"></i>
-						 <span class="hidden-xs"><%= resourceBundle.getString("statistics")%></span>
+						 <span id="statistics-AdminUI" class="hidden-xs"></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li id="UsageStatistics"><a class="ajax-link" href="../ajax/usageStatistics.html"><%= resourceBundle.getString("useStats")%></a></li>
-						<li><a class="ajax-link" href="../ajax/StatsQuery.html"><%= resourceBundle.getString("queryStats")%></a></li> 
+						<li id="UsageStatistics"><a id="usageStatistics-AdminUI" class="ajax-link" href="../ajax/usageStatistics.html"></a></li>
+						<li><a id="queryStatistics-AdminUI" class="ajax-link" href="../ajax/StatsQuery.html"></a></li> 
 <!-- 						<li><a class="ajax-link" href="../ajax/corpusStatistics.html">Corpus statistics</a></li> -->
 <!-- 						<li><a class="ajax-link" href="../ajax/systemStatistics.html">System statistics</a></li> -->
 					</ul>
@@ -197,18 +197,18 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 				<li class="dropdown" id="Admin">
 					<a href="#" class="dropdown-toggle">
 						<i class="fa fa-wrench"></i>
-						 <span class="hidden-xs"><%= resourceBundle.getString("admin")%></span>
+						 <span id="searchEngineAdmin-AdminUI" class="hidden-xs"></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li id="SolrAdmin"><a class="ajax-link" href="../ajax/solr.html"><%= resourceBundle.getString("solrAdmin")%></a></li>
-						<li id="AlertAdmin"><a class="ajax-link" href="../ajax/alertsAdmin.html"><%= resourceBundle.getString("alertAdmin")%></a></li>
-						<li id="IndexField"><a class="ajax-link" href="../ajax/IndexField.html"><%= resourceBundle.getString("indexField")%></a></li>
-						<li id="SchemaAnalysis"><a class="ajax-link" href="../ajax/SchemaAnalysis.html"><%= resourceBundle.getString("schemaAnalysis")%></a></li>
+						<li id="SolrAdmin"><a id="solrAdmin-AdminUI" class="ajax-link" href="../ajax/solr.html"></a></li>
+						<li id="AlertAdmin"><a id="alertAdmin-AdminUI" class="ajax-link" href="../ajax/alertsAdmin.html"></a></li>
+						<li id="IndexField"><a id="indexField-AdminUI" class="ajax-link" href="../ajax/IndexField.html"></a></li>
+						<li id="SchemaAnalysis"><a id="schemaAnalysis-AdminUI" class="ajax-link" href="../ajax/SchemaAnalysis.html"></a></li>
 <% 
 	if(request.isUserInRole("SearchAdministrator")){
 %>
-						<li id="SizeLimitation"><a class="ajax-link" href="../ajax/SizeLimitations.html"><%= resourceBundle.getString("sizeLimitation")%></a></li>
-						<li id="AutocompleteConfiguration"><a class="ajax-link" href="../ajax/AutocompleteConfiguration.html"><%= resourceBundle.getString("autocompleteConfiguration")%></a></li>
+						<li id="SizeLimitation"><a id="sizeLimitation-AdminUI" class="ajax-link" href="../ajax/SizeLimitations.html"></a></li>
+						<li id="AutocompleteConfiguration"><a id="autocompleteConfig-AdminUI" class="ajax-link" href="../ajax/AutocompleteConfiguration.html"></a></li>
 <%
 	}
 %>
@@ -217,17 +217,17 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 				<li class="dropdown" id="Conf">
 					<a href="#" class="dropdown-toggle">
 						<i class="fa fa-desktop"></i>
-						 <span class="hidden-xs"><%= resourceBundle.getString("conf")%></span>
+						 <span id="searchEngineConfig-AdminUI" class="hidden-xs"></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li id="PromoLink"><a class="ajax-link" href="../ajax/promoLinks.html"><%= resourceBundle.getString("promoLink")%></a></li>
-						<li id="Synonyms" ><a class="ajax-link" href="../ajax/Synonyms.html"><%= resourceBundle.getString("synonyms")%></a></li>
-<%-- 						<li id="Stopwords"><a class="ajax-link" href="../ajax/StopWords.html"><%= resourceBundle.getString("stopwords")%></a></li> --%>
-						<li id="FieldWeight"><a class="ajax-link" href="../ajax/FieldWeight.html"><%= resourceBundle.getString("fieldWeight")%></a></li>
-						<li id="FacetConfig"><a class="ajax-link" href="../ajax/FacetConfig.html"><%= resourceBundle.getString("facetConfig")%></a></li>
-						<li id="Deduplication"><a class="ajax-link" href="../ajax/config_deduplication.html"><%= resourceBundle.getString("deduplication")%></a></li>
+						<li id="PromoLink"><a id="promoLinks-AdminUI" class="ajax-link" href="../ajax/promoLinks.html"></a></li>
+						<li id="Synonyms" ><a id="synonyms-AdminUI" class="ajax-link" href="../ajax/Synonyms.html"></a></li>
+<%-- 						<li id="Stopwords"><a id="stopwords-AdminUI" class="ajax-link" href="../ajax/StopWords.html"></a></li> --%>
+						<li id="FieldWeight"><a id="fieldWeight-AdminUI" class="ajax-link" href="../ajax/FieldWeight.html"></a></li>
+						<li id="FacetConfig"><a id="facetConfig-AdminUI" class="ajax-link" href="../ajax/FacetConfig.html"></a></li>
+						<li id="Deduplication"><a id="deduplication-AdminUI" class="ajax-link" href="../ajax/config_deduplication.html"></a></li>
 
-						<li id="LikesAndFavorites"><a class="ajax-link" href="../ajax/config_likesAndFavorites.html"><%= resourceBundle.getString("likesAndFavorites")%></a></li>
+						<li id="LikesAndFavorites"><a id="likesFavoritesSearchEng-AdminUI" class="ajax-link" href="../ajax/config_likesAndFavorites.html"></a></li>
 <!-- 						<li><a class="ajax-link" href="../ajax/ui_jquery-ui.html">Query based boosts</a></li> -->
 <!-- 						<li><a class="ajax-link" href="../ajax/ui_icons.html">Document based boosts</a></li> -->
 <!-- 						<li><a class="ajax-link" href="../ajax/ui_icons.html">OCR: On/Off</a></li> -->
@@ -242,7 +242,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 			<li class="dropdown" id="Servers">
 					<a href="#" class="dropdown-toggle">
 						<i class="fa fa-database"></i>
-						 <span class="hidden-xs"><%= resourceBundle.getString("servers")%></span>
+						 <span id="servers-AdminUI" class="hidden-xs"></span>
 					</a>
 					<ul class="dropdown-menu">
 						<li id="Tomcat"><a class="ajax-link" href="../ajax/Tomcat.html">Tomcat</a></li>
@@ -253,12 +253,12 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 				<li class="dropdown" id="userManagement">
 					<a href="#" class="dropdown-toggle">
 					<i class="fa fa-users"></i>
-						 <span class="hidden-xs"><%= resourceBundle.getString("userManagement")%></span>
+						 <span id="userManagement-AdminUI" class="hidden-xs"></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li id="ldapConfiguration"><a class="ajax-link" href="../ajax/ldapConfiguration.html"><%= resourceBundle.getString("ldapConfiguration")%></a></li>
-						<li id="modifyUser"><a class="ajax-link" href="../ajax/modifyUsers.html"><%=resourceBundle.getString("modifyUsers")%></a></li>
-						<li id="addUser"><a class="ajax-link" href="../ajax/addUser.html"><%=resourceBundle.getString("addUser")%></a></li>
+						<li id="ldapConfiguration"><a id="ldapConfig-AdminUI" class="ajax-link" href="../ajax/ldapConfiguration.html"></a></li>
+						<li id="modifyUser"><a id="modifyUsers-AdminUI" class="ajax-link" href="../ajax/modifyUsers.html"></a></li>
+						<li id="addUser"><a id="addUser-AdminUI" class="ajax-link" href="../ajax/addUser.html"></a></li>
 					</ul>
 				</li>
 <%
@@ -295,16 +295,17 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 <script src="../plugins/jquery-ui/jquery-ui.min.js"></script>
 <script src="../plugins/CLEditor/jquery.cleditor.js"></script>
 <script src="../plugins/CLEditor/jquery.cleditor.min.js"></script>
-<script type="text/javascript" src="./../js/logout.js"></script>
+<script type="text/javascript" src="../js/logout.js"></script>
 <script src="./../plugins/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="../plugins/bootstrap/bootstrap.min.js"></script>
 <script src="../plugins/justified-gallery/jquery.justifiedGallery.min.js"></script>
-<script src="./../admin/i18nInit.js" ></script>
-<script type="text/javascript" src="./../js/AjaxFranceLabs/i18njs.js"></script>
+<script src="./i18nInit.js" ></script>
+<script type="text/javascript" src="../js/AjaxFranceLabs/i18njs.js"></script>
 <!-- All functions for this theme + document.ready processing -->
 <script src="../js/devoops.js"></script>
 <!-- JS library useful to extract parameters value from URL  -->
 <script type ="text/javascript" src ="../js/url.min.js"></script>
+<script type ="text/javascript" src ="./i18nAdminIndex.js"></script>
 </body>
 </html>
