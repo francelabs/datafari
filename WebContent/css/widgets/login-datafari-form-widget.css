@@ -1,0 +1,11 @@
+
+input[type="submit"]#loginAdminUiBtn {
+    margin-top: 4px;
+    position: absolute;
+    bottom: 0px;
+    right: 12px;
+}
+
+body {
+	background-color : #F0F0F0;
+}

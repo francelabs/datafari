@@ -11,3 +11,9 @@
 @import "color.css";
 @import "font.css";
 
+/*
+CSS for Datafari widgets
+*/
+@import "widgets/language-selector-widget.css";
+@import "widgets/login-datafari-links-widget.css";
+

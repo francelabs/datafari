@@ -27,7 +27,16 @@ AjaxFranceLabs.LanguageSelectorWidget = AjaxFranceLabs.AbstractWidget.extend({
 	 * AbstractWidget
 	 */
 	buildWidget : function() {
-		$(this.elm).addClass('languageSelectorWidget').addClass('widget');
+		$(this.elm).addClass('languageSelectorWidget widget');
+
+		// Build the selector language HTML elements
+		$(this.elm).append(window.i18n.msgStore['selectLang'])
+				.append('<select class="languageSelectorWidget-select"></select>')
+
+		$('<option value="en">' + window.i18n.msgStore['english_locale'] + '</option>').appendTo('.languageSelectorWidget-select');
+		$('<option value="fr">' + window.i18n.msgStore['french_locale'] + '</option>').appendTo('.languageSelectorWidget-select');
+		$('<option value="it">' + window.i18n.msgStore['italian_locale'] + '</option>').appendTo('.languageSelectorWidget-select');
+
 		
 		// Select the language for languageSelectorWidget, based on the window.i18n language detected from the browser/system
 		$(this.elm).find('select option[value="'+ window.i18n.language + '"]').prop('selected', true); 

@@ -1,14 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ page import="com.francelabs.datafari.utils.*"%>
-<%@ page import="java.util.ResourceBundle"  %>
+<!-- Logout.js to be merged into LoginDatafariLinks.widget.js -->
 <script type="text/javascript" src="js/logout.js"></script>
 <script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/LanguageSelector.widget.js"></script>
+<script type="text/javascript"
+		src="js/AjaxFranceLabs/widgets/LoginDatafariLinks.widget.js"></script>
+<script type="text/javascript"
+		src="js/AjaxFranceLabs/widgets/LoginDatafariForm.widget.js"></script>
 <!-- JS library useful to extract parameters value from URL  -->
 <script type ="text/javascript" src ="js/url.min.js"></script>
 <header>
-<% ResourceBundle resourceBundle = ResourceBundle.getBundle("com.francelabs.i18n.text", request.getLocale()); %>
 	<div id="header-wrapper">
 		<%
 			if (ScriptConfiguration.getProperty("SOLRCLOUD") != null
@@ -22,7 +25,6 @@
 			} else {
 		%>
 
-
 		<!-- <div id="logo"></div> -->
 
 		<%
@@ -31,44 +33,24 @@
 		<div id="userSpace">
 
 			<!-- Show the localized language section -->
+			<div id="languageSelector"></div>
 
-			<div id="languageSelector">
-
-				<%
-					out.print(resourceBundle.getString("selectLang"));
-				%>
-
-				<select>
-					<option value="en"> <% out.print(resourceBundle.getString("english_locale")); %> </option>
-					<option value="fr"> <% out.print(resourceBundle.getString("french_locale")); %> </option>
-					<option value="it"> <% out.print(resourceBundle.getString("italian_locale")); %> </option>
-				</select>
-
-			</div>
-
-
-
-			<div id="loginSettings">
+			<div id="loginDatafariLinks">
 
 				<%
 					if (request.getUserPrincipal() != null) {
 						if (request.getUserPrincipal().getName() != null) {
 				%>
-				<a id="adminLink" href="/Datafari/admin"><% out.print(resourceBundle.getString("settings")); %></a>
-				<a id="logout" onclick="logout();" style="cursor: pointer; font-weight: bold;"><% out.print(resourceBundle.getString("signout")); %></a>
-
+						<a id="adminLink"></a>
+						<a id="logout" onclick="logout();"></a>
 				<%
-					} 
-				%>
-				
-				<%
+						} 
 					}
 					else {
-						%>
-						<a id="loginLink" href="/Datafari/admin"><% out.print(resourceBundle.getString("signin")); %></a>
-					<% 
-					}
-					
+				%>
+						<a id="loginLink"></a>
+				<% 
+					}					
 				%>
 
 			</div>
