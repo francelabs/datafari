@@ -21,14 +21,19 @@
 		<!-- defaultGoal defined in the parent POM -->
 
 		<!-- Include resource files in the compilation -->
+		
+		<!-- No resource files for the moment 
 		<resources>
 			<resource>
 				<directory>../src/main/resources</directory>
 			</resource>
 		</resources>
+		-->
 
 		<plugins>
 			<!-- Copy the resources -->
+			
+			<!--  No resources to be copied for the moment 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
@@ -43,7 +48,7 @@
 					</execution>
 				</executions>
 			</plugin>
-
+			-->
 			<!-- Force JRE Java version 7 to be used instead of (default) version 
 				5 -->
 			<plugin>

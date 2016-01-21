@@ -11,14 +11,6 @@
 		<!-- Affect enough privileges for this folder -->
 		<chmod dir="pid" perm="777" />
 
-		<!-- Copy Tomcat Admin interface resources and Banana webapp to Eclipse's 
-			deploy directory NOT NEEDED -->
-		<!-- <copy -->
-		<!-- toDir="../.metadata/.plugins/org.eclipse.wst.server.core/tmp0/webapps/"> -->
-		<!-- <fileset dir="./tomcat/webapps" includes="ROOT/,manager/" /> -->
-		<!-- <file file="./tomcat/webapps/banana.war" /> -->
-		<!-- </copy> -->
-
 		<!-- Copy Manifold CF to Tomcat auto-deploy directory -->
 		<copy toDir="tomcat/webapps" overwrite="true" force="true">
 			<fileset dir="mcf/war" />
@@ -237,6 +229,8 @@
 		<!-- Not needed <chmod dir="debian7/elk/logstash" perm="775" includes="**" /> -->
 
 	</target>
+	
+	<!-- *** Setup Jena *** -->
 	
 	<target name="setup-jena">
 		<!-- Create jena directory in Solr FileShare core directory -->

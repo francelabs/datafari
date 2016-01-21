@@ -74,9 +74,13 @@ of Maven full build. -->
 			<exclude name="com/francelabs/datafari/searchcomp/**" />
 		</javac>
 
+		<!-- Redeploy resources, if any -->
+		
+		<!-- No resources for the moment
 		<copy toDir="${dist.src.dir}/WEB-INF/classes" overwrite="true" force="true">
 			<fileset dir="${project.dir}/src/main/resources" />
 		</copy>
+		-->
 
 	</target>
 
