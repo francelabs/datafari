@@ -85,19 +85,6 @@
    <field name="source" type="string" indexed="true" stored="true"/>
    <field name="url" type="text_en" indexed="true" stored="true"/>
    <field name="urlHierarchy" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="ontology_annotation" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="ontology_parents" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="ontology_children" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="ontology_descendants" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="ontology_ancestors" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="ontology_labels" type="string" indexed="true" stored="true" multiValued="true"/>
-   <dynamicField name="ontology_labels_*" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="ontology_parents_labels" type="string" indexed="true" stored="true" multiValued="true"/>
-   <dynamicField name="ontology_parents_labels_*" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="ontology_children_labels" type="string" indexed="true" stored="true" multiValued="true"/>
-   <dynamicField name="ontology_children_labels_*" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="ontology_descendants_labels" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="ontology_ancestors_labels" type="string" indexed="true" stored="true" multiValued="true"/>
    <field name="last_modified" type="tdate" indexed="true" stored="true"/>
    <field name="content" type="text_en" indexed="true" stored="true" multiValued="true"/>
    <field name="content_en" type="text_en" indexed="true" stored="true" multiValued="true"/>

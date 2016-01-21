@@ -38,9 +38,6 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 	public void processAdd(final AddUpdateCommand cmd) throws IOException {
 		final SolrInputDocument doc = cmd.getSolrInputDocument();
 
-		// Ontology test
-		doc.addField("ontology_annotation", "http://dbpedia.org/ontology/SportsLeague");
-
 		final String url = (String) doc.getFieldValue("id");
 		/*
 		 * // Create path hierarchy for facet
