@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ page import="com.francelabs.datafari.utils.*"%>
-<!-- Logout.js to be merged into LoginDatafariLinks.widget.js -->
+<!-- Logout.js used by admin/index.jsp as well -->
 <script type="text/javascript" src="js/logout.js"></script>
 <script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/LanguageSelector.widget.js"></script>

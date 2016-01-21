@@ -15,7 +15,7 @@
 			<a href="#" class="show-sidebar"> <i class="fa fa-bars"></i>
 			</a>
 			<ol class="breadcrumb pull-left">
-				<li><a id="topbar1" href="./../admin/index.jsp"></a></li>
+				<li><a id="topbar1" class="indexAdminUIBreadcrumbLink"></a></li>
 				<li><a id="topbar2" href="#"></a></li>
 				<li><a id="topbar3" href="#"></a></li>
 			</ol>
@@ -75,11 +75,20 @@ var previous="";
 				}
 			}
 		});
-		 document.getElementById("Modify").innerHTML = window.i18n.msgStore['selectLang'];
-		 document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
-		 document.getElementById("topbar2").innerHTML = window.i18n.msgStore['conf'];
-		 document.getElementById("topbar3").innerHTML = window.i18n.msgStore['stopwords'];
+		 
+		 setupLanguage();
+
 	});
+	
+
+	function setupLanguage(){
+		$(document).find('a.indexAdminUIBreadcrumbLink').prop('href', "./index.jsp?lang=" + window.i18n.language);
+		 document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
+		 document.getElementById("topbar2").innerHTML = window.i18n.msgStore['adminUI-SearchEngineConfig'];
+		 document.getElementById("topbar3").innerHTML = window.i18n.msgStore['adminUI-Stopwords'];
+		 document.getElementById("Modify").innerHTML = window.i18n.msgStore['selectLang'];
+	}
+	
 function getFile(){
 	//If the language has been changed while a file has been opened
 	if(previous!==""){

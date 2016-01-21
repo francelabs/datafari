@@ -44,12 +44,21 @@ public class SignOut extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+
         HttpSession session=request.getSession();  
         if (session!=null){
         	session.invalidate();
         }
-        response.sendRedirect("/Datafari/Search");
+        
+        // If the lang parameter is defined, we use it to display the search page with the correct language
+        String lang = request.getParameter("lang");
+        
+        if (lang != null && !lang.isEmpty()){
+        	response.sendRedirect("/Datafari/Search?lang=" + lang);
+        } else {
+        	// If not defined, default language will be used
+        	response.sendRedirect("/Datafari/Search");
+        }        
 	}
 
 	/**

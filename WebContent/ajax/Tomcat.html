@@ -4,7 +4,7 @@
 		<a href="#" class="show-sidebar"> <i class="fa fa-bars"></i>
 		</a>
 		<ol class="breadcrumb pull-left">
-			<li><a id="topbar1" href="index.html"></a></li>
+			<li><a id="topbar1" class="indexAdminUIBreadcrumbLink"></a></li>
 			<li><a id="topbar2" href="#"></a></li>
 			<li><a href="#">Tomcat</a></li>
 		</ol>
@@ -15,6 +15,10 @@
 	<iframe src="/tomcat" width="100%" height="100%"></iframe>
 </div>
 <script> 
-document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
-document.getElementById("topbar2").innerHTML = window.i18n.msgStore['servers'];
+setupLanguage();
+function setupLanguage(){
+	$(document).find('a.indexAdminUIBreadcrumbLink').prop('href', "./index.jsp?lang=" + window.i18n.language);
+	 document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
+	 document.getElementById("topbar2").innerHTML = window.i18n.msgStore['adminUI-Servers'];
+}
 </script>
