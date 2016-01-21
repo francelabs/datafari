@@ -7,6 +7,9 @@
 
 export DATAFARI_HOME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/..
 export JAVA_HOME=${DATAFARI_HOME}/jvm
+
+echo $JAVA_HOME
+
 export LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib:${DATAFARI_HOME}/ocr/tesseract/lib:${DATAFARI_HOME}/ocr/leptonica/lib
 export INIT_STATE_FILE=${DATAFARI_HOME}/bin/common/init_state.properties
 export CONFIG_FILE=${DATAFARI_HOME}/tomcat/conf/datafari.properties
@@ -19,6 +22,9 @@ export SOLR_INSTALL_DIR=$DATAFARI_HOME/solr
 export SOLR_ENV=$SOLR_INSTALL_DIR/bin/solr.in.sh
 export CASSANDRA_HOME=$DATAFARI_HOME/cassandra
 export CASSANDRA_ENV=$CASSANDRA_HOME/bin/cassandra.in.sh
+
+# Logs directory: needed for Cassandra startup
+export DATAFARI_LOGS=$DATAFARI_HOME/logs
 
 # pid files 
 export MCF_PID_FILE=$PID_DIR/mcf_crawler_agent.pid
