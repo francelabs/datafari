@@ -14,6 +14,11 @@ you just need to mention that you are using it.
 
 See http://wiki.datafari.com for more information.
 
+==================  2.1.3 ==================
+Cassandra startup fix
+Fix BackupManifoldCFConnectorsScript package change
+Update datafari.properties : Set ALLOWLOCALFILEREADING to false by default as it is a security leak
+
 ==================  2.1.2 ==================
 Add several roles to new user fix
 AD domain SearchProxy fix
