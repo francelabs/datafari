@@ -89,6 +89,9 @@
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/TableMobile.widget.js"></script>
 	
+	
+	<script type="text/javascript"
+		src="js/AjaxFranceLabs/widgets/OntologySuggestion.widget.js"></script>
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/Spellchecker.widget.js"></script>
 	<!-- comment the tag bellow if you don't use illustrate mode for desktop and mobile -->	
@@ -153,6 +156,7 @@
 		</div>
 		<div class="col right">
 			<div id="promolink"></div>
+			<div id="suggestion"></div>
 			<div id="spellchecker"></div>
 			<div id="results"></div>
 		</div>

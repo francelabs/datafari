@@ -4,4 +4,9 @@
 @import "results-font.css";
 @import "results-animation.css";
 
+/*
+CSS for Datafari widgets
+*/
+@import "widgets/ontology-suggestion-widget.css";
+
 body { overflow-y: scroll; }
