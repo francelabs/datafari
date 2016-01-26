@@ -22,7 +22,6 @@ package com.francelabs.datafari.alerts;
  * @author Alexis Karassev
  *
  */
-import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
@@ -65,7 +64,6 @@ public class Alert {
 	 */
 	public void run() {
 		try {
-			ResourceBundle res = ResourceBundle.getBundle("com.francelabs.i18n.text");
 			SolrQuery query = new SolrQuery();
 			switch(this.frequency){											//The fq parameter depends of the frequency of the alerts
 			default :
@@ -95,7 +93,8 @@ public class Alert {
 			String message = "";
 			SolrDocumentList list = queryResponse.getResults();					//Gets the results
 			if(list.getNumFound()!=0){											//If there are some results
-				message += list.getNumFound()+" "+res.getString("alertsMessage")+" : "+query.get("q"); //First sentence of the mail
+				// TODO remove the language hardcode here (before ResourceBundle was used, now removed with Maven refacto)
+				message += list.getNumFound()+" new or modified document(s) has/have been found for the key : "+query.get("q"); //First sentence of the mail
 				if(Integer.parseInt(query.get("rows"))<list.size()){			//If there are more than 10 results(can be modified in the setParam("rows","X") line) only the first ten will be printed
 					for(int i=0; i<Integer.parseInt(query.get("rows")); i++){	//For the ten first results puts the title in the mail
 						message += "\n"+list.get(i).getFieldValue("title");
