@@ -200,6 +200,7 @@
 "adminUI-Favorites" : "Favorites",
 "adminUI-Connectors" : "Connectors",
 "adminUI-Statistics" : "Statistics",
+"adminUI-OnDemandStats" : "On Demand Statistics",
 "adminUI-UsageStats" : "Usage Statistics",
 "adminUI-QueryStats" : "Query Statistics",
 "adminUI-SearchEngineAdmin" : "Search Engine Administration",
