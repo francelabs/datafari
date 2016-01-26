@@ -3,6 +3,10 @@
  */
 function logout() {
 	$.get("/datafari-mcf-crawler-ui/logout.jsp", function(data) {
-		window.open("/Datafari/SignOut","_self");
+		if (window.i18n.language !== null && window.i18n.language !== undefined){
+			window.open("/Datafari/SignOut?lang=" + window.i18n.language,"_self");
+		} else {
+			window.open("/Datafari/SignOut","_self");
+		}
 	});
 }

@@ -7,7 +7,7 @@
 		<a href="#" class="show-sidebar"> <i class="fa fa-bars"></i>
 		</a>
 		<ol class="breadcrumb pull-left">
-				<li><a id="topbar1" href="./../admin/index.jsp"></a></li>
+				<li><a id="topbar1" class="indexAdminUIBreadcrumbLink"></a></li>
 				<li><a id="topbar2" href="#"></a></li>
 				<li><a id="topbar3" href="#"></a></li>
 		</ol>
@@ -31,10 +31,16 @@
 	<iframe src="./../admin/statsQuery.jsp" width="100%" height="100%" frameborder="0" scrolling="yes" padding="none"></iframe>
 </div>
 </body>
-<script> 
-document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
-document.getElementById("topbar2").innerHTML = window.i18n.msgStore['admin'];
-document.getElementById("topbar3").innerHTML = window.i18n.msgStore['statsQuery'];
+<script>
+setupLanguage();
+
+function setupLanguage(){
+	$(document).find('a.indexAdminUIBreadcrumbLink').prop('href', "./index.jsp?lang=" + window.i18n.language);
+	document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
+	document.getElementById("topbar2").innerHTML = window.i18n.msgStore['adminUI-Statistics'];
+	document.getElementById("topbar3").innerHTML = window.i18n.msgStore['adminUI-QueryStats'];
+}
+
 
 </script>
 </html>
