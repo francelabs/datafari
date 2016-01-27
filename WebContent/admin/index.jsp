@@ -186,6 +186,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						 <span id="statistics-AdminUI" class="hidden-xs"></span>
 					</a>
 					<ul class="dropdown-menu">
+						<li id="onDemandStatistics"><a id="onDemandStatistics-AdminUI" class="ajax-link" href="../ajax/onDemandStatistics.html"></a></li>
 						<li id="UsageStatistics"><a id="usageStatistics-AdminUI" class="ajax-link" href="../ajax/usageStatistics.html"></a></li>
 						<li><a id="queryStatistics-AdminUI" class="ajax-link" href="../ajax/StatsQuery.html"></a></li> 
 <!-- 						<li><a class="ajax-link" href="../ajax/corpusStatistics.html">Corpus statistics</a></li> -->

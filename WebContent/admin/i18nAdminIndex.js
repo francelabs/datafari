@@ -17,6 +17,7 @@ $(function($) {
 	elm.find('#favorites-AdminUI').html(window.i18n.msgStore['adminUI-Favorites']);
 	elm.find('#connectors-AdminUI').html(window.i18n.msgStore['adminUI-Connectors']);
 	elm.find('#statistics-AdminUI').html(window.i18n.msgStore['adminUI-Statistics']);
+	elm.find('#onDemandStatistics-AdminUI').html(window.i18n.msgStore['adminUI-OnDemandStats']);
 	elm.find('#usageStatistics-AdminUI').html(window.i18n.msgStore['adminUI-UsageStats']);
 	elm.find('#queryStatistics-AdminUI').html(window.i18n.msgStore['adminUI-QueryStats']);
 	elm.find('#searchEngineAdmin-AdminUI').html(window.i18n.msgStore['adminUI-SearchEngineAdmin']);

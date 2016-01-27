@@ -190,6 +190,7 @@
 "adminUI-Favorites" : "Favoris",
 "adminUI-Connectors" : "Connecteurs",
 "adminUI-Statistics" : "Statistiques",
+"adminUI-OnDemandStats" : "Statistiques à la demande",
 "adminUI-UsageStats" : "Statistiques d'usage",
 "adminUI-QueryStats" : "Statistiques de requête",
 "adminUI-SearchEngineAdmin" : "Administration du moteur de recherche",
