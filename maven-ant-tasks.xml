@@ -69,6 +69,10 @@
 		</copy>
 
 		<!-- Overwrite with Datafari specific scripts and copy conf and solr_home directories -->
+		<!-- Use Datafari specific Tika-Parser JAR, should be removed with issue https://datafari.atlassian.net/browse/DATAFARI-80 -->
+		<delete>
+			<fileset dir="solr/solr_home/FileShare/lib/extraction" includes="*tika-parsers*.jar" />
+		</delete>
 		<copy toDir="solr" overwrite="true" force="true">
 			<fileset dir="datafari-solr" />
 		</copy>
@@ -229,13 +233,13 @@
 		<!-- Not needed <chmod dir="debian7/elk/logstash" perm="775" includes="**" /> -->
 
 	</target>
-	
+
 	<!-- *** Setup Jena *** -->
-	
+
 	<target name="setup-jena">
 		<!-- Create jena directory in Solr FileShare core directory -->
 		<!-- <mkdir dir="solr/solr_home/FileShare/lib/jena" /> -->
-		
+
 		<!-- Copy only useful Jena libraries to Solr FileShare core directory -->
 		<copy toDir="solr/solr_home/FileShare/lib/jena" overwrite="true" force="true">
 			<fileset dir="temp">
