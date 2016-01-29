@@ -91,12 +91,14 @@
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/HierarchicalFacet.js"></script>
 	-->
-	
 	<!--  
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/PrevisualizeResult.widget.js" charset="utf-8"></script>
 	-->
-	
+	<!--  
+	<script type="text/javascript"
+		src="js/AjaxFranceLabs/widgets/ExternalResult.widget.js" charset="utf-8"></script>
+	-->
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/OntologySuggestion.widget.js"></script>
 	<script type="text/javascript"
@@ -163,11 +165,11 @@
 			</div>
 		</div>
 		<div class="col right">
+			
 			<div id="promolink"></div>
 			<div id="suggestion"></div>
 			<div id="spellchecker"></div>
-			
-			<!-- To enable Previsualize window -->
+			<!--  <div id="external"></div> -->
 			<!--  <div id="previsualize"></div> -->
 			<div id="results"></div>
 		</div>

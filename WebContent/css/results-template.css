@@ -796,7 +796,28 @@ line-height:20px;
   	border-style:solid; border-color:black; border-width:1px; z-index: 6;}
 	div.res:hover div.previsualizetemplate {left: 2%; background: #ffffff; transition-delay:0.5s;} 
 	*/
+	/**************************************/
 	
+	/******	>>> ExternalResult Widget <<<	*******/
+	
+	@-moz-document url-prefix() {
+    	.externalresults {
+        	display: show;
+    	}
+	}
+
+	@media screen and (-webkit-min-device-pixel-ratio:0) {
+    	.externalresults {
+        	display: show;
+    	}
+	}
+	.externalmaintitle {margin-bottom:5px}
+	.external {margin-bottom : 10px;}
+	.externalresults { float: left; height: 100%; width:100%; padding-left: 5px;  position:relative;line-height: 20px; }
+	.externalurl { margin-top: 6px; box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.1), 0px 0px 0px rgba(0, 0, 0, 0.1);}
+	.datafariresultstitle { float: left; height: 100%; width:100%; padding-left: 5px;  position:relative;line-height: 20px; margin-bottom:20px }
+	.externalmore { float: left; height: 100%; width:100%; padding-left: 5px;  position:relative;line-height: 20px; margin-top: 10px; margin-bottom:15px; font-style:italic;}
+	/**************************************/
 	
 	/******	>>> Result Widget <<<	*******/
 	.resultWidget .doc { display: inline-block; margin-bottom: 20px; width: 100%; }

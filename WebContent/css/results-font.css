@@ -361,6 +361,30 @@
 	.capsuleWidget .title {
 		font-weight: bold;
 	}
+	.externalmaintitle { 
+		font-size: 20px; 
+		font-weight: bold; 
+	}
+	.externaltitle {
+		font-size:15px;
+	}
+	.externalhighlight { 
+		font-size: 90%; 
+	}
+	.externalurl {
+		font-size: 90%;
+	}
+	.externallinktitle { 
+		font-weight: bold; 
+		text-decoration: underline; 
+	}
+	.externallinktitle:hover { 
+		text-decoration:underline; 
+		color:#D37324; 
+	}
+	.datafariresultstitle { 
+		font-size: 20px; 
+		font-weight: bold; }
 
 	/* Spellchecker Widget font */
 	.spellcheckerWidget .result {
