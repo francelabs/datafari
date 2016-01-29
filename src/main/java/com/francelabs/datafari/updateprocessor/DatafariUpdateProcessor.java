@@ -45,23 +45,22 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 		// Create path hierarchy for facet
 		final List<String> urlHierarchy = new ArrayList<String>();
 
-		final String path = url.replace("file:", "");
-		int previousIndex = 1;
-		int depth = 0;
-		// Tokenize the path and add the depth as first character for each token
-		// (like: 0/home, 1/home/project ...)
-		for (int i = 0; i < path.split("/").length - 2; i++) {
-			int endIndex = path.indexOf('/', previousIndex);
-			if (endIndex == -1) {
-				endIndex = path.length() - 1;
-			}
-			urlHierarchy.add(depth + path.substring(0, endIndex));
-			depth++;
-			previousIndex = endIndex + 1;
-		}
-
-		// Add the tokens to the urlHierarchy field
-		doc.addField("urlHierarchy", urlHierarchy);
+		/*
+		 * // Create path hierarchy for facet
+		 *
+		 * final List<String> urlHierarchy = new ArrayList<String>();
+		 *
+		 * final String path = url.replace("file:", ""); int previousIndex = 1;
+		 * int depth = 0; // Tokenize the path and add the depth as first
+		 * character for each token // (like: 0/home, 1/home/project ...) for
+		 * (int i = 0; i < path.split("/").length - 2; i++) { int endIndex =
+		 * path.indexOf('/', previousIndex); if (endIndex == -1) { endIndex =
+		 * path.length() - 1; } urlHierarchy.add(depth + path.substring(0,
+		 * endIndex)); depth++; previousIndex = endIndex + 1; }
+		 *
+		 * // Add the tokens to the urlHierarchy field
+		 * doc.addField("urlHierarchy", urlHierarchy);
+		 */
 
 		doc.addField("url", url);
 

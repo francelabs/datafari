@@ -30,6 +30,7 @@ $(function($) {
 		returnUnselectedFacetValues : true
 	}));
 	
+	/*
 	Manager.addWidget(new AjaxFranceLabs.HierarchicalFacetWidget({
 		elm : $('#facet_hierarchical_url'),
 		id : 'facet_hierarchical',
@@ -43,6 +44,7 @@ $(function($) {
 		separator : '/',
 		maxDisplay : 100
 	}));
+	*/
 
 	Manager.addWidget(new AjaxFranceLabs.TableWidget({
 		elm : $('#facet_language'),
@@ -115,6 +117,9 @@ $(function($) {
 		Manager.addWidget(new AjaxFranceLabs.LikesAndFavoritesWidget());
 	else
 		Manager.addWidget(new AjaxFranceLabs.SubClassResultWidget());
+		
+		//Manager.addWidget(new AjaxFranceLabs.PrevisualizeResultWidget());
+	
 	/*new  AjaxFranceLabs.ResultIllustratedWidget({
 		elm : $('#results'),
 		id : 'documents',
