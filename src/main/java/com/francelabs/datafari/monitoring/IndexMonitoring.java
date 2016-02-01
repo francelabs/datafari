@@ -227,7 +227,8 @@ public class IndexMonitoring {
 		 * @param facetType
 		 *            facet type
 		 * @return the generated ID
-		 * @throws NoSuchAlgorithmException .
+		 * @throws NoSuchAlgorithmException
+		 *             .
 		 */
 		private String generateID(final String facetValue, final String facetType) throws NoSuchAlgorithmException {
 			// Set the current date according to the selected monitoring event

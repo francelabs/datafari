@@ -13,6 +13,7 @@
 	</condition>
 
 	<!-- Source directories -->
+	<property name="elk.src.dir" value="${project.dir}/elk" />
 	<property name="tomcat.src.dir" value="${project.dir}/tomcat" />
 	<property name="solr.src.dir" value="${project.dir}/solr" />
 	<property name="mcf.src.dir" value="${project.dir}/mcf" />
@@ -31,7 +32,6 @@
 	<property name="command.dir" value="${debian.dir}/command" />
 	<property name="ocr.dir" value="${debian.dir}/ocr" />
 	<property name="pgsql.dir" value="${debian.dir}/pgsql" />
-	<property name="elk.dir" value="${debian.dir}/elk" />
 
 	<!-- Installer directories -->
 	<property name="installer.dir" value="${debian.dir}/installer" />
@@ -103,6 +103,13 @@
 				<exclude name="**/data/**" />
 			</fileset>
 		</copy>
+		
+		<copy todir="${debian.dist.dir}/elk">
+			<fileset dir="${elk.src.dir}">
+				<!-- Exclude already existing data (i.e. coming from dev environment) -->
+				<exclude name="**/data/**" />
+			</fileset>
+		</copy>
 
 		<copy todir="${debian.dist.dir}/mcf">
 			<fileset dir="${mcf.src.dir}" />
@@ -140,11 +147,6 @@
 		<copy todir="${debian.dist.dir}/jvm">
 			<fileset dir="${jvm.dir}" />
 		</copy>
-
-		<copy todir="${debian.dist.dir}/elk">
-			<fileset dir="${elk.dir}" />
-		</copy>
-
 
 		<copy todir="${debian.dist.dir}/zookeeper">
 			<fileset dir="${zookeeper.dir}" />
