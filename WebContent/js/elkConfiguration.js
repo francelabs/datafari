@@ -65,7 +65,7 @@ $(document).ready(function() {
 
 	$("form").submit(function(e){
 		e.preventDefault();
-		if ($("#kibanaURILabel").val()!="" && $("#kibanaURILabel").val() != undefined){ 
+		if ($("#kibanaURI").val()!="" && $("#kibanaURI").val() != undefined){ 
 			$.post("../SearchAdministrator/changeELKConf",{
 				KibanaURI :  $("#kibanaURI").val() 
 			},function(data){
