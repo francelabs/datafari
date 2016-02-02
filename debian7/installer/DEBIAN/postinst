@@ -65,4 +65,7 @@ else
 fi
 chmod -R 755 /opt/datafari
 chmod -R 777 /opt/datafari/pid
-chmod -R 777 /opt/datafari/elk
+chmod 775 /opt/datafari/elk/kibana/bin/*
+chmod 775 /opt/datafari/elk/kibana/node/bin/*
+chmod 775 /opt/datafari/elk/logstash/vendor/jruby/bin/*
+chmod 775 /opt/datafari/elk/scripts/*

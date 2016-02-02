@@ -14,6 +14,7 @@
 
 	<!-- Source directories -->
 	<property name="elk.src.dir" value="${project.dir}/elk" />
+	<property name="datafari.elk.dir" value="${project.dir}/datafari-elk" />
 	<property name="tomcat.src.dir" value="${project.dir}/tomcat" />
 	<property name="solr.src.dir" value="${project.dir}/solr" />
 	<property name="mcf.src.dir" value="${project.dir}/mcf" />
@@ -106,9 +107,24 @@
 		
 		<copy todir="${debian.dist.dir}/elk">
 			<fileset dir="${elk.src.dir}">
-				<!-- Exclude already existing data (i.e. coming from dev environment) -->
+				<!-- Exclude already existing data & logs (i.e. coming from dev environment) -->
 				<exclude name="**/data/**" />
+				<exclude name="**/logs/**" />
 			</fileset>
+		</copy>
+		
+		<!-- Copy default configuration files for ELK to avoid custom ones -->
+		<copy toDir="${debian.dist.dir}/elk/logstash" overwrite="true" force="true">
+			<fileset dir="${datafari.elk.dir}/logstash" />
+		</copy>
+		<copy toDir="${debian.dist.dir}/elk/scripts" overwrite="true" force="true">
+			<fileset dir="${datafari.elk.dir}/scripts" />
+		</copy>
+		<copy toDir="${debian.dist.dir}/elk/elasticsearch/config" overwrite="true" force="true">
+			<fileset dir="${datafari.elk.dir}/elasticsearch/config" />
+		</copy>
+		<copy toDir="${debian.dist.dir}/elk/kibana/config" overwrite="true" force="true">
+			<fileset dir="${datafari.elk.dir}/kibana/config" />
 		</copy>
 
 		<copy todir="${debian.dist.dir}/mcf">

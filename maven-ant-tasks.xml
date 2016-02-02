@@ -231,6 +231,7 @@
 		<copy toDir="elk/scripts" overwrite="true" force="true">
 			<fileset dir="datafari-elk/scripts" />
 		</copy>
+		<chmod dir="elk/scripts" perm="775" includes="**" />
 		
 		<!-- Copy Datafari Kibana Objects save file -->
 		<copy toDir="elk/save" overwrite="true" force="true">
