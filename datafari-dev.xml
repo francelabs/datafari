@@ -6,11 +6,7 @@ of Maven full build. -->
 
 <!-- Pre-requisite: having run once Maven on pom.xml of datafari root -->
 
-<project name="datafari-deploy" default="all" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
-
-	<!-- Add a Ant taskdef to be able to reference Maven repo from Ant (needed as classpath for compilation) -->
-	<path id="maven-ant-tasks.classpath" path="dev-tools/setup-devenv/bin/maven-ant-tasks-2.1.3.jar" />
-	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
+<project name="datafari-deploy" default="all" basedir=".">
 
 	<property name="datafari.context.app" value="Datafari" />
 	<property name="tomcat.pw" value="admin" />
@@ -42,6 +38,7 @@ of Maven full build. -->
 	</target>
 
 	<target name="deploy">
+		<!-- Copy all the content of dist directory (newly built classes plus dependencies) to the webapps directory of Tomcat -->
 		<copy toDir="tomcat/webapps/${datafari.context.app}" overwrite="true" force="true">
 			<fileset dir="${dist.src.dir}" />
 		</copy>
@@ -54,15 +51,11 @@ of Maven full build. -->
 			<fileset dir="${project.dir}/WebContent" />
 		</copy>
 
-		<!-- Reference Maven dependencies for Java compilation -->
-		<!-- Needs to be run on a JDK (if you get strange errors check which runtime environment is being used by Ant)-->
-		<artifact:dependencies filesetId="deps.fileset">
-			<pom file="datafari-dependencies/pom.xml" />
-		</artifact:dependencies>
-
 		<javac destdir="${dist.src.dir}/WEB-INF/classes" debug="on" debuglevel="lines,vars,source" verbose="off" source="1.7" target="1.7">
 			<classpath>
-				<fileset refid="deps.fileset" />
+				<!-- Reference Maven dependencies for Java compilation -->
+				<!-- Artifacts for Java classes copied to dist directory by task copy-dependencies of datafari-core POM -->
+				<fileset dir="${dist.src.dir}/WEB-INF/lib" />
 			</classpath>
 
 			<src path="${project.dir}/src/main/java" />
