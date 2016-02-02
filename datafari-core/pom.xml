@@ -99,7 +99,7 @@
 								org.apache.httpcomponents,
 								org.apache.zookeeper,
 								net.htmlparser.jericho,
-								javax.mail,
+								com.sun.mail,
 								joda-time,
 								org.hamcrest, junit, org.noggit,
 								org.codehaus.woodstox, org.mozilla, org.apache.lucene
