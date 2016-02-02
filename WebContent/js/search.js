@@ -30,6 +30,7 @@ $(function($) {
 		returnUnselectedFacetValues : true
 	}));
 	
+	/*
 	Manager.addWidget(new AjaxFranceLabs.HierarchicalFacetWidget({
 		elm : $('#facet_hierarchical_url'),
 		id : 'facet_hierarchical',
@@ -43,6 +44,7 @@ $(function($) {
 		separator : '/',
 		maxDisplay : 100
 	}));
+	*/
 
 	Manager.addWidget(new AjaxFranceLabs.TableWidget({
 		elm : $('#facet_language'),
@@ -114,7 +116,10 @@ $(function($) {
 	if (window.isLikesAndFavoritesEnabled)
 		Manager.addWidget(new AjaxFranceLabs.LikesAndFavoritesWidget());
 	else
+		//Manager.addWidget(new AjaxFranceLabs.ExternalResultWidget());
 		Manager.addWidget(new AjaxFranceLabs.SubClassResultWidget());
+		//Manager.addWidget(new AjaxFranceLabs.PrevisualizeResultWidget());
+	
 	/*new  AjaxFranceLabs.ResultIllustratedWidget({
 		elm : $('#results'),
 		id : 'documents',
@@ -289,6 +294,9 @@ function getParamValue(param,url)
 	return matches[2] != undefined ? decodeURIComponent(matches[2]).replace(/\+/g,' ') : '';
 }
 
+function replaceAll(str, find, replace) {
+	  return str.replace(new RegExp(find, 'g'), replace);
+	}
 
 function createCookie(name,value,days) {
 	if (days) {

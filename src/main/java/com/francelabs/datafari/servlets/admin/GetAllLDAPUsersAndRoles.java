@@ -49,7 +49,7 @@ public class GetAllLDAPUsersAndRoles extends HttpServlet {
 	}
 
 	/**
-	 * Gets the directory context of the provided url
+	 * Gets the LDAP directory context of the provided url
 	 *
 	 * @param url
 	 *            the url ("ldap://serverName:serverPort")
@@ -75,6 +75,18 @@ public class GetAllLDAPUsersAndRoles extends HttpServlet {
 		return new InitialDirContext(env);
 	}
 
+	/**
+	 * Search for users in the provided LDAP context and LDAP userBase
+	 *
+	 * @param ctx
+	 *            LDAP context
+	 * @param userBase
+	 *            LDAP userBase
+	 * @param userSubTree
+	 *            should search for users in subTree ?
+	 * @return the list of found users
+	 * @throws NamingException
+	 */
 	private List<String> getUsersList(final DirContext ctx, final String userBase, final boolean userSubTree) throws NamingException {
 		final List<String> usersList = new ArrayList<String>();
 		final String[] attributeNames = { "userAccountControl", "sAMAccountName" };
@@ -88,13 +100,16 @@ public class GetAllLDAPUsersAndRoles extends HttpServlet {
 																						// current
 																						// object
 																						// is
+																						// something
+																						// else
+																						// than
 																						// a
 																						// user
 				if (userSubTree) {
 					// Recurse sub-contexts
 					usersList.addAll(getUsersList(ctx, userName + "," + userBase, userSubTree));
 				}
-			} else {
+			} else { // The object is a user ==> retrieve user name
 
 				final Attributes attrs = ctx.getAttributes(userName + "," + userBase, attributeNames);
 				final Attribute bitsAttribute = attrs.get("userAccountControl");
@@ -125,14 +140,18 @@ public class GetAllLDAPUsersAndRoles extends HttpServlet {
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		try {
+			// Get the LDAP configuration parameters
 			final HashMap<String, String> h = RealmLdapConfiguration.getConfig(request);
+			// Retrueve the LDAP context from the LDAP configuration parameters
 			final DirContext ctx = getDirContext(h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL),
 					h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME), h.get(RealmLdapConfiguration.ATTR_CONNECTION_PW));
+			// Retrieve the LDAP users list
 			final List<String> ldapUsersList = getUsersList(ctx, h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME), false);
+			// Close the context (never forget this)
 			ctx.close();
-			if (ldapUsersList.isEmpty()) {
+			if (ldapUsersList.isEmpty()) { // No LDAP users found
 				jsonResponse.put("code", CodesReturned.GENERALERROR).put("statut", "No users found !");
-			} else {
+			} else { // Retrieve user roles for LDAP users (if possible)
 				final Map<String, List<String>> usersRoles = User.getAllUsers();
 				final Map<String, List<String>> ldapUsersRoles = new HashMap<>();
 				for (final String ldapUser : ldapUsersList) {
@@ -142,6 +161,7 @@ public class GetAllLDAPUsersAndRoles extends HttpServlet {
 					}
 					ldapUsersRoles.put(ldapUser, roles);
 				}
+				// Write the LDAP users (& roles) list in the response in JSON
 				jsonResponse.put("code", CodesReturned.ALLOK).put("statut", ldapUsersRoles);
 			}
 		} catch (SAXException | ParserConfigurationException | JSONException e) {
@@ -159,6 +179,7 @@ public class GetAllLDAPUsersAndRoles extends HttpServlet {
 				logger.error(e);
 			}
 		}
+
 		final PrintWriter out = response.getWriter();
 		out.print(jsonResponse);
 	}

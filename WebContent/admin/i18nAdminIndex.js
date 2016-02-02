@@ -19,7 +19,10 @@ $(function($) {
 	elm.find('#statistics-AdminUI').html(window.i18n.msgStore['adminUI-Statistics']);
 	elm.find('#onDemandStatistics-AdminUI').html(window.i18n.msgStore['adminUI-OnDemandStats']);
 	elm.find('#usageStatistics-AdminUI').html(window.i18n.msgStore['adminUI-UsageStats']);
+	elm.find('#corpusStatistics-AdminUI').html(window.i18n.msgStore['adminUI-CorpusStats']);
+	elm.find('#corpusOTStatistics-AdminUI').html(window.i18n.msgStore['adminUI-CorpusOTStats']);
 	elm.find('#queryStatistics-AdminUI').html(window.i18n.msgStore['adminUI-QueryStats']);
+	elm.find('#elkConfiguration-AdminUI').html(window.i18n.msgStore['adminUI-ELKConf']);
 	elm.find('#searchEngineAdmin-AdminUI').html(window.i18n.msgStore['adminUI-SearchEngineAdmin']);
 	elm.find('#solrAdmin-AdminUI').html(window.i18n.msgStore['adminUI-SolrAdmin']);
 	elm.find('#alertAdmin-AdminUI').html(window.i18n.msgStore['adminUI-AlertAdmin']);

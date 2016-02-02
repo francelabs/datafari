@@ -188,8 +188,10 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 					<ul class="dropdown-menu">
 						<li id="onDemandStatistics"><a id="onDemandStatistics-AdminUI" class="ajax-link" href="../ajax/onDemandStatistics.html"></a></li>
 						<li id="UsageStatistics"><a id="usageStatistics-AdminUI" class="ajax-link" href="../ajax/usageStatistics.html"></a></li>
-						<li><a id="queryStatistics-AdminUI" class="ajax-link" href="../ajax/StatsQuery.html"></a></li> 
-<!-- 						<li><a class="ajax-link" href="../ajax/corpusStatistics.html">Corpus statistics</a></li> -->
+						<li id="CorpusStatistics"><a id="corpusStatistics-AdminUI" class="ajax-link" href="../ajax/corpusStatistics.html"></a></li>
+						<li id="CorpusOTStatistics"><a id="corpusOTStatistics-AdminUI" class="ajax-link" href="../ajax/corpusOTStatistics.html"></a></li>
+						<li><a id="queryStatistics-AdminUI" class="ajax-link" href="../ajax/StatsQuery.html"></a></li>
+						<li id="ELKConfiguration"><a id="elkConfiguration-AdminUI" class="ajax-link" href="../ajax/elkConfiguration.html"></a></li> 
 <!-- 						<li><a class="ajax-link" href="../ajax/systemStatistics.html">System statistics</a></li> -->
 					</ul>
 				</li>
