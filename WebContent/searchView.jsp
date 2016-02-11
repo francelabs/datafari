@@ -37,6 +37,7 @@
 	</style>
 <![endif]-->
 	
+<link rel="stylesheet" type ="text/css" href="css/custom/customSearchView.css">
 
 </head>
 <body class="gecko win">
