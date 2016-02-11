@@ -66,6 +66,8 @@
  <fields>
    <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" /> 
    
+   <!-- Includes additional fields -->
+   <xi:include href="./customs_schema/custom_fields.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 
    <!-- Common metadata fields, named specifically to match up with
      SolrCell metadata when parsing rich documents such as Word, PDF.
@@ -106,7 +108,10 @@
    <field name="_version_" type="long" indexed="true" stored="true"/>
    
    <dynamicField name="ignored_*" type="ignored" multiValued="true"/>
+   <dynamicField name="ontology_*" type="string" multiValued="true"/>
    
+   <!-- Includes additional dynamicFields -->
+   <xi:include href="./customs_schema/custom_dynamicFields.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 
    
    
@@ -150,9 +155,16 @@
    
    <copyField source="url" dest="suggest" />
    <copyField source="url" dest="spell" />
+   
+   <!-- Includes additional copyFields -->
+   <xi:include href="./customs_schema/custom_copyFields.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
  
   
   <types>
+  
+  	<!-- Includes additional fieldTypes -->
+   <xi:include href="./customs_schema/custom_fieldTypes.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  
  	 <fieldType name="likes" keyField="id" defVal="0" stored="false" indexed="false" class="solr.ExternalFileField" valType="pfloat"/>
     <fieldType name="textSpell" class="solr.TextField"
 			positionIncrementGap="100">

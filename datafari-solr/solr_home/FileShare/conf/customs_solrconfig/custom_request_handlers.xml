@@ -1,0 +1,10 @@
+<!-- Put here your custom requestHandlers for Solr -->
+<!-- E.g  <requestHandler class="my.requestHandler" name="/myRequestHandler">
+     <lst name="defaults">
+       <str name="param1">true</str>
+       <str name="param2">json</str>
+     </lst>
+  </requestHandler> -->
+  
+<!-- this tag is used to make this file a valid XML file, otherwise Solr raises an exception and does not run. It can be removed when this file is filled with requestHandlers -->
+<to_remove/>

@@ -1,0 +1,20 @@
+#!/bin/sh -e
+
+if [ ! "$1" = "purge" -a -e /usr/share/debconf/confmodule ]; then
+	tmp_dir="/var/tmp/datafari"
+	if [ ! -d "$tmp_dir" ];
+	then
+		mkdir "$tmp_dir"
+	else
+		rm -rf "$tmp_dir"/*
+	fi
+	tmp_common="$tmp_dir/bin/common"
+	mkdir -p "$tmp_common"
+	cp /opt/datafari/bin/common/init_state.properties "$tmp_common"
+	tmp_solr_conf="$tmp_dir/solr/solr_home/FileShare/conf"
+	mkdir -p "$tmp_solr_conf"
+	cp -R /opt/datafari/solr/solr_home/FileShare/conf/customs* "$tmp_solr_conf"
+	cp /opt/datafari/solr/solr_home/FileShare/conf/stopwords* "$tmp_solr_conf"
+	cp /opt/datafari/solr/solr_home/FileShare/conf/synonyms* "$tmp_solr_conf"
+	cp /opt/datafari/solr/solr_home/FileShare/conf/protwords* "$tmp_solr_conf"
+fi

@@ -1,0 +1,7 @@
+/opt/datafari/solr/solr_home/FileShare/conf/schema.xml
+/opt/datafari/solr/solr_home/FileShare/conf/solrconfig.xml
+/opt/datafari/tomcat/webapps/Datafari/META-INF/context.xml
+/opt/datafari/mcf/mcf_home/properties.xml
+/opt/datafari/mcf/mcf_home/connectors.xml
+/opt/datafari/tomcat/webapps/Datafari/searchView.jsp
+/opt/datafari/tomcat/webapps/Datafari/js/search.js

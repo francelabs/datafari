@@ -1,0 +1,5 @@
+<!-- Put here your custom copyFields for Solr -->
+<!-- E.g  <copyField source="myField" dest="myCopy" /> -->
+
+<!-- this tag is used to make this file a valid XML file, otherwise Solr raises an exception and does not run. It can be removed when this file is filled with copyFields -->
+<to_remove/>

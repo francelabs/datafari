@@ -1,0 +1,5 @@
+<!-- Put here your custom libs for Solr -->
+<!-- E.g  <lib dir="./lib/mylibs"/> -->
+
+<!-- this tag is used to make this file a valid XML file, otherwise Solr raises an exception and does not run. It can be removed when this file is filled with libs -->
+<to_remove/>

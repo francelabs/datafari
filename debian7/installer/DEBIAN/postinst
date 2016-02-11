@@ -64,8 +64,12 @@ else
 	sed -i -e "s/@SOLRCLOUD@/false/g" /opt/datafari/tomcat/conf/datafari.properties
 fi
 chmod -R 755 /opt/datafari
+id -u postgres &>/dev/null || useradd postgres
+chown -R postgres /opt/datafari/pgsql/
+chmod -R 700 /opt/datafari/pgsql/
 chmod -R 777 /opt/datafari/pid
-chmod 775 /opt/datafari/elk/kibana/bin/*
-chmod 775 /opt/datafari/elk/kibana/node/bin/*
-chmod 775 /opt/datafari/elk/logstash/vendor/jruby/bin/*
-chmod 775 /opt/datafari/elk/scripts/*
+chmod -R 777 /opt/datafari/logs
+chmod 755 /opt/datafari/elk/kibana/bin/*
+chmod 755 /opt/datafari/elk/kibana/node/bin/*
+chmod 755 /opt/datafari/elk/logstash/vendor/jruby/bin/*
+chmod 755 /opt/datafari/elk/scripts/*

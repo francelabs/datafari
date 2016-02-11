@@ -38,6 +38,9 @@
 	<lib dir="./lib/solr"/>
 	<lib dir="./lib/MCF"/>
 	<lib dir="./lib/custom"/>
+	
+	<!-- Includes custom libs -->
+	<xi:include href="./customs_solrconfig/custom_libs.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 
 
   <!-- <lib/> directives can be used to instruct Solr to load an Jars
@@ -665,6 +668,9 @@
        of SearchComponents (see below) and supports distributed
        queries across multiple shards
     -->
+    
+ <!-- Includes additional requestHandlers -->
+ <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="./customs_solrconfig/custom_request_handlers.xml"/>
 	    
  <requestHandler class="org.apache.solr.search.function.FileFloatSource$ReloadCacheRequestHandler" name="/reloadCache"/>
 	 
@@ -890,6 +896,10 @@
        A component to return terms and document frequency of those
        terms
     -->
+    
+  <!-- Includes additional searchComponents -->
+ <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="./customs_solrconfig/custom_search_components.xml"/>
+  
   <searchComponent class="solr.TermsComponent" name="terms"/>
 	 
 	 <searchComponent class="com.francelabs.datafari.searchcomp.capsule.CapsuleSearchComponent" name="capsulecomponent">
@@ -1121,7 +1131,9 @@
 	
 		
 		<processor class="com.francelabs.datafari.updateprocessor.DatafariUpdateProcessorFactory"/>
-
+		
+		<!-- Includes additional updateProcessors -->
+ 		<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="./customs_solrconfig/custom_update_processors.xml"/>
 
 	
 		<processor class="org.apache.solr.update.processor.LangDetectLanguageIdentifierUpdateProcessorFactory">

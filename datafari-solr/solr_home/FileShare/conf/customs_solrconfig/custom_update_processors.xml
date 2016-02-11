@@ -1,0 +1,8 @@
+<!-- Put here your custom libs for Solr -->
+<!-- E.g  <processor class="my.OwnUpdateProcessorFactory">
+    <bool name="enabled">true</bool>
+    <str name="param">something</str>
+</processor> -->
+
+<!-- this tag is used to make this file a valid XML file, otherwise Solr raises an exception and does not run. It can be removed when this file is filled with updateProcessors -->
+<to_remove/>

@@ -5,5 +5,13 @@ if [ "$1" = "purge" -a -e /usr/share/debconf/confmodule ]; then
     . /usr/share/debconf/confmodule
     # Remove my changes to the db.
     db_purge
+else
+	if [ -d /opt/datafari ]; then
+		tmp_dir="/var/tmp/datafari"
+		if [ -d "$tmp_dir" ];
+		then
+			cp -R "$tmp_dir"/* /opt/datafari/
+		fi
+	fi
 fi
      

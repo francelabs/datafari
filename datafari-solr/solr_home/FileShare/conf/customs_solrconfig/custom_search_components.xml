@@ -1,0 +1,10 @@
+<!-- Put here your custom searchComponents for Solr -->
+<!-- E.g  <searchComponent class="my.searchComponent" name="mySearchComponent">
+		<lst name="component">
+			<str name="name">default</str>
+			<str name="field">sample</str>
+		</lst>
+	</searchComponent> -->
+	
+<!-- this tag is used to make this file a valid XML file, otherwise Solr raises an exception and does not run. It can be removed when this file is filled with searchComponents -->
+<to_remove/>

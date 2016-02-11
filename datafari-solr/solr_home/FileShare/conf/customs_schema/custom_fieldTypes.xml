@@ -1,0 +1,11 @@
+<!-- Put here your custom fieldTypes for Solr -->
+<!-- E.g  <fieldType name="myType" class="solr.TextField"
+			positionIncrementGap="100">
+			<analyzer>
+				<tokenizer class="solr.KeywordTokenizerFactory" />
+				<filter class="solr.LowerCaseFilterFactory" />
+			</analyzer>
+	</fieldType> -->
+	
+<!-- this tag is used to make this file a valid XML file, otherwise Solr raises an exception and does not run. It can be removed when this file is filled with fieldTypes -->
+<to_remove/>
