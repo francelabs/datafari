@@ -108,7 +108,7 @@
 		<copy todir="${debian.dist.dir}/elk">
 			<fileset dir="${elk.src.dir}">
 				<!-- Exclude already existing data & logs (i.e. coming from dev environment) -->
-				<exclude name="**/data/**" />
+				<exclude name="elasticsearch/data/**" />
 				<exclude name="**/logs/**" />
 			</fileset>
 		</copy>
