@@ -22,9 +22,6 @@ export SOLR_INSTALL_DIR=$DATAFARI_HOME/solr
 export SOLR_ENV=$SOLR_INSTALL_DIR/bin/solr.in.sh
 export CASSANDRA_HOME=$DATAFARI_HOME/cassandra
 export CASSANDRA_ENV=$CASSANDRA_HOME/bin/cassandra.in.sh
-export ELASTICSEARCH_HOME=$DATAFARI_HOME/elk/elasticsearch
-export LOGSTASH_HOME=$DATAFARI_HOME/elk/logstash
-export KIBANA_HOME=$DATAFARI_HOME/elk/kibana
 
 # Logs directory: needed for Cassandra startup
 export DATAFARI_LOGS=$DATAFARI_HOME/logs
@@ -35,7 +32,4 @@ export CATALINA_PID=$PID_DIR/tomcat.pid
 export SOLR_PID_FILE=$PID_DIR/solr-8983.pid
 export CASSANDRA_PID_FILE=$PID_DIR/cassandra.pid
 export POSTGRES_PID_FILE=$PID_DIR/postmaster.pid
-export ELASTICSEARCH_PID_FILE=$PID_DIR/elasticsearch.pid
-export LOGSTASH_PID_FILE=$PID_DIR/logstash.pid
-export KIBANA_PID_FILE=$PID_DIR/kibana.pid
 

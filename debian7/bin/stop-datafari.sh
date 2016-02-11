@@ -5,8 +5,8 @@
 #
 #
 
-if (( EUID != 0 )); then
-   echo "You need to be root to run this script." 1>&2
+if (( EUID == 0 )); then
+   echo "You need to be a non-root user to run this script." 1>&2
    exit 100
 fi
 
@@ -55,30 +55,9 @@ else
 fi
 
 if is_running $POSTGRES_PID_FILE; then
-	su postgres -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_HOME}/logs/pgsql.log stop"
+	sudo LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib:${DATAFARI_HOME}/ocr/tesseract/lib:${DATAFARI_HOME}/ocr/leptonica/lib su postgres -p -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_HOME}/logs/pgsql.log stop"
 else
    echo "Warn : Postgres does not seem to be running."
-fi
-
-if is_running $KIBANA_PID_FILE; then
-   kill $(cat $KIBANA_PID_FILE)
-   rm $KIBANA_PID_FILE
-else
-   echo "Warn : Kibana does not seem to be running."
-fi
-
-if is_running $LOGSTASH_PID_FILE; then
-   kill $(cat $LOGSTASH_PID_FILE)
-   rm $LOGSTASH_PID_FILE
-else
-   echo "Warn : Logstash does not seem to be running."
-fi
-
-if is_running $ELASTICSEARCH_PID_FILE; then
-   kill $(cat $ELASTICSEARCH_PID_FILE)
-   rm $ELASTICSEARCH_PID_FILE
-else
-   echo "Warn : Elasticsearch does not seem to be running."
 fi
 
 
