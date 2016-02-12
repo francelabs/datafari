@@ -3,8 +3,6 @@
 
 	<!-- ========================= PROPERTIES ============================= -->
 
-	<property name="mcf.password" value="password" />
-	<property name="datafari.password" value="password" />
 	<property name="datafari.context.app" value="Datafari" />
 
 	<!-- If project.dir not set, set it as basedir (datafari directory) -->
@@ -48,7 +46,7 @@
 		</delete>
 	</target>
 
-	<target name="buildInstaller" depends="configure">
+	<target name="buildInstaller" depends="copyBinaries">
 
 		<echoproperties />
 
@@ -76,11 +74,6 @@
 		
 		<!-- Clean-up the dist intermediate directory -->
 		<delete dir="${debian.dist.dir}" />
-	</target>
-
-	<target name="configure" depends="copyBinaries">
-		<replace file="${debian.dist.dir}/tomcat/conf/tomcat-users.xml" token="@PASSWORD@" value="${datafari.password}" />
-		<replace file="${debian.dist.dir}/mcf/mcf_home/properties.xml" token="@PASSWORD@" value="${mcf.password}" />
 	</target>
 
 	<target name="copyBinaries">
