@@ -1,4 +1,3 @@
-!!! Please start first the script launch_me_first_after_install.bat !!!
-
-After, you can launch the script datafari-start.bat for normal use of Datafari
+The installation is done.
+You can now launch Datafari : start-datafari.bat 
 
