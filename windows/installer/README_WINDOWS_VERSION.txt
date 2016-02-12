@@ -2,6 +2,6 @@ Welcome to the Windows 64 bits version of Datafari. This version is for windows 
 
 - Alerts
 
-Please be sure to start Launch_me_after_install.bat right after you're done with the setup.exe process. Only then can you click on datafari_start.bat
+Click on datafari_start.bat to launch Datafari
 
 

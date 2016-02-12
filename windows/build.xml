@@ -97,12 +97,6 @@
 			<fileset dir="${bin.dir}/common/lib" />
 		</copy>
 						
-						
-		<copy todir="${windows.dist.dir}/bin/common">
-			  <fileset file="${bin.dir}/dist/DatafariScripts.jar" />
-		</copy>
-		
-
 		<copy todir="${windows.dist.dir}/bin/common/config">
 			<fileset dir="${bin.dir}/config" />
 		</copy>
