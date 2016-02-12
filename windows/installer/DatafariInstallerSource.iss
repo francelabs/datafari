@@ -163,4 +163,5 @@ end;
 
 
 [Run]
-Filename: "EXPLORER.EXE"; Parameters: "/select,{app}\bin\launch_me_first_after_install.bat"
+Filename: "{app}\bin\launch_me_first_after_install.bat"
+Filename: "EXPLORER.EXE"; Parameters: "/select,{app}\bin\start-datafari.bat"
