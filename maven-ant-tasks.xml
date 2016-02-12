@@ -69,9 +69,10 @@
 		</copy>
 
 		<!-- Overwrite with Datafari specific scripts and copy conf and solr_home directories -->
-		<!-- Use Datafari specific Tika-Parser JAR, should be removed with issue https://datafari.atlassian.net/browse/DATAFARI-80 -->
+		<!-- Use Datafari specific Tika-Parser JAR for TesseractOCR config file and SEG-Y parser, should be removed with issue https://datafari.atlassian.net/browse/DATAFARI-80 -->
+		<!-- Use Datafari specific Tika-Core JAR, for SEG-Y parser. Source code available: https://github.com/francelabs/tika and https://github.com/francelabs/sigrun -->
 		<delete>
-			<fileset dir="solr/solr_home/FileShare/lib/extraction" includes="*tika-parsers*.jar" />
+			<fileset dir="solr/solr_home/FileShare/lib/extraction" includes="*tika-parsers*.jar,*tika-core*.jar" />
 		</delete>
 		<copy toDir="solr" overwrite="true" force="true">
 			<fileset dir="datafari-solr" />
