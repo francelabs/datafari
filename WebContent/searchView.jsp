@@ -87,7 +87,9 @@
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/Promolink.widget.js"></script>
 	<script type="text/javascript"
-		src="js/AjaxFranceLabs/widgets/TableMobile.widget.js"></script>
+		src="js/AjaxFranceLabs/widgets/TableMobile.widget.js"></script> 
+<!-- 	<script type="text/javascript" -->
+<!-- 		src="js/AjaxFranceLabs/widgets/Tab.widget.js"></script> -->
 	<!--  
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/HierarchicalFacet.js"></script>
@@ -100,8 +102,8 @@
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/ExternalResult.widget.js" charset="utf-8"></script>
 	-->
-	<script type="text/javascript"
-		src="js/AjaxFranceLabs/widgets/OntologySuggestion.widget.js"></script>
+<!-- 	<script type="text/javascript" -->
+<!-- 		src="js/AjaxFranceLabs/widgets/OntologySuggestion.widget.js"></script> -->
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/Spellchecker.widget.js"></script>
 	<!-- comment the tag bellow if you don't use illustrate mode for desktop and mobile -->	
@@ -153,6 +155,8 @@
 			<div id="nav_facets_mobile"><a href="#facets_mobile"><i class="fa fa-bars"></i> </a></div>
 		</div>
 		<div id="result_information"></div>
+		
+		<div id="source_tabs"></div>
 
 		<div class="col left">
 			<div id="facets">

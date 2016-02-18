@@ -1,0 +1,22 @@
+#source_tabs ul {
+    list-style: none;
+    padding: 0;
+    margin: 5px;
+}
+
+
+#source_tabs li {
+    display: inline;
+    border: solid;
+    border-width: 1px 1px 0 1px;
+    margin: 0 5px 0 0;
+}
+
+#source_tabs .tab {
+    cursor: pointer; 
+	font-weight: bold; 
+	text-decoration: underline;
+	color: #204a87;
+}
+
+
