@@ -3,6 +3,6 @@ Version: 2.2.0
 Section: base
 Priority: optional
 Architecture: all
-Depends: bash,curl,debconf,unzip
+Depends: bash,curl,debconf,unzip,sudo
 Maintainer: France Labs (aurelien.mazoyer@francelabs.com)
 Description: Datafari search solution
