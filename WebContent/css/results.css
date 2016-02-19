@@ -8,5 +8,6 @@
 CSS for Datafari widgets
 */
 @import "widgets/ontology-suggestion-widget.css";
+@import "widgets/tab-widget.css";
 
 body { overflow-y: scroll; }
