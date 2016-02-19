@@ -74,7 +74,8 @@
 			// Update the manager and the widgets with the new language
 			// Reinit all the application, go to index page, cleaning its cache
 			// to force the rebuild of widgets
-			location.assign(window.location.origin + '/Datafari/?lang=' + lang);
+			// window.location.origin may be undefined for some environments
+			location.assign(window.location.protocol +"//" + window.location.host + window.location.pathname + "?lang=" + lang);
 		},
 
 		init : function(options) {
