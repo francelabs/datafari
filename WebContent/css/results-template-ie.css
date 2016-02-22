@@ -457,4 +457,8 @@ header{
 .hl { font-weight: bold; }
 #solr #sortMode{display:none;}
 
+.searchModeLink {
+	margin-top: 20px;
+}
+
 	

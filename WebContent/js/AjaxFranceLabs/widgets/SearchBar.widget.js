@@ -199,7 +199,19 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 				optionDate.setAttribute("value", "date");
 				optionDate.text = window.i18n.msgStore['date'];
 				selectList.appendChild(optionDate);
-
+				
+				// Advanced Search link
+				elm.append('<div id="advancedSearchLink" class="searchModeLink"><a href="">'+ window.i18n.msgStore['advancedSearchLink'] +'</a></div>')
+					.click(function(event){
+						// Hide the basic search
+						elm.hide();
+						
+						// Display the advanced search
+						$('#advancedSearch').show();
+						
+						// Prevent page reload
+						event.preventDefault();
+					});				
 			},
 
 			beforeRequest : function() {

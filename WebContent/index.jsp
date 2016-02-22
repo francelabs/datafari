@@ -16,26 +16,29 @@
 	</head>
 	<body class="gecko win">
 		
-	    <script type="text/javascript" src="js/jquery-1.8.1.min.js"></script>
-	    <script type="text/javascript" src="js/function/empty.func.js"></script>
-			<script type ="text/javascript" src ="js/jquery-ui-1.8.23.min.js"></script>
+	    <script type ="text/javascript" src ="js/jquery-1.8.1.min.js"></script>
+	    <script type ="text/javascript" src ="js/function/empty.func.js"></script>
+		<script type ="text/javascript" src ="js/jquery-ui-1.8.23.min.js"></script>
 
-			<script type ="text/javascript" src ="js/AjaxFranceLabs/core/Core.js"></script>
-			<script type ="text/javascript" src ="js/AjaxFranceLabs/core/AbstractModule.js"></script>
-			<script type ="text/javascript" src ="js/AjaxFranceLabs/core/AbstractWidget.js"></script>
-			<script type ="text/javascript" src ="js/AjaxFranceLabs/core/Parameter.js"></script>
-			<script type ="text/javascript" src ="js/AjaxFranceLabs/core/ParameterStore.js"></script>
-			<script type="text/javascript" src="js/AjaxFranceLabs/i18njs.js"></script>
-			<script type="text/javascript" src="js/AjaxFranceLabs/uuid.core.js"></script>
-			<script type ="text/javascript" src ="js/AjaxFranceLabs/core/AbstractManager.js"></script>
-			<script type ="text/javascript" src ="js/AjaxFranceLabs/manager/Manager.js"></script>
-			<script type ="text/javascript" src ="js/AjaxFranceLabs/modules/Pager.module.js"></script>
-			<script type ="text/javascript" src ="js/AjaxFranceLabs/modules/Autocomplete.module.js"></script>
-			<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/SearchBar.widget.js"></script>
+		<script type ="text/javascript" src ="js/AjaxFranceLabs/core/Core.js"></script>
+		<script type ="text/javascript" src ="js/AjaxFranceLabs/core/AbstractModule.js"></script>
+		<script type ="text/javascript" src ="js/AjaxFranceLabs/core/AbstractWidget.js"></script>
+		<script type ="text/javascript" src ="js/AjaxFranceLabs/core/Parameter.js"></script>
+		<script type ="text/javascript" src ="js/AjaxFranceLabs/core/ParameterStore.js"></script>
+		<script type ="text/javascript" src ="js/AjaxFranceLabs/i18njs.js"></script>
+		<script type ="text/javascript" src ="js/AjaxFranceLabs/uuid.core.js"></script>
+		<script type ="text/javascript" src ="js/AjaxFranceLabs/core/AbstractManager.js"></script>
+		<script type ="text/javascript" src ="js/AjaxFranceLabs/manager/Manager.js"></script>
+		<script type ="text/javascript" src ="js/AjaxFranceLabs/modules/Pager.module.js"></script>
+		<script type ="text/javascript" src ="js/AjaxFranceLabs/modules/Autocomplete.module.js"></script>
+		<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/SearchBar.widget.js"></script>
+		<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/AdvancedSearch.widget.js"></script>
+		<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/AdvancedSearchWidget/Field.js"></script>
+		<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/AdvancedSearchWidget/Table.js"></script>
 
 
-			<script type ="text/javascript" src ="js/main.js"></script>
-			<script type ="text/javascript" src ="js/searchBar.js"></script>
+		<script type ="text/javascript" src ="js/main.js"></script>
+		<script type ="text/javascript" src ="js/searchBar.js"></script>
 		
 
 	<jsp:include page="header.jsp" />
