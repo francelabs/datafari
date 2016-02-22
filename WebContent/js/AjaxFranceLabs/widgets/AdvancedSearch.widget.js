@@ -66,6 +66,9 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 				}
 			});
 		}
+		
+		// Hidden by default
+		elm.hide();
 	},
 
 	addTable : function(table) {

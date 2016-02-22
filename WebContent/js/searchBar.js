@@ -20,6 +20,39 @@ $(function($) {
 		updateBrowserAddressBar : false
 	}));
 
+	/*
+	* Add advanced search widget
+	*/
+	
+	var as = new AjaxFranceLabs.AdvancedSearchWidget({
+		// Take the advancedSearch element by ID.
+		elm : $('#advancedSearch'),
+		id : 'advancedSearch'
+	});
+
+	var ast = new AjaxFranceLabs.AdvancedSearchTable({
+		id : 'advancedSearchTable',
+		parent : '#advancedSearch',
+		elm : $('#advancedSearchTable'),
+		title : 'Advanced Search',
+		description : 'Description'
+	});
+	
+	var asf = new AjaxFranceLabs.AdvancedSearchField({
+		id : 'advancedSearchField',
+		parent : '#advancedSearchTable',
+		elm : $('#advancedSearchField'),
+		label : 'test field',
+		description : 'field descr',
+		field : 'title'		
+	});
+	
+	ast.addField(asf);
+	
+	as.addTable(ast);
+
+	Manager.addWidget(as);
+
 	Manager.addModule(new AjaxFranceLabs.AutocompleteModule({
 		elm : $('.searchBar input[type=text]'),
 		searchForItSelf : true

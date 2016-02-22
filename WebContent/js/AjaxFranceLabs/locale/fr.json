@@ -177,6 +177,8 @@
 "english_locale" : "English",
 "french_locale" : "Français",
 "italian_locale" : "Italiano",
+"advancedSearchLink" : "Changer pour Recherche Avancee",
+"basicSearchLink" : "Changer pour Recherche Basique",
 "adminUiLink" : "Administration",
 "loginAdminUiLink" : "Connexion",
 "logoutAdminUiLink" : "Déconnexion",
