@@ -16,6 +16,8 @@
 AjaxFranceLabs.AdvancedSearchTable = AjaxFranceLabs.Class.extend({
 
 	//Variables
+	
+	id : null,
 
 	parent : null,
 
@@ -32,7 +34,7 @@ AjaxFranceLabs.AdvancedSearchTable = AjaxFranceLabs.Class.extend({
 	//Methods
 
 	init : function() {
-		$(this.parent).append('<div class="advTable">');
+		$(this.parent).append('<div class="advTable" id="' + this.id + '">');
 		this.elm = $(this.parent).find('.advTable:last');
 		var elm = $(this.elm);
 		elm.append('<span class="title">').find('.title').append('<span class="left">').append('<span class="right">').find('.left').append(this.title).parent().find('.right').append(this.description);

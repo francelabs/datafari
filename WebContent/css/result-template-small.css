@@ -226,5 +226,9 @@ height:18px; width:18px;
 .ui-resizable-handle { height: 10px; }
 }
 
+.searchModeLink {
+	margin-top: 20px;
+}
+
 
 
