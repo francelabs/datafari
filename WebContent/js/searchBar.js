@@ -29,27 +29,8 @@ $(function($) {
 		elm : $('#advancedSearch'),
 		id : 'advancedSearch'
 	});
-
-	var ast = new AjaxFranceLabs.AdvancedSearchTable({
-		id : 'advancedSearchTable',
-		parent : '#advancedSearch',
-		elm : $('#advancedSearchTable'),
-		title : 'Advanced Search',
-		description : 'Description'
-	});
 	
-	var asf = new AjaxFranceLabs.AdvancedSearchField({
-		id : 'advancedSearchField',
-		parent : '#advancedSearchTable',
-		elm : $('#advancedSearchField'),
-		label : 'test field',
-		description : 'field descr',
-		field : 'title'		
-	});
-	
-	ast.addField(asf);
-	
-	as.addTable(ast);
+	createAdvancedSearchTable(as);
 
 	Manager.addWidget(as);
 
@@ -83,4 +64,35 @@ function search() {
 	window.open('Search?searchType=' + searchType + '&query='
 			+ encodeURIComponent($('.searchBar input[type=text]').val())
 			+ '&lang=' + window.i18n.language, '_self');
+};
+
+function createAdvancedSearchTable(as) {
+	
+	var ast = new AjaxFranceLabs.AdvancedSearchTable({
+		parent : '#advancedSearch',
+		title : window.i18n.msgStore['advancedSearch-label'],
+		description : window.i18n.msgStore['advancedSearch-descr']
+	});
+	
+	// TODO Call Solr to create rows dynamically, based on the index fields
+	
+	var asf = new AjaxFranceLabs.AdvancedSearchField({
+		parent : '#advancedSearchTable',
+		label : window.i18n.msgStore['advancedSearch-title-label'],
+		description : window.i18n.msgStore['advancedSearch-title-descr'],
+		field : 'title'		
+	});
+	
+	ast.addField(asf);
+	
+	asf = new AjaxFranceLabs.AdvancedSearchField({
+		parent : '#advancedSearchTable',
+		label : window.i18n.msgStore['advancedSearch-content-label'],
+		description : window.i18n.msgStore['advancedSearch-content-descr'],
+		field : 'content'		
+	});
+	
+	ast.addField(asf);
+	
+	as.addTable(ast);	
 };
