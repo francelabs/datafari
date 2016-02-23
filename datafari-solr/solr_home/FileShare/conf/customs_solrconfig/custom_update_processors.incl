@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!-- Put here your custom libs for Solr -->
+
+<!-- Put here your custom update processors for Solr -->
 <!-- E.g  <processor class="my.OwnUpdateProcessorFactory">
     <bool name="enabled">true</bool>
     <str name="param">something</str>
