@@ -16,8 +16,6 @@
 AjaxFranceLabs.AdvancedSearchTable = AjaxFranceLabs.Class.extend({
 
 	//Variables
-	
-	id : null,
 
 	parent : null,
 
@@ -34,7 +32,7 @@ AjaxFranceLabs.AdvancedSearchTable = AjaxFranceLabs.Class.extend({
 	//Methods
 
 	init : function() {
-		$(this.parent).append('<div class="advTable" id="' + this.id + '">');
+		$(this.parent).append('<div class="advTable">');
 		this.elm = $(this.parent).find('.advTable:last');
 		var elm = $(this.elm);
 		elm.append('<span class="title">').find('.title').append('<span class="left">').append('<span class="right">').find('.left').append(this.title).parent().find('.right').append(this.description);
@@ -44,6 +42,16 @@ AjaxFranceLabs.AdvancedSearchTable = AjaxFranceLabs.Class.extend({
 			this.fieldStore[field].init();
 		}
 		AjaxFranceLabs.addMultiElementClasses(elm.find('.field'));
+		
+		// If we have more than one field in advanced search
+		if (this.fieldStore.length > 1){
+			// Take all the fields except the last one, and add the span for the boolean operators below the current element
+			elm.find('.field:not(:last-child)').after('<span class="advSearchBooleanOperator left"></span>');
+			// Insert AND and OR radios
+			elm.find('.advSearchBooleanOperator').append('<span><input type="radio" name="advSearchRadios" class="radio" value="AND" checked="checked" id="advancedSearchRadioAnd"><label for="advancedSearchRadioAnd"><span>&nbsp;</span>AND</label></span>')
+					.append('<span><input type="radio" name="advSearchRadios" class="radio" value="OR" id="advancedSearchRadioOr"><label for="advancedSearchRadioOr"><span>&nbsp;</span>OR</label></span>')
+			;
+		}
 	},
 
 	addField : function(field) {

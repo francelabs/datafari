@@ -201,17 +201,18 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 				selectList.appendChild(optionDate);
 				
 				// Advanced Search link
-				elm.append('<div id="advancedSearchLink" class="searchModeLink"><a href="">'+ window.i18n.msgStore['advancedSearchLink'] +'</a></div>')
-					.click(function(event){
-						// Hide the basic search
-						elm.hide();
-						
-						// Display the advanced search
-						$('#advancedSearch').show();
-						
-						// Prevent page reload
-						event.preventDefault();
-					});				
+				elm.append('<div id="advancedSearchLink" class="searchModeLink"><a href="">'+ window.i18n.msgStore['advancedSearchLink'] +'</a></div>');
+				
+				$('#advancedSearchLink').click(function(event){
+					// Hide the basic search
+					elm.hide();
+					
+					// Display the advanced search
+					$('#advancedSearch').show();
+					
+					// Prevent page reload
+					event.preventDefault();
+				});				
 			},
 
 			beforeRequest : function() {

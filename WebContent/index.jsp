@@ -46,6 +46,7 @@
 		<img class="fadeInDown animated" id="logo-search" src="images/datafari.png"/>
 		<div id="solr">
 			<div id="searchBar"></div>
+			<div id="advancedSearch"></div>
 			<div class="clear"></div>
 		</div>
 	</div>

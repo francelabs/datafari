@@ -75,6 +75,9 @@
 		src="js/AjaxFranceLabs/widgets/Result.widget.js"></script>
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/SearchBar.widget.js"></script>
+	<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/AdvancedSearch.widget.js"></script>
+	<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/AdvancedSearchWidget/Field.js"></script>
+	<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/AdvancedSearchWidget/Table.js"></script>
 
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/SearchInformation.widget.js"></script>
@@ -151,6 +154,7 @@
     </div>
 	<div id="solr">
 		<div id="searchBar"> <a href="../Datafari/Search"><img src="css/images/logo_zebre.png"/></a></div>
+		<div id="advancedSearch"> <a href="../Datafari/Search"><img src="css/images/logo_zebre.png"/></a></div>
 		<div id="results_nav_mobile"  class="bc-color"> 
 			<div id="number_results_mobile"><span></span></div>
 			<div id="nav_facets_mobile"><a href="#facets_mobile"><i class="fa fa-bars"></i> </a></div>

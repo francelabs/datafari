@@ -67,8 +67,22 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			});
 		}
 		
-		// Hidden by default
-		elm.hide();
+		// Basic Search link
+		elm.append('<div id="basicSearchLink" class="searchModeLink"><a href="">'+ window.i18n.msgStore['basicSearchLink'] +'</a></div>');
+		
+		$('#basicSearchLink').click(function(event){
+			// Hide the basic search
+			elm.hide();
+			
+			// Display the advanced search
+			$('#searchBar').show();
+			
+			// Prevent page reload
+			event.preventDefault();
+		});
+		
+		// Hidden by default: basic search is displayed
+		elm.hide();		
 	},
 
 	addTable : function(table) {

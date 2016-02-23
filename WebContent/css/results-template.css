@@ -414,24 +414,6 @@ line-height:20px;
 
 /**************************************/
 
-/**	>>> advancedSearchWidget Widget <<<	***/
-.advancedSearchWidget { width: 1000px; }
-.advancedSearchWidget .advTable { width: 100%; }
-.advancedSearchWidget .separator { border-bottom: 1px solid; display: inline-block; margin: 15px 0; width: 100%; }
-.advancedSearchWidget .advTable .title,
-.advancedSearchWidget .advTable .field { display: block; height: 40px; width: 100%; }
-.advancedSearchWidget .advTable .left { width: 650px; }
-.advancedSearchWidget .advTable .left label { display: inline-block; width: 180px; }
-.advancedSearchWidget .advTable .inputs { float: right; width: 470px; }
-.advancedSearchWidget .advTable .field input { border: 1px solid; display: inline-block; height: 25px; margin-bottom: 5px; width: 450px; border-radius: 1px; -moz-border-radius: 1px; -webkit-border-radius: 1px; }
-.advancedSearchWidget .advTable .field.range input { display: inline-block; width: 200px; }
-.advancedSearchWidget .advTable .field.range .to { display: inline-block; text-align: center; width: 46px; }
-.advancedSearchWidget .advTable .right { width: 350px; }
-.advancedSearchWidget button { border: 1px solid; cursor: pointer; float: right; margin-bottom: 15px; padding: 5px; border-radius: 1px; -moz-border-radius: 1px; -webkit-border-radius: 1px; width: 150px; }
-.advancedSearchWidget .addInput { clear: both; cursor: pointer; float: right; margin-right: 18px; margin-top: 5px; }
-.advancedSearchWidget .removeInput { cursor: pointer; float: right; height: 29px; line-height: 29px; text-align: center; width: 18px; }
-/**************************************/
-
 /**	>>> promolinkWidget Widget <<<	***/
 
 #promolink{margin-top:3%;}
@@ -872,7 +854,7 @@ line-height:20px;
 	.advancedSearchWidget .advTable .left { width: 650px; }
 	.advancedSearchWidget .advTable .left label { display: inline-block; width: 180px; }
 	.advancedSearchWidget .advTable .inputs { float: right; width: 470px; }
-	.advancedSearchWidget .advTable .field input { border: 1px solid; display: inline-block; height: 25px; margin-bottom: 5px; width: 450px; border-radius: 1px; -moz-border-radius: 1px; -webkit-border-radius: 1px; }
+	.advancedSearchWidget .advTable .field input[type="text"] { border: 1px solid; display: inline-block; height: 25px; margin-bottom: 5px; width: 450px; border-radius: 1px; -moz-border-radius: 1px; -webkit-border-radius: 1px; }
 	.advancedSearchWidget .advTable .field.range input { display: inline-block; width: 200px; }
 	.advancedSearchWidget .advTable .field.range .to { display: inline-block; text-align: center; width: 46px; }
 	.advancedSearchWidget .advTable .right { width: 350px; }
@@ -926,7 +908,7 @@ line-height:20px;
 	/**************************************/
 	
 	.ui-resizable-handle { height: 10px; }
-		.searchBarWidget  img{
+		.searchBarWidget img,.advancedSearchWidget  img{
 		margin-left: 3%;
 		width: 2.9em;
 		outline:0px none;
@@ -1066,4 +1048,5 @@ line-height:20px;
 
 .searchModeLink {
 	margin-top: 20px;
+	margin-left: 20px;
 }

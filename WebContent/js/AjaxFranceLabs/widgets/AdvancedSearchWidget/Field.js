@@ -16,8 +16,6 @@
 AjaxFranceLabs.AdvancedSearchField = AjaxFranceLabs.Class.extend({
 
 	//Variables
-	
-	id : null,
 
 	parent : null,
 
@@ -55,7 +53,7 @@ AjaxFranceLabs.AdvancedSearchField = AjaxFranceLabs.Class.extend({
 	//Methodes
 
 	init : function() {
-		$(this.parent).append('<span class="field" id="' + this.id + '">');
+		$(this.parent).append('<span class="field">');
 		this.elm = $(this.parent).find('.field:last');
 		var elm = $(this.elm);
 		elm.append('<span class="left">').append('<span class="right"></span>');
