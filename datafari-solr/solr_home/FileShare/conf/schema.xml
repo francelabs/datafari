@@ -44,8 +44,11 @@
   - Remember to run the JVM in server mode, and use a higher logging level
     that avoids logging every request
 -->
-
+<!DOCTYPE schema [ <!ENTITY custom_copyFields SYSTEM "./customs_schema/custom_copyFields.incl"> <!ENTITY custom_dynamicFields SYSTEM "./customs_schema/custom_dynamicFields.incl"> <!ENTITY custom_fields SYSTEM "./customs_schema/custom_fields.incl"> <!ENTITY custom_fieldTypes SYSTEM "./customs_schema/custom_fieldTypes.incl"> ]>
 <schema name="example" version="1.5">
+  
+
+
   <!-- attribute "name" is the name of this schema and is only used for display purposes.
        version="x.y" is Solr's version number for the schema syntax and 
        semantics.  It should not normally be changed by applications.
@@ -68,8 +71,7 @@
    
    <!-- ////////////////////////// -->
    <!-- Includes additional fields -->
-   <!-- Uncomment this line : -->
-   <!--  <xi:include href="./customs_schema/custom_fields.xml" xmlns:xi="http://www.w3.org/2001/XInclude" /> -->
+   &custom_fields;
 
    <!-- Common metadata fields, named specifically to match up with
      SolrCell metadata when parsing rich documents such as Word, PDF.
@@ -114,9 +116,7 @@
    
    <!-- ////////////////////////// -->
    <!-- Includes additional dynamicFields -->
-   <!-- Uncomment this line : -->
-   <!--  <xi:include href="./customs_schema/custom_dynamicFields.xml" xmlns:xi="http://www.w3.org/2001/XInclude" /> -->
-
+   &custom_dynamicFields;
    
    
    
@@ -162,16 +162,13 @@
    
    <!-- ////////////////////////// -->
    <!-- Includes additional copyFields -->
-   <!-- Uncomment this line : -->
-   <!-- <xi:include href="./customs_schema/custom_copyFields.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />  -->
- 
+   &custom_copyFields;
   
   <types>
    <!-- ////////////////////////// -->
    <!-- Includes additional fieldTypes -->
-   <!-- Uncomment this line : -->
-   <!--  <xi:include href="./customs_schema/custom_fieldTypes.xml" xmlns:xi="http://www.w3.org/2001/XInclude" /> -->
-  
+   &custom_fieldTypes;
+   
  	 <fieldType name="likes" keyField="id" defVal="0" stored="false" indexed="false" class="solr.ExternalFileField" valType="pfloat"/>
     <fieldType name="textSpell" class="solr.TextField"
 			positionIncrementGap="100">

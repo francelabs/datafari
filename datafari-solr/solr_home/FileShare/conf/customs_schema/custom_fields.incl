@@ -1,3 +1,2 @@
-<?xml version="1.0" encoding="UTF-8" ?>
 <!-- Put here your custom fields for Solr -->
 <!-- E.g  <field name="my_field*" indexed="false" stored="true" type="string" multiValued="true"/> -->
