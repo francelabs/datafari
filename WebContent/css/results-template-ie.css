@@ -260,7 +260,7 @@
 .advancedSearchWidget .advTable .left { width: 650px; }
 .advancedSearchWidget .advTable .left label { display: inline-block; width: 180px; }
 .advancedSearchWidget .advTable .inputs { float: right; width: 470px; }
-.advancedSearchWidget .advTable .field input { border: 1px solid; display: inline-block; height: 25px; margin-bottom: 5px; width: 450px; border-radius: 1px; -moz-border-radius: 1px; -webkit-border-radius: 1px; }
+.advancedSearchWidget .advTable .field input[type="text"] { border: 1px solid; display: inline-block; height: 25px; margin-bottom: 5px; width: 450px; border-radius: 1px; -moz-border-radius: 1px; -webkit-border-radius: 1px; }
 .advancedSearchWidget .advTable .field.range input { display: inline-block; width: 200px; }
 .advancedSearchWidget .advTable .field.range .to { display: inline-block; text-align: center; width: 46px; }
 .advancedSearchWidget .advTable .right { width: 350px; }
@@ -314,7 +314,7 @@
 /**************************************/
 
 .ui-resizable-handle { height: 10px; }
-	.searchBarWidget > img{
+	.searchBarWidget > img,.advancedSearchWidget  > img{
 	margin-left: 3%;
 	width: 2.9em;
 	}
@@ -459,6 +459,7 @@ header{
 
 .searchModeLink {
 	margin-top: 20px;
+	margin-left: 20px;
 }
 
 	
