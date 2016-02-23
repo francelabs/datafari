@@ -45,12 +45,12 @@ then
 	sudo su postgres -c "rm -rf ${DATAFARI_HOME}/pgsql/data"
 	sudo su postgres -c "mkdir -m 700 ${DATAFARI_HOME}/pgsql/data"
 	
-	rm -rf "${DATAFARI_HOME}/cassandra/data"
-	mkdir "${DATAFARI_HOME}/cassandra/data"
+	sudo su datafari -c "rm -rf ${DATAFARI_HOME}/cassandra/data"
+	sudo su datafari -c "mkdir ${DATAFARI_HOME}/cassandra/data"
 	
 	CASSANDRA_INCLUDE=$CASSANDRA_ENV
 	# Redirect stdout and stderr to log file to ease startup issues investigation
-	$CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE &>$DATAFARI_LOGS/cassandra-startup.log
+	sudo -E su datafari -p -c "$CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE &>$DATAFARI_LOGS/cassandra-startup.log"
 	# Note: Cassandra start command returns 0 even if something goes wrong at startup. 
 	# This is why hereafter we check pid and we see if the Cassandra ports are open.
 
@@ -68,9 +68,9 @@ then
 	
 	sudo su postgres -c "${DATAFARI_HOME}/pgsql/bin/initdb -U postgres -A password --pwfile=${DATAFARI_HOME}/pgsql/pwd.conf -E utf8 -D ${DATAFARI_HOME}/pgsql/data"
 	sudo su postgres -c "cp ${DATAFARI_HOME}/pgsql/postgresql.conf.save ${DATAFARI_HOME}/pgsql/data/postgresql.conf"
-	sudo LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib:${DATAFARI_HOME}/ocr/tesseract/lib:${DATAFARI_HOME}/ocr/leptonica/lib su postgres -p -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_LOGS}/pgsql.log start"
+	sudo LD_LIBRARY_PATH=$LD_LIBRARY_PATH su postgres -p -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_LOGS}/pgsql.log start"
 	cd "${DATAFARI_HOME}/mcf/mcf_home"
-	bash "initialize.sh"
+	sudo -E su datafari -p -c "bash initialize.sh"
 	
 	echo "Checking if Cassandra is up and running ..."
 	# Try to connect on Cassandra's JMX port 7199
@@ -108,25 +108,25 @@ then
 	else
 		
         echo "Cassandra startup completed successfully --- OK"
-		$CASSANDRA_HOME/bin/cqlsh -f $DATAFARI_HOME/bin/common/config/cassandra/tables 
+		sudo -E su datafari -p -c "$CASSANDRA_HOME/bin/cqlsh -f $DATAFARI_HOME/bin/common/config/cassandra/tables"
 	fi
 fi
 
 cd $TOMCAT_HOME/bin
-bash startup.sh
+sudo -E su datafari -p -c "bash startup.sh"
 
 if  [[ "$STATE" = *installed* ]];
 then
 	cd "${DATAFARI_HOME}/bin/common"
 	"${JAVA_HOME}/bin/java" -cp DatafariScripts.jar com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript RESTORE config/manifoldcf/monoinstance
-	sed -i "s/\(STATE *= *\).*/\1initialized/" $INIT_STATE_FILE
+	sudo su datafari -c "sed -i 's/\(STATE *= *\).*/\1initialized/' $INIT_STATE_FILE"
 
 else
-	sudo LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib:${DATAFARI_HOME}/ocr/tesseract/lib:${DATAFARI_HOME}/ocr/leptonica/lib su postgres -p -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_LOGS}/pgsql.log start"
-	CASSANDRA_INCLUDE=$CASSANDRA_ENV $CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE 1>/dev/null
+	sudo LD_LIBRARY_PATH=$LD_LIBRARY_PATH su postgres -p -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_LOGS}/pgsql.log start"
+	sudo -E su datafari -p -c "CASSANDRA_INCLUDE=$CASSANDRA_ENV $CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE 1>/dev/null"
 fi
 
 cd $MCF_HOME/../bin
-bash mcf_crawler_agent.sh start
+sudo -E su datafari -p -c "export PATH=$PATH && bash mcf_crawler_agent.sh start"
 
-SOLR_INCLUDE=$SOLR_ENV $SOLR_INSTALL_DIR/bin/solr start
+sudo -E su datafari -p -c "SOLR_INCLUDE=$SOLR_ENV $SOLR_INSTALL_DIR/bin/solr start"
