@@ -17,7 +17,7 @@
      For more details about configurations options that may appear in
      this file, see http://wiki.apache.org/solr/SolrConfigXml. 
 -->
-<!DOCTYPE config [ <!ENTITY custom_libs SYSTEM "./customs_solrconfig/custom_libs.incl"> <!ENTITY custom_search_handler SYSTEM "./customs_solrconfig/custom_search_handler.incl"> <!ENTITY custom_search_components SYSTEM "./customs_solrconfig/custom_search_components.incl"> <!ENTITY custom_update_processors SYSTEM "./customs_solrconfig/custom_update_processors.incl"> ]>
+<!DOCTYPE config [ <!ENTITY custom_libs SYSTEM "./customs_solrconfig/custom_libs.incl"> <!ENTITY custom_search_handler SYSTEM "./customs_solrconfig/custom_search_handler.incl"> <!ENTITY custom_request_handlers SYSTEM "./customs_solrconfig/custom_request_handlers.incl"> <!ENTITY custom_search_components SYSTEM "./customs_solrconfig/custom_search_components.incl"> <!ENTITY custom_update_processors SYSTEM "./customs_solrconfig/custom_update_processors.incl"> ]>
 <config>
   <!-- In all configuration below, a prefix of "solr." for class names
        is an alias that causes solr to search appropriate packages,
@@ -678,7 +678,53 @@
    <!-- Includes custom search handler. You will have to comment the configuration of the search handler /select below -->
   &custom_search_handler;
       
-	
+<requestHandler class="solr.SearchHandler" name="/select">
+		<!-- default values for query parameters can be specified, these will be 
+			overridden by parameters in the request -->
+		<lst name="defaults">
+			<str name="echoParams">explicit</str>
+			<str name="defType">edismax</str>
+			<str name="qf">title_fr^50 title_en^50 content_fr^10 content_en^10 source^20 extension^30 id^3</str>
+			<str name="pf">title_en^500 title_fr^500 content_fr^100 content_en^100</str>
+			<int name="rows">10</int>
+			<str name="spellcheck">true</str>
+			<str name="hl.simple.pre">&lt;span class="em"&gt;</str>
+			<str name="hl.simple.post">&lt;/span&gt;</str>
+			<str name="spellcheck.count">1</str>
+			<str name="spellcheck.collate">true</str>       <!-- Highlighting defaults -->
+			<str name="hl">on</str>
+			<str name="hl.fl">content_fr content_en</str>
+			<str name="hl.alternateField">content_en</str>
+			<str name="hl.alternateField">content_fr</str>
+			<str name="hl.maxAlternateFieldLength">100</str>
+			<str name="hl.encoder">html</str>
+			<str name="hl.fragsize">200</str>
+			<str name="hl.maxAnalyzedChars">40000</str>
+			<int name="facet.mincount">1</int>
+		</lst>
+		<!-- 
+		<lst name="appends">
+			<str name="fq">{!manifoldCFSecurity}</str>
+		</lst>
+ -->
+		<arr name="last-components">
+			<str>spellcheck</str>
+			<str>capsulecomponent</str>
+		</arr>
+	<lst name="appends"><str name="fq">{!manifoldCFSecurity}</str></lst></requestHandler>
+
+
+
+  <!-- realtime get handler, guaranteed to return the latest stored fields of
+       any document, without the need to commit or open a new searcher.  The
+       current implementation relies on the updateLog feature being enabled. -->
+  <requestHandler class="solr.RealTimeGetHandler" name="/get">
+     <lst name="defaults">
+       <str name="omitHeader">true</str>
+       <str name="wt">json</str>
+       <str name="indent">true</str>
+     </lst>
+  </requestHandler>	
 
   <!-- realtime get handler, guaranteed to return the latest stored fields of
        any document, without the need to commit or open a new searcher.  The
@@ -776,7 +822,9 @@
     </lst>
   </requestHandler>
   
-  
+  <!-- ////////////////////////// -->
+   <!-- Includes custom request handlers -->
+  &custom_request_handlers;
 
 
   <!-- Field Analysis Request Handler
