@@ -69,9 +69,7 @@
  <fields>
    <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" /> 
    
-   <!-- ////////////////////////// -->
-   <!-- Includes additional fields -->
-   &custom_fields;
+   
 
    <!-- Common metadata fields, named specifically to match up with
      SolrCell metadata when parsing rich documents such as Word, PDF.
@@ -118,11 +116,11 @@
    <!-- Includes additional dynamicFields -->
    &custom_dynamicFields;
    
-   
-   
-   
  </fields>
 
+   <!-- ////////////////////////// -->
+   <!-- Includes additional fields -->
+   &custom_fields;
 
  <!-- Field to use to determine and enforce document uniqueness. 
       Unless this field is marked with required="false", it will be a required field
