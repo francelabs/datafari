@@ -45,7 +45,8 @@
 	<script type="text/javascript" src="js/function/empty.func.js"></script>
 	<script type="text/javascript" src="js/jquery-ui-1.8.23.min.js"></script>
 	<script type="text/javascript" src="js/jquery.waypoints.min.js"></script>
-
+	<script type="text/javascript" src="js/startswith.js"></script>
+	<script type="text/javascript" src="js/endswith.js"></script>
 	<script type="text/javascript" src="js/AjaxFranceLabs/uuid.core.js"></script>
 	<script type="text/javascript" src="js/AjaxFranceLabs/i18njs.js"></script>
 	<script type="text/javascript" src="js/AjaxFranceLabs/core/Core.js"></script>
