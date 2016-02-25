@@ -144,7 +144,7 @@
 "keyword":"Parola chiave : ",
 "qf":"Query con una sola parola",
 "detailsOnQuery":"Dettagli della query",
-"modifDone":"Modifiche prese in conto",
+"modifDone":"Modifiche prese in conto. Riavviare Solr per applicarle",
 "daily":"Giornaliero",
 "database":"Nome della base di dati",
 "pass":"Password : ",

@@ -144,7 +144,7 @@
 "keyword":"Keyword : ",
 "qf":"One word queries",
 "detailsOnQuery":"Query details",
-"modifDone":"Modifications done",
+"modifDone":"Modifications done. Reload the Solr Core to apply them",
 "daily":"Daily",
 "database":"Name of the database",
 "pass":"Password : ",

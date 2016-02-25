@@ -679,8 +679,6 @@
   &custom_search_handler;
       
 <requestHandler class="solr.SearchHandler" name="/select">
-		<!-- default values for query parameters can be specified, these will be 
-			overridden by parameters in the request -->
 		<lst name="defaults">
 			<str name="echoParams">explicit</str>
 			<str name="defType">edismax</str>
@@ -691,7 +689,7 @@
 			<str name="hl.simple.pre">&lt;span class="em"&gt;</str>
 			<str name="hl.simple.post">&lt;/span&gt;</str>
 			<str name="spellcheck.count">1</str>
-			<str name="spellcheck.collate">true</str>       <!-- Highlighting defaults -->
+			<str name="spellcheck.collate">true</str>
 			<str name="hl">on</str>
 			<str name="hl.fl">content_fr content_en</str>
 			<str name="hl.alternateField">content_en</str>
@@ -702,11 +700,7 @@
 			<str name="hl.maxAnalyzedChars">40000</str>
 			<int name="facet.mincount">1</int>
 		</lst>
-		<!-- 
-		<lst name="appends">
-			<str name="fq">{!manifoldCFSecurity}</str>
-		</lst>
- -->
+		
 		<arr name="last-components">
 			<str>spellcheck</str>
 			<str>capsulecomponent</str>
