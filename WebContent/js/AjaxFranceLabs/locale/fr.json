@@ -135,7 +135,7 @@
 "hint2":"Ici vous pouvez spécifier l'adresse, le port, le nom, de la base de données ainsi que la collection dans laquelle se trouvent vos alertes.",
 "keyword":"Mot-clef :",
 "qf":"Requêtes à mot unique",
-"modifDone":"Modifications appliqués",
+"modifDone":"Modifications effectuées. Rechargez le Solr Core pour les appliquer",
 "daily":"Quotidiennes",
 "database":"Nom de la base de données",
 "pass":"Password : ",
