@@ -123,11 +123,23 @@ AjaxFranceLabs.AbstractManager = AjaxFranceLabs.Class.extend({
 	 * Get the handle to the widget with ID specified as input
 	 */
 	getWidgetByID : function(id) {
-		var self = this;
-		for (var widget in self.widgets) {
-			if (self.widgets[widget].id === id){
-				return self.widgets[widget];
+		for (var widget in this.widgets) {
+			if (this.widgets[widget].id === id){
+				return this.widgets[widget];
 			}
 		}
+	},
+	
+	/**
+	 * Perform a select all request
+	 */
+	makeDefaultRequest : function() {
+		// Update the Q parameter of the manager store, to be used for
+		// the new search query
+		this.store.get('q').val('*:*');
+
+		// Submit a new query with the value set in the Q parameter of the manager store
+		this.generateAndSetQueryID();
+		this.makeRequest();
 	}
 });

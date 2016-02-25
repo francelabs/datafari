@@ -207,11 +207,14 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 					// Hide the basic search
 					elm.hide();
 					
-					// reset the widget status (radios, entered text, ...)
+					// Reset the widget status (radios, entered text, ...)
 					self.manager.getWidgetByID('advancedSearch').reset();
 					
 					// Display the advanced search
 					$('#advancedSearch').show();
+					
+					// Perform a "select all" request: *:*
+					self.manager.makeDefaultRequest();				
 					
 					// Prevent page reload
 					event.preventDefault();
