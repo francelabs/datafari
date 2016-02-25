@@ -118,5 +118,9 @@ AjaxFranceLabs.AdvancedSearchField = AjaxFranceLabs.Class.extend({
 		if (!AjaxFranceLabs.empty(res))
 			res = (!AjaxFranceLabs.empty(prefix) ? prefix + ':' : '') + res;
 		return res;
+	},
+	
+	reset : function() {
+		$(this.elm).find('input[type="text"]').val('');
 	}
 });

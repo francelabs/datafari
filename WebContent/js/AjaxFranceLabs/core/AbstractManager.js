@@ -117,5 +117,17 @@ AjaxFranceLabs.AbstractManager = AjaxFranceLabs.Class.extend({
 
 	executeRequest : function() {
 		throw 'AbstractManager.executeRequest must be implemented.';
+	},
+	
+	/**
+	 * Get the handle to the widget with ID specified as input
+	 */
+	getWidgetByID : function(id) {
+		var self = this;
+		for (var widget in self.widgets) {
+			if (self.widgets[widget].id === id){
+				return self.widgets[widget];
+			}
+		}
 	}
 });

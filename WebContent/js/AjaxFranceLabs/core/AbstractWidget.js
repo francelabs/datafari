@@ -43,5 +43,11 @@ AjaxFranceLabs.AbstractWidget = AjaxFranceLabs.Class.extend({
 	},
 
 	afterRequest : function() {
+	},
+	
+	/**
+	 * Interface method to reset the model of the widget
+	 */
+	reset : function() {		
 	}
 });
