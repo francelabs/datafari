@@ -60,14 +60,12 @@ AjaxFranceLabs.SpellcheckerWidget = AjaxFranceLabs.AbstractWidget
 
 					/*
 					* Store the "original" searched value
-					* We use this function instead of self.manager.store.add('original_query',
-					* data.spellcheck.suggestions[0]);
+					* We use this function instead of self.manager.store.add('original_query', ...);
 					* to have an object of type subclass inside original_query instead of string.
 					* Otherwise we get exception in params.push(this.params[name].string()); 
 					* of ParametersStore.js
 					*/
-					self.manager.store.get('original_query').val(data.spellcheck.suggestions[0])
-					
+					self.manager.store.get('original_query').val(self.manager.store.get('q').val());					
 
 					// Show localized message for corrected and misspelled searched values
 					$(self.elm)
@@ -79,7 +77,7 @@ AjaxFranceLabs.SpellcheckerWidget = AjaxFranceLabs.AbstractWidget
 											+ '</span></span><br/><br/><span>'
 											+ window.i18n.msgStore['notHitsQueries']
 											+ '<span class="result">'
-											+ data.spellcheck.suggestions[0]
+											+ self.manager.store.get('original_query').val()
 											+ '</span></span>');
 
 					/* 

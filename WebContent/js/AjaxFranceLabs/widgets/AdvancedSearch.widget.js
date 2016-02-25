@@ -70,11 +70,14 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		// Basic Search link
 		elm.append('<div id="basicSearchLink" class="searchModeLink"><a href="">'+ window.i18n.msgStore['basicSearchLink'] +'</a></div>');
 		
+		
 		$('#basicSearchLink').click(function(event){
-			// Hide the basic search
+			// Hide the advanced search
 			elm.hide();
 			
-			// Display the advanced search
+			self.manager.getWidgetByID('searchBar').reset();
+			
+			// Display the basic search
 			$('#searchBar').show();
 			
 			// Prevent page reload
@@ -90,26 +93,44 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 	},
 
 	beforeRequest : function() {
-		this.manager.store.remove('fq');
-		this.manager.store.remove('q');
-		var q = '';
-		for (var table in this.tables) {
-			for (var field in this.tables[table].fieldStore) {
-				var value = this.tables[table].fieldStore[field].getValue();
-				if (!AjaxFranceLabs.empty(value)) {
-					if (this.tables[table].fieldStore[field].filter === true) {
-						this.manager.store.addByValue('fq', value);
-					} else {
-						q += '(' + value + ') AND ';
+		
+		// If the widget is displayed and we are not performing the spellchecker query
+		if ($(this.elm).is(':visible') && !this.manager.store.isParamDefined('original_query')){
+			
+			this.manager.store.remove('fq');
+			this.manager.store.remove('q');
+			
+			var qArr = [];
+			
+			for (var table in this.tables) {
+				for (var field in this.tables[table].fieldStore) {
+					var value = this.tables[table].fieldStore[field].getValue();
+					if (!AjaxFranceLabs.empty(value)) {
+						if (this.tables[table].fieldStore[field].filter === true) {
+							this.manager.store.addByValue('fq', value);
+						} else {
+							qArr.push('(' + value + ')');
+						}
 					}
+				}			
+					
+				if (qArr.length > 0){
+					// Create the query, combining the different search fields with boolean values from radio buttons (natural order from left to right)
+					this.manager.store.addByValue('q', qArr.join($(this.elm).find('.advSearchBooleanOperator .radio:checked').val()));
+				}
+				else {
+					this.manager.store.addByValue('q', '*:*');
 				}
 			}
-			if (q.lastIndexOf('AND ') === q.length - 4)
-				q = q.substring(0, q.length - 5);
-			if (AjaxFranceLabs.empty(q) !== true)
-				this.manager.store.addByValue('q', q);
-			else
-				this.manager.store.addByValue('q', '*:*');
+		}
+	},
+	
+	/**
+	 * Resets the inputs of the widget
+	 */
+	reset : function() {
+		for (var table in this.tables){
+			this.tables[table].reset();
 		}
 	}
 });

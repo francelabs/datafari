@@ -207,6 +207,9 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 					// Hide the basic search
 					elm.hide();
 					
+					// reset the widget status (radios, entered text, ...)
+					self.manager.getWidgetByID('advancedSearch').reset();
+					
 					// Display the advanced search
 					$('#advancedSearch').show();
 					
@@ -286,6 +289,15 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 					$("#results .doc_list").empty();
 				}
 
+			},
+			
+			/**
+			 * Resets the inputs of the widget
+			 */
+			reset : function() {
+				var elm = $(this.elm);
+				elm.find('input[type="text"]').val('');
+				elm.find('input#allWords').prop('checked', true);				
 			}
 
 		});
