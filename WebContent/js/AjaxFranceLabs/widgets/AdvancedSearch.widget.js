@@ -38,13 +38,13 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			this.tables[table].init();
 			elm.find('.wrapper').append('<span class="separator">');
 		}
-		elm.append('<button>Make search</button>').find('button').click(function() {
-			self.manager.makeRequest();
+		elm.append('<button>' + window.i18n.msgStore['advancedSearch-makesearch-btn'] + '</button>').find('button').click(function() {
+			self.makeRequest();
 		});
 		AjaxFranceLabs.addMultiElementClasses($(this.elm).find('.advTable'));
 		elm.find('.advTable input').keypress(function(event) {
 			if (event.keyCode === 13) {
-				self.manager.makeRequest();
+				self.makeRequest();
 			}
 		});
 		if (this.resizable === true) {
@@ -126,15 +126,48 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 					this.manager.store.addByValue('q', '*:*');
 				}
 			}
+			
+			this.updateAddressBar();
 		}
 	},
 	
 	/**
-	 * Resets the inputs of the widget
+	 * Resets the inputs of the widget: underlying elements table and fields
 	 */
 	reset : function() {
 		for (var table in this.tables){
 			this.tables[table].reset();
 		}
+	},
+	
+	makeRequest : function() {
+		this.cleanResults();
+		this.manager.makeRequest();
+	},
+	
+	/**
+	 * Cleans results area (same as for basic search)
+	 */
+	cleanResults : function() {
+		
+		this.manager.store.remove('start');
+
+		$.each(this.manager.widgets, function(index, widget) {
+			if (typeof widget.pagination !== "undefined") {
+				widget.pagination.pageSelected = 0;
+			}
+		});
+	},
+	
+	/**
+	 * Update the address bar and generates the id for the query
+	 */
+	updateAddressBar : function() {
+		
+		window.history.pushState('Object', 'Title',
+				window.location.pathname + '?query=' + this.manager.store.get('q').val() + '&lang='
+						+ window.i18n.language);
+
+		this.manager.store.addByValue("id", UUID.generate());		
 	}
 });

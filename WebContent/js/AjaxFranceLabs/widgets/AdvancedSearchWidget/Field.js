@@ -116,11 +116,27 @@ AjaxFranceLabs.AdvancedSearchField = AjaxFranceLabs.Class.extend({
 			});
 		}
 		if (!AjaxFranceLabs.empty(res))
-			res = (!AjaxFranceLabs.empty(prefix) ? prefix + ':' : '') + res;
+			res = !AjaxFranceLabs.empty(prefix) ? this.buildSearchTerm(prefix, res) : res;
 		return res;
 	},
 	
+	/**
+	 * Empty the input field
+	 */
 	reset : function() {
 		$(this.elm).find('input[type="text"]').val('');
+	},
+	
+	/**
+	 * Expand the search term with the available languages: 
+	 * e.g. content:giovanni becomes ((content_en:giovanni) OR (content_it:giovanni))
+	 */
+	buildSearchTerm : function(prefix, res) {
+		var searchTermArr = [];
+		for (var lang in window.i18n.availableLanguages){
+			searchTermArr.push('(' + prefix + '_' + window.i18n.availableLanguages[lang] + ':' + res + ')');
+		}
+		// Be careful: the leading and trailing spaces are needed for the query to be well formed.
+		return searchTermArr.join(' OR ');
 	}
 });
