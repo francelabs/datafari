@@ -193,6 +193,7 @@
 "advancedSearch-title-descr" : "Search on title",
 "advancedSearch-content-label" : "Content",
 "advancedSearch-content-descr" : "Search on content",
+"advancedSearch-makesearch-btn" : "Search now",
 "advancedSearchLink" : "Switch to Advanced Search",
 "basicSearchLink" : "Switch to Basic Search",
 "adminUiLink" : "Admin",

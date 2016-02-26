@@ -131,7 +131,7 @@ AjaxFranceLabs.AbstractManager = AjaxFranceLabs.Class.extend({
 	},
 	
 	/**
-	 * Perform a select all request
+	 * Perform a select all (*:*) request
 	 */
 	makeDefaultRequest : function() {
 		// Update the Q parameter of the manager store, to be used for
@@ -141,5 +141,11 @@ AjaxFranceLabs.AbstractManager = AjaxFranceLabs.Class.extend({
 		// Submit a new query with the value set in the Q parameter of the manager store
 		this.generateAndSetQueryID();
 		this.makeRequest();
+		
+		// Reset the URL: window.location.origin not used as it is not standard
+		window.history.replaceState({
+			'Default search request' : ''
+		}, 'Default search request', window.location.protocol + '//' + window.location.host + window.location.pathname + '?query=*:*&lang=' + window.i18n.language);
+
 	}
 });

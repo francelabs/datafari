@@ -183,6 +183,7 @@
 "advancedSearch-title-descr" : "Recherche sur titre",
 "advancedSearch-content-label" : "Contenu",
 "advancedSearch-content-descr" : "Recherche sur contenu",
+"advancedSearch-makesearch-btn" : "Lancer la recherche",
 "advancedSearchLink" : "Changer pour Recherche Avancee",
 "basicSearchLink" : "Changer pour Recherche Basique",
 "adminUiLink" : "Administration",
