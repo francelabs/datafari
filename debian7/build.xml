@@ -13,6 +13,7 @@
 	<!-- Source directories -->
 	<property name="elk.src.dir" value="${project.dir}/elk" />
 	<property name="datafari.elk.dir" value="${project.dir}/datafari-elk" />
+	<property name="datafari.solr.dir" value="${project.dir}/datafari-solr" />
 	<property name="tomcat.src.dir" value="${project.dir}/tomcat" />
 	<property name="solr.src.dir" value="${project.dir}/solr" />
 	<property name="mcf.src.dir" value="${project.dir}/mcf" />
@@ -107,17 +108,13 @@
 		</copy>
 		
 		<!-- Copy default configuration files for ELK to avoid custom ones -->
-		<copy toDir="${debian.dist.dir}/elk/logstash" overwrite="true" force="true">
-			<fileset dir="${datafari.elk.dir}/logstash" />
+		<copy toDir="${debian.dist.dir}/elk/" overwrite="true" force="true">
+			<fileset dir="${datafari.elk.dir}/" />
 		</copy>
-		<copy toDir="${debian.dist.dir}/elk/scripts" overwrite="true" force="true">
-			<fileset dir="${datafari.elk.dir}/scripts" />
-		</copy>
-		<copy toDir="${debian.dist.dir}/elk/elasticsearch/config" overwrite="true" force="true">
-			<fileset dir="${datafari.elk.dir}/elasticsearch/config" />
-		</copy>
-		<copy toDir="${debian.dist.dir}/elk/kibana/config" overwrite="true" force="true">
-			<fileset dir="${datafari.elk.dir}/kibana/config" />
+		
+		<!-- Copy default configuration files for Solr to avoid custom ones -->
+		<copy toDir="${debian.dist.dir}/solr/" overwrite="true" force="true">
+			<fileset dir="${datafari.solr.dir}/" />
 		</copy>
 
 		<copy todir="${debian.dist.dir}/mcf">
