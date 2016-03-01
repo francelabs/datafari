@@ -20,6 +20,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -39,7 +44,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -279,32 +283,57 @@ public class FieldWeight extends HttpServlet {
 					}
 					final String field = request.getParameter("field").toString();
 					final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-					doc = dBuilder.parse(config);// Parse the solrconfig.xml
-													// document
-					final NodeList fields = (doc.getElementsByTagName("requestHandler"));// Get
-																							// the
-																							// requestHandler
-																							// Node
 
-					searchHandler = getSearchHandler(fields);// Get the search
-					// handler from
-					// the standard
-					// solrconfig.xml
-					// file
-
-					if (searchHandler == null && customSearchHandler != null && customSearchHandler.exists()) { // search
-						// handler
-						// not
-						// found
-						// in
-						// the
-						// standard solrconfig.xml find, try
-						// to find it in the
-						// custom_search_handler.xml file
-						usingCustom = true;
-						doc = dBuilder.parse(customSearchHandler);
-						searchHandler = getSearchHandler(doc.getElementsByTagName("requestHandler"));
+					if (customSearchHandler != null && customSearchHandler.exists()) {
+						try {
+							doc = dBuilder.parse(customSearchHandler);// Parse
+																		// the
+																		// solrconfig.xml
+							// document
+							searchHandler = getSearchHandler(doc.getElementsByTagName("requestHandler"));
+							if (searchHandler != null) {
+								usingCustom = true;
+							}
+						} catch (final Exception e) {
+							// Not using custom
+							usingCustom = false;
+						}
 					}
+
+					if (searchHandler == null) { // Not using the custom search
+													// handler so try to find it
+													// in the solrconfig.xml
+													// file
+						doc = dBuilder.parse(config);// Parse the solrconfig.xml
+														// document
+						final NodeList fields = (doc.getElementsByTagName("requestHandler"));// Get
+																								// the
+																								// requestHandler
+																								// Node
+
+						searchHandler = getSearchHandler(fields);// Get the
+																	// search
+						// handler from
+						// the standard
+						// solrconfig.xml
+						// file
+					}
+
+					// if (searchHandler == null && customSearchHandler != null
+					// && customSearchHandler.exists()) { // search
+					// // handler
+					// // not
+					// // found
+					// // in
+					// // the
+					// // standard solrconfig.xml find, try
+					// // to find it in the
+					// // custom_search_handler.xml file
+					// usingCustom = true;
+					// doc = dBuilder.parse(customSearchHandler);
+					// searchHandler =
+					// getSearchHandler(doc.getElementsByTagName("requestHandler"));
+					// }
 
 					if (searchHandler != null) {
 						final Node n = run(searchHandler.getChildNodes(), type);
@@ -433,66 +462,37 @@ public class FieldWeight extends HttpServlet {
 									// and the modifications must be saved in
 									// the custom search handler file
 
-					// Comment the current searchHandler in the solrconfig.xml
-					// file
+					// Transfrom searchHandler Node into String
 					final Transformer tf = TransformerFactory.newInstance().newTransformer();
+					tf.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 					tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 					tf.setOutputProperty(OutputKeys.INDENT, "yes");
 					final Writer out = new StringWriter();
 					tf.transform(new DOMSource(searchHandler), new StreamResult(out));
-					String comment = out.toString().substring(38); // Create the
-																	// string
-																	// comment
-																	// and
-																	// removing
-																	// the xml
-																	// starting
-																	// tag
-																	// (<?xml
-																	// version="1.0"
-																	// encoding="UTF-8"
-																	// standalone="no"?>)
-																	// thanks to
-																	// the
-																	// substring
-					comment = comment.substring(0, comment.lastIndexOf("\n")); // Remove
-																				// the
-																				// last
-																				// carrier
-																				// return
-																				// to
-																				// avoid
-																				// useless
-																				// whitespace
-																				// at
-																				// the
-																				// end
-																				// of
-																				// the
-																				// comment
-					final Comment xmlComment = doc.createComment(comment); // Create
-																			// the
-																			// node
-																			// comment
-					searchHandler.getParentNode().insertBefore(xmlComment, searchHandler); // Insert
-																							// the
-																							// comment
-																							// node
-																							// before
-																							// the
-																							// searchHandler
-																							// node
-					searchHandler.getParentNode().removeChild(searchHandler); // Remove
-																				// the
-																				// searchHandler
-																				// node
-																				// from
-																				// the
-																				// solrconfig
-																				// doc
-					tf.transform(new DOMSource(doc), new StreamResult(config)); // Save
-																				// the
-																				// modifications
+					// Removing the xml starting tag (<?xml version="1.0"
+					// encoding="UTF-8" standalone="no"?>)
+					String strSearchHandler = out.toString();
+
+					// Get the content of solrconfig.xml file as a string
+					final Path configPath = Paths.get(config.getAbsolutePath());
+					final Charset charset = StandardCharsets.UTF_8;
+					String configContent = new String(Files.readAllBytes(configPath), charset);
+
+					// Retrieve the searchHandler from the configContent
+					final String openSearchHandlerTag = strSearchHandler.substring(0, strSearchHandler.indexOf(System.getProperty("line.separator")));
+					final String endSearchHandlerTag = "</requestHandler>";
+					final int beginIndexSearchHandler = configContent.indexOf(openSearchHandlerTag);
+					final int endIndexSearchHandler = configContent.substring(beginIndexSearchHandler).indexOf(endSearchHandlerTag)
+							+ beginIndexSearchHandler + endSearchHandlerTag.length();
+					strSearchHandler = configContent.substring(beginIndexSearchHandler, endIndexSearchHandler);
+
+					// Create a commented equivalent of the strSearchHandler
+					final String commentedSearchHandler = "<!--" + strSearchHandler + "-->";
+
+					// Replace the searchHandler in the solrconfig.xml file by
+					// the commented version
+					configContent = configContent.replace(strSearchHandler, commentedSearchHandler);
+					Files.write(configPath, configContent.getBytes(charset));
 
 					// create the new custom_search_handler document
 					doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
@@ -583,7 +583,10 @@ public class FieldWeight extends HttpServlet {
 				// Apply the modifications
 				final TransformerFactory transformerFactory = TransformerFactory.newInstance();
 				final Transformer transformer = transformerFactory.newTransformer();
-				final DOMSource source = new DOMSource(doc);
+				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+				transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+				transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+				final DOMSource source = new DOMSource(searchHandler);
 				final StreamResult result = new StreamResult(customSearchHandler);
 				transformer.transform(source, result);
 				// Release the Semaphore according to the type
