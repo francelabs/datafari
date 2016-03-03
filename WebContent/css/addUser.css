@@ -1,0 +1,85 @@
+#ldapUserLabel {
+	display:inline-block;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	width: 40%;
+}
+
+#ldapUserLabel input {
+	margin-left:20px;
+ 	vertical-align: top;
+}
+
+.role{
+	width:180px;
+}	
+.inline_block .form-control{
+	font-size:12px;
+	cursor:default;
+}
+.delete_user{
+	cursor:pointer;
+}
+.delete_user:hover{
+ 	color: #F58376;
+}
+.inline_block{
+	display:inline-block;
+	vertical-align:middle;
+	margin-right:20px;
+	margin-top:5px;
+	margin-bottom:5px;
+}
+.inline_block .input-group-addon.delete{
+	color:white;
+	background: #F58376;
+	cursor:pointer;
+}
+th{
+	text-align:center;
+}
+#Message{
+ 	text-align:center
+}
+#Message.danger i{
+	margin-bottom: 2%;
+}
+#Message.danger{
+	color: #F00;
+}
+#Message{
+	color : #929292;
+}
+.success{
+	color:green;
+}
+.input{
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	display: inline-block;
+	width: 40%;
+	padding-top: 2%;
+	padding-bottom: 2%;
+	text-align: center;
+}
+.error{
+	display:inline-block;
+	color:red;
+	display:none;
+}
+input[type="submit"]{
+	width:20%;
+}
+form{
+	display:block;
+	width:100%;
+	text-align:center;
+}
+h1,p,#MessageSuccess,#Message{
+	text-align:center;
+}
+#MessageSuccess{
+	color:green;
+}
