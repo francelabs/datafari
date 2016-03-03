@@ -455,21 +455,23 @@ public class SearchProxy extends HttpServlet {
 			}
 			final String wrapperFunction = request.getParameter("json.wrf");
 			final String finalString = wrapperFunction + "(" + json.toString() + ")";
-			response.getWriter().write(finalString); // Send the answer to the
-														// jsp page
 			response.setStatus(200);
 			response.setCharacterEncoding("utf-8");
 			response.setContentType("text/json;charset=utf-8");
 			response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
+			response.getWriter().write(finalString); // Send the answer to the
+														// jsp page
+			
 		} else {
 			final SolrQueryResponse res = new SolrQueryResponse();
 			final JSONResponseWriter json = new JSONResponseWriter();
-			res.setAllValues(queryResponse.getResponse());
-			json.write(response.getWriter(), req, res);
 			response.setStatus(200);
 			response.setCharacterEncoding("utf-8");
 			response.setContentType("text/json;charset=utf-8");
 			response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
+			res.setAllValues(queryResponse.getResponse());
+			json.write(response.getWriter(), req, res);
+			
 		}
 	}
 
