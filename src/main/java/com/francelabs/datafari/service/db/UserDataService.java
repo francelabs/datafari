@@ -37,6 +37,7 @@ public class UserDataService {
 
 	public static final String USERNAMECOLUMN = "username";
 	public final static String PASSWORDCOLUMN = "password";
+	public final static String LDAPCOLUMN = "ldap";
 	public final static String ROLECOLUMN = "role";
 
 	private final Session session;

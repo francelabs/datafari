@@ -496,21 +496,11 @@ public class FieldWeight extends HttpServlet {
 
 					// create the new custom_search_handler document
 					doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-					searchHandler = doc.importNode(searchHandler, true); // Import
-																			// the
-																			// search
-																			// handler
-																			// node
-																			// from
-																			// the
-																			// solrconfig
-																			// doc
-																			// to
-																			// the
-																			// custom
-																			// search
-																			// handler
-																			// doc
+
+					// Import the search handler node from the solrconfig doc to
+					// the custom search handler doc
+					searchHandler = doc.importNode(searchHandler, true);
+
 					// Make the new node an actual item in the target document
 					searchHandler = doc.appendChild(searchHandler);
 
