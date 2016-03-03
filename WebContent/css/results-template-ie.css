@@ -252,19 +252,20 @@
 /**************************************/
 
 /**	>>> advancedSearchWidget Widget <<<	***/
-.advancedSearchWidget { width: 1000px; }
+.advancedSearchWidget { width: 1500px; margin-left: 3%; margin-bottom: 10px; }
 .advancedSearchWidget .advTable { width: 100%; }
 .advancedSearchWidget .separator { border-bottom: 1px solid; display: inline-block; margin: 15px 0; width: 100%; }
 .advancedSearchWidget .advTable .title,
 .advancedSearchWidget .advTable .field { display: block; height: 40px; width: 100%; }
-.advancedSearchWidget .advTable .left { width: 650px; }
-.advancedSearchWidget .advTable .left label { display: inline-block; width: 180px; }
-.advancedSearchWidget .advTable .inputs { float: right; width: 470px; }
-.advancedSearchWidget .advTable .field input[type="text"] { border: 1px solid; display: inline-block; height: 25px; margin-bottom: 5px; width: 450px; border-radius: 1px; -moz-border-radius: 1px; -webkit-border-radius: 1px; }
+.advancedSearchWidget .advTable .left { width: 1000px; }
+.advancedSearchWidget .advTable .left label { display: inline-block; width: 200px; }
+.advancedSearchWidget .advTable .inputs { float: right; width: 800px; }
+.advancedSearchWidget .advTable .field input[type="text"] { border: 1px solid; display: inline-block; height: 25px; margin-bottom: 5px; width: 800px; border-radius: 1px; -moz-border-radius: 1px; -webkit-border-radius: 1px; }
 .advancedSearchWidget .advTable .field.range input { display: inline-block; width: 200px; }
 .advancedSearchWidget .advTable .field.range .to { display: inline-block; text-align: center; width: 46px; }
 .advancedSearchWidget .advTable .right { width: 350px; }
-.advancedSearchWidget button {  border: 1px solid; cursor: pointer; float: right; margin-bottom: 15px; padding: 5px; border-radius: 1px; -moz-border-radius: 1px; -webkit-border-radius: 1px; width: 150px; }
+.advancedSearchWidget .advTable .advSearchBooleanOperator { margin-left: 350px; margin-bottom: 10px; }
+.advancedSearchWidget button {  border: 1px solid; cursor: pointer;  margin-bottom: 15px; margin-left: 43%; padding: 5px; border-radius: 1px; -moz-border-radius: 1px; -webkit-border-radius: 1px; width: 150px; }
 .advancedSearchWidget .addInput { clear: both; cursor: pointer; float: right; margin-right: 18px; margin-top: 5px; }
 .advancedSearchWidget .removeInput { cursor: pointer; float: right; height: 29px; line-height: 29px; text-align: center; width: 18px; }
 /**************************************/
@@ -367,7 +368,6 @@ header{
 #results .doc_list{
 	box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.1), 0px 0px 0px rgba(0, 0, 0, 0.1);
 }
-	.advancedSearchWidget button { background: none;}
 	.spellcheckerWidget {background-color:white;}
 	.searchBarWidget #sortMode select{background:transparent;}
 	#result_information,#sortMode { font-weight:bold; }
@@ -457,9 +457,11 @@ header{
 .hl { font-weight: bold; }
 #solr #sortMode{display:none;}
 
-.searchModeLink {
+#advancedSearchLink {
 	margin-top: 20px;
 	margin-left: 20px;
 }
+
+.searchModeLink { width: 250px; }
 
 	

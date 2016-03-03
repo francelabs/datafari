@@ -38,15 +38,40 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			this.tables[table].init();
 			elm.find('.wrapper').append('<span class="separator">');
 		}
+		
+		// Basic Search link
+		elm.append('<span id="basicSearchLink" class="searchModeLink"><a href="">'+ window.i18n.msgStore['basicSearchLink'] +'</a></span>');
+		
+		
+		$('#basicSearchLink').click(function(event){
+			// Hide the advanced search
+			elm.hide();
+			
+			// Reset the widget status (radios, entered text, ...)
+			self.manager.getWidgetByID('searchBar').reset();
+			
+			// Display the basic search
+			$('#searchBar').show();
+			
+			// Perform a "select all" request: *:*
+			self.manager.makeDefaultRequest();
+			
+			// Prevent page reload
+			event.preventDefault();
+		});
+		
 		elm.append('<button>' + window.i18n.msgStore['advancedSearch-makesearch-btn'] + '</button>').find('button').click(function() {
 			self.makeRequest();
 		});
+		
 		AjaxFranceLabs.addMultiElementClasses($(this.elm).find('.advTable'));
+		
 		elm.find('.advTable input').keypress(function(event) {
 			if (event.keyCode === 13) {
 				self.makeRequest();
 			}
 		});
+		
 		if (this.resizable === true) {
 			var options = {
 				handles : 's',
@@ -66,27 +91,6 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 				}
 			});
 		}
-		
-		// Basic Search link
-		elm.append('<div id="basicSearchLink" class="searchModeLink"><a href="">'+ window.i18n.msgStore['basicSearchLink'] +'</a></div>');
-		
-		
-		$('#basicSearchLink').click(function(event){
-			// Hide the advanced search
-			elm.hide();
-			
-			// Reset the widget status (radios, entered text, ...)
-			self.manager.getWidgetByID('searchBar').reset();
-			
-			// Display the basic search
-			$('#searchBar').show();
-			
-			// Perform a "select all" request: *:*
-			self.manager.makeDefaultRequest();
-			
-			// Prevent page reload
-			event.preventDefault();
-		});
 		
 		// Hidden by default: basic search is displayed
 		elm.hide();		

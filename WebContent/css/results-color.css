@@ -36,7 +36,7 @@
 
 .advancedSearchWidget .advTable .field input[type="text"] { border-color: #D9D9D9; border-top-color: #A1A1A1; }
 .advancedSearchWidget .separator { border-bottom-color: #D9D9D9; }
-.advancedSearchWidget button { color: #474D52; border-color: #D9D9D9; border-top-color: #A1A1A1; }
+.advancedSearchWidget button { background-color: rgb(168,201,0); border-color: #D9D9D9; border-top-color: #A1A1A1; }
 .advancedSearchWidget button:hover { border-color:#A1A1A1; }
 .capsuleWidget { border-color: #666666; }
 
@@ -64,7 +64,7 @@ body{background-color : #F0F0F0F0;}
 .searchBarWidget .searchBar {background:white}
 .searchBarWidget .searchBar .search:active {	background-color:#63B069;  }
 .resultWidget .bar-loader {background-image: url(../images/loader-000000-circle.gif)}
-.advancedSearchWidget button, .page { background: none;}
+.page { background: none;}
 .ui-autocomplete .ui-state-hover { background-image: none;}
 .ui-slider .ui-widget-header { background-image: none; }
  .col.left .pagerModule {background:white}
@@ -74,7 +74,6 @@ body{background-color : #F0F0F0F0;}
  .searchBarWidget select:-moz-focusring {color: transparent;}
  
  @media all and (min-width: 799px){
-	.advancedSearchWidget button { background: none;}
 	.searchBarWidget #sortMode select{background:transparent;}
  }
   @media all and (max-width: 799px){
