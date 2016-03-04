@@ -39,6 +39,8 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 			removeContentButton : false,
 
 			type : 'searchBar',
+			
+			activateAdvancedSearchLink : false,
 
 			// Methods
 
@@ -200,25 +202,28 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 				optionDate.text = window.i18n.msgStore['date'];
 				selectList.appendChild(optionDate);
 				
-				// Advanced Search link
-				elm.append('<div id="advancedSearchLink" class="searchModeLink"><a href="">'+ window.i18n.msgStore['advancedSearchLink'] +'</a></div>');
-				
-				$('#advancedSearchLink').click(function(event){
-					// Hide the basic search
-					elm.hide();
+				if (this.activateAdvancedSearchLink){
+
+					// Advanced Search link
+					elm.append('<div id="advancedSearchLink" class="searchModeLink"><a href="">'+ window.i18n.msgStore['advancedSearchLink'] +'</a></div>');
 					
-					// Reset the widget status (radios, entered text, ...)
-					self.manager.getWidgetByID('advancedSearch').reset();
-					
-					// Display the advanced search
-					$('#advancedSearch').show();
-					
-					// Perform a "select all" request: *:*
-					self.manager.makeDefaultRequest();				
-					
-					// Prevent page reload
-					event.preventDefault();
-				});				
+					$('#advancedSearchLink').click(function(event){
+						// Hide the basic search
+						elm.hide();
+						
+						// Reset the widget status (radios, entered text, ...)
+						self.manager.getWidgetByID('advancedSearch').reset();
+						
+						// Display the advanced search
+						$('#advancedSearch').show();
+						
+						// Perform a "select all" request: *:*
+						self.manager.makeDefaultRequest();				
+						
+						// Prevent page reload
+						event.preventDefault();
+					});	
+				}							
 			},
 
 			beforeRequest : function() {

@@ -20,19 +20,6 @@ $(function($) {
 		updateBrowserAddressBar : false
 	}));
 
-	/*
-	* Add advanced search widget
-	*/
-	
-	var as = new AjaxFranceLabs.AdvancedSearchWidget({
-		// Take the advancedSearch element by ID.
-		elm : $('#advancedSearch'),
-		id : 'advancedSearch'
-	});
-	
-	createAdvancedSearchTable(as);
-
-	Manager.addWidget(as);
 
 	Manager.addModule(new AjaxFranceLabs.AutocompleteModule({
 		elm : $('.searchBar input[type=text]'),
@@ -64,35 +51,4 @@ function search() {
 	window.open('Search?searchType=' + searchType + '&query='
 			+ encodeURIComponent($('.searchBar input[type=text]').val())
 			+ '&lang=' + window.i18n.language, '_self');
-};
-
-function createAdvancedSearchTable(as) {
-	
-	var ast = new AjaxFranceLabs.AdvancedSearchTable({
-		parent : '#advancedSearch',
-		title : window.i18n.msgStore['advancedSearch-label'],
-		description : window.i18n.msgStore['advancedSearch-descr']
-	});
-	
-	// TODO Call Solr to create rows dynamically, based on the index fields
-	
-	var asf = new AjaxFranceLabs.AdvancedSearchField({
-		parent : '#advancedSearchTable',
-		label : window.i18n.msgStore['advancedSearch-title-label'],
-		description : window.i18n.msgStore['advancedSearch-title-descr'],
-		field : 'title'		
-	});
-	
-	ast.addField(asf);
-	
-	asf = new AjaxFranceLabs.AdvancedSearchField({
-		parent : '#advancedSearchTable',
-		label : window.i18n.msgStore['advancedSearch-content-label'],
-		description : window.i18n.msgStore['advancedSearch-content-descr'],
-		field : 'content'		
-	});
-	
-	ast.addField(asf);
-	
-	as.addTable(ast);	
 };

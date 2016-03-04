@@ -113,7 +113,8 @@ $(function($) {
 	Manager.addWidget(new AjaxFranceLabs.SearchBarWidget({
 		elm : $('#searchBar'),
 		id : 'searchBar',
-		autocomplete : true
+		autocomplete : true,
+		activateAdvancedSearchLink : true
 	}));
 	
 	/*

@@ -32,9 +32,9 @@
 		<script type ="text/javascript" src ="js/AjaxFranceLabs/modules/Pager.module.js"></script>
 		<script type ="text/javascript" src ="js/AjaxFranceLabs/modules/Autocomplete.module.js"></script>
 		<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/SearchBar.widget.js"></script>
-		<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/AdvancedSearch.widget.js"></script>
+		<!-- <script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/AdvancedSearch.widget.js"></script>
 		<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/AdvancedSearchWidget/Field.js"></script>
-		<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/AdvancedSearchWidget/Table.js"></script>
+		<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/AdvancedSearchWidget/Table.js"></script> -->
 
 
 		<script type ="text/javascript" src ="js/main.js"></script>
@@ -46,7 +46,7 @@
 		<img class="fadeInDown animated" id="logo-search" src="images/datafari.png"/>
 		<div id="solr">
 			<div id="searchBar"></div>
-			<div id="advancedSearch"></div>
+			<!-- <div id="advancedSearch"></div> -->
 			<div class="clear"></div>
 		</div>
 	</div>
