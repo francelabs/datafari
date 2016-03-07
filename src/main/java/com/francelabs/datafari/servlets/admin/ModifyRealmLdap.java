@@ -57,7 +57,7 @@ public class ModifyRealmLdap extends HttpServlet {
 							request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_NAME),
 							request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_PW));
 				} catch (final NamingException e1) {
-					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONLDAP).put("statut", "Fail to connect to LDAP with the setting given");
+					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONAD).put("statut", "Fail to connect to LDAP with the setting given");
 					isConnected = false;
 				}
 				if (isConnected) {

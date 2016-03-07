@@ -155,6 +155,7 @@
 "SERVERNOTCONNECTED" : "Vous n'êtes pas connecté. Merci de recharger la page",
 "SERVERPROBLEMCONNECTIONDB" : "La base de donnée ne reponds pas au serveur. Merci de ressayer plus tard",
 "PROBLEMECONNECTIONSERVER" : "Le serveur ne repond pas. Merci de verifier votre connexion à internet et de ressayer plus tard",
+"PROBLEMCONNECTIONAD" : "Impossible de se connecter à l'Active Directory, vérifiez la configuration de l'AD !",
 "SERVERGENERALERROR" : "Une erreur s'est produite. Veuillez ressayer plus tard",
 "DESCRIPTIONGETFAVORITES" : "Tout vos favoris sont enregistrés dans cette page.<br/>Vous pouvez cliquer sur le nom du fichier si vous voulez l'ouvrir ou vous pouvez le supprimer des favoris en cliquant sur ",
 "signin" : "Se Connecter",

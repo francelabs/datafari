@@ -14,6 +14,8 @@ var clearTimeouts = function() {
 
 $(document).ready(function(){
 	$('#main').bind('DOMNodeRemoved', clearTimeouts);
+	var PROBLEMCONNECTIONAD = -6;
+	var ADUSERNOTEXISTS = -900;
 	var NOFAVORITESFOUND = 101;
 	var SERVERALREADYPERFORMED = 1;
 	var SERVERALLOK = 0;
@@ -95,6 +97,14 @@ $(document).ready(function(){
 				case FIELDNOTFILLED : 
 					hide = false;
 					message = "Fields not all filled";
+					break;
+				case PROBLEMCONNECTIONAD: 
+					hide = false;
+					message = window.i18n.msgStore["PROBLEMCONNECTIONAD"];
+					break;
+				case ADUSERNOTEXISTS:
+					hide = false;
+					message = "username does not exist in the Active Directory";
 					break;
 				default :
 					message = window.i18n.msgStore["SERVERGENERALERROR"];
