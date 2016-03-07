@@ -165,6 +165,7 @@
 "SERVERNOTCONNECTED" : "Non sei connesso. Per favore ricarica la pagina",
 "SERVERPROBLEMCONNECTIONDB" : "La base di dati non sta rispondendo al server. Per favore, riprova più tardi",
 "PROBLEMECONNECTIONSERVER" : "Il server non sta rispondendo. Per favore, controlla la tua connessione ad internet e riprova più tardi",
+"PROBLEMCONNECTIONAD" : "Unable to connect to the Active Directory, check the AD configuration !",
 "SERVERGENERALERROR" : "Si è verificato un errore. Per favore, riprova più tardi",
 "DESCRIPTIONGETFAVORITES" : "Tutti i preferiti salvati sono elencati in questa pagina.</br>Puoi cliccare sul nome del preferito per visualizzarlo, oppure puoi rimuoverlo dai preferiti cliccando su",
 "settings":"Impostazioni",

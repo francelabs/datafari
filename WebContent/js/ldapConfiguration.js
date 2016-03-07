@@ -24,9 +24,24 @@ $(document).ready(function() {
 		inputActivation(data,input);
 	},"json");
 	
-	$("#crawl_users").click(function() {retrieveUsers()});
+	$("#crawl_users").click(function() {
+		$('#refreshing').show();
+		$('#loader').show();
+		$('#crawl_users').prop("disabled", true);
+		$.get("../SearchAdministrator/getAllLDAPUsersAndRoles", { get: "users"}).done(function(data)
+				{
+					$('#refreshing').hide();
+					$('#loader').hide();
+					$('#crawl_users').prop("disabled", false);
+					fillUsersAndRoleTable(data);
+				},"json");
+	});
 	
 	$('.warning').hide();
+	$('#refreshing').hide();
+	$('#loader').hide();
+	
+	retrieveUsers();
 	
 	function htmlRole(role,username){
 		return '<div class="inline_block '+username+'" data-user="'+username+'"><div class="input-group role">'+
@@ -53,63 +68,81 @@ $(document).ready(function() {
 		},"json");
 	}
 	
-	function retrieveUsers() {
-		
+	function fillUsersAndRoleTable(data) {
 		$('#tableResult tbody tr').remove();
-		
-		$.get("../SearchAdministrator/getAllLDAPUsersAndRoles",function(data){
-			
+		$('.warning').hide();
+		$('.warning').html('');
+		if(data.code == SERVERALLOK) {
 			$('.warning').hide();
-			$('.warning').html('');
-			if(data.code == SERVERALLOK) {
-				$('.warning').hide();
-				window.globalVariableUser = data.statut;
-				var html = "";
-				$.each(window.globalVariableUser,function(index,element){
-					 html+= '<tr class="root" data-user="'+index+'">'+
-							"<th>"+index+"</th>"+
-							'<th>';
-					for (var i = 0; i<element.length; i++){
-						html+=htmlRole(element[i],index);
-					}
-					
-					html+='<input data-user="'+index+'" class="add_role" placeHolder="Add a Role"/></th>'+
-							'</tr>';
-				});
-				$("tbody").append(html);
-					
-				$(".add_role").autocomplete({
-					source : listRoles,
-					select : function(event,ui){
-						var role = ui.item.value;
-						//console.log(role);
-						var element = $(event.target);
-						element.val("");
-						if ($("."+element.data("user")+" ."+role).length==0){
-							$.post("../SearchAdministrator/addRole",{username:element.data("user"),role:role},function(data){
-								if (data.code==SERVERALLOK){
-									var html = $(htmlRole(role,element.data("user")));
-									element.before(html);
-									$(".inline_block .delete.notyet").click(deleteRoleListener).removeClass("notyet");
-								}else{
-									showError(data.code);
-								}
-								element.val("");
-							});
-						}
-						return false;
-					},
-					autoFocus:1
-				});
-				$(".inline_block .delete.notyet").click(deleteRoleListener).removeClass("notyet");
-			} else {
-				if(data.code == PROBLEMSERVERLDAPCONNECTION) {
-					$('.warning').html('Unable to connect to the AD user base, check the AD configuration !');
-				} else if (data.code == SERVERGENERALERROR) {
-					$('.warning').html('Unable to find AD users !');
+			window.globalVariableUser = data.statut;
+			var html = "";
+			$.each(window.globalVariableUser,function(index,element){
+				 html+= '<tr class="root" data-user="'+index+'">'+
+						"<th>"+index+"</th>"+
+						'<th>';
+				for (var i = 0; i<element.length; i++){
+					html+=htmlRole(element[i],index);
 				}
-				$('.warning').show();
+				
+				html+='<input data-user="'+index+'" class="add_role" placeHolder="Add a Role"/></th>'+
+						'</tr>';
+			});
+			$("tbody").append(html);
+				
+			$(".add_role").autocomplete({
+				source : listRoles,
+				select : function(event,ui){
+					var role = ui.item.value;
+					//console.log(role);
+					var element = $(event.target);
+					element.val("");
+					if ($("."+element.data("user")+" ."+role).length==0){
+						$.post("../SearchAdministrator/addRole",{username:element.data("user"),role:role},function(data){
+							if (data.code==SERVERALLOK){
+								var html = $(htmlRole(role,element.data("user")));
+								element.before(html);
+								$(".inline_block .delete.notyet").click(deleteRoleListener).removeClass("notyet");
+							}else{
+								showError(data.code);
+							}
+							element.val("");
+						});
+					}
+					return false;
+				},
+				autoFocus:1
+			});
+			$(".inline_block .delete.notyet").click(deleteRoleListener).removeClass("notyet");
+		} else {
+			if(data.code == PROBLEMSERVERLDAPCONNECTION) {
+				$('.warning').html('Unable to connect to the AD user base, check the AD configuration !');
+			} else if (data.code == SERVERGENERALERROR) {
+				$('.warning').html('Unable to find AD users !');
 			}
+			$('.warning').show();
+		}
+	}
+	
+	function retrieveUsers() {
+		$.get("../SearchAdministrator/getAllLDAPUsersAndRoles", { get: "status"}).done(function(data){
+			if(data.code == SERVERALLOK) {
+				if(data.statut === true) {
+					$('#refreshing').show();
+					$('#loader').show();
+					$('#crawl_users').prop("disabled", true);
+					$.get("../SearchAdministrator/getAllLDAPUsersAndRoles", { get: "users"}).done(function(data){
+						$('#refreshing').hide();
+						$('#loader').hide();
+						$('#crawl_users').prop("disabled", false);
+						fillUsersAndRoleTable(data);
+					});
+				}
+			}
+		});
+		
+		$.get("../SearchAdministrator/getAllLDAPUsersAndRoles", { get: "currentList"}).done(function(data){
+			fillUsersAndRoleTable(data);
+			
 		},"json");
 	}
 	
