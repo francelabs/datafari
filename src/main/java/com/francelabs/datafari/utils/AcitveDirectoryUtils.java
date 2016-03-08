@@ -96,7 +96,7 @@ public class AcitveDirectoryUtils {
 
 		// initializing search controls
 		final SearchControls searchCtls = new SearchControls();
-		searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+		searchCtls.setSearchScope(scope);
 		searchCtls.setReturningAttributes(returnAttributes);
 
 		final NamingEnumeration<SearchResult> users = dirContext.search(searchBase, filter, searchCtls);
