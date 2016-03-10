@@ -20,6 +20,7 @@ $(function($) {
 		updateBrowserAddressBar : false
 	}));
 
+
 	Manager.addModule(new AjaxFranceLabs.AutocompleteModule({
 		elm : $('.searchBar input[type=text]'),
 		searchForItSelf : true

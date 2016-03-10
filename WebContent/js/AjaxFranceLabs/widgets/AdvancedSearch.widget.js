@@ -38,15 +38,40 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			this.tables[table].init();
 			elm.find('.wrapper').append('<span class="separator">');
 		}
-		elm.append('<button>Make search</button>').find('button').click(function() {
-			self.manager.makeRequest();
+		
+		// Basic Search link
+		elm.append('<span id="basicSearchLink" class="searchModeLink"><a href="">'+ window.i18n.msgStore['basicSearchLink'] +'</a></span>');
+		
+		
+		$('#basicSearchLink').click(function(event){
+			// Hide the advanced search
+			elm.hide();
+			
+			// Reset the widget status (radios, entered text, ...)
+			self.manager.getWidgetByID('searchBar').reset();
+			
+			// Display the basic search
+			$('#searchBar').show();
+			
+			// Perform a "select all" request: *:*
+			self.manager.makeDefaultRequest();
+			
+			// Prevent page reload
+			event.preventDefault();
 		});
+		
+		elm.append('<button>' + window.i18n.msgStore['advancedSearch-makesearch-btn'] + '</button>').find('button').click(function() {
+			self.makeRequest();
+		});
+		
 		AjaxFranceLabs.addMultiElementClasses($(this.elm).find('.advTable'));
+		
 		elm.find('.advTable input').keypress(function(event) {
 			if (event.keyCode === 13) {
-				self.manager.makeRequest();
+				self.makeRequest();
 			}
 		});
+		
 		if (this.resizable === true) {
 			var options = {
 				handles : 's',
@@ -66,6 +91,9 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 				}
 			});
 		}
+		
+		// Hidden by default: basic search is displayed
+		elm.hide();		
 	},
 
 	addTable : function(table) {
@@ -73,26 +101,77 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 	},
 
 	beforeRequest : function() {
-		this.manager.store.remove('fq');
-		this.manager.store.remove('q');
-		var q = '';
-		for (var table in this.tables) {
-			for (var field in this.tables[table].fieldStore) {
-				var value = this.tables[table].fieldStore[field].getValue();
-				if (!AjaxFranceLabs.empty(value)) {
-					if (this.tables[table].fieldStore[field].filter === true) {
-						this.manager.store.addByValue('fq', value);
-					} else {
-						q += '(' + value + ') AND ';
+		
+		// If the widget is displayed and we are not performing the spellchecker query
+		if ($(this.elm).is(':visible') && !this.manager.store.isParamDefined('original_query')){
+			
+			this.manager.store.remove('fq');
+			this.manager.store.remove('q');
+			
+			var qArr = [];
+			
+			for (var table in this.tables) {
+				for (var field in this.tables[table].fieldStore) {
+					var value = this.tables[table].fieldStore[field].getValue();
+					if (!AjaxFranceLabs.empty(value)) {
+						if (this.tables[table].fieldStore[field].filter === true) {
+							this.manager.store.addByValue('fq', value);
+						} else {
+							qArr.push('(' + value + ')');
+						}
 					}
+				}			
+					
+				if (qArr.length > 0){
+					// Create the query, combining the different search fields with boolean values from radio buttons (natural order from left to right)
+					this.manager.store.addByValue('q', qArr.join($(this.elm).find('.advSearchBooleanOperator .radio:checked').val()));
+				}
+				else {
+					this.manager.store.addByValue('q', '*:*');
 				}
 			}
-			if (q.lastIndexOf('AND ') === q.length - 4)
-				q = q.substring(0, q.length - 5);
-			if (AjaxFranceLabs.empty(q) !== true)
-				this.manager.store.addByValue('q', q);
-			else
-				this.manager.store.addByValue('q', '*:*');
+			
+			this.updateAddressBar();
 		}
+	},
+	
+	/**
+	 * Resets the inputs of the widget: underlying elements table and fields
+	 */
+	reset : function() {
+		for (var table in this.tables){
+			this.tables[table].reset();
+		}
+	},
+	
+	makeRequest : function() {
+		this.cleanResults();
+		this.manager.makeRequest();
+	},
+	
+	/**
+	 * Cleans results area (same as for basic search)
+	 */
+	cleanResults : function() {
+		
+		this.manager.store.remove('start');
+
+		$.each(this.manager.widgets, function(index, widget) {
+			if (typeof widget.pagination !== "undefined") {
+				widget.pagination.pageSelected = 0;
+			}
+		});
+	},
+	
+	/**
+	 * Update the address bar and generates the id for the query
+	 */
+	updateAddressBar : function() {
+		
+		window.history.pushState('Object', 'Title',
+				window.location.pathname + '?query=' + this.manager.store.get('q').val() + '&lang='
+						+ window.i18n.language);
+
+		this.manager.store.addByValue("id", UUID.generate());		
 	}
 });

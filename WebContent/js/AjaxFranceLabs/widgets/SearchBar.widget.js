@@ -39,6 +39,8 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 			removeContentButton : false,
 
 			type : 'searchBar',
+			
+			activateAdvancedSearchLink : false,
 
 			// Methods
 
@@ -199,7 +201,29 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 				optionDate.setAttribute("value", "date");
 				optionDate.text = window.i18n.msgStore['date'];
 				selectList.appendChild(optionDate);
+				
+				if (this.activateAdvancedSearchLink){
 
+					// Advanced Search link
+					elm.append('<div id="advancedSearchLink" class="searchModeLink"><a href="">'+ window.i18n.msgStore['advancedSearchLink'] +'</a></div>');
+					
+					$('#advancedSearchLink').click(function(event){
+						// Hide the basic search
+						elm.hide();
+						
+						// Reset the widget status (radios, entered text, ...)
+						self.manager.getWidgetByID('advancedSearch').reset();
+						
+						// Display the advanced search
+						$('#advancedSearch').show();
+						
+						// Perform a "select all" request: *:*
+						self.manager.makeDefaultRequest();				
+						
+						// Prevent page reload
+						event.preventDefault();
+					});	
+				}							
 			},
 
 			beforeRequest : function() {
@@ -273,6 +297,15 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 					$("#results .doc_list").empty();
 				}
 
+			},
+			
+			/**
+			 * Resets the inputs of the widget
+			 */
+			reset : function() {
+				var elm = $(this.elm);
+				elm.find('input[type="text"]').val('');
+				elm.find('input#allWords').prop('checked', true);				
 			}
 
 		});

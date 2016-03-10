@@ -42,9 +42,30 @@ AjaxFranceLabs.AdvancedSearchTable = AjaxFranceLabs.Class.extend({
 			this.fieldStore[field].init();
 		}
 		AjaxFranceLabs.addMultiElementClasses(elm.find('.field'));
+		
+		// If we have more than one field in advanced search
+		if (this.fieldStore.length > 1){
+			// Take all the fields except the last one, and add the span for the boolean operators below the current element
+			elm.find('.field:not(:last-child)').after('<span class="advSearchBooleanOperator left"></span>');
+			// Insert AND, OR and NOT radios. Leading and trailing spaces are important for the construction of Solr query!
+			elm.find('.advSearchBooleanOperator')
+				.append('<span><input type="radio" name="advSearchRadios" class="radio" value=" AND " checked="checked" id="advancedSearchRadioAnd"><label for="advancedSearchRadioAnd"><span>&nbsp;</span>AND</label></span>')
+				.append('<span><input type="radio" name="advSearchRadios" class="radio" value=" OR " id="advancedSearchRadioOr"><label for="advancedSearchRadioOr"><span>&nbsp;</span>OR</label></span>')
+				.append('<span><input type="radio" name="advSearchRadios" class="radio" value=" NOT " id="advancedSearchRadioNot"><label for="advancedSearchRadioNot"><span>&nbsp;</span>NOT</label></span>');
+		}
 	},
 
 	addField : function(field) {
 		this.fieldStore.push(field);
+	},
+	
+	/**
+	 * Reset the underlying elements: fields and radios of the table
+	 */
+	reset : function() {
+		for (var field in this.fieldStore){
+			this.fieldStore[field].reset();
+		}
+		$(this.elm).find('input#advancedSearchRadioAnd').prop('checked', true);
 	}
 });
