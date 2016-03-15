@@ -6,62 +6,12 @@
 
 #start script
 
-db_input high datafari/solr_cloud || true
+db_input high datafari/datafari_password || true
 db_go
-db_get datafari/solr_cloud
-if [ "$RET" = "true" ];
-then
-	db_input high datafari/node_host || true
-	db_go
-	db_get datafari/node_host
-	sed -i -e "s/@NODEHOST@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
-	sed -i -e "s/@SOLRCLOUD@/true/g" /opt/datafari/tomcat/conf/datafari.properties
-	db_input high datafari/main_node || true
-	db_go
-	db_get datafari/main_node
-	if [ "$RET" = "true" ];
-	then
-		db_input high datafari/num_shards || true
-		db_go
-		db_get datafari/num_shards
-		sed -i -e "s/@NUMSHARDS@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
-		sed -i -e "s/@ISMAINNODE@/true/g" /opt/datafari/tomcat/conf/datafari.properties
-		mkdir /opt/datafari/solr/solrcloud
-		mv /opt/datafari/solr/solr_home/FileShare /opt/datafari/solr/solrcloud
-		mv /opt/datafari/solr/solr_home/Statistics /opt/datafari/solr/solrcloud
-		db_input high datafari/mcf_password || true
-		db_go
-		db_get datafari/mcf_password
-		sed -i -e "s/@PASSWORD@/${RET}/g" /opt/datafari/mcf/mcf_home/properties.xml
-		db_input high datafari/datafari_password || true
-		db_go
-		db_get datafari/datafari_password
-		sed -i -e "s/@TEMPADMINPASSWORD@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
-	else
-		db_input high datafari/main_node_host || true
-		db_go
-		db_get datafari/main_node_host
-		sed -i -e "s/@MAINNODEHOST@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
-		sed -i -e "s/@ISMAINNODE@/false/g" /opt/datafari/tomcat/conf/datafari.properties
-		rm -r /opt/datafari/mcf
-		rm -r /opt/datafari/solr/solr_home/FileShare
-		rm -r /opt/datafari/solr/solr_home/Statistics
-		rm -r /opt/datafari/zookeeper
-		rm -r /opt/datafari/pgsql
-		rm -r /opt/datafari/tomcat/webapps/Datafari
-		rm /opt/datafari/tomcat/conf/Catalina/localhost/datafari-mcf-*
-		db_input high datafari/tomcat_password || true
-		db_go
-		db_get datafari/tomcat_password
-	fi
-else
-	db_input high datafari/datafari_password || true
-	db_go
-	db_get datafari/datafari_password
-	sed -i -e "s/@PASSWORD@/${RET}/g" /opt/datafari/mcf/mcf_home/properties.xml
-	sed -i -e "s/@TEMPADMINPASSWORD@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
-	sed -i -e "s/@SOLRCLOUD@/false/g" /opt/datafari/tomcat/conf/datafari.properties
-fi
+db_get datafari/datafari_password
+sed -i -e "s/@PASSWORD@/${RET}/g" /opt/datafari/mcf/mcf_home/properties.xml
+sed -i -e "s/@TEMPADMINPASSWORD@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
+sed -i -e "s/@SOLRCLOUD@/false/g" /opt/datafari/tomcat/conf/datafari.properties
 chmod -R 755 /opt/datafari
 id -u postgres >/dev/null 2>&1 || useradd postgres
 id -u datafari >/dev/null 2>&1 || useradd datafari
