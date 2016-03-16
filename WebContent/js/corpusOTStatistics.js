@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	$.get("../SearchAdministrator/checkELKAvailability",function(data){
-		if(data.ELKactivation=="true" && data.isELKUp=="true") {
+		if((data.ELKactivation=="true" && data.isELKUp=="true") || data.isELKUp=="true") {
 			var kibanaURI = data.KibanaURI;
 			if(!kibanaURI.endsWith("/")) {
 				kibanaURI += "/";

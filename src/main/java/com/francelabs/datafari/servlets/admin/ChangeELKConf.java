@@ -28,6 +28,9 @@ public class ChangeELKConf extends HttpServlet {
 	private static final long serialVersionUID = -4261065947276998520L;
 	private static final Logger logger = Logger.getLogger(ChangeELKConf.class);
 	private static final String KIBANAURI = "KibanaURI";
+	private static final String EXTERNALELK = "externalELK";
+	private static final String ELKSERVER = "ELKServer";
+	private static final String ELKSCRIPTSDIR = "ELKScriptsDir";
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -42,10 +45,14 @@ public class ChangeELKConf extends HttpServlet {
 		req.setCharacterEncoding("utf8");
 		resp.setContentType("application/json");
 		try {
-			if (req.getParameter(KIBANAURI) == null) {
+			if (req.getParameter(KIBANAURI) == null || (req.getParameter(EXTERNALELK) != null && req.getParameter(EXTERNALELK).equals("true")
+					&& (req.getParameter(ELKSERVER) == null || req.getParameter(ELKSCRIPTSDIR) == null))) {
 				jsonResponse.put("code", CodesReturned.PROBLEMQUERY).put("statut", "Query Malformed");
 			} else {
-				if (ScriptConfiguration.setProperty(KIBANAURI, req.getParameter(KIBANAURI))) {
+				if (ScriptConfiguration.setProperty(KIBANAURI, req.getParameter(KIBANAURI))
+						|| ScriptConfiguration.setProperty(EXTERNALELK, req.getParameter(EXTERNALELK))
+						|| ScriptConfiguration.setProperty(ELKSERVER, req.getParameter(ELKSERVER))
+						|| ScriptConfiguration.setProperty(ELKSCRIPTSDIR, req.getParameter(ELKSCRIPTSDIR))) {
 					jsonResponse.put("code", CodesReturned.GENERALERROR);
 				} else {
 					jsonResponse.put("code", CodesReturned.ALLOK);

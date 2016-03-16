@@ -56,11 +56,57 @@ public class ActivateELK {
 	 *
 	 * @return
 	 */
-	public int disactivate() {
+	public int deactivate() {
 		final String[] cmd = new String[] { "/bin/bash", stopScriptPath };
 		final Thread t = new Thread(new RunnableBashScript(cmd));
 		t.start();
 		return 0;
+	}
+
+	/**
+	 * Start ELK remotely
+	 *
+	 * @param elkServer
+	 * @param elkScriptsDir
+	 * @return
+	 */
+	public int activateRemote(final String elkServer, final String elkScriptsDir) {
+		final String[] cmd = new String[] { "ssh", "datafari@" + elkServer, "/bin/bash", formatDir(elkScriptsDir) + "start-elk.sh" };
+		final Thread t = new Thread(new RunnableBashScript(cmd));
+		t.start();
+		return 0;
+	}
+
+	/**
+	 * Stop ELK remotely
+	 *
+	 * @param elkServer
+	 *            the ELK server address
+	 * @param elkScriptsDir
+	 *            the ELK 'scripts' directory absolute path on the server which
+	 *            contains the scripts to start and stop ELK
+	 * @return
+	 */
+	public int deactivateRemote(final String elkServer, final String elkScriptsDir) {
+		final String[] cmd = new String[] { "ssh", "datafari@" + elkServer, "/bin/bash", formatDir(elkScriptsDir) + "stop-elk.sh" };
+		final Thread t = new Thread(new RunnableBashScript(cmd));
+		t.start();
+		return 0;
+	}
+
+	/**
+	 * Format the dir path in order that it ends with a '/'
+	 *
+	 * @param dir
+	 *            the dir path
+	 * @return the dir path which ends by a '/'
+	 */
+	private String formatDir(final String dir) {
+		if (dir.endsWith("/")) {
+			return dir;
+		} else {
+			return dir + "/";
+		}
 	}
 
 	/**

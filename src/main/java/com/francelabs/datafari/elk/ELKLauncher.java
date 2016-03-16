@@ -15,7 +15,7 @@ public class ELKLauncher implements ServletContextListener {
 
 	@Override
 	public void contextDestroyed(final ServletContextEvent arg0) {
-		ActivateELK.getInstance().disactivate();
+		ActivateELK.getInstance().deactivate();
 	}
 
 	@Override

@@ -2,6 +2,7 @@ $(document).ready(function() {
 	var SERVERALLOK = 0;
 	var SERVERGENERALERROR = -1;
 	var PROBLEMSERVERLDAPCONNECTION = -6;
+	var externalELK = false;
 	
 	//Internationalize content
 	$("#topbar1").text(window.i18n.msgStore['home']);
@@ -10,27 +11,38 @@ $(document).ready(function() {
 	$("#submit").text(window.i18n.msgStore['save']);
 	$("#title").text(window.i18n.msgStore['adminUI-ELKConf']);
 	$("#kibanaURILabel").html(window.i18n.msgStore['kibanaURI']);
+	$("#externalELKText").html(window.i18n.msgStore['externalELK']);
+	$("#ELKServerLabel").html(window.i18n.msgStore['ELKServer']);
+	$("#ELKScriptsDirLabel").html(window.i18n.msgStore['ELKScriptsDir']);
 	var input = $("#elk_activation input");
 	var ENDOFANIMATION = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
+	
+	
 	$.get("../SearchAdministrator/checkELKAvailability",function(data){
 		inputActivation(data, input);
 		fillFields(data);
 	},"json");
 	
+	$("#externalELKLabel").click(function() {
+		if($("#externalELKLabel input").is(':checked')) {
+			externalELK = true;
+			$("#ELKServerDiv").show();
+			$("#ELKScriptsDirDiv").show();
+		} else {
+			externalELK = false;
+			$("#ELKServerDiv").hide();
+			$("#ELKScriptsDirDiv").hide();
+		}
+	});
+	
 	function inputActivation(data){
 		if (data.code == 0 ){
-			if (data.ELKactivation=="true"){
+			if (data.ELKactivation=="true" || data.isELKUp=="true"){
 				var bool = true;
-				$("input").prop('disabled', false);
-				$("button").prop('disabled',false);
-				
 			}else{
 				var bool = false;
-				$("input").prop('disabled', true);
-				$("button").prop('disabled',true);
-				
 			}
-			input.prop('checked',bool);		
+			input.prop('checked',bool);
 		}else{
 			$("#message").html('<i class="fa fa-times"></i> An error occured, Please try again')
 				.addClass("error").removeClass("success").show();
@@ -40,7 +52,20 @@ $(document).ready(function() {
 	function fillFields(data){
 		if (data.code == 0 ){
 			$("#elasticsearchPort").val(data.ElasticsearchPort);
-			$("#kibanaURI").val(data.KibanaURI);		
+			$("#kibanaURI").val(data.KibanaURI);
+			if(data.externalELK == "true") {
+				externalELK = true;
+				$("#ELKServerDiv").show();
+				$("#ELKScriptsDirDiv").show();
+			} else {
+				externalELK = false;
+				$("#ELKServerDiv").hide();
+				$("#ELKScriptsDirDiv").hide();
+			}
+			$("#externalELKLabel input").prop('checked', externalELK);
+			$("#ELKServer").val(data.ELKServer);
+			$("#ELKScriptsDir").val(data.ELKScriptsDir);
+			
 		}else{
 			$("#message").html('<i class="fa fa-times"></i> An error occured, Please try again')
 				.addClass("error").removeClass("success").show();
@@ -56,7 +81,10 @@ $(document).ready(function() {
 			var bool="false";
 		}
 		$.post("../SearchAdministrator/checkELKAvailability",{
-			ELKactivation : bool
+			ELKactivation : bool,
+			externalELK : externalELK,
+			ELKServer : $("#ELKServer").val(),
+			ELKScriptsDir : $("#ELKScriptsDir").val()
 		},function(data){
 			inputActivation(data,input);
 		},"json");
@@ -66,8 +94,12 @@ $(document).ready(function() {
 	$("form").submit(function(e){
 		e.preventDefault();
 		if ($("#kibanaURI").val()!="" && $("#kibanaURI").val() != undefined){ 
+			if((externalELK===true && $("#ELKServer").val()!="" && $("#ELKServer").val() != undefined && $("#ELKScriptsDir").val()!="" && $("#ELKScriptsDir").val() != undefined) || externalELK===false)
 			$.post("../SearchAdministrator/changeELKConf",{
-				KibanaURI :  $("#kibanaURI").val() 
+				KibanaURI :  $("#kibanaURI").val(),
+				externalELK : externalELK,
+				ELKServer : $("#ELKServer").val(),
+				ELKScriptsDir : $("#ELKScriptsDir").val()
 			},function(data){
 				if (data!=undefined && data.code!= undefined){
 					if (data.code==0){

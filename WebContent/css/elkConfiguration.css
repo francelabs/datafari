@@ -1,3 +1,13 @@
+#externalELKLabel {
+	margin-bottom: 5px;
+	margin-left: 34px;
+}
+
+#externalELKLabel input {
+	margin-left:20px;
+ 	vertical-align: top;
+}
+
 .assign_role{
 	display: none;
 }
