@@ -28,6 +28,10 @@ public class CheckELKAvailability extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(CheckELKAvailability.class);
 	private static final String ELKACTIVATION = "ELKactivation";
+	private static final String KIBANAURI = "KibanaURI";
+	private static final String EXTERNALELK = "externalELK";
+	private static final String ELKSERVER = "ELKServer";
+	private static final String ELKSCRIPTSDIR = "ELKScriptsDir";
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -68,10 +72,12 @@ public class CheckELKAvailability extends HttpServlet {
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 
-		final String kibanaURI = ScriptConfiguration.getProperty("KibanaURI");
-		jsonResponse.put("KibanaURI", kibanaURI);
+		jsonResponse.put(KIBANAURI, ScriptConfiguration.getProperty(KIBANAURI));
+		jsonResponse.put(EXTERNALELK, ScriptConfiguration.getProperty(EXTERNALELK));
+		jsonResponse.put(ELKSERVER, ScriptConfiguration.getProperty(ELKSERVER));
+		jsonResponse.put(ELKSCRIPTSDIR, ScriptConfiguration.getProperty(ELKSCRIPTSDIR));
 		final boolean activated = Boolean.parseBoolean(ScriptConfiguration.getProperty(ELKACTIVATION));
-		final boolean urlUp = isURLUp(kibanaURI);
+		final boolean urlUp = isURLUp(ScriptConfiguration.getProperty(KIBANAURI));
 		try {
 			if (activated) {
 				jsonResponse.put("code", CodesReturned.ALLOK).put(ELKACTIVATION, "true");
@@ -100,21 +106,41 @@ public class CheckELKAvailability extends HttpServlet {
 			if (req.getParameter(ELKACTIVATION) == null) {
 				jsonResponse.put("code", CodesReturned.PROBLEMQUERY).put("statut", "Query Malformed");
 			} else {
-				if (ScriptConfiguration.setProperty(ELKACTIVATION, req.getParameter(ELKACTIVATION))) {
-					jsonResponse.put("code", CodesReturned.GENERALERROR);
-				} else {
-					try {
-						int returnCode;
-						if (req.getParameter(ELKACTIVATION).toString().equals("true")) {
-							returnCode = ActivateELK.getInstance().activate();
+				String elkActivation = req.getParameter(ELKACTIVATION);
+
+				try {
+					int returnCode;
+					if (elkActivation.equals("true")) {
+						if (req.getParameter(EXTERNALELK) != null && req.getParameter(EXTERNALELK).toString().equals("true")) {
+							if (req.getParameter(ELKSERVER) != null && req.getParameter(ELKSCRIPTSDIR) != null) {
+								returnCode = ActivateELK.getInstance().activateRemote(req.getParameter(ELKSERVER), req.getParameter(ELKSCRIPTSDIR));
+							} else {
+								returnCode = CodesReturned.GENERALERROR;
+								elkActivation = "false";
+							}
 						} else {
-							returnCode = ActivateELK.getInstance().disactivate();
+							returnCode = ActivateELK.getInstance().activate();
 						}
-						jsonResponse.put("code", returnCode).put(ELKACTIVATION, req.getParameter(ELKACTIVATION));
-					} catch (final Exception e) {
-						jsonResponse.put("code", CodesReturned.GENERALERROR);
-						logger.error("Fatal Error", e);
+					} else {
+						if (req.getParameter(EXTERNALELK) != null && req.getParameter(EXTERNALELK).toString().equals("true")) {
+							if (req.getParameter(ELKSERVER) != null && req.getParameter(ELKSCRIPTSDIR) != null) {
+								returnCode = ActivateELK.getInstance().deactivateRemote(req.getParameter(ELKSERVER), req.getParameter(ELKSCRIPTSDIR));
+							} else {
+								returnCode = CodesReturned.GENERALERROR;
+								elkActivation = "true";
+							}
+						} else {
+							returnCode = ActivateELK.getInstance().deactivate();
+						}
 					}
+					if (ScriptConfiguration.setProperty(ELKACTIVATION, elkActivation)) {
+						jsonResponse.put("code", CodesReturned.GENERALERROR);
+					} else {
+						jsonResponse.put("code", returnCode).put(ELKACTIVATION, elkActivation);
+					}
+				} catch (final Exception e) {
+					jsonResponse.put("code", CodesReturned.GENERALERROR);
+					logger.error("Fatal Error", e);
 				}
 			}
 		} catch (final JSONException e) {

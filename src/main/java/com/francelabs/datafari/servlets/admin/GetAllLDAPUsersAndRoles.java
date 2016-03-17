@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.naming.NamingException;
-import javax.naming.directory.DirContext;
+import javax.naming.ldap.LdapContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -79,11 +79,12 @@ public class GetAllLDAPUsersAndRoles extends HttpServlet {
 					final HashMap<String, String> h = RealmLdapConfiguration.getConfig(request);
 					// Retrueve the LDAP context from the LDAP configuration
 					// parameters
-					final DirContext ctx = AcitveDirectoryUtils.getDirContext(h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL),
+					final LdapContext ctx = AcitveDirectoryUtils.getLdapContext(h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL),
 							h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME), h.get(RealmLdapConfiguration.ATTR_CONNECTION_PW));
 
 					// Retrieve the LDAP users list
-					final List<String> ldapUsersList = AcitveDirectoryUtils.listAllusers(ctx, h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME), false);
+					final List<String> ldapUsersList = AcitveDirectoryUtils.listAllusers(ctx, h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME),
+							Boolean.parseBoolean(h.get(RealmLdapConfiguration.ATTR_SUBTREE)));
 					currentUsersList = ldapUsersList;
 					// Close the context (never forget this)
 					ctx.close();

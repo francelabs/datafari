@@ -77,7 +77,7 @@ public class AddUser extends HttpServlet {
 
 					// Retrueve the LDAP context from the LDAP configuration
 					// parameters
-					final DirContext ctx = AcitveDirectoryUtils.getDirContext(h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL),
+					final DirContext ctx = AcitveDirectoryUtils.getLdapContext(h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL),
 							h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME), h.get(RealmLdapConfiguration.ATTR_CONNECTION_PW));
 
 					userExists = AcitveDirectoryUtils.checkUser(username, h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME), ctx);

@@ -1,5 +1,6 @@
 package com.francelabs.datafari.utils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -10,17 +11,23 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
+import javax.naming.ldap.Control;
+import javax.naming.ldap.InitialLdapContext;
+import javax.naming.ldap.LdapContext;
+import javax.naming.ldap.PagedResultsControl;
+import javax.naming.ldap.PagedResultsResponseControl;
 
 public class AcitveDirectoryUtils {
 
 	private static final String baseFilter = "(&((&(objectCategory=Person)(objectClass=User)))";
 	private static final String[] returnAttributes = { "sAMAccountName", "givenName", "userAccountControl" };
+	// For paged results
+	private static final int pageSize = 1000;
 
 	/**
-	 * Gets the AD directory context of the provided url
+	 * Gets the AD LDAP context of the provided url
 	 *
 	 * @param url
 	 *            the url ("ldap://serverName:serverPort")
@@ -28,11 +35,12 @@ public class AcitveDirectoryUtils {
 	 *            the user
 	 * @param password
 	 *            the user's password
-	 * @return the directory context
+	 * @return the LDAP context
+	 * @throws IOException
 	 * @throws NamingException
 	 *             .
 	 */
-	public static DirContext getDirContext(final String url, final String user, final String password) throws NamingException {
+	public static LdapContext getLdapContext(final String url, final String user, final String password) throws NamingException, IOException {
 		// create an initial directory context
 		final Hashtable<String, Object> env = new Hashtable<String, Object>();
 		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
@@ -43,7 +51,9 @@ public class AcitveDirectoryUtils {
 		env.put(Context.SECURITY_CREDENTIALS, password);
 
 		// Create the initial directory context
-		return new InitialDirContext(env);
+		final LdapContext ldapCtx = new InitialLdapContext(env, null);
+		ldapCtx.setRequestControls(new Control[] { new PagedResultsControl(pageSize, Control.NONCRITICAL) });
+		return ldapCtx;
 	}
 
 	/**
@@ -68,9 +78,9 @@ public class AcitveDirectoryUtils {
 		return dirContext.search(searchBase, filter, searchCtls).hasMore();
 	}
 
-	private static String getFilter(final String searchValue) {
+	private static String getFilter(final String username) {
 		String filter = baseFilter;
-		filter += "(samaccountname=" + searchValue + "))";
+		filter += "(samaccountname=" + username + "))";
 		return filter;
 	}
 
@@ -85,8 +95,10 @@ public class AcitveDirectoryUtils {
 	 *            should search for users in subTree ?
 	 * @return the list of found users
 	 * @throws NamingException
+	 * @throws IOException
 	 */
-	public static List<String> listAllusers(final DirContext dirContext, final String searchBase, final boolean userSubtree) throws NamingException {
+	public static List<String> listAllusers(final LdapContext ldapContext, final String searchBase, final boolean userSubtree)
+			throws NamingException, IOException {
 		final List<String> usersList = new ArrayList<String>();
 		final String filter = baseFilter + ")";
 		int scope = SearchControls.SUBTREE_SCOPE;
@@ -96,27 +108,46 @@ public class AcitveDirectoryUtils {
 
 		// initializing search controls
 		final SearchControls searchCtls = new SearchControls();
-		searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+		searchCtls.setSearchScope(scope);
 		searchCtls.setReturningAttributes(returnAttributes);
 
-		final NamingEnumeration<SearchResult> users = dirContext.search(searchBase, filter, searchCtls);
+		byte[] cookie = null;
 
-		while (users.hasMore()) {
-			final Attributes attrs = users.next().getAttributes();
+		do {
+			final NamingEnumeration<SearchResult> users = ldapContext.search(searchBase, filter, searchCtls);
 
-			// Check if the user is activated before adding him to the list
-			final Attribute bitsAttribute = attrs.get("userAccountControl");
-			if (bitsAttribute != null) {
-				final long lng = Long.parseLong(bitsAttribute.get(0).toString());
-				final long secondBit = lng & 2; // get bit 2
-				if (secondBit == 0) { // User activated
-					final Attribute accountAttribute = attrs.get("sAMAccountName");
-					if (accountAttribute != null) {
-						usersList.add((String) accountAttribute.get(0));
+			while (users.hasMore()) {
+				final Attributes attrs = users.next().getAttributes();
+
+				// Check if the user is activated before adding him to the list
+				final Attribute bitsAttribute = attrs.get("userAccountControl");
+				if (bitsAttribute != null) {
+					final long lng = Long.parseLong(bitsAttribute.get(0).toString());
+					final long secondBit = lng & 2; // get bit 2
+					if (secondBit == 0) { // User activated
+						final Attribute accountAttribute = attrs.get("sAMAccountName");
+						if (accountAttribute != null) {
+							usersList.add((String) accountAttribute.get(0));
+						}
 					}
 				}
 			}
-		}
+
+			// Examine the paged results control response
+			final Control[] controls = ldapContext.getResponseControls();
+			if (controls != null) {
+				for (int i = 0; i < controls.length; i++) {
+					if (controls[i] instanceof PagedResultsResponseControl) {
+						final PagedResultsResponseControl prrc = (PagedResultsResponseControl) controls[i];
+						cookie = prrc.getCookie();
+					}
+				}
+			}
+
+			// Re-activate paged results
+			ldapContext.setRequestControls(new Control[] { new PagedResultsControl(pageSize, cookie, Control.CRITICAL) });
+
+		} while (cookie != null);
 
 		return usersList;
 	}
