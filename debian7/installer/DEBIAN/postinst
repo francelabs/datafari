@@ -12,7 +12,7 @@ db_get datafari/datafari_password
 sed -i -e "s/@PASSWORD@/${RET}/g" /opt/datafari/mcf/mcf_home/properties.xml
 sed -i -e "s/@TEMPADMINPASSWORD@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
 sed -i -e "s/@SOLRCLOUD@/false/g" /opt/datafari/tomcat/conf/datafari.properties
-chmod -R 755 /opt/datafari
+chmod -R 775 /opt/datafari
 id -u postgres >/dev/null 2>&1 || useradd postgres
 id -u datafari >/dev/null 2>&1 || useradd datafari
 chown -R datafari /opt/datafari
