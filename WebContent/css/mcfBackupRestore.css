@@ -1,0 +1,7 @@
+.backupRestoreOK {
+	color: green;
+}
+
+.backupRestoreError {
+	color: red;
+}

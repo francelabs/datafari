@@ -229,5 +229,15 @@
 "adminUI-UserManagement" : "Gestion d'utilisateurs",
 "adminUI-LdapConfig" : "Configuration de l'Active Directory",
 "adminUI-ModifyUsers" : "Modifier un utilisateur",
-"adminUI-AddUser" : "Ajouter un utilisateur"
+"adminUI-AddUser" : "Ajouter un utilisateur",
+"adminUI-MCFBackupRestore-saveOK" : "Connections MCF sauvegardees correctement",
+"adminUI-MCFBackupRestore-saveError" : "Probleme avec le sauvetage des connections MCF",
+"adminUI-MCFBackupRestore-restoreOK" : "Connections MCF restorees correctement",
+"adminUI-MCFBackupRestore-restoreError" : "Probleme avec le restorage des connections MCF",
+"adminUI-MCFBackupRestore-backupDir-label" : "Repertoire pour le backup de MCF :",
+"adminUI-MCFBackupRestore-backupDir-label-default" : "Si laissé vide, un parcours par default verra utilisé",
+"adminUI-MCFBackupRestore-doSave-btn" : "Sauvegarde Connections MCF",
+"adminUI-MCFBackupRestore-doRestore-btn" : "Restore Connections MCF",
+"adminUI-Connectors-Admin" : "Administration de MCF",
+"adminUI-Connectors-BackupRestore" : "Sauvegarde et restore des connections"
 }         
