@@ -34,10 +34,10 @@ function doSave() {
 		//if received a response from the server
 		success : function(data, textStatus, jqXHR) {
 			if(data.toString().indexOf("Error code : ")!==-1){
-				$("doRestoreReturnStatus-label").html(window.i18n.msgStore["adminUI-MCFBackupRestore-saveError"]).addClass('backupRestoreError');
+				$("#doRestoreReturnStatus-label").text(window.i18n.msgStore["adminUI-MCFBackupRestore-saveError"]).switchClass('backupRestoreOK','backupRestoreError', 100);
 				
 			} else {
-				$("doRestoreReturnStatus-label").html(window.i18n.msgStore["adminUI-MCFBackupRestore-saveOK"]).addClass('backupRestoreOK');
+				$("#doRestoreReturnStatus-label").text(window.i18n.msgStore["adminUI-MCFBackupRestore-saveOK"]).switchClass('backupRestoreError','backupRestoreOK', 100);
 			}			
 		},
 		error : function(jqXHR, textStatus, errorThrown) {
@@ -77,9 +77,9 @@ function doRestore() {
 		//if received a response from the server
 		success : function(data, textStatus, jqXHR) {
 			if(data.toString().indexOf("Error code : ")!==-1){
-				$("doRestoreReturnStatus-label").html(window.i18n.msgStore["adminUI-MCFBackupRestore-RestoreError"]).addClass('backupRestoreError');
+				$("#doRestoreReturnStatus-label").text(window.i18n.msgStore["adminUI-MCFBackupRestore-restoreError"]).switchClass('backupRestoreOK','backupRestoreError', 100);
 			} else {
-				$("doRestoreReturnStatus-label").html(window.i18n.msgStore["adminUI-MCFBackupRestore-restoreOK"]).addClass('backupRestoreOK');
+				$("#doRestoreReturnStatus-label").text(window.i18n.msgStore["adminUI-MCFBackupRestore-restoreOK"]).switchClass('backupRestoreError','backupRestoreOK', 100);
 			}			
 		},
 		error : function(jqXHR, textStatus, errorThrown) {
