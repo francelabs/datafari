@@ -6,6 +6,7 @@ function setupLanguage() {
 			"./index.jsp?lang=" + window.i18n.language);
 	document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
 	document.getElementById("topbar2").innerHTML = window.i18n.msgStore['adminUI-Connectors'];
+	document.getElementById("topbar3").innerHTML = window.i18n.msgStore['adminUI-Connectors-Admin'];
 }
 
 function autoResize() {

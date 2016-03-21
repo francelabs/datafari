@@ -239,5 +239,15 @@
 "adminUI-UserManagement" : "Gestione degli utenti",
 "adminUI-LdapConfig" : "Configurazione di LDAP",
 "adminUI-ModifyUsers" : "Modificare un utente",
-"adminUI-AddUser" : "Aggiungere un utente"
+"adminUI-AddUser" : "Aggiungere un utente",
+"adminUI-MCFBackupRestore-saveOK" : "Connessioni MCF salvate correttamente",
+"adminUI-MCFBackupRestore-saveError" : "Non e' stato possibile salvare le connessioni MCF",
+"adminUI-MCFBackupRestore-restoreOK" : "Connessioni MCF ricaricate correttamente",
+"adminUI-MCFBackupRestore-restoreError" : "Non e' stato possibile ricaricare le connessioni MCF",
+"adminUI-MCFBackupRestore-backupDir-label" : "Directory per il backup delle connessioni MCF :",
+"adminUI-MCFBackupRestore-backupDir-label-default" : "Se lasciato vuoto, verra' utilizzato un percorso di default",
+"adminUI-MCFBackupRestore-doSave-btn" : "Salva connessioni MCF",
+"adminUI-MCFBackupRestore-doRestore-btn" : "Ricarica connessioni MCF",
+"adminUI-Connectors-Admin" : "Amministrazione di MCF",
+"adminUI-Connectors-BackupRestore" : "Salvataggio e ricaricamento delle connessioni"
 }

@@ -20,7 +20,7 @@ public class BackupManifoldCFConnectorsScript {
 	// TODO check if the logs are working properly
 	private static String configPropertiesFileName = "config/log4j.properties";
 
-	private final static Logger LOGGER = Logger.getLogger(BackupManifoldCFConnectorsScript.class.getName());
+	private final static Logger LOGGER = Logger.getLogger(BackupManifoldCFConnectorsScript.class);
 
 	/**
 	 * @param args
@@ -144,4 +144,77 @@ public class BackupManifoldCFConnectorsScript {
 
 	}
 
+	/**
+	 * Method called by Servlet MCFBackupRestore
+	 */
+	public static void doSave(String backupDirectory) throws Exception {
+
+		File outputConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
+
+		File repositoryConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
+
+		File authorityConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
+
+		File jobsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.JOBS);
+
+		try {
+			
+			ManifoldAPI.waitUntilManifoldIsStarted();
+
+			prepareDirectory(outputConnectionsDir);
+			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS),
+					outputConnectionsDir);
+
+			prepareDirectory(repositoryConnectionsDir);
+			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS),
+					repositoryConnectionsDir);
+
+			prepareDirectory(authorityConnectionsDir);
+			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS),
+					authorityConnectionsDir);
+
+			prepareDirectory(jobsDir);
+			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.JOBS), jobsDir);
+
+			LOGGER.info("Connectors Saved");
+
+		} catch (Exception e) {
+			LOGGER.fatal(e.getMessage());
+			throw new Exception("Error while saving MCF connections.");
+		}
+	}
+	
+	/**
+	 * Method called by Servlet MCFBackupRestore
+	 */
+	public static void doRestore(String backupDirectory) throws Exception {
+
+		File outputConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
+
+		File repositoryConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
+
+		File authorityConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
+
+		File jobsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.JOBS);
+
+		try {
+			
+			ManifoldAPI.waitUntilManifoldIsStarted();
+			ManifoldAPI.cleanAll();
+
+			restoreAllConnections(outputConnectionsDir, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
+
+			restoreAllConnections(repositoryConnectionsDir, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
+
+			restoreAllConnections(authorityConnectionsDir, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
+
+			restoreAllConnections(jobsDir, ManifoldAPI.COMMANDS.JOBS);
+
+			LOGGER.info("Connectors Restored");
+
+		} catch (Exception e) {
+			LOGGER.fatal(e.getMessage());
+			throw new Exception("Error while restoring MCF connections.");
+		}
+	}
 }

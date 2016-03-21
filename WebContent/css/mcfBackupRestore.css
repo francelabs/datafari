@@ -1,0 +1,12 @@
+.backupRestoreOK {
+	color: green;
+}
+
+.backupRestoreError {
+	color: red;
+}
+
+.backupRestore-btn {
+	margin: 15px;
+	width: auto;
+}
