@@ -172,12 +172,17 @@
 if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrator")){
 %>
 <!-- 					<a href="../ajax/dashboard.html" class="ajax-link"> <i -->
-				<li id="Connectors">
-<!-- 							class="fa fa-dashboard"></i> <span class="hidden-xs">Dashboard</span> </a>-->
-					 <a href="../ajax/manifoldcf.html" class="ajax-link">
+				<li class="dropdown" id="Connectors">
+					<a href="#" class="dropdown-toggle">
 						<i class="fa fa-arrows-alt"></i>
-						<span id="connectors-AdminUI" class="hidden-xs"></span>
-					</a>
+						 <span id="connectors-AdminUI" class="hidden-xs"></span>
+					</a>					 
+					<ul class="dropdown-menu">
+						<li id="MCFAdminUI">
+							<a href="../ajax/manifoldcf.html" class="ajax-link" id="MCFAdmin-AdminUI"></a>
+						</li>
+						<li id="MCFBackupRestore"><a id="MCFBackupRestore-AdminUI" class="ajax-link" href="../ajax/mcfBackupRestore.html"></a></li>
+					</ul>
 				</li>
 
 				<li class="dropdown" id="Statistics">

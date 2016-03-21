@@ -239,5 +239,15 @@
 "adminUI-UserManagement" : "User Management",
 "adminUI-LdapConfig" : "LDAP Configuration",
 "adminUI-ModifyUsers" : "Modify Users",
-"adminUI-AddUser" : "Add User"
+"adminUI-AddUser" : "Add User",
+"adminUI-MCFBackupRestore-saveOK" : "MCF connections correctly saved",
+"adminUI-MCFBackupRestore-saveError" : "Problem while saving MCF connections",
+"adminUI-MCFBackupRestore-restoreOK" : "MCF connections correctly restored",
+"adminUI-MCFBackupRestore-restoreError" : "Problem while restoring MCF connections",
+"adminUI-MCFBackupRestore-backupDir-label" : "MCF Backup directory (full path):",
+"adminUI-MCFBackupRestore-backupDir-label-default" : "If empty, the default one will be used",
+"adminUI-MCFBackupRestore-doSave-btn" : "Save MCF connections",
+"adminUI-MCFBackupRestore-doRestore-btn" : "Restore MCF connections",
+"adminUI-Connectors-Admin" : "Administration of MCF",
+"adminUI-Connectors-BackupRestore" : "Backup and Restore connections"
 }
