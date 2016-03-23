@@ -198,8 +198,8 @@
 						<configuration>
 							<!-- Version of Solr should be retrieved from a property file as well 
 								as the SHA1 -->
-							<url>http://archive.apache.org/dist/lucene/solr/5.2.1/solr-5.2.1.tgz</url>
-							<sha1>0351906cdeef48cdc85b3fe75dc5c038a90bae5f</sha1>
+							<url>http://archive.apache.org/dist/lucene/solr/5.5.0/solr-5.5.0.tgz</url>
+							<sha1>cc71b919282678276a37d393892ade5ce3e10252</sha1>
 							<unpack>true</unpack>
 							<outputDirectory>temp</outputDirectory>
 						</configuration>
