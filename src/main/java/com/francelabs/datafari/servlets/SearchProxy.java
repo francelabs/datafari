@@ -110,7 +110,7 @@ public class SearchProxy extends HttpServlet {
 			// get the AD domain
 			final HashMap<String, String> h = RealmLdapConfiguration.getConfig(request);
 			if (h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME) != null) {
-				final String userBase = h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME);
+				final String userBase = h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME).toLowerCase();
 				final String[] parts = userBase.split(",");
 				domain = "";
 				for (int i = 0; i < parts.length; i++) {
