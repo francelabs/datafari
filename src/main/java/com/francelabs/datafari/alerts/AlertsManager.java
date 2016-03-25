@@ -105,7 +105,7 @@ public class AlertsManager {
 			// Gets the delay for the hourly alerts
 			try {
 				delayH = new DateTime(df.parse(ScriptConfiguration
-						.getProperty("HOURLYDELAY")));
+						.getProperty("HOURLYDELAY").replace("\\", "")));
 			} catch (ParseException e) {
 				LOGGER.warn(
 						"Error parsing the Hourly Date, default value will be used, AlertsManager getParameter()",
@@ -116,7 +116,7 @@ public class AlertsManager {
 			// Gets the delay for the daily alerts
 			try {
 				delayD = new DateTime(df.parse(ScriptConfiguration
-						.getProperty("DAILYDELAY")));
+						.getProperty("DAILYDELAY").replace("\\", "")));
 			} catch (ParseException e) {
 				LOGGER.warn(
 						"Error parsing the Daily Date, default value will be used, AlertsManager getParameter()",
@@ -127,7 +127,7 @@ public class AlertsManager {
 			// Gets the delay for the weekly alerts
 			try {
 				delayW = new DateTime(df.parse(ScriptConfiguration
-						.getProperty("WEEKLYDELAY")));
+						.getProperty("WEEKLYDELAY").replace("\\", "")));
 			} catch (ParseException e) {
 				LOGGER.warn(
 						"Error parsing the Weekly Date, default value will be used, AlertsManager getParameter()",
@@ -137,17 +137,17 @@ public class AlertsManager {
 
 
 			// Checks if there has been a previous execution for alerts
-			String hourlyStr = ScriptConfiguration.getProperty("Hourly");
+			String hourlyStr = ScriptConfiguration.getProperty("Hourly").replace("\\", "");
 			if (hourlyStr != null) {
 				Hourly.setHasBeenExecuted(true);
 				HourlyHour = hourlyStr;
 			}
-			String dailyStr = ScriptConfiguration.getProperty("Daily");
+			String dailyStr = ScriptConfiguration.getProperty("Daily").replace("\\", "");
 			if (dailyStr != null) {
 				Daily.setHasBeenExecuted(true);
 				DailyHour = dailyStr;
 			}
-			String weeklyStr = ScriptConfiguration.getProperty("Weekly");
+			String weeklyStr = ScriptConfiguration.getProperty("Weekly").replace("\\", "");
 			if (weeklyStr != null) {
 				Weekly.setHasBeenExecuted(true);
 				WeeklyHour = weeklyStr;
