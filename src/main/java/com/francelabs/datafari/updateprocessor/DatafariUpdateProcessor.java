@@ -184,7 +184,11 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 			doc.addField("source", "file");
 		}
 
-		final String mimeType = (String) doc.get("ignored_stream_content_type").getFirstValue();
+		String mimeType = (String) doc.get("ignored_stream_content_type").getFirstValue();
+		if (mimeType.contains(";")){
+			String[] parts = mimeType.split(";");
+			mimeType = parts[0]; 
+		}
 		final MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
 		MimeType type;
 
