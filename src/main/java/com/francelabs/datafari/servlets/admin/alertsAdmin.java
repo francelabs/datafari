@@ -90,38 +90,38 @@ public class alertsAdmin extends HttpServlet {
 			for(int i = 0 ; i < lines.length ; i++){				//for each line
 				try{
 					if(lines[i].startsWith("ALERTS")){			
-						if(lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("o")).equals("on")){
+						if(lines[i].replace("\\", "").replaceAll("(\\r|\\n)", "").replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("o")).equals("on")){
 							json.put("on", "on");					//If the alerts are activated puts "on" in the JSON (so the button will print "turn off" in the UI)
 						}else{
 							json.put("on", "off");					//If the alerts are deactivated puts "off" in the JSON (so the button will print "turn on" in the UI)
 						}
 					}else if(lines[i].startsWith("HOURLYDELAY"))	//Gets the date for the hourly alerts
-						json.put("hourlyDate", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replaceAll("(\\r|\\n)", ""));
+						json.put("hourlyDate", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replace("\\", "").replaceAll("(\\r|\\n)", ""));
 					else if(lines[i].startsWith("DAILYDELAY"))		//Gets the date for the daily alerts
-						json.put("dailyDate", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replaceAll("(\\r|\\n)", ""));
+						json.put("dailyDate", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replace("\\", "").replaceAll("(\\r|\\n)", ""));
 					else if(lines[i].startsWith("WEEKLYDELAY"))		//Gets the date for the weekly alerts
-						json.put("weeklyDate", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replaceAll("(\\r|\\n)", ""));
+						json.put("weeklyDate", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replace("\\", "").replaceAll("(\\r|\\n)", ""));
 					else if(lines[i].startsWith("HOST"))			//Gets the address of the host
-						json.put("host", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replaceAll("(\\r|\\n)", ""));
+						json.put("host", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replace("\\", "").replaceAll("(\\r|\\n)", ""));
 					else if(lines[i].startsWith("PORT"))			//Gets the port
-						json.put("port", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replaceAll("(\\r|\\n)", ""));
+						json.put("port", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replace("\\", "").replaceAll("(\\r|\\n)", ""));
 					else if(lines[i].startsWith("DATABASE"))		//Gets the name of the database
-						json.put("database", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replaceAll("(\\r|\\n)", ""));
+						json.put("database", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replace("\\", "").replaceAll("(\\r|\\n)", ""));
 					else if(lines[i].startsWith("COLLECTION"))		//Gets the name of the collection
-						json.put("collection", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replaceAll("(\\r|\\n)", ""));
+						json.put("collection", lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replace("\\", "").replaceAll("(\\r|\\n)", ""));
 					else if(lines[i].startsWith("Hourly")){		//Gets the previous execution date for the hourly alerts
-						DateTime next = new DateTime(formatter.parseDateTime(lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replaceAll("(\\r|\\n)", ""))).plusHours(1);
-						DateTime previous = new DateTime(formatter.parseDateTime(lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replaceAll("(\\r|\\n)", "")));
+						DateTime next = new DateTime(formatter.parseDateTime(lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replace("\\", "").replaceAll("(\\r|\\n)", ""))).plusHours(1);
+						DateTime previous = new DateTime(formatter.parseDateTime(lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replace("\\", "").replaceAll("(\\r|\\n)", "")));
 						json.put("nextHourly", next.toString(formatterbis));
 						json.put("hourly",  previous.toString(formatterbis));
 					}else if(lines[i].startsWith("Daily")){		//Gets the previous execution date for the hourly alerts
-						DateTime next = new DateTime(formatter.parseDateTime(lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replaceAll("(\\r|\\n)", ""))).plusDays(1);
-						DateTime previous = new DateTime(formatter.parseDateTime(lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replaceAll("(\\r|\\n)", "")));
+						DateTime next = new DateTime(formatter.parseDateTime(lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replace("\\", "").replaceAll("(\\r|\\n)", ""))).plusDays(1);
+						DateTime previous = new DateTime(formatter.parseDateTime(lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replace("\\", "").replaceAll("(\\r|\\n)", "")));
 						json.put("nextDaily",  next.toString(formatterbis));
 						json.put("daily", previous.toString(formatterbis));
 					}else if(lines[i].startsWith("Weekly")){	//Gets the previous execution date for the hourly alerts
-						DateTime next = new DateTime(formatter.parseDateTime(lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replaceAll("(\\r|\\n)", ""))).plusWeeks(1);
-						DateTime previous = new DateTime(formatter.parseDateTime(lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replaceAll("(\\r|\\n)", "")));
+						DateTime next = new DateTime(formatter.parseDateTime(lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replace("\\", "").replaceAll("(\\r|\\n)", ""))).plusWeeks(1);
+						DateTime previous = new DateTime(formatter.parseDateTime(lines[i].substring(lines[i].indexOf("=")+1, lines[i].length()).replace("\\", "").replaceAll("(\\r|\\n)", "")));
 						json.put("nextWeekly",  next.toString(formatterbis));
 						json.put("weekly", previous.toString(formatterbis));
 					}
@@ -168,7 +168,7 @@ public class alertsAdmin extends HttpServlet {
 			if(request.getParameter("on/off")!=null){									//If the user clicked on turn on/off button
 				for(int i = 0 ; i < lines.length ; i++){							
 					if(lines[i].startsWith("ALERTS")){									//search for the ALERTS line
-						if(lines[i].replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("o")).equals("on")){
+						if(lines[i].replace("\\", "").replaceAll("(\\r|\\n)", "").substring(lines[i].indexOf("o")).equals("on")){
 							launch=2;
 							linesBis += lines[i].substring(0, lines[i].indexOf("o"))+"off\n";	//If it was set to on, then set it to off
 						}else{
