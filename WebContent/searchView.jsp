@@ -1,3 +1,4 @@
+<%@page import="java.io.Console"%>
 <%@ page import="com.francelabs.datafari.utils.ScriptConfiguration" %>
 <%@ page import="com.francelabs.datafari.servlets.admin.StringsDatafariProperties" %>
 <%@page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
@@ -124,6 +125,20 @@
 		src="js/AjaxFranceLabs/modules/AutocompleteIllustrated.module.js"></script>		
 	<script type="text/javascript" src="js/main.js"></script>
 	<script type="text/javascript" src="js/desktop_design.js"></script>
+	
+	<!-- Enable the queryElevator module if the user has the "SearchAdministrator" role -->
+	<%
+		if (request.getUserPrincipal() != null) {
+			if (request.getUserPrincipal().getName() != null) {
+				if(request.isUserInRole("SearchAdministrator")) { 
+	%>
+					<script type="text/javascript"
+						src="js/AjaxFranceLabs/modules/QueryElevator.module.js"></script>
+	<%
+				}
+			} 
+		}
+	%>
 	
 
 

@@ -1,0 +1,10 @@
+.elevator-up {
+	float: right;
+	cursor: pointer;
+}
+
+.elevator-down {
+	float: right;
+	cursor: pointer;
+	transform: rotate(180deg);
+}

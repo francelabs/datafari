@@ -10,4 +10,9 @@ CSS for Datafari widgets
 @import "widgets/ontology-suggestion-widget.css";
 @import "widgets/tab-widget.css";
 
+/*
+CSS for Datafari modules
+*/
+@import "modules/query-elevator-module.css";
+
 body { overflow-y: scroll; }

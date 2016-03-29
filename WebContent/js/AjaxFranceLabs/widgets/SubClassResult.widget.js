@@ -9,6 +9,14 @@ AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
 						buildWidget : function () {
 							this.elm = $(this.elmSelector);
 							this._super();
+
+
+							// Initialize the queryElevator module if possible (if not, that means that the user is not an administrator and is not allowed to use it)
+							if (typeof AjaxFranceLabs.QueryElevatorModule === 'function') {
+								this.queryElevator = new AjaxFranceLabs.QueryElevatorModule();
+								this.queryElevator.setParentWidget(this);
+								this.manager.addModule(this.queryElevator);
+							}
 						},
 						
 						afterRequest : function() {
@@ -69,6 +77,11 @@ AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
 														elm.find('.doc:last .description').append('<div id="snippet">'+ description+ '</div>');
 														elm.find('.doc:last .description').append('<div id="urlMobile"><p class="address">');
 														elm.find('.doc:last .address').append('<span>' + AjaxFranceLabs.tinyUrl(decodeURIComponent(url)) + '</span>');
+														
+														// Add the elevator links if the user is allowed
+														if (typeof self.queryElevator !== 'undefined') {
+															self.queryElevator.addElevatorLinks(elm.find('.doc:last .res'), doc.id);
+														}
 												}
 												});
 								

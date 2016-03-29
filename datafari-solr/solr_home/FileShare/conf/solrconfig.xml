@@ -704,6 +704,7 @@
 		<arr name="last-components">
 			<str>spellcheck</str>
 			<str>capsulecomponent</str>
+			<str>elevator</str>
 		</arr>
 	<lst name="appends"><str name="fq">{!manifoldCFSecurity}</str></lst></requestHandler>
 
@@ -909,6 +910,12 @@
   <!-- ////////////////////////// -->
   <!-- Includes additional searchComponents -->
   &custom_search_components;
+  
+  	<searchComponent name="elevator" class="solr.QueryElevationComponent" >
+	  <!-- pick a fieldType to analyze queries -->
+	  <str name="queryFieldType">string</str>
+	  <str name="config-file">elevate.xml</str>
+	</searchComponent>
   
   <searchComponent class="solr.TermsComponent" name="terms"/>
 	 

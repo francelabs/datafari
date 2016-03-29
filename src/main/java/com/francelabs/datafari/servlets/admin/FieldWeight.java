@@ -208,12 +208,6 @@ public class FieldWeight extends HttpServlet {
 																					// "field"
 																					// Nodes
 
-					final DocumentBuilder customdb = dbFactory.newDocumentBuilder();
-					final Document customFieldsD = customdb.parse(customFields); // Parse
-																					// the
-																					// custom_fields.xml
-																					// file
-
 					try {
 						// Get the list of fields in the standard schema.xml
 						// file

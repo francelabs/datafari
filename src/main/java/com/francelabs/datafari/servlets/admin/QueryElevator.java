@@ -1,0 +1,202 @@
+/*******************************************************************************
+ * Copyright 2015 France Labs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
+package com.francelabs.datafari.servlets.admin;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
+import com.francelabs.datafari.constants.CodesReturned;
+import com.francelabs.datafari.jaxb.Elevate;
+import com.francelabs.datafari.service.search.SolrServers.Core;
+import com.francelabs.datafari.utils.ExecutionEnvironment;
+
+@WebServlet("/admin/queryElevator")
+public class QueryElevator extends HttpServlet {
+	private String env;
+	private final String server = Core.FILESHARE.toString();
+	private static final long serialVersionUID = 1L;
+	private final static Logger LOGGER = Logger.getLogger(QueryElevator.class.getName());
+	private File elevatorFile;
+
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public QueryElevator() {
+		super();
+		env = System.getenv("DATAFARI_HOME"); // Gets the directory of
+		// installation if in standard
+		// environment
+		if (env == null) { // If in development environment
+			env = ExecutionEnvironment.getDevExecutionEnvironment();
+		}
+		if (new File(env + "solr/solr_home/" + server + "/conf/elevate.xml").exists()) {
+			elevatorFile = new File(env + "/solr/solr_home/" + server + "/conf/elevate.xml");
+		}
+	}
+
+	/**
+	 * Try to find a query tag in the provided elevate, corresponding to the
+	 * provided query text
+	 *
+	 * @param elevate
+	 *            the elevate object (JAXB representation of the elevate.xml
+	 *            file)
+	 * @param queryText
+	 *            the query text to search
+	 * @return the {@link Elevate.Query} object if found in the elevate object,
+	 *         null otherwise
+	 */
+	private Elevate.Query findQuery(final Elevate elevate, final String queryText) {
+		for (final Elevate.Query q : elevate.getQuery()) {
+			if (q.getText().equals(queryText)) {
+				return q;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Try to find the doc associated to the docId in the provided query
+	 *
+	 * @param query
+	 *            {@link Elevate.Query} the query object
+	 * @param docId
+	 *            the docId to search
+	 * @return the {@link Elevate.Query.Doc} object if found, null otherwise
+	 */
+	private Elevate.Query.Doc findDoc(final Elevate.Query query, final String docId) {
+		for (final Elevate.Query.Doc doc : query.getDoc()) {
+			if (doc.getId().equals(docId)) {
+				return doc;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @throws IOException
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	@Override
+	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+
+	}
+
+	/**
+	 * @throws IOException
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	@Override
+	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("utf8");
+		response.setContentType("application/json");
+		final JSONObject jsonResponse = new JSONObject();
+		if (request.getParameter("item") != null && !request.getParameter("item").equals("")) {
+			try {
+				// Retrieve the query used for the search
+				final String queryReq = request.getParameter("query");
+
+				// Retrieve the docInfos, containing the docId and the action to
+				// perform (elevate or remove from elevate)
+				final String[] docInfos = request.getParameter("item").split("_");
+				final String docId = docInfos[1];
+				final String action = docInfos[0];
+
+				// Use JAXB on the elevate.xml file to create the corresponding
+				// Java object
+				final JAXBContext jxbc = JAXBContext.newInstance(Elevate.class);
+				final Unmarshaller unmarshal = jxbc.createUnmarshaller();
+				final Elevate elevate = (Elevate) unmarshal.unmarshal(elevatorFile);
+
+				if (action.equals("up")) { // Elevate the doc
+
+					// Retrieve the query entry if it already exists in the
+					// elevate.xml file
+					Elevate.Query query = findQuery(elevate, queryReq);
+
+					// If the entry does not exist, create it
+					if (query == null) {
+						query = new Elevate.Query();
+						query.setText(queryReq);
+						elevate.getQuery().add(query);
+					}
+
+					// Try to find an existing entry for the doc, if it does not
+					// exists then create it, otherwise there is nothing to do.
+					Elevate.Query.Doc doc = findDoc(query, docId);
+					if (doc == null) {
+						doc = new Elevate.Query.Doc();
+						doc.setId(docId);
+						query.getDoc().add(doc);
+					}
+
+					// Set the response code
+					jsonResponse.put("code", CodesReturned.ALLOK);
+
+				} else { // Remove the doc
+
+					// Remove the doc if it is found, otherwise there is nothing
+					// to do
+					final Elevate.Query q = findQuery(elevate, queryReq);
+					if (q != null) {
+						final Elevate.Query.Doc doc = findDoc(q, docId);
+						if (doc != null) {
+							q.getDoc().remove(doc);
+						}
+
+						// If the query entry does not contain any doc then
+						// remove it from the elevate.xml file
+						if (q.getDoc().isEmpty()) {
+							elevate.getQuery().remove(q);
+						}
+					}
+
+					// Set the response code
+					jsonResponse.put("code", CodesReturned.ALLOK);
+				}
+
+				// Re-transform the Java object into the elevate.xml file thanks
+				// to JAXB
+				final Marshaller marshal = jxbc.createMarshaller();
+				marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, new Boolean(true));
+				final OutputStream os = new FileOutputStream(elevatorFile);
+				marshal.marshal(elevate, os);
+
+			} catch (final Exception e) {
+				jsonResponse.put("code", CodesReturned.GENERALERROR);
+			}
+		}
+		final PrintWriter out = response.getWriter();
+		out.print(jsonResponse);
+	}
+}
