@@ -1,7 +1,7 @@
 $(document).ready(function() {
 	var SERVERALLOK = 0;
 	var SERVERGENERALERROR = -1;
-	var PROBLEMSERVERLDAPCONNECTION = -6;
+	var PROBLEMSERVERADCONNECTION = -6;
 	var listRoles = ["ConnectedSearchUser","SearchAdministrator","SearchExpert"];
 	
 	//Internationalize content
@@ -25,19 +25,18 @@ $(document).ready(function() {
 		if (data.code == 0 ){
 			if (data.isActivated=="true"){
 				var bool = true;
-				$("input").prop('disabled', false);
-				$("button").prop('disabled',false);
 				
 				$('.assign_role').show();
 				
 			}else{
 				var bool = false;
-				$("input").prop('disabled', true);
-				$("button").prop('disabled',true);
 				
 				$('.assign_role').hide();
 			}
 			input.prop('checked',bool);		
+		} else if (data.code == PROBLEMSERVERADCONNECTION){
+			$("#message").html('<i class="fa fa-times"></i> AD connection not working ! Please check your configuration')
+			.addClass("error").removeClass("success").show();
 		}else{
 			$("#message").html('<i class="fa fa-times"></i> An error occured, Please try again')
 				.addClass("error").removeClass("success").show();
@@ -110,7 +109,7 @@ $(document).ready(function() {
 				if (data!=undefined && data.code!= undefined){
 					if (data.code==0){
 						$("#message").html('<i class="fa fa-check"></i> Well Saved').addClass("success").removeClass("error").show();
-					}else if (data.code == PROBLEMSERVERLDAPCONNECTION){
+					}else if (data.code == PROBLEMSERVERADCONNECTION){
 						$("#message").html('<i class="fa fa-times"></i> '+data.statut).addClass("error").removeClass("success").show();
 					}else{
 						$("#message").html('<i class="fa fa-times"></i> An error occured, Please try again').addClass("error").removeClass("success").show();
