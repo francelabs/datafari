@@ -209,7 +209,7 @@
 				$.each(window.globalVariableUser,function(index,element){
 					 html+= '<tr class="root" data-user="'+index+'">'+
 							"<th>"+index+"</th>"+
-							'<th><input data-user="'+index+'" placeHolder="change password" class="password"/></th>'+
+							'<th><input data-user="'+index+'" placeHolder="change password" type="password" class="password"/></th>'+
 							'<th>';
 					for (var i = 0; i<element.length; i++){
 						html+=htmlRole(element[i],index);
