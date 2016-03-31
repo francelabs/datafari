@@ -226,6 +226,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						 <span id="searchEngineConfig-AdminUI" class="hidden-xs"></span>
 					</a>
 					<ul class="dropdown-menu">
+						<li id="QueryElevator"><a id="queryElevator-AdminUI" class="ajax-link" href="../ajax/queryElevator.html"></a></li>
 						<li id="PromoLink"><a id="promoLinks-AdminUI" class="ajax-link" href="../ajax/promoLinks.html"></a></li>
 						<li id="Synonyms" ><a id="synonyms-AdminUI" class="ajax-link" href="../ajax/Synonyms.html"></a></li>
 <%-- 						<li id="Stopwords"><a id="stopwords-AdminUI" class="ajax-link" href="../ajax/StopWords.html"></a></li> --%>
@@ -262,7 +263,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						 <span id="userManagement-AdminUI" class="hidden-xs"></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li id="ldapConfiguration"><a id="ldapConfig-AdminUI" class="ajax-link" href="../ajax/ldapConfiguration.html"></a></li>
+						<li id="ADConfiguration"><a id="ADConfig-AdminUI" class="ajax-link" href="../ajax/ldapConfiguration.html"></a></li>
 						<li id="modifyUser"><a id="modifyUsers-AdminUI" class="ajax-link" href="../ajax/modifyUsers.html"></a></li>
 						<li id="addUser"><a id="addUser-AdminUI" class="ajax-link" href="../ajax/addUser.html"></a></li>
 					</ul>

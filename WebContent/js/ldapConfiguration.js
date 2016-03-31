@@ -7,9 +7,9 @@ $(document).ready(function() {
 	//Internationalize content
 	$("#topbar1").text(window.i18n.msgStore['home']);
 	$("#topbar2").text(window.i18n.msgStore['adminUI-UserManagement']);
-	$("#topbar3").text(window.i18n.msgStore['adminUI-LdapConfig']);
+	$("#topbar3").text(window.i18n.msgStore['adminUI-ADConfig']);
 	$("#submit").text(window.i18n.msgStore['save']);
-	$("#title").text(window.i18n.msgStore['ldapConfig']);
+	$("#title").text(window.i18n.msgStore['ADConfig']);
 	$("#connectionURLLabel").html(window.i18n.msgStore['adURLLabel']);
 	$("#connectionNameLabel").html(window.i18n.msgStore['adUsernameLabel']);
 	$("#connectionPasswordLabel").html(window.i18n.msgStore['adPasswordLabel']);

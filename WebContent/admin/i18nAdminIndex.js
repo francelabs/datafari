@@ -33,6 +33,7 @@ $(function($) {
 	elm.find('#sizeLimitation-AdminUI').html(window.i18n.msgStore['adminUI-SizeLimitation']);
 	elm.find('#autocompleteConfig-AdminUI').html(window.i18n.msgStore['adminUI-AutocompleteConfig']);
 	elm.find('#searchEngineConfig-AdminUI').html(window.i18n.msgStore['adminUI-SearchEngineConfig']);
+	elm.find('#queryElevator-AdminUI').html(window.i18n.msgStore['adminUI-QueryElevator']);
 	elm.find('#promoLinks-AdminUI').html(window.i18n.msgStore['adminUI-PromoLinks']);
 	elm.find('#synonyms-AdminUI').html(window.i18n.msgStore['adminUI-Synonyms']);
 	// Commented in JSP page 
@@ -43,7 +44,7 @@ $(function($) {
 	elm.find('#likesFavoritesSearchEng-AdminUI').html(window.i18n.msgStore['adminUI-LikesAndFavorites']);
 	elm.find('#servers-AdminUI').html(window.i18n.msgStore['adminUI-Servers']);
 	elm.find('#userManagement-AdminUI').html(window.i18n.msgStore['adminUI-UserManagement']);
-	elm.find('#ldapConfig-AdminUI').html(window.i18n.msgStore['adminUI-LdapConfig']);
+	elm.find('#ADConfig-AdminUI').html(window.i18n.msgStore['adminUI-ADConfig']);
 	elm.find('#modifyUsers-AdminUI').html(window.i18n.msgStore['adminUI-ModifyUsers']);
 	elm.find('#addUser-AdminUI').html(window.i18n.msgStore['adminUI-AddUser']);
 

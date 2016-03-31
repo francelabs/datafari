@@ -63,6 +63,7 @@
 "dates":"Datas",
 "alertsList":"Lista dos alertas",
 "distinctsQuery":"consultas distintas",
+"selectQuery":"Selecione o Query",
 "selectLang":"Selecione o Idioma",
 "facettitle0":"ooo",
 "weekly":"Semanalmente",
@@ -173,7 +174,7 @@
 "userManagement":"Gerenciamento de Usuário",
 "modifyUser":"Modifique um Usuário",
 "save":"Salvar",
-"ldapConfig":"Configuração LDAP",
+"ADConfig":"Configuração AD",
 "adRoles":"Atribuir funções para Usuários do Active Directory",
 "adNote":" Aqui você pode atribuir funções para usuários do AD. Observer que para mostrar esta lista de usuários AD, você DEVE forncecer na configuração, um usuário que possui direitos suficientes.</br>A lista abaixo MOSTRA APENAS os usuários habilitados do Active Directory !",
 "adURLLabel":"URL de conexão",
@@ -216,6 +217,7 @@
 "adminUI-SizeLimitation":"Limitações de Tamanho",
 "adminUI-AutocompleteConfig":"Configuração de AutoCompletar",
 "adminUI-SearchEngineConfig":"Configuração do Buscador",
+"adminUI-QueryElevator" : "Query Elevator",
 "adminUI-PromoLinks":"Promolinks",
 "adminUI-Synonyms":"Sinônimos",
 "adminUI-Stopwords":"Palavras Vazias",
@@ -225,7 +227,7 @@
 "adminUI-LikesAndFavorites":"Likes e Favoritos",
 "adminUI-Servers":"Servidores",
 "adminUI-UserManagement":"Gerenciamento de Usuário",
-"adminUI-LdapConfig":"Configuração do LDAP",
+"adminUI-ADConfig":"Configuração do Active Directory",
 "adminUI-ModifyUsers":"Modificar Usuários",
 "adminUI-AddUser":"Adicionar Usuário"
 }
