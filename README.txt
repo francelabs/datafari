@@ -1,9 +1,9 @@
---------------------------- DATAFARI V. 2.1.3 ------------------------
+--------------------------- DATAFARI V. 2.2 ------------------------
 
 NOTE: For the major changes compared to DATAFARI V1.x, please check at the bottom of this page.
 
 Datafari is the perfect product for anyone who needs to search within its corporate big data, based on the most advanced open source technologies.
-Datafari 2.1.3 combines the Apache Solr, Cassandra and ManifoldCF products. It allows its users to search into file shares, cloud shares (dropbox, google drive), databases, but also emails and many more sources. 
+Datafari 2.2 combines the Apache Solr, Cassandra and ManifoldCF products. It allows its users to search into file shares, cloud shares (dropbox, google drive), databases, but also emails and many more sources. 
 
 Available as community and enterprise edition, Datafari is different from the competition : 
 - Its open source license is not aggressive, as it uses the Apache v2 license: you are free to do whatever you want with it,
@@ -15,7 +15,7 @@ Pre-Requirements:
 - Debian Environment 64 bits (a Docker image is available if you are on Windows environment)
 - Processor : 1GHZ and RAM : 2GB
 - Ports 8080 and 5432 are opened
-- Debian environment : requires curl, debconf, unzip, sudo
+- Debian environment : requires curl, debconf, unzip, sudo, libc6-dev
 
 How to install and start Datafari :
 
@@ -23,7 +23,7 @@ You can build the Debian installer with the ant script Datafari/debian7/build.xm
 
 1) Install Datafari :
 # dpkg -i datafari.deb
-2) Start Datafari : 
+2) Start Datafari with a non root user: 
 # cd /opt/datafari/bin
 # bash start-datafari.sh
 3) Stop Datafari :
