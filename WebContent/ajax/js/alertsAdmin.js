@@ -1,5 +1,5 @@
-doGet();
 	$(document).ready(function() {
+		doGet();
 		var icons = {
 			header : "ui-icon-circle-arrow-e",
 			activeHeader : "ui-icon-circle-arrow-s"
@@ -52,7 +52,7 @@ doGet();
 				$("#prevNext").empty();
 				if(data.toString().indexOf("Error code : ")!==-1){
 					$("#errorPrint").append("<label>"+data.toString()+"</label>");
-					document.getElementById("on/off").disabled = true;
+					document.getElementById("activated").disabled = true;
 					document.getElementById("paramReg").disabled = true;
 				}else{
 					$("#prevNext").append("<fieldset id=\"field1\" class=\"col-sm-12\">");
@@ -65,9 +65,9 @@ doGet();
 					$("#field2").append("<div class=\"form-group\"><label id=nextWeeklyLabel class=\"col-sm-5 control-label\">"+window.i18n.msgStore["weekly"]+"</label><input type=\"text\" class=\"col-sm-2\" id=\"nextWeekly\" style=\"min-width : 150px;\" disabled value="+"\""+data.nextWeekly+"\""+"></div>");
 					$("#field2").append("<div class=\"control-label\"><i class=\"fa fa-asterisk\" style=\"color : red\"></i><label class=\"control-label\">"+window.i18n.msgStore['takingAccount']+"</label></div>");
 					if (data.on === "on") //Set the button
-						document.getElementById("on/off").checked = true;
+						document.getElementById("activated").checked = true;
 					else 
-						document.getElementById("on/off").checked = false;
+						document.getElementById("activated").checked = false;
 					$("#prevNext").append("</fieldset>");
 					
 					$("#prevNext").append
@@ -91,16 +91,28 @@ doGet();
 		return Date.substring(0, 10)+"/  "+Date.substring(11, 16);
 	}
 	function onOff() {
-		var data = "on/off=" + document.getElementById("on/off").innerHTML
-		$.ajax({ //Ajax request to the doGet of the Alerts servlet
-			type : "POST",
-			url : "./../admin/alertsAdmin",
-			data : data,
-			//if received a response from the server
-			success : function(data, textStatus, jqXHR) {
-				doGet();
-			}
+		var activated;
+		if($("#activated").is(':checked')) {
+			activated = "on";
+		} else {
+			activated = "off";
+		}
+		//var data = "activated=" + document.getElementById("activated").innerHTML
+		$.post("./../admin/alertsAdmin",{
+			activated : activated
+		},function(data, textStatus, jqXHR){
+			doGet();
 		});
+		
+//		$.post({ //Ajax request to the doGet of the Alerts servlet
+//			type : "POST",
+//			url : "./../admin/alertsAdmin",
+//			activated : activated,
+//			//if received a response from the server
+//			success : function(data, textStatus, jqXHR) {
+//				doGet();
+//			}
+//		});
 	}
 	function parameters() {
 		mailConfPost();
@@ -122,7 +134,7 @@ doGet();
 			success : function(data, textStatus, jqXHR) {
 				if(data.toString().indexOf("Error code : ")!==-1){
 					$("#errorPrint").append("<label>"+data.toString()+"</label>");
-					document.getElementById("on/off").disabled = true;
+					document.getElementById("activated").disabled = true;
 					document.getElementById("paramReg").disabled = true;
 				}
 				document.getElementById("parameterSaved").innerHTML = window.i18n.msgStore["parameterSaved"];
@@ -158,7 +170,7 @@ doGet();
 				}else {
 					if(data.toString().indexOf("Error code : ")!==-1){
 						$("#errorPrint").append("<label>"+data.toString()+"</label>");
-						document.getElementById("on/off").disabled = true;
+						document.getElementById("activated").disabled = true;
 						document.getElementById("paramReg").disabled = true;
 					}else{
 						$("#mailForm").append("<fieldset id=\"fieldForm\" class=\"col-sm-12\">");
@@ -186,7 +198,7 @@ doGet();
 				success : function(data, textStatus, jqXHR) {
 					if(data.toString().indexOf("Error code : ")!==-1){
 						$("#errorPrint").append("<label>"+data.toString()+"</label>");
-						document.getElementById("on/off").disabled = true;
+						document.getElementById("activated").disabled = true;
 						document.getElementById("paramReg").disabled = true;
 					}
 				}
