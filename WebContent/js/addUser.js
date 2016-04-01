@@ -47,6 +47,10 @@ $(document).ready(function(){
 			$("#confirmPassword").hide();
 			$("#password").val('');
 			$("#confirmPassword").val('');
+			error["password"]={};
+			error["password"].isError = false;
+			error["confirmPassword"]={};
+			error["confirmPassword"].isError = false;
 		} else {
 			bLDAPUser = false;
 			$("#password").show();
@@ -110,9 +114,9 @@ $(document).ready(function(){
 					message = window.i18n.msgStore["SERVERGENERALERROR"];
 					break;
 			}
-			error[source]={};
-			error[source].isError=true;
-			error[source].message = message;
+			error["all"]={};
+			error["all"].isError = false;
+
 			if (hide){
 				$("form").hide();
 			}
@@ -136,6 +140,7 @@ $(document).ready(function(){
 						if (data.code == 0){
 							element.next().hide();
 							if (data.statut == "true"){
+								error["username"].isError = true;
 								element.next().show();
 								showError(USERALREADYINBASE,attribute);
 							}else{
@@ -148,6 +153,7 @@ $(document).ready(function(){
 							}
 							
 						}else{
+							error["username"].isError = true;
 							element.next().show();
 							showError(data.code,"username");
 						}
@@ -165,6 +171,7 @@ $(document).ready(function(){
 					}
 					var confirmPassword;
 					if ((confirmPassword = $('input[name="confirmPassword"]').val()) !="" && confirmPassword!=element.val()){
+						error["password"].isError = true;
 						$('input[name="confirmPassword"]').next().show();
 						showError(CONFIRMPASSWORDNOTCORRECT,"confirmPassword");
 					}else{
@@ -183,6 +190,7 @@ $(document).ready(function(){
 				if(element.val()!=""){
 					var passwordtmp;
 					if ( ( passwordtmp=$('input[name="password"]').val())!= element.val()){
+						error["confirmPassword"].isError = true;
 						element.next().show();
 						showError(CONFIRMPASSWORDNOTCORRECT,"confirmPassword");
 					}else{
@@ -207,6 +215,7 @@ $(document).ready(function(){
 	$('form').submit(function(e){
 		e.preventDefault();
 		if (username==null || username=="" || (password==null && !bLDAPUser) || (password=="" && !bLDAPUser) || roles==null || roles.length==0){
+			error["all"].isError = true;
 			showError(FIELDNOTFILLED,"all");
 			return false;
 		}

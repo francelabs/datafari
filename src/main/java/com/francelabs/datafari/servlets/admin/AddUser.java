@@ -52,19 +52,8 @@ public class AddUser extends HttpServlet {
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		try {
-			if (request.getParameter(UserDataService.USERNAMECOLUMN) != null && request.getParameter(UserDataService.PASSWORDCOLUMN) != null
-					&& request.getParameter(UserDataService.ROLECOLUMN + "[]") != null) {
-				final User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(),
-						request.getParameter(UserDataService.PASSWORDCOLUMN).toString());
-				final int code = user.signup(Arrays.asList(request.getParameterValues(UserDataService.ROLECOLUMN + "[]")));
-				if (code == CodesReturned.ALLOK) {
-					jsonResponse.put("code", CodesReturned.ALLOK).put("statut", "User successfully added");
-				} else if (code == CodesReturned.USERALREADYINBASE) {
-					jsonResponse.put("code", CodesReturned.USERALREADYINBASE).put("statut", "User already Signed up");
-				} else {
-					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE).put("statut", "Problem with database");
-				}
-			} else if (request.getParameter(UserDataService.USERNAMECOLUMN) != null
+
+			if (request.getParameter(UserDataService.USERNAMECOLUMN) != null
 					&& request.getParameter(UserDataService.LDAPCOLUMN).toString().equals("true")) {
 
 				boolean userExists = false;
@@ -113,6 +102,18 @@ public class AddUser extends HttpServlet {
 					} catch (final JSONException e1) {
 						logger.error(e);
 					}
+				}
+			} else if (request.getParameter(UserDataService.USERNAMECOLUMN) != null && request.getParameter(UserDataService.PASSWORDCOLUMN) != null
+					&& request.getParameter(UserDataService.ROLECOLUMN + "[]") != null) {
+				final User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(),
+						request.getParameter(UserDataService.PASSWORDCOLUMN).toString());
+				final int code = user.signup(Arrays.asList(request.getParameterValues(UserDataService.ROLECOLUMN + "[]")));
+				if (code == CodesReturned.ALLOK) {
+					jsonResponse.put("code", CodesReturned.ALLOK).put("statut", "User successfully added");
+				} else if (code == CodesReturned.USERALREADYINBASE) {
+					jsonResponse.put("code", CodesReturned.USERALREADYINBASE).put("statut", "User already Signed up");
+				} else {
+					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE).put("statut", "Problem with database");
 				}
 			} else {
 				jsonResponse.put("code", CodesReturned.PROBLEMQUERY).put("statut", "Problem with query");
