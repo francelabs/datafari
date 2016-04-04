@@ -51,6 +51,12 @@ public class BackupManifoldCFConnectorsScript {
 			File repositoryConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
 
 			File authorityConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
+			
+			File mappingConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS);
+			
+			File transformationConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS);
+			
+			File authorityGroupsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
 
 			File jobsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.JOBS);
 
@@ -69,6 +75,18 @@ public class BackupManifoldCFConnectorsScript {
 				prepareDirectory(authorityConnectionsDir);
 				saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS),
 						authorityConnectionsDir);
+				
+				prepareDirectory(mappingConnectionsDir);
+				saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS),
+						mappingConnectionsDir);
+				
+				prepareDirectory(transformationConnectionsDir);
+				saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS),
+						transformationConnectionsDir);
+				
+				prepareDirectory(authorityGroupsDir);
+				saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.AUTHORITYGROUPS),
+						authorityGroupsDir);
 
 				prepareDirectory(jobsDir);
 				saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.JOBS), jobsDir);
@@ -82,11 +100,17 @@ public class BackupManifoldCFConnectorsScript {
 				ManifoldAPI.cleanAll();
 
 				restoreAllConnections(outputConnectionsDir, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
-
-				restoreAllConnections(repositoryConnectionsDir, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
-
+				
+				restoreAllConnections(transformationConnectionsDir, ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS);
+				
+				restoreAllConnections(authorityGroupsDir, ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
+				
 				restoreAllConnections(authorityConnectionsDir, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
 
+				restoreAllConnections(repositoryConnectionsDir, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
+				
+				restoreAllConnections(mappingConnectionsDir, ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS);
+				
 				restoreAllConnections(jobsDir, ManifoldAPI.COMMANDS.JOBS);
 
 				LOGGER.info("Connectors Restored");
@@ -150,10 +174,16 @@ public class BackupManifoldCFConnectorsScript {
 	public static void doSave(String backupDirectory) throws Exception {
 
 		File outputConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
-
+		
+		File authorityGroupsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
+		
 		File repositoryConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
 
 		File authorityConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
+		
+		File mappingConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS);
+		
+		File transformationConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS);
 
 		File jobsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.JOBS);
 
@@ -168,10 +198,22 @@ public class BackupManifoldCFConnectorsScript {
 			prepareDirectory(repositoryConnectionsDir);
 			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS),
 					repositoryConnectionsDir);
+			
+			prepareDirectory(authorityGroupsDir);
+			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.AUTHORITYGROUPS),
+					authorityGroupsDir);
 
 			prepareDirectory(authorityConnectionsDir);
 			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS),
 					authorityConnectionsDir);
+			
+			prepareDirectory(mappingConnectionsDir);
+			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS),
+					mappingConnectionsDir);
+			
+			prepareDirectory(transformationConnectionsDir);
+			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS),
+					transformationConnectionsDir);
 
 			prepareDirectory(jobsDir);
 			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.JOBS), jobsDir);
@@ -190,10 +232,16 @@ public class BackupManifoldCFConnectorsScript {
 	public static void doRestore(String backupDirectory) throws Exception {
 
 		File outputConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
+		
+		File authorityGroupsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
+		
+		File transformationConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS);
+		
+		File mappingConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS);
+		
+		File authorityConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
 
 		File repositoryConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
-
-		File authorityConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
 
 		File jobsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.JOBS);
 
@@ -203,11 +251,17 @@ public class BackupManifoldCFConnectorsScript {
 			ManifoldAPI.cleanAll();
 
 			restoreAllConnections(outputConnectionsDir, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
+			
+			restoreAllConnections(authorityGroupsDir, ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
+			
+			restoreAllConnections(authorityConnectionsDir, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
+			
+			restoreAllConnections(mappingConnectionsDir, ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS);
+			
+			restoreAllConnections(transformationConnectionsDir, ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS);
 
 			restoreAllConnections(repositoryConnectionsDir, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
-
-			restoreAllConnections(authorityConnectionsDir, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
-
+			
 			restoreAllConnections(jobsDir, ManifoldAPI.COMMANDS.JOBS);
 
 			LOGGER.info("Connectors Restored");
