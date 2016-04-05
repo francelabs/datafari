@@ -177,7 +177,7 @@
 						$("#fieldForm").append("<legend id=\"mailLegend\">"+window.i18n.msgStore["mailConf"]+"</legend><div class=\"form-group\"><label id=SMPTLabel class=\"col-sm-5 control-label\">SMTP : </label><input type=\"text\" class=\"col-sm-2\" id=\"SMTP\"  style=\"min-width : 150px;\" value="+"\""+data.smtp+"\""+"></div>");
 						$("#fieldForm").append("<div class=\"form-group\"><label id=AddressLabel class=\"col-sm-5 control-label\">"+window.i18n.msgStore["address"]+"</label><input type=\"text\" class=\"col-sm-2\" id=\"Address\" style=\"min-width : 150px;\"  value="+"\""+data.from+"\""+"></div>");
 						$("#fieldForm").append("<div class=\"form-group\"><label id=UserLabel class=\"col-sm-5 control-label\">"+window.i18n.msgStore["user"]+"</label><input type=\"text\" class=\"col-sm-2\" id=\"UserName\" style=\"min-width : 150px;\"  value="+"\""+data.user+"\""+"></div>");
-						$("#fieldForm").append("<div class=\"form-group\"><label id=PassLabel class=\"col-sm-5 control-label\">"+window.i18n.msgStore["pass"]+"</label><input type=\"text\" class=\"col-sm-2\" id=\"Pass\" style=\"min-width : 150px;\"  value="+"\""+data.pass+"\""+"></div>");
+						$("#fieldForm").append("<div class=\"form-group\"><label id=PassLabel class=\"col-sm-5 control-label\">"+window.i18n.msgStore["pass"]+"</label><input type=\"password\" class=\"col-sm-2\" id=\"Pass\" style=\"min-width : 150px;\"  value="+"\""+data.pass+"\""+"></div>");
 						$("#mailForm").append("</fieldset>");
 					}
 				}

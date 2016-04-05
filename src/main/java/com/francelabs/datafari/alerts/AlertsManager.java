@@ -16,7 +16,7 @@
 package com.francelabs.datafari.alerts;
 
 /**
- * 
+ *
  * This class is used to get the parameters for the alerts and then launch them.
  * It is called at the start of Datafari and when you turn off or on the alerts in the Alerts Administration UI
  * It is a singleton
@@ -35,6 +35,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -43,40 +44,35 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrClient;
+import org.joda.time.DateTime;
+import org.joda.time.Minutes;
+
 import com.francelabs.datafari.service.db.AlertDataService;
 import com.francelabs.datafari.service.search.SolrServers;
 import com.francelabs.datafari.service.search.SolrServers.Core;
 import com.francelabs.datafari.utils.ScriptConfiguration;
-
-import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.SolrClient;
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
-import org.joda.time.Interval;
-
 
 public class AlertsManager {
 	private static AlertsManager INSTANCE = new AlertsManager();
 
 	private boolean onOff = false;
 	private DateTime delayH, delayD, delayW;
-	private DateFormat df = new SimpleDateFormat("dd/MM/yyyy/HH:mm");
-	private AlertFrequencyFirstExecution Hourly = new AlertFrequencyFirstExecution(
-			AlertFrequencyFirstExecution.AlertFrequency.HOURLY, false);
-	private AlertFrequencyFirstExecution Daily = new AlertFrequencyFirstExecution(
-			AlertFrequencyFirstExecution.AlertFrequency.DAILY, false);
-	private AlertFrequencyFirstExecution Weekly = new AlertFrequencyFirstExecution(
-			AlertFrequencyFirstExecution.AlertFrequency.WEEKLY, false);
+	private final DateFormat df = new SimpleDateFormat("dd/MM/yyyy/HH:mm");
+	private final AlertFrequencyFirstExecution Hourly = new AlertFrequencyFirstExecution(AlertFrequencyFirstExecution.AlertFrequency.HOURLY, false);
+	private final AlertFrequencyFirstExecution Daily = new AlertFrequencyFirstExecution(AlertFrequencyFirstExecution.AlertFrequency.DAILY, false);
+	private final AlertFrequencyFirstExecution Weekly = new AlertFrequencyFirstExecution(AlertFrequencyFirstExecution.AlertFrequency.WEEKLY, false);
 
-	private String HourlyHour = "", DailyHour = "", WeeklyHour = "",
-			filePath = "";
-	private List<AlertFrequencyFirstExecution> HDW = new ArrayList<AlertFrequencyFirstExecution>();
+	private String HourlyHour = "";
+	private String DailyHour = "";
+	private String WeeklyHour = "";
+	private final List<AlertFrequencyFirstExecution> HDW = new ArrayList<AlertFrequencyFirstExecution>();
 	private ScheduledFuture<?> alertHandleH, alertHandleD, alertHandleW;
 	private ScheduledExecutorService scheduler;
 	private Mail mail;
 	private Alert alert;
-	private final static Logger LOGGER = Logger.getLogger(AlertsManager.class
-			.getName());
+	private final static Logger LOGGER = Logger.getLogger(AlertsManager.class.getName());
 
 	private AlertsManager() { // Booleans to know if there has been a previous
 								// execution for a given frequency
@@ -92,8 +88,8 @@ public class AlertsManager {
 	/**
 	 * Gets the path of datafari.properties file Reads the file to fill the
 	 * variables if the ALERTS line was set to true, then it establishes the
-	 * connection with the  database
-	 * 
+	 * connection with the database
+	 *
 	 * @throws ParseException
 	 */
 	public boolean getParameter() throws IOException, ParseException {
@@ -104,60 +100,48 @@ public class AlertsManager {
 
 			// Gets the delay for the hourly alerts
 			try {
-				delayH = new DateTime(df.parse(ScriptConfiguration
-						.getProperty("HOURLYDELAY").replace("\\", "")));
-			} catch (ParseException e) {
-				LOGGER.warn(
-						"Error parsing the Hourly Date, default value will be used, AlertsManager getParameter()",
-						e);
+				delayH = new DateTime(df.parse(ScriptConfiguration.getProperty("HOURLYDELAY").replace("\\", "")));
+			} catch (final ParseException e) {
+				LOGGER.warn("Error parsing the Hourly Date, default value will be used, AlertsManager getParameter()", e);
 				delayH = new DateTime(df.parse("01/01/0001/00:00"));
 			}
 
 			// Gets the delay for the daily alerts
 			try {
-				delayD = new DateTime(df.parse(ScriptConfiguration
-						.getProperty("DAILYDELAY").replace("\\", "")));
-			} catch (ParseException e) {
-				LOGGER.warn(
-						"Error parsing the Daily Date, default value will be used, AlertsManager getParameter()",
-						e);
+				delayD = new DateTime(df.parse(ScriptConfiguration.getProperty("DAILYDELAY").replace("\\", "")));
+			} catch (final ParseException e) {
+				LOGGER.warn("Error parsing the Daily Date, default value will be used, AlertsManager getParameter()", e);
 				delayD = new DateTime(df.parse("01/01/0001/00:00"));
 			}
 
 			// Gets the delay for the weekly alerts
 			try {
-				delayW = new DateTime(df.parse(ScriptConfiguration
-						.getProperty("WEEKLYDELAY").replace("\\", "")));
-			} catch (ParseException e) {
-				LOGGER.warn(
-						"Error parsing the Weekly Date, default value will be used, AlertsManager getParameter()",
-						e);
+				delayW = new DateTime(df.parse(ScriptConfiguration.getProperty("WEEKLYDELAY").replace("\\", "")));
+			} catch (final ParseException e) {
+				LOGGER.warn("Error parsing the Weekly Date, default value will be used, AlertsManager getParameter()", e);
 				delayW = new DateTime(df.parse("01/01/0001/00:00"));
 			}
 
-
 			// Checks if there has been a previous execution for alerts
-			String hourlyStr = ScriptConfiguration.getProperty("Hourly").replace("\\", "");
+			final String hourlyStr = ScriptConfiguration.getProperty("Hourly").replace("\\", "");
 			if (hourlyStr != null) {
 				Hourly.setHasBeenExecuted(true);
 				HourlyHour = hourlyStr;
 			}
-			String dailyStr = ScriptConfiguration.getProperty("Daily").replace("\\", "");
+			final String dailyStr = ScriptConfiguration.getProperty("Daily").replace("\\", "");
 			if (dailyStr != null) {
 				Daily.setHasBeenExecuted(true);
 				DailyHour = dailyStr;
 			}
-			String weeklyStr = ScriptConfiguration.getProperty("Weekly").replace("\\", "");
+			final String weeklyStr = ScriptConfiguration.getProperty("Weekly").replace("\\", "");
 			if (weeklyStr != null) {
 				Weekly.setHasBeenExecuted(true);
 				WeeklyHour = weeklyStr;
 			}
 			LOGGER.info("Alert config file successfully read");
 			return onOff;
-		} catch (Exception e) {
-			LOGGER.error(
-					"Unindentified error in the AlertsManager getParameter(). Error 69516 ",
-					e);
+		} catch (final Exception e) {
+			LOGGER.error("Unindentified error in the AlertsManager getParameter(). Error 69516 ", e);
 			return false;
 		}
 	}
@@ -165,7 +149,7 @@ public class AlertsManager {
 	/**
 	 * Creates the runnables Calculates the delays if necessary Schedules the
 	 * runnables
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	private void startScheduled() throws IOException {
@@ -173,65 +157,54 @@ public class AlertsManager {
 			scheduler = Executors.newScheduledThreadPool(1);
 			final Runnable alertHourly = new Runnable() { // Runnable that runs
 															// every hour
+				@Override
 				public void run() {
 					try {
 						alerts("Hourly");
-					} catch (Exception e) {
-						LOGGER.error(
-								"Unindentified error while running the hourly alerts in startScheduled(), AlertsManager. Error 69518",
-								e);
+					} catch (final Exception e) {
+						LOGGER.error("Unindentified error while running the hourly alerts in startScheduled(), AlertsManager. Error 69518", e);
 					}
 				}
 			};
 			final Runnable alertDaily = new Runnable() { // Runnable that runs
 															// every Day
+				@Override
 				public void run() {
 					try {
 						alerts("Daily");
-					} catch (Exception e) {
-						LOGGER.error(
-								"Unindentified error while running the daily alerts in startScheduled(), AlertsManager. Error 69519",
-								e);
+					} catch (final Exception e) {
+						LOGGER.error("Unindentified error while running the daily alerts in startScheduled(), AlertsManager. Error 69519", e);
 					}
 				}
 			};
 			final Runnable alertWeekly = new Runnable() { // Runnable that runs
 															// every Week
+				@Override
 				public void run() {
 					try {
 						alerts("Weekly");
-					} catch (Exception e) {
-						LOGGER.error(
-								"Unindentified error while running the weekly alerts in startScheduled(), AlertsManager. Error 69520",
-								e);
+					} catch (final Exception e) {
+						LOGGER.error("Unindentified error while running the weekly alerts in startScheduled(), AlertsManager. Error 69520", e);
 					}
 				}
 			};
 			mail = new Mail();
 
-			DateTime currentDate = new DateTime();
-			alertHandleH = launch(Hourly, delayH, alertHandleH, currentDate,
-					"Hourly", HourlyHour, alertHourly, 60); // Launches the
-															// alerts according
-															// to their previous
-															// execution and the
-															// date typed by the
-															// user
-			alertHandleD = launch(Daily, delayD, alertHandleD, currentDate,
-					"Daily", DailyHour, alertDaily, 1440);
-			alertHandleW = launch(Weekly, delayW, alertHandleW, currentDate,
-					"Weekly", WeeklyHour, alertWeekly, 10080);
-		} catch (Exception e) {
-			LOGGER.error(
-					"Unindentified error in the AlertsManager startScheduled(). Error 69517",
-					e);
+			final DateTime currentDate = new DateTime();
+			// Launches the alerts according to their previous execution and the
+			// date typed by the user
+			alertHandleH = launch(Hourly, delayH, alertHandleH, currentDate, "Hourly", HourlyHour, alertHourly, 60);
+			alertHandleD = launch(Daily, delayD, alertHandleD, currentDate, "Daily", DailyHour, alertDaily, 1440);
+			alertHandleW = launch(Weekly, delayW, alertHandleW, currentDate, "Weekly", WeeklyHour, alertWeekly, 10080);
+		} catch (final Exception e) {
+			LOGGER.error("Unindentified error in the AlertsManager startScheduled(). Error 69517", e);
 			return;
 		}
 	}
 
 	/**
 	 * Launches the alerts
-	 * 
+	 *
 	 * @param custom
 	 *            the customBool to know if alerts of this frequency have been
 	 *            launched
@@ -250,177 +223,47 @@ public class AlertsManager {
 	 * @param loop
 	 *            The number of minutes between each execution
 	 */
-	public ScheduledFuture<?> launch(AlertFrequencyFirstExecution custom, DateTime delay,
-			ScheduledFuture<?> Handle, DateTime current, String frequency,
-			String Hour, Runnable run, long loop) {
+	public ScheduledFuture<?> launch(final AlertFrequencyFirstExecution custom, final DateTime delay, ScheduledFuture<?> Handle,
+			final DateTime current, final String frequency, final String Hour, final Runnable run, final long loop) {
 		try {
-			if ((custom.hasBeenExecuted()) && (delay.plusMinutes(5).isBefore(current))) // If
-																				// there
-																				// has
-																				// been
-																				// a
-																				// previous
-																				// execution
-																				// and
-																				// the
-																				// date
-																				// typed
-																				// in
-																				// the
-																				// UI
-																				// was
-																				// more
-																				// than
-																				// 5
-																				// minutes
-																				// before
-																				// the
-																				// current
-																				// date
-				Handle = scheduler.scheduleAtFixedRate(run,
-						calculateDelays(frequency, loop, Hour), loop,
-						TimeUnit.MINUTES); // Launches alerts() every hour with
-											// the "Hourly" parameter and as an
-											// initial delay, the difference
-											// calculated previously
-			else if (custom.hasBeenExecuted()
-					&& (delay.minusMinutes(10).isAfter(current)))
-				Handle = scheduler.scheduleAtFixedRate(run,
-						calculateDelays(frequency, delay), loop,
-						TimeUnit.MINUTES);// Launches alerts() every hour with
-											// the "Hourly" parameter and as an
-											// initial delay, the difference
-											// between the current date and the
-											// date set in the UI
-			else
-				Handle = scheduler.scheduleAtFixedRate(run, 0, loop,
-						TimeUnit.MINUTES); // Launches alerts() every hour with
-											// the "Hourly" parameter instantly
-			return Handle;
-		} catch (Exception e) {
-			LOGGER.error(
-					"Unindentified error while calculating the delay to launch the "
-							+ frequency
-							+ " alerts in the AlertsManager launch(). Error 69038",
-					e);
+
+			return Handle = scheduler.scheduleAtFixedRate(run, calculateDelays(frequency, delay), loop, TimeUnit.MINUTES);
+
+		} catch (final Exception e) {
+			LOGGER.error("Unindentified error while calculating the delay to launch the " + frequency
+					+ " alerts in the AlertsManager launch(). Error 69038", e);
 			return null;
-		}
-	}
-
-	/**
-	 * Calculates the initial delays according to the frequency, and the
-	 * previous execution Only called when one of the hours typed in the UI (or
-	 * more) was prior to the current date or invalid and if there has been a
-	 * previous execution
-	 * 
-	 * @param frequency
-	 * @param minutes
-	 *            the number of minutes corresponding to an hour, a day, a week,
-	 *            according to the frequency
-	 * @param hour
-	 *            the last execution of the alert according to the frequency
-	 * @return the initial delay
-	 */
-	private long calculateDelays(String frequency, long minutes, String hour) {
-		try {
-			long diff = 0;
-			try {
-				DateTime dt1 = new DateTime(df.parse(hour)); // Parses the
-																// previous
-																// execution
-																// date
-				String now = df.format(new Date());
-				DateTime dt2 = new DateTime(df.parse(now)); // Gets the current
-															// date
-				Interval interval = new Interval(dt1, dt2); // Gets the interval
-				Duration duration = interval.toDuration();
-				diff = duration.getStandardMinutes();
-			} catch (ParseException e) {
-				LOGGER.error(
-						"Error while parsing the dates to schedule the "
-								+ frequency
-								+ " alerts in calculateDelays(), AlertsManager. Error 69039",
-						e);
-				throw new RuntimeException();
-			}
-			diff = minutes - diff; // Calculates the number of minutes that has
-									// still to go before launch
-			if (diff < 0) { // if it's under 0 the it is set to 0
-				diff = 0;
-			}
-			return diff;
-		} catch (Exception e) {
-			LOGGER.error(
-					"Error while calculating the delay to launch the "
-							+ frequency
-							+ " alerts in the AlertsManager calculateDelays(). Error 69518",
-					e);
-			return 0;
-		}
-	}
-
-	/**
-	 * Calculates the initial delay according to a given time and the current
-	 * date Called when dates are regular and it must also not be the first time
-	 * that the alerts (of a specific frequency) are runned.
-	 * 
-	 * @param frequency
-	 * @param Hour
-	 *            the parameter typed in the UI
-	 * @return the initial delay
-	 */
-	private long calculateDelays(String frequency, DateTime hour) {
-		try {
-			try {
-				long diff = 0;
-				String now = df.format(new Date());
-				DateTime dt2 = new DateTime(df.parse(now)); // Gets the current
-															// date
-				Interval interval = new Interval(dt2, hour); // Gets the
-																// interval
-				Duration duration = interval.toDuration();
-				diff = duration.getStandardMinutes();
-				return diff;
-			} catch (ParseException e) {
-				LOGGER.error(
-						"Error while parsing the dates to schedule the "
-								+ frequency
-								+ " alerts in calculateDelays(), AlertsManager. Error 69040",
-						e);
-				throw new RuntimeException();
-			}
-		} catch (Exception e) {
-			LOGGER.error(
-					"Error while calculating the delay to launch the "
-							+ frequency
-							+ " alerts in the AlertsManager calculateDelays(). Error 69519",
-					e);
-			return 0;
 		}
 	}
 
 	/**
 	 * Updates the datafari.properties file Run the alerts with the correct
 	 * frequency
-	 * 
+	 *
 	 * @param frequency
 	 *            : Hourly/Daily/Weekly
 	 */
-	private void alerts(String frequency) {
+	private void alerts(final String frequency) {
 		try {
-			for (AlertFrequencyFirstExecution c : HDW) { // Checks if alerts with the correct
-										// frequency have already run at least
-										// once
-				if (c.getFrequency().equals(frequency) && c.hasBeenExecuted()) {
+			for (final AlertFrequencyFirstExecution c : HDW) { // Checks if
+																// alerts with
+																// the correct
+				// frequency have already run at least
+				// once
+				if (c.getFrequency().toString().toLowerCase().equals(frequency.toLowerCase()) && c.hasBeenExecuted()) {
 					ScriptConfiguration.setProperty(frequency, df.format(new Date()).toString());
 				}
 			}
-			List<Properties> alertList = AlertDataService.getInstance().getAlerts(); // Get all the
-															// elements in the
+			final List<Properties> alertList = AlertDataService.getInstance().getAlerts(); // Get
+																							// all
+																							// the
+			// elements in the
+			// collection
+			final Core[] core = Core.values();
+			for (final Properties alertProp : alertList) { // Get the next
+															// Object in the
 															// collection
-			Core[] core = Core.values();
-			for (Properties alertProp : alertList) { // Get the next Object in the collection
-				if (frequency.equals(alertProp.get("frequency").toString())) {
+				if (frequency.toLowerCase().equals(alertProp.get("frequency").toString().toLowerCase())) {
 					SolrClient solr = null;
 					for (int i = 0; i < core.length; i++) { // Get the right
 															// core by comparing
@@ -428,30 +271,24 @@ public class AlertsManager {
 															// the Enum Type
 															// Core to the one
 															// in the database
-						if (alertProp.get("core").toString().toUpperCase()
-								.equals("" + core[i].toString().toUpperCase())) {
+						if (alertProp.get("core").toString().toUpperCase().equals("" + core[i].toString().toUpperCase())) {
 							try {
 								solr = SolrServers.getSolrServer(core[i]);
-							} catch (IOException e) {
-								LOGGER.error(
-										"Error while getting the Solr core in alerts(), AlertsManager. Error 69042 ",
-										e);
+							} catch (final IOException e) {
+								LOGGER.error("Error while getting the Solr core in alerts(), AlertsManager. Error 69042 ", e);
 								return;
 							}
 						}
-					}// Creates an alert with the attributes of the element
+					} // Creates an alert with the attributes of the element
 						// found in the database.
-					alert = new Alert(alertProp.get("subject").toString(), alertProp
-							.get("mail").toString(), solr, alertProp.get("keyword")
-							.toString(), alertProp.get("frequency").toString(), mail, alertProp
-							.get("user").toString());
+					alert = new Alert(alertProp.get("subject").toString(), alertProp.get("mail").toString(), solr,
+							alertProp.get("keyword").toString(), alertProp.get("frequency").toString(), mail, alertProp.get("user").toString());
 					alert.run(); // Makes the request and send the mail if they
 									// are some results
 				}
 			}
-		} catch (Exception e) {
-			LOGGER.error("Unindentified error while running  the " + frequency
-					+ " alerts in the AlertsManager alerts(). Error 69520", e);
+		} catch (final Exception e) {
+			LOGGER.error("Unindentified error while running  the " + frequency + " alerts in the AlertsManager alerts(). Error 69520", e);
 			return;
 		}
 	}
@@ -459,7 +296,7 @@ public class AlertsManager {
 	/**
 	 * Gets the parameters Establishes the connection to the database Starts the
 	 * alerts
-	 * 
+	 *
 	 * @throws IOException
 	 * @throws ParseException
 	 */
@@ -470,15 +307,11 @@ public class AlertsManager {
 				LOGGER.info("Alert scheduler started");
 
 			}
-		} catch (IOException e) {
-			LOGGER.error(
-					"Error while turning on the alerts during instantiation, AlertsManager turnOn(). Error 69043",
-					e);
+		} catch (final IOException e) {
+			LOGGER.error("Error while turning on the alerts during instantiation, AlertsManager turnOn(). Error 69043", e);
 			throw e;
-		} catch (Exception e) {
-			LOGGER.error(
-					"Error while turning on the alerts during instantiation, AlertsManager turnOn(). Error 69044",
-					e);
+		} catch (final Exception e) {
+			LOGGER.error("Error while turning on the alerts during instantiation, AlertsManager turnOn(). Error 69044", e);
 		}
 	}
 
@@ -496,14 +329,110 @@ public class AlertsManager {
 			Daily.setHasBeenExecuted(false);
 			Weekly.setHasBeenExecuted(false);
 		}
-		filePath = null;
 		mail = null;
 		LOGGER.info("Alert scheduler shutdown");
 	}
 
-	static String readFile(String path, Charset encoding) // Read the file
+	static String readFile(final String path, final Charset encoding) // Read
+																		// the
+																		// file
 			throws IOException {
-		byte[] encoded = Files.readAllBytes(Paths.get(path));
+		final byte[] encoded = Files.readAllBytes(Paths.get(path));
 		return new String(encoded, encoding);
+	}
+
+	/**
+	 * Calculate the difference in minutes between the current date time and the
+	 * provided scheduled one, according to the frequency
+	 *
+	 * @param frequency
+	 *            the frequency of the scheduled date time
+	 * @param scheduledDate
+	 *            the initial scheduled date time that the user has typed in the
+	 *            admin UI
+	 * @return the difference in minutes between the current date time and the
+	 *         next scheduled one
+	 */
+	private long calculateDelays(final String frequency, final DateTime scheduledDate) {
+		long diff = 0L;
+		final Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		final DateTime currentDateTime = new DateTime(cal.getTime());
+		DateTime scheduledDateTimeUpdate;
+
+		switch (frequency.toLowerCase()) {
+		case "hourly":
+			// Create what would be the current scheduled date
+			cal.setTime(new Date());
+			cal.set(Calendar.MINUTE, scheduledDate.getMinuteOfHour());
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			scheduledDateTimeUpdate = new DateTime(cal.getTime());
+
+			// Compare the current date with the current scheduled one, if the
+			// current date is earlier than the scheduled one, simply calculate
+			// the difference in minutes, otherwise create the next scheduled
+			// date and calculate the difference
+			if (!currentDateTime.isBefore(scheduledDateTimeUpdate)) {
+				cal.add(Calendar.HOUR_OF_DAY, 1);
+				scheduledDateTimeUpdate = new DateTime(cal.getTime());
+			}
+			diff = Minutes.minutesBetween(currentDateTime, scheduledDateTimeUpdate).getMinutes();
+			break;
+
+		case "daily":
+			// Create what would be the current scheduled date
+			cal.setTime(new Date());
+			cal.set(Calendar.HOUR_OF_DAY, scheduledDate.getHourOfDay());
+			cal.set(Calendar.MINUTE, scheduledDate.getMinuteOfHour());
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			scheduledDateTimeUpdate = new DateTime(cal.getTime());
+
+			// Compare the current date with the current scheduled one, if the
+			// current date is earlier than the scheduled one, simply calculate
+			// the difference in minutes, otherwise create the next scheduled
+			// date and calculate the difference
+			if (!currentDateTime.isBefore(scheduledDateTimeUpdate)) {
+				cal.add(Calendar.DAY_OF_YEAR, 1);
+				scheduledDateTimeUpdate = new DateTime(cal.getTime());
+			}
+			diff = Minutes.minutesBetween(currentDateTime, scheduledDateTimeUpdate).getMinutes();
+			break;
+
+		case "weekly":
+			// Create what would be the current scheduled date
+			cal.setTime(new Date());
+			cal.set(Calendar.DAY_OF_WEEK, scheduledDate.getDayOfWeek() + 1); // +1
+																				// =
+																				// diff
+																				// between
+																				// Joda
+																				// and
+																				// Calendar
+			cal.set(Calendar.HOUR_OF_DAY, scheduledDate.getHourOfDay());
+			cal.set(Calendar.MINUTE, scheduledDate.getMinuteOfHour());
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			scheduledDateTimeUpdate = new DateTime(cal.getTime());
+
+			// Compare the current date with the current scheduled one, if the
+			// current date is earlier than the scheduled one, simply calculate
+			// the difference in minutes, otherwise create the next scheduled
+			// date and calculate the difference
+			if (!currentDateTime.isBefore(scheduledDateTimeUpdate)) {
+				cal.add(Calendar.WEEK_OF_YEAR, 1);
+				scheduledDateTimeUpdate = new DateTime(cal.getTime());
+			}
+			diff = Minutes.minutesBetween(currentDateTime, scheduledDateTimeUpdate).getMinutes();
+			break;
+
+		default:
+			break;
+		}
+
+		return diff;
 	}
 }

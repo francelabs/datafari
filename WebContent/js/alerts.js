@@ -47,7 +47,7 @@ function getTab(){
                  while (i<numb){	//While they are still alerts to print
                 	 var doc = data.alerts[i];
                 	 //Print the alert with an href of the keyword towards edit()
-					 $("#table").append("<tr id=\""+i+"\"><td>"+doc._id+"</td><td><a href=\"javascript: edit("+i+")\">"+doc.keyword+"</a></td><td>"+doc.subject+"</td><td>"+doc.core+"</td><td>"+doc.frequency+"</td><td>"+doc.mail+"</td><td>"+doc.user+"</td><td class=\"btn-danger text-center\"style=\"background-color : #d9534f; position : relative;\"><a href=\"javascript: remove("+i+")\" style=\"color: #FFFFFF; position: absolute;top: 50%;left: 50%; text-decoration: inherit; -ms-transform: translate(-50%,-50%); -webkit-transform: translate(-50%,-50%); transform: translate(-50%,-50%);\"><i class=\"fa fa-trash-o\" ></i></a></td></tr>");
+					 $("#table").append("<tr id=\""+i+"\"><td>"+doc._id+"</td><td><a href=\"javascript: edit("+i+")\">"+doc.keyword+"</a></td><td>"+doc.subject+"</td><td>"+doc.core+"</td><td>"+window.i18n.msgStore[doc.frequency]+"</td><td>"+doc.mail+"</td><td>"+doc.user+"</td><td class=\"btn-danger text-center\"style=\"background-color : #d9534f; position : relative;\"><a href=\"javascript: remove("+i+")\" style=\"color: #FFFFFF; position: absolute;top: 50%;left: 50%; text-decoration: inherit; -ms-transform: translate(-50%,-50%); -webkit-transform: translate(-50%,-50%); transform: translate(-50%,-50%);\"><i class=\"fa fa-trash-o\" ></i></a></td></tr>");
 					 //Print a button with an href towards remove()
 					 i++;
                  }
@@ -107,7 +107,7 @@ function addAlerts(){
 	$("#fieldsAdd").append("</div>");
 	$("#fieldsAdd").append("<div class=\"form-group\" id=\"div21\">");
 	$("#div21").append("<label class=\"col-sm-2 control-label\">"+window.i18n.msgStore['frequency']+"</label>");
-	$("#div21").append("<select required id=\"frequency\" name=\"frequency\" class=\"col-sm-4\">	<OPTION>"+window.i18n.msgStore['hourly']+"</OPTION><OPTION>"+window.i18n.msgStore['daily']+"</OPTION><OPTION>"+window.i18n.msgStore['weekly']+"</OPTION></select> ");
+	$("#div21").append("<select required id=\"frequency\" name=\"frequency\" class=\"col-sm-4\">	<OPTION value='hourly'>"+window.i18n.msgStore['hourly']+"</OPTION><OPTION value='daily'>"+window.i18n.msgStore['daily']+"</OPTION><OPTION value='weekly'>"+window.i18n.msgStore['weekly']+"</OPTION></select> ");
 	$("#fieldsAdd").append("</div>");
 	$("#fieldsAdd").append("<div class=\"form-group\" id=\"div3\">");
 	$("#div3").append("</div>");

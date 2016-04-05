@@ -160,6 +160,10 @@ public class alertsAdmin extends HttpServlet {
 				ScriptConfiguration.setProperty("DATABASE", request.getParameter("database"));
 				ScriptConfiguration.setProperty("COLLECTION", request.getParameter("collection"));
 
+				// Restart scheduler
+				AlertsManager.getInstance().turnOff();
+				AlertsManager.getInstance().turnOn();
+
 				json.put("code", 0);
 
 			}
