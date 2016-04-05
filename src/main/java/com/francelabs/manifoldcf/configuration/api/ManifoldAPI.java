@@ -27,6 +27,9 @@ public class ManifoldAPI {
 		static public String OUTPUTCONNECTIONS = "outputconnections";
 		static public String REPOSITORYCONNECTIONS = "repositoryconnections";
 		static public String AUTHORITYCONNECTIONS = "authorityconnections";
+		static public String MAPPINGCONNECTIONS = "mappingconnections";
+		static public String TRANSFORMATIONCONNECTIONS = "transformationconnections";
+		static public String AUTHORITYGROUPS = "authoritygroups";
 		static public String JOBS = "jobs";
 	}
 
@@ -41,6 +44,9 @@ public class ManifoldAPI {
 		ManifoldAPI.cleanConnectors(ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
 		ManifoldAPI.cleanConnectors(ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
 		ManifoldAPI.cleanConnectors(ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
+		ManifoldAPI.cleanConnectors(ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS);
+		ManifoldAPI.cleanConnectors(ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS);
+		ManifoldAPI.cleanConnectors(ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
 	}
 
 	static public void cleanJobs() throws Exception {
