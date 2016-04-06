@@ -14,6 +14,7 @@
  * limitations under the License.
  *******************************************************************************/
 package com.francelabs.datafari.alerts;
+
 import java.io.IOException;
 import java.util.Properties;
 
@@ -27,85 +28,96 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.log4j.Logger;
 
-import com.francelabs.datafari.utils.ScriptConfiguration;
+import com.francelabs.datafari.utils.AlertsConfiguration;
 
-/**Javadoc
- * 
- * 
- * This class sends mails, it reads it's configuration in a text file.
- * If it cannot find the file , it has a hardcoded default configuration. The configuration is made in the constructor.
- * 
+/**
+ * Javadoc
+ *
+ *
+ * This class sends mails, it reads it's configuration in a text file. If it
+ * cannot find the file , it has a hardcoded default configuration. The
+ * configuration is made in the constructor.
+ *
  * @author Alexis Karassev
  */
 public class Mail {
-	
-	
-	private String smtpHost = "smtp.gmail.com";												//Default address/smtp used
+
+	private String smtpHost = "smtp.gmail.com"; // Default address/smtp used
 	private String from = "datafari.test@gmail.com";
 	private String username = "datafari.test@gmail.com";
-	private String password = "Datafari1";			
-	
-	
-	private final static Logger LOGGER = Logger.getLogger(Mail.class
-			.getName());
-	public Mail() throws IOException{
-		try{
-			smtpHost = ScriptConfiguration.getProperty("smtp");
-			from = ScriptConfiguration.getProperty("from");
-			username = ScriptConfiguration.getProperty("user");
-			password = ScriptConfiguration.getProperty("pass");
-		}catch(IOException e){
+	private String password = "Datafari1";
+
+	private final static Logger LOGGER = Logger.getLogger(Mail.class.getName());
+
+	public Mail() throws IOException {
+		try {
+			smtpHost = AlertsConfiguration.getProperty("smtp");
+			from = AlertsConfiguration.getProperty("from");
+			username = AlertsConfiguration.getProperty("user");
+			password = AlertsConfiguration.getProperty("pass");
+		} catch (final IOException e) {
 			LOGGER.error("Error while reading the mail configuration in the Mail constructor. Error 69045", e);
 			return;
 		}
 
 	}
-	/** Javadoc
-	 * 
+
+	/**
+	 * Javadoc
+	 *
 	 * sends a mail
-	 * @param subject : the subject of the mail
-	 * @param text : the text of the mail
-	 * @param dest : the destination address
-	 * @param copyDest : (optionnal set to "" if not wanted) an other destination
-	 * @throws IOException,  
+	 * 
+	 * @param subject
+	 *            : the subject of the mail
+	 * @param text
+	 *            : the text of the mail
+	 * @param dest
+	 *            : the destination address
+	 * @param copyDest
+	 *            : (optionnal set to "" if not wanted) an other destination
+	 * @throws IOException,
 	 * @throws AddressException
 	 * @throws MessagingException
-	 * 
+	 *
 	 */
-	public void sendMessage(String subject, String text, String dest, String copyDest)  { 
-		try{
-			Properties props = new Properties();
+	public void sendMessage(final String subject, final String text, final String dest, final String copyDest) {
+		try {
+			final Properties props = new Properties();
 			props.put("mail.smtp.host", smtpHost);
-			props.put("mail.smtp.auth", "true");				
+			props.put("mail.smtp.auth", "true");
 
-			Session session = Session.getDefaultInstance(props);			//Set the smtp 
+			final Session session = Session.getDefaultInstance(props); // Set
+																		// the
+																		// smtp
 			session.setDebug(true);
 
-			MimeMessage message = new MimeMessage(session);   
-			try{
-				message.setFrom(from);											//Set the destination and copy Destination if there are some
-				if(copyDest!=""){
-					message.addRecipients(Message.RecipientType.TO, new InternetAddress[] { new InternetAddress(dest), 
-							new InternetAddress(copyDest) });
-				}
-				else{
-					message.addRecipient(Message.RecipientType.TO ,new InternetAddress(dest));
+			final MimeMessage message = new MimeMessage(session);
+			try {
+				message.setFrom(from); // Set the destination and copy
+										// Destination if there are some
+				if (copyDest != "") {
+					message.addRecipients(Message.RecipientType.TO,
+							new InternetAddress[] { new InternetAddress(dest), new InternetAddress(copyDest) });
+				} else {
+					message.addRecipient(Message.RecipientType.TO, new InternetAddress(dest));
 				}
 				message.setSubject(subject);
-				message.setText(text);											//Set the content of the mail
+				message.setText(text); // Set the content of the mail
 
-				Transport tr = session.getTransport("smtps");
-				tr.connect(smtpHost, username, password);						//Connect to the address
+				final Transport tr = session.getTransport("smtps");
+				tr.connect(smtpHost, username, password); // Connect to the
+															// address
 				message.saveChanges();
 
-				tr.sendMessage(message,message.getAllRecipients());				//Send the message
+				tr.sendMessage(message, message.getAllRecipients()); // Send the
+																		// message
 				tr.close();
-			}catch(MessagingException e){	
+			} catch (final MessagingException e) {
 				LOGGER.error("Error while sending the mail. Error 69046", e);
 				return;
 			}
 
-		}catch(Exception e){
+		} catch (final Exception e) {
 			LOGGER.error("Unindentified error while in Mail sendMessage(). Error 69523", e);
 			return;
 		}

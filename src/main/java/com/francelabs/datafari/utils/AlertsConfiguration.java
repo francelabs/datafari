@@ -30,19 +30,19 @@ import org.apache.log4j.Logger;
  * @author France Labs
  *
  */
-public class ScriptConfiguration {
+public class AlertsConfiguration {
 
-	public static String configPropertiesFileName = "datafari.properties";
+	public static String configPropertiesFileName = "alerts.properties";
 
 	public static String configPropertiesFileNameRealPath;
 
-	private static ScriptConfiguration instance;
+	private static AlertsConfiguration instance;
 	private final Properties properties;
 
-	private final static Logger LOGGER = Logger.getLogger(ScriptConfiguration.class.getName());
+	private final static Logger LOGGER = Logger.getLogger(AlertsConfiguration.class.getName());
 
 	/**
-	 * Set a property and save it the datafari.properties
+	 * Set a property and save it the alerts.properties
 	 *
 	 * @param key
 	 *            : the key that should be change
@@ -72,9 +72,9 @@ public class ScriptConfiguration {
 	 * Get the instance
 	 *
 	 */
-	private static ScriptConfiguration getInstance() throws IOException {
+	private static AlertsConfiguration getInstance() throws IOException {
 		if (null == instance) {
-			instance = new ScriptConfiguration();
+			instance = new AlertsConfiguration();
 		}
 		return instance;
 	}
@@ -84,7 +84,7 @@ public class ScriptConfiguration {
 	 * Read the properties file to get the parameters to create instance
 	 *
 	 */
-	private ScriptConfiguration() throws IOException {
+	private AlertsConfiguration() throws IOException {
 		configPropertiesFileNameRealPath = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + configPropertiesFileName;
 		final File configFile = new File(configPropertiesFileNameRealPath);
 		final InputStream stream = new FileInputStream(configFile);

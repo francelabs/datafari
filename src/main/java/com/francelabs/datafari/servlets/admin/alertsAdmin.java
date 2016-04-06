@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -33,7 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.francelabs.datafari.alerts.AlertsManager;
-import com.francelabs.datafari.utils.ScriptConfiguration;
+import com.francelabs.datafari.utils.AlertsConfiguration;
 
 /**
  *
@@ -77,25 +79,36 @@ public class alertsAdmin extends HttpServlet {
 		final DateTimeFormatter formatterbis = DateTimeFormat.forPattern("dd/MM/yyyy/ HH:mm");
 
 		try {
-			json.put("on", ScriptConfiguration.getProperty("ALERTS"));
-			json.put("hourlyDate", ScriptConfiguration.getProperty("HOURLYDELAY"));
-			json.put("dailyDate", ScriptConfiguration.getProperty("DAILYDELAY"));
-			json.put("weeklyDate", ScriptConfiguration.getProperty("WEEKLYDELAY"));
-			json.put("host", ScriptConfiguration.getProperty("HOST"));
-			json.put("port", ScriptConfiguration.getProperty("PORT"));
-			json.put("database", ScriptConfiguration.getProperty("DATABASE"));
-			json.put("collection", ScriptConfiguration.getProperty("COLLECTION"));
+			json.put("on", AlertsConfiguration.getProperty("ALERTS"));
+			json.put("hourlyDate", AlertsConfiguration.getProperty("HOURLYDELAY"));
+			json.put("dailyDate", AlertsConfiguration.getProperty("DAILYDELAY"));
+			json.put("weeklyDate", AlertsConfiguration.getProperty("WEEKLYDELAY"));
+			json.put("host", AlertsConfiguration.getProperty("HOST"));
+			json.put("port", AlertsConfiguration.getProperty("PORT"));
+			json.put("database", AlertsConfiguration.getProperty("DATABASE"));
+			json.put("collection", AlertsConfiguration.getProperty("COLLECTION"));
 
-			json.put("nextHourly",
-					new DateTime(formatter.parseDateTime(ScriptConfiguration.getProperty("Hourly"))).plusHours(1).toString(formatterbis));
-			json.put("hourly", new DateTime(formatter.parseDateTime(ScriptConfiguration.getProperty("Hourly"))).toString(formatterbis));
+			// json.put("nextHourly",
+			// new
+			// DateTime(formatter.parseDateTime(AlertsConfiguration.getProperty("Hourly"))).plusHours(1).toString(formatterbis));
+			json.put("nextHourly", getNextEvent("hourly", AlertsConfiguration.getProperty("HOURLYDELAY")));
+			json.put("hourly", new DateTime(formatter.parseDateTime(AlertsConfiguration.getProperty("Hourly"))).toString(formatterbis));
 
-			json.put("nextDaily", new DateTime(formatter.parseDateTime(ScriptConfiguration.getProperty("Daily"))).plusDays(1).toString(formatterbis));
-			json.put("daily", new DateTime(formatter.parseDateTime(ScriptConfiguration.getProperty("Daily"))).toString(formatterbis));
+			// json.put("nextDaily", new
+			// DateTime(formatter.parseDateTime(AlertsConfiguration.getProperty("Daily"))).plusDays(1).toString(formatterbis));
+			json.put("nextDaily", getNextEvent("daily", AlertsConfiguration.getProperty("DAILYDELAY")));
+			json.put("daily", new DateTime(formatter.parseDateTime(AlertsConfiguration.getProperty("Daily"))).toString(formatterbis));
 
-			json.put("nextWeekly",
-					new DateTime(formatter.parseDateTime(ScriptConfiguration.getProperty("Weekly"))).plusWeeks(1).toString(formatterbis));
-			json.put("weekly", new DateTime(formatter.parseDateTime(ScriptConfiguration.getProperty("Weekly"))).toString(formatterbis));
+			// json.put("nextWeekly",
+			// new
+			// DateTime(formatter.parseDateTime(AlertsConfiguration.getProperty("Weekly"))).plusWeeks(1).toString(formatterbis));
+			json.put("nextWeekly", getNextEvent("weekly", AlertsConfiguration.getProperty("WEEKLYDELAY")));
+			json.put("weekly", new DateTime(formatter.parseDateTime(AlertsConfiguration.getProperty("Weekly"))).toString(formatterbis));
+
+			json.put("smtp", AlertsConfiguration.getProperty("smtp"));
+			json.put("from", AlertsConfiguration.getProperty("from"));
+			json.put("user", AlertsConfiguration.getProperty("user"));
+			json.put("pass", AlertsConfiguration.getProperty("pass"));
 
 			json.put("code", 0);
 		} catch (final JSONException e) {
@@ -134,7 +147,7 @@ public class alertsAdmin extends HttpServlet {
 
 		try {
 			if (request.getParameter("activated") != null) {
-				ScriptConfiguration.setProperty("ALERTS", request.getParameter("activated"));
+				AlertsConfiguration.setProperty("ALERTS", request.getParameter("activated"));
 				if (request.getParameter("activated").equals("on")) {
 					AlertsManager.getInstance().turnOn();
 				} else {
@@ -152,13 +165,17 @@ public class alertsAdmin extends HttpServlet {
 				// time
 				final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy/HH:mm");
 
-				ScriptConfiguration.setProperty("HOURLYDELAY", new DateTime(df.parse(request.getParameter("hourlyDelay"))).toString(formatter));
-				ScriptConfiguration.setProperty("DAILYDELAY", new DateTime(df.parse(request.getParameter("dailyDelay"))).toString(formatter));
-				ScriptConfiguration.setProperty("WEEKLYDELAY", new DateTime(df.parse(request.getParameter("weeklyDelay"))).toString(formatter));
-				ScriptConfiguration.setProperty("HOST", request.getParameter("host"));
-				ScriptConfiguration.setProperty("PORT", request.getParameter("port"));
-				ScriptConfiguration.setProperty("DATABASE", request.getParameter("database"));
-				ScriptConfiguration.setProperty("COLLECTION", request.getParameter("collection"));
+				AlertsConfiguration.setProperty("HOURLYDELAY", new DateTime(df.parse(request.getParameter("hourlyDelay"))).toString(formatter));
+				AlertsConfiguration.setProperty("DAILYDELAY", new DateTime(df.parse(request.getParameter("dailyDelay"))).toString(formatter));
+				AlertsConfiguration.setProperty("WEEKLYDELAY", new DateTime(df.parse(request.getParameter("weeklyDelay"))).toString(formatter));
+				AlertsConfiguration.setProperty("HOST", request.getParameter("host"));
+				AlertsConfiguration.setProperty("PORT", request.getParameter("port"));
+				AlertsConfiguration.setProperty("DATABASE", request.getParameter("database"));
+				AlertsConfiguration.setProperty("COLLECTION", request.getParameter("collection"));
+				AlertsConfiguration.setProperty("smtp", request.getParameter("SMTP"));
+				AlertsConfiguration.setProperty("from", request.getParameter("address"));
+				AlertsConfiguration.setProperty("user", request.getParameter("user"));
+				AlertsConfiguration.setProperty("pass", request.getParameter("pass"));
 
 				// Restart scheduler
 				AlertsManager.getInstance().turnOff();
@@ -176,6 +193,83 @@ public class alertsAdmin extends HttpServlet {
 
 		final PrintWriter out = response.getWriter();
 		out.print(json);
+	}
+
+	private String getNextEvent(final String frequency, final String initialDate) {
+		final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy/HH:mm");
+		final DateTime scheduledDate = new DateTime(formatter.parseDateTime(initialDate));
+		final Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		final DateTime currentDateTime = new DateTime(cal.getTime());
+		DateTime scheduledDateTimeUpdate = new DateTime(cal.getTime());
+
+		switch (frequency.toLowerCase()) {
+		case "hourly":
+			// Create what would be the current scheduled date
+			cal.setTime(new Date());
+			cal.set(Calendar.MINUTE, scheduledDate.getMinuteOfHour());
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			scheduledDateTimeUpdate = new DateTime(cal.getTime());
+
+			// Compare the current date with the current scheduled one, if the
+			// current date is later than the scheduled one then create the next
+			// scheduled date
+			if (!currentDateTime.isBefore(scheduledDateTimeUpdate)) {
+				cal.add(Calendar.HOUR_OF_DAY, 1);
+				scheduledDateTimeUpdate = new DateTime(cal.getTime());
+			}
+			break;
+
+		case "daily":
+			// Create what would be the current scheduled date
+			cal.setTime(new Date());
+			cal.set(Calendar.HOUR_OF_DAY, scheduledDate.getHourOfDay());
+			cal.set(Calendar.MINUTE, scheduledDate.getMinuteOfHour());
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			scheduledDateTimeUpdate = new DateTime(cal.getTime());
+
+			// Compare the current date with the current scheduled one, if the
+			// current date is later than the scheduled one then create the next
+			// scheduled date
+			if (!currentDateTime.isBefore(scheduledDateTimeUpdate)) {
+				cal.add(Calendar.DAY_OF_YEAR, 1);
+				scheduledDateTimeUpdate = new DateTime(cal.getTime());
+			}
+			break;
+
+		case "weekly":
+			// Create what would be the current scheduled date
+			cal.setTime(new Date());
+			cal.set(Calendar.DAY_OF_WEEK, scheduledDate.getDayOfWeek() + 1); // +1
+																				// =
+																				// diff
+																				// between
+																				// Joda
+																				// and
+																				// Calendar
+			cal.set(Calendar.HOUR_OF_DAY, scheduledDate.getHourOfDay());
+			cal.set(Calendar.MINUTE, scheduledDate.getMinuteOfHour());
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			scheduledDateTimeUpdate = new DateTime(cal.getTime());
+
+			// Compare the current date with the current scheduled one, if the
+			// current date is later than the scheduled one then create the next
+			// scheduled date
+			if (!currentDateTime.isBefore(scheduledDateTimeUpdate)) {
+				cal.add(Calendar.WEEK_OF_YEAR, 1);
+				scheduledDateTimeUpdate = new DateTime(cal.getTime());
+			}
+			break;
+
+		default:
+			break;
+		}
+		return scheduledDateTimeUpdate.toString(formatter);
 	}
 
 }

@@ -52,7 +52,7 @@ import org.joda.time.Minutes;
 import com.francelabs.datafari.service.db.AlertDataService;
 import com.francelabs.datafari.service.search.SolrServers;
 import com.francelabs.datafari.service.search.SolrServers.Core;
-import com.francelabs.datafari.utils.ScriptConfiguration;
+import com.francelabs.datafari.utils.AlertsConfiguration;
 
 public class AlertsManager {
 	private static AlertsManager INSTANCE = new AlertsManager();
@@ -94,13 +94,13 @@ public class AlertsManager {
 	 */
 	public boolean getParameter() throws IOException, ParseException {
 		try {
-			if (ScriptConfiguration.getProperty("ALERTS").equals("on")) {
+			if (AlertsConfiguration.getProperty("ALERTS").equals("on")) {
 				onOff = true;
 			}
 
 			// Gets the delay for the hourly alerts
 			try {
-				delayH = new DateTime(df.parse(ScriptConfiguration.getProperty("HOURLYDELAY").replace("\\", "")));
+				delayH = new DateTime(df.parse(AlertsConfiguration.getProperty("HOURLYDELAY").replace("\\", "")));
 			} catch (final ParseException e) {
 				LOGGER.warn("Error parsing the Hourly Date, default value will be used, AlertsManager getParameter()", e);
 				delayH = new DateTime(df.parse("01/01/0001/00:00"));
@@ -108,7 +108,7 @@ public class AlertsManager {
 
 			// Gets the delay for the daily alerts
 			try {
-				delayD = new DateTime(df.parse(ScriptConfiguration.getProperty("DAILYDELAY").replace("\\", "")));
+				delayD = new DateTime(df.parse(AlertsConfiguration.getProperty("DAILYDELAY").replace("\\", "")));
 			} catch (final ParseException e) {
 				LOGGER.warn("Error parsing the Daily Date, default value will be used, AlertsManager getParameter()", e);
 				delayD = new DateTime(df.parse("01/01/0001/00:00"));
@@ -116,24 +116,24 @@ public class AlertsManager {
 
 			// Gets the delay for the weekly alerts
 			try {
-				delayW = new DateTime(df.parse(ScriptConfiguration.getProperty("WEEKLYDELAY").replace("\\", "")));
+				delayW = new DateTime(df.parse(AlertsConfiguration.getProperty("WEEKLYDELAY").replace("\\", "")));
 			} catch (final ParseException e) {
 				LOGGER.warn("Error parsing the Weekly Date, default value will be used, AlertsManager getParameter()", e);
 				delayW = new DateTime(df.parse("01/01/0001/00:00"));
 			}
 
 			// Checks if there has been a previous execution for alerts
-			final String hourlyStr = ScriptConfiguration.getProperty("Hourly").replace("\\", "");
+			final String hourlyStr = AlertsConfiguration.getProperty("Hourly").replace("\\", "");
 			if (hourlyStr != null) {
 				Hourly.setHasBeenExecuted(true);
 				HourlyHour = hourlyStr;
 			}
-			final String dailyStr = ScriptConfiguration.getProperty("Daily").replace("\\", "");
+			final String dailyStr = AlertsConfiguration.getProperty("Daily").replace("\\", "");
 			if (dailyStr != null) {
 				Daily.setHasBeenExecuted(true);
 				DailyHour = dailyStr;
 			}
-			final String weeklyStr = ScriptConfiguration.getProperty("Weekly").replace("\\", "");
+			final String weeklyStr = AlertsConfiguration.getProperty("Weekly").replace("\\", "");
 			if (weeklyStr != null) {
 				Weekly.setHasBeenExecuted(true);
 				WeeklyHour = weeklyStr;
@@ -251,7 +251,7 @@ public class AlertsManager {
 				// frequency have already run at least
 				// once
 				if (c.getFrequency().toString().toLowerCase().equals(frequency.toLowerCase()) && c.hasBeenExecuted()) {
-					ScriptConfiguration.setProperty(frequency, df.format(new Date()).toString());
+					AlertsConfiguration.setProperty(frequency, df.format(new Date()).toString());
 				}
 			}
 			final List<Properties> alertList = AlertDataService.getInstance().getAlerts(); // Get
