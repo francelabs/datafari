@@ -8,6 +8,7 @@
 		<title>Admin Datafari</title>
 		<meta name="description" content="description">
 		<meta name="author" content="Admin Datafari">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" type="text/css" href="../css/mainbis.css" media="screen" />
 		<link href="../plugins/bootstrap/bootstrap.css" rel="stylesheet">
@@ -21,6 +22,8 @@
 		<link href="../css/style_v2.css" rel="stylesheet">
 		<link href="../plugins/chartist/chartist.min.css" rel="stylesheet">
 		<link href="../plugins/CLEditor/jquery.cleditor.css" rel="stylesheet">
+		<script type="text/javascript" src="../js/endswith.js"></script>
+		<script type="text/javascript" src="../js/startswith.js"></script>
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
 				<script src="http://getbootstrap.com/docs-assets/js/html5shiv.js"></script>
