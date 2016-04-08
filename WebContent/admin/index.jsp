@@ -8,6 +8,7 @@
 		<title>Admin Datafari</title>
 		<meta name="description" content="description">
 		<meta name="author" content="Admin Datafari">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" type="text/css" href="../css/mainbis.css" media="screen" />
 		<link href="../plugins/bootstrap/bootstrap.css" rel="stylesheet">

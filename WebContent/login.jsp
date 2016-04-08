@@ -8,6 +8,7 @@
 <title>Login Page</title>
 <meta HTTP-EQUIV="Pragma" CONTENT="no-cache" />
 <meta HTTP-EQUIV="Expires" CONTENT="-1" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 <link rel="stylesheet" type="text/css" href="/Datafari/css/reset.css">
 <link rel="stylesheet" type="text/css" href="/Datafari/css/login.css">
 <link href="/Datafari/plugins/bootstrap/bootstrap.css" rel="stylesheet">
