@@ -22,6 +22,8 @@
 		<link href="../css/style_v2.css" rel="stylesheet">
 		<link href="../plugins/chartist/chartist.min.css" rel="stylesheet">
 		<link href="../plugins/CLEditor/jquery.cleditor.css" rel="stylesheet">
+		<script type="text/javascript" src="../js/endswith.js"></script>
+		<script type="text/javascript" src="../js/startswith.js"></script>
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
 				<script src="http://getbootstrap.com/docs-assets/js/html5shiv.js"></script>
