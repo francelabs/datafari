@@ -130,7 +130,7 @@
 	<%
 		if (request.getUserPrincipal() != null) {
 			if (request.getUserPrincipal().getName() != null) {
-				if(request.isUserInRole("SearchAdministrator--")) { 
+				if(request.isUserInRole("SearchAdministrator")) { 
 	%>
 					<script type="text/javascript"
 						src="js/AjaxFranceLabs/modules/QueryElevator.module.js"></script>

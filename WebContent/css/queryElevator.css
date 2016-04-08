@@ -1,0 +1,41 @@
+#docs{
+	padding-top : 1em;
+}
+
+#modBox{
+	margin-bottom : 3em;
+}
+
+.movable_line {
+	cursor: pointer;
+}
+
+#saveElevateConf {
+	text-transform:uppercase;
+}
+
+#addDocButton {
+	text-transform:uppercase;
+    text-align:center;
+    text-decoration:none;
+}
+
+#saveNewElevate {
+	text-transform:uppercase;
+}
+
+.textInput {
+	width:90%;
+}
+
+.message{
+	display:none;
+	text-align:center;
+	padding-left: 1em;
+}
+.error{
+	color:red;
+}
+.success{
+	color:green;
+}

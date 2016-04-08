@@ -29,13 +29,13 @@ AjaxFranceLabs.QueryElevatorModule = AjaxFranceLabs.AbstractModule.extend({
 		var self = this;
 		
 		// Add the up link and set his onClick function
-		resultElm.find(".title").after("<span class='elevator-up' id='up_" + id + "'>^</span>");
+		resultElm.find(".title").after("<span class='elevator-up' action='up' id='" + id + "'>^</span>");
 		resultElm.find(".elevator-up").click(function() {
 			
 			self.parentWidget.beforeRequest(); // Display the loader icon
 			
 			// Send the POST request to elevate the selected doc
-			$.post("./admin/queryElevator", {item: $(this).attr('id'), query: self.manager.store.params.q.value},function(data){
+			$.post("./SearchAdministrator/queryElevator", {item: $(this).attr('id'), query: self.manager.store.params.q.value, action: $(this).attr('action')},function(data){
 				// If successful, reload the Solr core and refresh the searchView
 				if(data.code == 0) {
 					$.get("./admin/proxy/solr/admin/cores?action=RELOAD&core=" + self.core,function(){
@@ -46,13 +46,13 @@ AjaxFranceLabs.QueryElevatorModule = AjaxFranceLabs.AbstractModule.extend({
 		});
 		
 		// Add the down link and set his onClick function
-		resultElm.find(".description #urlMobile .address").append("<span class='elevator-down' id='down_" + id + "'>^</span>");
+		resultElm.find(".description #urlMobile .address").append("<span class='elevator-down' action='down' id='" + id + "'>^</span>");
 		resultElm.find(".description #urlMobile .address .elevator-down").click(function() {
 			
 			self.parentWidget.beforeRequest(); // Display the loader icon
 			
 			// Send the POST request to remove the selected doc from the elevate list
-			$.post("./admin/queryElevator", {item: $(this).attr('id'), query: self.manager.store.params.q.value},function(data){
+			$.post("./SearchAdministrator/queryElevator", {item: $(this).attr('id'), query: self.manager.store.params.q.value, action: $(this).attr('action')},function(data){
 				if(data.code == 0) {
 					$.get("./admin/proxy/solr/admin/cores?action=RELOAD&core=" + self.core,function(){
 						self.manager.makeRequest();
