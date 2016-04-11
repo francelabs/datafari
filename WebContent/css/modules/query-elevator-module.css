@@ -1,10 +1,15 @@
 .elevator-up {
 	float: right;
 	cursor: pointer;
+	background-image: url(../../images/icons/up-icon-16x16.png);
+	width: 16px;
+	height: 16px;
 }
 
 .elevator-down {
 	float: right;
 	cursor: pointer;
-	transform: rotate(180deg);
+	background-image: url(../../images/icons/undo-icon-16x16.png);
+	width: 16px;
+	height: 16px;
 }

@@ -239,14 +239,19 @@ public class QueryElevator extends HttpServlet {
 				jsonResponse.put("code", CodesReturned.GENERALERROR);
 				LOGGER.error("Error on marshal/unmarshal elevate.xml file in solr/solr_home/" + server + "/conf", e);
 			}
-		} else if (request.getParameter("docs[]") != null && !request.getParameter("docs[]").equals("")) {
+		} else if (request.getParameter("query") != null && !request.getParameter("query").equals("")) {
 			try {
 				// Retrieve the query used for the search
 				final String queryReq = request.getParameter("query");
 
 				// Retrieve the docInfos, containing the docId and the action to
 				// perform (elevate or remove from elevate)
-				final String[] docs = request.getParameterValues("docs[]");
+				final String[] docs;
+				if (request.getParameter("docs[]") != null) {
+					docs = request.getParameterValues("docs[]");
+				} else {
+					docs = new String[0];
+				}
 
 				// Use JAXB on the elevate.xml file to create the corresponding
 				// Java object
@@ -264,6 +269,10 @@ public class QueryElevator extends HttpServlet {
 					query.setText(queryReq);
 					elevate.getQuery().add(query);
 				}
+
+				// Clear the docs because everything must be like the user did
+				// in the admin UI
+				query.getDoc().clear();
 
 				for (int i = 0; i < docs.length; i++) {
 					final String docId = docs[i];

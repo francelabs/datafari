@@ -15,13 +15,22 @@
 }
 
 #addDocButton {
-	text-transform:uppercase;
-    text-align:center;
-    text-decoration:none;
+    height: 32px;
+    width: 32px;
+    cursor: pointer;
 }
 
 #saveNewElevate {
 	text-transform:uppercase;
+}
+
+.btn-danger {
+	background-color: #d9534f !important;
+	width: 2em;
+}
+
+.fa-trash-o {
+	color: white;
 }
 
 .textInput {

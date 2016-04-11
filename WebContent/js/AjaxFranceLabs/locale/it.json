@@ -67,6 +67,7 @@
 "modifyElevateLabel":"Modify an existing query elevation",
 "modifyDocsOderLabel":"Modify the documents order",
 "elevatorDocsListLabel":"Documents list",
+"elevateAddDoc":"add another doc ID",
 "createElevateLabel":"Create a new query elevation and/or add new documents",
 "queryThLabel":"Query",
 "confSaved":"Configuration well saved",

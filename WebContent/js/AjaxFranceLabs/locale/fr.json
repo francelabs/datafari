@@ -64,6 +64,7 @@
 "modifyElevateLabel":"Modifier une élévation de requête existante",
 "modifyDocsOderLabel":"Modifier l'ordre des documents",
 "elevatorDocsListLabel":"Liste des documents",
+"elevateAddDoc":"ajouter un autre doc ID",
 "createElevateLabel":"Créer une nouvelle élévation de requête et/ou ajouter des documents",
 "queryThLabel":"Requête",
 "confSaved":"Configuration correctement sauvegardée",

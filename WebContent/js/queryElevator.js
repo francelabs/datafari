@@ -2,6 +2,8 @@ $(document).ready(function() {
 		setupLanguage();
 		fillQuerySelector();
 		var core = "FileShare";
+		
+		// Make the docsTableContent lines drag and droppable
 		$("#docsTableContent").sortable({
 			
 			helper: function(e, tr) {
@@ -16,15 +18,15 @@ $(document).ready(function() {
 			},
 			  
 			stop: function( event, ui ) {
-				    $("#docsTableContent tr").each(function( index ) {
-				    	$(this).find('.position').html((index + 1));
-				    });
+				    refreshPositions();
 			  }
 			  
 		}).disableSelection();
 		
+		//Set the onChange function of the select query element
 		$("#query").change(function() {getQuery()});
 		
+		//Set the onClick function of the saveElevateConf button
 		$("#saveElevateConf").click(function() {
 			var docsList = new Array();
 			$("#docsTableContent tr").each(function( index ) {
@@ -48,10 +50,12 @@ $(document).ready(function() {
 			},"json");
 		});
 		
+		//Set the onClick function of the addDocButton button
 		$("#addDocButton").click(function() {
 			addNewDocLine();
 		});
 		
+		//Set the onClick function of the saveNewElevate button
 		$("#saveNewElevate").click(function() {
 			var docsList = new Array();
 			$(".docInput").each(function( index ) {
@@ -67,7 +71,9 @@ $(document).ready(function() {
 					$.get("./proxy/solr/admin/cores?action=RELOAD&core=" + core,function(){
 						$("#message2").html(window.i18n.msgStore["confSaved"]);
 						$("#message2").addClass("success");
-						$("#message2").show();						
+						$("#message2").show();			
+						fillQuerySelector();
+						reinitCreateTbody();
 					});
 				} else {
 					$("#message2").html(window.i18n.msgStore["confSaveError"]);
@@ -77,6 +83,25 @@ $(document).ready(function() {
 			},"json");
 		});
 });
+
+function reinitCreateTbody() {
+	$("#createTbody").empty();
+	$("#createTbody").append("<tr>" +
+											"<td><input type='text' class='textInput' id='queryInput'/></td>" +
+											"<td><input type='text' class='textInput docInput'/></td>" +
+											"<td><img src='../images/icons/plus-icon-32x32.png' id='addDocButton'/></td>" +
+										"</tr>");
+	$("#addDocButton").click(function() {
+		addNewDocLine();
+	});
+}
+
+// Refresh the position of elements in docsTableContent
+function refreshPositions() {
+	$("#docsTableContent tr").each(function( index ) {
+    	$(this).find('.position').html((index + 1));
+    });
+}
 
 function addNewDocLine() {
 	$("#createTbody").append("<tr><td/><td><input type='text' class='textInput docInput'/></td><td/></tr>");
@@ -97,25 +122,43 @@ function setupLanguage(){
 	 $("#createElevateLabel").html(window.i18n.msgStore["createElevateLabel"]);
 	 $("#queryThLabel").html(window.i18n.msgStore["queryThLabel"]);
 	 $("#saveNewElevate").attr("value", window.i18n.msgStore["confirm"]);
+	 $("#addDocButton").attr("title", window.i18n.msgStore["elevateAddDoc"])
 }
 
 function fillQuerySelector() {
+	//Clean the docs list
+	$("#docsTableContent").empty();
+	
 	$.get("../SearchAdministrator/queryElevator", { get: "queries"}).done(function(data)
-			{
-				var queries = data.queries;
-				var sel = document.getElementById('query');
-				for(var i = 0; i < queries.length; i++) {
-				    var opt = document.createElement('option');
-				    opt.innerHTML = queries[i];
-				    opt.value = queries[i];
-				    sel.appendChild(opt);
-				}
-			},"json");
+	{
+		//Clean the select
+		$("#query").empty();
+				
+		var queries = data.queries;
+		var sel = document.getElementById('query');
+		
+		// Create default empty option
+		var opt = document.createElement('option');
+		opt.innerHTML = "";
+		opt.value = "";
+	    sel.appendChild(opt);
+	    
+	    //
+		for(var i = 0; i < queries.length; i++) {
+		    opt = document.createElement('option');
+		    opt.innerHTML = queries[i];
+		    opt.value = queries[i];
+		    sel.appendChild(opt);
+		}
+	},"json");
 }
 
 function getQuery(){
 	//Clean the docs list
 	$("#docsTableContent").empty();
+	
+	// Clean potential message
+	$("#message").empty();
 	
 	//get the selected query
 	var query = document.getElementById("query").value;
@@ -123,7 +166,11 @@ function getQuery(){
 		$.get("../SearchAdministrator/queryElevator", { get: "docs", query : query}).done(function(data)
 				{
 					for(var i = 0; i < data.docs.length; i++) {
-					    $("#docsTableContent").append("<tr class='movable_line' id='" + data.docs[i] + "'><td>" + data.docs[i] + "</td><td class='position'>" + (i + 1) + "</td></tr>");
+					    $("#docsTableContent").append("<tr class='movable_line' id='" + data.docs[i] + "'><td>" + data.docs[i] + "</td><td class='position'>" + (i + 1) + "</td><td class='btn-danger'><a class='delete'><i class='fa fa-trash-o'></i></a></td></tr>");
+					    $("#docsTableContent tr:last td:last").click(function(){
+					    	$(this).parent("tr").remove();
+					    	refreshPositions();
+					    });
 					}
 				},"json");
 	}
