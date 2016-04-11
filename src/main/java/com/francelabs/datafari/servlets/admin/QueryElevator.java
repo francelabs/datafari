@@ -40,7 +40,7 @@ import com.francelabs.datafari.jaxb.Elevate;
 import com.francelabs.datafari.service.search.SolrServers.Core;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 
-@WebServlet("/SearchAdministrator/queryElevator")
+@WebServlet("/SearchExpert/queryElevator")
 public class QueryElevator extends HttpServlet {
 	private String env;
 	private final String server = Core.FILESHARE.toString();
@@ -239,7 +239,8 @@ public class QueryElevator extends HttpServlet {
 				jsonResponse.put("code", CodesReturned.GENERALERROR);
 				LOGGER.error("Error on marshal/unmarshal elevate.xml file in solr/solr_home/" + server + "/conf", e);
 			}
-		} else if (request.getParameter("query") != null && !request.getParameter("query").equals("")) {
+		} else if (request.getParameter("query") != null && !request.getParameter("query").equals("") && request.getParameter("tool") != null
+				&& !request.getParameter("tool").equals("")) {
 			try {
 				// Retrieve the query used for the search
 				final String queryReq = request.getParameter("query");
@@ -270,9 +271,12 @@ public class QueryElevator extends HttpServlet {
 					elevate.getQuery().add(query);
 				}
 
-				// Clear the docs because everything must be like the user did
-				// in the admin UI
-				query.getDoc().clear();
+				if (request.getParameter("tool").equals("modify")) {
+					// Clear the docs because everything must be like the user
+					// did
+					// in the admin UI
+					query.getDoc().clear();
+				}
 
 				for (int i = 0; i < docs.length; i++) {
 					final String docId = docs[i];

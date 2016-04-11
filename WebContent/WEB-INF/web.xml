@@ -50,6 +50,21 @@
       <transport-guarantee>NONE</transport-guarantee>
     </user-data-constraint>
   </security-constraint>
+  
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Admin Privilege</web-resource-name>
+      <url-pattern>/SearchExpert/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>SearchAdministrator</role-name>
+      <role-name>SearchExpert</role-name>
+    </auth-constraint>
+    <user-data-constraint>
+      <transport-guarantee>NONE</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+  
   <security-role>
     <role-name>*</role-name>
   </security-role>

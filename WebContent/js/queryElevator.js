@@ -28,13 +28,15 @@ $(document).ready(function() {
 		
 		//Set the onClick function of the saveElevateConf button
 		$("#saveElevateConf").click(function() {
+			$("#message").hide();
 			var docsList = new Array();
 			$("#docsTableContent tr").each(function( index ) {
 				docsList[index] = $(this).attr("id");
 		    });
-			$.post("../SearchAdministrator/queryElevator",{
+			$.post("../SearchExpert/queryElevator",{
 				query : $("#query").val(),
-				docs : docsList
+				docs : docsList,
+				tool : "modify"
 			},function(data){
 				if(data.code == 0) {
 					$.get("./proxy/solr/admin/cores?action=RELOAD&core=" + core,function(){
@@ -57,15 +59,17 @@ $(document).ready(function() {
 		
 		//Set the onClick function of the saveNewElevate button
 		$("#saveNewElevate").click(function() {
+			$("#message2").hide();
 			var docsList = new Array();
 			$(".docInput").each(function( index ) {
 				if($(this).val()) {
 					docsList[index] = $.trim($(this).val());
 				}
 		    });
-			$.post("../SearchAdministrator/queryElevator",{
+			$.post("../SearchExpert/queryElevator",{
 				query : $.trim($("#queryInput").val()),
-				docs : docsList
+				docs : docsList,
+				tool : "create"
 			},function(data){
 				if(data.code == 0) {
 					$.get("./proxy/solr/admin/cores?action=RELOAD&core=" + core,function(){
@@ -129,7 +133,7 @@ function fillQuerySelector() {
 	//Clean the docs list
 	$("#docsTableContent").empty();
 	
-	$.get("../SearchAdministrator/queryElevator", { get: "queries"}).done(function(data)
+	$.get("../SearchExpert/queryElevator", { get: "queries"}).done(function(data)
 	{
 		//Clean the select
 		$("#query").empty();
@@ -163,7 +167,7 @@ function getQuery(){
 	//get the selected query
 	var query = document.getElementById("query").value;
 	if(query != "") {
-		$.get("../SearchAdministrator/queryElevator", { get: "docs", query : query}).done(function(data)
+		$.get("../SearchExpert/queryElevator", { get: "docs", query : query}).done(function(data)
 				{
 					for(var i = 0; i < data.docs.length; i++) {
 					    $("#docsTableContent").append("<tr class='movable_line' id='" + data.docs[i] + "'><td>" + data.docs[i] + "</td><td class='position'>" + (i + 1) + "</td><td class='btn-danger'><a class='delete'><i class='fa fa-trash-o'></i></a></td></tr>");

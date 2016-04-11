@@ -35,7 +35,7 @@ AjaxFranceLabs.QueryElevatorModule = AjaxFranceLabs.AbstractModule.extend({
 			self.parentWidget.beforeRequest(); // Display the loader icon
 			
 			// Send the POST request to elevate the selected doc
-			$.post("./SearchAdministrator/queryElevator", {item: $(this).attr('id'), query: self.manager.store.params.q.value, action: $(this).attr('action')},function(data){
+			$.post("./SearchExpert/queryElevator", {item: $(this).attr('id'), query: self.manager.store.params.q.value, action: $(this).attr('action')},function(data){
 				// If successful, reload the Solr core and refresh the searchView
 				if(data.code == 0) {
 					$.get("./admin/proxy/solr/admin/cores?action=RELOAD&core=" + self.core,function(){
@@ -52,7 +52,7 @@ AjaxFranceLabs.QueryElevatorModule = AjaxFranceLabs.AbstractModule.extend({
 			self.parentWidget.beforeRequest(); // Display the loader icon
 			
 			// Send the POST request to remove the selected doc from the elevate list
-			$.post("./SearchAdministrator/queryElevator", {item: $(this).attr('id'), query: self.manager.store.params.q.value, action: $(this).attr('action')},function(data){
+			$.post("./SearchExpert/queryElevator", {item: $(this).attr('id'), query: self.manager.store.params.q.value, action: $(this).attr('action')},function(data){
 				if(data.code == 0) {
 					$.get("./admin/proxy/solr/admin/cores?action=RELOAD&core=" + self.core,function(){
 						self.manager.makeRequest();

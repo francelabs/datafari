@@ -215,6 +215,7 @@ $(document).ready(function(){
 	$('form').submit(function(e){
 		e.preventDefault();
 		if (username==null || username=="" || (password==null && !bLDAPUser) || (password=="" && !bLDAPUser) || roles==null || roles.length==0){
+			error["all"]={};
 			error["all"].isError = true;
 			showError(FIELDNOTFILLED,"all");
 			return false;
