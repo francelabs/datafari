@@ -14,6 +14,13 @@ you just need to mention that you are using it.
 
 See http://wiki.datafari.com for more information.
 
+==================  2.2.1 ==================
+
+Changes :
+Alerts fix
+Bug fixes for Internet Explorer : display of the Admin UI
+
+
 ==================  2.2 ==================
 
 Versions of Major Components 
