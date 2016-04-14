@@ -18,10 +18,11 @@ of Maven full build. -->
 
 	<!-- Source directories -->
 	<property name="dist.src.dir" value="${project.dir}/dist" />
+	<property name="tests.dir" value="${project.dir}/tests" />
 
-	<target name="all" depends="clean-datafari,configure,build,deploy" />
+	<target name="all" depends="clean-datafari,configure,build,tests,deploy" />
 
-	<target name="redeploy" depends="clean-datafari,build,deploy" />
+	<target name="redeploy" depends="clean-datafari,build,tests,deploy" />
 
 	<target name="clean-datafari">
 		<delete dir="tomcat/webapps/${datafari.context.app}" />
@@ -43,6 +44,11 @@ of Maven full build. -->
 			<fileset dir="${dist.src.dir}" />
 		</copy>
 	</target>
+	
+	<path id="src.path">
+	  <pathelement location="${project.dir}/src/main/java" />
+	  <pathelement location="${project.dir}/src/test/java" />
+	</path>
 
 	<target name="build">
 
@@ -51,14 +57,14 @@ of Maven full build. -->
 			<fileset dir="${project.dir}/WebContent" />
 		</copy>
 
-		<javac destdir="${dist.src.dir}/WEB-INF/classes" debug="on" debuglevel="lines,vars,source" verbose="off" source="1.7" target="1.7">
+		<javac destdir="${dist.src.dir}/WEB-INF/classes" includeantruntime="false" debug="on" debuglevel="lines,vars,source" verbose="off" source="1.8" target="1.8">
 			<classpath>
 				<!-- Reference Maven dependencies for Java compilation -->
 				<!-- Artifacts for Java classes copied to dist directory by task copy-dependencies of datafari-core POM -->
 				<fileset dir="${dist.src.dir}/WEB-INF/lib" />
 			</classpath>
 
-			<src path="${project.dir}/src/main/java" />
+			<src refid="src.path" />
 
 			<!-- These sources will be compiled as separate modules by Maven main POM, so we don't compile them here -->
 			<exclude name="com/francelabs/realm/**" />
@@ -75,6 +81,23 @@ of Maven full build. -->
 		</copy>
 		-->
 
+	</target>
+	
+	<path id="test.path">
+		<pathelement location="${dist.src.dir}/WEB-INF/classes"/>
+		<fileset dir="${tests.dir}/lib">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+	
+	<target name="tests">
+		<junit fork="yes" printsummary="yes">
+			<classpath refid="test.path" />
+			<batchtest>
+	            <fileset dir="${project.dir}/src/test/java" includes="**/*.java"/>
+				<formatter type="plain" usefile="false"/>
+	        </batchtest>
+		</junit>
 	</target>
 
 </project>

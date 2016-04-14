@@ -108,6 +108,35 @@
 								org.apache.catalina.deploy.WebXml addFilter at Tomcat startup -->
 						</configuration>
 					</execution>
+					
+					<execution> <!-- Copy dependencies transitively (if not transitively, use copy goal) -->
+						<id>copy-tests-dependencies</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>../tests/lib</outputDirectory>
+							<includeGroupIds> org.apache.commons, commons-httpclient,
+								commons-logging, commons-codec, commons-digester,
+								commons-beanutils, commons-io, log4j,
+								org.slf4j, org.apache.solr,
+								org.json,
+								org.jsoup,
+								org.apache.httpcomponents,
+								org.apache.zookeeper,
+								org.mockito,
+								javax.servlet,
+								net.htmlparser.jericho,
+								com.sun.mail,
+								joda-time,
+								org.hamcrest, junit, org.noggit,
+								org.codehaus.woodstox, org.mozilla, org.apache.lucene
+							</includeGroupIds>
+							<!-- Do not include org.apache.tomcat group, otherwise java.lang.NoSuchMethodException: 
+								org.apache.catalina.deploy.WebXml addFilter at Tomcat startup -->
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 		</plugins>

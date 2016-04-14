@@ -56,6 +56,11 @@ public class QueryElevator extends HttpServlet {
 		env = System.getenv("DATAFARI_HOME"); // Gets the directory of
 		// installation if in standard
 		// environment
+
+		if (env == null) {
+			env = System.getProperty("DATAFARI_HOME");
+		}
+
 		if (env == null) { // If in development environment
 			env = ExecutionEnvironment.getDevExecutionEnvironment();
 		}
