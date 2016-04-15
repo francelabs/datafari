@@ -126,6 +126,7 @@
 								org.apache.httpcomponents,
 								org.apache.zookeeper,
 								org.mockito,
+								org.xmlunit,
 								javax.servlet,
 								net.htmlparser.jericho,
 								com.sun.mail,

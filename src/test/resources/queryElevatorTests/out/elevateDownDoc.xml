@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<elevate>
+    <query text="txt">
+        <doc id="/localhost/file1.txt"></doc>
+        <doc id="/localhost/file2.txt"></doc>
+    </query>
+</elevate>

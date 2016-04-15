@@ -94,13 +94,13 @@ public class AlertsManager {
 	 */
 	public boolean getParameter() throws IOException, ParseException {
 		try {
-			if (AlertsConfiguration.getProperty("ALERTS").equals("on")) {
+			if (AlertsConfiguration.getProperty(AlertsConfiguration.ALERTS_ON_OFF).equals("on")) {
 				onOff = true;
 			}
 
 			// Gets the delay for the hourly alerts
 			try {
-				delayH = new DateTime(df.parse(AlertsConfiguration.getProperty("HOURLYDELAY").replace("\\", "")));
+				delayH = new DateTime(df.parse(AlertsConfiguration.getProperty(AlertsConfiguration.HOURLY_DELAYS).replace("\\", "")));
 			} catch (final ParseException e) {
 				LOGGER.warn("Error parsing the Hourly Date, default value will be used, AlertsManager getParameter()", e);
 				delayH = new DateTime(df.parse("01/01/0001/00:00"));
@@ -108,7 +108,7 @@ public class AlertsManager {
 
 			// Gets the delay for the daily alerts
 			try {
-				delayD = new DateTime(df.parse(AlertsConfiguration.getProperty("DAILYDELAY").replace("\\", "")));
+				delayD = new DateTime(df.parse(AlertsConfiguration.getProperty(AlertsConfiguration.DAILY_DELAYS).replace("\\", "")));
 			} catch (final ParseException e) {
 				LOGGER.warn("Error parsing the Daily Date, default value will be used, AlertsManager getParameter()", e);
 				delayD = new DateTime(df.parse("01/01/0001/00:00"));
@@ -116,24 +116,24 @@ public class AlertsManager {
 
 			// Gets the delay for the weekly alerts
 			try {
-				delayW = new DateTime(df.parse(AlertsConfiguration.getProperty("WEEKLYDELAY").replace("\\", "")));
+				delayW = new DateTime(df.parse(AlertsConfiguration.getProperty(AlertsConfiguration.WEEKLY_DELAYS).replace("\\", "")));
 			} catch (final ParseException e) {
 				LOGGER.warn("Error parsing the Weekly Date, default value will be used, AlertsManager getParameter()", e);
 				delayW = new DateTime(df.parse("01/01/0001/00:00"));
 			}
 
 			// Checks if there has been a previous execution for alerts
-			final String hourlyStr = AlertsConfiguration.getProperty("Hourly").replace("\\", "");
+			final String hourlyStr = AlertsConfiguration.getProperty(AlertsConfiguration.LAST_HOURLY_EXEC).replace("\\", "");
 			if (hourlyStr != null) {
 				Hourly.setHasBeenExecuted(true);
 				HourlyHour = hourlyStr;
 			}
-			final String dailyStr = AlertsConfiguration.getProperty("Daily").replace("\\", "");
+			final String dailyStr = AlertsConfiguration.getProperty(AlertsConfiguration.LAST_DAILY_EXEC).replace("\\", "");
 			if (dailyStr != null) {
 				Daily.setHasBeenExecuted(true);
 				DailyHour = dailyStr;
 			}
-			final String weeklyStr = AlertsConfiguration.getProperty("Weekly").replace("\\", "");
+			final String weeklyStr = AlertsConfiguration.getProperty(AlertsConfiguration.LAST_WEEKLY_EXEC).replace("\\", "");
 			if (weeklyStr != null) {
 				Weekly.setHasBeenExecuted(true);
 				WeeklyHour = weeklyStr;

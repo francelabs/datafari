@@ -51,10 +51,10 @@ public class Mail {
 
 	public Mail() throws IOException {
 		try {
-			smtpHost = AlertsConfiguration.getProperty("smtp");
-			from = AlertsConfiguration.getProperty("from");
-			username = AlertsConfiguration.getProperty("user");
-			password = AlertsConfiguration.getProperty("pass");
+			smtpHost = AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_ADRESS);
+			from = AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_FROM);
+			username = AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_USER);
+			password = AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_PASSWORD);
 		} catch (final IOException e) {
 			LOGGER.error("Error while reading the mail configuration in the Mail constructor. Error 69045", e);
 			return;
@@ -66,7 +66,7 @@ public class Mail {
 	 * Javadoc
 	 *
 	 * sends a mail
-	 * 
+	 *
 	 * @param subject
 	 *            : the subject of the mail
 	 * @param text

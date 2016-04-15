@@ -32,9 +32,30 @@ import org.apache.log4j.Logger;
  */
 public class AlertsConfiguration {
 
-	public static String configPropertiesFileName = "alerts.properties";
+	// Properties frequencies
+	public final static String HOURLY_DELAYS = "HOURLYDELAYS";
+	public final static String DAILY_DELAYS = "DAILYDELAYS";
+	public final static String WEEKLY_DELAYS = "WEEKLYDELAYS";
+	public final static String LAST_HOURLY_EXEC = "Hourly";
+	public final static String LAST_DAILY_EXEC = "Daily";
+	public final static String LAST_WEEKLY_EXEC = "Weekly";
+	public final static String ALERTS_ON_OFF = "ALERTS";
 
-	public static String configPropertiesFileNameRealPath;
+	// Properties mails
+	public final static String SMTP_ADRESS = "smtp";
+	public final static String SMTP_FROM = "from";
+	public final static String SMTP_USER = "user";
+	public final static String SMTP_PASSWORD = "pass";
+
+	// Properties Database
+	public final static String DATABASE_HOST = "HOST";
+	public final static String DATABASE_PORT = "PORT";
+	public final static String DATABASE_NAME = "DATABASE";
+	public final static String DATABASE_COLLECTION = "COLLECTION";
+
+	private static String configPropertiesFileName = "alerts.properties";
+
+	private static String configPropertiesFileNameRealPath;
 
 	private static AlertsConfiguration instance;
 	private final Properties properties;

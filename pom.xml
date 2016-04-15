@@ -17,7 +17,6 @@
 		<module>datafari-searchcomp-capsule</module>
 		<module>datafari-realm</module>
 		<module>datafari-manifoldcf-scripts</module>
-		<module>datafari-tests</module>
 	</modules>
 	<prerequisites>
 		<!-- Force minimum Maven version -->

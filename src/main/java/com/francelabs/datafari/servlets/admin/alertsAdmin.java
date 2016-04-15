@@ -79,36 +79,31 @@ public class alertsAdmin extends HttpServlet {
 		final DateTimeFormatter formatterbis = DateTimeFormat.forPattern("dd/MM/yyyy/ HH:mm");
 
 		try {
-			json.put("on", AlertsConfiguration.getProperty("ALERTS"));
-			json.put("hourlyDate", AlertsConfiguration.getProperty("HOURLYDELAY"));
-			json.put("dailyDate", AlertsConfiguration.getProperty("DAILYDELAY"));
-			json.put("weeklyDate", AlertsConfiguration.getProperty("WEEKLYDELAY"));
-			json.put("host", AlertsConfiguration.getProperty("HOST"));
-			json.put("port", AlertsConfiguration.getProperty("PORT"));
-			json.put("database", AlertsConfiguration.getProperty("DATABASE"));
-			json.put("collection", AlertsConfiguration.getProperty("COLLECTION"));
+			json.put("on", AlertsConfiguration.getProperty(AlertsConfiguration.ALERTS_ON_OFF));
+			json.put("hourlyDate", AlertsConfiguration.getProperty(AlertsConfiguration.HOURLY_DELAYS));
+			json.put("dailyDate", AlertsConfiguration.getProperty(AlertsConfiguration.DAILY_DELAYS));
+			json.put("weeklyDate", AlertsConfiguration.getProperty(AlertsConfiguration.WEEKLY_DELAYS));
+			json.put("host", AlertsConfiguration.getProperty(AlertsConfiguration.DATABASE_HOST));
+			json.put("port", AlertsConfiguration.getProperty(AlertsConfiguration.DATABASE_PORT));
+			json.put("database", AlertsConfiguration.getProperty(AlertsConfiguration.DATABASE_NAME));
+			json.put("collection", AlertsConfiguration.getProperty(AlertsConfiguration.DATABASE_COLLECTION));
 
-			// json.put("nextHourly",
-			// new
-			// DateTime(formatter.parseDateTime(AlertsConfiguration.getProperty("Hourly"))).plusHours(1).toString(formatterbis));
-			json.put("nextHourly", getNextEvent("hourly", AlertsConfiguration.getProperty("HOURLYDELAY")));
-			json.put("hourly", new DateTime(formatter.parseDateTime(AlertsConfiguration.getProperty("Hourly"))).toString(formatterbis));
+			json.put("nextHourly", getNextEvent("hourly", AlertsConfiguration.getProperty(AlertsConfiguration.HOURLY_DELAYS)));
+			json.put("hourly", new DateTime(formatter.parseDateTime(AlertsConfiguration.getProperty(AlertsConfiguration.LAST_HOURLY_EXEC)))
+					.toString(formatterbis));
 
-			// json.put("nextDaily", new
-			// DateTime(formatter.parseDateTime(AlertsConfiguration.getProperty("Daily"))).plusDays(1).toString(formatterbis));
-			json.put("nextDaily", getNextEvent("daily", AlertsConfiguration.getProperty("DAILYDELAY")));
-			json.put("daily", new DateTime(formatter.parseDateTime(AlertsConfiguration.getProperty("Daily"))).toString(formatterbis));
+			json.put("nextDaily", getNextEvent("daily", AlertsConfiguration.getProperty(AlertsConfiguration.DAILY_DELAYS)));
+			json.put("daily", new DateTime(formatter.parseDateTime(AlertsConfiguration.getProperty(AlertsConfiguration.LAST_DAILY_EXEC)))
+					.toString(formatterbis));
 
-			// json.put("nextWeekly",
-			// new
-			// DateTime(formatter.parseDateTime(AlertsConfiguration.getProperty("Weekly"))).plusWeeks(1).toString(formatterbis));
-			json.put("nextWeekly", getNextEvent("weekly", AlertsConfiguration.getProperty("WEEKLYDELAY")));
-			json.put("weekly", new DateTime(formatter.parseDateTime(AlertsConfiguration.getProperty("Weekly"))).toString(formatterbis));
+			json.put("nextWeekly", getNextEvent("weekly", AlertsConfiguration.getProperty(AlertsConfiguration.WEEKLY_DELAYS)));
+			json.put("weekly", new DateTime(formatter.parseDateTime(AlertsConfiguration.getProperty(AlertsConfiguration.LAST_WEEKLY_EXEC)))
+					.toString(formatterbis));
 
-			json.put("smtp", AlertsConfiguration.getProperty("smtp"));
-			json.put("from", AlertsConfiguration.getProperty("from"));
-			json.put("user", AlertsConfiguration.getProperty("user"));
-			json.put("pass", AlertsConfiguration.getProperty("pass"));
+			json.put("smtp", AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_ADRESS));
+			json.put("from", AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_FROM));
+			json.put("user", AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_USER));
+			json.put("pass", AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_PASSWORD));
 
 			json.put("code", 0);
 		} catch (final JSONException e) {
@@ -147,7 +142,7 @@ public class alertsAdmin extends HttpServlet {
 
 		try {
 			if (request.getParameter("activated") != null) {
-				AlertsConfiguration.setProperty("ALERTS", request.getParameter("activated"));
+				AlertsConfiguration.setProperty(AlertsConfiguration.ALERTS_ON_OFF, request.getParameter("activated"));
 				if (request.getParameter("activated").equals("on")) {
 					AlertsManager.getInstance().turnOn();
 				} else {
@@ -165,17 +160,20 @@ public class alertsAdmin extends HttpServlet {
 				// time
 				final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy/HH:mm");
 
-				AlertsConfiguration.setProperty("HOURLYDELAY", new DateTime(df.parse(request.getParameter("hourlyDelay"))).toString(formatter));
-				AlertsConfiguration.setProperty("DAILYDELAY", new DateTime(df.parse(request.getParameter("dailyDelay"))).toString(formatter));
-				AlertsConfiguration.setProperty("WEEKLYDELAY", new DateTime(df.parse(request.getParameter("weeklyDelay"))).toString(formatter));
-				AlertsConfiguration.setProperty("HOST", request.getParameter("host"));
-				AlertsConfiguration.setProperty("PORT", request.getParameter("port"));
-				AlertsConfiguration.setProperty("DATABASE", request.getParameter("database"));
-				AlertsConfiguration.setProperty("COLLECTION", request.getParameter("collection"));
-				AlertsConfiguration.setProperty("smtp", request.getParameter("SMTP"));
-				AlertsConfiguration.setProperty("from", request.getParameter("address"));
-				AlertsConfiguration.setProperty("user", request.getParameter("user"));
-				AlertsConfiguration.setProperty("pass", request.getParameter("pass"));
+				AlertsConfiguration.setProperty(AlertsConfiguration.HOURLY_DELAYS,
+						new DateTime(df.parse(request.getParameter("hourlyDelay"))).toString(formatter));
+				AlertsConfiguration.setProperty(AlertsConfiguration.DAILY_DELAYS,
+						new DateTime(df.parse(request.getParameter("dailyDelay"))).toString(formatter));
+				AlertsConfiguration.setProperty(AlertsConfiguration.WEEKLY_DELAYS,
+						new DateTime(df.parse(request.getParameter("weeklyDelay"))).toString(formatter));
+				AlertsConfiguration.setProperty(AlertsConfiguration.DATABASE_HOST, request.getParameter("host"));
+				AlertsConfiguration.setProperty(AlertsConfiguration.DATABASE_PORT, request.getParameter("port"));
+				AlertsConfiguration.setProperty(AlertsConfiguration.DATABASE_NAME, request.getParameter("database"));
+				AlertsConfiguration.setProperty(AlertsConfiguration.DATABASE_COLLECTION, request.getParameter("collection"));
+				AlertsConfiguration.setProperty(AlertsConfiguration.SMTP_ADRESS, request.getParameter("SMTP"));
+				AlertsConfiguration.setProperty(AlertsConfiguration.SMTP_FROM, request.getParameter("address"));
+				AlertsConfiguration.setProperty(AlertsConfiguration.SMTP_USER, request.getParameter("user"));
+				AlertsConfiguration.setProperty(AlertsConfiguration.SMTP_PASSWORD, request.getParameter("pass"));
 
 				// Restart scheduler
 				AlertsManager.getInstance().turnOff();

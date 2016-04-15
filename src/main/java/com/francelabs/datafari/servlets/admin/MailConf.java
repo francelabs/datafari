@@ -66,10 +66,10 @@ public class MailConf extends HttpServlet {
 																// user is
 																// an Admin
 
-				json.put("smtp", AlertsConfiguration.getProperty("smtp"));
-				json.put("from", AlertsConfiguration.getProperty("from"));
-				json.put("user", AlertsConfiguration.getProperty("user"));
-				json.put("pass", AlertsConfiguration.getProperty("pass"));
+				json.put("smtp", AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_ADRESS));
+				json.put("from", AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_FROM));
+				json.put("user", AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_USER));
+				json.put("pass", AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_PASSWORD));
 
 				json.put("code", 0);
 
@@ -101,10 +101,10 @@ public class MailConf extends HttpServlet {
 
 		try {
 
-			AlertsConfiguration.setProperty("smtp", request.getParameter("SMTP"));
-			AlertsConfiguration.setProperty("from", request.getParameter("address"));
-			AlertsConfiguration.setProperty("user", request.getParameter("user"));
-			AlertsConfiguration.setProperty("pass", request.getParameter("pass"));
+			AlertsConfiguration.setProperty(AlertsConfiguration.SMTP_ADRESS, request.getParameter("SMTP"));
+			AlertsConfiguration.setProperty(AlertsConfiguration.SMTP_FROM, request.getParameter("address"));
+			AlertsConfiguration.setProperty(AlertsConfiguration.SMTP_USER, request.getParameter("user"));
+			AlertsConfiguration.setProperty(AlertsConfiguration.SMTP_PASSWORD, request.getParameter("pass"));
 
 			json.put("code", 0);
 		} catch (final Exception e) {

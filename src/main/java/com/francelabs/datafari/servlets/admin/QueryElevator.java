@@ -163,7 +163,8 @@ public class QueryElevator extends HttpServlet {
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		final JSONObject jsonResponse = new JSONObject();
-		if (request.getParameter("action") != null && !request.getParameter("action").equals("")) {
+		if (request.getParameter("action") != null && !request.getParameter("action").equals("") && request.getParameter("query") != null
+				&& !request.getParameter("query").equals("")) {
 			try {
 				// Retrieve the query used for the search
 				final String queryReq = request.getParameter("query");
@@ -211,7 +212,7 @@ public class QueryElevator extends HttpServlet {
 					// Set the response code
 					jsonResponse.put("code", CodesReturned.ALLOK);
 
-				} else { // Remove the doc
+				} else if (action.equals("down")) { // Remove the doc
 
 					// Remove the doc if it is found, otherwise there is nothing
 					// to do
