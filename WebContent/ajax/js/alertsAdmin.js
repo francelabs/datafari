@@ -122,15 +122,15 @@
 	}
 	
 	function parameters() {
-		var data = "hourlyDelay=" + document.getElementById("HourlyDelay").value 
-				+ "&dailyDelay=" + document.getElementById("DailyDelay").value 
-				+ "&weeklyDelay=" + document.getElementById("WeeklyDelay").value
-				+ "&host=" + document.getElementById("Host").value
-				+ "&port=" + document.getElementById("Port").value
-				+ "&database=" + document.getElementById("Database").value
-				+ "&collection=" + document.getElementById("Collection").value
-				+ "&SMTP=" + document.getElementById("SMTP").value 
-				+ "&address=" + document.getElementById("Address").value 
+		var data = "HOURLYDELAY=" + document.getElementById("HourlyDelay").value 
+				+ "&DAILYDELAY=" + document.getElementById("DailyDelay").value 
+				+ "&WEEKLYDELAY=" + document.getElementById("WeeklyDelay").value
+				+ "&HOST=" + document.getElementById("Host").value
+				+ "&PORT=" + document.getElementById("Port").value
+				+ "&DATABASE=" + document.getElementById("Database").value
+				+ "&COLLECTION=" + document.getElementById("Collection").value
+				+ "&smtp=" + document.getElementById("SMTP").value 
+				+ "&from=" + document.getElementById("Address").value 
 				+ "&user=" + document.getElementById("UserName").value
 				+ "&pass=" + document.getElementById("Pass").value;
 		if (data.indexOf("=&") != -1) {

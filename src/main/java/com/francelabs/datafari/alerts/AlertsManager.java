@@ -100,7 +100,7 @@ public class AlertsManager {
 
 			// Gets the delay for the hourly alerts
 			try {
-				delayH = new DateTime(df.parse(AlertsConfiguration.getProperty(AlertsConfiguration.HOURLY_DELAYS).replace("\\", "")));
+				delayH = new DateTime(df.parse(AlertsConfiguration.getProperty(AlertsConfiguration.HOURLY_DELAY).replace("\\", "")));
 			} catch (final ParseException e) {
 				LOGGER.warn("Error parsing the Hourly Date, default value will be used, AlertsManager getParameter()", e);
 				delayH = new DateTime(df.parse("01/01/0001/00:00"));
@@ -108,7 +108,7 @@ public class AlertsManager {
 
 			// Gets the delay for the daily alerts
 			try {
-				delayD = new DateTime(df.parse(AlertsConfiguration.getProperty(AlertsConfiguration.DAILY_DELAYS).replace("\\", "")));
+				delayD = new DateTime(df.parse(AlertsConfiguration.getProperty(AlertsConfiguration.DAILY_DELAY).replace("\\", "")));
 			} catch (final ParseException e) {
 				LOGGER.warn("Error parsing the Daily Date, default value will be used, AlertsManager getParameter()", e);
 				delayD = new DateTime(df.parse("01/01/0001/00:00"));
@@ -116,7 +116,7 @@ public class AlertsManager {
 
 			// Gets the delay for the weekly alerts
 			try {
-				delayW = new DateTime(df.parse(AlertsConfiguration.getProperty(AlertsConfiguration.WEEKLY_DELAYS).replace("\\", "")));
+				delayW = new DateTime(df.parse(AlertsConfiguration.getProperty(AlertsConfiguration.WEEKLY_DELAY).replace("\\", "")));
 			} catch (final ParseException e) {
 				LOGGER.warn("Error parsing the Weekly Date, default value will be used, AlertsManager getParameter()", e);
 				delayW = new DateTime(df.parse("01/01/0001/00:00"));

@@ -30,37 +30,23 @@ import org.apache.log4j.Logger;
  * @author France Labs
  *
  */
-public class AlertsConfiguration {
+public class ELKConfiguration {
 
-	// Properties frequencies
-	public final static String HOURLY_DELAY = "HOURLYDELAY";
-	public final static String DAILY_DELAY = "DAILYDELAY";
-	public final static String WEEKLY_DELAY = "WEEKLYDELAY";
-	public final static String LAST_HOURLY_EXEC = "Hourly";
-	public final static String LAST_DAILY_EXEC = "Daily";
-	public final static String LAST_WEEKLY_EXEC = "Weekly";
-	public final static String ALERTS_ON_OFF = "ALERTS";
+	// Properties
+	public static final String ELK_ACTIVATION = "ELKactivation";
+	public static final String KIBANA_URI = "KibanaURI";
+	public static final String EXTERNAL_ELK_ON_OFF = "externalELK";
+	public static final String ELK_SERVER = "ELKServer";
+	public static final String ELK_SCRIPTS_DIR = "ELKScriptsDir";
 
-	// Properties mails
-	public final static String SMTP_ADDRESS = "smtp";
-	public final static String SMTP_FROM = "from";
-	public final static String SMTP_USER = "user";
-	public final static String SMTP_PASSWORD = "pass";
-
-	// Properties Database
-	public final static String DATABASE_HOST = "HOST";
-	public final static String DATABASE_PORT = "PORT";
-	public final static String DATABASE_NAME = "DATABASE";
-	public final static String DATABASE_COLLECTION = "COLLECTION";
-
-	private static String configPropertiesFileName = "alerts.properties";
+	private static String configPropertiesFileName = "elk.properties";
 
 	private static String configPropertiesFileNameRealPath;
 
-	private static AlertsConfiguration instance;
+	private static ELKConfiguration instance;
 	private final Properties properties;
 
-	private final static Logger LOGGER = Logger.getLogger(AlertsConfiguration.class.getName());
+	private final static Logger LOGGER = Logger.getLogger(ELKConfiguration.class.getName());
 
 	/**
 	 * Set a property and save it the alerts.properties
@@ -93,9 +79,9 @@ public class AlertsConfiguration {
 	 * Get the instance
 	 *
 	 */
-	private static AlertsConfiguration getInstance() throws IOException {
+	private static ELKConfiguration getInstance() throws IOException {
 		if (null == instance) {
-			instance = new AlertsConfiguration();
+			instance = new ELKConfiguration();
 		}
 		return instance;
 	}
@@ -105,7 +91,7 @@ public class AlertsConfiguration {
 	 * Read the properties file to get the parameters to create instance
 	 *
 	 */
-	private AlertsConfiguration() throws IOException {
+	private ELKConfiguration() throws IOException {
 		configPropertiesFileNameRealPath = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + configPropertiesFileName;
 		final File configFile = new File(configPropertiesFileNameRealPath);
 		final InputStream stream = new FileInputStream(configFile);

@@ -80,27 +80,27 @@ public class alertsAdmin extends HttpServlet {
 
 		try {
 			json.put("on", AlertsConfiguration.getProperty(AlertsConfiguration.ALERTS_ON_OFF));
-			json.put("hourlyDate", AlertsConfiguration.getProperty(AlertsConfiguration.HOURLY_DELAYS));
-			json.put("dailyDate", AlertsConfiguration.getProperty(AlertsConfiguration.DAILY_DELAYS));
-			json.put("weeklyDate", AlertsConfiguration.getProperty(AlertsConfiguration.WEEKLY_DELAYS));
+			json.put("hourlyDate", AlertsConfiguration.getProperty(AlertsConfiguration.HOURLY_DELAY));
+			json.put("dailyDate", AlertsConfiguration.getProperty(AlertsConfiguration.DAILY_DELAY));
+			json.put("weeklyDate", AlertsConfiguration.getProperty(AlertsConfiguration.WEEKLY_DELAY));
 			json.put("host", AlertsConfiguration.getProperty(AlertsConfiguration.DATABASE_HOST));
 			json.put("port", AlertsConfiguration.getProperty(AlertsConfiguration.DATABASE_PORT));
 			json.put("database", AlertsConfiguration.getProperty(AlertsConfiguration.DATABASE_NAME));
 			json.put("collection", AlertsConfiguration.getProperty(AlertsConfiguration.DATABASE_COLLECTION));
 
-			json.put("nextHourly", getNextEvent("hourly", AlertsConfiguration.getProperty(AlertsConfiguration.HOURLY_DELAYS)));
+			json.put("nextHourly", getNextEvent("hourly", AlertsConfiguration.getProperty(AlertsConfiguration.HOURLY_DELAY)));
 			json.put("hourly", new DateTime(formatter.parseDateTime(AlertsConfiguration.getProperty(AlertsConfiguration.LAST_HOURLY_EXEC)))
 					.toString(formatterbis));
 
-			json.put("nextDaily", getNextEvent("daily", AlertsConfiguration.getProperty(AlertsConfiguration.DAILY_DELAYS)));
+			json.put("nextDaily", getNextEvent("daily", AlertsConfiguration.getProperty(AlertsConfiguration.DAILY_DELAY)));
 			json.put("daily", new DateTime(formatter.parseDateTime(AlertsConfiguration.getProperty(AlertsConfiguration.LAST_DAILY_EXEC)))
 					.toString(formatterbis));
 
-			json.put("nextWeekly", getNextEvent("weekly", AlertsConfiguration.getProperty(AlertsConfiguration.WEEKLY_DELAYS)));
+			json.put("nextWeekly", getNextEvent("weekly", AlertsConfiguration.getProperty(AlertsConfiguration.WEEKLY_DELAY)));
 			json.put("weekly", new DateTime(formatter.parseDateTime(AlertsConfiguration.getProperty(AlertsConfiguration.LAST_WEEKLY_EXEC)))
 					.toString(formatterbis));
 
-			json.put("smtp", AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_ADRESS));
+			json.put("smtp", AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_ADDRESS));
 			json.put("from", AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_FROM));
 			json.put("user", AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_USER));
 			json.put("pass", AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_PASSWORD));
@@ -160,32 +160,43 @@ public class alertsAdmin extends HttpServlet {
 				// time
 				final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy/HH:mm");
 
-				AlertsConfiguration.setProperty(AlertsConfiguration.HOURLY_DELAYS,
-						new DateTime(df.parse(request.getParameter("hourlyDelay"))).toString(formatter));
-				AlertsConfiguration.setProperty(AlertsConfiguration.DAILY_DELAYS,
-						new DateTime(df.parse(request.getParameter("dailyDelay"))).toString(formatter));
-				AlertsConfiguration.setProperty(AlertsConfiguration.WEEKLY_DELAYS,
-						new DateTime(df.parse(request.getParameter("weeklyDelay"))).toString(formatter));
-				AlertsConfiguration.setProperty(AlertsConfiguration.DATABASE_HOST, request.getParameter("host"));
-				AlertsConfiguration.setProperty(AlertsConfiguration.DATABASE_PORT, request.getParameter("port"));
-				AlertsConfiguration.setProperty(AlertsConfiguration.DATABASE_NAME, request.getParameter("database"));
-				AlertsConfiguration.setProperty(AlertsConfiguration.DATABASE_COLLECTION, request.getParameter("collection"));
-				AlertsConfiguration.setProperty(AlertsConfiguration.SMTP_ADRESS, request.getParameter("SMTP"));
-				AlertsConfiguration.setProperty(AlertsConfiguration.SMTP_FROM, request.getParameter("address"));
-				AlertsConfiguration.setProperty(AlertsConfiguration.SMTP_USER, request.getParameter("user"));
-				AlertsConfiguration.setProperty(AlertsConfiguration.SMTP_PASSWORD, request.getParameter("pass"));
+				AlertsConfiguration.setProperty(AlertsConfiguration.HOURLY_DELAY,
+						new DateTime(df.parse(request.getParameter(AlertsConfiguration.HOURLY_DELAY))).toString(formatter));
+				AlertsConfiguration.setProperty(AlertsConfiguration.DAILY_DELAY,
+						new DateTime(df.parse(request.getParameter(AlertsConfiguration.DAILY_DELAY))).toString(formatter));
+				AlertsConfiguration.setProperty(AlertsConfiguration.WEEKLY_DELAY,
+						new DateTime(df.parse(request.getParameter(AlertsConfiguration.WEEKLY_DELAY))).toString(formatter));
+				AlertsConfiguration.setProperty(AlertsConfiguration.DATABASE_HOST, request.getParameter(AlertsConfiguration.DATABASE_HOST));
+				AlertsConfiguration.setProperty(AlertsConfiguration.DATABASE_PORT, request.getParameter(AlertsConfiguration.DATABASE_PORT));
+				AlertsConfiguration.setProperty(AlertsConfiguration.DATABASE_NAME, request.getParameter(AlertsConfiguration.DATABASE_NAME));
+				AlertsConfiguration.setProperty(AlertsConfiguration.DATABASE_COLLECTION,
+						request.getParameter(AlertsConfiguration.DATABASE_COLLECTION));
+				AlertsConfiguration.setProperty(AlertsConfiguration.SMTP_ADDRESS, request.getParameter(AlertsConfiguration.SMTP_ADDRESS));
+				AlertsConfiguration.setProperty(AlertsConfiguration.SMTP_FROM, request.getParameter(AlertsConfiguration.SMTP_FROM));
+				AlertsConfiguration.setProperty(AlertsConfiguration.SMTP_USER, request.getParameter(AlertsConfiguration.SMTP_USER));
+				AlertsConfiguration.setProperty(AlertsConfiguration.SMTP_PASSWORD, request.getParameter(AlertsConfiguration.SMTP_PASSWORD));
 
-				// Restart scheduler
-				AlertsManager.getInstance().turnOff();
-				AlertsManager.getInstance().turnOn();
+				if (request.getParameter("restart") == null || request.getParameter("restart").equals("")
+						|| request.getParameter("restart").equals("true")) { // restart
+																				// param
+																				// used
+																				// for
+																				// tests,
+																				// DO
+																				// NOT
+																				// REMOVE
+					// Restart scheduler
+					AlertsManager.getInstance().turnOff();
+					AlertsManager.getInstance().turnOn();
+				}
 
 				json.put("code", 0);
 
 			}
 		} catch (final Exception e) {
-			LOGGER.error("Error while accessing the datafari.properties file in the doPost of the alerts administration Servlet . Error 69020 ", e);
+			LOGGER.error("Error while accessing the alerts.properties file in the doPost of the alerts administration Servlet . Error 69020 ", e);
 			json.put("message",
-					"Error while accessing the datafari.properties file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69020");
+					"Error while accessing the alerts.properties file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69020");
 			json.put("code", "69020");
 		}
 

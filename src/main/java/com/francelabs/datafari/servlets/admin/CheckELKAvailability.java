@@ -18,7 +18,7 @@ import org.json.JSONObject;
 
 import com.francelabs.datafari.constants.CodesReturned;
 import com.francelabs.datafari.elk.ActivateELK;
-import com.francelabs.datafari.utils.ScriptConfiguration;
+import com.francelabs.datafari.utils.ELKConfiguration;
 
 /**
  * Servlet implementation class getAllUsersAndRoles
@@ -27,11 +27,6 @@ import com.francelabs.datafari.utils.ScriptConfiguration;
 public class CheckELKAvailability extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(CheckELKAvailability.class);
-	private static final String ELKACTIVATION = "ELKactivation";
-	private static final String KIBANAURI = "KibanaURI";
-	private static final String EXTERNALELK = "externalELK";
-	private static final String ELKSERVER = "ELKServer";
-	private static final String ELKSCRIPTSDIR = "ELKScriptsDir";
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -72,17 +67,17 @@ public class CheckELKAvailability extends HttpServlet {
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 
-		jsonResponse.put(KIBANAURI, ScriptConfiguration.getProperty(KIBANAURI));
-		jsonResponse.put(EXTERNALELK, ScriptConfiguration.getProperty(EXTERNALELK));
-		jsonResponse.put(ELKSERVER, ScriptConfiguration.getProperty(ELKSERVER));
-		jsonResponse.put(ELKSCRIPTSDIR, ScriptConfiguration.getProperty(ELKSCRIPTSDIR));
-		final boolean activated = Boolean.parseBoolean(ScriptConfiguration.getProperty(ELKACTIVATION));
-		final boolean urlUp = isURLUp(ScriptConfiguration.getProperty(KIBANAURI));
+		jsonResponse.put(ELKConfiguration.KIBANA_URI, ELKConfiguration.getProperty(ELKConfiguration.KIBANA_URI));
+		jsonResponse.put(ELKConfiguration.EXTERNAL_ELK_ON_OFF, ELKConfiguration.getProperty(ELKConfiguration.EXTERNAL_ELK_ON_OFF));
+		jsonResponse.put(ELKConfiguration.ELK_SERVER, ELKConfiguration.getProperty(ELKConfiguration.ELK_SERVER));
+		jsonResponse.put(ELKConfiguration.ELK_SCRIPTS_DIR, ELKConfiguration.getProperty(ELKConfiguration.ELK_SCRIPTS_DIR));
+		final boolean activated = Boolean.parseBoolean(ELKConfiguration.getProperty(ELKConfiguration.ELK_ACTIVATION));
+		final boolean urlUp = isURLUp(ELKConfiguration.getProperty(ELKConfiguration.KIBANA_URI));
 		try {
 			if (activated) {
-				jsonResponse.put("code", CodesReturned.ALLOK).put(ELKACTIVATION, "true");
+				jsonResponse.put("code", CodesReturned.ALLOK).put(ELKConfiguration.ELK_ACTIVATION, "true");
 			} else {
-				jsonResponse.put("code", CodesReturned.ALLOK).put(ELKACTIVATION, "false");
+				jsonResponse.put("code", CodesReturned.ALLOK).put(ELKConfiguration.ELK_ACTIVATION, "false");
 			}
 			if (urlUp) {
 				jsonResponse.put("code", CodesReturned.ALLOK).put("isELKUp", "true");
@@ -103,17 +98,19 @@ public class CheckELKAvailability extends HttpServlet {
 		req.setCharacterEncoding("utf8");
 		resp.setContentType("application/json");
 		try {
-			if (req.getParameter(ELKACTIVATION) == null) {
+			if (req.getParameter(ELKConfiguration.ELK_ACTIVATION) == null) {
 				jsonResponse.put("code", CodesReturned.PROBLEMQUERY).put("statut", "Query Malformed");
 			} else {
-				String elkActivation = req.getParameter(ELKACTIVATION);
+				String elkActivation = req.getParameter(ELKConfiguration.ELK_ACTIVATION);
 
 				try {
 					int returnCode;
 					if (elkActivation.equals("true")) {
-						if (req.getParameter(EXTERNALELK) != null && req.getParameter(EXTERNALELK).toString().equals("true")) {
-							if (req.getParameter(ELKSERVER) != null && req.getParameter(ELKSCRIPTSDIR) != null) {
-								returnCode = ActivateELK.getInstance().activateRemote(req.getParameter(ELKSERVER), req.getParameter(ELKSCRIPTSDIR));
+						if (req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF) != null
+								&& req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF).toString().equals("true")) {
+							if (req.getParameter(ELKConfiguration.ELK_SERVER) != null && req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR) != null) {
+								returnCode = ActivateELK.getInstance().activateRemote(req.getParameter(ELKConfiguration.ELK_SERVER),
+										req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR));
 							} else {
 								returnCode = CodesReturned.GENERALERROR;
 								elkActivation = "false";
@@ -122,9 +119,11 @@ public class CheckELKAvailability extends HttpServlet {
 							returnCode = ActivateELK.getInstance().activate();
 						}
 					} else {
-						if (req.getParameter(EXTERNALELK) != null && req.getParameter(EXTERNALELK).toString().equals("true")) {
-							if (req.getParameter(ELKSERVER) != null && req.getParameter(ELKSCRIPTSDIR) != null) {
-								returnCode = ActivateELK.getInstance().deactivateRemote(req.getParameter(ELKSERVER), req.getParameter(ELKSCRIPTSDIR));
+						if (req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF) != null
+								&& req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF).toString().equals("true")) {
+							if (req.getParameter(ELKConfiguration.ELK_SERVER) != null && req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR) != null) {
+								returnCode = ActivateELK.getInstance().deactivateRemote(req.getParameter(ELKConfiguration.ELK_SERVER),
+										req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR));
 							} else {
 								returnCode = CodesReturned.GENERALERROR;
 								elkActivation = "true";
@@ -133,10 +132,10 @@ public class CheckELKAvailability extends HttpServlet {
 							returnCode = ActivateELK.getInstance().deactivate();
 						}
 					}
-					if (ScriptConfiguration.setProperty(ELKACTIVATION, elkActivation)) {
+					if (ELKConfiguration.setProperty(ELKConfiguration.ELK_ACTIVATION, elkActivation)) {
 						jsonResponse.put("code", CodesReturned.GENERALERROR);
 					} else {
-						jsonResponse.put("code", returnCode).put(ELKACTIVATION, elkActivation);
+						jsonResponse.put("code", returnCode).put(ELKConfiguration.ELK_ACTIVATION, elkActivation);
 					}
 				} catch (final Exception e) {
 					jsonResponse.put("code", CodesReturned.GENERALERROR);

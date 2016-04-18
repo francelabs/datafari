@@ -51,7 +51,7 @@ public class Mail {
 
 	public Mail() throws IOException {
 		try {
-			smtpHost = AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_ADRESS);
+			smtpHost = AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_ADDRESS);
 			from = AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_FROM);
 			username = AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_USER);
 			password = AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_PASSWORD);

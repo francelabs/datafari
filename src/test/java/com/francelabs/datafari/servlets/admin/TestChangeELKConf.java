@@ -2,16 +2,16 @@ package com.francelabs.datafari.servlets.admin;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,34 +19,29 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.francelabs.datafari.utils.ScriptConfiguration;
+import com.francelabs.datafari.utils.ELKConfiguration;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TestChangeELKConf {
 
-	private static final String KIBANAURI = "KibanaURI";
-	private static final String EXTERNALELK = "externalELK";
-	private static final String ELKSERVER = "ELKServer";
-	private static final String ELKSCRIPTSDIR = "ELKScriptsDir";
-
-	private String KIBANAURI_SAVE = "KibanaURI";
-	private String EXTERNALELK_SAVE = "externalELK";
-	private String ELKSERVER_SAVE = "ELKServer";
-	private String ELKSCRIPTSDIR_SAVE = "ELKScriptsDir";
+	private String KIBANAURI_SAVE;
+	private String EXTERNALELK_SAVE;
+	private String ELKSERVER_SAVE;
+	private String ELKSCRIPTSDIR_SAVE;
 
 	private void saveConf() throws IOException {
-		KIBANAURI_SAVE = ScriptConfiguration.getProperty(KIBANAURI);
-		EXTERNALELK_SAVE = ScriptConfiguration.getProperty(EXTERNALELK);
-		ELKSERVER_SAVE = ScriptConfiguration.getProperty(ELKSERVER);
-		ELKSCRIPTSDIR_SAVE = ScriptConfiguration.getProperty(ELKSCRIPTSDIR);
+		KIBANAURI_SAVE = ELKConfiguration.getProperty(ELKConfiguration.KIBANA_URI);
+		EXTERNALELK_SAVE = ELKConfiguration.getProperty(ELKConfiguration.EXTERNAL_ELK_ON_OFF);
+		ELKSERVER_SAVE = ELKConfiguration.getProperty(ELKConfiguration.ELK_SERVER);
+		ELKSCRIPTSDIR_SAVE = ELKConfiguration.getProperty(ELKConfiguration.ELK_SCRIPTS_DIR);
 	}
 
 	@After
 	public void restoreConf() {
-		ScriptConfiguration.setProperty(KIBANAURI, KIBANAURI_SAVE);
-		ScriptConfiguration.setProperty(EXTERNALELK, EXTERNALELK_SAVE);
-		ScriptConfiguration.setProperty(ELKSERVER, ELKSERVER_SAVE);
-		ScriptConfiguration.setProperty(ELKSCRIPTSDIR, ELKSCRIPTSDIR_SAVE);
+		ELKConfiguration.setProperty(ELKConfiguration.KIBANA_URI, KIBANAURI_SAVE);
+		ELKConfiguration.setProperty(ELKConfiguration.EXTERNAL_ELK_ON_OFF, EXTERNALELK_SAVE);
+		ELKConfiguration.setProperty(ELKConfiguration.ELK_SERVER, ELKSERVER_SAVE);
+		ELKConfiguration.setProperty(ELKConfiguration.ELK_SCRIPTS_DIR, ELKSCRIPTSDIR_SAVE);
 	}
 
 	@Before
@@ -54,7 +49,7 @@ public class TestChangeELKConf {
 		final File currentDirFile = new File(".");
 		final String helper = currentDirFile.getAbsolutePath();
 		final String currentDir = helper.substring(0, currentDirFile.getCanonicalPath().length());
-		System.setProperty("catalina.home", currentDir + "/tomcat");
+		System.setProperty("catalina.home", currentDir + "/src/test/resources/elkTests");
 		saveConf();
 	}
 
@@ -63,20 +58,25 @@ public class TestChangeELKConf {
 		final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 		final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
-		Mockito.when(request.getParameter(KIBANAURI)).thenReturn("URI_Test");
-		Mockito.when(request.getParameter(EXTERNALELK)).thenReturn("External_Test");
-		Mockito.when(request.getParameter(ELKSERVER)).thenReturn("Server_Test");
-		Mockito.when(request.getParameter(ELKSCRIPTSDIR)).thenReturn("Script_Test");
-		final OutputStream os = new ByteArrayOutputStream();
-		final PrintWriter writer = new PrintWriter(os);
+		Mockito.when(request.getParameter(ELKConfiguration.KIBANA_URI)).thenReturn("URI_Test");
+		Mockito.when(request.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF)).thenReturn("External_Test");
+		Mockito.when(request.getParameter(ELKConfiguration.ELK_SERVER)).thenReturn("Server_Test");
+		Mockito.when(request.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR)).thenReturn("Script_Test");
+
+		final StringWriter sw = new StringWriter();
+		final PrintWriter writer = new PrintWriter(sw);
 		Mockito.when(response.getWriter()).thenReturn(writer);
 
 		new ChangeELKConf().doPost(request, response);
 
 		writer.flush(); // it may not have been flushed yet...
-		assertTrue(ScriptConfiguration.getProperty(KIBANAURI).contains("URI_Test"));
-		assertTrue(ScriptConfiguration.getProperty(EXTERNALELK).contains("External_Test"));
-		assertTrue(ScriptConfiguration.getProperty(ELKSERVER).contains("Server_Test"));
-		assertTrue(ScriptConfiguration.getProperty(ELKSCRIPTSDIR).contains("Script_Test"));
+
+		final JSONObject jsonResponse = new JSONObject(sw.toString());
+		assertTrue(jsonResponse.getInt("code") == 0);
+
+		assertTrue(ELKConfiguration.getProperty(ELKConfiguration.KIBANA_URI).equals("URI_Test"));
+		assertTrue(ELKConfiguration.getProperty(ELKConfiguration.EXTERNAL_ELK_ON_OFF).equals("External_Test"));
+		assertTrue(ELKConfiguration.getProperty(ELKConfiguration.ELK_SERVER).equals("Server_Test"));
+		assertTrue(ELKConfiguration.getProperty(ELKConfiguration.ELK_SCRIPTS_DIR).equals("Script_Test"));
 	}
 }
