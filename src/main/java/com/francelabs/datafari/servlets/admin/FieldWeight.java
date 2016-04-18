@@ -95,6 +95,11 @@ public class FieldWeight extends HttpServlet {
 		env = System.getenv("DATAFARI_HOME"); // Gets the directory of
 												// installation if in standard
 												// environment
+
+		if (env == null) { // Try with the property
+			env = System.getProperty("DATAFARI_HOME");
+		}
+
 		if (env == null) { // If in development environment
 			env = ExecutionEnvironment.getDevExecutionEnvironment();
 		}
@@ -276,42 +281,7 @@ public class FieldWeight extends HttpServlet {
 						}
 					}
 					final String field = request.getParameter("field").toString();
-					final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-
-					if (customSearchHandler != null && customSearchHandler.exists()) {
-						try {
-							doc = dBuilder.parse(customSearchHandler);// Parse
-																		// the
-																		// solrconfig.xml
-							// document
-							searchHandler = getSearchHandler(doc.getElementsByTagName("requestHandler"));
-							if (searchHandler != null) {
-								usingCustom = true;
-							}
-						} catch (final Exception e) {
-							// Not using custom
-							usingCustom = false;
-						}
-					}
-
-					if (searchHandler == null) { // Not using the custom search
-													// handler so try to find it
-													// in the solrconfig.xml
-													// file
-						doc = dBuilder.parse(config);// Parse the solrconfig.xml
-														// document
-						final NodeList fields = (doc.getElementsByTagName("requestHandler"));// Get
-																								// the
-																								// requestHandler
-																								// Node
-
-						searchHandler = getSearchHandler(fields);// Get the
-																	// search
-						// handler from
-						// the standard
-						// solrconfig.xml
-						// file
-					}
+					findSearchHandler();
 
 					// if (searchHandler == null && customSearchHandler != null
 					// && customSearchHandler.exists()) { // search
@@ -403,6 +373,45 @@ public class FieldWeight extends HttpServlet {
 		}
 	}
 
+	private void findSearchHandler() throws ParserConfigurationException, SAXException, IOException {
+		final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		if (customSearchHandler != null && customSearchHandler.exists()) {
+			try {
+				doc = dBuilder.parse(customSearchHandler);// Parse
+															// the
+															// solrconfig.xml
+				// document
+				searchHandler = getSearchHandler(doc.getElementsByTagName("requestHandler"));
+				if (searchHandler != null) {
+					usingCustom = true;
+				}
+			} catch (final Exception e) {
+				// Not using custom
+				usingCustom = false;
+			}
+		}
+
+		if (searchHandler == null) { // Not using the custom search
+										// handler so try to find it
+										// in the solrconfig.xml
+										// file
+			doc = dBuilder.parse(config);// Parse the solrconfig.xml
+											// document
+			final NodeList fields = (doc.getElementsByTagName("requestHandler"));// Get
+																					// the
+																					// requestHandler
+																					// Node
+
+			searchHandler = getSearchHandler(fields);// Get the
+														// search
+			// handler from
+			// the standard
+			// solrconfig.xml
+			// file
+		}
+	}
+
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response) Checks if the files still exist Used to modify the weight
@@ -449,6 +458,10 @@ public class FieldWeight extends HttpServlet {
 
 			try {
 				final String type = request.getParameter("type");
+
+				if (searchHandler == null) {
+					findSearchHandler();
+				}
 
 				if (!usingCustom) { // The custom search handler is not used.
 									// That means that the current config must
@@ -503,6 +516,11 @@ public class FieldWeight extends HttpServlet {
 
 					// Save the custom_search_handler.incl file
 					tf.transform(new DOMSource(doc), new StreamResult(customSearchHandler));
+				}
+
+				if (childList == null) {
+					final Node n = run(searchHandler.getChildNodes(), type);
+					childList = n.getParentNode().getChildNodes();
 				}
 
 				for (int i = 0; i < childList.getLength(); i++) { // Get the str

@@ -1,0 +1,7 @@
+<!-- Put here your custom requestHandlers for Solr -->
+<!-- E.g  <requestHandler class="my.requestHandler" name="/myRequestHandler">
+     <lst name="defaults">
+       <str name="param1">true</str>
+       <str name="param2">json</str>
+     </lst>
+  </requestHandler> -->
