@@ -18,8 +18,8 @@ source $INIT_STATE_FILE
 source $CONFIG_FILE
 
 
-if is_running $CATALINA_PID; then
-    echo "Error: Tomcat seems to be already running with PID $(cat $TOMCAT_PID_FILE)"
+if is_running $CATALINA_PID_FILE; then
+    echo "Error: Tomcat seems to be already running with PID $(cat $CATALINA_PID_FILE)"
     exit 1
 fi
 
