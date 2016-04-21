@@ -6,12 +6,10 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import com.francelabs.datafari.utils.ScriptConfiguration;
+import com.francelabs.datafari.utils.ELKConfiguration;
 
 @WebListener
 public class ELKLauncher implements ServletContextListener {
-
-	private static final String ELKACTIVATION = "ELKactivation";
 
 	@Override
 	public void contextDestroyed(final ServletContextEvent arg0) {
@@ -22,7 +20,7 @@ public class ELKLauncher implements ServletContextListener {
 	public void contextInitialized(final ServletContextEvent arg0) {
 		boolean activated = false;
 		try {
-			activated = Boolean.parseBoolean(ScriptConfiguration.getProperty(ELKACTIVATION));
+			activated = Boolean.parseBoolean(ELKConfiguration.getProperty(ELKConfiguration.ELK_ACTIVATION));
 		} catch (final IOException e) {
 			activated = false;
 		}
