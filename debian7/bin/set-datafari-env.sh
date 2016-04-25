@@ -29,7 +29,7 @@ export DATAFARI_LOGS=$DATAFARI_HOME/logs
 
 # pid files 
 export MCF_PID_FILE=$PID_DIR/mcf_crawler_agent.pid
-export CATALINA_PID_FILE=$PID_DIR/tomcat.pid
+export CATALINA_PID=$PID_DIR/tomcat.pid
 export SOLR_PID_FILE=$PID_DIR/solr-8983.pid
 export CASSANDRA_PID_FILE=$PID_DIR/cassandra.pid
 export POSTGRES_PID_FILE=$PID_DIR/postmaster.pid
