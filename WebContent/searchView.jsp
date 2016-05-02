@@ -40,11 +40,15 @@
 	
 <link rel="stylesheet" type ="text/css" href="css/custom/customSearchView.css">
 
+<link rel="stylesheet" type ="text/css" href="css/jquery-ui-1.11.4/jquery-ui.min.css">
+
+<!-- <link rel="stylesheet" type ="text/css" href="css/widgets/slider-widget.css"> -->
+
 </head>
 <body class="gecko win">
 	
 	<script type="text/javascript" src="js/function/empty.func.js"></script>
-	<script type="text/javascript" src="js/jquery-ui-1.8.23.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui-1.11.4/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="js/jquery.waypoints.min.js"></script>
 	<script type="text/javascript" src="js/startswith.js"></script>
 	<script type="text/javascript" src="js/endswith.js"></script>
@@ -109,6 +113,10 @@
 	-->
 <!-- 	<script type="text/javascript" -->
 <!-- 		src="js/AjaxFranceLabs/widgets/OntologySuggestion.widget.js"></script> -->
+
+<!-- <script type="text/javascript" -->
+<!-- 		src="js/AjaxFranceLabs/widgets/Slider.widget.js"></script> -->
+
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/Spellchecker.widget.js"></script>
 	<!-- comment the tag bellow if you don't use illustrate mode for desktop and mobile -->	
@@ -180,6 +188,7 @@
 
 		<div class="col left">
 			<div id="facets">
+				<div id="facet_slider"></div>
 				<div id="facet_last_modified"></div>
 				<div id="facet_extension"></div>
 				<!-- To enable Facet Hierarchical widget -->

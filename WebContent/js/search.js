@@ -1,5 +1,13 @@
 $(function($) {
 	
+//	Manager.addWidget(new AjaxFranceLabs.SliderWidget({
+//		elm : $('#facet_slider'),
+//		id : 'slider',
+//		name : 'Test',
+//		field : 'last_modified',
+//		range : false
+//	}));
+	
 //	Manager.addWidget(new AjaxFranceLabs.TabWidget({
 //		elm : $('#source_tabs'),
 //		id : 'facet_tab',
