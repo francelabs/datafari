@@ -17,6 +17,7 @@ package com.francelabs.datafari.servlets.admin;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.Principal;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -42,6 +43,7 @@ import org.apache.solr.response.SolrQueryResponse;
 import org.apache.solr.schema.IndexSchema;
 import org.apache.solr.search.SolrIndexSearcher;
 import org.apache.solr.util.RTimer;
+import org.apache.solr.util.RTimerTree;
 
 import com.francelabs.datafari.service.search.SolrServers;
 import com.francelabs.datafari.service.search.SolrServers.Core;
@@ -91,62 +93,29 @@ public class PromoLink extends HttpServlet {
 
 			}
 			SolrQueryRequest req = new SolrQueryRequest() {
-				@Override
-				public SolrParams getParams() {
-					return query;
-				}
 
 				@Override
-				public void setParams(SolrParams params) {
+				public void close() {
+					// TODO Auto-generated method stub
+					
 				}
 
 				@Override
 				public Iterable<ContentStream> getContentStreams() {
-					return null;
-				}
-
-				@Override
-				public SolrParams getOriginalParams() {
+					// TODO Auto-generated method stub
 					return null;
 				}
 
 				@Override
 				public Map<Object, Object> getContext() {
-					return null;
-				}
-
-				@Override
-				public void close() {
-				}
-
-				@Override
-				public long getStartTime() {
-					return 0;
-				}
-
-				@Override
-				public SolrIndexSearcher getSearcher() {
+					// TODO Auto-generated method stub
 					return null;
 				}
 
 				@Override
 				public SolrCore getCore() {
+					// TODO Auto-generated method stub
 					return null;
-				}
-
-				@Override
-				public IndexSchema getSchema() {
-					return null;
-				}
-
-				@Override
-				public String getParamString() {
-					return null;
-				}
-
-				@Override
-				public void updateSchemaToLatest() {
-
 				}
 
 				@Override
@@ -156,7 +125,49 @@ public class PromoLink extends HttpServlet {
 				}
 
 				@Override
-				public RTimer getRequestTimer() {
+				public SolrParams getOriginalParams() {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public String getParamString() {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public SolrParams getParams() {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public RTimerTree getRequestTimer() {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public IndexSchema getSchema() {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public SolrIndexSearcher getSearcher() {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public long getStartTime() {
+					// TODO Auto-generated method stub
+					return 0;
+				}
+
+				@Override
+				public Principal getUserPrincipal() {
 					// TODO Auto-generated method stub
 					return null;
 				}
@@ -166,6 +177,19 @@ public class PromoLink extends HttpServlet {
 					// TODO Auto-generated method stub
 					
 				}
+
+				@Override
+				public void setParams(SolrParams arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void updateSchemaToLatest() {
+					// TODO Auto-generated method stub
+					
+				}
+				
 
 			};
 			if(request.getParameter("title")!=null){										//If the servlet has been called to check if there was an existing promolink with this keyword
