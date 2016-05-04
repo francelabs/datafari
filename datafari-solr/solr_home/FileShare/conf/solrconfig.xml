@@ -817,6 +817,18 @@
     </lst>
   </requestHandler>
   
+  <requestHandler name="/update/website"
+		class="com.francelabs.datafari.handler.html.HTMLRequestHandler">
+		<lst name="defaults">
+			<str name="id">id</str>
+			<str name="field">content</str>
+			<str name="field">title</str>
+			<str name="f.content.selector">body</str>
+			<str name="f.title.selector">title</str>
+			<str name="update.chain">datafariweb</str>
+		</lst>
+	</requestHandler>
+  
   <!-- ////////////////////////// -->
    <!-- Includes custom request handlers -->
   &custom_request_handlers;
@@ -1171,6 +1183,46 @@
 	    <processor class="solr.RunUpdateProcessorFactory"/>
 
   
+	</updateRequestProcessorChain>
+	
+	<updateRequestProcessorChain name="datafariweb">
+
+		<processor class="solr.CloneFieldUpdateProcessorFactory">
+			<str name="source">id</str>
+			<str name="dest">url</str>
+		</processor>
+
+		<processor class="solr.DefaultValueUpdateProcessorFactory">
+			<str name="fieldName">source</str>
+			<str name="value">Web</str>
+		</processor>
+
+		<processor class="solr.DefaultValueUpdateProcessorFactory">
+			<str name="fieldName">extension</str>
+			<str name="value">html</str>
+		</processor>
+
+		<processor
+			class="org.apache.solr.update.processor.LangDetectLanguageIdentifierUpdateProcessorFactory">
+			<str name="langid.fl">content,title</str>
+			<str name="langid.langField">language</str>
+			<str name="langid.map">true</str>
+			<str name="langid.whitelist">en,fr</str>
+			<str name="langid.fallback">en</str>
+		</processor>
+
+
+		<processor class="solr.processor.SignatureUpdateProcessorFactory">
+			<bool name="enabled">${deduplication.factory.enabled:false}</bool>
+			<str name="signatureField">signature</str>
+			<bool name="overwriteDupes">false</bool>
+			<str name="fields">content,content_en,content_fr</str>
+			<str name="signatureClass">solr.processor.MD5Signature</str>
+		</processor>
+		<processor class="solr.LogUpdateProcessorFactory" />
+		<processor class="solr.RunUpdateProcessorFactory" />
+
+
 	</updateRequestProcessorChain>
 	
 	<!-- ////////////////////////// -->

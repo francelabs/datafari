@@ -1,0 +1,125 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.francelabs.datafari</groupId>
+	<artifactId>datafari-handler</artifactId>
+	<packaging>jar</packaging>
+	<version>2.0-SNAPSHOT</version>
+	<name>Datafari Enterprise Search - Search handler module</name>
+	<parent>
+		<groupId>com.francelabs.datafari</groupId>
+		<artifactId>datafari-parent</artifactId>
+		<version>2.0-SNAPSHOT</version>
+	</parent>
+	<prerequisites>
+		<!-- Force minimum Maven version -->
+		<maven>3.0.5</maven>
+	</prerequisites>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.8.2</version>
+		</dependency>
+	</dependencies>
+	<build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.10</version>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/alternateLocation</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>true</overWriteSnapshots>
+              <excludeTransitive>true</excludeTransitive>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
+    <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+					<includes>
+						<include>**/datafari/handler/**</include>
+					</includes>
+				</configuration>
+				<executions>
+					<!-- Run the compile goal at compile phase -->
+					<execution>
+						<id>compile</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<includes>
+						<include>**/datafari/handler/**</include>
+					</includes>
+					<outputDirectory>../solr/solr_home/FileShare/lib/custom</outputDirectory>
+				</configuration>
+				<executions>
+					<!-- Run the jar goal at package phase -->
+					<execution>
+						<id>jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <configuration>
+              <tasks>
+
+ <copy todir="../solr/solr_home/FileShare/lib/custom">
+    <fileset dir="${project.build.directory}/alternateLocation">
+      <include name="*.jar"/>
+    </fileset>
+  </copy>     
+                <!--
+                  Place any Ant task here. You can add anything
+                  you can add between <target> and </target> in a
+                  build.xml.
+                -->
+
+              </tasks>
+            </configuration>
+            
+         
+            <goals>
+              <goal>run</goal>
+            </goals>
+            </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+	
+</project>
