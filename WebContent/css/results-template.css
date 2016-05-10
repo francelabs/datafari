@@ -1,481 +1,516 @@
 /* Ajout responsif mobile <799 px */
 @media  (max-width : 799px){
 
-#spinner_mobile{
-	z-index: 1000;
-	padding: 10%;
-	top: 50%;
-	position: fixed;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	-webkit-transform: translate(-50%,-50%);
-	-ms-transform: translate(-50%,-50%);
-}
-#spinner_mobile i{
-	top: 50%;
-	transform: translate(-50%, -50%);
-	-webkit-transform: translate(-50%,-50%);
-	-ms-transform: translate(-50%,-50%);
-	left: 50%;
-	font-size: 3em;
-}
-.noResult{
-padding-top : 10px;
-}
-#pagerBefore {
-	display:none;
-}
-
-#pagerAfter {
-	display:none;
-}
-
-.go_l {
-	display:none;
-}
-
-.widgetContainer .annonce {padding: 3px;font-size: 0.6em;}
-
-#facets_mobile{
-    height:100vh;
-	display: block;
-	position: absolute;
-    top: 0px;
-    width: 100%;
- 	z-index:100;
-    -webkit-animation-duration: 0.3s; /* Chrome, Safari, Opera */
-    animation-duration: 0.3s;
-}
-
-
-#facets_mobile #nav_mobile {
-    height:4em;
-}
-#facets_mobile ul{
-	margin-top: 2px;
-	padding-left: 8%;
-	border:0px;
-	border-bottom:0px;
-}
-#facets_mobile li{
-	border:0px;
-	border-bottom:0px;
-}
-#facets_mobile #nav_mobile a {
-	width : 95%;
-	vertical-align: middle;
-	display: inline-block;
-	line-height: 3.7;
-	margin-left: 5%;
-	outline: 0px;
-}
-#facets_mobile #nav_mobile i{
-	margin-right:3%;
-}
-#facets_mobile .facet.tableWidget.widget .facetName{
-	position:relative;
-	width:90%;
-	padding:5%;
-	font-size:1.1em;
-}
-#facets_mobile .facet.tableWidget.widget{
-	position:relative;
-	min-width:86%;
-	margin:7% 7% 5% 7%;
-	padding-bottom:0px;
-	box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1), 0px 0px 1px rgba(0, 0, 0, 0.1);
-}
-#facets_mobile .facet.hierarchicalWidget.widget .facetName{
-	position:relative;
-	width:90%;
-	padding:5%;
-	font-size:1.1em;
-}
-#facets_mobile .facet.hierarchicalWidget.widget{
-	position:relative;
-	min-width:86%;
-	margin:7% 7% 5% 7%;
-	padding-bottom:0px;
-	box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1), 0px 0px 1px rgba(0, 0, 0, 0.1);
-}	
-#facets_mobile .facet.tableWidget.widget .label{
-
-}
-#facets_mobile .checkboxIcon, #facets_mobile input[type="checkbox"]:checked + label span.checkboxIcon{
-	font-size: 1.6em;
-}
-#facets_mobile .facet.tableWidget.widget .facetName i{
-	-webkit-transform: translateY(-50%);
-	-ms-transform: translateY(-50%);
-	transform: translateY(-50%);
-	top: 50%;
-	position: absolute;
-	right:5%;
-	-webkit-animation-duration: 0.2s; /* Chrome, Safari, Opera */
-    animation-duration: 0.2s;
-}
-#facets_mobile .facet.hierarchicalWidget.widget .facetName i{
-	-webkit-transform: translateY(-50%);
-	-ms-transform: translateY(-50%);
-	transform: translateY(-50%);
-	top: 50%;
-	position: absolute;
-	right:5%;
-	-webkit-animation-duration: 0.2s; /* Chrome, Safari, Opera */
-    animation-duration: 0.2s;
-}
-#results_nav_mobile{
-	display:block;
-	height:3em;
-	box-shadow:0 2px 1px rgba(0,0,0,0.1), 0 0 1px rgba(0,0,0,0.1);
-	position:relative;
-}
-#results{
-	margin-top: 3%;
-}
-#results_nav_mobile #nav_facets_mobile a:active{
-		text-decoration:none;
+	#spinner_mobile{
+		z-index: 1000;
+		padding: 10%;
+		top: 50%;
+		position: fixed;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		-webkit-transform: translate(-50%,-50%);
+		-ms-transform: translate(-50%,-50%);
+	}
+	
+	#spinner_mobile i{
+		top: 50%;
+		transform: translate(-50%, -50%);
+		-webkit-transform: translate(-50%,-50%);
+		-ms-transform: translate(-50%,-50%);
+		left: 50%;
+		font-size: 3em;
+	}
+	
+	.noResult{
+	padding-top : 10px;
+	}
+	
+	#pagerBefore {
+		display:none;
+	}
+	
+	#pagerAfter {
+		display:none;
+	}
+	
+	.go_l {
+		display:none;
+	}
+	
+	.widgetContainer .annonce {padding: 3px;font-size: 0.6em;}
+	
+	#facets_mobile{
+	    height:100vh;
+		display: block;
+		position: absolute;
+	    top: 0px;
+	    width: 100%;
+	 	z-index:100;
+	    -webkit-animation-duration: 0.3s; /* Chrome, Safari, Opera */
+	    animation-duration: 0.3s;
+	}
+	
+	
+	#facets_mobile #nav_mobile {
+	    height:4em;
+	}
+	
+	#facets_mobile ul{
+		margin-top: 2px;
+		padding-left: 8%;
 		border:0px;
-		outline:0;
-}
-#results_nav_mobile #nav_facets_mobile a{
-	font-size:1.3em;
-	float:right;
-	margin-right:3%;
-	font-weight:normal;
-	padding-right:3%;
-	padding-left:3%;
-	outline:0px;
-}
-#results .doc_list .doc .res .noResult{
-	vertical-align: middle;
-	text-decoration: none;
-	line-height: 4em;
-	overflow: visible;	
-}
-#results .doc_list .doc.no{
-	    box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1), 0px 0px 1px rgba(0, 0, 0, 0.1);
-	    text-align:center;
-}
-#results .doc_list .doc.no .res.no{
-	   	text-align:center;
-	   	padding:0px;
-}
-#results .doc_list .doc .res .noResult:hover{
-	text-decoration:none	
-}
-#number_results_mobile{
-	display:inline-block;
-	font-size:1.3em;
-	line-height:2em;	
-	vertical-align:middle;
-	margin-left:5%;
-	top: 50%;
-	position: absolute;
-	transform: translateY(-50%);
-	-ms-transform: translateY(-50%); /* IE 9 */
-    -webkit-transform: translateY(-50%); /* Safari */
-}
-#results_nav_mobile #nav_facets_mobile{
-	width:30%;
-	position: absolute;
-	right: 2%;
-	top: 50%;
-	transform: translateY(-50%);
-	-ms-transform: translateY(-50%); /* IE 9 */
-    -webkit-transform: translateY(-50%); /* Safari */
-	vertical-align: middle;
-	line-height: 2.8em;
-	display: inline-block;
-	padding-top: 2%;
-	padding-bottom: 2%;
-}
-
-
-  
-ul{
-      display:none;
-}
-
-#solr { margin:0 auto; padding:0px; width:100%; }
-#result_information { display:none;}
-#solr .col.left { display:none }
-#solr .col.right { margin-left:10px; width:100%; margin-bottom:9%; }
-
-
-
-#logo-search { display:none;}
-
-/* Reset page */
-.page { margin:0; min-height:0; padding:0; width:0; }
-
-/**************************************/
-/*******	>>> Widgets <<<		*******/
-/**************************************/
-
-/***	>>> Search Bar Widget <<<	***/
-.searchBarWidget { clear: both; margin: 5% 2%; ; width: 95%; height:3em; position:relative; }
-.searchBarWidget  img{
-	width:3em;
-	position: absolute;
-	top: 50%;
-	transform: translateY(-50%);
-	-webkit-transform: translateY(-50%);
-	-ms-transform: translateY(-50%);
-}
-.searchBarWidget .searchBar { 
-	position:relative;
-	border: 1px solid #ffffff;
-	padding: 0px;
-	width: 88%;
-	/* Height changed from 100% to 3em to display correctly when resized */
-	height: 3em;
-	display:inline-block;
-	margin-left:9%;
-	vertical-align:top;
-	box-shadow:0 2px 1px rgba(0,0,0,0.1), 0 0 1px rgba(0,0,0,0.1);
-}
-.searchBarWidget .searchBar input[type=text] { position:absolute;height: 100%; width:78%; padding: 0px;padding-left:2%; border: none; outline:none;  }
-
-.searchBarWidget .searchBar .search {  border: none; cursor: pointer; display: block; float: right;-webkit-appearance: none; border-radius: 0;
-	height:100%; width:20%;
-	text-align:center;
-	-webkit-border-radius:0px;
-	line-height:2.5em; 
-	position:relative;
-}
-.searchBarWidget .searchBar .search .fa-search{
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
-	-ms-transform: translate(-50%,-50%); /* IE 9 */
-    -webkit-transform: translate(-50%,-50%); /* Safari */
-	font-size:1.3em;
-}
-
-
-.searchBarWidget .searchMode { display:none; }
-.searchBarWidget #sortMode {display:none;}
-/**************************************/
-
-/***	>>> Search Bar Widget <<<	***/
-.searchInformationWidget { margin-bottom:10px; }
-/**************************************/
-
-/***	>>> Collection Widget <<<	***/
-.collectionWidget { border: 1px solid; width: 50%; }
-.collectionWidget .title { margin: 5px 10px; }
-.collectionWidget .content { margin: 5px 0; }
-.collectionWidget .content li { border-top: 1px solid; cursor: pointer; display: block; padding: 3px 0 3px 15px; width: 40%; }
-.collectionWidget .content li.last { border-bottom: 1px solid; }
-/**************************************/
-
-/***	>>> Table Facet Widget <<<	***/
-.tableWidget { margin-bottom: 20px; }
-.tableWidget .facetName {  margin: 0; min-height: 21px; padding-bottom: 3px; width: 50%; cursor:pointer; }
-.tableWidget .facetName .label { cursor:pointer;}
-.tableWidget .facetName .hide_show {  display: inline-block; height: 11px; margin-right: 3px; width: 11px; }
-.tableWidget .facetName .hide_show.close {  cursor: pointer; }
-.tableWidget .facetSort { border-bottom: 1px solid; padding: 3px 0px; text-align: left; width: 100%; }
-
-
-
-
-.tableWidget ul li { border-bottom: 1px solid; height: 20px; padding: 3px 0 3px 0; }
-.tableWidget ul li .filterFacetCheck { float: left; vertical-align: top; cursor: pointer; float: left; line-height: 20px; margin-left: 5px; width: 182px;}
-/**************************************/
-
-/***	>>> Hierarchical Facet Widget <<<	***/
-.hierarchicalWidget { margin-bottom: 20px; }
-.hierarchicalWidget .facetName {  margin: 0; min-height: 21px; padding-bottom: 3px; width: 50%; cursor:pointer; }
-.hierarchicalWidget .facetName .label { cursor:pointer;}
-.hierarchicalWidget .facetName .hide_show {  display: inline-block; height: 11px; margin-right: 3px; width: 11px; }
-.hierarchicalWidget .facetName .hide_show.close {  cursor: pointer; }
-.hierarchicalWidget .facetSort { border-bottom: 1px solid; padding: 3px 0px; text-align: left; width: 100%; }
-.hierarchicalWidget li { border-bottom: 1px solid; padding: 3px 0 3px 0; }
-.hierarchicalWidget li .filterFacetCheck { cursor: pointer; }
-
-.hierarchicalWidget .expand {
-	cursor: pointer;
-	display: inline-block;
-	width: 10px;
-}
-
-.hierarchicalWidget .collapse {
-	cursor: pointer;
-	display: inline-block;
-	width: 10px;
-	transform: rotate(90deg);
-}
-
-.hierarchicalWidget .collapse2expand {
-	animation-name: col2ex;
-   	animation-duration: 0.2s;
-   	-webkit-animation-timing-function: linear;
-}
-
-.hierarchicalWidget .expand2collapse {
-	animation-name: ex2col;
-   	animation-duration: 0.2s;
-   	-webkit-animation-timing-function: linear;
-}
-/**************************************/
-
-/******	>>> Result Widget <<<	*******/
-.resultWidget .doc,#promolink { 
-	width: 95%;
-	margin-left: auto;
-	margin-right: auto;
-	display: block;
-	margin-bottom: 2px;
-	height: 8em;
-	padding-top: 1%;
-}
-.resultWidget .doc .connector { float: left; height: 100%; width: 5%; }
-.resultWidget .doc .res { float: left; height: 100%; padding-left: 10px; width: 98%; position:relative; text-align:justify;
-line-height:20px;
-}
-
-.resultWidget .res .description , #promolink #snippet { margin-top: 3px;  }
-.resultWidget .res .title,#promolink .title {  word-wrap: break-word; }
-.resultWidget .res .icon span{vertical-align:top;}
-
-#snippet{
-	width: 95%;
-	line-height: 1.2;
-	display: block; /* Fallback for non-webkit */
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	height:2.4em;
-}
-  
- #urlMobile{
-	width: 95%;
-	line-height: 1.4;
-	display: block; /* Fallback for non-webkit */
-	display: -webkit-box;
-	-webkit-line-clamp: 1;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	position: absolute;
-	bottom: 2%;
-	left: 10px; 
-}
-
-.resultWidget .doc .res .address { margin-top: 6px;  overflow:hidden; text-overflow: ellipsis; }
-.resultWidget .doc .res .address span,.title{
-	width: 100%;
-	display: inline-block;
-	height: 1.5em;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-.title{
-	max-width:83%;
-}
-.resultWidget .doc .res .tags { margin-top: 6px; }
-.resultWidget .bar-loader { display:block; height:32px; margin: auto; width:32px; }
-.resultWidget .res .moreLikeThis { cursor:pointer; }
-/**************************************/
-
-/***	>>> VideoResult Widget <<<	***/
-*.videoResultWidget .video { display: inline-block; padding: 10px; width: 600px; }
-.videoResultWidget .video .thumbnail { display: block; float: left; }
-.videoResultWidget .video .length { border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px; float: left; opacity: 0.8; padding: 1px; position: absolute; margin-top: 2px; margin-left: 2px; }
-.videoResultWidget .video .res { float: left; height: 100%; padding-left: 5px; width: 440px; }
-.videoResultWidget .video .title { height: 20px; overflow: hidden; word-wrap: normal; white-space: nowrap; }
-.videoResultWidget .res .description { height: 45px; margin-top: 3px; overflow: hidden; }
-.videoResultWidget .video .res .address { margin-top: 6px; overflow: hidden; word-wrap: normal; white-space: nowrap; }
-.videoResultWidget .video .res .tags { margin-top: 6px; }
-.videoResultWidget .video:hover { border-radius: 2px; box-shadow: 1px 1px 3px #a1a1a1; cursor: pointer; }
-
-.videoResultWidget .video_list.mosaic .video { display: inline-block; margin-right: 4px; padding: 3px; width: 145px; }
-.videoResultWidget .video_list.mosaic .thumbnail { margin: auto; }
-.videoResultWidget .video_list.mosaic .res { padding-left: 0; width: 145px; }
-.videoResultWidget .video_list.mosaic .res .description { display: none; }
-.videoResultWidget .video_list.mosaic .res .address { display: none; }
-.videoResultWidget .video_list.mosaic .res .tags { display: none; }
-.videoResultWidget .video_list.mosaic .res a span { display: block; height: 30px; width: 145px; }
-/**************************************/
-
-/******	>>> Pager Widget <<<	*******/
-
-.pagerModule { margin-top: 10px; text-align: center; }
-.pagerModule .pages .page, .pagerModule .fn { cursor: pointer; display: inline-table; margin-right: 5px; min-width: 15px; padding: 0 2px; text-align: center; }
-.pagerModule .pages { display: none; overflow: hidden; }
-.pagerModule .pages .page { border: 1px solid; border-radius: 4px; height: 15px;  }
-.pagerModule .fn { height: 17px; }
-
-/**************************************/
-
-/**	>>> promolinkWidget Widget <<<	***/
-
-#promolink{margin-top:3%;}
-.promolinkWidget {padding-top: 1%;}
-.promolinkWidget .widgetContainer{padding-left:10px;}
-.promolinkWidget .title { display: block;  }
-.promolinkWidget .tips { display: block;  }
-/**************************************/
-
-/**	>>> spellcheckerWidget Widget <<<**/
-.spellcheckerWidget { margin: 15px 0;
-	width: 95%;
-	margin-left: auto;
-	margin-right: auto;
-	display: block;
-	margin-bottom: 5px;
-	padding-top: 1%;
-	/* The height has been changed from 2em to 4em to contain the spellchecker corrected result */
-	height: 4em;
-	box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1), 0px 0px 1px rgba(0, 0, 0, 0.1);
-}
-.spellcheckerWidget > span{
-	/* Margin-left changed from 1em to 3% to align original results and spellchecker results */
-	margin-left:3%;
-}
-.spellcheckerWidget .result { cursor: pointer; }
-/**************************************/
-
-/**	>>> userMenuWidget Widget <<<	**/
-.menuWidget .menu { border: 1px solid; position: absolute; }
-.menuWidget .menu li { cursor: pointer; padding: 3px 10px; position: relative; z-index: 100; }
-.menuWidget .menuLink { cursor: default; }
-/**************************************/
-
-/******		>>> jQuery UI <<<	*******/
-/******	>>> Autocomplete <<<	*******/
-* html .ui-autocomplete { width:1px; }
-.ui-autocomplete { position: absolute; cursor: default; }
-.ui-autocomplete .ui-state-hover { cursor:pointer; }
-/**************************************/
-
-
-/******		>>> Slider <<<		*******/
-.ui-slider { position: relative; text-align: left; }
-.ui-slider .ui-slider-handle { position: absolute; z-index: 2; width: 1.2em; height: 1.2em; cursor: default; }
-.ui-slider .ui-slider-range { position: absolute; z-index: 1; font-size: .7em; display: block; border: 0; background-position: 0 0; }
-
-.ui-slider-horizontal { height: .8em; }
-.ui-slider-horizontal .ui-slider-handle { top: -.3em; margin-left: -.6em; }
-.ui-slider-horizontal .ui-slider-range { top: 0; height: 100%; }
-.ui-slider-horizontal .ui-slider-range-min { left: 0; }
-.ui-slider-horizontal .ui-slider-range-max { right: 0; }
-
-.ui-slider-vertical { width: .8em; height: 100px; }
-.ui-slider-vertical .ui-slider-handle { left: -.3em; margin-left: 0; margin-bottom: -.6em; }
-.ui-slider-vertical .ui-slider-range { left: 0; width: 100%; }
-.ui-slider-vertical .ui-slider-range-min { bottom: 0; }
-.ui-slider-vertical .ui-slider-range-max { top: 0; }
-
-/**************************************/
-
-.ui-resizable-handle { height: 10px; }
+		border-bottom:0px;
+	}
+	
+	#facets_mobile li{
+		border:0px;
+		border-bottom:0px;
+	}
+	
+	#facets_mobile #nav_mobile a {
+		width : 95%;
+		vertical-align: middle;
+		display: inline-block;
+		line-height: 3.7;
+		margin-left: 5%;
+		outline: 0px;
+	}
+	
+	#facets_mobile #nav_mobile i{
+		margin-right:3%;
+	}
+	
+	#facets_mobile .facet.tableWidget.widget .facetName{
+		position:relative;
+		width:90%;
+		padding:5%;
+		font-size:1.1em;
+	}
+	
+	#facets_mobile .facet.tableWidget.widget{
+		position:relative;
+		min-width:86%;
+		margin:7% 7% 5% 7%;
+		padding-bottom:0px;
+		box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1), 0px 0px 1px rgba(0, 0, 0, 0.1);
+	}
+	
+	#facets_mobile .facet.hierarchicalWidget.widget .facetName{
+		position:relative;
+		width:90%;
+		padding:5%;
+		font-size:1.1em;
+	}
+	
+	#facets_mobile .facet.hierarchicalWidget.widget{
+		position:relative;
+		min-width:86%;
+		margin:7% 7% 5% 7%;
+		padding-bottom:0px;
+		box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1), 0px 0px 1px rgba(0, 0, 0, 0.1);
+	}	
+	
+	#facets_mobile .facet.tableWidget.widget .label{
+	
+	}
+	
+	#facets_mobile .checkboxIcon, #facets_mobile input[type="checkbox"]:checked + label span.checkboxIcon{
+		font-size: 1.6em;
+	}
+	
+	#facets_mobile .facet.tableWidget.widget .facetName i{
+		-webkit-transform: translateY(-50%);
+		-ms-transform: translateY(-50%);
+		transform: translateY(-50%);
+		top: 50%;
+		position: absolute;
+		right:5%;
+		-webkit-animation-duration: 0.2s; /* Chrome, Safari, Opera */
+	    animation-duration: 0.2s;
+	}
+	
+	#facets_mobile .facet.hierarchicalWidget.widget .facetName i{
+		-webkit-transform: translateY(-50%);
+		-ms-transform: translateY(-50%);
+		transform: translateY(-50%);
+		top: 50%;
+		position: absolute;
+		right:5%;
+		-webkit-animation-duration: 0.2s; /* Chrome, Safari, Opera */
+	    animation-duration: 0.2s;
+	}
+	
+	#results_nav_mobile{
+		display:block;
+		height:3em;
+		box-shadow:0 2px 1px rgba(0,0,0,0.1), 0 0 1px rgba(0,0,0,0.1);
+		position:relative;
+	}
+	
+	#results{
+		margin-top: 3%;
+	}
+	
+	#results_nav_mobile #nav_facets_mobile a:active{
+			text-decoration:none;
+			border:0px;
+			outline:0;
+	}
+	
+	#results_nav_mobile #nav_facets_mobile a{
+		font-size:1.3em;
+		float:right;
+		margin-right:3%;
+		font-weight:normal;
+		padding-right:3%;
+		padding-left:3%;
+		outline:0px;
+	}
+	
+	#results .doc_list .doc .res .noResult{
+		vertical-align: middle;
+		text-decoration: none;
+		line-height: 4em;
+		overflow: visible;	
+	}
+	
+	#results .doc_list .doc.no{
+		    box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1), 0px 0px 1px rgba(0, 0, 0, 0.1);
+		    text-align:center;
+	}
+	
+	#results .doc_list .doc.no .res.no{
+		   	text-align:center;
+		   	padding:0px;
+	}
+	
+	#results .doc_list .doc .res .noResult:hover{
+		text-decoration:none	
+	}
+	
+	#number_results_mobile{
+		display:inline-block;
+		font-size:1.3em;
+		line-height:2em;	
+		vertical-align:middle;
+		margin-left:5%;
+		top: 50%;
+		position: absolute;
+		transform: translateY(-50%);
+		-ms-transform: translateY(-50%); /* IE 9 */
+	    -webkit-transform: translateY(-50%); /* Safari */
+	}
+	
+	#results_nav_mobile #nav_facets_mobile{
+		width:30%;
+		position: absolute;
+		right: 2%;
+		top: 50%;
+		transform: translateY(-50%);
+		-ms-transform: translateY(-50%); /* IE 9 */
+	    -webkit-transform: translateY(-50%); /* Safari */
+		vertical-align: middle;
+		line-height: 2.8em;
+		display: inline-block;
+		padding-top: 2%;
+		padding-bottom: 2%;
+	}
+	
+	
+	  
+	ul{
+	      display:none;
+	}
+	
+	#solr { margin:0 auto; padding:0px; width:100%; }
+	#result_information { display:none;}
+	#solr .col.left { display:none }
+	#solr .col.right { margin-left:10px; width:100%; margin-bottom:9%; }
+	
+	
+	
+	#logo-search { display:none;}
+	
+	/* Reset page */
+	.page { margin:0; min-height:0; padding:0; width:0; }
+	
+	/**************************************/
+	/*******	>>> Widgets <<<		*******/
+	/**************************************/
+	
+	/***	>>> Search Bar Widget <<<	***/
+	.searchBarWidget { clear: both; margin: 5% 2%; ; width: 95%; height:3em; position:relative; }
+	
+	.searchBarWidget  img{
+		width:3em;
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		-webkit-transform: translateY(-50%);
+		-ms-transform: translateY(-50%);
+	}
+	
+	.searchBarWidget .searchBar { 
+		position:relative;
+		border: 1px solid #ffffff;
+		padding: 0px;
+		width: 88%;
+		/* Height changed from 100% to 3em to display correctly when resized */
+		height: 3em;
+		display:inline-block;
+		margin-left:9%;
+		vertical-align:top;
+		box-shadow:0 2px 1px rgba(0,0,0,0.1), 0 0 1px rgba(0,0,0,0.1);
+	}
+	
+	.searchBarWidget .searchBar input[type=text] { position:absolute;height: 100%; width:78%; padding: 0px;padding-left:2%; border: none; outline:none;  }
+	
+	.searchBarWidget .searchBar .search {  border: none; cursor: pointer; display: block; float: right;-webkit-appearance: none; border-radius: 0;
+		height:100%; width:20%;
+		text-align:center;
+		-webkit-border-radius:0px;
+		line-height:2.5em; 
+		position:relative;
+	}
+	
+	.searchBarWidget .searchBar .search .fa-search{
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		-ms-transform: translate(-50%,-50%); /* IE 9 */
+	    -webkit-transform: translate(-50%,-50%); /* Safari */
+		font-size:1.3em;
+	}
+	
+	
+	.searchBarWidget .searchMode { display:none; }
+	.searchBarWidget #sortMode {display:none;}
+	/**************************************/
+	
+	/***	>>> Search Bar Widget <<<	***/
+	.searchInformationWidget { margin-bottom:10px; }
+	/**************************************/
+	
+	/***	>>> Collection Widget <<<	***/
+	.collectionWidget { border: 1px solid; width: 50%; }
+	.collectionWidget .title { margin: 5px 10px; }
+	.collectionWidget .content { margin: 5px 0; }
+	.collectionWidget .content li { border-top: 1px solid; cursor: pointer; display: block; padding: 3px 0 3px 15px; width: 40%; }
+	.collectionWidget .content li.last { border-bottom: 1px solid; }
+	/**************************************/
+	
+	/***	>>> Table Facet Widget <<<	***/
+	.tableWidget { margin-bottom: 20px; }
+	.tableWidget .facetName {  margin: 0; min-height: 21px; padding-bottom: 3px; width: 50%; cursor:pointer; }
+	.tableWidget .facetName .label { cursor:pointer;}
+	.tableWidget .facetName .hide_show {  display: inline-block; height: 11px; margin-right: 3px; width: 11px; }
+	.tableWidget .facetName .hide_show.close {  cursor: pointer; }
+	.tableWidget .facetSort { border-bottom: 1px solid; padding: 3px 0px; text-align: left; width: 100%; }
+	
+	
+	
+	
+	.tableWidget ul li { border-bottom: 1px solid; height: 20px; padding: 3px 0 3px 0; }
+	.tableWidget ul li .filterFacetCheck { float: left; vertical-align: top; cursor: pointer; float: left; line-height: 20px; margin-left: 5px; width: 182px;}
+	/**************************************/
+	
+	/***	>>> Hierarchical Facet Widget <<<	***/
+	.hierarchicalWidget { margin-bottom: 20px; }
+	.hierarchicalWidget .facetName {  margin: 0; min-height: 21px; padding-bottom: 3px; width: 50%; cursor:pointer; }
+	.hierarchicalWidget .facetName .label { cursor:pointer;}
+	.hierarchicalWidget .facetName .hide_show {  display: inline-block; height: 11px; margin-right: 3px; width: 11px; }
+	.hierarchicalWidget .facetName .hide_show.close {  cursor: pointer; }
+	.hierarchicalWidget .facetSort { border-bottom: 1px solid; padding: 3px 0px; text-align: left; width: 100%; }
+	.hierarchicalWidget li { border-bottom: 1px solid; padding: 3px 0 3px 0; }
+	.hierarchicalWidget li .filterFacetCheck { cursor: pointer; }
+	
+	.hierarchicalWidget .expand {
+		cursor: pointer;
+		display: inline-block;
+		width: 10px;
+	}
+	
+	.hierarchicalWidget .collapse {
+		cursor: pointer;
+		display: inline-block;
+		width: 10px;
+		transform: rotate(90deg);
+	}
+	
+	.hierarchicalWidget .collapse2expand {
+		animation-name: col2ex;
+	   	animation-duration: 0.2s;
+	   	-webkit-animation-timing-function: linear;
+	}
+	
+	.hierarchicalWidget .expand2collapse {
+		animation-name: ex2col;
+	   	animation-duration: 0.2s;
+	   	-webkit-animation-timing-function: linear;
+	}
+	/**************************************/
+	
+	/******	>>> Result Widget <<<	*******/
+	.resultWidget .doc,#promolink { 
+		width: 95%;
+		margin-left: auto;
+		margin-right: auto;
+		display: block;
+		margin-bottom: 2px;
+		height: 8em;
+		padding-top: 1%;
+	}
+	
+	.resultWidget .doc .connector { float: left; height: 100%; width: 5%; }
+	
+	.resultWidget .doc .res { float: left; height: 100%; padding-left: 10px; width: 98%; position:relative; text-align:justify;
+	line-height:20px;
+	}
+	
+	.resultWidget .res .description , #promolink #snippet { margin-top: 3px;  }
+	.resultWidget .res .title,#promolink .title {  word-wrap: break-word; }
+	.resultWidget .res .icon span{vertical-align:top;}
+	
+	#snippet{
+		width: 95%;
+		line-height: 1.2;
+		display: block; /* Fallback for non-webkit */
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		height:2.4em;
+	}
+	  
+	 #urlMobile{
+		width: 95%;
+		line-height: 1.4;
+		display: block; /* Fallback for non-webkit */
+		display: -webkit-box;
+		-webkit-line-clamp: 1;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		position: absolute;
+		bottom: 2%;
+		left: 10px; 
+	}
+	
+	.resultWidget .doc .res .address { margin-top: 6px;  overflow:hidden; text-overflow: ellipsis; }
+	.resultWidget .doc .res .address span,.title{
+		width: 100%;
+		display: inline-block;
+		height: 1.5em;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+	
+	.title{
+		max-width:83%;
+	}
+	
+	.resultWidget .doc .res .tags { margin-top: 6px; }
+	.resultWidget .bar-loader { display:block; height:32px; margin: auto; width:32px; }
+	.resultWidget .res .moreLikeThis { cursor:pointer; }
+	/**************************************/
+	
+	/***	>>> VideoResult Widget <<<	***/
+	*.videoResultWidget .video { display: inline-block; padding: 10px; width: 600px; }
+	.videoResultWidget .video .thumbnail { display: block; float: left; }
+	.videoResultWidget .video .length { border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px; float: left; opacity: 0.8; padding: 1px; position: absolute; margin-top: 2px; margin-left: 2px; }
+	.videoResultWidget .video .res { float: left; height: 100%; padding-left: 5px; width: 440px; }
+	.videoResultWidget .video .title { height: 20px; overflow: hidden; word-wrap: normal; white-space: nowrap; }
+	.videoResultWidget .res .description { height: 45px; margin-top: 3px; overflow: hidden; }
+	.videoResultWidget .video .res .address { margin-top: 6px; overflow: hidden; word-wrap: normal; white-space: nowrap; }
+	.videoResultWidget .video .res .tags { margin-top: 6px; }
+	.videoResultWidget .video:hover { border-radius: 2px; box-shadow: 1px 1px 3px #a1a1a1; cursor: pointer; }
+	
+	.videoResultWidget .video_list.mosaic .video { display: inline-block; margin-right: 4px; padding: 3px; width: 145px; }
+	.videoResultWidget .video_list.mosaic .thumbnail { margin: auto; }
+	.videoResultWidget .video_list.mosaic .res { padding-left: 0; width: 145px; }
+	.videoResultWidget .video_list.mosaic .res .description { display: none; }
+	.videoResultWidget .video_list.mosaic .res .address { display: none; }
+	.videoResultWidget .video_list.mosaic .res .tags { display: none; }
+	.videoResultWidget .video_list.mosaic .res a span { display: block; height: 30px; width: 145px; }
+	/**************************************/
+	
+	/******	>>> Pager Widget <<<	*******/
+	
+	.pagerModule { margin-top: 10px; text-align: center; }
+	.pagerModule .pages .page, .pagerModule .fn { cursor: pointer; display: inline-table; margin-right: 5px; min-width: 15px; padding: 0 2px; text-align: center; }
+	.pagerModule .pages { display: none; overflow: hidden; }
+	.pagerModule .pages .page { border: 1px solid; border-radius: 4px; height: 15px;  }
+	.pagerModule .fn { height: 17px; }
+	
+	/**************************************/
+	
+	/**	>>> promolinkWidget Widget <<<	***/
+	
+	#promolink{margin-top:3%;}
+	.promolinkWidget {padding-top: 1%;}
+	.promolinkWidget .widgetContainer{padding-left:10px;}
+	.promolinkWidget .title { display: block;  }
+	.promolinkWidget .tips { display: block;  }
+	/**************************************/
+	
+	/**	>>> spellcheckerWidget Widget <<<**/
+	.spellcheckerWidget { margin: 15px 0;
+		width: 95%;
+		margin-left: auto;
+		margin-right: auto;
+		display: block;
+		margin-bottom: 5px;
+		padding-top: 1%;
+		/* The height has been changed from 2em to 4em to contain the spellchecker corrected result */
+		height: 4em;
+		box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1), 0px 0px 1px rgba(0, 0, 0, 0.1);
+	}
+	
+	.spellcheckerWidget > span{
+		/* Margin-left changed from 1em to 3% to align original results and spellchecker results */
+		margin-left:3%;
+	}
+	
+	.spellcheckerWidget .result { cursor: pointer; }
+	/**************************************/
+	
+	/**	>>> userMenuWidget Widget <<<	**/
+	.menuWidget .menu { border: 1px solid; position: absolute; }
+	.menuWidget .menu li { cursor: pointer; padding: 3px 10px; position: relative; z-index: 100; }
+	.menuWidget .menuLink { cursor: default; }
+	/**************************************/
+	
+	/******		>>> jQuery UI <<<	*******/
+	/******	>>> Autocomplete <<<	*******/
+	* html .ui-autocomplete { width:1px; }
+	.ui-autocomplete { position: absolute; cursor: default; }
+	.ui-autocomplete .ui-state-hover { cursor:pointer; }
+	/**************************************/
+	
+	
+	/******		>>> Slider <<<		*******/
+	.ui-slider { position: relative; text-align: left; }
+	.ui-slider .ui-slider-handle { position: absolute; z-index: 2; width: 1.2em; height: 1.2em; cursor: default; }
+	.ui-slider .ui-slider-range { position: absolute; z-index: 1; font-size: .7em; display: block; border: 0; background-position: 0 0; }
+	
+	.ui-slider-horizontal { height: .8em; }
+	.ui-slider-horizontal .ui-slider-handle { top: -.3em; margin-left: -.6em; }
+	.ui-slider-horizontal .ui-slider-range { top: 0; height: 100%; }
+	.ui-slider-horizontal .ui-slider-range-min { left: 0; }
+	.ui-slider-horizontal .ui-slider-range-max { right: 0; }
+	
+	.ui-slider-vertical { width: .8em; height: 100px; }
+	.ui-slider-vertical .ui-slider-handle { left: -.3em; margin-left: 0; margin-bottom: -.6em; }
+	.ui-slider-vertical .ui-slider-range { left: 0; width: 100%; }
+	.ui-slider-vertical .ui-slider-range-min { bottom: 0; }
+	.ui-slider-vertical .ui-slider-range-max { top: 0; }
+	
+	/**************************************/
+	
+	.ui-resizable-handle { height: 10px; }
 }
 
 @media all and (max-width : 430px){
@@ -483,11 +518,13 @@ line-height:20px;
 		height:7em;
 	}
 }
+
 @media all and (max-width : 221px){
 	.resultWidget .doc, #promolink{
 		height:6em;
 	}
 }
+
 @media all and (max-width : 191px){
 	.searchBarWidget{
 		height:2em;
@@ -499,6 +536,7 @@ line-height:20px;
 		height:2em;
 	}
 }
+
 @media all and (max-width : 340px){
 	
 	.searchBarWidget  img{
@@ -964,9 +1002,11 @@ line-height:20px;
 		box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.1), 0px 0px 0px rgba(0, 0, 0, 0.1);
 	}
 }
+
 #results .doc_list{
 	padding-right:3%;
 }
+
 .favorite{
 	color: #9B1919;
 	position: absolute;
@@ -983,9 +1023,11 @@ line-height:20px;
     color: #008CC9;
     //padding-left:4px;
 }
+
 .liker:hover{
 	text-decoration:underline;
 }
+
 .liker:after{
 	font-family : 'FontAwesome';
 	color : grey;
@@ -995,18 +1037,22 @@ line-height:20px;
 	margin-left:5px;
 	text-decoration:none;
 }
+
 .metadonne{
 	 font-size: 10px;
 	 padding-top:2px;
 }
+
 .metadonne .fa{
 	margin-right: 2px;
 //	color:grey;
 }
+
  #urlMobile .address a{    
  	//box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.1), 0px 0px 0px rgba(0, 0, 0, 0.1);
 	padding-bottom: 4px;
  }
+ 
 #containerError{
 	height: 100vh;
 	background: rgba(0, 0, 0, 0.5) none repeat scroll 0% 0%;
@@ -1016,6 +1062,7 @@ line-height:20px;
 	top: 0px;
 	z-index: 100;
 }
+
 #containerError #smallContainerError{
 	position: absolute;
 	background: white none repeat scroll 0% 0%;
@@ -1031,6 +1078,7 @@ line-height:20px;
 	border-radius: 10px;
 	overflow: hidden;
 }
+
 #error_title{
 	width: 100%;
 	display: inline-block;
@@ -1042,6 +1090,7 @@ line-height:20px;
 	padding-top: 5px;
 	padding-bottom: 5px;
 }
+
 #logout{
 	margin-left:20px;
 	font-size:12px;

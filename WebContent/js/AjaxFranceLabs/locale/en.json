@@ -1,4 +1,6 @@
 {
+"fromLabel":"From",
+"toLabel":"To",
 "fieldWeight":"Field weight",
 "facetlanguage":"Language",
 "facethierarchicalurl":"Path",

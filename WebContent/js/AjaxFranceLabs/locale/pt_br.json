@@ -1,4 +1,6 @@
 {
+"fromLabel":"From",
+"toLabel":"To",
 "fieldWeight":"Peso do campo",
 "facetlanguage":"Idioma",
 "facethierarchicalurl":"Caminho",
