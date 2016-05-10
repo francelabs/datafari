@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.security.Principal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -50,6 +51,7 @@ import org.apache.solr.response.SolrQueryResponse;
 import org.apache.solr.schema.IndexSchema;
 import org.apache.solr.search.SolrIndexSearcher;
 import org.apache.solr.util.RTimer;
+import org.apache.solr.util.RTimerTree;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -63,7 +65,7 @@ import com.francelabs.datafari.utils.RealmLdapConfiguration;
  * Servlet implementation class SearchProxy
  */
 @WebServlet("/SearchProxy/*")
-public class SearchProxy extends HttpServlet {
+public class SearchProxy extends HttpServlet implements SolrQueryRequest {
 	private static final long serialVersionUID = 1L;
 
 	private static String domain = "corp.francelabs.com";
@@ -255,62 +257,29 @@ public class SearchProxy extends HttpServlet {
 			final QueryResponse queryResponse, final SolrQuery queryBis, final QueryResponse queryResponseBis)
 					throws IOException, JSONException, ParseException {
 		final SolrQueryRequest req = new SolrQueryRequest() {
-			@Override
-			public SolrParams getParams() {
-				return query;
-			}
 
 			@Override
-			public void setParams(final SolrParams params) {
+			public void close() {
+				// TODO Auto-generated method stub
+				
 			}
 
 			@Override
 			public Iterable<ContentStream> getContentStreams() {
-				return null;
-			}
-
-			@Override
-			public SolrParams getOriginalParams() {
+				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
 			public Map<Object, Object> getContext() {
-				return null;
-			}
-
-			@Override
-			public void close() {
-			}
-
-			@Override
-			public long getStartTime() {
-				return 0;
-			}
-
-			@Override
-			public SolrIndexSearcher getSearcher() {
+				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
 			public SolrCore getCore() {
+				// TODO Auto-generated method stub
 				return null;
-			}
-
-			@Override
-			public IndexSchema getSchema() {
-				return null;
-			}
-
-			@Override
-			public String getParamString() {
-				return null;
-			}
-
-			@Override
-			public void updateSchemaToLatest() {
-
 			}
 
 			@Override
@@ -320,16 +289,71 @@ public class SearchProxy extends HttpServlet {
 			}
 
 			@Override
-			public RTimer getRequestTimer() {
+			public SolrParams getOriginalParams() {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
-			public void setJSON(final Map<String, Object> arg0) {
+			public String getParamString() {
 				// TODO Auto-generated method stub
-
+				return null;
 			}
+
+			@Override
+			public SolrParams getParams() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public RTimerTree getRequestTimer() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public IndexSchema getSchema() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public SolrIndexSearcher getSearcher() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public long getStartTime() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+
+			@Override
+			public Principal getUserPrincipal() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public void setJSON(Map<String, Object> arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void setParams(SolrParams arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void updateSchemaToLatest() {
+				// TODO Auto-generated method stub
+				
+			}
+			
 
 		};
 		if (queryResponseBis != null) { // If it was a request on FileShare
@@ -478,6 +502,102 @@ public class SearchProxy extends HttpServlet {
 	private String getHandler(final HttpServletRequest servletRequest) {
 		final String pathInfo = servletRequest.getPathInfo();
 		return pathInfo.substring(pathInfo.lastIndexOf("/"), pathInfo.length());
+	}
+
+	@Override
+	public void close() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Iterable<ContentStream> getContentStreams() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<Object, Object> getContext() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SolrCore getCore() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, Object> getJSON() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SolrParams getOriginalParams() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getParamString() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SolrParams getParams() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public RTimerTree getRequestTimer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IndexSchema getSchema() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SolrIndexSearcher getSearcher() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public long getStartTime() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Principal getUserPrincipal() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setJSON(Map<String, Object> arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setParams(SolrParams arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateSchemaToLatest() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
