@@ -120,6 +120,10 @@
 		<copy todir="${debian.dist.dir}/mcf">
 			<fileset dir="${mcf.src.dir}" />
 		</copy>
+		
+		<copy todir="${debian.dist.dir}/zookeeper">
+					<fileset dir="${zk.src.dir}" />
+				</copy>
 
 		<copy todir="${debian.dist.dir}/cassandra">
 			<fileset dir="${cassandra.src.dir}" />

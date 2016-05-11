@@ -303,7 +303,7 @@ public class SearchProxy extends HttpServlet implements SolrQueryRequest {
 			@Override
 			public SolrParams getParams() {
 				// TODO Auto-generated method stub
-				return null;
+				return query;
 			}
 
 			@Override
