@@ -6,22 +6,22 @@ Description: Use Solr Cloud?
 Template: datafari/main_node
 Type: boolean
 Default: true
-Description: Is this the main node?
+Description: SOLRCLOUD - Is this the main node?
 
 Template: datafari/node_host
-Type: text
+Type: string
 Default: localhost
-Description: Specify the current node hostname:
+Description: SOLRCLOUD - Specify the current node hostname:
 
 Template: datafari/main_node_host
-Type: text
+Type: string
 Default: localhost
-Description: Specify the main node host:
+Description: SOLRCLOUD - Specify the main node host:
 
 Template: datafari/num_shards
-Type: text
+Type: string
 Default: 2
-Description: Please enter the number of shards you want for your index: 
+Description: SOLRCLOUD - Please enter the number of shards you want for your index: 
 
 Template: datafari/mcf_password
 Type: password
