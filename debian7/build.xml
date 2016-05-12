@@ -28,7 +28,7 @@
 	<property name="debian.bin.dir" value="${debian.dir}/bin" />
 
 	<property name="jvm.dir" value="${debian.dir}/jvm" />
-	<property name="zookeeper.dir" value="${debian.dir}/zookeeper" />
+	<property name="zookeeper.dir" value="${project.dir}/zookeeper" />
 	<property name="command.dir" value="${debian.dir}/command" />
 	<property name="ocr.dir" value="${debian.dir}/ocr" />
 	<property name="pgsql.dir" value="${debian.dir}/pgsql" />

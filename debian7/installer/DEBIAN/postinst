@@ -21,6 +21,7 @@ db_input high datafari/node_host || true
 		db_get datafari/num_shards
 		sed -i -e "s/@NUMSHARDS@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
 		sed -i -e "s/@ISMAINNODE@/true/g" /opt/datafari/tomcat/conf/datafari.properties
+		sed -i -e "s/@NODEHOST@/${nodehost}/g" /opt/datafari/solr/solr_home/solr.xml
 		mkdir /opt/datafari/solr/solrcloud
 		mv /opt/datafari/solr/solr_home/FileShare /opt/datafari/solr/solrcloud
 		mv /opt/datafari/solr/solr_home/Statistics /opt/datafari/solr/solrcloud
@@ -43,4 +44,5 @@ chmod 755 /opt/datafari/elk/kibana/bin/*
 chmod 755 /opt/datafari/elk/kibana/node/bin/*
 chmod 755 /opt/datafari/elk/logstash/vendor/jruby/bin/*
 chmod 755 /opt/datafari/elk/scripts/*
+
 
