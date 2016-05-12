@@ -35,7 +35,7 @@ public class SolrServers {
 	private static String host = "localhost";
 	private static String solrWebapp = "solr";
 	private static String solrPort = "8983";
-	private static String zookeeperPort = "9080";
+	private static String zookeeperPort = "2181";
 
 	public enum Core {
 		FILESHARE {
@@ -62,6 +62,7 @@ public class SolrServers {
 			try {
 				SolrClient solrClient;
 				if (ScriptConfiguration.getProperty("SOLRCLOUD").equals("true")) {
+					// TODO : change for ZK ensemble 
 					solrClient = new CloudSolrClient(host + ":" + zookeeperPort);
 					((CloudSolrClient) solrClient).setDefaultCollection(core
 							.toString());

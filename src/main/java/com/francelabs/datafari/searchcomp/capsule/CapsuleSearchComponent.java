@@ -56,7 +56,8 @@ public class CapsuleSearchComponent extends SearchComponent {
 			String capsule = null;
 			String capsuleTitle = null;
 			String capsuleBody = null;
-			String solrhome = rb.req.getCore().getResourceLoader().getConfigDir()+"/";
+			// TODO : tempoorary hardcoded path
+			String solrhome = "/opt/datafari/solr/solrcloud/FileShare/conf/";
 			LoadProperties.setPathPropertiesFileName(solrhome);
 			DocList docs = rb.getResults().docList;
 			if ((docs == null) || (docs.size() == 0)) {
