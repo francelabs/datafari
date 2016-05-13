@@ -17,6 +17,11 @@ source "${DIR}/utils.sh"
 source $INIT_STATE_FILE
 source $CONFIG_FILE
 
+nodes(){
+        numrunningsolrnodes="`curl --silent 'http://localhost:8080/datafari-solr/zookeeper?detail=true&path=/live_nodes' | ${DATAFARI_HOME}/command/jq .znode.prop.children_count`"
+}
+
+NUMSHARDS="`echo ${NUMSHARDS} | tr -d '\r'`"
 
 if is_running $CATALINA_PID; then
     echo "Error: Tomcat seems to be already running with PID $(cat $CATALINA_PID)"
@@ -38,16 +43,23 @@ if is_running $CASSANDRA_PID_FILE; then
    exit 1
 fi
 
-if  [[ "$STATE" = *installed* ]];
+
+if [[ "$SOLRCLOUD" = *false* ]] || [[ "$ISMAINNODE" = *true* ]];
 then
-	echo "Start postgres and cassandra and add ManifoldCF database"
+
+	if  [[ "$STATE" = *installed* ]];
+	then
+		echo "Start postgres and cassandra and add ManifoldCF database"
 	
-	sudo su postgres -c "rm -rf ${DATAFARI_HOME}/pgsql/data"
-	sudo su postgres -c "mkdir -m 700 ${DATAFARI_HOME}/pgsql/data"
+		sudo su postgres -c "rm -rf ${DATAFARI_HOME}/pgsql/data"
+		sudo su postgres -c "mkdir -m 700 ${DATAFARI_HOME}/pgsql/data"
 	
-	sudo su datafari -c "rm -rf ${DATAFARI_HOME}/cassandra/data"
-	sudo su datafari -c "mkdir ${DATAFARI_HOME}/cassandra/data"
+		sudo su datafari -c "rm -rf ${DATAFARI_HOME}/cassandra/data"
+		sudo su datafari -c "mkdir ${DATAFARI_HOME}/cassandra/data"
 	
+		sudo su datafari -c "rm -rf ${DATAFARI_HOME}/zookeeper/data"
+                sudo su datafari -c "mkdir -m 700 ${DATAFARI_HOME}/zookeeper/data"
+
 	CASSANDRA_INCLUDE=$CASSANDRA_ENV
 	# Redirect stdout and stderr to log file to ease startup issues investigation
 	sudo -E su datafari -p -c "$CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE &>$DATAFARI_LOGS/cassandra-startup.log"
@@ -111,12 +123,36 @@ then
 		sudo -E su datafari -p -c "$CASSANDRA_HOME/bin/cqlsh -f $DATAFARI_HOME/bin/common/config/cassandra/tables"
 	fi
 fi
+fi
+
+if  [[ "$SOLRCLOUD" = *true* ]];
+then
+	if [[ "$ISMAINNODE" = *true* ]];
+	then
+		echo "Start zookeeper"
+		export SOLRCLOUDOPTION="-DzkHost=localhost:2181 "
+		cd "${DATAFARI_HOME}/zookeeper/bin"
+		sudo -E su datafari -p -c "bash zkServer.sh start"
+	else
+		export SOLRCLOUDOPTION="-DzkHost=${MAINNODEHOST}:2181 "
+	fi
+fi
 
 cd $TOMCAT_HOME/bin
 sudo -E su datafari -p -c "bash startup.sh"
 
 if  [[ "$STATE" = *installed* ]];
 then
+if  [[ "$SOLRCLOUD" = *true* ]];
+	then
+		if [[ "$ISMAINNODE" = *true* ]];
+		then
+			echo "Uploading configuration to zookeeper"
+			"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/FileShare/conf" -confname FileShare
+			"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Statistics/conf" -confname Statistics
+			"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Promolink/conf" -confname Promolink
+              fi
+fi
 	cd "${DATAFARI_HOME}/bin/common"
 	"${JAVA_HOME}/bin/java" -cp DatafariScripts.jar com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript RESTORE config/manifoldcf/init
 	sudo su datafari -c "sed -i 's/\(STATE *= *\).*/\1initialized/' $INIT_STATE_FILE"
@@ -130,3 +166,18 @@ cd $MCF_HOME/../bin
 sudo -E su datafari -p -c "export PATH=$PATH && bash mcf_crawler_agent.sh start"
 
 sudo -E su datafari -p -c "SOLR_INCLUDE=$SOLR_ENV $SOLR_INSTALL_DIR/bin/solr start"
+
+
+if  [[ "$STATE" = *installed* ]];
+then
+if  [[ "$SOLRCLOUD" = *true* ]];
+        then
+                if [[ "$ISMAINNODE" = *true* ]];
+                then
+"curl" "http://localhost:8983/solr/admin/collections?action=CREATE&name=FileShare&numShards=${NUMSHARDS}&replicationFactor=1"
+"curl" "http://localhost:8983/solr/admin/collections?action=CREATE&name=Statistics&numShards=1&replicationFactor=1"
+"curl" "http://localhost:8983/solr/admin/collections?action=CREATE&name=Promolink&numShards=1&replicationFactor=1"
+fi
+fi
+fi
+
