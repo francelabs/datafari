@@ -35,11 +35,12 @@
   -->
   <luceneMatchVersion>5.2.1</luceneMatchVersion>
 
-	<lib dir="./lib/extraction"/>
-	<lib dir="./lib/langid"/>
-	<lib dir="./lib/solr"/>
-	<lib dir="./lib/MCF"/>
-	<lib dir="./lib/custom"/>
+	<!-- TODO : change the hardcoded path add property.name=value in API Collections create -->
+	<lib dir="/opt/datafari/solr/solrcloud/FileShare/lib/extraction"/>
+    <lib dir="/opt/datafari/solr/solrcloud/FileShare/lib/langid"/>
+    <lib dir="/opt/datafari/solr/solrcloud/FileShare/lib/solr"/>
+    <lib dir="/opt/datafari/solr/solrcloud/FileShare/lib/MCF"/>
+    <lib dir="/opt/datafari/solr/solrcloud/FileShare/lib/custom"/>
 	
    <!-- ////////////////////////// -->
    <!-- Includes custom libs -->
@@ -533,10 +534,10 @@
     </listener>
 
 	<!-- Listener for External Filed used for likes -->
-	
+	<!--  
 	<listener class="org.apache.solr.schema.ExternalFileFieldReloader" event="newSearcher"/>
 	<listener class="org.apache.solr.schema.ExternalFileFieldReloader" event="firstSearcher"/>
-
+	-->
 
    <!-- Query Related Event Listeners
 

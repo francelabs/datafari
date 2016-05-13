@@ -30,8 +30,8 @@
 
   <solrcloud>
     <str name="host">@NODEHOST@</str>
-    <int name="hostPort">8080</int>
-    <str name="hostContext">datafari-solr</str>
+    <int name="hostPort">8983</int>
+    <str name="hostContext">solr</str>
     <int name="zkClientTimeout">15000</int>
     <bool name="genericCoreNodeNames">true</bool>
   </solrcloud>
