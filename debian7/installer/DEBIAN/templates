@@ -20,7 +20,7 @@ Description: SOLRCLOUD - Specify the main node host:
 
 Template: datafari/num_shards
 Type: string
-Default: 2
+Default: 1
 Description: SOLRCLOUD - Please enter the number of shards you want for your index: 
 
 Template: datafari/mcf_password

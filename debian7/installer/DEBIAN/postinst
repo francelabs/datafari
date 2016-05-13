@@ -25,6 +25,7 @@ db_input high datafari/node_host || true
 		mkdir /opt/datafari/solr/solrcloud
 		mv /opt/datafari/solr/solr_home/FileShare /opt/datafari/solr/solrcloud
 		mv /opt/datafari/solr/solr_home/Statistics /opt/datafari/solr/solrcloud
+		mv /opt/datafari/solr/solr_home/Promolink /opt/datafari/solr/solrcloud
 		db_input high datafari/datafari_password || true
 		db_go
 		db_get datafari/datafari_password
