@@ -22,7 +22,7 @@ isMCFRunning=true
 isTomcatRunning=true
 isSolrRunning=true
 isCassandraRunning=true
-
+isZKRunning=true
 
 if is_running $MCF_PID_FILE; then
     cd $MCF_HOME/../bin
@@ -41,10 +41,17 @@ else
     echo "Warn: Tomcat does not seem to be running."
 fi
 
+
 if is_running $SOLR_PID_FILE; then
    sudo -E su datafari -p -c "SOLR_INCLUDE=$SOLR_ENV $SOLR_INSTALL_DIR/bin/solr stop"
 else
    echo "Warn : Solr does not seem to be running."
+fi
+
+if is_running $ZK_PID_FILE; then
+   sudo -E su datafari -p -c "bash $ZK_HOME/bin/zkServer.sh stop"
+else
+   echo "Warn : Zookeeper does not seem to be running."
 fi
 
 if is_running $CASSANDRA_PID_FILE; then

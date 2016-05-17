@@ -23,7 +23,7 @@ export SOLR_INSTALL_DIR=$DATAFARI_HOME/solr
 export SOLR_ENV=$SOLR_INSTALL_DIR/bin/solr.in.sh
 export CASSANDRA_HOME=$DATAFARI_HOME/cassandra
 export CASSANDRA_ENV=$CASSANDRA_HOME/bin/cassandra.in.sh
-
+export ZK_HOME=$DATAFARI_HOME/zookeeper
 # Logs directory: needed for Cassandra startup
 export DATAFARI_LOGS=$DATAFARI_HOME/logs
 
@@ -33,4 +33,4 @@ export CATALINA_PID=$PID_DIR/tomcat.pid
 export SOLR_PID_FILE=$PID_DIR/solr-8983.pid
 export CASSANDRA_PID_FILE=$PID_DIR/cassandra.pid
 export POSTGRES_PID_FILE=$PID_DIR/postmaster.pid
-
+export ZK_PID_FILE=$PID_DIR/zookeeper_server.pid

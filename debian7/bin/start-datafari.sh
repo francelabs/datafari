@@ -18,7 +18,7 @@ source $INIT_STATE_FILE
 source $CONFIG_FILE
 
 nodes(){
-        numrunningsolrnodes="`curl --silent 'http://localhost:8983/solr/zookeeper?detail=true&path=/live_nodes' | ${DATAFARI_HOME}/command/jq .znode.prop.children_count`"
+        numrunningsolrnodes="`curl --silent 'http://localhost:8080/datafari-solr/zookeeper?detail=true&path=/live_nodes' | ${DATAFARI_HOME}/command/jq .znode.prop.children_count`"
 }
 
 NUMSHARDS="`echo ${NUMSHARDS} | tr -d '\r'`"
@@ -40,6 +40,11 @@ fi
 
 if is_running $CASSANDRA_PID_FILE; then
    echo "Error : Cassandra seems to be already running with PID $(cat $CASSANDRA_PID_FILE)"
+   exit 1
+fi
+
+if is_running $ZK_PID_FILE; then
+   echo "Error : Zookeeper seems to be already running with PID $(cat $ZK_PID_FILE)"
    exit 1
 fi
 
