@@ -55,7 +55,7 @@
 						<include>**/datafari/searchcomp/capsule/**</include>
 						<include>**/datafari/searchcomp/utils/**</include>
 					</includes>
-					<outputDirectory>../solr/solr_home/FileShare/lib/custom</outputDirectory>
+					<outputDirectory>../solr/solr_home/lib/custom</outputDirectory>
 				</configuration>
 				<executions>
 					<!-- Run the jar goal at package phase -->

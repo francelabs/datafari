@@ -40,7 +40,7 @@
 		</copy>
 
 		<!-- Copy contrib Jars to solr_home/FileShare/lib/FEATURE_DIR_NAME directory -->
-		<copy toDir="solr/solr_home/FileShare/lib" overwrite="true" force="true">
+		<copy toDir="solr/solr_home/lib" overwrite="true" force="true">
 			<!-- Copy Jars that are inside contrib directory -->
 			<!-- Copy Extraction and LangId -->
 			<fileset dir="temp">
@@ -58,7 +58,7 @@
 		</copy>
 
 		<!-- Copy Solr dist Jars to solr_home/FileShare/lib/solr directory -->
-		<copy toDir="solr/solr_home/FileShare/lib/solr" overwrite="true" force="true">
+		<copy toDir="solr/solr_home/lib/solr" overwrite="true" force="true">
 			<!-- Copy Jars that are inside dist directory -->
 			<!-- Copy only Jars that we need -->
 			<fileset dir="temp" includes="*solr*/dist/solr-langid-*.jar" />
@@ -72,7 +72,7 @@
 		<!-- Use Datafari specific Tika-Parser JAR for TesseractOCR config file and SEG-Y parser, should be removed with issue https://datafari.atlassian.net/browse/DATAFARI-80 -->
 		<!-- Use Datafari specific Tika-Core JAR, for SEG-Y parser. Source code available: https://github.com/francelabs/tika and https://github.com/francelabs/sigrun -->
 		<delete>
-			<fileset dir="solr/solr_home/FileShare/lib/extraction" includes="*tika-parsers*.jar,*tika-core*.jar" />
+			<fileset dir="solr/solr_home/lib/extraction" includes="*tika-parsers*.jar,*tika-core*.jar" />
 		</delete>
 		<copy toDir="solr" overwrite="true" force="true">
 			<fileset dir="datafari-solr" />
