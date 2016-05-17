@@ -1,7 +1,12 @@
 package com.francelabs.datafari.searchcomp.capsule;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
+import java.util.Properties;
+
 import org.apache.solr.common.SolrException;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.NamedList;
@@ -9,11 +14,12 @@ import org.apache.solr.common.util.SimpleOrderedMap;
 import org.apache.solr.handler.component.ResponseBuilder;
 import org.apache.solr.handler.component.SearchComponent;
 import org.apache.solr.search.DocList;
+import org.apache.solr.cloud.*;
 import org.apache.solr.search.SolrIndexSearcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.francelabs.datafari.searchcomp.utils.LoadProperties;
+
 
 public class CapsuleSearchComponent extends SearchComponent {
 	private static Logger LOGGER = LoggerFactory.getLogger(CapsuleSearchComponent.class);
@@ -23,7 +29,7 @@ public class CapsuleSearchComponent extends SearchComponent {
 	volatile String lastnewSearcher;
 	volatile String lastOptimizeEvent;
 	protected String defaultFile;
-
+	
 	public void init(NamedList args) {
 		super.init(args);
 		this.defaultFile = ((String) args.get("file"));
@@ -31,7 +37,7 @@ public class CapsuleSearchComponent extends SearchComponent {
 			throw new SolrException(SolrException.ErrorCode.NOT_FOUND,
 					"Need to specify the default file for Capsule component config");
 		}
-		LoadProperties.setConfigPropertiesFileName(this.defaultFile);
+		
 	}
 
 	public void prepare(ResponseBuilder rb) throws IOException {
@@ -56,15 +62,16 @@ public class CapsuleSearchComponent extends SearchComponent {
 			String capsule = null;
 			String capsuleTitle = null;
 			String capsuleBody = null;
-			// TODO : tempoorary hardcoded path
-			String solrhome = "/opt/datafari/solr/solrcloud/FileShare/conf/";
-			LoadProperties.setPathPropertiesFileName(solrhome);
+			InputStream stream = rb.req.getCore().getResourceLoader().openConfig(defaultFile);
+			Properties prop = new Properties();
+			prop.load(stream);
+			
 			DocList docs = rb.getResults().docList;
 			if ((docs == null) || (docs.size() == 0)) {
 				LOGGER.debug("No results");
 			}
 			LOGGER.debug("Doing This many docs:\t" + docs.size());
-			capsule = LoadProperties.getProperty(queryCapsule);
+			capsule = prop.getProperty(queryCapsule);
 			if (capsule != null) {
 				capsule = capsule.replaceAll("\\\\ ", " ");
 				capsuleTitle = capsule.split(";")[0];
@@ -72,9 +79,11 @@ public class CapsuleSearchComponent extends SearchComponent {
 				response.add("title", capsuleTitle);
 				response.add("body", capsuleBody);
 			}
+			stream.close();
 		}
 		rb.rsp.add("capsuleSearchComponent", response);
 		this.totalRequestsTime += System.currentTimeMillis() - lstartTime;
+		
 	}
 
 	public void postCommit() {
@@ -120,4 +129,6 @@ public class CapsuleSearchComponent extends SearchComponent {
 
 		return all;
 	}
+	
+	
 }
