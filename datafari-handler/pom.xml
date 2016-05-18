@@ -76,7 +76,7 @@
 					<includes>
 						<include>**/datafari/handler/**</include>
 					</includes>
-					<outputDirectory>../solr/solr_home/FileShare/lib/custom</outputDirectory>
+					<outputDirectory>../solr/solr_home/lib/custom</outputDirectory>
 				</configuration>
 				<executions>
 					<!-- Run the jar goal at package phase -->
@@ -98,7 +98,7 @@
             <configuration>
               <tasks>
 
- <copy todir="../solr/solr_home/FileShare/lib/custom">
+ <copy todir="../solr/solr_home/custom">
     <fileset dir="${project.build.directory}/alternateLocation">
       <include name="*.jar"/>
     </fileset>
