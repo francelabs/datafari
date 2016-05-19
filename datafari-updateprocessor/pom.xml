@@ -54,7 +54,7 @@
 					<includes>
 						<include>**/datafari/updateprocessor/**</include>
 					</includes>
-					<outputDirectory>../solr/solr_home/lib/custom</outputDirectory>
+					<outputDirectory>../solr/solr_home/FileShare/lib/custom</outputDirectory>
 				</configuration>
 				<executions>
 					<!-- Run the jar goal at package phase -->
