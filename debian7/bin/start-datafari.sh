@@ -171,7 +171,7 @@ cd $MCF_HOME/../bin
 sudo -E su datafari -p -c "export PATH=$PATH && bash mcf_crawler_agent.sh start"
 
 sudo -E su datafari -p -c "SOLR_INCLUDE=$SOLR_ENV $SOLR_INSTALL_DIR/bin/solr start"
-sleep 60
+sleep 30
 
 if  [[ "$STATE" = *installed* ]];
 then
@@ -179,7 +179,7 @@ if  [[ "$SOLRCLOUD" = *true* ]];
         then
                 if [[ "$ISMAINNODE" = *true* ]];
                 then
-curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=FileShare&numShards=@NUMSHARDS@&replicationFactor=1"
+curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=FileShare&numShards=@NUMSHARDS@&replicationFactor=1&property.lib.path=/opt/datafari/solr/solrcloud/FileShare/"
 curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=Statistics&numShards=1&replicationFactor=1"
 curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=Promolink&numShards=1&replicationFactor=1"
 fi

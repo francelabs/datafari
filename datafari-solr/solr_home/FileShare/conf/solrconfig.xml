@@ -35,12 +35,12 @@
   -->
   <luceneMatchVersion>5.2.1</luceneMatchVersion>
 
-	<lib dir="../lib/custom" regex=".*\.jar" />
-	<lib dir="../lib/extraction" regex=".*\.jar" />
-	<lib dir="../lib/jena" regex=".*\.jar" />
-	<lib dir="../lib/langid" regex=".*\.jar" />
-	<lib dir="../lib/MCF" regex=".*\.jar" />
-	<lib dir="../lib/solr" regex=".*\.jar" />
+<!-- TODO : change the hardcoded path add property.name=value in API Collections create -->
+	<lib dir="${lib.path}lib/extraction"/>
+    <lib dir="${lib.path}lib/langid"/>
+    <lib dir="${lib.path}lib/solr"/>
+    <lib dir="${lib.path}lib/MCF"/>
+    <lib dir="${lib.path}lib/custom"/>
 
 	
    <!-- ////////////////////////// -->
