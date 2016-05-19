@@ -7,40 +7,38 @@
 #start script
 
 db_input high datafari/node_host || true
-	db_go
-	db_get datafari/node_host
-	sed -i -e "s/@NODEHOST@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
-	sed -i -e "s/@SOLRCLOUD@/true/g" /opt/datafari/tomcat/conf/datafari.properties
-	db_input high datafari/main_node || true
-	db_go
-	db_get datafari/main_node
-	if [ "$RET" = "true" ];
-	then
-		db_input high datafari/num_shards || true
-		db_go
-		db_get datafari/num_shards
-		sed -i -e "s/@NUMSHARDS@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
-		sed -i -e "s/@ISMAINNODE@/true/g" /opt/datafari/tomcat/conf/datafari.properties
-		sed -i -e "s/@NODEHOST@/${nodehost}/g" /opt/datafari/solr/solr_home/solr.xml
-		mkdir /opt/datafari/solr/solrcloud
-		mv /opt/datafari/solr/solr_home/FileShare /opt/datafari/solr/solrcloud
-		mv /opt/datafari/solr/solr_home/Statistics /opt/datafari/solr/solrcloud
-		mv /opt/datafari/solr/solr_home/Promolink /opt/datafari/solr/solrcloud
-		db_input high datafari/datafari_password || true
-		db_go
-		db_get datafari/datafari_password
-		sed -i -e "s/@PASSWORD@/${RET}/g" /opt/datafari/mcf/mcf_home/properties.xml
-		sed -i -e "s/@TEMPADMINPASSWORD@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
-		sed -i -e "s/@SOLRCLOUD@/false/g" /opt/datafari/tomcat/conf/datafari.properties
-		chmod -R 775 /opt/datafari
-		id -u postgres >/dev/null 2>&1 || useradd postgres
-		id -u datafari >/dev/null 2>&1 || useradd datafari
-	fi
+db_go
+db_get datafari/node_host
+sed -i -e "s/@NODEHOST@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
+sed -i -e "s/@SOLRCLOUD@/true/g" /opt/datafari/tomcat/conf/datafari.properties
+db_input high datafari/num_shards || true
+db_go
+db_get datafari/num_shards
+sed -i -e "s/@NUMSHARDS@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
+sed -i -e "s/@NUMSHARDS@/${RET}/g" /opt/datafari/bin/start-datafari.sh
+sed -i -e "s/@ISMAINNODE@/true/g" /opt/datafari/tomcat/conf/datafari.properties
+sed -i -e "s/@NODEHOST@/${nodehost}/g" /opt/datafari/solr/solr_home/solr.xml
+mkdir /opt/datafari/solr/solrcloud
+mv /opt/datafari/solr/solr_home/FileShare /opt/datafari/solr/solrcloud
+mv /opt/datafari/solr/solr_home/Statistics /opt/datafari/solr/solrcloud
+mv /opt/datafari/solr/solr_home/Promolink /opt/datafari/solr/solrcloud
+db_input high datafari/datafari_password || true
+db_go
+db_get datafari/datafari_password
+sed -i -e "s/@PASSWORD@/${RET}/g" /opt/datafari/mcf/mcf_home/properties.xml
+sed -i -e "s/@TEMPADMINPASSWORD@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
+sed -i -e "s/@SOLRCLOUD@/false/g" /opt/datafari/tomcat/conf/datafari.properties
+		
+	
+chmod -R 775 /opt/datafari
+id -u postgres >/dev/null 2>&1 || useradd postgres
+id -u datafari >/dev/null 2>&1 || useradd datafari
 chown -R datafari /opt/datafari
 chown -R postgres /opt/datafari/pgsql/
 chmod -R 700 /opt/datafari/pgsql/
 chmod -R 777 /opt/datafari/pid
 chmod -R 777 /opt/datafari/logs
+chmod -R 777 /opt/datafari/solr/
 chmod 755 /opt/datafari/elk/kibana/bin/*
 chmod 755 /opt/datafari/elk/kibana/node/bin/*
 chmod 755 /opt/datafari/elk/logstash/vendor/jruby/bin/*
