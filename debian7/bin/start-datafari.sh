@@ -179,9 +179,9 @@ if  [[ "$SOLRCLOUD" = *true* ]];
         then
                 if [[ "$ISMAINNODE" = *true* ]];
                 then
-"curl" "http://localhost:8983/solr/admin/collections?action=CREATE&name=FileShare&numShards=${NUMSHARDS}&replicationFactor=1"
-"curl" "http://localhost:8983/solr/admin/collections?action=CREATE&name=Statistics&numShards=1&replicationFactor=1"
-"curl" "http://localhost:8983/solr/admin/collections?action=CREATE&name=Promolink&numShards=1&replicationFactor=1"
+curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=FileShare&numShards=@NUMSHARDS@&replicationFactor=1"
+curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=Statistics&numShards=1&replicationFactor=1"
+curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=Promolink&numShards=1&replicationFactor=1"
 fi
 fi
 fi
