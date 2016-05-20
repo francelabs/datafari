@@ -6,12 +6,12 @@
 
 #start script
 
-db_input high datafari/node_host || true
-db_go
-db_get datafari/node_host
-sed -i -e "s/@NODEHOST@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
-sed -i -e "s/@NODEHOST@/${RET}/g" /opt/datafari/solr/bin/solr.in.sh
-sed -i -e "s/@SOLRHOSTS@/${RET}:2181/g" /opt/datafari/solr/bin/solr.in.sh
+#db_input high datafari/node_host || true
+#db_go
+#db_get datafari/node_host
+sed -i -e "s/@NODEHOST@/localhost/g" /opt/datafari/tomcat/conf/datafari.properties
+sed -i -e "s/@NODEHOST@/localhost/g" /opt/datafari/solr/bin/solr.in.sh
+sed -i -e "s/@SOLRHOSTS@/localhost:2181/g" /opt/datafari/solr/bin/solr.in.sh
 sed -i -e "s/@SOLRCLOUD@/true/g" /opt/datafari/tomcat/conf/datafari.properties
 
 
@@ -39,7 +39,6 @@ chown -R postgres /opt/datafari/pgsql/
 chmod -R 700 /opt/datafari/pgsql/
 chmod -R 777 /opt/datafari/pid
 chmod -R 777 /opt/datafari/logs
-chmod -R 777 /opt/datafari/solr/
 chmod 755 /opt/datafari/elk/kibana/bin/*
 chmod 755 /opt/datafari/elk/kibana/node/bin/*
 chmod 755 /opt/datafari/elk/logstash/vendor/jruby/bin/*
