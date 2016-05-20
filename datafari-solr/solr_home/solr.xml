@@ -29,8 +29,8 @@
 <solr>
 
   <solrcloud>
-    <str name="host">@NODEHOST@</str>
-    <int name="hostPort">8983</int>
+    <str name="host">${host:}</str>
+    <int name="hostPort">${jetty.port:8983}</int>
     <str name="hostContext">solr</str>
     <int name="zkClientTimeout">15000</int>
     <bool name="genericCoreNodeNames">true</bool>
