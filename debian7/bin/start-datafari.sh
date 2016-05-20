@@ -172,7 +172,7 @@ sudo -E su datafari -p -c "export PATH=$PATH && bash mcf_crawler_agent.sh start"
 
 sudo -E su datafari -p -c "SOLR_INCLUDE=$SOLR_ENV $SOLR_INSTALL_DIR/bin/solr start"
 echo "Waiting before creation of the SolrCloud collections"
-sleep 30
+
 
 if  [[ "$STATE" = *installed* ]];
 then
