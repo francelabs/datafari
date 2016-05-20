@@ -10,14 +10,15 @@ db_input high datafari/node_host || true
 db_go
 db_get datafari/node_host
 sed -i -e "s/@NODEHOST@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
+sed -i -e "s/@NODEHOST@/${RET}/g" /opt/datafari/solr/bin/solr.in.sh
+sed -i -e "s/@SOLRHOSTS@/${RET}:2181/g" /opt/datafari/solr/bin/solr.in.sh
 sed -i -e "s/@SOLRCLOUD@/true/g" /opt/datafari/tomcat/conf/datafari.properties
-db_input high datafari/num_shards || true
-db_go
-db_get datafari/num_shards
-sed -i -e "s/@NUMSHARDS@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
-sed -i -e "s/@NUMSHARDS@/${RET}/g" /opt/datafari/bin/start-datafari.sh
+
+
+sed -i -e "s/@NUMSHARDS@/1/g" /opt/datafari/tomcat/conf/datafari.properties
+sed -i -e "s/@NUMSHARDS@/1/g" /opt/datafari/bin/start-datafari.sh
 sed -i -e "s/@ISMAINNODE@/true/g" /opt/datafari/tomcat/conf/datafari.properties
-sed -i -e "s/@NODEHOST@/${nodehost}/g" /opt/datafari/solr/solr_home/solr.xml
+
 mkdir /opt/datafari/solr/solrcloud
 mv /opt/datafari/solr/solr_home/FileShare /opt/datafari/solr/solrcloud
 mv /opt/datafari/solr/solr_home/Statistics /opt/datafari/solr/solrcloud
@@ -43,5 +44,6 @@ chmod 755 /opt/datafari/elk/kibana/bin/*
 chmod 755 /opt/datafari/elk/kibana/node/bin/*
 chmod 755 /opt/datafari/elk/logstash/vendor/jruby/bin/*
 chmod 755 /opt/datafari/elk/scripts/*
+
 
 
