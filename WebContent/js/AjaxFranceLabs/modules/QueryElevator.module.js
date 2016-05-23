@@ -27,11 +27,16 @@ AjaxFranceLabs.QueryElevatorModule = AjaxFranceLabs.AbstractModule.extend({
 	//Methods
 
 	addElevatorLinks : function(resultElm, id, query) {
+		var style = "";
+		if (window.isLikesAndFavoritesEnabled) {
+			style = "style='margin-right: 2em;'"
+		}
+		
 		if(!this.isMobile) {
 			var self = this;
 			
 			// Add the up link and set his onClick function
-			resultElm.find(".title").after("<span class='elevator-up' action='up' id='" + id + "'></span>");
+			resultElm.find(".title").after("<span class='elevator-up' " + style + " action='up' id='" + id + "'></span>");
 			resultElm.find(".elevator-up").click(function() {
 				
 				self.parentWidget.beforeRequest(); // Display the loader icon
@@ -48,7 +53,7 @@ AjaxFranceLabs.QueryElevatorModule = AjaxFranceLabs.AbstractModule.extend({
 			});
 			
 			// Add the down link and set his onClick function
-			resultElm.find(".description #urlMobile .address").append("<span class='elevator-down' action='down' id='" + id + "'></span>");
+			resultElm.find(".description #urlMobile .address").append("<span class='elevator-down' " + style + " action='down' id='" + id + "'></span>");
 			resultElm.find(".description #urlMobile .address .elevator-down").click(function() {
 				
 				self.parentWidget.beforeRequest(); // Display the loader icon
