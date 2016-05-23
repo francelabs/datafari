@@ -65,7 +65,7 @@ AjaxFranceLabs.AutocompleteModule = AjaxFranceLabs.AbstractModule
 						}
 						var f = (self.field === null) ? '' : '&f='
 							+ self.field;
-						if (AjaxFranceLabs.extractLast(request.term) != '') {
+						if ((AjaxFranceLabs.extractLast(request.term) != '') && ((/\s/.test(AjaxFranceLabs.extractLast(request.term)))))  {
 							self.lastXhr = self.manager
 							.executeRequest(
 									self.connectionInfo.serverUrl,
@@ -74,6 +74,41 @@ AjaxFranceLabs.AutocompleteModule = AjaxFranceLabs.AbstractModule
 									+ encodeURIComponent('"' + AjaxFranceLabs
 											.extractLast(request.term)
 											+ '"')
+											+ f + "&autocomplete=true",
+											function(data, status, xhr) {
+										var src = [];
+										// self.manager.executeRequest('',
+										// '', 'q=' +
+										// AjaxFranceLabs.extractLast(request.term)
+										// + f,
+										// function(data) {
+										if (data.spellcheck.suggestions.length > 1) {
+
+											$.each(data.spellcheck.collations, function(index, value) {
+												if (value != 'collation'){
+													src.push(data.spellcheck.collations[index].collationQuery.replace(/"/g, ''));
+												}
+
+											});
+
+											self.cache[term] = src;
+											if (xhr === self.lastXhr) {
+												response(src);
+											}
+										}
+
+									});
+							// });
+						}
+						else if (AjaxFranceLabs.extractLast(request.term) != '') {
+							self.lastXhr = self.manager
+							.executeRequest(
+									self.connectionInfo.serverUrl,
+									self.connectionInfo.servlet,
+									self.connectionInfo.queryString
+									+ encodeURIComponent('' + AjaxFranceLabs
+											.extractLast(request.term)
+											+ '')
 											+ f + "&autocomplete=true",
 											function(data, status, xhr) {
 										var src = [];
