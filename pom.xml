@@ -200,7 +200,7 @@
 							<!-- Version of Solr should be retrieved from a property file as well 
 								as the SHA1 -->
 							<url>http://archive.apache.org/dist/lucene/solr/5.5.1/solr-5.5.1.tgz</url>
-							<sha1>22c517987ecd56da54ccba255a70aee2fc0ca04</sha1>
+							<sha1>d22c517987ecd56da54ccba255a70aee2fc0ca04</sha1>
 							<unpack>true</unpack>
 							<outputDirectory>temp</outputDirectory>
 						</configuration>
