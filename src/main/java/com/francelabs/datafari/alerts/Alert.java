@@ -69,13 +69,13 @@ public class Alert {
 			default :
 				query.setParam("fq", "last_modified:[NOW-1DAY TO NOW]");
 				break;
-			case "Hourly" :
+			case "hourly" :
 				query.setParam("fq", "last_modified:[NOW-1HOUR TO NOW]");
 				break;
-			case "Daily" :
+			case "daily" :
 				query.setParam("fq", "last_modified:[NOW-1DAY TO NOW]");
 				break;
-			case "Weekly" :
+			case "weekly" :
 				query.setParam("fq", "last_modified:[NOW-7DAY TO NOW]");
 				break;
 			}
