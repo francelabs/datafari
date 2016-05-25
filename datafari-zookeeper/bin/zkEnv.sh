@@ -22,7 +22,7 @@
 # otherwise we use /etc/zookeeper
 # or the conf directory that is
 # a sibling of this script's directory
-ZOO_LOG_DIR=/opt/datafari/logs
+ZOO_LOG_DIR=$DATAFARI_HOME/logs
 ZOOBINDIR="${ZOOBINDIR:-/usr/bin}"
 ZOOKEEPER_PREFIX="${ZOOBINDIR}/.."
 

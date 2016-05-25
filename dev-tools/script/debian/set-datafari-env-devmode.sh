@@ -21,6 +21,9 @@ export SOLR_INSTALL_DIR=$DATAFARI_HOME/solr
 export SOLR_ENV=$SOLR_INSTALL_DIR/bin/solr.in.sh
 export CASSANDRA_HOME=$DATAFARI_HOME/cassandra
 export CASSANDRA_ENV=$CASSANDRA_HOME/bin/cassandra.in.sh
+export ZK_HOME=$DATAFARI_HOME/zookeeper
+export ZK_ENV=$ZK_HOME/bin/cassandra.in.sh
+export ZK_PID_FILE=$PID_DIR/zookeeper_server.pid
 
 # pid files 
 export MCF_PID_FILE=$PID_DIR/mcf_crawler_agent.pid
