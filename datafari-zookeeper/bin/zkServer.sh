@@ -26,7 +26,7 @@
 # http://java.sun.com/javase/6/docs/technotes/guides/management/agent.html
 # by default we allow local JMX connections
 
-ZOOPIDFILE="$DATAFARI_HOME/pid/zookeeper_server.pid"
+ZOOPIDFILE="${DATAFARI_HOME}/pid/zookeeper_server.pid"
 
 if [ "x$JMXLOCALONLY" = "x" ]
 then
