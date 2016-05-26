@@ -6,6 +6,10 @@
 #
 
 export DATAFARI_HOME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../..
+
+echo $JAVA_HOME
+
+export DATAFARI_HOME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../..
 export JAVA_HOME=${DATAFARI_HOME}/macosx/jvm
 export LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib:${DATAFARI_HOME}/ocr/tesseract/lib:${DATAFARI_HOME}/ocr/leptonica/lib
 export INIT_STATE_FILE=${DATAFARI_HOME}/bin/common/init_state.properties
@@ -20,7 +24,7 @@ export SOLR_ENV=$SOLR_INSTALL_DIR/bin/solr.in.sh
 export CASSANDRA_HOME=$DATAFARI_HOME/cassandra
 export CASSANDRA_ENV=$CASSANDRA_HOME/bin/cassandra.in.sh
 export ZK_HOME=$DATAFARI_HOME/zookeeper
-export ZK_ENV=$ZK_HOME/bin/cassandra.in.sh
+export ZK_ENV=$ZK_HOME/bin/zkEnv.sh
 
 
 # pid files 

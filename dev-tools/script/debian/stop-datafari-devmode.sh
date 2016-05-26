@@ -10,7 +10,6 @@ DIR=../../../debian7/bin
 source "set-datafari-env-devmode.sh"
 source "${DIR}/utils.sh"
 
-
 if is_running $ZK_PID_FILE; then
    bash $ZK_HOME/bin/zkServer.sh stop
 else
