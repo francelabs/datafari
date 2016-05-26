@@ -5,7 +5,7 @@
 #
 #
 
-DIR=../../../debian/bin
+DIR=../../../debian7/bin
 
 source "set-datafari-env-devmode.sh"
 source "${DIR}/utils.sh"
@@ -22,6 +22,6 @@ echo "Uploading configuration to zookeeper"
 sleep 10
 
 echo "create Solr collections"
-curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=FileShare&numShards=1&replicationFactor=1&property.lib.path=/Users/olivier/Documents/code/maven/datafari/solr/solrcloud/FileShare/"
+curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=FileShare&numShards=1&replicationFactor=1&property.lib.path=${DATAFARI_HOME}/solr/solrcloud/FileShare/"
 curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=Statistics&numShards=1&replicationFactor=1"
 curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=Promolink&numShards=1&replicationFactor=1"
