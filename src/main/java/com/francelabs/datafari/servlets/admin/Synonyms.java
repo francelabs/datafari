@@ -38,6 +38,7 @@ import org.apache.log4j.Logger;
 
 import com.francelabs.datafari.service.search.SolrServers.Core;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
+import com.francelabs.datafari.utils.ZKUtils;
 
 
 /** Javadoc
@@ -60,20 +61,31 @@ public class Synonyms extends HttpServlet {
 	private final static Logger LOGGER = Logger.getLogger(Synonyms.class
 			.getName());
 	/** 
+	 * @throws InterruptedException 
 	 * @throws IOException 
 	 * @see HttpServlet#HttpServlet()
 	 * Gets the list of the languages
 	 * Creates a semaphore for each of them
 	 */
-	public Synonyms() {
-		env = System.getenv("DATAFARI_HOME");									//Gets the directory of installation if in standard environment
-		if(env==null){															//If in development environment	
-			env = ExecutionEnvironment.getDevExecutionEnvironment();
+	public Synonyms() throws InterruptedException {
+		String environnement = System.getenv("DATAFARI_HOME");
+		
+		if(environnement==null){															//If in development environment	
+			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
+		}
+		env = environnement+"solr/solrcloud/tmp";		
+	
+		try {
+			ZKUtils.configZK("downloadconfigzk.sh", server);
+			Thread.sleep(15000);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		content="";
 		try {
-			if(new File(env+"/solr/solr_home/"+server+"/conf/list_language.txt").exists())
-				content = readFile(env+"/solr/solr_home/"+server+"/conf/list_language.txt", StandardCharsets.UTF_8);  //Read the various languages
+			if(new File(env+"/list_language.txt").exists())
+				content = readFile(env+"/list_language.txt", StandardCharsets.UTF_8);  //Read the various languages
 			else{
 				content = "";
 				return;
@@ -117,7 +129,7 @@ public class Synonyms extends HttpServlet {
 								}
 								String filename = "synonyms_"+request.getParameter("language").toString()+".txt";
 								response.setContentType("application/octet-stream"); 
-								String filepath = env+"/solr/solr_home/"+server+"/conf/";			
+								String filepath = env+"/";			
 								String synContent = readFile(filepath+filename, StandardCharsets.UTF_8);
 								//get the file and put its content into a string
 								response.setContentType("text/html");
@@ -165,13 +177,18 @@ public class Synonyms extends HttpServlet {
 				}
 			}else{															//The user clicked on confirm modification
 				File file ;
-				String filePath = env+"/solr/solr_home/"+server+"/conf/synonyms_"+request.getParameter("language")+".txt"; 		
+				String filePath = env+"/synonyms_"+request.getParameter("language")+".txt"; 		
+				System.out.println("filepath to store" + filePath);
 				file = new File(filePath);
 				try{
 					FileOutputStream fooStream = new FileOutputStream(file, false); // true to append false to overwrite.
 					byte[] myBytes = request.getParameter("content").replaceAll("&gt;", ">").replaceAll("<div>|<br>|<br >", "\n").replaceAll("</div>|</lines>|&nbsp;", "").getBytes();
 					fooStream.write(myBytes);										//rewrite the file
 					fooStream.close();
+					// Resend config to ZK
+					ZKUtils.configZK("uploadconfigzk.sh", server);
+					
+					
 				}catch(IOException e){
 					LOGGER.error("Error while rewriting the file synonyms_"+request.getParameter("language")+" Synonyms Servlet's doPost. Error 69019", e);
 					PrintWriter out = response.getWriter();
