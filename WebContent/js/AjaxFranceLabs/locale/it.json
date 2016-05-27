@@ -262,5 +262,5 @@
 "adminUI-MCFBackupRestore-doRestore-btn" : "Ricarica connessioni MCF",
 "adminUI-Connectors-Admin" : "Amministrazione di MCF",
 "adminUI-Connectors-BackupRestore" : "Salvataggio e ricaricamento delle connessioni",
-"adminUI-ZKwait" : The time to download the configuration from Zookeeper can be up to 15 seconds
+"adminUI-ZKwait" : "The time to download the configuration from Zookeeper can be up to 15 seconds"
 }
