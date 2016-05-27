@@ -90,4 +90,7 @@
      <listener>
 	<listener-class>com.francelabs.datafari.startup.UserManagementLauncher</listener-class>
    </listener>
+   <listener>
+	<listener-class>com.francelabs.datafari.startup.ZKConfigurationLauncher</listener-class>
+   </listener>
 </web-app>

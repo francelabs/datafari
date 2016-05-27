@@ -39,6 +39,7 @@ import com.francelabs.datafari.constants.CodesReturned;
 import com.francelabs.datafari.jaxb.Elevate;
 import com.francelabs.datafari.service.search.SolrServers.Core;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
+import com.francelabs.datafari.utils.ZKUtils;
 
 @WebServlet("/SearchExpert/queryElevator")
 public class QueryElevator extends HttpServlet {
@@ -53,19 +54,17 @@ public class QueryElevator extends HttpServlet {
 	 */
 	public QueryElevator() {
 		super();
-		env = System.getenv("DATAFARI_HOME"); // Gets the directory of
-		// installation if in standard
-		// environment
-
-		if (env == null) {
-			env = System.getProperty("DATAFARI_HOME");
+		
+		String environnement = System.getenv("DATAFARI_HOME");
+		
+		if(environnement==null){															//If in development environment	
+			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
 		}
-
-		if (env == null) { // If in development environment
-			env = ExecutionEnvironment.getDevExecutionEnvironment();
-		}
-		if (new File(env + "solr/solr_home/" + server + "/conf/elevate.xml").exists()) {
-			elevatorFile = new File(env + "/solr/solr_home/" + server + "/conf/elevate.xml");
+		env = environnement+"/solr/solrcloud/tmp";		
+	
+		
+		if (new File(env + "/elevate.xml").exists()) {
+			elevatorFile = new File(env + "/elevate.xml");
 		}
 	}
 
@@ -147,7 +146,7 @@ public class QueryElevator extends HttpServlet {
 			}
 		} catch (final Exception e) {
 			jsonResponse.put("code", CodesReturned.GENERALERROR);
-			LOGGER.error("Error on marshal/unmarshal elevate.xml file in solr/solr_home/" + server + "/conf", e);
+			LOGGER.error("Error on marshal/unmarshal elevate.xml file ", e);
 		}
 		final PrintWriter out = response.getWriter();
 		out.print(jsonResponse);
@@ -240,6 +239,7 @@ public class QueryElevator extends HttpServlet {
 				marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, new Boolean(true));
 				final OutputStream os = new FileOutputStream(elevatorFile);
 				marshal.marshal(elevate, os);
+				
 
 			} catch (final Exception e) {
 				jsonResponse.put("code", CodesReturned.GENERALERROR);
@@ -310,6 +310,7 @@ public class QueryElevator extends HttpServlet {
 				marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, new Boolean(true));
 				final OutputStream os = new FileOutputStream(elevatorFile);
 				marshal.marshal(elevate, os);
+				ZKUtils.configZK("uploadconfigzk.sh", server);
 
 				// Set the response code
 				jsonResponse.put("code", CodesReturned.ALLOK);

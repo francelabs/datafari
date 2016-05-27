@@ -139,7 +139,7 @@ public class PromoLink extends HttpServlet {
 				@Override
 				public SolrParams getParams() {
 					// TODO Auto-generated method stub
-					return null;
+					return query;
 				}
 
 				@Override

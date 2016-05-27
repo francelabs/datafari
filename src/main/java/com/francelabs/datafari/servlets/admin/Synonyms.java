@@ -67,7 +67,7 @@ public class Synonyms extends HttpServlet {
 	 * Gets the list of the languages
 	 * Creates a semaphore for each of them
 	 */
-	public Synonyms() throws InterruptedException {
+	public Synonyms()  {
 		String environnement = System.getenv("DATAFARI_HOME");
 		
 		if(environnement==null){															//If in development environment	
@@ -75,13 +75,7 @@ public class Synonyms extends HttpServlet {
 		}
 		env = environnement+"/solr/solrcloud/tmp";		
 	
-		try {
-			ZKUtils.configZK("downloadconfigzk.sh", server);
-			Thread.sleep(15000);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		content="";
 		try {
 			if(new File(env+"/list_language.txt").exists())
@@ -185,8 +179,7 @@ public class Synonyms extends HttpServlet {
 					byte[] myBytes = request.getParameter("content").replaceAll("&gt;", ">").replaceAll("<div>|<br>|<br >", "\n").replaceAll("</div>|</lines>|&nbsp;", "").getBytes();
 					fooStream.write(myBytes);										//rewrite the file
 					fooStream.close();
-					// Resend config to ZK
-					ZKUtils.configZK("uploadconfigzk.sh", server);
+					
 					
 					
 				}catch(IOException e){

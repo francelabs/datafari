@@ -92,36 +92,33 @@ public class FieldWeight extends HttpServlet {
 	 *      if the required files exist
 	 */
 	public FieldWeight() {
-		env = System.getenv("DATAFARI_HOME"); // Gets the directory of
-												// installation if in standard
-												// environment
-
-		if (env == null) { // Try with the property
-			env = System.getProperty("DATAFARI_HOME");
+		
+		String environnement = System.getenv("DATAFARI_HOME");
+		
+		if(environnement==null){															//If in development environment	
+			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
 		}
-
-		if (env == null) { // If in development environment
-			env = ExecutionEnvironment.getDevExecutionEnvironment();
-		}
+		env = environnement+"/solr/solrcloud/tmp";		
+	
 		semaphoreConfigPf = new SemaphoreLn("", "pf");
 		semaphoreConfigQf = new SemaphoreLn("", "qf");
-		if (new File(env + "/solr/solr_home/" + server + "/conf/schema.xml").exists()) { // Check
+		if (new File(env + "/schema.xml").exists()) { // Check
 																							// if
 																							// the
 																							// files
 																							// exists
-			schema = new File(env + "/solr/solr_home/" + server + "/conf/schema.xml");
+			schema = new File(env + "/schema.xml");
 		}
-		if (new File(env + "/solr/solr_home/" + server + "/conf/solrconfig.xml").exists()) {
-			config = new File(env + "/solr/solr_home/" + server + "/conf/solrconfig.xml");
-		}
-
-		if (new File(env + "/solr/solr_home/" + server + "/conf/customs_schema/custom_fields.incl").exists()) {
-			customFields = new File(env + "/solr/solr_home/" + server + "/conf/customs_schema/custom_fields.incl");
+		if (new File(env + "/solrconfig.xml").exists()) {
+			config = new File(env + "/solrconfig.xml");
 		}
 
-		if (new File(env + "/solr/solr_home/" + server + "/conf/customs_solrconfig/custom_search_handler.incl").exists()) {
-			customSearchHandler = new File(env + "/solr/solr_home/" + server + "/conf/customs_solrconfig/custom_search_handler.incl");
+		if (new File(env + "/customs_schema/custom_fields.incl").exists()) {
+			customFields = new File(env + "/customs_schema/custom_fields.incl");
+		}
+
+		if (new File(env + "/customs_solrconfig/custom_search_handler.incl").exists()) {
+			customSearchHandler = new File(env + "/customs_solrconfig/custom_search_handler.incl");
 		}
 	}
 
@@ -148,7 +145,7 @@ public class FieldWeight extends HttpServlet {
 				return;
 			}
 			if (schema == null || config == null || !new File(env + "/solr/solr_home/" + server + "/conf/schema.xml").exists()
-					|| !new File(env + "/solr/solr_home/" + server + "/conf/solrconfig.xml").exists()) {// If
+					|| !new File(env + "/solrconfig.xml").exists()) {// If
 																										// the
 																										// files
 																										// did
@@ -160,11 +157,11 @@ public class FieldWeight extends HttpServlet {
 																										// was
 																										// run
 				// Checks if they exist now
-				if (!new File(env + "/solr/solr_home/" + server + "/conf/schema.xml").exists()
-						|| !new File(env + "/solr/solr_home/" + server + "/conf/solrconfig.xml").exists()) {
+				if (!new File(env + "/schema.xml").exists()
+						|| !new File(env + "/solrconfig.xml").exists()) {
 					LOGGER.error(
 							"Error while opening the configuration files, solrconfig.xml and/or schema.xml, in FieldWeight doGet, please make sure those files exist at "
-									+ env + "/solr/solr_home/" + server + "/conf/ . Error 69025"); // If
+									+ env + " . Error 69025"); // If
 																									// not
 																									// an
 																									// error
@@ -176,26 +173,26 @@ public class FieldWeight extends HttpServlet {
 					out.close();
 					return;
 				} else {
-					schema = new File(env + "/solr/solr_home/" + server + "/conf/schema.xml");// Else
+					schema = new File(env + "/schema.xml");// Else
 																								// they
 																								// are
 																								// prepared
 																								// to
 																								// be
 																								// parsed
-					config = new File(env + "/solr/solr_home/" + server + "/conf/solrconfig.xml");
+					config = new File(env + "/solrconfig.xml");
 				}
 			}
 
 			if (customFields == null) {
-				if (new File(env + "/solr/solr_home/" + server + "/conf/customs_schema/custom_fields.incl").exists()) {
-					customFields = new File(env + "/solr/solr_home/" + server + "/conf/customs_schema/custom_fields.incl");
+				if (new File(env + "/customs_schema/custom_fields.incl").exists()) {
+					customFields = new File(env + "/customs_schema/custom_fields.incl");
 				}
 			}
 
 			if (customSearchHandler == null) {
-				if (new File(env + "/solr/solr_home/" + server + "/conf/customs_solrconfig/custom_search_handler.incl").exists()) {
-					customSearchHandler = new File(env + "/solr/solr_home/" + server + "/conf/customs_solrconfig/custom_search_handler.incl");
+				if (new File(env + "/customs_solrconfig/custom_search_handler.incl").exists()) {
+					customSearchHandler = new File(env + "/customs_solrconfig/custom_search_handler.incl");
 				}
 			}
 
@@ -420,7 +417,7 @@ public class FieldWeight extends HttpServlet {
 	@Override
 	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 		try {
-			if (config == null || !new File(env + "/solr/solr_home/" + server + "/conf/solrconfig.xml").exists()) {// If
+			if (config == null || !new File(env + "/solrconfig.xml").exists()) {// If
 																													// the
 																													// files
 																													// did
@@ -431,10 +428,10 @@ public class FieldWeight extends HttpServlet {
 																													// constructor
 																													// was
 																													// runned
-				if (!new File(env + "/solr/solr_home/" + server + "/conf/solrconfig.xml").exists()) {
+				if (!new File(env + "/solrconfig.xml").exists()) {
 					LOGGER.error(
 							"Error while opening the configuration file, solrconfig.xml, in FieldWeight doPost, please make sure this file exists at "
-									+ env + "/solr/solr_home/" + server + "/conf/ . Error 69029"); // If
+									+ env + "conf/ . Error 69029"); // If
 																									// not
 																									// an
 																									// error
@@ -446,13 +443,13 @@ public class FieldWeight extends HttpServlet {
 					out.close();
 					return;
 				} else {
-					config = new File(env + "/solr/solr_home/" + server + "/conf/solrconfig.xml");
+					config = new File(env + "/solrconfig.xml");
 				}
 			}
 
 			if (customSearchHandler == null) {
-				if (new File(env + "/solr/solr_home/" + server + "/conf/customs_solrconfig/custom_search_handler.incl").exists()) {
-					customSearchHandler = new File(env + "/solr/solr_home/" + server + "/conf/customs_solrconfig/custom_search_handler.incl");
+				if (new File(env + "/customs_solrconfig/custom_search_handler.incl").exists()) {
+					customSearchHandler = new File(env + "/customs_solrconfig/custom_search_handler.incl");
 				}
 			}
 

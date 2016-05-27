@@ -250,6 +250,5 @@
 "adminUI-MCFBackupRestore-doSave-btn" : "Sauvegarde Configuration MCF",
 "adminUI-MCFBackupRestore-doRestore-btn" : "Restauration Configuration MCF",
 "adminUI-Connectors-Admin" : "Administration de MCF",
-"adminUI-Connectors-BackupRestore" : "Sauvegarde et restauration configuration MCF",
-"adminUI-ZKwait" : "Le téléchargement depuis ZK peut mettre jusqu'à 15 secondes"
+"adminUI-Connectors-BackupRestore" : "Sauvegarde et restauration configuration MCF"
 }         

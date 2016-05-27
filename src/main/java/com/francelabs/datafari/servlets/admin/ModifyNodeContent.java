@@ -73,12 +73,15 @@ public class ModifyNodeContent extends HttpServlet {
 	 * Checks if the required file exist
 	 */
 	public ModifyNodeContent() {
-		env = System.getenv("DATAFARI_HOME");									//Gets the directory of installation if in standard environment
-		if(env==null){															//If in development environment	
-			env = ExecutionEnvironment.getDevExecutionEnvironment();
+		String environnement = System.getenv("DATAFARI_HOME");
+
+		if(environnement==null){															//If in development environment	
+			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
 		}
-		if(new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml").exists())
-			config = new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml");
+		env = environnement+"/solr/solrcloud/tmp";		
+
+		if(new File(env+"/solrconfig.xml").exists())
+			config = new File(env+"/solrconfig.xml");
 	}
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -98,16 +101,16 @@ public class ModifyNodeContent extends HttpServlet {
 					}
 					return;
 				}
-				if( config == null || !new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml").exists()){//If the file did not existed when the constructor was run
+				if( config == null || !new File(env+"/solrconfig.xml").exists()){//If the file did not existed when the constructor was run
 					//Checks if it exists now
-					if(!new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml").exists()){
+					if(!new File(env+"/solrconfig.xml").exists()){
 						LOGGER.error("Error while opening the configuration file, solrconfig.xml, in ModifyNodeContent doGet, please make sure this file exists at "+env+"/solr/solr_home/"+server+"/conf/ . Error 69033");		//If not an error is printed
 						PrintWriter out = response.getWriter();
 						out.append("Error while opening the configuration file, please retry, if the problem persists contact your system administrator. Error Code : 69033"); 	
 						out.close();
 						return;
 					}else
-						config = new File(env+"/solr/solr_home/"+server+"/conf/solrconfig.xml");
+						config = new File(env+"/solrconfig.xml");
 				}
 				boolean mutex = false;
 				for (int i = 0 ; i < listMutex.size() ; i++) {			//If the right semaphore exists and is available, acquire it.
