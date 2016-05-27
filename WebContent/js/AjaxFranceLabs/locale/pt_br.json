@@ -239,5 +239,6 @@
 "adminUI-UserManagement":"Gerenciamento de Usuário",
 "adminUI-ADConfig":"Configuração do Active Directory",
 "adminUI-ModifyUsers":"Modificar Usuários",
-"adminUI-AddUser":"Adicionar Usuário"
+"adminUI-AddUser":"Adicionar Usuário",
+"adminUI-ZKwait" : The time to download the configuration from Zookeeper can be up to 15 seconds
 }
