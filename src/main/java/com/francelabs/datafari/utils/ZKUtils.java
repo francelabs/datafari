@@ -18,9 +18,9 @@ public class ZKUtils {
 			devMode = true;
 		}
 		if (devMode == false)
-			pathScript = datafari_home + "bin/zkUtils/";
+			pathScript = datafari_home + "/bin/zkUtils/";
 		else
-			pathScript = datafari_home + "debian7/bin/zkUtils/";
+			pathScript = datafari_home + "/debian7/bin/zkUtils/";
 		
 		
 		System.out.println("pathscript" +pathScript);
