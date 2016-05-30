@@ -24,11 +24,11 @@ $(function($) {
 //		useLanguage : true
 //	}));
 
-	Manager.addWidget(new AjaxFranceLabs.LanguageSelectorWidget({
-		// Take the languageSelector element by ID.
-		elm : $('#languageSelector'),
-		id : 'languageSelector'
-	}));
+//	Manager.addWidget(new AjaxFranceLabs.LanguageSelectorWidget({
+//		// Take the languageSelector element by ID.
+//		elm : $('#languageSelector'),
+//		id : 'languageSelector'
+//	}));
 	
 	Manager.addWidget(new AjaxFranceLabs.LoginDatafariLinksWidget({
 		// Take the loginDatafariLinks element by ID.
