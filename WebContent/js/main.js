@@ -26,6 +26,19 @@ $(function($) {
 			}
 		}
 	});
+	
+
+	var languages = ['en'];
+	if (typeof langHeader !== 'undefined'){
+		languages = langHeader
+	}
+	
+	Manager.addWidget(new AjaxFranceLabs.LanguageSelectorWidget({
+		// Take the languageSelector element by ID.
+		languages : languages,
+		elm : $('#languageSelector'),
+		id : 'languageSelector'
+	}));
 
 	Manager.store.addByValue("fl", 'title,url,id,extension');
 

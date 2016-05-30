@@ -1,6 +1,5 @@
 {
-"fromLabel":"De",
-"toLabel":"À",
+
 "fieldWeight":"Pondération des champs",
 "facetlanguage":"Langue",
 "facethierarchicalurl":"Path",
@@ -188,9 +187,9 @@
 "ELKScriptsDir" : "Emplacement du répertoire scripts de ELK",
 "spellcheckerResults" : "Résultats pour: ",
 "selectLang" : "Choisir la langue",
-"english_locale" : "English",
-"french_locale" : "Français",
-"italian_locale" : "Italiano",
+"en_locale" : "English",
+"fr_locale" : "Français",
+"it_locale" : "Italiano",
 "advancedSearch-label" : "Recherche Avancee",
 "advancedSearch-descr" : "Description",
 "advancedSearch-title-label" : "Titre",
