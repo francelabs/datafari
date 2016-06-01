@@ -1,4 +1,19 @@
 {
+"downZKconf":"Télécharger la configuration depuis Zookeeper",
+"downZKconfLabel":"Télécharger la configuration du core FileShare depuis le serveur Zookeeper",
+"downloadButton":"Télécharger",
+"zkDwnSuccess":"La configuration de Zookeeper a été téléchargée avec succès !",
+"zkDwnFail":"Un problème est survenu lors du téléchargement de la configuration de Zookeeper, veuillez contacter l'administrateur !",
+"upldZKconf":"Upload la configuration vers Zookeeper",
+"upldZKconfLabel":"Upload la configuration du core FileShare vers le serveur Zookeeper",
+"uploadButton":"Upload",
+"zkUplSuccess":"La configuration de Zookeeper a été uploadée avec succès !",
+"zkUplFail":"Un problème est survenu lors de l'upload de la configuration de Zookeeper, veuillez contacter l'administrateur !",
+"rldZKconf":"Recharger la configuration de Zookeeper",
+"rldZKconfLabel":"Recharger la configuration de Zookeeper",
+"reloadButton":"Recharger",
+"zkRldSuccess":"La configuration de Zookeeper a été rechargée avec succès !",
+"zkRldFail":"Un problème est survenu lors du rechargement de la configuration de Zookeeper, veuillez contacter l'administrateur !",
 "fromLabel":"De",
 "toLabel":"À",
 "fieldWeight":"Pondération des champs",
@@ -250,5 +265,6 @@
 "adminUI-MCFBackupRestore-doSave-btn" : "Sauvegarde Configuration MCF",
 "adminUI-MCFBackupRestore-doRestore-btn" : "Restauration Configuration MCF",
 "adminUI-Connectors-Admin" : "Administration de MCF",
-"adminUI-Connectors-BackupRestore" : "Sauvegarde et restauration configuration MCF"
+"adminUI-Connectors-BackupRestore" : "Sauvegarde et restauration configuration MCF",
+"adminUI-Zookeeper" : "Zookeeper"
 }         

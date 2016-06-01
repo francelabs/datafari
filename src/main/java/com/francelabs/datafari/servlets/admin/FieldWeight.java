@@ -72,7 +72,7 @@ public class FieldWeight extends HttpServlet {
 	private final String server = Core.FILESHARE.toString();
 	private final SemaphoreLn semaphoreConfigPf;
 	private final SemaphoreLn semaphoreConfigQf;
-	private String env;
+	private final String env;
 	private NodeList childList;
 	private Document doc;
 	private File schema = null;
@@ -92,21 +92,21 @@ public class FieldWeight extends HttpServlet {
 	 *      if the required files exist
 	 */
 	public FieldWeight() {
-		
+
 		String environnement = System.getenv("DATAFARI_HOME");
-		
-		if(environnement==null){															//If in development environment	
+
+		if (environnement == null) { // If in development environment
 			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
 		}
-		env = environnement+"/solr/solrcloud/tmp";		
-	
+		env = environnement + "/solr/solrcloud/tmp";
+
 		semaphoreConfigPf = new SemaphoreLn("", "pf");
 		semaphoreConfigQf = new SemaphoreLn("", "qf");
 		if (new File(env + "/schema.xml").exists()) { // Check
-																							// if
-																							// the
-																							// files
-																							// exists
+														// if
+														// the
+														// files
+														// exists
 			schema = new File(env + "/schema.xml");
 		}
 		if (new File(env + "/solrconfig.xml").exists()) {
@@ -144,29 +144,27 @@ public class FieldWeight extends HttpServlet {
 					semaphoreConfigQf.release();
 				return;
 			}
-			if (schema == null || config == null || !new File(env + "/solr/solr_home/" + server + "/conf/schema.xml").exists()
-					|| !new File(env + "/solrconfig.xml").exists()) {// If
-																										// the
-																										// files
-																										// did
-																										// not
-																										// existed
-																										// when
-																										// the
-																										// constructor
-																										// was
-																										// run
+			if (schema == null || config == null || !new File(env + "/schema.xml").exists() || !new File(env + "/solrconfig.xml").exists()) {// If
+																																				// the
+																																				// files
+																																				// did
+																																				// not
+																																				// existed
+																																				// when
+																																				// the
+																																				// constructor
+																																				// was
+																																				// run
 				// Checks if they exist now
-				if (!new File(env + "/schema.xml").exists()
-						|| !new File(env + "/solrconfig.xml").exists()) {
+				if (!new File(env + "/schema.xml").exists() || !new File(env + "/solrconfig.xml").exists()) {
 					LOGGER.error(
 							"Error while opening the configuration files, solrconfig.xml and/or schema.xml, in FieldWeight doGet, please make sure those files exist at "
 									+ env + " . Error 69025"); // If
-																									// not
-																									// an
-																									// error
-																									// is
-																									// printed
+																// not
+																// an
+																// error
+																// is
+																// printed
 					final PrintWriter out = response.getWriter();
 					out.append(
 							"Error while opening the configuration files, please retry, if the problem persists contact your system administrator. Error Code : 69025");
@@ -174,12 +172,12 @@ public class FieldWeight extends HttpServlet {
 					return;
 				} else {
 					schema = new File(env + "/schema.xml");// Else
-																								// they
-																								// are
-																								// prepared
-																								// to
-																								// be
-																								// parsed
+															// they
+															// are
+															// prepared
+															// to
+															// be
+															// parsed
 					config = new File(env + "/solrconfig.xml");
 				}
 			}
@@ -393,6 +391,8 @@ public class FieldWeight extends HttpServlet {
 										// handler so try to find it
 										// in the solrconfig.xml
 										// file
+			// Not using custom
+			usingCustom = false;
 			doc = dBuilder.parse(config);// Parse the solrconfig.xml
 											// document
 			final NodeList fields = (doc.getElementsByTagName("requestHandler"));// Get
@@ -418,25 +418,25 @@ public class FieldWeight extends HttpServlet {
 	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 		try {
 			if (config == null || !new File(env + "/solrconfig.xml").exists()) {// If
-																													// the
-																													// files
-																													// did
-																													// not
-																													// existed
-																													// when
-																													// the
-																													// constructor
-																													// was
-																													// runned
+																				// the
+																				// files
+																				// did
+																				// not
+																				// existed
+																				// when
+																				// the
+																				// constructor
+																				// was
+																				// runned
 				if (!new File(env + "/solrconfig.xml").exists()) {
 					LOGGER.error(
 							"Error while opening the configuration file, solrconfig.xml, in FieldWeight doPost, please make sure this file exists at "
 									+ env + "conf/ . Error 69029"); // If
-																									// not
-																									// an
-																									// error
-																									// is
-																									// printed
+																	// not
+																	// an
+																	// error
+																	// is
+																	// printed
 					final PrintWriter out = response.getWriter();
 					out.append(
 							"Error while opening the configuration file, please retry, if the problem persists contact your system administrator. Error Code : 69029");

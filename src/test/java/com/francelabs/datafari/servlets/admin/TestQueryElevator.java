@@ -33,8 +33,8 @@ import org.xmlunit.diff.Diff;
 @RunWith(MockitoJUnitRunner.class)
 public class TestQueryElevator {
 
-	final static String elevateFilePath = "src/test/resources/queryElevatorTests/in/solr/solr_home/FileShare/conf/elevate.xml";
-	final static String elevateBackupFilePath = "src/test/resources/queryElevatorTests/in/solr/solr_home/FileShare/conf/elevate_backup.xml";
+	final static String elevateFilePath = "src/test/resources/queryElevatorTests/in/solr/solrcloud/tmp/elevate.xml";
+	final static String elevateBackupFilePath = "src/test/resources/queryElevatorTests/in/solr/solrcloud/tmp/elevate_backup.xml";
 
 	@Before
 	public void initialize() throws IOException {

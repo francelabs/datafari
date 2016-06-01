@@ -238,6 +238,13 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						<li id="Deduplication"><a id="deduplication-AdminUI" class="ajax-link" href="../ajax/config_deduplication.html"></a></li>
 
 						<li id="LikesAndFavorites"><a id="likesFavoritesSearchEng-AdminUI" class="ajax-link" href="../ajax/config_likesAndFavorites.html"></a></li>
+<% 
+	if(request.isUserInRole("SearchAdministrator")){
+%>
+						<li id="Zookeeper"><a id="zookeeper-AdminUI" class="ajax-link" href="../ajax/config_zookeeper.html"></a></li>
+<%
+	}
+%>
 <!-- 						<li><a class="ajax-link" href="../ajax/ui_jquery-ui.html">Query based boosts</a></li> -->
 <!-- 						<li><a class="ajax-link" href="../ajax/ui_icons.html">Document based boosts</a></li> -->
 <!-- 						<li><a class="ajax-link" href="../ajax/ui_icons.html">OCR: On/Off</a></li> -->

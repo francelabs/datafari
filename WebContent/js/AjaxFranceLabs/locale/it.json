@@ -1,4 +1,19 @@
 {
+"downZKconf":"Download configuration from Zookeeper",
+"downZKconfLabel":"Download the FileShare core configuration from the Zookeeper server",
+"zkDwnSuccess":"Zookeeper configuration successfully downloaded !",
+"zkDwnFail":"A problem occured during the download of the Zookeeper configuration, please contact the administrator !",
+"downloadButton":"Download",
+"upldZKconf":"Upload configuration to Zookeeper",
+"upldZKconfLabel":"Upload the FileShare core configuration to the Zookeeper server",
+"uploadButton":"Upload",
+"zkUplSuccess":"Zookeeper configuration successfully uploaded !",
+"zkUplFail":"A problem occured during the upload of the Zookeeper configuration, please contact the administrator !",
+"rldZKconf":"Reload Zookeeper configuration",
+"rldZKconfLabel":"Reload the Zookeeper configuration",
+"reloadButton":"Reload",
+"zkRldSuccess":"Zookeeper configuration successfully reloaded !",
+"zkRldFail":"A problem occured during the reload of the Zookeeper configuration, please contact the administrator !",
 "fromLabel":"From",
 "toLabel":"To",
 "fieldWeight":"Peso del campo",
@@ -261,5 +276,6 @@
 "adminUI-MCFBackupRestore-doSave-btn" : "Salva connessioni MCF",
 "adminUI-MCFBackupRestore-doRestore-btn" : "Ricarica connessioni MCF",
 "adminUI-Connectors-Admin" : "Amministrazione di MCF",
-"adminUI-Connectors-BackupRestore" : "Salvataggio e ricaricamento delle connessioni"
+"adminUI-Connectors-BackupRestore" : "Salvataggio e ricaricamento delle connessioni",
+"adminUI-Zookeeper" : "Zookeeper"
 }

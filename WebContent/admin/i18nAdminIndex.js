@@ -47,5 +47,5 @@ $(function($) {
 	elm.find('#ADConfig-AdminUI').html(window.i18n.msgStore['adminUI-ADConfig']);
 	elm.find('#modifyUsers-AdminUI').html(window.i18n.msgStore['adminUI-ModifyUsers']);
 	elm.find('#addUser-AdminUI').html(window.i18n.msgStore['adminUI-AddUser']);
-
+	elm.find('#zookeeper-AdminUI').html(window.i18n.msgStore['adminUI-Zookeeper']);
 });
