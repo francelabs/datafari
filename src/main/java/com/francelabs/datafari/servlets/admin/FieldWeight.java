@@ -98,7 +98,7 @@ public class FieldWeight extends HttpServlet {
 		if(environnement==null){															//If in development environment	
 			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
 		}
-		env = environnement+"/solr/solrcloud/tmp";		
+		env = environnement+"/solr/solrcloud/FileShare";		
 	
 		semaphoreConfigPf = new SemaphoreLn("", "pf");
 		semaphoreConfigQf = new SemaphoreLn("", "qf");

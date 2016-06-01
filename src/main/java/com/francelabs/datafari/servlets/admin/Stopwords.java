@@ -65,14 +65,18 @@ public class Stopwords extends HttpServlet {
 	 * Creates a semaphore for each of them
 	 */
 	public Stopwords() throws IOException {
-		env = System.getenv("DATAFARI_HOME");									//Gets the directory of installation if in standard environment
-		if(env==null){															//If in development environment	
-			env = ExecutionEnvironment.getDevExecutionEnvironment();
+String environnement = System.getenv("DATAFARI_HOME");
+		
+		if(environnement==null){															//If in development environment	
+			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
 		}
+		env = environnement+"/solr/solrcloud/FileShare";		
+	
+		
 		content="";
 		try {
-			if(new File(env+"/solr/solr_home/"+server+"/conf/list_language.txt").exists())
-				content = readFile(env+"/solr/solr_home/"+server+"/conf/list_language.txt", StandardCharsets.UTF_8);  //Read the various languages
+			if(new File(env+"/list_language.txt").exists())
+				content = readFile(env+"/list_language.txt", StandardCharsets.UTF_8);  //Read the various languages
 			else{
 				content = "";
 				return;
@@ -116,7 +120,7 @@ public class Stopwords extends HttpServlet {
 								}
 								String filename = "stopwords_"+request.getParameter("language").toString()+".txt";
 								response.setContentType("application/octet-stream");
-								String filepath = env+"/solr/solr_home/"+server+"/conf/";	
+								String filepath = env+"/";	
 								String stopContent = readFile(filepath+filename, StandardCharsets.UTF_8);
 								//get the file and put its content into a string
 								response.setContentType("text/html");
@@ -162,7 +166,7 @@ public class Stopwords extends HttpServlet {
 				}
 			}else{															//The user clicked on confirm modification
 				File file ;
-				String filePath =  env+"/solr/solr_home/"+server+"/conf/stopwords_"+request.getParameter("language")+".txt";
+				String filePath =  env+"/stopwords_"+request.getParameter("language")+".txt";
 				file = new File(filePath);										
 				try{
 					FileOutputStream fooStream = new FileOutputStream(file, false); // true to append, false to overwrite.
