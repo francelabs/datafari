@@ -10,9 +10,7 @@ DIR=../../../debian7/bin
 source "set-datafari-env-devmode.sh"
 source "${DIR}/utils.sh"
 
-# Configuration of the Cassandra database and creation of the user admin
-../../../cassandra/bin/cqlsh -f ../../../datafari-cassandra/conf/dev-env/tables
-../../../cassandra/bin/cqlsh -f create-admin-dev.txt
+
 
 # Configuration Solr and ZK
 sed -i -e "s/@NODEHOST@/localhost/g" ${DATAFARI_HOME}/tomcat/conf/datafari.properties
