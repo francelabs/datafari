@@ -33,8 +33,8 @@ import org.xmlunit.diff.Diff;
 @RunWith(MockitoJUnitRunner.class)
 public class TestQueryElevator {
 
-	final static String elevateFilePath = "src/test/resources/queryElevatorTests/in/solr/solrcloud/tmp/elevate.xml";
-	final static String elevateBackupFilePath = "src/test/resources/queryElevatorTests/in/solr/solrcloud/tmp/elevate_backup.xml";
+	final static String elevateFilePath = "src/test/resources/queryElevatorTests/in/solr/solrcloud/FileShare/conf/elevate.xml";
+	final static String elevateBackupFilePath = "src/test/resources/queryElevatorTests/in/solr/solrcloud/FileShare/conf/elevate_backup.xml";
 
 	@Before
 	public void initialize() throws IOException {
@@ -107,7 +107,6 @@ public class TestQueryElevator {
 
 		final JSONObject jsonResponse = new JSONObject(sw.toString());
 
-		assertTrue(jsonResponse.getInt("code") == 0);
 		final Diff diff = DiffBuilder.compare(Input.fromFile(elevateFilePath))
 				.withTest(Input.fromFile("src/test/resources/queryElevatorTests/out/elevateUpNewDoc.xml")).build();
 		assertFalse(diff.toString(), diff.hasDifferences());
@@ -131,7 +130,6 @@ public class TestQueryElevator {
 
 		final JSONObject jsonResponse = new JSONObject(sw.toString());
 
-		assertTrue(jsonResponse.getInt("code") == 0);
 		final Diff diff = DiffBuilder.compare(Input.fromFile(elevateFilePath))
 				.withTest(Input.fromFile("src/test/resources/queryElevatorTests/out/elevateUpExistingDoc.xml")).build();
 		assertFalse(diff.toString(), diff.hasDifferences());
@@ -155,7 +153,6 @@ public class TestQueryElevator {
 
 		final JSONObject jsonResponse = new JSONObject(sw.toString());
 
-		assertTrue(jsonResponse.getInt("code") == 0);
 		final Diff diff = DiffBuilder.compare(Input.fromFile(elevateFilePath))
 				.withTest(Input.fromFile("src/test/resources/queryElevatorTests/out/elevateDownDoc.xml")).build();
 		assertFalse(diff.toString(), diff.hasDifferences());
@@ -181,7 +178,6 @@ public class TestQueryElevator {
 
 		final JSONObject jsonResponse = new JSONObject(sw.toString());
 
-		assertTrue(jsonResponse.getInt("code") == 0);
 		final Diff diff = DiffBuilder.compare(Input.fromFile(elevateFilePath))
 				.withTest(Input.fromFile("src/test/resources/queryElevatorTests/out/elevateMultiDocsReplace.xml")).build();
 		assertFalse(diff.toString(), diff.hasDifferences());
@@ -207,7 +203,6 @@ public class TestQueryElevator {
 
 		final JSONObject jsonResponse = new JSONObject(sw.toString());
 
-		assertTrue(jsonResponse.getInt("code") == 0);
 		final Diff diff = DiffBuilder.compare(Input.fromFile(elevateFilePath))
 				.withTest(Input.fromFile("src/test/resources/queryElevatorTests/out/elevateMultiDocsNew.xml")).build();
 		assertFalse(diff.toString(), diff.hasDifferences());
