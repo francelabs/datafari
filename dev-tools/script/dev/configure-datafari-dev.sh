@@ -17,10 +17,7 @@ sed -i -e "s/@NODEHOST@/localhost/g" ${DATAFARI_HOME}/tomcat/conf/datafari.prope
 sed -i -e "s/@NODEHOST@/localhost/g" ${DATAFARI_HOME}/solr/bin/solr.in.sh
 sed -i -e "s/@SOLRHOSTS@/localhost:2181/g" ${DATAFARI_HOME}/solr/bin/solr.in.sh
 sed -i -e "s/@SOLRHOSTS@/localhost:2181/g" ${DATAFARI_HOME}/tomcat/conf/datafari.properties
-
-
 sed -i -e "s/@NUMSHARDS@/1/g" ${DATAFARI_HOME}/tomcat/conf/datafari.properties
-sed -i -e "s/@NUMSHARDS@/1/g" ${DATAFARI_HOME}/bin/start-datafari.sh
 sed -i -e "s/@ISMAINNODE@/true/g" ${DATAFARI_HOME}/tomcat/conf/datafari.properties
 mkdir $DATAFARI_HOME/solr/solrcloud
 mv ${DATAFARI_HOME}/solr/solr_home/FileShare ${DATAFARI_HOME}/solr/solrcloud
