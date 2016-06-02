@@ -98,7 +98,7 @@ public class FieldWeight extends HttpServlet {
 		if (environnement == null) { // If in development environment
 			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
 		}
-		env = environnement + "/solr/solrcloud/tmp";
+		env = environnement + "/solr/solrcloud/FileShare";
 
 		semaphoreConfigPf = new SemaphoreLn("", "pf");
 		semaphoreConfigQf = new SemaphoreLn("", "qf");
@@ -144,17 +144,18 @@ public class FieldWeight extends HttpServlet {
 					semaphoreConfigQf.release();
 				return;
 			}
-			if (schema == null || config == null || !new File(env + "/schema.xml").exists() || !new File(env + "/solrconfig.xml").exists()) {// If
-																																				// the
-																																				// files
-																																				// did
-																																				// not
-																																				// existed
-																																				// when
-																																				// the
-																																				// constructor
-																																				// was
-																																				// run
+			if (schema == null || config == null || !new File(env + "/solr/solr_home/" + server + "/conf/schema.xml").exists()
+					|| !new File(env + "/solrconfig.xml").exists()) {// If
+																		// the
+																		// files
+																		// did
+																		// not
+																		// existed
+																		// when
+																		// the
+																		// constructor
+																		// was
+																		// run
 				// Checks if they exist now
 				if (!new File(env + "/schema.xml").exists() || !new File(env + "/solrconfig.xml").exists()) {
 					LOGGER.error(
@@ -391,8 +392,6 @@ public class FieldWeight extends HttpServlet {
 										// handler so try to find it
 										// in the solrconfig.xml
 										// file
-			// Not using custom
-			usingCustom = false;
 			doc = dBuilder.parse(config);// Parse the solrconfig.xml
 											// document
 			final NodeList fields = (doc.getElementsByTagName("requestHandler"));// Get

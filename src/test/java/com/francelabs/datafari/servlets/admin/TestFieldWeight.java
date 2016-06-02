@@ -29,13 +29,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class TestFieldWeight {
 
-	final static String solrconfigFilePath = "src/test/resources/fieldWeightTests/in/solr/solrcloud/tmp/solrconfig.xml";
-	final static String solrconfigBackupFilePath = "src/test/resources/fieldWeightTests/in/solr/solrcloud/tmp/solrconfig_backup.xml";
-	final static String customSearchHandlerFilePath = "src/test/resources/fieldWeightTests/in/solr/solrcloud/tmp/customs_solrconfig/custom_search_handler.incl";
-	final static String customSearchHandlerBackupFilePath = "src/test/resources/fieldWeightTests/in/solr/solrcloud/tmp/customs_solrconfig/custom_search_handler_backup.incl";
+	final static String solrconfigFilePath = "src/test/resources/fieldWeightTests/in/solr/solrcloud/FileShare/solrconfig.xml";
+	final static String solrconfigBackupFilePath = "src/test/resources/fieldWeightTests/in/solr/solrcloud/FileShare/solrconfig_backup.xml";
+	final static String customSearchHandlerFilePath = "src/test/resources/fieldWeightTests/in/solr/solrcloud/FileShare/customs_solrconfig/custom_search_handler.incl";
+	final static String customSearchHandlerBackupFilePath = "src/test/resources/fieldWeightTests/in/solr/solrcloud/FileShare/customs_solrconfig/custom_search_handler_backup.incl";
 
-	final static String customSearchHandlerFilePath2 = "src/test/resources/fieldWeightTests/in_2/solr/solrcloud/tmp/customs_solrconfig/custom_search_handler.incl";
-	final static String customSearchHandlerBackupFilePath2 = "src/test/resources/fieldWeightTests/in_2/solr/solrcloud/tmp/customs_solrconfig/custom_search_handler_backup.incl";
+	final static String customSearchHandlerFilePath2 = "src/test/resources/fieldWeightTests/in_2/solr/solrcloud/FileShare/customs_solrconfig/custom_search_handler.incl";
+	final static String customSearchHandlerBackupFilePath2 = "src/test/resources/fieldWeightTests/in_2/solr/solrcloud/FileShare/customs_solrconfig/custom_search_handler_backup.incl";
 
 	@Before
 	public void initialize() throws IOException {

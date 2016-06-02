@@ -5,7 +5,7 @@
 #
 #
 
-rm -rf $1/solr/solrcloud/tmp/*
+rm -rf $1/solr/solrcloud/FileShare/*
 
 
 

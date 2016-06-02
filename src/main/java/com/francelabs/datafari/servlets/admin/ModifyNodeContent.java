@@ -78,7 +78,7 @@ public class ModifyNodeContent extends HttpServlet {
 		if(environnement==null){															//If in development environment	
 			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
 		}
-		env = environnement+"/solr/solrcloud/tmp";		
+		env = environnement+"/solr/solrcloud/FileShare";		
 
 		if(new File(env+"/solrconfig.xml").exists())
 			config = new File(env+"/solrconfig.xml");

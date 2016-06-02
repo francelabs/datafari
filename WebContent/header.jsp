@@ -1,8 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ page import="com.francelabs.datafari.utils.*"%>
+<%@ page import="java.util.ArrayList"%>
 <!-- Logout.js used by admin/index.jsp as well -->
 <script type="text/javascript" src="js/logout.js"></script>
+<script type="text/javascript">
+	var langHeader = new Array();
+		<% 
+		for (int i=0 ; i<LanguageUtils.availableLanguages.size() ; i++) { %>
+			langHeader[<%= i %>] = "<%= LanguageUtils.availableLanguages.get(i) %>"; 
+		<% } %>
+</script>
 <script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/LanguageSelector.widget.js"></script>
 <script type="text/javascript"
@@ -31,6 +39,7 @@
 			}
 		%>
 		<div id="userSpace">
+		
 
 			<!-- Show the localized language section -->
 			<div id="languageSelector"></div>

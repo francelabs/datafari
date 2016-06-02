@@ -13,7 +13,6 @@ sed -i -e "s/@NODEHOST@/localhost/g" /opt/datafari/tomcat/conf/datafari.properti
 sed -i -e "s/@NODEHOST@/localhost/g" /opt/datafari/solr/bin/solr.in.sh
 sed -i -e "s/@SOLRHOSTS@/localhost:2181/g" /opt/datafari/solr/bin/solr.in.sh
 sed -i -e "s/@SOLRHOSTS@/localhost:2181/g" /opt/datafari/tomcat/conf/datafari.properties
-sed -i -e "s/@SOLRCLOUD@/true/g" /opt/datafari/tomcat/conf/datafari.properties
 
 
 sed -i -e "s/@NUMSHARDS@/1/g" /opt/datafari/tomcat/conf/datafari.properties
@@ -21,7 +20,6 @@ sed -i -e "s/@NUMSHARDS@/1/g" /opt/datafari/bin/start-datafari.sh
 sed -i -e "s/@ISMAINNODE@/true/g" /opt/datafari/tomcat/conf/datafari.properties
 
 mkdir /opt/datafari/solr/solrcloud
-mkdir /opt/datafari/solr/solrcloud/tmp
 mv /opt/datafari/solr/solr_home/FileShare /opt/datafari/solr/solrcloud
 mv /opt/datafari/solr/solr_home/Statistics /opt/datafari/solr/solrcloud
 mv /opt/datafari/solr/solr_home/Promolink /opt/datafari/solr/solrcloud
@@ -30,7 +28,6 @@ db_go
 db_get datafari/datafari_password
 sed -i -e "s/@PASSWORD@/${RET}/g" /opt/datafari/mcf/mcf_home/properties.xml
 sed -i -e "s/@TEMPADMINPASSWORD@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
-sed -i -e "s/@SOLRCLOUD@/false/g" /opt/datafari/tomcat/conf/datafari.properties
 		
 	
 chmod -R 775 /opt/datafari
