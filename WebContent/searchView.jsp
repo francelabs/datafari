@@ -140,8 +140,8 @@
 			if (request.getUserPrincipal().getName() != null) {
 				if(request.isUserInRole("SearchAdministrator") || request.isUserInRole("SearchExpert")) { 
 	%>
-					<script type="text/javascript"
-						src="js/AjaxFranceLabs/modules/QueryElevator.module.js"></script>
+<!-- 					<script type="text/javascript" -->
+<!-- 						src="js/AjaxFranceLabs/modules/QueryElevator.module.js"></script> -->
 	<%
 				}
 			} 
