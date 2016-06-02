@@ -73,7 +73,7 @@ public class Synonyms extends HttpServlet {
 		if(environnement==null){															//If in development environment	
 			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
 		}
-		env = environnement+"/solr/solrcloud/FileShare";		
+		env = environnement+"/solr/solrcloud/FileShare/conf";		
 	
 		
 		content="";

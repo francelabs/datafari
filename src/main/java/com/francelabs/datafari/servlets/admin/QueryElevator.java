@@ -60,7 +60,7 @@ public class QueryElevator extends HttpServlet {
 		if(environnement==null){															//If in development environment	
 			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
 		}
-		env = environnement+"/solr/solrcloud/FileShare";		
+		env = environnement+"/solr/solrcloud/FileShare/conf";		
 	
 		
 		if (new File(env + "/elevate.xml").exists()) {

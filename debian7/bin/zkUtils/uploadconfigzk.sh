@@ -7,7 +7,7 @@
 
 
 
-"$1/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost $2 -confdir $1/solr/solrcloud/$3/ -confname $3
+"$1/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost $2 -confdir $1/solr/solrcloud/$3/conf/ -confname $3
 
 
 
