@@ -705,7 +705,6 @@
 		
 		<arr name="last-components">
 			<str>spellcheck</str>
-			<str>capsulecomponent</str>
 			<str>elevator</str>
 		</arr>
 	<lst name="appends"><str name="fq">{!manifoldCFSecurity}</str></lst></requestHandler>
@@ -933,10 +932,6 @@
   
   <searchComponent class="solr.TermsComponent" name="terms"/>
 	 
-	 <searchComponent class="com.francelabs.datafari.searchcomp.capsule.CapsuleSearchComponent" name="capsulecomponent">
-	  <str name="file">capsules.txt</str>
-	 
-	  </searchComponent>
   
 	<searchComponent class="solr.SpellCheckComponent" name="suggest">
 		<lst name="spellchecker">

@@ -29,6 +29,7 @@
 <script type="text/javascript"
 	src="/Datafari/js/AjaxFranceLabs/core/ParameterStore.js"></script>
 <script type="text/javascript" src="/Datafari/js/AjaxFranceLabs/i18njs.js"></script>
+<script type="text/javascript" src="/Datafari/js/AjaxFranceLabs/widgets/LanguageSelector.widget.js"></script>
 <script type="text/javascript" src="/Datafari/js/AjaxFranceLabs/uuid.core.js"></script>
 <script type="text/javascript"
 	src="/Datafari/js/AjaxFranceLabs/core/AbstractManager.js"></script>

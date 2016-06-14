@@ -15,27 +15,21 @@
  *******************************************************************************/
 package com.francelabs.datafari.service.search;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
 
 import org.apache.log4j.Logger;
 import com.francelabs.datafari.alerts.AlertsManager;
-import com.francelabs.datafari.utils.ScriptConfiguration;
 
 public class SolrServers {
 
-	private final static Logger LOGGER = Logger.getLogger(AlertsManager.class
-			.getName());
+	private final static Logger LOGGER = Logger.getLogger(AlertsManager.class.getName());
 
-	private static String host = "localhost";
-	private static String solrWebapp = "solr";
-	private static String solrPort = "8983";
-	private static String zookeeperPort = "2181";
+	private static String zkHost = "localhost";
+	private static String zkPort = "2181";
 
 	public enum Core {
 		FILESHARE {
@@ -55,29 +49,18 @@ public class SolrServers {
 		}
 	}
 
-	private static Map<Core, SolrClient> solrClients = new HashMap<Core, SolrClient>();
+	private static Map<Core, CloudSolrClient> solrClients = new HashMap<Core, CloudSolrClient>();
 
 	public static SolrClient getSolrServer(Core core) throws Exception {
 		if (!solrClients.containsKey(core)) {
 			try {
-				SolrClient solrClient;
-				if (ScriptConfiguration.getProperty("SOLRCLOUD").equals("true")) {
-					// TODO : change for ZK ensemble 
-					solrClient = new CloudSolrClient(host + ":" + zookeeperPort);
-					((CloudSolrClient) solrClient).setDefaultCollection(core
-							.toString());
-				} else {
-					solrClient = new HttpSolrClient("http://" + host + ":"
-							+ solrPort + "/" + solrWebapp + "/"
-							+ core.toString());
-				}
+				// TODO : change for ZK ensemble
+				CloudSolrClient solrClient = new CloudSolrClient(zkHost + ":" + zkPort);
+				solrClient.setDefaultCollection(core.toString());
 				solrClients.put(core, solrClient);
 			} catch (Exception e) {
-				LOGGER.error("Cannot instanciate Solr Client for core : "
-						+ core.toString(), e);
-				throw new Exception(
-						"Cannot instanciate Solr Client for core : "
-								+ core.toString());
+				LOGGER.error("Cannot instanciate Solr Client for core : " + core.toString(), e);
+				throw new Exception("Cannot instanciate Solr Client for core : " + core.toString());
 			}
 		}
 		return solrClients.get(core);
