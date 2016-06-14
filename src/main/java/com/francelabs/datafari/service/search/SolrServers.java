@@ -20,17 +20,13 @@ import java.util.Map;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
-
+import com.francelabs.datafari.utils.ScriptConfiguration;
 import org.apache.log4j.Logger;
 import com.francelabs.datafari.alerts.AlertsManager;
 
 public class SolrServers {
 
 	private final static Logger LOGGER = Logger.getLogger(AlertsManager.class.getName());
-
-	private static String zkHost = "localhost";
-	private static String zkPort = "2181";
-
 	public enum Core {
 		FILESHARE {
 			public String toString() {
@@ -52,10 +48,12 @@ public class SolrServers {
 	private static Map<Core, CloudSolrClient> solrClients = new HashMap<Core, CloudSolrClient>();
 
 	public static SolrClient getSolrServer(Core core) throws Exception {
+		// Zookeeper Hosts
+		String solrHosts = ScriptConfiguration.getProperty("SOLRHOSTS");
 		if (!solrClients.containsKey(core)) {
 			try {
 				// TODO : change for ZK ensemble
-				CloudSolrClient solrClient = new CloudSolrClient(zkHost + ":" + zkPort);
+				CloudSolrClient solrClient = new CloudSolrClient(solrHosts);
 				solrClient.setDefaultCollection(core.toString());
 				solrClients.put(core, solrClient);
 			} catch (Exception e) {
