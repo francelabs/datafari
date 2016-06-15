@@ -74,7 +74,7 @@ then
 	
 	sudo su postgres -c "${DATAFARI_HOME}/pgsql/bin/initdb -U postgres -A password --pwfile=${DATAFARI_HOME}/pgsql/pwd.conf -E utf8 -D ${DATAFARI_HOME}/pgsql/data"
 	sudo su postgres -c "cp ${DATAFARI_HOME}/pgsql/postgresql.conf.save ${DATAFARI_HOME}/pgsql/data/postgresql.conf"
-	sudo LD_LIBRARY_PATH=$LD_LIBRARY_PATH su postgres -p -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_LOGS}/pgsql.log start"
+	sudo LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib su postgres -p -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_LOGS}/pgsql.log start"
 	cd "${DATAFARI_HOME}/mcf/mcf_home"
 	sudo -E su datafari -p -c "bash initialize.sh"
 	
@@ -139,11 +139,20 @@ then
 	sudo su datafari -c "sed -i 's/\(STATE *= *\).*/\1initialized/' $INIT_STATE_FILE"
 
 else
-	sudo LD_LIBRARY_PATH=$LD_LIBRARY_PATH su postgres -p -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_LOGS}/pgsql.log start"
+	sudo LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib su postgres -p -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_LOGS}/pgsql.log start"
 	sudo -E su datafari -p -c "CASSANDRA_INCLUDE=$CASSANDRA_ENV $CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE 1>/dev/null"
 fi
 
 cd $MCF_HOME/../bin
+
+if  [[ "$OCR" = *true* ]];
+then
+	echo "Using Tesseract OCR..."
+	cp -f ${MCF_HOME}/tika-config.jar ${MCF_HOME}/connector-lib/	
+else
+	rm -f ${MCF_HOME}/connector-lib/tika-config.jar
+	
+fi
 sudo -E su datafari -p -c "export PATH=$PATH && bash mcf_crawler_agent.sh start"
 sudo -E su datafari -p -c "SOLR_INCLUDE=$SOLR_ENV $SOLR_INSTALL_DIR/bin/solr start"
 
