@@ -62,18 +62,13 @@
 			<!-- Copy Jars that are inside dist directory -->
 			<!-- Copy only Jars that we need -->
 			<fileset dir="temp" includes="*solr*/dist/solr-langid-*.jar" />
+			<fileset dir="temp" includes="*solr*/dist/solr-cell-*.jar" />
 			<chainedmapper>
 				<!-- Strip solr*/dist directory -->
 				<cutdirsmapper dirs="2" />
 			</chainedmapper>
 		</copy>
 
-		<!-- Overwrite with Datafari specific scripts and copy conf and solr_home directories -->
-		<!-- Use Datafari specific Tika-Parser JAR for TesseractOCR config file and SEG-Y parser, should be removed with issue https://datafari.atlassian.net/browse/DATAFARI-80 -->
-		<!-- Use Datafari specific Tika-Core JAR, for SEG-Y parser. Source code available: https://github.com/francelabs/tika and https://github.com/francelabs/sigrun -->
-		<delete>
-			<fileset dir="solr/solr_home/FileShare/lib/extraction" includes="*tika-parsers*.jar,*tika-core*.jar" />
-		</delete>
 		<copy toDir="solr" overwrite="true" force="true">
 			<fileset dir="datafari-solr" />
 		</copy>
@@ -163,6 +158,10 @@
 		<copy toDir="mcf" overwrite="true" force="true">
 			<fileset dir="datafari-mcf" includes="bin/**,mcf_home/**" />
 		</copy>
+		
+		<!-- Create Tika Config jar for OCR - TesseractOCRParser conf + PDF parser extractInlineImages -->
+		<jar destfile="mcf/mcf_home/connector-lib/tika-config.jar" basedir="src/main/java" 
+	       includes="org/apache/tika/parser/**" />
 
 		<!-- Affect enough privileges for MCF executables (Ant copy doesn't 
 			preserve execution rights!) -->
