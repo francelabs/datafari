@@ -32,7 +32,7 @@
                "_attribute_name":"Solr core name"
             },
             {
-               "_value_":"collection1",
+               "_value_":"FileShare",
                "_attribute_name":"Collection"
             },
             {
