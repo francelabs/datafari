@@ -1,7 +1,7 @@
 /*
  * PostgreSQL System Views
  *
- * Copyright (c) 1996-2013, PostgreSQL Global Development Group
+ * Copyright (c) 1996-2015, PostgreSQL Global Development Group
  *
  * src/backend/catalog/system_views.sql
  */
@@ -13,12 +13,12 @@ CREATE VIEW pg_roles AS
         rolinherit,
         rolcreaterole,
         rolcreatedb,
-        rolcatupdate,
         rolcanlogin,
         rolreplication,
         rolconnlimit,
         '********'::text as rolpassword,
         rolvaliduntil,
+        rolbypassrls,
         setconfig as rolconfig,
         pg_authid.oid
     FROM pg_authid LEFT JOIN pg_db_role_setting s
@@ -30,8 +30,8 @@ CREATE VIEW pg_shadow AS
         pg_authid.oid AS usesysid,
         rolcreatedb AS usecreatedb,
         rolsuper AS usesuper,
-        rolcatupdate AS usecatupd,
         rolreplication AS userepl,
+        rolbypassrls AS usebypassrls,
         rolpassword AS passwd,
         rolvaliduntil::abstime AS valuntil,
         setconfig AS useconfig
@@ -55,12 +55,41 @@ CREATE VIEW pg_user AS
         usesysid,
         usecreatedb,
         usesuper,
-        usecatupd,
         userepl,
+        usebypassrls,
         '********'::text as passwd,
         valuntil,
         useconfig
     FROM pg_shadow;
+
+CREATE VIEW pg_policies AS
+    SELECT
+        N.nspname AS schemaname,
+        C.relname AS tablename,
+        pol.polname AS policyname,
+        CASE
+            WHEN pol.polroles = '{0}' THEN
+                string_to_array('public', '')
+            ELSE
+                ARRAY
+                (
+                    SELECT rolname
+                    FROM pg_catalog.pg_authid
+                    WHERE oid = ANY (pol.polroles) ORDER BY 1
+                )
+        END AS roles,
+        CASE pol.polcmd
+            WHEN 'r' THEN 'SELECT'
+            WHEN 'a' THEN 'INSERT'
+            WHEN 'w' THEN 'UPDATE'
+            WHEN 'd' THEN 'DELETE'
+            WHEN '*' THEN 'ALL'
+        END AS cmd,
+        pg_catalog.pg_get_expr(pol.polqual, pol.polrelid) AS qual,
+        pg_catalog.pg_get_expr(pol.polwithcheck, pol.polrelid) AS with_check
+    FROM pg_catalog.pg_policy pol
+    JOIN pg_catalog.pg_class C ON (C.oid = pol.polrelid)
+    LEFT JOIN pg_catalog.pg_namespace N ON (N.oid = C.relnamespace);
 
 CREATE VIEW pg_rules AS
     SELECT
@@ -89,7 +118,8 @@ CREATE VIEW pg_tables AS
         T.spcname AS tablespace,
         C.relhasindex AS hasindexes,
         C.relhasrules AS hasrules,
-        C.relhastriggers AS hastriggers
+        C.relhastriggers AS hastriggers,
+        C.relrowsecurity AS rowsecurity
     FROM pg_class C LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
          LEFT JOIN pg_tablespace T ON (T.oid = C.reltablespace)
     WHERE C.relkind = 'r';
@@ -120,7 +150,7 @@ CREATE VIEW pg_indexes AS
          LEFT JOIN pg_tablespace T ON (T.oid = I.reltablespace)
     WHERE C.relkind IN ('r', 'm') AND I.relkind = 'i';
 
-CREATE VIEW pg_stats AS
+CREATE VIEW pg_stats WITH (security_barrier) AS
     SELECT
         nspname AS schemaname,
         relname AS tablename,
@@ -181,7 +211,9 @@ CREATE VIEW pg_stats AS
     FROM pg_statistic s JOIN pg_class c ON (c.oid = s.starelid)
          JOIN pg_attribute a ON (c.oid = attrelid AND attnum = s.staattnum)
          LEFT JOIN pg_namespace n ON (n.oid = c.relnamespace)
-    WHERE NOT attisdropped AND has_column_privilege(c.oid, a.attnum, 'select');
+    WHERE NOT attisdropped
+    AND has_column_privilege(c.oid, a.attnum, 'select')
+    AND (c.relrowsecurity = false OR NOT row_security_active(c.oid));
 
 REVOKE ALL on pg_statistic FROM public;
 
@@ -381,6 +413,12 @@ CREATE RULE pg_settings_n AS
 
 GRANT SELECT, UPDATE ON pg_settings TO PUBLIC;
 
+CREATE VIEW pg_file_settings AS
+   SELECT * FROM pg_show_all_file_settings() AS A;
+
+REVOKE ALL on pg_file_settings FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION pg_show_all_file_settings() FROM PUBLIC;
+
 CREATE VIEW pg_timezone_abbrevs AS
     SELECT * FROM pg_timezone_abbrevs();
 
@@ -405,6 +443,7 @@ CREATE VIEW pg_stat_all_tables AS
             pg_stat_get_tuples_hot_updated(C.oid) AS n_tup_hot_upd,
             pg_stat_get_live_tuples(C.oid) AS n_live_tup,
             pg_stat_get_dead_tuples(C.oid) AS n_dead_tup,
+            pg_stat_get_mod_since_analyze(C.oid) AS n_mod_since_analyze,
             pg_stat_get_last_vacuum_time(C.oid) as last_vacuum,
             pg_stat_get_last_autovacuum_time(C.oid) as last_autovacuum,
             pg_stat_get_last_analyze_time(C.oid) as last_analyze,
@@ -473,16 +512,16 @@ CREATE VIEW pg_statio_all_tables AS
             pg_stat_get_blocks_fetched(T.oid) -
                     pg_stat_get_blocks_hit(T.oid) AS toast_blks_read,
             pg_stat_get_blocks_hit(T.oid) AS toast_blks_hit,
-            pg_stat_get_blocks_fetched(X.oid) -
-                    pg_stat_get_blocks_hit(X.oid) AS tidx_blks_read,
-            pg_stat_get_blocks_hit(X.oid) AS tidx_blks_hit
+            sum(pg_stat_get_blocks_fetched(X.indexrelid) -
+                    pg_stat_get_blocks_hit(X.indexrelid))::bigint AS tidx_blks_read,
+            sum(pg_stat_get_blocks_hit(X.indexrelid))::bigint AS tidx_blks_hit
     FROM pg_class C LEFT JOIN
             pg_index I ON C.oid = I.indrelid LEFT JOIN
             pg_class T ON C.reltoastrelid = T.oid LEFT JOIN
-            pg_class X ON T.reltoastidxid = X.oid
+            pg_index X ON T.oid = X.indrelid
             LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
     WHERE C.relkind IN ('r', 't', 'm')
-    GROUP BY C.oid, N.nspname, C.relname, T.oid, X.oid;
+    GROUP BY C.oid, N.nspname, C.relname, T.oid, X.indrelid;
 
 CREATE VIEW pg_statio_sys_tables AS
     SELECT * FROM pg_statio_all_tables
@@ -585,6 +624,8 @@ CREATE VIEW pg_stat_activity AS
             S.state_change,
             S.waiting,
             S.state,
+            S.backend_xid,
+            s.backend_xmin,
             S.query
     FROM pg_database D, pg_stat_get_activity(NULL) AS S, pg_authid U
     WHERE S.datid = D.oid AND
@@ -600,6 +641,7 @@ CREATE VIEW pg_stat_replication AS
             S.client_hostname,
             S.client_port,
             S.backend_start,
+            S.backend_xmin,
             W.state,
             W.sent_location,
             W.write_location,
@@ -611,6 +653,32 @@ CREATE VIEW pg_stat_replication AS
             pg_stat_get_wal_senders() AS W
     WHERE S.usesysid = U.oid AND
             S.pid = W.pid;
+
+CREATE VIEW pg_stat_ssl AS
+    SELECT
+            S.pid,
+            S.ssl,
+            S.sslversion AS version,
+            S.sslcipher AS cipher,
+            S.sslbits AS bits,
+            S.sslcompression AS compression,
+            S.sslclientdn AS clientdn
+    FROM pg_stat_get_activity(NULL) AS S;
+
+CREATE VIEW pg_replication_slots AS
+    SELECT
+            L.slot_name,
+            L.plugin,
+            L.slot_type,
+            L.datoid,
+            D.datname AS database,
+            L.active,
+            L.active_pid,
+            L.xmin,
+            L.catalog_xmin,
+            L.restart_lsn
+    FROM pg_get_replication_slots() AS L
+            LEFT JOIN pg_database D ON (L.datoid = D.oid);
 
 CREATE VIEW pg_stat_database AS
     SELECT
@@ -671,6 +739,17 @@ CREATE VIEW pg_stat_xact_user_functions AS
     WHERE P.prolang != 12  -- fast check to eliminate built-in functions
           AND pg_stat_get_xact_function_calls(P.oid) IS NOT NULL;
 
+CREATE VIEW pg_stat_archiver AS
+    SELECT
+        s.archived_count,
+        s.last_archived_wal,
+        s.last_archived_time,
+        s.failed_count,
+        s.last_failed_wal,
+        s.last_failed_time,
+        s.stats_reset
+    FROM pg_stat_get_archiver() s;
+
 CREATE VIEW pg_stat_bgwriter AS
     SELECT
         pg_stat_get_bgwriter_timed_checkpoints() AS checkpoints_timed,
@@ -706,6 +785,13 @@ CREATE VIEW pg_user_mappings AS
         pg_foreign_server S ON (U.umserver = S.oid);
 
 REVOKE ALL on pg_user_mapping FROM public;
+
+
+CREATE VIEW pg_replication_origin_status AS
+    SELECT *
+    FROM pg_show_replication_origin_status();
+
+REVOKE ALL ON pg_replication_origin_status FROM public;
 
 --
 -- We have a few function definitions in here, too.
@@ -786,12 +872,63 @@ COMMENT ON FUNCTION ts_debug(text) IS
 
 CREATE OR REPLACE FUNCTION
   pg_start_backup(label text, fast boolean DEFAULT false)
-  RETURNS text STRICT VOLATILE LANGUAGE internal AS 'pg_start_backup';
+  RETURNS pg_lsn STRICT VOLATILE LANGUAGE internal AS 'pg_start_backup';
 
+-- legacy definition for compatibility with 9.3
 CREATE OR REPLACE FUNCTION
   json_populate_record(base anyelement, from_json json, use_json_as_text boolean DEFAULT false)
   RETURNS anyelement LANGUAGE internal STABLE AS 'json_populate_record';
 
+-- legacy definition for compatibility with 9.3
 CREATE OR REPLACE FUNCTION
   json_populate_recordset(base anyelement, from_json json, use_json_as_text boolean DEFAULT false)
   RETURNS SETOF anyelement LANGUAGE internal STABLE ROWS 100  AS 'json_populate_recordset';
+
+CREATE OR REPLACE FUNCTION pg_logical_slot_get_changes(
+    IN slot_name name, IN upto_lsn pg_lsn, IN upto_nchanges int, VARIADIC options text[] DEFAULT '{}',
+    OUT location pg_lsn, OUT xid xid, OUT data text)
+RETURNS SETOF RECORD
+LANGUAGE INTERNAL
+VOLATILE ROWS 1000 COST 1000
+AS 'pg_logical_slot_get_changes';
+
+CREATE OR REPLACE FUNCTION pg_logical_slot_peek_changes(
+    IN slot_name name, IN upto_lsn pg_lsn, IN upto_nchanges int, VARIADIC options text[] DEFAULT '{}',
+    OUT location pg_lsn, OUT xid xid, OUT data text)
+RETURNS SETOF RECORD
+LANGUAGE INTERNAL
+VOLATILE ROWS 1000 COST 1000
+AS 'pg_logical_slot_peek_changes';
+
+CREATE OR REPLACE FUNCTION pg_logical_slot_get_binary_changes(
+    IN slot_name name, IN upto_lsn pg_lsn, IN upto_nchanges int, VARIADIC options text[] DEFAULT '{}',
+    OUT location pg_lsn, OUT xid xid, OUT data bytea)
+RETURNS SETOF RECORD
+LANGUAGE INTERNAL
+VOLATILE ROWS 1000 COST 1000
+AS 'pg_logical_slot_get_binary_changes';
+
+CREATE OR REPLACE FUNCTION pg_logical_slot_peek_binary_changes(
+    IN slot_name name, IN upto_lsn pg_lsn, IN upto_nchanges int, VARIADIC options text[] DEFAULT '{}',
+    OUT location pg_lsn, OUT xid xid, OUT data bytea)
+RETURNS SETOF RECORD
+LANGUAGE INTERNAL
+VOLATILE ROWS 1000 COST 1000
+AS 'pg_logical_slot_peek_binary_changes';
+
+CREATE OR REPLACE FUNCTION
+  make_interval(years int4 DEFAULT 0, months int4 DEFAULT 0, weeks int4 DEFAULT 0,
+                days int4 DEFAULT 0, hours int4 DEFAULT 0, mins int4 DEFAULT 0,
+                secs double precision DEFAULT 0.0)
+RETURNS interval
+LANGUAGE INTERNAL
+STRICT IMMUTABLE
+AS 'make_interval';
+
+CREATE OR REPLACE FUNCTION
+  jsonb_set(jsonb_in jsonb, path text[] , replacement jsonb,
+            create_if_missing boolean DEFAULT true)
+RETURNS jsonb
+LANGUAGE INTERNAL
+STRICT IMMUTABLE
+AS 'jsonb_set';

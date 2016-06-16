@@ -14,6 +14,8 @@
 43	pg_proc	0	I/O
 44	pg_proc	0	I/O
 45	pg_proc	0	I/O
+3494	pg_proc	0	convert proname to regproc
+3479	pg_proc	0	convert proname to regprocedure
 46	pg_proc	0	I/O
 47	pg_proc	0	I/O
 48	pg_proc	0	I/O
@@ -28,6 +30,10 @@
 78	pg_proc	0	convert int4 to char
 1257	pg_proc	0	length
 89	pg_proc	0	PostgreSQL version string
+86	pg_proc	0	I/O
+87	pg_proc	0	I/O
+88	pg_proc	0	I/O
+90	pg_proc	0	I/O
 101	pg_proc	0	restriction selectivity of = and related operators
 102	pg_proc	0	restriction selectivity of <> and related operators
 103	pg_proc	0	restriction selectivity of < and related operators on scalar datatypes
@@ -85,7 +91,7 @@
 273	pg_proc	0	end of interval
 274	pg_proc	0	current date and time - increments during transactions
 275	pg_proc	0	finite abstime?
-320	pg_proc	0	bucket number of operand in equidepth histogram
+320	pg_proc	0	bucket number of operand in equal-width histogram
 311	pg_proc	0	convert float4 to float8
 312	pg_proc	0	convert float8 to float4
 313	pg_proc	0	convert int2 to int4
@@ -109,6 +115,20 @@
 276	pg_proc	0	btree(internal)
 1268	pg_proc	0	btree(internal)
 2785	pg_proc	0	btree(internal)
+3789	pg_proc	0	brin(internal)
+3790	pg_proc	0	brin(internal)
+3791	pg_proc	0	brin(internal)
+3792	pg_proc	0	brin(internal)
+3793	pg_proc	0	brin(internal)
+3794	pg_proc	0	brin(internal)
+3795	pg_proc	0	brin(internal)
+3796	pg_proc	0	brin(internal)
+3797	pg_proc	0	brin(internal)
+3798	pg_proc	0	brin(internal)
+3799	pg_proc	0	brin(internal)
+3800	pg_proc	0	brin(internal)
+3801	pg_proc	0	brin(internal)
+3952	pg_proc	0	brin: standalone scan new table pages
 347	pg_proc	0	I/O
 348	pg_proc	0	I/O
 350	pg_proc	0	less-equal-greater
@@ -129,6 +149,7 @@
 359	pg_proc	0	less-equal-greater
 3135	pg_proc	0	sort support
 360	pg_proc	0	less-equal-greater
+3255	pg_proc	0	sort support
 377	pg_proc	0	less-equal-greater
 380	pg_proc	0	less-equal-greater
 381	pg_proc	0	less-equal-greater
@@ -201,6 +222,7 @@
 2091	pg_proc	0	array lower dimension
 2092	pg_proc	0	array upper dimension
 2176	pg_proc	0	array length
+3179	pg_proc	0	array cardinality
 378	pg_proc	0	append element onto end of array
 379	pg_proc	0	prepend element onto front of array
 394	pg_proc	0	split delimited text into text[]
@@ -209,6 +231,9 @@
 384	pg_proc	0	concatenate array elements, using delimiter and null string, into text
 515	pg_proc	0	larger of two
 516	pg_proc	0	smaller of two
+3277	pg_proc	0	returns an offset of value in array
+3278	pg_proc	0	returns an offset of value in array with start index
+3279	pg_proc	0	returns an array of offsets of some value in array
 1191	pg_proc	0	array subscripts generator
 1192	pg_proc	0	array subscripts generator
 1193	pg_proc	0	array constructor with value
@@ -219,6 +244,10 @@
 2333	pg_proc	0	aggregate transition function
 2334	pg_proc	0	aggregate final function
 2335	pg_proc	0	concatenate aggregate input into an array
+4051	pg_proc	0	aggregate transition function
+4052	pg_proc	0	aggregate final function
+4053	pg_proc	0	concatenate aggregate input into an array
+3218	pg_proc	0	bucket number of operand given a sorted array of bucket lower bounds
 3816	pg_proc	0	array typanalyze
 3817	pg_proc	0	restriction selectivity for array-containment operators
 3818	pg_proc	0	join selectivity for array-containment operators
@@ -246,6 +275,7 @@
 326	pg_proc	0	gist(internal)
 776	pg_proc	0	gist(internal)
 2561	pg_proc	0	gist(internal)
+3280	pg_proc	0	gist(internal)
 772	pg_proc	0	gist(internal)
 2787	pg_proc	0	gist(internal)
 849	pg_proc	0	position of substring
@@ -278,14 +308,20 @@
 3171	pg_proc	0	large object position (64 bit)
 1004	pg_proc	0	truncate large object
 3172	pg_proc	0	truncate large object (64 bit)
+3457	pg_proc	0	create new large object with given content
+3458	pg_proc	0	read entire large object
+3459	pg_proc	0	read large object from offset for length
+3460	pg_proc	0	write data at offset
 964	pg_proc	0	large object unlink (delete)
 975	pg_proc	0	box area
 976	pg_proc	0	box width
 977	pg_proc	0	box height
 979	pg_proc	0	area of a closed path
+4067	pg_proc	0	bounding box of two boxes
 981	pg_proc	0	box diagonal
 992	pg_proc	0	slope between points
 993	pg_proc	0	convert points to line segment
+3994	pg_proc	0	transform a time zone adjustment
 1026	pg_proc	0	adjust timestamp to new time zone
 1031	pg_proc	0	I/O
 1032	pg_proc	0	I/O
@@ -324,6 +360,7 @@
 2907	pg_proc	0	I/O typmod
 2908	pg_proc	0	I/O typmod
 1158	pg_proc	0	convert UNIX epoch to timestamptz
+3995	pg_proc	0	transform a time zone adjustment
 1159	pg_proc	0	adjust timestamp to new time zone
 1160	pg_proc	0	I/O
 1161	pg_proc	0	I/O
@@ -342,6 +379,7 @@
 1179	pg_proc	0	convert abstime to date
 1180	pg_proc	0	convert timestamp with time zone to abstime
 1181	pg_proc	0	age of a transaction ID, in transactions before current transaction
+3939	pg_proc	0	age of a multi-transaction ID, in multi-transactions before current multi-transaction
 1194	pg_proc	0	convert interval to reltime
 1195	pg_proc	0	smaller of two
 1196	pg_proc	0	larger of two
@@ -356,7 +394,9 @@
 1217	pg_proc	0	truncate timestamp with time zone to specified units
 1218	pg_proc	0	truncate interval to specified units
 1219	pg_proc	0	increment
+3546	pg_proc	0	decrement
 2804	pg_proc	0	increment, ignores second argument
+3547	pg_proc	0	decrement, ignores second argument
 1236	pg_proc	0	larger of two
 1237	pg_proc	0	smaller of two
 1271	pg_proc	0	intervals overlap?
@@ -475,6 +515,7 @@
 1473	pg_proc	0	convert point and radius to circle
 1474	pg_proc	0	convert polygon to circle
 1475	pg_proc	0	convert vertex count and circle to polygon
+4091	pg_proc	0	convert point to empty box
 1479	pg_proc	0	convert box to circle
 1480	pg_proc	0	convert circle to box
 1481	pg_proc	0	convert to tinterval
@@ -582,6 +623,7 @@
 2162	pg_proc	0	argument list of a function
 2232	pg_proc	0	identity argument list of a function
 2165	pg_proc	0	result type of a function
+3808	pg_proc	0	function argument default
 1686	pg_proc	0	list of SQL keywords
 2289	pg_proc	0	convert generic options array to name/value table
 1619	pg_proc	0	type of the argument
@@ -624,6 +666,8 @@
 911	pg_proc	0	I/O
 1267	pg_proc	0	I/O
 1427	pg_proc	0	I/O
+3562	pg_proc	0	larger of two
+3563	pg_proc	0	smaller of two
 926	pg_proc	0	less-equal-greater
 598	pg_proc	0	abbreviated display of inet value
 599	pg_proc	0	abbreviated display of cidr value
@@ -642,6 +686,18 @@
 2197	pg_proc	0	client's port number for this connection
 2198	pg_proc	0	inet address of the server
 2199	pg_proc	0	server's port number for this connection
+4071	pg_proc	0	are the addresses from the same family?
+4063	pg_proc	0	the smallest network which includes both of the given networks
+3553	pg_proc	0	GiST support
+3554	pg_proc	0	GiST support
+3555	pg_proc	0	GiST support
+3556	pg_proc	0	GiST support
+3573	pg_proc	0	GiST support
+3557	pg_proc	0	GiST support
+3558	pg_proc	0	GiST support
+3559	pg_proc	0	GiST support
+3560	pg_proc	0	restriction selectivity for network operators
+3561	pg_proc	0	join selectivity for network operators
 1693	pg_proc	0	less-equal-greater
 1688	pg_proc	0	hash
 1696	pg_proc	0	hash
@@ -681,11 +737,12 @@
 1746	pg_proc	0	convert numeric to float8
 1973	pg_proc	0	trunc(x/y)
 1980	pg_proc	0	trunc(x/y)
-2170	pg_proc	0	bucket number of operand in equidepth histogram
+2170	pg_proc	0	bucket number of operand in equal-width histogram
 1764	pg_proc	0	increment by one
 1766	pg_proc	0	smaller of two
 1767	pg_proc	0	larger of two
 1769	pg_proc	0	less-equal-greater
+3283	pg_proc	0	sort support
 1779	pg_proc	0	convert numeric to int8
 1781	pg_proc	0	convert int8 to numeric
 1782	pg_proc	0	convert int2 to numeric
@@ -740,10 +797,16 @@
 1832	pg_proc	0	aggregate final function
 1833	pg_proc	0	aggregate transition function
 2858	pg_proc	0	aggregate transition function
+3548	pg_proc	0	aggregate transition function
 1834	pg_proc	0	aggregate transition function
 1835	pg_proc	0	aggregate transition function
 1836	pg_proc	0	aggregate transition function
 2746	pg_proc	0	aggregate transition function
+3567	pg_proc	0	aggregate transition function
+3568	pg_proc	0	aggregate transition function
+3569	pg_proc	0	aggregate transition function
+3387	pg_proc	0	aggregate transition function
+3178	pg_proc	0	aggregate final function
 1837	pg_proc	0	aggregate final function
 2514	pg_proc	0	aggregate final function
 1838	pg_proc	0	aggregate final function
@@ -752,11 +815,21 @@
 1840	pg_proc	0	aggregate transition function
 1841	pg_proc	0	aggregate transition function
 1842	pg_proc	0	aggregate transition function
+3388	pg_proc	0	aggregate final function
+3389	pg_proc	0	aggregate final function
+3390	pg_proc	0	aggregate final function
+3391	pg_proc	0	aggregate final function
+3392	pg_proc	0	aggregate final function
+3393	pg_proc	0	aggregate final function
 1843	pg_proc	0	aggregate transition function
+3549	pg_proc	0	aggregate transition function
 1844	pg_proc	0	aggregate final function
 1962	pg_proc	0	aggregate transition function
 1963	pg_proc	0	aggregate transition function
+3570	pg_proc	0	aggregate transition function
+3571	pg_proc	0	aggregate transition function
 1964	pg_proc	0	aggregate final function
+3572	pg_proc	0	aggregate final function
 2805	pg_proc	0	aggregate transition function
 2806	pg_proc	0	aggregate transition function
 2807	pg_proc	0	aggregate final function
@@ -818,6 +891,7 @@
 1972	pg_proc	0	statistics: number of tuples hot updated
 2878	pg_proc	0	statistics: number of live tuples
 2879	pg_proc	0	statistics: number of dead tuples
+3177	pg_proc	0	statistics: number of tuples changed since last analyze
 1934	pg_proc	0	statistics: number of blocks fetched
 1935	pg_proc	0	statistics: number of blocks found in cache
 2781	pg_proc	0	statistics: last manual vacuum time for a table
@@ -864,6 +938,7 @@
 3151	pg_proc	0	statistics: number of bytes in temporary files written
 2844	pg_proc	0	statistics: block read time, in msec
 2845	pg_proc	0	statistics: block write time, in msec
+3195	pg_proc	0	statistics: information about WAL archiver
 2769	pg_proc	0	statistics: number of timed checkpoints started by the bgwriter
 2770	pg_proc	0	statistics: number of backend requested checkpoints started by the bgwriter
 2771	pg_proc	0	statistics: number of buffers written by the bgwriter during checkpoints
@@ -890,6 +965,7 @@
 3046	pg_proc	0	statistics: number of function calls in current transaction
 3047	pg_proc	0	statistics: total execution time of function in current transaction, in msec
 3048	pg_proc	0	statistics: self execution time of function in current transaction, in msec
+3788	pg_proc	0	statistics: timestamp of the current statistics snapshot
 2230	pg_proc	0	statistics: discard current transaction's statistics snapshot
 2274	pg_proc	0	statistics: reset collected statistics for current database
 3775	pg_proc	0	statistics: reset collected statistics shared across the cluster
@@ -954,11 +1030,16 @@
 2077	pg_proc	0	SHOW X as a function
 2078	pg_proc	0	SET X as a function
 2084	pg_proc	0	SHOW ALL as a function
+3329	pg_proc	0	show config file settings
 1371	pg_proc	0	view system lock information
 1065	pg_proc	0	view two-phase transactions
 3819	pg_proc	0	view members of a multixactid
+3581	pg_proc	0	get commit timestamp of a transaction
+3583	pg_proc	0	get transaction Id and commit timestamp of latest transaction commit
 3537	pg_proc	0	get identification of SQL object
 3839	pg_proc	0	get machine-parseable identification of SQL object
+3382	pg_proc	0	get identification of SQL object for pg_get_object_address()
+3954	pg_proc	0	get OID-based object address from name/args arrays
 2079	pg_proc	0	is table visible in search path?
 2080	pg_proc	0	is type visible in search path?
 2081	pg_proc	0	is function visible in search path?
@@ -997,12 +1078,18 @@
 2621	pg_proc	0	reload configuration files
 2622	pg_proc	0	rotate log file
 2623	pg_proc	0	get information about file
+3307	pg_proc	0	get information about file
 2624	pg_proc	0	read text from a file
+3293	pg_proc	0	read text from a file
 3826	pg_proc	0	read text from a file
 3827	pg_proc	0	read bytea from a file
+3295	pg_proc	0	read bytea from a file
 3828	pg_proc	0	read bytea from a file
 2625	pg_proc	0	list all files in a directory
+3297	pg_proc	0	list all files in a directory
 2626	pg_proc	0	sleep for the specified time in seconds
+3935	pg_proc	0	sleep for the specified interval
+3936	pg_proc	0	sleep until the specified time
 2971	pg_proc	0	convert boolean to text
 2100	pg_proc	0	the average (arithmetic mean) as numeric of all bigint values
 2101	pg_proc	0	the average (arithmetic mean) as numeric of all integer values
@@ -1038,6 +1125,7 @@
 2050	pg_proc	0	maximum value of all anyarray input values
 2244	pg_proc	0	maximum value of all bpchar input values
 2797	pg_proc	0	maximum value of all tid input values
+3564	pg_proc	0	maximum value of all inet input values
 2131	pg_proc	0	minimum value of all bigint input values
 2132	pg_proc	0	minimum value of all integer input values
 2133	pg_proc	0	minimum value of all smallint input values
@@ -1057,6 +1145,7 @@
 2051	pg_proc	0	minimum value of all anyarray input values
 2245	pg_proc	0	minimum value of all bpchar input values
 2798	pg_proc	0	minimum value of all tid input values
+3565	pg_proc	0	minimum value of all inet input values
 2147	pg_proc	0	number of input rows for which the input expression is not null
 2803	pg_proc	0	number of input rows
 2718	pg_proc	0	population variance of bigint input values (square of the population standard deviation)
@@ -1121,13 +1210,23 @@
 2213	pg_proc	0	I/O
 2214	pg_proc	0	I/O
 2215	pg_proc	0	I/O
+3492	pg_proc	0	convert operator name to regoper
+3476	pg_proc	0	convert operator name to regoperator
 2216	pg_proc	0	I/O
 2217	pg_proc	0	I/O
 2218	pg_proc	0	I/O
 2219	pg_proc	0	I/O
+3495	pg_proc	0	convert classname to regclass
 2220	pg_proc	0	I/O
 2221	pg_proc	0	I/O
+3493	pg_proc	0	convert type name to regtype
 1079	pg_proc	0	convert text to regclass
+4098	pg_proc	0	I/O
+4092	pg_proc	0	I/O
+4093	pg_proc	0	convert role name to regrole
+4084	pg_proc	0	I/O
+4085	pg_proc	0	I/O
+4086	pg_proc	0	convert namespace name to regnamespace
 2246	pg_proc	0	(internal)
 2247	pg_proc	0	(internal)
 2248	pg_proc	0	(internal)
@@ -1198,6 +1297,7 @@
 2997	pg_proc	0	disk space usage for the specified table, including TOAST, free space and visibility map
 2998	pg_proc	0	disk space usage for all indexes attached to the specified table
 2999	pg_proc	0	filenode identifier of relation
+3454	pg_proc	0	relation OID for filenode and tablespace
 3034	pg_proc	0	file path of relation
 2316	pg_proc	0	(internal)
 2290	pg_proc	0	I/O
@@ -1230,6 +1330,10 @@
 2778	pg_proc	0	I/O
 3116	pg_proc	0	I/O
 3117	pg_proc	0	I/O
+3311	pg_proc	0	I/O
+3312	pg_proc	0	I/O
+3313	pg_proc	0	BERNOULLI tablesample method handler
+3314	pg_proc	0	SYSTEM tablesample method handler
 2311	pg_proc	0	MD5 hash
 2321	pg_proc	0	MD5 hash
 2344	pg_proc	0	less-equal-greater
@@ -1294,6 +1398,10 @@
 2453	pg_proc	0	I/O
 2454	pg_proc	0	I/O
 2455	pg_proc	0	I/O
+4094	pg_proc	0	I/O
+4095	pg_proc	0	I/O
+4087	pg_proc	0	I/O
+4088	pg_proc	0	I/O
 2456	pg_proc	0	I/O
 2457	pg_proc	0	I/O
 2458	pg_proc	0	I/O
@@ -1362,10 +1470,16 @@
 1067	pg_proc	0	non-persistent series generator
 1068	pg_proc	0	non-persistent series generator
 1069	pg_proc	0	non-persistent series generator
+3259	pg_proc	0	non-persistent series generator
+3260	pg_proc	0	non-persistent series generator
 938	pg_proc	0	non-persistent series generator
 939	pg_proc	0	non-persistent series generator
 2515	pg_proc	0	aggregate transition function
 2516	pg_proc	0	aggregate transition function
+3496	pg_proc	0	aggregate transition function
+3497	pg_proc	0	aggregate transition function
+3498	pg_proc	0	aggregate final function
+3499	pg_proc	0	aggregate final function
 2517	pg_proc	0	boolean-and aggregate
 2518	pg_proc	0	boolean-or aggregate
 2519	pg_proc	0	boolean-and aggregate
@@ -1386,6 +1500,7 @@
 2578	pg_proc	0	GiST support
 2579	pg_proc	0	GiST support
 2580	pg_proc	0	GiST support
+3281	pg_proc	0	GiST support
 2581	pg_proc	0	GiST support
 2582	pg_proc	0	GiST support
 2583	pg_proc	0	GiST support
@@ -1395,8 +1510,10 @@
 2591	pg_proc	0	GiST support
 2592	pg_proc	0	GiST support
 1030	pg_proc	0	GiST support
+3282	pg_proc	0	GiST support
 2179	pg_proc	0	GiST support
 3064	pg_proc	0	GiST support
+3288	pg_proc	0	GiST support
 2731	pg_proc	0	gin(internal)
 2732	pg_proc	0	gin(internal)
 2733	pg_proc	0	gin(internal)
@@ -1413,7 +1530,16 @@
 2743	pg_proc	0	GIN array support
 2774	pg_proc	0	GIN array support
 2744	pg_proc	0	GIN array support
+3920	pg_proc	0	GIN array support
 3076	pg_proc	0	GIN array support (obsolete)
+3383	pg_proc	0	BRIN minmax support
+3384	pg_proc	0	BRIN minmax support
+3385	pg_proc	0	BRIN minmax support
+3386	pg_proc	0	BRIN minmax support
+4105	pg_proc	0	BRIN inclusion support
+4106	pg_proc	0	BRIN inclusion support
+4107	pg_proc	0	BRIN inclusion support
+4108	pg_proc	0	BRIN inclusion support
 2880	pg_proc	0	obtain exclusive advisory lock
 3089	pg_proc	0	obtain exclusive advisory lock
 2881	pg_proc	0	obtain shared advisory lock
@@ -1478,28 +1604,42 @@
 3173	pg_proc	0	json aggregate transition function
 3174	pg_proc	0	json aggregate final function
 3175	pg_proc	0	aggregate input into json
+3180	pg_proc	0	json object aggregate transition function
+3196	pg_proc	0	json object aggregate final function
+3197	pg_proc	0	aggregate input into a json object
+3198	pg_proc	0	build a json array from any inputs
+3199	pg_proc	0	build an empty json array
+3200	pg_proc	0	build a json object from pairwise key/value inputs
+3201	pg_proc	0	build an empty json object
+3202	pg_proc	0	map text array of key value pairs to json object
+3203	pg_proc	0	map text arrays of keys and values to json object
 3176	pg_proc	0	map input to json
-3947	pg_proc	0	get json object field
-3948	pg_proc	0	get json object field as text
-3949	pg_proc	0	get json array element
-3950	pg_proc	0	get json array element as text
+3261	pg_proc	0	remove object fields with null values from json
 3951	pg_proc	0	get value from json with path elements
-3952	pg_proc	0	get value from json with path elements
 3953	pg_proc	0	get value from json as text with path elements
-3954	pg_proc	0	get value from json as text with path elements
 3955	pg_proc	0	key value pairs of a json object
+3969	pg_proc	0	elements of json array
 3956	pg_proc	0	length of json array
 3957	pg_proc	0	get json object keys
 3958	pg_proc	0	key value pairs of a json object
 3959	pg_proc	0	key value pairs of a json object
 3960	pg_proc	0	get record fields from a json object
 3961	pg_proc	0	get set of records with fields from a json array of objects
+3204	pg_proc	0	get record fields from a json object
+3205	pg_proc	0	get set of records with fields from a json array of objects
+3968	pg_proc	0	get the type of a json value
 2952	pg_proc	0	I/O
 2953	pg_proc	0	I/O
 2960	pg_proc	0	less-equal-greater
 2961	pg_proc	0	I/O
 2962	pg_proc	0	I/O
 2963	pg_proc	0	hash
+3229	pg_proc	0	I/O
+3230	pg_proc	0	I/O
+3238	pg_proc	0	I/O
+3239	pg_proc	0	I/O
+3251	pg_proc	0	less-equal-greater
+3252	pg_proc	0	hash
 3504	pg_proc	0	I/O
 3505	pg_proc	0	I/O
 3506	pg_proc	0	I/O
@@ -1540,6 +1680,7 @@
 3656	pg_proc	0	GIN tsvector support
 3657	pg_proc	0	GIN tsvector support
 3658	pg_proc	0	GIN tsvector support
+3921	pg_proc	0	GIN tsvector support
 3724	pg_proc	0	GIN tsvector support
 2700	pg_proc	0	GIN tsvector support
 3077	pg_proc	0	GIN tsvector support (obsolete)
@@ -1609,6 +1750,55 @@
 3772	pg_proc	0	I/O
 3773	pg_proc	0	I/O
 3774	pg_proc	0	I/O
+3806	pg_proc	0	I/O
+3805	pg_proc	0	I/O
+3804	pg_proc	0	I/O
+3803	pg_proc	0	I/O
+3263	pg_proc	0	map text array of key value pairs to jsonb object
+3264	pg_proc	0	map text array of key value pairs to jsonb object
+3787	pg_proc	0	map input to jsonb
+3265	pg_proc	0	jsonb aggregate transition function
+3266	pg_proc	0	jsonb aggregate final function
+3267	pg_proc	0	aggregate input into jsonb
+3268	pg_proc	0	jsonb object aggregate transition function
+3269	pg_proc	0	jsonb object aggregate final function
+3270	pg_proc	0	aggregate inputs into jsonb object
+3271	pg_proc	0	build a jsonb array from any inputs
+3272	pg_proc	0	build an empty jsonb array
+3273	pg_proc	0	build a jsonb object from pairwise key/value inputs
+3274	pg_proc	0	build an empty jsonb object
+3262	pg_proc	0	remove object fields with null values from jsonb
+3217	pg_proc	0	get value from jsonb with path elements
+3940	pg_proc	0	get value from jsonb as text with path elements
+3219	pg_proc	0	elements of a jsonb array
+3465	pg_proc	0	elements of jsonb array
+3207	pg_proc	0	length of jsonb array
+3931	pg_proc	0	get jsonb object keys
+3208	pg_proc	0	key value pairs of a jsonb object
+3932	pg_proc	0	key value pairs of a jsonb object
+3209	pg_proc	0	get record fields from a jsonb object
+3475	pg_proc	0	get set of records with fields from a jsonb array of objects
+3490	pg_proc	0	get record fields from a jsonb object
+3491	pg_proc	0	get set of records with fields from a jsonb array of objects
+3210	pg_proc	0	get the type of a jsonb value
+4044	pg_proc	0	less-equal-greater
+4045	pg_proc	0	hash
+4046	pg_proc	0	implementation of @> operator
+4047	pg_proc	0	implementation of ? operator
+4048	pg_proc	0	implementation of ?| operator
+4049	pg_proc	0	implementation of ?& operator
+4050	pg_proc	0	implementation of <@ operator
+3480	pg_proc	0	GIN support
+3482	pg_proc	0	GIN support
+3483	pg_proc	0	GIN support
+3484	pg_proc	0	GIN support
+3488	pg_proc	0	GIN support
+3485	pg_proc	0	GIN support
+3486	pg_proc	0	GIN support
+3487	pg_proc	0	GIN support
+3489	pg_proc	0	GIN support
+3305	pg_proc	0	Set part of a jsonb
+3306	pg_proc	0	Indented text from jsonb
 2939	pg_proc	0	I/O
 2940	pg_proc	0	I/O
 2941	pg_proc	0	I/O
@@ -1620,6 +1810,7 @@
 2947	pg_proc	0	get set of in-progress txids in snapshot
 2948	pg_proc	0	is txid visible in snapshot?
 2987	pg_proc	0	less-equal-greater
+3187	pg_proc	0	less-equal-greater based on byte images
 3082	pg_proc	0	list available extensions
 3083	pg_proc	0	list available extension versions
 3084	pg_proc	0	list an extension's version update paths
@@ -1665,6 +1856,7 @@
 3865	pg_proc	0	implementation of &< operator
 3866	pg_proc	0	implementation of &> operator
 3867	pg_proc	0	implementation of + operator
+4057	pg_proc	0	the smallest range which includes both of the given ranges
 3868	pg_proc	0	implementation of * operator
 3869	pg_proc	0	implementation of - operator
 3870	pg_proc	0	less-equal-greater
@@ -1672,6 +1864,7 @@
 3876	pg_proc	0	GiST support
 3877	pg_proc	0	GiST support
 3878	pg_proc	0	GiST support
+3996	pg_proc	0	GiST support
 3879	pg_proc	0	GiST support
 3880	pg_proc	0	GiST support
 3881	pg_proc	0	GiST support
@@ -1699,6 +1892,12 @@
 3942	pg_proc	0	daterange constructor
 3945	pg_proc	0	int8range constructor
 3946	pg_proc	0	int8range constructor
+3846	pg_proc	0	construct date
+3847	pg_proc	0	construct time
+3461	pg_proc	0	construct timestamp
+3462	pg_proc	0	construct timestamp with time zone
+3463	pg_proc	0	construct timestamp with time zone
+3464	pg_proc	0	construct interval
 4001	pg_proc	0	spgist(internal)
 4002	pg_proc	0	spgist(internal)
 4003	pg_proc	0	spgist(internal)
@@ -1733,7 +1932,65 @@
 3471	pg_proc	0	SP-GiST support for quad tree over range
 3472	pg_proc	0	SP-GiST support for quad tree over range
 3473	pg_proc	0	SP-GiST support for quad tree over range
+3779	pg_proc	0	create a physical replication slot
+3780	pg_proc	0	drop a replication slot
+3781	pg_proc	0	information about replication slots currently in use
+3786	pg_proc	0	set up a logical replication slot
+3782	pg_proc	0	get changes from replication slot
+3783	pg_proc	0	get binary changes from replication slot
+3784	pg_proc	0	peek at changes from replication slot
+3785	pg_proc	0	peek at binary changes from replication slot
 3566	pg_proc	0	list objects dropped by the current command
+4566	pg_proc	0	return Oid of the table getting rewritten
+4567	pg_proc	0	return reason code for table getting rewritten
+4568	pg_proc	0	list DDL actions being executed by the current command
+3970	pg_proc	0	aggregate transition function
+3971	pg_proc	0	aggregate transition function
+3972	pg_proc	0	discrete percentile
+3973	pg_proc	0	aggregate final function
+3974	pg_proc	0	continuous distribution percentile
+3975	pg_proc	0	aggregate final function
+3976	pg_proc	0	continuous distribution percentile
+3977	pg_proc	0	aggregate final function
+3978	pg_proc	0	multiple discrete percentiles
+3979	pg_proc	0	aggregate final function
+3980	pg_proc	0	multiple continuous percentiles
+3981	pg_proc	0	aggregate final function
+3982	pg_proc	0	multiple continuous percentiles
+3983	pg_proc	0	aggregate final function
+3984	pg_proc	0	most common value
+3985	pg_proc	0	aggregate final function
+3986	pg_proc	0	rank of hypothetical row
+3987	pg_proc	0	aggregate final function
+3988	pg_proc	0	fractional rank of hypothetical row
+3989	pg_proc	0	aggregate final function
+3990	pg_proc	0	cumulative distribution of hypothetical row
+3991	pg_proc	0	aggregate final function
+3992	pg_proc	0	rank of hypothetical row without gaps
+3993	pg_proc	0	aggregate final function
+3582	pg_proc	0	for use by pg_upgrade
+3584	pg_proc	0	for use by pg_upgrade
+3585	pg_proc	0	for use by pg_upgrade
+3586	pg_proc	0	for use by pg_upgrade
+3587	pg_proc	0	for use by pg_upgrade
+3588	pg_proc	0	for use by pg_upgrade
+3589	pg_proc	0	for use by pg_upgrade
+3590	pg_proc	0	for use by pg_upgrade
+3591	pg_proc	0	for use by pg_upgrade
+6003	pg_proc	0	create a replication origin
+6004	pg_proc	0	drop replication origin identified by its name
+6005	pg_proc	0	translate the replication origin's name to its id
+6006	pg_proc	0	configure session to maintain replication progress tracking for the passed in origin
+6007	pg_proc	0	teardown configured replication progress tracking
+6008	pg_proc	0	is a replication origin configured in this session
+6009	pg_proc	0	get the replication progress of the current session
+6010	pg_proc	0	setup the transaction's origin lsn and timestamp
+6011	pg_proc	0	reset the transaction's origin lsn and timestamp
+6012	pg_proc	0	advance replication itentifier to specific location
+6013	pg_proc	0	get an individual replication origin's replication progress
+6014	pg_proc	0	get progress for all replication origins
+3298	pg_proc	0	row security for current context active on table by table oid
+3299	pg_proc	0	row security for current context active on table by table name
 16	pg_type	0	boolean, 'true'/'false'
 17	pg_type	0	variable-length string, binary values escaped
 18	pg_type	0	single character
@@ -1751,13 +2008,14 @@
 30	pg_type	0	array of oids, used in system tables
 142	pg_type	0	XML content
 194	pg_type	0	string representing an internal node tree
+32	pg_type	0	internal type for passing CollectedCommand
 210	pg_type	0	storage manager
 600	pg_type	0	geometric point '(x, y)'
 601	pg_type	0	geometric line segment '(pt1,pt2)'
 602	pg_type	0	geometric path '(pt1,...)'
 603	pg_type	0	geometric box '(lower left,upper right)'
 604	pg_type	0	geometric polygon '(pt1,...)'
-628	pg_type	0	geometric line (not implemented)
+628	pg_type	0	geometric line
 700	pg_type	0	single-precision floating point number, 4-byte storage
 701	pg_type	0	double-precision floating point number, 8-byte storage
 702	pg_type	0	absolute, limited-range date and time (Unix system time)
@@ -1786,12 +2044,16 @@
 2204	pg_type	0	registered operator (with args)
 2205	pg_type	0	registered class
 2206	pg_type	0	registered type
+4096	pg_type	0	registered role
+4089	pg_type	0	registered namespace
 2950	pg_type	0	UUID datatype
+3220	pg_type	0	PostgreSQL LSN datatype
 3614	pg_type	0	text representation for text search
 3642	pg_type	0	GiST index internal text representation for text search
 3615	pg_type	0	query representation for text search
 3734	pg_type	0	registered text search configuration
 3769	pg_type	0	registered text search dictionary
+3802	pg_type	0	Binary JSON
 2970	pg_type	0	txid snapshot
 3904	pg_type	0	range of integers
 3906	pg_type	0	range of numerics
@@ -2220,6 +2482,9 @@
 1520	pg_operator	0	distance between
 1521	pg_operator	0	number of points
 1522	pg_operator	0	distance between
+3291	pg_operator	0	distance between
+3276	pg_operator	0	distance between
+3289	pg_operator	0	distance between
 1523	pg_operator	0	distance between
 1524	pg_operator	0	distance between
 1525	pg_operator	0	intersect
@@ -2279,6 +2544,7 @@
 932	pg_operator	0	is subnet or equal
 933	pg_operator	0	is supernet
 934	pg_operator	0	is supernet or equal
+3552	pg_operator	0	overlaps (is subnet or supernet)
 2634	pg_operator	0	bitwise not
 2635	pg_operator	0	bitwise and
 2636	pg_operator	0	bitwise or
@@ -2472,6 +2738,13 @@
 2975	pg_operator	0	greater than
 2976	pg_operator	0	less than or equal
 2977	pg_operator	0	greater than or equal
+3222	pg_operator	0	equal
+3223	pg_operator	0	not equal
+3224	pg_operator	0	less than
+3225	pg_operator	0	greater than
+3226	pg_operator	0	less than or equal
+3227	pg_operator	0	greater than or equal
+3228	pg_operator	0	minus
 3516	pg_operator	0	equal
 3517	pg_operator	0	not equal
 3518	pg_operator	0	less than
@@ -2508,6 +2781,12 @@
 2991	pg_operator	0	greater than
 2992	pg_operator	0	less than or equal
 2993	pg_operator	0	greater than or equal
+3188	pg_operator	0	identical
+3189	pg_operator	0	not identical
+3190	pg_operator	0	less than
+3191	pg_operator	0	greater than
+3192	pg_operator	0	less than or equal
+3193	pg_operator	0	greater than or equal
 3882	pg_operator	0	equal
 3883	pg_operator	0	not equal
 3884	pg_operator	0	less than
@@ -2533,11 +2812,33 @@
 3965	pg_operator	0	get json array element as text
 3966	pg_operator	0	get value from json with path elements
 3967	pg_operator	0	get value from json as text with path elements
+3211	pg_operator	0	get jsonb object field
+3477	pg_operator	0	get jsonb object field as text
+3212	pg_operator	0	get jsonb array element
+3481	pg_operator	0	get jsonb array element as text
+3213	pg_operator	0	get value from jsonb with path elements
+3206	pg_operator	0	get value from jsonb as text with path elements
+3240	pg_operator	0	equal
+3241	pg_operator	0	not equal
+3242	pg_operator	0	less than
+3243	pg_operator	0	greater than
+3244	pg_operator	0	less than or equal
+3245	pg_operator	0	greater than or equal
+3246	pg_operator	0	contains
+3247	pg_operator	0	key exists
+3248	pg_operator	0	any key exists
+3249	pg_operator	0	all keys exist
+3250	pg_operator	0	is contained by
+3284	pg_operator	0	concatenate
+3285	pg_operator	0	delete object field
+3286	pg_operator	0	delete array element
+3287	pg_operator	0	delete path
 403	pg_am	0	b-tree index access method
 405	pg_am	0	hash index access method
 783	pg_am	0	GiST index access method
 2742	pg_am	0	GIN index access method
 4000	pg_am	0	SP-GiST index access method
+3580	pg_am	0	block range index (BRIN) access method
 12	pg_language	0	built-in functions
 13	pg_language	0	dynamically-loaded C functions
 14	pg_language	0	SQL-language functions
