@@ -15,7 +15,6 @@
 		<module>datafari-core</module>
 		<module>datafari-updateprocessor</module>
 		<module>datafari-handler</module>
-		<module>datafari-searchcomp-capsule</module>
 		<module>datafari-realm</module>
 		<module>datafari-manifoldcf-scripts</module>
 	</modules>

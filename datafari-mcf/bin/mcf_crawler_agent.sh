@@ -15,7 +15,11 @@ OPTIONS=$(cat "$OPTIONSFILE")
 cmd_start() {
     echo "Starting MCF Agent ..."
     ./executecommand.sh org.apache.manifoldcf.core.LockClean
-    start-stop-daemon --background --chdir=$MCF_HOME --start --make-pidfile --pidfile $MCF_PID_FILE --exec "$JAVA_HOME/bin/java" -- $OPTIONS org.apache.manifoldcf.agents.AgentRun
+    start-stop-daemon --background --chdir=$MCF_HOME --start --make-pidfile --pidfile $MCF_PID_FILE --exec \
+    /usr/bin/env LD_LIBRARY_PATH=${DATAFARI_HOME}/ocr/libtiff/lib:${DATAFARI_HOME}/ocr/tesseract/lib:${DATAFARI_HOME}/ocr/leptonica/lib \
+        TESSDATA_PREFIX=${DATAFARI_HOME}/ocr/tesseract/bin \
+        LC_NUMERIC=C \
+    "$JAVA_HOME/bin/java" -- $OPTIONS org.apache.manifoldcf.agents.AgentRun
     sleep 1
 	echo "MCF Agent started with PID $(cat $MCF_PID_FILE)"
     return 0

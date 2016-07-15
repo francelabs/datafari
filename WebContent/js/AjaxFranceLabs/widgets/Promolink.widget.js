@@ -36,8 +36,22 @@ AjaxFranceLabs.PromolinkWidget = AjaxFranceLabs.AbstractWidget.extend({
 		var data = this.manager.response, elm = $(this.elm);
 		if(data.promolinkSearchComponent!==undefined){	
 			if (data.promolinkSearchComponent.title !== undefined && data.promolinkSearchComponent.title.length > 0){
+				var title;
+				if (data.promolinkSearchComponent["title_"+window.i18n.language] !== undefined){
+					title = data.promolinkSearchComponent["title_"+window.i18n.language];
+				} else {
+					title = data.promolinkSearchComponent.title;
+				}
+				var content = '';
+				if (data.promolinkSearchComponent["content_"+window.i18n.language] !== undefined){
+					content = data.promolinkSearchComponent["content_"+window.i18n.language];
+				} else {
+					if (data.promolinkSearchComponent.content !== undefined){
+						content = data.promolinkSearchComponent.content;
+					}
+				}
 				$(self.elm).append('<div class="widgetContainer"></div>').show();
-				$(self.elm).find('.widgetContainer').append('<span class="title">' + '<span class="annonce">Annonce</span> '+ data.promolinkSearchComponent.title + '</span></br>').append('<span class="tips" id="snippet">' + data.promolinkSearchComponent.content + '</span>').show();
+				$(self.elm).find('.widgetContainer').append('<span class="title">' + '<span class="annonce">Annonce</span> '+ title + '</span></br>').append('<span class="tips" id="snippet">' + content + '</span>').show();
 			}
 		}
 	}

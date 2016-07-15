@@ -27,7 +27,7 @@
 # Memory units:  kB = kilobytes        Time units:  ms  = milliseconds
 #                MB = megabytes                     s   = seconds
 #                GB = gigabytes                     min = minutes
-#                                                   h   = hours
+#                TB = terabytes                     h   = hours
 #                                                   d   = days
 
 
@@ -48,7 +48,6 @@
 # If external_pid_file is not explicitly set, no extra PID file is written.
 #external_pid_file = ''			# write an extra PID file
 					# (change requires restart)
-
 external_pid_file = '../../pid/postmaster.pid'
 
 
@@ -58,12 +57,12 @@ external_pid_file = '../../pid/postmaster.pid'
 
 # - Connection Settings -
 
-#listen_addresses = 'localhost'		# what IP address(es) to listen on;
+listen_addresses = 'localhost'		# what IP address(es) to listen on;
 					# comma-separated list of addresses;
 					# defaults to 'localhost'; use '*' for all
 					# (change requires restart)
 #port = 5432				# (change requires restart)
-max_connections = 100			# (change requires restart)
+max_connections = 400			# (change requires restart)
 # Note:  Increasing max_connections costs ~400 bytes of shared memory per
 # connection slot, plus lock space (see max_locks_per_transaction).
 #superuser_reserved_connections = 3	# (change requires restart)
@@ -81,19 +80,20 @@ max_connections = 100			# (change requires restart)
 
 #authentication_timeout = 1min		# 1s-600s
 #ssl = off				# (change requires restart)
-#ssl_ciphers = 'DEFAULT:!LOW:!EXP:!MD5:@STRENGTH'	# allowed SSL ciphers
+#ssl_ciphers = 'HIGH:MEDIUM:+3DES:!aNULL' # allowed SSL ciphers
 					# (change requires restart)
-#ssl_renegotiation_limit = 512MB	# amount of data between renegotiations
+#ssl_prefer_server_ciphers = on		# (change requires restart)
+#ssl_ecdh_curve = 'prime256v1'		# (change requires restart)
 #ssl_cert_file = 'server.crt'		# (change requires restart)
 #ssl_key_file = 'server.key'		# (change requires restart)
 #ssl_ca_file = ''			# (change requires restart)
 #ssl_crl_file = ''			# (change requires restart)
 #password_encryption = on
 #db_user_namespace = off
+#row_security = on
 
-# Kerberos and GSSAPI
+# GSSAPI using Kerberos
 #krb_server_keyfile = ''
-#krb_srvname = 'postgres'		# (Kerberos only)
 #krb_caseins_users = off
 
 # - TCP Keepalives -
@@ -113,7 +113,9 @@ max_connections = 100			# (change requires restart)
 
 # - Memory -
 
-shared_buffers = 128MB			# min 128kB
+shared_buffers = 1024MB			# min 128kB
+					# (change requires restart)
+#huge_pages = try			# on, off, or try
 					# (change requires restart)
 #temp_buffers = 8MB			# min 800kB
 #max_prepared_transactions = 0		# zero disables the feature
@@ -122,9 +124,17 @@ shared_buffers = 128MB			# min 128kB
 # per transaction slot, plus lock space (see max_locks_per_transaction).
 # It is not advisable to set max_prepared_transactions nonzero unless you
 # actively intend to use prepared transactions.
-#work_mem = 1MB				# min 64kB
-#maintenance_work_mem = 16MB		# min 1MB
+#work_mem = 4MB				# min 64kB
+maintenance_work_mem = 2MB		# min 1MB
+#autovacuum_work_mem = -1		# min 1MB, or -1 to use maintenance_work_mem
 #max_stack_depth = 2MB			# min 100kB
+#dynamic_shared_memory_type = posix	# the default is the first option
+					# supported by the operating system:
+					#   posix
+					#   sysv
+					#   windows
+					#   mmap
+					# use none to disable dynamic shared memory
 
 # - Disk -
 
@@ -154,6 +164,7 @@ shared_buffers = 128MB			# min 128kB
 # - Asynchronous Behavior -
 
 #effective_io_concurrency = 1		# 1-1000; 0 disables prefetching
+#max_worker_processes = 8
 
 
 #------------------------------------------------------------------------------
@@ -162,7 +173,7 @@ shared_buffers = 128MB			# min 128kB
 
 # - Settings -
 
-#wal_level = minimal			# minimal, archive, or hot_standby
+#wal_level = minimal			# minimal, archive, hot_standby, or logical
 					# (change requires restart)
 #fsync = on				# turns forced synchronization on or off
 #synchronous_commit = on		# synchronization level;
@@ -175,6 +186,9 @@ shared_buffers = 128MB			# min 128kB
 					#   fsync_writethrough
 					#   open_sync
 #full_page_writes = on			# recover from partial page writes
+#wal_compression = off			# enable compression of full-page writes
+#wal_log_hints = off			# also do full page writes of non-critical updates
+					# (change requires restart)
 #wal_buffers = -1			# min 32kB, -1 sets based on shared_buffers
 					# (change requires restart)
 #wal_writer_delay = 200ms		# 1-10000 milliseconds
@@ -184,14 +198,15 @@ shared_buffers = 128MB			# min 128kB
 
 # - Checkpoints -
 
-#checkpoint_segments = 3		# in logfile segments, min 1, 16MB each
-#checkpoint_timeout = 5min		# range 30s-1h
+checkpoint_timeout = 900s		# range 30s-1h
+max_wal_size = 14GB
+#min_wal_size = 80MB
 #checkpoint_completion_target = 0.5	# checkpoint target duration, 0.0 - 1.0
 #checkpoint_warning = 30s		# 0 disables
 
 # - Archiving -
 
-#archive_mode = off		# allows archiving to be done
+#archive_mode = off		# enables archiving; off, on, or always
 				# (change requires restart)
 #archive_command = ''		# command to use to archive a logfile segment
 				# placeholders: %p = path of file to archive
@@ -213,6 +228,11 @@ shared_buffers = 128MB			# min 128kB
 				# (change requires restart)
 #wal_keep_segments = 0		# in logfile segments, 16MB each; 0 disables
 #wal_sender_timeout = 60s	# in milliseconds; 0 disables
+
+#max_replication_slots = 0	# max number of replication slots
+				# (change requires restart)
+#track_commit_timestamp = off	# collect timestamp of transaction commit
+				# (change requires restart)
 
 # - Master Server -
 
@@ -242,6 +262,8 @@ shared_buffers = 128MB			# min 128kB
 #wal_receiver_timeout = 60s		# time that receiver waits for
 					# communication from master
 					# in milliseconds; 0 disables
+#wal_retrieve_retry_interval = 5s	# time to wait before retrying to
+					# retrieve WAL after a failed attempt
 
 
 #------------------------------------------------------------------------------
@@ -269,7 +291,7 @@ shared_buffers = 128MB			# min 128kB
 #cpu_tuple_cost = 0.01			# same scale as above
 #cpu_index_tuple_cost = 0.005		# same scale as above
 #cpu_operator_cost = 0.0025		# same scale as above
-#effective_cache_size = 128MB
+#effective_cache_size = 4GB
 
 # - Genetic Query Optimizer -
 
@@ -309,7 +331,7 @@ shared_buffers = 128MB			# min 128kB
 					# (change requires restart)
 
 # These are only used if logging_collector is on:
-#log_directory = 'pg_log'		# directory where log files are written,
+log_directory = '../../logs'		# directory where log files are written,
 					# can be absolute or relative to PGDATA
 #log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'	# log file name pattern,
 					# can include strftime() escapes
@@ -364,12 +386,12 @@ shared_buffers = 128MB			# min 128kB
 					#   panic
 
 #log_min_error_statement = error	# values in order of decreasing detail:
-				 	#   debug5
+					#   debug5
 					#   debug4
 					#   debug3
 					#   debug2
 					#   debug1
-				 	#   info
+					#   info
 					#   notice
 					#   warning
 					#   error
@@ -417,10 +439,18 @@ shared_buffers = 128MB			# min 128kB
 					# e.g. '<%u%%%d> '
 #log_lock_waits = off			# log lock waits >= deadlock_timeout
 #log_statement = 'none'			# none, ddl, mod, all
+#log_replication_commands = off
 #log_temp_files = -1			# log temporary files equal or larger
 					# than the specified size in kilobytes;
 					# -1 disables, 0 logs all temp files
-log_timezone = 'Europe/Paris'
+#log_timezone = 'GMT'
+
+
+# - Process Title -
+
+#cluster_name = ''			# added to process titles if nonempty
+					# (change requires restart)
+#update_process_title = on
 
 
 #------------------------------------------------------------------------------
@@ -433,8 +463,7 @@ log_timezone = 'Europe/Paris'
 #track_counts = on
 #track_io_timing = off
 #track_functions = none			# none, pl, all
-#track_activity_query_size = 1024 	# (change requires restart)
-#update_process_title = on
+#track_activity_query_size = 1024	# (change requires restart)
 #stats_temp_directory = 'pg_stat_tmp'
 
 
@@ -450,7 +479,7 @@ log_timezone = 'Europe/Paris'
 # AUTOVACUUM PARAMETERS
 #------------------------------------------------------------------------------
 
-#autovacuum = on			# Enable autovacuum subprocess?  'on'
+autovacuum = off			# Enable autovacuum subprocess?  'on'
 					# requires track_counts to also be on.
 #log_autovacuum_min_duration = -1	# -1 disables, 0 logs all actions and
 					# their durations, > 0 logs only
@@ -467,6 +496,9 @@ log_timezone = 'Europe/Paris'
 #autovacuum_analyze_scale_factor = 0.1	# fraction of table size before analyze
 #autovacuum_freeze_max_age = 200000000	# maximum XID age before forced vacuum
 					# (change requires restart)
+#autovacuum_multixact_freeze_max_age = 400000000	# maximum multixact age
+					# before forced vacuum
+					# (change requires restart)
 #autovacuum_vacuum_cost_delay = 20ms	# default vacuum cost delay for
 					# autovacuum, in milliseconds;
 					# -1 means use vacuum_cost_delay
@@ -481,7 +513,7 @@ log_timezone = 'Europe/Paris'
 
 # - Statement Behavior -
 
-#search_path = '"$user",public'		# schema names
+#search_path = '"$user", public'	# schema names
 #default_tablespace = ''		# a tablespace name, '' uses the default
 #temp_tablespaces = ''			# a list of tablespace names, '' uses
 					# only default tablespace
@@ -494,19 +526,23 @@ log_timezone = 'Europe/Paris'
 #lock_timeout = 0			# in milliseconds, 0 is disabled
 #vacuum_freeze_min_age = 50000000
 #vacuum_freeze_table_age = 150000000
+#vacuum_multixact_freeze_min_age = 5000000
+#vacuum_multixact_freeze_table_age = 150000000
 #bytea_output = 'hex'			# hex, escape
 #xmlbinary = 'base64'
 #xmloption = 'content'
+#gin_fuzzy_search_limit = 0
+#gin_pending_list_limit = 4MB
 
 # - Locale and Formatting -
 
-datestyle = 'iso, dmy'
+datestyle = 'ISO,European'
 #intervalstyle = 'postgres'
-timezone = 'Europe/Paris'
+#timezone = 'GMT'
 #timezone_abbreviations = 'Default'     # Select the set of available time zone
 					# abbreviations.  Currently, there are
 					#   Default
-					#   Australia
+					#   Australia (historical usage)
 					#   India
 					# You can create your own file in
 					# share/timezonesets/.
@@ -515,19 +551,20 @@ timezone = 'Europe/Paris'
 					# encoding
 
 # These settings are initialized by initdb, but they can be changed.
-#lc_messages = 'fr_FR.UTF-8'			# locale for system error message
+#lc_messages = 'C'			# locale for system error message
 					# strings
-#lc_monetary = 'fr_FR.UTF-8'			# locale for monetary formatting
+#lc_monetary = 'C'			# locale for monetary formatting
 #lc_numeric = 'C'			# locale for number formatting
-#lc_time = 'fr_FR.UTF-8'				# locale for time formatting
+#lc_time = 'C'				# locale for time formatting
 
 # default configuration for text search
-#default_text_search_config = 'pg_catalog.french'
+#default_text_search_config = 'pg_catalog.simple'
 
 # - Other Defaults -
 
 #dynamic_library_path = '$libdir'
 #local_preload_libraries = ''
+#session_preload_libraries = ''
 
 
 #------------------------------------------------------------------------------
@@ -555,9 +592,10 @@ timezone = 'Europe/Paris'
 #default_with_oids = off
 #escape_string_warning = on
 #lo_compat_privileges = off
+#operator_precedence_warning = off
 #quote_all_identifiers = off
 #sql_inheritance = on
-#standard_conforming_strings = on
+standard_conforming_strings = on
 #synchronize_seqscans = on
 
 # - Other Platforms and Clients -

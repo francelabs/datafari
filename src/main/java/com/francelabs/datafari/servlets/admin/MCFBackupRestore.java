@@ -81,7 +81,7 @@ public class MCFBackupRestore extends HttpServlet {
 			
 			if (action != null && !action.trim().isEmpty()){
 				
-				String backupDirTmp = request.getParameter("backup_dir");
+				String backupDirTmp = request.getParameter("backupDir-input");
 				
 				String backupDirectory;
 				

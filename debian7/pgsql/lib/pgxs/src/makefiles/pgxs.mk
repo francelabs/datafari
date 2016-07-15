@@ -9,11 +9,12 @@
 # Use the following layout for your Makefile:
 #
 #   [variable assignments, see below]
-#   [custom rules, rarely necessary]
 #
 #   PG_CONFIG = pg_config
 #   PGXS := $(shell $(PG_CONFIG) --pgxs)
 #   include $(PGXS)
+#
+#   [custom rules, rarely necessary]
 #
 # Set one of these three variables to specify what is built:
 #
@@ -60,10 +61,6 @@ ifdef PGXS
 # We assume that we are in src/makefiles/, so top is ...
 top_builddir := $(dir $(PGXS))../..
 include $(top_builddir)/src/Makefile.global
-
-top_srcdir = $(top_builddir)
-srcdir = .
-VPATH =
 
 # These might be set in Makefile.global, but if they were not found
 # during the build of PostgreSQL, supply default values so that users
@@ -205,7 +202,7 @@ endif # MODULE_big
 
 clean:
 ifdef MODULES
-	rm -f $(addsuffix $(DLSUFFIX), $(MODULES)) $(addsuffix .o, $(MODULES))
+	rm -f $(addsuffix $(DLSUFFIX), $(MODULES)) $(addsuffix .o, $(MODULES)) $(if $(PGFILEDESC),$(WIN32RES))
 endif
 ifdef DATA_built
 	rm -f $(DATA_built)
@@ -246,9 +243,6 @@ else
   REGRESS_OPTS += --dbname=$(CONTRIB_TESTDB)
 endif
 
-# where to find psql for running the tests
-PSQLDIR = $(bindir)
-
 # When doing a VPATH build, must copy over the data files so that the
 # driver script can find them.  We have to use an absolute path for
 # the targets, because otherwise make will try to locate the missing
@@ -263,6 +257,7 @@ test_files_build := $(patsubst $(srcdir)/%, $(abs_builddir)/%, $(test_files_src)
 
 all: $(test_files_build)
 $(test_files_build): $(abs_builddir)/%: $(srcdir)/%
+	$(MKDIR_P) $(dir $@)
 	ln -s $< $@
 endif # VPATH
 
@@ -281,8 +276,10 @@ check:
 	@echo '"$(MAKE) check" is not supported.'
 	@echo 'Do "$(MAKE) install", then "$(MAKE) installcheck" instead.'
 else
-check: all submake $(REGRESS_PREP)
-	$(pg_regress_check) --extra-install=$(subdir) $(REGRESS_OPTS) $(REGRESS)
+check: submake $(REGRESS_PREP)
+	$(pg_regress_check) $(REGRESS_OPTS) $(REGRESS)
+
+temp-install: EXTRA_INSTALL+=$(subdir)
 endif
 endif # REGRESS
 

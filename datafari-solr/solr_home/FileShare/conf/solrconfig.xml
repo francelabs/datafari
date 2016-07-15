@@ -705,7 +705,6 @@
 		
 		<arr name="last-components">
 			<str>spellcheck</str>
-			<str>capsulecomponent</str>
 			<str>elevator</str>
 		</arr>
 	<lst name="appends"><str name="fq">{!manifoldCFSecurity}</str></lst></requestHandler>
@@ -933,10 +932,6 @@
   
   <searchComponent class="solr.TermsComponent" name="terms"/>
 	 
-	 <searchComponent class="com.francelabs.datafari.searchcomp.capsule.CapsuleSearchComponent" name="capsulecomponent">
-	  <str name="file">capsules.txt</str>
-	 
-	  </searchComponent>
   
 	<searchComponent class="solr.SpellCheckComponent" name="suggest">
 		<lst name="spellchecker">
@@ -1267,8 +1262,8 @@
     
 	<!-- ManifoldCF document security enforcement component -->
 	<queryParser class="org.apache.solr.mcf.ManifoldCFQParserPlugin" name="manifoldCFSecurity">
-		<str name="AuthorityServiceBaseURL">http://localhost:8080/datafari-mcf-authority-service</str>
-	</queryParser>
+    <str name="AuthorityServiceBaseURL">${mcf.ip:http://localhost:8080/datafari-mcf-authority-service}</str>
+  </queryParser>
   <!-- example of registering a query parser -->
   <!--
      <queryParser name="myparser" class="com.mycompany.MyQParserPlugin"/>
