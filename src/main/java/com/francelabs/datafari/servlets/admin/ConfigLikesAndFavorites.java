@@ -29,6 +29,8 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.francelabs.datafari.exception.CodesReturned;
+import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.startup.LikesLauncher;
 import com.francelabs.datafari.utils.ScriptConfiguration;
 
@@ -76,9 +78,9 @@ public class ConfigLikesAndFavorites extends HttpServlet {
 
 			try {
 				if (error){				
-					jsonResponse.put("code",-1);
+					jsonResponse.put(OutputConstants.CODE,CodesReturned.GENERALERROR);
 				}else{
-					jsonResponse.put("code",0);
+					jsonResponse.put(OutputConstants.CODE,CodesReturned.ALLOK);
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -87,7 +89,7 @@ public class ConfigLikesAndFavorites extends HttpServlet {
 		}else if (request.getParameter("initiate")!=null){
 			String isEnabled = ScriptConfiguration.getProperty(StringsDatafariProperties.LIKESANDFAVORTES);
 			try {
-				jsonResponse.put("code", 0)
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK)
 				    .put("isEnabled",isEnabled);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block

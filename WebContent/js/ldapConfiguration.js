@@ -110,7 +110,7 @@ $(document).ready(function() {
 					if (data.code==0){
 						$("#message").html('<i class="fa fa-check"></i> Well Saved').addClass("success").removeClass("error").show();
 					}else if (data.code == PROBLEMSERVERADCONNECTION){
-						$("#message").html('<i class="fa fa-times"></i> '+data.statut).addClass("error").removeClass("success").show();
+						$("#message").html('<i class="fa fa-times"></i> '+data.status).addClass("error").removeClass("success").show();
 					}else{
 						$("#message").html('<i class="fa fa-times"></i> An error occured, Please try again').addClass("error").removeClass("success").show();
 					}

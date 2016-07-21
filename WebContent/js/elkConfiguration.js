@@ -15,7 +15,7 @@ $(document).ready(function() {
 	var ENDOFANIMATION = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
 	
 	
-	$.get("../SearchAdministrator/checkELKAvailability",function(data){
+	$.get("../SearchAdministrator/ELKAdmin",function(data){
 		inputActivation(data, input);
 		fillFields(data);
 	},"json");
@@ -54,7 +54,7 @@ $(document).ready(function() {
 		}else{
 			var bool="false";
 		}
-		$.post("../SearchAdministrator/checkELKAvailability",{
+		$.post("../SearchAdministrator/ELKAdmin",{
 			ELKactivation : bool,
 			externalELK : externalELK,
 			ELKServer : $("#ELKServer").val(),

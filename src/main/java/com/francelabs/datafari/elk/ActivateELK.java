@@ -44,11 +44,10 @@ public class ActivateELK {
 	 *
 	 * @return
 	 */
-	public int activate() {
+	public void activate() {
 		final String[] cmd = new String[] { "/bin/bash", startScriptPath };
 		final Thread t = new Thread(new RunnableBashScript(cmd));
 		t.start();
-		return 0;
 	}
 
 	/**
@@ -56,11 +55,10 @@ public class ActivateELK {
 	 *
 	 * @return
 	 */
-	public int deactivate() {
+	public void deactivate() {
 		final String[] cmd = new String[] { "/bin/bash", stopScriptPath };
 		final Thread t = new Thread(new RunnableBashScript(cmd));
 		t.start();
-		return 0;
 	}
 
 	/**
@@ -70,11 +68,10 @@ public class ActivateELK {
 	 * @param elkScriptsDir
 	 * @return
 	 */
-	public int activateRemote(final String elkServer, final String elkScriptsDir) {
+	public void activateRemote(final String elkServer, final String elkScriptsDir) {
 		final String[] cmd = new String[] { "ssh", "datafari@" + elkServer, "/bin/bash", formatDir(elkScriptsDir) + "start-elk.sh" };
 		final Thread t = new Thread(new RunnableBashScript(cmd));
 		t.start();
-		return 0;
 	}
 
 	/**
@@ -87,11 +84,10 @@ public class ActivateELK {
 	 *            contains the scripts to start and stop ELK
 	 * @return
 	 */
-	public int deactivateRemote(final String elkServer, final String elkScriptsDir) {
+	public void deactivateRemote(final String elkServer, final String elkScriptsDir) {
 		final String[] cmd = new String[] { "ssh", "datafari@" + elkServer, "/bin/bash", formatDir(elkScriptsDir) + "stop-elk.sh" };
 		final Thread t = new Thread(new RunnableBashScript(cmd));
 		t.start();
-		return 0;
 	}
 
 	/**

@@ -16,7 +16,8 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.francelabs.datafari.constants.CodesReturned;
+import com.francelabs.datafari.exception.CodesReturned;
+import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.user.User;
 
 /**
@@ -45,9 +46,9 @@ public class GetAllUsersAndRoles extends HttpServlet {
 		try {
 			Map<String, List<String>> usersList = User.getAllUsers();
 			if (usersList!=null)
-				jsonResponse.put("code",CodesReturned.ALLOK).put("statut",User.getAllUsers());
+				jsonResponse.put(OutputConstants.CODE,CodesReturned.ALLOK).put("statut",User.getAllUsers());
 			else
-				jsonResponse.put("code",CodesReturned.PROBLEMCONNECTIONDATABASE).put("statut","Datafari isn't connected to Cassandra");
+				jsonResponse.put(OutputConstants.CODE,CodesReturned.PROBLEMCONNECTIONDATABASE).put("statut","Datafari isn't connected to Cassandra");
 		}catch (JSONException e) {
 				logger.error(e);
 		}

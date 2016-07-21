@@ -30,7 +30,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.francelabs.datafari.utils.*;
+import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.servlets.admin.StringsDatafariProperties.*;
+import com.francelabs.datafari.servlets.constants.OutputConstants;
 
 /**
  * Servlet implementation class ConfigDeduplication
@@ -90,12 +92,11 @@ public class ConfigDeduplication extends HttpServlet {
 			}
 			try {
 				if (error){				
-					jsonResponse.put("code",-1);
+					jsonResponse.put(OutputConstants.CODE,CodesReturned.GENERALERROR);
 				}else{
-					jsonResponse.put("code",0);
+					jsonResponse.put(OutputConstants.CODE,CodesReturned.ALLOK);
 				}
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				logger.error(e);
 			}
 		}else if (request.getParameter("initiate")!=null){
@@ -112,7 +113,7 @@ public class ConfigDeduplication extends HttpServlet {
 				checked_factory="";
 			}
 			try {
-				jsonResponse.put("code",0);
+				jsonResponse.put(OutputConstants.CODE,CodesReturned.ALLOK);
 				jsonResponse.put("checked", checked);
 				jsonResponse.put("checked_factory", checked_factory);
 			} catch (JSONException e) {

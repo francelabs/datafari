@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
+import com.francelabs.datafari.exception.CodesReturned;
+import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 import com.francelabs.datafari.utils.ZKUtils;
 
@@ -73,10 +75,10 @@ public class ZooKeeperConf extends HttpServlet {
 				ZKUtils.configZK("reloadCollections.sh", confname);
 			}
 
-			jsonResponse.put("code", 200);
+			jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK);
 		} catch (final IOException e) {
 			LOGGER.error("Exception during action " + actionParam, e);
-			jsonResponse.put("code", -1);
+			jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
 		}
 
 		final PrintWriter out = response.getWriter();

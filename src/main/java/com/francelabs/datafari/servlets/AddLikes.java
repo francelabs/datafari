@@ -30,8 +30,10 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.francelabs.datafari.constants.CodesReturned;
+import com.francelabs.datafari.exception.CodesReturned;
+import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.servlets.admin.ConfigDeduplication;
+import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.user.Like;
 import com.francelabs.datafari.utils.UpdateNbLikes;
 
@@ -42,60 +44,66 @@ import com.francelabs.datafari.utils.UpdateNbLikes;
 public class AddLikes extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(AddLikes.class.getName());
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public AddLikes() {
-        super();
-        BasicConfigurator.configure();
-    }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public AddLikes() {
+		super();
+		BasicConfigurator.configure();
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		JSONObject jsonResponse = new JSONObject();
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		String documentId = request.getParameter("idDocument");
-		if (documentId!=null ){
+		if (documentId != null) {
 			try {
-				Principal userPrincipal = request.getUserPrincipal(); 
-				//checking if the user is connected
-				if (userPrincipal == null){
-					jsonResponse.put("code", CodesReturned.NOTCONNECTED)
-					.put("statut", "Please reload the page, you'r not connected");
-				}else{
-					String username = request.getUserPrincipal().getName(); //get the username  
-					int returnResult = Like.addLike(username, documentId); 
-					if (returnResult == CodesReturned.ALLOK){
+				Principal userPrincipal = request.getUserPrincipal();
+				// checking if the user is connected
+				if (userPrincipal == null) {
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.NOTCONNECTED).put(OutputConstants.STATUS,
+							"Please reload the page, you'r not connected");
+				} else {
+					String username = request.getUserPrincipal().getName(); // get
+																			// the
+																			// username
+					try {
 						UpdateNbLikes.getInstance().increment(documentId);
-						jsonResponse.put("code", 0);
-					}else if (returnResult == CodesReturned.ALREADYPERFORMED){
-						// if the like was already done (attempt to increase illegaly the likes)
-						jsonResponse.put("code", CodesReturned.ALREADYPERFORMED);
-					}else{
-						jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE)
-						.put("statut", "Problem while connecting to database");
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK);
+
+					} catch (DatafariServerException e) {
+						jsonResponse.put(OutputConstants.CODE, e.getErrorCode());
+						if (e.getErrorCode().equals(CodesReturned.PROBLEMCONNECTIONDATABASE)) {
+							// if the like was already done (attempt to increase
+							// illegaly the likes)
+							jsonResponse.put(OutputConstants.STATUS, "Problem while connecting to database");
+						}
 					}
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				logger.error(e);
 			}
-		}else{
+		} else {
 			try {
-				jsonResponse.put("code", -1)
-				.put("statut", "Query malformed");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR).put(OutputConstants.STATUS, "Query malformed");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				logger.error(e);

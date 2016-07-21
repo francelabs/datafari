@@ -35,9 +35,10 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-import com.francelabs.datafari.constants.CodesReturned;
+import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.jaxb.Elevate;
 import com.francelabs.datafari.service.search.SolrServers.Core;
+import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 import com.francelabs.datafari.utils.ZKUtils;
 
@@ -131,7 +132,7 @@ public class QueryElevator extends HttpServlet {
 				for (final Elevate.Query query : elevate.getQuery()) {
 					queriesList.add(query.getText());
 				}
-				jsonResponse.put("queries", queriesList).put("code", CodesReturned.ALLOK);
+				jsonResponse.put("queries", queriesList).put(OutputConstants.CODE, CodesReturned.ALLOK);
 			} else if (getParam.equals("docs")) {
 				final String queryParam = request.getParameter("query");
 				final List<String> docsList = new ArrayList<>();

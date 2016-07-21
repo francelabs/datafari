@@ -13,8 +13,10 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.francelabs.datafari.constants.CodesReturned;
+import com.francelabs.datafari.exception.CodesReturned;
+import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.service.db.UserDataService;
+import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.user.User;
 
 
@@ -43,13 +45,14 @@ public class DeleteRole extends HttpServlet {
 		try{
 			if (request.getParameter(UserDataService.USERNAMECOLUMN)!=null && request.getParameter(UserDataService.ROLECOLUMN)!=null){
 				User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(),"");
-				int code = user.deleteRole(request.getParameter(UserDataService.ROLECOLUMN).toString());
-				if (code == CodesReturned.ALLOK)
-					jsonResponse.put("code", CodesReturned.ALLOK).put("statut", "User deleted with success");
-				else
-					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE).put("statut", "Datafari isn't connected to Database");
+				try {
+				user.deleteRole(request.getParameter(UserDataService.ROLECOLUMN).toString());
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put(OutputConstants.STATUS, "User deleted with success");
+				} catch (DatafariServerException e){
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE).put(OutputConstants.STATUS, "Datafari isn't connected to Database");
+				}
 			}else{
-				jsonResponse.put("code", CodesReturned.PROBLEMQUERY).put("statut", "Problem with query");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY).put(OutputConstants.STATUS, "Problem with query");
 			}
 		}catch (JSONException e) {
 			logger.error(e);

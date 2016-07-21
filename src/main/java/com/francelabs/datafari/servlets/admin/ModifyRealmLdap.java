@@ -17,8 +17,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.xml.sax.SAXException;
 
-import com.francelabs.datafari.constants.CodesReturned;
+import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.service.ldap.LDAPService;
+import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.utils.LdapMcfConfig;
 import com.francelabs.datafari.utils.RealmLdapConfiguration;
 
@@ -57,7 +58,7 @@ public class ModifyRealmLdap extends HttpServlet {
 							request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_NAME),
 							request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_PW));
 				} catch (final NamingException e1) {
-					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONAD).put("statut", "Fail to connect to AD with the setting given");
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONAD).put(OutputConstants.STATUS, "Fail to connect to AD with the setting given");
 					isConnected = false;
 				}
 				if (isConnected) {
@@ -84,32 +85,33 @@ public class ModifyRealmLdap extends HttpServlet {
 					h.put(LdapMcfConfig.attributePassword, request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_PW));
 					h.put(LdapMcfConfig.attributeSuffix, suffixAttribute.toString());
 					try {
-						if (CodesReturned.ALLOK == RealmLdapConfiguration.setConfig(h, request)) {
-							if (CodesReturned.ALLOK == LdapMcfConfig.update(h))
-								jsonResponse.put("code", CodesReturned.ALLOK).put("statut", "200 ALL OK");
-							else
-								jsonResponse.put("code", CodesReturned.GENERALERROR).put("statut", "Problem with XML And JSON Manipulation");
-						} else {
-							jsonResponse.put("code", CodesReturned.GENERALERROR).put("statut", "Problem with XML And JSON Manipulation");
-						}
+						RealmLdapConfiguration.setConfig(h, request);
+						LdapMcfConfig.update(h);
+								jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put(OutputConstants.STATUS, "200 ALL OK");
 					} catch (SAXException | ParserConfigurationException e) {
 						logger.error(e);
-						jsonResponse.put("code", CodesReturned.GENERALERROR).put("statut", "Problem with XML And JSON Manipulation");
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR).put(OutputConstants.STATUS, "Problem with XML And JSON Manipulation");
 					}
 				}
 
 			} else {
-				jsonResponse.put("code", CodesReturned.PROBLEMQUERY).put("statut", "Problem with query");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY).put(OutputConstants.STATUS, "Problem with query");
 			}
-		} catch (final JSONException e) {
-			logger.error(e);
-		}
-		final PrintWriter out = response.getWriter();
-		out.print(jsonResponse);
+		}catch(
+
+	final JSONException e)
+
+	{
+		logger.error(e);
+	}
+
+	final PrintWriter out = response.getWriter();out.print(jsonResponse);
+
 	}
 
 	@Override
-	protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+	protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
+			throws ServletException, IOException {
 		final JSONObject jsonResponse = new JSONObject();
 		req.setCharacterEncoding("utf8");
 		resp.setContentType("application/json");
@@ -117,13 +119,17 @@ public class ModifyRealmLdap extends HttpServlet {
 			try {
 				final HashMap<String, String> h = RealmLdapConfiguration.getConfig(req);
 				jsonResponse.put("code", CodesReturned.ALLOK);
-				jsonResponse.put(RealmLdapConfiguration.ATTR_CONNECTION_URL, h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL));
-				jsonResponse.put(RealmLdapConfiguration.ATTR_CONNECTION_NAME, h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME));
-				jsonResponse.put(RealmLdapConfiguration.ATTR_CONNECTION_PW, h.get(RealmLdapConfiguration.ATTR_CONNECTION_PW));
-				jsonResponse.put(RealmLdapConfiguration.ATTR_DOMAIN_NAME, h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME));
+				jsonResponse.put(RealmLdapConfiguration.ATTR_CONNECTION_URL,
+						h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL));
+				jsonResponse.put(RealmLdapConfiguration.ATTR_CONNECTION_NAME,
+						h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME));
+				jsonResponse.put(RealmLdapConfiguration.ATTR_CONNECTION_PW,
+						h.get(RealmLdapConfiguration.ATTR_CONNECTION_PW));
+				jsonResponse.put(RealmLdapConfiguration.ATTR_DOMAIN_NAME,
+						h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME));
 				jsonResponse.put(RealmLdapConfiguration.ATTR_SUBTREE, h.get(RealmLdapConfiguration.ATTR_SUBTREE));
 			} catch (SAXException | ParserConfigurationException e) {
-				jsonResponse.put("code", CodesReturned.GENERALERROR).put("statut", "Problem with XML Manipulation");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR).put(OutputConstants.STATUS, "Problem with XML Manipulation");
 				logger.error(e);
 			}
 		} catch (final JSONException e) {

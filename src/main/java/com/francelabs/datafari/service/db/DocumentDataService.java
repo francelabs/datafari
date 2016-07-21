@@ -24,7 +24,10 @@ import org.apache.log4j.Logger;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
-import com.francelabs.datafari.constants.CodesReturned;
+import com.datastax.driver.core.exceptions.DriverException;
+import com.datastax.driver.core.exceptions.QueryValidationException;
+import com.francelabs.datafari.exception.CodesReturned;
+import com.francelabs.datafari.exception.DatafariServerException;
 
 public class DocumentDataService {
 
@@ -41,15 +44,20 @@ public class DocumentDataService {
 
 	private final Session session;
 
-	public static synchronized DocumentDataService getInstance() throws IOException {
-		if (instance == null) {
-			instance = new DocumentDataService();
+	public static synchronized DocumentDataService getInstance() throws DatafariServerException {
+		try {
+			if (instance == null) {
+				instance = new DocumentDataService();
+			}
+			return instance;
+		} catch (DriverException | IOException e) {
+			logger.warn("Unable to get instance : " + e.getMessage());
+			// TODO catch specific exception
+			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
 		}
-		return instance;
 	}
 
 	public DocumentDataService() throws IOException {
-
 		// Gets the name of the collection
 		session = DBContextListerner.getSession();
 
@@ -65,18 +73,17 @@ public class DocumentDataService {
 	 * @return Like.ALREADYPERFORMED if the like was already done,
 	 *         CodesUser.ALLOK if all was ok
 	 */
-	public int addLike(final String username, final String idDocument) throws Exception {
+	public void addLike(final String username, final String idDocument) throws DatafariServerException {
 		try {
-			final String query = "insert into " + LIKECOLLECTION + " (" + USERNAMECOLUMN + "," + DOCUMENTIDCOLUMN + ")" + " values ('" + username
-					+ "','" + idDocument + "')";
+			final String query = "insert into " + LIKECOLLECTION + " (" + USERNAMECOLUMN + "," + DOCUMENTIDCOLUMN + ")"
+					+ " values ('" + username + "','" + idDocument + "')";
 			session.execute(query);
-			// TODO change exception
-		} catch (final Exception e) {
-			logger.warn(e.getMessage());
-			return CodesReturned.ALREADYPERFORMED;
+		} catch (DriverException e) {
+			logger.warn("Unable to add like : " + e.getMessage());
+			// TODO catch specific exception
+			throw new DatafariServerException(CodesReturned.ALREADYPERFORMED, e.getMessage());
 		}
 
-		return CodesReturned.ALLOK;
 	}
 
 	/**
@@ -88,17 +95,18 @@ public class DocumentDataService {
 	 *            the id that should be unliked
 	 * @return Like.ALREADYPERFORMED if the like was already done, Like.ALLOK if
 	 *         all was ok and Like.CodesReturned.CASSANDRAN if there's an error
+	 * @throws DatafariServerException
 	 */
-	public int unlike(final String username, final String idDocument) throws Exception {
+	public void unlike(final String username, final String idDocument) throws DatafariServerException {
 		try {
-			final String query = "DELETE FROM " + LIKECOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "'" + " AND " + DOCUMENTIDCOLUMN
-					+ " = '" + idDocument + "'";
+			final String query = "DELETE FROM " + LIKECOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "'"
+					+ " AND " + DOCUMENTIDCOLUMN + " = '" + idDocument + "'";
 			session.execute(query);
-		} catch (final Exception e) {
-			logger.warn(e.getMessage());
-			return CodesReturned.ALREADYPERFORMED;
+		} catch (DriverException e) {
+			logger.warn("Unable to unlike : " + e.getMessage());
+			// TODO catch specific exception
+			throw new DatafariServerException(CodesReturned.ALREADYPERFORMED, e.getMessage());
 		}
-		return CodesReturned.ALLOK;
 	}
 
 	/**
@@ -109,14 +117,20 @@ public class DocumentDataService {
 	 * @return an array list of all the the likes of the user. Return null if
 	 *         there's an error.
 	 */
-	public List<String> getLikes(final String username) throws Exception {
-		final List<String> likes = new ArrayList<String>();
-		final ResultSet results = session
-				.execute("SELECT " + DOCUMENTIDCOLUMN + " FROM " + LIKECOLLECTION + " where " + USERNAMECOLUMN + "='" + username + "'");
-		for (final Row row : results) {
-			likes.add(row.getString(DOCUMENTIDCOLUMN));
+	public List<String> getLikes(final String username) throws DatafariServerException {
+		try {
+			final List<String> likes = new ArrayList<String>();
+			final ResultSet results = session.execute("SELECT " + DOCUMENTIDCOLUMN + " FROM " + LIKECOLLECTION
+					+ " where " + USERNAMECOLUMN + "='" + username + "'");
+			for (final Row row : results) {
+				likes.add(row.getString(DOCUMENTIDCOLUMN));
+			}
+			return likes;
+		} catch (DriverException e) {
+			logger.warn("Unable to getLikes : " + e.getMessage());
+			// TODO catch specific exception
+			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
 		}
-		return likes;
 	}
 
 	/**
@@ -124,12 +138,18 @@ public class DocumentDataService {
 	 *
 	 * @param username
 	 * @return CodesReturned.ALLOK if the operation was success and
-	 *         CodesReturned.PROBLEMCONNECTIONCASSANDRA
+	 *         CodesReturned.PROBLEMCONNECTIONDATABASE
 	 */
-	public int removeLikes(final String username) throws Exception {
-		final String query = "DELETE FROM " + LIKESCOLUMN + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
-		session.execute(query);
-		return CodesReturned.ALLOK;
+	public void removeLikes(final String username) throws DatafariServerException {
+		try {
+
+			final String query = "DELETE FROM " + LIKESCOLUMN + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
+			session.execute(query);
+		} catch (DriverException e) {
+			logger.warn("Unable to remove likes for user " + username + " : " + e.getMessage());
+			// TODO catch specific exception
+			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+		}
 	}
 
 	/**
@@ -140,11 +160,19 @@ public class DocumentDataService {
 	 * @param idDocument
 	 *            the id that should be add as a favorite
 	 * @return true if it was success and false if not
+	 * @throws DatafariServerException
 	 */
-	public void addFavorite(final String username, final String idDocument) {
-		final String query = "insert into " + FAVORITECOLLECTION + " (" + USERNAMECOLUMN + "," + DOCUMENTIDCOLUMN + ")" + " values ('" + username
-				+ "','" + idDocument + "')";
-		session.execute(query);
+	public void addFavorite(final String username, final String idDocument) throws DatafariServerException {
+		try {
+
+			final String query = "insert into " + FAVORITECOLLECTION + " (" + USERNAMECOLUMN + "," + DOCUMENTIDCOLUMN
+					+ ")" + " values ('" + username + "','" + idDocument + "')";
+			session.execute(query);
+		} catch (DriverException e) {
+			logger.warn("Unable add favorite " + username + " : " + e.getMessage());
+			// TODO catch specific exception
+			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+		}
 	}
 
 	/**
@@ -156,11 +184,16 @@ public class DocumentDataService {
 	 *            the id that should be deleted from the favorites
 	 * @return true if it was success and false if not
 	 */
-	public int deleteFavorite(final String username, final String idDocument) {
-		final String query = "DELETE FROM " + FAVORITECOLLECTION + " WHERE " + DOCUMENTIDCOLUMN + " = '" + idDocument + "' AND " + USERNAMECOLUMN
-				+ " = '" + username + "'";
-		session.execute(query);
-		return CodesReturned.ALLOK;
+	public void deleteFavorite(final String username, final String idDocument) throws DatafariServerException {
+		try {
+			final String query = "DELETE FROM " + FAVORITECOLLECTION + " WHERE " + DOCUMENTIDCOLUMN + " = '"
+					+ idDocument + "' AND " + USERNAMECOLUMN + " = '" + username + "'";
+			session.execute(query);
+		} catch (DriverException e) {
+			logger.warn("Unable delete favorite " + username + " : " + e.getMessage());
+			// TODO catch specific exception
+			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+		}
 	}
 
 	/**
@@ -170,15 +203,22 @@ public class DocumentDataService {
 	 *            of the user
 	 * @return an array list of all the favorites document of the user. Return
 	 *         null if there's an error.
+	 * @throws DatafariServerException
 	 */
-	public List<String> getFavorites(final String username) {
-		final List<String> favorites = new ArrayList<String>();
-		final ResultSet results = session
-				.execute("SELECT " + DOCUMENTIDCOLUMN + " FROM " + FAVORITECOLLECTION + " where " + USERNAMECOLUMN + "='" + username + "'");
-		for (final Row row : results) {
-			favorites.add(row.getString(DOCUMENTIDCOLUMN));
+	public List<String> getFavorites(final String username) throws DatafariServerException {
+		try {
+			final List<String> favorites = new ArrayList<String>();
+			final ResultSet results = session.execute("SELECT " + DOCUMENTIDCOLUMN + " FROM " + FAVORITECOLLECTION
+					+ " where " + USERNAMECOLUMN + "='" + username + "'");
+			for (final Row row : results) {
+				favorites.add(row.getString(DOCUMENTIDCOLUMN));
+			}
+			return favorites;
+		} catch (DriverException e) {
+			logger.warn("Unable getFavorites for " + username + " : " + e.getMessage());
+			// TODO catch specific exception
+			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
 		}
-		return favorites;
 	}
 
 	/**
@@ -188,14 +228,21 @@ public class DocumentDataService {
 	 * @return CodesReturned.ALLOK if the operation was success and
 	 *         CodesReturned.PROBLEMCONNECTIONMONGODB if the mongoDB isn't
 	 *         running
+	 * @throws DatafariServerException
 	 */
-	public int removeFavorites(final String username) {
-		final String query = "DELETE FROM " + FAVORITECOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
-		session.execute(query);
-		return CodesReturned.ALLOK;
+	public void removeFavorites(final String username) throws DatafariServerException {
+		try {
+			final String query = "DELETE FROM " + FAVORITECOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username
+					+ "'";
+			session.execute(query);
+		} catch (DriverException e) {
+			logger.warn("Unable removeFavorites for " + username + " : " + e.getMessage());
+			// TODO catch specific exception
+			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+		}
 	}
 
-	public void removeFavoritesAndLikeDB(final String username) throws Exception {
+	public void removeFavoritesAndLikeDB(final String username) throws DatafariServerException {
 		removeFavorites(username);
 		removeLikes(username);
 	}

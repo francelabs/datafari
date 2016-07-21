@@ -30,7 +30,9 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.francelabs.datafari.constants.CodesReturned;
+import com.francelabs.datafari.exception.CodesReturned;
+import com.francelabs.datafari.exception.DatafariServerException;
+import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.user.Favorite;
 
 
@@ -69,16 +71,16 @@ public class AddFavorite extends HttpServlet {
 				Principal userPrincipal = request.getUserPrincipal(); 
 				//checking if the user is connected
 				if (userPrincipal == null){
-					jsonResponse.put("code", CodesReturned.NOTCONNECTED)
-					.put("statut", "Please reload the page, you're not connected");
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.NOTCONNECTED)
+					.put(OutputConstants.STATUS, "Please reload the page, you're not connected");
 				}else{
 					String username = request.getUserPrincipal().getName();
-					int code = Favorite.addFavorite(username, request.getParameter("idDocument"));
-					if (code == CodesReturned.ALLOK){
-						jsonResponse.put("code", 0);
-					}else{
-						jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE)
-						.append("statut", "Problem while connecting to database");
+					try {
+					Favorite.addFavorite(username, request.getParameter("idDocument"));
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK);
+					}catch (DatafariServerException e){
+						jsonResponse.put(OutputConstants.CODE, e.getErrorCode())
+						.append(OutputConstants.STATUS, "Problem while connecting to database");
 					}
 				}
 			} catch (JSONException e) {
@@ -87,8 +89,8 @@ public class AddFavorite extends HttpServlet {
 			}
 		}else{
 			try {
-				jsonResponse.put("code", -1)
-				.put("statut", "Query malformed");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR)
+				.put(OutputConstants.STATUS, "Query malformed");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				logger.error(e);

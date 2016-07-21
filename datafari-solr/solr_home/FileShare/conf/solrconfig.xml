@@ -807,7 +807,6 @@
 
   <requestHandler class="solr.extraction.ExtractingRequestHandler" name="/update/extract" startup="lazy">
     <lst name="defaults">
-      		<str name="scan">false</str>
       		<str name="captureAttr">true</str>
 			<str name="lowernames">true</str>
 			<str name="fmap.language">ignored_</str>

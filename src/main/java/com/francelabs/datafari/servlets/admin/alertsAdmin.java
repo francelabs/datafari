@@ -35,6 +35,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.francelabs.datafari.alerts.AlertsManager;
+import com.francelabs.datafari.exception.CodesReturned;
+import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.utils.AlertsConfiguration;
 
 /**
@@ -105,19 +107,20 @@ public class alertsAdmin extends HttpServlet {
 			json.put("user", AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_USER));
 			json.put("pass", AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_PASSWORD));
 
-			json.put("code", 0);
+			
+			json.put(OutputConstants.CODE, CodesReturned.ALLOK);
 		} catch (final JSONException e) {
 			LOGGER.error(
 					"Error while building the JSON answer in the doGet of the alerts administration servlets, make sure the fields are filled correctly and that datafari.properties have the correct encoding charset(UTF_8). Error 69021",
 					e);
 			json.put("message",
 					"Error while getting the parameters, please retry, if the problem persists contact your system administrator. Error code : 69021");
-			json.put("code", "69021");
+			json.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY);
 		} catch (final IOException e) {
 			LOGGER.error("Error while reading the datafari.properties file in the doGet of the alerts administration Servlet . Error 69020 ", e);
 			json.put("message",
 					"Error while reading the datafari.properties file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69020");
-			json.put("code", "69020");
+			json.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
 		}
 
 		final PrintWriter out = response.getWriter();
@@ -190,14 +193,14 @@ public class alertsAdmin extends HttpServlet {
 					AlertsManager.getInstance().turnOn();
 				}
 
-				json.put("code", 0);
+				json.put(OutputConstants.CODE, CodesReturned.ALLOK);
 
 			}
 		} catch (final Exception e) {
 			LOGGER.error("Error while accessing the alerts.properties file in the doPost of the alerts administration Servlet . Error 69020 ", e);
 			json.put("message",
 					"Error while accessing the alerts.properties file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69020");
-			json.put("code", "69020");
+			json.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
 		}
 
 		final PrintWriter out = response.getWriter();

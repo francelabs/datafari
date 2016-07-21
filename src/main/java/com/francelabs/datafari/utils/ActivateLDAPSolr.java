@@ -22,7 +22,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.francelabs.datafari.constants.CodesReturned;
+import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.manifoldcf.configuration.api.JSONUtils;
 import com.francelabs.manifoldcf.configuration.api.ManifoldAPI;
 
@@ -112,7 +112,7 @@ public class ActivateLDAPSolr {
 				}
 			}
 		}
-		return CodesReturned.ALLOK;
+		return CodesReturned.ALLOK.getValue();
 	}
 	
 	public static int disactivate() throws SAXException, IOException, ParserConfigurationException, TransformerException{
@@ -137,10 +137,10 @@ public class ActivateLDAPSolr {
 					ManifoldAPI.deleteConfig("authoritygroups", "DatafariAuthorityGroup");
 				} catch (Exception e) {
 					logger.error("FATAL ERROR",e);
-					return CodesReturned.GENERALERROR;
+					return CodesReturned.GENERALERROR.getValue();
 				}
 			}
 		}
-		return CodesReturned.ALLOK;
+		return CodesReturned.ALLOK.getValue();
 	}
 }

@@ -41,5 +41,7 @@ $(function($) {
 	}));
 
 	Manager.store.addByValue("fl", 'title,url,id,extension');
+	
+	
 
 });

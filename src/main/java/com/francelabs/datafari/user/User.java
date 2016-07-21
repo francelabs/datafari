@@ -15,170 +15,149 @@
  *******************************************************************************/
 package com.francelabs.datafari.user;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.francelabs.datafari.constants.CodesReturned;
+import com.francelabs.datafari.exception.CodesReturned;
+import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.service.db.UserDataService;
 import com.francelabs.datafari.utils.HexUtils;
-
 
 public class User {
 	final static Logger logger = Logger.getLogger(User.class.getName());
 	private String algorithmHash = "SHA-256";
 	private String username;
 	private String passwordHashed;
-	private String[] role;
 	private boolean isSignedUp = false;
 	private boolean isSignedIn = false;
-	
-	
-	
-	 
-	public User(String username,String password){
+
+	public User(String username, String password) {
 		this.username = username;
 		this.passwordHashed = digest(password);
 	}
-		
+
 	/**
 	 * Attempt a sign up with assigning only one role to the user
-	 * @param role is the string that will be assigned to the user
+	 * 
+	 * @param role
+	 *            is the string that will be assigned to the user
 	 * @return true if the signup was successful and false if not
+	 * @throws DatafariServerException
+	 * @throws IOException
 	 */
-	public int signup(String role){
-			return signup(Collections.singletonList(role));
+	public void signup(String role) throws DatafariServerException {
+		signup(Collections.singletonList(role));
 	}
-		
+
 	/**
 	 * Attempt a sign up with assigning more than one role to the user
-	 * @param role is the array containing the roles of the user
+	 * 
+	 * @param role
+	 *            is the array containing the roles of the user
 	 * @return true if the sign up was successful and false if not
-	 */	
-	public int signup(List<String> role){
+	 * @throws IOException
+	 * @throws DatafariServerException
+	 */
+	public void signup(List<String> role) throws DatafariServerException {
 		try {
-			if (UserDataService.getInstance().addUser(this.username, this.passwordHashed, role)){
-				this.isSignedUp = true;
-				return CodesReturned.ALLOK;
-			}else{
-				this.isSignedUp = false;
-				return CodesReturned.USERALREADYINBASE;
-			}
-		} catch (Exception e) {
-			return CodesReturned.PROBLEMCONNECTIONDATABASE;
+			UserDataService.getInstance().addUser(this.username, this.passwordHashed, role);
+			this.isSignedUp = true;
+		} catch (DatafariServerException e) {
+			this.isSignedUp = false;
+			throw e;
 		}
 	}
-		
+
 	/**
-	 * method used to attemp a login in the database using the attribute userName and password
+	 * method used to attemp a login in the database using the attribute
+	 * userName and password
+	 * 
 	 * @return true if the login was successful and false in fail
 	 */
-	public int signIn(){
-		try {
-			String passwordDatabaseHashed = UserDataService.getInstance().getPassword(digest(this.username));
-			if (passwordHashed.equals(passwordDatabaseHashed)){
-				return CodesReturned.ALLOK;
-			}else{
-				return CodesReturned.FAILTOSIGNIN;
-			}
-		} catch (Exception e) {
-			return CodesReturned.PROBLEMCONNECTIONDATABASE;
+	public void signIn() throws DatafariServerException {
+
+		String passwordDatabaseHashed = UserDataService.getInstance().getPassword(digest(this.username));
+		if (!passwordHashed.equals(passwordDatabaseHashed)) {
+			throw new DatafariServerException(CodesReturned.FAILTOSIGNIN, "Uncorrect password");
 		}
 	}
-	
-	public int changePassword(String password){
-		try {
-			UserDataService.getInstance().changePassword(digest(password),this.username);
-			return CodesReturned.ALLOK;
-		} catch (Exception e) {
-			return CodesReturned.PROBLEMCONNECTIONDATABASE;
-		}
+
+	public void changePassword(String password) throws DatafariServerException {
+		UserDataService.getInstance().changePassword(digest(password), this.username);
 	}
-	
+
 	/**
 	 * Delete the user
+	 * 
 	 * @return true if the delete was performed correctly, false if not.
+	 * @throws DatafariServerException
 	 */
-	public int deleteUser(){
-		try {
-			UserDataService.getInstance().deleteUser(this.username);
-			return CodesReturned.ALLOK;
-		} catch (Exception e) {
-			return CodesReturned.PROBLEMCONNECTIONDATABASE;
-		}
+	public void deleteUser() throws DatafariServerException {
+		UserDataService.getInstance().deleteUser(this.username);
 	}
-		
+
 	/**
 	 * Returns the roles of a user
+	 * 
 	 * @return arrayList containing the roles
+	 * @throws DatafariServerException
 	 */
-	public List<String> getRoles(){
-		try {
-			return UserDataService.getInstance().getRoles(this.username);
-		} catch (Exception e) {
-			return null;
-		}
+	public List<String> getRoles() throws DatafariServerException {
+		return UserDataService.getInstance().getRoles(this.username);
 	}
-	
-	
-	
-		
+
 	/**
 	 * Add a role to the user
-	 * @param role string representing the role that we want to add
+	 * 
+	 * @param role
+	 *            string representing the role that we want to add
+	 * @throws DatafariServerException
 	 */
-	public int addRole(String role){
-		try {
-			UserDataService.getInstance().addRole(role, this.username);
-			return CodesReturned.ALLOK;
-		} catch (Exception e) {
-			return CodesReturned.PROBLEMCONNECTIONDATABASE;
-		}
+	public void addRole(String role) throws DatafariServerException {
+		UserDataService.getInstance().addRole(role, this.username);
 	}
-	
-	
+
 	/**
 	 * Delete a role from the user
-	 * @param role string representing the role that we want to delete
+	 * 
+	 * @param role
+	 *            string representing the role that we want to delete
+	 * @throws DatafariServerException
 	 */
-	public int deleteRole(String role){
-		try {
-			UserDataService.getInstance().deleteRole(role, this.username);
-			return CodesReturned.ALLOK;
-		} catch (Exception e) {
-			return CodesReturned.PROBLEMCONNECTIONDATABASE;
-		}
+	public void deleteRole(String role) throws DatafariServerException {
+		UserDataService.getInstance().deleteRole(role, this.username);
+
 	}
-		
+
 	/**
 	 * Inform if the user exists already in the database
+	 * 
 	 * @return true if is exists and false if not
+	 * @throws DatafariServerException 
 	 */
-	public int isInBase(){
-		try {
-			boolean bool = UserDataService.getInstance().isInBase(this.username);
-			if (bool)
-				return CodesReturned.TRUE;
-			else
-				return CodesReturned.FALSE;
-		} catch (Exception e) {
-			return CodesReturned.PROBLEMCONNECTIONDATABASE;
-		}
+	public boolean isInBase() throws DatafariServerException {
+		return UserDataService.getInstance().isInBase(this.username);
+
 	}
-		
+
 	/**
 	 * get all user with the corresponding roles
-	 * @param db instance of the database that contains the identifier collection	
-	 * @return array list of array list containing at index 0 the username and the index 1 an array list of the user's roles
-	 * and null if there's problem with database
+	 * 
+	 * @param db
+	 *            instance of the database that contains the identifier
+	 *            collection
+	 * @return array list of array list containing at index 0 the username and
+	 *         the index 1 an array list of the user's roles and null if there's
+	 *         problem with database
 	 */
-	public static Map<String, List<String>> getAllUsers(){	
+	public static Map<String, List<String>> getAllUsers() {
 		try {
 			return UserDataService.getInstance().getAllUsers();
 		} catch (Exception e) {
@@ -186,11 +165,14 @@ public class User {
 			return null;
 		}
 	}
-		
+
 	/**
-	 * Used to hash a password using the algorithm setted in the attribute algorithmHash
-	 * @param password that you want to hash
-	 * @return the password hashed 
+	 * Used to hash a password using the algorithm setted in the attribute
+	 * algorithmHash
+	 * 
+	 * @param password
+	 *            that you want to hash
+	 * @return the password hashed
 	 */
 	public String digest(String password) {
 		try {
@@ -206,20 +188,19 @@ public class User {
 		}
 	}
 
-		//setters 
-		public void setAlgorithmHash(String algo){
-			 this.algorithmHash = algo; 
-		 }
-		
-		//getters
-		
-		public boolean isSignedUp() {
-			return isSignedUp;
-		}
+	// setters
+	public void setAlgorithmHash(String algo) {
+		this.algorithmHash = algo;
+	}
 
-		public boolean isSignedIn() {
-			return isSignedIn;
-		}
-		
-		 
+	// getters
+
+	public boolean isSignedUp() {
+		return isSignedUp;
+	}
+
+	public boolean isSignedIn() {
+		return isSignedIn;
+	}
+
 }
