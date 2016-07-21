@@ -15,82 +15,81 @@
  *******************************************************************************/
 package com.francelabs.datafari.user;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.francelabs.datafari.constants.CodesReturned;
+import com.datastax.driver.core.exceptions.DriverException;
+import com.francelabs.datafari.exception.CodesReturned;
+import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.service.db.DocumentDataService;
+
 public class Favorite {
-	
-	/**
-	 * Add a document to the favorites list of the user
-	 * @param username of the user
-	 * @param idDocument the id that should be add as a favorite
-	 * @return true if it was success and false if not
-	 */
-	public static int addFavorite(String username, String idDocument){
-		try{
-			DocumentDataService.getInstance().addFavorite(username, idDocument);
-			return CodesReturned.ALLOK;
-		}catch(Exception e){
-			return CodesReturned.PROBLEMCONNECTIONDATABASE;
-		}
-	}
-	
-	
-	/**
-	 * delete a document from the favorites list of the user
-	 * @param username of the user
-	 * @param idDocument the id that should be deleted from the favorites
-	 * @return true if it was success and false if not
-	 */
-	public static int deleteFavorite(String username, String idDocument){
-		try{
-			DocumentDataService.getInstance().deleteFavorite(username, idDocument);
-			return CodesReturned.ALLOK;
-		}catch(Exception e){
-			return CodesReturned.PROBLEMCONNECTIONDATABASE;
-		}
-	}
-	
-	/**
-	 * get all the favorites of a user
-	 * @param username of the user
-	 * @return an array list of all the favorites document of the user. Return null if there's an error.
-	 */
-	public static List<String> getFavorites(String username){
-		try{
-			return DocumentDataService.getInstance().getFavorites(username);
-		}catch(Exception e){
-			return null;
-		}
-	}
-	
-	/**
-	 * Delete all favorites of a user without deleting also his likes
-	 * @param username
-	 * @return CodesReturned.ALLOK if the operation was success and CodesReturned.PROBLEMCONNECTIONDATABASE if the db isn't running	
-	 */
-	public static int removeFavorites(String username){
-		try{
-			return DocumentDataService.getInstance().removeFavorites(username);
-		}catch(Exception e){
-			return CodesReturned.PROBLEMCONNECTIONDATABASE;
-		}
-	}
-	
 
 	/**
-	 * Remove a user from the collection favorites. This will delete his likes and his favorites
+	 * Add a document to the favorites list of the user
+	 * 
 	 * @param username
-	 * @return 
+	 *            of the user
+	 * @param idDocument
+	 *            the id that should be add as a favorite
+	 * @return true if it was success and false if not
+	 * @throws IOException
+	 * @throws DatafariServerException
 	 */
-	public static int removeFavoritesAndLikesDB(String username){
-		try{
-			DocumentDataService.getInstance().removeFavoritesAndLikeDB(username);
-			return CodesReturned.ALLOK;
-		}catch(Exception e){
-			return CodesReturned.PROBLEMCONNECTIONDATABASE;
-		}
+	public static void addFavorite(String username, String idDocument) throws DatafariServerException {
+		DocumentDataService.getInstance().addFavorite(username, idDocument);
+	}
+
+	/**
+	 * delete a document from the favorites list of the user
+	 * 
+	 * @param username
+	 *            of the user
+	 * @param idDocument
+	 *            the id that should be deleted from the favorites
+	 * @return true if it was success and false if not
+	 * @throws DatafariServerException
+	 */
+	public static void deleteFavorite(String username, String idDocument) throws DatafariServerException {
+		DocumentDataService.getInstance().deleteFavorite(username, idDocument);
+	}
+
+	/**
+	 * get all the favorites of a user
+	 * 
+	 * @param username
+	 *            of the user
+	 * @return an array list of all the favorites document of the user. Return
+	 *         null if there's an error.
+	 * @throws DatafariServerException
+	 */
+	public static List<String> getFavorites(String username) throws DatafariServerException {
+		return DocumentDataService.getInstance().getFavorites(username);
+
+	}
+
+	/**
+	 * Delete all favorites of a user without deleting also his likes
+	 * 
+	 * @param username
+	 * @return CodesReturned.ALLOK if the operation was success and
+	 *         CodesReturned.PROBLEMCONNECTIONDATABASE if the db isn't running
+	 */
+	public static void removeFavorites(String username) throws DatafariServerException {
+		DocumentDataService.getInstance().removeFavorites(username);
+
+	}
+
+	/**
+	 * Remove a user from the collection favorites. This will delete his likes
+	 * and his favorites
+	 * 
+	 * @param username
+	 * @return
+	 */
+	public static void removeFavoritesAndLikesDB(String username) throws DatafariServerException {
+		DocumentDataService.getInstance().removeFavoritesAndLikeDB(username);
+
 	}
 }

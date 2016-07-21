@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.francelabs.datafari.constants.CodesReturned;
+import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.manifoldcf.configuration.api.JSONUtils;
 import com.francelabs.manifoldcf.configuration.api.ManifoldAPI;
 
@@ -68,19 +68,19 @@ public class LdapMcfConfig{
 				//				urlParameters.add(new BasicNameValuePair("parameter", authorityconnection.toString()));
 				//				urlParameters.add(new BasicNameValuePair("caller", ""));
 				//				urlParameters.add(new BasicNameValuePair("num", "12345"));
-				return CodesReturned.ALLOK;
+				return CodesReturned.ALLOK.getValue();
 			}else{
-				return CodesReturned.PARAMETERNOTWELLSET;
+				return CodesReturned.PARAMETERNOTWELLSET.getValue();
 			}
 		} catch (IOException e) {
 			logger.error("FATAL ERROR",e);
-			return CodesReturned.GENERALERROR;
+			return CodesReturned.GENERALERROR.getValue();
 		} catch (JSONException e) {
 			logger.error("FATAL ERROR",e);
-			return CodesReturned.GENERALERROR;
+			return CodesReturned.GENERALERROR.getValue();
 		} catch (Exception e) {
 			logger.error("FATAL ERROR",e);
-			return CodesReturned.GENERALERROR;
+			return CodesReturned.GENERALERROR.getValue();
 		}
 	}
 	

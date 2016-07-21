@@ -13,7 +13,8 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.francelabs.datafari.constants.CodesReturned;
+import com.francelabs.datafari.exception.CodesReturned;
+import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.utils.ELKConfiguration;
 
 /**
@@ -44,15 +45,15 @@ public class ChangeELKConf extends HttpServlet {
 			if (req.getParameter(ELKConfiguration.KIBANA_URI) == null || (req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF) != null
 					&& req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF).equals("true")
 					&& (req.getParameter(ELKConfiguration.ELK_SERVER) == null || req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR) == null))) {
-				jsonResponse.put("code", CodesReturned.PROBLEMQUERY).put("statut", "Query Malformed");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY).put(OutputConstants.STATUS, "Query Malformed");
 			} else {
 				if (ELKConfiguration.setProperty(ELKConfiguration.KIBANA_URI, req.getParameter(ELKConfiguration.KIBANA_URI))
 						|| ELKConfiguration.setProperty(ELKConfiguration.EXTERNAL_ELK_ON_OFF, req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF))
 						|| ELKConfiguration.setProperty(ELKConfiguration.ELK_SERVER, req.getParameter(ELKConfiguration.ELK_SERVER))
 						|| ELKConfiguration.setProperty(ELKConfiguration.ELK_SCRIPTS_DIR, req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR))) {
-					jsonResponse.put("code", CodesReturned.GENERALERROR);
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
 				} else {
-					jsonResponse.put("code", CodesReturned.ALLOK);
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK);
 				}
 			}
 		} catch (final JSONException e) {

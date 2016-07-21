@@ -30,7 +30,9 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.francelabs.datafari.constants.CodesReturned;
+import com.francelabs.datafari.exception.CodesReturned;
+import com.francelabs.datafari.exception.DatafariServerException;
+import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.user.Favorite;
 
 /**
@@ -40,52 +42,56 @@ import com.francelabs.datafari.user.Favorite;
 public class DeleteFavorite extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(DeleteFavorite.class.getName());
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public DeleteFavorite() {
-        super();
-        BasicConfigurator.configure();
-    }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public DeleteFavorite() {
+		super();
+		BasicConfigurator.configure();
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		JSONObject jsonResponse = new JSONObject();
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
-		if (request.getParameter("idDocument")!=null ){
+		if (request.getParameter("idDocument") != null) {
 			try {
 				Principal userPrincipal = request.getUserPrincipal();
-				if (userPrincipal == null){
-					jsonResponse.put("code", CodesReturned.NOTCONNECTED)
-					.put("statut", "Please reload the page, you're not connected");
-				}else{
+				if (userPrincipal == null) {
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.NOTCONNECTED).put(OutputConstants.STATUS,
+							"Please reload the page, you're not connected");
+				} else {
 					String username = request.getUserPrincipal().getName();
-					if (Favorite.deleteFavorite(username, request.getParameter("idDocument")) == CodesReturned.ALLOK){
-						jsonResponse.put("code", CodesReturned.ALLOK);
-					}else{
-						jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE)
-						.put("statut", "Problem while connecting to database");
+					try {
+						Favorite.deleteFavorite(username, request.getParameter("idDocument"));
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK);
+					} catch (DatafariServerException e) {
+						jsonResponse.put(OutputConstants.CODE, e.getErrorCode()).put(OutputConstants.STATUS,
+								"Problem while connecting to database");
 					}
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				logger.error(e);
 			}
-		}else{
+		} else {
 			try {
-				jsonResponse.put("code", -1)
-				.put("statut", "Query malformed");
+				jsonResponse.put(OutputConstants.CODE,CodesReturned.GENERALERROR).put(OutputConstants.STATUS, "Query malformed");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				logger.error(e);

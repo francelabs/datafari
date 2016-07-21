@@ -30,8 +30,10 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.francelabs.datafari.constants.CodesReturned;
+import com.francelabs.datafari.exception.CodesReturned;
+import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.servlets.admin.ConfigDeduplication;
+import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.user.Favorite;
 import com.francelabs.datafari.user.Like;
 
@@ -41,49 +43,48 @@ import com.francelabs.datafari.user.Like;
 @WebServlet("/getLikesFavorites")
 public class GetLikesFavorites extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger  = Logger.getLogger(GetLikesFavorites.class.getName());
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public GetLikesFavorites() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
+	private static final Logger logger = Logger.getLogger(GetLikesFavorites.class.getName());
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public GetLikesFavorites() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		JSONObject jsonResponse = new JSONObject();
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		try {
-			if (request.getUserPrincipal()!=null){	
+			if (request.getUserPrincipal() != null) {
 				String username = request.getUserPrincipal().getName();
-				List<String> likeList = Like.getLikes(username);	
-				List<String> favoritesList = Favorite.getFavorites(username);
-				if (likeList == null && favoritesList == null)
-					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE)
-					 .put("statut", "Database doesn't respound");		
-				else
-					jsonResponse.put("favorites", favoritesList)
-						.put("code", 0)
-						.put("likes", likeList);
-			}else{
-				jsonResponse.put("code", CodesReturned.NOTCONNECTED)
-					.put("statut","Not connected yet");
+				try {
+					jsonResponse.put("favorites", Favorite.getFavorites(username))
+							.put(OutputConstants.CODE, CodesReturned.ALLOK).put("likes", Like.getLikes(username));
+				} catch (DatafariServerException e) {
+
+					jsonResponse.put(OutputConstants.CODE, e.getErrorCode()).put(OutputConstants.STATUS, "Not connected yet");
+				}
 			}
 		} catch (JSONException e) {
 			logger.error(e);
-		}			
+		}
 		PrintWriter out = response.getWriter();
 		out.print(jsonResponse);
 	}

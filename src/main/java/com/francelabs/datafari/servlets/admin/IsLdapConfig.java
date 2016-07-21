@@ -17,8 +17,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.xml.sax.SAXException;
 
-import com.francelabs.datafari.constants.CodesReturned;
+import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.service.ldap.LDAPService;
+import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.utils.ActivateLDAPSolr;
 import com.francelabs.datafari.utils.RealmLdapConfiguration;
 import com.francelabs.datafari.utils.ScriptConfiguration;
@@ -55,19 +56,19 @@ public class IsLdapConfig extends HttpServlet {
 				LDAPService.getInstance().testLDAPConnection(h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL),
 						h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME), h.get(RealmLdapConfiguration.ATTR_CONNECTION_PW));
 			}
-			jsonResponse.put("code", CodesReturned.ALLOK).put("isActivated", isLdapActivated);
+			jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put("isActivated", isLdapActivated);
 		} catch (final JSONException | ParserConfigurationException | SAXException e) {
-			jsonResponse.put("code", CodesReturned.GENERALERROR);
+			jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
 			logger.error("Fatal Error", e);
 		} catch (final NamingException e) {
 			try {
 				ActivateLDAPSolr.disactivate();
 			} catch (final Exception e1) {
-				jsonResponse.put("code", CodesReturned.GENERALERROR);
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
 				logger.error("Fatal Error", e);
 			} finally {
 				ScriptConfiguration.setProperty(LDAPACTIVATED, "false");
-				jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONAD).put("statut", "Fail to connect to AD with the given settings ")
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONAD).put("statut", "Fail to connect to AD with the given settings ")
 						.put("isActivated", false);
 			}
 
@@ -83,7 +84,7 @@ public class IsLdapConfig extends HttpServlet {
 		resp.setContentType("application/json");
 		try {
 			if (req.getParameter("isLdapActivated") == null) {
-				jsonResponse.put("code", CodesReturned.PROBLEMQUERY).put("statut", "Query Malformed");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY).put("statut", "Query Malformed");
 			} else {
 				try {
 					if (req.getParameter("isLdapActivated").toString().equals("true")) {
@@ -94,16 +95,16 @@ public class IsLdapConfig extends HttpServlet {
 
 						ActivateLDAPSolr.activate();
 						if (ScriptConfiguration.setProperty(LDAPACTIVATED, req.getParameter("isLdapActivated"))) {
-							jsonResponse.put("code", CodesReturned.GENERALERROR);
+							jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
 						}
 					} else {
 						ActivateLDAPSolr.disactivate();
 					}
-					jsonResponse.put("code", CodesReturned.ALLOK).put("isActivated", req.getParameter("isLdapActivated"));
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put("isActivated", req.getParameter("isLdapActivated"));
 				} catch (final NamingException e) {
-					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONAD).put("statut", "Fail to connect to AD with the given settings");
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONAD).put("statut", "Fail to connect to AD with the given settings");
 				} catch (final Exception e) {
-					jsonResponse.put("code", CodesReturned.GENERALERROR);
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
 					logger.error("Fatal Error", e);
 				}
 			}

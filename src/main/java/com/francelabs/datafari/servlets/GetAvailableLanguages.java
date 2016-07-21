@@ -31,7 +31,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.francelabs.datafari.constants.CodesReturned;
+import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.user.Favorite;
 import com.francelabs.datafari.user.UserConstants;
 import com.francelabs.datafari.utils.LanguageUtils;

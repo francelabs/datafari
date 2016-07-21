@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 
+import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.service.search.SolrServers;
 import com.francelabs.datafari.service.search.SolrServers.Core;
 import com.francelabs.datafari.servlets.admin.StringsDatafariProperties;
@@ -39,7 +40,7 @@ public class LikesLauncher implements ServletContextListener {
 
 	private static boolean islaunched = false;
 	private static ScheduledExecutorService scheduler;
-	private static Logger LOGGER = Logger.getLogger(LikesLauncher.class
+	private static Logger logger = Logger.getLogger(LikesLauncher.class
 			.getName());
 	private static ScheduledFuture<?> handler;
 	private static boolean doReload = false;
@@ -53,19 +54,20 @@ public class LikesLauncher implements ServletContextListener {
 			isEnabled = ScriptConfiguration
 					.getProperty(StringsDatafariProperties.LIKESANDFAVORTES);
 		} catch (IOException e) {
-			LOGGER.error(e);
+			logger.error("Unable to log property "+ StringsDatafariProperties.LIKESANDFAVORTES+" : "+e.getMessage());
 		}
 		try {
 			File externalFile = UpdateNbLikes.getInstance().getConfigFile();
 			externalFile.createNewFile();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (DatafariServerException | IOException e) {
+			logger.error("Unable to read external file "+e.getMessage());
+
 		}
 		if (isEnabled != null && isEnabled.equals("true")) {
 			updateNbLikes();
 			startScheduler();
 		}
-		LOGGER.debug("LikesLauncher Servlet Initialized successfully");
+		logger.debug("LikesLauncher Servlet Initialized successfully");
 	}
 
 	@Override
@@ -85,9 +87,9 @@ public class LikesLauncher implements ServletContextListener {
 						refreshQuery.setRequestHandler("/reloadCache");
 						solrClient.query(refreshQuery);
 					} catch (Exception e) {
-						LOGGER.error("Cannot send refresh request", e);
+						logger.error("Cannot send refresh request", e);
 					}
-					LOGGER.info("updateNbLikes finished its work");
+					logger.info("updateNbLikes finished its work");
 				}
 
 			}).start();
@@ -119,15 +121,14 @@ public class LikesLauncher implements ServletContextListener {
 					solrClient.query(refreshQuery);
 					LikesLauncher.doReload = false;
 				} catch (Exception e) {
-
-					LOGGER.error("Cannot reload cache", e);
+					logger.error("Cannot reload cache", e);
 				}
 			}
 		}
 	};
 
 	public static void shutDown() {
-		LOGGER.debug("-----------------Trying to ShutDown the scheduler---------------------");
+		logger.debug("-----------------Trying to ShutDown the scheduler---------------------");
 		if (islaunched) {
 			handler.cancel(true);
 			scheduler.shutdown();

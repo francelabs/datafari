@@ -22,7 +22,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.francelabs.datafari.constants.CodesReturned;
+import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.servlets.admin.ModifyRealmLdap;
 import com.google.common.base.Strings;
 
@@ -134,13 +134,13 @@ public class RealmLdapConfiguration {
 					transformer.transform(source, result);
 				} catch (final TransformerException e) {
 					logger.error(e);
-					return CodesReturned.GENERALERROR;
+					return CodesReturned.GENERALERROR.getValue();
 				}
 
 			}
-			return CodesReturned.ALLOK;
+			return CodesReturned.ALLOK.getValue();
 		} else {
-			return CodesReturned.PARAMETERNOTWELLSET;
+			return CodesReturned.PARAMETERNOTWELLSET.getValue();
 		}
 
 	}

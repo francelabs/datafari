@@ -13,8 +13,10 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.francelabs.datafari.constants.CodesReturned;
+import com.francelabs.datafari.exception.CodesReturned;
+import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.service.db.UserDataService;
+import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.user.User;
 
 /**
@@ -41,20 +43,20 @@ public class IsUserInBase extends HttpServlet {
 		response.setContentType("application/json");
 		try{
 			if (request.getParameter(UserDataService.USERNAMECOLUMN)!=null){
+				try {
 				User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(),"");
-				int code = user.isInBase();
 				String result = null;
-				if (code == CodesReturned.TRUE){
+				if (user.isInBase()){
 					result = "true";
-				}else if (code == CodesReturned.FALSE){
+				}else {
 					result = "false";
 				}
-				if (code != CodesReturned.PROBLEMCONNECTIONDATABASE)
-					jsonResponse.put("code", CodesReturned.ALLOK).put("statut", result);
-				else
-					jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE).put("statut", "Problem with database");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put("statut", result);
+				} catch (DatafariServerException e){
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE).put("statut", "Problem with database");
+				}
 		}else{
-			jsonResponse.put("code", CodesReturned.PROBLEMQUERY).put("statut", "Problem with query");
+			jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY).put("statut", "Problem with query");
 		}
 		}catch (JSONException e) {
 			// TODO Auto-generated catch block

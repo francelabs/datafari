@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.francelabs.datafari.startup;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,7 +23,7 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
 
-import com.francelabs.datafari.constants.CodesReturned;
+import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.service.db.UserDataService;
 import com.francelabs.datafari.user.User;
 import com.francelabs.datafari.utils.ScriptConfiguration;
@@ -43,10 +42,8 @@ public class UserManagementLauncher implements ServletContextListener {
 				LOGGER.info("UserManagement admin");
 				User user = new User("admin",ScriptConfiguration.getProperty("TEMPADMINPASSWORD"));
 				List<String> roleAdmin = Collections.singletonList(UserDataService.SEARCHADMINISTRATOR);
-				int code = user.signup(roleAdmin);
-				if ( code == CodesReturned.ALLOK ){
-					LOGGER.info("Admin user created");
-				}
+				user.signup(roleAdmin);
+				LOGGER.info("Admin user created");
 				
 			}
 		} catch (Exception e) {

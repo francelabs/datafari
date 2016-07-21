@@ -39,5 +39,7 @@ fi
 
 # Configure the right path for Kibana PID file
 sed -i "/pid\.file/c\pid.file: ${KIBANA_PID_FILE}" $KIBANA_HOME/config/kibana.yml
+sed -i "/server\.crt/c\server.ssl.cert: ${DATAFARI_HOME}/ssl-keystore/datafari-cert.pem" $KIBANA_HOME/config/kibana.yml
+sed -i "/server\.key/c\server.ssl.key: ${DATAFARI_HOME}/ssl-keystore/datafari-key.pem" $KIBANA_HOME/config/kibana.yml
 cd $KIBANA_HOME/bin
 bash kibana

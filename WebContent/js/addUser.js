@@ -139,7 +139,7 @@ $(document).ready(function(){
 					$.post("../SearchAdministrator/isUserInBase",{username:element.val()},function(data){
 						if (data.code == 0){
 							element.next().hide();
-							if (data.statut == "true"){
+							if (data.status == "true"){
 								error["username"].isError = true;
 								element.next().show();
 								showError(USERALREADYINBASE,attribute);
