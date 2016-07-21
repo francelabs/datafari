@@ -14,7 +14,7 @@
 		<link href="../plugins/bootstrap/bootstrap.css" rel="stylesheet">
 		<link href="../plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet">
 		<link rel="stylesheet" type ="text/css" href="../css/font-awesome/font-awesome.min.css">
-		<link href='https://fonts.googleapis.com/css?family=Righteous' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type ="text/css" href="../css/google-fonts/righteous.css">
 		<link href="../plugins/fullcalendar/fullcalendar.css" rel="stylesheet">
 		<link href="../plugins/xcharts/xcharts.min.css" rel="stylesheet">
 		<link href="../plugins/select2/select2.css" rel="stylesheet">

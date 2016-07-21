@@ -22,9 +22,6 @@
 			<fileset dir="datafari-tomcat/conf" />
 		</copy>
 
-		<!-- Copy Log4j.properties file, needed to use log4j instead of common logging (logging.properties in tomcat/conf) -->
-		<copy file="tomcat/conf/log4j.properties" toDir="tomcat/lib" overwrite="true" force="true" />
-
 		<!-- Copy files needed for installed Datafari -->
 		<copy todir="bin/common/config/cassandra" overwrite="true" force="true">
 			<fileset dir="datafari-cassandra/conf/dev-env" />
