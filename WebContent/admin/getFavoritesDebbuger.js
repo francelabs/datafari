@@ -12,7 +12,7 @@
 							    shortText = string;
 							return shortText;
 						}
-						$.post("../GetFavorites",function(data){
+						$.get("../GetFavorites",function(data){
 							if (data.code == 0){
 								window.favoritesList = data.favoritesList;
 								if (favoritesList!==undefined){

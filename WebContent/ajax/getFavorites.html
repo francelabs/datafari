@@ -127,7 +127,7 @@
 							return shortText;
 						}
 						setTimeout(function(){
-							$.post("../GetFavorites",function(data){
+							$.get("../GetFavorites",function(data){
 							$('.loading').hide();
 							tableResult.show();
 							if (data.code == 0){

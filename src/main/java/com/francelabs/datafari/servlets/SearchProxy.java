@@ -15,21 +15,15 @@
  *******************************************************************************/
 package com.francelabs.datafari.servlets;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.security.Principal;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -45,14 +39,12 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.ContentStream;
-import org.apache.solr.common.util.NamedList;
 import org.apache.solr.core.SolrCore;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.response.JSONResponseWriter;
 import org.apache.solr.response.SolrQueryResponse;
 import org.apache.solr.schema.IndexSchema;
 import org.apache.solr.search.SolrIndexSearcher;
-import org.apache.solr.util.RTimer;
 import org.apache.solr.util.RTimerTree;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -183,7 +175,6 @@ public class SearchProxy extends HttpServlet implements SolrQueryRequest {
 			}
 
 			// perform query
-
 			query.add(params);
 			query.setRequestHandler(handler);
 			queryResponse = solr.query(query);
@@ -233,7 +224,8 @@ public class SearchProxy extends HttpServlet implements SolrQueryRequest {
 			}
 
 		} catch (final Exception e) {
-			e.printStackTrace();
+			//TODO fine handling of exception
+			LOGGER.error("Unknown error "+e.getMessage());
 		}
 
 	}

@@ -46,17 +46,17 @@ public class DeleteUser extends HttpServlet {
 		try{
 			if (request.getParameter(UserDataService.USERNAMECOLUMN)!=null){
 				User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(),"");
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put("statut", "User deleted with success");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put(OutputConstants.STATUS, "User deleted with success");
 
 				try {
 					user.deleteUser();
 					Favorite.removeFavoritesAndLikesDB(request.getParameter(UserDataService.USERNAMECOLUMN).toString());
 				} catch (DatafariServerException e){
 
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE).put("statut", "Problem with database");
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE).put(OutputConstants.STATUS, "Problem with database");
 				}
 			}else{
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY).put("statut", "Problem with query");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY).put(OutputConstants.STATUS, "Problem with query");
 			}
 		}catch (JSONException e) {
 			// TODO Auto-generated catch block

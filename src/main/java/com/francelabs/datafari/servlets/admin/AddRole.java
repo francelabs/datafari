@@ -51,14 +51,14 @@ public class AddRole extends HttpServlet {
 				User user = new User(request.getParameter(UserConstants.USERNAMECOLUMN).toString(), "");
 				try {
 					user.addRole(request.getParameter(UserDataService.ROLECOLUMN).toString());
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put("statut", "Role add  with success to "
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put(OutputConstants.STATUS, "Role add  with success to "
 							+ request.getParameter(UserConstants.USERNAMECOLUMN).toString());
 				} catch (DatafariServerException e) {
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE).put("statut",
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE).put(OutputConstants.STATUS,
 							"Datafari isn't connected to DB");
 				}
 			} else {
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY).put("statut", "Problem with query");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY).put(OutputConstants.STATUS, "Problem with query");
 			}
 		} catch (JSONException e) {
 			logger.error(e);
