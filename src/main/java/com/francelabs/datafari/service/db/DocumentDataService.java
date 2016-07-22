@@ -114,16 +114,30 @@ public class DocumentDataService {
 	 *
 	 * @param username
 	 *            of the user
+	 * @param documentIDs
 	 * @return an array list of all the the likes of the user. Return null if
 	 *         there's an error.
 	 */
-	public List<String> getLikes(final String username) throws DatafariServerException {
+	public List<String> getLikes(final String username, String[] documentIDs) throws DatafariServerException {
 		try {
-			final List<String> likes = new ArrayList<String>();
-			final ResultSet results = session.execute("SELECT " + DOCUMENTIDCOLUMN + " FROM " + LIKECOLLECTION
-					+ " where " + USERNAMECOLUMN + "='" + username + "'");
-			for (final Row row : results) {
-				likes.add(row.getString(DOCUMENTIDCOLUMN));
+				final List<String> likes = new ArrayList<String>();
+				if (documentIDs == null) {
+				final ResultSet results = session.execute("SELECT " + DOCUMENTIDCOLUMN + " FROM " + LIKECOLLECTION
+						+ " where " + USERNAMECOLUMN + "='" + username + "'");
+				for (final Row row : results) {
+					likes.add(row.getString(DOCUMENTIDCOLUMN));
+				}
+
+			} else {
+				for (String documentID : documentIDs) {
+					final ResultSet results = session.execute(
+							"SELECT " + DOCUMENTIDCOLUMN + " FROM " + LIKECOLLECTION + " where " + USERNAMECOLUMN
+									+ "='" + username + "' AND " + DOCUMENTIDCOLUMN + "='" + documentID + "'");
+					for (final Row row : results) {
+						likes.add(row.getString(DOCUMENTIDCOLUMN));
+					}
+				}
+
 			}
 			return likes;
 		} catch (DriverException e) {
@@ -201,22 +215,35 @@ public class DocumentDataService {
 	 *
 	 * @param username
 	 *            of the user
+	 * @param documentIDs
+	 *            : list of document id to check (if null, check all)
 	 * @return an array list of all the favorites document of the user. Return
 	 *         null if there's an error.
 	 * @throws DatafariServerException
 	 */
-	public List<String> getFavorites(final String username) throws DatafariServerException {
+	public List<String> getFavorites(final String username, String[] documentIDs) throws DatafariServerException {
 		try {
 			final List<String> favorites = new ArrayList<String>();
-			final ResultSet results = session.execute("SELECT " + DOCUMENTIDCOLUMN + " FROM " + FAVORITECOLLECTION
-					+ " where " + USERNAMECOLUMN + "='" + username + "'");
-			for (final Row row : results) {
-				favorites.add(row.getString(DOCUMENTIDCOLUMN));
+			if (documentIDs == null) {
+				final ResultSet results = session.execute("SELECT " + DOCUMENTIDCOLUMN + " FROM " + FAVORITECOLLECTION
+						+ " where " + USERNAMECOLUMN + "='" + username + "'");
+				for (final Row row : results) {
+					favorites.add(row.getString(DOCUMENTIDCOLUMN));
+				}
+			} else {
+				for (String documentID : documentIDs) {
+					final ResultSet results = session.execute(
+							"SELECT " + DOCUMENTIDCOLUMN + " FROM " + FAVORITECOLLECTION + " where " + USERNAMECOLUMN
+									+ "='" + username + "' AND " + DOCUMENTIDCOLUMN + "='" + documentID + "'");
+					for (final Row row : results) {
+						favorites.add(row.getString(DOCUMENTIDCOLUMN));
+					}
+				}
+
 			}
 			return favorites;
 		} catch (DriverException e) {
 			logger.warn("Unable getFavorites for " + username + " : " + e.getMessage());
-			// TODO catch specific exception
 			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
 		}
 	}

@@ -60,12 +60,13 @@ public class Favorite {
 	 * 
 	 * @param username
 	 *            of the user
+	 * @param documentIDs : list of document id to check (if null, check all) 
 	 * @return an array list of all the favorites document of the user. Return
 	 *         null if there's an error.
 	 * @throws DatafariServerException
 	 */
-	public static List<String> getFavorites(String username) throws DatafariServerException {
-		return DocumentDataService.getInstance().getFavorites(username);
+	public static List<String> getFavorites(String username, String[] documentIDs) throws DatafariServerException {
+		return DocumentDataService.getInstance().getFavorites(username, documentIDs);
 
 	}
 

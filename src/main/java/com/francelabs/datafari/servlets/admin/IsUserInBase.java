@@ -51,12 +51,12 @@ public class IsUserInBase extends HttpServlet {
 				}else {
 					result = "false";
 				}
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put("statut", result);
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put(OutputConstants.STATUS, result);
 				} catch (DatafariServerException e){
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE).put("statut", "Problem with database");
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE).put(OutputConstants.STATUS, "Problem with database");
 				}
 		}else{
-			jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY).put("statut", "Problem with query");
+			jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY).put(OutputConstants.STATUS, "Problem with query");
 		}
 		}catch (JSONException e) {
 			// TODO Auto-generated catch block

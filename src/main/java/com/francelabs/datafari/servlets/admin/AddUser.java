@@ -124,13 +124,13 @@ public class AddUser extends HttpServlet {
 						request.getParameter(UserDataService.PASSWORDCOLUMN).toString());
 				try {
 					user.signup(Arrays.asList(request.getParameterValues(UserDataService.ROLECOLUMN + "[]")));
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put("statut", "User successfully added");
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put(OutputConstants.STATUS, "User successfully added");
 				} catch (DatafariServerException e) {
 					if (e.getErrorCode().equals(CodesReturned.USERALREADYINBASE)) {
-						jsonResponse.put(OutputConstants.CODE, CodesReturned.USERALREADYINBASE).put("statut",
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.USERALREADYINBASE).put(OutputConstants.STATUS,
 								"User already Signed up");
 					} else {
-						jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE).put("statut",
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE).put(OutputConstants.STATUS,
 								"Problem with database");
 					}
 				}

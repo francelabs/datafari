@@ -45,6 +45,7 @@ public class GetFavorites extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(GetFavorites.class.getName());
 	private static final String FAVORITESLIST = "favoritesList";
+	private static final String documentID = "documentID";
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -59,19 +60,11 @@ public class GetFavorites extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-
 		JSONObject jsonResponse = new JSONObject();
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		try {
+			String[] documentIDs = request.getParameterValues(documentID);
 			Principal userPrincipal = request.getUserPrincipal();
 			// checking if the user is connected
 			if (userPrincipal == null) {
@@ -80,7 +73,7 @@ public class GetFavorites extends HttpServlet {
 			} else {
 				String username = userPrincipal.getName();
 				try {
-					jsonResponse.put(FAVORITESLIST, Favorite.getFavorites(username));
+					jsonResponse.put(FAVORITESLIST, Favorite.getFavorites(username, documentIDs));
 					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK);
 				} catch (DatafariServerException e) {
 					jsonResponse.put(OutputConstants.CODE, e.getErrorCode());
@@ -92,4 +85,5 @@ public class GetFavorites extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		out.print(jsonResponse);
 	}
+
 }

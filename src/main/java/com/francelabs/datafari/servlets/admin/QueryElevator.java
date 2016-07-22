@@ -143,10 +143,10 @@ public class QueryElevator extends HttpServlet {
 						}
 					}
 				}
-				jsonResponse.put("docs", docsList).put("code", CodesReturned.ALLOK);
+				jsonResponse.put("docs", docsList).put(OutputConstants.CODE, CodesReturned.ALLOK);
 			}
 		} catch (final Exception e) {
-			jsonResponse.put("code", CodesReturned.GENERALERROR);
+			jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
 			LOGGER.error("Error on marshal/unmarshal elevate.xml file ", e);
 		}
 		final PrintWriter out = response.getWriter();
@@ -210,7 +210,7 @@ public class QueryElevator extends HttpServlet {
 					}
 
 					// Set the response code
-					jsonResponse.put("code", CodesReturned.ALLOK);
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK);
 
 				} else if (action.equals("down")) { // Remove the doc
 
@@ -231,7 +231,7 @@ public class QueryElevator extends HttpServlet {
 					}
 
 					// Set the response code
-					jsonResponse.put("code", CodesReturned.ALLOK);
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK);
 				}
 
 				// Re-transform the Java object into the elevate.xml file thanks
@@ -243,7 +243,7 @@ public class QueryElevator extends HttpServlet {
 				
 
 			} catch (final Exception e) {
-				jsonResponse.put("code", CodesReturned.GENERALERROR);
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
 				LOGGER.error("Error on marshal/unmarshal elevate.xml file in solr/solr_home/" + server + "/conf", e);
 			}
 		} else if (request.getParameter("query") != null && !request.getParameter("query").equals("") && request.getParameter("tool") != null
@@ -314,10 +314,10 @@ public class QueryElevator extends HttpServlet {
 				ZKUtils.configZK("uploadconfigzk.sh", server);
 
 				// Set the response code
-				jsonResponse.put("code", CodesReturned.ALLOK);
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK);
 
 			} catch (final Exception e) {
-				jsonResponse.put("code", CodesReturned.GENERALERROR);
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
 				LOGGER.error("Error on marshal/unmarshal elevate.xml file in solr/solr_home/" + server + "/conf", e);
 			}
 		}

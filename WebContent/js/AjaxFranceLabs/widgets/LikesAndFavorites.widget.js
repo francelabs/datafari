@@ -28,12 +28,18 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 			//var isConneted = true;
 			var self = this;
 			var docs = self.manager.response.response.docs;
+			
 			if (window.globalVariableLikes===undefined || window.globalVariableFavorites===undefined){
 				// if the likes and Favorites aren't yet gotten from the server
-				$.post("./getLikesFavorites",function(data){
+				var docIDs = [];
+				docs.forEach(function(doc) {
+					docIDs.push(doc.id);
+				});
+				jQuery.ajaxSettings.traditional = true;
+				$.get("./getLikesFavorites", { "documentsID": "youpi" }, function(data){
 					if (data.code==0){
-						window.globalVariableLikes = data.likes;
-						window.globalVariableFavorites = data.favorites;
+						window.globalVariableLikes = data.likesList;
+						window.globalVariableFavorites = data.favoritesList;
 						self.afterGettingLikes(docs);
 					}
 					else if (data.code == self.SERVERNOTCONNECTED ){

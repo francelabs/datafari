@@ -48,12 +48,12 @@ public class ChangePassword extends HttpServlet {
 					User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(),"");
 					try {
 						user.changePassword(request.getParameter(UserDataService.PASSWORDCOLUMN).toString());
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put("statut", "User deleted with success");
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put(OutputConstants.STATUS, "User deleted with success");
 					} catch (DatafariServerException e){
-						jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE).put("statut", "Datafari isn't connected to Database");
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE).put(OutputConstants.STATUS, "Datafari isn't connected to Database");
 					}
 			}else{
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY).put("statut", "Problem with query");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY).put(OutputConstants.STATUS, "Problem with query");
 			}
 		}catch (JSONException e) {
 			// TODO Auto-generated catch block

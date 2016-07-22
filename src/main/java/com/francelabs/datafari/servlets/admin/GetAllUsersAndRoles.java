@@ -46,9 +46,9 @@ public class GetAllUsersAndRoles extends HttpServlet {
 		try {
 			Map<String, List<String>> usersList = User.getAllUsers();
 			if (usersList!=null)
-				jsonResponse.put(OutputConstants.CODE,CodesReturned.ALLOK).put("statut",User.getAllUsers());
+				jsonResponse.put(OutputConstants.CODE,CodesReturned.ALLOK).put(OutputConstants.STATUS,User.getAllUsers());
 			else
-				jsonResponse.put(OutputConstants.CODE,CodesReturned.PROBLEMCONNECTIONDATABASE).put("statut","Datafari isn't connected to Cassandra");
+				jsonResponse.put(OutputConstants.CODE,CodesReturned.PROBLEMCONNECTIONDATABASE).put(OutputConstants.STATUS,"Datafari isn't connected to Cassandra");
 		}catch (JSONException e) {
 				logger.error(e);
 		}
