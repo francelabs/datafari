@@ -1,5 +1,5 @@
 {
-	"template" : "logs",
+	"template" : "logs-*",
 	"settings" : {
 		"number_of_shards" : 1,
 		"number_of_replicas" : 1
@@ -7,8 +7,12 @@
 	"mappings": {
 		"_default_": {
 			"_all" : {"enabled" : true},
-			"dynamic" : "true",
+			"dynamic" : "false",
 			"properties": {
+				"@timestamp": {
+					"type": "date",
+					"format": "date_time"
+				},
 				"date": {
 					"type": "date",
 					"format": "yyyy-MM-dd HH:mm:ss"
