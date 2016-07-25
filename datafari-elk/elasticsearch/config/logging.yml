@@ -43,11 +43,19 @@ appender:
 
   file:
     type: dailyRollingFile
-    file: ${path.logs}/${cluster.name}.log
+    file: ${path.logs}/elasticsearch.log
     datePattern: "'.'yyyy-MM-dd"
     layout:
       type: pattern
-      conversionPattern: "[%d{ISO8601}][%-5p][%-25c] %.10000m%n"
+      conversionPattern: "%5p %d{ISO8601} (%t) - ELK|Elasticsearch|%c{3}|%m%n"
+
+  #file:
+    #type: dailyRollingFile
+    #file: ${path.logs}/${cluster.name}.log
+    #datePattern: "'.'yyyy-MM-dd"
+    #layout:
+      #type: pattern
+      #conversionPattern: "[%d{ISO8601}][%-5p][%-25c] %.10000m%n"
 
   # Use the following log4j-extras RollingFileAppender to enable gzip compression of log files. 
   # For more information see https://logging.apache.org/log4j/extras/apidocs/org/apache/log4j/rolling/RollingFileAppender.html
