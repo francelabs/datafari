@@ -71,8 +71,10 @@ AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
 										                var urlRedirect = 'URL?url='+ url + '&id='+Manager.store.get("id").value + '&q=' + Manager.store.get("q").value + '&position='+position;
 														elm.find('.doc:last .res').append('<a class="title" target="_blank" href="'+urlRedirect+'"></a>');										
 														var title;
+														// if the document is an html file, get the extracted title metadata
 														if (doc.extension == "html"){
 															title = doc.title;
+														// for other files, get the filename from the url
 														} else{
 															title = doc.url.split('/');
 															title = title[title.length-1];
