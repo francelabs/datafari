@@ -21,6 +21,11 @@
 		<copy toDir="tomcat/conf" overwrite="true" force="true">
 			<fileset dir="datafari-tomcat/conf" />
 		</copy>
+		
+		<!-- Copy Tomcat log4j config file -->
+		<copy toDir="tomcat/lib" overwrite="true" force="true">
+			<fileset dir="datafari-tomcat/lib" />
+		</copy>
 
 		<!-- Copy files needed for installed Datafari -->
 		<copy todir="bin/common/config/cassandra" overwrite="true" force="true">
