@@ -18,8 +18,13 @@
 		</copy>
 
 		<!-- Copy Tomcat config files, that may change if dev env under Eclipse -->
-		<copy toDir="tomcat/conf" overwrite="true" force="true">
-			<fileset dir="datafari-tomcat/conf" />
+		<copy toDir="tomcat" overwrite="true" force="true">
+			<fileset dir="datafari-tomcat" />
+		</copy>
+		
+		<!-- Copy Tomcat log4j config file -->
+		<copy toDir="tomcat/lib" overwrite="true" force="true">
+			<fileset dir="datafari-tomcat/lib" />
 		</copy>
 
 		<!-- Copy files needed for installed Datafari -->
@@ -236,21 +241,12 @@
 		
 		<chmod dir="elk/logstash/vendor/jruby/bin" perm="775" includes="**" />
 
-		<!-- Copy Datafari-specific directories and files -->
-		<copy toDir="elk/logstash" overwrite="true" force="true">
-			<fileset dir="datafari-elk/logstash" />
+		<!-- Copy Datafari-specific directories and files for ELK -->
+		<copy toDir="elk" overwrite="true" force="true">
+			<fileset dir="datafari-elk" />
 		</copy>
 		
-		<!-- Copy Datafari bin files -->
-		<copy toDir="elk/scripts" overwrite="true" force="true">
-			<fileset dir="datafari-elk/scripts" />
-		</copy>
 		<chmod dir="elk/scripts" perm="775" includes="**" />
-		
-		<!-- Copy Datafari Kibana Objects save file -->
-		<copy toDir="elk/save" overwrite="true" force="true">
-			<fileset dir="datafari-elk/save" />
-		</copy>
 
 		<!-- Affect enough privileges for Logstash executables (Ant copy doesn't 
 								preserve execution rights!) -->
