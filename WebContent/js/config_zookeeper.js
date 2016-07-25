@@ -19,7 +19,7 @@ $(document).ready(function() {
 	$("#download").click(function(e){
 		e.preventDefault();
 		$.get("../SearchAdministrator/zookeeperConf?action=download",function(data){
-			if(data.code == 200) {
+			if(data.code == 0) {
 				$("#downloadResult").text(window.i18n.msgStore['zkDwnSuccess']);
 			} else {
 				$("#downloadResult").text(window.i18n.msgStore['zkDwnFail']);
@@ -30,7 +30,7 @@ $(document).ready(function() {
 	$("#upload").click(function(e){
 		e.preventDefault();
 		$.get("../SearchAdministrator/zookeeperConf?action=upload",function(data){
-			if(data.code == 200) {
+			if(data.code == 0) {
 				$("#uploadResult").text(window.i18n.msgStore['zkUplSuccess']);
 			} else {
 				$("#uploadResult").text(window.i18n.msgStore['zkUplFail']);
@@ -41,7 +41,7 @@ $(document).ready(function() {
 	$("#reload").click(function(e){
 		e.preventDefault();
 		$.get("../SearchAdministrator/zookeeperConf?action=reload",function(data){
-			if(data.code == 200) {
+			if(data.code == 0) {
 				$("#reloadResult").text(window.i18n.msgStore['zkRldSuccess']);
 			} else {
 				$("#reloadResult").text(window.i18n.msgStore['zkRldFail']);
