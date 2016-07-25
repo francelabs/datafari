@@ -1,3 +1,4 @@
+DROP KEYSPACE datafari;
 CREATE KEYSPACE datafari
 WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
 use datafari;

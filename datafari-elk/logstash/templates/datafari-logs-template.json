@@ -9,10 +9,6 @@
 			"_all" : {"enabled" : true},
 			"dynamic" : "false",
 			"properties": {
-				"@timestamp": {
-					"type": "date",
-					"format": "date_time"
-				},
 				"date": {
 					"type": "date",
 					"format": "yyyy-MM-dd HH:mm:ss"
