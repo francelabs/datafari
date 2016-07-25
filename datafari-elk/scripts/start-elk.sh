@@ -28,7 +28,7 @@ sed -i "/francelabs\/datafari-monitoring.log/c\	path => \"${DATAFARI_HOME}/logs/
 sed -i "/francelabs\/datafari.log/c\	path => \"${DATAFARI_HOME}/logs/datafari.log\"" $LOGSTASH_HOME/logstash-datafari.conf
 sed -i "/francelabs\/datafari-manifold.log/c\	path => \"${DATAFARI_HOME}/logs/datafari-manifold.log\"" $LOGSTASH_HOME/logstash-datafari.conf
 sed -i "/francelabs\/tomcat.log/c\	path => \"${DATAFARI_HOME}/logs/tomcat.log\"" $LOGSTASH_HOME/logstash-datafari.conf
-sed -i "/francelabs\/manifold.log/c\	path => \"${DATAFARI_HOME}/mcf/mcf_home/manifold.log\"" $LOGSTASH_HOME/logstash-datafari.conf
+sed -i "/francelabs\/manifoldcf.log/c\	path => \"${DATAFARI_HOME}/logs/manifoldcf.log\"" $LOGSTASH_HOME/logstash-datafari.conf
 sed -i "/francelabs\/elasticsearch.log/c\	path => \"${DATAFARI_HOME}/elk/elasticsearch/logs/elasticsearch.log\"" $LOGSTASH_HOME/logstash-datafari.conf
 cd $LOGSTASH_HOME
 bash bin/logstash agent -f $LOGSTASH_HOME/logstash-datafari.conf &
