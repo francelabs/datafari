@@ -10,6 +10,14 @@
 
 	<dependencies>
 		<!-- Local Maven repo dependencies -->
+		<dependency>
+			<groupId>org.apache.manifoldcf</groupId>
+			<artifactId>mcf-core</artifactId>
+			<version>2.4</version>
+    		<scope>system</scope>
+    		<!--  mcf-core artefact doesn't exist in maven officla repo : add the lib to the project -->
+			<systemPath>${project.basedir}/../datafari-mcf/lib/mcf-core-2.4.jar</systemPath>
+		</dependency>
 
 		<!-- Remote Maven repo dependencies -->
 		<dependency>
@@ -22,6 +30,7 @@
 			<artifactId>solr-solrj</artifactId>
 			<version>5.5.1</version>
 		</dependency>
+
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
@@ -32,8 +41,9 @@
 			<artifactId>jaxb-api</artifactId>
 			<version>2.2.11</version>
 		</dependency>
-		
-		<!-- Reference implementation for javax.mail API, needed for Alerts at compilation and runtime -->
+
+		<!-- Reference implementation for javax.mail API, needed for Alerts at 
+			compilation and runtime -->
 		<dependency>
 			<groupId>com.sun.mail</groupId>
 			<artifactId>javax.mail</artifactId>
@@ -148,18 +158,18 @@
 			<version>4.12</version>
 		</dependency>
 		<!-- wstx-asl relocated to woodstox-core-asl -->
-		
+
 		<!-- Tests -->
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<version>1.10.19</version>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>org.xmlunit</groupId>
-		    <artifactId>xmlunit-core</artifactId>
-		    <version>2.1.1</version>
+			<groupId>org.xmlunit</groupId>
+			<artifactId>xmlunit-core</artifactId>
+			<version>2.1.1</version>
 		</dependency>
 
 		<!-- Tools.jar missing issue fix -->
