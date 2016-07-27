@@ -1,25 +1,28 @@
 package com.francelabs.manifoldcf.configuration.api;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 public class ManifoldAPI {
 
-	private final static Logger LOGGER = Logger.getLogger(ManifoldAPI.class
-			.getName());
+	private final static Logger LOGGER = Logger.getLogger(ManifoldAPI.class.getName());
 
 	public static class COMMANDS {
 
@@ -34,9 +37,18 @@ public class ManifoldAPI {
 	}
 
 	static private String urlManifoldCFAPI = "http://localhost:8080/datafari-mcf-api-service/json/";
-	
+
 	public JSONObject readConfiguration() {
 		return null;
+	}
+
+	static private HttpClient client = null;
+
+	static private HttpClient getClient() {
+		if (client == null) {
+			client = HttpClientBuilder.create().build();
+		}
+		return client;
 	}
 
 	static public void cleanAll() throws Exception {
@@ -96,8 +108,7 @@ public class ManifoldAPI {
 		LOGGER.info("Connectors " + command + " cleaned");
 	}
 
-	private static void delete(String command, String paramName)
-			throws Exception {
+	private static void delete(String command, String paramName) throws Exception {
 
 		LOGGER.info("Deleting connector " + paramName);
 		String url = urlManifoldCFAPI + command + "/" + paramName;
@@ -116,16 +127,14 @@ public class ManifoldAPI {
 		return executeCommand(url, "GET", null);
 	}
 
-	static public JSONObject readConfig(String command, String paramName)
-			throws IOException {
+	static public JSONObject readConfig(String command, String paramName) throws IOException {
 
 		String url = urlManifoldCFAPI + command + "/" + paramName;
 		return executeCommand(url, "GET", null);
 	}
 
-	static private void createConnectorFile(String command,
-			JSONObject subConnector, Map<String, JSONObject> connectorsMap)
-			throws JSONException {
+	static private void createConnectorFile(String command, JSONObject subConnector,
+			Map<String, JSONObject> connectorsMap) throws JSONException {
 		JSONObject singleConnector = new JSONObject();
 		if (command.equals(ManifoldAPI.COMMANDS.JOBS)) {
 			connectorsMap.put(subConnector.getString("id"), singleConnector);
@@ -133,12 +142,10 @@ public class ManifoldAPI {
 			connectorsMap.put(subConnector.getString("name"), singleConnector);
 			subConnector.put("isnew", true);
 		}
-		singleConnector.append(command.substring(0, command.length() - 1),
-				subConnector);
+		singleConnector.append(command.substring(0, command.length() - 1), subConnector);
 	}
 
-	static public Map<String, JSONObject> getConnections(String command)
-			throws Exception {
+	static public Map<String, JSONObject> getConnections(String command) throws Exception {
 		LOGGER.info("Get connectors " + command);
 		Map<String, JSONObject> connectorsMap = new HashMap<String, JSONObject>();
 		JSONObject connectors = getInfo(command);
@@ -150,16 +157,14 @@ public class ManifoldAPI {
 		JSONArray connectorList = connectors.optJSONArray(subCommands);
 		if (connectorList != null) {
 			for (int i = 0; i < connectorList.length(); i++) {
-				createConnectorFile(command, connectorList.getJSONObject(i),
-						connectorsMap);
+				createConnectorFile(command, connectorList.getJSONObject(i), connectorsMap);
 			}
 		}
 
 		return connectorsMap;
 	}
 
-	static public void putConfig(String command, String paramName,
-			JSONObject configuration) throws Exception {
+	static public void putConfig(String command, String paramName, JSONObject configuration) throws Exception {
 
 		LOGGER.info("Putting new config for " + paramName);
 		String url = urlManifoldCFAPI + command + "/" + paramName;
@@ -169,7 +174,6 @@ public class ManifoldAPI {
 
 		LOGGER.info("Config for new connector " + paramName + " set");
 	}
-	
 
 	static public void deleteConfig(String command, String paramName) throws Exception {
 		LOGGER.info("Delete config for " + paramName);
@@ -181,9 +185,7 @@ public class ManifoldAPI {
 		LOGGER.info("Connector " + paramName + " deleted");
 	}
 
-
-	static public JSONObject getConfig(String command, String paramName)
-			throws Exception {
+	static public JSONObject getConfig(String command, String paramName) throws Exception {
 
 		LOGGER.info("Getting configuration for " + paramName);
 		String url = urlManifoldCFAPI + command + "/" + paramName;
@@ -194,80 +196,59 @@ public class ManifoldAPI {
 		return result;
 	}
 
-	static private JSONObject executeCommand(String url, String verb,
-			JSONObject jsonObject) throws IOException {
+	static private JSONObject executeCommand(String url, String verb, JSONObject jsonObject) throws IOException {
 
-		URL commandURL;
-		HttpURLConnection connection = null;
+		HttpClient client = getClient();
+		HttpRequestBase request = null;
 		JSONObject responseObject = null;
 
 		try {
 
-			// Create connection
-			commandURL = new URL(url);
-			connection = (HttpURLConnection) commandURL.openConnection();
-
-			connection.setRequestMethod(verb);
-
-			if (verb.equals("PUT")) {
-				connection.setRequestProperty("Content-Type",
-						"application/json");
-				connection.setUseCaches(false);
-				connection.setDoInput(true);
-				connection.setDoOutput(true);
-
-				// Send request
-				DataOutputStream wr = new DataOutputStream(
-						connection.getOutputStream());
-
-				wr.writeBytes(jsonObject.toString());
-
-				wr.flush();
-				wr.close();
+			if (verb.equals("PUT") || verb.equals("POST")) {
+				StringEntity params = new StringEntity(jsonObject.toString());
+				if (verb.equals("POST")) {
+					request = new HttpPost(url);
+					((HttpPost) request).setEntity(params);
+				} else {
+					request = new HttpPut(url);
+					((HttpPut) request).setEntity(params);
+				}
+				request.addHeader("Content-Type", "application/json");
+			} else {
+				request = new HttpGet(url);
 			}
+
+			HttpResponse response = client.execute(request);
 
 			// Get Response
 			InputStream is;
 
-			if (connection.getResponseCode() >= 400) {
-				is = connection.getErrorStream();
-			} else {
-				is = connection.getInputStream();
-			}
+			is = response.getEntity().getContent();
 
 			BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 			String line;
 
-			StringBuffer response = new StringBuffer();
+			StringBuffer responseText = new StringBuffer();
 			while ((line = rd.readLine()) != null) {
-				response.append(line);
-				response.append('\r');
+				responseText.append(line);
+				responseText.append('\r');
 			}
 			rd.close();
 
-			responseObject = new JSONObject(response.toString());
+			responseObject = new JSONObject(responseText.toString());
 
 		} catch (Exception e) {
-
-			e.printStackTrace();
-
-		} finally {
-
-			if (connection != null) {
-				connection.disconnect();
-			}
+			LOGGER.warn("Error : ", e);
 		}
 
 		return responseObject;
 
 	}
-	
 
 	public static void waitUntilManifoldIsStarted() throws InterruptedException {
 
-		HttpURLConnection connection = null;
-		URL commandURL;
-		JSONObject responseObject;
+		LOGGER.info("Wait until MCF is started");
+		HttpClient client = getClient();
 
 		boolean exception = true;
 
@@ -275,41 +256,37 @@ public class ManifoldAPI {
 
 			try {
 
-				// Create connection
-				commandURL = new URL(urlManifoldCFAPI+"jobstatuses");
-				connection = (HttpURLConnection) commandURL.openConnection();
 
-				connection.setConnectTimeout(1000);
-				connection.setRequestMethod("GET");
+				Thread.sleep(1000);
+				
+				HttpGet request = new HttpGet(urlManifoldCFAPI + "jobstatuses");
+				HttpResponse response = client.execute(request);
 
 				// Get Response
-				InputStream is = connection.getInputStream();
-				BufferedReader rd = new BufferedReader(
-						new InputStreamReader(is));
+				InputStream is = response.getEntity().getContent();
+				BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 				String line;
 
-				StringBuffer response = new StringBuffer();
+				StringBuffer responseText = new StringBuffer();
 				while ((line = rd.readLine()) != null) {
-					response.append(line);
-					response.append('\r');
+					responseText.append(line);
+					responseText.append('\r');
 				}
 				rd.close();
 
-				
 				exception = false;
 
 			} catch (Exception e) {
 				LOGGER.info("Waiting for mcf-api-service start");
-			} finally {
-
-				if (connection != null) {
-					connection.disconnect();
-				}
 			}
-		
-		Thread.sleep(1000);
-			
+
+
 		} while (exception);
+	}
+
+	public static void authenticate(String apiUsername, String apiPassword) throws IOException {
+		JSONObject json = new JSONObject("{\"userID\":\"" + apiUsername + "\", \"password\":\"" + apiPassword + "\"}");
+		executeCommand(urlManifoldCFAPI + "LOGIN", "POST", json);
 	}
 
 }

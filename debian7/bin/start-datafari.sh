@@ -75,7 +75,7 @@ then
 	sudo su postgres -c "${DATAFARI_HOME}/pgsql/bin/initdb -U postgres -A password --pwfile=${DATAFARI_HOME}/pgsql/pwd.conf -E utf8 -D ${DATAFARI_HOME}/pgsql/data"
 	sudo su postgres -c "cp ${DATAFARI_HOME}/pgsql/postgresql.conf.save ${DATAFARI_HOME}/pgsql/data/postgresql.conf"
 	sudo LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib su postgres -p -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_LOGS}/pgsql.log start"
-	cd "${DATAFARI_HOME}/mcf/mcf_home"
+	cd ${MCF_HOME}
 	sudo -E su datafari -p -c "bash initialize.sh"
 	
 	echo "Checking if Cassandra is up and running ..."
@@ -135,7 +135,8 @@ then
 	"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Statistics/conf" -confname Statistics
 	"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Promolink/conf" -confname Promolink
     cd "${DATAFARI_HOME}/bin/common"
-	"${JAVA_HOME}/bin/java" -cp DatafariScripts.jar com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript RESTORE config/manifoldcf/init
+	echo "Uploading MCF configuration"
+	sudo "${JAVA_HOME}/bin/java" -Dorg.apache.manifoldcf.configfile="${MCF_HOME}/properties.xml" -cp DatafariScripts.jar:${MCF_HOME}/lib/mcf-core.jar:${MCF_HOME}/lib/commons-logging-1.2.jar:${MCF_HOME}/lib/log4j-1.2.16.jar:${MCF_HOME}/lib/httpclient-4.5.1.jar:${MCF_HOME}/lib/httpcore-4.4.4.jar com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript RESTORE config/manifoldcf/init
 	sudo su datafari -c "sed -i 's/\(STATE *= *\).*/\1initialized/' $INIT_STATE_FILE"
 
 else
@@ -159,7 +160,7 @@ sudo -E su datafari -p -c "SOLR_INCLUDE=$SOLR_ENV $SOLR_INSTALL_DIR/bin/solr sta
 
 if  [[ "$STATE" = *installed* ]];
 then
-	curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=FileShare&numShards=@NUMSHARDS@&replicationFactor=1&property.lib.path=/opt/datafari/solr/solrcloud/FileShare/"
+	curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=FileShare&numShards=1&replicationFactor=1&property.lib.path=/opt/datafari/solr/solrcloud/FileShare/"
 	curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=Statistics&numShards=1&replicationFactor=1"
 	curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=Promolink&numShards=1&replicationFactor=1"
 fi
