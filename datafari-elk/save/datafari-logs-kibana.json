@@ -1,0 +1,238 @@
+[
+  {
+    "_id": "ELK-Dashboard",
+    "_type": "dashboard",
+    "_source": {
+      "title": "ELK - Dashboard",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"id\":\"ELK-Error-logs-per-component\",\"type\":\"visualization\",\"size_x\":6,\"size_y\":5,\"col\":1,\"row\":1},{\"id\":\"ELK-Error-logs-per-packages\",\"type\":\"visualization\",\"size_x\":6,\"size_y\":5,\"col\":7,\"row\":1},{\"id\":\"ELK-Errors-overtime\",\"type\":\"visualization\",\"size_x\":12,\"size_y\":3,\"col\":1,\"row\":6},{\"id\":\"ELK-Ratio-Log-Level\",\"type\":\"visualization\",\"size_x\":6,\"size_y\":3,\"col\":1,\"row\":9},{\"id\":\"ELK-Ratio-Log-Level-Per-Day\",\"type\":\"visualization\",\"size_x\":6,\"size_y\":3,\"col\":7,\"row\":9}]",
+      "optionsJSON": "{\"darkTheme\":false}",
+      "version": 1,
+      "timeRestore": true,
+      "timeTo": "now",
+      "timeFrom": "now-7d",
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[{\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}}}]}"
+      }
+    }
+  },
+  {
+    "_id": "Global-Datafari-Dashboard",
+    "_type": "dashboard",
+    "_source": {
+      "title": "Global Datafari Dashboard",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"id\":\"Error-Logs-Per-Process\",\"type\":\"visualization\",\"size_x\":3,\"size_y\":8,\"col\":1,\"row\":1},{\"id\":\"Errors-overtime\",\"type\":\"visualization\",\"size_x\":9,\"size_y\":4,\"col\":4,\"row\":1},{\"id\":\"Ratio-Log-Level\",\"type\":\"visualization\",\"size_x\":4,\"size_y\":4,\"col\":4,\"row\":5},{\"id\":\"Ratio-Log-Level-Per-Day\",\"type\":\"visualization\",\"size_x\":5,\"size_y\":4,\"col\":8,\"row\":5}]",
+      "optionsJSON": "{\"darkTheme\":false}",
+      "version": 1,
+      "timeRestore": true,
+      "timeTo": "now",
+      "timeFrom": "now-7d",
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[{\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}}}]}"
+      }
+    }
+  },
+  {
+    "_id": "Tomcat-Dashboard",
+    "_type": "dashboard",
+    "_source": {
+      "title": "Tomcat - Dashboard",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"id\":\"Tomcat-Error-logs-per-component\",\"type\":\"visualization\",\"size_x\":6,\"size_y\":2,\"col\":1,\"row\":1},{\"id\":\"Tomcat-Error-logs-per-packages\",\"type\":\"visualization\",\"size_x\":6,\"size_y\":9,\"col\":7,\"row\":1},{\"id\":\"Tomcat-Errors-overtime\",\"type\":\"visualization\",\"size_x\":6,\"size_y\":3,\"col\":1,\"row\":3},{\"id\":\"Tomcat-Ratio-Log-Level\",\"type\":\"visualization\",\"size_x\":3,\"size_y\":4,\"col\":1,\"row\":6},{\"id\":\"Tomcat-Ratio-Log-Level-Per-Day\",\"type\":\"visualization\",\"size_x\":3,\"size_y\":4,\"col\":4,\"row\":6}]",
+      "optionsJSON": "{\"darkTheme\":false}",
+      "version": 1,
+      "timeRestore": true,
+      "timeTo": "now",
+      "timeFrom": "now-7d",
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[{\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}}}]}"
+      }
+    }
+  },
+  {
+    "_id": "Tomcat-Errors-overtime",
+    "_type": "visualization",
+    "_source": {
+      "title": "Tomcat - Errors overtime",
+      "visState": "{\"type\":\"line\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"showCircles\":true,\"smoothLines\":false,\"interpolate\":\"linear\",\"scale\":\"linear\",\"drawLinesBetweenPoints\":true,\"radiusRatio\":9,\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"date\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}},{\"id\":\"3\",\"type\":\"filters\",\"schema\":\"group\",\"params\":{\"filters\":[{\"input\":{\"query\":{\"query_string\":{\"query\":\"level:ERROR\",\"analyze_wildcard\":true}}},\"label\":\"ERROR\"}]}}],\"listeners\":{}}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"logs-*\",\"query\":{\"query_string\":{\"query\":\"process:Tomcat\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "ELK-Errors-overtime",
+    "_type": "visualization",
+    "_source": {
+      "title": "ELK - Errors overtime",
+      "visState": "{\"type\":\"line\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"showCircles\":true,\"smoothLines\":false,\"interpolate\":\"linear\",\"scale\":\"linear\",\"drawLinesBetweenPoints\":true,\"radiusRatio\":9,\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"date\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}},{\"id\":\"3\",\"type\":\"filters\",\"schema\":\"group\",\"params\":{\"filters\":[{\"input\":{\"query\":{\"query_string\":{\"query\":\"level:ERROR\",\"analyze_wildcard\":true}}},\"label\":\"ERROR\"}]}}],\"listeners\":{}}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"logs-*\",\"query\":{\"query_string\":{\"query\":\"process:ELK\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Errors-overtime",
+    "_type": "visualization",
+    "_source": {
+      "title": "Errors overtime",
+      "visState": "{\"type\":\"line\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"showCircles\":true,\"smoothLines\":false,\"interpolate\":\"linear\",\"scale\":\"linear\",\"drawLinesBetweenPoints\":true,\"radiusRatio\":9,\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"date\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}},{\"id\":\"3\",\"type\":\"filters\",\"schema\":\"group\",\"params\":{\"filters\":[{\"input\":{\"query\":{\"query_string\":{\"query\":\"level:ERROR\",\"analyze_wildcard\":true}}},\"label\":\"ERROR\"}]}}],\"listeners\":{}}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"logs-*\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Tomcat-Error-logs-per-component",
+    "_type": "visualization",
+    "_source": {
+      "title": "Tomcat - Error logs per component",
+      "visState": "{\"type\":\"table\",\"params\":{\"perPage\":10,\"showPartialRows\":false,\"showMeticsAtAllLevels\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"component\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}},{\"id\":\"3\",\"type\":\"filters\",\"schema\":\"bucket\",\"params\":{\"filters\":[{\"input\":{\"query\":{\"query_string\":{\"query\":\"level:ERROR\",\"analyze_wildcard\":true}}},\"label\":\"ERROR\"}]}}],\"listeners\":{}}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"logs-*\",\"query\":{\"query_string\":{\"query\":\"process:Tomcat\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Error-Logs-Per-Process",
+    "_type": "visualization",
+    "_source": {
+      "title": "Error Logs Per Process",
+      "visState": "{\"aggs\":[{\"id\":\"1\",\"params\":{},\"schema\":\"metric\",\"type\":\"count\"},{\"id\":\"2\",\"params\":{\"field\":\"process\",\"order\":\"desc\",\"orderBy\":\"1\",\"size\":5},\"schema\":\"bucket\",\"type\":\"terms\"},{\"id\":\"3\",\"params\":{\"filters\":[{\"input\":{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"level:ERROR\"}}},\"label\":\"ERROR\"}]},\"schema\":\"bucket\",\"type\":\"filters\"}],\"listeners\":{},\"params\":{\"perPage\":10,\"showMeticsAtAllLevels\":false,\"showPartialRows\":false},\"type\":\"table\"}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"logs-*\",\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Tomcat-Ratio-Log-Level",
+    "_type": "visualization",
+    "_source": {
+      "title": "Tomcat - Ratio Log Level",
+      "visState": "{\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"level\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"logs-*\",\"query\":{\"query_string\":{\"query\":\"process:Tomcat\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Ratio-Log-Level",
+    "_type": "visualization",
+    "_source": {
+      "title": "Ratio Log Level",
+      "visState": "{\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"level\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"logs-*\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Tomcat-Ratio-Log-Level-Per-Day",
+    "_type": "visualization",
+    "_source": {
+      "title": "Tomcat - Ratio Log Level Per Day",
+      "visState": "{\"type\":\"histogram\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"scale\":\"linear\",\"mode\":\"percentage\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"date\",\"interval\":\"d\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"group\",\"params\":{\"field\":\"level\",\"size\":5,\"order\":\"asc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"logs-*\",\"query\":{\"query_string\":{\"query\":\"process:Tomcat\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "ELK-Ratio-Log-Level-Per-Day",
+    "_type": "visualization",
+    "_source": {
+      "title": "ELK - Ratio Log Level Per Day",
+      "visState": "{\"type\":\"histogram\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"scale\":\"linear\",\"mode\":\"percentage\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"date\",\"interval\":\"d\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"group\",\"params\":{\"field\":\"level\",\"size\":5,\"order\":\"asc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"logs-*\",\"query\":{\"query_string\":{\"query\":\"process:ELK\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Ratio-Log-Level-Per-Day",
+    "_type": "visualization",
+    "_source": {
+      "title": "Ratio Log Level Per Day",
+      "visState": "{\"type\":\"histogram\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"scale\":\"linear\",\"mode\":\"percentage\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"date\",\"interval\":\"d\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"group\",\"params\":{\"field\":\"level\",\"size\":5,\"order\":\"asc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"logs-*\",\"query\":{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Tomcat-Error-logs-per-packages",
+    "_type": "visualization",
+    "_source": {
+      "title": "Tomcat - Error logs per packages",
+      "visState": "{\"type\":\"table\",\"params\":{\"perPage\":10,\"showPartialRows\":false,\"showMeticsAtAllLevels\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"4\",\"type\":\"terms\",\"schema\":\"split\",\"params\":{\"field\":\"component\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\",\"row\":true}},{\"id\":\"5\",\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"package\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}},{\"id\":\"6\",\"type\":\"filters\",\"schema\":\"bucket\",\"params\":{\"filters\":[{\"input\":{\"query\":{\"query_string\":{\"query\":\"level:ERROR\",\"analyze_wildcard\":true}}},\"label\":\"ERROR\"}]}}],\"listeners\":{}}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"logs-*\",\"query\":{\"query_string\":{\"query\":\"process:Tomcat\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "ELK-Error-logs-per-packages",
+    "_type": "visualization",
+    "_source": {
+      "title": "ELK - Error logs per packages",
+      "visState": "{\"type\":\"table\",\"params\":{\"perPage\":10,\"showPartialRows\":false,\"showMeticsAtAllLevels\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"4\",\"type\":\"terms\",\"schema\":\"split\",\"params\":{\"field\":\"component\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\",\"row\":true}},{\"id\":\"5\",\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"package\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}},{\"id\":\"6\",\"type\":\"filters\",\"schema\":\"bucket\",\"params\":{\"filters\":[{\"input\":{\"query\":{\"query_string\":{\"query\":\"level:ERROR\",\"analyze_wildcard\":true}}},\"label\":\"ERROR\"}]}}],\"listeners\":{}}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"logs-*\",\"query\":{\"query_string\":{\"query\":\"process:ELK\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "ELK-Error-logs-per-component",
+    "_type": "visualization",
+    "_source": {
+      "title": "ELK - Error logs per component",
+      "visState": "{\"type\":\"table\",\"params\":{\"perPage\":10,\"showPartialRows\":false,\"showMeticsAtAllLevels\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"component\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}},{\"id\":\"3\",\"type\":\"filters\",\"schema\":\"bucket\",\"params\":{\"filters\":[{\"input\":{\"query\":{\"query_string\":{\"query\":\"level:ERROR\",\"analyze_wildcard\":true}}},\"label\":\"ERROR\"}]}}],\"listeners\":{}}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"logs-*\",\"query\":{\"query_string\":{\"query\":\"process:ELK\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "ELK-Ratio-Log-Level",
+    "_type": "visualization",
+    "_source": {
+      "title": "ELK - Ratio Log Level",
+      "visState": "{\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"level\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"logs-*\",\"query\":{\"query_string\":{\"query\":\"process:ELK\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  }
+]
