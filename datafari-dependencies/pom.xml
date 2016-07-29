@@ -18,7 +18,7 @@
     		<!--  mcf-core artefact doesn't exist in maven officla repo : add the lib to the project -->
 			<systemPath>${project.basedir}/../datafari-mcf/lib/mcf-core-2.4.jar</systemPath>
 		</dependency>
-
+		
 		<!-- Remote Maven repo dependencies -->
 		<dependency>
 			<groupId>log4j</groupId>

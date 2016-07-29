@@ -7,6 +7,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
+import org.apache.manifoldcf.core.interfaces.IThreadContext;
+import org.apache.manifoldcf.core.interfaces.LockManagerFactory;
+import org.apache.manifoldcf.core.interfaces.ThreadContextFactory;
+import org.apache.manifoldcf.core.system.ManifoldCF;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONException;
@@ -20,6 +25,7 @@ public class BackupManifoldCFConnectorsScript {
 	// TODO check if the logs are working properly
 	private static String configPropertiesFileName = "config/log4j.properties";
 
+
 	private final static Logger LOGGER = Logger.getLogger(BackupManifoldCFConnectorsScript.class);
 
 	/**
@@ -28,8 +34,10 @@ public class BackupManifoldCFConnectorsScript {
 	 */
 	public static void main(String[] args) {
 
+		
 		PropertyConfigurator.configure(configPropertiesFileName);
 
+		
 		if (args.length < 1) {
 			LOGGER.fatal("No argument");
 			return;
@@ -45,6 +53,23 @@ public class BackupManifoldCFConnectorsScript {
 		}
 
 		try {
+			
+
+			IThreadContext tc = ThreadContextFactory.make();
+			ManifoldCF.initializeEnvironment(tc);
+
+
+		    String masterDatabaseUsername = LockManagerFactory.getStringProperty(tc,"org.apache.manifoldcf.apilogin.password.obfuscated","");
+
+
+			ManifoldAPI.waitUntilManifoldIsStarted();
+		    
+			if (!"".equals(masterDatabaseUsername)){
+				String apiPassword = ManifoldCF.deobfuscate(masterDatabaseUsername);
+				LOGGER.info("Try to authenticate");
+				ManifoldAPI.authenticate("", apiPassword);
+			}
+			
 
 			File outputConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
 
@@ -62,7 +87,6 @@ public class BackupManifoldCFConnectorsScript {
 
 			if (args[0].equals("BACKUP")) {
 
-				ManifoldAPI.waitUntilManifoldIsStarted();
 
 				prepareDirectory(outputConnectionsDir);
 				saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS),
@@ -96,7 +120,6 @@ public class BackupManifoldCFConnectorsScript {
 			}
 
 			if (args[0].equals("RESTORE")) {
-				ManifoldAPI.waitUntilManifoldIsStarted();
 				ManifoldAPI.cleanAll();
 
 				restoreAllConnections(outputConnectionsDir, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
@@ -189,7 +212,6 @@ public class BackupManifoldCFConnectorsScript {
 
 		try {
 			
-			ManifoldAPI.waitUntilManifoldIsStarted();
 
 			prepareDirectory(outputConnectionsDir);
 			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS),
@@ -247,7 +269,6 @@ public class BackupManifoldCFConnectorsScript {
 
 		try {
 			
-			ManifoldAPI.waitUntilManifoldIsStarted();
 			ManifoldAPI.cleanAll();
 
 			restoreAllConnections(outputConnectionsDir, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
