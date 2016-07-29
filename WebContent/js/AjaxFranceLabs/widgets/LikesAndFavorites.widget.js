@@ -36,7 +36,7 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 					docIDs.push(doc.id);
 				});
 				jQuery.ajaxSettings.traditional = true;
-				$.get("./getLikesFavorites", { "documentsID": "youpi" }, function(data){
+				$.get("./getLikesFavorites", { "documentsID": docIDs }, function(data){
 					if (data.code==0){
 						window.globalVariableLikes = data.likesList;
 						window.globalVariableFavorites = data.favoritesList;
