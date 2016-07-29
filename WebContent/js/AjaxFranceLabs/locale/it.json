@@ -1,4 +1,10 @@
 {
+"synonymsListLabel":"List of synonyms",
+"words":"Words",
+"synonyms":"Synonyms",
+"synonymsPlaceholder":"Enter a word and press Enter",
+"addSynonyms":"Add new synonyms",
+"validModifications":"Validate modifications",
 "downZKconf":"Download configuration from Zookeeper",
 "downZKconfLabel":"Download the FileShare core configuration from the Zookeeper server",
 "zkDwnSuccess":"Zookeeper configuration successfully downloaded !",
