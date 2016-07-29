@@ -1,4 +1,5 @@
 {
+"synonymsError":"Erreur: certains mots n'ont pas de synonymes ou certains synonymes n'ont pas de correspondance à des mots",
 "synonymsListLabel":"Liste des synonymes",
 "words":"Mots",
 "synonyms":"Synonymes",

@@ -103,6 +103,9 @@ function getSynonymsList() {
 			}
 			if(words != "" && synonyms != "") {
 				synonymsList[words] = synonyms;
+			} else {
+				synonymsList[Error] = window.i18n.msgStore['synonymsError']
+				return synonymsList;
 			}
 		}
 	});
@@ -170,18 +173,22 @@ function getFile(){
 				// Add validate button function
 				$("#validate").click(function() {
 					var synonymsList = getSynonymsList();
-					$.post('./Synonyms', {"synonymsList": JSON.stringify(synonymsList), "language": $("#language").val()}, function(data) {
-						if(data.toString().indexOf("Error code : ")!==-1){
-							$("#synonymsDisplay").hide();
-			        		$("#ajaxResponse").append("<div class=col-xs-3></div>");
-							$("#ajaxResponse").append("<h3 class=col-xs-6>"+data+"</h3>");
-							$("#ajaxResponse").append("<div class=col-xs-3></div>");
-			        	}else{
-			        		$("#synonymsDisplay").show();
-							$("#ajaxResponse").empty();
-							$("#ajaxResponse").append(window.i18n.msgStore['modifDone']);
-			        	}
-					});
+					if(synonymsList[Error] == undefined || synonymsList[Error] == "") {
+						$.post('./Synonyms', {"synonymsList": JSON.stringify(synonymsList), "language": $("#language").val()}, function(data) {
+							if(data.toString().indexOf("Error code : ")!==-1){
+								$("#synonymsDisplay").hide();
+				        		$("#ajaxResponse").append("<div class=col-xs-3></div>");
+								$("#ajaxResponse").append("<h3 class=col-xs-6>"+data+"</h3>");
+								$("#ajaxResponse").append("<div class=col-xs-3></div>");
+				        	}else{
+				        		$("#synonymsDisplay").show();
+								$("#ajaxResponse").empty();
+								$("#ajaxResponse").append(window.i18n.msgStore['modifDone']);
+				        	}
+						});
+					} else {
+						 $("#ajaxResponse").html(synonymsList[Error]);
+					}
 				});
 			}
 			},
