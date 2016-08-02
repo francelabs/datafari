@@ -4,14 +4,16 @@
 # Set Datafari environment variable
 #
 #
-export DEV_OS=debian7
+
+source "dev-datafari.properties"
+
+
 
 export DATAFARI_HOME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../..
 
-echo $JAVA_HOME
 
 export DATAFARI_HOME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../..
-export JAVA_HOME=${DATAFARI_HOME}/${DEV_OS}/jvm
+export JAVA_HOME=${DATAFARI_HOME}/$DEV_OS/jvm
 export LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib:${DATAFARI_HOME}/ocr/tesseract/lib:${DATAFARI_HOME}/ocr/leptonica/lib
 export INIT_STATE_FILE=${DATAFARI_HOME}/bin/common/init_state.properties
 export CONFIG_FILE=${DATAFARI_HOME}/tomcat/conf/datafari.properties
@@ -26,7 +28,6 @@ export CASSANDRA_HOME=$DATAFARI_HOME/cassandra
 export CASSANDRA_ENV=$CASSANDRA_HOME/bin/cassandra.in.sh
 export ZK_HOME=$DATAFARI_HOME/zookeeper
 export ZK_ENV=$ZK_HOME/bin/zkEnv.sh
-
 
 # pid files 
 export MCF_PID_FILE=$PID_DIR/mcf_crawler_agent.pid
