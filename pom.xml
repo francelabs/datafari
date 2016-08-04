@@ -258,7 +258,7 @@
 								<!-- Version of MCF should be retrieved from a property file as well 
 									as the MD5 -->
 								<url>http://archive.apache.org/dist/manifoldcf/apache-manifoldcf-2.4/apache-manifoldcf-2.4-bin.tar.gz</url>
-								<md5>8C03C809A068DE1BA4DADC0AAE1CE380</md5>
+								<md5>53365df21af8ff6c057a7b9dc3724836</md5>
 								<unpack>true</unpack>
 								<outputDirectory>temp</outputDirectory>
 							</configuration>
@@ -324,8 +324,8 @@
 							<configuration>
 								<!-- Version of Jena should be retrieved from a property file as 
 									well as the MD5 -->
-								<url>http://apache.crihan.fr/dist/jena/binaries/apache-jena-3.0.1.tar.gz</url>
-								<md5>b8ee1ecfb47849550f9412450606c606</md5>
+								<url>http://apache.crihan.fr/dist/jena/binaries/apache-jena-3.1.0.tar.gz</url>
+								<md5>39100e0eb432eb18c1326b0697a02751</md5>
 								<unpack>true</unpack>
 								<outputDirectory>temp</outputDirectory>
 							</configuration>

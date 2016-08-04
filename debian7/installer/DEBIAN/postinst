@@ -29,7 +29,7 @@ db_get datafari/datafari_password
 chmod -R 775 /opt/datafari
 export JAVA_HOME=/opt/datafari/jvm
 cd /opt/datafari/mcf/mcf_home/obfuscation-utility
-sed -i -e "s/@PASSWORD@/$(./obfuscate.sh ${RET})/g" /opt/datafari/mcf/mcf_home/properties.xml
+sed -i -e "s~@PASSWORD@~$(./obfuscate.sh ${RET})~g" /opt/datafari/mcf/mcf_home/properties.xml
 sed -i -e "s/@TEMPADMINPASSWORD@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
 id -u postgres >/dev/null 2>&1 || useradd postgres
 id -u datafari >/dev/null 2>&1 || useradd datafari
