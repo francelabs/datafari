@@ -42,8 +42,7 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 						window.globalVariableFavorites = data.favoritesList;
 						self.afterGettingLikes(docs);
 					}
-					else if (data.code == self.SERVERNOTCONNECTED ){
-					}else{
+					else if (data.code != self.SERVERNOTCONNECTED ){
 						// if there's a probleme we CAN'T call self.afterGettingLikes
 						self.showError(data.code);
 					}

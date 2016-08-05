@@ -4,7 +4,7 @@
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
  *  * You may obtain a copy of the License at
- *  * 
+ *  *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
  *  *
  *  * Unless required by applicable law or agreed to in writing, software
@@ -41,63 +41,66 @@ import com.francelabs.datafari.utils.ScriptConfiguration;
 public class ConfigLikesAndFavorites extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(ConfigLikesAndFavorites.class.getName());
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public ConfigLikesAndFavorites() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public ConfigLikesAndFavorites() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	@Override
+	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	@Override
+	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 		BasicConfigurator.configure();
-		JSONObject jsonResponse = new JSONObject();
-		if (request.getParameter("enable")!=null){
-			String enable = request.getParameter("enable");
+		final JSONObject jsonResponse = new JSONObject();
+		if (request.getParameter("enable") != null) {
+			final String enable = request.getParameter("enable");
 			request.setCharacterEncoding("utf8");
 			response.setContentType("application/json");
-			boolean error=false;
-			if (enable.equals("true")){
+			boolean error = false;
+			if (enable.equals("true")) {
 				error = ScriptConfiguration.setProperty(StringsDatafariProperties.LIKESANDFAVORTES, "true");
 				LikesLauncher.startScheduler();
-			}else{
+			} else {
 				error = ScriptConfiguration.setProperty(StringsDatafariProperties.LIKESANDFAVORTES, "false");
 				LikesLauncher.shutDown();
 			}
 
 			try {
-				if (error){				
-					jsonResponse.put(OutputConstants.CODE,CodesReturned.GENERALERROR);
-				}else{
-					jsonResponse.put(OutputConstants.CODE,CodesReturned.ALLOK);
+				if (error) {
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+				} else {
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 				}
-			} catch (JSONException e) {
+			} catch (final JSONException e) {
 				// TODO Auto-generated catch block
 				logger.error(e);
 			}
-		}else if (request.getParameter("initiate")!=null){
-			String isEnabled = ScriptConfiguration.getProperty(StringsDatafariProperties.LIKESANDFAVORTES);
+		} else if (request.getParameter("initiate") != null) {
+			final String isEnabled = ScriptConfiguration.getProperty(StringsDatafariProperties.LIKESANDFAVORTES);
 			try {
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK)
-				    .put("isEnabled",isEnabled);
-			} catch (JSONException e) {
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put("isEnabled", isEnabled);
+			} catch (final JSONException e) {
 				// TODO Auto-generated catch block
 				logger.error(e);
 			}
-			
+
 		}
-		PrintWriter out = response.getWriter();
+		final PrintWriter out = response.getWriter();
 		out.print(jsonResponse);
 	}
 

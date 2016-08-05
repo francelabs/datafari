@@ -19,45 +19,48 @@ import com.francelabs.datafari.service.db.UserDataService;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.user.User;
 
-
 /**
  * Servlet implementation class getAllUsersAndRoles
  */
 @WebServlet("/SearchAdministrator/deleteRole")
 public class DeleteRole extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(DeleteRole.class.getName());  
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public DeleteRole() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
+	private static final Logger logger = Logger.getLogger(DeleteRole.class.getName());
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		JSONObject jsonResponse = new JSONObject();
+	public DeleteRole() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	@Override
+	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+		final JSONObject jsonResponse = new JSONObject();
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
-		try{
-			if (request.getParameter(UserDataService.USERNAMECOLUMN)!=null && request.getParameter(UserDataService.ROLECOLUMN)!=null){
-				User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(),"");
+		try {
+			if (request.getParameter(UserDataService.USERNAMECOLUMN) != null && request.getParameter(UserDataService.ROLECOLUMN) != null) {
+				final User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(), "");
 				try {
-				user.deleteRole(request.getParameter(UserDataService.ROLECOLUMN).toString());
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put(OutputConstants.STATUS, "User deleted with success");
-				} catch (DatafariServerException e){
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE).put(OutputConstants.STATUS, "Datafari isn't connected to Database");
+					user.deleteRole(request.getParameter(UserDataService.ROLECOLUMN).toString());
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put(OutputConstants.STATUS, "User deleted with success");
+				} catch (final DatafariServerException e) {
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE.getValue()).put(OutputConstants.STATUS,
+							"Datafari isn't connected to Database");
 				}
-			}else{
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY).put(OutputConstants.STATUS, "Problem with query");
+			} else {
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue()).put(OutputConstants.STATUS, "Problem with query");
 			}
-		}catch (JSONException e) {
+		} catch (final JSONException e) {
 			logger.error(e);
 		}
-		PrintWriter out = response.getWriter();
+		final PrintWriter out = response.getWriter();
 		out.print(jsonResponse);
 	}
 }

@@ -40,30 +40,29 @@ public class AddRole extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		JSONObject jsonResponse = new JSONObject();
+	@Override
+	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+		final JSONObject jsonResponse = new JSONObject();
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		try {
-			if (request.getParameter(UserDataService.USERNAMECOLUMN) != null
-					&& request.getParameter(UserDataService.ROLECOLUMN) != null) {
-				User user = new User(request.getParameter(UserConstants.USERNAMECOLUMN).toString(), "");
+			if (request.getParameter(UserDataService.USERNAMECOLUMN) != null && request.getParameter(UserDataService.ROLECOLUMN) != null) {
+				final User user = new User(request.getParameter(UserConstants.USERNAMECOLUMN).toString(), "");
 				try {
 					user.addRole(request.getParameter(UserDataService.ROLECOLUMN).toString());
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put(OutputConstants.STATUS, "Role add  with success to "
-							+ request.getParameter(UserConstants.USERNAMECOLUMN).toString());
-				} catch (DatafariServerException e) {
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE).put(OutputConstants.STATUS,
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put(OutputConstants.STATUS,
+							"Role add  with success to " + request.getParameter(UserConstants.USERNAMECOLUMN).toString());
+				} catch (final DatafariServerException e) {
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE.getValue()).put(OutputConstants.STATUS,
 							"Datafari isn't connected to DB");
 				}
 			} else {
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY).put(OutputConstants.STATUS, "Problem with query");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue()).put(OutputConstants.STATUS, "Problem with query");
 			}
-		} catch (JSONException e) {
+		} catch (final JSONException e) {
 			logger.error(e);
 		}
-		PrintWriter out = response.getWriter();
+		final PrintWriter out = response.getWriter();
 		out.print(jsonResponse);
 	}
 }

@@ -58,7 +58,8 @@ public class ModifyRealmLdap extends HttpServlet {
 							request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_NAME),
 							request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_PW));
 				} catch (final NamingException e1) {
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONAD).put(OutputConstants.STATUS, "Fail to connect to AD with the setting given");
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONAD.getValue()).put(OutputConstants.STATUS,
+							"Fail to connect to AD with the setting given");
 					isConnected = false;
 				}
 				if (isConnected) {
@@ -87,49 +88,47 @@ public class ModifyRealmLdap extends HttpServlet {
 					try {
 						RealmLdapConfiguration.setConfig(h, request);
 						LdapMcfConfig.update(h);
-								jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put(OutputConstants.STATUS, "200 ALL OK");
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put(OutputConstants.STATUS, "200 ALL OK");
 					} catch (SAXException | ParserConfigurationException e) {
 						logger.error(e);
-						jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR).put(OutputConstants.STATUS, "Problem with XML And JSON Manipulation");
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue()).put(OutputConstants.STATUS,
+								"Problem with XML And JSON Manipulation");
 					}
 				}
 
 			} else {
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY).put(OutputConstants.STATUS, "Problem with query");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue()).put(OutputConstants.STATUS, "Problem with query");
 			}
-		}catch(
+		} catch (
 
-	final JSONException e)
+		final JSONException e)
 
-	{
-		logger.error(e);
-	}
+		{
+			logger.error(e);
+		}
 
-	final PrintWriter out = response.getWriter();out.print(jsonResponse);
+		final PrintWriter out = response.getWriter();
+		out.print(jsonResponse);
 
 	}
 
 	@Override
-	protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
-			throws ServletException, IOException {
+	protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
 		final JSONObject jsonResponse = new JSONObject();
 		req.setCharacterEncoding("utf8");
 		resp.setContentType("application/json");
 		try {
 			try {
 				final HashMap<String, String> h = RealmLdapConfiguration.getConfig(req);
-				jsonResponse.put("code", CodesReturned.ALLOK);
-				jsonResponse.put(RealmLdapConfiguration.ATTR_CONNECTION_URL,
-						h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL));
-				jsonResponse.put(RealmLdapConfiguration.ATTR_CONNECTION_NAME,
-						h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME));
-				jsonResponse.put(RealmLdapConfiguration.ATTR_CONNECTION_PW,
-						h.get(RealmLdapConfiguration.ATTR_CONNECTION_PW));
-				jsonResponse.put(RealmLdapConfiguration.ATTR_DOMAIN_NAME,
-						h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME));
+				jsonResponse.put("code", CodesReturned.ALLOK.getValue());
+				jsonResponse.put(RealmLdapConfiguration.ATTR_CONNECTION_URL, h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL));
+				jsonResponse.put(RealmLdapConfiguration.ATTR_CONNECTION_NAME, h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME));
+				jsonResponse.put(RealmLdapConfiguration.ATTR_CONNECTION_PW, h.get(RealmLdapConfiguration.ATTR_CONNECTION_PW));
+				jsonResponse.put(RealmLdapConfiguration.ATTR_DOMAIN_NAME, h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME));
 				jsonResponse.put(RealmLdapConfiguration.ATTR_SUBTREE, h.get(RealmLdapConfiguration.ATTR_SUBTREE));
 			} catch (SAXException | ParserConfigurationException e) {
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR).put(OutputConstants.STATUS, "Problem with XML Manipulation");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue()).put(OutputConstants.STATUS,
+						"Problem with XML Manipulation");
 				logger.error(e);
 			}
 		} catch (final JSONException e) {

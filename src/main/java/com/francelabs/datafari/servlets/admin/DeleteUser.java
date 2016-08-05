@@ -20,49 +20,52 @@ import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.user.Favorite;
 import com.francelabs.datafari.user.User;
 
-
 /**
  * Servlet implementation class getAllUsersAndRoles
  */
 @WebServlet("/SearchAdministrator/deleteUser")
 public class DeleteUser extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(DeleteUser.class.getName());  
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public DeleteUser() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
+	private static final Logger logger = Logger.getLogger(DeleteUser.class.getName());
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		JSONObject jsonResponse = new JSONObject();
+	public DeleteUser() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	@Override
+	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+		final JSONObject jsonResponse = new JSONObject();
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
-		try{
-			if (request.getParameter(UserDataService.USERNAMECOLUMN)!=null){
-				User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(),"");
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put(OutputConstants.STATUS, "User deleted with success");
+		try {
+			if (request.getParameter(UserDataService.USERNAMECOLUMN) != null) {
+				final User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(), "");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put(OutputConstants.STATUS, "User deleted with success");
 
 				try {
 					user.deleteUser();
 					Favorite.removeFavoritesAndLikesDB(request.getParameter(UserDataService.USERNAMECOLUMN).toString());
-				} catch (DatafariServerException e){
+				} catch (final DatafariServerException e) {
 
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE).put(OutputConstants.STATUS, "Problem with database");
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE.getValue()).put(OutputConstants.STATUS,
+							"Problem with database");
 				}
-			}else{
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY).put(OutputConstants.STATUS, "Problem with query");
+			} else {
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue()).put(OutputConstants.STATUS, "Problem with query");
 			}
-		}catch (JSONException e) {
+		} catch (final JSONException e) {
 			// TODO Auto-generated catch block
 			logger.error(e);
 		}
-		PrintWriter out = response.getWriter();
+		final PrintWriter out = response.getWriter();
 		out.print(jsonResponse);
 	}
 }

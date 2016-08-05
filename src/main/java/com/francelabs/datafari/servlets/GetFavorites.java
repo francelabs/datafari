@@ -4,7 +4,7 @@
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
  *  * You may obtain a copy of the License at
- *  * 
+ *  *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
  *  *
  *  * Unless required by applicable law or agreed to in writing, software
@@ -18,8 +18,6 @@ package com.francelabs.datafari.servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -35,7 +33,6 @@ import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.user.Favorite;
-import com.francelabs.datafari.user.UserConstants;
 
 /**
  * Servlet implementation class GetFavorites
@@ -58,31 +55,31 @@ public class GetFavorites extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		JSONObject jsonResponse = new JSONObject();
+	@Override
+	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+		final JSONObject jsonResponse = new JSONObject();
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		try {
-			String[] documentIDs = request.getParameterValues(documentID);
-			Principal userPrincipal = request.getUserPrincipal();
+			final String[] documentIDs = request.getParameterValues(documentID);
+			final Principal userPrincipal = request.getUserPrincipal();
 			// checking if the user is connected
 			if (userPrincipal == null) {
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.NOTCONNECTED).put(OutputConstants.STATUS,
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.NOTCONNECTED.getValue()).put(OutputConstants.STATUS,
 						"Please reload the page, you're not connected");
 			} else {
-				String username = userPrincipal.getName();
+				final String username = userPrincipal.getName();
 				try {
 					jsonResponse.put(FAVORITESLIST, Favorite.getFavorites(username, documentIDs));
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK);
-				} catch (DatafariServerException e) {
-					jsonResponse.put(OutputConstants.CODE, e.getErrorCode());
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+				} catch (final DatafariServerException e) {
+					jsonResponse.put(OutputConstants.CODE, e.getErrorCode().getValue());
 				}
 			}
-		} catch (JSONException e) {
+		} catch (final JSONException e) {
 			logger.error(e);
 		}
-		PrintWriter out = response.getWriter();
+		final PrintWriter out = response.getWriter();
 		out.print(jsonResponse);
 	}
 

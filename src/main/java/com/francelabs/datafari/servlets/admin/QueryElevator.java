@@ -44,7 +44,7 @@ import com.francelabs.datafari.utils.ZKUtils;
 
 @WebServlet("/SearchExpert/queryElevator")
 public class QueryElevator extends HttpServlet {
-	private String env;
+	private final String env;
 	private final String server = Core.FILESHARE.toString();
 	private static final long serialVersionUID = 1L;
 	private final static Logger LOGGER = Logger.getLogger(QueryElevator.class.getName());
@@ -55,15 +55,14 @@ public class QueryElevator extends HttpServlet {
 	 */
 	public QueryElevator() {
 		super();
-		
+
 		String environnement = System.getenv("DATAFARI_HOME");
-		
-		if(environnement==null){															//If in development environment	
+
+		if (environnement == null) { // If in development environment
 			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
 		}
-		env = environnement+"/solr/solrcloud/FileShare/conf";		
-	
-		
+		env = environnement + "/solr/solrcloud/FileShare/conf";
+
 		if (new File(env + "/elevate.xml").exists()) {
 			elevatorFile = new File(env + "/elevate.xml");
 		}
@@ -132,7 +131,7 @@ public class QueryElevator extends HttpServlet {
 				for (final Elevate.Query query : elevate.getQuery()) {
 					queriesList.add(query.getText());
 				}
-				jsonResponse.put("queries", queriesList).put(OutputConstants.CODE, CodesReturned.ALLOK);
+				jsonResponse.put("queries", queriesList).put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 			} else if (getParam.equals("docs")) {
 				final String queryParam = request.getParameter("query");
 				final List<String> docsList = new ArrayList<>();
@@ -143,10 +142,10 @@ public class QueryElevator extends HttpServlet {
 						}
 					}
 				}
-				jsonResponse.put("docs", docsList).put(OutputConstants.CODE, CodesReturned.ALLOK);
+				jsonResponse.put("docs", docsList).put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 			}
 		} catch (final Exception e) {
-			jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
+			jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
 			LOGGER.error("Error on marshal/unmarshal elevate.xml file ", e);
 		}
 		final PrintWriter out = response.getWriter();
@@ -210,7 +209,7 @@ public class QueryElevator extends HttpServlet {
 					}
 
 					// Set the response code
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK);
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 
 				} else if (action.equals("down")) { // Remove the doc
 
@@ -231,7 +230,7 @@ public class QueryElevator extends HttpServlet {
 					}
 
 					// Set the response code
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK);
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 				}
 
 				// Re-transform the Java object into the elevate.xml file thanks
@@ -240,10 +239,9 @@ public class QueryElevator extends HttpServlet {
 				marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, new Boolean(true));
 				final OutputStream os = new FileOutputStream(elevatorFile);
 				marshal.marshal(elevate, os);
-				
 
 			} catch (final Exception e) {
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
 				LOGGER.error("Error on marshal/unmarshal elevate.xml file in solr/solr_home/" + server + "/conf", e);
 			}
 		} else if (request.getParameter("query") != null && !request.getParameter("query").equals("") && request.getParameter("tool") != null
@@ -314,10 +312,10 @@ public class QueryElevator extends HttpServlet {
 				ZKUtils.configZK("uploadconfigzk.sh", server);
 
 				// Set the response code
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK);
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 
 			} catch (final Exception e) {
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
 				LOGGER.error("Error on marshal/unmarshal elevate.xml file in solr/solr_home/" + server + "/conf", e);
 			}
 		}

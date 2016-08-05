@@ -56,20 +56,20 @@ public class IsLdapConfig extends HttpServlet {
 				LDAPService.getInstance().testLDAPConnection(h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL),
 						h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME), h.get(RealmLdapConfiguration.ATTR_CONNECTION_PW));
 			}
-			jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put("isActivated", isLdapActivated);
+			jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put("isActivated", isLdapActivated);
 		} catch (final JSONException | ParserConfigurationException | SAXException e) {
-			jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
+			jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
 			logger.error("Fatal Error", e);
 		} catch (final NamingException e) {
 			try {
 				ActivateLDAPSolr.disactivate();
 			} catch (final Exception e1) {
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
 				logger.error("Fatal Error", e);
 			} finally {
 				ScriptConfiguration.setProperty(LDAPACTIVATED, "false");
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONAD).put(OutputConstants.STATUS, "Fail to connect to AD with the given settings ")
-						.put("isActivated", false);
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONAD.getValue())
+						.put(OutputConstants.STATUS, "Fail to connect to AD with the given settings ").put("isActivated", false);
 			}
 
 		}
@@ -84,7 +84,7 @@ public class IsLdapConfig extends HttpServlet {
 		resp.setContentType("application/json");
 		try {
 			if (req.getParameter("isLdapActivated") == null) {
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY).put(OutputConstants.STATUS, "Query Malformed");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue()).put(OutputConstants.STATUS, "Query Malformed");
 			} else {
 				try {
 					if (req.getParameter("isLdapActivated").toString().equals("true")) {
@@ -95,16 +95,17 @@ public class IsLdapConfig extends HttpServlet {
 
 						ActivateLDAPSolr.activate();
 						if (ScriptConfiguration.setProperty(LDAPACTIVATED, req.getParameter("isLdapActivated"))) {
-							jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
+							jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
 						}
 					} else {
 						ActivateLDAPSolr.disactivate();
 					}
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put("isActivated", req.getParameter("isLdapActivated"));
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put("isActivated", req.getParameter("isLdapActivated"));
 				} catch (final NamingException e) {
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONAD).put(OutputConstants.STATUS, "Fail to connect to AD with the given settings");
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONAD.getValue()).put(OutputConstants.STATUS,
+							"Fail to connect to AD with the given settings");
 				} catch (final Exception e) {
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
 					logger.error("Fatal Error", e);
 				}
 			}

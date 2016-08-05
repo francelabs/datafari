@@ -76,14 +76,14 @@ public class ELKAdmin extends HttpServlet {
 		final boolean urlUp = isURLUp(ELKConfiguration.getProperty(ELKConfiguration.KIBANA_URI));
 		try {
 			if (activated) {
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put(ELKConfiguration.ELK_ACTIVATION, "true");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put(ELKConfiguration.ELK_ACTIVATION, "true");
 			} else {
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put(ELKConfiguration.ELK_ACTIVATION, "false");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put(ELKConfiguration.ELK_ACTIVATION, "false");
 			}
 			if (urlUp) {
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put("isELKUp", "true");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put("isELKUp", "true");
 			} else {
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put("isELKUp", "false");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put("isELKUp", "false");
 			}
 		} catch (final JSONException e) {
 			logger.error("Error", e);
@@ -100,7 +100,7 @@ public class ELKAdmin extends HttpServlet {
 		resp.setContentType("application/json");
 		try {
 			if (req.getParameter(ELKConfiguration.ELK_ACTIVATION) == null) {
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY).put(OutputConstants.STATUS, "Query Malformed");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue()).put(OutputConstants.STATUS, "Query Malformed");
 			} else {
 				String elkActivation = req.getParameter(ELKConfiguration.ELK_ACTIVATION);
 
@@ -133,12 +133,12 @@ public class ELKAdmin extends HttpServlet {
 						}
 					}
 					if (ELKConfiguration.setProperty(ELKConfiguration.ELK_ACTIVATION, elkActivation)) {
-						jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
 					} else {
-						jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put(ELKConfiguration.ELK_ACTIVATION, elkActivation);
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put(ELKConfiguration.ELK_ACTIVATION, elkActivation);
 					}
 				} catch (final Exception e) {
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
 					logger.error("Fatal Error", e);
 				}
 			}

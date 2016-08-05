@@ -4,7 +4,7 @@
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
  *  * You may obtain a copy of the License at
- *  * 
+ *  *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
  *  *
  *  * Unless required by applicable law or agreed to in writing, software
@@ -17,8 +17,6 @@ package com.francelabs.datafari.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -32,7 +30,6 @@ import org.json.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
-import com.francelabs.datafari.servlets.admin.ConfigDeduplication;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.user.Favorite;
 import com.francelabs.datafari.user.Like;
@@ -46,7 +43,7 @@ public class GetLikesFavorites extends HttpServlet {
 	private static final Logger logger = Logger.getLogger(GetLikesFavorites.class.getName());
 	private static final String FAVORITESLIST = "favoritesList";
 	private static final String LIKESLIST = "likesList";
-	
+
 	private static final String DOCUMENTSID = "documentsID";
 
 	/**
@@ -61,33 +58,34 @@ public class GetLikesFavorites extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		JSONObject jsonResponse = new JSONObject();
+	@Override
+	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+		final JSONObject jsonResponse = new JSONObject();
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
-		
-		
+
 		try {
-			String[] documentIDs = request.getParameterValues(DOCUMENTSID);
+			final String[] documentIDs = request.getParameterValues(DOCUMENTSID);
 
 			if (request.getUserPrincipal() != null) {
-				String username = request.getUserPrincipal().getName();
+				final String username = request.getUserPrincipal().getName();
 				try {
 					jsonResponse.put(FAVORITESLIST, Favorite.getFavorites(username, documentIDs));
-					
+
 					jsonResponse.put(LIKESLIST, Like.getLikes(username, documentIDs));
 
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK);
-				} catch (DatafariServerException e) {
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+				} catch (final DatafariServerException e) {
 
-					jsonResponse.put(OutputConstants.CODE, e.getErrorCode()).put(OutputConstants.STATUS, "Not connected yet");
+					jsonResponse.put(OutputConstants.CODE, e.getErrorCode().getValue()).put(OutputConstants.STATUS, "Not connected yet");
 				}
+			} else {
+				jsonResponse.put("code", CodesReturned.NOTCONNECTED.getValue()).put(OutputConstants.STATUS, "Not connected yet");
 			}
-		} catch (JSONException e) {
+		} catch (final JSONException e) {
 			logger.error(e);
 		}
-		PrintWriter out = response.getWriter();
+		final PrintWriter out = response.getWriter();
 		out.print(jsonResponse);
 	}
 

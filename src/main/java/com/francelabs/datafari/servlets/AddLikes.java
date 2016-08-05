@@ -4,7 +4,7 @@
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
  *  * You may obtain a copy of the License at
- *  * 
+ *  *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
  *  *
  *  * Unless required by applicable law or agreed to in writing, software
@@ -32,9 +32,7 @@ import org.json.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
-import com.francelabs.datafari.servlets.admin.ConfigDeduplication;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
-import com.francelabs.datafari.user.Like;
 import com.francelabs.datafari.utils.UpdateNbLikes;
 
 /**
@@ -57,8 +55,8 @@ public class AddLikes extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	@Override
+	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 	}
 
@@ -66,30 +64,30 @@ public class AddLikes extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	@Override
+	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		JSONObject jsonResponse = new JSONObject();
+		final JSONObject jsonResponse = new JSONObject();
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
-		String documentId = request.getParameter("idDocument");
+		final String documentId = request.getParameter("idDocument");
 		if (documentId != null) {
 			try {
-				Principal userPrincipal = request.getUserPrincipal();
+				final Principal userPrincipal = request.getUserPrincipal();
 				// checking if the user is connected
 				if (userPrincipal == null) {
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.NOTCONNECTED).put(OutputConstants.STATUS,
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.NOTCONNECTED.getValue()).put(OutputConstants.STATUS,
 							"Please reload the page, you'r not connected");
 				} else {
-					String username = request.getUserPrincipal().getName(); // get
-																			// the
-																			// username
+					final String username = request.getUserPrincipal().getName(); // get
+					// the
+					// username
 					try {
 						UpdateNbLikes.getInstance().increment(documentId);
-						jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK);
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 
-					} catch (DatafariServerException e) {
-						jsonResponse.put(OutputConstants.CODE, e.getErrorCode());
+					} catch (final DatafariServerException e) {
+						jsonResponse.put(OutputConstants.CODE, e.getErrorCode().getValue());
 						if (e.getErrorCode().equals(CodesReturned.PROBLEMCONNECTIONDATABASE)) {
 							// if the like was already done (attempt to increase
 							// illegaly the likes)
@@ -97,19 +95,19 @@ public class AddLikes extends HttpServlet {
 						}
 					}
 				}
-			} catch (JSONException e) {
+			} catch (final JSONException e) {
 				// TODO Auto-generated catch block
 				logger.error(e);
 			}
 		} else {
 			try {
 				jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR).put(OutputConstants.STATUS, "Query malformed");
-			} catch (JSONException e) {
+			} catch (final JSONException e) {
 				// TODO Auto-generated catch block
 				logger.error(e);
 			}
 		}
-		PrintWriter out = response.getWriter();
+		final PrintWriter out = response.getWriter();
 		out.print(jsonResponse);
 	}
 

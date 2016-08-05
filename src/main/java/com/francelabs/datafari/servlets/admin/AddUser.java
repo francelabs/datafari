@@ -49,8 +49,7 @@ public class AddUser extends HttpServlet {
 	 *      response)
 	 */
 	@Override
-	protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 		final JSONObject jsonResponse = new JSONObject();
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
@@ -69,32 +68,30 @@ public class AddUser extends HttpServlet {
 
 					// Retrieve the LDAP context from the LDAP configuration
 					// parameters
-					final DirContext ctx = AcitveDirectoryUtils.getLdapContext(
-							h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL),
-							h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME),
-							h.get(RealmLdapConfiguration.ATTR_CONNECTION_PW));
+					final DirContext ctx = AcitveDirectoryUtils.getLdapContext(h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL),
+							h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME), h.get(RealmLdapConfiguration.ATTR_CONNECTION_PW));
 
-					userExists = AcitveDirectoryUtils.checkUser(username,
-							h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME), ctx);
+					userExists = AcitveDirectoryUtils.checkUser(username, h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME), ctx);
 
 					if (userExists) {
 						final User user = new User(request.getParameter(UserConstants.USERNAMECOLUMN).toString(), "");
 						try {
 							user.signup(Arrays.asList(request.getParameterValues(UserDataService.ROLECOLUMN + "[]")));
-							jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put(OutputConstants.STATUS, "User successfully added");
-						} catch (DatafariServerException e) {
+							jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put(OutputConstants.STATUS,
+									"User successfully added");
+						} catch (final DatafariServerException e) {
 							if (e.getErrorCode().equals(CodesReturned.USERALREADYINBASE)) {
-								jsonResponse.put(OutputConstants.CODE, CodesReturned.USERALREADYINBASE).put(OutputConstants.STATUS,
+								jsonResponse.put(OutputConstants.CODE, CodesReturned.USERALREADYINBASE.getValue()).put(OutputConstants.STATUS,
 										"User already Signed up");
 							} else {
-								jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE)
-										.put(OutputConstants.STATUS, "Problem with database");
+								jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE.getValue()).put(OutputConstants.STATUS,
+										"Problem with database");
 							}
 						}
 
 					} else {
 						try {
-							jsonResponse.put(OutputConstants.CODE, CodesReturned.ADUSERNOTEXISTS).put(OutputConstants.STATUS,
+							jsonResponse.put(OutputConstants.CODE, CodesReturned.ADUSERNOTEXISTS.getValue()).put(OutputConstants.STATUS,
 									"AD user does not exist");
 						} catch (final JSONException e) {
 							logger.error(e);
@@ -102,7 +99,7 @@ public class AddUser extends HttpServlet {
 					}
 				} catch (ParserConfigurationException | SAXException e) {
 					try {
-						jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR).put(OutputConstants.STATUS,
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue()).put(OutputConstants.STATUS,
 								"Problem with XML Manipulation");
 						logger.error(e);
 					} catch (final JSONException e1) {
@@ -110,32 +107,31 @@ public class AddUser extends HttpServlet {
 					}
 				} catch (final NamingException e) {
 					try {
-						jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONAD).put(OutputConstants.STATUS,
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONAD.getValue()).put(OutputConstants.STATUS,
 								"Problem with AD connection");
 						logger.error(e);
 					} catch (final JSONException e1) {
 						logger.error(e);
 					}
 				}
-			} else if (request.getParameter(UserDataService.USERNAMECOLUMN) != null
-					&& request.getParameter(UserDataService.PASSWORDCOLUMN) != null
+			} else if (request.getParameter(UserDataService.USERNAMECOLUMN) != null && request.getParameter(UserDataService.PASSWORDCOLUMN) != null
 					&& request.getParameter(UserDataService.ROLECOLUMN + "[]") != null) {
 				final User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(),
 						request.getParameter(UserDataService.PASSWORDCOLUMN).toString());
 				try {
 					user.signup(Arrays.asList(request.getParameterValues(UserDataService.ROLECOLUMN + "[]")));
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put(OutputConstants.STATUS, "User successfully added");
-				} catch (DatafariServerException e) {
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put(OutputConstants.STATUS, "User successfully added");
+				} catch (final DatafariServerException e) {
 					if (e.getErrorCode().equals(CodesReturned.USERALREADYINBASE)) {
-						jsonResponse.put(OutputConstants.CODE, CodesReturned.USERALREADYINBASE).put(OutputConstants.STATUS,
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.USERALREADYINBASE.getValue()).put(OutputConstants.STATUS,
 								"User already Signed up");
 					} else {
-						jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE).put(OutputConstants.STATUS,
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE.getValue()).put(OutputConstants.STATUS,
 								"Problem with database");
 					}
 				}
 			} else {
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY).put("statut", "Problem with query");
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue()).put("statut", "Problem with query");
 			}
 		} catch (final JSONException e) {
 			logger.error(e);

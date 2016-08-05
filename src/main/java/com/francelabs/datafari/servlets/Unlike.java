@@ -4,7 +4,7 @@
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
  *  * You may obtain a copy of the License at
- *  * 
+ *  *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
  *  *
  *  * Unless required by applicable law or agreed to in writing, software
@@ -33,7 +33,6 @@ import org.json.JSONObject;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
-import com.francelabs.datafari.user.Favorite;
 import com.francelabs.datafari.user.Like;
 import com.francelabs.datafari.utils.UpdateNbLikes;
 
@@ -57,8 +56,8 @@ public class Unlike extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	@Override
+	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 	}
 
@@ -66,50 +65,50 @@ public class Unlike extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		JSONObject jsonResponse = new JSONObject();
+	@Override
+	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+		final JSONObject jsonResponse = new JSONObject();
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
-		String documentId = request.getParameter("idDocument");
+		final String documentId = request.getParameter("idDocument");
 		if (documentId != null) {
 			try {
-				Principal userPrincipal = request.getUserPrincipal();
+				final Principal userPrincipal = request.getUserPrincipal();
 				// checking if the user is connected
 				if (userPrincipal == null) {
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.NOTCONNECTED).put(OutputConstants.STATUS,
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.NOTCONNECTED.getValue()).put(OutputConstants.STATUS,
 							"Please reload the page, you'r not connected");
 				} else {
-					String username = request.getUserPrincipal().getName();
+					final String username = request.getUserPrincipal().getName();
 					try {
 						Like.unlike(username, documentId);
 						UpdateNbLikes.getInstance().decrement(documentId);
-						jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK);
-					} catch (DatafariServerException e) {
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+					} catch (final DatafariServerException e) {
 						if (e.getErrorCode().equals(CodesReturned.ALREADYPERFORMED)) {
 							// the document isn't liked (attempt to decrease the
 							// likes of a document)
 							jsonResponse.put(OutputConstants.CODE, e.getErrorCode());
 						} else {
-							jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE).put(OutputConstants.STATUS,
+							jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE.getValue()).put(OutputConstants.STATUS,
 									"Problem while connecting to database");
 						}
 					}
 
 				}
-			} catch (JSONException e) {
+			} catch (final JSONException e) {
 				// TODO Auto-generated catch block
 				logger.error(e);
 			}
 		} else {
 			try {
 				jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR).put(OutputConstants.STATUS, "Query malformed");
-			} catch (JSONException e) {
+			} catch (final JSONException e) {
 				// TODO Auto-generated catch block
 				logger.error(e);
 			}
 		}
-		PrintWriter out = response.getWriter();
+		final PrintWriter out = response.getWriter();
 		out.print(jsonResponse);
 	}
 

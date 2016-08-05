@@ -2,7 +2,6 @@ package com.francelabs.datafari.servlets.admin;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,32 +26,35 @@ import com.francelabs.datafari.user.User;
 public class GetAllUsersAndRoles extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(GetAllUsersAndRoles.class);
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public GetAllUsersAndRoles() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		JSONObject jsonResponse = new JSONObject();
+	public GetAllUsersAndRoles() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	@Override
+	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+		final JSONObject jsonResponse = new JSONObject();
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		try {
-			Map<String, List<String>> usersList = User.getAllUsers();
-			if (usersList!=null)
-				jsonResponse.put(OutputConstants.CODE,CodesReturned.ALLOK).put(OutputConstants.STATUS,User.getAllUsers());
+			final Map<String, List<String>> usersList = User.getAllUsers();
+			if (usersList != null)
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put(OutputConstants.STATUS, User.getAllUsers());
 			else
-				jsonResponse.put(OutputConstants.CODE,CodesReturned.PROBLEMCONNECTIONDATABASE).put(OutputConstants.STATUS,"Datafari isn't connected to Cassandra");
-		}catch (JSONException e) {
-				logger.error(e);
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE.getValue()).put(OutputConstants.STATUS,
+						"Datafari isn't connected to Cassandra");
+		} catch (final JSONException e) {
+			logger.error(e);
 		}
-		PrintWriter out = response.getWriter();
+		final PrintWriter out = response.getWriter();
 		out.print(jsonResponse);
 	}
 

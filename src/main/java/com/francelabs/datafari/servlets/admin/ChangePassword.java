@@ -18,7 +18,6 @@ import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.service.db.UserDataService;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.user.User;
-import com.francelabs.datafari.user.UserConstants;
 
 /**
  * Servlet implementation class getAllUsersAndRoles
@@ -37,29 +36,32 @@ public class ChangePassword extends HttpServlet {
 	}
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		JSONObject jsonResponse = new JSONObject();
+	@Override
+	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+		final JSONObject jsonResponse = new JSONObject();
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
-		try{
-			if (request.getParameter(UserDataService.USERNAMECOLUMN)!=null && request.getParameter(UserDataService.PASSWORDCOLUMN)!=null){
-					User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(),"");
-					try {
-						user.changePassword(request.getParameter(UserDataService.PASSWORDCOLUMN).toString());
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put(OutputConstants.STATUS, "User deleted with success");
-					} catch (DatafariServerException e){
-						jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE).put(OutputConstants.STATUS, "Datafari isn't connected to Database");
-					}
-			}else{
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY).put(OutputConstants.STATUS, "Problem with query");
+		try {
+			if (request.getParameter(UserDataService.USERNAMECOLUMN) != null && request.getParameter(UserDataService.PASSWORDCOLUMN) != null) {
+				final User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(), "");
+				try {
+					user.changePassword(request.getParameter(UserDataService.PASSWORDCOLUMN).toString());
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put(OutputConstants.STATUS, "User deleted with success");
+				} catch (final DatafariServerException e) {
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE.getValue()).put(OutputConstants.STATUS,
+							"Datafari isn't connected to Database");
+				}
+			} else {
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue()).put(OutputConstants.STATUS, "Problem with query");
 			}
-		}catch (JSONException e) {
+		} catch (final JSONException e) {
 			// TODO Auto-generated catch block
 			logger.error(e);
 		}
-			PrintWriter out = response.getWriter();
-			out.print(jsonResponse);
+		final PrintWriter out = response.getWriter();
+		out.print(jsonResponse);
 	}
 }

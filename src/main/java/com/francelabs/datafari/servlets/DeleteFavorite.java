@@ -4,7 +4,7 @@
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
  *  * You may obtain a copy of the License at
- *  * 
+ *  *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
  *  *
  *  * Unless required by applicable law or agreed to in writing, software
@@ -55,8 +55,8 @@ public class DeleteFavorite extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	@Override
+	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 	}
 
@@ -64,40 +64,40 @@ public class DeleteFavorite extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		JSONObject jsonResponse = new JSONObject();
+	@Override
+	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+		final JSONObject jsonResponse = new JSONObject();
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
 		if (request.getParameter("idDocument") != null) {
 			try {
-				Principal userPrincipal = request.getUserPrincipal();
+				final Principal userPrincipal = request.getUserPrincipal();
 				if (userPrincipal == null) {
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.NOTCONNECTED).put(OutputConstants.STATUS,
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.NOTCONNECTED.getValue()).put(OutputConstants.STATUS,
 							"Please reload the page, you're not connected");
 				} else {
-					String username = request.getUserPrincipal().getName();
+					final String username = request.getUserPrincipal().getName();
 					try {
 						Favorite.deleteFavorite(username, request.getParameter("idDocument"));
-						jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK);
-					} catch (DatafariServerException e) {
-						jsonResponse.put(OutputConstants.CODE, e.getErrorCode()).put(OutputConstants.STATUS,
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+					} catch (final DatafariServerException e) {
+						jsonResponse.put(OutputConstants.CODE, e.getErrorCode().getValue()).put(OutputConstants.STATUS,
 								"Problem while connecting to database");
 					}
 				}
-			} catch (JSONException e) {
+			} catch (final JSONException e) {
 				// TODO Auto-generated catch block
 				logger.error(e);
 			}
 		} else {
 			try {
-				jsonResponse.put(OutputConstants.CODE,CodesReturned.GENERALERROR).put(OutputConstants.STATUS, "Query malformed");
-			} catch (JSONException e) {
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue()).put(OutputConstants.STATUS, "Query malformed");
+			} catch (final JSONException e) {
 				// TODO Auto-generated catch block
 				logger.error(e);
 			}
 		}
-		PrintWriter out = response.getWriter();
+		final PrintWriter out = response.getWriter();
 		out.print(jsonResponse);
 	}
 

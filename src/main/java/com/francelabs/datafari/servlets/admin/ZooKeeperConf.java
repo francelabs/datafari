@@ -75,10 +75,10 @@ public class ZooKeeperConf extends HttpServlet {
 				ZKUtils.configZK("reloadCollections.sh", confname);
 			}
 
-			jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK);
+			jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 		} catch (final IOException e) {
 			LOGGER.error("Exception during action " + actionParam, e);
-			jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
+			jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
 		}
 
 		final PrintWriter out = response.getWriter();

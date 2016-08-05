@@ -57,7 +57,7 @@ public class GetAllLDAPUsersAndRoles extends HttpServlet {
 		final String getParam = request.getParameter("get");
 
 		if (getParam.equals(OutputConstants.STATUS)) {
-			jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put(OutputConstants.STATUS, performingRefresh);
+			jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put(OutputConstants.STATUS, performingRefresh);
 		} else if (getParam.equals("currentList")) {
 			final Map<String, List<String>> usersRoles = User.getAllUsers();
 			final Map<String, List<String>> ldapUsersRoles = new HashMap<>();
@@ -71,7 +71,7 @@ public class GetAllLDAPUsersAndRoles extends HttpServlet {
 
 			// Write the LDAP users (& roles) list in the response in
 			// JSON
-			jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put(OutputConstants.STATUS, ldapUsersRoles);
+			jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put(OutputConstants.STATUS, ldapUsersRoles);
 		} else {
 			if (!performingRefresh) {
 				performingRefresh = true;
@@ -90,7 +90,7 @@ public class GetAllLDAPUsersAndRoles extends HttpServlet {
 					// Close the context (never forget this)
 					ctx.close();
 					if (ldapUsersList.isEmpty()) { // No LDAP users found
-						jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR).put(OutputConstants.STATUS, "No users found !");
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue()).put(OutputConstants.STATUS, "No users found !");
 					} else { // Retrieve user roles for LDAP users (if possible)
 						final Map<String, List<String>> usersRoles = User.getAllUsers();
 						final Map<String, List<String>> ldapUsersRoles = new HashMap<>();
@@ -105,12 +105,13 @@ public class GetAllLDAPUsersAndRoles extends HttpServlet {
 						// Write the LDAP users (& roles) list in the response
 						// in
 						// JSON
-						jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put(OutputConstants.STATUS, ldapUsersRoles);
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put(OutputConstants.STATUS, ldapUsersRoles);
 					}
 				} catch (SAXException | ParserConfigurationException | JSONException e) {
 					performingRefresh = false;
 					try {
-						jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR).put(OutputConstants.STATUS, "Problem with XML Manipulation");
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue()).put(OutputConstants.STATUS,
+								"Problem with XML Manipulation");
 						logger.error(e);
 					} catch (final JSONException e1) {
 						logger.error(e);
@@ -118,7 +119,8 @@ public class GetAllLDAPUsersAndRoles extends HttpServlet {
 				} catch (final NamingException e) {
 					performingRefresh = false;
 					try {
-						jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONAD).put(OutputConstants.STATUS, "Problem with AD connection");
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONAD.getValue()).put(OutputConstants.STATUS,
+								"Problem with AD connection");
 						logger.error(e);
 					} catch (final JSONException e1) {
 						logger.error(e);
@@ -144,7 +146,7 @@ public class GetAllLDAPUsersAndRoles extends HttpServlet {
 
 				// Write the LDAP users (& roles) list in the response in
 				// JSON
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK).put(OutputConstants.STATUS, ldapUsersRoles);
+				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put(OutputConstants.STATUS, ldapUsersRoles);
 			}
 		}
 		performingRefresh = false;
