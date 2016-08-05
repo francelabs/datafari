@@ -90,7 +90,7 @@ AjaxFranceLabs.AbstractFacetWidget = AjaxFranceLabs.AbstractWidget.extend({
 				fq.val('(' + fq.val().substring(4, fq.val().length));
 			if(fq.val() == '()') {
 				fq.val('');
-				this.manager.store.remove('fq');
+				this.manager.store.removeByValue('fq', fq.val());
 			}
 			return fq;
 		}
