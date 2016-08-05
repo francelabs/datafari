@@ -23,7 +23,6 @@ public class ZKUtils {
 			pathScript = datafari_home + "/debian7/bin/zkUtils/";
 		
 		
-		System.out.println("pathscript" +pathScript);
 	    String[] command = {"/bin/bash", pathScript+scriptname, datafari_home, zkhosts, configName};
 	    ProcessBuilder p = new ProcessBuilder(command);
 	    Process p2 = p.start();
