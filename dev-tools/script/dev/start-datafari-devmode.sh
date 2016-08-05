@@ -77,11 +77,61 @@ curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=Promolink&
 
 CASSANDRA_INCLUDE=$CASSANDRA_ENV $CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE
 
-# Configuration of the Cassandra database and creation of the user admin
-../../../cassandra/bin/cqlsh -f ../../../datafari-cassandra/conf/dev-env/tables
-../../../cassandra/bin/cqlsh -f create-admin-dev.txt
+# Check if Cassandra process is running
+	cassandra_process=$(ps -Alf | grep $pid | grep org.apache.cassandra.service.CassandraDaemon)
 
+	if [ -z "$cassandra_process" ]; then
+		echo "/!\ ERROR: Cassandra process is not running."
+	else
+		echo "Cassandra process running with PID ${pid} --- OK"
+	fi
+	
+echo "Checking if Cassandra is up and running ..."
+	# Try to connect on Cassandra's JMX port 7199
+	nc -z localhost 7199 
+	nc_return=$?
+
+	# Try to connect on Cassandra's CQLSH port 9042
+	nc -z localhost 9042
+	nc_return2=$? 
+	
+	cassandra_status=$((nc_return+nc_return2))
+
+	retries=1
+    while (( retries < 6 && cassandra_status != 0 )); do
+		echo "Cassandra doesn't reply to requests on ports 7199 and/or 9042. Sleeping for a while and trying again... retry ${retries}"
+
+		# Sleep for a while
+        sleep 2s
+		
+		# Try again to connect to Cassandra
+		echo "Checking if Cassandra is up and running ..."
+		nc -z localhost 7199 
+		nc_return=$?
+
+		nc -z localhost 9042 
+		nc_return2=$? 
+	
+		cassandra_status=$((nc_return+nc_return2))
+
+		((retries++))
+    done
+
+	if [ $cassandra_status -ne 0 ]; then
+		echo "/!\ ERROR: Cassandra startup has ended with errors; "
+		exit 
+	else
+		
+        echo "Cassandra startup completed successfully --- OK"
+        echo "Initialization of Cassandra"
+		# Configuration of the Cassandra database and creation of the user admin
+		../../../cassandra/bin/cqlsh -f ../../../datafari-cassandra/conf/dev-env/tables
+		../../../cassandra/bin/cqlsh -f ../../../datafari-cassandra/conf/dev-env/create-admin-dev.txt
+	fi
+	
+	
 sed -i '' 's/\(STATE *= *\).*/\1initialized/' "dev-datafari.properties"
+echo "Datafari initialized and running"
 
 
 else
