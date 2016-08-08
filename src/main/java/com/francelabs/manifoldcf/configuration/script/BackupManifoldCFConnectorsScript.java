@@ -7,13 +7,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.apache.manifoldcf.core.interfaces.IThreadContext;
 import org.apache.manifoldcf.core.interfaces.LockManagerFactory;
 import org.apache.manifoldcf.core.interfaces.ThreadContextFactory;
 import org.apache.manifoldcf.core.system.ManifoldCF;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,19 +24,16 @@ public class BackupManifoldCFConnectorsScript {
 	// TODO check if the logs are working properly
 	private static String configPropertiesFileName = "config/log4j.properties";
 
-
 	private final static Logger LOGGER = Logger.getLogger(BackupManifoldCFConnectorsScript.class);
 
 	/**
 	 * @param args
 	 * @throws Exception
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 
-		
 		PropertyConfigurator.configure(configPropertiesFileName);
 
-		
 		if (args.length < 1) {
 			LOGGER.fatal("No argument");
 			return;
@@ -46,71 +42,63 @@ public class BackupManifoldCFConnectorsScript {
 		String backupDirectory;
 		if (args.length < 2) {
 			System.out.println("Backup directory : ");
-			Scanner input = new Scanner(System.in);
+			final Scanner input = new Scanner(System.in);
 			backupDirectory = input.nextLine();
 		} else {
 			backupDirectory = args[1];
+			if (args.length == 3 && args[2].equals("https")) {
+				ManifoldAPI.useHttpsProtocol();
+			}
 		}
 
 		try {
-			
 
-			IThreadContext tc = ThreadContextFactory.make();
+			final IThreadContext tc = ThreadContextFactory.make();
 			ManifoldCF.initializeEnvironment(tc);
 
-
-		    String masterDatabaseUsername = LockManagerFactory.getStringProperty(tc,"org.apache.manifoldcf.apilogin.password.obfuscated","");
-
+			final String masterDatabaseUsername = LockManagerFactory.getStringProperty(tc, "org.apache.manifoldcf.apilogin.password.obfuscated", "");
 
 			ManifoldAPI.waitUntilManifoldIsStarted();
-		    
-			if (!"".equals(masterDatabaseUsername)){
-				String apiPassword = ManifoldCF.deobfuscate(masterDatabaseUsername);
+
+			if (!"".equals(masterDatabaseUsername)) {
+				final String apiPassword = ManifoldCF.deobfuscate(masterDatabaseUsername);
 				LOGGER.info("Try to authenticate");
 				ManifoldAPI.authenticate("", apiPassword);
 			}
-			
 
-			File outputConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
+			final File outputConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
 
-			File repositoryConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
+			final File repositoryConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
 
-			File authorityConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
-			
-			File mappingConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS);
-			
-			File transformationConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS);
-			
-			File authorityGroupsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
+			final File authorityConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
 
-			File jobsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.JOBS);
+			final File mappingConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS);
+
+			final File transformationConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS);
+
+			final File authorityGroupsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
+
+			final File jobsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.JOBS);
 
 			if (args[0].equals("BACKUP")) {
 
-
 				prepareDirectory(outputConnectionsDir);
-				saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS),
-						outputConnectionsDir);
+				saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS), outputConnectionsDir);
 
 				prepareDirectory(repositoryConnectionsDir);
-				saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS),
-						repositoryConnectionsDir);
+				saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS), repositoryConnectionsDir);
 
 				prepareDirectory(authorityConnectionsDir);
-				saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS),
-						authorityConnectionsDir);
-				
+				saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS), authorityConnectionsDir);
+
 				prepareDirectory(mappingConnectionsDir);
-				saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS),
-						mappingConnectionsDir);
-				
+				saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS), mappingConnectionsDir);
+
 				prepareDirectory(transformationConnectionsDir);
-				saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS),
-						transformationConnectionsDir);
-				
+				saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS), transformationConnectionsDir);
+
 				prepareDirectory(authorityGroupsDir);
-				saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.AUTHORITYGROUPS),
-						authorityGroupsDir);
+				saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.AUTHORITYGROUPS), authorityGroupsDir);
 
 				prepareDirectory(jobsDir);
 				saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.JOBS), jobsDir);
@@ -123,171 +111,162 @@ public class BackupManifoldCFConnectorsScript {
 				ManifoldAPI.cleanAll();
 
 				restoreAllConnections(outputConnectionsDir, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
-				
+
 				restoreAllConnections(transformationConnectionsDir, ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS);
-				
+
 				restoreAllConnections(authorityGroupsDir, ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
-				
+
 				restoreAllConnections(authorityConnectionsDir, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
 
 				restoreAllConnections(repositoryConnectionsDir, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
-				
+
 				restoreAllConnections(mappingConnectionsDir, ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS);
-				
+
 				restoreAllConnections(jobsDir, ManifoldAPI.COMMANDS.JOBS);
 
 				LOGGER.info("Connectors Restored");
 			}
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			LOGGER.fatal(e.getMessage());
 			e.printStackTrace();
 		}
 	}
 
-	private static void prepareDirectory(File directory) {
+	private static void prepareDirectory(final File directory) {
 		directory.mkdirs();
-		for (File file : directory.listFiles()) {
+		for (final File file : directory.listFiles()) {
 			file.delete();
 		}
 	}
 
-	private static void restoreAllConnections(File directory, String command) throws Exception {
+	private static void restoreAllConnections(final File directory, final String command) throws Exception {
 
-		File[] connectorFiles = directory.listFiles(new FilenameFilter() {
+		final File[] connectorFiles = directory.listFiles(new FilenameFilter() {
 			@Override
-			public boolean accept(File dir, String name) {
+			public boolean accept(final File dir, final String name) {
 				name.endsWith(".json");
 				return true;
 			}
 		});
-		for (File connectorFile : connectorFiles) {
+		for (final File connectorFile : connectorFiles) {
 			restoreConnection(connectorFile, command);
 		}
 
 	}
 
-	private static void restoreConnection(File connectorFile, String command) throws Exception {
+	private static void restoreConnection(final File connectorFile, final String command) throws Exception {
 
-		JSONObject jsonObject = JSONUtils.readJSON(connectorFile);
-		String name = connectorFile.getName();
+		final JSONObject jsonObject = JSONUtils.readJSON(connectorFile);
+		final String name = connectorFile.getName();
 		ManifoldAPI.putConfig(command, name.substring(0, name.length() - 5), jsonObject);
 
 	}
 
-	private static void saveAllConnections(Map<String, JSONObject> connections, File directory)
-			throws IOException, JSONException {
+	private static void saveAllConnections(final Map<String, JSONObject> connections, final File directory) throws IOException, JSONException {
 
-		for (Entry<String, JSONObject> connection : connections.entrySet()) {
+		for (final Entry<String, JSONObject> connection : connections.entrySet()) {
 			saveConnection(connection, directory);
 		}
 	}
 
-	private static void saveConnection(Entry<String, JSONObject> outputConnection, File directory)
-			throws IOException, JSONException {
+	private static void saveConnection(final Entry<String, JSONObject> outputConnection, final File directory) throws IOException, JSONException {
 
 		JSONUtils.saveJSON(outputConnection.getValue(), new File(directory, outputConnection.getKey() + ".json"));
-		File connectorFile = new File(directory, outputConnection.getKey() + ".json");
+		final File connectorFile = new File(directory, outputConnection.getKey() + ".json");
 
 	}
 
 	/**
 	 * Method called by Servlet MCFBackupRestore
 	 */
-	public static void doSave(String backupDirectory) throws Exception {
+	public static void doSave(final String backupDirectory) throws Exception {
 
-		File outputConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
-		
-		File authorityGroupsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
-		
-		File repositoryConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
+		final File outputConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
 
-		File authorityConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
-		
-		File mappingConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS);
-		
-		File transformationConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS);
+		final File authorityGroupsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
 
-		File jobsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.JOBS);
+		final File repositoryConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
+
+		final File authorityConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
+
+		final File mappingConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS);
+
+		final File transformationConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS);
+
+		final File jobsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.JOBS);
 
 		try {
-			
 
 			prepareDirectory(outputConnectionsDir);
-			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS),
-					outputConnectionsDir);
+			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS), outputConnectionsDir);
 
 			prepareDirectory(repositoryConnectionsDir);
-			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS),
-					repositoryConnectionsDir);
-			
+			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS), repositoryConnectionsDir);
+
 			prepareDirectory(authorityGroupsDir);
-			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.AUTHORITYGROUPS),
-					authorityGroupsDir);
+			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.AUTHORITYGROUPS), authorityGroupsDir);
 
 			prepareDirectory(authorityConnectionsDir);
-			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS),
-					authorityConnectionsDir);
-			
+			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS), authorityConnectionsDir);
+
 			prepareDirectory(mappingConnectionsDir);
-			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS),
-					mappingConnectionsDir);
-			
+			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS), mappingConnectionsDir);
+
 			prepareDirectory(transformationConnectionsDir);
-			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS),
-					transformationConnectionsDir);
+			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS), transformationConnectionsDir);
 
 			prepareDirectory(jobsDir);
 			saveAllConnections(ManifoldAPI.getConnections(ManifoldAPI.COMMANDS.JOBS), jobsDir);
 
 			LOGGER.info("Connectors Saved");
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			LOGGER.fatal(e.getMessage());
 			throw new Exception("Error while saving MCF connections.");
 		}
 	}
-	
+
 	/**
 	 * Method called by Servlet MCFBackupRestore
 	 */
-	public static void doRestore(String backupDirectory) throws Exception {
+	public static void doRestore(final String backupDirectory) throws Exception {
 
-		File outputConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
-		
-		File authorityGroupsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
-		
-		File transformationConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS);
-		
-		File mappingConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS);
-		
-		File authorityConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
+		final File outputConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
 
-		File repositoryConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
+		final File authorityGroupsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
 
-		File jobsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.JOBS);
+		final File transformationConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS);
+
+		final File mappingConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS);
+
+		final File authorityConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
+
+		final File repositoryConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
+
+		final File jobsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.JOBS);
 
 		try {
-			
+
 			ManifoldAPI.cleanAll();
 
 			restoreAllConnections(outputConnectionsDir, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
-			
+
 			restoreAllConnections(authorityGroupsDir, ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
-			
+
 			restoreAllConnections(authorityConnectionsDir, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
-			
+
 			restoreAllConnections(mappingConnectionsDir, ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS);
-			
+
 			restoreAllConnections(transformationConnectionsDir, ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS);
 
 			restoreAllConnections(repositoryConnectionsDir, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
-			
+
 			restoreAllConnections(jobsDir, ManifoldAPI.COMMANDS.JOBS);
 
 			LOGGER.info("Connectors Restored");
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			LOGGER.fatal(e.getMessage());
 			throw new Exception("Error while restoring MCF connections.");
 		}
