@@ -6,6 +6,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -48,12 +51,29 @@ public class ELKAdmin extends HttpServlet {
 	private boolean isURLUp(final String urlString) {
 		try {
 			final URL u = new URL(urlString);
-			final HttpURLConnection huc = (HttpURLConnection) u.openConnection();
-			huc.setRequestMethod("HEAD");
-			huc.connect();
-			huc.getResponseCode();
-			return true;
+			if (u.getProtocol().toLowerCase().equals("https")) {
+				final HttpsURLConnection huc = (HttpsURLConnection) u.openConnection();
+				// Deactivate the hostname verification
+				huc.setHostnameVerifier(new HostnameVerifier() {
+
+					@Override
+					public boolean verify(final String hostname, final SSLSession session) {
+						return true;
+					}
+				});
+				huc.setRequestMethod("HEAD");
+				huc.connect();
+				huc.getResponseCode();
+				return true;
+			} else {
+				final HttpURLConnection huc = (HttpURLConnection) u.openConnection();
+				huc.setRequestMethod("HEAD");
+				huc.connect();
+				huc.getResponseCode();
+				return true;
+			}
 		} catch (final Exception e) {
+			logger.error("Unable to connect to kibana", e);
 			return false;
 		}
 	}
