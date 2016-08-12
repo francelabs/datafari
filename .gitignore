@@ -1,14 +1,6 @@
-/cassandra/
-/dist/
-/logs/
-/mcf/
-/pid/
-/solr/
 /target/
-/temp/
 /.settings/
 /.classpath
 /.project
-/elk/
 /tests/
-/zookeeper
+/tomcat-dev/
