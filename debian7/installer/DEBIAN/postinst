@@ -19,7 +19,7 @@ sed -i -e "s/@NUMSHARDS@/1/g" /opt/datafari/tomcat/conf/datafari.properties
 sed -i -e "s/@NUMSHARDS@/1/g" /opt/datafari/bin/start-datafari.sh
 sed -i -e "s/@ISMAINNODE@/true/g" /opt/datafari/tomcat/conf/datafari.properties
 
-mkdir /opt/datafari/solr/solrcloud
+mkdir -p /opt/datafari/solr/solrcloud
 mv /opt/datafari/solr/solr_home/FileShare /opt/datafari/solr/solrcloud
 mv /opt/datafari/solr/solr_home/Statistics /opt/datafari/solr/solrcloud
 mv /opt/datafari/solr/solr_home/Promolink /opt/datafari/solr/solrcloud
