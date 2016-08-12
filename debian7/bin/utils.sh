@@ -34,7 +34,7 @@ is_running() {
 	return 1
     fi
     local pid
-    pid=$(cat $pidFile)
+    pid=$(sudo su datafari -c "cat $pidFile")
     if ! ps -p $pid 1>/dev/null 2>&1; then
         echo "Warn: a PID file was detected, removing it."
         sudo su datafari -c "rm -f $pidFile"
@@ -49,7 +49,7 @@ forceStopIfNecessary(){
         return 0
     fi
     local pid
-    pid=$(cat $pidFile)
+    pid=$(sudo su datafari -c "cat $pidFile")
     sudo su datafari -c "kill $pid"
     waitpid $pid 30 .
     if [ $? -ne 0 ]; then

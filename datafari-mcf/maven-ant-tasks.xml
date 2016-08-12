@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-ant-tasks" default="setup-mcf" basedir=".">
+	<property name="mcf.dist" value="target/dist/mcf" />
+
+	<target name="setup-mcf">
+		<!-- Copy only useful ManifoldCF directories and files stripping the parent MCF 
+			directory (to avoid MCF version inclusion) -->
+		<copy toDir="${mcf.dist}/mcf_home" overwrite="true" force="true">
+			<fileset dir="target">
+				<include name="*manifoldcf*/connector-common-lib/**" />
+				<include name="*manifoldcf*/connector-lib/**" />
+				<include name="*manifoldcf*/connector-lib-proprietary/**" />
+				<include name="*manifoldcf*/lib/**" />
+				<include name="*manifoldcf*/connectors.xml" />
+			</fileset>
+			<cutdirsmapper dirs="1" />
+		</copy>
+
+		<!-- Copy war directory stripping the parent MCF 
+			directory (to avoid MCF version inclusion) and web directory -->
+		<copy toDir="${mcf.dist}" overwrite="true" force="true">
+			<fileset dir="target">
+				<include name="*manifoldcf*/**/mcf-api-service.war" />
+				<include name="*manifoldcf*/**/mcf-authority-service.war" />
+				<include name="*manifoldcf*/**/mcf-crawler-ui.war" />
+			</fileset>
+			<cutdirsmapper dirs="2" />
+		</copy>
+
+		<!-- Copy bin and mcf_home directories -->
+		<copy toDir="${mcf.dist}" overwrite="true" force="true">
+			<fileset dir=".">
+					<include name="bin/**" />
+					<include name="mcf_home/**" />
+			</fileset>
+		</copy>
+
+		<!-- Create syncharea directory, otherwise we get an exception while running bash initialize-dev.sh -->
+		<mkdir dir="${mcf.dist}/mcf_home/syncharea" />
+
+	</target>
+
+</project>

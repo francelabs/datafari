@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-ant-tasks" default="setup-zookeeper" basedir=".">
+	<property name="zookeeper.dist" value="target/dist/zookeeper" />
+
+	<target name="setup-zookeeper">
+		<copy toDir="${zookeeper.dist}" overwrite="true" force="true">
+			<fileset dir="target">
+				<include name="*zookeeper*/**" />
+			</fileset>
+			<cutdirsmapper dirs="1" />
+		</copy>
+		<copy toDir="${zookeeper.dist}" overwrite="true" force="true">
+			<fileset dir=".">
+				<include name="bin/**" />
+				<include name="conf/**" />
+			</fileset>
+		</copy>
+	</target>
+</project>

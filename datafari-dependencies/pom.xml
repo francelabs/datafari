@@ -15,7 +15,7 @@
 			<artifactId>mcf-core</artifactId>
 			<version>2.4</version>
 		</dependency>
-		
+
 		<!-- Remote Maven repo dependencies -->
 		<dependency>
 			<groupId>log4j</groupId>
@@ -106,13 +106,14 @@
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-util</artifactId>
-			<version>7.0.65</version>
+			<version>8.5.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-catalina</artifactId>
-			<version>7.0.65</version>
+			<version>8.5.4</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>apache-jena-libs</artifactId>
@@ -154,7 +155,6 @@
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
 		</dependency>
-		<!-- wstx-asl relocated to woodstox-core-asl -->
 
 		<!-- Tests -->
 		<dependency>

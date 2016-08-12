@@ -1,0 +1,57 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.francelabs.datafari</groupId>
+  <artifactId>datafari-tomcat</artifactId>
+  <packaging>pom</packaging>
+  <version>3.0-SNAPSHOT</version>
+  <name>Datafari Enterprise Search - Tomcat module</name>
+  <build>
+  <plugins>
+  <plugin>
+	<groupId>com.googlecode.maven-download-plugin</groupId>
+	<artifactId>download-maven-plugin</artifactId>
+	<version>1.2.1</version>
+	<!-- Don't propagate configuration to child POMs -->
+	<inherited>false</inherited>
+  	<executions>
+						<execution>
+							<id>install-tomcat</id>
+							<phase>validate</phase>
+							<goals>
+								<goal>wget</goal>
+							</goals>
+							<configuration>
+								<!-- Version of MCF should be retrieved from a property file as well 
+									as the MD5 -->
+								<url>http://archive.apache.org/dist/tomcat/tomcat-8/v8.5.4/bin/apache-tomcat-8.5.4.tar.gz</url>
+								<md5>43508c3d1eb5bc697f11b8501a10b084</md5>
+								<unpack>true</unpack>
+							</configuration>
+						</execution>
+  	</executions>
+	</plugin>
+				<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<!-- Don't propagate configuration to child POMs -->
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>ant-tasks</id>
+						<phase>validate</phase>
+						<configuration>
+							<target>
+								<ant antfile="maven-ant-tasks.xml" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+</plugins>
+</build>
+</project>
+

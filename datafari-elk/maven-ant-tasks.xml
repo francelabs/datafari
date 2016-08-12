@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-ant-tasks" default="setup-elk" basedir=".">
+
+	<property name="elk.dist" value="target/dist/elk"/>
+
+
+	<!-- Right now we use ELK (Elasticsearch - Logstash - Kibana stack) only for Debian distribution of Datafari -->
+	<target name="setup-elk">
+
+		<!-- *** Setup Elasticsearch *** -->
+
+		<!-- Copy Elasticsearch directories and files stripping the parent Elasticsearch 
+				directory (to avoid Elasticsearch version inclusion) -->
+		<copy toDir="${elk.dist}/elasticsearch" overwrite="true" force="true">
+			<fileset dir="target">
+				<include name="*elasticsearch*/**" />
+			</fileset>
+			<cutdirsmapper dirs="1" />
+		</copy>
+
+		<!-- *** Setup Kibana *** -->
+
+		<!-- We unzip and untar Kibana here instead of Maven's plugin Wget (like done for the other components)
+		 as it doesn't handle correctly duplicated directory names in the path: e.g. A/B/C/B/D -->
+		<gunzip>
+			<fileset dir="target">
+				<include name="*kibana*.tar.gz" />
+			</fileset>
+		</gunzip>
+
+		<untar dest="${elk.dist}/kibana">
+			<fileset dir="target">
+				<include name="*kibana*.tar" />
+			</fileset>
+			<cutdirsmapper dirs="1" />
+		</untar>
+		
+		<!-- *** Setup Logstash *** -->
+
+		<!-- We unzip and untar Logstash here instead of Maven's plugin Wget (like done for the other components)
+				 as it doesn't handle correctly duplicated directory names in the path: e.g. A/B/C/B/D -->
+		<gunzip>
+			<fileset dir="target">
+				<include name="*logstash*.tar.gz" />
+			</fileset>
+		</gunzip>
+
+		<untar dest="${elk.dist}/logstash">
+			<fileset dir="target">
+				<include name="*logstash*.tar" />
+			</fileset>
+			<cutdirsmapper dirs="1" />
+		</untar>
+		
+		<!-- Copy Datafari-specific directories and files for ELK -->
+		<copy toDir="${elk.dist}" overwrite="true" force="true">
+				<fileset dir="." >
+			        <include name="elasticsearch/**" />
+			        <include name="kibana/**" />
+					<include name="logstash/**" />
+			        <include name="save/**" />
+			        <include name="scripts/**" />
+				</fileset>
+		</copy>
+		
+	</target>
+
+
+
+</project>

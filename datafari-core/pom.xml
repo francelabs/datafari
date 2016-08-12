@@ -1,145 +1,41 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.francelabs.datafari</groupId>
-	<artifactId>datafari-core</artifactId>
-	<packaging>jar</packaging>
-	<version>3.0-SNAPSHOT</version>
-	<name>Datafari Enterprise Search - Core module</name>
-	<parent>
-		<groupId>com.francelabs.datafari</groupId>
-		<artifactId>datafari-parent</artifactId>
-		<version>3.0-SNAPSHOT</version>
-	</parent>
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.francelabs.datafari</groupId>
+  <artifactId>datafari-core</artifactId>
+  <packaging>war</packaging>
+  <version>3.0-SNAPSHOT</version>
+  <name>Datafari Enterprise Search - Datafari Core</name>
+  <dependencies>
+       <dependency>
+              <groupId>com.francelabs.datafari</groupId>
+              <artifactId>datafari-dependencies</artifactId>
+              <version>3.0-SNAPSHOT</version>
+              <type>pom</type>
+        </dependency>
+		<dependency>
+              <groupId>com.francelabs.datafari</groupId>
+              <artifactId>datafari-mcf-scripts</artifactId>
+              <version>3.0-SNAPSHOT</version>
+              <type>jar</type>
+        </dependency>
+  </dependencies>
 	<prerequisites>
 		<!-- Force minimum Maven version -->
 		<maven>3.0.5</maven>
 	</prerequisites>
-	
-	<build>
-
-		<!-- defaultGoal defined in the parent POM -->
-
-		<!-- Include resource files in the compilation -->
-		
-		<!-- No resource files for the moment 
-		<resources>
-			<resource>
-				<directory>../src/main/resources</directory>
-			</resource>
-		</resources>
-		-->
-
-		<plugins>
-			<!-- Copy the resources -->
-			
-			<!--  No resources to be copied for the moment 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.7</version>
-				<executions>
-					<execution>
-						<id>resources</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>resources</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			-->
-			<!-- Force JRE Java version 7 to be used instead of (default) version 
-				5 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.3</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-					<excludes>
-						<!-- These sources will be compiled as separate modules -->
-						<exclude>**/francelabs/realm/**</exclude>
-						<exclude>**/francelabs/manifoldcf/**</exclude>
-						<exclude>**/datafari/updateprocessor/**</exclude>
-						<exclude>**/datafari/searchcomp/**</exclude>
-					</excludes>
-				</configuration>
-				<executions>
-					<!-- Run the compile goal at compile phase -->
-					<execution>
-						<id>compile</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.10</version>
-				<executions>
-					<execution> <!-- Copy dependencies transitively (if not transitively, use copy goal) -->
-						<id>copy-dependencies</id>
-						<phase>process-sources</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>../dist/WEB-INF/lib</outputDirectory>
-							<includeGroupIds> org.apache.commons, commons-httpclient,
-								commons-logging, commons-codec, commons-digester,
-								commons-beanutils, commons-io, log4j,
-								org.slf4j, org.apache.solr,
-								org.json,
-								org.jsoup,
-								org.apache.httpcomponents,
-								org.apache.zookeeper,
-								net.htmlparser.jericho,
-								com.sun.mail,
-								joda-time,
-								org.hamcrest, junit, org.noggit,
-								org.codehaus.woodstox, org.mozilla, org.apache.lucene
-							</includeGroupIds>
-							<!-- Do not include org.apache.tomcat group, otherwise java.lang.NoSuchMethodException: 
-								org.apache.catalina.deploy.WebXml addFilter at Tomcat startup -->
-						</configuration>
-					</execution>
-					
-					<execution> <!-- Copy dependencies transitively (if not transitively, use copy goal) -->
-						<id>copy-tests-dependencies</id>
-						<phase>process-sources</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>../tests/lib</outputDirectory>
-							<includeGroupIds> org.apache.commons, commons-httpclient,
-								commons-logging, commons-codec, commons-digester,
-								commons-beanutils, commons-io, log4j,
-								org.slf4j, org.apache.solr,
-								org.json,
-								org.jsoup,
-								org.apache.httpcomponents,
-								org.apache.zookeeper,
-								org.mockito,
-								org.xmlunit,
-								javax.servlet,
-								net.htmlparser.jericho,
-								com.sun.mail,
-								joda-time,
-								org.hamcrest, junit, org.noggit,
-								org.codehaus.woodstox, org.mozilla, org.apache.lucene
-							</includeGroupIds>
-							<!-- Do not include org.apache.tomcat group, otherwise java.lang.NoSuchMethodException: 
-								org.apache.catalina.deploy.WebXml addFilter at Tomcat startup -->
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+  <build>
+  <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.5.1</version>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+        </configuration>
+      </plugin>
+    </plugins>
+    <finalName>Datafari</finalName>
+  </build>
 </project>

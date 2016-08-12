@@ -11,24 +11,30 @@
 	</condition>
 
 	<!-- Source directories -->
-	<property name="elk.src.dir" value="${project.dir}/elk" />
-	<property name="datafari.elk.dir" value="${project.dir}/datafari-elk" />
-	<property name="datafari.solr.dir" value="${project.dir}/datafari-solr" />
-	<property name="tomcat.src.dir" value="${project.dir}/tomcat" />
-	<property name="solr.src.dir" value="${project.dir}/solr" />
-	<property name="mcf.src.dir" value="${project.dir}/mcf" />
-	<property name="cassandra.src.dir" value="${project.dir}/cassandra" />
-	<property name="dist.src.dir" value="${project.dir}/dist" />
+	<property name="elk.src.dir" value="${project.dir}/datafari-elk/target/dist/elk" />
+	<property name="tomcat.src.dir" value="${project.dir}/datafari-tomcat/target/dist/tomcat" />
+	<property name="solr.src.dir" value="${project.dir}/datafari-solr/target/dist/solr" />
+	<property name="tika-config.src.dir" value="${project.dir}/datafari-tika-config/target" />
+	<property name="datafari.src.dir" value="${project.dir}/datafari-core/target" />
+	<property name="jena.src.dir" value="${project.dir}/datafari-jena/target" />
+	<property name="mcf.src.dir" value="${project.dir}/datafari-mcf/target/dist/mcf" />
+	<property name="realm.src.dir" value="${project.dir}/datafari-realm/target" />
+	<property name="updateprocessor.src.dir" value="${project.dir}/datafari-updateprocessor/target" />
+	<property name="datafarihandler.src.dir" value="${project.dir}/datafari-handler/target" />
+	<property name="mcf-scripts.src.dir" value="${project.dir}/datafari-mcf-scripts/target" />
+	<property name="cassandra.src.dir" value="${project.dir}/datafari-cassandra/target/dist/cassandra" />
+	<property name="zookeeper.src.dir" value="${project.dir}/datafari-zookeeper/target/dist/zookeeper" />
 	<property name="bin.src.dir" value="${project.dir}/bin" />
-	<property name="devtools.src.dir" value="${project.dir}/dev-tools" />
+
 
 	<!-- Output directories and self contained Datafari's Debian components -->
 	<property name="debian.dir" value="${project.dir}/debian7" />
 	<property name="debian.dist.dir" value="${debian.dir}/dist" />
 	<property name="debian.bin.dir" value="${debian.dir}/bin" />
 
+
+	<!-- debian binaries -->
 	<property name="jvm.dir" value="${debian.dir}/jvm" />
-	<property name="zookeeper.dir" value="${project.dir}/zookeeper" />
 	<property name="command.dir" value="${debian.dir}/command" />
 	<property name="ocr.dir" value="${debian.dir}/ocr" />
 	<property name="pgsql.dir" value="${debian.dir}/pgsql" />
@@ -48,9 +54,6 @@
 	</target>
 
 	<target name="buildInstaller" depends="copyBinaries">
-
-		<echoproperties />
-
 		<copy todir="${installer.build.dir}/datafari/opt/datafari">
 			<fileset dir="${debian.dist.dir}" />
 		</copy>
@@ -63,6 +66,7 @@
 			<arg value="${installer.build.dir}/datafari/DEBIAN" />
 		</exec>
 		<exec executable="dpkg-deb">
+			<arg value="-z0" />
 			<arg value="-b" />
 			<arg value="${installer.build.dir}/datafari" />
 		</exec>
@@ -72,7 +76,7 @@
 
 		<!-- Clean-up the installer intermediate directory -->
 		<delete dir="${installer.build.dir}" />
-		
+
 		<!-- Clean-up the dist intermediate directory -->
 		<delete dir="${debian.dist.dir}" />
 	</target>
@@ -84,63 +88,109 @@
 
 		<!-- These components need a build with Maven -->
 
-		<!-- Copy Tomcat admin UI and external webapps like ManifoldCF -->
+		<!-- Copy Tomcat  -->
 		<copy todir="${debian.dist.dir}/tomcat">
 			<fileset dir="${tomcat.src.dir}">
-				<!-- Exclude already deployed (d/D)atafari app, if present -->
-				<exclude name="**/*atafari/**" />
 			</fileset>
 		</copy>
 
+
+		<!-- Copy Solr -->
 		<copy todir="${debian.dist.dir}/solr">
 			<fileset dir="${solr.src.dir}">
-				<!-- Exclude already existing data (i.e. coming from dev environment) -->
-				<exclude name="**/data/**" />
 			</fileset>
 		</copy>
-		
+
+		<!-- Copy Datafari update processor -->
+		<copy todir="${debian.dist.dir}/solr/solr_home/FileShare/lib/custom">
+			<fileset dir="${updateprocessor.src.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<!-- Copy Datafari update handler -->
+		<copy todir="${debian.dist.dir}/solr/solr_home/FileShare/lib/custom">
+			<fileset dir="${datafarihandler.src.dir}">
+				<include name="*.jar" />
+				<include name="dependency/*.jar" />
+			</fileset>
+		</copy>
+
+		<!-- Copy Datafari update handler dependencies-->
+		<copy todir="${debian.dist.dir}/solr/solr_home/FileShare/lib/custom">
+			<fileset dir="${datafarihandler.src.dir}/dependency">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<!-- Copy only useful Jena libraries to Solr FileShare core directory -->
+		<copy toDir="${debian.dist.dir}/solr/solr_home/FileShare/lib/jena" overwrite="true" force="true">
+			<fileset dir="${jena.src.dir}">
+				<include name="*apache-jena*/lib/jena*" />
+				<include name="*apache-jena*/lib/jackson*" />
+				<include name="*apache-jena*/lib/commons-cli*" />
+				<include name="*apache-jena*/lib/commons-csv*" />
+				<include name="*apache-jena*/lib/dexx-collections*" />
+				<include name="*apache-jena*/lib/jsonld*" />
+				<include name="*apache-jena*/lib/libthrift*" />
+			</fileset>
+			<cutdirsmapper dirs="2" />
+		</copy>
+
 		<copy todir="${debian.dist.dir}/elk">
 			<fileset dir="${elk.src.dir}">
-				<!-- Exclude already existing data & logs (i.e. coming from dev environment) -->
-				<exclude name="elasticsearch/data/**" />
-				<exclude name="**/logs/**" />
 			</fileset>
-		</copy>
-		
-		<!-- Copy default configuration files for ELK to avoid custom ones -->
-		<copy toDir="${debian.dist.dir}/elk/" overwrite="true" force="true">
-			<fileset dir="${datafari.elk.dir}/" />
-		</copy>
-		
-		<!-- Copy default configuration files for Solr to avoid custom ones -->
-		<copy toDir="${debian.dist.dir}/solr/" overwrite="true" force="true">
-			<fileset dir="${datafari.solr.dir}/" />
 		</copy>
 
 		<copy todir="${debian.dist.dir}/mcf">
 			<fileset dir="${mcf.src.dir}" />
 		</copy>
 
-		<copy todir="${debian.dist.dir}/cassandra">
-			<fileset dir="${cassandra.src.dir}" />
+		<!-- Copy Tika OCR config in mcf lib -->
+		<copy todir="${debian.dist.dir}/mcf/mcf_home/lib">
+			<fileset dir="${tika-config.src.dir}">
+				<include name="*.jar" />
+			</fileset>
 		</copy>
 
-		<!-- Copy Datafari web application sources -->
-		<copy todir="${debian.dist.dir}/tomcat/webapps/${datafari.context.app}">
-			<fileset dir="${dist.src.dir}" />
+
+		<!-- Copy Manifold CF to Tomcat auto-deploy directory -->
+		<move toDir="${debian.dist.dir}/tomcat/webapps" overwrite="true" force="true">
+			<fileset dir="${debian.dist.dir}/mcf/war" />
+			<globmapper from="*.war" to="datafari-*.war" />
+		</move>
+
+		<!-- Copy Datafari -->
+		<copy file="${datafari.src.dir}/Datafari.war" todir="${debian.dist.dir}/tomcat/webapps" />
+
+		<!-- Copy Realm -->
+		<copy todir="${debian.dist.dir}/tomcat/lib">
+			<fileset dir="${realm.src.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<!-- Copy Realm - dependencies-->
+		<copy todir="${debian.dist.dir}/tomcat/lib">
+			<fileset dir="${realm.src.dir}/dependency">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<copy todir="${debian.dist.dir}/cassandra">
+			<fileset dir="${cassandra.src.dir}" />
 		</copy>
 
 		<copy todir="${debian.dist.dir}/bin">
 			<fileset dir="${bin.src.dir}" />
 		</copy>
 
+		<!-- Copy BackupManifoldCF script -->
 		<copy todir="${debian.dist.dir}/bin/common">
-			<fileset dir="${devtools.src.dir}/script/mcf-conf">
+			<fileset dir="${mcf-scripts.src.dir}">
 				<include name="*.jar" />
 			</fileset>
 		</copy>
-
-		<!-- Self-contained Debian components -->
 
 		<copy todir="${debian.dist.dir}/ocr">
 			<fileset dir="${ocr.dir}" />
@@ -155,7 +205,7 @@
 		</copy>
 
 		<copy todir="${debian.dist.dir}/zookeeper">
-			<fileset dir="${zookeeper.dir}" />
+			<fileset dir="${zookeeper.src.dir}" />
 		</copy>
 
 
@@ -168,6 +218,7 @@
 			<fileset dir="${debian.bin.dir}" />
 		</copy>
 
+		<!-- Add txt files -->
 		<copy file="${project.dir}/LICENSE.txt" todir="${debian.dist.dir}/" />
 		<copy file="${project.dir}/README.txt" todir="${debian.dist.dir}/" />
 		<copy file="${project.dir}/CHANGES.txt" todir="${debian.dist.dir}/" />

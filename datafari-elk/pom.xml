@@ -1,0 +1,92 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.francelabs.datafari</groupId>
+  <artifactId>datafari-elk</artifactId>
+  <packaging>pom</packaging>
+  <version>3.0-SNAPSHOT</version>
+  <name>Datafari Enterprise Search - ELK module</name>
+  <build>
+  <plugins>
+  <plugin>
+	<groupId>com.googlecode.maven-download-plugin</groupId>
+	<artifactId>download-maven-plugin</artifactId>
+	<version>1.2.1</version>
+	<!-- Don't propagate configuration to child POMs -->
+	<inherited>false</inherited>
+  	<executions>
+						<execution>
+							<id>install-elastic</id>
+							<phase>validate</phase>
+							<goals>
+								<goal>wget</goal>
+							</goals>
+							<configuration>
+								<!-- Version of Elastic should be retrieved from a property file 
+									as well as the SHA1 -->
+								<url>https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.0.2/elasticsearch-2.0.2.tar.gz</url>
+								<sha1>525c06705ca98934cd92ce5fd1a312fc03e20b8b</sha1>
+								<unpack>true</unpack>
+							</configuration>
+						</execution>
+						<execution>
+							<id>install-kibana</id>
+							<phase>validate</phase>
+							<goals>
+								<goal>wget</goal>
+							</goals>
+							<configuration>
+								<!-- Version of Kibana should be retrieved from a property file as 
+									well as the SHA1 -->
+								<!-- We use 64bits version of Kibana -->
+								<url>https://download.elastic.co/kibana/kibana/kibana-4.2.2-linux-x64.tar.gz</url>
+								<sha1>f0daf9cd0b949c0ec7a3be300ee876fba17d1570</sha1>
+								<!-- We unzip and untar Kibana by Ant in maven-ant-tasks.xml instead 
+									of here as the Maven's wget plugin doesn't handle correctly duplicated directory 
+									names in the path: e.g. A/B/C/B/D -->
+								<unpack>false</unpack>
+							</configuration>
+						</execution>
+						<execution>
+							<id>install-logstash</id>
+							<phase>validate</phase>
+							<goals>
+								<goal>wget</goal>
+							</goals>
+							<configuration>
+								<!-- Version of Logstash should be retrieved from a property file 
+									as well as the SHA1 -->
+								<url>https://download.elastic.co/logstash/logstash/logstash-2.0.0.tar.gz</url>
+								<sha1>f0961520dd9590d3b600c877be66f79f94a05f80</sha1>
+								<!-- We unzip and untar Logstash by Ant in maven-ant-tasks.xml instead 
+									of here as the Maven's wget plugin doesn't handle correctly duplicated directory 
+									names in the path: e.g. A/B/C/B/D -->
+								<unpack>false</unpack>
+							</configuration>
+						</execution>
+  	</executions>
+	</plugin>
+				<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<!-- Don't propagate configuration to child POMs -->
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>ant-tasks</id>
+						<phase>validate</phase>
+						<configuration>
+							<target>
+								<ant antfile="maven-ant-tasks.xml" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+</plugins>
+</build>
+</project>
+

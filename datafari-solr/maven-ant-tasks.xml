@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-ant-tasks" default="setup-solr" basedir=".">
+
+	<property name="solr.dist" value="target/dist/solr"/>
+
+	
+	<target name="setup-solr">
+		<!-- Copy only useful Solr server directories stripping the parent Solr 
+			directory (to avoid Solr version inclusion) -->
+		<copy toDir="${solr.dist}" overwrite="true" force="true">
+			<fileset dir="target" includes="*solr*/bin/**,*solr*/server/**" />
+			<cutdirsmapper dirs="1" />
+		</copy>
+
+		<!-- Copy contrib Jars to solr_home/FileShare/lib/FEATURE_DIR_NAME directory -->
+		<copy toDir="${solr.dist}/solr_home/FileShare/lib" overwrite="true" force="true">
+			<!-- Copy Jars that are inside contrib directory -->
+			<!-- Copy Extraction and LangId -->
+			<fileset dir="target">
+				<include name="*solr*/contrib/extraction/**/*.jar" />
+				<include name="*solr*/contrib/langid/**/*.jar" />
+			</fileset>
+			<chainedmapper>
+				<!-- Strip solr*/contrib directory -->
+				<cutdirsmapper dirs="2" />
+				<filtermapper>
+					<!-- Strip lib directory under each group of Jars-->
+					<replacestring from="lib" to="" />
+				</filtermapper>
+			</chainedmapper>
+		</copy>
+
+		<!-- Copy Solr dist Jars to solr_home/FileShare/lib/solr directory -->
+		<copy toDir="${solr.dist}/solr_home/FileShare/lib/solr" overwrite="true" force="true">
+			<!-- Copy Jars that are inside dist directory -->
+			<!-- Copy only Jars that we need -->
+			<fileset dir="target" includes="*solr*/dist/solr-langid-*.jar" />
+			<fileset dir="target" includes="*solr*/dist/solr-cell-*.jar" />
+			<chainedmapper>
+				<!-- Strip solr*/dist directory -->
+				<cutdirsmapper dirs="2" />
+			</chainedmapper>
+		</copy>
+
+		<copy toDir="${solr.dist}" overwrite="true" force="true">
+			<fileset dir="." >
+		        <include name="bin/**" />
+		        <include name="conf/**" />
+		        <include name="server/**" />
+		        <include name="solr_home/**" />
+			</fileset>
+		</copy>
+	</target>
+
+
+</project>
