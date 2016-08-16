@@ -25,6 +25,8 @@ public class BackupManifoldCFConnectorsScript {
 	private static String configPropertiesFileName = "config/log4j.properties";
 
 	private final static Logger LOGGER = Logger.getLogger(BackupManifoldCFConnectorsScript.class);
+	
+	private static boolean isAuthentified = false;
 
 	/**
 	 * @param args
@@ -52,20 +54,6 @@ public class BackupManifoldCFConnectorsScript {
 		}
 
 		try {
-
-			final IThreadContext tc = ThreadContextFactory.make();
-			ManifoldCF.initializeEnvironment(tc);
-
-			final String masterDatabaseUsername = LockManagerFactory.getStringProperty(tc, "org.apache.manifoldcf.apilogin.password.obfuscated", "");
-
-			ManifoldAPI.waitUntilManifoldIsStarted();
-
-			if (!"".equals(masterDatabaseUsername)) {
-				final String apiPassword = ManifoldCF.deobfuscate(masterDatabaseUsername);
-				LOGGER.info("Try to authenticate");
-				ManifoldAPI.authenticate("", apiPassword);
-			}
-
 			final File outputConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
 
 			final File repositoryConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
@@ -133,9 +121,11 @@ public class BackupManifoldCFConnectorsScript {
 		}
 	}
 
-	private static void prepareDirectory(final File directory) {
+	private static void prepareDirectory(final File directory) throws IOException {
+
 		directory.mkdirs();
-		for (final File file : directory.listFiles()) {
+		File[] files = directory.listFiles();
+		for (final File file : files) {
 			file.delete();
 		}
 	}
@@ -181,7 +171,12 @@ public class BackupManifoldCFConnectorsScript {
 	 * Method called by Servlet MCFBackupRestore
 	 */
 	public static void doSave(final String backupDirectory) throws Exception {
-
+		final File backupDirectoryFile = new File(backupDirectory);
+		// check access right 
+		if (!backupDirectoryFile.canWrite()){
+			throw new IOException("Lack of permissions on directory : "+backupDirectory);
+		}
+		
 		final File outputConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
 
 		final File authorityGroupsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
@@ -231,7 +226,12 @@ public class BackupManifoldCFConnectorsScript {
 	 * Method called by Servlet MCFBackupRestore
 	 */
 	public static void doRestore(final String backupDirectory) throws Exception {
-
+		final File backupDirectoryFile = new File(backupDirectory);
+		// check access right 
+		if (!backupDirectoryFile.canWrite()){
+			throw new IOException("Lack of permissions on directory : "+backupDirectory);
+		}
+		
 		final File outputConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
 
 		final File authorityGroupsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYGROUPS);

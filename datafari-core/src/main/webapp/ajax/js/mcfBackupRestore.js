@@ -24,7 +24,7 @@ function doSave() {
 	var data = "action=save";
 	
 	if ($('#backupDir-input').val()) {
-		data = data + "&backup_dir=" + $('#backupDir-input').val();
+		data = data + "&backupDir=" + $('#backupDir-input').val();
 	} 
 	
 	$.ajax({ //Ajax request to the doPost of the MCF Backup Restore servlet

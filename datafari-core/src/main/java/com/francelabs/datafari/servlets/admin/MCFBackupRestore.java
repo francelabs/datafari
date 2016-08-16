@@ -56,14 +56,10 @@ public class MCFBackupRestore extends HttpServlet {
 	 * Gets the environment path of Datafari installation
 	 */
 	public MCFBackupRestore() {
-		env = System.getenv("DATAFARI_HOME");									//Gets the directory of installation if in standard environment
-		if(env==null){															//If in development environment	
-			RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();	//Gets the D.solr.solr.home variable given in arguments to the VM
-			List<String> arguments = runtimeMxBean.getInputArguments();
-			for(String s : arguments){
-				if(s.startsWith("-Dsolr.solr.home"))
-					env = s.substring(s.indexOf("=")+1, s.indexOf("solr_home")-5);
-			}
+		env = System.getenv("DATAFARI_HOME");									
+		if(env==null){															
+			// if no variable is set, use the default installation path
+			env = "/opt/datafari";
 		}
 	}
 
@@ -81,7 +77,7 @@ public class MCFBackupRestore extends HttpServlet {
 			
 			if (action != null && !action.trim().isEmpty()){
 				
-				String backupDirTmp = request.getParameter("backupDir-input");
+				String backupDirTmp = request.getParameter("backupDir");
 				
 				String backupDirectory;
 				
