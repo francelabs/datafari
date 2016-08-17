@@ -60,16 +60,13 @@ public class RealmLdapConfiguration {
 		String env = System.getenv("DATAFARI_HOME"); // Gets the directory of
 														// installation if in
 														// standard environment
-		if (env == null) { // If in development environment (Eclipse WTP)
-			env = ExecutionEnvironment.getDevExecutionEnvironment();
-			// Should return something like PATH_TO_WORKSPACE/datafari/
-			// Reference WebContent folder as already done for FacetConfig class
-
-			fileContext = new File(env + "WebContent" + File.separator + "META-INF" + File.separator + FILE_NAME);
-		} else {
+		if (env == null) { // Use the default DATAFARI_HOME
+			
+			env = "/opt/datafari";
+			
+		}
 			fileContext = new File(env + File.separator + "tomcat" + File.separator + "webapps" + File.separator + webAppName + File.separator
 					+ "META-INF" + File.separator + FILE_NAME);
-		}
 
 	}
 
@@ -84,8 +81,9 @@ public class RealmLdapConfiguration {
 		final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		final Document docSchem = dBuilder.parse(getInstance(request.getContextPath()).fileContext); // Parse
-																										// the
-																										// schema
+		
+		// read config in JNDI
+		// schema
 		final NodeList fields = docSchem.getElementsByTagName("Realm");
 		final HashMap<String, String> hashMap = new HashMap<String, String>();
 		for (int i = 0; i < fields.getLength(); i++) {

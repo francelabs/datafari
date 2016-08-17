@@ -20,12 +20,16 @@ import java.util.Map;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.apache.solr.client.solrj.request.SolrPing;
+
 import com.francelabs.datafari.utils.ScriptConfiguration;
 import org.apache.log4j.Logger;
 import com.francelabs.datafari.alerts.AlertsManager;
 
 public class SolrServers {
 
+	private static String defaultURL = "localhost:2181";
+	
 	private final static Logger LOGGER = Logger.getLogger(AlertsManager.class.getName());
 	public enum Core {
 		FILESHARE {
@@ -55,10 +59,21 @@ public class SolrServers {
 				// TODO : change for ZK ensemble
 				CloudSolrClient solrClient = new CloudSolrClient(solrHosts);
 				solrClient.setDefaultCollection(core.toString());
+				SolrPing ping = new SolrPing();
+				solrClient.request(ping);
 				solrClients.put(core, solrClient);
 			} catch (Exception e) {
-				LOGGER.error("Cannot instanciate Solr Client for core : " + core.toString(), e);
-				throw new Exception("Cannot instanciate Solr Client for core : " + core.toString());
+				// test default param
+				try {
+					CloudSolrClient solrClient = new CloudSolrClient(defaultURL);
+					solrClient.setDefaultCollection(core.toString());
+					SolrPing ping = new SolrPing();
+					solrClient.request(ping);
+					solrClients.put(core, solrClient);
+				} catch (Exception e2){
+					LOGGER.error("Cannot instanciate Solr Client for core : " + core.toString(), e);
+					throw new Exception("Cannot instanciate Solr Client for core : " + core.toString());
+				}
 			}
 		}
 		return solrClients.get(core);

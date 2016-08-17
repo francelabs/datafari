@@ -9,9 +9,16 @@ $(function($) {
 	
 	window.i18n.setupLanguage('Datafari home page');
 
+	var port = '8080';
+	
+	if (typeof portHeader !== 'undefined'){
+		port = parseInt(portHeader);
+	}
+	
+	
 	Manager = new AjaxFranceLabs.Manager({
 		serverUrl : 'http://' + window.location.hostname
-				+ ':8080/Datafari/SearchProxy/',
+				+ ':'+port+'/Datafari/SearchProxy/',
 		constellio : false,
 		connectionInfo : {
 			autocomplete : {

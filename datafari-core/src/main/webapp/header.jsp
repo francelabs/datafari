@@ -10,6 +10,8 @@
 		for (int i=0 ; i<LanguageUtils.availableLanguages.size() ; i++) { %>
 			langHeader[<%= i %>] = "<%= LanguageUtils.availableLanguages.get(i) %>"; 
 		<% } %>
+		var portHeader = <%= request.getServerPort()%>;
+		
 </script>
 <script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/LanguageSelector.widget.js"></script>
@@ -21,23 +23,7 @@
 <script type ="text/javascript" src ="js/url.min.js"></script>
 <header>
 	<div id="header-wrapper">
-		<%
-			if (ScriptConfiguration.getProperty("SOLRCLOUD") != null
-					&& ScriptConfiguration.getProperty("SOLRCLOUD").equals(
-							"true")) {
-		%>
-
-
-		<div id="biglogo"></div>
-		<%
-			} else {
-		%>
-
-		<!-- <div id="logo"></div> -->
-
-		<%
-			}
-		%>
+		
 		<div id="userSpace">
 		
 
