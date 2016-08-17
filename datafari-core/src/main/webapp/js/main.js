@@ -49,6 +49,20 @@ $(function($) {
 
 	Manager.store.addByValue("fl", 'title,url,id,extension');
 	
-	
+	// add Konami code
+	var k = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65],
+	n = 0;
+	$(document).keydown(function (e) {
+	    if (e.keyCode === k[n++]) {
+	        if (n === k.length) {
+	            alert('Congratulation, you found the konami code! More surprises are coming soon!'); 
+	            n = 0;
+	            return false;
+	        }
+	    }
+	    else {
+	        n = 0;
+	    }
+	});
 
 });
