@@ -213,6 +213,7 @@
 "en_locale" : "English",
 "fr_locale" : "Français",
 "it_locale" : "Italiano",
+"pt_br_locale" : "Português",
 "advancedSearch-label" : "Recherche Avancee",
 "advancedSearch-descr" : "Description",
 "advancedSearch-title-label" : "Titre",

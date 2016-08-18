@@ -11,7 +11,7 @@
 		language : null,
 
 		// Available languages for Datafari
-		availableLanguages : [ 'en', 'fr', 'it' ],
+		availableLanguages : [ 'en', 'fr', 'it', 'pt_br' ],
 
 		// Default language for Datafari
 		defaultLanguage : 'en',
@@ -31,22 +31,16 @@
 		},
 
 		setLanguage : function(lang) {
-
+			var self = this;
 			// Set the language selected, to update the languageSelector widget
-			this.language = lang;
+			self.language = lang;
 
 			$.ajax({
-				url : this.languageUrl + lang + ".json",
+				url : self.languageUrl + lang + ".json",
 				dataType : "json",
 				async : false,
 				success : function(data) {
 					i18n.persistMsgStore(data);
-				},
-				error : function(error) {
-					$.getJSON(this.languageUrl + lang + ".json",
-							function(data) {
-								i18n.persistMsgStore(data);
-							});
 				}
 			});
 		},

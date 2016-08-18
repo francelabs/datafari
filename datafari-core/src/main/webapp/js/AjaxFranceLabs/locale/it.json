@@ -224,6 +224,7 @@
 "en_locale" : "English",
 "fr_locale" : "Français",
 "it_locale" : "Italiano",
+"pt_br_locale" : "Português",
 "advancedSearch-label" : "Ricerca Avanzata",
 "advancedSearch-descr" : "Descrizione",
 "advancedSearch-title-label" : "Titolo",
