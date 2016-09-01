@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import com.francelabs.datafari.utils.Environment;
 import com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript;
 
 /**
@@ -56,7 +57,7 @@ public class MCFBackupRestore extends HttpServlet {
 	 * Gets the environment path of Datafari installation
 	 */
 	public MCFBackupRestore() {
-		env = System.getenv("DATAFARI_HOME");									
+		env = Environment.getEnvironmentVariable("DATAFARI_HOME");									
 		if(env==null){															
 			// if no variable is set, use the default installation path
 			env = "/opt/datafari";

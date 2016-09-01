@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import org.apache.log4j.Logger;
 
 import com.francelabs.datafari.logs.ELKLevel;
+import com.francelabs.datafari.utils.Environment;
 
 public class ActivateELK {
 	private static String startScriptPath;
@@ -21,9 +22,9 @@ public class ActivateELK {
 	 * Retrieve the start-elk and stop-elk scripts paths
 	 */
 	private ActivateELK() {
-		startScriptPath = System.getProperty("catalina.home") + File.separator + ".." + File.separator + "elk" + File.separator + "scripts"
+		startScriptPath = Environment.getProperty("catalina.home") + File.separator + ".." + File.separator + "elk" + File.separator + "scripts"
 				+ File.separator + "start-elk.sh";
-		stopScriptPath = System.getProperty("catalina.home") + File.separator + ".." + File.separator + "elk" + File.separator + "scripts"
+		stopScriptPath = Environment.getProperty("catalina.home") + File.separator + ".." + File.separator + "elk" + File.separator + "scripts"
 				+ File.separator + "stop-elk.sh";
 	}
 

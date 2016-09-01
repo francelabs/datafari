@@ -678,7 +678,7 @@
    <!-- Includes custom search handler. You will have to comment the configuration of the search handler /select below -->
   &custom_search_handler;
       
-<requestHandler class="solr.SearchHandler" name="/select">
+<!--<requestHandler class="solr.SearchHandler" name="/select">
 		<lst name="defaults">
 			<str name="echoParams">explicit</str>
 			<str name="defType">edismax</str>
@@ -706,7 +706,7 @@
 			<str>capsulecomponent</str>
 			<str>elevator</str>
 		</arr>
-	<lst name="appends"><str name="fq">{!manifoldCFSecurity}</str></lst></requestHandler>
+	<lst name="appends"><str name="fq">{!manifoldCFSecurity}</str></lst></requestHandler>-->
 
 
 

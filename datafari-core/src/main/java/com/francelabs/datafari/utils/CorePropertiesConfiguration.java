@@ -59,10 +59,10 @@ public class CorePropertiesConfiguration {
 	public static boolean setProperty(String key, String value) {
 			try {
 				String env;
-				if (System.getenv("DATAFARI_HOME") == null)
-					env = System.getProperty("solr.solr.home");
+				if (Environment.getEnvironmentVariable("DATAFARI_HOME") == null)
+					env = Environment.getProperty("solr.solr.home");
 				else
-					env = System.getenv("DATAFARI_HOME") + "/solr/solr_home";
+					env = Environment.getEnvironmentVariable("DATAFARI_HOME") + "/solr/solr_home";
 				env += "/FileShare/"+configPropertiesFileName ;
 				getInstance().properties.setProperty(key, value);
 				FileOutputStream fileOutputStream = new FileOutputStream(configPropertiesFileNameRealPath);
@@ -102,10 +102,10 @@ public class CorePropertiesConfiguration {
 	private CorePropertiesConfiguration() throws IOException {
 		BasicConfigurator.configure();
 		String env;
-		if (System.getenv("DATAFARI_HOME") == null)
-			env = System.getProperty("solr.solr.home");
+		if (Environment.getEnvironmentVariable("DATAFARI_HOME") == null)
+			env = Environment.getProperty("solr.solr.home");
 		else
-			env = System.getenv("DATAFARI_HOME") + "/solr/solr_home";
+			env = Environment.getEnvironmentVariable("DATAFARI_HOME") + "/solr/solr_home";
 		env += "/FileShare/"+configPropertiesFileName ;
 		
 		configPropertiesFileNameRealPath = env;

@@ -57,7 +57,7 @@ public class RealmLdapConfiguration {
 			webAppName = "Datafari";
 		}
 
-		String env = System.getenv("DATAFARI_HOME"); // Gets the directory of
+		String env = Environment.getEnvironmentVariable("DATAFARI_HOME"); // Gets the directory of
 														// installation if in
 														// standard environment
 		if (env == null) { // Use the default DATAFARI_HOME

@@ -12,7 +12,7 @@ public class ZKUtils {
 		boolean devMode = false;
 		String pathScript ;
 		String zkhosts = ScriptConfiguration.getProperty("SOLRHOSTS");
-		datafari_home = System.getenv("DATAFARI_HOME");									//Gets the directory of installation if in standard environment
+		datafari_home = Environment.getEnvironmentVariable("DATAFARI_HOME");									//Gets the directory of installation if in standard environment
 		if(datafari_home==null){															//If in development environment	
 			datafari_home = ExecutionEnvironment.getDevExecutionEnvironment();
 			devMode = true;

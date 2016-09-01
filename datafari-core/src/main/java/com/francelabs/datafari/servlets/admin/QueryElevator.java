@@ -39,6 +39,7 @@ import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.jaxb.Elevate;
 import com.francelabs.datafari.service.search.SolrServers.Core;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
+import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 import com.francelabs.datafari.utils.ZKUtils;
 
@@ -56,7 +57,7 @@ public class QueryElevator extends HttpServlet {
 	public QueryElevator() {
 		super();
 
-		String environnement = System.getenv("DATAFARI_HOME");
+		String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
 
 		if (environnement == null) { // If in development environment
 			environnement = ExecutionEnvironment.getDevExecutionEnvironment();

@@ -6,86 +6,45 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.francelabs.datafari.utils.AlertsConfiguration;
+import com.francelabs.datafari.utils.Environment;
 
-@RunWith(MockitoJUnitRunner.class)
+@PrepareForTest(Environment.class) 
+@RunWith(PowerMockRunner.class)
 public class TestAlertsAdmin {
 
-	// Properties frequencies
-	private String HOURLY_DELAY_SAVE;
-	private String DAILY_DELAY_SAVE;
-	private String WEEKLY_DELAY_SAVE;
-
-	// Properties mails
-	private String SMTP_ADRESS_SAVE;
-	private String SMTP_FROM_SAVE;
-	private String SMTP_USER_SAVE;
-	private String SMTP_PASSWORD_SAVE;
-
-	// Properties Database
-	private String DATABASE_HOST_SAVE;
-	private String DATABASE_PORT_SAVE;
-	private String DATABASE_NAME_SAVE;
-	private String DATABASE_COLLECTION_SAVE;
-
-	private void saveConf() throws IOException {
-		HOURLY_DELAY_SAVE = AlertsConfiguration.getProperty(AlertsConfiguration.HOURLY_DELAY);
-		DAILY_DELAY_SAVE = AlertsConfiguration.getProperty(AlertsConfiguration.DAILY_DELAY);
-		WEEKLY_DELAY_SAVE = AlertsConfiguration.getProperty(AlertsConfiguration.WEEKLY_DELAY);
-
-		// Properties mails
-		SMTP_ADRESS_SAVE = AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_ADDRESS);
-		SMTP_FROM_SAVE = AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_FROM);
-		SMTP_USER_SAVE = AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_USER);
-		SMTP_PASSWORD_SAVE = AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_PASSWORD);
-
-		// Properties Database
-		DATABASE_HOST_SAVE = AlertsConfiguration.getProperty(AlertsConfiguration.DATABASE_HOST);
-		DATABASE_PORT_SAVE = AlertsConfiguration.getProperty(AlertsConfiguration.DATABASE_PORT);
-		DATABASE_NAME_SAVE = AlertsConfiguration.getProperty(AlertsConfiguration.DATABASE_NAME);
-		DATABASE_COLLECTION_SAVE = AlertsConfiguration.getProperty(AlertsConfiguration.DATABASE_COLLECTION);
-
-	}
-
-	@After
-	public void restoreConf() {
-		AlertsConfiguration.setProperty(AlertsConfiguration.HOURLY_DELAY, HOURLY_DELAY_SAVE);
-		AlertsConfiguration.setProperty(AlertsConfiguration.DAILY_DELAY, DAILY_DELAY_SAVE);
-		AlertsConfiguration.setProperty(AlertsConfiguration.WEEKLY_DELAY, WEEKLY_DELAY_SAVE);
-
-		// Properties mails
-		AlertsConfiguration.setProperty(AlertsConfiguration.SMTP_ADDRESS, SMTP_ADRESS_SAVE);
-		AlertsConfiguration.setProperty(AlertsConfiguration.SMTP_FROM, SMTP_FROM_SAVE);
-		AlertsConfiguration.setProperty(AlertsConfiguration.SMTP_USER, SMTP_USER_SAVE);
-		AlertsConfiguration.setProperty(AlertsConfiguration.SMTP_PASSWORD, SMTP_PASSWORD_SAVE);
-
-		// Properties Database
-		AlertsConfiguration.setProperty(AlertsConfiguration.DATABASE_HOST, DATABASE_HOST_SAVE);
-		AlertsConfiguration.setProperty(AlertsConfiguration.DATABASE_PORT, DATABASE_PORT_SAVE);
-		AlertsConfiguration.setProperty(AlertsConfiguration.DATABASE_NAME, DATABASE_NAME_SAVE);
-		AlertsConfiguration.setProperty(AlertsConfiguration.DATABASE_COLLECTION, DATABASE_COLLECTION_SAVE);
-	}
+	final static String resourcePathStr = "src/test/resources/alertsTests";
+	final static String catalinaHomeTemp ="catalina";
+	Path tempDirectory = null;
 
 	@Before
 	public void initialize() throws IOException {
-		final File currentDirFile = new File(".");
-		final String helper = currentDirFile.getAbsolutePath();
-		final String currentDir = helper.substring(0, currentDirFile.getCanonicalPath().length());
-		System.setProperty("catalina.home", currentDir + "/src/test/resources/alertsTests");
-		saveConf();
+
+		// create temp dir
+		tempDirectory = Files.createTempDirectory(catalinaHomeTemp);
+		FileUtils.copyDirectory(new File(resourcePathStr), tempDirectory.toFile());
+
+		// set catalina_home to temp dir
+		PowerMockito.mockStatic(Environment.class);
+		Mockito.when(Environment.getProperty("catalina.home")).thenReturn(tempDirectory.toFile().getAbsolutePath());
+
 	}
 
 	@Test
@@ -106,7 +65,8 @@ public class TestAlertsAdmin {
 		Mockito.when(request.getParameter(AlertsConfiguration.DATABASE_HOST)).thenReturn("DATABASE_HOST_Test");
 		Mockito.when(request.getParameter(AlertsConfiguration.DATABASE_PORT)).thenReturn("DATABASE_PORT_Test");
 		Mockito.when(request.getParameter(AlertsConfiguration.DATABASE_NAME)).thenReturn("DATABASE_NAME_Test");
-		Mockito.when(request.getParameter(AlertsConfiguration.DATABASE_COLLECTION)).thenReturn("DATABASE_COLLECTION_Test");
+		Mockito.when(request.getParameter(AlertsConfiguration.DATABASE_COLLECTION))
+				.thenReturn("DATABASE_COLLECTION_Test");
 
 		final StringWriter sw = new StringWriter();
 		final PrintWriter writer = new PrintWriter(sw);
@@ -133,6 +93,7 @@ public class TestAlertsAdmin {
 		assertTrue(AlertsConfiguration.getProperty(AlertsConfiguration.DATABASE_HOST).equals("DATABASE_HOST_Test"));
 		assertTrue(AlertsConfiguration.getProperty(AlertsConfiguration.DATABASE_PORT).equals("DATABASE_PORT_Test"));
 		assertTrue(AlertsConfiguration.getProperty(AlertsConfiguration.DATABASE_NAME).equals("DATABASE_NAME_Test"));
-		assertTrue(AlertsConfiguration.getProperty(AlertsConfiguration.DATABASE_COLLECTION).equals("DATABASE_COLLECTION_Test"));
+		assertTrue(AlertsConfiguration.getProperty(AlertsConfiguration.DATABASE_COLLECTION)
+				.equals("DATABASE_COLLECTION_Test"));
 	}
 }

@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import com.francelabs.datafari.service.search.SolrServers.Core;
+import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 
 /** Javadoc
@@ -65,7 +66,7 @@ public class Stopwords extends HttpServlet {
 	 * Creates a semaphore for each of them
 	 */
 	public Stopwords() throws IOException {
-String environnement = System.getenv("DATAFARI_HOME");
+String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
 		
 		if(environnement==null){															//If in development environment	
 			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
@@ -84,7 +85,7 @@ String environnement = System.getenv("DATAFARI_HOME");
 		} catch (IOException e1) {
 			LOGGER.error("Error while opening list_language.txt in StopWords Servlet's Constructor, please make sure the file exists and is located in "+env+"/solr/solr_home/"+server+"/conf/"+". Error 69012", e1);
 		}	
-		String[] lines = content.split(System.getProperty("line.separator"));					//There is one language per line
+		String[] lines = content.split(Environment.getProperty("line.separator"));					//There is one language per line
 		for(int i=0;i<lines.length;i++){														//For each line
 			listMutex.add(new SemaphoreLn(lines[i], "Stop"));									//create a semaphore and add it to the list
 		}

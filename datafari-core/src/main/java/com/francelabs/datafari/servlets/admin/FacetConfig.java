@@ -53,6 +53,7 @@ import org.mozilla.javascript.ast.ExpressionStatement;
 import org.mozilla.javascript.ast.NodeVisitor;
 
 import com.ctc.wstx.io.CharsetNames;
+import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 import com.google.common.base.Strings;
 /**
@@ -112,7 +113,7 @@ public class FacetConfig extends HttpServlet {
 	public FacetConfig() {
 		//gets the files
 		// TODO DATAFARI_HOME to be moved to a property file
-		env = System.getenv("DATAFARI_HOME");									//Gets the directory of installation if in standard environment
+		env = Environment.getEnvironmentVariable("DATAFARI_HOME");									//Gets the directory of installation if in standard environment
 		if(env==null){															//If in development environment	
 			env = ExecutionEnvironment.getDevExecutionEnvironment();
 			jsp = new File(env+"/WebContent/searchView.jsp");
@@ -149,7 +150,7 @@ public class FacetConfig extends HttpServlet {
 				//If one of the files has not been found
 				if( jsp == null || js == null || en == null || fr == null){
 					//Check if it still doesn't exists
-					if(System.getenv("DATAFARI_HOME")==null){
+					if(Environment.getEnvironmentVariable("DATAFARI_HOME")==null){
 						if(!(new File(env+"/WebContent/searchView.jsp").exists() 
 								|| new File(env+"/WebContent/js/search.js").exists() 
 								|| new File(env + LOCALE_PATH_DEV + EN_JSON).exists() 

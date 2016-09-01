@@ -92,7 +92,7 @@ public class ELKConfiguration {
 	 *
 	 */
 	private ELKConfiguration() throws IOException {
-		configPropertiesFileNameRealPath = System.getProperty("catalina.home") + File.separator + "conf" + File.separator + configPropertiesFileName;
+		configPropertiesFileNameRealPath = Environment.getProperty("catalina.home") + File.separator + "conf" + File.separator + configPropertiesFileName;
 		final File configFile = new File(configPropertiesFileNameRealPath);
 		final InputStream stream = new FileInputStream(configFile);
 		properties = new Properties();

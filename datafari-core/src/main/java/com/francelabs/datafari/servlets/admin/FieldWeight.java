@@ -52,6 +52,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.francelabs.datafari.service.search.SolrServers.Core;
+import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 
 /**
@@ -93,32 +94,32 @@ public class FieldWeight extends HttpServlet {
 	 */
 	public FieldWeight() {
 
-		String environnement = System.getenv("DATAFARI_HOME");
+		String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
 
 		if (environnement == null) { // If in development environment
 			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
 		}
-		env = environnement + "/solr/solrcloud/FileShare/conf";
+		env = environnement + File.separator+"solr"+File.separator+"solrcloud"+File.separator+"FileShare"+File.separator+"conf";
 
 		semaphoreConfigPf = new SemaphoreLn("", "pf");
 		semaphoreConfigQf = new SemaphoreLn("", "qf");
-		if (new File(env + "/schema.xml").exists()) { // Check
+		if (new File(env + File.separator+"schema.xml").exists()) { // Check
 														// if
 														// the
 														// files
 														// exists
-			schema = new File(env + "/schema.xml");
+			schema = new File(env + File.separator+"schema.xml");
 		}
-		if (new File(env + "/solrconfig.xml").exists()) {
-			config = new File(env + "/solrconfig.xml");
-		}
-
-		if (new File(env + "/customs_schema/custom_fields.incl").exists()) {
-			customFields = new File(env + "/customs_schema/custom_fields.incl");
+		if (new File(env + File.separator+"solrconfig.xml").exists()) {
+			config = new File(env + File.separator+"solrconfig.xml");
 		}
 
-		if (new File(env + "/customs_solrconfig/custom_search_handler.incl").exists()) {
-			customSearchHandler = new File(env + "/customs_solrconfig/custom_search_handler.incl");
+		if (new File(env + File.separator+"customs_schema"+File.separator+"custom_fields.incl").exists()) {
+			customFields = new File(env + File.separator+"customs_schema"+File.separator+"custom_fields.incl");
+		}
+
+		if (new File(env + File.separator+"customs_solrconfig"+File.separator+"custom_search_handler.incl").exists()) {
+			customSearchHandler = new File(env + File.separator+"customs_solrconfig"+File.separator+"custom_search_handler.incl");
 		}
 	}
 
@@ -416,7 +417,7 @@ public class FieldWeight extends HttpServlet {
 	@Override
 	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 		try {
-			if (config == null || !new File(env + "/solrconfig.xml").exists()) {// If
+			if (config == null || !new File(env + File.separator+"solrconfig.xml").exists()) {// If
 																				// the
 																				// files
 																				// did
@@ -427,7 +428,7 @@ public class FieldWeight extends HttpServlet {
 																				// constructor
 																				// was
 																				// runned
-				if (!new File(env + "/solrconfig.xml").exists()) {
+				if (!new File(env + File.separator+"solrconfig.xml").exists()) {
 					LOGGER.error(
 							"Error while opening the configuration file, solrconfig.xml, in FieldWeight doPost, please make sure this file exists at "
 									+ env + "conf/ . Error 69029"); // If
@@ -442,13 +443,13 @@ public class FieldWeight extends HttpServlet {
 					out.close();
 					return;
 				} else {
-					config = new File(env + "/solrconfig.xml");
+					config = new File(env + File.separator+"solrconfig.xml");
 				}
 			}
 
 			if (customSearchHandler == null) {
-				if (new File(env + "/customs_solrconfig/custom_search_handler.incl").exists()) {
-					customSearchHandler = new File(env + "/customs_solrconfig/custom_search_handler.incl");
+				if (new File(env + File.separator+"customs_solrconfig"+File.separator+"custom_search_handler.incl").exists()) {
+					customSearchHandler = new File(env + File.separator+"customs_solrconfig"+File.separator+"custom_search_handler.incl");
 				}
 			}
 
@@ -482,7 +483,7 @@ public class FieldWeight extends HttpServlet {
 					String configContent = new String(Files.readAllBytes(configPath), charset);
 
 					// Retrieve the searchHandler from the configContent
-					final String openSearchHandlerTag = strSearchHandler.substring(0, strSearchHandler.indexOf(System.getProperty("line.separator")));
+					final String openSearchHandlerTag = strSearchHandler.substring(0, strSearchHandler.indexOf(Environment.getProperty("line.separator")));
 					final String endSearchHandlerTag = "</requestHandler>";
 					final int beginIndexSearchHandler = configContent.indexOf(openSearchHandlerTag);
 					final int endIndexSearchHandler = configContent.substring(beginIndexSearchHandler).indexOf(endSearchHandlerTag)

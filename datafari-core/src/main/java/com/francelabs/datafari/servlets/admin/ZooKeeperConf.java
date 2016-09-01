@@ -29,6 +29,7 @@ import org.json.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
+import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 import com.francelabs.datafari.utils.ZKUtils;
 
@@ -45,7 +46,7 @@ public class ZooKeeperConf extends HttpServlet {
 	public ZooKeeperConf() {
 		super();
 
-		String environnement = System.getenv("DATAFARI_HOME");
+		String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
 
 		if (environnement == null) { // If in development environment
 			environnement = ExecutionEnvironment.getDevExecutionEnvironment();

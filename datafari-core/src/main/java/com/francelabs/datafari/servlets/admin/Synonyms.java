@@ -41,6 +41,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import com.francelabs.datafari.service.search.SolrServers.Core;
+import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 
 /**
@@ -71,7 +72,7 @@ public class Synonyms extends HttpServlet {
 	 *      semaphore for each of them
 	 */
 	public Synonyms() {
-		String environnement = System.getenv("DATAFARI_HOME");
+		String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
 
 		if (environnement == null) { // If in development environment
 			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
@@ -95,7 +96,7 @@ public class Synonyms extends HttpServlet {
 							+ env + "/solr/solr_home/" + server + "/conf/" + ".. Error code : 69016",
 					e1);
 		}
-		final String[] lines = content.split(System.getProperty("line.separator")); // There
+		final String[] lines = content.split(Environment.getProperty("line.separator")); // There
 																					// is
 																					// one
 																					// language

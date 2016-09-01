@@ -46,6 +46,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.francelabs.datafari.service.search.SolrServers.Core;
+import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 
 /**
@@ -73,7 +74,7 @@ public class ModifyNodeContent extends HttpServlet {
 	 * Checks if the required file exist
 	 */
 	public ModifyNodeContent() {
-		String environnement = System.getenv("DATAFARI_HOME");
+		String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
 
 		if(environnement==null){															//If in development environment	
 			environnement = ExecutionEnvironment.getDevExecutionEnvironment();

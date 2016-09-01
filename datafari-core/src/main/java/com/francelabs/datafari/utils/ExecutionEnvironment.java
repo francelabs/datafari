@@ -24,7 +24,7 @@ public final class ExecutionEnvironment {
 		}
 
 		if (env == null) {
-			env = System.getProperty("DATAFARI_HOME");
+			env = Environment.getProperty("DATAFARI_HOME");
 		}
 
 		// TODO Throw something like ConfigMissingException in case of null

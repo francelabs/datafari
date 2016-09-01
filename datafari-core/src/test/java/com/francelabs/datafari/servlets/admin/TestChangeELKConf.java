@@ -6,51 +6,44 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.francelabs.datafari.utils.ELKConfiguration;
+import com.francelabs.datafari.utils.Environment;
 
-@RunWith(MockitoJUnitRunner.class)
+@PrepareForTest(Environment.class) 
+@RunWith(PowerMockRunner.class)
 public class TestChangeELKConf {
-
-	private String KIBANAURI_SAVE;
-	private String EXTERNALELK_SAVE;
-	private String ELKSERVER_SAVE;
-	private String ELKSCRIPTSDIR_SAVE;
-
-	private void saveConf() throws IOException {
-		KIBANAURI_SAVE = ELKConfiguration.getProperty(ELKConfiguration.KIBANA_URI);
-		EXTERNALELK_SAVE = ELKConfiguration.getProperty(ELKConfiguration.EXTERNAL_ELK_ON_OFF);
-		ELKSERVER_SAVE = ELKConfiguration.getProperty(ELKConfiguration.ELK_SERVER);
-		ELKSCRIPTSDIR_SAVE = ELKConfiguration.getProperty(ELKConfiguration.ELK_SCRIPTS_DIR);
-	}
-
-	@After
-	public void restoreConf() {
-		ELKConfiguration.setProperty(ELKConfiguration.KIBANA_URI, KIBANAURI_SAVE);
-		ELKConfiguration.setProperty(ELKConfiguration.EXTERNAL_ELK_ON_OFF, EXTERNALELK_SAVE);
-		ELKConfiguration.setProperty(ELKConfiguration.ELK_SERVER, ELKSERVER_SAVE);
-		ELKConfiguration.setProperty(ELKConfiguration.ELK_SCRIPTS_DIR, ELKSCRIPTSDIR_SAVE);
-	}
+	
+	final static String resourcePathStr = "src/test/resources/elkTests";
+	final static String catalinaHomeTemp ="catalina";
+	Path tempDirectory = null;
 
 	@Before
 	public void initialize() throws IOException {
-		final File currentDirFile = new File(".");
-		final String helper = currentDirFile.getAbsolutePath();
-		final String currentDir = helper.substring(0, currentDirFile.getCanonicalPath().length());
-		System.setProperty("catalina.home", currentDir + "/src/test/resources/elkTests");
-		saveConf();
+		// create temp dir
+		tempDirectory = Files.createTempDirectory(catalinaHomeTemp);
+		FileUtils.copyDirectory(new File(resourcePathStr), tempDirectory.toFile());
+
+		// set datafari_home to temp dir
+        PowerMockito.mockStatic(Environment.class);
+        Mockito.when(Environment.getProperty("catalina.home")).thenReturn(tempDirectory.toFile().getAbsolutePath());
+
 	}
 
 	@Test

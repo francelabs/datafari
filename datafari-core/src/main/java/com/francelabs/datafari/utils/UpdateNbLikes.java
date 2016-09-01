@@ -45,7 +45,7 @@ public class UpdateNbLikes {
 	private UpdateNbLikes() throws IOException {
 		super();
 		BasicConfigurator.configure();
-		configFile = new File(System.getProperty("catalina.home") + File.separator + ".." + File.separator + "solr"
+		configFile = new File(Environment.getProperty("catalina.home") + File.separator + ".." + File.separator + "solr"
 				+ File.separator + "solr_home" + File.separator + "FileShare_shard1_replica1" + File.separator + "data"
 				+ File.separator + configPropertiesFileName);
 		if (configFile.exists()) {
