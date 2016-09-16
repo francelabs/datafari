@@ -17,6 +17,8 @@ The complete documentation (for users, admins and developers) is available here 
 Requirements:
 
 - Debian7 or higher Environment 64 bits (a Docker image is available if you are on Windows environment)
+Recommended version is Debian 8
+(if you are on Debian 7 you will need to add the testing repo in /etc/apt/sources.list)
 - Processor : 1GHZ and RAM : 8GB
 - Ports 8080, 5432, 9200, 5601 are opened
 - Debian environment : requires curl, debconf, unzip, sudo, libc6-dev
