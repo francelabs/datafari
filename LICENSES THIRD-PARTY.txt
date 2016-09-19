@@ -51,4 +51,9 @@ HTML5 framework
 Apache v2 licence (see devoops readme.txt for embedded 3rd parties)
 https://github.com/devoopsme/devoops
 
+~~~ fontawesome.io ~~~
+Web fonts (http://fontawesome.io/)
+OFL 1.1 license
+[http://scripts.sil.org/cms/scripts/page.php?item_id=OFL_web]
+
 =============================================================================
