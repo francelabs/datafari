@@ -26,7 +26,7 @@ Apache license V2
 Apache license V2
 
 ~~~ ELK stack (Elasticsearch, Logstash, Kibana) ~~~
-Apache 2 Open Source license
+Apache license v2
 
 ~~~ PostgreSQL ~~~
 PostgreSQL license, a liberal Open Source license, similar to the BSD or MIT licenses
@@ -45,5 +45,10 @@ MIT license
 A simple, lightweight url parser for JavaScript
 MIT license
 [https://github.com/websanova/js-url]
+
+~~~ devoops ~~~
+HTML5 framework
+Apache v2 licence (see devoops readme.txt for embedded 3rd parties)
+https://github.com/devoopsme/devoops
 
 =============================================================================
