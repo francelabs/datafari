@@ -37,7 +37,7 @@
   
   
   <property name="org.apache.manifoldcf.database.maxhandles" value="100"/>
-  <property name="org.apache.manifoldcf.crawler.threads" value="50"/>
+  <property name="org.apache.manifoldcf.crawler.threads" value="20"/>
   
   <!-- Point to a specific (common) logging file -->
   <property name="org.apache.manifoldcf.logconfigfile" value="./logging.ini"/>
