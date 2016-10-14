@@ -85,7 +85,12 @@ public class ScriptConfiguration {
 	 *
 	 */
 	private ScriptConfiguration() throws IOException {
-		configPropertiesFileNameRealPath = Environment.getProperty("catalina.home") + File.separator + "conf" + File.separator + configPropertiesFileName;
+		String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
+
+		if(environnement==null){															//If in development environment	
+			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
+		}
+		configPropertiesFileNameRealPath = environnement + "/tomcat/conf/"+ configPropertiesFileName;
 		final File configFile = new File(configPropertiesFileNameRealPath);
 		final InputStream stream = new FileInputStream(configFile);
 		properties = new Properties();

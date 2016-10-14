@@ -1,3 +1,6 @@
+//@ sourceURL=manifoldcf.js
+
+
 // Be careful: SetInterval executed in every page (and continuously every 250ms) after loading of manifoldcf.html page once
 // TODO: use a callback and run the resize only once; when the frame is completely built.
 

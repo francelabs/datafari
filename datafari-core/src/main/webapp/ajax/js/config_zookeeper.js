@@ -1,3 +1,6 @@
+//@ sourceURL=config_zookeeper.js
+
+
 $(document).ready(function() {
 	
 	//Internationalize content

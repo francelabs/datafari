@@ -1,3 +1,6 @@
+//@ sourceURL=alerts.js
+
+
 var d;
 var data;
 $(document).ready(function() {

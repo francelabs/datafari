@@ -693,9 +693,8 @@
 			<str name="spellcheck.count">1</str>
 			<str name="spellcheck.collate">true</str>
 			<str name="hl">on</str>
-			<str name="hl.fl">content_fr content_en</str>
-			<str name="hl.alternateField">content_en</str>
-			<str name="hl.alternateField">content_fr</str>
+			<str name="hl.fl">content_hl</str>
+			<str name="hl.alternateField">content_hl</str>
 			<str name="hl.maxAlternateFieldLength">100</str>
 			<str name="hl.encoder">html</str>
 			<str name="hl.fragsize">200</str>
@@ -749,9 +748,8 @@
 			<str name="spellcheck.count">1</str>
 			<str name="spellcheck.collate">true</str>       <!-- Highlighting defaults -->
 			<str name="hl">on</str>
-			<str name="hl.fl">content_fr content_en</str>
-			<str name="hl.alternateField">content_en</str>
-			<str name="hl.alternateField">content_fr</str>
+			<str name="hl.fl">content_hl</str>
+			<str name="hl.alternateField">content_hl</str>
 			<str name="hl.maxAlternateFieldLength">100</str>
 			<str name="hl.encoder">html</str>
 			<str name="hl.fragsize">200</str>
@@ -1157,7 +1155,15 @@
 		
 		<processor class="com.francelabs.datafari.updateprocessor.DatafariUpdateProcessorFactory"/>
 		
+		<processor class="solr.CloneFieldUpdateProcessorFactory">
+       		<str name="source">content</str>
+       		<str name="dest">content_hl</str>
+     	</processor>
 		
+		<processor class="solr.TruncateFieldUpdateProcessorFactory">
+   			<str name="fieldName">content_hl</str>
+   			<int name="maxLength">1000</int>
+ 		</processor>
 	
 		<processor class="org.apache.solr.update.processor.LangDetectLanguageIdentifierUpdateProcessorFactory">
 			<str name="langid.fl">content,title</str>

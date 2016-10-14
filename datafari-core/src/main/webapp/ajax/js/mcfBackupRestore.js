@@ -1,3 +1,6 @@
+//@ sourceURL=mcfBackupRestore.js
+
+
 $(document).ready(function() {
 
 	$('backupDir-label').text(window.i18n.msgStore["adminUI-MCFBackupRestore-backupDir-label"]);

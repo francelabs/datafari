@@ -1,4 +1,7 @@
-	$(document).ready(function() {
+//@ sourceURL=alertsAdmin.js
+
+
+$(document).ready(function() {
 		doGet();
 		var icons = {
 			header : "ui-icon-circle-arrow-e",

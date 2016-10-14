@@ -1,3 +1,6 @@
+//@ sourceURL=corpusOTStatistics.js
+
+
 $(document).ready(function() {
 	$.get("../SearchAdministrator/ELKAdmin",function(data){
 		if((data.ELKactivation=="true" && data.isELKUp=="true") || data.isELKUp=="true") {

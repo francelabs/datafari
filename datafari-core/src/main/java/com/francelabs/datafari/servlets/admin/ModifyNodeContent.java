@@ -48,6 +48,7 @@ import org.xml.sax.SAXException;
 import com.francelabs.datafari.service.search.SolrServers.Core;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
+import com.francelabs.datafari.utils.ZKUtils;
 
 /**
  * This Servlet is used to print and modify the textContent of various nodes of the solrConfig.xml
@@ -147,6 +148,7 @@ public class ModifyNodeContent extends HttpServlet {
 				out.close();
 				return;
 			}
+			
 		}catch(Exception e){
 			PrintWriter out = response.getWriter();
 			out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69514");
@@ -197,6 +199,10 @@ public class ModifyNodeContent extends HttpServlet {
 				out.close();
 				return;
 			}
+
+			
+			ZKUtils.configZK("uploadconfigzk.sh", "FileShare");
+			ZKUtils.configZK("reloadCollections.sh", "FileShare");
 		}catch(Exception e){
 			PrintWriter out = response.getWriter();
 			out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69515");

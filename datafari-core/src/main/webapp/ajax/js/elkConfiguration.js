@@ -1,3 +1,6 @@
+//@ sourceURL=elkConfiguration.js
+
+
 $(document).ready(function() {
 	var SERVERALLOK = 0;
 	var SERVERGENERALERROR = -1;
