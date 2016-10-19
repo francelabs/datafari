@@ -133,7 +133,10 @@
        modification REST API calls will be allowed; otherwise, error responses will be
        sent back for these requests. 
   -->
-  <schemaFactory class="ClassicIndexSchemaFactory"/>
+  	   <schemaFactory class="ManagedIndexSchemaFactory">
+         <bool name="mutable">true</bool>
+         <str name="managedSchemaResourceName">managed-schema</str>
+       </schemaFactory>
 
   <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
        Index Config - These settings control low-level behavior of indexing

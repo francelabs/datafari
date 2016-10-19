@@ -1,4 +1,0 @@
-<!-- Put here your custom fields for Solr -->
-<fields>
-<!-- E.g  <field name="my_field*" indexed="false" stored="true" type="string" multiValued="true"/> -->
-</fields>

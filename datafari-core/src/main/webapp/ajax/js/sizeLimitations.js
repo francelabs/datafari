@@ -17,6 +17,11 @@ $(document).ready(function() {
 	document.getElementById("submitindexhl").innerHTML = window.i18n.msgStore['confirm'];
 	document.getElementById("hlindexname").innerHTML = window.i18n.msgStore['limitindexHL'];
 	
+
+	document.getElementById("labelindexed").innerHTML = window.i18n.msgStore['labelindexed']+" : ";
+	document.getElementById("submitindexed").innerHTML = window.i18n.msgStore['confirm'];
+	document.getElementById("indexedname").innerHTML = window.i18n.msgStore['indexedname'];
+	
 	//Disable the input and submit
 	$('#submithl').attr("disabled", true);
 	$('#maxhl').attr("disabled", true);
@@ -47,12 +52,12 @@ $(document).ready(function() {
 		}
 	});
 	//Get hl.maxAmaxAnalyzedChars value
-	get("hl.maxAnalyzedChars", "hl");
+	getModifyNodeContent("hl.maxAnalyzedChars", "hl");
 	
 	//Sert the button to call the function set with the hl.maxAnalyzedChars parameter
 	$("#submithl").click(function(e){
 		e.preventDefault();
-		set("hl.maxAnalyzedChars", "hl");
+		setModifyNodeContent("hl.maxAnalyzedChars", "hl");
 	});
 	
 	//If the user loads an other page
@@ -66,15 +71,78 @@ $(document).ready(function() {
 		}
 	});
 	//Get hl.maxAmaxAnalyzedChars value
-	get("maxLength", "indexhl");
+	getModifyNodeContent("maxLength", "indexhl");
 	//Sert the button to call the function set with the hl.maxAnalyzedChars parameter
 	$("#submitindexhl").click(function(e){
 		e.preventDefault();
-		set("maxLength", "indexhl");
+		setModifyNodeContent("maxLength", "indexhl");
+	});
+	
+	
+	//Get hl.maxAmaxAnalyzedChars value
+	getModifyFieldType("maxTokenCount", "indexed");
+	//Sert the button to call the function set with the hl.maxAnalyzedChars parameter
+	$("#submitindexed").click(function(e){
+		e.preventDefault();
+		setModifyFieldType("maxTokenCount", "indexed");
 	});
 });
+
+// use the same kind of function to be coherent with the "Limit hl size" function on the same page, but we should definitely refactor this.
+function getModifyFieldType(typeConf, type){
+	document.getElementById("max"+type).value = "";
+	$.ajax({			//Ajax request to the doGet of the ModifyNodeContent servlet
+        type: "GET",
+        url: "./../admin/ModifyFieldType",
+        data : "type="+typeConf+"&class=solr.LimitTokenCountFilterFactory",
+        //if received a response from the server
+        success: function( data, textStatus, jqXHR) {	
+        	//If they're was an error
+        	//we should definitely change the API response !!!!
+        	if(data.toString().indexOf("Error code : ")!==-1){
+        		//print it and disable the input and submit
+        		document.getElementById("globalAnswer").innerHTML = data;
+        		$('#submit'+type).attr("disabled", true);
+        		$('#max'+type).attr("disabled", true);
+        	}else{		//else add the options to the select
+        		document.getElementById("max"+type).value = data;    
+        		$('#submit'+type).attr("disabled", false);
+        		$('#max'+type).attr("disabled", false);
+        	}
+        }
+ 	});
+}
+
+//use the same kind of function to be coherent with the "Limit hl size" function on the same page, but we should definitely refactor this.
+function setModifyFieldType(typeConf, type){
+	var value = document.getElementById("max"+type).value;
+	if(value>0 && value % 1 === 0){
+		$.ajax({			//Ajax request to the doGet of the ModifyNodeContent servlet to modify the solrconfig file
+        	type: "POST",
+        	url: "./../admin/ModifyFieldType",
+        	data : "type="+typeConf+"&value="+value+"&class=solr.LimitTokenCountFilterFactory",
+        	//if received a response from the server
+        	success: function( data, textStatus, jqXHR) {	
+        		//If the semaphore was already acquired
+        		//If they're was an error
+            	//we should definitely change the API response !!!!
+        		if(data.toString().indexOf("Error code : ")!==-1){        		
+        			//print it and disable the input and submit
+        			document.getElementById("globalAnswer").innerHTML = data;
+        			$('#submit'+type).attr("disabled", true);
+    	    		$('#max'+type).attr("disabled", true);
+   		     	}else{		//else add the options to the select
+   		     		document.getElementById("answer"+type).innerHTML = window.i18n.msgStore['modifDone']
+    	    	}
+    	    }
+ 		});
+	}else{
+		document.getElementById("answer"+type).innerHTML = window.i18n.msgStore['inputMust'];
+	}
+}
+
 //Call the get function with the correct parameter
-function get(typeConf, type){
+function getModifyNodeContent(typeConf, type){
 	document.getElementById("max"+type).value = "";
 	$.ajax({			//Ajax request to the doGet of the ModifyNodeContent servlet
         type: "GET",
@@ -102,7 +170,7 @@ function get(typeConf, type){
         }
  	});
 }
-function set(typeConf, type){
+function setModifyNodeContent(typeConf, type){
 	var value = document.getElementById("max"+type).value;
 	if(value>0 && value % 1 === 0){
 		$.ajax({			//Ajax request to the doGet of the ModifyNodeContent servlet to modify the solrconfig file
