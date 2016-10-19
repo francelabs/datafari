@@ -9,7 +9,7 @@
 <head>
 <title>Redirect</title>
 
-<meta http-equiv="refresh" content="0;URL=<%= request.getParameter("url") %>">
+<meta http-equiv="refresh" content="0;URL='<%= request.getParameter("url") %>'">
 </head>
 <body>
 </body>
