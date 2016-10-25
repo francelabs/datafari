@@ -146,7 +146,7 @@ fi
 
 cd $MCF_HOME/../bin
 
-if  [[ "$OCR" = *true* ]];
+if  [[ "${OCR,,}" = *true* ]];
 then
 	echo "Using Tesseract OCR..."
 	cp -f ${MCF_HOME}/tika-config.jar ${MCF_HOME}/connector-lib/	
