@@ -24,7 +24,6 @@ public class DBContextListerner implements ServletContextListener {
 			.getLogger(DBContextListerner.class.getName());
 
 	private static final String KEYSPACE = "datafari";
-	private static final String host = "127.0.0.1";
 
 	private static Cluster cluster;
 	private static Session session;
@@ -56,7 +55,7 @@ public class DBContextListerner implements ServletContextListener {
 
 	private static void initDB() {
 		try {
-			// Connect to the cluster and keyspace "demo"
+			String host = ScriptConfiguration.getProperty("cassandraHost");
 			cluster = Cluster.builder().addContactPoint(host).build();
 			session = cluster.connect(KEYSPACE);
 			LOGGER.info("Cassandra client initialized successfully");
