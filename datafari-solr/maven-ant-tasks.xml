@@ -17,7 +17,6 @@
 			<!-- Copy Jars that are inside contrib directory -->
 			<!-- Copy Extraction and LangId -->
 			<fileset dir="target">
-				<include name="*solr*/contrib/extraction/**/*.jar" />
 				<include name="*solr*/contrib/langid/**/*.jar" />
 			</fileset>
 			<chainedmapper>

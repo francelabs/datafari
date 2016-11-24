@@ -25,6 +25,7 @@
 	<property name="cassandra.src.dir" value="${project.dir}/datafari-cassandra/target/dist/cassandra" />
 	<property name="zookeeper.src.dir" value="${project.dir}/datafari-zookeeper/target/dist/zookeeper" />
 	<property name="bin.src.dir" value="${project.dir}/bin" />
+	<property name="tika.src.dir" value="${project.dir}/datafari-tika/target" />
 
 
 	<!-- Output directories and self contained Datafari's Debian components -->
@@ -163,19 +164,19 @@
 				<include name="*.jar" />
 			</fileset>
 		</copy>
+		
+		<!-- Copy Tika jars to Solr -->
+		<copy todir="${debian.dist.dir}/solr/solr_home/FileShare/lib/extraction">
+			<fileset dir="${tika.src.dir}/dependency">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
 
 		<!-- Copy only useful Jena libraries to Solr FileShare core directory -->
-		<copy toDir="${debian.dist.dir}/solr/solr_home/FileShare/lib/jena" overwrite="true" force="true">
-			<fileset dir="${jena.src.dir}">
-				<include name="*apache-jena*/lib/jena*" />
-				<include name="*apache-jena*/lib/jackson*" />
-				<include name="*apache-jena*/lib/commons-cli*" />
-				<include name="*apache-jena*/lib/commons-csv*" />
-				<include name="*apache-jena*/lib/dexx-collections*" />
-				<include name="*apache-jena*/lib/jsonld*" />
-				<include name="*apache-jena*/lib/libthrift*" />
+		<copy toDir="${debian.dist.dir}/solr/solr_home/FileShare/lib/jena">
+			<fileset dir="${jena.src.dir}/dependency">
+				<include name="*.jar" />
 			</fileset>
-			<cutdirsmapper dirs="2" />
 		</copy>
 
 		<copy todir="${debian.dist.dir}/elk">

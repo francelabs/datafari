@@ -21,6 +21,7 @@
 		<module>datafari-tomcat</module>
 		<module>datafari-elk</module>
 		<module>datafari-updateprocessor</module>
+		<module>datafari-tika</module>
 		<module>datafari-tika-config</module>
 		<module>datafari-handler</module>
 		<module>datafari-realm</module>

@@ -19,8 +19,60 @@ Apache license V2
 ~~~ Apache ManifoldCF ~~~
 Apache license V2
 
-~~~ Apache Tika ~~~
+~~~ Apache Tika v1.14 ~~~
 Apache license V2
+With the following updated libs :
+- c3p0:JDBC DataSources/Resource Pools (http://c3p0.sourceforge.net) c3p0:c3p0:jar:0.9.1.2
+    License: GNU LESSER GENERAL PUBLIC LICENSE  (http://www.gnu.org/licenses/lgpl.txt)
+- ISO Parser (http://code.google.com/p/mp4parser/) com.googlecode.mp4parser:isoparser:jar:1.1.21
+    License: Apache Software License - Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+- Bouncy Castle S/MIME API (http://www.bouncycastle.org/java.html) org.bouncycastle:bcmail-jdk15on:jar:1.55
+    License: Bouncy Castle Licence  (http://www.bouncycastle.org/licence.html)
+- Bouncy Castle PKIX, CMS, EAC, TSP, PKCS, OCSP, CMP, and CRMF APIs (http://www.bouncycastle.org/java.html) org.bouncycastle:bcpkix-jdk15on:jar:1.55
+    License: Bouncy Castle Licence  (http://www.bouncycastle.org/licence.html)
+- Bouncy Castle Provider (http://www.bouncycastle.org/java.html) org.bouncycastle:bcprov-jdk15on:jar:1.55
+    License: Bouncy Castle Licence  (http://www.bouncycastle.org/licence.html)
+- JHighlight (https://github.com/codelibs/jhighlight) org.codelibs:jhighlight:jar:1.0.3
+    License: CDDL, v1.0  (http://www.opensource.org/licenses/cddl1.php)    License: LGPL, v2.1 or later  (http://www.opensource.org/licenses/lgpl-license.php)
+- Gson (http://code.google.com/p/google-gson/) com.google.code.gson:gson:jar:2.3.1
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+- Ehcache Core (http://ehcache.org) net.sf.ehcache:ehcache-core:jar:2.6.11
+    License: The Apache Software License, Version 2.0  (src/assemble/EHCACHE-CORE-LICENSE.txt)
+- quartz (http://www.quartz-scheduler.org/quartz) org.quartz-scheduler:quartz:jar:2.2.3
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+- Apache CXF Core (http://cxf.apache.org) org.apache.cxf:cxf-core:bundle:3.0.11
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+- Apache CXF Runtime JAX-RS Frontend (http://cxf.apache.org) org.apache.cxf:cxf-rt-frontend-jaxrs:bundle:3.0.11
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+- Apache CXF JAX-RS Client (http://cxf.apache.org) org.apache.cxf:cxf-rt-rs-client:bundle:3.0.11
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+- Apache CXF Runtime HTTP Transport (http://cxf.apache.org) org.apache.cxf:cxf-rt-transports-http:bundle:3.0.11
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+- Apache OpenNLP Tools (http://www.apache.org/opennlp-tools/) org.apache.opennlp:opennlp-tools:bundle:1.6.0
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+- XmlBeans (http://xmlbeans.apache.org) org.apache.xmlbeans:xmlbeans:jar:2.6.0
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+- XMP Library for Java (http://www.adobe.com/devnet/xmp.html) com.adobe.xmp:xmpcore:jar:5.1.3
+    License: The BSD License  (http://www.adobe.com/devnet/xmp/library/eula-xmp-library-java.html)
+- Jackson-core (https://github.com/FasterXML/jackson-core) com.fasterxml.jackson.core:jackson-core:bundle:2.8.5
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+- Jackcess (http://jackcess.sf.net) com.healthmarketscience.jackcess:jackcess:jar:2.1.5
+    License: Apache License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+- JDOM (http://www.jdom.org) org.jdom:jdom2:jar:2.0.6
+    License: Similar to Apache License but with the acknowledgment clause removed  (https://raw.github.com/hunterhacker/jdom/master/LICENSE.txt)
+- Apache Commons CSV (http://commons.apache.org/proper/commons-csv/) org.apache.commons:commons-csv:jar:1.4
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+- Apache HttpClient (http://hc.apache.org/httpcomponents-client) org.apache.httpcomponents:httpclient:jar:4.5.2
+    License: Apache License  (LICENSE.txt)
+- Apache HttpCore (http://hc.apache.org/httpcomponents-core-ga) org.apache.httpcomponents:httpcore:jar:4.4.5
+    License: Apache License  (LICENSE.txt)
+    
+And the following additional libs:
+- Xcerces J (https://xerces.apache.org/xerces2-j/) xerces:xercesImpl:jar:2.11.0
+	License: Apache License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+- Apache OpenNLP Maxent (http://www.apache.org/opennlp-maxent/) org.apache.opennlp:opennlp-maxent:bundle:3.0.3
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+    
 
 ~~~ Apache Jena ~~~
 Apache license V2

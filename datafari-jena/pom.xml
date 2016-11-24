@@ -6,51 +6,98 @@
   <packaging>pom</packaging>
   <version>3.0-SNAPSHOT</version>
   <name>Datafari Enterprise Search - Jena module</name>
-  <build>
-  <plugins>
-  <plugin>
-	<groupId>com.googlecode.maven-download-plugin</groupId>
-	<artifactId>download-maven-plugin</artifactId>
-	<version>1.2.1</version>
-	<!-- Don't propagate configuration to child POMs -->
-	<inherited>false</inherited>
-  	<executions><execution>
-							<id>install-jena</id>
-							<phase>validate</phase>
-							<goals>
-								<goal>wget</goal>
-							</goals>
-							<configuration>
-								<!-- Version of Jena should be retrieved from a property file as 
-									well as the MD5 -->
-								<url>http://apache.crihan.fr/dist/jena/binaries/apache-jena-3.1.0.tar.gz</url>
-								<md5>39100e0eb432eb18c1326b0697a02751</md5>
-								<unpack>true</unpack>
-							</configuration>
-						</execution>
-  	</executions>
-	</plugin>
-				<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.8</version>
-				<!-- Don't propagate configuration to child POMs -->
-				<inherited>false</inherited>
+  <dependencies>
+  		<!-- https://mvnrepository.com/artifact/org.apache.jena/apache-jena-libs -->
+		<dependency>
+		    <groupId>org.apache.jena</groupId>
+		    <artifactId>apache-jena-libs</artifactId>
+		    <type>pom</type>
+		    <version>3.1.1</version>
+		    <exclusions>
+			  <exclusion>
+			    <groupId>xerces</groupId>
+			    <artifactId>xercesImpl</artifactId>
+			  </exclusion>
+			  <exclusion>
+			    <groupId>org.slf4j</groupId>
+			    <artifactId>slf4j-api</artifactId>
+			  </exclusion>
+			  <exclusion>
+			    <groupId>xml-apis</groupId>
+			    <artifactId>xml-apis</artifactId>
+			  </exclusion>
+			  <exclusion>
+			    <groupId>commons-io</groupId>
+			    <artifactId>commons-io</artifactId>
+			  </exclusion>
+			  <exclusion>
+			    <groupId>commons-codec</groupId>
+			    <artifactId>commons-codec</artifactId>
+			  </exclusion>
+			  <exclusion>
+			    <groupId>org.apache.commons</groupId>
+			    <artifactId>commons-csv</artifactId>
+			  </exclusion>
+			  <exclusion>
+			    <groupId>com.fasterxml.jackson.core</groupId>
+			    <artifactId>jackson-core</artifactId>
+			  </exclusion>
+			  <exclusion>
+			    <groupId>org.apache.httpcomponents</groupId>
+			    <artifactId>httpclient</artifactId>
+			  </exclusion>
+			</exclusions>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.8.5</version>
+		    <exclusions>
+			  <exclusion>
+			    <groupId>com.fasterxml.jackson.core</groupId>
+			    <artifactId>jackson-core</artifactId>
+			  </exclusion>
+			</exclusions>
+		</dependency>
+
+  </dependencies>
+	<build>
+		<plugins>
+			<!-- Enable all dependencies to be installed in Maven repo -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.5.2</version>
 				<executions>
 					<execution>
-						<id>ant-tasks</id>
-						<phase>validate</phase>
-						<configuration>
-							<target>
-								<ant antfile="maven-ant-tasks.xml" />
-							</target>
-						</configuration>
+						<id>default-install</id>
+						<phase>install</phase>
 						<goals>
-							<goal>run</goal>
+							<goal>install</goal>
 						</goals>
 					</execution>
 				</executions>
 			</plugin>
-</plugins>
-</build>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.10</version>
+				<executions>
+				  <execution>
+				    <id>copy-dependencies</id>
+				    <phase>package</phase>
+				    <goals>
+				      <goal>copy-dependencies</goal>
+				    </goals>
+				    <configuration>
+						<excludeScope>provided</excludeScope>
+				    </configuration>
+				  </execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
 
