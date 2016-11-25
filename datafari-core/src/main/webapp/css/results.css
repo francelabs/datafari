@@ -16,3 +16,7 @@ CSS for Datafari modules
 @import "modules/query-elevator-module.css";
 
 body { overflow-y: scroll; }
+
+.title {
+ display: block; 
+}
