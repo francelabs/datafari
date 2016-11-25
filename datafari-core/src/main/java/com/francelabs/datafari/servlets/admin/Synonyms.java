@@ -93,7 +93,7 @@ public class Synonyms extends HttpServlet {
 		} catch (final IOException e1) {
 			LOGGER.error(
 					"Error while opening list_language.txt in Synonyms Servlet's Constructor, please make sure the file exists and is located in "
-							+ env + "/solr/solr_home/" + server + "/conf/" + ".. Error code : 69016",
+							+ env + "/solr/solrcloud/" + server + "/conf/" + ".. Error code : 69016",
 					e1);
 		}
 		final String[] lines = content.split(Environment.getProperty("line.separator")); // There
@@ -187,7 +187,7 @@ public class Synonyms extends HttpServlet {
 							}
 						} catch (final IOException e) {
 							LOGGER.error("Error while reading the synonyms_" + request.getParameter("language")
-									+ ".txt file in Synonyms servlet, please make sure the file exists and is located in " + env + "/solr/solr_home/"
+									+ ".txt file in Synonyms servlet, please make sure the file exists and is located in " + env + "/solr/solrcloud/"
 									+ server + "/conf/" + ". Error 69018", e);
 							final PrintWriter out = response.getWriter();
 							out.append(

@@ -34,7 +34,7 @@ public class ActivateLDAPSolr {
 	private final static Logger logger = Logger.getLogger(ActivateLDAPSolr.class); 
 	
 	private ActivateLDAPSolr(){
-		String filePath = Environment.getProperty("catalina.home")+ File.separator +".." + File.separator +"solr"+File.separator+"solr_home"+File.separator+"FileShare"+File.separator+"conf"+File.separator+"solrconfig.xml";
+		String filePath = Environment.getProperty("catalina.home")+ File.separator +".." + File.separator +"solr"+File.separator+"solrcloud"+File.separator+"FileShare"+File.separator+"conf"+File.separator+"solrconfig.xml";
 		solrConfig = new File(filePath);
 			String filePathJSON = Environment.getProperty("catalina.home") + File.separator +".." + File.separator + "bin" + File.separator + "common" + File.separator + "config" 
 				+ File.separator + "manifoldcf" + File.separator + "monoinstance" + File.separator + "authorityconnections" + File.separator + "authorityConnection.json";

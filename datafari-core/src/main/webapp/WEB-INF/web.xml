@@ -24,7 +24,7 @@
   <context-param>
     <description>Location to store uploaded file</description>
     <param-name>file-upload</param-name>
-    <param-value>../../solr/solr_home/FileShare/conf/</param-value>
+    <param-value>../../solr/solrcloud/FileShare/conf/</param-value>
   </context-param>
   <security-constraint>
     <web-resource-collection>

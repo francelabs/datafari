@@ -145,7 +145,7 @@ public class FieldWeight extends HttpServlet {
 					semaphoreConfigQf.release();
 				return;
 			}
-			if (schema == null || config == null || !new File(env + "/solr/solr_home/" + server + "/conf/schema.xml").exists()
+			if (schema == null || config == null || !new File(env + "/solr/solrcloud/" + server + "/conf/schema.xml").exists()
 					|| !new File(env + "/solrconfig.xml").exists()) {// If
 																		// the
 																		// files

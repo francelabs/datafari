@@ -83,7 +83,7 @@ String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
 				return;
 			}
 		} catch (IOException e1) {
-			LOGGER.error("Error while opening list_language.txt in StopWords Servlet's Constructor, please make sure the file exists and is located in "+env+"/solr/solr_home/"+server+"/conf/"+". Error 69012", e1);
+			LOGGER.error("Error while opening list_language.txt in StopWords Servlet's Constructor, please make sure the file exists and is located in "+env+"/solr/solrcloud/"+server+"/conf/"+". Error 69012", e1);
 		}	
 		String[] lines = content.split(Environment.getProperty("line.separator"));					//There is one language per line
 		for(int i=0;i<lines.length;i++){														//For each line
@@ -138,7 +138,7 @@ String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
 							PrintWriter out = response.getWriter();
 							out.append("Error while reading the stopwords file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69014"); 	
 							out.close();
-							LOGGER.error("Error while reading the stopwords_"+request.getParameter("language")+".txt file in Stopwords servlet, please make sure the file exists and is located in "+env+"/solr/solr_home/"+server+"/conf/"+". Error 69014", e);
+							LOGGER.error("Error while reading the stopwords_"+request.getParameter("language")+".txt file in Stopwords servlet, please make sure the file exists and is located in "+env+"/solr/solrcloud/"+server+"/conf/"+". Error 69014", e);
 						}
 					}
 				}

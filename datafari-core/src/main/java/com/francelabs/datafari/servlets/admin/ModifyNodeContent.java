@@ -106,7 +106,7 @@ public class ModifyNodeContent extends HttpServlet {
 				if( config == null || !new File(env+"/solrconfig.xml").exists()){//If the file did not existed when the constructor was run
 					//Checks if it exists now
 					if(!new File(env+"/solrconfig.xml").exists()){
-						LOGGER.error("Error while opening the configuration file, solrconfig.xml, in ModifyNodeContent doGet, please make sure this file exists at "+env+"/solr/solr_home/"+server+"/conf/ . Error 69033");		//If not an error is printed
+						LOGGER.error("Error while opening the configuration file, solrconfig.xml, in ModifyNodeContent doGet, please make sure this file exists at "+env+"/solr/solrcloud/"+server+"/conf/ . Error 69033");		//If not an error is printed
 						PrintWriter out = response.getWriter();
 						out.append("Error while opening the configuration file, please retry, if the problem persists contact your system administrator. Error Code : 69033"); 	
 						out.close();

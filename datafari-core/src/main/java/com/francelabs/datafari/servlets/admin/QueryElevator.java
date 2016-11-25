@@ -243,7 +243,7 @@ public class QueryElevator extends HttpServlet {
 
 			} catch (final Exception e) {
 				jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-				LOGGER.error("Error on marshal/unmarshal elevate.xml file in solr/solr_home/" + server + "/conf", e);
+				LOGGER.error("Error on marshal/unmarshal elevate.xml file in solr/solrcloud/" + server + "/conf", e);
 			}
 		} else if (request.getParameter("query") != null && !request.getParameter("query").equals("") && request.getParameter("tool") != null
 				&& !request.getParameter("tool").equals("")) {
@@ -317,7 +317,7 @@ public class QueryElevator extends HttpServlet {
 
 			} catch (final Exception e) {
 				jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-				LOGGER.error("Error on marshal/unmarshal elevate.xml file in solr/solr_home/" + server + "/conf", e);
+				LOGGER.error("Error on marshal/unmarshal elevate.xml file in solr/solrcloud/" + server + "/conf", e);
 			}
 		}
 		final PrintWriter out = response.getWriter();
