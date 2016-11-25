@@ -19,7 +19,7 @@ import javax.naming.ldap.LdapContext;
 import javax.naming.ldap.PagedResultsControl;
 import javax.naming.ldap.PagedResultsResponseControl;
 
-public class AcitveDirectoryUtils {
+public class ActiveDirectoryUtils {
 
 	private static final String baseFilter = "(&((&(objectCategory=Person)(objectClass=User)))";
 	private static final String[] returnAttributes = { "sAMAccountName", "givenName", "userAccountControl" };
@@ -42,11 +42,10 @@ public class AcitveDirectoryUtils {
 	 */
 	public static LdapContext getLdapContext(final String url, final String user, final String password) throws NamingException, IOException {
 		// create an initial directory context
-		final Hashtable<String, Object> env = new Hashtable<String, Object>();
+		final Hashtable<String, Object> env = new Hashtable<>();
 		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 		env.put("com.sun.jndi.ldap.connect.timeout", "1000");
 		env.put(Context.PROVIDER_URL, url);
-		env.put(Context.SECURITY_AUTHENTICATION, "simple");
 		env.put(Context.SECURITY_PRINCIPAL, user);
 		env.put(Context.SECURITY_CREDENTIALS, password);
 
@@ -99,7 +98,7 @@ public class AcitveDirectoryUtils {
 	 */
 	public static List<String> listAllusers(final LdapContext ldapContext, final String searchBase, final boolean userSubtree)
 			throws NamingException, IOException {
-		final List<String> usersList = new ArrayList<String>();
+		final List<String> usersList = new ArrayList<>();
 		final String filter = baseFilter + ")";
 		int scope = SearchControls.SUBTREE_SCOPE;
 		if (!userSubtree) {

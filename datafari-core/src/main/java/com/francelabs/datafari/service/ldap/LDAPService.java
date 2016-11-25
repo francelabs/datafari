@@ -17,21 +17,18 @@ public class LDAPService {
 		return instance;
 	}
 
-	
-	// LDAPService.getInstance().testLDAPConnection("ldap://52.16.74.128:389", "admin@corp.francelabs.com", "Jailesdroits");
-	public void testLDAPConnection(String connectionString,String userPrincipal, String password
-			) throws NamingException {
+	// LDAPService.getInstance().testLDAPConnection("ldap://52.16.74.128:389",
+	// "admin@corp.francelabs.com", "Jailesdroits");
+	public void testLDAPConnection(final String connectionString, final String userPrincipal, final String password) throws NamingException {
 
-		Hashtable env = new Hashtable();
-		env.put(Context.INITIAL_CONTEXT_FACTORY,
-				"com.sun.jndi.ldap.LdapCtxFactory");
-        env.put("com.sun.jndi.ldap.connect.timeout", "1000");
+		final Hashtable<String, String> env = new Hashtable<>();
+		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+		env.put("com.sun.jndi.ldap.connect.timeout", "1000");
 		env.put(Context.PROVIDER_URL, connectionString);
-		env.put(Context.SECURITY_AUTHENTICATION, "simple");
 		env.put(Context.SECURITY_PRINCIPAL, userPrincipal);
 		env.put(Context.SECURITY_CREDENTIALS, password);
 
-		InitialLdapContext session = new InitialLdapContext(env, null);
+		final InitialLdapContext session = new InitialLdapContext(env, null);
 		session.close();
 	}
 

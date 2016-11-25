@@ -25,7 +25,7 @@ import com.francelabs.datafari.service.db.UserDataService;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.user.User;
 import com.francelabs.datafari.user.UserConstants;
-import com.francelabs.datafari.utils.AcitveDirectoryUtils;
+import com.francelabs.datafari.utils.ActiveDirectoryUtils;
 import com.francelabs.datafari.utils.RealmLdapConfiguration;
 
 /**
@@ -68,10 +68,10 @@ public class AddUser extends HttpServlet {
 
 					// Retrieve the LDAP context from the LDAP configuration
 					// parameters
-					final DirContext ctx = AcitveDirectoryUtils.getLdapContext(h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL),
+					final DirContext ctx = ActiveDirectoryUtils.getLdapContext(h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL),
 							h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME), h.get(RealmLdapConfiguration.ATTR_CONNECTION_PW));
 
-					userExists = AcitveDirectoryUtils.checkUser(username, h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME), ctx);
+					userExists = ActiveDirectoryUtils.checkUser(username, h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME), ctx);
 
 					if (userExists) {
 						final User user = new User(request.getParameter(UserConstants.USERNAMECOLUMN).toString(), "");

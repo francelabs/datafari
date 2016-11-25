@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.user.User;
-import com.francelabs.datafari.utils.AcitveDirectoryUtils;
+import com.francelabs.datafari.utils.ActiveDirectoryUtils;
 import com.francelabs.datafari.utils.RealmLdapConfiguration;
 
 /**
@@ -80,11 +80,11 @@ public class GetAllLDAPUsersAndRoles extends HttpServlet {
 					final HashMap<String, String> h = RealmLdapConfiguration.getConfig(request);
 					// Retrueve the LDAP context from the LDAP configuration
 					// parameters
-					final LdapContext ctx = AcitveDirectoryUtils.getLdapContext(h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL),
+					final LdapContext ctx = ActiveDirectoryUtils.getLdapContext(h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL),
 							h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME), h.get(RealmLdapConfiguration.ATTR_CONNECTION_PW));
 
 					// Retrieve the LDAP users list
-					final List<String> ldapUsersList = AcitveDirectoryUtils.listAllusers(ctx, h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME),
+					final List<String> ldapUsersList = ActiveDirectoryUtils.listAllusers(ctx, h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME),
 							Boolean.parseBoolean(h.get(RealmLdapConfiguration.ATTR_SUBTREE)));
 					currentUsersList = ldapUsersList;
 					// Close the context (never forget this)
