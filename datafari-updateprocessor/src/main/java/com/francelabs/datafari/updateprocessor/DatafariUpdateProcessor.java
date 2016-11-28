@@ -40,10 +40,26 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 	public void processAdd(final AddUpdateCommand cmd) throws IOException {
 		final SolrInputDocument doc = cmd.getSolrInputDocument();
 
+		// Sometimes Tika put several ids so we keep the first one which is
+		// always the right one
+		if (doc.getFieldValues("id").size() > 1) {
+			final Object id = doc.getFieldValue("id");
+			doc.remove("id");
+			doc.addField("id", id);
+		}
+
+		// Sometimes Tika put several last_modified dates, so we keep the first
+		// one which is always the right one
+		if (doc.getFieldValues("last_modified") != null && doc.getFieldValues("last_modified").size() > 1) {
+			final Object last_modified = doc.getFieldValue("last_modified");
+			doc.remove("last_modified");
+			doc.addField("last_modified", last_modified);
+		}
+
 		final String url = (String) doc.getFieldValue("id");
 
 		// Create path hierarchy for facet
-		final List<String> urlHierarchy = new ArrayList<String>();
+		final List<String> urlHierarchy = new ArrayList<>();
 
 		/*
 		 * // Create path hierarchy for facet
@@ -185,9 +201,9 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 		}
 
 		String mimeType = (String) doc.get("ignored_stream_content_type").getFirstValue();
-		if (mimeType.contains(";")){
-			String[] parts = mimeType.split(";");
-			mimeType = parts[0]; 
+		if (mimeType.contains(";")) {
+			final String[] parts = mimeType.split(";");
+			mimeType = parts[0];
 		}
 		final MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
 		MimeType type;
