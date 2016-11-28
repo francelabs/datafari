@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -53,7 +54,6 @@ public class ManifoldAPI {
 
 		if (client == null) {
 			client = HttpClientBuilder.create().build();
-			
 
 			final IThreadContext tc = ThreadContextFactory.make();
 			ManifoldCF.initializeEnvironment(tc);
@@ -68,12 +68,8 @@ public class ManifoldAPI {
 				ManifoldAPI.authenticate("", apiPassword, client);
 			}
 
-				
 		}
 
-		
-		
-		
 		return client;
 	}
 
@@ -177,7 +173,7 @@ public class ManifoldAPI {
 
 	static public Map<String, JSONObject> getConnections(final String command) throws Exception {
 		LOGGER.info("Get connectors " + command);
-		final Map<String, JSONObject> connectorsMap = new HashMap<String, JSONObject>();
+		final Map<String, JSONObject> connectorsMap = new HashMap<>();
 		final JSONObject connectors = getInfo(command);
 		final String subCommands = command.substring(0, command.length() - 1);
 		final JSONObject connector = connectors.optJSONObject(subCommands);
@@ -225,8 +221,9 @@ public class ManifoldAPI {
 
 		return result;
 	}
-	
-	static private JSONObject executeCommand(final String url, final String verb, final JSONObject jsonObject, HttpClient client) throws IOException, ManifoldCFException, InterruptedException {
+
+	static private JSONObject executeCommand(final String url, final String verb, final JSONObject jsonObject, final HttpClient client)
+			throws IOException, ManifoldCFException, InterruptedException {
 
 		HttpRequestBase request = null;
 		JSONObject responseObject = null;
@@ -244,7 +241,11 @@ public class ManifoldAPI {
 				}
 				request.addHeader("Content-Type", "application/json");
 			} else {
-				request = new HttpGet(url);
+				if (verb.equals("DELETE")) {
+					request = new HttpDelete(url);
+				} else {
+					request = new HttpGet(url);
+				}
 			}
 
 			final HttpResponse response = client.execute(request);
@@ -273,13 +274,14 @@ public class ManifoldAPI {
 		return responseObject;
 	}
 
-	static private JSONObject executeCommand(final String url, final String verb, final JSONObject jsonObject) throws IOException, ManifoldCFException, InterruptedException {
+	static private JSONObject executeCommand(final String url, final String verb, final JSONObject jsonObject)
+			throws IOException, ManifoldCFException, InterruptedException {
 		final HttpClient client = getClient();
 		return executeCommand(url, verb, jsonObject, client);
 
 	}
 
-	private static void waitUntilManifoldIsStarted(HttpClient client) throws InterruptedException, ManifoldCFException, IOException {
+	private static void waitUntilManifoldIsStarted(final HttpClient client) throws InterruptedException, ManifoldCFException, IOException {
 		LOGGER.info("Wait until MCF is started");
 
 		boolean exception = true;
@@ -314,7 +316,8 @@ public class ManifoldAPI {
 		} while (exception);
 	}
 
-	public static void authenticate(final String apiUsername, final String apiPassword, HttpClient client) throws IOException, ManifoldCFException, InterruptedException {
+	public static void authenticate(final String apiUsername, final String apiPassword, final HttpClient client)
+			throws IOException, ManifoldCFException, InterruptedException {
 		final JSONObject json = new JSONObject("{\"userID\":\"" + apiUsername + "\", \"password\":\"" + apiPassword + "\"}");
 		executeCommand(urlManifoldCFAPI + "LOGIN", "POST", json, client);
 	}
