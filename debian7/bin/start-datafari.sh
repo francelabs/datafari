@@ -64,12 +64,11 @@ then
 	pid=$(head -n 1 $CASSANDRA_PID_FILE)
 
 	# Check if Cassandra process is running
-	cassandra_process=$(ps -Alf | grep $pid | grep org.apache.cassandra.service.CassandraDaemon)
-
-	if [ -z "$cassandra_process" ]; then
-		echo "/!\ ERROR: Cassandra process is not running."
-	else
+	if ps -p $pid > /dev/null 
+	then
 		echo "Cassandra process running with PID ${pid} --- OK"
+	else
+		echo "/!\ ERROR: Cassandra process is not running."
 	fi
 	
 	sudo su postgres -c "${DATAFARI_HOME}/pgsql/bin/initdb -U postgres -A password --pwfile=${DATAFARI_HOME}/pgsql/pwd.conf -E utf8 -D ${DATAFARI_HOME}/pgsql/data"
