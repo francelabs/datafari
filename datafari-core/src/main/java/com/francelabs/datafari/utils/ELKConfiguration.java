@@ -38,6 +38,7 @@ public class ELKConfiguration {
 	public static final String EXTERNAL_ELK_ON_OFF = "externalELK";
 	public static final String ELK_SERVER = "ELKServer";
 	public static final String ELK_SCRIPTS_DIR = "ELKScriptsDir";
+	public static final String AUTH_USER = "authUser";
 
 	private static String configPropertiesFileName = "elk.properties";
 
@@ -92,7 +93,8 @@ public class ELKConfiguration {
 	 *
 	 */
 	private ELKConfiguration() throws IOException {
-		configPropertiesFileNameRealPath = Environment.getProperty("catalina.home") + File.separator + "conf" + File.separator + configPropertiesFileName;
+		configPropertiesFileNameRealPath = Environment.getProperty("catalina.home") + File.separator + "conf" + File.separator
+				+ configPropertiesFileName;
 		final File configFile = new File(configPropertiesFileNameRealPath);
 		final InputStream stream = new FileInputStream(configFile);
 		properties = new Properties();

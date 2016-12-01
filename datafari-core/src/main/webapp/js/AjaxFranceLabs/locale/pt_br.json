@@ -1,4 +1,5 @@
 {
+"authUser" : "Monitoring User",
 "synonymsError":"Erro: algumas palavras não tem sinônimos ou alguns sinônimos não tem palavras correspontes !",
 "synonymsListLabel":"Lista de sinônimos",
 "words":"Palávras",

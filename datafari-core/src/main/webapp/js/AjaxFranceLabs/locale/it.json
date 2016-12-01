@@ -1,4 +1,5 @@
 {
+"authUser" : "Monitoring User",
 "synonymsError":"Error: some words do not have synonyms or some synonyms do not have corresponding words !",
 "synonymsListLabel":"List of synonyms",
 "words":"Words",

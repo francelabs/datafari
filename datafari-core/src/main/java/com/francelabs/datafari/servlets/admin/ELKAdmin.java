@@ -89,6 +89,7 @@ public class ELKAdmin extends HttpServlet {
 		response.setContentType("application/json");
 
 		jsonResponse.put(ELKConfiguration.KIBANA_URI, ELKConfiguration.getProperty(ELKConfiguration.KIBANA_URI));
+		jsonResponse.put(ELKConfiguration.AUTH_USER, ELKConfiguration.getProperty(ELKConfiguration.AUTH_USER));
 		jsonResponse.put(ELKConfiguration.EXTERNAL_ELK_ON_OFF, ELKConfiguration.getProperty(ELKConfiguration.EXTERNAL_ELK_ON_OFF));
 		jsonResponse.put(ELKConfiguration.ELK_SERVER, ELKConfiguration.getProperty(ELKConfiguration.ELK_SERVER));
 		jsonResponse.put(ELKConfiguration.ELK_SCRIPTS_DIR, ELKConfiguration.getProperty(ELKConfiguration.ELK_SCRIPTS_DIR));

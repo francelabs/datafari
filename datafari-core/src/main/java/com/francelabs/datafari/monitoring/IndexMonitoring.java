@@ -21,10 +21,12 @@ import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.params.ModifiableSolrParams;
 
 import com.francelabs.datafari.logs.MonitoringLevel;
 import com.francelabs.datafari.service.search.SolrServers;
 import com.francelabs.datafari.service.search.SolrServers.Core;
+import com.francelabs.datafari.utils.ELKConfiguration;
 
 /**
  * Starts monitoring events which occurs at a fixed rate (once an hour by
@@ -155,7 +157,7 @@ public class IndexMonitoring {
 		private final Logger LOGGER = Logger.getLogger(FileShareMonitoringLog.class);
 
 		/** facet fields to add to the query. */
-		private final List<String> facetFields = new ArrayList<String>(Arrays.asList("extension", "language", "source"));
+		private final List<String> facetFields = new ArrayList<>(Arrays.asList("extension", "language", "source"));
 
 		private final MonitoringEventFrequency eventFrequency;
 
@@ -191,6 +193,15 @@ public class IndexMonitoring {
 				for (final String facetField : facetFields) {
 					query.addFacetField(facetField);
 				}
+
+				// add authenticatedUser if necessary
+				final String authUser = ELKConfiguration.getProperty(ELKConfiguration.AUTH_USER);
+				if (!authUser.isEmpty()) {
+					final ModifiableSolrParams params = new ModifiableSolrParams();
+					params.set("AuthenticatedUserName", authUser);
+					query.add(params);
+				}
+
 				final QueryResponse queryResponse = solrServer.query(query);
 				final SolrDocumentList response = (SolrDocumentList) queryResponse.getResponse().get("response");
 				// Generate the global num of docs log

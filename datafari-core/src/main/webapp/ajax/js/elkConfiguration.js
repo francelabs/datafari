@@ -14,6 +14,7 @@ $(document).ready(function() {
 	$("#submit").text(window.i18n.msgStore['save']);
 	$("#title").text(window.i18n.msgStore['adminUI-ELKConf']);
 	$("#kibanaURILabel").html(window.i18n.msgStore['kibanaURI']);
+	$("#authUserLabel").html(window.i18n.msgStore['authUser']);
 	var input = $("#elk_activation input");
 	var ENDOFANIMATION = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
 	
@@ -41,6 +42,7 @@ $(document).ready(function() {
 		if (data.code == 0 ){
 			$("#elasticsearchPort").val(data.ElasticsearchPort);
 			$("#kibanaURI").val(data.KibanaURI);
+			$("#authUser").val(data.authUser);
 			externalELK = fillExtendedFields(data);
 			
 		}else{
@@ -74,6 +76,7 @@ $(document).ready(function() {
 			if((externalELK===true && $("#ELKServer").val()!="" && $("#ELKServer").val() != undefined && $("#ELKScriptsDir").val()!="" && $("#ELKScriptsDir").val() != undefined) || externalELK===false)
 			$.post("../SearchAdministrator/changeELKConf",{
 				KibanaURI :  $("#kibanaURI").val(),
+				authUser :  $("#authUser").val(),
 				externalELK : getExternalELK(),
 				ELKServer : $("#ELKServer").val(),
 				ELKScriptsDir : $("#ELKScriptsDir").val()

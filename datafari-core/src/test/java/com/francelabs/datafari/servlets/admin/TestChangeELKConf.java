@@ -26,12 +26,12 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import com.francelabs.datafari.utils.ELKConfiguration;
 import com.francelabs.datafari.utils.Environment;
 
-@PrepareForTest(Environment.class) 
+@PrepareForTest(Environment.class)
 @RunWith(PowerMockRunner.class)
 public class TestChangeELKConf {
-	
+
 	final static String resourcePathStr = "src/test/resources/elkTests";
-	final static String catalinaHomeTemp ="catalina";
+	final static String catalinaHomeTemp = "catalina";
 	Path tempDirectory = null;
 
 	@Before
@@ -41,8 +41,8 @@ public class TestChangeELKConf {
 		FileUtils.copyDirectory(new File(resourcePathStr), tempDirectory.toFile());
 
 		// set datafari_home to temp dir
-        PowerMockito.mockStatic(Environment.class);
-        Mockito.when(Environment.getProperty("catalina.home")).thenReturn(tempDirectory.toFile().getAbsolutePath());
+		PowerMockito.mockStatic(Environment.class);
+		Mockito.when(Environment.getProperty("catalina.home")).thenReturn(tempDirectory.toFile().getAbsolutePath());
 
 	}
 
@@ -52,6 +52,7 @@ public class TestChangeELKConf {
 		final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
 		Mockito.when(request.getParameter(ELKConfiguration.KIBANA_URI)).thenReturn("URI_Test");
+		Mockito.when(request.getParameter(ELKConfiguration.AUTH_USER)).thenReturn("");
 		Mockito.when(request.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF)).thenReturn("External_Test");
 		Mockito.when(request.getParameter(ELKConfiguration.ELK_SERVER)).thenReturn("Server_Test");
 		Mockito.when(request.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR)).thenReturn("Script_Test");
@@ -68,6 +69,7 @@ public class TestChangeELKConf {
 		assertTrue(jsonResponse.getInt("code") == 0);
 
 		assertTrue(ELKConfiguration.getProperty(ELKConfiguration.KIBANA_URI).equals("URI_Test"));
+		assertTrue(ELKConfiguration.getProperty(ELKConfiguration.AUTH_USER).equals(""));
 		assertTrue(ELKConfiguration.getProperty(ELKConfiguration.EXTERNAL_ELK_ON_OFF).equals("External_Test"));
 		assertTrue(ELKConfiguration.getProperty(ELKConfiguration.ELK_SERVER).equals("Server_Test"));
 		assertTrue(ELKConfiguration.getProperty(ELKConfiguration.ELK_SCRIPTS_DIR).equals("Script_Test"));
