@@ -15,6 +15,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.log4j.Logger;
+import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
+import org.apache.manifoldcf.core.system.ManifoldCF;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -28,7 +31,7 @@ import com.google.common.base.Strings;
 
 public class RealmLdapConfiguration {
 
-	private File fileContext;
+	private final File fileContext;
 
 	private static RealmLdapConfiguration instance;
 
@@ -57,16 +60,19 @@ public class RealmLdapConfiguration {
 			webAppName = "Datafari";
 		}
 
-		String env = Environment.getEnvironmentVariable("DATAFARI_HOME"); // Gets the directory of
-														// installation if in
-														// standard environment
+		String env = Environment.getEnvironmentVariable("DATAFARI_HOME"); // Gets
+																			// the
+																			// directory
+																			// of
+		// installation if in
+		// standard environment
 		if (env == null) { // Use the default DATAFARI_HOME
-			
+
 			env = "/opt/datafari";
-			
+
 		}
-			fileContext = new File(env + File.separator + "tomcat" + File.separator + "webapps" + File.separator + webAppName + File.separator
-					+ "META-INF" + File.separator + FILE_NAME);
+		fileContext = new File(env + File.separator + "tomcat" + File.separator + "webapps" + File.separator + webAppName + File.separator
+				+ "META-INF" + File.separator + FILE_NAME);
 
 	}
 
@@ -77,22 +83,23 @@ public class RealmLdapConfiguration {
 		return instance;
 	}
 
-	public static HashMap<String, String> getConfig(final HttpServletRequest request) throws SAXException, IOException, ParserConfigurationException {
+	public static HashMap<String, String> getConfig(final HttpServletRequest request)
+			throws SAXException, IOException, ParserConfigurationException, DOMException, ManifoldCFException {
 		final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		final Document docSchem = dBuilder.parse(getInstance(request.getContextPath()).fileContext); // Parse
-		
+
 		// read config in JNDI
 		// schema
 		final NodeList fields = docSchem.getElementsByTagName("Realm");
-		final HashMap<String, String> hashMap = new HashMap<String, String>();
+		final HashMap<String, String> hashMap = new HashMap<>();
 		for (int i = 0; i < fields.getLength(); i++) {
 			final NamedNodeMap attributes = fields.item(i).getAttributes();
-			if (!attributes.getNamedItem("className").getNodeValue().equals("org.apache.catalina.realm.JNDIRealm"))
+			if (!attributes.getNamedItem("className").getNodeValue().equals("com.francelabs.datafari.realm.DatafariJNDIRealm"))
 				continue;
 			hashMap.put(ATTR_CONNECTION_URL, attributes.getNamedItem(ATTR_CONNECTION_URL).getNodeValue());
 			hashMap.put(ATTR_CONNECTION_NAME, attributes.getNamedItem(ATTR_CONNECTION_NAME).getNodeValue());
-			hashMap.put(ATTR_CONNECTION_PW, attributes.getNamedItem(ATTR_CONNECTION_PW).getNodeValue());
+			hashMap.put(ATTR_CONNECTION_PW, ManifoldCF.deobfuscate(attributes.getNamedItem(ATTR_CONNECTION_PW).getNodeValue()));
 			hashMap.put(ATTR_DOMAIN_NAME, attributes.getNamedItem(ATTR_DOMAIN_NAME).getNodeValue());
 			hashMap.put(ATTR_SUBTREE, attributes.getNamedItem(ATTR_SUBTREE).getNodeValue());
 		}
@@ -112,7 +119,7 @@ public class RealmLdapConfiguration {
 			final NodeList fields = root.getElementsByTagName("Realm");
 			for (int i = 0; i < fields.getLength(); i++) {
 				final Node item = fields.item(i);
-				if (!item.getAttributes().getNamedItem("className").getNodeValue().equals("org.apache.catalina.realm.JNDIRealm"))
+				if (!item.getAttributes().getNamedItem("className").getNodeValue().equals("com.francelabs.datafari.realm.DatafariJNDIRealm"))
 					continue;
 				if (item.getNodeType() == Node.ELEMENT_NODE) {
 					final Element realmConfiguration = (Element) item;

@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
+import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xml.sax.SAXException;
@@ -121,6 +122,15 @@ public class GetAllLDAPUsersAndRoles extends HttpServlet {
 					try {
 						jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONAD.getValue()).put(OutputConstants.STATUS,
 								"Problem with AD connection");
+						logger.error(e);
+					} catch (final JSONException e1) {
+						logger.error(e);
+					}
+				} catch (final ManifoldCFException e) {
+					performingRefresh = false;
+					try {
+						jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue()).put(OutputConstants.STATUS,
+								"Problem with password obfuscation");
 						logger.error(e);
 					} catch (final JSONException e1) {
 						logger.error(e);

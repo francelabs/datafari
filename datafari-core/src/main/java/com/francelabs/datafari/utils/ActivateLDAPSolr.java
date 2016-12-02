@@ -2,141 +2,186 @@ package com.francelabs.datafari.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import com.francelabs.datafari.exception.CodesReturned;
-import com.francelabs.manifoldcf.configuration.api.JSONUtils;
-import com.francelabs.manifoldcf.configuration.api.ManifoldAPI;
 
 public class ActivateLDAPSolr {
 	private static File solrConfig;
-	private static File authorityconnectionJSON;
-	private static File authoritygroupJSON;
+	private static File customSearchHandler;
 	private static ActivateLDAPSolr instance;
-	private final static Logger logger = Logger.getLogger(ActivateLDAPSolr.class); 
-	
-	private ActivateLDAPSolr(){
-		String filePath = Environment.getProperty("catalina.home")+ File.separator +".." + File.separator +"solr"+File.separator+"solrcloud"+File.separator+"FileShare"+File.separator+"conf"+File.separator+"solrconfig.xml";
+	private final static Logger logger = Logger.getLogger(ActivateLDAPSolr.class);
+
+	private ActivateLDAPSolr() {
+		final String filePath = Environment.getProperty("catalina.home") + File.separator + ".." + File.separator + "solr" + File.separator
+				+ "solrcloud" + File.separator + "FileShare" + File.separator + "conf" + File.separator + "solrconfig.xml";
 		solrConfig = new File(filePath);
-			String filePathJSON = Environment.getProperty("catalina.home") + File.separator +".." + File.separator + "bin" + File.separator + "common" + File.separator + "config" 
-				+ File.separator + "manifoldcf" + File.separator + "monoinstance" + File.separator + "authorityconnections" + File.separator + "authorityConnection.json";
-		String filePathGroupJSON = Environment.getProperty("catalina.home") + File.separator +".." + File.separator + "bin" + File.separator + "common" + File.separator + "config" 
-				+ File.separator + "manifoldcf" + File.separator + "monoinstance" + File.separator + "authorityconnections" + File.separator + "authorityGroups.json";
-		authorityconnectionJSON = new File(filePathJSON);
-		authoritygroupJSON = new File(filePathGroupJSON);
+		final String filePathJSON = Environment.getProperty("catalina.home") + File.separator + ".." + File.separator + "bin" + File.separator
+				+ "common" + File.separator + "config" + File.separator + "manifoldcf" + File.separator + "monoinstance" + File.separator
+				+ "authorityconnections" + File.separator + "authorityConnection.json";
+		final String filePathGroupJSON = Environment.getProperty("catalina.home") + File.separator + ".." + File.separator + "bin" + File.separator
+				+ "common" + File.separator + "config" + File.separator + "manifoldcf" + File.separator + "monoinstance" + File.separator
+				+ "authorityconnections" + File.separator + "authorityGroups.json";
+		new File(filePathJSON);
+		new File(filePathGroupJSON);
+
+		// Custom searchHandler
+		final String customSearchHandlerPath = Environment.getProperty("catalina.home") + File.separator + ".." + File.separator + "solr"
+				+ File.separator + "solrcloud" + File.separator + "FileShare" + File.separator + "conf" + File.separator + "customs_solrconfig"
+				+ File.separator + "custom_search_handler.incl";
+		customSearchHandler = new File(customSearchHandlerPath);
 	}
-	private static ActivateLDAPSolr getInstance(){
-		if (instance == null){
+
+	private static ActivateLDAPSolr getInstance() {
+		if (instance == null) {
 			return instance = new ActivateLDAPSolr();
 		}
 		return instance;
 	}
-	
-	private static void XMLTOFile(File file , Document document) throws TransformerException{
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer;
-		transformer = transformerFactory.newTransformer();
-		DOMSource source = new DOMSource(document);
-		StreamResult result = new StreamResult(file);
-		transformer.transform(source, result);
-		
-	}
-	
+
 	public static int activate() throws Exception {
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		Document docSchem = dBuilder.parse(getInstance().solrConfig);					
-		Element root = docSchem.getDocumentElement();
-		NodeList fields = root.getElementsByTagName("requestHandler");
-		for (int i=0;i<fields.getLength();i++){
-			Node item = fields.item(i);
-			if ( item.getAttributes().getNamedItem("class")!=null && !item.getAttributes().getNamedItem("class").getNodeValue().equals("solr.SearchHandler") )
-				continue;
-			boolean isActivated = false;
-			NodeList lstList = ((Element)item).getElementsByTagName("lst");
-			for (int j=0 ; j<lstList.getLength() ; j++){
-				if (!lstList.item(j).getAttributes().getNamedItem("name").getNodeValue().equals("appends"))
-					continue;
-				isActivated = true;
-			}
-			if (!isActivated){
-				Element elementRoot = docSchem.createElement("lst");
-				Element elementChild = docSchem.createElement("str");
-				elementRoot.setAttribute("name","appends");
-				elementChild.setAttribute("name","fq");
+		final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		File fileToParse = getInstance().customSearchHandler;
+		Document docSchem;
+		try {
+			docSchem = dBuilder.parse(fileToParse);
+		} catch (final Exception e) {
+			fileToParse = getInstance().solrConfig;
+			docSchem = dBuilder.parse(fileToParse);
+		}
+
+		final XPathFactory xPathfactory = XPathFactory.newInstance();
+		final XPath xpath = xPathfactory.newXPath();
+		XPathExpression expr = xpath.compile("//requestHandler[@class=\"solr.SearchHandler\" and @name=\"/select\"]");
+		final Node requestHandler = (Node) expr.evaluate(docSchem, XPathConstants.NODE);
+
+		if (requestHandler != null) {
+			expr = xpath.compile("//lst[@name=\"appends\"]");
+			final Node appends = (Node) expr.evaluate(requestHandler, XPathConstants.NODE);
+			if (appends == null) {
+				// Save the current searchHandler version
+				final String oldSearchHandler = nodeToString(requestHandler);
+
+				// Add the manifoldCFSecurity to the searchHandler
+				final Element elementRoot = docSchem.createElement("lst");
+				final Element elementChild = docSchem.createElement("str");
+				elementRoot.setAttribute("name", "appends");
+				elementChild.setAttribute("name", "fq");
 				elementChild.appendChild(docSchem.createTextNode("{!manifoldCFSecurity}"));
 				elementRoot.appendChild(elementChild);
-				item.appendChild(elementRoot);
-				XMLTOFile(solrConfig,docSchem);
-				JSONObject json = JSONUtils.readJSON(authorityconnectionJSON);
-				JSONObject jsonGroup = JSONUtils.readJSON(authoritygroupJSON);
-				try {
-					ManifoldAPI.deleteConfig("authorityconnections", "DatafariAD");
-					ManifoldAPI.deleteConfig("authoritygroups", "DatafariAuthorityGroup");
-				} catch (Exception e) {
-					logger.error("FATAL ERROR",e);
-				}
-				
-				try {
-					ManifoldAPI.putConfig("authoritygroups", "DatafariAuthorityGroup",jsonGroup);
-							
-				} catch (Exception e) {
-					
-				}
-				try {
-					ManifoldAPI.putConfig("authorityconnections", "DatafariAD",json);					
-				} catch (Exception e) {
-					
-				}
+				requestHandler.appendChild(elementRoot);
+
+				// Replace the old searchHandler by the new one
+				String configContent = getFileContent(fileToParse);
+				final String newSearchHandler = nodeToString(requestHandler);
+				configContent = configContent.replace(oldSearchHandler, newSearchHandler);
+
+				// Save the file
+				saveFile(fileToParse, configContent);
 			}
 		}
+
 		return CodesReturned.ALLOK.getValue();
 	}
-	
-	public static int disactivate() throws SAXException, IOException, ParserConfigurationException, TransformerException{
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		Document docSchem = dBuilder.parse(getInstance().solrConfig);					
-		Element root = docSchem.getDocumentElement();
-		NodeList fields = root.getElementsByTagName("requestHandler");
-		for (int i=0;i<fields.getLength();i++){
-			Node item = fields.item(i);
-			if ( item.getAttributes().getNamedItem("class")!= null && !item.getAttributes().getNamedItem("class").getNodeValue().equals("solr.SearchHandler"))
-				continue;
-			boolean isActivated = false;
-			NodeList lstList = ((Element)item).getElementsByTagName("lst");
-			for (int j=0 ; j<lstList.getLength() ; j++){
-				if (!lstList.item(j).getAttributes().getNamedItem("name").getNodeValue().equals("appends"))
-					continue;
-				item.removeChild(lstList.item(j));
-				XMLTOFile(solrConfig,docSchem);		
-				try {
-					ManifoldAPI.deleteConfig("authorityconnections", "DatafariAD");
-					ManifoldAPI.deleteConfig("authoritygroups", "DatafariAuthorityGroup");
-				} catch (Exception e) {
-					logger.error("FATAL ERROR",e);
-					return CodesReturned.GENERALERROR.getValue();
-				}
+
+	public static int disactivate() throws Exception {
+		final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		File fileToParse = getInstance().customSearchHandler;
+		Document docSchem;
+		try {
+			docSchem = dBuilder.parse(fileToParse);
+		} catch (final Exception e) {
+			fileToParse = getInstance().solrConfig;
+			docSchem = dBuilder.parse(fileToParse);
+		}
+
+		final XPathFactory xPathfactory = XPathFactory.newInstance();
+		final XPath xpath = xPathfactory.newXPath();
+		XPathExpression expr = xpath.compile("//requestHandler[@class=\"solr.SearchHandler\" and @name=\"/select\"]");
+		final Node requestHandler = (Node) expr.evaluate(docSchem, XPathConstants.NODE);
+
+		if (requestHandler != null) {
+			expr = xpath.compile("//lst[@name=\"appends\"]");
+			final Node appends = (Node) expr.evaluate(requestHandler, XPathConstants.NODE);
+			if (appends != null) {
+				// Save the current searchHandler version
+				final String oldSearchHandler = nodeToString(requestHandler);
+
+				// Remove the manifoldCFSecurity
+				requestHandler.removeChild(appends);
+
+				// Replace the old searchHandler by the new one
+				String configContent = getFileContent(fileToParse);
+				final String newSearchHandler = nodeToString(requestHandler);
+				configContent = configContent.replace(oldSearchHandler, newSearchHandler);
+
+				// Save the file
+				saveFile(fileToParse, configContent);
 			}
 		}
+
 		return CodesReturned.ALLOK.getValue();
+	}
+
+	/**
+	 * Convert XML Node to String
+	 *
+	 * @param node
+	 *            the node to convert
+	 * @return the String equivalent of the node
+	 * @throws TransformerException
+	 */
+	private static String nodeToString(final Node node) throws TransformerException {
+		final Transformer tf = TransformerFactory.newInstance().newTransformer();
+		tf.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+		tf.setOutputProperty(OutputKeys.INDENT, "yes");
+		final Writer out = new StringWriter();
+		tf.transform(new DOMSource(node), new StreamResult(out));
+		return out.toString();
+	}
+
+	/**
+	 * Get the file content as a String
+	 *
+	 * @param file
+	 * @return the file content as a String
+	 * @throws IOException
+	 */
+	private static String getFileContent(final File file) throws IOException {
+		final Path filePath = Paths.get(file.getAbsolutePath());
+		final Charset charset = StandardCharsets.UTF_8;
+		return new String(Files.readAllBytes(filePath), charset);
+	}
+
+	private static void saveFile(final File file, final String fileContent) throws Exception {
+		final Path configPath = Paths.get(file.getAbsolutePath());
+		Files.write(configPath, fileContent.getBytes(StandardCharsets.UTF_8));
 	}
 }

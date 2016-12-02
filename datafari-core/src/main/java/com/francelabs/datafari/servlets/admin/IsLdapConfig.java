@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
+import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xml.sax.SAXException;
@@ -57,7 +58,7 @@ public class IsLdapConfig extends HttpServlet {
 						h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME), h.get(RealmLdapConfiguration.ATTR_CONNECTION_PW));
 			}
 			jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put("isActivated", isLdapActivated);
-		} catch (final JSONException | ParserConfigurationException | SAXException e) {
+		} catch (final JSONException | ParserConfigurationException | SAXException | ManifoldCFException e) {
 			jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
 			logger.error("Fatal Error", e);
 		} catch (final NamingException e) {

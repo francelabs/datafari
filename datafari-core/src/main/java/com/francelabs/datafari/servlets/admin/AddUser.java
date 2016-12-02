@@ -15,8 +15,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
+import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.DOMException;
 import org.xml.sax.SAXException;
 
 import com.francelabs.datafari.exception.CodesReturned;
@@ -113,6 +115,10 @@ public class AddUser extends HttpServlet {
 					} catch (final JSONException e1) {
 						logger.error(e);
 					}
+				} catch (final DOMException e) {
+					logger.error(e);
+				} catch (final ManifoldCFException e) {
+					logger.error(e);
 				}
 			} else if (request.getParameter(UserDataService.USERNAMECOLUMN) != null && request.getParameter(UserDataService.PASSWORDCOLUMN) != null
 					&& request.getParameter(UserDataService.ROLECOLUMN + "[]") != null) {

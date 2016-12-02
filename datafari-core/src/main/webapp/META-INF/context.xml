@@ -36,7 +36,7 @@
 	
 	
 	 -->
-		<Realm className="org.apache.catalina.realm.JNDIRealm" connectionName="admin@corp.francelabs.com" connectionPassword="Jailesdroits69!" connectionURL="ldap://52.16.74.128:389" debug="99" userBase="cn=Users,dc=corp,dc=francelabs,dc=com" userRoleName="member" userSearch="(sAMAccountName={0})" userSubtree="true"/>
+		<Realm className="com.francelabs.datafari.realm.DatafariJNDIRealm" connectionName="test@corp.france.labs.com" connectionPassword="awthQxGDiipsPPWLJbiCcepXbL2hjFqDa1iZapp+d+I=" connectionURL="ldap://52.48.241.103:389" debug="99" userBase="cn=Users,dc=corp,dc=france,dc=labs,dc=com" userRoleName="member" userSearch="(sAMAccountName={0})" userSubtree="true"/>
 			     
 	</Realm>
 

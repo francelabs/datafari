@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
+import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
+import org.apache.manifoldcf.core.system.ManifoldCF;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xml.sax.SAXException;
@@ -63,10 +65,11 @@ public class ModifyRealmLdap extends HttpServlet {
 					isConnected = false;
 				}
 				if (isConnected) {
-					final HashMap<String, String> h = new HashMap<String, String>();
+					final HashMap<String, String> h = new HashMap<>();
 					h.put(RealmLdapConfiguration.ATTR_CONNECTION_URL, request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_URL).toString());
 					h.put(RealmLdapConfiguration.ATTR_CONNECTION_NAME, request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_NAME).toString());
-					h.put(RealmLdapConfiguration.ATTR_CONNECTION_PW, request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_PW).toString());
+					h.put(RealmLdapConfiguration.ATTR_CONNECTION_PW,
+							ManifoldCF.obfuscate(request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_PW).toString()));
 					h.put(RealmLdapConfiguration.ATTR_DOMAIN_NAME, request.getParameter(RealmLdapConfiguration.ATTR_DOMAIN_NAME).toString());
 					h.put(RealmLdapConfiguration.ATTR_SUBTREE, request.getParameter(RealmLdapConfiguration.ATTR_SUBTREE).toString());
 					final String[] listOfNode = request.getParameter(RealmLdapConfiguration.ATTR_DOMAIN_NAME).toString().split(",");
@@ -83,11 +86,11 @@ public class ModifyRealmLdap extends HttpServlet {
 					final String url = urlPort.split(":")[0];
 					h.put(LdapMcfConfig.attributeUsername, request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_NAME).toString());
 					h.put(LdapMcfConfig.attributeDomainController, url);
-					h.put(LdapMcfConfig.attributePassword, request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_PW));
+					h.put(LdapMcfConfig.attributePassword, ManifoldCF.obfuscate(request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_PW)));
 					h.put(LdapMcfConfig.attributeSuffix, suffixAttribute.toString());
 					try {
-						RealmLdapConfiguration.setConfig(h, request);
 						LdapMcfConfig.update(h);
+						RealmLdapConfiguration.setConfig(h, request);
 						jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put(OutputConstants.STATUS, "200 ALL OK");
 					} catch (SAXException | ParserConfigurationException e) {
 						logger.error(e);
@@ -101,7 +104,7 @@ public class ModifyRealmLdap extends HttpServlet {
 			}
 		} catch (
 
-		final JSONException e)
+		final JSONException | ManifoldCFException e)
 
 		{
 			logger.error(e);
@@ -126,7 +129,7 @@ public class ModifyRealmLdap extends HttpServlet {
 				jsonResponse.put(RealmLdapConfiguration.ATTR_CONNECTION_PW, h.get(RealmLdapConfiguration.ATTR_CONNECTION_PW));
 				jsonResponse.put(RealmLdapConfiguration.ATTR_DOMAIN_NAME, h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME));
 				jsonResponse.put(RealmLdapConfiguration.ATTR_SUBTREE, h.get(RealmLdapConfiguration.ATTR_SUBTREE));
-			} catch (SAXException | ParserConfigurationException e) {
+			} catch (SAXException | ParserConfigurationException | ManifoldCFException e) {
 				jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue()).put(OutputConstants.STATUS,
 						"Problem with XML Manipulation");
 				logger.error(e);
