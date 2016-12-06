@@ -29,8 +29,7 @@ public class LdapMcfConfig {
 		try {
 			final JSONObject json = JSONUtils.readJSON(getInstance().authorityconnectionJSON);
 
-			if (h.containsKey(attributeUsername) && h.containsKey(attributeDomainController) && h.containsKey(attributePassword)
-					&& h.containsKey(attributeSuffix)) {
+			if (h.containsKey(attributeUsername) && h.containsKey(attributeDomainController) && h.containsKey(attributePassword)) {
 				final JSONObject authorityconnection = (JSONObject) json.get(autorityConnectionElement);
 				final JSONObject configuration = (JSONObject) authorityconnection.get(configurationElement);
 				final JSONObject domainController = (JSONObject) configuration.get(domainControllerElement);
@@ -41,7 +40,6 @@ public class LdapMcfConfig {
 				domainController.put(attributeUsername, username);
 				domainController.put(attributeDomainController, h.get(attributeDomainController));
 				domainController.put(attributePassword, h.get(attributePassword));
-				domainController.put(attributeSuffix, h.get(attributeSuffix));
 
 				JSONUtils.saveJSON(json, authorityconnectionJSON);
 

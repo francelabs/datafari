@@ -27,7 +27,6 @@ fi
 
 if is_running $ELASTICSEARCH_PID_FILE; then
    kill $(cat $ELASTICSEARCH_PID_FILE)
-   rm $ELASTICSEARCH_PID_FILE
 else
    echo "Warn : Elasticsearch does not seem to be running."
 fi

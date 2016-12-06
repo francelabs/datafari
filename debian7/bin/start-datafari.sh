@@ -66,7 +66,6 @@ then
 	sudo -E su datafari -p -c "kill $(cat $KIBANA_PID_FILE)"
 	sudo -E su datafari -p -c "kill $(cat $ELASTICSEARCH_PID_FILE)"
 	sudo -E su datafari -p -c "rm $KIBANA_PID_FILE"
-	sudo -E su datafari -p -c "rm $ELASTICSEARCH_PID_FILE"
 	echo "ELK successfully configured"
 
 	echo "Start postgres and cassandra and add ManifoldCF database"
