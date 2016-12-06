@@ -47,6 +47,28 @@ fi
 
 if  [[ "$STATE" = *installed* ]];
 then
+	# Configure ELK
+	echo "Configure ELK"
+	cd $ELASTICSEARCH_HOME/bin
+	sudo -E su datafari -p -c "bash elasticsearch -p $ELASTICSEARCH_PID_FILE" &
+	sleep 7
+	sudo -E su datafari -p -c "sed -i '/pid\.file/c\pid.file: ${KIBANA_PID_FILE}' $KIBANA_HOME/config/kibana.yml"
+	cd $KIBANA_HOME/bin
+	sudo -E su datafari -p -c "bash kibana" &
+	sleep 10
+	kibana_config=$(curl -s http://localhost:9200/.kibana/config/_search | jq -r '.hits.hits | .[0] | ._id')
+	curl -H 'Content-Type: application/json' -XPUT -d @/opt/datafari/elk/logstash/templates/datafari-monitoring-template.json http://localhost:9200/_template/datafari-monitoring
+	curl -H 'Content-Type: application/json' -XPUT -d @/opt/datafari/elk/logstash/templates/datafari-statistic-template.json http://localhost:9200/_template/datafari-statistics
+	curl -H 'Content-Type: application/json' -XPUT -d @/opt/datafari/elk/save/index-pattern-kibana-monitoring.json http://localhost:9200/.kibana/index-pattern/monitoring
+	curl -H 'Content-Type: application/json' -XPUT -d @/opt/datafari/elk/save/index-pattern-kibana-statistics.json http://localhost:9200/.kibana/index-pattern/statistics
+	curl -H 'Content-Type: application/json' -XPOST -d '{"doc":{"defaultIndex": "monitoring"}}' http://localhost:9200/.kibana/config/${kibana_config}/_update
+	curl -s -XPOST localhost:9200/_bulk --data-binary "@/opt/datafari/elk/save/datafari-bulk-kibana.json"
+	sudo -E su datafari -p -c "kill $(cat $KIBANA_PID_FILE)"
+	sudo -E su datafari -p -c "kill $(cat $ELASTICSEARCH_PID_FILE)"
+	sudo -E su datafari -p -c "rm $KIBANA_PID_FILE"
+	sudo -E su datafari -p -c "rm $ELASTICSEARCH_PID_FILE"
+	echo "ELK successfully configured"
+
 	echo "Start postgres and cassandra and add ManifoldCF database"
 	sudo su postgres -c "rm -rf ${DATAFARI_HOME}/pgsql/data"
 	sudo su postgres -c "mkdir -m 700 ${DATAFARI_HOME}/pgsql/data"
@@ -89,11 +111,11 @@ then
 	cassandra_status=$((nc_return+nc_return2))
 
 	retries=1
-    while (( retries < 6 && cassandra_status != 0 )); do
+    	while (( retries < 6 && cassandra_status != 0 )); do
 		echo "Cassandra doesn't reply to requests on ports 7199 and/or 9042. Sleeping for a while and trying again... retry ${retries}"
 
 		# Sleep for a while
-        sleep 2s
+        	sleep 2s
 		
 		# Try again to connect to Cassandra
 		echo "Checking if Cassandra is up and running ..."
@@ -106,7 +128,7 @@ then
 		cassandra_status=$((nc_return+nc_return2))
 
 		((retries++))
-    done
+    	done
 
 	if [ $cassandra_status -ne 0 ]; then
 		echo "/!\ ERROR: Cassandra startup has ended with errors; please check log file ${DATAFARI_LOGS}/cassandra-startup.log"
@@ -133,7 +155,7 @@ then
 	"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/FileShare/conf" -confname FileShare
 	"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Statistics/conf" -confname Statistics
 	"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Promolink/conf" -confname Promolink
-    cd "${DATAFARI_HOME}/bin/common"
+    	cd "${DATAFARI_HOME}/bin/common"
 	echo "Uploading MCF configuration"
 	sudo -E su datafari -p -c "${JAVA_HOME}/bin/java -Dorg.apache.manifoldcf.configfile=${MCF_HOME}/properties.xml -cp ./*:${MCF_HOME}/lib/mcf-core.jar:${MCF_HOME}/lib/* com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript RESTORE config/manifoldcf/init"
 	sudo su datafari -c "sed -i 's/\(STATE *= *\).*/\1initialized/' $INIT_STATE_FILE"
