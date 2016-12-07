@@ -14,6 +14,27 @@ you just need to mention that you are using it.
 
 See http://wiki.datafari.com for more information.
 
+==================  3.1.0 ==================
+
+Changes :
+Tika updated to version 1.14+
+Manifold CF updated to version 2.5
+Improved security for Active Directory connections
+Improved security for Tomcat JNDI Realm
+Auto-configuration of ELK on the first start of Datafari
+Bug fixes for Likes/Favorites and other features of the admin UI
+
+
+
+==================  3.0.0 ==================
+
+Changes :
+Solrcloud on a single node activated by default
+Added query elevator admin fonctionnality
+Solr updated to version 5.5.1
+Postgres updated to version 9.5.3
+Usage of Tika embedded in MCF instead of Solr
+
 ==================  2.2.1 ==================
 
 Changes :
