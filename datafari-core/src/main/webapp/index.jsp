@@ -18,7 +18,7 @@
 		
 	    <script type ="text/javascript" src ="js/jquery-1.8.1.min.js"></script>
 	    <script type ="text/javascript" src ="js/function/empty.func.js"></script>
-		<script type ="text/javascript" src ="js/jquery-ui-1.8.23.min.js"></script>
+		<script type="text/javascript" src="js/jquery-ui-1.11.4/jquery-ui.min.js"></script>
 
 		<script type ="text/javascript" src ="js/AjaxFranceLabs/core/Core.js"></script>
 		<script type ="text/javascript" src ="js/AjaxFranceLabs/core/AbstractModule.js"></script>
