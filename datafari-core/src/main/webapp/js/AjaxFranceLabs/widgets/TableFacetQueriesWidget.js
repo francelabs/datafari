@@ -40,12 +40,20 @@ AjaxFranceLabs.TableFacetQueriesWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 	queries : [],
 	
 	labels : [],
+	
+	modules : [],
 
 	//Methods
 
 	
 	
 	buildWidget : function() {
+		
+		// Set the manager for the modules
+		for(var i=0; i<this.modules.length; i++) {
+			this.modules[i].manager = this.manager;
+		}
+		
 		var endAnimationEvents= 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
 		var animation = 'animated rotateIn';
 		var self = this, elm = $(this.elm);
@@ -133,6 +141,14 @@ AjaxFranceLabs.TableFacetQueriesWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 			else 
 				elm.find('ul li:last .filterFacetCheck label').attr('for', data[i].name).append('<span class="checkboxIcon fa fa-square-o">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(decodeURIComponent(data[i].name), 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + data[i].nb + '</span>)</span>');
 		}
+		
+		// Enable the modules, create one line per module
+		for(var i=0; i<this.modules.length; i++) {
+			elm.find('ul').append('<li id="li-' + this.modules[i].id + '"></li>');
+			this.modules[i].elm = elm.find('ul li:last');
+			this.modules[i].afterRequest();
+		}
+		
 		if (this.pagination) {
 			this.pagination.source = $('ul', this.elm);
 			this.pagination.updatePages();
@@ -187,6 +203,13 @@ AjaxFranceLabs.TableFacetQueriesWidget = AjaxFranceLabs.AbstractFacetWidget.exte
     clickHandler: function () {},
 	afterRequest: function() {
 		this.update();
+	},
+	
+	beforeRequest: function() {
+		// Call the modules beforeRequest method
+		for(var i=0; i<this.modules.length; i++) {
+			this.modules[i].beforeRequest();
+		}
 	}
 });
 

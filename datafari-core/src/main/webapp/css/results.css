@@ -14,6 +14,7 @@ CSS for Datafari widgets
 CSS for Datafari modules
 */
 @import "modules/query-elevator-module.css";
+@import "modules/date-selector-facet-module.css";
 
 body { overflow-y: scroll; }
 

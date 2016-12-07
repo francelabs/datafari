@@ -1,4 +1,7 @@
 {
+"wrong-date-format":"Wrong date format ! (must be: dd/mm/yyyy)",
+"fromDate":"From",
+"toDate":"To",
 "authUser" : "Monitoring User",
 "synonymsError":"Erro: algumas palavras não tem sinônimos ou alguns sinônimos não tem palavras correspontes !",
 "synonymsListLabel":"Lista de sinônimos",

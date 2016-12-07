@@ -1,4 +1,7 @@
 {
+"wrong-date-format":"Mauvais format de date ! (doit être: jj/mm/aaaa)",
+"fromDate":"Du",
+"toDate":"Au",
 "authUser" : "Utilisateur de Surveillance",
 "synonymsError":"Erreur: certains mots n'ont pas de synonymes ou certains synonymes n'ont pas de correspondance à des mots",
 "synonymsListLabel":"Liste des synonymes",
