@@ -365,7 +365,7 @@
       <analyzer type="index">
         <tokenizer class="solr.WhitespaceTokenizerFactory"/>
         <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0" splitOnCaseChange="1"/>
-        <filter class="solr.LimitTokenCountFilterFactory" maxTokenCount="10" consumeAllTokens="false" />
+        <filter class="solr.LimitTokenCountFilterFactory" maxTokenCount="1000" consumeAllTokens="false" />
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.KeywordMarkerFilterFactory" />
         <filter class="solr.PorterStemFilterFactory"/>
@@ -545,7 +545,7 @@
       <analyzer type="index"> 
         <tokenizer class="solr.WhitespaceTokenizerFactory"/>
         <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1" preserveOriginal="1"/>
-        <filter class="solr.LimitTokenCountFilterFactory" maxTokenCount="10" consumeAllTokens="false" />
+        <filter class="solr.LimitTokenCountFilterFactory" maxTokenCount="1000" consumeAllTokens="false" />
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.FrenchLightStemFilterFactory"/>
         <filter class="solr.ASCIIFoldingFilterFactory"/>

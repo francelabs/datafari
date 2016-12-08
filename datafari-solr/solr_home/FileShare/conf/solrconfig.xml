@@ -1165,7 +1165,7 @@
 		
 		<processor class="solr.TruncateFieldUpdateProcessorFactory">
    			<str name="fieldName">content_hl</str>
-   			<int name="maxLength">1000</int>
+   			<int name="maxLength">10000</int>
  		</processor>
 	
 		<processor class="org.apache.solr.update.processor.LangDetectLanguageIdentifierUpdateProcessorFactory">
