@@ -3,6 +3,6 @@ Version: 3.1.0
 Section: base
 Priority: optional
 Architecture: all
-Depends: bash,curl,debconf,unzip,sudo,libc6-dev, jq
+Depends: bash,curl,debconf,unzip,sudo,libc6-dev, jq,lsof
 Maintainer: France Labs (aurelien.mazoyer@francelabs.com)
 Description: Datafari search solution

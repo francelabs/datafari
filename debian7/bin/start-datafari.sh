@@ -99,15 +99,13 @@ then
 	sudo -E su datafari -p -c "bash initialize.sh"
 	
 	echo "Checking if Cassandra is up and running ..."
-	# Try to connect on Cassandra's JMX port 7199
-	nc -z localhost 7199 
-	nc_return=$?
-
-	# Try to connect on Cassandra's CQLSH port 9042
-	nc -z localhost 9042
-	nc_return2=$? 
-	
-	cassandra_status=$((nc_return+nc_return2))
+	# Try to connect on Cassandra's JMX port 7199 and CQLSH port 9042
+	if lsof -Pi :7199 -sTCP:LISTEN -t >/dev/null  && lsof -Pi :9042 -sTCP:LISTEN -t >/dev/null
+	then
+		cassandra_status=0
+	else
+		cassandra_status=-1
+	fi
 
 	retries=1
     	while (( retries < 6 && cassandra_status != 0 )); do
@@ -118,13 +116,12 @@ then
 		
 		# Try again to connect to Cassandra
 		echo "Checking if Cassandra is up and running ..."
-		nc -z localhost 7199 
-		nc_return=$?
-
-		nc -z localhost 9042 
-		nc_return2=$? 
-	
-		cassandra_status=$((nc_return+nc_return2))
+		if lsof -Pi :7199 -sTCP:LISTEN -t >/dev/null  && lsof -Pi :9042 -sTCP:LISTEN -t >/dev/null
+		then
+			cassandra_status=0
+		else
+			cassandra_status=-1
+		fi
 
 		((retries++))
     	done
