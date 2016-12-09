@@ -134,12 +134,14 @@
 	<%
 		} else {
 			
-			String urlRedirect = mainPage + "/admin/";
+			String urlRedirect = mainPage + "/applyLang";
 			
 			// If the language param was defined in the source URL, append the language 
 			// selection to the adminUi page URL to be able to display it in the correct language
 			if (langParam != null){
-				urlRedirect = urlRedirect + langParam;
+				urlRedirect = urlRedirect + langParam + "&urlRedirect=" + mainPage + "/admin/";
+			} else {
+				urlRedirect = urlRedirect + "?urlRedirect=" + mainPage + "/admin/";
 			}
 			
 			response.sendRedirect(urlRedirect);

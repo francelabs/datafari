@@ -8,6 +8,13 @@ $(function($) {
 	window.i18n.setLanguageUrl('/Datafari/js/AjaxFranceLabs/locale/');
 	
 	window.i18n.setupLanguage('Datafari home page');
+	
+	// Force user preferred language if available and not corresponding to the current one
+    $.get('/Datafari/applyLang?lang=' + window.i18n.language, function(data) {
+    	if(data.code == 0 && data.lang != window.i18n.language) {
+    		window.location.replace("/Datafari/applyLang?urlRedirect=" + window.location.href);
+    	}
+    }, "json");
 
 	var port = '8080';
 	

@@ -48,6 +48,9 @@ AjaxFranceLabs.LanguageSelectorWidget = AjaxFranceLabs.AbstractWidget.extend({
 		// It's an anonymous function: in this way it's not called when the widget initializes.
 		$(this.elm).find('select').change(function() {
 
+			// Save user language in the 'lang' table of Cassandra
+			$.post('./applyLang',{"lang":$(this).val()});
+			
 			// Function executed every time the user changes the language of
 			// Datafari		
 			window.i18n.userSelected($(this).val());

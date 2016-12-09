@@ -17,7 +17,9 @@ package com.francelabs.datafari.service.db;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -25,7 +27,6 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.DriverException;
-import com.datastax.driver.core.exceptions.QueryValidationException;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 
@@ -39,6 +40,13 @@ public class DocumentDataService {
 
 	public static final String FAVORITECOLLECTION = "favorite";
 	public static final String LIKECOLLECTION = "like";
+
+	public static final String SEARCHCOLLECTION = "search";
+	public static final String REQUESTCOLUMN = "request";
+	public static final String REQUESTNAMECOLUMN = "name";
+
+	public static final String LANGCOLLECTION = "lang";
+	public static final String LANGCOLUMN = "lang";
 
 	private static DocumentDataService instance;
 
@@ -64,6 +72,151 @@ public class DocumentDataService {
 	}
 
 	/**
+	 * Get user preferred lang
+	 *
+	 * @param username
+	 * @return the user preferred lang
+	 */
+	public String getLang(final String username) {
+		String lang = null;
+		try {
+			final String query = "SELECT " + LANGCOLUMN + " FROM " + LANGCOLLECTION + " where " + USERNAMECOLUMN + "='" + username + "'";
+			final ResultSet result = session.execute(query);
+			final Row row = result.one();
+			if (row != null && !row.isNull(LANGCOLUMN) && !row.getString(LANGCOLUMN).isEmpty()) {
+				lang = row.getString(LANGCOLUMN);
+			}
+		} catch (final Exception e) {
+			logger.warn("Unable to get lang for user " + username + " : " + e.getMessage());
+		}
+		return lang;
+	}
+
+	/**
+	 * Set user lang
+	 *
+	 * @param username
+	 * @param lang
+	 * @return CodesReturned.ALLOK if all was ok
+	 * @throws DatafariServerException
+	 */
+	public int setLang(final String username, final String lang) throws DatafariServerException {
+		try {
+			final String query = "INSERT INTO " + LANGCOLUMN + " (" + USERNAMECOLUMN + "," + LANGCOLUMN + ")" + " values ('" + username + "','" + lang
+					+ "')";
+			session.execute(query);
+		} catch (final Exception e) {
+			logger.warn("Unable to insert lang for user " + username + " : " + e.getMessage());
+			// TODO catch specific exception
+			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+		}
+		return CodesReturned.ALLOK.getValue();
+	}
+
+	/**
+	 * Update user lang
+	 *
+	 * @param username
+	 * @param lang
+	 * @return CodesReturned.ALLOK if all was ok
+	 * @throws DatafariServerException
+	 */
+	public int updateLang(final String username, final String lang) throws DatafariServerException {
+		try {
+			final String query = "UPDATE " + LANGCOLUMN + " SET " + LANGCOLUMN + " = '" + lang + "' WHERE " + USERNAMECOLUMN + " = '" + username
+					+ "'";
+			session.execute(query);
+		} catch (final Exception e) {
+			logger.warn("Unable to update lang for user " + username + " : " + e.getMessage());
+			// TODO catch specific exception
+			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+		}
+		return CodesReturned.ALLOK.getValue();
+	}
+
+	/**
+	 * Add a search to the list of searches saved by the user
+	 *
+	 * @param username
+	 *            of the user
+	 * @param requestName
+	 *            the request name
+	 * @param request
+	 *            the search request
+	 * @return Search.ALREADYPERFORMED if the search was already saved,
+	 *         CodesUser.ALLOK if all was ok
+	 */
+	public int saveSearch(final String username, final String requestName, final String request) throws Exception {
+		try {
+			final String query = "insert into " + SEARCHCOLLECTION + " (" + USERNAMECOLUMN + "," + REQUESTNAMECOLUMN + "," + REQUESTCOLUMN + ")"
+					+ " values ('" + username + "','" + requestName + "','" + request + "')";
+			session.execute(query);
+			// TODO change exception
+		} catch (final Exception e) {
+			logger.warn(e.getMessage());
+			return CodesReturned.ALREADYPERFORMED.getValue();
+		}
+
+		return CodesReturned.ALLOK.getValue();
+	}
+
+	/**
+	 * delete a search
+	 *
+	 * @param username
+	 *            of the user
+	 * @param requestName
+	 *            the request name
+	 * @param request
+	 *            the search request
+	 * @return Search.ALREADYPERFORMED if the search was already deleted,
+	 *         Search.ALLOK if all was ok and Search.CodesReturned.CASSANDRAN if
+	 *         there's an error
+	 */
+	public int deleteSearch(final String username, final String requestName, final String request) throws Exception {
+		try {
+			final String query = "DELETE FROM " + SEARCHCOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "'" + " AND " + REQUESTCOLUMN
+					+ " = '" + request + "'" + " AND " + REQUESTNAMECOLUMN + " = '" + requestName + "'";
+			session.execute(query);
+		} catch (final Exception e) {
+			logger.warn(e.getMessage());
+			return CodesReturned.ALREADYPERFORMED.getValue();
+		}
+		return CodesReturned.ALLOK.getValue();
+	}
+
+	/**
+	 * get all the saved searches of a user
+	 *
+	 * @param username
+	 *            of the user
+	 * @return an array list of all the the saved searches of the user. Return
+	 *         null if there's an error.
+	 */
+	public Map<String, String> getSearches(final String username) throws Exception {
+		final Map<String, String> searches = new HashMap<>();
+		final ResultSet results = session.execute("SELECT " + REQUESTNAMECOLUMN + ", " + REQUESTCOLUMN + " FROM " + SEARCHCOLLECTION + " where "
+				+ USERNAMECOLUMN + "='" + username + "'");
+		for (final Row row : results) {
+			searches.put(row.getString(REQUESTNAMECOLUMN), row.getString(REQUESTCOLUMN));
+		}
+		return searches;
+	}
+
+	/**
+	 * Delete all saved searches of a user
+	 *
+	 * @param username
+	 * @return CodesReturned.ALLOK if the operation was success and
+	 *         CodesReturned.PROBLEMCONNECTIONCASSANDRA
+	 */
+	public int removeSearches(final String username) throws Exception {
+		final String query = "DELETE FROM " + SEARCHCOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
+		session.execute(query);
+		return CodesReturned.ALLOK.getValue();
+	}
+
+	/**
 	 * Add a document to the list of documents liked by the user
 	 *
 	 * @param username
@@ -75,10 +228,10 @@ public class DocumentDataService {
 	 */
 	public void addLike(final String username, final String idDocument) throws DatafariServerException {
 		try {
-			final String query = "insert into " + LIKECOLLECTION + " (" + USERNAMECOLUMN + "," + DOCUMENTIDCOLUMN + ")"
-					+ " values ('" + username + "','" + idDocument + "')";
+			final String query = "insert into " + LIKECOLLECTION + " (" + USERNAMECOLUMN + "," + DOCUMENTIDCOLUMN + ")" + " values ('" + username
+					+ "','" + idDocument + "')";
 			session.execute(query);
-		} catch (DriverException e) {
+		} catch (final DriverException e) {
 			logger.warn("Unable to add like : " + e.getMessage());
 			// TODO catch specific exception
 			throw new DatafariServerException(CodesReturned.ALREADYPERFORMED, e.getMessage());
@@ -99,10 +252,10 @@ public class DocumentDataService {
 	 */
 	public void unlike(final String username, final String idDocument) throws DatafariServerException {
 		try {
-			final String query = "DELETE FROM " + LIKECOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "'"
-					+ " AND " + DOCUMENTIDCOLUMN + " = '" + idDocument + "'";
+			final String query = "DELETE FROM " + LIKECOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "'" + " AND " + DOCUMENTIDCOLUMN
+					+ " = '" + idDocument + "'";
 			session.execute(query);
-		} catch (DriverException e) {
+		} catch (final DriverException e) {
 			logger.warn("Unable to unlike : " + e.getMessage());
 			// TODO catch specific exception
 			throw new DatafariServerException(CodesReturned.ALREADYPERFORMED, e.getMessage());
@@ -118,21 +271,20 @@ public class DocumentDataService {
 	 * @return an array list of all the the likes of the user. Return null if
 	 *         there's an error.
 	 */
-	public List<String> getLikes(final String username, String[] documentIDs) throws DatafariServerException {
+	public List<String> getLikes(final String username, final String[] documentIDs) throws DatafariServerException {
 		try {
-				final List<String> likes = new ArrayList<String>();
-				if (documentIDs == null) {
-				final ResultSet results = session.execute("SELECT " + DOCUMENTIDCOLUMN + " FROM " + LIKECOLLECTION
-						+ " where " + USERNAMECOLUMN + "='" + username + "'");
+			final List<String> likes = new ArrayList<>();
+			if (documentIDs == null) {
+				final ResultSet results = session
+						.execute("SELECT " + DOCUMENTIDCOLUMN + " FROM " + LIKECOLLECTION + " where " + USERNAMECOLUMN + "='" + username + "'");
 				for (final Row row : results) {
 					likes.add(row.getString(DOCUMENTIDCOLUMN));
 				}
 
 			} else {
-				for (String documentID : documentIDs) {
-					final ResultSet results = session.execute(
-							"SELECT " + DOCUMENTIDCOLUMN + " FROM " + LIKECOLLECTION + " where " + USERNAMECOLUMN
-									+ "='" + username + "' AND " + DOCUMENTIDCOLUMN + "='" + documentID + "'");
+				for (final String documentID : documentIDs) {
+					final ResultSet results = session.execute("SELECT " + DOCUMENTIDCOLUMN + " FROM " + LIKECOLLECTION + " where " + USERNAMECOLUMN
+							+ "='" + username + "' AND " + DOCUMENTIDCOLUMN + "='" + documentID + "'");
 					for (final Row row : results) {
 						likes.add(row.getString(DOCUMENTIDCOLUMN));
 					}
@@ -140,7 +292,7 @@ public class DocumentDataService {
 
 			}
 			return likes;
-		} catch (DriverException e) {
+		} catch (final DriverException e) {
 			logger.warn("Unable to getLikes : " + e.getMessage());
 			// TODO catch specific exception
 			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
@@ -159,7 +311,7 @@ public class DocumentDataService {
 
 			final String query = "DELETE FROM " + LIKESCOLUMN + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
 			session.execute(query);
-		} catch (DriverException e) {
+		} catch (final DriverException e) {
 			logger.warn("Unable to remove likes for user " + username + " : " + e.getMessage());
 			// TODO catch specific exception
 			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
@@ -179,10 +331,10 @@ public class DocumentDataService {
 	public void addFavorite(final String username, final String idDocument) throws DatafariServerException {
 		try {
 
-			final String query = "insert into " + FAVORITECOLLECTION + " (" + USERNAMECOLUMN + "," + DOCUMENTIDCOLUMN
-					+ ")" + " values ('" + username + "','" + idDocument + "')";
+			final String query = "insert into " + FAVORITECOLLECTION + " (" + USERNAMECOLUMN + "," + DOCUMENTIDCOLUMN + ")" + " values ('" + username
+					+ "','" + idDocument + "')";
 			session.execute(query);
-		} catch (DriverException e) {
+		} catch (final DriverException e) {
 			logger.warn("Unable add favorite " + username + " : " + e.getMessage());
 			// TODO catch specific exception
 			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
@@ -200,10 +352,10 @@ public class DocumentDataService {
 	 */
 	public void deleteFavorite(final String username, final String idDocument) throws DatafariServerException {
 		try {
-			final String query = "DELETE FROM " + FAVORITECOLLECTION + " WHERE " + DOCUMENTIDCOLUMN + " = '"
-					+ idDocument + "' AND " + USERNAMECOLUMN + " = '" + username + "'";
+			final String query = "DELETE FROM " + FAVORITECOLLECTION + " WHERE " + DOCUMENTIDCOLUMN + " = '" + idDocument + "' AND " + USERNAMECOLUMN
+					+ " = '" + username + "'";
 			session.execute(query);
-		} catch (DriverException e) {
+		} catch (final DriverException e) {
 			logger.warn("Unable delete favorite " + username + " : " + e.getMessage());
 			// TODO catch specific exception
 			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
@@ -221,20 +373,19 @@ public class DocumentDataService {
 	 *         null if there's an error.
 	 * @throws DatafariServerException
 	 */
-	public List<String> getFavorites(final String username, String[] documentIDs) throws DatafariServerException {
+	public List<String> getFavorites(final String username, final String[] documentIDs) throws DatafariServerException {
 		try {
-			final List<String> favorites = new ArrayList<String>();
+			final List<String> favorites = new ArrayList<>();
 			if (documentIDs == null) {
-				final ResultSet results = session.execute("SELECT " + DOCUMENTIDCOLUMN + " FROM " + FAVORITECOLLECTION
-						+ " where " + USERNAMECOLUMN + "='" + username + "'");
+				final ResultSet results = session
+						.execute("SELECT " + DOCUMENTIDCOLUMN + " FROM " + FAVORITECOLLECTION + " where " + USERNAMECOLUMN + "='" + username + "'");
 				for (final Row row : results) {
 					favorites.add(row.getString(DOCUMENTIDCOLUMN));
 				}
 			} else {
-				for (String documentID : documentIDs) {
-					final ResultSet results = session.execute(
-							"SELECT " + DOCUMENTIDCOLUMN + " FROM " + FAVORITECOLLECTION + " where " + USERNAMECOLUMN
-									+ "='" + username + "' AND " + DOCUMENTIDCOLUMN + "='" + documentID + "'");
+				for (final String documentID : documentIDs) {
+					final ResultSet results = session.execute("SELECT " + DOCUMENTIDCOLUMN + " FROM " + FAVORITECOLLECTION + " where "
+							+ USERNAMECOLUMN + "='" + username + "' AND " + DOCUMENTIDCOLUMN + "='" + documentID + "'");
 					for (final Row row : results) {
 						favorites.add(row.getString(DOCUMENTIDCOLUMN));
 					}
@@ -242,7 +393,7 @@ public class DocumentDataService {
 
 			}
 			return favorites;
-		} catch (DriverException e) {
+		} catch (final DriverException e) {
 			logger.warn("Unable getFavorites for " + username + " : " + e.getMessage());
 			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
 		}
@@ -259,10 +410,9 @@ public class DocumentDataService {
 	 */
 	public void removeFavorites(final String username) throws DatafariServerException {
 		try {
-			final String query = "DELETE FROM " + FAVORITECOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username
-					+ "'";
+			final String query = "DELETE FROM " + FAVORITECOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
 			session.execute(query);
-		} catch (DriverException e) {
+		} catch (final DriverException e) {
 			logger.warn("Unable removeFavorites for " + username + " : " + e.getMessage());
 			// TODO catch specific exception
 			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());

@@ -31,6 +31,11 @@ CREATE TABLE user (
   password varchar
 );
 
+CREATE TABLE lang (
+	username varchar PRIMARY KEY,
+	lang varchar
+);
+
 CREATE TABLE role (
   username varchar,
   role varchar,
