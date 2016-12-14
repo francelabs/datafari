@@ -822,9 +822,9 @@
 		class="com.francelabs.datafari.handler.html.HTMLRequestHandler">
 		<lst name="defaults">
 			<str name="id">id</str>
-			<str name="field">content</str>
+			<str name="field">content_hl</str>
 			<str name="field">title</str>
-			<str name="f.content.selector">body</str>
+			<str name="f.content_hl.selector">body</str>
 			<str name="f.title.selector">title</str>
 			<str name="update.chain">datafariweb</str>
 		</lst>
