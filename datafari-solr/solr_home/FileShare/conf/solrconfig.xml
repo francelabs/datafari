@@ -822,9 +822,9 @@
 		class="com.francelabs.datafari.handler.html.HTMLRequestHandler">
 		<lst name="defaults">
 			<str name="id">id</str>
-			<str name="field">content_hl</str>
+			<str name="field">content</str>
 			<str name="field">title</str>
-			<str name="f.content_hl.selector">body</str>
+			<str name="f.content.selector">body</str>
 			<str name="f.title.selector">title</str>
 			<str name="update.chain">datafariweb</str>
 		</lst>
@@ -1167,6 +1167,11 @@
    			<str name="fieldName">content_hl</str>
    			<int name="maxLength">10000</int>
  		</processor>
+		
+		<processor class="solr.TrimFieldUpdateProcessorFactory">
+                        <str name="fieldName">content_hl</str>
+
+                </processor>
 	
 		<processor class="org.apache.solr.update.processor.LangDetectLanguageIdentifierUpdateProcessorFactory">
 			<str name="langid.fl">content,title</str>
@@ -1196,6 +1201,21 @@
 			<str name="source">id</str>
 			<str name="dest">url</str>
 		</processor>
+		
+		<processor class="solr.CloneFieldUpdateProcessorFactory">
+       		<str name="source">content</str>
+       		<str name="dest">content_hl</str>
+     	</processor>
+		
+		<processor class="solr.TruncateFieldUpdateProcessorFactory">
+   			<str name="fieldName">content_hl</str>
+   			<int name="maxLength">10000</int>
+ 		</processor>
+		
+		 <processor class="solr.TrimFieldUpdateProcessorFactory">
+                        <str name="fieldName">content_hl</str>
+
+                </processor>
 
 		<processor class="solr.DefaultValueUpdateProcessorFactory">
 			<str name="fieldName">source</str>
