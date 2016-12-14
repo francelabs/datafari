@@ -1202,6 +1202,11 @@
 			<str name="dest">url</str>
 		</processor>
 		
+		<processor class="solr.DefaultValueUpdateProcessorFactory">
+			<str name="fieldName">source</str>
+			<str name="value">Web</str>
+		</processor>
+		
 		<processor class="solr.CloneFieldUpdateProcessorFactory">
        		<str name="source">content</str>
        		<str name="dest">content_hl</str>
