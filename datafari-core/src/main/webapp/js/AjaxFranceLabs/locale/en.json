@@ -102,7 +102,7 @@
 "elevateAddDoc":"add another doc ID",
 "createElevateLabel":"Create a new query elevation and/or add new documents",
 "queryThLabel":"Query",
-"confSaved":"Configuration well saved",
+"confSaved":"Configuration well saved, use the Zookeeper admin UI to upload and reload the new conf",
 "confSaveError":"Error when trying to save the configuration",
 "selectLang":"Select the language",
 "facettitle0":"ooo",

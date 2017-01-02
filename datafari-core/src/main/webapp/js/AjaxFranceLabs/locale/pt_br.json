@@ -97,7 +97,7 @@
 "elevateAddDoc":"adicionar outro doc ID",
 "createElevateLabel":"Criar uma nova elevação de consulta e/ou adicionar novos documentos",
 "queryThLabel":"Consulta",
-"confSaved":"Configuração salva",
+"confSaved":"Configuração salva, use the Zookeeper admin UI to upload and reload the new conf",
 "confSaveError":"Erro ao tentar salvar a configuração",
 "selectLang":"Selecione o Idioma",
 "facettitle0":"ooo",

@@ -39,11 +39,9 @@ $(document).ready(function() {
 				tool : "modify"
 			},function(data){
 				if(data.code == 0) {
-					$.get("./proxy/solr/admin/cores?action=RELOAD&core=" + core,function(){
-						$("#message").html(window.i18n.msgStore["confSaved"]);
-						$("#message").addClass("success");
-						$("#message").show();						
-					});
+					$("#message").html(window.i18n.msgStore["confSaved"]);
+					$("#message").addClass("success");
+					$("#message").show();
 				} else {
 					$("#message").html(window.i18n.msgStore["confSaveError"]);
 					$("#message").addClass("error");
@@ -72,13 +70,11 @@ $(document).ready(function() {
 				tool : "create"
 			},function(data){
 				if(data.code == 0) {
-					$.get("./proxy/solr/admin/cores?action=RELOAD&core=" + core,function(){
-						$("#message2").html(window.i18n.msgStore["confSaved"]);
-						$("#message2").addClass("success");
-						$("#message2").show();			
-						fillQuerySelector();
-						reinitCreateTbody();
-					});
+					$("#message2").html(window.i18n.msgStore["confSaved"]);
+					$("#message2").addClass("success");
+					$("#message2").show();			
+					fillQuerySelector();
+					reinitCreateTbody();
 				} else {
 					$("#message2").html(window.i18n.msgStore["confSaveError"]);
 					$("#message2").addClass("error");
