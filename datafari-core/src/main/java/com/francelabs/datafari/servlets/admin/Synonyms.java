@@ -118,6 +118,7 @@ public class Synonyms extends HttpServlet {
 	 */
 	@Override
 	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+		SemaphoreLn acquiredSem = null;
 		try {
 			if (content.equals("")) {
 				final PrintWriter out = response.getWriter();
@@ -156,6 +157,7 @@ public class Synonyms extends HttpServlet {
 									out.close();
 									return;
 								}
+								acquiredSem = sem;
 								final String filename = "synonyms_" + request.getParameter("language").toString() + ".txt";
 								final JSONObject jsonResponse = new JSONObject();
 								response.setCharacterEncoding("utf8");
@@ -193,6 +195,9 @@ public class Synonyms extends HttpServlet {
 							out.append(
 									"Error while reading the synonyms file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69018");
 							out.close();
+							if(acquiredSem != null) {
+								acquiredSem.release();
+							}
 							return;
 						}
 					}
@@ -203,6 +208,9 @@ public class Synonyms extends HttpServlet {
 			out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69506");
 			out.close();
 			LOGGER.error("Unindentified error in Synonyms doGet. Error 69506", e);
+			if(acquiredSem != null) {
+				acquiredSem.release();
+			}
 		}
 	}
 

@@ -91,6 +91,7 @@ public class ModifyNodeContent extends HttpServlet {
 	 * Or create and or acquire the semaphore, then read the file to get the requested node
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		SemaphoreLn acquiredSem = null;
 		try{
 			String type = request.getParameter("type");
 			try {
@@ -119,6 +120,7 @@ public class ModifyNodeContent extends HttpServlet {
 					if (listMutex.get(i).getType().equals(type)){
 						if(listMutex.get(i).availablePermits()>0){
 							listMutex.get(i).acquire();
+							acquiredSem = listMutex.get(i);
 						}else{											//If not available return "File already in use"
 							PrintWriter out = response.getWriter();
 							out.append("File already in use"); 	
@@ -130,7 +132,8 @@ public class ModifyNodeContent extends HttpServlet {
 				}
 				if(!mutex){												//If not existing then create it and acquire it
 					listMutex.add(new SemaphoreLn("", type));
-					listMutex.get(listMutex.size()-1).acquire();
+					acquiredSem = listMutex.get(listMutex.size()-1);
+					acquiredSem.acquire();
 				}
 				String attr = request.getParameter("attr");
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -146,6 +149,9 @@ public class ModifyNodeContent extends HttpServlet {
 				PrintWriter out = response.getWriter();
 				out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69034"); 	
 				out.close();
+				if(acquiredSem != null) {
+					acquiredSem.release();
+				}
 				return;
 			}
 			
@@ -154,6 +160,9 @@ public class ModifyNodeContent extends HttpServlet {
 			out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69514");
 			out.close();
 			LOGGER.error("Unindentified error in ModifyNodeContent doGet. Error 69514", e);
+			if(acquiredSem != null) {
+				acquiredSem.release();
+			}
 		}
 	}
 

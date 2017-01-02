@@ -98,6 +98,7 @@ String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
 	 * If called to print it will return plain text
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		SemaphoreLn acquiredSem = null;
 		try{
 			if(content.equals("")){
 				PrintWriter out = response.getWriter();
@@ -119,6 +120,7 @@ String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
 									out.close();
 									return;
 								}
+								acquiredSem = sem;
 								String filename = "stopwords_"+request.getParameter("language").toString()+".txt";
 								response.setContentType("application/octet-stream");
 								String filepath = env+"/";	
@@ -139,6 +141,9 @@ String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
 							out.append("Error while reading the stopwords file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69014"); 	
 							out.close();
 							LOGGER.error("Error while reading the stopwords_"+request.getParameter("language")+".txt file in Stopwords servlet, please make sure the file exists and is located in "+env+"/solr/solrcloud/"+server+"/conf/"+". Error 69014", e);
+							if(acquiredSem != null) {
+								acquiredSem.release();
+							}
 						}
 					}
 				}
@@ -148,6 +153,9 @@ String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
 			out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69504");
 			out.close();
 			LOGGER.error("Unindentified error in Stopwords doGet. Error 69504", e);
+			if(acquiredSem != null) {
+				acquiredSem.release();
+			}
 		}
 	}
 

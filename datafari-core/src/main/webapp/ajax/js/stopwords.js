@@ -7,14 +7,14 @@ var previous="";
 
 		//If the user refresh the page  
 		$(window).bind('beforeunload', function(e){
-			if(document.getElementById("input")!== null){
+			if(document.getElementById("language").value !== ""){
 			  cleanSem(document.getElementById("language").value);
 			}
 		 });
 		//If the user loads an other page
 		$("a").click(function(e){
 			if(e.target.className==="ajax-link" || e.target.className==="ajax-link active-parent active"){
-				if(document.getElementById("input")!== null){
+				if(document.getElementById("language").value !== ""){
 					cleanSem(document.getElementById("language").value);
 					$("#ajaxResponse").empty();
 				}

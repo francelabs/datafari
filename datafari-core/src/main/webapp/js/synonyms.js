@@ -2,14 +2,14 @@ var previous="";
 $(document).ready(function() {
 	//If the user refresh the page  
 	$(window).bind('beforeunload', function(){  								
-		if(document.getElementById("input")!== null){
+		if(document.getElementById("language").value !== ""){
 			  cleanSem(document.getElementById("language").value);
 		}
 	  });
 	//If the user loads an other page
 	$("a").click(function(e){
 		if(e.target.className==="ajax-link" || e.target.className==="ajax-link active-parent active"){
-			if(document.getElementById("input")!== null){
+			if(document.getElementById("language").value !== ""){
 				cleanSem(document.getElementById("language").value);
 				$("#ajaxResponse").empty();
 			}
@@ -63,7 +63,7 @@ function setFunctions() {
 	$(".addWord").keypress(function(e) {
 		if(e.which == 13) {
 			var element = $(e.target);
-			if(element.val() != "" && !element.val().contains(",")) {
+			if(element.val() != "" && element.val().indexOf(",") == -1) {
 				element.parent().append(htmlWord(element.val()));
 				element.val('');
 				setWordDeleteFunction();

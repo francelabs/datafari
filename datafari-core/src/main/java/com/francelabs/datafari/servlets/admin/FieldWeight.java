@@ -359,6 +359,8 @@ public class FieldWeight extends HttpServlet {
 					final PrintWriter out = response.getWriter();
 					out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69028");
 					out.close();
+					semaphoreConfigPf.release();
+					semaphoreConfigQf.release();
 					return;
 				}
 			}
@@ -367,6 +369,8 @@ public class FieldWeight extends HttpServlet {
 			out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69510");
 			out.close();
 			LOGGER.error("Unindentified error in FieldWeight doGet. Error 69510", e);
+			semaphoreConfigPf.release();
+			semaphoreConfigQf.release();
 		}
 	}
 
