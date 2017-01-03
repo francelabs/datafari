@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.francelabs.datafari.startup;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,7 +42,10 @@ public class UserManagementLauncher implements ServletContextListener {
 			if (!UserDataService.getInstance().isInBase("admin")){
 				LOGGER.info("UserManagement admin");
 				User user = new User("admin",ScriptConfiguration.getProperty("TEMPADMINPASSWORD"));
-				List<String> roleAdmin = Collections.singletonList(UserDataService.SEARCHADMINISTRATOR);
+				List<String> roleAdmin = new ArrayList<String>(); 
+				roleAdmin.add(UserDataService.SEARCHADMINISTRATOR);
+				// Set role for tomcat manager app
+				roleAdmin.add("manager-gui");
 				user.signup(roleAdmin);
 				LOGGER.info("Admin user created");
 				

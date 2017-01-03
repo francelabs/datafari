@@ -18,6 +18,7 @@
 					<include name="bin/**" />
 					<include name="conf/**" />
 					<include name="lib/**" />
+					<include name="webapps/**" />
 			</fileset>
 		</copy>
 
