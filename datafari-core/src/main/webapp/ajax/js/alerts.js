@@ -67,9 +67,9 @@ function getTab(){
 				$("#ajaxResponse").append("</div></div></div></div>");
         	}else{
         		if(keyword===""){
-        			$("#ajaxResponse").html("<div><b>"+window.i18n.msgStore['noAlerts'].substring(0,9)+"</b></div>");
-        		}else{
         			$("#ajaxResponse").html("<div><b>"+window.i18n.msgStore['noAlerts']+"</b></div>");
+        		}else{
+        			$("#ajaxResponse").html("<div><b>"+window.i18n.msgStore['noKeywordAlerts']+"</b></div>");
         		}
         	}
         },
