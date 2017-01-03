@@ -68,7 +68,7 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 			$.each(docs,function(index,doc){
 				if ($.inArray(docs[index].id,window.globalVariableLikes)!==-1){
 					// the document is liked
-					$($('.doc_list > div')[index]).data("isLiked",true).find('.liker').text('unlike');
+					$($('.doc_list > div')[index]).data("isLiked",true).find('.liker').text('Unlike');
 				}
 				if ($.inArray(docs[index].id,window.globalVariableFavorites)!==-1){
 					// the document is saved as favorite 

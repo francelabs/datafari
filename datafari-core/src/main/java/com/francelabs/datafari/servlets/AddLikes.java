@@ -33,6 +33,7 @@ import org.json.JSONObject;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
+import com.francelabs.datafari.user.Like;
 import com.francelabs.datafari.utils.UpdateNbLikes;
 
 /**
@@ -83,6 +84,7 @@ public class AddLikes extends HttpServlet {
 					// the
 					// username
 					try {
+						Like.addLike(username, documentId);
 						UpdateNbLikes.getInstance().increment(documentId);
 						jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 
