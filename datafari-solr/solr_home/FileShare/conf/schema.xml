@@ -90,9 +90,10 @@
    <field name="urlHierarchy" type="string" indexed="true" stored="true" multiValued="true"/>
    <field name="last_modified" type="tdate" indexed="true" stored="true"/>
    <field name="content" type="text_general" indexed="false" stored="false" multiValued="true"/>
-   <field name="content_hl" type="text_general" indexed="false" stored="true" multiValued="true"/>
    <field name="content_en" type="text_en" indexed="true" stored="false" multiValued="true"/>
    <field name="content_fr" type="text_fr" indexed="true" stored="false" multiValued="true"/>
+   <field name="content_hl_en" type="text_en" indexed="false" stored="true" multiValued="true"/>
+   <field name="content_hl_fr" type="text_fr" indexed="false" stored="true" multiValued="true"/>
    
    <field name="suggest" type="text_auto" indexed="true" stored="false" multiValued="true" />
    <field name="spell" type="textSpell" indexed="true" stored="false" multiValued="true" />

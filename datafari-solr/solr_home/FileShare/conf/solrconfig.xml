@@ -696,8 +696,9 @@
 			<str name="spellcheck.count">1</str>
 			<str name="spellcheck.collate">true</str>
 			<str name="hl">on</str>
-			<str name="hl.fl">content_hl</str>
-			<str name="hl.alternateField">content_hl</str>
+			<str name="hl.fl">content_hl_fr content_hl_en</str>
+			<str name="hl.alternateField">content_hl_fr</str>
+			<str name="hl.alternateField">content_hl_en</str>
 			<str name="hl.maxAlternateFieldLength">100</str>
 			<str name="hl.encoder">html</str>
 			<str name="hl.fragsize">200</str>
@@ -751,8 +752,9 @@
 			<str name="spellcheck.count">1</str>
 			<str name="spellcheck.collate">true</str>       <!-- Highlighting defaults -->
 			<str name="hl">on</str>
-			<str name="hl.fl">content_hl</str>
-			<str name="hl.alternateField">content_hl</str>
+			<str name="hl.fl">content_hl_fr content_hl_en</str>
+			<str name="hl.alternateField">content_hl_fr</str>
+			<str name="hl.alternateField">content_hl_en</str>
 			<str name="hl.maxAlternateFieldLength">100</str>
 			<str name="hl.encoder">html</str>
 			<str name="hl.fragsize">200</str>
@@ -1157,21 +1159,6 @@
 	
 		
 		<processor class="com.francelabs.datafari.updateprocessor.DatafariUpdateProcessorFactory"/>
-		
-		<processor class="solr.CloneFieldUpdateProcessorFactory">
-       		<str name="source">content</str>
-       		<str name="dest">content_hl</str>
-     	</processor>
-		
-		<processor class="solr.TruncateFieldUpdateProcessorFactory">
-   			<str name="fieldName">content_hl</str>
-   			<int name="maxLength">10000</int>
- 		</processor>
-		
-		<processor class="solr.TrimFieldUpdateProcessorFactory">
-                        <str name="fieldName">content_hl</str>
-
-                </processor>
 	
 		<processor class="org.apache.solr.update.processor.LangDetectLanguageIdentifierUpdateProcessorFactory">
 			<str name="langid.fl">content,title</str>
@@ -1179,6 +1166,25 @@
 			<str name="langid.map">true</str>
 			<str name="langid.whitelist">en,fr</str>
 			<str name="langid.fallback">en</str>
+		</processor>
+		
+		<processor class="solr.CloneFieldUpdateProcessorFactory">
+			<lst name="source">
+				<str name="fieldRegex">content_(.*)</str>
+			</lst>
+			<lst name="dest">
+				<str name="pattern">content_(.*)</str>
+				<str name="replacement">content_hl_$1</str>
+			</lst>
+     	</processor>
+		
+		<processor class="solr.TruncateFieldUpdateProcessorFactory">
+   			<str name="fieldRegex">content_hl_.*</str>
+   			<int name="maxLength">10000</int>
+ 		</processor>
+		
+		<processor class="solr.TrimFieldUpdateProcessorFactory">
+        	<str name="fieldRegex">content_hl_.*</str>
 		</processor>
 
 
@@ -1206,21 +1212,6 @@
 			<str name="fieldName">source</str>
 			<str name="value">Web</str>
 		</processor>
-		
-		<processor class="solr.CloneFieldUpdateProcessorFactory">
-       		<str name="source">content</str>
-       		<str name="dest">content_hl</str>
-     	</processor>
-		
-		<processor class="solr.TruncateFieldUpdateProcessorFactory">
-   			<str name="fieldName">content_hl</str>
-   			<int name="maxLength">10000</int>
- 		</processor>
-		
-		 <processor class="solr.TrimFieldUpdateProcessorFactory">
-                        <str name="fieldName">content_hl</str>
-
-                </processor>
 
 		<processor class="solr.DefaultValueUpdateProcessorFactory">
 			<str name="fieldName">source</str>
@@ -1239,6 +1230,25 @@
 			<str name="langid.map">true</str>
 			<str name="langid.whitelist">en,fr</str>
 			<str name="langid.fallback">en</str>
+		</processor>
+		
+		<processor class="solr.CloneFieldUpdateProcessorFactory">
+			<lst name="source">
+				<str name="fieldRegex">content_(.*)</str>
+			</lst>
+			<lst name="dest">
+				<str name="pattern">content_(.*)</str>
+				<str name="replacement">content_hl_$1</str>
+			</lst>
+     	</processor>
+		
+		<processor class="solr.TruncateFieldUpdateProcessorFactory">
+   			<str name="fieldRegex">content_hl_.*</str>
+   			<int name="maxLength">10000</int>
+ 		</processor>
+		
+		<processor class="solr.TrimFieldUpdateProcessorFactory">
+        	<str name="fieldRegex">content_hl_.*</str>
 		</processor>
 
 
