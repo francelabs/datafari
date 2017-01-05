@@ -158,10 +158,12 @@
    
  	 <fieldType name="likes" keyField="id" defVal="0" stored="false" indexed="false" class="solr.ExternalFileField" valType="pfloat"/>
     <fieldType name="textSpell" class="solr.TextField"
-			positionIncrementGap="100">
+			positionIncrementGap="100" omitNorms="true">
 			<analyzer>
-				<tokenizer class="solr.StandardTokenizerFactory" />
+<!-- 				<tokenizer class="solr.StandardTokenizerFactory" /> -->
+				<tokenizer class="solr.WhitespaceTokenizerFactory"/>
 				<filter class="solr.LowerCaseFilterFactory" />
+				<filter class="solr.StandardFilterFactory"/>
 				<filter class="solr.RemoveDuplicatesTokenFilterFactory" />
 			</analyzer>
 	</fieldType>
