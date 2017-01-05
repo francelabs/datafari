@@ -104,7 +104,7 @@ AjaxFranceLabs.TableFacetQueriesWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 			
 			elm.find('ul li:last label').append('<div class="filterFacetCheck"></div>').append('<div class="filterFacetLabel"></div>');
 			elm.find('ul li:last .filterFacetCheck').append('<input type="checkbox" value="' + data[i].name + '"/>');
-			elm.find('ul li:last .filterFacetCheck input').attr('id',data[i].name);
+			elm.find('ul li:last .filterFacetCheck input').attr('id', self.id + "-" + data[i].name);
 			var filter =  new RegExp(self.field + ':' + self.queries[i].replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"));
 			if (this.manager.store.find('fq', filter))
 				elm.find('ul li:last .filterFacetCheck input').attr('checked', 'checked').parents('li').addClass('selected');
@@ -137,9 +137,9 @@ AjaxFranceLabs.TableFacetQueriesWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 			
 			elm.find('ul li:last .filterFacetCheck').append('<label></label>');
 			if (elm.find('ul li:last .filterFacetCheck input').attr('checked')== 'checked' )
-				elm.find('ul li:last .filterFacetCheck label').attr('for', data[i].name).append('<span class="checkboxIcon fa fa-check-square-o">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(decodeURIComponent(data[i].name), 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + data[i].nb + '</span>)</span>');
+				elm.find('ul li:last .filterFacetCheck label').attr('for', self.id + "-" + data[i].name).append('<span class="checkboxIcon fa fa-check-square-o">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(decodeURIComponent(data[i].name), 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + data[i].nb + '</span>)</span>');
 			else 
-				elm.find('ul li:last .filterFacetCheck label').attr('for', data[i].name).append('<span class="checkboxIcon fa fa-square-o">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(decodeURIComponent(data[i].name), 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + data[i].nb + '</span>)</span>');
+				elm.find('ul li:last .filterFacetCheck label').attr('for', self.id + "-" + data[i].name).append('<span class="checkboxIcon fa fa-square-o">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(decodeURIComponent(data[i].name), 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + data[i].nb + '</span>)</span>');
 		}
 		
 		// Enable the modules, create one line per module

@@ -293,7 +293,7 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 		currentLi.append('<label></label>');
 		currentLi.find('label').append('<span class="filterFacetCheck"></span>');
 		currentLi.find('.filterFacetCheck').append('<input type="checkbox" value="' + level.original + '"/>');
-		currentLi.find('.filterFacetCheck input').attr('id',checkboxValue);
+		currentLi.find('.filterFacetCheck input').attr('id', widget.id + "-" + checkboxValue);
 		
 		if (this.manager.store.find('fq', new RegExp(widget.field + ':' + AjaxFranceLabs.Parameter.escapeValue(level.original.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&").replace(/\\/g,"\\\\")) + '[ )]'))) {
 			// The checkbox value is used in the search query, so the checked attribute of the checkbox is set to 'checked'
@@ -346,9 +346,9 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 		currentLi.find('.filterFacetCheck').append('<label></label>');
 		// Apply the correct checkbox image regarding the checkbox state (checked or not checked)
 		if (currentLi.find('.filterFacetCheck input').attr('checked')== 'checked' ) {
-			currentLi.find('.filterFacetCheck label').attr('for', checkboxValue).append('<span class="checkboxIcon fa fa-check-square-o">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(checkboxValue, 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + count + '</span>)</span>');
+			currentLi.find('.filterFacetCheck label').attr('for', widget.id + "-" + checkboxValue).append('<span class="checkboxIcon fa fa-check-square-o">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(checkboxValue, 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + count + '</span>)</span>');
 		} else {
-			currentLi.find('.filterFacetCheck label').attr('for', checkboxValue).append('<span class="checkboxIcon fa fa-square-o">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(checkboxValue, 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + count + '</span>)</span>');
+			currentLi.find('.filterFacetCheck label').attr('for', widget.id + "-" + checkboxValue).append('<span class="checkboxIcon fa fa-square-o">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(checkboxValue, 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + count + '</span>)</span>');
 		}
 		
 		// If the current level has children, makes a recursive call to this method in order to display the children levels
