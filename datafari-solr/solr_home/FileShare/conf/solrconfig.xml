@@ -1211,11 +1211,6 @@
 			<str name="source">id</str>
 			<str name="dest">url</str>
 		</processor>
-		
-		<processor class="solr.DefaultValueUpdateProcessorFactory">
-			<str name="fieldName">source</str>
-			<str name="value">Web</str>
-		</processor>
 
 		<processor class="solr.DefaultValueUpdateProcessorFactory">
 			<str name="fieldName">source</str>
