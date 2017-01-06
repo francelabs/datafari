@@ -56,7 +56,7 @@
 "last24hours":"Last 24 hours",
 "limitHL":"Limitation of the fields size for highlighting",
 "limitindexHL":"Limitation of the stored fields size",
-"limitindexed":"Limitation of the number of tokens indexed per field",
+"indexedname":"Limitation of the number of tokens indexed per field",
 "last30days":"Last 30 days",
 "dateStart":"Starting date : ",
 "content":"Content : ",

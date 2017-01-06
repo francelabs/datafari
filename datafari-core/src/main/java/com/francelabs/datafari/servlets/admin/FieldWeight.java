@@ -18,13 +18,6 @@ package com.francelabs.datafari.servlets.admin;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -54,6 +47,8 @@ import org.xml.sax.SAXException;
 import com.francelabs.datafari.service.search.SolrServers.Core;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
+import com.francelabs.datafari.utils.FileUtils;
+import com.francelabs.datafari.utils.XMLUtils;
 
 /**
  * Javadoc
@@ -99,27 +94,30 @@ public class FieldWeight extends HttpServlet {
 		if (environnement == null) { // If in development environment
 			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
 		}
-		env = environnement + File.separator+"solr"+File.separator+"solrcloud"+File.separator+"FileShare"+File.separator+"conf";
+		env = environnement + File.separator + "solr" + File.separator + "solrcloud" + File.separator + "FileShare"
+				+ File.separator + "conf";
 
 		semaphoreConfigPf = new SemaphoreLn("", "pf");
 		semaphoreConfigQf = new SemaphoreLn("", "qf");
-		if (new File(env + File.separator+"schema.xml").exists()) { // Check
-														// if
-														// the
-														// files
-														// exists
-			schema = new File(env + File.separator+"schema.xml");
+		if (new File(env + File.separator + "schema.xml").exists()) { // Check
+			// if
+			// the
+			// files
+			// exists
+			schema = new File(env + File.separator + "schema.xml");
 		}
-		if (new File(env + File.separator+"solrconfig.xml").exists()) {
-			config = new File(env + File.separator+"solrconfig.xml");
-		}
-
-		if (new File(env + File.separator+"customs_schema"+File.separator+"custom_fields.incl").exists()) {
-			customFields = new File(env + File.separator+"customs_schema"+File.separator+"custom_fields.incl");
+		if (new File(env + File.separator + "solrconfig.xml").exists()) {
+			config = new File(env + File.separator + "solrconfig.xml");
 		}
 
-		if (new File(env + File.separator+"customs_solrconfig"+File.separator+"custom_search_handler.incl").exists()) {
-			customSearchHandler = new File(env + File.separator+"customs_solrconfig"+File.separator+"custom_search_handler.incl");
+		if (new File(env + File.separator + "customs_schema" + File.separator + "custom_fields.incl").exists()) {
+			customFields = new File(env + File.separator + "customs_schema" + File.separator + "custom_fields.incl");
+		}
+
+		if (new File(env + File.separator + "customs_solrconfig" + File.separator + "custom_search_handler.incl")
+				.exists()) {
+			customSearchHandler = new File(
+					env + File.separator + "customs_solrconfig" + File.separator + "custom_search_handler.incl");
 		}
 	}
 
@@ -130,7 +128,8 @@ public class FieldWeight extends HttpServlet {
 	 *      Gets the weight of a field in a type of query
 	 */
 	@Override
-	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
+			throws ServletException, IOException {
 
 		usingCustom = false; // Reinit the usingCustom value to false in order
 								// to check again if the
@@ -139,13 +138,15 @@ public class FieldWeight extends HttpServlet {
 		try {
 			if (request.getParameter("sem") != null) { // If it's called just to
 														// clean the semaphore
-				if (request.getParameter("type").equals("pf") && semaphoreConfigPf.availablePermits() < 1)
+				if (request.getParameter("type").equals("pf") && (semaphoreConfigPf.availablePermits() < 1)) {
 					semaphoreConfigPf.release();
-				else if (semaphoreConfigQf.availablePermits() < 1)
+				} else if (semaphoreConfigQf.availablePermits() < 1) {
 					semaphoreConfigQf.release();
+				}
 				return;
 			}
-			if (schema == null || config == null || !new File(env + "/solr/solrcloud/" + server + "/conf/schema.xml").exists()
+			if ((schema == null) || (config == null)
+					|| !new File(env + "/solr/solrcloud/" + server + "/conf/schema.xml").exists()
 					|| !new File(env + "/solrconfig.xml").exists()) {// If
 																		// the
 																		// files
@@ -244,7 +245,9 @@ public class FieldWeight extends HttpServlet {
 					response.setStatus(200);
 					response.setContentType("text/json;charset=UTF-8");
 				} catch (SAXException | ParserConfigurationException e) {
-					LOGGER.error("Error while parsing the schema.xml, in FieldWeight doGet, make sure the file is valid. Error 69027", e);
+					LOGGER.error(
+							"Error while parsing the schema.xml, in FieldWeight doGet, make sure the file is valid. Error 69027",
+							e);
 					final PrintWriter out = response.getWriter();
 					out.append(
 							"Error while parsing the schema.xml, please retry, if the problem persists contact your system administrator. Error Code : 69027");
@@ -258,19 +261,20 @@ public class FieldWeight extends HttpServlet {
 												// the type and acquire it
 												// because the file can be now
 												// modified in a click
-						if (semaphoreConfigPf.availablePermits() > 0)
+						if (semaphoreConfigPf.availablePermits() > 0) {
 							semaphoreConfigPf.acquire();
-						else { // If the selected Semaphore is already acquired
-								// return "File already in use"
+						} else { // If the selected Semaphore is already
+									// acquired
+									// return "File already in use"
 							final PrintWriter out = response.getWriter();
 							out.append("File already in use");
 							out.close();
 							return;
 						}
 					} else {
-						if (semaphoreConfigQf.availablePermits() > 0)
+						if (semaphoreConfigQf.availablePermits() > 0) {
 							semaphoreConfigQf.acquire();
-						else {
+						} else {
 							final PrintWriter out = response.getWriter();
 							out.append("File already in use");
 							out.close();
@@ -323,25 +327,28 @@ public class FieldWeight extends HttpServlet {
 																					// the
 																					// requested
 																					// field
-							if (elemValueCut.indexOf(" ") != -1) // If it's not
-																	// the
-																	// last
-																	// field,
-																	// returns
-																	// what's
-																	// between
-																	// the
-																	// "^" and
-																	// the
-																	// next
-																	// whitespace
-								response.getWriter().write(elemValue.substring(index, index + elemValueCut.indexOf(" ")));
-							else // If it is the last field, return everything
-									// that
-									// is after the "field^"
+							if (elemValueCut.indexOf(" ") != -1) {
+								// the
+								// last
+								// field,
+								// returns
+								// what's
+								// between
+								// the
+								// "^" and
+								// the
+								// next
+								// whitespace
+								response.getWriter()
+										.write(elemValue.substring(index, index + elemValueCut.indexOf(" ")));
+							} else {
+								// that
+								// is after the "field^"
 								response.getWriter().write(elemValue.substring(index));
-						} else // If the field is not present return 0
+							}
+						} else {
 							response.getWriter().write("0");
+						}
 						response.setStatus(200);
 						response.setContentType("text;charset=UTF-8");
 						return;
@@ -355,9 +362,12 @@ public class FieldWeight extends HttpServlet {
 						return;
 					}
 				} catch (SAXException | ParserConfigurationException | InterruptedException e) {
-					LOGGER.error("Error while parsing the solrconfig.xml, in FieldWeight doGet, make sure the file is valid. Error 69028", e);
+					LOGGER.error(
+							"Error while parsing the solrconfig.xml, in FieldWeight doGet, make sure the file is valid. Error 69028",
+							e);
 					final PrintWriter out = response.getWriter();
-					out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69028");
+					out.append(
+							"Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69028");
 					out.close();
 					semaphoreConfigPf.release();
 					semaphoreConfigQf.release();
@@ -366,7 +376,8 @@ public class FieldWeight extends HttpServlet {
 			}
 		} catch (final Exception e) {
 			final PrintWriter out = response.getWriter();
-			out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69510");
+			out.append(
+					"Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69510");
 			out.close();
 			LOGGER.error("Unindentified error in FieldWeight doGet. Error 69510", e);
 			semaphoreConfigPf.release();
@@ -377,7 +388,7 @@ public class FieldWeight extends HttpServlet {
 	private void findSearchHandler() throws ParserConfigurationException, SAXException, IOException {
 		final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		if (customSearchHandler != null && customSearchHandler.exists()) {
+		if ((customSearchHandler != null) && customSearchHandler.exists()) {
 			try {
 				doc = dBuilder.parse(customSearchHandler);// Parse
 															// the
@@ -419,20 +430,21 @@ public class FieldWeight extends HttpServlet {
 	 *      of a field
 	 */
 	@Override
-	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
+			throws ServletException, IOException {
 		try {
-			if (config == null || !new File(env + File.separator+"solrconfig.xml").exists()) {// If
-																				// the
-																				// files
-																				// did
-																				// not
-																				// existed
-																				// when
-																				// the
-																				// constructor
-																				// was
-																				// runned
-				if (!new File(env + File.separator+"solrconfig.xml").exists()) {
+			if ((config == null) || !new File(env + File.separator + "solrconfig.xml").exists()) {// If
+				// the
+				// files
+				// did
+				// not
+				// existed
+				// when
+				// the
+				// constructor
+				// was
+				// runned
+				if (!new File(env + File.separator + "solrconfig.xml").exists()) {
 					LOGGER.error(
 							"Error while opening the configuration file, solrconfig.xml, in FieldWeight doPost, please make sure this file exists at "
 									+ env + "conf/ . Error 69029"); // If
@@ -447,13 +459,16 @@ public class FieldWeight extends HttpServlet {
 					out.close();
 					return;
 				} else {
-					config = new File(env + File.separator+"solrconfig.xml");
+					config = new File(env + File.separator + "solrconfig.xml");
 				}
 			}
 
 			if (customSearchHandler == null) {
-				if (new File(env + File.separator+"customs_solrconfig"+File.separator+"custom_search_handler.incl").exists()) {
-					customSearchHandler = new File(env + File.separator+"customs_solrconfig"+File.separator+"custom_search_handler.incl");
+				if (new File(
+						env + File.separator + "customs_solrconfig" + File.separator + "custom_search_handler.incl")
+								.exists()) {
+					customSearchHandler = new File(env + File.separator + "customs_solrconfig" + File.separator
+							+ "custom_search_handler.incl");
 				}
 			}
 
@@ -470,29 +485,12 @@ public class FieldWeight extends HttpServlet {
 									// and the modifications must be saved in
 									// the custom search handler file
 
-					// Transfrom searchHandler Node into String
-					final Transformer tf = TransformerFactory.newInstance().newTransformer();
-					tf.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-					tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-					tf.setOutputProperty(OutputKeys.INDENT, "yes");
-					final Writer out = new StringWriter();
-					tf.transform(new DOMSource(searchHandler), new StreamResult(out));
-					// Removing the xml starting tag (<?xml version="1.0"
-					// encoding="UTF-8" standalone="no"?>)
-					String strSearchHandler = out.toString();
-
 					// Get the content of solrconfig.xml file as a string
-					final Path configPath = Paths.get(config.getAbsolutePath());
-					final Charset charset = StandardCharsets.UTF_8;
-					String configContent = new String(Files.readAllBytes(configPath), charset);
+					String configContent = FileUtils.getFileContent(config);
 
 					// Retrieve the searchHandler from the configContent
-					final String openSearchHandlerTag = strSearchHandler.substring(0, strSearchHandler.indexOf(Environment.getProperty("line.separator")));
-					final String endSearchHandlerTag = "</requestHandler>";
-					final int beginIndexSearchHandler = configContent.indexOf(openSearchHandlerTag);
-					final int endIndexSearchHandler = configContent.substring(beginIndexSearchHandler).indexOf(endSearchHandlerTag)
-							+ beginIndexSearchHandler + endSearchHandlerTag.length();
-					strSearchHandler = configContent.substring(beginIndexSearchHandler, endIndexSearchHandler);
+					final Node originalSearchHandler = XMLUtils.getSearchHandlerNode(config);
+					final String strSearchHandler = XMLUtils.nodeToString(originalSearchHandler);
 
 					// Create a commented equivalent of the strSearchHandler
 					final String commentedSearchHandler = "<!--" + strSearchHandler + "-->";
@@ -500,7 +498,7 @@ public class FieldWeight extends HttpServlet {
 					// Replace the searchHandler in the solrconfig.xml file by
 					// the commented version
 					configContent = configContent.replace(strSearchHandler, commentedSearchHandler);
-					Files.write(configPath, configContent.getBytes(charset));
+					FileUtils.saveStringToFile(config, configContent);
 
 					// create the new custom_search_handler document
 					doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
@@ -516,7 +514,7 @@ public class FieldWeight extends HttpServlet {
 					childList = n.getParentNode().getChildNodes();
 
 					// Save the custom_search_handler.incl file
-					tf.transform(new DOMSource(doc), new StreamResult(customSearchHandler));
+					XMLUtils.docToFile(doc, customSearchHandler);
 				}
 
 				if (childList == null) {
@@ -554,30 +552,35 @@ public class FieldWeight extends HttpServlet {
 								final String textCut = text.substring(index + pas);
 								if (value.equals("0")) { // If the user entered
 															// 0
-									if (textCut.indexOf(" ") == -1) // If the
-																	// field is
-																	// the last
-																	// one then
-																	// we just
-																	// cut the
-																	// end of
-																	// the text
-																	// content
+									if (textCut.indexOf(" ") == -1) {
+										// field is
+										// the last
+										// one then
+										// we just
+										// cut the
+										// end of
+										// the text
+										// content
 										n.setTextContent((text.substring(0, index)).trim());
-									else // If it's not we get the part before
-											// the field and the part after
-										n.setTextContent((text.substring(0, index) + text.substring(index + pas + textCut.indexOf(" "))).trim());
+									} else {
+										// the field and the part after
+										n.setTextContent((text.substring(0, index)
+												+ text.substring(index + pas + textCut.indexOf(" "))).trim());
+									}
 								} else { // If the user typed any other values
-									if (textCut.indexOf(" ") == -1)
+									if (textCut.indexOf(" ") == -1) {
 										n.setTextContent(text.substring(0, index + pas) + value);
-									else
-										n.setTextContent(text.substring(0, index + pas) + value + text.substring(index + pas + textCut.indexOf(" ")));
+									} else {
+										n.setTextContent(text.substring(0, index + pas) + value
+												+ text.substring(index + pas + textCut.indexOf(" ")));
+									}
 								}
 							} else { // If it's not weighted
-								if (!value.equals("0")) // If the value is not 0
-														// append the field and
-														// it's value
+								if (!value.equals("0")) {
+									// append the field and
+									// it's value
 									n.setTextContent((n.getTextContent() + " " + field + "^" + value).trim());
+								}
 							}
 							break;
 						}
@@ -593,13 +596,16 @@ public class FieldWeight extends HttpServlet {
 				final StreamResult result = new StreamResult(customSearchHandler);
 				transformer.transform(source, result);
 				// Release the Semaphore according to the type
-				if (type.equals("pf") && semaphoreConfigPf.availablePermits() < 1)
+				if (type.equals("pf") && (semaphoreConfigPf.availablePermits() < 1)) {
 					semaphoreConfigPf.release();
-				else if (semaphoreConfigQf.availablePermits() < 1)
+				} else if (semaphoreConfigQf.availablePermits() < 1) {
 					semaphoreConfigQf.release();
+				}
 
 			} catch (final TransformerException e) {
-				LOGGER.error("Error while modifying the solrconfig.xml, in FieldWeight doPost, pls make sure the file is valid. Error 69030", e);
+				LOGGER.error(
+						"Error while modifying the solrconfig.xml, in FieldWeight doPost, pls make sure the file is valid. Error 69030",
+						e);
 				final PrintWriter out = response.getWriter();
 				out.append(
 						"Error while modifying the config file, please retry, if the problem persists contact your system administrator. Error Code : 69030");
@@ -609,7 +615,8 @@ public class FieldWeight extends HttpServlet {
 
 		} catch (final Exception e) {
 			final PrintWriter out = response.getWriter();
-			out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69511");
+			out.append(
+					"Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69511");
 			out.close();
 			LOGGER.error("Unindentified error in FieldWeight doPost. Error 69511", e);
 		}
@@ -629,7 +636,8 @@ public class FieldWeight extends HttpServlet {
 			if (rh.hasAttributes()) {
 				final NamedNodeMap rhAttributes = rh.getAttributes();
 				for (int j = 0; j < rhAttributes.getLength(); j++) {
-					if (rhAttributes.item(j).getNodeName().equals("name") && rhAttributes.item(j).getNodeValue().equals("/select")) {
+					if (rhAttributes.item(j).getNodeName().equals("name")
+							&& rhAttributes.item(j).getNodeValue().equals("/select")) {
 						return rh;
 					}
 				}
@@ -645,15 +653,19 @@ public class FieldWeight extends HttpServlet {
 			if (child.item(i).hasAttributes()) {
 				final NamedNodeMap map = child.item(i).getAttributes();
 				for (int j = 0; j < map.getLength(); j++) {
-					if (map.item(j).getNodeName().equals("name"))
+					if (map.item(j).getNodeName().equals("name")) {
 						name = map.item(j).getNodeValue();
+					}
 				}
-				if (name.equals(type))
+				if (name.equals(type)) {
 					return child.item(i);
+				}
 			}
-			if (child.item(i).hasChildNodes())
-				if (run(child.item(i).getChildNodes(), type) != null)
+			if (child.item(i).hasChildNodes()) {
+				if (run(child.item(i).getChildNodes(), type) != null) {
 					return run(child.item(i).getChildNodes(), type);
+				}
+			}
 		}
 		return null;
 	}

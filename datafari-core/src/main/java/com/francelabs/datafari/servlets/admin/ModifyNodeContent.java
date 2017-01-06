@@ -4,7 +4,7 @@
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
  *  * You may obtain a copy of the License at
- *  * 
+ *  *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
  *  *
  *  * Unless required by applicable law or agreed to in writing, software
@@ -18,8 +18,6 @@ package com.francelabs.datafari.servlets.admin;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,11 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -48,192 +42,274 @@ import org.xml.sax.SAXException;
 import com.francelabs.datafari.service.search.SolrServers.Core;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
+import com.francelabs.datafari.utils.FileUtils;
+import com.francelabs.datafari.utils.XMLUtils;
 import com.francelabs.datafari.utils.ZKUtils;
 
 /**
- * This Servlet is used to print and modify the textContent of various nodes of the solrConfig.xml
- * It is called by SizeLimitations.html and by AutocompleteConfiguration.html
- * You must give as a parameter "type" the content of the attribute "name" of the node you search
- * DoGet is used to get the value of the requested node cleans and creates the semaphores
- * DoPost is used to modify the value of the requested node
- * There is one semaphore by node requested since the start/restart of Datafari
+ * This Servlet is used to print and modify the textContent of various nodes of
+ * the solrConfig.xml It is called by SizeLimitations.html and by
+ * AutocompleteConfiguration.html You must give as a parameter "type" the
+ * content of the attribute "name" of the node you search DoGet is used to get
+ * the value of the requested node cleans and creates the semaphores DoPost is
+ * used to modify the value of the requested node There is one semaphore by node
+ * requested since the start/restart of Datafari
+ *
  * @author Alexis Karassev
  */
 @WebServlet("/admin/ModifyNodeContent")
 public class ModifyNodeContent extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private String server = Core.FILESHARE.toString();
+	private final String server = Core.FILESHARE.toString();
 	private static final List<SemaphoreLn> listMutex = new ArrayList<SemaphoreLn>();
-	private String env;
+	private final String env;
 	private Document doc;
 	private File config = null;
-	private final static Logger LOGGER = Logger.getLogger(ModifyNodeContent.class
-			.getName());
+	private final static Logger LOGGER = Logger.getLogger(ModifyNodeContent.class.getName());
+
 	/**
-	 * @see HttpServlet#HttpServlet()
-	 * Gets the path
-	 * Checks if the required file exist
+	 * @see HttpServlet#HttpServlet() Gets the path Checks if the required file
+	 *      exist
 	 */
 	public ModifyNodeContent() {
 		String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
 
-		if(environnement==null){															//If in development environment	
+		if (environnement == null) { // If in development environment
 			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
 		}
-		env = environnement+"/solr/solrcloud/FileShare/conf";		
+		env = environnement + "/solr/solrcloud/FileShare/conf";
 
-		if(new File(env+"/solrconfig.xml").exists())
-			config = new File(env+"/solrconfig.xml");
+		if (new File(env + "/solrconfig.xml").exists()) {
+			config = new File(env + "/solrconfig.xml");
+		}
 	}
+
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 * Used to release the semaphore 
-	 * Or create and or acquire the semaphore, then read the file to get the requested node
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response) Used to release the semaphore Or create and or acquire the
+	 *      semaphore, then read the file to get the requested node
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	@Override
+	protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
+			throws ServletException, IOException {
 		SemaphoreLn acquiredSem = null;
-		try{
-			String type = request.getParameter("type");
+		try {
+			final String type = request.getParameter("type");
 			try {
-				if(request.getParameter("sem") != null){									//If it's called just to clean the semaphore
-					for ( int i = 0 ; i < listMutex.size() ; i++){							//Get the one corresponding to the parameter "type" and checks if it has not already been released
-						if(listMutex.get(i).getType().equals(type) && listMutex.get(i).availablePermits()<1){
-							listMutex.get(i).release();												
+				if (request.getParameter("sem") != null) { // If it's called
+															// just to clean the
+															// semaphore
+					for (int i = 0; i < listMutex.size(); i++) { // Get the one
+																	// corresponding
+																	// to the
+																	// parameter
+																	// "type"
+																	// and
+																	// checks if
+																	// it has
+																	// not
+																	// already
+																	// been
+																	// released
+						if (listMutex.get(i).getType().equals(type) && (listMutex.get(i).availablePermits() < 1)) {
+							listMutex.get(i).release();
 							return;
 						}
 					}
 					return;
 				}
-				if( config == null || !new File(env+"/solrconfig.xml").exists()){//If the file did not existed when the constructor was run
-					//Checks if it exists now
-					if(!new File(env+"/solrconfig.xml").exists()){
-						LOGGER.error("Error while opening the configuration file, solrconfig.xml, in ModifyNodeContent doGet, please make sure this file exists at "+env+"/solr/solrcloud/"+server+"/conf/ . Error 69033");		//If not an error is printed
-						PrintWriter out = response.getWriter();
-						out.append("Error while opening the configuration file, please retry, if the problem persists contact your system administrator. Error Code : 69033"); 	
+				if ((config == null) || !new File(env + "/solrconfig.xml").exists()) {// If
+																						// the
+																						// file
+																						// did
+																						// not
+																						// existed
+																						// when
+																						// the
+																						// constructor
+																						// was
+																						// run
+					// Checks if it exists now
+					if (!new File(env + "/solrconfig.xml").exists()) {
+						LOGGER.error(
+								"Error while opening the configuration file, solrconfig.xml, in ModifyNodeContent doGet, please make sure this file exists at "
+										+ env + "/solr/solrcloud/" + server + "/conf/ . Error 69033"); // If
+																										// not
+																										// an
+																										// error
+																										// is
+																										// printed
+						final PrintWriter out = response.getWriter();
+						out.append(
+								"Error while opening the configuration file, please retry, if the problem persists contact your system administrator. Error Code : 69033");
 						out.close();
 						return;
-					}else
-						config = new File(env+"/solrconfig.xml");
+					} else {
+						config = new File(env + "/solrconfig.xml");
+					}
 				}
 				boolean mutex = false;
-				for (int i = 0 ; i < listMutex.size() ; i++) {			//If the right semaphore exists and is available, acquire it.
-					if (listMutex.get(i).getType().equals(type)){
-						if(listMutex.get(i).availablePermits()>0){
+				for (int i = 0; i < listMutex.size(); i++) { // If the right
+																// semaphore
+																// exists and is
+																// available,
+																// acquire it.
+					if (listMutex.get(i).getType().equals(type)) {
+						if (listMutex.get(i).availablePermits() > 0) {
 							listMutex.get(i).acquire();
 							acquiredSem = listMutex.get(i);
-						}else{											//If not available return "File already in use"
-							PrintWriter out = response.getWriter();
-							out.append("File already in use"); 	
+						} else { // If not available return "File already in
+									// use"
+							final PrintWriter out = response.getWriter();
+							out.append("File already in use");
 							out.close();
 							return;
 						}
 						mutex = true;
 					}
 				}
-				if(!mutex){												//If not existing then create it and acquire it
+				if (!mutex) { // If not existing then create it and acquire it
 					listMutex.add(new SemaphoreLn("", type));
-					acquiredSem = listMutex.get(listMutex.size()-1);
+					acquiredSem = listMutex.get(listMutex.size() - 1);
 					acquiredSem.acquire();
 				}
-				String attr = request.getParameter("attr");
-				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-				doc = dBuilder.parse(config);							//Parse the solrconfig.xml
-				NodeList childNodes = doc.getChildNodes();
-				Element elem = (Element) run(childNodes, type, attr);	//Search for the requested node
-				PrintWriter out = response.getWriter();
-				out.append(elem.getTextContent()); 						//Return it's content
+				final String attr = request.getParameter("attr");
+				final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+				final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+				doc = dBuilder.parse(config); // Parse the solrconfig.xml
+				final NodeList childNodes = doc.getChildNodes();
+				final Element elem = (Element) run(childNodes, type, attr); // Search
+																			// for
+																			// the
+																			// requested
+																			// node
+				final PrintWriter out = response.getWriter();
+				out.append(elem.getTextContent()); // Return it's content
 				out.close();
-			} catch ( ParserConfigurationException | SAXException e) {
-				LOGGER.error("Error while parsing the solrconfig.xml, in ModifyNodeContent doGet, make sure the file is valid. Error 69034", e);
-				PrintWriter out = response.getWriter();
-				out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69034"); 	
+			} catch (ParserConfigurationException | SAXException e) {
+				LOGGER.error(
+						"Error while parsing the solrconfig.xml, in ModifyNodeContent doGet, make sure the file is valid. Error 69034",
+						e);
+				final PrintWriter out = response.getWriter();
+				out.append(
+						"Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69034");
 				out.close();
-				if(acquiredSem != null) {
+				if (acquiredSem != null) {
 					acquiredSem.release();
 				}
 				return;
 			}
-			
-		}catch(Exception e){
-			PrintWriter out = response.getWriter();
-			out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69514");
+
+		} catch (final Exception e) {
+			final PrintWriter out = response.getWriter();
+			out.append(
+					"Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69514");
 			out.close();
 			LOGGER.error("Unindentified error in ModifyNodeContent doGet. Error 69514", e);
-			if(acquiredSem != null) {
+			if (acquiredSem != null) {
 				acquiredSem.release();
 			}
 		}
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 * Read the file and search for the requested node, then set it's textContent to the parameter
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response) Read the file and search for the requested node, then set
+	 *      it's textContent to the parameter
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		try{
-			String type = request.getParameter("type");
-			String value = request.getParameter("value");
-			String attr = request.getParameter("attr");
+	@Override
+	protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
+			throws ServletException, IOException {
+		try {
+			final String type = request.getParameter("type");
+			final String value = request.getParameter("value");
+			final String attr = request.getParameter("attr");
 			Element elem;
+			String oldNodeStr = null;
 			try {
-				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-				doc = dBuilder.parse(config);							//Parse the solrconfig.xml
-				NodeList childNodes = doc.getChildNodes();
-				elem = (Element) run(childNodes, type, attr);			//Get the requested Node
-			}catch (ParserConfigurationException | SAXException e) {
-				LOGGER.error("Error while parsing the solrconfig.xml, in ModifyNodeContent doPost, make sure the file is valid. Error 69035", e);
-				PrintWriter out = response.getWriter();
-				out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69035"); 	
+				final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+				final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+				doc = dBuilder.parse(config); // Parse the solrconfig.xml
+				final NodeList childNodes = doc.getChildNodes();
+				elem = (Element) run(childNodes, type, attr); // Get the
+																// requested
+																// Node
+				oldNodeStr = XMLUtils.nodeToString(elem);
+			} catch (ParserConfigurationException | SAXException e) {
+				LOGGER.error(
+						"Error while parsing the solrconfig.xml, in ModifyNodeContent doPost, make sure the file is valid. Error 69035",
+						e);
+				final PrintWriter out = response.getWriter();
+				out.append(
+						"Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69035");
 				out.close();
 				return;
 			}
 			try {
-				elem.setTextContent(value);								//Set the value of the node
-				TransformerFactory transformerFactory = TransformerFactory.newInstance();
-				Transformer transformer;
-				transformer = transformerFactory.newTransformer();
-				DOMSource source = new DOMSource(doc);
-				StreamResult result = new StreamResult(config);
-				transformer.transform(source, result);					//Modify the file
-				for(int i = 0 ; i < listMutex.size() ; i++){			//Release the semaphore
-					if(listMutex.get(i).getType().equals(type) && listMutex.get(i).availablePermits()<1)
+				elem.setTextContent(value); // Set the value of the node
+				final String newNodeStr = XMLUtils.nodeToString(elem);
+				String configStr = FileUtils.getFileContent(config);
+				configStr = configStr.replace(oldNodeStr, newNodeStr);
+				FileUtils.saveStringToFile(config, configStr); // Modify the
+																// file
+				for (int i = 0; i < listMutex.size(); i++) { // Release the
+																// semaphore
+					if (listMutex.get(i).getType().equals(type) && (listMutex.get(i).availablePermits() < 1)) {
 						listMutex.get(i).release();
+					}
 				}
-			} catch (TransformerException e) {
+			} catch (final TransformerException e) {
 				LOGGER.error("Error while modifying the solrconfig.xml, in ModifyNodeContent doPost. Error 69036", e);
-				PrintWriter out = response.getWriter();
-				out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69036"); 	
+				final PrintWriter out = response.getWriter();
+				out.append(
+						"Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69036");
 				out.close();
 				return;
 			}
 
-			
 			ZKUtils.configZK("uploadconfigzk.sh", "FileShare");
 			ZKUtils.configZK("reloadCollections.sh", "FileShare");
-		}catch(Exception e){
-			PrintWriter out = response.getWriter();
-			out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69515");
+		} catch (final Exception e) {
+			final PrintWriter out = response.getWriter();
+			out.append(
+					"Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69515");
 			out.close();
 			LOGGER.error("Unindentified error in ModifyNodeContent doPost. Error 69515", e);
 		}
 	}
-	private Node run(NodeList child, String type, String attr){		//Function to search for a node by it's attribute "name" in a childList and 
-		for(int i = 0 ; i<child.getLength(); i ++){
+
+	private Node run(final NodeList child, final String type, final String attr) { // Function
+																					// to
+																					// search
+																					// for
+																					// a
+																					// node
+																					// by
+																					// it's
+																					// attribute
+																					// "name"
+																					// in
+																					// a
+																					// childList
+																					// and
+		for (int i = 0; i < child.getLength(); i++) {
 			String name = "";
-			if(child.item(i).hasAttributes()){
-				NamedNodeMap map = child.item(i).getAttributes();
-				for(int j = 0 ; j < map.getLength() ; j++){
-					if (map.item(j).getNodeName().equals(attr))
+			if (child.item(i).hasAttributes()) {
+				final NamedNodeMap map = child.item(i).getAttributes();
+				for (int j = 0; j < map.getLength(); j++) {
+					if (map.item(j).getNodeName().equals(attr)) {
 						name = map.item(j).getNodeValue();
+					}
 				}
-				if(name.equals(type))
+				if (name.equals(type)) {
 					return child.item(i);
+				}
 			}
-			if(child.item(i).hasChildNodes())
-				if(run(child.item(i).getChildNodes(), type, attr)!=null)
+			if (child.item(i).hasChildNodes()) {
+				if (run(child.item(i).getChildNodes(), type, attr) != null) {
 					return run(child.item(i).getChildNodes(), type, attr);
+				}
+			}
 		}
 		return null;
 	}

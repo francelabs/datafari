@@ -53,6 +53,8 @@
 "facetlast_modified":"Data",
 "last24hours":"Últimas 24 horas",
 "limitHL":"Limitação do tamanho dos campos para destacar",
+"limitindexHL":"Limitation of the stored fields size",
+"indexedname":"Limitation of the number of tokens indexed per field",
 "last30days":"Últimos 30 dias",
 "dateStart":"Data de início : ",
 "content":"Conteúdo : ",

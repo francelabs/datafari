@@ -56,6 +56,7 @@
 "limitHL":"Limitation de la taille des champs pour le surlignage",
 "limitindexHL":"Limitation de la taille des champs stored",
 "indexedname":"Limitation du nombre de tokens indexés par champ",
+"last30days":"30 derniers jours",
 "dateStart":"Date de début : ",
 "content":"Contenu : ",
 "listFacet":"Liste des facettes",
