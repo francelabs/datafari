@@ -51,11 +51,11 @@ then
 	echo "Configure ELK"
 	cd $ELASTICSEARCH_HOME/bin
 	sudo -E su datafari -p -c "bash elasticsearch -p $ELASTICSEARCH_PID_FILE" &
-	sleep 7
+	sleep 15
 	sudo -E su datafari -p -c "sed -i '/pid\.file/c\pid.file: ${KIBANA_PID_FILE}' $KIBANA_HOME/config/kibana.yml"
 	cd $KIBANA_HOME/bin
 	sudo -E su datafari -p -c "bash kibana" &
-	sleep 10
+	sleep 20
 	kibana_config=$(curl -s http://localhost:9200/.kibana/config/_search | jq -r '.hits.hits | .[0] | ._id')
 	curl -H 'Content-Type: application/json' -XPUT -d @/opt/datafari/elk/logstash/templates/datafari-monitoring-template.json http://localhost:9200/_template/datafari-monitoring
 	curl -H 'Content-Type: application/json' -XPUT -d @/opt/datafari/elk/logstash/templates/datafari-statistic-template.json http://localhost:9200/_template/datafari-statistics
