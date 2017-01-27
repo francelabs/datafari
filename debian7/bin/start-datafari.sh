@@ -161,9 +161,9 @@ cd $MCF_HOME/../bin
 if  [[ "${OCR,,}" = *true* ]];
 then
 	echo "Using Tesseract OCR..."
-	cp -f ${MCF_HOME}/tika-config.jar ${MCF_HOME}/connector-lib/	
+	sudo -E su datafari -p -c "cp -f ${MCF_HOME}/lib/datafari-tika-config-*.jar ${MCF_HOME}/connector-lib/"
 else
-	rm -f ${MCF_HOME}/connector-lib/tika-config.jar
+        sudo -E su datafari -p -c "rm -f ${MCF_HOME}/connector-lib/datafari-tika-config-*.jar"
 	
 fi
 sudo -E su datafari -p -c "export PATH=$PATH && bash mcf_crawler_agent.sh start"
