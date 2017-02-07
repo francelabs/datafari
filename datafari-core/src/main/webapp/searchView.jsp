@@ -79,12 +79,15 @@
 		src="js/AjaxFranceLabs/modules/HierarchicalPager.module.js"></script>
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/modules/Autocomplete.module.js"></script>
+		<script type="text/javascript"
+		src="js/AjaxFranceLabs/modules/DateSelectorFacet.module.js"></script>
+		
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/Result.widget.js"></script>
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/SearchBar.widget.js"></script>
-	<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/AdvancedSearch.widget.js"></script>
-	<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/AdvancedSearchWidget/Field.js"></script>
+	<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/NewAdvancedSearch.widget.js"></script>
+	<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/AdvancedSearchWidget/NewAdvancedSearchField.js"></script>
 	<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/AdvancedSearchWidget/Table.js"></script>
 
 	<script type="text/javascript"

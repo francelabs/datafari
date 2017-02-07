@@ -214,11 +214,14 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 						// Reset the widget status (radios, entered text, ...)
 						self.manager.getWidgetByID('advancedSearch').reset();
 						
+						// Initialize the advancedSearch UI
+						self.manager.getWidgetByID('advancedSearch').buildStartingUI();
+						
 						// Display the advanced search
 						$('#advancedSearch').show();
 						
 						// Perform a "select all" request: *:*
-						self.manager.makeDefaultRequest();				
+						//self.manager.makeDefaultRequest();				
 						
 						// Prevent page reload
 						event.preventDefault();

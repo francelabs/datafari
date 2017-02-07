@@ -135,7 +135,7 @@ $(function($) {
 		id : 'advancedSearch'
 	});
 	
-	createAdvancedSearchTable(as);
+	//createAdvancedSearchTable(as);
 
 	Manager.addWidget(as);
 

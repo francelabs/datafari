@@ -129,6 +129,21 @@ AjaxFranceLabs.ParameterStore = AjaxFranceLabs.Class
 
 			string : function() {
 				var params = [];
+				
+				// We the query is complex (like an advanced search), the spellchecker may break it
+				// so it needs to be deactivated in that case
+				// the following regex helps to detect complex queries and deactivate the spellchecker for them
+				// it searches for query using fields filters (for example : title_en:energy)
+				var advSearchRegex = /.*:[^\s].*/g;
+				// Here the spellchecker param is cleaned in case the new query is not complex and the spellchecker needs to be reactivated
+				this.remove('spellcheck');
+				// Stock the regex test result
+				var testRe = advSearchRegex.test(this.get('q').val());	
+				// If the query is complex then deactivate the spellchecker
+				if(testRe) {
+					this.addByValue('spellcheck', 'false');
+				}
+				
 				for ( var name in this.params) {
 					if (this.isMultiple(name)) {
 						for (var p = 0, l = this.params[name].length; p < l; p++) {
