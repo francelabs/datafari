@@ -33,6 +33,8 @@ AjaxFranceLabs.NewAdvancedSearchField = AjaxFranceLabs.Class.extend({
 	},
 	
 	dateSelectorModule : null,
+	
+	values : null,
 
 	field : null,
 
@@ -64,18 +66,25 @@ AjaxFranceLabs.NewAdvancedSearchField = AjaxFranceLabs.Class.extend({
 	
 	buildTextFieldFilterUI : function() {
 		
-		this.elm.append('<div class="all_words_line">').append('<div class="exact_match_line">').append('<div class="at_least_one_word_line">').append('<div class="none_of_the_words_line">');
-		var all_words = this.elm.find('.all_words_line');
+		this.elm.append('<div class="all_words_line">').append('<div class="exact_expression_line">').append('<div class="at_least_one_word_line">').append('<div class="none_of_these_words_line">');
+		var all_words_line = this.elm.find('.all_words_line');
 		var at_least_one_word_line = this.elm.find('.at_least_one_word_line');
-		var exact_match_line = this.elm.find('.exact_match_line');
-		var none_of_the_words_line = this.elm.find('.none_of_the_words_line');
-		all_words.append('<span class="left">').find('.left').append('<label>' + window.i18n.msgStore['allWords'] + '</label>').append('<input type="text" />');
+		var exact_expression_line = this.elm.find('.exact_expression_line');
+		var none_of_these_words_line = this.elm.find('.none_of_these_words_line');
+		all_words_line.append('<span class="left">').find('.left').append('<label>' + window.i18n.msgStore['allWords'] + '</label>').append('<input type="text" />');
 		
 		at_least_one_word_line.append('<span class="left">').find('.left').append('<label>' + window.i18n.msgStore['atLeastOneWord'] + '</label>').append('<input type="text" />');
 		
-		exact_match_line.append('<span class="left">').find('.left').append('<label>' + window.i18n.msgStore['exactExpression'] + '</label>').append('<input type="text" />');
+		exact_expression_line.append('<span class="left">').find('.left').append('<label>' + window.i18n.msgStore['exactExpression'] + '</label>').append('<input type="text" />');
 		
-		none_of_the_words_line.append('<span class="left">').find('.left').append('<label>' + window.i18n.msgStore['noneOfTheseWords'] + '</label>').append('<input type="text" />');
+		none_of_these_words_line.append('<span class="left">').find('.left').append('<label>' + window.i18n.msgStore['noneOfTheseWords'] + '</label>').append('<input type="text" />');
+		
+		if(this.values != null && this.values != undefined) {
+			all_words_line.find('input').val(this.values["all_words_value"]);
+			at_least_one_word_line.find('input').val(this.values["at_least_one_word_value"]);
+			exact_expression_line.find('input').val(this.values["exact_expression_value"]);
+			none_of_these_words_line.find('input').val(this.values["none_of_these_words_value"]);
+		}
 	},
 	
 	buildNumericFieldFilterUI : function() {
@@ -122,20 +131,20 @@ AjaxFranceLabs.NewAdvancedSearchField = AjaxFranceLabs.Class.extend({
 	getTextFieldFilter : function() {
 		var all_words_value = this.elm.find('.all_words_line').find('input').val();
 		var at_least_one_word_line_value = this.elm.find('.at_least_one_word_line').find('input').val();
-		var exact_match_line_value = this.elm.find('.exact_match_line').find('input').val();
-		var none_of_the_words_line_value = this.elm.find('.none_of_the_words_line').find('input').val();
+		var exact_expression_line_value = this.elm.find('.exact_expression_line').find('input').val();
+		var none_of_these_words_line_value = this.elm.find('.none_of_these_words_line').find('input').val();
 		
 		var filter = "";
 		if(all_words_value != null && all_words_value != undefined && all_words_value != "") {
 			filter = all_words_value.trim();
 		}
 		
-		if(exact_match_line_value != null && exact_match_line_value != undefined && exact_match_line_value != "") {
-			var splittedValue = exact_match_line_value.trim().split(" ");
+		if(exact_expression_line_value != null && exact_expression_line_value != undefined && exact_expression_line_value != "") {
+			var splittedValue = exact_expression_line_value.trim().split(" ");
 			if(splittedValue.length > 1) {
-				filter += " \"" + exact_match_line_value.trim() + "\"";
+				filter += " \"" + exact_expression_line_value.trim() + "\"";
 			} else {
-				filter += " " + exact_match_line_value.trim();
+				filter += " " + exact_expression_line_value.trim();
 			}
 		}
 		
@@ -150,8 +159,8 @@ AjaxFranceLabs.NewAdvancedSearchField = AjaxFranceLabs.Class.extend({
 			}
 		}
 		
-		if(none_of_the_words_line_value != null && none_of_the_words_line_value != undefined && none_of_the_words_line_value != "") {
-			var splittedValue = none_of_the_words_line_value.trim().split(" ");
+		if(none_of_these_words_line_value != null && none_of_these_words_line_value != undefined && none_of_these_words_line_value != "") {
+			var splittedValue = none_of_these_words_line_value.trim().split(" ");
 			for(var i=0; i<splittedValue.length; i++) {
 				filter += " -" + splittedValue[i];
 			}

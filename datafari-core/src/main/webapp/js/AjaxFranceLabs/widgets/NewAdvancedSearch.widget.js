@@ -82,6 +82,48 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		
 		var baseQuery = this.manager.store.get('q').val();
 		
+		
+		
+		var baseQueryRegEx = /(AND\s|OR\s)*[^\s\(\[\:]+:/g;
+		var indexOf = baseQuery.search(baseQueryRegEx);
+		var baseSearch = "";
+		
+		if(indexOf != -1) {
+			baseSearch = baseQuery.substring(0, indexOf);
+		} else {
+			baseSearch = baseQuery;
+		}
+		console.log("base search: " + baseSearch);
+		
+		elm.append('<div class="advTable">');
+		this.advTable = elm.find('.advTable');
+		
+		this.advTable.append('<span class="title left">');
+		
+		this.advTable.find('.title').append(window.i18n.msgStore['advancedSearch-label']);
+		
+		this.advTable.append('<span class="separator">');
+		
+		this.advTable.append('<div id="adv_base_search">');
+		
+		var adv_base_search = this.advTable.find('#adv_base_search');
+		adv_base_search.append('<span class="subtitle left">').find('.left').append('Base search');
+		var baseSearchValues = self.extractFilterFromText(baseSearch, false, true);
+		this.constructFilter("string", adv_base_search, null, baseSearchValues);
+		
+		
+		this.advTable.append('<span class="separator">');
+		
+		this.advTable.append('<div><span id="add_adv_field" class="button">-- Add field --</span></div>');
+		$('#add_adv_field').click(function() {
+			self.addField();
+		});
+		
+		this.advTable.append('<button id="exec_adv_search">' + window.i18n.msgStore['advancedSearch-makesearch-btn'] + '</button>').find('button').click(function() {
+			self.makeRequest();
+		});
+		
+		// Add other fields filter
 		var superFieldsRegEx = /(AND\s|OR\s)*[^\s\(\[\:]+:(\[[^\]]+\]|\([^\)]+\)|[^\s\(\]]+)/g;
 		var fields = baseQuery.match(superFieldsRegEx);
 		if(fields != null && fields != undefined && fields != "") {
@@ -131,8 +173,8 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 				// Define filters values
 				if(fieldType == "text") {
 					
-					self.extractFilterFromText(fieldExpression, negativeExpression, false);
-					
+					var extractedValues = self.extractFilterFromText(fieldExpression, negativeExpression, false);
+					self.addField(fieldname, extractedValues);
 				} else {
 					if(fieldExpression.startsWith('[')) {
 						var values = fieldExpression.split(" ");
@@ -145,47 +187,10 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			}
 		}
 		
-		var baseQueryRegEx = /(AND\s|OR\s)*[^\s\(\[\:]+:/g;
-		var indexOf = baseQuery.search(baseQueryRegEx);
-		var baseSearch = "";
-		
-		if(indexOf != -1) {
-			baseSearch = baseQuery.substring(0, indexOf);
-		} else {
-			baseSearch = baseQuery;
-		}
-		console.log("base search: " + baseSearch);
-		self.extractFilterFromText(baseSearch, false, true);
-		
-		elm.append('<div class="advTable">');
-		this.advTable = elm.find('.advTable');
-		
-		this.advTable.append('<span class="title left">');
-		
-		this.advTable.find('.title').append(window.i18n.msgStore['advancedSearch-label']);
-		
-		this.advTable.append('<span class="separator">');
-		
-		this.advTable.append('<div id="adv_base_search">');
-		
-		var adv_base_search = this.advTable.find('#adv_base_search');
-		adv_base_search.append('<span class="subtitle left">').find('.left').append('Base search');
-		this.constructFilter("string", adv_base_search, null);
-		
-		
-		this.advTable.append('<span class="separator">');
-		
-		this.advTable.append('<div><span id="add_adv_field" class="button">-- Add field --</span></div>');
-		$('#add_adv_field').click(function() {
-			self.addField();
-		});
-		
-		this.advTable.append('<button id="exec_adv_search">' + window.i18n.msgStore['advancedSearch-makesearch-btn'] + '</button>').find('button').click(function() {
-			self.makeRequest();
-		});
 	},
 	
 	extractFilterFromText : function(text, negativeExpression, isBasicSearchText) {
+		var self = this;
 		var all_words_value = "";
 		var exact_expression_value = "";
 		var at_least_one_word_value = "";
@@ -219,7 +224,11 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 				var gbValue = globalValues[cptGlobal];
 				if(gbValue.startsWith("-")) {
 					none_of_these_words_value += " " + gbValue.substring(1);
-					text = text.replace(" " + gbValue, "");
+					if(text.search(gbValue) > 0) {
+						text = text.replace(" " + gbValue, "");
+					} else {
+						text = text.replace(gbValue, "");
+					}
 				} else if (gbValue.startsWith("\"")) {
 					exact_expression_value += " " + gbValue.substring(1, gbValue.length - 1);
 					text = text.replace(" " + gbValue, "");
@@ -350,9 +359,23 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		console.log("exact_expression_value: " + exact_expression_value);
 		console.log("at_least_one_word_value: " + at_least_one_word_value);
 		console.log("none_of_these_words_value: " + none_of_these_words_value);
+		
+		var returnValues = {};
+		returnValues["all_words_value"] = all_words_value;
+		returnValues["exact_expression_value"] = exact_expression_value;
+		returnValues["at_least_one_word_value"] = at_least_one_word_value;
+		returnValues["none_of_these_words_value"] = none_of_these_words_value;
+		
+		return returnValues;
+		
+		//self.addField(fieldname, all_words_value, exact_expression_value, at_least_one_word_value, none_of_these_words_value, null, null);
 	},
 	
 	addField : function() {
+		this.addField(null, values);
+	},
+	
+	addField : function(fieldName, values) {
 		var self = this;
 		$('#add_adv_field').parent().before('<div class="adv_field">');
 		this.fieldNumber++;
@@ -386,15 +409,38 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		});
 		$("#exec_adv_search").before('<span class="separator">');
 		$("#exec_adv_search").before(addButton);
+		
+		// Populate fields if possible
+		if(fieldName != null && fieldName != undefined && fieldName != "") {
+			select.val(fieldName);
+			var div = select.parent();
+			var type = $("#" + selectID + " option:selected").attr("type");
+			console.log("Add field " + fieldName + " of type " + type);
+			self.constructFilter(type, div, fieldName, values);
+		}
 	},
 	
 	constructFilter : function(type, elm, field) {
 		
+		this.constructFilter(type, elm, field, null);
+		
+//		var newField = new AjaxFranceLabs.NewAdvancedSearchField({
+//			type : type,
+//			elm : elm,
+//			id : "field_" + this.fieldNumber,
+//			field : field
+//		});
+//		newField.init();
+//		this.fieldsList[this.fieldNumber] = newField;
+	},
+	
+	constructFilter : function(type, elm, field, values) {
 		var newField = new AjaxFranceLabs.NewAdvancedSearchField({
 			type : type,
 			elm : elm,
 			id : "field_" + this.fieldNumber,
-			field : field
+			field : field,
+			values : values
 		});
 		newField.init();
 		this.fieldsList[this.fieldNumber] = newField;
