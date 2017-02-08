@@ -89,8 +89,6 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		
 		var baseQuery = this.manager.store.get('q').val();
 		
-		
-		
 		var baseQueryRegEx = /(AND\s|OR\s)*[^\s\(\[\:]+:/g;
 		var indexOf = baseQuery.search(baseQueryRegEx);
 		var baseSearch = "";
@@ -131,76 +129,77 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		});
 		
 		// Add other fields filter
-		var superFieldsRegEx = /(AND\s|OR\s)*[^\s\(\[\:]+:(\[[^\]]+\]|\([^\)]+\)|[^\s\(\]]+)/g;
-		var fields = baseQuery.match(superFieldsRegEx);
-		if(fields != null && fields != undefined && fields != "") {
-			for(var cpt=0; cpt<fields.length; cpt++) {
-				var fieldExpression = fields[cpt];
-				console.log(fieldExpression);
-				
-				// Extract operator if there is one
-				var operator = "";
-				if(fieldExpression.startsWith('AND') || fieldExpression.startsWith('OR')) {
-					operator = fieldExpression.split(" ")[0];
-					console.log("Opérator: " + operator);
-					fieldExpression = fieldExpression.substring(operator.length + 1);
+		if(baseQuery != "" && baseQuery != "*" && baseQuery != "*:*") {
+			var superFieldsRegEx = /(AND\s|OR\s)*[^\s\(\[\:]+:(\[[^\]]+\]|\([^\)]+\)|[^\s\(\]]+)/g;
+			var fields = baseQuery.match(superFieldsRegEx);
+			if(fields != null && fields != undefined && fields != "") {
+				for(var cpt=0; cpt<fields.length; cpt++) {
+					var fieldExpression = fields[cpt];
+					console.log(fieldExpression);
+					
+					// Extract operator if there is one
+					var operator = "";
+					if(fieldExpression.startsWith('AND') || fieldExpression.startsWith('OR')) {
+						operator = fieldExpression.split(" ")[0];
+						console.log("Opérator: " + operator);
+						fieldExpression = fieldExpression.substring(operator.length + 1);
+						console.log("New expression: " + fieldExpression);
+					}
+					
+					// Extract fieldname
+					var fieldname = fieldExpression.substring(0, fieldExpression.indexOf(":"));
+					var negativeExpression = false;
+					// If the firest char of the fieldname is -, it is because it is a negative filter
+					// need to remove this char to get the real fieldname
+					if(fieldname.startsWith("-")) {
+						fielname = fieldname.substring(1);
+						negativeExpression = true;
+					}
+					console.log("fieldname: " + fieldname);
+					fieldExpression = fieldExpression.substring(fieldname.length +1);
 					console.log("New expression: " + fieldExpression);
-				}
-				
-				// Extract fieldname
-				var fieldname = fieldExpression.substring(0, fieldExpression.indexOf(":"));
-				var negativeExpression = false;
-				// If the firest char of the fieldname is -, it is because it is a negative filter
-				// need to remove this char to get the real fieldname
-				if(fieldname.startsWith("-")) {
-					fielname = fieldname.substring(1);
-					negativeExpression = true;
-				}
-				console.log("fieldname: " + fieldname);
-				fieldExpression = fieldExpression.substring(fieldname.length +1);
-				console.log("New expression: " + fieldExpression);
-				
-				// Define field type
-				var fieldType = "";
-				for(var i=0; i<self.available_fields.field.length; i++) {
-					if(self.available_fields.field[i].name == fieldname) {
-						fieldType = self.available_fields.field[i].type[0];
-						break;
+					
+					// Define field type
+					var fieldType = "";
+					for(var i=0; i<self.available_fields.field.length; i++) {
+						if(self.available_fields.field[i].name == fieldname) {
+							fieldType = self.available_fields.field[i].type[0];
+							break;
+						}
 					}
-				}
-				if(fieldType == "tdate" || fieldType == "date") {
-					fieldType = "date";
-				} else if (fieldType == "int" || fieldType == "long" || fieldType == "float" || fieldType == "double" || fieldType == "tint" || fieldType == "tlong" || fieldType == "tfloat" || fieldType == "tdouble") {
-					fieldType = "num";
-				} else {
-					fieldType = "text";
-				}
-				console.log("fieldType: " + fieldType);
-				
-				// Define filters values
-				var extractedValues = null;
-				if(fieldType == "text") {
-					extractedValues = self.extractFilterFromText(fieldExpression, negativeExpression, false);
-				} else {
-					var fromValue = null;
-					var toValue = null;
-					if(fieldExpression.startsWith('[')) {
-						var values = fieldExpression.split(" ");
-						fromValue = values[0].substring(1);
-						toValue = values[2].substring(0, values[2].length - 1);
-						console.log("fromValue: " + fromValue);
-						console.log("toValue: " + toValue);
+					if(fieldType == "tdate" || fieldType == "date") {
+						fieldType = "date";
+					} else if (fieldType == "int" || fieldType == "long" || fieldType == "float" || fieldType == "double" || fieldType == "tint" || fieldType == "tlong" || fieldType == "tfloat" || fieldType == "tdouble") {
+						fieldType = "num";
 					} else {
-						fromValue = fieldExpression;
-						toValue = fieldExpression;
+						fieldType = "text";
 					}
-					extractedValues = {"fromValue" : fromValue, "toValue" : toValue};
+					console.log("fieldType: " + fieldType);
+					
+					// Define filters values
+					var extractedValues = null;
+					if(fieldType == "text") {
+						extractedValues = self.extractFilterFromText(fieldExpression, negativeExpression, false);
+					} else {
+						var fromValue = null;
+						var toValue = null;
+						if(fieldExpression.startsWith('[')) {
+							var values = fieldExpression.split(" ");
+							fromValue = values[0].substring(1);
+							toValue = values[2].substring(0, values[2].length - 1);
+							console.log("fromValue: " + fromValue);
+							console.log("toValue: " + toValue);
+						} else {
+							fromValue = fieldExpression;
+							toValue = fieldExpression;
+						}
+						extractedValues = {"fromValue" : fromValue, "toValue" : toValue};
+					}
+					
+					self.addField(fieldname, extractedValues, operator);
 				}
-				
-				self.addField(fieldname, extractedValues);
 			}
 		}
-		
 	},
 	
 	extractFilterFromText : function(text, negativeExpression, isBasicSearchText) {
@@ -395,15 +394,13 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		returnValues["none_of_these_words_value"] = none_of_these_words_value;
 		
 		return returnValues;
-		
-		//self.addField(fieldname, all_words_value, exact_expression_value, at_least_one_word_value, none_of_these_words_value, null, null);
 	},
 	
 	addField : function() {
-		this.addField(null, values);
+		this.addField(null, values, null);
 	},
 	
-	addField : function(fieldName, values) {
+	addField : function(fieldName, values, operator) {
 		//Deactivate tooltips
 		this.elm.tooltip('disable');
 			
@@ -414,7 +411,13 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		var addButton = $('#add_adv_field').parent().detach();
 		var selectID = "field_" + this.fieldNumber;
 		var currentDiv = this.advTable.find('.adv_field').last();
-		currentDiv.append('<select class="subtitle" id="' + selectID + '"><option disabled selected value>Select a field</option></select> <span class="delete_button button"> X </span>');
+		currentDiv.append('<select class="select-operator"><option selected value="AND">AND</option><option value="OR">OR</option></select> <select class="subtitle" id="' + selectID + '"><option disabled selected value>Select a field</option></select> <span class="delete_button button"> X </span>');
+		
+		// Set operator if available
+		var selectOperator = currentDiv.find('.select-operator');
+		if(operator != null && operator != undefined && operator != "") {
+			selectOperator.val(operator);
+		}
 		var deleteButton = currentDiv.find('.delete_button');
 		deleteButton.click(function() {
 			// Remove the separator line
@@ -436,7 +439,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			div.html('');
 			selectSave.appendTo(div);
 			deleteButtonSave.appendTo(div);
-			self.constructFilter(type, div, field);
+			self.constructFilter(type, div, field, operator);
 		});
 		$("#exec_adv_search").before('<span class="separator">');
 		$("#exec_adv_search").before(addButton);
@@ -449,21 +452,22 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			var div = select.parent();
 			var type = $("#" + selectID + " option:selected").attr("type");
 			console.log("Add field " + fieldName + " of type " + type);
-			self.constructFilter(type, div, fieldName, values);
+			self.constructFilter(type, div, fieldName, values, operator);
 		}
 	},
 	
 	constructFilter : function(type, elm, field) {
-		this.constructFilter(type, elm, field, null);
+		this.constructFilter(type, elm, field, null, null);
 	},
 	
-	constructFilter : function(type, elm, field, values) {
+	constructFilter : function(type, elm, field, values, operator) {
 		var newField = new AjaxFranceLabs.NewAdvancedSearchField({
 			type : type,
 			elm : elm,
 			id : "field_" + this.fieldNumber,
 			field : field,
-			values : values
+			values : values,
+			operator : operator
 		});
 		newField.init();
 		this.fieldsList[this.fieldNumber] = newField;
@@ -477,7 +481,11 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			
 			for (var i=0; i < this.fieldsList.length; i++) {
 				if(this.fieldsList[i] != null) {
-					finalFilter += " " + this.fieldsList[i].getFilter();
+					var operator = "";
+					if(this.fieldsList[i].operator == "OR") {
+						operator = "OR ";
+					}
+					finalFilter += " " + operator + this.fieldsList[i].getFilter();
 				}
 			}
 			finalFilter = finalFilter.trim();
