@@ -39,6 +39,7 @@ public class AdvancedSearchConfiguration {
 
 	// Properties
 	public static final String DENIED_FIELD_LIST = "DENIEDFIELDLIST";
+	public static final String EXACT_FIELDS = "EXACTFIELDS";
 
 	private static String configPropertiesFileName = "advanced-search.properties";
 

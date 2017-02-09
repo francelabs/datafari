@@ -17,14 +17,10 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 
 	//Variables
 
-	resizable : false,
-
-	options : {},
-
-	optionsExtend : true,
-
 	type : 'advancedSearch',
 	
+	// List of fields allowed for the advanced search
+	// they will appear in the Select element
 	available_fields : null,
 	
 	advTable : null,
@@ -32,15 +28,32 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 	fieldNumber : 0,
 	
 	fieldsList : [],
+	
+	mappingFieldNameValues : {},
+	
+	exactFields : null,
 
 	//Methods
 
 	buildWidget : function() {
 		
 		var self = this, elm = $(this.elm);
+		
+		// Retrieve available fields
 		$.get("./GetFieldsInfo", function(data) {
 			self.available_fields = data;
 		}, "json");
+		
+		// Retrieve exactFields
+		$.get("./GetExactFields", function(data) {
+			if(data.code == 0) {
+				self.exactFields = {};
+				for(var cptExactFields=0; cptExactFields<data.exactFieldsList.length; cptExactFields++){
+					self.exactFields[data.exactFieldsList[cptExactFields]] = data.exactFieldsList[cptExactFields] + "_exact";
+				}
+			}
+		}, "json");
+		
 		elm.addClass('advancedSearchWidget').addClass('widget').attr('widgetId', this.id);
 		
 		// Activate tooltip
@@ -53,26 +66,6 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 				self.makeRequest();
 			}
 		});
-		
-		if (this.resizable === true) {
-			var options = {
-				handles : 's',
-				minHeight : 135,
-				maxHeight : $(self.elm).find('.wrapper').innerHeight()
-			};
-			if (this.optionsExtend) {
-				$.extend(this.options, this.options, options);
-			}
-			elm.find('.wrapper').css('overflow', 'hidden').resizable(this.options).find('.wrapper').resizable({
-				start : function(event, ui) {
-					elm.find('.wrapper').css('height', '100%').resizable("option", "maxHeight", elm.find('.wrapper').height());
-				},
-				stop : function(event, ui) {
-					if (elm.find('.wrapper').resizable("option", "maxHeight") === elm.find('.wrapper').height())
-						elm.find('.wrapper').css('height', '100%');
-				}
-			});
-		}
 		
 		// Hidden by default: basic search is displayed
 		elm.hide();		
@@ -428,7 +421,13 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		});
 		var select = $("#" + selectID);
 		for(var i = 0 ; i < this.available_fields.field.length ; i++){
-			select.append('<option value="' + this.available_fields.field[i].name + '" type="' + this.available_fields.field[i].type + '">' + this.available_fields.field[i].name + '</option>');
+			
+			// Change the displayed name of the field if mapping values have been provided
+			var displayedName = this.available_fields.field[i].name;
+			if(!jQuery.isEmptyObject(this.mappingFieldNameValues) && displayedName in this.mappingFieldNameValues) {
+				displayedName = this.mappingFieldNameValues[displayedName];
+			} 
+			select.append('<option value="' + this.available_fields.field[i].name + '" type="' + this.available_fields.field[i].type + '">' + displayedName + '</option>');
 		}
 		select.change(function() {
 			var div = select.parent();
@@ -464,13 +463,18 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 	},
 	
 	constructFilter : function(type, elm, field, values, operator) {
+		var fieldNameExactExpr = field;
+		if(field in this.exactFields) {
+			fieldNameExactExpr = this.exactFields[field];
+		}
 		var newField = new AjaxFranceLabs.NewAdvancedSearchField({
 			type : type,
 			elm : elm,
 			id : "field_" + this.fieldNumber,
 			field : field,
 			values : values,
-			operator : operator
+			operator : operator,
+			fieldNameExactExpr : fieldNameExactExpr
 		});
 		newField.init();
 		this.fieldsList[this.fieldNumber] = newField;
@@ -492,11 +496,21 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 				}
 			}
 			finalFilter = finalFilter.trim();
+			
+			// Clean finalFilter
+			if(finalFilter.startsWith("OR")) {
+				finalFilter = finalFilter.substring(2).trim();
+			} else if(finalFilter.startsWith("AND")) {
+				finalFilter = finalFilter.substring(3).trim();
+			}
+			
 			if(finalFilter == "") {
 				finalFilter = "*:*";
 			} else {
 				searchBarFilter = finalFilter;
 			}
+			
+			
 			this.manager.store.remove('q');
 			this.manager.store.addByValue('q', finalFilter);
 			
