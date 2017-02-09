@@ -441,7 +441,8 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			selectOperatorSave.appendTo(div);
 			selectSave.appendTo(div);
 			deleteButtonSave.appendTo(div);
-			self.constructFilter(type, div, field, operator);
+			var newOperator = div.find('.select-operator');
+			self.constructFilter(type, div, field, null, newOperator);
 		});
 		$("#exec_adv_search").before('<span class="separator">');
 		$("#exec_adv_search").before(addButton);
@@ -454,7 +455,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			var div = select.parent();
 			var type = $("#" + selectID + " option:selected").attr("type");
 			console.log("Add field " + fieldName + " of type " + type);
-			self.constructFilter(type, div, fieldName, values, operator);
+			self.constructFilter(type, div, fieldName, values, selectOperator);
 		}
 	},
 	
@@ -484,7 +485,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			for (var i=0; i < this.fieldsList.length; i++) {
 				if(this.fieldsList[i] != null) {
 					var operator = "";
-					if(this.fieldsList[i].operator == "OR") {
+					if(this.fieldsList[i].operator != null && this.fieldsList[i].operator != undefined && this.fieldsList[i].operator.val() == "OR") {
 						operator = "OR ";
 					}
 					finalFilter += " " + operator + this.fieldsList[i].getFilter();
