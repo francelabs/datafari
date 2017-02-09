@@ -18,6 +18,8 @@ package com.francelabs.datafari.servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.Principal;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -53,7 +55,8 @@ public class ApplyUserLang extends HttpServlet {
 	 *      response)
 	 */
 	@Override
-	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
+			throws ServletException, IOException {
 		final JSONObject jsonResponse = new JSONObject();
 		final Principal userPrincipal = request.getUserPrincipal();
 		String redirectUrl = "";
@@ -62,7 +65,7 @@ public class ApplyUserLang extends HttpServlet {
 		// checking if the user is connected
 		if (userPrincipal == null) {
 			jsonResponse.put("code", CodesReturned.NOTCONNECTED);
-			if (request.getParameter("urlRedirect") != null && !request.getParameter("urlRedirect").isEmpty()) {
+			if ((request.getParameter("urlRedirect") != null) && !request.getParameter("urlRedirect").isEmpty()) {
 				response.sendRedirect(request.getParameter("urlRedirect"));
 			}
 		} else {
@@ -70,7 +73,7 @@ public class ApplyUserLang extends HttpServlet {
 			try {
 				lang = Lang.getLang(username);
 				if (lang == null) {
-					if (reqLang != null && !reqLang.isEmpty() && reqLang.length() == 2) {
+					if ((reqLang != null) && !reqLang.isEmpty() && (reqLang.length() <= 5)) {
 						lang = reqLang;
 					} else {
 						lang = "fr";
@@ -78,15 +81,31 @@ public class ApplyUserLang extends HttpServlet {
 					Lang.setLang(username, lang);
 				}
 				jsonResponse.put("code", CodesReturned.ALLOK);
-				if (request.getParameter("urlRedirect") != null && !request.getParameter("urlRedirect").isEmpty()) {
+				if ((request.getParameter("urlRedirect") != null) && !request.getParameter("urlRedirect").isEmpty()) {
 					redirectUrl = request.getParameter("urlRedirect");
-					redirectUrl += "?lang=" + lang;
+					Pattern p = Pattern.compile("lang=[^\\s\\&]*");
+					Matcher m = p.matcher(redirectUrl);
+					if (m.find()) {
+						redirectUrl = redirectUrl.replace(m.group(), "lang=" + lang);
+					} else {
+						p = Pattern.compile("\\?[^\\s\\&]+");
+						m = p.matcher(redirectUrl);
+						if (!m.find()) {
+							if (redirectUrl.contains("?")) {
+								redirectUrl += "lang=" + lang;
+							} else {
+								redirectUrl += "?lang=" + lang;
+							}
+						} else {
+							redirectUrl += "&lang=" + lang;
+						}
+					}
 					response.sendRedirect(redirectUrl);
 				}
 			} catch (final Exception e) {
 				logger.error(e);
 				jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE);
-				if (request.getParameter("urlRedirect") != null && !request.getParameter("urlRedirect").isEmpty()) {
+				if ((request.getParameter("urlRedirect") != null) && !request.getParameter("urlRedirect").isEmpty()) {
 					response.sendRedirect(request.getParameter("urlRedirect"));
 				}
 			}
@@ -101,12 +120,13 @@ public class ApplyUserLang extends HttpServlet {
 	 *      response)
 	 */
 	@Override
-	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
+			throws ServletException, IOException {
 		final JSONObject jsonResponse = new JSONObject();
 		final Principal userPrincipal = request.getUserPrincipal();
 		if (userPrincipal != null) {
 			final String reqLang = request.getParameter("lang");
-			if (reqLang != null && !reqLang.isEmpty() && reqLang.length() == 2) {
+			if ((reqLang != null) && !reqLang.isEmpty() && (reqLang.length() <= 5)) {
 				final String username = request.getUserPrincipal().getName();
 				try {
 					Lang.updateLang(username, reqLang);
