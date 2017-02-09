@@ -18,6 +18,9 @@ package com.francelabs.datafari.servlets;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -43,6 +46,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.francelabs.datafari.utils.AdvancedSearchConfiguration;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 
@@ -124,6 +128,11 @@ public class GetFieldsInfo extends HttpServlet {
 
 			} else {
 
+				// Load the list of denied fields
+				final String strDeniedFieldsList = AdvancedSearchConfiguration.getInstance()
+						.getProperty(AdvancedSearchConfiguration.DENIED_FIELD_LIST);
+				final Set<String> deniedFieldsSet = new HashSet<>(Arrays.asList(strDeniedFieldsList.split(",")));
+
 				final NodeList fields = docSchem.getElementsByTagName("field"); // Get
 																				// the
 																				// "field"
@@ -143,12 +152,14 @@ public class GetFieldsInfo extends HttpServlet {
 						for (int j = 0; j < map.getLength(); j++) { // Get
 																	// its
 																	// attributes
-							if ((map.item(j).getNodeName().equals("indexed")
-									&& map.item(j).getNodeValue().equals("false"))
-									|| (map.item(j).getNodeName().equals("name")
-											&& (map.item(j).getNodeValue().startsWith("_")
-													|| map.item(j).getNodeValue().startsWith("allow_")
-													|| map.item(j).getNodeValue().startsWith("deny_")))) {
+							if ((map.item(j).getNodeName().equals("name")
+									&& deniedFieldsSet.contains(map.item(j).getNodeValue()))
+									|| ((map.item(j).getNodeName().equals("indexed")
+											&& map.item(j).getNodeValue().equals("false"))
+											|| (map.item(j).getNodeName().equals("name")
+													&& (map.item(j).getNodeValue().startsWith("_")
+															|| map.item(j).getNodeValue().startsWith("allow_")
+															|| map.item(j).getNodeValue().startsWith("deny_"))))) {
 								json = null;
 								break;
 							} else {
