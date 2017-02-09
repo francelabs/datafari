@@ -435,8 +435,10 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			var type = $("#" + selectID + " option:selected").attr("type");
 			var field = $("#" + selectID + " option:selected").attr("value");
 			var selectSave = select.detach();
+			var selectOperatorSave = selectOperator.detach();
 			var deleteButtonSave = deleteButton.detach();
 			div.html('');
+			selectOperatorSave.appendTo(div);
 			selectSave.appendTo(div);
 			deleteButtonSave.appendTo(div);
 			self.constructFilter(type, div, field, operator);
