@@ -37,6 +37,8 @@ AjaxFranceLabs.NewAdvancedSearchField = AjaxFranceLabs.Class.extend({
 	values : null,
 
 	field : null,
+	
+	fieldNameExactExpr : null,
 
 	//Methodes
 
@@ -189,12 +191,16 @@ AjaxFranceLabs.NewAdvancedSearchField = AjaxFranceLabs.Class.extend({
 		var exact_expression_line_value = this.elm.find('.exact_expression_line').find('input').val();
 		var none_of_these_words_line_value = this.elm.find('.none_of_these_words_line').find('input').val();
 		
+		// Global filter
 		var filter = "";
+		
+		// Add the all_words filter if available to the global filter
 		if(all_words_value != null && all_words_value != undefined && all_words_value != "") {
-			filter = all_words_value.trim();
+			filter += all_words_value.trim();
 		}
 		
-		if(exact_expression_line_value != null && exact_expression_line_value != undefined && exact_expression_line_value != "") {
+		// Add the exact expression filter if available and if no specific Solr field for exact expression have been provided
+		if(exact_expression_line_value != null && exact_expression_line_value != undefined && exact_expression_line_value != "" && (this.fieldNameExactExpr == null || this.fieldNameExactExpr == undefined || this.fieldNameExactExpr == this.field)) {
 			var splittedValue = exact_expression_line_value.trim().split(" ");
 			if(splittedValue.length > 1) {
 				filter += " \"" + exact_expression_line_value.trim() + "\"";
@@ -203,6 +209,7 @@ AjaxFranceLabs.NewAdvancedSearchField = AjaxFranceLabs.Class.extend({
 			}
 		}
 		
+		// Add the at least one word filter if available to the global filter
 		if(at_least_one_word_line_value != null && at_least_one_word_line_value != undefined && at_least_one_word_line_value != "") {
 			var splittedValue = at_least_one_word_line_value.trim().split(" ");
 			for(var i=0; i<splittedValue.length; i++) {
@@ -214,6 +221,7 @@ AjaxFranceLabs.NewAdvancedSearchField = AjaxFranceLabs.Class.extend({
 			}
 		}
 		
+		// Add the none of these words filter if available to the global filter
 		if(none_of_these_words_line_value != null && none_of_these_words_line_value != undefined && none_of_these_words_line_value != "") {
 			var splittedValue = none_of_these_words_line_value.trim().split(" ");
 			for(var i=0; i<splittedValue.length; i++) {
@@ -221,11 +229,18 @@ AjaxFranceLabs.NewAdvancedSearchField = AjaxFranceLabs.Class.extend({
 			}
 		}
 		
-		if(filter != "") {
+		// If the filter is not empty then format/clean it before returning it, return the empty string otherwise 
+		if(filter != "" || (this.fieldNameExactExpr != null && this.fieldNameExactExpr != undefined && exact_expression_line_value != null && exact_expression_line_value != undefined && exact_expression_line_value != "")) {
 			var finalFilter = "";
-			if(this.field != null && this.field != "") {
+			
+			// If the fieldName is available it then add it to the final filter
+			if(this.field != null && this.field != "" && filter != "") {
 				finalFilter += this.field + ":";
 			}
+			
+			// If the filter contains multiple expressions (identified by the number of spaces) 
+			// then it needs to be surrounded by parenthesis
+			// unless it is the filter for the basic search (in which case the finalFilter variable is empty because no fieldName has been found)
 			if(filter.split(" ").length > 1) {
 				if(finalFilter != "") {
 					finalFilter += "(" + filter.trim() + ")";
@@ -235,6 +250,13 @@ AjaxFranceLabs.NewAdvancedSearchField = AjaxFranceLabs.Class.extend({
 			} else {
 				finalFilter += filter.trim();
 			}
+			
+			// if a specific Solr field is available for the exact expression then add it to the finalFilter
+			if(this.fieldNameExactExpr != null && this.fieldNameExactExpr != undefined && this.fieldNameExactExpr != this.field) {
+				finalFilter = this.fieldNameExactExpr + ":" + "\"" + exact_expression_line_value.trim() + "\" " + finalFilter;
+				finalFilter = finalFilter.trim();
+			}
+			
 			return finalFilter;
 		} else {
 			return filter;

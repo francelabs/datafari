@@ -32,6 +32,9 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 	mappingFieldNameValues : {},
 	
 	exactFields : null,
+	
+	// Maximum char for text inputs
+	maxChar : 512,
 
 	//Methods
 
@@ -107,7 +110,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		var adv_base_search = this.advTable.find('#adv_base_search');
 		adv_base_search.append('<span class="subtitle left">').find('.left').append(window.i18n.msgStore['baseSearch-label']);
 		var baseSearchValues = self.extractFilterFromText(baseSearch, false, true);
-		this.constructFilter("string", adv_base_search, null, baseSearchValues);
+		this.constructFilter("string", adv_base_search, null, baseSearchValues, null, this.fieldNumber);
 		
 		
 		this.advTable.append('<span class="separator">');
@@ -123,10 +126,14 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		
 		// Add other fields filter
 		if(baseQuery != "" && baseQuery != "*" && baseQuery != "*:*") {
-			var superFieldsRegEx = /(AND\s|OR\s)*[^\s\(\[\:]+:(\[[^\]]+\]|\([^\)]+\)|[^\s\(\]]+)/g;
+			var superFieldsRegEx = /(AND\s|OR\s)*[^\s\(\[\:]+:(\[[^\]]+\]|\([^\)]+\)|\"[^\"]+\"|[^\s\(\]]+)/g;
 			var fields = baseQuery.match(superFieldsRegEx);
+			var lastExact = {};
 			if(fields != null && fields != undefined && fields != "") {
 				for(var cpt=0; cpt<fields.length; cpt++) {
+					var isExactField = false;
+					var exactFilter = "";
+					var originalFieldname = "";
 					var fieldExpression = fields[cpt];
 					console.log(fieldExpression);
 					
@@ -152,6 +159,34 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 					fieldExpression = fieldExpression.substring(fieldname.length +1);
 					console.log("New expression: " + fieldExpression);
 					
+					// Determine if the previous field was an exact Solr field of this one
+					if(!jQuery.isEmptyObject(lastExact) && fieldname in lastExact) { 
+						// The previous field was the exact field of this one
+						// Get the exact filter to put it in the exact_expression_value filter of the current field
+						exactFilter = lastExact[fieldname]["extractedValues"]["exact_expression_value"];
+						// Empty the lastExact object
+						lastExact = {};
+					} else if(!jQuery.isEmptyObject(lastExact)) { 
+						// The lastExact object is not empty
+						// This means that the previous field was an exact Solr field and it doesn't match with the current field
+						// Thus it was not added to the UI and need to be added now !
+						var lastExactOriginalFieldname = "";
+						for(var key in lastExact) {
+							lastExactOriginalFieldname = key;
+						}
+						var lastExactFieldName = lastExactOriginalFieldname + "_exact";
+						var lastExactOperator = lastExact[lastExactOriginalFieldname]["operator"];
+						var lastExactExtractedValues = lastExact[lastExactOriginalFieldname]["extractedValues"];
+						self.addField(lastExactFieldName, lastExactExtractedValues, lastExactOperator);
+					}
+					
+					// Determine if the current field is an exact Solr field
+					var moreThanExactExprRegex = /(?![^\"]*\")[^\)\s].*/g;
+					if(fieldname.endsWith("_exact") && (fieldExpression.startsWith("\"") || fieldExpression.startsWith("(\"")) && fieldExpression.match(moreThanExactExprRegex) == null) {
+						isExactField = true;
+						originalFieldname = fieldname.replace("_exact", "");
+					}
+					
 					// Define field type
 					var fieldType = "";
 					for(var i=0; i<self.available_fields.field.length; i++) {
@@ -173,6 +208,11 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 					var extractedValues = null;
 					if(fieldType == "text") {
 						extractedValues = self.extractFilterFromText(fieldExpression, negativeExpression, false);
+						
+						// If the exactFilter variable is not empty then it needs to be added to the extracted values
+						if(exactFilter != "") {
+							extractedValues["exact_expression_value"] = (extractedValues["exact_expression_value"] + " " + exactFilter).trim();
+						}
 					} else {
 						var fromValue = null;
 						var toValue = null;
@@ -189,7 +229,28 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 						extractedValues = {"fromValue" : fromValue, "toValue" : toValue};
 					}
 					
-					self.addField(fieldname, extractedValues, operator);
+					// If this field is not an exact Solr field then its filter UI can be created now
+					// otherwise its exact filter value needs to be saved for the next iteration in order to either add it to it's corresponding "normal" field or to add it as standalone field
+					if(!isExactField) {
+						self.addField(fieldname, extractedValues, operator);
+					} else {
+						lastExact[originalFieldname] = {"fieldname" : fieldname, "operator" : operator, "extractedValues" : extractedValues};
+					}
+				}
+				
+				
+				// Add remaining lastExact if any
+				if(!jQuery.isEmptyObject(lastExact)) { 
+					// The lastExact object is not empty
+					// It was not added to the UI because it was the last field of the for loop and thus need to be added now !
+					var lastExactOriginalFieldname = "";
+					for(var key in lastExact) {
+						lastExactOriginalFieldname = key;
+					}
+					var lastExactFieldName = lastExactOriginalFieldname + "_exact";
+					var lastExactOperator = lastExact[lastExactOriginalFieldname]["operator"];
+					var lastExactExtractedValues = lastExact[lastExactOriginalFieldname]["extractedValues"];
+					self.addField(lastExactFieldName, lastExactExtractedValues, lastExactOperator);
 				}
 			}
 		}
@@ -341,6 +402,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 				}
 			}
 			
+			// Clean remaining alone 'OR' words
 			while(text.match(cleanORRegex) != null) {
 				var orExprToClean = text.match(cleanORRegex);
 				for(var cptExprToClean=0; cptExprToClean<orExprToClean.length; cptExprToClean++) {
@@ -350,7 +412,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			text = text.replace(/OR/g, "");
 			
 			
-			
+			// Clean remaining alone 'AND' words
 			while(text.match(cleanANDRegex) != null) {
 				var andExprToClean = text.match(cleanANDRegex);
 				for(var cptExprToClean=0; cptExprToClean<andExprToClean.length; cptExprToClean++) {
@@ -359,17 +421,19 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			}
 			text = text.replace(/AND/g, "");
 			
+			// Trim the expression
 			text = text.trim();
 			
 			console.log("Final expression: " + text);
 			
+			// Search for potential remaining words to add them to the all_words_value
 			var lastWords = text.split(" ");
 			for(var cptLastWords=0; cptLastWords<lastWords.length; cptLastWords++) {
 				all_words_value += " " + lastWords[cptLastWords];
 			}
 		}
 		
-		// Trim the values
+		// Trim the final values
 		all_words_value = all_words_value.trim();
 		exact_expression_value = exact_expression_value.trim();
 		at_least_one_word_value = at_least_one_word_value.trim();
@@ -380,6 +444,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		console.log("at_least_one_word_value: " + at_least_one_word_value);
 		console.log("none_of_these_words_value: " + none_of_these_words_value);
 		
+		// Put the values in an object and return it
 		var returnValues = {};
 		returnValues["all_words_value"] = all_words_value;
 		returnValues["exact_expression_value"] = exact_expression_value;
@@ -404,7 +469,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		var addButton = $('#add_adv_field').parent().detach();
 		var selectID = "field_" + this.fieldNumber;
 		var currentDiv = this.advTable.find('.adv_field').last();
-		currentDiv.append('<select class="select-operator"><option selected value="AND">AND</option><option value="OR">OR</option></select> <select class="subtitle" id="' + selectID + '"><option disabled selected value>Select a field</option></select> <span class="delete_button button"> X </span>');
+		currentDiv.append('<select class="select-operator"><option selected value="AND">AND</option><option value="OR">OR</option></select> <select class="dropdown-field" id="' + selectID + '"><option disabled selected value>Select a field</option></select> <span class="delete_button button"> X </span>');
 		
 		// Set operator if available
 		var selectOperator = currentDiv.find('.select-operator');
@@ -441,7 +506,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			selectSave.appendTo(div);
 			deleteButtonSave.appendTo(div);
 			var newOperator = div.find('.select-operator');
-			self.constructFilter(type, div, field, null, newOperator);
+			self.constructFilter(type, div, field, null, newOperator, currentFieldNum);
 		});
 		$("#exec_adv_search").before('<span class="separator">');
 		$("#exec_adv_search").before(addButton);
@@ -450,34 +515,40 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		
 		// Populate fields if possible
 		if(fieldName != null && fieldName != undefined && fieldName != "") {
+			// Set the dropdown to the fieldName value
 			select.val(fieldName);
+			// Get the div in which the UI filters will be added
 			var div = select.parent();
+			// Get the type of the field from the dropdown
 			var type = $("#" + selectID + " option:selected").attr("type");
 			console.log("Add field " + fieldName + " of type " + type);
-			self.constructFilter(type, div, fieldName, values, selectOperator);
+			// Build the filters UI
+			self.constructFilter(type, div, fieldName, values, selectOperator, currentFieldNum);
 		}
 	},
 	
-	constructFilter : function(type, elm, field) {
-		this.constructFilter(type, elm, field, null, null);
-	},
-	
-	constructFilter : function(type, elm, field, values, operator) {
+	constructFilter : function(type, elm, field, values, operator, fieldNum) {
+		var self = this;
 		var fieldNameExactExpr = field;
-		if(field in this.exactFields) {
+		if(field != null && field != undefined && this.exactFields != null && this.exactFields != undefined && field in this.exactFields) {
 			fieldNameExactExpr = this.exactFields[field];
 		}
 		var newField = new AjaxFranceLabs.NewAdvancedSearchField({
 			type : type,
 			elm : elm,
-			id : "field_" + this.fieldNumber,
+			id : "field_" + fieldNum,
 			field : field,
 			values : values,
 			operator : operator,
 			fieldNameExactExpr : fieldNameExactExpr
 		});
 		newField.init();
-		this.fieldsList[this.fieldNumber] = newField;
+		this.fieldsList[fieldNum] = newField;
+		
+		// Put limit on fields
+		elm.find("input[type=text]").each(function(index) {
+			$(this).attr("maxlength", self.maxChar);
+		});
 	},
 
 	beforeRequest : function() {

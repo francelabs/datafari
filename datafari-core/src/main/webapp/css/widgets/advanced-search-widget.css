@@ -4,6 +4,20 @@
     margin-bottom: 10px;
 }
 
+.adv_field .dropdown-field {
+	margin-bottom : 0.5em;
+}
+
+.adv_field .fromInput, .adv_field .toInput {
+    border: 1px solid;
+    display: inline-block;
+    height: 25px;
+    margin-bottom: 5px;
+    -webkit-border-radius: 1px;
+    border-color: #D9D9D9 !important;
+    border-top-color: #A1A1A1 !important;
+}
+
 .advancedSearchWidget .add-field-button {
     font-weight: bold;
     font-size: 2em !important;
@@ -48,6 +62,8 @@
 	padding: 5px;
 	-webkit-border-radius: 1px;
 	width: 150px;
+	border-color: #D9D9D9 !important;
+    border-top-color: #A1A1A1 !important;
 }
 
 .advancedSearchWidget .advTable .title.left {
