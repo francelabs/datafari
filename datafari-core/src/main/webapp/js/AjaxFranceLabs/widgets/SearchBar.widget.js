@@ -78,17 +78,29 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 
 			buildWidget : function() {
 				var self = this, elm = $(this.elm);
+//				if ($(window).width() > 800) {
+//					elm.addClass('searchBarWidget').addClass('widget').append(
+//							'<div id="searchBarContent"></div>').append(
+//							'<div id="sortMode"></div>');
+//					elm.find('#searchBarContent').append(
+//							'<div class="searchBar"></div>').append(
+//							'<div class="searchMode"></div>');
+//				} else {
+//					elm.addClass('searchBarWidget').addClass('widget').append(
+//							'<div class="searchBar"></div>').append(
+//							'<div class="searchMode"></div>').append(
+//							'<div id="sortMode"></div>');
+//				}
+				
 				if ($(window).width() > 800) {
 					elm.addClass('searchBarWidget').addClass('widget').append(
 							'<div id="searchBarContent"></div>').append(
 							'<div id="sortMode"></div>');
 					elm.find('#searchBarContent').append(
-							'<div class="searchBar"></div>').append(
-							'<div class="searchMode"></div>');
+							'<div class="searchBar"></div>');
 				} else {
 					elm.addClass('searchBarWidget').addClass('widget').append(
 							'<div class="searchBar"></div>').append(
-							'<div class="searchMode"></div>').append(
 							'<div id="sortMode"></div>');
 				}
 				elm
@@ -210,6 +222,9 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 					$('#advancedSearchLink').click(function(event){
 						// Hide the basic search
 						elm.hide();
+						
+						// Hide the results UI
+						$("#results_div").hide();
 						
 						// Reset the widget status (radios, entered text, ...)
 						self.manager.getWidgetByID('advancedSearch').reset();

@@ -90,24 +90,6 @@
 	.pagerModule .pages .page, .pagerModule .fn {
 		font-weight: bold;
 	}
-	.advancedSearchWidget .advTable .right {
-		font-size: 11px;
-	}
-	.advancedSearchWidget .advTable .left {
-		font-size: 13px;
-	}
-	.advancedSearchWidget .advTable .title .right {
-		font-size: 13px;
-	}
-	.advancedSearchWidget .advTable .title .left {
-		font-size: 16px;
-	}
-	.advancedSearchWidget .advTable .title {
-		font-weight: bold;
-	}
-	.advancedSearchWidget .addInput:hover {
-		text-decoration: underline;
-	}
 	.capsuleWidget .title {
 		font-weight: bold;
 	}
@@ -339,24 +321,6 @@
 	}
 	.pagerModule .pages .page, .pagerModule .fn {
 		font-weight: bold;
-	}
-	.advancedSearchWidget .advTable .right {
-		font-size: 11px;
-	}
-	.advancedSearchWidget .advTable .left {
-		font-size: 13px;
-	}
-	.advancedSearchWidget .advTable .title .right {
-		font-size: 13px;
-	}
-	.advancedSearchWidget .advTable .title .left {
-		font-size: 16px;
-	}
-	.advancedSearchWidget .advTable .title {
-		font-weight: bold;
-	}
-	.advancedSearchWidget .addInput:hover {
-		text-decoration: underline;
 	}
 	.capsuleWidget .title {
 		font-weight: bold;

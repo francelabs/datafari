@@ -48,12 +48,37 @@ AjaxFranceLabs.NewAdvancedSearchField = AjaxFranceLabs.Class.extend({
 			
 		} else if (this.type != "int" && this.type != "long" && this.type != "float" && this.type != "double" && this.type != "tint" && this.type != "tlong" && this.type != "tfloat" && this.type != "tdouble") {
 			
+			
+			var fromInitValue = null;
+			var toInitValue = null;
+			
+			// Initialize fromValue and toValue if provided
+			if(this.values != null && this.values != undefined) {
+				if(this.values["fromValue"] != null && this.values["fromValue"] != undefined) {
+					if(this.values["fromValue"] == "*") {
+						fromInitValue = "";
+					} else {
+						fromInitValue = this.values["fromValue"];
+					}
+				}
+				if(this.values["toValue"] != null && this.values["toValue"] != undefined) {
+					if(this.values["toValue"] == "*") {
+						toInitValue = "";
+					} else {
+						toInitValue = this.values["toValue"];
+					}
+				}
+			}
+			
 			// The field is of date or tdate type
 			this.dateSelectorModule = new AjaxFranceLabs.DateSelectorFacetModule({
 				elm : this.elm,
 				hideGo : true,
-				id : "field_" + this.fieldNumber,
-				field : this.field
+				id : "ds_" + this.field,
+				field : this.field,
+				displayError : true,
+				fromInitValue : fromInitValue,
+				toInitValue : toInitValue
 			});
 			this.dateSelectorModule.createDateSelectorDiv();
 			
@@ -71,14 +96,15 @@ AjaxFranceLabs.NewAdvancedSearchField = AjaxFranceLabs.Class.extend({
 		var at_least_one_word_line = this.elm.find('.at_least_one_word_line');
 		var exact_expression_line = this.elm.find('.exact_expression_line');
 		var none_of_these_words_line = this.elm.find('.none_of_these_words_line');
-		all_words_line.append('<span class="left">').find('.left').append('<label>' + window.i18n.msgStore['allWords'] + '</label>').append('<input type="text" />');
+		all_words_line.append('<span class="left">').find('.left').append('<label>' + window.i18n.msgStore['allWords'] + '</label>').append('<input type="text" class="filter-input" />');
 		
-		at_least_one_word_line.append('<span class="left">').find('.left').append('<label>' + window.i18n.msgStore['atLeastOneWord'] + '</label>').append('<input type="text" />');
+		at_least_one_word_line.append('<span class="left">').find('.left').append('<label>' + window.i18n.msgStore['atLeastOneWord'] + '</label>').append('<input type="text" class="filter-input" />');
 		
-		exact_expression_line.append('<span class="left">').find('.left').append('<label>' + window.i18n.msgStore['exactExpression'] + '</label>').append('<input type="text" />');
+		exact_expression_line.append('<span class="left">').find('.left').append('<label>' + window.i18n.msgStore['exactExpression'] + '</label>').append('<input type="text" class="filter-input" />');
 		
-		none_of_these_words_line.append('<span class="left">').find('.left').append('<label>' + window.i18n.msgStore['noneOfTheseWords'] + '</label>').append('<input type="text" />');
+		none_of_these_words_line.append('<span class="left">').find('.left').append('<label>' + window.i18n.msgStore['noneOfTheseWords'] + '</label>').append('<input type="text" class="filter-input" />');
 		
+		// Init fields with init values if availables
 		if(this.values != null && this.values != undefined) {
 			all_words_line.find('input').val(this.values["all_words_value"]);
 			at_least_one_word_line.find('input').val(this.values["at_least_one_word_value"]);
@@ -90,6 +116,35 @@ AjaxFranceLabs.NewAdvancedSearchField = AjaxFranceLabs.Class.extend({
 	buildNumericFieldFilterUI : function() {
 		
 		this.elm.append('<div><label>From: </label><input type="number" class="fromNum"></input><label>To: </label><input type="number" class="toNum"></input></div>');
+		
+		var fromInitValue = null;
+		var toInitValue = null;
+		
+		// Initialize fromValue and toValue if provided
+		if(this.values != null && this.values != undefined) {
+			if(this.values["fromValue"] != null && this.values["fromValue"] != undefined) {
+				if(this.values["fromValue"] == "*") {
+					fromInitValue = "";
+				} else {
+					fromInitValue = this.values["fromValue"];
+				}
+			}
+			if(this.values["toValue"] != null && this.values["toValue"] != undefined) {
+				if(this.values["toValue"] == "*") {
+					toInitValue = "";
+				} else {
+					toInitValue = this.values["toValue"];
+				}
+			}
+		}
+		
+		if(fromInitValue != null) {
+			this.elm.find('.fromNum').val(fromInitValue);
+		}
+		
+		if(toInitValue != null) {
+			this.elm.find('.toNum').val(toInitValue);
+		}
 	},
 
 	getFilter : function() {

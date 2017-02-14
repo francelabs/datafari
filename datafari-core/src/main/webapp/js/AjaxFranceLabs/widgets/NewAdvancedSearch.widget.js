@@ -17,8 +17,6 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 
 	//Variables
 
-	tables : [],
-
 	resizable : false,
 
 	options : {},
@@ -44,6 +42,9 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			self.available_fields = data;
 		}, "json");
 		elm.addClass('advancedSearchWidget').addClass('widget').attr('widgetId', this.id);
+		
+		// Activate tooltip
+		elm.tooltip();
 		
 		AjaxFranceLabs.addMultiElementClasses($(this.elm).find('.advTable'));
 		
@@ -77,7 +78,13 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		elm.hide();		
 	},
 	
+	reinitVariables : function() {
+		this.fieldNumber = 0;
+		this.fieldsList = [];
+	},
+	
 	buildStartingUI : function() {
+		this.reinitVariables();
 		var self = this, elm = $(this.elm);
 		
 		var baseQuery = this.manager.store.get('q').val();
@@ -107,14 +114,14 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		this.advTable.append('<div id="adv_base_search">');
 		
 		var adv_base_search = this.advTable.find('#adv_base_search');
-		adv_base_search.append('<span class="subtitle left">').find('.left').append('Base search');
+		adv_base_search.append('<span class="subtitle left">').find('.left').append(window.i18n.msgStore['baseSearch-label']);
 		var baseSearchValues = self.extractFilterFromText(baseSearch, false, true);
 		this.constructFilter("string", adv_base_search, null, baseSearchValues);
 		
 		
 		this.advTable.append('<span class="separator">');
 		
-		this.advTable.append('<div><span id="add_adv_field" class="button">-- Add field --</span></div>');
+		this.advTable.append('<div><span id="add_adv_field" title="' + window.i18n.msgStore['advancedSearch-add-filter-tooltip'] + '" class="add-field-button">+</span></div>');
 		$('#add_adv_field').click(function() {
 			self.addField();
 		});
@@ -171,19 +178,26 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 				console.log("fieldType: " + fieldType);
 				
 				// Define filters values
+				var extractedValues = null;
 				if(fieldType == "text") {
-					
-					var extractedValues = self.extractFilterFromText(fieldExpression, negativeExpression, false);
-					self.addField(fieldname, extractedValues);
+					extractedValues = self.extractFilterFromText(fieldExpression, negativeExpression, false);
 				} else {
+					var fromValue = null;
+					var toValue = null;
 					if(fieldExpression.startsWith('[')) {
 						var values = fieldExpression.split(" ");
-						var fromValue = values[0].substring(1);
-						var toValue = values[2].substring(0, values[2].length - 1);
+						fromValue = values[0].substring(1);
+						toValue = values[2].substring(0, values[2].length - 1);
 						console.log("fromValue: " + fromValue);
 						console.log("toValue: " + toValue);
+					} else {
+						fromValue = fieldExpression;
+						toValue = fieldExpression;
 					}
+					extractedValues = {"fromValue" : fromValue, "toValue" : toValue};
 				}
+				
+				self.addField(fieldname, extractedValues);
 			}
 		}
 		
@@ -199,8 +213,8 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		andExpressionRegex = /[^\s\[\(\]\)\-\"(AND|OR)]+\sAND\s[^\s\[\(\]\)\-\"(AND|OR)]+/g;
 		orExpressionRegex = /[^\s\[\(\]\)\-\"(AND|OR)]+\sOR\s[^\s\[\(\]\)\-\"(AND|OR)]+/g;
 		
-		cleanANDRegex = /(AND\s(?:(?![^\s\[\(]+AND)[^\s\[\(]+)\s|[^\s\[\(]+\sAND)/g;
-		cleanORRegex = /(OR\s(?:(?![^\s\[\(]+OR)[^\s\[\(]+)\s|[^\s\[\(]+\sOR)/g;
+		cleanANDRegex = /(AND\s(?:(?![^\s\[\(]+AND)[^\s\[\(]+)\s?|[^\s\[\(]+\sAND)/g;
+		cleanORRegex = /(OR\s(?:(?![^\s\[\(]+OR)[^\s\[\(]+)\s?|[^\s\[\(]+\sOR)/g;
 		
 		if(!text.startsWith("(") && !isBasicSearchText) {
 			if(negativeExpression) {
@@ -218,7 +232,24 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 				text = text.substring(1, text.length -1);
 			}
 			
-			// Negative words and exact match
+			
+			// Exact expressions
+			var exactExpressionsRegex = /"[^\"]+"/g;
+			var exactExpressions = text.match(exactExpressionsRegex);
+			if(exactExpressions != null && exactExpressions != undefined) {
+				for(var cptExact=0; cptExact<exactExpressions.length; cptExact++) {
+					var exactExpression = exactExpressions[cptExact];
+					exact_expression_value += " " + exactExpression.substring(1, exactExpression.length -1);
+					var exactExprIndex = text.search(exactExpression);
+					if(exactExprIndex > 0 && text.substring(exactExprIndex -1, exactExprIndex) == " ") {
+						text = text.replace(" " + exactExpression, "");
+					} else {
+						text = text.replace(exactExpression, "");
+					}
+				}
+			}
+			
+			// Negative words
 			var globalValues = text.split(' ');
 			for(var cptGlobal=0; cptGlobal < globalValues.length; cptGlobal++) {
 				var gbValue = globalValues[cptGlobal];
@@ -229,9 +260,6 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 					} else {
 						text = text.replace(gbValue, "");
 					}
-				} else if (gbValue.startsWith("\"")) {
-					exact_expression_value += " " + gbValue.substring(1, gbValue.length - 1);
-					text = text.replace(" " + gbValue, "");
 				}
 			}
 			
@@ -376,6 +404,9 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 	},
 	
 	addField : function(fieldName, values) {
+		//Deactivate tooltips
+		this.elm.tooltip('disable');
+			
 		var self = this;
 		$('#add_adv_field').parent().before('<div class="adv_field">');
 		this.fieldNumber++;
@@ -383,7 +414,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		var addButton = $('#add_adv_field').parent().detach();
 		var selectID = "field_" + this.fieldNumber;
 		var currentDiv = this.advTable.find('.adv_field').last();
-		currentDiv.append('<select id="' + selectID + '"><option disabled selected value>Select a field</option></select> <span class="delete_button button"> X </span>');
+		currentDiv.append('<select class="subtitle" id="' + selectID + '"><option disabled selected value>Select a field</option></select> <span class="delete_button button"> X </span>');
 		var deleteButton = currentDiv.find('.delete_button');
 		deleteButton.click(function() {
 			// Remove the separator line
@@ -409,6 +440,8 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		});
 		$("#exec_adv_search").before('<span class="separator">');
 		$("#exec_adv_search").before(addButton);
+		$('#add_adv_field').attr("title", window.i18n.msgStore['advancedSearch-add-filter-tooltip']);
+		self.elm.tooltip('enable');
 		
 		// Populate fields if possible
 		if(fieldName != null && fieldName != undefined && fieldName != "") {
@@ -421,17 +454,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 	},
 	
 	constructFilter : function(type, elm, field) {
-		
 		this.constructFilter(type, elm, field, null);
-		
-//		var newField = new AjaxFranceLabs.NewAdvancedSearchField({
-//			type : type,
-//			elm : elm,
-//			id : "field_" + this.fieldNumber,
-//			field : field
-//		});
-//		newField.init();
-//		this.fieldsList[this.fieldNumber] = newField;
 	},
 	
 	constructFilter : function(type, elm, field, values) {
@@ -471,41 +494,10 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			
 			// Display the basic search
 			$('#searchBar').show();
+			$("#results_div").show();
 			$('.searchBar input').val(searchBarFilter);
 			this.updateAddressBar();
 		}
-		
-//		// If the widget is displayed and we are not performing the spellchecker query
-//		if ($(this.elm).is(':visible') && !this.manager.store.isParamDefined('original_query')){
-//			
-//			this.manager.store.remove('fq');
-//			this.manager.store.remove('q');
-//			
-//			var qArr = [];
-//			
-//			for (var table in this.tables) {
-//				for (var field in this.tables[table].fieldStore) {
-//					var value = this.tables[table].fieldStore[field].getValue();
-//					if (!AjaxFranceLabs.empty(value)) {
-//						if (this.tables[table].fieldStore[field].filter === true) {
-//							this.manager.store.addByValue('fq', value);
-//						} else {
-//							qArr.push('(' + value + ')');
-//						}
-//					}
-//				}			
-//					
-//				if (qArr.length > 0){
-//					// Create the query, combining the different search fields with boolean values from radio buttons (natural order from left to right)
-//					this.manager.store.addByValue('q', qArr.join($(this.elm).find('.advSearchBooleanOperator .radio:checked').val()));
-//				}
-//				else {
-//					this.manager.store.addByValue('q', '*:*');
-//				}
-//			}
-//			
-//			this.updateAddressBar();
-//		}
 	},
 	
 	/**
@@ -513,6 +505,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 	 */
 	reset : function() {
 		this.elm.html('');
+		this.elm.append('<a href="../Datafari/Search"><img src="css/images/logo_zebre.png"/></a>');
 	},
 	
 	makeRequest : function() {

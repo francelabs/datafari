@@ -34,10 +34,6 @@
 
 
 
-.advancedSearchWidget .advTable .field input[type="text"] { border-color: #D9D9D9; border-top-color: #A1A1A1; }
-.advancedSearchWidget .separator { border-bottom-color: #D9D9D9; }
-.advancedSearchWidget button { background-color: rgb(168,201,0); border-color: #D9D9D9; border-top-color: #A1A1A1; }
-.advancedSearchWidget button:hover { border-color:#A1A1A1; }
 .capsuleWidget { border-color: #666666; }
 
 .spellcheckerWidget .result { color: #B92221; }

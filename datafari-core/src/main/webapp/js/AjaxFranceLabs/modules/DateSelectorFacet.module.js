@@ -24,6 +24,8 @@ AjaxFranceLabs.DateSelectorFacetModule = AjaxFranceLabs.AbstractModule.extend({
 	hideGo : false,
 	displayError : false,
 	oldFilter : null,
+	fromInitValue : null,
+	toInitValue : null,
 
 	 
 	
@@ -192,6 +194,18 @@ AjaxFranceLabs.DateSelectorFacetModule = AjaxFranceLabs.AbstractModule.extend({
 				dateSelector.find(".toInput").datepicker({dateFormat: "dd/mm/yy", altFormat: "yy-mm-ddT00:00:00Z", changeMonth: true, changeYear: true, onClose: function(dateText, inst){self.checkAndUpdateToInputs(dateText, inst)}});
 				dateSelector.find(".toInput").datepicker( "option", "altField", "#" + this.id + "-altToInput" );
 				
+				// Init values if possible
+				if(self.fromInitValue != null) {
+					var fromDate = self.convertAltDateFormatToDateFormat(self.fromInitValue);
+					dateSelector.find(".fromInput").val(fromDate);
+					dateSelector.find(".fromInput").datepicker("setDate", fromDate);
+				}
+				if(self.toInitValue != null) {
+					var toDate = self.convertAltDateFormatToDateFormat(self.toInitValue);
+					dateSelector.find(".toInput").val(toDate);
+					dateSelector.find(".toInput").datepicker("setDate", toDate);
+				}
+				
 				// Hide the Go button if it has been specified in the constructor
 				if(this.hideGo === true) {
 					this.hideGoButton();
@@ -203,6 +217,21 @@ AjaxFranceLabs.DateSelectorFacetModule = AjaxFranceLabs.AbstractModule.extend({
 				});
 			}
 		} 
+	},
+	
+	convertAltDateFormatToDateFormat : function(altFormatDate) {
+		if(altFormatDate == "") {
+			return "";
+		} else {
+			var dateRegex = /[0-9]+-[0-9]+-[0-9]+/g;
+			var altDate = altFormatDate.match(dateRegex);
+			var splittedDate = altDate[0].split("-");
+			var year = splittedDate[0];
+			var month = splittedDate[1];
+			var day = splittedDate[2];
+			var formatedDate = day + "/" + month + "/" + year;
+			return formatedDate;
+		}
 	},
 	
 	beforeRequest : function() {

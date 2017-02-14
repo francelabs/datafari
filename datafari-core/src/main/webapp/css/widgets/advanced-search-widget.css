@@ -1,0 +1,82 @@
+.advancedSearchWidget {
+    width: 1500px;
+    margin-left: 3%;
+    margin-bottom: 10px;
+}
+
+.advancedSearchWidget .add-field-button {
+    font-weight: bold;
+    font-size: 2em !important;
+    color: green;
+    cursor: pointer;
+}
+
+.advancedSearchWidget .subtitle {
+    font-weight: bold;
+    font-size: 15px !important;
+    margin-bottom: 0.5em;
+    margin-right: 0.5em;
+}
+
+.advancedSearchWidget .delete_button {
+    font-weight: bold;
+    font-size: 1.2em;
+    color: red;
+}
+
+.advancedSearchWidget .filter-input {
+    border: 1px solid;
+    display: inline-block;
+    height: 25px;
+    margin-bottom: 5px;
+    width: 796px;
+    -webkit-border-radius: 1px;
+    border-color: #D9D9D9 !important;
+    border-top-color: #A1A1A1 !important;
+}
+
+.advancedSearchWidget button:hover {
+    border-color: #A1A1A1;
+}
+
+.advancedSearchWidget button {
+    background-color: rgb(168,201,0);
+    border: 1px solid;
+	cursor: pointer;
+	margin-bottom: 15px;
+	margin-left: 43%;
+	padding: 5px;
+	-webkit-border-radius: 1px;
+	width: 150px;
+}
+
+.advancedSearchWidget .advTable .title.left {
+    font-weight: bold;
+    font-size: 16px;
+    color: #3d3c3a;
+    display: block;
+}
+
+.advancedSearchWidget .advTable .left {
+    width: 1000px;
+    font-size: 13px;
+}
+
+.advancedSearchWidget .advTable .left label {
+    display: inline-block;
+    width: 200px;
+}
+
+.advancedSearchWidget .separator {
+    border-bottom-color: #D9D9D9 !important;
+    border-bottom: 1px solid;
+	display: inline-block;
+	margin: 15px 0;
+	width: 100%;
+	height: 1px;
+}
+
+.advancedSearchWidget .advTable .right {
+    font-size: 11px;
+    width: 350px;
+}

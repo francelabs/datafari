@@ -1,4 +1,6 @@
 {
+"advancedSearch-add-filter-tooltip":"Affinare la ricerca aggiungendo un nuovo filtro",
+"baseSearch-label":"Ricerca di base",
 "noneOfTheseWords":"Nessuna di queste parole",
 "wrong-date-format":"Wrong date format ! (must be: dd/mm/yyyy)",
 "fromDate":"From",
