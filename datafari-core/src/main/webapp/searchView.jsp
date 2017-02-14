@@ -183,36 +183,38 @@
 	<div id="solr">
 		<div id="searchBar"> <a href="../Datafari/Search"><img src="css/images/logo_zebre.png"/></a></div>
 		<div id="advancedSearch"> <a href="../Datafari/Search"><img src="css/images/logo_zebre.png"/></a></div>
-		<div id="results_nav_mobile"  class="bc-color"> 
-			<div id="number_results_mobile"><span></span></div>
-			<div id="nav_facets_mobile"><a href="#facets_mobile"><i class="fa fa-bars"></i> </a></div>
-		</div>
-		<div id="result_information"></div>
-		
-		<div id="source_tabs"></div>
-
-		<div class="col left">
-			<div id="facets">
-				<div id="facet_slider"></div>
-				<div id="facet_last_modified"></div>
-				<div id="facet_extension"></div>
-				<!-- To enable Facet Hierarchical widget -->
-				<!--  <div id="facet_hierarchical_url"></div> -->
-				<div id="facet_source"></div>
-				<div id="facet_language"></div>
-				<div id="facet_signature"></div>
+		<div id="results_div">
+			<div id="results_nav_mobile"  class="bc-color"> 
+				<div id="number_results_mobile"><span></span></div>
+				<div id="nav_facets_mobile"><a href="#facets_mobile"><i class="fa fa-bars"></i> </a></div>
 			</div>
-		</div>
-		<div class="col right">
+			<div id="result_information"></div>
 			
-			<div id="promolink"></div>
-			<div id="suggestion"></div>
-			<div id="spellchecker"></div>
-			<!--  <div id="external"></div> -->
-			<!--  <div id="previsualize"></div> -->
-			<div id="results"></div>
+			<div id="source_tabs"></div>
+	
+			<div class="col left">
+				<div id="facets">
+					<div id="facet_slider"></div>
+					<div id="facet_last_modified"></div>
+					<div id="facet_extension"></div>
+					<!-- To enable Facet Hierarchical widget -->
+					<!--  <div id="facet_hierarchical_url"></div> -->
+					<div id="facet_source"></div>
+					<div id="facet_language"></div>
+					<div id="facet_signature"></div>
+				</div>
+			</div>
+			<div class="col right">
+				
+				<div id="promolink"></div>
+				<div id="suggestion"></div>
+				<div id="spellchecker"></div>
+				<!--  <div id="external"></div> -->
+				<!--  <div id="previsualize"></div> -->
+				<div id="results"></div>
+			</div>
+			<div class="clear"></div>
 		</div>
-		<div class="clear"></div>
 	</div>
 	<jsp:include page="footer.jsp"/> 
 	<!--  <div id="spinner_mobile"><i class="fa fa-spinner fa-spin"></i></div>-->
