@@ -51,7 +51,17 @@ import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 
 /**
- * Servlet implementation class GetFavorites
+ * Servlet implementation class GetFieldsInfo
+ *
+ *
+ * Has two return behaviors: - No fieldName param provided : return the list of
+ * fields found in the schema.xml of Solr with their attributes (type, indexed,
+ * etc) - fieldName param provided : return the field with his attributes if
+ * found in the schema.xml
+ *
+ * The return format is a json containing the return code and the expected
+ * result
+ *
  */
 @WebServlet("/GetFieldsInfo")
 public class GetFieldsInfo extends HttpServlet {
@@ -99,15 +109,20 @@ public class GetFieldsInfo extends HttpServlet {
 																// the
 																// schema
 
+			// If a fieldname has been provided, it means that this servlet only
+			// needs to return infos on this specific field
 			if (request.getParameter("fieldName") != null) {
 				final String fieldName = request.getParameter("fieldName");
 				final XPathFactory xPathfactory = XPathFactory.newInstance();
 				final XPath xpath = xPathfactory.newXPath();
 				XPathExpression expr;
 
+				// search for the provided field with Xpath
 				expr = xpath.compile("//field[@name=\"" + fieldName + "\"]");
 				final Node fieldNode = (Node) expr.evaluate(docSchem, XPathConstants.NODE);
 				if (fieldNode != null) {
+					// Field has been found, transform it into a json and return
+					// it
 					final JSONObject json = new JSONObject();
 					final Element elem = (Element) fieldNode; // Get
 					// a
@@ -126,7 +141,8 @@ public class GetFieldsInfo extends HttpServlet {
 				final PrintWriter out = response.getWriter();
 				out.print(Superjson);
 
-			} else {
+			} else { // otherwise return the list of all fields found in the
+						// schema.xml file
 
 				// Load the list of denied fields
 				final String strDeniedFieldsList = AdvancedSearchConfiguration.getInstance()
@@ -152,6 +168,11 @@ public class GetFieldsInfo extends HttpServlet {
 						for (int j = 0; j < map.getLength(); j++) { // Get
 																	// its
 																	// attributes
+
+							// If the current field is in the denied list or is
+							// not indexed or its name starts with '_' or
+							// 'allow_' or 'deny_' then ignore it, otherwise add
+							// it to the super json
 							if ((map.item(j).getNodeName().equals("name")
 									&& deniedFieldsSet.contains(map.item(j).getNodeValue()))
 									|| ((map.item(j).getNodeName().equals("indexed")

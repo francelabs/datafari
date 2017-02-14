@@ -33,7 +33,10 @@ import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.utils.AdvancedSearchConfiguration;
 
 /**
- * Servlet implementation class GetFavorites
+ * Servlet implementation class GetExactFields
+ *
+ * returns the list of fields that has a specific Solr field clone for exact
+ * match queries. This list is found in the advanced-search.properties file
  */
 @WebServlet("/GetExactFields")
 public class GetExactFields extends HttpServlet {
