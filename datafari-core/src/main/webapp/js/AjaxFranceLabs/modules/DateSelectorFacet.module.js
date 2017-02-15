@@ -219,18 +219,23 @@ AjaxFranceLabs.DateSelectorFacetModule = AjaxFranceLabs.AbstractModule.extend({
 		} 
 	},
 	
+	// converts a string date formated like "YYYY-MM-DDT00:00:00Z" into a string formated like "DD/MM/YYYY"
 	convertAltDateFormatToDateFormat : function(altFormatDate) {
 		if(altFormatDate == "") {
 			return "";
 		} else {
 			var dateRegex = /[0-9]+-[0-9]+-[0-9]+/g;
 			var altDate = altFormatDate.match(dateRegex);
-			var splittedDate = altDate[0].split("-");
-			var year = splittedDate[0];
-			var month = splittedDate[1];
-			var day = splittedDate[2];
-			var formatedDate = day + "/" + month + "/" + year;
-			return formatedDate;
+			if(altDate != null && altDate != undefined && altDate.length > 0) {
+				var splittedDate = altDate[0].split("-");
+				var year = splittedDate[0];
+				var month = splittedDate[1];
+				var day = splittedDate[2];
+				var formatedDate = day + "/" + month + "/" + year;
+				return formatedDate;
+			} else {
+				return "";
+			}
 		}
 	},
 	
