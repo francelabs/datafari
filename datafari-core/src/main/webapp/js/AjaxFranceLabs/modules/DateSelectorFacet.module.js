@@ -108,7 +108,7 @@ AjaxFranceLabs.DateSelectorFacetModule = AjaxFranceLabs.AbstractModule.extend({
 		$("#" + this.id + "-date-selector").find(".go").show();
 	},
 	
-	// Validates that the input string is a valid date formatted as "mm/dd/yyyy"
+	// Validates that the input string is a valid date formatted as "dd/mm/yyyy"
 	isValidDate : function(dateString)
 	{
 	    // First check for the pattern
