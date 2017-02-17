@@ -29,6 +29,7 @@ import javax.mail.internet.MimeMessage;
 import org.apache.log4j.Logger;
 
 import com.francelabs.datafari.utils.AlertsConfiguration;
+import com.sun.mail.util.MailSSLSocketFactory;
 
 /**
  * Javadoc
@@ -85,6 +86,10 @@ public class Mail {
 			final Properties props = new Properties();
 			props.put("mail.smtp.host", smtpHost);
 			props.put("mail.smtp.auth", "true");
+			final MailSSLSocketFactory sf = new MailSSLSocketFactory();
+			sf.setTrustAllHosts(true);
+			props.put("mail.smtps.ssl.trust", "*");
+			props.put("mail.smtps.ssl.socketFactory", sf);
 
 			final Session session = Session.getDefaultInstance(props); // Set
 																		// the
@@ -93,8 +98,10 @@ public class Mail {
 
 			final MimeMessage message = new MimeMessage(session);
 			try {
-				message.setFrom(new InternetAddress(from)); // Set the destination and copy
-										// Destination if there are some
+				message.setFrom(new InternetAddress(from)); // Set the
+															// destination and
+															// copy
+				// Destination if there are some
 				if (copyDest != "") {
 					message.addRecipients(Message.RecipientType.TO,
 							new InternetAddress[] { new InternetAddress(dest), new InternetAddress(copyDest) });
