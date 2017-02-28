@@ -697,8 +697,7 @@
 		<str name="spellcheck.collate">true</str>
 		<str name="hl">on</str>
 		<str name="hl.fl">content_hl_fr content_hl_en</str>
-		<str name="hl.alternateField">content_hl_fr</str>
-		<str name="hl.alternateField">content_hl_en</str>
+		<str name="hl.alternateField">content_hl_fr,content_hl_en</str>
 		<str name="hl.maxAlternateFieldLength">100</str>
 		<str name="hl.encoder">html</str>
 		<str name="hl.fragsize">200</str>
@@ -757,8 +756,7 @@
 			<str name="spellcheck.collate">true</str>       <!-- Highlighting defaults -->
 			<str name="hl">on</str>
 			<str name="hl.fl">content_hl_fr content_hl_en</str>
-			<str name="hl.alternateField">content_hl_fr</str>
-			<str name="hl.alternateField">content_hl_en</str>
+			<str name="hl.alternateField">content_hl_fr,content_hl_en</str>
 			<str name="hl.maxAlternateFieldLength">100</str>
 			<str name="hl.encoder">html</str>
 			<str name="hl.fragsize">200</str>
