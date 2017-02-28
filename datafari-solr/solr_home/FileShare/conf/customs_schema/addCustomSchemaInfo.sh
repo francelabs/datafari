@@ -33,8 +33,8 @@ sendCommand "${value}" $2
 }
 
 
+processFile custom_fieldTypes.incl field-type
 processFile custom_fields.incl field
 processFile custom_dynamicFields.incl dynamic-field
 processFile custom_copyFields.incl copy-field
-processFile custom_fieldTypes.incl field-type
 echo done
