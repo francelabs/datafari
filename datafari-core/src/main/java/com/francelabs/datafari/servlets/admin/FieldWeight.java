@@ -34,17 +34,21 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
-import org.json.JSONException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.francelabs.datafari.service.search.SolrServers.Core;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 import com.francelabs.datafari.utils.FileUtils;
@@ -60,18 +64,15 @@ import com.francelabs.datafari.utils.XMLUtils;
  * weight of a field The semaphores (one for each type of query) are created in
  * the constructor.
  *
- * @author Alexis Karassev
  */
 @WebServlet("/admin/FieldWeight")
 public class FieldWeight extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private final String server = Core.FILESHARE.toString();
 	private final SemaphoreLn semaphoreConfigPf;
 	private final SemaphoreLn semaphoreConfigQf;
 	private final String env;
 	private NodeList childList;
 	private Document doc;
-	private File schema = null;
 	private File config = null;
 	/** Custom fields. **/
 	private File customFields = null;
@@ -99,13 +100,7 @@ public class FieldWeight extends HttpServlet {
 
 		semaphoreConfigPf = new SemaphoreLn("", "pf");
 		semaphoreConfigQf = new SemaphoreLn("", "qf");
-		if (new File(env + File.separator + "schema.xml").exists()) { // Check
-			// if
-			// the
-			// files
-			// exists
-			schema = new File(env + File.separator + "schema.xml");
-		}
+
 		if (new File(env + File.separator + "solrconfig.xml").exists()) {
 			config = new File(env + File.separator + "solrconfig.xml");
 		}
@@ -131,6 +126,7 @@ public class FieldWeight extends HttpServlet {
 	protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
 			throws ServletException, IOException {
 
+		final PrintWriter out = response.getWriter();
 		usingCustom = false; // Reinit the usingCustom value to false in order
 								// to check again if the
 								// custom_search_handler.xml file is used
@@ -145,21 +141,19 @@ public class FieldWeight extends HttpServlet {
 				}
 				return;
 			}
-			if ((schema == null) || (config == null)
-					|| !new File(env + "/solr/solrcloud/" + server + "/conf/schema.xml").exists()
-					|| !new File(env + "/solrconfig.xml").exists()) {// If
-																		// the
-																		// files
-																		// did
-																		// not
-																		// existed
-																		// when
-																		// the
-																		// constructor
-																		// was
-																		// run
+			if ((config == null) || !new File(env + "/solrconfig.xml").exists()) {// If
+				// the
+				// files
+				// did
+				// not
+				// existed
+				// when
+				// the
+				// constructor
+				// was
+				// run
 				// Checks if they exist now
-				if (!new File(env + "/schema.xml").exists() || !new File(env + "/solrconfig.xml").exists()) {
+				if (!new File(env + "/solrconfig.xml").exists()) {
 					LOGGER.error(
 							"Error while opening the configuration files, solrconfig.xml and/or schema.xml, in FieldWeight doGet, please make sure those files exist at "
 									+ env + " . Error 69025"); // If
@@ -168,19 +162,11 @@ public class FieldWeight extends HttpServlet {
 																// error
 																// is
 																// printed
-					final PrintWriter out = response.getWriter();
 					out.append(
 							"Error while opening the configuration files, please retry, if the problem persists contact your system administrator. Error Code : 69025");
 					out.close();
 					return;
 				} else {
-					schema = new File(env + "/schema.xml");// Else
-															// they
-															// are
-															// prepared
-															// to
-															// be
-															// parsed
 					config = new File(env + "/solrconfig.xml");
 				}
 			}
@@ -197,64 +183,54 @@ public class FieldWeight extends HttpServlet {
 				}
 			}
 
-			final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			if (request.getParameter("type") == null) { // If called at the
 														// creation of the HTML
-				try {
-					final JSONObject Superjson = new JSONObject();
-					final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-					final Document docSchem = dBuilder.parse(schema); // Parse
-																		// the
-																		// schema
-					final NodeList fields = docSchem.getElementsByTagName("field"); // Get
-																					// the
-																					// "field"
-																					// Nodes
+														// ==> retrieve the
+														// fields list
 
-					try {
-						// Get the list of fields in the standard schema.xml
-						// file
-						for (int i = 0; i < fields.getLength(); i++) {
-							final JSONObject json = new JSONObject();
-							final Element elem = (Element) fields.item(i); // Get
-																			// a
-																			// field
-																			// node
-							final NamedNodeMap map = elem.getAttributes();
-							for (int j = 0; j < map.getLength(); j++) { // Get
-																		// its
-																		// attributes
-								json.append(map.item(j).getNodeName(), map.item(j).getNodeValue());
-							}
-							Superjson.append("field", json);
-						}
-					} catch (final JSONException e) {
-						LOGGER.error(
-								"Error while putting the parameters of a field into a JSON Object in FieldWeight doGet , make sure the schema.xml is valid. Error 69026",
-								e);
-						final PrintWriter out = response.getWriter();
+				try {
+					// Define the Solr hostname, port and protocol
+					final String solrserver = "localhost";
+					final String solrport = "8983";
+					final String protocol = "http";
+
+					// Use Solr Schema REST API to get the list of fields
+					final HttpClient httpClient = HttpClientBuilder.create().build();
+					final HttpHost httpHost = new HttpHost(solrserver, Integer.parseInt(solrport), protocol);
+					final HttpGet httpGet = new HttpGet("/solr/FileShare/schema/fields");
+					final HttpResponse httpResponse = httpClient.execute(httpHost, httpGet);
+
+					// Construct the jsonResponse
+					final JSONObject jsonResponse = new JSONObject();
+					if (httpResponse.getStatusLine().getStatusCode() == 200) {
+						// Status of the API response is OK
+						final JSONObject json = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
+						final JSONArray fieldsJson = json.getJSONArray("fields");
+						jsonResponse.put("field", fieldsJson);
+
+						response.getWriter().write(jsonResponse.toString()); // Answer
+						// to
+						// the
+						// request
+						response.setStatus(200);
+						response.setContentType("text/json;charset=UTF-8");
+					} else {
+						// Status of the API response is an error
+						LOGGER.error("Error while retrieving the fields from the Schema API of Solr: "
+								+ httpResponse.getStatusLine().toString());
 						out.append(
-								"Error while retrieving the fields from the schema.xml, please retry, if the problem persists contact your system administrator. Error Code : 69026");
-						out.close();
-						return;
+								"Error while retrieving the fields from the Schema API of Solr, please retry, if the problem persists contact your system administrator. Error Code : 69026");
 					}
-					response.getWriter().write(Superjson.toString()); // Answer
-																		// to
-																		// the
-																		// request
-					response.setStatus(200);
-					response.setContentType("text/json;charset=UTF-8");
-				} catch (SAXException | ParserConfigurationException e) {
-					LOGGER.error(
-							"Error while parsing the schema.xml, in FieldWeight doGet, make sure the file is valid. Error 69027",
-							e);
-					final PrintWriter out = response.getWriter();
-					out.append(
-							"Error while parsing the schema.xml, please retry, if the problem persists contact your system administrator. Error Code : 69027");
 					out.close();
-					return;
+				} catch (final IOException e) {
+					LOGGER.error("Error while retrieving the fields from the Schema API of Solr", e);
+					out.append(
+							"Error while retrieving the fields from the Schema API of Solr, please retry, if the problem persists contact your system administrator. Error Code : 69026");
+					out.close();
 				}
+
 			} else { // If the weight of a field has been requested
+
 				try {
 					final String type = request.getParameter("type");
 					if (type.equals("pf")) { // Select a semaphore according to
@@ -266,7 +242,6 @@ public class FieldWeight extends HttpServlet {
 						} else { // If the selected Semaphore is already
 									// acquired
 									// return "File already in use"
-							final PrintWriter out = response.getWriter();
 							out.append("File already in use");
 							out.close();
 							return;
@@ -275,7 +250,6 @@ public class FieldWeight extends HttpServlet {
 						if (semaphoreConfigQf.availablePermits() > 0) {
 							semaphoreConfigQf.acquire();
 						} else {
-							final PrintWriter out = response.getWriter();
 							out.append("File already in use");
 							out.close();
 							return;
@@ -355,7 +329,6 @@ public class FieldWeight extends HttpServlet {
 					} else {
 						LOGGER.error(
 								"No searchHandler found either in solrconfig.xml or in custom_search_handler.xml ! Make sure your files are valid. Error 69028");
-						final PrintWriter out = response.getWriter();
 						out.append(
 								"Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69028");
 						out.close();
@@ -365,7 +338,6 @@ public class FieldWeight extends HttpServlet {
 					LOGGER.error(
 							"Error while parsing the solrconfig.xml, in FieldWeight doGet, make sure the file is valid. Error 69028",
 							e);
-					final PrintWriter out = response.getWriter();
 					out.append(
 							"Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69028");
 					out.close();
@@ -375,7 +347,6 @@ public class FieldWeight extends HttpServlet {
 				}
 			}
 		} catch (final Exception e) {
-			final PrintWriter out = response.getWriter();
 			out.append(
 					"Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69510");
 			out.close();
@@ -408,6 +379,8 @@ public class FieldWeight extends HttpServlet {
 										// handler so try to find it
 										// in the solrconfig.xml
 										// file
+			// Not using custom
+			usingCustom = false;
 			doc = dBuilder.parse(config);// Parse the solrconfig.xml
 											// document
 			final NodeList fields = (doc.getElementsByTagName("requestHandler"));// Get

@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.francelabs.datafari.servlets;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
@@ -27,28 +26,18 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
-import org.json.JSONException;
+import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import com.francelabs.datafari.utils.AdvancedSearchConfiguration;
-import com.francelabs.datafari.utils.Environment;
-import com.francelabs.datafari.utils.ExecutionEnvironment;
 
 /**
  * Servlet implementation class GetFieldsInfo
@@ -67,28 +56,12 @@ import com.francelabs.datafari.utils.ExecutionEnvironment;
 public class GetFieldsInfo extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(GetFieldsInfo.class.getName());
-	private final String env;
-	private File schema = null;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
 	public GetFieldsInfo() {
-		String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
 
-		if (environnement == null) { // If in development environment
-			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
-		}
-		env = environnement + File.separator + "solr" + File.separator + "solrcloud" + File.separator + "FileShare"
-				+ File.separator + "conf";
-
-		if (new File(env + File.separator + "schema.xml").exists()) { // Check
-			// if
-			// the
-			// files
-			// exists
-			schema = new File(env + File.separator + "schema.xml");
-		}
 	}
 
 	/**
@@ -100,119 +73,67 @@ public class GetFieldsInfo extends HttpServlet {
 			throws ServletException, IOException {
 		request.setCharacterEncoding("utf8");
 		response.setContentType("application/json");
+		final PrintWriter out = response.getWriter();
 
-		final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		try {
-			final JSONObject Superjson = new JSONObject();
-			final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			final Document docSchem = dBuilder.parse(schema); // Parse
-																// the
-																// schema
+			// Define the Solr hostname, port and protocol
+			final String solrserver = "localhost";
+			final String solrport = "8983";
+			final String protocol = "http";
 
-			// If a fieldname has been provided, it means that this servlet only
-			// needs to return infos on this specific field
-			if (request.getParameter("fieldName") != null) {
-				final String fieldName = request.getParameter("fieldName");
-				final XPathFactory xPathfactory = XPathFactory.newInstance();
-				final XPath xpath = xPathfactory.newXPath();
-				XPathExpression expr;
+			// Use Solr Schema REST API to get the list of fields
+			final HttpClient httpClient = HttpClientBuilder.create().build();
+			final HttpHost httpHost = new HttpHost(solrserver, Integer.parseInt(solrport), protocol);
+			final HttpGet httpGet = new HttpGet("/solr/FileShare/schema/fields");
+			final HttpResponse httpResponse = httpClient.execute(httpHost, httpGet);
 
-				// search for the provided field with Xpath
-				expr = xpath.compile("//field[@name=\"" + fieldName + "\"]");
-				final Node fieldNode = (Node) expr.evaluate(docSchem, XPathConstants.NODE);
-				if (fieldNode != null) {
-					// Field has been found, transform it into a json and return
-					// it
-					final JSONObject json = new JSONObject();
-					final Element elem = (Element) fieldNode; // Get
-					// a
-					// field
-					// node
-					final NamedNodeMap map = elem.getAttributes();
-					for (int j = 0; j < map.getLength(); j++) { // Get
-						// its
-						// attributes
-						json.append(map.item(j).getNodeName(), map.item(j).getNodeValue());
-					}
-					if (json != null) {
-						Superjson.append("field", json);
-					}
-				}
-				final PrintWriter out = response.getWriter();
-				out.print(Superjson);
-
-			} else { // otherwise return the list of all fields found in the
-						// schema.xml file
-
-				// Load the list of denied fields
-				final String strDeniedFieldsList = AdvancedSearchConfiguration.getInstance()
-						.getProperty(AdvancedSearchConfiguration.DENIED_FIELD_LIST);
-				final Set<String> deniedFieldsSet = new HashSet<>(Arrays.asList(strDeniedFieldsList.split(",")));
-
-				final NodeList fields = docSchem.getElementsByTagName("field"); // Get
-																				// the
-																				// "field"
-																				// Nodes
-
-				try {
-					// Get the list of fields in the standard schema.xml
-					// file
-					for (int i = 0; i < fields.getLength(); i++) {
-						JSONObject json = new JSONObject();
-						final boolean notIndexed = false;
-						final Element elem = (Element) fields.item(i); // Get
-																		// a
-																		// field
-																		// node
-						final NamedNodeMap map = elem.getAttributes();
-						for (int j = 0; j < map.getLength(); j++) { // Get
-																	// its
-																	// attributes
-
-							// If the current field is in the denied list or is
-							// not indexed or its name starts with '_' or
-							// 'allow_' or 'deny_' then ignore it, otherwise add
-							// it to the super json
-							if ((map.item(j).getNodeName().equals("name")
-									&& deniedFieldsSet.contains(map.item(j).getNodeValue()))
-									|| ((map.item(j).getNodeName().equals("indexed")
-											&& map.item(j).getNodeValue().equals("false"))
-											|| (map.item(j).getNodeName().equals("name")
-													&& (map.item(j).getNodeValue().startsWith("_")
-															|| map.item(j).getNodeValue().startsWith("allow_")
-															|| map.item(j).getNodeValue().startsWith("deny_"))))) {
-								json = null;
-								break;
-							} else {
-								json.append(map.item(j).getNodeName(), map.item(j).getNodeValue());
-							}
+			// Construct the jsonResponse
+			final JSONObject jsonResponse = new JSONObject();
+			if (httpResponse.getStatusLine().getStatusCode() == 200) {
+				// Status of the API response is OK
+				final JSONObject json = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
+				final JSONArray fieldsJson = json.getJSONArray("fields");
+				for (int i = 0; i < fieldsJson.length(); i++) {
+					final JSONObject field = (JSONObject) fieldsJson.get(i);
+					// If a fieldname has been provided, it means that this
+					// servlet
+					// only
+					// needs to return infos on this specific field
+					if (request.getParameter("fieldName") != null) {
+						final String fieldName = request.getParameter("fieldName");
+						if (field.getString("name").equals(fieldName)) {
+							jsonResponse.append("field", field);
+							break;
 						}
-						if (json != null) {
-							Superjson.append("field", json);
+					} else {
+						// Load the list of denied fields
+						final String strDeniedFieldsList = AdvancedSearchConfiguration.getInstance()
+								.getProperty(AdvancedSearchConfiguration.DENIED_FIELD_LIST);
+						final Set<String> deniedFieldsSet = new HashSet<>(
+								Arrays.asList(strDeniedFieldsList.split(",")));
+						if (!deniedFieldsSet.contains(field.getString("name")) && field.getBoolean("indexed")
+								&& !field.getString("name").startsWith("allow_")
+								&& !field.getString("name").startsWith("deny_")
+								&& !field.getString("name").startsWith("_")) {
+							jsonResponse.append("field", field);
 						}
 					}
-					final PrintWriter out = response.getWriter();
-					out.print(Superjson);
-				} catch (final JSONException e) {
-					logger.error(
-							"Error while putting the parameters of a field into a JSON Object in GetFieldsInfo doGet , make sure the schema.xml is valid. Error 69026",
-							e);
-					final PrintWriter out = response.getWriter();
-					out.append(
-							"Error while retrieving the fields from the schema.xml, please retry, if the problem persists contact your system administrator. Error Code : 69026");
-					out.close();
-					return;
 				}
+
+				out.print(jsonResponse);
+			} else {
+				// Status of the API response is an error
+				logger.error("Error while retrieving the fields from the Schema API of Solr: "
+						+ httpResponse.getStatusLine().toString());
+				out.append(
+						"Error while retrieving the fields from the Schema API of Solr, please retry, if the problem persists contact your system administrator. Error Code : 69026");
 			}
-		} catch (SAXException | ParserConfigurationException | XPathExpressionException e) {
-			logger.error(
-					"Error while parsing the schema.xml, in FieldWeight doGet, make sure the file is valid. Error 69027",
-					e);
-			final PrintWriter out = response.getWriter();
-			out.append(
-					"Error while parsing the schema.xml, please retry, if the problem persists contact your system administrator. Error Code : 69027");
 			out.close();
-			return;
+		} catch (final IOException e) {
+			logger.error("Error while retrieving the fields from the Schema API of Solr", e);
+			out.append(
+					"Error while retrieving the fields from the Schema API of Solr, please retry, if the problem persists contact your system administrator. Error Code : 69026");
+			out.close();
 		}
 
 	}
