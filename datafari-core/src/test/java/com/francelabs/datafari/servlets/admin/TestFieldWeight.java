@@ -45,25 +45,6 @@ public class TestFieldWeight {
         Mockito.when(Environment.getEnvironmentVariable("DATAFARI_HOME")).thenReturn(tempDirectory.toFile().getAbsolutePath());
 	}
 
-
-	@Test
-	public void TestFieldWeightGetFields() throws ServletException, IOException {
-		final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-		final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-
-		final StringWriter sw = new StringWriter();
-		final PrintWriter writer = new PrintWriter(sw);
-		Mockito.when(response.getWriter()).thenReturn(writer);
-
-		new FieldWeight().doGet(request, response);
-		writer.flush(); // it may not have been flushed yet...
-
-		final JSONObject jsonResponse = new JSONObject(sw.toString());
-		final JSONObject jsonExpected = new JSONObject(TestUtils.readResource("/fieldWeightTests/out/getFields.json"));
-
-		 JSONAssert.assertEquals(jsonResponse,jsonExpected, true);
-	}
-
 	@Test
 	public void TestFieldWeightGetWeightOneWord() throws ServletException, IOException {
 		final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
