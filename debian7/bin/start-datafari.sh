@@ -52,6 +52,10 @@ then
 	cd $ELASTICSEARCH_HOME/bin
 	sudo -E su datafari -p -c "bash elasticsearch -p $ELASTICSEARCH_PID_FILE" &
 	sleep 15
+	
+	#Test if Elasticsearch is up, if not then exit
+    curl -s --fail -XGET http://localhost:9200/ || { echo "Fail to reach Elasticsearch on localhost:9200"; echo "Please check your network connection and, in case a proxy is configured, that a proxy exception exists for 'localhost' and '127.0.0.1' !"; sudo -E su datafari -p -c "kill $(cat $ELASTICSEARCH_PID_FILE)"; exit 1; }   
+	
 	sudo -E su datafari -p -c "sed -i '/pid\.file/c\pid.file: ${KIBANA_PID_FILE}' $KIBANA_HOME/config/kibana.yml"
 	cd $KIBANA_HOME/bin
 	sudo -E su datafari -p -c "bash kibana" &
