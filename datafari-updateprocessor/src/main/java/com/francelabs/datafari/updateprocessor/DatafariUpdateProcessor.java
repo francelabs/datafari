@@ -48,19 +48,20 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 			doc.addField("id", id);
 		}
 
+		// Try to retrieve at the ignored_filelastmodified field to set it's
+		// value in the last_modified field
+		if (doc.getFieldValue("ignored_filelastmodified") != null) {
+			final Object last_modified = doc.getFieldValue("ignored_filelastmodified");
+			doc.remove("last_modified");
+			doc.addField("last_modified", last_modified);
+		}
+
 		// Sometimes Tika put several last_modified dates, so we keep the first
 		// one which is always the right one
 		if ((doc.getFieldValues("last_modified") != null) && (doc.getFieldValues("last_modified").size() > 1)) {
 			final Object last_modified = doc.getFieldValue("last_modified");
 			doc.remove("last_modified");
 			doc.addField("last_modified", last_modified);
-		}
-
-		// If the last_modified field is null, try to retrieve at least the
-		// ignored_filelastmodified field to set it's value in the last_modified
-		// field
-		if ((doc.getFieldValue("last_modified") == null) && (doc.getFieldValue("ignored_filelastmodified") != null)) {
-			doc.addField("last_modified", doc.getFieldValue("ignored_filelastmodified"));
 		}
 
 		final String url = (String) doc.getFieldValue("id");
