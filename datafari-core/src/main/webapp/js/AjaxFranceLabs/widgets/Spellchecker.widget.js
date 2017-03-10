@@ -53,7 +53,7 @@ AjaxFranceLabs.SpellcheckerWidget = AjaxFranceLabs.AbstractWidget
 				 * => show the spellchecker widget and perform a new query with
 				 * the corrected value
 				 */
-				if (data.spellcheck !== undefined
+				if (data.response.numFound == 0 && data.spellcheck !== undefined
 						&& data.spellcheck.suggestions.length > 0) {
 
 					$(self.elm).show();
@@ -87,6 +87,25 @@ AjaxFranceLabs.SpellcheckerWidget = AjaxFranceLabs.AbstractWidget
 					 */					
 					self.doSpellcheckerQuery(data.spellcheck.collations[1]);
 
+				} else if(data.spellcheck !== undefined
+						&& data.spellcheck.suggestions.length > 0) {
+					// Create suggestButton
+					var suggestButton = $("<span class='result'>" + data.spellcheck.collations[1] + "</span>");
+					suggestButton.click(function() {
+						$('.searchBar input[type=text]').val(data.spellcheck.collations[1]);
+						self.manager.makeRequest();
+					});
+					
+					// Create spellcheck span
+					var spellcheckSpan = $("<span class='spellcheckerResult'></span>");
+					spellcheckSpan.append(window.i18n.msgStore['spellcheckerProposal']);
+					spellcheckSpan.append(suggestButton);
+					
+					// Add spellcheck span to elm
+					$(self.elm).append(spellcheckSpan);
+					
+					// Display widget
+					$(self.elm).show();
 				} else {
 
 					// Last query is not the one corrected by spellchecker

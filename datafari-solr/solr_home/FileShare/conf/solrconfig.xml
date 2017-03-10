@@ -959,6 +959,7 @@
 			<str name="name">default</str>
 			<str name="field">spell</str>
 			<str name="classname">solr.DirectSolrSpellChecker</str>
+			<float name="thresholdTokenFrequency">.01</float>
 		</lst>
 	</searchComponent>
 
