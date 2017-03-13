@@ -10,8 +10,8 @@ Description: SOLRCLOUD - Is this the main node?
 
 Template: datafari/node_host
 Type: string
-Default: localhost
-Description: SOLRCLOUD - Specify the current node hostname:
+Default: 127.0.0.1
+Description: Specify the current host address:
 
 Template: datafari/main_node_host
 Type: string

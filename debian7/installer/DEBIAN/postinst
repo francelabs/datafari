@@ -6,9 +6,14 @@
 
 #start script
 
-#db_input high datafari/node_host || true
-#db_go
-#db_get datafari/node_host
+db_input high datafari/node_host || true
+db_go
+db_get datafari/node_host
+currentnodehost=${RET}
+
+#change elk address
+sed -i -e "s/localhost/${currentnodehost}/g" /opt/datafari/tomcat/conf/elk.properties
+
 sed -i -e "s/@NODEHOST@/localhost/g" /opt/datafari/tomcat/conf/datafari.properties
 sed -i -e "s/@NODEHOST@/localhost/g" /opt/datafari/solr/bin/solr.in.sh
 sed -i -e "s/@SOLRHOSTS@/localhost:2181/g" /opt/datafari/solr/bin/solr.in.sh
