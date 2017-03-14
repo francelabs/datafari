@@ -92,7 +92,12 @@ public class StatsPusher {
 
 			final SolrDocument insertedSolrDoc = solrServer.getById(doc.getFieldValue("id").toString());
 
-			LOGGER.log(StatLevel.STAT, StatsUtils.createStatLog(insertedSolrDoc));
+			String username = "";
+			if (params.get("AuthenticatedUserName") != null) {
+				username = params.get("AuthenticatedUserName");
+			}
+
+			LOGGER.log(StatLevel.STAT, StatsUtils.createStatLog(insertedSolrDoc, username));
 
 		} catch (final Exception e) {
 			LOGGER.error("Cannot add doc for statistic component : " + e.getMessage(), e);
@@ -140,7 +145,8 @@ public class StatsPusher {
 			history += "///" + paramsMap.get("QTime");
 			history += "///";
 			if (paramsMap.get("start") != null && paramsMap.get("rows") != null) {
-				history += (int) (Double.parseDouble(paramsMap.get("start")) / Double.parseDouble(paramsMap.get("rows")) + 1);
+				history += (int) (Double.parseDouble(paramsMap.get("start")) / Double.parseDouble(paramsMap.get("rows"))
+						+ 1);
 			} else {
 				history += 1;
 			}
@@ -157,7 +163,12 @@ public class StatsPusher {
 
 			final SolrDocument insertedSolrDoc = solrServer.getById(doc.getFieldValue("id").toString());
 
-			LOGGER.log(StatLevel.STAT, StatsUtils.createStatLog(insertedSolrDoc));
+			String username = "";
+			if (params.get("AuthenticatedUserName") != null) {
+				username = params.get("AuthenticatedUserName");
+			}
+
+			LOGGER.log(StatLevel.STAT, StatsUtils.createStatLog(insertedSolrDoc, username));
 
 		} catch (final Exception e) {
 			LOGGER.error("Cannot add query for statistic component : " + e.getMessage(), e);
@@ -166,7 +177,8 @@ public class StatsPusher {
 
 	}
 
-	private static String normalizeParameterValue(final String param, String value) throws UnsupportedEncodingException {
+	private static String normalizeParameterValue(final String param, String value)
+			throws UnsupportedEncodingException {
 		value = URLDecoder.decode(value, "UTF-8");
 		value = value.replaceAll("\\{\\!tag=[^}]*\\}", "");
 		return value;

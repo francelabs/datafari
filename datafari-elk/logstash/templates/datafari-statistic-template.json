@@ -10,43 +10,47 @@
 	    "dynamic" : "false",
 	    "properties": {
 	       "QTime": {
-                  "type": "integer"
-               },
-               "clicked": {
-                  "type": "boolean"
-               },
-               "date": {
-                  "type": "date",
-                  "format": "date_time"
-               },
-               "history": {
-                  "type": "string",
-		  "index": "not_analyzed"
-               },
-               "id": {
-                  "type": "string",
-		  "index": "not_analyzed"
-               },
-               "noHits": {
-                  "type": "boolean"
-               },
-               "numClicks": {
-                  "type": "integer"
-               },
-               "numFound": {
-                  "type": "integer"
-               },
+           	  "type": "integer"
+           },
+           "clicked": {
+              "type": "boolean"
+           },
+           "date": {
+              "type": "date",
+              "format": "date_time"
+           },
+           "history": {
+              "type": "string",
+		  	  "index": "not_analyzed"
+           },
+           "id": {
+              "type": "string",
+	  		  "index": "not_analyzed"
+           },
+           "noHits": {
+              "type": "boolean"
+           },
+           "numClicks": {
+              "type": "integer"
+           },
+           "numFound": {
+              "type": "integer"
+           },
 	       "positionClickTot": {
-                  "type": "integer"
-               },
-               "query": {
-                  "type": "string"
-               },
+              "type": "integer"
+           },
+           "query": {
+              "type": "string"
+           },
 	       "url": {
-                  "type": "string",
-		  "index": "not_analyzed"
-               }
+              "type": "string",
+		  	  "index": "not_analyzed"
+           },
+	       "username": {
+              "type": "string",
+		  	  "index": "not_analyzed"
+           }
 	    }
-   	}
+   	  }
    }
 }

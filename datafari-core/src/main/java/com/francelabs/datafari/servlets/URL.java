@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -34,11 +36,8 @@ import org.apache.commons.lang3.SystemUtils;
 import org.apache.solr.common.params.ModifiableSolrParams;
 
 import com.francelabs.datafari.statistics.StatsPusher;
+import com.francelabs.datafari.utils.RealmLdapConfiguration;
 import com.francelabs.datafari.utils.ScriptConfiguration;
-
-
-
-
 
 /**
  * Servlet implementation class URL
@@ -48,7 +47,6 @@ public class URL extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	private static final String redirectUrl = "/url.jsp";
-
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -62,73 +60,105 @@ public class URL extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
-		
+	@Override
+	protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
+			throws ServletException, IOException {
+
 		request.setCharacterEncoding("UTF-8");
-		
-		
-		ModifiableSolrParams params = new ModifiableSolrParams(
-				request.getParameterMap());
+
+		final Map<String, String[]> requestMap = new HashMap<>();
+		requestMap.putAll(request.getParameterMap());
+		final ModifiableSolrParams params = new ModifiableSolrParams(requestMap);
+		// get the AD domain
+		String domain = "";
+		HashMap<String, String> h;
+		try {
+			h = RealmLdapConfiguration.getConfig(request);
+
+			if (h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME) != null) {
+				final String userBase = h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME).toLowerCase();
+				final String[] parts = userBase.split(",");
+				domain = "";
+				for (int i = 0; i < parts.length; i++) {
+					if (parts[i].indexOf("dc=") != -1) { // Check if the current
+															// part is a domain
+															// component
+						if (!domain.isEmpty()) {
+							domain += ".";
+						}
+						domain += parts[i].substring(parts[i].indexOf('=') + 1);
+					}
+				}
+			}
+
+			// Add authentication
+			if (request.getUserPrincipal() != null) {
+				String AuthenticatedUserName = request.getUserPrincipal().getName().replaceAll("[^\\\\]*\\\\", "");
+				if (AuthenticatedUserName.contains("@")) {
+					AuthenticatedUserName = AuthenticatedUserName.substring(0, AuthenticatedUserName.indexOf("@"));
+				}
+				if (!domain.equals("")) {
+					AuthenticatedUserName += "@" + domain;
+				}
+				params.set("AuthenticatedUserName", AuthenticatedUserName);
+			}
+		} catch (final Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		StatsPusher.pushDocument(params);
-		
-		//String surl = URLDecoder.decode(request.getParameter("url"), "ISO-8859-1");
-		String surl = request.getParameter("url");
-		
 
-		if ((ScriptConfiguration.getProperty("ALLOWLOCALFILEREADING").equals("true")) && !(surl.startsWith("file://///"))) {
+		// String surl = URLDecoder.decode(request.getParameter("url"),
+		// "ISO-8859-1");
+		final String surl = request.getParameter("url");
 
-			int BUFSIZE = 4096;
-			String fileName = null ;
-			
-			
-			
-			/** File Display/Download -->
-		    <!-- Written by Rick Garcia -->
+		if (ScriptConfiguration.getProperty("ALLOWLOCALFILEREADING").equals("true") && !surl.startsWith("file://///")) {
+
+			final int BUFSIZE = 4096;
+			String fileName = null;
+
+			/**
+			 * File Display/Download --> <!-- Written by Rick Garcia -->
 			 */
 			if (SystemUtils.IS_OS_LINUX) {
-			// try to open the file locally
-			String fileNameA[] = surl.split(":");
-			fileName= URLDecoder.decode(fileNameA[1], "UTF-8");
-			
-			}
-			else if (SystemUtils.IS_OS_WINDOWS){
+				// try to open the file locally
+				final String fileNameA[] = surl.split(":");
+				fileName = URLDecoder.decode(fileNameA[1], "UTF-8");
+
+			} else if (SystemUtils.IS_OS_WINDOWS) {
 				fileName = URLDecoder.decode(surl, "UTF-8").replaceFirst("file:/", "");
 			}
-			
-			
 
-			File file = new File(fileName);
-			int length   = 0;
-			ServletOutputStream outStream = response.getOutputStream();
-			ServletContext context  = getServletConfig().getServletContext();
+			final File file = new File(fileName);
+			int length = 0;
+			final ServletOutputStream outStream = response.getOutputStream();
+			final ServletContext context = getServletConfig().getServletContext();
 			String mimetype = context.getMimeType(fileName);
 
 			// sets response content type
 			if (mimetype == null) {
 				mimetype = "application/octet-stream";
-				
+
 			}
 			response.setContentType(mimetype);
-			response.setContentLength((int)file.length());
+			response.setContentLength((int) file.length());
 
 			// sets HTTP header
 			response.setHeader("Content-Disposition", "inline; fileName=\"" + fileName + "\"");
 
-			byte[] byteBuffer = new byte[BUFSIZE];
-			DataInputStream in = new DataInputStream(new FileInputStream(file));
+			final byte[] byteBuffer = new byte[BUFSIZE];
+			final DataInputStream in = new DataInputStream(new FileInputStream(file));
 
 			// reads the file's bytes and writes them to the response stream
-			while ((in != null) && ((length = in.read(byteBuffer)) != -1))
-			{
-				outStream.write(byteBuffer,0,length);
+			while (in != null && (length = in.read(byteBuffer)) != -1) {
+				outStream.write(byteBuffer, 0, length);
 			}
 
 			in.close();
 			outStream.close();
 		} else {
 
-			RequestDispatcher rd = request.getRequestDispatcher(redirectUrl);
+			final RequestDispatcher rd = request.getRequestDispatcher(redirectUrl);
 			rd.forward(request, response);
 		}
 	}
