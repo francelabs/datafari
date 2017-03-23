@@ -103,24 +103,32 @@ then
 	sudo -E su datafari -p -c "bash initialize.sh"
 	
 	echo "Checking if Cassandra is up and running ..."
-        # Try to connect on Cassandra's JMX port 7199 and CQLSH port 9042
-        cassandra_status=1
-        retries=1
+	# Try to connect on Cassandra's JMX port 7199 and CQLSH port 9042
+        cassandra_status=0
+	retries=1
+
+	exec 6<>/dev/tcp/127.0.0.1/7199 || cassandra_status=1
+	exec 6>&- # close output connection
+	exec 6<&- # close input connection
+
+	exec 6<>/dev/tcp/127.0.0.1/9042 || cassandra_status=1
+	exec 6>&- # close output connection
+	exec 6<&- # close input connection
         while (( retries < 10 && cassandra_status != 0 )); do
                 echo "Cassandra doesn't reply to requests on ports 7199 and/or 9042. Sleeping for a while and trying again... retry ${retries}"
-                cassandracheck=`sudo -E su datafari -p -c "lsof -Pi :7199 -sTCP:LISTEN -t"`
-                cassandracheck2=`sudo -E su datafari -p -c "lsof -Pi :9042 -sTCP:LISTEN -t"`
+                
+                cassandra_status=0
+                
                 # Sleep for a while
                 sleep 5s
+                
+                exec 6<>/dev/tcp/127.0.0.1/7199 || cassandra_status=1
+		exec 6>&- # close output connection
+		exec 6<&- # close input connection
 
-                # Try again to connect to Cassandra
-                echo "Checking if Cassandra is up and running ..."
-                if [ ! -z "$cassandracheck" ] && [ ! -z "$cassandracheck2" ];
-                then
-                        cassandra_status=0
-                else
-                        cassandra_status=-1
-                fi
+		exec 6<>/dev/tcp/127.0.0.1/9042 || cassandra_status=1
+		exec 6>&- # close output connection
+		exec 6<&- # close input connection
 
                 ((retries++))
         done
