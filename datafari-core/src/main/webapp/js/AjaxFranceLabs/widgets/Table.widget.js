@@ -117,12 +117,18 @@ AjaxFranceLabs.TableWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 					elm.find('ul li:last label').append('<div class="filterFacetCheck"></div>').append('<div class="filterFacetLabel"></div>');
 					elm.find('ul li:last .filterFacetCheck').append('<input type="checkbox" value="' + data[i].name + '"/>');
 					elm.find('ul li:last .filterFacetCheck input').attr('id', self.id + "-" + data[i].name);
-					if (this.manager.store.find('fq', new RegExp(self.field + ':' + AjaxFranceLabs.Parameter.escapeValue(data[i].name.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&").replace(/\\/g,"\\\\")) + '[ )]')))
+					if(self.selectionType != 'OR' && this.manager.store.find('fq', self.field + ':' + AjaxFranceLabs.Parameter.escapeValue(data[i].name))) {
 						elm.find('ul li:last .filterFacetCheck input').attr('checked', 'checked').parents('li').addClass('selected');
+					} else if (this.manager.store.find('fq', new RegExp(self.field + ':' + AjaxFranceLabs.Parameter.escapeValue(data[i].name.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&").replace(/\\/g,"\\\\")) + '[ )]'))) {
+						elm.find('ul li:last .filterFacetCheck input').attr('checked', 'checked').parents('li').addClass('selected');
+					}
 					elm.find('ul li:last .filterFacetCheck input').change(function() {
 						if ($(this).attr('checked') == 'checked') {
-							if(self.selectionType === 'ONE' && elm.find('ul li .filterFacetCheck input:checked').not(this).length)
-								self.remove(elm.find('ul li .filterFacetCheck input:checked').not(this).val());
+							if(self.selectionType === 'ONE') {
+								elm.find('ul li .filterFacetCheck input:checked').not(this).each(function() {
+									self.remove($(this).val());
+								});
+							}
 							self.clickHandler();
 							self.selectHandler($(this).val().replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"));
 						} else {

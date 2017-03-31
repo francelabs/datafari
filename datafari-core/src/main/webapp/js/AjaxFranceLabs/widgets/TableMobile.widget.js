@@ -125,14 +125,18 @@ AjaxFranceLabs.TableMobileWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 				
 				elm.find('ul li:last label').append('<div class="filterFacetCheck"></div>').append('<div class="filterFacetLabel"></div>');
 				elm.find('ul li:last .filterFacetCheck').append('<input type="checkbox" value="' + data[i].name + '"/>');
-				elm.find('ul li:last .filterFacetCheck input').attr('id',data[i].name);
-				if (this.manager.store.find('fq', new RegExp(self.field + ':' + AjaxFranceLabs.Parameter.escapeValue(data[i].name.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&").replace(/\\/g,"\\\\")) + '[ )]'))){
+				elm.find('ul li:last .filterFacetCheck input').attr('id', "mobile-" + self.id + "-" + data[i].name);
+				if(self.selectionType != 'OR' && this.manager.store.find('fq', self.field + ':' + AjaxFranceLabs.Parameter.escapeValue(data[i].name))) {
+					elm.find('ul li:last .filterFacetCheck input').attr('checked', 'checked').parents('li').addClass('selected');
+				} else if (this.manager.store.find('fq', new RegExp(self.field + ':' + AjaxFranceLabs.Parameter.escapeValue(data[i].name.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&").replace(/\\/g,"\\\\")) + '[ )]'))){
 					elm.find('ul li:last .filterFacetCheck input').attr('checked', 'checked').parents('li').addClass('selected');
 				}
 				elm.find('ul li:last .filterFacetCheck input').change(function() {
 					if ($(this).attr('checked') == 'checked') {
-						if(self.selectionType === 'ONE' && elm.find('ul li .filterFacetCheck input:checked').not(this).length){
-							self.remove(elm.find('ul li .filterFacetCheck input:checked').not(this).val());	
+						if(self.selectionType === 'ONE') {
+							elm.find('ul li .filterFacetCheck input:checked').not(this).each(function() {
+								self.remove($(this).val());
+							});
 						}
 						self.clickHandler();
 						self.selectHandler($(this).val().replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"));
@@ -143,9 +147,9 @@ AjaxFranceLabs.TableMobileWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 				});
 				elm.find('ul li:last .filterFacetCheck').append('<label></label>');
 				if (elm.find('ul li:last .filterFacetCheck input').attr('checked')== 'checked' )
-					elm.find('ul li:last .filterFacetCheck label').attr('for', data[i].name).append('<span class="checkboxIcon fa fa-check-square-o">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(data[i].name, 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + data[i].nb + '</span>)</span>');
+					elm.find('ul li:last .filterFacetCheck label').attr('for', "mobile-" + self.id + "-" + data[i].name).append('<span class="checkboxIcon fa fa-check-square-o">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(data[i].name, 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + data[i].nb + '</span>)</span>');
 				else 
-					elm.find('ul li:last .filterFacetCheck label').attr('for', data[i].name).append('<span class="checkboxIcon fa fa-square-o">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(data[i].name, 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + data[i].nb + '</span>)</span>');
+					elm.find('ul li:last .filterFacetCheck label').attr('for', "mobile-" + self.id + "-" + data[i].name).append('<span class="checkboxIcon fa fa-square-o">&nbsp;</span>'+'<span class="filterFacetLinkValue">'+AjaxFranceLabs.tinyString(data[i].name, 19)+'</span>').append('&nbsp;<span class="filterFacetLinkCount">(<span>' + data[i].nb + '</span>)</span>');
 				}
 			}
 			if (this.pagination) {
