@@ -41,3 +41,10 @@ CREATE TABLE role (
   role varchar,
   PRIMARY KEY (username, role )
 );
+
+CREATE TABLE ranking (
+  request varchar,
+  document_id varchar,
+  ranking int,
+  PRIMARY KEY (request, document_id)
+);

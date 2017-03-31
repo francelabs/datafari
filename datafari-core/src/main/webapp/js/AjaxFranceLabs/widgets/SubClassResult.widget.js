@@ -12,10 +12,10 @@ AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
 
 
 							// Initialize the queryElevator module if possible (if not, that means that the user is not an administrator and is not allowed to use it)
-							if (typeof AjaxFranceLabs.QueryElevatorModule === 'function') {
-								this.queryElevator = new AjaxFranceLabs.QueryElevatorModule();
-								this.queryElevator.setParentWidget(this);
-								this.manager.addModule(this.queryElevator);
+							if (typeof AjaxFranceLabs.QueryEvaluatorModule === 'function') {
+								this.queryEvaluator = new AjaxFranceLabs.QueryEvaluatorModule();
+								this.queryEvaluator.setParentWidget(this);
+								this.manager.addModule(this.queryEvaluator);
 							}
 						},
 						
@@ -86,11 +86,42 @@ AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
 														elm.find('.doc:last .address').append('<span>' + AjaxFranceLabs.tinyUrl(decodeURIComponent(url)) + '</span>');
 														
 														// Add the elevator links if the user is allowed
-														if (typeof self.queryElevator !== 'undefined') {
-															self.queryElevator.addElevatorLinks(elm.find('.doc:last .res'), doc.id);
+														if (typeof self.queryEvaluator !== 'undefined') {
+															self.queryEvaluator.addEvaluatorLinks(elm.find('.doc:last .res'), doc.id);
 														}
 												}
 												});
+								if (typeof self.queryEvaluator !== 'undefined') {
+									$.get("./SearchExpert/queryEvaluator", {
+										"query" : self.manager.store.params.q.value,
+										"docids" : data.response.docs.map(function(doc) {
+											  return doc.id;
+										})
+									}, function(data) {
+										if (data.code == 0) {
+											$.each(data.docs,
+													function(docID, rank) {
+												var elem = $(document.getElementById(docID));
+
+														if (rank == 1){
+															elem.find(".evaluator-up-unclicked").show();
+															elem.find(".evaluator-up-clicked").hide();
+															elem.find(".evaluator-down-unclicked").hide();
+															elem.find(".evaluator-down-clicked").show();
+															
+														} else {
+															if (rank == 10){
+
+																elem.find(".evaluator-up-unclicked").hide();
+																elem.find(".evaluator-up-clicked").show();
+																elem.find(".evaluator-down-unclicked").show();
+																elem.find(".evaluator-down-clicked").hide();
+																
+															}
+														}
+											});
+										}});
+								}
 								
 								AjaxFranceLabs.addMultiElementClasses(elm
 										.find('.doc'));

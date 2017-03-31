@@ -1,0 +1,35 @@
+.evaluator-up-clicked {
+	float: right;
+	cursor: pointer;
+	background-image: url(../../images/icons/evaluator-up-clicked-32x32.png);
+	width: 16px;
+	height: 16px;
+  	background-size: 16px;
+}
+
+.evaluator-down-clicked {
+	float: right;
+	cursor: pointer;
+	background-image: url(../../images/icons/evaluator-down-clicked-32x32.png);
+	width: 16px;
+	height: 16px;
+  	background-size: 16px;
+}
+
+.evaluator-up-unclicked {
+	float: right;
+	cursor: pointer;
+	background-image: url(../../images/icons/evaluator-up-unclicked-32x32.png);
+	width: 16px;
+	height: 16px;
+  	background-size: 16px;
+}
+
+.evaluator-down-unclicked {
+	float: right;
+	cursor: pointer;
+	background-image: url(../../images/icons/evaluator-down-unclicked-32x32.png);
+	width: 16px;
+	height: 16px;
+  	background-size: 16px;
+}
