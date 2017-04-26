@@ -36,8 +36,7 @@ $(function($) {
 	elm.find('#queryElevator-AdminUI').html(window.i18n.msgStore['adminUI-QueryElevator']);
 	elm.find('#promoLinks-AdminUI').html(window.i18n.msgStore['adminUI-PromoLinks']);
 	elm.find('#synonyms-AdminUI').html(window.i18n.msgStore['adminUI-Synonyms']);
-	// Commented in JSP page 
-	//elm.find('#stopwords-AdminUI').html(window.i18n.msgStore['adminUI-Stopwords']);
+	elm.find('#stopwords-AdminUI').html(window.i18n.msgStore['adminUI-Stopwords']);
 	elm.find('#fieldWeight-AdminUI').html(window.i18n.msgStore['adminUI-FieldWeight']);
 	elm.find('#facetConfig-AdminUI').html(window.i18n.msgStore['adminUI-FacetConfig']);
 	elm.find('#deduplication-AdminUI').html(window.i18n.msgStore['adminUI-Deduplication']);
