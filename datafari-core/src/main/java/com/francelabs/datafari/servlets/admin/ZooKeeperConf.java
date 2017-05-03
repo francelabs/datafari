@@ -74,14 +74,20 @@ public class ZooKeeperConf extends HttpServlet {
 				ZKUtils.configZK("uploadconfigzk.sh", confname);
 			} else if (actionParam.toLowerCase().equals("reload")) {
 				ZKUtils.configZK("reloadCollections.sh", confname);
+			} else if (actionParam.toLowerCase().equals("upload_and_reload")) {
+				ZKUtils.configZK("uploadconfigzk.sh", confname);
+				Thread.sleep(3000);
+				ZKUtils.configZK("reloadCollections.sh", confname);
 			}
 
 			jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 		} catch (final IOException e) {
 			LOGGER.error("Exception during action " + actionParam, e);
 			jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
 		final PrintWriter out = response.getWriter();
 		out.print(jsonResponse);
 	}
