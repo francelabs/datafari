@@ -8,7 +8,6 @@ $(function($) {
 	
 	// Set the language parameter for search page
 	elm.find('#datafariSearchUiLink').prop('href', "/Datafari/Search?lang=" + window.i18n.language);
-	
 	elm.find('#datafariSearchUiLink').html(window.i18n.msgStore['adminUI-SearchPage']);
 	elm.find('#welcomeAdminUiMsg').html(window.i18n.msgStore['adminUI-Welcome']);
 	elm.find('#logout-AdminUI').html(window.i18n.msgStore['logoutAdminUiLink']);
@@ -17,6 +16,7 @@ $(function($) {
 	elm.find('#favorites-AdminUI').html(window.i18n.msgStore['adminUI-Favorites']);
 	elm.find('#connectors-AdminUI').html(window.i18n.msgStore['adminUI-Connectors']);
 	elm.find('#MCFAdmin-AdminUI').html(window.i18n.msgStore['adminUI-Connectors-Admin']);
+	elm.find('#MCFPassword-AdminUI').html(window.i18n.msgStore['MCFPassword-AdminUI']);
 	elm.find('#MCFBackupRestore-AdminUI').html(window.i18n.msgStore['adminUI-Connectors-BackupRestore']);
 	elm.find('#statistics-AdminUI').html(window.i18n.msgStore['adminUI-Statistics']);
 	elm.find('#onDemandStatistics-AdminUI').html(window.i18n.msgStore['adminUI-OnDemandStats']);

@@ -185,6 +185,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 							<a href="../ajax/manifoldcf.html" class="ajax-link" id="MCFAdmin-AdminUI"></a>
 						</li>
 						<li id="MCFBackupRestore"><a id="MCFBackupRestore-AdminUI" class="ajax-link" href="../ajax/mcfBackupRestore.html"></a></li>
+						<li id="MCFChangePassword" ><a id="MCFPassword-AdminUI" class="ajax-link" href="../ajax/MCFChangePassword.html"></a></li>
 					</ul>
 				</li>
 
