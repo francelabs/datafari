@@ -35,7 +35,10 @@ AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
 								$.each(data.response.docs,
 												function(i, doc) {
 													if (doc.url != undefined){
-										                var url = doc.url.replace("localhost",window.location.hostname); 
+										                if(doc.url instanceof Array) {
+													doc.url = doc.url[0];
+												}
+												var url = doc.url.replace("localhost",window.location.hostname); 
 										                var positionString = Manager.store.get("start").value;
 										                var position = 1;
 										                
