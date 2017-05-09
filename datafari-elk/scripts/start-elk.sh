@@ -27,9 +27,11 @@ sed -i "/francelabs\/datafari-stats.log/c\	path => \"${DATAFARI_HOME}/logs/dataf
 sed -i "/francelabs\/datafari-monitoring.log/c\	path => \"${DATAFARI_HOME}/logs/datafari-monitoring.log\"" $LOGSTASH_HOME/logstash-datafari.conf
 sed -i "/francelabs\/datafari.log/c\	path => \"${DATAFARI_HOME}/logs/datafari.log\"" $LOGSTASH_HOME/logstash-datafari.conf
 sed -i "/francelabs\/datafari-manifold.log/c\	path => \"${DATAFARI_HOME}/logs/datafari-manifold.log\"" $LOGSTASH_HOME/logstash-datafari.conf
-sed -i "/francelabs\/tomcat.log/c\	path => \"${DATAFARI_HOME}/logs/tomcat.log\"" $LOGSTASH_HOME/logstash-datafari.conf
-sed -i "/francelabs\/manifoldcf.log/c\	path => \"${DATAFARI_HOME}/logs/manifoldcf.log\"" $LOGSTASH_HOME/logstash-datafari.conf
-sed -i "/francelabs\/elasticsearch.log/c\	path => \"${DATAFARI_HOME}/elk/elasticsearch/logs/elasticsearch.log\"" $LOGSTASH_HOME/logstash-datafari.conf
+sed -i "/francelabs\/tomcat.log/c\	path => \"${DATAFARI_HOME}/logs/tomcat.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
+sed -i "/francelabs\/manifoldcf.log/c\	path => \"${DATAFARI_HOME}/logs/manifoldcf.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
+sed -i "/francelabs\/elasticsearch.log/c\	path => \"${DATAFARI_HOME}/elk/elasticsearch/logs/elasticsearch.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
+sed -i "/francelabs\/solr.log/c\	path => \"${DATAFARI_HOME}/logs/solr.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
+sed -i "/francelabs\/zookeeper.log/c\	path => \"${DATAFARI_HOME}/logs/zookeeper.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
 cd $LOGSTASH_HOME
 bash bin/logstash agent -f $LOGSTASH_HOME/logstash-datafari.conf &
 # Must sleep 1 sec to be sure to find logstash's PID
@@ -44,5 +46,8 @@ fi
 
 # Configure the right path for Kibana PID file
 sed -i "/pid\.file/c\pid.file: ${KIBANA_PID_FILE}" $KIBANA_HOME/config/kibana.yml
+# Uncomment to enable SSL
+#sed -i "/server\.crt/c\server.ssl.cert: ${DATAFARI_HOME}/ssl-keystore/datafari-cert.pem" $KIBANA_HOME/config/kibana.yml
+#sed -i "/server\.key/c\server.ssl.key: ${DATAFARI_HOME}/ssl-keystore/datafari-key.pem" $KIBANA_HOME/config/kibana.yml
 cd $KIBANA_HOME/bin
 bash kibana
