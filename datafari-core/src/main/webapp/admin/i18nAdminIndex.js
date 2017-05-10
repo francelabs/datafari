@@ -37,6 +37,7 @@ $(function($) {
 	elm.find('#promoLinks-AdminUI').html(window.i18n.msgStore['adminUI-PromoLinks']);
 	elm.find('#synonyms-AdminUI').html(window.i18n.msgStore['adminUI-Synonyms']);
 	elm.find('#stopwords-AdminUI').html(window.i18n.msgStore['adminUI-Stopwords']);
+	elm.find('#protwords-AdminUI').html(window.i18n.msgStore['adminUI-Protwords']);
 	elm.find('#fieldWeight-AdminUI').html(window.i18n.msgStore['adminUI-FieldWeight']);
 	elm.find('#facetConfig-AdminUI').html(window.i18n.msgStore['adminUI-FacetConfig']);
 	elm.find('#deduplication-AdminUI').html(window.i18n.msgStore['adminUI-Deduplication']);

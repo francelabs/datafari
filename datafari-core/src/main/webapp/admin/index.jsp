@@ -234,6 +234,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						<li id="PromoLink"><a id="promoLinks-AdminUI" class="ajax-link" href="../ajax/promoLinks.html"></a></li>
 						<li id="Synonyms" ><a id="synonyms-AdminUI" class="ajax-link" href="../ajax/Synonyms.html"></a></li>
 						<li id="Stopwords"><a id="stopwords-AdminUI" class="ajax-link" href="../ajax/StopWords.html"></a></li> 
+						<li id="Protwords"><a id="protwords-AdminUI" class="ajax-link" href="../ajax/ProtWords.html"></a></li> 
 						<li id="FieldWeight"><a id="fieldWeight-AdminUI" class="ajax-link" href="../ajax/FieldWeight.html"></a></li>
 						<li id="FacetConfig"><a id="facetConfig-AdminUI" class="ajax-link" href="../ajax/FacetConfig.html"></a></li>
 						<li id="Deduplication"><a id="deduplication-AdminUI" class="ajax-link" href="../ajax/config_deduplication.html"></a></li>
