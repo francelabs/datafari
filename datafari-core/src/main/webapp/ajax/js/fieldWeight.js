@@ -1,7 +1,5 @@
 //@ sourceURL=fieldWeight.js
 
-
-
 var list;
 $(document).ready(function() {
 	//Get the fields from the schema
@@ -19,6 +17,17 @@ $(document).ready(function() {
 	$("#submitqf").click(function(e){
 		e.preventDefault();
 	    setQF();
+	});
+	
+	$("#uprel").click(function(e){
+		e.preventDefault();
+		$.get("../SearchAdministrator/zookeeperConf?action=upload_and_reload",function(data){
+			if(data.code == 0) {
+				$("#answeruprel").text(window.i18n.msgStore['zkOK']);
+			} else {
+				$("#answeruprel").text(window.i18n.msgStore['zkDown']);
+			}
+		});
 	});
 	//If the user refresh the page  
 	$(window).bind('beforeunload', function(){  								
@@ -56,6 +65,7 @@ $(document).ready(function() {
 	document.getElementById("submitqf").innerHTML = window.i18n.msgStore['confirm'];
 	document.getElementById("pfname").innerHTML = window.i18n.msgStore['pf'];
 	document.getElementById("qfname").innerHTML = window.i18n.msgStore['qf'];
+	document.getElementById("uprel").innerHTML = window.i18n.msgStore['save-config'];
 });
 function getFields(){										//Get the fields from the schema.xml
 	 $.ajax({			//Ajax request to the doGet of the FieldWeight servlet
@@ -92,6 +102,10 @@ function selectPF(){
 	}
 	getValue("pf");
 }
+
+
+
+
 //Get the value of a field according to his type
 function getValue(type){
 	//Clean the response area
@@ -162,7 +176,7 @@ function setValue(type){
 		        		$('#submitqf').attr("disabled", true);
 		        		$('#weight'+type).attr("disabled", true);
 		        	}else{//print modif done and reset the value and disable the submit and input field
-		        		document.getElementById("answer"+type).innerHTML = window.i18n.msgStore['modifDone'];
+		        		document.getElementById("answer"+type).innerHTML = window.i18n.msgStore['modifDoneZK'];
 		        		document.getElementById("select"+type).value = "";
 		        		document.getElementById("weight"+type).value = "";
 		        		$('#weight'+type).attr("disabled", true);
