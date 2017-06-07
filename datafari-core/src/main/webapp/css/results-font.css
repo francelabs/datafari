@@ -1,8 +1,5 @@
 /* Ajout responsif */
 @media all and (max-width : 800px) {
-	#result_information {
-		font-weight: bold;
-	}
 
 	/**************************************/
 	/*******	>>> Widgets <<<		*******/
@@ -226,12 +223,6 @@
  * 
  */
 @media all and (min-width: 481px) {
-	#result_information, #sortMode {
-		font-weight: bold;
-	}
-	#sortMode {
-		font-size: 1.1em;
-	}
 
 	/**************************************/
 	/*******	>>> Widgets <<<		*******/

@@ -79,7 +79,6 @@
     animation-duration: 0.2s;
 }
 #solr { margin:0 auto; margin-bottom:3%;  width:100%;}
-#result_information { padding:0.6em 2%; padding-right:0px;height:16px; width : 98%;box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1), 0px 0px 1px rgba(0, 0, 0, 0.1);}
 #solr .col.left { display:inline-block; width:15%; margin-left:1em;min-width:250px; }
 #solr .col.right { position:relative; padding:0 10px; width:50%; float:left;margin-top: 0.5em; padding-left:2%; }
 
@@ -149,10 +148,6 @@
     .doc_list_pagination{
     margin-top:12px;
     }
-/**************************************/
-
-/***	>>> Search Bar Widget <<<	***/
-.searchInformationWidget { margin-bottom:10px; }
 /**************************************/
 
 /***	>>> Collection Widget <<<	***/
@@ -351,7 +346,6 @@ header{
 }
 	.spellcheckerWidget {background-color:white;}
 	.searchBarWidget #sortMode select{background:transparent;}
-	#result_information,#sortMode { font-weight:bold; }
 
 #sortMode{font-size:1.1em;}
 
@@ -432,7 +426,6 @@ header{
 #solr #sortMode{display:none;}
 
 #advancedSearchLink {
-	margin-top: 20px;
 	margin-left: 20px;
 }
 

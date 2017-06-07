@@ -18,11 +18,12 @@ AjaxFranceLabs.SearchInformationWidget = AjaxFranceLabs.AbstractWidget.extend({
 	//Variables
 
 	type : 'searchInformation',
+	detailedMode : false,
 
 	//Methods
 
 	buildWidget : function() {
-		$(this.elm).addClass('searchInformationWidget bc-color').addClass('widget').attr('widgetId', this.id).append('<span class="information" id="result_information_collectionName"></span>').append('<span class="information" id="result_information_numberOfResults"></span>').append('<span class="information" id="result_information_search"></span>').append('<span class="information" id="result_information_requestTime"></span>');
+		$(this.elm).addClass('searchInformationWidget').addClass('widget').attr('widgetId', this.id).append('<span class="information" id="result_information_collectionName"></span>').append('<span class="information" id="result_information_numberOfResults"></span>').append('<span class="information" id="result_information_search"></span>').append('<span class="information" id="result_information_requestTime"></span>');
 	},
 
 	beforeRequest : function() {
@@ -43,7 +44,9 @@ AjaxFranceLabs.SearchInformationWidget = AjaxFranceLabs.AbstractWidget.extend({
 			start = 0;
 		
 		elm.find('#result_information_numberOfResults').append('<span>' + window.i18n.msgStore['Results'] + ' ' + start + ' - ' + end + ' '+ window.i18n.msgStore['of'] +' ' + numFound + '</span>');
-		elm.find('#result_information_search').append('<span> '+ window.i18n.msgStore['for'] +' ' + this.manager.store.get('q').val() + '</span>');
-		elm.find('#result_information_requestTime').append('<span> (' + (data.responseHeader.QTime / 1000) + ' '+window.i18n.msgStore['Seconds']+')</span>');
+		if(this.detailedMode) {
+		  elm.find('#result_information_search').append('<span> '+ window.i18n.msgStore['for'] +' ' + this.manager.store.get('q').val() + '</span>');
+		  elm.find('#result_information_requestTime').append('<span> (' + (data.responseHeader.QTime / 1000) + ' '+window.i18n.msgStore['Seconds']+')</span>');
+		}
 	}
 });

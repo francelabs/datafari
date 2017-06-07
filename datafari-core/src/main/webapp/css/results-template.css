@@ -223,7 +223,6 @@
 	}
 	
 	#solr { margin:0 auto; padding:0px; width:100%; }
-	#result_information { display:none;}
 	#solr .col.left { display:none }
 	#solr .col.right { margin-left:10px; width:100%; margin-bottom:9%; }
 	
@@ -286,10 +285,6 @@
 	
 	.searchBarWidget .searchMode { display:none; }
 	.searchBarWidget #sortMode {display:none;}
-	/**************************************/
-	
-	/***	>>> Search Bar Widget <<<	***/
-	.searchInformationWidget { margin-bottom:10px; }
 	/**************************************/
 	
 	/***	>>> Collection Widget <<<	***/
@@ -674,7 +669,6 @@
 	    animation-duration: 0.2s;
 	}
 	#solr { margin:0 auto; margin-bottom:3%;  width:100%;}
-	#result_information { padding:0.6em 2%; padding-right:0px;height:16px; width : 98%;box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1), 0px 0px 1px rgba(0, 0, 0, 0.1);}
 	#solr .col.left { display:inline-block; width:15%; margin-left:1em;min-width:250px; margin-top:1%; }
 	#solr .col.right { position:relative; padding:0 10px; width:40%; float:left;margin-top:1%; }
 	
@@ -745,10 +739,6 @@
 	    .doc_list_pagination{
 	    margin-top:12px;
 	    }
-	/**************************************/
-	
-	/***	>>> Search Bar Widget <<<	***/
-	.searchInformationWidget { margin-bottom:10px; }
 	/**************************************/
 	
 	/***	>>> Collection Widget <<<	***/
@@ -1078,7 +1068,6 @@
 }
 
 #advancedSearchLink {
-	margin-top: 20px;
 	margin-left: 20px;
 }
 

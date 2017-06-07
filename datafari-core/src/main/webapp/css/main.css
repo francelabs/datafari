@@ -17,4 +17,5 @@ CSS for Datafari widgets
 @import "widgets/language-selector-widget.css";
 @import "widgets/login-datafari-links-widget.css";
 @import "widgets/advanced-search-widget.css";
+@import "widgets/search-infos-widget.css";
 

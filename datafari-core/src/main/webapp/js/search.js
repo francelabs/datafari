@@ -140,7 +140,7 @@ $(function($) {
 	Manager.addWidget(as);
 
 	Manager.addWidget(new AjaxFranceLabs.SearchInformationWidget({
-		elm : $('#result_information'),
+		elm : $('#search_information'),
 		id : 'searchInformation'
 	}));
 	

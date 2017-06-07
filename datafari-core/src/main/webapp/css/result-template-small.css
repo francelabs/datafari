@@ -52,10 +52,6 @@ height:18px; width:18px;
 .searchBarWidget #sortMode {display:none;}
 /**************************************/
 
-/***	>>> Search Bar Widget <<<	***/
-.searchInformationWidget { margin-bottom:10px; }
-/**************************************/
-
 /***	>>> Collection Widget <<<	***/
 .collectionWidget { border: 1px solid; width: 50%; }
 .collectionWidget .title { margin: 5px 10px; }
