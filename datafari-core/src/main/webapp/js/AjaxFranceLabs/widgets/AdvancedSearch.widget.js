@@ -113,7 +113,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		elm.append('<div class="advTable">');
 		this.advTable = elm.find('.advTable');
 		// Build the title
-		this.advTable.append('<span class="title left">');
+		this.advTable.append('<div class="head-title"><span class="title"></span></div>');
 		this.advTable.find('.title').append(window.i18n.msgStore['advancedSearch-label']);
 		
 		// Add a separator
@@ -503,7 +503,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		var addButton = $('#add_adv_field').parent().detach();
 		var selectID = "field_" + this.fieldNumber;
 		var currentDiv = this.advTable.find('.adv_field').last();
-		currentDiv.append('<select class="select-operator"><option selected value="AND">AND</option><option value="OR">OR</option></select> <select class="dropdown-field" id="' + selectID + '"><option disabled selected value>Select a field</option></select> <span class="delete_button button"> X </span>');
+		currentDiv.append('<select class="select-operator dropdown"><option selected value="AND">AND</option><option value="OR">OR</option></select><select class="dropdown-field dropdown" id="' + selectID + '"><option disabled selected value>Select a field</option></select><span class="delete_button button"> X </span>');
 		
 		// Set operator if available or let the 'AND' operator which is by default
 		var selectOperator = currentDiv.find('.select-operator');

@@ -1,11 +1,28 @@
+.dropdown {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding: 5px;
+    border-radius: 0px;
+    text-align: center;
+    background-color: white;
+    border: 1px solid #CCC;
+    background: url('../images/chevron-down.png') no-repeat 95% 50% #ffffff !important;
+    background-size: 11px 7px !important;
+}
+
+.select-operator {
+    width: 5em;
+}
+
 .advancedSearchWidget {
-    width: 1500px;
-    margin-left: 3%;
+    width: 98%;
     margin-bottom: 10px;
 }
 
 .adv_field .dropdown-field {
 	margin-bottom : 0.5em;
+	margin-left: 0.5em;
 }
 
 .adv_field .fromInput, .adv_field .toInput {
@@ -65,13 +82,16 @@
 	width: 150px;
 	border-color: #D9D9D9 !important;
     border-top-color: #A1A1A1 !important;
+    color: white;
 }
 
-.advancedSearchWidget .advTable .title.left {
-    font-weight: bold;
-    font-size: 16px;
-    color: #3d3c3a;
-    display: block;
+.advancedSearchWidget .advTable .title {
+    background-color: #FFF;
+    font-family: "HelveticaNeueW02-67MdCn 694060", Helvetica, Arial, sans-serif;
+    font-size: 20px;
+    text-transform: uppercase;
+    margin-left: 0;
+    width: 12em;
 }
 
 .advancedSearchWidget .advTable .left {

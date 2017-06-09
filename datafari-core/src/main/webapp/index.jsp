@@ -8,6 +8,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 		<title>Search</title>
 			<link rel="icon" type="image/png" href="images/bullet.png">
+			<link rel="stylesheet" type="text/css" href="css/custom/new-style.css" media="screen" />
 		<link rel="stylesheet" type="text/css" href="css/main.css" media="screen" />
 		<link rel ="stylesheet" type ="text/css" href ="css/results.css" />
 		<link rel ="stylesheet" type ="text/css" href ="css/index.css" />
@@ -51,18 +52,6 @@
 		</div>
 	</div>
 	<jsp:include page="footer.jsp" />
-	
-	<script>
-		$(document).ready(function(){
-			if ($(window).width()>799)
-			var endAnimationEvent = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
-			$('footer').hide();
-			$('#logo-search').one(endAnimationEvent,function(){
-				$('footer').show().addClass('animated fadeInUp');
-			});
-			$('.searchBar input').focus();
-		});
-	</script>
 	
 
 </body>

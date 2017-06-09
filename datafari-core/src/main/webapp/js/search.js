@@ -91,7 +91,11 @@ $(function($) {
 		selectionType : 'ONE',
 		queries : [ '[NOW-1MONTH TO NOW]',  '[NOW-1YEAR TO NOW]',  '[NOW-5YEARS TO NOW]'
 		],
-		labels : [ window.i18n.msgStore['facetlast_modified0'], window.i18n.msgStore['facetlast_modified1'], window.i18n.msgStore['facetlast_modified2']]
+		labels : [ window.i18n.msgStore['facetlast_modified0'], window.i18n.msgStore['facetlast_modified1'], window.i18n.msgStore['facetlast_modified2']],
+		modules : [new AjaxFranceLabs.DateSelectorFacetModule({
+			id : 'dsfm-last_modified',
+			field : 'last_modified'
+		})]
 	}));
 	
 	Manager.addWidget(new AjaxFranceLabs.TableMobileWidget({

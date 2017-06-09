@@ -304,7 +304,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 			<div id="ajax-content"></div>
 		</div>
 		<!--End Content-->
-		<jsp:include page="../footer.jsp"  />
+		<jsp:include page="./admin-footer.jsp"  />
 	</div>
 </div>
 <!--End Container-->

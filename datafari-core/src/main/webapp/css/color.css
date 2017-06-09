@@ -22,12 +22,6 @@ body {
 header {
 	background-color: #70B776;
 }
-a {
-	color: #456548;
-}
-a:hover{
-	color: #6B956F;	
-}
 
 #nav {
 	background-color: #3D3C3A;
@@ -78,22 +72,8 @@ a:hover{
 	color: #3d3c3a;
 }
 
-footer {
-	background-color:rgb(93, 152, 98);;
-	color: #F5F7C7;
-	-moz-box-shadow: 0px -1px 10px -2px #656565;
-	-webkit-box-shadow: 0px -1px 10px -2px #656565;
-	-o-box-shadow: 0px -1px 10px -2px #656565;
-	box-shadow: 0px -1px 10px -2px #656565;
-	filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=90, Strength=10);
-}
-
 footer .links a,footer  a {
 	opacity:0.8;
-}
-footer a:hover {
-	color: white;
-	opacity:1;
 }
 
 
@@ -110,7 +90,6 @@ footer a:hover {
 .bc-color{
 	background:#A8C900;
 }
-footer.bc-color{background:rgb(133, 159, 9);}
 
 #spinner_mobile{color: #FFF;}
 .noResult{color:red}
