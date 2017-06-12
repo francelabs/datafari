@@ -29,6 +29,18 @@ AjaxFranceLabs.LoginDatafariLinksWidget = AjaxFranceLabs.AbstractWidget.extend({
 	buildWidget : function() {
 		
 		// If user is already connected
+		var loginDatafariLinksDOMElement = $(this.elm).find('a#parameters');
+		if (loginDatafariLinksDOMElement.length > 0){
+			loginDatafariLinksDOMElement.append(window.i18n.msgStore['parametersLink']);
+		}
+		
+		// If user is already connected
+		var loginDatafariLinksDOMElement = $(this.elm).find('a#favorites');
+		if (loginDatafariLinksDOMElement.length > 0){
+			loginDatafariLinksDOMElement.append(window.i18n.msgStore['favoritesLink']);
+		}
+		
+		// If user is already connected
 		var loginDatafariLinksDOMElement = $(this.elm).find('a#adminLink');
 		if (loginDatafariLinksDOMElement.length > 0){
 			loginDatafariLinksDOMElement.append(window.i18n.msgStore['adminUiLink']);

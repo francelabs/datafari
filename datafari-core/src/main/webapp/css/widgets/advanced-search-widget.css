@@ -23,6 +23,7 @@
 .adv_field .dropdown-field {
 	margin-bottom : 0.5em;
 	margin-left: 0.5em;
+	min-width: 12em;
 }
 
 .adv_field .fromInput, .adv_field .toInput {

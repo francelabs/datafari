@@ -186,6 +186,8 @@
 	<div id="solr">
 		<div id="searchBar"> <a href="../Datafari/Search"><img src="css/images/logo_zebre.png"/></a> <div id="search_information"></div></div>
 		<div id="advancedSearch"> <a href="../Datafari/Search"><img src="css/images/logo_zebre.png"/></a></div>
+		<div id="parametersUi" style="display: none;"><jsp:include page="parameters.jsp" /></div>
+		<div id="favoritesUi" style="display: none;"></div>
 		<div id="results_div">
 			<div id="results_nav_mobile"  class="bc-color"> 
 				<div id="number_results_mobile"><span></span></div>

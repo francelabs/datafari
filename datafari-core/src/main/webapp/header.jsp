@@ -1,3 +1,4 @@
+<%@page import="org.apache.jena.sparql.function.library.print"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ page import="com.francelabs.datafari.utils.*"%>
@@ -24,26 +25,38 @@
 <header>
 	<div id="header-wrapper">
 		
-		<div id="userSpace">
+		<div id="upright-menu">
 		
 
 			<!-- Show the localized language section -->
-			<div id="languageSelector"></div>
+			<!--<div id="languageSelector"></div> -->
 
 			<div id="loginDatafariLinks">
-
 				<%
 					if (request.getUserPrincipal() != null) {
 						if (request.getUserPrincipal().getName() != null) {
 				%>
-						<a id="adminLink"></a>
-						<a id="logout" onclick="logout();"></a>
+							<a id="favorites" class="head-link"></a>
+							<a id="parameters" class="head-link"></a>
+				<%
+							String[] adminRoles = {"SearchAdministrator", "SearchExpert"};
+							for(String role : adminRoles) {
+								if(request.isUserInRole(role)) {
+									%>
+										<a id="adminLink" class="head-link"></a>
+									<%
+									break;
+								}
+							}
+							
+				%>
+						<a id="logout" class="head-link" onclick="logout();"></a>
 				<%
 						} 
 					}
 					else {
 				%>
-						<a id="loginLink"></a>
+						<a id="loginLink" class="head-link"></a>
 				<% 
 					}					
 				%>

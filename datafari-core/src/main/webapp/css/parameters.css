@@ -1,0 +1,45 @@
+#tableResult {
+ 	width: 50em; 
+}
+
+#tableResult td {
+ 	text-align: center; 
+}
+
+#tableResult th {
+ 	font-weight: bold; 
+}
+
+.head-title {
+	margin-bottom: 2em;
+}
+
+#left-menu {
+	display: inline;
+	float: left;
+	position: relative;
+	min-width: 10em;
+	background-color: whitesmoke;
+}
+
+#left-menu ul li {
+ 	margin-right: 2em; 
+}
+
+#right-content {
+	float: left;
+	position: relative;
+	margin-left: 2em;
+}
+
+#param-content-title {
+	margin-bottom: 1em;
+}
+
+#param-list {
+	margin-left: 2em;
+}
+
+.link-icon.selected {
+	color: #df0c36;
+}

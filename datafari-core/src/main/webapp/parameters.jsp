@@ -1,0 +1,21 @@
+<%@page import="java.io.Console"%>
+<%@ page import="com.francelabs.datafari.servlets.admin.StringsDatafariProperties" %>
+<%@ page import="com.francelabs.datafari.utils.*"%>
+<%@ page import="java.util.ArrayList"%>
+<%@page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+
+<link rel="stylesheet" type="text/css" href="css/parameters.css" media="screen">
+<script type="text/javascript" src="js/parameters.js"></script>
+
+<div class="head-title"><span id="param-label"></span></div>
+<div id="left-menu">
+	<ul id="param-list">
+		<li><a id="lang-link"><span class="link-icon">></span><span id="lang-label"></span></a></li>
+		<li><a id="alert-link"><span class="link-icon">></span><span id="alert-label"></span></a></li>
+		<li><a id="savedsearch-link"><span class="link-icon">></span><span id="savedsearch-label"></span></a></li>
+	</ul>
+</div>
+<div id="right-content">
+	<div id="param-content-title"></div>
+	<div id="param-content"></div>
+</div>
