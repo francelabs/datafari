@@ -1,4 +1,8 @@
 {
+"validate" : "Validar",
+"lang-choice":"Escolha de idioma",
+"savedsearch" : "Pesquisas salvas",
+"alerts" : "Alertas",
 "parametersLink" : "Parâmetros",
 "favoritesLink" : "Favoritos",
 "spellcheckerProposal" : "Tente com: ",
@@ -244,7 +248,7 @@
 "advancedSearch-content-label" : "Conteúdo",
 "advancedSearch-content-descr" : "Pesquisar no conteúdo",
 "advancedSearch-makesearch-btn" : "Pesquisar agora",
-"advancedSearchLink" : "Mudar para pesquisa avançada",
+"advancedSearchLink" : "Pesquisa avançada",
 "basicSearchLink" : "Mudar para pesquisa básica",
 "adminUiLink" : "Opções",
 "loginAdminUiLink" : "Login",

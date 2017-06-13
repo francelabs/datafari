@@ -28,6 +28,12 @@ AjaxFranceLabs.LoginDatafariLinksWidget = AjaxFranceLabs.AbstractWidget.extend({
 	 */
 	buildWidget : function() {
 		
+		// Any cases
+		var loginDatafariLinksDOMElement = $(this.elm).find('a#advancedSearchLink');
+		if (loginDatafariLinksDOMElement.length > 0){
+			loginDatafariLinksDOMElement.append(window.i18n.msgStore['advancedSearchLink']);
+		}
+		
 		// If user is already connected
 		var loginDatafariLinksDOMElement = $(this.elm).find('a#parameters');
 		if (loginDatafariLinksDOMElement.length > 0){

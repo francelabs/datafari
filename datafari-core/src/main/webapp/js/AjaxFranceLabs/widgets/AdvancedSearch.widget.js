@@ -642,11 +642,21 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			this.elm.hide();
 			
 			// Display the basic search
-			$('#searchBar').show();
-			$("#results_div").show();
+			this.displayBasicSearch();
 			$('.searchBar input').val(searchBarFilter);
 			this.updateAddressBar();
 		}
+	},
+	
+	displayBasicSearch : function() {
+		$('#searchBar').show();
+		$("#results_div").show();
+		$("#search_information").show();
+		$("#sortMode").show();
+		$("#advancedSearch").hide();
+		$("#parametersUi").hide();
+		$("#favoritesUi").hide();
+		$("#loginDatafariLinks").find(".active").removeClass("active");
 	},
 	
 	/**

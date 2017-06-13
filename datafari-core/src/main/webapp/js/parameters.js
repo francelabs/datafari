@@ -1,49 +1,18 @@
 $(document).ready(function() {
 	
 	$('#parameters').click(function() {
+		initUI();
 		$("#parametersUi").show();
-		$("#results_div").hide();
-		$("#search_information").hide();
-		$("#sortMode").hide();
-		$("#advancedSearchLink").hide();
+		$("#parameters").addClass("active");
+		changeContent("lang");
 	});
 	
 	
 	//Internationalize content
-	$("#lang-label").text(window.i18n.msgStore['language']);
+	$("#lang-label").text(window.i18n.msgStore['facetlanguage']);
 	$("#alert-label").text(window.i18n.msgStore['alerts']);
 	$("#savedsearch-label").text(window.i18n.msgStore['savedsearch']);
 	$("#param-label").text(window.i18n.msgStore['param']);
-	
-	// Add active class to the parameters button
-	$("#param").addClass("active");
-	
-	
-	// Reload the entire page to return to the search view when click on the search button
-	$('.searchBar .search').click(function() {
-		location.reload();
-	});
-	
-			// Reload the entire page to return to the search view when keypressed
-	$('.searchBar input[type=text]').keypress(function(event) {
-		if (event.keyCode === 13) {
-			location.reload();
-		}
-	});
-	
-	// Hide advanced search
-	/*
-	var a = document.createElement('a');
-    a.setAttribute("class", "linkAdvancedSearch");
-    var linkText = document.createTextNode(window.i18n.msgStore['advancedSearchLink']);
-    a.appendChild(linkText);
-
-    a.href = "AdvancedSearch";
-    var element = document.getElementById("searchBarContent");
-    element.appendChild(a);
-	*/
-	// Hide the advanced search link
-	$("#showAdvancedSearch").hide();
 	
 	var param = retrieveParamValue();
 	
@@ -56,6 +25,20 @@ $(document).ready(function() {
 });
 	var d;
 	var table;
+	
+	function initUI() {
+		$("#results_div").hide();
+		$("#search_information").hide();
+		$("#sortMode").hide();
+		$("#advancedSearch").hide();
+		$("#favoritesUi").hide();
+		$("#searchBar").show();
+		clearActiveLinks();
+	}
+	
+	function clearActiveLinks() {
+		$("#loginDatafariLinks").find(".active").removeClass("active");
+	}
 	
 	function retrieveParamValue() {
 		var query = window.location.search.substring(1);
@@ -74,14 +57,17 @@ $(document).ready(function() {
 		if(param == "lang") {
 			$("#param-content-title").text(window.i18n.msgStore['param-lang']);
 			$("#lang-link .link-icon").addClass("selected");
+			$("#lang-link .link-label").addClass("selected");
 			createLangContent();
 		} else if(param == "alert") {
 			$("#param-content-title").text(window.i18n.msgStore['param-alert']);
 			$("#alert-link .link-icon").addClass("selected");
+			$("#alert-link .link-label").addClass("selected");
 			createAlertContent();
 		} else if (param == "savedsearch") {
 			$("#param-content-title").text(window.i18n.msgStore['param-savedsearch']);
 			$("#savedsearch-link .link-icon").addClass("selected");
+			$("#savedsearch-link .link-label").addClass("selected");
 			createSavedSearchContent();
 		}
 	}
@@ -90,6 +76,9 @@ $(document).ready(function() {
 		$("#lang-link .link-icon").removeClass("selected");
 		$("#alert-link .link-icon").removeClass("selected");
 		$("#savedsearch-link .link-icon").removeClass("selected");
+		$("#lang-link .link-label").removeClass("selected");
+		$("#alert-link .link-label").removeClass("selected");
+		$("#savedsearch-link .link-label").removeClass("selected");
 	}
 	
 	function createSavedSearchContent() {
@@ -161,9 +150,13 @@ $(document).ready(function() {
 	}
 	
 	function createLangContent() {
+		var languages = ['en', 'fr', 'it', 'pt_br'];
+		
 		$("#param-content").html("<div id='lang-choice'><span id='lang-choice-label'>" + window.i18n.msgStore['lang-choice'] + "</span></div>");
-		var inputs = $("<div id='lang-inputs'></div>").append("<input type='radio' name='lang' id='en' value='en'><label for='en'> " + window.i18n.msgStore['english_locale'] + "</label><br>");
-		inputs.append("<input type='radio' name='lang' value='fr' id='fr'><label for='fr'> " + window.i18n.msgStore['french_locale'] + "</label><br>");
+		var inputs = $("<div id='lang-inputs'></div>")
+		$.each(languages, function( index, value ) {
+			inputs.append("<input type='radio' name='lang' id='" + value + "' value='" + value + "'><label for='" + value + "'> " + window.i18n.msgStore[value+'_locale'] + "</label><br>");
+		});
 		
 		$("#param-content").append(inputs);
 		
@@ -173,7 +166,14 @@ $(document).ready(function() {
 		
 		$("#param-content").append("<div class='separator'></div><div id='button-div'><input type='button' name='validate-lang' id='validate-lang' value='" + window.i18n.msgStore['validate'] + "'/></div>");
 		$("#validate-lang").click(function() {
-			window.i18n.userSelected(inputs.find('input:checked').val());
+			var selectedLang = $('input[name=lang]:checked').val();
+
+			// Save user language in the 'lang' table of Cassandra
+			$.post('./applyLang',{"lang":selectedLang}, function() {
+				// Function executed every time the user changes the language of
+				// Datafari		
+				window.i18n.userSelected(selectedLang);
+			});
 		});
 	}
 	

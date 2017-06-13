@@ -32,6 +32,7 @@
 			<!--<div id="languageSelector"></div> -->
 
 			<div id="loginDatafariLinks">
+				<a id="advancedSearchLink" class="head-link"></a>
 				<%
 					if (request.getUserPrincipal() != null) {
 						if (request.getUserPrincipal().getName() != null) {

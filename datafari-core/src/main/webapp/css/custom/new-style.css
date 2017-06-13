@@ -125,10 +125,6 @@
   	margin-top: 20px;
 
   }
-  
-  #advancedSearchLink {
-    margin-top: -2em;
-  }
 
   body #facets .checkboxIcon {
     color: #666; }
@@ -410,7 +406,7 @@
       width: 100%; }
     body .searchBarWidget {
       margin-bottom: 10px;
-      height: 7em;
+      height: 5em;
        }
       body .searchBarWidget .search-bar-full {
         min-width: 750px; }
@@ -751,10 +747,6 @@
     float: left;
   }
 
-  #advancedSearchLink  {
-    display: block;
-  }
-
   #languageSelector {
     font-size: 13.2px;
   }
@@ -769,7 +761,7 @@
   }
 
 .active {
-  border-bottom: 2px solid red;
+  border-bottom: 2px solid #A8C900;
   padding: 0px 5px 6px 5px !important;
 }
 
@@ -881,7 +873,6 @@ input[type="button"] {
 
 #fav-label, #param-label, #advSearchTitle {
   background-color: #FFF;
-  color: #df0c36;
   display: inline-block;
   font-family: "HelveticaNeueW02-67MdCn 694060", Helvetica, Arial, sans-serif;
   font-size: 20px;
@@ -1110,12 +1101,8 @@ body #facets .facet ul {
     margin-right: 20px;
   }
 
-.searchBarWidget .searchBar .search:active {
-  background-color: #e93557;
-}
-
 .searchBarWidget #sortMode {
-  top: 7em;
+  top: 5em;
   width: 30%;
 }
 

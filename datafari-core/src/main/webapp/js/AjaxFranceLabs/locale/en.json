@@ -1,4 +1,8 @@
 {
+"validate" : "Validate",
+"lang-choice":"Language choice",
+"savedsearch" : "Saved searches",
+"alerts" : "Alerts",
 "parametersLink" : "Parameters",
 "favoritesLink" : "Favorites",
 "spellcheckerProposal" : "Try with: ",
@@ -264,7 +268,7 @@
 "advancedSearch-content-label" : "Content",
 "advancedSearch-content-descr" : "Search on content",
 "advancedSearch-makesearch-btn" : "Search now",
-"advancedSearchLink" : "Switch to Advanced Search",
+"advancedSearchLink" : "Advanced Search",
 "basicSearchLink" : "Switch to Basic Search",
 "adminUiLink" : "Admin",
 "loginAdminUiLink" : "Login",

@@ -1,3 +1,11 @@
+.link-label {
+	padding-left: 5px;
+}
+
+.link-label.selected {
+	font-weight: 700;
+}
+
 #tableResult {
  	width: 50em; 
 }
@@ -20,6 +28,7 @@
 	position: relative;
 	min-width: 10em;
 	background-color: whitesmoke;
+	width: 18em;
 }
 
 #left-menu ul li {
@@ -30,6 +39,7 @@
 	float: left;
 	position: relative;
 	margin-left: 2em;
+	width: 79em;
 }
 
 #param-content-title {

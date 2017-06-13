@@ -1,4 +1,8 @@
 {
+"validate" : "Convalidare",
+"lang-choice":"Scelta della lingua",
+"savedsearch" : "Ricerche salvate",
+"alerts" : "Avvisi",
 "parametersLink" : "Parametri",
 "favoritesLink" : "Preferiti",
 "spellcheckerProposal" : "Prova con: ",

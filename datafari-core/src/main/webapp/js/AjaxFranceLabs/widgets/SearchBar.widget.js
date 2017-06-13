@@ -216,10 +216,17 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 				
 				if (this.activateAdvancedSearchLink){
 
-					// Advanced Search link
-					elm.append('<div id="advancedSearchLink" class="searchModeLink"><a href="">'+ window.i18n.msgStore['advancedSearchLink'] +'</a></div>');
 					
 					$('#advancedSearchLink').click(function(event){
+						
+						// Hide other UIs
+						$("#parametersUi").hide();
+						$("#favoritesUi").hide();
+						$("#loginDatafariLinks").find(".active").removeClass("active");
+						
+						// Make the link active
+						$(this).addClass('active');
+						
 						// Hide the basic search
 						elm.hide();
 						
@@ -308,6 +315,14 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 			},
 
 			makeRequest : function() {
+				$('#searchBar').show();
+				$("#results_div").show();
+				$("#search_information").show();
+				$("#sortMode").show();
+				$("#advancedSearch").hide();
+				$("#parametersUi").hide();
+				$("#favoritesUi").hide();
+				$("#loginDatafariLinks").find(".active").removeClass("active");
 				if (!this.noRequest) {
 					this.clean();
 					this.updateAddressBar();

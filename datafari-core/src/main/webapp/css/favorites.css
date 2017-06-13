@@ -1,0 +1,46 @@
+#favorites-label {
+	background-color: #FFF;
+	display: inline-block;
+	font-family: "HelveticaNeueW02-67MdCn 694060", Helvetica, Arial, sans-serif;
+	font-size: 20px;
+	text-transform: uppercase;
+	margin-left: 0;
+	padding-right: 10px;
+	width: auto;
+}
+
+.head-title {
+	margin-bottom: 2em;
+}
+
+h1 i{
+	color: #E16759;
+}
+th.delete{
+	//position : relative;
+}
+th.delete i {
+	color: #F00;
+	cursor: pointer; 
+	
+ }
+ table#tableResult{
+ 	display:none;
+ }
+ #Message{
+ 	text-align:center
+ }
+ #Message.danger i{
+	 font-size: 3em;
+	margin-bottom: 2%;
+ }
+ #Message.danger{
+ 	color: #F00;
+ }
+ #Message{
+ 	color : #929292;
+ }
+ 
+ .fa-chevron-left { cursor: pointer; cursor: hand; }
+ .fa-chevron-right { cursor: pointer; cursor: hand; }
+ 
