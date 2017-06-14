@@ -12,8 +12,7 @@ jdk:
 cache:
   directories:
     - $HOME/.m2
-  
-  notifications:
+notifications:
   email:
-    on_success: change 
-    on_failure: always 
+    on_success: change
+    on_failure: always
