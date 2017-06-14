@@ -4,11 +4,11 @@ $(document).ready(function() {
 		initUI();
 		$("#favoritesUi").show();
 		$("#favorites").addClass("active");
+		loadFavorites(window.current);
 	});
 	
 	//Internationalize content
 	$("#favorites-label").text(window.i18n.msgStore['favorites']);
-	//$("#fav-label").text(window.i18n.msgStore['favorites']);
 	$("#doc-name").text(window.i18n.msgStore['doc-name']);
 	$("#doc-source").text(window.i18n.msgStore['source']);
 	$("#doc-delete").text(window.i18n.msgStore['delete']);
@@ -141,33 +141,16 @@ function loadFavorites(){
 				// add each favorite found in Json response
 				$.each(favoritesList,function(index,favorite){
                     
-                    var id = favorite.id;
-
-                    if (favorite.title === undefined) {
-                            title = favorite.id;
-                    }
-                    else {
-                        title = favorite.title[0];
-                    }
-
-                    var source = favorite.source;
-                    if (source === undefined) {
-                            source = '';
-                    }
-                    var date = favorite.date;
-                    if (date === undefined) {
-                            date = '';
-                    }
+					var linkPrefix = "http://"+window.location.hostname+":"+window.location.port+"/Datafari/URL?url=";
+					var splitArray = favorite.split("/");
                     
                 	var line = $('<tr class="tr">'+
-                            '<th class="title col-xs-3"><a href="'+favorite.id+'">'+shortText(title,30)+'</a></th>'+
-                            '<th class="title col-xs-9"><a href="mailto:?subject='+window.i18n.msgStore['mailshare-body']+'&body='+favorite.id+'">'+window.i18n.msgStore['doc-share']+'</a></th>'+
-                            '<th class="tiny col-xs-9">'+source+"</th>"+
-                            '<th class="tiny col-xs-9">'+date+'</th>'+
+                            '<th class="title col-xs-3"><a href="'+linkPrefix+favorite+'">'+shortText(splitArray[splitArray.length-1],30)+'</a></th>'+
+                            '<th class="tiny col-xs-9">'+favorite+"</th>"+
                             '<th class="text-center delete"><i class="fa fa-times"></i></th>'+
                             '</tr>');
 					
-					line.data("id",favorite.favoriteID);
+					line.data("id",favorite);
 					$("table#tableResult tbody").append(line);
 				});
 				// handle favorite deletion
@@ -175,9 +158,8 @@ function loadFavorites(){
 					var element = $(e.target);
 					while (!element.hasClass('tr')){
 						element = element.parent();
-						console.log(element);
 					}
-					$.post("./deleteFavorite",{idFavorite:element.data('id')},function(data){
+					$.post("./deleteFavorite",{idDocument:element.data('id')},function(data){
 						if (data.code>=0){
 							loadFavorites(window.current);
 						}else{

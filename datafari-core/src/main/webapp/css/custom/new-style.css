@@ -770,7 +770,7 @@
 }
 
 .title a {
-  color: #df0c36 !important;
+  color: #6B956F !important;
   font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
 
 }
@@ -888,7 +888,7 @@ input[type="button"] {
   width: 100%; }
   #tableResult a {
     color: #df0c36;
-    font-weight: 300; }
+    font-weight: 700; }
   #tableResult thead th {
     border: 1px solid #c3c3c3;
     border-top: 0;
