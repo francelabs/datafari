@@ -9,6 +9,14 @@
 		<!-- Force minimum Maven version -->
 		<maven>3.0.5</maven>
 	</prerequisites>
+	
+	<repositories>
+		<repository>
+         		<id>localrepository</id>
+         		<url>file://${basedir}../datafari-dependencies/lib</url>
+      		</repository>
+	</repositories>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.manifoldcf</groupId>
