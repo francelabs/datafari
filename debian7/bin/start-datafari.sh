@@ -47,7 +47,7 @@ version=$(python -V 2>&1 | grep -Po '(?<=Python )(.+)')
 if [[ -z "$version" ]]
 then
 
-echo "No Python!"
+echo "No Python detected! Please install Python 2.7.x"
 exit 1
 else
 
