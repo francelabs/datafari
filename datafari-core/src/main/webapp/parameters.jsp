@@ -6,6 +6,8 @@
 
 <link rel="stylesheet" type="text/css" href="css/parameters.css" media="screen">
 <script type="text/javascript" src="js/parameters.js"></script>
+<script type="text/javascript" src="./plugins/DataTables-1.10.15/media/js/jquery.dataTables.js"></script>
+<link rel="stylesheet" type="text/css" href="./plugins/DataTables-1.10.15/media/css/jquery.dataTables.css"/>
 
 <div class="head-title"><span id="param-label"></span></div>
 <div id="left-menu">

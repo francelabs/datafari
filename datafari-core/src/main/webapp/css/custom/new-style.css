@@ -374,6 +374,7 @@
       text-align: right;
       background-color: rgba(255, 255, 255, 0);
       position: relative;
+      z-index: 2;
       /*! Popup paramètres */
       /*! Ajout class pour faire apparaitre le popup */ }
       body #upright-menu a {
@@ -887,7 +888,7 @@ input[type="button"] {
   margin-bottom: 20px;
   width: 100%; }
   #tableResult a {
-    color: #df0c36;
+    color: #6B956F;
     font-weight: 700; }
   #tableResult thead th {
     border: 1px solid #c3c3c3;
@@ -950,11 +951,6 @@ input[type="button"] {
   }
 
 }
-.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
-  background-image: none;
-  background-color: #df0c36;
-  border: 0;
-  border-radius: 50%; }
 
 #sliderDate {
   height: 2px; }
@@ -1090,9 +1086,6 @@ body #facets .facet ul {
 #facet_wellview_high_pressure, #facet_wellview_high_temperature, #facet_wellview_shallowgas, #facet_wellview_erd, #facet_wellview_foothill {
   margin: 0% 5% 0% 15px !important;
 }
-
-.ui-autocomplete .ui-state-hover { background-color: rgb(236, 236, 236); !important; border-color: rgb(222, 222, 222); !important; color: #2c2c2c !important; box-sizing: border-box;}
-  /*# sourceMappingURL=new-style.css.map */
 
 
   /* Patch audit 29/12/2016 */

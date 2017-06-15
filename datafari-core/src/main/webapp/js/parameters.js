@@ -1,9 +1,7 @@
 $(document).ready(function() {
 	
 	$('#parameters').click(function() {
-		initUI();
-		$("#parametersUi").show();
-		$("#parameters").addClass("active");
+		initParametersUI();
 		changeContent("lang");
 	});
 	
@@ -26,7 +24,8 @@ $(document).ready(function() {
 	var d;
 	var table;
 	
-	function initUI() {
+	function initParametersUI() {
+		$("#parametersUi").show();
 		$("#results_div").hide();
 		$("#search_information").hide();
 		$("#sortMode").hide();
@@ -34,6 +33,7 @@ $(document).ready(function() {
 		$("#favoritesUi").hide();
 		$("#searchBar").show();
 		clearActiveLinks();
+		$("#parameters").addClass("active");
 	}
 	
 	function clearActiveLinks() {
@@ -83,7 +83,7 @@ $(document).ready(function() {
 	
 	function createSavedSearchContent() {
 		$.ajax({			//Ajax request to the doGet of the Alerts servlet
-	        type: "GET",
+	        type: "POST",
 	        url: "./GetSearches",
 	    	beforeSend: function(jqXHR, settings){
 	    		$("#param-content").html("<center><div class=\"bar-loader\" style=\"display : block; height : 32px; width : 32px;\"></div></center>");
@@ -91,12 +91,12 @@ $(document).ready(function() {
 	        //if received a response from the server
 	    	success: function( data, textStatus, jqXHR) {
 	        	if (data.code == 0){
-					if (data.searchesList!==undefined && data.searchesList.length!=0){
+					if (data.searchesList!==undefined && !jQuery.isEmptyObject(data.searchesList)){
 						$("#param-content").html("<table id='tableResult'><thead><tr><th>"+window.i18n.msgStore['search']+"</th><th>"+window.i18n.msgStore['link']+"</th><th>"+window.i18n.msgStore['delete']+"</th></tr></thead><tbody></tbody></table>");
 						$.each(data.searchesList,function(name,search){
 							var line = $('<tr class="tr">'+
 										'<td>' + name + '</td>'+
-										'<td><a href="/Datafari/Search?lang=' + window.i18n.language + '&request=\''+search+'\'">' + window.i18n.msgStore['exec-search'] + '</a></td>'+
+										'<td><a href="/Datafari/Search?lang=' + window.i18n.language + '&request='+encodeURIComponent(search)+'">' + window.i18n.msgStore['exec-search'] + '</a></td>'+
 										"<td><a class='delete-button'>x</a></td>"+
 										'</tr>'
 							);
@@ -119,7 +119,6 @@ $(document).ready(function() {
 							var element = $(e.target);
 							while (!element.hasClass('tr')){
 								element = element.parent();
-								console.log(element);
 							}
 							$.post("./deleteSearch",{name:element.data('name'),request:element.data('id')},function(data){
 								if (data.code==0){
@@ -127,6 +126,11 @@ $(document).ready(function() {
 					                .row(element) 
 					                .remove()
 					                .draw();
+									
+									var nbData = tableResult.column(0).data().length
+									if(nbData < 1 ) {
+										$("#param-content").html("<div><b>"+window.i18n.msgStore["nosavedsearches"]+"</b></div>");
+									} 
 								}else{
 									console.log(data.status);
 								}
@@ -135,7 +139,7 @@ $(document).ready(function() {
 							});
 						});
 					}else{
-						$("#param-content").html("<div><b>"+window.i18n.msgStore["NOSEARCHESFOUND"]+"</b></div>");
+						$("#param-content").html("<div><b>"+window.i18n.msgStore["nosavedsearches"]+"</b></div>");
 					}
 				} else{
 					console.log(window.i18n.msgStore['dbError']);
@@ -191,7 +195,7 @@ $(document).ready(function() {
 	        	if(data.toString().indexOf("Error code : ")!==-1){
 	        		console.log(data);
 	        	} else if(data.alerts!=undefined){
-	        		$("#param-content").html("<table id='favorites_table'><thead><tr><th>"+window.i18n.msgStore['date']+"</th><th>"+window.i18n.msgStore['search']+"</th><th>"+window.i18n.msgStore['send-frequency']+"</th><th>"+window.i18n.msgStore['delete']+"</th></tr></thead><tbody></tbody></table>");
+	        		$("#param-content").html("<table id='alerts_table'><thead><tr><th>"+window.i18n.msgStore['search']+"</th><th>"+window.i18n.msgStore['send-frequency']+"</th><th>"+window.i18n.msgStore['delete']+"</th></tr></thead><tbody></tbody></table>");
 	        		//get the data in a global var so it can be used in edit() or remove() 
 	        		d=data;
 	        		var numb = data.alerts.length;
@@ -199,17 +203,16 @@ $(document).ready(function() {
 					while (i<numb){	//While they are still alerts to print
 						var doc = data.alerts[i];
 						//Print the alert with an href of the keyword towards edit()
-						$("#favorites_table tbody").append("<tr id=\"alert-"+i+"\"><td></td><td><span class='alert_search_term'>"+doc.keyword+"</span></td><td id='frequency-"+i+"' class='frequency'>"+window.i18n.msgStore[doc.frequency]+" <span class='modify-link'><a href='javascript: modify("+i+")'>"+window.i18n.msgStore['modify']+"</a></span></td><td><a href=\"javascript: remove("+i+")\" class='delete-button'>x</a></td></tr>");
+						$("#alerts_table tbody").append("<tr id=\"alert-"+i+"\"><td><span class='alert_search_term'>"+doc.keyword+"</span></td><td id='frequency-"+i+"' class='frequency'>"+window.i18n.msgStore[doc.frequency]+" <span class='modify-link'><button onclick='javascript: modify("+i+")'>"+window.i18n.msgStore['modify']+"</button></span></td><td><a href=\"javascript: remove("+i+")\" class='delete-button'>x</a></td></tr>");
 						//Print a button with an href towards remove()
 						i++;
 					}
-					table = $("#favorites_table").DataTable(
+					table = $("#alerts_table").DataTable(
 	        				{
 	        					"info":false, 
 	        					"lengthChange":false, 
 	        					"searching":false,
 	        					"columns": [
-	        						null,
 	        						null,
 	        						null,
 	        						{ "orderable": false }
@@ -233,8 +236,8 @@ $(document).ready(function() {
 	}
 	
 	function modify(i) {
-		$("#frequency-"+i).html("<select required id=\"frequency\" name=\"frequency\" class=\"col-sm-4\">	<OPTION value='hourly'>"+window.i18n.msgStore['hourly']+"</OPTION><OPTION value='daily'>"+window.i18n.msgStore['daily']+"</OPTION><OPTION value='weekly'>"+window.i18n.msgStore['weekly']+"</OPTION></select> <button onclick='javascript: validate("+i+")' >"+window.i18n.msgStore['validate']+"</button>")
-		$("#frequency").val(d.alerts[i].frequency);
+		$("#frequency-"+i).html("<select required id=\"select-frequency-" + i + "\" name=\"frequency\" class=\"col-sm-4\">	<OPTION value='hourly'>"+window.i18n.msgStore['hourly']+"</OPTION><OPTION value='daily'>"+window.i18n.msgStore['daily']+"</OPTION><OPTION value='weekly'>"+window.i18n.msgStore['weekly']+"</OPTION></select> <button onclick='javascript: validate("+i+")' >"+window.i18n.msgStore['validate']+"</button>")
+		$("#select-frequency-" + i).val(d.alerts[i].frequency);
 	}
 	
 	function validate(i) {
@@ -246,7 +249,7 @@ $(document).ready(function() {
 		    }
 		    var value = "";
 		    if(key==="frequency") {
-		    	value = $("#frequency").val();
+		    	value = $("#select-frequency-" + i).val();
 		    } else {
 		    	value = d.alerts[i][key];
 		    }
@@ -261,9 +264,9 @@ $(document).ready(function() {
 	        	if(data.toString().indexOf("Error code : ")!==-1){
 	        		console.log(data);
 	        	}else{
-	        		d.alerts[i].frequency = $("#frequency").val();
+	        		d.alerts[i].frequency = $("#select-frequency-" + i).val();
 	        		d.alerts[i]._id = JSON.parse(data).uuid;
-	        		table.cell("#frequency-"+i).data(window.i18n.msgStore[d.alerts[i].frequency]+" <span class='modify-link'><a href='javascript: modify("+i+")'>"+window.i18n.msgStore['modify']+"</a></span>").draw();
+	        		table.cell("#frequency-"+i).data(window.i18n.msgStore[d.alerts[i].frequency]+" <span class='modify-link'><button onclick='javascript: modify("+i+")'>"+window.i18n.msgStore['modify']+"</button></span>").draw();
 	        	}
 	        },
 	        error: function(jqXHR, textStatus, errorThrown){
@@ -291,6 +294,11 @@ $(document).ready(function() {
 	                .row( "#alert-" + i) 
 	                .remove()
 	                .draw();
+	            	
+	            	var nbData = table.column(0).data().length
+					if(nbData < 1 ) {
+						$("#param-content").html("<div><b>"+window.i18n.msgStore['noAlerts']+"</b></div>");
+					}
 	        	}        
 	        },
 	        //If there was no resonse from the server

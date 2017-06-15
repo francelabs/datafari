@@ -1,13 +1,57 @@
+#alerts_table th {
+  border: 1px solid #c3c3c3;
+	font-size: 14px;
+	font-weight: 700;
+	padding: 10px;
+	border-bottom: 0;
+	border-top: 0;
+	border-left: 0;
+
+}
+
+#alerts_table td {
+  text-align: center;
+}
+
+#alerts_table {
+	background-color: #f8f8f8;
+}
+
+#alerts_table button, #alerts_table select {
+  font-size: 1em
+}
+
+#alerts_table select {
+  width: 12em;
+}
+
+.frequency select, .frequency button, #alerts_table button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding: 5px;
+  border-radius: 0px;
+  text-align: center;
+  background-color: white;
+  border: 1px solid #CCC;
+}
+
+.frequency select {
+  background: url('./images/chevron-down.png') no-repeat 95% 50% #ffffff !important;
+  background-size: auto auto;
+  background-size: 11px 7px !important;
+}
+
+.delete-button {
+  color: red !important;
+}
+
 .link-label {
 	padding-left: 5px;
 }
 
 .link-label.selected {
 	font-weight: 700;
-}
-
-#tableResult {
- 	width: 50em; 
 }
 
 #tableResult td {

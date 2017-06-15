@@ -153,6 +153,7 @@ public class Alerts extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try{
 			PrintWriter pw = response.getWriter();
+			final JSONObject jsonResponse = new JSONObject();
 			try{
 				if(request.getParameter("_id")!=null){
 					AlertDataService.getInstance().deleteAlert(request.getParameter("_id"));//Deleting part									//Execute the query in the collection
@@ -166,10 +167,11 @@ public class Alerts extends HttpServlet {
 						}															//This loop can only be triggered by an edit.
 					} 
 					alert.put("user", request.getRemoteUser());
-					AlertDataService.getInstance().addAlert(alert);
+					jsonResponse.put("uuid", AlertDataService.getInstance().addAlert(alert));
 					//insert the object composed of all the parameters
 				}
 				//If this is an edit the two parts (Delete and Add) will be executed successively
+        pw.write(jsonResponse.toString());
 			} catch(Exception e){
 				pw.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69011"); 	
 				pw.close();

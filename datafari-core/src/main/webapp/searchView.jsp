@@ -42,9 +42,9 @@
 <!-- New style -->
 <link rel="stylesheet" type="text/css" href="css/custom/new-style.css">
 
-<link rel="stylesheet" type ="text/css" href="css/jquery-ui-1.11.4/jquery-ui.css">
-<link rel="stylesheet" type ="text/css" href="css/jquery-ui-1.11.4/jquery-ui.theme.css">
-<link rel="stylesheet" type ="text/css" href="css/jquery-ui-1.11.4/jquery-ui.structure.css">
+<link rel="stylesheet" type ="text/css" href="css/jquery-ui-1.11.4/jquery-ui.min.css">
+<link rel="stylesheet" type ="text/css" href="css/jquery-ui-1.11.4/jquery-ui.theme.min.css">
+<link rel="stylesheet" type ="text/css" href="css/jquery-ui-1.11.4/jquery-ui.structure.min.css">
 
 <!-- <link rel="stylesheet" type ="text/css" href="css/widgets/slider-widget.css"> -->
 

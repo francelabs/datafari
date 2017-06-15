@@ -1,4 +1,11 @@
 {
+"nosavedsearches" : "No hay una búsqueda guardada",
+"modify":"Modificar",
+"send-frequency":"Frecuencia de entrega",
+"delete" : "Borrar",
+"search" : "Búsqueda",
+"exec-search":"Realizar búsqueda",
+"link":"Enlazar",
 "validate" : "Validar",
 "lang-choice":"Escolha de idioma",
 "savedsearch" : "Pesquisas salvas",

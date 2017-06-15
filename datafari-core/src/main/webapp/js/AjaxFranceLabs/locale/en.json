@@ -1,4 +1,11 @@
 {
+"nosavedsearches" : "No saved search",
+"modify":"Modify",
+"send-frequency":"Send frequency",
+"delete" : "Delete",
+"search" : "Search",
+"exec-search":"Perform search",
+"link":"Link",
 "validate" : "Validate",
 "lang-choice":"Language choice",
 "savedsearch" : "Saved searches",

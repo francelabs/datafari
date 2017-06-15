@@ -24,9 +24,7 @@ th.delete i {
 	cursor: pointer; 
 	
  }
- table#tableResult{
- 	display:none;
- }
+ 
  #Message{
  	text-align:center
  }

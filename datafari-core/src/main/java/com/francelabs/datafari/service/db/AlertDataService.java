@@ -12,6 +12,7 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.DriverException;
+import com.datastax.driver.core.utils.UUIDs;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 
@@ -50,15 +51,17 @@ public class AlertDataService {
 
 	}
 
-	public void addAlert(Properties alertProp) throws DatafariServerException {
+	public String addAlert(Properties alertProp) throws DatafariServerException {
 		try {
 
+		  final UUID uuid = UUIDs.random();
 			String query = "insert into " + ALERTCOLLECTION
 					+ " (id, keyword, core, frequency, mail, subject, user) values (" + "uuid()," + "'"
 					+ alertProp.getProperty("keyword") + "'," + "'" + alertProp.getProperty("core") + "'," + "'"
 					+ alertProp.getProperty("frequency") + "'," + "'" + alertProp.getProperty("mail") + "'," + "'"
 					+ alertProp.getProperty("subject") + "'," + "'" + alertProp.getProperty("user") + "');";
 			session.execute(query);
+			return uuid.toString();
 		} catch (DriverException e) {
 			logger.warn("Unable addAlert : " + e.getMessage());
 			// TODO catch specific exception

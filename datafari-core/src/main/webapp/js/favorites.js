@@ -1,9 +1,7 @@
 $(document).ready(function() {
 	
 	$('#favorites').click(function() {
-		initUI();
-		$("#favoritesUi").show();
-		$("#favorites").addClass("active");
+		initFavoritesUI();
 		loadFavorites(window.current);
 	});
 	
@@ -45,7 +43,8 @@ $(document).ready(function() {
 	
 });
 
-function initUI() {
+function initFavoritesUI() {
+	$("#favoritesUi").show();
 	$("#results_div").hide();
 	$("#search_information").hide();
 	$("#sortMode").hide();
@@ -53,6 +52,7 @@ function initUI() {
 	$("#parametersUi").hide();
 	$("#searchBar").show();
 	clearActiveLinks();
+	$("#favorites").addClass("active");
 }
 
 function clearActiveLinks() {
@@ -109,6 +109,7 @@ function shortText(string,maxCaracter){
 
 function loadFavorites(){
 	$('.loading').show();
+	$("#Message").hide();
 	$("#tableResult").hide();
 		var params = {
 		    nextToken: window.cursors[window.currentPage]
