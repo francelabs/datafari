@@ -231,6 +231,7 @@
 "ELKScriptsDir" : "Localização do diretório dos scripts ELK",
 "spellcheckerResults" : "Resultados para: ",
 "en_locale" : "English",
+"de_locale" : "Alemão",  
 "fr_locale" : "Français",
 "it_locale" : "Italiano",
 "pt_br_locale" : "Português",
