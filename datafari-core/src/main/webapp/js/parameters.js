@@ -183,19 +183,21 @@ $(document).ready(function() {
 	
 	function createAlertContent() {
 		var dataString = "keyword=";
+		$("#param-content").html("<div id='addAlertDiv'></div>");
+		$("#param-content").append("<div id='alertsListDiv'></div>");
 		$.ajax({			//Ajax request to the doGet of the Alerts servlet
 	        type: "GET",
 	        url: "./admin/Alerts",
 	        data: dataString,
 	    	beforeSend: function(jqXHR, settings){
-	    		$("#param-content").html("<center><div class=\"bar-loader\" style=\"display : block; height : 32px; width : 32px;\"></div></center>");
+	    		$("#alertsListDiv").html("<center><div class=\"bar-loader\" style=\"display : block; height : 32px; width : 32px;\"></div></center>");
 	    	},
 	        //if received a response from the server
 	        success: function( data, textStatus, jqXHR) {
 	        	if(data.toString().indexOf("Error code : ")!==-1){
 	        		console.log(data);
 	        	} else if(data.alerts!=undefined){
-	        		$("#param-content").html("<table id='alerts_table'><thead><tr><th>"+window.i18n.msgStore['search']+"</th><th>"+window.i18n.msgStore['send-frequency']+"</th><th>"+window.i18n.msgStore['delete']+"</th></tr></thead><tbody></tbody></table>");
+	        		$("#alertsListDiv").html("<table id='alerts_table'><thead><tr><th>"+window.i18n.msgStore['search']+"</th><th>"+window.i18n.msgStore['send-frequency']+"</th><th>"+window.i18n.msgStore['delete']+"</th></tr></thead><tbody></tbody></table>");
 	        		//get the data in a global var so it can be used in edit() or remove() 
 	        		d=data;
 	        		var numb = data.alerts.length;
@@ -220,7 +222,7 @@ $(document).ready(function() {
 	        				}
 	        		);
 	        	}else{
-	        		$("#param-content").html("<div><b>"+window.i18n.msgStore['noAlerts']+"</b></div>");
+	        		$("#alertsListDiv").html("<div><b>"+window.i18n.msgStore['noAlerts']+"</b></div>");
 	        	}
 	        },
 	       
@@ -297,7 +299,7 @@ $(document).ready(function() {
 	            	
 	            	var nbData = table.column(0).data().length
 					if(nbData < 1 ) {
-						$("#param-content").html("<div><b>"+window.i18n.msgStore['noAlerts']+"</b></div>");
+						$("#alertsListDiv").html("<div><b>"+window.i18n.msgStore['noAlerts']+"</b></div>");
 					}
 	        	}        
 	        },
