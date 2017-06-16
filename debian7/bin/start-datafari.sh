@@ -43,7 +43,25 @@ if is_running $ZK_PID_FILE; then
    exit 1
 fi
 
+version=$(python -V 2>&1 | grep -Po '(?<=Python )(.+)')
+if [[ -z "$version" ]]
+then
 
+echo "No Python detected! Please install Python 2.7.x"
+exit 1
+else
+
+case "$(python --version 2>&1)" in
+    *" 2.7"*)
+        echo "Compatible Python version detected"
+        ;;
+    *)
+        echo "Wrong Python version! Please install Python 2.7.X"
+        exit 1
+        ;;
+esac
+
+fi
 
 if  [[ "$STATE" = *installed* ]];
 then
