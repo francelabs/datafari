@@ -11,7 +11,7 @@
 <div id="fav-content">
 	<div class="loading"><i class="fa fa-circle-o-notch fa-spin"></i> Loading ...</div>
 	<div id="Message" style="display:none;">No Document Saved Yet</div>
-	<table id="tableResult" class="table table-bordered table-striped">
+	<table id="favoritesTable" class="table table-bordered table-striped">
 			<thead>
 				<tr>
 					<th id="doc-name">Document Name</th>

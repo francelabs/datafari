@@ -44,6 +44,7 @@ $(document).ready(function() {
 });
 
 function initFavoritesUI() {
+	destroyDatatables();
 	$("#favoritesUi").show();
 	$("#results_div").hide();
 	$("#search_information").hide();
@@ -88,7 +89,7 @@ function showError(code){
 			message = window.i18n.msgStore["SERVERGENERALERROR"];
 			break;
 	}
-	$("#tableResult").hide();
+	$("#favoritesTable").hide();
 	$("#Message").text(message).show();
 	if (danger){
 		$("#Message").addClass("danger").prepend('<i class="fa fa-exclamation-triangle"></i>  <br/>');
@@ -110,16 +111,16 @@ function shortText(string,maxCaracter){
 function loadFavorites(){
 	$('.loading').show();
 	$("#Message").hide();
-	$("#tableResult").hide();
+	$("#favoritesTable").hide();
 		var params = {
 		    nextToken: window.cursors[window.currentPage]
 		};
 	
 		$.getJSON("./GetFavorites",params, function(data){
 		$('.loading').hide();
-		$("#tableResult").show();
+		$("#favoritesTable").show();
 		if (data.code == 0){
-			$("table#tableResult tbody").empty();
+			$("table#favoritesTable tbody").empty();
 			window.favoritesList = data.favoritesList;
 			
 			// add paging
@@ -152,7 +153,7 @@ function loadFavorites(){
                             '</tr>');
 					
 					line.data("id",favorite);
-					$("table#tableResult tbody").append(line);
+					$("table#favoritesTable tbody").append(line);
 				});
 				// handle favorite deletion
 				$('.delete i').click(function(e){

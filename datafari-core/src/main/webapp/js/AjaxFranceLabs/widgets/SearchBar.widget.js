@@ -219,6 +219,8 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 					
 					$('#advancedSearchLink').click(function(event){
 						
+						destroyDatatables();
+						
 						// Hide other UIs
 						$("#parametersUi").hide();
 						$("#favoritesUi").hide();
@@ -315,6 +317,7 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 			},
 
 			makeRequest : function() {
+				destroyDatatables();
 				$('#searchBar').show();
 				$("#results_div").show();
 				$("#search_information").show();

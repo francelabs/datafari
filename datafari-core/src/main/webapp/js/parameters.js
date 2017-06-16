@@ -22,7 +22,8 @@ $(document).ready(function() {
 	
 });
 	var d;
-	var table;
+	var alertsTable;
+	var searchesTable;
 	
 	function initParametersUI() {
 		$("#parametersUi").show();
@@ -92,7 +93,7 @@ $(document).ready(function() {
 	    	success: function( data, textStatus, jqXHR) {
 	        	if (data.code == 0){
 					if (data.searchesList!==undefined && !jQuery.isEmptyObject(data.searchesList)){
-						$("#param-content").html("<table id='tableResult'><thead><tr><th>"+window.i18n.msgStore['search']+"</th><th>"+window.i18n.msgStore['link']+"</th><th>"+window.i18n.msgStore['delete']+"</th></tr></thead><tbody></tbody></table>");
+						$("#param-content").html("<table id='searchesTable'><thead><tr><th>"+window.i18n.msgStore['search']+"</th><th>"+window.i18n.msgStore['link']+"</th><th>"+window.i18n.msgStore['delete']+"</th></tr></thead><tbody></tbody></table>");
 						$.each(data.searchesList,function(name,search){
 							var line = $('<tr class="tr">'+
 										'<td>' + name + '</td>'+
@@ -102,9 +103,9 @@ $(document).ready(function() {
 							);
 							line.data("id",search);
 							line.data("name",name);
-							$("#tableResult tbody").append(line);
+							$("#searchesTable tbody").append(line);
 						});
-						var tableResult = $("#tableResult").DataTable(
+						searchesTable = $("#searchesTable").DataTable(
         				{
         					"info":false, 
         					"lengthChange":false, 
@@ -122,14 +123,15 @@ $(document).ready(function() {
 							}
 							$.post("./deleteSearch",{name:element.data('name'),request:element.data('id')},function(data){
 								if (data.code==0){
-									tableResult
+									searchesTable
 					                .row(element) 
 					                .remove()
 					                .draw();
 									
-									var nbData = tableResult.column(0).data().length
+									var nbData = searchesTable.column(0).data().length
 									if(nbData < 1 ) {
 										$("#param-content").html("<div><b>"+window.i18n.msgStore["nosavedsearches"]+"</b></div>");
+										destroySavedSearchesTable();
 									} 
 								}else{
 									console.log(data.status);
@@ -183,7 +185,7 @@ $(document).ready(function() {
 	
 	function createAlertContent() {
 		var dataString = "keyword=";
-		$("#param-content").html("<div id='addAlertDiv'></div>");
+		$("#param-content").html("<div id='addAlertDiv'><button onclick='javascript:addAlert();' id='addAlertButton'>"+window.i18n.msgStore['addAlert']+"</button></div>");
 		$("#param-content").append("<div id='alertsListDiv'></div>");
 		$.ajax({			//Ajax request to the doGet of the Alerts servlet
 	        type: "GET",
@@ -209,7 +211,7 @@ $(document).ready(function() {
 						//Print a button with an href towards remove()
 						i++;
 					}
-					table = $("#alerts_table").DataTable(
+					alertsTable = $("#alerts_table").DataTable(
 	        				{
 	        					"info":false, 
 	        					"lengthChange":false, 
@@ -235,6 +237,87 @@ $(document).ready(function() {
 	          	}
 	        }
 	    });  
+	}
+	
+	function addAlert() {
+		$("#addAlertDiv").html("");
+		$("#addAlertDiv").append("<form id=\"add\" role=\"form\">");
+		$("#add").append("<table id=\"addAlertTable\" ></table>");
+		var tr = $("<tr>");
+		tr.append("<td><label>"+window.i18n.msgStore['keyword']+"</label></td>");
+		tr.append("<td><input required type=\"text\" id=\"keyword\" name=\"keyword\" placeholder="+window.i18n.msgStore['keyword']+"/></td>");
+		$("#addAlertTable").append(tr);
+		tr = $("<tr>");
+		tr.append("<td><label>"+window.i18n.msgStore['subject']+"</label></td>");
+		tr.append("<td><input required type=\"text\" id=\"subject\" name=\"subject\" placeholder="+window.i18n.msgStore['subject']+"/></td>");
+		$("#addAlertTable").append(tr);
+		tr = $("<tr>");
+		tr.append("<td><label>"+window.i18n.msgStore['mail']+"</label></td>");
+		tr.append("<td><input required type=\"text\" id=\"mail\" name=\"mail\" placeholder="+window.i18n.msgStore['mail']+"/></td>");
+		$("#addAlertTable").append(tr);
+		tr = $("<tr>");
+		tr.append("<td><label>"+window.i18n.msgStore['core']+"</label></td>");
+		tr.append("<td><input required type=\"text\" id=\"core\" name=\"core\" placeholder=\"Core\" value=\"FileShare\"/></td>");
+		$("#addAlertTable").append(tr);
+		tr = $("<tr>");
+		tr.append("<td><label>"+window.i18n.msgStore['frequency']+"</label></td>");
+		tr.append("<td><select required id=\"frequency\" name=\"frequency\" class=\"col-sm-4\">	<OPTION value='hourly'>"+window.i18n.msgStore['hourly']+"</OPTION><OPTION value='daily'>"+window.i18n.msgStore['daily']+"</OPTION><OPTION value='weekly'>"+window.i18n.msgStore['weekly']+"</OPTION></select></td>");
+		$("#addAlertTable").append(tr);
+		tr = $("<tr>");
+		tr.append("<td colspan=2 id='addAlertSubmit'><input type=\"Submit\" id=\"newAlerts\" name=\"AddAlert\" value=\""+window.i18n.msgStore['confirm']+"\"/><button id='addAlertCancel'>"+window.i18n.msgStore['cancel']+"</button></td>");
+		$("#addAlertTable").append(tr);
+		$("#addAlertDiv").append("</form>");
+		$("#addAlertDiv").append("<div id='addAlertMessage'></div>");
+		
+		$("#addAlertCancel").click(function() {initCreateAlertButton();});
+		
+		$("#add").submit(function(e){
+	        e.preventDefault();
+	 	});
+		
+		$("#add").submit(function(e){
+			 var datastring = $("#add").serialize();	
+		 		$.ajax({ 				//Ajax request to the doPost of the Alerts servlet
+		       		type: "POST",
+		        	url: "./admin/Alerts",
+		       	 	data: datastring,
+		        	//if received a response from the server
+		        	success: function(data, textStatus, jqXHR) {
+		        		if(data.toString().indexOf("Error code : ")!==-1){
+		        			$("#addAlertMessage").addClass("fail");
+		    				$("#addAlertMessage").html(data);
+		            	}else{
+		            		$("#addAlertMessage").addClass("success");
+		            		$("#addAlertMessage").html(window.i18n.msgStore['success']);
+		            		$("#addAlertMessage").fadeOut(1500,function(){
+		            			destroyAlertsTable();
+		            			createAlertContent();});
+		            	}
+		        	},
+		        	error: function(jqXHR, textStatus, errorThrown){
+		        		 if(jqXHR.responseText==="error connecting to the database"){
+		               		$("#addAlertsForm").append(window.i18n.msgStore['dbError'])
+		               	}else {
+		                     console.log("Something really bad happened " + textStatus);
+		                     $("#addAlertsForm").html(jqXHR.responseText);
+		               	}
+		        	},
+		        	//capture the request before it was sent to server
+		        	beforeSend: function(jqXHR, settings){
+		            	//disable the button until we get the response
+		            	$('#newAlerts').attr("disabled", true);
+		        	},
+		        	//called after the response or error functions are finsihed
+		        	complete: function(jqXHR, textStatus){
+		            	//enable the button 
+		            	$('#add').attr("disabled", false);
+		        	}  
+		 		});
+		 });
+	}
+	
+	function initCreateAlertButton() {
+		$("#addAlertDiv").html("<button onclick='javascript:addAlert();' id='addAlertButton'>"+window.i18n.msgStore['addAlert']+"</button>");
 	}
 	
 	function modify(i) {
@@ -268,7 +351,7 @@ $(document).ready(function() {
 	        	}else{
 	        		d.alerts[i].frequency = $("#select-frequency-" + i).val();
 	        		d.alerts[i]._id = JSON.parse(data).uuid;
-	        		table.cell("#frequency-"+i).data(window.i18n.msgStore[d.alerts[i].frequency]+" <span class='modify-link'><button onclick='javascript: modify("+i+")'>"+window.i18n.msgStore['modify']+"</button></span>").draw();
+	        		alertsTable.cell("#frequency-"+i).data(window.i18n.msgStore[d.alerts[i].frequency]+" <span class='modify-link'><button onclick='javascript: modify("+i+")'>"+window.i18n.msgStore['modify']+"</button></span>").draw();
 	        	}
 	        },
 	        error: function(jqXHR, textStatus, errorThrown){
@@ -292,14 +375,15 @@ $(document).ready(function() {
 	        		//Suppress the row of the tab that was show the now removed alert
 //	        		var row = document.getElementById(i);
 //	            	row.parentNode.removeChild(row);
-	            	table
+	            	alertsTable
 	                .row( "#alert-" + i) 
 	                .remove()
 	                .draw();
 	            	
-	            	var nbData = table.column(0).data().length
+	            	var nbData = alertsTable.column(0).data().length
 					if(nbData < 1 ) {
 						$("#alertsListDiv").html("<div><b>"+window.i18n.msgStore['noAlerts']+"</b></div>");
+						destroyAlertsTable();
 					}
 	        	}        
 	        },
@@ -308,4 +392,25 @@ $(document).ready(function() {
 	             console.log("Something really bad happened " + textStatus);
 	        }
 		});
+	}
+	
+	function destroyDatatables() {
+		destroyAlertsTable();
+		destroySavedSearchesTable();
+	}
+	
+	function destroySavedSearchesTable() {
+		if(searchesTable !== undefined) {
+			searchesTable.clear();
+			searchesTable.destroy(true);
+			searchesTable = undefined;
+		}
+	}
+	
+	function destroyAlertsTable() {
+		if(alertsTable !== undefined) {
+			alertsTable.clear();
+			alertsTable.destroy(true);
+			alertsTable = undefined;
+		}
 	}

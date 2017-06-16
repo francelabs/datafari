@@ -882,37 +882,6 @@ input[type="button"] {
   padding-right: 10px;
   width: auto;
 }
-#tableResult {
-  background-color: #f8f8f8;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-  width: 100%; }
-  #tableResult a {
-    color: #6B956F;
-    font-weight: 700; }
-  #tableResult thead th {
-    border: 1px solid #c3c3c3;
-    border-top: 0;
-    font-size: 14px;
-    font-weight: 700;
-    padding: 10px; }
-  #tableResult thead tr th:first-child {
-    border-left: 0; }
-  #tableResult thead tr th:last-child {
-    border-right: 0; }
-  #tableResult thead tr:last-child th {
-    border-bottom: 0; }
-  #tableResult tbody th {
-    border: 1px solid #c3c3c3;
-    font-size: 12px !important;
-    font-weight: 300;
-    padding: 10px; }
-  #tableResult tbody tr th:first-child {
-    border-left: 0; }
-  #tableResult tbody tr th:last-child {
-    border-right: 0; }
-  #tableResult tbody tr:last-child th {
-    border-bottom: 0; }
 
 /* Recherche avancée*/
 
