@@ -78,19 +78,9 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 
 			buildWidget : function() {
 				var self = this, elm = $(this.elm);
-//				if ($(window).width() > 800) {
-//					elm.addClass('searchBarWidget').addClass('widget').append(
-//							'<div id="searchBarContent"></div>').append(
-//							'<div id="sortMode"></div>');
-//					elm.find('#searchBarContent').append(
-//							'<div class="searchBar"></div>').append(
-//							'<div class="searchMode"></div>');
-//				} else {
-//					elm.addClass('searchBarWidget').addClass('widget').append(
-//							'<div class="searchBar"></div>').append(
-//							'<div class="searchMode"></div>').append(
-//							'<div id="sortMode"></div>');
-//				}
+				$("#basicSearchLink").html(window.i18n.msgStore['search']);
+				$("#basicSearchLink").click(function() {self.initBasicSearchUI();});
+				$("#basicSearchLink").addClass("active");
 				
 				if ($(window).width() > 800) {
 					elm.addClass('searchBarWidget').addClass('widget').append(
@@ -317,6 +307,17 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 			},
 
 			makeRequest : function() {
+				this.initBasicSearchUI();
+				if (!this.noRequest) {
+					this.clean();
+					this.updateAddressBar();
+					this.manager.makeRequest();
+					$("#results .doc_list").empty();
+				}
+
+			},
+			
+			initBasicSearchUI: function() {
 				destroyDatatables();
 				$('#searchBar').show();
 				$("#results_div").show();
@@ -326,13 +327,7 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 				$("#parametersUi").hide();
 				$("#favoritesUi").hide();
 				$("#loginDatafariLinks").find(".active").removeClass("active");
-				if (!this.noRequest) {
-					this.clean();
-					this.updateAddressBar();
-					this.manager.makeRequest();
-					$("#results .doc_list").empty();
-				}
-
+				$("#basicSearchLink").addClass("active");
 			},
 			
 			/**

@@ -199,7 +199,7 @@ $(document).ready(function() {
 	        	if(data.toString().indexOf("Error code : ")!==-1){
 	        		console.log(data);
 	        	} else if(data.alerts!=undefined){
-	        		$("#alertsListDiv").html("<table id='alerts_table'><thead><tr><th>"+window.i18n.msgStore['search']+"</th><th>"+window.i18n.msgStore['send-frequency']+"</th><th>"+window.i18n.msgStore['delete']+"</th></tr></thead><tbody></tbody></table>");
+	        		$("#alertsListDiv").html("<table id='alerts_table'><thead><tr><th>"+window.i18n.msgStore['search']+"</th><th>"+window.i18n.msgStore['subject']+"</th><th>"+window.i18n.msgStore['mail']+"</th><th>"+window.i18n.msgStore['send-frequency']+"</th><th>"+window.i18n.msgStore['delete']+"</th></tr></thead><tbody></tbody></table>");
 	        		//get the data in a global var so it can be used in edit() or remove() 
 	        		d=data;
 	        		var numb = data.alerts.length;
@@ -207,7 +207,7 @@ $(document).ready(function() {
 					while (i<numb){	//While they are still alerts to print
 						var doc = data.alerts[i];
 						//Print the alert with an href of the keyword towards edit()
-						$("#alerts_table tbody").append("<tr id=\"alert-"+i+"\"><td><span class='alert_search_term'>"+doc.keyword+"</span></td><td id='frequency-"+i+"' class='frequency'>"+window.i18n.msgStore[doc.frequency]+" <span class='modify-link'><button onclick='javascript: modify("+i+")'>"+window.i18n.msgStore['modify']+"</button></span></td><td><a href=\"javascript: remove("+i+")\" class='delete-button'>x</a></td></tr>");
+						$("#alerts_table tbody").append("<tr id=\"alert-"+i+"\"><td><span class='alert_search_term'>"+doc.keyword+"</span></td><td>"+doc.subject+"</td><td>"+doc.mail+"</td><td id='frequency-"+i+"' class='frequency'>"+window.i18n.msgStore[doc.frequency]+" <span class='modify-link'><button onclick='javascript: modify("+i+")'>"+window.i18n.msgStore['modify']+"</button></span></td><td><a href=\"javascript: remove("+i+")\" class='delete-button'>x</a></td></tr>");
 						//Print a button with an href towards remove()
 						i++;
 					}
@@ -217,6 +217,8 @@ $(document).ready(function() {
 	        					"lengthChange":false, 
 	        					"searching":false,
 	        					"columns": [
+	        						null,
+	        						null,
 	        						null,
 	        						null,
 	        						{ "orderable": false }
@@ -255,7 +257,7 @@ $(document).ready(function() {
 		tr.append("<td><label>"+window.i18n.msgStore['mail']+"</label></td>");
 		tr.append("<td><input required type=\"text\" id=\"mail\" name=\"mail\" placeholder="+window.i18n.msgStore['mail']+"/></td>");
 		$("#addAlertTable").append(tr);
-		tr = $("<tr>");
+		tr = $("<tr style='display: none;'>");
 		tr.append("<td><label>"+window.i18n.msgStore['core']+"</label></td>");
 		tr.append("<td><input required type=\"text\" id=\"core\" name=\"core\" placeholder=\"Core\" value=\"FileShare\"/></td>");
 		$("#addAlertTable").append(tr);

@@ -159,18 +159,17 @@
 	<div class="row">
 		<div id="sidebar-left" class="col-xs-2 col-sm-2">
 			<ul class="nav main-menu">
-<li class="dropdown" id="User">
-					<a href="#" class="dropdown-toggle">
-						<i class="fa fa-male"></i>
-						<span id="myAccount-AdminUI" class="hidden-xs"></span>
-					</a>
-					<ul class="dropdown-menu">
-<!-- 						<li><a class="ajax-link" href="../ajax/maps.html">Save search queries</a></li> -->
-						<li id="Alerts"><a id="alerts-AdminUI" class="ajax-link" href="../ajax/Alerts.html"></a></li>
-						<li id="LikesAndFavorites"><a id="favorites-AdminUI" class="ajax-link" href="../ajax/getFavorites.html"></a></li>
-<!-- 						<li><a class="ajax-link" href="../ajax/map_leaflet.html">Favorite documents</a></li> -->
-					</ul>
-				</li>
+<!-- <li class="dropdown" id="User"> -->
+<!-- 					<a href="#" class="dropdown-toggle"> -->
+<!-- 						<i class="fa fa-male"></i> -->
+<!-- 						<span id="myAccount-AdminUI" class="hidden-xs"></span> -->
+<!-- 					</a> -->
+<!-- 					<ul class="dropdown-menu"> -->
+<!-- 						<li id="Alerts"><a id="alerts-AdminUI" class="ajax-link" href="../ajax/Alerts.html"></a></li> -->
+<!-- 						<li id="LikesAndFavorites"><a id="favorites-AdminUI" class="ajax-link" href="../ajax/getFavorites.html"></a></li> -->
+<!-- 						<li id="SavedSearches"><a id="searches-AdminUI" class="ajax-link" href="../ajax/getSearches.html"></a></li> -->
+<!-- 					</ul> -->
+<!-- 				</li> -->
 <%
 if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrator")){
 %>
