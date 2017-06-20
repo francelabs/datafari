@@ -14,6 +14,26 @@ you just need to mention that you are using it.
 
 See http://wiki.datafari.com for more information.
 
+
+Remark
+------
+Datafari needs Python v 2.7.x. If you have only Python v3, please install Python2 (for Ubuntu 16.04 for example, install the package python-minimal)
+
+
+==================  3.2.0 ==================
+
+Changes :
+Tika updated to version 1.15
+Manifold CF updated to version 2.6
+Cassandra updated to version 3.10
+New UI
+New Advanced Search
+New languages : 
+  - Deutch
+  - Portuguese/Brazilian
+Various bug fixes
+
+
 ==================  3.1.0 ==================
 
 Changes :
