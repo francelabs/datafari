@@ -121,7 +121,7 @@
 	</target>
 	
 
-	<target name="all" depends="package,tomcat-dev" />
+	<target name="all" depends="clean,package,tomcat-dev" />
 
 	<target name="copyBinaries">
 
@@ -169,6 +169,7 @@
 		<copy todir="${debian.dist.dir}/solr/solr_home/FileShare/lib/extraction">
 			<fileset dir="${tika.src.dir}/dependency">
 				<include name="*.jar" />
+				<exclude name="language-detector*" />
 			</fileset>
 		</copy>
 
@@ -187,6 +188,13 @@
 		<copy todir="${debian.dist.dir}/mcf">
 			<fileset dir="${mcf.src.dir}" />
 		</copy>
+		
+		<!-- Copy Tika jars to MCF -->
+    <copy todir="${debian.dist.dir}/mcf/mcf_home/connector-common-lib">
+      <fileset dir="${tika.src.dir}/dependency">
+        <include name="*.jar" />
+      </fileset>
+    </copy>
 
 		<!-- Copy Tika OCR config in mcf lib -->
 		<copy todir="${debian.dist.dir}/mcf/mcf_home/lib">
