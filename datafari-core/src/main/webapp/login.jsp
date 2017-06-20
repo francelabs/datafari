@@ -139,9 +139,9 @@
 			// If the language param was defined in the source URL, append the language 
 			// selection to the adminUi page URL to be able to display it in the correct language
 			if (langParam != null){
-				urlRedirect = urlRedirect + langParam + "&urlRedirect=" + mainPage + "/admin/";
+				urlRedirect = urlRedirect + langParam + "&urlRedirect=" + mainPage + "/Search";
 			} else {
-				urlRedirect = urlRedirect + "?urlRedirect=" + mainPage + "/admin/";
+				urlRedirect = urlRedirect + "?urlRedirect=" + mainPage + "/Search";
 			}
 			
 			response.sendRedirect(urlRedirect);
