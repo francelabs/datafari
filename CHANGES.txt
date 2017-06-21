@@ -29,7 +29,7 @@ Cassandra updated to version 3.10
 New UI
 New Advanced Search
 New languages : 
-  - Deutch
+  - German
   - Portuguese/Brazilian
 Various bug fixes
 
