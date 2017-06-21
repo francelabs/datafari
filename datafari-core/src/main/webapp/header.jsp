@@ -32,6 +32,7 @@
 			<!--<div id="languageSelector"></div> -->
 
 			<div id="loginDatafariLinks">
+			 <div id="commonLinks">
 			  <a id="basicSearchLink" class="head-link"></a>
 				<a id="advancedSearchLink" class="head-link"></a>
 				<%
@@ -41,24 +42,28 @@
 							<a id="favorites" class="head-link"></a>
 							<a id="parameters" class="head-link"></a>
 				<%
-							String[] adminRoles = {"SearchAdministrator", "SearchExpert"};
-							for(String role : adminRoles) {
-								if(request.isUserInRole(role)) {
-									%>
-										<a id="adminLink" class="head-link"></a>
-									<%
-									break;
-								}
-							}
-							
+						}
 				%>
-						<a id="logout" class="head-link" onclick="logout();"></a>
+						</div>
+						<div id="connectionLink">
+				<% 
+						String[] adminRoles = {"SearchAdministrator", "SearchExpert"};
+		        for(String role : adminRoles) {
+		          if(request.isUserInRole(role)) {
+		            %>
+		              <a id="adminLink" class="head-link"></a>
+		            <%
+		            break;
+		          }
+		        }
+				%>
+						<a id="logout" class="head-link" onclick="logout();"></a></div>
 				<%
 						} 
-					}
 					else {
 				%>
-						<a id="loginLink" class="head-link"></a>
+				    </div>
+						<div id="connectionLink"><a id="loginLink" class="head-link"></a></div>
 				<% 
 					}					
 				%>

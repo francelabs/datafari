@@ -148,8 +148,8 @@
 			if (request.getUserPrincipal().getName() != null) {
 				if(request.isUserInRole("SearchAdministrator") || request.isUserInRole("SearchExpert")) { 
 	%>
- 					<script type="text/javascript" 
- 					src="js/AjaxFranceLabs/modules/QueryEvaluator.module.js"></script> 
+<!--  					<script type="text/javascript"  -->
+<!--  					src="js/AjaxFranceLabs/modules/QueryEvaluator.module.js"></script>  -->
 	<%
 				}
 			} 
