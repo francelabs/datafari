@@ -423,7 +423,9 @@
         height: 30px;
         border: 1px solid #fbfbfb;
         transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-        -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s; }
+        -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s; 
+        z-index: 3;
+        }
         body .searchBarWidget .searchBar input[type=text] {
           color: #444;
           padding-left: 0px;
