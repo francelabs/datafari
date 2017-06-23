@@ -147,7 +147,7 @@ function loadFavorites(){
 					var splitArray = favorite.split("/");
                     
                 	var line = $('<tr class="tr">'+
-                            '<th class="title col-xs-3"><a href="'+linkPrefix+favorite+'">'+shortText(splitArray[splitArray.length-1],30)+'</a></th>'+
+                            '<th class="col-xs-3"><a href="'+linkPrefix+favorite+'">'+shortText(splitArray[splitArray.length-1],30)+'</a></th>'+
                             '<th class="tiny col-xs-9">'+favorite+"</th>"+
                             '<th class="text-center delete"><i class="fa fa-times"></i></th>'+
                             '</tr>');
