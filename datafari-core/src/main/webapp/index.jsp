@@ -42,7 +42,7 @@
 		<script type ="text/javascript" src ="js/searchBar.js"></script>
 		
 
-	<jsp:include page="header.jsp" />
+	<jsp:include page="header-index.jsp" />
 	<div id="content_index">
 		<img class="fadeInDown animated" id="logo-search" src="images/datafari.png"/>
 		<div id="solr">

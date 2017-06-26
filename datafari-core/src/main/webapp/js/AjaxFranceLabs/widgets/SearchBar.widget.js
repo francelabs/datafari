@@ -307,8 +307,8 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 			},
 
 			makeRequest : function() {
-				this.initBasicSearchUI();
 				if (!this.noRequest) {
+					this.initBasicSearchUI();
 					this.clean();
 					this.updateAddressBar();
 					this.manager.makeRequest();
@@ -318,7 +318,9 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 			},
 			
 			initBasicSearchUI: function() {
-				destroyDatatables();
+				if(typeof destroyDatatables !== "undefined") {
+					destroyDatatables();
+				}
 				$('#searchBar').show();
 				$("#results_div").show();
 				$("#search_information").show();
