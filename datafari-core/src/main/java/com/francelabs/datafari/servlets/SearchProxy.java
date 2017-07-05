@@ -17,7 +17,6 @@ package com.francelabs.datafari.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.security.Principal;
 import java.text.ParseException;
 import java.util.Arrays;
@@ -32,24 +31,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.ContentStream;
 import org.apache.solr.core.SolrCore;
 import org.apache.solr.request.SolrQueryRequest;
-import org.apache.solr.response.JSONResponseWriter;
-import org.apache.solr.response.SolrQueryResponse;
 import org.apache.solr.schema.IndexSchema;
 import org.apache.solr.search.SolrIndexSearcher;
 import org.apache.solr.util.RTimerTree;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.francelabs.datafari.service.search.SolrServers;
+import com.francelabs.datafari.service.indexer.IndexerQuery;
+import com.francelabs.datafari.service.indexer.IndexerResponse;
+import com.francelabs.datafari.service.indexer.IndexerServer;
+import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.service.search.SolrServers.Core;
 import com.francelabs.datafari.statistics.StatsProcessor;
 import com.francelabs.datafari.statistics.StatsPusher;
@@ -78,6 +76,7 @@ public class SearchProxy extends HttpServlet implements SolrQueryRequest {
 			throws ServletException, IOException {
 
 		final String handler = getHandler(request);
+    final String protocol = request.getScheme() + ":";
 
 		if (!allowedHandlers.contains(handler)) {
 			log("Unauthorized handler");
@@ -96,14 +95,357 @@ public class SearchProxy extends HttpServlet implements SolrQueryRequest {
 			return;
 		}
 
-		SolrClient solr;
-		SolrClient promolinkCore = null;
-		QueryResponse queryResponse = null;
-		QueryResponse queryResponsePromolink = null;
-		final SolrQuery query = new SolrQuery();
-		final SolrQuery queryPromolink = new SolrQuery();
+    // SolrClient solr;
+    // SolrClient promolinkCore = null;
+    // QueryResponse queryResponse = null;
+    // QueryResponse queryResponsePromolink = null;
+    // final SolrQuery query = new SolrQuery();
+    // final SolrQuery queryPromolink = new SolrQuery();
+    //
+    // final ModifiableSolrParams params = new ModifiableSolrParams();
+    // try {
+    // // get the AD domain
+    // final HashMap<String, String> h =
+    // RealmLdapConfiguration.getConfig(request);
+    // if (h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME) != null) {
+    // final String userBase =
+    // h.get(RealmLdapConfiguration.ATTR_DOMAIN_NAME).toLowerCase();
+    // final String[] parts = userBase.split(",");
+    // domain = "";
+    // for (int i = 0; i < parts.length; i++) {
+    // if (parts[i].indexOf("dc=") != -1) { // Check if the current
+    // // part is a domain
+    // // component
+    // if (!domain.isEmpty()) {
+    // domain += ".";
+    // }
+    // domain += parts[i].substring(parts[i].indexOf('=') + 1);
+    // }
+    // }
+    // }
+    //
+    // switch (handler) {
+    // case "/stats":
+    // case "/statsQuery":
+    // solr = SolrServers.getSolrServer(Core.STATISTICS);
+    // break;
+    // default:
+    // solr = SolrServers.getSolrServer(Core.FILESHARE);
+    // promolinkCore = SolrServers.getSolrServer(Core.PROMOLINK);
+    //
+    // // Add authentication
+    // if (request.getUserPrincipal() != null) {
+    // String AuthenticatedUserName =
+    // request.getUserPrincipal().getName().replaceAll("[^\\\\]*\\\\", "");
+    // if (AuthenticatedUserName.contains("@")) {
+    // AuthenticatedUserName = AuthenticatedUserName.substring(0,
+    // AuthenticatedUserName.indexOf("@"));
+    // }
+    // if (!domain.equals("")) {
+    // AuthenticatedUserName += "@" + domain;
+    // }
+    // params.set("AuthenticatedUserName", AuthenticatedUserName);
+    // }
+    //
+    // final String queryParam = params.get("query");
+    // if (queryParam != null) {
+    // params.set("q", queryParam);
+    // params.remove("query");
+    // }
+    //
+    // break;
+    // }
+    //
+    // params.add(new ModifiableSolrParams(request.getParameterMap()));
+    //
+    // try {
+    // if
+    // (ScriptConfiguration.getProperty("ontologyEnabled").toLowerCase().equals("true")
+    // &&
+    // ScriptConfiguration.getProperty("ontologyEnabled").toLowerCase().equals("true")
+    // && handler.equals("/select")) {
+    // final boolean languageSelection = Boolean
+    // .valueOf(ScriptConfiguration.getProperty("ontologyLanguageSelection"));
+    // String parentsLabels =
+    // ScriptConfiguration.getProperty("ontologyParentsLabels");
+    // String childrenLabels =
+    // ScriptConfiguration.getProperty("ontologyChildrenLabels");
+    // if (languageSelection) {
+    // parentsLabels += "_fr";
+    // childrenLabels += "_fr";
+    // }
+    // final int facetFieldLength = params.getParams("facet.field").length;
+    // final String[] facetFields =
+    // Arrays.copyOf(params.getParams("facet.field"), facetFieldLength + 2);
+    // facetFields[facetFieldLength] = "{!ex=" + parentsLabels + "}" +
+    // parentsLabels;
+    // facetFields[facetFieldLength + 1] = "{!ex=" + childrenLabels + "}" +
+    // childrenLabels;
+    // params.set("facet.field", facetFields);
+    // }
+    // } catch (final IOException e) {
+    // LOGGER.warn("Ignored ontology facets because of error: " + e.toString());
+    // }
+    //
+    // // perform query
+    // // define the request handler which may change if a specific source
+    // // has been provided
+    // String requestHandler = handler;
+    // if (request.getParameter("source") != null &&
+    // !request.getParameter("source").isEmpty()
+    // && !request.getParameter("source").equalsIgnoreCase("all")) {
+    // requestHandler += "-" + request.getParameter("source");
+    // }
+    // params.remove("source");
+    // query.add(params);
+    // query.setRequestHandler(handler);
+    // queryResponse = solr.query(query);
+    // if (promolinkCore != null && !params.get("q").toString().equals("*:*")) {
+    // // launch
+    // // a
+    // // request
+    // // in
+    // // the
+    // // promolink
+    // // core
+    // // only
+    // // if
+    // // it's
+    // // a
+    // // request
+    // // onZ
+    // // the
+    // // FileShare
+    // // core
+    //
+    // queryPromolink.setQuery(params.get("q"));
+    // queryPromolink.setFilterQueries("-dateBeginning:[NOW/DAY+1DAY TO *]",
+    // "-dateEnd:[* TO NOW/DAY]");
+    // queryResponsePromolink = promolinkCore.query(queryPromolink);
+    // }
+    // switch (handler) {
+    // case "/select":
+    // // If there is no id there is no need to record stats
+    // if (params.get("id") != null && !params.get("id").equals("")) {
+    // // index
+    // final long numFound = queryResponse.getResults().getNumFound();
+    // final int QTime = queryResponse.getQTime();
+    // final ModifiableSolrParams statsParams = new
+    // ModifiableSolrParams(params);
+    // statsParams.add("numFound", Long.toString(numFound));
+    // if (numFound == 0) {
+    // statsParams.add("noHits", "1");
+    // }
+    // statsParams.add("QTime", Integer.toString(QTime));
+    // StatsPusher.pushQuery(statsParams, protocol);
+    // }
+    // break;
+    // case "/stats":
+    // StatsProcessor.processStatsResponse(queryResponse);
+    // break;
+    // }
+    //
+    // if (promolinkCore != null) {
+    // writeSolrJResponse(request, response, query, queryResponse,
+    // queryPromolink, queryResponsePromolink);
+    // } else {
+    // writeSolrJResponse(request, response, query, queryResponse, null, null);
+    // }
+    //
+    // } catch (final Exception e) {
+    // // TODO fine handling of exception
+    // LOGGER.error("Unknown error " + e.getMessage());
+    // }
+    //
+    // }
+    //
+    // private void writeSolrJResponse(final HttpServletRequest request, final
+    // HttpServletResponse response,
+    // final SolrQuery query, final QueryResponse queryResponse, final SolrQuery
+    // queryPromolink,
+    // final QueryResponse queryResponsePromolink) throws IOException,
+    // JSONException, ParseException {
+    //
+    // final SolrQueryRequest req = new SolrQueryRequest() {
+    //
+    // @Override
+    // public void close() {
+    // // TODO Auto-generated method stub
+    //
+    // }
+    //
+    // @Override
+    // public Iterable<ContentStream> getContentStreams() {
+    // // TODO Auto-generated method stub
+    // return null;
+    // }
+    //
+    // @Override
+    // public Map<Object, Object> getContext() {
+    // // TODO Auto-generated method stub
+    // return null;
+    // }
+    //
+    // @Override
+    // public SolrCore getCore() {
+    // // TODO Auto-generated method stub
+    // return null;
+    // }
+    //
+    // @Override
+    // public Map<String, Object> getJSON() {
+    // // TODO Auto-generated method stub
+    // return null;
+    // }
+    //
+    // @Override
+    // public SolrParams getOriginalParams() {
+    // // TODO Auto-generated method stub
+    // return null;
+    // }
+    //
+    // @Override
+    // public String getParamString() {
+    // // TODO Auto-generated method stub
+    // return null;
+    // }
+    //
+    // @Override
+    // public SolrParams getParams() {
+    // // TODO Auto-generated method stub
+    // return query;
+    // }
+    //
+    // @Override
+    // public RTimerTree getRequestTimer() {
+    // // TODO Auto-generated method stub
+    // return null;
+    // }
+    //
+    // @Override
+    // public IndexSchema getSchema() {
+    // // TODO Auto-generated method stub
+    // return null;
+    // }
+    //
+    // @Override
+    // public SolrIndexSearcher getSearcher() {
+    // // TODO Auto-generated method stub
+    // return null;
+    // }
+    //
+    // @Override
+    // public long getStartTime() {
+    // // TODO Auto-generated method stub
+    // return 0;
+    // }
+    //
+    // @Override
+    // public Principal getUserPrincipal() {
+    // // TODO Auto-generated method stub
+    // return null;
+    // }
+    //
+    // @Override
+    // public void setJSON(final Map<String, Object> arg0) {
+    // // TODO Auto-generated method stub
+    //
+    // }
+    //
+    // @Override
+    // public void setParams(final SolrParams arg0) {
+    // // TODO Auto-generated method stub
+    //
+    // }
+    //
+    // @Override
+    // public void updateSchemaToLatest() {
+    // // TODO Auto-generated method stub
+    //
+    // }
+    //
+    // };
+    // if (queryResponsePromolink != null) { // If it was a request on
+    // // FileShare
+    // // therefore on promolink
+    // final SolrQueryResponse res = new SolrQueryResponse();
+    // res.setAllValues(queryResponse.getResponse());
+    // final JSONResponseWriter jsonWriter = new JSONResponseWriter();
+    // StringWriter s = new StringWriter();
+    //
+    // jsonWriter.write(s, req, res);
+    // final JSONObject json = new
+    // JSONObject(s.toString().substring(s.toString().indexOf("{"))); //
+    // Creating
+    // // a
+    // // valid
+    // // json
+    // // object
+    // // from
+    // // the
+    // // results
+    //
+    // res.setAllValues(queryResponsePromolink.getResponse());
+    // s = new StringWriter();
+    // jsonWriter.write(s, req, res); // Write the result of the query on
+    // // promolink
+    //
+    // if (queryResponsePromolink.getResults().getNumFound() != 0) { // If
+    // // there
+    // // are
+    // // a
+    // // result
+    // // for
+    // // the
+    // // promolink
+    //
+    // final JSONObject promoResponseJSON = new JSONObject();
+    // final SolrDocument promoLinkDocument =
+    // queryResponsePromolink.getResults().get(0);
+    // for (final String fieldName :
+    // queryResponsePromolink.getResults().get(0).getFieldNames()) {
+    // promoResponseJSON.put(fieldName, promoLinkDocument.get(fieldName));
+    // }
+    // // Taking
+    // // just
+    // // the
+    // // results
+    // // without
+    // // the
+    // // header
+    //
+    // json.put("promolinkSearchComponent", promoResponseJSON);
+    //
+    // }
+    // final String wrapperFunction = request.getParameter("json.wrf");
+    // final String finalString = wrapperFunction + "(" + json.toString() + ")";
+    // response.setStatus(200);
+    // response.setCharacterEncoding("utf-8");
+    // response.setContentType("text/json;charset=utf-8");
+    // response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
+    // response.getWriter().write(finalString); // Send the answer to the
+    // // jsp page
+    //
+    // } else {
+    // final SolrQueryResponse res = new SolrQueryResponse();
+    // final JSONResponseWriter json = new JSONResponseWriter();
+    // response.setStatus(200);
+    // response.setCharacterEncoding("utf-8");
+    // response.setContentType("text/json;charset=utf-8");
+    // response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
+    // res.setAllValues(queryResponse.getResponse());
+    // json.write(response.getWriter(), req, res);
+    //
+    // }
+    // }
 
-		final ModifiableSolrParams params = new ModifiableSolrParams();
+    IndexerServer solr;
+    IndexerServer promolinkCore = null;
+    IndexerResponse queryResponse = null;
+    IndexerResponse queryResponsePromolink = null;
+    final IndexerQuery queryPromolink;
+
+    final IndexerQuery params;
 		try {
 			// get the AD domain
 			final HashMap<String, String> h = RealmLdapConfiguration.getConfig(request);
@@ -126,31 +468,37 @@ public class SearchProxy extends HttpServlet implements SolrQueryRequest {
 			switch (handler) {
 			case "/stats":
 			case "/statsQuery":
-				solr = SolrServers.getSolrServer(Core.STATISTICS);
+        solr = IndexerServerManager.getIndexerServer(Core.STATISTICS);
+        params = solr.createQuery();
 				break;
 			default:
-				solr = SolrServers.getSolrServer(Core.FILESHARE);
-				promolinkCore = SolrServers.getSolrServer(Core.PROMOLINK);
+        solr = IndexerServerManager.getIndexerServer(Core.FILESHARE);
+        params = solr.createQuery();
+        promolinkCore = IndexerServerManager.getIndexerServer(Core.PROMOLINK);
+        queryPromolink = promolinkCore.createQuery();
 
 				// Add authentication
 				if (request.getUserPrincipal() != null) {
 					String AuthenticatedUserName = request.getUserPrincipal().getName().replaceAll("[^\\\\]*\\\\", "");
+          if (AuthenticatedUserName.contains("@")) {
+            AuthenticatedUserName = AuthenticatedUserName.substring(0, AuthenticatedUserName.indexOf("@"));
+          }
 					if (!domain.equals("")) {
 						AuthenticatedUserName += "@" + domain;
 					}
-					params.set("AuthenticatedUserName", AuthenticatedUserName);
+          params.setParam("AuthenticatedUserName", AuthenticatedUserName);
 				}
 
-				final String queryParam = params.get("query");
+        final String queryParam = params.getParamValue("query");
 				if (queryParam != null) {
-					params.set("q", queryParam);
-					params.remove("query");
+          params.setParam("q", queryParam);
+          params.removeParam("query");
 				}
 
 				break;
 			}
 
-			params.add(new ModifiableSolrParams(request.getParameterMap()));
+      params.addParams(request.getParameterMap());
 
 			try {
 				if (ScriptConfiguration.getProperty("ontologyEnabled").toLowerCase().equals("true")
@@ -164,21 +512,28 @@ public class SearchProxy extends HttpServlet implements SolrQueryRequest {
 						parentsLabels += "_fr";
 						childrenLabels += "_fr";
 					}
-					final int facetFieldLength = params.getParams("facet.field").length;
-					final String[] facetFields = Arrays.copyOf(params.getParams("facet.field"), facetFieldLength + 2);
+          final int facetFieldLength = params.getParamValues("facet.field").length;
+          final String[] facetFields = Arrays.copyOf(params.getParamValues("facet.field"), facetFieldLength + 2);
 					facetFields[facetFieldLength] = "{!ex=" + parentsLabels + "}" + parentsLabels;
 					facetFields[facetFieldLength + 1] = "{!ex=" + childrenLabels + "}" + childrenLabels;
-					params.set("facet.field", facetFields);
+          params.setParam("facet.field", facetFields);
 				}
 			} catch (final IOException e) {
 				LOGGER.warn("Ignored ontology facets because of error: " + e.toString());
 			}
 
 			// perform query
-			query.add(params);
-			query.setRequestHandler(handler);
-			queryResponse = solr.query(query);
-			if (promolinkCore != null && !(params.get("q").toString().equals("*:*"))) { // launch
+      // define the request handler which may change if a specific source
+      // has been provided
+      String requestHandler = handler;
+      if (request.getParameter("source") != null && !request.getParameter("source").isEmpty()
+          && !request.getParameter("source").equalsIgnoreCase("all")) {
+        requestHandler += "-" + request.getParameter("source");
+      }
+      params.removeParam("source");
+      params.setRequestHandler(handler);
+      queryResponse = solr.executeQuery(params);
+      if (promolinkCore != null && !params.getParamValue("q").toString().equals("*:*")) { // launch
 																						// a
 																						// request
 																						// in
@@ -195,22 +550,25 @@ public class SearchProxy extends HttpServlet implements SolrQueryRequest {
 																						// FileShare
 																						// core
 
-				queryPromolink.setQuery(params.get("q"));
+        queryPromolink.setQuery(params.getParamValue("q"));
 				queryPromolink.setFilterQueries("-dateBeginning:[NOW/DAY+1DAY TO *]", "-dateEnd:[* TO NOW/DAY]");
-				queryResponsePromolink = promolinkCore.query(queryPromolink);
+        queryResponsePromolink = promolinkCore.executeQuery(queryPromolink);
 			}
 			switch (handler) {
 			case "/select":
+        // If there is no id there is no need to record stats
+        if (params.getParamValue("id") != null && !params.getParamValue("id").equals("")) {
 				// index
-				final long numFound = queryResponse.getResults().getNumFound();
+          final long numFound = queryResponse.getNumFound();
 				final int QTime = queryResponse.getQTime();
-				final ModifiableSolrParams statsParams = new ModifiableSolrParams(params);
+          final IndexerQuery statsParams = new ModifiableSolrParams(params);
 				statsParams.add("numFound", Long.toString(numFound));
 				if (numFound == 0) {
 					statsParams.add("noHits", "1");
 				}
 				statsParams.add("QTime", Integer.toString(QTime));
-				StatsPusher.pushQuery(statsParams);
+          StatsPusher.pushQuery(statsParams, protocol);
+        }
 				break;
 			case "/stats":
 				StatsProcessor.processStatsResponse(queryResponse);
@@ -218,9 +576,9 @@ public class SearchProxy extends HttpServlet implements SolrQueryRequest {
 			}
 
 			if (promolinkCore != null) {
-				writeSolrJResponse(request, response, query, queryResponse, queryPromolink, queryResponsePromolink);
+        writeSolrJResponse(request, response, params, queryResponse, queryPromolink, queryResponsePromolink);
 			} else {
-				writeSolrJResponse(request, response, query, queryResponse, null, null);
+        writeSolrJResponse(request, response, params, queryResponse, null, null);
 			}
 
 		} catch (final Exception e) {
@@ -230,118 +588,96 @@ public class SearchProxy extends HttpServlet implements SolrQueryRequest {
 
 	}
 
+  // private void writeSolrJResponse(final HttpServletRequest request, final
+  // HttpServletResponse response,
+  // final SolrQuery query, final QueryResponse queryResponse, final SolrQuery
+  // queryPromolink,
+  // final QueryResponse queryResponsePromolink) throws IOException,
+  // JSONException, ParseException {
+  //
+  //
+  // if (queryResponsePromolink != null) { // If it was a request on
+  // // FileShare
+  // // therefore on promolink
+  // final SolrQueryResponse res = new SolrQueryResponse();
+  // res.setAllValues(queryResponse.getResponse());
+  // final JSONResponseWriter jsonWriter = new JSONResponseWriter();
+  // StringWriter s = new StringWriter();
+  //
+  // jsonWriter.write(s, req, res);
+  // final JSONObject json = new
+  // JSONObject(s.toString().substring(s.toString().indexOf("{"))); // Creating
+  // // a
+  // // valid
+  // // json
+  // // object
+  // // from
+  // // the
+  // // results
+  //
+  // res.setAllValues(queryResponsePromolink.getResponse());
+  // s = new StringWriter();
+  // jsonWriter.write(s, req, res); // Write the result of the query on
+  // // promolink
+  //
+  // if (queryResponsePromolink.getResults().getNumFound() != 0) { // If
+  // // there
+  // // are
+  // // a
+  // // result
+  // // for
+  // // the
+  // // promolink
+  //
+  // final JSONObject promoResponseJSON = new JSONObject();
+  // final SolrDocument promoLinkDocument =
+  // queryResponsePromolink.getResults().get(0);
+  // for (final String fieldName :
+  // queryResponsePromolink.getResults().get(0).getFieldNames()) {
+  // promoResponseJSON.put(fieldName, promoLinkDocument.get(fieldName));
+  // }
+  // // Taking
+  // // just
+  // // the
+  // // results
+  // // without
+  // // the
+  // // header
+  //
+  // json.put("promolinkSearchComponent", promoResponseJSON);
+  //
+  // }
+  // final String wrapperFunction = request.getParameter("json.wrf");
+  // final String finalString = wrapperFunction + "(" + json.toString() + ")";
+  // response.setStatus(200);
+  // response.setCharacterEncoding("utf-8");
+  // response.setContentType("text/json;charset=utf-8");
+  // response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
+  // response.getWriter().write(finalString); // Send the answer to the
+  // // jsp page
+  //
+  // } else {
+  // final SolrQueryResponse res = new SolrQueryResponse();
+  // final JSONResponseWriter json = new JSONResponseWriter();
+  // response.setStatus(200);
+  // response.setCharacterEncoding("utf-8");
+  // response.setContentType("text/json;charset=utf-8");
+  // response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
+  // res.setAllValues(queryResponse.getResponse());
+  // json.write(response.getWriter(), req, res);
+  //
+  // }
+  // }
+
 	private void writeSolrJResponse(final HttpServletRequest request, final HttpServletResponse response,
-			final SolrQuery query, final QueryResponse queryResponse, final SolrQuery queryPromolink,
-			final QueryResponse queryResponsePromolink) throws IOException, JSONException, ParseException {
-		final SolrQueryRequest req = new SolrQueryRequest() {
+      final IndexerQuery query, final IndexerResponse queryResponse, final IndexerQuery queryPromolink,
+      final IndexerResponse queryResponsePromolink) throws IOException, JSONException, ParseException {
 
-			@Override
-			public void close() {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public Iterable<ContentStream> getContentStreams() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public Map<Object, Object> getContext() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public SolrCore getCore() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public Map<String, Object> getJSON() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public SolrParams getOriginalParams() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public String getParamString() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public SolrParams getParams() {
-				// TODO Auto-generated method stub
-				return query;
-			}
-
-			@Override
-			public RTimerTree getRequestTimer() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public IndexSchema getSchema() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public SolrIndexSearcher getSearcher() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public long getStartTime() {
-				// TODO Auto-generated method stub
-				return 0;
-			}
-
-			@Override
-			public Principal getUserPrincipal() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public void setJSON(Map<String, Object> arg0) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void setParams(SolrParams arg0) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void updateSchemaToLatest() {
-				// TODO Auto-generated method stub
-
-			}
-
-		};
 		if (queryResponsePromolink != null) { // If it was a request on
 												// FileShare
 			// therefore on promolink
-			final SolrQueryResponse res = new SolrQueryResponse();
-			res.setAllValues(queryResponse.getResponse());
-			final JSONResponseWriter jsonWriter = new JSONResponseWriter();
-			StringWriter s = new StringWriter();
-
-			jsonWriter.write(s, req, res);
-			final JSONObject json = new JSONObject(s.toString().substring(s.toString().indexOf("{"))); // Creating
+      final String jsonStrQueryResponse = queryResponse.getStrJSONResponse();
+      final JSONObject json = new JSONObject(jsonStrQueryResponse.substring(jsonStrQueryResponse.indexOf("{"))); // Creating
 																										// a
 																										// valid
 																										// json
@@ -350,12 +686,11 @@ public class SearchProxy extends HttpServlet implements SolrQueryRequest {
 																										// the
 																										// results
 
-			res.setAllValues(queryResponsePromolink.getResponse());
-			s = new StringWriter();
-			jsonWriter.write(s, req, res); // Write the result of the query on
+      // Write the result of the query on
 											// promolink
+      final String jsonStrPromolinkResponse = queryResponsePromolink.getStrJSONResponse();
 
-			if (queryResponsePromolink.getResults().getNumFound() != 0) { // If
+      if (queryResponsePromolink.getNumFound() != 0) { // If
 																			// there
 																			// are
 																			// a
@@ -364,9 +699,11 @@ public class SearchProxy extends HttpServlet implements SolrQueryRequest {
 																			// the
 																			// promolink
 
-				JSONObject promoResponseJSON = new JSONObject();
-				SolrDocument promoLinkDocument = queryResponsePromolink.getResults().get(0);
-				for (String fieldName : queryResponsePromolink.getResults().get(0).getFieldNames()) {
+        final JSONObject promoResponseJSON = new JSONObject();
+        final JSONArray jsonPromolinkDocs = queryResponsePromolink.getResults();
+        final JSONObject jsonPromolinkDoc = jsonPromolinkDocs.getJSONObject(0);
+        final SolrDocument promoLinkDocument = queryResponsePromolink.getResults().get(0);
+        for (final String fieldName : queryResponsePromolink.getResults().get(0).getFieldNames()) {
 					promoResponseJSON.put(fieldName, promoLinkDocument.get(fieldName));
 				}
 				// Taking
@@ -390,14 +727,11 @@ public class SearchProxy extends HttpServlet implements SolrQueryRequest {
 														// jsp page
 
 		} else {
-			final SolrQueryResponse res = new SolrQueryResponse();
-			final JSONResponseWriter json = new JSONResponseWriter();
 			response.setStatus(200);
 			response.setCharacterEncoding("utf-8");
 			response.setContentType("text/json;charset=utf-8");
 			response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
-			res.setAllValues(queryResponse.getResponse());
-			json.write(response.getWriter(), req, res);
+      response.getWriter().write(queryResponse.getStrJSONResponse());
 
 		}
 	}
@@ -486,13 +820,13 @@ public class SearchProxy extends HttpServlet implements SolrQueryRequest {
 	}
 
 	@Override
-	public void setJSON(Map<String, Object> arg0) {
+  public void setJSON(final Map<String, Object> arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setParams(SolrParams arg0) {
+  public void setParams(final SolrParams arg0) {
 		// TODO Auto-generated method stub
 
 	}

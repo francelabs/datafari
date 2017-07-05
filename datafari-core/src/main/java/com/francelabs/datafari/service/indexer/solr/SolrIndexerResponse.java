@@ -16,6 +16,8 @@ import org.apache.solr.response.SolrQueryResponse;
 import org.apache.solr.schema.IndexSchema;
 import org.apache.solr.search.SolrIndexSearcher;
 import org.apache.solr.util.RTimerTree;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.francelabs.datafari.service.indexer.IndexerResponse;
 
@@ -155,6 +157,14 @@ public class SolrIndexerResponse implements IndexerResponse {
     }
 
     return null;
+  }
+
+  @Override
+  public JSONArray getResults() {
+    final String strJSON = getStrJSONResponse();
+    final JSONObject jsonResponse = new JSONObject(strJSON);
+    final JSONArray jsonResults = jsonResponse.getJSONObject("response").getJSONArray("docs");
+    return jsonResults;
   }
 
 }

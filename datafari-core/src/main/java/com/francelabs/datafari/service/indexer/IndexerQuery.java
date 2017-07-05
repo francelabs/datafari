@@ -10,12 +10,14 @@ public interface IndexerQuery {
 
   public void removeParam(final String paramName);
 
+  public String getParamValue(final String paramName);
+
   public String[] getParamValues(final String paramName);
 
   public void setQuery(final String query);
 
   public void setFilterQueries(final String... queries);
 
-  public void serRequestHandler(final String requestHandler);
+  public void setRequestHandler(final String requestHandler);
 
 }

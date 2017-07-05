@@ -34,6 +34,11 @@ public class SolrIndexerQuery implements IndexerQuery {
   }
 
   @Override
+  public String getParamValue(final String paramName) {
+    return parameters.get(paramName);
+  }
+
+  @Override
   public String[] getParamValues(final String paramName) {
     return parameters.getParams(paramName);
   }
@@ -54,7 +59,7 @@ public class SolrIndexerQuery implements IndexerQuery {
   }
 
   @Override
-  public void serRequestHandler(final String requestHandler) {
+  public void setRequestHandler(final String requestHandler) {
     this.query.setRequestHandler(requestHandler);
 
   }
