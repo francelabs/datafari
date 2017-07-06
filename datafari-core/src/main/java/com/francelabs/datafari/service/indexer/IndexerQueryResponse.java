@@ -2,7 +2,7 @@ package com.francelabs.datafari.service.indexer;
 
 import org.json.JSONArray;
 
-public interface IndexerResponse {
+public interface IndexerQueryResponse {
 
   public long getNumFound();
 

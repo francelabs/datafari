@@ -31,103 +31,84 @@ import org.apache.solr.common.util.SimpleOrderedMap;
 
 public class StatsProcessor {
 
-	public static void processStatsResponse(QueryResponse queryResponse)
-			throws Exception {
-		NamedList responseHeader = queryResponse.getResponseHeader();
-		FacetField QFacet = queryResponse.getFacetField("q");
+  public static void processStatsResponse(final QueryResponse queryResponse) throws Exception {
+    final NamedList responseHeader = queryResponse.getResponseHeader();
+    final FacetField QFacet = queryResponse.getFacetField("q");
 
-		Long numTot = queryResponse.getResults().getNumFound();
-		
+    final Long numTot = queryResponse.getResults().getNumFound();
 
-		SolrDocumentList solrDocumentList = new SolrDocumentList();
-		solrDocumentList.setNumFound(QFacet.getValueCount());
-		solrDocumentList.setStart(0);
+    final SolrDocumentList solrDocumentList = new SolrDocumentList();
+    solrDocumentList.setNumFound(QFacet.getValueCount());
+    solrDocumentList.setStart(0);
 
-		if (numTot != 0) {
-			Map<String, FieldStatsInfo> stats = queryResponse
-					.getFieldStatsInfo();
-			List<FieldStatsInfo> noHitsStats = ((FieldStatsInfo) stats
-					.get("noHits")).getFacets().get("q");
-			List<FieldStatsInfo> QTimeStats = ((FieldStatsInfo) stats
-					.get("QTime")).getFacets().get("q");
-			List<FieldStatsInfo> positionClickTotStats = null;
-			try {
-				positionClickTotStats = ((FieldStatsInfo) stats
-					.get("positionClickTot")).getFacets().get("q");
-			} catch (Exception e){
-				
-			}
-			List<FieldStatsInfo> clickStats = ((FieldStatsInfo) stats
-					.get("click")).getFacets().get("q");
-			List<FieldStatsInfo> numClicksStats = ((FieldStatsInfo) stats
-					.get("numClicks")).getFacets().get("q");
-			List<FieldStatsInfo> numFoundStats = ((FieldStatsInfo) stats
-					.get("numFound")).getFacets().get("q");
+    if (numTot != 0) {
+      final Map<String, FieldStatsInfo> stats = queryResponse.getFieldStatsInfo();
+      final List<FieldStatsInfo> noHitsStats = stats.get("noHits").getFacets().get("q");
+      final List<FieldStatsInfo> QTimeStats = stats.get("QTime").getFacets().get("q");
+      List<FieldStatsInfo> positionClickTotStats = null;
+      try {
+        positionClickTotStats = stats.get("positionClickTot").getFacets().get("q");
+      } catch (final Exception e) {
 
+      }
+      final List<FieldStatsInfo> clickStats = stats.get("click").getFacets().get("q");
+      final List<FieldStatsInfo> numClicksStats = stats.get("numClicks").getFacets().get("q");
+      final List<FieldStatsInfo> numFoundStats = stats.get("numFound").getFacets().get("q");
 
-			List<Count> QFacetValues = QFacet.getValues();
-			
-			Map<String, SolrDocument> mapDocuments = new HashMap<String, SolrDocument>();
-			
-			for (int i = 0; i < QFacetValues.size(); i++) {
-				SolrDocument doc = new SolrDocument();
-				String query = QFacetValues.get(i).getName();
+      final List<Count> QFacetValues = QFacet.getValues();
 
-				double count = QFacetValues.get(i).getCount();
-				double frequency = StatsUtils.round(count * 100 / numTot, 2,
-						BigDecimal.ROUND_HALF_UP);
-				
-				doc.addField("query", query);
+      final Map<String, SolrDocument> mapDocuments = new HashMap<String, SolrDocument>();
 
-				doc.addField("count", count);
-				doc.addField("frequency", frequency);
-				mapDocuments.put(query, doc);
-				solrDocumentList.add(doc);
-			}
-			
+      for (int i = 0; i < QFacetValues.size(); i++) {
+        final SolrDocument doc = new SolrDocument();
+        final String query = QFacetValues.get(i).getName();
 
-			for (int i = 0; i < QTimeStats.size(); i++) {
-				String query = QTimeStats.get(i).getName();
-				SolrDocument doc = mapDocuments.get(query);
+        final double count = QFacetValues.get(i).getCount();
+        final double frequency = StatsUtils.round(count * 100 / numTot, 2, BigDecimal.ROUND_HALF_UP);
 
-				int AVGHits = new Double((Double) numFoundStats.get(i)
-						.getMean()).intValue();
-				Double noHits = new Double((Double) noHitsStats.get(i).getSum());
-				int AVGQTime = new Double((Double) QTimeStats.get(i).getMean())
-						.intValue();
-				int MAXQTime = new Double((Double) QTimeStats.get(i).getMax())
-						.intValue();
-				double click = new Double((Double) clickStats.get(i).getSum());
-				double clickRatio = StatsUtils.round(click * 100 / (Double)doc.getFirstValue("count"), 2,
-						BigDecimal.ROUND_HALF_UP);
-				if (click>0){
-					double AVGClickPosition = new Double(
-							(Double) positionClickTotStats.get(i).getSum()
-									/ (Double) numClicksStats.get(i).getSum())
-							.intValue();
+        doc.addField("query", query);
 
-					doc.addField("AVGClickPosition", AVGClickPosition);
-					
-				} else {
-					doc.addField("AVGClickPosition", "-");
-				}
+        doc.addField("count", count);
+        doc.addField("frequency", frequency);
+        mapDocuments.put(query, doc);
+        solrDocumentList.add(doc);
+      }
 
-				doc.addField("withClickRatio", clickRatio);
-				doc.addField("AVGHits", AVGHits);
-				doc.addField("numNoHits", noHits);
-				doc.addField("withClick", click);
-				doc.addField("AVGQTime", AVGQTime);
-				doc.addField("MaxQTime", MAXQTime);
-			}
-			
+      for (int i = 0; i < QTimeStats.size(); i++) {
+        final String query = QTimeStats.get(i).getName();
+        final SolrDocument doc = mapDocuments.get(query);
 
-		}
+        final int AVGHits = new Double((Double) numFoundStats.get(i).getMean()).intValue();
+        final Double noHits = new Double((Double) noHitsStats.get(i).getSum());
+        final int AVGQTime = new Double((Double) QTimeStats.get(i).getMean()).intValue();
+        final int MAXQTime = new Double((Double) QTimeStats.get(i).getMax()).intValue();
+        final double click = new Double((Double) clickStats.get(i).getSum());
+        final double clickRatio = StatsUtils.round(click * 100 / (Double) doc.getFirstValue("count"), 2,
+            BigDecimal.ROUND_HALF_UP);
+        if (click > 0) {
+          final double AVGClickPosition = new Double(
+              (Double) positionClickTotStats.get(i).getSum() / (Double) numClicksStats.get(i).getSum()).intValue();
 
-		NamedList<Object> response = new SimpleOrderedMap<Object>();
-		response.add("responseHeader", responseHeader);
-		response.add("response", solrDocumentList);
-		queryResponse.setResponse(response);
-	}
+          doc.addField("AVGClickPosition", AVGClickPosition);
 
+        } else {
+          doc.addField("AVGClickPosition", "-");
+        }
+
+        doc.addField("withClickRatio", clickRatio);
+        doc.addField("AVGHits", AVGHits);
+        doc.addField("numNoHits", noHits);
+        doc.addField("withClick", click);
+        doc.addField("AVGQTime", AVGQTime);
+        doc.addField("MaxQTime", MAXQTime);
+      }
+
+    }
+
+    final NamedList<Object> response = new SimpleOrderedMap<Object>();
+    response.add("responseHeader", responseHeader);
+    response.add("response", solrDocumentList);
+    queryResponse.setResponse(response);
+  }
 
 }

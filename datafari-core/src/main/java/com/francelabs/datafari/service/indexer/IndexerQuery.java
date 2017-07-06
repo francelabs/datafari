@@ -1,6 +1,7 @@
 package com.francelabs.datafari.service.indexer;
 
 import java.util.Map;
+import java.util.Set;
 
 public interface IndexerQuery {
 
@@ -19,5 +20,9 @@ public interface IndexerQuery {
   public void setFilterQueries(final String... queries);
 
   public void setRequestHandler(final String requestHandler);
+
+  public Map<String, String[]> getParams();
+
+  public Set<String> getParamNames();
 
 }

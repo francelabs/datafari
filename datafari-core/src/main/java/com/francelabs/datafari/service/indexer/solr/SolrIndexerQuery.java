@@ -1,6 +1,7 @@
 package com.francelabs.datafari.service.indexer.solr;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.common.params.ModifiableSolrParams;
@@ -12,8 +13,12 @@ public class SolrIndexerQuery implements IndexerQuery {
   private final ModifiableSolrParams parameters;
   private final SolrQuery query = new SolrQuery();
 
-  public SolrIndexerQuery() {
+  protected SolrIndexerQuery() {
     parameters = new ModifiableSolrParams();
+  }
+
+  protected ModifiableSolrParams getParameters() {
+    return parameters;
   }
 
   @Override
@@ -62,6 +67,16 @@ public class SolrIndexerQuery implements IndexerQuery {
   public void setRequestHandler(final String requestHandler) {
     this.query.setRequestHandler(requestHandler);
 
+  }
+
+  @Override
+  public Map<String, String[]> getParams() {
+    return parameters.getMap();
+  }
+
+  @Override
+  public Set<String> getParamNames() {
+    return parameters.getParameterNames();
   }
 
 }

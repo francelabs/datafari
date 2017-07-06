@@ -19,16 +19,20 @@ import org.apache.solr.util.RTimerTree;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.francelabs.datafari.service.indexer.IndexerResponse;
+import com.francelabs.datafari.service.indexer.IndexerQueryResponse;
 
-public class SolrIndexerResponse implements IndexerResponse {
+public class SolrIndexerQueryResponse implements IndexerQueryResponse {
 
   private final QueryResponse response;
   private final SolrQuery query;
 
-  public SolrIndexerResponse(final SolrQuery query, final QueryResponse response) {
+  protected SolrIndexerQueryResponse(final SolrQuery query, final QueryResponse response) {
     this.response = response;
     this.query = query;
+  }
+
+  protected QueryResponse getQueryResponse() {
+    return response;
   }
 
   @Override
@@ -163,8 +167,12 @@ public class SolrIndexerResponse implements IndexerResponse {
   public JSONArray getResults() {
     final String strJSON = getStrJSONResponse();
     final JSONObject jsonResponse = new JSONObject(strJSON);
-    final JSONArray jsonResults = jsonResponse.getJSONObject("response").getJSONArray("docs");
-    return jsonResults;
+    if (!jsonResponse.has("docs") || jsonResponse.isNull("docs")) {
+      return null;
+    } else {
+      final JSONArray jsonResults = jsonResponse.getJSONArray("docs");
+      return jsonResults;
+    }
   }
 
 }
