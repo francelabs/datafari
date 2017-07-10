@@ -1,4 +1,4 @@
---------------------------- DATAFARI V. 3.1.0 ------------------------
+--------------------------- DATAFARI V. 3.1.2 ------------------------
 
 
 NOTE: For the major changes compared to DATAFARI V2.2, please check at the bottom of this page.
@@ -57,13 +57,7 @@ https://www.youtube.com/watch?v=w0FtsvZO9SI
 You can find documentation on how to create connectors and jobs here : 
 http://manifoldcf.apache.org/release/trunk/en_US/end-user-documentation.html
 
-Major changes compared to v3.0
-- Tika updated to version 1.14+
-- Manifold CF updated to version 2.5
-- Improved security for Active Directory connections
-- Improved security for Tomcat JNDI Realm
-- Auto-configuration of ELK on the first start of Datafari
-- Bug fixes for Likes/Favorites and other features of the admin UI
+To see major changes, see CHANGES.txt
 
 
 

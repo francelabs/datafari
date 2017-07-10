@@ -4,7 +4,7 @@
 	<artifactId>datafari-parent</artifactId>
 	<!-- Main POM of datafari -->
 	<packaging>pom</packaging>
-	<version>3.2.0-SNAPSHOT</version>
+	<version>3.2.1-SNAPSHOT</version>
 	<name>Datafari Enterprise Search - Parent POM</name>
 	<!-- The order of modules execution is important -->
 	<modules>

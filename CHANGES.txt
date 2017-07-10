@@ -20,6 +20,11 @@ Remark
 Datafari needs Python v 2.7.x. If you have only Python v3, please install Python2 (for Ubuntu 16.04 for example, install the package python-minimal)
 
 
+==================  3.2.1 ==================
+
+Changes :
+Bug fix UI : Header fix
+
 ==================  3.2.0 ==================
 
 Changes :

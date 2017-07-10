@@ -3,7 +3,7 @@
   <groupId>com.francelabs.datafari</groupId>
   <artifactId>datafari-realm</artifactId>
   <packaging>jar</packaging>
-  <version>3.2.0-SNAPSHOT</version>
+  <version>3.2.1-SNAPSHOT</version>
   <name>Datafari Enterprise Search - Realm module</name>
   	<prerequisites>
 		<!-- Force minimum Maven version -->
