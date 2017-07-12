@@ -3,6 +3,7 @@ package com.francelabs.datafari.service.indexer;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.francelabs.datafari.service.indexer.solr.SolrIndexerInputDocument;
 import com.francelabs.datafari.service.indexer.solr.SolrIndexerServer;
 import com.francelabs.datafari.service.search.SolrServers.Core;
 
@@ -18,6 +19,10 @@ public class IndexerServerManager {
       serversList.put(core, newServer);
       return newServer;
     }
+  }
+
+  public IndexerInputDocument createDocument() {
+    return new SolrIndexerInputDocument();
   }
 
 }

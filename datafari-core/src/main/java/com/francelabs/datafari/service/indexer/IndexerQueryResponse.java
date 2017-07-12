@@ -1,5 +1,7 @@
 package com.francelabs.datafari.service.indexer;
 
+import java.util.List;
+
 import org.json.JSONArray;
 
 public interface IndexerQueryResponse {
@@ -11,5 +13,7 @@ public interface IndexerQueryResponse {
   public String getStrJSONResponse();
 
   public JSONArray getResults();
+
+  public List<IndexerFacetField> getFacetFields();
 
 }

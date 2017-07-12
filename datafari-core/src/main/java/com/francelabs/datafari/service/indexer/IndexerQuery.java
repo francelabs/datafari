@@ -25,4 +25,6 @@ public interface IndexerQuery {
 
   public Set<String> getParamNames();
 
+  public void addFacetField(final String... facetField);
+
 }

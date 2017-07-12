@@ -13,7 +13,7 @@ public class SolrIndexerQuery implements IndexerQuery {
   private final ModifiableSolrParams parameters;
   private final SolrQuery query = new SolrQuery();
 
-  protected SolrIndexerQuery() {
+  public SolrIndexerQuery() {
     parameters = new ModifiableSolrParams();
   }
 
@@ -77,6 +77,12 @@ public class SolrIndexerQuery implements IndexerQuery {
   @Override
   public Set<String> getParamNames() {
     return parameters.getParameterNames();
+  }
+
+  @Override
+  public void addFacetField(final String... facetField) {
+    query.addFacetField(facetField);
+
   }
 
 }

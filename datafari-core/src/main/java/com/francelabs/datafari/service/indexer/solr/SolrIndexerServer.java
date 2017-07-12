@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,9 +38,6 @@ public class SolrIndexerServer implements IndexerServer {
   private final Logger LOGGER = Logger.getLogger(SolrIndexerServer.class.getName());
   private CloudSolrClient client;
 
-  private static final List<String> queryParams = Arrays.asList("q", "numFound", "noHits", "QTime");
-  private static final List<String> documentParams = Arrays.asList("url", "id");
-
   public SolrIndexerServer(final Core core) throws Exception {
     // Zookeeper Hosts
     final String solrHosts = ScriptConfiguration.getProperty("SOLRHOSTS");
@@ -68,11 +64,6 @@ public class SolrIndexerServer implements IndexerServer {
   }
 
   @Override
-  public IndexerQuery createQuery() {
-    return new SolrIndexerQuery();
-  }
-
-  @Override
   public IndexerQueryResponse executeQuery(final IndexerQuery query) throws Exception {
     try {
       final SolrQuery solrQuery = ((SolrIndexerQuery) query).prepareQuery();
@@ -84,11 +75,6 @@ public class SolrIndexerServer implements IndexerServer {
       e.printStackTrace();
     }
     return null;
-  }
-
-  @Override
-  public IndexerInputDocument createDocument() {
-    return new SolrIndexerInputDocument();
   }
 
   @Override

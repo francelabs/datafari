@@ -29,14 +29,20 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.francelabs.datafari.alerts.Mail;
+import com.francelabs.datafari.service.indexer.IndexerQuery;
+import com.francelabs.datafari.service.indexer.IndexerQueryManager;
+import com.francelabs.datafari.service.indexer.IndexerQueryResponse;
+import com.francelabs.datafari.service.indexer.IndexerServer;
 
 
 public class Alert {
 	private String subject;
 	private String address;
-	private SolrClient solr; 
+	private IndexerServer solr; 
 	private String keyword;
 	private String frequency;
 	private Mail mail;
@@ -46,7 +52,7 @@ public class Alert {
 	/**
 	 * Initializes all the attributes
 	 */
-	public Alert(String subject, String address, SolrClient solr2,
+	public Alert(String subject, String address, IndexerServer solr2,
 			String keyword, String frequency, Mail mail, String user) {
 		this.subject = subject;
 		this.address = address;
@@ -64,7 +70,7 @@ public class Alert {
 	 */
 	public void run() {
 		try {
-			SolrQuery query = new SolrQuery();
+			IndexerQuery query = IndexerQueryManager.createQuery();
 			switch(this.frequency){											//The fq parameter depends of the frequency of the alerts
 			default :
 				query.setParam("fq", "last_modified:[NOW-1DAY TO NOW]");
@@ -83,30 +89,32 @@ public class Alert {
 			query.setParam("q.op", "AND");												
 			query.setParam("q", keyword);										//Sets the q parameters according to the attribute
 			query.setParam("AuthenticatedUserName", user);
-			QueryResponse queryResponse;
+			IndexerQueryResponse queryResponse;
 			try {
-				queryResponse = solr.query(query);
+				queryResponse = solr.executeQuery(query);
 			} catch (SolrServerException | NullPointerException e) {
 				LOGGER.error("Error getting the results of the solr query in the Alert's run(), check the name of the core in the alert with the followind attributes, keyword : "+this.keyword+", frequency : "+this.frequency+", user : "+this.user+". Error 69044", e);
 				return;
 			}		
 			String message = "";
-			SolrDocumentList list = queryResponse.getResults();					//Gets the results
-			if(list.getNumFound()!=0){											//If there are some results
+			JSONArray list = queryResponse.getResults();					//Gets the results
+			if(queryResponse.getNumFound()!=0){											//If there are some results
 				// TODO remove the language hardcode here (before ResourceBundle was used, now removed with Maven refacto)
-				message += list.getNumFound()+" new or modified document(s) has/have been found for the key : "+query.get("q"); //First sentence of the mail
-				if(Integer.parseInt(query.get("rows"))<list.size()){			//If there are more than 10 results(can be modified in the setParam("rows","X") line) only the first ten will be printed
-					for(int i=0; i<Integer.parseInt(query.get("rows")); i++){	//For the ten first results puts the title in the mail
-						message += "\n"+list.get(i).getFieldValue("title");
-						message += "\n"+list.get(i).getFieldValue("url");
-						message += "\n"+list.get(i).getFieldValue("last_modified")+"\n";
+				message += queryResponse.getNumFound()+" new or modified document(s) has/have been found for the key : "+query.getParamValue("q"); //First sentence of the mail
+				if(Integer.parseInt(query.getParamValue("rows"))<list.length()){			//If there are more than 10 results(can be modified in the setParam("rows","X") line) only the first ten will be printed
+					for(int i=0; i<Integer.parseInt(query.getParamValue("rows")); i++){	//For the ten first results puts the title in the mail
+						JSONObject result = list.getJSONObject(i);
+					  message += "\n"+result.getJSONArray("title").getString(0);
+						message += "\n"+result.getString("url");
+						message += "\n"+result.getString("last_modified")+"\n";
 					}
 				}
 				else {
-					for(int i=0; i<list.size(); i++){							//Else puts the title of all the results
-						message += "\n"+list.get(i).getFieldValue("title");
-						message += "\n"+list.get(i).getFieldValue("url");
-						message += "\n"+list.get(i).getFieldValue("last_modified")+"\n";
+					for(int i=0; i<list.length(); i++){							//Else puts the title of all the results
+					  JSONObject result = list.getJSONObject(i);
+						message += "\n"+result.getJSONArray("title").getString(0);
+						message += "\n"+result.getString("url");
+						message += "\n"+result.getString("last_modified")+"\n";
 					}
 				}
 				//Sends the mail (the last parameter is "" because other destinations are not necessary but you can add a String)														

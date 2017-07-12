@@ -50,6 +50,8 @@ import org.joda.time.DateTime;
 import org.joda.time.Minutes;
 
 import com.francelabs.datafari.service.db.AlertDataService;
+import com.francelabs.datafari.service.indexer.IndexerServer;
+import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.service.search.SolrServers;
 import com.francelabs.datafari.service.search.SolrServers.Core;
 import com.francelabs.datafari.utils.AlertsConfiguration;
@@ -264,7 +266,7 @@ public class AlertsManager {
 															// Object in the
 															// collection
 				if (frequency.toLowerCase().equals(alertProp.get("frequency").toString().toLowerCase())) {
-					SolrClient solr = null;
+					IndexerServer solr = null;
 					for (int i = 0; i < core.length; i++) { // Get the right
 															// core by comparing
 															// all the return of
@@ -273,7 +275,7 @@ public class AlertsManager {
 															// in the database
 						if (alertProp.get("core").toString().toUpperCase().equals("" + core[i].toString().toUpperCase())) {
 							try {
-								solr = SolrServers.getSolrServer(core[i]);
+								solr = IndexerServerManager.getIndexerServer(core[i]);
 							} catch (final IOException e) {
 								LOGGER.error("Error while getting the Solr core in alerts(), AlertsManager. Error 69042 ", e);
 								return;

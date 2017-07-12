@@ -8,7 +8,7 @@ public class SolrIndexerInputDocument implements IndexerInputDocument {
 
   private final SolrInputDocument inputDocument;
 
-  protected SolrIndexerInputDocument() {
+  public SolrIndexerInputDocument() {
     inputDocument = new SolrInputDocument();
   }
 

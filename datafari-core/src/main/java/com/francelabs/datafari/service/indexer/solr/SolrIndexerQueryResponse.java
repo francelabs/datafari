@@ -3,9 +3,12 @@ package com.francelabs.datafari.service.indexer.solr;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.ContentStream;
@@ -19,6 +22,7 @@ import org.apache.solr.util.RTimerTree;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.francelabs.datafari.service.indexer.IndexerFacetField;
 import com.francelabs.datafari.service.indexer.IndexerQueryResponse;
 
 public class SolrIndexerQueryResponse implements IndexerQueryResponse {
@@ -166,13 +170,23 @@ public class SolrIndexerQueryResponse implements IndexerQueryResponse {
   @Override
   public JSONArray getResults() {
     final String strJSON = getStrJSONResponse();
-    final JSONObject jsonResponse = new JSONObject(strJSON);
+    final JSONObject jsonResponse = new JSONObject(strJSON).getJSONObject("response");
     if (!jsonResponse.has("docs") || jsonResponse.isNull("docs")) {
       return null;
     } else {
       final JSONArray jsonResults = jsonResponse.getJSONArray("docs");
       return jsonResults;
     }
+  }
+
+  @Override
+  public List<IndexerFacetField> getFacetFields() {
+    final List<IndexerFacetField> listFacetFields = new ArrayList<>();
+    for (final FacetField facteField : response.getFacetFields()) {
+      listFacetFields.add(new SolrIndexerFacetField(facteField));
+    }
+    return listFacetFields;
+
   }
 
 }
