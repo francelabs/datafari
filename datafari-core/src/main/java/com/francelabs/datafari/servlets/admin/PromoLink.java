@@ -17,9 +17,7 @@ package com.francelabs.datafari.servlets.admin;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.Principal;
 import java.util.Enumeration;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -27,25 +25,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrException;
-import org.apache.solr.common.SolrInputDocument;
-import org.apache.solr.common.params.SolrParams;
-import org.apache.solr.common.util.ContentStream;
-import org.apache.solr.core.SolrCore;
-import org.apache.solr.request.SolrQueryRequest;
-import org.apache.solr.response.JSONResponseWriter;
-import org.apache.solr.response.SolrQueryResponse;
-import org.apache.solr.schema.IndexSchema;
-import org.apache.solr.search.SolrIndexSearcher;
-import org.apache.solr.util.RTimerTree;
 
-import com.francelabs.datafari.service.search.SolrServers;
+import com.francelabs.datafari.service.indexer.IndexerInputDocument;
+import com.francelabs.datafari.service.indexer.IndexerQuery;
+import com.francelabs.datafari.service.indexer.IndexerQueryManager;
+import com.francelabs.datafari.service.indexer.IndexerQueryResponse;
+import com.francelabs.datafari.service.indexer.IndexerServer;
+import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.service.search.SolrServers.Core;
 
 /**
@@ -61,7 +50,7 @@ import com.francelabs.datafari.service.search.SolrServers.Core;
 @WebServlet("/admin/PromoLink")
 public class PromoLink extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private SolrInputDocument doc;
+  private IndexerInputDocument doc;
 	private final static Logger LOGGER = Logger.getLogger(PromoLink.class.getName());
 
 	/**
@@ -74,22 +63,22 @@ public class PromoLink extends HttpServlet {
 	/**
 	 * @throws IOException
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response) Used to print the existing promolinks, and to check when
-	 *      you add a promolink if an other exist with this keyword. Makes a
-	 *      Solr request and put the results into a JSON file.
+   *      response) Used to print the existing promolinks, and to check when you
+   *      add a promolink if an other exist with this keyword. Makes a Solr
+   *      request and put the results into a JSON file.
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+  @Override
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
 			throws ServletException, IOException {
 		try {
-			final SolrQuery query = new SolrQuery();
-			QueryResponse queryResponse = null;
-			doc = new SolrInputDocument();
-			SolrClient server = null;
+      final IndexerQuery query = IndexerQueryManager.createQuery();
+      IndexerQueryResponse queryResponse = null;
+      doc = IndexerQueryManager.createDocument();
+      IndexerServer server = null;
 			try {
-				server = SolrServers // Select the right core
-						.getSolrServer(Core.PROMOLINK);
-			} catch (IOException e1) {
-				PrintWriter out = response.getWriter();
+        server = IndexerServerManager.getIndexerServer(Core.PROMOLINK);
+      } catch (final IOException e1) {
+        final PrintWriter out = response.getWriter();
 				out.append(
 						"Error while getting the Solr core, please make sure the core dedicated to PromoLinks has booted up. Error code : 69000");
 				out.close();
@@ -99,105 +88,7 @@ public class PromoLink extends HttpServlet {
 				return;
 
 			}
-			SolrQueryRequest req = new SolrQueryRequest() {
 
-				@Override
-				public void close() {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public Iterable<ContentStream> getContentStreams() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				@Override
-				public Map<Object, Object> getContext() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				@Override
-				public SolrCore getCore() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				@Override
-				public Map<String, Object> getJSON() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				@Override
-				public SolrParams getOriginalParams() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				@Override
-				public String getParamString() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				@Override
-				public SolrParams getParams() {
-					// TODO Auto-generated method stub
-					return query;
-				}
-
-				@Override
-				public RTimerTree getRequestTimer() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				@Override
-				public IndexSchema getSchema() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				@Override
-				public SolrIndexSearcher getSearcher() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				@Override
-				public long getStartTime() {
-					// TODO Auto-generated method stub
-					return 0;
-				}
-
-				@Override
-				public Principal getUserPrincipal() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				@Override
-				public void setJSON(Map<String, Object> arg0) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void setParams(SolrParams arg0) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void updateSchemaToLatest() {
-					// TODO Auto-generated method stub
-
-				}
-
-			};
 			if (request.getParameter("title") != null) { // If the servlet has
 															// been called to
 															// check if there
@@ -240,37 +131,23 @@ public class PromoLink extends HttpServlet {
 			}
 			query.setRequestHandler("/select");
 			try {
-				queryResponse = server.query(query); // send the query
+        queryResponse = server.executeQuery(query); // send the query
 			} catch (SolrServerException | SolrException e) {
-				PrintWriter out = response.getWriter();
+        final PrintWriter out = response.getWriter();
 				out.append(
 						"Error getting the existing promolinks, please retry and look for special characters you could have entered in the search bar, if the problem persists contact your system administrator. Error code : 69001");
 				out.close();
-				LOGGER.error(
-						"Error while getting the results of the Solr Request in doGet, admin servlet. Error 69001 ", e);
+        LOGGER.error("Error while getting the results of the Solr Request in doGet, admin servlet. Error 69001 ", e);
 				return;
 			}
-			SolrQueryResponse res = new SolrQueryResponse();
-			JSONResponseWriter json = new JSONResponseWriter();
-			res.setAllValues(queryResponse.getResponse());
-			try {
-				json.write(response.getWriter(), req, res); // send the answer
-															// in a json
+      queryResponse.getStrJSONResponse();
+      response.getWriter().write(queryResponse.getStrJSONResponse());
 				response.setStatus(200);
 				response.setContentType("text/json;charset=UTF-8");
-			} catch (IOException e) {
-				PrintWriter out = response.getWriter();
+
+    } catch (final Exception e) {
+      final PrintWriter out = response.getWriter();
 				out.append(
-						"Error returning the results, please retry, if the problem persists contact your system administrator. Error code : 69002");
-				out.close();
-				LOGGER.error(
-						"Error while writing the results of the Solr Request in the doGet response, admin servlet. Error 69002",
-						e);
-				return;
-			}
-		} catch (Exception e) {
-			PrintWriter out = response.getWriter();
-			out.append(
 					"Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69500");
 			out.close();
 			LOGGER.error("Unindentified error in Admin doGet. Error 69500", e);
@@ -278,7 +155,9 @@ public class PromoLink extends HttpServlet {
 
 	}
 
-	public String formatDate(String date, String time) { // format date to the
+  public String formatDate(final String date, final String time) { // format
+                                                                   // date to
+                                                                   // the
 															// format of the
 															// datepicker
 		if (date.equals("")) {
@@ -293,18 +172,18 @@ public class PromoLink extends HttpServlet {
 	 *      response) Used to delete/add/edit an promolink Send request to Solr
 	 *      and returns nothing
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+  @Override
+  protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
 			throws ServletException, IOException {
 		try {
 
-			Enumeration<String> params = request.getParameterNames();
+      final Enumeration<String> params = request.getParameterNames();
 
-			SolrClient server = null;
+      IndexerServer server = null;
 			try {
-				server = SolrServers // Select the right core
-						.getSolrServer(Core.PROMOLINK);
-			} catch (IOException e1) {
-				PrintWriter out = response.getWriter();
+        server = IndexerServerManager.getIndexerServer(Core.PROMOLINK);
+      } catch (final IOException e1) {
+        final PrintWriter out = response.getWriter();
 				out.append(
 						"Error while getting the Solr core, please make sure the core dedicated to PromoLinks has booted up. Error code : 69003");
 				out.close();
@@ -317,7 +196,7 @@ public class PromoLink extends HttpServlet {
 					&& request.getParameter("content") != null) { // If it's an
 																	// edit or
 																	// an add
-				String dateB = formatDate(request.getParameter("dateB").toString(), "T00:00:00Z"),
+        final String dateB = formatDate(request.getParameter("dateB").toString(), "T00:00:00Z"),
 						dateE = formatDate(request.getParameter("dateE").toString(), "T23:59:59Z"); // Get
 																									// all
 																									// the
@@ -326,26 +205,28 @@ public class PromoLink extends HttpServlet {
 																									// format
 																									// the
 																									// Date
-				doc = new SolrInputDocument();
+        doc = IndexerQueryManager.createDocument();
 				try {
-					Enumeration<String> parametersName = request.getParameterNames();
+          final Enumeration<String> parametersName = request.getParameterNames();
 					while (parametersName.hasMoreElements()) {
-						String key = parametersName.nextElement();
+            final String key = parametersName.nextElement();
 						if (!key.equals("dateB") && !key.equals("dateE") && !key.equals("oldKey")) {
-							String value = request.getParameter(key);
+              final String value = request.getParameter(key);
 							if (!value.equals("")) {
 								doc.addField(key, value);
 							}
 						}
 					}
-					if (!dateB.equals("T00:00:00Z"))
+          if (!dateB.equals("T00:00:00Z")) {
 						doc.addField("dateBeginning", dateB); // add the
+          }
 																// Starting Date
 																// (if there is
 																// one) to the
 																// Solrdoc
-					if (!dateE.equals("T23:59:59Z"))
+          if (!dateE.equals("T23:59:59Z")) {
 						doc.addField("dateEnd", dateE); // add the ending Date
+          }
 														// (if there is one) to
 														// the Solrdoc
 					if (request.getParameter("oldKey") != null) { // If it's an
@@ -354,7 +235,7 @@ public class PromoLink extends HttpServlet {
 																	// keyword
 																	// has been
 																	// changed
-						if (request.getParameter("oldKey") != request.getParameter("keyword"))
+            if (request.getParameter("oldKey") != request.getParameter("keyword")) {
 							server.deleteById(request.getParameter("oldKey").toString()); // Delete
 																							// the
 																							// previous
@@ -363,7 +244,8 @@ public class PromoLink extends HttpServlet {
 																							// the
 																							// keyword
 					}
-					server.deleteById(doc.get("keyword").toString());// delete a
+          }
+          server.deleteById(doc.getFieldValue("keyword").toString());// delete a
 																		// promolink
 																		// with
 																		// the
@@ -390,10 +272,10 @@ public class PromoLink extends HttpServlet {
 																		// has
 																		// been
 																		// confirmed)
-					server.add(doc); // Insert the new promolink
+          server.pushDoc(doc); // Insert the new promolink
 					server.commit();
 				} catch (SolrServerException | IOException e) {
-					PrintWriter out = response.getWriter();
+          final PrintWriter out = response.getWriter();
 					out.append(
 							"Error while adding/editing a promolink, please retry, if the problem persists contact your system administrator. Error code : 69004");
 					out.close();
@@ -403,12 +285,12 @@ public class PromoLink extends HttpServlet {
 					return;
 				}
 			} else { // delete a promolink
-				String key = request.getParameter("keyword").toString();
+        final String key = request.getParameter("keyword").toString();
 				try {
 					server.deleteById(key.toString());
 					server.commit();
-				} catch (SolrServerException e) {
-					PrintWriter out = response.getWriter();
+        } catch (final SolrServerException e) {
+          final PrintWriter out = response.getWriter();
 					out.append(
 							"Error while deleting a promolink, please retry, if the problem persists contact your system administrator. Error code : 69005");
 					out.close();
@@ -418,8 +300,8 @@ public class PromoLink extends HttpServlet {
 					return;
 				}
 			}
-		} catch (Exception e) {
-			PrintWriter out = response.getWriter();
+    } catch (final Exception e) {
+      final PrintWriter out = response.getWriter();
 			out.append(
 					"Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69501");
 			out.close();

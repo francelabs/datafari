@@ -613,6 +613,8 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 					var operator = "";
 					if(this.fieldsList[i].operator != null && this.fieldsList[i].operator != undefined && this.fieldsList[i].operator.val() == "OR") {
 						operator = "OR ";
+					} else {
+						operator = "AND ";
 					}
 					finalFilter += " " + operator + this.fieldsList[i].getFilter();
 				}

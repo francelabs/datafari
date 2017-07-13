@@ -85,4 +85,16 @@ public class SolrIndexerQuery implements IndexerQuery {
 
   }
 
+  @Override
+  public void addFilterQuery(final String... filterQuery) {
+    query.addFilterQuery(filterQuery);
+
+  }
+
+  @Override
+  public void addFacetQuery(final String facetQuery) {
+    query.addFacetQuery(facetQuery);
+
+  }
+
 }

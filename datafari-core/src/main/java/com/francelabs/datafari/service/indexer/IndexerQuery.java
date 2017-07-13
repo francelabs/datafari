@@ -27,4 +27,8 @@ public interface IndexerQuery {
 
   public void addFacetField(final String... facetField);
 
+  public void addFilterQuery(final String... filterQuery);
+
+  public void addFacetQuery(final String facetQuery);
+
 }

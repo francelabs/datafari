@@ -1,9 +1,8 @@
 package com.francelabs.datafari.service.indexer.solr;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,10 +12,17 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.request.SolrPing;
+import org.apache.solr.client.solrj.request.schema.AnalyzerDefinition;
+import org.apache.solr.client.solrj.request.schema.SchemaRequest.FieldTypes;
+import org.apache.solr.client.solrj.request.schema.SchemaRequest.MultiUpdate;
+import org.apache.solr.client.solrj.request.schema.SchemaRequest.ReplaceFieldType;
+import org.apache.solr.client.solrj.request.schema.SchemaRequest.Update;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.FieldStatsInfo;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.schema.FieldTypeRepresentation;
+import org.apache.solr.client.solrj.response.schema.SchemaResponse.FieldTypesResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
@@ -172,9 +178,111 @@ public class SolrIndexerServer implements IndexerServer {
 
   }
 
-  private static String normalizeParameterValue(final String param, String value) throws UnsupportedEncodingException {
-    value = URLDecoder.decode(value, "UTF-8");
-    value = value.replaceAll("\\{\\!tag=[^}]*\\}", "");
+  @Override
+  public void pushDoc(final IndexerInputDocument document) throws Exception {
+    final SolrInputDocument solrDoc = ((SolrIndexerInputDocument) document).getSolrInputDocument();
+    client.add(solrDoc);
+
+  }
+
+  @Override
+  public void commit() throws Exception {
+    client.commit();
+
+  }
+
+  @Override
+  public void deleteById(final String id) throws Exception {
+    client.deleteById(id);
+
+  }
+
+  /**
+   * Get current value for a filter of an analyzer type for text_* fields
+   *
+   * filterClass = name of the filter filterAttr = attr in filter
+   *
+   */
+  @Override
+  public String getAnalyzerFilterValue(final String filterClass, final String filterAttr) throws Exception {
+    String value = "";
+    final FieldTypes solrRequest = new FieldTypes();
+    final FieldTypesResponse solrResponse = new FieldTypesResponse();
+    solrResponse.setResponse(client.request(solrRequest));
+
+    for (final FieldTypeRepresentation fieldType : solrResponse.getFieldTypes()) {
+      final String name = (String) fieldType.getAttributes().get("name");
+      // get all analyzers for text_* field
+      if (name != null && name.startsWith("text_")) {
+        final List<AnalyzerDefinition> analyzers = new ArrayList<AnalyzerDefinition>();
+        analyzers.add(fieldType.getAnalyzer());
+        analyzers.add(fieldType.getIndexAnalyzer());
+        analyzers.add(fieldType.getQueryAnalyzer());
+        for (final AnalyzerDefinition analyzer : analyzers) {
+          if (analyzer != null) {
+            final List<Map<String, Object>> filters = analyzer.getFilters();
+            if (filters != null) {
+              for (final Map<String, Object> filter : filters) {
+                if (filter != null) {
+                  final String clazzAttr = (String) filter.get("class");
+                  if (clazzAttr != null && clazzAttr.equals(filterClass)) {
+                    // get last value
+                    value = (String) filter.get(filterAttr);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
     return value;
+  }
+
+  /**
+   * Set the current value for a filter of an analyzer type
+   *
+   * filterClass = name of the filter filterAttr = attribute of the filter value
+   * = value to change
+   *
+   */
+  @Override
+  public void updateAnalyzerFilterValue(final String filterClass, final String filterAttr, final String value)
+      throws Exception {
+    final FieldTypes solrRequest = new FieldTypes();
+    final FieldTypesResponse solrResponse = new FieldTypesResponse();
+    solrResponse.setResponse(client.request(solrRequest));
+    final List<Update> updates = new ArrayList<Update>();
+    for (final FieldTypeRepresentation fieldType : solrResponse.getFieldTypes()) {
+      final String name = (String) fieldType.getAttributes().get("name");
+      if (name != null && name.startsWith("text_")) {
+        final List<AnalyzerDefinition> analyzers = new ArrayList<AnalyzerDefinition>();
+        analyzers.add(fieldType.getAnalyzer());
+        analyzers.add(fieldType.getIndexAnalyzer());
+        analyzers.add(fieldType.getQueryAnalyzer());
+        for (final AnalyzerDefinition analyzer : analyzers) {
+          if (analyzer != null) {
+            final List<Map<String, Object>> filters = analyzer.getFilters();
+            if (filters != null) {
+              for (final Map<String, Object> filter : filters) {
+                if (filter != null) {
+                  final String clazzAttr = (String) filter.get("class");
+                  if (clazzAttr != null && clazzAttr.equals(filterClass)) {
+                    filter.put(filterAttr, value);
+                    // keep each modified fieldType definition
+                    updates.add(new ReplaceFieldType(fieldType));
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // send a bulk update of each modified fieldType definition
+    final MultiUpdate multiUpdateRequest = new MultiUpdate(updates);
+    client.request(multiUpdateRequest);
+
   }
 }
