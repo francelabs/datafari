@@ -14,7 +14,7 @@ import org.apache.solr.common.SolrException;
 
 import com.francelabs.datafari.service.indexer.IndexerServer;
 import com.francelabs.datafari.service.indexer.IndexerServerManager;
-import com.francelabs.datafari.service.search.SolrServers.Core;
+import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 
 /**
  * Servlet implementation class AddTokenLimit

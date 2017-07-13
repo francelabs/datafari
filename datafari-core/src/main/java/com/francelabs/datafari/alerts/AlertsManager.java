@@ -50,7 +50,7 @@ import org.joda.time.Minutes;
 
 import com.francelabs.datafari.service.indexer.IndexerServer;
 import com.francelabs.datafari.service.indexer.IndexerServerManager;
-import com.francelabs.datafari.service.search.SolrServers.Core;
+import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 import com.francelabs.datafari.utils.AlertsConfiguration;
 
 public class AlertsManager {
@@ -276,7 +276,7 @@ public class AlertsManager {
         // Object in the
         // collection
         if (frequency.toLowerCase().equals(alertProp.get("frequency").toString().toLowerCase())) {
-          IndexerServer solr = null;
+          IndexerServer server = null;
           for (int i = 0; i < core.length; i++) { // Get the right
             // core by comparing
             // all the return of
@@ -285,7 +285,7 @@ public class AlertsManager {
             // in the database
             if (alertProp.get("core").toString().toUpperCase().equals("" + core[i].toString().toUpperCase())) {
               try {
-                solr = IndexerServerManager.getIndexerServer(core[i]);
+                server = IndexerServerManager.getIndexerServer(core[i]);
               } catch (final IOException e) {
                 LOGGER.error("Error while getting the Solr core in alerts(), AlertsManager. Error 69042 ", e);
                 return;
@@ -293,7 +293,7 @@ public class AlertsManager {
             }
           } // Creates an alert with the attributes of the element
             // found in the database.
-          alert = new Alert(alertProp.get("subject").toString(), alertProp.get("mail").toString(), solr,
+          alert = new Alert(alertProp.get("subject").toString(), alertProp.get("mail").toString(), server,
               alertProp.get("keyword").toString(), alertProp.get("frequency").toString(), mail,
               alertProp.get("user").toString());
           alert.run(); // Makes the request and send the mail if they

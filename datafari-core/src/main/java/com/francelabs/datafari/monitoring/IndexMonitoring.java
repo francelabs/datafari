@@ -20,11 +20,10 @@ import com.francelabs.datafari.logs.MonitoringLevel;
 import com.francelabs.datafari.service.indexer.IndexerFacetField;
 import com.francelabs.datafari.service.indexer.IndexerFacetFieldCount;
 import com.francelabs.datafari.service.indexer.IndexerQuery;
-import com.francelabs.datafari.service.indexer.IndexerQueryManager;
 import com.francelabs.datafari.service.indexer.IndexerQueryResponse;
 import com.francelabs.datafari.service.indexer.IndexerServer;
 import com.francelabs.datafari.service.indexer.IndexerServerManager;
-import com.francelabs.datafari.service.search.SolrServers.Core;
+import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 import com.francelabs.datafari.utils.ELKConfiguration;
 
 /**
@@ -176,8 +175,8 @@ public class IndexMonitoring {
         final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
         final String currentDate = df.format(new Date());
         String log = "";
-        final IndexerServer solrServer = IndexerServerManager.getIndexerServer(Core.FILESHARE);
-        final IndexerQuery query = IndexerQueryManager.createQuery();
+        final IndexerServer server = IndexerServerManager.getIndexerServer(Core.FILESHARE);
+        final IndexerQuery query = IndexerServerManager.createQuery();
         query.setQuery("*:*");
         // Add specified facet fields
         for (final String facetField : facetFields) {
@@ -190,7 +189,7 @@ public class IndexMonitoring {
           query.setParam("AuthenticatedUserName", authUser);
         }
 
-        final IndexerQueryResponse queryResponse = solrServer.executeQuery(query);
+        final IndexerQueryResponse queryResponse = server.executeQuery(query);
         // Generate the global num of docs log
         log = generateID("no", "no") + "|" + currentDate + "|" + queryResponse.getNumFound() + "|no|no";
         LOGGER.log(MonitoringLevel.MONITORING, log);

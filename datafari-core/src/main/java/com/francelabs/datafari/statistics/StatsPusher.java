@@ -28,12 +28,10 @@ import org.apache.log4j.Logger;
 import com.francelabs.datafari.logs.StatLevel;
 import com.francelabs.datafari.service.indexer.IndexerInputDocument;
 import com.francelabs.datafari.service.indexer.IndexerQuery;
-import com.francelabs.datafari.service.indexer.IndexerQueryManager;
-import com.francelabs.datafari.service.indexer.IndexerQueryResponse;
 import com.francelabs.datafari.service.indexer.IndexerResponseDocument;
 import com.francelabs.datafari.service.indexer.IndexerServer;
 import com.francelabs.datafari.service.indexer.IndexerServerManager;
-import com.francelabs.datafari.service.search.SolrServers.Core;
+import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 
 public class StatsPusher {
 
@@ -42,10 +40,10 @@ public class StatsPusher {
 
   private final static Logger LOGGER = Logger.getLogger(StatsPusher.class.getName());
 
-  public static void pushDocument(final IndexerQuery params, final String protocol) {
+  public static void pushDocument(final IndexerQuery query, final String protocol) {
     try {
 
-      final IndexerServer solrServer = IndexerServerManager.getIndexerServer(Core.STATISTICS);
+      final IndexerServer server = IndexerServerManager.getIndexerServer(Core.STATISTICS);
 
       final Map<String, Integer> increment = new HashMap<String, Integer>();
       increment.put("inc", 1);
@@ -54,17 +52,17 @@ public class StatsPusher {
       setToOne.put("set", 1);
 
       final Map<String, Integer> incrementPosition = new HashMap<String, Integer>();
-      incrementPosition.put("inc", Integer.parseInt(params.getParamValue("position")));
+      incrementPosition.put("inc", Integer.parseInt(query.getParamValue("position")));
 
-      final IndexerInputDocument doc = IndexerQueryManager.createDocument();
+      final IndexerInputDocument doc = IndexerServerManager.createDocument();
       doc.addField("click", setToOne);
       doc.addField("numClicks", increment);
       doc.addField("positionClickTot", incrementPosition);
 
       final Map<String, String> paramsMap = new HashMap<String, String>();
 
-      for (final String paramName : params.getParamNames()) {
-        for (final String paramValue : params.getParamValues(paramName)) {
+      for (final String paramName : query.getParamNames()) {
+        for (final String paramValue : query.getParamValues(paramName)) {
           paramsMap.put(paramName, normalizeParameterValue(paramName, paramValue));
         }
       }
@@ -88,13 +86,13 @@ public class StatsPusher {
 
       doc.addField("history", addValue);
 
-      solrServer.pushDoc(doc, 10000);
+      server.pushDoc(doc, 10000);
 
-      final IndexerResponseDocument insertedSolrDoc = solrServer.getDocById(doc.getFieldValue("id").toString());
+      final IndexerResponseDocument insertedSolrDoc = server.getDocById(doc.getFieldValue("id").toString());
 
       String username = "";
-      if (params.getParamValue("AuthenticatedUserName") != null) {
-        username = params.getParamValue("AuthenticatedUserName");
+      if (query.getParamValue("AuthenticatedUserName") != null) {
+        username = query.getParamValue("AuthenticatedUserName");
       }
 
       LOGGER.log(StatLevel.STAT, StatsUtils.createStatLog(insertedSolrDoc, username));
@@ -105,24 +103,24 @@ public class StatsPusher {
     }
   }
 
-  public static void pushQuery(final IndexerQuery params, final String protocol) {
+  public static void pushQuery(final IndexerQuery inputQuery, final String protocol) {
     try {
 
-      final IndexerServer solrServer = IndexerServerManager.getIndexerServer(Core.STATISTICS);
+      final IndexerServer server = IndexerServerManager.getIndexerServer(Core.STATISTICS);
 
-      final IndexerQuery query = IndexerQueryManager.createQuery();
+      final IndexerQuery query = IndexerServerManager.createQuery();
       query.setRequestHandler("/get");
-      query.setParam("id", params.getParamValue("id"));
+      query.setParam("id", inputQuery.getParamValue("id"));
       query.setParam("fl", "id");
-      final IndexerQueryResponse queryResponse = solrServer.executeQuery(query);
+      server.executeQuery(query);
 
-      final IndexerInputDocument doc = IndexerQueryManager.createDocument();
-      doc.addField("id", params.getParamValue("id"));
+      final IndexerInputDocument doc = IndexerServerManager.createDocument();
+      doc.addField("id", inputQuery.getParamValue("id"));
 
       final Map<String, String> paramsMap = new HashMap<String, String>();
 
-      for (final String paramName : params.getParamNames()) {
-        for (final String paramValue : params.getParamValues(paramName)) {
+      for (final String paramName : inputQuery.getParamNames()) {
+        for (final String paramValue : inputQuery.getParamValues(paramName)) {
           paramsMap.put(paramName, normalizeParameterValue(paramName, paramValue));
         }
       }
@@ -156,13 +154,13 @@ public class StatsPusher {
 
       doc.addField("history", addValue);
 
-      solrServer.pushDoc(doc, 10000);
+      server.pushDoc(doc, 10000);
 
-      final IndexerResponseDocument insertedSolrDoc = solrServer.getDocById(doc.getFieldValue("id").toString());
+      final IndexerResponseDocument insertedSolrDoc = server.getDocById(doc.getFieldValue("id").toString());
 
       String username = "";
-      if (params.getParamValue("AuthenticatedUserName") != null) {
-        username = params.getParamValue("AuthenticatedUserName");
+      if (inputQuery.getParamValue("AuthenticatedUserName") != null) {
+        username = inputQuery.getParamValue("AuthenticatedUserName");
       }
 
       LOGGER.log(StatLevel.STAT, StatsUtils.createStatLog(insertedSolrDoc, username));

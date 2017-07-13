@@ -4,10 +4,31 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.francelabs.datafari.service.indexer.solr.SolrIndexerInputDocument;
+import com.francelabs.datafari.service.indexer.solr.SolrIndexerQuery;
 import com.francelabs.datafari.service.indexer.solr.SolrIndexerServer;
-import com.francelabs.datafari.service.search.SolrServers.Core;
 
 public class IndexerServerManager {
+
+  public enum Core {
+    FILESHARE {
+      @Override
+      public String toString() {
+        return "FileShare";
+      }
+    },
+    STATISTICS {
+      @Override
+      public String toString() {
+        return "Statistics";
+      }
+    },
+    PROMOLINK {
+      @Override
+      public String toString() {
+        return "Promolink";
+      }
+    }
+  }
 
   private static Map<Core, IndexerServer> serversList = new HashMap<Core, IndexerServer>();
 
@@ -21,7 +42,11 @@ public class IndexerServerManager {
     }
   }
 
-  public IndexerInputDocument createDocument() {
+  public static IndexerQuery createQuery() {
+    return new SolrIndexerQuery();
+  }
+
+  public static IndexerInputDocument createDocument() {
     return new SolrIndexerInputDocument();
   }
 

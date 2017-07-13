@@ -29,14 +29,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.francelabs.datafari.service.indexer.IndexerQuery;
-import com.francelabs.datafari.service.indexer.IndexerQueryManager;
 import com.francelabs.datafari.service.indexer.IndexerQueryResponse;
 import com.francelabs.datafari.service.indexer.IndexerServer;
+import com.francelabs.datafari.service.indexer.IndexerServerManager;
 
 public class Alert {
   private final String subject;
   private final String address;
-  private final IndexerServer solr;
+  private final IndexerServer server;
   private final String keyword;
   private final String frequency;
   private final Mail mail;
@@ -46,11 +46,11 @@ public class Alert {
   /**
    * Initializes all the attributes
    */
-  public Alert(final String subject, final String address, final IndexerServer solr2, final String keyword,
+  public Alert(final String subject, final String address, final IndexerServer server, final String keyword,
       final String frequency, final Mail mail, final String user) {
     this.subject = subject;
     this.address = address;
-    this.solr = solr2;
+    this.server = server;
     this.keyword = keyword;
     this.frequency = frequency;
     this.mail = mail;
@@ -63,7 +63,7 @@ public class Alert {
    */
   public void run() {
     try {
-      final IndexerQuery query = IndexerQueryManager.createQuery();
+      final IndexerQuery query = IndexerServerManager.createQuery();
       switch (this.frequency) { // The fq parameter depends of the frequency of
                                 // the alerts
       default:
@@ -87,7 +87,7 @@ public class Alert {
       query.setParam("AuthenticatedUserName", user);
       IndexerQueryResponse queryResponse;
       try {
-        queryResponse = solr.executeQuery(query);
+        queryResponse = server.executeQuery(query);
       } catch (SolrServerException | NullPointerException e) {
         LOGGER.error(
             "Error getting the results of the solr query in the Alert's run(), check the name of the core in the alert with the followind attributes, keyword : "

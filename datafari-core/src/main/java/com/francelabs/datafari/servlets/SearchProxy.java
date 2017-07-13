@@ -34,11 +34,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.francelabs.datafari.service.indexer.IndexerQuery;
-import com.francelabs.datafari.service.indexer.IndexerQueryManager;
 import com.francelabs.datafari.service.indexer.IndexerQueryResponse;
 import com.francelabs.datafari.service.indexer.IndexerServer;
 import com.francelabs.datafari.service.indexer.IndexerServerManager;
-import com.francelabs.datafari.service.search.SolrServers.Core;
+import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 import com.francelabs.datafari.statistics.StatsPusher;
 import com.francelabs.datafari.utils.RealmLdapConfiguration;
 import com.francelabs.datafari.utils.ScriptConfiguration;
@@ -114,13 +113,13 @@ public class SearchProxy extends HttpServlet {
       case "/stats":
       case "/statsQuery":
         solr = IndexerServerManager.getIndexerServer(Core.STATISTICS);
-        params = IndexerQueryManager.createQuery();
+        params = IndexerServerManager.createQuery();
         break;
       default:
         solr = IndexerServerManager.getIndexerServer(Core.FILESHARE);
-        params = IndexerQueryManager.createQuery();
+        params = IndexerServerManager.createQuery();
         promolinkCore = IndexerServerManager.getIndexerServer(Core.PROMOLINK);
-        queryPromolink = IndexerQueryManager.createQuery();
+        queryPromolink = IndexerServerManager.createQuery();
 
         // Add authentication
         if (request.getUserPrincipal() != null) {
@@ -206,7 +205,7 @@ public class SearchProxy extends HttpServlet {
           // index
           final long numFound = queryResponse.getNumFound();
           final int QTime = queryResponse.getQTime();
-          final IndexerQuery statsParams = IndexerQueryManager.createQuery();
+          final IndexerQuery statsParams = IndexerServerManager.createQuery();
           statsParams.addParams(params.getParams());
           statsParams.setParam("numFound", Long.toString(numFound));
           if (numFound == 0) {

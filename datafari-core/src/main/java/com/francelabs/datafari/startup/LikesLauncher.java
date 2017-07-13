@@ -4,7 +4,7 @@
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
  *  * You may obtain a copy of the License at
- *  * 
+ *  *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
  *  *
  *  * Unless required by applicable law or agreed to in writing, software
@@ -29,108 +29,106 @@ import org.apache.log4j.Logger;
 
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.service.indexer.IndexerQuery;
-import com.francelabs.datafari.service.indexer.IndexerQueryManager;
 import com.francelabs.datafari.service.indexer.IndexerServer;
 import com.francelabs.datafari.service.indexer.IndexerServerManager;
-import com.francelabs.datafari.service.search.SolrServers.Core;
+import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 import com.francelabs.datafari.servlets.admin.StringsDatafariProperties;
 import com.francelabs.datafari.utils.ScriptConfiguration;
 import com.francelabs.datafari.utils.UpdateNbLikes;
 
 public class LikesLauncher implements ServletContextListener {
 
-	private static boolean islaunched = false;
-	private static ScheduledExecutorService scheduler;
+  private static boolean islaunched = false;
+  private static ScheduledExecutorService scheduler;
   private static Logger logger = Logger.getLogger(LikesLauncher.class.getName());
-	private static ScheduledFuture<?> handler;
-	private static boolean doReload = false;
-	private static boolean isThreadUpdateNbLikesStarted = false;
+  private static ScheduledFuture<?> handler;
+  private static boolean doReload = false;
+  private static boolean isThreadUpdateNbLikesStarted = false;
 
-	@Override
+  @Override
   public void contextInitialized(final ServletContextEvent arg0) {
 
-		String isEnabled = null;
-		try {
+    String isEnabled = null;
+    try {
       isEnabled = ScriptConfiguration.getProperty(StringsDatafariProperties.LIKESANDFAVORTES);
     } catch (final IOException e) {
-			logger.error("Unable to log property "+ StringsDatafariProperties.LIKESANDFAVORTES+" : "+e.getMessage());
-		}
-		try {
+      logger.error("Unable to log property " + StringsDatafariProperties.LIKESANDFAVORTES + " : " + e.getMessage());
+    }
+    try {
       final File externalFile = UpdateNbLikes.getInstance().getConfigFile();
-			externalFile.createNewFile();
-		} catch (DatafariServerException | IOException e) {
-			logger.error("Unable to read external file "+e.getMessage());
+      externalFile.createNewFile();
+    } catch (DatafariServerException | IOException e) {
+      logger.error("Unable to read external file " + e.getMessage());
+    }
+    if (isEnabled != null && isEnabled.equals("true")) {
+      updateNbLikes();
+      startScheduler();
+    }
+    logger.debug("LikesLauncher Servlet Initialized successfully");
+  }
 
-		}
-		if (isEnabled != null && isEnabled.equals("true")) {
-			updateNbLikes();
-			startScheduler();
-		}
-		logger.debug("LikesLauncher Servlet Initialized successfully");
-	}
-
-	@Override
+  @Override
   public void contextDestroyed(final ServletContextEvent arg0) {
-		LikesLauncher.shutDown();
-	}
+    LikesLauncher.shutDown();
+  }
 
-	private void updateNbLikes() {
-		if (!LikesLauncher.isThreadUpdateNbLikesStarted) {
-			LikesLauncher.isThreadUpdateNbLikesStarted = true;
-			new Thread(new Runnable() {
+  private void updateNbLikes() {
+    if (!LikesLauncher.isThreadUpdateNbLikesStarted) {
+      LikesLauncher.isThreadUpdateNbLikesStarted = true;
+      new Thread(new Runnable() {
         @Override
-				public void run() {
-					try {
-            final IndexerServer solrClient = IndexerServerManager.getIndexerServer(Core.FILESHARE);
-            final IndexerQuery refreshQuery = IndexerQueryManager.createQuery();
-						refreshQuery.setRequestHandler("/reloadCache");
-            solrClient.executeQuery(refreshQuery);
+        public void run() {
+          try {
+            final IndexerServer server = IndexerServerManager.getIndexerServer(Core.FILESHARE);
+            final IndexerQuery refreshQuery = IndexerServerManager.createQuery();
+            refreshQuery.setRequestHandler("/reloadCache");
+            server.executeQuery(refreshQuery);
           } catch (final Exception e) {
-						logger.error("Cannot send refresh request", e);
-					}
-					logger.info("updateNbLikes finished its work");
-				}
+            logger.error("Cannot send refresh request", e);
+          }
+          logger.info("updateNbLikes finished its work");
+        }
 
-			}).start();
-		}
-	}
+      }).start();
+    }
+  }
 
-	public static void startScheduler() {
-		if (!islaunched) {
-			islaunched = true;
-			scheduler = Executors.newScheduledThreadPool(1);
+  public static void startScheduler() {
+    if (!islaunched) {
+      islaunched = true;
+      scheduler = Executors.newScheduledThreadPool(1);
       handler = scheduler.scheduleAtFixedRate(reloadCache, 1, 10, TimeUnit.SECONDS);
-		}
-	}
+    }
+  }
 
-	public static void saveChange() {
-		LikesLauncher.doReload = true;
-	}
+  public static void saveChange() {
+    LikesLauncher.doReload = true;
+  }
 
-	static Runnable reloadCache = new Runnable() {
-		@Override
-		public void run() {
-			if (LikesLauncher.doReload) {
-				try {
-          final IndexerServer solrClient = IndexerServerManager.getIndexerServer(Core.FILESHARE);
-          final IndexerQuery refreshQuery = IndexerQueryManager.createQuery();
-					refreshQuery.setRequestHandler("/reloadCache");
-          solrClient.executeQuery(refreshQuery);
-					LikesLauncher.doReload = false;
+  static Runnable reloadCache = new Runnable() {
+    @Override
+    public void run() {
+      if (LikesLauncher.doReload) {
+        try {
+          final IndexerServer server = IndexerServerManager.getIndexerServer(Core.FILESHARE);
+          final IndexerQuery refreshQuery = IndexerServerManager.createQuery();
+          refreshQuery.setRequestHandler("/reloadCache");
+          server.executeQuery(refreshQuery);
+          LikesLauncher.doReload = false;
         } catch (final Exception e) {
-					logger.error("Cannot reload cache", e);
-				}
-			}
-		}
-	};
+          logger.error("Cannot reload cache", e);
+        }
+      }
+    }
+  };
 
-	public static void shutDown() {
-		logger.debug("-----------------Trying to ShutDown the scheduler---------------------");
-		if (islaunched) {
-			handler.cancel(true);
-			scheduler.shutdown();
-		}
-		islaunched = false;
-	}
+  public static void shutDown() {
+    logger.debug("-----------------Trying to ShutDown the scheduler---------------------");
+    if (islaunched) {
+      handler.cancel(true);
+      scheduler.shutdown();
+    }
+    islaunched = false;
+  }
 
 }

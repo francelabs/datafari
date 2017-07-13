@@ -34,7 +34,7 @@ import com.francelabs.datafari.service.indexer.IndexerQuery;
 import com.francelabs.datafari.service.indexer.IndexerQueryResponse;
 import com.francelabs.datafari.service.indexer.IndexerResponseDocument;
 import com.francelabs.datafari.service.indexer.IndexerServer;
-import com.francelabs.datafari.service.search.SolrServers.Core;
+import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 import com.francelabs.datafari.statistics.StatsUtils;
 import com.francelabs.datafari.utils.ScriptConfiguration;
 

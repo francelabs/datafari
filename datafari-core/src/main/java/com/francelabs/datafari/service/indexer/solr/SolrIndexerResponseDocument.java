@@ -4,6 +4,12 @@ import org.apache.solr.common.SolrDocument;
 
 import com.francelabs.datafari.service.indexer.IndexerResponseDocument;
 
+/**
+ * Response document that is retrieved in a query response
+ * 
+ * @author francelabs
+ *
+ */
 public class SolrIndexerResponseDocument implements IndexerResponseDocument {
 
   private final SolrDocument document;

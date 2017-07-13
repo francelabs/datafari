@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.SystemUtils;
 
 import com.francelabs.datafari.service.indexer.IndexerQuery;
-import com.francelabs.datafari.service.indexer.IndexerQueryManager;
+import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.statistics.StatsPusher;
 import com.francelabs.datafari.utils.RealmLdapConfiguration;
 import com.francelabs.datafari.utils.ScriptConfiguration;
@@ -71,8 +71,8 @@ public class URL extends HttpServlet {
 
     final Map<String, String[]> requestMap = new HashMap<>();
     requestMap.putAll(request.getParameterMap());
-    final IndexerQuery params = IndexerQueryManager.createQuery();
-    params.addParams(requestMap);
+    final IndexerQuery query = IndexerServerManager.createQuery();
+    query.addParams(requestMap);
     // get the AD domain
     String domain = "";
     HashMap<String, String> h;
@@ -104,13 +104,13 @@ public class URL extends HttpServlet {
         if (!domain.equals("")) {
           AuthenticatedUserName += "@" + domain;
         }
-        params.setParam("AuthenticatedUserName", AuthenticatedUserName);
+        query.setParam("AuthenticatedUserName", AuthenticatedUserName);
       }
     } catch (final Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    StatsPusher.pushDocument(params, protocol);
+    StatsPusher.pushDocument(query, protocol);
 
     // String surl = URLDecoder.decode(request.getParameter("url"),
     // "ISO-8859-1");

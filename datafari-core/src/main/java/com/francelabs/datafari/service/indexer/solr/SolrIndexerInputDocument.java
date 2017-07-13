@@ -4,6 +4,12 @@ import org.apache.solr.common.SolrInputDocument;
 
 import com.francelabs.datafari.service.indexer.IndexerInputDocument;
 
+/**
+ * Input document that is meant to be pushed to the indexer server
+ * 
+ * @author francelabs
+ *
+ */
 public class SolrIndexerInputDocument implements IndexerInputDocument {
 
   private final SolrInputDocument inputDocument;
