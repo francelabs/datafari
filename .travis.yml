@@ -3,13 +3,11 @@ install: true
 env:
   matrix:
     - TEST_SCRIPT="mvn clean install"
-    
 script: $TEST_SCRIPT
 language: java
 dist : precise
 jdk:
   - oraclejdk8
-
 notifications:
   email:
     on_success: change
