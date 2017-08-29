@@ -1183,7 +1183,7 @@
 		
 		<processor class="solr.TruncateFieldUpdateProcessorFactory">
    			<str name="fieldRegex">content_hl_.*</str>
-   			<int name="maxLength">10000</int>
+   			<int name="maxLength">100000</int>
  		</processor>
 		
 		<processor class="solr.TrimFieldUpdateProcessorFactory">
@@ -1242,7 +1242,7 @@
 		
 		<processor class="solr.TruncateFieldUpdateProcessorFactory">
    			<str name="fieldRegex">content_hl_.*</str>
-   			<int name="maxLength">10000</int>
+   			<int name="maxLength">100000</int>
  		</processor>
 		
 		<processor class="solr.TrimFieldUpdateProcessorFactory">
