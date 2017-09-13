@@ -90,7 +90,6 @@
 			<arg value="${installer.build.dir}/datafari/DEBIAN" />
 		</exec>
 		<exec executable="dpkg-deb">
-			<arg value="-z0" />
 			<arg value="-b" />
 			<arg value="${installer.build.dir}/datafari" />
 		</exec>
