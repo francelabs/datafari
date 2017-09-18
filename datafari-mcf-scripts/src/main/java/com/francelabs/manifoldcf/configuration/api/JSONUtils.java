@@ -5,27 +5,30 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import org.json.JSONException;
-import org.json.JSONObject;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 public class JSONUtils {
 
-	public static void saveJSON(JSONObject json, File file) throws java.io.IOException {
+	public static void saveJSON(final JSONObject json, final File file) throws java.io.IOException {
 		file.createNewFile();
-		FileWriter fw = new FileWriter(file.getAbsoluteFile());
-		BufferedWriter bw = new BufferedWriter(fw);
-		bw.write(json.toString());
+		final FileWriter fw = new FileWriter(file.getAbsoluteFile());
+		final BufferedWriter bw = new BufferedWriter(fw);
+		bw.write(json.toJSONString());
 		bw.close();
 	}
 
-	public static JSONObject readJSON(File file) throws java.io.IOException, JSONException {
-		BufferedReader reader = new BufferedReader(new FileReader(file));
+	public static JSONObject readJSON(final File file) throws java.io.IOException, ParseException {
+		final BufferedReader reader = new BufferedReader(new FileReader(file));
 		String line, results = "";
 		while ((line = reader.readLine()) != null) {
 			results += line;
 		}
 		reader.close();
-		return new JSONObject(results);
+		final JSONParser parser = new JSONParser();
+		return (JSONObject) parser.parse(results);
 	}
 
 }

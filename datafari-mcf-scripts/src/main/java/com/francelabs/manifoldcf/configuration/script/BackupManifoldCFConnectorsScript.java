@@ -9,12 +9,7 @@ import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.apache.manifoldcf.core.interfaces.IThreadContext;
-import org.apache.manifoldcf.core.interfaces.LockManagerFactory;
-import org.apache.manifoldcf.core.interfaces.ThreadContextFactory;
-import org.apache.manifoldcf.core.system.ManifoldCF;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 
 import com.francelabs.manifoldcf.configuration.api.JSONUtils;
 import com.francelabs.manifoldcf.configuration.api.ManifoldAPI;
@@ -25,7 +20,7 @@ public class BackupManifoldCFConnectorsScript {
 	private static String configPropertiesFileName = "config/log4j.properties";
 
 	private final static Logger LOGGER = Logger.getLogger(BackupManifoldCFConnectorsScript.class);
-	
+
 	private static boolean isAuthentified = false;
 
 	/**
@@ -124,7 +119,7 @@ public class BackupManifoldCFConnectorsScript {
 	private static void prepareDirectory(final File directory) throws IOException {
 
 		directory.mkdirs();
-		File[] files = directory.listFiles();
+		final File[] files = directory.listFiles();
 		for (final File file : files) {
 			file.delete();
 		}
@@ -153,14 +148,14 @@ public class BackupManifoldCFConnectorsScript {
 
 	}
 
-	private static void saveAllConnections(final Map<String, JSONObject> connections, final File directory) throws IOException, JSONException {
+	private static void saveAllConnections(final Map<String, JSONObject> connections, final File directory) throws IOException {
 
 		for (final Entry<String, JSONObject> connection : connections.entrySet()) {
 			saveConnection(connection, directory);
 		}
 	}
 
-	private static void saveConnection(final Entry<String, JSONObject> outputConnection, final File directory) throws IOException, JSONException {
+	private static void saveConnection(final Entry<String, JSONObject> outputConnection, final File directory) throws IOException {
 
 		JSONUtils.saveJSON(outputConnection.getValue(), new File(directory, outputConnection.getKey() + ".json"));
 		final File connectorFile = new File(directory, outputConnection.getKey() + ".json");
@@ -172,11 +167,11 @@ public class BackupManifoldCFConnectorsScript {
 	 */
 	public static void doSave(final String backupDirectory) throws Exception {
 		final File backupDirectoryFile = new File(backupDirectory);
-		// check access right 
-		if (!backupDirectoryFile.canWrite()){
-			throw new IOException("Lack of permissions on directory : "+backupDirectory);
+		// check access right
+		if (!backupDirectoryFile.canWrite()) {
+			throw new IOException("Lack of permissions on directory : " + backupDirectory);
 		}
-		
+
 		final File outputConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
 
 		final File authorityGroupsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
@@ -227,11 +222,11 @@ public class BackupManifoldCFConnectorsScript {
 	 */
 	public static void doRestore(final String backupDirectory) throws Exception {
 		final File backupDirectoryFile = new File(backupDirectory);
-		// check access right 
-		if (!backupDirectoryFile.canWrite()){
-			throw new IOException("Lack of permissions on directory : "+backupDirectory);
+		// check access right
+		if (!backupDirectoryFile.canWrite()) {
+			throw new IOException("Lack of permissions on directory : " + backupDirectory);
 		}
-		
+
 		final File outputConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
 
 		final File authorityGroupsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYGROUPS);

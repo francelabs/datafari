@@ -5,8 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.manifoldcf.configuration.api.JSONUtils;
@@ -56,9 +55,6 @@ public class LdapMcfConfig {
 				return CodesReturned.PARAMETERNOTWELLSET.getValue();
 			}
 		} catch (final IOException e) {
-			logger.error("FATAL ERROR", e);
-			return CodesReturned.GENERALERROR.getValue();
-		} catch (final JSONException e) {
 			logger.error("FATAL ERROR", e);
 			return CodesReturned.GENERALERROR.getValue();
 		} catch (final Exception e) {

@@ -18,6 +18,9 @@
 
 <configuration>
 
+  <!-- Version string for UI -->
+  <property name="org.apache.manifoldcf.versionstring" value="2.8.1"/>
+
   <property name="org.apache.manifoldcf.login.name" value="admin"/>
   <property name="org.apache.manifoldcf.login.password.obfuscated" value="@PASSWORD@"/>
   <property name="org.apache.manifoldcf.apilogin.password.obfuscated" value="@PASSWORD@"/>
@@ -40,7 +43,7 @@
   <property name="org.apache.manifoldcf.crawler.threads" value="20"/>
   
   <!-- Point to a specific (common) logging file -->
-  <property name="org.apache.manifoldcf.logconfigfile" value="./logging.ini"/>
+  <property name="org.apache.manifoldcf.logconfigfile" value="./logging.xml"/>
   <!-- Specify the connectors to be loaded -->
   <property name="org.apache.manifoldcf.connectorsconfigurationfile" value="./connectors.xml"/>
 

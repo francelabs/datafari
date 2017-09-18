@@ -14,6 +14,8 @@
 	<!-- By default, not used -->
 	<!-- <Parameter name="nogroupsinad" value="" override="false" /> -->
 	
+	<Resources cachingAllowed="true" cacheMaxSize="100000" />
+	
 	<Realm className="com.francelabs.datafari.realm.CustomCombinedRealm">
 		
 		<Realm className="com.francelabs.datafari.realm.GenericCassandraRealm"/>

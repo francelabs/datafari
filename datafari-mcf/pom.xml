@@ -24,8 +24,8 @@
 							<configuration>
 								<!-- Version of MCF should be retrieved from a property file as well 
 									as the MD5 -->
-								<url>http://archive.apache.org/dist/manifoldcf/apache-manifoldcf-2.6/apache-manifoldcf-2.6-bin.tar.gz</url>
-								<md5>0721040d3e25bee1e224256045f35ca0</md5>
+								<url>http://archive.apache.org/dist/manifoldcf/apache-manifoldcf-2.8.1/apache-manifoldcf-2.8.1-bin.tar.gz</url>
+								<md5>b12bf9f8b452fabc9967aef5d7be7fad</md5>
 								<unpack>true</unpack>
 							</configuration>
 						</execution>
