@@ -63,7 +63,9 @@
 					else {
 				%>
 				    </div>
-						<div id="connectionLink"><a id="loginLink" class="head-link"></a></div>
+						<div id="connectionLink">
+						<img id="logo_mobile" src="images/datafari.png">
+						<a id="loginLink" class="head-link"></a></div>
 				<% 
 					}					
 				%>
