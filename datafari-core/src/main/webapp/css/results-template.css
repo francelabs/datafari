@@ -56,10 +56,13 @@
 	}
 	
 	#facets_mobile ul{
+		width: 100%;
 		margin-top: 2px;
 		padding-left: 8%;
 		border:0px;
 		border-bottom:0px;
+		box-sizing: border-box;
+		-moz-box-sizing: border-box;
 	}
 	
 	#facets_mobile li{
@@ -83,7 +86,7 @@
 	#facets_mobile .facet.tableWidget.widget .facetName{
 		position:relative;
 		width:90%;
-		padding:5%;
+		padding: 5px 5% !important;
 		font-size:1.1em;
 	}
 	
@@ -238,7 +241,7 @@
 	/**************************************/
 	
 	/***	>>> Search Bar Widget <<<	***/
-	.searchBarWidget { clear: both; margin: 5% 2%; ; width: 95%; height:3em; position:relative; }
+	.searchBarWidget { clear: both; margin: 5% 2%; ; width: 100%; height:3em; position:relative; }
 	
 	.searchBarWidget  img{
 		width:3em;
@@ -284,7 +287,7 @@
 	
 	
 	.searchBarWidget .searchMode { display:none; }
-	.searchBarWidget #sortMode {display:none;}
+	.searchBarWidget #sortMode {display:none !important;}
 	/**************************************/
 	
 	/***	>>> Collection Widget <<<	***/
@@ -359,8 +362,14 @@
 	
 	.resultWidget .doc .connector { float: left; height: 100%; width: 5%; }
 	
-	.resultWidget .doc .res { float: left; height: 100%; padding-left: 10px; width: 98%; position:relative; text-align:justify;
-	line-height:20px;
+	.resultWidget .doc .res {
+		float: left;
+		height: 100%;
+		padding-left: 10px;
+		width: 100% !important;
+		position: relative;
+		text-align:justify;
+		line-height:20px;
 	}
 	
 	.resultWidget .res .description , #promolink #snippet { margin-top: 3px;  }
@@ -506,6 +515,29 @@
 	/**************************************/
 	
 	.ui-resizable-handle { height: 10px; }
+	
+	#commonLinks{ display: none !important; }
+	
+	#results_div{ margin-top: 20px; }
+	
+	#searchBar #logo_desktop{ display: none; }
+	
+	#searchBar > div.searchBar{ margin-top: 35px; }
+	
+	#connectionLink{
+		margin-top: 5px !important;
+		text-align: center;
+	}
+	
+	#connectionLink #logo_mobile{
+		display: inline-block !important;
+	}
+	
+	#connectionLink #loginLink{
+		position: absolute;
+		top: 5px;
+		right: 20px;
+	}
 }
 
 @media all and (max-width : 430px){
@@ -1063,3 +1095,5 @@
 }
 
 .searchModeLink { width: 250px; }
+
+#connectionLink #logo_desktop{ display: none; }
