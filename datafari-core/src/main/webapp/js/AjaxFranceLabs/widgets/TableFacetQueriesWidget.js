@@ -97,6 +97,22 @@ AjaxFranceLabs.TableFacetQueriesWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 	update : function() {
 		var self = this, data = this.assocTags(this.manager.response.facet_counts.facet_queries), max = (data.length > this.maxDisplay) ? this.maxDisplay : data.length, elm = $(this.elm);
 		elm.find('ul').empty();
+		
+		// Define the available facet queries
+		var enabledQueries = [];
+		if(max == self.queries.length) {
+			enabledQueries = self.queries;
+		} else {
+			var cptQ = 0;
+			for (var i = 0; i < max; i++) {
+				var inArray = $.inArray(data[i].name, self.labels);
+				if(inArray != -1) {
+					enabledQueries[cptQ] = self.queries[inArray];
+					cptQ++;
+				}
+			}
+		}
+		
 		for (var i = 0; i < max; i++) {
 			elm.find('ul').append('<li></li>');
 			elm.find('ul li:last').append('<label></label>');
@@ -105,7 +121,7 @@ AjaxFranceLabs.TableFacetQueriesWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 			elm.find('ul li:last label').append('<div class="filterFacetCheck"></div>').append('<div class="filterFacetLabel"></div>');
 			elm.find('ul li:last .filterFacetCheck').append('<input type="checkbox" value="' + data[i].name + '"/>');
 			elm.find('ul li:last .filterFacetCheck input').attr('id', self.id + "-" + data[i].name);
-			var filter =  new RegExp(self.field + ':' + self.queries[i].replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"));
+			var filter =  new RegExp(self.field + ':' + enabledQueries[i].replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"));
 			if (this.manager.store.find('fq', filter))
 				elm.find('ul li:last .filterFacetCheck input').attr('checked', 'checked').parents('li').addClass('selected');
 			elm.find('ul li:last .filterFacetCheck input').change(function() {
