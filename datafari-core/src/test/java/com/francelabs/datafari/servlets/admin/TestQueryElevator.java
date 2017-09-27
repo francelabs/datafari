@@ -1,6 +1,7 @@
 package com.francelabs.datafari.servlets.admin;
 
 import static org.junit.Assert.assertFalse;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,6 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -30,179 +32,172 @@ import com.francelabs.datafari.utils.TestUtils;
 
 @PrepareForTest(Environment.class)
 @RunWith(PowerMockRunner.class)
+@PowerMockIgnore("javax.management.*")
 public class TestQueryElevator {
 
-	final static String resourcePathStr = "src/test/resources/queryElevatorTests/in";
-	final static String datafariHomeTemp = "datafari_home";
-	Path tempDirectory = null;
+  final static String resourcePathStr = "src/test/resources/queryElevatorTests/in";
+  final static String datafariHomeTemp = "datafari_home";
+  Path tempDirectory = null;
 
-	@Before
-	public void initialize() throws IOException {
-		// create temp dir
-		tempDirectory = Files.createTempDirectory(datafariHomeTemp);
-		FileUtils.copyDirectory(new File(resourcePathStr), tempDirectory.toFile());
+  @Before
+  public void initialize() throws IOException {
+    // create temp dir
+    tempDirectory = Files.createTempDirectory(datafariHomeTemp);
+    FileUtils.copyDirectory(new File(resourcePathStr), tempDirectory.toFile());
 
-		// set datafari_home to temp dir
-		PowerMockito.mockStatic(Environment.class);
-		Mockito.when(Environment.getEnvironmentVariable("DATAFARI_HOME"))
-				.thenReturn(tempDirectory.toFile().getAbsolutePath());
+    // set datafari_home to temp dir
+    PowerMockito.mockStatic(Environment.class);
+    Mockito.when(Environment.getEnvironmentVariable("DATAFARI_HOME")).thenReturn(tempDirectory.toFile().getAbsolutePath());
 
-	}
+  }
 
-	@Test
-	public void TestQueryElevatorGetQueries() throws ServletException, IOException {
-		final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-		final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
+  @Test
+  public void TestQueryElevatorGetQueries() throws ServletException, IOException {
+    final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
-		Mockito.when(request.getParameter("get")).thenReturn("queries");
-		final StringWriter sw = new StringWriter();
-		final PrintWriter writer = new PrintWriter(sw);
-		Mockito.when(response.getWriter()).thenReturn(writer);
+    Mockito.when(request.getParameter("get")).thenReturn("queries");
+    final StringWriter sw = new StringWriter();
+    final PrintWriter writer = new PrintWriter(sw);
+    Mockito.when(response.getWriter()).thenReturn(writer);
 
-		new QueryElevator().doGet(request, response);
-		writer.flush(); // it may not have been flushed yet...
+    new QueryElevator().doGet(request, response);
+    writer.flush(); // it may not have been flushed yet...
 
-		final JSONObject jsonResponse = new JSONObject(sw.toString());
-		final JSONObject jsonExpected = new JSONObject(
-				TestUtils.readResource("/queryElevatorTests/out/getQueries.json"));
+    final JSONObject jsonResponse = new JSONObject(sw.toString());
+    final JSONObject jsonExpected = new JSONObject(TestUtils.readResource("/queryElevatorTests/out/getQueries.json"));
 
-		JSONAssert.assertEquals(jsonResponse, jsonExpected, true);
+    JSONAssert.assertEquals(jsonResponse, jsonExpected, true);
 
-	}
+  }
 
-	@Test
-	public void TestQueryElevatorGetDocs() throws ServletException, IOException {
-		final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-		final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
+  @Test
+  public void TestQueryElevatorGetDocs() throws ServletException, IOException {
+    final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
-		Mockito.when(request.getParameter("get")).thenReturn("docs");
-		Mockito.when(request.getParameter("query")).thenReturn("txt");
-		final StringWriter sw = new StringWriter();
-		final PrintWriter writer = new PrintWriter(sw);
-		Mockito.when(response.getWriter()).thenReturn(writer);
+    Mockito.when(request.getParameter("get")).thenReturn("docs");
+    Mockito.when(request.getParameter("query")).thenReturn("txt");
+    final StringWriter sw = new StringWriter();
+    final PrintWriter writer = new PrintWriter(sw);
+    Mockito.when(response.getWriter()).thenReturn(writer);
 
-		new QueryElevator().doGet(request, response);
-		writer.flush(); // it may not have been flushed yet...
+    new QueryElevator().doGet(request, response);
+    writer.flush(); // it may not have been flushed yet...
 
-		final JSONObject jsonResponse = new JSONObject(sw.toString());
-		final JSONObject jsonExpected = new JSONObject(TestUtils.readResource("/queryElevatorTests/out/getDocs.json"));
+    final JSONObject jsonResponse = new JSONObject(sw.toString());
+    final JSONObject jsonExpected = new JSONObject(TestUtils.readResource("/queryElevatorTests/out/getDocs.json"));
 
-		JSONAssert.assertEquals(jsonResponse, jsonExpected, true);
-	}
+    JSONAssert.assertEquals(jsonResponse, jsonExpected, true);
+  }
 
-	@Test
-	public void TestQueryElevatorPostUpNewDoc() throws ServletException, IOException {
-		final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-		final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
+  @Test
+  public void TestQueryElevatorPostUpNewDoc() throws ServletException, IOException {
+    final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
-		Mockito.when(request.getParameter("action")).thenReturn("up");
-		Mockito.when(request.getParameter("item")).thenReturn("/localhost/file4.txt");
-		Mockito.when(request.getParameter("query")).thenReturn("txt");
-		final StringWriter sw = new StringWriter();
-		final PrintWriter writer = new PrintWriter(sw);
-		Mockito.when(response.getWriter()).thenReturn(writer);
+    Mockito.when(request.getParameter("action")).thenReturn("up");
+    Mockito.when(request.getParameter("item")).thenReturn("/localhost/file4.txt");
+    Mockito.when(request.getParameter("query")).thenReturn("txt");
+    final StringWriter sw = new StringWriter();
+    final PrintWriter writer = new PrintWriter(sw);
+    Mockito.when(response.getWriter()).thenReturn(writer);
 
-		new QueryElevator().doPost(request, response);
-		writer.flush(); // it may not have been flushed yet...
+    new QueryElevator().doPost(request, response);
+    writer.flush(); // it may not have been flushed yet...
 
-		final Diff diff = DiffBuilder
-				.compare(TestUtils
-						.readFile(new File(tempDirectory.toFile(), "solr/solrcloud/FileShare/conf/elevate.xml")))
-				.withTest(TestUtils.readResource("/queryElevatorTests/out/elevateUpNewDoc.xml")).build();
-		assertFalse(diff.toString(), diff.hasDifferences());
-	}
+    final Diff diff = DiffBuilder.compare(TestUtils.readFile(new File(tempDirectory.toFile(), "solr/solrcloud/FileShare/conf/elevate.xml")))
+        .withTest(TestUtils.readResource("/queryElevatorTests/out/elevateUpNewDoc.xml")).build();
+    assertFalse(diff.toString(), diff.hasDifferences());
+  }
 
-	@Test
-	public void TestQueryElevatorPostUpExistingDoc() throws ServletException, IOException {
+  @Test
+  public void TestQueryElevatorPostUpExistingDoc() throws ServletException, IOException {
 
-		final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-		final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
+    final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
-		Mockito.when(request.getParameter("action")).thenReturn("up");
-		Mockito.when(request.getParameter("item")).thenReturn("/localhost/file3.txt");
-		Mockito.when(request.getParameter("query")).thenReturn("txt");
-		final StringWriter sw = new StringWriter();
-		final PrintWriter writer = new PrintWriter(sw);
-		Mockito.when(response.getWriter()).thenReturn(writer);
+    Mockito.when(request.getParameter("action")).thenReturn("up");
+    Mockito.when(request.getParameter("item")).thenReturn("/localhost/file3.txt");
+    Mockito.when(request.getParameter("query")).thenReturn("txt");
+    final StringWriter sw = new StringWriter();
+    final PrintWriter writer = new PrintWriter(sw);
+    Mockito.when(response.getWriter()).thenReturn(writer);
 
-		new QueryElevator().doPost(request, response);
-		writer.flush(); // it may not have been flushed yet...
+    new QueryElevator().doPost(request, response);
+    writer.flush(); // it may not have been flushed yet...
 
-		final Diff diff = DiffBuilder.compare(TestUtils
-				.readFile(new File(tempDirectory.toFile(), "solr/solrcloud/FileShare/conf/elevate.xml")))
-				.withTest(TestUtils.readResource("/queryElevatorTests/out/elevateUpExistingDoc.xml")).build();
-		assertFalse(diff.toString(), diff.hasDifferences());
-	}
+    final Diff diff = DiffBuilder.compare(TestUtils.readFile(new File(tempDirectory.toFile(), "solr/solrcloud/FileShare/conf/elevate.xml")))
+        .withTest(TestUtils.readResource("/queryElevatorTests/out/elevateUpExistingDoc.xml")).build();
+    assertFalse(diff.toString(), diff.hasDifferences());
+  }
 
-	@Test
-	public void TestQueryElevatorPostDownDoc() throws ServletException, IOException {
+  @Test
+  public void TestQueryElevatorPostDownDoc() throws ServletException, IOException {
 
-		final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-		final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
+    final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
-		Mockito.when(request.getParameter("action")).thenReturn("down");
-		Mockito.when(request.getParameter("item")).thenReturn("/localhost/file3.txt");
-		Mockito.when(request.getParameter("query")).thenReturn("txt");
-		final StringWriter sw = new StringWriter();
-		final PrintWriter writer = new PrintWriter(sw);
-		Mockito.when(response.getWriter()).thenReturn(writer);
+    Mockito.when(request.getParameter("action")).thenReturn("down");
+    Mockito.when(request.getParameter("item")).thenReturn("/localhost/file3.txt");
+    Mockito.when(request.getParameter("query")).thenReturn("txt");
+    final StringWriter sw = new StringWriter();
+    final PrintWriter writer = new PrintWriter(sw);
+    Mockito.when(response.getWriter()).thenReturn(writer);
 
-		new QueryElevator().doPost(request, response);
-		writer.flush(); // it may not have been flushed yet...
+    new QueryElevator().doPost(request, response);
+    writer.flush(); // it may not have been flushed yet...
 
-		final Diff diff = DiffBuilder.compare(TestUtils
-				.readFile(new File(tempDirectory.toFile(), "solr/solrcloud/FileShare/conf/elevate.xml")))
+    final Diff diff = DiffBuilder.compare(TestUtils.readFile(new File(tempDirectory.toFile(), "solr/solrcloud/FileShare/conf/elevate.xml")))
 
-				.withTest(TestUtils.readResource("/queryElevatorTests/out/elevateDownDoc.xml")).build();
-		assertFalse(diff.toString(), diff.hasDifferences());
-	}
+        .withTest(TestUtils.readResource("/queryElevatorTests/out/elevateDownDoc.xml")).build();
+    assertFalse(diff.toString(), diff.hasDifferences());
+  }
 
-	@Test
-	public void TestQueryElevatorPostMultiDocsReplace() throws ServletException, IOException {
-		final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-		final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
+  @Test
+  public void TestQueryElevatorPostMultiDocsReplace() throws ServletException, IOException {
+    final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
-		Mockito.when(request.getParameter("tool")).thenReturn("modify");
-		final String[] postData = { "/localhost/file3.txt", "/localhost/file1.txt" };
-		Mockito.when(request.getParameter("docs[]")).thenReturn(postData.toString());
-		Mockito.when(request.getParameterValues("docs[]")).thenReturn(postData);
-		Mockito.when(request.getParameter("query")).thenReturn("txt");
-		final StringWriter sw = new StringWriter();
-		final PrintWriter writer = new PrintWriter(sw);
-		Mockito.when(response.getWriter()).thenReturn(writer);
-		new QueryElevator().doPost(request, response);
-		writer.flush(); // it may not have been flushed yet...
+    Mockito.when(request.getParameter("tool")).thenReturn("modify");
+    final String[] postData = { "/localhost/file3.txt", "/localhost/file1.txt" };
+    Mockito.when(request.getParameter("docs[]")).thenReturn(postData.toString());
+    Mockito.when(request.getParameterValues("docs[]")).thenReturn(postData);
+    Mockito.when(request.getParameter("query")).thenReturn("txt");
+    final StringWriter sw = new StringWriter();
+    final PrintWriter writer = new PrintWriter(sw);
+    Mockito.when(response.getWriter()).thenReturn(writer);
+    new QueryElevator().doPost(request, response);
+    writer.flush(); // it may not have been flushed yet...
 
-		final Diff diff = DiffBuilder.compare(TestUtils
-				.readFile(new File(tempDirectory.toFile(), "solr/solrcloud/FileShare/conf/elevate.xml")))
+    final Diff diff = DiffBuilder.compare(TestUtils.readFile(new File(tempDirectory.toFile(), "solr/solrcloud/FileShare/conf/elevate.xml")))
 
-				.withTest(TestUtils.readResource("/queryElevatorTests/out/elevateMultiDocsReplace.xml")).build();
-		assertFalse(diff.toString(), diff.hasDifferences());
-	}
+        .withTest(TestUtils.readResource("/queryElevatorTests/out/elevateMultiDocsReplace.xml")).build();
+    assertFalse(diff.toString(), diff.hasDifferences());
+  }
 
-	@Test
-	public void TestQueryElevatorPostMultiDocsNew() throws ServletException, IOException {
+  @Test
+  public void TestQueryElevatorPostMultiDocsNew() throws ServletException, IOException {
 
-		final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-		final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
+    final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
-		Mockito.when(request.getParameter("tool")).thenReturn("create");
-		final String[] postData = { "/localhost/file5.txt", "/localhost/file6.txt" };
-		Mockito.when(request.getParameter("docs[]")).thenReturn(postData.toString());
-		Mockito.when(request.getParameterValues("docs[]")).thenReturn(postData);
-		Mockito.when(request.getParameter("query")).thenReturn("txt");
-		final StringWriter sw = new StringWriter();
-		final PrintWriter writer = new PrintWriter(sw);
-		Mockito.when(response.getWriter()).thenReturn(writer);
+    Mockito.when(request.getParameter("tool")).thenReturn("create");
+    final String[] postData = { "/localhost/file5.txt", "/localhost/file6.txt" };
+    Mockito.when(request.getParameter("docs[]")).thenReturn(postData.toString());
+    Mockito.when(request.getParameterValues("docs[]")).thenReturn(postData);
+    Mockito.when(request.getParameter("query")).thenReturn("txt");
+    final StringWriter sw = new StringWriter();
+    final PrintWriter writer = new PrintWriter(sw);
+    Mockito.when(response.getWriter()).thenReturn(writer);
 
-		new QueryElevator().doPost(request, response);
-		writer.flush(); // it may not have been flushed yet...
+    new QueryElevator().doPost(request, response);
+    writer.flush(); // it may not have been flushed yet...
 
-		final Diff diff = DiffBuilder.compare(TestUtils
-				.readFile(new File(tempDirectory.toFile(), "solr/solrcloud/FileShare/conf/elevate.xml")))
+    final Diff diff = DiffBuilder.compare(TestUtils.readFile(new File(tempDirectory.toFile(), "solr/solrcloud/FileShare/conf/elevate.xml")))
 
-				.withTest(TestUtils.readResource("/queryElevatorTests/out/elevateMultiDocsNew.xml")).build();
-		assertFalse(diff.toString(), diff.hasDifferences());
-	}
+        .withTest(TestUtils.readResource("/queryElevatorTests/out/elevateMultiDocsNew.xml")).build();
+    assertFalse(diff.toString(), diff.hasDifferences());
+  }
 
 }
