@@ -94,6 +94,8 @@
    <field name="content_fr" type="text_fr" indexed="true" stored="false" multiValued="true"/>
    <field name="content_hl_en" type="text_en" indexed="false" stored="true" multiValued="true"/>
    <field name="content_hl_fr" type="text_fr" indexed="false" stored="true" multiValued="true"/>
+   <field name="exactContent" type="text_nostem" indexed="true" stored="false" multiValued="true"/>
+   <field name="exactTitle" type="text_nostem" indexed="true" stored="false" multiValued="true"/>
    
    <field name="suggest" type="text_auto" indexed="true" stored="false" multiValued="true" />
    <field name="spell" type="textSpell" indexed="true" stored="false" multiValued="true" />
@@ -667,6 +669,15 @@
         <filter class="solr.FrenchLightStemFilterFactory"/>
         <filter class="solr.ASCIIFoldingFilterFactory"/>
       </analyzer>
+    </fieldType>
+    
+    <!--  Exact Search  -->
+    <!-- A text field that only splits on whitespace for exact matching of words -->
+     <fieldType name="text_nostem" class="solr.TextField" positionIncrementGap="100">
+       <analyzer>
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+       </analyzer>
     </fieldType>
 
  </types>

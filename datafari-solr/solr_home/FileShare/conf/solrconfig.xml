@@ -1175,6 +1175,20 @@
 			<lst name="source">
 				<str name="fieldRegex">content_(.*)</str>
 			</lst>
+			<str name="dest">exactContent</str>
+     	</processor>
+     	
+     	<processor class="solr.CloneFieldUpdateProcessorFactory">
+			<lst name="source">
+				<str name="fieldRegex">title_(.*)</str>
+			</lst>
+			<str name="dest">exactTitle</str>
+     	</processor>
+		
+		<processor class="solr.CloneFieldUpdateProcessorFactory">
+			<lst name="source">
+				<str name="fieldRegex">content_(.*)</str>
+			</lst>
 			<lst name="dest">
 				<str name="pattern">content_(.*)</str>
 				<str name="replacement">content_hl_$1</str>
@@ -1229,6 +1243,20 @@
 			<str name="langid.whitelist">en,fr</str>
 			<str name="langid.fallback">en</str>
 		</processor>
+		
+		<processor class="solr.CloneFieldUpdateProcessorFactory">
+			<lst name="source">
+				<str name="fieldRegex">content_(.*)</str>
+			</lst>
+			<str name="dest">exactContent</str>
+     	</processor>
+     	
+     	<processor class="solr.CloneFieldUpdateProcessorFactory">
+			<lst name="source">
+				<str name="fieldRegex">title_(.*)</str>
+			</lst>
+			<str name="dest">exactTitle</str>
+     	</processor>
 		
 		<processor class="solr.CloneFieldUpdateProcessorFactory">
 			<lst name="source">
