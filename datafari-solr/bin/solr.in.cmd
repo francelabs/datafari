@@ -96,6 +96,11 @@ REM set SOLR_SSL_CLIENT_KEY_STORE_PASSWORD=
 REM setSOLR_SSL_CLIENT_TRUST_STORE=
 REM setSOLR_SSL_CLIENT_TRUST_STORE_PASSWORD=
 
+REM Enables log rotation, cleanup, and archiving before starting Solr. Setting SOLR_LOG_PRESTART_ROTATION=false will skip start
+REM time rotation of logs, and the archiving of the last GC and console log files. It does not affect Log4j configuration. This
+REM pre-startup rotation may need to be disabled depending how much you customize the default logging setup.
+REM set SOLR_LOG_PRESTART_ROTATION=false
+
 
 set SOLR_HOME=%DATAFARI_HOME%/solr/solr_home
 set LOG4J_PROPS=%DATAFARI_HOME%/solr/conf/log4j.properties

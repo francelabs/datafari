@@ -83,6 +83,11 @@ ENABLE_REMOTE_JMX_OPTS="false"
 # must contain a solr.xml; by default, Solr will use server/solr
 #SOLR_HOME=
 
+# Enables log rotation, cleanup, and archiving during start. Setting SOLR_LOG_PRESTART_ROTATION=false will skip start
+# time rotation of logs, and the archiving of the last GC and console log files. It does not affect Log4j configuration.
+# This pre-startup rotation may need to be disabled depending how much you customize the default logging setup.
+SOLR_LOG_PRESTART_ROTATION=false
+
 # Solr provides a default Log4J configuration properties file in server/resources
 # however, you may want to customize the log settings and file appender location
 # so you can point the script to use a different log4j.properties file
