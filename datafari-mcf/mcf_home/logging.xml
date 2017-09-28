@@ -17,7 +17,7 @@
 -->
 
 
-<Configuration status="warn" name="ManifoldCF" packages="">
+<Configuration status="warn" name="ManifoldCF">
   <Appenders>
     <RollingFile name="main" fileName="../../logs/manifoldcf.log" filePattern="../../logs/manifoldcf-%d{yyyy-MM-dd}.log">
       <PatternLayout>
