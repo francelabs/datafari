@@ -11,6 +11,7 @@
 	</condition>
 
 	<!-- Source directories -->
+	<property name="datafari.home" value="/opt/datafari" />
 	<property name="elk.src.dir" value="${project.dir}/datafari-elk/target/dist/elk" />
 	<property name="tomcat.src.dir" value="${project.dir}/datafari-tomcat/target/dist/tomcat" />
 	<property name="solr.src.dir" value="${project.dir}/datafari-solr/target/dist/solr" />
@@ -25,7 +26,7 @@
 	<property name="cassandra.src.dir" value="${project.dir}/datafari-cassandra/target/dist/cassandra" />
 	<property name="zookeeper.src.dir" value="${project.dir}/datafari-zookeeper/target/dist/zookeeper" />
 	<property name="bin.src.dir" value="${project.dir}/bin" />
-	<property name="tika.src.dir" value="${project.dir}/datafari-tika/target" />
+	<property name="tika.src.dir" value="${project.dir}/datafari-tika/" />
 
 
 	<!-- Output directories and self contained Datafari's Debian components -->
@@ -166,7 +167,7 @@
 		
 		<!-- Copy Tika jars to Solr -->
 		<copy todir="${debian.dist.dir}/solr/solr_home/FileShare/lib/extraction">
-			<fileset dir="${tika.src.dir}/dependency">
+			<fileset dir="${tika.src.dir}/target/dependency">
 				<include name="*.jar" />
 				<exclude name="language-detector*" />
 			</fileset>
@@ -189,11 +190,48 @@
 		</copy>
 		
 		<!-- Copy Tika jars to MCF -->
-    <copy todir="${debian.dist.dir}/mcf/mcf_home/connector-common-lib">
-      <fileset dir="${tika.src.dir}/dependency">
-        <include name="*.jar" />
-      </fileset>
-    </copy>
+		<copy todir="${debian.dist.dir}/mcf/mcf_home/connector-common-lib">
+			<fileset dir="${tika.src.dir}/target/dependency">
+				<include name="*.jar" />
+				<exclude name="commons-codec-*" />
+				<exclude name="commons-collections4-*" />
+				<exclude name="commons-exec-*" />
+				<exclude name="commons-io-*" />
+				<exclude name="commons-lang-*" />
+				<exclude name="commons-logging-*" />
+				<exclude name="curvesapi-*" />
+				<exclude name="gson-*" />
+				<exclude name="guava-*" />
+				<exclude name="httpclient-*" />
+				<exclude name="httpcore-*" />
+				<exclude name="jna-*" />
+				<exclude name="json-simple-*" />
+				<exclude name="poi-*" />
+				<exclude name="slf4j-*" />
+				<exclude name="xmlbeans-*" />
+			</fileset>
+		</copy>
+		<copy todir="${debian.dist.dir}/mcf/mcf_home/lib">
+			<fileset dir="${tika.src.dir}/target/dependency">
+				<include name="commons-codec-*" />
+				<include name="commons-collections4-*" />
+				<include name="commons-exec-*" />
+				<include name="commons-io-*" />
+				<include name="commons-lang-*" />
+				<include name="commons-logging-*" />
+				<include name="curvesapi-*" />
+				<include name="gson-*" />
+				<include name="httpclient-*" />
+				<include name="httpcore-*" />
+				<include name="jna-*" />
+				<include name="json-simple-*" />
+				<include name="poi-*" />
+				<include name="slf4j-*" />
+				<include name="xercesImpl-*" />
+				<include name="xml-apis-*" />
+				<include name="xmlbeans-*" />
+			</fileset>
+		</copy>
 
 		<!-- Copy Tika OCR config in mcf lib -->
 		<copy todir="${debian.dist.dir}/mcf/mcf_home/lib">
