@@ -12,7 +12,6 @@
 		        <include name="*manifoldcf*/connector-lib-proprietary/**" />
 		        <include name="*manifoldcf*/lib/**" />
 		        <include name="*manifoldcf*/connectors.xml" />
-		        <exclude name="*manifoldcf*/lib/mcf-core*" />
 				<exclude name="*manifoldcf*/lib/commons-codec-*" />
 				<exclude name="*manifoldcf*/lib/commons-collections4-*" />
 				<exclude name="*manifoldcf*/lib/commons-exec-*" />
