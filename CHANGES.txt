@@ -23,6 +23,11 @@ Datafari needs Python v 2.7.x. If you have only Python v3, please install Python
 ==================  4.0.0 ==================
 Changes : 
 Removed location_rpt from Solr schemas
+Tika updated to version 1.16 for both MCF and Solr
+Manifold CF updated to version 2.8.1
+Solr updated to version 6.6.1
+Various bug fixes
+
 
 ==================  3.2.1 ==================
 
