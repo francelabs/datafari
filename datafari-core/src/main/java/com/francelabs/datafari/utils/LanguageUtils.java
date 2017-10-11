@@ -26,6 +26,6 @@ import java.util.List;
  */
 public class LanguageUtils {
 
-	public static final List<String> availableLanguages = Arrays.asList("en", "fr", "it", "pt_br", "de");
+	public static final List<String> availableLanguages = Arrays.asList("en", "fr", "it", "pt_br", "de", "ru");
 	
 }
