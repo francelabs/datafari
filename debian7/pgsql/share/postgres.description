@@ -66,13 +66,14 @@
 214	pg_proc	0	I/O
 215	pg_proc	0	I/O
 222	pg_proc	0	aggregate transition function
+276	pg_proc	0	aggregate combine function
 223	pg_proc	0	larger of two
 224	pg_proc	0	smaller of two
 228	pg_proc	0	round to nearest integer
 229	pg_proc	0	truncate to integer
-2308	pg_proc	0	smallest integer >= value
-2320	pg_proc	0	smallest integer >= value
-2309	pg_proc	0	largest integer <= value
+2308	pg_proc	0	nearest integer >= value
+2320	pg_proc	0	nearest integer >= value
+2309	pg_proc	0	nearest integer <= value
 2310	pg_proc	0	sign of value
 233	pg_proc	0	natural exponential (e^x)
 234	pg_proc	0	natural logarithm
@@ -100,35 +101,17 @@
 317	pg_proc	0	convert float8 to int4
 318	pg_proc	0	convert int4 to float4
 319	pg_proc	0	convert float4 to int4
-330	pg_proc	0	btree(internal)
-636	pg_proc	0	btree(internal)
-331	pg_proc	0	btree(internal)
-333	pg_proc	0	btree(internal)
-334	pg_proc	0	btree(internal)
-335	pg_proc	0	btree(internal)
-336	pg_proc	0	btree(internal)
-337	pg_proc	0	btree(internal)
-338	pg_proc	0	btree(internal)
-328	pg_proc	0	btree(internal)
-332	pg_proc	0	btree(internal)
-972	pg_proc	0	btree(internal)
-276	pg_proc	0	btree(internal)
-1268	pg_proc	0	btree(internal)
-2785	pg_proc	0	btree(internal)
-3789	pg_proc	0	brin(internal)
-3790	pg_proc	0	brin(internal)
-3791	pg_proc	0	brin(internal)
-3792	pg_proc	0	brin(internal)
-3793	pg_proc	0	brin(internal)
-3794	pg_proc	0	brin(internal)
-3795	pg_proc	0	brin(internal)
-3796	pg_proc	0	brin(internal)
-3797	pg_proc	0	brin(internal)
-3798	pg_proc	0	brin(internal)
-3799	pg_proc	0	brin(internal)
-3800	pg_proc	0	brin(internal)
-3801	pg_proc	0	brin(internal)
+330	pg_proc	0	btree index access method handler
+331	pg_proc	0	hash index access method handler
+332	pg_proc	0	gist index access method handler
+333	pg_proc	0	gin index access method handler
+334	pg_proc	0	spgist index access method handler
+335	pg_proc	0	brin index access method handler
 3952	pg_proc	0	brin: standalone scan new table pages
+338	pg_proc	0	validate an operator class
+636	pg_proc	0	test property of an index access method
+637	pg_proc	0	test property of an index
+638	pg_proc	0	test property of an index column
 347	pg_proc	0	I/O
 348	pg_proc	0	I/O
 350	pg_proc	0	less-equal-greater
@@ -159,20 +142,6 @@
 407	pg_proc	0	convert text to name
 408	pg_proc	0	convert name to char(n)
 409	pg_proc	0	convert char(n) to name
-440	pg_proc	0	hash(internal)
-637	pg_proc	0	hash(internal)
-441	pg_proc	0	hash(internal)
-443	pg_proc	0	hash(internal)
-444	pg_proc	0	hash(internal)
-445	pg_proc	0	hash(internal)
-446	pg_proc	0	hash(internal)
-447	pg_proc	0	hash(internal)
-448	pg_proc	0	hash(internal)
-327	pg_proc	0	hash(internal)
-442	pg_proc	0	hash(internal)
-425	pg_proc	0	hash(internal)
-438	pg_proc	0	hash(internal)
-2786	pg_proc	0	hash(internal)
 449	pg_proc	0	hash
 450	pg_proc	0	hash
 949	pg_proc	0	hash
@@ -189,6 +158,8 @@
 399	pg_proc	0	hash
 422	pg_proc	0	hash
 432	pg_proc	0	hash
+438	pg_proc	0	count the number of NULL arguments
+440	pg_proc	0	count the number of non-NULL arguments
 458	pg_proc	0	larger of two
 459	pg_proc	0	smaller of two
 460	pg_proc	0	I/O
@@ -263,21 +234,6 @@
 769	pg_proc	0	smaller of two
 770	pg_proc	0	larger of two
 771	pg_proc	0	smaller of two
-774	pg_proc	0	gist(internal)
-638	pg_proc	0	gist(internal)
-775	pg_proc	0	gist(internal)
-777	pg_proc	0	gist(internal)
-778	pg_proc	0	gist(internal)
-779	pg_proc	0	gist(internal)
-780	pg_proc	0	gist(internal)
-781	pg_proc	0	gist(internal)
-782	pg_proc	0	gist(internal)
-326	pg_proc	0	gist(internal)
-776	pg_proc	0	gist(internal)
-2561	pg_proc	0	gist(internal)
-3280	pg_proc	0	gist(internal)
-772	pg_proc	0	gist(internal)
-2787	pg_proc	0	gist(internal)
 849	pg_proc	0	position of substring
 860	pg_proc	0	convert char to char(n)
 861	pg_proc	0	name of the current database
@@ -342,6 +298,7 @@
 1063	pg_proc	0	larger of two
 1064	pg_proc	0	smaller of two
 1078	pg_proc	0	less-equal-greater
+3328	pg_proc	0	sort support
 1080	pg_proc	0	hash
 1081	pg_proc	0	format a type oid and atttypmod to canonical SQL
 1084	pg_proc	0	I/O
@@ -562,6 +519,14 @@
 1605	pg_proc	0	cosine
 1606	pg_proc	0	tangent
 1607	pg_proc	0	cotangent
+2731	pg_proc	0	arcsine, degrees
+2732	pg_proc	0	arccosine, degrees
+2733	pg_proc	0	arctangent, degrees
+2734	pg_proc	0	arctangent, two arguments, degrees
+2735	pg_proc	0	sine, degrees
+2736	pg_proc	0	cosine, degrees
+2737	pg_proc	0	tangent, degrees
+2738	pg_proc	0	cotangent, degrees
 1608	pg_proc	0	radians to degrees
 1609	pg_proc	0	degrees to radians
 1610	pg_proc	0	PI
@@ -714,9 +679,9 @@
 1708	pg_proc	0	value rounded to 'scale' of zero
 1709	pg_proc	0	value truncated to 'scale'
 1710	pg_proc	0	value truncated to 'scale' of zero
-1711	pg_proc	0	smallest integer >= value
-2167	pg_proc	0	smallest integer >= value
-1712	pg_proc	0	largest integer <= value
+1711	pg_proc	0	nearest integer >= value
+2167	pg_proc	0	nearest integer >= value
+1712	pg_proc	0	nearest integer <= value
 1728	pg_proc	0	modulus
 1730	pg_proc	0	square root
 1731	pg_proc	0	square root
@@ -728,6 +693,7 @@
 1737	pg_proc	0	logarithm base m of n
 1738	pg_proc	0	exponentiation
 2169	pg_proc	0	exponentiation
+8888	pg_proc	0	number of decimal digits in the fractional part
 1740	pg_proc	0	convert int4 to numeric
 1741	pg_proc	0	base 10 logarithm
 1742	pg_proc	0	convert float4 to numeric
@@ -796,16 +762,29 @@
 2513	pg_proc	0	aggregate final function
 1832	pg_proc	0	aggregate final function
 1833	pg_proc	0	aggregate transition function
+3341	pg_proc	0	aggregate combine function
 2858	pg_proc	0	aggregate transition function
+3337	pg_proc	0	aggregate combine function
+2740	pg_proc	0	aggregate serial function
+2741	pg_proc	0	aggregate deserial function
+3335	pg_proc	0	aggregate serial function
+3336	pg_proc	0	aggregate deserial function
 3548	pg_proc	0	aggregate transition function
 1834	pg_proc	0	aggregate transition function
 1835	pg_proc	0	aggregate transition function
 1836	pg_proc	0	aggregate transition function
+3338	pg_proc	0	aggregate combine function
+3339	pg_proc	0	aggregate serial function
+3340	pg_proc	0	aggregate deserial function
 2746	pg_proc	0	aggregate transition function
 3567	pg_proc	0	aggregate transition function
 3568	pg_proc	0	aggregate transition function
 3569	pg_proc	0	aggregate transition function
 3387	pg_proc	0	aggregate transition function
+2785	pg_proc	0	aggregate combine function
+2786	pg_proc	0	aggregate serial function
+2787	pg_proc	0	aggregate deserial function
+3324	pg_proc	0	aggregate combine function
 3178	pg_proc	0	aggregate final function
 1837	pg_proc	0	aggregate final function
 2514	pg_proc	0	aggregate final function
@@ -822,6 +801,7 @@
 3392	pg_proc	0	aggregate final function
 3393	pg_proc	0	aggregate final function
 1843	pg_proc	0	aggregate transition function
+3325	pg_proc	0	aggregate combine function
 3549	pg_proc	0	aggregate transition function
 1844	pg_proc	0	aggregate final function
 1962	pg_proc	0	aggregate transition function
@@ -832,6 +812,7 @@
 3572	pg_proc	0	aggregate final function
 2805	pg_proc	0	aggregate transition function
 2806	pg_proc	0	aggregate transition function
+3342	pg_proc	0	aggregate combine function
 2807	pg_proc	0	aggregate final function
 2808	pg_proc	0	aggregate final function
 2809	pg_proc	0	aggregate final function
@@ -904,13 +885,16 @@
 3057	pg_proc	0	statistics: number of auto analyzes for a table
 1936	pg_proc	0	statistics: currently active backend IDs
 2022	pg_proc	0	statistics: information about currently active backends
+3318	pg_proc	0	statistics: information about progress of backends running maintenance command
 3099	pg_proc	0	statistics: information about currently active replication
+3317	pg_proc	0	statistics: information about WAL receiver
 2026	pg_proc	0	statistics: current backend PID
 1937	pg_proc	0	statistics: PID of backend
 1938	pg_proc	0	statistics: database ID of backend
 1939	pg_proc	0	statistics: user ID of backend
 1940	pg_proc	0	statistics: current query of backend
-2853	pg_proc	0	statistics: is backend currently waiting for a lock
+2788	pg_proc	0	statistics: wait event type on which backend is currently waiting
+2853	pg_proc	0	statistics: wait event on which backend is currently waiting
 2094	pg_proc	0	statistics: start time for current query of backend
 2857	pg_proc	0	statistics: start time for backend's current transaction
 1391	pg_proc	0	statistics: start time for current backend session
@@ -976,6 +960,7 @@
 1946	pg_proc	0	convert bytea value into some ascii-only text string
 1947	pg_proc	0	convert ascii-encoded text string into bytea value
 1954	pg_proc	0	less-equal-greater
+3331	pg_proc	0	sort support
 3917	pg_proc	0	transform a timestamp length coercion
 3944	pg_proc	0	transform a time length coercion
 1961	pg_proc	0	adjust timestamp precision
@@ -1028,10 +1013,12 @@
 2075	pg_proc	0	convert int8 to bitstring
 2076	pg_proc	0	convert bitstring to int8
 2077	pg_proc	0	SHOW X as a function
+3294	pg_proc	0	SHOW X as a function, optionally no error for missing variable
 2078	pg_proc	0	SET X as a function
 2084	pg_proc	0	SHOW ALL as a function
 3329	pg_proc	0	show config file settings
 1371	pg_proc	0	view system lock information
+2561	pg_proc	0	get array of PIDs of sessions blocking specified backend PID
 1065	pg_proc	0	view two-phase transactions
 3819	pg_proc	0	view members of a multixactid
 3581	pg_proc	0	get commit timestamp of a transaction
@@ -1058,12 +1045,14 @@
 2096	pg_proc	0	terminate a server process
 2172	pg_proc	0	prepare for taking an online backup
 2173	pg_proc	0	finish taking an online backup
+2739	pg_proc	0	finish taking an online backup
 3813	pg_proc	0	true if server is in online backup
 3814	pg_proc	0	start time of an online backup
 2848	pg_proc	0	switch to new xlog file
 3098	pg_proc	0	create a named restore point
 2849	pg_proc	0	current xlog write location
 2852	pg_proc	0	current xlog insert location
+3330	pg_proc	0	current xlog flush location
 2850	pg_proc	0	xlog filename and byte offset, given an xlog location
 2851	pg_proc	0	xlog filename, given an xlog location
 3165	pg_proc	0	difference in bytes, given two xlog locations
@@ -1197,7 +1186,9 @@
 2828	pg_proc	0	sample covariance
 2829	pg_proc	0	correlation coefficient
 2166	pg_proc	0	less-equal-greater
+3332	pg_proc	0	sort support
 2180	pg_proc	0	less-equal-greater
+3333	pg_proc	0	sort support
 2188	pg_proc	0	less-equal-greater
 2189	pg_proc	0	less-equal-greater
 2190	pg_proc	0	less-equal-greater
@@ -1227,6 +1218,7 @@
 4084	pg_proc	0	I/O
 4085	pg_proc	0	I/O
 4086	pg_proc	0	convert namespace name to regnamespace
+1268	pg_proc	0	parse qualified identifier to array of identifiers
 2246	pg_proc	0	(internal)
 2247	pg_proc	0	(internal)
 2248	pg_proc	0	(internal)
@@ -1294,6 +1286,7 @@
 2286	pg_proc	0	total disk space usage for the specified table and associated indexes
 2288	pg_proc	0	convert a long int to a human readable text using size units
 3166	pg_proc	0	convert a numeric to a human readable text using size units
+3334	pg_proc	0	convert a size in human-readable format with size units into bytes
 2997	pg_proc	0	disk space usage for the specified table, including TOAST, free space and visibility map
 2998	pg_proc	0	disk space usage for all indexes attached to the specified table
 2999	pg_proc	0	filenode identifier of relation
@@ -1330,6 +1323,8 @@
 2778	pg_proc	0	I/O
 3116	pg_proc	0	I/O
 3117	pg_proc	0	I/O
+326	pg_proc	0	I/O
+327	pg_proc	0	I/O
 3311	pg_proc	0	I/O
 3312	pg_proc	0	I/O
 3313	pg_proc	0	BERNOULLI tablesample method handler
@@ -1466,6 +1461,7 @@
 2730	pg_proc	0	trigger description with pretty-print option
 3035	pg_proc	0	get the channels that the current backend listens to
 3036	pg_proc	0	send a notification event
+3296	pg_proc	0	get the fraction of the asynchronous notification queue currently in use
 1066	pg_proc	0	non-persistent series generator
 1067	pg_proc	0	non-persistent series generator
 1068	pg_proc	0	non-persistent series generator
@@ -1513,20 +1509,8 @@
 3282	pg_proc	0	GiST support
 2179	pg_proc	0	GiST support
 3064	pg_proc	0	GiST support
+3280	pg_proc	0	GiST support
 3288	pg_proc	0	GiST support
-2731	pg_proc	0	gin(internal)
-2732	pg_proc	0	gin(internal)
-2733	pg_proc	0	gin(internal)
-2734	pg_proc	0	gin(internal)
-2735	pg_proc	0	gin(internal)
-2736	pg_proc	0	gin(internal)
-2737	pg_proc	0	gin(internal)
-2738	pg_proc	0	gin(internal)
-325	pg_proc	0	gin(internal)
-2739	pg_proc	0	gin(internal)
-2740	pg_proc	0	gin(internal)
-2741	pg_proc	0	gin(internal)
-2788	pg_proc	0	gin(internal)
 2743	pg_proc	0	GIN array support
 2774	pg_proc	0	GIN array support
 2744	pg_proc	0	GIN array support
@@ -1631,6 +1615,7 @@
 2952	pg_proc	0	I/O
 2953	pg_proc	0	I/O
 2960	pg_proc	0	less-equal-greater
+3300	pg_proc	0	sort support
 2961	pg_proc	0	I/O
 2962	pg_proc	0	I/O
 2963	pg_proc	0	hash
@@ -1669,7 +1654,14 @@
 3622	pg_proc	0	less-equal-greater
 3711	pg_proc	0	number of lexemes
 3623	pg_proc	0	strip position information
-3624	pg_proc	0	set weight of lexeme's entries
+3624	pg_proc	0	set given weight for whole tsvector
+3320	pg_proc	0	set given weight for given lexemes
+3321	pg_proc	0	delete lexeme
+3323	pg_proc	0	delete given lexemes
+3322	pg_proc	0	expand tsvector to set of rows
+3326	pg_proc	0	convert tsvector to array of lexemes
+3327	pg_proc	0	build tsvector from array of lexemes
+3319	pg_proc	0	delete lexemes that do not have one of the given weights
 3648	pg_proc	0	GiST tsvector support
 3649	pg_proc	0	GiST tsvector support
 3650	pg_proc	0	GiST tsvector support
@@ -1677,6 +1669,7 @@
 3652	pg_proc	0	GiST tsvector support
 3653	pg_proc	0	GiST tsvector support
 3654	pg_proc	0	GiST tsvector support
+3790	pg_proc	0	GiST tsvector support (obsolete)
 3656	pg_proc	0	GIN tsvector support
 3657	pg_proc	0	GIN tsvector support
 3658	pg_proc	0	GIN tsvector support
@@ -1686,7 +1679,11 @@
 3077	pg_proc	0	GIN tsvector support (obsolete)
 3087	pg_proc	0	GIN tsvector support (obsolete)
 3088	pg_proc	0	GIN tsvector support (obsolete)
+3791	pg_proc	0	GIN tsvector support (obsolete)
+3792	pg_proc	0	GIN tsvector support (obsolete)
+3789	pg_proc	0	clean up GIN pending list
 3668	pg_proc	0	less-equal-greater
+5004	pg_proc	0	phrase-concatenate with distance
 3672	pg_proc	0	number of nodes
 3673	pg_proc	0	show real useful query for GiST index
 3684	pg_proc	0	rewrite tsquery
@@ -1698,6 +1695,7 @@
 3699	pg_proc	0	GiST tsquery support
 3700	pg_proc	0	GiST tsquery support
 3701	pg_proc	0	GiST tsquery support
+3793	pg_proc	0	GiST tsquery support (obsolete)
 3686	pg_proc	0	restriction selectivity of tsvector @@ tsquery
 3687	pg_proc	0	join selectivity of tsvector @@ tsquery
 3688	pg_proc	0	tsvector typanalyze
@@ -1736,9 +1734,11 @@
 3745	pg_proc	0	transform to tsvector
 3746	pg_proc	0	make tsquery
 3747	pg_proc	0	transform to tsquery
+5006	pg_proc	0	transform to tsquery
 3749	pg_proc	0	transform to tsvector
 3750	pg_proc	0	make tsquery
 3751	pg_proc	0	transform to tsquery
+5001	pg_proc	0	transform to tsquery
 3752	pg_proc	0	trigger for automatic update of tsvector column
 3753	pg_proc	0	trigger for automatic update of tsvector column
 3759	pg_proc	0	get current tsearch configuration
@@ -1783,11 +1783,6 @@
 3210	pg_proc	0	get the type of a jsonb value
 4044	pg_proc	0	less-equal-greater
 4045	pg_proc	0	hash
-4046	pg_proc	0	implementation of @> operator
-4047	pg_proc	0	implementation of ? operator
-4048	pg_proc	0	implementation of ?| operator
-4049	pg_proc	0	implementation of ?& operator
-4050	pg_proc	0	implementation of <@ operator
 3480	pg_proc	0	GIN support
 3482	pg_proc	0	GIN support
 3483	pg_proc	0	GIN support
@@ -1799,6 +1794,7 @@
 3489	pg_proc	0	GIN support
 3305	pg_proc	0	Set part of a jsonb
 3306	pg_proc	0	Indented text from jsonb
+3579	pg_proc	0	Insert value into a jsonb
 2939	pg_proc	0	I/O
 2940	pg_proc	0	I/O
 2941	pg_proc	0	I/O
@@ -1843,22 +1839,7 @@
 3852	pg_proc	0	is the range's upper bound inclusive?
 3853	pg_proc	0	is the range's lower bound infinite?
 3854	pg_proc	0	is the range's upper bound infinite?
-3855	pg_proc	0	implementation of = operator
-3856	pg_proc	0	implementation of <> operator
-3857	pg_proc	0	implementation of && operator
-3858	pg_proc	0	implementation of @> operator
-3859	pg_proc	0	implementation of @> operator
-3860	pg_proc	0	implementation of <@ operator
-3861	pg_proc	0	implementation of <@ operator
-3862	pg_proc	0	implementation of -|- operator
-3863	pg_proc	0	implementation of << operator
-3864	pg_proc	0	implementation of >> operator
-3865	pg_proc	0	implementation of &< operator
-3866	pg_proc	0	implementation of &> operator
-3867	pg_proc	0	implementation of + operator
 4057	pg_proc	0	the smallest range which includes both of the given ranges
-3868	pg_proc	0	implementation of * operator
-3869	pg_proc	0	implementation of - operator
 3870	pg_proc	0	less-equal-greater
 3875	pg_proc	0	GiST support
 3876	pg_proc	0	GiST support
@@ -1898,21 +1879,6 @@
 3462	pg_proc	0	construct timestamp with time zone
 3463	pg_proc	0	construct timestamp with time zone
 3464	pg_proc	0	construct interval
-4001	pg_proc	0	spgist(internal)
-4002	pg_proc	0	spgist(internal)
-4003	pg_proc	0	spgist(internal)
-4004	pg_proc	0	spgist(internal)
-4005	pg_proc	0	spgist(internal)
-4006	pg_proc	0	spgist(internal)
-4007	pg_proc	0	spgist(internal)
-4008	pg_proc	0	spgist(internal)
-4009	pg_proc	0	spgist(internal)
-4010	pg_proc	0	spgist(internal)
-4011	pg_proc	0	spgist(internal)
-4012	pg_proc	0	spgist(internal)
-4032	pg_proc	0	spgist(internal)
-4013	pg_proc	0	spgist(internal)
-4014	pg_proc	0	spgist(internal)
 4018	pg_proc	0	SP-GiST support for quad tree over point
 4019	pg_proc	0	SP-GiST support for quad tree over point
 4020	pg_proc	0	SP-GiST support for quad tree over point
@@ -1932,6 +1898,11 @@
 3471	pg_proc	0	SP-GiST support for quad tree over range
 3472	pg_proc	0	SP-GiST support for quad tree over range
 3473	pg_proc	0	SP-GiST support for quad tree over range
+5012	pg_proc	0	SP-GiST support for quad tree over box
+5013	pg_proc	0	SP-GiST support for quad tree over box
+5014	pg_proc	0	SP-GiST support for quad tree over box
+5015	pg_proc	0	SP-GiST support for quad tree over box
+5016	pg_proc	0	SP-GiST support for quad tree over box
 3779	pg_proc	0	create a physical replication slot
 3780	pg_proc	0	drop a replication slot
 3781	pg_proc	0	information about replication slots currently in use
@@ -1940,6 +1911,8 @@
 3783	pg_proc	0	get binary changes from replication slot
 3784	pg_proc	0	peek at changes from replication slot
 3785	pg_proc	0	peek at binary changes from replication slot
+3577	pg_proc	0	emit a textual logical decoding message
+3578	pg_proc	0	emit a binary logical decoding message
 3566	pg_proc	0	list objects dropped by the current command
 4566	pg_proc	0	return Oid of the table getting rewritten
 4567	pg_proc	0	return reason code for table getting rewritten
@@ -1977,6 +1950,7 @@
 3589	pg_proc	0	for use by pg_upgrade
 3590	pg_proc	0	for use by pg_upgrade
 3591	pg_proc	0	for use by pg_upgrade
+4083	pg_proc	0	for use by pg_upgrade
 6003	pg_proc	0	create a replication origin
 6004	pg_proc	0	drop replication origin identified by its name
 6005	pg_proc	0	translate the replication origin's name to its id
@@ -1991,6 +1965,11 @@
 6014	pg_proc	0	get progress for all replication origins
 3298	pg_proc	0	row security for current context active on table by table oid
 3299	pg_proc	0	row security for current context active on table by table name
+3400	pg_proc	0	pg_config binary as a function
+3441	pg_proc	0	pg_controldata general state information as a function
+3442	pg_proc	0	pg_controldata checkpoint state information as a function
+3443	pg_proc	0	pg_controldata recovery state information as a function
+3444	pg_proc	0	pg_controldata init state information as a function
 16	pg_type	0	boolean, 'true'/'false'
 17	pg_type	0	variable-length string, binary values escaped
 18	pg_type	0	single character
@@ -2085,6 +2064,8 @@
 375	pg_operator	0	concatenate
 352	pg_operator	0	equal
 353	pg_operator	0	equal
+3315	pg_operator	0	not equal
+3316	pg_operator	0	not equal
 388	pg_operator	0	factorial
 389	pg_operator	0	deprecated, use ! instead
 385	pg_operator	0	equal
@@ -2770,6 +2751,7 @@
 3679	pg_operator	0	greater than
 3680	pg_operator	0	AND-concatenate
 3681	pg_operator	0	OR-concatenate
+5005	pg_operator	0	phrase-concatenate
 3682	pg_operator	0	NOT tsquery
 3693	pg_operator	0	contains
 3694	pg_operator	0	is contained by

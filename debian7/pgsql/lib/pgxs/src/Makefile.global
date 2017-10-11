@@ -36,9 +36,9 @@ all:
 .SECONDARY:
 
 # PostgreSQL version number
-VERSION = 9.5.3
-MAJORVERSION = 9.5
-VERSION_NUM = 90503
+VERSION = 9.6.5
+MAJORVERSION = 9.6
+VERSION_NUM = 90605
 
 # Set top_srcdir, srcdir, and VPATH.
 ifdef PGXS
@@ -59,8 +59,8 @@ endif
 endif
 else # not PGXS
 vpath_build = no
-abs_top_builddir = /home/mazoyer/compilePostgres/postgresql-9.5.3
-abs_top_srcdir = /home/mazoyer/compilePostgres/postgresql-9.5.3
+abs_top_builddir = /root/postgres/postgresql-9.6.5
+abs_top_srcdir = /root/postgres/postgresql-9.6.5
 
 ifneq ($(vpath_build),yes)
 top_srcdir = $(top_builddir)
@@ -75,7 +75,7 @@ endif # not PGXS
 vpathsearch = `for f in $(addsuffix /$(1),$(subst :, ,. $(VPATH))); do test -r $$f && echo $$f && break; done`
 
 # Saved arguments from configure
-configure_args =  '--prefix=/opt/datafari/pgsql'
+configure_args = 
 
 
 ##########################################################################
@@ -95,7 +95,7 @@ ifndef PGXS
 # Note that prefix, exec_prefix, and datarootdir aren't defined in a PGXS build;
 # makefiles may only use the derived variables such as bindir.
 
-prefix := /opt/datafari/pgsql
+prefix := /usr/local/pgsql
 exec_prefix := ${prefix}
 datarootdir := ${prefix}/share
 
@@ -184,6 +184,7 @@ with_python	= no
 with_tcl	= no
 with_openssl	= no
 with_selinux	= no
+with_systemd	= no
 with_libxml	= no
 with_libxslt	= no
 with_system_tzdata = 
@@ -213,8 +214,8 @@ TCL_INCLUDE_SPEC	=
 TCL_SHARED_BUILD	= 
 TCL_SHLIB_LD_LIBS	= 
 
-PTHREAD_CFLAGS		=  -pthread  -D_REENTRANT -D_THREAD_SAFE -D_POSIX_PTHREAD_SEMANTICS
-PTHREAD_LIBS		=  -lpthread   
+PTHREAD_CFLAGS		= -pthread -D_REENTRANT -D_THREAD_SAFE -D_POSIX_PTHREAD_SEMANTICS
+PTHREAD_LIBS		= 
 
 
 ##########################################################################
@@ -244,9 +245,9 @@ CFLAGS_SSE42 = -msse4.2
 
 # Kind-of compilers
 
-BISON = /usr/bin/bison
-BISONFLAGS =  -Wno-deprecated $(YFLAGS)
-FLEX = /usr/bin/flex
+BISON = 
+BISONFLAGS =  $(YFLAGS)
+FLEX = 
 FLEXFLAGS =  $(LFLAGS)
 DTRACE = 
 DTRACEFLAGS = 
@@ -257,7 +258,7 @@ ZIC =
 AR = ar
 DLLTOOL = 
 DLLWRAP = 
-LIBS = -lz -ledit -lrt -lcrypt -ldl -lm 
+LIBS = -lz -lreadline -lrt -lcrypt -ldl -lm 
 LDAP_LIBS_FE = 
 LDAP_LIBS_BE = 
 UUID_LIBS = 
@@ -297,6 +298,7 @@ else
 endif
 perl_archlibexp		= 
 perl_privlibexp		= 
+perl_embed_ccflags	= 
 perl_embed_ldflags	= 
 
 # Miscellaneous
@@ -331,8 +333,11 @@ endif
 endif
 
 PROVE = 
-PG_PROVE_FLAGS = -I $(top_srcdir)/src/test/perl/
-PROVE_FLAGS = --verbose
+# There are common routines in src/test/perl, and some test suites have
+# extra perl modules in their own directory.
+PG_PROVE_FLAGS = -I $(top_srcdir)/src/test/perl/ -I $(srcdir)
+# User-supplied prove flags such as --verbose can be provided in PROVE_FLAGS.
+PROVE_FLAGS =
 
 # prepend to path if already set, else just set it
 define add_to_path
@@ -435,9 +440,6 @@ host_cpu = x86_64
 # Make HAVE_IPV6 available for initdb script creation
 HAVE_IPV6= yes
 
-# The HP-UX port makefile, for one, needs access to this symbol
-HAVE_POSIX_SIGNALS= yes
-
 # This is mainly for use on FreeBSD, where we have both a.out and elf
 # systems now.  May be applicable to other systems to?
 ELF_SYSTEM= true
@@ -496,6 +498,10 @@ libpq_pgport += $(LDAP_LIBS_FE)
 endif
 
 
+##########################################################################
+#
+# Commonly used submake targets
+
 submake-libpq:
 	$(MAKE) -C $(libpq_builddir) all
 
@@ -503,7 +509,15 @@ submake-libpgport:
 	$(MAKE) -C $(top_builddir)/src/port all
 	$(MAKE) -C $(top_builddir)/src/common all
 
-.PHONY: submake-libpq submake-libpgport
+submake-libpgfeutils:
+	$(MAKE) -C $(top_builddir)/src/port all
+	$(MAKE) -C $(top_builddir)/src/common all
+	$(MAKE) -C $(top_builddir)/src/fe_utils all
+
+submake-generated-headers:
+	$(MAKE) -C $(top_builddir)/src/backend generated-headers
+
+.PHONY: submake-libpq submake-libpgport submake-libpgfeutils submake-generated-headers
 
 
 ##########################################################################
@@ -526,14 +540,20 @@ ifdef NO_LOCALE
 NOLOCALE += --no-locale
 endif
 
+# file with extra config for temp build
+TEMP_CONF =
+ifdef TEMP_CONFIG
+TEMP_CONF += --temp-config=$(TEMP_CONFIG)
+endif
+
 pg_regress_locale_flags = $(if $(ENCODING),--encoding=$(ENCODING)) $(NOLOCALE)
 
-pg_regress_check = $(with_temp_install) $(top_builddir)/src/test/regress/pg_regress --inputdir=$(srcdir) --temp-instance=./tmp_check --bindir= $(pg_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
+pg_regress_check = $(with_temp_install) $(top_builddir)/src/test/regress/pg_regress --inputdir=$(srcdir) --temp-instance=./tmp_check $(TEMP_CONF) --bindir= $(pg_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
 pg_regress_installcheck = $(top_builddir)/src/test/regress/pg_regress --inputdir=$(srcdir) --bindir='$(bindir)' $(pg_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
 
 pg_regress_clean_files = results/ regression.diffs regression.out tmp_check/ log/
 
-pg_isolation_regress_check = $(with_temp_install) $(top_builddir)/src/test/isolation/pg_isolation_regress --inputdir=$(srcdir) --temp-instance=./tmp_check --bindir= $(pg_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
+pg_isolation_regress_check = $(with_temp_install) $(top_builddir)/src/test/isolation/pg_isolation_regress --inputdir=$(srcdir) --temp-instance=./tmp_check $(TEMP_CONF) --bindir= $(pg_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
 pg_isolation_regress_installcheck = $(top_builddir)/src/test/isolation/pg_isolation_regress --inputdir=$(srcdir) $(pg_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
 
 ##########################################################################
@@ -564,6 +584,11 @@ ifneq ($(CUSTOM_COPT),)
   COPT= $(CUSTOM_COPT)
 endif
 
+#
+# These variables are meant to be set in the environment of "make"
+# to add flags to whatever configure picked.  Unlike the ones above,
+# they are documented.
+#
 ifdef COPT
    CFLAGS += $(COPT)
    LDFLAGS += $(COPT)
