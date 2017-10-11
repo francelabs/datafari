@@ -809,6 +809,16 @@
        </lst>
        
   </requestHandler>
+  
+  <requestHandler class="com.francelabs.datafari.handler.parsed.ParsedRequestHandler" name="/update/no-tika" startup="lazy">
+    <lst name="defaults">
+			<str name="lowernames">true</str>
+			<str name="fmap.language">ignored_</str>
+			<str name="fmap.source">ignored_</str>
+			<str name="uprefix">ignored_</str>
+			<str name="update.chain">datafari</str>
+    </lst>
+  </requestHandler>
 
   <requestHandler class="solr.extraction.ExtractingRequestHandler" name="/update/extract" startup="lazy">
     <lst name="defaults">
