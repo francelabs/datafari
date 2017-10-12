@@ -62,7 +62,7 @@ else
 fi
 
 if is_running $POSTGRES_PID_FILE; then
-	sudo LD_LIBRARY_PATH=$LD_LIBRARY_PATH su postgres -p -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_HOME}/logs/pgsql.log stop"
+	sudo LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib su postgres -p -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_HOME}/logs/pgsql.log stop"
 else
    echo "Warn : Postgres does not seem to be running."
 fi
