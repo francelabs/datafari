@@ -33,7 +33,7 @@
        that you fully re-index after changing this setting as it can
        affect both how text is indexed and queried.
   -->
-  <luceneMatchVersion>5.5.3</luceneMatchVersion>
+  <luceneMatchVersion>6.6.1</luceneMatchVersion>
 
 <!-- TODO : change the hardcoded path add property.name=value in API Collections create -->
 	<lib dir="${lib.path}lib/extraction"/>
