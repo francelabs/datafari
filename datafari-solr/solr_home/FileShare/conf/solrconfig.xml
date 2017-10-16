@@ -1171,7 +1171,9 @@
 	
 	
 		
-		<processor class="com.francelabs.datafari.updateprocessor.DatafariUpdateProcessorFactory"/>
+		<processor class="com.francelabs.datafari.updateprocessor.DatafariUpdateProcessorFactory">
+			<str name="extension.fromname">true</str>
+		</processor>
 	
 		<processor class="org.apache.solr.update.processor.LangDetectLanguageIdentifierUpdateProcessorFactory">
 			<str name="langid.fl">content,title</str>

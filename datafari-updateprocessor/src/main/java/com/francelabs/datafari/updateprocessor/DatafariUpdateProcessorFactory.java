@@ -4,7 +4,7 @@
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
  *  * You may obtain a copy of the License at
- *  * 
+ *  *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
  *  *
  *  * Unless required by applicable law or agreed to in writing, software
@@ -15,18 +15,27 @@
  *******************************************************************************/
 package com.francelabs.datafari.updateprocessor;
 
+import org.apache.solr.common.params.SolrParams;
+import org.apache.solr.common.util.NamedList;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.response.SolrQueryResponse;
 import org.apache.solr.update.processor.UpdateRequestProcessor;
 import org.apache.solr.update.processor.UpdateRequestProcessorFactory;
 
-public class DatafariUpdateProcessorFactory extends UpdateRequestProcessorFactory
-{
+public class DatafariUpdateProcessorFactory extends UpdateRequestProcessorFactory {
 
-@Override
-  public UpdateRequestProcessor getInstance(SolrQueryRequest req, SolrQueryResponse rsp, UpdateRequestProcessor next)
-  {
-    return new DatafariUpdateProcessor(next);
+  private SolrParams params = null;
+
+  @Override
+  public void init(final NamedList args) {
+    if (args != null) {
+      params = SolrParams.toSolrParams(args);
+    }
+  }
+
+  @Override
+  public UpdateRequestProcessor getInstance(final SolrQueryRequest req, final SolrQueryResponse rsp, final UpdateRequestProcessor next) {
+    return new DatafariUpdateProcessor(params, next);
   }
 
 }
