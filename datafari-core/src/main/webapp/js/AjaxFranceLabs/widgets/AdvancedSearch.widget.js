@@ -515,7 +515,9 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		var deleteButton = currentDiv.find('.delete_button');
 		deleteButton.click(function() {
 			// Remove the separator line
-			currentDiv.next().remove();
+			if(currentDiv.next().hasClass( "separator" )) {
+				currentDiv.next().remove();
+			}
 			// Remove the div itself
 			currentDiv.remove();
 			self.fieldsList[currentFieldNum] = null;
