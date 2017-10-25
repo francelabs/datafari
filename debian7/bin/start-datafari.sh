@@ -118,6 +118,8 @@ then
 	sudo su postgres -c "cp ${DATAFARI_HOME}/pgsql/postgresql.conf.save ${DATAFARI_HOME}/pgsql/data/postgresql.conf"
 	sudo LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib su postgres -p -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_LOGS}/pgsql.log start"
 	cd ${MCF_HOME}
+	echo "Init ZK sync for MCF"
+	sudo -E su datafari -p -c "bash setglobalproperties.sh" & sleep 10
 	sudo -E su datafari -p -c "bash initialize.sh"
 	
 	echo "Checking if Cassandra is up and running ..."

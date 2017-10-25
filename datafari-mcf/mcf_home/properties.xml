@@ -21,22 +21,15 @@
   <!-- Version string for UI -->
   <property name="org.apache.manifoldcf.versionstring" value="2.8.1"/>
 
-  <property name="org.apache.manifoldcf.login.name" value="admin"/>
+ 
+ <property name="org.apache.manifoldcf.login.name" value="admin"/>
   <property name="org.apache.manifoldcf.login.password.obfuscated" value="@PASSWORD@"/>
   <property name="org.apache.manifoldcf.apilogin.password.obfuscated" value="@PASSWORD@"/>
 
-
-  <!-- Point to the synchronization area -->
-  <property name="org.apache.manifoldcf.synchdirectory" value="./syncharea"/>
-  
-  <property name="org.apache.manifoldcf.databaseimplementationclass" value="org.apache.manifoldcf.core.database.DBInterfacePostgreSQL"/>
-  <property name="org.apache.manifoldcf.hsqldbdatabaseprotocol" value="hsql"/>
-  <property name="org.apache.manifoldcf.hsqldbdatabaseserver" value="localhost"/>
-  <property name="org.apache.manifoldcf.hsqldbdatabaseinstance" value="xdb"/>
-  <property name="org.apache.manifoldcf.database.name" value="manifoldcf"/>
-  <property name="org.apache.manifoldcf.dbsuperusername" value="postgres"/>
-  <property name="org.apache.manifoldcf.dbsuperuserpassword" value="password"/>
-  
+  <!-- ZooKeeper lock manager configuration -->
+  <property name="org.apache.manifoldcf.lockmanagerclass" value="org.apache.manifoldcf.core.lockmanager.ZooKeeperLockManager"/>
+  <property name="org.apache.manifoldcf.zookeeper.connectstring" value="@ZKHOST@"/>
+  <property name="org.apache.manifoldcf.zookeeper.sessiontimeout" value="300000"/>
   
   
   <property name="org.apache.manifoldcf.database.maxhandles" value="100"/>

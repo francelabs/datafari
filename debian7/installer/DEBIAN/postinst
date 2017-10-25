@@ -18,6 +18,7 @@ sed -i -e "s/@NODEHOST@/localhost/g" /opt/datafari/tomcat/conf/datafari.properti
 sed -i -e "s/@NODEHOST@/localhost/g" /opt/datafari/solr/bin/solr.in.sh
 sed -i -e "s/@SOLRHOSTS@/localhost:2181/g" /opt/datafari/solr/bin/solr.in.sh
 sed -i -e "s/@SOLRHOSTS@/localhost:2181/g" /opt/datafari/tomcat/conf/datafari.properties
+sed -i -e "s/@ZKHOST@/localhost:2181/g" /opt/datafari/mcf/mcf_home/properties.xml
 
 
 sed -i -e "s/@NUMSHARDS@/1/g" /opt/datafari/tomcat/conf/datafari.properties
