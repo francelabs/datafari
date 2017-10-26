@@ -171,15 +171,26 @@ if  [[ "$STATE" = *installed* ]];
 then
 	cd ${MCF_HOME}
 	echo "Init ZK sync for MCF"
-	sudo -E su datafari -p -c "bash setglobalproperties.sh" & sleep 5
+	sudo -E su datafari -p -c "bash setglobalproperties.sh & sleep 3"
 	sudo -E su datafari -p -c "bash initialize.sh"
 	echo "Uploading configuration to zookeeper"
 	"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/FileShare/conf" -confname FileShare
 	"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Statistics/conf" -confname Statistics
 	"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Promolink/conf" -confname Promolink
-    	cd "${DATAFARI_HOME}/bin/common"
-	echo "Uploading MCF configuration"
-	sudo -E su datafari -p -c "${JAVA_HOME}/bin/java -Dorg.apache.manifoldcf.configfile=${MCF_HOME}/properties.xml -cp ./*:${MCF_HOME}/lib/mcf-core.jar:${MCF_HOME}/lib/* com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript RESTORE config/manifoldcf/init"
+    cd "${DATAFARI_HOME}/bin/common"
+	echo "Uploading MCF configuration - waiting up to 2 minutes"
+	sudo -E su datafari -p -c "nohup ${JAVA_HOME}/bin/java -Dorg.apache.manifoldcf.configfile=${MCF_HOME}/properties.xml -cp ./*:${MCF_HOME}/lib/mcf-core.jar:${MCF_HOME}/lib/* com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript RESTORE config/manifoldcf/init 2>/dev/null &"
+	pid_mcf_upload=$(pgrep -f "com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript" )
+	spin='-\|/'
+	i=0
+	while kill -0 $pid_mcf_upload 2>/dev/null
+		do
+  			i=$(( (i+1) %4 ))
+  			printf "\r${spin:$i:1}"
+  			sleep .2
+			done
+	echo "end uploading MCF conf"	
+	
 	sudo su datafari -c "sed -i 's/\(STATE *= *\).*/\1initialized/' $INIT_STATE_FILE"
 
 else
