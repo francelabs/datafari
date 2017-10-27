@@ -22,7 +22,9 @@
   <!-- Version string for UI -->
   <property name="org.apache.manifoldcf.versionstring" value="2.8.1"/>
 
-
+<property name="org.apache.manifoldcf.login.name" value="admin"/>
+  <property name="org.apache.manifoldcf.login.password.obfuscated" value="@PASSWORD@"/>
+  <property name="org.apache.manifoldcf.apilogin.password.obfuscated" value="@PASSWORD@"/>
  <property name="org.apache.manifoldcf.databaseimplementationclass" value="org.apache.manifoldcf.core.database.DBInterfacePostgreSQL"/>
   <property name="org.apache.manifoldcf.hsqldbdatabaseprotocol" value="hsql"/>
   <property name="org.apache.manifoldcf.hsqldbdatabaseserver" value="localhost"/>

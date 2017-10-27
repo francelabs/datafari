@@ -257,7 +257,7 @@
     "paramReg": "Sauvegarder ces paramètres",
     "pass": "Password : ",
     "passProblem": "Problème de mot de passe : vide ou ne correspondent pas",
-    "passSaved": "Mot de passe MCF changé avec succès. Redémarrez Datafari pour l'utiliser",
+    "passSaved": "Mot de passe MCF changé avec succès",
     "passSaveError": "Erreur de sauvegarde du mot de passe MCF",
     "passwordAdminUi": "Mot de passe :",
     "pf": "Requêtes à mots multiples",

@@ -15,8 +15,10 @@
  *******************************************************************************/
 package com.francelabs.datafari.servlets.admin;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
@@ -43,6 +45,7 @@ import org.w3c.dom.NodeList;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
+import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 import com.francelabs.manifoldcf.configuration.api.ManifoldAPI;
 
@@ -99,7 +102,36 @@ public class MCFChangePassword extends HttpServlet {
 			LOGGER.error("Exception during MCf change password ", e);
 			jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
 		}
-		modifyPropertiesMCF(newMCFPassword);		
+		modifyPropertiesMCF(newMCFPassword);
+		
+		String datafari_home = Environment.getEnvironmentVariable("DATAFARI_HOME"); // Gets
+		
+		if (datafari_home == null) { // If in development environment
+				datafari_home = ExecutionEnvironment.getDevExecutionEnvironment();
+		}
+		String mcf_path = datafari_home + "/mcf/mcf_home/";
+		String scriptname = "setglobalproperties.sh";
+		
+		String[] command = { "/bin/bash","-c", "cd "+mcf_path+" && bash "+scriptname};
+		ProcessBuilder p = new ProcessBuilder(command);
+		Process p2 = p.start();
+		
+		BufferedReader stdInput = new BufferedReader(new InputStreamReader(p2.getInputStream()));
+
+		BufferedReader stdError = new BufferedReader(new InputStreamReader(p2.getErrorStream()));
+
+		// read the output from the command
+		String s = null;
+		while ((s = stdInput.readLine()) != null) {
+			LOGGER.info(s);
+		}
+
+		// read any errors from the attempted command
+		while ((s = stdError.readLine()) != null) {
+			LOGGER.warn(s);
+		}
+		
+		// script
 	
 		final PrintWriter out = response.getWriter();
 		jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
@@ -113,7 +145,7 @@ public class MCFChangePassword extends HttpServlet {
 		
 		try {
 
-			File file = new File(env+"/properties.xml");
+			File file = new File(env+"/properties-global.xml");
 
 			DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance()
 					.newDocumentBuilder();
@@ -145,7 +177,7 @@ public class MCFChangePassword extends HttpServlet {
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(new File(env+"/properties.xml"));
+			StreamResult result = new StreamResult(new File(env+"/properties-global.xml"));
 			transformer.transform(source, result);
 
 			System.out.println("Done");

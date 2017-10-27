@@ -20,12 +20,6 @@
 
   <!-- Version string for UI -->
   <property name="org.apache.manifoldcf.versionstring" value="2.8.1"/>
-
- 
- <property name="org.apache.manifoldcf.login.name" value="admin"/>
-  <property name="org.apache.manifoldcf.login.password.obfuscated" value="@PASSWORD@"/>
-  <property name="org.apache.manifoldcf.apilogin.password.obfuscated" value="@PASSWORD@"/>
-
   <!-- ZooKeeper lock manager configuration -->
   <property name="org.apache.manifoldcf.lockmanagerclass" value="org.apache.manifoldcf.core.lockmanager.ZooKeeperLockManager"/>
   <property name="org.apache.manifoldcf.zookeeper.connectstring" value="@ZKHOST@"/>

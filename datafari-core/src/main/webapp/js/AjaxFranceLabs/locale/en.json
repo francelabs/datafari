@@ -257,7 +257,7 @@
     "paramReg": " Save those parameters",
     "pass": "Password : ",
     "passProblem": "Problem of entered password : empty or not matching",
-    "passSaved": "MCF password correctly saved. Restart Datafari to use it.",
+    "passSaved": "MCF password correctly saved",
     "passSaveError": "Error when trying to save the new MCF password",
     "passwordAdminUi": "Password :",
     "pf": "Multiple words queries",
