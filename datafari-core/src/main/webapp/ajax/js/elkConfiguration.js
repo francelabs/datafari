@@ -19,7 +19,7 @@ $(document).ready(function() {
 	var ENDOFANIMATION = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
 	
 	
-	$.get("../SearchAdministrator/ELKAdmin",function(data){
+	$.get("../SearchExpert/ELKAdmin",function(data){
 		inputActivation(data, input);
 		fillFields(data);
 	},"json");
@@ -59,7 +59,7 @@ $(document).ready(function() {
 		}else{
 			var bool="false";
 		}
-		$.post("../SearchAdministrator/ELKAdmin",{
+		$.post("../SearchExpert/ELKAdmin",{
 			ELKactivation : bool,
 			externalELK : externalELK,
 			ELKServer : $("#ELKServer").val(),

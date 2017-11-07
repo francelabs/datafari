@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	$.get("../SearchAdministrator/ELKAdmin",function(data){
+	$.get("../SearchExpert/ELKAdmin",function(data){
 		if((data.ELKactivation=="true" && data.isELKUp=="true") || data.isELKUp=="true") {
 			var kibanaURI = data.KibanaURI;
 			if(!kibanaURI.endsWith("/")) {
