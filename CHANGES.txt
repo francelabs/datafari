@@ -26,6 +26,7 @@ Removed location_rpt from Solr schemas
 Tika updated to version 1.16 for both MCF and Solr
 Manifold CF updated to version 2.8.1
 Solr updated to version 6.6.1
+PostgreSQL updated to 9.6.5
 Various bug fixes
 
 
