@@ -1,1 +1,1 @@
-LOG4J_TIMESTAMP [0-9]*-[0-9]*-[0-9]* [0-9]*:[0-9]*:[0-9]*
+LOG4J_TIMESTAMP %{INT:year}-%{INT:month}-%{INT:day} %{INT}:%{INT}:%{INT}
