@@ -33,10 +33,10 @@ sed -i "/francelabs\/elasticsearch.log/c\	path => \"${DATAFARI_HOME}/elk/elastic
 sed -i "/francelabs\/solr.log/c\	path => \"${DATAFARI_HOME}/logs/solr.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
 sed -i "/francelabs\/zookeeper.log/c\	path => \"${DATAFARI_HOME}/logs/zookeeper.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
 cd $LOGSTASH_HOME
-bash bin/logstash agent -f $LOGSTASH_HOME/logstash-datafari.conf &
+bash bin/logstash -f $LOGSTASH_HOME/logstash-datafari.conf &
 # Must sleep 1 sec to be sure to find logstash's PID
 sleep 1
-LOGSTASH_PID=`ps ux | grep logstash | grep java | grep agent | awk '{ print $2}'`
+LOGSTASH_PID=`ps ux | grep logstash | grep runner.rb | awk '{ print $2}'`
 if [ "x$LOGSTASH_PID" = "x" ]; then
 LOGSTASH_PID=-1
 fi

@@ -19,7 +19,7 @@ else
 fi
 
 if is_running $LOGSTASH_PID_FILE; then
-   kill $(cat $LOGSTASH_PID_FILE)
+   kill -TERM $(cat $LOGSTASH_PID_FILE)
    rm $LOGSTASH_PID_FILE
 else
    echo "Warn : Logstash does not seem to be running."

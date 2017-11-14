@@ -23,8 +23,8 @@
 							<configuration>
 								<!-- Version of Elastic should be retrieved from a property file 
 									as well as the SHA1 -->
-								<url>https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.0.2/elasticsearch-2.0.2.tar.gz</url>
-								<sha1>525c06705ca98934cd92ce5fd1a312fc03e20b8b</sha1>
+								<url>https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.4.tar.gz</url>
+								<sha512>37730f39cf1711b6a20861370ef7aff4b48e7f90ad82cb1c8c92643179194c4dcdf0180691d8065304bf61e7f5a2fb1ed5c84c384e0b2ff7ad0dc58ac7352f47</sha512>
 								<unpack>true</unpack>
 							</configuration>
 						</execution>
@@ -38,8 +38,8 @@
 								<!-- Version of Kibana should be retrieved from a property file as 
 									well as the SHA1 -->
 								<!-- We use 64bits version of Kibana -->
-								<url>https://download.elastic.co/kibana/kibana/kibana-4.2.2-linux-x64.tar.gz</url>
-								<sha1>f0daf9cd0b949c0ec7a3be300ee876fba17d1570</sha1>
+								<url>https://artifacts.elastic.co/downloads/kibana/kibana-5.6.4-linux-x86_64.tar.gz</url>
+								<sha512>9cf1633405bd3513ca1533786aa46d0b17d28a0dfe7762018c744a693efbcfec9e24e0e222d1192d2cb12a664a391bc8fd072b82236c2bbfadb786ddcadecfef</sha512>
 								<!-- We unzip and untar Kibana by Ant in maven-ant-tasks.xml instead 
 									of here as the Maven's wget plugin doesn't handle correctly duplicated directory 
 									names in the path: e.g. A/B/C/B/D -->
@@ -55,8 +55,8 @@
 							<configuration>
 								<!-- Version of Logstash should be retrieved from a property file 
 									as well as the SHA1 -->
-								<url>https://download.elastic.co/logstash/logstash/logstash-2.0.0.tar.gz</url>
-								<sha1>f0961520dd9590d3b600c877be66f79f94a05f80</sha1>
+								<url>https://artifacts.elastic.co/downloads/logstash/logstash-5.6.4.tar.gz</url>
+								<sha512>ec5540449fef1f6bb25313fc7d72f4c792480e26fa4529c3d35894c3de5b783cc24c40261f268658a8631687d7d7316a9b9c6ef9b69635c80a0fe4d5c542d4c5</sha512>
 								<!-- We unzip and untar Logstash by Ant in maven-ant-tasks.xml instead 
 									of here as the Maven's wget plugin doesn't handle correctly duplicated directory 
 									names in the path: e.g. A/B/C/B/D -->

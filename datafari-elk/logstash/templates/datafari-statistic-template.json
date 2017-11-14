@@ -40,7 +40,8 @@
               "type": "integer"
            },
            "query": {
-              "type": "string"
+              "type": "string",
+              "fielddata": true
            },
 	       "url": {
               "type": "string",

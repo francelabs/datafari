@@ -1,1 +1,2 @@
-LOG4J_TIMESTAMP %{INT:year}-%{INT:month}-%{INT:day} %{INT}:%{INT}:%{INT}
+LOG4J_TIMESTAMP %{INT:year}-%{INT:month}-%{INT:day}(T| )%{INT}:%{INT}:%{INT}
+CUSTOM_DATA [^|]*
