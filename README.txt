@@ -60,6 +60,9 @@ Major changes compared to v3.2.1
 - Tika updated to version 1.16 for both Solr and MCF
 - Manifold CF updated to version 2.8.1
 - Solr updated to version 6.6.1
+- Elasticsearch updated to 5.6.4
+- Logstash updated to 5.6.4
+- Kibana updated to 5.6.4
 
 
 
