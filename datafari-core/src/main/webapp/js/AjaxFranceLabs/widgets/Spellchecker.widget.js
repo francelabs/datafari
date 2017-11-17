@@ -54,8 +54,9 @@ AjaxFranceLabs.SpellcheckerWidget = AjaxFranceLabs.AbstractWidget
 				 * the corrected value
 				 */
 				if (data.response.numFound == 0 && data.spellcheck !== undefined
-						&& data.spellcheck.suggestions.length > 0) {
+						&& data.spellcheck.collations.length > 0) {
 
+					$(self.elm).empty();
 					$(self.elm).show();
 
 					/*
@@ -88,11 +89,13 @@ AjaxFranceLabs.SpellcheckerWidget = AjaxFranceLabs.AbstractWidget
 					self.doSpellcheckerQuery(data.spellcheck.collations[1]);
 
 				} else if(data.spellcheck !== undefined
-						&& data.spellcheck.suggestions.length > 0) {
+						&& data.spellcheck.collations.length > 0) {
 					// Create suggestButton
 					var suggestButton = $("<span class='result'>" + data.spellcheck.collations[1] + "</span>");
 					suggestButton.click(function() {
 						$('.searchBar input[type=text]').val(data.spellcheck.collations[1]);
+						self.manager.store.get('q').val(data.spellcheck.collations[1]);
+						self.manager.store.remove('original_query');
 						self.manager.makeRequest();
 					});
 					
@@ -102,6 +105,7 @@ AjaxFranceLabs.SpellcheckerWidget = AjaxFranceLabs.AbstractWidget
 					spellcheckSpan.append(suggestButton);
 					
 					// Add spellcheck span to elm
+					$(self.elm).append("<br/><br/>");
 					$(self.elm).append(spellcheckSpan);
 					
 					// Display widget

@@ -695,6 +695,7 @@
 		<str name="hl.simple.post">&lt;/span&gt;</str>
 		<str name="spellcheck.count">1</str>
 		<str name="spellcheck.collate">true</str>
+		<str name="spellcheck.maxCollationTries">1</str>
 		<str name="hl">on</str>
 		<str name="hl.fl">content_hl_fr content_hl_en</str>
 		<str name="hl.alternateField">content_hl_fr,content_hl_en</str>
@@ -754,6 +755,7 @@
 			<str name="hl.simple.post">&lt;/span&gt;</str>
 			<str name="spellcheck.count">1</str>
 			<str name="spellcheck.collate">true</str>       <!-- Highlighting defaults -->
+			<str name="spellcheck.maxCollationTries">1</str>
 			<str name="hl">on</str>
 			<str name="hl.fl">content_hl_fr content_hl_en</str>
 			<str name="hl.alternateField">content_hl_fr,content_hl_en</str>

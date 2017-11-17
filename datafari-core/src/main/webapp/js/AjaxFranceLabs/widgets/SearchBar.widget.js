@@ -275,15 +275,18 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 							.val()) {
 					case "allWords":
 						Manager.store.addByValue("q.op", 'AND');
+						Manager.store.addByValue("spellcheck.collateParam.q.op", 'AND');
 						break;
 					case "atLeastOneWord":
 						Manager.store.addByValue("q.op", 'OR');
+						Manager.store.addByValue("spellcheck.collateParam.q.op", 'OR');
 						break;
 					case 'exactExpression':
 						search = '"' + search + '"';
 						break;
 					default:
 						Manager.store.addByValue("q.op", 'AND');
+						Manager.store.addByValue("spellcheck.collateParam.q.op", 'AND');
 						break
 					}
 
