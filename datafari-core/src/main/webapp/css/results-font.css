@@ -94,7 +94,7 @@
 	/* Spellchecker Widget font */
 	.spellcheckerWidget .result {
 		font-weight: bold;
-		text-decoration: underline;
+		/* text-decoration: underline; */
 	}
 	.spellcheckerWidget .spellcheckerResult {
 		font-size: medium;
@@ -344,7 +344,7 @@
 	/* Spellchecker Widget font */
 	.spellcheckerWidget .result {
 		font-weight: bold;
-		text-decoration: underline;
+		/* text-decoration: underline; */
 	}
 	.spellcheckerWidget .spellcheckerResult {
 		font-size: medium;

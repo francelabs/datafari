@@ -91,7 +91,7 @@ AjaxFranceLabs.SpellcheckerWidget = AjaxFranceLabs.AbstractWidget
 				} else if(data.spellcheck !== undefined
 						&& data.spellcheck.collations.length > 0) {
 					// Create suggestButton
-					var suggestButton = $("<span class='result'>" + data.spellcheck.collations[1] + "</span>");
+					var suggestButton = $("<span class='proposal'>" + data.spellcheck.collations[1] + "</span>");
 					suggestButton.click(function() {
 						$('.searchBar input[type=text]').val(data.spellcheck.collations[1]);
 						self.manager.store.get('q').val(data.spellcheck.collations[1]);
