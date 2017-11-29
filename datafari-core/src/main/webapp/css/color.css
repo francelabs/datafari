@@ -2,6 +2,14 @@
   color: black;
 }
 
+.success {
+  color: green;
+}
+
+.fail {
+  color: red;
+}
+
 body {
 	
     height: 100%;

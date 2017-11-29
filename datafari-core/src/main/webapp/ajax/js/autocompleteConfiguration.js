@@ -95,7 +95,13 @@ function set(type){
     	    		$('#submit'+typ).attr("disabled", true);
     	    		$('#max'+typ).attr("disabled", true);
     	    	}else{		//else add the options to the select
-    	    		document.getElementById("answer"+typ).innerHTML = window.i18n.msgStore['modifDone'];
+    	    		document.getElementById("answer"+typ).innerHTML = window.i18n.msgStore['modifDoneImmediateEffect'];
+    	    		$("#answer"+typ).addClass("success");
+		     		$("#answer"+typ).fadeOut(3000,function(){
+		     			$("#answer"+typ).removeClass("success");
+		     			$("#answer"+typ).html("");
+		     			$("#answer"+typ).show();
+		     		});
     	    	}
     	    }
  		});

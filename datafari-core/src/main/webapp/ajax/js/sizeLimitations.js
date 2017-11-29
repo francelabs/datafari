@@ -132,7 +132,13 @@ function setModifyFieldType(typeConf, type){
         			$('#submit'+type).attr("disabled", true);
     	    		$('#max'+type).attr("disabled", true);
    		     	}else{		//else add the options to the select
-   		     		document.getElementById("answer"+type).innerHTML = window.i18n.msgStore['modifDone']
+   		     		document.getElementById("answer"+type).innerHTML = window.i18n.msgStore['modifDoneNextIndexation'];
+		     		$("#answer"+type).addClass("success");
+		     		$("#answer"+type).fadeOut(3000,function(){
+		     			$("#answer"+type).removeClass("success");
+		     			$("#answer"+type).html("");
+		     			$("#answer"+type).show();
+		     		});
     	    	}
     	    }
  		});
@@ -192,7 +198,13 @@ function setModifyNodeContent(typeConf, type){
         			$('#submit'+type).attr("disabled", true);
     	    		$('#max'+type).attr("disabled", true);
    		     	}else{		//else add the options to the select
-   		     		document.getElementById("answer"+type).innerHTML = window.i18n.msgStore['modifDone']
+   		     		document.getElementById("answer"+type).innerHTML = window.i18n.msgStore['modifDoneNextIndexation'];
+		     		$("#answer"+type).addClass("success");
+		     		$("#answer"+type).fadeOut(3000,function(){
+		     			$("#answer"+type).removeClass("success");
+		     			$("#answer"+type).html("");
+		     			$("#answer"+type).show();
+		     		});
     	    	}
     	    }
  		});
