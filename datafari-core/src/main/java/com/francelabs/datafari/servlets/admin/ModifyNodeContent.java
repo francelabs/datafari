@@ -88,7 +88,6 @@ public class ModifyNodeContent extends HttpServlet {
    */
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-    final SemaphoreLn acquiredSem = null;
     try {
       final String type = request.getParameter("type");
       try {
@@ -146,9 +145,6 @@ public class ModifyNodeContent extends HttpServlet {
         final PrintWriter out = response.getWriter();
         out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69034");
         out.close();
-        if (acquiredSem != null) {
-          acquiredSem.release();
-        }
         return;
       }
 
@@ -157,9 +153,6 @@ public class ModifyNodeContent extends HttpServlet {
       out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69514");
       out.close();
       LOGGER.error("Unindentified error in ModifyNodeContent doGet. Error 69514", e);
-      if (acquiredSem != null) {
-        acquiredSem.release();
-      }
     }
   }
 

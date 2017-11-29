@@ -67,580 +67,516 @@ import com.francelabs.datafari.utils.XMLUtils;
  */
 @WebServlet("/admin/FieldWeight")
 public class FieldWeight extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	private final SemaphoreLn semaphoreConfigPf;
-	private final SemaphoreLn semaphoreConfigQf;
-	private final String env;
-	private NodeList childList;
-	private Document doc;
-	private File config = null;
-	/** Custom fields. **/
-	private File customFields = null;
-	/** Custom requestHandlers. **/
-	private File customSearchHandler = null;
-	/** Using Custom Search Handler. **/
-	private boolean usingCustom = false;
-	/** Search Handler. **/
-	private Node searchHandler = null;
-	private final static Logger LOGGER = Logger.getLogger(FieldWeight.class.getName());
+  private static final long serialVersionUID = 1L;
+  private final String env;
+  private NodeList childList;
+  private Document doc;
+  private File config = null;
+  /** Custom fields. **/
+  private File customFields = null;
+  /** Custom requestHandlers. **/
+  private File customSearchHandler = null;
+  /** Using Custom Search Handler. **/
+  private boolean usingCustom = false;
+  /** Search Handler. **/
+  private Node searchHandler = null;
+  private final static Logger LOGGER = Logger.getLogger(FieldWeight.class.getName());
 
-	/**
-	 * @see HttpServlet#HttpServlet() Gets the path Create the semaphore Checks
-	 *      if the required files exist
-	 */
-	public FieldWeight() {
+  /**
+   * @see HttpServlet#HttpServlet() Gets the path Create the semaphore Checks if
+   *      the required files exist
+   */
+  public FieldWeight() {
 
-		String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
+    String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
 
-		if (environnement == null) { // If in development environment
-			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
-		}
-		env = environnement + File.separator + "solr" + File.separator + "solrcloud" + File.separator + "FileShare"
-				+ File.separator + "conf";
+    if (environnement == null) { // If in development environment
+      environnement = ExecutionEnvironment.getDevExecutionEnvironment();
+    }
+    env = environnement + File.separator + "solr" + File.separator + "solrcloud" + File.separator + "FileShare" + File.separator + "conf";
 
-		semaphoreConfigPf = new SemaphoreLn("", "pf");
-		semaphoreConfigQf = new SemaphoreLn("", "qf");
+    if (new File(env + File.separator + "solrconfig.xml").exists()) {
+      config = new File(env + File.separator + "solrconfig.xml");
+    }
 
-		if (new File(env + File.separator + "solrconfig.xml").exists()) {
-			config = new File(env + File.separator + "solrconfig.xml");
-		}
+    if (new File(env + File.separator + "customs_schema" + File.separator + "custom_fields.incl").exists()) {
+      customFields = new File(env + File.separator + "customs_schema" + File.separator + "custom_fields.incl");
+    }
 
-		if (new File(env + File.separator + "customs_schema" + File.separator + "custom_fields.incl").exists()) {
-			customFields = new File(env + File.separator + "customs_schema" + File.separator + "custom_fields.incl");
-		}
+    if (new File(env + File.separator + "customs_solrconfig" + File.separator + "custom_search_handler.incl").exists()) {
+      customSearchHandler = new File(env + File.separator + "customs_solrconfig" + File.separator + "custom_search_handler.incl");
+    }
+  }
 
-		if (new File(env + File.separator + "customs_solrconfig" + File.separator + "custom_search_handler.incl")
-				.exists()) {
-			customSearchHandler = new File(
-					env + File.separator + "customs_solrconfig" + File.separator + "custom_search_handler.incl");
-		}
-	}
+  /**
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+   *      response) Used to free a semaphore on an other select without any
+   *      confirl Checks if the files still exist Gets the list of the fields
+   *      Gets the weight of a field in a type of query
+   */
+  @Override
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response) Used to free a semaphore on an other select without any
-	 *      confirl Checks if the files still exist Gets the list of the fields
-	 *      Gets the weight of a field in a type of query
-	 */
-	@Override
-	protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
-			throws ServletException, IOException {
+    final PrintWriter out = response.getWriter();
+    usingCustom = false; // Reinit the usingCustom value to false in order
+    // to check again if the
+    // custom_search_handler.xml file is used
 
-		final PrintWriter out = response.getWriter();
-		usingCustom = false; // Reinit the usingCustom value to false in order
-								// to check again if the
-								// custom_search_handler.xml file is used
+    try {
+      if (request.getParameter("sem") != null) { // If it's called just to
+        // clean the semaphore
+        return;
+      }
+      if ((config == null) || !new File(env + "/solrconfig.xml").exists()) {// If
+        // the
+        // files
+        // did
+        // not
+        // existed
+        // when
+        // the
+        // constructor
+        // was
+        // run
+        // Checks if they exist now
+        if (!new File(env + "/solrconfig.xml").exists()) {
+          LOGGER.error(
+              "Error while opening the configuration files, solrconfig.xml and/or schema.xml, in FieldWeight doGet, please make sure those files exist at "
+                  + env + " . Error 69025"); // If
+          // not
+          // an
+          // error
+          // is
+          // printed
+          out.append(
+              "Error while opening the configuration files, please retry, if the problem persists contact your system administrator. Error Code : 69025");
+          out.close();
+          return;
+        } else {
+          config = new File(env + "/solrconfig.xml");
+        }
+      }
 
-		try {
-			if (request.getParameter("sem") != null) { // If it's called just to
-														// clean the semaphore
-				if (request.getParameter("type").equals("pf") && (semaphoreConfigPf.availablePermits() < 1)) {
-					semaphoreConfigPf.release();
-				} else if (semaphoreConfigQf.availablePermits() < 1) {
-					semaphoreConfigQf.release();
-				}
-				return;
-			}
-			if ((config == null) || !new File(env + "/solrconfig.xml").exists()) {// If
-				// the
-				// files
-				// did
-				// not
-				// existed
-				// when
-				// the
-				// constructor
-				// was
-				// run
-				// Checks if they exist now
-				if (!new File(env + "/solrconfig.xml").exists()) {
-					LOGGER.error(
-							"Error while opening the configuration files, solrconfig.xml and/or schema.xml, in FieldWeight doGet, please make sure those files exist at "
-									+ env + " . Error 69025"); // If
-																// not
-																// an
-																// error
-																// is
-																// printed
-					out.append(
-							"Error while opening the configuration files, please retry, if the problem persists contact your system administrator. Error Code : 69025");
-					out.close();
-					return;
-				} else {
-					config = new File(env + "/solrconfig.xml");
-				}
-			}
+      if (customFields == null) {
+        if (new File(env + "/customs_schema/custom_fields.incl").exists()) {
+          customFields = new File(env + "/customs_schema/custom_fields.incl");
+        }
+      }
 
-			if (customFields == null) {
-				if (new File(env + "/customs_schema/custom_fields.incl").exists()) {
-					customFields = new File(env + "/customs_schema/custom_fields.incl");
-				}
-			}
+      if (customSearchHandler == null) {
+        if (new File(env + "/customs_solrconfig/custom_search_handler.incl").exists()) {
+          customSearchHandler = new File(env + "/customs_solrconfig/custom_search_handler.incl");
+        }
+      }
 
-			if (customSearchHandler == null) {
-				if (new File(env + "/customs_solrconfig/custom_search_handler.incl").exists()) {
-					customSearchHandler = new File(env + "/customs_solrconfig/custom_search_handler.incl");
-				}
-			}
+      if (request.getParameter("type") == null) { // If called at the
+        // creation of the HTML
+        // ==> retrieve the
+        // fields list
 
-			if (request.getParameter("type") == null) { // If called at the
-														// creation of the HTML
-														// ==> retrieve the
-														// fields list
+        try {
+          // Define the Solr hostname, port and protocol
+          final String solrserver = "localhost";
+          final String solrport = "8983";
+          final String protocol = "http";
 
-				try {
-					// Define the Solr hostname, port and protocol
-					final String solrserver = "localhost";
-					final String solrport = "8983";
-					final String protocol = "http";
+          // Use Solr Schema REST API to get the list of fields
+          final HttpClient httpClient = HttpClientBuilder.create().build();
+          final HttpHost httpHost = new HttpHost(solrserver, Integer.parseInt(solrport), protocol);
+          final HttpGet httpGet = new HttpGet("/solr/FileShare/schema/fields");
+          final HttpResponse httpResponse = httpClient.execute(httpHost, httpGet);
 
-					// Use Solr Schema REST API to get the list of fields
-					final HttpClient httpClient = HttpClientBuilder.create().build();
-					final HttpHost httpHost = new HttpHost(solrserver, Integer.parseInt(solrport), protocol);
-					final HttpGet httpGet = new HttpGet("/solr/FileShare/schema/fields");
-					final HttpResponse httpResponse = httpClient.execute(httpHost, httpGet);
+          // Construct the jsonResponse
+          final JSONObject jsonResponse = new JSONObject();
+          if (httpResponse.getStatusLine().getStatusCode() == 200) {
+            // Status of the API response is OK
+            final JSONObject json = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
+            final JSONArray fieldsJson = json.getJSONArray("fields");
+            jsonResponse.put("field", fieldsJson);
 
-					// Construct the jsonResponse
-					final JSONObject jsonResponse = new JSONObject();
-					if (httpResponse.getStatusLine().getStatusCode() == 200) {
-						// Status of the API response is OK
-						final JSONObject json = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
-						final JSONArray fieldsJson = json.getJSONArray("fields");
-						jsonResponse.put("field", fieldsJson);
+            response.getWriter().write(jsonResponse.toString()); // Answer
+            // to
+            // the
+            // request
+            response.setStatus(200);
+            response.setContentType("text/json;charset=UTF-8");
+          } else {
+            // Status of the API response is an error
+            LOGGER.error("Error while retrieving the fields from the Schema API of Solr: " + httpResponse.getStatusLine().toString());
+            out.append(
+                "Error while retrieving the fields from the Schema API of Solr, please retry, if the problem persists contact your system administrator. Error Code : 69026");
+          }
+          out.close();
+        } catch (final IOException e) {
+          LOGGER.error("Error while retrieving the fields from the Schema API of Solr", e);
+          out.append(
+              "Error while retrieving the fields from the Schema API of Solr, please retry, if the problem persists contact your system administrator. Error Code : 69026");
+          out.close();
+        }
 
-						response.getWriter().write(jsonResponse.toString()); // Answer
-						// to
-						// the
-						// request
-						response.setStatus(200);
-						response.setContentType("text/json;charset=UTF-8");
-					} else {
-						// Status of the API response is an error
-						LOGGER.error("Error while retrieving the fields from the Schema API of Solr: "
-								+ httpResponse.getStatusLine().toString());
-						out.append(
-								"Error while retrieving the fields from the Schema API of Solr, please retry, if the problem persists contact your system administrator. Error Code : 69026");
-					}
-					out.close();
-				} catch (final IOException e) {
-					LOGGER.error("Error while retrieving the fields from the Schema API of Solr", e);
-					out.append(
-							"Error while retrieving the fields from the Schema API of Solr, please retry, if the problem persists contact your system administrator. Error Code : 69026");
-					out.close();
-				}
+      } else { // If the weight of a field has been requested
 
-			} else { // If the weight of a field has been requested
+        try {
+          final String type = request.getParameter("type");
+          final String field = request.getParameter("field").toString();
+          findSearchHandler();
 
-				try {
-					final String type = request.getParameter("type");
-					if (type.equals("pf")) { // Select a semaphore according to
-												// the type and acquire it
-												// because the file can be now
-												// modified in a click
-						if (semaphoreConfigPf.availablePermits() > 0) {
-							semaphoreConfigPf.acquire();
-						} else { // If the selected Semaphore is already
-									// acquired
-									// return "File already in use"
-							out.append("File already in use");
-							out.close();
-							return;
-						}
-					} else {
-						if (semaphoreConfigQf.availablePermits() > 0) {
-							semaphoreConfigQf.acquire();
-						} else {
-							out.append("File already in use");
-							out.close();
-							return;
-						}
-					}
-					final String field = request.getParameter("field").toString();
-					findSearchHandler();
+          // if (searchHandler == null && customSearchHandler != null
+          // && customSearchHandler.exists()) { // search
+          // // handler
+          // // not
+          // // found
+          // // in
+          // // the
+          // // standard solrconfig.xml find, try
+          // // to find it in the
+          // // custom_search_handler.xml file
+          // usingCustom = true;
+          // doc = dBuilder.parse(customSearchHandler);
+          // searchHandler =
+          // getSearchHandler(doc.getElementsByTagName("requestHandler"));
+          // }
 
-					// if (searchHandler == null && customSearchHandler != null
-					// && customSearchHandler.exists()) { // search
-					// // handler
-					// // not
-					// // found
-					// // in
-					// // the
-					// // standard solrconfig.xml find, try
-					// // to find it in the
-					// // custom_search_handler.xml file
-					// usingCustom = true;
-					// doc = dBuilder.parse(customSearchHandler);
-					// searchHandler =
-					// getSearchHandler(doc.getElementsByTagName("requestHandler"));
-					// }
+          if (searchHandler != null) {
+            final Node n = run(searchHandler.getChildNodes(), type);
+            childList = n.getParentNode().getChildNodes();
+            final String elemValue = n.getTextContent(); // Get the
+            // text
+            // content
+            // of
+            // the
+            // node
+            int index = elemValue.indexOf(field + "^");
+            if (index != -1) { // If the field is weighted
+              index += field.length() + 1; // Gets the number of
+              // the
+              // char that is the
+              // first figure of
+              // the
+              // number
+              final String elemValueCut = elemValue.substring(index);// Get
+              // the
+              // text
+              // content
+              // cutting
+              // everything
+              // before
+              // the
+              // requested
+              // field
+              if (elemValueCut.indexOf(" ") != -1) {
+                // the
+                // last
+                // field,
+                // returns
+                // what's
+                // between
+                // the
+                // "^" and
+                // the
+                // next
+                // whitespace
+                response.getWriter().write(elemValue.substring(index, index + elemValueCut.indexOf(" ")));
+              } else {
+                // that
+                // is after the "field^"
+                response.getWriter().write(elemValue.substring(index));
+              }
+            } else {
+              response.getWriter().write("0");
+            }
+            response.setStatus(200);
+            response.setContentType("text;charset=UTF-8");
+            return;
+          } else {
+            LOGGER.error(
+                "No searchHandler found either in solrconfig.xml or in custom_search_handler.xml ! Make sure your files are valid. Error 69028");
+            out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69028");
+            out.close();
+            return;
+          }
+        } catch (SAXException | ParserConfigurationException e) {
+          LOGGER.error("Error while parsing the solrconfig.xml, in FieldWeight doGet, make sure the file is valid. Error 69028", e);
+          out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69028");
+          out.close();
+          return;
+        }
+      }
+    } catch (final Exception e) {
+      out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69510");
+      out.close();
+      LOGGER.error("Unindentified error in FieldWeight doGet. Error 69510", e);
+    }
+  }
 
-					if (searchHandler != null) {
-						final Node n = run(searchHandler.getChildNodes(), type);
-						childList = n.getParentNode().getChildNodes();
-						final String elemValue = n.getTextContent(); // Get the
-																		// text
-																		// content
-																		// of
-																		// the
-																		// node
-						int index = elemValue.indexOf(field + "^");
-						if (index != -1) { // If the field is weighted
-							index += field.length() + 1; // Gets the number of
-															// the
-															// char that is the
-															// first figure of
-															// the
-															// number
-							final String elemValueCut = elemValue.substring(index);// Get
-																					// the
-																					// text
-																					// content
-																					// cutting
-																					// everything
-																					// before
-																					// the
-																					// requested
-																					// field
-							if (elemValueCut.indexOf(" ") != -1) {
-								// the
-								// last
-								// field,
-								// returns
-								// what's
-								// between
-								// the
-								// "^" and
-								// the
-								// next
-								// whitespace
-								response.getWriter()
-										.write(elemValue.substring(index, index + elemValueCut.indexOf(" ")));
-							} else {
-								// that
-								// is after the "field^"
-								response.getWriter().write(elemValue.substring(index));
-							}
-						} else {
-							response.getWriter().write("0");
-						}
-						response.setStatus(200);
-						response.setContentType("text;charset=UTF-8");
-						return;
-					} else {
-						LOGGER.error(
-								"No searchHandler found either in solrconfig.xml or in custom_search_handler.xml ! Make sure your files are valid. Error 69028");
-						out.append(
-								"Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69028");
-						out.close();
-						return;
-					}
-				} catch (SAXException | ParserConfigurationException | InterruptedException e) {
-					LOGGER.error(
-							"Error while parsing the solrconfig.xml, in FieldWeight doGet, make sure the file is valid. Error 69028",
-							e);
-					out.append(
-							"Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69028");
-					out.close();
-					semaphoreConfigPf.release();
-					semaphoreConfigQf.release();
-					return;
-				}
-			}
-		} catch (final Exception e) {
-			out.append(
-					"Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69510");
-			out.close();
-			LOGGER.error("Unindentified error in FieldWeight doGet. Error 69510", e);
-			semaphoreConfigPf.release();
-			semaphoreConfigQf.release();
-		}
-	}
+  private void findSearchHandler() throws ParserConfigurationException, SAXException, IOException {
+    final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+    final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+    if ((customSearchHandler != null) && customSearchHandler.exists()) {
+      try {
+        doc = dBuilder.parse(customSearchHandler);// Parse
+        // the
+        // solrconfig.xml
+        // document
+        searchHandler = getSearchHandler(doc.getElementsByTagName("requestHandler"));
+        if (searchHandler != null) {
+          usingCustom = true;
+        }
+      } catch (final Exception e) {
+        // Not using custom
+        usingCustom = false;
+      }
+    }
 
-	private void findSearchHandler() throws ParserConfigurationException, SAXException, IOException {
-		final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		if ((customSearchHandler != null) && customSearchHandler.exists()) {
-			try {
-				doc = dBuilder.parse(customSearchHandler);// Parse
-															// the
-															// solrconfig.xml
-				// document
-				searchHandler = getSearchHandler(doc.getElementsByTagName("requestHandler"));
-				if (searchHandler != null) {
-					usingCustom = true;
-				}
-			} catch (final Exception e) {
-				// Not using custom
-				usingCustom = false;
-			}
-		}
+    if (searchHandler == null) { // Not using the custom search
+      // handler so try to find it
+      // in the solrconfig.xml
+      // file
+      // Not using custom
+      usingCustom = false;
+      doc = dBuilder.parse(config);// Parse the solrconfig.xml
+      // document
+      final NodeList fields = (doc.getElementsByTagName("requestHandler"));// Get
+      // the
+      // requestHandler
+      // Node
 
-		if (searchHandler == null) { // Not using the custom search
-										// handler so try to find it
-										// in the solrconfig.xml
-										// file
-			// Not using custom
-			usingCustom = false;
-			doc = dBuilder.parse(config);// Parse the solrconfig.xml
-											// document
-			final NodeList fields = (doc.getElementsByTagName("requestHandler"));// Get
-																					// the
-																					// requestHandler
-																					// Node
+      searchHandler = getSearchHandler(fields);// Get the
+      // search
+      // handler from
+      // the standard
+      // solrconfig.xml
+      // file
+    }
+  }
 
-			searchHandler = getSearchHandler(fields);// Get the
-														// search
-			// handler from
-			// the standard
-			// solrconfig.xml
-			// file
-		}
-	}
+  /**
+   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+   *      response) Checks if the files still exist Used to modify the weight of
+   *      a field
+   */
+  @Override
+  protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    try {
+      if ((config == null) || !new File(env + File.separator + "solrconfig.xml").exists()) {// If
+        // the
+        // files
+        // did
+        // not
+        // existed
+        // when
+        // the
+        // constructor
+        // was
+        // runned
+        if (!new File(env + File.separator + "solrconfig.xml").exists()) {
+          LOGGER.error("Error while opening the configuration file, solrconfig.xml, in FieldWeight doPost, please make sure this file exists at "
+              + env + "conf/ . Error 69029"); // If
+          // not
+          // an
+          // error
+          // is
+          // printed
+          final PrintWriter out = response.getWriter();
+          out.append(
+              "Error while opening the configuration file, please retry, if the problem persists contact your system administrator. Error Code : 69029");
+          out.close();
+          return;
+        } else {
+          config = new File(env + File.separator + "solrconfig.xml");
+        }
+      }
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response) Checks if the files still exist Used to modify the weight
-	 *      of a field
-	 */
-	@Override
-	protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
-			throws ServletException, IOException {
-		try {
-			if ((config == null) || !new File(env + File.separator + "solrconfig.xml").exists()) {// If
-				// the
-				// files
-				// did
-				// not
-				// existed
-				// when
-				// the
-				// constructor
-				// was
-				// runned
-				if (!new File(env + File.separator + "solrconfig.xml").exists()) {
-					LOGGER.error(
-							"Error while opening the configuration file, solrconfig.xml, in FieldWeight doPost, please make sure this file exists at "
-									+ env + "conf/ . Error 69029"); // If
-																	// not
-																	// an
-																	// error
-																	// is
-																	// printed
-					final PrintWriter out = response.getWriter();
-					out.append(
-							"Error while opening the configuration file, please retry, if the problem persists contact your system administrator. Error Code : 69029");
-					out.close();
-					return;
-				} else {
-					config = new File(env + File.separator + "solrconfig.xml");
-				}
-			}
+      if (customSearchHandler == null) {
+        if (new File(env + File.separator + "customs_solrconfig" + File.separator + "custom_search_handler.incl").exists()) {
+          customSearchHandler = new File(env + File.separator + "customs_solrconfig" + File.separator + "custom_search_handler.incl");
+        }
+      }
 
-			if (customSearchHandler == null) {
-				if (new File(
-						env + File.separator + "customs_solrconfig" + File.separator + "custom_search_handler.incl")
-								.exists()) {
-					customSearchHandler = new File(env + File.separator + "customs_solrconfig" + File.separator
-							+ "custom_search_handler.incl");
-				}
-			}
+      try {
+        final String type = request.getParameter("type");
 
-			try {
-				final String type = request.getParameter("type");
+        if (searchHandler == null) {
+          findSearchHandler();
+        }
 
-				if (searchHandler == null) {
-					findSearchHandler();
-				}
+        if (!usingCustom) { // The custom search handler is not used.
+          // That means that the current config must
+          // be commented in the solrconfig.xml file
+          // and the modifications must be saved in
+          // the custom search handler file
 
-				if (!usingCustom) { // The custom search handler is not used.
-									// That means that the current config must
-									// be commented in the solrconfig.xml file
-									// and the modifications must be saved in
-									// the custom search handler file
+          // Get the content of solrconfig.xml file as a string
+          String configContent = FileUtils.getFileContent(config);
 
-					// Get the content of solrconfig.xml file as a string
-					String configContent = FileUtils.getFileContent(config);
+          // Retrieve the searchHandler from the configContent
+          final Node originalSearchHandler = XMLUtils.getSearchHandlerNode(config);
+          final String strSearchHandler = XMLUtils.nodeToString(originalSearchHandler);
 
-					// Retrieve the searchHandler from the configContent
-					final Node originalSearchHandler = XMLUtils.getSearchHandlerNode(config);
-					final String strSearchHandler = XMLUtils.nodeToString(originalSearchHandler);
+          // Create a commented equivalent of the strSearchHandler
+          final String commentedSearchHandler = "<!--" + strSearchHandler + "-->";
 
-					// Create a commented equivalent of the strSearchHandler
-					final String commentedSearchHandler = "<!--" + strSearchHandler + "-->";
+          // Replace the searchHandler in the solrconfig.xml file by
+          // the commented version
+          configContent = configContent.replace(strSearchHandler, commentedSearchHandler);
+          FileUtils.saveStringToFile(config, configContent);
 
-					// Replace the searchHandler in the solrconfig.xml file by
-					// the commented version
-					configContent = configContent.replace(strSearchHandler, commentedSearchHandler);
-					FileUtils.saveStringToFile(config, configContent);
+          // create the new custom_search_handler document
+          doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 
-					// create the new custom_search_handler document
-					doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+          // Import the search handler node from the solrconfig doc to
+          // the custom search handler doc
+          searchHandler = doc.importNode(searchHandler, true);
 
-					// Import the search handler node from the solrconfig doc to
-					// the custom search handler doc
-					searchHandler = doc.importNode(searchHandler, true);
+          // Make the new node an actual item in the target document
+          searchHandler = doc.appendChild(searchHandler);
 
-					// Make the new node an actual item in the target document
-					searchHandler = doc.appendChild(searchHandler);
+          final Node n = run(searchHandler.getChildNodes(), type);
+          childList = n.getParentNode().getChildNodes();
 
-					final Node n = run(searchHandler.getChildNodes(), type);
-					childList = n.getParentNode().getChildNodes();
+          // Save the custom_search_handler.incl file
+          XMLUtils.docToFile(doc, customSearchHandler);
+        }
 
-					// Save the custom_search_handler.incl file
-					XMLUtils.docToFile(doc, customSearchHandler);
-				}
+        if (childList == null) {
+          final Node n = run(searchHandler.getChildNodes(), type);
+          childList = n.getParentNode().getChildNodes();
+        }
 
-				if (childList == null) {
-					final Node n = run(searchHandler.getChildNodes(), type);
-					childList = n.getParentNode().getChildNodes();
-				}
+        for (int i = 0; i < childList.getLength(); i++) { // Get the str
+          // node
+          final Node n = childList.item(i);
+          if (n.getNodeName().equals("str")) {
+            String name = ""; // Get it's attributes
+            final NamedNodeMap map = n.getAttributes();
+            for (int j = 0; j < map.getLength(); j++) {
+              if (map.item(j).getNodeName().equals("name")) {// Get
+                // the
+                // name
+                name = map.item(j).getNodeValue();
+              }
+            }
+            if (name.equals(type)) { // If it's pf or qf according
+              // to what the user selected
+              // Get the parameters
+              final String field = request.getParameter("field").toString();
+              final String value = request.getParameter("value").toString();
+              final String text = n.getTextContent(); // Get the
+              // value of
+              // the node,
+              // Search for the requested field, if it is there
+              // return the weight, if not return 0
+              final int index = text.indexOf(field + "^");
+              if (index != -1) { // If the field is already
+                // weighted
+                final int pas = field.length() + 1;
+                final String textCut = text.substring(index + pas);
+                if (value.equals("0")) { // If the user entered
+                  // 0
+                  if (textCut.indexOf(" ") == -1) {
+                    // field is
+                    // the last
+                    // one then
+                    // we just
+                    // cut the
+                    // end of
+                    // the text
+                    // content
+                    n.setTextContent((text.substring(0, index)).trim());
+                  } else {
+                    // the field and the part after
+                    n.setTextContent((text.substring(0, index) + text.substring(index + pas + textCut.indexOf(" "))).trim());
+                  }
+                } else { // If the user typed any other values
+                  if (textCut.indexOf(" ") == -1) {
+                    n.setTextContent(text.substring(0, index + pas) + value);
+                  } else {
+                    n.setTextContent(text.substring(0, index + pas) + value + text.substring(index + pas + textCut.indexOf(" ")));
+                  }
+                }
+              } else { // If it's not weighted
+                if (!value.equals("0")) {
+                  // append the field and
+                  // it's value
+                  n.setTextContent((n.getTextContent() + " " + field + "^" + value).trim());
+                }
+              }
+              break;
+            }
+          }
+        }
+        // Apply the modifications
+        final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        final Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        final DOMSource source = new DOMSource(searchHandler);
+        final StreamResult result = new StreamResult(customSearchHandler);
+        transformer.transform(source, result);
 
-				for (int i = 0; i < childList.getLength(); i++) { // Get the str
-																	// node
-					final Node n = childList.item(i);
-					if (n.getNodeName().equals("str")) {
-						String name = ""; // Get it's attributes
-						final NamedNodeMap map = n.getAttributes();
-						for (int j = 0; j < map.getLength(); j++) {
-							if (map.item(j).getNodeName().equals("name")) {// Get
-																			// the
-																			// name
-								name = map.item(j).getNodeValue();
-							}
-						}
-						if (name.equals(type)) { // If it's pf or qf according
-													// to what the user selected
-							// Get the parameters
-							final String field = request.getParameter("field").toString();
-							final String value = request.getParameter("value").toString();
-							final String text = n.getTextContent(); // Get the
-																	// value of
-																	// the node,
-							// Search for the requested field, if it is there
-							// return the weight, if not return 0
-							final int index = text.indexOf(field + "^");
-							if (index != -1) { // If the field is already
-												// weighted
-								final int pas = field.length() + 1;
-								final String textCut = text.substring(index + pas);
-								if (value.equals("0")) { // If the user entered
-															// 0
-									if (textCut.indexOf(" ") == -1) {
-										// field is
-										// the last
-										// one then
-										// we just
-										// cut the
-										// end of
-										// the text
-										// content
-										n.setTextContent((text.substring(0, index)).trim());
-									} else {
-										// the field and the part after
-										n.setTextContent((text.substring(0, index)
-												+ text.substring(index + pas + textCut.indexOf(" "))).trim());
-									}
-								} else { // If the user typed any other values
-									if (textCut.indexOf(" ") == -1) {
-										n.setTextContent(text.substring(0, index + pas) + value);
-									} else {
-										n.setTextContent(text.substring(0, index + pas) + value
-												+ text.substring(index + pas + textCut.indexOf(" ")));
-									}
-								}
-							} else { // If it's not weighted
-								if (!value.equals("0")) {
-									// append the field and
-									// it's value
-									n.setTextContent((n.getTextContent() + " " + field + "^" + value).trim());
-								}
-							}
-							break;
-						}
-					}
-				}
-				// Apply the modifications
-				final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-				final Transformer transformer = transformerFactory.newTransformer();
-				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-				transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-				transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-				final DOMSource source = new DOMSource(searchHandler);
-				final StreamResult result = new StreamResult(customSearchHandler);
-				transformer.transform(source, result);
-				// Release the Semaphore according to the type
-				if (type.equals("pf") && (semaphoreConfigPf.availablePermits() < 1)) {
-					semaphoreConfigPf.release();
-				} else if (semaphoreConfigQf.availablePermits() < 1) {
-					semaphoreConfigQf.release();
-				}
+      } catch (final TransformerException e) {
+        LOGGER.error("Error while modifying the solrconfig.xml, in FieldWeight doPost, pls make sure the file is valid. Error 69030", e);
+        final PrintWriter out = response.getWriter();
+        out.append(
+            "Error while modifying the config file, please retry, if the problem persists contact your system administrator. Error Code : 69030");
+        out.close();
+        return;
+      }
 
-			} catch (final TransformerException e) {
-				LOGGER.error(
-						"Error while modifying the solrconfig.xml, in FieldWeight doPost, pls make sure the file is valid. Error 69030",
-						e);
-				final PrintWriter out = response.getWriter();
-				out.append(
-						"Error while modifying the config file, please retry, if the problem persists contact your system administrator. Error Code : 69030");
-				out.close();
-				return;
-			}
+    } catch (final Exception e) {
+      final PrintWriter out = response.getWriter();
+      out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69511");
+      out.close();
+      LOGGER.error("Unindentified error in FieldWeight doPost. Error 69511", e);
+    }
+  }
 
-		} catch (final Exception e) {
-			final PrintWriter out = response.getWriter();
-			out.append(
-					"Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69511");
-			out.close();
-			LOGGER.error("Unindentified error in FieldWeight doPost. Error 69511", e);
-		}
-	}
+  /**
+   * Retrieve the default search handler '/select' from a list of request
+   * handlers
+   *
+   * @param requestHandlers
+   * @return the search handler or null if not found
+   */
+  private Node getSearchHandler(final NodeList requestHandlers) {
+    for (int i = 0; i < requestHandlers.getLength(); i++) {
 
-	/**
-	 * Retrieve the default search handler '/select' from a list of request
-	 * handlers
-	 *
-	 * @param requestHandlers
-	 * @return the search handler or null if not found
-	 */
-	private Node getSearchHandler(final NodeList requestHandlers) {
-		for (int i = 0; i < requestHandlers.getLength(); i++) {
+      final Node rh = requestHandlers.item(i);
+      if (rh.hasAttributes()) {
+        final NamedNodeMap rhAttributes = rh.getAttributes();
+        for (int j = 0; j < rhAttributes.getLength(); j++) {
+          if (rhAttributes.item(j).getNodeName().equals("name") && rhAttributes.item(j).getNodeValue().equals("/select")) {
+            return rh;
+          }
+        }
+      }
 
-			final Node rh = requestHandlers.item(i);
-			if (rh.hasAttributes()) {
-				final NamedNodeMap rhAttributes = rh.getAttributes();
-				for (int j = 0; j < rhAttributes.getLength(); j++) {
-					if (rhAttributes.item(j).getNodeName().equals("name")
-							&& rhAttributes.item(j).getNodeValue().equals("/select")) {
-						return rh;
-					}
-				}
-			}
+    }
+    return null;
+  }
 
-		}
-		return null;
-	}
-
-	private Node run(final NodeList child, final String type) {
-		for (int i = 0; i < child.getLength(); i++) {
-			String name = "";
-			if (child.item(i).hasAttributes()) {
-				final NamedNodeMap map = child.item(i).getAttributes();
-				for (int j = 0; j < map.getLength(); j++) {
-					if (map.item(j).getNodeName().equals("name")) {
-						name = map.item(j).getNodeValue();
-					}
-				}
-				if (name.equals(type)) {
-					return child.item(i);
-				}
-			}
-			if (child.item(i).hasChildNodes()) {
-				if (run(child.item(i).getChildNodes(), type) != null) {
-					return run(child.item(i).getChildNodes(), type);
-				}
-			}
-		}
-		return null;
-	}
+  private Node run(final NodeList child, final String type) {
+    for (int i = 0; i < child.getLength(); i++) {
+      String name = "";
+      if (child.item(i).hasAttributes()) {
+        final NamedNodeMap map = child.item(i).getAttributes();
+        for (int j = 0; j < map.getLength(); j++) {
+          if (map.item(j).getNodeName().equals("name")) {
+            name = map.item(j).getNodeValue();
+          }
+        }
+        if (name.equals(type)) {
+          return child.item(i);
+        }
+      }
+      if (child.item(i).hasChildNodes()) {
+        if (run(child.item(i).getChildNodes(), type) != null) {
+          return run(child.item(i).getChildNodes(), type);
+        }
+      }
+    }
+    return null;
+  }
 
 }

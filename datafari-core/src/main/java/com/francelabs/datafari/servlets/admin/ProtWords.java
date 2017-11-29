@@ -23,8 +23,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -51,7 +49,6 @@ import com.francelabs.datafari.utils.ExecutionEnvironment;
 @WebServlet("/admin/ProtWords")
 public class ProtWords extends HttpServlet {
   private static final long serialVersionUID = 1L;
-  private static final List<SemaphoreLn> listMutex = new ArrayList<SemaphoreLn>();
   private final String server = Core.FILESHARE.toString();
   private final String env;
   private final String content;
@@ -71,9 +68,6 @@ public class ProtWords extends HttpServlet {
     env = environnement + "/solr/solrcloud/FileShare/conf";
 
     content = "ALL";
-    // For each line
-    listMutex.add(new SemaphoreLn("ALL", "Prot")); // create a semaphore and add
-                                                   // it to the list
 
   }
 
@@ -84,9 +78,7 @@ public class ProtWords extends HttpServlet {
    *      called to print it will return plain text
    */
   @Override
-  protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
-      throws ServletException, IOException {
-    SemaphoreLn acquiredSem = null;
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     try {
       if (content.equals("")) {
         final PrintWriter out = response.getWriter();
@@ -97,63 +89,34 @@ public class ProtWords extends HttpServlet {
       } else if (request.getParameter("language") != null) { // Print the
                                                              // content of the
                                                              // file
-        for (final SemaphoreLn sem : listMutex) { // For all the semaphores
-          if (sem.getType().equals("Prot")) { // if it has the good language and
-                                              // type(stopwords or Synonyms for
-                                              // now)
-            try {
-              if (sem.availablePermits() != 0) { // If it is available
-                try {
-                  sem.acquire(); // Acquire it
-                } catch (final InterruptedException e) {
-                  LOGGER.error("Error while acquiring semaphore in ProtWords Servlet's doGet. Error 69013", e);
-                  final PrintWriter out = response.getWriter();
-                  out.append(
-                      "Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69013");
-                  out.close();
-                  return;
-                }
-                acquiredSem = sem;
-                final String filename = "protwords.txt";
-                response.setContentType("application/octet-stream");
-                final String filepath = env + "/";
-                final String stopContent = readFile(filepath + filename, StandardCharsets.UTF_8);
-                // get the file and put its content into a string
-                response.setContentType("text/html");
-                final PrintWriter out = response.getWriter();
-                out.append(stopContent); // returns the content of the file
-                out.close();
-                return;
-              } else { // if not available
-                final PrintWriter out = response.getWriter();
-                out.append("File already in use");
-                out.close();
-              }
-            } catch (final IOException e) {
-              final PrintWriter out = response.getWriter();
-              out.append(
-                  "Error while reading the protwords file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69014");
-              out.close();
-              LOGGER.error(
-                  "Error while reading the protwords.txt file in Protwords servlet, please make sure the file exists and is located in "
-                      + env + "/solr/solrcloud/" + server + "/conf/" + ". Error 69014",
-                  e);
-              if (acquiredSem != null) {
-                acquiredSem.release();
-              }
-            }
-          }
+
+        try {
+          final String filename = "protwords.txt";
+          response.setContentType("application/octet-stream");
+          final String filepath = env + "/";
+          final String stopContent = readFile(filepath + filename, StandardCharsets.UTF_8);
+          // get the file and put its content into a string
+          response.setContentType("text/html");
+          final PrintWriter out = response.getWriter();
+          out.append(stopContent); // returns the content of the file
+          out.close();
+          return;
+
+        } catch (final IOException e) {
+          final PrintWriter out = response.getWriter();
+          out.append(
+              "Error while reading the protwords file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69014");
+          out.close();
+          LOGGER.error("Error while reading the protwords.txt file in Protwords servlet, please make sure the file exists and is located in " + env
+              + "/solr/solrcloud/" + server + "/conf/" + ". Error 69014", e);
         }
+
       }
     } catch (final Exception e) {
       final PrintWriter out = response.getWriter();
-      out.append(
-          "Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69504");
+      out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69504");
       out.close();
       LOGGER.error("Unindentified error in Protwords doGet. Error 69504", e);
-      if (acquiredSem != null) {
-        acquiredSem.release();
-      }
     }
   }
 
@@ -165,18 +128,10 @@ public class ProtWords extends HttpServlet {
    *      other page, refreshes the page or switches language
    */
   @Override
-  protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
-      throws ServletException, IOException {
+  protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     try {
       if (request.getParameter("content") == null) { // the user load an other
                                                      // page
-        for (final SemaphoreLn sem : listMutex) { // Get the correct semaphore
-                                                  // and check if it was not
-                                                  // already released
-          if (sem.getType().equals("Prot") && sem.availablePermits() < 1) {
-            sem.release(); // Release the semaphore
-          }
-        }
       } else { // The user clicked on confirm modification
         File file;
         final String filePath = env + "/protwords.txt";
@@ -188,8 +143,8 @@ public class ProtWords extends HttpServlet {
                                                                                 // false
                                                                                 // to
                                                                                 // overwrite.
-          final byte[] myBytes = request.getParameter("content").replaceAll("&gt;", ">")
-              .replaceAll("<div>|<br>|<br >", "\n").replaceAll("</div>|</lines>|&nbsp;", "").getBytes();
+          final byte[] myBytes = request.getParameter("content").replaceAll("&gt;", ">").replaceAll("<div>|<br>|<br >", "\n")
+              .replaceAll("</div>|</lines>|&nbsp;", "").getBytes();
           fooStream.write(myBytes); // rewrite the file
           fooStream.close();
         } catch (final IOException e) {
@@ -200,19 +155,10 @@ public class ProtWords extends HttpServlet {
           LOGGER.error("Error while rewriting the file protwords Protwords Servlet's doPost. Error 69015", e);
           return;
         }
-        for (final SemaphoreLn sem : listMutex) { // Get the correct semaphore
-                                                  // and check if it was not
-                                                  // already released
-          if (sem.getLanguage().equals(request.getParameter("language")) && sem.getType().equals("Prot")
-              && sem.availablePermits() < 1) {
-            sem.release(); // Release the semaphore
-          }
-        }
       }
     } catch (final Exception e) {
       final PrintWriter out = response.getWriter();
-      out.append(
-          "Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69505");
+      out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69505");
       out.close();
       LOGGER.error("Unindentified error in Protwords doPost. Error 69505", e);
     }
