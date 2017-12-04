@@ -611,7 +611,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			
 			// for each effective fields in the list, retrieve its operator and filter value and add them to the global finalFilter variable 
 			for (var i=0; i < this.fieldsList.length; i++) {
-				if(this.fieldsList[i] != null) {
+				if(this.fieldsList[i] != null && this.fieldsList[i] != undefined && this.fieldsList[i].getFilter() != "") {
 					var operator = "";
 					if(this.fieldsList[i].operator != null && this.fieldsList[i].operator != undefined && this.fieldsList[i].operator.val() == "OR") {
 						operator = "OR ";
