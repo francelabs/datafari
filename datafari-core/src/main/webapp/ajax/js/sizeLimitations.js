@@ -57,7 +57,7 @@ $(document).ready(function() {
 	//Sert the button to call the function set with the hl.maxAnalyzedChars parameter
 	$("#submithl").click(function(e){
 		e.preventDefault();
-		setModifyNodeContent("hl.maxAnalyzedChars", "hl");
+		setModifyNodeContent("hl.maxAnalyzedChars", "hl", "#submithl");
 	});
 	
 	//If the user loads an other page
@@ -75,7 +75,7 @@ $(document).ready(function() {
 	//Sert the button to call the function set with the hl.maxAnalyzedChars parameter
 	$("#submitindexhl").click(function(e){
 		e.preventDefault();
-		setModifyNodeContent("maxLength", "indexhl");
+		setModifyNodeContent("maxLength", "indexhl", "#submitindexhl");
 	});
 	
 	
@@ -84,7 +84,7 @@ $(document).ready(function() {
 	//Sert the button to call the function set with the hl.maxAnalyzedChars parameter
 	$("#submitindexed").click(function(e){
 		e.preventDefault();
-		setModifyFieldType("maxTokenCount", "indexed");
+		setModifyFieldType("maxTokenCount", "indexed", "#submitindexed");
 	});
 });
 
@@ -114,15 +114,19 @@ function getModifyFieldType(typeConf, type){
 }
 
 //use the same kind of function to be coherent with the "Limit hl size" function on the same page, but we should definitely refactor this.
-function setModifyFieldType(typeConf, type){
+function setModifyFieldType(typeConf, type, buttonId){
 	var value = document.getElementById("max"+type).value;
 	if(value>0 && value % 1 === 0){
+		// Deactivate the calling button
+		$(buttonId).prop("disabled", true);
 		$.ajax({			//Ajax request to the doGet of the ModifyNodeContent servlet to modify the solrconfig file
         	type: "POST",
         	url: "./../admin/ModifyFieldType",
         	data : "type="+typeConf+"&value="+value+"&class=solr.LimitTokenCountFilterFactory",
         	//if received a response from the server
-        	success: function( data, textStatus, jqXHR) {	
+        	success: function( data, textStatus, jqXHR) {
+        		// Reactivate the calling button
+        		$(buttonId).prop("disabled", false);
         		//If the semaphore was already acquired
         		//If they're was an error
             	//we should definitely change the API response !!!!
@@ -133,12 +137,12 @@ function setModifyFieldType(typeConf, type){
     	    		$('#max'+type).attr("disabled", true);
    		     	}else{		//else add the options to the select
    		     		document.getElementById("answer"+type).innerHTML = window.i18n.msgStore['modifDoneNextIndexation'];
-		     		$("#answer"+type).addClass("success");
-		     		$("#answer"+type).fadeOut(3000,function(){
-		     			$("#answer"+type).removeClass("success");
-		     			$("#answer"+type).html("");
-		     			$("#answer"+type).show();
-		     		});
+   		     		$("#answer"+type).addClass("success");
+   		     		$("#answer"+type).fadeOut(3000,function(){
+   		     			$("#answer"+type).removeClass("success");
+   		     			$("#answer"+type).html("");
+   		     			$("#answer"+type).show();
+   		     		});
     	    	}
     	    }
  		});
@@ -176,15 +180,19 @@ function getModifyNodeContent(typeConf, type){
         }
  	});
 }
-function setModifyNodeContent(typeConf, type){
+function setModifyNodeContent(typeConf, type, buttonId){
 	var value = document.getElementById("max"+type).value;
 	if(value>0 && value % 1 === 0){
+		// Deactivate the calling button
+		$(buttonId).prop("disabled", true);
 		$.ajax({			//Ajax request to the doGet of the ModifyNodeContent servlet to modify the solrconfig file
         	type: "POST",
         	url: "./../admin/ModifyNodeContent",
         	data : "type="+typeConf+"&value="+value+"&attr=name",
         	//if received a response from the server
-        	success: function( data, textStatus, jqXHR) {	
+        	success: function( data, textStatus, jqXHR) {
+        		// Reactivate the calling button
+        		$(buttonId).prop("disabled", false);
         		//If the semaphore was already acquired
         		if(data === "File already in use"){
         			//Print it and disable the input and submit
@@ -199,7 +207,7 @@ function setModifyNodeContent(typeConf, type){
     	    		$('#max'+type).attr("disabled", true);
    		     	}else{		//else add the options to the select
    		     		document.getElementById("answer"+type).innerHTML = window.i18n.msgStore['modifDoneNextIndexation'];
-		     		$("#answer"+type).addClass("success");
+   		     		$("#answer"+type).addClass("success");
 		     		$("#answer"+type).fadeOut(3000,function(){
 		     			$("#answer"+type).removeClass("success");
 		     			$("#answer"+type).html("");
