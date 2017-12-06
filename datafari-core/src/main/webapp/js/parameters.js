@@ -76,7 +76,7 @@ $(document).ready(function() {
 	}
 	
 	function createLangContent() {
-		var languages = ['en', 'fr', 'it', 'pt_br', 'de'];
+		var languages = ['en', 'fr', 'it', 'pt_br', 'de', 'ru'];
 		
 		$("#param-content").html("<div id='lang-choice'><span id='lang-choice-label'>" + window.i18n.msgStore['lang-choice'] + "</span></div>");
 		var inputs = $("<div id='lang-inputs'></div>")
