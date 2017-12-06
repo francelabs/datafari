@@ -54,88 +54,85 @@ import com.francelabs.datafari.utils.AdvancedSearchConfiguration;
  */
 @WebServlet("/GetFieldsInfo")
 public class GetFieldsInfo extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(GetFieldsInfo.class.getName());
+  private static final long serialVersionUID = 1L;
+  private static final Logger logger = Logger.getLogger(GetFieldsInfo.class.getName());
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public GetFieldsInfo() {
+  /**
+   * @see HttpServlet#HttpServlet()
+   */
+  public GetFieldsInfo() {
 
-	}
+  }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	@Override
-	protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
-			throws ServletException, IOException {
-		request.setCharacterEncoding("utf8");
-		response.setContentType("application/json");
-		final PrintWriter out = response.getWriter();
+  /**
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+   *      response)
+   */
+  @Override
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    request.setCharacterEncoding("utf8");
+    response.setContentType("application/json");
+    final PrintWriter out = response.getWriter();
 
-		try {
-			// Define the Solr hostname, port and protocol
-			final String solrserver = "localhost";
-			final String solrport = "8983";
-			final String protocol = "http";
+    try {
+      // Define the Solr hostname, port and protocol
+      final String solrserver = "localhost";
+      final String solrport = "8983";
+      final String protocol = "http";
 
-			// Use Solr Schema REST API to get the list of fields
-			final HttpClient httpClient = HttpClientBuilder.create().build();
-			final HttpHost httpHost = new HttpHost(solrserver, Integer.parseInt(solrport), protocol);
-			final HttpGet httpGet = new HttpGet("/solr/FileShare/schema/fields");
-			final HttpResponse httpResponse = httpClient.execute(httpHost, httpGet);
+      // Use Solr Schema REST API to get the list of fields
+      final HttpClient httpClient = HttpClientBuilder.create().build();
+      final HttpHost httpHost = new HttpHost(solrserver, Integer.parseInt(solrport), protocol);
+      final HttpGet httpGet = new HttpGet("/solr/FileShare/schema/fields");
+      final HttpResponse httpResponse = httpClient.execute(httpHost, httpGet);
 
-			// Construct the jsonResponse
-			final JSONObject jsonResponse = new JSONObject();
-			if (httpResponse.getStatusLine().getStatusCode() == 200) {
-				// Status of the API response is OK
-				final JSONObject json = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
-				final JSONArray fieldsJson = json.getJSONArray("fields");
-				for (int i = 0; i < fieldsJson.length(); i++) {
-					final JSONObject field = (JSONObject) fieldsJson.get(i);
-					// If a fieldname has been provided, it means that this
-					// servlet
-					// only
-					// needs to return infos on this specific field
-					if (request.getParameter("fieldName") != null) {
-						final String fieldName = request.getParameter("fieldName");
-						if (field.getString("name").equals(fieldName)) {
-							jsonResponse.append("field", field);
-							break;
-						}
-					} else {
-						// Load the list of denied fields
-						final String strDeniedFieldsList = AdvancedSearchConfiguration.getInstance()
-								.getProperty(AdvancedSearchConfiguration.DENIED_FIELD_LIST);
-						final Set<String> deniedFieldsSet = new HashSet<>(
-								Arrays.asList(strDeniedFieldsList.split(",")));
-						if (!deniedFieldsSet.contains(field.getString("name")) && field.getBoolean("indexed")
-								&& !field.getString("name").startsWith("allow_")
-								&& !field.getString("name").startsWith("deny_")
-								&& !field.getString("name").startsWith("_")) {
-							jsonResponse.append("field", field);
-						}
-					}
-				}
+      // Construct the jsonResponse
+      final JSONObject jsonResponse = new JSONObject();
+      if (httpResponse.getStatusLine().getStatusCode() == 200) {
+        // Status of the API response is OK
+        final JSONObject json = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
+        final JSONArray fieldsJson = json.getJSONArray("fields");
 
-				out.print(jsonResponse);
-			} else {
-				// Status of the API response is an error
-				logger.error("Error while retrieving the fields from the Schema API of Solr: "
-						+ httpResponse.getStatusLine().toString());
-				out.append(
-						"Error while retrieving the fields from the Schema API of Solr, please retry, if the problem persists contact your system administrator. Error Code : 69026");
-			}
-			out.close();
-		} catch (final IOException e) {
-			logger.error("Error while retrieving the fields from the Schema API of Solr", e);
-			out.append(
-					"Error while retrieving the fields from the Schema API of Solr, please retry, if the problem persists contact your system administrator. Error Code : 69026");
-			out.close();
-		}
+        // Load the list of denied fields
+        final String strDeniedFieldsList = AdvancedSearchConfiguration.getInstance().getProperty(AdvancedSearchConfiguration.DENIED_FIELD_LIST);
+        final Set<String> deniedFieldsSet = new HashSet<>(Arrays.asList(strDeniedFieldsList.split(",")));
 
-	}
+        for (int i = 0; i < fieldsJson.length(); i++) {
+          final JSONObject field = (JSONObject) fieldsJson.get(i);
+          // If a fieldname has been provided, it means that this
+          // servlet
+          // only
+          // needs to return infos on this specific field
+          if (request.getParameter("fieldName") != null) {
+            final String fieldName = request.getParameter("fieldName");
+            if (field.getString("name").equals(fieldName)) {
+              jsonResponse.append("field", field);
+              break;
+            }
+          } else {
+            if (!deniedFieldsSet.contains(field.getString("name")) && (!field.has("indexed") || field.getBoolean("indexed"))
+                && !field.getString("name").startsWith("allow_") && !field.getString("name").startsWith("deny_")
+                && !field.getString("name").startsWith("_")) {
+              jsonResponse.append("field", field);
+            }
+          }
+        }
+
+        out.print(jsonResponse);
+      } else {
+        // Status of the API response is an error
+        logger.error("Error while retrieving the fields from the Schema API of Solr: " + httpResponse.getStatusLine().toString());
+        out.append(
+            "Error while retrieving the fields from the Schema API of Solr, please retry, if the problem persists contact your system administrator. Error Code : 69026");
+      }
+      out.close();
+    } catch (final IOException e) {
+      logger.error("Error while retrieving the fields from the Schema API of Solr", e);
+      out.append(
+          "Error while retrieving the fields from the Schema API of Solr, please retry, if the problem persists contact your system administrator. Error Code : 69026");
+      out.close();
+    }
+
+  }
 
 }

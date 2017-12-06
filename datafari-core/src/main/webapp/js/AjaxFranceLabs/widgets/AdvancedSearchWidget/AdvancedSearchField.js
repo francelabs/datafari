@@ -191,6 +191,8 @@ AjaxFranceLabs.AdvancedSearchField = AjaxFranceLabs.Class.extend({
 		var exact_expression_line_value = this.elm.find('.exact_expression_line').find('input').val();
 		var none_of_these_words_line_value = this.elm.find('.none_of_these_words_line').find('input').val();
 		
+		var exactExpressionsRegex = /"[^\"]+"/g;
+		
 		// Global filter
 		var filter = "";
 		
@@ -223,9 +225,29 @@ AjaxFranceLabs.AdvancedSearchField = AjaxFranceLabs.Class.extend({
 		
 		// Add the none of these words filter if available to the global filter
 		if(none_of_these_words_line_value != null && none_of_these_words_line_value != undefined && none_of_these_words_line_value != "") {
+			
+			// Starts with the exact negative expressions like -"france labs"
+			var exactNegativeExpressions = none_of_these_words_line_value.match(exactExpressionsRegex);
+			if(exactNegativeExpressions != null && exactNegativeExpressions != undefined) {
+				for(var cptNgtExact=0; cptNgtExact<exactNegativeExpressions.length; cptNgtExact++) {
+					var exactNegativeExpression = exactNegativeExpressions[cptNgtExact];
+					filter += " -" + exactNegativeExpression;
+					var exactNgtExprIndex = none_of_these_words_line_value.search(exactNegativeExpression);
+					// If there is a space in front of the exact expression then remove it + the exact expression, otherwise only remove the exact expression
+					if(exactNgtExprIndex > 0 && none_of_these_words_line_value.substring(exactNgtExprIndex -1, exactNgtExprIndex) == " ") {
+						none_of_these_words_line_value = none_of_these_words_line_value.replace(" " + exactNegativeExpression, "");
+					} else {
+						none_of_these_words_line_value = none_of_these_words_line_value.replace(exactNegativeExpression, "");
+					}
+				}
+			}
+			
+			// Now handle the "normal" negative words like -test
 			var splittedValue = none_of_these_words_line_value.trim().split(" ");
 			for(var i=0; i<splittedValue.length; i++) {
-				filter += " -" + splittedValue[i];
+				if(splittedValue[i].trim() != "") {
+					filter += " -" + splittedValue[i];
+				}
 			}
 		}
 		

@@ -210,7 +210,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 					var fieldType = "";
 					for(var i=0; i<self.available_fields.field.length; i++) {
 						if(self.available_fields.field[i].name == fieldname) {
-							fieldType = self.available_fields.field[i].type[0];
+							fieldType = self.available_fields.field[i].type;
 							break;
 						}
 					}
@@ -314,6 +314,39 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			}
 			
 			
+			// Try to extract negative exact expression (ie -"france labs")
+			var exactNegativeExpressionRegex = /-"[^"]*"/g;
+			var exactNegativeExpressions = text.match(exactNegativeExpressionRegex);
+			if(exactNegativeExpressions != null && exactNegativeExpressions != undefined) {
+				for(var cptNgtExact=0; cptNgtExact<exactNegativeExpressions.length; cptNgtExact++) {
+					var exactNegativeExpression = exactNegativeExpressions[cptNgtExact];
+					none_of_these_words_value += " " + exactNegativeExpression.substring(1);
+					var exactNgtExprIndex = text.search(exactNegativeExpression);
+					// If there is a space in front of the exact expression then remove it + the exact expression, otherwise only remove the exact expression
+					if(exactNgtExprIndex > 0 && text.substring(exactNgtExprIndex -1, exactNgtExprIndex) == " ") {
+						text = text.replace(" " + exactNegativeExpression, "");
+					} else {
+						text = text.replace(exactNegativeExpression, "");
+					}
+				}
+			}
+			
+			// Try to extract negative words (ie -nuclear) 
+			var globalValues = text.split(' ');
+			for(var cptGlobal=0; cptGlobal < globalValues.length; cptGlobal++) {
+				var gbValue = globalValues[cptGlobal];
+				if(gbValue.startsWith("-")) {
+					none_of_these_words_value += " " + gbValue.substring(1);
+					// If there is a space in front of the negative word then remove it + the negative word, otherwise only remove the negative word
+					if(text.search(gbValue) > 0) {
+						text = text.replace(" " + gbValue, "");
+					} else {
+						text = text.replace(gbValue, "");
+					}
+				}
+			}
+			
+			
 			// Try to extract the exact expressions (ie "renew energy")
 			var exactExpressionsRegex = /"[^\"]+"/g;
 			var exactExpressions = text.match(exactExpressionsRegex);
@@ -327,21 +360,6 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 						text = text.replace(" " + exactExpression, "");
 					} else {
 						text = text.replace(exactExpression, "");
-					}
-				}
-			}
-			
-			// Try to extract negative words (ie -nuclear)
-			var globalValues = text.split(' ');
-			for(var cptGlobal=0; cptGlobal < globalValues.length; cptGlobal++) {
-				var gbValue = globalValues[cptGlobal];
-				if(gbValue.startsWith("-")) {
-					none_of_these_words_value += " " + gbValue.substring(1);
-					// If there is a space in front of the negative word then remove it + the negative word, otherwise only remove the negative word
-					if(text.search(gbValue) > 0) {
-						text = text.replace(" " + gbValue, "");
-					} else {
-						text = text.replace(gbValue, "");
 					}
 				}
 			}
@@ -656,7 +674,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		$('#searchBar').show();
 		$("#results_div").show();
 		$("#search_information").show();
-		$("#sortMode").show();
+		$("#results_action").show();
 		$("#advancedSearch").hide();
 		$("#parametersUi").hide();
 		$("#favoritesUi").hide();
