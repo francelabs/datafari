@@ -26,6 +26,8 @@ AjaxFranceLabs.DateSelectorFacetModule = AjaxFranceLabs.AbstractModule.extend({
 	oldFilter : null,
 	fromInitValue : null,
 	toInitValue : null,
+	yearsBeforeCurrent: 50,
+	yearsAfterCurrent: 0,
 
 	 
 	
@@ -189,10 +191,36 @@ AjaxFranceLabs.DateSelectorFacetModule = AjaxFranceLabs.AbstractModule.extend({
 				this.elm.append("<div id='" + this.id + "-date-selector'></div>");
 				var dateSelector = $("#" + this.id + "-date-selector");
 				dateSelector.append("<span id='" + this.id + "-from-label'>" + window.i18n.msgStore["fromDate"] + "</span> <input type='text' id='" + this.id + "-fromInput' class='fromInput'></input><input type='hidden' id='" + this.id + "-altFromInput'></input> <span id='" + this.id + "-to-label'>" + window.i18n.msgStore["toDate"] + "</span> <input type='text' id='" + this.id + "-toInput' class='toInput'></input><input type='hidden' id='" + this.id + "-altToInput'></input> <a class='go'>Go</a> <span class='date-format-error' id='" + this.id + "-Message'>" + window.i18n.msgStore['wrong-date-format'] + "</span>");
-				dateSelector.find(".fromInput").datepicker({dateFormat: "dd/mm/yy", altFormat: "yy-mm-ddT00:00:00Z", changeMonth: true, changeYear: true, onClose: function(dateText, inst){self.checkAndUpdateFromInputs(dateText, inst)}});
+				dateSelector.find(".fromInput").datepicker({
+					dateFormat: "dd/mm/yy", 
+					altFormat: "yy-mm-ddT00:00:00Z", 
+					changeMonth: true, 
+					changeYear: true, 
+					onClose: function(dateText, inst){
+						self.checkAndUpdateFromInputs(dateText, inst)
+					}, 
+					onSelect: function(dateText, inst) {
+						// Used to keep the focus and being able to trigger the search by pressing Enter
+						$("#" + self.id + "-fromInput").focus()
+					}
+				});
 				dateSelector.find(".fromInput").datepicker( "option", "altField", "#" + this.id + "-altFromInput" );
-				dateSelector.find(".toInput").datepicker({dateFormat: "dd/mm/yy", altFormat: "yy-mm-ddT00:00:00Z", changeMonth: true, changeYear: true, onClose: function(dateText, inst){self.checkAndUpdateToInputs(dateText, inst)}});
+				dateSelector.find(".fromInput").datepicker( "option", "yearRange", "c-"+ self.yearsBeforeCurrent + ":c+" +  self.yearsAfterCurrent);
+				dateSelector.find(".toInput").datepicker({
+					dateFormat: "dd/mm/yy", 
+					altFormat: "yy-mm-ddT00:00:00Z", 
+					changeMonth: true, 
+					changeYear: true, 
+					onClose: function(dateText, inst){
+						self.checkAndUpdateToInputs(dateText, inst)
+					}, 
+					onSelect: function(dateText, inst) {
+						// Used to keep the focus and being able to trigger the search by pressing Enter
+						$("#" + self.id + "-toInput").focus()
+					}
+				});
 				dateSelector.find(".toInput").datepicker( "option", "altField", "#" + this.id + "-altToInput" );
+				dateSelector.find(".toInput").datepicker( "option", "yearRange", "c-"+ self.yearsBeforeCurrent + ":c+" +  self.yearsAfterCurrent );
 				
 				// Init values if possible
 				if(self.fromInitValue != null) {
@@ -214,6 +242,18 @@ AjaxFranceLabs.DateSelectorFacetModule = AjaxFranceLabs.AbstractModule.extend({
 				// Set the onClick function of the Go button
 				dateSelector.find(".go").click(function() {
 					self.execFacet();
+				});
+				
+				// When user press enter when focus is on the text inputs
+				$("#" + this.id + "-fromInput").keypress(function(e) {
+				    if(e.which == 13) {
+				    	self.execFacet();
+				    }
+				});
+				$("#" + this.id + "-toInput").keypress(function(e) {
+				    if(e.which == 13) {
+				    	self.execFacet();
+				    }
 				});
 			}
 		} 
