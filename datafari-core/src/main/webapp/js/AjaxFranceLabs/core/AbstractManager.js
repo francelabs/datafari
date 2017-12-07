@@ -38,6 +38,9 @@ AjaxFranceLabs.AbstractManager = AjaxFranceLabs.Class.extend({
 	collection : null,
 
 	connectionInfo : {},
+	
+	// Used to abort a previous request
+	previousRequestXhr : null,
 
 	//Methods
 
@@ -99,6 +102,10 @@ AjaxFranceLabs.AbstractManager = AjaxFranceLabs.Class.extend({
 
 	makeRequest : function(servlet) {
 		var self = this;
+		// Abort the previous request in case not finished to avoid weird behavior in the search UI
+		if(self.previousRequestXhr != null && self.previousRequestXhr != undefined) {
+			self.previousRequestXhr.abort();
+		}
 		$.when(this.init()).done(function() {
 			for (var widget in self.widgets) {
 				self.widgets[widget].beforeRequest();
@@ -106,7 +113,8 @@ AjaxFranceLabs.AbstractManager = AjaxFranceLabs.Class.extend({
 			for (var module in self.modules) {
 				self.modules[module].beforeRequest();
 			}
-			self.executeRequest('', servlet);
+			// Keep the request object to be able to abort it
+			self.previousRequestXhr = self.executeRequest('', servlet);
 		});
 	},
 	
