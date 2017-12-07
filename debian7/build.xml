@@ -37,7 +37,6 @@
 	<!-- debian binaries -->
 	<property name="jvm.dir" value="${debian.dir}/jvm" />
 	<property name="command.dir" value="${debian.dir}/command" />
-	<property name="ocr.dir" value="${debian.dir}/ocr" />
 	<property name="pgsql.dir" value="${debian.dir}/pgsql" />
 
 	<!-- Installer directories -->
@@ -273,9 +272,7 @@
 			</fileset>
 		</copy>
 
-		<copy todir="${debian.dist.dir}/ocr">
-			<fileset dir="${ocr.dir}" />
-		</copy>
+		
 
 		<copy todir="${debian.dist.dir}/pgsql">
 			<fileset dir="${pgsql.dir}" />
