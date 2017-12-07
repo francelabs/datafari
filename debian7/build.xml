@@ -15,7 +15,6 @@
 	<property name="elk.src.dir" value="${project.dir}/datafari-elk/target/dist/elk" />
 	<property name="tomcat.src.dir" value="${project.dir}/datafari-tomcat/target/dist/tomcat" />
 	<property name="solr.src.dir" value="${project.dir}/datafari-solr/target/dist/solr" />
-	<property name="tika-config.src.dir" value="${project.dir}/datafari-tika-config/target" />
 	<property name="datafari.src.dir" value="${project.dir}/datafari-core/target" />
 	<property name="jena.src.dir" value="${project.dir}/datafari-jena/target" />
 	<property name="mcf.src.dir" value="${project.dir}/datafari-mcf/target/dist/mcf" />
@@ -233,12 +232,7 @@
 			</fileset>
 		</copy>
 
-		<!-- Copy Tika OCR config in mcf lib -->
-		<copy todir="${debian.dist.dir}/mcf/mcf_home/lib">
-			<fileset dir="${tika-config.src.dir}">
-				<include name="*.jar" />
-			</fileset>
-		</copy>
+		
 
 
 		<!-- Copy Manifold CF to Tomcat auto-deploy directory -->
