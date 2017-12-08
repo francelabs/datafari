@@ -24,8 +24,7 @@ $(function($) {
 	
 	
 	Manager = new AjaxFranceLabs.Manager({
-		serverUrl : 'http://' + window.location.hostname
-				+ ':'+port+'/Datafari/SearchProxy/',
+		serverUrl : '/Datafari/SearchProxy/',
 		constellio : false,
 		connectionInfo : {
 			autocomplete : {
