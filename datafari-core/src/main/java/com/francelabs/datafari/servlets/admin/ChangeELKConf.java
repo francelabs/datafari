@@ -75,14 +75,14 @@ public class ChangeELKConf extends HttpServlet {
 					String kibana_url = ELKConfiguration.KIBANA_URI ;
 					String kibana_clean_url = null;
 					List<String> list = new ArrayList<>();
-					if (kibana_url != null) {
+					if (kibana_url != null && kibana_url.contains("http")) {
 						Pattern p = Pattern.compile("http://(.*?)/");
 						Matcher m = p.matcher(kibana_url);
 						if (m.find()) {
 							kibana_clean_url = (m.group(1));
 						}
-
-						kibana_clean_url = kibana_clean_url.split(":")[0];
+						if (kibana_clean_url.contains(":"))
+							kibana_clean_url = kibana_clean_url.split(":")[0];
 						ELKConfiguration.setProperty(ELKConfiguration.ELK_SERVER, kibana_clean_url);
 
 						File f = new File(kibana_conf_path);
@@ -105,10 +105,11 @@ public class ChangeELKConf extends HttpServlet {
 								list.remove(index_position);
 								list.add(index_position, "server.host: "+ kibana_clean_url);
 								Files.write(Paths.get(kibana_conf_path), list);
-								jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+								
 							}
 						}
 					}
+					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 				}
 			}
 		} catch (final JSONException e) {
