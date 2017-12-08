@@ -59,6 +59,7 @@ public class SolrServers {
 				// TODO : change for ZK ensemble
 				CloudSolrClient solrClient = new CloudSolrClient(solrHosts);
 				solrClient.setDefaultCollection(core.toString());
+				solrClient.setZkClientTimeout(60000);
 				SolrPing ping = new SolrPing();
 				solrClient.request(ping);
 				solrClients.put(core, solrClient);

@@ -15,7 +15,6 @@
 	<property name="elk.src.dir" value="${project.dir}/datafari-elk/target/dist/elk" />
 	<property name="tomcat.src.dir" value="${project.dir}/datafari-tomcat/target/dist/tomcat" />
 	<property name="solr.src.dir" value="${project.dir}/datafari-solr/target/dist/solr" />
-	<property name="tika-config.src.dir" value="${project.dir}/datafari-tika-config/target" />
 	<property name="datafari.src.dir" value="${project.dir}/datafari-core/target" />
 	<property name="jena.src.dir" value="${project.dir}/datafari-jena/target" />
 	<property name="mcf.src.dir" value="${project.dir}/datafari-mcf/target/dist/mcf" />
@@ -38,7 +37,6 @@
 	<!-- debian binaries -->
 	<property name="jvm.dir" value="${debian.dir}/jvm" />
 	<property name="command.dir" value="${debian.dir}/command" />
-	<property name="ocr.dir" value="${debian.dir}/ocr" />
 	<property name="pgsql.dir" value="${debian.dir}/pgsql" />
 
 	<!-- Installer directories -->
@@ -233,12 +231,7 @@
 			</fileset>
 		</copy>
 
-		<!-- Copy Tika OCR config in mcf lib -->
-		<copy todir="${debian.dist.dir}/mcf/mcf_home/lib">
-			<fileset dir="${tika-config.src.dir}">
-				<include name="*.jar" />
-			</fileset>
-		</copy>
+		
 
 
 		<!-- Copy Manifold CF to Tomcat auto-deploy directory -->
@@ -279,9 +272,7 @@
 			</fileset>
 		</copy>
 
-		<copy todir="${debian.dist.dir}/ocr">
-			<fileset dir="${ocr.dir}" />
-		</copy>
+		
 
 		<copy todir="${debian.dist.dir}/pgsql">
 			<fileset dir="${pgsql.dir}" />
