@@ -292,6 +292,8 @@
     "relevancySetupFile-label": "Chemin du fichier de système de pertinence",
     "reloadButton": "Recharger",
     "replace": "Remplacer",
+    "requestError": "Une erreur est survenue lors de l'exécution de la requête.",
+    "requestTimeout": "La requête a mis trop de temps à s'exécuter.",
     "required": "Requis",
     "result": "R&eacute;sultat",
     "results": "r&eacute;sultats",

@@ -44,10 +44,13 @@ AjaxFranceLabs.AbstractWidget = AjaxFranceLabs.Class.extend({
 
 	afterRequest : function() {
 	},
-	
+
+	requestError : function(status, error) {
+	},
+
 	/**
 	 * Interface method to reset the model of the widget
 	 */
-	reset : function() {		
+	reset : function() {
 	}
 });

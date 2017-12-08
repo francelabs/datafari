@@ -38,7 +38,7 @@ AjaxFranceLabs.AbstractManager = AjaxFranceLabs.Class.extend({
 	collection : null,
 
 	connectionInfo : {},
-	
+
 	// Used to abort a previous request
 	previousRequestXhr : null,
 
@@ -100,6 +100,15 @@ AjaxFranceLabs.AbstractManager = AjaxFranceLabs.Class.extend({
 		}
 	},
 
+	handleError : function(jqxhr, status, error) {
+		for (var widget in this.widgets) {
+			this.widgets[widget].requestError(status, error);
+		}
+		for (var module in this.modules) {
+			this.modules[module].requestError(status, error);
+		}
+	},
+
 	makeRequest : function(servlet) {
 		var self = this;
 		// Abort the previous request in case not finished to avoid weird behavior in the search UI
@@ -117,7 +126,7 @@ AjaxFranceLabs.AbstractManager = AjaxFranceLabs.Class.extend({
 			self.previousRequestXhr = self.executeRequest('', servlet);
 		});
 	},
-	
+
 
 	generateAndSetQueryID: function(){
 		this.store.addByValue("id", UUID.generate());
@@ -126,7 +135,7 @@ AjaxFranceLabs.AbstractManager = AjaxFranceLabs.Class.extend({
 	executeRequest : function() {
 		throw 'AbstractManager.executeRequest must be implemented.';
 	},
-	
+
 	/**
 	 * Get the handle to the widget with ID specified as input
 	 */
@@ -137,7 +146,7 @@ AjaxFranceLabs.AbstractManager = AjaxFranceLabs.Class.extend({
 			}
 		}
 	},
-	
+
 	/**
 	 * Perform a select all (*:*) request
 	 */
@@ -149,7 +158,7 @@ AjaxFranceLabs.AbstractManager = AjaxFranceLabs.Class.extend({
 		// Submit a new query with the value set in the Q parameter of the manager store
 		this.generateAndSetQueryID();
 		this.makeRequest();
-		
+
 		// Reset the URL: window.location.origin not used as it is not standard
 		window.history.replaceState({
 			'Default search request' : ''

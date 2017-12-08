@@ -34,5 +34,8 @@ AjaxFranceLabs.AbstractModule = AjaxFranceLabs.Class.extend({
 	},
 
 	afterRequest : function() {
+	},
+
+	requestError: function(status, error) {
 	}
 });

@@ -20,7 +20,7 @@ AjaxFranceLabs.ResultWidget = AjaxFranceLabs.AbstractWidget.extend({
 	pagination : false,
 
 	type : 'result',
-	
+
 	isMobile : false, // use to know if we delete the res bloc before adding the next page's result or not (loading on scroll)
 
 	//Methods
@@ -33,7 +33,7 @@ AjaxFranceLabs.ResultWidget = AjaxFranceLabs.AbstractWidget.extend({
 		var elm = $(this.elm);
 		var sel = this;
 		elm.addClass('resultWidget').addClass('widget').attr('widgetId', this.id).append('<div class="doc_list">');
-		
+
 		if (this.pagination){
 			$(this.elm).append('<div class="doc_list_pagination">');
 		}
@@ -72,8 +72,8 @@ AjaxFranceLabs.ResultWidget = AjaxFranceLabs.AbstractWidget.extend({
 	afterRequest : function() {
 		//This is an example, this method must be overide using your own results
 		var data = this.manager.response, elm = $(this.elm);
-		if (!this.isMobile)	
-			elm.find('.doc_list').empty(); //if we're in desktop mode 
+		if (!this.isMobile)
+			elm.find('.doc_list').empty(); //if we're in desktop mode
 		if (data.response.numFound === 0) {
 			elm.find('.doc_list').append('<div class="doc"><span class="noResult description">Aucun document ne correspond aux termes de recherche spécifiés </span></div>');
 		} else {
@@ -85,5 +85,16 @@ AjaxFranceLabs.ResultWidget = AjaxFranceLabs.AbstractWidget.extend({
 			if (this.pagination)
 				this.pagination.afterRequest(data);
 		}
+	},
+
+	requestError : function (status, error) {
+		let elm = $(this.elm);
+		elm.find('.doc_list').empty();
+		if (status == "timeout") {
+			elm.find('.doc_list').append('<div class="doc"><span class="noResult description">' + window.i18n.msgStore['requestTimeout'] + '</span></div>');
+		} else {
+			elm.find('.doc_list').append('<div class="doc"><span class="noResult description">' + window.i18n.msgStore['requestError'] + '</span></div>');
+		}
+
 	}
 });

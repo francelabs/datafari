@@ -15,21 +15,42 @@
  *******************************************************************************/
 AjaxFranceLabs.Manager = AjaxFranceLabs.AbstractManager.extend({
 
-	executeRequest : function(server, servlet, string, handler) {
+	defaultTimeout : 60000,
+
+	/**
+	 * A timeout of 0 means no timeout. If timeout is invalid, the default timeout
+	 * is used.
+	 */
+	executeRequest : function(server, servlet, string, handler, errorHandler, requestTimeout) {
 		var self = this;
 		server = server || this.serverUrl;
 		servlet = servlet || this.servlet;
 		string = string || this.store.string();
 		handler = handler ||
-		function(data) {
-			self.handleResponse(data);
-		};
+			function(data) {
+				self.handleResponse(data);
+			};
+		errorHandler = errorHandler ||
+			function(jqxhr, status, error) {
+				self.handleError(jqxhr, status, error);
+			};
+		if (!Number.isInteger(requestTimeout) || timeout < 0) {
+			requestTimeout = self.defaultTimeout;
+		}
 		if (this.proxyUrl) {
 			return $.post(this.proxyUrl, {
 				query : string
 			}, handler, 'json');
 		} else {
-			return $.getJSON(server + servlet + '?' + string + '&wt=json&json.wrf=?', handler);		}
+			// Using $.ajax to provide a timeout. Timeout can't be given using $.get.
+			return $.ajax({
+				url: server + servlet + '?' + string + '&wt=json&json.wrf=?',
+				dataType: "json",
+				success: handler,
+				error: errorHandler,
+				timeout: requestTimeout
+			});
+		}
 	}
-	
+
 });

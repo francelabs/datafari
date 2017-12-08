@@ -47,14 +47,14 @@ afterRequest : function() {
 		$.each(data.response.docs,
 						function(i, doc) {
 							if (doc.url != undefined){
-				                var url = doc.url.replace("localhost",window.location.hostname); 
+				                var url = doc.url.replace("localhost",window.location.hostname);
 				                var positionString = Manager.store.get("start").value;
 				                var position = 1;
-				                
+
 				                if (positionString !== null){
 				                	position += parseInt(positionString);
 				                }
-				               
+
 				                position += i;
 								var description = '';
 								if (data.highlighting[doc.id]) {
@@ -69,11 +69,11 @@ afterRequest : function() {
 
 								elm.find('.doc:last .res').append('<span class="icon"></span>');
 								var extension = doc.extension;
-								
+
 								if (self.isMobile){
 									if (extension.toLowerCase()!==undefined && extension.toLowerCase()!="")
 										elm.find('.doc:last .icon').append('<span>['+ extension.toUpperCase() +']</span> ');
-								}	
+								}
 								else {
 									if (extension !==undefined && extension !="") {
 										var icon = "";
@@ -94,7 +94,7 @@ afterRequest : function() {
 									}
 								}
 				                var urlRedirect = 'URL?url='+ url + '&id='+Manager.store.get("id").value + '&q=' + Manager.store.get("q").value + '&position='+position;
-								elm.find('.doc:last .res').append('<a class="title" target="_blank" href="'+urlRedirect+'"></a>');										
+								elm.find('.doc:last .res').append('<a class="title" target="_blank" href="'+urlRedirect+'"></a>');
 								var title;
 								// if the document is an html file, get the extracted title metadata
 								if (doc.extension == "html"){
@@ -109,7 +109,7 @@ afterRequest : function() {
 								elm.find('.doc:last .description').append('<div id="snippet">'+ description+ '</div>');
 								elm.find('.doc:last .description').append('<div id="urlMobile"><p class="address">');
 								elm.find('.doc:last .address').append('<span>' + AjaxFranceLabs.tinyUrl(decodeURIComponent(url)) + '</span>');
-								
+
 								// Add the elevator links if the user is allowed
 								if (typeof self.queryEvaluator !== 'undefined') {
 									self.queryEvaluator.addEvaluatorLinks(elm.find('.doc:last .res'), doc.id);
@@ -133,7 +133,7 @@ afterRequest : function() {
 									elem.find(".evaluator-up-clicked").hide();
 									elem.find(".evaluator-down-unclicked").hide();
 									elem.find(".evaluator-down-clicked").show();
-									
+
 								} else {
 									if (rank == 10){
 
@@ -141,13 +141,13 @@ afterRequest : function() {
 										elem.find(".evaluator-up-clicked").show();
 										elem.find(".evaluator-down-unclicked").show();
 										elem.find(".evaluator-down-clicked").hide();
-										
+
 									}
 								}
 					});
 				}});
 		}
-		
+
 		AjaxFranceLabs.addMultiElementClasses(elm
 				.find('.doc'));
 		if (this.pagination)
@@ -155,7 +155,7 @@ afterRequest : function() {
 	}
 	if (this.isMobile){
 		if ( $(".doc_list").children().length<parseInt($("#number_results_mobile span").text(),10)){
-			if (data.response.docs.length!=0){	
+			if (data.response.docs.length!=0){
 				$("#results .doc_list_pagination").show();
 				if (this.firstTimeWaypoint){
 					this.firstTimeWaypoint = false;
@@ -170,7 +170,7 @@ afterRequest : function() {
 					},{ offset: 'bottom-in-view'});
 					while(self.mutex_locked)
 						sleep(1);
-					//home made mutex  used to stop the browser from executing multiple times the lines above 
+					//home made mutex  used to stop the browser from executing multiple times the lines above
 					// without waiting the precedent execution (no native mutex are enable in javascript)
 				}
 			}
@@ -179,5 +179,19 @@ afterRequest : function() {
 			$("#spinner_mobile").hide();
 			}
 		}
+	},
+
+	requestError: function(status, error) {
+		let elm = $(this.elm),self=this;
+		if (!this.isMobile)
+			elm.find('.doc_list').empty();
+		else
+			elm.find('.doc_list .bar-loader').remove();
+
+			if (status == "timeout") {
+				elm.find('.doc_list').append('<div class="doc"><span class="noResult description">' + window.i18n.msgStore['requestTimeout'] + '</span></div>');
+			} else {
+				elm.find('.doc_list').append('<div class="doc"><span class="noResult description">' + window.i18n.msgStore['requestError'] + '</span></div>');
+			}
 	}
 });

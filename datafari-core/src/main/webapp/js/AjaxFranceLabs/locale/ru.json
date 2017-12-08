@@ -293,6 +293,8 @@
     "relevancySetupFile-label": "Relevancy setup filepath",
     "reloadButton": "Перезагрузить",
     "replace": "Заменить",
+    "requestError": "There was an error while executing the request.",
+    "requestTimeout": "The request took too long.",
     "required": "Требуется",
     "result": "Результат",
     "results": "результаты",

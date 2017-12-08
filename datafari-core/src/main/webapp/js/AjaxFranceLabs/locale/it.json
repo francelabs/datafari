@@ -293,6 +293,8 @@
     "relevancySetupFile-label": "Relevancy setup filepath",
     "reloadButton": "Reload",
     "replace": "Sostituire",
+    "requestError": "There was an error while executing the request.",
+    "requestTimeout": "The request took too long.",
     "required": "Obbligatorio",
     "result": "Risultato",
     "results": "risultati",
