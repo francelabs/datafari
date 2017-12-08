@@ -985,7 +985,7 @@
 			<str name="fl">score</str>
 			<str name="spellcheck.collate">true</str>
 			<str name="spellcheck.collateExtendedResults">true</str>
-			<str name="spellcheck.maxCollations">100</str>
+			<str name="spellcheck.maxCollations">10</str>
 			<str name="spellcheck.maxCollationTries">100</str>
 			<str name="spellcheck.count">10</str>
 			<str name="spellcheck.collate">true</str>
