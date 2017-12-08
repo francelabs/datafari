@@ -60,8 +60,7 @@ public class SearchProxy extends HttpServlet {
    *      response)
    */
   @Override
-  protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
-      throws ServletException, IOException {
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
     final String handler = getHandler(request);
     final String protocol = request.getScheme() + ":";
@@ -146,10 +145,8 @@ public class SearchProxy extends HttpServlet {
 
       try {
         if (ScriptConfiguration.getProperty("ontologyEnabled").toLowerCase().equals("true")
-            && ScriptConfiguration.getProperty("ontologyEnabled").toLowerCase().equals("true")
-            && handler.equals("/select")) {
-          final boolean languageSelection = Boolean
-              .valueOf(ScriptConfiguration.getProperty("ontologyLanguageSelection"));
+            && ScriptConfiguration.getProperty("ontologyEnabled").toLowerCase().equals("true") && handler.equals("/select")) {
+          final boolean languageSelection = Boolean.valueOf(ScriptConfiguration.getProperty("ontologyLanguageSelection"));
           String parentsLabels = ScriptConfiguration.getProperty("ontologyParentsLabels");
           String childrenLabels = ScriptConfiguration.getProperty("ontologyChildrenLabels");
           if (languageSelection) {
@@ -194,7 +191,7 @@ public class SearchProxy extends HttpServlet {
         // FileShare
         // core
 
-        queryPromolink.setQuery(params.getParamValue("q"));
+        queryPromolink.setQuery("\"" + params.getParamValue("q") + "\"");
         queryPromolink.setFilterQueries("-dateBeginning:[NOW/DAY+1DAY TO *]", "-dateEnd:[* TO NOW/DAY]");
         queryResponsePromolink = promolinkCore.executeQuery(queryPromolink);
       }
@@ -234,9 +231,9 @@ public class SearchProxy extends HttpServlet {
 
   }
 
-  private void writeSolrJResponse(final HttpServletRequest request, final HttpServletResponse response,
-      final IndexerQuery query, final IndexerQueryResponse queryResponse, final IndexerQuery queryPromolink,
-      final IndexerQueryResponse queryResponsePromolink) throws IOException, JSONException, ParseException {
+  private void writeSolrJResponse(final HttpServletRequest request, final HttpServletResponse response, final IndexerQuery query,
+      final IndexerQueryResponse queryResponse, final IndexerQuery queryPromolink, final IndexerQueryResponse queryResponsePromolink)
+      throws IOException, JSONException, ParseException {
 
     if (queryResponsePromolink != null) { // If it was a request on
       // FileShare

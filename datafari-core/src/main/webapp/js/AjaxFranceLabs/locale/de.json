@@ -194,7 +194,7 @@
     "indexField": "Indexfelder",
     "inputMust": "The value must be less than 1 and greater than 0",
     "it_locale": "Italienisch",
-    "keyword": "Schlüsselwort: ",
+    "keyword": "Schlüsselwort/Phrase: ",
     "kibanaURI": "Kibana URL",
     "labelFormAdminUi": "Datafari-Verwaltung",
     "labelhl": "Maximale Anzahl von hervorgehobenen analysierten Feldern",

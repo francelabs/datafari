@@ -194,7 +194,7 @@
     "indexField": "Index fields",
     "inputMust": "The value must be less than 1 and greater than 0",
     "it_locale": "Italiano",
-    "keyword": "Keyword : ",
+    "keyword": "Keyword/Phrase : ",
     "kibanaURI": "Kibana URI",
     "labelFormAdminUi": "Access Datafari administration",
     "labelhl": "Maximum number of analyzed chars by the highlight",

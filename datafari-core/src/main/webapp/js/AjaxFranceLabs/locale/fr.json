@@ -194,7 +194,7 @@
     "indexField": "Champs de l'index",
     "inputMust": "La valeur doit être inférieure ou égale à 1 et supérieure ou égale à 0",
     "it_locale": "Italiano",
-    "keyword": "Mot-clef :",
+    "keyword": "Mot-clef/Expression :",
     "kibanaURI": "URI Kibana",
     "labelFormAdminUi": "Acceder à Datafari",
     "labelhl": "Nombre maximum de caractères analysés par le surlignage",
