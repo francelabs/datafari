@@ -52,7 +52,7 @@
 <body class="gecko win">
 	
 	
-	<script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+	<script type="text/javascript" src="plugins/openlayers/OpenLayers.js"></script>
 	<script type="text/javascript" src="js/function/empty.func.js"></script>
 	<script type="text/javascript" src="js/jquery-ui-1.11.4/jquery-ui.js"></script>
 	<script type="text/javascript" src="js/jquery.waypoints.min.js"></script>
