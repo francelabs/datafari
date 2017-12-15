@@ -1319,7 +1319,8 @@ ul.DTTT_dropdown.dropdown-menu > li:hover > a {
 .form-control-feedback {
 	top: 6px;
 	right: 6px;
-}	
+}
+	
 .has-feedback .form-control-feedback {
   width: 26px;
   height: 26px;
