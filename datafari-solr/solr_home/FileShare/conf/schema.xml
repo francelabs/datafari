@@ -65,166 +65,168 @@
             (int, float, boolean, string...)
      -->
 
- <fields>
-   <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" /> 
-   
-   
-
-   <!-- Common metadata fields, named specifically to match up with
+<fields>
+    <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" /> 
+    
+    
+    
+    <!-- Common metadata fields, named specifically to match up with
      SolrCell metadata when parsing rich documents such as Word, PDF.
      Some fields are multiValued only because Tika currently may return
      multiple values for them. Some metadata is parsed from the documents,
      but there are some which come from the client context:
        "content_type": From the HTTP headers of incoming stream
        "resourcename": From SolrCell request param resource.name
-   -->
-  <field name="title" type="text_general" indexed="false" stored="true" multiValued="true"/>
-  <field name="title_en" type="text_en" indexed="true" stored="false" multiValued="true"/>
-   <field name="title_fr" type="text_fr" indexed="true" stored="false" multiValued="true"/>
-   <field name="nbLikes" type="likes"   />
-
-   <field name="extension" type="lowerCasedString" indexed="true" stored="true"/>
-   <field name="language" type="string" indexed="true" stored="true"/>
-   <field name="source" type="string" indexed="true" stored="true"/>
-   <field name="url" type="text_en" indexed="true" stored="true"/>
-   <field name="urlHierarchy" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="last_modified" type="tdate" indexed="true" stored="true"/>
-   <field name="content" type="text_general" indexed="false" stored="false" multiValued="true"/>
-   <field name="content_en" type="text_en" indexed="true" stored="false" multiValued="true"/>
-   <field name="content_fr" type="text_fr" indexed="true" stored="false" multiValued="true"/>
-   <field name="content_hl_en" type="text_en" indexed="false" stored="true" multiValued="true"/>
-   <field name="content_hl_fr" type="text_fr" indexed="false" stored="true" multiValued="true"/>
-   <field name="exactContent" type="text_nostem" indexed="true" stored="false" multiValued="true"/>
-   <field name="exactTitle" type="text_nostem" indexed="true" stored="false" multiValued="true"/>
-   
-   <field name="suggest" type="text_auto" indexed="true" stored="false" multiValued="true" />
-   <field name="spell" type="textSpell" indexed="true" stored="false" multiValued="true" />
-   
-   <!-- For the hash, added by rsabir -->
+    -->
+    <field name="title" type="text_general" indexed="false" stored="true" multiValued="true"/>
+    <field name="title_en" type="text_en" indexed="true" stored="false" multiValued="true"/>
+    <field name="title_fr" type="text_fr" indexed="true" stored="false" multiValued="true"/>
+    <field name="nbLikes" type="likes"   />
+    
+    <field name="extension" type="lowerCasedString" indexed="true" stored="true"/>
+    <field name="language" type="string" indexed="true" stored="true"/>
+    <field name="source" type="string" indexed="true" stored="true"/>
+    <field name="url" type="text_en" indexed="true" stored="true"/>
+    <field name="urlHierarchy" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="last_modified" type="tdate" indexed="true" stored="true" default="NOW"/>
+    <field name="content" type="text_general" indexed="false" stored="false" multiValued="true"/>
+    <field name="content_en" type="text_en" indexed="true" stored="false" multiValued="true"/>
+    <field name="content_fr" type="text_fr" indexed="true" stored="false" multiValued="true"/>
+    <field name="content_hl_en" type="text_en" indexed="false" stored="true" multiValued="true"/>
+    <field name="content_hl_fr" type="text_fr" indexed="false" stored="true" multiValued="true"/>
+    <field name="exactContent" type="text_nostem" indexed="true" stored="false" multiValued="true"/>
+    <field name="exactTitle" type="text_nostem" indexed="true" stored="false" multiValued="true"/>
+    <field name="crawl_date" type="tdate" indexed="true" stored="true" default="NOW"/>
+    
+    
+    <field name="suggest" type="text_auto" indexed="true" stored="false" multiValued="true" />
+    <field name="spell" type="textSpell" indexed="true" stored="false" multiValued="true" />
+    
+    <!-- For the hash, added by rsabir -->
     <field name="signature" type="string" stored="true" indexed="true" multiValued="false" />
-   
-   
-  <field name="allow_token_document" type="string" indexed="true" stored="true" multiValued="true" required="true" default="__nosecurity__"/>
-  <field name="allow_token_parent" type="string" indexed="true" stored="true" multiValued="true" required="true" default="__nosecurity__"/>
-  <field name="allow_token_share" type="string" indexed="true" stored="true" multiValued="true" required="true" default="__nosecurity__"/>
-  <field name="deny_token_document" type="string" indexed="true" stored="true" multiValued="true" required="true" default="__nosecurity__"/>
-  <field name="deny_token_parent" type="string" indexed="true" stored="true" multiValued="true" required="true" default="__nosecurity__"/>
-  <field name="deny_token_share" type="string" indexed="true" stored="true" multiValued="true" required="true" default="__nosecurity__"/>
+    
+    
+    <field name="allow_token_document" type="string" indexed="true" stored="true" multiValued="true" required="true" default="__nosecurity__"/>
+    <field name="allow_token_parent" type="string" indexed="true" stored="true" multiValued="true" required="true" default="__nosecurity__"/>
+    <field name="allow_token_share" type="string" indexed="true" stored="true" multiValued="true" required="true" default="__nosecurity__"/>
+    <field name="deny_token_document" type="string" indexed="true" stored="true" multiValued="true" required="true" default="__nosecurity__"/>
+    <field name="deny_token_parent" type="string" indexed="true" stored="true" multiValued="true" required="true" default="__nosecurity__"/>
+    <field name="deny_token_share" type="string" indexed="true" stored="true" multiValued="true" required="true" default="__nosecurity__"/>
+    
+    
+    <field name="_version_" type="long" indexed="true" stored="true"/>
+    
+    <!-- EXIF fields -->
+    <field name="ae_warning" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="custom_rendered" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="scene_capture_type" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="exposure_mode" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="max_aperture_value" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="subject_distance_range" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="faces_detected" type="int" indexed="true" stored="true" multiValued="true"/>
+    <field name="exposure_bias_value" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="resolution_unit" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="white_balance_fine_tune" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="image_width" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="sharpness" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="high_iso_noise_reduction" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="focus_warning" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="exif_datetimeoriginal" type="tdate" indexed="true" stored="true" multiValued="true"/>
+    <field name="tiff_xresolution" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="flash" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="date_time_digitized" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="quality" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="meta_save_date" type="tdate" indexed="true" stored="true" multiValued="true"/>
+    <field name="color_space" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="sequence_number" type="int" indexed="true" stored="true" multiValued="true"/>
+    <field name="last_save_date" type="tdate" indexed="true" stored="true" multiValued="true"/>
+    <field name="exif_flash" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="dcterms_modified" type="tdate" indexed="true" stored="true" multiValued="true"/>
+    <field name="dcterms_created" type="tdate" indexed="true" stored="true" multiValued="true"/>
+    <field name="tiff_imagelength" type="int" indexed="true" stored="true" multiValued="true"/>
+    <field name="compressed_bits_per_pixel" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="data_precision" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="macro" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="flashpix_version" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="dynamic_range_setting" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="scene_type" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="software" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="focal_plane_y_resolution" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="exif_focallength" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="picture_mode" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="makernote_version" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="resourcename" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="iso_speed_ratings" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="exposure_time" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="slow_sync" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="exif_fnumber" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="film_mode" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="focus_pixel" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="exposure_program" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="color_saturation" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="interoperability_version" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="focal_plane_resolution_unit" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="brightness_value" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="copyright" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="x_resolution" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="ycbcr_positioning" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="components_configuration" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="compression" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="white_balance_mode" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="tiff_imagewidth" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="model" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="exif_isospeedratings" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="ge_image_size" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="tiff_model" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="dynamic_range" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="image_height" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="exif_image_width" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="auto_bracketing" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="development_dynamic_range" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="aperture_value" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="noise_reduction" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="blur_warning" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="file_size" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="thumbnail_length" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="exif_exposuretime" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="sensing_method" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="flash_strength" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="white_balance" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="focal_plane_x_resolution" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="y_resolution" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="tiff_yresolution" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="exif_image_height" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="thumbnail_offset" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="tiff_software" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="interoperability_index" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="tiff_orientation" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="metering_mode" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="orientation" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="make" type="string" indexed="false" stored="true" multiValued="true"/>
+    <field name="creation_date" type="tdate" indexed="true" stored="true" multiValued="true"/>
+    <field name="file_source" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="meta_creation_date" type="tdate" indexed="true" stored="true" multiValued="true"/>
+    <field name="tiff_bitspersample" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="sensitivity_type" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="focus_mode" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="f_number" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="component_3" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="serial_number" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="tiff_make" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="shutter_speed_value" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="date_time_original" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="tiff_resolutionunit" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="component_1" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="focal_length" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="component_2" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="number_of_components" type="int" indexed="true" stored="true" multiValued="true"/>
+    <field name="compression_type" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="flash_mode" type="string" indexed="true" stored="true" multiValued="true"/>
+        
+    <dynamicField name="ignored_*" type="ignored" multiValued="true"/>
+    <dynamicField name="ontology_*" type="string" multiValued="true"/>
 
-
-   <field name="_version_" type="long" indexed="true" stored="true"/>
-   
-   <!-- EXIF fields -->
-   <field name="ae_warning" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="custom_rendered" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="scene_capture_type" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="exposure_mode" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="max_aperture_value" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="subject_distance_range" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="faces_detected" type="int" indexed="true" stored="true" multiValued="true"/>
-   <field name="exposure_bias_value" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="resolution_unit" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="white_balance_fine_tune" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="image_width" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="sharpness" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="high_iso_noise_reduction" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="focus_warning" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="exif_datetimeoriginal" type="tdate" indexed="true" stored="true" multiValued="true"/>
-   <field name="tiff_xresolution" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="flash" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="date_time_digitized" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="quality" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="meta_save_date" type="tdate" indexed="true" stored="true" multiValued="true"/>
-   <field name="color_space" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="sequence_number" type="int" indexed="true" stored="true" multiValued="true"/>
-   <field name="last_save_date" type="tdate" indexed="true" stored="true" multiValued="true"/>
-   <field name="exif_flash" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="dcterms_modified" type="tdate" indexed="true" stored="true" multiValued="true"/>
-   <field name="dcterms_created" type="tdate" indexed="true" stored="true" multiValued="true"/>
-   <field name="tiff_imagelength" type="int" indexed="true" stored="true" multiValued="true"/>
-   <field name="compressed_bits_per_pixel" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="data_precision" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="macro" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="flashpix_version" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="dynamic_range_setting" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="scene_type" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="software" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="focal_plane_y_resolution" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="exif_focallength" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="picture_mode" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="makernote_version" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="resourcename" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="iso_speed_ratings" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="exposure_time" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="slow_sync" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="exif_fnumber" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="film_mode" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="focus_pixel" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="exposure_program" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="color_saturation" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="interoperability_version" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="focal_plane_resolution_unit" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="brightness_value" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="copyright" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="x_resolution" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="ycbcr_positioning" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="components_configuration" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="compression" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="white_balance_mode" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="tiff_imagewidth" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="model" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="exif_isospeedratings" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="ge_image_size" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="tiff_model" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="dynamic_range" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="image_height" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="exif_image_width" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="auto_bracketing" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="development_dynamic_range" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="aperture_value" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="noise_reduction" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="blur_warning" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="file_size" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="thumbnail_length" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="exif_exposuretime" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="sensing_method" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="flash_strength" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="white_balance" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="focal_plane_x_resolution" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="y_resolution" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="tiff_yresolution" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="exif_image_height" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="thumbnail_offset" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="tiff_software" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="interoperability_index" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="tiff_orientation" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="metering_mode" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="orientation" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="make" type="string" indexed="false" stored="true" multiValued="true"/>
-   <field name="creation_date" type="tdate" indexed="true" stored="true" multiValued="true"/>
-   <field name="file_source" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="meta_creation_date" type="tdate" indexed="true" stored="true" multiValued="true"/>
-   <field name="tiff_bitspersample" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="sensitivity_type" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="focus_mode" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="f_number" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="component_3" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="serial_number" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="tiff_make" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="shutter_speed_value" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="date_time_original" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="tiff_resolutionunit" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="component_1" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="focal_length" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="component_2" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="number_of_components" type="int" indexed="true" stored="true" multiValued="true"/>
-   <field name="compression_type" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="flash_mode" type="string" indexed="true" stored="true" multiValued="true"/>
-   
-   <dynamicField name="ignored_*" type="ignored" multiValued="true"/>
-   <dynamicField name="ontology_*" type="string" multiValued="true"/>
-   
- </fields>
+</fields>
 
  <!-- Field to use to determine and enforce document uniqueness. 
       Unless this field is marked with required="false", it will be a required field
