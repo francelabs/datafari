@@ -12,16 +12,21 @@ import org.apache.manifoldcf.core.system.ManifoldCF;
 public class DatafariJNDIRealm extends JNDIRealm {
 
 	private static final Logger log = Logger.getLogger(DatafariJNDIRealm.class);
+	boolean alreadyDeobfuscatedPassword = false;
 
 	@Override
 	protected Hashtable<String, String> getDirectoryContextEnvironment() {
 		final Hashtable<String, String> env = new Hashtable<>();
 		// Configure our directory context environment.
 		// Here we decrypt password and set it
-		try {
-			this.connectionPassword = ManifoldCF.deobfuscate(this.connectionPassword);
-		} catch (final ManifoldCFException e) {
-			log.error("Deobfuscate error on password ! Did you use clear text password ?", e);
+		if (!alreadyDeobfuscatedPassword) {
+			try {
+				this.connectionPassword = ManifoldCF.deobfuscate(this.connectionPassword);
+				alreadyDeobfuscatedPassword = true;
+			} catch (final ManifoldCFException e) {
+				log.error("Deobfuscate error on password ! Did you use clear text password ? Password to deobfuscate: "
+						+ this.connectionPassword, e);
+			}
 		}
 
 		env.put(Context.INITIAL_CONTEXT_FACTORY, contextFactory);
@@ -31,9 +36,9 @@ public class DatafariJNDIRealm extends JNDIRealm {
 		if (connectionPassword != null) {
 			env.put(Context.SECURITY_CREDENTIALS, connectionPassword);
 		}
-		if (connectionURL != null && connectionAttempt == 0) {
+		if ((connectionURL != null) && (connectionAttempt == 0)) {
 			env.put(Context.PROVIDER_URL, connectionURL);
-		} else if (alternateURL != null && connectionAttempt > 0) {
+		} else if ((alternateURL != null) && (connectionAttempt > 0)) {
 			env.put(Context.PROVIDER_URL, alternateURL);
 		}
 		if (authentication != null) {
