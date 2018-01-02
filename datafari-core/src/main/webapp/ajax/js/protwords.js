@@ -92,7 +92,8 @@ function getFile(){
 	                bodyStyle: // style to assign to document body contained within the editor
 	                    "margin:4px; font:10pt Arial,Verdana; cursor:text"
 		        });
-				$("#fields").append("<input style=\"margin-top : 10px;\" type=\"Submit\" class=\"btn btn-primary btn-label-left\" id=\"submit\"value="+window.i18n.msgStore['confirm']+">");
+				$("#fields").append("<button style=\"margin-top : 10px;\" type=\"Submit\" class=\"btn btn-primary btn-label-left\" id=\"submit\" data-loading-text=\"<i class='fa fa-spinner fa-spin'></i> " + 
+						window.i18n.msgStore['confirm'] + "\">"+window.i18n.msgStore['confirm']+"</button>");
 				$("#div1").append("</fieldset>");
 				$("#res").append("</div>");
 				$("#ajaxResponse").append("</form>");
@@ -113,6 +114,7 @@ function getFile(){
 	}
 }
 function upload(text){
+	$("#submit").button("loading");
 	//Get the language and the content
 	var language = document.getElementById("language").value
 	var content = text;
@@ -140,6 +142,7 @@ function upload(text){
     	complete: function(jqXHR, textStatus){
         	//allow the user to select a language
         	$('#language').attr("disabled", false);
+    		$("#submit").button("reset");
     	}
 	});
 }

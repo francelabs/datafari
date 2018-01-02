@@ -17,6 +17,7 @@ $(document).ready(function() {
 	});
 	
 	setupLanguage();
+	
 
 });
 
@@ -27,6 +28,7 @@ function setupLanguage(){
 	 document.getElementById("topbar3").innerHTML = window.i18n.msgStore['adminUI-Synonyms'];
 	 document.getElementById("Modify").innerHTML = window.i18n.msgStore['selectLang'];
 	 $("#validate").html(window.i18n.msgStore['validModifications']);
+	 $("#validate").attr('data-loading-text', "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['validModifications']);
 	 $("#thWords").html(window.i18n.msgStore['words']);
 	 $("#thSynonyms").html(window.i18n.msgStore['synonyms']);
 	 $("#synonymsListLabel").html(window.i18n.msgStore['synonymsListLabel']);
@@ -172,6 +174,7 @@ function getFile(){
 				
 				// Add validate button function
 				$("#validate").click(function() {
+					$("#validate").button("loading");
 					var synonymsList = getSynonymsList();
 					if(synonymsList[Error] == undefined || synonymsList[Error] == "") {
 						$.post('./Synonyms', {"synonymsList": JSON.stringify(synonymsList), "language": $("#language").val()}, function(data) {
@@ -185,9 +188,11 @@ function getFile(){
 								$("#ajaxResponse").empty();
 								$("#ajaxResponse").append(window.i18n.msgStore['modifDone']);
 				        	}
+							$("#validate").button("reset");
 						});
 					} else {
 						 $("#ajaxResponse").html(synonymsList[Error]);
+						 $("#validate").button("reset");
 					}
 				});
 			}

@@ -40,6 +40,7 @@ import org.json.JSONObject;
 import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
+import com.francelabs.datafari.utils.ZKUtils;
 
 /**
  * Javadoc
@@ -56,6 +57,7 @@ import com.francelabs.datafari.utils.ExecutionEnvironment;
 @WebServlet("/admin/Synonyms")
 public class Synonyms extends HttpServlet {
   private static final long serialVersionUID = 1L;
+  private static final String confname = "FileShare";
   private final String server = Core.FILESHARE.toString();
   private final String env;
   private final static Logger LOGGER = Logger.getLogger(Synonyms.class.getName());
@@ -172,6 +174,10 @@ public class Synonyms extends HttpServlet {
         }
         file.delete();
         tempFile.renameTo(file);
+        String[] params = {file.getName()};
+        ZKUtils.configZK("uploadconfigzk.sh", confname, params);
+        Thread.sleep(1000);
+        ZKUtils.configZK("reloadCollections.sh", confname);
       }
     } catch (final Exception e) {
       final PrintWriter out = response.getWriter();
