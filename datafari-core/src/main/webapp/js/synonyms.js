@@ -27,6 +27,7 @@ function setupLanguage(){
 	 document.getElementById("topbar2").innerHTML = window.i18n.msgStore['adminUI-SearchEngineConfig'];
 	 document.getElementById("topbar3").innerHTML = window.i18n.msgStore['adminUI-Synonyms'];
 	 document.getElementById("Modify").innerHTML = window.i18n.msgStore['selectLang'];
+	 $("#reload-warning").html(window.i18n.msgStore['adminUI-ReloadWarning']);
 	 $("#validate").html(window.i18n.msgStore['validModifications']);
 	 $("#validate").attr('data-loading-text', "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['validModifications']);
 	 $("#thWords").html(window.i18n.msgStore['words']);
