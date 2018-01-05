@@ -123,7 +123,13 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     String extension = "";
     final SolrInputField mimeTypeField = doc.get("ignored_content_type");
     if (extensionFromName || mimeTypeField == null) {
-      extension = extractFromFileName(filename);
+    	if (filename.contains(".")){
+    		extension = extractFromFileName(filename);
+    	}
+    	else if (url.startsWith("http")) {
+    		extension = "html";
+    	}
+      
     } else {
       String mimeType = (String) mimeTypeField.getFirstValue();
       if (mimeType.contains(";")) {
