@@ -971,7 +971,11 @@
 			<str name="name">default</str>
 			<str name="field">spell</str>
 			<str name="classname">solr.DirectSolrSpellChecker</str>
-			<float name="thresholdTokenFrequency">.01</float>
+			<!-- By default set to 0, because in standard Enterprise Search scenarios, 
+			even if terms are present very seldomly, we want Datafari to present 
+			the proposed term as a valid spellcheck in case the current search term
+ 			ends up with no results. -->
+			<float name="thresholdTokenFrequency">0</float>
 		</lst>
 	</searchComponent>
 
