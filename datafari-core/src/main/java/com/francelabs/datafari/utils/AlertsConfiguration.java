@@ -23,6 +23,8 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.apache.manifoldcf.authorities.system.ManifoldCF;
+import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 
 /**
  * Configuration reader
@@ -71,8 +73,16 @@ public class AlertsConfiguration {
 	 *            : the new value of the key
 	 * @return : true if there's an error and false if not
 	 */
-	public static synchronized boolean setProperty(final String key, final String value) {
+	public static synchronized boolean setProperty(final String key, String value) {
 		try {
+			if (key.equals(SMTP_PASSWORD)) {
+				try {
+					value = ManifoldCF.obfuscate(value);
+				} catch (ManifoldCFException e) {
+					LOGGER.error(e);
+					return true;
+				}
+			}
 			getInstance().properties.setProperty(key, value);
 			final FileOutputStream fileOutputStream = new FileOutputStream(configPropertiesFileNameRealPath);
 			instance.properties.store(fileOutputStream, null);
@@ -85,7 +95,17 @@ public class AlertsConfiguration {
 	}
 
 	public static synchronized String getProperty(final String key) throws IOException {
-		return (String) getInstance().properties.get(key);
+		String result = (String) getInstance().properties.get(key);
+		if (key.equals(SMTP_PASSWORD)) {
+			try {
+				return ManifoldCF.deobfuscate(result);
+			} catch (ManifoldCFException e) {
+				LOGGER.error(e);
+				return result;
+			}
+		} else {
+			return result;
+		}
 	}
 
 	/**
