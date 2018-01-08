@@ -8,12 +8,14 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.NoSuchAlgorithmException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +31,7 @@ import com.francelabs.datafari.utils.Environment;
 
 @PrepareForTest(Environment.class)
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore("javax.management.*")
+@PowerMockIgnore({"javax.management.*","javax.crypto.*"})
 public class TestAlertsAdmin {
 
   final static String resourcePathStr = "src/test/resources/alertsTests";
@@ -50,7 +52,7 @@ public class TestAlertsAdmin {
   }
 
   @Test
-  public void TestSaveAlerts() throws ServletException, IOException {
+  public void TestSaveAlerts() throws ServletException, IOException, ManifoldCFException, NoSuchAlgorithmException {
     final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
     final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 

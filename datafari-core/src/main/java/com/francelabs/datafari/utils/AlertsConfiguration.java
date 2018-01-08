@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.apache.manifoldcf.authorities.system.ManifoldCF;
+import org.apache.manifoldcf.core.system.ManifoldCF;
 import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 
 /**
