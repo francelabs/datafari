@@ -691,6 +691,7 @@
 		<str name="pf">title_en^500 title_fr^500 content_fr^100 content_en^100</str>
 		<int name="rows">10</int>
 		<str name="spellcheck">true</str>
+		<str name="spellcheck.onlyMorePopular">true</str>
 		<str name="hl.simple.pre">&lt;span class="em"&gt;</str>
 		<str name="hl.simple.post">&lt;/span&gt;</str>
 		<str name="spellcheck.count">1</str>
@@ -751,6 +752,7 @@
 			<str name="pf">title_en^500 title_fr^500 content_fr^100 content_en^100</str>
 			<int name="rows">10</int>
 			<str name="spellcheck">true</str>
+			<str name="spellcheck.onlyMorePopular">true</str>
 			<str name="hl.simple.pre">&lt;span class="em"&gt;</str>
 			<str name="hl.simple.post">&lt;/span&gt;</str>
 			<str name="spellcheck.count">1</str>

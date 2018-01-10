@@ -271,10 +271,11 @@
     <fieldType name="textSpell" class="solr.TextField"
 			positionIncrementGap="100" omitNorms="true">
 			<analyzer>
-				<tokenizer class="solr.StandardTokenizerFactory" />
-				<filter class="solr.LowerCaseFilterFactory" />
-				<filter class="solr.StandardFilterFactory"/>
-				<filter class="solr.RemoveDuplicatesTokenFilterFactory" />
+				<tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="0"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.ASCIIFoldingFilterFactory" preserveOriginal="false" />
+        <filter class="solr.RemoveDuplicatesTokenFilterFactory" />
 			</analyzer>
 	</fieldType>
 	
