@@ -38,6 +38,11 @@ export JAVA_HOME=/opt/datafari/jvm
 cd /opt/datafari/mcf/mcf_home/obfuscation-utility
 sed -i -e "s~@PASSWORD@~$(./obfuscate.sh ${RET})~g" /opt/datafari/mcf/mcf_home/properties-global.xml
 sed -i -e "s/@TEMPADMINPASSWORD@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
+db_input high datafari/postgres_password || true
+db_go
+db_get datafari/postgres_password
+sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${RET})~g" /opt/datafari/mcf/mcf_home/properties-global.xml
+sed -i -e "s~@POSTGRESPASSWORD@~${RET}~g" /opt/datafari/pgsql/pwd.conf
 id -u postgres >/dev/null 2>&1 || useradd postgres
 id -u datafari >/dev/null 2>&1 || useradd datafari
 chown -R datafari /opt/datafari
@@ -49,6 +54,3 @@ chmod 755 /opt/datafari/elk/kibana/bin/*
 chmod 755 /opt/datafari/elk/kibana/node/bin/*
 chmod 755 /opt/datafari/elk/logstash/vendor/jruby/bin/*
 chmod 755 /opt/datafari/elk/scripts/*
-
-
-

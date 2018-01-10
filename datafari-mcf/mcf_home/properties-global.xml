@@ -31,7 +31,7 @@
   <property name="org.apache.manifoldcf.hsqldbdatabaseinstance" value="xdb"/>
   <property name="org.apache.manifoldcf.database.name" value="manifoldcf"/>
   <property name="org.apache.manifoldcf.dbsuperusername" value="postgres"/>
-  <property name="org.apache.manifoldcf.dbsuperuserpassword" value="password"/>
+  <property name="org.apache.manifoldcf.dbsuperuserpassword.obfuscated" value="@POSTGRESPASSWORD@"/>
 
   <property name="org.apache.manifoldcf.database.maxhandles" value="100"/>
   <property name="org.apache.manifoldcf.crawler.threads" value="50"/>

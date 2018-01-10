@@ -21,7 +21,7 @@ Description: SOLRCLOUD - Specify the main node host:
 Template: datafari/num_shards
 Type: string
 Default: 1
-Description: SOLRCLOUD - Please enter the number of shards you want for your index: 
+Description: SOLRCLOUD - Please enter the number of shards you want for your index:
 
 Template: datafari/mcf_password
 Type: password
@@ -34,9 +34,13 @@ Type: password
 Default: admin
 Description: Please enter the Datafari password:
 
+Template: datafari/postgres_password
+Type: password
+Default: admin
+Description: Please enter the PostgreSQL superuser password:
+
 
 Template: datafari/tomcat_password
 Type: password
 Default: admin
 Description: Please enter the Tomcat password:
-
