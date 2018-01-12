@@ -31,277 +31,273 @@ import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 
 public class UserDataService {
-	final static Logger logger = Logger.getLogger(UserDataService.class.getName());
-	private static UserDataService instance;
+  final static Logger logger = Logger.getLogger(UserDataService.class.getName());
+  private static UserDataService instance;
 
-	public final static String SEARCHADMINISTRATOR = "SearchAdministrator";
-	public final static String USERCOLLECTION = "user";
-	public final static String ROLECOLLECTION = "role";
+  public final static String SEARCHADMINISTRATOR = "SearchAdministrator";
+  public final static String USERCOLLECTION = "user";
+  public final static String ROLECOLLECTION = "role";
 
-	public static final String USERNAMECOLUMN = "username";
-	public final static String PASSWORDCOLUMN = "password";
-	public final static String LDAPCOLUMN = "ldap";
-	public final static String ROLECOLUMN = "role";
+  public static final String USERNAMECOLUMN = "username";
+  public final static String PASSWORDCOLUMN = "password";
+  public final static String LDAPCOLUMN = "ldap";
+  public final static String ROLECOLUMN = "role";
 
-	private final Session session;
+  private final Session session;
 
-	public static synchronized UserDataService getInstance() throws DatafariServerException {
-		try {
-			if (instance == null) {
-				instance = new UserDataService();
-			}
-			return instance;
-		} catch (DriverException | IOException e) {
-			logger.warn("Unable to connect to database : " + e.getMessage());
-			// TODO catch specific exception
-			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
-		}
-	}
+  public static synchronized UserDataService getInstance() throws DatafariServerException {
+    try {
+      if (instance == null) {
+        instance = new UserDataService();
+      }
+      return instance;
+    } catch (DriverException | IOException e) {
+      logger.warn("Unable to connect to database : " + e.getMessage());
+      // TODO catch specific exception
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+    }
+  }
 
-	public UserDataService() throws IOException {
+  public UserDataService() throws IOException {
 
-		// Gets the name of the collection
-		session = DBContextListerner.getSession();
+    // Gets the name of the collection
+    session = CassandraManager.getInstance().getSession();
 
-	}
+  }
 
-	/**
-	 * Inform if the user exists already in the database
-	 *
-	 * @return true if is exists and false if not
-	 * @throws Exception
-	 *             if there's a problem with Cassandra
-	 */
-	public boolean isInBase(final String username) throws DatafariServerException {
-		try {
-			final ResultSet results = session
-					.execute("SELECT * FROM " + USERCOLLECTION + " where " + USERNAMECOLUMN + " = '" + username + "'");
-			if (results.one() != null) {
-				return true;
-			} else {
-				return false;
-			}
-		} catch (DriverException e) {
-			logger.warn("Unable to check if user in base : " + e.getMessage());
-			// TODO catch specific exception
-			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
-		}
+  /**
+   * Inform if the user exists already in the database
+   *
+   * @return true if is exists and false if not
+   * @throws Exception
+   *           if there's a problem with Cassandra
+   */
+  public boolean isInBase(final String username) throws DatafariServerException {
+    try {
+      final ResultSet results = session
+          .execute("SELECT * FROM " + USERCOLLECTION + " where " + USERNAMECOLUMN + " = '" + username + "'");
+      if (results.one() != null) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (final DriverException e) {
+      logger.warn("Unable to check if user in base : " + e.getMessage());
+      // TODO catch specific exception
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+    }
 
-	}
+  }
 
-	/**
-	 * Get the password of a user
-	 *
-	 * @param username
-	 * @return the password of the user
-	 * @throws Exception
-	 *             if there's a problem with Cassandra
-	 */
-	public String getPassword(final String username) throws DatafariServerException {
-		try {
+  /**
+   * Get the password of a user
+   *
+   * @param username
+   * @return the password of the user
+   * @throws Exception
+   *           if there's a problem with Cassandra
+   */
+  public String getPassword(final String username) throws DatafariServerException {
+    try {
 
-			final ResultSet results = session
-					.execute("SELECT * FROM " + USERCOLLECTION + " where " + USERNAMECOLUMN + " = '" + username + "'");
-			final Row entry = results.one();
-			if (entry == null) {
-				return null;
-			} else {
-				return entry.getString(PASSWORDCOLUMN);
-			}
+      final ResultSet results = session
+          .execute("SELECT * FROM " + USERCOLLECTION + " where " + USERNAMECOLUMN + " = '" + username + "'");
+      final Row entry = results.one();
+      if (entry == null) {
+        return null;
+      } else {
+        return entry.getString(PASSWORDCOLUMN);
+      }
 
-		} catch (DriverException e) {
-			logger.warn("Unable to get password : " + e.getMessage());
-			// TODO catch specific exception
-			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
-		}
-	}
+    } catch (final DriverException e) {
+      logger.warn("Unable to get password : " + e.getMessage());
+      // TODO catch specific exception
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+    }
+  }
 
-	/**
-	 * Returns the roles of a user containing in the myDoc
-	 *
-	 * @param myDoc
-	 *            the document containing the user with the roles
-	 * @return an arrayList of roles of the user
-	 * @throws Exception
-	 *             if there's a probleme with database
-	 */
-	public List<String> getRoles(final String username) throws DatafariServerException {
-		try {
+  /**
+   * Returns the roles of a user containing in the myDoc
+   *
+   * @param myDoc
+   *          the document containing the user with the roles
+   * @return an arrayList of roles of the user
+   * @throws Exception
+   *           if there's a probleme with database
+   */
+  public List<String> getRoles(final String username) throws DatafariServerException {
+    try {
 
-			final List<String> roles = new ArrayList<String>();
-			final ResultSet results = session.execute("SELECT " + ROLECOLUMN + " FROM " + ROLECOLLECTION + " where "
-					+ USERNAMECOLUMN + " = '" + username + "'");
+      final List<String> roles = new ArrayList<String>();
+      final ResultSet results = session.execute(
+          "SELECT " + ROLECOLUMN + " FROM " + ROLECOLLECTION + " where " + USERNAMECOLUMN + " = '" + username + "'");
 
-			for (final Row row : results) {
-				roles.add(row.getString(ROLECOLUMN));
-			}
-			return roles;
-		} catch (DriverException e) {
-			logger.warn("Unable to get roles : " + e.getMessage());
-			// TODO catch specific exception
-			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
-		}
-	}
+      for (final Row row : results) {
+        roles.add(row.getString(ROLECOLUMN));
+      }
+      return roles;
+    } catch (final DriverException e) {
+      logger.warn("Unable to get roles : " + e.getMessage());
+      // TODO catch specific exception
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+    }
+  }
 
-	/**
-	 * get all user with the corresponding roles
-	 *
-	 * @param db
-	 *            instance of the database that contains the identifier
-	 *            collection
-	 * @return Map of <username, list of roles>
-	 * @throws Exception
-	 *             if there's a problem with Cassandra
-	 */
-	public Map<String, List<String>> getAllUsers() throws DatafariServerException {
-		try {
-			final Map<String, List<String>> users = new HashMap<String, List<String>>();
+  /**
+   * get all user with the corresponding roles
+   *
+   * @param db
+   *          instance of the database that contains the identifier collection
+   * @return Map of <username, list of roles>
+   * @throws Exception
+   *           if there's a problem with Cassandra
+   */
+  public Map<String, List<String>> getAllUsers() throws DatafariServerException {
+    try {
+      final Map<String, List<String>> users = new HashMap<String, List<String>>();
 
-			final ResultSet userResults = session.execute("SELECT * FROM " + USERCOLLECTION);
-			for (final Row row : userResults) {
-				final String user = row.getString(USERNAMECOLUMN);
-				if (!users.containsKey(user)) {
-					users.put(user, new ArrayList<String>());
-				}
-			}
+      final ResultSet userResults = session.execute("SELECT * FROM " + USERCOLLECTION);
+      for (final Row row : userResults) {
+        final String user = row.getString(USERNAMECOLUMN);
+        if (!users.containsKey(user)) {
+          users.put(user, new ArrayList<String>());
+        }
+      }
 
-			final ResultSet roleResults = session.execute("SELECT * FROM " + ROLECOLLECTION);
+      final ResultSet roleResults = session.execute("SELECT * FROM " + ROLECOLLECTION);
 
-			for (final Row row : roleResults) {
-				final String user = row.getString(USERNAMECOLUMN);
-				if (!users.containsKey(user)) {
-					users.put(user, new ArrayList<String>());
-				}
-				users.get(user).add(row.getString(ROLECOLUMN));
-			}
+      for (final Row row : roleResults) {
+        final String user = row.getString(USERNAMECOLUMN);
+        if (!users.containsKey(user)) {
+          users.put(user, new ArrayList<String>());
+        }
+        users.get(user).add(row.getString(ROLECOLUMN));
+      }
 
-			return users;
+      return users;
 
-		} catch (DriverException e) {
-			logger.warn("Unable to get all users : " + e.getMessage());
-			// TODO catch specific exception
-			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
-		}
-	}
+    } catch (final DriverException e) {
+      logger.warn("Unable to get all users : " + e.getMessage());
+      // TODO catch specific exception
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+    }
+  }
 
-	/**
-	 * Change a password of username with the "password"
-	 *
-	 * @param password
-	 *            new password hashed
-	 * @param username
-	 *            the username that we want to change
-	 * @throws Exception
-	 *             if there's a problem with Cassandra
-	 */
-	public void changePassword(final String passwordHashed, final String username) throws DatafariServerException {
-		try {
+  /**
+   * Change a password of username with the "password"
+   *
+   * @param password
+   *          new password hashed
+   * @param username
+   *          the username that we want to change
+   * @throws Exception
+   *           if there's a problem with Cassandra
+   */
+  public void changePassword(final String passwordHashed, final String username) throws DatafariServerException {
+    try {
 
-			final String query = "update " + USERCOLLECTION + " set " + PASSWORDCOLUMN + " = '" + passwordHashed
-					+ "' where " + USERNAMECOLUMN + " = '" + username + "'";
-			session.execute(query);
-		} catch (DriverException e) {
+      final String query = "update " + USERCOLLECTION + " set " + PASSWORDCOLUMN + " = '" + passwordHashed + "' where "
+          + USERNAMECOLUMN + " = '" + username + "'";
+      session.execute(query);
+    } catch (final DriverException e) {
 
-			logger.warn("Unable to change password : " + e.getMessage());
-			// TODO catch specific exception
-			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
-		}
-	}
+      logger.warn("Unable to change password : " + e.getMessage());
+      // TODO catch specific exception
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+    }
+  }
 
-	/**
-	 * Add a role to the user
-	 *
-	 * @param role
-	 *            string representing the role that we want to add
-	 * @throws DatafariServerException
-	 *             if there's a problem with Cassandra
-	 */
-	public void addRole(final String role, final String username) throws DatafariServerException {
-		try {
-			final String query = "insert into " + ROLECOLLECTION + " (" + USERNAMECOLUMN + "," + ROLECOLUMN + ")"
-					+ " values ('" + username + "','" + role + "')";
-			session.execute(query);
-		} catch (DriverException e) {
+  /**
+   * Add a role to the user
+   *
+   * @param role
+   *          string representing the role that we want to add
+   * @throws DatafariServerException
+   *           if there's a problem with Cassandra
+   */
+  public void addRole(final String role, final String username) throws DatafariServerException {
+    try {
+      final String query = "insert into " + ROLECOLLECTION + " (" + USERNAMECOLUMN + "," + ROLECOLUMN + ")"
+          + " values ('" + username + "','" + role + "')";
+      session.execute(query);
+    } catch (final DriverException e) {
 
-			logger.warn("Unable to add role : " + e.getMessage());
-			// TODO catch specific exception
-			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
-		}
-	}
+      logger.warn("Unable to add role : " + e.getMessage());
+      // TODO catch specific exception
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+    }
+  }
 
-	/**
-	 * Add a user
-	 *
-	 * @param username
-	 * @param password
-	 * @param role
-	 *            is the array containing the roles of the user that we want to
-	 *            add
-	 * @return
-	 * @throws Exception
-	 *             if there's a problem with Cassandra
-	 */
-	public boolean addUser(final String username, final String password, final List<String> roles)
-			throws DatafariServerException {
-		try {
-			final String query = "insert into " + USERCOLLECTION + " (" + USERNAMECOLUMN + "," + PASSWORDCOLUMN + ")"
-					+ " values ('" + username + "','" + password + "')";
-			session.execute(query);
-			for (final String role : roles) {
-				this.addRole(role, username);
-			}
-			// TODO correctly catch already in base database
-		} catch (DriverException e) {
-			logger.warn("Unable to add user : " + e.getMessage());
-			// TODO catch specific exception
-			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
-		}
-		return true;
-	}
+  /**
+   * Add a user
+   *
+   * @param username
+   * @param password
+   * @param role
+   *          is the array containing the roles of the user that we want to add
+   * @return
+   * @throws Exception
+   *           if there's a problem with Cassandra
+   */
+  public boolean addUser(final String username, final String password, final List<String> roles)
+      throws DatafariServerException {
+    try {
+      final String query = "insert into " + USERCOLLECTION + " (" + USERNAMECOLUMN + "," + PASSWORDCOLUMN + ")"
+          + " values ('" + username + "','" + password + "')";
+      session.execute(query);
+      for (final String role : roles) {
+        this.addRole(role, username);
+      }
+      // TODO correctly catch already in base database
+    } catch (final DriverException e) {
+      logger.warn("Unable to add user : " + e.getMessage());
+      // TODO catch specific exception
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+    }
+    return true;
+  }
 
-	/**
-	 * Delete a user
-	 *
-	 * @param username
-	 *            the user to delete
-	 * @throws Exception
-	 *             if there's a problem with Cassandra
-	 */
-	public void deleteUser(final String username) throws DatafariServerException {
-		try {
-			final String queryUser = "DELETE FROM " + USERCOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username
-					+ "'";
-			session.execute(queryUser);
+  /**
+   * Delete a user
+   *
+   * @param username
+   *          the user to delete
+   * @throws Exception
+   *           if there's a problem with Cassandra
+   */
+  public void deleteUser(final String username) throws DatafariServerException {
+    try {
+      final String queryUser = "DELETE FROM " + USERCOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
+      session.execute(queryUser);
 
-			final String queryRole = "DELETE FROM " + ROLECOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username
-					+ "'";
-			session.execute(queryRole);
-		} catch (DriverException e) {
-			logger.warn("Unable to remove user : " + e.getMessage());
-			// TODO catch specific exception
-			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
-		}
-	}
+      final String queryRole = "DELETE FROM " + ROLECOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
+      session.execute(queryRole);
+    } catch (final DriverException e) {
+      logger.warn("Unable to remove user : " + e.getMessage());
+      // TODO catch specific exception
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+    }
+  }
 
-	/**
-	 * Delete a role from the user
-	 *
-	 * @param role
-	 *            string representing the role that we want to delete
-	 * @throws Exception
-	 *             if there's a problem with Cassandra
-	 */
-	public void deleteRole(final String role, final String username) throws DatafariServerException {
-		try {
+  /**
+   * Delete a role from the user
+   *
+   * @param role
+   *          string representing the role that we want to delete
+   * @throws Exception
+   *           if there's a problem with Cassandra
+   */
+  public void deleteRole(final String role, final String username) throws DatafariServerException {
+    try {
 
-			final String query = "DELETE FROM " + ROLECOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "'"
-					+ " AND " + ROLECOLUMN + " = '" + role + "'";
-			session.execute(query);
-		} catch (DriverException e) {
-			logger.warn("Unable to remove roles : " + e.getMessage());
-			// TODO catch specific exception
-			throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
-		}
-	}
+      final String query = "DELETE FROM " + ROLECOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "'"
+          + " AND " + ROLECOLUMN + " = '" + role + "'";
+      session.execute(query);
+    } catch (final DriverException e) {
+      logger.warn("Unable to remove roles : " + e.getMessage());
+      // TODO catch specific exception
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+    }
+  }
 
 }

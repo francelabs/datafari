@@ -4,12 +4,6 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import org.apache.log4j.Logger;
-
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
-import com.francelabs.datafari.utils.ScriptConfiguration;
-
 /**
  * Application Lifecycle Listener implementation class
  * CassandraDBContextListerner
@@ -18,50 +12,14 @@ import com.francelabs.datafari.utils.ScriptConfiguration;
 @WebListener
 public class DBContextListerner implements ServletContextListener {
 
-	private static Object lock = new Object();
+  @Override
+  public void contextInitialized(final ServletContextEvent sce) {
 
-	private final static Logger LOGGER = Logger
-			.getLogger(DBContextListerner.class.getName());
+  }
 
-	private static final String KEYSPACE = "datafari";
-
-	private static Cluster cluster;
-	private static Session session;
-
-	public static Session getSession() {
-		synchronized (lock) {
-			if (session == null) {
-				initDB();
-			}
-		}
-		return session;
-	}
-
-	@Override
-	public void contextInitialized(ServletContextEvent sce) {
-		synchronized (lock) {
-			if (session == null) {
-				initDB();
-			}
-		}
-
-	}
-
-	@Override
-	public void contextDestroyed(ServletContextEvent sce) {
-		cluster.close();
-		LOGGER.info("Cassandra closed successfully");
-	}
-
-	private static void initDB() {
-		try {
-			String host = ScriptConfiguration.getProperty("cassandraHost");
-			cluster = Cluster.builder().addContactPoint(host).build();
-			session = cluster.connect(KEYSPACE);
-			LOGGER.info("Cassandra client initialized successfully");
-		} catch (Exception e) {
-			LOGGER.error("Error initializing Cassandra client", e);
-		}
-	}
+  @Override
+  public void contextDestroyed(final ServletContextEvent sce) {
+    CassandraManager.getInstance().closeSession();
+  }
 
 }
