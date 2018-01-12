@@ -67,7 +67,8 @@ public class PromoLink extends HttpServlet {
    *      request and put the results into a JSON file.
    */
   @Override
-  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
+      throws ServletException, IOException {
     try {
       final IndexerQuery query = IndexerServerManager.createQuery();
       IndexerQueryResponse queryResponse = null;
@@ -77,7 +78,8 @@ public class PromoLink extends HttpServlet {
         server = IndexerServerManager.getIndexerServer(Core.PROMOLINK);
       } catch (final IOException e1) {
         final PrintWriter out = response.getWriter();
-        out.append("Error while getting the Solr core, please make sure the core dedicated to PromoLinks has booted up. Error code : 69000");
+        out.append(
+            "Error while getting the Solr core, please make sure the core dedicated to PromoLinks has booted up. Error code : 69000");
         out.close();
         LOGGER.error(
             "Error while getting the Solr core in doGet, admin servlet, make sure the core dedicated to Promolink has booted up and is still called promolink or that the code has been changed to match the changes. Error 69000 ",
@@ -92,7 +94,8 @@ public class PromoLink extends HttpServlet {
         // was an existing
         // promolink with
         // this keyword
-        query.setParam("q", "\"" + request.getParameter("keyword").toString() + "\""); // set
+        query.setParam("q",
+            request.getParameter("keyword").toString() + " \"" + request.getParameter("keyword").toString() + "\""); // set
         // the
         // keyword
         // to
@@ -110,7 +113,8 @@ public class PromoLink extends HttpServlet {
           query.setParam("q", "*:*"); // the query will return all the
           // promolinks
         } else {
-          query.setParam("q", "\"" + request.getParameter("keyword").toString() + "\""); // else
+          query.setParam("q",
+              request.getParameter("keyword").toString() + " \"" + request.getParameter("keyword").toString() + "\""); // else
           // set
           // the
           // a
@@ -144,7 +148,8 @@ public class PromoLink extends HttpServlet {
 
     } catch (final Exception e) {
       final PrintWriter out = response.getWriter();
-      out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69500");
+      out.append(
+          "Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69500");
       out.close();
       LOGGER.error("Unindentified error in Admin doGet. Error 69500", e);
     }
@@ -169,7 +174,8 @@ public class PromoLink extends HttpServlet {
    *      and returns nothing
    */
   @Override
-  protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+  protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
+      throws ServletException, IOException {
     try {
 
       final Enumeration<String> params = request.getParameterNames();
@@ -179,16 +185,18 @@ public class PromoLink extends HttpServlet {
         server = IndexerServerManager.getIndexerServer(Core.PROMOLINK);
       } catch (final IOException e1) {
         final PrintWriter out = response.getWriter();
-        out.append("Error while getting the Solr core, please make sure the core dedicated to PromoLinks has booted up. Error code : 69003");
+        out.append(
+            "Error while getting the Solr core, please make sure the core dedicated to PromoLinks has booted up. Error code : 69003");
         out.close();
         LOGGER.error(
             "Error while getting the Solr core in doPost, admin servlet, make sure the core dedicated to Promolink has booted up and is still called promolink or that the code has been changed to match the changes. Error 69003",
             e1);
         return;
       }
-      if (request.getParameter("title") != null && request.getParameter("keyword") != null && request.getParameter("content") != null) { // If
-                                                                                                                                         // it's
-                                                                                                                                         // an
+      if (request.getParameter("title") != null && request.getParameter("keyword") != null
+          && request.getParameter("content") != null) { // If
+                                                        // it's
+                                                        // an
         // edit or
         // an add
         final String dateB = formatDate(request.getParameter("dateB").toString(), "T00:00:00Z"),
@@ -286,7 +294,8 @@ public class PromoLink extends HttpServlet {
           server.commit();
         } catch (final SolrServerException e) {
           final PrintWriter out = response.getWriter();
-          out.append("Error while deleting a promolink, please retry, if the problem persists contact your system administrator. Error code : 69005");
+          out.append(
+              "Error while deleting a promolink, please retry, if the problem persists contact your system administrator. Error code : 69005");
           out.close();
           LOGGER.error(
               "Error while deleting a promolink in the Admin Servlet doPost, the promolink might habe already been deleted by an other user since the opening of the promolink.html. Error 69005 ",
@@ -296,7 +305,8 @@ public class PromoLink extends HttpServlet {
       }
     } catch (final Exception e) {
       final PrintWriter out = response.getWriter();
-      out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69501");
+      out.append(
+          "Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69501");
       out.close();
       LOGGER.error("Unindentified error in Admin doPost. Error 69501", e);
     }
