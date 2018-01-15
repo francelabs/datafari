@@ -687,7 +687,7 @@
 	<lst name="defaults">
 		<str name="echoParams">explicit</str>
 		<str name="defType">edismax</str>
-		<str name="qf">title_fr^50 title_en^50 content_fr^10 content_en^10 source^20 extension^30 id^3</str>
+		<str name="qf">title_fr^50 title_en^50 content_fr^10 content_en^10 source^20 extension^30 id^3 content_hl_en content_hl_fr</str>
 		<str name="pf">title_en^500 title_fr^500 content_fr^100 content_en^100</str>
 		<int name="rows">10</int>
 		<str name="spellcheck">true</str>
@@ -701,6 +701,7 @@
 		<str name="hl.fl">content_hl_fr content_hl_en</str>
 		<str name="hl.alternateField">content_hl_fr,content_hl_en</str>
 		<str name="hl.maxAlternateFieldLength">100</str>
+		<str name="hl.requireFieldMatch">true</str>
 		<str name="hl.encoder">html</str>
 		<str name="hl.fragsize">200</str>
 		<str name="hl.maxAnalyzedChars">40000</str>
