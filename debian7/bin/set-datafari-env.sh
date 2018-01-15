@@ -24,7 +24,9 @@ export CASSANDRA_HOME=$DATAFARI_HOME/cassandra
 export CASSANDRA_ENV=$CASSANDRA_HOME/bin/cassandra.in.sh
 export ZK_HOME=$DATAFARI_HOME/zookeeper
 export ZK_ENV=$ZK_HOME/bin/zkEnvh.sh
+export ELK_HOME=$DATAFARI_HOME/elk
 export ELASTICSEARCH_HOME=$DATAFARI_HOME/elk/elasticsearch
+export LOGSTASH_HOME=$ELK_HOME/logstash
 export KIBANA_HOME=$DATAFARI_HOME/elk/kibana
 # Logs directory: needed for Cassandra startup
 export DATAFARI_LOGS=$DATAFARI_HOME/logs

@@ -79,12 +79,12 @@ then
 	sudo -E su datafari -p -c "bash kibana" &
 	sleep 10
 	kibana_config=$(curl -s http://localhost:9200/.kibana/config/_search | jq -r '.hits.hits | .[0] | ._id')
-	curl -H 'Content-Type: application/json' -XPUT -d @/opt/datafari/elk/logstash/templates/datafari-monitoring-template.json http://localhost:9200/_template/datafari-monitoring
-	curl -H 'Content-Type: application/json' -XPUT -d @/opt/datafari/elk/logstash/templates/datafari-statistic-template.json http://localhost:9200/_template/datafari-statistics
-	curl -H 'Content-Type: application/json' -XPUT -d @/opt/datafari/elk/save/index-pattern-kibana-monitoring.json http://localhost:9200/.kibana/index-pattern/monitoring
-	curl -H 'Content-Type: application/json' -XPUT -d @/opt/datafari/elk/save/index-pattern-kibana-statistics.json http://localhost:9200/.kibana/index-pattern/statistics
+	curl -H 'Content-Type: application/json' -XPUT -d @${LOGSTASH_HOME}/templates/datafari-monitoring-template.json http://localhost:9200/_template/datafari-monitoring
+	curl -H 'Content-Type: application/json' -XPUT -d @${LOGSTASH_HOME}/templates/datafari-statistic-template.json http://localhost:9200/_template/datafari-statistics
+	curl -H 'Content-Type: application/json' -XPUT -d @${ELK_HOME}/save/index-pattern-kibana-monitoring.json http://localhost:9200/.kibana/index-pattern/monitoring
+	curl -H 'Content-Type: application/json' -XPUT -d @${ELK_HOME}/save/index-pattern-kibana-statistics.json http://localhost:9200/.kibana/index-pattern/statistics
 	curl -H 'Content-Type: application/json' -XPOST -d '{"doc":{"defaultIndex": "monitoring"}}' http://localhost:9200/.kibana/config/${kibana_config}/_update
-	curl -s -XPOST localhost:9200/_bulk --data-binary "@/opt/datafari/elk/save/datafari-bulk-kibana.json"
+	curl -s -XPOST localhost:9200/_bulk --data-binary "@${ELK_HOME}/save/datafari-bulk-kibana.json"
 	sudo -E su datafari -p -c "kill $(cat $KIBANA_PID_FILE)"
 	sudo -E su datafari -p -c "kill $(cat $ELASTICSEARCH_PID_FILE)"
 	sudo -E su datafari -p -c "rm $KIBANA_PID_FILE"
@@ -206,7 +206,7 @@ sudo -E su datafari -p -c "SOLR_INCLUDE=$SOLR_ENV $SOLR_INSTALL_DIR/bin/solr sta
 
 if  [[ "$STATE" = *installed* ]];
 then
-	curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=FileShare&numShards=1&replicationFactor=1&property.lib.path=/opt/datafari/solr/solrcloud/FileShare/"
+	curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=FileShare&numShards=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/FileShare/"
 	curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=Statistics&numShards=1&replicationFactor=1"
 	curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=Promolink&numShards=1&replicationFactor=1"
 fi
