@@ -1,5 +1,8 @@
 {
-    "adActivationLabel":"Activate/Deactivate the Active Directory users",
+    "countdown-redirect":"At the end of the countdown, you will be redirected to the search UI",
+    "wait":"Please wait",
+    "tomcat-warning-title":"Tomcat is restarting",
+    "adActivationLabel":"Connection status",
     "query-elevator-ui-desc":"Activate/Deactivate the visual tool in search view",
     "address-tooltip": "e-mail address that will send the alerts",
     "user-tooltip": "e-mail provider's user (in most cases it is the e-mail address itself)",

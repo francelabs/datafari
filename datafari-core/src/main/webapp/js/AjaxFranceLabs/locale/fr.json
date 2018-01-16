@@ -1,5 +1,8 @@
 {
-    "adActivationLabel":"Activer/Désactiver les utilisateurs Active Directory",
+    "countdown-redirect":"À la fin du décompte, vous serez redirigé vers l'interface de recherche",
+    "wait":"Veuillez patienter",
+    "tomcat-warning-title":"Tomcat est entrain de redémarrer",
+    "adActivationLabel":"Statut de la connexion",
     "query-elevator-ui-desc":"Activer/Désactiver l'outil visuel dans l'interface de recherche",
     "address-tooltip": "Adresse e-mail qui va envoyer les alertes",
     "user-tooltip": "Utilisateur du fournisseur e-mail (dans la plupart des cas c'est l'adresse e-mail elle même)",
