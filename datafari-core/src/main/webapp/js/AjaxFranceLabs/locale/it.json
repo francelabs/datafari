@@ -1,4 +1,5 @@
 {
+    "adActivationLabel":"Activate/Deactivate the Active Directory users",
     "query-elevator-ui-desc":"Activate/Deactivate the visual tool in search view",
     "address-tooltip": "e-mail address that will send the alerts",
     "user-tooltip": "e-mail provider's user (in most cases it is the e-mail address itself)",

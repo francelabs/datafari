@@ -10,6 +10,7 @@ $(document).ready(function() {
 	$("#topbar3").text(window.i18n.msgStore['adminUI-ADConfig']);
 	$("#submit").text(window.i18n.msgStore['save']);
 	$("#title").text(window.i18n.msgStore['ADConfig']);
+	$("#adActivationLabel").html(window.i18n.msgStore['adActivationLabel']);
 	$("#connectionURLLabel").html(window.i18n.msgStore['adURLLabel']);
 	$("#connectionNameLabel").html(window.i18n.msgStore['adUsernameLabel']);
 	$("#connectionPasswordLabel").html(window.i18n.msgStore['adPasswordLabel']);

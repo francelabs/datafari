@@ -37,19 +37,19 @@
 		</div>
 		<div id="thBox" class="box-content">
 			<form class="form-horizontal" role="form">
-					
-					<div class="row">
-						<div class="col-sm-9">
-							<div id="ldap_activation" class="ldap toggle-switch toggle-switch-success">
-								<label>
-									<input type="checkbox">
-									<div class="toggle-switch-inner"></div>
-									<div class="toggle-switch-switch"><i class="fa fa-check"></i></div>
-								</label>
-							</div> 
-						</div>	
-					</div>
 					<div>
+					<div class="row">
+              <label id="adActivationLabel" class="col-sm-4 control-label"></label>
+              <div class="col-sm-4">
+                <div id="ldap_activation" class="ldap toggle-switch toggle-switch-success">
+                  <label>
+                    <input type="checkbox">
+                    <div class="toggle-switch-inner"></div>
+                    <div class="toggle-switch-switch"><i class="fa fa-check"></i></div>
+                  </label>
+                </div> 
+              </div>  
+            </div>
 					<div class="row">
 						<label id="connectionURLLabel" class="col-sm-4 control-label"></label>
 						<div class="col-sm-4">
@@ -94,23 +94,6 @@
 			</form>
 			<div class="col-sm-11" id="message"></div>
 		</div>
-	</div>
-	<div class="col-xs-8 col-lg-offset-1 assign_role">
-		<h1><span id="ad_roles"></span>   <i style="color:#A8C900" class="fa fa-users"></i></h1><br/>
-		<p id="ad_note"></p><br/>
-		<button id="crawl_users" name="crawl_users" class="btn btn-primary btn-label-left col-sm-offset-7 col-sm-2">Refresh LDAP Users</button> <div id="refreshing">Currently refreshing the users list</div><div id="loader" />
-		<table id="tableResult" class="table table-bordered table-striped">
-			<thead>
-				<tr>
-					<th id="thUsername"></th>
-					<th id="thRoles"></th>
-				</tr>
-			</thead>
-			<tbody>
-						
-			</tbody>
-		</table>
-		<p class="warning"></p>
 	</div>
 </body>
 </html>
