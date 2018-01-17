@@ -188,7 +188,7 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 				var selectList = document.createElement("select");
 				selectList.id = "mySelect";
 				selectList.onchange = function() {
-					self.makeRequest();
+					self.manager.makeRequest();
 				};
 				sortModeDiv.appendChild(selectList);
 
