@@ -597,9 +597,12 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		var self = this;
 		var fieldNameExactExpr = field;
 		
-		// If the provided field has specific a Solr field for exact match query then set the fieldNameExactExpr with the name of the Solr exact field
+		// If the provided field has a specific Solr field for exact match query then set the fieldNameExactExpr with the name of the Solr exact field
 		if(field != null && field != undefined && this.exactFieldsList != null && this.exactFieldsList != undefined && field in this.exactFieldsList) {
 			fieldNameExactExpr = this.exactFieldsList[field];
+		} else if(field == null) {
+			//Exact fields for basic search
+			fieldNameExactExpr = ["exactContent","exactTitle"];
 		}
 		
 		// Create the AjaxFranceLabs.AdvancedSearchField object with the provided values and initialize it

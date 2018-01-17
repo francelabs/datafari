@@ -275,7 +275,18 @@ AjaxFranceLabs.AdvancedSearchField = AjaxFranceLabs.Class.extend({
 			
 			// if a specific Solr field is available for the exact expression then add it to the finalFilter
 			if(this.fieldNameExactExpr != null && this.fieldNameExactExpr != undefined && this.fieldNameExactExpr != this.field) {
-				finalFilter = this.fieldNameExactExpr + ":" + "\"" + exact_expression_line_value.trim() + "\" " + finalFilter;
+				if(Array.isArray(this.fieldNameExactExpr)) {
+					var exactFilter = "";
+					for(var i=0; i<this.fieldNameExactExpr.length; i++) {
+						if(exactFilter != "") {
+							exactFilter += "OR ";
+						}
+						exactFilter += this.fieldNameExactExpr[i] + ":" + "\"" + exact_expression_line_value.trim() + "\" ";
+					}
+					finalFilter = exactFilter + finalFilter;
+				} else {
+					finalFilter = this.fieldNameExactExpr + ":" + "\"" + exact_expression_line_value.trim() + "\" " + finalFilter;
+				}
 				finalFilter = finalFilter.trim();
 			}
 			
