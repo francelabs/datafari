@@ -135,7 +135,7 @@ AjaxFranceLabs.AutocompleteModule = AjaxFranceLabs.AbstractModule
 											}
 										}
 
-									});
+									}, function(){}, 30000);
 							// });
 						}
 					},

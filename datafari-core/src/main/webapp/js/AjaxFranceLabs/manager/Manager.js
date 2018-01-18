@@ -34,7 +34,7 @@ AjaxFranceLabs.Manager = AjaxFranceLabs.AbstractManager.extend({
 			function(jqxhr, status, error) {
 				self.handleError(jqxhr, status, error);
 			};
-		if (!Number.isInteger(requestTimeout) || timeout < 0) {
+		if (!Number.isInteger(requestTimeout) || requestTimeout < 0) {
 			requestTimeout = self.defaultTimeout;
 		}
 		if (this.proxyUrl) {
