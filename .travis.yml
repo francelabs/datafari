@@ -29,6 +29,6 @@ env:
     - secure: "lRyXg58XFn5ATH79l6Fa9bWGVRE/MaC78NjVyjVFHnPhTEFTwia2cFnkym3dbR5y1h4dhiib03FeFJH+I7tiFul9on1pEj4PstAeg9FydK12PctiFfLcvbbQsd8Bn9lL0i25Ew60pET1uWINjYpYiop2nTVuLlrGmzUzxQssAp5qRr/aNOGp4Ui0icExxM71ArsNgg7BIhqkSPbEXS69pioJAfwj1zrXtOYioxiIbOgMlxJtqIt4kra2HqcRpQYaNoUwjrbY4xUUDaUdO3GpNmc2S1PtxyRTNVkMe9sBcP858rgzPE5M9snPciN7VPyMB/hxLZCJAVnDirQh5O7ly9OxsD6UFBwrm2XTovJf9NdcR7wvg7GOiAszSFjOrou9UdOcQndKeLmP/qWzswJzfr1yZDFBuWVJ9ZkQ9I9phcbfh0d3ML7833o6JQr+d3q843FP63Twdax5lnUhUhz3QXrajYUJqKX/Lq/ZkRsNbpHed9z8t0xNUXQORi0DxN/TraWieP48Ak4J2tfnkrFUqN4ck+fKUTZ+ZgKA+bFIB0tlgcw8Wto55a7B2FQo89DbM2BWEnLfzFmukEfuL4wzkpiAAOvX5MxTw+aUZd4OMxes5BvlDlVzl9thnct7u+ta7I6RW7A6MPo3PKmlAtkTrrBJWr7MSXvwc5do39HQNpQ="
 after_success:
 - export SSHPASS=$DEPLOY_PASSWORD
-- sshpass -e scp -o stricthostkeychecking=no debian7/installer/dist/datafari.deb $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATHSCRIPT/datafari_community.deb
-
+- export ESCAPEDBRANCH=${TRAVIS_BRANCH//\//\\\\}
+- sshpass -e scp -o stricthostkeychecking=no debian7/installer/dist/datafari.deb $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATHSCRIPT/datafari_community_$ESCAPEDBRANCH.deb
 
