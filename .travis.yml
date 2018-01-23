@@ -10,6 +10,10 @@ dist: trusty
 jdk:
 - oraclejdk8
 
+cache:
+  directories:
+  - $HOME/.m2
+  
 script:
 - bash debian7/bin/deployment_script.sh
 
