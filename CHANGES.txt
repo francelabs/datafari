@@ -19,6 +19,41 @@ Remark
 ------
 Datafari needs Python v 2.7.x. If you have only Python v3, please install Python2 (for Ubuntu 16.04 for example, install the package python-minimal)
 
+==================  4.0.1 ==================
+Changes :
+Bug fix advanced search
+Bug Fix DATAFARI-220 : Russian language not visible in the Datafari UI
+Bug fix OCR (tesseract no longer integrated in Datafari package)
+Abort previous query if not finished when new query is performed
+Bug fix autocomplete module
+Fix DATAFARI-222 : ELK IP change
+Set ZK timeout to 60 seconds
+[BETA] Promolinks now handle phrases
+[BETA] feature DATAFARI-223 timeout on queries
+Reduce suggest maxCollations from 100 to 10
+Added OpenLayers as local script
+Relative path to SearchProxy
+Avoid copy fields duplicates
+Added datafari restart script
+Added JAVA_HOME/bin to PATH
+[BETA] DATAFARI-21-choice-of-date-for-indexed-documents 
+[BETA] DATAFARI-227-Do-not-upload-managed-schema-file 
+Fix password deobfuscation DatafariRealm
+[BETA] DATAFARI-194 Synonyms etc modification behavior
+[BETA] Modification spellcheck threshold
+[BETA] DATAFARI-210 storage of email creadentials
+Updated test case for AlertsAdmin
+[BETA] DATAFARI-237-238 postgres password management
+spellcheck fix
+Fix DBContextListener
+Fix promolink behavior
+Remove hardcoded paths from start script
+Bug Fix HL
+[BETA] Added label for On/Off AD activation
+[BETA] Added Tomcat restart warning message to AD configuration UI
+[BETA] Mapped exact expression to exactContent and exactTitle for basic search
+[BETA] Keep facets when sort mode is changed
+Fix autocomplete errorHandler
 
 ==================  4.0.0 ==================
 Changes : 
