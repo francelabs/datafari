@@ -30,5 +30,5 @@ env:
 after_success:
 - export SSHPASS=$DEPLOY_PASSWORD
 - export ESCAPEDBRANCH=${TRAVIS_BRANCH//\//\\\\}
-- sshpass -e scp -o stricthostkeychecking=no debian7/installer/dist/datafari.deb $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATHSCRIPT/datafari_enterprise_$ESCAPEDBRANCH.deb
+- sshpass -e scp -o stricthostkeychecking=no debian7/installer/dist/datafari.deb $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATHSCRIPT/datafari_community_$ESCAPEDBRANCH.deb
 
