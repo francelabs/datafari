@@ -6,7 +6,7 @@ addons:
     packages:
     - sshpass
 language: java
-dist: trusty
+dist: precise
 jdk:
 - oraclejdk8
 
