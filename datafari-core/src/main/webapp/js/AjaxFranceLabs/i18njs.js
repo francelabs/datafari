@@ -94,6 +94,10 @@
 		setupLanguage : function(replaceStateMsg) {
 
 			// Get the lang parameter, if defined
+			if($.url != undefined) {
+				var language = $.url('?lang');
+			}
+			
 			var language = $.url('?lang');
 
 			if (language === undefined) {
