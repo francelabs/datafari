@@ -72,7 +72,7 @@
                "_attribute_name":"Solr id field name"
             },
             {
-               "_value_":"",
+               "_value_":"original_file_size",
                "_attribute_name":"Solr original size field name"
             },
             {

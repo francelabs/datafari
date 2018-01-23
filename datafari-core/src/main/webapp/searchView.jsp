@@ -17,10 +17,10 @@
 <link rel="stylesheet" type ="text/css" href="css/font-awesome/font-awesome.min.css">
 <script type="text/javascript" src="js/history.ielte7.min.js"></script>
 <script type="text/javascript" src="js/jquery-1.8.1.min.js"></script>
-<!-- comment the tag bellow if you don't use illustrate mode for desktop and mobile -->	
-<!-- <link rel="stylesheet" type="text/css" href="css/results-illustrate.css" />  -->   
+<!-- comment the tag bellow if you don't use illustrate mode for desktop and mobile -->
+<!-- <link rel="stylesheet" type="text/css" href="css/results-illustrate.css" />  -->
 <!--[if lt IE 9]>
-	<script type="text/javascript" src="js/html5shiv-printshiv.js"></script>	
+	<script type="text/javascript" src="js/html5shiv-printshiv.js"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="css/results-template-ie.css"/>
 		<script>
 			$(document).ready(function(){
@@ -37,7 +37,7 @@
 		}
 	</style>
 <![endif]-->
-	
+
 <link rel="stylesheet" type ="text/css" href="css/custom/customSearchView.css">
 <!-- New style -->
 <link rel="stylesheet" type="text/css" href="css/custom/new-style.css">
@@ -50,8 +50,8 @@
 
 </head>
 <body class="gecko win">
-	
-	
+
+
 	<script type="text/javascript" src="plugins/openlayers/OpenLayers.js"></script>
 	<script type="text/javascript" src="js/function/empty.func.js"></script>
 	<script type="text/javascript" src="js/jquery-ui-1.11.4/jquery-ui.js"></script>
@@ -84,7 +84,7 @@
 		src="js/AjaxFranceLabs/modules/Autocomplete.module.js"></script>
 		<script type="text/javascript"
 		src="js/AjaxFranceLabs/modules/DateSelectorFacet.module.js"></script>
-		
+
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/Result.widget.js"></script>
 	<script type="text/javascript"
@@ -96,7 +96,7 @@
 		src="js/AjaxFranceLabs/widgets/SearchInformation.widget.js"></script>
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/Table.widget.js"></script>
-	
+
 		<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/FacetDuplicates.js"></script>
 	<script type="text/javascript"
@@ -104,18 +104,18 @@
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/Promolink.widget.js"></script>
 	<script type="text/javascript"
-		src="js/AjaxFranceLabs/widgets/TableMobile.widget.js"></script> 
+		src="js/AjaxFranceLabs/widgets/TableMobile.widget.js"></script>
 <!-- 	<script type="text/javascript" -->
 <!-- 		src="js/AjaxFranceLabs/widgets/Tab.widget.js"></script> -->
-	<!--  
+	<!--
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/HierarchicalFacet.js"></script>
 	-->
-	<!--  
+	<!--
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/PrevisualizeResult.widget.js" charset="utf-8"></script>
 	-->
-	<!--  
+	<!--
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/ExternalResult.widget.js" charset="utf-8"></script>
 	-->
@@ -127,7 +127,7 @@
 
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/Spellchecker.widget.js"></script>
-	<!-- comment the tag bellow if you don't use illustrate mode for desktop and mobile -->	
+	<!-- comment the tag bellow if you don't use illustrate mode for desktop and mobile -->
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/ResultIllustrated.widget.js"></script>
 	<script type="text/javascript"
@@ -138,24 +138,24 @@
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/SearchBarIllustrated.widget.js"></script>
 	<script type="text/javascript"
-		src="js/AjaxFranceLabs/modules/AutocompleteIllustrated.module.js"></script>		
+		src="js/AjaxFranceLabs/modules/AutocompleteIllustrated.module.js"></script>
 	<script type="text/javascript" src="js/main.js"></script>
 	<script type="text/javascript" src="js/desktop_design.js"></script>
-	
+
 	<!-- Enable the queryElevator module if the user has the "SearchAdministrator" role -->
 	<%
 		if (request.getUserPrincipal() != null) {
 			if (request.getUserPrincipal().getName() != null) {
-				if(request.isUserInRole("SearchAdministrator") || request.isUserInRole("SearchExpert")) { 
+				if(request.isUserInRole("SearchAdministrator") || request.isUserInRole("SearchExpert")) {
 	%>
 <!--  					<script type="text/javascript"  -->
 <!--  					src="js/AjaxFranceLabs/modules/QueryEvaluator.module.js"></script>  -->
 	<%
 				}
-			} 
+			}
 		}
 	%>
-	
+
 
 
 
@@ -174,7 +174,7 @@
 	<script type="text/javascript" src="js/search.js"></script>
 	<script type="text/javascript" src="js/nav_mobile.js"></script>
 
-	<jsp:include page="header.jsp" /> 
+	<jsp:include page="header.jsp" />
 	<div id="facets_mobile" style="">
 		<div id="nav_mobile" class="bc-color">
 		<!-- Faut mettre un truc dynamique par rapport à la langue -->
@@ -189,14 +189,14 @@
 		<div id="parametersUi" style="display: none;"><jsp:include page="parameters.jsp" /></div>
 		<div id="favoritesUi" style="display: none;"><jsp:include page="favorites.jsp" /></div>
 		<div id="results_div">
-			<div id="results_nav_mobile"  class="bc-color"> 
+			<div id="results_nav_mobile"  class="bc-color">
 				<div id="number_results_mobile"><span></span></div>
 				<div id="nav_facets_mobile"><a href="#facets_mobile"><i class="fa fa-bars"></i> </a></div>
 			</div>
 			<div id="tab_line"></div>
-			
+
 			<div id="source_tabs"></div>
-	
+
 			<div class="col left">
 				<div id="facets">
 					<div id="facet_slider"></div>
@@ -207,10 +207,11 @@
 					<div id="facet_source"></div>
 					<div id="facet_language"></div>
 					<div id="facet_signature"></div>
+					<div id="facet_file_size"></div>
 				</div>
 			</div>
 			<div class="col right">
-				
+
 				<div id="promolink"></div>
 				<div id="suggestion"></div>
 				<div id="spellchecker"></div>
@@ -218,11 +219,11 @@
 				<!--  <div id="previsualize"></div> -->
 				<div id="results"></div>
 			</div>
-			
+
 			<div class="clear"></div>
 		</div>
 	</div>
-	<jsp:include page="footer.jsp"/> 
+	<jsp:include page="footer.jsp"/>
 	<!--  <div id="spinner_mobile"><i class="fa fa-spinner fa-spin"></i></div>-->
 
 </body>

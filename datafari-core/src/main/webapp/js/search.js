@@ -1,5 +1,5 @@
 $(function($) {
-	
+
 //	Manager.addWidget(new AjaxFranceLabs.SliderWidget({
 //		elm : $('#facet_slider'),
 //		id : 'slider',
@@ -7,7 +7,7 @@ $(function($) {
 //		field : 'last_modified',
 //		range : false
 //	}));
-	
+
 //	Manager.addWidget(new AjaxFranceLabs.TabWidget({
 //		elm : $('#source_tabs'),
 //		id : 'facet_tab',
@@ -15,7 +15,7 @@ $(function($) {
 //		field : 'connector',
 //		returnUnselectedFacetValues : true
 //	}));
-	
+
 //	Manager.addWidget(new AjaxFranceLabs.OntologySuggestionWidget({
 //		elm : $('#suggestion'),
 //		id : 'suggestion',
@@ -29,13 +29,13 @@ $(function($) {
 //		elm : $('#languageSelector'),
 //		id : 'languageSelector'
 //	}));
-	
+
 	Manager.addWidget(new AjaxFranceLabs.LoginDatafariLinksWidget({
 		// Take the loginDatafariLinks element by ID.
 		elm : $('#loginDatafariLinks'),
 		id : 'loginDatafariLinks'
 	}));
-	
+
 	Manager.addWidget(new AjaxFranceLabs.TableWidget({
 		elm : $('#facet_extension'),
 		id : 'facet_extension',
@@ -45,7 +45,7 @@ $(function($) {
 		selectionType : 'OR',
 		returnUnselectedFacetValues : true
 	}));
-	
+
 	/*
 	Manager.addWidget(new AjaxFranceLabs.HierarchicalFacetWidget({
 		elm : $('#facet_hierarchical_url'),
@@ -81,7 +81,7 @@ $(function($) {
 		selectionType : 'OR',
 		returnUnselectedFacetValues : true
 	}));
-	
+
 	Manager.addWidget(new AjaxFranceLabs.TableFacetQueriesWidget({
 		elm : $('#facet_last_modified'),
 		id : 'facet_last_modified',
@@ -97,7 +97,26 @@ $(function($) {
 			field : 'last_modified'
 		})]
 	}));
-	
+//*
+	Manager.addWidget(new AjaxFranceLabs.TableFacetQueriesWidget({
+		elm : $('#facet_file_size'),
+		id : 'facet_file_size',
+		field : 'original_file_size',
+		name : window.i18n.msgStore['facet_File size'],
+		pagination : true,
+		selectionType : 'ONE',
+		queries : [
+			'[0 TO 102400]',
+			'[102400 TO 10485760]',
+			'[10485760 TO *]'
+		],
+		labels: [
+			window.i18n.msgStore['facet_Less than 100ko'],
+			window.i18n.msgStore['facet_From 100ko to 10Mo'],
+			window.i18n.msgStore['facet_More than 10Mo']
+		],
+	}));
+//*/
 	Manager.addWidget(new AjaxFranceLabs.TableMobileWidget({
 		elm : $('#facet_type_mobile'),
 		id : 'facet_type_mobile',
@@ -128,17 +147,17 @@ $(function($) {
 		autocomplete : true,
 		activateAdvancedSearchLink : true
 	}));
-	
+
 	/*
 	* Add advanced search widget
 	*/
-	
+
 	var as = new AjaxFranceLabs.AdvancedSearchWidget({
 		// Take the advancedSearch element by ID.
 		elm : $('#advancedSearch'),
 		id : 'advancedSearch'
 	});
-	
+
 	//createAdvancedSearchTable(as);
 
 	Manager.addWidget(as);
@@ -147,14 +166,14 @@ $(function($) {
 		elm : $('#search_information'),
 		id : 'searchInformation'
 	}));
-	
+
 	if (window.isLikesAndFavoritesEnabled)
 		Manager.addWidget(new AjaxFranceLabs.LikesAndFavoritesWidget());
 	else
 		//Manager.addWidget(new AjaxFranceLabs.ExternalResultWidget());
 		Manager.addWidget(new AjaxFranceLabs.SubClassResultWidget());
 		//Manager.addWidget(new AjaxFranceLabs.PrevisualizeResultWidget());
-	
+
 	/*new  AjaxFranceLabs.ResultIllustratedWidget({
 		elm : $('#results'),
 		id : 'documents',
@@ -171,7 +190,7 @@ $(function($) {
 						firstTimeWaypoint : true,
 						isMobile : $(window).width()<800,
 						mutex_locked:false,
-						
+
 						afterRequest : function() {
 							var data = this.manager.response, elm = $(this.elm),self=this;
 							if (!this.isMobile)
@@ -188,14 +207,14 @@ $(function($) {
 								$.each(data.response.docs,
 												function(i, doc) {
 
-									                var url = doc.url.replace("localhost",window.location.hostname); 
+									                var url = doc.url.replace("localhost",window.location.hostname);
 									                var positionString = Manager.store.get("start").value;
 									                var position = 1;
-									                
+
 									                if (positionString !== null){
 									                	position += parseInt(positionString);
 									                }
-									               
+
 									                position += i;
 													var description = '';
 													if (data.highlighting[doc.id]) {
@@ -218,22 +237,22 @@ $(function($) {
 													if (self.isMobile){
 														if (extension.toLowerCase()!==undefined && extension.toLowerCase()!="")
 															elm.find('.doc:last .icon').append('<span>['+ extension.toUpperCase() +']</span> ');
-													}	
+													}
 													else
 														elm.find('.doc:last .icon').append('<object data="images/icons/'+ extension.toLowerCase() +'-icon-24x24.png"><img src="images/icons/default-icon-24x24.png" /></object>&nbsp;');
 
 									                var urlRedirect = 'URL?url='+ url + '&id='+Manager.store.get("id").value + '&q=' + Manager.store.get("q").value + '&position='+position;
-													elm.find('.doc:last .res').append('<a class="title" target="_blank" href="'+urlRedirect+'"></a>');										
+													elm.find('.doc:last .res').append('<a class="title" target="_blank" href="'+urlRedirect+'"></a>');
 													elm.find('.doc:last .title').append('<span>' +decodeURIComponent(doc.title) + '</span>')
-													.append('<span class="favorite"><i class="fa fa-bookmark-o"></i></span>'); 
+													.append('<span class="favorite"><i class="fa fa-bookmark-o"></i></span>');
 													elm.find('.doc:last .res').append('<p class="description">');
 													elm.find('.doc:last .description').append('<div id="snippet">'+ description+ '</div>');
 													elm.find('.doc:last .description').append('<div id="urlMobile"><p class="address">')
 													.append('<div class="metadonne"><span class="liker">Like</span>  <i class="fa fa-thumbs-up"></i><span class="likes">12</span></div>');
 													elm.find('.doc:last .address').append('<span>' + AjaxFranceLabs.tinyUrl(decodeURIComponent(url)) + '</span>');
-													
+
 												});
-								
+
 								AjaxFranceLabs.addMultiElementClasses(elm
 										.find('.doc'));
 								if (this.pagination)
@@ -241,7 +260,7 @@ $(function($) {
 							}
 							if (this.isMobile){
 								if ( $(".doc_list").children().length<parseInt($("#number_results_mobile span").text(),10)){
-									if (data.response.docs.length!=0){	
+									if (data.response.docs.length!=0){
 										$("#results .doc_list_pagination").show();
 										if (this.firstTimeWaypoint){
 											this.firstTimeWaypoint = false;
@@ -256,7 +275,7 @@ $(function($) {
 											},{ offset: 'bottom-in-view'});
 											while(self.mutex_locked)
 												sleep(1);
-											//home made mutex  used to stop the browser from executing multiple times the lines above 
+											//home made mutex  used to stop the browser from executing multiple times the lines above
 											// without waiting the precedent execution (no native mutex are enable in javascript)
 										}
 									}
@@ -266,33 +285,33 @@ $(function($) {
 							}
 						}
 					}));*/
-	 		
-	
+
+
 
 		Manager.addWidget(new AjaxFranceLabs.PromolinkWidget({
 		elm : $('#promolink'),
 		id : 'promolink'
 	}));
 
-	
-	
+
+
 	Manager.addWidget(new AjaxFranceLabs.SpellcheckerWidget({
 		elm : $('#spellchecker'),
 		id : 'spellchecker'
 	}));
-	
+
 	Manager.store.addByValue('facet', true);
 
 
 	$.when(Manager.init()).then(
 			function() {
-				
+
 				var query = getParamValue('query', decodeURIComponent(window.location.search));
 				var searchType = getParamValue('searchType', window.location.search);
 				var sortType = getParamValue('sortType', window.location.search);
 
 				Manager.store.addByValue("id", UUID.generate());
-				
+
 				if (searchType === ''){
 					searchType = 'allWords';
 				}
@@ -300,7 +319,7 @@ $(function($) {
 					sortType = 'score';
 				}
 				$('#searchBar').find('.searchBar input[type=text]').val(query);
-				
+
 				/*
 				 * atLeastOneWord allWords exactExpression
 				 */
@@ -319,34 +338,34 @@ $(function($) {
 });
 
 function createAdvancedSearchTable(as) {
-	
+
 	var ast = new AjaxFranceLabs.AdvancedSearchTable({
 		parent : '#advancedSearch',
 		title : window.i18n.msgStore['advancedSearch-label'],
 		description : window.i18n.msgStore['advancedSearch-descr']
 	});
-	
+
 	// TODO Call Solr to create rows dynamically, based on the index fields
-	
+
 	var asf = new AjaxFranceLabs.AdvancedSearchField({
 		parent : '#advancedSearchTable',
 		label : window.i18n.msgStore['advancedSearch-title-label'],
 		description : window.i18n.msgStore['advancedSearch-title-descr'],
-		field : 'title'		
+		field : 'title'
 	});
-	
+
 	ast.addField(asf);
-	
+
 	asf = new AjaxFranceLabs.AdvancedSearchField({
 		parent : '#advancedSearchTable',
 		label : window.i18n.msgStore['advancedSearch-content-label'],
 		description : window.i18n.msgStore['advancedSearch-content-descr'],
-		field : 'content'		
+		field : 'content'
 	});
-	
+
 	ast.addField(asf);
-	
-	as.addTable(ast);	
+
+	as.addTable(ast);
 };
 
 
