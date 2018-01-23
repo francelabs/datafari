@@ -13,7 +13,7 @@
 		<dependency>
               <groupId>com.francelabs.datafari</groupId>
               <artifactId>datafari-dependencies</artifactId>
-              <version>4.0.0-SNAPSHOT</version>
+              <version>4.0.1-SNAPSHOT</version>
               <type>pom</type>
         </dependency>
 	</dependencies>
