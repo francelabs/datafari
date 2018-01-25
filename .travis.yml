@@ -1,12 +1,12 @@
 
-sudo: false
+sudo: true
 install: true
 addons:
   apt:
     packages:
     - sshpass
 language: java
-dist: precise
+dist: trusty
 jdk:
 - oraclejdk8
 
@@ -15,7 +15,7 @@ cache:
   - $HOME/.m2
   
 script:
-- bash debian7/bin/deployment_script.sh
+- travis_wait 30 bash debian7/bin/deployment_script.sh
 
 notifications:
   email:
