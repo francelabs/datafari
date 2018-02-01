@@ -186,10 +186,10 @@ AjaxFranceLabs.AdvancedSearchField = AjaxFranceLabs.Class.extend({
 	},
 	
 	getTextFieldFilter : function() {
-		var all_words_value = this.elm.find('.all_words_line').find('input').val();
-		var at_least_one_word_line_value = this.elm.find('.at_least_one_word_line').find('input').val();
-		var exact_expression_line_value = this.elm.find('.exact_expression_line').find('input').val();
-		var none_of_these_words_line_value = this.elm.find('.none_of_these_words_line').find('input').val();
+		var all_words_value = this.elm.find('.all_words_line').find('input').val().trim();
+		var at_least_one_word_line_value = this.elm.find('.at_least_one_word_line').find('input').val().trim();
+		var exact_expression_line_value = this.elm.find('.exact_expression_line').find('input').val().trim();
+		var none_of_these_words_line_value = this.elm.find('.none_of_these_words_line').find('input').val().trim();
 		
 		var exactExpressionsRegex = /"[^\"]+"/g;
 		
@@ -274,7 +274,7 @@ AjaxFranceLabs.AdvancedSearchField = AjaxFranceLabs.Class.extend({
 			}
 			
 			// if a specific Solr field is available for the exact expression then add it to the finalFilter
-			if(this.fieldNameExactExpr != null && this.fieldNameExactExpr != undefined && this.fieldNameExactExpr != this.field) {
+			if(this.fieldNameExactExpr != null && this.fieldNameExactExpr != undefined && this.fieldNameExactExpr != this.field && exact_expression_line_value != null && exact_expression_line_value != undefined && exact_expression_line_value != "") {
 				if(Array.isArray(this.fieldNameExactExpr)) {
 					var exactFilter = "";
 					for(var i=0; i<this.fieldNameExactExpr.length; i++) {
@@ -283,9 +283,9 @@ AjaxFranceLabs.AdvancedSearchField = AjaxFranceLabs.Class.extend({
 						}
 						exactFilter += this.fieldNameExactExpr[i] + ":" + "\"" + exact_expression_line_value.trim() + "\" ";
 					}
-					finalFilter = exactFilter + finalFilter;
+					finalFilter += " " + exactFilter;
 				} else {
-					finalFilter = this.fieldNameExactExpr + ":" + "\"" + exact_expression_line_value.trim() + "\" " + finalFilter;
+					finalFilter += " " + this.fieldNameExactExpr + ":" + "\"" + exact_expression_line_value.trim() + "\" ";
 				}
 				finalFilter = finalFilter.trim();
 			}
