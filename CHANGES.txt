@@ -6,10 +6,10 @@ Introduction
 Datafari is the perfect product for anyone who needs to search within its corporate big data,
 based on the most advanced open source technologies.
 Datafari combines both the Apache ManifoldCF and Solr products, and proposes to its users to search into file shares,
-cloud shares (dropbox, google drive), databases, but also emails and many more sources. 
-Available as community and enterprise edition, Datafari is different from the competition : 
+cloud shares (dropbox, google drive), databases, but also emails and many more sources.
+Available as community and enterprise edition, Datafari is different from the competition :
 - Its open source license is not aggressive, as it uses the Apache v2 license: you are free to do whatever you want with it,
-you just need to mention that you are using it. 
+you just need to mention that you are using it.
 - It combines two renowned Apache projects, namely ManifoldCF and Solr, which gives Datafari a long term vision.
 
 See http://wiki.datafari.com for more information.
@@ -18,6 +18,15 @@ See http://wiki.datafari.com for more information.
 Remark
 ------
 Datafari needs Python v 2.7.x. If you have only Python v3, please install Python2 (for Ubuntu 16.04 for example, install the package python-minimal)
+
+==================  4.0.2 ==================
+Changes :
+Update travis file
+Bug fix Tomcat realm
+i18n.js fix
+Lib datafari-tika-config.jar not used anymore
+Bug fix exact search advanced search
+Harmonize i18n files
 
 ==================  4.0.1 ==================
 Changes :
@@ -36,8 +45,8 @@ Relative path to SearchProxy
 Avoid copy fields duplicates
 Added datafari restart script
 Added JAVA_HOME/bin to PATH
-[BETA] DATAFARI-21-choice-of-date-for-indexed-documents 
-[BETA] DATAFARI-227-Do-not-upload-managed-schema-file 
+[BETA] DATAFARI-21-choice-of-date-for-indexed-documents
+[BETA] DATAFARI-227-Do-not-upload-managed-schema-file
 Fix password deobfuscation DatafariRealm
 [BETA] DATAFARI-194 Synonyms etc modification behavior
 [BETA] Modification spellcheck threshold
@@ -56,7 +65,7 @@ Bug Fix HL
 Fix autocomplete errorHandler
 
 ==================  4.0.0 ==================
-Changes : 
+Changes :
 Removed location_rpt from Solr schemas
 Tika updated to version 1.16 for both MCF and Solr
 Manifold CF updated to version 2.8.1
@@ -81,7 +90,7 @@ Manifold CF updated to version 2.6
 Cassandra updated to version 3.10
 New UI
 New Advanced Search
-New languages : 
+New languages :
   - German
   - Portuguese/Brazilian
 Various bug fixes
@@ -117,7 +126,7 @@ Bug fixes for Internet Explorer : display of the Admin UI
 
 ==================  2.2 ==================
 
-Versions of Major Components 
+Versions of Major Components
 ---------------------
 - Apache Solr 5.2.1
 - Apache ManifoldCF 2.3
@@ -134,7 +143,7 @@ Spellcheckers fixes
 ELK added
 Migrate i18n to JS
 Special characters display fix
-Added Apache Jena dependencies + New OntologyUpdateProcessor 
+Added Apache Jena dependencies + New OntologyUpdateProcessor
 New pages for Statistics
 Previsualize Widget added
 Federated Search widget added
@@ -187,7 +196,7 @@ Active Directory feature fix :
 	- [DATAFARI-76] The "Modify a user"  admin UI shows role table users
 	- [DATAFARI-75] User suppression shows error
 	- [DATAFARI-74] User roles suppression
-	
+
 
 ==================  2.0 ==================
 
@@ -203,7 +212,7 @@ Active Directory feature fix :
 	Deduplication
 	Likes (experimental)
 	LDAP configuration (experimental)
-	
+
 - Architecture changed
 	Solr is now in 5.2.1 with a standalone server application (Jetty)
 	Cassandra 2.1.8
