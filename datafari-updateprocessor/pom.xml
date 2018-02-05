@@ -3,7 +3,7 @@
   <groupId>com.francelabs.datafari</groupId>
   <artifactId>datafari-updateprocessor</artifactId>
   <packaging>jar</packaging>
-  <version>4.0.1-SNAPSHOT</version>
+  <version>4.0.2-SNAPSHOT</version>
   <name>Datafari Enterprise Search - UpdateProcessor module</name>
   	<prerequisites>
 		<!-- Force minimum Maven version -->
@@ -13,7 +13,7 @@
 		<dependency>
               <groupId>com.francelabs.datafari</groupId>
               <artifactId>datafari-dependencies</artifactId>
-              <version>4.0.1-SNAPSHOT</version>
+              <version>4.0.2-SNAPSHOT</version>
               <type>pom</type>
         </dependency>
 	</dependencies>

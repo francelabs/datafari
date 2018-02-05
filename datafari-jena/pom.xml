@@ -3,7 +3,7 @@
   <groupId>com.francelabs.datafari</groupId>
   <artifactId>datafari-jena</artifactId>
   <packaging>pom</packaging>
-  <version>4.0.1-SNAPSHOT</version>
+  <version>4.0.2-SNAPSHOT</version>
   <name>Datafari Enterprise Search - Jena module</name>
   <dependencies>
   		<!-- https://mvnrepository.com/artifact/org.apache.jena/apache-jena-libs -->
