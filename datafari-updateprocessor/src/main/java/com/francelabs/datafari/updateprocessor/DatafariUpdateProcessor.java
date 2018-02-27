@@ -17,6 +17,7 @@
 package com.francelabs.datafari.updateprocessor;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -30,6 +31,7 @@ import org.apache.solr.update.processor.UpdateRequestProcessor;
 import org.apache.tika.mime.MimeType;
 import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
+import org.apache.commons.io.FilenameUtils;
 
 public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 
@@ -121,46 +123,76 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     }
 
     String extension = "";
+    URL urlObject = new URL(url);
+    String path = urlObject.getPath();
     final SolrInputField mimeTypeField = doc.get("ignored_content_type");
-    if (extensionFromName || mimeTypeField == null) {
-    	if (filename.contains(".")){
-    		extension = extractFromFileName(filename);
-    	}
-    	else if (url.startsWith("http")) {
-    		extension = "html";
-    	}
-      
+
+    String nameExtension = FilenameUtils.getExtension(path);
+    String tikaExtension = mimeTypeField==null ? "" : extensionFromMimeTypeField(mimeTypeField);
+    
+    if (extensionFromName) {
+      extension = nameExtension.length() > 1 && nameExtension.length() < 5 ? nameExtension : tikaExtension;
     } else {
-      String mimeType = (String) mimeTypeField.getFirstValue();
+      extension = tikaExtension.length() > 1 && tikaExtension.length() < 5 ? tikaExtension : nameExtension;
+    }
+    /*
+    if (extensionFromName || mimeTypeField == null) {
+    	if (path.contains(".")){
+    	  extension = FilenameUtils.getExtension(path);
+    		if (extension.length() > 4 || extension.length() < 1) {
+    		  // If length is too long, try extracting from tika information if available
+    		  String tryExtension = mimeTypeField==null ? null : extensionFromMimeTypeField(mimeTypeField);
+    		  if (tryExtension != null) {
+    		    extension = tryExtension;
+    		  } else {
+    		    // Else default to bin for anything else
+    		    extension = "bin";
+    		  }
+    		}
+    	}
+    	else if (urlObject.getProtocol().equals("http") || urlObject.getProtocol().equals("https")) {
+    	  extension = null;
+    	  if (mimeTypeField != null) {
+    	    extension = extensionFromMimeTypeField(mimeTypeField);
+    	  } 
+    	  if (extension == null) {
+    	    extension = "html";
+    	  }
+    	}
+    } else {
+      extension = extensionFromMimeTypeField(mimeTypeField);
+      if (extension == null) {
+        extension = FilenameUtils.getExtension(path);
+      }
+    }
+  */
+    doc.addField("extension", extension.toLowerCase());
+
+    super.processAdd(cmd);
+  }
+  
+  private String extensionFromMimeTypeField(SolrInputField mimeTypeField) {
+    String extension = "";
+    String[] mimeTypeList = mimeTypeField.getValues().toArray(new String[0]);
+    for (String mimeType : mimeTypeList) {
       if (mimeType.contains(";")) {
         final String[] parts = mimeType.split(";");
         mimeType = parts[0];
       }
       final MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
       MimeType type;
-
+  
       try {
         type = allTypes.forName(mimeType);
-        extension = type.getExtension();
-        if (extension.length() > 1) {
-          extension = extension.substring(1);
+        String currentExtension = type.getExtension();
+        if (currentExtension.length() > 1) {
+          currentExtension = currentExtension.substring(1);
         }
-      } catch (final MimeTypeException e) {
-        extension = extractFromFileName(filename);
-      }
+        if (!currentExtension.equals("bin")) {
+          extension = currentExtension;
+        }
+      } catch (final MimeTypeException e) {}
     }
-
-    doc.addField("extension", extension.toLowerCase());
-
-    super.processAdd(cmd);
-  }
-
-  private String extractFromFileName(final String filename) {
-    final Pattern pattern = Pattern.compile("[^\\.]*$");
-    final Matcher matcher = pattern.matcher(filename);
-    if (matcher.find()) {
-      return matcher.group();
-    }
-    return "";
+    return extension;
   }
 }
