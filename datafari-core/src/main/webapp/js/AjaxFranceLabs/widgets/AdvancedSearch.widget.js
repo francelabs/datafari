@@ -98,7 +98,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		var baseQuery = this.manager.store.get('q').val();
 		
 		// Regex that matches field filters in the query (ie any [field]:)
-		var baseQueryRegEx = /(AND\s|OR\s)*[^\s\(\[\:]+:/g;
+		var baseQueryRegEx = /(AND\s|OR\s)*\(*[^\s\(\[\:]+:/g;
 		// Get the index of the first field filter found
 		var indexOf = baseQuery.search(baseQueryRegEx);
 		var baseSearch = "";
@@ -107,6 +107,17 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			baseSearch = baseQuery.substring(0, indexOf);
 		} else {
 			baseSearch = baseQuery;
+		}
+		
+		// Exact expression baseSearch regex
+		var baseExactExprVal = "";
+		var baseExactExprRegEx = /\((exactContent|exactTitle):[^\)]+\)/g;
+		var baseExactExpr = baseQuery.match(baseExactExprRegEx);
+		if(baseExactExpr != null && baseExactExpr != undefined && baseExactExpr != "") {
+			//Remove base exact expression from baseQuery
+			baseQuery = baseQuery.replace(baseExactExprRegEx,'');
+			// Retrieve base exact expr value
+			baseExactExprVal = baseExactExpr[0].split('OR')[0].split(':')[1].replace(/\"/g,'').trim();
 		}
 		
 		// Construct the main div which will contain every UI element of the advanced search
@@ -124,6 +135,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		var adv_base_search = this.advTable.find('#adv_base_search');
 		adv_base_search.append('<span class="subtitle left">').find('.left').append(window.i18n.msgStore['baseSearch-label']);
 		var baseSearchValues = self.extractFilterFromText(baseSearch, false, true);
+		baseSearchValues["exact_expression_value"] = baseExactExprVal;
 		this.constructFilter("string", adv_base_search, null, baseSearchValues, null, this.fieldNumber);
 		
 		// Add a separator
