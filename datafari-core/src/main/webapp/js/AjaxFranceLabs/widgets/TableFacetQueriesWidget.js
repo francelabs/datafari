@@ -58,7 +58,7 @@ AjaxFranceLabs.TableFacetQueriesWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 		var animation = 'animated rotateIn';
 		var self = this, elm = $(this.elm);
 		$.each(this.queries, function(i, query){
-			self.manager.store.addByValue('facet.query', '{!key='+self.labels[i]+' ex=query}'+self.field+':'+query);
+			self.manager.store.addByValue('facet.query', '{!key='+encodeURI(self.labels[i])+'}'+self.field+':'+query);
 		});
 		elm.addClass('facet').addClass('TableFacetQueriesWidget').addClass('tableWidget').addClass('widget').attr('widgetId', this.id).append('<div class="facetSort"></div>').append('<ul></ul>');
 		if(this.name != null){
@@ -175,10 +175,11 @@ AjaxFranceLabs.TableFacetQueriesWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 	assocTags : function(data) {
 		var self = this, tempData = Array();
 		$.each(this.labels, function(i, label){
-			if(data[label] !== undefined)
+			var encodedLabel = encodeURI(label);
+			if(data[encodedLabel] !== undefined)
 				tempData.push({
-					name: label,
-					nb: data[label]
+					name: encodedLabel,
+					nb: data[encodedLabel]
 				});
 		});
 		return tempData;
@@ -195,7 +196,8 @@ AjaxFranceLabs.TableFacetQueriesWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 		var self = this;
 		var query;
 		$.each(self.labels, function(i, label){
-			if (label === value){
+			var encodedLabel = encodeURI(label);
+			if (encodedLabel === value){
 				query = self.queries[i];
 			}
 		});
@@ -209,7 +211,8 @@ AjaxFranceLabs.TableFacetQueriesWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 		var self = this;
 		var query;
 		$.each(self.labels, function(i, label){
-			if (label === value){
+			var encodedLabel = encodeURI(label);
+			if (encodedLabel === value){
 				query = self.queries[i];
 			}
 		});
