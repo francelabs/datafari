@@ -22,8 +22,7 @@
 		<link href="../css/style_v2.css" rel="stylesheet">
 		<link href="../plugins/chartist/chartist.min.css" rel="stylesheet">
 		<link href="../plugins/CLEditor/jquery.cleditor.css" rel="stylesheet">
-		<script type="text/javascript" src="../js/endswith.js"></script>
-		<script type="text/javascript" src="../js/startswith.js"></script>
+		<script type="text/javascript" src="../js/polyfill.js"></script>
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
 				<script src="http://getbootstrap.com/docs-assets/js/html5shiv.js"></script>
@@ -69,7 +68,7 @@
 <!-- 						<a href="#" class="about">about</a> -->
 
 					 	<ul class="nav navbar-nav pull-right panel-menu" >
-					 	
+
 					 	<li class="searchLink"><a id="datafariSearchUiLink" class="searchPageLink"></a></li>
 <!-- 							<li class="hidden-xs"> -->
 <!-- 								<a href="index.html" class="modal-link"> -->
@@ -93,7 +92,7 @@
 							<li class="dropdown" >
 								<a href="#" class="dropdown-toggle account" data-toggle="dropdown">
 									<div class="avatar">
-										<img src="../images/pic.jpg" class="img-circle" alt="avatar" /> 
+										<img src="../images/pic.jpg" class="img-circle" alt="avatar" />
 									</div>
 
 <!-- 									<i class="fa fa-angle-down pull-right"></i> -->
@@ -105,7 +104,7 @@
 
 									</div>
 								</a>
- 								<ul class="dropdown-menu"> 
+ 								<ul class="dropdown-menu">
 <!-- 									<li> -->
 <!-- 										<a href="#"> -->
 <!-- 											<i class="fa fa-user"></i> -->
@@ -136,15 +135,15 @@
 <!-- 											<span>Settings</span> -->
 <!-- 										</a> -->
 <!-- 									</li> -->
- 									<li> 
- 										<a onclick="logout();" style="cursor: pointer;"> 
- 											<i class="fa fa-power-off"></i> 
- 											<span id="logout-AdminUI"></span> 
- 										</a> 
- 									</li> 
- 								</ul> 
+ 									<li>
+ 										<a onclick="logout();" style="cursor: pointer;">
+ 											<i class="fa fa-power-off"></i>
+ 											<span id="logout-AdminUI"></span>
+ 										</a>
+ 									</li>
+ 								</ul>
 
-								</li> 
+								</li>
 						</ul>
 
 					</div>
@@ -178,7 +177,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 					<a href="#" class="dropdown-toggle">
 						<i class="fa fa-arrows-alt"></i>
 						 <span id="connectors-AdminUI" class="hidden-xs"></span>
-					</a>					 
+					</a>
 					<ul class="dropdown-menu">
 						<li id="MCFAdminUI">
 							<a href="../ajax/manifoldcf.html" class="ajax-link" id="MCFAdmin-AdminUI"></a>
@@ -199,7 +198,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						<li id="CorpusStatistics"><a id="corpusStatistics-AdminUI" class="ajax-link" href="../ajax/corpusStatistics.html"></a></li>
 						<li id="CorpusOTStatistics"><a id="corpusOTStatistics-AdminUI" class="ajax-link" href="../ajax/corpusOTStatistics.html"></a></li>
 						<li><a id="queryStatistics-AdminUI" class="ajax-link" href="../ajax/StatsQuery.html"></a></li>
-						<li id="ELKConfiguration"><a id="elkConfiguration-AdminUI" class="ajax-link" href="../ajax/elkConfiguration.html"></a></li> 
+						<li id="ELKConfiguration"><a id="elkConfiguration-AdminUI" class="ajax-link" href="../ajax/elkConfiguration.html"></a></li>
 <!-- 						<li><a class="ajax-link" href="../ajax/systemStatistics.html">System statistics</a></li> -->
 					</ul>
 				</li>
@@ -213,7 +212,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						<li id="AlertAdmin"><a id="alertAdmin-AdminUI" class="ajax-link" href="../ajax/alertsAdmin.html"></a></li>
 						<li id="IndexField"><a id="indexField-AdminUI" class="ajax-link" href="../ajax/IndexField.html"></a></li>
 						<li id="SchemaAnalysis"><a id="schemaAnalysis-AdminUI" class="ajax-link" href="../ajax/SchemaAnalysis.html"></a></li>
-<% 
+<%
 	if(request.isUserInRole("SearchAdministrator")){
 %>
 						<li id="SizeLimitation"><a id="sizeLimitation-AdminUI" class="ajax-link" href="../ajax/SizeLimitations.html"></a></li>
@@ -232,14 +231,14 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
  						<li id="QueryElevator"><a id="queryElevator-AdminUI" class="ajax-link" href="../ajax/queryElevator.html"></a></li>
 						<li id="PromoLink"><a id="promoLinks-AdminUI" class="ajax-link" href="../ajax/promoLinks.html"></a></li>
 						<li id="Synonyms" ><a id="synonyms-AdminUI" class="ajax-link" href="../ajax/Synonyms.html"></a></li>
-						<li id="Stopwords"><a id="stopwords-AdminUI" class="ajax-link" href="../ajax/StopWords.html"></a></li> 
-						<li id="Protwords"><a id="protwords-AdminUI" class="ajax-link" href="../ajax/ProtWords.html"></a></li> 
+						<li id="Stopwords"><a id="stopwords-AdminUI" class="ajax-link" href="../ajax/StopWords.html"></a></li>
+						<li id="Protwords"><a id="protwords-AdminUI" class="ajax-link" href="../ajax/ProtWords.html"></a></li>
 						<li id="FieldWeight"><a id="fieldWeight-AdminUI" class="ajax-link" href="../ajax/FieldWeight.html"></a></li>
 						<li id="FacetConfig"><a id="facetConfig-AdminUI" class="ajax-link" href="../ajax/FacetConfig.html"></a></li>
 						<li id="Deduplication"><a id="deduplication-AdminUI" class="ajax-link" href="../ajax/config_deduplication.html"></a></li>
 
 						<li id="LikesAndFavorites"><a id="likesFavoritesSearchEng-AdminUI" class="ajax-link" href="../ajax/config_likesAndFavorites.html"></a></li>
-<% 
+<%
 	if(request.isUserInRole("SearchAdministrator")){
 %>
 						<li id="Zookeeper"><a id="zookeeper-AdminUI" class="ajax-link" href="../ajax/config_zookeeper.html"></a></li>
@@ -254,7 +253,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 <!-- 						<li><a class="ajax-link" href="../ajax/ui_icons.html">Autocomplete configuration</a></li> -->
 					</ul>
 				</li>
-<% 
+<%
 	if(request.isUserInRole("SearchAdministrator")){
 %>
 			<li class="dropdown" id="Servers">
@@ -267,7 +266,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 <!-- 						<li><a class="ajax-link" href="../ajax/Jetty.html">Jetty</a></li> -->
 					</ul>
 				</li>
-				
+
 				<li class="dropdown" id="userManagement">
 					<a href="#" class="dropdown-toggle">
 					<i class="fa fa-users"></i>
@@ -283,9 +282,9 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 	}
 }
 %>
-				
-				
-				
+
+
+
 			</ul>
 		</div>
 		<!--Start Content-->
