@@ -34,7 +34,7 @@ db_input high datafari/datafari_password || true
 db_go
 db_get datafari/datafari_password
 chmod -R 775 /opt/datafari
-export JAVA_HOME=/opt/datafari/jvm
+
 cd /opt/datafari/mcf/mcf_home/obfuscation-utility
 sed -i -e "s~@PASSWORD@~$(./obfuscate.sh ${RET})~g" /opt/datafari/mcf/mcf_home/properties-global.xml
 sed -i -e "s/@TEMPADMINPASSWORD@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties

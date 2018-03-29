@@ -6,7 +6,7 @@
 #
 
 export DATAFARI_HOME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/..
-export JAVA_HOME=${DATAFARI_HOME}/jvm
+#export JAVA_HOME=${DATAFARI_HOME}/jvm
 export PATH=${PATH}:$JAVA_HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 export INIT_STATE_FILE=${DATAFARI_HOME}/bin/common/init_state.properties
 export CONFIG_FILE=${DATAFARI_HOME}/tomcat/conf/datafari.properties

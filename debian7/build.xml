@@ -35,7 +35,6 @@
 
 
 	<!-- debian binaries -->
-	<property name="jvm.dir" value="${debian.dir}/jvm" />
 	<property name="command.dir" value="${debian.dir}/command" />
 	<property name="pgsql.dir" value="${debian.dir}/pgsql" />
 
@@ -276,10 +275,6 @@
 
 		<copy todir="${debian.dist.dir}/pgsql">
 			<fileset dir="${pgsql.dir}" />
-		</copy>
-
-		<copy todir="${debian.dist.dir}/jvm">
-			<fileset dir="${jvm.dir}" />
 		</copy>
 
 		<copy todir="${debian.dist.dir}/zookeeper">
