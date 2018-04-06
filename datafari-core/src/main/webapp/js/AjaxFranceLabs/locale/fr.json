@@ -1,4 +1,8 @@
 {
+    "selectField" : "Sélectionnez un champ",
+    "equals": "Est égal à",
+    "not-equals" : "N'est pas égal à",
+    "selectValue": "Sélectionnez une valeur",
     "abnormalQueryTime": "Requête trop longue",
     "adActivationLabel": "Statut de la connexion",
     "ADConfig": "Configuration de l'Active Directory",

@@ -1,4 +1,8 @@
 {
+    "selectField" : "Select a field",
+    "equals": "Equals",
+    "not-equals" : "Not equals",
+    "selectValue": "Select a value",
     "abnormalQueryTime": "Query troppo lunga",
     "adActivationLabel": "Connection status",
     "ADConfig": "Configurazione AD",
