@@ -95,6 +95,7 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
      * urlHierarchy);
      */
 
+    doc.remove("url");
     doc.addField("url", url);
 
     String filename = "";
