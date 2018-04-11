@@ -139,7 +139,7 @@
     <field name="quality" type="string" indexed="true" stored="true" multiValued="true"/>
     <field name="meta_save_date" type="tdate" indexed="true" stored="true" multiValued="true"/>
     <field name="color_space" type="string" indexed="true" stored="true" multiValued="true"/>
-    <field name="sequence_number" type="int" indexed="true" stored="true" multiValued="true"/>
+    <field name="sequence_number" type="string" indexed="true" stored="true" multiValued="true"/>
     <field name="last_save_date" type="tdate" indexed="true" stored="true" multiValued="true"/>
     <field name="exif_flash" type="string" indexed="true" stored="true" multiValued="true"/>
     <field name="dcterms_modified" type="tdate" indexed="true" stored="true" multiValued="true"/>
