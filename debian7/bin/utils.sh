@@ -28,6 +28,112 @@ waitTomcat() {
     done
 }
 
+waitCassandra() {
+	echo "Checking if Cassandra is up and running ..."
+	# Try to connect on Cassandra's JMX port 7199 and CQLSH port 9042
+	cassandra_status=0
+	retries=1
+
+	exec 6<>/dev/tcp/127.0.0.1/7199 || cassandra_status=1
+	exec 6>&- # close output connection
+	exec 6<&- # close input connection
+
+	exec 6<>/dev/tcp/127.0.0.1/9042 || cassandra_status=1
+	exec 6>&- # close output connection
+	exec 6<&- # close input connection
+
+	while (( retries < 10 && cassandra_status != 0 )); do
+		echo "Cassandra doesn't reply to requests on ports 7199 and/or 9042. Sleeping for a while and trying again... retry ${retries}"
+
+		cassandra_status=0
+
+		# Sleep for a while
+		sleep 5s
+
+		exec 6<>/dev/tcp/127.0.0.1/7199 || cassandra_status=1
+		exec 6>&- # close output connection
+		exec 6<&- # close input connection
+		
+		exec 6<>/dev/tcp/127.0.0.1/9042 || cassandra_status=1
+		exec 6>&- # close output connection
+		exec 6<&- # close input connection
+
+		((retries++))
+	done
+
+	if [ $cassandra_status -ne 0 ]; then
+		echo "/!\ ERROR: Cassandra startup has ended with errors; please check log file ${DATAFARI_LOGS}/cassandra-startup.log"
+	else
+		echo "Cassandra startup completed successfully --- OK"
+	fi
+}
+
+waitElasticsearch() {
+	echo "Checking if Elasticsearch is up and running ..."
+	# Try to connect on Elasticsearch port 9200
+	elasticsearch_status=0
+	retries=1
+
+	exec 6<>/dev/tcp/127.0.0.1/9200 || elasticsearch_status=1
+	exec 6>&- # close output connection
+	exec 6<&- # close input connection
+
+	while (( retries < 6 && elasticsearch_status != 0 )); do
+		echo "Elasticsearch doesn't reply to requests on port 9200. Sleeping for a while and trying again... retry ${retries}"
+
+		elasticsearch_status=0
+
+		# Sleep for a while
+		sleep 10s
+
+		exec 6<>/dev/tcp/127.0.0.1/9200 || elasticsearch_status=1
+		exec 6>&- # close output connection
+		exec 6<&- # close input connection
+
+		((retries++))
+	done
+
+	if [ $elasticsearch_status -ne 0 ]; then
+		echo "/!\ ERROR: Elasticsearch startup has ended with errors"
+		exit 1;
+	else
+		echo "Elasticsearch startup completed successfully --- OK"
+	fi
+}
+
+waitKibana() {
+	echo "Checking if Kibana is up and running ..."
+	# Try to connect on Kibana port 5601
+	kibana_status=0
+	retries=1
+
+	exec 6<>/dev/tcp/127.0.0.1/5601 || kibana_status=1
+	exec 6>&- # close output connection
+	exec 6<&- # close input connection
+
+	while (( retries < 6 && kibana_status != 0 )); do
+		echo "Kibana doesn't reply to requests on port 5601. Sleeping for a while and trying again... retry ${retries}"
+
+		kibana_status=0
+
+		# Sleep for a while
+		sleep 10s
+
+		exec 6<>/dev/tcp/127.0.0.1/5601 || kibana_status=1
+		exec 6>&- # close output connection
+		exec 6<&- # close input connection
+
+		((retries++))
+	done
+
+	if [ $kibana_status -ne 0 ]; then
+		echo "/!\ ERROR: Kibana startup has ended with errors"
+		exit 1;
+	else
+		echo "Kibana startup completed successfully --- OK"
+	fi
+}
+
 is_running() {
     local pidFile=$1
     if ! [ -f $pidFile ]; then

@@ -93,15 +93,23 @@ then
 	echo "Configure ELK"
 	cd $ELASTICSEARCH_HOME/bin
 	sudo -E su datafari -p -c "bash elasticsearch -p $ELASTICSEARCH_PID_FILE" &
-	sleep 10
 	
 	#Test if Elasticsearch is up, if not then exit
-    curl -s --fail -XGET http://localhost:9200/ || { echo "Fail to reach Elasticsearch on localhost:9200"; echo "Please check your network connection and, in case a proxy is configured, that a proxy exception exists for 'localhost' and '127.0.0.1' !"; sudo -E su datafari -p -c "kill $(cat $ELASTICSEARCH_PID_FILE)"; exit 1; }   
+	waitElasticsearch
+	
+	#Sleep till Elasticsearch finishes its configuration
+	sleep 5
 	
 	sudo -E su datafari -p -c "sed -i '/pid\.file/c\pid.file: ${KIBANA_PID_FILE}' $KIBANA_HOME/config/kibana.yml"
 	cd $KIBANA_HOME/bin
 	sudo -E su datafari -p -c "bash kibana" &
-	sleep 10
+	
+	#Test if Kibana is up, if not then exit
+	waitKibana
+	
+	#Sleep till Kibana finishes its configuration
+	sleep 5
+		
 	kibana_config=$(curl -s http://localhost:9200/.kibana/config/_search | jq -r '.hits.hits | .[0] | ._id')
 	curl -H 'Content-Type: application/json' -XPUT -d @${LOGSTASH_HOME}/templates/datafari-monitoring-template.json http://localhost:9200/_template/datafari-monitoring
 	curl -H 'Content-Type: application/json' -XPUT -d @${LOGSTASH_HOME}/templates/datafari-statistic-template.json http://localhost:9200/_template/datafari-statistics
@@ -220,6 +228,7 @@ then
 else
 	sudo LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib su postgres -p -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_LOGS}/pgsql.log start"
 	sudo -E su datafari -p -c "CASSANDRA_INCLUDE=$CASSANDRA_ENV $CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE 1>/dev/null"
+	waitCassandra
 fi
 
 cd $MCF_HOME/../bin
