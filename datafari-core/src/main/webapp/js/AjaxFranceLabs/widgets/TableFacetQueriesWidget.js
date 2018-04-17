@@ -105,7 +105,7 @@ AjaxFranceLabs.TableFacetQueriesWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 		} else {
 			var cptQ = 0;
 			for (var i = 0; i < max; i++) {
-				var inArray = $.inArray(data[i].name, self.labels);
+				var inArray = $.inArray(decodeURIComponent(data[i].name), self.labels);
 				if(inArray != -1) {
 					enabledQueries[cptQ] = self.queries[inArray];
 					cptQ++;
