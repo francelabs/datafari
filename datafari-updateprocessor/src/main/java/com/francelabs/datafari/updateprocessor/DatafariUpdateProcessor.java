@@ -19,10 +19,12 @@ package com.francelabs.datafari.updateprocessor;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.SolrInputField;
 import org.apache.solr.common.params.SolrParams;
@@ -31,7 +33,6 @@ import org.apache.solr.update.processor.UpdateRequestProcessor;
 import org.apache.tika.mime.MimeType;
 import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
-import org.apache.commons.io.FilenameUtils;
 
 public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 
@@ -84,12 +85,12 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
      * final List<String> urlHierarchy = new ArrayList<String>();
      *
      * final String path = url.replace("file:", ""); int previousIndex = 1; int
-     * depth = 0; // Tokenize the path and add the depth as first character for
-     * each token // (like: 0/home, 1/home/project ...) for (int i = 0; i <
+     * depth = 0; // Tokenize the path and add the depth as first character for each
+     * token // (like: 0/home, 1/home/project ...) for (int i = 0; i <
      * path.split("/").length - 2; i++) { int endIndex = path.indexOf('/',
      * previousIndex); if (endIndex == -1) { endIndex = path.length() - 1; }
-     * urlHierarchy.add(depth + path.substring(0, endIndex)); depth++;
-     * previousIndex = endIndex + 1; }
+     * urlHierarchy.add(depth + path.substring(0, endIndex)); depth++; previousIndex
+     * = endIndex + 1; }
      *
      * // Add the tokens to the urlHierarchy field doc.addField("urlHierarchy",
      * urlHierarchy);
@@ -118,63 +119,57 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     }
 
     if (url.startsWith("file")) {
-      doc.removeField("title");
-      doc.addField("title", filename);
+      // keep the filename as the first title for the searchView of Datafari
+      if (doc.getFieldValues("title") != null) {
+        final Collection<Object> titleValues = doc.getFieldValues("title");
+        doc.removeField("title");
+        doc.addField("title", filename);
+        for (final Object value : titleValues) {
+          doc.addField("title", value);
+        }
+      } else {
+        doc.addField("title", filename);
+      }
+
       doc.addField("source", "file");
     }
 
     String extension = "";
-    URL urlObject = new URL(url);
-    String path = urlObject.getPath();
+    final URL urlObject = new URL(url);
+    final String path = urlObject.getPath();
     final SolrInputField mimeTypeField = doc.get("ignored_content_type");
 
-    String nameExtension = FilenameUtils.getExtension(path);
-    String tikaExtension = mimeTypeField==null ? "" : extensionFromMimeTypeField(mimeTypeField);
-    
+    final String nameExtension = FilenameUtils.getExtension(path);
+    final String tikaExtension = mimeTypeField == null ? "" : extensionFromMimeTypeField(mimeTypeField);
+
     if (extensionFromName) {
-      extension = nameExtension.length() > 1 && nameExtension.length() < 5 ? nameExtension : tikaExtension;
+      extension = (nameExtension.length() > 1) && (nameExtension.length() < 5) ? nameExtension : tikaExtension;
     } else {
-      extension = tikaExtension.length() > 1 && tikaExtension.length() < 5 ? tikaExtension : nameExtension;
+      extension = (tikaExtension.length() > 1) && (tikaExtension.length() < 5) ? tikaExtension : nameExtension;
     }
     /*
-    if (extensionFromName || mimeTypeField == null) {
-    	if (path.contains(".")){
-    	  extension = FilenameUtils.getExtension(path);
-    		if (extension.length() > 4 || extension.length() < 1) {
-    		  // If length is too long, try extracting from tika information if available
-    		  String tryExtension = mimeTypeField==null ? null : extensionFromMimeTypeField(mimeTypeField);
-    		  if (tryExtension != null) {
-    		    extension = tryExtension;
-    		  } else {
-    		    // Else default to bin for anything else
-    		    extension = "bin";
-    		  }
-    		}
-    	}
-    	else if (urlObject.getProtocol().equals("http") || urlObject.getProtocol().equals("https")) {
-    	  extension = null;
-    	  if (mimeTypeField != null) {
-    	    extension = extensionFromMimeTypeField(mimeTypeField);
-    	  } 
-    	  if (extension == null) {
-    	    extension = "html";
-    	  }
-    	}
-    } else {
-      extension = extensionFromMimeTypeField(mimeTypeField);
-      if (extension == null) {
-        extension = FilenameUtils.getExtension(path);
-      }
-    }
-  */
+     * if (extensionFromName || mimeTypeField == null) { if (path.contains(".")){
+     * extension = FilenameUtils.getExtension(path); if (extension.length() > 4 ||
+     * extension.length() < 1) { // If length is too long, try extracting from tika
+     * information if available String tryExtension = mimeTypeField==null ? null :
+     * extensionFromMimeTypeField(mimeTypeField); if (tryExtension != null) {
+     * extension = tryExtension; } else { // Else default to bin for anything else
+     * extension = "bin"; } } } else if (urlObject.getProtocol().equals("http") ||
+     * urlObject.getProtocol().equals("https")) { extension = null; if
+     * (mimeTypeField != null) { extension =
+     * extensionFromMimeTypeField(mimeTypeField); } if (extension == null) {
+     * extension = "html"; } } } else { extension =
+     * extensionFromMimeTypeField(mimeTypeField); if (extension == null) { extension
+     * = FilenameUtils.getExtension(path); } }
+     */
     doc.addField("extension", extension.toLowerCase());
 
     super.processAdd(cmd);
   }
-  
-  private String extensionFromMimeTypeField(SolrInputField mimeTypeField) {
+
+  private String extensionFromMimeTypeField(final SolrInputField mimeTypeField) {
     String extension = "";
-    String[] mimeTypeList = mimeTypeField.getValues().toArray(new String[0]);
+    final String[] mimeTypeList = mimeTypeField.getValues().toArray(new String[0]);
     for (String mimeType : mimeTypeList) {
       if (mimeType.contains(";")) {
         final String[] parts = mimeType.split(";");
@@ -182,7 +177,7 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
       }
       final MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
       MimeType type;
-  
+
       try {
         type = allTypes.forName(mimeType);
         String currentExtension = type.getExtension();
@@ -192,7 +187,8 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
         if (!currentExtension.equals("bin")) {
           extension = currentExtension;
         }
-      } catch (final MimeTypeException e) {}
+      } catch (final MimeTypeException e) {
+      }
     }
     return extension;
   }
