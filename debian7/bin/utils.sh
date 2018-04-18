@@ -34,11 +34,11 @@ waitCassandra() {
 	cassandra_status=0
 	retries=1
 
-	exec 6<>/dev/tcp/127.0.0.1/7199 || cassandra_status=1
+	exec 6<>/dev/tcp/localhost/7199 || cassandra_status=1
 	exec 6>&- # close output connection
 	exec 6<&- # close input connection
 
-	exec 6<>/dev/tcp/127.0.0.1/9042 || cassandra_status=1
+	exec 6<>/dev/tcp/localhost/9042 || cassandra_status=1
 	exec 6>&- # close output connection
 	exec 6<&- # close input connection
 
@@ -50,11 +50,11 @@ waitCassandra() {
 		# Sleep for a while
 		sleep 5s
 
-		exec 6<>/dev/tcp/127.0.0.1/7199 || cassandra_status=1
+		exec 6<>/dev/tcp/localhost/7199 || cassandra_status=1
 		exec 6>&- # close output connection
 		exec 6<&- # close input connection
 		
-		exec 6<>/dev/tcp/127.0.0.1/9042 || cassandra_status=1
+		exec 6<>/dev/tcp/localhost/9042 || cassandra_status=1
 		exec 6>&- # close output connection
 		exec 6<&- # close input connection
 
@@ -74,7 +74,7 @@ waitElasticsearch() {
 	elasticsearch_status=0
 	retries=1
 
-	exec 6<>/dev/tcp/127.0.0.1/9200 || elasticsearch_status=1
+	exec 6<>/dev/tcp/localhost/9200 || elasticsearch_status=1
 	exec 6>&- # close output connection
 	exec 6<&- # close input connection
 
@@ -86,7 +86,7 @@ waitElasticsearch() {
 		# Sleep for a while
 		sleep 10s
 
-		exec 6<>/dev/tcp/127.0.0.1/9200 || elasticsearch_status=1
+		exec 6<>/dev/tcp/localhost/9200 || elasticsearch_status=1
 		exec 6>&- # close output connection
 		exec 6<&- # close input connection
 
@@ -107,7 +107,7 @@ waitKibana() {
 	kibana_status=0
 	retries=1
 
-	exec 6<>/dev/tcp/127.0.0.1/5601 || kibana_status=1
+	exec 6<>/dev/tcp/localhost/5601 || kibana_status=1
 	exec 6>&- # close output connection
 	exec 6<&- # close input connection
 
@@ -119,7 +119,7 @@ waitKibana() {
 		# Sleep for a while
 		sleep 10s
 
-		exec 6<>/dev/tcp/127.0.0.1/5601 || kibana_status=1
+		exec 6<>/dev/tcp/localhost/5601 || kibana_status=1
 		exec 6>&- # close output connection
 		exec 6<&- # close input connection
 
