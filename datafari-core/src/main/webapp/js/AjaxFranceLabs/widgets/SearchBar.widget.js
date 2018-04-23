@@ -315,7 +315,6 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 					this.clean();
 					this.updateAddressBar();
 					this.manager.makeRequest();
-					$("#results .doc_list").empty();
 				}
 
 			},
