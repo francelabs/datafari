@@ -40,6 +40,7 @@
 
 		<script type ="text/javascript" src ="js/main.js"></script>
 		<script type ="text/javascript" src ="js/searchBar.js"></script>
+		<script type ="text/javascript" src ="js/polyfill.js"></script>
 		
 
 	<jsp:include page="header-index.jsp" />
