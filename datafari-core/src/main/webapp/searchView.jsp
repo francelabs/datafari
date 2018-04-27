@@ -183,7 +183,7 @@
 		<div id="facet_type_mobile"></div>
     </div>
 	<div id="solr">
-		<div id="searchBar"> <a id="logo_desktop" href="../Datafari/Search"><img src="css/images/logo_zebre.png"/></a> <div id="search_information"></div></div>
+		<div id="searchBar"> <a id="logo_desktop" href="../Datafari/Search"><img src="css/images/logo_zebre.png"/></a> <div id="search_information"></div><div id="results_action"></div></div>
 		<div id="advancedSearch"> <a href="../Datafari/Search"><img src="css/images/logo_zebre.png"/></a></div>
 		<div id="parametersUi" style="display: none;"><jsp:include page="parameters.jsp" /></div>
 		<div id="favoritesUi" style="display: none;"><jsp:include page="favorites.jsp" /></div>

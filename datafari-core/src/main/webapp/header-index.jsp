@@ -59,5 +59,4 @@
 		</div>
 	</div>
 
-	<div id="bar"></div>
 </header>

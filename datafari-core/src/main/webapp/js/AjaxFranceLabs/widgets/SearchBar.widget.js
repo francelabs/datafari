@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2015 - 2016 France Labs
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -39,7 +39,7 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 			removeContentButton : false,
 
 			type : 'searchBar',
-			
+
 			activateAdvancedSearchLink : false,
 
 			// Methods
@@ -81,18 +81,14 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 				$("#basicSearchLink").html(window.i18n.msgStore['search']);
 				$("#basicSearchLink").click(function() {self.initBasicSearchUI();});
 				$("#basicSearchLink").addClass("active");
-				
-				if ($(window).width() > 800) {
-					elm.addClass('searchBarWidget').addClass('widget').append(
-							'<div id="searchBarContent"></div>').append(
-							'<div id="sortMode"></div>');
-					elm.find('#searchBarContent').append(
-							'<div class="searchBar"></div>');
-				} else {
-					elm.addClass('searchBarWidget').addClass('widget').append(
-							'<div class="searchBar"></div>').append(
-							'<div id="sortMode"></div>');
-				}
+
+				elm.addClass('searchBarWidget').addClass('widget').append(
+						'<div id="searchBarContent"></div>');
+				$("#results_action").append(
+						'<div id="sortMode"></div>');
+				elm.find('#searchBarContent').append(
+						'<div class="searchBar"></div>');
+
 				elm
 						.find('.searchBar')
 						.append(
@@ -182,65 +178,68 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 					this.autocomplete.init();
 				}
 				var sortModeDiv = document.getElementById("sortMode");
-				var textSort = document
-						.createTextNode(window.i18n.msgStore['sortType']);
-				sortModeDiv.appendChild(textSort);
-				var selectList = document.createElement("select");
-				selectList.id = "mySelect";
-				selectList.onchange = function() {
-					self.manager.makeRequest();
-				};
-				sortModeDiv.appendChild(selectList);
+        if (sortModeDiv != undefined) {
+  				var textSort = document
+  						.createTextNode(window.i18n.msgStore['sortType']);
+  				sortModeDiv.appendChild(textSort);
+  				var selectList = document.createElement("select");
+  				selectList.id = "mySelect";
+  				selectList.onchange = function() {
+  					self.manager.makeRequest();
+  				};
+  				sortModeDiv.appendChild(selectList);
 
-				var optionScore = document.createElement("option");
-				optionScore.setAttribute("value", "score");
-				optionScore.setAttribute("selected", "");
-				optionScore.text = window.i18n.msgStore['score'];
 
-				selectList.appendChild(optionScore);
+  				var optionScore = document.createElement("option");
+  				optionScore.setAttribute("value", "score");
+  				optionScore.setAttribute("selected", "");
+  				optionScore.text = window.i18n.msgStore['score'];
 
-				var optionDate = document.createElement("option");
-				optionDate.setAttribute("value", "date");
-				optionDate.text = window.i18n.msgStore['date'];
-				selectList.appendChild(optionDate);
-				
+  				selectList.appendChild(optionScore);
+
+  				var optionDate = document.createElement("option");
+  				optionDate.setAttribute("value", "date");
+  				optionDate.text = window.i18n.msgStore['date'];
+  				selectList.appendChild(optionDate);
+        }
+
 				if (this.activateAdvancedSearchLink){
 
-					
+
 					$('#advancedSearchLink').click(function(event){
-						
+
 						destroyDatatables();
-						
+
 						// Hide other UIs
 						$("#parametersUi").hide();
 						$("#favoritesUi").hide();
 						$("#loginDatafariLinks").find(".active").removeClass("active");
-						
+
 						// Make the link active
 						$(this).addClass('active');
-						
+
 						// Hide the basic search
 						elm.hide();
-						
+
 						// Hide the results UI
 						$("#results_div").hide();
-						
+
 						// Reset the widget status (radios, entered text, ...)
 						self.manager.getWidgetByID('advancedSearch').reset();
-						
+
 						// Initialize the advancedSearch UI
 						self.manager.getWidgetByID('advancedSearch').buildStartingUI();
-						
+
 						// Display the advanced search
 						$('#advancedSearch').show();
-						
+
 						// Perform a "select all" request: *:*
-						//self.manager.makeDefaultRequest();				
-						
+						//self.manager.makeDefaultRequest();
+
 						// Prevent page reload
 						event.preventDefault();
-					});	
-				}							
+					});
+				}
 			},
 
 			beforeRequest : function() {
@@ -263,7 +262,7 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 					// Make spellchecker case insensitive
 					// Manager.store.addByValue("spellcheck.q", search);
 					var testSelect = document.getElementById("mySelect");
-					if (testSelect.options[testSelect.selectedIndex].value == 'date') {
+					if (testSelect != undefined && testSelect.options[testSelect.selectedIndex].value == 'date') {
 						Manager.store.addByValue("sort", 'last_modified desc');
 					} else {
 						Manager.store.addByValue("sort", 'score desc');
@@ -318,7 +317,7 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 				}
 
 			},
-			
+
 			initBasicSearchUI: function() {
 				if(typeof destroyDatatables !== "undefined") {
 					destroyDatatables();
@@ -333,14 +332,14 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 				$("#loginDatafariLinks").find(".active").removeClass("active");
 				$("#basicSearchLink").addClass("active");
 			},
-			
+
 			/**
 			 * Resets the inputs of the widget
 			 */
 			reset : function() {
 				var elm = $(this.elm);
 				elm.find('input[type="text"]').val('');
-				elm.find('input#allWords').prop('checked', true);				
+				elm.find('input#allWords').prop('checked', true);
 			}
 
 		});

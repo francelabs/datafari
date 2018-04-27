@@ -8,14 +8,11 @@
 		width:auto;
 		display:block;
 	}
-	
+
 	#content_index{
-		position: fixed;
-		transform: translate(-50%, -50%);
-		-webkit-transform: translate(-50%, -50%);
-		-ms-transform: translate(-50%, -50%);
-		left: 50%;
-		top: 35%;
+		position: relative;
+		top: 15%;
+		margin:auto;
 	}
 	header{
 		display:inline-block;
@@ -26,6 +23,7 @@
 	}
 	.searchBar input{
 		width:70%;
+    margin:auto;
 	}
 	#solr .searchBarWidget{
 		margin-left:0px;
@@ -37,7 +35,7 @@
 	.searchMode{
 		display:none;
 	}
-	
+
 }
 
 
