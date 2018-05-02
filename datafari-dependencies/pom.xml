@@ -3,7 +3,7 @@
 	<groupId>com.francelabs.datafari</groupId>
 	<artifactId>datafari-dependencies</artifactId>
 	<!-- Dependencies POM of datafari -->
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 	<version>4.0.2-SNAPSHOT</version>
 	<name>Datafari Enterprise Search - Dependencies POM</name>
 
@@ -262,21 +262,28 @@
 		<!-- defaultGoal defined in the parent POM -->
 
 		<plugins>
-			<!-- Enable all dependencies to be installed in Maven repo -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-install-plugin</artifactId>
-				<version>2.5.2</version>
-				<executions>
-					<execution>
-						<id>default-install</id>
-						<phase>install</phase>
-						<goals>
-							<goal>install</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
+      <plugin>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>2.5.2</version>
+        <executions>
+          <execution>
+            <id>default-install</id>
+            <phase>install</phase>
+            <goals>
+              <goal>install</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.5.1</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+    </plugins>
 	</build>
 </project>

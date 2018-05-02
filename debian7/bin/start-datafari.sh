@@ -195,10 +195,6 @@ echo "Start zookeeper"
 cd "${DATAFARI_HOME}/zookeeper/bin"
 sudo -E su datafari -p -c "bash zkServer.sh start"
 
-echo "Start Tomcat"
-cd $TOMCAT_HOME/bin
-sudo -E su datafari -p -c "bash startup.sh"
-
 if  [[ "$STATE" = *installed* ]];
 then
 	cd ${MCF_HOME}
@@ -243,6 +239,10 @@ then
 	curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=Statistics&numShards=1&replicationFactor=1"
 	curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=Promolink&numShards=1&replicationFactor=1"
 fi
+
+echo "Start Tomcat"
+cd $TOMCAT_HOME/bin
+sudo -E su datafari -p -c "bash startup.sh"
 
 
 

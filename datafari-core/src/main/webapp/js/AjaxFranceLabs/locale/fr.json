@@ -1,4 +1,12 @@
 {
+    "seeds":"URLs",
+    "exclusions":"Exclusions",
+    "adminUI-Connectors-MCFSimplified" : "MCF Simplified UI",
+    "adminUI-MCFSimplified-title" : "Welcome to the Simplified Connectors Admin UI",
+    "adminUI-MCFSimplified-createWebJob" : "Create Web job",
+    "adminUI-MCFSimplified-createFilerJob" : "Create Filer Job",
+    "adminUI-MCFSimplified-webjobFormEdit" : "Edit MCF Web Job",
+    "adminUI-MCFSimplified-email" : "Email used for the crawl",
     "selectField" : "Sélectionnez un champ",
     "equals": "Est égal à",
     "not-equals" : "N'est pas égal à",

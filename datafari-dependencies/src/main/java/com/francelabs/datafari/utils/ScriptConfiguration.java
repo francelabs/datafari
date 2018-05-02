@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
+
 package com.francelabs.datafari.utils;
 
 import java.io.File;
@@ -38,10 +39,9 @@ public class ScriptConfiguration {
 
   private static ScriptConfiguration instance;
   private final Properties properties;
+  public static final String LDAPACTIVATED = "ISLDAPACTIVATED";
 
   private final static Logger LOGGER = Logger.getLogger(ScriptConfiguration.class.getName());
-
-  public static final String LDAPACTIVATED = "ISLDAPACTIVATED";
 
   /**
    * Set a property and save it the datafari.properties

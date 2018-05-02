@@ -16,7 +16,7 @@
               <groupId>com.francelabs.datafari</groupId>
               <artifactId>datafari-dependencies</artifactId>
               <version>4.0.2-SNAPSHOT</version>
-              <type>pom</type>
+              <type>jar</type>
         </dependency>
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
