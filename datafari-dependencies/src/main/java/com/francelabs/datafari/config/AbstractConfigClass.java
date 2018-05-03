@@ -31,6 +31,14 @@ public abstract class AbstractConfigClass implements IConfigClass {
 
   private Thread watcherThread;
 
+  /**
+   * Load the provided properties file from /opt/datafari/tomcat/conf
+   *
+   * @param configPropertiesFileName
+   *          the properties file name
+   * @param logger
+   *          the logger to use
+   */
   protected AbstractConfigClass(final String configPropertiesFileName, final Logger logger) {
     LOGGER = logger;
     this.configPropertiesFileName = configPropertiesFileName;
@@ -38,8 +46,25 @@ public abstract class AbstractConfigClass implements IConfigClass {
     if (envPath == null) {
       envPath = "/opt/datafari/tomcat";
     }
-    configPropertiesFileNameAbsolutePath = envPath + File.separator + "conf" + File.separator
-        + configPropertiesFileName;
+    configPropertiesFileNameAbsolutePath = envPath + File.separator + "conf" + File.separator + configPropertiesFileName;
+    loadProperties();
+  }
+
+  /**
+   * Load the properties file referenced by the
+   * configPropertiesFileNameAbsolutePath parameter
+   *
+   * @param configPropertiesFileName
+   *          the properties file name
+   * @param configPropertiesFileNameAbsolutePath
+   *          the properties file absolute path
+   * @param logger
+   *          the logger to use
+   */
+  protected AbstractConfigClass(final String configPropertiesFileName, final String configPropertiesFileNameAbsolutePath, final Logger logger) {
+    LOGGER = logger;
+    this.configPropertiesFileName = configPropertiesFileName;
+    this.configPropertiesFileNameAbsolutePath = configPropertiesFileNameAbsolutePath;
     loadProperties();
   }
 
@@ -62,9 +87,8 @@ public abstract class AbstractConfigClass implements IConfigClass {
   }
 
   @Override
-  public void saveProperties() throws IOException {
-    try (final FileWriterWithEncoding propWriter = new FileWriterWithEncoding(
-        new File(configPropertiesFileNameAbsolutePath), StandardCharsets.UTF_8);) {
+  public synchronized void saveProperties() throws IOException {
+    try (final FileWriterWithEncoding propWriter = new FileWriterWithEncoding(new File(configPropertiesFileNameAbsolutePath), StandardCharsets.UTF_8);) {
       properties.store(propWriter, null);
     }
   }
@@ -75,8 +99,7 @@ public abstract class AbstractConfigClass implements IConfigClass {
   private void loadProperties() {
     final File configFile = new File(configPropertiesFileNameAbsolutePath);
     properties = new Properties();
-    try (final InputStream stream = new FileInputStream(configFile);
-        final InputStreamReader isr = new InputStreamReader(stream, StandardCharsets.UTF_8);) {
+    try (final InputStream stream = new FileInputStream(configFile); final InputStreamReader isr = new InputStreamReader(stream, StandardCharsets.UTF_8);) {
       properties.load(isr);
     } catch (final IOException e) {
       LOGGER.error("Cannot read file : " + configFile.getAbsolutePath(), e);
@@ -116,7 +139,7 @@ public abstract class AbstractConfigClass implements IConfigClass {
               // always
               // a Path.
               final Path changed = (Path) event.context();
-              if (changed.endsWith(configPropertiesFileName) && (event.count() == 1)) {
+              if (changed.endsWith(configPropertiesFileName) && event.count() == 1) {
                 LOGGER.info("Advanced search config file has changed, reloading the properties");
                 Thread.sleep(200);
                 loadProperties();
@@ -138,7 +161,8 @@ public abstract class AbstractConfigClass implements IConfigClass {
   }
 
   /**
-   * Listen for every changes/modifications of the advanced search properties file
+   * Listen for every changes/modifications of the advanced search properties
+   * file
    */
   @Override
   public synchronized void listenChanges() {

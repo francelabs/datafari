@@ -27,23 +27,30 @@ import com.francelabs.datafari.config.AbstractConfigClass;
  * @author France Labs
  *
  */
-public class CorePropertiesConfiguration extends AbstractConfigClass {
+public class SolrConfiguration extends AbstractConfigClass {
+
+  // Properties
+  public static final String SOLRHOST = "SOLRHOST";
+  public static final String SOLRWEBAPP = "SOLRWEBAPP";
+  public static final String SOLRPORT = "SOLRPORT";
+  public static final String ZOOKEEPERPORT = "ZOOKEEPERPORT";
+  public static final String SOLRPROTOCOL = "SOLRPROTOCOL";
 
   // Config filename
-  private static final String configFilename = "core.properties";
+  private static final String configFilename = "solr.properties";
 
-  private static CorePropertiesConfiguration instance;
+  private static SolrConfiguration instance;
 
-  private final static Logger LOGGER = Logger.getLogger(CorePropertiesConfiguration.class.getName());
+  private final static Logger LOGGER = Logger.getLogger(SolrConfiguration.class.getName());
 
   /**
    *
    * Get the instance
    *
    */
-  public static synchronized CorePropertiesConfiguration getInstance() throws IOException {
+  public synchronized static SolrConfiguration getInstance() throws IOException {
     if (null == instance) {
-      instance = new CorePropertiesConfiguration();
+      instance = new SolrConfiguration();
     }
     return instance;
   }
@@ -53,8 +60,8 @@ public class CorePropertiesConfiguration extends AbstractConfigClass {
    * Read the properties file to get the parameters to create instance
    *
    */
-  private CorePropertiesConfiguration() {
-    super(configFilename, Environment.getEnvironmentVariable("DATAFARI_HOME") + "/solr/solrcloud" + "/FileShare/" + configFilename, LOGGER);
+  private SolrConfiguration() {
+    super(configFilename, LOGGER);
 
   }
 

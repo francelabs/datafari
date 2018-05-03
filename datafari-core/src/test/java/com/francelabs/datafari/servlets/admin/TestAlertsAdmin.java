@@ -31,7 +31,7 @@ import com.francelabs.datafari.utils.Environment;
 
 @PrepareForTest(Environment.class)
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"javax.management.*","javax.crypto.*"})
+@PowerMockIgnore({ "javax.management.*", "javax.crypto.*" })
 public class TestAlertsAdmin {
 
   final static String resourcePathStr = "src/test/resources/alertsTests";
@@ -82,20 +82,20 @@ public class TestAlertsAdmin {
     final JSONObject jsonResponse = new JSONObject(sw.toString());
     assertTrue(jsonResponse.getInt("code") == 0);
 
-    assertTrue(AlertsConfiguration.getProperty(AlertsConfiguration.HOURLY_DELAY).equals("31/07/2015/08:42"));
-    assertTrue(AlertsConfiguration.getProperty(AlertsConfiguration.DAILY_DELAY).equals("31/07/2015/08:42"));
-    assertTrue(AlertsConfiguration.getProperty(AlertsConfiguration.WEEKLY_DELAY).equals("31/07/2015/08:42"));
+    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.HOURLY_DELAY).equals("31/07/2015/08:42"));
+    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DAILY_DELAY).equals("31/07/2015/08:42"));
+    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.WEEKLY_DELAY).equals("31/07/2015/08:42"));
 
     // Properties mails
-    assertTrue(AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_ADDRESS).equals("SMTP_ADRESS_Test"));
-    assertTrue(AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_FROM).equals("SMTP_FROM_Test"));
-    assertTrue(AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_USER).equals("SMTP_USER_Test"));
-    assertTrue(AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_PASSWORD).equals("SMTP_PASSWORD_Test"));
+    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_ADDRESS).equals("SMTP_ADRESS_Test"));
+    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_FROM).equals("SMTP_FROM_Test"));
+    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_USER).equals("SMTP_USER_Test"));
+    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_PASSWORD).equals("SMTP_PASSWORD_Test"));
 
     // Properties Database
-    assertTrue(AlertsConfiguration.getProperty(AlertsConfiguration.DATABASE_HOST).equals("DATABASE_HOST_Test"));
-    assertTrue(AlertsConfiguration.getProperty(AlertsConfiguration.DATABASE_PORT).equals("DATABASE_PORT_Test"));
-    assertTrue(AlertsConfiguration.getProperty(AlertsConfiguration.DATABASE_NAME).equals("DATABASE_NAME_Test"));
-    assertTrue(AlertsConfiguration.getProperty(AlertsConfiguration.DATABASE_COLLECTION).equals("DATABASE_COLLECTION_Test"));
+    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DATABASE_HOST).equals("DATABASE_HOST_Test"));
+    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DATABASE_PORT).equals("DATABASE_PORT_Test"));
+    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DATABASE_NAME).equals("DATABASE_NAME_Test"));
+    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DATABASE_COLLECTION).equals("DATABASE_COLLECTION_Test"));
   }
 }

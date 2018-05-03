@@ -43,7 +43,7 @@ public class AdvancedSearchConfiguration extends AbstractConfigClass {
    * Get the instance
    *
    */
-  public static AdvancedSearchConfiguration getInstance() {
+  public synchronized static AdvancedSearchConfiguration getInstance() {
     if (null == instance) {
       instance = new AdvancedSearchConfiguration();
     }

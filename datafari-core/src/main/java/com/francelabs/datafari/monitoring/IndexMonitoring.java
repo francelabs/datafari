@@ -184,7 +184,7 @@ public class IndexMonitoring {
         }
 
         // add authenticatedUser if necessary
-        final String authUser = ELKConfiguration.getProperty(ELKConfiguration.AUTH_USER);
+        final String authUser = ELKConfiguration.getInstance().getProperty(ELKConfiguration.AUTH_USER);
         if (!authUser.isEmpty()) {
           query.setParam("AuthenticatedUserName", authUser);
         }

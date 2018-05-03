@@ -43,91 +43,90 @@ import com.sun.mail.util.MailSSLSocketFactory;
  */
 public class Mail {
 
-	private String smtpHost = "smtp.gmail.com"; // Default address/smtp used
-	private String from = "datafari.test@gmail.com";
-	private String username = "datafari.test@gmail.com";
-	private String password = "Datafari1";
+  private String smtpHost = "smtp.gmail.com"; // Default address/smtp used
+  private String from = "datafari.test@gmail.com";
+  private String username = "datafari.test@gmail.com";
+  private String password = "Datafari1";
 
-	private final static Logger LOGGER = Logger.getLogger(Mail.class.getName());
+  private final static Logger LOGGER = Logger.getLogger(Mail.class.getName());
 
-	public Mail() throws IOException {
-		try {
-			smtpHost = AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_ADDRESS);
-			from = AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_FROM);
-			username = AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_USER);
-			password = AlertsConfiguration.getProperty(AlertsConfiguration.SMTP_PASSWORD);
-		} catch (final IOException e) {
-			LOGGER.error("Error while reading the mail configuration in the Mail constructor. Error 69045", e);
-			return;
-		}
+  public Mail() throws IOException {
+    try {
+      smtpHost = AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_ADDRESS);
+      from = AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_FROM);
+      username = AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_USER);
+      password = AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_PASSWORD);
+    } catch (final IOException e) {
+      LOGGER.error("Error while reading the mail configuration in the Mail constructor. Error 69045", e);
+      return;
+    }
 
-	}
+  }
 
-	/**
-	 * Javadoc
-	 *
-	 * sends a mail
-	 *
-	 * @param subject
-	 *            : the subject of the mail
-	 * @param text
-	 *            : the text of the mail
-	 * @param dest
-	 *            : the destination address
-	 * @param copyDest
-	 *            : (optionnal set to "" if not wanted) an other destination
-	 * @throws IOException,
-	 * @throws AddressException
-	 * @throws MessagingException
-	 *
-	 */
-	public void sendMessage(final String subject, final String text, final String dest, final String copyDest) {
-		try {
-			final Properties props = new Properties();
-			props.put("mail.smtp.host", smtpHost);
-			props.put("mail.smtp.auth", "true");
-			final MailSSLSocketFactory sf = new MailSSLSocketFactory();
-			sf.setTrustAllHosts(true);
-			props.put("mail.smtps.ssl.trust", "*");
-			props.put("mail.smtps.ssl.socketFactory", sf);
+  /**
+   * Javadoc
+   *
+   * sends a mail
+   *
+   * @param subject
+   *          : the subject of the mail
+   * @param text
+   *          : the text of the mail
+   * @param dest
+   *          : the destination address
+   * @param copyDest
+   *          : (optionnal set to "" if not wanted) an other destination
+   * @throws IOException,
+   * @throws AddressException
+   * @throws MessagingException
+   *
+   */
+  public void sendMessage(final String subject, final String text, final String dest, final String copyDest) {
+    try {
+      final Properties props = new Properties();
+      props.put("mail.smtp.host", smtpHost);
+      props.put("mail.smtp.auth", "true");
+      final MailSSLSocketFactory sf = new MailSSLSocketFactory();
+      sf.setTrustAllHosts(true);
+      props.put("mail.smtps.ssl.trust", "*");
+      props.put("mail.smtps.ssl.socketFactory", sf);
 
-			final Session session = Session.getDefaultInstance(props); // Set
-																		// the
-																		// smtp
-			session.setDebug(true);
+      final Session session = Session.getDefaultInstance(props); // Set
+      // the
+      // smtp
+      session.setDebug(true);
 
-			final MimeMessage message = new MimeMessage(session);
-			try {
-				message.setFrom(new InternetAddress(from)); // Set the
-															// destination and
-															// copy
-				// Destination if there are some
-				if (copyDest != "") {
-					message.addRecipients(Message.RecipientType.TO,
-							new InternetAddress[] { new InternetAddress(dest), new InternetAddress(copyDest) });
-				} else {
-					message.addRecipient(Message.RecipientType.TO, new InternetAddress(dest));
-				}
-				message.setSubject(subject);
-				message.setText(text); // Set the content of the mail
+      final MimeMessage message = new MimeMessage(session);
+      try {
+        message.setFrom(new InternetAddress(from)); // Set the
+        // destination and
+        // copy
+        // Destination if there are some
+        if (copyDest != "") {
+          message.addRecipients(Message.RecipientType.TO, new InternetAddress[] { new InternetAddress(dest), new InternetAddress(copyDest) });
+        } else {
+          message.addRecipient(Message.RecipientType.TO, new InternetAddress(dest));
+        }
+        message.setSubject(subject);
+        message.setText(text); // Set the content of the mail
 
-				final Transport tr = session.getTransport("smtps");
-				tr.connect(smtpHost, username, password); // Connect to the
-															// address
-				message.saveChanges();
+        final Transport tr = session.getTransport("smtps");
+        tr.connect(smtpHost, username, password); // Connect to the
+        // address
+        message.saveChanges();
 
-				tr.sendMessage(message, message.getAllRecipients()); // Send the
-																		// message
-				tr.close();
-			} catch (final MessagingException e) {
-				LOGGER.error("Error while sending the mail. Error 69046", e);
-				return;
-			}
+        tr.sendMessage(message, message.getAllRecipients()); // Send the
+        // message
+        tr.close();
+      } catch (final MessagingException e) {
+        LOGGER.error("Error while sending the mail. Error 69046", e);
+        return;
+      }
 
-		} catch (final Exception e) {
-			LOGGER.error("Unindentified error while in Mail sendMessage(). Error 69523", e);
-			return;
-		}
-	}
+    } catch (final Exception e) {
+      LOGGER.error("Unindentified error while in Mail sendMessage(). Error 69523", e);
+      return;
+    }
+  }
 
 }

@@ -76,6 +76,7 @@ public class ELKAdmin extends HttpServlet {
       logger.error("Unable to connect to kibana", e);
       return false;
     }
+
   }
 
   /**
@@ -88,13 +89,13 @@ public class ELKAdmin extends HttpServlet {
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
 
-    jsonResponse.put(ELKConfiguration.KIBANA_URI, ELKConfiguration.getProperty(ELKConfiguration.KIBANA_URI));
-    jsonResponse.put(ELKConfiguration.AUTH_USER, ELKConfiguration.getProperty(ELKConfiguration.AUTH_USER));
-    jsonResponse.put(ELKConfiguration.EXTERNAL_ELK_ON_OFF, ELKConfiguration.getProperty(ELKConfiguration.EXTERNAL_ELK_ON_OFF));
-    jsonResponse.put(ELKConfiguration.ELK_SERVER, ELKConfiguration.getProperty(ELKConfiguration.ELK_SERVER));
-    jsonResponse.put(ELKConfiguration.ELK_SCRIPTS_DIR, ELKConfiguration.getProperty(ELKConfiguration.ELK_SCRIPTS_DIR));
-    final boolean activated = Boolean.parseBoolean(ELKConfiguration.getProperty(ELKConfiguration.ELK_ACTIVATION));
-    final boolean urlUp = isURLUp(ELKConfiguration.getProperty(ELKConfiguration.KIBANA_URI));
+    jsonResponse.put(ELKConfiguration.KIBANA_URI, ELKConfiguration.getInstance().getProperty(ELKConfiguration.KIBANA_URI));
+    jsonResponse.put(ELKConfiguration.AUTH_USER, ELKConfiguration.getInstance().getProperty(ELKConfiguration.AUTH_USER));
+    jsonResponse.put(ELKConfiguration.EXTERNAL_ELK_ON_OFF, ELKConfiguration.getInstance().getProperty(ELKConfiguration.EXTERNAL_ELK_ON_OFF));
+    jsonResponse.put(ELKConfiguration.ELK_SERVER, ELKConfiguration.getInstance().getProperty(ELKConfiguration.ELK_SERVER));
+    jsonResponse.put(ELKConfiguration.ELK_SCRIPTS_DIR, ELKConfiguration.getInstance().getProperty(ELKConfiguration.ELK_SCRIPTS_DIR));
+    final boolean activated = Boolean.parseBoolean(ELKConfiguration.getInstance().getProperty(ELKConfiguration.ELK_ACTIVATION));
+    final boolean urlUp = isURLUp(ELKConfiguration.getInstance().getProperty(ELKConfiguration.KIBANA_URI));
     try {
       if (activated) {
         jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put(ELKConfiguration.ELK_ACTIVATION, "true");
@@ -127,11 +128,9 @@ public class ELKAdmin extends HttpServlet {
 
         try {
           if (elkActivation.equals("true")) {
-            if (req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF) != null
-                && req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF).toString().equals("true")) {
+            if (req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF) != null && req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF).toString().equals("true")) {
               if (req.getParameter(ELKConfiguration.ELK_SERVER) != null && req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR) != null) {
-                ActivateELK.getInstance().activateRemote(req.getParameter(ELKConfiguration.ELK_SERVER),
-                    req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR));
+                ActivateELK.getInstance().activateRemote(req.getParameter(ELKConfiguration.ELK_SERVER), req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR));
               } else {
                 logger.warn("Unable to activate ELK : wrong parameters");
                 elkActivation = "false";
@@ -140,11 +139,9 @@ public class ELKAdmin extends HttpServlet {
               ActivateELK.getInstance().activate();
             }
           } else {
-            if (req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF) != null
-                && req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF).toString().equals("true")) {
+            if (req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF) != null && req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF).toString().equals("true")) {
               if (req.getParameter(ELKConfiguration.ELK_SERVER) != null && req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR) != null) {
-                ActivateELK.getInstance().deactivateRemote(req.getParameter(ELKConfiguration.ELK_SERVER),
-                    req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR));
+                ActivateELK.getInstance().deactivateRemote(req.getParameter(ELKConfiguration.ELK_SERVER), req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR));
               } else {
                 logger.warn("Unable to unactivate ELK : wrong parameters");
                 elkActivation = "true";
@@ -153,11 +150,14 @@ public class ELKAdmin extends HttpServlet {
               ActivateELK.getInstance().deactivate();
             }
           }
-          if (ELKConfiguration.setProperty(ELKConfiguration.ELK_ACTIVATION, elkActivation)) {
-            jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-          } else {
+          try {
+            ELKConfiguration.getInstance().setProperty(ELKConfiguration.ELK_ACTIVATION, elkActivation);
+            ELKConfiguration.getInstance().saveProperties();
             jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put(ELKConfiguration.ELK_ACTIVATION, elkActivation);
+          } catch (final IOException e) {
+            jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
           }
+
         } catch (final Exception e) {
           jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
           logger.error("Fatal Error", e);

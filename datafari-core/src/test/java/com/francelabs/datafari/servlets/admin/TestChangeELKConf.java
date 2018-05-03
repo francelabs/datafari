@@ -70,10 +70,10 @@ public class TestChangeELKConf {
     final JSONObject jsonResponse = new JSONObject(sw.toString());
     assertTrue(jsonResponse.getInt("code") == 0);
 
-    assertTrue(ELKConfiguration.getProperty(ELKConfiguration.KIBANA_URI).equals("URI_Test"));
-    assertTrue(ELKConfiguration.getProperty(ELKConfiguration.AUTH_USER).equals(""));
-    assertTrue(ELKConfiguration.getProperty(ELKConfiguration.EXTERNAL_ELK_ON_OFF).equals("External_Test"));
-    assertTrue(ELKConfiguration.getProperty(ELKConfiguration.ELK_SERVER).equals("Server_Test"));
-    assertTrue(ELKConfiguration.getProperty(ELKConfiguration.ELK_SCRIPTS_DIR).equals("Script_Test"));
+    assertTrue(ELKConfiguration.getInstance().getProperty(ELKConfiguration.KIBANA_URI).equals("URI_Test"));
+    assertTrue(ELKConfiguration.getInstance().getProperty(ELKConfiguration.AUTH_USER).equals(""));
+    assertTrue(ELKConfiguration.getInstance().getProperty(ELKConfiguration.EXTERNAL_ELK_ON_OFF).equals("External_Test"));
+    assertTrue(ELKConfiguration.getInstance().getProperty(ELKConfiguration.ELK_SERVER).equals("Server_Test"));
+    assertTrue(ELKConfiguration.getInstance().getProperty(ELKConfiguration.ELK_SCRIPTS_DIR).equals("Script_Test"));
   }
 }

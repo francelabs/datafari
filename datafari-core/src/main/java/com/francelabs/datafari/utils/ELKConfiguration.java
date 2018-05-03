@@ -15,14 +15,11 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
+
+import com.francelabs.datafari.config.AbstractConfigClass;
 
 /**
  * Configuration reader
@@ -30,83 +27,42 @@ import org.apache.log4j.Logger;
  * @author France Labs
  *
  */
-public class ELKConfiguration {
+public class ELKConfiguration extends AbstractConfigClass {
 
-	// Properties
-	public static final String ELK_ACTIVATION = "ELKactivation";
-	public static final String KIBANA_URI = "KibanaURI";
-	public static final String EXTERNAL_ELK_ON_OFF = "externalELK";
-	public static final String ELK_SERVER = "ELKServer";
-	public static final String ELK_SCRIPTS_DIR = "ELKScriptsDir";
-	public static final String AUTH_USER = "authUser";
+  // Properties
+  public static final String ELK_ACTIVATION = "ELKactivation";
+  public static final String KIBANA_URI = "KibanaURI";
+  public static final String EXTERNAL_ELK_ON_OFF = "externalELK";
+  public static final String ELK_SERVER = "ELKServer";
+  public static final String ELK_SCRIPTS_DIR = "ELKScriptsDir";
+  public static final String AUTH_USER = "authUser";
 
-	private static String configPropertiesFileName = "elk.properties";
+  private static final String configFilename = "elk.properties";
 
-	private static String configPropertiesFileNameRealPath;
+  private static ELKConfiguration instance;
 
-	private static ELKConfiguration instance;
-	private final Properties properties;
+  private final static Logger LOGGER = Logger.getLogger(ELKConfiguration.class.getName());
 
-	private final static Logger LOGGER = Logger.getLogger(ELKConfiguration.class.getName());
+  /**
+   *
+   * Get the instance
+   *
+   */
+  public static synchronized ELKConfiguration getInstance() throws IOException {
+    if (null == instance) {
+      instance = new ELKConfiguration();
+    }
+    return instance;
+  }
 
-	/**
-	 * Set a property and save it the alerts.properties
-	 *
-	 * @param key
-	 *            : the key that should be change
-	 * @param value
-	 *            : the new value of the key
-	 * @return : true if there's an error and false if not
-	 */
-	public static synchronized boolean setProperty(final String key, final String value) {
-		try {
-			getInstance().properties.setProperty(key, value);
-			final FileOutputStream fileOutputStream = new FileOutputStream(configPropertiesFileNameRealPath);
-			instance.properties.store(fileOutputStream, null);
-			fileOutputStream.close();
-			return false;
-		} catch (final IOException e) {
-			LOGGER.error(e);
-			return true;
-		}
-	}
+  /**
+   *
+   * Read the properties file to get the parameters to create instance
+   *
+   */
+  private ELKConfiguration() throws IOException {
+    super(configFilename, LOGGER);
 
-	public static synchronized String getProperty(final String key) throws IOException {
-		return (String) getInstance().properties.get(key);
-	}
-
-	/**
-	 *
-	 * Get the instance
-	 *
-	 */
-	private static ELKConfiguration getInstance() throws IOException {
-		if (null == instance) {
-			instance = new ELKConfiguration();
-		}
-		return instance;
-	}
-
-	/**
-	 *
-	 * Read the properties file to get the parameters to create instance
-	 *
-	 */
-	private ELKConfiguration() throws IOException {
-		configPropertiesFileNameRealPath = Environment.getProperty("catalina.home") + File.separator + "conf" + File.separator
-				+ configPropertiesFileName;
-		final File configFile = new File(configPropertiesFileNameRealPath);
-		final InputStream stream = new FileInputStream(configFile);
-		properties = new Properties();
-		try {
-			properties.load(stream);
-		} catch (final IOException e) {
-			LOGGER.error("Cannot read file : " + configFile.getAbsolutePath(), e);
-			throw e;
-		} finally {
-			stream.close();
-		}
-
-	}
+  }
 
 }

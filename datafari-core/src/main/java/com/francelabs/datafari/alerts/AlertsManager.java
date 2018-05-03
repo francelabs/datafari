@@ -59,17 +59,14 @@ public class AlertsManager {
   private boolean onOff = false;
   private DateTime delayH, delayD, delayW;
   private final DateFormat df = new SimpleDateFormat("dd/MM/yyyy/HH:mm");
-  private final AlertFrequencyFirstExecution Hourly = new AlertFrequencyFirstExecution(
-      AlertFrequencyFirstExecution.AlertFrequency.HOURLY, false);
-  private final AlertFrequencyFirstExecution Daily = new AlertFrequencyFirstExecution(
-      AlertFrequencyFirstExecution.AlertFrequency.DAILY, false);
-  private final AlertFrequencyFirstExecution Weekly = new AlertFrequencyFirstExecution(
-      AlertFrequencyFirstExecution.AlertFrequency.WEEKLY, false);
+  private final AlertFrequencyFirstExecution Hourly = new AlertFrequencyFirstExecution(AlertFrequencyFirstExecution.AlertFrequency.HOURLY, false);
+  private final AlertFrequencyFirstExecution Daily = new AlertFrequencyFirstExecution(AlertFrequencyFirstExecution.AlertFrequency.DAILY, false);
+  private final AlertFrequencyFirstExecution Weekly = new AlertFrequencyFirstExecution(AlertFrequencyFirstExecution.AlertFrequency.WEEKLY, false);
 
   private String HourlyHour = "";
   private String DailyHour = "";
   private String WeeklyHour = "";
-  private final List<AlertFrequencyFirstExecution> HDW = new ArrayList<AlertFrequencyFirstExecution>();
+  private final List<AlertFrequencyFirstExecution> HDW = new ArrayList<>();
   private ScheduledFuture<?> alertHandleH, alertHandleD, alertHandleW;
   private ScheduledExecutorService scheduler;
   private Mail mail;
@@ -96,14 +93,13 @@ public class AlertsManager {
    */
   public boolean getParameter() throws IOException, ParseException {
     try {
-      if (AlertsConfiguration.getProperty(AlertsConfiguration.ALERTS_ON_OFF).equals("on")) {
+      if (AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.ALERTS_ON_OFF).equals("on")) {
         onOff = true;
       }
 
       // Gets the delay for the hourly alerts
       try {
-        delayH = new DateTime(
-            df.parse(AlertsConfiguration.getProperty(AlertsConfiguration.HOURLY_DELAY).replace("\\", "")));
+        delayH = new DateTime(df.parse(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.HOURLY_DELAY).replace("\\", "")));
       } catch (final ParseException e) {
         LOGGER.warn("Error parsing the Hourly Date, default value will be used, AlertsManager getParameter()", e);
         delayH = new DateTime(df.parse("01/01/0001/00:00"));
@@ -111,8 +107,7 @@ public class AlertsManager {
 
       // Gets the delay for the daily alerts
       try {
-        delayD = new DateTime(
-            df.parse(AlertsConfiguration.getProperty(AlertsConfiguration.DAILY_DELAY).replace("\\", "")));
+        delayD = new DateTime(df.parse(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DAILY_DELAY).replace("\\", "")));
       } catch (final ParseException e) {
         LOGGER.warn("Error parsing the Daily Date, default value will be used, AlertsManager getParameter()", e);
         delayD = new DateTime(df.parse("01/01/0001/00:00"));
@@ -120,25 +115,24 @@ public class AlertsManager {
 
       // Gets the delay for the weekly alerts
       try {
-        delayW = new DateTime(
-            df.parse(AlertsConfiguration.getProperty(AlertsConfiguration.WEEKLY_DELAY).replace("\\", "")));
+        delayW = new DateTime(df.parse(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.WEEKLY_DELAY).replace("\\", "")));
       } catch (final ParseException e) {
         LOGGER.warn("Error parsing the Weekly Date, default value will be used, AlertsManager getParameter()", e);
         delayW = new DateTime(df.parse("01/01/0001/00:00"));
       }
 
       // Checks if there has been a previous execution for alerts
-      final String hourlyStr = AlertsConfiguration.getProperty(AlertsConfiguration.LAST_HOURLY_EXEC).replace("\\", "");
+      final String hourlyStr = AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.LAST_HOURLY_EXEC).replace("\\", "");
       if (hourlyStr != null) {
         Hourly.setHasBeenExecuted(true);
         HourlyHour = hourlyStr;
       }
-      final String dailyStr = AlertsConfiguration.getProperty(AlertsConfiguration.LAST_DAILY_EXEC).replace("\\", "");
+      final String dailyStr = AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.LAST_DAILY_EXEC).replace("\\", "");
       if (dailyStr != null) {
         Daily.setHasBeenExecuted(true);
         DailyHour = dailyStr;
       }
-      final String weeklyStr = AlertsConfiguration.getProperty(AlertsConfiguration.LAST_WEEKLY_EXEC).replace("\\", "");
+      final String weeklyStr = AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.LAST_WEEKLY_EXEC).replace("\\", "");
       if (weeklyStr != null) {
         Weekly.setHasBeenExecuted(true);
         WeeklyHour = weeklyStr;
@@ -167,9 +161,7 @@ public class AlertsManager {
           try {
             alerts("Hourly");
           } catch (final Exception e) {
-            LOGGER.error(
-                "Unindentified error while running the hourly alerts in startScheduled(), AlertsManager. Error 69518",
-                e);
+            LOGGER.error("Unindentified error while running the hourly alerts in startScheduled(), AlertsManager. Error 69518", e);
           }
         }
       };
@@ -180,9 +172,7 @@ public class AlertsManager {
           try {
             alerts("Daily");
           } catch (final Exception e) {
-            LOGGER.error(
-                "Unindentified error while running the daily alerts in startScheduled(), AlertsManager. Error 69519",
-                e);
+            LOGGER.error("Unindentified error while running the daily alerts in startScheduled(), AlertsManager. Error 69519", e);
           }
         }
       };
@@ -193,9 +183,7 @@ public class AlertsManager {
           try {
             alerts("Weekly");
           } catch (final Exception e) {
-            LOGGER.error(
-                "Unindentified error while running the weekly alerts in startScheduled(), AlertsManager. Error 69520",
-                e);
+            LOGGER.error("Unindentified error while running the weekly alerts in startScheduled(), AlertsManager. Error 69520", e);
           }
         }
       };
@@ -234,16 +222,13 @@ public class AlertsManager {
    * @param loop
    *          The number of minutes between each execution
    */
-  public ScheduledFuture<?> launch(final AlertFrequencyFirstExecution custom, final DateTime delay,
-      ScheduledFuture<?> Handle, final DateTime current, final String frequency, final String Hour, final Runnable run,
-      final long loop) {
+  public ScheduledFuture<?> launch(final AlertFrequencyFirstExecution custom, final DateTime delay, ScheduledFuture<?> Handle, final DateTime current, final String frequency, final String Hour, final Runnable run, final long loop) {
     try {
 
       return Handle = scheduler.scheduleAtFixedRate(run, calculateDelays(frequency, delay), loop, TimeUnit.MINUTES);
 
     } catch (final Exception e) {
-      LOGGER.error("Unindentified error while calculating the delay to launch the " + frequency
-          + " alerts in the AlertsManager launch(). Error 69038", e);
+      LOGGER.error("Unindentified error while calculating the delay to launch the " + frequency + " alerts in the AlertsManager launch(). Error 69038", e);
       return null;
     }
   }
@@ -263,7 +248,7 @@ public class AlertsManager {
         // frequency have already run at least
         // once
         if (c.getFrequency().toString().toLowerCase().equals(frequency.toLowerCase()) && c.hasBeenExecuted()) {
-          AlertsConfiguration.setProperty(frequency, df.format(new Date()).toString());
+          AlertsConfiguration.getInstance().setProperty(frequency, df.format(new Date()).toString());
         }
       }
       final List<Properties> alertList = com.francelabs.datafari.user.Alert.getAlerts(); // Get
@@ -293,17 +278,13 @@ public class AlertsManager {
             }
           } // Creates an alert with the attributes of the element
             // found in the database.
-          alert = new Alert(alertProp.get("subject").toString(), alertProp.get("mail").toString(), server,
-              alertProp.get("keyword").toString(), alertProp.get("frequency").toString(), mail,
-              alertProp.get("user").toString());
+          alert = new Alert(alertProp.get("subject").toString(), alertProp.get("mail").toString(), server, alertProp.get("keyword").toString(), alertProp.get("frequency").toString(), mail, alertProp.get("user").toString());
           alert.run(); // Makes the request and send the mail if they
           // are some results
         }
       }
     } catch (final Exception e) {
-      LOGGER.error(
-          "Unindentified error while running  the " + frequency + " alerts in the AlertsManager alerts(). Error 69520",
-          e);
+      LOGGER.error("Unindentified error while running  the " + frequency + " alerts in the AlertsManager alerts(). Error 69520", e);
       return;
     }
   }

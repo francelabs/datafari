@@ -15,16 +15,13 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.apache.manifoldcf.core.system.ManifoldCF;
 import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
+import org.apache.manifoldcf.core.system.ManifoldCF;
+
+import com.francelabs.datafari.config.AbstractConfigClass;
 
 /**
  * Configuration reader
@@ -32,113 +29,90 @@ import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
  * @author France Labs
  *
  */
-public class AlertsConfiguration {
+public class AlertsConfiguration extends AbstractConfigClass {
 
-	// Properties frequencies
-	public final static String HOURLY_DELAY = "HOURLYDELAY";
-	public final static String DAILY_DELAY = "DAILYDELAY";
-	public final static String WEEKLY_DELAY = "WEEKLYDELAY";
-	public final static String LAST_HOURLY_EXEC = "Hourly";
-	public final static String LAST_DAILY_EXEC = "Daily";
-	public final static String LAST_WEEKLY_EXEC = "Weekly";
-	public final static String ALERTS_ON_OFF = "ALERTS";
+  // Properties frequencies
+  public final static String HOURLY_DELAY = "HOURLYDELAY";
+  public final static String DAILY_DELAY = "DAILYDELAY";
+  public final static String WEEKLY_DELAY = "WEEKLYDELAY";
+  public final static String LAST_HOURLY_EXEC = "Hourly";
+  public final static String LAST_DAILY_EXEC = "Daily";
+  public final static String LAST_WEEKLY_EXEC = "Weekly";
+  public final static String ALERTS_ON_OFF = "ALERTS";
 
-	// Properties mails
-	public final static String SMTP_ADDRESS = "smtp";
-	public final static String SMTP_FROM = "from";
-	public final static String SMTP_USER = "user";
-	public final static String SMTP_PASSWORD = "pass";
+  // Properties mails
+  public final static String SMTP_ADDRESS = "smtp";
+  public final static String SMTP_FROM = "from";
+  public final static String SMTP_USER = "user";
+  public final static String SMTP_PASSWORD = "pass";
 
-	// Properties Database
-	public final static String DATABASE_HOST = "HOST";
-	public final static String DATABASE_PORT = "PORT";
-	public final static String DATABASE_NAME = "DATABASE";
-	public final static String DATABASE_COLLECTION = "COLLECTION";
+  // Properties Database
+  public final static String DATABASE_HOST = "HOST";
+  public final static String DATABASE_PORT = "PORT";
+  public final static String DATABASE_NAME = "DATABASE";
+  public final static String DATABASE_COLLECTION = "COLLECTION";
 
-	private static String configPropertiesFileName = "alerts.properties";
+  private static final String configFilename = "alerts.properties";
 
-	private static String configPropertiesFileNameRealPath;
+  private static AlertsConfiguration instance;
 
-	private static AlertsConfiguration instance;
-	private final Properties properties;
+  private final static Logger LOGGER = Logger.getLogger(AlertsConfiguration.class.getName());
 
-	private final static Logger LOGGER = Logger.getLogger(AlertsConfiguration.class.getName());
+  /**
+   * Set a property and save it the alerts.properties
+   *
+   * @param key
+   *          : the key that should be change
+   * @param value
+   *          : the new value of the key
+   * @return : true if there's an error and false if not
+   */
+  @Override
+  public void setProperty(final String key, String value) {
+    if (key.equals(SMTP_PASSWORD)) {
+      try {
+        value = ManifoldCF.obfuscate(value);
+      } catch (final ManifoldCFException e) {
+        LOGGER.error(e);
+      }
+    }
+    properties.setProperty(key, value);
+    try {
+      saveProperties();
+    } catch (final IOException e) {
+      LOGGER.error("Error happened during save process", e);
+    }
+  }
 
-	/**
-	 * Set a property and save it the alerts.properties
-	 *
-	 * @param key
-	 *            : the key that should be change
-	 * @param value
-	 *            : the new value of the key
-	 * @return : true if there's an error and false if not
-	 */
-	public static synchronized boolean setProperty(final String key, String value) {
-		try {
-			if (key.equals(SMTP_PASSWORD)) {
-				try {
-					value = ManifoldCF.obfuscate(value);
-				} catch (ManifoldCFException e) {
-					LOGGER.error(e);
-					return true;
-				}
-			}
-			getInstance().properties.setProperty(key, value);
-			final FileOutputStream fileOutputStream = new FileOutputStream(configPropertiesFileNameRealPath);
-			instance.properties.store(fileOutputStream, null);
-			fileOutputStream.close();
-			return false;
-		} catch (final IOException e) {
-			LOGGER.error(e);
-			return true;
-		}
-	}
+  @Override
+  public String getProperty(final String key) throws IOException {
+    final String result = (String) properties.get(key);
+    if (key.equals(SMTP_PASSWORD)) {
+      try {
+        return ManifoldCF.deobfuscate(result);
+      } catch (final ManifoldCFException e) {
+        LOGGER.error(e);
+        return result;
+      }
+    } else {
+      return result;
+    }
+  }
 
-	public static synchronized String getProperty(final String key) throws IOException {
-		String result = (String) getInstance().properties.get(key);
-		if (key.equals(SMTP_PASSWORD)) {
-			try {
-				return ManifoldCF.deobfuscate(result);
-			} catch (ManifoldCFException e) {
-				LOGGER.error(e);
-				return result;
-			}
-		} else {
-			return result;
-		}
-	}
+  /**
+   *
+   * Get the instance
+   *
+   */
+  public static synchronized AlertsConfiguration getInstance() throws IOException {
+    if (null == instance) {
+      instance = new AlertsConfiguration();
+    }
+    return instance;
+  }
 
-	/**
-	 *
-	 * Get the instance
-	 *
-	 */
-	private static AlertsConfiguration getInstance() throws IOException {
-		if (null == instance) {
-			instance = new AlertsConfiguration();
-		}
-		return instance;
-	}
-
-	/**
-	 *
-	 * Read the properties file to get the parameters to create instance
-	 *
-	 */
-	private AlertsConfiguration() throws IOException {
-		configPropertiesFileNameRealPath = Environment.getProperty("catalina.home") + File.separator + "conf" + File.separator + configPropertiesFileName;
-		final File configFile = new File(configPropertiesFileNameRealPath);
-		final InputStream stream = new FileInputStream(configFile);
-		properties = new Properties();
-		try {
-			properties.load(stream);
-		} catch (final IOException e) {
-			LOGGER.error("Cannot read file : " + configFile.getAbsolutePath(), e);
-			throw e;
-		} finally {
-			stream.close();
-		}
-
-	}
+  private AlertsConfiguration() {
+    super(configFilename, LOGGER);
+  }
 
 }
