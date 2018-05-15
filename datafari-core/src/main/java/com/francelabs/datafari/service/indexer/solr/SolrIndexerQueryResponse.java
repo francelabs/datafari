@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -19,8 +20,10 @@ import org.apache.solr.response.SolrQueryResponse;
 import org.apache.solr.schema.IndexSchema;
 import org.apache.solr.search.SolrIndexSearcher;
 import org.apache.solr.util.RTimerTree;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.francelabs.datafari.service.indexer.IndexerFacetField;
 import com.francelabs.datafari.service.indexer.IndexerQueryResponse;
@@ -29,6 +32,7 @@ public class SolrIndexerQueryResponse implements IndexerQueryResponse {
 
   private final QueryResponse response;
   private final SolrQuery query;
+  private final Logger LOGGER = Logger.getLogger(SolrIndexerQueryResponse.class);
 
   protected SolrIndexerQueryResponse(final SolrQuery query, final QueryResponse response) {
     this.response = response;
@@ -170,12 +174,19 @@ public class SolrIndexerQueryResponse implements IndexerQueryResponse {
   @Override
   public JSONArray getResults() {
     final String strJSON = getStrJSONResponse();
-    final JSONObject jsonResponse = new JSONObject(strJSON).getJSONObject("response");
-    if (!jsonResponse.has("docs") || jsonResponse.isNull("docs")) {
+    final JSONParser parser = new JSONParser();
+    try {
+      final JSONObject objJSON = (JSONObject) parser.parse(strJSON);
+      final JSONObject jsonResponse = (JSONObject) objJSON.get("response");
+      if (jsonResponse.get("docs") == null) {
+        return null;
+      } else {
+        final JSONArray jsonResults = (JSONArray) jsonResponse.get("docs");
+        return jsonResults;
+      }
+    } catch (final ParseException e) {
+      LOGGER.error("JSON parsing error", e);
       return null;
-    } else {
-      final JSONArray jsonResults = jsonResponse.getJSONArray("docs");
-      return jsonResults;
     }
   }
 

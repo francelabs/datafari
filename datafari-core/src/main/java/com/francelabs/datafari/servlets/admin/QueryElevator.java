@@ -33,7 +33,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.jaxb.Elevate;
@@ -113,8 +113,7 @@ public class QueryElevator extends HttpServlet {
    *      response)
    */
   @Override
-  protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
-      throws ServletException, IOException {
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     final JSONObject jsonResponse = new JSONObject();
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
@@ -132,7 +131,8 @@ public class QueryElevator extends HttpServlet {
         for (final Elevate.Query query : elevate.getQuery()) {
           queriesList.add(query.getText());
         }
-        jsonResponse.put("queries", queriesList).put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+        jsonResponse.put("queries", queriesList);
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
       } else if (getParam.equals("docs")) {
         final String queryParam = request.getParameter("query");
         final List<String> docsList = new ArrayList<>();
@@ -143,7 +143,8 @@ public class QueryElevator extends HttpServlet {
             }
           }
         }
-        jsonResponse.put("docs", docsList).put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+        jsonResponse.put("docs", docsList);
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
       }
     } catch (final Exception e) {
       jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
@@ -159,13 +160,11 @@ public class QueryElevator extends HttpServlet {
    *      response)
    */
   @Override
-  protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
-      throws ServletException, IOException {
+  protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
     final JSONObject jsonResponse = new JSONObject();
-    if (request.getParameter("action") != null && !request.getParameter("action").equals("")
-        && request.getParameter("query") != null && !request.getParameter("query").equals("")) {
+    if (request.getParameter("action") != null && !request.getParameter("action").equals("") && request.getParameter("query") != null && !request.getParameter("query").equals("")) {
       try {
         // Retrieve the query used for the search
         final String queryReq = request.getParameter("query");
@@ -246,8 +245,7 @@ public class QueryElevator extends HttpServlet {
         jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
         LOGGER.error("Error on marshal/unmarshal elevate.xml file in solr/solrcloud/" + server + "/conf", e);
       }
-    } else if (request.getParameter("query") != null && !request.getParameter("query").equals("")
-        && request.getParameter("tool") != null && !request.getParameter("tool").equals("")) {
+    } else if (request.getParameter("query") != null && !request.getParameter("query").equals("") && request.getParameter("tool") != null && !request.getParameter("tool").equals("")) {
       try {
         // Retrieve the query used for the search
         final String queryReq = request.getParameter("query");

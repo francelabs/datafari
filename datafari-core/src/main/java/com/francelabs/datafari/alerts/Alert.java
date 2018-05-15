@@ -25,8 +25,8 @@ package com.francelabs.datafari.alerts;
 
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.service.indexer.IndexerQuery;
 import com.francelabs.datafari.service.indexer.IndexerQueryResponse;
@@ -46,8 +46,7 @@ public class Alert {
   /**
    * Initializes all the attributes
    */
-  public Alert(final String subject, final String address, final IndexerServer server, final String keyword,
-      final String frequency, final Mail mail, final String user) {
+  public Alert(final String subject, final String address, final IndexerServer server, final String keyword, final String frequency, final Mail mail, final String user) {
     this.subject = subject;
     this.address = address;
     this.server = server;
@@ -89,10 +88,8 @@ public class Alert {
       try {
         queryResponse = server.executeQuery(query);
       } catch (SolrServerException | NullPointerException e) {
-        LOGGER.error(
-            "Error getting the results of the solr query in the Alert's run(), check the name of the core in the alert with the followind attributes, keyword : "
-                + this.keyword + ", frequency : " + this.frequency + ", user : " + this.user + ". Error 69044",
-            e);
+        LOGGER.error("Error getting the results of the solr query in the Alert's run(), check the name of the core in the alert with the followind attributes, keyword : " + this.keyword + ", frequency : " + this.frequency + ", user : " + this.user
+            + ". Error 69044", e);
         return;
       }
       String message = "";
@@ -100,28 +97,31 @@ public class Alert {
       if (queryResponse.getNumFound() != 0) { // If there are some results
         // TODO remove the language hardcode here (before ResourceBundle was
         // used, now removed with Maven refacto)
-        message += queryResponse.getNumFound() + " new or modified document(s) has/have been found for the key : "
-            + query.getParamValue("q"); // First sentence of the mail
-        if (Integer.parseInt(query.getParamValue("rows")) < list.length()) { // If
-                                                                             // there
-                                                                             // are
-                                                                             // more
-                                                                             // than
-                                                                             // 10
-                                                                             // results(can
-                                                                             // be
-                                                                             // modified
-                                                                             // in
-                                                                             // the
-                                                                             // setParam("rows","X")
-                                                                             // line)
-                                                                             // only
-                                                                             // the
-                                                                             // first
-                                                                             // ten
-                                                                             // will
-                                                                             // be
-                                                                             // printed
+        message += queryResponse.getNumFound() + " new or modified document(s) has/have been found for the key : " + query.getParamValue("q"); // First
+                                                                                                                                               // sentence
+                                                                                                                                               // of
+                                                                                                                                               // the
+                                                                                                                                               // mail
+        if (Integer.parseInt(query.getParamValue("rows")) < list.size()) { // If
+                                                                           // there
+                                                                           // are
+                                                                           // more
+                                                                           // than
+                                                                           // 10
+                                                                           // results(can
+                                                                           // be
+                                                                           // modified
+                                                                           // in
+                                                                           // the
+                                                                           // setParam("rows","X")
+                                                                           // line)
+                                                                           // only
+                                                                           // the
+                                                                           // first
+                                                                           // ten
+                                                                           // will
+                                                                           // be
+                                                                           // printed
           for (int i = 0; i < Integer.parseInt(query.getParamValue("rows")); i++) { // For
                                                                                     // the
                                                                                     // ten
@@ -133,18 +133,18 @@ public class Alert {
                                                                                     // in
                                                                                     // the
                                                                                     // mail
-            final JSONObject result = list.getJSONObject(i);
-            message += "\n" + result.getJSONArray("title").getString(0);
-            message += "\n" + result.getString("url");
-            message += "\n" + result.getString("last_modified") + "\n";
+            final JSONObject result = (JSONObject) list.get(i);
+            message += "\n" + ((JSONArray) result.get("title")).get(0);
+            message += "\n" + result.get("url");
+            message += "\n" + result.get("last_modified") + "\n";
           }
         } else {
-          for (int i = 0; i < list.length(); i++) { // Else puts the title of
-                                                    // all the results
-            final JSONObject result = list.getJSONObject(i);
-            message += "\n" + result.getJSONArray("title").getString(0);
-            message += "\n" + result.getString("url");
-            message += "\n" + result.getString("last_modified") + "\n";
+          for (int i = 0; i < list.size(); i++) { // Else puts the title of
+                                                  // all the results
+            final JSONObject result = (JSONObject) list.get(i);
+            message += "\n" + ((JSONArray) result.get("title")).get(0);
+            message += "\n" + result.get("url");
+            message += "\n" + result.get("last_modified") + "\n";
           }
         }
         // Sends the mail (the last parameter is "" because other destinations

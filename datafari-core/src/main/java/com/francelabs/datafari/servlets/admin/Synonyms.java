@@ -35,7 +35,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 import com.francelabs.datafari.utils.Environment;
@@ -116,12 +117,9 @@ public class Synonyms extends HttpServlet {
           out.close();
           return;
         } catch (final IOException e) {
-          LOGGER.error("Error while reading the synonyms_" + request.getParameter("language")
-              + ".txt file in Synonyms servlet, please make sure the file exists and is located in " + env + "/solr/solrcloud/" + server + "/conf/"
-              + ". Error 69018", e);
+          LOGGER.error("Error while reading the synonyms_" + request.getParameter("language") + ".txt file in Synonyms servlet, please make sure the file exists and is located in " + env + "/solr/solrcloud/" + server + "/conf/" + ". Error 69018", e);
           final PrintWriter out = response.getWriter();
-          out.append(
-              "Error while reading the synonyms file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69018");
+          out.append("Error while reading the synonyms file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69018");
           out.close();
           return;
         }
@@ -159,22 +157,22 @@ public class Synonyms extends HttpServlet {
             bw.write(line + "\n");
             line = br.readLine();
           }
-          final JSONObject synonymsList = new JSONObject(request.getParameter("synonymsList"));
+          final JSONParser parser = new JSONParser();
+          final JSONObject synonymsList = (JSONObject) parser.parse(request.getParameter("synonymsList"));
           for (final Object words : synonymsList.keySet()) {
-            bw.write(words + " => " + synonymsList.getString(words.toString()) + "\n");
+            bw.write(words + " => " + synonymsList.get(words.toString()) + "\n");
           }
 
         } catch (final IOException e) {
           LOGGER.error("Error while rewriting the file synonyms_" + request.getParameter("language") + " Synonyms Servlet's doPost. Error 69019", e);
           final PrintWriter out = response.getWriter();
-          out.append(
-              "Error while rewriting the synonyms file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69015");
+          out.append("Error while rewriting the synonyms file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69015");
           out.close();
           return;
         }
         file.delete();
         tempFile.renameTo(file);
-        String[] params = {file.getName()};
+        final String[] params = { file.getName() };
         ZKUtils.configZK("uploadconfigzk.sh", confname, params);
         Thread.sleep(1000);
         ZKUtils.configZK("reloadCollections.sh", confname);

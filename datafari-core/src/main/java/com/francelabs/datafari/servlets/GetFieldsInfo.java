@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.config.Registry;
@@ -49,8 +50,9 @@ import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import com.francelabs.datafari.utils.AdvancedSearchConfiguration;
 import com.francelabs.datafari.utils.SolrConfiguration;
@@ -130,12 +132,14 @@ public class GetFieldsInfo extends HttpServlet {
       final JSONObject jsonResponse = new JSONObject();
       if (httpResponse.getStatusLine().getStatusCode() == 200) {
         // Status of the API response is OK
-        final JSONObject json = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
-        final JSONArray fieldsJson = json.getJSONArray("fields");
+        final JSONParser parser = new JSONParser();
+        final JSONObject json = (JSONObject) parser.parse(EntityUtils.toString(httpResponse.getEntity()));
+        final JSONArray fieldsJson = (JSONArray) json.get("fields");
+        final JSONArray fieldsArray = new JSONArray();
         // Load the list of denied fields
         final String strDeniedFieldsList = AdvancedSearchConfiguration.getInstance().getProperty(AdvancedSearchConfiguration.DENIED_FIELD_LIST);
         final Set<String> deniedFieldsSet = new HashSet<>(Arrays.asList(strDeniedFieldsList.split(",")));
-        for (int i = 0; i < fieldsJson.length(); i++) {
+        for (int i = 0; i < fieldsJson.size(); i++) {
           final JSONObject field = (JSONObject) fieldsJson.get(i);
           // If a fieldname has been provided, it means that this
           // servlet
@@ -143,18 +147,18 @@ public class GetFieldsInfo extends HttpServlet {
           // needs to return infos on this specific field
           if (request.getParameter("fieldName") != null) {
             final String fieldName = request.getParameter("fieldName");
-            if (field.getString("name").equals(fieldName)) {
-              jsonResponse.append("field", field);
+            if (field.get("name").toString().equals(fieldName)) {
+              fieldsArray.add(field);
               break;
             }
           } else {
-            if (!deniedFieldsSet.contains(field.getString("name")) && (!field.has("indexed") || field.getBoolean("indexed")) && !field.getString("name").startsWith("allow_") && !field.getString("name").startsWith("deny_")
-                && !field.getString("name").startsWith("_")) {
-              jsonResponse.append("field", field);
+            if (!deniedFieldsSet.contains(field.get("name").toString()) && (field.get("indexed") == null || field.get("indexed").toString().equals("true")) && !field.get("name").toString().startsWith("allow_")
+                && !field.get("name").toString().startsWith("deny_") && !field.get("name").toString().startsWith("_")) {
+              fieldsArray.add(field);
             }
           }
         }
-
+        jsonResponse.put("field", fieldsArray);
         out.print(jsonResponse);
       } else {
         // Status of the API response is an error
@@ -162,7 +166,7 @@ public class GetFieldsInfo extends HttpServlet {
         out.append("Error while retrieving the fields from the Schema API of Solr, please retry, if the problem persists contact your system administrator. Error Code : 69026");
       }
       out.close();
-    } catch (final IOException e) {
+    } catch (final IOException | ParseException | org.json.simple.parser.ParseException e) {
       logger.error("Error while retrieving the fields from the Schema API of Solr", e);
       out.append("Error while retrieving the fields from the Schema API of Solr, please retry, if the problem persists contact your system administrator. Error Code : 69026");
       out.close();

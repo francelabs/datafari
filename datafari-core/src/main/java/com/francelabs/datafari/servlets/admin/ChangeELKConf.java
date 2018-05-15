@@ -19,8 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
@@ -59,65 +58,64 @@ public class ChangeELKConf extends HttpServlet {
       datafari_home = ExecutionEnvironment.getDevExecutionEnvironment();
     }
     final String kibana_conf_path = datafari_home + "/elk/kibana/config/kibana.yml";
-    try {
-      if (req.getParameter(ELKConfiguration.KIBANA_URI) == null || req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF) != null && req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF).equals("true")
-          && (req.getParameter(ELKConfiguration.ELK_SERVER) == null || req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR) == null)) {
-        jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue()).put(OutputConstants.STATUS, "Query Malformed");
-      } else {
-        try {
-          final ELKConfiguration elkConf = ELKConfiguration.getInstance();
-          elkConf.setProperty(ELKConfiguration.KIBANA_URI, req.getParameter(ELKConfiguration.KIBANA_URI));
-          elkConf.setProperty(ELKConfiguration.EXTERNAL_ELK_ON_OFF, req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF));
-          elkConf.setProperty(ELKConfiguration.ELK_SERVER, req.getParameter(ELKConfiguration.ELK_SERVER));
-          elkConf.setProperty(ELKConfiguration.ELK_SCRIPTS_DIR, req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR));
-          elkConf.setProperty(ELKConfiguration.AUTH_USER, req.getParameter(ELKConfiguration.AUTH_USER));
-          elkConf.saveProperties();
 
-          final String kibana_url = ELKConfiguration.KIBANA_URI;
-          String kibana_clean_url = null;
-          List<String> list = new ArrayList<>();
-          if (kibana_url != null && kibana_url.contains("http")) {
-            final Pattern p = Pattern.compile("http://(.*?)/");
-            final Matcher m = p.matcher(kibana_url);
-            if (m.find()) {
-              kibana_clean_url = m.group(1);
+    if (req.getParameter(ELKConfiguration.KIBANA_URI) == null || req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF) != null && req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF).equals("true")
+        && (req.getParameter(ELKConfiguration.ELK_SERVER) == null || req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR) == null)) {
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue());
+      jsonResponse.put(OutputConstants.STATUS, "Query Malformed");
+    } else {
+      try {
+        final ELKConfiguration elkConf = ELKConfiguration.getInstance();
+        elkConf.setProperty(ELKConfiguration.KIBANA_URI, req.getParameter(ELKConfiguration.KIBANA_URI));
+        elkConf.setProperty(ELKConfiguration.EXTERNAL_ELK_ON_OFF, req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF));
+        elkConf.setProperty(ELKConfiguration.ELK_SERVER, req.getParameter(ELKConfiguration.ELK_SERVER));
+        elkConf.setProperty(ELKConfiguration.ELK_SCRIPTS_DIR, req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR));
+        elkConf.setProperty(ELKConfiguration.AUTH_USER, req.getParameter(ELKConfiguration.AUTH_USER));
+        elkConf.saveProperties();
+
+        final String kibana_url = ELKConfiguration.KIBANA_URI;
+        String kibana_clean_url = null;
+        List<String> list = new ArrayList<>();
+        if (kibana_url != null && kibana_url.contains("http")) {
+          final Pattern p = Pattern.compile("http://(.*?)/");
+          final Matcher m = p.matcher(kibana_url);
+          if (m.find()) {
+            kibana_clean_url = m.group(1);
+          }
+          if (kibana_clean_url.contains(":")) {
+            kibana_clean_url = kibana_clean_url.split(":")[0];
+          }
+          ELKConfiguration.getInstance().setProperty(ELKConfiguration.ELK_SERVER, kibana_clean_url);
+
+          final File f = new File(kibana_conf_path);
+          if (f.exists() && !f.isDirectory()) {
+            try (BufferedReader br = Files.newBufferedReader(Paths.get(kibana_conf_path))) {
+              list = br.lines().collect(Collectors.toList());
+            } catch (final IOException e) {
+              e.printStackTrace();
             }
-            if (kibana_clean_url.contains(":")) {
-              kibana_clean_url = kibana_clean_url.split(":")[0];
+            int index_position = -1;
+            for (int i = 0; i < list.size(); i++) {
+              if (list.get(i).startsWith("server.host")) {
+                System.out.println(list.get(i));
+                index_position = i;
+              }
             }
-            ELKConfiguration.getInstance().setProperty(ELKConfiguration.ELK_SERVER, kibana_clean_url);
+            if (index_position != -1) {
+              list.remove(index_position);
+              list.add(index_position, "server.host: " + kibana_clean_url);
+              Files.write(Paths.get(kibana_conf_path), list);
 
-            final File f = new File(kibana_conf_path);
-            if (f.exists() && !f.isDirectory()) {
-              try (BufferedReader br = Files.newBufferedReader(Paths.get(kibana_conf_path))) {
-                list = br.lines().collect(Collectors.toList());
-              } catch (final IOException e) {
-                e.printStackTrace();
-              }
-              int index_position = -1;
-              for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).startsWith("server.host")) {
-                  System.out.println(list.get(i));
-                  index_position = i;
-                }
-              }
-              if (index_position != -1) {
-                list.remove(index_position);
-                list.add(index_position, "server.host: " + kibana_clean_url);
-                Files.write(Paths.get(kibana_conf_path), list);
-
-              }
             }
           }
-          jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-        } catch (final IOException e) {
-          jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
         }
-
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+      } catch (final IOException e) {
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
       }
-    } catch (final JSONException e) {
-      logger.error("Error", e);
+
     }
+
     final PrintWriter out = resp.getWriter();
     out.print(jsonResponse);
   }

@@ -25,8 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
@@ -39,54 +38,53 @@ import com.francelabs.datafari.user.Like;
  */
 @WebServlet("/getLikesFavorites")
 public class GetLikesFavorites extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(GetLikesFavorites.class.getName());
-	private static final String FAVORITESLIST = "favoritesList";
-	private static final String LIKESLIST = "likesList";
+  private static final long serialVersionUID = 1L;
+  private static final Logger logger = Logger.getLogger(GetLikesFavorites.class.getName());
+  private static final String FAVORITESLIST = "favoritesList";
+  private static final String LIKESLIST = "likesList";
 
-	private static final String DOCUMENTSID = "documentsID";
+  private static final String DOCUMENTSID = "documentsID";
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public GetLikesFavorites() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+  /**
+   * @see HttpServlet#HttpServlet()
+   */
+  public GetLikesFavorites() {
+    super();
+    // TODO Auto-generated constructor stub
+  }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	@Override
-	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-		final JSONObject jsonResponse = new JSONObject();
-		request.setCharacterEncoding("utf8");
-		response.setContentType("application/json");
+  /**
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+   *      response)
+   */
+  @Override
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    final JSONObject jsonResponse = new JSONObject();
+    request.setCharacterEncoding("utf8");
+    response.setContentType("application/json");
 
-		try {
-			final String[] documentIDs = request.getParameterValues(DOCUMENTSID);
+    final String[] documentIDs = request.getParameterValues(DOCUMENTSID);
 
-			if (request.getUserPrincipal() != null) {
-				final String username = request.getUserPrincipal().getName();
-				try {
-					jsonResponse.put(FAVORITESLIST, Favorite.getFavorites(username, documentIDs));
+    if (request.getUserPrincipal() != null) {
+      final String username = request.getUserPrincipal().getName();
+      try {
+        jsonResponse.put(FAVORITESLIST, Favorite.getFavorites(username, documentIDs));
 
-					jsonResponse.put(LIKESLIST, Like.getLikes(username, documentIDs));
+        jsonResponse.put(LIKESLIST, Like.getLikes(username, documentIDs));
 
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-				} catch (final DatafariServerException e) {
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+      } catch (final DatafariServerException e) {
 
-					jsonResponse.put(OutputConstants.CODE, e.getErrorCode().getValue()).put(OutputConstants.STATUS, "Not connected yet");
-				}
-			} else {
-				jsonResponse.put("code", CodesReturned.NOTCONNECTED.getValue()).put(OutputConstants.STATUS, "Not connected yet");
-			}
-		} catch (final JSONException e) {
-			logger.error(e);
-		}
-		final PrintWriter out = response.getWriter();
-		out.print(jsonResponse);
-	}
+        jsonResponse.put(OutputConstants.CODE, e.getErrorCode().getValue());
+        jsonResponse.put(OutputConstants.STATUS, "Not connected yet");
+      }
+    } else {
+      jsonResponse.put("code", CodesReturned.NOTCONNECTED.getValue());
+      jsonResponse.put(OutputConstants.STATUS, "Not connected yet");
+    }
+
+    final PrintWriter out = response.getWriter();
+    out.print(jsonResponse);
+  }
 
 }

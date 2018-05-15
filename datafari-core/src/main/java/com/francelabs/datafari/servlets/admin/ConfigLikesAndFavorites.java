@@ -26,8 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
@@ -39,69 +38,62 @@ import com.francelabs.datafari.utils.ScriptConfiguration;
  */
 @WebServlet("/ConfigureLikesAndFavorites")
 public class ConfigLikesAndFavorites extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(ConfigLikesAndFavorites.class.getName());
+  private static final long serialVersionUID = 1L;
+  private static final Logger logger = Logger.getLogger(ConfigLikesAndFavorites.class.getName());
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public ConfigLikesAndFavorites() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+  /**
+   * @see HttpServlet#HttpServlet()
+   */
+  public ConfigLikesAndFavorites() {
+    super();
+    // TODO Auto-generated constructor stub
+  }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	@Override
-	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-	}
+  /**
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+   *      response)
+   */
+  @Override
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    // TODO Auto-generated method stub
+  }
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	@Override
-	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-		BasicConfigurator.configure();
-		final JSONObject jsonResponse = new JSONObject();
-		if (request.getParameter("enable") != null) {
-			final String enable = request.getParameter("enable");
-			request.setCharacterEncoding("utf8");
-			response.setContentType("application/json");
-			boolean error = false;
-			if (enable.equals("true")) {
-				error = ScriptConfiguration.setProperty(StringsDatafariProperties.LIKESANDFAVORTES, "true");
-				LikesLauncher.startScheduler();
-			} else {
-				error = ScriptConfiguration.setProperty(StringsDatafariProperties.LIKESANDFAVORTES, "false");
-				LikesLauncher.shutDown();
-			}
+  /**
+   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+   *      response)
+   */
+  @Override
+  protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    BasicConfigurator.configure();
+    final JSONObject jsonResponse = new JSONObject();
+    if (request.getParameter("enable") != null) {
+      final String enable = request.getParameter("enable");
+      request.setCharacterEncoding("utf8");
+      response.setContentType("application/json");
+      boolean error = false;
+      if (enable.equals("true")) {
+        error = ScriptConfiguration.setProperty(StringsDatafariProperties.LIKESANDFAVORTES, "true");
+        LikesLauncher.startScheduler();
+      } else {
+        error = ScriptConfiguration.setProperty(StringsDatafariProperties.LIKESANDFAVORTES, "false");
+        LikesLauncher.shutDown();
+      }
 
-			try {
-				if (error) {
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-				} else {
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-				}
-			} catch (final JSONException e) {
-				// TODO Auto-generated catch block
-				logger.error(e);
-			}
-		} else if (request.getParameter("initiate") != null) {
-			final String isEnabled = ScriptConfiguration.getProperty(StringsDatafariProperties.LIKESANDFAVORTES);
-			try {
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put("isEnabled", isEnabled);
-			} catch (final JSONException e) {
-				// TODO Auto-generated catch block
-				logger.error(e);
-			}
+      if (error) {
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+      } else {
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+      }
 
-		}
-		final PrintWriter out = response.getWriter();
-		out.print(jsonResponse);
-	}
+    } else if (request.getParameter("initiate") != null) {
+      final String isEnabled = ScriptConfiguration.getProperty(StringsDatafariProperties.LIKESANDFAVORTES);
+
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+      jsonResponse.put("isEnabled", isEnabled);
+
+    }
+    final PrintWriter out = response.getWriter();
+    out.print(jsonResponse);
+  }
 
 }

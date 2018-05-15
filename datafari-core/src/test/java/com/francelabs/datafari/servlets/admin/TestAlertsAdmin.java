@@ -16,7 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,7 +54,7 @@ public class TestAlertsAdmin {
   }
 
   @Test
-  public void TestSaveAlerts() throws ServletException, IOException, ManifoldCFException, NoSuchAlgorithmException {
+  public void TestSaveAlerts() throws ServletException, IOException, ManifoldCFException, NoSuchAlgorithmException, ParseException {
     final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
     final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
@@ -79,8 +81,9 @@ public class TestAlertsAdmin {
 
     writer.flush(); // it may not have been flushed yet...
 
-    final JSONObject jsonResponse = new JSONObject(sw.toString());
-    assertTrue(jsonResponse.getInt("code") == 0);
+    final JSONParser parser = new JSONParser();
+    final JSONObject jsonResponse = (JSONObject) parser.parse(sw.toString());
+    assertTrue((Long) jsonResponse.get("code") == 0);
 
     assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.HOURLY_DELAY).equals("31/07/2015/08:42"));
     assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DAILY_DELAY).equals("31/07/2015/08:42"));

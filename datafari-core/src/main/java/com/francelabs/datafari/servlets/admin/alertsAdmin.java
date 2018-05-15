@@ -31,8 +31,7 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.alerts.AlertsManager;
 import com.francelabs.datafari.exception.CodesReturned;
@@ -105,10 +104,6 @@ public class alertsAdmin extends HttpServlet {
       json.put("pass", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_PASSWORD));
 
       json.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-    } catch (final JSONException e) {
-      LOGGER.error("Error while building the JSON answer in the doGet of the alerts administration servlets, make sure the fields are filled correctly and that datafari.properties have the correct encoding charset(UTF_8). Error 69021", e);
-      json.put("message", "Error while getting the parameters, please retry, if the problem persists contact your system administrator. Error code : 69021");
-      json.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue());
     } catch (final IOException e) {
       LOGGER.error("Error while reading the datafari.properties file in the doGet of the alerts administration Servlet . Error 69020 ", e);
       json.put("message", "Error while reading the datafari.properties file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69020");

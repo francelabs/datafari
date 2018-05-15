@@ -14,8 +14,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
 import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 import org.xml.sax.SAXException;
 
 import com.francelabs.datafari.exception.CodesReturned;
@@ -49,15 +48,16 @@ public class IsLdapConfig extends HttpServlet {
     try {
       // Test the connection
       final HashMap<String, String> h = RealmLdapConfiguration.getConfig(request);
-      LDAPService.getInstance().testLDAPConnection(h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL),
-          h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME), h.get(RealmLdapConfiguration.ATTR_CONNECTION_PW));
-      jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put("isActivated", true);
-    } catch (final JSONException | ParserConfigurationException | SAXException | ManifoldCFException e) {
+      LDAPService.getInstance().testLDAPConnection(h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL), h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME), h.get(RealmLdapConfiguration.ATTR_CONNECTION_PW));
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+      jsonResponse.put("isActivated", true);
+    } catch (final ParserConfigurationException | SAXException | ManifoldCFException e) {
       jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
       logger.error("Fatal Error", e);
     } catch (final NamingException e) {
-      jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONAD.getValue())
-          .put(OutputConstants.STATUS, "Fail to connect to AD with the given settings").put("isActivated", false);
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONAD.getValue());
+      jsonResponse.put(OutputConstants.STATUS, "Fail to connect to AD with the given settings");
+      jsonResponse.put("isActivated", false);
 
     }
     final PrintWriter out = response.getWriter();
@@ -69,41 +69,36 @@ public class IsLdapConfig extends HttpServlet {
     final JSONObject jsonResponse = new JSONObject();
     req.setCharacterEncoding("utf8");
     resp.setContentType("application/json");
-    try {
-      if (req.getParameter("isLdapActivated") == null) {
-        jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue()).put(OutputConstants.STATUS, "Query Malformed");
-      } else {
-        try {
-          if (req.getParameter("isLdapActivated").toString().equals("true")) {
-            // Test the connection
-            final HashMap<String, String> h = RealmLdapConfiguration.getConfig(req);
-            LDAPService.getInstance().testLDAPConnection(h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL),
-                h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME), h.get(RealmLdapConfiguration.ATTR_CONNECTION_PW));
 
-            ActivateLDAPSolr.activate();
-          } else {
-            ActivateLDAPSolr.disactivate();
-          }
-          if (ScriptConfiguration.setProperty(ScriptConfiguration.LDAPACTIVATED, req.getParameter("isLdapActivated"))) {
-            jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-          } else {
-            jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-          }
-          jsonResponse.put("isActivated", req.getParameter("isLdapActivated"));
-        } catch (final NamingException e) {
-          jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONAD.getValue()).put(OutputConstants.STATUS,
-              "Fail to connect to AD with the given settings");
-        } catch (final Exception e) {
-          jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-          logger.error("Fatal Error", e);
+    if (req.getParameter("isLdapActivated") == null) {
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue());
+      jsonResponse.put(OutputConstants.STATUS, "Query Malformed");
+    } else {
+      try {
+        if (req.getParameter("isLdapActivated").toString().equals("true")) {
+          // Test the connection
+          final HashMap<String, String> h = RealmLdapConfiguration.getConfig(req);
+          LDAPService.getInstance().testLDAPConnection(h.get(RealmLdapConfiguration.ATTR_CONNECTION_URL), h.get(RealmLdapConfiguration.ATTR_CONNECTION_NAME), h.get(RealmLdapConfiguration.ATTR_CONNECTION_PW));
+
+          ActivateLDAPSolr.activate();
+        } else {
+          ActivateLDAPSolr.disactivate();
         }
+        if (ScriptConfiguration.setProperty(ScriptConfiguration.LDAPACTIVATED, req.getParameter("isLdapActivated"))) {
+          jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+        } else {
+          jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+        }
+        jsonResponse.put("isActivated", req.getParameter("isLdapActivated"));
+      } catch (final NamingException e) {
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONAD.getValue());
+        jsonResponse.put(OutputConstants.STATUS, "Fail to connect to AD with the given settings");
+      } catch (final Exception e) {
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+        logger.error("Fatal Error", e);
       }
-
-    } catch (
-
-    final JSONException e) {
-      logger.error("Error", e);
     }
+
     final PrintWriter out = resp.getWriter();
     out.print(jsonResponse);
   }

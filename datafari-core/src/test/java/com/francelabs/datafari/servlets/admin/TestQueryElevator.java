@@ -14,7 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
-import org.json.JSONObject;
+import org.json.JSONException;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,7 +55,7 @@ public class TestQueryElevator {
   }
 
   @Test
-  public void TestQueryElevatorGetQueries() throws ServletException, IOException {
+  public void TestQueryElevatorGetQueries() throws ServletException, IOException, ParseException, JSONException {
     final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
     final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
@@ -64,15 +67,16 @@ public class TestQueryElevator {
     new QueryElevator().doGet(request, response);
     writer.flush(); // it may not have been flushed yet...
 
-    final JSONObject jsonResponse = new JSONObject(sw.toString());
-    final JSONObject jsonExpected = new JSONObject(TestUtils.readResource("/queryElevatorTests/out/getQueries.json"));
+    final JSONParser parser = new JSONParser();
+    final JSONObject jsonResponse = (JSONObject) parser.parse(sw.toString());
+    final JSONObject jsonExpected = (JSONObject) parser.parse(TestUtils.readResource("/queryElevatorTests/out/getQueries.json"));
 
-    JSONAssert.assertEquals(jsonResponse, jsonExpected, true);
+    JSONAssert.assertEquals(jsonResponse.toJSONString(), jsonExpected.toJSONString(), true);
 
   }
 
   @Test
-  public void TestQueryElevatorGetDocs() throws ServletException, IOException {
+  public void TestQueryElevatorGetDocs() throws ServletException, IOException, ParseException, JSONException {
     final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
     final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
@@ -85,10 +89,11 @@ public class TestQueryElevator {
     new QueryElevator().doGet(request, response);
     writer.flush(); // it may not have been flushed yet...
 
-    final JSONObject jsonResponse = new JSONObject(sw.toString());
-    final JSONObject jsonExpected = new JSONObject(TestUtils.readResource("/queryElevatorTests/out/getDocs.json"));
+    final JSONParser parser = new JSONParser();
+    final JSONObject jsonResponse = (JSONObject) parser.parse(sw.toString());
+    final JSONObject jsonExpected = (JSONObject) parser.parse(TestUtils.readResource("/queryElevatorTests/out/getDocs.json"));
 
-    JSONAssert.assertEquals(jsonResponse, jsonExpected, true);
+    JSONAssert.assertEquals(jsonResponse.toJSONString(), jsonExpected.toJSONString(), true);
   }
 
   @Test
@@ -106,8 +111,7 @@ public class TestQueryElevator {
     new QueryElevator().doPost(request, response);
     writer.flush(); // it may not have been flushed yet...
 
-    final Diff diff = DiffBuilder.compare(TestUtils.readFile(new File(tempDirectory.toFile(), "solr/solrcloud/FileShare/conf/elevate.xml")))
-        .withTest(TestUtils.readResource("/queryElevatorTests/out/elevateUpNewDoc.xml")).build();
+    final Diff diff = DiffBuilder.compare(TestUtils.readFile(new File(tempDirectory.toFile(), "solr/solrcloud/FileShare/conf/elevate.xml"))).withTest(TestUtils.readResource("/queryElevatorTests/out/elevateUpNewDoc.xml")).build();
     assertFalse(diff.toString(), diff.hasDifferences());
   }
 
@@ -127,8 +131,7 @@ public class TestQueryElevator {
     new QueryElevator().doPost(request, response);
     writer.flush(); // it may not have been flushed yet...
 
-    final Diff diff = DiffBuilder.compare(TestUtils.readFile(new File(tempDirectory.toFile(), "solr/solrcloud/FileShare/conf/elevate.xml")))
-        .withTest(TestUtils.readResource("/queryElevatorTests/out/elevateUpExistingDoc.xml")).build();
+    final Diff diff = DiffBuilder.compare(TestUtils.readFile(new File(tempDirectory.toFile(), "solr/solrcloud/FileShare/conf/elevate.xml"))).withTest(TestUtils.readResource("/queryElevatorTests/out/elevateUpExistingDoc.xml")).build();
     assertFalse(diff.toString(), diff.hasDifferences());
   }
 

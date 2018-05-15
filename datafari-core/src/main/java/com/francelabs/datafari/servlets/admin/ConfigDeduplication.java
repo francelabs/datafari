@@ -26,8 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
@@ -111,13 +110,11 @@ public class ConfigDeduplication extends HttpServlet {
       } else {
         checked_factory = "";
       }
-      try {
-        jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-        jsonResponse.put("checked", checked);
-        jsonResponse.put("checked_factory", checked_factory);
-      } catch (final JSONException e) {
-        logger.error(e);
-      }
+
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+      jsonResponse.put("checked", checked);
+      jsonResponse.put("checked_factory", checked_factory);
+
     }
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);

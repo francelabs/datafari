@@ -56,8 +56,9 @@ import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -228,8 +229,9 @@ public class FieldWeight extends HttpServlet {
           final JSONObject jsonResponse = new JSONObject();
           if (httpResponse.getStatusLine().getStatusCode() == 200) {
             // Status of the API response is OK
-            final JSONObject json = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
-            final JSONArray fieldsJson = json.getJSONArray("fields");
+            final JSONParser parser = new JSONParser();
+            final JSONObject json = (JSONObject) parser.parse(EntityUtils.toString(httpResponse.getEntity()));
+            final JSONArray fieldsJson = (JSONArray) json.get("fields");
             jsonResponse.put("field", fieldsJson);
 
             response.setContentType("application/json;charset=UTF-8");

@@ -16,8 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.elk.ActivateELK;
 import com.francelabs.datafari.exception.CodesReturned;
@@ -96,19 +95,20 @@ public class ELKAdmin extends HttpServlet {
     jsonResponse.put(ELKConfiguration.ELK_SCRIPTS_DIR, ELKConfiguration.getInstance().getProperty(ELKConfiguration.ELK_SCRIPTS_DIR));
     final boolean activated = Boolean.parseBoolean(ELKConfiguration.getInstance().getProperty(ELKConfiguration.ELK_ACTIVATION));
     final boolean urlUp = isURLUp(ELKConfiguration.getInstance().getProperty(ELKConfiguration.KIBANA_URI));
-    try {
-      if (activated) {
-        jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put(ELKConfiguration.ELK_ACTIVATION, "true");
-      } else {
-        jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put(ELKConfiguration.ELK_ACTIVATION, "false");
-      }
-      if (urlUp) {
-        jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put("isELKUp", "true");
-      } else {
-        jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put("isELKUp", "false");
-      }
-    } catch (final JSONException e) {
-      logger.error("Error", e);
+
+    if (activated) {
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+      jsonResponse.put(ELKConfiguration.ELK_ACTIVATION, "true");
+    } else {
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+      jsonResponse.put(ELKConfiguration.ELK_ACTIVATION, "false");
+    }
+    if (urlUp) {
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+      jsonResponse.put("isELKUp", "true");
+    } else {
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+      jsonResponse.put("isELKUp", "false");
     }
 
     final PrintWriter out = response.getWriter();
@@ -120,52 +120,52 @@ public class ELKAdmin extends HttpServlet {
     final JSONObject jsonResponse = new JSONObject();
     req.setCharacterEncoding("utf8");
     resp.setContentType("application/json");
-    try {
-      if (req.getParameter(ELKConfiguration.ELK_ACTIVATION) == null) {
-        jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue()).put(OutputConstants.STATUS, "Query Malformed");
-      } else {
-        String elkActivation = req.getParameter(ELKConfiguration.ELK_ACTIVATION);
 
-        try {
-          if (elkActivation.equals("true")) {
-            if (req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF) != null && req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF).toString().equals("true")) {
-              if (req.getParameter(ELKConfiguration.ELK_SERVER) != null && req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR) != null) {
-                ActivateELK.getInstance().activateRemote(req.getParameter(ELKConfiguration.ELK_SERVER), req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR));
-              } else {
-                logger.warn("Unable to activate ELK : wrong parameters");
-                elkActivation = "false";
-              }
+    if (req.getParameter(ELKConfiguration.ELK_ACTIVATION) == null) {
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue());
+      jsonResponse.put(OutputConstants.STATUS, "Query Malformed");
+    } else {
+      String elkActivation = req.getParameter(ELKConfiguration.ELK_ACTIVATION);
+
+      try {
+        if (elkActivation.equals("true")) {
+          if (req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF) != null && req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF).toString().equals("true")) {
+            if (req.getParameter(ELKConfiguration.ELK_SERVER) != null && req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR) != null) {
+              ActivateELK.getInstance().activateRemote(req.getParameter(ELKConfiguration.ELK_SERVER), req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR));
             } else {
-              ActivateELK.getInstance().activate();
+              logger.warn("Unable to activate ELK : wrong parameters");
+              elkActivation = "false";
             }
           } else {
-            if (req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF) != null && req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF).toString().equals("true")) {
-              if (req.getParameter(ELKConfiguration.ELK_SERVER) != null && req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR) != null) {
-                ActivateELK.getInstance().deactivateRemote(req.getParameter(ELKConfiguration.ELK_SERVER), req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR));
-              } else {
-                logger.warn("Unable to unactivate ELK : wrong parameters");
-                elkActivation = "true";
-              }
+            ActivateELK.getInstance().activate();
+          }
+        } else {
+          if (req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF) != null && req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF).toString().equals("true")) {
+            if (req.getParameter(ELKConfiguration.ELK_SERVER) != null && req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR) != null) {
+              ActivateELK.getInstance().deactivateRemote(req.getParameter(ELKConfiguration.ELK_SERVER), req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR));
             } else {
-              ActivateELK.getInstance().deactivate();
+              logger.warn("Unable to unactivate ELK : wrong parameters");
+              elkActivation = "true";
             }
+          } else {
+            ActivateELK.getInstance().deactivate();
           }
-          try {
-            ELKConfiguration.getInstance().setProperty(ELKConfiguration.ELK_ACTIVATION, elkActivation);
-            ELKConfiguration.getInstance().saveProperties();
-            jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue()).put(ELKConfiguration.ELK_ACTIVATION, elkActivation);
-          } catch (final IOException e) {
-            jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-          }
-
-        } catch (final Exception e) {
-          jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-          logger.error("Fatal Error", e);
         }
+        try {
+          ELKConfiguration.getInstance().setProperty(ELKConfiguration.ELK_ACTIVATION, elkActivation);
+          ELKConfiguration.getInstance().saveProperties();
+          jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+          jsonResponse.put(ELKConfiguration.ELK_ACTIVATION, elkActivation);
+        } catch (final IOException e) {
+          jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+        }
+
+      } catch (final Exception e) {
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+        logger.error("Fatal Error", e);
       }
-    } catch (final JSONException e) {
-      logger.error("Error", e);
     }
+
     final PrintWriter out = resp.getWriter();
     out.print(jsonResponse);
   }

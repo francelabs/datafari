@@ -36,7 +36,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.log4j.Logger;
 import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 import org.apache.manifoldcf.core.system.ManifoldCF;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -47,144 +47,138 @@ import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
-import com.francelabs.manifoldcf.configuration.api.ManifoldAPI;
 
 @WebServlet("/SearchAdministrator/MCFChangePassword")
 public class MCFChangePassword extends HttpServlet {
-	private final String env;
-	private static final String confname = "FileShare";
-	private static final long serialVersionUID = 1L;
-	private final static Logger LOGGER = Logger.getLogger(MCFChangePassword.class.getName());
+  private final String env;
+  private static final String confname = "FileShare";
+  private static final long serialVersionUID = 1L;
+  private final static Logger LOGGER = Logger.getLogger(MCFChangePassword.class.getName());
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public MCFChangePassword() {
-		super();
+  /**
+   * @see HttpServlet#HttpServlet()
+   */
+  public MCFChangePassword() {
+    super();
 
-		String environnement = System.getenv("DATAFARI_HOME");
+    String environnement = System.getenv("DATAFARI_HOME");
 
-		if (environnement == null) { // If in development environment
-			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
-		}
-		env = environnement + "/mcf/mcf_home";
+    if (environnement == null) { // If in development environment
+      environnement = ExecutionEnvironment.getDevExecutionEnvironment();
+    }
+    env = environnement + "/mcf/mcf_home";
 
-	}
+  }
 
-	/**
-	 * @throws IOException
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	@Override
-	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-		final JSONObject jsonResponse = new JSONObject();
-		request.setCharacterEncoding("utf8");
-		response.setContentType("application/json");
+  /**
+   * @throws IOException
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+   *      response)
+   */
+  @Override
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    final JSONObject jsonResponse = new JSONObject();
+    request.setCharacterEncoding("utf8");
+    response.setContentType("application/json");
 
-	}
+  }
 
-	/**
-	 * @throws IOException
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	@Override
-	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-		
-		final JSONObject jsonResponse = new JSONObject();
-		request.setCharacterEncoding("utf8");
-		response.setContentType("application/json");
-		String newMCFPassword = request.getParameter("password");
-		try {
-			newMCFPassword = ManifoldCF.obfuscate(newMCFPassword);
-		} catch (ManifoldCFException e) {
-			LOGGER.error("Exception during MCf change password ", e);
-			jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-		}
-		modifyPropertiesMCF(newMCFPassword);
-		
-		String datafari_home = Environment.getEnvironmentVariable("DATAFARI_HOME"); // Gets
-		
-		if (datafari_home == null) { // If in development environment
-				datafari_home = ExecutionEnvironment.getDevExecutionEnvironment();
-		}
-		String mcf_path = datafari_home + "/mcf/mcf_home/";
-		String scriptname = "setglobalproperties.sh";
-		
-		String[] command = { "/bin/bash","-c", "cd "+mcf_path+" && bash "+scriptname};
-		ProcessBuilder p = new ProcessBuilder(command);
-		Process p2 = p.start();
-		
-		BufferedReader stdInput = new BufferedReader(new InputStreamReader(p2.getInputStream()));
+  /**
+   * @throws IOException
+   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+   *      response)
+   */
+  @Override
+  protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
-		BufferedReader stdError = new BufferedReader(new InputStreamReader(p2.getErrorStream()));
+    final JSONObject jsonResponse = new JSONObject();
+    request.setCharacterEncoding("utf8");
+    response.setContentType("application/json");
+    String newMCFPassword = request.getParameter("password");
+    try {
+      newMCFPassword = ManifoldCF.obfuscate(newMCFPassword);
+    } catch (final ManifoldCFException e) {
+      LOGGER.error("Exception during MCf change password ", e);
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+    }
+    modifyPropertiesMCF(newMCFPassword);
 
-		// read the output from the command
-		String s = null;
-		while ((s = stdInput.readLine()) != null) {
-			LOGGER.info(s);
-		}
+    String datafari_home = Environment.getEnvironmentVariable("DATAFARI_HOME"); // Gets
 
-		// read any errors from the attempted command
-		while ((s = stdError.readLine()) != null) {
-			LOGGER.warn(s);
-		}
-		
-		// script
-	
-		final PrintWriter out = response.getWriter();
-		jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-		out.print(jsonResponse);
+    if (datafari_home == null) { // If in development environment
+      datafari_home = ExecutionEnvironment.getDevExecutionEnvironment();
+    }
+    final String mcf_path = datafari_home + "/mcf/mcf_home/";
+    final String scriptname = "setglobalproperties.sh";
 
-		
+    final String[] command = { "/bin/bash", "-c", "cd " + mcf_path + " && bash " + scriptname };
+    final ProcessBuilder p = new ProcessBuilder(command);
+    final Process p2 = p.start();
 
-	}
+    final BufferedReader stdInput = new BufferedReader(new InputStreamReader(p2.getInputStream()));
 
-	protected void modifyPropertiesMCF(String password) {
-		
-		try {
+    final BufferedReader stdError = new BufferedReader(new InputStreamReader(p2.getErrorStream()));
 
-			File file = new File(env+"/properties-global.xml");
+    // read the output from the command
+    String s = null;
+    while ((s = stdInput.readLine()) != null) {
+      LOGGER.info(s);
+    }
 
-			DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance()
-					.newDocumentBuilder();
+    // read any errors from the attempted command
+    while ((s = stdError.readLine()) != null) {
+      LOGGER.warn(s);
+    }
 
-			Document doc = dBuilder.parse(file);
+    // script
 
-			Element element = doc.getDocumentElement();
-			System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
-			NodeList nodeList = element.getElementsByTagName("property");
-			System.out.println(nodeList.getLength());
-			if (nodeList.getLength() > 0) {
-				for (int i=0; i< nodeList.getLength(); i++){
-					//System.out.println("test");
-					Element elementAttribute = (Element) nodeList.item(i);
-					NamedNodeMap nodeMap = elementAttribute.getAttributes();
+    final PrintWriter out = response.getWriter();
+    jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+    out.print(jsonResponse);
 
+  }
 
-					if (nodeMap.getLength() >= 1) {
-						Node node = nodeMap.item(0);
-						Node node2 = nodeMap.item(1);
-						if ((node.getNodeValue().toString().equals("org.apache.manifoldcf.login.password.obfuscated")) ||(node.getNodeValue().toString().equals("org.apache.manifoldcf.apilogin.password.obfuscated"))) {
-							node2.setTextContent(password);
-				
-						}
-					}
+  protected void modifyPropertiesMCF(final String password) {
 
-				}
-			}
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(new File(env+"/properties-global.xml"));
-			transformer.transform(source, result);
+    try {
 
-			System.out.println("Done");
+      final File file = new File(env + "/properties-global.xml");
 
+      final DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
-	}
+      final Document doc = dBuilder.parse(file);
+
+      final Element element = doc.getDocumentElement();
+      System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+      final NodeList nodeList = element.getElementsByTagName("property");
+      System.out.println(nodeList.getLength());
+      if (nodeList.getLength() > 0) {
+        for (int i = 0; i < nodeList.getLength(); i++) {
+          // System.out.println("test");
+          final Element elementAttribute = (Element) nodeList.item(i);
+          final NamedNodeMap nodeMap = elementAttribute.getAttributes();
+
+          if (nodeMap.getLength() >= 1) {
+            final Node node = nodeMap.item(0);
+            final Node node2 = nodeMap.item(1);
+            if ((node.getNodeValue().toString().equals("org.apache.manifoldcf.login.password.obfuscated")) || (node.getNodeValue().toString().equals("org.apache.manifoldcf.apilogin.password.obfuscated"))) {
+              node2.setTextContent(password);
+
+            }
+          }
+
+        }
+      }
+      final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+      final Transformer transformer = transformerFactory.newTransformer();
+      final DOMSource source = new DOMSource(doc);
+      final StreamResult result = new StreamResult(new File(env + "/properties-global.xml"));
+      transformer.transform(source, result);
+
+      System.out.println("Done");
+
+    } catch (final Exception e) {
+      System.out.println(e.getMessage());
+    }
+  }
 }

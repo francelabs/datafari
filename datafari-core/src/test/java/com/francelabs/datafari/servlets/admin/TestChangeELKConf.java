@@ -14,7 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,7 +51,7 @@ public class TestChangeELKConf {
   }
 
   @Test
-  public void TestELKConf() throws ServletException, IOException {
+  public void TestELKConf() throws ServletException, IOException, ParseException {
     final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
     final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
@@ -67,8 +69,9 @@ public class TestChangeELKConf {
 
     writer.flush(); // it may not have been flushed yet...
 
-    final JSONObject jsonResponse = new JSONObject(sw.toString());
-    assertTrue(jsonResponse.getInt("code") == 0);
+    final JSONParser parser = new JSONParser();
+    final JSONObject jsonResponse = (JSONObject) parser.parse(sw.toString());
+    assertTrue((Long) jsonResponse.get("code") == 0);
 
     assertTrue(ELKConfiguration.getInstance().getProperty(ELKConfiguration.KIBANA_URI).equals("URI_Test"));
     assertTrue(ELKConfiguration.getInstance().getProperty(ELKConfiguration.AUTH_USER).equals(""));

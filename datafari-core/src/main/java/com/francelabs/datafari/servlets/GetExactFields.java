@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.utils.AdvancedSearchConfiguration;
@@ -40,39 +40,37 @@ import com.francelabs.datafari.utils.AdvancedSearchConfiguration;
  */
 @WebServlet("/GetExactFields")
 public class GetExactFields extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(GetExactFields.class.getName());
+  private static final long serialVersionUID = 1L;
+  private static final Logger logger = Logger.getLogger(GetExactFields.class.getName());
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public GetExactFields() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+  /**
+   * @see HttpServlet#HttpServlet()
+   */
+  public GetExactFields() {
+    super();
+    // TODO Auto-generated constructor stub
+  }
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	@Override
-	protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
-			throws ServletException, IOException {
+  /**
+   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+   *      response)
+   */
+  @Override
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
-		final JSONObject jsonResponse = new JSONObject();
-		request.setCharacterEncoding("utf8");
-		response.setContentType("application/json");
-		try {
-			final String strExactFields = AdvancedSearchConfiguration.getInstance()
-					.getProperty(AdvancedSearchConfiguration.EXACT_FIELDS);
-			final List<String> exactFieldsList = Arrays.asList(strExactFields.split(","));
-			jsonResponse.put("code", CodesReturned.ALLOK.getValue());
-			jsonResponse.put("exactFieldsList", exactFieldsList);
-		} catch (final IOException e) {
-			logger.error("Impossible to retrieve exactFields from advanced-search.properties", e);
-			jsonResponse.put("code", CodesReturned.GENERALERROR.getValue());
-		}
-		final PrintWriter out = response.getWriter();
-		out.print(jsonResponse);
-	}
+    final JSONObject jsonResponse = new JSONObject();
+    request.setCharacterEncoding("utf8");
+    response.setContentType("application/json");
+    try {
+      final String strExactFields = AdvancedSearchConfiguration.getInstance().getProperty(AdvancedSearchConfiguration.EXACT_FIELDS);
+      final List<String> exactFieldsList = Arrays.asList(strExactFields.split(","));
+      jsonResponse.put("code", CodesReturned.ALLOK.getValue());
+      jsonResponse.put("exactFieldsList", exactFieldsList);
+    } catch (final IOException e) {
+      logger.error("Impossible to retrieve exactFields from advanced-search.properties", e);
+      jsonResponse.put("code", CodesReturned.GENERALERROR.getValue());
+    }
+    final PrintWriter out = response.getWriter();
+    out.print(jsonResponse);
+  }
 }

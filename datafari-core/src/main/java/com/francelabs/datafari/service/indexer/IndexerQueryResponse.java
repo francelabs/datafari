@@ -2,7 +2,7 @@ package com.francelabs.datafari.service.indexer;
 
 import java.util.List;
 
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 
 public interface IndexerQueryResponse {
 

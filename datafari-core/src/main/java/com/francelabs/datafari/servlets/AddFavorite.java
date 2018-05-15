@@ -27,8 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
@@ -40,66 +39,61 @@ import com.francelabs.datafari.user.Favorite;
  */
 @WebServlet("/addFavorite")
 public class AddFavorite extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(AddFavorite.class.getName());
+  private static final long serialVersionUID = 1L;
+  private static final Logger logger = Logger.getLogger(AddFavorite.class.getName());
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public AddFavorite() {
-		super();
-		BasicConfigurator.configure();
-	}
+  /**
+   * @see HttpServlet#HttpServlet()
+   */
+  public AddFavorite() {
+    super();
+    BasicConfigurator.configure();
+  }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	@Override
-	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-	}
+  /**
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+   *      response)
+   */
+  @Override
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    // TODO Auto-generated method stub
+  }
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	@Override
-	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-		final JSONObject jsonResponse = new JSONObject();
-		request.setCharacterEncoding("utf8");
-		response.setContentType("application/json");
-		if (request.getParameter("idDocument") != null) {
-			try {
-				final Principal userPrincipal = request.getUserPrincipal();
-				// checking if the user is connected
-				if (userPrincipal == null) {
-					jsonResponse.put(OutputConstants.CODE, CodesReturned.NOTCONNECTED.getValue()).put(OutputConstants.STATUS,
-							"Please reload the page, you're not connected");
-				} else {
-					final String username = request.getUserPrincipal().getName();
-					try {
-						Favorite.addFavorite(username, request.getParameter("idDocument"));
-						jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-					} catch (final DatafariServerException e) {
-						jsonResponse.put(OutputConstants.CODE, e.getErrorCode().getValue()).append(OutputConstants.STATUS,
-								"Problem while connecting to database");
-					}
-				}
-			} catch (final JSONException e) {
-				// TODO Auto-generated catch block
-				logger.error(e);
-			}
-		} else {
-			try {
-				jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue()).put(OutputConstants.STATUS, "Query malformed");
-			} catch (final JSONException e) {
-				// TODO Auto-generated catch block
-				logger.error(e);
-			}
-		}
-		final PrintWriter out = response.getWriter();
-		out.print(jsonResponse);
-	}
+  /**
+   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+   *      response)
+   */
+  @Override
+  protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    final JSONObject jsonResponse = new JSONObject();
+    request.setCharacterEncoding("utf8");
+    response.setContentType("application/json");
+    if (request.getParameter("idDocument") != null) {
+
+      final Principal userPrincipal = request.getUserPrincipal();
+      // checking if the user is connected
+      if (userPrincipal == null) {
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.NOTCONNECTED.getValue());
+        jsonResponse.put(OutputConstants.STATUS, "Please reload the page, you're not connected");
+      } else {
+        final String username = request.getUserPrincipal().getName();
+        try {
+          Favorite.addFavorite(username, request.getParameter("idDocument"));
+          jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+        } catch (final DatafariServerException e) {
+          jsonResponse.put(OutputConstants.CODE, e.getErrorCode().getValue());
+          jsonResponse.put(OutputConstants.STATUS, "Problem while connecting to database");
+        }
+      }
+
+    } else {
+
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+      jsonResponse.put(OutputConstants.STATUS, "Query malformed");
+
+    }
+    final PrintWriter out = response.getWriter();
+    out.print(jsonResponse);
+  }
 
 }

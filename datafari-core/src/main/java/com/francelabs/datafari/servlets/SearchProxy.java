@@ -29,9 +29,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import com.francelabs.datafari.service.indexer.IndexerQuery;
 import com.francelabs.datafari.service.indexer.IndexerQueryResponse;
@@ -60,8 +60,7 @@ public class SearchProxy extends HttpServlet {
    *      response)
    */
   @Override
-  protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
-      throws ServletException, IOException {
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
     final String handler = getHandler(request);
     final String protocol = request.getScheme() + ":";
@@ -145,11 +144,8 @@ public class SearchProxy extends HttpServlet {
       params.addParams(request.getParameterMap());
 
       try {
-        if (ScriptConfiguration.getProperty("ontologyEnabled").toLowerCase().equals("true")
-            && ScriptConfiguration.getProperty("ontologyEnabled").toLowerCase().equals("true")
-            && handler.equals("/select")) {
-          final boolean languageSelection = Boolean
-              .valueOf(ScriptConfiguration.getProperty("ontologyLanguageSelection"));
+        if (ScriptConfiguration.getProperty("ontologyEnabled").toLowerCase().equals("true") && ScriptConfiguration.getProperty("ontologyEnabled").toLowerCase().equals("true") && handler.equals("/select")) {
+          final boolean languageSelection = Boolean.valueOf(ScriptConfiguration.getProperty("ontologyLanguageSelection"));
           String parentsLabels = ScriptConfiguration.getProperty("ontologyParentsLabels");
           String childrenLabels = ScriptConfiguration.getProperty("ontologyChildrenLabels");
           if (languageSelection) {
@@ -170,8 +166,7 @@ public class SearchProxy extends HttpServlet {
       // define the request handler which may change if a specific source
       // has been provided
       String requestHandler = handler;
-      if (request.getParameter("source") != null && !request.getParameter("source").isEmpty()
-          && !request.getParameter("source").equalsIgnoreCase("all")) {
+      if (request.getParameter("source") != null && !request.getParameter("source").isEmpty() && !request.getParameter("source").equalsIgnoreCase("all")) {
         requestHandler += "-" + request.getParameter("source");
       }
       params.removeParam("source");
@@ -234,15 +229,16 @@ public class SearchProxy extends HttpServlet {
 
   }
 
-  private void writeSolrJResponse(final HttpServletRequest request, final HttpServletResponse response,
-      final IndexerQuery query, final IndexerQueryResponse queryResponse, final IndexerQuery queryPromolink,
-      final IndexerQueryResponse queryResponsePromolink) throws IOException, JSONException, ParseException {
+  private void writeSolrJResponse(final HttpServletRequest request, final HttpServletResponse response, final IndexerQuery query, final IndexerQueryResponse queryResponse, final IndexerQuery queryPromolink,
+      final IndexerQueryResponse queryResponsePromolink) throws IOException, ParseException, org.json.simple.parser.ParseException {
+
+    final JSONParser parser = new JSONParser();
 
     if (queryResponsePromolink != null) { // If it was a request on
       // FileShare
       // therefore on promolink
       final String jsonStrQueryResponse = queryResponse.getStrJSONResponse();
-      final JSONObject json = new JSONObject(jsonStrQueryResponse.substring(jsonStrQueryResponse.indexOf("{"))); // Creating
+      final JSONObject json = (JSONObject) parser.parse(jsonStrQueryResponse.substring(jsonStrQueryResponse.indexOf("{"), jsonStrQueryResponse.lastIndexOf("}") + 1)); // Creating
       // a
       // valid
       // json
@@ -266,10 +262,8 @@ public class SearchProxy extends HttpServlet {
 
         final JSONObject promoResponseJSON = new JSONObject();
         final JSONArray jsonPromolinkDocs = queryResponsePromolink.getResults();
-        final JSONObject jsonPromolinkDoc = jsonPromolinkDocs.getJSONObject(0);
-        final String[] fieldNames = JSONObject.getNames(jsonPromolinkDoc);
-        for (int i = 0; i < fieldNames.length; i++) {
-          final String fieldName = fieldNames[i];
+        final JSONObject jsonPromolinkDoc = (JSONObject) jsonPromolinkDocs.get(0);
+        for (final Object fieldName : jsonPromolinkDoc.keySet()) {
           promoResponseJSON.put(fieldName, jsonPromolinkDoc.get(fieldName));
         }
 
