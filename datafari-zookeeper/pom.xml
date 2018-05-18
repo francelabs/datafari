@@ -3,7 +3,7 @@
   <groupId>com.francelabs.datafari</groupId>
   <artifactId>datafari-zookeeper</artifactId>
   <packaging>pom</packaging>
-  <version>4.0.2-SNAPSHOT</version>
+  <version>4.0.2-Community</version>
   <name>Datafari Enterprise Search - Zookeeper module</name>
   <build>
   <plugins>
