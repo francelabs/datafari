@@ -89,7 +89,7 @@ AjaxFranceLabs.SpellcheckerWidget = AjaxFranceLabs.AbstractWidget
 					self.doSpellcheckerQuery(data.spellcheck.collations[1]);
 
 				} else if(data.spellcheck !== undefined
-						&& data.spellcheck.collations.length > 0) {
+						&& data.spellcheck.collations.length > 0 && data.spellcheck.suggestions[1].suggestion[0].freq > data.response.numFound && self.manager.store.isParamDefined('original_query') !== true) {
 					// Create suggestButton
 					var suggestButton = $("<span class='proposal'>" + data.spellcheck.collations[1] + "</span>");
 					suggestButton.click(function() {

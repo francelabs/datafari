@@ -101,7 +101,7 @@
 
 
     <field name="suggest" type="text_auto" indexed="true" stored="false" multiValued="true" />
-    <field name="spell" type="textSpell" indexed="true" stored="false" multiValued="true" />
+    <field name="spell" type="text_auto" indexed="true" stored="false" multiValued="true" />
 
     <!-- For the hash, added by rsabir -->
     <field name="signature" type="string" stored="true" indexed="true" multiValued="false" />
@@ -273,7 +273,7 @@
 			positionIncrementGap="100" omitNorms="true">
 			<analyzer>
 				<tokenizer class="solr.WhitespaceTokenizerFactory"/>
-        <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="0"/>
+        <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1"/>
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.ASCIIFoldingFilterFactory" preserveOriginal="false" />
         <filter class="solr.RemoveDuplicatesTokenFilterFactory" />
@@ -680,6 +680,7 @@
      <fieldType name="text_nostem" class="solr.TextField" positionIncrementGap="100">
        <analyzer>
         <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="0" generateNumberParts="0" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="0" splitOnNumerics="0"/>
         <filter class="solr.LowerCaseFilterFactory"/>
        </analyzer>
     </fieldType>
