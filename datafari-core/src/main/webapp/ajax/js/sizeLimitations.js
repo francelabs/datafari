@@ -51,13 +51,38 @@ $(document).ready(function() {
 			}
 		}
 	});
-	//Get hl.maxAmaxAnalyzedChars value
-	getModifyNodeContent("hl.maxAnalyzedChars", "hl");
+	
+	//Get hl.maxAnalyzedChars value
+	$.get('../GetHighlightInfos', function(data){
+		if(data.code == 0) { 
+			document.getElementById("maxhl").value = data.maxAnalyzedChars;    
+    		$('#submithl').attr("disabled", false);
+    		$('#maxhl').attr("disabled", false);
+		} else {
+			document.getElementById("globalAnswer").innerHTML = data;
+    		$('#submithl').attr("disabled", true);
+    		$('#maxhl').attr("disabled", true);
+		}
+	}, "json");
 	
 	//Sert the button to call the function set with the hl.maxAnalyzedChars parameter
 	$("#submithl").click(function(e){
 		e.preventDefault();
-		setModifyNodeContent("hl.maxAnalyzedChars", "hl", "#submithl");
+		$.post('./SetHighlightInfos', {maxAnalyzedChars : document.getElementById("maxhl").value }, function(data) {
+			if(data.code == 0) {
+				document.getElementById("answerhl").innerHTML = window.i18n.msgStore['modifDoneImmediateEffect'];
+		     	$("#answerhl").addClass("success");
+	     		$("#answerhl").fadeOut(3000,function(){
+	     			$("#answerhl").removeClass("success");
+	     			$("#answerhl").html("");
+	     			$("#answerhl").show();
+	     		});
+			} else {
+				document.getElementById("globalAnswer").innerHTML = data;
+    			$('#submithl').attr("disabled", true);
+	    		$('#maxhl').attr("disabled", true);
+			}
+		}, "json");
 	});
 	
 	//If the user loads an other page
