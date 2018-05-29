@@ -1,4 +1,5 @@
 {
+    "adminUI-Download-All-Logs-label" : "Tous les logs",
     "adminUI-Logs" : "Logs",
     "adminUI-Download-Logs" : "Télécharger les Logs",
     "adminUI-Logs-Select" : "Sélectionnez les logs à télécharger",
@@ -10,7 +11,7 @@
     "adminUI-Download-Tomcat-Logs-label" : "Tomcat logs",
     "adminUI-Download-ZooKeeper-Logs-label" : "ZooKeeper logs",
     "adminUI-Download-Solr-Logs-label" : "Solr logs",
-    "downloading" : "Downloading",
+    "downloading" : "Téléchargement",
     "seeds-tip" : "Root URLs of the sites you want to crawl. One URL per line. Each must start with http:// or https://.",
     "email-tip" : "adresse e-mail vers laquelle les rapports d'erreur seront envoyés",
     "exclusions-tip" : "Une expression régulière d'exclusion (optionnelle)",
