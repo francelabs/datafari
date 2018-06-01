@@ -1,4 +1,11 @@
 {
+    "unavailable" : "This feature is only available in the Enterprise Edition, contact us for more info at ",
+    "adminUI-UsagesAnalysis" : "Usages Analysis",
+    "adminUI-CorpusAnalysis" : "Corpus Analysis",
+    "adminUI-CorpusOTAnalysis" : "Corpus Analysis Over Time",
+    "adminUI-QueriesAnalysis" : "Queries Analysis",
+    "adminUI-SystemAnalysis" : "System Analysis",
+    "adminUI-LogsAnalysis" : "Logs Analysis",
     "adminUI-Download-All-Logs-label" : "All logs",
     "adminUI-Logs" : "Logs",
     "adminUI-Download-Logs" : "Download Logs",

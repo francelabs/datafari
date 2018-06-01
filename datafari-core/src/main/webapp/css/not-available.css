@@ -1,0 +1,13 @@
+#not-available-div {
+  width: 100%;
+  height: 25em;
+  display: table;
+  text-align: center;
+}
+
+#not-available-span {
+  display: table-cell;
+  vertical-align: middle;
+  font-size: 2em;
+  font-weight: bold;
+}

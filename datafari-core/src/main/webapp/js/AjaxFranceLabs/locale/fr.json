@@ -1,4 +1,11 @@
 {
+    "unavailable" : "Cette fonctionnalité est uniquement disponible dans la version Entreprise, contactez nous pour plus d'informations à ",
+    "adminUI-UsagesAnalysis" : "Analyse des Usages",
+    "adminUI-CorpusAnalysis" : "Analyse du Corpus",
+    "adminUI-CorpusOTAnalysis" : "Analyse du Corpus sur le temps",
+    "adminUI-QueriesAnalysis" : "Analyse des Requêtes",
+    "adminUI-SystemAnalysis" : "Analyse du Système",
+    "adminUI-LogsAnalysis" : "Analyse des Logs",
     "adminUI-Download-All-Logs-label" : "Tous les logs",
     "adminUI-Logs" : "Logs",
     "adminUI-Download-Logs" : "Télécharger les Logs",
