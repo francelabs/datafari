@@ -1,4 +1,8 @@
 {
+    "adminUI-licenceStatus" : "Licence Status",
+    "adminUI-licenceDocsNb" : "Number of indexed documents / Maximum allowed",
+    "adminUI-licenceDays" : "Consumed Days",
+    "adminUI-Licence" : "Licence",
     "unavailable" : "This feature is only available in the Enterprise Edition, contact us for more info at ",
     "adminUI-UsagesAnalysis" : "Usages Analysis",
     "adminUI-CorpusAnalysis" : "Corpus Analysis",
