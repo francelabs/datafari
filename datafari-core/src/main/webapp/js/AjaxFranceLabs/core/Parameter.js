@@ -54,7 +54,7 @@ AjaxFranceLabs.Parameter = AjaxFranceLabs.Class.extend({
 			}
 		}
 
-		var prefix = pairs.length ? '{!' + pairs.join('%20') + '}' : '';
+		var prefix = pairs.length ? '%7B!' + pairs.join('%20') + '%7D' : '';
 
 		if (this.value) {
 			return this.name + '=' + prefix + this.valueString(this.value);
