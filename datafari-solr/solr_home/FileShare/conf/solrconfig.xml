@@ -698,11 +698,11 @@
     <str name="spellcheck.extendedResults">true</str>
     <str name="hl">on</str>
     <str name="hl.method">unified</str>
-    <str name="hl.defaultSummary">true</str>
+    <str name="hl.defaultSummary">false</str>
     <str name="hl.tag.pre">&lt;span class="em"&gt;</str>
     <str name="hl.tag.post">&lt;/span&gt;</str>
-    <str name="hl.fl">content_hl_fr content_hl_en</str>
-    <str name="hl.requireFieldMatch">false</str>
+    <str name="hl.fl">content_fr content_en exactContent</str>
+    <str name="hl.requireFieldMatch">true</str>
     <str name="hl.bs.type">CHARACTER</str>
     <str name="hl.encoder">html</str>
     <str name="hl.fragsize">200</str>
@@ -761,11 +761,11 @@
       <str name="spellcheck.extendedResults">true</str>
       <str name="hl">on</str>
       <str name="hl.method">unified</str>
-      <str name="hl.defaultSummary">true</str>
+      <str name="hl.defaultSummary">false</str>
       <str name="hl.tag.pre">&lt;span class="em"&gt;</str>
       <str name="hl.tag.post">&lt;/span&gt;</str>
-      <str name="hl.fl">content_hl_fr content_hl_en</str>
-      <str name="hl.requireFieldMatch">false</str>
+      <str name="hl.fl">content_fr content_en exactContent</str>
+      <str name="hl.requireFieldMatch">true</str>
       <str name="hl.bs.type">CHARACTER</str>
       <str name="hl.encoder">html</str>
       <str name="hl.fragsize">200</str>
@@ -1203,31 +1203,28 @@
 			<str name="dest">exactContent</str>
      	</processor>
      	
+   	  <processor class="solr.CloneFieldUpdateProcessorFactory">
+	      <lst name="source">
+	        <str name="fieldRegex">content_(.*)</str>
+	      </lst>
+	      <str name="dest">preview_content</str>
+      </processor>
+      
+      <processor class="solr.TrimFieldUpdateProcessorFactory">
+          <str name="fieldRegex">preview_content</str>
+      </processor>
+    
+      <processor class="solr.TruncateFieldUpdateProcessorFactory">
+        <str name="fieldRegex">preview_content</str>
+        <int name="maxLength">1000</int>
+      </processor>
+     	
      	<processor class="solr.CloneFieldUpdateProcessorFactory">
 			<lst name="source">
 				<str name="fieldRegex">title_(.*)</str>
 			</lst>
 			<str name="dest">exactTitle</str>
      	</processor>
-		
-		<processor class="solr.CloneFieldUpdateProcessorFactory">
-			<lst name="source">
-				<str name="fieldRegex">content_(.*)</str>
-			</lst>
-			<lst name="dest">
-				<str name="pattern">content_(.*)</str>
-				<str name="replacement">content_hl_$1</str>
-			</lst>
-     	</processor>
-		
-		<processor class="solr.TruncateFieldUpdateProcessorFactory">
-   			<str name="fieldRegex">content_hl_.*</str>
-   			<int name="maxLength">100000</int>
- 		</processor>
-		
-		<processor class="solr.TrimFieldUpdateProcessorFactory">
-        	<str name="fieldRegex">content_hl_.*</str>
-		</processor>
 
 
 	    <processor class="solr.processor.SignatureUpdateProcessorFactory">
@@ -1276,31 +1273,28 @@
 			<str name="dest">exactContent</str>
      	</processor>
      	
+   	  <processor class="solr.CloneFieldUpdateProcessorFactory">
+	      <lst name="source">
+	        <str name="fieldRegex">content_(.*)</str>
+	      </lst>
+	      <str name="dest">preview_content</str>
+      </processor>
+      
+      <processor class="solr.TrimFieldUpdateProcessorFactory">
+          <str name="fieldRegex">preview_content</str>
+      </processor>
+    
+      <processor class="solr.TruncateFieldUpdateProcessorFactory">
+        <str name="fieldRegex">preview_content</str>
+        <int name="maxLength">1000</int>
+      </processor>
+     	
      	<processor class="solr.CloneFieldUpdateProcessorFactory">
-			<lst name="source">
-				<str name="fieldRegex">title_(.*)</str>
-			</lst>
-			<str name="dest">exactTitle</str>
+				<lst name="source">
+					<str name="fieldRegex">title_(.*)</str>
+				</lst>
+				<str name="dest">exactTitle</str>
      	</processor>
-		
-		<processor class="solr.CloneFieldUpdateProcessorFactory">
-			<lst name="source">
-				<str name="fieldRegex">content_(.*)</str>
-			</lst>
-			<lst name="dest">
-				<str name="pattern">content_(.*)</str>
-				<str name="replacement">content_hl_$1</str>
-			</lst>
-     	</processor>
-		
-		<processor class="solr.TruncateFieldUpdateProcessorFactory">
-   			<str name="fieldRegex">content_hl_.*</str>
-   			<int name="maxLength">100000</int>
- 		</processor>
-		
-		<processor class="solr.TrimFieldUpdateProcessorFactory">
-        	<str name="fieldRegex">content_hl_.*</str>
-		</processor>
 
 
 		<processor class="solr.processor.SignatureUpdateProcessorFactory">

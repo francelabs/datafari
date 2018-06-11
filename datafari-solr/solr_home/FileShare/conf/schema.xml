@@ -90,11 +90,9 @@
     <field name="urlHierarchy" type="string" indexed="true" stored="true" multiValued="true"/>
     <field name="last_modified" type="tdate" indexed="true" stored="true" default="NOW"/>
     <field name="content" type="text_general" indexed="false" stored="false" multiValued="true"/>
-    <field name="content_en" type="text_en" indexed="true" stored="false" multiValued="true"/>
-    <field name="content_fr" type="text_fr" indexed="true" stored="false" multiValued="true"/>
-    <field name="content_hl_en" type="text_en" indexed="false" stored="true" multiValued="true"/>
-    <field name="content_hl_fr" type="text_fr" indexed="false" stored="true" multiValued="true"/>
-    <field name="exactContent" type="text_nostem" indexed="true" stored="false" multiValued="true"/>
+    <field name="content_en" type="text_en" indexed="true" stored="true" multiValued="true"/>
+    <field name="content_fr" type="text_fr" indexed="true" stored="true" multiValued="true"/>
+    <field name="exactContent" type="text_nostem" indexed="true" stored="true" multiValued="true"/>
     <field name="exactTitle" type="text_nostem" indexed="true" stored="false" multiValued="true"/>
     <field name="crawl_date" type="tdate" indexed="true" stored="true" default="NOW"/>
     <field name="original_file_size" type="long" indexed="true" stored="false"/>
@@ -223,6 +221,8 @@
     <field name="number_of_components" type="int" indexed="true" stored="true" multiValued="true"/>
     <field name="compression_type" type="string" indexed="true" stored="true" multiValued="true"/>
     <field name="flash_mode" type="string" indexed="true" stored="true" multiValued="true"/>
+    
+    <field name="preview_content" type="string" indexed="false" stored="true" multiValued="true"/>
 
     <dynamicField name="ignored_*" type="ignored" multiValued="true"/>
     <dynamicField name="ontology_*" type="string" multiValued="true"/>

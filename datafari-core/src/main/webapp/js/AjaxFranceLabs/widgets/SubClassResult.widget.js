@@ -62,6 +62,10 @@ afterRequest : function() {
 										description += value;
 										});
 								}
+								if(description.trim() == '') {
+									description = doc.preview_content.toString().substring(0,200);
+								}
+								
 								elm.find('.doc_list').append(
 												'<div class="doc e-'+ i + '" id="'+ doc.id+ '"></div>');
 								elm.find('.doc:last').append(
