@@ -14,13 +14,13 @@ currentnodehost=${RET}
 #change elk address
 sed -i -e "s/localhost/${currentnodehost}/g" /opt/datafari/tomcat/conf/elk.properties
 sed -i "/server.host:/c\server.host: ${currentnodehost}" /opt/datafari/elk/kibana/config/kibana.yml
+sed -i -e "s/@NODEHOST@/${currentnodehost}/g" /opt/datafari/bin/utils.sh
 
 sed -i -e "s/@NODEHOST@/localhost/g" /opt/datafari/tomcat/conf/datafari.properties
 sed -i -e "s/@NODEHOST@/localhost/g" /opt/datafari/solr/bin/solr.in.sh
 sed -i -e "s/@SOLRHOSTS@/localhost:2181/g" /opt/datafari/solr/bin/solr.in.sh
 sed -i -e "s/@SOLRHOSTS@/localhost:2181/g" /opt/datafari/tomcat/conf/datafari.properties
 sed -i -e "s/@ZKHOST@/localhost:2181/g" /opt/datafari/mcf/mcf_home/properties.xml
-
 
 sed -i -e "s/@NUMSHARDS@/1/g" /opt/datafari/tomcat/conf/datafari.properties
 sed -i -e "s/@NUMSHARDS@/1/g" /opt/datafari/bin/start-datafari.sh

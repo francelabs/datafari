@@ -107,7 +107,7 @@ waitKibana() {
 	kibana_status=0
 	retries=1
 
-	exec 6<>/dev/tcp/localhost/5601 || kibana_status=1
+	exec 6<>/dev/tcp/@NODEHOST@/5601 || kibana_status=1
 	exec 6>&- # close output connection
 	exec 6<&- # close input connection
 
@@ -119,7 +119,7 @@ waitKibana() {
 		# Sleep for a while
 		sleep 10s
 
-		exec 6<>/dev/tcp/localhost/5601 || kibana_status=1
+		exec 6<>/dev/tcp/@NODEHOST@/5601 || kibana_status=1
 		exec 6>&- # close output connection
 		exec 6<&- # close input connection
 
