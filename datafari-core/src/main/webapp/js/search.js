@@ -172,7 +172,7 @@ $(function($) {
 	else
 		//Manager.addWidget(new AjaxFranceLabs.ExternalResultWidget());
 		Manager.addWidget(new AjaxFranceLabs.SubClassResultWidget());
-		//Manager.addWidget(new AjaxFranceLabs.PrevisualizeResultWidget());
+		Manager.addWidget(new AjaxFranceLabs.PrevisualizeResultWidget());
 
 	/*new  AjaxFranceLabs.ResultIllustratedWidget({
 		elm : $('#results'),

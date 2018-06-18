@@ -110,10 +110,10 @@
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/HierarchicalFacet.js"></script>
 	-->
-	<!--
+	
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/PrevisualizeResult.widget.js" charset="utf-8"></script>
-	-->
+	
 	<!--
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/ExternalResult.widget.js" charset="utf-8"></script>
@@ -215,7 +215,7 @@
 				<div id="suggestion"></div>
 				<div id="spellchecker"></div>
 				<!--  <div id="external"></div> -->
-				<!--  <div id="previsualize"></div> -->
+				<div id="previsualize"></div>
 				<div id="results"></div>
 			</div>
 
