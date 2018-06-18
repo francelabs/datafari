@@ -24,8 +24,8 @@
 							<configuration>
 								<!-- Version of Cassandra should be retrieved from a property file 
 									as well as the SHA1 -->
-								<url>https://archive.apache.org/dist/cassandra/3.0.16/apache-cassandra-3.0.16-bin.tar.gz</url>
-                				<sha1>b90824477cb455510086e1c6cf5e10d956ec6798</sha1>
+								<url>https://archive.apache.org/dist/cassandra/3.11.2/apache-cassandra-3.11.2-bin.tar.gz</url>
+                					<sha1>f52a65ffddeff553f2ac3f8f3fd3dd74317fe793</sha1>
 								<unpack>true</unpack>
 							</configuration>
 						</execution>
