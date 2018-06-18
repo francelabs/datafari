@@ -693,6 +693,8 @@
     </fieldType>
     
     <!--  Entity extraction -->
+    <!--  Needs to create the file keep_phrases.txt in Solr Home -->
+    <!-- 
     <fieldType name="key_phrases" class="solr.TextField" sortMissingLast="true" omitNorms="true">
 	<analyzer>
   		<tokenizer class="solr.WhitespaceTokenizerFactory"/>
@@ -705,6 +707,7 @@
     		<filter class="solr.LowerCaseFilterFactory"/>
   	</analyzer>
 	</fieldType>
+	 -->
 
  </types>
 
