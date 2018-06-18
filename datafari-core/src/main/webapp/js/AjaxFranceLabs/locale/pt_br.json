@@ -332,6 +332,8 @@
     "passwordAdminUi": "Senha :",
     "pf": "Consulta com mais de uma palavra",
     "port": "Número da porta",
+    "preview_moreInformation": "More information",
+    "preview_content": "Content",
     "previous": "Anterior",
     "previousExecution": "Execuções anteriores",
     "PROBLEMCONNECTIONAD": "Não é possível conectar ao Active Directory, verifique a configuração do AD !",

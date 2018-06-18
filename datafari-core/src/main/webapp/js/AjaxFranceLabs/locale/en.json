@@ -331,6 +331,8 @@
     "passwordAdminUi": "Password :",
     "pf": "Multiple words queries",
     "port": "Number of the port",
+    "preview_moreInformation": "More information",
+    "preview_content": "Content",
     "previous": "Previous",
     "previousExecution": "Previous executions",
     "PROBLEMCONNECTIONAD": "Unable to connect to the Active Directory, check the AD configuration !",

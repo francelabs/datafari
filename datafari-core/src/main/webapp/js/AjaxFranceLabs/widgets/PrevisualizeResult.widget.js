@@ -29,9 +29,9 @@ AjaxFranceLabs.PrevisualizeResultWidget = AjaxFranceLabs.ResultWidget.extend({
 					preview_content = "";
 				}
 				// Add here the information that you want to add in the previsualize window
-				$($('.doc_list .res')[index]).append('<div class="previsualizetemplate" style="width:500px">More information');
+				$($('.doc_list .res')[index]).append('<div class="previsualizetemplate" style="width:500px">'+window.i18n.msgStore['preview_moreInformation']);
 				// For example, we display here the id of the document
-				$($('.doc_list .previsualizetemplate')[index]).append('<div id="previsualizeid">Content : '+preview_content+' </div>' );
+				$($('.doc_list .previsualizetemplate')[index]).append('<div id="previsualizeid">'+window.i18n.msgStore['preview_content']+': '+preview_content+' </div>' );
 			});
 
 

@@ -223,6 +223,13 @@
     <field name="flash_mode" type="string" indexed="true" stored="true" multiValued="true"/>
     
     <field name="preview_content" type="string" indexed="false" stored="true" multiValued="true"/>
+    <!-- Basic entity extraction -->
+ 	<!--  
+	<field name="entity_person" type="key_phrases" indexed="true" stored="true" multiValued="true"/>
+	<field name="entity_phone" type="string" indexed="true" stored="true" multiValued="true"/>
+	<field name="entity_person_present" type="text_general" indexed="true" stored="true" multiValued="false"/>
+	<field name="entity_phone_present" type="text_general" indexed="true" stored="true" multiValued="false"/>
+	-->  
 
     <dynamicField name="ignored_*" type="ignored" multiValued="true"/>
     <dynamicField name="ontology_*" type="string" multiValued="true"/>
@@ -254,7 +261,7 @@
         or to add multiple fields to the same field for easier/faster searching.  -->
    <copyField source="content_*" dest="suggest" />
    <copyField source="content_*" dest="spell" />
-
+	
 
 
    <copyField source="title_*" dest="suggest" />
@@ -684,6 +691,20 @@
         <filter class="solr.LowerCaseFilterFactory"/>
        </analyzer>
     </fieldType>
+    
+    <!--  Entity extraction -->
+    <fieldType name="key_phrases" class="solr.TextField" sortMissingLast="true" omitNorms="true">
+	<analyzer>
+  		<tokenizer class="solr.WhitespaceTokenizerFactory"/>
+    		<filter class="solr.ShingleFilterFactory"
+            minShingleSize="2" maxShingleSize="5"
+            outputUnigramsIfNoShingles="true"
+    		/>
+    		<filter class="solr.KeepWordFilterFactory"
+            words="keep_phrases.txt" ignoreCase="true"/>
+    		<filter class="solr.LowerCaseFilterFactory"/>
+  	</analyzer>
+	</fieldType>
 
  </types>
 

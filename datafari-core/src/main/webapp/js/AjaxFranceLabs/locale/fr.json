@@ -331,6 +331,8 @@
     "passwordAdminUi": "Mot de passe :",
     "pf": "Requêtes à mots multiples",
     "port": "Numéro du port",
+    "preview_moreInformation": "Plus d'informations",
+    "preview_content": "Contenu",
     "previous": "Précédent",
     "previousExecution": "Ces alertes ont été éxécutés la dernière fois le : ",
     "PROBLEMCONNECTIONAD": "Impossible de se connecter à l'Active Directory, vérifiez la configuration de l'AD !",

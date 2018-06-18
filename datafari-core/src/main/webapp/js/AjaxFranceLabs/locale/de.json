@@ -331,6 +331,8 @@
     "passwordAdminUi": "Passwort:",
     "pf": "Anfragen mit mehreren Wörtern",
     "port": "Portnummer",
+    "preview_moreInformation": "More information",
+    "preview_content": "Content",
     "previous": "Vorherige",
     "previousExecution": "Vorherige Ausführungen",
     "PROBLEMCONNECTIONAD": "Mit Active Directory Server kann nicht verbunden werden.",

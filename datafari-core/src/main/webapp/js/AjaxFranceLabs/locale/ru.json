@@ -332,6 +332,8 @@
     "passwordAdminUi": "Пароль:",
     "pf": "Запросы из нескольких слов",
     "port": "Number of the port",
+    "preview_moreInformation": "More information",
+    "preview_content": "Content",
     "previous": "Предыдущее",
     "previousExecution": "Предыдущие запуски",
     "PROBLEMCONNECTIONAD": "Невозможно соединиться  с Active Directory, проверьте конфигурацию AD!",
