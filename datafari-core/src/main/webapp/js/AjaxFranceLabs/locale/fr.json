@@ -1,4 +1,8 @@
 {
+    "adminUI-ProblematicFiles" : "Voir les fichiers à problèmes",
+    "allCategories" : "Toutes les catégories",
+    "authors" : "Auteurs",
+    "asAuthor" : "en temps qu' \"Auteur\"",
     "adminUI-licenceStatus" : "Statut de la Licence",
     "adminUI-licenceDocsNb" : "Nombre de documents indexés / Maximum autorisé",
     "adminUI-licenceDays" : "Jours consommés",

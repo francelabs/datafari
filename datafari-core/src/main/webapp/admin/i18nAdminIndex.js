@@ -15,6 +15,7 @@ $(function($) {
 	elm.find('#corpusOTAnalysis-AdminUI').html(window.i18n.msgStore['adminUI-CorpusOTAnalysis']);
 	elm.find('#queriesAnalysis-AdminUI').html(window.i18n.msgStore['adminUI-QueriesAnalysis']);
 	elm.find('#systemAnalysis-AdminUI').html(window.i18n.msgStore['adminUI-SystemAnalysis']);
+	elm.find('#problematicFiles-AdminUI').html(window.i18n.msgStore['adminUI-ProblematicFiles']);
 	elm.find('#logsAnalysis-AdminUI').html(window.i18n.msgStore['adminUI-LogsAnalysis']);
 	
 	

@@ -1,4 +1,8 @@
 {
+    "adminUI-ProblematicFiles" : "Check problematic files",
+    "allCategories" : "All categories",
+    "authors" : "Authors",
+    "asAuthor" : "as an \"Author\"",
     "adminUI-licenceStatus" : "Licence Status",
     "adminUI-licenceDocsNb" : "Number of indexed documents / Maximum allowed",
     "adminUI-licenceDays" : "Consumed Days",
