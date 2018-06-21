@@ -754,7 +754,7 @@
       </analyzer>
     </fieldType>
     <!--  Entity extraction -->
- 
+ <!--  
     <fieldType name="key_phrases" class="solr.TextField" sortMissingLast="true" omitNorms="true">
 <analyzer>
   <tokenizer class="solr.WhitespaceTokenizerFactory"/>
@@ -763,7 +763,7 @@
     <filter class="solr.LowerCaseFilterFactory"/>
   </analyzer>
 </fieldType>
-    
+ -->
 
  </types>
 
