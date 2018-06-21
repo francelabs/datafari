@@ -4,6 +4,40 @@
 # Source debconf library.
 . /usr/share/debconf/confmodule
 
+mkdir -p /opt/datafari/tomcat/webapps/Datafari
+mv /opt/datafari/tomcat/webapps/Datafari.war /opt/datafari/tomcat/webapps/Datafari
+unzip -qq /opt/datafari/tomcat/webapps/Datafari/Datafari.war -d /opt/datafari/tomcat/webapps/Datafari
+
+# Get Git commit id and version 
+
+ 
+ file="/opt/datafari/tomcat/conf/git.properties"
+
+if [ -f "$file" ]
+	then
+		while IFS='=' read -r key value
+  		do
+			if  [[ $key == git.commit.id.abbrev ]]
+			then
+			
+				commit=$value
+				echo $commit
+			fi
+			
+			if  [[ $key == git.closest.tag.name ]]
+			then
+			
+				version=$value
+				echo $version
+			fi
+  		done < "$file"
+fi
+
+sed -i -e "s/@VERSION@/$version/g" /opt/datafari/tomcat/webapps/Datafari/footer.jsp
+sed -i -e "s/@VERSION@/$version/g" /opt/datafari/tomcat/webapps/Datafari/admin/admin-footer.jsp
+sed -i -e "s/@COMMIT@/$commit/g" /opt/datafari/tomcat/webapps/Datafari/admin/admin-footer.jsp
+
+
 #start script
 
 db_input high datafari/node_host || true
