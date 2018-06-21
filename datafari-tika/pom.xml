@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.francelabs.datafari</groupId>
   <artifactId>datafari-tika</artifactId>
-  <version>4.0.2-Community</version>
+  <version>4.1-Community</version>
   <packaging>pom</packaging>
   <name>Datafari Enterprise Search - Tika module</name>
   <dependencies>

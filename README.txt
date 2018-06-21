@@ -1,10 +1,10 @@
---------------------------- DATAFARI V. 4.0.2 ------------------------
+--------------------------- DATAFARI V. 4.1 ------------------------
 
 
-NOTE: For the major changes compared to DATAFARI V3.2.1, please check below.
+NOTE: For the changes compared to DATAFARI V4.0.2, please check CHANGES.txt.
 
-Datafari 4.0.0 is the perfect product for anyone who needs to search and analyze its corporate big data, based on the most advanced open source technologies.
-Datafari 4.0.0 combines the Apache Solr, Cassandra, ManifoldCF products and ELK. It allows its users to search into file shares, cloud shares (dropbox, google drive), databases, but also emails and many more sources.
+Datafari 4.1 is the perfect product for anyone who needs to search and analyze its corporate big data, based on the most advanced open source technologies.
+Datafari 4.1 combines the Apache Solr, Cassandra, ManifoldCF products and ELK. It allows its users to search into file shares, cloud shares (dropbox, google drive), databases, but also emails and many more sources.
 
 Available as community and enterprise edition, Datafari is different from the competition :
 - Its open source license is not aggressive, as it uses the Apache v2 license: you are free to do whatever you want with it,
@@ -21,6 +21,7 @@ Recommended version is Debian 9
 - Processor : 1GHZ and RAM : 8GB
 - Ports 8080, 5432, 9200, 5601 are opened
 - Debian environment : requires curl, debconf, unzip, sudo, libc6-dev, jq, lsof
+- Java JDK 8
 
 How to install and start Datafari :
 

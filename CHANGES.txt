@@ -15,9 +15,59 @@ you just need to mention that you are using it.
 See http://wiki.datafari.com for more information.
 
 
-Remark
+Remarks
 ------
-Datafari needs Python v 2.7.x. If you have only Python v3, please install Python2 (for Ubuntu 16.04 for example, install the package python-minimal)
+Datafari needs Python v 2.7.x. If you have only Python v3, please install Python2 (for Ubuntu 16.04 for example, install the package python-minimal).
+
+Datafari no longer embeds Java JDK. JDK 8 must be present on the machine and set JAVA HOME.
+
+==================  4.1 ==================
+* Version of major components :
+Solr 6.6.4
+ManifoldCF 2.8.1
+Tomcat 9.0.8
+Cassandra 3.11.2
+PostgreSQL 9.5.6
+Zookeeper 3.4.10
+Tika Server 1.18
+ElasticSearch 5.6.4
+Kibana 5.6.4
+LogStash 5.6.4
+
+* New features :
+Basic entity extraction schema
+Previsualize widget added
+Highlight now based on original content fields
+Updated admin menu
+hl.maxAnalyzedChars dynamic config
+Updated MCF UI
+Bug fix spellchecker + new unified highlighter
+Replace org.json by org.json.simple
+Remove the embedded JDK from Datafari
+moved js function redefinition to a single file
+Corrected and added German translation (contribution by marlemion)
+Changed the way extensions are detected
+Added file size default facet
+
+
+* Bug fixes :
+Change Kibana IP check
+Bug fix spellchecker + new unified highlighter
+ZK autopurge added
+Fixed search bar behavior when resizing
+Updated config classes
+Gap update
+Added polyfill.js in index.jsp
+Fix search loading
+Fix TableFacetQueriesWidget.js
+Fix several title
+Fix first startup on low profile conf
+Fix sequence_number type in Solr schema
+Fix multiple url values
+Bug fix UI languages that break queries
+Update version number in Admin footer
+Fix advanced search exact expression for basic search
+
 
 ==================  4.0.2 ==================
 Changes :

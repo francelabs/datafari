@@ -4,7 +4,7 @@
 	<artifactId>datafari-dependencies</artifactId>
 	<!-- Dependencies POM of datafari -->
 	<packaging>jar</packaging>
-	<version>4.0.2-Community</version>
+	<version>4.1-Community</version>
 	<name>Datafari Enterprise Search - Dependencies POM</name>
 
 <repositories>

@@ -3,7 +3,7 @@
   <groupId>com.francelabs.datafari</groupId>
   <artifactId>datafari-cassandra</artifactId>
   <packaging>pom</packaging>
-  <version>4.0.2-Community</version>
+  <version>4.1-Community</version>
   <name>Datafari Enterprise Search - Cassandra module</name>
   <build>
   <plugins>

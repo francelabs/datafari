@@ -3,7 +3,7 @@
   <groupId>com.francelabs.datafari</groupId>
   <artifactId>datafari-mcf-scripts</artifactId>
   <packaging>jar</packaging>
-  <version>4.0.2-Community</version>
+  <version>4.1-Community</version>
   <name>Datafari Enterprise Search - ManifoldCF script module</name>
   	<prerequisites>
 		<!-- Force minimum Maven version -->
@@ -13,7 +13,7 @@
 		<dependency>
               <groupId>com.francelabs.datafari</groupId>
               <artifactId>datafari-dependencies</artifactId>
-              <version>4.0.2-Community</version>
+              <version>4.1-Community</version>
               <scope>provided</scope>
               <type>pom</type>
         </dependency>
