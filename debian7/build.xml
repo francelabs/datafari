@@ -26,6 +26,7 @@
 	<property name="zookeeper.src.dir" value="${project.dir}/datafari-zookeeper/target/dist/zookeeper" />
 	<property name="bin.src.dir" value="${project.dir}/bin" />
 	<property name="tika.src.dir" value="${project.dir}/datafari-tika/" />
+	<property name="git.plugin.src.dir" value="${project.dir}/datafari-git-plugin/target" />
 
 
 	<!-- Output directories and self contained Datafari's Debian components -->
@@ -134,6 +135,13 @@
 		</copy>
 
 
+		<!-- Copy Git properties file -->
+		<copy todir="${debian.dist.dir}/tomcat/conf">
+			<fileset dir="${git.plugin.src.dir}">
+			<include name="*.properties" />
+			</fileset>
+		</copy>
+		
 		<!-- Copy Solr -->
 		<copy todir="${debian.dist.dir}/solr">
 			<fileset dir="${solr.src.dir}">
