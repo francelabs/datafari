@@ -25,7 +25,10 @@
 								<!-- Version of MCF should be retrieved from a property file as well 
 									as the MD5 -->
 								<url>http://archive.apache.org/dist/manifoldcf/apache-manifoldcf-2.10/apache-manifoldcf-2.10-bin.tar.gz</url>
-								<md5>474739ce2187C0db5e9f64967ff9a609</md5>
+								<sha512>0EC1EABC 35642289 14040A97 5F391C1D D25DCABF
+                                   7304524D 5685F9F4 34F80409 7DC3512A C16F4AF8
+                                   88A957FB EA9DE0F2 8A7C00D6 F05883C5 3EF30F49
+                                   F53725FB</sha512>
 								<unpack>true</unpack>
 							</configuration>
 						</execution>
