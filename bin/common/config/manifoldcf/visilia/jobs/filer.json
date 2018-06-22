@@ -1,0 +1,92 @@
+{
+  "job": [
+    {
+      "expiration_interval": "infinite",
+      "hopcount_mode": "accurate",
+      "document_specification": {
+        "security": {
+          "_value_": "",
+          "_attribute_value": "off"
+        },
+        "parentfoldersecurity": {
+          "_value_": "",
+          "_attribute_value": "off"
+        },
+        "startpoint": {
+          "include": [
+            {
+              "_attribute_indexable": "yes",
+              "_attribute_filespec": "*",
+              "_value_": "",
+              "_attribute_type": "file"
+            },
+            {
+              "_attribute_filespec": "*",
+              "_value_": "",
+              "_attribute_type": "directory"
+            }
+          ],
+          "_attribute_path": "enron",
+          "_value_": ""
+        },
+        "sharesecurity": {
+          "_value_": "",
+          "_attribute_value": "off"
+        }
+      },
+      "description": "FilerCrawl",
+      "priority": "5",
+      "max_recrawl_interval": "infinite",
+      "recrawl_interval": "86400000",
+      "run_mode": "scan once",
+      "reseed_interval": "3600000",
+      "start_mode": "manual",
+      "id": "1529676052583",
+      "repository_connection": "winShare",
+      "pipelinestage": [
+        {
+          "stage_isoutput": "false",
+          "stage_id": "0",
+          "stage_specification": {
+            "keepAllMetadata": {
+              "_value_": "",
+              "_attribute_value": "true"
+            },
+            "writeLimit": {
+              "_value_": "",
+              "_attribute_value": ""
+            },
+            "ignoreException": {
+              "_value_": "",
+              "_attribute_value": "true"
+            },
+            "lowerNames": {
+              "_value_": "",
+              "_attribute_value": "false"
+            }
+          },
+          "stage_connectionname": "TikaOCR"
+        },
+        {
+          "stage_isoutput": "false",
+          "stage_id": "1",
+          "stage_specification": {
+            "maxlength": {
+              "_value_": "",
+              "_attribute_value": "1000000"
+            }
+          },
+          "stage_connectionname": "ContentLimiter",
+          "stage_prerequisite": "0"
+        },
+        {
+          "stage_isoutput": "true",
+          "stage_id": "2",
+          "stage_specification": {},
+          "stage_connectionname": "DatafariSolrNoTika",
+          "stage_prerequisite": "1"
+        }
+      ]
+    }
+  ]
+}

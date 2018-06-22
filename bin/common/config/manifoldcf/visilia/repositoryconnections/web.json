@@ -1,0 +1,69 @@
+{
+   "repositoryconnection":[
+      {
+         "max_connections":"10",
+         "configuration":{
+            "trust": {
+              "_attribute_trusteverything": "true",
+              "_value_": "",
+              "_attribute_urlregexp": ""
+            },
+            "bindesc":{
+               "maxkbpersecond":{
+                  "_value_":"",
+                  "_attribute_value":"64"
+               },
+               "_attribute_caseinsensitive":"false",
+               "maxconnections":{
+                  "_value_":"",
+                  "_attribute_value":"2"
+               },
+               "maxfetchesperminute":{
+                  "_value_":"",
+                  "_attribute_value":"12"
+               },
+               "_attribute_binregexp":"",
+               "_value_":""
+            },
+            "_PARAMETER_":[
+               {
+                  "_value_":"info@francelabs.com",
+                  "_attribute_name":"Email address"
+               },
+               {
+                  "_value_":"all",
+                  "_attribute_name":"Robots usage"
+               },
+               {
+                  "_value_": "all",
+                  "_attribute_name": "Meta robots tags usage"
+               },
+               {
+                  "_value_":"",
+                  "_attribute_name":"Proxy host"
+               },
+               {
+                  "_value_":"",
+                  "_attribute_name":"Proxy port"
+               },
+               {
+                  "_value_":"",
+                  "_attribute_name":"Proxy authentication domain"
+               },
+               {
+                  "_value_":"",
+                  "_attribute_name":"Proxy authentication user name"
+               },
+               {
+                  "_value_":"",
+                  "_attribute_name":"Proxy authentication password"
+               }
+            ]
+         },
+         "name":"Web",
+         "description":"",
+         "isnew":true,
+         "class_name":"org.apache.manifoldcf.crawler.connectors.webcrawler.WebcrawlerConnector"
+      }
+   ]
+}

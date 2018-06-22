@@ -1,0 +1,57 @@
+{
+   "job":[
+      {
+         "expiration_interval":"infinite",
+         "hopcount_mode":"accurate",
+         "document_specification":{
+            "limittoseeds":{
+               "_value_":"",
+               "_attribute_value":"true"
+            },
+            "excludes":"",
+            "excludescontentindex":"",
+            "seeds":"http://www.francelabs.com",
+            "excludesindex":"",
+            "includes":".*",
+            "includesindex":".*"
+         },
+         "description":"CrawlWeb",
+         "priority":"5",
+         "max_recrawl_interval":"infinite",
+         "recrawl_interval":"86400000",
+         "run_mode":"scan once",
+         "reseed_interval":"3600000",
+         "start_mode":"manual",
+         "id":"1503925800824",
+         "repository_connection":"Web",
+         "pipelinestage": [
+           {
+            "stage_isoutput": "false",
+            "stage_id": "0",
+            "stage_specification": {
+              "striphtml": {
+                "_value_": "",
+                "_attribute_value": "true"
+              },
+              "includefilter": {
+                "_value_": "",
+                "_attribute_regex": "body"
+              },
+              "excludefilter": {
+                "_value_": "",
+                "_attribute_regex": "script"
+              }
+            },
+            "stage_connectionname": "TikaHTMLConnector"
+          },
+          {
+            "stage_isoutput": "true",
+            "stage_id": "1",
+            "stage_specification": {},
+            "stage_connectionname": "DatafariSolr",
+            "stage_prerequisite": "0"
+          }
+        ]
+      }
+   ]
+}

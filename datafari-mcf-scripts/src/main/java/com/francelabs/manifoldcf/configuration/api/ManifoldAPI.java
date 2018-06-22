@@ -53,22 +53,19 @@ public class ManifoldAPI {
 
   static private HttpClient getClient() throws ManifoldCFException, InterruptedException, IOException, ParseException {
 
-    if (client == null) {
-      client = HttpClientBuilder.create().build();
+    client = HttpClientBuilder.create().build();
 
-      final IThreadContext tc = ThreadContextFactory.make();
-      ManifoldCF.initializeEnvironment(tc);
+    final IThreadContext tc = ThreadContextFactory.make();
+    ManifoldCF.initializeEnvironment(tc);
 
-      final String masterDatabaseUsername = LockManagerFactory.getStringProperty(tc, "org.apache.manifoldcf.apilogin.password.obfuscated", "");
+    final String masterDatabaseUsername = LockManagerFactory.getStringProperty(tc, "org.apache.manifoldcf.apilogin.password.obfuscated", "");
 
-      ManifoldAPI.waitUntilManifoldIsStarted(client);
+    ManifoldAPI.waitUntilManifoldIsStarted(client);
 
-      if (!"".equals(masterDatabaseUsername)) {
-        final String apiPassword = ManifoldCF.deobfuscate(masterDatabaseUsername);
-        LOGGER.info("Try to authenticate");
-        ManifoldAPI.authenticate("", apiPassword, client);
-      }
-
+    if (!"".equals(masterDatabaseUsername)) {
+      final String apiPassword = ManifoldCF.deobfuscate(masterDatabaseUsername);
+      LOGGER.info("Try to authenticate");
+      ManifoldAPI.authenticate("", apiPassword, client);
     }
 
     return client;
@@ -161,8 +158,7 @@ public class ManifoldAPI {
     return executeCommand(url, "GET", null);
   }
 
-  static public JSONObject readConfig(final String command, final String paramName)
-      throws IOException, ManifoldCFException, InterruptedException, ParseException {
+  static public JSONObject readConfig(final String command, final String paramName) throws IOException, ManifoldCFException, InterruptedException, ParseException {
 
     final String url = urlManifoldCFAPI + command + "/" + paramName;
     return executeCommand(url, "GET", null);
@@ -213,6 +209,24 @@ public class ManifoldAPI {
     LOGGER.info("Config for new connector " + paramName + " set");
   }
 
+  public static JSONObject postConfig(final String command, final JSONObject configuration) throws Exception {
+
+    LOGGER.info("Post new config for " + command);
+    final String url = urlManifoldCFAPI + command;
+    final JSONObject result = executeCommand(url, "POST", configuration);
+    return result;
+
+  }
+
+  public static JSONObject startJob(final String jobId) throws Exception {
+
+    LOGGER.info("Start the job " + jobId);
+    final String url = urlManifoldCFAPI + "start/" + jobId;
+    final JSONObject result = executeCommand(url, "PUT", new JSONObject());
+    return result;
+
+  }
+
   static public void deleteConfig(final String command, final String paramName) throws Exception {
     LOGGER.info("Delete config for " + paramName);
     final String url = urlManifoldCFAPI + command + "/" + paramName;
@@ -234,8 +248,7 @@ public class ManifoldAPI {
     return result;
   }
 
-  static private JSONObject executeCommand(final String url, final String verb, final JSONObject jsonObject, final HttpClient client)
-      throws IOException, ManifoldCFException, InterruptedException {
+  static private JSONObject executeCommand(final String url, final String verb, final JSONObject jsonObject, final HttpClient client) throws IOException, ManifoldCFException, InterruptedException {
 
     HttpRequestBase request = null;
     JSONObject responseObject = null;
@@ -287,8 +300,7 @@ public class ManifoldAPI {
     return responseObject;
   }
 
-  static private JSONObject executeCommand(final String url, final String verb, final JSONObject jsonObject)
-      throws IOException, ManifoldCFException, InterruptedException, ParseException {
+  static private JSONObject executeCommand(final String url, final String verb, final JSONObject jsonObject) throws IOException, ManifoldCFException, InterruptedException, ParseException {
     final HttpClient client = getClient();
     return executeCommand(url, verb, jsonObject, client);
 
@@ -329,8 +341,7 @@ public class ManifoldAPI {
     } while (exception);
   }
 
-  public static void authenticate(final String apiUsername, final String apiPassword, final HttpClient client)
-      throws IOException, ManifoldCFException, InterruptedException, ParseException {
+  public static void authenticate(final String apiUsername, final String apiPassword, final HttpClient client) throws IOException, ManifoldCFException, InterruptedException, ParseException {
     final JSONParser parser = new JSONParser();
     final JSONObject json = (JSONObject) parser.parse("{\"userID\":\"" + apiUsername + "\", \"password\":\"" + apiPassword + "\"}");
     executeCommand(urlManifoldCFAPI + "LOGIN", "POST", json, client);
