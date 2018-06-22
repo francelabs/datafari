@@ -202,6 +202,7 @@
     "DESCRIPTIONGETFAVORITES": "All your favorites that you have saved are listed in this page.</br>You can click on the name if you want to see it or you can delete it from the favorites by clicking on ",
     "DESCRIPTIONGETSEARCHES": "All the searches that you have saved are listed in this page.</br>You can click on the link if you want to perform it or you can delete it from the searches by clicking on",
     "detailsOnQuery": "Query details",
+    "disclaimer-enterprise":"Warning: this admin page will be removed from the Community Edition starting with Datafari 4.2",
     "distinctsQuery": "distinct queries",
     "download": "Download the file",
     "downloadButton": "Download",
