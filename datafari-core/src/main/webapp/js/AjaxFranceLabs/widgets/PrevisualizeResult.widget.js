@@ -13,6 +13,12 @@ AjaxFranceLabs.PrevisualizeResultWidget = AjaxFranceLabs.ResultWidget.extend({
 
 	afterRequest : function() {
 		var data = this.manager.response, elm = $(this.elm),self=this;
+
+    if (!this.isMobile)
+			elm.find('.doc_list').empty();
+		else
+			elm.find('.doc_list .bar-loader').remove();
+
 		var querySolr = getParamValue('query', decodeURIComponent(window.location.search));
 		this._super();
 		var self = this;
@@ -20,7 +26,7 @@ AjaxFranceLabs.PrevisualizeResultWidget = AjaxFranceLabs.ResultWidget.extend({
 		var preview_content = "";
 
 
-		if (docs.length!=0){ 
+		if (docs.length!=0){
 			$.each(docs,function(index,doc){
 				if (docs[index].preview_content != undefined){
 					preview_content = docs[index].preview_content
