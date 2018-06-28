@@ -1,3 +1,19 @@
+.select-div {
+  width: 50%;
+}
+
+#query-elevator-ui-desc {
+  display: inline-block;
+}
+
+#query-elevator_activation {
+  display: inline-block;
+  top: 0.7em;
+  left: 1em;
+  height: 1.5em;
+  margin-bottom: 2em;
+}
+
 #docs{
 	padding-top : 1em;
 }
@@ -12,6 +28,11 @@
 
 #saveElevateConf {
 	text-transform:uppercase;
+}
+
+#deleteElevateConf {
+  text-transform:uppercase;
+  margin-left: 1em;
 }
 
 #addDocButton {

@@ -5,7 +5,7 @@
     <script src="./../plugins/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
     <script src="../plugins/CLEditor/jquery.cleditor.js"></script>
 	<script src="../plugins/CLEditor/jquery.cleditor.min.js"></script>
-	<script src="../js/queryElevator.js"></script>
+	<script src="../ajax/js/queryElevator.js"></script>
 	<link href="./../css/queryElevator.css" rel="stylesheet"></link>
 	<meta charset="UTF-8">
 </head>
@@ -23,6 +23,17 @@
 	</div>
 </div>
 <!--End Breadcrumb-->
+<div><a href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/22052870/Boosting+documents+from+the+admin+UI" target="_blank">Documentation</a></div>
+  <br/>
+  <span id="query-elevator-ui-desc"></span>
+  <div id="query-elevator_activation" class="toggle-switch toggle-switch-success">
+    <label>
+      <input type="checkbox">
+      <div class="toggle-switch-inner"></div>
+      <div class="toggle-switch-switch"><i class="fa fa-check"></i></div>
+    </label>
+  </div>
+  <br/>
 
 	<div id="modBox" class="box">
 		<div class="box-header">
@@ -37,7 +48,7 @@
 			<form id="modifyElevateForm">
 				<fieldset>
 					<legend id="selectQuery"></legend>
-					<div class="col-sm-1">
+					<div class="select-div">
 						<select id="query" class="form-control">
 							<OPTION></OPTION>
 						</select>
@@ -71,7 +82,7 @@
 						</div>
 						
 						<div>
-							<input type="button" class="btn btn-primary btn-label-left col-sm-2" name="saveElevate" id="saveElevateConf"><span class="message" id="message"></span>
+							<input type="button" class="btn btn-primary btn-label-left col-sm-2" name="saveElevate" id="saveElevateConf"/><input type="button" class="btn btn-primary btn-label-left col-sm-2" name="deleteElevate" id="deleteElevateConf"/><span class="message" id="message"></span><br /><span class="message" id="messageZK"></span>
 						</div>
 					</fieldset>
 				</div>
@@ -114,7 +125,7 @@
 						</div>
 						
 						<div>
-							<input type="button" class="btn btn-primary btn-label-left col-sm-2" name="saveNew" id="saveNewElevate"><span class="message" id="message2"></span>
+							<input type="button" class="btn btn-primary btn-label-left col-sm-2" name="saveNew" id="saveNewElevate"><span class="message" id="message2"></span><br /><span class="message" id="messageZK2"></span>
 						</div>
 					</fieldset>
 				</div>

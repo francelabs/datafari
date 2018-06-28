@@ -41,7 +41,6 @@ import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
-import com.francelabs.datafari.utils.ZKUtils;
 
 @WebServlet("/SearchExpert/queryElevator")
 public class QueryElevator extends HttpServlet {
@@ -194,18 +193,19 @@ public class QueryElevator extends HttpServlet {
           }
 
           // Try to find an existing entry for the doc, if it does not
-          // exists then create it on top of the list, otherwise move
-          // the doc in top of the list.
+          // exists then create it and add it at the end of the list, otherwise
+          // move
+          // the doc one step up.
           Elevate.Query.Doc doc = findDoc(query, docId);
           if (doc == null) {
             doc = new Elevate.Query.Doc();
             doc.setId(docId);
-            query.getDoc().add(0, doc);
+            query.getDoc().add(doc);
           } else {
             final int index = query.getDoc().indexOf(doc);
             if (index > 0) {
               query.getDoc().remove(index);
-              query.getDoc().add(0, doc);
+              query.getDoc().add(index - 1, doc);
             }
           }
 
@@ -214,6 +214,24 @@ public class QueryElevator extends HttpServlet {
 
         } else if (action.equals("down")) { // Remove the doc
 
+          // Down the doc if it is found, otherwise there is nothing
+          // to do
+          final Elevate.Query q = findQuery(elevate, queryReq);
+          if (q != null) {
+            final Elevate.Query.Doc doc = findDoc(q, docId);
+            if (doc != null) {
+              final int index = q.getDoc().indexOf(doc);
+              if (index < q.getDoc().size() - 1) {
+                q.getDoc().remove(index);
+                q.getDoc().add(index + 1, doc);
+              }
+            }
+          }
+
+          // Set the response code
+          jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+        } else if (action.equals("remove")) { // Remove the doc
+
           // Remove the doc if it is found, otherwise there is nothing
           // to do
           final Elevate.Query q = findQuery(elevate, queryReq);
@@ -221,12 +239,6 @@ public class QueryElevator extends HttpServlet {
             final Elevate.Query.Doc doc = findDoc(q, docId);
             if (doc != null) {
               q.getDoc().remove(doc);
-            }
-
-            // If the query entry does not contain any doc then
-            // remove it from the elevate.xml file
-            if (q.getDoc().isEmpty()) {
-              elevate.getQuery().remove(q);
             }
           }
 
@@ -269,38 +281,46 @@ public class QueryElevator extends HttpServlet {
         // elevate.xml file
         Elevate.Query query = findQuery(elevate, queryReq);
 
-        // If the entry does not exist, create it
-        if (query == null) {
-          query = new Elevate.Query();
-          query.setText(queryReq);
-          elevate.getQuery().add(query);
-        }
+        if (request.getParameter("tool").equals("delete")) {
+          if (query != null) {
+            elevate.getQuery().remove(query);
+          }
+        } else {
 
-        if (request.getParameter("tool").equals("modify")) {
-          // Clear the docs because everything must be like the user
-          // did
-          // in the admin UI
-          query.getDoc().clear();
-        }
+          // If the entry does not exist, create it
+          if (query == null) {
+            query = new Elevate.Query();
+            query.setText(queryReq);
+            elevate.getQuery().add(query);
+          }
 
-        for (int i = 0; i < docs.length; i++) {
-          final String docId = docs[i];
+          if (request.getParameter("tool").equals("modify")) {
+            // Clear the docs because everything must be like the user
+            // did
+            // in the admin UI
+            query.getDoc().clear();
+          }
 
-          // Try to find an existing entry for the doc, if it does not
-          // exists then create it on top of the list, otherwise move
-          // the doc in top of the list.
-          Elevate.Query.Doc doc = findDoc(query, docId);
-          if (doc == null) {
-            doc = new Elevate.Query.Doc();
-            doc.setId(docId);
-            query.getDoc().add(i, doc);
-          } else {
-            final int index = query.getDoc().indexOf(doc);
-            if (index != i) {
-              query.getDoc().remove(index);
+          for (int i = 0; i < docs.length; i++) {
+            final String docId = docs[i];
+
+            // Try to find an existing entry for the doc, if it does not
+            // exists then create it on top of the list, otherwise move
+            // the doc in top of the list.
+            Elevate.Query.Doc doc = findDoc(query, docId);
+            if (doc == null) {
+              doc = new Elevate.Query.Doc();
+              doc.setId(docId);
               query.getDoc().add(i, doc);
+            } else {
+              final int index = query.getDoc().indexOf(doc);
+              if (index != i) {
+                query.getDoc().remove(index);
+                query.getDoc().add(i, doc);
+              }
             }
           }
+
         }
 
         // Re-transform the Java object into the elevate.xml file thanks
@@ -309,7 +329,6 @@ public class QueryElevator extends HttpServlet {
         marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, new Boolean(true));
         final OutputStream os = new FileOutputStream(elevatorFile);
         marshal.marshal(elevate, os);
-        ZKUtils.configZK("uploadconfigzk.sh", server);
 
         // Set the response code
         jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
