@@ -1,3 +1,5 @@
+//@ sourceURL=usageStatistics.js
+
 $(document).ready(function() {
 	$.get("../SearchExpert/ELKAdmin",function(data){
 		if((data.ELKactivation=="true" && data.isELKUp=="true") || data.isELKUp=="true") {

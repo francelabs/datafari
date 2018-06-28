@@ -342,4 +342,4 @@ function addWebConnector(){
 }
 
 //Pragma needed to be able to debug JS in the browser
-//# sourceURL=../ajax/js/mcfBackupRestore.js
+//# sourceURL=../ajax/js/mcfSimplified.js

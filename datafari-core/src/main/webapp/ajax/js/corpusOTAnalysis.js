@@ -1,4 +1,4 @@
-//@ sourceURL=corpusOTStatistics.js
+//@ sourceURL=corpusOTAnalysis.js
 
 
 $(document).ready(function() {

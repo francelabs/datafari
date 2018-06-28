@@ -74,4 +74,5 @@ function checkPassword() {
 	}
 
 
-
+//Pragma needed to be able to debug JS in the browser
+//# sourceURL=../ajax/js/MCFChangePassword.js
