@@ -2,6 +2,7 @@
 <elevate>
     <query text="txt">
         <doc id="/localhost/file1.txt"></doc>
+        <doc id="/localhost/file3.txt"></doc>
         <doc id="/localhost/file2.txt"></doc>
     </query>
 </elevate>

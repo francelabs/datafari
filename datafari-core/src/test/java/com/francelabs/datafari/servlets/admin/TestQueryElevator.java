@@ -76,7 +76,7 @@ public class TestQueryElevator {
   }
 
   @Test
-  public void TestQueryElevatorGetDocs() throws ServletException, IOException, ParseException, JSONException {
+  public void TestQueryElevatorGetDocs() throws ServletException, IOException, JSONException, ParseException {
     final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
     final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
@@ -142,7 +142,7 @@ public class TestQueryElevator {
     final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
     Mockito.when(request.getParameter("action")).thenReturn("down");
-    Mockito.when(request.getParameter("item")).thenReturn("/localhost/file3.txt");
+    Mockito.when(request.getParameter("item")).thenReturn("/localhost/file2.txt");
     Mockito.when(request.getParameter("query")).thenReturn("txt");
     final StringWriter sw = new StringWriter();
     final PrintWriter writer = new PrintWriter(sw);
@@ -154,6 +154,28 @@ public class TestQueryElevator {
     final Diff diff = DiffBuilder.compare(TestUtils.readFile(new File(tempDirectory.toFile(), "solr/solrcloud/FileShare/conf/elevate.xml")))
 
         .withTest(TestUtils.readResource("/queryElevatorTests/out/elevateDownDoc.xml")).build();
+    assertFalse(diff.toString(), diff.hasDifferences());
+  }
+
+  @Test
+  public void TestQueryElevatorPostRemoveDoc() throws ServletException, IOException {
+
+    final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
+
+    Mockito.when(request.getParameter("action")).thenReturn("remove");
+    Mockito.when(request.getParameter("item")).thenReturn("/localhost/file2.txt");
+    Mockito.when(request.getParameter("query")).thenReturn("txt");
+    final StringWriter sw = new StringWriter();
+    final PrintWriter writer = new PrintWriter(sw);
+    Mockito.when(response.getWriter()).thenReturn(writer);
+
+    new QueryElevator().doPost(request, response);
+    writer.flush(); // it may not have been flushed yet...
+
+    final Diff diff = DiffBuilder.compare(TestUtils.readFile(new File(tempDirectory.toFile(), "solr/solrcloud/FileShare/conf/elevate.xml")))
+
+        .withTest(TestUtils.readResource("/queryElevatorTests/out/elevateRemoveDoc.xml")).build();
     assertFalse(diff.toString(), diff.hasDifferences());
   }
 
