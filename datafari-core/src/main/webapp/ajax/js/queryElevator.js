@@ -77,45 +77,48 @@ $(document).ready(function() {
 		//Set the onClick function of the saveElevateConf button
 		$("#saveElevateConf").click(function() {
 			if($("#query").val() !== "") {
-				//Disable the button until the called servlet responds
-				$("#saveElevateConf").prop('disabled', true);
-				$("#message").hide();
-				var docsList = new Array();
-				$("#docsTableContent tr").each(function( index ) {
-					docsList[index] = $(this).attr("id");
-			    });
-				$.post("../SearchExpert/queryElevator",{
-					query : $("#query").val(),
-					docs : docsList,
-					tool : "modify"
-				},function(data){
-					if(data.code == 0) {
-						$("#message").html(window.i18n.msgStore["LocalConfSaved"]);
-						$("#message").addClass("success");
-						$("#message").show();
-						$.get("../SearchAdministrator/zookeeperConf?action=upload_and_reload",function(data){
+				if (confirm(window.i18n.msgStore['solr-interruption'])) {
+			        
+					//Disable the button until the called servlet responds
+					$("#saveElevateConf").prop('disabled', true);
+					$("#message").hide();
+					var docsList = new Array();
+					$("#docsTableContent tr").each(function( index ) {
+						docsList[index] = $(this).attr("id");
+				    });
+					$.post("../SearchExpert/queryElevator",{
+						query : $("#query").val(),
+						docs : docsList,
+						tool : "modify"
+					},function(data){
+						if(data.code == 0) {
+							$("#message").html(window.i18n.msgStore["LocalConfSaved"]);
+							$("#message").addClass("success");
+							$("#message").show();
+							$.get("../SearchAdministrator/zookeeperConf?action=upload_and_reload",function(data){
+								//Re-enable the button
+								$("#saveElevateConf").prop('disabled', false);
+								if(data.code == 0) {
+									$("#messageZK").html(window.i18n.msgStore["zkOK"]);
+									$("#messageZK").addClass("success");
+									$("#messageZK").show();	
+									$("#message").fadeOut(3000);
+									$("#messageZK").fadeOut(3000);
+								} else {
+									$("#messageZK").html(window.i18n.msgStore["zkDown"]);
+									$("#messageZK").addClass("error");
+									$("#messageZK").show();
+								}
+							},"json");
+						} else {
 							//Re-enable the button
 							$("#saveElevateConf").prop('disabled', false);
-							if(data.code == 0) {
-								$("#messageZK").html(window.i18n.msgStore["zkOK"]);
-								$("#messageZK").addClass("success");
-								$("#messageZK").show();	
-								$("#message").fadeOut(3000);
-								$("#messageZK").fadeOut(3000);
-							} else {
-								$("#messageZK").html(window.i18n.msgStore["zkDown"]);
-								$("#messageZK").addClass("error");
-								$("#messageZK").show();
-							}
-						},"json");
-					} else {
-						//Re-enable the button
-						$("#saveElevateConf").prop('disabled', false);
-						$("#message").html(window.i18n.msgStore["LocalConfSaveError"]);
-						$("#message").addClass("error");
-						$("#message").show();
-					}
-				},"json");
+							$("#message").html(window.i18n.msgStore["LocalConfSaveError"]);
+							$("#message").addClass("error");
+							$("#message").show();
+						}
+					},"json");
+				}
 			}
 		});
 		
@@ -123,41 +126,43 @@ $(document).ready(function() {
 		$("#deleteElevateConf").click(function() {
 			if($("#query").val() !== "") {
 			
-				//Disable the button until the called servlet responds
-				$("#deleteElevateConf").prop('disabled', true);
-				$("#message").hide();
-				$.post("../SearchExpert/queryElevator",{
-					query : $("#query").val(),
-					tool : "delete"
-				},function(data){
-					if(data.code == 0) {
-						$("#message").html(window.i18n.msgStore["ConfDeleted"]);
-						$("#message").addClass("success");
-						$("#message").show();
-						fillQuerySelector();
-						$.get("../SearchAdministrator/zookeeperConf?action=upload_and_reload",function(data){
+				if (confirm(window.i18n.msgStore['solr-interruption'])) {
+					//Disable the button until the called servlet responds
+					$("#deleteElevateConf").prop('disabled', true);
+					$("#message").hide();
+					$.post("../SearchExpert/queryElevator",{
+						query : $("#query").val(),
+						tool : "delete"
+					},function(data){
+						if(data.code == 0) {
+							$("#message").html(window.i18n.msgStore["ConfDeleted"]);
+							$("#message").addClass("success");
+							$("#message").show();
+							fillQuerySelector();
+							$.get("../SearchAdministrator/zookeeperConf?action=upload_and_reload",function(data){
+								//Re-enable the button
+								$("#deleteElevateConf").prop('disabled', false);
+								if(data.code == 0) {
+									$("#messageZK").html(window.i18n.msgStore["zkOK"]);
+									$("#messageZK").addClass("success");
+									$("#messageZK").show();	
+									$("#message").fadeOut(3000);
+									$("#messageZK").fadeOut(3000);
+								} else {
+									$("#messageZK").html(window.i18n.msgStore["zkDown"]);
+									$("#messageZK").addClass("error");
+									$("#messageZK").show();
+								}
+							},"json");
+						} else {
 							//Re-enable the button
 							$("#deleteElevateConf").prop('disabled', false);
-							if(data.code == 0) {
-								$("#messageZK").html(window.i18n.msgStore["zkOK"]);
-								$("#messageZK").addClass("success");
-								$("#messageZK").show();	
-								$("#message").fadeOut(3000);
-								$("#messageZK").fadeOut(3000);
-							} else {
-								$("#messageZK").html(window.i18n.msgStore["zkDown"]);
-								$("#messageZK").addClass("error");
-								$("#messageZK").show();
-							}
-						},"json");
-					} else {
-						//Re-enable the button
-						$("#deleteElevateConf").prop('disabled', false);
-						$("#message").html(window.i18n.msgStore["ConfDeletedError"]);
-						$("#message").addClass("error");
-						$("#message").show();
-					}
-				},"json");
+							$("#message").html(window.i18n.msgStore["ConfDeletedError"]);
+							$("#message").addClass("error");
+							$("#message").show();
+						}
+					},"json");
+				}
 			}
 		});
 		
@@ -168,49 +173,53 @@ $(document).ready(function() {
 		
 		//Set the onClick function of the saveNewElevate button
 		$("#saveNewElevate").click(function() {
-			//Disable the button until the called servlet responds
-			$("#saveNewElevate").prop('disabled', true);
-			$("#message2").hide();
-			var docsList = new Array();
-			$(".docInput").each(function( index ) {
-				if($(this).val()) {
-					docsList[index] = $.trim($(this).val());
-				}
-		    });
-			$.post("../SearchExpert/queryElevator",{
-				query : $.trim($("#queryInput").val()),
-				docs : docsList,
-				tool : "create"
-			},function(data){
-				if(data.code == 0) {
-					$("#message2").html(window.i18n.msgStore["LocalConfSaved"]);
-					$("#message2").addClass("success");
-					$("#message2").show();			
-					fillQuerySelector();
-					reinitCreateTbody();
-					$.get("../SearchAdministrator/zookeeperConf?action=upload_and_reload",function(data){
+			
+			if (confirm(window.i18n.msgStore['solr-interruption'])) {
+				//Disable the button until the called servlet responds
+				$("#saveNewElevate").prop('disabled', true);
+				$("#message2").hide();
+				var docsList = new Array();
+				$(".docInput").each(function( index ) {
+					if($(this).val()) {
+						docsList[index] = $.trim($(this).val());
+					}
+			    });
+				$.post("../SearchExpert/queryElevator",{
+					query : $.trim($("#queryInput").val()),
+					docs : docsList,
+					tool : "create"
+				},function(data){
+					if(data.code == 0) {
+						$("#message2").html(window.i18n.msgStore["LocalConfSaved"]);
+						$("#message2").addClass("success");
+						$("#message2").show();			
+						fillQuerySelector();
+						reinitCreateTbody();
+						$.get("../SearchAdministrator/zookeeperConf?action=upload_and_reload",function(data){
+							//Re-enable the button
+							$("#saveNewElevate").prop('disabled', false);
+							if(data.code == 0) {
+								$("#messageZK2").html(window.i18n.msgStore["zkOK"]);
+								$("#messageZK2").addClass("success");
+								$("#messageZK2").show();
+								$("#message2").fadeOut(3000);
+								$("#messageZK2").fadeOut(3000);
+							} else {
+								$("#messageZK2").html(window.i18n.msgStore["zkDown"]);
+								$("#messageZK2").addClass("error");
+								$("#messageZK2").show();
+							}
+						},"json");
+					} else {
 						//Re-enable the button
 						$("#saveNewElevate").prop('disabled', false);
-						if(data.code == 0) {
-							$("#messageZK2").html(window.i18n.msgStore["zkOK"]);
-							$("#messageZK2").addClass("success");
-							$("#messageZK2").show();
-							$("#message2").fadeOut(3000);
-							$("#messageZK2").fadeOut(3000);
-						} else {
-							$("#messageZK2").html(window.i18n.msgStore["zkDown"]);
-							$("#messageZK2").addClass("error");
-							$("#messageZK2").show();
-						}
-					},"json");
-				} else {
-					//Re-enable the button
-					$("#saveNewElevate").prop('disabled', false);
-					$("#message2").html(window.i18n.msgStore["LocalConfSaveError"]);
-					$("#message2").addClass("error");
-					$("#message2").show();
-				}
-			},"json");
+						$("#message2").html(window.i18n.msgStore["LocalConfSaveError"]);
+						$("#message2").addClass("error");
+						$("#message2").show();
+					}
+				},"json");
+			
+			}
 			
 			
 		});
@@ -257,6 +266,9 @@ function setupLanguage(){
 	 $("#saveNewElevate").attr("value", window.i18n.msgStore["confirm"]);
 	 $("#addDocButton").attr("title", window.i18n.msgStore["elevateAddDoc"]);
 	 $("#query-elevator-ui-desc").html(window.i18n.msgStore["query-elevator-ui-desc"]);
+	 
+	 //Set the tooltips
+	 $("#deleteElevateConf").attr("title", window.i18n.msgStore['deleteElevateConf-tip']);
 }
 
 function fillQuerySelector() {

@@ -1,4 +1,6 @@
 {
+    "solr-interruption" : "This action will reload the Solr core and so, may lead to an interruption of service of Datafari that can take several minutes. Do you want to proceed ?",
+    "deleteElevateConf-tip" : "Delete all document boosts of the selected query",
     "ConfDeleted" : "Configuration successfully deleted. Sending To Zookeeper, please wait",
     "ConfDeletedError" : "Unable to delete configuration",
     "deleteElevatorConf" : "Delete current config",
