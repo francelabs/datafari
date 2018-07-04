@@ -46,7 +46,7 @@
 <br>
 <body>
 	<%
-		HttpSession sess = request.getSession(false);
+		HttpSession sess = request.getSession(true);
 		String message = "";
 		boolean error = false;
 
