@@ -122,6 +122,7 @@ public class SearchProxy extends HttpServlet {
         queryPromolink = IndexerServerManager.createQuery();
 
         // Add authentication
+        params.removeParam("AuthenticatedUserName");
         if (request.getUserPrincipal() != null) {
           String AuthenticatedUserName = request.getUserPrincipal().getName().replaceAll("[^\\\\]*\\\\", "");
           if (AuthenticatedUserName.contains("@")) {
