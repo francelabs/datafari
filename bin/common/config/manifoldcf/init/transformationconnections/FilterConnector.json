@@ -1,0 +1,12 @@
+{
+  "transformationconnection": [
+    {
+      "max_connections": "10",
+      "configuration": {},
+      "name": "FilterConnector",
+      "description": "",
+      "isnew": true,
+      "class_name": "org.apache.manifoldcf.agents.transformation.documentfilter.DocumentFilter"
+    }
+  ]
+}

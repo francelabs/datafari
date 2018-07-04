@@ -1,6 +1,7 @@
 package com.francelabs.datafari.simplifiedui.utils;
 
 import java.io.File;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -18,6 +19,7 @@ public class WebJobConfig {
 
   private final static String jobElement = "job";
   private final static String repositoryConnectionElement = "repository_connection";
+  private final static String descriptionElement = "description";
   private final static String documentSpecificationElement = "document_specification";
   private final static String excludesElement = "excludes";
   private final static String seedsElement = "seeds";
@@ -47,6 +49,11 @@ public class WebJobConfig {
 
       // Set repositoryName
       webJobEl.replace(repositoryConnectionElement, webJob.getRepositoryConnection());
+
+      // Set description
+      final int randomInt = new Random().nextInt(10000);
+      webJobEl.replace(descriptionElement, "CrawlWeb-" + randomInt);
+
       final JSONObject documentSpec = (JSONObject) webJobEl.get(documentSpecificationElement);
       // Set excludes
       documentSpec.replace(excludesElement, webJob.getExclusions());

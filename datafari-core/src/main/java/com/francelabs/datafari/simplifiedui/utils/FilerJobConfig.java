@@ -1,6 +1,7 @@
 package com.francelabs.datafari.simplifiedui.utils;
 
 import java.io.File;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -17,6 +18,7 @@ public class FilerJobConfig {
   private final static Logger logger = Logger.getLogger(FilerJobConfig.class);
 
   private final static String jobElement = "job";
+  private final static String descriptionElement = "description";
   private final static String repositoryConnectionElement = "repository_connection";
   private final static String documentSpecificationElement = "document_specification";
   private final static String securityElement = "security";
@@ -55,6 +57,10 @@ public class FilerJobConfig {
       // Set repositoryName
       filerJobEl.replace(repositoryConnectionElement, filerJob.getRepositoryConnection());
       final JSONObject documentSpec = (JSONObject) filerJobEl.get(documentSpecificationElement);
+
+      // Set description
+      final int randomInt = new Random().nextInt(10000);
+      filerJobEl.replace(descriptionElement, "CrawlFiler-" + randomInt);
 
       // Set security
       if (filerJob.isSecurity()) {

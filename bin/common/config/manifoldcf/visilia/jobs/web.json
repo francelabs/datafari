@@ -1,57 +1,79 @@
 {
-   "job":[
-      {
-         "expiration_interval":"infinite",
-         "hopcount_mode":"accurate",
-         "document_specification":{
-            "limittoseeds":{
-               "_value_":"",
-               "_attribute_value":"true"
+  "job": [
+    {
+      "expiration_interval": "infinite",
+      "hopcount_mode": "accurate",
+      "document_specification": {
+        "limittoseeds": {
+          "_value_": "",
+          "_attribute_value": "true"
+        },
+        "excludes": "",
+        "excludescontentindex": "",
+        "seeds": "http://www.francelabs.com",
+        "excludesindex": "",
+        "includes": ".*",
+        "includesindex": ".*"
+      },
+      "description": "webjob",
+      "priority": "5",
+      "max_recrawl_interval": "infinite",
+      "recrawl_interval": "86400000",
+      "run_mode": "scan once",
+      "reseed_interval": "3600000",
+      "start_mode": "manual",
+      "id": "1530707393296",
+      "repository_connection": "0e8184fbccd24bbb99ecca212f3a6596",
+      "pipelinestage": [
+        {
+          "stage_isoutput": "false",
+          "stage_id": "0",
+          "stage_specification": {
+            "mindate": {
+              "_value_": "",
+              "_attribute_value": "0"
             },
-            "excludes":"",
-            "excludescontentindex":"",
-            "seeds":"http://www.francelabs.com",
-            "excludesindex":"",
-            "includes":".*",
-            "includesindex":".*"
-         },
-         "description":"CrawlWeb",
-         "priority":"5",
-         "max_recrawl_interval":"infinite",
-         "recrawl_interval":"86400000",
-         "run_mode":"scan once",
-         "reseed_interval":"3600000",
-         "start_mode":"manual",
-         "id":"1503925800824",
-         "repository_connection":"Web",
-         "pipelinestage": [
-           {
-            "stage_isoutput": "false",
-            "stage_id": "0",
-            "stage_specification": {
-              "striphtml": {
-                "_value_": "",
-                "_attribute_value": "true"
-              },
-              "includefilter": {
-                "_value_": "",
-                "_attribute_regex": "body"
-              },
-              "excludefilter": {
-                "_value_": "",
-                "_attribute_regex": "script"
-              }
+            "minlength": {
+              "_value_": "",
+              "_attribute_value": "0"
             },
-            "stage_connectionname": "TikaHTMLConnector"
+            "extensions": "*\r\nlog\r\ndoc\r\ndocx\r\nxls\r\nxlsx\r\nppt\r\npptx\r\nhtml\r\npdf\r\nodt\r\nods\r\nrtf\r\ntxt\r\nmp3\r\nmp4\r\nwav\r\nogg\r\nflac\r\ntorrent",
+            "maxlength": {
+              "_value_": "",
+              "_attribute_value": "1000000000"
+            },
+            "mimetypes": "text/html\r\ntext/plain\r\ntext/html; charset=utf-8\r\ntext/plain; charset=utf-8"
           },
-          {
-            "stage_isoutput": "true",
-            "stage_id": "1",
-            "stage_specification": {},
-            "stage_connectionname": "DatafariSolr",
-            "stage_prerequisite": "0"
-          }
-        ]
-      }
-   ]
+          "stage_connectionname": "FilterConnector"
+        },
+        {
+          "stage_isoutput": "false",
+          "stage_id": "1",
+          "stage_specification": {
+            "striphtml": {
+              "_value_": "",
+              "_attribute_value": "true"
+            },
+            "includefilter": {
+              "_value_": "",
+              "_attribute_regex": "body"
+            },
+            "excludefilter": {
+              "_value_": "",
+              "_attribute_regex": "script"
+            }
+          },
+          "stage_connectionname": "TikaHTMLConnector",
+          "stage_prerequisite": "0"
+        },
+        {
+          "stage_isoutput": "true",
+          "stage_id": "2",
+          "stage_specification": {},
+          "stage_connectionname": "DatafariSolr",
+          "stage_prerequisite": "1"
+        }
+      ]
+    }
+  ]
 }
