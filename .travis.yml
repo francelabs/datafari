@@ -1,6 +1,8 @@
 
 sudo: true
 install: true
+git:
+  depth: 200
 addons:
   apt:
     packages:
