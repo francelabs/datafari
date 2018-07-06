@@ -207,6 +207,7 @@
     "DESCRIPTIONGETFAVORITES": "Tout vos favoris sont enregistrés dans cette page.<br/>Vous pouvez cliquer sur le nom du fichier si vous voulez l'ouvrir ou vous pouvez le supprimer des favoris en cliquant sur ",
     "DESCRIPTIONGETSEARCHES": "Toutes vos recherches sauvegardées sont affichées dans cette page.<br/>Vous pouvez cliquer sur le lien si vous voulez effectuer la recherche ou vous pouvez la supprimer des recherches sauvegardées en cliquant sur ",
     "detailsOnQuery": "Détails de la requête",
+    "disclaimer-enterprise":"Attention, cette page admin sera retirée de la version Datafari communautaire à partir de Datafari 4.2",
     "distinctsQuery": "requêtes distinctes",
     "download": "Télécharger le fichier",
     "downloadButton": "Télécharger",

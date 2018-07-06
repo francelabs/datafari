@@ -207,6 +207,7 @@
     "DESCRIPTIONGETFAVORITES": "Alle Favoriten sind auf dieser Seite gespeichert</br>",
     "DESCRIPTIONGETSEARCHES": "All gespeicherten Suchen sin auf dieser Seite aufgelistet.</br>Wenn du eine davon ausführen willst, kannst du auf den Link klicken, oder du kannst sie durch darauf klicken löschen.",
     "detailsOnQuery": "Anfragedetail",
+    "disclaimer-enterprise":"Warning: this admin page will be removed from the Community Edition starting with Datafari 4.2",
     "distinctsQuery": "Unterschiedliche Anfragen",
     "download": "Lade die Datei herunter",
     "downloadButton": "Download",

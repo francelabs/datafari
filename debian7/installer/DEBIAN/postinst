@@ -21,14 +21,13 @@ if [ -f "$file" ]
 			then
 			
 				commit=$value
-				echo $commit
+				
 			fi
 			
 			if  [[ $key == git.closest.tag.name ]]
 			then
 			
 				version=$value
-				echo $version
 			fi
   		done < "$file"
 fi
