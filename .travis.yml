@@ -2,7 +2,7 @@
 sudo: true
 install: true
 git:
-  depth: 200
+  depth: false
 addons:
   apt:
     packages:
