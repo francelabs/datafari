@@ -15,15 +15,15 @@
         "includes": ".*",
         "includesindex": ".*"
       },
-      "description": "webjob",
+      "description": "CrawlWeb",
       "priority": "5",
       "max_recrawl_interval": "infinite",
       "recrawl_interval": "86400000",
       "run_mode": "scan once",
       "reseed_interval": "3600000",
       "start_mode": "manual",
-      "id": "1530707393296",
-      "repository_connection": "0e8184fbccd24bbb99ecca212f3a6596",
+      "id": "1530884711758",
+      "repository_connection": "bc0f5890b48143e0b33a91475a85947f",
       "pipelinestage": [
         {
           "stage_isoutput": "false",
@@ -42,7 +42,7 @@
               "_value_": "",
               "_attribute_value": "1000000000"
             },
-            "mimetypes": "text/html\r\ntext/plain\r\ntext/html; charset=utf-8\r\ntext/plain; charset=utf-8"
+            "mimetypes": "application/msword\r\napplication/vnd.ms-excel\r\napplication/vnd.openxmlformats-officedocument.wordprocessingml.document\r\napplication/vnd.openxmlformats-officedocument.spreadsheetml.sheet\r\ntext/html\r\napplication/pdf\r\napplication/vnd.ms-powerpoint\r\napplication/vnd.openxmlformats-officedocument.presentationml.presentation\r\napplication/vnd.oasis.opendocument.text\r\napplication/vnd.oasis.opendocument.spreadsheet\r\napplication/vnd.oasis.opendocument.formula\r\napplication/rtf\r\ntext/plain\r\ntext/html; charset=utf-8\r\ntext/plain; charset=utf-8\r\ntext/xml\r\ntext/xml; charset=utf-8"
           },
           "stage_connectionname": "FilterConnector"
         },
@@ -67,11 +67,47 @@
           "stage_prerequisite": "0"
         },
         {
-          "stage_isoutput": "true",
+          "stage_isoutput": "false",
           "stage_id": "2",
-          "stage_specification": {},
-          "stage_connectionname": "DatafariSolr",
+          "stage_specification": {
+            "keepAllMetadata": {
+              "_value_": "",
+              "_attribute_value": "true"
+            },
+            "writeLimit": {
+              "_value_": "",
+              "_attribute_value": ""
+            },
+            "ignoreException": {
+              "_value_": "",
+              "_attribute_value": "true"
+            },
+            "lowerNames": {
+              "_value_": "",
+              "_attribute_value": "false"
+            }
+          },
+          "stage_connectionname": "TikaOCR",
           "stage_prerequisite": "1"
+        },
+        {
+          "stage_isoutput": "false",
+          "stage_id": "3",
+          "stage_specification": {
+            "maxlength": {
+              "_value_": "",
+              "_attribute_value": "1000000"
+            }
+          },
+          "stage_connectionname": "ContentLimiter",
+          "stage_prerequisite": "2"
+        },
+        {
+          "stage_isoutput": "true",
+          "stage_id": "4",
+          "stage_specification": {},
+          "stage_connectionname": "DatafariSolrNoTika",
+          "stage_prerequisite": "3"
         }
       ]
     }
