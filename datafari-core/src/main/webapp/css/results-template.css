@@ -62,7 +62,7 @@
 		border:0px;
 		border-bottom:0px;
 		box-sizing: border-box;
-		-moz-box-sizing: border-box;
+ 		-moz-box-sizing: border-box;
 	}
 
 	#facets_mobile li{
@@ -363,13 +363,13 @@
 	.resultWidget .doc .connector { float: left; height: 100%; width: 5%; }
 
 	.resultWidget .doc .res {
-		float: left;
-		height: 100%;
-		padding-left: 10px;
-		width: 100% !important;
-		position: relative;
-		text-align:justify;
-		line-height:20px;
+ 		float: left;
+ 		height: 100%;
+ 		padding-left: 10px;
+ 		width: 100% !important;
+ 		position: relative;
+ 		text-align:justify;
+ 		line-height:20px;
 	}
 
 	.resultWidget .res .description , #promolink #snippet { margin-top: 3px;  }
@@ -844,7 +844,7 @@
   	border-style:solid; border-color:black; border-width:1px; z-index: 6;}
 	div.res:hover div.previsualizetemplate {left: 2%; background: #ffffff; transition-delay:0.5s;}
 	
-	
+	/**************************************/
 
 	/******	>>> ExternalResult Widget <<<	*******/
 
@@ -1041,8 +1041,8 @@
 	margin-left:5px;
 	text-decoration:none;
 }
-.metadonne {
-  display: none;
+.metadonne{
+	 display:none;
 }
 /*
 .metadonne{
@@ -1052,7 +1052,7 @@
 
 .metadonne .fa{
 	margin-right: 2px;
-//	color:grey;
+	color:grey;
 }
 */
  #urlMobile .address a{

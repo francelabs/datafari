@@ -292,6 +292,7 @@
 	}
 	.resultWidget .res .title, #capsule .title {
 		text-decoration: none;
+		display: inline-block;
 	}
 	.resultWidget .res .title:hover {
 		text-decoration: underline;

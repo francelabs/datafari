@@ -13,6 +13,12 @@ buildWidget : function () {
 
 
 	// Initialize the queryElevator module if possible (if not, that means that the user is not an administrator and is not allowed to use it)
+	if (typeof AjaxFranceLabs.QueryElevatorModule === 'function') {
+		this.queryElevator = new AjaxFranceLabs.QueryElevatorModule();
+		this.queryElevator.setParentWidget(this);
+		this.manager.addModule(this.queryElevator);
+	}
+	
 	if (typeof AjaxFranceLabs.QueryEvaluatorModule === 'function') {
 		this.queryEvaluator = new AjaxFranceLabs.QueryEvaluatorModule();
 		this.queryEvaluator.setParentWidget(this);
@@ -29,6 +35,17 @@ imageExists : function(image_url){
 
     return http.status != 404;
 
+},
+
+beforeRequest : function() {
+	var self = this;
+	if (typeof self.queryElevator !== 'undefined') {
+		var query = $('.searchBar input[type=text]').val();
+		if(query === "") {
+			query = "*:*";
+		}
+		self.queryElevator.initElevatedDocs(query);
+	}
 },
 
 afterRequest : function() {
@@ -115,6 +132,11 @@ afterRequest : function() {
 								elm.find('.doc:last .address').append('<span>' + AjaxFranceLabs.tinyUrl(decodeURIComponent(url)) + '</span>');
 
 								// Add the elevator links if the user is allowed
+								// Add the elevator links if the user is allowed
+								if (typeof self.queryElevator !== 'undefined') {
+									self.queryElevator.addElevatorLinks(elm.find('.doc:last .res'), doc.id);
+								}
+								
 								if (typeof self.queryEvaluator !== 'undefined') {
 									self.queryEvaluator.addEvaluatorLinks(elm.find('.doc:last .res'), doc.id);
 								}

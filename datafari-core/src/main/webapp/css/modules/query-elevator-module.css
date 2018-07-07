@@ -1,3 +1,16 @@
+.elevator-num {
+  float: right;
+  width: 16px;
+  height: 16px;
+  text-align: center;
+  line-height: 16px;
+  vertical-align: middle;
+  border-radius: 50%;
+  background-color: #666;
+  color: white;
+  margin-right: 0.5em;
+}
+
 .elevator-up {
 	float: right;
 	cursor: pointer;
@@ -6,10 +19,30 @@
 	height: 16px;
 }
 
+.elevator-remove {
+  float: right;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  text-align: center;
+  line-height: 16px;
+  vertical-align: middle;
+  margin-right: 0.5em;
+  color: #666;
+}
+
 .elevator-down {
 	float: right;
 	cursor: pointer;
 	background-image: url(../../images/icons/undo-icon-16x16.png);
 	width: 16px;
 	height: 16px;
+}
+
+.elevator-ok {
+	float: right;
+	cursor: pointer;
+	background-image: url(../../images/icons/ok-icon-16x16.png);
+	width: 16px;
+	height: 12px;
 }
