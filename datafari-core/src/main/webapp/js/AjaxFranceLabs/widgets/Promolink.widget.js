@@ -18,6 +18,7 @@ AjaxFranceLabs.PromolinkWidget = AjaxFranceLabs.AbstractWidget.extend({
 	//Variables
 
 	type : 'promolink',
+	widgetContainerNum : 0,
 
 	//Methods
 
@@ -28,7 +29,12 @@ AjaxFranceLabs.PromolinkWidget = AjaxFranceLabs.AbstractWidget.extend({
 	},
 
 	beforeRequest : function() {
-		$(this.elm).empty().hide();
+		
+		if (self.manager.store.isParamDefined('original_query') !== true) {
+			$(this.elm).empty().hide();
+			self.widgetContainerNum = 0;
+		}
+		
 	},
 
 	afterRequest : function() {
@@ -50,8 +56,12 @@ AjaxFranceLabs.PromolinkWidget = AjaxFranceLabs.AbstractWidget.extend({
 						content = data.promolinkSearchComponent.content;
 					}
 				}
-				$(self.elm).append('<div class="widgetContainer"></div>').show();
-				$(self.elm).find('.widgetContainer').append('<span class="title">' + '<span class="annonce">Annonce</span> '+ title + '</span></br>').append('<span class="tips" id="snippet">' + content + '</span>').show();
+				if (self.manager.store.isParamDefined('original_query') === true) {
+					$(self.elm).append("<span class='promolink-separator'></span>");
+				}
+				$(self.elm).append('<div class="widgetContainer" id="widgetContainer' + self.widgetContainerNum + '"></div>').show();
+				$(self.elm).find('#widgetContainer' + self.widgetContainerNum).append('<span class="title">' + '<span class="annonce">Annonce</span> '+ title + '</span></br>').append('<span class="tips" id="snippet">' + content + '</span>').show();
+				self.widgetContainerNum++;
 			}
 		}
 	}
