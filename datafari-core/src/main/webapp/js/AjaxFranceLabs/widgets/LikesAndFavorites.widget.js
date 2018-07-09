@@ -66,16 +66,16 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 			.append('<div class="metadonne"><span class="liker">Like</span>  <i class="fa fa-thumbs-up"></i><span class="likes">0</span></div>');
 			$(".doc_list > div").data("isLiked",false).data("isFavorite",false);
 			$.each(docs,function(index,doc){
-				if ($.inArray(docs[index].id,window.globalVariableLikes)!==-1){
+				if ($.inArray(doc.id,window.globalVariableLikes)!==-1){
 					// the document is liked
-					$($('.doc_list > div')[index]).data("isLiked",true).find('.liker').text('Unlike');
+					$(document.getElementById(doc.id)).data("isLiked",true).find('.liker').text('Unlike');
 				}
 				if ($.inArray(docs[index].id,window.globalVariableFavorites)!==-1){
 					// the document is saved as favorite 
-					$($('.doc_list > div')[index]).data("isFavorite",true).find('.favorite i').removeClass('fa-bookmark-o').addClass('fa-bookmark');
+					$(document.getElementById(doc.id)).data("isFavorite",true).find('.favorite i').removeClass('fa-bookmark-o').addClass('fa-bookmark');
 				}
 				// save the number of likes of a document gotten from Solr
-				$($('.doc_list > div')[index]).data('likes',doc.nbLikes).find('.likes').text(doc.nbLikes);
+				$(document.getElementById(doc.id)).data('likes',doc.nbLikes).find('.likes').text(doc.nbLikes);
 			});
 		}
 		$(".favorite").off("click").on("click",function(){			
