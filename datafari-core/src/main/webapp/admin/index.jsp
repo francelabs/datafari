@@ -323,8 +323,8 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 <script src="./../plugins/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="../plugins/bootstrap/bootstrap.min.js"></script>
-<script src="./i18nInit.js" ></script>
 <script type="text/javascript" src="../js/AjaxFranceLabs/i18njs.js"></script>
+<script src="./i18nInit.js" ></script>
 <!-- All functions for this theme + document.ready processing -->
 <script src="../js/devoops.js"></script>
 <!-- JS library useful to extract parameters value from URL  -->
