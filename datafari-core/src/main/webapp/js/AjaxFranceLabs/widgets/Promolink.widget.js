@@ -29,7 +29,7 @@ AjaxFranceLabs.PromolinkWidget = AjaxFranceLabs.AbstractWidget.extend({
 	},
 
 	beforeRequest : function() {
-		
+		var self = this;
 		if (self.manager.store.isParamDefined('original_query') !== true) {
 			$(this.elm).empty().hide();
 			self.widgetContainerNum = 0;
