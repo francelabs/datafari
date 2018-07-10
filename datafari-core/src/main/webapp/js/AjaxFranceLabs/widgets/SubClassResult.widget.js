@@ -176,8 +176,9 @@ afterRequest : function() {
 
 		AjaxFranceLabs.addMultiElementClasses(elm
 				.find('.doc'));
-		if (this.pagination)
-			this.pagination.afterRequest(data);
+	}
+	if (this.pagination) {
+		this.pagination.afterRequest(data);
 	}
 	if (this.isMobile){
 		if ( $(".doc_list").children().length<parseInt($("#number_results_mobile span").text(),10)){

@@ -55,8 +55,9 @@ AjaxFranceLabs.ResultWidget = AjaxFranceLabs.AbstractWidget.extend({
 				}
 			});
 		}
-		if (this.pagination)
+		if (this.pagination) {
 			this.pagination.init();
+		}
 	},
 
 	beforeRequest : function() {
@@ -65,8 +66,9 @@ AjaxFranceLabs.ResultWidget = AjaxFranceLabs.AbstractWidget.extend({
 		if (!this.isMobile)
 			elm.find('.doc_list').empty();
 		elm.find('.doc_list').append('<div class="bar-loader" />');
-		if (this.pagination)
+		if (this.pagination) {
 			this.pagination.beforeRequest();
+		}
 	},
 
 	afterRequest : function() {
@@ -82,8 +84,9 @@ AjaxFranceLabs.ResultWidget = AjaxFranceLabs.AbstractWidget.extend({
 				//Append your document
 			});
 			AjaxFranceLabs.addMultiElementClasses(elm.find('.doc'));
-			if (this.pagination)
-				this.pagination.afterRequest(data);
+		}
+		if (this.pagination) {
+			this.pagination.afterRequest(data);
 		}
 	},
 
