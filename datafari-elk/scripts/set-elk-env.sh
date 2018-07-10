@@ -21,3 +21,5 @@ export ELASTICSEARCH_PID_FILE=$PID_DIR/elasticsearch.pid
 export LOGSTASH_PID_FILE=$PID_DIR/logstash.pid
 export KIBANA_PID_FILE=$PID_DIR/kibana.pid
 
+# Kibana max mem
+NODE_OPTIONS="--max-old-space-size=512"

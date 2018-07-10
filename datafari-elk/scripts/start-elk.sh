@@ -23,6 +23,7 @@ bash elasticsearch -p $ELASTICSEARCH_PID_FILE &
 sleep 5
 
 # Replace the default conf with the correct paths before starting logstash
+sed -i "/francelabs\/datafari-crawl.log/c\  path => \"${DATAFARI_HOME}/logs/datafari-crawl.log\"" $LOGSTASH_HOME/logstash-datafari.conf
 sed -i "/francelabs\/datafari-stats.log/c\	path => \"${DATAFARI_HOME}/logs/datafari-stats.log\"" $LOGSTASH_HOME/logstash-datafari.conf
 sed -i "/francelabs\/datafari-monitoring.log/c\	path => \"${DATAFARI_HOME}/logs/datafari-monitoring.log\"" $LOGSTASH_HOME/logstash-datafari.conf
 sed -i "/francelabs\/datafari.log/c\	path => \"${DATAFARI_HOME}/logs/datafari.log\"" $LOGSTASH_HOME/logstash-datafari.conf
@@ -32,6 +33,7 @@ sed -i "/francelabs\/manifoldcf.log/c\	path => \"${DATAFARI_HOME}/logs/manifoldc
 sed -i "/francelabs\/elasticsearch.log/c\	path => \"${DATAFARI_HOME}/elk/elasticsearch/logs/elasticsearch.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
 sed -i "/francelabs\/solr.log/c\	path => \"${DATAFARI_HOME}/logs/solr.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
 sed -i "/francelabs\/zookeeper.log/c\	path => \"${DATAFARI_HOME}/logs/zookeeper.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
+sed -i "/francelabs\/tika-server.log/c\	path => \"${DATAFARI_HOME}/logs/tika-server.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
 cd $LOGSTASH_HOME
 bash bin/logstash -f $LOGSTASH_HOME/logstash-datafari.conf &
 # Must sleep 1 sec to be sure to find logstash's PID
@@ -50,4 +52,5 @@ sed -i "/pid\.file/c\pid.file: ${KIBANA_PID_FILE}" $KIBANA_HOME/config/kibana.ym
 #sed -i "/server\.crt/c\server.ssl.cert: ${DATAFARI_HOME}/ssl-keystore/datafari-cert.pem" $KIBANA_HOME/config/kibana.yml
 #sed -i "/server\.key/c\server.ssl.key: ${DATAFARI_HOME}/ssl-keystore/datafari-key.pem" $KIBANA_HOME/config/kibana.yml
 cd $KIBANA_HOME/bin
+export NODE_OPTIONS
 bash kibana
