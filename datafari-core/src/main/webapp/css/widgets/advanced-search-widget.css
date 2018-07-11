@@ -15,7 +15,7 @@
     background: url('../images/chevron-down.png') no-repeat 95% 50% #ffffff !important;
     background-size: 11px 7px !important;
     outline: none;
-    color: rgba(0,0,0,0);
+    color: black;
     text-shadow: 0 0 0 #000;
 }
 
