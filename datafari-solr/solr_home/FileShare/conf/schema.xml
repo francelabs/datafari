@@ -91,8 +91,7 @@
    <field name="last_modified" type="tdate" indexed="true" stored="true" default="NOW"/>
    <field name="content" type="text_general" indexed="false" stored="false" multiValued="true"/>
    <field name="content_en" type="text_en" indexed="true" stored="true" multiValued="true"/>
-   <field name="content_fr" type="
-				  " indexed="true" stored="true" multiValued="true"/>
+   <field name="content_fr" type="text_fr" indexed="true" stored="true" multiValued="true"/>
    <field name="exactContent" type="text_nostem" indexed="true" stored="true" multiValued="true"/>
    <field name="exactTitle" type="text_nostem" indexed="true" stored="false" multiValued="true"/>
    <field name="crawl_date" type="tdate" indexed="true" stored="true" default="NOW"/>
