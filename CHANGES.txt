@@ -24,7 +24,7 @@ Datafari no longer embeds Java JDK. JDK 8 must be present on the machine and set
 ==================  4.1 ==================
 * Version of major components :
 Solr 6.6.4
-ManifoldCF 2.8.1
+ManifoldCF 2.10
 Tomcat 9.0.8
 Cassandra 3.11.2
 PostgreSQL 9.5.6
@@ -35,6 +35,8 @@ Kibana 5.6.4
 LogStash 5.6.4
 
 * New features :
+New queryElevator
+Simplified Connectors UI
 Basic entity extraction schema
 Previsualize widget added
 Highlight now based on original content fields
@@ -51,6 +53,18 @@ Added file size default facet
 
 
 * Bug fixes :
+Fix protwords back in schema
+Bugfix css advanced search
+Updated advanced search to fit with enterprise edition
+Fix Cassandra Xms and Xmx to 2G
+Bugfix pagination
+Bugfix favorites
+Bugfix promolink
+Updated overtime visualizations
+Fix exact fields advanced search
+Fix authent session for httpclient
+Fix lack of security SearchProxy
+Fixed loading wheel on mobile U
 Change Kibana IP check
 Bug fix spellchecker + new unified highlighter
 ZK autopurge added
