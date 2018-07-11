@@ -73,21 +73,21 @@ AjaxFranceLabs.ResultWidget = AjaxFranceLabs.AbstractWidget.extend({
 
 	afterRequest : function() {
 		//This is an example, this method must be overide using your own results
-		var data = this.manager.response, elm = $(this.elm);
-		if (!this.isMobile)
-			elm.find('.doc_list').empty(); //if we're in desktop mode
-		if (data.response.numFound === 0) {
-			elm.find('.doc_list').append('<div class="doc"><span class="noResult description">Aucun document ne correspond aux termes de recherche spécifiés </span></div>');
-		} else {
-			var self = this;
-			$.each(data.response.docs, function(i, doc) {
-				//Append your document
-			});
-			AjaxFranceLabs.addMultiElementClasses(elm.find('.doc'));
-		}
-		if (this.pagination) {
-			this.pagination.afterRequest(data);
-		}
+//		var data = this.manager.response, elm = $(this.elm);
+//		if (!this.isMobile)
+//			elm.find('.doc_list').empty(); //if we're in desktop mode
+//		if (data.response.numFound === 0) {
+//			elm.find('.doc_list').append('<div class="doc"><span class="noResult description">Aucun document ne correspond aux termes de recherche spécifiés </span></div>');
+//		} else {
+//			var self = this;
+//			$.each(data.response.docs, function(i, doc) {
+//				//Append your document
+//			});
+//			AjaxFranceLabs.addMultiElementClasses(elm.find('.doc'));
+//		}
+//		if (this.pagination) {
+//			this.pagination.afterRequest(data);
+//		}
 	},
 
 	requestError : function (status, error) {

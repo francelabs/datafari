@@ -20,7 +20,6 @@ AjaxFranceLabs.PrevisualizeResultWidget = AjaxFranceLabs.ResultWidget.extend({
 			elm.find('.doc_list .bar-loader').remove();
 
 		var querySolr = getParamValue('query', decodeURIComponent(window.location.search));
-		this._super();
 		var self = this;
 		var docs = self.manager.response.response.docs;
 		var preview_content = "";
