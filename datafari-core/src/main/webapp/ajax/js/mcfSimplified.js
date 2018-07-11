@@ -1,4 +1,6 @@
+// Very important to allow debugging !
 //@ sourceURL=mcfSimplified.js
+
 var timeouts = [];
 var returnData = undefined;
 var clearTimeouts = function() {
@@ -112,10 +114,24 @@ $(document).ready(function() {
    
    $("#addFiler").submit(function(e){
        e.preventDefault();
+       $("#addFilerCheckMessageFailure").hide();
        if (!checkServer($("#server")) && checkUser($("#user")) && checkPassword($("#password")) && checkPaths($("#paths"))) {
          return false;
        } else {
-         return addFilerConnector();
+    	   $.get("./../admin/CheckMCFConfiguration", {configuration : "filer"}, function(data) {
+    			if(data.code === 0) {
+    				if(data.registered === true) {
+    					return addFilerConnector();
+    				} else {
+    					 $("#addFilerCheckMessageFailure").html(window.i18n.msgStore['jcifs-not-installed']);
+    					 $("#addFilerCheckMessageFailure").show();
+    				}
+    				
+    			} else {
+    				$("#addFilerCheckMessageFailure").html("Unable to parse the connectors.xml file : " + data.status);
+					$("#addFilerCheckMessageFailure").show();
+    			}
+    		});
        }
   });
    
