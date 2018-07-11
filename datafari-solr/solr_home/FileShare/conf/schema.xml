@@ -91,7 +91,8 @@
    <field name="last_modified" type="tdate" indexed="true" stored="true" default="NOW"/>
    <field name="content" type="text_general" indexed="false" stored="false" multiValued="true"/>
    <field name="content_en" type="text_en" indexed="true" stored="true" multiValued="true"/>
-   <field name="content_fr" type="text_fr" indexed="true" stored="true" multiValued="true"/>
+   <field name="content_fr" type="
+				  " indexed="true" stored="true" multiValued="true"/>
    <field name="exactContent" type="text_nostem" indexed="true" stored="true" multiValued="true"/>
    <field name="exactTitle" type="text_nostem" indexed="true" stored="false" multiValued="true"/>
    <field name="crawl_date" type="tdate" indexed="true" stored="true" default="NOW"/>
@@ -564,7 +565,7 @@
         <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0" splitOnCaseChange="1"/>
         <filter class="solr.LimitTokenCountFilterFactory" maxTokenCount="15000" consumeAllTokens="false" />
         <filter class="solr.LowerCaseFilterFactory"/>
-        <filter class="solr.KeywordMarkerFilterFactory" />
+         <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
         <filter class="solr.PorterStemFilterFactory"/>
       </analyzer>
       <analyzer type="query">
@@ -572,7 +573,7 @@
         <filter class="solr.SynonymGraphFilterFactory" synonyms="synonyms_en.txt" ignoreCase="true" expand="true"/>
         <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1"/>
         <filter class="solr.LowerCaseFilterFactory"/>
-        <filter class="solr.KeywordMarkerFilterFactory" />
+         <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
         <filter class="solr.PorterStemFilterFactory"/>
       </analyzer>
     </fieldType>
@@ -741,6 +742,7 @@
         <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1" preserveOriginal="1"/>
         <filter class="solr.LimitTokenCountFilterFactory" maxTokenCount="15000" consumeAllTokens="false" />
         <filter class="solr.LowerCaseFilterFactory"/>
+	<filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
         <filter class="solr.FrenchLightStemFilterFactory"/>
         <filter class="solr.ASCIIFoldingFilterFactory"/>
       </analyzer>
@@ -749,6 +751,7 @@
         <filter class="solr.SynonymGraphFilterFactory" synonyms="synonyms_fr.txt" ignoreCase="true" expand="true"/>
         <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1" preserveOriginal="0"/>
         <filter class="solr.LowerCaseFilterFactory"/>
+	<filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
         <filter class="solr.FrenchLightStemFilterFactory"/>
         <filter class="solr.ASCIIFoldingFilterFactory"/>
       </analyzer>
