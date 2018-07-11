@@ -44,6 +44,12 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 	// The exact match Solr field must be formated like this : [original_fieldname]_exact
 	exactFieldsList : null,
 	
+	// This is an object containing fields that must have the autocomplete functionality. The fields are mapped to their Solr suggester's name that will be used to perform suggest requests
+	autocompleteFields : {},
+	
+	// This is an object containing fields that must have a list of fixed values instead of a free text input. The fields are mapped to their list of fixed values values
+	fixedValuesFields : {},
+	
 	// Maximum char for text inputs
 	maxChar : 512,
 
@@ -66,6 +72,20 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 				for(var cptExactFields=0; cptExactFields<data.exactFieldsList.length; cptExactFields++){
 					self.exactFieldsList[data.exactFieldsList[cptExactFields]] = data.exactFieldsList[cptExactFields] + "_exact";
 				}
+			}
+		}, "json");
+		
+		//Retrieve the fields that must have the autocomplete functionality associated to their suggester
+		$.get("GetAutocompleteAdvancedFields", function(data) {
+			if(data.code == 0 && data.autocompleteFields != undefined && data.autocompleteFields != null && data.autocompleteFields != "") {
+				self.autocompleteFields = JSON.parse(data.autocompleteFields);
+			}
+		}, "json");
+		
+		//Retrieve the fields that must have a fixed values list instead of a free text input
+		$.get("GetFixedValuesAdvancedFields", function(data) {
+			if(data.code == 0) {
+				self.fixedValuesFields = JSON.parse(data.fixedValuesFields);
 			}
 		}, "json");
 		
@@ -111,13 +131,28 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		
 		// Exact expression baseSearch regex
 		var baseExactExprVal = "";
-		var baseExactExprRegEx = /\((exactContent|exactTitle):[^\)]+\)/g;
+//		var baseExactExprRegEx = /\((exactContent|exactTitle):[^\)]+\)/g;
+		var baseExactExprRegEx = /\((exactContent|exactTitle):[^)]* OR (exactContent|exactTitle):[^)]*\)/g;
 		var baseExactExpr = baseQuery.match(baseExactExprRegEx);
+		var exactContentRegEx = /exactContent:(?:(?!( AND | OR ))[^)(])+/g;
+		var exactTitleRegEx = /exactTitle:(?:(?!( AND | OR ))[^)(])+/g;
 		if(baseExactExpr != null && baseExactExpr != undefined && baseExactExpr != "") {
-			//Remove base exact expression from baseQuery
-			baseQuery = baseQuery.replace(baseExactExprRegEx,'');
-			// Retrieve base exact expr value
-			baseExactExprVal = baseExactExpr[0].split('OR')[0].split(':')[1].replace(/\"/g,'').trim();
+			var exactContentExpr = baseExactExpr[0].match(exactContentRegEx);
+			var exactTitleExpr = baseExactExpr[0].match(exactTitleRegEx);
+			
+			if(exactContentExpr != null && exactContentExpr != undefined && exactContentExpr != "" && exactTitleExpr != null && exactTitleExpr != undefined && exactTitleExpr != "") {
+				var exactContentVal = exactContentExpr[0].split(":")[1].replace(/\"/g,'').trim();
+				var exactTitleVal = exactTitleExpr[0].split(":")[1].replace(/\"/g,'').trim();
+				
+				if(exactContentVal === exactTitleVal) {
+					//Remove base exact expression from baseQuery
+					baseQuery = baseQuery.replace(baseExactExprRegEx,'');
+					// Retrieve base exact expr value
+					baseExactExprVal = exactContentVal;
+				}
+			}
+			
+			
 		}
 		
 		// Construct the main div which will contain every UI element of the advanced search
@@ -533,7 +568,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		var addButton = $('#add_adv_field').parent().detach();
 		var selectID = "field_" + this.fieldNumber;
 		var currentDiv = this.advTable.find('.adv_field').last();
-		currentDiv.append('<select class="select-operator dropdown"><option selected value="AND">AND</option><option value="OR">OR</option></select><select class="dropdown-field dropdown" id="' + selectID + '"><option disabled selected value>Select a field</option></select><span class="delete_button button"> X </span>');
+		currentDiv.append('<select class="select-operator dropdown"><option selected value="AND">AND</option><option value="OR">OR</option></select><select class="dropdown-field dropdown" id="' + selectID + '"><option disabled selected value>' + window.i18n.msgStore['selectField'] + '</option></select><span class="delete_button button"> X </span>');
 		
 		// Set operator if available or let the 'AND' operator which is by default
 		var selectOperator = currentDiv.find('.select-operator');
@@ -604,7 +639,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 	},
 	
 	
-	// Method that construct the proper filter UI corresponding to the field provided and the other parameters
+	// Method that constructs the proper filter UI corresponding to the field provided and the other parameters
 	constructFilter : function(type, elm, field, values, operator, fieldNum) {
 		var self = this;
 		var fieldNameExactExpr = field;
@@ -617,6 +652,16 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			fieldNameExactExpr = ["exactContent","exactTitle"];
 		}
 		
+		var autocompleteSuggester = null;
+		if(field in self.autocompleteFields) {
+			autocompleteSuggester = self.autocompleteFields[field];
+		}
+		
+		var fixedValues = null;
+		if(field in self.fixedValuesFields) {
+			fixedValues = self.fixedValuesFields[field];
+		}
+		
 		// Create the AjaxFranceLabs.AdvancedSearchField object with the provided values and initialize it
 		var newField = new AjaxFranceLabs.AdvancedSearchField({
 			type : type,
@@ -625,8 +670,12 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			field : field,
 			values : values,
 			operator : operator,
-			fieldNameExactExpr : fieldNameExactExpr
+			fieldNameExactExpr : fieldNameExactExpr,
+			autocompleteSuggester : autocompleteSuggester,
+			fixedValues : fixedValues
 		});
+		// If the manager is passed through the constructor it will trigger a "too much recursion" error. So this is the only way
+		newField.manager = self.manager;
 		newField.init(); // The init method will build the UI
 		this.fieldsList[fieldNum] = newField; // Save this field object to the list of effective fields
 		
@@ -694,6 +743,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		$("#parametersUi").hide();
 		$("#favoritesUi").hide();
 		$("#loginDatafariLinks").find(".active").removeClass("active");
+		$("#basicSearchLink").addClass("active");
 	},
 	
 	/**

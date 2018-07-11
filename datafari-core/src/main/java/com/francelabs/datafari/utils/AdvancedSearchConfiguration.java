@@ -27,23 +27,23 @@ import com.francelabs.datafari.config.AbstractConfigClass;
  */
 public class AdvancedSearchConfiguration extends AbstractConfigClass {
 
-  // Properties
-  public static final String DENIED_FIELD_LIST = "DENIEDFIELDLIST";
-  public static final String EXACT_FIELDS = "EXACTFIELDS";
-
   // Config filename
   private static final String configFilename = "advanced-search.properties";
 
-  private static AdvancedSearchConfiguration instance;
+  // Properties
+  public static final String DENIED_FIELD_LIST = "DENIEDFIELDLIST";
+  public static final String EXACT_FIELDS = "EXACTFIELDS";
+  public static final String AUTOCOMPLETE_FIELDS = "AUTOCOMPLETEFIELDS";
+  public static final String FIXEDVALUES_FIELDS = "FIXEDVALUESFIELDS";
 
-  private final static Logger LOGGER = Logger.getLogger(AdvancedSearchConfiguration.class.getName());
+  private static AdvancedSearchConfiguration instance;
 
   /**
    *
    * Get the instance
    *
    */
-  public synchronized static AdvancedSearchConfiguration getInstance() {
+  public static synchronized AdvancedSearchConfiguration getInstance() {
     if (null == instance) {
       instance = new AdvancedSearchConfiguration();
     }

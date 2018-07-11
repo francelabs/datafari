@@ -18,19 +18,10 @@ AjaxFranceLabs.AdvancedSearchField = AjaxFranceLabs.Class.extend({
 	//Variables
 
 	elm : null,
-
-	autocomplete : false,
-
-	autocompleteOptions : {
-		optionsExtend : true,
-		render : null,
-		field : null,
-		valueSelectFormat : function(value) {
-			return value;
-		},
-		singleValue : false,
-		openOnFieldFocus : false
-	},
+	
+	autocompleteSuggester : null,
+	
+	fixedValues : null,
 	
 	dateSelectorModule : null,
 	
@@ -43,7 +34,9 @@ AjaxFranceLabs.AdvancedSearchField = AjaxFranceLabs.Class.extend({
 	//Methodes
 
 	init : function() {
-		if(this.type != "tdate" && this.type != "date" && this.type != "int" && this.type != "long" && this.type != "float" && this.type != "double" && this.type != "tint" && this.type != "tlong" && this.type != "tfloat" && this.type != "tdouble") {
+		if(this.fixedValues != null) {
+			this.buildFixedValuesFilterUI();
+		} else if(this.type != "tdate" && this.type != "date" && this.type != "int" && this.type != "long" && this.type != "float" && this.type != "double" && this.type != "tint" && this.type != "tlong" && this.type != "tfloat" && this.type != "tdouble") {
 			
 			// The field is of Text type
 			this.buildTextFieldFilterUI();
@@ -91,8 +84,52 @@ AjaxFranceLabs.AdvancedSearchField = AjaxFranceLabs.Class.extend({
 		}
 	},
 	
+	buildFixedValuesFilterUI : function() {
+		var self = this;
+		var select = $("<select class=\"select-equals dropdown-field dropdown\"><option selected value=''>" + window.i18n.msgStore['selectValue'] + "</option></select>");
+		var select2 = $("<select class=\"select-not-equals dropdown-field dropdown\"><option selected value=''>" + window.i18n.msgStore['selectValue'] + "</option></select>");
+		for(var i=0; i<self.fixedValues.length; i++) {
+			var value = "";
+			var label = "";
+			if(typeof self.fixedValues[i] === "object") {
+				value = self.fixedValues[i].value;
+				label = self.fixedValues[i].label;
+			} else {
+				value = self.fixedValues[i];
+				label = value;
+			}
+			select.append("<option value=\"" + value + "\">" + label + "</option>");
+			select2.append("<option value=\"" + value + "\">" + label + "</option>")
+		}
+		// Init select with init value if available
+		if(this.values != null && this.values != undefined) {
+			var val = "";
+			if(this.values["all_words_value"] != null && this.values["all_words_value"] != undefined && this.values["all_words_value"] != "") {
+				val = this.values["all_words_value"];
+			} else if(this.values["exact_expression_value"] != null && this.values["exact_expression_value"] != undefined && this.values["exact_expression_value"] != "") {
+				val = this.values["exact_expression_value"];
+			}
+			select.val(val);
+			
+			if(this.values["none_of_these_words_value"] != null && this.values["none_of_these_words_value"] != undefined && this.values["none_of_these_words_value"] != "") {
+				//Remove double quotes from value
+				var cleanVal = this.values["none_of_these_words_value"].replace(/\"/g,"");
+				select2.val(cleanVal);
+			}
+			
+		}
+		
+		//Construct the divs
+		var divEquals = $('<div class="equals-line"></div>');
+		var divNotEquals = $('<div class="not-equals-line"></div>');
+		divEquals.append('<span class="left">').find('.left').append('<label>' + window.i18n.msgStore['equals'] + '</label>').append(select);
+		divNotEquals.append('<span class="left">').find('.left').append('<label>' + window.i18n.msgStore['not-equals'] + '</label>').append(select2);
+		self.elm.append(divEquals).append(divNotEquals);
+	},
+	
 	buildTextFieldFilterUI : function() {
 		
+		var self = this;
 		this.elm.append('<div class="all_words_line">').append('<div class="exact_expression_line">').append('<div class="at_least_one_word_line">').append('<div class="none_of_these_words_line">');
 		var all_words_line = this.elm.find('.all_words_line');
 		var at_least_one_word_line = this.elm.find('.at_least_one_word_line');
@@ -112,6 +149,55 @@ AjaxFranceLabs.AdvancedSearchField = AjaxFranceLabs.Class.extend({
 			at_least_one_word_line.find('input').val(this.values["at_least_one_word_value"]);
 			exact_expression_line.find('input').val(this.values["exact_expression_value"]);
 			none_of_these_words_line.find('input').val(this.values["none_of_these_words_value"]);
+		}
+		
+		if(self.autocompleteSuggester != null && self.autocompleteSuggester != undefined) {
+			// All words autocomplete
+			var autocompleteAllWords = new AjaxFranceLabs.AdvancedAutocompleteModule(
+				{
+					servlet : self.autocompleteSuggester,
+					elm : all_words_line.find('input')
+				}	
+			);
+			// If the manager is passed through the constructor it will trigger a "too much recursion" error. So this is the only way
+			autocompleteAllWords.manager = self.manager;
+			autocompleteAllWords.init();
+			
+			
+			// At least one word autocomplete
+			var autocompleteAtLeastOneWord = new AjaxFranceLabs.AdvancedAutocompleteModule(
+					{
+						servlet : self.autocompleteSuggester,
+						elm : at_least_one_word_line.find('input')
+					}	
+				);
+				// If the manager is passed through the constructor it will trigger a "too much recursion" error. So this is the only way
+			autocompleteAtLeastOneWord.manager = self.manager;
+			autocompleteAtLeastOneWord.init();
+			
+			
+			// Exact expression autocomplete
+			var autocompleteExactExpression = new AjaxFranceLabs.AdvancedAutocompleteModule(
+				{
+					servlet : self.autocompleteSuggester,
+					elm : exact_expression_line.find('input')
+				}	
+			);
+			// If the manager is passed through the constructor it will trigger a "too much recursion" error. So this is the only way
+			autocompleteExactExpression.manager = self.manager;
+			autocompleteExactExpression.init();
+					
+			
+			// None of these words autocomplete
+			var autocompleteNoneOfTheseWords = new AjaxFranceLabs.AdvancedAutocompleteModule(
+				{
+					servlet : self.autocompleteSuggester,
+					elm : none_of_these_words_line.find('input')
+				}	
+			);
+			// If the manager is passed through the constructor it will trigger a "too much recursion" error. So this is the only way
+			autocompleteNoneOfTheseWords.manager = self.manager;
+			autocompleteNoneOfTheseWords.init();
 		}
 	},
 	
@@ -150,7 +236,9 @@ AjaxFranceLabs.AdvancedSearchField = AjaxFranceLabs.Class.extend({
 	},
 
 	getFilter : function() {
-		if(this.dateSelectorModule != null) {
+		if(this.fixedValues != null) {
+			return this.getFixedValueFilter();
+		} else if(this.dateSelectorModule != null) {
 			return this.dateSelectorModule.getFilter();
 		} else if(this.type != "tdate" && this.type != "date" && this.type != "int" && this.type != "long" && this.type != "float" && this.type != "double" && this.type != "tint" && this.type != "tlong" && this.type != "tfloat" && this.type != "tdouble") {
 			
@@ -160,6 +248,27 @@ AjaxFranceLabs.AdvancedSearchField = AjaxFranceLabs.Class.extend({
 			return this.getNumberFilter();
 		}
 	},
+	
+	getFixedValueFilter : function()
+	{
+		var filter = "";
+		if(this.elm.find(".select-equals").val() != null && this.elm.find(".select-equals").val() != undefined && this.elm.find(".select-equals").val() != "") {
+			filter = this.field + ":(\"" + this.elm.find(".select-equals").val() + "\"";
+		}
+		
+		if(this.elm.find(".select-not-equals").val() != null && this.elm.find(".select-not-equals").val() != undefined && this.elm.find(".select-not-equals").val() != "") {
+			if(filter == "") {
+				filter = this.field + ":(-\"" + this.elm.find(".select-not-equals").val() + "\"";
+			} else {
+				filter += " -" + "\"" + this.elm.find(".select-not-equals").val() + "\"";
+			}
+		}
+		
+		if(filter != "") {
+			filter += ")";
+		}
+		return filter;
+	},	
 	
 	getNumberFilter : function() {
 		var fromValue = this.elm.find('.fromNum').val();

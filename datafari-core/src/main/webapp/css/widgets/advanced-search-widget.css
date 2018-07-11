@@ -1,18 +1,26 @@
+.select-equals,.select-not-equals {
+    margin-left: 0em !important;
+}
+
 .dropdown {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
     padding: 5px;
+    padding-right: 2em;
     border-radius: 0px;
     text-align: center;
     background-color: white;
     border: 1px solid #CCC;
     background: url('../images/chevron-down.png') no-repeat 95% 50% #ffffff !important;
     background-size: 11px 7px !important;
+    outline: none;
+    color: rgba(0,0,0,0);
+    text-shadow: 0 0 0 #000;
 }
 
 .select-operator {
-    width: 5em;
+    
 }
 
 .advancedSearchWidget {
