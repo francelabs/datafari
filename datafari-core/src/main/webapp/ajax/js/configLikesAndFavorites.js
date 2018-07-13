@@ -8,6 +8,9 @@ setupLanguage();
  		document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
  	   	document.getElementById("topbar2").innerHTML = window.i18n.msgStore['adminUI-SearchEngineConfig'];
  	   	document.getElementById("topbar3").innerHTML = window.i18n.msgStore['adminUI-LikesAndFavorites'];
+ 	   	
+ 	   	$("#favorites-title").html(window.i18n.msgStore['adminUI-LikesAndFavorites']);
+ 	   	$("#favorites-label").html(window.i18n.msgStore['favorites-label']);
  	}	   
 		
 		var message_info = $("#message_info");
