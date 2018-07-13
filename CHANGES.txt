@@ -27,7 +27,7 @@ Solr 6.6.4
 ManifoldCF 2.10
 Tomcat 9.0.8
 Cassandra 3.11.2
-PostgreSQL 9.5.6
+PostgreSQL 9.6.5
 Zookeeper 3.4.10
 Tika Server 1.18
 ElasticSearch 5.6.4
