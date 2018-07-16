@@ -8,6 +8,7 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 	PROBLEMECONNECTIONSERVER : -404,
 	SERVERTESTPING : "www.google.com",
 	isMobile : $(window).width()<800,
+	id: "favoritesWidget",
 
 	buildWidget : function() {
 		this._super();
@@ -39,7 +40,11 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 				$.get("./getLikesFavorites", { "documentsID": docIDs }, function(data){
 					if (data.code==0){
 						window.globalVariableLikes = data.likesList;
-						window.globalVariableFavorites = data.favoritesList;
+						window.globalVariableFavorites = [];
+						$.each(data.favoritesList,function(index,favorite){
+							var fav = JSON.parse(favorite);
+							window.globalVariableFavorites.push(fav.id);
+						});
 						self.afterGettingLikes(docs);
 					}
 					else if (data.code != self.SERVERNOTCONNECTED ){
@@ -102,7 +107,7 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 					self.showError(self.PROBLEMECONNECTIONSERVER );	
 				});;
 			}else{
-				$.post('./addFavorite',{"idDocument":element.attr('id')},function(data){
+				$.post('./addFavorite',{"idDocument":element.attr('id'),"titleDocument":element.find('.title span').html()},function(data){
 					if (data.code == self.SERVERALLOK){
 						// if the we saved the document as a Favorite successfully
 						window.globalVariableFavorites.push(element.attr('id')); // we add it to window

@@ -16,44 +16,44 @@
 package com.francelabs.datafari.user;
 
 import com.francelabs.datafari.exception.DatafariServerException;
-import com.francelabs.datafari.service.db.DocumentDataService;
+import com.francelabs.datafari.service.db.LangDataService;
 
 public class Lang {
 
-	/**
-	 * Get the preferred language of a user
-	 *
-	 * @param username
-	 *            of the user
-	 * @return the prefered language.
-	 * @throws DatafariServerException
-	 */
-	public static String getLang(final String username) throws DatafariServerException {
-		return DocumentDataService.getInstance().getLang(username);
-	}
+  /**
+   * Get the preferred language of a user
+   *
+   * @param username
+   *          of the user
+   * @return the prefered language.
+   * @throws DatafariServerException
+   */
+  public static String getLang(final String username) throws DatafariServerException {
+    return LangDataService.getInstance().getLang(username);
+  }
 
-	/**
-	 * Set user's preferred lang
-	 *
-	 * @param username
-	 * @param lang
-	 * @return CodesReturned.ALLOK if all was ok
-	 * @throws DatafariServerException
-	 */
-	public static int setLang(final String username, final String lang) throws DatafariServerException {
-		return DocumentDataService.getInstance().setLang(username, lang);
-	}
+  /**
+   * Set user's preferred lang
+   *
+   * @param username
+   * @param lang
+   * @return CodesReturned.ALLOK if all was ok
+   * @throws DatafariServerException
+   */
+  public static int setLang(final String username, final String lang) throws DatafariServerException {
+    return LangDataService.getInstance().setLang(username, lang);
+  }
 
-	/**
-	 * Update user's preferred lang
-	 *
-	 * @param username
-	 * @param lang
-	 * @return CodesReturned.ALLOK if all was ok
-	 * @throws DatafariServerException
-	 */
-	public static int updateLang(final String username, final String lang) throws DatafariServerException {
-		return DocumentDataService.getInstance().updateLang(username, lang);
-	}
+  /**
+   * Update user's preferred lang
+   *
+   * @param username
+   * @param lang
+   * @return CodesReturned.ALLOK if all was ok
+   * @throws DatafariServerException
+   */
+  public static int updateLang(final String username, final String lang) throws DatafariServerException {
+    return LangDataService.getInstance().updateLang(username, lang);
+  }
 
 }

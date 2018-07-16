@@ -1,4 +1,5 @@
 {
+    "doc-name" : "Titre du Document",
     "favorites-label" : "C'est ici que vous pouvez activer ou désactiver la fonctionnalité des Favoris.<br/>Utilisez le boutton ci-dessous.",
     "jcifs-not-installed" : "Le connecteur JCIFS n'a pas été installé dans ManifoldCF",
     "solr-interruption" : "Cette action va recharger la configuration Solr et par conséquent, peut entrainer une interruption de service de Datafari pouvant prendre plusieurs minutes. Voulez vous procéder ?",

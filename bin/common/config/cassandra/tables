@@ -12,13 +12,25 @@ CREATE TABLE alerts (
   user varchar
 );
 
+CREATE TABLE department (
+  username varchar PRIMARY KEY,
+  department varchar
+);
+
 
 CREATE TABLE favorite (
   username varchar,
   document_id varchar,
+  document_title varchar,
   PRIMARY KEY (username, document_id )
 );
 
+CREATE TABLE search (
+  username varchar,
+  name varchar,
+  request varchar,
+  PRIMARY KEY (username, name, request )
+);
 
 CREATE TABLE like (
   username varchar,
@@ -42,9 +54,45 @@ CREATE TABLE role (
   PRIMARY KEY (username, role )
 );
 
-CREATE TABLE ranking (
-  request varchar,
-  document_id varchar,
-  ranking int,
-  PRIMARY KEY (request, document_id)
+CREATE TABLE crawled_document (
+    id text,
+    lastmodified TimeUUID,
+    processed boolean,
+    errored boolean,
+    content blob,
+    fields map<text, text>,
+    solr_update_handler text,
+    annotator_type text,
+PRIMARY KEY (id, lastmodified)
+) WITH CLUSTERING ORDER BY (lastmodified DESC)
+;
+
+CREATE INDEX ON crawled_document (processed);
+
+CREATE TABLE user_search_actions (
+  query_id text,
+  query text,
+  user_id text,
+  num_hit int,
+  document_id text,
+  rank int,
+  action text,
+  time_stamp timestamp,
+  PRIMARY KEY (query_id, time_stamp)
+);
+
+CREATE TABLE document_features (
+  document_id text,
+  document_rights set<text>,
+  clicks set<frozen<tuple<int,int>>>,
+  time_to_click set<frozen<tuple<int,int,int>>>,
+  PRIMARY KEY (document_id)
+);
+
+CREATE TABLE query_document_features (
+  query text,
+  document_id text,
+  clicks set<frozen<tuple<int,int>>>,
+  time_to_click set<frozen <tuple<int,int,int>>>,
+  PRIMARY KEY (query, document_id)
 );

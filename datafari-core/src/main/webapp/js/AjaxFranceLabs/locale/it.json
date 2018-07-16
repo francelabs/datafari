@@ -1,4 +1,5 @@
 {
+    "doc-name" : "Document Title",
     "favorites-label" : "This is the place where you can enable or disable the Favorites Functionality.<br/>All you need is to use the switcher bellow.",
     "jcifs-not-installed" : "The JCIFS connector has not been installed in ManifoldCF",
     "solr-interruption" : "This action will reload the Solr core and so, may lead to an interruption of service of Datafari that can take several minutes. Do you want to proceed ?",

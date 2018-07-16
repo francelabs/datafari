@@ -78,7 +78,7 @@ public class AddFavorite extends HttpServlet {
       } else {
         final String username = request.getUserPrincipal().getName();
         try {
-          Favorite.addFavorite(username, request.getParameter("idDocument"));
+          Favorite.addFavorite(username, request.getParameter("idDocument"), request.getParameter("titleDocument"));
           jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
         } catch (final DatafariServerException e) {
           jsonResponse.put(OutputConstants.CODE, e.getErrorCode().getValue());
@@ -87,10 +87,8 @@ public class AddFavorite extends HttpServlet {
       }
 
     } else {
-
       jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
       jsonResponse.put(OutputConstants.STATUS, "Query malformed");
-
     }
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);

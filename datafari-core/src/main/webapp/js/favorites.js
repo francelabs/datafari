@@ -48,7 +48,7 @@ function initFavoritesUI() {
 	$("#favoritesUi").show();
 	$("#results_div").hide();
 	$("#search_information").hide();
-	$("#sortMode").hide();
+	$("#results_action").hide();
 	$("#advancedSearch").hide();
 	$("#parametersUi").hide();
 	$("#searchBar").show();
@@ -143,16 +143,16 @@ function loadFavorites(){
 				// add each favorite found in Json response
 				$.each(favoritesList,function(index,favorite){
                     
+					var fav = JSON.parse(favorite);
 					var linkPrefix = "http://"+window.location.hostname+":"+window.location.port+"/Datafari/URL?url=";
-					var splitArray = favorite.split("/");
                     
                 	var line = $('<tr class="tr">'+
-                            '<th class="col-xs-3"><a href="'+linkPrefix+favorite+'">'+shortText(splitArray[splitArray.length-1],30)+'</a></th>'+
-                            '<th class="tiny col-xs-9">'+favorite+"</th>"+
+                            '<th class="col-xs-3"><a href="'+linkPrefix+fav.id+'">'+fav.title+'</a></th>'+
+                            '<th class="tiny col-xs-9">'+fav.id+"</th>"+
                             '<th class="text-center delete"><i class="fa fa-times"></i></th>'+
                             '</tr>');
 					
-					line.data("id",favorite);
+					line.data("id",fav.id);
 					$("table#favoritesTable tbody").append(line);
 				});
 				// handle favorite deletion
@@ -164,6 +164,8 @@ function loadFavorites(){
 					$.post("./deleteFavorite",{idDocument:element.data('id')},function(data){
 						if (data.code>=0){
 							loadFavorites(window.current);
+							window.globalVariableLikes = undefined;
+							window.Manager.getWidgetByID("favoritesWidget").afterRequest();
 						}else{
 							showError(data.code);
 						}
