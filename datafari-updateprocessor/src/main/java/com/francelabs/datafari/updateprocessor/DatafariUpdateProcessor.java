@@ -135,8 +135,8 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     }
 
     // Ensure a search-able title
-    if (doc.getFieldValues("title_en") == null && doc.getFieldValues("title_fr") == null) {
-      final String language = (String) doc.getFieldValue("language");
+    final String language = (String) doc.getFieldValue("language");
+    if (doc.getFieldValues("title_" + language) == null) {
       doc.addField("title_" + language, filename);
     }
 
