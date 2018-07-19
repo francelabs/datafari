@@ -66,16 +66,16 @@ public class Alert {
       switch (this.frequency) { // The fq parameter depends of the frequency of
                                 // the alerts
       default:
-        query.setParam("fq", "last_modified:[NOW-1DAY TO NOW]");
+        query.setParam("fq", "last_modified:[NOW-1DAY TO NOW] OR crawl_date:[NOW-1DAY TO NOW]");
         break;
       case "hourly":
-        query.setParam("fq", "last_modified:[NOW-1HOUR TO NOW]");
+        query.setParam("fq", "last_modified:[NOW-1HOUR TO NOW] OR crawl_date:[NOW-1HOUR TO NOW]");
         break;
       case "daily":
-        query.setParam("fq", "last_modified:[NOW-1DAY TO NOW]");
+        query.setParam("fq", "last_modified:[NOW-1DAY TO NOW] OR crawl_date:[NOW-1DAY TO NOW]");
         break;
       case "weekly":
-        query.setParam("fq", "last_modified:[NOW-7DAY TO NOW]");
+        query.setParam("fq", "last_modified:[NOW-7DAY TO NOW] OR crawl_date:[NOW-7DAY TO NOW]");
         break;
       }
       query.setParam("rows", "10"); // Sets the maximum number of results that
