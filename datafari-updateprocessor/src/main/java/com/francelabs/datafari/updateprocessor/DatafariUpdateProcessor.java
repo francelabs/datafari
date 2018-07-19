@@ -85,12 +85,12 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
      * final List<String> urlHierarchy = new ArrayList<String>();
      *
      * final String path = url.replace("file:", ""); int previousIndex = 1; int
-     * depth = 0; // Tokenize the path and add the depth as first character for each
-     * token // (like: 0/home, 1/home/project ...) for (int i = 0; i <
+     * depth = 0; // Tokenize the path and add the depth as first character for
+     * each token // (like: 0/home, 1/home/project ...) for (int i = 0; i <
      * path.split("/").length - 2; i++) { int endIndex = path.indexOf('/',
      * previousIndex); if (endIndex == -1) { endIndex = path.length() - 1; }
-     * urlHierarchy.add(depth + path.substring(0, endIndex)); depth++; previousIndex
-     * = endIndex + 1; }
+     * urlHierarchy.add(depth + path.substring(0, endIndex)); depth++;
+     * previousIndex = endIndex + 1; }
      *
      * // Add the tokens to the urlHierarchy field doc.addField("urlHierarchy",
      * urlHierarchy);
@@ -134,6 +134,12 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
       doc.addField("source", "file");
     }
 
+    // Ensure a search-able title
+    if (doc.getFieldValues("title_en") == null && doc.getFieldValues("title_fr") == null) {
+      final String language = (String) doc.getFieldValue("language");
+      doc.addField("title_" + language, filename);
+    }
+
     String extension = "";
     final URL urlObject = new URL(url);
     final String path = urlObject.getPath();
@@ -148,19 +154,21 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
       extension = (tikaExtension.length() > 1) && (tikaExtension.length() < 5) ? tikaExtension : nameExtension;
     }
     /*
-     * if (extensionFromName || mimeTypeField == null) { if (path.contains(".")){
-     * extension = FilenameUtils.getExtension(path); if (extension.length() > 4 ||
-     * extension.length() < 1) { // If length is too long, try extracting from tika
-     * information if available String tryExtension = mimeTypeField==null ? null :
+     * if (extensionFromName || mimeTypeField == null) { if
+     * (path.contains(".")){ extension = FilenameUtils.getExtension(path); if
+     * (extension.length() > 4 || extension.length() < 1) { // If length is too
+     * long, try extracting from tika information if available String
+     * tryExtension = mimeTypeField==null ? null :
      * extensionFromMimeTypeField(mimeTypeField); if (tryExtension != null) {
-     * extension = tryExtension; } else { // Else default to bin for anything else
-     * extension = "bin"; } } } else if (urlObject.getProtocol().equals("http") ||
+     * extension = tryExtension; } else { // Else default to bin for anything
+     * else extension = "bin"; } } } else if
+     * (urlObject.getProtocol().equals("http") ||
      * urlObject.getProtocol().equals("https")) { extension = null; if
      * (mimeTypeField != null) { extension =
      * extensionFromMimeTypeField(mimeTypeField); } if (extension == null) {
      * extension = "html"; } } } else { extension =
-     * extensionFromMimeTypeField(mimeTypeField); if (extension == null) { extension
-     * = FilenameUtils.getExtension(path); } }
+     * extensionFromMimeTypeField(mimeTypeField); if (extension == null) {
+     * extension = FilenameUtils.getExtension(path); } }
      */
     doc.addField("extension", extension.toLowerCase());
 
