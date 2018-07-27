@@ -8,7 +8,7 @@
 		<!-- Copy only useful Solr server directories stripping the parent Solr 
 			directory (to avoid Solr version inclusion) -->
 		<copy toDir="${solr.dist}" overwrite="true" force="true">
-			<fileset dir="target" includes="*solr*/bin/**,*solr*/server/**" />
+			<fileset dir="target" includes="*solr*/bin/**,*solr*/server/**,*solr*/licenses/**,*solr*/*.txt" />
 			<cutdirsmapper dirs="1" />
 		</copy>
 
