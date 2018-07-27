@@ -1,3 +1,6 @@
+// Very important to allow debugging !
+//@ sourceURL=MCFChangePassword.js
+
 $(document).ready(function() {
 		setupLanguage();
 		
@@ -7,6 +10,7 @@ $(document).ready(function() {
 		
 		//Set the onClick function of the saveElevateConf button
 		$("#savePasswordButton").click(function() {
+			$("#savePasswordButton").button("loading");
 			$("#message").hide();
 			var password ="" ;
 			var confirm_password ="" ;
@@ -21,25 +25,25 @@ $(document).ready(function() {
 			console.log("confirm_password" +confirm_password);
 			
 			if ( (password !="") && (confirm_password !="") && (password == confirm_password)){
-			console.log("OK");
-			$.post("../SearchAdministrator/MCFChangePassword",{
-				password : password
-			
-			},function(data){
-				if(data.code == 0) {
-						$("#message").html(window.i18n.msgStore["passSaved"]);
-						$("#message").addClass("success");
-						$("#message").show();						
-					
-				} else {
-					$("#message").html(window.i18n.msgStore["passSaveError"]);
-					$("#message").addClass("error");
-					$("#message").show();
-				}
-			
-			},"json");
-			}
-			else {
+				console.log("OK");
+				$.post("../SearchAdministrator/MCFChangePassword",{
+					password : password
+				
+				},function(data){
+					$("#savePasswordButton").button("reset");
+					if(data.code == 0) {
+							$("#message").html(window.i18n.msgStore["passSaved"]);
+							$("#message").addClass("success");
+							$("#message").show();						
+						
+					} else {
+						$("#message").html(window.i18n.msgStore["passSaveError"]);
+						$("#message").addClass("error");
+						$("#message").show();
+					}
+				
+				},"json");
+			} else {
 				$("#message").html(window.i18n.msgStore["passProblem"]);
 			}
 		});
@@ -58,6 +62,7 @@ function setupLanguage(){
 	 document.getElementById("confirmPasswordLabel").innerHTML = window.i18n.msgStore['confirmPassword'];
 	 document.getElementById("selectPassword").innerHTML = window.i18n.msgStore['changeMCFPassword'];
 	 document.getElementById("savePasswordButton").innerHTML = window.i18n.msgStore['confirmPass'];
+	 $("#savePasswordButton").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
 	 
 	
 }
@@ -74,5 +79,4 @@ function checkPassword() {
 	}
 
 
-//Pragma needed to be able to debug JS in the browser
-//# sourceURL=../ajax/js/MCFChangePassword.js
+
