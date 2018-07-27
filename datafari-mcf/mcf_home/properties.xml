@@ -19,7 +19,7 @@
 <configuration>
 
   <!-- Version string for UI -->
-  <property name="org.apache.manifoldcf.versionstring" value="2.8.1"/>
+  <property name="org.apache.manifoldcf.versionstring" value="2.10"/>
   <!-- ZooKeeper lock manager configuration -->
   <property name="org.apache.manifoldcf.lockmanagerclass" value="org.apache.manifoldcf.core.lockmanager.ZooKeeperLockManager"/>
   <property name="org.apache.manifoldcf.zookeeper.connectstring" value="@ZKHOST@"/>
