@@ -82,8 +82,11 @@ th{
 	color:green;
 }
 #elk_activation{
-	margin-left: auto;
-	margin-bottom : 2%;
+	margin-bottom: 1em;
+  padding-top: 4px;
+}
+#elk_activation .toggle-switch-switch {
+  top: 4px !important;
 }
 .box{
 	padding-bottom : 5%;

@@ -1,4 +1,6 @@
 {
+    "no_save_needed" : "Does not require a save",
+    "elkActivationLabel" : "ELK activation",
     "doc-name" : "Document Title",
     "favorites-label" : "This is the place where you can enable or disable the Favorites Functionality.<br/>All you need is to use the switcher bellow.",
     "jcifs-not-installed" : "The JCIFS connector has not been installed in ManifoldCF",

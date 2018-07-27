@@ -13,6 +13,7 @@ $(document).ready(function() {
 	$("#topbar3").text(window.i18n.msgStore['adminUI-ELKConf']);
 	$("#submit").text(window.i18n.msgStore['save']);
 	$("#title").text(window.i18n.msgStore['adminUI-ELKConf']);
+	$("#elkActivationLabel").html(window.i18n.msgStore['elkActivationLabel'] + " (" + window.i18n.msgStore['no_save_needed'] + ")");
 	$("#kibanaURILabel").html(window.i18n.msgStore['kibanaURI']);
 	$("#authUserLabel").html(window.i18n.msgStore['authUser']);
 	var input = $("#elk_activation input");
