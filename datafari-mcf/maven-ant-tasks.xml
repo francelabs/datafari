@@ -7,11 +7,13 @@
 			directory (to avoid MCF version inclusion) -->
 		<copy toDir="${mcf.dist}/mcf_home" overwrite="true" force="true">
 			<fileset dir="target">
+				<include name="*manifoldcf*/*.txt" />
+        <include name="*manifoldcf*/obfuscation-utility/**" />
 				<include name="*manifoldcf*/connector-common-lib/**" />
-		        <include name="*manifoldcf*/connector-lib/**" />
-		        <include name="*manifoldcf*/connector-lib-proprietary/**" />
-		        <include name="*manifoldcf*/lib/**" />
-		        <include name="*manifoldcf*/connectors.xml" />
+        <include name="*manifoldcf*/connector-lib/**" />
+        <include name="*manifoldcf*/connector-lib-proprietary/**" />
+        <include name="*manifoldcf*/lib/**" />
+        <include name="*manifoldcf*/connectors.xml" />
 				<exclude name="*manifoldcf*/lib/commons-codec-*" />
 				<exclude name="*manifoldcf*/lib/commons-collections4-*" />
 				<exclude name="*manifoldcf*/lib/commons-exec-*" />
@@ -81,6 +83,21 @@
 			</fileset>
 			<cutdirsmapper dirs="1" />
 		</copy>
+		
+		<!-- Copy original multiprocess zk scripts -->
+    <copy toDir="${mcf.dist}/mcf_home" overwrite="true" force="true">
+      <fileset dir="target">
+        <include name="*manifoldcf*/multiprocess-zk-example/**" />
+        <exclude name="*manifoldcf*/multiprocess-zk-example/*.bat" />
+        <exclude name="*manifoldcf*/multiprocess-zk-example/*.win" />
+        <exclude name="*manifoldcf*/multiprocess-zk-example/*.xml" />
+        <exclude name="*manifoldcf*/multiprocess-zk-example/*jetty*" />
+        <exclude name="*manifoldcf*/multiprocess-zk-example/*hsqldb*" />
+        <exclude name="*manifoldcf*/multiprocess-zk-example/zookeeper.cfg" />
+        <exclude name="*manifoldcf*/multiprocess-zk-example/options.env.unix" />
+      </fileset>
+      <cutdirsmapper dirs="2" />
+    </copy>
 
 		<!-- Copy war directory stripping the parent MCF 
 			directory (to avoid MCF version inclusion) and web directory -->
