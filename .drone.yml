@@ -12,7 +12,7 @@ pipeline:
     rancher:
         image: peloton/drone-rancher
         url: http://91.121.49.115:8080
-        service: datafari_ce
+        service: datafarice
         docker_image: datafari/ce_build
         confirm: true
         timeout: 18000
