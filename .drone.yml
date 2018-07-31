@@ -1,0 +1,19 @@
+pipeline:
+    build:
+        image: plugins/docker
+        repo: datafari/ce_build
+        tags:
+            - latest
+            - "${DRONE_COMMIT_SHA}"
+        secrets: [ docker_username, docker_password ]
+    notify:
+        image: drillster/drone-email
+        secrets: [ email_username, email_password, email_port, email_host, email_recipients ]
+    rancher:
+        image: peloton/drone-rancher
+        url: http://91.121.49.115:8080
+        service: datafari_ce
+        docker_image: datafari/ce_build
+        confirm: true
+        timeout: 18000
+        secrets: [ RANCHER_ACCESS_KEY, RANCHER_SECRET_KEY ]

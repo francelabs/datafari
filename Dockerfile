@@ -41,12 +41,13 @@ COPY ./datafari-handler/pom.xml ./datafari-handler/pom.xml
 COPY ./datafari-realm/pom.xml ./datafari-realm/pom.xml
 COPY ./datafari-mcf-scripts/pom.xml ./datafari-mcf-scripts/pom.xml
 COPY ./datafari-git-plugin/pom.xml ./datafari-git-plugin/pom.xml
-RUN mvn -P ci -f pom.xml -s /usr/share/maven/ref/settings-docker.xml dependency:resolve 
+RUN mvn --log-file log1.txt -P ci -f pom.xml -s /usr/share/maven/ref/settings-docker.xml dependency:resolve
 COPY . .
 
-RUN mvn -B -f pom.xml -s /usr/share/maven/ref/settings-docker.xml clean install
+RUN mvn --log-file log2.txt -f pom.xml -s /usr/share/maven/ref/settings-docker.xml --quiet clean install
 RUN ls -lah ./debian7
 RUN ant clean-build -f ./debian7/build.xml
+RUN ls /tmp/datafari/debian7/installer/dist/datafari.deb
 
 
 FROM openjdk:8-jdk-stretch
@@ -67,9 +68,8 @@ RUN     apt-get update && apt-get install -y \
                 lsof \
                 procps \
 	&& rm -rf /var/lib/apt/lists/*
-COPY --from=BUILD /tmp/datafari/debian7/installer/build/datafari/opt/datafari/ /opt/datafari/
-RUN chmod u+x /opt/datafari/bin/docker_script.sh
-RUN bash /opt/datafari/bin/docker_script.sh
+COPY --from=BUILD /tmp/datafari/debian7/installer/dist/datafari.deb .
+RUN DEBIAN_FRONTEND=noninteractive dpkg -i datafari.deb && rm -rf datafari.deb
 EXPOSE 8080 8983 5601 9200
 RUN useradd -m demo && echo "demo:demo" | chpasswd && adduser demo sudo
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
