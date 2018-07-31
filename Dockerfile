@@ -54,6 +54,6 @@ WORKDIR /opt/datafari
 RUN  sed -i -e 's/sleep 10/sleep 30/g' /opt/datafari/bin/start-datafari.sh
 RUN  sed -i "/server.host:/c\server.host: 0.0.0.0" /opt/datafari/elk/kibana/config/kibana.yml
 USER demo
-CMD ["/bin/bash", "-c", "echo 'wait 120 seconds 
+CMD ["/bin/bash", "-c", "echo 'wait 120 seconds to let Datafari start and then connect to http://IP:EXPOSE_PORT/Datafari' && cd /opt/datafari/bin && bash start-datafari.sh; sleep infinity"] 
 
 
