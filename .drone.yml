@@ -8,6 +8,7 @@ pipeline:
         secrets: [ docker_username, docker_password ]
     notify:
         image: drillster/drone-email
+        from : noreply@github.com
         secrets: [ email_username, email_password, email_port, email_host, email_recipients ]
     rancher:
         image: peloton/drone-rancher
