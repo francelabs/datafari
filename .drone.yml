@@ -17,7 +17,7 @@ pipeline:
         url: http://91.121.49.115:8080
         service: datafarice
         docker_image: datafari/ce_build
-         start_first: false
+        start_first: false
         confirm: true
         timeout: 18000
         secrets: [ RANCHER_ACCESS_KEY, RANCHER_SECRET_KEY ]
