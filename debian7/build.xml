@@ -60,9 +60,9 @@
 	</target>
 
 	<target name="package" depends="copyBinaries">
-		<copy todir="${installer.build.dir}/datafari/opt/datafari">
+		<move todir="${installer.build.dir}/datafari/opt/datafari">
 			<fileset dir="${debian.dist.dir}" />
-		</copy>
+		</move>
 		
 		<!-- Configure tomcat port - will probably change in the futur -->
 		<replace file="${installer.build.dir}/datafari/opt/datafari/tomcat/conf/server.xml" >
@@ -80,9 +80,9 @@
 		  </replacefilter>
 		</replace>
 		
-		<copy todir="${installer.build.dir}/datafari/DEBIAN">
+		<move todir="${installer.build.dir}/datafari/DEBIAN">
 			<fileset dir="${installer.dir}/DEBIAN" />
-		</copy>
+		</move>
 		<exec executable="chmod">
 			<arg value="-R" />
 			<arg value="755" />
