@@ -11,8 +11,12 @@ public class CassandraManager {
 
   private final static Logger LOGGER = Logger.getLogger(CassandraManager.class.getName());
 
-  private static final String KEYSPACE = "datafari";
-  private static final String host = "127.0.0.1";
+  private static final String DEFAULT_KEYSPACE = "datafari";
+  private static final String default_host = "127.0.0.1";
+  private static final int default_port = 9042;
+  private static final String cassandra_host_var = "CASSANDRA_HOST";
+  private static final String cassandra_port_var = "CASSANDRA_PORT";
+  private static final String cassandra_keyspace_var = "CASSANDRA_KEYSPACE";
 
   private Cluster cluster;
   private Session session;
@@ -57,7 +61,24 @@ public class CassandraManager {
       cluster.close();
       cluster = null;
     }
-    cluster = Cluster.builder().addContactPoint(host).build();
+
+    // Determine host
+    String contactPoint = default_host;
+    final String providedCassandraHost = System.getenv(cassandra_host_var);
+    if (providedCassandraHost != null) {
+      LOGGER.info("Provided Cassandra host: " + providedCassandraHost);
+      contactPoint = providedCassandraHost;
+    }
+
+    // Determine port
+    int cassandraPort = default_port;
+    final String providedCassandraPort = System.getenv(cassandra_port_var);
+    if (providedCassandraPort != null) {
+      LOGGER.info("Provided Cassandra port: " + providedCassandraPort);
+      cassandraPort = Integer.valueOf(providedCassandraPort);
+    }
+
+    cluster = Cluster.builder().addContactPoint(contactPoint).withPort(cassandraPort).build();
     LOGGER.info("Cassandra cluster successfully initialized");
   }
 
@@ -67,10 +88,16 @@ public class CassandraManager {
       session.close();
       session = null;
     }
+    String keyspace = DEFAULT_KEYSPACE;
+    final String provided_keyspace = System.getenv(cassandra_keyspace_var);
+    if (provided_keyspace != null) {
+      LOGGER.info("Provided Cassandra keyspace: " + provided_keyspace);
+      keyspace = provided_keyspace;
+    }
     while (session == null && retryNum < numRetries) {
       try {
         // Connect to the cluster and keyspace "datafari"
-        session = cluster.connect(KEYSPACE);
+        session = cluster.connect(keyspace);
         LOGGER.info("Cassandra session successfully initialized");
       } catch (final Exception e) {
         retryNum++;
