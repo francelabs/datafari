@@ -9,6 +9,7 @@ pipeline:
     notify:
         image: drillster/drone-email
         from : noreply@github.com
+        skip_verify: true
         when:
             status: [ success, failure ]
         secrets: [ email_username, email_password, email_port, email_host, email_recipients ]
