@@ -131,12 +131,12 @@ function addProm(){
 	
 	
 	// add title per language
-	$.each(languages, function( index, value ) {
-		$("#fieldContent").append("<div class=\"form-group\" id=\"div11"+value+"\">");
-		$("#div11"+value+"").append("<div class=\"col-sm-2 control-label\"><label class=\"control-label\">"+'('+value+') '+window.i18n.msgStore['title']+"</label></div>");
-		$("#div11"+value+"").append("<input type=\"text\" id=\"title_"+value+"\" name=\"title_"+value+"\" placeholder="+"("+value+")"+" class=col-sm-2 >");
-		$("#fieldContent").append("</div>");
-	});
+//	$.each(languages, function( index, value ) {
+//		$("#fieldContent").append("<div class=\"form-group\" id=\"div11"+value+"\">");
+//		$("#div11"+value+"").append("<div class=\"col-sm-2 control-label\"><label class=\"control-label\">"+'('+value+') '+window.i18n.msgStore['title']+"</label></div>");
+//		$("#div11"+value+"").append("<input type=\"text\" id=\"title_"+value+"\" name=\"title_"+value+"\" placeholder="+"("+value+")"+" class=col-sm-2 >");
+//		$("#fieldContent").append("</div>");
+//	});
 			
 			
 	// add content		
@@ -147,12 +147,12 @@ function addProm(){
 	
 
 	// add content per language
-	$.each(languages, function( index, value ) {
-	$("#fieldContent").append("<div class=\"form-group\" id=\"div2"+value+"\">");
-	$("#div2"+value+"").append("<div class=\"col-sm-2 control-label\"><label class=\"control-label\">"+'('+value+') '+window.i18n.msgStore['content']+"</label></div>");
-	$("#div2"+value+"").append("<textarea type=\"text\" id=\"content_"+value+"\" name=\"content_"+value+"\" placeholder="+"("+value+") class=\"col-sm-8\"></textarea>");
-	$("#fieldContent").append("</div>");
-	});
+//	$.each(languages, function( index, value ) {
+//	$("#fieldContent").append("<div class=\"form-group\" id=\"div2"+value+"\">");
+//	$("#div2"+value+"").append("<div class=\"col-sm-2 control-label\"><label class=\"control-label\">"+'('+value+') '+window.i18n.msgStore['content']+"</label></div>");
+//	$("#div2"+value+"").append("<textarea type=\"text\" id=\"content_"+value+"\" name=\"content_"+value+"\" placeholder="+"("+value+") class=\"col-sm-8\"></textarea>");
+//	$("#fieldContent").append("</div>");
+//	});
 	
 	$("#add").append("</fieldset>");
 	$("#add").append("<fieldset id=\"fieldDate\">")
