@@ -1,6 +1,19 @@
-//@ sourceURL=fieldWeight.js
+//# sourceURL=fieldWeight.js
 
 var list;
+var timeouts = [];
+
+var clearTimeouts = function() {
+	for (var i = 0; i < timeouts.length; i++) {
+	    clearTimeout(timeouts[i]);
+	}
+
+	//quick reset of the timer array you just cleared
+	timeouts = [];
+
+	$('#main').unbind('DOMNodeRemoved');
+}
+
 $(document).ready(function() {
 	//Get the fields from the schema
 	getFields();
@@ -21,16 +34,26 @@ $(document).ready(function() {
 	
 	$("#uprel").click(function(e){
 		e.preventDefault();
+		$("#uprel").button("loading");
 		$.get("../SearchAdministrator/zookeeperConf?action=upload_and_reload",function(data){
+			$("#uprel").button("reset");
 			if(data.code == 0) {
+				$("#answerqf").hide();
+				$("#answerpf").hide();
 				$("#answeruprel").text(window.i18n.msgStore['zkOK']);
+				$("#answeruprel").addClass("success").removeClass("fail animated fadeOut").show();
+				timeouts.push(setTimeout(function(){
+		          $("#answeruprel").addClass("animated fadeOut");
+		        },1500));
 			} else {
 				$("#answeruprel").text(window.i18n.msgStore['zkDown']);
+				$("#answeruprel").addClass("fail").removeClass("success animated fadeOut").show();
 			}
 		});
 	});
 	//If the user refresh the page  
-	$(window).bind('beforeunload', function(){  								
+	$(window).bind('beforeunload', function(){
+		clearTimeouts();
 		if(document.getElementById("weightpf")!==null){
 			if(!document.getElementById("weightpf").getAttribute('disabled')){
 				  cleanSem("pf");
@@ -44,6 +67,7 @@ $(document).ready(function() {
 	 });
 	//If the user loads an other page
 	$("a").click(function(e){
+		clearTimeouts();
 		if(e.target.className==="ajax-link" || e.target.className==="ajax-link active-parent active"){
 			if(document.getElementById("weightpf")!==null){
 				if(!document.getElementById("weightpf").getAttribute('disabled')){
@@ -66,6 +90,7 @@ $(document).ready(function() {
 	document.getElementById("pfname").innerHTML = window.i18n.msgStore['pf'];
 	document.getElementById("qfname").innerHTML = window.i18n.msgStore['qf'];
 	document.getElementById("uprel").innerHTML = window.i18n.msgStore['save-config'];
+	$("#uprel").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['saving']);
 });
 function getFields(){										//Get the fields from the schema.xml
 	 $.ajax({			//Ajax request to the doGet of the FieldWeight servlet
@@ -102,10 +127,6 @@ function selectPF(){
 	}
 	getValue("pf");
 }
-
-
-
-
 //Get the value of a field according to his type
 function getValue(type){
 	//Clean the response area
@@ -170,6 +191,7 @@ function setValue(type){
 	        		if(data.toString().indexOf("Error code : ")!==-1){
 	        			//print it and disable the selection
 	        			document.getElementById("globalAnswer").innerHTML = data;
+	        			$("#globalAnswer").removeClass("success").addCLass("fail").show();
 		        		$('#selectpf').attr("disabled", true);
 		        		$('#selectqf').attr("disabled", true);
 		        		$('#submitpf').attr("disabled", true);
@@ -177,6 +199,7 @@ function setValue(type){
 		        		$('#weight'+type).attr("disabled", true);
 		        	}else{//print modif done and reset the value and disable the submit and input field
 		        		document.getElementById("answer"+type).innerHTML = window.i18n.msgStore['modifDoneZK'];
+		        		$("#answer"+type).removeClass("fail").addClass("success").show();
 		        		document.getElementById("select"+type).value = "";
 		        		document.getElementById("weight"+type).value = "";
 		        		$('#weight'+type).attr("disabled", true);

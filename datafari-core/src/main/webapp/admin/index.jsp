@@ -22,6 +22,7 @@
 		<link href="../css/style_v2.css" rel="stylesheet">
 		<link href="../plugins/chartist/chartist.min.css" rel="stylesheet">
 		<link href="../plugins/CLEditor/jquery.cleditor.css" rel="stylesheet">
+		<Link rel="stylesheet" href="../css/animate.min.css"/>
 		<script type="text/javascript" src="../js/polyfill.js"></script>
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
