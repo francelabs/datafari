@@ -256,31 +256,10 @@ public class SearchProxy extends HttpServlet {
       // promolink
       final String jsonStrPromolinkResponse = queryResponsePromolink.getStrJSONResponse();
 
-      if (queryResponsePromolink.getNumFound() != 0) { // If
-        // there
-        // are
-        // a
-        // result
-        // for
-        // the
-        // promolink
+      if (queryResponsePromolink.getNumFound() != 0) {
 
-        final JSONObject promoResponseJSON = new JSONObject();
         final JSONArray jsonPromolinkDocs = queryResponsePromolink.getResults();
-        final JSONObject jsonPromolinkDoc = (JSONObject) jsonPromolinkDocs.get(0);
-        for (final Object fieldName : jsonPromolinkDoc.keySet()) {
-          promoResponseJSON.put(fieldName, jsonPromolinkDoc.get(fieldName));
-        }
-
-        // Taking
-        // just
-        // the
-        // results
-        // without
-        // the
-        // header
-
-        json.put("promolinkSearchComponent", promoResponseJSON);
+        json.put("promolinkSearchComponent", jsonPromolinkDocs);
 
       }
       final String wrapperFunction = request.getParameter("json.wrf");
