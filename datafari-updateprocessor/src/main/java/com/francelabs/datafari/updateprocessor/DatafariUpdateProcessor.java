@@ -68,7 +68,7 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 
     // Sometimes Tika put several last_modified dates, so we keep the first
     // one which is always the right one
-    if ((doc.getFieldValues("last_modified") != null) && (doc.getFieldValues("last_modified").size() > 1)) {
+    if (doc.getFieldValues("last_modified") != null && doc.getFieldValues("last_modified").size() > 1) {
       final Object last_modified = doc.getFieldValue("last_modified");
       doc.remove("last_modified");
       doc.addField("last_modified", last_modified);
@@ -136,9 +136,7 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 
     // Ensure a search-able title
     final String language = (String) doc.getFieldValue("language");
-    if (doc.getFieldValues("title_" + language) == null) {
-      doc.addField("title_" + language, filename);
-    }
+    doc.addField("title_" + language, filename);
 
     String extension = "";
     final URL urlObject = new URL(url);
@@ -149,9 +147,9 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     final String tikaExtension = mimeTypeField == null ? "" : extensionFromMimeTypeField(mimeTypeField);
 
     if (extensionFromName) {
-      extension = (nameExtension.length() > 1) && (nameExtension.length() < 5) ? nameExtension : tikaExtension;
+      extension = nameExtension.length() > 1 && nameExtension.length() < 5 ? nameExtension : tikaExtension;
     } else {
-      extension = (tikaExtension.length() > 1) && (tikaExtension.length() < 5) ? tikaExtension : nameExtension;
+      extension = tikaExtension.length() > 1 && tikaExtension.length() < 5 ? tikaExtension : nameExtension;
     }
     /*
      * if (extensionFromName || mimeTypeField == null) { if

@@ -320,7 +320,6 @@
 
    <copyField source="title_*" dest="suggest" />
    <copyField source="title_*" dest="spell" />
-   <copyField source="title_*" dest="title" />
 
 
    <copyField source="url" dest="suggest" />
