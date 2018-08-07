@@ -114,6 +114,7 @@ function addProm(){
 	$("#addPromFormBis").empty();
 	$("#addPromForm").append("<div class=\"col-xs-12\"><div class=\"box\"><div class=\"box-header\"><div class=\"box-name\"><i class=\"fa fa-table\"></i><span>"+window.i18n.msgStore['promoLinkAdd']+"</span></div><div class=\"box-icons\"><a class=\"collapse-link\"><i class=\"fa fa-chevron-up\"></i></a><a class=\"expand-link\"><i class=\"fa fa-expand\"></i></a></div><div class=\"no-move\"></div></div><div id=\"addBox\" class=\"box-content\">");
 	$("#addBox").append("<form id=\"add\" class=\"form-horizontal\" role=\"form\">");
+	$("#add").append("<span class='fa fa-info-circle default-explanation'>" + window.i18n.msgStore['promolink-default-explanation'] + "</span>");
 	$("#add").append("<fieldset id=\"fieldContent\">");
 	$("#fieldContent").append("<legend>"+window.i18n.msgStore['param']+"</legend>");
 	$("#fieldContent").append("<div class=\"form-group\" id=\"div1\">");
@@ -124,35 +125,35 @@ function addProm(){
 	
 	// add title
 	$("#fieldContent").append("<div class=\"form-group\" id=\"div11\">");
-	$("#div11").append("<div class=\"col-sm-2 control-label\"><span class=\"fa fa-asterisk \" style=\"color : red\"></span><label class=\"control-label\">"+window.i18n.msgStore['title']+"</label></div>");
+	$("#div11").append("<div class=\"col-sm-2 control-label\"><span class=\"fa fa-asterisk \" style=\"color : red\"></span><label class=\"control-label default-label\">"+window.i18n.msgStore['title']+" ("+window.i18n.msgStore['promolink_default']+")</label></div>");
 	$("#div11").append("<input required type=\"text\" id=\"title\" name=\"title\" placeholder="+window.i18n.msgStore['title']+" class=col-sm-2 >");
 	$("#fieldContent").append("</div>");
 	
 	
 	
 	// add title per language
-//	$.each(languages, function( index, value ) {
-//		$("#fieldContent").append("<div class=\"form-group\" id=\"div11"+value+"\">");
-//		$("#div11"+value+"").append("<div class=\"col-sm-2 control-label\"><label class=\"control-label\">"+'('+value+') '+window.i18n.msgStore['title']+"</label></div>");
-//		$("#div11"+value+"").append("<input type=\"text\" id=\"title_"+value+"\" name=\"title_"+value+"\" placeholder="+"("+value+")"+" class=col-sm-2 >");
-//		$("#fieldContent").append("</div>");
-//	});
+	$.each(languages, function( index, value ) {
+		$("#fieldContent").append("<div class=\"form-group\" id=\"div11"+value+"\">");
+		$("#div11"+value+"").append("<div class=\"col-sm-2 control-label\"><label class=\"control-label\">"+'('+value+') '+window.i18n.msgStore['title']+"</label></div>");
+		$("#div11"+value+"").append("<input type=\"text\" id=\"title_"+value+"\" name=\"title_"+value+"\" placeholder="+"("+value+")"+" class=col-sm-2 >");
+		$("#fieldContent").append("</div>");
+	});
 			
 			
 	// add content		
 	$("#fieldContent").append("<div class=\"form-group\" id=\"div2\">");
-	$("#div2").append("<div class=\"col-sm-2 control-label\"><span class=\"fa fa-asterisk \" style=\"color : red\"></span><label class=\"control-label\">"+window.i18n.msgStore['content']+"</label></div>");
+	$("#div2").append("<div class=\"col-sm-2 control-label\"><span class=\"fa fa-asterisk \" style=\"color : red\"></span><label class=\"control-label default-label\">"+window.i18n.msgStore['content']+" ("+window.i18n.msgStore['promolink_default']+")</label></div>");
 	$("#div2").append("<textarea required type=\"text\" id=\"contentPromoLink\" name=\"content\" placeholder="+window.i18n.msgStore['content']+" class=\"col-sm-8\"></textarea>");
 	$("#fieldContent").append("</div>");
 	
 
 	// add content per language
-//	$.each(languages, function( index, value ) {
-//	$("#fieldContent").append("<div class=\"form-group\" id=\"div2"+value+"\">");
-//	$("#div2"+value+"").append("<div class=\"col-sm-2 control-label\"><label class=\"control-label\">"+'('+value+') '+window.i18n.msgStore['content']+"</label></div>");
-//	$("#div2"+value+"").append("<textarea type=\"text\" id=\"content_"+value+"\" name=\"content_"+value+"\" placeholder="+"("+value+") class=\"col-sm-8\"></textarea>");
-//	$("#fieldContent").append("</div>");
-//	});
+	$.each(languages, function( index, value ) {
+		$("#fieldContent").append("<div class=\"form-group\" id=\"div2"+value+"\">");
+		$("#div2"+value+"").append("<div class=\"col-sm-2 control-label\"><label class=\"control-label\">"+'('+value+') '+window.i18n.msgStore['content']+"</label></div>");
+		$("#div2"+value+"").append("<textarea type=\"text\" id=\"content_"+value+"\" name=\"content_"+value+"\" placeholder="+"("+value+") class=\"col-sm-8\"></textarea>");
+		$("#fieldContent").append("</div>");
+	});
 	
 	$("#add").append("</fieldset>");
 	$("#add").append("<fieldset id=\"fieldDate\">")

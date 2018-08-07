@@ -1,0 +1,11 @@
+.default-label {
+	display: inline;
+}
+
+.default-explanation {
+  margin-bottom: 1em;
+}
+
+.default-explanation::before {
+  margin-right: 0.5em;
+}

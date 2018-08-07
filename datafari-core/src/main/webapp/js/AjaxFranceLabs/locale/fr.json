@@ -1,4 +1,6 @@
 {
+    "promolink-default-explanation" : "Les valeurs par défaut sont obligatoires car elles sont utilisées pour les langues non renseignées. Vous pouvez également préférer ne remplir que les valeurs par défaut au cas où vous souhaiteriez le même texte pour votre promolink, quelle que soit la langue de l'utilisateur.",
+    "promolink_default" : "valeur par defaut, quelle que soit la langue",
     "saving" : "Sauvegarde...",
     "no_save_needed" : "Ne nécessite pas de sauvegarde",
     "elkActivationLabel" : "Activation de ELK",
