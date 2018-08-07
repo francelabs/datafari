@@ -1179,14 +1179,12 @@
      <queryResponseWriter name="csv" class="solr.CSVResponseWriter"/>
      <queryResponseWriter name="schema.xml" class="solr.SchemaXmlResponseWriter"/>
     -->
+    
+    <updateProcessor class="com.francelabs.datafari.updateprocessor.DatafariUpdateProcessorFactory" name="datafariUpdateProcessor">
+      <str name="extension.fromname">true</str>
+    </updateProcessor>
 
-	<updateRequestProcessorChain name="datafari">
-	
-	
-		
-		<processor class="com.francelabs.datafari.updateprocessor.DatafariUpdateProcessorFactory">
-			<str name="extension.fromname">true</str>
-		</processor>
+	<updateRequestProcessorChain name="datafari" processor="datafariUpdateProcessor">
 	
 		<processor class="org.apache.solr.update.processor.LangDetectLanguageIdentifierUpdateProcessorFactory">
 			<str name="langid.fl">content,title</str>
