@@ -19,7 +19,7 @@
 # Start Script for the CATALINA Server
 # -----------------------------------------------------------------------------
 
-export CATALINA_OPTS="${SOLRCLOUDOPTION}-Dorg.apache.manifoldcf.configfile=../../mcf/mcf_home/properties.xml -server -Xms2048m -Xmx2048m"
+export CATALINA_OPTS="${SOLRCLOUDOPTION}-Dorg.apache.manifoldcf.configfile=../../mcf/mcf_home/properties.xml -server -Xms1024m -Xmx1024m"
 
 # Better OS/400 detection: see Bugzilla 31132
 os400=false
