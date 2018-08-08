@@ -46,7 +46,7 @@ RUN     apt-get update && apt-get install -y \
                 procps \
 	&& rm -rf /var/lib/apt/lists/*
 COPY --from=BUILD /tmp/datafari/debian7/installer/dist/datafari.deb .
-RUN DEBIAN_FRONTEND=noninteractive dpkg -i datafari.deb && rm -rf datafari.deb
+RUN DEBIAN_FRONTEND=noninteractive dpkg -i datafari.deb
 EXPOSE 8080 8983 5601 9200
 RUN useradd -m demo && echo "demo:demo" | chpasswd && adduser demo sudo
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
