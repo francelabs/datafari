@@ -1,4 +1,4 @@
-//@ sourceURL=tomcat.js
+//# sourceURL=/Datafari/ajax/js/tomcat.js
 
 setupLanguage();
 function setupLanguage(){

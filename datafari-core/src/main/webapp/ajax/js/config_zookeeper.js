@@ -1,4 +1,4 @@
-//@ sourceURL=config_zookeeper.js
+//# sourceURL=/Datafari/ajax/js/config_zookeeper.js
 
 
 $(document).ready(function() {

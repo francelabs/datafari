@@ -1,4 +1,4 @@
-//@ sourceURL=not-available.js
+//# sourceURL=/Datafari/ajax/js/not-available.js
 
 
 $(document).ready(function() {

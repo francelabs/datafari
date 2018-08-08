@@ -1,4 +1,4 @@
-//@ sourceURL=elkConfiguration.js
+//# sourceURL=/Datafari/ajax/js/elkConfiguration.js
 
 
 $(document).ready(function() {

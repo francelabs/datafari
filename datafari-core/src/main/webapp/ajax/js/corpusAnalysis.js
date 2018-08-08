@@ -1,4 +1,4 @@
-//@ sourceURL=corpusAnalysis.js
+//# sourceURL=/Datafari/ajax/js/corpusAnalysis.js
 
 
 $(document).ready(function() {

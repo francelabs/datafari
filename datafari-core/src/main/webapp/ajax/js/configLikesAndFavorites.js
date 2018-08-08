@@ -1,4 +1,4 @@
-//@ sourceURL=configLikesAndFavorites.js
+//# sourceURL=/Datafari/ajax/js/configLikesAndFavorites.js
 
 
 setupLanguage();

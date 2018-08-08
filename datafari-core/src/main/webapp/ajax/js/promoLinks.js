@@ -1,4 +1,4 @@
-//@ sourceURL=promoLink.js
+//# sourceURL=/Datafari/ajax/js/promoLink.js
 
 
 
@@ -551,5 +551,3 @@ function isGreater(biggerDate, smallerDate){	//Compare two dates
     return false;
     }
 }
-
-//@ sourceURL=promoLinks.js

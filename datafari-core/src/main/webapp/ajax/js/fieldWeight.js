@@ -1,4 +1,4 @@
-//# sourceURL=fieldWeight.js
+//# sourceURL=/Datafari/ajax/js/fieldWeight.js
 
 var list;
 var timeouts = [];

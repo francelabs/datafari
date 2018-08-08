@@ -1,4 +1,4 @@
-//@ sourceURL=alertsAdmin.js
+//# sourceURL=/Datafari/ajax/js/alertsAdmin.js
 
 
 $(document).ready(function() {

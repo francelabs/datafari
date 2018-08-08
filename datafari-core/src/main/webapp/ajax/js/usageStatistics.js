@@ -1,4 +1,4 @@
-//@ sourceURL=usageStatistics.js
+//# sourceURL=/Datafari/ajax/js/usageStatistics.js
 
 $(document).ready(function() {
 	$.get("../SearchExpert/ELKAdmin",function(data){

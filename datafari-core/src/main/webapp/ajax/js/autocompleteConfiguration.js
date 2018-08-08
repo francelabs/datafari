@@ -1,4 +1,4 @@
-//@ sourceURL=autocompleteConfiguration.js
+//# sourceURL=/Datafari/ajax/js/autocompleteConfiguration.js
 
 
 $(document).ready(function() {

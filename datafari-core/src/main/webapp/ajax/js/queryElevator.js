@@ -1,5 +1,5 @@
 // Very important to allow debugging !
-//@ sourceURL=queryElevator.js
+//# sourceURL=/Datafari/ajax/js/queryElevator.js
 
 $(document).ready(function() {
 		setupLanguage();

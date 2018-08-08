@@ -1,4 +1,4 @@
-//@ sourceURL=facetConfig.js
+//# sourceURL=/Datafari/ajax/js/facetConfig.js
 
 var list;
 var i = 1;

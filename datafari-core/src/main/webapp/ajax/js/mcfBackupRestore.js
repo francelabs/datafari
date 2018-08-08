@@ -1,4 +1,4 @@
-//@ sourceURL=mcfBackupRestore.js
+//# sourceURL=/Datafari/ajax/js/mcfBackupRestore.js
 
 
 $(document).ready(function() {
@@ -103,6 +103,3 @@ function doRestore() {
 		}
 	});
 }
-
-// Pragma needed to be able to debug JS in the browser
-//# sourceURL=../ajax/js/mcfBackupRestore.js

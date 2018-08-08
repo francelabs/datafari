@@ -1,5 +1,5 @@
 
-//@ sourceURL=onDemandStatistics.js
+//# sourceURL=/Datafari/ajax/js/onDemandStatistics.js
 
 
 setupLanguage();

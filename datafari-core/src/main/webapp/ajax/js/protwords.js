@@ -1,4 +1,4 @@
-//@ sourceURL=protwords.js
+//# sourceURL=/Datafari/ajax/js/protwords.js
 
 
 

@@ -1,7 +1,7 @@
 
 
 
-//@ sourceURL=sizeLimitations.js
+//# sourceURL=/Datafari/ajax/js/sizeLimitations.js
 
 
 $(document).ready(function() {

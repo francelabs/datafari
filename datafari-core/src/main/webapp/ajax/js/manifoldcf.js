@@ -1,4 +1,4 @@
-//@ sourceURL=manifoldcf.js
+//# sourceURL=/Datafari/ajax/js/manifoldcf.js
 
 
 // Be careful: SetInterval executed in every page (and continuously every 250ms) after loading of manifoldcf.html page once

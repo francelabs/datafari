@@ -1,4 +1,4 @@
-//@ sourceURL=alerts.js
+//# sourceURL=/Datafari/ajax/js/alerts.js
 
 
 var d;

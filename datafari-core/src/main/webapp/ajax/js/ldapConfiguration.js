@@ -1,3 +1,5 @@
+//# sourceURL=/Datafari/ajax/js/ldapConfiguration.js
+
 $(document).ready(function() {
 	var SERVERALLOK = 0;
 	var SERVERGENERALERROR = -1;

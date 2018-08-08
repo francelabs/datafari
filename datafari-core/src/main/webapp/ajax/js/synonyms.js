@@ -1,3 +1,5 @@
+//# sourceURL=/Datafari/ajax/js/synonyms.js
+
 var previous="";
 $(document).ready(function() {
 	//If the user refresh the page  

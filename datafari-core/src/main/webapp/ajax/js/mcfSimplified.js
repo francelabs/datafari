@@ -1,5 +1,5 @@
 // Very important to allow debugging !
-//@ sourceURL=mcfSimplified.js
+//# sourceURL=/Datafari/ajax/js/mcfSimplified.js
 
 var timeouts = [];
 var returnData = undefined;
@@ -356,6 +356,3 @@ function addWebConnector(){
     }
   });
 }
-
-//Pragma needed to be able to debug JS in the browser
-//# sourceURL=../ajax/js/mcfSimplified.js

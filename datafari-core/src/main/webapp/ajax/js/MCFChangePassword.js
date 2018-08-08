@@ -1,5 +1,5 @@
 // Very important to allow debugging !
-//@ sourceURL=MCFChangePassword.js
+//# sourceURL=/Datafari/ajax/js/MCFChangePassword.js
 
 $(document).ready(function() {
 		setupLanguage();
