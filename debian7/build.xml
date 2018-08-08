@@ -80,9 +80,9 @@
 		  </replacefilter>
 		</replace>
 		
-		<move todir="${installer.build.dir}/datafari/DEBIAN">
+		<copy todir="${installer.build.dir}/datafari/DEBIAN">
 			<fileset dir="${installer.dir}/DEBIAN" />
-		</move>
+		</copy>
 		<exec executable="chmod">
 			<arg value="-R" />
 			<arg value="755" />
