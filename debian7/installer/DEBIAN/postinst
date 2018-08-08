@@ -41,7 +41,7 @@ if [ -e "$JAVA_HOME"/bin/java ]; then
 
 	#change elk address
 	sed -i -e "s/localhost/${currentnodehost}/g" /opt/datafari/tomcat/conf/elk.properties
-	sed -i "/server.host:/c\server.host: ${currentnodehost}" /opt/datafari/elk/kibana/config/kibana.yml
+	sed -i "/server.host:/c\server.host: 0.0.0.0" /opt/datafari/elk/kibana/config/kibana.yml
 	sed -i -e "s/@NODEHOST@/${currentnodehost}/g" /opt/datafari/bin/utils.sh
 
 	sed -i -e "s/@NODEHOST@/localhost/g" /opt/datafari/tomcat/conf/datafari.properties
