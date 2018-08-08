@@ -1,4 +1,5 @@
 {
+    "delete-user-unallowed" : "You are not allowed to delete the user you are currently connected with !",
     "promolink-default-explanation" : "The default values are mandatory because they are used for the languages that are not filled. You may also prefer to only fullfil the default values in case you want the same text for your promolink, whatever the language of a user.",
     "promolink_default" : "default value for any language",
     "saving" : "Saving...",

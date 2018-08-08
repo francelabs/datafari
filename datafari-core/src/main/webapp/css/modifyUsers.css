@@ -51,8 +51,10 @@ th{
 #Message.danger{
 	color: #F00;
 }
+
 #Message{
-	color : #929292;
+  height: 3em;
+  line-height: 3em;
 }
 
 .ui-dialog-titlebar.ui-widget-header{

@@ -1,3 +1,5 @@
+//# sourceURL=/Datafari/ajax/js/modifyUsers.js
+
 var NOFAVORITESFOUND = 101;
 var SERVERALREADYPERFORMED = 1;
 var SERVERALLOK = 0;
@@ -43,9 +45,9 @@ function showError(code){
 	$("#tableResult").hide();
 	admin_messageDiv.text(message).show();
 	if (danger){
-			admin_messageDiv.addClass("danger").prepend('<i class="fa fa-exclamation-triangle"></i><br/>');
+			admin_messageDiv.addClass("alert-danger").prepend('<i class="fa fa-exclamation-triangle"></i><br/>');
 	}else{
-		admin_messageDiv.removeClass("danger");
+		admin_messageDiv.removeClass("alert-danger");
 		}
 }
 
@@ -57,6 +59,7 @@ function htmlRole(role,username){
 }
 
 function deleteRoleListener (e){
+	$("#Message").hide();
 	var element = $(e.target);
 	while(!element.hasClass("inline_block")){
 		element = element.parent();
@@ -117,15 +120,14 @@ $.get("../SearchAdministrator/getAllUsersAndRoles",function(data){
 					'</tr>';
 		});
 		$("tbody").append(html);
-		console.log($("input").val());
 		$(".password").keydown(function(e){
 			if (e.keyCode == 13){
+				$("#Message").hide();
 				var element = $(e.target);
 				while(!element.hasClass("root")){
 					element = element.parent();
 				}
 				$.post("../SearchAdministrator/changePassword",{username:element.data("user"),password:$(e.target).val()},function(data){
-					console.log(data.code);
 					if (data.code == SERVERALLOK){
 						$(e.target).before('<i class="fa fa-check success"></i>');
 						setTimeout(function(){
@@ -142,8 +144,23 @@ $.get("../SearchAdministrator/getAllUsersAndRoles",function(data){
 		});				
 
 		$(".delete_user").click(function(e){
+			$("#Message").hide();
 			elementDiv = $(e.target);
-			window.dialogue.dialog("open");
+			while(!elementDiv.hasClass("root")){
+				elementDiv = elementDiv.parent();
+			}
+			$.get("../SearchAdministrator/checkUser",{username:elementDiv.data("user"),action:"delete"}, function(data) {
+				if(data.code == SERVERALLOK) {
+					if(data.allowed == true) {
+						window.dialogue.dialog("open");
+					} else {
+						$("#Message").removeClass("alert-success");
+						$("#Message").addClass("alert-danger");
+						$("#Message").html(window.i18n.msgStore['delete-user-unallowed']);
+						$("#Message").show();
+					}
+				}
+			});
 	     });
 			
 		$(".add_role").autocomplete({
@@ -153,7 +170,6 @@ $.get("../SearchAdministrator/getAllUsersAndRoles",function(data){
 				//console.log(role);
 				var element = $(event.target);
 				element.val("");
-				console.log("test user and role "+element.data("user")+" ."+role);
 				if ($("."+element.data("user")+" ."+role).length==0){
 					$.post("../SearchAdministrator/addRole",{username:element.data("user"),role:role},function(data){
 						if (data.code==SERVERALLOK){
