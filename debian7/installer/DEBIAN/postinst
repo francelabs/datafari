@@ -1,89 +1,92 @@
 #!/bin/bash
 
+if [ -e "$JAVA_HOME"/bin/java ]; then
 
-# Source debconf library.
-. /usr/share/debconf/confmodule
+	# Source debconf library.
+	. /usr/share/debconf/confmodule
 
-mkdir -p /opt/datafari/tomcat/webapps/Datafari
-mv /opt/datafari/tomcat/webapps/Datafari.war /opt/datafari/tomcat/webapps/Datafari
-unzip -qq /opt/datafari/tomcat/webapps/Datafari/Datafari.war -d /opt/datafari/tomcat/webapps/Datafari
+	mkdir -p /opt/datafari/tomcat/webapps/Datafari
+	mv /opt/datafari/tomcat/webapps/Datafari.war /opt/datafari/tomcat/webapps/Datafari
+	unzip -qq /opt/datafari/tomcat/webapps/Datafari/Datafari.war -d /opt/datafari/tomcat/webapps/Datafari
 
-# Get Git commit id and version 
+	# Get Git commit id and version 
 
- 
- file="/opt/datafari/tomcat/conf/git.properties"
+	file="/opt/datafari/tomcat/conf/git.properties"
 
-if [ -f "$file" ]
-	then
-		while IFS='=' read -r key value
-  		do
-			if  [[ $key == git.commit.id.abbrev ]]
-			then
-			
+	if [ -f "$file" ]; then
+		while IFS='=' read -r key value; do
+			if [[ $key == git.commit.id.abbrev ]]; then
+
 				commit=$value
-				
+
 			fi
-			
-			if  [[ $key == git.closest.tag.name ]]
-			then
-			
+
+			if [[ $key == git.closest.tag.name ]]; then
+
 				version=$value
 			fi
-  		done < "$file"
+		done <"$file"
+	fi
+
+	sed -i -e "s/@VERSION@/$version/g" /opt/datafari/tomcat/webapps/Datafari/footer.jsp
+	sed -i -e "s/@VERSION@/$version/g" /opt/datafari/tomcat/webapps/Datafari/admin/admin-footer.jsp
+	sed -i -e "s/@COMMIT@/$commit/g" /opt/datafari/tomcat/webapps/Datafari/admin/admin-footer.jsp
+
+	#start script
+
+	db_input high datafari/node_host || true
+	db_go
+	db_get datafari/node_host
+	currentnodehost=${RET}
+
+	#change elk address
+	sed -i -e "s/localhost/${currentnodehost}/g" /opt/datafari/tomcat/conf/elk.properties
+	sed -i "/server.host:/c\server.host: ${currentnodehost}" /opt/datafari/elk/kibana/config/kibana.yml
+	sed -i -e "s/@NODEHOST@/${currentnodehost}/g" /opt/datafari/bin/utils.sh
+
+	sed -i -e "s/@NODEHOST@/localhost/g" /opt/datafari/tomcat/conf/datafari.properties
+	sed -i -e "s/@NODEHOST@/localhost/g" /opt/datafari/solr/bin/solr.in.sh
+	sed -i -e "s/@SOLRHOSTS@/localhost:2181/g" /opt/datafari/solr/bin/solr.in.sh
+	sed -i -e "s/@SOLRHOSTS@/localhost:2181/g" /opt/datafari/tomcat/conf/datafari.properties
+	sed -i -e "s/@ZKHOST@/localhost:2181/g" /opt/datafari/mcf/mcf_home/properties.xml
+
+	sed -i -e "s/@NUMSHARDS@/1/g" /opt/datafari/tomcat/conf/datafari.properties
+	sed -i -e "s/@NUMSHARDS@/1/g" /opt/datafari/bin/start-datafari.sh
+	sed -i -e "s/@ISMAINNODE@/true/g" /opt/datafari/tomcat/conf/datafari.properties
+
+	mkdir -p /opt/datafari/solr/solrcloud
+	mv /opt/datafari/solr/solr_home/FileShare /opt/datafari/solr/solrcloud
+	mv /opt/datafari/solr/solr_home/Statistics /opt/datafari/solr/solrcloud
+	mv /opt/datafari/solr/solr_home/Promolink /opt/datafari/solr/solrcloud
+	db_input high datafari/datafari_password || true
+	db_go
+	db_get datafari/datafari_password
+	chmod -R 775 /opt/datafari
+
+	cd /opt/datafari/mcf/mcf_home/obfuscation-utility
+	sed -i -e "s~@PASSWORD@~$(./obfuscate.sh ${RET})~g" /opt/datafari/mcf/mcf_home/properties-global.xml
+	sed -i -e "s/@TEMPADMINPASSWORD@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
+	db_input high datafari/postgres_password || true
+	db_go
+	db_get datafari/postgres_password
+	sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${RET})~g" /opt/datafari/mcf/mcf_home/properties-global.xml
+	sed -i -e "s~@POSTGRESPASSWORD@~${RET}~g" /opt/datafari/pgsql/pwd.conf
+	id -u postgres >/dev/null 2>&1 || useradd postgres
+	id -u datafari >/dev/null 2>&1 || useradd datafari
+	chown -R datafari /opt/datafari
+	chown -R postgres /opt/datafari/pgsql/
+	chmod -R 700 /opt/datafari/pgsql/
+	chmod -R 777 /opt/datafari/pid
+	chmod -R 777 /opt/datafari/logs
+	chmod 755 /opt/datafari/elk/kibana/bin/*
+	chmod 755 /opt/datafari/elk/kibana/node/bin/*
+	chmod 755 /opt/datafari/elk/logstash/vendor/jruby/bin/*
+	chmod 755 /opt/datafari/elk/scripts/*
+
+else
+	echo "Datafari cannot be installed."
+	echo "Environment variable JAVA_HOME is not properly set." 1>&2
+	echo "Please set your JAVA HOME variable and reinstall Datafari"
+	echo "Go to  https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/66125825/Quick+Start+Guide for more information"
+	exit 1
 fi
-
-sed -i -e "s/@VERSION@/$version/g" /opt/datafari/tomcat/webapps/Datafari/footer.jsp
-sed -i -e "s/@VERSION@/$version/g" /opt/datafari/tomcat/webapps/Datafari/admin/admin-footer.jsp
-sed -i -e "s/@COMMIT@/$commit/g" /opt/datafari/tomcat/webapps/Datafari/admin/admin-footer.jsp
-
-
-#start script
-
-db_input high datafari/node_host || true
-db_go
-db_get datafari/node_host
-currentnodehost=${RET}
-
-#change elk address
-sed -i -e "s/localhost/${currentnodehost}/g" /opt/datafari/tomcat/conf/elk.properties
-sed -i "/server.host:/c\server.host: ${currentnodehost}" /opt/datafari/elk/kibana/config/kibana.yml
-sed -i -e "s/@NODEHOST@/${currentnodehost}/g" /opt/datafari/bin/utils.sh
-
-sed -i -e "s/@NODEHOST@/localhost/g" /opt/datafari/tomcat/conf/datafari.properties
-sed -i -e "s/@NODEHOST@/localhost/g" /opt/datafari/solr/bin/solr.in.sh
-sed -i -e "s/@SOLRHOSTS@/localhost:2181/g" /opt/datafari/solr/bin/solr.in.sh
-sed -i -e "s/@SOLRHOSTS@/localhost:2181/g" /opt/datafari/tomcat/conf/datafari.properties
-sed -i -e "s/@ZKHOST@/localhost:2181/g" /opt/datafari/mcf/mcf_home/properties.xml
-
-sed -i -e "s/@NUMSHARDS@/1/g" /opt/datafari/tomcat/conf/datafari.properties
-sed -i -e "s/@NUMSHARDS@/1/g" /opt/datafari/bin/start-datafari.sh
-sed -i -e "s/@ISMAINNODE@/true/g" /opt/datafari/tomcat/conf/datafari.properties
-
-mkdir -p /opt/datafari/solr/solrcloud
-mv /opt/datafari/solr/solr_home/FileShare /opt/datafari/solr/solrcloud
-mv /opt/datafari/solr/solr_home/Statistics /opt/datafari/solr/solrcloud
-mv /opt/datafari/solr/solr_home/Promolink /opt/datafari/solr/solrcloud
-db_input high datafari/datafari_password || true
-db_go
-db_get datafari/datafari_password
-chmod -R 775 /opt/datafari
-
-cd /opt/datafari/mcf/mcf_home/obfuscation-utility
-sed -i -e "s~@PASSWORD@~$(./obfuscate.sh ${RET})~g" /opt/datafari/mcf/mcf_home/properties-global.xml
-sed -i -e "s/@TEMPADMINPASSWORD@/${RET}/g" /opt/datafari/tomcat/conf/datafari.properties
-db_input high datafari/postgres_password || true
-db_go
-db_get datafari/postgres_password
-sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${RET})~g" /opt/datafari/mcf/mcf_home/properties-global.xml
-sed -i -e "s~@POSTGRESPASSWORD@~${RET}~g" /opt/datafari/pgsql/pwd.conf
-id -u postgres >/dev/null 2>&1 || useradd postgres
-id -u datafari >/dev/null 2>&1 || useradd datafari
-chown -R datafari /opt/datafari
-chown -R postgres /opt/datafari/pgsql/
-chmod -R 700 /opt/datafari/pgsql/
-chmod -R 777 /opt/datafari/pid
-chmod -R 777 /opt/datafari/logs
-chmod 755 /opt/datafari/elk/kibana/bin/*
-chmod 755 /opt/datafari/elk/kibana/node/bin/*
-chmod 755 /opt/datafari/elk/logstash/vendor/jruby/bin/*
-chmod 755 /opt/datafari/elk/scripts/*
