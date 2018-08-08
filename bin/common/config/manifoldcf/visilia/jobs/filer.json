@@ -62,10 +62,10 @@
             },
             "lowerNames": {
               "_value_": "",
-              "_attribute_value": "false"
+              "_attribute_value": "true"
             }
           },
-          "stage_connectionname": "TikaOCR"
+          "stage_connectionname": "Tika"
         },
         {
           "stage_isoutput": "false",
