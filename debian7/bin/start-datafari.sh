@@ -86,6 +86,13 @@ if [[ "$_java" ]]; then
     fi
 fi
 
+if [ -e "$JAVA_HOME"/bin/java ]; then
+	echo "JAVA HOME is correctly set"
+else
+	echo "Environment variable JAVA_HOME is not properly set." 1>&2
+	exit 1
+fi
+
 
 if  [[ "$STATE" = *installed* ]];
 then
