@@ -126,7 +126,7 @@
     "adminUI-RelevancySetupFile": "Relevancy Setup File",
     "adminUI-RelevancySetupFile-saveError": "Error during the save process",
     "adminUI-RelevancySetupFile-saveOK": "Relevancy setup file successfully saved",
-    "adminUI-ReloadWarning": "Validating uploads the config to zookeeper and refreshes the core immediately. This is not recommended while the server is heaviely loaded (indexation time for example) and may take more than a minute if your core contains millions of entries. The search service responses will be slower than usual while the core is reloading.",
+    "adminUI-ReloadWarning": "Validating uploads the config to zookeeper and refreshes the core immediately. This is not recommended while the server is heaviely loaded (indexation time for example) and may take more than a minute if your core contains millions of entries. The search service responses will be slower than usual while the core is reloading. In addition, already indexed documents will not take this modification into account. You need to reindex those, please contact your Connectors admin to trigger the reindexing.",
     "adminUI-RolesError": "At least one role must be assigned.",
     "adminUI-SchemaAnalysis": "Анализ схемы",
     "adminUI-SearchEngineAdmin": "Администрирование поисковой системы",

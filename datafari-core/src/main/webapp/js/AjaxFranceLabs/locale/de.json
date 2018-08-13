@@ -126,7 +126,7 @@
     "adminUI-RelevancySetupFile": "Relevanz-Einstellungsdatei",
     "adminUI-RelevancySetupFile-saveError": "Fehler während des Speichervorgangs",
     "adminUI-RelevancySetupFile-saveOK": "Relevanz-Einstellungsdatei erfolgreich gespeichert",
-    "adminUI-ReloadWarning": "Bestätigen lädt die Konfiguration direkt zu Zookeeper hoch und lädt den Kern direkt neu. Dies wird nicht empfohlen, wenn der Server unter Last steht (z.B. während einer Indizierung) und kann mehr als eine Minute dauern, wenn der Kern Millionen von Einträgen enthält. Die Antworten des Suchdienstes werden langsamer als normal sein, während der Kern neu lädt.",
+    "adminUI-ReloadWarning": "Validating uploads the config to zookeeper and refreshes the core immediately. This is not recommended while the server is heaviely loaded (indexation time for example) and may take more than a minute if your core contains millions of entries. The search service responses will be slower than usual while the core is reloading. In addition, already indexed documents will not take this modification into account. You need to reindex those, please contact your Connectors admin to trigger the reindexing.",
     "adminUI-RolesError": "Wenigstens eine Rolle muss zugeordnet sein.",
     "adminUI-SchemaAnalysis": "Schemaanalyse",
     "adminUI-SearchEngineAdmin": "Suchmaschinenverwaltung",

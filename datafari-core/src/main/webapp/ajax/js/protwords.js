@@ -69,7 +69,7 @@ function getFile(){
         	}
 			//Else print the content of the file in a textArea
 			else{
-				$("#ajaxResponse").append("<legend>"+window.i18n.msgStore['stopwords']+"</legend>");
+				$("#ajaxResponse").append("<legend>"+window.i18n.msgStore['protwords']+"</legend>");
 				$("#ajaxResponse").append("<div class=\"col-sm-1\"</div>");
 				$("#ajaxResponse").append("<form class=\"col-sm-11\" id=\"res\">");
 				$("#res").append("<div class=\"form-group\" id=\"div1\">");

@@ -126,7 +126,7 @@
     "adminUI-RelevancySetupFile": "Fichier de système de pertinence",
     "adminUI-RelevancySetupFile-saveError": "Erreur durant la procédure de sauvegarde",
     "adminUI-RelevancySetupFile-saveOK": "Le chemin du fichier de système de pertinence a été sauvegardé avec succès",
-    "adminUI-ReloadWarning": "La validation entraîne le chargement de la configuration dans l'instance de zookeeper et le rechargement du core SolR. Cela n'est pas recommandé lorsque le système est très solicité (lorsqu'une indexation est en cours par exemple) et le rechargement du core peut prendre plus d'une minute si votre index comprend plusieurs millions de fichiers. Les performances du service de recherche seront diminuées pendant le rechargement du core.",
+    "adminUI-ReloadWarning": "La validation entraîne le chargement de la configuration dans l'instance de zookeeper et le rechargement du core SolR. Cela n'est pas recommandé lorsque le système est très solicité (lorsqu'une indexation est en cours par exemple) et le rechargement du core peut prendre plus d'une minute si votre index comprend plusieurs millions de fichiers. Les performances du service de recherche seront diminuées pendant le rechargement du core. De plus, les documents déjà indexés ne prendront pas en compte cette modification. Vous devez les réindexer, veuillez contacter votre administrateur pour déclencher la réindexation.",
     "adminUI-RolesError": "Au moins un rôle doit être assigné",
     "adminUI-SchemaAnalysis": "Analyse du schéma",
     "adminUI-SearchEngineAdmin": "Administration du moteur de recherche",
