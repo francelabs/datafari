@@ -87,7 +87,7 @@
               "_attribute_value": "false"
             }
           },
-          "stage_connectionname": "TikaOCR",
+          "stage_connectionname": "Tika",
           "stage_prerequisite": "1"
         },
         {
