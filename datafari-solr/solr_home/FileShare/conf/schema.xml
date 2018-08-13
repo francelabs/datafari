@@ -85,6 +85,7 @@
    <field name="nbLikes" type="likes"   />
 
    <field name="extension" type="lowerCasedString" indexed="true" stored="true"/>
+   <field name="mime" type="lowerCasedString" indexed="true" stored="true"/>
    <field name="language" type="string" indexed="true" stored="true"/>
    <field name="source" type="string" indexed="true" stored="true"/>
    <field name="url" type="text_en" indexed="true" stored="true"/>

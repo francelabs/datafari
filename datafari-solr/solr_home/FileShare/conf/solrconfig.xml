@@ -1181,7 +1181,7 @@
     -->
     
     <updateProcessor class="com.francelabs.datafari.updateprocessor.DatafariUpdateProcessorFactory" name="datafariUpdateProcessor">
-      <str name="extension.fromname">true</str>
+      
     </updateProcessor>
 
 	<updateRequestProcessorChain name="datafari" processor="datafariUpdateProcessor">
