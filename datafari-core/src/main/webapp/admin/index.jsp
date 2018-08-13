@@ -251,13 +251,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 
 						<li id="LikesAndFavorites"><a id="likesFavoritesSearchEng-AdminUI" class="ajax-link" href="../ajax/config_likesAndFavorites.html"></a></li>
 						<li id="RelevancySetupFile"><a id="relevancySetupFile-AdminUI" class="ajax-link" href="../ajax/relevancyFile.html"></a></li>
-<%
-	if(request.isUserInRole("SearchAdministrator")){
-%>
 						<li id="Zookeeper"><a id="zookeeper-AdminUI" class="ajax-link" href="../ajax/config_zookeeper.html"></a></li>
-<%
-	}
-%>
 					</ul>
 				</li>
 <%

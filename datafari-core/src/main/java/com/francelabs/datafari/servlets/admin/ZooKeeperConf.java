@@ -33,7 +33,7 @@ import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 import com.francelabs.datafari.utils.ZKUtils;
 
-@WebServlet("/SearchAdministrator/zookeeperConf")
+@WebServlet("/SearchExpert/zookeeperConf")
 public class ZooKeeperConf extends HttpServlet {
   private final String env;
   private static final String confname = "FileShare";

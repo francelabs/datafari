@@ -352,7 +352,7 @@ function addWebConnector(){
     //this is called after the response or error functions are finsihed
     complete: function(jqXHR, textStatus){
       //enable the button
-      $("#newWebConfig").button("reset");;
+      $("#newWebConfig").button("reset");
     }
   });
 }

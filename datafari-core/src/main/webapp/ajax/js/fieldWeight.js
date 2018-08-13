@@ -35,7 +35,7 @@ $(document).ready(function() {
 	$("#uprel").click(function(e){
 		e.preventDefault();
 		$("#uprel").button("loading");
-		$.get("../SearchAdministrator/zookeeperConf?action=upload_and_reload",function(data){
+		$.get("../SearchExpert/zookeeperConf?action=upload_and_reload",function(data){
 			$("#uprel").button("reset");
 			if(data.code == 0) {
 				$("#answerqf").hide();

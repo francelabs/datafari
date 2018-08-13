@@ -75,12 +75,13 @@ $(document).ready(function() {
 		$("#query").change(function() {getQuery()});
 		
 		//Set the onClick function of the saveElevateConf button
-		$("#saveElevateConf").click(function() {
+		$("#saveElevateConf").click(function(e) {
+			e.preventDefault();
 			if($("#query").val() !== "") {
 				if (confirm(window.i18n.msgStore['solr-interruption'])) {
 			        
 					//Disable the button until the called servlet responds
-					$("#saveElevateConf").prop('disabled', true);
+					$("#saveElevateConf").button("loading");
 					$("#message").hide();
 					var docsList = new Array();
 					$("#docsTableContent tr").each(function( index ) {
@@ -95,9 +96,9 @@ $(document).ready(function() {
 							$("#message").html(window.i18n.msgStore["LocalConfSaved"]);
 							$("#message").addClass("success");
 							$("#message").show();
-							$.get("../SearchAdministrator/zookeeperConf?action=upload_and_reload",function(data){
+							$.get("../SearchExpert/zookeeperConf?action=upload_and_reload",function(data){
 								//Re-enable the button
-								$("#saveElevateConf").prop('disabled', false);
+								$("#saveElevateConf").button("reset");
 								if(data.code == 0) {
 									$("#messageZK").html(window.i18n.msgStore["zkOK"]);
 									$("#messageZK").addClass("success");
@@ -112,7 +113,7 @@ $(document).ready(function() {
 							},"json");
 						} else {
 							//Re-enable the button
-							$("#saveElevateConf").prop('disabled', false);
+							$("#saveElevateConf").button("reset");
 							$("#message").html(window.i18n.msgStore["LocalConfSaveError"]);
 							$("#message").addClass("error");
 							$("#message").show();
@@ -123,12 +124,13 @@ $(document).ready(function() {
 		});
 		
 		//Set the onClick function of the deleteElevateConf button
-		$("#deleteElevateConf").click(function() {
+		$("#deleteElevateConf").click(function(e) {
+			e.preventDefault();
 			if($("#query").val() !== "") {
 			
 				if (confirm(window.i18n.msgStore['solr-interruption'])) {
 					//Disable the button until the called servlet responds
-					$("#deleteElevateConf").prop('disabled', true);
+					$("#deleteElevateConf").button("loading");
 					$("#message").hide();
 					$.post("../SearchExpert/queryElevator",{
 						query : $("#query").val(),
@@ -139,9 +141,9 @@ $(document).ready(function() {
 							$("#message").addClass("success");
 							$("#message").show();
 							fillQuerySelector();
-							$.get("../SearchAdministrator/zookeeperConf?action=upload_and_reload",function(data){
+							$.get("../SearchExpert/zookeeperConf?action=upload_and_reload",function(data){
 								//Re-enable the button
-								$("#deleteElevateConf").prop('disabled', false);
+								$("#deleteElevateConf").button("reset");
 								if(data.code == 0) {
 									$("#messageZK").html(window.i18n.msgStore["zkOK"]);
 									$("#messageZK").addClass("success");
@@ -156,7 +158,7 @@ $(document).ready(function() {
 							},"json");
 						} else {
 							//Re-enable the button
-							$("#deleteElevateConf").prop('disabled', false);
+							$("#deleteElevateConf").button("reset");
 							$("#message").html(window.i18n.msgStore["ConfDeletedError"]);
 							$("#message").addClass("error");
 							$("#message").show();
@@ -172,20 +174,23 @@ $(document).ready(function() {
 		});
 		
 		//Set the onClick function of the saveNewElevate button
-		$("#saveNewElevate").click(function() {
-			
-			if (confirm(window.i18n.msgStore['solr-interruption'])) {
+		$("#saveNewElevate").click(function(e) {
+			e.preventDefault();
+			var docsList = new Array();
+			$(".docInput").each(function( index ) {
+				if($(this).val()) {
+					docsList[index] = $.trim($(this).val());
+				}
+		    });
+			var queryVal = $.trim($("#queryInput").val());
+			if (queryVal !== "" && docsList.length > 0 && confirm(window.i18n.msgStore['solr-interruption'])) {
+				
 				//Disable the button until the called servlet responds
-				$("#saveNewElevate").prop('disabled', true);
+				$("#saveNewElevate").button("loading");
 				$("#message2").hide();
-				var docsList = new Array();
-				$(".docInput").each(function( index ) {
-					if($(this).val()) {
-						docsList[index] = $.trim($(this).val());
-					}
-			    });
+				
 				$.post("../SearchExpert/queryElevator",{
-					query : $.trim($("#queryInput").val()),
+					query : queryVal,
 					docs : docsList,
 					tool : "create"
 				},function(data){
@@ -195,9 +200,9 @@ $(document).ready(function() {
 						$("#message2").show();			
 						fillQuerySelector();
 						reinitCreateTbody();
-						$.get("../SearchAdministrator/zookeeperConf?action=upload_and_reload",function(data){
+						$.get("../SearchExpert/zookeeperConf?action=upload_and_reload",function(data){
 							//Re-enable the button
-							$("#saveNewElevate").prop('disabled', false);
+							$("#saveNewElevate").button("reset");
 							if(data.code == 0) {
 								$("#messageZK2").html(window.i18n.msgStore["zkOK"]);
 								$("#messageZK2").addClass("success");
@@ -212,7 +217,7 @@ $(document).ready(function() {
 						},"json");
 					} else {
 						//Re-enable the button
-						$("#saveNewElevate").prop('disabled', false);
+						$("#saveNewElevate").button("reset");
 						$("#message2").html(window.i18n.msgStore["LocalConfSaveError"]);
 						$("#message2").addClass("error");
 						$("#message2").show();
@@ -258,12 +263,15 @@ function setupLanguage(){
 	 document.getElementById("modifyElevateLabel").innerHTML = window.i18n.msgStore['modifyElevateLabel'];
 	 document.getElementById("modifyDocsOderLabel").innerHTML = window.i18n.msgStore['modifyDocsOderLabel'];
 	 document.getElementById("elevatorDocsListLabel").innerHTML = window.i18n.msgStore['elevatorDocsListLabel'];
-	 $("#saveElevateConf").attr("value", window.i18n.msgStore["confirm"]);
-	 $("#deleteElevateConf").attr("value", window.i18n.msgStore["deleteElevatorConf"]);
+	 $("#saveElevateConf").html(window.i18n.msgStore["confirm"]);
+	 $("#saveElevateConf").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
+	 $("#deleteElevateConf").html(window.i18n.msgStore["deleteElevatorConf"]);
+	 $("#deleteElevateConf").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['deleteElevatorConf']);
 	 
 	 $("#createElevateLabel").html(window.i18n.msgStore["createElevateLabel"]);
 	 $("#queryThLabel").html(window.i18n.msgStore["queryThLabel"]);
-	 $("#saveNewElevate").attr("value", window.i18n.msgStore["confirm"]);
+	 $("#saveNewElevate").html(window.i18n.msgStore["confirm"]);
+	 $("#saveNewElevate").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
 	 $("#addDocButton").attr("title", window.i18n.msgStore["elevateAddDoc"]);
 	 $("#query-elevator-ui-desc").html(window.i18n.msgStore["query-elevator-ui-desc"]);
 	 

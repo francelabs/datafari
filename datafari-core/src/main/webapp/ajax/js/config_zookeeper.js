@@ -23,7 +23,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		//Disable the button until the called servlet responds
 		$("#download").prop('disabled', true);
-		$.get("../SearchAdministrator/zookeeperConf?action=download",function(data){
+		$.get("../SearchExpert/zookeeperConf?action=download",function(data){
 			//Re-enable the button
 			$("#download").prop('disabled', false);
 			if(data.code == 0) {
@@ -43,7 +43,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		//Disable the button until the called servlet responds
 		$("#upload").prop('disabled', true);
-		$.get("../SearchAdministrator/zookeeperConf?action=upload",function(data){
+		$.get("../SearchExpert/zookeeperConf?action=upload",function(data){
 			//Re-enable the button
 			$("#upload").prop('disabled', false);
 			if(data.code == 0) {
@@ -63,7 +63,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		//Disable the button until the called servlet responds
 		$("#reload").prop('disabled', true);
-		$.get("../SearchAdministrator/zookeeperConf?action=reload",function(data){
+		$.get("../SearchExpert/zookeeperConf?action=reload",function(data){
 			//Re-enable the button
 			$("#reload").prop('disabled', false);
 			if(data.code == 0) {
