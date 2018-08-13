@@ -226,11 +226,11 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 <%
 	if(request.isUserInRole("SearchAdministrator")){
 %>          <li id="ELKConfiguration"><a id="elkConfiguration-AdminUI" class="ajax-link" href="../ajax/elkConfiguration.html"></a></li>
-						<li id="SizeLimitation"><a id="sizeLimitation-AdminUI" class="ajax-link" href="../ajax/SizeLimitations.html"></a></li>
-						<li id="AutocompleteConfiguration"><a id="autocompleteConfig-AdminUI" class="ajax-link" href="../ajax/AutocompleteConfiguration.html"></a></li>
 <%
 	}
 %>
+            <li id="SizeLimitation"><a id="sizeLimitation-AdminUI" class="ajax-link" href="../ajax/SizeLimitations.html"></a></li>
+            <li id="AutocompleteConfiguration"><a id="autocompleteConfig-AdminUI" class="ajax-link" href="../ajax/AutocompleteConfiguration.html"></a></li>
 					</ul>
 				</li>
 				<li class="dropdown" id="Conf">
