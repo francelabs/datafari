@@ -153,7 +153,7 @@
     "adminUI-UsernameAlreadyUsed": "The username already exists.",
     "adminUI-UsernameInvalid": "The username is invalid or the server couldn't check it.",
     "adminUI-Welcome": "Bem Vindo,",
-    "adminUI-Zookeeper": "Zookeeper",
+    "adminUI-Zookeeper": "System Configuration Manager",
     "adminUI-ZooKeeperErrorsStats": "ZooKeeper - Errors Statistics",
     "adminUiLink": "Opções",
     "adNote": "Aqui você pode atribuir funções para usuários do AD. Observer que para mostrar esta lista de usuários AD, você DEVE forncecer na configuração, um usuário que possui direitos suficientes.</br>A lista abaixo MOSTRA APENAS os usuários habilitados do Active Directory !",

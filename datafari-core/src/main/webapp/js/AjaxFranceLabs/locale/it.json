@@ -153,7 +153,7 @@
     "adminUI-UsernameAlreadyUsed": "The username already exists.",
     "adminUI-UsernameInvalid": "The username is invalid or the server couldn't check it.",
     "adminUI-Welcome": "Benvenuto,",
-    "adminUI-Zookeeper": "Zookeeper",
+    "adminUI-Zookeeper": "System Configuration Manager",
     "adminUI-ZooKeeperErrorsStats": "ZooKeeper - Errors Statistics",
     "adminUiLink": "Amministrazione",
     "adNote": "Qui puoi aggiungere ruoli Datafari agli utenti AD. Nota: per visualizzare la lista degli utenti AD, devi specificare nella configurazione un utente con sufficienti privilegi.</br>La lista sottostante mostra solamente gli utenti abilitati all'Active Directory !",

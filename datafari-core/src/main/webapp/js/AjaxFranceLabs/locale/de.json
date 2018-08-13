@@ -153,7 +153,7 @@
     "adminUI-UsernameAlreadyUsed": "Der Benutzername exisitiert bereits.",
     "adminUI-UsernameInvalid": "Der Benutzername ist nicht zulässig oder der Server konnte ihn nicht überprüfen.",
     "adminUI-Welcome": "Willkommen,",
-    "adminUI-Zookeeper": "Zookeeper",
+    "adminUI-Zookeeper": "System Configuration Manager",
     "adminUI-ZooKeeperErrorsStats": "ZooKeeper - Fehlerstatistik",
     "adminUiLink": "Admin",
     "adNote": "Hier kannst du die Datafari Rollen zu AD Benutzern hinzufügen",

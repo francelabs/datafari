@@ -153,7 +153,7 @@
     "adminUI-UsernameAlreadyUsed": "The username already exists.",
     "adminUI-UsernameInvalid": "The username is invalid or the server couldn't check it.",
     "adminUI-Welcome": "Welcome,",
-    "adminUI-Zookeeper": "Zookeeper",
+    "adminUI-Zookeeper": "System Configuration Manager",
     "adminUI-ZooKeeperErrorsStats": "ZooKeeper - Errors Statistics",
     "adminUiLink": "Admin",
     "adNote": "Here you can add Datafari roles to AD users. Note that in order to display this list of AD users, you MUST provide in the configuration, a user who has the sufficient rights.</br>The below list ONLY DISPLAYS the ENABLED USERS of the Active Directory !",
