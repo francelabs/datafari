@@ -201,7 +201,7 @@ function verifAdd(){	//Used to check if ther's already a promoLink with the spec
 					$("#ajaxResponse").append("<h3 class=col-xs-6>"+data+"</h3>");
 					$("#ajaxResponse").append("<div class=col-xs-3></div>");
 					$('#newPromoLink').attr("disabled", true);
-	        	}else if(data.response.docs.length>0){//if there is already a promoLink ask for confirm and print the attributes of this promoLink
+	        	}else if(data.response.docs.length>0 && existsKeyword(data.response.docs, $("#keyword").val())){//if there is already a promoLink ask for confirm and print the attributes of this promoLink
 	        		$("#addPromFormBis").empty();
 	        		$("#addPromFormBis").append("<div class=\"col-sm-2\"></div>");
 	        		$("#addPromFormBis").append("<h3>"+window.i18n.msgStore['promoLinkAlready']+"</h3><div class=\"col-sm-2\"></div><br />");
@@ -245,6 +245,16 @@ function verifAdd(){	//Used to check if ther's already a promoLink with the spec
 	        }  
 	 });
 }
+
+function existsKeyword(docs, keyword) {
+	for(var i=0; i<docs.length; i++) {
+		if(docs[i].keyword == keyword) {
+			return true;
+		}
+	}
+	return false;
+}
+
 function cancel(){
 	oldKey=null;
 	$("#addPromFormBis").empty();
