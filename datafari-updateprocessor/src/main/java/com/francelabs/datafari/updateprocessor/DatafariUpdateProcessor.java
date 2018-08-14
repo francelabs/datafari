@@ -143,6 +143,7 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
       language = "en";
     }
     doc.addField("title_" + language, filename);
+    doc.addField("exactTitle", filename);
 
     String extension = "";
     String mime = "";
