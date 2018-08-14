@@ -80,8 +80,8 @@
    -->
   <field name="title" type="text_general" indexed="false" stored="true" multiValued="true"/>
   <field name="title_en" type="text_en" indexed="true" stored="false" multiValued="true"/>
-  <field name="title_fr" type="text_fr" indexed="true" stored="false" multiValued="true"/>
-  <field name="jsoup_title" type="text_general" indexed="false" stored="true" multiValued="true"/>
+   <field name="title_fr" type="text_fr" indexed="true" stored="false" multiValued="true"/>
+   <field name="jsoup_title" type="text_general" indexed="false" stored="true" multiValued="true"/>
    <field name="nbLikes" type="likes"   />
 
    <field name="extension" type="lowerCasedString" indexed="true" stored="true"/>
@@ -281,12 +281,12 @@
     <field name="preview_content" type="string" indexed="false" stored="true" multiValued="true"/>
 
 <!-- Basic entity extraction -->
-<!--  
 	<field name="entity_person" type="key_phrases" indexed="true" stored="true" multiValued="true"/>
 	<field name="entity_phone" type="string" indexed="true" stored="true" multiValued="true"/>
 	<field name="entity_person_present" type="text_general" indexed="true" stored="true" multiValued="false"/>
 	<field name="entity_phone_present" type="text_general" indexed="true" stored="true" multiValued="false"/>
--->  
+	<field name="entity_special_present" type="text_general" indexed="true" stored="true" multiValued="false"/>
+	
     <dynamicField name="ignored_*" type="ignored" multiValued="true"/>
     <dynamicField name="ontology_*" type="string" multiValued="true"/>
 
@@ -502,7 +502,7 @@
     <fieldType name="text_nostem" class="solr.TextField" positionIncrementGap="100">
       <analyzer>
         <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-        <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="0" generateNumberParts="0" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="0" splitOnNumerics="0"/>
+        <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="0" generateNumberParts="0" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="0" splitOnNumerics="0" preserveOriginal="1"/>
         <filter class="solr.LowerCaseFilterFactory"/>
       </analyzer>
     </fieldType>
@@ -565,7 +565,7 @@
         <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0" splitOnCaseChange="1"/>
         <filter class="solr.LimitTokenCountFilterFactory" maxTokenCount="15000" consumeAllTokens="false" />
         <filter class="solr.LowerCaseFilterFactory"/>
-         <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
+        <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
         <filter class="solr.PorterStemFilterFactory"/>
       </analyzer>
       <analyzer type="query">
@@ -573,7 +573,7 @@
         <filter class="solr.SynonymGraphFilterFactory" synonyms="synonyms_en.txt" ignoreCase="true" expand="true"/>
         <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1"/>
         <filter class="solr.LowerCaseFilterFactory"/>
-         <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
+        <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
         <filter class="solr.PorterStemFilterFactory"/>
       </analyzer>
     </fieldType>
@@ -751,13 +751,13 @@
         <filter class="solr.SynonymGraphFilterFactory" synonyms="synonyms_fr.txt" ignoreCase="true" expand="true"/>
         <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1" preserveOriginal="0"/>
         <filter class="solr.LowerCaseFilterFactory"/>
-	<filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
+ 	<filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
         <filter class="solr.FrenchLightStemFilterFactory"/>
         <filter class="solr.ASCIIFoldingFilterFactory"/>
       </analyzer>
     </fieldType>
     <!--  Entity extraction -->
- <!--  
+ 
     <fieldType name="key_phrases" class="solr.TextField" sortMissingLast="true" omitNorms="true">
 <analyzer>
   <tokenizer class="solr.WhitespaceTokenizerFactory"/>
@@ -766,7 +766,7 @@
     <filter class="solr.LowerCaseFilterFactory"/>
   </analyzer>
 </fieldType>
- -->
+    
 
  </types>
 

@@ -144,6 +144,10 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     }
     doc.addField("title_" + language, filename);
     doc.addField("exactTitle", filename);
+    if (!jsouptitle.isEmpty()) {
+      doc.addField("title_" + language, jsouptitle);
+      doc.addField("exactTitle", jsouptitle);
+    }
 
     String extension = "";
     String mime = "";
