@@ -8,6 +8,7 @@ $(document).ready(function() {
 	document.getElementById("topbar3").innerHTML = window.i18n.msgStore['adminUI-AutocompleteConfig'];
 	document.getElementById("labelth").innerHTML = window.i18n.msgStore['labelth']+" : ";
 	document.getElementById("submitth").innerHTML = window.i18n.msgStore['confirm'];
+	$('#submitth').attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
 	document.getElementById("thname").innerHTML = window.i18n.msgStore['limitTH'];
 	//Disable the input and submit
 	$('#submitth').attr("disabled", true);
@@ -73,6 +74,7 @@ function get(type){
  	});
 }
 function set(type){
+	$("#submitth").button("loading");
 	var typ = type.substring(0,2);
 	var value = document.getElementById("max"+typ).value;
 	if(value<=1 && value>=0){
@@ -103,7 +105,12 @@ function set(type){
 		     			$("#answer"+typ).show();
 		     		});
     	    	}
-    	    }
+    	    },
+			//this is called after the response or error functions are finsihed
+		    complete: function(jqXHR, textStatus){
+		      //enable the button
+		      $("#submitth").button("reset");
+		    }
  		});
 	}else{
 		document.getElementById("answer"+typ).innerHTML = window.i18n.msgStore['inputMust'];
