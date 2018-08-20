@@ -32,10 +32,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import com.francelabs.datafari.service.indexer.IndexerServer;
+import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
-import com.francelabs.datafari.utils.ZKUtils;
 
 /**
  * Javadoc
@@ -67,8 +68,8 @@ public class ProtWords extends HttpServlet {
     if (environnement == null) { // If in development environment
       environnement = ExecutionEnvironment.getDevExecutionEnvironment();
     }
-    env = environnement + "/solr/solrcloud/FileShare/conf";
-
+    env = environnement + "/solr/solrcloud/"+Core.FILESHARE.toString()+"/conf";
+    System.out.println(env);
     content = "ALL";
 
   }
@@ -81,7 +82,10 @@ public class ProtWords extends HttpServlet {
    */
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-    try {
+	 
+
+	  
+	  try {
       if (content.equals("")) {
         final PrintWriter out = response.getWriter();
         out.append(
@@ -131,7 +135,26 @@ public class ProtWords extends HttpServlet {
    */
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-    try {
+    
+	  IndexerServer server = null;
+      try {
+        server = IndexerServerManager.getIndexerServer(Core.FILESHARE);
+      } catch (final IOException e1) {
+        final PrintWriter out = response.getWriter();
+        out.append(
+            "Error while getting the Solr core, please make sure the core dedicated to FileShare has booted up. Error code : 69000");
+        out.close();
+        LOGGER.error(
+            "Error while getting the Solr core in doGet, admin servlet, make sure the core dedicated to Promolink has booted up and is still called promolink or that the code has been changed to match the changes. Error 69000 ",
+            e1);
+        return;
+
+      } catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	  
+	  try {
       if (request.getParameter("content") == null) { // the user load an other
                                                      // page
       } else { // The user clicked on confirm modification
@@ -149,10 +172,9 @@ public class ProtWords extends HttpServlet {
               .replaceAll("</div>|</lines>|&nbsp;", "").getBytes();
           fooStream.write(myBytes); // rewrite the file
           fooStream.close();
-          String[] params = {file.getName()};
-          ZKUtils.configZK("uploadconfigzk.sh", confname, params);
+          server.uploadConfig(Paths.get(env),Core.FILESHARE.toString());
           Thread.sleep(1000);
-          ZKUtils.configZK("reloadCollections.sh", confname);
+          server.reloadCollection(Core.FILESHARE.toString());
         } catch (final IOException e) {
           final PrintWriter out = response.getWriter();
           out.append(
