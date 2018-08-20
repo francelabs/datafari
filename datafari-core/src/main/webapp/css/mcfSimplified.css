@@ -1,3 +1,11 @@
+input#security {
+  vertical-align: bottom;
+}
+
+#security-div {
+	padding-top: 4px;
+}
+
 .backupRestoreOK {
 	color: green;
 }

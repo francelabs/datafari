@@ -79,7 +79,7 @@
       <legend id="legendAdd"></legend>
 
       <div id="addPromForm">
-        <div id="filerJobDiv" class="formDiv">
+        <div id="filerJobDiv" style="display:none;" class="formDiv">
           <div class="col-xs-12">
             <div class="box">
               <div class="box-header">
@@ -144,13 +144,12 @@
                     </div>
                     <div class="form-group" id="div14">
                       <div class="col-sm-2 control-label">
-                        <span class="fa fa-asterisk " style="color : red"></span>
                         <label id="securityLabel" for="security" class="control-label"></label>
                       </div>
-                      <div class="col-sm-4">
-                        <input type="checkbox" id="security" name="security"></input>
+                      <div class="col-sm-4" id="security-div">
+	                      <input type="checkbox" id="security" name="security"></input>
+	                      <span id="security-tip" class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
-                      <span id="security-tip" class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                     </div>
                     </fieldset>
                     <div class="form-group" id="div4">
@@ -172,7 +171,7 @@
           </div>
       
       
-        <div id="webJobDiv" class="formDiv">
+        <div id="webJobDiv" style="display:none;" class="formDiv">
           <div class="col-xs-12">
             <div class="box">
               <div class="box-header">
