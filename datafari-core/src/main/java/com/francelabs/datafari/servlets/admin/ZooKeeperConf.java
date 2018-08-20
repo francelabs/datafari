@@ -37,7 +37,6 @@ import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
-import com.francelabs.datafari.utils.ZKUtils;
 
 @WebServlet("/SearchExpert/zookeeperConf")
 public class ZooKeeperConf extends HttpServlet {
