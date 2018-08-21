@@ -48,7 +48,7 @@ public class MCFBackupRestore extends HttpServlet {
 
 	private String env;
 	
-	private static final String DEFAULT_MCF_BACKUP_DIR = "/bin/backup";
+	private static final String DEFAULT_MCF_BACKUP_DIR = "/bin/backup/mcf";
 	
 	private final static Logger LOGGER = Logger.getLogger(MCFBackupRestore.class);
 	
