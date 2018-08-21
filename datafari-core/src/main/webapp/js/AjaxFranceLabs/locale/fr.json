@@ -199,7 +199,7 @@
     "download": "Télécharger le fichier",
     "downloadButton": "Télécharger",
     "downloading": "Téléchargement",
-    "downZKconf": "Télécharger les fichiers de configuration depuis le System Configuration Manager (experts only)",
+    "downZKconf": "Télécharger les fichiers de configuration depuis le System Configuration Manager (stocké dans /opt/datafari/backup/solr)",
     "downZKconfLabel": "Télécharger la configuration du core FileShare depuis le System Configuration Manager",
     "duplicates": "Doublons",
     "elevateAddDoc": "ajouter un autre doc ID",
