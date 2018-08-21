@@ -15,8 +15,10 @@
  *******************************************************************************/
 package com.francelabs.datafari.servlets.admin;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -24,18 +26,22 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
+import com.francelabs.datafari.service.indexer.IndexerServer;
+import com.francelabs.datafari.service.indexer.IndexerServerManager;
+import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
-import com.francelabs.datafari.utils.ZKUtils;
 
 @WebServlet("/SearchExpert/zookeeperConf")
 public class ZooKeeperConf extends HttpServlet {
   private final String env;
+  private final String downloadFolder;
   private static final String confname = "FileShare";
   private static final long serialVersionUID = 1L;
   private final static Logger LOGGER = Logger.getLogger(ZooKeeperConf.class.getName());
@@ -51,7 +57,8 @@ public class ZooKeeperConf extends HttpServlet {
     if (environnement == null) { // If in development environment
       environnement = ExecutionEnvironment.getDevExecutionEnvironment();
     }
-    env = environnement + "/solr/solrcloud/FileShare/conf";
+    env = environnement + "/solr/solrcloud/FileShare/conf/";
+    downloadFolder = environnement +"/bin/backup/solr";
 
   }
 
@@ -67,17 +74,37 @@ public class ZooKeeperConf extends HttpServlet {
     response.setContentType("application/json");
     final String actionParam = request.getParameter("action");
 
+    IndexerServer server = null;
+    try {
+      server = IndexerServerManager.getIndexerServer(Core.FILESHARE);
+    } catch (final IOException e1) {
+      final PrintWriter out = response.getWriter();
+      out.append(
+          "Error while getting the Solr core, please make sure the core dedicated to PromoLinks has booted up. Error code : 69000");
+      out.close();
+      LOGGER.error(
+          "Error while getting the Solr core in doGet, admin servlet, make sure the core dedicated to Promolink has booted up and is still called promolink or that the code has been changed to match the changes. Error 69000 ",
+          e1);
+      return;
+
+    } catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	  
     try {
       if (actionParam.toLowerCase().equals("download")) {
-        ZKUtils.configZK("downloadconfigzk.sh", confname);
+    	  File folderConf = new File(downloadFolder);
+    	  FileUtils.cleanDirectory(folderConf);
+    	  server.downloadConfig(Paths.get(downloadFolder),Core.FILESHARE.toString());
       } else if (actionParam.toLowerCase().equals("upload")) {
-        ZKUtils.configZK("uploadconfigzk.sh", confname);
+    	  server.uploadConfig(Paths.get(env),Core.FILESHARE.toString());
       } else if (actionParam.toLowerCase().equals("reload")) {
-        ZKUtils.configZK("reloadCollections.sh", confname);
+    	  server.reloadCollection(Core.FILESHARE.toString());
       } else if (actionParam.toLowerCase().equals("upload_and_reload")) {
-        ZKUtils.configZK("uploadconfigzk.sh", confname);
+    	  server.uploadConfig(Paths.get(env),Core.FILESHARE.toString());
         Thread.sleep(3000);
-        ZKUtils.configZK("reloadCollections.sh", confname);
+        server.reloadCollection(Core.FILESHARE.toString());
       }
 
       jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());

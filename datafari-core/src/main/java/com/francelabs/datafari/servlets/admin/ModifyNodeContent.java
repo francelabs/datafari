@@ -18,6 +18,7 @@ package com.francelabs.datafari.servlets.admin;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -37,12 +38,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.francelabs.datafari.service.indexer.IndexerServer;
+import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 import com.francelabs.datafari.utils.FileUtils;
 import com.francelabs.datafari.utils.XMLUtils;
-import com.francelabs.datafari.utils.ZKUtils;
 
 /**
  * This Servlet is used to print and modify the textContent of various nodes of
@@ -163,7 +165,27 @@ public class ModifyNodeContent extends HttpServlet {
    */
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-    try {
+
+	  IndexerServer server = null;
+      try {
+        server = IndexerServerManager.getIndexerServer(Core.FILESHARE);
+      } catch (final IOException e1) {
+        final PrintWriter out = response.getWriter();
+        out.append(
+            "Error while getting the Solr core, please make sure the core dedicated to FileShare has booted up. Error code : 69000");
+        out.close();
+        LOGGER.error(
+            "Error while getting the Solr core in doGet, admin servlet, make sure the core dedicated to Promolink has booted up and is still called promolink or that the code has been changed to match the changes. Error 69000 ",
+            e1);
+        return;
+
+      } catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	  
+	  
+	  try {
       final String type = request.getParameter("type");
       final String value = request.getParameter("value");
       final String attr = request.getParameter("attr");
@@ -200,8 +222,9 @@ public class ModifyNodeContent extends HttpServlet {
         return;
       }
 
-      ZKUtils.configZK("uploadconfigzk.sh", "FileShare");
-      ZKUtils.configZK("reloadCollections.sh", "FileShare");
+      server.uploadConfig(Paths.get(env),Core.FILESHARE.toString());
+      Thread.sleep(1000);
+      server.reloadCollection(Core.FILESHARE.toString());
     } catch (final Exception e) {
       final PrintWriter out = response.getWriter();
       out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69515");

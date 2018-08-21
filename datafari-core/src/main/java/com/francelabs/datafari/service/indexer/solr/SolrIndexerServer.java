@@ -2,6 +2,7 @@ package com.francelabs.datafari.service.indexer.solr;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.apache.solr.client.solrj.request.CollectionAdminRequest;
 import org.apache.solr.client.solrj.request.SolrPing;
 import org.apache.solr.client.solrj.request.schema.AnalyzerDefinition;
 import org.apache.solr.client.solrj.request.schema.SchemaRequest.FieldTypes;
@@ -94,6 +96,22 @@ public class SolrIndexerServer implements IndexerServer {
     final SolrDocument document = client.getById(id);
     return new SolrIndexerResponseDocument(document);
   }
+  
+  public void uploadConfig(Path configPath, String configName) throws IOException {
+	    
+	    client.uploadConfig(configPath, configName);
+	  }
+  
+  public void downloadConfig(Path configPath, String configName) throws IOException {
+	    
+	    client.downloadConfig(configName, configPath);
+	  }
+
+  
+  public void reloadCollection(String collectionName) {
+	    
+	  CollectionAdminRequest.reloadCollection(collectionName);
+	  }
 
   @Override
   public void processStatsResponse(final IndexerQueryResponse queryResponse) {

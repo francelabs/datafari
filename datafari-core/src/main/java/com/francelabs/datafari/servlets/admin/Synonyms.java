@@ -38,10 +38,12 @@ import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import com.francelabs.datafari.service.indexer.IndexerServer;
+import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
-import com.francelabs.datafari.utils.ZKUtils;
+
 
 /**
  * Javadoc
@@ -142,7 +144,27 @@ public class Synonyms extends HttpServlet {
    */
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-    try {
+
+	  IndexerServer server = null;
+      try {
+        server = IndexerServerManager.getIndexerServer(Core.FILESHARE);
+      } catch (final IOException e1) {
+        final PrintWriter out = response.getWriter();
+        out.append(
+            "Error while getting the Solr core, please make sure the core dedicated to PromoLinks has booted up. Error code : 69000");
+        out.close();
+        LOGGER.error(
+            "Error while getting the Solr core in doGet, admin servlet, make sure the core dedicated to Promolink has booted up and is still called promolink or that the code has been changed to match the changes. Error 69000 ",
+            e1);
+        return;
+
+      } catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	  
+	  
+	  try {
       if (request.getParameter("synonymsList") == null) { // the user load an
         // other page
 
@@ -173,9 +195,9 @@ public class Synonyms extends HttpServlet {
         file.delete();
         tempFile.renameTo(file);
         final String[] params = { file.getName() };
-        ZKUtils.configZK("uploadconfigzk.sh", confname, params);
+        server.uploadConfig(Paths.get(env),Core.FILESHARE.toString());
         Thread.sleep(1000);
-        ZKUtils.configZK("reloadCollections.sh", confname);
+        server.reloadCollection(Core.FILESHARE.toString());
       }
     } catch (final Exception e) {
       final PrintWriter out = response.getWriter();

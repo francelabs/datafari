@@ -1,5 +1,8 @@
 package com.francelabs.datafari.service.indexer;
 
+import java.io.IOException;
+import java.nio.file.Path;
+
 public interface IndexerServer {
 
   public IndexerQueryResponse executeQuery(final IndexerQuery query) throws Exception;
@@ -15,6 +18,12 @@ public interface IndexerServer {
   public void deleteById(final String id) throws Exception;
 
   public void processStatsResponse(final IndexerQueryResponse queryResponse);
+  
+  public void uploadConfig(Path configPath, String configName) throws IOException ;
+  
+  public void downloadConfig(Path configPath, String configName) throws IOException ;
+  
+  public void reloadCollection(String collectionName) ;
 
   public String getAnalyzerFilterValue(final String filterClass, final String filterAttr) throws Exception;
 
