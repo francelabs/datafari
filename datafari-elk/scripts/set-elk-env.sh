@@ -12,9 +12,11 @@ if [ -d "${DATAFARI_HOME}/jvm" ]; then
 fi
 
 export PID_DIR=$DATAFARI_HOME/pid
-export ELASTICSEARCH_HOME=$DATAFARI_HOME/elk/elasticsearch
-export LOGSTASH_HOME=$DATAFARI_HOME/elk/logstash
-export KIBANA_HOME=$DATAFARI_HOME/elk/kibana
+export ELK_HOME=$DATAFARI_HOME/elk
+export ELK_LOGS=$ELK_HOME/logs
+export ELASTICSEARCH_HOME=$ELK_HOME/elasticsearch
+export LOGSTASH_HOME=$ELK_HOME/logstash
+export KIBANA_HOME=$ELK_HOME/kibana
 
 # pid files 
 export ELASTICSEARCH_PID_FILE=$PID_DIR/elasticsearch.pid

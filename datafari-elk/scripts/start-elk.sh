@@ -18,8 +18,16 @@ if is_running $KIBANA_PID_FILE; then
    exit 1
 fi
 
+# Set logs path
+sed -i "/path.logs/c\path.logs: ${ELK_LOGS}" $ELASTICSEARCH_HOME/config/elasticsearch.yml
+sed -i "/path.logs/c\path.logs: ${ELK_LOGS}" $LOGSTASH_HOME/config/logstash.yml
+sed -i "/logging.dest/c\logging.dest: ${ELK_LOGS}/kibana.log" $KIBANA_HOME/config/kibana.yml
+
+
 cd $ELASTICSEARCH_HOME/bin
+echo "Starting Elasticsearch..."
 bash elasticsearch -p $ELASTICSEARCH_PID_FILE &
+waitElasticsearch
 sleep 5
 
 # Replace the default conf with the correct paths before starting logstash
@@ -35,6 +43,7 @@ sed -i "/francelabs\/solr.log/c\	path => \"${DATAFARI_HOME}/logs/solr.log*\"" $L
 sed -i "/francelabs\/zookeeper.log/c\	path => \"${DATAFARI_HOME}/logs/zookeeper.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
 sed -i "/francelabs\/tika-server.log/c\	path => \"${DATAFARI_HOME}/logs/tika-server.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
 cd $LOGSTASH_HOME
+echo "Starting Logstash..."
 bash bin/logstash -f $LOGSTASH_HOME/logstash-datafari.conf &
 # Must sleep 1 sec to be sure to find logstash's PID
 sleep 1
@@ -45,6 +54,7 @@ fi
 if [ $LOGSTASH_PID -ne -1 ]; then
 	echo $LOGSTASH_PID > $LOGSTASH_PID_FILE
 fi
+echo "Logstash started !"
 
 # Configure the right path for Kibana PID file
 sed -i "/pid\.file/c\pid.file: ${KIBANA_PID_FILE}" $KIBANA_HOME/config/kibana.yml
@@ -53,4 +63,5 @@ sed -i "/pid\.file/c\pid.file: ${KIBANA_PID_FILE}" $KIBANA_HOME/config/kibana.ym
 #sed -i "/server\.key/c\server.ssl.key: ${DATAFARI_HOME}/ssl-keystore/datafari-key.pem" $KIBANA_HOME/config/kibana.yml
 cd $KIBANA_HOME/bin
 export NODE_OPTIONS
+echo "Starting Kibana..." 
 bash kibana

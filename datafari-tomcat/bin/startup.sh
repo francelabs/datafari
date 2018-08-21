@@ -20,6 +20,7 @@
 # -----------------------------------------------------------------------------
 
 export CATALINA_OPTS="${SOLRCLOUDOPTION}-Dorg.apache.manifoldcf.configfile=../../mcf/mcf_home/properties.xml -server -Xms1024m -Xmx1024m"
+export LOGGING_CONFIG="-Dlog4j.configuration=file:$TOMCAT_HOME/conf/log4j.properties"
 
 # Better OS/400 detection: see Bugzilla 31132
 os400=false
