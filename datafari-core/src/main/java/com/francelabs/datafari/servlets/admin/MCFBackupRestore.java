@@ -48,7 +48,7 @@ public class MCFBackupRestore extends HttpServlet {
 
 	private String env;
 	
-	private static final String DEFAULT_MCF_BACKUP_DIR = "/bin/common/config/manifoldcf/bckp_restore";
+	private static final String DEFAULT_MCF_BACKUP_DIR = "/bin/backup";
 	
 	private final static Logger LOGGER = Logger.getLogger(MCFBackupRestore.class);
 	

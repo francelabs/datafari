@@ -60,7 +60,7 @@
     "adminUI-Logs-Select": "Select logs to download",
     "adminUI-LogsAnalysis": "Logs Analysis",
     "adminUI-MCFBackupRestore-backupDir-label": "Каталог для резервных копий MCF (полный путь):",
-    "adminUI-MCFBackupRestore-backupDir-label-default": "Если не заполнено, будет использоваться значение по-умолчанию.",
+    "adminUI-MCFBackupRestore-backupDir-label-default": "Warning the folder must exist ! If empty the folder /opt/datafari/bin/backup will be used by default",
     "adminUI-MCFBackupRestore-doRestore-btn": "Восстановить соединения с MCF",
     "adminUI-MCFBackupRestore-doSave-btn": "Сохранить соедиенения с MCF",
     "adminUI-MCFBackupRestore-restoreError": "Ошибка восстановления соединенений с MCF",

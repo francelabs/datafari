@@ -60,7 +60,7 @@
     "adminUI-Logs-Select": "Sélectionnez les logs à télécharger",
     "adminUI-LogsAnalysis": "Analyse des Logs",
     "adminUI-MCFBackupRestore-backupDir-label": "Répertoire pour le backup de MCF :",
-    "adminUI-MCFBackupRestore-backupDir-label-default": "Si laissé vide, le répertoire par défaut sera utilisé",
+    "adminUI-MCFBackupRestore-backupDir-label-default": "Attention le répertoire doit exister ! Si laissé vide, le répertoire /opt/datafari/bin/backup sera utilisé par défaut",
     "adminUI-MCFBackupRestore-doRestore-btn": "Restauration Configuration MCF",
     "adminUI-MCFBackupRestore-doSave-btn": "Sauvegarde Configuration MCF",
     "adminUI-MCFBackupRestore-restoreError": "Problème avec la restauration de la configuration MCF",

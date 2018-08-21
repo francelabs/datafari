@@ -60,7 +60,7 @@
     "adminUI-Logs-Select": "Select logs to download",
     "adminUI-LogsAnalysis": "Logs Analysis",
     "adminUI-MCFBackupRestore-backupDir-label": "Diretório de Backup do MCF (caminho completo):",
-    "adminUI-MCFBackupRestore-backupDir-label-default": "Se vazio, será utilizado o diretório padrão",
+    "adminUI-MCFBackupRestore-backupDir-label-default": "Warning the folder must exist ! If empty the folder /opt/datafari/bin/backup will be used by default",
     "adminUI-MCFBackupRestore-doRestore-btn": "Restaurar as conexões do MCF",
     "adminUI-MCFBackupRestore-doSave-btn": "Salvar as conexões do MCF",
     "adminUI-MCFBackupRestore-restoreError": "Problema ao restaurar as conexões MCF",
