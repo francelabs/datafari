@@ -41,6 +41,7 @@ import com.francelabs.datafari.utils.ExecutionEnvironment;
 @WebServlet("/SearchExpert/zookeeperConf")
 public class ZooKeeperConf extends HttpServlet {
   private final String env;
+  private final String downloadFolder;
   private static final String confname = "FileShare";
   private static final long serialVersionUID = 1L;
   private final static Logger LOGGER = Logger.getLogger(ZooKeeperConf.class.getName());
@@ -57,6 +58,7 @@ public class ZooKeeperConf extends HttpServlet {
       environnement = ExecutionEnvironment.getDevExecutionEnvironment();
     }
     env = environnement + "/solr/solrcloud/FileShare/conf/";
+    downloadFolder = environnement +"/bin/backup/solr";
 
   }
 
@@ -92,9 +94,9 @@ public class ZooKeeperConf extends HttpServlet {
 	  
     try {
       if (actionParam.toLowerCase().equals("download")) {
-    	  File folderConf = new File("env");
+    	  File folderConf = new File(downloadFolder);
     	  FileUtils.cleanDirectory(folderConf);
-    	  server.downloadConfig(Paths.get(env),Core.FILESHARE.toString());
+    	  server.downloadConfig(Paths.get(downloadFolder),Core.FILESHARE.toString());
       } else if (actionParam.toLowerCase().equals("upload")) {
     	  server.uploadConfig(Paths.get(env),Core.FILESHARE.toString());
       } else if (actionParam.toLowerCase().equals("reload")) {
