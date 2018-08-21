@@ -127,19 +127,22 @@ public class MCFChangePassword extends HttpServlet {
 		}
 
 		// read any errors from the attempted command
+		// TODO too verbose, display messages that are not errors
 		while ((s = stdError.readLine()) != null) {
 			LOGGER.warn(s);
 			errorCode = s;
 		}
 
-		// script
-
+		
+		// TODO handle exception in shell script better
 		final PrintWriter out = response.getWriter();
+		/*
 		if (errorCode == null)
 			jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 		else
 			jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-
+		*/
+		jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 		out.print(jsonResponse);
 
 	}
@@ -167,7 +170,8 @@ public class MCFChangePassword extends HttpServlet {
 					if (nodeMap.getLength() >= 1) {
 						final Node node = nodeMap.item(0);
 						final Node node2 = nodeMap.item(1);
-						if ((node.getNodeValue().toString().equals("org.apache.manifoldcf.dbsuperuserpassword.obfuscated")) || (node.getNodeValue().toString().equals("org.apache.manifoldcf.apilogin.password.obfuscated"))) {
+						if ((node.getNodeValue().toString().equals("org.apache.manifoldcf.login.password.obfuscated")) || (node.getNodeValue().toString().equals("org.apache.manifoldcf.apilogin.password.obfuscated"))) {
+				              node2.setTextContent(password);
 							node2.setTextContent(password);
 
 						}
