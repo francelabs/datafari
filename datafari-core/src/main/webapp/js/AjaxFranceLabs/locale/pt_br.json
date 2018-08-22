@@ -35,6 +35,7 @@
     "adminUI-Download-All-Logs-label": "All logs",
     "adminUI-Download-Cassandra-Logs-label": "Cassandra logs",
     "adminUI-Download-Datafari-Logs-label": "Datafari logs",
+    "adminUI-Download-ELK-Logs-label": "ELK logs",
     "adminUI-Download-Logs": "Download Logs",
     "adminUI-Download-ManifoldCF-Logs-label": "ManifoldCF logs",
     "adminUI-Download-PostgreSQL-Logs-label": "PostgreSQL logs",
