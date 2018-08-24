@@ -4,7 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
@@ -22,7 +23,7 @@ public class LdapMcfConfig {
 	public final static String attributeDomainController = "_attribute_domaincontroller";
 	public final static String attributePassword = "_attribute_password";
 	public final static String attributeSuffix = "_attribute_suffix";
-	private final static Logger logger = Logger.getLogger(LdapMcfConfig.class);
+	private final static Logger logger = LogManager.getLogger(LdapMcfConfig.class);
 
 	public static int update(final HashMap<String, String> h) {
 		try {

@@ -23,11 +23,12 @@ import org.apache.catalina.Realm;
 import org.apache.catalina.realm.CombinedRealm;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class CustomCombinedRealm extends CombinedRealm{
 
-	private static final Logger log = Logger.getLogger(CombinedRealm.class);
+	private static final Logger log = LogManager.getLogger(CombinedRealm.class);
 	GenericCassandraRealm cassandraCombinedRealm;
 	
 	 /**

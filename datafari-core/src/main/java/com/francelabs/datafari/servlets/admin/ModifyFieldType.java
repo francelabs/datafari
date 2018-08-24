@@ -9,7 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.solr.common.SolrException;
 
 import com.francelabs.datafari.service.indexer.IndexerServer;
@@ -22,7 +23,7 @@ import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 @WebServlet("/admin/ModifyFieldType")
 public class ModifyFieldType extends HttpServlet {
 
-  private final static Logger LOGGER = Logger.getLogger(ModifyFieldType.class.getName());
+  private final static Logger LOGGER = LogManager.getLogger(ModifyFieldType.class.getName());
 
   /**
    * @see HttpServlet#HttpServlet()

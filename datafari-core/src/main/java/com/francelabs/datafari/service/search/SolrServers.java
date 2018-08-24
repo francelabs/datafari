@@ -23,14 +23,15 @@ import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.request.SolrPing;
 
 import com.francelabs.datafari.utils.ScriptConfiguration;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import com.francelabs.datafari.alerts.AlertsManager;
 
 public class SolrServers {
 
 	private static String defaultURL = "localhost:2181";
 	
-	private final static Logger LOGGER = Logger.getLogger(AlertsManager.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(AlertsManager.class.getName());
 	public enum Core {
 		FILESHARE {
 			public String toString() {

@@ -3,7 +3,8 @@ package com.francelabs.datafari.simplifiedui.utils;
 import java.io.File;
 import java.util.Random;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -15,7 +16,7 @@ public class WebJobConfig {
 
   private final File webJobJSON;
   private static WebJobConfig instance = null;
-  private final static Logger logger = Logger.getLogger(WebJobConfig.class);
+  private final static Logger logger = LogManager.getLogger(WebJobConfig.class);
 
   private final static String jobElement = "job";
   private final static String repositoryConnectionElement = "repository_connection";

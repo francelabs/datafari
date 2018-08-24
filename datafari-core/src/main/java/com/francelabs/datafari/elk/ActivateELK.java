@@ -5,7 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.francelabs.datafari.logs.ELKLevel;
 import com.francelabs.datafari.utils.Environment;
@@ -14,7 +15,7 @@ public class ActivateELK {
 	private static String startScriptPath;
 	private static String stopScriptPath;
 	private static ActivateELK instance;
-	private final static Logger logger = Logger.getLogger(ActivateELK.class);
+	private final static Logger logger = LogManager.getLogger(ActivateELK.class);
 
 	/**
 	 * Constructor

@@ -15,7 +15,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.elk.ActivateELK;
@@ -29,7 +30,7 @@ import com.francelabs.datafari.utils.ELKConfiguration;
 @WebServlet("/SearchExpert/ELKAdmin")
 public class ELKAdmin extends HttpServlet {
   private static final long serialVersionUID = 1L;
-  private static final Logger logger = Logger.getLogger(ELKAdmin.class);
+  private static final Logger logger = LogManager.getLogger(ELKAdmin.class);
 
   /**
    * @see HttpServlet#HttpServlet()

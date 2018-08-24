@@ -9,7 +9,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -20,7 +21,7 @@ public class ActivateLDAPSolr {
 	private static File solrConfig;
 	private static File customSearchHandler;
 	private static ActivateLDAPSolr instance;
-	private final static Logger logger = Logger.getLogger(ActivateLDAPSolr.class);
+	private final static Logger logger = LogManager.getLogger(ActivateLDAPSolr.class);
 
 	private ActivateLDAPSolr() {
 		final String filePath = Environment.getProperty("catalina.home") + File.separator + ".." + File.separator

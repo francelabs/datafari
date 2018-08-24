@@ -30,7 +30,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -64,7 +65,7 @@ public class ModifyNodeContent extends HttpServlet {
   private final String env;
   private Document doc;
   private File config = null;
-  private final static Logger LOGGER = Logger.getLogger(ModifyNodeContent.class.getName());
+  private final static Logger LOGGER = LogManager.getLogger(ModifyNodeContent.class.getName());
 
   /**
    * @see HttpServlet#HttpServlet() Gets the path Checks if the required file

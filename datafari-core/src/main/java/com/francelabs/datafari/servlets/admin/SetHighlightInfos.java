@@ -24,7 +24,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
@@ -36,7 +37,7 @@ import com.francelabs.datafari.utils.HighlightConfiguration;
 @WebServlet("/admin/SetHighlightInfos")
 public class SetHighlightInfos extends HttpServlet {
   private static final long serialVersionUID = 1L;
-  private static final Logger logger = Logger.getLogger(SetHighlightInfos.class.getName());
+  private static final Logger logger = LogManager.getLogger(SetHighlightInfos.class.getName());
 
   /**
    * @see HttpServlet#HttpServlet()

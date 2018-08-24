@@ -1,6 +1,7 @@
 package com.francelabs.datafari.service.db;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
@@ -9,7 +10,7 @@ public class CassandraManager {
 
   private static CassandraManager instance;
 
-  private final static Logger LOGGER = Logger.getLogger(CassandraManager.class.getName());
+  private final static Logger LOGGER = LogManager.getLogger(CassandraManager.class.getName());
 
   private static final String DEFAULT_KEYSPACE = "datafari";
   private static final String default_host = "127.0.0.1";

@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -32,7 +33,7 @@ public class SolrIndexerQueryResponse implements IndexerQueryResponse {
 
   private final QueryResponse response;
   private final SolrQuery query;
-  private final Logger LOGGER = Logger.getLogger(SolrIndexerQueryResponse.class);
+  private final Logger LOGGER = LogManager.getLogger(SolrIndexerQueryResponse.class);
 
   protected SolrIndexerQueryResponse(final SolrQuery query, final QueryResponse response) {
     this.response = response;

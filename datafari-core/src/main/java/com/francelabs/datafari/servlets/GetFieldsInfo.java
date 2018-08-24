@@ -49,7 +49,8 @@ import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -73,7 +74,7 @@ import com.francelabs.datafari.utils.SolrConfiguration;
 @WebServlet("/GetFieldsInfo")
 public class GetFieldsInfo extends HttpServlet {
   private static final long serialVersionUID = 1L;
-  private static final Logger logger = Logger.getLogger(GetFieldsInfo.class.getName());
+  private static final Logger logger = LogManager.getLogger(GetFieldsInfo.class.getName());
 
   /**
    * @see HttpServlet#HttpServlet()

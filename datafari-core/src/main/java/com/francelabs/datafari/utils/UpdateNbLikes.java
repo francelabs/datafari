@@ -27,7 +27,8 @@ import java.io.PrintWriter;
 import java.util.Properties;
 
 import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
@@ -40,7 +41,7 @@ public class UpdateNbLikes {
 	private static File configFile;
 	private Properties properties = new Properties();
 
-	final static Logger logger = Logger.getLogger(UpdateNbLikes.class.getName());
+	final static Logger logger = LogManager.getLogger(UpdateNbLikes.class.getName());
 
 	private UpdateNbLikes() throws IOException {
 		super();

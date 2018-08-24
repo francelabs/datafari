@@ -14,6 +14,10 @@
       </repository>
 </repositories>
 
+<properties>
+  <log4j.version>2.11.1</log4j.version>
+</properties>
+
 <dependencies>
 			<!-- Local Maven repo dependencies -->
 		<dependency>
@@ -56,10 +60,25 @@
 		    <version>1.0.11</version>
 		</dependency>
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
-		</dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-core</artifactId>
+        <version>${log4j.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-api</artifactId>
+        <version>${log4j.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-1.2-api</artifactId>
+        <version>${log4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-jul</artifactId>
+      <version>${log4j.version}</version>
+    </dependency>
 		<dependency>
 			<groupId>org.apache.solr</groupId>
 			<artifactId>solr-solrj</artifactId>
@@ -217,11 +236,6 @@
 		</dependency>
 
 	</dependencies>
-
-	<!-- Section to define properties like versions of Artifacts to be referenced 
-		in the dependencies section (e.g. <mysqlVersion>(5.1,)</mysqlVersion>. <version>${mysqlVersion}</version> 
-		) -->
-	<properties />
 
 	<build>
 

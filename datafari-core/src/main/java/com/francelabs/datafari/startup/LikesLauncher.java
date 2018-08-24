@@ -25,7 +25,8 @@ import java.util.concurrent.TimeUnit;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.service.indexer.IndexerQuery;
@@ -40,7 +41,7 @@ public class LikesLauncher implements ServletContextListener {
 
   private static boolean islaunched = false;
   private static ScheduledExecutorService scheduler;
-  private static Logger logger = Logger.getLogger(LikesLauncher.class.getName());
+  private static Logger logger = LogManager.getLogger(LikesLauncher.class.getName());
   private static ScheduledFuture<?> handler;
   private static boolean doReload = false;
   private static boolean isThreadUpdateNbLikesStarted = false;

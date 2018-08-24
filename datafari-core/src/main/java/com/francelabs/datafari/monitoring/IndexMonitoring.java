@@ -14,7 +14,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.francelabs.datafari.logs.MonitoringLevel;
 import com.francelabs.datafari.service.indexer.IndexerFacetField;
@@ -152,7 +153,7 @@ public class IndexMonitoring {
   private final class FileShareMonitoringLog implements Runnable {
 
     /** The LOGGER. */
-    private final Logger LOGGER = Logger.getLogger(FileShareMonitoringLog.class);
+    private final Logger LOGGER = LogManager.getLogger(FileShareMonitoringLog.class);
 
     /** facet fields to add to the query. */
     private final List<String> facetFields = new ArrayList<>(Arrays.asList("extension", "language", "source"));

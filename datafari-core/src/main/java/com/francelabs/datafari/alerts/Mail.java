@@ -26,7 +26,8 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.francelabs.datafari.utils.AlertsConfiguration;
 import com.sun.mail.util.MailSSLSocketFactory;
@@ -48,7 +49,7 @@ public class Mail {
   private String username = "datafari.test@gmail.com";
   private String password = "Datafari1";
 
-  private final static Logger LOGGER = Logger.getLogger(Mail.class.getName());
+  private final static Logger LOGGER = LogManager.getLogger(Mail.class.getName());
 
   public Mail() throws IOException {
     try {

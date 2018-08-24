@@ -28,7 +28,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -54,7 +55,7 @@ public class SearchProxy extends HttpServlet {
 
   private static final List<String> allowedHandlers = Arrays.asList("/select", "/suggest", "/stats", "/statsQuery");
 
-  private static final Logger LOGGER = Logger.getLogger(SearchProxy.class.getName());
+  private static final Logger LOGGER = LogManager.getLogger(SearchProxy.class.getName());
 
   /**
    * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse

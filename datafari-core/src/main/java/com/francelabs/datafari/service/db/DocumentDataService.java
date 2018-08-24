@@ -19,7 +19,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 
 import com.datastax.driver.core.ResultSet;
@@ -31,7 +32,7 @@ import com.francelabs.datafari.exception.DatafariServerException;
 
 public class DocumentDataService {
 
-  final static Logger logger = Logger.getLogger(DocumentDataService.class.getName());
+  final static Logger logger = LogManager.getLogger(DocumentDataService.class.getName());
 
   public static final String USERNAMECOLUMN = "username";
   public static final String DOCUMENTIDCOLUMN = "document_id";

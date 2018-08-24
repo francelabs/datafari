@@ -15,7 +15,8 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.francelabs.datafari.config.AbstractConfigClass;
 
@@ -56,7 +57,7 @@ public class WidgetManagerConfiguration extends AbstractConfigClass {
    *
    */
   private WidgetManagerConfiguration() {
-    super(configFilename, Logger.getLogger(WidgetManagerConfiguration.class.getName()));
+    super(configFilename, LogManager.getLogger(WidgetManagerConfiguration.class.getName()));
   }
 
 }

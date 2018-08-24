@@ -25,7 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
@@ -38,7 +39,7 @@ import com.francelabs.datafari.utils.WidgetManagerConfiguration;
 @WebServlet("/WidgetManager")
 public class WidgetManager extends HttpServlet {
   private static final long serialVersionUID = 1L;
-  private static final Logger logger = Logger.getLogger(WidgetManager.class.getName());
+  private static final Logger logger = LogManager.getLogger(WidgetManager.class.getName());
 
   /**
    * @see HttpServlet#HttpServlet()

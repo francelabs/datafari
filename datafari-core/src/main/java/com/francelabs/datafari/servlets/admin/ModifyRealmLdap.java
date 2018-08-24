@@ -12,7 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 import org.apache.manifoldcf.core.system.ManifoldCF;
 import org.json.simple.JSONObject;
@@ -30,7 +31,7 @@ import com.francelabs.datafari.utils.RealmLdapConfiguration;
 @WebServlet("/SearchAdministrator/modifyRealmLdap")
 public class ModifyRealmLdap extends HttpServlet {
   private static final long serialVersionUID = 1L;
-  private static final Logger logger = Logger.getLogger(ModifyRealmLdap.class.getName());
+  private static final Logger logger = LogManager.getLogger(ModifyRealmLdap.class.getName());
 
   /**
    * @see HttpServlet#HttpServlet()

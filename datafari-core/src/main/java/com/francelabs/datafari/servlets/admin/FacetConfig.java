@@ -36,7 +36,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -101,7 +102,7 @@ public class FacetConfig extends HttpServlet {
   private File en = null;
   private File fr = null;
   private File it = null;
-  private final static Logger LOGGER = Logger.getLogger(FacetConfig.class);
+  private final static Logger LOGGER = LogManager.getLogger(FacetConfig.class);
 
   // TODO To be moved to a property file
   private static final String LOCALE_PATH_DEV = "/WebContent/js/AjaxFranceLabs/locale/";

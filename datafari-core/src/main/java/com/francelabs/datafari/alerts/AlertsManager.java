@@ -44,7 +44,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
 
@@ -71,7 +72,7 @@ public class AlertsManager {
   private ScheduledExecutorService scheduler;
   private Mail mail;
   private Alert alert;
-  private final static Logger LOGGER = Logger.getLogger(AlertsManager.class.getName());
+  private final static Logger LOGGER = LogManager.getLogger(AlertsManager.class.getName());
 
   private AlertsManager() { // Booleans to know if there has been a previous
     // execution for a given frequency

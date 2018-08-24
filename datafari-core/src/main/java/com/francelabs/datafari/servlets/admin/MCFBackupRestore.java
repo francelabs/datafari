@@ -29,7 +29,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript;
@@ -50,7 +51,7 @@ public class MCFBackupRestore extends HttpServlet {
 	
 	private static final String DEFAULT_MCF_BACKUP_DIR = "/bin/backup/mcf";
 	
-	private final static Logger LOGGER = Logger.getLogger(MCFBackupRestore.class);
+	private final static Logger LOGGER = LogManager.getLogger(MCFBackupRestore.class);
 	
 	/**
 	 * @see HttpServlet#HttpServlet()

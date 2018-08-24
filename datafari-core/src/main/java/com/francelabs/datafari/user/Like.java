@@ -17,7 +17,8 @@ package com.francelabs.datafari.user;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
@@ -25,7 +26,7 @@ import com.francelabs.datafari.service.db.DocumentDataService;
 
 public class Like {
 
-	private final static Logger logger = Logger.getLogger(Like.class);
+	private final static Logger logger = LogManager.getLogger(Like.class);
 
 	/**
 	 * Add a document to the list of documents liked by the user

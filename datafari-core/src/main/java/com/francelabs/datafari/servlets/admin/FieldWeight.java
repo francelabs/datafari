@@ -55,7 +55,8 @@ import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -98,7 +99,7 @@ public class FieldWeight extends HttpServlet {
   private boolean usingCustom = false;
   /** Search Handler. **/
   private Node searchHandler = null;
-  private final static Logger LOGGER = Logger.getLogger(FieldWeight.class.getName());
+  private final static Logger LOGGER = LogManager.getLogger(FieldWeight.class.getName());
 
   /**
    * @see HttpServlet#HttpServlet() Gets the path Create the semaphore Checks if

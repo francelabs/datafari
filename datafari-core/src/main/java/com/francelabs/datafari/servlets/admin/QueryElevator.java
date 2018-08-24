@@ -32,7 +32,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
@@ -47,7 +48,7 @@ public class QueryElevator extends HttpServlet {
   private final String env;
   private final String server = Core.FILESHARE.toString();
   private static final long serialVersionUID = 1L;
-  private final static Logger LOGGER = Logger.getLogger(QueryElevator.class.getName());
+  private final static Logger LOGGER = LogManager.getLogger(QueryElevator.class.getName());
   private File elevatorFile;
 
   /**

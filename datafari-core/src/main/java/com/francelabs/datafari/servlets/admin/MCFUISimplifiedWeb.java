@@ -25,7 +25,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
@@ -47,7 +48,7 @@ public class MCFUISimplifiedWeb extends HttpServlet {
 
   private String env;
 
-  private final static Logger LOGGER = Logger.getLogger(MCFUISimplifiedWeb.class);
+  private final static Logger LOGGER = LogManager.getLogger(MCFUISimplifiedWeb.class);
 
   /**
    * @see HttpServlet#HttpServlet() Gets the environment path of Datafari

@@ -5,13 +5,14 @@ import java.util.Hashtable;
 import javax.naming.Context;
 
 import org.apache.catalina.realm.JNDIRealm;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 import org.apache.manifoldcf.core.system.ManifoldCF;
 
 public class DatafariJNDIRealm extends JNDIRealm {
 
-	private static final Logger log = Logger.getLogger(DatafariJNDIRealm.class);
+	private static final Logger log = LogManager.getLogger(DatafariJNDIRealm.class);
 	boolean alreadyDeobfuscatedPassword = false;
 
 	@Override

@@ -27,7 +27,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -54,7 +55,7 @@ import com.francelabs.datafari.utils.AlertsConfiguration;
 @WebServlet("/admin/alertsAdmin")
 public class alertsAdmin extends HttpServlet {
   private static final long serialVersionUID = 1L;
-  private final static Logger LOGGER = Logger.getLogger(alertsAdmin.class.getName());
+  private final static Logger LOGGER = LogManager.getLogger(alertsAdmin.class.getName());
 
   /**
    * @see HttpServlet#HttpServlet()

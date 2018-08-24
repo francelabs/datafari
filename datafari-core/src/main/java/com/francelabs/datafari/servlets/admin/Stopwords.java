@@ -30,7 +30,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.francelabs.datafari.service.indexer.IndexerServer;
 import com.francelabs.datafari.service.indexer.IndexerServerManager;
@@ -56,7 +57,7 @@ public class Stopwords extends HttpServlet {
   private static final String confname = "FileShare";
   private final String server = Core.FILESHARE.toString();
   private final String env;
-  private final static Logger LOGGER = Logger.getLogger(Stopwords.class.getName());
+  private final static Logger LOGGER = LogManager.getLogger(Stopwords.class.getName());
 
   /**
    * @throws IOException

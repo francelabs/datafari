@@ -8,7 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
@@ -43,7 +44,7 @@ import com.francelabs.datafari.utils.ScriptConfiguration;
 public class SolrIndexerServer implements IndexerServer {
 
   private static String defaultURL = "localhost:2181";
-  private final Logger LOGGER = Logger.getLogger(SolrIndexerServer.class.getName());
+  private final Logger LOGGER = LogManager.getLogger(SolrIndexerServer.class.getName());
   private CloudSolrClient client;
 
   public SolrIndexerServer(final Core core) throws Exception {

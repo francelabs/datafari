@@ -14,7 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 import org.json.simple.JSONObject;
 import org.w3c.dom.DOMException;
@@ -35,7 +36,7 @@ import com.francelabs.datafari.utils.RealmLdapConfiguration;
 @WebServlet("/SearchAdministrator/addUser")
 public class AddUser extends HttpServlet {
   private static final long serialVersionUID = 1L;
-  private static final Logger logger = Logger.getLogger(AddUser.class.getName());
+  private static final Logger logger = LogManager.getLogger(AddUser.class.getName());
 
   /**
    * @see HttpServlet#HttpServlet()

@@ -19,14 +19,15 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.service.db.AlertDataService;
 
 public class Alert {
 
-  private final static Logger logger = Logger.getLogger(Alert.class);
+  private final static Logger logger = LogManager.getLogger(Alert.class);
 
   /**
    * Add an alert to the user list of alerts

@@ -11,6 +11,7 @@ export JAVA_OPTS="${JAVA_OPTS} -Duser.timezone=UTC"
 export PATH=${PATH}:$JAVA_HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 export INIT_STATE_FILE=${DATAFARI_HOME}/bin/common/init_state.properties
 export CONFIG_FILE=${DATAFARI_HOME}/tomcat/conf/datafari.properties
+export LOG4J_VERSION=2.11.1
 
 
 
@@ -33,7 +34,6 @@ export LOGSTASH_HOME=$ELK_HOME/logstash
 export KIBANA_HOME=$DATAFARI_HOME/elk/kibana
 # Logs directory: needed for Cassandra startup
 export DATAFARI_LOGS=$DATAFARI_HOME/logs
-export CATALINA_OUT=${DATAFARI_LOGS}/catalina.out
 
 
 # pid files 

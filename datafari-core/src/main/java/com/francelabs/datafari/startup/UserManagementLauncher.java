@@ -22,7 +22,8 @@ import java.util.List;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.service.db.UserDataService;
@@ -32,7 +33,7 @@ import com.francelabs.datafari.utils.ScriptConfiguration;
 public class UserManagementLauncher implements ServletContextListener {
 
 
-	private static Logger LOGGER = Logger.getLogger(UserManagementLauncher.class
+	private static Logger LOGGER = LogManager.getLogger(UserManagementLauncher.class
 			.getName());
 	
 	@Override

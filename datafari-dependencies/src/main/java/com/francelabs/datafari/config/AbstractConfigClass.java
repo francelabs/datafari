@@ -15,7 +15,8 @@ import java.nio.file.WatchService;
 import java.util.Properties;
 
 import org.apache.commons.io.output.FileWriterWithEncoding;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.francelabs.datafari.utils.Environment;
 

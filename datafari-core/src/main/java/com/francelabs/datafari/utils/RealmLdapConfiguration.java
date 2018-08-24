@@ -14,7 +14,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 import org.apache.manifoldcf.core.system.ManifoldCF;
 import org.w3c.dom.DOMException;
@@ -35,7 +36,7 @@ public class RealmLdapConfiguration {
 
 	private static RealmLdapConfiguration instance;
 
-	private static final Logger logger = Logger.getLogger(ModifyRealmLdap.class);
+	private static final Logger logger = LogManager.getLogger(ModifyRealmLdap.class);
 
 	public static final String ATTR_CONNECTION_URL = "connectionURL";
 	public static final String ATTR_CONNECTION_NAME = "connectionName";

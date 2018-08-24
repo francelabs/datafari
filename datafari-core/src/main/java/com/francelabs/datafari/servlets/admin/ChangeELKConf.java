@@ -18,7 +18,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
@@ -37,7 +38,7 @@ public class ChangeELKConf extends HttpServlet {
    * serialVersionUID
    */
   private static final long serialVersionUID = -4261065947276998520L;
-  private static final Logger logger = Logger.getLogger(ChangeELKConf.class);
+  private static final Logger logger = LogManager.getLogger(ChangeELKConf.class);
 
   /**
    * @see HttpServlet#HttpServlet()

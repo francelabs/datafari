@@ -33,7 +33,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 import org.apache.manifoldcf.core.system.ManifoldCF;
 import org.json.simple.JSONObject;
@@ -53,7 +54,7 @@ public class MCFChangePassword extends HttpServlet {
 	private final String env;
 	private static final String confname = "FileShare";
 	private static final long serialVersionUID = 1L;
-	private final static Logger LOGGER = Logger.getLogger(MCFChangePassword.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(MCFChangePassword.class.getName());
 
 	/**
 	 * @see HttpServlet#HttpServlet()

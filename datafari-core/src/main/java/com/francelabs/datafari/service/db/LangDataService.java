@@ -17,7 +17,8 @@ package com.francelabs.datafari.service.db;
 
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
@@ -28,7 +29,7 @@ import com.francelabs.datafari.exception.DatafariServerException;
 
 public class LangDataService {
 
-  final static Logger logger = Logger.getLogger(LangDataService.class.getName());
+  final static Logger logger = LogManager.getLogger(LangDataService.class.getName());
 
   public static final String USERNAMECOLUMN = "username";
   public static final String LANGCOLLECTION = "lang";

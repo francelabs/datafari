@@ -24,7 +24,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
@@ -39,7 +40,7 @@ import com.francelabs.datafari.user.Like;
 @WebServlet("/getLikesFavorites")
 public class GetLikesFavorites extends HttpServlet {
   private static final long serialVersionUID = 1L;
-  private static final Logger logger = Logger.getLogger(GetLikesFavorites.class.getName());
+  private static final Logger logger = LogManager.getLogger(GetLikesFavorites.class.getName());
   private static final String FAVORITESLIST = "favoritesList";
   private static final String LIKESLIST = "likesList";
 

@@ -17,7 +17,8 @@ package com.francelabs.datafari.utils;
 
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 import org.apache.manifoldcf.core.system.ManifoldCF;
 
@@ -56,7 +57,7 @@ public class AlertsConfiguration extends AbstractConfigClass {
 
   private static AlertsConfiguration instance;
 
-  private final static Logger LOGGER = Logger.getLogger(AlertsConfiguration.class.getName());
+  private final static Logger LOGGER = LogManager.getLogger(AlertsConfiguration.class.getName());
 
   /**
    * Set a property and save it the alerts.properties

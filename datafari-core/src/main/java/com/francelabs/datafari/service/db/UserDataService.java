@@ -21,7 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
@@ -31,7 +32,7 @@ import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 
 public class UserDataService {
-  final static Logger logger = Logger.getLogger(UserDataService.class.getName());
+  final static Logger logger = LogManager.getLogger(UserDataService.class.getName());
   private static UserDataService instance;
 
   public final static String SEARCHADMINISTRATOR = "SearchAdministrator";

@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
@@ -24,7 +25,7 @@ public class AlertDataService {
 
   private static AlertDataService instance;
 
-  final static Logger logger = Logger.getLogger(AlertDataService.class.getName());
+  final static Logger logger = LogManager.getLogger(AlertDataService.class.getName());
 
   public static synchronized AlertDataService getInstance() throws IOException {
     if (instance == null) {

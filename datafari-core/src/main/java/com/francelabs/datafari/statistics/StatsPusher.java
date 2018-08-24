@@ -23,7 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.francelabs.datafari.logs.StatLevel;
 import com.francelabs.datafari.service.indexer.IndexerInputDocument;
@@ -38,7 +39,7 @@ public class StatsPusher {
   private static final List<String> queryParams = Arrays.asList("q", "numFound", "noHits", "QTime");
   private static final List<String> documentParams = Arrays.asList("url", "id");
 
-  private final static Logger LOGGER = Logger.getLogger(StatsPusher.class.getName());
+  private final static Logger LOGGER = LogManager.getLogger(StatsPusher.class.getName());
 
   public static void pushDocument(final IndexerQuery query, final String protocol) {
     try {

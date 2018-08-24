@@ -28,7 +28,8 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.catalina.realm.RealmBase;
@@ -37,7 +38,7 @@ import org.apache.catalina.realm.RealmBase;
              
 public class GenericCassandraRealm extends RealmBase {
 
-	final static Logger logger = Logger.getLogger(GenericCassandraRealm.class.getName());
+	final static Logger logger = LogManager.getLogger(GenericCassandraRealm.class.getName());
 
     public static final String KEYROLENAME = "datafari";
     

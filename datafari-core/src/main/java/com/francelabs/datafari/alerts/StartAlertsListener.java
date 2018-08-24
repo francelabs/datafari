@@ -28,10 +28,11 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 @WebListener
 public class StartAlertsListener implements ServletContextListener {
-	private final static Logger LOGGER = Logger.getLogger(StartAlertsListener.class
+	private final static Logger LOGGER = LogManager.getLogger(StartAlertsListener.class
 			.getName());
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {

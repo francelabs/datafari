@@ -31,7 +31,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 public class SendHttpRequest {
@@ -41,7 +42,7 @@ public class SendHttpRequest {
 	public static void sendGET(String url) throws IOException {
 		sendGET(url,USERAGENT);
 	}
-	private static Logger logger = Logger.getLogger(SendHttpRequest.class);
+	private static Logger logger = LogManager.getLogger(SendHttpRequest.class);
 	
 	public static void sendGET(String url,String userAgent) throws IOException {
         URL obj = new URL(url);

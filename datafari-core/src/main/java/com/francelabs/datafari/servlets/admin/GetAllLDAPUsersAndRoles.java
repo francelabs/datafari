@@ -16,7 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 import org.json.simple.JSONObject;
 import org.xml.sax.SAXException;
@@ -33,7 +34,7 @@ import com.francelabs.datafari.utils.RealmLdapConfiguration;
 @WebServlet("/SearchAdministrator/getAllLDAPUsersAndRoles")
 public class GetAllLDAPUsersAndRoles extends HttpServlet {
   private static final long serialVersionUID = 1L;
-  private static final Logger logger = Logger.getLogger(GetAllLDAPUsersAndRoles.class);
+  private static final Logger logger = LogManager.getLogger(GetAllLDAPUsersAndRoles.class);
   private static boolean performingRefresh = false;
   private static List<String> currentUsersList = new ArrayList<>();
 

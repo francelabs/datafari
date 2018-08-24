@@ -23,7 +23,8 @@ package com.francelabs.datafari.alerts;
  *
  */
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -41,7 +42,7 @@ public class Alert {
   private final String frequency;
   private final Mail mail;
   private final String user;
-  private final static Logger LOGGER = Logger.getLogger(Alert.class.getName());
+  private final static Logger LOGGER = LogManager.getLogger(Alert.class.getName());
 
   /**
    * Initializes all the attributes

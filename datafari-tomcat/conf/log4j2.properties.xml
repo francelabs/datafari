@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+	<CustomLevels>
+		<CustomLevel name="ELK" intLevel="520" />
+		<CustomLevel name="MONITORING" intLevel="520" />
+		<CustomLevel name="STAT" intLevel="520" />
+	</CustomLevels>
+
+	<Appenders>
+		<Console name="STDOUT" target="SYSTEM_OUT">
+		  <PatternLayout>
+        <Pattern>%-4r [%t] %-5p %c %x \u2013 %m%n</Pattern>
+      </PatternLayout>
+		</Console>
+		
+		<!-- Tomcat appender -->
+		<RollingFile name="Tomcat" fileName="${env:DATAFARI_LOGS}/tomcat.log" filePattern="${env:DATAFARI_LOGS}/tomcat-%d{yyyy-MM-dd}.log">
+      <PatternLayout>
+        <Pattern>%5p %d{ISO8601} (%t) - Tomcat|Tomcat|%c{3}|%m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1"/>
+      </Policies>
+    </RollingFile>
+    
+    <!-- Datafari appender -->
+    <RollingFile name="Datafari" fileName="${env:DATAFARI_LOGS}/datafari.log" filePattern="${env:DATAFARI_LOGS}/datafari-%d{yyyy-MM-dd}.log">
+      <PatternLayout>
+        <Pattern>%5p %d{ISO8601} (%t) - Tomcat|Datafari|%c{3}|%m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1"/>
+      </Policies>
+    </RollingFile>
+    
+    <!-- ManifoldCF appender -->
+    <RollingFile name="Manifold" fileName="${env:DATAFARI_LOGS}/datafari-manifold.log" filePattern="${env:DATAFARI_LOGS}/datafari-manifold-%d{yyyy-MM-dd}.log">
+      <PatternLayout>
+        <Pattern>%5p %d{ISO8601} (%t) - Tomcat|Manifold|%c{3}|%m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1"/>
+      </Policies>
+    </RollingFile>
+    
+    <!-- Stats appender -->
+    <RollingFile name="Stats" fileName="${env:DATAFARI_LOGS}/datafari-stats.log" filePattern="${env:DATAFARI_LOGS}/datafari-stats-%d{yyyy-MM-dd}-%i.log">
+      <PatternLayout>
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="100 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="10"/>
+    </RollingFile>
+    
+    <!-- Monitoring appender -->
+    <RollingFile name="Monitoring" fileName="${env:DATAFARI_LOGS}/datafari-monitoring.log" filePattern="${env:DATAFARI_LOGS}/datafari-monitoring-%d{yyyy-MM-dd}-%i.log">
+      <PatternLayout>
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="1 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="10"/>
+    </RollingFile>
+    
+    <!-- ELK appender -->
+    <RollingFile name="ELK" fileName="${env:TOMCAT_HOME}/../elk/logs/elk-startup.log" filePattern="${env:TOMCAT_HOME}/../elk/logs/elk-startup-%d{yyyy-MM-dd}-%i.log">
+      <PatternLayout>
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="1 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="10"/>
+    </RollingFile>
+    
+	</Appenders>
+	
+	<Loggers>
+		<Root level="info">
+		  <AppenderRef ref="STDOUT"/>
+		  <AppenderRef ref="Tomcat"/>
+		</Root>
+		
+		<!-- Datafari logger -->
+	  <Logger name="com.francelabs.datafari" level="info" additivity="false">
+	    <AppenderRef ref="Datafari"/>
+	  </Logger>
+	  
+	  <!-- ManifoldCF logger -->
+    <Logger name="com.francelabs.manifoldcf" level="info" additivity="false">
+      <AppenderRef ref="Manifold"/>
+    </Logger>
+    
+    <!-- Stats logger -->
+    <Logger name="com.francelabs.datafari.statistics" level="stat" additivity="false">
+      <AppenderRef ref="Stats"/>
+    </Logger>
+    
+    <!-- Monitoring logger -->
+    <Logger name="com.francelabs.datafari.monitoring" level="monitoring" additivity="false">
+      <AppenderRef ref="Monitoring"/>
+    </Logger>
+    
+    <!-- ELK logger -->
+    <Logger name="com.francelabs.datafari.elk" level="elk" additivity="false">
+      <AppenderRef ref="ELK"/>
+    </Logger>
+    
+    <!-- Zookeeper logger -->
+    <Logger name="org.apache.zookeeper" level="warn">
+    </Logger>
+    
+    <!-- Hadoop logger -->
+    <Logger name="org.apache.hadoop" level="warn">
+    </Logger>
+	</Loggers>
+</Configuration>
