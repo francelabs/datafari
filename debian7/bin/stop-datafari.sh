@@ -26,7 +26,7 @@ isZKRunning=true
 
 if is_running $MCF_PID_FILE; then
     cd $MCF_HOME/../bin
-    sudo -E su datafari -p -c "export PATH=$PATH && bash mcf_crawler_agent.sh stop"
+    run_as ${DATAFARI_USER} "export PATH=$PATH && bash mcf_crawler_agent.sh stop"
     forceStopIfNecessary $MCF_PID_FILE McfCrawlerAgent
 else
     echo "Warn: MCF Agent does not seem to be running."
@@ -35,7 +35,7 @@ fi
 if is_running $CATALINA_PID; then
     cd $TOMCAT_HOME
     waitTomcat
-    sudo -E su datafari -p -c "bash bin/shutdown.sh 30"
+    run_as ${DATAFARI_USER} "bash bin/shutdown.sh 30"
     forceStopIfNecessary $CATALINA_PID Tomcat
 else
     echo "Warn: Tomcat does not seem to be running."
@@ -43,20 +43,20 @@ fi
 
 
 if is_running $SOLR_PID_FILE; then
-   sudo -E su datafari -p -c "SOLR_INCLUDE=$SOLR_ENV $SOLR_INSTALL_DIR/bin/solr stop"
+   run_as ${DATAFARI_USER} "SOLR_INCLUDE=$SOLR_ENV $SOLR_INSTALL_DIR/bin/solr stop"
 else
    echo "Warn : Solr does not seem to be running."
 fi
 
 if is_running $ZK_PID_FILE; then
-   sudo -E su datafari -p -c "bash $ZK_HOME/bin/zkServer.sh stop"
+   run_as ${DATAFARI_USER} "bash $ZK_HOME/bin/zkServer.sh stop"
 else
    echo "Warn : Zookeeper does not seem to be running."
 fi
 
 if is_running $CASSANDRA_PID_FILE; then
-   sudo su datafari -c "kill $(cat $CASSANDRA_PID_FILE)"
-   sudo su datafari -c "rm -f $CASSANDRA_PID_FILE"
+   run_as ${DATAFARI_USER} "kill $(cat $CASSANDRA_PID_FILE)"
+   run_as ${DATAFARI_USER} "rm -f $CASSANDRA_PID_FILE"
 else
    echo "Warn : Cassandra does not seem to be running."
 fi

@@ -99,7 +99,7 @@ then
 	# Configure ELK
 	echo "Configure ELK"
 	cd $ELASTICSEARCH_HOME/bin
-	sudo -E su datafari -p -c "bash elasticsearch -p $ELASTICSEARCH_PID_FILE" &
+	run_as ${DATAFARI_USER} "bash elasticsearch -p $ELASTICSEARCH_PID_FILE" &
 	
 	#Test if Elasticsearch is up, if not then exit
 	waitElasticsearch
@@ -107,9 +107,9 @@ then
 	#Sleep till Elasticsearch finishes its configuration
 	sleep 5
 	
-	sudo -E su datafari -p -c "sed -i '/pid\.file/c\pid.file: ${KIBANA_PID_FILE}' $KIBANA_HOME/config/kibana.yml"
+	run_as ${DATAFARI_USER} "sed -i '/pid\.file/c\pid.file: ${KIBANA_PID_FILE}' $KIBANA_HOME/config/kibana.yml"
 	cd $KIBANA_HOME/bin
-	sudo -E su datafari -p -c "bash kibana" &
+	run_as ${DATAFARI_USER} "bash kibana" &
 	
 	#Test if Kibana is up, if not then exit
 	waitKibana
@@ -124,21 +124,21 @@ then
 	curl -H 'Content-Type: application/json' -XPUT -d @${ELK_HOME}/save/index-pattern-kibana-statistics.json http://localhost:9200/.kibana/index-pattern/statistics
 	curl -H 'Content-Type: application/json' -XPOST -d '{"doc":{"defaultIndex": "monitoring"}}' http://localhost:9200/.kibana/config/${kibana_config}/_update
 	curl -s -XPOST localhost:9200/_bulk --data-binary "@${ELK_HOME}/save/datafari-bulk-kibana.json"
-	sudo -E su datafari -p -c "kill $(cat $KIBANA_PID_FILE)"
-	sudo -E su datafari -p -c "kill $(cat $ELASTICSEARCH_PID_FILE)"
-	sudo -E su datafari -p -c "rm $KIBANA_PID_FILE"
+	run_as ${DATAFARI_USER} "kill $(cat $KIBANA_PID_FILE)"
+	run_as ${DATAFARI_USER} "kill $(cat $ELASTICSEARCH_PID_FILE)"
+	run_as ${DATAFARI_USER} "rm $KIBANA_PID_FILE"
 	echo "ELK successfully configured"
 
 	echo "Start postgres and cassandra and add ManifoldCF database"
 	sudo su postgres -c "rm -rf ${DATAFARI_HOME}/pgsql/data"
 	sudo su postgres -c "mkdir -m 700 ${DATAFARI_HOME}/pgsql/data"
-	sudo su datafari -c "rm -rf ${DATAFARI_HOME}/cassandra/data"
-	sudo su datafari -c "mkdir ${DATAFARI_HOME}/cassandra/data"
-	sudo su datafari -c "rm -rf ${DATAFARI_HOME}/zookeeper/data"
-        sudo su datafari -c "mkdir -m 700 ${DATAFARI_HOME}/zookeeper/data"
+	run_as ${DATAFARI_USER} "rm -rf ${DATAFARI_HOME}/cassandra/data"
+	run_as ${DATAFARI_USER} "mkdir ${DATAFARI_HOME}/cassandra/data"
+	run_as ${DATAFARI_USER} "rm -rf ${DATAFARI_HOME}/zookeeper/data"
+  run_as ${DATAFARI_USER} "mkdir -m 700 ${DATAFARI_HOME}/zookeeper/data"
 	CASSANDRA_INCLUDE=$CASSANDRA_ENV
 	# Redirect stdout and stderr to log file to ease startup issues investigation
-	sudo -E su datafari -p -c "$CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE &>$DATAFARI_LOGS/cassandra-startup.log"
+	run_as ${DATAFARI_USER} "$CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE &>$DATAFARI_LOGS/cassandra-startup.log"
 	# Note: Cassandra start command returns 0 even if something goes wrong at startup. 
 	# This is why hereafter we check pid and we see if the Cassandra ports are open.
 
@@ -159,7 +159,7 @@ then
 	
 	echo "Checking if Cassandra is up and running ..."
 	# Try to connect on Cassandra's JMX port 7199 and CQLSH port 9042
-        cassandra_status=0
+  cassandra_status=0
 	retries=1
 
 	exec 6<>/dev/tcp/127.0.0.1/7199 || cassandra_status=1
@@ -169,15 +169,15 @@ then
 	exec 6<>/dev/tcp/127.0.0.1/9042 || cassandra_status=1
 	exec 6>&- # close output connection
 	exec 6<&- # close input connection
-        while (( retries < 10 && cassandra_status != 0 )); do
-                echo "Cassandra doesn't reply to requests on ports 7199 and/or 9042. Sleeping for a while and trying again... retry ${retries}"
+  while (( retries < 10 && cassandra_status != 0 )); do
+    echo "Cassandra doesn't reply to requests on ports 7199 and/or 9042. Sleeping for a while and trying again... retry ${retries}"
+    
+    cassandra_status=0
+    
+    # Sleep for a while
+    sleep 5s
                 
-                cassandra_status=0
-                
-                # Sleep for a while
-                sleep 5s
-                
-                exec 6<>/dev/tcp/127.0.0.1/7199 || cassandra_status=1
+    exec 6<>/dev/tcp/127.0.0.1/7199 || cassandra_status=1
 		exec 6>&- # close output connection
 		exec 6<&- # close input connection
 
@@ -185,36 +185,36 @@ then
 		exec 6>&- # close output connection
 		exec 6<&- # close input connection
 
-                ((retries++))
-        done
+    ((retries++))
+  done
 
 	if [ $cassandra_status -ne 0 ]; then
 		echo "/!\ ERROR: Cassandra startup has ended with errors; please check log file ${DATAFARI_LOGS}/cassandra-startup.log"
 	else
 		
         echo "Cassandra startup completed successfully --- OK"
-		sudo -E su datafari -p -c "$CASSANDRA_HOME/bin/cqlsh -f $DATAFARI_HOME/bin/common/config/cassandra/tables"
+		run_as ${DATAFARI_USER} "$CASSANDRA_HOME/bin/cqlsh -f $DATAFARI_HOME/bin/common/config/cassandra/tables"
 	fi
 fi
 
 
 echo "Start zookeeper"
 cd "${DATAFARI_HOME}/zookeeper/bin"
-sudo -E su datafari -p -c "bash zkServer.sh start"
+run_as ${DATAFARI_USER} "bash zkServer.sh start"
 
 if  [[ "$STATE" = *installed* ]];
 then
 	cd ${MCF_HOME}
 	echo "Init ZK sync for MCF"
-	sudo -E su datafari -p -c "bash setglobalproperties.sh & sleep 3"
-	sudo -E su datafari -p -c "bash initialize.sh"
+	run_as ${DATAFARI_USER} "bash setglobalproperties.sh & sleep 3"
+	run_as ${DATAFARI_USER} "bash initialize.sh"
 	echo "Uploading configuration to zookeeper"
 	"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/FileShare/conf" -confname FileShare
 	"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Statistics/conf" -confname Statistics
 	"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Promolink/conf" -confname Promolink
-    cd "${DATAFARI_HOME}/bin/common"
+  cd "${DATAFARI_HOME}/bin/common"
 	echo "Uploading MCF configuration - waiting up to 2 minutes"
-	sudo -E su datafari -p -c "nohup ${JAVA_HOME}/bin/java -Dorg.apache.manifoldcf.configfile=${MCF_HOME}/properties.xml -cp ./*:${MCF_HOME}/lib/mcf-core.jar:${MCF_HOME}/lib/* com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript RESTORE config/manifoldcf/init 2>/dev/null &"
+	run_as ${DATAFARI_USER} "nohup ${JAVA_HOME}/bin/java -Dorg.apache.manifoldcf.configfile=${MCF_HOME}/properties.xml -cp ./*:${MCF_HOME}/lib/mcf-core.jar:${MCF_HOME}/lib/* com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript RESTORE config/manifoldcf/init 2>/dev/null &"
 	pid_mcf_upload=$(pgrep -f "com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript" )
 	spin='-\|/'
 	i=0
@@ -226,18 +226,18 @@ then
 			done
 	echo "end uploading MCF conf"	
 	
-	sudo su datafari -c "sed -i 's/\(STATE *= *\).*/\1initialized/' $INIT_STATE_FILE"
+	run_as ${DATAFARI_USER} "sed -i 's/\(STATE *= *\).*/\1initialized/' $INIT_STATE_FILE"
 
 else
 	sudo LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib su postgres -p -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_LOGS}/pgsql.log start"
-	sudo -E su datafari -p -c "CASSANDRA_INCLUDE=$CASSANDRA_ENV $CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE 1>/dev/null"
+	run_as ${DATAFARI_USER} "CASSANDRA_INCLUDE=$CASSANDRA_ENV $CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE 1>/dev/null"
 	waitCassandra
 fi
 
 cd $MCF_HOME/../bin
 
-sudo -E su datafari -p -c "export PATH=$PATH && bash mcf_crawler_agent.sh start"
-sudo -E su datafari -p -c "SOLR_INCLUDE=$SOLR_ENV $SOLR_INSTALL_DIR/bin/solr start"
+run_as ${DATAFARI_USER} "export PATH=$PATH && bash mcf_crawler_agent.sh start"
+run_as ${DATAFARI_USER} "SOLR_INCLUDE=$SOLR_ENV $SOLR_INSTALL_DIR/bin/solr start"
 
 
 if  [[ "$STATE" = *installed* ]];
@@ -249,7 +249,7 @@ fi
 
 echo "Start Tomcat"
 cd $TOMCAT_HOME/bin
-sudo -E su datafari -p -c "bash startup.sh"
+run_as ${DATAFARI_USER} "bash startup.sh"
 
 
 

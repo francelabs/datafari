@@ -1,5 +1,17 @@
 #!/bin/bash
 
+run_as()
+{
+  user=$1
+  command=$2
+  current_user=`whoami`
+  if [ $current_user != $user ] ; then
+    sudo -E su $user -p -c "$command"
+  else
+    $command
+  fi
+}
+
 # util funcs
 waitpid() {
     local pid=$1 timeout=$2 
@@ -140,10 +152,10 @@ is_running() {
 	return 1
     fi
     local pid
-    pid=$(sudo su datafari -c "cat $pidFile")
+    pid=$(run_as ${DATAFARI_USER} "cat $pidFile")
     if ! ps -p $pid 1>/dev/null 2>&1; then
         echo "Warn: a PID file was detected, removing it."
-        sudo su datafari -c "rm -f $pidFile"
+        run_as ${DATAFARI_USER} "rm -f $pidFile"
         return 1
     fi
     return 0        
@@ -155,15 +167,15 @@ forceStopIfNecessary(){
         return 0
     fi
     local pid
-    pid=$(sudo su datafari -c "cat $pidFile")
-    sudo su datafari -c "kill $pid"
+    pid=$(run_as ${DATAFARI_USER} "cat $pidFile")
+    run_as ${DATAFARI_USER} "kill $pid"
     waitpid $pid 30 .
     if [ $? -ne 0 ]; then
         echo
         echo "Warn: failed to stop $2 in 30 seconds, sending SIGKILL"
-        sudo su datafari -c "kill -9 $pid"
+        run_as ${DATAFARI_USER} "kill -9 $pid"
         sleep 1
     fi
     echo "stopped"
-    sudo su datafari -c "rm -f $pidFile"
+    run_as ${DATAFARI_USER} "rm -f $pidFile"
 }
