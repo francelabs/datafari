@@ -61,11 +61,11 @@ public class CheckMCFConfiguration extends HttpServlet {
 
     if (confToCheck != null) {
 
-      String envPath = Environment.getProperty("catalina.home");
+      String envPath = Environment.getEnvironmentVariable("MCF_HOME");
       if (envPath == null) {
-        envPath = "/opt/datafari/tomcat";
+        envPath = "/opt/datafari/mcf/mcf_home";
       }
-      final File connectors = new File(envPath + "/../mcf/mcf_home/connectors.xml");
+      final File connectors = new File(envPath + "/connectors.xml");
       final DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
       try {
         final DocumentBuilder builder = builderFactory.newDocumentBuilder();

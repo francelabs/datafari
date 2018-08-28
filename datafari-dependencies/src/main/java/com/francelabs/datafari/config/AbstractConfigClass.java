@@ -15,7 +15,6 @@ import java.nio.file.WatchService;
 import java.util.Properties;
 
 import org.apache.commons.io.output.FileWriterWithEncoding;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.francelabs.datafari.utils.Environment;
@@ -43,7 +42,7 @@ public abstract class AbstractConfigClass implements IConfigClass {
   protected AbstractConfigClass(final String configPropertiesFileName, final Logger logger) {
     LOGGER = logger;
     this.configPropertiesFileName = configPropertiesFileName;
-    String envPath = Environment.getProperty("catalina.home");
+    String envPath = Environment.getEnvironmentVariable("TOMCAT_HOME");
     if (envPath == null) {
       envPath = "/opt/datafari/tomcat";
     }

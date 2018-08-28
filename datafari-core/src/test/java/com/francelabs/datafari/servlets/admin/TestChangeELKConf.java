@@ -46,7 +46,7 @@ public class TestChangeELKConf {
 
     // set datafari_home to temp dir
     PowerMockito.mockStatic(Environment.class);
-    Mockito.when(Environment.getProperty("catalina.home")).thenReturn(tempDirectory.toFile().getAbsolutePath());
+    Mockito.when(Environment.getEnvironmentVariable("TOMCAT_HOME")).thenReturn(tempDirectory.toFile().getAbsolutePath());
 
   }
 

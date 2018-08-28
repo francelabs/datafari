@@ -45,8 +45,8 @@ sed -i "/francelabs\/tika-server.log/c\	path => \"${DATAFARI_HOME}/logs/tika-ser
 cd $LOGSTASH_HOME
 echo "Starting Logstash..."
 bash bin/logstash -f $LOGSTASH_HOME/logstash-datafari.conf &
-# Must sleep 1 sec to be sure to find logstash's PID
-sleep 1
+# Must sleep few secs to be sure to find logstash's PID
+sleep 5
 LOGSTASH_PID=`ps ux | grep logstash | grep runner.rb | awk '{ print $2}'`
 if [ "x$LOGSTASH_PID" = "x" ]; then
 LOGSTASH_PID=-1
