@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
@@ -59,7 +60,7 @@ public class ZooKeeperConf extends HttpServlet {
       environnement = ExecutionEnvironment.getDevExecutionEnvironment();
     }
     env = environnement + "/solr/solrcloud/FileShare/conf/";
-    downloadFolder = environnement +"/bin/backup/solr";
+    downloadFolder = environnement + "/bin/backup/solr";
 
   }
 
@@ -80,36 +81,33 @@ public class ZooKeeperConf extends HttpServlet {
       server = IndexerServerManager.getIndexerServer(Core.FILESHARE);
     } catch (final IOException e1) {
       final PrintWriter out = response.getWriter();
-      out.append(
-          "Error while getting the Solr core, please make sure the core dedicated to PromoLinks has booted up. Error code : 69000");
+      out.append("Error while getting the Solr core, please make sure the core dedicated to PromoLinks has booted up. Error code : 69000");
       out.close();
-      LOGGER.error(
-          "Error while getting the Solr core in doGet, admin servlet, make sure the core dedicated to Promolink has booted up and is still called promolink or that the code has been changed to match the changes. Error 69000 ",
-          e1);
+      LOGGER.error("Error while getting the Solr core in doGet, admin servlet, make sure the core dedicated to Promolink has booted up and is still called promolink or that the code has been changed to match the changes. Error 69000 ", e1);
       return;
 
-    } catch (Exception e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	  
+    } catch (final Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
     try {
       if (actionParam.toLowerCase().equals("download")) {
-    	  File folderConf = new File(downloadFolder);
-    	  FileUtils.cleanDirectory(folderConf);
-    	  server.downloadConfig(Paths.get(downloadFolder),Core.FILESHARE.toString());
+        final File folderConf = new File(downloadFolder);
+        FileUtils.cleanDirectory(folderConf);
+        server.downloadConfig(Paths.get(downloadFolder), Core.FILESHARE.toString());
       } else if (actionParam.toLowerCase().equals("upload")) {
-    	  server.uploadConfig(Paths.get(env),Core.FILESHARE.toString());
+        server.uploadConfig(Paths.get(env), Core.FILESHARE.toString());
       } else if (actionParam.toLowerCase().equals("reload")) {
-    	  server.reloadCollection(Core.FILESHARE.toString());
+        server.reloadCollection(Core.FILESHARE.toString());
       } else if (actionParam.toLowerCase().equals("upload_and_reload")) {
-    	  server.uploadConfig(Paths.get(env),Core.FILESHARE.toString());
+        server.uploadConfig(Paths.get(env), Core.FILESHARE.toString());
         Thread.sleep(3000);
         server.reloadCollection(Core.FILESHARE.toString());
       }
 
       jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-    } catch (final IOException e) {
+    } catch (final IOException | SolrServerException e) {
       LOGGER.error("Exception during action " + actionParam, e);
       jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
     } catch (final InterruptedException e) {

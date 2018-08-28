@@ -3,6 +3,8 @@ package com.francelabs.datafari.service.indexer;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import org.apache.solr.client.solrj.SolrServerException;
+
 public interface IndexerServer {
 
   public IndexerQueryResponse executeQuery(final IndexerQuery query) throws Exception;
@@ -18,16 +20,15 @@ public interface IndexerServer {
   public void deleteById(final String id) throws Exception;
 
   public void processStatsResponse(final IndexerQueryResponse queryResponse);
-  
-  public void uploadConfig(Path configPath, String configName) throws IOException ;
-  
-  public void downloadConfig(Path configPath, String configName) throws IOException ;
-  
-  public void reloadCollection(String collectionName) ;
+
+  public void uploadConfig(Path configPath, String configName) throws IOException;
+
+  public void downloadConfig(Path configPath, String configName) throws IOException;
+
+  public void reloadCollection(String collectionName) throws SolrServerException, IOException;
 
   public String getAnalyzerFilterValue(final String filterClass, final String filterAttr) throws Exception;
 
-  public void updateAnalyzerFilterValue(final String filterClass, final String filterAttr, final String value)
-      throws Exception;
+  public void updateAnalyzerFilterValue(final String filterClass, final String filterAttr, final String value) throws Exception;
 
 }

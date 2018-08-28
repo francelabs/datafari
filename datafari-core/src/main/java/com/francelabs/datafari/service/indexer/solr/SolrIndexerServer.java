@@ -97,22 +97,23 @@ public class SolrIndexerServer implements IndexerServer {
     final SolrDocument document = client.getById(id);
     return new SolrIndexerResponseDocument(document);
   }
-  
-  public void uploadConfig(Path configPath, String configName) throws IOException {
-	    
-	    client.uploadConfig(configPath, configName);
-	  }
-  
-  public void downloadConfig(Path configPath, String configName) throws IOException {
-	    
-	    client.downloadConfig(configName, configPath);
-	  }
 
-  
-  public void reloadCollection(String collectionName) {
-	    
-	  CollectionAdminRequest.reloadCollection(collectionName);
-	  }
+  @Override
+  public void uploadConfig(final Path configPath, final String configName) throws IOException {
+
+    client.uploadConfig(configPath, configName);
+  }
+
+  @Override
+  public void downloadConfig(final Path configPath, final String configName) throws IOException {
+
+    client.downloadConfig(configName, configPath);
+  }
+
+  @Override
+  public void reloadCollection(final String collectionName) throws SolrServerException, IOException {
+    CollectionAdminRequest.reloadCollection(collectionName).process(client);
+  }
 
   @Override
   public void processStatsResponse(final IndexerQueryResponse queryResponse) {
@@ -142,7 +143,7 @@ public class SolrIndexerServer implements IndexerServer {
 
       final List<Count> QFacetValues = QFacet.getValues();
 
-      final Map<String, SolrDocument> mapDocuments = new HashMap<String, SolrDocument>();
+      final Map<String, SolrDocument> mapDocuments = new HashMap<>();
 
       for (int i = 0; i < QFacetValues.size(); i++) {
         final SolrDocument doc = new SolrDocument();
@@ -168,11 +169,9 @@ public class SolrIndexerServer implements IndexerServer {
         final int AVGQTime = new Double((Double) QTimeStats.get(i).getMean()).intValue();
         final int MAXQTime = new Double((Double) QTimeStats.get(i).getMax()).intValue();
         final double click = new Double((Double) clickStats.get(i).getSum());
-        final double clickRatio = StatsUtils.round(click * 100 / (Double) doc.getFirstValue("count"), 2,
-            BigDecimal.ROUND_HALF_UP);
+        final double clickRatio = StatsUtils.round(click * 100 / (Double) doc.getFirstValue("count"), 2, BigDecimal.ROUND_HALF_UP);
         if (click > 0) {
-          final double AVGClickPosition = new Double(
-              (Double) positionClickTotStats.get(i).getSum() / (Double) numClicksStats.get(i).getSum()).intValue();
+          final double AVGClickPosition = new Double((Double) positionClickTotStats.get(i).getSum() / (Double) numClicksStats.get(i).getSum()).intValue();
 
           doc.addField("AVGClickPosition", AVGClickPosition);
 
@@ -190,7 +189,7 @@ public class SolrIndexerServer implements IndexerServer {
 
     }
 
-    final NamedList<Object> response = new SimpleOrderedMap<Object>();
+    final NamedList<Object> response = new SimpleOrderedMap<>();
     response.add("responseHeader", responseHeader);
     response.add("response", solrDocumentList);
     solrResponse.setResponse(response);
@@ -233,7 +232,7 @@ public class SolrIndexerServer implements IndexerServer {
       final String name = (String) fieldType.getAttributes().get("name");
       // get all analyzers for text_* field
       if (name != null && name.startsWith("text_")) {
-        final List<AnalyzerDefinition> analyzers = new ArrayList<AnalyzerDefinition>();
+        final List<AnalyzerDefinition> analyzers = new ArrayList<>();
         analyzers.add(fieldType.getAnalyzer());
         analyzers.add(fieldType.getIndexAnalyzer());
         analyzers.add(fieldType.getQueryAnalyzer());
@@ -266,16 +265,15 @@ public class SolrIndexerServer implements IndexerServer {
    *
    */
   @Override
-  public void updateAnalyzerFilterValue(final String filterClass, final String filterAttr, final String value)
-      throws Exception {
+  public void updateAnalyzerFilterValue(final String filterClass, final String filterAttr, final String value) throws Exception {
     final FieldTypes solrRequest = new FieldTypes();
     final FieldTypesResponse solrResponse = new FieldTypesResponse();
     solrResponse.setResponse(client.request(solrRequest));
-    final List<Update> updates = new ArrayList<Update>();
+    final List<Update> updates = new ArrayList<>();
     for (final FieldTypeRepresentation fieldType : solrResponse.getFieldTypes()) {
       final String name = (String) fieldType.getAttributes().get("name");
       if (name != null && name.startsWith("text_")) {
-        final List<AnalyzerDefinition> analyzers = new ArrayList<AnalyzerDefinition>();
+        final List<AnalyzerDefinition> analyzers = new ArrayList<>();
         analyzers.add(fieldType.getAnalyzer());
         analyzers.add(fieldType.getIndexAnalyzer());
         analyzers.add(fieldType.getQueryAnalyzer());
