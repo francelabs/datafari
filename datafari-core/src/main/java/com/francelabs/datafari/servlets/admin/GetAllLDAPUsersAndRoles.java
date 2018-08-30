@@ -93,6 +93,7 @@ public class GetAllLDAPUsersAndRoles extends HttpServlet {
           if (ldapUsersList.isEmpty()) { // No LDAP users found
             jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
             jsonResponse.put(OutputConstants.STATUS, "No users found !");
+            logger.warn("No users found !");
           } else { // Retrieve user roles for LDAP users (if possible)
             final Map<String, List<String>> usersRoles = User.getAllUsers();
             final Map<String, List<String>> ldapUsersRoles = new HashMap<>();
@@ -115,21 +116,21 @@ public class GetAllLDAPUsersAndRoles extends HttpServlet {
 
           jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
           jsonResponse.put(OutputConstants.STATUS, "Problem with XML Manipulation");
-          logger.error(e);
+          logger.error("Problem with XML Manipulation", e);
 
         } catch (final NamingException e) {
           performingRefresh = false;
 
           jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONAD.getValue());
           jsonResponse.put(OutputConstants.STATUS, "Problem with AD connection");
-          logger.error(e);
+          logger.error("Problem with AD connection", e);
 
         } catch (final ManifoldCFException e) {
           performingRefresh = false;
 
           jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
           jsonResponse.put(OutputConstants.STATUS, "Problem with password obfuscation");
-          logger.error(e);
+          logger.error("Problem with password obfuscation", e);
 
         }
       } else {

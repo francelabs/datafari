@@ -72,7 +72,6 @@ public class Unlike extends HttpServlet {
     response.setContentType("application/json");
     final String documentId = request.getParameter("idDocument");
     if (documentId != null) {
-
       final Principal userPrincipal = request.getUserPrincipal();
       // checking if the user is connected
       if (userPrincipal == null) {
@@ -93,15 +92,14 @@ public class Unlike extends HttpServlet {
             jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE.getValue());
             jsonResponse.put(OutputConstants.STATUS, "Problem while connecting to database");
           }
+          logger.error("Impossible to unlike due to error", e);
         }
 
       }
-
     } else {
-
       jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
       jsonResponse.put(OutputConstants.STATUS, "Query malformed");
-
+      logger.error("Query malformed, no idDocument provided: " + request.getQueryString());
     }
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);

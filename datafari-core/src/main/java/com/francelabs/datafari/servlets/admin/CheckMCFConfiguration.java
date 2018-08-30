@@ -17,6 +17,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -38,6 +40,8 @@ public class CheckMCFConfiguration extends HttpServlet {
   private static final String FILER_CONF = "filer";
   private static final String FILER_EXPRESSION = "/connectors/repositoryconnector[@class='org.apache.manifoldcf.crawler.connectors.sharedrive.SharedDriveConnector']";
   private static final String REGISTER_PARAM = "registered";
+
+  private static final Logger logger = LogManager.getLogger(CheckMCFConfiguration.class.getName());
 
   /**
    * @see HttpServlet#HttpServlet()
@@ -81,6 +85,7 @@ public class CheckMCFConfiguration extends HttpServlet {
       } catch (ParserConfigurationException | SAXException | XPathExpressionException e) {
         jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
         jsonResponse.put(OutputConstants.STATUS, "Unable to read the MCF connectors.xml file");
+        logger.error("Unable to read the MCF config", e);
       }
     }
 

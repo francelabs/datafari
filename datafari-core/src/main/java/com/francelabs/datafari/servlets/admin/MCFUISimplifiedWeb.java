@@ -85,6 +85,7 @@ public class MCFUISimplifiedWeb extends HttpServlet {
       if (webRepoName == null) {
         jsonResponse.put("OK", "OK");
         jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+        LOGGER.error("Cannot create Web Repository Connection");
       } else {
 
         // Create webJob
@@ -100,6 +101,7 @@ public class MCFUISimplifiedWeb extends HttpServlet {
           jsonResponse.put("job_id", jobId);
         } else {
           jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+          LOGGER.error("Cannot create Web job");
         }
         jsonResponse.put("OK", "OK");
       }
@@ -108,7 +110,7 @@ public class MCFUISimplifiedWeb extends HttpServlet {
       final PrintWriter out = response.getWriter();
       out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69253");
       out.close();
-      LOGGER.error("Error in MCFBackupRestore doPost. Error 69253", e);
+      LOGGER.error("Unknown error during process", e);
     }
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);

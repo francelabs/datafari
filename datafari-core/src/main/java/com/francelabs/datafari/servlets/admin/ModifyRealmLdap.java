@@ -60,6 +60,7 @@ public class ModifyRealmLdap extends HttpServlet {
           jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONAD.getValue());
           jsonResponse.put(OutputConstants.STATUS, "Fail to connect to AD with the setting given");
           isConnected = false;
+          logger.error("Fail to connect to the AD with the given settings", e1);
         }
         if (isConnected) {
           final HashMap<String, String> h = new HashMap<>();
@@ -72,11 +73,13 @@ public class ModifyRealmLdap extends HttpServlet {
           final StringBuilder suffixAttribute = new StringBuilder();
           for (int i = 0; i < listOfNode.length; i++) {
             final String[] element = listOfNode[i].split("=");
-            if (!element[0].equals("dc"))
+            if (!element[0].equals("dc")) {
               continue;
+            }
             suffixAttribute.append(element[1]);
-            if (i < listOfNode.length - 1)
+            if (i < listOfNode.length - 1) {
               suffixAttribute.append(".");
+            }
           }
           final String urlPort = request.getParameter(RealmLdapConfiguration.ATTR_CONNECTION_URL).toString().split("ldap://")[1];
           final String url = urlPort.split(":")[0];
@@ -90,7 +93,7 @@ public class ModifyRealmLdap extends HttpServlet {
             jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
             jsonResponse.put(OutputConstants.STATUS, "200 ALL OK");
           } catch (SAXException | ParserConfigurationException e) {
-            logger.error(e);
+            logger.error("Problem with XML And JSON Manipulation", e);
             jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
             jsonResponse.put(OutputConstants.STATUS, "Problem with XML And JSON Manipulation");
           }
@@ -99,13 +102,10 @@ public class ModifyRealmLdap extends HttpServlet {
       } else {
         jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue());
         jsonResponse.put(OutputConstants.STATUS, "Problem with query");
+        logger.error("Problem with query, some parameters are empty or missing: " + request.getQueryString());
       }
-    } catch (
-
-    final ManifoldCFException e)
-
-    {
-      logger.error(e);
+    } catch (final ManifoldCFException e) {
+      logger.error("ManifoldCF exception", e);
     }
 
     final PrintWriter out = response.getWriter();

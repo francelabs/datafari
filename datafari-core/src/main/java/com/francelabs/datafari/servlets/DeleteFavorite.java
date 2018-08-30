@@ -70,7 +70,6 @@ public class DeleteFavorite extends HttpServlet {
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
     if (request.getParameter("idDocument") != null) {
-
       final Principal userPrincipal = request.getUserPrincipal();
       if (userPrincipal == null) {
         jsonResponse.put(OutputConstants.CODE, CodesReturned.NOTCONNECTED.getValue());
@@ -83,14 +82,13 @@ public class DeleteFavorite extends HttpServlet {
         } catch (final DatafariServerException e) {
           jsonResponse.put(OutputConstants.CODE, e.getErrorCode().getValue());
           jsonResponse.put(OutputConstants.STATUS, "Problem while connecting to database");
+          logger.error("Delete favorite error", e);
         }
       }
-
     } else {
-
       jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
       jsonResponse.put(OutputConstants.STATUS, "Query malformed");
-
+      logger.error("Delete favorite error, query malformed: " + request.getQueryString());
     }
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);

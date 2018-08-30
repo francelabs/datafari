@@ -64,6 +64,7 @@ public class ChangeELKConf extends HttpServlet {
         && (req.getParameter(ELKConfiguration.ELK_SERVER) == null || req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR) == null)) {
       jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue());
       jsonResponse.put(OutputConstants.STATUS, "Query Malformed");
+      logger.error("Query Malformed, some parameters are empty or missing: " + req.getQueryString());
     } else {
       try {
         final ELKConfiguration elkConf = ELKConfiguration.getInstance();
@@ -113,6 +114,7 @@ public class ChangeELKConf extends HttpServlet {
         jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
       } catch (final IOException e) {
         jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+        logger.error("Impossible to change and save the ELK conf", e);
       }
 
     }

@@ -56,9 +56,7 @@ public class GetAvailableLanguages extends HttpServlet {
     final JSONObject jsonResponse = new JSONObject();
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
-
     jsonResponse.put("availableLanguageList", LanguageUtils.availableLanguages);
-
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);
   }

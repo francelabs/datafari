@@ -86,6 +86,7 @@ public class AddUser extends HttpServlet {
               jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE.getValue());
               jsonResponse.put(OutputConstants.STATUS, "Problem with database");
             }
+            logger.error("Impossible to add user", e);
           }
 
         } else {
@@ -97,12 +98,12 @@ public class AddUser extends HttpServlet {
       } catch (ParserConfigurationException | SAXException | DOMException | ManifoldCFException e) {
         jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
         jsonResponse.put(OutputConstants.STATUS, "Problem with XML Manipulation");
-        logger.error(e);
+        logger.error("Problem with XML Manipulation", e);
       } catch (final NamingException e) {
 
         jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONAD.getValue());
         jsonResponse.put(OutputConstants.STATUS, "Problem with AD connection");
-        logger.error(e);
+        logger.error("Problem with AD connection", e);
       }
     } else if (request.getParameter(UserDataService.USERNAMECOLUMN) != null && request.getParameter(UserDataService.PASSWORDCOLUMN) != null && request.getParameter(UserDataService.ROLECOLUMN + "[]") != null) {
       final User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(), request.getParameter(UserDataService.PASSWORDCOLUMN).toString());
@@ -114,14 +115,17 @@ public class AddUser extends HttpServlet {
         if (e.getErrorCode().equals(CodesReturned.USERALREADYINBASE)) {
           jsonResponse.put(OutputConstants.CODE, CodesReturned.USERALREADYINBASE.getValue());
           jsonResponse.put(OutputConstants.STATUS, "User already Signed up");
+          logger.error("User already Signed up", e);
         } else {
           jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE.getValue());
           jsonResponse.put(OutputConstants.STATUS, "Problem with database");
+          logger.error("Problem with database", e);
         }
       }
     } else {
       jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue());
       jsonResponse.put("statut", "Problem with query");
+      logger.error("Problem with query, some parameters are empty or missing: " + request.getQueryString());
     }
 
     final PrintWriter out = response.getWriter();

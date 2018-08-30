@@ -79,9 +79,9 @@ public class ConfigLikesAndFavorites extends HttpServlet {
         error = ScriptConfiguration.setProperty(StringsDatafariProperties.LIKESANDFAVORTES, "false");
         LikesLauncher.shutDown();
       }
-
       if (error) {
         jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+        logger.error("Unable to change likes and favorites config");
       } else {
         jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
       }

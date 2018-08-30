@@ -46,7 +46,7 @@ import com.francelabs.datafari.user.Alert;
  * alerts in the database. It is only called by the Alerts.html. doGet is used
  * to print the Alerts. doPost is used to add/edit/delete Alerts. The connection
  * with the database is made in the constructor.
- *
+ * 
  * @author Alexis Karassev
  *
  */

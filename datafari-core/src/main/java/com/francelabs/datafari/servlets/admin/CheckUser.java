@@ -62,6 +62,7 @@ public class CheckUser extends HttpServlet {
     } else {
       jsonResponse.put(OutputConstants.CODE, CodesReturned.PARAMETERNOTWELLSET.getValue());
       jsonResponse.put(OutputConstants.STATUS, "Problem with provided parameters");
+      logger.error("Problem with provided parameters" + request.getQueryString());
     }
 
     final PrintWriter out = response.getWriter();

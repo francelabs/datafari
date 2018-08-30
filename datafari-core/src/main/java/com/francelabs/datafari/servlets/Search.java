@@ -36,20 +36,37 @@ public class Search extends HttpServlet {
 	 */
 	public Search() {
 		super();
-		
+
 	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+	@Override
+	protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
+			throws ServletException, IOException {
 		String redirectUrl = "/searchView.jsp";
 
-		RequestDispatcher rd = request.getRequestDispatcher(redirectUrl);
+		if (request.getParameter("source") != null && !request.getParameter("source").equals("all")) {
+			redirectUrl = "/searchView- " + request.getParameter("source") + ".jsp";
+		}
+
+		final RequestDispatcher rd = request.getRequestDispatcher(redirectUrl);
 		rd.forward(request, response);
 	}
 
+	@Override
+	protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
+			throws ServletException, IOException {
+		String redirectUrl = "/searchView.jsp";
+
+		if (request.getParameter("source") != null && !request.getParameter("source").equals("all")) {
+			redirectUrl = "/searchView- " + request.getParameter("source") + ".jsp";
+		}
+
+		final RequestDispatcher rd = request.getRequestDispatcher(redirectUrl);
+		rd.forward(request, response);
+	}
 
 }

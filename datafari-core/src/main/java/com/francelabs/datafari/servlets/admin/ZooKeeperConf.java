@@ -107,12 +107,9 @@ public class ZooKeeperConf extends HttpServlet {
       }
 
       jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-    } catch (final IOException | SolrServerException e) {
+    } catch (final IOException | SolrServerException | InterruptedException e) {
       LOGGER.error("Exception during action " + actionParam, e);
       jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-    } catch (final InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
     }
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);

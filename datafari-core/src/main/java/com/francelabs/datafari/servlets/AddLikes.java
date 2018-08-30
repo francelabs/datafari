@@ -73,7 +73,6 @@ public class AddLikes extends HttpServlet {
     response.setContentType("application/json");
     final String documentId = request.getParameter("idDocument");
     if (documentId != null) {
-
       final Principal userPrincipal = request.getUserPrincipal();
       // checking if the user is connected
       if (userPrincipal == null) {
@@ -95,14 +94,13 @@ public class AddLikes extends HttpServlet {
             // illegaly the likes)
             jsonResponse.put(OutputConstants.STATUS, "Problem while connecting to database");
           }
+          logger.error("Add like error", e);
         }
       }
-
     } else {
-
       jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR);
       jsonResponse.put(OutputConstants.STATUS, "Query malformed");
-
+      logger.error("Add like error, no idDocument provided: " + request.getQueryString());
     }
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);

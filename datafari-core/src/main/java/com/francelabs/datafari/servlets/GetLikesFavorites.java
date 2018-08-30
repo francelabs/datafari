@@ -63,7 +63,6 @@ public class GetLikesFavorites extends HttpServlet {
     final JSONObject jsonResponse = new JSONObject();
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
-
     final String[] documentIDs = request.getParameterValues(DOCUMENTSID);
 
     if (request.getUserPrincipal() != null) {
@@ -75,15 +74,14 @@ public class GetLikesFavorites extends HttpServlet {
 
         jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
       } catch (final DatafariServerException e) {
-
         jsonResponse.put(OutputConstants.CODE, e.getErrorCode().getValue());
         jsonResponse.put(OutputConstants.STATUS, "Not connected yet");
+        logger.error("Error getting likes and favorites", e);
       }
     } else {
       jsonResponse.put("code", CodesReturned.NOTCONNECTED.getValue());
       jsonResponse.put(OutputConstants.STATUS, "Not connected yet");
     }
-
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);
   }

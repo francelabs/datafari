@@ -97,6 +97,7 @@ public class ConfigDeduplication extends HttpServlet {
       } catch (final IOException e) {
         logger.error(e);
         jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+        logger.error("Unable to save Solr configuration", e);
       }
     } else if (request.getParameter("initiate") != null) {
       String checked, checked_factory;

@@ -4,7 +4,7 @@
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
  *  * You may obtain a copy of the License at
- *  * 
+ *  *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
  *  *
  *  * Unless required by applicable law or agreed to in writing, software
@@ -36,110 +36,110 @@ import com.francelabs.datafari.startup.LikesLauncher;
 
 public class UpdateNbLikes {
 
-	public static UpdateNbLikes instance;
-	public final static String configPropertiesFileName = "external_nbLikes";
-	private static File configFile;
-	private Properties properties = new Properties();
+  public static UpdateNbLikes instance;
+  public final static String configPropertiesFileName = "external_nbLikes";
+  private static File configFile;
+  private final Properties properties = new Properties();
 
-	final static Logger logger = LogManager.getLogger(UpdateNbLikes.class.getName());
+  final static Logger logger = LogManager.getLogger(UpdateNbLikes.class.getName());
 
-	private UpdateNbLikes() throws IOException {
-		super();
-		BasicConfigurator.configure();
-		configFile = new File(Environment.getProperty("catalina.home") + File.separator + ".." + File.separator + "solr"
-				+ File.separator + "solr_home" + File.separator + "FileShare_shard1_replica1" + File.separator + "data"
-				+ File.separator + configPropertiesFileName);
-		if (configFile.exists()) {
-			properties.load(new FileInputStream(configFile));
-		} else
-			configFile.createNewFile();
-	}
+  private UpdateNbLikes() throws IOException {
+    super();
+    BasicConfigurator.configure();
+    configFile = new File(Environment.getEnvironmentVariable("SOLR_INSTALL_DIR") + File.separator + "solr_home" + File.separator + "FileShare_shard1_replica1" + File.separator + "data" + File.separator + configPropertiesFileName);
+    if (configFile.exists()) {
+      properties.load(new FileInputStream(configFile));
+    } else {
+      configFile.createNewFile();
+    }
+  }
 
-	public static synchronized UpdateNbLikes getInstance() throws DatafariServerException {
-		try {
-			if (instance == null) {
-				instance = new UpdateNbLikes();
-			}
-			return instance;
-		} catch (IOException e) {
-			logger.error(e);
-			throw new DatafariServerException(CodesReturned.GENERALERROR, e.getMessage());
-		}
-	}
+  public static synchronized UpdateNbLikes getInstance() throws DatafariServerException {
+    try {
+      if (instance == null) {
+        instance = new UpdateNbLikes();
+      }
+      return instance;
+    } catch (final IOException e) {
+      logger.error(e);
+      throw new DatafariServerException(CodesReturned.GENERALERROR, e.getMessage());
+    }
+  }
 
-	/**
-	 * increment the likes of a document
-	 * 
-	 * @param document
-	 *            the id of the document that have to be which likes has to be
-	 *            incremented
-	 */
-	public void increment(String document) {
-		String nbLikes = (String) properties.get(document);
-		if (nbLikes == null) {
-			properties.setProperty(document, "1.0");
-		} else {
-			properties.setProperty(document, String.valueOf(Float.parseFloat(nbLikes) + 1));
-		}
-		saveProperty();
-		LikesLauncher.saveChange();
-	}
+  /**
+   * increment the likes of a document
+   * 
+   * @param document
+   *          the id of the document that have to be which likes has to be
+   *          incremented
+   */
+  public void increment(final String document) {
+    final String nbLikes = (String) properties.get(document);
+    if (nbLikes == null) {
+      properties.setProperty(document, "1.0");
+    } else {
+      properties.setProperty(document, String.valueOf(Float.parseFloat(nbLikes) + 1));
+    }
+    saveProperty();
+    LikesLauncher.saveChange();
+  }
 
-	/**
-	 * decrement the likes of a document
-	 * 
-	 * @param document
-	 *            the id of the document that have to be which likes has to be
-	 *            decremented
-	 */
-	public void decrement(String document) {
+  /**
+   * decrement the likes of a document
+   * 
+   * @param document
+   *          the id of the document that have to be which likes has to be
+   *          decremented
+   */
+  public void decrement(final String document) {
 
-		String nbLikes = (String) properties.get(document);
-		if (nbLikes == null || Float.parseFloat(nbLikes) <= 0) {
-			properties.setProperty(document, "0");
-		} else {
-			properties.setProperty(document, String.valueOf(Float.parseFloat(nbLikes) - 1));
-		}
-		saveProperty();
-		LikesLauncher.saveChange();
+    final String nbLikes = (String) properties.get(document);
+    if (nbLikes == null || Float.parseFloat(nbLikes) <= 0) {
+      properties.setProperty(document, "0");
+    } else {
+      properties.setProperty(document, String.valueOf(Float.parseFloat(nbLikes) - 1));
+    }
+    saveProperty();
+    LikesLauncher.saveChange();
 
-	}
+  }
 
-	public void saveProperty() {
-		FileOutputStream fileOutputStream;
-		try {
-			fileOutputStream = new FileOutputStream(UpdateNbLikes.configFile);
-			properties.store(fileOutputStream, "");
-			fileOutputStream.close();
-			File originalFile = UpdateNbLikes.configFile;
-			BufferedReader br = new BufferedReader(new FileReader(originalFile));
-			File tempFile = new File("tempfile.txt");
-			PrintWriter pw = new PrintWriter(new FileWriter(tempFile));
-			String line = null;
-			while ((line = br.readLine()) != null) {
-				line = line.replaceAll("file\\\\:", "file:");
-				line = line.replaceAll("http\\\\:", "http:");
-				pw.println(line);
-				pw.flush();
-			}
-			pw.close();
-			br.close();
-			if (!originalFile.delete()) {
-				logger.debug("Could not delete file");
-				return;
-			}
-			if (!tempFile.renameTo(originalFile))
-				logger.debug("Could not rename file");
+  public void saveProperty() {
+    FileOutputStream fileOutputStream;
+    try {
+      fileOutputStream = new FileOutputStream(UpdateNbLikes.configFile);
+      properties.store(fileOutputStream, "");
+      fileOutputStream.close();
+      final File originalFile = UpdateNbLikes.configFile;
+      final BufferedReader br = new BufferedReader(new FileReader(originalFile));
+      final File tempFile = new File("tempfile.txt");
+      final PrintWriter pw = new PrintWriter(new FileWriter(tempFile));
+      String line = null;
+      while ((line = br.readLine()) != null) {
+        line = line.replaceAll("file\\\\:", "file:");
+        line = line.replaceAll("http\\\\:", "http:");
+        pw.println(line);
+        pw.flush();
+      }
+      pw.close();
+      br.close();
+      if (!originalFile.delete()) {
+        logger.debug("Could not delete file");
+        return;
+      }
+      if (!tempFile.renameTo(originalFile)) {
+        logger.debug("Could not rename file");
+      }
 
-		} catch (FileNotFoundException e) {
-			logger.error(e);
-		} catch (IOException e) {
-			logger.error(e);
-		}
-	}
+    } catch (final FileNotFoundException e) {
+      logger.error(e);
+    } catch (final IOException e) {
+      logger.error(e);
+    }
+  }
 
-	public File getConfigFile() {
-		return configFile;
-	}
+  public File getConfigFile() {
+    return configFile;
+  }
 
 }

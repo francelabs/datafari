@@ -45,7 +45,6 @@ public class DeleteUser extends HttpServlet {
     final JSONObject jsonResponse = new JSONObject();
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
-
     if (request.getParameter(UserDataService.USERNAMECOLUMN) != null) {
       final User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(), "");
       jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
@@ -55,13 +54,14 @@ public class DeleteUser extends HttpServlet {
         user.deleteUser();
         Favorite.removeFavoritesAndLikesDB(request.getParameter(UserDataService.USERNAMECOLUMN).toString());
       } catch (final DatafariServerException e) {
-
         jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE.getValue());
         jsonResponse.put(OutputConstants.STATUS, "Problem with database");
+        logger.error("Unable to delete user", e);
       }
     } else {
       jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue());
       jsonResponse.put(OutputConstants.STATUS, "Problem with query");
+      logger.error("Problem with query, some parameters are empty or missing: " + request.getQueryString());
     }
 
     final PrintWriter out = response.getWriter();

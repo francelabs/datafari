@@ -84,12 +84,14 @@ public class AddFavorite extends HttpServlet {
         } catch (final DatafariServerException e) {
           jsonResponse.put(OutputConstants.CODE, e.getErrorCode().getValue());
           jsonResponse.put(OutputConstants.STATUS, "Problem while connecting to database");
+          logger.error("Add favorite error", e);
         }
       }
 
     } else {
       jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
       jsonResponse.put(OutputConstants.STATUS, "Query malformed");
+      logger.error("Add favorite error, no idDocument provided: " + request.getQueryString());
     }
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);

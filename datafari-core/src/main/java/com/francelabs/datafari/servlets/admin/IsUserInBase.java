@@ -44,7 +44,6 @@ public class IsUserInBase extends HttpServlet {
     final JSONObject jsonResponse = new JSONObject();
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
-
     if (request.getParameter(UserDataService.USERNAMECOLUMN) != null) {
       try {
         final User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(), "");
@@ -59,12 +58,13 @@ public class IsUserInBase extends HttpServlet {
       } catch (final DatafariServerException e) {
         jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE.getValue());
         jsonResponse.put(OutputConstants.STATUS, "Problem with database");
+        logger.error("Problem with database", e);
       }
     } else {
       jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue());
       jsonResponse.put(OutputConstants.STATUS, "Problem with query");
+      logger.error("Problem with query, some parameters are empty or missing: " + request.getQueryString());
     }
-
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);
   }

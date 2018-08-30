@@ -89,6 +89,8 @@ public class MCFUISimplifiedFiler extends HttpServlet {
       if (filerRepoName == null) {
         jsonResponse.put("OK", "OK");
         jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+        LOGGER.error("Cannot create Share Repository Connection");
+
       } else {
 
         // Create filerJob
@@ -106,6 +108,7 @@ public class MCFUISimplifiedFiler extends HttpServlet {
           jsonResponse.put("job_id", jobId);
         } else {
           jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+          LOGGER.error("Cannot create Filer job");
         }
         jsonResponse.put("OK", "OK");
       }
@@ -114,7 +117,7 @@ public class MCFUISimplifiedFiler extends HttpServlet {
       final PrintWriter out = response.getWriter();
       out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69253");
       out.close();
-      LOGGER.error("Error in MCFBackupRestore doPost. Error 69253", e);
+      LOGGER.error("Unknown error during process", e);
     }
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);

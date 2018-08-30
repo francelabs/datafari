@@ -60,7 +60,6 @@ public class GetFavorites extends HttpServlet {
     final JSONObject jsonResponse = new JSONObject();
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
-
     final String[] documentIDs = request.getParameterValues(documentID);
     final Principal userPrincipal = request.getUserPrincipal();
     // checking if the user is connected
@@ -74,9 +73,9 @@ public class GetFavorites extends HttpServlet {
         jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
       } catch (final DatafariServerException e) {
         jsonResponse.put(OutputConstants.CODE, e.getErrorCode().getValue());
+        logger.error("Error getting favorites", e);
       }
     }
-
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);
   }

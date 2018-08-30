@@ -7,7 +7,7 @@
 
 export DATAFARI_USER="datafari"
 
-export DATAFARI_HOME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/..
+export DATAFARI_HOME=$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )
 #export JAVA_HOME=${DATAFARI_HOME}/jvm
 export JAVA_OPTS="${JAVA_OPTS} -Duser.timezone=UTC"
 export PATH=${PATH}:$JAVA_HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin

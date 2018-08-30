@@ -33,6 +33,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.francelabs.datafari.service.indexer.IndexerQuery;
 import com.francelabs.datafari.service.indexer.IndexerServerManager;
@@ -46,6 +48,7 @@ import com.francelabs.datafari.utils.ScriptConfiguration;
 @WebServlet("/URL")
 public class URL extends HttpServlet {
   private static final long serialVersionUID = 1L;
+  private static final Logger logger = LogManager.getLogger(URL.class.getName());
 
   private static final String redirectUrl = "/url.jsp";
 
@@ -62,8 +65,7 @@ public class URL extends HttpServlet {
    *      response)
    */
   @Override
-  protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
-      throws ServletException, IOException {
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
     request.setCharacterEncoding("UTF-8");
 
@@ -107,8 +109,7 @@ public class URL extends HttpServlet {
         query.setParam("AuthenticatedUserName", AuthenticatedUserName);
       }
     } catch (final Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      logger.error("Unable to add AuthenticatedUserName to query", e);
     }
     StatsPusher.pushDocument(query, protocol);
 

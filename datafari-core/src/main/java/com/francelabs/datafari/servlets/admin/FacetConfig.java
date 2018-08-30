@@ -158,8 +158,8 @@ public class FacetConfig extends HttpServlet {
           sem.release();
         }
       } else {
-        listDivName = new ArrayList<>();
-        listFieldsName = new ArrayList<>();
+        listDivName = new ArrayList<String>();
+        listFieldsName = new ArrayList<String>();
         // If one of the files has not been found
         if (jsp == null || js == null || en == null || fr == null) {
           // Check if it still doesn't exists
@@ -370,10 +370,10 @@ public class FacetConfig extends HttpServlet {
               + "'],\n" + "\t\tpagination : " + pagi + ",\n" + "\t\tselectionType : '" + mult + "',\n" + "\t\treturnUnselectedFacetValues : true\n" + "\t}));\n";
         } else {
           // If it's a query facet
-          final List<String> listQueries = new ArrayList<>();
-          final List<String> listLabelsFr = new ArrayList<>();
-          final List<String> listLabelsEn = new ArrayList<>();
-          final List<String> listLabelsIt = new ArrayList<>();
+          final List<String> listQueries = new ArrayList<String>();
+          final List<String> listLabelsFr = new ArrayList<String>();
+          final List<String> listLabelsEn = new ArrayList<String>();
+          final List<String> listLabelsIt = new ArrayList<String>();
           final String reg1 = "^query[0-9]*\\b";
           // Get as much queries and as much labels as provided by the user
           for (final Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {

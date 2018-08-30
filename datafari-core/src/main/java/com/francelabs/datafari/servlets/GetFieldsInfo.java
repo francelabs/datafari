@@ -113,7 +113,7 @@ public class GetFieldsInfo extends HttpServlet {
           final SSLConnectionSocketFactory sslConnectionFactory = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
           builder.setSSLSocketFactory(sslConnectionFactory);
 
-          final Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory> create().register("https", sslConnectionFactory).build();
+          final Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create().register("https", sslConnectionFactory).build();
 
           final HttpClientConnectionManager ccm = new BasicHttpClientConnectionManager(registry);
 

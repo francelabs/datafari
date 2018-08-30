@@ -54,10 +54,12 @@ public class DeleteRole extends HttpServlet {
       } catch (final DatafariServerException e) {
         jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE.getValue());
         jsonResponse.put(OutputConstants.STATUS, "Datafari isn't connected to Database");
+        logger.error("Unable to delete role", e);
       }
     } else {
       jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue());
       jsonResponse.put(OutputConstants.STATUS, "Problem with query");
+      logger.error("Problem with query, some parameters are empty or missing: " + request.getQueryString());
     }
 
     final PrintWriter out = response.getWriter();

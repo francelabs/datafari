@@ -121,10 +121,10 @@ public class ELKAdmin extends HttpServlet {
     final JSONObject jsonResponse = new JSONObject();
     req.setCharacterEncoding("utf8");
     resp.setContentType("application/json");
-
     if (req.getParameter(ELKConfiguration.ELK_ACTIVATION) == null) {
       jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue());
       jsonResponse.put(OutputConstants.STATUS, "Query Malformed");
+      logger.error("Query Malformed, some parameters are empty or missing: " + req.getQueryString());
     } else {
       String elkActivation = req.getParameter(ELKConfiguration.ELK_ACTIVATION);
 
@@ -159,6 +159,7 @@ public class ELKAdmin extends HttpServlet {
           jsonResponse.put(ELKConfiguration.ELK_ACTIVATION, elkActivation);
         } catch (final IOException e) {
           jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+          logger.error("Unable to save ELK properties", e);
         }
 
       } catch (final Exception e) {
@@ -166,7 +167,6 @@ public class ELKAdmin extends HttpServlet {
         logger.error("Fatal Error", e);
       }
     }
-
     final PrintWriter out = resp.getWriter();
     out.print(jsonResponse);
   }

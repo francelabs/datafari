@@ -28,8 +28,8 @@ public class WebJobConfig {
   private final static String jobsCommand = "jobs";
 
   private WebJobConfig() {
-    final String filePath = Environment.getProperty("catalina.home") + File.separator + ".." + File.separator + "bin" + File.separator + "common" + File.separator + "config" + File.separator + "manifoldcf" + File.separator + "visilia"
-        + File.separator + "jobs" + File.separator + "web.json";
+    final String filePath = Environment.getEnvironmentVariable("DATAFARI_HOME") + File.separator + "bin" + File.separator + "common" + File.separator + "config" + File.separator + "manifoldcf" + File.separator + "visilia" + File.separator + "jobs"
+        + File.separator + "web.json";
     webJobJSON = new File(filePath);
   }
 

@@ -55,10 +55,12 @@ public class AddRole extends HttpServlet {
         } catch (final DatafariServerException e) {
           jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE.getValue());
           jsonResponse.put(OutputConstants.STATUS, "Datafari isn't connected to DB");
+          logger.error("Impossible to add role", e);
         }
       } else {
         jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMQUERY.getValue());
         jsonResponse.put(OutputConstants.STATUS, "Problem with query");
+        logger.error("Problem with query, no user and/or no role provided : " + request.getQueryString());
       }
     } catch (final Exception e) {
       logger.error(e);
