@@ -15,8 +15,6 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils;
 
-import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -49,7 +47,7 @@ public class SolrConfiguration extends AbstractConfigClass {
    * Get the instance
    *
    */
-  public synchronized static SolrConfiguration getInstance() throws IOException {
+  public synchronized static SolrConfiguration getInstance() {
     if (null == instance) {
       instance = new SolrConfiguration();
     }

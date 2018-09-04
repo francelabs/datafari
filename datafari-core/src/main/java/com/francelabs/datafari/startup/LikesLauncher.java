@@ -33,8 +33,7 @@ import com.francelabs.datafari.service.indexer.IndexerQuery;
 import com.francelabs.datafari.service.indexer.IndexerServer;
 import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
-import com.francelabs.datafari.servlets.admin.StringsDatafariProperties;
-import com.francelabs.datafari.utils.ScriptConfiguration;
+import com.francelabs.datafari.utils.DatafariMainConfiguration;
 import com.francelabs.datafari.utils.UpdateNbLikes;
 
 public class LikesLauncher implements ServletContextListener {
@@ -51,9 +50,9 @@ public class LikesLauncher implements ServletContextListener {
 
     String isEnabled = null;
     try {
-      isEnabled = ScriptConfiguration.getProperty(StringsDatafariProperties.LIKESANDFAVORTES);
+      isEnabled = DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.LIKESANDFAVORTES);
     } catch (final IOException e) {
-      logger.error("Unable to log property " + StringsDatafariProperties.LIKESANDFAVORTES + " : " + e.getMessage());
+      logger.error("Unable to log property " + DatafariMainConfiguration.LIKESANDFAVORTES + " : " + e.getMessage());
     }
     try {
       final File externalFile = UpdateNbLikes.getInstance().getConfigFile();

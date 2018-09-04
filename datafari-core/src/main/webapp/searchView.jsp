@@ -1,6 +1,6 @@
 <%@page import="java.io.Console"%>
-<%@ page import="com.francelabs.datafari.utils.ScriptConfiguration" %>
-<%@ page import="com.francelabs.datafari.servlets.admin.StringsDatafariProperties" %>
+<%@ page import="com.francelabs.datafari.utils.DatafariMainConfiguration" %>
+<%@ page import="com.francelabs.datafari.utils.CorePropertiesConfiguration" %>
 <%@page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -143,28 +143,30 @@
 
 	<!-- Enable the queryElevator module if the user has the "SearchAdministrator" role -->
 	<%
-		if (request.getUserPrincipal() != null) {
-			if (request.getUserPrincipal().getName() != null) {
-				if(request.isUserInRole("SearchAdministrator") || request.isUserInRole("SearchExpert")) {
+	  if (request.getUserPrincipal() != null) {
+				if (request.getUserPrincipal().getName() != null) {
+					if(request.isUserInRole("SearchAdministrator") || request.isUserInRole("SearchExpert")) {
 	%>
  					<script type="text/javascript" 
  					src="js/AjaxFranceLabs/modules/QueryElevator.module.js"></script> 
 	<%
-				}
-			}
-		}
-	%>
+ 	  }
+ 				}
+ 			}
+ 	%>
 
 
 
 
 <%
- if (ScriptConfiguration.getProperty(StringsDatafariProperties.DEDUPLICATION)!=null && ScriptConfiguration.getProperty(StringsDatafariProperties.DEDUPLICATION ).equals("true") ){
+  if (CorePropertiesConfiguration.getInstance().getProperty(CorePropertiesConfiguration.DEDUPLICATION)!=null && CorePropertiesConfiguration.getInstance().getProperty(CorePropertiesConfiguration.DEDUPLICATION ).equals("true") ){
 %>
 	<script type="text/javascript" src="js/doublon.js"></script>
-	<%}%>
+	<%
+	  }
+	%>
 <%
- if (ScriptConfiguration.getProperty(StringsDatafariProperties.LIKESANDFAVORTES)!=null && ScriptConfiguration.getProperty(StringsDatafariProperties.LIKESANDFAVORTES).equals("true") ){
+  if (DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.LIKESANDFAVORTES)!=null && DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.LIKESANDFAVORTES).equals("true") ){
 %>
 	<script type="text/javascript"> window.isLikesAndFavoritesEnabled = true</script>
 <%}else{ %>

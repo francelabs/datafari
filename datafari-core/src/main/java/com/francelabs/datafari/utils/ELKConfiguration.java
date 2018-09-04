@@ -15,8 +15,6 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils;
 
-import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -49,7 +47,7 @@ public class ELKConfiguration extends AbstractConfigClass {
    * Get the instance
    *
    */
-  public static synchronized ELKConfiguration getInstance() throws IOException {
+  public static synchronized ELKConfiguration getInstance() {
     if (null == instance) {
       instance = new ELKConfiguration();
     }
@@ -61,7 +59,7 @@ public class ELKConfiguration extends AbstractConfigClass {
    * Read the properties file to get the parameters to create instance
    *
    */
-  private ELKConfiguration() throws IOException {
+  private ELKConfiguration() {
     super(configFilename, LOGGER);
 
   }

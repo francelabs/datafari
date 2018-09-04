@@ -91,7 +91,7 @@ SOLR_LOG_PRESTART_ROTATION=false
 # Solr provides a default Log4J configuration properties file in server/resources
 # however, you may want to customize the log settings and file appender location
 # so you can point the script to use a different log4j.properties file
-#LOG4J_PROPS=/var/solr/log4j.properties
+LOG4J_PROPS=${SOLR_INSTALL_DIR}/conf/log4j2.xml
 
 # Location where Solr should write logs to; should agree with the file appender
 # settings in server/resources/log4j.properties
@@ -123,6 +123,5 @@ SOLR_LOGS_DIR=${DATAFARI_HOME}/logs
 
 SOLR_PID_DIR=${PID_DIR}
 SOLR_HOME=${DATAFARI_HOME}/solr/solr_home
-LOG4J_PROPS=${DATAFARI_HOME}/solr/conf/log4j.properties
 SOLR_PORT=8983
 

@@ -67,6 +67,7 @@ public class ConfigDeduplication extends HttpServlet {
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     BasicConfigurator.configure();
     final JSONObject jsonResponse = new JSONObject();
+    final CorePropertiesConfiguration config = CorePropertiesConfiguration.getInstance();
     if (request.getParameter("id") != null) {
       final int id = Integer.parseInt(request.getParameter("id"));
       final String enable = request.getParameter("enable");
@@ -75,19 +76,19 @@ public class ConfigDeduplication extends HttpServlet {
       if (id == 1) {
         if (enable != null) {
           if (enable.equals("true")) {
-            CorePropertiesConfiguration.getInstance().setProperty(StringsDatafariProperties.DEDUPLICATION, "true");
+            config.setProperty(CorePropertiesConfiguration.DEDUPLICATION, "true");
           } else {
-            CorePropertiesConfiguration.getInstance().setProperty(StringsDatafariProperties.DEDUPLICATION, "false");
+            config.setProperty(CorePropertiesConfiguration.DEDUPLICATION, "false");
           }
         }
 
       } else if (id == 2) {
         if (enable != null) {
           if (enable.equals("true")) {
-            CorePropertiesConfiguration.getInstance().setProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY, "true");
+            config.setProperty(CorePropertiesConfiguration.DEDUPLICATION_FACTORY, "true");
           } else {
-            CorePropertiesConfiguration.getInstance().setProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY, "false");
-            CorePropertiesConfiguration.getInstance().setProperty(StringsDatafariProperties.DEDUPLICATION, "false");
+            config.setProperty(CorePropertiesConfiguration.DEDUPLICATION_FACTORY, "false");
+            config.setProperty(CorePropertiesConfiguration.DEDUPLICATION, "false");
           }
         }
       }
@@ -101,13 +102,13 @@ public class ConfigDeduplication extends HttpServlet {
       }
     } else if (request.getParameter("initiate") != null) {
       String checked, checked_factory;
-      if (CorePropertiesConfiguration.getInstance().getProperty(StringsDatafariProperties.DEDUPLICATION) != null && CorePropertiesConfiguration.getInstance().getProperty(StringsDatafariProperties.DEDUPLICATION).equals("true")) {
+      if (config.getProperty(CorePropertiesConfiguration.DEDUPLICATION) != null && config.getProperty(CorePropertiesConfiguration.DEDUPLICATION).equals("true")) {
         checked = "checked";
       } else {
         checked = "";
       }
 
-      if (CorePropertiesConfiguration.getInstance().getProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY) != null && CorePropertiesConfiguration.getInstance().getProperty(StringsDatafariProperties.DEDUPLICATION_FACTORY).equals("true")) {
+      if (config.getProperty(CorePropertiesConfiguration.DEDUPLICATION_FACTORY) != null && config.getProperty(CorePropertiesConfiguration.DEDUPLICATION_FACTORY).equals("true")) {
         checked_factory = "checked";
       } else {
         checked_factory = "";

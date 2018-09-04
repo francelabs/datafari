@@ -80,36 +80,30 @@ public class alertsAdmin extends HttpServlet {
     final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy/HH:mm");
     final DateTimeFormatter formatterbis = DateTimeFormat.forPattern("dd/MM/yyyy/ HH:mm");
 
-    try {
-      json.put("on", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.ALERTS_ON_OFF));
-      json.put("hourlyDate", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.HOURLY_DELAY));
-      json.put("dailyDate", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DAILY_DELAY));
-      json.put("weeklyDate", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.WEEKLY_DELAY));
-      json.put("host", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DATABASE_HOST));
-      json.put("port", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DATABASE_PORT));
-      json.put("database", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DATABASE_NAME));
-      json.put("collection", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DATABASE_COLLECTION));
+    json.put("on", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.ALERTS_ON_OFF));
+    json.put("hourlyDate", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.HOURLY_DELAY));
+    json.put("dailyDate", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DAILY_DELAY));
+    json.put("weeklyDate", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.WEEKLY_DELAY));
+    json.put("host", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DATABASE_HOST));
+    json.put("port", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DATABASE_PORT));
+    json.put("database", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DATABASE_NAME));
+    json.put("collection", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DATABASE_COLLECTION));
 
-      json.put("nextHourly", getNextEvent("hourly", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.HOURLY_DELAY)));
-      json.put("hourly", new DateTime(formatter.parseDateTime(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.LAST_HOURLY_EXEC))).toString(formatterbis));
+    json.put("nextHourly", getNextEvent("hourly", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.HOURLY_DELAY)));
+    json.put("hourly", new DateTime(formatter.parseDateTime(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.LAST_HOURLY_EXEC))).toString(formatterbis));
 
-      json.put("nextDaily", getNextEvent("daily", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DAILY_DELAY)));
-      json.put("daily", new DateTime(formatter.parseDateTime(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.LAST_DAILY_EXEC))).toString(formatterbis));
+    json.put("nextDaily", getNextEvent("daily", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DAILY_DELAY)));
+    json.put("daily", new DateTime(formatter.parseDateTime(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.LAST_DAILY_EXEC))).toString(formatterbis));
 
-      json.put("nextWeekly", getNextEvent("weekly", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.WEEKLY_DELAY)));
-      json.put("weekly", new DateTime(formatter.parseDateTime(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.LAST_WEEKLY_EXEC))).toString(formatterbis));
+    json.put("nextWeekly", getNextEvent("weekly", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.WEEKLY_DELAY)));
+    json.put("weekly", new DateTime(formatter.parseDateTime(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.LAST_WEEKLY_EXEC))).toString(formatterbis));
 
-      json.put("smtp", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_ADDRESS));
-      json.put("from", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_FROM));
-      json.put("user", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_USER));
-      json.put("pass", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_PASSWORD));
+    json.put("smtp", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_ADDRESS));
+    json.put("from", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_FROM));
+    json.put("user", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_USER));
+    json.put("pass", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_PASSWORD));
 
-      json.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-    } catch (final IOException e) {
-      LOGGER.error("Error while reading the datafari.properties file in the doGet of the alerts administration Servlet . Error 69020 ", e);
-      json.put("message", "Error while reading the datafari.properties file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69020");
-      json.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-    }
+    json.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 
     final PrintWriter out = response.getWriter();
     out.print(json);

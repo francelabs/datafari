@@ -23,8 +23,8 @@
 			<configuration>
 			<!-- Version of Solr should be retrieved from a property file as well 
 			as the SHA1 -->
-			<url>http://archive.apache.org/dist/lucene/solr/6.6.4/solr-6.6.4.tgz</url>
-			<sha1>8a7c9571fe5b8a2779c85f43b4bb2316a2ec2afe</sha1>
+			<url>http://archive.apache.org/dist/lucene/solr/7.4.0/solr-7.4.0.tgz</url>
+      <sha512>25f91246bb1831067ac7529d8e0d4f49fb4b015c7c8b5d1b3a0fe8817953f8dda224393b9f54f9fa8e06272c39a10d0263fc6bc5f94743f80ac9d2f13613720a</sha512>
 			<unpack>true</unpack>
 			</configuration>
 		</execution>

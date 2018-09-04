@@ -33,15 +33,15 @@
        that you fully re-index after changing this setting as it can
        affect both how text is indexed and queried.
   -->
-  <luceneMatchVersion>6.6.4</luceneMatchVersion>
+  <luceneMatchVersion>7.4.0</luceneMatchVersion>
 
-<!-- TODO : change the hardcoded path add property.name=value in API Collections create -->
-	<lib dir="${lib.path}lib/extraction"/>
+	<!-- TODO : change the hardcoded path add property.name=value in API Collections create -->
+	
+    <lib dir="${lib.path}lib/extraction"/>
     <lib dir="${lib.path}lib/langid"/>
     <lib dir="${lib.path}lib/solr"/>
     <lib dir="${lib.path}lib/MCF"/>
     <lib dir="${lib.path}lib/custom"/>
-
 	
    <!-- ////////////////////////// -->
    <!-- Includes custom libs -->
@@ -362,8 +362,8 @@
          have some sort of hard autoCommit to limit the log size.
       -->
      <autoCommit> 
-       <maxTime>10000</maxTime> 
-       <openSearcher>true</openSearcher> 
+       <maxTime>300000</maxTime> 
+       <openSearcher>false</openSearcher> 
      </autoCommit>
 
     <!-- softAutoCommit is like autoCommit except it causes a
@@ -686,39 +686,50 @@
 <requestHandler class="solr.SearchHandler" name="/select">
 	<lst name="defaults">
 		<str name="echoParams">explicit</str>
-    <str name="defType">edismax</str>
-    <str name="qf">title_fr^50 title_en^50 content_fr^10 content_en^10 source^20 extension^30 id^3</str>
-    <str name="pf">title_en^500 title_fr^500 content_fr^100 content_en^100</str>
-    <int name="rows">10</int>
-    <str name="spellcheck">true</str>
-    <str name="spellcheck.onlyMorePopular">true</str>
-    <str name="spellcheck.count">1</str>
-    <str name="spellcheck.collate">true</str>
-    <str name="spellcheck.maxCollationTries">1</str>
-    <str name="spellcheck.extendedResults">true</str>
-    <str name="hl">on</str>
-    <str name="hl.method">unified</str>
+		<str name="defType">edismax</str>
+		<str name="qf">title_fr^50 title_en^50 content_fr^10 content_en^10 source^20 extension^30 id^3</str>
+		<str name="pf">title_en^500 title_fr^500 content_fr^100 content_en^100</str>
+		<int name="rows">10</int>
+		<str name="spellcheck">true</str>
+		<str name="spellcheck.onlyMorePopular">true</str>
+		<str name="spellcheck.count">1</str>
+		<str name="spellcheck.collate">true</str>
+		<str name="spellcheck.maxCollationTries">1</str>
+		<str name="spellcheck.extendedResults">true</str>
+		<str name="hl">on</str>
+		<str name="hl.method">unified</str>
     <str name="hl.defaultSummary">false</str>
     <str name="hl.tag.pre">&lt;span class="em"&gt;</str>
     <str name="hl.tag.post">&lt;/span&gt;</str>
-    <str name="hl.fl">content_fr content_en exactContent</str>
-    <str name="hl.requireFieldMatch">true</str>
-    <str name="hl.bs.type">CHARACTER</str>
-    <str name="hl.encoder">html</str>
-    <str name="hl.fragsize">200</str>
-    <str name="hl.maxAnalyzedChars">51200</str>
-    <int name="facet.mincount">1</int>
+		<str name="hl.fl">content_fr content_en exactContent</str>
+		<str name="hl.requireFieldMatch">true</str>
+		<str name="hl.bs.type">CHARACTER</str>
+		<str name="hl.encoder">html</str>
+		<str name="hl.fragsize">200</str>
+		<str name="hl.maxAnalyzedChars">51200</str>
+		<int name="facet.mincount">1</int>
 	</lst>
 		
 	<arr name="last-components">
 		<str>spellcheck</str>
 		<str>elevator</str>
 	</arr>
-	
+		
 	<lst name="appends">
 		<str name="fq">{!manifoldCFSecurity}</str>
 	</lst>
 </requestHandler>
+
+	<requestHandler class="org.apache.solr.handler.component.SearchHandler" name="/suggestAuthors">
+		<lst name="defaults">
+			<str name="suggest">true</str>
+			<str name="suggest.dictionary">suggesterAuthors</str>
+			<str name="suggest.count">10</str>
+		</lst>
+		<arr name="components">
+		  <str>suggestAuthors</str>
+		</arr>
+	</requestHandler>
 
 
 
@@ -750,18 +761,18 @@
 			overridden by parameters in the request -->
 		<lst name="defaults">
 			<str name="echoParams">explicit</str>
-      <str name="defType">edismax</str>
-      <str name="qf">title_fr^50 title_en^50 content_fr^10 content_en^10 source^20 extension^500 id^3</str>
-      <str name="pf">title_en^500 title_fr^500 content_fr^100 content_en^100</str>
-      <int name="rows">10</int>
-      <str name="spellcheck">true</str>
-      <str name="spellcheck.count">1</str>
-      <str name="spellcheck.collate">true</str>       <!-- Highlighting defaults -->
-      <str name="spellcheck.maxCollationTries">1</str>
-      <str name="spellcheck.extendedResults">true</str>
-      <str name="hl">on</str>
+			<str name="defType">edismax</str>
+			<str name="qf">title_fr^50 title_en^50 content_fr^10 content_en^10 source^20 extension^500 id^3</str>
+			<str name="pf">title_en^500 title_fr^500 content_fr^100 content_en^100</str>
+			<int name="rows">10</int>
+			<str name="spellcheck">true</str>
+			<str name="spellcheck.count">1</str>
+			<str name="spellcheck.collate">true</str>       <!-- Highlighting defaults -->
+			<str name="spellcheck.maxCollationTries">1</str>
+			<str name="spellcheck.extendedResults">true</str>
+			<str name="hl">on</str>
       <str name="hl.method">unified</str>
-      <str name="hl.defaultSummary">false</str>
+      <str name="hl.defaultSummary">true</str>
       <str name="hl.tag.pre">&lt;span class="em"&gt;</str>
       <str name="hl.tag.post">&lt;/span&gt;</str>
       <str name="hl.fl">content_fr content_en exactContent</str>
@@ -771,9 +782,9 @@
       <str name="hl.fragsize">200</str>
       <str name="hl.maxAnalyzedChars">51200</str>
       <int name="facet.mincount">1</int>
-      <str name="wt">xslt</str>
-      <str name="tr">opensearch.xsl</str>
-      <str name="fl">*</str>
+			<str name="wt">xslt</str>
+			<str name="tr">opensearch.xsl</str>
+			<str name="fl">*</str>
 		</lst>
 		<!-- 
 		<lst name="appends">
@@ -831,13 +842,16 @@
 
   <requestHandler class="solr.extraction.ExtractingRequestHandler" name="/update/extract" startup="lazy">
     <lst name="defaults">
+      		<str name="scan">false</str>
       		<str name="captureAttr">true</str>
 			<str name="lowernames">true</str>
 			<str name="fmap.language">ignored_</str>
 			<str name="fmap.source">ignored_</str>
+			<str name="fmap.url">ignored_</str>
 			<str name="uprefix">ignored_</str>
 			<str name="update.chain">datafari</str>
 			<bool name="ignoreTikaException">true</bool>
+			<str name="tika.config">/opt/datafari/solr/solrcloud/FileShare/conf/tika.config</str>
     </lst>
   </requestHandler>
   
@@ -935,6 +949,19 @@
        <searchComponent name="debug"     class="solr.DebugComponent" />
        
      -->
+     
+	<searchComponent class="solr.SuggestComponent" name="suggestAuthors">
+		<lst name="suggester">
+			<str name="name">suggesterAuthors</str>
+			<str name="suggestAnalyzerFieldType">text_general</str>
+			<str name="lookupImpl">AnalyzingInfixLookupFactory</str>
+			<str name="maxEdits">0</str>
+			<str name="field">author</str>
+			<str name="highlight">false</str>
+			<str name="dictionaryImpl">HighFrequencyDictionaryFactory</str>
+			<str name="buildOnCommit">true</str>
+		</lst>
+	</searchComponent>
 
   <!-- Terms Component
 
@@ -1005,6 +1032,10 @@
 			<str>suggest</str>
 			<str>query</str>
 		</arr>
+		
+		<lst name="appends">
+	    <str name="fq">{!manifoldCFSecurity}</str>
+	  </lst>
 	</requestHandler>
 
 
@@ -1181,7 +1212,11 @@
     -->
     
     <updateProcessor class="com.francelabs.datafari.updateprocessor.DatafariUpdateProcessorFactory" name="datafariUpdateProcessor">
-      
+    	<bool name="entities.extract.simple">false</bool>
+    	<bool name="entities.extract.simple.name">false</bool>
+    	<bool name="entities.extract.simple.phone">false</bool>
+    	<bool name="entities.extract.simple.special">false</bool>
+    	<str name="entities.extract.simple.special.regex">.*resume*</str>
     </updateProcessor>
 
 	<updateRequestProcessorChain name="datafari" processor="datafariUpdateProcessor">
@@ -1201,21 +1236,23 @@
 			<str name="dest">exactContent</str>
      	</processor>
      	
-   	  <processor class="solr.CloneFieldUpdateProcessorFactory">
-	      <lst name="source">
-	        <str name="fieldRegex">content_(.*)</str>
-	      </lst>
-	      <str name="dest">preview_content</str>
-      </processor>
-      
-      <processor class="solr.TrimFieldUpdateProcessorFactory">
-          <str name="fieldRegex">preview_content</str>
-      </processor>
-    
-      <processor class="solr.TruncateFieldUpdateProcessorFactory">
-        <str name="fieldRegex">preview_content</str>
-        <int name="maxLength">1000</int>
-      </processor>
+     	<processor class="solr.CloneFieldUpdateProcessorFactory">
+			<lst name="source">
+				<str name="fieldRegex">content_(.*)</str>
+			</lst>
+			<str name="dest">preview_content</str>
+     	</processor>
+     	
+     	<processor class="solr.TrimFieldUpdateProcessorFactory">
+        	<str name="fieldRegex">preview_content</str>
+		</processor>
+		
+     	<processor class="solr.TruncateFieldUpdateProcessorFactory">
+   			<str name="fieldRegex">preview_content</str>
+   			<int name="maxLength">1000</int>
+ 		</processor>
+		
+		
      	
      	<processor class="solr.CloneFieldUpdateProcessorFactory">
 			<lst name="source">
@@ -1223,7 +1260,6 @@
 			</lst>
 			<str name="dest">exactTitle</str>
      	</processor>
-
 
 	    <processor class="solr.processor.SignatureUpdateProcessorFactory">
 	      <bool name="enabled">${deduplication.factory.enabled:false}</bool>
@@ -1244,7 +1280,7 @@
 			<str name="source">id</str>
 			<str name="dest">url</str>
 		</processor>
-
+		
 		<processor class="solr.DefaultValueUpdateProcessorFactory">
 			<str name="fieldName">source</str>
 			<str name="value">Web</str>
@@ -1288,12 +1324,11 @@
       </processor>
      	
      	<processor class="solr.CloneFieldUpdateProcessorFactory">
-				<lst name="source">
-					<str name="fieldRegex">title_(.*)</str>
-				</lst>
-				<str name="dest">exactTitle</str>
+			<lst name="source">
+				<str name="fieldRegex">title_(.*)</str>
+			</lst>
+			<str name="dest">exactTitle</str>
      	</processor>
-
 
 		<processor class="solr.processor.SignatureUpdateProcessorFactory">
 			<bool name="enabled">${deduplication.factory.enabled:false}</bool>
@@ -1348,8 +1383,8 @@
     
 	<!-- ManifoldCF document security enforcement component -->
 	<queryParser class="org.apache.solr.mcf.ManifoldCFQParserPlugin" name="manifoldCFSecurity">
-    <str name="AuthorityServiceBaseURL">${mcf.ip:http://localhost:8080/datafari-mcf-authority-service}</str>
-  </queryParser>
+		<str name="AuthorityServiceBaseURL">${mcf.ip:http://localhost:8080/datafari-mcf-authority-service}</str>
+	</queryParser>
   <!-- example of registering a query parser -->
   <!--
      <queryParser name="myparser" class="com.mycompany.MyQParserPlugin"/>

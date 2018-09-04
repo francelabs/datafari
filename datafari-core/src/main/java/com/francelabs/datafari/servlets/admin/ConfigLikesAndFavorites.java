@@ -32,7 +32,7 @@ import org.json.simple.JSONObject;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.startup.LikesLauncher;
-import com.francelabs.datafari.utils.ScriptConfiguration;
+import com.francelabs.datafari.utils.DatafariMainConfiguration;
 
 /**
  * Servlet implementation class ConfigureLikesAndFacorites
@@ -67,27 +67,29 @@ public class ConfigLikesAndFavorites extends HttpServlet {
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     BasicConfigurator.configure();
     final JSONObject jsonResponse = new JSONObject();
+    final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
     if (request.getParameter("enable") != null) {
       final String enable = request.getParameter("enable");
       request.setCharacterEncoding("utf8");
       response.setContentType("application/json");
-      boolean error = false;
+      final boolean error = false;
       if (enable.equals("true")) {
-        error = ScriptConfiguration.setProperty(StringsDatafariProperties.LIKESANDFAVORTES, "true");
+        config.setProperty(DatafariMainConfiguration.LIKESANDFAVORTES, "true");
         LikesLauncher.startScheduler();
       } else {
-        error = ScriptConfiguration.setProperty(StringsDatafariProperties.LIKESANDFAVORTES, "false");
+        config.setProperty(DatafariMainConfiguration.LIKESANDFAVORTES, "false");
         LikesLauncher.shutDown();
       }
-      if (error) {
-        jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-        logger.error("Unable to change likes and favorites config");
-      } else {
+      try {
+        config.saveProperties();
         jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+      } catch (final IOException e) {
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+        logger.error("Unable to change likes and favorites config", e);
       }
 
     } else if (request.getParameter("initiate") != null) {
-      final String isEnabled = ScriptConfiguration.getProperty(StringsDatafariProperties.LIKESANDFAVORTES);
+      final String isEnabled = config.getProperty(DatafariMainConfiguration.LIKESANDFAVORTES);
 
       jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
       jsonResponse.put("isEnabled", isEnabled);

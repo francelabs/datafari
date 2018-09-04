@@ -7,12 +7,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.apache.solr.client.solrj.impl.ZkClientClusterStateProvider;
 import org.apache.solr.client.solrj.request.CollectionAdminRequest;
 import org.apache.solr.client.solrj.request.SolrPing;
 import org.apache.solr.client.solrj.request.schema.AnalyzerDefinition;
@@ -37,36 +39,41 @@ import com.francelabs.datafari.service.indexer.IndexerQuery;
 import com.francelabs.datafari.service.indexer.IndexerQueryResponse;
 import com.francelabs.datafari.service.indexer.IndexerResponseDocument;
 import com.francelabs.datafari.service.indexer.IndexerServer;
-import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 import com.francelabs.datafari.statistics.StatsUtils;
-import com.francelabs.datafari.utils.ScriptConfiguration;
+import com.francelabs.datafari.utils.DatafariMainConfiguration;
 
 public class SolrIndexerServer implements IndexerServer {
 
-  private static String defaultURL = "localhost:2181";
+  private static List<String> defaultURL = new ArrayList<String>();
+  static {
+    defaultURL.add("localhost:2181");
+  }
   private final Logger LOGGER = LogManager.getLogger(SolrIndexerServer.class.getName());
   private CloudSolrClient client;
+  private ZkClientClusterStateProvider zkManager;
 
-  public SolrIndexerServer(final Core core) throws Exception {
+  public SolrIndexerServer(final String core) throws Exception {
     // Zookeeper Hosts
-    final String solrHosts = ScriptConfiguration.getProperty("SOLRHOSTS");
+    final List<String> solrHosts = DatafariMainConfiguration.getInstance().getSolrHosts();
 
     try {
       // TODO : change for ZK ensemble
-      client = new CloudSolrClient.Builder().withZkHost(solrHosts).build();
-      client.setDefaultCollection(core.toString());
+      client = new CloudSolrClient.Builder(solrHosts, Optional.empty()).build();
+      zkManager = new ZkClientClusterStateProvider(solrHosts, null);
+      client.setDefaultCollection(core);
       final SolrPing ping = new SolrPing();
       client.request(ping);
     } catch (final Exception e) {
       // test default param
       try {
-        client = new CloudSolrClient.Builder().withZkHost(defaultURL).build();
-        client.setDefaultCollection(core.toString());
+        client = new CloudSolrClient.Builder(defaultURL, Optional.empty()).build();
+        zkManager = new ZkClientClusterStateProvider(defaultURL, null);
+        client.setDefaultCollection(core);
         final SolrPing ping = new SolrPing();
         client.request(ping);
       } catch (final Exception e2) {
-        LOGGER.error("Cannot instanciate Solr Client for core : " + core.toString(), e);
-        throw new Exception("Cannot instanciate Solr Client for core : " + core.toString());
+        LOGGER.error("Cannot instanciate Solr Client for core : " + core, e);
+        throw new Exception("Cannot instanciate Solr Client for core : " + core);
       }
     }
 
@@ -100,14 +107,12 @@ public class SolrIndexerServer implements IndexerServer {
 
   @Override
   public void uploadConfig(final Path configPath, final String configName) throws IOException {
-
-    client.uploadConfig(configPath, configName);
+    zkManager.uploadConfig(configPath, configName);
   }
 
   @Override
   public void downloadConfig(final Path configPath, final String configName) throws IOException {
-
-    client.downloadConfig(configName, configPath);
+    zkManager.downloadConfig(configName, configPath);
   }
 
   @Override

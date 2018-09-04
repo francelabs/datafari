@@ -1,7 +1,3 @@
-<%@page import="java.io.Console"%>
-<%@ page import="com.francelabs.datafari.servlets.admin.StringsDatafariProperties" %>
-<%@ page import="com.francelabs.datafari.utils.*"%>
-<%@ page import="java.util.ArrayList"%>
 <%@page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 <link rel="stylesheet" type="text/css" href="css/parameters.css" media="screen">

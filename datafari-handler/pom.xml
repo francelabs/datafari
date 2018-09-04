@@ -3,7 +3,7 @@
   <groupId>com.francelabs.datafari</groupId>
   <artifactId>datafari-handler</artifactId>
   <packaging>jar</packaging>
-  <version>4.1-Community</version>
+  <version>4.1-Enterprise</version>
   <name>Datafari Enterprise Search - Search handler module</name>
   	<prerequisites>
 		<!-- Force minimum Maven version -->
@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>org.apache.solr</groupId>
 			<artifactId>solr-core</artifactId>
-			<version>6.6.4</version>
+			<version>7.4.0</version>
 			<scope>provided</scope>
 		</dependency>
 		
@@ -33,7 +33,7 @@
 	    <dependency>
 		    <groupId>org.apache.solr</groupId>
 		    <artifactId>solr-cell</artifactId>
-		    <version>6.6.4</version>
+		    <version>7.4.0</version>
 		    <scope>provided</scope>
 		</dependency>
 	</dependencies>

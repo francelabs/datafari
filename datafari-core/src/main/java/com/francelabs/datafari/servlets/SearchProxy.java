@@ -40,9 +40,9 @@ import com.francelabs.datafari.service.indexer.IndexerServer;
 import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 import com.francelabs.datafari.statistics.StatsPusher;
+import com.francelabs.datafari.utils.DatafariMainConfiguration;
 import com.francelabs.datafari.utils.HighlightConfiguration;
 import com.francelabs.datafari.utils.RealmLdapConfiguration;
-import com.francelabs.datafari.utils.ScriptConfiguration;
 
 /**
  * Servlet implementation class SearchProxy
@@ -150,10 +150,11 @@ public class SearchProxy extends HttpServlet {
       params.addParams(request.getParameterMap());
 
       try {
-        if (ScriptConfiguration.getProperty("ontologyEnabled").toLowerCase().equals("true") && ScriptConfiguration.getProperty("ontologyEnabled").toLowerCase().equals("true") && handler.equals("/select")) {
-          final boolean languageSelection = Boolean.valueOf(ScriptConfiguration.getProperty("ontologyLanguageSelection"));
-          String parentsLabels = ScriptConfiguration.getProperty("ontologyParentsLabels");
-          String childrenLabels = ScriptConfiguration.getProperty("ontologyChildrenLabels");
+        final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
+        if (config.getProperty(DatafariMainConfiguration.ONTOLOGY_ENABLED).toLowerCase().equals("true") && config.getProperty(DatafariMainConfiguration.ONTOLOGY_ENABLED).toLowerCase().equals("true") && handler.equals("/select")) {
+          final boolean languageSelection = Boolean.valueOf(config.getProperty(DatafariMainConfiguration.ONTOLOGY_LANGUAGE_SELECTION));
+          String parentsLabels = config.getProperty(DatafariMainConfiguration.ONTOLOGY_PARENTS_LABELS);
+          String childrenLabels = config.getProperty(DatafariMainConfiguration.ONTOLOGY_CHILDREN_LABELS);
           if (languageSelection) {
             parentsLabels += "_fr";
             childrenLabels += "_fr";

@@ -5,25 +5,17 @@ import org.apache.solr.handler.loader.ContentStreamLoader;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.update.processor.UpdateRequestProcessor;
 
-
 public class HTMLRequestHandler extends ContentStreamHandlerBase {
 
-	@Override
-	protected ContentStreamLoader newLoader(SolrQueryRequest req,
-			UpdateRequestProcessor processor) {
-		return new HTMLDocumentLoader();
-	}
+  @Override
+  protected ContentStreamLoader newLoader(final SolrQueryRequest req, final UpdateRequestProcessor processor) {
+    return new HTMLDocumentLoader();
+  }
 
-	@Override
-	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getSource() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+  @Override
+  public String getDescription() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
 }

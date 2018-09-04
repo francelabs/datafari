@@ -52,15 +52,10 @@ public class Mail {
   private final static Logger LOGGER = LogManager.getLogger(Mail.class.getName());
 
   public Mail() throws IOException {
-    try {
-      smtpHost = AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_ADDRESS);
-      from = AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_FROM);
-      username = AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_USER);
-      password = AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_PASSWORD);
-    } catch (final IOException e) {
-      LOGGER.error("Error while reading the mail configuration in the Mail constructor. Error 69045", e);
-      return;
-    }
+    smtpHost = AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_ADDRESS);
+    from = AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_FROM);
+    username = AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_USER);
+    password = AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_PASSWORD);
 
   }
 

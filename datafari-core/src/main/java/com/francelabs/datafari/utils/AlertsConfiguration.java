@@ -86,7 +86,7 @@ public class AlertsConfiguration extends AbstractConfigClass {
   }
 
   @Override
-  public String getProperty(final String key) throws IOException {
+  public String getProperty(final String key) {
     final String result = (String) properties.get(key);
     if (key.equals(SMTP_PASSWORD)) {
       try {
@@ -105,7 +105,7 @@ public class AlertsConfiguration extends AbstractConfigClass {
    * Get the instance
    *
    */
-  public static synchronized AlertsConfiguration getInstance() throws IOException {
+  public static synchronized AlertsConfiguration getInstance() {
     if (null == instance) {
       instance = new AlertsConfiguration();
     }

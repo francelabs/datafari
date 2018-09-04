@@ -15,8 +15,6 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils;
 
-import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,6 +30,8 @@ public class CorePropertiesConfiguration extends AbstractConfigClass {
 
   // Config filename
   private static final String configFilename = "core.properties";
+  public final static String DEDUPLICATION = "DEDUPLICATION_IS_ENABLED";
+  public final static String DEDUPLICATION_FACTORY = "deduplication.factory.enabled";
 
   private static CorePropertiesConfiguration instance;
 
@@ -42,7 +42,7 @@ public class CorePropertiesConfiguration extends AbstractConfigClass {
    * Get the instance
    *
    */
-  public static synchronized CorePropertiesConfiguration getInstance() throws IOException {
+  public static synchronized CorePropertiesConfiguration getInstance() {
     if (null == instance) {
       instance = new CorePropertiesConfiguration();
     }

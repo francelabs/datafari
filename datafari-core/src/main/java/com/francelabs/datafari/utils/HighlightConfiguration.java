@@ -15,8 +15,6 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils;
 
-import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,7 +42,7 @@ public class HighlightConfiguration extends AbstractConfigClass {
    * Get the instance
    *
    */
-  public static synchronized HighlightConfiguration getInstance() throws IOException {
+  public static synchronized HighlightConfiguration getInstance() {
     if (null == instance) {
       instance = new HighlightConfiguration();
     }
@@ -56,7 +54,7 @@ public class HighlightConfiguration extends AbstractConfigClass {
    * Read the properties file to get the parameters to create instance
    *
    */
-  private HighlightConfiguration() throws IOException {
+  private HighlightConfiguration() {
     super(configFilename, LOGGER);
 
   }

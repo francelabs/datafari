@@ -39,8 +39,8 @@ import org.apache.logging.log4j.Logger;
 import com.francelabs.datafari.service.indexer.IndexerQuery;
 import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.statistics.StatsPusher;
+import com.francelabs.datafari.utils.DatafariMainConfiguration;
 import com.francelabs.datafari.utils.RealmLdapConfiguration;
-import com.francelabs.datafari.utils.ScriptConfiguration;
 
 /**
  * Servlet implementation class URL
@@ -117,7 +117,7 @@ public class URL extends HttpServlet {
     // "ISO-8859-1");
     final String surl = request.getParameter("url");
 
-    if (ScriptConfiguration.getProperty("ALLOWLOCALFILEREADING").equals("true") && !surl.startsWith("file://///")) {
+    if (DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.ALLOW_LOCAL_FILE_READING).equals("true") && !surl.startsWith("file://///")) {
 
       final int BUFSIZE = 4096;
       String fileName = null;
