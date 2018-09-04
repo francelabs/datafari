@@ -130,8 +130,8 @@ then
 	echo "ELK successfully configured"
 
 	echo "Start postgres and cassandra and add ManifoldCF database"
-	sudo su postgres -c "rm -rf ${DATAFARI_HOME}/pgsql/data"
-	sudo su postgres -c "mkdir -m 700 ${DATAFARI_HOME}/pgsql/data"
+	run_as ${POSTGRES_USER} "rm -rf ${DATAFARI_HOME}/pgsql/data"
+	run_as ${POSTGRES_USER} "mkdir -m 700 ${DATAFARI_HOME}/pgsql/data"
 	run_as ${DATAFARI_USER} "rm -rf ${DATAFARI_HOME}/cassandra/data"
 	run_as ${DATAFARI_USER} "mkdir ${DATAFARI_HOME}/cassandra/data"
 	run_as ${DATAFARI_USER} "rm -rf ${DATAFARI_HOME}/zookeeper/data"
@@ -153,8 +153,8 @@ then
 		echo "/!\ ERROR: Cassandra process is not running."
 	fi
 	
-	sudo su postgres -c "${DATAFARI_HOME}/pgsql/bin/initdb -U postgres -A password --pwfile=${DATAFARI_HOME}/pgsql/pwd.conf -E utf8 -D ${DATAFARI_HOME}/pgsql/data"
-	sudo su postgres -c "cp ${DATAFARI_HOME}/pgsql/postgresql.conf.save ${DATAFARI_HOME}/pgsql/data/postgresql.conf"
+	run_as ${POSTGRES_USER} "${DATAFARI_HOME}/pgsql/bin/initdb -U postgres -A password --pwfile=${DATAFARI_HOME}/pgsql/pwd.conf -E utf8 -D ${DATAFARI_HOME}/pgsql/data"
+	run_as ${POSTGRES_USER} "cp ${DATAFARI_HOME}/pgsql/postgresql.conf.save ${DATAFARI_HOME}/pgsql/data/postgresql.conf"
 	sudo LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib su postgres -p -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_LOGS}/pgsql.log start"
 	
 	echo "Checking if Cassandra is up and running ..."
@@ -212,22 +212,6 @@ then
 	"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/FileShare/conf" -confname FileShare
 	"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Statistics/conf" -confname Statistics
 	"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Promolink/conf" -confname Promolink
-  cd "${DATAFARI_HOME}/bin/common"
-	echo "Uploading MCF configuration - waiting up to 2 minutes"
-	run_as ${DATAFARI_USER} "nohup ${JAVA_HOME}/bin/java -Dorg.apache.manifoldcf.configfile=${MCF_HOME}/properties.xml -cp ./*:${MCF_HOME}/lib/mcf-core.jar:${MCF_HOME}/lib/* com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript RESTORE config/manifoldcf/init 2>/dev/null &"
-	pid_mcf_upload=$(pgrep -f "com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript" )
-	spin='-\|/'
-	i=0
-	while kill -0 $pid_mcf_upload 2>/dev/null
-		do
-  			i=$(( (i+1) %4 ))
-  			printf "\r${spin:$i:1}"
-  			sleep .2
-			done
-	echo "end uploading MCF conf"	
-	
-	run_as ${DATAFARI_USER} "sed -i 's/\(STATE *= *\).*/\1initialized/' $INIT_STATE_FILE"
-
 else
 	sudo LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib su postgres -p -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_LOGS}/pgsql.log start"
 	run_as ${DATAFARI_USER} "CASSANDRA_INCLUDE=$CASSANDRA_ENV $CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE 1>/dev/null"
@@ -250,6 +234,28 @@ fi
 echo "Start Tomcat"
 cd $TOMCAT_HOME/bin
 run_as ${DATAFARI_USER} "bash startup.sh"
+waitTomcat
+  
+if  [[ "$STATE" = *installed* ]];
+then
+  echo "Uploading MCF configuration"
+  cd "${DATAFARI_HOME}/bin/common"
+  run_as ${DATAFARI_USER} "nohup ${JAVA_HOME}/bin/java -Dlog4j.configurationFile=$DATAFARI_HOME/bin/mcf.scripts.logging.xml -Dorg.apache.manifoldcf.configfile=${MCF_HOME}/properties.xml -cp ./*:${MCF_HOME}/lib/mcf-core.jar:${MCF_HOME}/lib/* com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript RESTORE config/manifoldcf/init 2>/dev/null &"
+  pid_mcf_upload=$(pgrep -f "com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript" )
+  spin='-\|/'
+  i=0
+  while kill -0 $pid_mcf_upload 2>/dev/null
+  do
+      i=$(( (i+1) %4 ))
+      printf "\r${spin:$i:1}"
+      sleep .2
+  done
+  sleep 2
+  echo "end uploading MCF conf"
+  
+    
+  run_as ${DATAFARI_USER} "sed -i 's/\(STATE *= *\).*/\1initialized/' $INIT_STATE_FILE"
+fi
 
 
 

@@ -16,7 +16,8 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.manifoldcf.core.interfaces.IThreadContext;
 import org.apache.manifoldcf.core.interfaces.LockManagerFactory;
 import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
@@ -29,7 +30,7 @@ import org.json.simple.parser.ParseException;
 
 public class ManifoldAPI {
 
-  private final static Logger LOGGER = Logger.getLogger(ManifoldAPI.class.getName());
+  private final static Logger LOGGER = LogManager.getLogger(ManifoldAPI.class.getName());
 
   public static class COMMANDS {
 

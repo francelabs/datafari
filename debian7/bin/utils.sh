@@ -29,15 +29,35 @@ waitpid() {
 }
 
 waitTomcat() {
-    until [ "`curl --silent --show-error --connect-timeout 1 -I http://localhost:8080 | grep 'Coyote'`" != "" ];
-    local t=9 timeout=15
-    do
-        t=$((t + 1))
-        if [ $t -eq $timeout ]; then
-            return 1
-        fi
-        sleep 3
-    done
+  echo "Checking if Tomcat is up and running ..."
+  # Try to connect to Tomcat on port 8080
+  tomcat_status=0
+  retries=1
+
+  exec 6<>/dev/tcp/localhost/8080 || tomcat_status=1
+  exec 6>&- # close output connection
+  exec 6<&- # close input connection
+
+  while (( retries < 10 && tomcat_status != 0 )); do
+    echo "Tomcat doesn't reply to requests on port 8080. Sleeping for a while and trying again... retry ${retries}"
+
+    tomcat_status=0
+
+    # Sleep for a while
+    sleep 5s
+
+    exec 6<>/dev/tcp/localhost/8080 || tomcat_status=1
+    exec 6>&- # close output connection
+    exec 6<&- # close input connection
+
+    ((retries++))
+  done
+
+  if [ $tomcat_status -ne 0 ]; then
+    echo "/!\ ERROR: Tomcat startup has ended with errors; please check log file ${DATAFARI_LOGS}/tomcat.log"
+  else
+    echo "Tomcat startup completed successfully --- OK"
+  fi
 }
 
 waitCassandra() {

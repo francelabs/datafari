@@ -6,6 +6,7 @@
 #
 
 export DATAFARI_USER="datafari"
+export POSTGRES_USER="postgres"
 
 export DATAFARI_HOME=$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )
 #export JAVA_HOME=${DATAFARI_HOME}/jvm
