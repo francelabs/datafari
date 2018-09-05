@@ -15,7 +15,10 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 		if (!this.isMobile){
 			if ($("#containerError").length==0){
 				// appending the alert message that will be displayed if there's an error
-				$("body").append('<div id="containerError" style="display:none"><div id="smallContainerError"><div id="error_title">Error :</div><span id="messageError"></span></div></div>');
+				$("body").append('<div id="containerError" style="display:none"><div id="smallContainerError"><div id="error_title">Error :</div><span id="messageError"></span><div><button id="error_ok_button">OK</button></div></div></div>');
+				$("#error_ok_button").click(function() {
+					$("#containerError").hide();
+				});
 			}
 		}
 	},
