@@ -46,7 +46,7 @@ import com.francelabs.datafari.user.Alert;
  * alerts in the database. It is only called by the Alerts.html. doGet is used
  * to print the Alerts. doPost is used to add/edit/delete Alerts. The connection
  * with the database is made in the constructor.
- * 
+ *
  * @author Alexis Karassev
  *
  */
@@ -241,6 +241,9 @@ public class Alerts extends HttpServlet {
                                                            // after a
                                                            // modification.
             } // This loop can only be triggered by an edit.
+          }
+          if (!alert.containsKey("filters")) {
+            alert.put("filters", "");
           }
           alert.put("user", request.getRemoteUser());
           jsonResponse.put("uuid", Alert.addAlert(alert));

@@ -39,6 +39,7 @@ public class Alert {
   private final String address;
   private final IndexerServer server;
   private final String keyword;
+  private final String filters;
   private final String frequency;
   private final Mail mail;
   private final String user;
@@ -47,11 +48,12 @@ public class Alert {
   /**
    * Initializes all the attributes
    */
-  public Alert(final String subject, final String address, final IndexerServer server, final String keyword, final String frequency, final Mail mail, final String user) {
+  public Alert(final String subject, final String address, final IndexerServer server, final String keyword, final String filters, final String frequency, final Mail mail, final String user) {
     this.subject = subject;
     this.address = address;
     this.server = server;
     this.keyword = keyword;
+    this.filters = filters;
     this.frequency = frequency;
     this.mail = mail;
     this.user = user;
@@ -84,6 +86,13 @@ public class Alert {
       query.setParam("q.op", "AND");
       query.setParam("q", keyword); // Sets the q parameters according to the
                                     // attribute
+      final String[] filtersTab = filters.split("&");
+      for (int i = 0; i < filtersTab.length; i++) {
+        final String filter = filtersTab[i];
+        if (!filter.isEmpty()) {
+          query.setParam("fq", filter);
+        }
+      }
       query.setParam("AuthenticatedUserName", user);
       IndexerQueryResponse queryResponse;
       try {

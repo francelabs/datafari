@@ -1,6 +1,21 @@
-#frequency {
-  width: 10em;
+#select-alert-type {
+	background: url('./images/chevron-down.png') no-repeat 95% 50% #ffffff !important;
+	background-size: 11px 7px !important;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	padding: 5px;
+	border-radius: 0px;
+	text-align: center;
+	background-color: white;
+	border: 1px solid #CCC;
+	padding-right: 2em;
 }
+
+#addAlertTable td {
+  padding-bottom: 0.5em;
+}
+
 
 #addAlertTable td {
   padding-right: 2em;
@@ -77,6 +92,7 @@
   text-align: center;
   background-color: white;
   border: 1px solid #CCC;
+  padding-right: 2em;
 }
 
 #frequency, .frequency select {

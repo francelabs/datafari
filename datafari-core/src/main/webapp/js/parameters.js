@@ -29,7 +29,7 @@ $(document).ready(function() {
 		$("#parametersUi").show();
 		$("#results_div").hide();
 		$("#search_information").hide();
-		$("#sortMode").hide();
+		$("#results_action").hide();
 		$("#advancedSearch").hide();
 		$("#favoritesUi").hide();
 		$("#searchBar").show();
@@ -65,18 +65,98 @@ $(document).ready(function() {
 			$("#alert-link .link-icon").addClass("selected");
 			$("#alert-link .link-label").addClass("selected");
 			createAlertContent();
+		} else if (param == "savedsearch") {
+			$("#param-content-title").text(window.i18n.msgStore['param-savedsearch']);
+			$("#savedsearch-link .link-icon").addClass("selected");
+			$("#savedsearch-link .link-label").addClass("selected");
+			createSavedSearchContent();
 		}
 	}
 	
 	function clear() {
 		$("#lang-link .link-icon").removeClass("selected");
 		$("#alert-link .link-icon").removeClass("selected");
+		$("#savedsearch-link .link-icon").removeClass("selected");
 		$("#lang-link .link-label").removeClass("selected");
 		$("#alert-link .link-label").removeClass("selected");
+		$("#savedsearch-link .link-label").removeClass("selected");
+	}
+	
+	function createSavedSearchContent() {
+		$.ajax({			//Ajax request to the doGet of the Alerts servlet
+	        type: "POST",
+	        url: "./GetSearches",
+	    	beforeSend: function(jqXHR, settings){
+	    		$("#param-content").html("<center><div class=\"bar-loader\" style=\"display : block; height : 32px; width : 32px;\"></div></center>");
+	    	},
+	        //if received a response from the server
+	    	success: function( data, textStatus, jqXHR) {
+	        	if (data.code == 0){
+					if (data.searchesList!==undefined && !jQuery.isEmptyObject(data.searchesList)){
+						$("#param-content").html("<table id='searchesTable'><thead><tr><th>"+window.i18n.msgStore['search']+"</th><th>"+window.i18n.msgStore['link']+"</th><th>"+window.i18n.msgStore['delete']+"</th></tr></thead><tbody></tbody></table>");
+						$.each(data.searchesList,function(name,search){
+							var line = $('<tr class="tr">'+
+										'<td>' + name + '</td>'+
+										'<td><a href="/Datafari/Search?lang=' + window.i18n.language + '&request='+encodeURIComponent(search)+'">' + window.i18n.msgStore['exec-search'] + '</a></td>'+
+										"<td><a class='delete-button'>x</a></td>"+
+										'</tr>'
+							);
+							line.data("id",search);
+							line.data("name",name);
+							$("#searchesTable tbody").append(line);
+						});
+						searchesTable = $("#searchesTable").DataTable(
+        				{
+        					"info":false, 
+        					"lengthChange":false, 
+        					"searching":false,
+        					"columns": [
+        						null,
+        						{ "orderable": false },
+        						{ "orderable": false }
+        					]
+        				});
+						$('.delete-button').click(function(e){
+							var element = $(e.target);
+							while (!element.hasClass('tr')){
+								element = element.parent();
+							}
+							$.post("./deleteSearch",{name:element.data('name'),request:element.data('id')},function(data){
+								if (data.code==0){
+									searchesTable
+					                .row(element) 
+					                .remove()
+					                .draw();
+									
+									var nbData = searchesTable.column(0).data().length
+									if(nbData < 1 ) {
+										$("#param-content").html("<div><b>"+window.i18n.msgStore["nosavedsearches"]+"</b></div>");
+										destroySavedSearchesTable();
+									} 
+								}else{
+									console.log(data.status);
+								}
+							}).fail(function(){
+								console.log(window.i18n.msgStore['dbError']);
+							});
+						});
+					}else{
+						$("#param-content").html("<div><b>"+window.i18n.msgStore["nosavedsearches"]+"</b></div>");
+					}
+				} else{
+					console.log(window.i18n.msgStore['dbError']);
+	        	}
+	        },
+	       
+	        //If there was no response from the server
+	        error: function(jqXHR, textStatus, errorThrown){
+	            console.log("Something really bad happened " + textStatus);
+	        }
+	    });
 	}
 	
 	function createLangContent() {
-		var languages = ['en', 'fr', 'it', 'pt_br', 'de', 'ru'];
+		var languages = ['en', 'fr', 'it', 'pt_br', 'de', "ru"];
 		
 		$("#param-content").html("<div id='lang-choice'><span id='lang-choice-label'>" + window.i18n.msgStore['lang-choice'] + "</span></div>");
 		var inputs = $("<div id='lang-inputs'></div>")
@@ -165,9 +245,22 @@ $(document).ready(function() {
 		$("#addAlertDiv").html("");
 		$("#addAlertDiv").append("<form id=\"add\" role=\"form\">");
 		$("#add").append("<table id=\"addAlertTable\" ></table>");
-		var tr = $("<tr>");
-		tr.append("<td><label>"+window.i18n.msgStore['keyword']+"</label></td>");
-		tr.append("<td><input required type=\"text\" id=\"keyword\" name=\"keyword\" placeholder="+window.i18n.msgStore['keyword']+"/></td>");
+		var tr = $("<tr id='alert-type-tr'>");
+		tr.append("<td><label>"+window.i18n.msgStore['alert-type']+"</label></td>");
+		var selectAlertType = $("<select id='select-alert-type' name='alert-type'><option selected value='current-query'>"+window.i18n.msgStore['current-query']+"</option><option value='custom'>"+window.i18n.msgStore['custom-alert']+"</option></select>");
+		selectAlertType.change(function() {
+			if($(this).val() == "custom") {
+				var tr = $("<tr id='custom-alert-tr'>");
+				tr.append("<td><label>"+window.i18n.msgStore['keyword']+"</label></td>");
+				tr.append("<td><input required type=\"text\" id=\"keyword\" name=\"keyword\" placeholder="+window.i18n.msgStore['keyword']+"/></td>");
+				$("#alert-type-tr").after(tr);
+			} else {
+				$("#custom-alert-tr").remove();
+			}
+		});
+		var td = $("<td>");
+		td.append(selectAlertType);
+		tr.append(td);
 		$("#addAlertTable").append(tr);
 		tr = $("<tr>");
 		tr.append("<td><label>"+window.i18n.msgStore['subject']+"</label></td>");
@@ -198,7 +291,16 @@ $(document).ready(function() {
 	 	});
 		
 		$("#add").submit(function(e){
-			 var datastring = $("#add").serialize();	
+			 var datastring = $("#add").serialize();
+			 if($("#select-alert-type").val() == "current-query") {
+				var query = "filters=";
+				var fqs = window.Manager.store.values("fq");
+				for(var i=0;i<fqs.length;i++) {
+					query += encodeURIComponent(fqs[i] + "&");
+				}
+				query += "&keyword=" + window.Manager.store.values("q")[0];
+				datastring += "&" + query;
+			 }
 		 		$.ajax({ 				//Ajax request to the doPost of the Alerts servlet
 		       		type: "POST",
 		        	url: "./admin/Alerts",
@@ -318,6 +420,15 @@ $(document).ready(function() {
 	
 	function destroyDatatables() {
 		destroyAlertsTable();
+		destroySavedSearchesTable();
+	}
+	
+	function destroySavedSearchesTable() {
+		if(searchesTable !== undefined) {
+			searchesTable.clear();
+			searchesTable.destroy(true);
+			searchesTable = undefined;
+		}
 	}
 	
 	function destroyAlertsTable() {

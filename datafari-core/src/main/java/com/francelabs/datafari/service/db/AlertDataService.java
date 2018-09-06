@@ -26,6 +26,14 @@ public class AlertDataService {
   private static AlertDataService instance;
 
   final static Logger logger = LogManager.getLogger(AlertDataService.class.getName());
+  public static final String ID_COLUMN = "id";
+  public static final String KEYWORD_COLUMN = "keyword";
+  public static final String CORE_COLUMN = "core";
+  public static final String FILTERS_COLUMN = "filters";
+  public static final String FREQUENCY_COLUMN = "frequency";
+  public static final String MAIL_COLUMN = "mail";
+  public static final String SUBJECT_COLUMN = "subject";
+  public static final String USER_COLUMN = "user";
 
   public static synchronized AlertDataService getInstance() throws IOException {
     if (instance == null) {
@@ -45,7 +53,7 @@ public class AlertDataService {
       final String query = "DELETE FROM " + ALERTCOLLECTION + " WHERE id =" + id + ";";
       session.execute(query);
     } catch (final DriverException e) {
-      logger.warn("Unable to delete alert : " + e.getMessage());
+      logger.error("Unable to delete alert", e);
       // TODO catch specific exception
       throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
@@ -56,15 +64,13 @@ public class AlertDataService {
     try {
 
       final UUID uuid = UUIDs.random();
-      final String query = "insert into " + ALERTCOLLECTION
-          + " (id, keyword, core, frequency, mail, subject, user) values (" + "uuid()," + "'"
-          + alertProp.getProperty("keyword") + "'," + "'" + alertProp.getProperty("core") + "'," + "'"
-          + alertProp.getProperty("frequency") + "'," + "'" + alertProp.getProperty("mail") + "'," + "'"
-          + alertProp.getProperty("subject") + "'," + "'" + alertProp.getProperty("user") + "');";
+      final String query = "insert into " + ALERTCOLLECTION + " (" + ID_COLUMN + ", " + KEYWORD_COLUMN + ", " + FILTERS_COLUMN + ", " + CORE_COLUMN + ", " + FREQUENCY_COLUMN + ", " + MAIL_COLUMN + ", " + SUBJECT_COLUMN + ", " + USER_COLUMN
+          + ") values (" + "uuid()," + "$$" + alertProp.getProperty(KEYWORD_COLUMN) + "$$," + "$$" + alertProp.getProperty(FILTERS_COLUMN) + "$$," + "'" + alertProp.getProperty(CORE_COLUMN) + "'," + "'" + alertProp.getProperty(FREQUENCY_COLUMN)
+          + "'," + "'" + alertProp.getProperty(MAIL_COLUMN) + "'," + "'" + alertProp.getProperty(SUBJECT_COLUMN) + "'," + "'" + alertProp.getProperty(USER_COLUMN) + "');";
       session.execute(query);
       return uuid.toString();
     } catch (final DriverException e) {
-      logger.warn("Unable addAlert : " + e.getMessage());
+      logger.error("Unable to add alert", e);
       // TODO catch specific exception
       throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
@@ -72,23 +78,24 @@ public class AlertDataService {
 
   public List<Properties> getAlerts() throws DatafariServerException {
     try {
-      final List<Properties> alerts = new ArrayList<Properties>();
+      final List<Properties> alerts = new ArrayList<>();
       final ResultSet results = session.execute("SELECT * FROM " + ALERTCOLLECTION);
       for (final Row row : results) {
         final Properties alertProp = new Properties();
         final UUID id = row.getUUID("id");
         alertProp.put("_id", id.toString());
-        alertProp.put("keyword", row.getString("keyword"));
-        alertProp.put("core", row.getString("core"));
-        alertProp.put("frequency", row.getString("frequency"));
-        alertProp.put("mail", row.getString("mail"));
-        alertProp.put("subject", row.getString("subject"));
-        alertProp.put("user", row.getString("user"));
+        alertProp.put("keyword", row.getString(KEYWORD_COLUMN));
+        alertProp.put("filters", row.getString(FILTERS_COLUMN));
+        alertProp.put("core", row.getString(CORE_COLUMN));
+        alertProp.put("frequency", row.getString(FREQUENCY_COLUMN));
+        alertProp.put("mail", row.getString(MAIL_COLUMN));
+        alertProp.put("subject", row.getString(SUBJECT_COLUMN));
+        alertProp.put("user", row.getString(USER_COLUMN));
         alerts.add(alertProp);
       }
       return alerts;
     } catch (final DriverException e) {
-      logger.warn("Unable getAlerts : " + e.getMessage());
+      logger.error("Unable to get Alerts", e);
       // TODO catch specific exception
       throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
