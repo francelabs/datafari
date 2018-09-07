@@ -89,8 +89,7 @@ public class LangDataService {
    */
   public int setLang(final String username, final String lang) throws DatafariServerException {
     try {
-      final String query = "INSERT INTO " + LANGCOLUMN + " (" + USERNAMECOLUMN + "," + LANGCOLUMN + ")" + " values ('" + username + "','" + lang
-          + "')";
+      final String query = "INSERT INTO " + LANGCOLLECTION + " (" + USERNAMECOLUMN + "," + LANGCOLUMN + ")" + " values ('" + username + "','" + lang + "')";
       session.execute(query);
     } catch (final Exception e) {
       logger.warn("Unable to insert lang for user " + username + " : " + e.getMessage());
@@ -110,7 +109,25 @@ public class LangDataService {
    */
   public int updateLang(final String username, final String lang) throws DatafariServerException {
     try {
-      final String query = "UPDATE " + LANGCOLUMN + " SET " + LANGCOLUMN + " = '" + lang + "' WHERE " + USERNAMECOLUMN + " = '" + username + "'";
+      final String query = "UPDATE " + LANGCOLLECTION + " SET " + LANGCOLUMN + " = '" + lang + "' WHERE " + USERNAMECOLUMN + " = '" + username + "'";
+      session.execute(query);
+    } catch (final Exception e) {
+      logger.warn("Unable to update lang for user " + username + " : " + e.getMessage());
+      // TODO catch specific exception
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+    }
+    return CodesReturned.ALLOK.getValue();
+  }
+
+  /**
+   *
+   * @param username
+   * @return CodesReturned.ALLOK value if all was ok
+   * @throws DatafariServerException
+   */
+  public int deleteLang(final String username) throws DatafariServerException {
+    try {
+      final String query = "DELETE FROM " + LANGCOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "' IF EXISTS";
       session.execute(query);
     } catch (final Exception e) {
       logger.warn("Unable to update lang for user " + username + " : " + e.getMessage());

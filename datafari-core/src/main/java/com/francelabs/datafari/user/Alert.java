@@ -65,4 +65,16 @@ public class Alert {
     return AlertDataService.getInstance().getAlerts();
   }
 
+  /**
+   * delete all user alerts
+   *
+   * @param username
+   *          the username
+   * @throws IOException
+   * @throws DatafariServerException
+   */
+  public static void deleteAllAlerts(final String username) throws DatafariServerException {
+    AlertDataService.getInstance().deleteUserAlerts(username);
+  }
+
 }

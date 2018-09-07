@@ -1,6 +1,5 @@
 package com.francelabs.datafari.service.db;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -35,14 +34,14 @@ public class AlertDataService {
   public static final String SUBJECT_COLUMN = "subject";
   public static final String USER_COLUMN = "user";
 
-  public static synchronized AlertDataService getInstance() throws IOException {
+  public static synchronized AlertDataService getInstance() {
     if (instance == null) {
       instance = new AlertDataService();
     }
     return instance;
   }
 
-  public AlertDataService() throws IOException {
+  public AlertDataService() {
 
     // Gets the name of the collection
     session = CassandraManager.getInstance().getSession();
@@ -52,6 +51,28 @@ public class AlertDataService {
     try {
       final String query = "DELETE FROM " + ALERTCOLLECTION + " WHERE id =" + id + ";";
       session.execute(query);
+    } catch (final DriverException e) {
+      logger.error("Unable to delete alert", e);
+      // TODO catch specific exception
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+    }
+
+  }
+
+  /**
+   * Delete all the alerts of the provided user
+   *
+   * @param username
+   * @throws DatafariServerException
+   */
+  public void deleteUserAlerts(final String username) throws DatafariServerException {
+    try {
+      final List<Properties> alerts = getUserAlerts(username);
+      for (final Properties alert : alerts) {
+        final String alertID = alert.getProperty("_id");
+        final String query = "DELETE FROM " + ALERTCOLLECTION + " WHERE " + ID_COLUMN + "=" + alertID + " IF EXISTS;";
+        session.execute(query);
+      }
     } catch (final DriverException e) {
       logger.error("Unable to delete alert", e);
       // TODO catch specific exception
@@ -80,6 +101,31 @@ public class AlertDataService {
     try {
       final List<Properties> alerts = new ArrayList<>();
       final ResultSet results = session.execute("SELECT * FROM " + ALERTCOLLECTION);
+      for (final Row row : results) {
+        final Properties alertProp = new Properties();
+        final UUID id = row.getUUID("id");
+        alertProp.put("_id", id.toString());
+        alertProp.put("keyword", row.getString(KEYWORD_COLUMN));
+        alertProp.put("filters", row.getString(FILTERS_COLUMN));
+        alertProp.put("core", row.getString(CORE_COLUMN));
+        alertProp.put("frequency", row.getString(FREQUENCY_COLUMN));
+        alertProp.put("mail", row.getString(MAIL_COLUMN));
+        alertProp.put("subject", row.getString(SUBJECT_COLUMN));
+        alertProp.put("user", row.getString(USER_COLUMN));
+        alerts.add(alertProp);
+      }
+      return alerts;
+    } catch (final DriverException e) {
+      logger.error("Unable to get Alerts", e);
+      // TODO catch specific exception
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+    }
+  }
+
+  public List<Properties> getUserAlerts(final String username) throws DatafariServerException {
+    try {
+      final List<Properties> alerts = new ArrayList<>();
+      final ResultSet results = session.execute("SELECT * FROM " + ALERTCOLLECTION + " WHERE " + USER_COLUMN + "='" + username + "' ALLOW FILTERING");
       for (final Row row : results) {
         final Properties alertProp = new Properties();
         final UUID id = row.getUUID("id");

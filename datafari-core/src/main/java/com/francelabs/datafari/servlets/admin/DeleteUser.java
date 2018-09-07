@@ -17,7 +17,9 @@ import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.service.db.UserDataService;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
+import com.francelabs.datafari.user.Alert;
 import com.francelabs.datafari.user.Favorite;
+import com.francelabs.datafari.user.Lang;
 import com.francelabs.datafari.user.User;
 
 /**
@@ -45,14 +47,17 @@ public class DeleteUser extends HttpServlet {
     final JSONObject jsonResponse = new JSONObject();
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
-    if (request.getParameter(UserDataService.USERNAMECOLUMN) != null) {
-      final User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(), "");
+    final String username = request.getParameter(UserDataService.USERNAMECOLUMN).toString();
+    if (username != null) {
+      final User user = new User(username, "");
       jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
       jsonResponse.put(OutputConstants.STATUS, "User deleted with success");
 
       try {
         user.deleteUser();
-        Favorite.removeFavoritesAndLikesDB(request.getParameter(UserDataService.USERNAMECOLUMN).toString());
+        Alert.deleteAllAlerts(username);
+        Favorite.removeFavoritesAndLikesDB(username);
+        Lang.deleteLang(username);
       } catch (final DatafariServerException e) {
         jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE.getValue());
         jsonResponse.put(OutputConstants.STATUS, "Problem with database");

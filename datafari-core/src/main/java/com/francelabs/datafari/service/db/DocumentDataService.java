@@ -22,6 +22,8 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
@@ -153,9 +155,11 @@ public class DocumentDataService {
    */
   public void removeLikes(final String username) throws DatafariServerException {
     try {
-
-      final String query = "DELETE FROM " + LIKESCOLUMN + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
-      session.execute(query);
+      final List<String> likes = getFavorites(username, null);
+      for (final String like : likes) {
+        final String query = "DELETE FROM " + LIKESCOLUMN + " WHERE " + USERNAMECOLUMN + " = '" + username + "' AND " + DOCUMENTIDCOLUMN + "=$$" + like + "$$ IF EXISTS";
+        session.execute(query);
+      }
     } catch (final DriverException e) {
       logger.warn("Unable to remove likes for user " + username + " : " + e.getMessage());
       // TODO catch specific exception
@@ -243,7 +247,7 @@ public class DocumentDataService {
       }
       return favorites;
     } catch (final DriverException e) {
-      logger.warn("Unable getFavorites for " + username + " : " + e.getMessage());
+      logger.error("Unable getFavorites for " + username, e);
       throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
   }
@@ -258,10 +262,15 @@ public class DocumentDataService {
    */
   public void removeFavorites(final String username) throws DatafariServerException {
     try {
-      final String query = "DELETE FROM " + FAVORITECOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
-      session.execute(query);
-    } catch (final DriverException e) {
-      logger.warn("Unable removeFavorites for " + username + " : " + e.getMessage());
+      final List<String> favorites = getFavorites(username, null);
+      for (final String jsonFavorite : favorites) {
+        final JSONParser parser = new JSONParser();
+        final JSONObject favorite = (JSONObject) parser.parse(jsonFavorite);
+        final String query = "DELETE FROM " + FAVORITECOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "' AND " + DOCUMENTIDCOLUMN + "=$$" + favorite.get("id") + "$$ IF EXISTS";
+        session.execute(query);
+      }
+    } catch (final DriverException | ParseException e) {
+      logger.error("Unable removeFavorites for " + username, e);
       // TODO catch specific exception
       throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }

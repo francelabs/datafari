@@ -56,4 +56,15 @@ public class Lang {
     return LangDataService.getInstance().updateLang(username, lang);
   }
 
+  /**
+   * Delete user's preferred lang
+   *
+   * @param username
+   * @return CodesReturned.ALLOK if all was ok
+   * @throws DatafariServerException
+   */
+  public static int deleteLang(final String username) throws DatafariServerException {
+    return LangDataService.getInstance().deleteLang(username);
+  }
+
 }
