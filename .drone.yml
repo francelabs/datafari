@@ -1,3 +1,7 @@
+clone:
+    git:
+        image: plugins/git
+        tags: true
 pipeline:
     build:
         image: plugins/docker
