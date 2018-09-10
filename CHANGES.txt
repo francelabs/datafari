@@ -21,6 +21,51 @@ Datafari needs Python v 2.7.x. If you have only Python v3, please install Python
 
 Datafari no longer embeds Java JDK. JDK 8 must be present on the machine and set JAVA HOME.
 
+
+
+==================  4.1.1 ==================
+* Version of major components :
+Solr 6.6.4
+ManifoldCF 2.10
+Tomcat 9.0.8
+Cassandra 3.11.2
+PostgreSQL 9.6.5
+Zookeeper 3.4.10
+Tika Server 1.18
+ElasticSearch 5.6.4
+Kibana 5.6.4
+LogStash 5.6.4
+
+* New features :
+Migrate to log4j2
+Zookeeper refacto
+Zookeeper commands available for SearchExpert role
+Improved "Save configuration" button behavior in Fields Weight
+Added Cassandra host and port as env variables
+Docker build deployment
+
+* Bug fixes :
+Improved logging + Env var adjustments
+Fix solr collection reload
+Stopwords activated in Solr schema
+DATAFARI-308 DATAFARI-308 Remove the "mandatory" mention from the security param
+Fix exactContent and exactTitle issues
+Fix keyword check for promolinks
+Separate fields extension and mime
+Fix Web job creation simplified UI
+Updated Highlighting limitation
+Fix title for web job
+Harmonized javascripts
+Check that user does not remove himself
+Fix updateprocessor chain
+Manage several promolinks for a query
+Removed promolinks unused parameters
+Removed useless files in datafari-mcf
+Fix for title search
+Improve alerts mechanism
+Fix favorites
+Attach repository connectors to DatafariAuthorityGroup
+
 ==================  4.1 ==================
 * Version of major components :
 Solr 6.6.4
@@ -280,3 +325,4 @@ Active Directory feature fix :
 - Architecture changed
 	Solr is now in 5.2.1 with a standalone server application (Jetty)
 	Cassandra 2.1.8
+

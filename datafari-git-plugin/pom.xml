@@ -7,7 +7,7 @@
     <groupId>com.francelabs.datafari</groupId>
   <artifactId>datafari-git-plugin</artifactId>
   <packaging>war</packaging>
-  <version>4.1-Community</version>
+  <version>4.1.1-Community</version>
   <name>Datafari Enterprise Search - Git plugin</name>
 
     <dependencies />

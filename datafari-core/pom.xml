@@ -3,20 +3,20 @@
   <groupId>com.francelabs.datafari</groupId>
   <artifactId>datafari-core</artifactId>
   <packaging>war</packaging>
-  <version>4.1-Community</version>
+  <version>4.1.1-Community</version>
   <name>Datafari Enterprise Search - Datafari Core</name>
   <dependencies>
        <dependency>
               <groupId>com.francelabs.datafari</groupId>
               <artifactId>datafari-dependencies</artifactId>
-              <version>4.1-Community</version>
+              <version>4.1.1-Community</version>
               <type>jar</type>
               <scope>provided</scope>
         </dependency>
 		    <dependency>
               <groupId>com.francelabs.datafari</groupId>
               <artifactId>datafari-mcf-scripts</artifactId>
-              <version>4.1-Community</version>
+              <version>4.1.1-Community</version>
               <type>jar</type>
         </dependency>
         

@@ -3,7 +3,7 @@
   <groupId>com.francelabs.datafari</groupId>
   <artifactId>datafari-tomcat</artifactId>
   <packaging>pom</packaging>
-  <version>4.1-Community</version>
+  <version>4.1.1-Community</version>
   <name>Datafari Enterprise Search - Tomcat module</name>
   <build>
   <plugins>
