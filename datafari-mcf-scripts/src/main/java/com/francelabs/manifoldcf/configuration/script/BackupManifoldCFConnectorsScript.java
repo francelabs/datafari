@@ -1,15 +1,19 @@
 package com.francelabs.manifoldcf.configuration.script;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import com.francelabs.manifoldcf.configuration.api.JSONUtils;
 import com.francelabs.manifoldcf.configuration.api.ManifoldAPI;
@@ -19,6 +23,17 @@ public class BackupManifoldCFConnectorsScript {
   private final static Logger LOGGER = LogManager.getLogger(BackupManifoldCFConnectorsScript.class);
 
   private static boolean isAuthentified = false;
+
+  private static final Set<String> restoreDirectoriesNames = new HashSet<>();
+  static {
+    restoreDirectoriesNames.add(ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
+    restoreDirectoriesNames.add(ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS);
+    restoreDirectoriesNames.add(ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
+    restoreDirectoriesNames.add(ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
+    restoreDirectoriesNames.add(ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
+    restoreDirectoriesNames.add(ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS);
+    restoreDirectoriesNames.add(ManifoldAPI.COMMANDS.JOBS);
+  }
 
   /**
    * @param args
@@ -207,8 +222,8 @@ public class BackupManifoldCFConnectorsScript {
       LOGGER.info("Connectors Saved");
 
     } catch (final Exception e) {
-      LOGGER.fatal(e.getMessage());
-      throw new Exception("Error while saving MCF connections.");
+      LOGGER.error("Error while saving MCF connections", e);
+      throw new Exception("Error while saving MCF connections");
     }
   }
 
@@ -218,47 +233,77 @@ public class BackupManifoldCFConnectorsScript {
   public static void doRestore(final String backupDirectory) throws Exception {
     final File backupDirectoryFile = new File(backupDirectory);
     // check access right
-    if (!backupDirectoryFile.canWrite()) {
+    if (!backupDirectoryFile.canRead()) {
       throw new IOException("Lack of permissions on directory : " + backupDirectory);
     }
 
-    final File outputConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
+    final File[] files = backupDirectoryFile.listFiles();
+    if (checkRestoreFiles(files)) {
 
-    final File authorityGroupsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
+      final File outputConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
 
-    final File transformationConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS);
+      final File authorityGroupsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
 
-    final File mappingConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS);
+      final File transformationConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS);
 
-    final File authorityConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
+      final File mappingConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS);
 
-    final File repositoryConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
+      final File authorityConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
 
-    final File jobsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.JOBS);
+      final File repositoryConnectionsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
 
-    try {
+      final File jobsDir = new File(backupDirectory, ManifoldAPI.COMMANDS.JOBS);
 
-      ManifoldAPI.cleanAll();
+      try {
 
-      restoreAllConnections(outputConnectionsDir, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
+        ManifoldAPI.cleanAll();
 
-      restoreAllConnections(authorityGroupsDir, ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
+        restoreAllConnections(outputConnectionsDir, ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
 
-      restoreAllConnections(authorityConnectionsDir, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
+        restoreAllConnections(authorityGroupsDir, ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
 
-      restoreAllConnections(mappingConnectionsDir, ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS);
+        restoreAllConnections(authorityConnectionsDir, ManifoldAPI.COMMANDS.AUTHORITYCONNECTIONS);
 
-      restoreAllConnections(transformationConnectionsDir, ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS);
+        restoreAllConnections(mappingConnectionsDir, ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS);
 
-      restoreAllConnections(repositoryConnectionsDir, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
+        restoreAllConnections(transformationConnectionsDir, ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS);
 
-      restoreAllConnections(jobsDir, ManifoldAPI.COMMANDS.JOBS);
+        restoreAllConnections(repositoryConnectionsDir, ManifoldAPI.COMMANDS.REPOSITORYCONNECTIONS);
 
-      LOGGER.info("Connectors Restored");
+        restoreAllConnections(jobsDir, ManifoldAPI.COMMANDS.JOBS);
 
-    } catch (final Exception e) {
-      LOGGER.fatal(e.getMessage());
-      throw new Exception("Error while restoring MCF connections.");
+        LOGGER.info("Connectors Restored");
+
+      } catch (final Exception e) {
+        LOGGER.error("Error while restoring MCF connections", e);
+        throw new Exception("Error while restoring MCF connections");
+      }
     }
+  }
+
+  private static boolean checkRestoreFiles(final File[] files) throws Exception {
+    final boolean status = true;
+    for (int i = 0; i < files.length; i++) {
+      final File f = files[i];
+      if (!f.canRead()) {
+        throw new IOException("Cannot read : " + f.getAbsolutePath());
+      } else if (!f.isDirectory() || !restoreDirectoriesNames.contains(f.getName())) {
+        LOGGER.warn("The provided directory does not contain a correct file tree");
+        throw new Exception("The provided directory does not contain a correct file tree");
+      } else {
+        final File[] subfiles = f.listFiles();
+        for (int j = 0; j < subfiles.length; j++) {
+          final File subFile = subfiles[j];
+          final JSONParser parser = new JSONParser();
+          try {
+            parser.parse(new FileReader(subFile));
+          } catch (final Exception e) {
+            LOGGER.warn("The file " + subFile.getAbsolutePath() + " is not a JSON file");
+            throw new Exception("The file " + subFile.getAbsolutePath() + " is not a JSON file");
+          }
+        }
+      }
+    }
+    return status;
   }
 }

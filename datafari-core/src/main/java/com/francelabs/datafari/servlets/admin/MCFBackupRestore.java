@@ -16,6 +16,7 @@
 
 package com.francelabs.datafari.servlets.admin;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -27,7 +28,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONObject;
 
+import com.francelabs.datafari.exception.CodesReturned;
+import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript;
 
@@ -35,7 +39,7 @@ import com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectors
  * This Servlet is used to save and restore the MCF connections from AdminUI It
  * is called by MCFBackupRestore.html DoGet is not used DoPost is used to save
  * and restore the MCF connections, given the action parameter (save or restore)
- * 
+ *
  * @author Giovanni Usai
  */
 @WebServlet("/admin/MCFBackupRestore")
@@ -70,38 +74,80 @@ public class MCFBackupRestore extends HttpServlet {
    */
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-    try {
+    final String action = request.getParameter("action");
+    final JSONObject jsonResponse = new JSONObject();
+    request.setCharacterEncoding("utf8");
+    response.setContentType("application/json");
+    final PrintWriter out = response.getWriter();
 
-      final String action = request.getParameter("action");
+    if (action != null && !action.trim().isEmpty()) {
 
-      if (action != null && !action.trim().isEmpty()) {
+      final String backupDirTmp = request.getParameter("backupDir");
 
-        final String backupDirTmp = request.getParameter("backupDir");
+      String backupDirectory;
 
-        String backupDirectory;
-
-        // Check if the backup dir has been given in input, otherwise take the
-        // default path
-        if (backupDirTmp != null && !backupDirTmp.trim().isEmpty()) {
-          backupDirectory = backupDirTmp.trim();
-        } else {
-          backupDirectory = env + DEFAULT_MCF_BACKUP_DIR;
-        }
-
-        if (action.trim().equalsIgnoreCase("save")) {
-
-          BackupManifoldCFConnectorsScript.doSave(backupDirectory);
-
-        } else if (action.trim().equalsIgnoreCase("restore")) {
-
-          BackupManifoldCFConnectorsScript.doRestore(backupDirectory);
-        }
+      // Check if the backup dir has been given in input, otherwise take the
+      // default path
+      if (backupDirTmp != null && !backupDirTmp.trim().isEmpty()) {
+        backupDirectory = backupDirTmp.trim();
+      } else {
+        backupDirectory = env + DEFAULT_MCF_BACKUP_DIR;
       }
-    } catch (final Exception e) {
-      final PrintWriter out = response.getWriter();
-      out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69253");
-      out.close();
-      LOGGER.error("Error in MCFBackupRestore doPost. Error 69253", e);
+
+      // Test directory
+      final File dir = new File(backupDirectory);
+      try {
+        if (!dir.exists()) {
+          jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+          jsonResponse.put(OutputConstants.STATUS, "The provided directory does not exist");
+        } else if (!dir.isDirectory()) {
+          jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+          jsonResponse.put(OutputConstants.STATUS, "The provided directory is not a directory");
+        } else {
+          if (action.trim().equalsIgnoreCase("save")) {
+            if (dir.list().length != 0) {
+              jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+              jsonResponse.put(OutputConstants.STATUS, "The provided directory is not empty");
+              LOGGER.warn("The provided directory is not empty : " + backupDirectory);
+            } else {
+              try {
+                BackupManifoldCFConnectorsScript.doSave(backupDirectory);
+                jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+              } catch (final Exception e) {
+                jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+                jsonResponse.put(OutputConstants.STATUS, e.getMessage());
+                LOGGER.error("Error during MCF config save", e);
+              }
+            }
+          } else if (action.trim().equalsIgnoreCase("restore")) {
+            if (dir.list().length == 0) {
+              jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+              jsonResponse.put(OutputConstants.STATUS, "The provided directory does not contain any file to restore");
+            } else {
+              try {
+                BackupManifoldCFConnectorsScript.doRestore(backupDirectory);
+                jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+              } catch (final Exception e) {
+                jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+                jsonResponse.put(OutputConstants.STATUS, e.getMessage());
+                LOGGER.error("Error during MCF config restore", e);
+              }
+            }
+          }
+        }
+      } catch (final SecurityException e) {
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+        jsonResponse.put(OutputConstants.STATUS, "The provided directory is not accessible");
+        LOGGER.warn("The provided directory and/or subfiles is/are not accessible/readable :" + backupDirectory);
+      }
+
+    } else {
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+      jsonResponse.put(OutputConstants.STATUS, "No action has been provided");
+      LOGGER.warn("No action has been provided");
     }
+
+    out.print(jsonResponse);
+
   }
 }

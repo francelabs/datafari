@@ -299,6 +299,7 @@
     "mandatoryField": "Erforderliches Feld",
     "match": "übereinstimmend",
     "max": "max",
+    "mcf-restore-warning": "Warning ! Restoring a configuration will completely remove the current existing crawling jobs and connectors. Would you like to proceed ?",
     "MCFPassword-AdminUI": "Ändere MCF-Passwort",
     "MCFPasswordAdmin": "Ändere MCF-Passwort",
     "min": "min",

@@ -36,8 +36,8 @@ function doSave() {
 		data : data,
 		//if received a response from the server
 		success : function(data, textStatus, jqXHR) {
-			if(data.toString().indexOf("Error code : ")!==-1){
-				$("#doRestoreReturnStatus-label").text(window.i18n.msgStore["adminUI-MCFBackupRestore-saveError"]).switchClass('backupRestoreOK','backupRestoreError', 100);
+			if(data.code !== 0){
+				$("#doRestoreReturnStatus-label").text(data.status).switchClass('backupRestoreOK','backupRestoreError', 100);
 				
 			} else {
 				$("#doRestoreReturnStatus-label").text(window.i18n.msgStore["adminUI-MCFBackupRestore-saveOK"]).switchClass('backupRestoreError','backupRestoreOK', 100);
@@ -52,6 +52,7 @@ function doSave() {
 			//disable the buttons until we get the response
 			$('#doRestore-btn').prop("disabled", true);
 			$('#doSave-btn').prop("disabled", true);
+			$("#doRestoreReturnStatus-label").text('');
 		},
 		//this is called after the response or error functions are finished
 		complete : function(jqXHR, textStatus) {
@@ -64,42 +65,46 @@ function doSave() {
 
 function doRestore() {
 	
-	//Reset message
-	$("doRestoreReturnStatus-label").html('');
+	if (confirm(window.i18n.msgStore['mcf-restore-warning'])) {
+		//Reset message
+		$("doRestoreReturnStatus-label").html('');
+		
+		var data = "action=restore";
+		
+		if ($('#backupDir-input').val()) {
+			data = data + "&backupDir=" + $('#backupDir-input').val();
+		} 
+		
+		$.ajax({ //Ajax request to the doPost of the MCF Backup Restore servlet
+			type : "POST",
+			url : "./../admin/MCFBackupRestore",
+			data : data,
+			//if received a response from the server
+			success : function(data, textStatus, jqXHR) {
+				if(data.code !== 0){
+					$("#doRestoreReturnStatus-label").text(data.status).switchClass('backupRestoreOK','backupRestoreError', 100);
+				} else {
+					$("#doRestoreReturnStatus-label").text(window.i18n.msgStore["adminUI-MCFBackupRestore-restoreOK"]).switchClass('backupRestoreError','backupRestoreOK', 100);
+				}			
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				console.log("Something really bad happened " + textStatus);
+				$("#doRestoreReturnStatus-label").html(jqXHR.responseText).addClass('backupRestoreError');
+			},
+			//capture the request before it was sent to server
+			beforeSend : function(jqXHR, settings) {
+				//disable the buttons until we get the response
+				$('#doRestore-btn').prop("disabled", true);
+				$('#doSave-btn').prop("disabled", true);
+				$("#doRestoreReturnStatus-label").text('');
+			},
+			//this is called after the response or error functions are finished
+			complete : function(jqXHR, textStatus) {
+				//enable the buttons 
+				$('#doRestore-btn').prop("disabled", false);
+				$('#doSave-btn').prop("disabled", false);
+			}
+		});
 	
-	var data = "action=restore";
-	
-	if ($('#backupDir-input').val()) {
-		data = data + "&backupDir=" + $('#backupDir-input').val();
-	} 
-	
-	$.ajax({ //Ajax request to the doPost of the MCF Backup Restore servlet
-		type : "POST",
-		url : "./../admin/MCFBackupRestore",
-		data : data,
-		//if received a response from the server
-		success : function(data, textStatus, jqXHR) {
-			if(data.toString().indexOf("Error code : ")!==-1){
-				$("#doRestoreReturnStatus-label").text(window.i18n.msgStore["adminUI-MCFBackupRestore-restoreError"]).switchClass('backupRestoreOK','backupRestoreError', 100);
-			} else {
-				$("#doRestoreReturnStatus-label").text(window.i18n.msgStore["adminUI-MCFBackupRestore-restoreOK"]).switchClass('backupRestoreError','backupRestoreOK', 100);
-			}			
-		},
-		error : function(jqXHR, textStatus, errorThrown) {
-			console.log("Something really bad happened " + textStatus);
-			$("#doRestoreReturnStatus-label").html(jqXHR.responseText).addClass('backupRestoreError');
-		},
-		//capture the request before it was sent to server
-		beforeSend : function(jqXHR, settings) {
-			//disable the buttons until we get the response
-			$('#doRestore-btn').prop("disabled", true);
-			$('#doSave-btn').prop("disabled", true);
-		},
-		//this is called after the response or error functions are finished
-		complete : function(jqXHR, textStatus) {
-			//enable the buttons 
-			$('#doRestore-btn').prop("disabled", false);
-			$('#doSave-btn').prop("disabled", false);
-		}
-	});
+	}
 }
