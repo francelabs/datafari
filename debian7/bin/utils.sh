@@ -1,5 +1,59 @@
 #!/bin/bash
 
+# util funcs
+check_java()
+{
+  if type -p java; then
+    echo found java executable in PATH
+    _java=java
+  elif [[ -n "$JAVA_HOME" ]] && [[ -x "$JAVA_HOME/bin/java" ]];  then
+      echo found java executable in JAVA_HOME
+      _java="$JAVA_HOME/bin/java"
+  else
+      echo "no Java detected. Please install Java. Program will exit."
+      exit
+  fi
+  
+  if [[ "$_java" ]]; then
+      version=$("$_java" -version 2>&1 | awk -F '"' '/version/ {print $2}')
+      echo version "$version"
+      if [[ "$version" > "1.8" ]]; then
+          echo Java version detected is OK
+  
+      else
+          echo Java version is not >=1.8. Please install at least Java 8. Program will exit
+          exit
+      fi
+  fi
+  
+  if [ -e "$JAVA_HOME"/bin/java ]; then
+    echo "JAVA HOME is correctly set"
+  else
+    echo "Environment variable JAVA_HOME is not properly set." 1>&2
+    exit 1
+  fi
+}
+
+check_python()
+{
+  version=$(python -V 2>&1 | grep -Po '(?<=Python )(.+)')
+  if [[ -z "$version" ]]
+  then
+    echo "No Python detected! Please install Python 2.7.x"
+    exit 1
+  else
+    case "$(python --version 2>&1)" in
+    *" 2.7"*)
+      echo "Compatible Python version detected"
+      ;;
+    *)
+      echo "Wrong Python version! Please install Python 2.7.X"
+      exit 1
+      ;;
+    esac
+  fi
+}
+
 run_as()
 {
   user=$1
@@ -12,7 +66,6 @@ run_as()
   fi
 }
 
-# util funcs
 waitpid() {
     local pid=$1 timeout=$2 
     { [ -z "$pid" ] || [ -z "$timeout" ]; } && return 10
@@ -164,38 +217,4 @@ waitKibana() {
 	else
 		echo "Kibana startup completed successfully --- OK"
 	fi
-}
-
-is_running() {
-    local pidFile=$1
-    if ! [ -f $pidFile ]; then
-	return 1
-    fi
-    local pid
-    pid=$(run_as ${DATAFARI_USER} "cat $pidFile")
-    if ! ps -p $pid 1>/dev/null 2>&1; then
-        echo "Warn: a PID file was detected, removing it."
-        run_as ${DATAFARI_USER} "rm -f $pidFile"
-        return 1
-    fi
-    return 0        
-}
-
-forceStopIfNecessary(){
-    local pidFile=$1
-    if ! [ -f $pidFile ]; then
-        return 0
-    fi
-    local pid
-    pid=$(run_as ${DATAFARI_USER} "cat $pidFile")
-    run_as ${DATAFARI_USER} "kill $pid"
-    waitpid $pid 30 .
-    if [ $? -ne 0 ]; then
-        echo
-        echo "Warn: failed to stop $2 in 30 seconds, sending SIGKILL"
-        run_as ${DATAFARI_USER} "kill -9 $pid"
-        sleep 1
-    fi
-    echo "stopped"
-    run_as ${DATAFARI_USER} "rm -f $pidFile"
 }
