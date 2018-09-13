@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,7 +45,6 @@ import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
-
 
 /**
  * Javadoc
@@ -146,34 +146,30 @@ public class Synonyms extends HttpServlet {
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
-	  IndexerServer server = null;
-      try {
-        server = IndexerServerManager.getIndexerServer(Core.FILESHARE);
-      } catch (final IOException e1) {
-        final PrintWriter out = response.getWriter();
-        out.append(
-            "Error while getting the Solr core, please make sure the core dedicated to PromoLinks has booted up. Error code : 69000");
-        out.close();
-        LOGGER.error(
-            "Error while getting the Solr core in doGet, admin servlet, make sure the core dedicated to Promolink has booted up and is still called promolink or that the code has been changed to match the changes. Error 69000 ",
-            e1);
-        return;
+    IndexerServer server = null;
+    try {
+      server = IndexerServerManager.getIndexerServer(Core.FILESHARE);
+    } catch (final IOException e1) {
+      final PrintWriter out = response.getWriter();
+      out.append("Error while getting the Solr core, please make sure the core dedicated to PromoLinks has booted up. Error code : 69000");
+      out.close();
+      LOGGER.error("Error while getting the Solr core in doGet, admin servlet, make sure the core dedicated to Promolink has booted up and is still called promolink or that the code has been changed to match the changes. Error 69000 ", e1);
+      return;
 
-      } catch (Exception e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	  
-	  
-	  try {
+    } catch (final Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    try {
       if (request.getParameter("synonymsList") == null) { // the user load an
         // other page
 
       } else { // The user clicked on confirm modification
-        final String filePath = env + "/synonyms_" + request.getParameter("language") + ".txt";
-        final String tempFilename = env + "/synonyms_" + request.getParameter("language").toString() + "_temp.txt";
+        final String language = request.getParameter("language").toLowerCase();
+        final String filePath = env + "/synonyms_" + language + ".txt";
         final File file = new File(filePath);
-        final File tempFile = new File(tempFilename);
+        final File tempFile = File.createTempFile("synonyms_" + language, ".txt");
         try (BufferedReader br = new BufferedReader(new FileReader(file)); BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile))) {
           String line = br.readLine();
           while (line != null && line.startsWith("#")) {
@@ -187,16 +183,15 @@ public class Synonyms extends HttpServlet {
           }
 
         } catch (final IOException e) {
-          LOGGER.error("Error while rewriting the file synonyms_" + request.getParameter("language") + " Synonyms Servlet's doPost. Error 69019", e);
+          LOGGER.error("Error while rewriting the file synonyms_" + language + " Synonyms Servlet's doPost. Error 69019", e);
           final PrintWriter out = response.getWriter();
           out.append("Error while rewriting the synonyms file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69015");
           out.close();
+          tempFile.delete();
           return;
         }
-        file.delete();
-        tempFile.renameTo(file);
-        final String[] params = { file.getName() };
-        server.uploadConfig(Paths.get(env),Core.FILESHARE.toString());
+        Files.move(tempFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        server.uploadConfig(Paths.get(env), Core.FILESHARE.toString());
         Thread.sleep(1000);
         server.reloadCollection(Core.FILESHARE.toString());
       }
