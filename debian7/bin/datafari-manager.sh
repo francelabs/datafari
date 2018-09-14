@@ -72,44 +72,6 @@ init_zookeeper_mcf_repertory()
   mkdir -m 700 ${DATAFARI_HOME}/zookeeper-mcf/data
 }
 
-init_elk()
-{
-  # Configure ELK
-  echo "Configure ELK"
-  cd $ELASTICSEARCH_HOME/bin
-  bash elasticsearch -p $ELASTICSEARCH_PID_FILE &
-  
-  #Test if Elasticsearch is up, if not then exit
-  waitElasticsearch
-  
-  #Sleep till Elasticsearch finishes its configuration
-  sleep 5
-  
-  sed -i "/pid\.file/c\pid.file: ${KIBANA_PID_FILE}" $KIBANA_HOME/config/kibana.yml
-  cd $KIBANA_HOME/bin
-  bash kibana &
-  
-  #Test if Kibana is up, if not then exit
-  waitKibana
-  
-  #Sleep till Kibana finishes its configuration
-  sleep 5
-  
-  kibana_config=$(curl -s http://localhost:9200/.kibana/config/_search | jq -r '.hits.hits | .[0] | ._id')
-  curl -H 'Content-Type: application/json' -XPUT -d @${LOGSTASH_HOME}/templates/datafari-monitoring-template.json http://localhost:9200/_template/datafari-monitoring
-  curl -H 'Content-Type: application/json' -XPUT -d @${LOGSTASH_HOME}/templates/datafari-statistic-template.json http://localhost:9200/_template/datafari-statistics
-  curl -H 'Content-Type: application/json' -XPUT -d @${ELK_HOME}/save/index-pattern-kibana-monitoring.json http://localhost:9200/.kibana/index-pattern/monitoring
-  curl -H 'Content-Type: application/json' -XPUT -d @${ELK_HOME}/save/index-pattern-kibana-statistics.json http://localhost:9200/.kibana/index-pattern/statistics
-  curl -H 'Content-Type: application/json' -XPOST -d '{"doc":{"defaultIndex": "monitoring"}}' http://localhost:9200/.kibana/config/${kibana_config}/_update
-  curl -s -XPOST localhost:9200/_bulk --data-binary "@${ELK_HOME}/save/datafari-bulk-kibana.json"
-  #Wait for low systems to complete Kibana config
-  sleep 10
-  kill $(cat $KIBANA_PID_FILE)
-  kill $(cat $ELASTICSEARCH_PID_FILE)
-  rm $KIBANA_PID_FILE
-  echo "ELK successfully configured"
-}
-
 init_postgres()
 {
   ${DATAFARI_HOME}/pgsql/bin/initdb -U postgres -A password --pwfile=${DATAFARI_HOME}/pgsql/pwd.conf -E utf8 -D ${DATAFARI_HOME}/pgsql/data
@@ -123,7 +85,9 @@ start_postgres()
 
 stop_postgres()
 {
+  echo "Stopping Postgres..."
   ${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_HOME}/logs/pgsql.log stop
+  forceStopIfNecessary $POSTGRES_PID_FILE Postgres
 }
 
 
@@ -147,8 +111,8 @@ start_cassandra()
 
 stop_cassandra()
 {
-  kill $(cat $CASSANDRA_PID_FILE)
-  rm -f $CASSANDRA_PID_FILE
+  echo "Stopping Cassandra..."
+  forceStopIfNecessary $CASSANDRA_PID_FILE Cassandra
 }
 
 init_cassandra()
@@ -166,6 +130,7 @@ start_zookeeper()
 stop_zookeeper()
 {
   bash $ZK_HOME/bin/zkServer.sh stop
+  forceStopIfNecessary $ZK_PID_FILE Zookeeper
 }
 
 init_zk()
@@ -207,7 +172,7 @@ start_tomcat()
 
 stop_tomcat()
 {
-  echo "Stop Tomcat"
+  echo "Stopping Tomcat..."
   cd $TOMCAT_HOME/bin
   bash shutdown.sh 30
   forceStopIfNecessary $CATALINA_PID Tomcat
@@ -250,6 +215,7 @@ init_solr()
 stop_solr()
 {
   $SOLR_INSTALL_DIR/bin/solr stop
+  forceStopIfNecessary $SOLR_PID_FILE Solr
 }
 
 COMMAND=$1
@@ -266,9 +232,6 @@ case $COMMAND in
         ;;
     init_zookeeper_mcf_repertory)
         init_zookeeper_mcf_repertory
-        ;;
-    init_elk)
-        init_elk
         ;;
     init_postgres)
         init_postgres

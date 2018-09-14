@@ -49,7 +49,9 @@ check_python;
 
 if  [[ "$STATE" = *installed* ]];
 then
-	run_as ${DATAFARI_USER} "bash datafari-manager.sh init_elk";
+	cd $ELK_HOME/scripts
+  run_as ${DATAFARI_USER} "bash elk-manager.sh init_elk";
+  cd $DIR
 
 	echo "Start postgres and cassandra and add ManifoldCF database"
 	run_as ${POSTGRES_USER} "bash datafari-manager.sh init_postgres_repertories";
