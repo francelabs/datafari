@@ -1,5 +1,6 @@
 package com.francelabs.manifoldcf.configuration.script;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
@@ -119,7 +120,39 @@ public class BackupManifoldCFConnectorsScript {
 
         LOGGER.info("Connectors Restored");
       }
+      if (args[0].equals("RESTOREJOBS")) {
+     
+        restoreAllConnections(jobsDir, ManifoldAPI.COMMANDS.JOBS);
 
+        LOGGER.info("Jobs Restored");
+      }
+
+      if (args[0].equals("STARTJOBS")) {
+        LOGGER.info("Execution Start jobs");
+        // takes in argument a list of job IDs : one per line
+        File f = new File(args[1]);
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+          String s;
+          while ((s = br.readLine()) != null) {
+            LOGGER.info("startJob");
+            ManifoldAPI.startJob(s);
+            ManifoldAPI.statusJob(s);
+          }
+
+        }
+      }
+      if (args[0].equals("DELETEJOBS")) {
+        LOGGER.info("Execution Deletion jobs");
+        // takes in argument a list of job IDs : one per line
+        File f = new File(args[1]);
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+          String s;
+          while ((s = br.readLine()) != null) {
+            ManifoldAPI.deleteJob(s);
+          }
+
+        }
+      }
     } catch (final Exception e) {
       LOGGER.fatal(e.getMessage());
       e.printStackTrace();
