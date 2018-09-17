@@ -111,19 +111,31 @@ AjaxFranceLabs.PagerModule = AjaxFranceLabs.AbstractModule.extend({
 				elm.find('.go_n, .go_l').css('display', this.display);
 		}
 		elm.find('.page').css('display', 'none');
-		elm.find('.page[page=' + this.pageSelected + ']').addClass('selected');
-		elm.find('.page.selected').css('display', this.display).prev().css('display', this.display);
-		for (var p = $(this.elm).find('.page:visible').length; p < this.nbPageDisplayed; p++)
-			elm.find('.page:visible:last').next().css('display', this.display);
-		if (elm.find('.page:visible').length < this.nbPageDisplayed)
-			for (var p = $(this.elm).find('.page:visible').length; p < this.nbPageDisplayed; p++)
-				elm.find('.page:visible:first').prev().css('display', this.display);
+		elm.find('.page[page=' + this.pageSelected + ']').addClass('selected disp');
+		// Add class 'disp' because the old code version relied on the ':visible' filter to find .page elements
+		// but if the pager module is hidden at this point it breaks everything
+		// By relying on a class, the behavior of the following code will be correct in any cases
+		elm.find('.page.selected').css('display', this.display).prev().addClass('disp').css('display', this.display);
+		for (var p = $(this.elm).find('.page.disp').length; p < this.nbPageDisplayed; p++) {
+			// Display the page numbers one by one till the nbPageDisplayed (which should be renamed as 'MaxPagesToDisplay') is reached
+			elm.find('.page.disp:last').next().addClass('disp').css('display', this.display);
+		}
+		// If the number of currently displayed pages is below the max allowed number (nbPageDisplayed), 
+		// then display any existing previous pages till the max allowed number is reached
+		// For example if the selected page is 11 and the current diplayed pages are 11,12 and 13, if the max allowed pages to display is 10
+		// then we can display the pages 4,5,6,7,8,9 and 10 in addition
+		if (elm.find('.page.disp').length < this.nbPageDisplayed) {
+			for (var p = $(this.elm).find('.page.disp').length; p < this.nbPageDisplayed; p++) {
+				elm.find('.page.disp:first').prev().addClass('disp').css('display', this.display);
+			}
+		}
 		var width = 10;
-		for (var p = 0; p < this.nbPageDisplayed; p++)
-			width += $(this.elm).find('.page:visible:eq(' + p + ')').outerWidth(true);
+		for (var p = 0; p < this.nbPageDisplayed; p++) {
+			width += $(this.elm).find('.page.disp:eq(' + p + ')').outerWidth(true);
+		}
 		elm.find('.pages').width(width);
 		AjaxFranceLabs.clearMultiElementClasses(elm.find('.page'));
-		AjaxFranceLabs.addMultiElementClasses(elm.find('.page:visible'));
+		AjaxFranceLabs.addMultiElementClasses(elm.find('.page.disp'));
 	},
 
 	clickHandler : function() {
