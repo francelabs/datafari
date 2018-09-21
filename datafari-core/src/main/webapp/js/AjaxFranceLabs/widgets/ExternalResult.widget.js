@@ -13,10 +13,13 @@ AjaxFranceLabs.ExternalResultWidget = AjaxFranceLabs.ResultWidget.extend({
 
 	afterRequest : function() {
 		var data = this.manager.response, elm = $(this.elm),self=this;
+		
+		if (!this.isMobile)
+            elm.find('.doc_list').empty();
+		else
+            elm.find('.doc_list .bar-loader').remove();
+		
 		var querySolr = getParamValue('query', decodeURIComponent(window.location.search));
-
-		this._super();
-
 		var self = this;
 		var docs = self.manager.response.response.docs;
 
