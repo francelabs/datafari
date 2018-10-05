@@ -72,6 +72,7 @@ run_as ${DATAFARI_USER} "bash datafari-manager.sh start_zookeeper";
 
 if  [[ "$STATE" = *installed* ]];
 then
+  run_as ${DATAFARI_USER} "bash datafari-manager.sh init_mcf_crawler_agent";
 	run_as ${DATAFARI_USER} "bash datafari-manager.sh init_zk_mcf";
 	run_as ${DATAFARI_USER} "bash datafari-manager.sh init_zk";
 else

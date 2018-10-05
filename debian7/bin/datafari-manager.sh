@@ -150,6 +150,17 @@ init_zk_mcf()
   bash initialize.sh
 }
 
+init_mcf_crawler_agent()
+{
+  cd $MCF_HOME
+  echo "Init MCF crawler agent libs"
+  LIBS=$(echo lib/*.jar | tr ' ' ':')
+  #Remove log4j-1 lib
+  LOG4J1=$(echo lib/log4j-1.2.*.jar):
+  LIBS=$(echo "${LIBS/$LOG4J1/}")
+  sed -i -e "s#@LIBS@#$LIBS#g" options.env.unix
+}
+
 start_mcf_crawler_agent() 
 {
   cd $MCF_HOME/../bin
@@ -262,6 +273,9 @@ case $COMMAND in
         ;;
     init_zk_mcf)
         init_zk_mcf
+        ;;
+    init_mcf_crawler_agent)
+        init_mcf_crawler_agent
         ;;
     start_mcf_crawler_agent)
         start_mcf_crawler_agent
