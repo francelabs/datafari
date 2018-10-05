@@ -34,7 +34,7 @@
          </activation>
         <modules>
         <module>datafari-dependencies</module>
-		<module>datafari-core</module>
+		<module>datafari-webapp</module>
 		<module>datafari-solr</module>
 		<module>datafari-zookeeper</module>
 		<module>datafari-jena</module>

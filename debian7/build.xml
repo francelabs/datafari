@@ -15,7 +15,7 @@
 	<property name="elk.src.dir" value="${project.dir}/datafari-elk/target/dist/elk" />
 	<property name="tomcat.src.dir" value="${project.dir}/datafari-tomcat/target/dist/tomcat" />
 	<property name="solr.src.dir" value="${project.dir}/datafari-solr/target/dist/solr" />
-	<property name="datafari.src.dir" value="${project.dir}/datafari-core/target" />
+	<property name="datafari.webapp.dir" value="${project.dir}/datafari-webapp/target" />
 	<property name="jena.src.dir" value="${project.dir}/datafari-jena/target" />
 	<property name="mcf.src.dir" value="${project.dir}/datafari-mcf/target/dist/mcf" />
 	<property name="realm.src.dir" value="${project.dir}/datafari-realm/target" />
@@ -248,7 +248,7 @@
 		</move>
 
 		<!-- Copy Datafari -->
-		<copy file="${datafari.src.dir}/Datafari.war" todir="${debian.dist.dir}/tomcat/webapps" />
+		<copy file="${datafari.webapp.dir}/Datafari.war" todir="${debian.dist.dir}/tomcat/webapps" />
 
 		<!-- Copy Realm -->
 		<copy todir="${debian.dist.dir}/tomcat/lib">

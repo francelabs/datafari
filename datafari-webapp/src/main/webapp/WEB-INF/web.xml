@@ -50,7 +50,6 @@
       <transport-guarantee>NONE</transport-guarantee>
     </user-data-constraint>
   </security-constraint>
-  
   <security-constraint>
     <web-resource-collection>
       <web-resource-name>Admin Privilege</web-resource-name>
@@ -64,7 +63,6 @@
       <transport-guarantee>NONE</transport-guarantee>
     </user-data-constraint>
   </security-constraint>
-  
   <security-role>
     <role-name>*</role-name>
   </security-role>
@@ -85,9 +83,9 @@
     </form-login-config>
   </login-config>
   <listener>
-	<listener-class>com.francelabs.datafari.startup.LikesLauncher</listener-class>
-   </listener>
-     <listener>
-	<listener-class>com.francelabs.datafari.startup.UserManagementLauncher</listener-class>
-   </listener>
+    <listener-class>com.francelabs.datafari.startup.LikesLauncher</listener-class>
+  </listener>
+  <listener>
+    <listener-class>com.francelabs.datafari.startup.UserManagementLauncher</listener-class>
+  </listener>
 </web-app>
