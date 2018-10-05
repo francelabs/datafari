@@ -8,7 +8,7 @@
   <dependencies>
        <dependency>
               <groupId>com.francelabs.datafari</groupId>
-              <artifactId>datafari-dependencies</artifactId>
+              <artifactId>datafari-core</artifactId>
               <version>4.1-Community</version>
               <type>jar</type>
               <scope>provided</scope>

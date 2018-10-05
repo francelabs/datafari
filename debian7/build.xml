@@ -16,6 +16,7 @@
 	<property name="tomcat.src.dir" value="${project.dir}/datafari-tomcat/target/dist/tomcat" />
 	<property name="solr.src.dir" value="${project.dir}/datafari-solr/target/dist/solr" />
 	<property name="datafari.webapp.dir" value="${project.dir}/datafari-webapp/target" />
+	<property name="datafari.core.dir" value="${project.dir}/datafari-core/target" />
 	<property name="jena.src.dir" value="${project.dir}/datafari-jena/target" />
 	<property name="mcf.src.dir" value="${project.dir}/datafari-mcf/target/dist/mcf" />
 	<property name="realm.src.dir" value="${project.dir}/datafari-realm/target" />
@@ -271,6 +272,23 @@
 		<copy todir="${debian.dist.dir}/bin">
 			<fileset dir="${bin.src.dir}" />
 		</copy>
+		
+		<!-- Copy Datafari core libs to Tomcat -->
+    <copy flatten="true" toDir="${debian.dist.dir}/tomcat/lib" overwrite="true" force="true">
+      <fileset dir="${datafari.core.dir}">
+        <include name="dependency/*.jar" />
+      </fileset>
+      <fileset dir="${datafari.core.dir}">
+        <include name="*.jar" />
+      </fileset>
+    </copy>
+    
+    <!-- Copy datafari-core jar to MCF -->
+    <copy toDir="${debian.dist.dir}/mcf/mcf_home/connector-common-lib" overwrite="true" force="true">
+      <fileset dir="${datafari.core.dir}">
+        <include name="*.jar" />
+      </fileset>
+    </copy>
 
 		<!-- Copy BackupManifoldCF script -->
 		<copy todir="${debian.dist.dir}/bin/common">
