@@ -16,6 +16,7 @@
 
 package com.francelabs.datafari.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -37,7 +38,7 @@ public class DatafariMainConfiguration extends AbstractConfigClass {
 
   private static DatafariMainConfiguration instance;
   public static final String LDAPACTIVATED = "ISLDAPACTIVATED";
-  public static final String SOLR_HOSTS = "SOLRHOSTS";
+  public static final String ZK_HOSTS = "SOLRHOSTS";
   public static final String ONTOLOGY_ENABLED = "ontologyEnabled";
   public static final String ONTOLOGY_LANGUAGE_SELECTION = "ontologyLanguageSelection";
   public static final String ONTOLOGY_PARENTS_LABELS = "ontologyParentsLabels";
@@ -66,12 +67,12 @@ public class DatafariMainConfiguration extends AbstractConfigClass {
    *
    */
   private DatafariMainConfiguration() {
-    super(configFilename, LOGGER);
+    super(configFilename, Environment.getEnvironmentVariable("MAIN_DATAFARI_CONFIG_HOME") + File.separator + configFilename, LOGGER);
 
   }
 
-  public List<String> getSolrHosts() throws IOException {
-    final String strList = getProperty(SOLR_HOSTS);
+  public List<String> getZkHosts() throws IOException {
+    final String strList = getProperty(ZK_HOSTS);
     return Arrays.asList(strList.split(","));
   }
 

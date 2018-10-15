@@ -215,7 +215,6 @@ start_solr()
 init_solr()
 {
   find $SOLR_INSTALL_DIR/solr_home -maxdepth 1 -mindepth 1 -type d -exec rm -rf '{}' \;
-  run_as ${DATAFARI_USER} "find $SOLR_INSTALL_DIR/solr_home -maxdepth 1 -mindepth 1 -type d -exec rm -rf '{}' \;"
   #curl --insecure -XGET "https://localhost:8983/solr/admin/collections?action=CREATE&name=FileShare&collection.configName=FileShare&numShards=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/FileShare/"
   #curl --insecure -XGET "https://localhost:8983/solr/admin/collections?action=CREATE&name=Statistics&collection.configName=Statistics&numShards=1&replicationFactor=1"
   #curl --insecure -XGET "https://localhost:8983/solr/admin/collections?action=CREATE&name=Promolink&collection.configName=Promolink&numShards=1&replicationFactor=1"

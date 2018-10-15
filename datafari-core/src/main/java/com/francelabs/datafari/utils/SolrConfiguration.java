@@ -15,6 +15,8 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils;
 
+import java.io.File;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -60,7 +62,7 @@ public class SolrConfiguration extends AbstractConfigClass {
    *
    */
   private SolrConfiguration() {
-    super(configFilename, LOGGER);
+    super(configFilename, Environment.getEnvironmentVariable("DATAFARI_SOLR_PROPERTIES_HOME") + File.separator + configFilename, LOGGER);
 
   }
 

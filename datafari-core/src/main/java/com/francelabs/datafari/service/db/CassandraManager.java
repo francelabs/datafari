@@ -69,6 +69,8 @@ public class CassandraManager {
     if (providedCassandraHost != null) {
       LOGGER.info("Provided Cassandra host: " + providedCassandraHost);
       contactPoint = providedCassandraHost;
+    } else {
+      LOGGER.info("Cassandra host not provided, using default value: " + default_host);
     }
 
     // Determine port
@@ -77,6 +79,8 @@ public class CassandraManager {
     if (providedCassandraPort != null) {
       LOGGER.info("Provided Cassandra port: " + providedCassandraPort);
       cassandraPort = Integer.valueOf(providedCassandraPort);
+    } else {
+      LOGGER.info("Cassandra port not provided, using default value: " + default_port);
     }
 
     cluster = Cluster.builder().addContactPoint(contactPoint).withPort(cassandraPort).build();

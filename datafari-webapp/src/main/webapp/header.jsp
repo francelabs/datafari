@@ -1,4 +1,3 @@
-<%@page import="org.apache.jena.sparql.function.library.print"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ page import="com.francelabs.datafari.utils.*"%>

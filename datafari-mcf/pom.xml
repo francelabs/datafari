@@ -1,9 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.francelabs.datafari</groupId>
+  <parent>
+    <groupId>com.francelabs.datafari</groupId>
+    <artifactId>datafari-parent</artifactId>
+    <version>4.1-Community</version>
+  </parent>
   <artifactId>datafari-mcf</artifactId>
   <packaging>pom</packaging>
-  <version>4.1-Community</version>
   <name>Datafari Enterprise Search - ManifoldCF module</name>
   <build>
   <plugins>
@@ -15,23 +18,20 @@
 	<inherited>false</inherited>
   	<executions>
 		
-						<execution>
-							<id>install-mcf</id>
-							<phase>validate</phase>
-							<goals>
-								<goal>wget</goal>
-							</goals>
-							<configuration>
-								<!-- Version of MCF should be retrieved from a property file as well 
-									as the MD5 -->
-								<url>http://archive.apache.org/dist/manifoldcf/apache-manifoldcf-2.10/apache-manifoldcf-2.10-bin.tar.gz</url>
-								<sha512>0EC1EABC 35642289 14040A97 5F391C1D D25DCABF
-                                   7304524D 5685F9F4 34F80409 7DC3512A C16F4AF8
-                                   88A957FB EA9DE0F2 8A7C00D6 F05883C5 3EF30F49
-                                   F53725FB</sha512>
-								<unpack>true</unpack>
-							</configuration>
-						</execution>
+			<execution>
+        <id>install-mcf</id>
+        <phase>validate</phase>
+        <goals>
+          <goal>wget</goal>
+        </goals>
+        <configuration>
+          <!-- Version of MCF should be retrieved from a property file as well 
+            as the MD5 -->
+          <url>http://archive.apache.org/dist/manifoldcf/apache-manifoldcf-${mcf.version}/apache-manifoldcf-${mcf.version}-bin.tar.gz</url>
+          <sha512>28935306582B0E0040AB71072A851B3A5E062EAFB51A804C1A5EEBCB7B29E310A081E2800708437FFB23A98933C0AE0BF95CCF30EF05324466C9A19F4FB01658</sha512>
+          <unpack>true</unpack>
+        </configuration>
+      </execution>
   	</executions>
 	</plugin>
 				<plugin>

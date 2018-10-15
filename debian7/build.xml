@@ -149,20 +149,25 @@
 			</fileset>
 		</copy>
 
-		<!-- Copy Datafari update processor -->
-		<copy todir="${debian.dist.dir}/solr/solr_home/FileShare/lib/custom">
-			<fileset dir="${updateprocessor.src.dir}">
-				<include name="*.jar" />
-			</fileset>
-		</copy>
+		<!-- Copy Datafari update processor + dependencies -->
+    <copy todir="${debian.dist.dir}/solr/solr_home/FileShare/lib/custom">
+      <fileset dir="${updateprocessor.src.dir}">
+        <include name="*.jar" />
+      </fileset>
+      <fileset dir="${updateprocessor.src.dir}/dependency">
+        <include name="*.jar" />
+      </fileset>
+    </copy>
 
-		<!-- Copy Datafari update handler -->
-		<copy todir="${debian.dist.dir}/solr/solr_home/FileShare/lib/custom">
-			<fileset dir="${datafarihandler.src.dir}">
-				<include name="*.jar" />
-				<include name="dependency/*.jar" />
-			</fileset>
-		</copy>
+		<!-- Copy Datafari update handler + dependencies-->
+    <copy todir="${debian.dist.dir}/solr/solr_home/FileShare/lib/custom">
+      <fileset dir="${datafarihandler.src.dir}">
+        <include name="*.jar" />
+      </fileset>
+      <fileset dir="${datafarihandler.src.dir}/dependency">
+        <include name="*.jar" />
+      </fileset>
+    </copy>
 
 		<!-- Copy Datafari update handler dependencies-->
 		<copy todir="${debian.dist.dir}/solr/solr_home/FileShare/lib/custom">
@@ -194,61 +199,21 @@
 		<copy todir="${debian.dist.dir}/mcf">
 			<fileset dir="${mcf.src.dir}" />
 		</copy>
-		
-		<!-- Copy Tika jars to MCF -->
-		<copy todir="${debian.dist.dir}/mcf/mcf_home/connector-common-lib">
-			<fileset dir="${tika.src.dir}/target/dependency">
-				<include name="*.jar" />
-				<exclude name="commons-codec-*" />
-				<exclude name="commons-collections4-*" />
-				<exclude name="commons-exec-*" />
-				<exclude name="commons-io-*" />
-				<exclude name="commons-lang-*" />
-				<exclude name="commons-logging-*" />
-				<exclude name="curvesapi-*" />
-				<exclude name="gson-*" />
-				<exclude name="guava-*" />
-				<exclude name="httpclient-*" />
-				<exclude name="httpcore-*" />
-				<exclude name="jna-*" />
-				<exclude name="json-simple-*" />
-				<exclude name="poi-*" />
-				<exclude name="slf4j-*" />
-				<exclude name="xmlbeans-*" />
-			</fileset>
-		</copy>
-		<copy todir="${debian.dist.dir}/mcf/mcf_home/lib">
-			<fileset dir="${tika.src.dir}/target/dependency">
-				<include name="commons-codec-*" />
-				<include name="commons-collections4-*" />
-				<include name="commons-exec-*" />
-				<include name="commons-io-*" />
-				<include name="commons-lang-*" />
-				<include name="commons-logging-*" />
-				<include name="curvesapi-*" />
-				<include name="gson-*" />
-				<include name="httpclient-*" />
-				<include name="httpcore-*" />
-				<include name="jna-*" />
-				<include name="json-simple-*" />
-				<include name="poi-*" />
-				<include name="slf4j-*" />
-				<include name="xercesImpl-*" />
-				<include name="xml-apis-*" />
-				<include name="xmlbeans-*" />
-			</fileset>
-		</copy>
-
-		
-
 
 		<!-- Copy Manifold CF to Tomcat auto-deploy directory -->
 		<move toDir="${debian.dist.dir}/tomcat/webapps" overwrite="true" force="true">
 			<fileset dir="${debian.dist.dir}/mcf/war" />
 			<globmapper from="*.war" to="datafari-*.war" />
 		</move>
+		
+		<!-- Copy Manifold CF Velocity lib to Tomcat (Needed for the crawler ui) -->
+    <copy toDir="${debian.dist.dir}/tomcat/lib" overwrite="true" force="true">
+      <fileset dir="${debian.dist.dir}/mcf/mcf_home/lib">
+        <include name="velocity*.jar" />
+      </fileset>
+    </copy>
 
-		<!-- Copy Datafari -->
+		<!-- Copy Datafari War -->
 		<copy file="${datafari.webapp.dir}/Datafari.war" todir="${debian.dist.dir}/tomcat/webapps" />
 
 		<!-- Copy Realm -->

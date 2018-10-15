@@ -4,16 +4,30 @@
 	<artifactId>datafari-parent</artifactId>
 	<!-- Main POM of datafari -->
 	<packaging>pom</packaging>
-	<version>4.0.2-Community</version>
+	<version>4.1-Community</version>
 	<name>Datafari Enterprise Search - Parent POM</name>
+	
+	<properties>
+    <log4j.version>2.11.1</log4j.version>
+    <mcf.version>2.11</mcf.version>
+    <solr.version>7.4.0</solr.version>
+    <postgres.version>42.1.3</postgres.version>
+    <tomcat.version>9.0.8</tomcat.version>
+    <tika.version>1.19.1</tika.version>
+    <slf4j.version>1.7.25</slf4j.version>
+    <httpclient.version>4.5.6</httpclient.version>
+    <cassandra.driver.version>3.6.0</cassandra.driver.version>
+    <zookeeper.version>3.4.10</zookeeper.version>
+  </properties>
+	
 	<!-- The order of modules execution is important -->
 	<modules>
+    <module>datafari-mcf</module> 
 		<module>datafari-core</module>
 		<module>datafari-webapp</module>
 		<module>datafari-solr</module>
 		<module>datafari-zookeeper</module>
 		<module>datafari-jena</module>
-		<module>datafari-mcf</module>
 		<module>datafari-cassandra</module>
 		<module>datafari-tomcat</module>
 		<module>datafari-elk</module>

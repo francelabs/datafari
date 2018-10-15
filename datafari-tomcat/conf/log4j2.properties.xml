@@ -67,7 +67,7 @@
     </RollingFile>
     
     <!-- ELK appender -->
-    <RollingFile name="ELK" fileName="${env:TOMCAT_HOME}/../elk/logs/elk-startup.log" filePattern="${env:TOMCAT_HOME}/../elk/logs/elk-startup-%d{yyyy-MM-dd}-%i.log">
+    <RollingFile name="ELK" fileName="${env:ELK_HOME}/logs/elk-startup.log" filePattern="${env:ELK_HOME}/logs/elk-startup-%d{yyyy-MM-dd}-%i.log">
       <PatternLayout>
         <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n</Pattern>
       </PatternLayout>

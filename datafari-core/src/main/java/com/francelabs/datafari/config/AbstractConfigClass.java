@@ -32,7 +32,7 @@ public abstract class AbstractConfigClass implements IConfigClass {
   private Thread watcherThread;
 
   /**
-   * Load the provided properties file from /opt/datafari/tomcat/conf
+   * Load the provided properties file from $CONFIG_HOME
    *
    * @param configPropertiesFileName
    *          the properties file name
@@ -42,11 +42,14 @@ public abstract class AbstractConfigClass implements IConfigClass {
   protected AbstractConfigClass(final String configPropertiesFileName, final Logger logger) {
     LOGGER = logger;
     this.configPropertiesFileName = configPropertiesFileName;
-    String envPath = Environment.getEnvironmentVariable("TOMCAT_HOME");
+    String envPath = Environment.getEnvironmentVariable("CONFIG_HOME");
     if (envPath == null) {
-      envPath = "/opt/datafari/tomcat";
+      envPath = "/opt/datafari/tomcat/conf";
+      LOGGER.warn("The CONFIG_HOME environment variable is not set, using default value: " + envPath);
+    } else {
+      LOGGER.info("Using CONFIG_HOME: " + envPath);
     }
-    configPropertiesFileNameAbsolutePath = envPath + File.separator + "conf" + File.separator + configPropertiesFileName;
+    configPropertiesFileNameAbsolutePath = envPath + File.separator + configPropertiesFileName;
     loadProperties();
   }
 
@@ -63,6 +66,7 @@ public abstract class AbstractConfigClass implements IConfigClass {
    */
   protected AbstractConfigClass(final String configPropertiesFileName, final String configPropertiesFileNameAbsolutePath, final Logger logger) {
     LOGGER = logger;
+    LOGGER.info("Using direct file path: " + configPropertiesFileNameAbsolutePath);
     this.configPropertiesFileName = configPropertiesFileName;
     this.configPropertiesFileNameAbsolutePath = configPropertiesFileNameAbsolutePath;
     loadProperties();
@@ -78,7 +82,11 @@ public abstract class AbstractConfigClass implements IConfigClass {
    */
   @Override
   public String getProperty(final String key) throws IOException {
-    return (String) properties.get(key);
+    final String prop = (String) properties.get(key);
+    if (prop == null) {
+      LOGGER.warn("Property " + key + " not found in the following property file: " + this.configPropertiesFileNameAbsolutePath);
+    }
+    return prop;
   }
 
   @Override
@@ -102,7 +110,7 @@ public abstract class AbstractConfigClass implements IConfigClass {
     try (final InputStream stream = new FileInputStream(configFile); final InputStreamReader isr = new InputStreamReader(stream, StandardCharsets.UTF_8);) {
       properties.load(isr);
     } catch (final IOException e) {
-      LOGGER.error("Cannot read file : " + configFile.getAbsolutePath(), e);
+      LOGGER.error("Cannot read file : " + configPropertiesFileNameAbsolutePath, e);
     }
   }
 
@@ -140,7 +148,7 @@ public abstract class AbstractConfigClass implements IConfigClass {
               // a Path.
               final Path changed = (Path) event.context();
               if (changed.endsWith(configPropertiesFileName) && event.count() == 1) {
-                LOGGER.info("Advanced search config file has changed, reloading the properties");
+                LOGGER.info(configPropertiesFileNameAbsolutePath + " has been modified, reloading the properties");
                 Thread.sleep(200);
                 loadProperties();
                 onPropertiesReloaded();

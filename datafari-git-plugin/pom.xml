@@ -3,11 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
-
+  <parent>
     <groupId>com.francelabs.datafari</groupId>
+    <artifactId>datafari-parent</artifactId>
+    <version>4.1-Community</version>
+  </parent>
   <artifactId>datafari-git-plugin</artifactId>
   <packaging>war</packaging>
-  <version>4.1-Community</version>
   <name>Datafari Enterprise Search - Git plugin</name>
 
     <dependencies />

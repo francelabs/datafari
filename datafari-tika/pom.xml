@@ -1,51 +1,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.francelabs.datafari</groupId>
+  <parent>
+    <groupId>com.francelabs.datafari</groupId>
+    <artifactId>datafari-parent</artifactId>
+    <version>4.1-Community</version>
+  </parent>
   <artifactId>datafari-tika</artifactId>
-  <version>4.1-Community</version>
   <packaging>pom</packaging>
   <name>Datafari Enterprise Search - Tika module</name>
   <dependencies>
     <dependency>
         <groupId>org.apache.tika</groupId>
         <artifactId>tika-parsers</artifactId>
-        <version>1.16</version>
-    </dependency>
-      
-    <dependency>
-        <groupId>org.bouncycastle</groupId>
-        <artifactId>bcmail-jdk15on</artifactId>
-        <version>1.55</version>
-    </dependency>
-    
-    <dependency>
-        <groupId>org.bouncycastle</groupId>
-        <artifactId>bcprov-jdk15on</artifactId>
-        <version>1.55</version>
+        <version>${tika.version}</version>
     </dependency>
     
     <dependency>
         <groupId>c3p0</groupId>
         <artifactId>c3p0</artifactId>
         <version>0.9.1.2</version>
-    </dependency>
-    
-    <dependency>
-        <groupId>com.googlecode.mp4parser</groupId>
-        <artifactId>isoparser</artifactId>
-        <version>1.1.21</version>
-    </dependency>
-    
-    <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-core</artifactId>
-        <version>2.8.5</version>
-    </dependency>
-    
-    <dependency>
-        <groupId>org.codelibs</groupId>
-        <artifactId>jhighlight</artifactId>
-        <version>1.0.3</version>
     </dependency>
     
     <dependency>
@@ -61,58 +34,16 @@
     </dependency>
     
     <dependency>
-        <groupId>com.adobe.xmp</groupId>
-        <artifactId>xmpcore</artifactId>
-        <version>5.1.3</version>
-    </dependency>
-    
-    <dependency>
-        <groupId>org.jdom</groupId>
-        <artifactId>jdom2</artifactId>
-        <version>2.0.6</version>
-    </dependency>
-    
-    <dependency>
         <groupId>xerces</groupId>
         <artifactId>xercesImpl</artifactId>
         <version>2.11.0</version>
     </dependency>
-    
+  
     <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-csv</artifactId>
-        <version>1.4</version>
+        <groupId>joda-time</groupId>
+        <artifactId>joda-time</artifactId>
+        <version>2.9.9</version>
     </dependency>
-    
-    <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpclient</artifactId>
-        <version>4.5.3</version>
-    </dependency>
-    
-    <dependency>
-	    <groupId>org.apache.httpcomponents</groupId>
-	    <artifactId>httpmime</artifactId>
-	    <version>4.5.3</version>
-	</dependency>
-	
-	<dependency>
-	    <groupId>joda-time</groupId>
-	    <artifactId>joda-time</artifactId>
-	    <version>2.9.9</version>
-	</dependency>
-    
-    <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpcore</artifactId>
-        <version>4.4.6</version>
-    </dependency>
-    
-    <dependency>
-	    <groupId>org.slf4j</groupId>
-	    <artifactId>slf4j-simple</artifactId>
-	    <version>1.7.24</version>
-	</dependency>
       
   </dependencies>
   

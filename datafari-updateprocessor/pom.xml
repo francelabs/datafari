@@ -1,21 +1,48 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.francelabs.datafari</groupId>
+  <parent>
+    <groupId>com.francelabs.datafari</groupId>
+    <artifactId>datafari-parent</artifactId>
+    <version>4.1-Community</version>
+  </parent>
   <artifactId>datafari-updateprocessor</artifactId>
   <packaging>jar</packaging>
-  <version>4.1-Community</version>
   <name>Datafari Enterprise Search - UpdateProcessor module</name>
   	<prerequisites>
 		<!-- Force minimum Maven version -->
 		<maven>3.0.5</maven>
 	</prerequisites>
 	<dependencies>
+    <dependency>
+      <groupId>org.apache.solr</groupId>
+      <artifactId>solr-solrj</artifactId>
+      <version>${solr.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.solr</groupId>
+      <artifactId>solr-core</artifactId>
+      <version>${solr.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.googlecode.json-simple</groupId>
+      <artifactId>json-simple</artifactId>
+      <version>1.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tika</groupId>
+      <artifactId>tika-core</artifactId>
+      <version>${tika.version}</version>
+      <scope>provided</scope>
+    </dependency>
 		<dependency>
-              <groupId>com.francelabs.datafari</groupId>
-              <artifactId>datafari-core</artifactId>
-              <version>4.1-Community</version>
-              <type>pom</type>
-        </dependency>
+      <groupId>com.francelabs.datafari</groupId>
+      <artifactId>datafari-jena</artifactId>
+      <version>4.1-Community</version>
+      <type>pom</type>
+      <scope>provided</scope>
+    </dependency>
 	</dependencies>
 	<build>
 	<plugins>
@@ -27,6 +54,23 @@
           <source>1.8</source>
           <target>1.8</target>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.10</version>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+            <excludeScope>provided</excludeScope>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
 	</build>

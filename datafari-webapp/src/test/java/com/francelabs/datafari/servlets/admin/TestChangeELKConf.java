@@ -35,18 +35,18 @@ import com.francelabs.datafari.utils.Environment;
 public class TestChangeELKConf {
 
   final static String resourcePathStr = "src/test/resources/elkTests";
-  final static String catalinaHomeTemp = "catalina";
+  final static String configHomeTemp = "conf";
   Path tempDirectory = null;
 
   @Before
   public void initialize() throws IOException {
     // create temp dir
-    tempDirectory = Files.createTempDirectory(catalinaHomeTemp);
+    tempDirectory = Files.createTempDirectory(configHomeTemp);
     FileUtils.copyDirectory(new File(resourcePathStr), tempDirectory.toFile());
 
     // set datafari_home to temp dir
     PowerMockito.mockStatic(Environment.class);
-    Mockito.when(Environment.getEnvironmentVariable("TOMCAT_HOME")).thenReturn(tempDirectory.toFile().getAbsolutePath());
+    Mockito.when(Environment.getEnvironmentVariable("CONFIG_HOME")).thenReturn(tempDirectory.toFile().getAbsolutePath());
 
   }
 

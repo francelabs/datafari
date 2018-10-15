@@ -1,22 +1,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.francelabs.datafari</groupId>
+  <parent>
+    <groupId>com.francelabs.datafari</groupId>
+    <artifactId>datafari-parent</artifactId>
+    <version>4.1-Community</version>
+  </parent>
   <artifactId>datafari-mcf-scripts</artifactId>
   <packaging>jar</packaging>
-  <version>4.1-Community</version>
   <name>Datafari Enterprise Search - ManifoldCF script module</name>
   	<prerequisites>
 		<!-- Force minimum Maven version -->
 		<maven>3.0.5</maven>
 	</prerequisites>
 	<dependencies>
-		<dependency>
-              <groupId>com.francelabs.datafari</groupId>
-              <artifactId>datafari-core</artifactId>
-              <version>4.1-Community</version>
-              <scope>provided</scope>
-              <type>pom</type>
-        </dependency>
+    <dependency>
+      <groupId>com.francelabs.datafari</groupId>
+      <artifactId>datafari-core</artifactId>
+      <version>4.1-Community</version>
+      <scope>provided</scope>
+      <type>pom</type>
+    </dependency>
 	</dependencies>
 	<build>
 	<plugins>

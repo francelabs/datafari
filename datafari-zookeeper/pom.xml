@@ -1,9 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.francelabs.datafari</groupId>
+  <parent>
+    <groupId>com.francelabs.datafari</groupId>
+    <artifactId>datafari-parent</artifactId>
+    <version>4.1-Community</version>
+  </parent>
   <artifactId>datafari-zookeeper</artifactId>
   <packaging>pom</packaging>
-  <version>4.1-Community</version>
   <name>Datafari Enterprise Search - Zookeeper module</name>
   <build>
   <plugins>
@@ -32,7 +35,7 @@
 							<!-- Version of Solr should be retrieved from a property file as well 
 								as the SHA1 -->
 
-							<url>http://www-eu.apache.org/dist/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz</url>
+							<url>http://www-eu.apache.org/dist/zookeeper/zookeeper-${zookeeper.version}/zookeeper-${zookeeper.version}.tar.gz</url>
 
 							<sha1>eb2145498c5f7a0d23650d3e0102318363206fba</sha1>
 

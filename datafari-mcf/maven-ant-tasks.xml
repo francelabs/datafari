@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <project name="maven-ant-tasks" default="setup-mcf" basedir=".">
 	<property name="mcf.dist" value="target/dist/mcf" />
+	
+	<condition property="project.dir" else="${basedir}/..">
+    <isset property="project.dir" />
+  </condition>
+  
+  <property name="datafari.dependencies.main" value="${project.dir}/datafari-core" />
 
 	<target name="setup-mcf">
 		<!-- Copy only useful ManifoldCF directories and files stripping the parent MCF 
@@ -14,72 +20,6 @@
         <include name="*manifoldcf*/connector-lib-proprietary/**" />
         <include name="*manifoldcf*/lib/**" />
         <include name="*manifoldcf*/connectors.xml" />
-				<exclude name="*manifoldcf*/lib/commons-codec-*" />
-				<exclude name="*manifoldcf*/lib/commons-collections4-*" />
-				<exclude name="*manifoldcf*/lib/commons-exec-*" />
-				<exclude name="*manifoldcf*/lib/commons-io-*" />
-				<exclude name="*manifoldcf*/lib/commons-lang-*" />
-				<exclude name="*manifoldcf*/lib/commons-logging-*" />
-				<exclude name="*manifoldcf*/lib/curvesapi-*" />
-				<exclude name="*manifoldcf*/lib/gson-*" />
-				<exclude name="*manifoldcf*/lib/httpclient-*" />
-				<exclude name="*manifoldcf*/lib/httpcore-*" />
-				<exclude name="*manifoldcf*/lib/jna-*" />
-				<exclude name="*manifoldcf*/lib/json-simple-*" />
-				<exclude name="*manifoldcf*/lib/poi-*" />
-				<exclude name="*manifoldcf*/lib/slf4j-*" />
-				<exclude name="*manifoldcf*/lib/xercesImpl-*" />
-				<exclude name="*manifoldcf*/lib/xml-apis-*" />
-				<exclude name="*manifoldcf*/lib/xmlbeans-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/apache-mime4j-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/asm-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/boilerpipe-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/bzip2-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/cdm-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/ehcache-core-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/grib-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/httpservices-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/isoparser-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/javax.annotation-api-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/javax.ws.rs-api-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/jdom2-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/jcip-annotations-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/juniversalchardet-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/junar-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/netcdf-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/opennlp-tools-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/sis-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/tagsoup-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/vorbis-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/bc*" />
-				<exclude name="*manifoldcf*/connector-common-lib/c3p0-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/commons-compress-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/commons-csv-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/cxf-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/fontbox-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/isoparsers-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/jackcess-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/jackson-core-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/jcommander-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/jempbox-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/jmatio-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/metadata-extractor-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/pdfbox-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/quartz-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/rome-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/tika-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/xercesImpl-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/xmpcore-*" />
-				<exclude name="*manifoldcf*/connector-common-lib/xz-*" />
-				<exclude name="*manifoldcf*/connector-lib/woodstox-core-*" />
-				<exclude name="*manifoldcf*/connector-lib/stax2-api-*" />
-				<exclude name="*manifoldcf*/connector-lib/stax-api-*" />
-				<exclude name="*manifoldcf*/connector-lib/protobuf-java-*" />
-				<exclude name="*manifoldcf*/connector-lib/poi-*" />
-				<exclude name="*manifoldcf*/connector-lib/joda-time-*" />
-				<exclude name="*manifoldcf*/connector-lib/jackson-*" />
-				<exclude name="*manifoldcf*/connector-lib/http*" />
-				<exclude name="*manifoldcf*/connector-lib/solr-*" />
 			</fileset>
 			<cutdirsmapper dirs="1" />
 		</copy>
@@ -124,6 +64,20 @@
 
 		<!-- Create syncharea directory, otherwise we get an exception while running bash initialize-dev.sh -->
 		<mkdir dir="${mcf.dist}/mcf_home/syncharea" />
+		
+		<!-- Remove old MCF libs -->
+    <delete includeemptydirs="true" failonerror="false">
+      <fileset dir="${datafari.dependencies.main}/lib/org/apache/manifoldcf/mcf-core" includes="**/*"/>
+    </delete>
+    <!-- Create dir for current MCF version -->
+    <mkdir dir="${datafari.dependencies.main}/lib/org/apache/manifoldcf/mcf-core/${mcf.version}" />
+    <!-- Copy the current MCF version libs -->
+    <copy toDir="${datafari.dependencies.main}/lib/org/apache/manifoldcf/mcf-core/${mcf.version}" overwrite="true" force="true">
+      <fileset dir="target/apache-manifoldcf-${mcf.version}/lib">
+          <include name="mcf-core*" />
+      </fileset>
+      <globmapper from="*.jar" to="*-${mcf.version}.jar" />
+    </copy>
 
 	</target>
 
