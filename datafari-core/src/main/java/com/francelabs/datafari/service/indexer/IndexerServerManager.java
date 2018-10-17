@@ -30,9 +30,13 @@ public class IndexerServerManager {
     }
   }
 
-  private static Map<Core, IndexerServer> serversList = new HashMap<Core, IndexerServer>();
+  private static Map<String, IndexerServer> serversList = new HashMap<>();
 
   public static IndexerServer getIndexerServer(final Core core) throws Exception {
+    return getIndexerServer(core.toString());
+  }
+
+  public static IndexerServer getIndexerServer(final String core) throws Exception {
     if (serversList.containsKey(core)) {
       return serversList.get(core);
     } else {

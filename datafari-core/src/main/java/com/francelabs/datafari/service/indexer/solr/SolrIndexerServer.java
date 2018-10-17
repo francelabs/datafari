@@ -7,13 +7,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest.METHOD;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.apache.solr.client.solrj.impl.XMLResponseParser;
+import org.apache.solr.client.solrj.impl.ZkClientClusterStateProvider;
 import org.apache.solr.client.solrj.request.CollectionAdminRequest;
+import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;
 import org.apache.solr.client.solrj.request.SolrPing;
 import org.apache.solr.client.solrj.request.schema.AnalyzerDefinition;
 import org.apache.solr.client.solrj.request.schema.SchemaRequest.FieldTypes;
@@ -37,36 +43,70 @@ import com.francelabs.datafari.service.indexer.IndexerQuery;
 import com.francelabs.datafari.service.indexer.IndexerQueryResponse;
 import com.francelabs.datafari.service.indexer.IndexerResponseDocument;
 import com.francelabs.datafari.service.indexer.IndexerServer;
-import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
+import com.francelabs.datafari.service.indexer.IndexerUpdateRequest;
+import com.francelabs.datafari.solr.custom.ModifiedHttpSolrClient;
 import com.francelabs.datafari.statistics.StatsUtils;
-import com.francelabs.datafari.utils.ScriptConfiguration;
+import com.francelabs.datafari.utils.DatafariMainConfiguration;
+import com.francelabs.datafari.utils.SolrConfiguration;
 
 public class SolrIndexerServer implements IndexerServer {
 
-  private static String defaultURL = "localhost:2181";
+  private static List<String> defaultZkHosts = new ArrayList<>();
+  static {
+    defaultZkHosts.add("localhost:2181");
+  }
+  private static String defaultSolrServer = "localhost";
+  private static String defaultSolrPort = "8983";
+  private static String defaultSolrProtocol = "http";
+  private static String defaultLocation = "/solr/FileShare";
   private final Logger LOGGER = LogManager.getLogger(SolrIndexerServer.class.getName());
   private CloudSolrClient client;
+  private ModifiedHttpSolrClient httpClient;
+  private ZkClientClusterStateProvider zkManager;
 
-  public SolrIndexerServer(final Core core) throws Exception {
+  public SolrIndexerServer(final String core) throws Exception {
     // Zookeeper Hosts
-    final String solrHosts = ScriptConfiguration.getProperty("SOLRHOSTS");
+    final List<String> zkHosts = DatafariMainConfiguration.getInstance().getZkHosts();
 
     try {
-      // TODO : change for ZK ensemble
-      client = new CloudSolrClient.Builder().withZkHost(solrHosts).build();
-      client.setDefaultCollection(core.toString());
+      client = new CloudSolrClient.Builder(zkHosts, Optional.empty()).build();
+      String protocol = SolrConfiguration.getInstance().getProperty(SolrConfiguration.SOLRPROTOCOL);
+      if (protocol == null) {
+        LOGGER.warn("Unable to get Solr protocol from Solr properties, switching to default value: " + defaultSolrProtocol);
+        protocol = defaultSolrProtocol;
+      }
+      String server = SolrConfiguration.getInstance().getProperty(SolrConfiguration.SOLRHOST);
+      if (server == null) {
+        LOGGER.warn("Unable to get Solr server from Solr properties, switching to default value: " + defaultSolrServer);
+        server = defaultSolrServer;
+      }
+      String port = SolrConfiguration.getInstance().getProperty(SolrConfiguration.SOLRPORT);
+      if (port == null) {
+        LOGGER.warn("Unable to get Solr port from Solr properties, switching to default value: " + defaultSolrPort);
+        port = defaultSolrPort;
+      }
+      final String location = "/solr/" + "FileShare";
+      final String solrUrl = protocol + "://" + server + ":" + port + location;
+      httpClient = new ModifiedHttpSolrClient(solrUrl, HttpClientBuilder.create().build(), new XMLResponseParser(), true);
+      httpClient.setUseMultiPartPost(true);
+      zkManager = new ZkClientClusterStateProvider(zkHosts, null);
+      client.setDefaultCollection(core);
       final SolrPing ping = new SolrPing();
       client.request(ping);
     } catch (final Exception e) {
       // test default param
       try {
-        client = new CloudSolrClient.Builder().withZkHost(defaultURL).build();
-        client.setDefaultCollection(core.toString());
+        client = new CloudSolrClient.Builder(defaultZkHosts, Optional.empty()).build();
+        final String solrUrl = defaultSolrProtocol + "://" + defaultSolrServer + ":" + defaultSolrPort + defaultLocation;
+        httpClient = new ModifiedHttpSolrClient(solrUrl, HttpClientBuilder.create().build(), new XMLResponseParser(), true);
+        httpClient.setUseMultiPartPost(true);
+        zkManager = new ZkClientClusterStateProvider(defaultZkHosts, null);
+        client.setDefaultCollection(core);
         final SolrPing ping = new SolrPing();
         client.request(ping);
       } catch (final Exception e2) {
-        LOGGER.error("Cannot instanciate Solr Client for core : " + core.toString(), e);
-        throw new Exception("Cannot instanciate Solr Client for core : " + core.toString());
+        LOGGER.error("Cannot instanciate Solr Client for core : " + core, e);
+        throw new Exception("Cannot instanciate Solr Client for core : " + core);
       }
     }
 
@@ -87,6 +127,13 @@ public class SolrIndexerServer implements IndexerServer {
   }
 
   @Override
+  public void executeUpdateRequest(final IndexerUpdateRequest ur) throws Exception {
+    final ContentStreamUpdateRequest csur = ((SolrIndexerUpdateRequest) ur).prepareUpdateRequest();
+    csur.setMethod(METHOD.POST);
+    httpClient.request(csur);
+  }
+
+  @Override
   public void pushDoc(final IndexerInputDocument document, final int commitWithinMs) throws Exception {
     final SolrInputDocument solrDoc = ((SolrIndexerInputDocument) document).getSolrInputDocument();
     client.add(solrDoc, commitWithinMs);
@@ -100,14 +147,12 @@ public class SolrIndexerServer implements IndexerServer {
 
   @Override
   public void uploadConfig(final Path configPath, final String configName) throws IOException {
-
-    client.uploadConfig(configPath, configName);
+    zkManager.uploadConfig(configPath, configName);
   }
 
   @Override
   public void downloadConfig(final Path configPath, final String configName) throws IOException {
-
-    client.downloadConfig(configName, configPath);
+    zkManager.downloadConfig(configName, configPath);
   }
 
   @Override

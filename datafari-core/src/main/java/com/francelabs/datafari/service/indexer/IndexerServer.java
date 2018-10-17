@@ -9,6 +9,8 @@ public interface IndexerServer {
 
   public IndexerQueryResponse executeQuery(final IndexerQuery query) throws Exception;
 
+  public void executeUpdateRequest(final IndexerUpdateRequest ur) throws Exception;
+
   public void pushDoc(final IndexerInputDocument document, final int commitWithinMs) throws Exception;
 
   public void pushDoc(final IndexerInputDocument document) throws Exception;

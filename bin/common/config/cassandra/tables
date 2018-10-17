@@ -5,6 +5,7 @@ use datafari;
 CREATE TABLE alerts (
   id uuid PRIMARY KEY,
   keyword varchar,
+  filters varchar,
   core varchar,
   frequency varchar,
   mail varchar,

@@ -16,7 +16,8 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.manifoldcf.core.interfaces.IThreadContext;
 import org.apache.manifoldcf.core.interfaces.LockManagerFactory;
 import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
@@ -29,7 +30,7 @@ import org.json.simple.parser.ParseException;
 
 public class ManifoldAPI {
 
-  private final static Logger LOGGER = Logger.getLogger(ManifoldAPI.class.getName());
+  private final static Logger LOGGER = LogManager.getLogger(ManifoldAPI.class.getName());
 
   public static class COMMANDS {
 
@@ -107,7 +108,7 @@ public class ManifoldAPI {
     }
   }
 
-  private static void waitJob(final String id) throws Exception {
+  public static void waitJob(final String id) throws Exception {
     JSONObject result;
     do {
       Thread.sleep(1000);
@@ -116,6 +117,31 @@ public class ManifoldAPI {
     } while (result.size() != 0);
 
   }
+
+  public static void statusJob(final String id) throws Exception {
+    JSONObject result;
+    for (int i=0;i < 600; i++) {
+      Thread.sleep(1000);
+      result = readConfig(COMMANDS.JOBSTATUSES, id);
+      LOGGER.info("job id " +id+" "+result.toString());
+      if ((result.toString().contains("\"status\":\"done\"")) || (result.toString().contains("\"status\":\"error\"")) ){
+        LOGGER.info("job done or in error state");
+        break;
+      }
+
+    } 
+
+  }
+  
+  public static void deleteJob(final String id) throws Exception {
+    LOGGER.info("delete job"+id);
+    delete("jobs",id);
+    waitJob(id);
+
+     
+
+  }
+
 
   static public void cleanConnectors(final String command) throws Exception {
     LOGGER.info("Start cleaning " + command);

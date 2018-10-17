@@ -18,51 +18,39 @@ source $INIT_STATE_FILE
 source $CONFIG_FILE
 
 
-isMCFRunning=true
-isTomcatRunning=true
-isSolrRunning=true
-isCassandraRunning=true
-isZKRunning=true
-
-if is_running $MCF_PID_FILE; then
-    cd $MCF_HOME/../bin
-    run_as ${DATAFARI_USER} "export PATH=$PATH && bash mcf_crawler_agent.sh stop"
-    forceStopIfNecessary $MCF_PID_FILE McfCrawlerAgent
+if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $MCF_PID_FILE"; then
+    run_as ${DATAFARI_USER} "bash datafari-manager.sh stop_mcf_crawler_agent";
 else
     echo "Warn: MCF Agent does not seem to be running."
 fi
 
-if is_running $CATALINA_PID; then
-    cd $TOMCAT_HOME
-    waitTomcat
-    run_as ${DATAFARI_USER} "bash bin/shutdown.sh 30"
-    forceStopIfNecessary $CATALINA_PID Tomcat
+if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $CATALINA_PID"; then
+    run_as ${DATAFARI_USER} "bash datafari-manager.sh stop_tomcat"
 else
     echo "Warn: Tomcat does not seem to be running."
 fi
 
 
-if is_running $SOLR_PID_FILE; then
-   run_as ${DATAFARI_USER} "SOLR_INCLUDE=$SOLR_ENV $SOLR_INSTALL_DIR/bin/solr stop"
+if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $SOLR_PID_FILE"; then
+   run_as ${DATAFARI_USER} "bash datafari-manager.sh stop_solr";
 else
    echo "Warn : Solr does not seem to be running."
 fi
 
-if is_running $ZK_PID_FILE; then
-   run_as ${DATAFARI_USER} "bash $ZK_HOME/bin/zkServer.sh stop"
+if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $ZK_PID_FILE"; then
+   run_as ${DATAFARI_USER} "bash datafari-manager.sh stop_zookeeper";
 else
    echo "Warn : Zookeeper does not seem to be running."
 fi
 
-if is_running $CASSANDRA_PID_FILE; then
-   run_as ${DATAFARI_USER} "kill $(cat $CASSANDRA_PID_FILE)"
-   run_as ${DATAFARI_USER} "rm -f $CASSANDRA_PID_FILE"
+if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $CASSANDRA_PID_FILE"; then
+   run_as ${DATAFARI_USER} "bash datafari-manager.sh stop_cassandra";
 else
    echo "Warn : Cassandra does not seem to be running."
 fi
 
-if is_running $POSTGRES_PID_FILE; then
-	sudo LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib su postgres -p -c "${DATAFARI_HOME}/pgsql/bin/pg_ctl -D ${DATAFARI_HOME}/pgsql/data -l ${DATAFARI_HOME}/logs/pgsql.log stop"
+if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $POSTGRES_PID_FILE"; then
+  run_as ${POSTGRES_USER} "bash datafari-manager.sh stop_postgres"
 else
    echo "Warn : Postgres does not seem to be running."
 fi

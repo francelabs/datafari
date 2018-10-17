@@ -1,9 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.francelabs.datafari</groupId>
+  <parent>
+    <groupId>com.francelabs.datafari</groupId>
+    <artifactId>datafari-parent</artifactId>
+    <version>4.1-Community</version>
+  </parent>
   <artifactId>datafari-handler</artifactId>
   <packaging>jar</packaging>
-  <version>4.1.1-Community</version>
   <name>Datafari Enterprise Search - Search handler module</name>
   	<prerequisites>
 		<!-- Force minimum Maven version -->
@@ -11,31 +14,31 @@
 	</prerequisites>
 	<dependencies>
 		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<version>1.10.1</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.apache.solr</groupId>
-			<artifactId>solr-core</artifactId>
-			<version>6.6.4</version>
-			<scope>provided</scope>
-		</dependency>
-		
-		<dependency>
-	        <groupId>org.apache.tika</groupId>
-	        <artifactId>tika-parsers</artifactId>
-	        <version>1.16</version>
-	        <scope>provided</scope>
-	    </dependency>
-	    
-	    <dependency>
-		    <groupId>org.apache.solr</groupId>
-		    <artifactId>solr-cell</artifactId>
-		    <version>6.6.4</version>
-		    <scope>provided</scope>
-		</dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>1.10.1</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.solr</groupId>
+      <artifactId>solr-core</artifactId>
+      <version>${solr.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.tika</groupId>
+      <artifactId>tika-parsers</artifactId>
+      <version>${tika.version}</version>
+      <scope>provided</scope>
+    </dependency>
+      
+    <dependency>
+      <groupId>org.apache.solr</groupId>
+      <artifactId>solr-cell</artifactId>
+      <version>${solr.version}</version>
+      <scope>provided</scope>
+    </dependency>
 	</dependencies>
 	<build>
 	<plugins>

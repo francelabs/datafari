@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils;
 
-import java.io.IOException;
+import java.io.File;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,7 +49,7 @@ public class SolrConfiguration extends AbstractConfigClass {
    * Get the instance
    *
    */
-  public synchronized static SolrConfiguration getInstance() throws IOException {
+  public synchronized static SolrConfiguration getInstance() {
     if (null == instance) {
       instance = new SolrConfiguration();
     }
@@ -62,7 +62,7 @@ public class SolrConfiguration extends AbstractConfigClass {
    *
    */
   private SolrConfiguration() {
-    super(configFilename, LOGGER);
+    super(configFilename, Environment.getEnvironmentVariable("DATAFARI_SOLR_PROPERTIES_HOME") + File.separator + configFilename, LOGGER);
 
   }
 

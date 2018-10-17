@@ -6,6 +6,7 @@
 #
 
 export DATAFARI_USER="datafari"
+export POSTGRES_USER="postgres"
 
 export DATAFARI_HOME=$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )
 #export JAVA_HOME=${DATAFARI_HOME}/jvm
@@ -14,6 +15,7 @@ export PATH=${PATH}:$JAVA_HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr
 export INIT_STATE_FILE=${DATAFARI_HOME}/bin/common/init_state.properties
 export CONFIG_FILE=${DATAFARI_HOME}/tomcat/conf/datafari.properties
 export LOG4J_VERSION=2.11.1
+export LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib
 
 
 
@@ -26,6 +28,7 @@ export SOLR_INSTALL_DIR=$DATAFARI_HOME/solr
 export SOLR_ENV=$SOLR_INSTALL_DIR/bin/solr.in.sh
 export CASSANDRA_HOME=$DATAFARI_HOME/cassandra
 export CASSANDRA_ENV=$CASSANDRA_HOME/bin/cassandra.in.sh
+export CASSANDRA_INCLUDE=$CASSANDRA_ENV
 export CASSANDRA_HOST=127.0.0.1
 export CASSANDRA_PORT=9042
 export ZK_HOME=$DATAFARI_HOME/zookeeper
@@ -34,8 +37,14 @@ export ELK_HOME=$DATAFARI_HOME/elk
 export ELASTICSEARCH_HOME=$DATAFARI_HOME/elk/elasticsearch
 export LOGSTASH_HOME=$ELK_HOME/logstash
 export KIBANA_HOME=$DATAFARI_HOME/elk/kibana
+
 # Logs directory: needed for Cassandra startup
 export DATAFARI_LOGS=$DATAFARI_HOME/logs
+
+# Configs
+export CONFIG_HOME=$TOMCAT_HOME/conf
+export MAIN_DATAFARI_CONFIG_HOME=$TOMCAT_HOME/conf
+export DATAFARI_SOLR_PROPERTIES_HOME=$TOMCAT_HOME/conf
 
 
 # pid files 

@@ -7,10 +7,6 @@
 
 export DATAFARI_HOME=$( cd "$( dirname "${BASH_SOURCE[0]}" )/../.." && pwd )
 
-if [ -d "${DATAFARI_HOME}/jvm" ]; then
-  export JAVA_HOME=${DATAFARI_HOME}/jvm
-fi
-
 export PID_DIR=$DATAFARI_HOME/pid
 export ELK_HOME=$DATAFARI_HOME/elk
 export ELK_LOGS=$ELK_HOME/logs
@@ -24,4 +20,4 @@ export LOGSTASH_PID_FILE=$PID_DIR/logstash.pid
 export KIBANA_PID_FILE=$PID_DIR/kibana.pid
 
 # Kibana max mem
-NODE_OPTIONS="--max-old-space-size=512"
+export NODE_OPTIONS="--max-old-space-size=512"

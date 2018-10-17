@@ -108,6 +108,8 @@
 334	pg_proc	0	spgist index access method handler
 335	pg_proc	0	brin index access method handler
 3952	pg_proc	0	brin: standalone scan new table pages
+3999	pg_proc	0	brin: standalone scan new table pages
+4014	pg_proc	0	brin: desummarize page range
 338	pg_proc	0	validate an operator class
 636	pg_proc	0	test property of an index access method
 637	pg_proc	0	test property of an index
@@ -154,10 +156,10 @@
 456	pg_proc	0	hash
 457	pg_proc	0	hash
 329	pg_proc	0	hash
-398	pg_proc	0	hash
 399	pg_proc	0	hash
 422	pg_proc	0	hash
 432	pg_proc	0	hash
+328	pg_proc	0	hash
 438	pg_proc	0	count the number of NULL arguments
 440	pg_proc	0	count the number of non-NULL arguments
 458	pg_proc	0	larger of two
@@ -504,6 +506,7 @@
 1576	pg_proc	0	set sequence value
 1765	pg_proc	0	set sequence value and is_called status
 3078	pg_proc	0	sequence parameters, for use by information schema
+4032	pg_proc	0	sequence last value
 1579	pg_proc	0	I/O
 1580	pg_proc	0	I/O
 2902	pg_proc	0	I/O typmod
@@ -557,8 +560,10 @@
 2087	pg_proc	0	replace all occurrences in string of old_substr with new_substr
 2284	pg_proc	0	replace text using regexp
 2285	pg_proc	0	replace text using regexp
-2763	pg_proc	0	find all match groups for regexp
-2764	pg_proc	0	find all match groups for regexp
+3396	pg_proc	0	find first match for regexp
+3397	pg_proc	0	find first match for regexp
+2763	pg_proc	0	find match(es) for regexp
+2764	pg_proc	0	find match(es) for regexp
 2088	pg_proc	0	split string by field_sep and return field_num
 2765	pg_proc	0	split string by pattern
 2766	pg_proc	0	split string by pattern
@@ -580,6 +585,9 @@
 1641	pg_proc	0	select statement of a view
 1642	pg_proc	0	role name by OID (with fallback)
 1643	pg_proc	0	index description
+3415	pg_proc	0	extended statistics object description
+3352	pg_proc	0	partition key description
+3408	pg_proc	0	partition constraint description
 1662	pg_proc	0	trigger description
 1387	pg_proc	0	constraint description
 1716	pg_proc	0	deparse an encoded expression
@@ -595,6 +603,7 @@
 3162	pg_proc	0	collation of the argument; implementation of the COLLATION FOR expression
 3842	pg_proc	0	is a relation insertable/updatable/deletable
 3843	pg_proc	0	is a column updatable
+6120	pg_proc	0	oid of replica identity index if any
 1250	pg_proc	0	deferred UNIQUE constraint check
 1644	pg_proc	0	referential integrity FOREIGN KEY ... REFERENCES
 1645	pg_proc	0	referential integrity FOREIGN KEY ... REFERENCES
@@ -625,8 +634,16 @@
 3033	pg_proc	0	set bit
 436	pg_proc	0	I/O
 437	pg_proc	0	I/O
-753	pg_proc	0	MAC manufacturer fields
+753	pg_proc	0	MACADDR manufacturer fields
 836	pg_proc	0	less-equal-greater
+3359	pg_proc	0	sort support
+4110	pg_proc	0	I/O
+4111	pg_proc	0	I/O
+4112	pg_proc	0	MACADDR8 manufacturer fields
+4119	pg_proc	0	less-equal-greater
+4123	pg_proc	0	convert macaddr to macaddr8
+4124	pg_proc	0	convert macaddr8 to macaddr
+4125	pg_proc	0	set 7th bit in macaddr8
 910	pg_proc	0	I/O
 911	pg_proc	0	I/O
 1267	pg_proc	0	I/O
@@ -661,6 +678,11 @@
 3557	pg_proc	0	GiST support
 3558	pg_proc	0	GiST support
 3559	pg_proc	0	GiST support
+3795	pg_proc	0	SP-GiST support
+3796	pg_proc	0	SP-GiST support
+3797	pg_proc	0	SP-GiST support
+3798	pg_proc	0	SP-GiST support
+3799	pg_proc	0	SP-GiST support
 3560	pg_proc	0	restriction selectivity for network operators
 3561	pg_proc	0	join selectivity for network operators
 1693	pg_proc	0	less-equal-greater
@@ -863,6 +885,14 @@
 3027	pg_proc	0	user privilege on any column by user oid, rel oid
 3028	pg_proc	0	current user privilege on any column by rel name
 3029	pg_proc	0	current user privilege on any column by rel oid
+3355	pg_proc	0	I/O
+3356	pg_proc	0	I/O
+3357	pg_proc	0	I/O
+3358	pg_proc	0	I/O
+3404	pg_proc	0	I/O
+3405	pg_proc	0	I/O
+3406	pg_proc	0	I/O
+3407	pg_proc	0	I/O
 1928	pg_proc	0	statistics: number of scans done for table/index
 1929	pg_proc	0	statistics: number of tuples read by seqscan
 1930	pg_proc	0	statistics: number of tuples fetched by idxscan
@@ -888,6 +918,7 @@
 3318	pg_proc	0	statistics: information about progress of backends running maintenance command
 3099	pg_proc	0	statistics: information about currently active replication
 3317	pg_proc	0	statistics: information about WAL receiver
+6118	pg_proc	0	statistics: information about subscription
 2026	pg_proc	0	statistics: current backend PID
 1937	pg_proc	0	statistics: PID of backend
 1938	pg_proc	0	statistics: database ID of backend
@@ -920,8 +951,8 @@
 3074	pg_proc	0	statistics: last reset for a database
 3150	pg_proc	0	statistics: number of temporary files written
 3151	pg_proc	0	statistics: number of bytes in temporary files written
-2844	pg_proc	0	statistics: block read time, in msec
-2845	pg_proc	0	statistics: block write time, in msec
+2844	pg_proc	0	statistics: block read time, in milliseconds
+2845	pg_proc	0	statistics: block write time, in milliseconds
 3195	pg_proc	0	statistics: information about WAL archiver
 2769	pg_proc	0	statistics: number of timed checkpoints started by the bgwriter
 2770	pg_proc	0	statistics: number of backend requested checkpoints started by the bgwriter
@@ -929,14 +960,14 @@
 2772	pg_proc	0	statistics: number of buffers written by the bgwriter for cleaning dirty buffers
 2773	pg_proc	0	statistics: number of times the bgwriter stopped processing when it had written too many buffers while cleaning
 3075	pg_proc	0	statistics: last reset for the bgwriter
-3160	pg_proc	0	statistics: checkpoint time spent writing buffers to disk, in msec
-3161	pg_proc	0	statistics: checkpoint time spent synchronizing buffers to disk, in msec
+3160	pg_proc	0	statistics: checkpoint time spent writing buffers to disk, in milliseconds
+3161	pg_proc	0	statistics: checkpoint time spent synchronizing buffers to disk, in milliseconds
 2775	pg_proc	0	statistics: number of buffers written by backends
 3063	pg_proc	0	statistics: number of backend buffer writes that did their own fsync
 2859	pg_proc	0	statistics: number of buffer allocations
 2978	pg_proc	0	statistics: number of function calls
-2979	pg_proc	0	statistics: total execution time of function, in msec
-2980	pg_proc	0	statistics: self execution time of function, in msec
+2979	pg_proc	0	statistics: total execution time of function, in milliseconds
+2980	pg_proc	0	statistics: self execution time of function, in milliseconds
 3037	pg_proc	0	statistics: number of scans done for table/index in current transaction
 3038	pg_proc	0	statistics: number of tuples read by seqscan in current transaction
 3039	pg_proc	0	statistics: number of tuples fetched by idxscan in current transaction
@@ -947,8 +978,8 @@
 3044	pg_proc	0	statistics: number of blocks fetched in current transaction
 3045	pg_proc	0	statistics: number of blocks found in cache in current transaction
 3046	pg_proc	0	statistics: number of function calls in current transaction
-3047	pg_proc	0	statistics: total execution time of function in current transaction, in msec
-3048	pg_proc	0	statistics: self execution time of function in current transaction, in msec
+3047	pg_proc	0	statistics: total execution time of function in current transaction, in milliseconds
+3048	pg_proc	0	statistics: self execution time of function in current transaction, in milliseconds
 3788	pg_proc	0	statistics: timestamp of the current statistics snapshot
 2230	pg_proc	0	statistics: discard current transaction's statistics snapshot
 2274	pg_proc	0	statistics: reset collected statistics for current database
@@ -1017,8 +1048,11 @@
 2078	pg_proc	0	SET X as a function
 2084	pg_proc	0	SHOW ALL as a function
 3329	pg_proc	0	show config file settings
+3401	pg_proc	0	show pg_hba.conf rules
 1371	pg_proc	0	view system lock information
-2561	pg_proc	0	get array of PIDs of sessions blocking specified backend PID
+2561	pg_proc	0	get array of PIDs of sessions blocking specified backend PID from acquiring a heavyweight lock
+3376	pg_proc	0	get array of PIDs of sessions blocking specified backend PID from acquiring a safe snapshot
+3378	pg_proc	0	isolationtester support function
 1065	pg_proc	0	view two-phase transactions
 3819	pg_proc	0	view members of a multixactid
 3581	pg_proc	0	get commit timestamp of a transaction
@@ -1034,6 +1068,7 @@
 2083	pg_proc	0	is opclass visible in search path?
 3829	pg_proc	0	is opfamily visible in search path?
 2093	pg_proc	0	is conversion visible in search path?
+3403	pg_proc	0	is statistics object visible in search path?
 3756	pg_proc	0	is text search parser visible in search path?
 3757	pg_proc	0	is text search dictionary visible in search path?
 3768	pg_proc	0	is text search template visible in search path?
@@ -1048,24 +1083,26 @@
 2739	pg_proc	0	finish taking an online backup
 3813	pg_proc	0	true if server is in online backup
 3814	pg_proc	0	start time of an online backup
-2848	pg_proc	0	switch to new xlog file
+2848	pg_proc	0	switch to new wal file
 3098	pg_proc	0	create a named restore point
-2849	pg_proc	0	current xlog write location
-2852	pg_proc	0	current xlog insert location
-3330	pg_proc	0	current xlog flush location
-2850	pg_proc	0	xlog filename and byte offset, given an xlog location
-2851	pg_proc	0	xlog filename, given an xlog location
-3165	pg_proc	0	difference in bytes, given two xlog locations
+2849	pg_proc	0	current wal write location
+2852	pg_proc	0	current wal insert location
+3330	pg_proc	0	current wal flush location
+2850	pg_proc	0	wal filename and byte offset, given a wal location
+2851	pg_proc	0	wal filename, given a wal location
+3165	pg_proc	0	difference in bytes, given two wal locations
 3809	pg_proc	0	export a snapshot
 3810	pg_proc	0	true if server is in recovery
-3820	pg_proc	0	current xlog flush location
-3821	pg_proc	0	last xlog replay location
+3820	pg_proc	0	current wal flush location
+3821	pg_proc	0	last wal replay location
 3830	pg_proc	0	timestamp of last replay xact
-3071	pg_proc	0	pause xlog replay
-3072	pg_proc	0	resume xlog replay, if it was paused
-3073	pg_proc	0	true if xlog replay is paused
+3071	pg_proc	0	pause wal replay
+3072	pg_proc	0	resume wal replay, if it was paused
+3073	pg_proc	0	true if wal replay is paused
 2621	pg_proc	0	reload configuration files
 2622	pg_proc	0	rotate log file
+3800	pg_proc	0	current logging collector file location
+3801	pg_proc	0	current logging collector file location
 2623	pg_proc	0	get information about file
 3307	pg_proc	0	get information about file
 2624	pg_proc	0	read text from a file
@@ -1447,6 +1484,8 @@
 2503	pg_proc	0	I/O
 3120	pg_proc	0	I/O
 3121	pg_proc	0	I/O
+3446	pg_proc	0	I/O
+3447	pg_proc	0	I/O
 2504	pg_proc	0	source text of a rule with pretty-print option
 2505	pg_proc	0	select statement of a view with pretty-print option
 2506	pg_proc	0	select statement of a view with pretty-print option
@@ -1731,6 +1770,14 @@
 3744	pg_proc	0	generate headline
 3754	pg_proc	0	generate headline
 3755	pg_proc	0	generate headline
+4201	pg_proc	0	generate headline from jsonb
+4202	pg_proc	0	generate headline from jsonb
+4203	pg_proc	0	generate headline from jsonb
+4204	pg_proc	0	generate headline from jsonb
+4205	pg_proc	0	generate headline from json
+4206	pg_proc	0	generate headline from json
+4207	pg_proc	0	generate headline from json
+4208	pg_proc	0	generate headline from json
 3745	pg_proc	0	transform to tsvector
 3746	pg_proc	0	make tsquery
 3747	pg_proc	0	transform to tsquery
@@ -1739,6 +1786,10 @@
 3750	pg_proc	0	make tsquery
 3751	pg_proc	0	transform to tsquery
 5001	pg_proc	0	transform to tsquery
+4209	pg_proc	0	transform jsonb to tsvector
+4210	pg_proc	0	transform json to tsvector
+4211	pg_proc	0	transform jsonb to tsvector
+4212	pg_proc	0	transform json to tsvector
 3752	pg_proc	0	trigger for automatic update of tsvector column
 3753	pg_proc	0	trigger for automatic update of tsvector column
 3759	pg_proc	0	get current tsearch configuration
@@ -1800,11 +1851,13 @@
 2941	pg_proc	0	I/O
 2942	pg_proc	0	I/O
 2943	pg_proc	0	get current transaction ID
+3348	pg_proc	0	get current transaction ID
 2944	pg_proc	0	get current snapshot
 2945	pg_proc	0	get xmin of snapshot
 2946	pg_proc	0	get xmax of snapshot
 2947	pg_proc	0	get set of in-progress txids in snapshot
 2948	pg_proc	0	is txid visible in snapshot?
+3360	pg_proc	0	commit status of transaction
 2987	pg_proc	0	less-equal-greater
 3187	pg_proc	0	less-equal-greater based on byte images
 3082	pg_proc	0	list available extensions
@@ -1960,9 +2013,11 @@
 6009	pg_proc	0	get the replication progress of the current session
 6010	pg_proc	0	setup the transaction's origin lsn and timestamp
 6011	pg_proc	0	reset the transaction's origin lsn and timestamp
-6012	pg_proc	0	advance replication itentifier to specific location
+6012	pg_proc	0	advance replication identifier to specific location
 6013	pg_proc	0	get an individual replication origin's replication progress
 6014	pg_proc	0	get progress for all replication origins
+6119	pg_proc	0	get OIDs of tables in a publication
+6121	pg_proc	0	returns whether a relation can be part of a publication
 3298	pg_proc	0	row security for current context active on table by table oid
 3299	pg_proc	0	row security for current context active on table by table name
 3400	pg_proc	0	pg_config binary as a function
@@ -1970,6 +2025,10 @@
 3442	pg_proc	0	pg_controldata checkpoint state information as a function
 3443	pg_proc	0	pg_controldata recovery state information as a function
 3444	pg_proc	0	pg_controldata init state information as a function
+3445	pg_proc	0	import collations from operating system
+3448	pg_proc	0	get actual version of collation from operating system
+3353	pg_proc	0	list files in the log directory
+3354	pg_proc	0	list of files in the WAL directory
 16	pg_type	0	boolean, 'true'/'false'
 17	pg_type	0	variable-length string, binary values escaped
 18	pg_type	0	single character
@@ -1987,6 +2046,8 @@
 30	pg_type	0	array of oids, used in system tables
 142	pg_type	0	XML content
 194	pg_type	0	string representing an internal node tree
+3361	pg_type	0	multivariate ndistinct coefficients
+3402	pg_type	0	multivariate dependencies
 32	pg_type	0	internal type for passing CollectedCommand
 210	pg_type	0	storage manager
 600	pg_type	0	geometric point '(x, y)'
@@ -2005,6 +2066,7 @@
 829	pg_type	0	XX:XX:XX:XX:XX:XX, MAC address
 869	pg_type	0	IP address/netmask, host address, netmask optional
 650	pg_type	0	network IP address/netmask, network address
+774	pg_type	0	XX:XX:XX:XX:XX:XX:XX:XX, MAC address
 1033	pg_type	0	access control list
 1042	pg_type	0	char(length), blank-padded string, fixed storage length
 1043	pg_type	0	varchar(length), non-blank-padded string, variable storage length
@@ -2069,7 +2131,6 @@
 388	pg_operator	0	factorial
 389	pg_operator	0	deprecated, use ! instead
 385	pg_operator	0	equal
-386	pg_operator	0	equal
 387	pg_operator	0	equal
 402	pg_operator	0	not equal
 2799	pg_operator	0	less than
@@ -2331,11 +2392,14 @@
 907	pg_operator	0	subtract
 908	pg_operator	0	multiply
 909	pg_operator	0	divide
+3346	pg_operator	0	multiply
+3347	pg_operator	0	divide
 912	pg_operator	0	multiply
 913	pg_operator	0	divide
 914	pg_operator	0	multiply
 915	pg_operator	0	divide
 916	pg_operator	0	multiply
+3349	pg_operator	0	multiply
 917	pg_operator	0	multiply
 918	pg_operator	0	multiply
 3825	pg_operator	0	divide
@@ -2515,6 +2579,15 @@
 3147	pg_operator	0	bitwise not
 3148	pg_operator	0	bitwise and
 3149	pg_operator	0	bitwise or
+3362	pg_operator	0	equal
+3363	pg_operator	0	not equal
+3364	pg_operator	0	less than
+3365	pg_operator	0	less than or equal
+3366	pg_operator	0	greater than
+3367	pg_operator	0	greater than or equal
+3368	pg_operator	0	bitwise not
+3369	pg_operator	0	bitwise and
+3370	pg_operator	0	bitwise or
 1201	pg_operator	0	equal
 1202	pg_operator	0	not equal
 1203	pg_operator	0	less than
@@ -2813,6 +2886,7 @@
 3250	pg_operator	0	is contained by
 3284	pg_operator	0	concatenate
 3285	pg_operator	0	delete object field
+3398	pg_operator	0	delete object fields
 3286	pg_operator	0	delete array element
 3287	pg_operator	0	delete path
 403	pg_am	0	b-tree index access method
