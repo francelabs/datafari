@@ -36,9 +36,9 @@ all:
 .SECONDARY:
 
 # PostgreSQL version number
-VERSION = 9.6.5
-MAJORVERSION = 9.6
-VERSION_NUM = 90605
+VERSION = 10.1
+MAJORVERSION = 10
+VERSION_NUM = 100001
 
 # Set top_srcdir, srcdir, and VPATH.
 ifdef PGXS
@@ -59,8 +59,8 @@ endif
 endif
 else # not PGXS
 vpath_build = no
-abs_top_builddir = /root/postgres/postgresql-9.6.5
-abs_top_srcdir = /root/postgres/postgresql-9.6.5
+abs_top_builddir = /root/postgresql-10.1
+abs_top_srcdir = /root/postgresql-10.1
 
 ifneq ($(vpath_build),yes)
 top_srcdir = $(top_builddir)
@@ -179,6 +179,7 @@ pgxsdir = $(pkglibdir)/pgxs
 #
 # Records the choice of the various --enable-xxx and --with-xxx options.
 
+with_icu	= no
 with_perl	= no
 with_python	= no
 with_tcl	= no
@@ -197,6 +198,7 @@ enable_dtrace	= no
 enable_coverage	= no
 enable_tap_tests	= no
 enable_thread_safety	= yes
+enable_strong_random	= yes
 
 python_includespec	= 
 python_libdir		= 
@@ -206,6 +208,9 @@ python_majorversion	=
 python_version		= 
 
 krb_srvtab = 
+
+ICU_CFLAGS		= 
+ICU_LIBS		= 
 
 TCLSH			= 
 TCL_LIBS		= 
@@ -226,6 +231,8 @@ PTHREAD_LIBS		=
 
 CPP = gcc -E
 CPPFLAGS =  -D_GNU_SOURCE 
+
+override CPPFLAGS := $(ICU_CFLAGS) $(CPPFLAGS)
 
 ifdef PGXS
 override CPPFLAGS := -I$(includedir_server) -I$(includedir_internal) $(CPPFLAGS)
@@ -258,14 +265,13 @@ ZIC =
 AR = ar
 DLLTOOL = 
 DLLWRAP = 
-LIBS = -lz -lreadline -lrt -lcrypt -ldl -lm 
+LIBS = -lpthread -lz -lreadline -lrt -lcrypt -ldl -lm 
 LDAP_LIBS_FE = 
 LDAP_LIBS_BE = 
 UUID_LIBS = 
 UUID_EXTRA_OBJS = 
 LD = /usr/bin/ld
 with_gnu_ld = yes
-ld_R_works = 
 
 # We want -L for libpgport.a and libpgcommon.a to be first in LDFLAGS.  We
 # also need LDFLAGS to be a "recursively expanded" variable, else adjustments
@@ -346,7 +352,7 @@ endef
 
 # platform-specific environment variable to set shared library path
 define ld_library_path_var
-$(if $(filter $(PORTNAME),darwin),DYLD_LIBRARY_PATH,$(if $(filter $(PORTNAME),aix),LIBPATH,LD_LIBRARY_PATH))
+$(if $(filter $(PORTNAME),darwin),DYLD_LIBRARY_PATH,$(if $(filter $(PORTNAME),aix),LIBPATH,$(if $(filter $(PORTNAME),hpux),SHLIB_PATH,LD_LIBRARY_PATH)))
 endef
 
 define with_temp_install
@@ -357,12 +363,12 @@ ifeq ($(enable_tap_tests),yes)
 
 define prove_installcheck
 rm -rf $(CURDIR)/tmp_check/log
-cd $(srcdir) && TESTDIR='$(CURDIR)' PATH="$(bindir):$$PATH" PGPORT='6$(DEF_PGPORT)' top_builddir='$(CURDIR)/$(top_builddir)' PG_REGRESS='$(CURDIR)/$(top_builddir)/src/test/regress/pg_regress' $(PROVE) $(PG_PROVE_FLAGS) $(PROVE_FLAGS) t/*.pl
+cd $(srcdir) && TESTDIR='$(CURDIR)' PATH="$(bindir):$$PATH" PGPORT='6$(DEF_PGPORT)' top_builddir='$(CURDIR)/$(top_builddir)' PG_REGRESS='$(CURDIR)/$(top_builddir)/src/test/regress/pg_regress' $(PROVE) $(PG_PROVE_FLAGS) $(PROVE_FLAGS) $(if $(PROVE_TESTS),$(PROVE_TESTS),t/*.pl)
 endef
 
 define prove_check
 rm -rf $(CURDIR)/tmp_check/log
-cd $(srcdir) && TESTDIR='$(CURDIR)' $(with_temp_install) PGPORT='6$(DEF_PGPORT)' PG_REGRESS='$(CURDIR)/$(top_builddir)/src/test/regress/pg_regress' $(PROVE) $(PG_PROVE_FLAGS) $(PROVE_FLAGS) t/*.pl
+cd $(srcdir) && TESTDIR='$(CURDIR)' $(with_temp_install) PGPORT='6$(DEF_PGPORT)' PG_REGRESS='$(CURDIR)/$(top_builddir)/src/test/regress/pg_regress' $(PROVE) $(PG_PROVE_FLAGS) $(PROVE_FLAGS) $(if $(PROVE_TESTS),$(PROVE_TESTS),t/*.pl)
 endef
 
 else
@@ -396,11 +402,8 @@ STRIP_SHARED_LIB = strip --strip-unneeded
 
 # Documentation
 
-have_docbook	= no
-COLLATEINDEX	= 
 DBTOEPUB	= 
-DOCBOOKSTYLE	= 
-JADE			= 
+FOP				= 
 NSGMLS			= 
 OSX				= 
 XMLLINT			= 
@@ -547,14 +550,35 @@ TEMP_CONF += --temp-config=$(TEMP_CONFIG)
 endif
 
 pg_regress_locale_flags = $(if $(ENCODING),--encoding=$(ENCODING)) $(NOLOCALE)
+pg_regress_clean_files = results/ regression.diffs regression.out tmp_check/ tmp_check_iso/ log/ output_iso/
 
-pg_regress_check = $(with_temp_install) $(top_builddir)/src/test/regress/pg_regress --inputdir=$(srcdir) --temp-instance=./tmp_check $(TEMP_CONF) --bindir= $(pg_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
-pg_regress_installcheck = $(top_builddir)/src/test/regress/pg_regress --inputdir=$(srcdir) --bindir='$(bindir)' $(pg_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
+pg_regress_check = \
+    $(with_temp_install) \
+    $(top_builddir)/src/test/regress/pg_regress \
+    --temp-instance=./tmp_check \
+    --inputdir=$(srcdir) \
+    --bindir= \
+    $(TEMP_CONF) \
+    $(pg_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
+pg_regress_installcheck = \
+    $(top_builddir)/src/test/regress/pg_regress \
+    --inputdir=$(srcdir) \
+    --bindir='$(bindir)' \
+    $(pg_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
 
-pg_regress_clean_files = results/ regression.diffs regression.out tmp_check/ log/
-
-pg_isolation_regress_check = $(with_temp_install) $(top_builddir)/src/test/isolation/pg_isolation_regress --inputdir=$(srcdir) --temp-instance=./tmp_check $(TEMP_CONF) --bindir= $(pg_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
-pg_isolation_regress_installcheck = $(top_builddir)/src/test/isolation/pg_isolation_regress --inputdir=$(srcdir) $(pg_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
+pg_isolation_regress_check = \
+    $(with_temp_install) \
+    $(top_builddir)/src/test/isolation/pg_isolation_regress \
+    --temp-instance=./tmp_check_iso \
+    --inputdir=$(srcdir) --outputdir=output_iso \
+    --bindir= \
+    $(TEMP_CONF) \
+    $(pg_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
+pg_isolation_regress_installcheck = \
+    $(top_builddir)/src/test/isolation/pg_isolation_regress \
+    --inputdir=$(srcdir) --outputdir=output_iso \
+    --bindir='$(bindir)' \
+    $(pg_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
 
 ##########################################################################
 #
@@ -629,6 +653,7 @@ TAS         =
 ifdef FLEX
 	$(FLEX) $(if $(FLEX_NO_BACKUP),-b) $(FLEXFLAGS) -o'$@' $<
 	@$(if $(FLEX_NO_BACKUP),if [ `wc -l <lex.backup` -eq 1 ]; then rm lex.backup; else echo "Scanner requires backup; see lex.backup." 1>&2; exit 1; fi)
+	$(if $(FLEX_FIX_WARNING),$(PERL) $(top_srcdir)/src/tools/fix-old-flex-code.pl '$@')
 else
 	@$(missing) flex $< '$@'
 endif
@@ -853,7 +878,7 @@ ifeq ($(enable_coverage), yes)
 gcda_files := $(wildcard *.gcda)
 
 lcov.info: $(gcda_files)
-	rm -f *.gcov
+	rm -f *.gcov .*.gcov
 	$(if $^,$(LCOV) -d . -c -o $@ $(LCOVFLAGS) --gcov-tool $(GCOV))
 
 %.c.gcov: %.gcda | lcov.info
@@ -874,7 +899,7 @@ clean distclean maintainer-clean: clean-coverage
 .PHONY: clean-coverage
 clean-coverage:
 	rm -rf coverage
-	rm -f *.gcda *.gcno lcov.info *.gcov *.gcov.out
+	rm -f *.gcda *.gcno lcov.info *.gcov .*.gcov *.gcov.out
 
 
 # User-callable target to reset counts between test runs

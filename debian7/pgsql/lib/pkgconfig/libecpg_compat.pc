@@ -1,7 +1,7 @@
 Name: libecpg_compat
 Description: PostgreSQL libecpg_compat library
 Url: http://www.postgresql.org/
-Version: 9.6.5
+Version: 10.1
 Requires: 
 Requires.private: libecpg libpgtypes
 Cflags: -I/usr/local/pgsql/include
