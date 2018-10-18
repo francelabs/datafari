@@ -21,7 +21,34 @@ Datafari needs Python v 2.7.x. If you have only Python v3, please install Python
 
 Datafari no longer embeds Java JDK. JDK 8 must be present on the machine and set JAVA HOME.
 
+==================  4.2 ==================
+* Version of major components :
+Solr 7.4
+ManifoldCF 2.11
+Tomcat 9.0.8
+Cassandra 3.11.2
+PostgreSQL 10.1
+Zookeeper 3.4.10
+Tika Server 1.19.1
+ElasticSearch 5.6.4
+Kibana 5.6.4
+LogStash 5.6.4
 
+* New features :
+Solr updated to 7.4
+ManifoldCF updated to 2.11
+PostgreSQL updated to 10.1
+Tika Server updated to 1.19.1
+DATAFARI-320 Add the possibility to also save facets in the alert 
+Scripts rework
+
+* Bug fixes :
+Fix DATAFARI-324 Add a button to close the database connection error 
+Fix DATAFARI-327 Delete a user does not delete it's additionnal data 
+Fix DATAFARI-330 MCF Restore erase everything...
+Fix DATAFARI-329 Bug updating synonyms 
+Fix DATAFARI-331 Pagination numbers disappear 
+Fix external result widget 
 
 ==================  4.1.1 ==================
 * Version of major components :

@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.francelabs.datafari</groupId>
     <artifactId>datafari-parent</artifactId>
-    <version>4.1-Community</version>
+    <version>4.2-Community</version>
   </parent>
   <artifactId>datafari-realm</artifactId>
   <packaging>jar</packaging>
@@ -18,7 +18,7 @@
     <dependency>
       <groupId>com.francelabs.datafari</groupId>
       <artifactId>datafari-core</artifactId>
-      <version>4.1-Community</version>
+      <version>4.2-Community</version>
       <scope>provided</scope>
     </dependency>
 		<dependency>

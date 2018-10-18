@@ -23,24 +23,6 @@
 		<Realm className="com.francelabs.datafari.realm.GenericCassandraRealm"/>
 			    
 		    	
-	
-		<!--  <Realm   className="org.apache.catalina.realm.JNDIRealm"
-		     connectionURL="ldap://52.16.74.128:389"
-		       userPattern="uid={0},dc=example,dc=com"
-		    connectionName="cn=read-only-admin,dc=example,dc=com"
-		connectionPassword="password"/>
-		     -->
-	<!-- 
-		adminUser = admin
-		adminPassword = Jailesdoirs
-		url = 53.43243243..432
-		port = 69
-		domain = corp.francelabs.com
-	
-	
-	
-	 -->
-		<Realm className="com.francelabs.datafari.realm.DatafariJNDIRealm" adCompat="true" connectionName="test@corp.france.labs.com" connectionPassword="awthQxGDiipsPPWLJbiCcepXbL2hjFqDa1iZapp+d+I=" connectionURL="ldap://52.48.241.103:389" debug="99" userBase="cn=Users,dc=corp,dc=france,dc=labs,dc=com" userRoleName="member" userSearch="(sAMAccountName={0})" userSubtree="true"/>
 			     
 	</Realm>
 
