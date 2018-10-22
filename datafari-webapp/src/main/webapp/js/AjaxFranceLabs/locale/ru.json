@@ -437,6 +437,7 @@
     "source": "Источник",
     "spellcheckerProposal": "You may have more results with: ",
     "spellcheckerResults": "Результаты для: ",
+    "startJob" : "Start the job once created",
     "statistics": "Статистика",
     "statsOn": "Статистика включена",
     "statsQuery": "Статистика запросов",

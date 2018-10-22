@@ -16,7 +16,7 @@ var clearTimeouts = function() {
 
 
 $(document).ready(function() {
-
+  $('#main').bind('DOMNodeRemoved', clearTimeouts);
   $('backupDir-label').text(window.i18n.msgStore["adminUI-MCFBackupRestore-backupDir-label"]);
 
   // Set the breadcrumbs
@@ -52,6 +52,8 @@ $(document).ready(function() {
   document.getElementById("passwordLabel").innerHTML = window.i18n.msgStore['adminUI-Password'];
   document.getElementById("pathsLabel").innerHTML = window.i18n.msgStore['paths'];
   document.getElementById("securityLabel").innerHTML = window.i18n.msgStore['security'];
+  $("#startJobLabel").html(window.i18n.msgStore['startJob']);
+  $("#startJobWebLabel").html(window.i18n.msgStore['startJob']);
   $("#server").attr("placeholder", window.i18n.msgStore['server']);
   $("#password").attr("placeholder", window.i18n.msgStore['adminUI-Password']);
   $("#user").attr("placeholder", window.i18n.msgStore['filerUser']);
@@ -282,7 +284,11 @@ function addFilerConnector(){
         },1500));
       } else {
         $("#addFiler").trigger("reset");
-        $("#addFilerMessageSuccess").html("<i class='fa fa-check'></i>Job " + data.job_id + " created and started ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp'>Datafari connectors status page</a>");
+        var jobStarted = "";
+        if(document.getElementById('startJob').checked) {
+        	jobStarted = " and started";
+        }
+        $("#addFilerMessageSuccess").html("<i class='fa fa-check'></i>Job " + data.job_id + " created" + jobStarted + " ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp'>Datafari connectors status page</a>");
         $("#addFilerMessageSuccess").show().removeClass("animated fadeOut");
         timeouts.push(setTimeout(function(){
           clearStatus($("#server"));
@@ -304,7 +310,7 @@ function addFilerConnector(){
     //this is called after the response or error functions are finsihed
     complete: function(jqXHR, textStatus){
       //enable the button
-      $("#newFilerConfig").button("reset");;
+      $("#newFilerConfig").button("reset");
     }
   });
 }
@@ -331,7 +337,10 @@ function addWebConnector(){
         },1500));
       } else {
         $("#addWeb").trigger("reset");
-        $("#addWebMessageSuccess").html("<i class='fa fa-check'></i>Job " + data.job_id + " created and started ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp'>Datafari connectors status page</a>");
+        if(document.getElementById('startJobWeb').checked) {
+        	jobStarted = " and started";
+        }
+        $("#addWebMessageSuccess").html("<i class='fa fa-check'></i>Job " + data.job_id + " created" + jobStarted + " ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp'>Datafari connectors status page</a>");
         $("#addWebMessageSuccess").show().removeClass("animated fadeOut");
         timeouts.push(setTimeout(function(){
           clearStatus($("#seeds"));
@@ -352,7 +361,7 @@ function addWebConnector(){
     //this is called after the response or error functions are finsihed
     complete: function(jqXHR, textStatus){
       //enable the button
-      $("#newWebConfig").button("reset");
+      $("#newWebConfig").button("reset");;
     }
   });
 }

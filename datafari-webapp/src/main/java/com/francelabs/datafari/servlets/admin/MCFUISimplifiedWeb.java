@@ -66,16 +66,18 @@ public class MCFUISimplifiedWeb extends HttpServlet {
    * @throws IOException
    * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
    *      response) It saves the MCF connections if action parameter is save It
-   *      restores the MCF connections if action parameter is restore It uses
-   *      the backup directory in input (if specified) or a default path
+   *      restores the MCF connections if action parameter is restore It uses the
+   *      backup directory in input (if specified) or a default path
    */
   @Override
-  protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+  protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
+      throws ServletException, IOException {
     final JSONObject jsonResponse = new JSONObject();
     try {
       final String seeds = request.getParameter("seeds");
       final String email = request.getParameter("email");
       final String exclusions = request.getParameter("exclusions");
+      final String startJob = request.getParameter("startJobWeb");
 
       // Create webRepository
       final WebRepository webRepo = new WebRepository();
@@ -96,7 +98,9 @@ public class MCFUISimplifiedWeb extends HttpServlet {
         final String jobId = WebJobConfig.getInstance().createJob(webJob);
 
         if (jobId != null) {
-          ManifoldAPI.startJob(jobId);
+          if (startJob != null) {
+            ManifoldAPI.startJob(jobId);
+          }
           jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
           jsonResponse.put("job_id", jobId);
         } else {
@@ -108,7 +112,8 @@ public class MCFUISimplifiedWeb extends HttpServlet {
 
     } catch (final Exception e) {
       final PrintWriter out = response.getWriter();
-      out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69253");
+      out.append(
+          "Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69253");
       out.close();
       LOGGER.error("Unknown error during process", e);
     }

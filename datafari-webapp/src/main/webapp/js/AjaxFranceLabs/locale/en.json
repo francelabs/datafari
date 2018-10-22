@@ -436,6 +436,7 @@
     "source": "Source",
     "spellcheckerProposal": "You may have more results with: ",
     "spellcheckerResults": "Results for: ",
+    "startJob" : "Start the job once created",
     "statistics": "Statistics",
     "statsOn": "Statistics on",
     "statsQuery": "Query statistics",

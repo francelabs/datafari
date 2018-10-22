@@ -2,7 +2,7 @@ input#security {
   vertical-align: bottom;
 }
 
-#security-div {
+#security-div, #startJob-div, #startJobWeb-div {
 	padding-top: 4px;
 }
 
