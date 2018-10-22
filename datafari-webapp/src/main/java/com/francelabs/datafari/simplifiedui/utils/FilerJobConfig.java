@@ -8,6 +8,8 @@ import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import com.francelabs.datafari.simplifiedui.utils.FilerFilterRule.FilterType;
+import com.francelabs.datafari.simplifiedui.utils.FilerFilterRule.RuleType;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.manifoldcf.configuration.api.JSONUtils;
 import com.francelabs.manifoldcf.configuration.api.ManifoldAPI;
@@ -29,14 +31,16 @@ public class FilerJobConfig {
   private final static String attributeType = "_attribute_type";
   private final static String attributePath = "_attribute_path";
   private final static String value = "_value_";
-  private final static String includeElement = "include";
+  private final static String type = "_type_";
   private final static String startpointElement = "startpoint";
+  private final static String childrenElement = "_children_";
   private final static String idElement = "id";
   private final static String jobsCommand = "jobs";
 
   private FilerJobConfig() {
-    final String filePath = Environment.getEnvironmentVariable("DATAFARI_HOME") + File.separator + "bin" + File.separator + "common" + File.separator + "config" + File.separator + "manifoldcf" + File.separator + "visilia" + File.separator + "jobs"
-        + File.separator + "filer.json";
+    final String filePath = Environment.getEnvironmentVariable("DATAFARI_HOME") + File.separator + "bin"
+        + File.separator + "common" + File.separator + "config" + File.separator + "manifoldcf" + File.separator
+        + "visilia" + File.separator + "jobs" + File.separator + "filer.json";
     filerJobJSON = new File(filePath);
   }
 
@@ -73,21 +77,36 @@ public class FilerJobConfig {
       final JSONArray pathsArray = new JSONArray();
       for (int i = 0; i < paths.length; i++) {
         final JSONObject path = new JSONObject();
-        final JSONArray includeArray = new JSONArray();
+        final JSONArray childrenArray = new JSONArray();
         final JSONObject file = new JSONObject();
         final JSONObject directory = new JSONObject();
+
+        // Create children for include and exclude rules
+        // Create rules
+        for (final FilerFilterRule filterRule : filerJob.getOrderedRules()) {
+          final JSONObject newRule = new JSONObject();
+          newRule.put(type, filterRule.getRuleType());
+          newRule.put(attributeFilespec, filterRule.getFilterValue());
+          newRule.put(value, "");
+          newRule.put(attributeType, filterRule.getFilterType());
+          childrenArray.add(newRule);
+        }
+
+        // Create include rules
+        file.put(type, RuleType.INCLUDE.toString());
         file.put(attributeIndexable, "yes");
         file.put(attributeFilespec, "*");
         file.put(value, "");
-        file.put(attributeType, "file");
-        includeArray.add(file);
+        file.put(attributeType, FilterType.FILE.toString());
+        childrenArray.add(file);
 
+        directory.put(type, RuleType.INCLUDE.toString());
         directory.put(attributeFilespec, "*");
         directory.put(value, "");
-        directory.put(attributeType, "directory");
-        includeArray.add(directory);
+        directory.put(attributeType, FilterType.DIRECTORY.toString());
+        childrenArray.add(directory);
 
-        path.put(includeElement, includeArray);
+        path.put(childrenElement, childrenArray);
         path.put(attributePath, paths[i]);
         path.put(value, "");
 

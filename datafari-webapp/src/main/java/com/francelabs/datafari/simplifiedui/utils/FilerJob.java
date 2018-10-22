@@ -1,13 +1,26 @@
 package com.francelabs.datafari.simplifiedui.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.francelabs.datafari.simplifiedui.utils.FilerFilterRule.FilterType;
+import com.francelabs.datafari.simplifiedui.utils.FilerFilterRule.RuleType;
+
 public class FilerJob {
 
   private String repositoryConnection;
   private String paths;
   private boolean security = false;
+  private final List<FilerFilterRule> orderedFilterRules = new ArrayList<>();
 
   public FilerJob() {
-
+    // Set default exclude rules
+    orderedFilterRules.add(new FilerFilterRule(RuleType.EXCLUDE, FilterType.FILE, "/thumbs.db"));
+    orderedFilterRules.add(new FilerFilterRule(RuleType.EXCLUDE, FilterType.FILE, "/desktop.ini"));
+    orderedFilterRules.add(new FilerFilterRule(RuleType.EXCLUDE, FilterType.FILE, "/~*"));
+    orderedFilterRules.add(new FilerFilterRule(RuleType.EXCLUDE, FilterType.FILE, "*.lnk"));
+    orderedFilterRules.add(new FilerFilterRule(RuleType.EXCLUDE, FilterType.FILE, "*.mat"));
+    orderedFilterRules.add(new FilerFilterRule(RuleType.EXCLUDE, FilterType.FILE, "*.odb"));
   }
 
   public String getRepositoryConnection() {
@@ -32,6 +45,10 @@ public class FilerJob {
 
   public void setSecurity(final boolean security) {
     this.security = security;
+  }
+
+  public List<FilerFilterRule> getOrderedRules() {
+    return orderedFilterRules;
   }
 
 }
