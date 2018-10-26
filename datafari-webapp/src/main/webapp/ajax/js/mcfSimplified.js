@@ -337,6 +337,7 @@ function addWebConnector(){
         },1500));
       } else {
         $("#addWeb").trigger("reset");
+        var jobStarted = "";
         if(document.getElementById('startJobWeb').checked) {
         	jobStarted = " and started";
         }
