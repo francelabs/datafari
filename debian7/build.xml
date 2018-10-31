@@ -101,7 +101,7 @@
 
 	<target name="tomcat-dev" depends="copyBinaries">
 		<copy todir="${project.dir}/tomcat-dev">
-    		<fileset dir="${debian.dist.dir}/tomcat"/>
+    		<fileset dir="${installer.build.dir}/datafari/opt/datafari/tomcat"/>
   		</copy>
 		<replace file="${project.dir}/tomcat-dev/conf/server.xml" >
 		  <replacefilter>
