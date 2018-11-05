@@ -33,7 +33,8 @@ RUN ant clean-build -f ./debian7/build.xml
 FROM openjdk:8-jdk-stretch
 MAINTAINER Olivier Tavard FRANCE LABS <olivier.tavard@francelabs.com>
 
-RUN     apt-get update && apt-get install -y \
+# temporary allow unauthenticatedparameter due to debian repo issue
+RUN     apt-get update && apt-get install --allow-unauthenticated -y \
                 wget \
                 curl \
                 jq \
