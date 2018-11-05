@@ -3,6 +3,9 @@ FROM maven:3.5-jdk-8 AS BUILD
 ENV ANT_VERSION=1.10.3
 ENV ANT_HOME=/opt/ant
 
+# Temporary Workaround to Surefire issue 
+ENV _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true
+
 # change to tmp folder
 WORKDIR /tmp
 
