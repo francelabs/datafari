@@ -219,7 +219,7 @@ init_solr()
   #curl --insecure -XGET "https://localhost:8983/solr/admin/collections?action=CREATE&name=Statistics&collection.configName=Statistics&numShards=1&replicationFactor=1"
   #curl --insecure -XGET "https://localhost:8983/solr/admin/collections?action=CREATE&name=Promolink&collection.configName=Promolink&numShards=1&replicationFactor=1"
 
-  curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=FileShare&collection.configName=FileShare&numShards=${NUMSHARDS}&maxShardsPerNode=${NUMSHARDS}&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/FileShare/"
+  curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=@MAINCOLLECTION@&collection.configName=FileShare&numShards=${NUMSHARDS}&maxShardsPerNode=${NUMSHARDS}&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/FileShare/"
   curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=Statistics&collection.configName=Statistics&numShards=1&maxShardsPerNode=1&replicationFactor=1"
   curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=Promolink&collection.configName=Promolink&numShards=1&maxShardsPerNode=1&replicationFactor=1"
 }

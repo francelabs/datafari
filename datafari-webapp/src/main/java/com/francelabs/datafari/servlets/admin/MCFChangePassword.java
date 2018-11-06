@@ -52,7 +52,6 @@ import com.francelabs.datafari.utils.ExecutionEnvironment;
 @WebServlet("/SearchAdministrator/MCFChangePassword")
 public class MCFChangePassword extends HttpServlet {
   private final String env;
-  private static final String confname = "FileShare";
   private static final long serialVersionUID = 1L;
   private final static Logger LOGGER = LogManager.getLogger(MCFChangePassword.class.getName());
 

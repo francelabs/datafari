@@ -1,5 +1,5 @@
 #!/bin/bash
-server=http://localhost:8983/solr/FileShare/schema
+server=http://localhost:8983/solr/@MAINCOLLECTION@/schema
 
 sendCommand() {
 	# test if command is empty

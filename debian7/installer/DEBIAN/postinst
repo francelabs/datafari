@@ -71,6 +71,16 @@ if [ -e "$JAVA_HOME"/bin/java ]; then
 	db_get datafari/postgres_password
 	sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${RET})~g" /opt/datafari/mcf/mcf_home/properties-global.xml
 	sed -i -e "s~@POSTGRESPASSWORD@~${RET}~g" /opt/datafari/pgsql/pwd.conf
+	
+	db_input high datafari/main_collection_name || true
+	db_go
+	db_get datafari/main_collection_name
+	sed -i -e "s~@MAINCOLLECTION@~${RET}~g" /opt/datafari/solr/solrcloud/FileShare/core.properties
+  sed -i -e "s~@MAINCOLLECTION@~${RET}~g" /opt/datafari/solr/solrcloud/FileShare/conf/customs_schema/addCustomSchemaInfo.sh
+  sed -i -e "s~@MAINCOLLECTION@~${RET}~g" /opt/datafari/bin/datafari-manager.sh
+  sed -i -e "s~@MAINCOLLECTION@~${RET}~g" /opt/datafari/tomcat/conf/datafari.properties
+	
+	
 	id -u postgres >/dev/null 2>&1 || useradd postgres
 	id -u datafari >/dev/null 2>&1 || useradd datafari
 	chown -R datafari /opt/datafari

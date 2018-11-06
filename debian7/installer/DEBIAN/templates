@@ -13,6 +13,12 @@ Type: string
 Default: 127.0.0.1
 Description: Specify the current host address:
 
+Template: datafari/main_collection_name
+Type: string
+Default: FileShare
+Description: What is the name of the main Solr Collection:
+
+
 Template: datafari/main_node_host
 Type: string
 Default: localhost
