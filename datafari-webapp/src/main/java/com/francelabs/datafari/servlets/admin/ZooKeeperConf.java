@@ -45,109 +45,109 @@ import com.francelabs.datafari.utils.ExecutionEnvironment;
 
 @WebServlet("/SearchExpert/zookeeperConf")
 public class ZooKeeperConf extends HttpServlet {
-	private final String env;
-	private final String downloadFolder;
-	private final String configName;
-	private static final String confname = "FileShare";
-	private static final long serialVersionUID = 1L;
-	private final static Logger LOGGER = LogManager.getLogger(ZooKeeperConf.class.getName());
+  private final String env;
+  private final String downloadFolder;
+  private final String configName;
+  private static final String confname = "FileShare";
+  private static final long serialVersionUID = 1L;
+  private final static Logger LOGGER = LogManager.getLogger(ZooKeeperConf.class.getName());
 
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public ZooKeeperConf() {
-		super();
+  /**
+   * @see HttpServlet#HttpServlet()
+   */
+  public ZooKeeperConf() {
+    super();
 
-		String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
+    String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
 
-		if (environnement == null) { // If in development environment
-			environnement = ExecutionEnvironment.getDevExecutionEnvironment();
-		}
-		env = environnement + "/solr/solrcloud/FileShare/conf/";
-		downloadFolder = environnement + "/bin/backup/solr";
-		configName="FileShare";
+    if (environnement == null) { // If in development environment
+      environnement = ExecutionEnvironment.getDevExecutionEnvironment();
+    }
+    env = environnement + "/solr/solrcloud/FileShare/conf/";
+    downloadFolder = environnement + "/bin/backup/solr";
+    configName="FileShare";
 
-	}
+  }
 
-	/**
-	 * @throws IOException
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	@Override
-	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-		final JSONObject jsonResponse = new JSONObject();
-		request.setCharacterEncoding("utf8");
-		response.setContentType("application/json");
-		final String actionParam = request.getParameter("action");
-		List<String> collectionsList = null;
+  /**
+   * @throws IOException
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+   *      response)
+   */
+  @Override
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    final JSONObject jsonResponse = new JSONObject();
+    request.setCharacterEncoding("utf8");
+    response.setContentType("application/json");
+    final String actionParam = request.getParameter("action");
+    List<String> collectionsList = null;
 
-		final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
-		if (config.getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION)!= "" && config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS)!= "") {
-			collectionsList = Arrays.asList(config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).split(","));
-		}
-		IndexerServer server = null;
-		try {
-			server = IndexerServerManager.getIndexerServer(Core.FILESHARE);
-		} catch (final IOException e1) {
-			final PrintWriter out = response.getWriter();
-			out.append("Error while getting the Solr core, please make sure the core dedicated to PromoLinks has booted up. Error code : 69000");
-			out.close();
-			LOGGER.error("Error while getting the Solr core in doGet, admin servlet, make sure the core dedicated to Promolink has booted up and is still called promolink or that the code has been changed to match the changes. Error 69000 ", e1);
-			return;
+    final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
+    if (config.getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION)!= "" && config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS)!= "") {
+      collectionsList = Arrays.asList(config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).split(","));
+    }
+    IndexerServer server = null;
+    try {
+      server = IndexerServerManager.getIndexerServer(Core.FILESHARE);
+    } catch (final IOException e1) {
+      final PrintWriter out = response.getWriter();
+      out.append("Error while getting the Solr core, please make sure the core dedicated to PromoLinks has booted up. Error code : 69000");
+      out.close();
+      LOGGER.error("Error while getting the Solr core in doGet, admin servlet, make sure the core dedicated to Promolink has booted up and is still called promolink or that the code has been changed to match the changes. Error 69000 ", e1);
+      return;
 
-		} catch (final Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    } catch (final Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 
-		try {
-			if (actionParam.toLowerCase().equals("download")) {
-				final File folderConf = new File(downloadFolder);
-				FileUtils.cleanDirectory(folderConf);
-				server.downloadConfig(Paths.get(downloadFolder), configName);
-			} else if (actionParam.toLowerCase().equals("upload")) {
-				server.uploadConfig(Paths.get(env), configName);
-			} else if (actionParam.toLowerCase().equals("reload")) {
-				server.reloadCollection(Core.FILESHARE.toString());
-				if (collectionsList != null) {
-					for (String object: collectionsList) {
-						server.reloadCollection(object);
-					}
-				}
-			} else if (actionParam.toLowerCase().equals("upload_and_reload")) {
-				server.uploadConfig(Paths.get(env), configName);
-				Thread.sleep(3000);
-				server.reloadCollection(Core.FILESHARE.toString());
-				if (collectionsList != null) {
-					for (String object: collectionsList) {
-						server.reloadCollection(object);
-					}
-				}
-			}
+    try {
+      if (actionParam.toLowerCase().equals("download")) {
+        final File folderConf = new File(downloadFolder);
+        FileUtils.cleanDirectory(folderConf);
+        server.downloadConfig(Paths.get(downloadFolder), configName);
+      } else if (actionParam.toLowerCase().equals("upload")) {
+        server.uploadConfig(Paths.get(env), configName);
+      } else if (actionParam.toLowerCase().equals("reload")) {
+        server.reloadCollection(Core.FILESHARE.toString());
+        if (collectionsList != null) {
+          for (String object: collectionsList) {
+            server.reloadCollection(object);
+          }
+        }
+      } else if (actionParam.toLowerCase().equals("upload_and_reload")) {
+        server.uploadConfig(Paths.get(env), configName);
+        Thread.sleep(3000);
+        server.reloadCollection(Core.FILESHARE.toString());
+        if (collectionsList != null) {
+          for (String object: collectionsList) {
+            server.reloadCollection(object);
+          }
+        }
+      }
 
-			jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-		} catch (final IOException | SolrServerException | InterruptedException e) {
-			LOGGER.error("Exception during action " + actionParam, e);
-			jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-		}
-		final PrintWriter out = response.getWriter();
-		out.print(jsonResponse);
-	}
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+    } catch (final IOException | SolrServerException | InterruptedException e) {
+      LOGGER.error("Exception during action " + actionParam, e);
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+    }
+    final PrintWriter out = response.getWriter();
+    out.print(jsonResponse);
+  }
 
-	/**
-	 * @throws IOException
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	@Override
-	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("utf8");
-		response.setContentType("application/json");
-		final JSONObject jsonResponse = new JSONObject();
+  /**
+   * @throws IOException
+   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+   *      response)
+   */
+  @Override
+  protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    request.setCharacterEncoding("utf8");
+    response.setContentType("application/json");
+    final JSONObject jsonResponse = new JSONObject();
 
-		final PrintWriter out = response.getWriter();
-		out.print(jsonResponse);
-	}
+    final PrintWriter out = response.getWriter();
+    out.print(jsonResponse);
+  }
 }

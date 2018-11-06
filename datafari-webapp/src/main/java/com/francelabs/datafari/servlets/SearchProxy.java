@@ -164,24 +164,24 @@ public class SearchProxy extends HttpServlet {
           facetFields[facetFieldLength] = "{!ex=" + parentsLabels + "}" + parentsLabels;
           facetFields[facetFieldLength + 1] = "{!ex=" + childrenLabels + "}" + childrenLabels;
           params.setParam("facet.field", facetFields);
-          
+
         }
       } catch (final IOException e) {
         LOGGER.warn("Ignored ontology facets because of error: " + e.toString());
       }
-      
+
       try {
         final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
         if (config.getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION)!= "" && config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS)!= "" && handler.equals("/select")) {
-        	params.setParam("collection", config.getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION)+","+config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS));
-          
+          params.setParam("collection", config.getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION)+","+config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS));
+
         }
       } catch (final IOException e) {
         LOGGER.warn("Ignored search multiple collections because of error: " + e.toString());
       }
-      
-      
-      
+
+
+
       // perform query
       // define the request handler which may change if a specific source
       // has been provided

@@ -39,8 +39,8 @@ public class CorePropertiesConfiguration extends AbstractConfigClass {
 
   private final static Logger LOGGER = LogManager.getLogger(CorePropertiesConfiguration.class.getName());
 
-  
-	private static String collectionName = "FileShare";
+
+  private static String collectionName = "FileShare";
   /**
    *
    * Get the instance
@@ -59,7 +59,7 @@ public class CorePropertiesConfiguration extends AbstractConfigClass {
    *
    */
   private CorePropertiesConfiguration() {
-  	
+
     super(configFilename, Environment.getEnvironmentVariable("SOLR_INSTALL_DIR") + File.separator + "solrcloud" + File.separator + collectionName + File.separator + configFilename, LOGGER);
 
   }
