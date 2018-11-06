@@ -1,0 +1,8 @@
+<!--
+test
+<requestHandler name="/cdcr" class="solr.CdcrRequestHandler">
+  <lst name="buffer">
+    <str name="defaultState">disabled</str>
+  </lst>
+</requestHandler>
+-->
