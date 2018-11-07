@@ -28,11 +28,11 @@
                "_attribute_name":"Server web application"
             },
             {
-               "_value_":"FileShare",
+               "_value_":"@MAINCOLLECTION@",
                "_attribute_name":"Solr core name"
             },
             {
-               "_value_":"FileShare",
+               "_value_":"@MAINCOLLECTION@",
                "_attribute_name":"Collection"
             },
             {

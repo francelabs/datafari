@@ -75,10 +75,13 @@ if [ -e "$JAVA_HOME"/bin/java ]; then
 	db_input high datafari/main_collection_name || true
 	db_go
 	db_get datafari/main_collection_name
-	sed -i -e "s~@MAINCOLLECTION@~${RET}~g" /opt/datafari/solr/solrcloud/FileShare/core.properties
-  sed -i -e "s~@MAINCOLLECTION@~${RET}~g" /opt/datafari/solr/solrcloud/FileShare/conf/customs_schema/addCustomSchemaInfo.sh
-  sed -i -e "s~@MAINCOLLECTION@~${RET}~g" /opt/datafari/bin/datafari-manager.sh
-  sed -i -e "s~@MAINCOLLECTION@~${RET}~g" /opt/datafari/tomcat/conf/datafari.properties
+	collectionName=${RET}
+	sed -i -e "s~@MAINCOLLECTION@~${collectionName}~g" /opt/datafari/solr/solrcloud/FileShare/core.properties
+  sed -i -e "s~@MAINCOLLECTION@~${collectionName}~g" /opt/datafari/solr/solrcloud/FileShare/conf/customs_schema/addCustomSchemaInfo.sh
+  sed -i -e "s~@MAINCOLLECTION@~${collectionName}~g" /opt/datafari/bin/datafari-manager.sh
+  sed -i -e "s~@MAINCOLLECTION@~${collectionName}~g" /opt/datafari/tomcat/conf/datafari.properties
+  sed -i -e "s~@MAINCOLLECTION@~${collectionName}~g" /opt/datafari/bin/common/config/manifoldcf/init/outputconnections/DatafariSolr.json
+  sed -i -e "s~@MAINCOLLECTION@~${collectionName}~g" /opt/datafari/bin/common/config/manifoldcf/init/outputconnections/DatafariSolrNoTika.json
 	
 	
 	id -u postgres >/dev/null 2>&1 || useradd postgres
