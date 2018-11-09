@@ -10,6 +10,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Search</title>
 <link rel="icon" type="image/png" href="images/bullet.png">
+<link rel="stylesheet" type="text/css" href="plugins/bootstrap/bootstrap.css"/>
 <link rel="stylesheet" type="text/css" href="css/main.css"
 	media="screen" />
 <link rel="stylesheet" type="text/css" href="css/animate.min.css" />
@@ -57,6 +58,8 @@
 	<script type="text/javascript" src="js/jquery-ui-1.11.4/jquery-ui.js"></script>
 	<script type="text/javascript" src="js/jquery.waypoints.min.js"></script>
 	<script type="text/javascript" src="js/polyfill.js"></script>
+  <script type="text/javascript" src="plugins/bootstrap/bootstrap.min.js"></script>
+
 	<script type="text/javascript" src="js/AjaxFranceLabs/uuid.core.js"></script>
 	<script type="text/javascript" src="js/AjaxFranceLabs/i18njs.js"></script>
 	<script type="text/javascript" src="js/AjaxFranceLabs/core/Core.js"></script>
@@ -183,9 +186,33 @@
 		</div>
 		<div id="facet_source_mobile"></div>
 		<div id="facet_type_mobile"></div>
-    </div>
+  </div>
 	<div id="solr">
-		<div id="searchBar"> <a id="logo_desktop" href="../Datafari/Search"><img src="css/images/logo_zebre.png"/></a> <div id="search_information"></div><div id="results_action"></div></div>
+    <div class="row">
+      <div class="col-sm-2"></div>
+  		<div id="searchBar" class="col-sm-8">
+        <a id="logo_desktop" href="../Datafari/Search">
+          <img src="css/images/logo_zebre.png"/>
+        </a>
+      </div>
+      <div class="col-sm-2"></div>
+    </div>
+    <div class="row">
+      <div id="search_information" class="col-sm-3"></div>
+      <div class="col-sm-3"></div>
+      <div id="results_action" class="col-sm-6">
+        <!-- Enable the SaveSearch widget if the user is authenticated -->
+        <%
+          if (request.getUserPrincipal() != null) {
+            if (request.getUserPrincipal().getName() != null) {
+        %>
+              <span id="save_search" class="pull-right"></span>
+        <%
+            }
+          }
+        %>
+      </div>
+    </div>
 		<div id="advancedSearch"> <a href="../Datafari/Search"><img src="css/images/logo_zebre.png"/></a></div>
 		<div id="parametersUi" style="display: none;"><jsp:include page="parameters.jsp" /></div>
 		<div id="favoritesUi" style="display: none;"><jsp:include page="favorites.jsp" /></div>

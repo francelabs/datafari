@@ -30,32 +30,37 @@ AjaxFranceLabs.LanguageSelectorWidget = AjaxFranceLabs.AbstractWidget.extend({
 	 * AbstractWidget
 	 */
 	buildWidget : function() {
-		$(this.elm).addClass('languageSelectorWidget widget');
+		$(this.elm).addClass('languageSelectorWidget widget dropdown');
 
 		// Build the selector language HTML elements
-		$(this.elm).append(window.i18n.msgStore['selectLang'])
-				.append('<select class="languageSelectorWidget-select"></select>')
-
-				
-		$.each(this.languages, function( index, value ) {
-			$('<option value="'+value+'">' + window.i18n.msgStore[value+'_locale'] + '</option>').appendTo('.languageSelectorWidget-select');
-		});
+		$(this.elm).append('<a '+
+							'class="dropdown-toggle" '+
+							'data-target="#" '+
+							'href="#" '+
+							'role="button" '+
+							'id="dropdownMenuLink" '+
+							'data-toggle="dropdown" '+
+							'aria-haspopup="true" '+
+							'aria-expanded="false">'+
+								'<span class="glyphicon glyphicon-globe"></span>'+
+							'</a>'+
+							'<ul class="dropdown-menu"></ul>');
 		
-		// Select the language for languageSelectorWidget, based on the window.i18n language detected from the browser/system
-		$(this.elm).find('select option[value="'+ window.i18n.language + '"]').prop('selected', true); 
+		// Using proxy to bind this into the each callback function, else this is mapped to the current item being processed.
+		$.each(this.languages, $.proxy(function( index, value ) {
+			$('<li><a href="#" id="lang-'+value+'">' + window.i18n.msgStore[value+'_locale'] + '</a></li>')
+				.appendTo($(this.elm).find("ul"))
+				.click($.proxy(function() {
+					this.applyLang(value);
+				}, this));
+		}, this));
 
-		// Bind the onChange event of the "select" DOM element (language list box).
-		// It's an anonymous function: in this way it's not called when the widget initializes.
-		$(this.elm).find('select').change(function() {
-
-			var selectedLang = $(this).val();
-
-			// Save user language in the 'lang' table of Cassandra
+		this.applyLang = function(selectedLang) {
 			$.post('./applyLang',{"lang":selectedLang}, function() {
 				// Function executed every time the user changes the language of
 				// Datafari		
 				window.i18n.userSelected(selectedLang);
 			});
-		});
+		}
 	}
 });

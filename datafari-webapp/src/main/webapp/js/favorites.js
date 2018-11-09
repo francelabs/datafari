@@ -1,18 +1,18 @@
 $(document).ready(function() {
-	
-	$('#favorites').click(function() {
+
+	$('#userFavoritesLink').click(function() {
 		initFavoritesUI();
 		loadFavorites(window.current);
 	});
-	
+
 	//Internationalize content
 	$("#favorites-label").text(window.i18n.msgStore['favorites']);
 	$("#doc-name").text(window.i18n.msgStore['doc-name']);
 	$("#doc-source").text(window.i18n.msgStore['source']);
 	$("#doc-delete").text(window.i18n.msgStore['delete']);
-	
-	
-	
+
+
+
 	$("#previous").hide();
 	$("#next").hide();
 
@@ -22,25 +22,28 @@ $(document).ready(function() {
 		window.currentPage -= 1;
 		loadFavorites();
 	});
-	
+
 
 	$("#next").click(function() {
 
 		window.currentPage += 1;
 		loadFavorites();
 	});
-	
+
 
 	window.currentPage = 0;
 	window.cursors = [''];
 	$("#previous").hide();
 
 	$("#next").hide();
-	
-	
-	
+
+	let hash = window.location.hash;
+	if (hash === "#favorites") {
+		$('#userFavoritesLink').click();
+	}
+
     loadFavorites();
-	
+
 });
 
 function initFavoritesUI() {
@@ -49,11 +52,11 @@ function initFavoritesUI() {
 	$("#results_div").hide();
 	$("#search_information").hide();
 	$("#results_action").hide();
+	$("#save_search").hide();
 	$("#advancedSearch").hide();
 	$("#parametersUi").hide();
 	$("#searchBar").show();
 	clearActiveLinks();
-	$("#favorites").addClass("active");
 }
 
 function clearActiveLinks() {
@@ -76,7 +79,7 @@ function showError(code){
 			danger = false;
 			message = window.i18n.msgStore["NOFAVORITESFOUND"];
 			break;
-		case SERVERNOTCONNECTED:	
+		case SERVERNOTCONNECTED:
 			message = window.i18n.msgStore["SERVERNOTCONNECTED"];
 			break;
 		case SERVERPROBLEMCONNECTIONDB:
@@ -115,21 +118,21 @@ function loadFavorites(){
 		var params = {
 		    nextToken: window.cursors[window.currentPage]
 		};
-	
+
 		$.getJSON("./GetFavorites",params, function(data){
 		$('.loading').hide();
 		$("#favoritesTable").show();
 		if (data.code == 0){
 			$("table#favoritesTable tbody").empty();
 			window.favoritesList = data.favoritesList;
-			
+
 			// add paging
 			if (window.currentPage == 0){
 				$("#previous").hide();
 			} else {
 				$("#previous").show();
 			}
-			
+
 			if (data.nextToken !== undefined){
 				window.cursors[window.currentPage+1] = data.nextToken;
 				$("#next").show();
@@ -137,21 +140,21 @@ function loadFavorites(){
 
 				$("#next").hide();
 			}
-			
+
 			if (favoritesList!==undefined && favoritesList.length!=0){
-				
+
 				// add each favorite found in Json response
 				$.each(favoritesList,function(index,favorite){
-                    
+
 					var fav = JSON.parse(favorite);
 					var linkPrefix = "http://"+window.location.hostname+":"+window.location.port+"/Datafari/URL?url=";
-                    
+
                 	var line = $('<tr class="tr">'+
                             '<th class="col-xs-3"><a href="'+linkPrefix+fav.id+'">'+fav.title+'</a></th>'+
                             '<th class="tiny col-xs-9">'+fav.id+"</th>"+
                             '<th class="text-center delete"><i class="fa fa-times"></i></th>'+
                             '</tr>');
-					
+
 					line.data("id",fav.id);
 					$("table#favoritesTable tbody").append(line);
 				});
@@ -177,13 +180,13 @@ function loadFavorites(){
 				showError(NOFAVORITESFOUND);
 			}
 		}else{
-			showError(data.code);	
+			showError(data.code);
 		}
 	},"json").fail(function(){
 		$('.loading').hide();
 		showError(PROBLEMECONNECTIONSERVER);
-	});	
+	});
 
 
-		
+
 }

@@ -151,7 +151,7 @@ html, body, #container { height:100%; }
 #container { position:relative; }
 #content { background:transparent url(../images/content-bg.png) repeat-x 0 0; top:131px; bottom:31px; left:0; right:0; position:absolute; }
 
-//header { }
+/*header { }*/
 label { cursor:pointer; }
 #header-wrapper { margin:0 auto; width:96%;display:inline-block;  } 
 #logo { background:transparent url(../images/datafari.png) no-repeat 0 0; height:85px; float:left; width:229px; margin-left:30px;}

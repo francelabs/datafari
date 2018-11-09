@@ -1,46 +1,57 @@
 $(document).ready(function() {
-	
-	$('#parameters').click(function() {
-		initParametersUI();
-		changeContent("lang");
-	});
-	
-	
+
+  $('#userAlertsLink').click(function() {
+    initParametersUI();
+    changeContent("alert");
+  });
+
 	//Internationalize content
 	$("#lang-label").text(window.i18n.msgStore['facetlanguage']);
 	$("#alert-label").text(window.i18n.msgStore['alerts']);
-	$("#savedsearch-label").text(window.i18n.msgStore['savedsearch']);
 	$("#param-label").text(window.i18n.msgStore['param']);
-	
+
 	var param = retrieveParamValue();
+	if (param ==="alert" ||
+	    param ==="lang") {
+		
+		initParametersUI();
+		changeContent(param);
+	}
 	
-	changeContent(param);
-	
+
 	$("#lang-link").click(function() {changeContent("lang")});
 	$("#alert-link").click(function() {changeContent("alert")});
-	$("#savedsearch-link").click(function() {changeContent("savedsearch")});
-	
+
+	let hash = window.location.hash;
+	if (hash === "#lang") {
+		initParametersUI();
+		changeContent("lang");
+	} else if (hash==="#alert") {
+		initParametersUI();
+		changeContent("alert");
+	}
+
 });
 	var d;
 	var alertsTable;
 	var searchesTable;
-	
+
 	function initParametersUI() {
 		$("#parametersUi").show();
 		$("#results_div").hide();
 		$("#search_information").hide();
 		$("#results_action").hide();
+		$("#save_search").hide();
 		$("#advancedSearch").hide();
 		$("#favoritesUi").hide();
 		$("#searchBar").show();
 		clearActiveLinks();
-		$("#parameters").addClass("active");
 	}
-	
+
 	function clearActiveLinks() {
 		$("#loginDatafariLinks").find(".active").removeClass("active");
 	}
-	
+
 	function retrieveParamValue() {
 		var query = window.location.search.substring(1);
 		var vars = query.split("&");
@@ -52,7 +63,7 @@ $(document).ready(function() {
 			}
 		}
 	}
-	
+
 	function changeContent(param) {
 		clear();
 		if(param == "lang") {
@@ -65,14 +76,9 @@ $(document).ready(function() {
 			$("#alert-link .link-icon").addClass("selected");
 			$("#alert-link .link-label").addClass("selected");
 			createAlertContent();
-		} else if (param == "savedsearch") {
-			$("#param-content-title").text(window.i18n.msgStore['param-savedsearch']);
-			$("#savedsearch-link .link-icon").addClass("selected");
-			$("#savedsearch-link .link-label").addClass("selected");
-			createSavedSearchContent();
 		}
 	}
-	
+
 	function clear() {
 		$("#lang-link .link-icon").removeClass("selected");
 		$("#alert-link .link-icon").removeClass("selected");
@@ -81,95 +87,22 @@ $(document).ready(function() {
 		$("#alert-link .link-label").removeClass("selected");
 		$("#savedsearch-link .link-label").removeClass("selected");
 	}
-	
-	function createSavedSearchContent() {
-		$.ajax({			//Ajax request to the doGet of the Alerts servlet
-	        type: "POST",
-	        url: "./GetSearches",
-	    	beforeSend: function(jqXHR, settings){
-	    		$("#param-content").html("<center><div class=\"bar-loader\" style=\"display : block; height : 32px; width : 32px;\"></div></center>");
-	    	},
-	        //if received a response from the server
-	    	success: function( data, textStatus, jqXHR) {
-	        	if (data.code == 0){
-					if (data.searchesList!==undefined && !jQuery.isEmptyObject(data.searchesList)){
-						$("#param-content").html("<table id='searchesTable'><thead><tr><th>"+window.i18n.msgStore['search']+"</th><th>"+window.i18n.msgStore['link']+"</th><th>"+window.i18n.msgStore['delete']+"</th></tr></thead><tbody></tbody></table>");
-						$.each(data.searchesList,function(name,search){
-							var line = $('<tr class="tr">'+
-										'<td>' + name + '</td>'+
-										'<td><a href="/Datafari/Search?lang=' + window.i18n.language + '&request='+encodeURIComponent(search)+'">' + window.i18n.msgStore['exec-search'] + '</a></td>'+
-										"<td><a class='delete-button'>x</a></td>"+
-										'</tr>'
-							);
-							line.data("id",search);
-							line.data("name",name);
-							$("#searchesTable tbody").append(line);
-						});
-						searchesTable = $("#searchesTable").DataTable(
-        				{
-        					"info":false, 
-        					"lengthChange":false, 
-        					"searching":false,
-        					"columns": [
-        						null,
-        						{ "orderable": false },
-        						{ "orderable": false }
-        					]
-        				});
-						$('.delete-button').click(function(e){
-							var element = $(e.target);
-							while (!element.hasClass('tr')){
-								element = element.parent();
-							}
-							$.post("./deleteSearch",{name:element.data('name'),request:element.data('id')},function(data){
-								if (data.code==0){
-									searchesTable
-					                .row(element) 
-					                .remove()
-					                .draw();
-									
-									var nbData = searchesTable.column(0).data().length
-									if(nbData < 1 ) {
-										$("#param-content").html("<div><b>"+window.i18n.msgStore["nosavedsearches"]+"</b></div>");
-										destroySavedSearchesTable();
-									} 
-								}else{
-									console.log(data.status);
-								}
-							}).fail(function(){
-								console.log(window.i18n.msgStore['dbError']);
-							});
-						});
-					}else{
-						$("#param-content").html("<div><b>"+window.i18n.msgStore["nosavedsearches"]+"</b></div>");
-					}
-				} else{
-					console.log(window.i18n.msgStore['dbError']);
-	        	}
-	        },
-	       
-	        //If there was no response from the server
-	        error: function(jqXHR, textStatus, errorThrown){
-	            console.log("Something really bad happened " + textStatus);
-	        }
-	    });
-	}
-	
+
 	function createLangContent() {
 		var languages = ['en', 'fr', 'it', 'pt_br', 'de', "ru"];
-		
+
 		$("#param-content").html("<div id='lang-choice'><span id='lang-choice-label'>" + window.i18n.msgStore['lang-choice'] + "</span></div>");
 		var inputs = $("<div id='lang-inputs'></div>")
 		$.each(languages, function( index, value ) {
 			inputs.append("<input type='radio' name='lang' id='" + value + "' value='" + value + "'><label for='" + value + "'> " + window.i18n.msgStore[value+'_locale'] + "</label><br>");
 		});
-		
+
 		$("#param-content").append(inputs);
-		
+
 		// Select the language for languageSelectorWidget, based on the window.i18n language detected from the browser/system
-		inputs.find('input[value="'+ window.i18n.language + '"]').prop('checked', true); 
+		inputs.find('input[value="'+ window.i18n.language + '"]').prop('checked', true);
 		inputs.find('input').show();
-		
+
 		$("#param-content").append("<div class='separator'></div><div id='button-div'><input type='button' name='validate-lang' id='validate-lang' value='" + window.i18n.msgStore['validate'] + "'/></div>");
 		$("#validate-lang").click(function() {
 			var selectedLang = $('input[name=lang]:checked').val();
@@ -177,12 +110,12 @@ $(document).ready(function() {
 			// Save user language in the 'lang' table of Cassandra
 			$.post('./applyLang',{"lang":selectedLang}, function() {
 				// Function executed every time the user changes the language of
-				// Datafari		
+				// Datafari
 				window.i18n.userSelected(selectedLang);
 			});
 		});
 	}
-	
+
 	function createAlertContent() {
 		var dataString = "keyword=";
 		$("#param-content").html("<div id='addAlertDiv'><button onclick='javascript:addAlert();' id='addAlertButton'>"+window.i18n.msgStore['addAlert']+"</button></div>");
@@ -200,10 +133,10 @@ $(document).ready(function() {
 	        		console.log(data);
 	        	} else if(data.alerts!=undefined){
 	        		$("#alertsListDiv").html("<table id='alerts_table'><thead><tr><th>"+window.i18n.msgStore['search']+"</th><th>"+window.i18n.msgStore['subject']+"</th><th>"+window.i18n.msgStore['mail']+"</th><th>"+window.i18n.msgStore['send-frequency']+"</th><th>"+window.i18n.msgStore['delete']+"</th></tr></thead><tbody></tbody></table>");
-	        		//get the data in a global var so it can be used in edit() or remove() 
+	        		//get the data in a global var so it can be used in edit() or remove()
 	        		d=data;
 	        		var numb = data.alerts.length;
-	        		var i = 0;          
+	        		var i = 0;
 					while (i<numb){	//While they are still alerts to print
 						var doc = data.alerts[i];
 						//Print the alert with an href of the keyword towards edit()
@@ -213,8 +146,8 @@ $(document).ready(function() {
 					}
 					alertsTable = $("#alerts_table").DataTable(
 	        				{
-	        					"info":false, 
-	        					"lengthChange":false, 
+	        					"info":false,
+	        					"lengthChange":false,
 	        					"searching":false,
 	        					"columns": [
 	        						null,
@@ -229,7 +162,7 @@ $(document).ready(function() {
 	        		$("#alertsListDiv").html("<div><b>"+window.i18n.msgStore['noAlerts']+"</b></div>");
 	        	}
 	        },
-	       
+
 	        //If there was no response from the server
 	        error: function(jqXHR, textStatus, errorThrown){
 	            if(jqXHR.responseText==="error connecting to the database"){
@@ -238,9 +171,9 @@ $(document).ready(function() {
 	                console.log("Something really bad happened " + textStatus);
 	          	}
 	        }
-	    });  
+	    });
 	}
-	
+
 	function addAlert() {
 		$("#addAlertDiv").html("");
 		$("#addAlertDiv").append("<form id=\"add\" role=\"form\">");
@@ -283,13 +216,13 @@ $(document).ready(function() {
 		$("#addAlertTable").append(tr);
 		$("#addAlertDiv").append("</form>");
 		$("#addAlertDiv").append("<div id='addAlertMessage'></div>");
-		
+
 		$("#addAlertCancel").click(function() {initCreateAlertButton();});
-		
+
 		$("#add").submit(function(e){
 	        e.preventDefault();
 	 	});
-		
+
 		$("#add").submit(function(e){
 			 var datastring = $("#add").serialize();
 			 if($("#select-alert-type").val() == "current-query") {
@@ -333,22 +266,22 @@ $(document).ready(function() {
 		        	},
 		        	//called after the response or error functions are finsihed
 		        	complete: function(jqXHR, textStatus){
-		            	//enable the button 
+		            	//enable the button
 		            	$('#add').attr("disabled", false);
-		        	}  
+		        	}
 		 		});
 		 });
 	}
-	
+
 	function initCreateAlertButton() {
 		$("#addAlertDiv").html("<button onclick='javascript:addAlert();' id='addAlertButton'>"+window.i18n.msgStore['addAlert']+"</button>");
 	}
-	
+
 	function modify(i) {
 		$("#frequency-"+i).html("<select required id=\"select-frequency-" + i + "\" name=\"frequency\" class=\"col-sm-4\">	<OPTION value='hourly'>"+window.i18n.msgStore['hourly']+"</OPTION><OPTION value='daily'>"+window.i18n.msgStore['daily']+"</OPTION><OPTION value='weekly'>"+window.i18n.msgStore['weekly']+"</OPTION></select> <button onclick='javascript: validate("+i+")' >"+window.i18n.msgStore['validate']+"</button>")
 		$("#select-frequency-" + i).val(d.alerts[i].frequency);
 	}
-	
+
 	function validate(i) {
 		var id = "_id="+d.alerts[i]._id;
 		var datastring = "";
@@ -383,7 +316,7 @@ $(document).ready(function() {
 	        }
 		});
 	}
-	
+
 	function remove(i){
 		// get the id of the alert to remove and serialize it
 		var id = "_id="+d.alerts[i]._id;
@@ -400,16 +333,16 @@ $(document).ready(function() {
 //	        		var row = document.getElementById(i);
 //	            	row.parentNode.removeChild(row);
 	            	alertsTable
-	                .row( "#alert-" + i) 
+	                .row( "#alert-" + i)
 	                .remove()
 	                .draw();
-	            	
+
 	            	var nbData = alertsTable.column(0).data().length
 					if(nbData < 1 ) {
 						$("#alertsListDiv").html("<div><b>"+window.i18n.msgStore['noAlerts']+"</b></div>");
 						destroyAlertsTable();
 					}
-	        	}        
+	        	}
 	        },
 	        //If there was no resonse from the server
 	        error: function(jqXHR, textStatus, errorThrown){
@@ -417,12 +350,12 @@ $(document).ready(function() {
 	        }
 		});
 	}
-	
+
 	function destroyDatatables() {
 		destroyAlertsTable();
 		destroySavedSearchesTable();
 	}
-	
+
 	function destroySavedSearchesTable() {
 		if(searchesTable !== undefined) {
 			searchesTable.clear();
@@ -430,7 +363,7 @@ $(document).ready(function() {
 			searchesTable = undefined;
 		}
 	}
-	
+
 	function destroyAlertsTable() {
 		if(alertsTable !== undefined) {
 			alertsTable.clear();
@@ -438,3 +371,7 @@ $(document).ready(function() {
 			alertsTable = undefined;
 		}
 	}
+
+	$(function() {
+		
+	});

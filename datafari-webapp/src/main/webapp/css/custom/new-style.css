@@ -1,14 +1,14 @@
-  @charset "UTF-8";
-  /*! Font */
-  @font-face {
-    font-family: "HelveticaNeueW02-67MdCn 694060";
-    src: url(../fonts/helvetica/HelveticaNeueW02-67MdCn/06b85ec8-4a05-49b4-91c2-f44ec792102b.eot?#iefix);
-    src: url(../fonts/helvetica/HelveticaNeueW02-67MdCn/06b85ec8-4a05-49b4-91c2-f44ec792102b.eot?#iefix) format("eot"), url(../fonts/helvetica/HelveticaNeueW02-67MdCn/11398868-5e58-467f-86d1-650e10dd998a.woff) format("woff"), url(../fonts/helvetica/HelveticaNeueW02-67MdCn/285f76f1-9aeb-40f3-8df6-f87eb061df28.ttf) format("truetype"), url(../fonts/helvetica/HelveticaNeueW02-67MdCn/95e9b167-72f4-4e05-8337-e993a249b8b5.svg) format("svg"); }
-  @font-face {
-    font-family: "HelveticaNeueW02-77BdCn 694066";
-    src: url(../fonts/helvetica/HelveticaNeueW02-77BdCn/77cb0adc-646b-4830-8f4c-3db7adbb8dc4.eot?#iefix);
-    src: url(../fonts/helvetica/HelveticaNeueW02-77BdCn/77cb0adc-646b-4830-8f4c-3db7adbb8dc4.eot?#iefix) format("eot"), url(../fonts/helvetica/HelveticaNeueW02-77BdCn/631bf655-ced5-4627-93d4-89d1bdfe3014.woff) format("woff"), url(../fonts/helvetica/HelveticaNeueW02-77BdCn/96740819-d387-437f-b739-9778ddc5e5b9.ttf) format("truetype"), url(../fonts/helvetica/HelveticaNeueW02-77BdCn/05729794-671d-4a73-a294-f2f447795319.svg) format("svg"); }
-  /*! Fond page */
+@charset "UTF-8";
+/*! Font */
+@font-face {
+  font-family: "HelveticaNeueW02-67MdCn 694060";
+  src: url(../fonts/helvetica/HelveticaNeueW02-67MdCn/06b85ec8-4a05-49b4-91c2-f44ec792102b.eot?#iefix);
+  src: url(../fonts/helvetica/HelveticaNeueW02-67MdCn/06b85ec8-4a05-49b4-91c2-f44ec792102b.eot?#iefix) format("eot"), url(../fonts/helvetica/HelveticaNeueW02-67MdCn/11398868-5e58-467f-86d1-650e10dd998a.woff) format("woff"), url(../fonts/helvetica/HelveticaNeueW02-67MdCn/285f76f1-9aeb-40f3-8df6-f87eb061df28.ttf) format("truetype"), url(../fonts/helvetica/HelveticaNeueW02-67MdCn/95e9b167-72f4-4e05-8337-e993a249b8b5.svg) format("svg"); }
+@font-face {
+  font-family: "HelveticaNeueW02-77BdCn 694066";
+  src: url(../fonts/helvetica/HelveticaNeueW02-77BdCn/77cb0adc-646b-4830-8f4c-3db7adbb8dc4.eot?#iefix);
+  src: url(../fonts/helvetica/HelveticaNeueW02-77BdCn/77cb0adc-646b-4830-8f4c-3db7adbb8dc4.eot?#iefix) format("eot"), url(../fonts/helvetica/HelveticaNeueW02-77BdCn/631bf655-ced5-4627-93d4-89d1bdfe3014.woff) format("woff"), url(../fonts/helvetica/HelveticaNeueW02-77BdCn/96740819-d387-437f-b739-9778ddc5e5b9.ttf) format("truetype"), url(../fonts/helvetica/HelveticaNeueW02-77BdCn/05729794-671d-4a73-a294-f2f447795319.svg) format("svg"); }
+/*! Fond page */
 
   .proposal {
     font-weight: bold;
@@ -16,14 +16,14 @@
     text-decoration: underline;
     cursor: pointer;
   }
-
+/*
   #results_action {
     text-align: right;
     position: absolute;
     top: 5em;
     right: 1em;
   }
-
+*/
   .ui-menu-item {
     padding-right: 0em !important;
     width: calc(100% - 0.4em) !important;
@@ -44,8 +44,12 @@
     color: #6B956F;
   }
 
+  header {
+    width:100%;
+  }
+
   footer img {
-    height: 3em;
+    height: 30px;
   }
 
   /*! Btn */
@@ -152,13 +156,17 @@
 
   body #facets .checkboxIcon {
     color: #666; }
+
+  #facets label {
+    display:inline;
+  }
   .facetName {
     background-color: #f8f8f8 !important; }
   .facet ul {
     background-color: #f8f8f8 !important; }
 
   /*! Titre des filtres col gauche */
-  .facetName {
+  .facetName .label {
     font-size: 14px !important;
     font-family: "HelveticaNeueW02-67MdCn 694060" !important;
     color: #707173 !important;
@@ -502,7 +510,7 @@
       background-position: top left;
       background-repeat: repeat-y;
       background-size: contain;
-      padding: 10px 15px;
+      
       text-align: left;
       /*! Container pour centrer */ }
       body .bar-footer .container-footer {
@@ -629,7 +637,7 @@
       width: 120px !important; }
 
     header {
-      display: inline-block; }
+      display: inline-block;}
 
     .searchBarWidget {
       margin: 0px; }
@@ -793,7 +801,6 @@
 
 .active {
   border-bottom: 2px solid #A8C900;
-  padding: 0px 5px 6px 5px !important;
 }
 
 .active .name, .active .number {

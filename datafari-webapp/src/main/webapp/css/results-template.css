@@ -222,7 +222,7 @@
 
 
 	ul{
-	      display:none;
+	      /* display:none; */
 	}
 
 	#solr { margin:0 auto; padding:0px; width:100%; }
@@ -836,14 +836,14 @@
 
 
 	/******	>>> PrevisualizeResult Widget <<<	*******/
-	
+
 	div.res {border-bottom: thin dotted; }
 	div.res:hover {text-decoration: none; background: #ffffff; z-index: 6; transition-delay:0.5s; }
 	div.res div.previsualizetemplate {position: absolute; left: -9999px;
   	margin: -40px 0 0 0px; padding: 3px 3px 3px 3px;
   	border-style:solid; border-color:black; border-width:1px; z-index: 6;}
 	div.res:hover div.previsualizetemplate {left: 2%; background: #ffffff; transition-delay:0.5s;}
-	
+
 	/**************************************/
 
 	/******	>>> ExternalResult Widget <<<	*******/

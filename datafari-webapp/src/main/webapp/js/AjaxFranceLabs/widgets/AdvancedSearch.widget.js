@@ -725,10 +725,13 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 			this.manager.store.addByValue('q', finalFilter);
 			
 			// Hide the advanced interface
-			this.elm.hide();
+			if (window.location.hash !== "#advancedsearch") {
+				this.elm.hide();
 			
-			// Display the basic search
-			this.displayBasicSearch();
+			
+				// Display the basic search
+				this.displayBasicSearch();
+			}
 			$('.searchBar input').val(searchBarFilter);
 			this.updateAddressBar();
 		}
@@ -739,6 +742,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		$("#results_div").show();
 		$("#search_information").show();
 		$("#results_action").show();
+		$("#save_search").show();
 		$("#advancedSearch").hide();
 		$("#parametersUi").hide();
 		$("#favoritesUi").hide();
@@ -780,7 +784,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
 		
 		window.history.pushState('Object', 'Title',
 				window.location.pathname + '?query=' + this.manager.store.get('q').val() + '&lang='
-						+ window.i18n.language);
+						+ window.i18n.language + window.location.hash);
 
 		this.manager.store.addByValue("id", UUID.generate());		
 	}

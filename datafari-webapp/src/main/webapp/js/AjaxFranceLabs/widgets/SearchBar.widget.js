@@ -85,7 +85,7 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 				elm.addClass('searchBarWidget').addClass('widget').append(
 						'<div id="searchBarContent"></div>');
 				$("#results_action").append(
-						'<div id="sortMode"></div>');
+						'<span id="sortMode" class="pull-right"></div>');
 				elm.find('#searchBarContent').append(
 						'<div class="searchBar"></div>');
 
@@ -205,19 +205,28 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 
 				if (this.activateAdvancedSearchLink){
 
+					$(window).ready(function () {
+						if (window.location.hash === "#advancedsearch") {
+							$('#advancedSearchLink').click();
+						}
+					});
 
 					$('#advancedSearchLink').click(function(event){
 
 						destroyDatatables();
 
 						// Hide other UIs
+						$("#results_div").hide();
 						$("#parametersUi").hide();
 						$("#favoritesUi").hide();
+						$("#search_information").hide();
+						$("#results_action").hide();
+						$("#save_search").hide();
 						$("#loginDatafariLinks").find(".active").removeClass("active");
 
 						// Make the link active
-						$(this).addClass('active');
-
+						// $(this).addClass('active');
+						
 						// Hide the basic search
 						elm.hide();
 
@@ -325,7 +334,8 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget
 				$('#searchBar').show();
 				$("#results_div").show();
 				$("#search_information").show();
-				$("#sortMode").show();
+				$("#save_search").show();
+				$("#results_action").show();
 				$("#advancedSearch").hide();
 				$("#parametersUi").hide();
 				$("#favoritesUi").hide();

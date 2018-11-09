@@ -2,7 +2,7 @@
     margin-left: 0em !important;
 }
 
-.dropdown {
+.advancedSearchWidget .dropdown {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -20,7 +20,7 @@
 }
 
 .select-operator {
-    
+
 }
 
 .advancedSearchWidget {
