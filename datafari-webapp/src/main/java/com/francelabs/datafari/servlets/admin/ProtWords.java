@@ -69,8 +69,7 @@ public class ProtWords extends HttpServlet {
     if (environnement == null) { // If in development environment
       environnement = ExecutionEnvironment.getDevExecutionEnvironment();
     }
-    env = environnement + "/solr/solrcloud/"+Core.FILESHARE.toString()+"/conf";
-    System.out.println(env);
+    env = environnement + "/solr/solrcloud/FileShare/conf";
     content = "ALL";
 
   }

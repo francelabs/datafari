@@ -25,11 +25,13 @@
           <goal>wget</goal>
         </goals>
         <configuration>
-          <!-- Version of MCF should be retrieved from a property file as well 
-            as the MD5 -->
-          <url>http://archive.apache.org/dist/manifoldcf/apache-manifoldcf-${mcf.version}/apache-manifoldcf-${mcf.version}-bin.tar.gz</url>
-          <sha512>28935306582B0E0040AB71072A851B3A5E062EAFB51A804C1A5EEBCB7B29E310A081E2800708437FFB23A98933C0AE0BF95CCF30EF05324466C9A19F4FB01658</sha512>
-          <unpack>true</unpack>
+          <!-- 2 repos :
+      		official repo : http://archive.apache.org/dist/manifoldcf/apache-manifoldcf-${mcf.version}/apache-manifoldcf-${mcf.version}-bin.tar.gz 
+      		Datafari repo : http://repomcf.datafari.com/mcf/apache-manifoldcf-${mcf.version}-dev-bin-${mcf.commit.number}.tar.gz
+      		-->
+      			<url>http://repomcf.datafari.com/mcf/apache-manifoldcf-${mcf.version}-dev-bin-${mcf.commit.number}.tar.gz</url>
+      			<sha512>ef479fa768411d010ed1336f8e220115e892ddd645f1d2cb1e123eaf3471c4de036329ad3375f126a47a550acb022c0667b527818bbd3a676c7aa9376a264ae1</sha512>
+      			<unpack>true</unpack>
         </configuration>
       </execution>
   	</executions>

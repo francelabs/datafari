@@ -72,12 +72,12 @@
     <!-- Create dir for current MCF version -->
     <mkdir dir="${datafari.dependencies.main}/lib/org/apache/manifoldcf/mcf-core/${mcf.version}" />
     <!-- Copy the current MCF version libs -->
-    <copy toDir="${datafari.dependencies.main}/lib/org/apache/manifoldcf/mcf-core/${mcf.version}" overwrite="true" force="true">
-      <fileset dir="target/apache-manifoldcf-${mcf.version}/lib">
-          <include name="mcf-core*" />
-      </fileset>
-      <globmapper from="*.jar" to="*-${mcf.version}.jar" />
-    </copy>
+		<copy toDir="${datafari.dependencies.main}/lib/org/apache/manifoldcf/mcf-core/${mcf.version}" overwrite="true" force="true">
+					<fileset dir="target">
+		          <include name="apache-manifoldcf-${mcf.version}*/lib/**/mcf-core*" />
+		      </fileset>
+					<globmapper from="*.jar" to="mcf-core-${mcf.version}.jar" />
+		    </copy>
 
 	</target>
 

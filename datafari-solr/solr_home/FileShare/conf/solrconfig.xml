@@ -17,7 +17,7 @@
      For more details about configurations options that may appear in
      this file, see http://wiki.apache.org/solr/SolrConfigXml. 
 -->
-<!DOCTYPE config [ <!ENTITY custom_libs SYSTEM "./customs_solrconfig/custom_libs.incl"> <!ENTITY custom_search_handler SYSTEM "./customs_solrconfig/custom_search_handler.incl"> <!ENTITY custom_request_handlers SYSTEM "./customs_solrconfig/custom_request_handlers.incl"> <!ENTITY custom_search_components SYSTEM "./customs_solrconfig/custom_search_components.incl"> <!ENTITY custom_update_processors SYSTEM "./customs_solrconfig/custom_update_processors.incl"> <!ENTITY cdcr_source SYSTEM "./customs_solrconfig/cdcr_source.incl"> <!ENTITY cdcr_target SYSTEM "./customs_solrconfig/cdcr_target.incl"> ]>
+<!DOCTYPE config [ <!ENTITY custom_libs SYSTEM "./customs_solrconfig/custom_libs.incl"> <!ENTITY custom_search_handler SYSTEM "./customs_solrconfig/custom_search_handler.incl"> <!ENTITY custom_request_handlers SYSTEM "./customs_solrconfig/custom_request_handlers.incl"> <!ENTITY custom_search_components SYSTEM "./customs_solrconfig/custom_search_components.incl"> <!ENTITY custom_update_processors SYSTEM "./customs_solrconfig/custom_update_processors.incl">  ]>
 <config>
   <!-- In all configuration below, a prefix of "solr." for class names
        is an alias that causes solr to search appropriate packages,
@@ -831,8 +831,6 @@
        
   </requestHandler>
   
-&cdcr_source;
-&cdcr_target;
   <requestHandler class="com.francelabs.datafari.handler.parsed.ParsedRequestHandler" name="/update/no-tika" startup="lazy">
     <lst name="defaults">
 			<str name="lowernames">true</str>

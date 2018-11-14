@@ -21,6 +21,11 @@ public class FilerJob {
     orderedFilterRules.add(new FilerFilterRule(RuleType.EXCLUDE, FilterType.FILE, "*.lnk"));
     orderedFilterRules.add(new FilerFilterRule(RuleType.EXCLUDE, FilterType.FILE, "*.mat"));
     orderedFilterRules.add(new FilerFilterRule(RuleType.EXCLUDE, FilterType.FILE, "*.odb"));
+    orderedFilterRules.add(new FilerFilterRule(RuleType.EXCLUDE, FilterType.FILE, "*.zip"));
+    orderedFilterRules.add(new FilerFilterRule(RuleType.EXCLUDE, FilterType.FILE, "*.gz"));
+    orderedFilterRules.add(new FilerFilterRule(RuleType.EXCLUDE, FilterType.FILE, "*.rar"));
+    orderedFilterRules.add(new FilerFilterRule(RuleType.EXCLUDE, FilterType.FILE, "*.bz2"));
+    orderedFilterRules.add(new FilerFilterRule(RuleType.EXCLUDE, FilterType.FILE, "*.7z"));
   }
 
   public String getRepositoryConnection() {
