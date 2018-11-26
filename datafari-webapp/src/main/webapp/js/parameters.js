@@ -272,7 +272,7 @@ $(document).ready(function() {
 		$("#addAlertTable").append(tr);
 		tr = $("<tr style='display: none;'>");
 		tr.append("<td><label>"+window.i18n.msgStore['core']+"</label></td>");
-		tr.append("<td><input required type=\"text\" id=\"core\" name=\"core\" placeholder=\"Core\" value=\"FileShare\"/></td>");
+		tr.append("<td><input required type=\"text\" id=\"core\" name=\"core\" placeholder=\"Core\" value=\"@MAINCOLLECTION@\"/></td>");
 		$("#addAlertTable").append(tr);
 		tr = $("<tr>");
 		tr.append("<td><label>"+window.i18n.msgStore['frequency']+"</label></td>");

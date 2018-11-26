@@ -172,7 +172,7 @@ public class SearchProxy extends HttpServlet {
 
       try {
         final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
-        if (config.getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION)!= "" && config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS)!= "" && handler.equals("/select")) {
+        if ((!config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).equals("")) && handler.equals("/select")) {
           params.setParam("collection", config.getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION)+","+config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS));
 
         }

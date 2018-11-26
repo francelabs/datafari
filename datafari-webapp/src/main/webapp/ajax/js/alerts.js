@@ -106,7 +106,7 @@ function addAlerts(){
 	$("#fieldsAdd").append("</div>");
 	$("#fieldsAdd").append("<div class=\"form-group\" id=\"div2\">");
 	$("#div2").append("<label class=\"col-sm-2 control-label\">"+window.i18n.msgStore['core']+"</label>");
-	$("#div2").append("<input required type=\"text\" id=\"core\" name=\"core\" placeholder=\"Core\" value=\"FileShare\" class=\"col-sm-4\"/>");
+	$("#div2").append("<input required type=\"text\" id=\"core\" name=\"core\" placeholder=\"Core\" value=\"@MAINCOLLECTION@\" class=\"col-sm-4\"/>");
 	$("#fieldsAdd").append("</div>");
 	$("#fieldsAdd").append("<div class=\"form-group\" id=\"div21\">");
 	$("#div21").append("<label class=\"col-sm-2 control-label\">"+window.i18n.msgStore['frequency']+"</label>");

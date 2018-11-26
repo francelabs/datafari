@@ -84,7 +84,7 @@ public class ZooKeeperConf extends HttpServlet {
     List<String> collectionsList = null;
 
     final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
-    if (config.getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION)!= "" && config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS)!= "") {
+    if (!config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).equals("")) {
       collectionsList = Arrays.asList(config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).split(","));
     }
     IndexerServer server = null;
@@ -107,8 +107,11 @@ public class ZooKeeperConf extends HttpServlet {
         final File folderConf = new File(downloadFolder);
         FileUtils.cleanDirectory(folderConf);
         server.downloadConfig(Paths.get(downloadFolder), configName);
+        
       } else if (actionParam.toLowerCase().equals("upload")) {
         server.uploadConfig(Paths.get(env), configName);
+        
+     
       } else if (actionParam.toLowerCase().equals("reload")) {
         server.reloadCollection(Core.FILESHARE.toString());
         if (collectionsList != null) {
