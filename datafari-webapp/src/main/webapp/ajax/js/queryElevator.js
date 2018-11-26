@@ -4,7 +4,7 @@
 $(document).ready(function() {
 		setupLanguage();
 		fillQuerySelector();
-		var core = "FileShare";
+		var core = "@MAINCOLLECTION@";
 		
 		var input = $("#query-elevator_activation input");
 		

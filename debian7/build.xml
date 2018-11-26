@@ -101,8 +101,11 @@
 
 	<target name="tomcat-dev" depends="copyBinaries">
 		<copy todir="${project.dir}/tomcat-dev">
-    		<fileset dir="${installer.build.dir}/datafari/opt/datafari/tomcat"/>
-  		</copy>
+		    		<fileset dir="${installer.build.dir}/datafari/opt/datafari/tomcat"/>
+		  		</copy>
+				<copy file="${tomcat.src.dir}/conf/server.xml"
+				    		tofile="${project.dir}/tomcat-dev/conf/server.xml" overwrite="true" force="true" />
+		  		
 		<replace file="${project.dir}/tomcat-dev/conf/server.xml" >
 		  <replacefilter>
 		    <replacetoken>@TOMCAT_PORT@</replacetoken> 

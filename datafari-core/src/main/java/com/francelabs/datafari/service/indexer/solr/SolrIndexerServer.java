@@ -1,8 +1,10 @@
 package com.francelabs.datafari.service.indexer.solr;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +39,8 @@ import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.util.NamedList;
 import org.apache.solr.common.util.SimpleOrderedMap;
+import org.apache.solr.common.cloud.SolrZkClient;
+import org.apache.solr.common.cloud.ZkMaintenanceUtils;
 
 import com.francelabs.datafari.service.indexer.IndexerInputDocument;
 import com.francelabs.datafari.service.indexer.IndexerQuery;
@@ -63,6 +67,7 @@ public class SolrIndexerServer implements IndexerServer {
   private CloudSolrClient client;
   private ModifiedHttpSolrClient httpClient;
   private ZkClientClusterStateProvider zkManager;
+  private SolrZkClient zkClient;
 
   public SolrIndexerServer(final String core) throws Exception {
     // Zookeeper Hosts
@@ -90,6 +95,7 @@ public class SolrIndexerServer implements IndexerServer {
       httpClient = new ModifiedHttpSolrClient(solrUrl, HttpClientBuilder.create().build(), new XMLResponseParser(), true);
       httpClient.setUseMultiPartPost(true);
       zkManager = new ZkClientClusterStateProvider(zkHosts, null);
+      zkClient = new SolrZkClient(defaultZkHosts.get(0),60000);
       client.setDefaultCollection(core);
       final SolrPing ping = new SolrPing();
       client.request(ping);
@@ -101,6 +107,7 @@ public class SolrIndexerServer implements IndexerServer {
         httpClient = new ModifiedHttpSolrClient(solrUrl, HttpClientBuilder.create().build(), new XMLResponseParser(), true);
         httpClient.setUseMultiPartPost(true);
         zkManager = new ZkClientClusterStateProvider(defaultZkHosts, null);
+        zkClient = new SolrZkClient(defaultZkHosts.get(0),60000);
         client.setDefaultCollection(core);
         final SolrPing ping = new SolrPing();
         client.request(ping);
@@ -149,10 +156,29 @@ public class SolrIndexerServer implements IndexerServer {
   public void uploadConfig(final Path configPath, final String configName) throws IOException {
     zkManager.uploadConfig(configPath, configName);
   }
+  
+  @Override
+  public void uploadFile(final String localDirectory,final String fileToUpload,final String collection) throws IOException {
+    Path localPath = Paths.get(localDirectory+"/"+fileToUpload);
+    LOGGER.error("zkpath : "+"/configs/"+collection+"/"+fileToUpload);
+    LOGGER.error("localPath : "+localDirectory+fileToUpload);
+    ZkMaintenanceUtils.uploadToZK(zkClient, localPath, "/configs/"+collection+"/"+fileToUpload,null);
+    
+  }
+  
+  
+  @Override
+  public void downloadFile(final String localDirectory,final String fileToUpload,final String collection) throws IOException {
+    Path localPath = Paths.get(localDirectory+"/"+fileToUpload);
+    ZkMaintenanceUtils.downloadFromZK(zkClient, "/configs/"+collection+"/"+fileToUpload,localPath );
+    LOGGER.error("zkpath : "+"/configs/"+collection+"/"+fileToUpload);
+    LOGGER.error("localPath : "+localDirectory+fileToUpload);
+  }
 
   @Override
   public void downloadConfig(final Path configPath, final String configName) throws IOException {
     zkManager.downloadConfig(configName, configPath);
+    
   }
 
   @Override

@@ -683,7 +683,7 @@
    <!-- Includes custom search handler. You will have to comment the configuration of the search handler /select below -->
   &custom_search_handler;
       
-<requestHandler class="solr.SearchHandler" name="/select">
+<requestHandler class="solr.SearchHandler" name="/select" useParams="mySearch">
 	<lst name="defaults">
 		<str name="echoParams">explicit</str>
 		<str name="defType">edismax</str>
@@ -995,7 +995,7 @@
 				[default, jaspell-based] org.apache.solr.spelling.suggest.tst.TSTLookup [ternary 
 				trees] -->
 			<str name="field">suggest</str>  <!-- the indexed field to derive suggestions from -->
-			<float name="threshold">0.005</float>
+			<float name="threshold">${threshold:0.005}</float>
 			<str name="buildOnCommit">true</str>
 
 		</lst>

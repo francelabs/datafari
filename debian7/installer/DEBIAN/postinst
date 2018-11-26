@@ -82,6 +82,12 @@ if [ -e "$JAVA_HOME"/bin/java ]; then
   sed -i -e "s~@MAINCOLLECTION@~${collectionName}~g" /opt/datafari/tomcat/conf/datafari.properties
   sed -i -e "s~@MAINCOLLECTION@~${collectionName}~g" /opt/datafari/bin/common/config/manifoldcf/init/outputconnections/DatafariSolr.json
   sed -i -e "s~@MAINCOLLECTION@~${collectionName}~g" /opt/datafari/bin/common/config/manifoldcf/init/outputconnections/DatafariSolrNoTika.json
+  
+  sed -i -e "s~@MAINCOLLECTION@~${collectionName}~g" /opt/datafari/tomcat/webapps/Datafari/ajax/js/alerts.js
+  sed -i -e "s~@MAINCOLLECTION@~${collectionName}~g" /opt/datafari/tomcat/webapps/Datafari/js/parameters.js
+  sed -i -e "s~@MAINCOLLECTION@~${collectionName}~g" /opt/datafari/tomcat/webapps/Datafari/ajax/js/queryElevator.js
+  sed -i -e "s~@MAINCOLLECTION@~${collectionName}~g" /opt/datafari/tomcat/webapps/Datafari/js/AjaxFranceLabs/modules/QueryElevator.module.js
+  sed -i -e "s~@MAINCOLLECTION@~${collectionName}~g" /opt/datafari/tomcat/webapps/Datafari/ajax/SchemaAnalysis.html
 	
 	
 	id -u postgres >/dev/null 2>&1 || useradd postgres

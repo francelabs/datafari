@@ -2,8 +2,10 @@ package com.francelabs.datafari.service.indexer;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.common.cloud.ZkMaintenanceUtils;
 
 public interface IndexerServer {
 
@@ -24,8 +26,12 @@ public interface IndexerServer {
   public void processStatsResponse(final IndexerQueryResponse queryResponse);
 
   public void uploadConfig(Path configPath, String configName) throws IOException;
+  
+  public void uploadFile(final String localDirectory,final String fileToUpload,final String collection) throws IOException;
 
   public void downloadConfig(Path configPath, String configName) throws IOException;
+  
+  public void downloadFile(final String localDirectory, final String fileToUpload,final String collection) throws IOException ;
 
   public void reloadCollection(String collectionName) throws SolrServerException, IOException;
 

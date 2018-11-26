@@ -88,7 +88,7 @@ $(document).ready(function() {
 function cleanSem(type){
 	$.ajax({			//Ajax request to the doGet of the ModifyNodeContent servlet to release the semaphore
         type: "GET",
-        url: "./../admin/ModifyNodeContent",
+        url: "./../admin/RequestParams",
         data : "sem=sem&type="+type
 	 });
 }

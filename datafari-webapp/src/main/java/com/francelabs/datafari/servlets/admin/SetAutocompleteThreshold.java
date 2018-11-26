@@ -41,15 +41,15 @@ import com.francelabs.datafari.utils.SolrAPI;
 /**
  * Servlet implementation class GetFavorites
  */
-@WebServlet("/admin/SetHighlightInfos")
-public class SetHighlightInfos extends HttpServlet {
+@WebServlet("/admin/SetAutocompleteThreshold")
+public class SetAutocompleteThreshold extends HttpServlet {
   private static final long serialVersionUID = 1L;
-  private static final Logger logger = LogManager.getLogger(SetHighlightInfos.class.getName());
+  private static final Logger logger = LogManager.getLogger(SetAutocompleteThreshold.class.getName());
 
   /**
    * @see HttpServlet#HttpServlet()
    */
-  public SetHighlightInfos() {
+  public SetAutocompleteThreshold() {
     super();
     // TODO Auto-generated constructor stub
   }
@@ -72,14 +72,14 @@ public class SetHighlightInfos extends HttpServlet {
     final JSONObject jsonResponse = new JSONObject();
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
-    if (request.getParameter("maxAnalyzedChars") != null) {
-      logger.debug(request.getParameter("maxAnalyzedChars"));
-      
+    if (request.getParameter("autocompleteThreshold") != null) {
+      logger.debug("threshold"+request.getParameter("autocompleteThreshold"));
+      System.out.println(request.getParameter("autocompleteThreshold"));
     }
     
       
    try {
-    SolrAPI.setHLcharacters(Long.parseLong(request.getParameter("maxAnalyzedChars")));
+    SolrAPI.setAutocompleteThreshold(Double.parseDouble(request.getParameter("autocompleteThreshold")));
   } catch (NumberFormatException e) {
     // TODO Auto-generated catch block
     e.printStackTrace();

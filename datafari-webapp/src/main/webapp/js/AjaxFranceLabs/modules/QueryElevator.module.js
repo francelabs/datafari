@@ -18,7 +18,7 @@
 AjaxFranceLabs.QueryElevatorModule = AjaxFranceLabs.AbstractModule.extend({
 
 	//Variables
-	core : "FileShare",
+	core : "@MAINCOLLECTION@",
 	parentWidget : "",
 	activated : false,
 	isMobile : $(window).width()<800,

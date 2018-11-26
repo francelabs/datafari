@@ -222,6 +222,9 @@ init_solr()
   curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=@MAINCOLLECTION@&collection.configName=FileShare&numShards=${NUMSHARDS}&maxShardsPerNode=${NUMSHARDS}&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/FileShare/"
   curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=Statistics&collection.configName=Statistics&numShards=1&maxShardsPerNode=1&replicationFactor=1"
   curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=Promolink&collection.configName=Promolink&numShards=1&maxShardsPerNode=1&replicationFactor=1"
+  
+ 	curl -XPOST http://localhost:8983/solr/@MAINCOLLECTION@/config/params -H 'Content-type:application/json'  -d '{"set":{"mySearch":{"qf":"title_fr^50 title_en^50 content_fr^10 content_en^10 source^20 extension^30 id^3","pf":"title_en^500 title_fr^500 content_fr^100 content_en^100","hl.maxAnalyzedChars":51200}}}'
+	curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"autocomplete.threshold": 0.005}}' http://localhost:8983/solr/@MAINCOLLECTION@/config
 }
 
 stop_solr()

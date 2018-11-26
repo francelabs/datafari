@@ -62,10 +62,10 @@ import com.francelabs.datafari.utils.SolrConfiguration;
 /**
  * Servlet implementation class GetFavorites
  */
-@WebServlet("/GetHighlightInfos")
-public class GetHighlightInfos extends HttpServlet {
+@WebServlet("/GetAutocompleteThreshold")
+public class GetAutocompleteThreshold extends HttpServlet {
   private static final long serialVersionUID = 1L;
-  private static final Logger logger = LogManager.getLogger(GetHighlightInfos.class.getName());
+  private static final Logger logger = LogManager.getLogger(GetAutocompleteThreshold.class.getName());
 
   private final String DEFAULT_SOLR_SERVER = "localhost";
   private final String DEFAULT_SOLR_PORT = "8983";
@@ -79,7 +79,7 @@ public class GetHighlightInfos extends HttpServlet {
    * @throws IOException 
    * @see HttpServlet#HttpServlet()
    */
-  public GetHighlightInfos() throws IOException {
+  public GetAutocompleteThreshold() throws IOException {
     super();
    
     solrserver = SolrConfiguration.getInstance().getProperty(SolrConfiguration.SOLRHOST);
@@ -98,12 +98,12 @@ public class GetHighlightInfos extends HttpServlet {
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
 
-    long maxAnalyzedChars = 0;
+    double autocompleteThreshold = 0;
    JSONObject jsonresponse = new JSONObject();
     
     try {
-     jsonresponse =  SolrAPI.readConfig();
-     maxAnalyzedChars = SolrAPI.getHLcharacters(jsonresponse);
+     jsonresponse =  SolrAPI.readConfigOverlay();
+     autocompleteThreshold = SolrAPI.getAutocompleteThreshold(jsonresponse);
     } catch (ManifoldCFException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();
@@ -116,9 +116,9 @@ public class GetHighlightInfos extends HttpServlet {
     }
     // Perform retrieve operations to get the actual values
 
-    
+    logger.debug("overlay"+jsonresponse.toJSONString());
     // Write the values to the response object and send
-    jsonResponse.put("maxAnalyzedChars", maxAnalyzedChars);
+    jsonResponse.put("autoCompleteThreshold", autocompleteThreshold);
     jsonResponse.put("code", CodesReturned.ALLOK.getValue());
    
     final PrintWriter out = response.getWriter();

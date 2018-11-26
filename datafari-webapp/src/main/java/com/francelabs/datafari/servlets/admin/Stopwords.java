@@ -163,7 +163,8 @@ public class Stopwords extends HttpServlet {
           fooStream.write(myBytes); // rewrite the file
           fooStream.close();
           String[] params = {file.getName()};
-          server.uploadConfig(Paths.get(env),Core.FILESHARE.toString());
+          //server.uploadConfig(Paths.get(env),Core.FILESHARE.toString());
+          server.uploadFile(env,"stopwords_" + request.getParameter("language") + ".txt", Core.FILESHARE.toString());
           Thread.sleep(1000);
           server.reloadCollection(Core.FILESHARE.toString());
         } catch (final IOException e) {

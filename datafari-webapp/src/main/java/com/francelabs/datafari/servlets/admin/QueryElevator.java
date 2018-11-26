@@ -38,6 +38,8 @@ import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.jaxb.Elevate;
+import com.francelabs.datafari.service.indexer.IndexerServer;
+import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.utils.Environment;
@@ -161,6 +163,22 @@ public class QueryElevator extends HttpServlet {
    */
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    IndexerServer indexServer = null;
+    
+    
+    try {
+      indexServer = IndexerServerManager.getIndexerServer(Core.FILESHARE);
+    } catch (final IOException e1) {
+      final PrintWriter out = response.getWriter();
+      out.append("Error while getting the Solr core, please make sure the core has booted up. Error code : 69000");
+      out.close();
+      LOGGER.error("Error while getting the Solr core in doGet, admin servlet, make sure the core  has booted up and  that the code has been changed to match the changes. Error 69000 ", e1);
+      return;
+
+    } catch (final Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
     final JSONObject jsonResponse = new JSONObject();
@@ -253,6 +271,7 @@ public class QueryElevator extends HttpServlet {
         marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, new Boolean(true));
         final OutputStream os = new FileOutputStream(elevatorFile);
         marshal.marshal(elevate, os);
+        indexServer.uploadFile(env,"elevate.xml",Core.FILESHARE.toString());
 
       } catch (final Exception e) {
         jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
@@ -330,6 +349,7 @@ public class QueryElevator extends HttpServlet {
         marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, new Boolean(true));
         final OutputStream os = new FileOutputStream(elevatorFile);
         marshal.marshal(elevate, os);
+        indexServer.uploadFile(env,"elevate.xml",Core.FILESHARE.toString());
 
         // Set the response code
         jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());

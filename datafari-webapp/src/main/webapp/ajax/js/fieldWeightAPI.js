@@ -1,15 +1,16 @@
-//# sourceURL=/Datafari/ajax/js/autocompleteConfiguration.js
+//# sourceURL=/Datafari/ajax/js/fieldWeightAPI.js
 
 
 $(document).ready(function() {
 	//Internationalize content
 	document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
 	document.getElementById("topbar2").innerHTML = window.i18n.msgStore['adminUI-SearchEngineAdmin'];
-	document.getElementById("topbar3").innerHTML = window.i18n.msgStore['adminUI-AutocompleteConfig'];
-	document.getElementById("labelth").innerHTML = window.i18n.msgStore['labelth']+" : ";
+	document.getElementById("topbar3").innerHTML = window.i18n.msgStore['adminUI-FieldWeight'];
+	document.getElementById("labelth").innerHTML = window.i18n.msgStore['qf']+" : ";
+	document.getElementById("labelth2").innerHTML = window.i18n.msgStore['pf']+" : ";
 	document.getElementById("submitth").innerHTML = window.i18n.msgStore['confirm'];
 	$('#submitth').attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
-	document.getElementById("thname").innerHTML = window.i18n.msgStore['limitTH'];
+	document.getElementById("thname").innerHTML = window.i18n.msgStore['adminUI-FieldWeight'];
 	//Disable the input and submit
 	$('#submitth').attr("disabled", true);
 	$('#maxth').attr("disabled", true);
@@ -33,11 +34,12 @@ $(document).ready(function() {
 		}
 	});
 	//Get threshold value
-	$.get('../GetAutocompleteThreshold', function(data){
+	$.get('./FieldWeightAPI', function(data){
 		if(data.code == 0) { 
-			document.getElementById("autocompleteThreshold").value = data.autoCompleteThreshold;    
+			document.getElementById("qfAPI").value = data.qfAPI;
+			document.getElementById("pfAPI").value = data.pfAPI;
 			$('#submitth').attr("disabled", false);
-			$('#autoCompleteThreshold').attr("disabled", false);
+			$('#qfAPI').attr("disabled", false);
 		} else {
 			document.getElementById("globalAnswer").innerHTML = data;
 			$('#submitth').attr("disabled", true);
@@ -47,7 +49,8 @@ $(document).ready(function() {
 	//Sert the button to call the function set with the threshold parameter
 	$("#submitth").click(function(e){
 		e.preventDefault();
-		$.post('./SetAutocompleteThreshold', {autocompleteThreshold : document.getElementById("autocompleteThreshold").value }, function(data) {
+		
+		$.post('./FieldWeightAPI', {qfAPI : document.getElementById("qfAPI").value, pfAPI : document.getElementById("pfAPI").value }, function(data) {
 			if(data.code == 0) {
 				document.getElementById("answerth").innerHTML = window.i18n.msgStore['modifDoneImmediateEffect'];
 				$("#answerth").addClass("success");

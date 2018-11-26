@@ -191,7 +191,7 @@ public class Synonyms extends HttpServlet {
           return;
         }
         Files.move(tempFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        server.uploadConfig(Paths.get(env), Core.FILESHARE.toString());
+        server.uploadFile(env,"synonyms_" + language + ".txt", Core.FILESHARE.toString());
         Thread.sleep(1000);
         server.reloadCollection(Core.FILESHARE.toString());
       }
