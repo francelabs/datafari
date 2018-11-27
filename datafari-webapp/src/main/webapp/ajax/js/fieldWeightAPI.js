@@ -9,8 +9,13 @@ $(document).ready(function() {
 	document.getElementById("labelth").innerHTML = window.i18n.msgStore['qf']+" : ";
 	document.getElementById("labelth2").innerHTML = window.i18n.msgStore['pf']+" : ";
 	document.getElementById("submitth").innerHTML = window.i18n.msgStore['confirm'];
+	document.getElementById("submittab").innerHTML = window.i18n.msgStore['confirm'];
+	document.getElementById("addRow").innerHTML = window.i18n.msgStore['addField'];
+	document.getElementById("name").innerHTML = window.i18n.msgStore['field'];
+	document.getElementById("type").innerHTML = window.i18n.msgStore['fieldWeight'];
 	$('#submitth').attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
-	document.getElementById("thname").innerHTML = window.i18n.msgStore['adminUI-FieldWeight'];
+	document.getElementById("thname").innerHTML = window.i18n.msgStore['fieldWeightExpert'];
+	document.getElementById("thname2").innerHTML = window.i18n.msgStore['adminUI-FieldWeight'];
 	//Disable the input and submit
 	$('#submitth').attr("disabled", true);
 	$('#maxth').attr("disabled", true);
@@ -40,6 +45,23 @@ $(document).ready(function() {
 			document.getElementById("pfAPI").value = data.pfAPI;
 			$('#submitth').attr("disabled", false);
 			$('#qfAPI').attr("disabled", false);
+			var qfAPI = data.qfAPI;
+			qfAPI = qfAPI.trim();
+			var words = qfAPI.split(' ');
+			for(var i = 0 ; i < qfAPI.length ; i++){
+				if((words[i]!=undefined) && (!words[i].startsWith("code"))) {
+					var splitWord = words[i].split('^');
+
+
+					$("#tbody").append("<tr id='hello"+i+"'><th>"+splitWord[0]+"</th><th><input type='text'  id='qf"+splitWord[0]+"' name='qfAPI' value='"+splitWord[1]+"'></th>");
+
+				}
+				$("#tbody").append("</tr>");
+			}
+
+
+
+
 		} else {
 			document.getElementById("globalAnswer").innerHTML = data;
 			$('#submitth').attr("disabled", true);
@@ -49,10 +71,24 @@ $(document).ready(function() {
 	//Sert the button to call the function set with the threshold parameter
 	$("#submitth").click(function(e){
 		e.preventDefault();
-		
+
 		$.post('./FieldWeightAPI', {qfAPI : document.getElementById("qfAPI").value, pfAPI : document.getElementById("pfAPI").value }, function(data) {
 			if(data.code == 0) {
 				document.getElementById("answerth").innerHTML = window.i18n.msgStore['modifDoneImmediateEffect'];
+				var qfAPI = document.getElementById("qfAPI").value;
+				qfAPI = qfAPI.trim();
+				var words = qfAPI.split(' ');
+				$("#tbody").empty();
+				for(var i = 0 ; i < qfAPI.length ; i++){
+					if((words[i]!=undefined) && (!words[i].startsWith("code"))) {
+						var splitWord = words[i].split('^');
+
+
+						$("#tbody").append("<tr id='hello"+i+"'><th>"+splitWord[0]+"</th><th><input type='text'  id='qf"+splitWord[0]+"' name='qfAPI' value='"+splitWord[1]+"'></th>");
+
+					}
+					$("#tbody").append("</tr>");
+				}
 				$("#answerth").addClass("success");
 				$("#answerth").fadeOut(3000,function(){
 					$("#answerth").removeClass("success");
@@ -66,6 +102,113 @@ $(document).ready(function() {
 			}
 		}, "json");
 	});
+
+
+
+	$("#submittab").click(function(e){
+
+
+		var newQF ="";
+		var table = document.getElementById("tbody");
+		for (var i = 0, row; row = table.rows[i]; i++) {
+			var tempQF=""
+				//iterate through rows
+				// console.log(row.innerHTML);
+				//rows would be accessed using the "row" variable assigned in the for loop
+				//alert(row.innerHTML); 
+				console.log(row.getElementsByTagName("th")[0].innerHTML);
+			if (!(row.getElementsByTagName("th")[0].innerHTML.startsWith("<input"))){
+				tempQF = row.getElementsByTagName("th")[0].innerHTML;
+				console.log("tempQF1:"+tempQF)
+			}
+			currentTh = row.getElementsByTagName("th");
+			// console.log(row.getElementsByTagName("input")[0].value);
+			//console.log(currentTh.length);
+			for(j=0; j<currentTh.length; j++) {
+				//console.log(currentTh[j]);
+				if (currentTh[j].getElementsByTagName("input")[0]) {
+					console.log(currentTh[j].getElementsByTagName("input")[0].value);
+					if (tempQF != ""){
+						tempQF= tempQF+"^"+currentTh[j].getElementsByTagName("input")[0].value;
+					}
+					else {
+						tempQF= currentTh[j].getElementsByTagName("input")[0].value;
+					}
+					console.log("tempQF"+tempQF);
+				}
+			}
+			newQF= newQF+" "+tempQF;
+			newQF = newQF.trim();
+
+		}
+		console.log(newQF);
+
+		$.post('./FieldWeightAPI', {qfAPI : newQF, pfAPI : document.getElementById("pfAPI").value  }, function(data) {
+			if(data.code == 0) {
+				document.getElementById("answerth").innerHTML = window.i18n.msgStore['modifDoneImmediateEffect'];
+				document.getElementById("qfAPI").value = newQF;
+
+				$("#answerth").addClass("success");
+				$("#answerth").fadeOut(3000,function(){
+					$("#answerth").removeClass("success");
+					$("#answerth").html("");
+					$("#answerth").show();
+				});
+			} else {
+				document.getElementById("globalAnswer").innerHTML = data;
+				$('#submitth').attr("disabled", true);
+				$('#autocompleteThreshold').attr("disabled", true);
+			}
+		}, "json");
+	});
+
+
+	$("#submitth").click(function(e){
+		e.preventDefault();
+
+		$.post('./FieldWeightAPI', {qfAPI : document.getElementById("qfAPI").value, pfAPI : document.getElementById("pfAPI").value }, function(data) {
+			if(data.code == 0) {
+				document.getElementById("answerth").innerHTML = window.i18n.msgStore['modifDoneImmediateEffect'];
+				var qfAPI = document.getElementById("qfAPI").value;
+				qfAPI = qfAPI.trim();
+				var words = qfAPI.split(' ');
+				$("#tbody").empty();
+				for(var i = 0 ; i < qfAPI.length ; i++){
+					if((words[i]!=undefined) && (!words[i].startsWith("code"))) {
+						var splitWord = words[i].split('^');
+
+
+						$("#tbody").append("<tr id='hello"+i+"'><th>"+splitWord[0]+"</th><th><input type='text'  id='qf"+splitWord[0]+"' name='qfAPI' value='"+splitWord[1]+"'></th>");
+
+					}
+					$("#tbody").append("</tr>");
+				}
+				$("#answerth").addClass("success");
+				$("#answerth").fadeOut(3000,function(){
+					$("#answerth").removeClass("success");
+					$("#answerth").html("");
+					$("#answerth").show();
+				});
+			} else {
+				document.getElementById("globalAnswer").innerHTML = data;
+				$('#submitth').attr("disabled", true);
+				$('#autocompleteThreshold').attr("disabled", true);
+			}
+		}, "json");
+	});
+
+
+
+	$("#addRow").click(function(e){
+
+		var tabLength = document.getElementById("tableau").rows.length - 1;
+		console.log(tabLength);
+
+		$("#tbody").append("<tr id='hello"+tabLength+"'><th><input type='text' name='newRowField"+tabLength+"' id='newRowField"+tabLength+"' value=''></th><th><input type='text' id='newRowValue"+tabLength+"'  name='newRowValue"+tabLength+"'></th>");
+	});
+
+
+
 });
 
 
