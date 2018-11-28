@@ -51,6 +51,8 @@
     "adminUI-FacetConfig": "Configuration des facettes",
     "adminUI-Favorites": "Favoris",
     "adminUI-FieldWeight": "Pondération des champs",
+    "adminUI-FieldWeight-Error": "Tous les champs DOIVENT être remplis",
+    "adminUI-FieldWeight-Explanations": "The main fields are title_fr, title_en, content_en, content_fr, id, extension",
     "adminUI-GlobalDatafariErrorsStats": "Datafari Global - Statistiques d'Erreurs",
     "adminUI-IndexField": "Champs de l'index",
     "adminUI-Licence": "Licence",

@@ -51,6 +51,8 @@
     "adminUI-FacetConfig": "Configuração de Característica",
     "adminUI-Favorites": "Favoritos",
     "adminUI-FieldWeight": "Peso do Campo",
+    "adminUI-FieldWeight-Error": "All the form fields MUST have a value",
+    "adminUI-FieldWeight-Explanations": "The main fields are title_fr, title_en, content_en, content_fr, id, extension",
     "adminUI-GlobalDatafariErrorsStats": "Global Datafari - Errors Statistics",
     "adminUI-IndexField": "Campos de Indexação",
     "adminUI-Licence": "Licence",

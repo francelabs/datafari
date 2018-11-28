@@ -13,6 +13,7 @@ $(document).ready(function() {
 	document.getElementById("addRow").innerHTML = window.i18n.msgStore['addField'];
 	document.getElementById("name").innerHTML = window.i18n.msgStore['field'];
 	document.getElementById("type").innerHTML = window.i18n.msgStore['fieldWeight'];
+	document.getElementById("explanationsText").innerHTML = window.i18n.msgStore['adminUI-FieldWeight-Explanations'];
 	$('#submitth').attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
 	document.getElementById("thname").innerHTML = window.i18n.msgStore['fieldWeightExpert'];
 	document.getElementById("thname2").innerHTML = window.i18n.msgStore['adminUI-FieldWeight'];
@@ -53,7 +54,7 @@ $(document).ready(function() {
 					var splitWord = words[i].split('^');
 
 
-					$("#tbody").append("<tr id='hello"+i+"'><th>"+splitWord[0]+"</th><th><input type='text'  id='qf"+splitWord[0]+"' name='qfAPI' value='"+splitWord[1]+"'></th>");
+					$("#tbody").append("<tr id='"+i+"'><th>"+splitWord[0]+"</th><th><input type='text'  id='qf"+splitWord[0]+"' name='qfAPI' value='"+splitWord[1]+"'></th><th class=\"btn-danger text-center\"style=\"background-color : #d9534f; position : relative;\"><a href=\"javascript: remove("+i+")\" style=\"color: #FFFFFF; position: absolute;top: 50%;left: 50%; text-decoration: inherit; -ms-transform: translate(-50%,-50%); -webkit-transform: translate(-50%,-50%); transform: translate(-50%,-50%);\"><i class=\"fa fa-trash-o\" ></i></a></th>");
 
 				}
 				$("#tbody").append("</tr>");
@@ -84,7 +85,7 @@ $(document).ready(function() {
 						var splitWord = words[i].split('^');
 
 
-						$("#tbody").append("<tr id='hello"+i+"'><th>"+splitWord[0]+"</th><th><input type='text'  id='qf"+splitWord[0]+"' name='qfAPI' value='"+splitWord[1]+"'></th>");
+						$("#tbody").append("<tr id='"+i+"'><th>"+splitWord[0]+"</th><th><input type='text'  id='qf"+splitWord[0]+"' name='qfAPI' value='"+splitWord[1]+"'></th><th class=\"btn-danger text-center\"style=\"background-color : #d9534f; position : relative;\"><a href=\"javascript: remove("+i+")\" style=\"color: #FFFFFF; position: absolute;top: 50%;left: 50%; text-decoration: inherit; -ms-transform: translate(-50%,-50%); -webkit-transform: translate(-50%,-50%); transform: translate(-50%,-50%);\"><i class=\"fa fa-trash-o\" ></i></a></th>");
 
 					}
 					$("#tbody").append("</tr>");
@@ -112,36 +113,41 @@ $(document).ready(function() {
 		var table = document.getElementById("tbody");
 		for (var i = 0, row; row = table.rows[i]; i++) {
 			var tempQF=""
-				//iterate through rows
-				// console.log(row.innerHTML);
-				//rows would be accessed using the "row" variable assigned in the for loop
-				//alert(row.innerHTML); 
-				console.log(row.getElementsByTagName("th")[0].innerHTML);
-			if (!(row.getElementsByTagName("th")[0].innerHTML.startsWith("<input"))){
+				
+				
+			if ( (!(row.getElementsByTagName("th")[0].innerHTML.startsWith("<input"))) && (row.getElementsByTagName("th")[0] != "") && (row.getElementsByTagName("th")[0] != undefined))  {
 				tempQF = row.getElementsByTagName("th")[0].innerHTML;
-				console.log("tempQF1:"+tempQF)
 			}
 			currentTh = row.getElementsByTagName("th");
-			// console.log(row.getElementsByTagName("input")[0].value);
-			//console.log(currentTh.length);
+			
 			for(j=0; j<currentTh.length; j++) {
-				//console.log(currentTh[j]);
+				
 				if (currentTh[j].getElementsByTagName("input")[0]) {
-					console.log(currentTh[j].getElementsByTagName("input")[0].value);
-					if (tempQF != ""){
-						tempQF= tempQF+"^"+currentTh[j].getElementsByTagName("input")[0].value;
+					
+					if ((currentTh[j].getElementsByTagName("input")[0].value != "")&& (currentTh[j].getElementsByTagName("input")[0].value != undefined)){
+						if (tempQF != ""){
+							tempQF= tempQF+"^"+currentTh[j].getElementsByTagName("input")[0].value;
+						}
+						else {
+							tempQF= currentTh[j].getElementsByTagName("input")[0].value;
+						}
 					}
-					else {
-						tempQF= currentTh[j].getElementsByTagName("input")[0].value;
-					}
-					console.log("tempQF"+tempQF);
+					
 				}
+			}
+			
+			if ( (tempQF.match("^[a-zA-Z]")) && (tempQF.match("[0-9]$"))){
+		        
+		    }
+			else {
+				alert(window.i18n.msgStore['adminUI-FieldWeight-Error']);
+				return;
 			}
 			newQF= newQF+" "+tempQF;
 			newQF = newQF.trim();
 
 		}
-		console.log(newQF);
+		
 
 		$.post('./FieldWeightAPI', {qfAPI : newQF, pfAPI : document.getElementById("pfAPI").value  }, function(data) {
 			if(data.code == 0) {
@@ -178,7 +184,7 @@ $(document).ready(function() {
 						var splitWord = words[i].split('^');
 
 
-						$("#tbody").append("<tr id='hello"+i+"'><th>"+splitWord[0]+"</th><th><input type='text'  id='qf"+splitWord[0]+"' name='qfAPI' value='"+splitWord[1]+"'></th>");
+						$("#tbody").append("<tr id='"+i+"'><th>"+splitWord[0]+"</th><th><input type='text'  id='qf"+splitWord[0]+"' name='qfAPI' value='"+splitWord[1]+"'></th>");
 
 					}
 					$("#tbody").append("</tr>");
@@ -202,16 +208,33 @@ $(document).ready(function() {
 	$("#addRow").click(function(e){
 
 		var tabLength = document.getElementById("tableau").rows.length - 1;
-		console.log(tabLength);
+		
 
-		$("#tbody").append("<tr id='hello"+tabLength+"'><th><input type='text' name='newRowField"+tabLength+"' id='newRowField"+tabLength+"' value=''></th><th><input type='text' id='newRowValue"+tabLength+"'  name='newRowValue"+tabLength+"'></th>");
+		var  tab=document.getElementById("tableau");
+
+		rws=tab.getElementsByTagName('TR');
+		var tabLastId = rws[rws.length-1].id;
+		var tabid = Number(tabLastId)+1;
+
+		
+
+		$("#tbody").append("<tr id='"+tabid+"'><th><input type='text' name='newRowField"+tabid+"' id='newRowField"+tabLength+"' value=''></th><th><input type='text' id='newRowValue"+tabid+"'  name='newRowValue"+tabid+"' value='0'></th><th class=\"btn-danger text-center\"style=\"background-color : #d9534f; position : relative;\"><a href=\"javascript: remove("+tabid+")\" style=\"color: #FFFFFF; position: absolute;top: 50%;left: 50%; text-decoration: inherit; -ms-transform: translate(-50%,-50%); -webkit-transform: translate(-50%,-50%); transform: translate(-50%,-50%);\"><i class=\"fa fa-trash-o\" ></i></a></th>");
 	});
+
+
 
 
 
 });
 
+function myFunction(b) {
+    document.getElementById("myText").value = "black";
+}
 
+function remove(i){
+	var line = document.getElementById(i);
+	line.parentNode.removeChild(line);
+}
 
 
 function get(type){

@@ -51,6 +51,8 @@
     "adminUI-FacetConfig": "Конфигурация шаблонов",
     "adminUI-Favorites": "Избранное",
     "adminUI-FieldWeight": "Веса полей",
+    "adminUI-FieldWeight-Error": "All the form fields MUST have a value",
+    "adminUI-FieldWeight-Explanations": "The main fields are title_fr, title_en, content_en, content_fr, id, extension",
     "adminUI-GlobalDatafariErrorsStats": "Global Datafari - Errors Statistics",
     "adminUI-IndexField": "Поля индекса",
     "adminUI-Licence": "Licence",
