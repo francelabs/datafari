@@ -39,13 +39,12 @@ AjaxFranceLabs.LoginDatafariLinksWidget = AjaxFranceLabs.AbstractWidget.extend({
     }
 
     // If user is already connected
-    var loginDatafariLinksDOMElement = $(this.elm).find('a#userPreferencesLink');
+    var loginDatafariLinksDOMElement = $(this.elm).find('a#dropdown-search-tools');
     if (loginDatafariLinksDOMElement.length > 0){
-      let text = window.i18n.msgStore['userPreferencesLink'];
+      let text = window.i18n.msgStore['searchToolsLink'];
       if (text) {
         loginDatafariLinksDOMElement.html(text);
       }
-      loginDatafariLinksDOMElement.prop("href", "/Datafari/Search?lang=" + window.i18n.language + "#lang");
     }
 
     // If user is already connected
