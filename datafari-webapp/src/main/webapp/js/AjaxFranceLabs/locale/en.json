@@ -441,6 +441,7 @@
     "SERVERNOTCONNECTED": "You're not connected. Please reload the page",
     "SERVERPROBLEMCONNECTIONDB": "The database doesn't respond to server. Please retry later",
     "servers": "Servers",
+    "session-expired" : "Session expired !",
     "settings": "Settings",
     "signin": "Log In",
     "signout": "Sign Out",

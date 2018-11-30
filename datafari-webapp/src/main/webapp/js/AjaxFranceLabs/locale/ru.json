@@ -442,6 +442,7 @@
     "SERVERNOTCONNECTED": "Вы не подключены. Попробуйте обновить страницу.",
     "SERVERPROBLEMCONNECTIONDB": "База данных не отвечает. Поробуйте позднее",
     "servers": "Серверы",
+    "session-expired" : "Session expired !",
     "settings": "Установки",
     "signin": "Войти",
     "signout": "Выйти",

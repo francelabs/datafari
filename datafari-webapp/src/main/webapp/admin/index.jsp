@@ -10,6 +10,7 @@
 		<meta name="author" content="Admin Datafari">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script type="text/javascript">var secondsBeforeExpire = ${pageContext.session.maxInactiveInterval};</script>
 		<link rel="stylesheet" type="text/css" href="../css/mainbis.css" media="screen" />
 		<link href="../plugins/bootstrap/bootstrap.css" rel="stylesheet">
 		<link href="../plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet">
@@ -326,5 +327,6 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 <!-- JS library useful to extract parameters value from URL  -->
 <script type ="text/javascript" src ="../js/url.min.js"></script>
 <script type ="text/javascript" src ="./i18nAdminIndex.js"></script>
+<script type="text/javascript" src="./sessionTimeout.js"></script>
 </body>
 </html>

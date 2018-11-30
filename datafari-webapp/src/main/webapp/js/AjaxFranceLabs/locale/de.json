@@ -440,6 +440,7 @@
     "SERVERNOTCONNECTED": "Du bist nicht verbunden. Lade die Seite neu",
     "SERVERPROBLEMCONNECTIONDB": "Die Datenbank antwortet nicht auf den Server. Versuche es später noch einmal",
     "servers": "Server",
+    "session-expired" : "Session expired !",
     "settings": "Einsellungen",
     "signin": "Login",
     "signout": "Logout",
