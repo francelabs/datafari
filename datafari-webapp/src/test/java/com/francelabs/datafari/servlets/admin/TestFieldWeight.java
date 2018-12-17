@@ -43,6 +43,7 @@ public class TestFieldWeight {
     // set datafari_home to temp dir
     PowerMockito.mockStatic(Environment.class);
     Mockito.when(Environment.getEnvironmentVariable("DATAFARI_HOME")).thenReturn(tempDirectory.toFile().getAbsolutePath());
+    Mockito.when(Environment.getEnvironmentVariable("MAIN_DATAFARI_CONFIG_HOME")).thenReturn(tempDirectory.toFile().getAbsolutePath());
   }
 
   @Test

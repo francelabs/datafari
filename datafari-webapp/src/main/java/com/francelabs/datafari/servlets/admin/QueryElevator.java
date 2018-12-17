@@ -72,15 +72,13 @@ public class QueryElevator extends HttpServlet {
   }
 
   /**
-   * Try to find a query tag in the provided elevate, corresponding to the
-   * provided query text
+   * Try to find a query tag in the provided elevate, corresponding to the provided query text
    *
    * @param elevate
    *          the elevate object (JAXB representation of the elevate.xml file)
    * @param queryText
    *          the query text to search
-   * @return the {@link Elevate.Query} object if found in the elevate object,
-   *         null otherwise
+   * @return the {@link Elevate.Query} object if found in the elevate object, null otherwise
    */
   private Elevate.Query findQuery(final Elevate elevate, final String queryText) {
     for (final Elevate.Query q : elevate.getQuery()) {
@@ -111,8 +109,7 @@ public class QueryElevator extends HttpServlet {
 
   /**
    * @throws IOException
-   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-   *      response)
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
    */
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
@@ -158,14 +155,12 @@ public class QueryElevator extends HttpServlet {
 
   /**
    * @throws IOException
-   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-   *      response)
+   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
    */
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     IndexerServer indexServer = null;
-    
-    
+
     try {
       indexServer = IndexerServerManager.getIndexerServer(Core.FILESHARE);
     } catch (final IOException e1) {
@@ -271,7 +266,7 @@ public class QueryElevator extends HttpServlet {
         marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, new Boolean(true));
         final OutputStream os = new FileOutputStream(elevatorFile);
         marshal.marshal(elevate, os);
-        indexServer.uploadFile(env,"elevate.xml",Core.FILESHARE.toString());
+        indexServer.uploadFile(env, "elevate.xml", Core.FILESHARE.toString());
 
       } catch (final Exception e) {
         jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
@@ -349,7 +344,7 @@ public class QueryElevator extends HttpServlet {
         marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, new Boolean(true));
         final OutputStream os = new FileOutputStream(elevatorFile);
         marshal.marshal(elevate, os);
-        indexServer.uploadFile(env,"elevate.xml",Core.FILESHARE.toString());
+        indexServer.uploadFile(env, "elevate.xml", Core.FILESHARE.toString());
 
         // Set the response code
         jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
