@@ -10,17 +10,14 @@ import org.apache.logging.log4j.Logger;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.DriverException;
 import com.datastax.driver.core.utils.UUIDs;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 
-public class AlertDataService {
+public class AlertDataService extends CassandraService {
 
   public static final String ALERTCOLLECTION = "alerts";
-
-  private final Session session;
 
   private static AlertDataService instance;
 
@@ -38,13 +35,8 @@ public class AlertDataService {
     if (instance == null) {
       instance = new AlertDataService();
     }
+    instance.refreshSession();
     return instance;
-  }
-
-  public AlertDataService() {
-
-    // Gets the name of the collection
-    session = CassandraManager.getInstance().getSession();
   }
 
   public void deleteAlert(final String id) throws DatafariServerException {

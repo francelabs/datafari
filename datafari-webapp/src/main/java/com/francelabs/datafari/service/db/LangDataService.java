@@ -15,19 +15,16 @@
  *******************************************************************************/
 package com.francelabs.datafari.service.db;
 
-import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.DriverException;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 
-public class LangDataService {
+public class LangDataService extends CassandraService {
 
   final static Logger logger = LogManager.getLogger(LangDataService.class.getName());
 
@@ -37,25 +34,18 @@ public class LangDataService {
 
   private static LangDataService instance;
 
-  private final Session session;
-
   public static synchronized LangDataService getInstance() throws DatafariServerException {
     try {
       if (instance == null) {
         instance = new LangDataService();
       }
+      instance.refreshSession();
       return instance;
-    } catch (DriverException | IOException e) {
+    } catch (final DriverException e) {
       logger.warn("Unable to get instance : " + e.getMessage());
       // TODO catch specific exception
       throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
-  }
-
-  public LangDataService() throws IOException {
-    // Gets the name of the collection
-    session = CassandraManager.getInstance().getSession();
-
   }
 
   /**

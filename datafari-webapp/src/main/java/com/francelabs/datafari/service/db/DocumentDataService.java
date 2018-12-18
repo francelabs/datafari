@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.francelabs.datafari.service.db;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,12 +26,11 @@ import org.json.simple.parser.ParseException;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.DriverException;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 
-public class DocumentDataService {
+public class DocumentDataService extends CassandraService {
 
   final static Logger logger = LogManager.getLogger(DocumentDataService.class.getName());
 
@@ -46,25 +44,18 @@ public class DocumentDataService {
 
   private static DocumentDataService instance;
 
-  private final Session session;
-
   public static synchronized DocumentDataService getInstance() throws DatafariServerException {
     try {
       if (instance == null) {
         instance = new DocumentDataService();
       }
+      instance.refreshSession();
       return instance;
-    } catch (DriverException | IOException e) {
+    } catch (final DriverException e) {
       logger.warn("Unable to get instance : " + e.getMessage());
       // TODO catch specific exception
       throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
-  }
-
-  public DocumentDataService() throws IOException {
-    // Gets the name of the collection
-    session = CassandraManager.getInstance().getSession();
-
   }
 
   /**
@@ -74,8 +65,7 @@ public class DocumentDataService {
    *          of the user
    * @param idDocument
    *          the id that should be liked
-   * @return Like.ALREADYPERFORMED if the like was already done, CodesUser.ALLOK
-   *         if all was ok
+   * @return Like.ALREADYPERFORMED if the like was already done, CodesUser.ALLOK if all was ok
    */
   public void addLike(final String username, final String idDocument) throws DatafariServerException {
     try {
@@ -96,8 +86,7 @@ public class DocumentDataService {
    *          of the user who unlike a document
    * @param idDocument
    *          the id that should be unliked
-   * @return Like.ALREADYPERFORMED if the like was already done, Like.ALLOK if
-   *         all was ok and Like.CodesReturned.CASSANDRAN if there's an error
+   * @return Like.ALREADYPERFORMED if the like was already done, Like.ALLOK if all was ok and Like.CodesReturned.CASSANDRAN if there's an error
    * @throws DatafariServerException
    */
   public void unlike(final String username, final String idDocument) throws DatafariServerException {
@@ -117,8 +106,7 @@ public class DocumentDataService {
    * @param username
    *          of the user
    * @param documentIDs
-   * @return an array list of all the the likes of the user. Return null if
-   *         there's an error.
+   * @return an array list of all the the likes of the user. Return null if there's an error.
    */
   public List<String> getLikes(final String username, final String[] documentIDs) throws DatafariServerException {
     try {
@@ -150,8 +138,7 @@ public class DocumentDataService {
    * Delete all likes of a user without deleting also his favorites
    *
    * @param username
-   * @return CodesReturned.ALLOK if the operation was success and
-   *         CodesReturned.PROBLEMCONNECTIONDATABASE
+   * @return CodesReturned.ALLOK if the operation was success and CodesReturned.PROBLEMCONNECTIONDATABASE
    */
   public void removeLikes(final String username) throws DatafariServerException {
     try {
@@ -218,8 +205,7 @@ public class DocumentDataService {
    *          of the user
    * @param documentIDs
    *          : list of document id to check (if null, check all)
-   * @return an array list of all the favorites document of the user. Return
-   *         null if there's an error.
+   * @return an array list of all the favorites document of the user. Return null if there's an error.
    * @throws DatafariServerException
    */
   public List<String> getFavorites(final String username, final String[] documentIDs) throws DatafariServerException {
@@ -256,8 +242,7 @@ public class DocumentDataService {
    * Delete all favorites of a user without deleting also his likes
    *
    * @param username
-   * @return CodesReturned.ALLOK if the operation was success and
-   *         CodesReturned.PROBLEMCONNECTIONMONGODB if the mongoDB isn't running
+   * @return CodesReturned.ALLOK if the operation was success and CodesReturned.PROBLEMCONNECTIONMONGODB if the mongoDB isn't running
    * @throws DatafariServerException
    */
   public void removeFavorites(final String username) throws DatafariServerException {

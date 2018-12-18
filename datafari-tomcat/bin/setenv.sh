@@ -8,3 +8,6 @@ LOGGING_CONFIG="-Dlog4j.configurationFile=$TOMCAT_HOME/conf/log4j2.properties.xm
 LOGGING_MANAGER="-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager"
 # Set CATALINA_OPTS
 CATALINA_OPTS="${SOLRCLOUDOPTION} -Dorg.apache.manifoldcf.configfile=../../mcf/mcf_home/properties.xml -server -Xms1024m -Xmx1024m"
+
+# Set redefine JAVA_OPTS
+JAVA_OPTS="-Duser.timezone=UTC"
