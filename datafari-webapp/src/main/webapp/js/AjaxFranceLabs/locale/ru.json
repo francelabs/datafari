@@ -345,6 +345,7 @@
     "nbResultsToExport-label": "Number of results to export",
     "nextExecution": "Следующее выполнение",
     "no": "нет",
+    "no-licence": "This is the Community Edition, some features are locked but it can be used without any time restrictions or limit on indexed documents",
     "no_save_needed": "Does not require a save",
     "noAlerts": "Нет уведомлений",
     "noClicksQueries": "Запросы без кликов",

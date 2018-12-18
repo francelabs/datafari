@@ -294,12 +294,29 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						 <span id="userManagement-AdminUI" class="hidden-xs"></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li id="ADConfiguration"><a id="ADConfig-AdminUI" class="ajax-link" href="./ajax/ldapConfiguration.html"></a></li>
 						<li id="modifyUser"><a id="modifyUsers-AdminUI" class="ajax-link" href="./ajax/modifyUsers.html"></a></li>
 						<li id="modifyDepartment"><a id="modifyDepartment-AdminUI" class="ajax-link" href="./ajax/userDepartment.html"></a></li>
 						<li id="addUser"><a id="addUser-AdminUI" class="ajax-link" href="./ajax/addUser.html"></a></li>
 					</ul>
 				</li>
+				
+				<li class="dropdown" id="activeDirectoryManagement">
+          <a href="#" class="dropdown-toggle">
+          <i class="fa fa-address-book"></i>
+             <span id="activeDirectoryManagement-AdminUI" class="hidden-xs"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li id="ADConfiguration"><a id="ADConfig-AdminUI" class="ajax-link" href="./ajax/ldapConfiguration.html"></a></li>
+            <li id="testADAuthority"><a id="testADAuthority-AdminUI" class="ajax-link" href="./ajax/testADAuthority.html"></a></li>
+          </ul>
+        </li>
+        
+        <li id="Licence">
+          <a href="./ajax/licence.html" class="ajax-link">
+            <i class="fa fa-barcode"></i>
+             <span id="licence-AdminUI" class="hidden-xs"></span>
+          </a>
+        </li>
 <%
 	}
 }
