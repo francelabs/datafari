@@ -268,7 +268,7 @@
 	.searchBarWidget .searchBar input[type=text] { position:absolute;height: 100%; width:78%; padding: 0px;padding-left:2%; border: none; outline:none;  }
 
 	.searchBarWidget .searchBar .search {  border: none; cursor: pointer; display: block; float: right;-webkit-appearance: none; border-radius: 0;
-		height:100%; width:20%;
+		height:100%; width:10%;
 		text-align:center;
 		-webkit-border-radius:0px;
 		line-height:2.5em;
@@ -522,8 +522,8 @@
  	#results_div{ margin-top: 20px; }
 
  	#searchBar #logo_desktop{ display: none; }
-
- 	#searchBar div.searchBar{ margin-top: 35px; }
+ 	
+ 	#status-div { display: none; }
 
  	#connectionLink{
  		margin-top: 5px !important;
@@ -876,7 +876,7 @@
 	.resultWidget .doc .res .tags { margin-top: 6px; }
 	.resultWidget .bar-loader { display:block; height:32px; margin: auto; width:32px; }
 	.resultWidget .res .moreLikeThis { cursor:pointer; }
-	.resultWidget .res .title{margin-left: 6%;}
+	.resultWidget .res .title{margin-left: 50%;}
 	#results .res .icon{display: inline-block;position: absolute;top: 2%;width: 4.5%;}
 	/**************************************/
 
