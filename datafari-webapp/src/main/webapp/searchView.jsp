@@ -16,6 +16,7 @@
 <link rel="stylesheet" type="text/css" href="css/animate.min.css" />
 <link rel="stylesheet" type="text/css" href="css/results.css" />
 <link rel="stylesheet" type ="text/css" href="css/font-awesome/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="css/searchView-status-bar.css" />
 <script type="text/javascript" src="js/history.ielte7.min.js"></script>
 <script type="text/javascript" src="js/jquery-1.8.1.min.js"></script>
 <!-- comment the tag bellow if you don't use illustrate mode for desktop and mobile -->
@@ -188,19 +189,16 @@
 		<div id="facet_type_mobile"></div>
   </div>
 	<div id="solr">
-    <div class="row">
-      <div class="col-sm-2"></div>
-  		<div id="searchBar" class="col-sm-8">
+    <div class="search-view-ui search-view-header">
+      <div id="searchBar" class="search-view-header">
         <a id="logo_desktop" href="../Datafari/Search">
           <img src="css/images/logo_zebre.png"/>
         </a>
       </div>
-      <div class="col-sm-2"></div>
     </div>
-    <div class="row">
-      <div id="search_information" class="col-sm-3"></div>
-      <div class="col-sm-3"></div>
-      <div id="results_action" class="col-sm-6">
+    <div id="status-div" class="search-view-ui search-view-header">
+      <div id="search_information"></div>
+      <div id="results_action">
         <!-- Enable the SaveSearch widget if the user is authenticated -->
         <%
           if (request.getUserPrincipal() != null) {

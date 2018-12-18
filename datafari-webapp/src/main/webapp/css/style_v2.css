@@ -103,7 +103,6 @@ a.show-sidebar:hover {
   transition: 0.1s;
 }
 #content {
-  position: relative;
   z-index: 10;
   background: #F0F0F0;
   box-shadow: 0 0 6px #000;
@@ -332,7 +331,6 @@ a.show-sidebar:hover {
 }
 .box {
   display: block;
-  z-index: 1999;
   position: relative;
   border: 1px solid #ccc;
   background: transparent;

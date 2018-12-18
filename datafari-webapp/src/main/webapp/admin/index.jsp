@@ -25,6 +25,25 @@
 		<link href="../plugins/CLEditor/jquery.cleditor.css" rel="stylesheet">
 		<Link rel="stylesheet" href="../css/animate.min.css"/>
 		<script type="text/javascript" src="../js/polyfill.js"></script>
+		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+		<!--<script src="http://code.jquery.com/jquery.js"></script>-->
+		<script src="../plugins/jquery/jquery.min.js"></script>
+		<script src="../plugins/CLEditor/jquery.cleditor.js"></script>
+		<script src="../plugins/CLEditor/jquery.cleditor.min.js"></script>
+		<script src="../plugins/justified-gallery/jquery.justifiedGallery.min.js"></script>
+		<script src="../plugins/jquery-ui/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="../js/logout.js"></script>
+		<script src="./../plugins/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.js"></script>
+		<!-- Include all compiled plugins (below), or include individual files as needed -->
+		<script src="../plugins/bootstrap/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../js/AjaxFranceLabs/i18njs.js"></script>
+		<script src="./i18nInit.js" ></script>
+		<!-- All functions for this theme + document.ready processing -->
+		<script src="../js/devoops.js"></script>
+		<!-- JS library useful to extract parameters value from URL  -->
+		<script type ="text/javascript" src ="../js/url.min.js"></script>
+		<script type ="text/javascript" src ="./i18nAdminIndex.js"></script>
+		<script type="text/javascript" src="./sessionTimeout.js"></script>
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
 				<script src="http://getbootstrap.com/docs-assets/js/html5shiv.js"></script>
@@ -166,15 +185,15 @@
 <!-- 						<span id="myAccount-AdminUI" class="hidden-xs"></span> -->
 <!-- 					</a> -->
 <!-- 					<ul class="dropdown-menu"> -->
-<!-- 						<li id="Alerts"><a id="alerts-AdminUI" class="ajax-link" href="../ajax/Alerts.html"></a></li> -->
-<!-- 						<li id="LikesAndFavorites"><a id="favorites-AdminUI" class="ajax-link" href="../ajax/getFavorites.html"></a></li> -->
-<!-- 						<li id="SavedSearches"><a id="searches-AdminUI" class="ajax-link" href="../ajax/getSearches.html"></a></li> -->
+<!-- 						<li id="Alerts"><a id="alerts-AdminUI" class="ajax-link" href="./ajax/Alerts.html"></a></li> -->
+<!-- 						<li id="LikesAndFavorites"><a id="favorites-AdminUI" class="ajax-link" href="./ajax/getFavorites.html"></a></li> -->
+<!-- 						<li id="SavedSearches"><a id="searches-AdminUI" class="ajax-link" href="./ajax/getSearches.html"></a></li> -->
 <!-- 					</ul> -->
 <!-- 				</li> -->
 <%
 if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrator")){
 %>
-<!-- 					<a href="../ajax/dashboard.html" class="ajax-link"> <i -->
+<!-- 					<a href="./ajax/dashboard.html" class="ajax-link"> <i -->
 				<li class="dropdown" id="Connectors">
 					<a href="#" class="dropdown-toggle">
 						<i class="fa fa-arrows-alt"></i>
@@ -184,9 +203,9 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						<li id="MCFAdminUI">
 							<a target="_blank" href="/datafari-mcf-crawler-ui/" id="MCFAdmin-AdminUI"></a>
 						</li>
-						<li id="MCFBackupRestore"><a id="MCFBackupRestore-AdminUI" class="ajax-link" href="../ajax/mcfBackupRestore.html"></a></li>
-						<li id="MCFChangePassword" ><a id="MCFPassword-AdminUI" class="ajax-link" href="../ajax/MCFChangePassword.html"></a></li>
-						<li id="MCFSimplified"><a id="MCFSimplified-AdminUI" class="ajax-link" href="../ajax/mcfSimplified.html"></a></li>
+						<li id="MCFBackupRestore"><a id="MCFBackupRestore-AdminUI" class="ajax-link" href="./ajax/mcfBackupRestore.html"></a></li>
+						<li id="MCFChangePassword" ><a id="MCFPassword-AdminUI" class="ajax-link" href="./ajax/MCFChangePassword.html"></a></li>
+						<li id="MCFSimplified"><a id="MCFSimplified-AdminUI" class="ajax-link" href="./ajax/mcfSimplified.html"></a></li>
 					</ul>
 				</li>
 				
@@ -196,9 +215,9 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
              <span id="usagesAnalysis-AdminUI" class="hidden-xs"></span>
           </a>
           <ul class="dropdown-menu">
-            <li id="CorpusAnalysis"><a id="corpusAnalysis-AdminUI" class="ajax-link" href="../ajax/corpusAnalysis.html"></a></li>
-            <li id="CorpusOTAnalysis"><a id="corpusOTAnalysis-AdminUI" class="ajax-link" href="../ajax/corpusOTAnalysis.html"></a></li>
-            <li id="QueriesAnalysis"><a id="queriesAnalysis-AdminUI" class="ajax-link" href="../ajax/queriesAnalysis.html"></a></li>
+            <li id="CorpusAnalysis"><a id="corpusAnalysis-AdminUI" class="ajax-link" href="./ajax/corpusAnalysis.html"></a></li>
+            <li id="CorpusOTAnalysis"><a id="corpusOTAnalysis-AdminUI" class="ajax-link" href="./ajax/corpusOTAnalysis.html"></a></li>
+            <li id="QueriesAnalysis"><a id="queriesAnalysis-AdminUI" class="ajax-link" href="./ajax/queriesAnalysis.html"></a></li>
           </ul>
         </li>
         
@@ -208,9 +227,9 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
             <span id="systemAnalysis-AdminUI" class="hidden-xs"></span>
           </a>
           <ul class="dropdown-menu">
-           <li id="ProblematicFiles"><a id="problematicFiles-AdminUI" class="ajax-link" href="../ajax/problematicFiles.html"></a></li>
-	         <li id="LogsAnalysis"><a id="logsAnalysis-AdminUI" class="ajax-link" href="../ajax/logsAnalysis.html"></a></li>
-	         <li id="downloadLogs"><a id="downloadLogs-AdminUI" class="ajax-link" href="../ajax/downloadLogs.html"></a></li>
+           <li id="ProblematicFiles"><a id="problematicFiles-AdminUI" class="ajax-link" href="./ajax/problematicFiles.html"></a></li>
+	         <li id="LogsAnalysis"><a id="logsAnalysis-AdminUI" class="ajax-link" href="./ajax/logsAnalysis.html"></a></li>
+	         <li id="downloadLogs"><a id="downloadLogs-AdminUI" class="ajax-link" href="./ajax/downloadLogs.html"></a></li>
           </ul>
         </li>
         
@@ -220,18 +239,18 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						 <span id="searchEngineAdmin-AdminUI" class="hidden-xs"></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li id="SolrAdmin"><a id="solrAdmin-AdminUI" class="ajax-link" href="../ajax/solr.html"></a></li>
-						<li id="AlertAdmin"><a id="alertAdmin-AdminUI" class="ajax-link" href="../ajax/alertsAdmin.html"></a></li>
-						<li id="IndexField"><a id="indexField-AdminUI" class="ajax-link" href="../ajax/IndexField.html"></a></li>
-						<li id="SchemaAnalysis"><a id="schemaAnalysis-AdminUI" class="ajax-link" href="../ajax/SchemaAnalysis.html"></a></li>
+						<li id="SolrAdmin"><a id="solrAdmin-AdminUI" class="ajax-link" href="./ajax/solr.html"></a></li>
+						<li id="AlertAdmin"><a id="alertAdmin-AdminUI" class="ajax-link" href="./ajax/alertsAdmin.html"></a></li>
+						<li id="IndexField"><a id="indexField-AdminUI" class="ajax-link" href="./ajax/IndexField.html"></a></li>
+						<li id="SchemaAnalysis"><a id="schemaAnalysis-AdminUI" class="ajax-link" href="./ajax/SchemaAnalysis.html"></a></li>
 <%
 	if(request.isUserInRole("SearchAdministrator")){
-%>          <li id="ELKConfiguration"><a id="elkConfiguration-AdminUI" class="ajax-link" href="../ajax/elkConfiguration.html"></a></li>
+%>          <li id="ELKConfiguration"><a id="elkConfiguration-AdminUI" class="ajax-link" href="./ajax/elkConfiguration.html"></a></li>
 <%
 	}
 %>
-            <li id="SizeLimitation"><a id="sizeLimitation-AdminUI" class="ajax-link" href="../ajax/SizeLimitations.html"></a></li>
-            <li id="AutocompleteConfiguration"><a id="autocompleteConfig-AdminUI" class="ajax-link" href="../ajax/AutocompleteConfiguration.html"></a></li>
+            <li id="SizeLimitation"><a id="sizeLimitation-AdminUI" class="ajax-link" href="./ajax/SizeLimitations.html"></a></li>
+            <li id="AutocompleteConfiguration"><a id="autocompleteConfig-AdminUI" class="ajax-link" href="./ajax/AutocompleteConfiguration.html"></a></li>
 					</ul>
 				</li>
 				<li class="dropdown" id="Conf">
@@ -240,20 +259,20 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						 <span id="searchEngineConfig-AdminUI" class="hidden-xs"></span>
 					</a>
 					<ul class="dropdown-menu">
-					  <li id="DepartmentSearchConf"><a id="departmentSearchConf-AdminUI" class="ajax-link" href="../ajax/departmentSearchConf.html"></a></li>
- 						<li id="QueryElevator"><a id="queryElevator-AdminUI" class="ajax-link" href="../ajax/queryElevator.html"></a></li>
-						<li id="PromoLink"><a id="promoLinks-AdminUI" class="ajax-link" href="../ajax/promoLinks.html"></a></li>
-						<li id="Synonyms" ><a id="synonyms-AdminUI" class="ajax-link" href="../ajax/Synonyms.html"></a></li>
- 						<li id="Stopwords"><a id="stopwords-AdminUI" class="ajax-link" href="../ajax/StopWords.html"></a></li>
-						<li id="Protwords"><a id="protwords-AdminUI" class="ajax-link" href="../ajax/ProtWords.html"></a></li>
-						<!--<li id="FieldWeight"><a id="fieldWeight-AdminUI" class="ajax-link" href="../ajax/FieldWeight.html"></a></li>-->
-						<li id="FieldWeightAPI"><a id="fieldWeightAPI-AdminUI" class="ajax-link" href="../ajax/FieldWeightAPI.html"></a></li>
-						<li id="FacetConfig"><a id="facetConfig-AdminUI" class="ajax-link" href="../ajax/FacetConfig.html"></a></li>
-						<li id="Deduplication"><a id="deduplication-AdminUI" class="ajax-link" href="../ajax/config_deduplication.html"></a></li>
+					  <li id="DepartmentSearchConf"><a id="departmentSearchConf-AdminUI" class="ajax-link" href="./ajax/departmentSearchConf.html"></a></li>
+ 						<li id="QueryElevator"><a id="queryElevator-AdminUI" class="ajax-link" href="./ajax/queryElevator.html"></a></li>
+						<li id="PromoLink"><a id="promoLinks-AdminUI" class="ajax-link" href="./ajax/promoLinks.html"></a></li>
+						<li id="Synonyms" ><a id="synonyms-AdminUI" class="ajax-link" href="./ajax/Synonyms.html"></a></li>
+ 						<li id="Stopwords"><a id="stopwords-AdminUI" class="ajax-link" href="./ajax/StopWords.html"></a></li>
+						<li id="Protwords"><a id="protwords-AdminUI" class="ajax-link" href="./ajax/ProtWords.html"></a></li>
+						<!--<li id="FieldWeight"><a id="fieldWeight-AdminUI" class="ajax-link" href="./ajax/FieldWeight.html"></a></li>-->
+						<li id="FieldWeightAPI"><a id="fieldWeightAPI-AdminUI" class="ajax-link" href="./ajax/FieldWeightAPI.html"></a></li>
+						<li id="FacetConfig"><a id="facetConfig-AdminUI" class="ajax-link" href="./ajax/FacetConfig.html"></a></li>
+						<li id="Deduplication"><a id="deduplication-AdminUI" class="ajax-link" href="./ajax/config_deduplication.html"></a></li>
 
-						<li id="LikesAndFavorites"><a id="likesFavoritesSearchEng-AdminUI" class="ajax-link" href="../ajax/config_likesAndFavorites.html"></a></li>
-						<li id="RelevancySetupFile"><a id="relevancySetupFile-AdminUI" class="ajax-link" href="../ajax/relevancyFile.html"></a></li>
-						<li id="Zookeeper"><a id="zookeeper-AdminUI" class="ajax-link" href="../ajax/config_zookeeper.html"></a></li>
+						<li id="LikesAndFavorites"><a id="likesFavoritesSearchEng-AdminUI" class="ajax-link" href="./ajax/config_likesAndFavorites.html"></a></li>
+						<li id="RelevancySetupFile"><a id="relevancySetupFile-AdminUI" class="ajax-link" href="./ajax/relevancyFile.html"></a></li>
+						<li id="Zookeeper"><a id="zookeeper-AdminUI" class="ajax-link" href="./ajax/config_zookeeper.html"></a></li>
 					</ul>
 				</li>
 <%
@@ -265,7 +284,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						 <span id="servers-AdminUI" class="hidden-xs"></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li id="Tomcat"><a class="ajax-link" href="../ajax/Tomcat.html">Tomcat</a></li>
+						<li id="Tomcat"><a class="ajax-link" href="./ajax/Tomcat.html">Tomcat</a></li>
 					</ul>
 				</li>
 
@@ -275,10 +294,10 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						 <span id="userManagement-AdminUI" class="hidden-xs"></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li id="ADConfiguration"><a id="ADConfig-AdminUI" class="ajax-link" href="../ajax/ldapConfiguration.html"></a></li>
-						<li id="modifyUser"><a id="modifyUsers-AdminUI" class="ajax-link" href="../ajax/modifyUsers.html"></a></li>
-						<li id="modifyDepartment"><a id="modifyDepartment-AdminUI" class="ajax-link" href="../ajax/userDepartment.html"></a></li>
-						<li id="addUser"><a id="addUser-AdminUI" class="ajax-link" href="../ajax/addUser.html"></a></li>
+						<li id="ADConfiguration"><a id="ADConfig-AdminUI" class="ajax-link" href="./ajax/ldapConfiguration.html"></a></li>
+						<li id="modifyUser"><a id="modifyUsers-AdminUI" class="ajax-link" href="./ajax/modifyUsers.html"></a></li>
+						<li id="modifyDepartment"><a id="modifyDepartment-AdminUI" class="ajax-link" href="./ajax/userDepartment.html"></a></li>
+						<li id="addUser"><a id="addUser-AdminUI" class="ajax-link" href="./ajax/addUser.html"></a></li>
 					</ul>
 				</li>
 <%
@@ -291,7 +310,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 			</ul>
 		</div>
 		<!--Start Content-->
-		<div id="content" class="col-xs-12 col-sm-10">
+		<div id="content" style="min-height: 1px;padding-right: 15px;padding-left: 15px;">
 			<div id="about">
 				<div class="about-inner">
 					<h4 class="page-header">Open-source admin theme for you</h4>
@@ -309,24 +328,5 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 	</div>
 </div>
 <!--End Container-->
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<!--<script src="http://code.jquery.com/jquery.js"></script>-->
-<script src="../plugins/jquery/jquery.min.js"></script>
-<script src="../plugins/CLEditor/jquery.cleditor.js"></script>
-<script src="../plugins/CLEditor/jquery.cleditor.min.js"></script>
-<script src="../plugins/justified-gallery/jquery.justifiedGallery.min.js"></script>
-<script src="../plugins/jquery-ui/jquery-ui.min.js"></script>
-<script type="text/javascript" src="../js/logout.js"></script>
-<script src="./../plugins/jquery-ui-timepicker-addon/jquery-ui-timepicker-addon.js"></script>
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="../plugins/bootstrap/bootstrap.min.js"></script>
-<script type="text/javascript" src="../js/AjaxFranceLabs/i18njs.js"></script>
-<script src="./i18nInit.js" ></script>
-<!-- All functions for this theme + document.ready processing -->
-<script src="../js/devoops.js"></script>
-<!-- JS library useful to extract parameters value from URL  -->
-<script type ="text/javascript" src ="../js/url.min.js"></script>
-<script type ="text/javascript" src ="./i18nAdminIndex.js"></script>
-<script type="text/javascript" src="./sessionTimeout.js"></script>
 </body>
 </html>

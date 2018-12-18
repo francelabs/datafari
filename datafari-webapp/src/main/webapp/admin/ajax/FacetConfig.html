@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="./ajax/js/facetConfig.js"></script>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<!--Start Breadcrumb-->
+	<div class="row">
+		<div id="breadcrumb" class="col-xs-12">
+			<a href="#" class="show-sidebar"> <i class="fa fa-bars"></i>
+			</a>
+			<ol class="breadcrumb pull-left">
+				<li><a id="topbar1" class="indexAdminUIBreadcrumbLink"></a></li>
+				<li><a id="topbar2" href="#"></a></li>
+				<li><a id="topbar3" href="#"></a></li>
+			</ol>
+		</div>
+	</div>
+	<!--End Breadcrumb-->
+	<fieldset id="alphafeature"><legend>!! This feature is experimental. It will be fully supported in the next version of Datafari !!</legend></fieldset>
+	<div class="col-sm-12"><span id="fileAlready"></span></div><br/>
+	<div class="col-sm-12"><span id="globalAnswer"></span></div><br/>
+	<div class="box">
+		<div class="box-header">
+			<div class="box-name">
+				<i class="fa fa-table"></i><span  id="addfacetname"></span>
+			</div>
+			<div class="box-icons">
+				<a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+			</div>
+			<div class="no-move"></div>
+		</div>
+		<div id="addFacetBox" class="box-content">
+			<form class="form-horizontal" role="form" id="form">
+			<div class="form-group" >
+				<label id="labelSelect" class="col-sm-1 control-label"></label>
+				<div class="col-sm-3">
+					<select id="addselect" class="form-control" onclick="activateSubmit()">
+					<option></option>
+					</select>
+				</div>
+				<div class="col-sm-3">
+				<label class="control-label" id="paginLegend"></label>
+				<input type="checkbox" id="pagination">
+				</div>
+				<div class="col-sm-3">
+				<label class="control-label" id="selectTypeLegend"></label>
+				<input type="checkbox" id="selectType">
+				</div>
+				</div>
+			<div class="form-group">
+				<div class="col-sm-4">
+				<label class="control-label" id="frNameLegend"></label>
+				<input type="text" id="frName">
+				</div>
+				<div class="col-sm-4">
+				<label class="control-label" id="enNameLegend"></label>
+				<input type="text" id="enName">
+				</div>
+				<div class="col-sm-1"></div>
+				<input type="submit" id="addsubmit" name="addsubmit" class="btn btn-primary btn-label-left col-sm-2">
+			</div>
+			</form>
+		</div>
+	</div>
+	<div class="box">
+		<div class="box-header">
+			<div class="box-name">
+				<i class="fa fa-table"></i><span  id="addqueryfacetname"></span>
+			</div>
+			<div class="box-icons">
+				<a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+			</div>
+			<div class="no-move"></div>
+		</div>
+		<div id="addQueryFacetBox" class="box-content">
+			<form class="form-horizontal" role="form" id="queryform">
+			<div class="form-group" >
+				<label id="querylabelSelect" class="col-sm-1 control-label"></label>
+				<div class="col-sm-3">
+					<select id="addqueryselect" class="form-control" onclick="activatequerySubmit()">
+					<option></option>
+					</select>
+				</div>
+				<div class="col-sm-3">
+				<label class="control-label" id="queryPaginLegend"></label>
+				<input type="checkbox" id="queryPagination">
+				</div>
+				<div class="col-sm-3">
+				<label class="control-label" id="querySelectTypeLegend"></label>
+				<input type="checkbox" id="querySelectType">
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-4">
+				<label class="control-label" id="queryfrNameLegend"></label>
+				<input type="text" id="queryFrName">
+				</div>
+				<div class="col-sm-4">
+				<label class="control-label" id="queryenNameLegend"></label>
+				<input type="text" id="queryEnName">
+				</div>
+				<div class="col-sm-1"></div>
+			</div>
+			<div class="form-group" id="queries">
+				<div class="form-group">
+					<div class="col-sm-4">
+						<label class="control-label" id="query1Legend"></label>
+						<input type="text" id="query1" >
+					</div>
+					<div class="col-sm-4">
+						<label class="control-label" id="query1LabelLegendEn"></label>
+						<input type="text" id="query1LabelEn" >
+					</div>
+					<div class="col-sm-4">
+						<label class="control-label" id="query1LabelLegendFr"></label>
+						<input type="text" id="query1LabelFr" >
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-4">
+					<label class="control-label" id="addqueryLegend"></label>
+					<button id="addquery" class="fa fa-plus"></button>
+				</div>
+				<div class="col-sm-6">
+					<input type="submit" id="queryaddsubmit" name="queryaddsubmit" class="btn btn-primary btn-label-left col-sm-4">
+				</div>
+			</div>
+			</form>
+		</div>
+	</div>
+	<div class="box">
+		<div class="box-header">
+			<div class="box-name">
+				<i class="fa fa-table"></i><span  id="tablename"></span>
+			</div>
+			<div class="box-icons">
+			<a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+			</div>
+			<div class="no-move"></div>
+		</div>
+		<div id="tableBox" class="box-content">
+			<form class="form-horizontal" role="form">
+			<table class="table table-striped table-bordered table-hover table-heading no-border-bottom">
+			<thead id="thead"><tr><th id="order"></th><th id="field"></th><th></th>
+			<tbody id="tbody" ></tbody>
+			</table>
+			<div class="col-sm-4"></div>
+			<input type="submit" id="changeOrder" name="changeOrder" class="btn btn-primary btn-label-left col-sm-4">
+			<div class="col-sm-4"></div><br><br>
+			</form>
+		</div>
+	</div>
+</body>
+<style>
+[draggable] {-moz-user-select: none;
+	        			  -khtml-user-select: none;
+	        			  -webkit-user-select: none;
+	        			  user-select: none;
+	        			  /* Required to make elements draggable in old WebKit */
+	        			  -khtml-user-drag: element;
+	        			  -webkit-user-drag: element;
+	        			  }
+</style>
+</html>

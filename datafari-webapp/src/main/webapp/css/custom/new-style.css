@@ -264,7 +264,6 @@
   body #tab_line {
     margin-bottom: 5px;
     border-bottom: 1px solid #e4e4e4;
-    width: 98%;
     margin-left: 11px;
 
     /*! Onglet utilisé */ }
@@ -438,7 +437,7 @@
       margin-bottom: 40px;
       width: 100%; }
     body .searchBarWidget {
-      margin-bottom: 10px;
+      margin-bottom: 2em;
       height: 5em;
       width: 100%;
        }
@@ -446,9 +445,10 @@
         min-width: 750px; }
       body .searchBarWidget .searchBar {
         text-align: left;
-        width: calc(99% - 75px);
+        width: 100%;
         margin:auto;
-        height: 30px;
+        margin-left: 1em;
+        height: 100%;
         border: 1px solid #fbfbfb;
         transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
         -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
@@ -852,15 +852,6 @@
 #param-content:after {
   display: table;
   content: " "; }
-
-/* Langues */
-.head-title {
-  background-image: url("../../images/patern-barre.png");
-  background-position: center center;
-  background-repeat: repeat-x;
-  height: 23px;
-  margin-left: 0 !important;
-  margin-bottom: 20px !important; }
 
 #param-content-title {
   color: #444;
