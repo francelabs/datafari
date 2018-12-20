@@ -211,10 +211,10 @@
         %>
       </div>
     </div>
-		<div id="advancedSearch"> <a href="../Datafari/Search"><img src="css/images/logo_zebre.png"/></a></div>
-		<div id="parametersUi" style="display: none;"><jsp:include page="parameters.jsp" /></div>
-		<div id="favoritesUi" style="display: none;"><jsp:include page="favorites.jsp" /></div>
-		<div id="results_div">
+		<div id="advancedSearch" class ="header-menu-ui force-hide"></div>
+		<div id="parametersUi" class ="header-menu-ui force-hide"><jsp:include page="parameters.jsp" /></div>
+		<div id="favoritesUi" class ="header-menu-ui force-hide"><jsp:include page="favorites.jsp" /></div>
+		<div id="results_div" class="search-view-ui">
 			<div id="results_nav_mobile"  class="bc-color">
 				<div id="number_results_mobile"><span></span></div>
 				<div id="nav_facets_mobile"><a href="#facets_mobile"><i class="fa fa-bars"></i> </a></div>

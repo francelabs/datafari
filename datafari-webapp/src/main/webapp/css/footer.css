@@ -1,0 +1,17 @@
+#footer-bar {
+  display: flex;
+}
+
+#footer-logo {
+  margin-top: auto;
+	margin-bottom: auto;
+}
+
+#footer-link {
+	margin-top: auto;
+  margin-bottom: auto;
+  margin-left: 1em;
+  text-align: center;
+  height: 1em;
+  line-height: 1em;
+}

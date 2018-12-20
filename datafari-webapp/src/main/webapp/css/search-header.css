@@ -1,0 +1,19 @@
+.head-title {
+  background-image: url("../images/patern-barre.png");
+  background-position: center center;
+  background-repeat: repeat-x;
+  height: 23px;
+  margin-left: 0 !important;
+  margin-bottom: 20px !important; 
+}
+
+.header-sub-menu-label {
+	background-color: #FFF;
+	display: inline-block;
+	font-family: "HelveticaNeueW02-67MdCn 694060", Helvetica, Arial, sans-serif;
+	font-size: 20px;
+	text-transform: uppercase;
+	margin-left: 0;
+	padding-right: 10px;
+	width: auto;
+}

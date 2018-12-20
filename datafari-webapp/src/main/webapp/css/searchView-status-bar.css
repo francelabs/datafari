@@ -1,3 +1,7 @@
+.force-hide {
+	display : none !important;
+}
+
 .search-view-header {
 	display: flex;
 }

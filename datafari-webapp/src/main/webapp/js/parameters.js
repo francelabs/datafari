@@ -39,20 +39,11 @@ var alertsTable;
 var searchesTable;
 
 function initParametersUI() {
-  $("#parametersUi").show();
-  $("#results_div").hide();
-  $("#search_information").hide();
-  $("#results_action").hide();
-  $("#save_search").hide();
-  $("#advancedSearch").hide();
-  $("#favoritesUi").hide();
-  $("#searchBar").show();
+  hideSearchView();
   clearActiveLinks();
   $("#dropdown-search-tools").addClass("active");
-}
-
-function clearActiveLinks() {
-  $("#loginDatafariLinks").find(".active").removeClass("active");
+  $("#parametersUi").removeClass('force-hide');
+  $("#dropdown-search-tools").addClass("active");
 }
 
 function retrieveParamValue() {

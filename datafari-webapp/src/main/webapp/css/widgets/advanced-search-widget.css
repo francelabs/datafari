@@ -94,13 +94,15 @@
     color: white;
 }
 
-.advancedSearchWidget .advTable .title {
-    background-color: #FFF;
-    font-family: "HelveticaNeueW02-67MdCn 694060", Helvetica, Arial, sans-serif;
-    font-size: 20px;
-    text-transform: uppercase;
-    margin-left: 0;
-    width: 12em;
+#advancedSeach-label {
+	background-color: #FFF;
+	display: inline-block;
+	font-family: "HelveticaNeueW02-67MdCn 694060", Helvetica, Arial, sans-serif;
+	font-size: 20px;
+	text-transform: uppercase;
+	margin-left: 0;
+	padding-right: 10px;
+	width: auto;
 }
 
 .advancedSearchWidget .advTable .left {

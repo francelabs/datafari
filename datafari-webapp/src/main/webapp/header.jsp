@@ -2,8 +2,10 @@
   pageEncoding="utf-8"%>
 <%@ page import="com.francelabs.datafari.utils.*"%>
 <%@ page import="java.util.ArrayList"%>
+<link rel="stylesheet" type ="text/css" href="css/search-header.css">
 <!-- Logout.js used by admin/index.jsp as well -->
 <script type="text/javascript" src="js/logout.js"></script>
+<script type="text/javascript" src="js/search-header.js"></script>
 <script type="text/javascript">
   var langHeader = new Array();
     <%

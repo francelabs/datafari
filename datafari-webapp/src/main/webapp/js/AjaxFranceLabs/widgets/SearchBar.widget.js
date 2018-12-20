@@ -163,25 +163,14 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 
       $('#advancedSearchLink').click(function(event) {
 
-        destroyDatatables();
-
         // Hide other UIs
-        $("#results_div").hide();
-        $("#parametersUi").hide();
-        $("#favoritesUi").hide();
-        $("#search_information").hide();
-        $("#results_action").hide();
-        $("#save_search").hide();
-        $("#loginDatafariLinks").find(".active").removeClass("active");
+        hideSearchView();
+        clearActiveLinks();
 
         // Make the link active
         $("#dropdown-search-tools").addClass("active");
 
-        // Hide the basic search
-        elm.hide();
-
-        // Hide the results UI
-        $("#results_div").hide();
+        destroyDatatables();
 
         // Reset the widget status (radios, entered text, ...)
         self.manager.getWidgetByID('advancedSearch').reset();
@@ -190,7 +179,7 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
         self.manager.getWidgetByID('advancedSearch').buildStartingUI();
 
         // Display the advanced search
-        $('#advancedSearch').show();
+        $('#advancedSearch').removeClass('force-hide');
 
         // Perform a "select all" request: *:*
         // self.manager.makeDefaultRequest();
@@ -271,15 +260,8 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
     if (typeof destroyDatatables !== "undefined") {
       destroyDatatables();
     }
-    $('#searchBar').show();
-    $("#results_div").show();
-    $("#search_information").show();
-    $("#save_search").show();
-    $("#results_action").show();
-    $("#advancedSearch").hide();
-    $("#parametersUi").hide();
-    $("#favoritesUi").hide();
-    $("#loginDatafariLinks").find(".active").removeClass("active");
+    displaySearchView();
+    clearActiveLinks();
     $("#basicSearchLink").addClass("active");
   },
 
