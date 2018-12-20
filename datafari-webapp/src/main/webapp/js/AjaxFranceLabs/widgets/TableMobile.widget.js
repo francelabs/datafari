@@ -39,15 +39,15 @@ AjaxFranceLabs.TableMobileWidget = AjaxFranceLabs.AbstractFacetWidget
         elm.hide();
         elm.addClass('facet').addClass('tableWidget').addClass('widget').attr('widgetId', this.id).append('<ul class="ultest"">');
         if (this.name != null) {
-          elm.prepend('<div class="facetName label">').find('.facetName').append('<i class="fa fa-chevron-down">').append('<span class="label la">')
-              .find('.label.la').append(this.name);
+          elm.prepend('<div class="facetName">').find('.facetName').append('<i class="fa fa-chevron-down">').append('<span class="label la">').find(
+              '.label.la').append(this.name);
           elm.find('.facetName').toggle(function() {
-            $('.facetSort, ul, .pagerModule.show', $(this).parents('.tableWidget')).show();
+            $('.facetSort, ul, .pagerModule.show', $(this).parents('.tableWidget')).hide();
             elm.find(".facetName i").removeClass('fa-chevron-down').addClass('fa-chevron-up ' + animation).on(endAnimationEvents, function() {
               $(this).removeClass(animation);
             });
           }, function() {
-            $('.facetSort, ul, .pagerModule.show', $(this).parents('.tableWidget')).hide();
+            $('.facetSort, ul, .pagerModule.show', $(this).parents('.tableWidget')).show();
             elm.find(".facetName i").removeClass('fa-chevron-up').addClass(animation + ' fa-chevron-down').on(endAnimationEvents, function() {
               $(this).removeClass(animation);
             });

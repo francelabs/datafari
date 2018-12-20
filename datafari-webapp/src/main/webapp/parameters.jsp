@@ -8,7 +8,6 @@
 <div class="head-title"><span id="param-label"></span></div>
 <div id="left-menu">
 	<ul id="param-list">
-		<li><a id="lang-link"><span class="link-icon">></span><span id="lang-label" class='link-label'></span></a></li>
 		<li><a id="alert-link"><span class="link-icon">></span><span id="alert-label" class='link-label'></span></a></li>
 	</ul>
 </div>

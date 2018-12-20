@@ -1,18 +1,15 @@
-/*******************************************************************************
+/*****************************************************************************************************************************************************
  * Copyright 2015 - 2016 France Labs
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations
+ * under the License.
+ ****************************************************************************************************************************************************/
 
 AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 
@@ -54,7 +51,8 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
       });
       var query = $('.searchBar input[type=text]').val();
 
-      window.history.pushState('Object', 'Title', window.location.pathname + '?searchType=' + searchType + '&query=' + query + '&lang=' + window.i18n.language);
+      window.history.pushState('Object', 'Title', window.location.pathname + '?searchType=' + searchType + '&query=' + query + '&lang='
+          + window.i18n.language);
 
       Manager.store.addByValue("id", UUID.generate());
     }
@@ -83,22 +81,25 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
     $("#results_action").append('<span id="sortMode" class="pull-right"></div>');
     elm.find('#searchBarContent').append('<div class="searchBar"></div>');
 
-    elm.find('.searchBar').append('<input type="text" autocorrect="off" autocapitalize="off"/>').append('<div class="search bc-color"><i class="fa fa-search"></i></div>');
+    elm.find('.searchBar').append('<input type="text" autocorrect="off" autocapitalize="off"/>').append(
+        '<div class="search bc-color"><i class="fa fa-search"></i></div>');
     if (this.removeContentButton)
-      elm.find('.searchBar').append('<span class="removeContent"></span>').find('.removeContent').css('display', 'none').append('<span>X</span>').click(function() {
-        elm.find('.searchBar input[type=text]').val('');
-        $(this).css('display', 'none');
-        self.makeRequest();
-      });
+      elm.find('.searchBar').append('<span class="removeContent"></span>').find('.removeContent').css('display', 'none').append('<span>X</span>')
+          .click(function() {
+            elm.find('.searchBar input[type=text]').val('');
+            $(this).css('display', 'none');
+            self.makeRequest();
+          });
 
     elm.find('.searchMode').append('<div></div>').append('<div></div>').append('<div></div>').append('<div></div>');
-    elm.find('.searchMode div').attr('style', 'display: inline').append('<input type="radio" name="searchType" class="radio" />').append('<label></label>');
-    elm.find('.searchMode div:eq(0)').find('input').attr('value', 'allWords').attr('checked', 'true').attr('id', 'allWords').parent().find('label').attr('for', 'allWords').append(
-        '<span>&nbsp;</span>').append(window.i18n.msgStore['allWords']);
-    elm.find('.searchMode div:eq(1)').find('input').attr('value', 'atLeastOneWord').attr('id', 'atLeastOneWord').parent().find('label').attr('for', 'atLeastOneWord').append('<span>&nbsp;</span>')
-        .append(window.i18n.msgStore['atLeastOneWord']);
-    elm.find('.searchMode div:eq(2)').find('input').attr('value', 'exactExpression').attr('id', 'exactExpression').parent().find('label').attr('for', 'exactExpression').append('<span>&nbsp;</span>')
-        .append(window.i18n.msgStore['exactExpression']);
+    elm.find('.searchMode div').attr('style', 'display: inline').append('<input type="radio" name="searchType" class="radio" />').append(
+        '<label></label>');
+    elm.find('.searchMode div:eq(0)').find('input').attr('value', 'allWords').attr('checked', 'true').attr('id', 'allWords').parent().find('label')
+        .attr('for', 'allWords').append('<span>&nbsp;</span>').append(window.i18n.msgStore['allWords']);
+    elm.find('.searchMode div:eq(1)').find('input').attr('value', 'atLeastOneWord').attr('id', 'atLeastOneWord').parent().find('label').attr('for',
+        'atLeastOneWord').append('<span>&nbsp;</span>').append(window.i18n.msgStore['atLeastOneWord']);
+    elm.find('.searchMode div:eq(2)').find('input').attr('value', 'exactExpression').attr('id', 'exactExpression').parent().find('label').attr('for',
+        'exactExpression').append('<span>&nbsp;</span>').append(window.i18n.msgStore['exactExpression']);
 
     elm.find('.searchBar input[type=text]').keypress(function(event) {
       if (event.keyCode === 13) {
@@ -174,7 +175,7 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
         $("#loginDatafariLinks").find(".active").removeClass("active");
 
         // Make the link active
-        // $(this).addClass('active');
+        $("#dropdown-search-tools").addClass("active");
 
         // Hide the basic search
         elm.hide();
@@ -203,16 +204,14 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
   beforeRequest : function() {
 
     /*
-     * Check if we are executing a synthetic request, built by spellChecker
-     * widget after a misspelled search term or not. If it is a "normal"
-     * request, update the Q parameter with the value from searchBar and do
-     * other useful stuff. Else, it is a "synthetic" request; do nothing as the
-     * spellchecker itself has already replaced the Q parameter with the
-     * corrected search term.
+     * Check if we are executing a synthetic request, built by spellChecker widget after a misspelled search term or not. If it is a "normal" request,
+     * update the Q parameter with the value from searchBar and do other useful stuff. Else, it is a "synthetic" request; do nothing as the
+     * spellchecker itself has already replaced the Q parameter with the corrected search term.
      */
     if (this.manager.store.isParamDefined('original_query') !== true) {
 
-      var search = (AjaxFranceLabs.empty(AjaxFranceLabs.trim($(this.elm).find('.searchBar input').val()))) ? '*:*' : AjaxFranceLabs.trim($(this.elm).find('.searchBar input').val());
+      var search = (AjaxFranceLabs.empty(AjaxFranceLabs.trim($(this.elm).find('.searchBar input').val()))) ? '*:*' : AjaxFranceLabs.trim($(this.elm)
+          .find('.searchBar input').val());
       // Make spellchecker case insensitive
       // Manager.store.addByValue("spellcheck.q", search);
       var testSelect = document.getElementById("mySelect");
@@ -225,21 +224,21 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
       if (this.autocomplete)
         search = search.replace(/\u200c/g, '');
       switch ($(this.elm).find('input[name=searchType]:checked').val()) {
-      case "allWords":
-        Manager.store.addByValue("q.op", 'AND');
-        Manager.store.addByValue("spellcheck.collateParam.q.op", 'AND');
-        break;
-      case "atLeastOneWord":
-        Manager.store.addByValue("q.op", 'OR');
-        Manager.store.addByValue("spellcheck.collateParam.q.op", 'OR');
-        break;
-      case 'exactExpression':
-        search = '"' + search + '"';
-        break;
-      default:
-        Manager.store.addByValue("q.op", 'AND');
-        Manager.store.addByValue("spellcheck.collateParam.q.op", 'AND');
-        break
+        case "allWords":
+          Manager.store.addByValue("q.op", 'AND');
+          Manager.store.addByValue("spellcheck.collateParam.q.op", 'AND');
+          break;
+        case "atLeastOneWord":
+          Manager.store.addByValue("q.op", 'OR');
+          Manager.store.addByValue("spellcheck.collateParam.q.op", 'OR');
+          break;
+        case 'exactExpression':
+          search = '"' + search + '"';
+          break;
+        default:
+          Manager.store.addByValue("q.op", 'AND');
+          Manager.store.addByValue("spellcheck.collateParam.q.op", 'AND');
+          break
       }
 
       this.manager.store.get('q').val(search);
@@ -250,8 +249,7 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
 
   afterRequest : function() {
     /*
-     * It appeared that sometimes when making a request, the autocomplete was
-     * displayed, this part of the code has been made to counter this little
+     * It appeared that sometimes when making a request, the autocomplete was displayed, this part of the code has been made to counter this little
      * glitch, after a request, we close the autocomplete
      */
     if (this.autocomplete) {

@@ -40,7 +40,6 @@
 	.widgetContainer .annonce {padding: 3px;font-size: 0.6em;}
 
 	#facets_mobile{
-	    height:100vh;
 		display: block;
 		position: absolute;
 	    top: 0px;
@@ -86,7 +85,7 @@
 	#facets_mobile .facet.tableWidget.widget .facetName{
 		position:relative;
 		width:90%;
-		padding: 5px 5% !important;
+		padding: 2%;
 		font-size:1.1em;
 	}
 
@@ -96,6 +95,7 @@
 		margin:7% 7% 5% 7%;
 		padding-bottom:0px;
 		box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1), 0px 0px 1px rgba(0, 0, 0, 0.1);
+		background: #f8f8f8;
 	}
 
 	#facets_mobile .facet.hierarchicalWidget.widget .facetName{
@@ -876,7 +876,7 @@
 	.resultWidget .doc .res .tags { margin-top: 6px; }
 	.resultWidget .bar-loader { display:block; height:32px; margin: auto; width:32px; }
 	.resultWidget .res .moreLikeThis { cursor:pointer; }
-	.resultWidget .res .title{margin-left: 50%;}
+	.resultWidget .res .title{margin-left: 6%;}
 	#results .res .icon{display: inline-block;position: absolute;top: 2%;width: 4.5%;}
 	/**************************************/
 
