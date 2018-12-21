@@ -24,7 +24,7 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 	},
 	beforeRequest: function() {
 		this._super();
-		this.manager.store.get("fl").value = this.manager.store.get("fl").val() + ", nbLikes:field(nbLikes)";
+		this.manager.store.get("fl").value = this.manager.store.get("fl").val() ;
 	},
 	afterRequest : function() {
 		this._super();
@@ -42,7 +42,7 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 				jQuery.ajaxSettings.traditional = true;
 				$.get("./getLikesFavorites", { "documentsID": docIDs }, function(data){
 					if (data.code==0){
-						window.globalVariableLikes = data.likesList;
+						
 						window.globalVariableFavorites = [];
 						$.each(data.favoritesList,function(index,favorite){
 							var fav = JSON.parse(favorite);
@@ -82,8 +82,8 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget.ext
 					// the document is saved as favorite 
 					$(document.getElementById(doc.id)).data("isFavorite",true).find('.favorite i').removeClass('fa-bookmark-o').addClass('fa-bookmark');
 				}
-				// save the number of likes of a document gotten from Solr
-				$(document.getElementById(doc.id)).data('likes',doc.nbLikes).find('.likes').text(doc.nbLikes);
+				
+				
 			});
 		}
 		$(".favorite").off("click").on("click",function(){			

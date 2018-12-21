@@ -31,7 +31,6 @@ import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
-import com.francelabs.datafari.startup.LikesLauncher;
 import com.francelabs.datafari.utils.DatafariMainConfiguration;
 
 /**
@@ -75,10 +74,10 @@ public class ConfigLikesAndFavorites extends HttpServlet {
       final boolean error = false;
       if (enable.equals("true")) {
         config.setProperty(DatafariMainConfiguration.LIKESANDFAVORTES, "true");
-        LikesLauncher.startScheduler();
+        
       } else {
         config.setProperty(DatafariMainConfiguration.LIKESANDFAVORTES, "false");
-        LikesLauncher.shutDown();
+       
       }
       try {
         config.saveProperties();

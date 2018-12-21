@@ -278,15 +278,6 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 <%
 	if(request.isUserInRole("SearchAdministrator")){
 %>
-			<li class="dropdown" id="Servers">
-					<a href="#" class="dropdown-toggle">
-						<i class="fa fa-database"></i>
-						 <span id="servers-AdminUI" class="hidden-xs"></span>
-					</a>
-					<ul class="dropdown-menu">
-						<li id="Tomcat"><a class="ajax-link" href="./ajax/Tomcat.html">Tomcat</a></li>
-					</ul>
-				</li>
 
 				<li class="dropdown" id="userManagement">
 					<a href="#" class="dropdown-toggle">
