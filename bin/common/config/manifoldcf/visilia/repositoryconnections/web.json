@@ -11,16 +11,16 @@
             "bindesc":{
                "maxkbpersecond":{
                   "_value_":"",
-                  "_attribute_value":"64"
+                  "_attribute_value":"1000"
                },
                "_attribute_caseinsensitive":"false",
                "maxconnections":{
                   "_value_":"",
-                  "_attribute_value":"2"
+                  "_attribute_value":"30"
                },
                "maxfetchesperminute":{
                   "_value_":"",
-                  "_attribute_value":"12"
+                  "_attribute_value":"240"
                },
                "_attribute_binregexp":"",
                "_value_":""

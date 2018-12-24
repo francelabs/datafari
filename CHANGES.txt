@@ -21,10 +21,14 @@ Datafari needs Python v 2.7.x. If you have only Python v3, please install Python
 
 Datafari no longer embeds Java JDK. JDK 8 must be present on the machine and set JAVA HOME.
 
+The differences between the Community Edition and Enterprise Edition are listed here: https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/509575169/Differences+between+the+Community+and+Enterprise+Editions+of+Datafari
+
 ==================  4.2 ==================
+Note: As announced a few months ago, the AD admin page is now uniquely available in the Enterprise Edition of Datafari.
+
 * Version of major components :
 Solr 7.4
-ManifoldCF 2.11
+ManifoldCF 2.12
 Tomcat 9.0.8
 Cassandra 3.11.2
 PostgreSQL 10.1
@@ -36,11 +40,14 @@ LogStash 5.6.4
 
 * New features :
 Solr updated to 7.4
-ManifoldCF updated to 2.11
+ManifoldCF updated to 2.12
 PostgreSQL updated to 10.1
 Tika Server updated to 1.19.1
 DATAFARI-320 Add the possibility to also save facets in the alert 
+Redesigned menu to simplify the access to parameters and functionalities
 Scripts rework
+Change main collection name
+Session expiration automatically
 
 * Bug fixes :
 Fix DATAFARI-324 Add a button to close the database connection error 
@@ -49,6 +56,12 @@ Fix DATAFARI-330 MCF Restore erase everything...
 Fix DATAFARI-329 Bug updating synonyms 
 Fix DATAFARI-331 Pagination numbers disappear 
 Fix external result widget 
+More restrictions on simplified jobs
+Bugfixes UI mobile
+
+* One cool new feature about the Enterprise Edition :
+Now supports SMBv2
+
 
 ==================  4.1.1 ==================
 * Version of major components :
