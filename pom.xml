@@ -4,7 +4,7 @@
 	<artifactId>datafari-parent</artifactId>
 	<!-- Main POM of datafari -->
 	<packaging>pom</packaging>
-	<version>4.2-Community</version>
+	<version>4.3-dev-Community</version>
 	<name>Datafari Enterprise Search - Parent POM</name>
 	
 	<properties>

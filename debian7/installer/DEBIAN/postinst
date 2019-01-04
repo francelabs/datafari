@@ -21,7 +21,7 @@ if [ -e "$JAVA_HOME"/bin/java ]; then
 
 			fi
 
-			if [[ $key == git.closest.tag.name ]]; then
+			if [[ $key == git.build.version ]]; then
 
 				version=$value
 			fi
