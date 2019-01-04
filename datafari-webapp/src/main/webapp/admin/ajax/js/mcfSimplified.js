@@ -288,7 +288,9 @@ function addFilerConnector(){
         if(document.getElementById('startJob').checked) {
         	jobStarted = " and started";
         }
-        $("#addFilerMessageSuccess").html("<i class='fa fa-check'></i>Job " + data.job_id + " created" + jobStarted + " ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp'>Datafari connectors status page</a>");
+        var getUrl = window.location;
+        var mcfUrl = getUrl.protocol + "//" + getUrl.host + ":9080" + "/" + "/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp";
+        $("#addFilerMessageSuccess").html("<i class='fa fa-check'></i>Job " + data.job_id + " created" + jobStarted + " ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='"+mcfUrl+"'>Datafari connectors status page</a>");
         $("#addFilerMessageSuccess").show().removeClass("animated fadeOut");
         timeouts.push(setTimeout(function(){
           clearStatus($("#server"));
@@ -341,7 +343,9 @@ function addWebConnector(){
         if(document.getElementById('startJobWeb').checked) {
         	jobStarted = " and started";
         }
-        $("#addWebMessageSuccess").html("<i class='fa fa-check'></i>Job " + data.job_id + " created" + jobStarted + " ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp'>Datafari connectors status page</a>");
+        var getUrl = window.location;
+        var mcfUrl = getUrl.protocol + "//" + getUrl.host + ":9080" + "/" + "/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp";
+        $("#addWebMessageSuccess").html("<i class='fa fa-check'></i>Job " + data.job_id + " created" + jobStarted + " ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='"+mcfUrl+"'>Datafari connectors status page</a>");
         $("#addWebMessageSuccess").show().removeClass("animated fadeOut");
         timeouts.push(setTimeout(function(){
           clearStatus($("#seeds"));
