@@ -1,6 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ page import="java.util.Locale" %>
+<%
+  String path = request.getContextPath();
+
+  String getProtocol=request.getScheme();
+  String getDomain=request.getServerName();
+  String getPort=Integer.toString(request.getServerPort());
+
+  String getPath = getProtocol+"://"+getDomain+":"+getPort+path+"/";
+  String getMCF = getProtocol+"://"+getDomain+":"+"9080"+"/datafari-mcf-crawler-ui";
+  String getURI=request.getRequestURI();
+%>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -201,7 +212,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 					</a>
 					<ul class="dropdown-menu">
 						<li id="MCFAdminUI">
-							<a target="_blank" href="/datafari-mcf-crawler-ui/" id="MCFAdmin-AdminUI"></a>
+							<a target="_blank" href="<%= getMCF %>" id="MCFAdmin-AdminUI"></a>
 						</li>
 						<li id="MCFBackupRestore"><a id="MCFBackupRestore-AdminUI" class="ajax-link" href="./ajax/mcfBackupRestore.html"></a></li>
 						<li id="MCFChangePassword" ><a id="MCFPassword-AdminUI" class="ajax-link" href="./ajax/MCFChangePassword.html"></a></li>

@@ -52,7 +52,7 @@ RUN     apt-get update && apt-get install --allow-unauthenticated -y \
 WORKDIR /var/datafari
 COPY --from=BUILD /tmp/datafari/debian7/installer/dist/datafari.deb .
 RUN DEBIAN_FRONTEND=noninteractive dpkg -i datafari.deb
-EXPOSE 8080 8983 5601 9200
+EXPOSE 8080 9080 8983 5601 9200
 RUN useradd -m demo && echo "demo:demo" | chpasswd && adduser demo sudo
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 WORKDIR /opt/datafari

@@ -17,12 +17,9 @@ export CONFIG_FILE=${DATAFARI_HOME}/tomcat/conf/datafari.properties
 export LOG4J_VERSION=2.11.1
 export LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib
 
-
-
-
-
 export PID_DIR=$DATAFARI_HOME/pid
 export TOMCAT_HOME=$DATAFARI_HOME/tomcat
+export TOMCAT_MCF_HOME=$DATAFARI_HOME/tomcat-mcf
 export MCF_HOME=$DATAFARI_HOME/mcf/mcf_home
 export SOLR_INSTALL_DIR=$DATAFARI_HOME/solr
 export SOLR_ENV=$SOLR_INSTALL_DIR/bin/solr.in.sh
@@ -50,6 +47,7 @@ export DATAFARI_SOLR_PROPERTIES_HOME=$TOMCAT_HOME/conf
 # pid files 
 export MCF_PID_FILE=$PID_DIR/mcf_crawler_agent.pid
 export CATALINA_PID=$PID_DIR/tomcat.pid
+export CATALINA_MCF_PID=$PID_DIR/tomcat-mcf.pid
 export SOLR_PID_FILE=$PID_DIR/solr-8983.pid
 export CASSANDRA_PID_FILE=$PID_DIR/cassandra.pid
 export POSTGRES_PID_FILE=$PID_DIR/postmaster.pid

@@ -19,6 +19,12 @@ if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $CATALINA_PID"; 
     exit 1
 fi
 
+if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $CATALINA_MCF_PID"; then
+    PID=$(run_as ${DATAFARI_USER} "cat $CATALINA_MCF_PID");
+    echo "Error: Tomcat-MCF seems to be already running with PID $PID"
+    exit 1
+fi
+
 if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $MCF_PID_FILE"; then
     PID=$(run_as ${DATAFARI_USER} "cat $MCF_PID_FILE");
     echo "Error: MCF Agent seems to be already running with PID $PID"
@@ -95,6 +101,8 @@ fi
 
 run_as ${DATAFARI_USER} "bash datafari-manager.sh start_tomcat";
 waitTomcat;
+run_as ${DATAFARI_USER} "bash datafari-manager.sh start_tomcat_mcf";
+		waitTomcatMCF;
   
 if  [[ "$STATE" = *installed* ]];
 then

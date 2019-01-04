@@ -113,6 +113,39 @@ waitTomcat() {
   fi
 }
 
+waitTomcatMCF() {
+  echo "Checking if Tomcat is up and running ..."
+  # Try to connect to Tomcat-MCF on port 9080
+  tomcat_status=0
+  retries=1
+
+  exec 6<>/dev/tcp/localhost/9080 || tomcat_status=1
+  exec 6>&- # close output connection
+  exec 6<&- # close input connection
+
+  while (( retries < 10 && tomcat_status != 0 )); do
+    echo "Tomcat doesn't reply to requests on port 9080. Sleeping for a while and trying again... retry ${retries}"
+
+    tomcat_status=0
+
+    # Sleep for a while
+    sleep 5s
+
+    exec 6<>/dev/tcp/localhost/9080 || tomcat_status=1
+    exec 6>&- # close output connection
+    exec 6<&- # close input connection
+
+    ((retries++))
+  done
+
+  if [ $tomcat_status -ne 0 ]; then
+    echo "/!\ ERROR: Tomcat-MCF startup has ended with errors; please check log file ${DATAFARI_LOGS}/tomcat.log"
+  else
+    echo "Tomcat-MCF startup completed successfully --- OK"
+  fi
+}
+
+
 waitCassandra() {
 	echo "Checking if Cassandra is up and running ..."
 	# Try to connect on Cassandra's JMX port 7199 and CQLSH port 9042

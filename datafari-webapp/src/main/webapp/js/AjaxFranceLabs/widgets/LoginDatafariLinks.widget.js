@@ -94,7 +94,9 @@ AjaxFranceLabs.LoginDatafariLinksWidget = AjaxFranceLabs.AbstractWidget.extend({
       if (text) {
         loginDatafariLinksDOMElement.html(text);
       }
-      loginDatafariLinksDOMElement.prop('href', '/datafari-mcf-crawler-ui/');
+      var getUrl = window.location;
+      var mcfUrl = getUrl .protocol + "//" + getUrl.host + ":9080" + "/" + "datafari-mcf-crawler-ui";
+      loginDatafariLinksDOMElement.prop('href', mcfUrl);
       loginDatafariLinksDOMElement.prop('target', 'blank');
     }
 

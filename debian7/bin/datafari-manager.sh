@@ -189,6 +189,21 @@ stop_tomcat()
   forceStopIfNecessary $CATALINA_PID Tomcat
 }
 
+start_tomcat_mcf()
+{
+  echo "Start Tomcat-MCF"
+  cd $TOMCAT_MCF_HOME/bin
+  bash startup.sh
+}
+
+stop_tomcat_mcf()
+{
+  echo "Stopping Tomcat..."
+  cd $TOMCAT_MCF_HOME/bin
+  bash shutdown.sh 30
+  forceStopIfNecessary $CATALINA_MCF_PID Tomcat
+}
+
 init_mcf()
 {
   echo "Uploading MCF configuration"
@@ -293,6 +308,12 @@ case $COMMAND in
     stop_tomcat)
         stop_tomcat
         ;;
+    start_tomcat_mcf)
+        start_tomcat_mcf
+        ;;
+    stop_tomcat_mcf)
+        stop_tomcat_mcf
+        ;;    
     init_mcf)
         init_mcf
         ;;

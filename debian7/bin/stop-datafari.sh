@@ -30,6 +30,12 @@ else
     echo "Warn: Tomcat does not seem to be running."
 fi
 
+if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $CATALINA_MCF_PID"; then
+    run_as ${DATAFARI_USER} "bash datafari-manager.sh stop_tomcat_mcf"
+else
+    echo "Warn: Tomcat-MCF does not seem to be running."
+fi
+
 
 if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $SOLR_PID_FILE"; then
    run_as ${DATAFARI_USER} "bash datafari-manager.sh stop_solr";

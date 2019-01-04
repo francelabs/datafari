@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+	<CustomLevels>
+		<CustomLevel name="CRAWL" intLevel="520" />
+		<CustomLevel name="ELK" intLevel="520" />
+		<CustomLevel name="MONITORING" intLevel="520" />
+		<CustomLevel name="STAT" intLevel="520" />
+	</CustomLevels>
+
+	<Appenders>
+		<Console name="STDOUT" target="SYSTEM_OUT">
+		  <PatternLayout>
+        <Pattern>%-4r [%t] %-5p %c %x \u2013 %m%n</Pattern>
+      </PatternLayout>
+		</Console>
+		
+		<!-- Tomcat appender -->
+		<RollingFile name="Tomcat" fileName="${env:DATAFARI_LOGS}/tomcat-mcf.log" filePattern="${env:DATAFARI_LOGS}/tomcat-mcf-%d{yyyy-MM-dd}.log">
+      <PatternLayout>
+        <Pattern>%5p %d{ISO8601} (%t) - Tomcat|Tomcat|%c{3}|%m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1"/>
+      </Policies>
+    </RollingFile>
+    
+    
+    <!-- ManifoldCF appender -->
+    <RollingFile name="Manifold" fileName="${env:DATAFARI_LOGS}/datafari-manifold.log" filePattern="${env:DATAFARI_LOGS}/datafari-manifold-%d{yyyy-MM-dd}.log">
+      <PatternLayout>
+        <Pattern>%5p %d{ISO8601} (%t) - Tomcat|Manifold|%c{3}|%m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1"/>
+      </Policies>
+    </RollingFile>
+    
+   
+    
+    <!-- Crawl appender -->
+    <RollingFile name="Crawl" fileName="${env:DATAFARI_LOGS}/datafari-crawl.log" filePattern="${env:DATAFARI_LOGS}/datafari-crawl-%d{yyyy-MM-dd}-%i.log">
+      <ThresholdFilter level="DEBUG" onMatch="DENY" onMismatch="ACCEPT"/>
+      <PatternLayout>
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="100 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="10"/>
+    </RollingFile>
+    
+	</Appenders>
+	
+	<Loggers>
+		<Root level="info">
+		  <AppenderRef ref="STDOUT"/>
+		  <AppenderRef ref="Tomcat"/>
+		</Root>
+		
+		
+	  
+	  <!-- ManifoldCF logger -->
+    <Logger name="com.francelabs.manifoldcf" level="info" additivity="false">
+      <AppenderRef ref="Manifold"/>
+    </Logger>
+    
+    <!-- Stats logger -->
+    <Logger name="com.francelabs.datafari.statistics" level="stat" additivity="false">
+      <AppenderRef ref="Stats"/>
+    </Logger>
+    
+    <!-- Monitoring logger -->
+    <Logger name="com.francelabs.datafari.monitoring" level="monitoring" additivity="false">
+      <AppenderRef ref="Monitoring"/>
+    </Logger>
+  
+    
+    <!-- Crawl logger -->
+    <Logger name="com.francelabs.datafari.crawl.monitoring" level="crawl" additivity="true">
+      <AppenderRef ref="Crawl"/>
+    </Logger>
+    
+    <!-- Zookeeper logger -->
+    <Logger name="org.apache.zookeeper" level="warn">
+    </Logger>
+    
+    <!-- Hadoop logger -->
+    <Logger name="org.apache.hadoop" level="warn">
+    </Logger>
+	</Loggers>
+</Configuration>

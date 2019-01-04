@@ -44,7 +44,7 @@ public class ManifoldAPI {
     static public String JOBS = "jobs";
   }
 
-  static private String urlManifoldCFAPI = "http://localhost:8080/datafari-mcf-api-service/json/";
+  static private String urlManifoldCFAPI = "http://localhost:9080/datafari-mcf-api-service/json/";
 
   public JSONObject readConfiguration() {
     return null;

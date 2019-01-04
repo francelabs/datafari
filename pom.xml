@@ -31,6 +31,7 @@
 		<module>datafari-jena</module>
 		<module>datafari-cassandra</module>
 		<module>datafari-tomcat</module>
+		<module>datafari-tomcat-mcf</module>
 		<module>datafari-elk</module>
 		<module>datafari-updateprocessor</module>
 		<module>datafari-tika</module>
