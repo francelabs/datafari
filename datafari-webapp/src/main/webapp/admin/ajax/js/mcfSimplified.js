@@ -289,7 +289,7 @@ function addFilerConnector(){
         	jobStarted = " and started";
         }
         var getUrl = window.location;
-        var mcfUrl = getUrl.protocol + "//" + getUrl.host + ":9080" + "/" + "/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp";
+        var mcfUrl = getUrl.protocol + "//" + getUrl.host + ":9080" + "/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp";
         $("#addFilerMessageSuccess").html("<i class='fa fa-check'></i>Job " + data.job_id + " created" + jobStarted + " ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='"+mcfUrl+"'>Datafari connectors status page</a>");
         $("#addFilerMessageSuccess").show().removeClass("animated fadeOut");
         timeouts.push(setTimeout(function(){
@@ -344,7 +344,7 @@ function addWebConnector(){
         	jobStarted = " and started";
         }
         var getUrl = window.location;
-        var mcfUrl = getUrl.protocol + "//" + getUrl.host + ":9080" + "/" + "/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp";
+        var mcfUrl = getUrl.protocol + "//" + getUrl.host + ":9080" + "/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp";
         $("#addWebMessageSuccess").html("<i class='fa fa-check'></i>Job " + data.job_id + " created" + jobStarted + " ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='"+mcfUrl+"'>Datafari connectors status page</a>");
         $("#addWebMessageSuccess").show().removeClass("animated fadeOut");
         timeouts.push(setTimeout(function(){

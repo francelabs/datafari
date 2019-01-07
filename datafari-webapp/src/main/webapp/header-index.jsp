@@ -74,8 +74,8 @@
                             Admin <span class="caret"></span>
                           </a>
                           <ul class="dropdown-menu">
-                            <li><a id="adminConsoleLink">Central Administration Console</a></li>
                             <li><a id="adminMCFLink">Connectors Framework</a></li>
+                            <li><a id="adminConsoleLink">Central Administration Console</a></li>
                             <!-- Those will need a rework of the admin UI to work --
                             <li><a id="adminGoldenQueriesLink">Activate Golden Queries Mode</a></li>
                             <li><a id="adminDocBoostLink">Activate Document Boost Mode</a></li>
