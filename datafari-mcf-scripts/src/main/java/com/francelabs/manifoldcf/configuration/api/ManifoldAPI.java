@@ -95,17 +95,31 @@ public class ManifoldAPI {
     if (objGet != null) {
       if (objGet instanceof JSONObject) {
         final JSONObject job = (JSONObject) objGet;
-        delete(command, (String) job.get("id"));
-        waitJob((String) job.get("id"));
+        final String jobId = getStrAttrVal(job, "id");
+        delete(command, jobId);
+        waitJob(jobId);
       } else if (objGet instanceof JSONArray) {
         final JSONArray jobsList = (JSONArray) objGet;
         for (int i = 0; i < jobsList.size(); i++) {
-          final JSONObject singleConnector = (JSONObject) jobsList.get(i);
-          delete(command, (String) singleConnector.get("id"));
-          waitJob((String) singleConnector.get("id"));
+          final JSONObject job = (JSONObject) jobsList.get(i);
+          final String jobId = getStrAttrVal(job, "id");
+          delete(command, jobId);
+          waitJob(jobId);
         }
       }
     }
+  }
+
+  static private String getStrAttrVal(final JSONObject mcfObj, final String attr) {
+    final JSONArray children = (JSONArray) mcfObj.get("_children_");
+    for (int i = 0; i < children.size(); i++) {
+      final JSONObject child = (JSONObject) children.get(i);
+      final String type = (String) child.get("_type_");
+      if (type != null && type.equals(attr)) {
+        return child.get("_value_").toString();
+      }
+    }
+    return null;
   }
 
   public static void waitJob(final String id) throws Exception {
@@ -120,28 +134,25 @@ public class ManifoldAPI {
 
   public static void statusJob(final String id) throws Exception {
     JSONObject result;
-    for (int i=0;i < 600; i++) {
+    for (int i = 0; i < 600; i++) {
       Thread.sleep(1000);
       result = readConfig(COMMANDS.JOBSTATUSES, id);
-      LOGGER.info("job id " +id+" "+result.toString());
-      if ((result.toString().contains("\"status\":\"done\"")) || (result.toString().contains("\"status\":\"error\"")) ){
+      LOGGER.info("job id " + id + " " + result.toString());
+      if ((result.toString().contains("\"status\":\"done\"")) || (result.toString().contains("\"status\":\"error\"")) || (result.toString().contains("\"status\":\"notifying\"")) || (result.toString().contains("\"status\":\"terminating\""))) {
         LOGGER.info("job done or in error state");
         break;
       }
 
-    } 
+    }
 
   }
-  
+
   public static void deleteJob(final String id) throws Exception {
-    LOGGER.info("delete job"+id);
-    delete("jobs",id);
+    LOGGER.info("delete job" + id);
+    delete("jobs", id);
     waitJob(id);
 
-     
-
   }
-
 
   static public void cleanConnectors(final String command) throws Exception {
     LOGGER.info("Start cleaning " + command);
@@ -152,12 +163,12 @@ public class ManifoldAPI {
     if (objGet != null) {
       if (objGet instanceof JSONObject) {
         final JSONObject connector = (JSONObject) objGet;
-        delete(command, (String) connector.get("name"));
+        delete(command, getStrAttrVal(connector, "name"));
       } else if (objGet instanceof JSONArray) {
         final JSONArray connectorList = (JSONArray) connectors.get(subCommands);
         for (int i = 0; i < connectorList.size(); i++) {
           final JSONObject singleConnector = (JSONObject) connectorList.get(i);
-          delete(command, (String) singleConnector.get("name"));
+          delete(command, getStrAttrVal(singleConnector, "name"));
         }
       }
     }
@@ -193,9 +204,9 @@ public class ManifoldAPI {
   static private void createConnectorFile(final String command, final JSONObject subConnector, final Map<String, JSONObject> connectorsMap) {
     final JSONObject singleConnector = new JSONObject();
     if (command.equals(ManifoldAPI.COMMANDS.JOBS)) {
-      connectorsMap.put((String) subConnector.get("id"), singleConnector);
+      connectorsMap.put(getStrAttrVal(subConnector, "id"), singleConnector);
     } else {
-      connectorsMap.put((String) subConnector.get("name"), singleConnector);
+      connectorsMap.put(getStrAttrVal(subConnector, "name"), singleConnector);
       subConnector.put("isnew", true);
     }
     append(singleConnector, command.substring(0, command.length() - 1), subConnector);

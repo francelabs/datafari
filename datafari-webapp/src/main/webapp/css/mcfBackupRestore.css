@@ -10,3 +10,9 @@
 	margin: 15px;
 	width: auto;
 }
+
+
+#backupDir-label-default {
+  margin-top: 1em;
+  color: firebrick;
+}

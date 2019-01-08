@@ -4,16 +4,15 @@
 var timeouts = [];
 var returnData = undefined;
 var clearTimeouts = function() {
-	for (var i = 0; i < timeouts.length; i++) {
-	    clearTimeout(timeouts[i]);
-	}
+  for (var i = 0; i < timeouts.length; i++) {
+    clearTimeout(timeouts[i]);
+  }
 
-	//quick reset of the timer array you just cleared
-	timeouts = [];
+  // quick reset of the timer array you just cleared
+  timeouts = [];
 
-	$('#main').unbind('DOMNodeRemoved');
+  $('#main').unbind('DOMNodeRemoved');
 }
-
 
 $(document).ready(function() {
   $('#main').bind('DOMNodeRemoved', clearTimeouts);
@@ -28,9 +27,12 @@ $(document).ready(function() {
   document.getElementById("box-title").innerHTML = window.i18n.msgStore['adminUI-Connectors-MCFSimplified'];
 
   document.getElementById("mcfsimplified-title-label").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-title'];
-  //document.getElementById("backupDir-label-default").innerHTML = window.i18n.msgStore['adminUI-MCFBackupRestore-backupDir-label-default'];
-  //document.getElementById("web-btn").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-web-btn'];
-  //document.getElementById("filer-btn").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-filer-btn'];
+  // document.getElementById("backupDir-label-default").innerHTML =
+  // window.i18n.msgStore['adminUI-MCFBackupRestore-backupDir-label-default'];
+  // document.getElementById("web-btn").innerHTML =
+  // window.i18n.msgStore['adminUI-MCFSimplified-web-btn'];
+  // document.getElementById("filer-btn").innerHTML =
+  // window.i18n.msgStore['adminUI-MCFSimplified-filer-btn'];
   document.getElementById("createWebJob").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-createWebJob'];
   document.getElementById("createFilerJob").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-createFilerJob'];
 
@@ -44,7 +46,7 @@ $(document).ready(function() {
   $("#exclusions").attr("placeholder", window.i18n.msgStore['exclusions']);
   $("#newWebConfig").innerHTML = window.i18n.msgStore['confirm'];
   $("#newWebConfig").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
-  
+
   document.getElementById("filerJobTitle").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-filerjobFormEdit'];
   document.getElementById("filerAddLegend").innerHTML = window.i18n.msgStore['param'];
   document.getElementById("serverLabel").innerHTML = window.i18n.msgStore['server'];
@@ -60,84 +62,84 @@ $(document).ready(function() {
   $("#paths").attr("placeholder", window.i18n.msgStore['paths']);
   ("#newFilerConfig").innerHTML = window.i18n.msgStore['confirm'];
   $("#newFilerConfig").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
-  
-  //Set the tooltips
+
+  // Set the tooltips
   $("#server-tip").attr("title", window.i18n.msgStore['server-tip']);
   $("#password-tip").attr("title", window.i18n.msgStore['password-tip']);
   $("#user-tip").attr("title", window.i18n.msgStore['user-tip']);
   $("#paths-tip").attr("title", window.i18n.msgStore['paths-tip']);
   $("#security-tip").attr("title", window.i18n.msgStore['security-tip']);
-  
+
   $("#seeds-tip").attr("title", window.i18n.msgStore['seeds-tip']);
   $("#email-tip").attr("title", window.i18n.msgStore['email-tip']);
   $("#exclusions-tip").attr("title", window.i18n.msgStore['exclusions-tip']);
-  
+
   $(".asteriskLabel").html(window.i18n.msgStore['mandatoryField']);
 
+  $('[data-toggle="tooltip"]').tooltip();
 
-   $('[data-toggle="tooltip"]').tooltip();
-
-   $("#server").change(function(e) {
-     checkServer($("#server"));
-   });
-   
-   $("#user").change(function(e) {
-     checkUser($("#user"));
-   });
-   
-   $("#password").change(function(e) {
-     checkPassword($("#password"));
-   });
-   
-   $("#paths").change(function(e) {
-     checkPaths($("#paths"));
-   });
-   
-   $("#seeds").change(function(e) {
-     checkSeeds($("#seeds"));
-   });
-
-   $("#email").change(function(e) {
-     checkemail($("#email"));
-   });
-
-   $("#exclusions").change(function(e) {
-     checkExclusions($("#exclusions"));
-   });
-   
-   $("#addWeb").submit(function(e){
-       e.preventDefault();
-       if (!checkSeeds($("#seeds")) && checkemail($("#email")) && checkExclusions($("#exclusions"))) {
-         return false;
-       } else {
-         return addWebConnector();
-       }
+  $("#server").change(function(e) {
+    checkServer($("#server"));
   });
-   
-   $("#addFiler").submit(function(e){
-       e.preventDefault();
-       $("#addFilerCheckMessageFailure").hide();
-       if (!checkServer($("#server")) && checkUser($("#user")) && checkPassword($("#password")) && checkPaths($("#paths"))) {
-         return false;
-       } else {
-    	   $.get("./../admin/CheckMCFConfiguration", {configuration : "filer"}, function(data) {
-    			if(data.code === 0) {
-    				if(data.registered === true) {
-    					return addFilerConnector();
-    				} else {
-    					 $("#addFilerCheckMessageFailure").html(window.i18n.msgStore['jcifs-not-installed']);
-    					 $("#addFilerCheckMessageFailure").show();
-    				}
-    				
-    			} else {
-    				$("#addFilerCheckMessageFailure").html("Unable to parse the connectors.xml file : " + data.status);
-					$("#addFilerCheckMessageFailure").show();
-    			}
-    		});
-       }
+
+  $("#user").change(function(e) {
+    checkUser($("#user"));
   });
-   
-   
+
+  $("#password").change(function(e) {
+    checkPassword($("#password"));
+  });
+
+  $("#paths").change(function(e) {
+    checkPaths($("#paths"));
+  });
+
+  $("#seeds").change(function(e) {
+    checkSeeds($("#seeds"));
+  });
+
+  $("#email").change(function(e) {
+    checkemail($("#email"));
+  });
+
+  $("#exclusions").change(function(e) {
+    checkExclusions($("#exclusions"));
+  });
+
+  $("#addWeb").submit(function(e) {
+    e.preventDefault();
+    if (!checkSeeds($("#seeds")) && checkemail($("#email")) && checkExclusions($("#exclusions"))) {
+      return false;
+    } else {
+      return addWebConnector();
+    }
+  });
+
+  $("#addFiler").submit(function(e) {
+    e.preventDefault();
+    $("#addFilerCheckMessageFailure").hide();
+    if (!checkServer($("#server")) && checkUser($("#user")) && checkPassword($("#password")) && checkPaths($("#paths"))) {
+      return false;
+    } else {
+      $.get("./../admin/CheckMCFConfiguration", {
+        configuration : "filer"
+      }, function(data) {
+        if (data.code === 0) {
+          if (data.registered === true) {
+            return addFilerConnector();
+          } else {
+            $("#addFilerCheckMessageFailure").html(window.i18n.msgStore['jcifs-not-installed']);
+            $("#addFilerCheckMessageFailure").show();
+          }
+
+        } else {
+          $("#addFilerCheckMessageFailure").html("Unable to parse the connectors.xml file : " + data.status);
+          $("#addFilerCheckMessageFailure").show();
+        }
+      });
+    }
+  });
+
 });
 // ***** Inputs verification and status management ***** //
 function clearStatus(element) {
@@ -173,7 +175,8 @@ function setError(element) {
 function checkSeeds(element) {
   clearStatus(element);
   let lines = element.val().split('\n');
-  // Very loose verification, only checks that it really starts with http or https
+  // Very loose verification, only checks that it really starts with http or
+  // https
   // let URLPattern = /^https?:\/\/.*/;
   // More restrictive pattern matching
   let URLPattern = /^((?:https?:\/\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i;
@@ -235,134 +238,143 @@ function checkPaths(element) {
   return true;
 }
 
-function getJobForm(){
+function getJobForm() {
   var jobType = document.getElementById("jobType").value
-  //clean the response area
+  // clean the response area
   $("#ajaxResponse").empty();
   $('#webJobDiv').hide();
   $('#filerJobDiv').hide();
   $("#addFilerMessageSuccess").hide();
   $("#addWebMessageSuccess").hide();
-  //get the language
+  // get the language
   if (jobType == "webjob") {
     webJobForm();
-  }
-  else if (jobType == "filerjob") {
+  } else if (jobType == "filerjob") {
     filerJobForm();
   }
 
 }
 
-
-function webJobForm(){
+function webJobForm() {
   $('#webJobDiv').show();
 }
 
-function filerJobForm(){
+function filerJobForm() {
   $('#filerJobDiv').show();
 }
 
-function addFilerConnector(){
-  if ($("#newWebConfig").hasClass('disabled')) {
+function addFilerConnector() {
+  if ($("#newFilerConfig").hasClass('disabled')) {
     return;
   }
   $("#newFilerConfig").button("loading");
   $('#addFiler').attr("disabled", true);
-  //Put the Data of the form into a global variable and serialize it
+  // Put the Data of the form into a global variable and serialize it
   formData = $("#addFiler").serialize();
-  $.ajax({              //Ajax Request to the doGet of Admin to check if there is already a promoLink with this keyword
-    type: "POST",
-    url: "./../admin/MCFUISimplified/Filer",
-    data: formData,
-    //if received a response from the server
-    success: function(data, textStatus, jqXHR) {
+  $.ajax({ // Ajax Request to the doGet of Admin to check if there is already a
+    // promoLink with this keyword
+    type : "POST",
+    url : "./../admin/MCFUISimplified/Filer",
+    data : formData,
+    // if received a response from the server
+    success : function(data, textStatus, jqXHR) {
       data = JSON.parse(data);
-      if(data['code']!==0){
+      if (data['code'] !== 0) {
         $("#addFilerMessageFailure").show().removeClass("animated fadeOut");
-        timeouts.push(setTimeout(function(){
+        timeouts.push(setTimeout(function() {
           $("#addFilerMessageFailure").addClass("animated fadeOut");
-        },1500));
+        }, 1500));
       } else {
         $("#addFiler").trigger("reset");
         var jobStarted = "";
-        if(document.getElementById('startJob').checked) {
-        	jobStarted = " and started";
+        if (document.getElementById('startJob').checked) {
+          jobStarted = " and started";
         }
-        $("#addFilerMessageSuccess").html("<i class='fa fa-check'></i>Job " + data.job_id + " created" + jobStarted + " ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp'>Datafari connectors status page</a>");
+        var getUrl = window.location;
+        var mcfUrl = getUrl.protocol + "//" + getUrl.hostname + ":9080" + "/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp";
+        $("#addFilerMessageSuccess").html(
+            "<i class='fa fa-check'></i>Job " + data.job_id + " created" + jobStarted
+                + " ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='" + mcfUrl + "'>Datafari connectors status page</a>");
         $("#addFilerMessageSuccess").show().removeClass("animated fadeOut");
-        timeouts.push(setTimeout(function(){
+        timeouts.push(setTimeout(function() {
           clearStatus($("#server"));
           clearStatus($("#user"));
           clearStatus($('#password'));
           clearStatus($('#paths'));
-        },1500));
+        }, 1500));
       }
     },
-    error: function(jqXHR, textStatus, errorThrown){
+    error : function(jqXHR, textStatus, errorThrown) {
       console.log("Something really bad happened " + textStatus);
       $("#addPromForm").html(jqXHR.responseText);
     },
-    //capture the request before it was sent to server
-    beforeSend: function(jqXHR, settings){
-      //disable the button until we get the response
+    // capture the request before it was sent to server
+    beforeSend : function(jqXHR, settings) {
+      // disable the button until we get the response
       $('#addFiler').attr("disabled", true);
     },
-    //this is called after the response or error functions are finsihed
-    complete: function(jqXHR, textStatus){
-      //enable the button
+    // this is called after the response or error functions are finsihed
+    complete : function(jqXHR, textStatus) {
+      // enable the button
       $("#newFilerConfig").button("reset");
     }
   });
 }
 
-function addWebConnector(){
+function addWebConnector() {
   if ($("#newWebConfig").hasClass('disabled')) {
     return;
   }
   $("#newWebConfig").button("loading");
   $('#addWeb').attr("disabled", true);
-  //Put the Data of the form into a global variable and serialize it
+  // Put the Data of the form into a global variable and serialize it
   formData = $("#addWeb").serialize();
-  $.ajax({              //Ajax Request to the doGet of Admin to check if there is already a promoLink with this keyword
-    type: "POST",
-    url: "./../admin/MCFUISimplified/Web",
-    data: formData,
-    //if received a response from the server
-    success: function(data, textStatus, jqXHR) {
+  $.ajax({ // Ajax Request to the doGet of Admin to check if there is already a
+    // promoLink with this keyword
+    type : "POST",
+    url : "./../admin/MCFUISimplified/Web",
+    data : formData,
+    // if received a response from the server
+    success : function(data, textStatus, jqXHR) {
       data = JSON.parse(data);
-      if(data['code']!==0){
+      if (data['code'] !== 0) {
         $("#addWebMessageFailure").show().removeClass("animated fadeOut");
-        timeouts.push(setTimeout(function(){
+        timeouts.push(setTimeout(function() {
           $("#addWebMessageFailure").addClass("animated fadeOut");
-        },1500));
+        }, 1500));
       } else {
         $("#addWeb").trigger("reset");
         var jobStarted = "";
-        if(document.getElementById('startJobWeb').checked) {
-        	jobStarted = " and started";
+        if (document.getElementById('startJobWeb').checked) {
+          jobStarted = " and started";
         }
-        $("#addWebMessageSuccess").html("<i class='fa fa-check'></i>Job " + data.job_id + " created" + jobStarted + " ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp'>Datafari connectors status page</a>");
+        var getUrl = window.location;
+        var mcfUrl = getUrl.protocol + "//" + getUrl.hostname + ":9080" + "/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp";
+        $("#addWebMessageSuccess").html(
+            "<i class='fa fa-check'></i>Job " + data.job_id + " created" + jobStarted
+                + " ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='" + mcfUrl + "'>Datafari connectors status page</a>");
         $("#addWebMessageSuccess").show().removeClass("animated fadeOut");
-        timeouts.push(setTimeout(function(){
+        timeouts.push(setTimeout(function() {
           clearStatus($("#seeds"));
           clearStatus($("#email"));
           clearStatus($('#exclusions'));
-        },1500));
+        }, 1500));
       }
     },
-    error: function(jqXHR, textStatus, errorThrown){
+    error : function(jqXHR, textStatus, errorThrown) {
       console.log("Something really bad happened " + textStatus);
       $("#addPromForm").html(jqXHR.responseText);
     },
-    //capture the request before it was sent to server
-    beforeSend: function(jqXHR, settings){
-      //disable the button until we get the response
+    // capture the request before it was sent to server
+    beforeSend : function(jqXHR, settings) {
+      // disable the button until we get the response
       $('#addWeb').attr("disabled", true);
     },
-    //this is called after the response or error functions are finsihed
-    complete: function(jqXHR, textStatus){
-      //enable the button
-      $("#newWebConfig").button("reset");;
+    // this is called after the response or error functions are finsihed
+    complete : function(jqXHR, textStatus) {
+      // enable the button
+      $("#newWebConfig").button("reset");
+      ;
     }
   });
 }
