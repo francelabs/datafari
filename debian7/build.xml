@@ -288,6 +288,8 @@
 				<exclude name="jsp-*.jar"/>
 				<exclude name="jna*.jar"/>
 				<exclude name="log4j-*.jar"/>
+				<exclude name="jasper-*.jar"/>
+				<exclude name="ecj-*.jar"/>
 			</fileset>
 		</copy>
 

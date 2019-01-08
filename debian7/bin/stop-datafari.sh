@@ -5,10 +5,6 @@
 #
 #
 
-if (( EUID == 0 )); then
-   echo "You need to be a non-root user to run this script." 1>&2
-   exit 100
-fi
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
