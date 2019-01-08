@@ -285,7 +285,7 @@
 				<include name="*.jar" />
 				<exclude name="javax.servlet*.jar"/>
 				<exclude name="jetty*.jar"/>
-
+				<exclude name="jsp-*.jar"/>
 				<exclude name="jna*.jar"/>
 				<exclude name="log4j-*.jar"/>
 			</fileset>

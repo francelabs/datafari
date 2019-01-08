@@ -90,12 +90,12 @@ AjaxFranceLabs.LoginDatafariLinksWidget = AjaxFranceLabs.AbstractWidget.extend({
     // If user is already connected
     var loginDatafariLinksDOMElement = $(this.elm).find('a#adminMCFLink');
     if (loginDatafariLinksDOMElement.length > 0){
-      let text = window.i18n.msgStore['adminConnectorsFrameworkLink'];
+      let text = window.i18n.msgStore['adminUI-Connectors-Admin'];
       if (text) {
         loginDatafariLinksDOMElement.html(text);
       }
       var getUrl = window.location;
-      var mcfUrl = getUrl .protocol + "//" + getUrl.host + ":9080" + "/" + "datafari-mcf-crawler-ui";
+      var mcfUrl = getUrl .protocol + "//" + getUrl.hostname + ":9080" + "/" + "datafari-mcf-crawler-ui";
       loginDatafariLinksDOMElement.prop('href', mcfUrl);
       loginDatafariLinksDOMElement.prop('target', 'blank');
     }
