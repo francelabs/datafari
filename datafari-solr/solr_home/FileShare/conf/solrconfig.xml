@@ -1219,6 +1219,10 @@
     </updateProcessor>
 
 	<updateRequestProcessorChain name="datafari" processor="datafariUpdateProcessor">
+  
+        <!-- ////////////////////////// -->
+        <!-- Includes additional updateProcessors -->
+        &custom_update_processors;
 	
 		<processor class="org.apache.solr.update.processor.LangDetectLanguageIdentifierUpdateProcessorFactory">
 			<str name="langid.fl">content,title</str>
@@ -1348,9 +1352,7 @@
     <processor class="solr.RunUpdateProcessorFactory"/>
   </updateRequestProcessorChain>
 	
-	<!-- ////////////////////////// -->
-   	<!-- Includes additional updateProcessors -->
-   	&custom_update_processors;
+	
 	
   <queryResponseWriter class="solr.JSONResponseWriter" name="json">
      <!-- For the purposes of the tutorial, JSON responses are written as
