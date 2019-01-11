@@ -1,3 +1,16 @@
+String.prototype.truncate = function(length, length_show) {
+        var string = this.valueOf();
+
+        if (string.length > length) {
+                var between_txt = string.substring(length_show, string.length - length_show);
+
+                return string.replace(between_txt, "...");
+        } else {
+                return string;
+        }
+}
+
+
 AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
 elmSelector : '#results',
 id : 'documents',
@@ -119,7 +132,7 @@ afterRequest : function() {
 									title = doc.url.split('/');
 									title = title[title.length-1];
 								}
-								elm.find('.doc:last .title').append('<span>' +decodeURIComponent(title) + '</span>');
+								elm.find('.doc:last .title').append('<span>' +decodeURIComponent(title).truncate(50, 15) + '</span>');
 								elm.find('.doc:last .res').append('<p class="description">');
 								elm.find('.doc:last .description').append('<div id="snippet">'+ description+ '</div>');
 								elm.find('.doc:last .description').append('<div id="urlMobile"><p class="address">');
