@@ -132,7 +132,7 @@ afterRequest : function() {
 									title = doc.url.split('/');
 									title = title[title.length-1];
 								}
-								elm.find('.doc:last .title').append('<span>' +decodeURIComponent(title).truncate(50, 15) + '</span>');
+								elm.find('.doc:last .title').append('<span title="' + decodeURIComponent(title) + '">' +decodeURIComponent(title).truncate(50, 15) + '</span>');
 								elm.find('.doc:last .res').append('<p class="description">');
 								elm.find('.doc:last .description').append('<div id="snippet">'+ description+ '</div>');
 								elm.find('.doc:last .description').append('<div id="urlMobile"><p class="address">');
