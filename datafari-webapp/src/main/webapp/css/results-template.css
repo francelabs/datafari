@@ -1101,3 +1101,32 @@
 .searchModeLink { width: 250px; }
 
 #connectionLink #logo_desktop{ display: none; }
+
+.arrow_box {
+	position: relative;
+	background: #f9f9f9;
+	border: 2px solid #ccc;
+}
+.arrow_box:after, .arrow_box:before {
+	right: 100%;
+	top: 12%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.arrow_box:after {
+	border-color: rgba(255, 255, 255, 0);
+	border-right-color: #f9f9f9;
+	border-width: 15px;
+	margin-top: -15px;
+}
+.arrow_box:before {
+	border-color: rgba(204, 204, 204, 0);
+	border-right-color: #e9e9e9;
+	border-width: 18px;
+	margin-top: -18px;
+}
