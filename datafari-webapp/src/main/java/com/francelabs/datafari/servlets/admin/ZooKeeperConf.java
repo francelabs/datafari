@@ -47,7 +47,7 @@ import com.francelabs.datafari.utils.ExecutionEnvironment;
 public class ZooKeeperConf extends HttpServlet {
   private final String env;
   private final String downloadFolder;
-  private final String configName;
+  private String configName;
   private static final String confname = "FileShare";
   private static final long serialVersionUID = 1L;
   private final static Logger LOGGER = LogManager.getLogger(ZooKeeperConf.class.getName());
@@ -84,6 +84,10 @@ public class ZooKeeperConf extends HttpServlet {
     List<String> collectionsList = null;
 
     final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
+    if (!config.getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION).equals("")) {
+      configName = config.getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION);
+
+    }
     if (!config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).equals("")) {
       collectionsList = Arrays.asList(config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).split(","));
     }
@@ -107,11 +111,13 @@ public class ZooKeeperConf extends HttpServlet {
         final File folderConf = new File(downloadFolder);
         FileUtils.cleanDirectory(folderConf);
         server.downloadConfig(Paths.get(downloadFolder), configName);
-        
       } else if (actionParam.toLowerCase().equals("upload")) {
         server.uploadConfig(Paths.get(env), configName);
-        
-     
+        if (collectionsList != null) {
+          for (String object: collectionsList) {
+            server.uploadConfig(Paths.get(env), object);
+          }
+        }
       } else if (actionParam.toLowerCase().equals("reload")) {
         server.reloadCollection(Core.FILESHARE.toString());
         if (collectionsList != null) {
