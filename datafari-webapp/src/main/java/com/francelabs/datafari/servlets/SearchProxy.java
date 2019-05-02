@@ -18,9 +18,12 @@ package com.francelabs.datafari.servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -52,10 +55,34 @@ public class SearchProxy extends HttpServlet {
   private static final long serialVersionUID = 1L;
 
   private static String domain = "corp.francelabs.com";
-
-  private static final List<String> allowedHandlers = Arrays.asList("/select", "/suggest", "/stats", "/statsQuery");
-
+  private String userAllowedHandlers;
   private static final Logger LOGGER = LogManager.getLogger(SearchProxy.class.getName());
+
+  private Set<String> getAllowedHandlers() {   
+    final Set<String> allowedHandlers = new HashSet<>();
+    allowedHandlers.add("/select");
+    allowedHandlers.add("/suggest");
+    allowedHandlers.add("/stats");
+    allowedHandlers.add("/statsQuery");
+    allowedHandlers.add("/");
+
+    final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
+    try {
+      if (!config.getProperty(DatafariMainConfiguration.USER_ALLOWED_HANDLERS).equals("")) {
+        userAllowedHandlers = config.getProperty(DatafariMainConfiguration.USER_ALLOWED_HANDLERS);
+        List<String> userAllowedHandlersList = Arrays.asList(userAllowedHandlers.split(","));
+        for (int i = 0; i < userAllowedHandlersList.size(); i++) {
+          allowedHandlers.add(userAllowedHandlersList.get(i));
+        }
+      }
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    return allowedHandlers;
+  }
+
 
   /**
    * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -66,6 +93,8 @@ public class SearchProxy extends HttpServlet {
 
     final String handler = getHandler(request);
     final String protocol = request.getScheme() + ":";
+
+    final Set<String> allowedHandlers = getAllowedHandlers();
 
     if (!allowedHandlers.contains(handler)) {
       log("Unauthorized handler");

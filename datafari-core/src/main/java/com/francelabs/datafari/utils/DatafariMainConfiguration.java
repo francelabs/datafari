@@ -48,6 +48,7 @@ public class DatafariMainConfiguration extends AbstractConfigClass {
   public final static String TEMP_ADMIN_PASSWORD = "TEMPADMINPASSWORD";
   public static final String SOLR_MAIN_COLLECTION = "mainCollection";
   public static final String SOLR_SECONDARY_COLLECTIONS = "secondaryCollections";
+  public static final String USER_ALLOWED_HANDLERS = "userAllowedHandlers";
 
 
   private final static Logger LOGGER = LogManager.getLogger(DatafariMainConfiguration.class.getName());
