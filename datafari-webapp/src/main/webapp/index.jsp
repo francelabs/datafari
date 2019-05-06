@@ -49,7 +49,7 @@
 		<script type ="text/javascript" src ="js/polyfill.js"></script>
 
 
-	<jsp:include page="header-index.jsp" />
+	<jsp:include page="header.jsp" />
 	<div id="content_index">
 		<img class="fadeInDown animated" id="logo-search" src="images/datafari.png"/>
 		<div id="solr">

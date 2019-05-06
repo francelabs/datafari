@@ -1229,3 +1229,61 @@ input[type="checkbox"] + label span.checkboxIcon {
  	height: 40px;
  	display: none;
  }
+ 
+ /* top menu
+
+        /* taking search to the left*/
+        #basicSearchLink {
+                margin-right: 200px;
+        }
+
+        /* adding background box when hover on search tools */
+        #dropdown-search-tools:hover {
+                padding-top: 7px;
+                padding-bottom: 7px;
+                margin-top: 8px;
+                background: #eee;
+        }
+		.navbar-default .navbar-nav > .open > a#dropdown-search-tools {
+			padding-top: 7px!important;
+            padding-bottom: 7px!important;
+            margin-top: 8px!important;
+            background: #eee!important;
+		}
+		.dropdown-search-click {
+			padding-top: 7px!important;
+            padding-bottom: 7px!important;
+            margin-top: 8px!important;
+            background: #eee!important;
+			color: #555!important;
+		}
+
+        /* adding margin to right and bottom for secondary menu*/
+        .dropdown-second {
+                margin-right: 40px!important;
+                margin-bottom: 10px;
+        }
+        /* default visibility for secondary menu is hidden*/
+        .dropdown-second {
+                visibility: hidden;
+        }
+        /* click on search tools add or remove this class from secondary menu..it will be done by jquery ..adding jquery add the bottom */
+         .secondary-visibility-show {
+                 visibility: visible!important;
+         }
+        /* remove background and border from secondary menu items */
+        .dropdown-second .dropdown button {
+                background: none!important;
+                border: none!important;
+        }
+        /* add padding secondary menu items */
+        .dropdown-second .dropdown button {
+                padding: 10px;
+				color: #777!important;
+        }
+		.dropdown-second .dropdown button:hover {
+			color: #333!important;
+		}
+		header nav.navbar {
+			margin-bottom: 0!important;
+		}
