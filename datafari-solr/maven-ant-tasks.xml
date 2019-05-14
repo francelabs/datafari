@@ -51,6 +51,7 @@
 			<!-- Copy only Jars that we need -->
 			<fileset dir="target" includes="*solr*/dist/solr-langid-*.jar" />
 			<fileset dir="target" includes="*solr*/dist/solr-cell-*.jar" />
+			<fileset dir="target" includes="*solr*/dist/solr-dataimporthandler-*.jar" />
 			<chainedmapper>
 				<!-- Strip solr*/dist directory -->
 				<cutdirsmapper dirs="2" />
