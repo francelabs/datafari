@@ -1210,19 +1210,11 @@
      <queryResponseWriter name="schema.xml" class="solr.SchemaXmlResponseWriter"/>
     -->
     
-    <updateProcessor class="com.francelabs.datafari.updateprocessor.DatafariUpdateProcessorFactory" name="datafariUpdateProcessor">
-    	<bool name="entities.extract.simple">false</bool>
-    	<bool name="entities.extract.simple.name">false</bool>
-    	<bool name="entities.extract.simple.phone">false</bool>
-    	<bool name="entities.extract.simple.special">false</bool>
-    	<str name="entities.extract.simple.special.regex">.*resume*</str>
-    </updateProcessor>
+   
 
 	<updateRequestProcessorChain name="datafari" processor="datafariUpdateProcessor">
   
-        <!-- ////////////////////////// -->
-        <!-- Includes additional updateProcessors -->
-        &custom_update_processors;
+        
 	
 		<processor class="org.apache.solr.update.processor.LangDetectLanguageIdentifierUpdateProcessorFactory">
 			<str name="langid.fl">content,title</str>
@@ -1271,6 +1263,20 @@
 	      <str name="fields">content,content_en,content_fr</str>
 	      <str name="signatureClass">solr.processor.MD5Signature</str>
 	    </processor>
+      
+      <processor class="com.francelabs.datafari.updateprocessor.DatafariUpdateProcessorFactory">
+        <bool name="entities.extract.simple">false</bool>
+        <bool name="entities.extract.simple.name">false</bool>
+        <bool name="entities.extract.simple.phone">false</bool>
+        <bool name="entities.extract.simple.special">false</bool>
+        <str name="entities.extract.simple.special.regex">.*resume*</str>
+      </processor>
+      
+      
+      <!-- ////////////////////////// -->
+        <!-- Includes additional updateProcessors -->
+        &custom_update_processors;
+        
 	    <processor class="solr.LogUpdateProcessorFactory"/>
 	    <processor class="solr.RunUpdateProcessorFactory"/>
 
