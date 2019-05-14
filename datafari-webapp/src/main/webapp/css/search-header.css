@@ -42,4 +42,9 @@
     #logo_desktop {
       display: none;
     }
+    
+    #header-menu {
+	    margin-left: 0px;
+	    padding-left: 5px;
+    }
 }

@@ -10,6 +10,11 @@
   src: url(../fonts/helvetica/HelveticaNeueW02-77BdCn/77cb0adc-646b-4830-8f4c-3db7adbb8dc4.eot?#iefix) format("eot"), url(../fonts/helvetica/HelveticaNeueW02-77BdCn/631bf655-ced5-4627-93d4-89d1bdfe3014.woff) format("woff"), url(../fonts/helvetica/HelveticaNeueW02-77BdCn/96740819-d387-437f-b739-9778ddc5e5b9.ttf) format("truetype"), url(../fonts/helvetica/HelveticaNeueW02-77BdCn/05729794-671d-4a73-a294-f2f447795319.svg) format("svg"); }
 /*! Fond page */
 
+#facets {
+	height: 52em;
+  overflow: auto;
+}
+
 .icon object {
   width: 24px;
   height: 24px;
