@@ -1212,7 +1212,7 @@
     
    
 
-	<updateRequestProcessorChain name="datafari" processor="datafariUpdateProcessor">
+	<updateRequestProcessorChain name="datafari">
   
         
 	
