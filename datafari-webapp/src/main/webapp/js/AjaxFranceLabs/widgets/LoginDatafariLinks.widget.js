@@ -142,7 +142,7 @@ AjaxFranceLabs.LoginDatafariLinksWidget = AjaxFranceLabs.AbstractWidget.extend({
       if (text) {
         loginDatafariLinksDOMElement.html(text);
       }
-      loginDatafariLinksDOMElement.prop('href', '/Datafari/admin/?lang=' + window.i18n.language);
+      loginDatafariLinksDOMElement.prop('href', '/Datafari/admin/?lang=' + window.i18n.language + "&redirect=" + window.location.href);
     }
   }
 });

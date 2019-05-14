@@ -47,6 +47,7 @@
 <link rel="stylesheet" type ="text/css" href="css/jquery-ui-1.11.4/jquery-ui.min.css">
 <link rel="stylesheet" type ="text/css" href="css/jquery-ui-1.11.4/jquery-ui.theme.min.css">
 <link rel="stylesheet" type ="text/css" href="css/jquery-ui-1.11.4/jquery-ui.structure.min.css">
+<link rel="stylesheet" type ="text/css" href="css/preview/preview-displayer.css">
 
 <!-- <link rel="stylesheet" type ="text/css" href="css/widgets/slider-widget.css"> -->
 

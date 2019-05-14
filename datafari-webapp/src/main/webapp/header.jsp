@@ -62,6 +62,10 @@
         </div>
 
         <div class="collapse navbar-collapse" id="header-menu">
+        
+        <div id="logo_desktop">
+	          <img class="datafari-mini-logo" src="images/empty-pixel.png">
+	        </div>
 
           <ul class="nav navbar-nav navbar-right" id= "loginDatafariLinks">
 

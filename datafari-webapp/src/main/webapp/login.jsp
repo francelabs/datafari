@@ -36,6 +36,7 @@
 <script type="text/javascript"
 	src="/Datafari/js/AjaxFranceLabs/manager/Manager.js"></script>
 
+<script type ="text/javascript" src ="/Datafari/customs/js/customFieldsForResults.js"></script>
 <script type="text/javascript" src="/Datafari/js/main.js"></script>
 <!-- JS library useful to extract parameters value from URL  -->
 <script type ="text/javascript" src ="/Datafari/js/url.min.js"></script>
@@ -95,12 +96,17 @@
 
 		String mainPage = request.getContextPath();
 		String loginPage = mainPage + request.getServletPath();
+		String redirect = request.getParameter("redirect");
+    if(redirect != null) {
+      loginPage += "?redirect=" + redirect;
+    } else {
 		
-		// If the language param was defined in the source URL, append the language 
-		// selection to the adminUi login page URL to be able to display it in the correct language
-		if (langParam != null){
-			loginPage = loginPage + langParam;
-		}
+  		// If the language param was defined in the source URL, append the language 
+  		// selection to the adminUi login page URL to be able to display it in the correct language
+  		if (langParam != null){
+  			loginPage = loginPage + langParam;
+  		}
+    }
 		
 		// User is not logged in
 		if (request.getUserPrincipal() == null) {
@@ -133,18 +139,22 @@
 
 	<%
 		} else {
+      if(redirect != null) {
+        response.sendRedirect(redirect);
+      } else {
 			
-			String urlRedirect = mainPage + "/applyLang";
-			
-			// If the language param was defined in the source URL, append the language 
-			// selection to the adminUi page URL to be able to display it in the correct language
-			if (langParam != null){
-				urlRedirect = urlRedirect + langParam + "&urlRedirect=" + mainPage + "/Search";
-			} else {
-				urlRedirect = urlRedirect + "?urlRedirect=" + mainPage + "/Search";
-			}
-			
-			response.sendRedirect(urlRedirect);
+  			String urlRedirect = mainPage + "/applyLang";
+  			
+  			// If the language param was defined in the source URL, append the language 
+  			// selection to the adminUi page URL to be able to display it in the correct language
+  			if (langParam != null){
+  				urlRedirect = urlRedirect + langParam + "&urlRedirect=" + mainPage + "/Search";
+  			} else {
+  				urlRedirect = urlRedirect + "?urlRedirect=" + mainPage + "/Search";
+  			}
+  			
+  			response.sendRedirect(urlRedirect);
+      }
 		}
 	%>
 </body>
