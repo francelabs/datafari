@@ -29,7 +29,7 @@ public class DatafariUpdateProcessorFactory extends UpdateRequestProcessorFactor
   @Override
   public void init(final NamedList args) {
     if (args != null) {
-      params = SolrParams.toSolrParams(args);
+      params = args.toSolrParams();
     }
   }
 
