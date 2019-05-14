@@ -69,7 +69,21 @@
 			// Reinit all the application, go to index page, cleaning its cache
 			// to force the rebuild of widgets
 			// window.location.origin may be undefined for some environments
-			location.assign(window.location.protocol +"//" + window.location.host + window.location.pathname + "?lang=" + lang + window.location.hash);
+			// Retrieve last executed request
+		      var searchStr = window.location.search;
+		      if (searchStr.indexOf("lang") != -1) {
+		        var langParam = searchStr.substring(searchStr.indexOf("lang")).split("&")[0];
+		        searchStr = searchStr.replace(langParam + "&", '');
+		        searchStr = searchStr.replace(langParam, '');
+		      }
+		      if (searchStr != null && searchStr != undefined && searchStr != '' && !searchStr.endsWith("&")) {
+		        searchStr += "&";
+		      } else if (searchStr == null || searchStr == undefined || searchStr == '') {
+		        searchStr = '?';
+		      }
+
+		       // Change the language and directly execute the last request
+		      location.assign(window.location.protocol + "//" + window.location.host + window.location.pathname + searchStr + "lang=" + lang + window.location.hash);
 		},
 
 		init : function(options) {
