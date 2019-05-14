@@ -133,12 +133,12 @@
    <field name="character_count" type="int" indexed="true" stored="true" multiValued="false"/>
    <field name="page_count" type="int" indexed="true" stored="true" multiValued="false"/>
    <field name="xmptpg_npages" type="int" indexed="true" stored="true" multiValued="false"/>
-   <field name="author_search" type="text_general" indexed="true" stored="true" multiValued="true"/>
-   <field name="subject_search" type="text_general" indexed="true" stored="true" multiValued="true"/>
-   <field name="keywords_search" type="text_general" indexed="true" stored="true" multiValued="true"/>
-   <field name="comments_search" type="text_general" indexed="true" stored="true" multiValued="true"/>
-   <field name="last_author_search" type="text_general" indexed="true" stored="true" multiValued="true"/>
-   <field name="description_search" type="text_general" indexed="true" stored="true" multiValued="true"/>
+   <field name="author_search" type="text_general" indexed="true" stored="false" multiValued="true"/>
+   <field name="subject_search" type="text_general" indexed="true" stored="false" multiValued="true"/>
+   <field name="keywords_search" type="text_general" indexed="true" stored="false" multiValued="true"/>
+   <field name="comments_search" type="text_general" indexed="true" stored="false" multiValued="true"/>
+   <field name="last_author_search" type="text_general" indexed="true" stored="false" multiValued="true"/>
+   <field name="description_search" type="text_general" indexed="true" stored="false" multiValued="true"/>
 
    <!-- Add people data from AD/LDAP -->
    <field name="people_firstName" type="text_nostem" indexed="true" stored="true" multiValued="false"/>
