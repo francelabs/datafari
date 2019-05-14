@@ -78,8 +78,8 @@ function getTab(){
                 	 //for each result add a line to the table
                 	 while(i<numb){
                 		 var key = data.response.docs[i].keyword;
-						 $("#table").append("<tr id=\""+i+"\"><th>"+i+"</th><th><a href=\"javascript: edit("+i+")\">"+key+"</a></th><th>"+data.response.docs[i].title+"</th><th>"+data.response.docs[i].content+"</th><th>"+formatDate(data.response.docs[i].dateBeginning)+"</th><th>"+formatDate(data.response.docs[i].dateEnd)+"</th><th class=\"btn-danger text-center\"style=\"background-color : #d9534f; position : relative;\"><a href=\"javascript: remove("+i+")\" style=\"color: #FFFFFF; position: absolute;top: 50%;left: 50%; text-decoration: inherit; -ms-transform: translate(-50%,-50%); -webkit-transform: translate(-50%,-50%); transform: translate(-50%,-50%);\"><i class=\"fa fa-trash-o\" ></i></a></th></tr>");
-						i++;
+                		 $("#table").append("<tr id=\""+i+"\"><th>"+i+"</th><th><a href=\"javascript: edit("+i+")\">"+key+"</a></th><th>"+data.response.docs[i].title+"</th><th>"+data.response.docs[i].content+"</th><th>"+formatDate(data.response.docs[i].dateBeginning)+"</th><th>"+formatDate(data.response.docs[i].dateEnd)+"</th><th class=\"btn-danger text-center\"style=\"background-color : #d9534f; position : relative;\"><a href=\"javascript: remove("+i+")\" style=\"color: #FFFFFF; position: absolute;top: 50%;left: 50%; text-decoration: inherit; -ms-transform: translate(-50%,-50%); -webkit-transform: translate(-50%,-50%); transform: translate(-50%,-50%);\"><i class=\"far fa-trash-alt\" ></i></a></th></tr>");
+                		 i++;
 					}
 					$("#table").append("</tbody></table>");
 					$("#ajaxResponse").append("</div></div></div></div>");

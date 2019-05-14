@@ -321,7 +321,7 @@ function getQuery(){
 		$.get("../SearchExpert/queryElevator", { get: "docs", query : query}).done(function(data)
 				{
 					for(var i = 0; i < data.docs.length; i++) {
-					    $("#docsTableContent").append("<tr class='movable_line' id='" + data.docs[i] + "'><td>" + data.docs[i] + "</td><td class='position'>" + (i + 1) + "</td><td class='btn-danger'><a class='delete'><i class='fa fa-trash-o'></i></a></td></tr>");
+					    $("#docsTableContent").append("<tr class='movable_line' id='" + data.docs[i] + "'><td>" + data.docs[i] + "</td><td class='position'>" + (i + 1) + "</td><td class='btn-danger'><a class='delete'><i class='far fa-trash-alt'></i></a></td></tr>");
 					    $("#docsTableContent tr:last td:last").click(function(){
 					    	$(this).parent("tr").remove();
 					    	refreshPositions();

@@ -126,7 +126,7 @@ AjaxFranceLabs.QueryElevatorModule = AjaxFranceLabs.AbstractModule.extend({
 				});
 				
 				// Add the remove link and set his onClick function
-				resultElm.find(".description #urlMobile .address").append("<span class='elevator-remove' " + style + " action='remove' id='" + id + "'><i class='fa fa-trash-o'></i></span>");
+				resultElm.find(".description #urlMobile .address").append("<span class='elevator-remove' " + style + " action='remove' id='" + id + "'><i class='far fa-trash-alt'></i></span>");
 				resultElm.find(".description #urlMobile .address .elevator-remove").click(function() {
 					
 					var currentDocID = $(this).attr('id');

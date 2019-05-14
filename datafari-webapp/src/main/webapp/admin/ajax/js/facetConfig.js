@@ -89,7 +89,7 @@ function getExistingFacets(){
 	       			list=data;
 	        		$('#changeOrder').attr("disabled", false);
 	        		for(var i = 0; i < data.length ; i++){
-	        			$("#tbody").append("<tr draggable=\"true\" ondrop=\"javascript : drop(event)\" ondragover=\"allowDrop(event)\" ondragstart=\"javascript : drag(event)\" \" id="+i+"><td id=\"id"+i+"\">"+(i+1)+"</td><td id=\"field"+i+"\">"+data.facet[i].field+"</td><td id=\"btn"+i+"\" class=\"btn-danger text-center\"style=\"background-color : #d9534f; width : 25px; position : relative;\"><a href=\"javascript: remove("+i+")\" style=\"color: #FFFFFF; position: absolute;top: 50%;left: 50%; text-decoration: inherit; -ms-transform: translate(-50%,-50%); -webkit-transform: translate(-50%,-50%); transform: translate(-50%,-50%);\"><i class=\"fa fa-trash-o\" ></i></a></td></tr>");
+	        			$("#tbody").append("<tr draggable=\"true\" ondrop=\"javascript : drop(event)\" ondragover=\"allowDrop(event)\" ondragstart=\"javascript : drag(event)\" \" id="+i+"><td id=\"id"+i+"\">"+(i+1)+"</td><td id=\"field"+i+"\">"+data.facet[i].field+"</td><td id=\"btn"+i+"\" class=\"btn-danger text-center\"style=\"background-color : #d9534f; width : 25px; position : relative;\"><a href=\"javascript: remove("+i+")\" style=\"color: #FFFFFF; position: absolute;top: 50%;left: 50%; text-decoration: inherit; -ms-transform: translate(-50%,-50%); -webkit-transform: translate(-50%,-50%); transform: translate(-50%,-50%);\"><i class=\"far fa-trash-alt\" ></i></a></td></tr>");
 	        		}
 	        		//Get the fields
 	        		getFields();

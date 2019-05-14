@@ -157,7 +157,7 @@ function getFile(){
 				$("#legendDiv").html("<legend>"+window.i18n.msgStore['synonyms']+"</legend>");
 				$("#synonymsDisplay").show();
 				for(var words in data.synonymsList) {
-				    $("#synonymsTableContent").append("<tr><td>" + createAddWordDiv() + htmlWord(words) + "</td><td>" + createAddWordDiv() + htmlWord(data.synonymsList[words]) + "</td><td class='btn-danger'><a><i class='fa fa-trash-o'></i></a></td></tr>");
+				    $("#synonymsTableContent").append("<tr><td>" + createAddWordDiv() + htmlWord(words) + "</td><td>" + createAddWordDiv() + htmlWord(data.synonymsList[words]) + "</td><td class='btn-danger'><a><i class='far fa-trash-alt'></i></a></td></tr>");
 				    $("#synonymsTableContent tr:last td:last").click(function(){
 				    	$(this).parent("tr").remove();
 				    });
@@ -167,7 +167,7 @@ function getFile(){
 				// Add line to add new synonyms
 				$("#synonymsTableContent").append("<tr id='addLine'><td colspan=3><button class='btn btn-primary btn-label-left' name='addSynonyms' id='addSynonyms'>" + window.i18n.msgStore['addSynonyms'] + "</button></td></tr>");
 				$("#addSynonyms").click(function() {
-					$("#synonymsTableContent").append("<tr><td>" + createAddWordDiv() + "</td><td>" + createAddWordDiv() + "</td><td class='btn-danger'><a><i class='fa fa-trash-o'></i></a></td></tr>");
+					$("#synonymsTableContent").append("<tr><td>" + createAddWordDiv() + "</td><td>" + createAddWordDiv() + "</td><td class='btn-danger'><a><i class='far fa-trash-alt'></i></a></td></tr>");
 					$("#synonymsTableContent tr:last td:last").click(function(){
 				    	$(this).parent("tr").remove();
 				    });

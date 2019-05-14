@@ -54,7 +54,7 @@ $(document).ready(function() {
 					var splitWord = words[i].split('^');
 
 
-					$("#tbody").append("<tr id='"+i+"'><th>"+splitWord[0]+"</th><th><input type='text'  id='qf"+splitWord[0]+"' name='qfAPI' value='"+splitWord[1]+"'></th><th class=\"btn-danger text-center\"style=\"background-color : #d9534f; position : relative;\"><a href=\"javascript: remove("+i+")\" style=\"color: #FFFFFF; position: absolute;top: 50%;left: 50%; text-decoration: inherit; -ms-transform: translate(-50%,-50%); -webkit-transform: translate(-50%,-50%); transform: translate(-50%,-50%);\"><i class=\"fa fa-trash-o\" ></i></a></th>");
+					$("#tbody").append("<tr id='"+i+"'><th>"+splitWord[0]+"</th><th><input type='text'  id='qf"+splitWord[0]+"' name='qfAPI' value='"+splitWord[1]+"'></th><th class=\"btn-danger text-center\"style=\"background-color : #d9534f; position : relative;\"><a href=\"javascript: remove("+i+")\" style=\"color: #FFFFFF; position: absolute;top: 50%;left: 50%; text-decoration: inherit; -ms-transform: translate(-50%,-50%); -webkit-transform: translate(-50%,-50%); transform: translate(-50%,-50%);\"><i class=\"far fa-trash-alt\" ></i></a></th>");
 
 				}
 				$("#tbody").append("</tr>");
