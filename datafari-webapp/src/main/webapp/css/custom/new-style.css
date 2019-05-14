@@ -264,7 +264,6 @@
   body #tab_line {
     margin-bottom: 5px;
     border-bottom: 1px solid #e4e4e4;
-    margin-left: 11px;
 
     /*! Onglet utilisé */ }
     body #tab_line ul {
@@ -363,9 +362,7 @@
     margin-left: 0px; }
 
   #solr {
-    max-width: 1190px;
-    width: 90% !important;
-    margin-bottom: 13.5% !important;
+    width: 69%;
   }
 
   .title, .title .externallinktitle, .title .externalappilinktitle {

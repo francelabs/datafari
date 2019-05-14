@@ -1,3 +1,13 @@
+@media (min-width: 800px) {
+	.navbar-header {
+	 display: none;
+	}
+}
+
+#header-menu, .container-fluid {
+  padding: 0;
+}
+
 .head-title {
   background-image: url("../images/patern-barre.png");
   background-position: center center;
@@ -22,4 +32,14 @@
 	display: inline-block;
   margin-left: 15.5%;
   margin-top: 0.5em;
+}
+
+#logo_desktop img{
+  height: 3.6em;
+}
+
+@media all and (max-width: 799px){
+    #logo_desktop {
+      display: none;
+    }
 }
