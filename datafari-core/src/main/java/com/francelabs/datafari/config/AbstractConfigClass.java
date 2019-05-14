@@ -88,6 +88,25 @@ public abstract class AbstractConfigClass implements IConfigClass {
     }
     return prop;
   }
+  
+  /**
+   * Return the value of the property given as parameter
+   *
+   * @param key
+   *          the property name
+   * @param defaultValue
+   *          the default value to return in case of null or error
+   * @return the property value
+   */
+  @Override
+  public String getProperty(final String key, final String defaultValue) {
+    String prop = (String) properties.get(key);
+    if (prop == null) {
+      prop = defaultValue;
+      LOGGER.warn("Property " + key + " not found in the following property file: " + this.configPropertiesFileNameAbsolutePath);
+    }
+    return prop;
+  }
 
   @Override
   public void setProperty(final String key, final String value) {

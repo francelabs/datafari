@@ -995,7 +995,7 @@
 				[default, jaspell-based] org.apache.solr.spelling.suggest.tst.TSTLookup [ternary 
 				trees] -->
 			<str name="field">suggest</str>  <!-- the indexed field to derive suggestions from -->
-			<float name="threshold">${threshold:0.005}</float>
+			<float name="threshold">${autocomplete.threshold:0.005}</float>
 			<str name="buildOnCommit">true</str>
 
 		</lst>

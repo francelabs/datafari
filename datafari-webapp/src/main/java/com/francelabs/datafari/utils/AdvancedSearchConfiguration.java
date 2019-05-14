@@ -16,7 +16,6 @@
 package com.francelabs.datafari.utils;
 
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.francelabs.datafari.config.AbstractConfigClass;
 
@@ -37,6 +36,7 @@ public class AdvancedSearchConfiguration extends AbstractConfigClass {
   public static final String AUTOCOMPLETE_FIELDS = "AUTOCOMPLETEFIELDS";
   public static final String FIXEDVALUES_FIELDS = "FIXEDVALUESFIELDS";
   public static final String LABELED_FIELDS = "LABELED_FIELDS";
+
   private static AdvancedSearchConfiguration instance;
 
   /**
