@@ -44,7 +44,6 @@ import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 import com.francelabs.datafari.statistics.StatsPusher;
 import com.francelabs.datafari.utils.DatafariMainConfiguration;
-import com.francelabs.datafari.utils.HighlightConfiguration;
 import com.francelabs.datafari.utils.RealmLdapConfiguration;
 
 /**
@@ -163,9 +162,6 @@ public class SearchProxy extends HttpServlet {
           }
           params.setParam("AuthenticatedUserName", AuthenticatedUserName);
         }
-
-        // Add Highlight custom params
-        params.setParam("hl.maxAnalyzedChars", HighlightConfiguration.getInstance().getProperty(HighlightConfiguration.MAX_ANALYZED_CHARS));
 
         final String queryParam = params.getParamValue("query");
         if (queryParam != null) {
