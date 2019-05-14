@@ -1,6 +1,7 @@
 package com.francelabs.datafari.utils;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -60,6 +61,7 @@ public class SolrAPI {
   private static String config_api="/solr/FileShare/config/params";
   private static String overlay="/solr/FileShare/config/overlay";
   private static String overlayshort="/solr/FileShare/config";
+  private static String schema_api="/solr/FileShare/schema";
 
 
   public JSONObject readConfiguration() {
@@ -74,26 +76,31 @@ public class SolrAPI {
     return (protocol+"://"+solrserver+":"+solrport);
   }
 
-  private static String getConfigAPI() throws IOException{
+  private static String getConfigAPI(String collection) throws IOException{
 
-    if (DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION)!= null)
-      config_api = "/solr/"+DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION)+"/config/params";
+    config_api = "/solr/"+collection+"/config/params";
 
     return config_api;
   }
-  
-  private static String getOverlay() throws IOException{
 
-    if (DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION)!= null)
-      overlay = "/solr/"+DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION)+"/config/overlay";
+  private static String getSchemaAPI(String collection) throws IOException{
+
+    config_api = "/solr/"+collection+"/schema";
+
+    return schema_api;
+  }
+
+  private static String getOverlay(String collection) throws IOException{
+
+
+    overlay = "/solr/"+collection+"/config/overlay";
 
     return overlay;
   }
-  
-  private static String getOverlayShort() throws IOException{
 
-    if (DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION)!= null)
-      overlayshort = "/solr/"+DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION)+"/config";
+  private static String getOverlayShort(String collection) throws IOException{
+
+    overlayshort = "/solr/"+collection+"/config";
 
     return overlayshort;
   }
@@ -171,16 +178,23 @@ public class SolrAPI {
 
   }
 
-  static public JSONObject readConfig() throws IOException, ManifoldCFException, InterruptedException, ParseException {
+  static public JSONObject readConfig(String collection) throws IOException, ManifoldCFException, InterruptedException, ParseException {
 
-    final String url = getSolrUrl() + getConfigAPI();
+    final String url = getSolrUrl() + getConfigAPI(collection);
     LOGGER.debug(url+"url");
     return executeCommand(url, "GET", null);
   }
 
-  static public JSONObject readConfigOverlay() throws IOException, ManifoldCFException, InterruptedException, ParseException {
+  static public JSONObject readSchema(String collection,String path) throws IOException, ManifoldCFException, InterruptedException, ParseException {
 
-    final String url = getSolrUrl() + getOverlay();
+    final String url = getSolrUrl() + getSchemaAPI(collection)+"/"+path;
+    LOGGER.debug(url+"url schema");
+    return executeCommand(url, "GET", null);
+  }
+
+  static public JSONObject readConfigOverlay(String collection) throws IOException, ManifoldCFException, InterruptedException, ParseException {
+
+    final String url = getSolrUrl() + getOverlay(collection);
     LOGGER.debug("url overlay"+url);
     return executeCommand(url, "GET", null);
   }
@@ -206,9 +220,9 @@ public class SolrAPI {
     return phraseFieldsWeight;
   }
 
-  static public JSONObject setHLcharacters(long nbCharactersHL) throws IOException, InterruptedException, ParseException{
+  static public JSONObject setHLcharacters(String collection, long nbCharactersHL) throws IOException, InterruptedException, ParseException{
 
-    final String url = getSolrUrl() + getConfigAPI();
+    final String url = getSolrUrl() + getConfigAPI(collection);
     final JSONObject objet = new JSONObject();
     final JSONObject mysearch = new JSONObject();
     final JSONObject highlight = new JSONObject();
@@ -222,9 +236,9 @@ public class SolrAPI {
 
   }
 
-  static public JSONObject setFieldsWeight(String fieldsWeight) throws IOException, InterruptedException, ParseException{
+  static public JSONObject setFieldsWeight(String collection, String fieldsWeight) throws IOException, InterruptedException, ParseException{
 
-    final String url = getSolrUrl() + getConfigAPI();
+    final String url = getSolrUrl() + getConfigAPI(collection);
     final JSONObject objet = new JSONObject();
     final JSONObject mysearch = new JSONObject();
     final JSONObject qf = new JSONObject();
@@ -238,9 +252,9 @@ public class SolrAPI {
 
   }
 
-  static public JSONObject setPhraseFieldsWeight(String fieldsWeight) throws IOException, InterruptedException, ParseException{
+  static public JSONObject setPhraseFieldsWeight(String collection, String fieldsWeight) throws IOException, InterruptedException, ParseException{
 
-    final String url = getSolrUrl() + getConfigAPI();
+    final String url = getSolrUrl() + getConfigAPI(collection);
     final JSONObject objet = new JSONObject();
     final JSONObject mysearch = new JSONObject();
     final JSONObject pf = new JSONObject();
@@ -250,34 +264,57 @@ public class SolrAPI {
     objet.put("update", mysearch);
 
     return executeCommand(url, "POST", objet);
-
-
   }
-  static public JSONObject setAutocompleteThreshold(double autocompleteThreshold) throws IOException, InterruptedException, ParseException{
 
-    LOGGER.debug("setauto:"+autocompleteThreshold);
-    final String url = getSolrUrl() + getOverlayShort();
+
+  static public String getUserProp(JSONObject object, String userProp) throws IOException, ManifoldCFException, InterruptedException, ParseException {
+    LOGGER.debug("userProp:"+userProp);
+    final JSONObject objectUserProps = (JSONObject) ((JSONObject)  ((JSONObject) object.get("overlay")).get("userProps"));
+    String userPropValue = (String) objectUserProps.get(userProp);
+    return userPropValue;
+  }
+
+  static public JSONObject setUserProp(String collection, String userProp, String userPropValue) throws IOException, InterruptedException, ParseException{
+
+    LOGGER.debug("setUserProp:"+userPropValue);
+    final String url = getSolrUrl() + getOverlayShort(collection);
     final JSONObject objet = new JSONObject();
 
-    final JSONObject threshold = new JSONObject();
-
-    threshold.put("autocomplete.threshold",autocompleteThreshold);
-    objet.put("set-user-property", threshold);
-
-
+    final JSONObject userPropObject = new JSONObject();
+    userPropObject.put(userProp,userPropValue);
+    objet.put("set-user-property", userPropObject);
     return executeCommand(url, "POST", objet);
-
-
   }
 
-  static public double getAutocompleteThreshold(JSONObject object) throws IOException, ManifoldCFException, InterruptedException, ParseException {
+  static public JSONObject manageCopyField(String collection, String command, String sourceField, String targetField) throws IOException, ManifoldCFException, InterruptedException, ParseException {
 
-    final JSONObject objectAutocomplete = (JSONObject) ((JSONObject)  ((JSONObject) object.get("overlay")).get("userProps"));
-    double autoCompleteThreshold = (double) objectAutocomplete.get("autocomplete.threshold");
-    return autoCompleteThreshold;
+    final String url = getSolrUrl() + getSchemaAPI(collection);
+    final JSONObject objet = new JSONObject();
+    final JSONObject copy = new JSONObject();
+    copy.put("dest",targetField);
+    copy.put("source",sourceField);
+    objet.put(command, copy);
+    return executeCommand(url, "POST", objet);
   }
 
+  static public boolean containsCopyFields(String collection) throws Exception {
 
+    boolean copyFieldPresent = false ;
+
+    JSONObject jsonObject = readSchema(collection,"copyfields");
+    System.out.println(jsonObject);
+    LOGGER.error(jsonObject.toJSONString());
+    final JSONArray jsonarray = (JSONArray)  jsonObject.get("copyFields");
+    System.out.println(jsonarray);
+    for (int i = 0; i < jsonarray.size(); i++) {
+      Object jsonobject = jsonarray.get(i);
+      System.out.println(jsonobject);
+      if (jsonobject.toString().equals("{\"source\":\"content_*\",\"dest\":\"entity_person\"}"))
+        copyFieldPresent = true;
+    }
+    return copyFieldPresent ; 
+
+  }
 
 
 

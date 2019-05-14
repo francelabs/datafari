@@ -17,45 +17,20 @@ package com.francelabs.datafari.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 
-import javax.net.ssl.SSLContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.HttpClientConnectionManager;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
-import org.apache.http.ssl.SSLContextBuilder;
-import org.apache.http.ssl.TrustStrategy;
-import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import com.francelabs.datafari.exception.CodesReturned;
-import com.francelabs.datafari.utils.HighlightConfiguration;
+import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
+import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.utils.SolrAPI;
 import com.francelabs.datafari.utils.SolrConfiguration;
 
@@ -76,21 +51,20 @@ public class GetAutocompleteThreshold extends HttpServlet {
   private final String protocol;
 
   /**
-   * @throws IOException 
+   * @throws IOException
    * @see HttpServlet#HttpServlet()
    */
   public GetAutocompleteThreshold() throws IOException {
     super();
-   
+
     solrserver = SolrConfiguration.getInstance().getProperty(SolrConfiguration.SOLRHOST);
-   solrport = SolrConfiguration.getInstance().getProperty(SolrConfiguration.SOLRPORT);
-   protocol = SolrConfiguration.getInstance().getProperty(SolrConfiguration.SOLRPROTOCOL);
+    solrport = SolrConfiguration.getInstance().getProperty(SolrConfiguration.SOLRPORT);
+    protocol = SolrConfiguration.getInstance().getProperty(SolrConfiguration.SOLRPROTOCOL);
     // TODO Auto-generated constructor stub
   }
 
   /**
-   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-   *      response)
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
    */
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
@@ -98,52 +72,27 @@ public class GetAutocompleteThreshold extends HttpServlet {
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
 
-    double autocompleteThreshold = 0;
-   JSONObject jsonresponse = new JSONObject();
-    
+    String autocompleteThreshold = "0";
+    JSONObject jsonresponse = new JSONObject();
+
     try {
-     jsonresponse =  SolrAPI.readConfigOverlay();
-     autocompleteThreshold = SolrAPI.getAutocompleteThreshold(jsonresponse);
-    } catch (ManifoldCFException e1) {
-      // TODO Auto-generated catch block
-      e1.printStackTrace();
-    } catch (InterruptedException e1) {
-      // TODO Auto-generated catch block
-      e1.printStackTrace();
-    } catch (ParseException e1) {
-      // TODO Auto-generated catch block
-      e1.printStackTrace();
+      jsonresponse = SolrAPI.readConfigOverlay(Core.FILESHARE.toString());
+      //autocompleteThreshold = SolrAPI.getAutocompleteThreshold(jsonresponse);
+      autocompleteThreshold = (SolrAPI.getUserProp(jsonresponse, "autocomplete.threshold").toString());
+      // Write the values to the response object and send
+      jsonResponse.put("autoCompleteThreshold", autocompleteThreshold);
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+    } catch (final Exception e) {
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+      jsonResponse.put(OutputConstants.STATUS, "Error with SolrAPI: " + e.getMessage());
+      logger.error("Solr API getAutocompleteThreshold request error", e);
     }
     // Perform retrieve operations to get the actual values
 
-    logger.debug("overlay"+jsonresponse.toJSONString());
-    // Write the values to the response object and send
-    jsonResponse.put("autoCompleteThreshold", autocompleteThreshold);
-    jsonResponse.put("code", CodesReturned.ALLOK.getValue());
-   
+    logger.debug("overlay" + jsonresponse.toJSONString());
+
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);
   }
-
-  /**
-   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-   *      response)
-   */
-  @Override
-  protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-
-    final JSONObject jsonResponse = new JSONObject();
-    request.setCharacterEncoding("utf8");
-    response.setContentType("application/json");
-    if (request.getParameter("hl.maxAnalyzedChars") != null) {
-      logger.debug(request.getParameter("hl.maxAnalyzedChars"));
-      System.out.println(request.getParameter("hl.maxAnalyzedChars"));
-      
-    }
-    
-  }
-  
- 
- 
 
 }

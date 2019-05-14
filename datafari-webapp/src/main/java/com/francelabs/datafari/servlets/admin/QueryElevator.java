@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -42,6 +43,7 @@ import com.francelabs.datafari.service.indexer.IndexerServer;
 import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
+import com.francelabs.datafari.utils.DatafariMainConfiguration;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 
@@ -163,16 +165,13 @@ public class QueryElevator extends HttpServlet {
 
     try {
       indexServer = IndexerServerManager.getIndexerServer(Core.FILESHARE);
-    } catch (final IOException e1) {
+    } catch (final Exception e) {
       final PrintWriter out = response.getWriter();
       out.append("Error while getting the Solr core, please make sure the core has booted up. Error code : 69000");
       out.close();
-      LOGGER.error("Error while getting the Solr core in doGet, admin servlet, make sure the core  has booted up and  that the code has been changed to match the changes. Error 69000 ", e1);
+      LOGGER.error("Error while getting the Solr core in doGet, admin servlet, make sure the core  has booted up and  that the code has been changed to match the changes. Error 69000 ", e);
       return;
 
-    } catch (final Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
     }
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
@@ -257,7 +256,7 @@ public class QueryElevator extends HttpServlet {
           }
 
           // Set the response code
-          jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+          
         }
 
         // Re-transform the Java object into the elevate.xml file thanks
@@ -267,6 +266,21 @@ public class QueryElevator extends HttpServlet {
         final OutputStream os = new FileOutputStream(elevatorFile);
         marshal.marshal(elevate, os);
         indexServer.uploadFile(env, "elevate.xml", Core.FILESHARE.toString());
+        indexServer.reloadCollection(Core.FILESHARE.toString());
+        
+        List<String> collectionsList = null;
+
+        final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
+        if (!config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).equals("")) {
+          collectionsList = Arrays.asList(config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).split(","));
+        }
+        if (collectionsList != null) {
+          for (String object: collectionsList) {
+            indexServer.uploadFile(env, "elevate.xml", object);
+            indexServer.reloadCollection(object);
+          }
+        }
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 
       } catch (final Exception e) {
         jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
@@ -345,6 +359,20 @@ public class QueryElevator extends HttpServlet {
         final OutputStream os = new FileOutputStream(elevatorFile);
         marshal.marshal(elevate, os);
         indexServer.uploadFile(env, "elevate.xml", Core.FILESHARE.toString());
+        indexServer.reloadCollection(Core.FILESHARE.toString());
+        
+        List<String> collectionsList = null;
+
+        final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
+        if (!config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).equals("")) {
+          collectionsList = Arrays.asList(config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).split(","));
+        }
+        if (collectionsList != null) {
+          for (String object: collectionsList) {
+            indexServer.uploadFile(env, "elevate.xml", object);
+            indexServer.reloadCollection(object);
+          }
+        }
 
         // Set the response code
         jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());

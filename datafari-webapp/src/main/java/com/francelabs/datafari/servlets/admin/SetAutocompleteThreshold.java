@@ -17,6 +17,8 @@ package com.francelabs.datafari.servlets.admin;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -24,18 +26,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
 
 import com.francelabs.datafari.exception.CodesReturned;
-import com.francelabs.datafari.utils.HighlightConfiguration;
+import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
+import com.francelabs.datafari.servlets.constants.OutputConstants;
+import com.francelabs.datafari.utils.DatafariMainConfiguration;
 import com.francelabs.datafari.utils.SolrAPI;
 
 /**
@@ -55,8 +53,7 @@ public class SetAutocompleteThreshold extends HttpServlet {
   }
 
   /**
-   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-   *      response)
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
    */
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
@@ -64,44 +61,42 @@ public class SetAutocompleteThreshold extends HttpServlet {
   }
 
   /**
-   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-   *      response)
+   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
    */
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     final JSONObject jsonResponse = new JSONObject();
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
-    if (request.getParameter("autocompleteThreshold") != null) {
-      logger.debug("threshold"+request.getParameter("autocompleteThreshold"));
-      System.out.println(request.getParameter("autocompleteThreshold"));
+    if (request.getParameter("autocompleteThreshold") == null) {
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+      jsonResponse.put(OutputConstants.STATUS, "autocompleteThreshold parameter not provided");
+    } else {
+
+      try {
+        SolrAPI.setUserProp(Core.FILESHARE.toString(), "autocomplete.threshold", request.getParameter("autocompleteThreshold"));
+        List<String> collectionsList = null;
+        final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
+        if (!config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).equals("")) {
+          collectionsList = Arrays.asList(config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).split(","));
+        }
+        if (collectionsList != null) {
+          for (String object: collectionsList) {
+            //SolrAPI.setAutocompleteThreshold(object,Double.parseDouble(request.getParameter("autocompleteThreshold")));
+            SolrAPI.setUserProp(object, "autocomplete.threshold", request.getParameter("autocompleteThreshold"));
+          }
+        }
+
+        jsonResponse.put("code", CodesReturned.ALLOK.getValue());
+      } catch (final Exception e) {
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+        jsonResponse.put(OutputConstants.STATUS, "Error with SolrAPI: " + e.getMessage());
+        logger.error("Solr API setAutocompleteThreshold request error", e);
+      }
     }
-    
-      
-   try {
-    SolrAPI.setAutocompleteThreshold(Double.parseDouble(request.getParameter("autocompleteThreshold")));
-  } catch (NumberFormatException e) {
-    // TODO Auto-generated catch block
-    e.printStackTrace();
-  } catch (InterruptedException e) {
-    // TODO Auto-generated catch block
-    e.printStackTrace();
-  } catch (ParseException e) {
-    // TODO Auto-generated catch block
-    e.printStackTrace();
-  }
-    
-   
-   
-    
- 
-    
-    jsonResponse.put("code", CodesReturned.ALLOK.getValue());
+
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);
-    
-     
-    
-   
+
   }
 }
