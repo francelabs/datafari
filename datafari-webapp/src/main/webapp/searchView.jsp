@@ -177,9 +177,10 @@
 <%}else{ %>
 	<script type="text/javascript"> window.isLikesAndFavoritesEnabled = false</script>
 <%}%>
+	<script type="text/javascript" src="customs/js/customWidgetsBuild.js"></script>
 	<script type="text/javascript" src="js/search.js"></script>
 	<script type="text/javascript" src="js/nav_mobile.js"></script>
-
+	<jsp:include page="customs/html/customs_js_files.jsp" />
 	<jsp:include page="header.jsp" />
 	<div id="facets_mobile" style="">
 		<div id="nav_mobile" class="bc-color">
@@ -207,6 +208,7 @@
             }
           }
         %>
+        <jsp:include page="customs/html/custom_results_action_elms.jsp" />
       </div>
     </div>
 		<div id="advancedSearch" class ="header-menu-ui force-hide"></div>
@@ -223,6 +225,7 @@
 
 			<div class="col left">
 				<div id="facets">
+				<jsp:include page="customs/html/custom_facets_div.jsp" />
 					<div id="facet_slider"></div>
 					<div id="facet_last_modified"></div>
 					<div id="facet_extension"></div>

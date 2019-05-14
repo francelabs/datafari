@@ -1,5 +1,7 @@
 $(function($) {
 
+	buildCustomWidgets();
+	
 //	Manager.addWidget(new AjaxFranceLabs.SliderWidget({
 //		elm : $('#facet_slider'),
 //		id : 'slider',
