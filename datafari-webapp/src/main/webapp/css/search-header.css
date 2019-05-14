@@ -17,3 +17,9 @@
 	padding-right: 10px;
 	width: auto;
 }
+
+#logo_desktop {
+	display: inline-block;
+  margin-left: 15.5%;
+  margin-top: 0.5em;
+}

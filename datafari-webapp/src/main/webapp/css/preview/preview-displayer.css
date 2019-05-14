@@ -1,0 +1,7 @@
+.preview-link, .preview-link:hover, .preview-link:visited, .preview-link:active, .preview-link:focus {
+	position: absolute;
+  font-size: large;
+  color: #666;
+  text-decoration: none;
+  outline: 0;
+}

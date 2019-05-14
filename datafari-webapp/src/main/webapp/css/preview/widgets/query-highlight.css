@@ -1,0 +1,17 @@
+.highlight-term-value, .highlight-term-next, .highlight-term-prev {
+  cursor: pointer;
+}
+
+.hlmark {
+  border-radius: 3px;
+  background-color: #b1d5e5;
+}
+
+.current-hlmark {
+  border-radius: 3px;
+  background-color: #f8f174;
+}
+
+.highlight-term {
+  margin-bottom: 0.5em;
+}

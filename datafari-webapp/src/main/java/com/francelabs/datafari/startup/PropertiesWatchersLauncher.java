@@ -9,7 +9,6 @@ import com.francelabs.datafari.utils.AlertsConfiguration;
 import com.francelabs.datafari.utils.CorePropertiesConfiguration;
 import com.francelabs.datafari.utils.DatafariMainConfiguration;
 import com.francelabs.datafari.utils.ELKConfiguration;
-import com.francelabs.datafari.utils.HighlightConfiguration;
 import com.francelabs.datafari.utils.SolrConfiguration;
 import com.francelabs.datafari.utils.WidgetManagerConfiguration;
 
@@ -21,7 +20,6 @@ public class PropertiesWatchersLauncher implements ServletContextListener {
     AdvancedSearchConfiguration.getInstance().stopListeningChanges();
     ELKConfiguration.getInstance().stopListeningChanges();
     CorePropertiesConfiguration.getInstance().stopListeningChanges();
-    HighlightConfiguration.getInstance().stopListeningChanges();
     SolrConfiguration.getInstance().stopListeningChanges();
     WidgetManagerConfiguration.getInstance().stopListeningChanges();
     AlertsConfiguration.getInstance().stopListeningChanges();
@@ -33,7 +31,6 @@ public class PropertiesWatchersLauncher implements ServletContextListener {
     AdvancedSearchConfiguration.getInstance().listenChanges();
     ELKConfiguration.getInstance().listenChanges();
     CorePropertiesConfiguration.getInstance().listenChanges();
-    HighlightConfiguration.getInstance().listenChanges();
     SolrConfiguration.getInstance().listenChanges();
     WidgetManagerConfiguration.getInstance().listenChanges();
     AlertsConfiguration.getInstance().listenChanges();

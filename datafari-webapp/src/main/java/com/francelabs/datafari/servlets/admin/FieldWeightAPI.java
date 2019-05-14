@@ -70,9 +70,10 @@ public class FieldWeightAPI extends HttpServlet {
   private static String mainCollection = "FileShare";
 
   /**
+   * @throws IOException 
    * @see HttpServlet#HttpServlet() Gets the path Create the semaphore Checks if the required files exist
    */
-  public FieldWeightAPI() {
+  public FieldWeightAPI() throws IOException {
 
     String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
 

@@ -55,7 +55,6 @@
     <tstamp> <format property="touch.time" pattern="MM/dd/yyyy hh:mm aa"/>  </tstamp>
     <touch datetime="${touch.time}">
         <fileset dir="mcf_home/crawler-ui-customs" />
-        <fileset dir="mcf_home/authority-service-customs" />
     </touch>
 		<war destfile="${mcf.dist}/war/mcf-crawler-ui.war" update="true">
       <zipfileset dir="mcf_home/crawler-ui-customs" includes="*.png" />
@@ -63,7 +62,6 @@
 			<zipfileset dir="mcf_home/crawler-ui-customs" includes="*.css" prefix="css" />
     </war>
 		<war destfile="${mcf.dist}/war/mcf-authority-service.war" update="true">
-      <zipfileset dir="mcf_home/authority-service-customs" includes="*.xml" prefix="WEB-INF" />
     </war>
 
 		<!-- Copy bin and mcf_home directories -->

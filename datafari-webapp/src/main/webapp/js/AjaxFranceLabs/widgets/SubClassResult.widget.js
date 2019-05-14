@@ -19,11 +19,16 @@ firstTimeWaypoint : true,
 isMobile : $(window).width()<800,
 mutex_locked:false,
 availableImages: {},
+previewDisplayer : null,
 
 buildWidget : function () {
+	var self = this;
 	this.elm = $(this.elmSelector);
 	this._super();
 
+	this.previewDisplayer = new AjaxFranceLabs.PreviewDisplayer({
+	      id : 'previewDisplayer'
+	    })
 
 	// Initialize the queryElevator module if possible (if not, that means that the user is not an administrator and is not allowed to use it)
 	if (typeof AjaxFranceLabs.QueryElevatorModule === 'function') {
@@ -90,8 +95,7 @@ afterRequest : function() {
 									description = doc.preview_content.toString().substring(0,200);
 								}
 								
-								elm.find('.doc_list').append(
-												'<div class="doc e-'+ i + '" id="'+ doc.id+ '"></div>');
+								eelm.find('.doc_list').append('<div class="doc e-' + i + '" id="' + doc.id + '" pos="' + i + '"></div>');
 								elm.find('.doc:last').append(
 												'<div class="res"></div>');
 
@@ -148,6 +152,7 @@ afterRequest : function() {
 
 		AjaxFranceLabs.addMultiElementClasses(elm
 				.find('.doc'));
+		self.previewDisplayer.init(self.manager.store.string());
 	}
 	if (this.pagination) {
 		this.pagination.afterRequest(data);

@@ -1,0 +1,128 @@
+@import "../reset.css"; 
+@import "../../plugins/bootstrap/bootstrap.css";
+@import "../jquery-ui-1.11.4/jquery-ui.min.css";
+@import "../jquery-ui-1.11.4/jquery-ui.theme.min.css";
+@import "../jquery-ui-1.11.4/jquery-ui.structure.min.css";
+@import "../../plugins/font-awesome/css/all.css";
+@import "../custom/new-style.css"; 
+
+#loading-div, #preview-error {
+  margin-left: 30%;
+  margin-top: 5em;
+  width: 40%;
+  text-align: center;
+  font-size: large;
+}
+
+.facet.widget-content {
+  margin-top: 1em;
+  margin-left: 0.5em;
+}
+
+.facetName .label {
+	font-size: 14px;
+	font-family: "HelveticaNeueW02-67MdCn 694060";
+	color: #707173;
+	padding: 10px 5px 0px 15px;
+}
+
+.facetName {
+	cursor: pointer;
+}
+
+.fa-bookmark-o {
+	color: #9B1919;
+}
+
+.section-m{ width: 20%; float: left; }
+.section-xl{ width: 60%; float: left; }
+.section-xxl{ width: 80%; float: left; }
+.section-l{ width: 20%; float: left; }
+
+.nav-links{
+  margin-top: 9px;
+}
+.nav-links a{
+  color: #777777;
+    text-decoration: none;
+    margin-left: 30px;
+    font-weight: 500;
+    font-size: 15px;
+}
+
+.header{
+    margin-top: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;  
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+
+.container{}
+
+.left-side-bar{}
+
+.box{
+  background-color: #f8f8f8;
+    margin: 0px 10px;
+    padding: 10px 5px 30px 5px;
+    border-bottom: 1px solid #ccc;
+}
+.box-heading{
+    margin-bottom: 15px;  
+}
+.box-content{
+  font-size:13px;
+}
+.box-property{
+    margin-bottom: 4px; 
+}
+.box-property b{
+  font-size:13px;
+}
+.box-margin{
+    margin-bottom: 20px;  
+}
+.box-content-addition{
+  margin-left:30px;
+  font-size:16px;
+}
+.box-content-addition input[type="text"]{
+  width: 80%;
+    padding: 5px;
+  margin-bottom:3px;
+  margin-top:3px;
+}
+
+.inner-area{
+  background-color: #f8f8f8;  
+  height: 78%;
+}
+
+.inner-content{
+  background-color: #fff;
+  white-space: pre-wrap;
+  overflow : auto;
+  margin: 1%;
+  width: 98%;
+  height: 97%;
+  line-height: 17px;
+}
+
+.right-side-bar{}
+
+.checkbox-conatiner{
+  overflow:hidden;
+}
+
+.checkboxes{
+    float: left;
+    width: 170px;
+}
+
+.color-bar{
+  float: left;
+    width: 50px;
+    height: 10px;
+    margin-top: 5px;  
+}

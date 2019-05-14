@@ -87,7 +87,8 @@
 		src="js/AjaxFranceLabs/modules/Autocomplete.module.js"></script>
 		<script type="text/javascript"
 		src="js/AjaxFranceLabs/modules/DateSelectorFacet.module.js"></script>
-
+ 	<script type="text/javascript"
+    src="js/AjaxFranceLabs/preview/PreviewDisplayer.js"></script>
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/Result.widget.js"></script>
 	<script type="text/javascript"
@@ -191,9 +192,6 @@
 	<div id="solr">
     <div class="search-view-ui search-view-header">
       <div id="searchBar" class="search-view-header">
-        <a id="logo_desktop" href="../Datafari/Search">
-          <img src="css/images/logo_zebre.png"/>
-        </a>
       </div>
     </div>
     <div id="status-div" class="search-view-ui search-view-header">
