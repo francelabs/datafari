@@ -3216,11 +3216,11 @@ function DrawCalendar(){
 				'</div>'+
 				'</form>');
 			var buttons = $('<button id="event_cancel" type="cancel" class="btn btn-default btn-label-left">'+
-							'<span><i class="fa fa-clock-o txt-danger"></i></span>'+
+							'<span><i class="fas fa-clock-o txt-danger"></i></span>'+
 							'Cancel'+
 							'</button>'+
 							'<button type="submit" id="event_submit" class="btn btn-primary btn-label-left pull-right">'+
-							'<span><i class="fa fa-clock-o"></i></span>'+
+							'<span><i class="fas fa-clock-o"></i></span>'+
 							'Add'+
 							'</button>');
 			OpenModalBox('Add event', form, buttons);
@@ -3283,15 +3283,15 @@ function DrawCalendar(){
 				'</div>'+
 				'</form>');
 			var buttons = $('<button id="event_cancel" type="cancel" class="btn btn-default btn-label-left">'+
-							'<span><i class="fa fa-clock-o txt-danger"></i></span>'+
+							'<span><i class="fas fa-clock-o txt-danger"></i></span>'+
 							'Cancel'+
 							'</button>'+
 							'<button id="event_delete" type="cancel" class="btn btn-danger btn-label-left">'+
-							'<span><i class="fa fa-clock-o txt-danger"></i></span>'+
+							'<span><i class="fas fa-clock-o txt-danger"></i></span>'+
 							'Delete'+
 							'</button>'+
 							'<button type="submit" id="event_change" class="btn btn-primary btn-label-left pull-right">'+
-							'<span><i class="fa fa-clock-o"></i></span>'+
+							'<span><i class="fas fa-clock-o"></i></span>'+
 							'Save changes'+
 							'</button>');
 			OpenModalBox('Change event', form, buttons);

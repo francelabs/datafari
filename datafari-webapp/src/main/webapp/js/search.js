@@ -246,11 +246,11 @@ $(function($) {
 									                var urlRedirect = 'URL?url='+ url + '&id='+Manager.store.get("id").value + '&q=' + Manager.store.get("q").value + '&position='+position;
 													elm.find('.doc:last .res').append('<a class="title" target="_blank" href="'+urlRedirect+'"></a>');
 													elm.find('.doc:last .title').append('<span>' +decodeURIComponent(doc.title) + '</span>')
-													.append('<span class="favorite"><i class="fa fa-bookmark-o"></i></span>');
+													.append('<span class="fasvorite"><i class="fas fa-bookmark-o"></i></span>');
 													elm.find('.doc:last .res').append('<p class="description">');
 													elm.find('.doc:last .description').append('<div id="snippet">'+ description+ '</div>');
 													elm.find('.doc:last .description').append('<div id="urlMobile"><p class="address">')
-													.append('<div class="metadonne"><span class="liker">Like</span>  <i class="fa fa-thumbs-up"></i><span class="likes">12</span></div>');
+													.append('<div class="metadonne"><span class="liker">Like</span>  <i class="fas fa-thumbs-up"></i><span class="likes">12</span></div>');
 													elm.find('.doc:last .address').append('<span>' + AjaxFranceLabs.tinyUrl(decodeURIComponent(url)) + '</span>');
 
 												});

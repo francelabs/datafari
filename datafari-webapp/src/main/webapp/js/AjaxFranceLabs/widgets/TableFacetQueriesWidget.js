@@ -54,9 +54,9 @@ AjaxFranceLabs.TableFacetQueriesWidget = AjaxFranceLabs.AbstractFacetWidget.exte
       self.manager.store.addByValue('facet.query', '{!key=' + encodeURI(self.labels[i]) + '}' + self.field + ':' + query);
     });
     elm.addClass('facet').addClass('TableFacetQueriesWidget').addClass('tableWidget').addClass('widget').attr('widgetId', this.id).append(
-        '<div class="facetSort"></div>').append('<ul></ul>');
+        '<div class="fascetSort"></div>').append('<ul></ul>');
     if (this.name != null) {
-      elm.prepend('<div class="facetName"></div>').find('.facetName').append('<i class="fa fa-chevron-down"></i>').append(
+      elm.prepend('<div class="fascetName"></div>').find('.facetName').append('<i class="fas fa-chevron-down"></i>').append(
           '<span class="la label"></span>').find('.la.label').append(this.name);
       elm.find('.facetName').toggle(function() {
         $('.facetSort, ul, .PagerModule', $(this).parents('.tableWidget')).hide();

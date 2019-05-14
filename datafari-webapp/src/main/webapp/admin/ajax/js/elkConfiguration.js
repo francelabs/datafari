@@ -34,7 +34,7 @@ $(document).ready(function() {
 			}
 			input.prop('checked',bool);
 		}else{
-			$("#message").html('<i class="fa fa-times"></i> An error occured, Please try again')
+			$("#message").html('<i class="fas fa-times"></i> An error occured, Please try again')
 				.addClass("error").removeClass("success").show();
 		}
 	}
@@ -47,7 +47,7 @@ $(document).ready(function() {
 			externalELK = fillExtendedFields(data);
 			
 		}else{
-			$("#message").html('<i class="fa fa-times"></i> An error occured, Please try again')
+			$("#message").html('<i class="fas fa-times"></i> An error occured, Please try again')
 				.addClass("error").removeClass("success").show();
 		}
 	}
@@ -84,13 +84,13 @@ $(document).ready(function() {
 			},function(data){
 				if (data!=undefined && data.code!= undefined){
 					if (data.code==0){
-						$("#message").html('<i class="fa fa-check"></i> Well Saved').addClass("success").removeClass("error").show();
+						$("#message").html('<i class="fas fa-check"></i> Well Saved').addClass("success").removeClass("error").show();
 						retrieveUsers();
 					}else{
-						$("#message").html('<i class="fa fa-times"></i> An error occured, Please try again').addClass("error").removeClass("success").show();
+						$("#message").html('<i class="fas fa-times"></i> An error occured, Please try again').addClass("error").removeClass("success").show();
 					}
 				}else{
-					$("#message").html('<i class="fa fa-times"></i> An error occured, Please try again').addClass("error").removeClass("success").show();
+					$("#message").html('<i class="fas fa-times"></i> An error occured, Please try again').addClass("error").removeClass("success").show();
 				}
 				setTimeout(function(){
 					$("#message").addClass("animated fadeOut").one(ENDOFANIMATION,function(){
@@ -99,7 +99,7 @@ $(document).ready(function() {
 				},2000);
 			},"json");
 		}else{
-			$("#message").html('<i class="fa fa-times"></i> Please fill in all the fields').addClass("error").removeClass("success").show();
+			$("#message").html('<i class="fas fa-times"></i> Please fill in all the fields').addClass("error").removeClass("success").show();
 			setTimeout(function(){
 				$("#message").addClass("animated fadeOut").one(ENDOFANIMATION,function(){
 					$("#message").hide().removeClass("animated fadeOut");

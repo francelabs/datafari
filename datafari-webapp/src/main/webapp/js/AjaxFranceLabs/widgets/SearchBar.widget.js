@@ -82,7 +82,7 @@ AjaxFranceLabs.SearchBarWidget = AjaxFranceLabs.AbstractWidget.extend({
     elm.find('#searchBarContent').append('<div class="searchBar"></div>');
 
     elm.find('.searchBar').append('<input type="text" autocorrect="off" autocapitalize="off"/>').append(
-        '<div class="search bc-color"><i class="fa fa-search"></i></div>');
+        '<div class="search bc-color"><i class="fas fa-search"></i></div>');
     if (this.removeContentButton)
       elm.find('.searchBar').append('<span class="removeContent"></span>').find('.removeContent').css('display', 'none').append('<span>X</span>')
           .click(function() {

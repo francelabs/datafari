@@ -25,7 +25,7 @@
 		<link rel="stylesheet" type="text/css" href="../css/mainbis.css" media="screen" />
 		<link href="../plugins/bootstrap/bootstrap.css" rel="stylesheet">
 		<link href="../plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet">
-		<link rel="stylesheet" type ="text/css" href="../css/font-awesome/font-awesome.min.css">
+		<link rel="stylesheet" type ="text/css" href="../plugins/font-awesome/css/all.css">
 		<link rel="stylesheet" type ="text/css" href="../css/google-fonts/righteous.css">
 		<link href="../plugins/fullcalendar/fullcalendar.css" rel="stylesheet">
 		<link href="../plugins/xcharts/xcharts.min.css" rel="stylesheet">
@@ -65,7 +65,7 @@
 <!--Start Header-->
 <div id="screensaver">
 	<canvas id="canvas"></canvas>
-	<i class="fa fa-lock" id="screen_unlock"></i>
+	<i class="fas fa-lock" id="screen_unlock"></i>
 </div>
 <div id="modalbox">
 	<div class="devoops-modal">
@@ -75,7 +75,7 @@
 			</div>
 			<div class="box-icons">
 				<a class="close-link">
-					<i class="fa fa-times"></i>
+					<i class="fas fa-times"></i>
 				</a>
 			</div>
 		</div>
@@ -104,19 +104,19 @@
 					 	<li class="searchLink"><a id="datafariSearchUiLink" class="searchPageLink"></a></li>
 <!-- 							<li class="hidden-xs"> -->
 <!-- 								<a href="index.html" class="modal-link"> -->
-<!-- 									<i class="fa fa-bell"></i> -->
+<!-- 									<i class="fas fa-bell"></i> -->
 <!-- 									<span class="badge">7</span> -->
 <!-- 								</a> -->
 <!-- 							</li> -->
 <!-- 							<li class="hidden-xs"  > -->
 <!-- 								<a class="ajax-link" href="ajax/calendar.html"> -->
-<!-- 									<i class="fa fa-calendar"></i> -->
+<!-- 									<i class="fas fa-calendar"></i> -->
 <!-- 									<span class="badge">7</span> -->
 <!-- 								</a> -->
 <!-- 							</li> -->
 <!-- 							<li class="hidden-xs"> -->
 <!-- 								<a href="ajax/page_messages.html" class="ajax-link"> -->
-<!-- 									<i class="fa fa-envelope"></i> -->
+<!-- 									<i class="fas fa-envelope"></i> -->
 <!-- 									<span class="badge">7</span> -->
 <!-- 								</a> -->
 <!-- 							</li>  -->
@@ -127,7 +127,7 @@
 										<img src="../images/pic.jpg" class="img-circle" alt="avatar" />
 									</div>
 
-<!-- 									<i class="fa fa-angle-down pull-right"></i> -->
+<!-- 									<i class="fas fa-angle-down pull-right"></i> -->
 
 									<div class="user-mini pull-right" >
 										<span id="welcomeAdminUiMsg" class="welcome"></span>
@@ -139,37 +139,37 @@
  								<ul class="dropdown-menu">
 <!-- 									<li> -->
 <!-- 										<a href="#"> -->
-<!-- 											<i class="fa fa-user"></i> -->
+<!-- 											<i class="fas fa-user"></i> -->
 <!-- 											<span>Profile</span> -->
 <!-- 										</a> -->
 <!-- 									</li> -->
 <!-- 									<li> -->
 <!-- 										<a href="ajax/page_messages.html" class="ajax-link"> -->
-<!-- 											<i class="fa fa-envelope"></i> -->
+<!-- 											<i class="fas fa-envelope"></i> -->
 <!-- 											<span>Messages</span> -->
 <!-- 										</a> -->
 <!-- 									</li> -->
 <!-- 									<li> -->
 <!-- 										<a href="ajax/gallery_simple.html" class="ajax-link"> -->
-<!-- 											<i class="fa fa-picture-o"></i> -->
+<!-- 											<i class="fas fa-picture-o"></i> -->
 <!-- 											<span>Albums</span> -->
 <!-- 										</a> -->
 <!-- 									</li> -->
 <!-- 									<li> -->
 <!-- 										<a href="ajax/calendar.html" class="ajax-link"> -->
-<!-- 											<i class="fa fa-tasks"></i> -->
+<!-- 											<i class="fas fa-tasks"></i> -->
 <!-- 											<span>Tasks</span> -->
 <!-- 										</a> -->
 <!-- 									</li> -->
 <!-- 									<li> -->
 <!-- 										<a href="#"> -->
-<!-- 											<i class="fa fa-cog"></i> -->
+<!-- 											<i class="fas fa-cog"></i> -->
 <!-- 											<span>Settings</span> -->
 <!-- 										</a> -->
 <!-- 									</li> -->
  									<li>
  										<a onclick="logout();" style="cursor: pointer;">
- 											<i class="fa fa-power-off"></i>
+ 											<i class="fas fa-power-off"></i>
  											<span id="logout-AdminUI"></span>
  										</a>
  									</li>
@@ -192,7 +192,7 @@
 			<ul class="nav main-menu">
 <!-- <li class="dropdown" id="User"> -->
 <!-- 					<a href="#" class="dropdown-toggle"> -->
-<!-- 						<i class="fa fa-male"></i> -->
+<!-- 						<i class="fas fa-male"></i> -->
 <!-- 						<span id="myAccount-AdminUI" class="hidden-xs"></span> -->
 <!-- 					</a> -->
 <!-- 					<ul class="dropdown-menu"> -->
@@ -207,7 +207,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 <!-- 					<a href="./ajax/dashboard.html" class="ajax-link"> <i -->
 				<li class="dropdown" id="Connectors">
 					<a href="#" class="dropdown-toggle">
-						<i class="fa fa-arrows-alt"></i>
+						<i class="fas fa-arrows-alt"></i>
 						 <span id="connectors-AdminUI" class="hidden-xs"></span>
 					</a>
 					<ul class="dropdown-menu">
@@ -222,7 +222,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 				
 				<li class="dropdown" id="Usages Analysis">
           <a href="#" class="dropdown-toggle">
-            <i class="fa fa-bar-chart"></i>
+            <i class="fas fa-bar-chart"></i>
              <span id="usagesAnalysis-AdminUI" class="hidden-xs"></span>
           </a>
           <ul class="dropdown-menu">
@@ -234,7 +234,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
         
         <li class="dropdown" id="System Analysis">
 	        <a href="#" class="dropdown-toggle">
-	          <i class="fa fa-clipboard"></i>
+	          <i class="fas fa-clipboard"></i>
             <span id="systemAnalysis-AdminUI" class="hidden-xs"></span>
           </a>
           <ul class="dropdown-menu">
@@ -246,7 +246,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
         
 				<li class="dropdown" id="Admin">
 					<a href="#" class="dropdown-toggle">
-						<i class="fa fa-wrench"></i>
+						<i class="fas fa-wrench"></i>
 						 <span id="searchEngineAdmin-AdminUI" class="hidden-xs"></span>
 					</a>
 					<ul class="dropdown-menu">
@@ -266,7 +266,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 				</li>
 				<li class="dropdown" id="Conf">
 					<a href="#" class="dropdown-toggle">
-						<i class="fa fa-desktop"></i>
+						<i class="fas fa-desktop"></i>
 						 <span id="searchEngineConfig-AdminUI" class="hidden-xs"></span>
 					</a>
 					<ul class="dropdown-menu">
@@ -292,7 +292,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 
 				<li class="dropdown" id="userManagement">
 					<a href="#" class="dropdown-toggle">
-					<i class="fa fa-users"></i>
+					<i class="fas fa-users"></i>
 						 <span id="userManagement-AdminUI" class="hidden-xs"></span>
 					</a>
 					<ul class="dropdown-menu">
@@ -304,7 +304,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 				
 				<li class="dropdown" id="activeDirectoryManagement">
           <a href="#" class="dropdown-toggle">
-          <i class="fa fa-address-book"></i>
+          <i class="fas fa-address-book"></i>
              <span id="activeDirectoryManagement-AdminUI" class="hidden-xs"></span>
           </a>
           <ul class="dropdown-menu">
@@ -315,7 +315,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
         
         <li id="Licence">
           <a href="./ajax/licence.html" class="ajax-link">
-            <i class="fa fa-barcode"></i>
+            <i class="fas fa-barcode"></i>
              <span id="licence-AdminUI" class="hidden-xs"></span>
           </a>
         </li>

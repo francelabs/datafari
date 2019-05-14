@@ -27,7 +27,7 @@ AjaxFranceLabs.FacetCore = AjaxFranceLabs.WidgetCore.extend({
     elm.hide();
     elm.addClass('preview-widget box box-margin').attr('widgetId', this.id).append("<div class='facet widget-content'></div>");
     if (this.name != null) {
-      elm.prepend('<div class="facetName">').find('.facetName').append('<i class="fas fa-chevron-down"></i>').append('<span class="label la"></span>').find('.label.la').append(this.name);
+      elm.prepend('<div class="fascetName">').find('.facetName').append('<i class="fass fa-chevron-down"></i>').append('<span class="label la"></span>').find('.label.la').append(this.name);
       elm.find('.facetName').toggle(function() {
         $('.widget-content', $(this).parents('.preview-widget')).hide();
         elm.find(".facetName i").removeClass('fa-chevron-down').addClass('fa-chevron-up ' + animation).on(endAnimationEvents, function() {

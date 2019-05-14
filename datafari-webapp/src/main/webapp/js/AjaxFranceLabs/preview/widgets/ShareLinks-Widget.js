@@ -34,10 +34,10 @@ AjaxFranceLabs.ShareLinksWidget = AjaxFranceLabs.FacetCore.extend({
         idDocLink = encodeURIComponent(idDoc);
       }
       var sharePreviewLink = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/Datafari/Preview?docId=" + idDocLink
-      var sharePreview = $('<div class="share-link-div"><i class="fas fa-chevron-right"></i> ' + window.i18n.msgStore['preview-share-preview'] + ' <br/><input type="text" value="' + sharePreviewLink
+      var sharePreview = $('<div class="share-link-div"><i class="fass fa-chevron-right"></i> ' + window.i18n.msgStore['preview-share-preview'] + ' <br/><input type="text" value="' + sharePreviewLink
           + '" /></div>');
 
-      var shareDoc = $('<div class="share-link-div"><i class="fas fa-chevron-right"></i> ' + window.i18n.msgStore['preview-share-doc'] + ' <br/><input type="text" value="' + idDoc + '" /></div>');
+      var shareDoc = $('<div class="share-link-div"><i class="fass fa-chevron-right"></i> ' + window.i18n.msgStore['preview-share-doc'] + ' <br/><input type="text" value="' + idDoc + '" /></div>');
       widgetContentDiv.html("");
       widgetContentDiv.append(sharePreview).append(shareDoc);
     } else {

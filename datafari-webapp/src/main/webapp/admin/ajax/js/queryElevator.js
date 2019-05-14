@@ -46,7 +46,7 @@ $(document).ready(function() {
 				}
 				input.prop('checked',bool);
 			}else{
-				$("#messageActivation").html('<i class="fa fa-times"></i> An error occured, Please try again')
+				$("#messageActivation").html('<i class="fas fa-times"></i> An error occured, Please try again')
 					.addClass("error").removeClass("success").show();
 			}
 		}

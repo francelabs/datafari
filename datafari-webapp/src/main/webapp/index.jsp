@@ -14,7 +14,7 @@
 		<link rel ="stylesheet" type ="text/css" href ="css/results.css" />
 		<link rel ="stylesheet" type ="text/css" href ="css/index.css" />
 		<link rel ="stylesheet" type ="text/css" href ="css/animate.min.css" />
-		<link rel="stylesheet" type ="text/css" href="css/font-awesome/font-awesome.min.css">
+		<link rel="stylesheet" type ="text/css" href="plugins/font-awesome/css/all.css">
 
 		<link rel="stylesheet" type ="text/css" href="css/jquery-ui-1.11.4/jquery-ui.min.css">
 		<link rel="stylesheet" type ="text/css" href="css/jquery-ui-1.11.4/jquery-ui.theme.min.css">
@@ -51,7 +51,7 @@
 
 	<jsp:include page="header.jsp" />
 	<div id="content_index">
-		<img class="fadeInDown animated" id="logo-search" src="images/datafari.png"/>
+		<img class="fasdeInDown animated" id="logo-search" src="images/datafari.png"/>
 		<div id="solr">
 			<div id="searchBar"></div>
 			<div class="clear"></div>

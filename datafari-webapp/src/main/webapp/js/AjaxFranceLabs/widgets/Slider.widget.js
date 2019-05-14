@@ -58,7 +58,7 @@ AjaxFranceLabs.SliderWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
     }
     ul.append('<li><div id="' + this.id + '" class="slider"></div></li>');
     if (this.name != null) {
-      elm.prepend('<div class="facetName">').find('.facetName').append('<i class="fa fa-chevron-down"></i>').append('<span class="label la"></span>')
+      elm.prepend('<div class="fascetName">').find('.facetName').append('<i class="fas fa-chevron-down"></i>').append('<span class="label la"></span>')
           .find('.label.la').append(this.name);
       elm.find('.facetName').toggle(function() {
         $("#" + self.id).hide();

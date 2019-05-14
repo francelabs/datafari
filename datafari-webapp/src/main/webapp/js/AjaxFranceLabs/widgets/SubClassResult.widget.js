@@ -80,7 +80,7 @@ AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
           position += i;
           var description = '';
           if (doc.emptied != null && doc.emptied != undefined && doc.emptied == true) {
-            description = '<i class="fas fa-exclamation-triangle"></i> ' + window.i18n.msgStore['emptied_content'];
+            description = '<i class="fass fa-exclamation-triangle"></i> ' + window.i18n.msgStore['emptied_content'];
           } else {
             if (data.highlighting[doc.id]) {
               $.each(data.highlighting[doc.id], function(key, value) {

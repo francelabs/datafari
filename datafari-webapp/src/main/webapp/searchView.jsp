@@ -15,7 +15,7 @@
 	media="screen" />
 <link rel="stylesheet" type="text/css" href="css/animate.min.css" />
 <link rel="stylesheet" type="text/css" href="css/results.css" />
-<link rel="stylesheet" type ="text/css" href="css/font-awesome/font-awesome.min.css">
+<link rel="stylesheet" type ="text/css" href="plugins/font-awesome/css/all.css">
 <link rel="stylesheet" type="text/css" href="css/searchView-status-bar.css" />
 <script type="text/javascript" src="js/history.ielte7.min.js"></script>
 <script type="text/javascript" src="js/jquery-1.8.1.min.js"></script>
@@ -186,7 +186,7 @@
 	<div id="facets_mobile" style="">
 		<div id="nav_mobile" class="bc-color">
 		<!-- Faut mettre un truc dynamique par rapport à la langue -->
-			<a href="#previous_mobile"><i class="fa fa-chevron-left"></i> </a>
+			<a href="#previous_mobile"><i class="fas fa-chevron-left"></i> </a>
 		</div>
 		<div id="facet_source_mobile"></div>
 		<div id="facet_type_mobile"></div>
@@ -218,7 +218,7 @@
 		<div id="results_div" class="search-view-ui">
 			<div id="results_nav_mobile"  class="bc-color">
 				<div id="number_results_mobile"><span></span></div>
-				<div id="nav_facets_mobile"><a href="#facets_mobile"><i class="fa fa-bars"></i> </a></div>
+				<div id="nav_facets_mobile"><a href="#facets_mobile"><i class="fas fa-bars"></i> </a></div>
 			</div>
 			<div id="tab_line"></div>
 
@@ -252,7 +252,7 @@
 		</div>
 	</div>
 	<jsp:include page="footer.jsp"/>
-	<!--  <div id="spinner_mobile"><i class="fa fa-spinner fa-spin"></i></div>-->
+	<!--  <div id="spinner_mobile"><i class="fas fa-spinner fa-spin"></i></div>-->
 
 </body>
 </html>

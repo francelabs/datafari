@@ -45,7 +45,7 @@ function showError(code){
 	$("#tableResult").hide();
 	admin_messageDiv.text(message).show();
 	if (danger){
-			admin_messageDiv.addClass("alert-danger").prepend('<i class="fa fa-exclamation-triangle"></i><br/>');
+			admin_messageDiv.addClass("alert-danger").prepend('<i class="fas fa-exclamation-triangle"></i><br/>');
 	}else{
 		admin_messageDiv.removeClass("alert-danger");
 		}
@@ -53,7 +53,7 @@ function showError(code){
 
 function htmlRole(role,username){
 	return '<div class="inline_block '+username+'" data-user="'+username+'"><div class="input-group role">'+
-  '<span class="input-group-addon delete notyet"><i class="fa fa-times"></i></span>'+
+  '<span class="input-group-addon delete notyet"><i class="fas fa-times"></i></span>'+
   '<input class="form-control '+role+'" value="'+role+'" type="text" disabled/>'+
   '</div></div>';
 }
@@ -116,7 +116,7 @@ $.get("../SearchAdministrator/getAllUsersAndRoles",function(data){
 			}
 			
 			html+='<input data-user="'+index+'" class="add_role" placeHolder="Add a Role"/></th>'+
-					'<th><span class="delete_user"><i class="fa fa-times"></i></span></th>'+
+					'<th><span class="delete_user"><i class="fas fa-times"></i></span></th>'+
 					'</tr>';
 		});
 		$("tbody").append(html);
@@ -129,7 +129,7 @@ $.get("../SearchAdministrator/getAllUsersAndRoles",function(data){
 				}
 				$.post("../SearchAdministrator/changePassword",{username:element.data("user"),password:$(e.target).val()},function(data){
 					if (data.code == SERVERALLOK){
-						$(e.target).before('<i class="fa fa-check success"></i>');
+						$(e.target).before('<i class="fas fa-check success"></i>');
 						setTimeout(function(){
 							$(e.target).prev().addClass("animated fadeOut").one(ENDOFANIMATION,function(){
 								$(e.target).val("").prev().remove();

@@ -5,7 +5,7 @@
 
 <div class="head-title"><span id="favorites-label"></span></div>
 <div id="fav-content">
-	<div class="loading"><i class="fa fa-circle-o-notch fa-spin"></i> Loading ...</div>
+	<div class="loading"><i class="fas fa-circle-o-notch fa-spin"></i> Loading ...</div>
 	<div id="Message" style="display:none;">No Document Saved Yet</div>
 	<table id="favoritesTable" class="table table-bordered table-striped">
 			<thead>
@@ -19,7 +19,7 @@
 				
 			</tbody>
 	</table>
-	<span id="previous"><i  class="fa fa-chevron-left"></i></span>
-	<span id="next"><i  class="fa fa-chevron-right"></i></span>
+	<span id="previous"><i  class="fas fa-chevron-left"></i></span>
+	<span id="next"><i  class="fas fa-chevron-right"></i></span>
 
 </div>

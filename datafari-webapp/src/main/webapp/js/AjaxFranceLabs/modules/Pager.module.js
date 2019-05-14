@@ -16,13 +16,13 @@ AjaxFranceLabs.PagerModule = AjaxFranceLabs.AbstractModule.extend({
 
   source : null,
 
-  prevLabel : '<i class="fa fa-chevron-left"></i>',
+  prevLabel : '<i class="fas fa-chevron-left"></i>',
 
-  nextLabel : '<i class="fa fa-chevron-right"></i>',
+  nextLabel : '<i class="fas fa-chevron-right"></i>',
 
-  firstLabel : '<i class="fa fa-chevron-left"></i><i class="fa fa-chevron-left"></i>',
+  firstLabel : '<i class="fas fa-chevron-left"></i><i class="fas fa-chevron-left"></i>',
 
-  lastLabel : '<i class="fa fa-chevron-right"></i><i class="fa fa-chevron-right"></i>',
+  lastLabel : '<i class="fas fa-chevron-right"></i><i class="fas fa-chevron-right"></i>',
 
   nbElmToDisplay : 10,
 

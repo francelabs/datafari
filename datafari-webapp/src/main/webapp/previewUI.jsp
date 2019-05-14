@@ -65,7 +65,7 @@
           <div id="share-links"></div>
           <div class="box" style="display: none;">
             <div class="box-heading">
-              <i class="fas fa-chevron-down"></i> <b>Document Entities</b>
+              <i class="fass fa-chevron-down"></i> <b>Document Entities</b>
             </div>
             <div class="box-content box-content-addition">
               <div class="checkbox-conatiner">

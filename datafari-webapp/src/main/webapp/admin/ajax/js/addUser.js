@@ -69,7 +69,7 @@ $(document).ready(function(){
 
 	function htmlRole(role){
 		return '<div class="inline_block"><div class="input-group role">'+
-		  '<span class="input-group-addon delete"><i class="fa fa-times"></i></span>'+
+		  '<span class="input-group-addon delete"><i class="fas fa-times"></i></span>'+
 		  '<input class="form-control '+role+'" value="'+role+'" type="text" disabled/>'+
 		  '</div></div>';
 	}
@@ -124,7 +124,7 @@ $(document).ready(function(){
 			sourceError = source;
 			admin_messageDiv.text(message).show();
 			if (danger){
-					admin_messageDiv.addClass("danger").prepend('<i class="fa fa-exclamation-triangle"></i> ');
+					admin_messageDiv.addClass("danger").prepend('<i class="fas fa-exclamation-triangle"></i> ');
 			}else{
 				admin_messageDiv.removeClass("danger");
 			}
@@ -296,7 +296,7 @@ $(document).ready(function(){
 		}
 		for (var index in error){
 			if (error[index].isError){
-				admin_messageDiv.text(error[index].message).addClass("danger").prepend('<i class="fa fa-exclamation-triangle"></i>').show();
+				admin_messageDiv.text(error[index].message).addClass("danger").prepend('<i class="fas fa-exclamation-triangle"></i>').show();
 				$("#add-button").button("reset");
 				return false;
 			}

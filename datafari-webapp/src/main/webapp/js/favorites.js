@@ -85,7 +85,7 @@ function showError(code) {
   $("#favoritesTable").hide();
   $("#Message").text(message).show();
   if (danger) {
-    $("#Message").addClass("danger").prepend('<i class="fa fa-exclamation-triangle"></i>  <br/>');
+    $("#Message").addClass("danger").prepend('<i class="fas fa-exclamation-triangle"></i>  <br/>');
   } else {
     $("#Message").removeClass("danger");
   }
@@ -142,7 +142,7 @@ function loadFavorites() {
               var linkPrefix = "http://" + window.location.hostname + ":" + window.location.port + "/Datafari/URL?url=";
 
               var line = $('<tr class="tr">' + '<th class="col-xs-3"><a href="' + linkPrefix + fav.id + '">' + fav.title + '</a></th>'
-                  + '<th class="tiny col-xs-9">' + fav.id + "</th>" + '<th class="text-center delete"><i class="fa fa-times"></i></th>' + '</tr>');
+                  + '<th class="tiny col-xs-9">' + fav.id + "</th>" + '<th class="text-center delete"><i class="fas fa-times"></i></th>' + '</tr>');
 
               line.data("id", fav.id);
               $("table#favoritesTable tbody").append(line);

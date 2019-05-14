@@ -47,7 +47,7 @@ function htmlWord(words){
 	for(var i=0; i<arrWords.length; i++) {
 		var word = arrWords[i].trim();
 		html += '<div class="inline_block"><div class="input-group word">'+
-		  '<span class="input-group-addon delete"><i class="fa fa-times"></i></span>'+
+		  '<span class="input-group-addon delete"><i class="fas fa-times"></i></span>'+
 		  '<input class="form-control '+word+'" value="'+word+'" type="text" disabled/>'+
 		  '</div></div>';
 	}

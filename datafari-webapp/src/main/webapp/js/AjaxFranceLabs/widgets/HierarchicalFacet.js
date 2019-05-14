@@ -53,7 +53,7 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget
         elm.hide();
         elm.addClass('facet').addClass('hierarchicalWidget').addClass('widget').attr('widgetId', this.id).append('<ul></ul>');
         if (this.name != null) {
-          elm.prepend('<div class="facetName">').find('.facetName').append('<i class="fa fa-chevron-down"></i>').append(
+          elm.prepend('<div class="fascetName">').find('.facetName').append('<i class="fas fa-chevron-down"></i>').append(
               '<span class="label la"></span>').find('.label.la').append(this.name);
           elm.find('.facetName').toggle(function() {
             $('.facetSort, ul, .pagerModule.show', $(this).parents('.hierarchicalWidget')).hide();

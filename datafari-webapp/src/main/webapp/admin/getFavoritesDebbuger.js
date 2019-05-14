@@ -23,7 +23,7 @@
 										var line = $('<tr class="tr">'+
 													'<th class="title col-xs-3"><a href="'+linkPrefix+favorite+'">'+shortText(splitArray[splitArray.length-1],30)+'</a></th>'+
 													'<th class="tiny col-xs-9">'+favorite+"</th>"+
-													'<th class="text-center delete"><i class="fa fa-ban"></i></th>'+
+													'<th class="text-center delete"><i class="fas fa-ban"></i></th>'+
 													'</tr>'
 										);
 										line.data("id",favorite);
