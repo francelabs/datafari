@@ -842,6 +842,7 @@
 	div.res div.previsualizetemplate {position: absolute; left: -9999px;
   	margin: -40px 0 0 0px; padding: 3px 3px 3px 3px;
   	border-style:solid; border-color:black; border-width:1px; z-index: 6;}
+  	div.last>div.res>div.previsualizetemplate {margin: +40px 0 0 0px; }
 	div.res:hover div.previsualizetemplate {left: 2%; background: #ffffff; transition-delay:0.5s;}
 
 	/**************************************/
