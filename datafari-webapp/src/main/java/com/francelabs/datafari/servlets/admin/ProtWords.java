@@ -23,6 +23,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -36,6 +38,7 @@ import org.apache.logging.log4j.Logger;
 import com.francelabs.datafari.service.indexer.IndexerServer;
 import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
+import com.francelabs.datafari.utils.DatafariMainConfiguration;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 
@@ -82,10 +85,10 @@ public class ProtWords extends HttpServlet {
    */
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-	 
 
-	  
-	  try {
+
+
+    try {
       if (content.equals("")) {
         final PrintWriter out = response.getWriter();
         out.append(
@@ -93,8 +96,8 @@ public class ProtWords extends HttpServlet {
         out.close();
         return;
       } else if (request.getParameter("language") != null) { // Print the
-                                                             // content of the
-                                                             // file
+        // content of the
+        // file
 
         try {
           final String filename = "protwords.txt";
@@ -135,39 +138,39 @@ public class ProtWords extends HttpServlet {
    */
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-    
-	  IndexerServer server = null;
-      try {
-        server = IndexerServerManager.getIndexerServer(Core.FILESHARE);
-      } catch (final IOException e1) {
-        final PrintWriter out = response.getWriter();
-        out.append(
-            "Error while getting the Solr core, please make sure the core dedicated to FileShare has booted up. Error code : 69000");
-        out.close();
-        LOGGER.error(
-            "Error while getting the Solr core in doGet, admin servlet, make sure the core dedicated to Promolink has booted up and is still called promolink or that the code has been changed to match the changes. Error 69000 ",
-            e1);
-        return;
 
-      } catch (Exception e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	  
-	  try {
+    IndexerServer server = null;
+    try {
+      server = IndexerServerManager.getIndexerServer(Core.FILESHARE);
+    } catch (final IOException e1) {
+      final PrintWriter out = response.getWriter();
+      out.append(
+          "Error while getting the Solr core, please make sure the core dedicated to FileShare has booted up. Error code : 69000");
+      out.close();
+      LOGGER.error(
+          "Error while getting the Solr core in doGet, admin servlet, make sure the core dedicated to Promolink has booted up and is still called promolink or that the code has been changed to match the changes. Error 69000 ",
+          e1);
+      return;
+
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    try {
       if (request.getParameter("content") == null) { // the user load an other
-                                                     // page
+        // page
       } else { // The user clicked on confirm modification
         File file;
         final String filePath = env + "/protwords.txt";
         file = new File(filePath);
         try {
           final FileOutputStream fooStream = new FileOutputStream(file, false); // true
-                                                                                // to
-                                                                                // append,
-                                                                                // false
-                                                                                // to
-                                                                                // overwrite.
+          // to
+          // append,
+          // false
+          // to
+          // overwrite.
           final byte[] myBytes = request.getParameter("content").replaceAll("&gt;", ">").replaceAll("<div>|<br>|<br >", "\n")
               .replaceAll("</div>|</lines>|&nbsp;", "").getBytes();
           fooStream.write(myBytes); // rewrite the file
@@ -175,6 +178,22 @@ public class ProtWords extends HttpServlet {
           server.uploadFile(env,"protwords.txt", Core.FILESHARE.toString());
           Thread.sleep(1000);
           server.reloadCollection(Core.FILESHARE.toString());
+
+          List<String> collectionsList = null;
+          final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
+          if (!config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).equals("")) {
+            collectionsList = Arrays.asList(config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).split(","));
+          }
+          
+          if (collectionsList != null) {
+            for (String object: collectionsList) {
+              server.uploadFile(env,"protwords.txt", object);
+              Thread.sleep(1000);
+              server.reloadCollection(object);
+            }
+          }
+
+
         } catch (final IOException e) {
           final PrintWriter out = response.getWriter();
           out.append(
@@ -193,7 +212,7 @@ public class ProtWords extends HttpServlet {
   }
 
   static String readFile(final String path, final Charset encoding) // Read the
-                                                                    // file
+  // file
       throws IOException {
     final byte[] encoded = Files.readAllBytes(Paths.get(path));
     return new String(encoded, encoding);

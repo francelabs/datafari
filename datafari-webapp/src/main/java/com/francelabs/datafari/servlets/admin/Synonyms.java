@@ -26,7 +26,9 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -43,6 +45,7 @@ import org.json.simple.parser.JSONParser;
 import com.francelabs.datafari.service.indexer.IndexerServer;
 import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
+import com.francelabs.datafari.utils.DatafariMainConfiguration;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 
@@ -190,10 +193,31 @@ public class Synonyms extends HttpServlet {
           tempFile.delete();
           return;
         }
+
+       
         Files.move(tempFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
         server.uploadFile(env,"synonyms_" + language + ".txt", Core.FILESHARE.toString());
         Thread.sleep(1000);
         server.reloadCollection(Core.FILESHARE.toString());
+        
+        List<String> collectionsList = null;
+
+        final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
+        if (!config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).equals("")) {
+          collectionsList = Arrays.asList(config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).split(","));
+        }
+        if (collectionsList != null) {
+          for (String object: collectionsList) {
+            server.uploadFile(env,"synonyms_" + language + ".txt",object);
+            Thread.sleep(1000);
+            server.reloadCollection(object);
+          }
+        }
+        
+
+
+
+        
       }
     } catch (final Exception e) {
       final PrintWriter out = response.getWriter();
@@ -204,8 +228,8 @@ public class Synonyms extends HttpServlet {
   }
 
   static String readFile(final String path, final Charset encoding) // Read
-      // the
-      // file
+  // the
+  // file
       throws IOException {
     final byte[] encoded = Files.readAllBytes(Paths.get(path));
     return new String(encoded, encoding);

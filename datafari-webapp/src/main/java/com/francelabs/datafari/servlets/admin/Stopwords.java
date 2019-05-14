@@ -23,6 +23,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -36,6 +38,7 @@ import org.apache.logging.log4j.Logger;
 import com.francelabs.datafari.service.indexer.IndexerServer;
 import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
+import com.francelabs.datafari.utils.DatafariMainConfiguration;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 
@@ -163,10 +166,23 @@ public class Stopwords extends HttpServlet {
           fooStream.write(myBytes); // rewrite the file
           fooStream.close();
           String[] params = {file.getName()};
-          //server.uploadConfig(Paths.get(env),Core.FILESHARE.toString());
           server.uploadFile(env,"stopwords_" + request.getParameter("language") + ".txt", Core.FILESHARE.toString());
           Thread.sleep(1000);
           server.reloadCollection(Core.FILESHARE.toString());
+          List<String> collectionsList = null;
+
+          final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
+          if (!config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).equals("")) {
+            collectionsList = Arrays.asList(config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).split(","));
+          }
+          if (collectionsList != null) {
+            for (String object: collectionsList) {
+              server.uploadFile(env,"stopwords_" + request.getParameter("language") + ".txt", Core.FILESHARE.toString());
+              Thread.sleep(1000);
+              server.reloadCollection(object);
+            }
+          }
+          
         } catch (final IOException e) {
           final PrintWriter out = response.getWriter();
           out.append(
