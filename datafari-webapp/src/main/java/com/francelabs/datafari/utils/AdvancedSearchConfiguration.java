@@ -36,7 +36,7 @@ public class AdvancedSearchConfiguration extends AbstractConfigClass {
   public static final String EXACT_FIELDS = "EXACTFIELDS";
   public static final String AUTOCOMPLETE_FIELDS = "AUTOCOMPLETEFIELDS";
   public static final String FIXEDVALUES_FIELDS = "FIXEDVALUESFIELDS";
-
+  public static final String LABELED_FIELDS = "LABELED_FIELDS";
   private static AdvancedSearchConfiguration instance;
 
   /**
