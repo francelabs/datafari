@@ -1,6 +1,6 @@
 $(function($) {
 
-	buildCustomWidgets();
+	
 	
 //	Manager.addWidget(new AjaxFranceLabs.SliderWidget({
 //		elm : $('#facet_slider'),
@@ -303,6 +303,8 @@ $(function($) {
 	}));
 
 	Manager.store.addByValue('facet', true);
+	
+	buildCustomWidgets();
 
 
 	$.when(Manager.init()).then(
