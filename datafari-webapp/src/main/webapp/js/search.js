@@ -411,3 +411,8 @@ function readCookie(name) {
 function eraseCookie(name) {
 	createCookie(name,"",-1);
 }
+function formatDate(date_string,format){
+	  var date_to_convert = new Date(date_string);
+	  var date  = date_to_convert.toLocaleDateString(format);
+	  return date;
+}
