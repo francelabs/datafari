@@ -397,12 +397,12 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget
         // Apply the correct checkbox image regarding the checkbox state (checked or not checked)
         if (currentLi.find('.filterFacetCheck input').attr('checked') == 'checked') {
           currentLi.find('.filterFacetCheck label').attr('for', widget.id + "-" + checkboxValue).append(
-              '<span class="checkboxIcon fa fa-check-square-o">&nbsp;</span>' + '<span class="filterFacetLinkValue">'
+              '<span class="checkboxIcon far fa-check-square">&nbsp;</span>' + '<span class="filterFacetLinkValue">'
                   + AjaxFranceLabs.tinyString(checkboxValue, 19) + '</span>').append(
               '&nbsp;<span class="filterFacetLinkCount">(<span>' + count + '</span>)</span>');
         } else {
           currentLi.find('.filterFacetCheck label').attr('for', widget.id + "-" + checkboxValue).append(
-              '<span class="checkboxIcon fa fa-square-o">&nbsp;</span>' + '<span class="filterFacetLinkValue">'
+              '<span class="checkboxIcon far fa-square">&nbsp;</span>' + '<span class="filterFacetLinkValue">'
                   + AjaxFranceLabs.tinyString(checkboxValue, 19) + '</span>').append(
               '&nbsp;<span class="filterFacetLinkCount">(<span>' + count + '</span>)</span>');
         }
