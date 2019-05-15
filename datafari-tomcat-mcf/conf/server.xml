@@ -70,7 +70,7 @@
     -->
     <Connector port="@TOMCAT_PORT@" protocol="HTTP/1.1"
                connectionTimeout="20000"
-               redirectPort="@SSL_PORT@" />
+               redirectPort="@SSL_PORT@" maxHttpHeaderSize="1048576" maxPostSize="10485760" />
     <!-- A "Connector" using the shared thread pool-->
     <!--
     <Connector executor="tomcatThreadPool"
