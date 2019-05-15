@@ -29,6 +29,15 @@ AjaxFranceLabs.Class.extend = function(properties) {
 	return subclass;
 }
 
+AjaxFranceLabs.imageExists = function(image_url) {
+	  var http = new XMLHttpRequest();
+
+	  http.open('HEAD', image_url, false);
+	  http.send();
+
+	  return http.status != 404;
+}
+
 AjaxFranceLabs.tinyUrl = function(url, length) {
 	var maxSize = (length) ? length : 75;
 	if (url.length <= maxSize)
