@@ -19,6 +19,8 @@ package com.francelabs.datafari.updateprocessor;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -71,6 +73,10 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 
     final String url = (String) doc.getFieldValue("id");
 
+    final String decodedUrl = URLDecoder.decode(url, StandardCharsets.UTF_8.name());
+    doc.addField("url_search", decodedUrl);
+
+
     // Create path hierarchy for facet
     final List<String> urlHierarchy = new ArrayList<>();
 
@@ -92,8 +98,9 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 
     String filename = "";
     String jsouptitle = "";
-    if (doc.getField("jsoup_title") != null)
+    if (doc.getField("jsoup_title") != null) {
       jsouptitle = (String) doc.getFieldValue("jsoup_title");
+    }
 
     final SolrInputField streamNameField = doc.get("ignored_stream_name");
     if (streamNameField != null) {

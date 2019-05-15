@@ -89,7 +89,8 @@
    <field name="language" type="string" indexed="true" stored="true"/>
    <field name="repo_source" type="string" indexed="true" stored="true"/>
    <field name="source" type="string" indexed="true" stored="true"/>
-   <field name="url" type="text_en" indexed="true" stored="true"/>
+   <field name="url" type="string" indexed="false" stored="true"/>
+   <field name="url_search" type="text_en" indexed="true" stored="false"/>
    <field name="urlHierarchy" type="string" indexed="true" stored="true" multiValued="true"/>
    <field name="last_modified" type="tdate" indexed="true" stored="true" default="NOW"/>
    <field name="content" type="text_general" indexed="false" stored="false" multiValued="true"/>
@@ -325,8 +326,8 @@
    <copyField source="title_*" dest="spell" />
 
 
-   <copyField source="url" dest="suggest" />
-   <copyField source="url" dest="spell" />
+   <copyField source="url_search" dest="suggest" />
+   <copyField source="url_search" dest="spell" />
    
    <copyField source="author" dest="author_search" />
    <copyField source="subject" dest="subject_search" />
