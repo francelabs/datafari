@@ -99,7 +99,7 @@
    <field name="exactContent" type="text_nostem" indexed="true" stored="true" multiValued="true"/>
    <field name="exactTitle" type="text_nostem" indexed="true" stored="false" multiValued="true"/>
    <field name="crawl_date" type="tdate" indexed="true" stored="true" default="NOW"/>
-   <field name="original_file_size" type="long" indexed="true" stored="false"/>
+   <field name="original_file_size" type="long" indexed="true" stored="true"/>
    
    <!-- Usual encountered metadata -->
    <field name="producer" type="string" indexed="true" stored="true" multiValued="true"/>
