@@ -180,10 +180,12 @@ AjaxFranceLabs.TableWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
     for (var i = 0; i < data.length - 1; i++) {
       var encodedName = encodeURI(data[i]);
       if (encodedName.trim() != "") {
-        tags.push({
-          name : encodedName,
-          nb : data[i + 1]
-        });
+    	  if (encodedName.trim() != "") {
+    	        tags.push({
+    	          name : encodedName,
+    	          nb : data[i + 1]
+    	        });
+    	  }
       }
       i++;
     }
