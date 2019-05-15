@@ -53,7 +53,7 @@ $(function($) {
 		id : 'languageSelector'
 	}));
 
-	Manager.store.addByValue("fl", 'title,url,id,extension,preview_content,last_modified,crawl_date,author,file_size');
+	Manager.store.addByValue("fl", 'title,url,id,extension,preview_content,last_modified,crawl_date,author,original_file_size');
 	
 	// add Konami code
 	var k = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65],
