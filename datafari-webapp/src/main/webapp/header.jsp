@@ -18,7 +18,7 @@
 <script type="text/javascript"
     src="js/AjaxFranceLabs/widgets/LanguageSelector.widget.js"></script>
 <script type="text/javascript"
-    src="js/AjaxFranceLabs/widgets/LoginDatafariLinks.widget.js"></script>
+    src="js/AjaxFranceLabs/widgets/HeaderMenus.widget.js"></script>
 <script type="text/javascript"
     src="js/AjaxFranceLabs/widgets/LoginDatafariForm.widget.js"></script>
 <!-- JS library useful to extract parameters value from URL  -->
@@ -48,7 +48,7 @@
 
 
 <header>
-  <div>
+  <div id="header-menus">
     <nav class=" navbar navbar-default">
       <div class="container-fluid">
         <div class="navbar-header">
@@ -132,57 +132,101 @@
   </div>
 
  <!--secondary menu started-->
- <ul class="nav navbar-nav navbar-right dropdown-second">
-	<li class="dropdown">
-		<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-			 Alerts
-		<span class="caret"></span>
-		</button>
-		<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-			<li></li>
-			<li></li>
-		</ul>
-	</li>
-	<li class="dropdown">
-			<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-				 Export Results
-			<span class="caret"></span>
-			</button>
-			<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-				<li></li>
-				<li></li>
-			</ul>
-		</li>
-		<li class="dropdown">
-				<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					 Save Search
-				<span class="caret"></span>
-				</button>
-				<ul class="dropdown-menu" aria-labelledby="dropdownMenu3">
-					<li></li>
-					<li></li>
-				</ul>
-			</li>
-			<li class="dropdown">
-					<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						 Advanced Search
-					<span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu" aria-labelledby="dropdownMenu4">
-						<li></li>
-						<li></li>
-					</ul>
-				</li>
-				<li class="dropdown">
-						<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							 Favorites
-						<span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu" aria-labelledby="dropdownMenu5">
-							<li></li>
-							<li></li>
-						</ul>
-					</li>
- </ul>
- <!--secondary menu end-->
+    <ul class="nav navbar-nav navbar-right dropdown-second" id="search-tools-sub-menu">
+    
+    <%
+                  if (request.getUserPrincipal() != null) {
+                    if (request.getUserPrincipal().getName() != null) {
+                  %>
+      <li class="dropdown">
+        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <a id="userAlertsLink">Alerts</a><span class="caret"></span>
+        
+        </button>
+        <!--  
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+          <li></li>
+          <li></li>
+        </ul>
+        -->
+      </li>
+      
+      <%
+                          }
+                      }
+    %>
+    
+    <!--  
+      <li class="dropdown">
+          <button class="btn btn-default dropdown-toggle" type="button" id="exportResultsDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a id="exportResultsLink">Export Results</a>
+          <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="exportResultsDropdownMenu">
+            <li></li>
+            <li></li>
+          </ul>
+        </li>
+        
+        -->
+        <%
+                  if (request.getUserPrincipal() != null) {
+                    if (request.getUserPrincipal().getName() != null) {
+                  %>
+                  <!--  
+        <li class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="savedSearchDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <a id="userSavedSearchLink">Saved Search</a>
+            <span class="caret"></span>
+            </button>
+            <!--  
+            <ul class="dropdown-menu" aria-labelledby="savedSearchDropdownMenu">
+              <li></li>
+              <li></li>
+            </ul>
+            
+          </li>
+          -->
+          <%
+                          }
+                      }
+    %>
+          <li class="dropdown">
+              <button class="btn btn-default dropdown-toggle" type="button" id="advancedSearchDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a id="advancedSearchLink">Advanced Search</a>
+              <span class="caret"></span>
+              </button>
+              <!-- 
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenu4">
+                <li></li>
+                <li></li>
+              </ul>
+              -->
+            </li>
+            <%
+                  if (request.getUserPrincipal() != null) {
+                    if (request.getUserPrincipal().getName() != null) {
+                      if (DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.LIKESANDFAVORTES)!=null && DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.LIKESANDFAVORTES).equals("true") ){
+                    
+                  %>
+                  
+            <li class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <a id="userFavoritesLink">Favorites</a>
+                <span class="caret"></span>
+                </button>
+                <!-- 
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu5">
+                  <li></li>
+                  <li></li>
+                </ul>
+                -->
+              </li>
+              <%
+                          }
+                      }
+                    }
+                    %>
+    </ul>
+    <!--secondary menu end-->
 </header>

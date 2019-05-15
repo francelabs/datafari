@@ -16,10 +16,9 @@ $(function($) {
   }).buildWidget();
 
   // Setup login/logout link
-  new AjaxFranceLabs.LoginDatafariLinksWidget({
-    // Take the loginDatafariLinks element by ID.
-    elm : $('#loginDatafariLinks'),
-    id : 'loginDatafariLinks'
+  new AjaxFranceLabs.HeaderMenusWidget({
+	    elm : $('#header-menus'),
+	    id : 'headerMenus'
   }).buildWidget();
 
   // Setup loading div

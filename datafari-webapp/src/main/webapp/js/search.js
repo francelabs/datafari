@@ -32,11 +32,10 @@ $(function($) {
 //		id : 'languageSelector'
 //	}));
 
-	Manager.addWidget(new AjaxFranceLabs.LoginDatafariLinksWidget({
-		// Take the loginDatafariLinks element by ID.
-		elm : $('#loginDatafariLinks'),
-		id : 'loginDatafariLinks'
-	}));
+	Manager.addWidget(new AjaxFranceLabs.HeaderMenusWidget({
+	    elm : $('#header-menus'),
+	    id : 'headerMenus'
+	  }));
 
 	Manager.addWidget(new AjaxFranceLabs.TableWidget({
 		elm : $('#facet_extension'),

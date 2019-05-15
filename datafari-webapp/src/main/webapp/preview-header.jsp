@@ -15,10 +15,10 @@
     var portHeader = <%= request.getServerPort()%>;
 </script>
 <script type="text/javascript"
-    src="js/AjaxFranceLabs/widgets/LoginDatafariLinks.widget.js"></script>
+    src="js/AjaxFranceLabs/widgets/HeaderMenus.widget.js"></script>
 <!-- JS library useful to extract parameters value from URL  -->
 <script type ="text/javascript" src ="js/url.min.js"></script>
-<header>
+<header id="header-menus">
   <div>
     <nav class=" navbar navbar-default">
       <div class="container-fluid">
