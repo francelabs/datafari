@@ -16,7 +16,7 @@
 <script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/LanguageSelector.widget.js"></script>
 <script type="text/javascript"
-		src="js/AjaxFranceLabs/widgets/LoginDatafariLinks.widget.js"></script>
+		src="js/AjaxFranceLabs/widgets/HeaderMenus.widget.js"></script>
 <script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/LoginDatafariForm.widget.js"></script>
 <!-- JS library useful to extract parameters value from URL  -->
