@@ -52,7 +52,7 @@
           "stage_specification": {
             "striphtml": {
               "_value_": "",
-              "_attribute_value": "true"
+              "_attribute_value": "false"
             },
             "includefilter": {
               "_value_": "",
