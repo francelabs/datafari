@@ -30,6 +30,10 @@
 			this.languageUrl = languageUrl;
 		},
 
+		setCustomLanguageUrl : function(customLanguageUrl) {
+		      this.customLanguageUrl = customLanguageUrl;
+		},
+		
 		setLanguage : function(lang) {
 			var self = this;
 			// Set the language selected, to update the languageSelector widget
