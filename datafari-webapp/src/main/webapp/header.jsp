@@ -24,10 +24,6 @@
 <!-- JS library useful to extract parameters value from URL  -->
 <script type ="text/javascript" src ="js/url.min.js"></script>
 <script>
-  src="https://code.jquery.com/jquery-3.4.0.min.js"
-  integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg="
-  crossorigin="anonymous"></script>
-<script>
     $(document).ready(function(){
 		$("#loginDatafariLinks").click(function() {
 			$("#dropdown-search-tools").removeClass("dropdown-search-click");
@@ -129,16 +125,18 @@
         </div>
       </div>
     </nav>
-  </div>
+  
 
  <!--secondary menu started-->
     <ul class="nav navbar-nav navbar-right dropdown-second" id="search-tools-sub-menu">
+    
     
     <%
                   if (request.getUserPrincipal() != null) {
                     if (request.getUserPrincipal().getName() != null) {
                   %>
       <li class="dropdown">
+      	
         <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <a id="userAlertsLink">Alerts</a><span class="caret"></span>
         
@@ -229,4 +227,5 @@
                     %>
     </ul>
     <!--secondary menu end-->
+ 	</div>
 </header>
