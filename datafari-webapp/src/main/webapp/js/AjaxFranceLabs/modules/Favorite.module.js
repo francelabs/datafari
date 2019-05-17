@@ -62,7 +62,7 @@ AjaxFranceLabs.FavoriteModule = AjaxFranceLabs.AbstractModule.extend({
 
 	afterRequest : function() {
 		var self = this, resList = $('.resultWidget');
-		resList.find('.doc .title').append('<span class="fasvorite_star">');
+		resList.find('.doc .title').append('<span class="favorite_star">');
 		resList.find('.doc .title .favorite_star').click(function() {
 			var elm = this;
 			if ($(this).hasClass('selected')) {

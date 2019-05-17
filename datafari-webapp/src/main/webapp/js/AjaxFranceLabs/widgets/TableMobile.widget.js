@@ -39,7 +39,7 @@ AjaxFranceLabs.TableMobileWidget = AjaxFranceLabs.AbstractFacetWidget
         elm.hide();
         elm.addClass('facet').addClass('tableWidget').addClass('widget').attr('widgetId', this.id).append('<ul class="ultest"">');
         if (this.name != null) {
-          elm.prepend('<div class="fascetName">').find('.facetName').append('<i class="fas fa-chevron-down">').append('<span class="label la">').find(
+          elm.prepend('<div class="facetName">').find('.facetName').append('<i class="fas fa-chevron-down">').append('<span class="label la">').find(
               '.label.la').append(this.name);
           elm.find('.facetName').toggle(function() {
             $('.facetSort, ul, .pagerModule.show', $(this).parents('.tableWidget')).hide();

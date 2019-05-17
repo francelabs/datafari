@@ -123,7 +123,7 @@ $(function($) {
   }
 
   function previewError() {
-    $("#preview-error").html('<i class="fass fa-exclamation-triangle"></i> ' + window.i18n.msgStore['preview-unavailable']);
+    $("#preview-error").html('<i class="fas fa-exclamation-triangle"></i> ' + window.i18n.msgStore['preview-unavailable']);
     $("#preview-error").show();
   }
 

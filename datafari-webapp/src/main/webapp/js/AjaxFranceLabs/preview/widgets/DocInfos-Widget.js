@@ -31,8 +31,8 @@ AjaxFranceLabs.DocInfosWidget = AjaxFranceLabs.WidgetCore.extend({
     var docIdDiv = $("<div id='docId'></div>");
     widgetContentDiv.append(docIdDiv);
     widgetContentDiv.append('<div>' + '<div id="docIcon" class="doc-icon"></div>' + '<div class="heading-content">' + '<div>' + '<h1 id="docTitle"></h1>' + '</div>' + '<div class="heading-desc">'
-        + '<div id="doclastModified" class="heading-date"></div>' + '<a target="_blank" class="source-doc-link heading-box" href="' + doc.id + '">' + '<i class="fass fa-download"></i> '
-        + window.i18n.msgStore['preview-open-from-source'] + '</a>' + '<div class="heading-box" style="display:none;">' + '<i class="fass fa-bookmark-o"></i>' + '</div>'
+        + '<div id="doclastModified" class="heading-date"></div>' + '<a target="_blank" class="source-doc-link heading-box" href="' + doc.id + '">' + '<i class="fas fa-download"></i> '
+        + window.i18n.msgStore['preview-open-from-source'] + '</a>' + '<div class="heading-box" style="display:none;">' + '<i class="fas fa-bookmark-o"></i>' + '</div>'
         + '<div class="heading-box" style="display:none;">' + '<img src="images/icons/pdf-icon-24x24.png"/>' + '</div>' + '</div>' + '</div>' + '</div>');
     $("#docId").html(doc.id);
     var extension = doc.extension;
