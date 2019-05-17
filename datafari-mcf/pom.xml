@@ -29,7 +29,7 @@
       		official repo : http://archive.apache.org/dist/manifoldcf/apache-manifoldcf-${mcf.version}/apache-manifoldcf-${mcf.version}-bin.tar.gz 
       		Datafari repo : http://repomcf.datafari.com/mcf/apache-manifoldcf-${mcf.version}-dev-bin-${mcf.commit.number}.tar.gz
       		-->
-      			<url>https://www-eu.apache.org/dist/manifoldcf/apache-manifoldcf-${mcf.version}/apache-manifoldcf-${mcf.version}-bin.tar.gz</url>
+      			<url>https://archive.apache.org/dist/manifoldcf/apache-manifoldcf-${mcf.version}/apache-manifoldcf-${mcf.version}-bin.tar.gz</url>
       			<sha512>89C43BC110E1D03FD724323D5C9595687E565E5057002DFFA59E55E2EBAD10B211A65688F46CA27AFD0C8C21E6CABAF2799FA09BE984F3B80A9A481F0A3866AB</sha512>
       			<unpack>true</unpack>
         </configuration>
