@@ -222,7 +222,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 				
 				<li class="dropdown" id="Usages Analysis">
           <a href="#" class="dropdown-toggle">
-            <i class="fas fa-bar-chart"></i>
+            <i class="fas fa-chart-bar"></i>
              <span id="usagesAnalysis-AdminUI" class="hidden-xs"></span>
           </a>
           <ul class="dropdown-menu">
