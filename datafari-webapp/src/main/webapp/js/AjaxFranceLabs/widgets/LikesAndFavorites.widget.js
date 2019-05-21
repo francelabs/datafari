@@ -79,7 +79,7 @@ AjaxFranceLabs.LikesAndFavoritesWidget = AjaxFranceLabs.SubClassResultWidget
         if (docs.length != 0) {
           $(".doc_list .res")
               .append(
-                  '<span class="favorite"><i class="fasr fa-bookmark"></i></span>')
+                  '<span class="favorite"><i class="far fa-bookmark"></i></span>')
               .find(".description")
               .append(
                   '<div class="metadonne"><span class="liker">Like</span>  <i class="fas fa-thumbs-up"></i><span class="likes">0</span></div>');

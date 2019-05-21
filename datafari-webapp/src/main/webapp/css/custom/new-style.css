@@ -62,6 +62,11 @@
   footer img {
     height: 30px;
   }
+  
+   /* spécificité sous menu */
+  #search-tools-sub-menu a:link {
+    font-weight: normal;
+  }
 
   /*! Btn */
   .btn {

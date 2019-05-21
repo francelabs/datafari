@@ -352,7 +352,7 @@
     "nbResultsToExport-label": "Nombre de résultats à exporter",
     "nextExecution": "La prochaine éxécution est prévue le : ",
     "no": "non",
-    "no-licence": "Ceci est l'édition communautaire, certaines fonctionnalités sont bloquées mais elle peut être utilisée sans restrictions de temps ou de limite sur le nombre de documents indexés",
+    "no-licence": "Ceci est l'édition communautaire complète, certaines fonctionnalités sont absentes mais cette version peut être utilisée sans restrictions de temps ou de limite sur le nombre de documents indexés",
     "no_save_needed": "Ne nécessite pas de sauvegarde",
     "noAlerts": "Aucune alerte",
     "noClicksQueries": "Pas de requêtes avec clic",
