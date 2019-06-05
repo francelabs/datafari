@@ -36,9 +36,8 @@ import com.francelabs.datafari.utils.Environment;
 import com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript;
 
 /**
- * This Servlet is used to save and restore the MCF connections from AdminUI It
- * is called by MCFBackupRestore.html DoGet is not used DoPost is used to save
- * and restore the MCF connections, given the action parameter (save or restore)
+ * This Servlet is used to save and restore the MCF connections from AdminUI It is called by MCFBackupRestore.html DoGet is not used DoPost is used to save and restore the MCF connections, given the
+ * action parameter (save or restore)
  *
  * @author Giovanni Usai
  */
@@ -54,8 +53,7 @@ public class MCFBackupRestore extends HttpServlet {
   private final static Logger LOGGER = LogManager.getLogger(MCFBackupRestore.class);
 
   /**
-   * @see HttpServlet#HttpServlet() Gets the environment path of Datafari
-   *      installation
+   * @see HttpServlet#HttpServlet() Gets the environment path of Datafari installation
    */
   public MCFBackupRestore() {
     env = Environment.getEnvironmentVariable("DATAFARI_HOME");
@@ -67,10 +65,8 @@ public class MCFBackupRestore extends HttpServlet {
 
   /**
    * @throws IOException
-   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-   *      response) It saves the MCF connections if action parameter is save It
-   *      restores the MCF connections if action parameter is restore It uses
-   *      the backup directory in input (if specified) or a default path
+   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response) It saves the MCF connections if action parameter is save It restores the MCF connections if action parameter is
+   *      restore It uses the backup directory in input (if specified) or a default path
    */
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
@@ -107,7 +103,7 @@ public class MCFBackupRestore extends HttpServlet {
           if (action.trim().equalsIgnoreCase("save")) {
             if (dir.list().length != 0) {
               jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-              jsonResponse.put(OutputConstants.STATUS, "The provided directory is not empty");
+              jsonResponse.put(OutputConstants.STATUS, "The provided directory exists but is not empty");
               LOGGER.warn("The provided directory is not empty : " + backupDirectory);
             } else {
               try {
@@ -122,7 +118,7 @@ public class MCFBackupRestore extends HttpServlet {
           } else if (action.trim().equalsIgnoreCase("restore")) {
             if (dir.list().length == 0) {
               jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-              jsonResponse.put(OutputConstants.STATUS, "The provided directory does not contain any file to restore");
+              jsonResponse.put(OutputConstants.STATUS, "The provided directory exists but does not contain any file to restore");
             } else {
               try {
                 BackupManifoldCFConnectorsScript.doRestore(backupDirectory);
