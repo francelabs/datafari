@@ -17,8 +17,8 @@ $(function($) {
 
   // Setup login/logout link
   new AjaxFranceLabs.HeaderMenusWidget({
-	    elm : $('#header-menus'),
-	    id : 'headerMenus'
+    elm : $('#header-menus'),
+    id : 'headerMenus'
   }).buildWidget();
 
   // Setup loading div
@@ -89,10 +89,13 @@ $(function($) {
     rawParams = rawParams.substring(1);
     rawParams = rawParams.replace("docId=" + docId + "&", "");
     rawParams = rawParams.replace(/docPos=[0-9]*\&/, "");
+    rawParams = rawParams.replace(/qId=[^&]*\&/, "");
     var doc = data.response.docs[0];
     if (doc != undefined) {
       updateUI(doc);
-      manager.uiUpdate(docContentDiv, doc.id, docPos, rawParams, data);
+      // docContentDiv, docPos and qId parameters are inherited from this
+      // javascript (near manager.performRequestFromQuery call)
+      manager.uiUpdate(docContentDiv, doc.id, docPos, rawParams, data, qId);
     } else {
       previewError();
     }
@@ -107,7 +110,9 @@ $(function($) {
     var doc = data.response.docs[0];
     if (doc != undefined) {
       updateUI(doc);
-      manager.uiUpdate(docContentDiv, doc.id, null, params, data);
+      // docContentDiv parameter is inherited from this javascript
+      // (near manager.performRequestFromDocId call)
+      manager.uiUpdate(docContentDiv, doc.id, null, null, data, null);
     } else {
       previewError();
     }
@@ -157,6 +162,7 @@ $(function($) {
     docPos = parseInt(docPos);
   }
   var docId = getQueryString("docId");
+  var qId = getQueryString("qId");
   if (q != null) {
     var params = window.location.search;
     manager.performRequestFromQuery("SearchProxy/select", params, docPos, queryRequestHandler);

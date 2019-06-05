@@ -64,7 +64,7 @@ AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
 
     elm.find('.doc_list .bar-loader').remove();
     if (data.response.numFound === 0) {
-    	elm.find('.doc_list').append('<div class="doc no"><div class="res no"><span class="title noResult">' + window.i18n.msgStore['noResult'] + '</span></div></div>');
+      elm.find('.doc_list').append('<div class="doc no"><div class="res no"><span class="title noResult">' + window.i18n.msgStore['noResult'] + '</span></div></div>');
     } else {
       var self = this;
       $.each(data.response.docs, function(i, doc) {
@@ -162,7 +162,7 @@ AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
       });
 
       AjaxFranceLabs.addMultiElementClasses(elm.find('.doc'));
-      self.previewDisplayer.init(self.manager.store.string());
+      self.previewDisplayer.init(self.manager.store.string(), self.manager.store.get("id").value);
     }
     if (this.pagination) {
       this.pagination.afterRequest(data);
@@ -209,9 +209,9 @@ AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
       elm.find('.doc_list .bar-loader').remove();
 
     if (status == "timeout") {
-    	elm.find('.doc_list').append('<div class="doc"><span class="noResult description">' + window.i18n.msgStore['requestTimeout'] + '</span></div>');
+      elm.find('.doc_list').append('<div class="doc"><span class="noResult description">' + window.i18n.msgStore['requestTimeout'] + '</span></div>');
     } else {
-    	elm.find('.doc_list').append('<div class="doc"><span class="noResult description">' + window.i18n.msgStore['requestError'] + '</span></div>');
+      elm.find('.doc_list').append('<div class="doc"><span class="noResult description">' + window.i18n.msgStore['requestError'] + '</span></div>');
     }
   }
 });

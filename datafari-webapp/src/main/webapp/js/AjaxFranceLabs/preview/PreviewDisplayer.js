@@ -1,6 +1,6 @@
 AjaxFranceLabs.PreviewDisplayer = AjaxFranceLabs.Class.extend({
 
-  init : function(request) {
+  init : function(request, qId) {
     var self = this;
     var isMobile = $(window).width() < 800;
     if (!isMobile) {
@@ -10,7 +10,7 @@ AjaxFranceLabs.PreviewDisplayer = AjaxFranceLabs.Class.extend({
           docId = encodeURIComponent(docId);
         }
         var docPos = $(this).parents(".doc").attr("pos");
-        var link = "Preview?docPos=" + docPos + "&" + request + "&lang=" + window.i18n.language;
+        var link = "Preview?docPos=" + docPos + "&qId=" + qId + "&" + request + "&lang=" + window.i18n.language;
         $(this).prepend("<a class='preview-link' target='_blank' href='" + link + "' title='" + window.i18n.msgStore['preview-link'] + "'><i class='fa fa-eye'></i><a></div>");
       });
     }

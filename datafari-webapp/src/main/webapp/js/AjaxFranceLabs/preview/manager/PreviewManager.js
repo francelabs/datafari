@@ -84,11 +84,11 @@ AjaxFranceLabs.PreviewManager = AjaxFranceLabs.Class.extend({
     }
   },
 
-  uiUpdate : function(docContentDiv, docId, docPos, params, data) {
+  uiUpdate : function(docContentDiv, docId, docPos, params, data, qId) {
     var self = this;
     for ( var widget in self.widgets) {
       if (self.widgets[widget].type != "request" && self.widgets[widget].type != "content-builder") {
-        self.widgets[widget].update(docContentDiv, docId, docPos, params, data);
+        self.widgets[widget].update(docContentDiv, docId, docPos, params, data, qId);
       }
     }
   }

@@ -25,7 +25,7 @@ AjaxFranceLabs.ShareLinksWidget = AjaxFranceLabs.FacetCore.extend({
 
   },
 
-  updateWidgetContent : function(docContentDiv, widgetDiv, widgetContentDiv, docId, docPos, params, data) {
+  updateWidgetContent : function(docContentDiv, widgetDiv, widgetContentDiv, docId, docPos, params, data, qId) {
     if (data != undefined && data != null) {
       var doc = data.response.docs[0];
       var idDoc = doc.id;

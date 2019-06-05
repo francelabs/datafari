@@ -49,7 +49,7 @@ AjaxFranceLabs.FacetCore = AjaxFranceLabs.WidgetCore.extend({
   },
 
   // To override
-  updateWidgetContent : function(docContentDiv, widgetDiv, widgetContentDiv, docId, docPos, params, data) {
+  updateWidgetContent : function(docContentDiv, widgetDiv, widgetContentDiv, docId, docPos, params, data, qId) {
 
   }
 });

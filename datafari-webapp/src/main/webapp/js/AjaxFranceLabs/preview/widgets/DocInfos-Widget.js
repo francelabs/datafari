@@ -25,13 +25,19 @@ AjaxFranceLabs.DocInfosWidget = AjaxFranceLabs.WidgetCore.extend({
 
   },
 
-  updateWidgetContent : function(docContentDiv, widgetDiv, widgetContentDiv, docId, docPos, params, data) {
+  updateWidgetContent : function(docContentDiv, widgetDiv, widgetContentDiv, docId, docPos, params, data, qId) {
     var doc = data.response.docs[0];
     widgetContentDiv.html("");
     var docIdDiv = $("<div id='docId'></div>");
     widgetContentDiv.append(docIdDiv);
+    var sourceLink = doc.id;
+    // If there is a qId then change the sourceLink so that the URL servlet can
+    // update the statistics (one click for this doc)
+    if (qId != null && qId != undefined && qId != "") {
+      sourceLink = "URL?url=" + doc.id + "&id=" + qId;
+    }
     widgetContentDiv.append('<div>' + '<div id="docIcon" class="doc-icon"></div>' + '<div class="heading-content">' + '<div>' + '<h1 id="docTitle"></h1>' + '</div>' + '<div class="heading-desc">'
-        + '<div id="doclastModified" class="heading-date"></div>' + '<a target="_blank" class="source-doc-link heading-box" href="' + doc.id + '">' + '<i class="fas fa-download"></i> '
+        + '<div id="doclastModified" class="heading-date"></div>' + '<a target="_blank" class="source-doc-link heading-box" href="' + sourceLink + '">' + '<i class="fas fa-download"></i> '
         + window.i18n.msgStore['preview-open-from-source'] + '</a>' + '<div class="heading-box" style="display:none;">' + '<i class="fas fa-bookmark-o"></i>' + '</div>'
         + '<div class="heading-box" style="display:none;">' + '<img src="images/icons/pdf-icon-24x24.png"/>' + '</div>' + '</div>' + '</div>' + '</div>');
     $("#docId").html(doc.id);

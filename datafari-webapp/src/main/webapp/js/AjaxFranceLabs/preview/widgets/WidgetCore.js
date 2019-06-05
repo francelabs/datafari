@@ -48,15 +48,15 @@ AjaxFranceLabs.WidgetCore = AjaxFranceLabs.Class.extend({
 
   },
 
-  update : function(docContentDiv, docId, docPos, params, data) {
+  update : function(docContentDiv, docId, docPos, params, data, qId) {
     var widgetDiv = $(this.elm);
     widgetDiv.show();
     var widgetContentDiv = widgetDiv.find(".widget-content");
-    this.updateWidgetContent(docContentDiv, widgetDiv, widgetContentDiv, docId, docPos, params, data)
+    this.updateWidgetContent(docContentDiv, widgetDiv, widgetContentDiv, docId, docPos, params, data, qId)
   },
 
   // To override
-  updateWidgetContent : function(docContentDiv, widgetDiv, widgetContentDiv, docId, docPos, params, data) {
+  updateWidgetContent : function(docContentDiv, widgetDiv, widgetContentDiv, docId, docPos, params, data, qId) {
 
   }
 });

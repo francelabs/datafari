@@ -130,7 +130,7 @@ AjaxFranceLabs.QueryHighlightingWidget = AjaxFranceLabs.FacetCore.extend({
     }
   },
 
-  updateWidgetContent : function(docContentDiv, widgetDiv, widgetContentDiv, docId, docPos, params, data) {
+  updateWidgetContent : function(docContentDiv, widgetDiv, widgetContentDiv, docId, docPos, params, data, qId) {
     var self = this;
     widgetContentDiv.html("");
     if (data != undefined && data != null) {

@@ -25,7 +25,7 @@ AjaxFranceLabs.PreviewNavigationWidget = AjaxFranceLabs.FacetCore.extend({
 
   },
 
-  updateWidgetContent : function(docContentDiv, widgetDiv, widgetContentDiv, docId, docPos, params, data) {
+  updateWidgetContent : function(docContentDiv, widgetDiv, widgetContentDiv, docId, docPos, params, data, qId) {
     if (!isNaN(docPos) && docPos != undefined && docPos != null) {
       var previousDoc = $("<span class='preview-nav-button'><i class='fa fa-chevron-left'></i> " + window.i18n.msgStore['preview-previous-doc'] + "</span>");
       previousDoc.click(function() {
