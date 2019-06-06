@@ -88,8 +88,7 @@ function createLangContent() {
   $("#param-content").html("<div id='lang-choice'><span id='lang-choice-label'>" + window.i18n.msgStore['lang-choice'] + "</span></div>");
   var inputs = $("<div id='lang-inputs'></div>")
   $.each(languages, function(index, value) {
-    inputs.append("<input type='radio' name='lang' id='" + value + "' value='" + value + "'><label for='" + value + "'> "
-        + window.i18n.msgStore[value + '_locale'] + "</label><br>");
+    inputs.append("<input type='radio' name='lang' id='" + value + "' value='" + value + "'><label for='" + value + "'> " + window.i18n.msgStore[value + '_locale'] + "</label><br>");
   });
 
   $("#param-content").append(inputs);
@@ -98,9 +97,7 @@ function createLangContent() {
   inputs.find('input[value="' + window.i18n.language + '"]').prop('checked', true);
   inputs.find('input').show();
 
-  $("#param-content").append(
-      "<div class='separator'></div><div id='button-div'><input type='button' name='validate-lang' id='validate-lang' value='"
-          + window.i18n.msgStore['validate'] + "'/></div>");
+  $("#param-content").append("<div class='separator'></div><div id='button-div'><input type='button' name='validate-lang' id='validate-lang' value='" + window.i18n.msgStore['validate'] + "'/></div>");
   $("#validate-lang").click(function() {
     var selectedLang = $('input[name=lang]:checked').val();
 
@@ -117,8 +114,7 @@ function createLangContent() {
 
 function createAlertContent() {
   var dataString = "keyword=";
-  $("#param-content").html(
-      "<div id='addAlertDiv'><button onclick='javascript:addAlert();' id='addAlertButton'>" + window.i18n.msgStore['addAlert'] + "</button></div>");
+  $("#param-content").html("<div id='addAlertDiv'><button onclick='javascript:addAlert();' id='addAlertButton'>" + window.i18n.msgStore['addAlert'] + "</button></div>");
   $("#param-content").append("<div id='alertsListDiv'></div>");
   $.ajax({ // Ajax request to the doGet of the Alerts servlet
     type : "GET",
@@ -133,9 +129,8 @@ function createAlertContent() {
         console.log(data);
       } else if (data.alerts != undefined) {
         $("#alertsListDiv").html(
-            "<table id='alerts_table'><thead><tr><th>" + window.i18n.msgStore['search'] + "</th><th>" + window.i18n.msgStore['subject'] + "</th><th>"
-                + window.i18n.msgStore['mail'] + "</th><th>" + window.i18n.msgStore['send-frequency'] + "</th><th>" + window.i18n.msgStore['delete']
-                + "</th></tr></thead><tbody></tbody></table>");
+            "<table id='alerts_table'><thead><tr><th>" + window.i18n.msgStore['search'] + "</th><th>" + window.i18n.msgStore['subject'] + "</th><th>" + window.i18n.msgStore['mail'] + "</th><th>"
+                + window.i18n.msgStore['send-frequency'] + "</th><th>" + window.i18n.msgStore['delete'] + "</th></tr></thead><tbody></tbody></table>");
         // get the data in a global var so it can be used in edit() or remove()
         d = data;
         var numb = data.alerts.length;
@@ -144,9 +139,8 @@ function createAlertContent() {
           var doc = data.alerts[i];
           // Print the alert with an href of the keyword towards edit()
           $("#alerts_table tbody").append(
-              "<tr id=\"alert-" + i + "\"><td><span class='alert_search_term'>" + doc.keyword + "</span></td><td>" + doc.subject + "</td><td>"
-                  + doc.mail + "</td><td id='frequency-" + i + "' class='frequency'>" + window.i18n.msgStore[doc.frequency]
-                  + " <span class='modify-link'><button onclick='javascript: modify(" + i + ")'>" + window.i18n.msgStore['modify']
+              "<tr id=\"alert-" + i + "\"><td><span class='alert_search_term'>" + doc.keyword + "</span></td><td>" + doc.subject + "</td><td>" + doc.mail + "</td><td id='frequency-" + i
+                  + "' class='frequency'>" + window.i18n.msgStore[doc.frequency] + " <span class='modify-link'><button onclick='javascript: modify(" + i + ")'>" + window.i18n.msgStore['modify']
                   + "</button></span></td><td><a href=\"javascript: remove(" + i + ")\" class='delete-button'>x</a></td></tr>");
           // Print a button with an href towards remove()
           i++;
@@ -181,8 +175,8 @@ function addAlert() {
   $("#add").append("<table id=\"addAlertTable\" ></table>");
   var tr = $("<tr id='alert-type-tr'>");
   tr.append("<td><label>" + window.i18n.msgStore['alert-type'] + "</label></td>");
-  var selectAlertType = $("<select id='select-alert-type' name='alert-type'><option selected value='current-query'>"
-      + window.i18n.msgStore['current-query'] + "</option><option value='custom'>" + window.i18n.msgStore['custom-alert'] + "</option></select>");
+  var selectAlertType = $("<select id='select-alert-type' name='alert-type'><option selected value='current-query'>" + window.i18n.msgStore['current-query'] + "</option><option value='custom'>"
+      + window.i18n.msgStore['custom-alert'] + "</option></select>");
   selectAlertType.change(function() {
     if ($(this).val() == "custom") {
       var tr = $("<tr id='custom-alert-tr'>");
@@ -211,13 +205,12 @@ function addAlert() {
   $("#addAlertTable").append(tr);
   tr = $("<tr>");
   tr.append("<td><label>" + window.i18n.msgStore['frequency'] + "</label></td>");
-  tr.append("<td><select required id=\"frequency\" name=\"frequency\">	<OPTION value='hourly'>" + window.i18n.msgStore['hourly']
-      + "</OPTION><OPTION value='daily'>" + window.i18n.msgStore['daily'] + "</OPTION><OPTION value='weekly'>" + window.i18n.msgStore['weekly']
-      + "</OPTION></select></td>");
+  tr.append("<td><select required id=\"frequency\" name=\"frequency\">	<OPTION value='hourly'>" + window.i18n.msgStore['hourly'] + "</OPTION><OPTION value='daily'>" + window.i18n.msgStore['daily']
+      + "</OPTION><OPTION value='weekly'>" + window.i18n.msgStore['weekly'] + "</OPTION></select></td>");
   $("#addAlertTable").append(tr);
   tr = $("<tr>");
-  tr.append("<td colspan=2 id='addAlertSubmit'><input type=\"Submit\" id=\"newAlerts\" name=\"AddAlert\" value=\"" + window.i18n.msgStore['confirm']
-      + "\"/><button id='addAlertCancel'>" + window.i18n.msgStore['cancel'] + "</button></td>");
+  tr.append("<td colspan=2 id='addAlertSubmit'><input type=\"Submit\" id=\"newAlerts\" name=\"AddAlert\" value=\"" + window.i18n.msgStore['confirm'] + "\"/><button id='addAlertCancel'>"
+      + window.i18n.msgStore['cancel'] + "</button></td>");
   $("#addAlertTable").append(tr);
   $("#addAlertDiv").append("</form>");
   $("#addAlertDiv").append("<div id='addAlertMessage'></div>");
@@ -238,7 +231,9 @@ function addAlert() {
       for (var i = 0; i < fqs.length; i++) {
         query += encodeURIComponent(fqs[i] + "&");
       }
-      query += "&keyword=" + window.Manager.store.values("q")[0];
+      // Get query value from window.location thanks to getParamValue method from search.js file
+      var rawQuery = getParamValue('query', decodeURIComponent(window.location.search));
+      query += "&keyword=" + rawQuery;
       datastring += "&" + query;
     }
     $.ajax({ // Ajax request to the doPost of the Alerts servlet
@@ -287,9 +282,8 @@ function initCreateAlertButton() {
 
 function modify(i) {
   $("#frequency-" + i).html(
-      "<select required id=\"select-frequency-" + i + "\" name=\"frequency\" class=\"col-sm-4\">	<OPTION value='hourly'>"
-          + window.i18n.msgStore['hourly'] + "</OPTION><OPTION value='daily'>" + window.i18n.msgStore['daily'] + "</OPTION><OPTION value='weekly'>"
-          + window.i18n.msgStore['weekly'] + "</OPTION></select> <button onclick='javascript: validate(" + i + ")' >"
+      "<select required id=\"select-frequency-" + i + "\" name=\"frequency\" class=\"col-sm-4\">	<OPTION value='hourly'>" + window.i18n.msgStore['hourly'] + "</OPTION><OPTION value='daily'>"
+          + window.i18n.msgStore['daily'] + "</OPTION><OPTION value='weekly'>" + window.i18n.msgStore['weekly'] + "</OPTION></select> <button onclick='javascript: validate(" + i + ")' >"
           + window.i18n.msgStore['validate'] + "</button>")
   $("#select-frequency-" + i).val(d.alerts[i].frequency);
 }
@@ -321,8 +315,7 @@ function validate(i) {
         d.alerts[i].frequency = $("#select-frequency-" + i).val();
         d.alerts[i]._id = JSON.parse(data).uuid;
         alertsTable.cell("#frequency-" + i).data(
-            window.i18n.msgStore[d.alerts[i].frequency] + " <span class='modify-link'><button onclick='javascript: modify(" + i + ")'>"
-                + window.i18n.msgStore['modify'] + "</button></span>").draw();
+            window.i18n.msgStore[d.alerts[i].frequency] + " <span class='modify-link'><button onclick='javascript: modify(" + i + ")'>" + window.i18n.msgStore['modify'] + "</button></span>").draw();
       }
     },
     error : function(jqXHR, textStatus, errorThrown) {
