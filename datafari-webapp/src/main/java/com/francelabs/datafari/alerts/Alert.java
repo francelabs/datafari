@@ -60,14 +60,13 @@ public class Alert {
   }
 
   /**
-   * Creates a solr query Creates a mail with the title of each result Send the
-   * mail
+   * Creates a solr query Creates a mail with the title of each result Send the mail
    */
   public void run() {
     try {
       final IndexerQuery query = IndexerServerManager.createQuery();
-      switch (this.frequency) { // The fq parameter depends of the frequency of
-                                // the alerts
+      switch (this.frequency.toLowerCase()) { // The fq parameter depends of the frequency of
+      // the alerts
       default:
         query.setParam("fq", "last_modified:[NOW-1DAY TO NOW] OR crawl_date:[NOW-1DAY TO NOW]");
         break;
@@ -81,8 +80,8 @@ public class Alert {
         query.setParam("fq", "last_modified:[NOW-7DAY TO NOW] OR crawl_date:[NOW-7DAY TO NOW]");
         break;
       }
-      query.setParam("rows", "10"); // Sets the maximum number of results that
-                                    // will be sent in the email
+      query.setParam("rows", "100"); // Sets the maximum number of results that
+                                     // will be sent in the email
       query.setParam("q.op", "AND");
       query.setParam("q", keyword); // Sets the q parameters according to the
                                     // attribute
