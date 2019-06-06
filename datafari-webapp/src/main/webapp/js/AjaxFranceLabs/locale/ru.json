@@ -241,6 +241,7 @@
     "equals": "Equals",
     "error": "Error !",
     "errorDate": "Дата начала за датой окончания",
+    "errorSpecChars" : "Keyword/Expression must not contain special chars or accented chars",
     "exactExpression": "Точное выражение",
     "exclusions": "Exclusions",
     "exclusions-tip": "An optional exclusion regex.",

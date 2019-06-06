@@ -241,6 +241,7 @@
     "equals": "Equals",
     "error": "Error !",
     "errorDate": "La data di fine è successiva alla data di inizio",
+    "errorSpecChars" : "Keyword/Expression must not contain special chars or accented chars",
     "exactExpression": "Espressione esatta",
     "exclusions": "Exclusions",
     "exclusions-tip": "An optional exclusion regex.",

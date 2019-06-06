@@ -241,6 +241,7 @@
     "equals": "Est égal à",
     "error": "Erreur !",
     "errorDate": "La date de début est postérieure à la date de fin",
+    "errorSpecChars" : "Mot-clef/Expression ne doit pas contenir de caractères spéciaux ou avec accents",
     "exactExpression": "Expression exacte",
     "exclusions": "Exclusions",
     "exclusions-tip": "Une expression régulière d'exclusion (optionnelle)",

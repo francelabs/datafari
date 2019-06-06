@@ -84,6 +84,7 @@
     "emptied_content": "Preview not available ! The content of this document has been rejected as the document size did not match the specified limitations !",
     "english_locale": "English",
     "errorDate": "تاريخ البدء يأتي بعد تاريخ الانتهاء",
+    "errorSpecChars" : "Keyword/Expression must not contain special chars or accented chars",
     "exactExpression": "التعبير الصحيح",
     "exportResults-label": "Export results",
     "facet": "",

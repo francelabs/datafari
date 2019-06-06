@@ -240,6 +240,7 @@
     "equals": "Equals",
     "error": "Fehler",
     "errorDate": "Startdatum ist später als Enddatum",
+    "errorSpecChars" : "Keyword/Expression must not contain special chars or accented chars",
     "exactExpression": "Exakter Ausdruck",
     "exclusions": "Exclusions",
     "exclusions-tip": "An optional exclusion regex.",
