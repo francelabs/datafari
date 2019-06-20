@@ -30,7 +30,7 @@
       		Datafari repo : http://repomcf.datafari.com/mcf/apache-manifoldcf-${mcf.version}-dev-bin-${mcf.commit.number}.tar.gz
       		-->
       			<url>https://archive.apache.org/dist/manifoldcf/apache-manifoldcf-${mcf.version}/apache-manifoldcf-${mcf.version}-bin.tar.gz</url>
-      			<sha512>89C43BC110E1D03FD724323D5C9595687E565E5057002DFFA59E55E2EBAD10B211A65688F46CA27AFD0C8C21E6CABAF2799FA09BE984F3B80A9A481F0A3866AB</sha512>
+      			<sha512>81AA07E42385A76CB6D8EEEE4FDE8EC4BF9C7490D99FAB2F2121DBD1670627D33BD6791D7134F525D71CB35F47DD97F5BE61618BFD7EA8DA193FC4E2127FDCBF</sha512>
       			<unpack>true</unpack>
         </configuration>
       </execution>

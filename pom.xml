@@ -9,7 +9,7 @@
 	
 	<properties>
     <log4j.version>2.11.1</log4j.version>
-    <mcf.version>2.12</mcf.version>
+    <mcf.version>2.13</mcf.version>
 	  <mcf.commit.number>93e597a48</mcf.commit.number>
     <solr.version>7.4.0</solr.version>
     <postgres.version>42.1.3</postgres.version>
@@ -80,30 +80,20 @@ Datafari is the ideal product for those who want to search through their data, w
 			<timezone>Europe/Paris</timezone>
 		</developer>
 		<developer>
-			<id>amazoyer</id>
-			<name>Aurelien Mazoyer</name>
-			<email>aurelien.mazoyer@francelabs.com</email>
-			<organization>France Labs</organization>
-			<roles>
-				<role>architect</role>
-				<role>developer</role>
-			</roles>
-			<timezone>Europe/Paris</timezone>
-		</developer>
-		<developer>
 			<id>jmassiera</id>
 			<name>Julien Massiera</name>
 			<email>julien.massiera@francelabs.com</email>
 			<organization>France Labs</organization>
 			<roles>
+                <role>architect</role>
 				<role>developer</role>
 			</roles>
 			<timezone>Europe/Paris</timezone>
 		</developer>
 		<developer>
-			<id>gusai</id>
-			<name>Giovanni Usai</name>
-			<email>giovanni.usai@francelabs.com</email>
+			<id>endmaril</id>
+			<name>Romaric Pighetti</name>
+			<email>romaric.pighetti@francelabs.com</email>
 			<organization>France Labs</organization>
 			<roles>
 				<role>developer</role>
