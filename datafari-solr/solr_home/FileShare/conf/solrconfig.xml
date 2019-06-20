@@ -1265,10 +1265,10 @@
 	    </processor>
       
       <processor class="com.francelabs.datafari.updateprocessor.DatafariUpdateProcessorFactory">
-        <bool name="entities.extract.simple">false</bool>
-        <bool name="entities.extract.simple.name">false</bool>
-        <bool name="entities.extract.simple.phone">false</bool>
-        <bool name="entities.extract.simple.special">false</bool>
+        <bool name="entities.extract.simple">${entity.extract:false}</bool>
+        <bool name="entities.extract.simple.name">${entity.name:false}</bool>
+        <bool name="entities.extract.simple.phone">${entity.phone:false}</bool>
+        <bool name="entities.extract.simple.special">${entity.special:false}</bool>
         <str name="entities.extract.simple.special.regex">.*resume*</str>
       </processor>
       

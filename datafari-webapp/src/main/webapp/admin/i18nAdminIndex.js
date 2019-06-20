@@ -59,10 +59,11 @@ $(function($) {
   elm.find('#modifyDepartment-AdminUI').html(window.i18n.msgStore['adminUI-UserDepartment']);
   elm.find('#addUser-AdminUI').html(window.i18n.msgStore['adminUI-AddUser']);
   elm.find('#zookeeper-AdminUI').html(window.i18n.msgStore['adminUI-Zookeeper']);
+  elm.find('#entityExtractionConf-AdminUI').html(window.i18n.msgStore['adminUI-entityExtractionConf']);
 
   $("#logs-AdminUI").html(window.i18n.msgStore['adminUI-Logs']);
   $("#downloadLogs-AdminUI").html(window.i18n.msgStore['adminUI-Download-Logs']);
-
+  
   // Active Directory
   elm.find('#activeDirectoryManagement-AdminUI').html(window.i18n.msgStore['adminUI-activeDirectoryManagement']);
   elm.find('#ADConfig-AdminUI').html(window.i18n.msgStore['adminUI-ADConfig']);
