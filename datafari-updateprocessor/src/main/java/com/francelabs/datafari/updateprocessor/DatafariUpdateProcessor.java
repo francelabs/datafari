@@ -205,6 +205,15 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
         filename = matcher.group();
       }
     }
+    
+    final SolrInputField streamSizeField = doc.get("ignored_stream_size");
+    long streamSize = Long.parseLong((String) streamSizeField.getValue());
+
+    if (doc.getFieldValue("original_file_size") == null) {
+      if (streamSizeField != null) {
+        doc.addField("original_file_size",streamSize);
+      }
+    }
 
     if (url.startsWith("http")) {
       if (doc.get("title") == null) {
