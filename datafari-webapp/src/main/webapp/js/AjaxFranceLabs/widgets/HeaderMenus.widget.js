@@ -124,7 +124,7 @@ AjaxFranceLabs.HeaderMenusWidget = AjaxFranceLabs.AbstractWidget.extend({
             }
 
             var getUrl = window.location;
-            var mcfUrl = "@GET-MCF-IP@";
+            var mcfUrl = getUrl.protocol + "//" + getUrl.hostname + ":9080" + "/" + "datafari-mcf-crawler-ui/";
             linkDOMElement.prop('href', mcfUrl);
             linkDOMElement.prop('target', 'blank');
         }

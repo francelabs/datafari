@@ -428,20 +428,6 @@ if (request.getUserPrincipal().getName() != null) {
       if (request.getUserPrincipal() != null) {
       if (request.getUserPrincipal().getName() != null) {
       %>
-      <li id="relevancy-node" class="dropdown">
-        <button id="create-relevancy" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalSearchRelevancy">
-          Créer une requête de pertinence
-        </button>
-        <!-- <button class="btn btn-default dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false">
-          <a >Créer une requête de pertinence</a>  
-        </button> -->
-
-        <!-- <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-          <li></li>
-          <li></li>
-        </ul>
-       -->
-    </li>
 
     <%
   }
