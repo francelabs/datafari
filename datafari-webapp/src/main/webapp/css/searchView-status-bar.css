@@ -14,14 +14,14 @@
 	display: flex;
 	justify-content: left;
 	align-items: flex-end;
-	width: 50%;
+	width: 30%;
 }
 
 #results_action {
 	display: flex;
 	justify-content: flex-end;
-	align-items: center;
-	width: 50%;
+	align-items: flex-end;
+	width: 70%;
 }
 
 #searchBar {

@@ -24,6 +24,9 @@ AjaxFranceLabs.HeaderMenusWidget = AjaxFranceLabs.AbstractWidget.extend({
         var caret = ' <span class="caret">';
         var mainMenuDOMElement = $(this.elm).find("#loginDatafariLinks");
         var searchToolsSubMenuDOMElement = $(this.elm).find('#search-tools-sub-menu');
+        var adminToolsSubMenuDOMElement = $(this.elm).find('#admin-sub-menu-item');
+        var accountToolsSubMenuDOMElement = $(this.elm).find('#account-sub-menu-item');
+
 
         // Any cases
         var linkDOMElement = searchToolsSubMenuDOMElement.find('a#advancedSearchLink');
@@ -56,12 +59,12 @@ AjaxFranceLabs.HeaderMenusWidget = AjaxFranceLabs.AbstractWidget.extend({
 
         // If user is already connected
         linkDOMElement = searchToolsSubMenuDOMElement.find('a#exportResultsLink');
-        if (linkDOMElement.length > 0) {
-            let text = window.i18n.msgStore['exportResults-label'];
-            if (text) {
-                linkDOMElement.html(text);
-            }
-        }
+         if (linkDOMElement.length > 0) {
+             let text = window.i18n.msgStore['exportResults-label'];
+             if (text) {
+                 linkDOMElement.html(text);
+             }
+         }
 
         // If user is already connected
         linkDOMElement = searchToolsSubMenuDOMElement.find('a#userAlertsLink');
@@ -71,6 +74,16 @@ AjaxFranceLabs.HeaderMenusWidget = AjaxFranceLabs.AbstractWidget.extend({
                 linkDOMElement.html(text);
             }
             linkDOMElement.prop("href", "/Datafari/Search?lang=" + window.i18n.language + "#alert");
+        }
+
+        // If user is already connected
+        linkDOMElement = searchToolsSubMenuDOMElement.find('a#save_search_label');
+        if (linkDOMElement.length > 0) {
+            let text = window.i18n.msgStore['save_search_button'];
+            if (text) {
+                linkDOMElement.html(text);
+            }
+            linkDOMElement.prop("href", "/Datafari/Search?lang=" + window.i18n.language + "#save_search_button");
         }
 
         // If user is already connected
@@ -84,6 +97,49 @@ AjaxFranceLabs.HeaderMenusWidget = AjaxFranceLabs.AbstractWidget.extend({
         }
 
         // If user is already connected
+        linkDOMElement = mainMenuDOMElement.find('a#admin-sub-menu-item');
+        if (linkDOMElement.length > 0) {
+            let text = window.i18n.msgStore['adminUI-Admin'] + caret;
+            if (text) {
+                linkDOMElement.html(text);
+            }
+        }
+
+        // If user is already connected
+        linkDOMElement = adminToolsSubMenuDOMElement.find('a#adminConsoleLink');
+        if (linkDOMElement.length > 0) {
+            let text = window.i18n.msgStore['adminUI-Admin-Main'];
+            if (text) {
+                linkDOMElement.html(text);
+            }
+            linkDOMElement.prop('href', '/Datafari/admin/?lang=' + window.i18n.language);
+        }
+
+        // If user is already connected.
+        linkDOMElement = adminToolsSubMenuDOMElement.find('a#adminMCFLink');
+        if (linkDOMElement.length > 0) {
+            let text = window.i18n.msgStore['adminUI-Connectors-Admin'];
+            if (text) {
+                linkDOMElement.html(text);
+            }
+
+            var getUrl = window.location;
+            var mcfUrl = "@GET-MCF-IP@";
+            linkDOMElement.prop('href', mcfUrl);
+            linkDOMElement.prop('target', 'blank');
+        }
+
+        // If user is already connected
+        linkDOMElement = adminToolsSubMenuDOMElement.find('a#create-relevancy');
+        if (linkDOMElement.length > 0) {
+            let text = window.i18n.msgStore['relevancy_button'];
+            if (text) {
+                linkDOMElement.html(text);
+            }
+        }
+
+
+        // If user is already connected
         linkDOMElement = mainMenuDOMElement.find('a#dropdown-my-account');
         if (linkDOMElement.length > 0) {
             let text = window.i18n.msgStore['adminUI-MyAccount'] + caret;
@@ -93,7 +149,7 @@ AjaxFranceLabs.HeaderMenusWidget = AjaxFranceLabs.AbstractWidget.extend({
         }
 
         // If user is already connected
-        linkDOMElement = mainMenuDOMElement.find('a#externalSourcesLink');
+        linkDOMElement = accountToolsSubMenuDOMElement.find('a#externalSourcesLink');
         if (linkDOMElement.length > 0) {
             let text = window.i18n.msgStore['external-sources-label'];
             if (text) {
@@ -101,31 +157,7 @@ AjaxFranceLabs.HeaderMenusWidget = AjaxFranceLabs.AbstractWidget.extend({
             }
             linkDOMElement.prop("href", "/Datafari/Search?lang=" + window.i18n.language + "#externalSources");
         }
-
-        // If user is already connected
-        linkDOMElement = mainMenuDOMElement.find('a#adminConsoleLink');
-        if (linkDOMElement.length > 0) {
-            let text = window.i18n.msgStore['adminUiLink'];
-            if (text) {
-                linkDOMElement.html(text);
-            }
-            linkDOMElement.prop('href', '/Datafari/admin/?lang=' + window.i18n.language);
-        }
-
-        // If user is already connected
-        linkDOMElement = mainMenuDOMElement.find('a#adminMCFLink');
-        if (linkDOMElement.length > 0) {
-            let text = window.i18n.msgStore['adminUI-Connectors-Admin'];
-            if (text) {
-                linkDOMElement.html(text);
-            }
-
-            var getUrl = window.location;
-            var mcfUrl = getUrl.protocol + "//" + getUrl.hostname + ":9080" + "/" + "datafari-mcf-crawler-ui/";
-            linkDOMElement.prop('href', mcfUrl);
-            linkDOMElement.prop('target', 'blank');
-        }
-
+        
         // If user is already connected
         linkDOMElement = mainMenuDOMElement.find('a#adminGoldenQueriesLink');
         if (linkDOMElement.length > 0) {

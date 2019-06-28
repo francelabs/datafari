@@ -47,4 +47,13 @@
 	    margin-left: 0px;
 	    padding-left: 5px;
     }
+    
+    #search-tools-sub-menu{
+      display: none;
+    }
+}
+/*OVERWRITE the default pattern in new-style.css Line 1250*/
+.dropdown-admin-second-main{
+  margin-right: 0 !important;
+  right: 3%;
 }

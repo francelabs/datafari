@@ -41,7 +41,6 @@
 		<script type ="text/javascript" src ="js/AjaxFranceLabs/modules/Autocomplete.module.js"></script>
 		<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/SearchBar.widget.js"></script>
 		<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/AdvancedSearch.widget.js"></script>
-		<script type ="text/javascript" src ="js/AjaxFranceLabs/widgets/AdvancedSearchWidget/Field.js"></script>
 
 
 		<script type ="text/javascript" src ="js/main.js"></script>

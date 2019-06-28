@@ -28,7 +28,7 @@ AjaxFranceLabs.LoginDatafariFormWidget = AjaxFranceLabs.AbstractWidget.extend({
 	 */
 	buildWidget : function() {		
 	
-		$(this.elm).find('#loginFormAdminUiLabel').append(window.i18n.msgStore['labelFormAdminUi']);
+		$(this.elm).find('#loginFormAdminUiLabel').append(window.i18n.msgStore['labelFormUi']);
 		$(this.elm).find('#loginAdminUiLabel').append(window.i18n.msgStore['loginAdminUi']);
 		$(this.elm).find('#passwordAdminUiLabel').append(window.i18n.msgStore['passwordAdminUi']);
 		

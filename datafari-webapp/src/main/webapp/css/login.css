@@ -56,7 +56,8 @@ body{
 .box label
 {
     display:block;
-    font:14px/22px Arial, Helvetica, Sans-serif;
+    font-weight: normal;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     margin:10px 0 0 6px;
 }
 .box footer label{
@@ -157,4 +158,9 @@ body{
 {
     font:italic 14px/16px Arial, Helvetica, Sans-serif;
     color:#FF3F3F;
+}
+
+/*Prevents the display of yellow glow when an input is pre-filled*/
+input{
+    filter: none;
 }
