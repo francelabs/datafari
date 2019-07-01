@@ -62,6 +62,63 @@ $(function($) {
 		maxDisplay : 100
 	}));
 	*/
+	
+	 /*
+	   * Entity Extracttion
+	   */
+	  /*
+	   * Entity person widget
+	   */
+	  Manager.addWidget(new AjaxFranceLabs.TableWidget({
+	    elm : $('#facet_entity_person'),
+	    id : 'facet_entity_person',
+	    field : 'entity_person',
+	    name : 'Person',
+	    pagination : true,
+	    selectionType : 'OR',
+	    returnUnselectedFacetValues : true
+	  }));
+	  // */
+
+	  /*
+	   * Entity phone widget
+	   */
+	  Manager.addWidget(new AjaxFranceLabs.TableWidget({
+	    elm : $('#facet_entity_phone_present'),
+	    id : 'facet_entity_phone_present',
+	    field : 'entity_phone_present',
+	    name : 'Phone',
+	    pagination : true,
+	    selectionType : 'OR',
+	    returnUnselectedFacetValues : true
+	  }));
+
+	  Manager.addWidget(new AjaxFranceLabs.TableWidget({
+	    elm : $('#facet_entity_phone'),
+	    id : 'facet_entity_phone',
+	    field : 'entity_phone',
+	    name : 'Phone',
+	    pagination : true,
+	    selectionType : 'OR',
+	    returnUnselectedFacetValues : true
+	  }));
+	  // */
+
+	  /*
+	   * Special entity widget
+	   */
+	  Manager.addWidget(new AjaxFranceLabs.TableWidget({
+	    elm : $('#facet_entity_special_present'),
+	    id : 'facet_entity_special_present',
+	    field : 'entity_special_present',
+	    name : 'Special Entity',
+	    pagination : true,
+	    selectionType : 'OR',
+	    returnUnselectedFacetValues : true
+	  }));
+	  // */
+	  
+	  
 
 	Manager.addWidget(new AjaxFranceLabs.TableWidget({
 		elm : $('#facet_language'),

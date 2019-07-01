@@ -283,7 +283,7 @@
     <field name="preview_content" type="string" indexed="false" stored="true" multiValued="true"/>
 
 <!-- Basic entity extraction -->
-	<field name="entity_person" type="key_phrases" indexed="true" stored="true" multiValued="true"/>
+	<field name="entity_person" type="key_phrases" indexed="true" stored="false" multiValued="true"/>
 	<field name="entity_phone" type="string" indexed="true" stored="true" multiValued="true"/>
 	<field name="entity_person_present" type="text_general" indexed="true" stored="true" multiValued="false"/>
 	<field name="entity_phone_present" type="text_general" indexed="true" stored="true" multiValued="false"/>

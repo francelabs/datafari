@@ -232,6 +232,11 @@
 					<div id="facet_extension"></div>
 					<!-- To enable Facet Hierarchical widget -->
 					<!--  <div id="facet_hierarchical_url"></div> -->
+					<!-- To enable entity extraction -->
+					<div id="facet_entity_phone_present"></div>
+					<div id="facet_entity_phone"></div>
+          			<div id="facet_entity_person"></div>
+          			<div id="facet_entity_special_present"></div>
 					<div id="facet_source"></div>
 					<div id="facet_language"></div>
 					<div id="facet_signature"></div>
