@@ -28,4 +28,6 @@ pipeline:
         confirm: true
         timeout: 18000
         secrets: [ RANCHER_ACCESS_KEY, RANCHER_SECRET_KEY ]
-branches: master
+branches: 
+  - master
+  - release-*
