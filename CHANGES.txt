@@ -23,7 +23,37 @@ Datafari no longer embeds Java JDK. JDK 8 must be present on the machine and set
 
 The differences between the Community Edition and Enterprise Edition are listed here: https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/509575169/Differences+between+the+Community+and+Enterprise+Editions+of+Datafari
 
-==================  4.3-dev ==================
+==================  4.4-dev ==================
+
+
+==================  4.3 ==================
+
+* Version of major components :
+Solr 7.4
+ManifoldCF 2.13
+Tomcat 9.0.8
+Cassandra 3.11.2
+PostgreSQL 10.1
+Zookeeper 3.4.10
+Tika Server 1.19.1
+ElasticSearch 5.6.4
+Kibana 5.6.4
+LogStash 5.6.4
+
+* New features :
+New Quicklook UI
+New top menu
+Integration of entity extraction
+Multicollections configuration management
+Dedicated folders for custom UI code modifications
+
+* Bug fixes :
+Fix DATAFARI-338 Change text in the MCF backup admin UI
+Fix DATAFARI-335 Alerts using "corrected" search when saving a query with no results
+Bugfix url with special characters by julienFL
+Authorize search handlers in datafari properties file
+Fix push Solr configuration for one or many collections
+Improvement PrevisualizeResult widget
 
 ==================  4.2 ==================
 Note: As announced a few months ago, the AD admin page is now uniquely available in the Enterprise Edition of Datafari.
