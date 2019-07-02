@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.francelabs.datafari</groupId>
     <artifactId>datafari-parent</artifactId>
-    <version>4.3-dev-Community</version>
+    <version>4.4-dev-Community</version>
   </parent>
   <artifactId>datafari-tomcat</artifactId>
   <packaging>pom</packaging>
