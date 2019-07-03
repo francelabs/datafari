@@ -62,7 +62,8 @@ init_node_host() {
     sed -i -e "s/@NODEHOST@/${1}/g" /opt/datafari/solr/bin/solr.in.sh
     sed -i -e "s/@NODEHOST@/${1}/g" /opt/datafari/solr/server/etc/jetty.xml
     sed -i -e "s/@NODEHOST@/${1}/g" /opt/datafari/bin/zkUtils/reloadCollections.sh
-    sed -i -e "s/@NODEHOST@/${1}/g" /opt/datafari/bin/zkUtils/init-solr-collections.sh
+    # Not for Datafari CE
+    #sed -i -e "s/@NODEHOST@/${1}/g" /opt/datafari/bin/zkUtils/init-solr-collections.sh
 }
 
 init_shards() {
