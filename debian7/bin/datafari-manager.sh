@@ -244,8 +244,8 @@ init_solr()
   curl -XPOST http://localhost:8983/solr/@MAINCOLLECTION@/config/params -H 'Content-type:application/json'  -d '{"set":{"mySearch":{"qf":"title_fr^50 title_en^50 content_fr^10 content_en^10 source^20 extension^30 id^3","pf":"title_en^500 title_fr^500 content_fr^100 content_en^100","hl.maxAnalyzedChars":51200}}}'
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"autocomplete.threshold": "0.005"}}' http://localhost:8983/solr/@MAINCOLLECTION@/config
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"entity.extract": "false"}}' http://localhost:8983/solr/@MAINCOLLECTION@/config
-  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"entity.name": "false}}' http://localhost:8983/solr/@MAINCOLLECTION@/config
-  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"entity.phone": "false}}' http://localhost:8983/solr/@MAINCOLLECTION@/config
+  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"entity.name": "false"}}' http://localhost:8983/solr/@MAINCOLLECTION@/config
+  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"entity.phone": "false"}}' http://localhost:8983/solr/@MAINCOLLECTION@/config
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"entity.special": "false"}}' http://localhost:8983/solr/@MAINCOLLECTION@/config
 
 }
