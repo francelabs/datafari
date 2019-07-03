@@ -86,13 +86,15 @@ init_solr_node() {
 
     sed -i -e "s/@SOLRNODEIP@/${1}/g" /opt/datafari/tomcat/webapps/Datafari/WEB-INF/config/proxy.xml
     sed -i -e "s/@SOLRNODEIP@/${1}/g" /opt/datafari/bin/zkUtils/reloadCollections.sh
-    sed -i -e "s/@SOLRNODEIP@/${1}/g" /opt/datafari/bin/zkUtils/init-solr-collections.sh
+    # Not for Datafari CE
+    #sed -i -e "s/@SOLRNODEIP@/${1}/g" /opt/datafari/bin/zkUtils/init-solr-collections.sh
 }
 
 init_solr_hosts() {
     sed -i -e "s/@SOLRHOSTS@/${1}/g" /opt/datafari/tomcat/conf/datafari.properties
     sed -i -e "s/@SOLRHOSTS@/${1}/g" /opt/datafari/solr/bin/solr.in.sh
-    sed -i -e "s/@SOLRHOSTS@/${1}/g" /opt/datafari/bin/zkUtils/init-zk.sh
+    # Not for Datafari CE
+    #sed -i -e "s/@SOLRHOSTS@/${1}/g" /opt/datafari/bin/zkUtils/init-zk.sh
 }
 
 init_zk() {
@@ -166,7 +168,6 @@ if [ -e "$JAVA_HOME"/bin/java ]; then
     init_solr_node ${solrNodeIP}
     init_solr_hosts ${solrHostsIP}
     init_zk ${zkHostIP}
-    init_zk_mcf
 
     # Get number of shards
     NoS=1
