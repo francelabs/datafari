@@ -34,7 +34,7 @@ $(document).ready(function(){
     $("#topbar2").text(window.i18n.msgStore['adminUI-SearchEngineConfig']);
     $("#topbar3").text(window.i18n.msgStore['adminUI-tagCloudConf']);
     $("#title").text(window.i18n.msgStore['adminUI-tagCloudConf']);
-    $("#activateSimpleExtractionLabel").text(window.i18n.msgStore['adminUI-tagCloudActivate']);
+    $("#activateTagCloudLabel").text(window.i18n.msgStore['adminUI-tagCloudActivate']);
     $("#simpleSaveButton").text(window.i18n.msgStore['save']);
     $("#simpleSaveButton").attr('data-loading-text', "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['save']);
   }

@@ -69,5 +69,7 @@ $(function($) {
   elm.find('#ADConfig-AdminUI').html(window.i18n.msgStore['adminUI-ADConfig']);
   elm.find('#testADAuthority-AdminUI').html(window.i18n.msgStore['adminUI-testADAuthority']);
 
+  elm.find('#tagCloudConfiguration-AdminUI').html(window.i18n.msgStore['adminUI-tagCloudConf']);
+
   $("#licence-AdminUI").html(window.i18n.msgStore['adminUI-Licence']);
 });
