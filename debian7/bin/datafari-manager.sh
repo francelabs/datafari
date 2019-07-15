@@ -247,7 +247,9 @@ init_solr()
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"entity.name": "false"}}' http://localhost:8983/solr/@MAINCOLLECTION@/config
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"entity.phone": "false"}}' http://localhost:8983/solr/@MAINCOLLECTION@/config
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"entity.special": "false"}}' http://localhost:8983/solr/@MAINCOLLECTION@/config
-
+  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"texttagger.activate": "false"}}' http://localhost:8983/solr/@MAINCOLLECTION@/config
+  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"texttagger.host": "localhost:2181"}}' http://localhost:8983/solr/@MAINCOLLECTION@/config
+  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"clustering.enabled": "false"}}' http://localhost:8983/solr/@MAINCOLLECTION@/config
 }
 
 stop_solr()

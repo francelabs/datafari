@@ -286,7 +286,8 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						<%
 	if(request.isUserInRole("SearchAdministrator")){
 %>
-						<li id="EntityExtractionConf"><a id="entityExtractionConf-AdminUI" class="ajax-link" href="./ajax/entityExtractionConf.html"></a></li> 
+						<li id="EntityExtractionConf"><a id="entityExtractionConf-AdminUI" class="ajax-link" href="./ajax/entityExtractionConf.html"></a></li>
+						<li id="tagCloudConfiguration"><a id="tagCloudConfiguration-AdminUI" class="ajax-link" href="./ajax/tagCloudConfiguration.html">Tag Cloud</a></li> 
 <%
 	}
 %>
