@@ -175,6 +175,15 @@ $(function($) {
 		],
 	}));
 //*/
+
+  Manager.addWidget(new AjaxFranceLabs.TagCloudWidget({
+    elm: $('#facet_tag_cloud'),
+    id: 'facet_tag_cloud',
+    name: window.i18n.msgStore['facet_tag_cloud'] ? window.i18n.msgStore['facet_tag_cloud'] : "Tag Cloud",
+    pagination: true,
+    mappingValues: {'Other Topics': window.i18n.msgStore['other_topics'] ? window.i18n.msgStore['other_topics'] : "Other Topics"}
+  }));
+
 	Manager.addWidget(new AjaxFranceLabs.TableMobileWidget({
 		elm : $('#facet_type_mobile'),
 		id : 'facet_type_mobile',
