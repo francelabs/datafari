@@ -1,15 +1,14 @@
 --------------------------- DATAFARI V. 4.4-dev ------------------------
 
+NOTE: For the changes compared to the previous version of DATAFARI, please check CHANGES.txt.
 
-NOTE: For the changes compared to DATAFARI V4.0.2, please check CHANGES.txt.
-
-Datafari 4.1 is the perfect product for anyone who needs to search and analyze its corporate big data, based on the most advanced open source technologies.
-Datafari 4.1 combines the Apache Solr, Cassandra, ManifoldCF products and ELK. It allows its users to search into file shares, cloud shares (dropbox, google drive), databases, but also emails and many more sources.
+Datafari is the perfect product for anyone who needs to search and analyze its corporate big data, based on the most advanced open source technologies.
+Datafari combines the Apache Solr, Cassandra, ManifoldCF products and ELK. It allows its users to search into file shares, cloud shares (dropbox, google drive), databases, but also sharepoint, alfresco and many more sources.
 
 Available as community and enterprise edition, Datafari is different from the competition :
 - Its open source license is not aggressive, as it uses the Apache v2 license: you are free to do whatever you want with it,
 you just need to mention that you are using it.
-- It combines three renowned Apache projects, namely Cassandra, Solr and ManifoldCF, which gives Datafari a long term vision.
+- It combines renowned Apache projects, namely Cassandra, Solr and ManifoldCF, which gives Datafari a long term vision.
 - It leverages ELK the reference stack to analyze unstructured big data
 
 The complete documentation (for users, admins and developers) is available here : https://datafari.atlassian.net/wiki/display/DATAFARI/Datafari
@@ -25,7 +24,7 @@ Recommended version is Debian 9
 
 How to install and start Datafari :
 
-You can build the Debian installer with the ant script Datafari/debian7/build.xml. You can download Debian installer and Docker image from www.datafari.com.
+You can build the Debian installer with the ant script Datafari/debian7/build.xml. You can download Debian installer, an OVA or  a Docker image from https://www.datafari.com/en/download.html .
 
 1) Install Datafari :
 # dpkg -i datafari.deb
@@ -45,17 +44,13 @@ http://localhost:8080/Datafari/admin
 You can find video tutorials on how to install and start Datafari from the installer (Warning: the videos are for version 1.x) :
 - Debian : https://www.youtube.com/watch?v=cekFICeTTTs
 
-
-If you want to use the jcifs connector in ManifoldCF, download  jcifs-1.3.xx.jar from http://jcifs.samba.org/src/ to DATAFARI_SOURCE_DIR\mcf\mcf_home\connector-lib-proprietary
-Then edit the file Datafari/mcf/mcf_home/connectors.xml and uncomment the line :
- <!--repositoryconnector name="Windows shares" class="org.apache.manifoldcf.crawler.connectors.sharedrive.SharedDriveConnector"/-->
- And restart Datafari
+If you want to crawl fileshares, you will need to activate the jcifs-ng connector in ManifoldCF: follow this documentation: https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/662700036/Add+the+JCIFS-NG+Connector+to+Datafari+-+Community+Edition
 
 You have to configure your Repository connector and job to add documents to Datafari.
 You can find a video tutorial on how to index local file share here (Warning: the videos are for version 1.x) :
 https://www.youtube.com/watch?v=w0FtsvZO9SI
 You can find documentation on how to create connectors and jobs here :
-http://manifoldcf.apache.org/release/trunk/en_US/end-user-documentation.html
+http://manifoldcf.apache.org/release/release-2.13/en_US/end-user-documentation.html
 
 For all the changes please check CHANGES.txt
 
