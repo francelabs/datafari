@@ -73,6 +73,9 @@ AjaxFranceLabs.TagCloudWidget = AjaxFranceLabs.AbstractWidget.extend({
     },
 
     update : function() {
+        if (!this.manager.response.clusters) {
+            return;
+        }
         var self = this;
         var data = this.assocTags(this.manager.response.clusters);
         var max = (data.length > this.maxDisplay) ? this.maxDisplay : data.length;
