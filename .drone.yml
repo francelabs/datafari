@@ -12,6 +12,10 @@ pipeline:
         secrets: [ docker_username, docker_password ]
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
+        when:
+          branch:
+          - master
+          - release-*
     notify:
         image: drillster/drone-email
         from : noreply@github.com
@@ -28,6 +32,8 @@ pipeline:
         confirm: true
         timeout: 18000
         secrets: [ RANCHER_ACCESS_KEY, RANCHER_SECRET_KEY ]
-branches: 
-  - master
-  - release-*
+        when:
+          branch:
+          - master
+          - release-*
+
