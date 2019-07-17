@@ -110,6 +110,8 @@
 		src="js/AjaxFranceLabs/widgets/Promolink.widget.js"></script>
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/TableMobile.widget.js"></script>
+	<script type="text/javascript"
+		src="js/AjaxFranceLabs/widgets/tagCloud.widget.js"></script>
 <!-- 	<script type="text/javascript" -->
 <!-- 		src="js/AjaxFranceLabs/widgets/Tab.widget.js"></script> -->
 	<!--
@@ -241,6 +243,7 @@
 					<div id="facet_language"></div>
 					<div id="facet_signature"></div>
 					<div id="facet_file_size"></div>
+					<div id="facet_tag_cloud"></div>
 				</div>
 			</div>
 			<div class="col right">

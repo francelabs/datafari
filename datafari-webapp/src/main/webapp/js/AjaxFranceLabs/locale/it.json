@@ -122,6 +122,8 @@
     "adminUI-Stopwords": "Stopwords",
     "adminUI-Synonyms": "Sinonimi",
     "adminUI-SystemAnalysis": "System Analysis",
+    "adminUI-tagCloudActivate": "Activate the tag cloud functionality",
+    "adminUI-tagCloudConf": "Tag cloud",
     "adminUI-testADAuthority": "Test Active Directory Authority",
     "adminUI-testCurrentUserRights": "Display current user access rights",
     "adminUI-testUserRights": "Display specified user access rights",

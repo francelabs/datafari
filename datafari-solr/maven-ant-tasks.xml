@@ -31,9 +31,10 @@
 		<!-- Copy contrib Jars to solr_home/FileShare/lib/FEATURE_DIR_NAME directory -->
 		<copy toDir="${solr.dist}/solr_home/FileShare/lib" overwrite="true" force="true">
 			<!-- Copy Jars that are inside contrib directory -->
-			<!-- Copy Extraction and LangId -->
+			<!-- Copy Extraction, LangId and clustering contrib (for tag cloud) -->
 			<fileset dir="target">
 				<include name="*solr*/contrib/langid/**/*.jar" />
+				<include name="*solr*/contrib/**/*.jar" />
 			</fileset>
 			<chainedmapper>
 				<!-- Strip solr*/contrib directory -->
@@ -52,6 +53,8 @@
 			<fileset dir="target" includes="*solr*/dist/solr-langid-*.jar" />
 			<fileset dir="target" includes="*solr*/dist/solr-cell-*.jar" />
 			<fileset dir="target" includes="*solr*/dist/solr-dataimporthandler-*.jar" />
+			<fileset dir="target" includes="*solr*/dist/solr-clustering-*.jar" />
+
 			<chainedmapper>
 				<!-- Strip solr*/dist directory -->
 				<cutdirsmapper dirs="2" />

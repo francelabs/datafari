@@ -122,6 +122,8 @@
     "adminUI-Stopwords": "Stopwords",
     "adminUI-Synonyms": "Synonymes",
     "adminUI-SystemAnalysis": "Analyse du Système",
+    "adminUI-tagCloudActivate": "Activer le nuage de mots",
+    "adminUI-tagCloudConf": "Nuage de mots",
     "adminUI-testADAuthority": "Tester Autorité Active Directory",
     "adminUI-testCurrentUserRights": "Afficher les droits d'accès de l'utilisateur actuel",
     "adminUI-testUserRights": "Afficher les droits d'accès de l'utilisateur spécifié",
