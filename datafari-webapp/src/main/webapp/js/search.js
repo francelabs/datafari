@@ -399,8 +399,23 @@ $(function($) {
 						if (radio.value === searchType) {
 							radio.checked=true;
 						}
-				});
+        });
+        
+        var q = window.location.search.substring(1);
+        var n = q.indexOf("request");
+        if (n != -1) {
+          var request = decodeURIComponent(q.substring(n + 8, q.length));
+          var args = request.split("&");
+          for (var i = 0; i < args.length; i++) {
+            var paramName = args[i].substring(0, args[i].indexOf("="));
+            var paramValue = decodeURI(args[i].substring(args[i].indexOf("=") + 1));
+            Manager.store.addByValue(paramName, paramValue);
 
+            if (paramName == "q") {
+              $('#searchBar').find('.searchBar input[type=text]').val(paramValue);
+            }
+          }
+        }
 
 				Manager.makeRequest();
 			});
