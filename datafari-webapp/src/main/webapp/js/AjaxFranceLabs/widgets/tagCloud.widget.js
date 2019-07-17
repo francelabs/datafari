@@ -122,7 +122,7 @@ AjaxFranceLabs.TagCloudWidget = AjaxFranceLabs.AbstractWidget.extend({
 
     assocTags : function(data) {
         var tags = [];
-        for (var i = 0; i < data.length - 1; i++) {
+        for (var i = 0; i < data.length; i++) {
           var encodedName = encodeURI(data[i].labels[0]);
           if (encodedName.trim() != "") {
             tags.push({

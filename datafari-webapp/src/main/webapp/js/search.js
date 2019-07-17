@@ -181,7 +181,7 @@ $(function($) {
     id: 'facet_tag_cloud',
     name: window.i18n.msgStore['facet_tag_cloud'] ? window.i18n.msgStore['facet_tag_cloud'] : "Tag Cloud",
     pagination: true,
-    mappingValues: {'Other Topics': window.i18n.msgStore['other_topics'] ? window.i18n.msgStore['other_topics'] : "Other Topics"}
+    discardedValues: ['Other Topics']
   }));
 
 	Manager.addWidget(new AjaxFranceLabs.TableMobileWidget({
