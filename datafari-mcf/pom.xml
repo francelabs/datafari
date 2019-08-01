@@ -13,7 +13,6 @@
   <plugin>
 	<groupId>com.googlecode.maven-download-plugin</groupId>
 	<artifactId>download-maven-plugin</artifactId>
-	<version>1.2.1</version>
 	<!-- Don't propagate configuration to child POMs -->
 	<inherited>false</inherited>
   	<executions>
@@ -30,7 +29,7 @@
       		Datafari repo : http://repomcf.datafari.com/mcf/apache-manifoldcf-${mcf.version}-dev-bin-${mcf.commit.number}.tar.gz
       		-->
       			<url>https://archive.apache.org/dist/manifoldcf/apache-manifoldcf-${mcf.version}/apache-manifoldcf-${mcf.version}-bin.tar.gz</url>
-      			<sha512>81AA07E42385A76CB6D8EEEE4FDE8EC4BF9C7490D99FAB2F2121DBD1670627D33BD6791D7134F525D71CB35F47DD97F5BE61618BFD7EA8DA193FC4E2127FDCBF</sha512>
+      			<sha512>81aa07e42385a76cb6d8eeee4fde8ec4bf9c7490d99fab2f2121dbd1670627d33bd6791d7134f525d71cb35f47dd97f5be61618bfd7ea8da193fc4e2127fdcbf</sha512>
       			<unpack>true</unpack>
         </configuration>
       </execution>
@@ -38,7 +37,6 @@
 	</plugin>
 				<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.8</version>
 				<!-- Don't propagate configuration to child POMs -->
 				<inherited>false</inherited>
 				<executions>
@@ -47,6 +45,7 @@
 						<phase>validate</phase>
 						<configuration>
 							<target>
+								<property name="mcf.version" value="${mcf.version}" />
 								<ant antfile="maven-ant-tasks.xml" />
 							</target>
 						</configuration>

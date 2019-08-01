@@ -8,10 +8,6 @@
   <artifactId>datafari-updateprocessor</artifactId>
   <packaging>jar</packaging>
   <name>Datafari Enterprise Search - UpdateProcessor module</name>
-  	<prerequisites>
-		<!-- Force minimum Maven version -->
-		<maven>3.0.5</maven>
-	</prerequisites>
 	<dependencies>
     <dependency>
       <groupId>org.apache.solr</groupId>
@@ -48,17 +44,7 @@
 	<plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.5.1</version>
-        <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.10</version>
         <executions>
           <execution>
             <id>copy-dependencies</id>

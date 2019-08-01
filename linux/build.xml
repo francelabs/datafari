@@ -237,15 +237,15 @@
 			<globmapper from="*.war" to="datafari-*.war" />
 		</move>
 
-		<!-- Copy Manifold CF Velocity lib to Tomcat (Needed for the crawler ui) -->
-		<copy toDir="${linux.dist.dir}/tomcat-mcf/lib" overwrite="true" force="true">
-			<fileset dir="${linux.dist.dir}/mcf/mcf_home/lib">
-				<include name="velocity*.jar" />
-			</fileset>
-		</copy>
-
 		<!-- Copy Datafari War -->
 		<copy file="${datafari.webapp.dir}/Datafari.war" todir="${linux.dist.dir}/tomcat/webapps" />
+		
+		<!-- Copy Datafari core lib to Tomcat -->
+    <copy flatten="true" toDir="${linux.dist.dir}/tomcat/lib" overwrite="true" force="true">
+      <fileset dir="${datafari.core.dir}">
+        <include name="*.jar" />
+      </fileset>
+    </copy>
 
 		<!-- Copy Realm -->
 		<copy todir="${linux.dist.dir}/tomcat/lib">
@@ -269,32 +269,32 @@
 			<fileset dir="${bin.src.dir}" />
 		</copy>
 
-		<!-- Copy Datafari core libs to Tomcat -->
+		<!-- Copy Datafari log4j libs to Tomcat -->
 		<copy flatten="true" toDir="${linux.dist.dir}/tomcat/lib" overwrite="true" force="true">
 			<fileset dir="${datafari.core.dir}">
-				<include name="dependency/*.jar" />
-			</fileset>
-			<fileset dir="${datafari.core.dir}">
-				<include name="*.jar" />
+				<include name="dependency/log4j-*.jar" />
+        <include name="dependency/slf4j-*.jar" />
+        <include name="dependency/jul-to-slf4j-*.jar" />
 			</fileset>
 		</copy>
 
-		<!-- Copy Datafari log4j lib to Tomcat-MCF -->
-		<copy flatten="true" toDir="${linux.dist.dir}/tomcat-mcf/lib" overwrite="true" force="true">
-			<fileset dir="${mcf.src.dir}/mcf_home/lib">
-				<include name="*.jar" />
-				<exclude name="javax.servlet*.jar"/>
-				<exclude name="jetty*.jar"/>
-				<exclude name="jsp-*.jar"/>
-				<exclude name="jna*.jar"/>
-				<exclude name="log4j-*.jar"/>
-				<exclude name="jasper-*.jar"/>
-				<exclude name="ecj-*.jar"/>
-				<exclude name="log4j-*.jar"/>
+		<!-- Copy MCF libs to Tomcat-MCF -->
+    <copy flatten="true" toDir="${linux.dist.dir}/tomcat-mcf/lib" overwrite="true" force="true">
+      <fileset dir="${mcf.src.dir}/mcf_home/lib">
+        <include name="*.jar" />
+        <exclude name="javax.servlet*.jar"/>
+        <exclude name="jetty*.jar"/>
+        <exclude name="jsp-*.jar"/>
+        <exclude name="jna*.jar"/>
+        <exclude name="log4j-*.jar"/>
+        <exclude name="jasper-*.jar"/>
+        <exclude name="ecj-*.jar"/>
+        <exclude name="log4j-*.jar"/>
         <exclude name="slf4j-*.jar"/>
-			</fileset>
-		</copy>
+      </fileset>
+    </copy>
 
+		<!-- Copy Datafari log4j & slf4j libs to Tomcat-MCF -->
 		<copy flatten="true" toDir="${linux.dist.dir}/tomcat-mcf/lib" overwrite="true" force="true">
 			<fileset dir="${datafari.core.dir}">
 				<include name="dependency/log4j-*.jar" />

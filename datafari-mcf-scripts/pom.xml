@@ -8,10 +8,6 @@
   <artifactId>datafari-mcf-scripts</artifactId>
   <packaging>jar</packaging>
   <name>Datafari Enterprise Search - ManifoldCF script module</name>
-  	<prerequisites>
-		<!-- Force minimum Maven version -->
-		<maven>3.0.5</maven>
-	</prerequisites>
 	<dependencies>
     <dependency>
       <groupId>com.francelabs.datafari</groupId>
@@ -21,17 +17,4 @@
       <type>pom</type>
     </dependency>
 	</dependencies>
-	<build>
-	<plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.5.1</version>
-        <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-        </configuration>
-      </plugin>
-    </plugins>
-	</build>
 </project>

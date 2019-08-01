@@ -17,8 +17,6 @@ import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
-import org.apache.manifoldcf.core.system.ManifoldCF;
 
 import com.francelabs.datafari.config.AbstractConfigClass;
 
@@ -70,8 +68,8 @@ public class AlertsConfiguration extends AbstractConfigClass {
   public void setProperty(final String key, String value) {
     if (key.equals(SMTP_PASSWORD)) {
       try {
-        value = ManifoldCF.obfuscate(value);
-      } catch (final ManifoldCFException e) {
+        value = ObfuscationTool.obfuscate(value);
+      } catch (final Exception e) {
         LOGGER.error(e);
       }
     }
@@ -88,8 +86,8 @@ public class AlertsConfiguration extends AbstractConfigClass {
     final String result = (String) properties.get(key);
     if (key.equals(SMTP_PASSWORD)) {
       try {
-        return ManifoldCF.deobfuscate(result);
-      } catch (final ManifoldCFException e) {
+        return ObfuscationTool.deobfuscate(result);
+      } catch (final Exception e) {
         LOGGER.error(e);
         return result;
       }

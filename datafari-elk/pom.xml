@@ -13,7 +13,6 @@
   <plugin>
 	<groupId>com.googlecode.maven-download-plugin</groupId>
 	<artifactId>download-maven-plugin</artifactId>
-	<version>1.2.1</version>
 	<!-- Don't propagate configuration to child POMs -->
 	<inherited>false</inherited>
   	<executions>
@@ -70,7 +69,6 @@
 	</plugin>
 				<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.8</version>
 				<!-- Don't propagate configuration to child POMs -->
 				<inherited>false</inherited>
 				<executions>
