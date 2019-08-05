@@ -36,6 +36,18 @@
       <artifactId>jaxb-api</artifactId>
       <version>2.2.11</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.taglibs</groupId>
+      <artifactId>taglibs-standard-impl</artifactId>
+      <version>1.2.5</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.taglibs/taglibs-standard-spec -->
+    <dependency>
+      <groupId>org.apache.taglibs</groupId>
+      <artifactId>taglibs-standard-spec</artifactId>
+      <version>1.2.5</version>
+    </dependency>
+    
     <!-- Reference implementation for javax.mail API, needed for Alerts at 
       compilation and runtime -->
     <dependency>
