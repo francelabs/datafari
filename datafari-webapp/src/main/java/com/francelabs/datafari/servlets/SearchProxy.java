@@ -16,7 +16,6 @@ package com.francelabs.datafari.servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -55,7 +54,7 @@ public class SearchProxy extends HttpServlet {
   private String userAllowedHandlers;
   private static final Logger LOGGER = LogManager.getLogger(SearchProxy.class.getName());
 
-  private Set<String> getAllowedHandlers() {   
+  private Set<String> getAllowedHandlers() {
     final Set<String> allowedHandlers = new HashSet<>();
     allowedHandlers.add("/select");
     allowedHandlers.add("/suggest");
@@ -67,12 +66,12 @@ public class SearchProxy extends HttpServlet {
     try {
       if (!config.getProperty(DatafariMainConfiguration.USER_ALLOWED_HANDLERS).equals("")) {
         userAllowedHandlers = config.getProperty(DatafariMainConfiguration.USER_ALLOWED_HANDLERS);
-        List<String> userAllowedHandlersList = Arrays.asList(userAllowedHandlers.split(","));
+        final List<String> userAllowedHandlersList = Arrays.asList(userAllowedHandlers.split(","));
         for (int i = 0; i < userAllowedHandlersList.size(); i++) {
           allowedHandlers.add(userAllowedHandlersList.get(i));
         }
       }
-    } catch (IOException e) {
+    } catch (final IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
@@ -80,10 +79,8 @@ public class SearchProxy extends HttpServlet {
     return allowedHandlers;
   }
 
-
   /**
-   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-   *      response)
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
    */
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
@@ -137,44 +134,45 @@ public class SearchProxy extends HttpServlet {
       }
 
       switch (handler) {
-      case "/stats":
-      case "/statsQuery":
-        solr = IndexerServerManager.getIndexerServer(Core.STATISTICS);
-        params = IndexerServerManager.createQuery();
-        break;
-      default:
-        solr = IndexerServerManager.getIndexerServer(Core.FILESHARE);
-        params = IndexerServerManager.createQuery();
-        promolinkCore = IndexerServerManager.getIndexerServer(Core.PROMOLINK);
-        queryPromolink = IndexerServerManager.createQuery();
+        case "/stats":
+        case "/statsQuery":
+          solr = IndexerServerManager.getIndexerServer(Core.STATISTICS);
+          params = IndexerServerManager.createQuery();
+          break;
+        default:
+          solr = IndexerServerManager.getIndexerServer(Core.FILESHARE);
+          params = IndexerServerManager.createQuery();
+          promolinkCore = IndexerServerManager.getIndexerServer(Core.PROMOLINK);
+          queryPromolink = IndexerServerManager.createQuery();
 
-        // Add authentication
-        params.removeParam("AuthenticatedUserName");
-        if (request.getUserPrincipal() != null) {
-          String AuthenticatedUserName = request.getUserPrincipal().getName().replaceAll("[^\\\\]*\\\\", "");
-          if (AuthenticatedUserName.contains("@")) {
-            AuthenticatedUserName = AuthenticatedUserName.substring(0, AuthenticatedUserName.indexOf("@"));
+          // Add authentication
+          params.removeParam("AuthenticatedUserName");
+          if (request.getUserPrincipal() != null) {
+            String AuthenticatedUserName = request.getUserPrincipal().getName().replaceAll("[^\\\\]*\\\\", "");
+            if (AuthenticatedUserName.contains("@")) {
+              AuthenticatedUserName = AuthenticatedUserName.substring(0, AuthenticatedUserName.indexOf("@"));
+            }
+            if (!domain.equals("")) {
+              AuthenticatedUserName += "@" + domain;
+            }
+            params.setParam("AuthenticatedUserName", AuthenticatedUserName);
           }
-          if (!domain.equals("")) {
-            AuthenticatedUserName += "@" + domain;
+
+          final String queryParam = params.getParamValue("query");
+          if (queryParam != null) {
+            params.setParam("q", queryParam);
+            params.removeParam("query");
           }
-          params.setParam("AuthenticatedUserName", AuthenticatedUserName);
-        }
 
-        final String queryParam = params.getParamValue("query");
-        if (queryParam != null) {
-          params.setParam("q", queryParam);
-          params.removeParam("query");
-        }
-
-        break;
+          break;
       }
 
       params.addParams(request.getParameterMap());
 
       try {
         final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
-        if (config.getProperty(DatafariMainConfiguration.ONTOLOGY_ENABLED).toLowerCase().equals("true") && config.getProperty(DatafariMainConfiguration.ONTOLOGY_ENABLED).toLowerCase().equals("true") && handler.equals("/select")) {
+        if (config.getProperty(DatafariMainConfiguration.ONTOLOGY_ENABLED).toLowerCase().equals("true") && config.getProperty(DatafariMainConfiguration.ONTOLOGY_ENABLED).toLowerCase().equals("true")
+            && handler.equals("/select")) {
           final boolean languageSelection = Boolean.valueOf(config.getProperty(DatafariMainConfiguration.ONTOLOGY_LANGUAGE_SELECTION));
           String parentsLabels = config.getProperty(DatafariMainConfiguration.ONTOLOGY_PARENTS_LABELS);
           String childrenLabels = config.getProperty(DatafariMainConfiguration.ONTOLOGY_CHILDREN_LABELS);
@@ -195,15 +193,13 @@ public class SearchProxy extends HttpServlet {
 
       try {
         final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
-        if ((!config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).equals("")) && handler.equals("/select")) {
-          params.setParam("collection", config.getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION)+","+config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS));
+        if (!config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).equals("") && handler.equals("/select")) {
+          params.setParam("collection", config.getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION) + "," + config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS));
 
         }
       } catch (final IOException e) {
         LOGGER.warn("Ignored search multiple collections because of error: " + e.toString());
       }
-
-
 
       // perform query
       // define the request handler which may change if a specific source
@@ -237,26 +233,26 @@ public class SearchProxy extends HttpServlet {
         queryResponsePromolink = promolinkCore.executeQuery(queryPromolink);
       }
       switch (handler) {
-      case "/select":
-        // If there is no id there is no need to record stats
-        if (params.getParamValue("id") != null && !params.getParamValue("id").equals("")) {
-          // index
-          final long numFound = queryResponse.getNumFound();
-          final int QTime = queryResponse.getQTime();
-          final IndexerQuery statsParams = IndexerServerManager.createQuery();
-          statsParams.addParams(params.getParams());
-          statsParams.setParam("numFound", Long.toString(numFound));
-          if (numFound == 0) {
-            statsParams.setParam("noHits", "1");
-          }
-          statsParams.setParam("QTime", Integer.toString(QTime));
+        case "/select":
+          // If there is no id there is no need to record stats
+          if (params.getParamValue("id") != null && !params.getParamValue("id").equals("")) {
+            // index
+            final long numFound = queryResponse.getNumFound();
+            final int QTime = queryResponse.getQTime();
+            final IndexerQuery statsParams = IndexerServerManager.createQuery();
+            statsParams.addParams(params.getParams());
+            statsParams.setParam("numFound", Long.toString(numFound));
+            if (numFound == 0) {
+              statsParams.setParam("noHits", "1");
+            }
+            statsParams.setParam("QTime", Integer.toString(QTime));
 
-          StatsPusher.pushQuery(statsParams, protocol);
-        }
-        break;
-      case "/stats":
-        solr.processStatsResponse(queryResponse);
-        break;
+            StatsPusher.pushQuery(statsParams, protocol);
+          }
+          break;
+        case "/stats":
+          solr.processStatsResponse(queryResponse);
+          break;
       }
 
       if (promolinkCore != null) {
@@ -272,27 +268,17 @@ public class SearchProxy extends HttpServlet {
 
   }
 
-  private void writeSolrJResponse(final HttpServletRequest request, final HttpServletResponse response, final IndexerQuery query, final IndexerQueryResponse queryResponse, final IndexerQuery queryPromolink,
-      final IndexerQueryResponse queryResponsePromolink) throws IOException, ParseException, org.json.simple.parser.ParseException {
+  private void writeSolrJResponse(final HttpServletRequest request, final HttpServletResponse response, final IndexerQuery query, final IndexerQueryResponse queryResponse,
+      final IndexerQuery queryPromolink, final IndexerQueryResponse queryResponsePromolink) throws IOException, ParseException, org.json.simple.parser.ParseException {
 
     final JSONParser parser = new JSONParser();
+    final String wrapperFunction = request.getParameter("json.wrf");
+    final String jsonStrQueryResponse = queryResponse.getStrJSONResponse();
 
     if (queryResponsePromolink != null) { // If it was a request on
       // FileShare
       // therefore on promolink
-      final String jsonStrQueryResponse = queryResponse.getStrJSONResponse();
-      final JSONObject json = (JSONObject) parser.parse(jsonStrQueryResponse.substring(jsonStrQueryResponse.indexOf("{"), jsonStrQueryResponse.lastIndexOf("}") + 1)); // Creating
-      // a
-      // valid
-      // json
-      // object
-      // from
-      // the
-      // results
-
-      // Write the result of the query on
-      // promolink
-      final String jsonStrPromolinkResponse = queryResponsePromolink.getStrJSONResponse();
+      final JSONObject json = (JSONObject) parser.parse(jsonStrQueryResponse);
 
       if (queryResponsePromolink.getNumFound() != 0) {
 
@@ -300,7 +286,6 @@ public class SearchProxy extends HttpServlet {
         json.put("promolinkSearchComponent", jsonPromolinkDocs);
 
       }
-      final String wrapperFunction = request.getParameter("json.wrf");
       final String finalString = wrapperFunction + "(" + json.toString() + ")";
       response.setStatus(200);
       response.setCharacterEncoding("utf-8");
@@ -310,11 +295,12 @@ public class SearchProxy extends HttpServlet {
       // jsp page
 
     } else {
+      final String finalString = wrapperFunction + "(" + jsonStrQueryResponse + ")";
       response.setStatus(200);
       response.setCharacterEncoding("utf-8");
       response.setContentType("text/json;charset=utf-8");
       response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
-      response.getWriter().write(queryResponse.getStrJSONResponse());
+      response.getWriter().write(finalString);
 
     }
   }

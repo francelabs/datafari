@@ -13,26 +13,26 @@
  *******************************************************************************/
 package com.francelabs.datafari.service.indexer.solr;
 
-import org.apache.solr.client.solrj.response.FacetField.Count;
-
 import com.francelabs.datafari.service.indexer.IndexerFacetFieldCount;
 
 public class SolrIndexerFacetFieldCount implements IndexerFacetFieldCount {
 
-  private final Count count;
+  private final String name;
+  private final long count;
 
-  protected SolrIndexerFacetFieldCount(final Count count) {
+  protected SolrIndexerFacetFieldCount(final String name, final long count) {
+    this.name = name;
     this.count = count;
   }
 
   @Override
   public String getName() {
-    return count.getName();
+    return name;
   }
 
   @Override
   public long getCount() {
-    return count.getCount();
+    return count;
   }
 
 }

@@ -13,205 +13,107 @@
  *******************************************************************************/
 package com.francelabs.datafari.service.indexer.solr;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.response.FacetField;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.params.SolrParams;
-import org.apache.solr.common.util.ContentStream;
-import org.apache.solr.core.SolrCore;
-import org.apache.solr.request.SolrQueryRequest;
-import org.apache.solr.response.JSONResponseWriter;
-import org.apache.solr.response.SolrQueryResponse;
-import org.apache.solr.schema.IndexSchema;
-import org.apache.solr.search.SolrIndexSearcher;
-import org.apache.solr.util.RTimerTree;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import com.francelabs.datafari.service.indexer.IndexerFacetField;
+import com.francelabs.datafari.service.indexer.IndexerFieldStatsInfo;
 import com.francelabs.datafari.service.indexer.IndexerQueryResponse;
 
 public class SolrIndexerQueryResponse implements IndexerQueryResponse {
 
-  private final QueryResponse response;
-  private final SolrQuery query;
+  private JSONObject rawResponse;
+  private JSONArray resultsObj;
+  private long numFound;
+  private int qTime;
+  private Map<String, IndexerFacetField> listFacetFields;
+  private Map<String, IndexerFieldStatsInfo> listFieldStatsInfo;
   private final Logger LOGGER = LogManager.getLogger(SolrIndexerQueryResponse.class);
 
-  protected SolrIndexerQueryResponse(final SolrQuery query, final QueryResponse response) {
-    this.response = response;
-    this.query = query;
+  protected SolrIndexerQueryResponse(final JSONObject response) {
+    build(response);
   }
 
-  protected QueryResponse getQueryResponse() {
-    return response;
+  private void build(final JSONObject response) {
+    this.rawResponse = response;
+    final JSONObject responseObj = (JSONObject) rawResponse.get("response");
+    final JSONObject responseHeader = (JSONObject) rawResponse.get("responseHeader");
+    numFound = Long.parseLong(responseObj.get("numFound").toString());
+    qTime = Integer.parseInt(responseHeader.get("QTime").toString());
+
+    // Get docs
+    if (responseObj.get("docs") == null) {
+      resultsObj = new JSONArray();
+    } else {
+      resultsObj = (JSONArray) responseObj.get("docs");
+    }
+
+    // Get facetFields
+    listFacetFields = new HashMap<String, IndexerFacetField>();
+    if (rawResponse.get("facet_counts") != null) {
+      final JSONObject facetCounts = (JSONObject) rawResponse.get("facet_counts");
+      final JSONObject facetFields = (JSONObject) facetCounts.get("facet_fields");
+      facetFields.forEach((k, v) -> {
+        final String fieldName = k.toString();
+        final JSONArray values = (JSONArray) v;
+        listFacetFields.put(fieldName, new SolrIndexerFacetField(fieldName, values));
+      });
+    }
+
+    // Get stats infos
+    listFieldStatsInfo = new HashMap<String, IndexerFieldStatsInfo>();
+    if (rawResponse.get("stats") != null) {
+      final JSONObject stats = (JSONObject) rawResponse.get("stats");
+      final JSONObject statsFields = (JSONObject) stats.get("stats_fields");
+      statsFields.forEach((k, v) -> {
+        final String fieldName = k.toString();
+        final JSONObject statsInfos = (JSONObject) v;
+        listFieldStatsInfo.put(fieldName, new SolrIndexerFieldStatsInfo(fieldName, statsInfos));
+      });
+    }
+  }
+
+  protected JSONObject getQueryResponse() {
+    return rawResponse;
   }
 
   @Override
   public long getNumFound() {
-    return response.getResults().getNumFound();
+    return numFound;
   }
 
   @Override
   public int getQTime() {
-    return response.getQTime();
+    return qTime;
   }
 
   @Override
   public String getStrJSONResponse() {
-
-    final SolrQueryRequest req = new SolrQueryRequest() {
-
-      @Override
-      public void close() {
-        // TODO Auto-generated method stub
-
-      }
-
-      @Override
-      public Iterable<ContentStream> getContentStreams() {
-        // TODO Auto-generated method stub
-        return null;
-      }
-
-      @Override
-      public Map<Object, Object> getContext() {
-        // TODO Auto-generated method stub
-        return null;
-      }
-
-      @Override
-      public SolrCore getCore() {
-        // TODO Auto-generated method stub
-        return null;
-      }
-
-      @Override
-      public Map<String, Object> getJSON() {
-        // TODO Auto-generated method stub
-        return null;
-      }
-
-      @Override
-      public SolrParams getOriginalParams() {
-        // TODO Auto-generated method stub
-        return null;
-      }
-
-      @Override
-      public String getParamString() {
-        // TODO Auto-generated method stub
-        return null;
-      }
-
-      @Override
-      public SolrParams getParams() {
-        // TODO Auto-generated method stub
-        return query;
-      }
-
-      @Override
-      public RTimerTree getRequestTimer() {
-        // TODO Auto-generated method stub
-        return null;
-      }
-
-      @Override
-      public IndexSchema getSchema() {
-        // TODO Auto-generated method stub
-        return null;
-      }
-
-      @Override
-      public SolrIndexSearcher getSearcher() {
-        // TODO Auto-generated method stub
-        return null;
-      }
-
-      @Override
-      public long getStartTime() {
-        // TODO Auto-generated method stub
-        return 0;
-      }
-
-      @Override
-      public Principal getUserPrincipal() {
-        // TODO Auto-generated method stub
-        return null;
-      }
-
-      @Override
-      public void setJSON(final Map<String, Object> arg0) {
-        // TODO Auto-generated method stub
-
-      }
-
-      @Override
-      public void setParams(final SolrParams arg0) {
-        // TODO Auto-generated method stub
-
-      }
-
-      @Override
-      public void updateSchemaToLatest() {
-        // TODO Auto-generated method stub
-
-      }
-
-    };
-
-    final SolrQueryResponse res = new SolrQueryResponse();
-    res.setAllValues(response.getResponse());
-    final JSONResponseWriter jsonWriter = new JSONResponseWriter();
-    final StringWriter s = new StringWriter();
-    try {
-      jsonWriter.write(s, req, res);
-      return s.toString();
-    } catch (final IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
-    return null;
+    return rawResponse.toJSONString();
   }
 
   @Override
   public JSONArray getResults() {
-    final String strJSON = getStrJSONResponse();
-    final JSONParser parser = new JSONParser();
-    try {
-      final JSONObject objJSON = (JSONObject) parser.parse(strJSON);
-      final JSONObject jsonResponse = (JSONObject) objJSON.get("response");
-      if (jsonResponse.get("docs") == null) {
-        return null;
-      } else {
-        final JSONArray jsonResults = (JSONArray) jsonResponse.get("docs");
-        return jsonResults;
-      }
-    } catch (final ParseException e) {
-      LOGGER.error("JSON parsing error", e);
-      return null;
-    }
+    return resultsObj;
   }
 
   @Override
-  public List<IndexerFacetField> getFacetFields() {
-    final List<IndexerFacetField> listFacetFields = new ArrayList<>();
-    for (final FacetField facteField : response.getFacetFields()) {
-      listFacetFields.add(new SolrIndexerFacetField(facteField));
-    }
+  public Map<String, IndexerFacetField> getFacetFields() {
     return listFacetFields;
+  }
 
+  @Override
+  public Map<String, IndexerFieldStatsInfo> getFieldStatsInfo() {
+    return listFieldStatsInfo;
+  }
+
+  public void setResponse(final JSONObject rawResponse) {
+    build(rawResponse);
   }
 
 }

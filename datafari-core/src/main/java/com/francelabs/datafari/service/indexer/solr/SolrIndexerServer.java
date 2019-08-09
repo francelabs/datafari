@@ -31,20 +31,18 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest.METHOD;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.apache.solr.client.solrj.impl.NoOpResponseParser;
 import org.apache.solr.client.solrj.impl.XMLResponseParser;
 import org.apache.solr.client.solrj.impl.ZkClientClusterStateProvider;
 import org.apache.solr.client.solrj.request.CollectionAdminRequest;
 import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;
+import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.client.solrj.request.SolrPing;
 import org.apache.solr.client.solrj.request.schema.AnalyzerDefinition;
 import org.apache.solr.client.solrj.request.schema.SchemaRequest.FieldTypes;
 import org.apache.solr.client.solrj.request.schema.SchemaRequest.MultiUpdate;
 import org.apache.solr.client.solrj.request.schema.SchemaRequest.ReplaceFieldType;
 import org.apache.solr.client.solrj.request.schema.SchemaRequest.Update;
-import org.apache.solr.client.solrj.response.FacetField;
-import org.apache.solr.client.solrj.response.FacetField.Count;
-import org.apache.solr.client.solrj.response.FieldStatsInfo;
-import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.schema.FieldTypeRepresentation;
 import org.apache.solr.client.solrj.response.schema.SchemaResponse.FieldTypesResponse;
 import org.apache.solr.common.SolrDocument;
@@ -53,8 +51,15 @@ import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.cloud.SolrZkClient;
 import org.apache.solr.common.cloud.ZkMaintenanceUtils;
 import org.apache.solr.common.util.NamedList;
-import org.apache.solr.common.util.SimpleOrderedMap;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.noggit.JSONUtil;
 
+import com.francelabs.datafari.service.indexer.IndexerFacetFieldCount;
+import com.francelabs.datafari.service.indexer.IndexerFacetStatsInfo;
+import com.francelabs.datafari.service.indexer.IndexerFieldStatsInfo;
 import com.francelabs.datafari.service.indexer.IndexerInputDocument;
 import com.francelabs.datafari.service.indexer.IndexerQuery;
 import com.francelabs.datafari.service.indexer.IndexerQueryResponse;
@@ -77,7 +82,15 @@ public class SolrIndexerServer implements IndexerServer {
   private static String defaultSolrProtocol = "http";
   private static String defaultLocation = "/solr/FileShare";
   private final Logger LOGGER = LogManager.getLogger(SolrIndexerServer.class.getName());
-  private CloudSolrClient client;
+  /**
+   * queryClient must only be used for executeQuery method as it is configured not to treat the solr response and get a raw response (json)
+   * instead of a SolrJ object
+   */
+  private CloudSolrClient queryClient;
+  /**
+   * standardClient must be used for any request BUT the executeQuery method
+   */
+  private CloudSolrClient standardClient;
   private ModifiedHttpSolrClient httpClient;
   private ZkClientClusterStateProvider zkManager;
   private SolrZkClient zkClient;
@@ -87,7 +100,8 @@ public class SolrIndexerServer implements IndexerServer {
     final List<String> zkHosts = DatafariMainConfiguration.getInstance().getZkHosts();
 
     try {
-      client = new CloudSolrClient.Builder(zkHosts, Optional.empty()).build();
+      queryClient = new CloudSolrClient.Builder(zkHosts, Optional.empty()).build();
+      standardClient = new CloudSolrClient.Builder(zkHosts, Optional.empty()).build();
       String protocol = SolrConfiguration.getInstance().getProperty(SolrConfiguration.SOLRPROTOCOL);
       if (protocol == null) {
         LOGGER.warn("Unable to get Solr protocol from Solr properties, switching to default value: " + defaultSolrProtocol);
@@ -109,21 +123,30 @@ public class SolrIndexerServer implements IndexerServer {
       httpClient.setUseMultiPartPost(true);
       zkManager = new ZkClientClusterStateProvider(zkHosts, null);
       zkClient = new SolrZkClient(defaultZkHosts.get(0), 60000);
-      client.setDefaultCollection(core);
+      queryClient.setDefaultCollection(core);
+      standardClient.setDefaultCollection(core);
+      final NoOpResponseParser jsonWriter = new NoOpResponseParser();
+      jsonWriter.setWriterType("json");
+      queryClient.setParser(jsonWriter);
       final SolrPing ping = new SolrPing();
-      client.request(ping);
+      queryClient.request(ping);
     } catch (final Exception e) {
       // test default param
       try {
-        client = new CloudSolrClient.Builder(defaultZkHosts, Optional.empty()).build();
+        queryClient = new CloudSolrClient.Builder(defaultZkHosts, Optional.empty()).build();
+        standardClient = new CloudSolrClient.Builder(defaultZkHosts, Optional.empty()).build();
         final String solrUrl = defaultSolrProtocol + "://" + defaultSolrServer + ":" + defaultSolrPort + defaultLocation;
         httpClient = new ModifiedHttpSolrClient(solrUrl, HttpClientBuilder.create().build(), new XMLResponseParser(), true);
         httpClient.setUseMultiPartPost(true);
         zkManager = new ZkClientClusterStateProvider(defaultZkHosts, null);
         zkClient = new SolrZkClient(defaultZkHosts.get(0), 60000);
-        client.setDefaultCollection(core);
+        queryClient.setDefaultCollection(core);
+        standardClient.setDefaultCollection(core);
+        final NoOpResponseParser jsonWriter = new NoOpResponseParser();
+        jsonWriter.setWriterType("json");
+        queryClient.setParser(jsonWriter);
         final SolrPing ping = new SolrPing();
-        client.request(ping);
+        queryClient.request(ping);
       } catch (final Exception e2) {
         LOGGER.error("Cannot instanciate Solr Client for core : " + core, e);
         throw new Exception("Cannot instanciate Solr Client for core : " + core);
@@ -136,8 +159,17 @@ public class SolrIndexerServer implements IndexerServer {
   public IndexerQueryResponse executeQuery(final IndexerQuery query) throws Exception {
     try {
       final SolrQuery solrQuery = ((SolrIndexerQuery) query).prepareQuery();
-      final QueryResponse response = client.query(solrQuery);
-      final SolrIndexerQueryResponse sir = new SolrIndexerQueryResponse(solrQuery, response);
+      final QueryRequest req = new QueryRequest(solrQuery);
+      final NamedList<Object> response = queryClient.request(req);
+      final JSONParser parser = new JSONParser();
+
+      // the response may be encapsulated in a jQuery wrapper function, so remove it
+      String cleanedJson = response.get("response").toString();
+      if (!cleanedJson.startsWith("{")) {
+        cleanedJson = cleanedJson.substring(cleanedJson.indexOf("{"), cleanedJson.lastIndexOf(")"));
+      }
+      final JSONObject responseJSON = (JSONObject) parser.parse(cleanedJson);
+      final SolrIndexerQueryResponse sir = new SolrIndexerQueryResponse(responseJSON);
       return sir;
     } catch (SolrServerException | IOException e) {
       // TODO Auto-generated catch block
@@ -156,12 +188,12 @@ public class SolrIndexerServer implements IndexerServer {
   @Override
   public void pushDoc(final IndexerInputDocument document, final int commitWithinMs) throws Exception {
     final SolrInputDocument solrDoc = ((SolrIndexerInputDocument) document).getSolrInputDocument();
-    client.add(solrDoc, commitWithinMs);
+    standardClient.add(solrDoc, commitWithinMs);
   }
 
   @Override
   public IndexerResponseDocument getDocById(final String id) throws Exception {
-    final SolrDocument document = client.getById(id);
+    final SolrDocument document = standardClient.getById(id);
     return new SolrIndexerResponseDocument(document);
   }
 
@@ -195,36 +227,35 @@ public class SolrIndexerServer implements IndexerServer {
 
   @Override
   public void reloadCollection(final String collectionName) throws SolrServerException, IOException {
-    CollectionAdminRequest.reloadCollection(collectionName).process(client);
+    CollectionAdminRequest.reloadCollection(collectionName).process(standardClient);
   }
 
   @Override
   public void processStatsResponse(final IndexerQueryResponse queryResponse) {
-    final QueryResponse solrResponse = ((SolrIndexerQueryResponse) queryResponse).getQueryResponse();
-    final NamedList responseHeader = solrResponse.getResponseHeader();
-    final FacetField QFacet = solrResponse.getFacetField("q");
+    final SolrIndexerQueryResponse solrResponse = (SolrIndexerQueryResponse) queryResponse;
+    final JSONObject solrJSONResp = solrResponse.getQueryResponse();
+    final JSONObject responseHeader = (JSONObject) solrJSONResp.get("responseHeader");
+    final SolrIndexerFacetField QFacet = (SolrIndexerFacetField) solrResponse.getFacetFields().get("q");
 
     final Long numTot = queryResponse.getNumFound();
 
     final SolrDocumentList solrDocumentList = new SolrDocumentList();
-    solrDocumentList.setNumFound(QFacet.getValueCount());
-    solrDocumentList.setStart(0);
 
     if (numTot != 0) {
-      final Map<String, FieldStatsInfo> stats = solrResponse.getFieldStatsInfo();
-      final List<FieldStatsInfo> noHitsStats = stats.get("noHits").getFacets().get("q");
-      final List<FieldStatsInfo> QTimeStats = stats.get("QTime").getFacets().get("q");
-      List<FieldStatsInfo> positionClickTotStats = null;
+      final Map<String, IndexerFieldStatsInfo> stats = solrResponse.getFieldStatsInfo();
+      final IndexerFacetStatsInfo noHitsStats = stats.get("noHits").getFacets().get("q");
+      final IndexerFacetStatsInfo QTimeStats = stats.get("QTime").getFacets().get("q");
+      IndexerFacetStatsInfo positionClickTotStats = null;
       try {
         positionClickTotStats = stats.get("positionClickTot").getFacets().get("q");
       } catch (final Exception e) {
 
       }
-      final List<FieldStatsInfo> clickStats = stats.get("click").getFacets().get("q");
-      final List<FieldStatsInfo> numClicksStats = stats.get("numClicks").getFacets().get("q");
-      final List<FieldStatsInfo> numFoundStats = stats.get("numFound").getFacets().get("q");
+      final IndexerFacetStatsInfo clickStats = stats.get("click").getFacets().get("q");
+      final IndexerFacetStatsInfo numClicksStats = stats.get("numClicks").getFacets().get("q");
+      final IndexerFacetStatsInfo numFoundStats = stats.get("numFound").getFacets().get("q");
 
-      final List<Count> QFacetValues = QFacet.getValues();
+      final List<IndexerFacetFieldCount> QFacetValues = QFacet.getValues();
 
       final Map<String, SolrDocument> mapDocuments = new HashMap<>();
 
@@ -243,18 +274,18 @@ public class SolrIndexerServer implements IndexerServer {
         solrDocumentList.add(doc);
       }
 
-      for (int i = 0; i < QTimeStats.size(); i++) {
-        final String query = QTimeStats.get(i).getName();
+      for (int i = 0; i < QTimeStats.getValuesStatsInfo().size(); i++) {
+        final String query = QTimeStats.getValuesStatsInfo().get(i).getName();
         final SolrDocument doc = mapDocuments.get(query);
 
-        final int AVGHits = new Double((Double) numFoundStats.get(i).getMean()).intValue();
-        final Double noHits = new Double((Double) noHitsStats.get(i).getSum());
-        final int AVGQTime = new Double((Double) QTimeStats.get(i).getMean()).intValue();
-        final int MAXQTime = new Double((Double) QTimeStats.get(i).getMax()).intValue();
-        final double click = new Double((Double) clickStats.get(i).getSum());
+        final int AVGHits = new Double(numFoundStats.getValuesStatsInfo().get(i).getMean()).intValue();
+        final Double noHits = new Double(noHitsStats.getValuesStatsInfo().get(i).getSum());
+        final int AVGQTime = new Double(QTimeStats.getValuesStatsInfo().get(i).getMean()).intValue();
+        final int MAXQTime = new Double(QTimeStats.getValuesStatsInfo().get(i).getMax()).intValue();
+        final double click = new Double(clickStats.getValuesStatsInfo().get(i).getSum());
         final double clickRatio = StatsUtils.round(click * 100 / (Double) doc.getFirstValue("count"), 2, BigDecimal.ROUND_HALF_UP);
         if (click > 0) {
-          final double AVGClickPosition = new Double((Double) positionClickTotStats.get(i).getSum() / (Double) numClicksStats.get(i).getSum()).intValue();
+          final double AVGClickPosition = new Double(positionClickTotStats.getValuesStatsInfo().get(i).getSum() / numClicksStats.getValuesStatsInfo().get(i).getSum()).intValue();
 
           doc.addField("AVGClickPosition", AVGClickPosition);
 
@@ -272,23 +303,34 @@ public class SolrIndexerServer implements IndexerServer {
 
     }
 
-    final NamedList<Object> response = new SimpleOrderedMap<>();
-    response.add("responseHeader", responseHeader);
-    response.add("response", solrDocumentList);
-    solrResponse.setResponse(response);
+    final JSONObject newRawResponse = new JSONObject();
+    newRawResponse.put("responseHeader", responseHeader.clone());
+    final JSONObject response = new JSONObject();
+    newRawResponse.put("response", response);
+    response.put("numFound", QFacet.getValues().size());
+    response.put("start", 0);
+    final JSONParser parser = new JSONParser();
+    JSONArray docs = new JSONArray();
+    try {
+      docs = (JSONArray) parser.parse(JSONUtil.toJSON(solrDocumentList));
+    } catch (final ParseException e) {
+      LOGGER.error("Impossible to convert solrDocumentList to JSON string", e);
+    }
+    response.put("docs", docs);
+    solrResponse.setResponse(newRawResponse);
 
   }
 
   @Override
   public void pushDoc(final IndexerInputDocument document) throws Exception {
     final SolrInputDocument solrDoc = ((SolrIndexerInputDocument) document).getSolrInputDocument();
-    client.add(solrDoc);
+    standardClient.add(solrDoc);
 
   }
 
   @Override
   public void commit() throws Exception {
-    client.commit();
+    standardClient.commit();
 
   }
 
@@ -298,7 +340,7 @@ public class SolrIndexerServer implements IndexerServer {
     String cleanId = id.toLowerCase();
     cleanId = Normalizer.normalize(cleanId, Normalizer.Form.NFD);
     cleanId = cleanId.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
-    client.deleteById(cleanId);
+    standardClient.deleteById(cleanId);
 
   }
 
@@ -313,7 +355,7 @@ public class SolrIndexerServer implements IndexerServer {
     String value = "";
     final FieldTypes solrRequest = new FieldTypes();
     final FieldTypesResponse solrResponse = new FieldTypesResponse();
-    solrResponse.setResponse(client.request(solrRequest));
+    solrResponse.setResponse(standardClient.request(solrRequest));
 
     for (final FieldTypeRepresentation fieldType : solrResponse.getFieldTypes()) {
       final String name = (String) fieldType.getAttributes().get("name");
@@ -354,7 +396,7 @@ public class SolrIndexerServer implements IndexerServer {
   public void updateAnalyzerFilterValue(final String filterClass, final String filterAttr, final String value) throws Exception {
     final FieldTypes solrRequest = new FieldTypes();
     final FieldTypesResponse solrResponse = new FieldTypesResponse();
-    solrResponse.setResponse(client.request(solrRequest));
+    solrResponse.setResponse(standardClient.request(solrRequest));
     final List<Update> updates = new ArrayList<>();
     for (final FieldTypeRepresentation fieldType : solrResponse.getFieldTypes()) {
       final String name = (String) fieldType.getAttributes().get("name");
@@ -385,7 +427,7 @@ public class SolrIndexerServer implements IndexerServer {
 
     // send a bulk update of each modified fieldType definition
     final MultiUpdate multiUpdateRequest = new MultiUpdate(updates);
-    client.request(multiUpdateRequest);
+    standardClient.request(multiUpdateRequest);
 
   }
 }

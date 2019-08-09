@@ -1,7 +1,7 @@
 # This file is used to set custom conf to Tomcat without modifying its core files
 
 # Add log4j2 and slf4j libs to classpath
-CLASSPATH=$CATALINA_HOME/lib/log4j-api-$LOG4J_VERSION.jar:$CATALINA_HOME/lib/log4j-core-$LOG4J_VERSION.jar:$CATALINA_HOME/lib/log4j-jul-$LOG4J_VERSION.jar:$CATALINA_HOME/lib/log4j-slf4j-impl-$LOG4J_VERSION.jar:$CATALINA_HOME/lib/jul-to-slf4j-$SLF4J_VERSION.jar:$CATALINA_HOME/lib/slf4j-api-$SLF4J_VERSION.jar
+CLASSPATH=$CATALINA_HOME/lib/log4j-api-$LOG4J_VERSION.jar:$CATALINA_HOME/lib/log4j-core-$LOG4J_VERSION.jar:$CATALINA_HOME/lib/log4j-jul-$LOG4J_VERSION.jar:$CATALINA_HOME/lib/log4j-slf4j-impl-$LOG4J_VERSION.jar:$CATALINA_HOME/lib/log4j-jcl-$LOG4J_VERSION.jar:$CATALINA_HOME/lib/slf4j-api-$SLF4J_VERSION.jar:$CATALINA_HOME/lib/commons-logging-$COMMONS_LOGGING_VERSION.jar
 
 # Define log4j properties file location
 LOGGING_CONFIG="-Dlog4j.configurationFile=$TOMCAT_HOME/conf/log4j2.properties.xml"

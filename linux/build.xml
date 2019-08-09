@@ -274,7 +274,7 @@
 			<fileset dir="${datafari.core.dir}">
 				<include name="dependency/log4j-*.jar" />
         <include name="dependency/slf4j-*.jar" />
-        <include name="dependency/jul-to-slf4j-*.jar" />
+				<include name="dependency/commons-logging-*.jar" />
 			</fileset>
 		</copy>
 
@@ -299,7 +299,7 @@
 			<fileset dir="${datafari.core.dir}">
 				<include name="dependency/log4j-*.jar" />
         <include name="dependency/slf4j-*.jar" />
-        <include name="dependency/jul-to-slf4j-*.jar" />
+				<include name="dependency/commons-logging-*.jar" />
 			</fileset>
 		</copy>
 

@@ -209,7 +209,7 @@ public class IndexMonitoring {
         LOGGER.log(MonitoringLevel.MONITORING, log);
 
         // Then generate the logs for each facet
-        for (final IndexerFacetField facetField : queryResponse.getFacetFields()) {
+        for (final IndexerFacetField facetField : queryResponse.getFacetFields().values()) {
           final String facetType = facetField.getName();
           for (final IndexerFacetFieldCount facet : facetField.getValues()) {
             final String facetValue = facet.getName();

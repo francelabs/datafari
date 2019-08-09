@@ -13,7 +13,7 @@
  *******************************************************************************/
 package com.francelabs.datafari.service.indexer;
 
-import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONArray;
 
@@ -27,6 +27,13 @@ public interface IndexerQueryResponse {
 
   public JSONArray getResults();
 
-  public List<IndexerFacetField> getFacetFields();
+  /**
+   * Get the facet fields
+   *
+   * @return A map with facet name as key and count infos as value
+   */
+  public Map<String, IndexerFacetField> getFacetFields();
+
+  public Map<String, IndexerFieldStatsInfo> getFieldStatsInfo();
 
 }

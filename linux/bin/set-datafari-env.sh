@@ -15,7 +15,8 @@ export PATH=${PATH}:$JAVA_HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr
 export INIT_STATE_FILE=${DATAFARI_HOME}/bin/common/init_state.properties
 export CONFIG_FILE=${DATAFARI_HOME}/tomcat/conf/datafari.properties
 export LOG4J_VERSION=2.12.0
-export SLF4J_VERSION=1.7.26
+export SLF4J_VERSION=1.7.25
+export COMMONS_LOGGING_VERSION=1.2
 export LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib
 
 export PID_DIR=$DATAFARI_HOME/pid
