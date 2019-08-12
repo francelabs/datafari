@@ -55,6 +55,7 @@ init_collection_name() {
     sed -i -e "s~@MAINCOLLECTION@~${1}~g" /opt/datafari/tomcat/webapps/Datafari/admin/ajax/js/queryElevator.js
     sed -i -e "s~@MAINCOLLECTION@~${1}~g" /opt/datafari/tomcat/webapps/Datafari/js/AjaxFranceLabs/modules/QueryElevator.module.js
     sed -i -e "s~@MAINCOLLECTION@~${1}~g" /opt/datafari/tomcat/webapps/Datafari/admin/ajax/SchemaAnalysis.html
+    sed -i -e "s~@MAINCOLLECTION@~${1}~g" /opt/datafari/tomcat/webapps/Datafari/admin/ajax/SchemaAdmin.html
 
 }
 
