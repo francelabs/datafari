@@ -37,6 +37,7 @@ $(function($) {
   elm.find('#solrAdmin-AdminUI').html(window.i18n.msgStore['adminUI-SolrAdmin']);
   elm.find('#alertAdmin-AdminUI').html(window.i18n.msgStore['adminUI-AlertAdmin']);
   elm.find('#indexField-AdminUI').html(window.i18n.msgStore['adminUI-IndexField']);
+  elm.find('#schemaAdmin-AdminUI').html(window.i18n.msgStore['adminUI-SchemaAdmin']);
   elm.find('#schemaAnalysis-AdminUI').html(window.i18n.msgStore['adminUI-SchemaAnalysis']);
   elm.find('#sizeLimitation-AdminUI').html(window.i18n.msgStore['adminUI-SizeLimitation']);
   elm.find('#autocompleteConfig-AdminUI').html(window.i18n.msgStore['adminUI-AutocompleteConfig']);

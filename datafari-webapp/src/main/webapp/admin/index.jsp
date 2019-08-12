@@ -253,6 +253,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						<li id="SolrAdmin"><a id="solrAdmin-AdminUI" class="ajax-link" href="./ajax/solr.html"></a></li>
 						<li id="AlertAdmin"><a id="alertAdmin-AdminUI" class="ajax-link" href="./ajax/alertsAdmin.html"></a></li>
 						<li id="IndexField"><a id="indexField-AdminUI" class="ajax-link" href="./ajax/IndexField.html"></a></li>
+						<li id="SchemaAdmin"><a id="schemaAdmin-AdminUI" class="ajax-link" href="./ajax/SchemaAdmin.html"></a></li>
 						<li id="SchemaAnalysis"><a id="schemaAnalysis-AdminUI" class="ajax-link" href="./ajax/SchemaAnalysis.html"></a></li>
 <%
 	if(request.isUserInRole("SearchAdministrator")){
