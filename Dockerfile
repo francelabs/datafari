@@ -28,7 +28,7 @@ RUN     apt-get update && apt-get install -y \
 WORKDIR ./datafari
 COPY . .
 RUN mvn -f pom.xml --quiet clean install | egrep -v "(^[0-9])|(^\[INFO\]|^\[DEBUG\])"
-RUN ant clean-build -f ./debian7/build.xml
+RUN ant clean-build -f ./linux/build.xml
 
 FROM openjdk:8-jdk-stretch
 MAINTAINER Olivier Tavard FRANCE LABS <olivier.tavard@francelabs.com>
@@ -50,7 +50,7 @@ RUN     apt-get update && apt-get install --allow-unauthenticated -y \
                 procps \
 	&& rm -rf /var/lib/apt/lists/*
 WORKDIR /var/datafari
-COPY --from=BUILD /tmp/datafari/debian7/installer/dist/datafari.deb .
+COPY --from=BUILD /tmp/datafari/linux/installer/dist/datafari.deb .
 RUN DEBIAN_FRONTEND=noninteractive dpkg -i datafari.deb
 EXPOSE 8080 9080 8983 5601 9200
 RUN useradd -m demo && echo "demo:demo" | chpasswd && adduser demo sudo

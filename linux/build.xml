@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<project name="Datafari_Debian7" default="clean-build" basedir=".">
+<project name="Datafari_Linux" default="clean-build" basedir=".">
 
 	<!-- ========================= PROPERTIES ============================= -->
 
@@ -32,17 +32,17 @@
 
 
 	<!-- Output directories and self contained Datafari's Debian components -->
-	<property name="debian.dir" value="${project.dir}/debian7" />
-	<property name="debian.dist.dir" value="${debian.dir}/dist" />
-	<property name="debian.bin.dir" value="${debian.dir}/bin" />
+	<property name="linux.dir" value="${project.dir}/linux" />
+	<property name="linux.dist.dir" value="${linux.dir}/dist" />
+	<property name="linux.bin.dir" value="${linux.dir}/bin" />
 
 
 	<!-- debian binaries -->
-	<property name="command.dir" value="${debian.dir}/command" />
-	<property name="pgsql.dir" value="${debian.dir}/pgsql" />
+	<property name="command.dir" value="${linux.dir}/command" />
+	<property name="pgsql.dir" value="${linux.dir}/pgsql" />
 
 	<!-- Installer directories -->
-	<property name="installer.dir" value="${debian.dir}/installer" />
+	<property name="installer.dir" value="${linux.dir}/installer" />
 	<property name="installer.build.dir" value="${installer.dir}/build" />
 	<!-- Debian installer direcotry -->
 	<property name="installer.dist.dir" value="${installer.dir}/dist" />
@@ -58,12 +58,12 @@
 		<delete dir="${installer.build.dir}" />
 
 		<!-- Clean-up the dist intermediate directory -->
-		<delete dir="${debian.dist.dir}" />
+		<delete dir="${linux.dist.dir}" />
 	</target>
 
 	<target name="package" depends="copyBinaries">
 		<move todir="${installer.build.dir}/datafari/opt/datafari">
-			<fileset dir="${debian.dist.dir}" />
+			<fileset dir="${linux.dist.dir}" />
 		</move>
 
 		<!-- Configure tomcat port - will probably change in the futur -->
@@ -149,39 +149,39 @@
 
 	<target name="copyBinaries">
 
-		<mkdir dir="${debian.dist.dir}/logs" />
-		<mkdir dir="${debian.dist.dir}/pid" />
+		<mkdir dir="${linux.dist.dir}/logs" />
+		<mkdir dir="${linux.dist.dir}/pid" />
 
 		<!-- These components need a build with Maven -->
 
 		<!-- Copy Tomcat  -->
-		<copy todir="${debian.dist.dir}/tomcat">
+		<copy todir="${linux.dist.dir}/tomcat">
 			<fileset dir="${tomcat.src.dir}">
 			</fileset>
 		</copy>
 
 		<!-- Copy Tomcat-MCF  -->
-		<copy todir="${debian.dist.dir}/tomcat-mcf">
+		<copy todir="${linux.dist.dir}/tomcat-mcf">
 			<fileset dir="${tomcat-mcf.src.dir}">
 			</fileset>
 		</copy>
 
 
 		<!-- Copy Git properties file -->
-		<copy todir="${debian.dist.dir}/tomcat/conf">
+		<copy todir="${linux.dist.dir}/tomcat/conf">
 			<fileset dir="${git.plugin.src.dir}">
 				<include name="*.properties" />
 			</fileset>
 		</copy>
 
 		<!-- Copy Solr -->
-		<copy todir="${debian.dist.dir}/solr">
+		<copy todir="${linux.dist.dir}/solr">
 			<fileset dir="${solr.src.dir}">
 			</fileset>
 		</copy>
 
 		<!-- Copy Datafari update processor + dependencies -->
-		<copy todir="${debian.dist.dir}/solr/solr_home/FileShare/lib/custom">
+		<copy todir="${linux.dist.dir}/solr/solr_home/FileShare/lib/custom">
 			<fileset dir="${updateprocessor.src.dir}">
 				<include name="*.jar" />
 			</fileset>
@@ -191,7 +191,7 @@
 		</copy>
 
 		<!-- Copy Datafari update handler + dependencies-->
-		<copy todir="${debian.dist.dir}/solr/solr_home/FileShare/lib/custom">
+		<copy todir="${linux.dist.dir}/solr/solr_home/FileShare/lib/custom">
 			<fileset dir="${datafarihandler.src.dir}">
 				<include name="*.jar" />
 			</fileset>
@@ -201,14 +201,14 @@
 		</copy>
 
 		<!-- Copy Datafari update handler dependencies-->
-		<copy todir="${debian.dist.dir}/solr/solr_home/FileShare/lib/custom">
+		<copy todir="${linux.dist.dir}/solr/solr_home/FileShare/lib/custom">
 			<fileset dir="${datafarihandler.src.dir}/dependency">
 				<include name="*.jar" />
 			</fileset>
 		</copy>
 
 		<!-- Copy Tika jars to Solr -->
-		<copy todir="${debian.dist.dir}/solr/solr_home/FileShare/lib/extraction">
+		<copy todir="${linux.dist.dir}/solr/solr_home/FileShare/lib/extraction">
 			<fileset dir="${tika.src.dir}/target/dependency">
 				<include name="*.jar" />
 				<exclude name="language-detector*" />
@@ -216,61 +216,61 @@
 		</copy>
 
 		<!-- Copy only useful Jena libraries to Solr FileShare core directory -->
-		<copy toDir="${debian.dist.dir}/solr/solr_home/FileShare/lib/jena">
+		<copy toDir="${linux.dist.dir}/solr/solr_home/FileShare/lib/jena">
 			<fileset dir="${jena.src.dir}/dependency">
 				<include name="*.jar" />
 			</fileset>
 		</copy>
 
-		<copy todir="${debian.dist.dir}/elk">
+		<copy todir="${linux.dist.dir}/elk">
 			<fileset dir="${elk.src.dir}">
 			</fileset>
 		</copy>
 
-		<copy todir="${debian.dist.dir}/mcf">
+		<copy todir="${linux.dist.dir}/mcf">
 			<fileset dir="${mcf.src.dir}" />
 		</copy>
 
 		<!-- Copy Manifold CF to Tomcat auto-deploy directory -->
-		<move toDir="${debian.dist.dir}/tomcat-mcf/webapps" overwrite="true" force="true">
-			<fileset dir="${debian.dist.dir}/mcf/war" />
+		<move toDir="${linux.dist.dir}/tomcat-mcf/webapps" overwrite="true" force="true">
+			<fileset dir="${linux.dist.dir}/mcf/war" />
 			<globmapper from="*.war" to="datafari-*.war" />
 		</move>
 
 		<!-- Copy Manifold CF Velocity lib to Tomcat (Needed for the crawler ui) -->
-		<copy toDir="${debian.dist.dir}/tomcat-mcf/lib" overwrite="true" force="true">
-			<fileset dir="${debian.dist.dir}/mcf/mcf_home/lib">
+		<copy toDir="${linux.dist.dir}/tomcat-mcf/lib" overwrite="true" force="true">
+			<fileset dir="${linux.dist.dir}/mcf/mcf_home/lib">
 				<include name="velocity*.jar" />
 			</fileset>
 		</copy>
 
 		<!-- Copy Datafari War -->
-		<copy file="${datafari.webapp.dir}/Datafari.war" todir="${debian.dist.dir}/tomcat/webapps" />
+		<copy file="${datafari.webapp.dir}/Datafari.war" todir="${linux.dist.dir}/tomcat/webapps" />
 
 		<!-- Copy Realm -->
-		<copy todir="${debian.dist.dir}/tomcat/lib">
+		<copy todir="${linux.dist.dir}/tomcat/lib">
 			<fileset dir="${realm.src.dir}">
 				<include name="*.jar" />
 			</fileset>
 		</copy>
 
 		<!-- Copy Realm - dependencies-->
-		<copy todir="${debian.dist.dir}/tomcat/lib">
+		<copy todir="${linux.dist.dir}/tomcat/lib">
 			<fileset dir="${realm.src.dir}/dependency">
 				<include name="*.jar" />
 			</fileset>
 		</copy>
 
-		<copy todir="${debian.dist.dir}/cassandra">
+		<copy todir="${linux.dist.dir}/cassandra">
 			<fileset dir="${cassandra.src.dir}" />
 		</copy>
 
-		<copy todir="${debian.dist.dir}/bin">
+		<copy todir="${linux.dist.dir}/bin">
 			<fileset dir="${bin.src.dir}" />
 		</copy>
 
 		<!-- Copy Datafari core libs to Tomcat -->
-		<copy flatten="true" toDir="${debian.dist.dir}/tomcat/lib" overwrite="true" force="true">
+		<copy flatten="true" toDir="${linux.dist.dir}/tomcat/lib" overwrite="true" force="true">
 			<fileset dir="${datafari.core.dir}">
 				<include name="dependency/*.jar" />
 			</fileset>
@@ -280,7 +280,7 @@
 		</copy>
 
 		<!-- Copy Datafari log4j lib to Tomcat-MCF -->
-		<copy flatten="true" toDir="${debian.dist.dir}/tomcat-mcf/lib" overwrite="true" force="true">
+		<copy flatten="true" toDir="${linux.dist.dir}/tomcat-mcf/lib" overwrite="true" force="true">
 			<fileset dir="${mcf.src.dir}/mcf_home/lib">
 				<include name="*.jar" />
 				<exclude name="javax.servlet*.jar"/>
@@ -293,7 +293,7 @@
 			</fileset>
 		</copy>
 
-		<copy flatten="true" toDir="${debian.dist.dir}/tomcat-mcf/lib" overwrite="true" force="true">
+		<copy flatten="true" toDir="${linux.dist.dir}/tomcat-mcf/lib" overwrite="true" force="true">
 			<fileset dir="${datafari.core.dir}">
 				<include name="dependency/log4j-*.jar" />
 			</fileset>
@@ -303,14 +303,14 @@
 		</copy>
 
 		<!-- Copy datafari-core jar to MCF -->
-		<copy toDir="${debian.dist.dir}/mcf/mcf_home/connector-common-lib" overwrite="true" force="true">
+		<copy toDir="${linux.dist.dir}/mcf/mcf_home/connector-common-lib" overwrite="true" force="true">
 			<fileset dir="${datafari.core.dir}">
 				<include name="*.jar" />
 			</fileset>
 		</copy>
 
 		<!-- Copy BackupManifoldCF script -->
-		<copy todir="${debian.dist.dir}/bin/common">
+		<copy todir="${linux.dist.dir}/bin/common">
 			<fileset dir="${mcf-scripts.src.dir}">
 				<include name="*.jar" />
 			</fileset>
@@ -318,28 +318,28 @@
 
 
 
-		<copy todir="${debian.dist.dir}/pgsql">
+		<copy todir="${linux.dist.dir}/pgsql">
 			<fileset dir="${pgsql.dir}" />
 		</copy>
 
-		<copy todir="${debian.dist.dir}/zookeeper">
+		<copy todir="${linux.dist.dir}/zookeeper">
 			<fileset dir="${zookeeper.src.dir}" />
 		</copy>
 
 
-		<copy todir="${debian.dist.dir}/command">
+		<copy todir="${linux.dist.dir}/command">
 			<fileset dir="${command.dir}" />
 		</copy>
 
 
-		<copy todir="${debian.dist.dir}/bin">
-			<fileset dir="${debian.bin.dir}" />
+		<copy todir="${linux.dist.dir}/bin">
+			<fileset dir="${linux.bin.dir}" />
 		</copy>
 
 		<!-- Add txt files -->
-		<copy file="${project.dir}/LICENSE.txt" todir="${debian.dist.dir}/" />
-		<copy file="${project.dir}/README.txt" todir="${debian.dist.dir}/" />
-		<copy file="${project.dir}/CHANGES.txt" todir="${debian.dist.dir}/" />
+		<copy file="${project.dir}/LICENSE.txt" todir="${linux.dist.dir}/" />
+		<copy file="${project.dir}/README.txt" todir="${linux.dist.dir}/" />
+		<copy file="${project.dir}/CHANGES.txt" todir="${linux.dist.dir}/" />
 	</target>
 
 </project>

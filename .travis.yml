@@ -17,7 +17,7 @@ cache:
   - $HOME/.m2
   
 script:
-- travis_wait 30 bash debian7/bin/deployment_script.sh
+- travis_wait 30 bash linux/bin/deployment_script.sh
 
 notifications:
   email:
@@ -34,5 +34,5 @@ env:
 after_success:
 - export SSHPASS=$DEPLOY_PASSWORD
 - export ESCAPEDBRANCH=${TRAVIS_BRANCH//\//\\\\}
-- sshpass -e scp -o stricthostkeychecking=no debian7/installer/dist/datafari.deb $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATHSCRIPT/datafari_community_$ESCAPEDBRANCH.deb
+- sshpass -e scp -o stricthostkeychecking=no linux/installer/dist/datafari.deb $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATHSCRIPT/datafari_community_$ESCAPEDBRANCH.deb
 
