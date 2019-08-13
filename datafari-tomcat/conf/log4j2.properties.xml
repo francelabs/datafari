@@ -34,16 +34,6 @@
       </Policies>
     </RollingFile>
     
-    <!-- ManifoldCF appender -->
-    <RollingFile name="Manifold" fileName="${env:DATAFARI_LOGS}/datafari-manifold.log" filePattern="${env:DATAFARI_LOGS}/datafari-manifold-%d{yyyy-MM-dd}.log">
-      <PatternLayout>
-        <Pattern>%5p %d{ISO8601} (%t) - Tomcat|Manifold|%c{3}|%m%n</Pattern>
-      </PatternLayout>
-      <Policies>
-        <TimeBasedTriggeringPolicy interval="1"/>
-      </Policies>
-    </RollingFile>
-    
     <!-- Stats appender -->
     <RollingFile name="Stats" fileName="${env:DATAFARI_LOGS}/datafari-stats.log" filePattern="${env:DATAFARI_LOGS}/datafari-stats-%d{yyyy-MM-dd}-%i.log">
       <PatternLayout>
@@ -89,11 +79,6 @@
 	  <Logger name="com.francelabs.datafari" level="info" additivity="false">
 	    <AppenderRef ref="Datafari"/>
 	  </Logger>
-	  
-	  <!-- ManifoldCF logger -->
-    <Logger name="com.francelabs.manifoldcf" level="info" additivity="false">
-      <AppenderRef ref="Manifold"/>
-    </Logger>
     
     <!-- Stats logger -->
     <Logger name="com.francelabs.datafari.statistics" level="stat" additivity="false">

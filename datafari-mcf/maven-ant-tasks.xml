@@ -20,6 +20,8 @@
         <include name="*manifoldcf*/connector-lib-proprietary/**" />
         <include name="*manifoldcf*/lib/**" />
         <include name="*manifoldcf*/connectors.xml" />
+        <exclude name="*manifoldcf*/connector-lib/postgresql*" />
+		<exclude name="*manifoldcf*/lib/postgresql*" />
 			</fileset>
 			<cutdirsmapper dirs="1" />
 		</copy>
@@ -45,14 +47,35 @@
 			<fileset dir="target">
 				<include name="*manifoldcf*/**/mcf-api-service.war" />
 				<include name="*manifoldcf*/**/mcf-authority-service.war" />
+				<include name="*manifoldcf*/**/mcf-crawler-ui.war" />
 			</fileset>
 			<cutdirsmapper dirs="2" />
 		</copy>
-		<copy toDir="${mcf.dist}/war" overwrite="true" force="true">
-			<fileset dir="mcf_home/wars">
-				<include name="*.war" />
-			</fileset>
-		</copy>
+		<!-- Use touch to set modification time of all custom files to current time. This will force war task to update custom files inside the war -->
+    <tstamp> <format property="touch.time" pattern="MM/dd/yyyy hh:mm aa"/>  </tstamp>
+    <touch datetime="${touch.time}">
+        <fileset dir="mcf_home/crawler-ui-customs" />
+    </touch>
+		
+		<!-- Update mcf-crawler-ui.war to add custom CSS style -->
+		<war destfile="${mcf.dist}/war/mcf-crawler-ui.war" update="true">
+      <zipfileset dir="mcf_home/crawler-ui-customs" includes="*.png" />
+			<zipfileset dir="mcf_home/crawler-ui-customs" includes="*.css" prefix="css" />
+    </war>
+    
+    <!-- Remove all logging libs from MCF wars as they are provided by Tomcat MCF -->
+		<zip destfile="${mcf.dist}/war/mcf-crawler-ui-tmp.war">
+      <zipfileset src="${mcf.dist}/war/mcf-crawler-ui.war" excludes="WEB-INF/lib/log4j* WEB-INF/lib/slf4j* WEB-INF/lib/commons-logging*" />
+    </zip>
+		<zip destfile="${mcf.dist}/war/mcf-api-service-tmp.war">
+      <zipfileset src="${mcf.dist}/war/mcf-api-service.war" excludes="WEB-INF/lib/log4j* WEB-INF/lib/slf4j* WEB-INF/lib/commons-logging*" />
+    </zip>
+		<zip destfile="${mcf.dist}/war/mcf-authority-service-tmp.war">
+      <zipfileset src="${mcf.dist}/war/mcf-authority-service.war" excludes="WEB-INF/lib/log4j* WEB-INF/lib/slf4j* WEB-INF/lib/commons-logging*" />
+    </zip>
+		<move file="${mcf.dist}/war/mcf-authority-service-tmp.war" tofile="${mcf.dist}/war/mcf-authority-service.war"/>
+		<move file="${mcf.dist}/war/mcf-api-service-tmp.war" tofile="${mcf.dist}/war/mcf-api-service.war"/>
+		<move file="${mcf.dist}/war/mcf-crawler-ui-tmp.war" tofile="${mcf.dist}/war/mcf-crawler-ui.war"/>
 
 		<!-- Copy bin and mcf_home directories -->
 		<copy toDir="${mcf.dist}" overwrite="true" force="true">

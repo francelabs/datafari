@@ -18,6 +18,12 @@
 
 <configuration>
 
+  <!-- Useful logs conf -->
+  <property name="org.apache.manifoldcf.connectors" value="INFO"/>
+  <property name="org.apache.manifoldcf.authorityconnectors" value="INFO"/>
+  <property name="org.apache.manifoldcf.authorityservice" value="INFO"/>
+  <property name="org.apache.manifoldcf.mappingconnectors" value="INFO"/>
+
   <!-- Version string for UI -->
   <property name="org.apache.manifoldcf.versionstring" value="2.12"/>
   <!-- ZooKeeper lock manager configuration -->

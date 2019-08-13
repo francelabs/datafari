@@ -19,6 +19,13 @@
 <!-- This file contains ONLY global (shared) configuration, for use on systems using
     ZooKeeper to coordinate ManifoldCF processes. -->
 <configuration>
+
+  <!-- Useful logs conf -->
+  <property name="org.apache.manifoldcf.connectors" value="INFO"/>
+  <property name="org.apache.manifoldcf.authorityconnectors" value="INFO"/>
+  <property name="org.apache.manifoldcf.authorityservice" value="INFO"/>
+  <property name="org.apache.manifoldcf.mappingconnectors" value="INFO"/>
+
   <!-- Version string for UI -->
   <property name="org.apache.manifoldcf.versionstring" value="2.12"/>
 

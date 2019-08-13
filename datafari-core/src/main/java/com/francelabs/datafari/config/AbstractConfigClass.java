@@ -47,10 +47,8 @@ public abstract class AbstractConfigClass implements IConfigClass {
   /**
    * Load the provided properties file from $CONFIG_HOME
    *
-   * @param configPropertiesFileName
-   *          the properties file name
-   * @param logger
-   *          the logger to use
+   * @param configPropertiesFileName the properties file name
+   * @param logger                   the logger to use
    */
   protected AbstractConfigClass(final String configPropertiesFileName, final Logger logger) {
     LOGGER = logger;
@@ -67,15 +65,11 @@ public abstract class AbstractConfigClass implements IConfigClass {
   }
 
   /**
-   * Load the properties file referenced by the
-   * configPropertiesFileNameAbsolutePath parameter
+   * Load the properties file referenced by the configPropertiesFileNameAbsolutePath parameter
    *
-   * @param configPropertiesFileName
-   *          the properties file name
-   * @param configPropertiesFileNameAbsolutePath
-   *          the properties file absolute path
-   * @param logger
-   *          the logger to use
+   * @param configPropertiesFileName             the properties file name
+   * @param configPropertiesFileNameAbsolutePath the properties file absolute path
+   * @param logger                               the logger to use
    */
   protected AbstractConfigClass(final String configPropertiesFileName, final String configPropertiesFileNameAbsolutePath, final Logger logger) {
     LOGGER = logger;
@@ -88,8 +82,7 @@ public abstract class AbstractConfigClass implements IConfigClass {
   /**
    * Return the value of the property given as parameter
    *
-   * @param key
-   *          the property name
+   * @param key the property name
    * @return the property value
    * @throws IOException
    */
@@ -101,14 +94,12 @@ public abstract class AbstractConfigClass implements IConfigClass {
     }
     return prop;
   }
-  
+
   /**
    * Return the value of the property given as parameter
    *
-   * @param key
-   *          the property name
-   * @param defaultValue
-   *          the default value to return in case of null or error
+   * @param key          the property name
+   * @param defaultValue the default value to return in case of null or error
    * @return the property value
    */
   @Override
@@ -156,8 +147,7 @@ public abstract class AbstractConfigClass implements IConfigClass {
   }
 
   /**
-   * Start a FileWatcher thread to detect every modification of the advanced
-   * search properties file and automatically reload it
+   * Start a FileWatcher thread to detect every modification of the advanced search properties file and automatically reload it
    */
   private void watchPropertiesFile() {
     watcherThread = new Thread(new Runnable() {
@@ -201,8 +191,7 @@ public abstract class AbstractConfigClass implements IConfigClass {
   }
 
   /**
-   * Listen for every changes/modifications of the advanced search properties
-   * file
+   * Listen for every changes/modifications of the advanced search properties file
    */
   @Override
   public synchronized void listenChanges() {
