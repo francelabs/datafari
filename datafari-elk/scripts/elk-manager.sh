@@ -25,8 +25,9 @@ init_logstash()
   sed -i "/francelabs\/datafari-stats.log/c\  path => \"${DATAFARI_HOME}/logs/datafari-stats.log\"" $LOGSTASH_HOME/logstash-datafari.conf
   sed -i "/francelabs\/datafari-monitoring.log/c\ path => \"${DATAFARI_HOME}/logs/datafari-monitoring.log\"" $LOGSTASH_HOME/logstash-datafari.conf
   sed -i "/francelabs\/datafari.log/c\  path => \"${DATAFARI_HOME}/logs/datafari.log\"" $LOGSTASH_HOME/logstash-datafari.conf
-  sed -i "/francelabs\/datafari-manifold.log/c\ path => \"${DATAFARI_HOME}/logs/datafari-manifold.log\"" $LOGSTASH_HOME/logstash-datafari.conf
+  sed -i "/francelabs\/manifoldcf-webservices.log/c\ path => \"${DATAFARI_HOME}/logs/manifoldcf-webservices.log\"" $LOGSTASH_HOME/logstash-datafari.conf
   sed -i "/francelabs\/tomcat.log/c\  path => \"${DATAFARI_HOME}/logs/tomcat.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
+  sed -i "/francelabs\/tomcat-mcf.log/c\  path => \"${DATAFARI_HOME}/logs/tomcat-mcf.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
   sed -i "/francelabs\/manifoldcf.log/c\  path => \"${DATAFARI_HOME}/logs/manifoldcf.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
   sed -i "/francelabs\/elasticsearch.log/c\ path => \"${DATAFARI_HOME}/elk/elasticsearch/logs/elasticsearch.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
   sed -i "/francelabs\/solr.log/c\  path => \"${DATAFARI_HOME}/logs/solr.log*\"" $LOGSTASH_HOME/logstash-datafari.conf

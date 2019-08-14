@@ -227,9 +227,35 @@
 			</fileset>
 		</copy>
 
+		<!-- Copy MCF without logging libs -->
 		<copy todir="${linux.dist.dir}/mcf">
-			<fileset dir="${mcf.src.dir}" />
+			<fileset dir="${mcf.src.dir}">
+        <exclude name="mcf_home/connector-lib/commons-logging-*.jar" />
+        <exclude name="mcf_home/connector-lib/jcl-over-*.jar" />
+        <exclude name="mcf_home/connector-lib/log4j-*.jar" />
+        <exclude name="mcf_home/connector-lib/slf4j-*.jar" />
+        <exclude name="mcf_home/lib/commons-logging-*.jar" />
+        <exclude name="mcf_home/lib/jcl-over-*.jar" />
+        <exclude name="mcf_home/lib/log4j-*.jar" />
+        <exclude name="mcf_home/lib/slf4j-*.jar" />
+      </fileset>
 		</copy>
+		
+		<!-- Copy Datafari logging libs to MCF -->
+    <copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
+      <fileset dir="${datafari.core.dir}">
+        <include name="dependency/log4j-*.jar" />
+        <include name="dependency/slf4j-*.jar" />
+        <include name="dependency/commons-logging-*.jar" />
+      </fileset>
+    </copy>
+    <copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/lib" overwrite="true" force="true">
+      <fileset dir="${datafari.core.dir}">
+        <include name="dependency/log4j-*.jar" />
+        <include name="dependency/slf4j-*.jar" />
+        <include name="dependency/commons-logging-*.jar" />
+      </fileset>
+    </copy>
 
 		<!-- Copy Manifold CF to Tomcat auto-deploy directory -->
 		<move toDir="${linux.dist.dir}/tomcat-mcf/webapps" overwrite="true" force="true">
