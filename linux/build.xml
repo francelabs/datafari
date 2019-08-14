@@ -290,15 +290,16 @@
 				<exclude name="log4j-*.jar"/>
 				<exclude name="jasper-*.jar"/>
 				<exclude name="ecj-*.jar"/>
+				<exclude name="log4j-*.jar"/>
+        <exclude name="slf4j-*.jar"/>
 			</fileset>
 		</copy>
 
 		<copy flatten="true" toDir="${linux.dist.dir}/tomcat-mcf/lib" overwrite="true" force="true">
 			<fileset dir="${datafari.core.dir}">
 				<include name="dependency/log4j-*.jar" />
-			</fileset>
-			<fileset dir="${datafari.core.dir}">
-				<include name="log4j-*.jar" />
+        <include name="dependency/slf4j-*.jar" />
+        <include name="dependency/jul-to-slf4j-*.jar" />
 			</fileset>
 		</copy>
 
