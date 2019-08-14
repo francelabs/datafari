@@ -12,6 +12,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <java.version>1.8</java.version>
     <log4j.version>2.12.0</log4j.version>
     <mcf.version>2.13</mcf.version>
 	  <mcf.commit.number>93e597a48</mcf.commit.number>
