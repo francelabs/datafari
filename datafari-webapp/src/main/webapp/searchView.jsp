@@ -112,8 +112,8 @@
 		src="js/AjaxFranceLabs/widgets/TableMobile.widget.js"></script>
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/tagCloud.widget.js"></script>
-<!-- 	<script type="text/javascript" -->
-<!-- 		src="js/AjaxFranceLabs/widgets/Tab.widget.js"></script> -->
+	<script type="text/javascript"
+		src="js/AjaxFranceLabs/widgets/Tab.widget.js"></script>
 	<!--
 	<script type="text/javascript"
 		src="js/AjaxFranceLabs/widgets/HierarchicalFacet.js"></script>
@@ -198,6 +198,7 @@
       <div id="searchBar" class="search-view-header">
       </div>
     </div>
+    <div id="facet_tabs" class="search-view-ui search-view-header results-elm"></div>
     <div id="status-div" class="search-view-ui search-view-header">
       <div id="search_information"></div>
       <div id="results_action">
