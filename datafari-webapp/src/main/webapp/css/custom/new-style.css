@@ -1302,8 +1302,7 @@ margin-bottom: 0!important;
 /*NEW CLICKED STYLE*/
 
 #dropdown-search-tools, #dropdownAdminLink, #dropdown-my-account{
-  margin-top: 6px;
-  padding: 10px;
+  padding: 15px;
   border-radius: 2px;
   z-index: 5;
 }

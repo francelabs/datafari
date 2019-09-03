@@ -4,6 +4,28 @@
 	}
 }
 
+.sub-btn {
+  padding: 10px;
+  border: 0;
+}
+
+.open > a.sub-btn, .open > a.sub-btn:hover, .open > a.sub-btn:focus, .open > a.sub-btn:active:focus {
+  background-color: transparent;
+  color: #6B956F;
+}
+
+.sub-btn:active {
+  box-shadow: none;
+}
+
+.sub-btn:focus, .sub-btn:active:focus {
+  outline: none;
+}
+
+.sub-btn:hover {
+  color: #6B956F;
+}
+
 #header-menu, .container-fluid {
   padding: 0;
 }

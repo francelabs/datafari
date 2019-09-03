@@ -292,16 +292,7 @@ pageEncoding="utf-8"%>
   if (request.getUserPrincipal().getName() != null) {
   %>
   <li class="dropdown">
-    <button class="btn btn-default dropdown-toggle" type="button" id="alertsDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      <a id="userAlertsLink">Alerts</a>
-      <!-- <span class="caret"></span> -->
-    </button>
-        <!--  
-        <ul class="dropdown-menu" aria-labelledby="alertsDropdownMenu">
-          <li></li>
-          <li></li>
-        </ul>
-      -->
+      <span id="alertsDropdownMenu"><a class="btn sub-btn" data-toggle="dropdown" id="userAlertsLink" >Alerts</a></span>
     </li>
 
     <%
