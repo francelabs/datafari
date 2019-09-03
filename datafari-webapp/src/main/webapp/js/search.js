@@ -10,13 +10,20 @@ $(function($) {
 //		range : false
 //	}));
 
-//	Manager.addWidget(new AjaxFranceLabs.TabWidget({
-//		elm : $('#source_tabs'),
-//		id : 'facet_tab',
-//		selectionType : 'ONE',
-//		field : 'connector',
-//		returnUnselectedFacetValues : true
-//	}));
+// Manager.addWidget(new AjaxFranceLabs.TabWidget({
+  // id : 'tabwidget',
+  // elm : $("#facet_tabs"),
+  // rawTabs : [ {
+  // "label" : "Test",
+  // "href" : "http://datafariee.datafari.com"
+  // }, {
+  // "label" : "Test2",
+  // "href" : "http://www.google.com"
+  // } ],
+  // actifValue : "Test",
+  // selectionType : "ONE",
+  // returnUnselectedFacetValues : true
+  // }));
 
 //	Manager.addWidget(new AjaxFranceLabs.OntologySuggestionWidget({
 //		elm : $('#suggestion'),

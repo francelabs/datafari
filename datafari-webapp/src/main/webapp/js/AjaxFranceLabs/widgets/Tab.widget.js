@@ -17,6 +17,7 @@ AjaxFranceLabs.TabWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
   type : 'tab',
   'facet.field' : true,
   actifValue : '',
+  rawTabs : [],
 
   // Methods
 
@@ -33,12 +34,14 @@ AjaxFranceLabs.TabWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
   // Get facet field values and their corresponding numbers then return them in an object
   assocTags : function(data) {
     var tags = [];
-    for (var i = 0; i < data.length - 1; i++) {
-      tags.push({
-        name : data[i],
-        nb : data[i + 1]
-      });
-      i++;
+    if (data !== undefined && data !== null) {
+      for (var i = 0; i < data.length - 1; i++) {
+        tags.push({
+          name : data[i],
+          nb : data[i + 1]
+        });
+        i++;
+      }
     }
     return tags;
   },
@@ -47,10 +50,26 @@ AjaxFranceLabs.TabWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
     var self = this;
     var data = this.assocTags(this.manager.response.facet_counts.facet_fields[this.field]); // Get the facet field values
     var elm = $(this.elm);
-    if (data.length !== 0) { // Some values exist
+    if (data.length !== 0 || self.rawTabs.length !== 0) { // Some values exist
       $(self.elm).show();
       elm.find('ul').empty(); // empty the widget content
       var ul = elm.children('ul'); // select the list element
+
+      // Raw tabs first
+      for (var i = 0; i < self.rawTabs.length; i++) {
+        var active = "";
+        if (self.rawTabs[i].label === self.actifValue) {
+          active = " active"
+        }
+        // Create the tab and his associated click function that will trigger the facet query
+        ul.append("<li class='nav-item " + active + "'><span class='tab'><span class='name'>" + self.rawTabs[i].label + "</span><span class='href' style='display:none;'>" + self.rawTabs[i].href
+            + "</span></span></li>");
+        ul.find('li:lastchild').click(function() {
+          window.location = $(this).find('.href').text();
+        });
+      }
+
+      // Then facet tabs
       var total = 0;
       for (var i = 0; i < data.length; i++) { // For each value, create a tab (<li> element) which will contain the value and his associated
         // number
@@ -73,15 +92,17 @@ AjaxFranceLabs.TabWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 
       // Create the 'All' tab and his associated click function that will remove the last selected facet query to retrieve all documents on
       // the search view
-      var allActive = "";
-      if (self.actifValue === "") {
-        allActive = "active";
+      if (total > 0) {
+        var allActive = "";
+        if (self.actifValue === "") {
+          allActive = "active";
+        }
+        ul.prepend("<li class='nav-item " + allActive + "'><span class='tab'><span class='name'>All</span><span class='number'>" + "(" + total + ")</span></span></li>");
+        ul.find('li:firstchild').click(function() {
+          self.unselectHandler(self.actifValue);
+          self.actifValue = "";
+        });
       }
-      ul.prepend("<li class='nav-item " + allActive + "'><span class='tab'><span class='name'>All</span><span class='number'>" + "(" + total + ")</span></span></li>");
-      ul.find('li:firstchild').click(function() {
-        self.unselectHandler(self.actifValue);
-        self.actifValue = "";
-      });
     } else {
       $(self.elm).hide();
     }
