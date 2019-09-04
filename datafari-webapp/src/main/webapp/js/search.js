@@ -18,8 +18,7 @@ $(function($) {
   // "label" : "Test2",
   // "href" : "http://www.google.com"
   // } ],
-  // actifValue : "Test",
-  // returnUnselectedFacetValues : true
+  // actifValue : "Test"
   // }));
 
   // Manager.addWidget(new AjaxFranceLabs.OntologySuggestionWidget({
