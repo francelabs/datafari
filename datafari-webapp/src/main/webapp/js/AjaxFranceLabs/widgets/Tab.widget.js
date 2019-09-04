@@ -18,6 +18,7 @@ AjaxFranceLabs.TabWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
   'facet.field' : true,
   actifValue : '',
   rawTabs : [],
+  selectionType : "ONE",
 
   // Methods
 
