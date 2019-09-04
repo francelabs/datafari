@@ -209,16 +209,7 @@
                     if (request.getUserPrincipal().getName() != null) {
                   %>
       <li class="dropdown">
-        <button class="btn btn-default dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false">
-          <a href="/Datafari/admin/?lang=en" target="blank" id="adminConsoleLink">Main </a>
-          <!-- <span class="caret"></span> -->        
-        </button>
-        <!--  
-        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-          <li></li>
-          <li></li>
-        </ul>
-        -->
+        <span><a href="/Datafari/admin/?lang=en" target="blank" class="btn sub-btn" id="adminConsoleLink" >Main</a></span>
       </li>
       
       <%
@@ -230,16 +221,7 @@
                     if (request.getUserPrincipal().getName() != null) {
                   %>
         <li class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false">
-              <a href="/datafari-mcf-crawler-ui/" target="blank" id="adminMCFLink" >Data Crawlers </a>
-              <!-- <span class="caret"></span> -->              
-            </button>
-            <!--  
-            <ul class="dropdown-menu" aria-labelledby="savedSearchDropdownMenu">
-              <li></li>
-              <li></li>
-            </ul>
-            -->
+           <span><a href="/datafari-mcf-crawler-ui/" target="blank" class="btn sub-btn" id="adminMCFLink" >Data Crawlers</a></span>
           </li>
           <%
                           }
