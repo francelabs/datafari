@@ -9,12 +9,12 @@
 		<title>Search</title>
 		<link rel="icon" type="image/png" href="images/bullet.png"/>
     <link rel="stylesheet" type="text/css" href="plugins/bootstrap/bootstrap.css"/>
-		<link rel="stylesheet" type="text/css" href="css/custom/new-style.css" media="screen" />
 		<link rel="stylesheet" type="text/css" href="css/main.css" media="screen" />
 		<link rel ="stylesheet" type ="text/css" href ="css/results.css" />
-		<link rel ="stylesheet" type ="text/css" href ="css/index.css" />
 		<link rel ="stylesheet" type ="text/css" href ="css/animate.min.css" />
 		<link rel="stylesheet" type ="text/css" href="plugins/font-awesome/css/all.css">
+		<link rel="stylesheet" type="text/css" href="css/custom/new-style.css" media="screen" />
+    <link rel ="stylesheet" type ="text/css" href ="css/index.css" />
 
 		<link rel="stylesheet" type ="text/css" href="css/jquery-ui-1.11.4/jquery-ui.min.css">
 		<link rel="stylesheet" type ="text/css" href="css/jquery-ui-1.11.4/jquery-ui.theme.min.css">

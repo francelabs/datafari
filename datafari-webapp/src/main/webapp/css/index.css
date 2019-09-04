@@ -8,6 +8,10 @@
 		width:auto;
 		display:block;
 	}
+	
+	#searchBarContent {
+	 width: 100%;
+	}
 
 	#content_index{
 		position: relative;

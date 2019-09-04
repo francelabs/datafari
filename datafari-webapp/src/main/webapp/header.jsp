@@ -39,9 +39,7 @@ pageEncoding="utf-8"%>
         if ($(window).width() < 800) {
           // Prevents the drag on right/left side while in mobile view
           $('#container-viewport-switch').removeClass('container-fluid');
-          $('#container-viewport-switch').addClass('container');
-
-         
+          $('#container-viewport-switch').addClass('container');         
 
         } else {
           $('#search-tools-sub-menu-mobile').empty();
@@ -321,16 +319,7 @@ pageEncoding="utf-8"%>
     }
     %>
     <li class="dropdown">
-      <button class="btn btn-default dropdown-toggle" type="button" id="advancedSearchDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <a id="advancedSearchLink">Advanced Search </a>
-        <!-- <span class="caret"></span> -->              
-      </button>
-              <!-- 
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenu4">
-                <li></li>
-                <li></li>
-              </ul>
-            -->
+      <span id="advancedSearchDropdownMenu"><a class="btn sub-btn" data-toggle="dropdown" id="advancedSearchLink" >Advanced Search</a></span>
           </li>
 
           <%
@@ -349,16 +338,7 @@ pageEncoding="utf-8"%>
     %>
 
     <li class="dropdown">
-      <button class="btn btn-default dropdown-toggle" type="button" id="favoritesDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <a id="userFavoritesLink">Favorites </a>
-        <!-- <span class="caret"></span> -->                
-      </button>
-                <!-- 
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenu5">
-                  <li></li>
-                  <li></li>
-                </ul>
-              -->
+      <span id="favoritesDropdownMenu"><a class="btn sub-btn" data-toggle="dropdown" id="userFavoritesLink" >Favorites</a></span>
             </li>
             <%
           }
@@ -378,16 +358,7 @@ pageEncoding="utf-8"%>
       if (request.getUserPrincipal().getName() != null) {
       %>
       <li class="dropdown">
-        <button class="btn btn-default dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false">
-          <a href="/Datafari/admin/?lang=en" target="blank" id="adminConsoleLink">Main </a>
-          <!-- <span class="caret"></span> -->        
-        </button>
-        <!--  
-        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-          <li></li>
-          <li></li>
-        </ul>
-      -->
+        <span><a href="/Datafari/admin/?lang=en" target="blank" class="btn sub-btn" id="adminConsoleLink" >Main</a></span>
     </li>
 
     <%
@@ -399,16 +370,7 @@ if (request.getUserPrincipal() != null) {
 if (request.getUserPrincipal().getName() != null) {
 %>
 <li class="dropdown">
-  <button class="btn btn-default dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false">
-    <a href="/datafari-mcf-crawler-ui/" target="blank" id="adminMCFLink" >Data Crawlers </a>
-    <!-- <span class="caret"></span> -->              
-  </button>
-            <!--  
-            <ul class="dropdown-menu" aria-labelledby="savedSearchDropdownMenu">
-              <li></li>
-              <li></li>
-            </ul>
-          -->
+  <span><a href="/datafari-mcf-crawler-ui/" target="blank" class="btn sub-btn" id="adminMCFLink" >Data Crawlers</a></span>
         </li>
         <%
       }
@@ -438,16 +400,7 @@ if (request.getUserPrincipal().getName() != null) {
     if (request.getUserPrincipal().getName() != null) {
     %>
     <li class="dropdown">
-      <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <a id="externalSourcesLink">External Sources </a>
-        <!-- <span class="caret"></span> -->                   
-      </button>
-        <!--  
-        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-          <li></li>
-          <li></li>
-        </ul>
-      -->
+      <span id="externalSourcesDropdownMenu"><a class="btn sub-btn" data-toggle="dropdown" id="externalSourcesLink" >External Sources</a></span>
     </li>
 
     <%
