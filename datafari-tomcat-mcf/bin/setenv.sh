@@ -13,6 +13,8 @@ LOGGING_MANAGER="-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogMan
 CATALINA_OPTS="-Dorg.apache.manifoldcf.configfile=../../mcf/mcf_home/properties.xml -server -Xms1024m -Xmx1024m"
 
 # Set redefine JAVA_OPTS
+# To change the temp directory for Tomcat (by default /tmp) add this line :
+# -Djava.io.tmpdir=/YOUR_FOLDER
 JAVA_OPTS="-Duser.timezone=UTC"
 
 
