@@ -27,8 +27,7 @@ RUN     apt-get update && apt-get install -y \
 	&& rm -rf /var/lib/apt/lists/*
 WORKDIR ./datafari
 COPY . .
-#RUN mvn -f pom.xml --quiet clean install | egrep -v "(^[0-9])|(^\[INFO\]|^\[DEBUG\])"
-RUN mvn -f pom.xml clean install
+RUN mvn -f pom.xml --quiet clean install
 RUN ant clean-build -f ./linux/build.xml
 
 FROM openjdk:8-jdk-stretch
