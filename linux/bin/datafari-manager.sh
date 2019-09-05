@@ -74,7 +74,7 @@ init_zookeeper_mcf_repertory()
 
 init_postgres()
 {
-  ${DATAFARI_HOME}/pgsql/bin/initdb -U postgres -A password --pwfile=${DATAFARI_HOME}/pgsql/pwd.conf -E utf8 -D ${DATAFARI_HOME}/pgsql/data
+  ${DATAFARI_HOME}/pgsql/bin/initdb -E 'UTF-8' -U postgres -A password --pwfile=${DATAFARI_HOME}/pgsql/pwd.conf -D ${DATAFARI_HOME}/pgsql/data
   cp ${DATAFARI_HOME}/pgsql/postgresql.conf.save ${DATAFARI_HOME}/pgsql/data/postgresql.conf
 }
 
