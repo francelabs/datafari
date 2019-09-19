@@ -11,7 +11,7 @@
 		language : null,
 
 		// Available languages for Datafari
-		availableLanguages : [ 'en', 'fr', 'it', 'pt_br', 'de', 'ru' ],
+		availableLanguages : [ 'en', 'fr', 'it', 'pt_br', 'de', 'es', 'ru' ],
 
 		// Default language for Datafari
 		defaultLanguage : 'en',
