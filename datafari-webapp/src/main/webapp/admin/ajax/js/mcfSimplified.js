@@ -14,141 +14,145 @@ var clearTimeouts = function() {
   $('#main').unbind('DOMNodeRemoved');
 }
 
-$(document).ready(function() {
-  $('#main').bind('DOMNodeRemoved', clearTimeouts);
-  $('backupDir-label').text(window.i18n.msgStore["adminUI-MCFBackupRestore-backupDir-label"]);
-  $('.MCFSave').html(window.i18n.msgStore['adminUI-MCFSave']
-    + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Be careful, if you do not check the “Start the job once created” checkbox, the job will be saved and it will present in the crawlers admin interface, but it will not start automatically'>i</button></span>");
+$(document)
+    .ready(
+        function() {
+          $('#main').bind('DOMNodeRemoved', clearTimeouts);
+          $('backupDir-label').text(window.i18n.msgStore["adminUI-MCFBackupRestore-backupDir-label"]);
+          $('.MCFSave')
+              .html(
+                  window.i18n.msgStore['adminUI-MCFSave']
+                      + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Be careful, if you do not check the “Start the job once created” checkbox, the job will be saved and it will present in the crawlers admin interface, but it will not start automatically'>i</button></span>");
 
-  // Set the breadcrumbs
-  document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
-  document.getElementById("topbar2").innerHTML = window.i18n.msgStore['adminUI-Connectors'];
-  document.getElementById("topbar3").innerHTML = window.i18n.msgStore['adminUI-Connectors-MCFSimplified'];
-  document.getElementById("topbar2").innerHTML = window.i18n.msgStore['adminUI-Connectors'];
-  // Set the i18n for page elements
-  document.getElementById("box-title").innerHTML = window.i18n.msgStore['adminUI-Connectors-MCFSimplified'];
-  document.getElementById("documentation-mcfsimplified").innerHTML = window.i18n.msgStore['documentation-mcfsimplified'];
+          // Set the breadcrumbs
+          document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
+          document.getElementById("topbar2").innerHTML = window.i18n.msgStore['adminUI-Connectors'];
+          document.getElementById("topbar3").innerHTML = window.i18n.msgStore['adminUI-Connectors-MCFSimplified'];
+          document.getElementById("topbar2").innerHTML = window.i18n.msgStore['adminUI-Connectors'];
+          // Set the i18n for page elements
+          document.getElementById("box-title").innerHTML = window.i18n.msgStore['adminUI-Connectors-MCFSimplified'];
+          document.getElementById("documentation-mcfsimplified").innerHTML = window.i18n.msgStore['documentation-mcfsimplified'];
 
-  document.getElementById("mcfsimplified-title-label").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-title'];
-  // document.getElementById("backupDir-label-default").innerHTML =
-  // window.i18n.msgStore['adminUI-MCFBackupRestore-backupDir-label-default'];
-  // document.getElementById("web-btn").innerHTML =
-  // window.i18n.msgStore['adminUI-MCFSimplified-web-btn'];
-  // document.getElementById("filer-btn").innerHTML =
-  // window.i18n.msgStore['adminUI-MCFSimplified-filer-btn'];
-  document.getElementById("createWebJob").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-createWebJob'];
-  document.getElementById("createFilerJob").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-createFilerJob'];
+          document.getElementById("mcfsimplified-title-label").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-title'];
+          // document.getElementById("backupDir-label-default").innerHTML =
+          // window.i18n.msgStore['adminUI-MCFBackupRestore-backupDir-label-default'];
+          // document.getElementById("web-btn").innerHTML =
+          // window.i18n.msgStore['adminUI-MCFSimplified-web-btn'];
+          // document.getElementById("filer-btn").innerHTML =
+          // window.i18n.msgStore['adminUI-MCFSimplified-filer-btn'];
+          document.getElementById("createWebJob").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-createWebJob'];
+          document.getElementById("createFilerJob").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-createFilerJob'];
 
-  document.getElementById("webJobTitle").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-webjobFormEdit'];
-  document.getElementById("webAddLegend").innerHTML = window.i18n.msgStore['param'];
-  document.getElementById("webSeedsLabel").innerHTML = window.i18n.msgStore['seeds'];
-  document.getElementById("webEmailLabel").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-email'];
-  document.getElementById("webExclusionLabel").innerHTML = window.i18n.msgStore['exclusions'];
-  document.getElementById("webSourcenameLabel").innerHTML = window.i18n.msgStore['sourcename'];
-  $("#seeds").attr("placeholder", window.i18n.msgStore['seeds']);
-  $("#email").attr("placeholder", window.i18n.msgStore['adminUI-MCFSimplified-email']);
-  $("#exclusions").attr("placeholder", window.i18n.msgStore['exclusions']);
-  $("#newWebConfig").innerHTML = window.i18n.msgStore['confirm'];
-  $("#newWebConfig").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
+          document.getElementById("webJobTitle").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-webjobFormEdit'];
+          document.getElementById("webAddLegend").innerHTML = window.i18n.msgStore['param'];
+          document.getElementById("webSeedsLabel").innerHTML = window.i18n.msgStore['seeds'];
+          document.getElementById("webEmailLabel").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-email'];
+          document.getElementById("webExclusionLabel").innerHTML = window.i18n.msgStore['exclusions'];
+          document.getElementById("webSourcenameLabel").innerHTML = window.i18n.msgStore['sourcename'];
+          $("#seeds").attr("placeholder", window.i18n.msgStore['seeds']);
+          $("#email").attr("placeholder", window.i18n.msgStore['adminUI-MCFSimplified-email']);
+          $("#exclusions").attr("placeholder", window.i18n.msgStore['exclusions']);
+          $("#newWebConfig").innerHTML = window.i18n.msgStore['confirm'];
+          $("#newWebConfig").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
 
-  document.getElementById("filerJobTitle").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-filerjobFormEdit'];
-  document.getElementById("filerAddLegend").innerHTML = window.i18n.msgStore['param'];
-  document.getElementById("serverLabel").innerHTML = window.i18n.msgStore['server'];
-  document.getElementById("userLabel").innerHTML = window.i18n.msgStore['filerUser'];
-  document.getElementById("passwordLabel").innerHTML = window.i18n.msgStore['adminUI-Password'];
-  document.getElementById("pathsLabel").innerHTML = window.i18n.msgStore['paths'];
-  document.getElementById("filerSourcenameLabel").innerHTML = window.i18n.msgStore['sourcename'];
-  document.getElementById("securityLabel").innerHTML = window.i18n.msgStore['security'];
-  $("#startJobLabel").html(window.i18n.msgStore['startJob']);
-  $("#startJobWebLabel").html(window.i18n.msgStore['startJob']);
-  $("#server").attr("placeholder", window.i18n.msgStore['server']);
-  $("#password").attr("placeholder", window.i18n.msgStore['adminUI-Password']);
-  $("#user").attr("placeholder", window.i18n.msgStore['filerUser']);
-  $("#paths").attr("placeholder", window.i18n.msgStore['paths']);
-  $("#filerSourcename").attr("placeholder", window.i18n.msgStore['sourcename']);
-  ("#newFilerConfig").innerHTML = window.i18n.msgStore['confirm'];
-  $("#newFilerConfig").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
+          document.getElementById("filerJobTitle").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-filerjobFormEdit'];
+          document.getElementById("filerAddLegend").innerHTML = window.i18n.msgStore['param'];
+          document.getElementById("serverLabel").innerHTML = window.i18n.msgStore['server'];
+          document.getElementById("userLabel").innerHTML = window.i18n.msgStore['filerUser'];
+          document.getElementById("passwordLabel").innerHTML = window.i18n.msgStore['adminUI-Password'];
+          document.getElementById("pathsLabel").innerHTML = window.i18n.msgStore['paths'];
+          document.getElementById("filerSourcenameLabel").innerHTML = window.i18n.msgStore['sourcename'];
+          document.getElementById("securityLabel").innerHTML = window.i18n.msgStore['security'];
+          $("#startJobLabel").html(window.i18n.msgStore['startJob']);
+          $("#startJobWebLabel").html(window.i18n.msgStore['startJob']);
+          $("#server").attr("placeholder", window.i18n.msgStore['server']);
+          $("#password").attr("placeholder", window.i18n.msgStore['adminUI-Password']);
+          $("#user").attr("placeholder", window.i18n.msgStore['filerUser']);
+          $("#paths").attr("placeholder", window.i18n.msgStore['paths']);
+          $("#filerSourcename").attr("placeholder", window.i18n.msgStore['sourcename']);
+          ("#newFilerConfig").innerHTML = window.i18n.msgStore['confirm'];
+          $("#newFilerConfig").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
 
-  // Set the tooltips
-  $("#server-tip").attr("title", window.i18n.msgStore['server-tip']);
-  $("#password-tip").attr("title", window.i18n.msgStore['password-tip']);
-  $("#user-tip").attr("title", window.i18n.msgStore['user-tip']);
-  $("#paths-tip").attr("title", window.i18n.msgStore['paths-tip']);
-  $("#filerSourcename-tip").attr("title", window.i18n.msgStore['sourcename-tip']);
-  $("#security-tip").attr("title", window.i18n.msgStore['security-tip']);
+          // Set the tooltips
+          $("#server-tip").attr("title", window.i18n.msgStore['server-tip']);
+          $("#password-tip").attr("title", window.i18n.msgStore['password-tip']);
+          $("#user-tip").attr("title", window.i18n.msgStore['user-tip']);
+          $("#paths-tip").attr("title", window.i18n.msgStore['paths-tip']);
+          $("#filerSourcename-tip").attr("title", window.i18n.msgStore['sourcename-tip']);
+          $("#security-tip").attr("title", window.i18n.msgStore['security-tip']);
 
-  $("#seeds-tip").attr("title", window.i18n.msgStore['seeds-tip']);
-  $("#email-tip").attr("title", window.i18n.msgStore['email-tip']);
-  $("#exclusions-tip").attr("title", window.i18n.msgStore['exclusions-tip']);
-  $("#webSourcename-tip").attr("title", window.i18n.msgStore['sourcename-tip']);
+          $("#seeds-tip").attr("title", window.i18n.msgStore['seeds-tip']);
+          $("#email-tip").attr("title", window.i18n.msgStore['email-tip']);
+          $("#exclusions-tip").attr("title", window.i18n.msgStore['exclusions-tip']);
+          $("#webSourcename-tip").attr("title", window.i18n.msgStore['sourcename-tip']);
 
-  $(".asteriskLabel").html(window.i18n.msgStore['mandatoryField']);
+          $(".asteriskLabel").html(window.i18n.msgStore['mandatoryField']);
 
-  $('[data-toggle="tooltip"]').tooltip();
+          $('[data-toggle="tooltip"]').tooltip();
 
-  $("#server").change(function(e) {
-    checkServer($("#server"));
-  });
+          $("#server").change(function(e) {
+            checkServer($("#server"));
+          });
 
-  $("#user").change(function(e) {
-    checkUser($("#user"));
-  });
+          $("#user").change(function(e) {
+            checkUser($("#user"));
+          });
 
-  $("#password").change(function(e) {
-    checkPassword($("#password"));
-  });
+          $("#password").change(function(e) {
+            checkPassword($("#password"));
+          });
 
-  $("#paths").change(function(e) {
-    checkPaths($("#paths"));
-  });
+          $("#paths").change(function(e) {
+            checkPaths($("#paths"));
+          });
 
-  $("#seeds").change(function(e) {
-    checkSeeds($("#seeds"));
-  });
+          $("#seeds").change(function(e) {
+            checkSeeds($("#seeds"));
+          });
 
-  $("#email").change(function(e) {
-    checkemail($("#email"));
-  });
+          $("#email").change(function(e) {
+            checkemail($("#email"));
+          });
 
-  $("#exclusions").change(function(e) {
-    checkExclusions($("#exclusions"));
-  });
+          $("#exclusions").change(function(e) {
+            checkExclusions($("#exclusions"));
+          });
 
-  $("#addWeb").submit(function(e) {
-    e.preventDefault();
-    if (!checkSeeds($("#seeds")) && checkemail($("#email")) && checkExclusions($("#exclusions")) && checkSourcename($("#webSourcename"))) {
-      return false;
-    } else {
-      return addWebConnector();
-    }
-  });
+          $("#addWeb").submit(function(e) {
+            e.preventDefault();
+            if (!checkSeeds($("#seeds")) && checkemail($("#email")) && checkExclusions($("#exclusions")) && checkSourcename($("#webSourcename"))) {
+              return false;
+            } else {
+              return addWebConnector();
+            }
+          });
 
-  $("#addFiler").submit(function(e) {
-    e.preventDefault();
-    $("#addFilerCheckMessageFailure").hide();
-    if (!checkServer($("#server")) && checkUser($("#user")) && checkPassword($("#password")) && checkPaths($("#paths")) && checkSourcename($("#filerSourcename"))) {
-      return false;
-    } else {
-      $.get("./../admin/CheckMCFConfiguration", {
-        configuration : "filer"
-      }, function(data) {
-        if (data.code === 0) {
-          if (data.registered === true) {
-            return addFilerConnector();
-          } else {
-            $("#addFilerCheckMessageFailure").html(window.i18n.msgStore['jcifs-not-installed']);
-            $("#addFilerCheckMessageFailure").show();
-          }
+          $("#addFiler").submit(function(e) {
+            e.preventDefault();
+            $("#addFilerCheckMessageFailure").hide();
+            if (!checkServer($("#server")) && checkUser($("#user")) && checkPassword($("#password")) && checkPaths($("#paths")) && checkSourcename($("#filerSourcename"))) {
+              return false;
+            } else {
+              $.get("./../admin/CheckMCFConfiguration", {
+                configuration : "filer"
+              }, function(data) {
+                if (data.code === 0) {
+                  if (data.registered === true) {
+                    return addFilerConnector();
+                  } else {
+                    $("#addFilerCheckMessageFailure").html(window.i18n.msgStore['jcifs-not-installed']);
+                    $("#addFilerCheckMessageFailure").show();
+                  }
 
-        } else {
-          $("#addFilerCheckMessageFailure").html("Unable to parse the connectors.xml file : " + data.status);
-          $("#addFilerCheckMessageFailure").show();
-        }
-      });
-    }
-  });
+                } else {
+                  $("#addFilerCheckMessageFailure").html("Unable to parse the connectors.xml file : " + data.status);
+                  $("#addFilerCheckMessageFailure").show();
+                }
+              });
+            }
+          });
 
-});
+        });
 // ***** Inputs verification and status management ***** //
 function clearStatus(element) {
   let parent = element.closest(".form-group");
@@ -305,7 +309,7 @@ function addFilerConnector() {
           jobStarted = " and started";
         }
         var getUrl = window.location;
-        var mcfUrl = "/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp";
+        var mcfUrl = "@GET-MCF-IP@";
         $("#addFilerMessageSuccess").html(
             "<i class='fa fa-check'></i>Job " + data.job_id + " created" + jobStarted
                 + " ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='" + mcfUrl + "'>Datafari connectors status page</a>");
@@ -363,7 +367,7 @@ function addWebConnector() {
           jobStarted = " and started";
         }
         var getUrl = window.location;
-        var mcfUrl = "/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp";
+        var mcfUrl = "@GET-MCF-IP@";
         $("#addWebMessageSuccess").html(
             "<i class='fa fa-check'></i>Job " + data.job_id + " created" + jobStarted
                 + " ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='" + mcfUrl + "'>Datafari connectors status page</a>");
