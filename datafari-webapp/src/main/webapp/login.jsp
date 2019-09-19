@@ -134,7 +134,7 @@
 		%>
 		<div class="col-sm-8"></div>
 		<input type="submit" id="loginAdminUiBtn"
-			class="btn btn-primary col-sm-3" value="Login" tabindex="4">
+			class="btn btn-primary col-sm-3" value="LOG IN" tabindex="4">
 	</form>
 
 	<%

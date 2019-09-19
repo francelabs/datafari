@@ -2,7 +2,7 @@
 input[type="submit"]#loginAdminUiBtn {
     margin-top: 4px;
     position: absolute;
-    bottom: 0;
+    bottom: 3%;
     right: 5%;
     /*In the middle of the form
     right: 125px;
