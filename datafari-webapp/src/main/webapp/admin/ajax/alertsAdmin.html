@@ -5,6 +5,7 @@
 <!-- Page specific JS -->
 <script src="./ajax/js/alertsAdmin.js" type="text/javascript"></script>
 
+<link href="./../css/style_v2.css" rel="stylesheet"></link>
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
@@ -20,85 +21,95 @@
 			</ol>
 		</div>
 	</div>
-	<div class="box no-padding col-sm-8" id="box" >
+	<div class="box no-padding col-sm" id="box" >
 		<div class="box-header">
 			<div class="box-name">
-				<i class="fas fa-calendar-o" ></i> <span id="boxname"></span>
+				<i class="fas fa-table"></i></i><span id="boxname"></span>
 			</div>
 			<div class="box-icons pull-right">
 			</div>
 			<div class="no-move"></div>
-		</div>
-		<div class="box-content">
+		</div>		
+			<div class="box-content" id="thBox">
+				<div class="documentation-style-no-margin">
+				<p class="documentation-preview"> <span id="documentation-alerstadmin"></span><a class="documentation-link" href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/8192039/Alerts+management+-+Mail+Configuration" target="_blank"> ...see more</a></p>
+			</div>
 			<form class="form-horizontal" id="form" role="form">
 				<div id="errorPrint"></div>
 				<fieldset >
 				<legend id="delayLegend"></legend>
 				<div class="form-group">
-					<label id=HourlyLabel class="col-sm-5 control-label"></label>
-					<input type="text" class="col-sm-2" id="HourlyDelay"  style="min-width : 150px;">
+					<label id=HourlyLabel class="col-sm-3 control-label"></label>
+					<input type="text" class="col-sm-1" id="HourlyDelay"  style="min-width : 150px;">
+					<div class="col-sm-1"></div>
+					<div class="form-group col-sm-6" id="hint1">
+						<label  class="control-label" id="labelHint1"></label>
+					</div>				
 				</div>
 				<div class="form-group">
-					<label id=DailyLabel class="col-sm-5 control-label"></label>
-					<input type="text" class="col-sm-2" id="DailyDelay" style="min-width : 150px;">
+					<label id=DailyLabel class="col-sm-3 control-label"></label>
+					<input type="text" class="col-sm" id="DailyDelay" style="min-width : 150px;">
 				</div>
 				<div class="form-group">
-					<label id=WeeklyLabel class="col-sm-5 control-label"></label>
-					<input type="text" class="col-sm-2" id="WeeklyDelay"  style="min-width : 150px;">
+					<label id=WeeklyLabel class="col-sm-3 control-label"></label>
+					<input type="text" class="col-sm" id="WeeklyDelay"  style="min-width : 150px;">
 				</div>
 				</fieldset>
 				<div id="prevNext" class="form-group">
-				</div>
+				</div>				
 				<fieldset >
 					<legend id="connLegend"></legend>
 					<div class="form-group">
-						<label id="HostLabel" class="col-sm-5 control-label"></label>
-						<input type="text" id="Host" name="Host" class="col-sm-2"  style="min-width : 150px;"/>
+						<label id="HostLabel" class="col-sm-3 control-label"></label>
+						<input type="text" id="Host" name="Host" class="col-sm-1"  style="min-width : 150px;"/>
+						<div class="col-sm-1"></div>
+						<div class="col-sm-6 form-group" id="hint2">
+							<label class="control-label" id="labelHint2"></label>
+						</div>
 					</div>
 					<div class="form-group">
-						<label id="PortLabel" class="col-sm-5 control-label"></label>
-						<input type="text" id="Port" name="Port" class="col-sm-2"  style="min-width : 150px;"/>
+						<label id="PortLabel" class="col-sm-3 control-label"></label>
+						<input type="text" id="Port" name="Port" class="col-sm"  style="min-width : 150px;"/>
 					</div>
 					<div class="form-group">
-						<label id="DatabaseLabel" class="col-sm-5 control-label"></label>
-						<input type="text" id="Database" name="Database" class="col-sm-2"  style="min-width : 150px;"/>
+						<label id="DatabaseLabel" class="col-sm-3 control-label"></label>
+						<input type="text" id="Database" name="Database" class="col-sm"  style="min-width : 150px;"/>
 					</div>
 					<div class="form-group">
-						<label id="CollectionLabel" class="col-sm-5 control-label"></label>
-						<input type="text" id="Collection" name="Collection" class="col-sm-2"  style="min-width : 150px;"/>
+						<label id="CollectionLabel" class="col-sm-3 control-label"></label>
+						<input type="text" id="Collection" name="Collection" class="col-sm"  style="min-width : 150px;"/>
 					</div>
 					</fieldset>
 					<div id="mailForm" class="form-group">
 					</div>
-					<div class="form-group"  id="divParam">
-					<div class="col-sm-3"></div>
-						<button type="button" class="btn btn-primary btn-label-left"
-							id="paramReg" onclick="javascript : parameters()">
-							<span><i class="fas fa-clock-o" id="paramRegtext"></i></span>
-						</button>
-						<label id="parameterSaved"></label>
-					</div>
-					<div class="form-group">
-					<div class="col-sm-3"></div>
-					<div class="col-sm-2">
-						<div class="toggle-switch toggle-switch-success">
+					<div id="align-buttons" class="form-group">
+						<div class="form-group col-sm-12" id="divParam">
+						<div class="col-sm-3">
+							<label id="paramRegLabel" for=""></label>
+						</div>
+							<button type="button" class="btn btn-primary btn-label-center"
+								id="paramReg" onclick="javascript : parameters()">
+								<span><i class="fas fa-clock-o" id="paramRegtext"></i></span>
+							</button>
+							<label id="parameterSaved"></label>
+						</div>
+						<div class="form-group">
+						<div id="switchAlertsAdmin" class="col-sm-12">
+						<div class="col-sm-3">
+							<label id="paramRegEmail" for=""></label>
+						</div>						
+						<div class="col-sm-offset-3 toggle-switch toggle-switch-success">					
 							<label>
 								<input type="checkbox" id="activated" onchange="Javascript : onOff()">
-							<div class="toggle-switch-inner"></div>
-							<div class="toggle-switch-switch"><i class="fas fa-check"></i></div>
+								<div class="toggle-switch-inner"></div>
+								<div class="toggle-switch-switch"><i class="fas fa-check"></i></div>
 							</label>
 						</div>
+						</div>
+					</div>	
 					</div>
-					</div>
-			</form>
-		</div>
+			</form>		
 	</div>
-	<div class="col-sm-4" id="hints" >
-	<div class="form-group" id="hint1">
-	<label  class="control-label" id="labelHint1"></label>
-	</div>
-	<div class="form-group" id="hint2">
-	<label class="control-label" id="labelHint2"></label>
-	</div>
+	<!-- <div class="col-sm-4" id="hints" > -->	
 	</div>
 </body>

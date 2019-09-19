@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	
     <script src="./ajax/js/protwords.js"></script>
-    
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
@@ -25,18 +23,19 @@
 	<div class="box">
 		<div class="box-header">
 			<div class="box-name">
-				<i class="fas fa-table"></i><span></span>
+				<i class="fas fa-table"></i><span id="protwordsBox"></span>
 			</div>
 			<div class="box-icons">
 			</div>
 			<div class="no-move"></div>
 		</div>
 		<div id="modBox" class="box-content">
-		
+			<div class="documentation-style-no-margin">
+				<p class="documentation-preview"> <span id="documentation-protwords"></span><a class="documentation-link" href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/554336261/Protwords+Configuration" target="_blank"> ...see more</a></p>
+			</div>
 			<form>
 				<fieldset>
 					<legend id="Modify"></legend>
-					<div class="col-sm-1"></div>
 					<div class="col-sm-2">
 						<select id="language" class="form-control"
 							onchange="javascript: getFile()">

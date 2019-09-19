@@ -13,9 +13,14 @@ $(document).ready(function() {
 	$("#topbar3").text(window.i18n.msgStore['adminUI-ELKConf']);
 	$("#submit").text(window.i18n.msgStore['save']);
 	$("#title").text(window.i18n.msgStore['adminUI-ELKConf']);
-	$("#elkActivationLabel").html(window.i18n.msgStore['elkActivationLabel'] + " (" + window.i18n.msgStore['no_save_needed'] + ")");
-	$("#kibanaURILabel").html(window.i18n.msgStore['kibanaURI']);
-	$("#authUserLabel").html(window.i18n.msgStore['authUser']);
+	$("#documentation-elkconfiguration").text(window.i18n.msgStore['documentation-elkconfiguration']);
+	$("#elkActivationLabel").html(window.i18n.msgStore['elkActivationLabel'] + " (" + window.i18n.msgStore['no_save_needed'] + ")" 
+		+ "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title=' Should ELK (re)start whenever Datafari is (re)started ? (Note that if you switching it from OFF to ON, it will immediately start ELK)'>i</button></span>");
+	$("#kibanaURILabel").html(window.i18n.msgStore['kibanaURI'] + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='The URI to reach Kibana. By default it is the real IP address of your Datafari server, so if you have externalised your ELK, you need to point to your Kibana host'>i</button></span>");
+	$("#authUserLabel").html(window.i18n.msgStore['authUser'] 
+		+ '<span><button type=\'button\' class=\'btn btn-secondary tooltips\' data-toggle=\'tooltip\' data-placement=\'right\' title="This parameter should only be filled if you use ACLs for search. In that case, enter here the user used to crawl the files. Otherwise, ELK won\'t be able to generate statistics on the corpus">i</button></span>');
+	$('#ELKSave-button').html(window.i18n.msgStore['adminUI-ELKSave'] 
+		+ "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Only saves your modifcations. You need to deactivate/activate ELK (button above) for them to be taken into account'>i</button></span>"); 
 	var input = $("#elk_activation input");
 	var ENDOFANIMATION = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
 	
@@ -85,7 +90,6 @@ $(document).ready(function() {
 				if (data!=undefined && data.code!= undefined){
 					if (data.code==0){
 						$("#message").html('<i class="fas fa-check"></i> Well Saved').addClass("success").removeClass("error").show();
-						retrieveUsers();
 					}else{
 						$("#message").html('<i class="fas fa-times"></i> An error occured, Please try again').addClass("error").removeClass("success").show();
 					}

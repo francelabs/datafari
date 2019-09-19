@@ -32,6 +32,8 @@ var previous="";
 		 document.getElementById("topbar2").innerHTML = window.i18n.msgStore['adminUI-SearchEngineConfig'];
 		 document.getElementById("topbar3").innerHTML = window.i18n.msgStore['adminUI-Stopwords'];
 		 document.getElementById("Modify").innerHTML = window.i18n.msgStore['selectLang'];
+		 document.getElementById("documentation-stopwords").innerHTML = window.i18n.msgStore['documentation-stopwords'];
+		 $('#stopwordsBox').text(window.i18n.msgStore['adminUI-Stopwords']);
 	}
 	
 function getFile(){
@@ -68,8 +70,7 @@ function getFile(){
 			//Else print the content of the file in a textArea
 			else{
 				$("#ajaxResponse").append("<legend>"+window.i18n.msgStore['stopwords']+"</legend>");
-				$("#ajaxResponse").append("<div class=\"col-sm-1\"</div>");
-				$("#ajaxResponse").append("<form class=\"col-sm-11\" id=\"res\">");
+				$("#ajaxResponse").append("<form class=\"col-sm-12\" id=\"res\">");
 				$("#res").append("<div class=\"form-group\" id=\"div1\">");
 				$("#div1").append("<fieldset id=\"fields\">");
 				$("#fields").append("<textarea id=\"input\" required resizable=\"true\"></textarea>");
@@ -91,8 +92,8 @@ function getFile(){
 	                    "margin:4px; font:10pt Arial,Verdana; cursor:text"
 		        });
 				$("#fields").append("<div class=\"alert alert-warning\" id=\"reload-warning\">" + window.i18n.msgStore['adminUI-ReloadWarning'] + "</div>");
-				$("#fields").append("<button style=\"margin-top : 10px;\" type=\"Submit\" class=\"btn btn-primary btn-label-left\" id=\"submit\" data-loading-text=\"<i class='fa fa-spinner fa-spin'></i> " + 
-						window.i18n.msgStore['confirm'] + "\">"+window.i18n.msgStore['confirm']+"</button>");
+				$("#fields").append("<div><div class='col-sm-3'><label id='stopWordsConfirm'>Click to save and activate the modifications</label></div><button type=\"Submit\" class=\"col-sm btn btn-primary btn-label-left\" id=\"submit\" data-loading-text=\"<i class='fa fa-spinner fa-spin'></i> " + 
+						window.i18n.msgStore['confirm'] + "\">"+window.i18n.msgStore['confirm']+"</button></div>");
 				$("#div1").append("</fieldset>");
 				$("#res").append("</div>");
 				$("#ajaxResponse").append("</form>");

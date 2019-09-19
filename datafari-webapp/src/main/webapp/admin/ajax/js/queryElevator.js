@@ -4,7 +4,7 @@
 $(document).ready(function() {
 		setupLanguage();
 		fillQuerySelector();
-		var core = "@MAINCOLLECTION@";
+		var core = "FileShare";
 		
 		var input = $("#query-elevator_activation input");
 		
@@ -259,14 +259,19 @@ function setupLanguage(){
 	 document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
 	 document.getElementById("topbar2").innerHTML = window.i18n.msgStore['adminUI-SearchEngineConfig'];
 	 document.getElementById("topbar3").innerHTML = window.i18n.msgStore['adminUI-QueryElevator'];
-	 document.getElementById("selectQuery").innerHTML = window.i18n.msgStore['selectQuery'];
+	 document.getElementById("documentation-queryelevator").innerHTML = window.i18n.msgStore['documentation-queryelevator'];
+	 document.getElementById("selectQuery").innerHTML = window.i18n.msgStore['selectQuery'] 
+	 + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Select a query which already contains elevated documents'>i</button></span>";
 	 document.getElementById("modifyElevateLabel").innerHTML = window.i18n.msgStore['modifyElevateLabel'];
-	 document.getElementById("modifyDocsOderLabel").innerHTML = window.i18n.msgStore['modifyDocsOderLabel'];
+	 document.getElementById("modifyDocsOderLabel").innerHTML = window.i18n.msgStore['modifyDocsOderLabel']
+	 + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='The documents are ordered by priority of appearance in the search results, which is also indicated by their \"Position\" number. Here you can simply drag and drop the documents to change their position in the search results. You can also remove some of them if you want by clicking on their associated trash icon'>i</button></span>";
 	 document.getElementById("elevatorDocsListLabel").innerHTML = window.i18n.msgStore['elevatorDocsListLabel'];
 	 $("#saveElevateConf").html(window.i18n.msgStore["confirm"]);
 	 $("#saveElevateConf").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
 	 $("#deleteElevateConf").html(window.i18n.msgStore["deleteElevatorConf"]);
 	 $("#deleteElevateConf").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['deleteElevatorConf']);
+	 $('.confirmElevateConf').html(window.i18n.msgStore['adminUI-ClickConfirm']);
+	 $('#deleteElevateConfButton').html(window.i18n.msgStore['adminUI-ClickDelete'] + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Clicking Delete will erase all the boosts for the documents listed above, for the currently selected query'>i</button></span>");
 	 
 	 $("#createElevateLabel").html(window.i18n.msgStore["createElevateLabel"]);
 	 $("#queryThLabel").html(window.i18n.msgStore["queryThLabel"]);

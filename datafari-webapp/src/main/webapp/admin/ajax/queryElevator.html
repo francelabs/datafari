@@ -12,25 +12,13 @@
 		<a href="#" class="show-sidebar"> <i class="fas fa-bars"></i>
 		</a>
 		<ol class="breadcrumb pull-left">
-				<li><a id="topbar1" class="indexAdminUIBreadcrumbLink"></a></li>
-				<li><a id="topbar2" href="#"></a></li>
-				<li><a id="topbar3" href="#"></a></li>
+			<li><a id="topbar1" class="indexAdminUIBreadcrumbLink"></a></li>
+			<li><a id="topbar2" href="#"></a></li>
+			<li><a id="topbar3" href="#"></a></li>
 		</ol>
 	</div>
 </div>
-<!--End Breadcrumb-->
-<div><a href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/22052870/Boosting+documents+from+the+admin+UI" target="_blank">Documentation</a></div>
-  <br/>
-  <span id="query-elevator-ui-desc"></span>
-  <div id="query-elevator_activation" class="toggle-switch toggle-switch-success">
-    <label>
-      <input type="checkbox">
-      <div class="toggle-switch-inner"></div>
-      <div class="toggle-switch-switch"><i class="fas fa-check"></i></div>
-    </label>
-  </div>
-  <br/>
-
+<!--End Breadcrumb--> 
 	<div id="modBox" class="box">
 		<div class="box-header">
 			<div class="box-name">
@@ -41,6 +29,17 @@
 			<div class="no-move"></div>
 		</div>
 		<div class="box-content">
+			<div class="documentation-style-no-margin">
+				<p class="documentation-preview"> <span id="documentation-queryelevator"></span><a href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/22052870/Boosting+documents+from+the+admin+UI" target="_blank">...see more</a></p>
+			</div>
+			<span id="query-elevator-ui-desc" class="col-sm-3"></span>
+			<div id="query-elevator_activation" class="toggle-switch toggle-switch-success">
+			<label>
+			  <input type="checkbox">
+			  <div class="toggle-switch-inner"></div>
+			  <div class="toggle-switch-switch"><i class="fas fa-check"></i></div>
+			</label>
+			</div>
 			<form id="modifyElevateForm">
 				<fieldset>
 					<legend id="selectQuery"></legend>
@@ -51,7 +50,7 @@
 					</div>
 				</fieldset>
 				
-				<div id="docs">
+				<div class="box-content" id="docs">
 					<fieldset>
 						<legend id="modifyDocsOderLabel"></legend>
 						<div class="box">
@@ -78,7 +77,20 @@
 						</div>
 						
 						<div>
-							<button class="btn btn-primary btn-label-left col-sm-2" name="saveElevate" id="saveElevateConf" data-toggle="tooltip" data-placement="right" title=""></button><button class="btn btn-primary btn-label-left col-sm-2" name="deleteElevate" id="deleteElevateConf" data-toggle="tooltip" data-placement="right" title=""></button><span class="message" id="message"></span><br /><span class="message" id="messageZK"></span>
+							<div class="row">
+								<div class="col-sm-3">
+									<label class="confirmElevateConf" for=""></label>
+								</div>
+								<button class="btn btn-primary btn-label-left col-sm-2" name="saveElevate" id="saveElevateConf" data-toggle="tooltip" data-placement="right" title=""></button>
+							</div>
+							<div class="row">
+								<div class="col-sm-3">
+									<label id="deleteElevateConfButton" for=""></label>
+								</div>
+								<button class="btn btn-primary btn-label-left col-sm-2" name="deleteElevate" id="deleteElevateConf" data-toggle="tooltip" data-placement="right" title=""></button>
+							</div>
+								<span class="message" id="message"></span><br />
+								<span class="message" id="messageZK"></span>
 						</div>
 					</fieldset>
 				</div>
@@ -121,7 +133,12 @@
 						</div>
 						
 						<div>
-							<button class="btn btn-primary btn-label-left col-sm-2" name="saveNew" id="saveNewElevate"></button><span class="message" id="message2"></span><br /><span class="message" id="messageZK2"></span>
+							<div class="col-sm-3">
+									<label class="confirmElevateConf" for=""></label>
+								</div>
+							<button class="btn btn-primary btn-label-left col-sm-2" name="saveNew" id="saveNewElevate"></button>
+							<span class="message" id="message2"></span><br />
+							<span class="message" id="messageZK2"></span>
 						</div>
 					</fieldset>
 				</div>

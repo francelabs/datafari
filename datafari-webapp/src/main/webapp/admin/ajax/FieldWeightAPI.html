@@ -17,10 +17,7 @@
 			</ol>
 		</div>
 	</div>
-	<div class="col-sm-12"><span id="globalAnswer"></span></div>
-	<div><a href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/17858566/Index+fields+relevancy+weights+Configuration" target="_blank">Documentation</a></div>
-	<br>
-	
+	<div class="col-sm-12"><span id="globalAnswer"></span></div>	
 	<div class="col-sm-12"></div>
 	<div class="box">
 	<div class="box-header">
@@ -32,19 +29,37 @@
 			</div>
 			<div class="no-move"></div>
 		</div>
+		<div class="documentation-style">
+			<p class="documentation-preview"> <span id="documentation-fieldweightapi"></span><a href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/17858566/Index+fields+relevancy+weights+Configuration" target="_blank">...see more</a></p>
+		</div>
 	<div id="tableBox" class="box-content">
 			<form class="form-horizontal" role="form">
 			<table class="table table-striped table-bordered table-hover table-heading no-border-bottom" id="tableau">
-			<thead id="thead"><tr><th id="name"></th><th id="type"></th><th id="delete"></th></tr></thead>
+			<thead id="thead">
+				<tr>
+					<th id="name"></th>
+					<th id="type"></th>
+					<th id="delete"></th>
+				</tr>
+			</thead>
 			<tbody id="tbody"></tbody>
 			</table>
 			</form>
 			<div>
-			<p><span id="explanationsText"></span></p>
+				<p><span id="explanationsText"></span></p>
 			</div>
-			<button id="addRow" name="addRow"></button>
-			<button id="submittab" name="submittab"></button>
-			
+			<div class="form-group">
+				<div class="col-sm-3">
+					<label id="fieldWeightAdd" for=""></label>
+				</div>
+				<button id="addRow" name="addRow" class="btn btn-primary col-sm"></button>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-3">
+					<label id="fieldWeightConfirm" for=""></label>
+				</div>
+				<button id="submittab" name="submittab" class="btn btn-primary col-sm" ></button>
+			</div>			
   </div>
   </div>
 	
@@ -60,23 +75,28 @@
 			<div class="no-move"></div>
 		</div>
 		<div id="thBox" class="box-content">
+			<div class="documentation-style-no-margin">
+				<p class="documentation-preview">Because the concepts of PF and QF can be challenging to understand, both are available only via the expert mode. In order to better understand these concepts, please consult the Solr documentation on the edismax query parser<a class="documentation-link" href="https://lucene.apache.org/solr/guide/7_5/the-dismax-query-parser.html" target="_blank"> ...see more</a></p>
+			</div>
 			<form class="form-horizontal" role="form">
-				<div class="form-group" >
-					
-					<div>
-						<label id="labelth" class="col-sm-5 control-label"></label>
-						<input type="text"  id="qfAPI" name="qfAPI" class="col-sm-5">
-						<div class="col-sm-1"></div>
-						
-					</div><br/>
-					
-					<div>
-						<label id="labelth2" class="col-sm-5 control-label"></label>
-						<input type="text"  id="pfAPI" name="pfAPI" class="col-sm-5">
-						<div class="col-sm-1"></div>
-						<label id="labeaaaaa" class="col-sm-5 control-label"></label>
-						<button id="submitth" name="submitth" class="btn btn-primary btn-label-left  col-sm-5"></button>
-					</div><br/>
+				<div class="form-group">					
+					<div class="col-sm-12">
+						<label id="labelth" class="col-sm-3 control-label"></label>
+						<input type="text"  id="qfAPI" name="qfAPI" class="col-sm-3">
+						<div class="col-sm"></div>					
+					</div>					
+					<div class="col-sm-12">
+						<label id="labelth2" class="col-sm-3 control-label"></label>
+						<input type="text"  id="pfAPI" name="pfAPI" class="col-sm-3">
+						<div class="col-sm"></div>
+					</div>					
+				</div>
+				<div class="form-group col-sm" id="field-weight-expert-margin">						
+					<div class="col-sm-3">
+						<label id="fieldWeightExpertConfirm" for=""></label>
+					</div>
+					<!-- <label id="labeaaaaa" class="col-sm-3 control-label"></label> -->
+					<button id="submitth" name="submitth" class="btn btn-primary btn-label-left  col-sm-3"></button>
 					<div class="col-sm-12"><span id="answerth"></span></div>
 				</div>
 			</form>

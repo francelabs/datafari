@@ -2,7 +2,6 @@
 <html>
 <head>
 <script src="./ajax/js/sizeLimitations.js"></script>
-<!-- Needed for URL parameter parsing -->
 <meta charset="UTF-8">
 <title>Size Limitations</title>
 </head>
@@ -18,9 +17,8 @@
 			</ol>
 		</div>
 	</div>
-	<div class="col-sm-12"><span id="globalAnswer"></span></div>
-	<div><a href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/8192102/Highlighting+configuration" target="_blank">Documentation</a></div>
-	<br/>
+	<div class="col-sm-12"><span id="globalAnswer"></span></div>	
+	<!-- <br/> -->
 	<div class="col-sm-12"></div>
 	<div class="box">
 		<div class="box-header">
@@ -32,18 +30,25 @@
 			</div>
 			<div class="no-move"></div>
 		</div>
+		<div class="documentation-style">
+			<p class="documentation-preview"> <span id="documentation-sizelimitations"></span><a class="documentation-link" href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/8192102/Highlighting+configuration" target="_blank">  ...see more</a></p>
+		</div>
 		<div id="hlBox" class="box-content">
 			<form class="form-horizontal" role="form">
-				<div class="form-group" >
-					
+				<div class="form-group">					
 					<div>
-						<label id="labelhl" class="col-sm-5 control-label"></label>
-						<input type="number" min="0"id="maxhl" name="maxhl" class="col-sm-1">
-						<div class="col-sm-1"></div>
-						<button id="submithl" name="submithl" class="btn btn-primary btn-label-left  col-sm-2"></button>
-					</div><br/>
+						<label id="labelhl" class="col-sm-3 control-label"></label>
+						<input type="number" min="0"id="maxhl" name="maxhl" class="col-sm-1">			
+					</div>					
+				</div>
+				<div class="form-group">
+					<div class="col-sm-3">
+						<label id="size-limitations-confirm"></label>
+					</div>
+					<button id="submithl" name="submithl" class="btn btn-primary btn-label-left  col-sm-2"></button>
 					<div class="col-sm-12"><span id="answerhl"></span></div>
 				</div>
+				
 			</form>
 		</div>
 	</div>

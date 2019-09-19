@@ -17,6 +17,8 @@ var clearTimeouts = function() {
 $(document).ready(function() {
   $('#main').bind('DOMNodeRemoved', clearTimeouts);
   $('backupDir-label').text(window.i18n.msgStore["adminUI-MCFBackupRestore-backupDir-label"]);
+  $('.MCFSave').html(window.i18n.msgStore['adminUI-MCFSave']
+    + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Be careful, if you do not check the “Start the job once created” checkbox, the job will be saved and it will present in the crawlers admin interface, but it will not start automatically'>i</button></span>");
 
   // Set the breadcrumbs
   document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
@@ -25,6 +27,7 @@ $(document).ready(function() {
   document.getElementById("topbar2").innerHTML = window.i18n.msgStore['adminUI-Connectors'];
   // Set the i18n for page elements
   document.getElementById("box-title").innerHTML = window.i18n.msgStore['adminUI-Connectors-MCFSimplified'];
+  document.getElementById("documentation-mcfsimplified").innerHTML = window.i18n.msgStore['documentation-mcfsimplified'];
 
   document.getElementById("mcfsimplified-title-label").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-title'];
   // document.getElementById("backupDir-label-default").innerHTML =
@@ -41,6 +44,7 @@ $(document).ready(function() {
   document.getElementById("webSeedsLabel").innerHTML = window.i18n.msgStore['seeds'];
   document.getElementById("webEmailLabel").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-email'];
   document.getElementById("webExclusionLabel").innerHTML = window.i18n.msgStore['exclusions'];
+  document.getElementById("webSourcenameLabel").innerHTML = window.i18n.msgStore['sourcename'];
   $("#seeds").attr("placeholder", window.i18n.msgStore['seeds']);
   $("#email").attr("placeholder", window.i18n.msgStore['adminUI-MCFSimplified-email']);
   $("#exclusions").attr("placeholder", window.i18n.msgStore['exclusions']);
@@ -53,6 +57,7 @@ $(document).ready(function() {
   document.getElementById("userLabel").innerHTML = window.i18n.msgStore['filerUser'];
   document.getElementById("passwordLabel").innerHTML = window.i18n.msgStore['adminUI-Password'];
   document.getElementById("pathsLabel").innerHTML = window.i18n.msgStore['paths'];
+  document.getElementById("filerSourcenameLabel").innerHTML = window.i18n.msgStore['sourcename'];
   document.getElementById("securityLabel").innerHTML = window.i18n.msgStore['security'];
   $("#startJobLabel").html(window.i18n.msgStore['startJob']);
   $("#startJobWebLabel").html(window.i18n.msgStore['startJob']);
@@ -60,6 +65,7 @@ $(document).ready(function() {
   $("#password").attr("placeholder", window.i18n.msgStore['adminUI-Password']);
   $("#user").attr("placeholder", window.i18n.msgStore['filerUser']);
   $("#paths").attr("placeholder", window.i18n.msgStore['paths']);
+  $("#filerSourcename").attr("placeholder", window.i18n.msgStore['sourcename']);
   ("#newFilerConfig").innerHTML = window.i18n.msgStore['confirm'];
   $("#newFilerConfig").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
 
@@ -68,11 +74,13 @@ $(document).ready(function() {
   $("#password-tip").attr("title", window.i18n.msgStore['password-tip']);
   $("#user-tip").attr("title", window.i18n.msgStore['user-tip']);
   $("#paths-tip").attr("title", window.i18n.msgStore['paths-tip']);
+  $("#filerSourcename-tip").attr("title", window.i18n.msgStore['sourcename-tip']);
   $("#security-tip").attr("title", window.i18n.msgStore['security-tip']);
 
   $("#seeds-tip").attr("title", window.i18n.msgStore['seeds-tip']);
   $("#email-tip").attr("title", window.i18n.msgStore['email-tip']);
   $("#exclusions-tip").attr("title", window.i18n.msgStore['exclusions-tip']);
+  $("#webSourcename-tip").attr("title", window.i18n.msgStore['sourcename-tip']);
 
   $(".asteriskLabel").html(window.i18n.msgStore['mandatoryField']);
 
@@ -108,7 +116,7 @@ $(document).ready(function() {
 
   $("#addWeb").submit(function(e) {
     e.preventDefault();
-    if (!checkSeeds($("#seeds")) && checkemail($("#email")) && checkExclusions($("#exclusions"))) {
+    if (!checkSeeds($("#seeds")) && checkemail($("#email")) && checkExclusions($("#exclusions")) && checkSourcename($("#webSourcename"))) {
       return false;
     } else {
       return addWebConnector();
@@ -118,7 +126,7 @@ $(document).ready(function() {
   $("#addFiler").submit(function(e) {
     e.preventDefault();
     $("#addFilerCheckMessageFailure").hide();
-    if (!checkServer($("#server")) && checkUser($("#user")) && checkPassword($("#password")) && checkPaths($("#paths"))) {
+    if (!checkServer($("#server")) && checkUser($("#user")) && checkPassword($("#password")) && checkPaths($("#paths")) && checkSourcename($("#filerSourcename"))) {
       return false;
     } else {
       $.get("./../admin/CheckMCFConfiguration", {
@@ -171,6 +179,12 @@ function setError(element) {
   element.closest(".form-group").addClass("has-feedback");
   element.next().addClass("glyphicon-remove");
 };
+
+function checkSourcename(element) {
+  clearStatus(element);
+  setSuccess(element);
+  return true;
+}
 
 function checkSeeds(element) {
   clearStatus(element);
@@ -291,7 +305,7 @@ function addFilerConnector() {
           jobStarted = " and started";
         }
         var getUrl = window.location;
-        var mcfUrl = getUrl.protocol + "//" + getUrl.hostname + ":9080" + "/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp";
+        var mcfUrl = "/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp";
         $("#addFilerMessageSuccess").html(
             "<i class='fa fa-check'></i>Job " + data.job_id + " created" + jobStarted
                 + " ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='" + mcfUrl + "'>Datafari connectors status page</a>");
@@ -349,7 +363,7 @@ function addWebConnector() {
           jobStarted = " and started";
         }
         var getUrl = window.location;
-        var mcfUrl = getUrl.protocol + "//" + getUrl.hostname + ":9080" + "/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp";
+        var mcfUrl = "/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp";
         $("#addWebMessageSuccess").html(
             "<i class='fa fa-check'></i>Job " + data.job_id + " created" + jobStarted
                 + " ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='" + mcfUrl + "'>Datafari connectors status page</a>");

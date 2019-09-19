@@ -31,8 +31,10 @@ var previous="";
 		 document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
 		 document.getElementById("topbar2").innerHTML = window.i18n.msgStore['adminUI-SearchEngineConfig'];
 		 document.getElementById("topbar3").innerHTML = window.i18n.msgStore['adminUI-Protwords'];
+		 document.getElementById("documentation-protwords").innerHTML = window.i18n.msgStore['documentation-protwords'];
 		 document.getElementById("Modify").innerHTML = window.i18n.msgStore['selectLang'];
 		 document.getElementById("protExplain").innerHTML = window.i18n.msgStore['protExplain'];
+		 $('#protwordsBox').text(window.i18n.msgStore['adminUI-Protwords']);
 		 
 	}
 	
@@ -70,8 +72,7 @@ function getFile(){
 			//Else print the content of the file in a textArea
 			else{
 				$("#ajaxResponse").append("<legend>"+window.i18n.msgStore['protwords']+"</legend>");
-				$("#ajaxResponse").append("<div class=\"col-sm-1\"</div>");
-				$("#ajaxResponse").append("<form class=\"col-sm-11\" id=\"res\">");
+				$("#ajaxResponse").append("<form class=\"col-sm-12\" id=\"res\">");
 				$("#res").append("<div class=\"form-group\" id=\"div1\">");
 				$("#div1").append("<fieldset id=\"fields\">");
 				$("#fields").append("<textarea id=\"input\" required resizable=\"true\"></textarea>");
@@ -93,8 +94,8 @@ function getFile(){
 	                    "margin:4px; font:10pt Arial,Verdana; cursor:text"
 		        });
 				$("#fields").append("<div class=\"alert alert-warning\" id=\"reload-warning\">" + window.i18n.msgStore['adminUI-ReloadWarning'] + "</div>");
-				$("#fields").append("<button style=\"margin-top : 10px;\" type=\"Submit\" class=\"btn btn-primary btn-label-left\" id=\"submit\" data-loading-text=\"<i class='fa fa-spinner fa-spin'></i> " + 
-						window.i18n.msgStore['confirm'] + "\">"+window.i18n.msgStore['confirm']+"</button>");
+				$("#fields").append("<div><div class='col-sm-3'><label>Click to save and activate the modifications</label></div><button type=\"Submit\" class=\"btn btn-primary btn-label-left\" id=\"submit\" data-loading-text=\"<i class='fa fa-spinner fa-spin'></i> " + 
+						window.i18n.msgStore['confirm'] + "\">"+window.i18n.msgStore['confirm']+"</button></div>");
 				$("#div1").append("</fieldset>");
 				$("#res").append("</div>");
 				$("#ajaxResponse").append("</form>");

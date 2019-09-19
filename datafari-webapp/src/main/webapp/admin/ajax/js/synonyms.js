@@ -29,12 +29,16 @@ function setupLanguage(){
 	 document.getElementById("topbar2").innerHTML = window.i18n.msgStore['adminUI-SearchEngineConfig'];
 	 document.getElementById("topbar3").innerHTML = window.i18n.msgStore['adminUI-Synonyms'];
 	 document.getElementById("Modify").innerHTML = window.i18n.msgStore['selectLang'];
+	 document.getElementById("documentation-synonyms").innerHTML = window.i18n.msgStore['documentation-synonyms'];
+	 $("#synonymsBox").text(window.i18n.msgStore['adminUI-Synonyms']);
 	 $("#reload-warning").html(window.i18n.msgStore['adminUI-ReloadWarning']);
 	 $("#validate").html(window.i18n.msgStore['validModifications']);
 	 $("#validate").attr('data-loading-text', "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['validModifications']);
 	 $("#thWords").html(window.i18n.msgStore['words']);
 	 $("#thSynonyms").html(window.i18n.msgStore['synonyms']);
 	 $("#synonymsListLabel").html(window.i18n.msgStore['synonymsListLabel']);
+	 $('#validateModification').html(window.i18n.msgStore['adminUI-ValidateModifications'] 
+	 	+ "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='You first need to Save your changes before clicking here if you want your modifications to be taken into account'>i</button></span>");
 }
 
 function cleanTable() {
@@ -165,7 +169,7 @@ function getFile(){
 				setFunctions();
 				
 				// Add line to add new synonyms
-				$("#synonymsTableContent").append("<tr id='addLine'><td colspan=3><button class='btn btn-primary btn-label-left' name='addSynonyms' id='addSynonyms'>" + window.i18n.msgStore['addSynonyms'] + "</button></td></tr>");
+				$("#synonymsTableContent").append("<tr id='addLine'><td colspan=3><div class='col-sm-3'><label for=''>Click to save the changes above</label><span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Once you have saved by clicking this button, don’t forget to click on the button further down to activate these changes'>i</button></span></div><button class='col-sm btn btn-primary btn-label-left' name='addSynonyms' id='addSynonyms'>" + window.i18n.msgStore['addSynonyms'] + "</button></td></tr>");
 				$("#addSynonyms").click(function() {
 					$("#synonymsTableContent").append("<tr><td>" + createAddWordDiv() + "</td><td>" + createAddWordDiv() + "</td><td class='btn-danger'><a><i class='far fa-trash-alt'></i></a></td></tr>");
 					$("#synonymsTableContent tr:last td:last").click(function(){

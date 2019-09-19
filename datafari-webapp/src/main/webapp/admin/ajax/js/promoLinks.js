@@ -36,7 +36,10 @@ function setupLanguage() {
   $("#topbar1").text(window.i18n.msgStore['home']);
   $("#topbar2").text(window.i18n.msgStore['adminUI-SearchEngineConfig']);
   $("#topbar3").text(window.i18n.msgStore['adminUI-PromoLinks']);
+  $('#promoLinksBox').text(window.i18n.msgStore['adminUI-PromoLinks']);
   document.getElementById("legendAdd").innerHTML = window.i18n.msgStore['promoLinkAdd'];
+  document.getElementById("documentation-promolinks").innerHTML = window.i18n.msgStore['documentation-promolinks'];
+  $('#legendAdd').append("<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='" + window.i18n.msgStore['promolink-default-explanation'] + "'>i</button></span>");
   document.getElementById("searchBar").placeholder = window.i18n.msgStore['promoLinkSearch'];
   document.getElementById("contextMenu").innerHTML = window.i18n.msgStore['Results'];
 }
@@ -113,7 +116,7 @@ function getTab() {
             }
           }
         },
-        // If there was no resonse from the server
+        // If there was no response from the server
         error : function(jqXHR, textStatus, errorThrown) {
           console.log("Something really bad happened " + textStatus);
           $("#ajaxResponse").html(jqXHR.responseText);
@@ -131,45 +134,43 @@ function getTab() {
 
       });
 }
-function addProm() {
+function addProm() {  
   // print the add promoLink form
   $("#addPromForm").empty();
   $("#addPromFormBis").empty();
   $("#addPromForm")
       .append(
-          "<div class=\"col-xs-12\"><div class=\"box\"><div class=\"box-header\"><div class=\"box-name\"><i class=\"fa fa-table\"></i><span>"
-              + window.i18n.msgStore['promoLinkAdd']
-              + "</span></div><div class=\"box-icons\"><a class=\"collapse-link\"><i class=\"fa fa-chevron-up\"></i></a><a class=\"expand-link\"><i class=\"fa fa-expand\"></i></a></div><div class=\"no-move\"></div></div><div id=\"addBox\" class=\"box-content\">");
+          "<div id=\"addBox\" class=\"box-content\">");
   $("#addBox").append("<form id=\"add\" class=\"form-horizontal\" role=\"form\">");
-  $("#add").append("<span class='fa fa-info-circle default-explanation'>" + window.i18n.msgStore['promolink-default-explanation'] + "</span>");
+  // $("#add").append("<span class='fa fa-info-circle default-explanation'><p class='force-font'>" + window.i18n.msgStore['promolink-default-explanation'] + "</p></span>");
   $("#add").append("<fieldset id=\"fieldContent\">");
-  $("#fieldContent").append("<legend>" + window.i18n.msgStore['param'] + "</legend>");
+  $("#fieldContent").append("<legend>" + window.i18n.msgStore['param']);
   $("#fieldContent").append("<div class=\"form-group\" id=\"div1\">");
   $("#div1").append(
-      "<div class=\"col-sm-2 control-label\"><span class=\"fa fa-asterisk \" style=\"color : red\"></span><label class=\"control-label\">" + window.i18n.msgStore['keyword'] + "</label></div>");
-  $("#div1").append("<input required type=\"text\" id=\"keyword\" name=\"keyword\" placeholder=" + window.i18n.msgStore['keyword'] + " class=col-sm-2>");
+      "<div class=\"col-sm-3 control-label\"><span class=\"fa fa-asterisk \" style=\"color : red\"></span><label class=\"control-label\">" + window.i18n.msgStore['keyword'] + "</label></div>");
+  $("#div1").append("<input required type=\"text\" id=\"keyword\" name=\"keyword\" placeholder=" + window.i18n.msgStore['keyword'] + " class=col-sm-3>");
   $("#fieldContent").append("</div>");
 
   // add title
   $("#fieldContent").append("<div class=\"form-group\" id=\"div11\">");
   $("#div11").append(
-      "<div class=\"col-sm-2 control-label\"><span class=\"fa fa-asterisk \" style=\"color : red\"></span><label class=\"control-label default-label\">" + window.i18n.msgStore['title'] + " ("
+      "<div class=\"col-sm-3 control-label\"><span class=\"fa fa-asterisk \" style=\"color : red\"></span><label class=\"control-label default-label\">" + window.i18n.msgStore['title'] + " ("
           + window.i18n.msgStore['promolink_default'] + ")</label></div>");
-  $("#div11").append("<input required type=\"text\" id=\"title\" name=\"title\" placeholder=" + window.i18n.msgStore['title'] + " class=col-sm-2 >");
-  $("#fieldContent").append("</div>");
+  $("#div11").append("<input required type=\"text\" id=\"title\" name=\"title\" placeholder=" + window.i18n.msgStore['title'] + " class=col-sm-3 ><div class='col-sm-2'></div>");
+  $("#fieldContent").append("</div><div>");
 
   // add title per language
   $.each(languages, function(index, value) {
     $("#fieldContent").append("<div class=\"form-group\" id=\"div11" + value + "\">");
-    $("#div11" + value + "").append("<div class=\"col-sm-2 control-label\"><label class=\"control-label\">" + '(' + value + ') ' + window.i18n.msgStore['title'] + "</label></div>");
-    $("#div11" + value + "").append("<input type=\"text\" id=\"title_" + value + "\" name=\"title_" + value + "\" placeholder=" + "(" + value + ")" + " class=col-sm-2 >");
+    $("#div11" + value + "").append("<div class=\"col-sm-3 control-label\"><label class=\"control-label\">" + '(' + value + ') ' + window.i18n.msgStore['title'] + "</label></div>");
+    $("#div11" + value + "").append("<input type=\"text\" id=\"title_" + value + "\" name=\"title_" + value + "\" placeholder=" + "(" + value + ")" + " class=col-sm-3>");
     $("#fieldContent").append("</div>");
   });
 
   // add content
-  $("#fieldContent").append("<div class=\"form-group\" id=\"div2\">");
+  $("#fieldContent").append("</div><div class=\"form-group\" id=\"div2\">");
   $("#div2").append(
-      "<div class=\"col-sm-2 control-label\"><span class=\"fa fa-asterisk \" style=\"color : red\"></span><label class=\"control-label default-label\">" + window.i18n.msgStore['content'] + " ("
+      "<div class=\"col-sm-3 control-label\"><span class=\"fa fa-asterisk \" style=\"color : red\"></span><label class=\"control-label default-label\">" + window.i18n.msgStore['content'] + " ("
           + window.i18n.msgStore['promolink_default'] + ")</label></div>");
   $("#div2").append("<textarea required type=\"text\" id=\"contentPromoLink\" name=\"content\" placeholder=" + window.i18n.msgStore['content'] + " class=\"col-sm-8\"></textarea>");
   $("#fieldContent").append("</div>");
@@ -177,7 +178,7 @@ function addProm() {
   // add content per language
   $.each(languages, function(index, value) {
     $("#fieldContent").append("<div class=\"form-group\" id=\"div2" + value + "\">");
-    $("#div2" + value + "").append("<div class=\"col-sm-2 control-label\"><label class=\"control-label\">" + '(' + value + ') ' + window.i18n.msgStore['content'] + "</label></div>");
+    $("#div2" + value + "").append("<div class=\"col-sm-3 control-label\"><label class=\"control-label\">" + '(' + value + ') ' + window.i18n.msgStore['content'] + "</label></div>");
     $("#div2" + value + "").append("<textarea type=\"text\" id=\"content_" + value + "\" name=\"content_" + value + "\" placeholder=" + "(" + value + ") class=\"col-sm-8\"></textarea>");
     $("#fieldContent").append("</div>");
   });
@@ -186,23 +187,23 @@ function addProm() {
   $("#add").append("<fieldset id=\"fieldDate\">")
   $("#fieldDate").append("<legend id=\"legendDate\">" + window.i18n.msgStore['dates'] + "</legend>");
   $("#fieldDate").append(
-      "<div class=\"form-group\" id=\"div3\"><label class=\"col-sm-2 control-label\">" + window.i18n.msgStore['dateStart']
-          + "</label><input type=\"text\" id=\"dateB\" name=\"dateB\" class=\"col-sm-2\" placeholder=\"Date\"></div>");
+      "<div class=\"form-group\" id=\"div3\"><label class=\"col-sm-3 control-label\">" + window.i18n.msgStore['dateStart']
+          + "</label><input type=\"text\" id=\"dateB\" name=\"dateB\" class=\"col-sm-3\" placeholder=\"Date\"></div>");
   $("#dateB").datepicker({
     setDate : new Date()
   });
   $("#fieldDate").append("<div class=\"form-group\" id=\"div31\">");
-  $("#div31").append("<label class=\"col-sm-2 control-label\">" + window.i18n.msgStore['dateEnd'] + "</label>");
-  $("#div31").append("<input type=\"text\" id=\"dateE\" name=\"dateE\" class=\"col-sm-2\" placeholder=\"Date\">");
+  $("#div31").append("<label class=\"col-sm-3 control-label\">" + window.i18n.msgStore['dateEnd'] + "</label>");
+  $("#div31").append("<input type=\"text\" id=\"dateE\" name=\"dateE\" class=\"col-sm-3\" placeholder=\"Date\">");
   $("#dateE").datepicker({
     setDate : new Date()
   });
   $("#div3").append("</div>");
   $("#add").append("</fieldset>");
   $("#add").append("<div class=\"form-group\" id=\"div4\">");
-  $("#div4").append("<div class=\"col-sm-2\"></div>");
+  $("#div4").append("<div class=\"col-sm-3\"><label id=\"promoLinkConfirm\">Click to validate and activate your promolink creation or changes</label></div>");
   $("#div4").append(
-      "<input type=\"Submit\" id=\"newPromoLink\" name=\"addProm\" class=\"btn btn-primary btn-label-left col-sm-2\" value=" + window.i18n.msgStore['confirm']
+      "<input type=\"Submit\" id=\"newPromoLink\" name=\"addProm\" class=\"btn btn-primary btn-label-left col-sm-3\" value=" + window.i18n.msgStore['confirm']
           + " /><div class=\"col-sm-6\"></div><i class=\"fa fa-asterisk\" style=\"color : red\"></i><label class=\"control-label\">" + window.i18n.msgStore['mandatoryField'] + "</label>");
   $("#add").append("</div>");
   $("#addBox").append("</form>");
@@ -251,26 +252,26 @@ function verifAdd() { // Used to check if ther's already a promoLink with the sp
           // print the attributes of this
           // promoLink
           $("#addPromFormBis").empty();
-          $("#addPromFormBis").append("<div class=\"col-sm-2\"></div>");
-          $("#addPromFormBis").append("<h3>" + window.i18n.msgStore['promoLinkAlready'] + "</h3><div class=\"col-sm-2\"></div><br />");
-          $("#addPromFormBis").append("<div class=\"col-sm-2\"></div>");
+          $("#addPromFormBis").append("<div class=\"col-sm-3\"></div>");
+          $("#addPromFormBis").append("<h3>" + window.i18n.msgStore['promoLinkAlready'] + "</h3><div class=\"col-sm-3\"></div><br />");
+          $("#addPromFormBis").append("<div class=\"col-sm-3\"></div>");
           $("#addPromFormBis").append("<h3>" + window.i18n.msgStore['title'] + data.response.docs[0].title + ", " + window.i18n.msgStore['content'] + data.response.docs[0].content + " </h3>");
-          $("#addPromFormBis").append("<div class=\"col-sm-2\"></div></br><div class=\"col-sm-2\"></div>");
+          $("#addPromFormBis").append("<div class=\"col-sm-3\"></div></br><div class=\"col-sm-3\"></div>");
           if (data.response.docs[0].dateBeginning != undefined) {
             $("#addPromFormBis").append("<h3>" + window.i18n.msgStore['dateStart'] + data.response.docs[0].dateBeginning + ", </h3>");
-            $("#addPromFormBis").append("<div class=\"col-sm-2\"></div><br />");
+            $("#addPromFormBis").append("<div class=\"col-sm-3\"></div><br />");
           }
           if (data.response.docs[0].dateEnd != undefined) {
-            $("#addPromFormBis").append("<div class=\"col-sm-2\"></div>");
+            $("#addPromFormBis").append("<div class=\"col-sm-3\"></div>");
             $("#addPromFormBis").append("<h3>" + window.i18n.msgStore['dateEnd'] + data.response.docs[0].dateEnd + " </h3>");
           }
-          $("#addPromFormBis").append("<div class=\"col-sm-2\"></div>");
+          $("#addPromFormBis").append("<div class=\"col-sm-3\"></div>");
           $("#addPromFormBis").append("<br />");
-          $("#addPromFormBis").append("<div class=\"col-sm-2\"></div>");
+          $("#addPromFormBis").append("<div class=\"col-sm-3\"></div>");
           $("#addPromFormBis").append(
               "<a href=\"javascript: add()\" style=\"color: inherit; text-decoration: inherit;\"><button class=\"btn btn-primary btn-label-left col-sm-1\" id=\"confirm\">"
                   + window.i18n.msgStore['yes'] + "</button></a>");
-          $("#addPromFormBis").append("<div class=\"col-sm-2\"></div>");
+          $("#addPromFormBis").append("<div class=\"col-sm-3\"></div>");
           $("#addPromFormBis").append(
               "<a href=\"javascript: cancel()\" style=\"color: inherit; text-decoration: inherit;\"><button class=\"btn btn-primary btn-label-left col-sm-1\" id=\"confirm\">"
                   + window.i18n.msgStore['no'] + "</button></a><br />	");

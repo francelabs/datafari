@@ -36,18 +36,28 @@
 		</div>		
 		
 		<div class="box-content" id="thBox">
-			<br>
+			<div class="documentation-style-no-margin">
+			<p class="documentation-preview"> <span id="documentation-mcfbackuprestore"></span><a href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/506789890/MCF+Backup+and+Restore+Configuration" target="_blank">...see more</a></p>
+		</div>
 			<div class="row">
-				<label for="backupDir-input" id="backupDir-label" class="col-sm-4 control-label"></label>
+				<label for="backupDir-input" id="backupDir-label" class="col-sm-3 control-label"></label>
 				<input type="text" id="backupDir-input" class="col-sm-5"/>
 				<label id="backupDir-label-default" class="col-sm-8"></label>
 			</div>
 			<br>
 			<div class="row">
-				<button type="button" class="backupRestore-btn btn btn-primary btn-label-left col-sm-offset-7 col-sm-2"
+				<div class="col-sm-3">
+					<label id="" for="">Save the connectors</label>
+				</div>
+				<button type="button" class="backupRestore-btn btn btn-primary btn-label-left col-sm-2"
 					id="doSave-btn" onclick="javascript : doSave()">
-				</button>
-				<button type="button" class="backupRestore-btn btn btn-primary btn-label-right col-sm-offset-7 col-sm-2"
+				</button>				
+			</div>
+			<div class="row">
+				<div class="col-sm-3">
+					<label id="" for="">Restore the connectors</label>
+				</div>
+				<button type="button" class="backupRestore-btn btn btn-primary btn-label-right col-sm-2"
 					id="doRestore-btn" onclick="javascript : doRestore()">
 				</button>
 			</div>

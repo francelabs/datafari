@@ -63,6 +63,7 @@ $(document).ready(function(){
  	 	$("#roles-label").text(window.i18n.msgStore['adminUI-AddRoles']);
  	 	$("#roles-error-text").text(window.i18n.msgStore['adminUI-RolesError']);
  	 	$("#add-button").text(window.i18n.msgStore['adminUI-AddUser']);
+ 	 	$("#documentation-adduser").text(window.i18n.msgStore['documentation-adduser']);
  	 	$("#add-button").attr('data-loading-text', "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['adminUI-AddUser']);
  	}
 

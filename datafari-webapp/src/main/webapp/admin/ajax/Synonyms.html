@@ -24,17 +24,19 @@
 	<div class="box">
 		<div class="box-header">
 			<div class="box-name">
-				<i class="fas fa-table"></i><span></span>
+				<i class="fas fa-table"></i><span id="synonymsBox"></span>
 			</div>
 			<div class="box-icons">
 			</div>
 			<div class="no-move"></div>
 		</div>
 		<div id="modBox" class="box-content">
+			<div class="documentation-style-no-margin">
+				<p class="documentation-preview"> <span id="documentation-synonyms"></span><a class="documentation-link" href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/6324239/Synonyms+Configuration" target="_blank"> ...see more</a></p>
+			</div>
 			<form>
 				<fieldset>
 					<legend id="Modify"></legend>
-					<div class="col-sm-1"></div>
 					<div class="col-sm-2">
 						<select id="language" class="form-control"
 							onchange="javascript: getFile()">
@@ -77,6 +79,9 @@
 							This is not recommended while the server is heaviely loaded (indexation time for example) and may take more than 
 							a minute if your core contains millions of entries. The search service responses will be slower than usual while 
 							the core is reloading.</div>
+							<div class='col-sm-3'>
+								<label id="validateModification" for=""></label>
+							</div>
 							<button class='btn btn-primary btn-label-left' name='validateSynonyms' id='validate'></button>
 						</div>
 					</div>

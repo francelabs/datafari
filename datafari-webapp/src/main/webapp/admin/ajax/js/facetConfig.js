@@ -31,6 +31,8 @@ $(document).ready(function() {
 	document.getElementById("topbar2").innerHTML = window.i18n.msgStore['adminUI-SearchEngineConfig'];
 	document.getElementById("topbar3").innerHTML = window.i18n.msgStore['adminUI-FacetConfig'];
 	document.getElementById("addfacetname").innerHTML = window.i18n.msgStore['addFacet'];
+	document.getElementById("documentation-facetconfig1").innerHTML = window.i18n.msgStore['documentation-facetconfig1'];
+	document.getElementById("documentation-facetconfig2").innerHTML = window.i18n.msgStore['documentation-facetconfig2'];
 	document.getElementById("addsubmit").innerHTML = window.i18n.msgStore['confirm'];
 	document.getElementById("order").innerHTML = window.i18n.msgStore['order'];
 	document.getElementById("field").innerHTML = window.i18n.msgStore['field'];
@@ -233,10 +235,10 @@ function createQueryFacet(){
 //Add a query field and the fields for the i18n
 function addQuerySlot(){
 	i++;
-	$("#queries").append("<div class=\"form-group\" id="+i+">");
-	$("#"+i).append("<div class=\"col-sm-4\"><label class=\"control-label\" id=\"query"+i+"Legend\"></label><input type=\"text\" id=\"query"+i+"\"></div>");
-	$("#"+i).append("<div class=\"col-sm-4\"><label class=\"control-label\" id=\"query"+i+"LabelLegendEn\"></label><input type=\"text\" id=\"query"+i+"LabelEn\"></div>");
-	$("#"+i).append("<div class=\"col-sm-4\"><label class=\"control-label\" id=\"query"+i+"LabelLegendFr\"></label><input type=\"text\" id=\"query"+i+"LabelFr\"></div>");
+	$("#queries").append("<div class=\"form-group\" id="+i+" style=\"margin: auto; margin-top: 15px; margin-bottom:15px;\">");
+	$("#"+i).append("<div class=\"col-sm-4\"><label class=\"col-sm-6 control-label\" id=\"query"+i+"Legend\"></label><input type=\"text\" id=\"query"+i+"\"></div>");
+	$("#"+i).append("<div class=\"col-sm-4\"><label class=\"col-sm-6 control-label\" id=\"query"+i+"LabelLegendEn\"></label><input type=\"text\" id=\"query"+i+"LabelEn\"></div>");
+	$("#"+i).append("<div class=\"col-sm-4\"><label class=\"col-sm-6 control-label\" id=\"query"+i+"LabelLegendFr\"></label><input type=\"text\" id=\"query"+i+"LabelFr\"></div>");
 	$("#"+i).append("</div>");
 	document.getElementById("query"+i+"Legend").innerHTML = window.i18n.msgStore['queryNumber']+i+" :";
 	document.getElementById("query"+i+"LabelLegendEn").innerHTML = window.i18n.msgStore['queryLabel']+" (en) :";

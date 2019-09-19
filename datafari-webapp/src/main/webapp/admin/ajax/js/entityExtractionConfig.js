@@ -39,11 +39,17 @@ $(document).ready(function(){
     $("#topbar2").text(window.i18n.msgStore['adminUI-SearchEngineConfig']);
     $("#topbar3").text(window.i18n.msgStore['adminUI-entityExtractionConf']);
     $("#title").text(window.i18n.msgStore['adminUI-entityExtractionConf']);
-    $("#activateSimpleExtractionLabel").text(window.i18n.msgStore['adminUI-SimpleEntityExtractionActivate']);
-    $("#simplePersonsLabel").text(window.i18n.msgStore['adminUI-SimpleEntityExtractionActivatePersons']);
-    $("#simplePhonesLabel").text(window.i18n.msgStore['adminUI-SimpleEntityExtractionActivatePhones']);
-    $("#simpleSpecialsLabel").text(window.i18n.msgStore['adminUI-SimpleEntityExtractionActivateSpecial']);
+    $("#documentation-entityextraction").text(window.i18n.msgStore['documentation-entityextraction']);
+    $("#activateSimpleExtractionLabel").html(window.i18n.msgStore['adminUI-SimpleEntityExtractionActivate'] 
+      + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Global switch to enable or not the whole feature. Switching it to ON will display the other switches to enable each specific feature separately'>i</button></span>");
+    $("#simplePersonsLabel").html(window.i18n.msgStore['adminUI-SimpleEntityExtractionActivatePersons'] 
+      + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Enable the Simple Persons Extraction. Requires configuration to be functional, please check the documentation. Will not work before you click on Save'>i</button></span>");
+    $("#simplePhonesLabel").html(window.i18n.msgStore['adminUI-SimpleEntityExtractionActivatePhones']
+      + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Enable the Simple Phones Extraction. Will not work before you click on Save'>i</button></span>");
+    $("#simpleSpecialsLabel").html(window.i18n.msgStore['adminUI-SimpleEntityExtractionActivateSpecial']
+      + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Enable the Simple Special Extraction. Requires configuration to be functional, please check the documentation. Will not work before you click on Save'>i</button></span>");
     $("#simpleSaveButton").text(window.i18n.msgStore['save']);
+    $('#extractionSave').html(window.i18n.msgStore['adminUI-DepartmentSearchConfConfirm1']);
     $("#simpleSaveButton").attr('data-loading-text', "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['save']);
   }
 

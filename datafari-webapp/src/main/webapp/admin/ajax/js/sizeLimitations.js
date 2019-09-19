@@ -1,6 +1,3 @@
-
-
-
 //# sourceURL=/Datafari/admin/ajax/js/sizeLimitations.js
 
 
@@ -12,7 +9,8 @@ $(document).ready(function() {
 	document.getElementById("labelhl").innerHTML = window.i18n.msgStore['labelhl']+" : ";
 	document.getElementById("submithl").innerHTML = window.i18n.msgStore['confirm'];
 	document.getElementById("hlname").innerHTML = window.i18n.msgStore['limitHL'];
-	
+	document.getElementById("documentation-sizelimitations").innerHTML = window.i18n.msgStore['documentation-sizelimitations'];
+	document.getElementById("size-limitations-confirm").innerHTML = window.i18n.msgStore['adminUI-SizeLimitationText'];
 	//Disable the input and submit
 	$('#submithl').attr("disabled", true);
 	$('#maxhl').attr("disabled", true);
@@ -88,7 +86,7 @@ $(document).ready(function() {
 function cleanSem(type){
 	$.ajax({			//Ajax request to the doGet of the ModifyNodeContent servlet to release the semaphore
         type: "GET",
-        url: "./../admin/RequestParams",
+        url: "./../admin/ModifyNodeContent",
         data : "sem=sem&type="+type
 	 });
 }

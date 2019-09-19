@@ -1,3 +1,278 @@
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+input[type=number] {
+    -moz-appearance:textfield; /* Firefox */
+}
+/*Highlight Redirects so I don't click them by mistake*/
+
+/*For DEVS, uncomment this if you want to highlight in red all menus with a redirect*/
+/*#MCFAdmin-AdminUI, #corpusAnalysis-AdminUI, #corpusOTAnalysis-AdminUI,
+#queriesAnalysis-AdminUI, #problematicFiles-AdminUI, #logsAnalysis-AdminUI,
+#metricbeatOverview-AdminUI, #solrAdmin-AdminUI, #schemaAnalysis-AdminUI{
+	color: red !important;
+}*/
+
+#form input{
+	text-align: center;
+	min-width: 200px !important;
+}
+
+.active-directory-align{
+  display: flex;
+  align-items: center;
+}
+
+.baseline-items{
+	display: flex;
+	align-items: baseline;
+	margin-top: 10px;
+}
+
+.baseline-content{
+	display: flex;
+	align-content: baseline;
+	margin-top: 10px;
+}
+
+#logs-download-form .baseline-content{
+	margin-top: 5px;
+}
+
+#refreshCrawlDataLabel{
+	text-align: right;
+}
+
+#add-button{
+  margin-left: 15px;
+}
+
+#form #addsubmit{
+  min-width: 0 !important;
+}
+
+#validate, #changeOrder, #queryaddsubmit{
+	width: 200px;
+}
+
+.force-font{
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+}
+
+#addSynonyms{
+	width: auto;
+}
+
+#anotherSection, #addProm{
+  margin: 10px;
+}
+
+#answerhl{
+	margin-left: 90px;
+}
+
+
+.center{
+	display: flex;
+	align-items: center;
+}
+
+#crawl-data-monitoring-col{
+	padding: 0;
+}
+
+.col-sm-3 p{
+  text-align: left !important;
+}
+
+.documentation-style{
+	font-size: 14px;
+  display: flex;
+  background-color: lightgray;
+  border-radius: 5px;
+  text-align: left;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+  padding: 5px;
+}
+
+.documentation-style-no-margin{
+  font-size: 14px;
+  display: flex;
+  background-color: lightgray;
+  border-radius: 5px;
+  text-align: left;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 5px;
+}
+
+.documentation-split .documentation-style{
+	width: 48%;
+	margin: 0;
+	margin-bottom: 15px;
+
+}
+
+.documentation-preview{
+	margin: 0;
+	color: dimgray;
+}
+
+.documentation-link{
+	/*color: dimgray;*/
+}
+
+.documentation-link:hover{
+	color: dimgray;
+}
+
+.documentation-split{
+	display: flex;
+	justify-content: space-around;
+}
+
+#deduplication-box{
+  height: 580px;
+}
+
+#deleteElevateConf{
+	width: 230px;
+  margin-left: 0 !important;
+}
+
+#ELKConfig-save-margin{
+  margin-top: 15px;
+}
+
+#externalELKInput{
+  vertical-align: text-bottom !important;
+}
+
+#externalELKLabel{
+	margin-left: 0 !important;
+}
+
+#favorites-global, #field-weight-expert-margin{
+  margin-top: 15px;
+}
+
+fieldset{
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+#likes-favorites-box{
+  height: 300px;
+}
+
+label{
+	font-weight: normal;
+	font-size: 14px;
+	text-align: left !important;
+}
+
+#labelhl{
+  margin-top: 0;
+  padding-top: 0;
+}
+
+#labelHint1, #labelHint2{
+  padding: 0;
+  position: absolute;
+}
+
+#thBox #labelth{
+  padding-left: 0;
+}
+
+.labelth-autocomplete{
+  padding-left: 15px !important;
+}
+
+#labelth2{
+  padding-left: 0;
+}
+
+#modBox1{
+  height: 350px;
+}
+
+#modifyElevateForm{
+  margin-top: 15px;
+}
+
+#hint1, #hint2{
+  margin: 0;
+}
+
+legend{
+	font-size: 16px;
+}
+
+#paramRegtext{
+	font-family: "Lucida Grande","Lucida Sans","Lucida Sans Unicode","Segoe UI",Verdana,sans-serif;
+	font-size: 12px;
+	text-align: center;
+}
+
+#paramReg{
+  margin-left: 10px;
+	width: 260px;
+}
+
+#promolinkSearchBar{
+	margin: 15px 0;
+}
+
+#querylabelSelect, #labelSelect{
+	margin-left: 15px;
+}
+
+#queryPagination, #querySelectType{
+	width: 200px !important;
+}
+
+#reload-warning{
+  margin-top: 15px;
+}
+
+.relevancySetupFile-btn{
+  margin: 0 !important;
+}
+
+/*#submitth{
+  margin-left: 6px;
+}
+*/
+#test-current-user, #test-user-btn{
+  margin-bottom: 0;
+}
+
+.textInput{
+	width: 100% !important;
+}
+
+.tooltips{
+  height: 18px !important;
+  line-height: 0 !important;
+  border-radius: 50% !important;
+  margin-left: 5px !important;
+  margin-bottom: 0 !important;
+  background-color: dimgray;
+  color: white;
+  text-transform: lowercase !important;
+  font-size: 12px !important;
+  padding-bottom: 0 !important;
+  margin-top: 2px !important;
+  padding-top: 3px !important;
+}
+
 * {outline:none !important;}
 body {
   color:#353535;
@@ -330,11 +605,12 @@ a.show-sidebar:hover {
   padding:15px;
 }
 .box {
+  cursor: auto;
   display: block;
   position: relative;
   border: 1px solid #ccc;
   background: transparent;
-  margin-bottom: 20px;
+  margin: 15px 0;
 }
 .full-content .box {
   border: 0;
@@ -361,12 +637,13 @@ a.show-sidebar:hover {
   line-height: 24px;
 }
 .box-name:hover {
-  cursor: move;
+  cursor: auto;
 }
 .box-name > i {
   margin-right:5px;
 }
 .box-icons {
+	display: none;
   position: absolute;
   top:0;
   right:0;
@@ -613,7 +890,7 @@ ul.DTTT_dropdown.dropdown-menu > li:hover > a {
   padding: 0;
   line-height: 40px;
   background: #353535;
-  margin-bottom: 30px;
+  /*margin-bottom: 30px;*/
 }
 .breadcrumb {
   padding: 0 15px;
@@ -741,6 +1018,10 @@ ul.DTTT_dropdown.dropdown-menu > li:hover > a {
   white-space: normal;
 }
 .btn {
+
+	width: auto !important;
+	height: 26px;
+	padding: 0 6px;
   border: 1px solid transparent;
   border-bottom: 3px solid transparent;
   text-decoration: none;
@@ -760,6 +1041,7 @@ ul.DTTT_dropdown.dropdown-menu > li:hover > a {
   -moz-user-select: none;
   -webkit-user-select: none;
   outline: none !important;
+  text-transform: uppercase;
 }
 .btn-label-left span {
   position: relative;
@@ -1330,6 +1612,7 @@ ul.DTTT_dropdown.dropdown-menu > li:hover > a {
 }
 .form-horizontal .control-label {
   padding-top: 4px;
+  text-align: left;
 }
 .input-group-addon {
   padding: 0px 6px;

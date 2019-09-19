@@ -10,7 +10,7 @@ $(document).ready(function() {
 	$("#downZKconf").text(window.i18n.msgStore['downZKconf']);
 	$("#downZKconfLabel").text(window.i18n.msgStore['downZKconfLabel']);
 	$("#download").text(window.i18n.msgStore['downloadButton']);
-	
+	$("#documentation-configzookeeper").text(window.i18n.msgStore['documentation-configzookeeper']);
 	$("#upldZKconf").text(window.i18n.msgStore['upldZKconf']);
 	$("#upldZKconfLabel").text(window.i18n.msgStore['upldZKconfLabel']);
 	$("#upload").text(window.i18n.msgStore['uploadButton']);

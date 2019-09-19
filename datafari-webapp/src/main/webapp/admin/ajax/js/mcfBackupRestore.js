@@ -11,7 +11,7 @@ $(document).ready(function() {
 
   // Set the i18n for page elements
   document.getElementById("box-title").innerHTML = window.i18n.msgStore['adminUI-Connectors-BackupRestore'];
-
+  document.getElementById("documentation-mcfbackuprestore").innerHTML = window.i18n.msgStore['documentation-mcfbackuprestore'];
   document.getElementById("backupDir-label").innerHTML = window.i18n.msgStore['adminUI-MCFBackupRestore-backupDir-label'];
   document.getElementById("backupDir-label-default").innerHTML = window.i18n.msgStore['adminUI-MCFBackupRestore-backupDir-label-default'];
   document.getElementById("doSave-btn").innerHTML = window.i18n.msgStore['adminUI-MCFBackupRestore-doSave-btn'];

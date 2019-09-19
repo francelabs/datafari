@@ -8,8 +8,8 @@ $(document).ready(function() {
 			activeHeader : "ui-icon-circle-arrow-s"
 		};
 		var totalHeight =  document.getElementById("box").scrollHeight;
-		document.getElementById("hints").setAttribute("style","height:"+totalHeight+"px;");
-		document.getElementById("hint1").setAttribute("style","border:1px solid #ccc; margin-top : "+totalHeight/6+"px;");
+		// document.getElementById("hints").setAttribute("style","height:"+totalHeight+"px;");
+		// document.getElementById("hint1").setAttribute("style","border:1px solid #ccc; margin-top : "+totalHeight/6+"px;");
 		document.getElementById("labelHint1").innerHTML = window.i18n.msgStore['hint1'];
 		document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
 		document.getElementById("topbar2").innerHTML = window.i18n.msgStore['adminUI-SearchEngineAdmin'];
@@ -25,16 +25,19 @@ $(document).ready(function() {
 		document.getElementById("DatabaseLabel").innerHTML = window.i18n.msgStore['database'];
 		document.getElementById("CollectionLabel").innerHTML = window.i18n.msgStore['collection'];
 		document.getElementById("paramRegtext").innerHTML = window.i18n.msgStore['paramReg'];
+		document.getElementById("documentation-alerstadmin").innerHTML = window.i18n.msgStore['documentation-alerstadmin'];
+		$('#paramRegLabel').html(window.i18n.msgStore['paramRegText']);
+		$('#paramRegEmail').html(window.i18n.msgStore['paramRegEmail']);
 
 		//Creates date pickers et get current dates
 		$('#HourlyDelay').datetimepicker({
 			dateFormat : 'dd/mm/yy/ '
 		});
 		$('#DailyDelay').datetimepicker({
-			dateFormat : 'dd/mm/yy/'
+			dateFormat : 'dd/mm/yy/ '
 		});
 		$('#WeeklyDelay').datetimepicker({
-			dateFormat : 'dd/mm/yy/'
+			dateFormat : 'dd/mm/yy/ '
 		});
 		//Remove the div of selection, useful on second load of date pickers
 		$("a").click(function(){
@@ -59,14 +62,14 @@ $(document).ready(function() {
 					document.getElementById("paramReg").disabled = true;
 				}else{
 					$("#prevNext").append("<fieldset id=\"field1\" class=\"col-sm-12\">");
-					$("#field1").append("<legend id=\"prevLegend\">"+window.i18n.msgStore["previousExecution"]+"</legend><div class=\"form-group\"><label id=prevHourlyLabel class=\"col-sm-5 control-label\">"+window.i18n.msgStore["hourly"]+"</label><input type=\"text\" class=\"col-sm-2\" id=\"prevHourly\"  style=\"min-width : 150px;\"disabled value="+"\""+data.hourly+"\""+"></div>");
-					$("#field1").append("<div class=\"form-group\"><label id=prevDailyLabel class=\"col-sm-5 control-label\">"+window.i18n.msgStore["daily"]+"</label><input type=\"text\" class=\"col-sm-2\" id=\"prevDaily\" style=\"min-width : 150px;\" disabled value="+"\""+data.daily+"\""+"></div>");
-					$("#field1").append("<div class=\"form-group\"><label id=prevWeeklyLabel class=\"col-sm-5 control-label\">"+window.i18n.msgStore["weekly"]+"</label><input type=\"text\" class=\"col-sm-2\" id=\"prevWeekly\" style=\"min-width : 150px;\" disabled value="+"\""+data.weekly+"\""+"></div>");
+					$("#field1").append("<legend id=\"prevLegend\">"+window.i18n.msgStore["previousExecution"]+"</legend><div class=\"form-group\"><label id=prevHourlyLabel class=\"col-sm-3 control-label\">"+window.i18n.msgStore["hourly"]+"</label><input type=\"text\" class=\"col-sm\" id=\"prevHourly\"  style=\"min-width : 150px;\"disabled value="+"\""+data.hourly+"\""+"></div>");
+					$("#field1").append("<div class=\"form-group\"><label id=prevDailyLabel class=\"col-sm-3 control-label\">"+window.i18n.msgStore["daily"]+"</label><input type=\"text\" class=\"col-sm\" id=\"prevDaily\" style=\"min-width : 150px;\" disabled value="+"\""+data.daily+"\""+"></div>");
+					$("#field1").append("<div class=\"form-group\"><label id=prevWeeklyLabel class=\"col-sm-3 control-label\">"+window.i18n.msgStore["weekly"]+"</label><input type=\"text\" class=\"col-sm\" id=\"prevWeekly\" style=\"min-width : 150px;\" disabled value="+"\""+data.weekly+"\""+"></div>");
 					$("#prevNext").append("</fieldset><fieldset id=\"field2\" class=\"col-sm-12\">");
-					//$("#field2").append("<legend id=\"nextLegend\">"+window.i18n.msgStore["nextExecution"]+"<span class=\"fa fa-asterisk \" style=\"color : red\"></span></legend><div class=\"form-group\"><label id=nextHourlyLabel class=\"col-sm-5 control-label\">"+window.i18n.msgStore["hourly"]+"</label><input type=\"text\" class=\"col-sm-2\" id=\"nextHourly\" style=\"min-width : 150px;\" disabled value="+"\""+data.nextHourly+"\""+"></div>");
-					$("#field2").append("<legend id=\"nextLegend\">"+window.i18n.msgStore["nextExecution"]+"</legend><div class=\"form-group\"><label id=nextHourlyLabel class=\"col-sm-5 control-label\">"+window.i18n.msgStore["hourly"]+"</label><input type=\"text\" class=\"col-sm-2\" id=\"nextHourly\" style=\"min-width : 150px;\" disabled value="+"\""+data.nextHourly+"\""+"></div>");
-					$("#field2").append("<div class=\"form-group\"><label id=nextDailyLabel class=\"col-sm-5 control-label\">"+window.i18n.msgStore["daily"]+"</label><input type=\"text\" class=\"col-sm-2\" id=\"nextDaily\" style=\"min-width : 150px;\" disabled value="+"\""+data.nextDaily+"\""+"></div>");
-					$("#field2").append("<div class=\"form-group\"><label id=nextWeeklyLabel class=\"col-sm-5 control-label\">"+window.i18n.msgStore["weekly"]+"</label><input type=\"text\" class=\"col-sm-2\" id=\"nextWeekly\" style=\"min-width : 150px;\" disabled value="+"\""+data.nextWeekly+"\""+"></div>");
+					//$("#field2").append("<legend id=\"nextLegend\">"+window.i18n.msgStore["nextExecution"]+"<span class=\"fa fa-asterisk \" style=\"color : red\"></span></legend><div class=\"form-group\"><label id=nextHourlyLabel class=\"col-sm-3 control-label\">"+window.i18n.msgStore["hourly"]+"</label><input type=\"text\" class=\"col-sm\" id=\"nextHourly\" style=\"min-width : 150px;\" disabled value="+"\""+data.nextHourly+"\""+"></div>");
+					$("#field2").append("<legend id=\"nextLegend\">"+window.i18n.msgStore["nextExecution"]+"</legend><div class=\"form-group\"><label id=nextHourlyLabel class=\"col-sm-3 control-label\">"+window.i18n.msgStore["hourly"]+"</label><input type=\"text\" class=\"col-sm\" id=\"nextHourly\" style=\"min-width : 150px;\" disabled value="+"\""+data.nextHourly+"\""+"></div>");
+					$("#field2").append("<div class=\"form-group\"><label id=nextDailyLabel class=\"col-sm-3 control-label\">"+window.i18n.msgStore["daily"]+"</label><input type=\"text\" class=\"col-sm\" id=\"nextDaily\" style=\"min-width : 150px;\" disabled value="+"\""+data.nextDaily+"\""+"></div>");
+					$("#field2").append("<div class=\"form-group\"><label id=nextWeeklyLabel class=\"col-sm-3 control-label\">"+window.i18n.msgStore["weekly"]+"</label><input type=\"text\" class=\"col-sm\" id=\"nextWeekly\" style=\"min-width : 150px;\" disabled value="+"\""+data.nextWeekly+"\""+"></div>");
 					//$("#field2").append("<div class=\"control-label\"><i class=\"fa fa-asterisk\" style=\"color : red\"></i><label class=\"control-label\">"+window.i18n.msgStore['takingAccount']+"</label></div>");
 					
 					if (data.on === "on") //Set the button
@@ -90,15 +93,15 @@ $(document).ready(function() {
 						$("#fieldForm").empty();
 					}
 					$("#mailForm").append("<fieldset id=\"fieldForm\" class=\"col-sm-12\">");
-					$("#fieldForm").append("<legend id=\"mailLegend\">"+window.i18n.msgStore["mailConf"]+"</legend><div class=\"form-group\"><label id=SMPTLabel class=\"col-sm-5 control-label\">SMTP : </label><input type=\"text\" class=\"col-sm-2\" id=\"SMTP\"  style=\"min-width : 150px;\" value="+"\""+data.smtp+"\""+"></div>");
-					$("#fieldForm").append("<div class=\"form-group\"><label id=AddressLabel class=\"col-sm-5 control-label\">"+window.i18n.msgStore["address"]+"</label><input type=\"text\" title=\"" + window.i18n.msgStore["address-tooltip"] + "\" class=\"col-sm-2\" id=\"Address\" style=\"min-width : 150px;\"  value="+"\""+data.from+"\""+"></div>");
-					$("#fieldForm").append("<div class=\"form-group\"><label id=UserLabel class=\"col-sm-5 control-label\">"+window.i18n.msgStore["user"]+"</label><input type=\"text\" title=\"" + window.i18n.msgStore["user-tooltip"] + "\" class=\"col-sm-2\" id=\"UserName\" style=\"min-width : 150px;\"  value="+"\""+data.user+"\""+"></div>");
-					$("#fieldForm").append("<div class=\"form-group\"><label id=PassLabel class=\"col-sm-5 control-label\">"+window.i18n.msgStore["pass"]+"</label><input type=\"password\" class=\"col-sm-2\" id=\"Pass\" style=\"min-width : 150px;\"  value="+"\""+data.pass+"\""+"></div>");
+					$("#fieldForm").append("<legend id=\"mailLegend\">"+window.i18n.msgStore["mailConf"]+"</legend><div class=\"form-group\"><label id=SMPTLabel class=\"col-sm-3 control-label\">SMTP : </label><input type=\"text\" class=\"col-sm\" id=\"SMTP\"  style=\"min-width : 150px;\" value="+"\""+data.smtp+"\""+"></div>");
+					$("#fieldForm").append("<div class=\"form-group\"><label id=AddressLabel class=\"col-sm-3 control-label\">"+window.i18n.msgStore["address"]+"</label><input type=\"text\" title=\"" + window.i18n.msgStore["address-tooltip"] + "\" class=\"col-sm\" id=\"Address\" style=\"min-width : 150px;\"  value="+"\""+data.from+"\""+"></div>");
+					$("#fieldForm").append("<div class=\"form-group\"><label id=UserLabel class=\"col-sm-3 control-label\">"+window.i18n.msgStore["user"]+"</label><input type=\"text\" title=\"" + window.i18n.msgStore["user-tooltip"] + "\" class=\"col-sm\" id=\"UserName\" style=\"min-width : 150px;\"  value="+"\""+data.user+"\""+"></div>");
+					$("#fieldForm").append("<div class=\"form-group\"><label id=PassLabel class=\"col-sm-3 control-label\">"+window.i18n.msgStore["pass"]+"</label><input type=\"password\" class=\"col-sm\" id=\"Pass\" style=\"min-width : 150px;\"  value="+"\""+data.pass+"\""+"></div>");
 					$("#mailForm").append("</fieldset>");
 				}
 				var totalHeight =  document.getElementById("box").scrollHeight;
 				var margin = (totalHeight/2);
-				document.getElementById("hint2").setAttribute("style","border:1px solid #ccc; margin-top : "+margin+"px;");
+				document.getElementById("hint2");
 				document.getElementById("labelHint2").innerHTML = window.i18n.msgStore['hint2'];
 			}
 		});

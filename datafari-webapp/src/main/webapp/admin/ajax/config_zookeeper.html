@@ -20,9 +20,11 @@
 		</div>
 	</div>
 	<!--End Breadcrumb-->
-	<div class="col-sm-12"><span id="globalAnswer"></span></div><br/>
-	
+	<div class="col-sm-12"><span id="globalAnswer"></span></div>
 	<div class="col-sm-12"></div>
+	<div class="documentation-style">
+		<p class="documentation-preview"> <span id="documentation-configzookeeper"></span><a class="documentation-link" href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/34603014/System+Configuration+Manager+Zookeeper" target="_blank"> ...see more</a></p>
+	</div>
 	<div class="box">
 		<div class="box-header">
 			<div class="box-name">
@@ -32,11 +34,11 @@
 			<a class="collapse-link"><i class="fas fa-chevron-up"></i></a>
 			</div>
 			<div class="no-move"></div>
-		</div>
-		<div id="upldZKconfBox" class="box-content">
+		</div>				
+		<div id="upldZKconfBox" class="box-content">			
 			<form class="form-horizontal" role="form">
 				<div class="form-group" >
-					<div class="ZKlabel">
+					<div class="ZKlabel col-sm-3">
 						<span id="upldZKconfLabel"></span>
 					</div>
 					<div>
@@ -61,7 +63,7 @@
 		<div id="rldZKconfBox" class="box-content">
 			<form class="form-horizontal" role="form">
 				<div class="form-group" >
-					<div class="ZKlabel">
+					<div class="ZKlabel col-sm-3">
 						<span id="rldZKconfLabel"></span>
 					</div>
 					<div>
@@ -73,28 +75,28 @@
 		</div>
 	</div>
 	<div class="col-sm-12"></div>
-	<div class="box">
-		<div class="box-header">
-			<div class="box-name">
-				<i class="fas fa-table"></i><span  id="downZKconf"></span>
-			</div>
-			<div class="box-icons">
-			<a class="collapse-link"><i class="fas fa-chevron-up"></i></a>
-			</div>
-			<div class="no-move"></div>
-		</div>
-		<div id="downZKconfBox" class="box-content">
-			<form class="form-horizontal" role="form">
-				<div class="form-group" >
-					<div class="ZKlabel">
-						<span id="downZKconfLabel"></span>
-					</div>
-					<div>
-						<button id="download" name="download" class="btn btn-primary btn-label-left  col-sm-2"></button>
-					</div>
-					<div class="col-sm-12"><span id="downloadResult"></span></div>
-				</div>
-			</form>
-		</div>
-	</div>
+  <div class="box">
+    <div class="box-header">
+      <div class="box-name">
+        <i class="fas fa-table"></i><span  id="downZKconf"></span>
+      </div>
+      <div class="box-icons">
+      <a class="collapse-link"><i class="fas fa-chevron-up"></i></a>
+      </div>
+      <div class="no-move"></div>
+    </div>
+    <div id="downZKconfBox" class="box-content">
+      <form class="form-horizontal" role="form">
+        <div class="form-group" >
+          <div class="ZKlabel col-sm-3">
+            <span id="downZKconfLabel"></span>
+          </div>
+          <div>
+            <button id="download" name="download" class="btn btn-primary btn-label-left  col-sm-2"></button>
+          </div>
+          <div class="col-sm-12"><span id="downloadResult"></span></div>
+        </div>
+      </form>
+    </div>
+  </div>
 </body>

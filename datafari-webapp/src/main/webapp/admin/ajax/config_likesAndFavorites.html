@@ -5,53 +5,53 @@
 	
 		<style>
 		
-		    #message_info.bs-callout{
-		        padding: 20px;
-			    margin: 20px 0px;
-			    border-width: 1px 1px 1px 5px;
-			    border-style: solid;
-			    border-color: #EEE;
-			    -moz-border-top-colors: none;
-			    -moz-border-right-colors: none;
-			    -moz-border-bottom-colors: none;
-			    -moz-border-left-colors: none;
-			    border-image: none;
-			    border-radius: 3px;
-			    background: transparent;
+				#message_info.bs-callout{
+						padding: 20px;
+					margin: 20px 0px;
+					border-width: 1px 1px 1px 5px;
+					border-style: solid;
+					border-color: #EEE;
+					-moz-border-top-colors: none;
+					-moz-border-right-colors: none;
+					-moz-border-bottom-colors: none;
+					-moz-border-left-colors: none;
+					border-image: none;
+					border-radius: 3px;
+					background: transparent;
 			}
 			#message_info{
 				display:none;
 			}
 			
-		    #message_info.bt-callout-success{
-		    	border-left-color:#6AB77B;
-		    }
-		    #message_info.bt-callout-success h4{
-		    color : #6AB77B;
-		    }
-		    #message_info.bt-callout-danger{
-		    border-left-color:rgb(255, 124, 124);
-		    }
-		    #message_info.bt-callout-danger h4{
-		    color:rgb(255, 124, 124);
-		    }
-    	</style>
-    	<style>
-    	i.error_deduplication{
-    		color : red;
-    		display: none;
-    	}
-    	</style>
-    
+				#message_info.bt-callout-success{
+					border-left-color:#6AB77B;
+				}
+				#message_info.bt-callout-success h4{
+				color : #6AB77B;
+				}
+				#message_info.bt-callout-danger{
+				border-left-color:rgb(255, 124, 124);
+				}
+				#message_info.bt-callout-danger h4{
+				color:rgb(255, 124, 124);
+				}
+			</style>
+			<style>
+			i.error_deduplication{
+				color : red;
+				display: none;
+			}
+			</style>
+		
 		<!--		
 			<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 			<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
-		 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
-    	  	<link rel="stylesheet" href="http://getbootstrap.com/assets/css/docs.min.css"/> 
-    	-->
- 	</head>
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
+					<link rel="stylesheet" href="http://getbootstrap.com/assets/css/docs.min.css"/> 
+			-->
+	</head>
 	<body>
-		<div class="row">
+	<div class="row">
 		<div id="breadcrumb" class="col-xs-12">
 			<a href="#" class="show-sidebar"> <i class="fas fa-bars"></i>
 			</a>
@@ -59,34 +59,36 @@
 				<li><a id="topbar1" class="indexAdminUIBreadcrumbLink"></a></li>
 				<li><a id="topbar2" href="#"></a></li>
 				<li><a id="topbar3" href="#"></a></li>
-			</ol>
-		
+			</ol>		
 		</div>
 	</div>
-		
-		<div class="col-xs-6 col-lg-offset-3">
-			    	
-		<h4 id="favorites-title"></h4> 
-		
-		
-		<p id="favorites-label">
-			 
-		</p>
-
-	    	<div id="likesAndFavorites" class="likesAndFavorites toggle-switch toggle-switch-success">
+	<div id="likes-favorites-box" class="box">
+		<div class="box-header">
+			<div class="box-name">
+				<i class="fas fa-table"></i><span  id="title">Favorites</span>
+			</div>
+			<div class="box-icons">
+				<a class="collapse-link"><i class="fas fa-chevron-up"></i></a>
+			</div>
+			<div class="no-move"></div>
+		</div>
+		<div class="box-content">
+			<div id="favorites-global" class="col-xs-6">				    	
+				<h4 id="favorites-title"></h4>			
+				<p id="favorites-label"></p>
+				<div id="likesAndFavorites" class="likesAndFavorites toggle-switch toggle-switch-success">
 					<label>
 						<input type="checkbox">
 						<div class="toggle-switch-inner"></div>
 						<div class="toggle-switch-switch"><i class="fas fa-check"></i></div>
 					</label>
-			</div> 
- 
-	    	<div class="bs-callout bs-callout-danger" id="message_info">
-			    <h4>s</h4>
-			    <p></p>
-	  		</div>
-  		</div>
-	
-	</body>
-	
+				</div>		 
+				<div class="bs-callout bs-callout-danger" id="message_info">
+					<h4>s</h4>
+					<p></p>
+				</div>
+			</div>
+		</div>
+	</div>		
+	</body>	
 </html>

@@ -85,6 +85,7 @@ $(document).ready(function() {
 	document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
 	document.getElementById("topbar2").innerHTML = window.i18n.msgStore['adminUI-SearchEngineConfig'];
 	document.getElementById("topbar3").innerHTML = window.i18n.msgStore['adminUI-FieldWeight'];
+	document.getElementById("documentation-fieldweightapi").innerHTML = window.i18n.msgStore['documentation-fieldweightapi'];
 	document.getElementById("submitpf").innerHTML = window.i18n.msgStore['confirm'];
 	document.getElementById("submitqf").innerHTML = window.i18n.msgStore['confirm'];
 	document.getElementById("pfname").innerHTML = window.i18n.msgStore['pf'];

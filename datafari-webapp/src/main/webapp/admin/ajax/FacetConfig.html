@@ -18,10 +18,7 @@
 			</ol>
 		</div>
 	</div>
-	<!--End Breadcrumb-->
-	<fieldset id="alphafeature"><legend>!! This feature is experimental. It will be fully supported in the next version of Datafari !!</legend></fieldset>
-	<div class="col-sm-12"><span id="fileAlready"></span></div><br/>
-	<div class="col-sm-12"><span id="globalAnswer"></span></div><br/>
+	<!--End Breadcrumb-->	
 	<div class="box">
 		<div class="box-header">
 			<div class="box-name">
@@ -32,7 +29,13 @@
 			</div>
 			<div class="no-move"></div>
 		</div>
-		<div id="addFacetBox" class="box-content">
+		<div id="addFacetBox" class="box-content">			
+			<div class="documentation-style-no-margin">
+				<p class="documentation-preview"> <span id="documentation-facetconfig1"></span></p>
+			</div>
+			<fieldset id="alphafeature"><legend>!! This feature is experimental. It will be fully supported in the next version of Datafari !!</legend></fieldset>
+			<div class="col-sm-12"><span id="fileAlready"></span></div><br/>
+			<div class="col-sm-12"><span id="globalAnswer"></span></div><br/>
 			<form class="form-horizontal" role="form" id="form">
 			<div class="form-group" >
 				<label id="labelSelect" class="col-sm-1 control-label"></label>
@@ -52,15 +55,20 @@
 				</div>
 			<div class="form-group">
 				<div class="col-sm-4">
-				<label class="control-label" id="frNameLegend"></label>
+				<label class="control-label col-sm-6" id="frNameLegend"></label>
 				<input type="text" id="frName">
 				</div>
 				<div class="col-sm-4">
-				<label class="control-label" id="enNameLegend"></label>
+				<label class="control-label col-sm-6" id="enNameLegend"></label>
 				<input type="text" id="enName">
 				</div>
-				<div class="col-sm-1"></div>
-				<input type="submit" id="addsubmit" name="addsubmit" class="btn btn-primary btn-label-left col-sm-2">
+				<div class="col-sm-1"></div>				
+			</div>
+			<div class="form-group">
+				<div class="col-sm-4">
+					<p class="col-sm-6"><b>Validate</b></p>
+					<input type="submit" id="addsubmit" name="addsubmit" class="btn btn-primary btn-label-left col-sm-4">
+				</div>				
 			</div>
 			</form>
 		</div>
@@ -76,6 +84,9 @@
 			<div class="no-move"></div>
 		</div>
 		<div id="addQueryFacetBox" class="box-content">
+			<div class="documentation-style-no-margin">
+				<p class="documentation-preview"><span id="documentation-facetconfig2"></span></p>
+			</div>
 			<form class="form-horizontal" role="form" id="queryform">
 			<div class="form-group" >
 				<label id="querylabelSelect" class="col-sm-1 control-label"></label>
@@ -95,37 +106,42 @@
 			</div>
 			<div class="form-group">
 				<div class="col-sm-4">
-				<label class="control-label" id="queryfrNameLegend"></label>
+				<label class="control-label col-sm-6" id="queryfrNameLegend"></label>
 				<input type="text" id="queryFrName">
 				</div>
 				<div class="col-sm-4">
-				<label class="control-label" id="queryenNameLegend"></label>
+				<label class="control-label col-sm-6" id="queryenNameLegend"></label>
 				<input type="text" id="queryEnName">
 				</div>
 				<div class="col-sm-1"></div>
 			</div>
 			<div class="form-group" id="queries">
-				<div class="form-group">
+				<div class="form-group" id="query">
 					<div class="col-sm-4">
-						<label class="control-label" id="query1Legend"></label>
+						<label class="control-label col-sm-6" id="query1Legend"></label>
 						<input type="text" id="query1" >
 					</div>
 					<div class="col-sm-4">
-						<label class="control-label" id="query1LabelLegendEn"></label>
+						<label class="control-label col-sm-6" id="query1LabelLegendEn"></label>
 						<input type="text" id="query1LabelEn" >
 					</div>
 					<div class="col-sm-4">
-						<label class="control-label" id="query1LabelLegendFr"></label>
+						<label class="control-label col-sm-6" id="query1LabelLegendFr"></label>
 						<input type="text" id="query1LabelFr" >
 					</div>
-				</div>
+				</div>				
 			</div>
 			<div class="form-group">
 				<div class="col-sm-4">
-					<label class="control-label" id="addqueryLegend"></label>
+					<label class="control-label col-sm-6" id="addqueryLegend"></label>
 					<button id="addquery" class="fas fa-plus"></button>
-				</div>
-				<div class="col-sm-6">
+				</div>				
+			</div>
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="col-sm-6">
+						<p><b>Validate</b></p>
+					</div>
 					<input type="submit" id="queryaddsubmit" name="queryaddsubmit" class="btn btn-primary btn-label-left col-sm-4">
 				</div>
 			</div>
@@ -148,9 +164,13 @@
 			<thead id="thead"><tr><th id="order"></th><th id="field"></th><th></th>
 			<tbody id="tbody" ></tbody>
 			</table>
-			<div class="col-sm-4"></div>
-			<input type="submit" id="changeOrder" name="changeOrder" class="btn btn-primary btn-label-left col-sm-4">
-			<div class="col-sm-4"></div><br><br>
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="col-sm-6"><p><b>Lorem Ipsum</b></p></div>
+					<input type="submit" id="changeOrder" name="changeOrder" class="btn btn-primary btn-label-left col-sm-3">
+					<div class="col-sm-4"></div>
+				</div>
+			</div>
 			</form>
 		</div>
 	</div>

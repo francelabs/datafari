@@ -31,20 +31,22 @@
 			<div class="no-move"></div>
 		</div>
 		<div id="thBox" class="box-content">
-
+			<div class="documentation-style-no-margin">
+				<p class="documentation-preview"> <span id="documentation-adduser"></span> <a class="documentation-link" href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/49709061/Managing+Datafari+Roles+and+Users" target="_blank"> ...see more</a></p>
+			</div>
 			<form class="form-horizontal" role="form" id="addForm">
 				<div class="form-group">
-					<label class="col-sm-4 control-label" for="username-input" id="username-label">Username</label>
-					<div class="col-sm-4">
+					<label class="col-sm-3 control-label" for="username-input" id="username-label">Username</label>
+					<div class="col-sm-3">
 						<input class="form-control" type="text" name="username" id="username-input" placeHolder="username"/>
 						<span class="glyphicon form-control-feedback"></span>
 					</div>
-					<span class="control-label col-sm-4 error-text" id="username-error-text">The username already exists.</span>
-					<span class="control-label col-sm-4 warning-text" id="username-warning-text">The username is invalid or the server couldn't check it.</span>
+					<span class="control-label col-sm-3 error-text" id="username-error-text">The username already exists.</span>
+					<span class="control-label col-sm-3 warning-text" id="username-warning-text">The username is invalid or the server couldn't check it.</span>
 				</div>
 				<div class="form-group">			
-					<label class="col-sm-4 control-label" for="ldapUser" id="ldap-user-label">Create from the Active Directory</label>
-					<div class="col-sm-4">
+					<label class="col-sm-3 control-label" for="ldapUser" id="ldap-user-label">Create from the Active Directory</label>
+					<div class="col-sm-3">
 					  <div class="toggle-switch toggle-switch-success">
 					    <label>
 					      <input id="ldapUser" type="checkbox">
@@ -55,35 +57,36 @@
 					</div>
 				</div>
 				<div class="form-group" id="passwordSection">
-					<label class="col-sm-4 control-label" for="password-input" id="password-label">Password</label>
-					<div class="col-sm-4">
+					<label class="col-sm-3 control-label" for="password-input" id="password-label">Password</label>
+					<div class="col-sm-3">
 						<input id="password-input" type="password" class="form-control" name="password" placeHolder="password"/>
 						<span class="glyphicon form-control-feedback"></span>
 					</div>
 				</div>
 				<div class="form-group" id="confirmPasswordSection">
-					<label class="col-sm-4 control-label" for="confirm-password-input" id="confirm-password-label">Confirm password</label>
-					<div class="col-sm-4">
+					<label class="col-sm-3 control-label" for="confirm-password-input" id="confirm-password-label">Confirm password</label>
+					<div class="col-sm-3">
 						<input id="confirm-password-input" type="password" class="form-control" name="confirmPassword" placeHolder="password"/>
 						<span class="glyphicon form-control-feedback"></span>
 					</div>
-					<span class="control-label col-sm-4 error-text" id="password-error-text">Passwords does not match.</span>
+					<span class="control-label col-sm-3 error-text" id="password-error-text">Passwords does not match.</span>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-4 control-label" for="roles-input" id="roles-label">Add roles</label>
-					<div class="col-sm-4">
+					<label class="col-sm-3 control-label" for="roles-input" id="roles-label">Add roles</label>
+					<div class="col-sm-3">
 						<input type="text" id="roles-input" class="form-control" name="role" placeHolder="SearchExpert" />
 					</div>
-					<span class="control-label col-sm-4 error-text" id="roles-error-text">At least one role must be assigned.</span>
+					<span class="control-label col-sm-3 error-text" id="roles-error-text">At least one role must be assigned.</span>
 				</div>
 				<div class="form-group">
 				  <div id="roles" class="col-sm-offset-4 col-sm-6"></div>
 				</div>
 				<div class="form-group">
-				  <div class="col-sm-offset-4 col-sm-2">
-				    <button type="submit" class="btn btn-primary" value="ADD" id="add-button"
-				    data-loading-text="<i class='fa fa-spinner fa-spin'></i> Add User">Add User</button>
+				  <div class="col-sm-3">
+				  	<label for="">Save and activate the added user</label>
 				  </div>
+				    <button type="submit" class="col-sm-2 btn btn-primary" value="ADD" id="add-button"
+				    data-loading-text="<i class='fa fa-spinner fa-spin'></i> Add User">Add User</button>
 				</div>
 			</form>
 			<div id="Message" style="display:none;">No Document Saved Yet</div>

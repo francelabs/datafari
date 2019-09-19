@@ -11,8 +11,17 @@
   
 */
 body{
-		background: #F8FAD9;
+	background-color: #FFF !important;
 }
+
+form{
+    background-color: #F0F0F0 !important;
+}
+
+fieldset{
+    margin-top: 0 !important;
+}
+
 .box
 {
     background:#FDFDF1;

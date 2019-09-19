@@ -37,7 +37,9 @@
     </div>
 
     <div class="box-content" id="thBox">
-      <br>
+      <div class="documentation-style-no-margin">
+        <p class="documentation-preview"> <span id="documentation-mcfsimplified"></span><a href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/682754069/MCF+Simplified+UI+configuration" target="_blank">...see more</a></p>
+      </div>  
       <div class="row">
         <label id="mcfsimplified-title-label" class="col-sm-4 control-label"></label>
         <label id="mcfsimplified-choice-label" class="col-sm-4 control-label"></label>
@@ -45,11 +47,11 @@
       <br>
       <!--
       <div class="row">
-        <button type="button" class="web-btn btn btn-primary btn-label-left col-sm-offset-7 col-sm-2"
+        <button type="button" class="web-btn btn btn-primary btn-label-left col-sm-offset-7 col-sm-3"
           id="web-btn" onclick="javascript : getFile()">
         </button>
 
-        <button type="button" class="filer-btn btn btn-primary btn-label-right col-sm-offset-7 col-sm-2"
+        <button type="button" class="filer-btn btn btn-primary btn-label-right col-sm-offset-7 col-sm-3"
           id="filer-btn" onclick="javascript : getFile()">
         </button>
       </div>
@@ -57,23 +59,23 @@
       </div>
       <div class="row">
         <label class="col-sm-4 control-label" id="doRestoreReturnStatus-label"></label>
-      </div>
-      <div id="modBox" class="box-content">
-        <form>
-          <fieldset>
-            <legend id="Modify"></legend>
-            <div class="col-sm-1"></div>
-            <div class="col-sm-2">
-              <select id="jobType" class="form-control"
-                onchange="javascript: getJobForm()">
-                <OPTION></OPTION>
-                <OPTION value="webjob" id="createWebJob"></OPTION>
-                <OPTION value="filerjob" id="createFilerJob"></OPTION>
-              </select>
-            </div>
-          </fieldset>
-        </form>
-      </div>
+      </div>      
+      <form>
+        <fieldset>
+          <legend id="Modify"></legend>
+          <div class="col-sm-3">
+            <label for="">Select the source type of your choice</label>
+          </div>
+          <div class="col-sm-3">
+            <select id="jobType" class="form-control"
+              onchange="javascript: getJobForm()">
+              <OPTION></OPTION>
+              <OPTION value="webjob" id="createWebJob"></OPTION>
+              <OPTION value="filerjob" id="createFilerJob"></OPTION>
+            </select>
+          </div>
+        </fieldset>
+      </form>      
     </div>
     <fieldset>
       <legend id="legendAdd"></legend>
@@ -98,61 +100,66 @@
                 <form id="addFiler" class="form-horizontal" role="form">
                   <fieldset id="fieldContentFiler">
                     <legend id="filerAddLegend"></legend>
-                    <div class="form-group" id="div1">
-                      <div class="col-sm-2 control-label">
+                    <div class="form-group" id="filer-server-div">
+                      <div class="col-sm-3 control-label">
                         <span class="fas fa-asterisk " style="color : red"></span>
-                        <label id="serverLabel" for="server" class="control-label"></label>
+                        <label id="serverLabel" for="server" class="control-label"></label><span id="server-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
                       <div class="col-sm-4">
                         <input type="text" required id="server" name="server" placeholder="" class="form-control"></input>
                         <span class="glyphicon form-control-feedback"></span>
-                      </div>
-                      <span id="server-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                      </div>                      
                     </div>
-                    <div class="form-group" id="div11">
-                      <div class="col-sm-2 control-label">
+                    <div class="form-group" id="filer-user-div">
+                      <div class="col-sm-3 control-label">
                         <span class="fas fa-asterisk " style="color : red"></span>
-                        <label id="userLabel" for="user" class="control-label"></label>
+                        <label id="userLabel" for="user" class="control-label"></label><span id="user-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
                       <div class="col-sm-4">
                         <input required type="text" id="user" name="user" placeholder="" class="form-control">
                         <span class="glyphicon form-control-feedback"></span>
-                      </div>
-                      <span id="user-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                      </div>                      
                     </div>
-                    <div class="form-group" id="div12">
-                      <div class="col-sm-2 control-label">
+                    <div class="form-group" id="filer-password-div">
+                      <div class="col-sm-3 control-label">
                         <span class="fas fa-asterisk " style="color : red"></span>
-                        <label id="passwordLabel" for="password" class="control-label"></label>
+                        <label id="passwordLabel" for="password" class="control-label"></label><span id="password-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
                       <div class="col-sm-4">
                         <input type="password" id="password" name="password" placeholder="" class="form-control">
                         <span class="glyphicon form-control-feedback"></span>
-                      </div>
-                      <span id="password-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                      </div>                      
                     </div>
-                    <div class="form-group" id="div13">
-                      <div class="col-sm-2 control-label">
+                    <div class="form-group" id="filer-paths-div">
+                      <div class="col-sm-3 control-label">
                         <span class="fas fa-asterisk " style="color : red"></span>
-                        <label id="pathsLabel" for="paths" class="control-label"></label>
+                        <label id="pathsLabel" for="paths" class="control-label"></label><span id="paths-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
                       <div class="col-sm-4">
                         <textarea required id="paths" name="paths" placeholder="" class="form-control"></textarea>
                         <span class="glyphicon form-control-feedback"></span>
-                      </div>
-                      <span id="paths-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                      </div>                      
                     </div>
-                    <div class="form-group" id="div14">
-                      <div class="col-sm-2 control-label">
-                        <label id="securityLabel" for="security" class="control-label"></label>
+                    <div class="form-group" id="filer-sourcename-div">
+                      <div class="col-sm-3 control-label">
+                        <span class="fas fa-asterisk " style="color : red"></span>
+                        <label id="filerSourcenameLabel" for="filerSourcename" class="control-label"></label><span id="filerSourcename-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
-                      <div class="col-sm-4" id="security-div">
-	                      <input type="checkbox" id="security" name="security"></input>
-	                      <span id="security-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
-                      </div>
+                      <div class="col-sm-4">
+                        <input required type="text" id="filerSourcename" name="filerSourcename" placeholder="" class="form-control">
+                        <span class="glyphicon form-control-feedback"></span>
+                      </div>                      
                     </div>
                     <div class="form-group" id="div15">
-                      <div class="col-sm-2 control-label">
+                      <div class="col-sm-3 control-label">
+                        <label id="securityLabel" for="security" class="control-label"></label><span id="security-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                      </div>
+                      <div class="col-sm-4" id="security-div">
+	                      <input type="checkbox" id="security" name="security"></input>	                      
+                      </div>
+                    </div>
+                    <div class="form-group" id="div16">
+                      <div class="col-sm-3 control-label">
                         <label id="startJobLabel" for="startJob" class="control-label"></label>
                       </div>
                       <div class="col-sm-4" id="startJob-div">
@@ -161,7 +168,9 @@
                     </div>
                     </fieldset>
                     <div class="form-group" id="div4">
-                      <div class="col-sm-2"></div>
+                      <div class="col-sm-3">
+                        <label class="MCFSave" for=""></label>
+                      </div>
                       <div class="col-sm-4">
                         <button type="Submit" id="newFilerConfig" name="addProm" class="btn btn-primary" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Saving...">Save</button>
                       </div>
@@ -199,39 +208,46 @@
                   <fieldset id="fieldContentWeb">
                     <legend id="webAddLegend"></legend>
                     <div class="form-group" id="div1">
-                      <div class="col-sm-2 control-label">
+                      <div class="col-sm-3 control-label">
                         <span class="fas fa-asterisk " style="color : red"></span>
-                        <label id="webSeedsLabel" for="seeds" class="control-label"></label>
+                        <label id="webSeedsLabel" for="seeds" class="control-label"></label><span id="seeds-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
                       <div class="col-sm-4">
                         <textarea required id="seeds" name="seeds" placeholder="" class="form-control"></textarea>
                         <span class="glyphicon form-control-feedback"></span>
-                      </div>
-                      <span id="seeds-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                      </div>                      
                     </div>
                     <div class="form-group" id="div11">
-                      <div class="col-sm-2 control-label">
+                      <div class="col-sm-3 control-label">
                         <span class="fas fa-asterisk " style="color : red"></span>
-                        <label id="webEmailLabel" for="email" class="control-label"></label>
+                        <label id="webEmailLabel" for="email" class="control-label"></label><span id="email-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
                       <div class="col-sm-4">
                         <input required type="text" id="email" name="email" placeholder="" class="form-control">
                         <span class="glyphicon form-control-feedback"></span>
-                      </div>
-                      <span id="email-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                      </div>                      
                     </div>
                     <div class="form-group" id="div12">
-                      <div class="col-sm-2 control-label">
-                        <label id="webExclusionLabel" for="exclusions" class="control-label"></label>
+                      <div class="col-sm-3 control-label">
+                        <label id="webExclusionLabel" for="exclusions" class="control-label"></label><span id="exclusions-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
                       <div class="col-sm-4">
                         <input type="text" id="exclusions" name="exclusions" placeholder="" class="form-control">
                         <span class="glyphicon form-control-feedback"></span>
+                      </div>                      
+                    </div>
+                    <div class="form-group" id="web-sourcename-div">
+                      <div class="col-sm-3 control-label">
+                        <span class="fas fa-asterisk " style="color : red"></span>
+                        <label id="webSourcenameLabel" for="webSourcename" class="control-label"></label><span id="webSourcename-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
-                      <span id="exclusions-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                      <div class="col-sm-4">
+                        <input required type="text" id="webSourcename" name="webSourcename" placeholder="" class="form-control">
+                        <span class="glyphicon form-control-feedback"></span>
+                      </div>                      
                     </div>
                     <div class="form-group" id="div13">
-                      <div class="col-sm-2 control-label">
+                      <div class="col-sm-3 control-label">
                         <label id="startJobWebLabel" for="startJobWeb" class="control-label"></label>
                       </div>
                       <div class="col-sm-4" id="startJobWeb-div">
@@ -240,7 +256,9 @@
                     </div>
                     </fieldset>
                     <div class="form-group" id="div4">
-                      <div class="col-sm-2"></div>
+                      <div class="col-sm-3">
+                        <label class="MCFSave" for=""></label>
+                      </div>
                       <div class="col-sm-4">
                         <button type="Submit" id="newWebConfig" name="addProm" class="btn btn-primary" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Saving...">Save</button>
                       </div>

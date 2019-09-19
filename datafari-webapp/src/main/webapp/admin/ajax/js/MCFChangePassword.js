@@ -21,11 +21,8 @@ $(document).ready(function() {
 			if ((document.getElementById('confirm_password').value) != null) {
 				confirm_password = document.getElementById('confirm_password').value;
 			}
-			console.log("password : " +password);
-			console.log("confirm_password" +confirm_password);
 			
 			if ( (password !="") && (confirm_password !="") && (password == confirm_password)){
-				console.log("OK");
 				$.post("../SearchAdministrator/MCFChangePassword",{
 					password : password
 				
@@ -57,15 +54,19 @@ function setupLanguage(){
 	$("#topbar1").text(window.i18n.msgStore['home']);
 	$("#topbar2").text(window.i18n.msgStore['adminUI-Connectors']);
 	$("#topbar3").text(window.i18n.msgStore['adminUI-Connectors-MCFPassword']);
+	 document.getElementById("documentation-mcfchangepassword").innerHTML = window.i18n.msgStore['documentation-mcfchangepassword'];
 	 document.getElementById("changePasswordLabel").innerHTML = window.i18n.msgStore['MCFPasswordAdmin'];
 	 document.getElementById("enterPasswordLabel").innerHTML = window.i18n.msgStore['enterPassword'];
 	 document.getElementById("confirmPasswordLabel").innerHTML = window.i18n.msgStore['confirmPassword'];
 	 document.getElementById("selectPassword").innerHTML = window.i18n.msgStore['changeMCFPassword'];
 	 document.getElementById("savePasswordButton").innerHTML = window.i18n.msgStore['confirmPass'];
 	 $("#savePasswordButton").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
+	 $('#MCFConfirm').html(window.i18n.msgStore['adminUI-MCFConfirm']
+	 	+ "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='"+window.i18n.msgStore['tooltip-changepassword']+"'>i</button></span>");
 	 
 	
 }
+
 
 function checkPassword() {
 	  if (document.getElementById('password').value ==
