@@ -43,8 +43,8 @@ public class FilerRepoConfig {
   private final static String repoConnectionsCommand = "repositoryconnections";
 
   private FilerRepoConfig() {
-    final String filePath = Environment.getEnvironmentVariable("DATAFARI_HOME") + File.separator + "bin" + File.separator + "common" + File.separator + "config" + File.separator + "manifoldcf" + File.separator + "visilia" + File.separator
-        + "repositoryconnections" + File.separator + "filer.json";
+    final String filePath = Environment.getEnvironmentVariable("DATAFARI_HOME") + File.separator + "bin" + File.separator + "common" + File.separator + "config" + File.separator + "manifoldcf"
+        + File.separator + "simplifiedui" + File.separator + "repositoryconnections" + File.separator + "filer.json";
     filerRepoJSON = new File(filePath);
   }
 

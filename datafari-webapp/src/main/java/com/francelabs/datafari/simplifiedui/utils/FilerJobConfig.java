@@ -51,9 +51,8 @@ public class FilerJobConfig {
   private final static String jobsCommand = "jobs";
 
   private FilerJobConfig() {
-    final String filePath = Environment.getEnvironmentVariable("DATAFARI_HOME") + File.separator + "bin"
-        + File.separator + "common" + File.separator + "config" + File.separator + "manifoldcf" + File.separator
-        + "visilia" + File.separator + "jobs" + File.separator + "filer.json";
+    final String filePath = Environment.getEnvironmentVariable("DATAFARI_HOME") + File.separator + "bin" + File.separator + "common" + File.separator + "config" + File.separator + "manifoldcf"
+        + File.separator + "simplifiedui" + File.separator + "jobs" + File.separator + "filer.json";
     filerJobJSON = new File(filePath);
   }
 

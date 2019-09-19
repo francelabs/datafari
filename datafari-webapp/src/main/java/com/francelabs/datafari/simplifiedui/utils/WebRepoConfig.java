@@ -41,8 +41,8 @@ public class WebRepoConfig {
   private final static String repoConnectionsCommand = "repositoryconnections";
 
   private WebRepoConfig() {
-    final String filePath = Environment.getEnvironmentVariable("DATAFARI_HOME") + File.separator + "bin" + File.separator + "common" + File.separator + "config" + File.separator + "manifoldcf" + File.separator + "visilia" + File.separator
-        + "repositoryconnections" + File.separator + "web.json";
+    final String filePath = Environment.getEnvironmentVariable("DATAFARI_HOME") + File.separator + "bin" + File.separator + "common" + File.separator + "config" + File.separator + "manifoldcf"
+        + File.separator + "simplifiedui" + File.separator + "repositoryconnections" + File.separator + "web.json";
     webRepoJSON = new File(filePath);
   }
 
