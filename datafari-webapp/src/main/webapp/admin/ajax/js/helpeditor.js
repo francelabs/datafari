@@ -39,10 +39,14 @@ function getFile(){
                 $("#fields").append("<textarea id=\"input\" required resizable=\"true\"></textarea>");
                 document.getElementById("input").value = data;
                 $("#input").cleditor({
-                    width: 500, // width not including margins, borders or padding
-                    height: 250, // height not including margins, borders or padding
+                    width: "600", // width not including margins, borders or padding
+                    height: "600", // height not including margins, borders or padding
                     controls: // controls to add to the toolbar
-                        " undo redo | cut copy paste pastetext | print source",
+                        " undo redo | style image link unlink | cut copy paste pastetext | print source",
+                    styles: // styles in the style popup
+                        [["Paragraph", "<p>"], ["Header 1", "<h1>"], ["Header 2", "<h2>"],
+                        ["Header 3", "<h3>"],  ["Header 4","<h4>"],  ["Header 5","<h5>"],
+                        ["Header 6","<h6>"]],
                     useCSS: false, // use CSS to style HTML when possible (not supported in ie) 
                     bodyStyle: // style to assign to document body contained within the editor
                         "margin:4px; font:10pt Arial,Verdana; cursor:text"
