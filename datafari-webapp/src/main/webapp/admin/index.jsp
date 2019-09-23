@@ -293,6 +293,8 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 	}
 %>
 						<li id="Zookeeper"><a id="zookeeper-AdminUI" class="ajax-link" href="./ajax/config_zookeeper.html"></a></li>
+						<li id="HelpPage"><a id="helpPage-AdminUI" class="ajax-link" href="./ajax/HelpEditor.html">Edit Help Page</a></li>
+
 					</ul>
 				</li>
 <%

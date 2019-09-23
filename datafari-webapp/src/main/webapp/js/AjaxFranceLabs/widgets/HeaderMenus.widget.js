@@ -186,5 +186,15 @@ AjaxFranceLabs.HeaderMenusWidget = AjaxFranceLabs.AbstractWidget.extend({
             }
             linkDOMElement.prop('href', '/Datafari/admin/?lang=' + window.i18n.language + "&redirect=" + window.location.href);
         }
+
+        // Help link
+        linkDOMElement = mainMenuDOMElement.find('a#helpLink');
+        if (linkDOMElement.length > 0) {
+            let text = window.i18n.msgStore['helpLink'];
+            if (text) {
+                linkDOMElement.html(text);
+            }
+            linkDOMElement.prop('href', '/Datafari/help?lang=' + window.i18n.language);
+        }
     }
 });

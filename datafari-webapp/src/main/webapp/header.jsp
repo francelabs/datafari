@@ -250,6 +250,7 @@ pageEncoding="utf-8"%>
           <%
         }
         %>
+        <li><a id="helpLink" class="head-link" href="/Datafari/help">Help</a></li>
       </ul>
     </div>
   </div>

@@ -71,6 +71,11 @@ $(function($) {
   elm.find('#testADAuthority-AdminUI').html(window.i18n.msgStore['adminUI-testADAuthority']);
 
   elm.find('#tagCloudConfiguration-AdminUI').html(window.i18n.msgStore['adminUI-tagCloudConf']);
+  elm.find('#zookeeper-AdminUI').html(window.i18n.msgStore['adminUI-Zookeeper']);
+  elm.find('#helpPage-AdminUI').html(window.i18n.msgStore['adminUI-helpPageEditor']);
+
+  $("#logs-AdminUI").html(window.i18n.msgStore['adminUI-Logs']);
+  $("#downloadLogs-AdminUI").html(window.i18n.msgStore['adminUI-Download-Logs']);
 
   $("#licence-AdminUI").html(window.i18n.msgStore['adminUI-Licence']);
 });
