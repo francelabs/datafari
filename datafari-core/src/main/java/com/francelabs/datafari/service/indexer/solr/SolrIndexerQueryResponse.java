@@ -43,18 +43,26 @@ public class SolrIndexerQueryResponse implements IndexerQueryResponse {
     this.rawResponse = response;
     final JSONObject responseObj = (JSONObject) rawResponse.get("response");
     final JSONObject responseHeader = (JSONObject) rawResponse.get("responseHeader");
-    numFound = Long.parseLong(responseObj.get("numFound").toString());
-    qTime = Integer.parseInt(responseHeader.get("QTime").toString());
+    if (responseObj != null && responseObj.get("numFound") != null) {
+      numFound = Long.parseLong(responseObj.get("numFound").toString());
+    } else {
+      numFound = 0;
+    }
+    if (responseHeader != null && responseHeader.get("QTime") != null) {
+      qTime = Integer.parseInt(responseHeader.get("QTime").toString());
+    } else {
+      qTime = -1;
+    }
 
     // Get docs
-    if (responseObj.get("docs") == null) {
+    if (responseObj == null || responseObj.get("docs") == null) {
       resultsObj = new JSONArray();
     } else {
       resultsObj = (JSONArray) responseObj.get("docs");
     }
 
     // Get facetFields
-    listFacetFields = new HashMap<String, IndexerFacetField>();
+    listFacetFields = new HashMap<>();
     if (rawResponse.get("facet_counts") != null) {
       final JSONObject facetCounts = (JSONObject) rawResponse.get("facet_counts");
       final JSONObject facetFields = (JSONObject) facetCounts.get("facet_fields");
@@ -66,7 +74,7 @@ public class SolrIndexerQueryResponse implements IndexerQueryResponse {
     }
 
     // Get stats infos
-    listFieldStatsInfo = new HashMap<String, IndexerFieldStatsInfo>();
+    listFieldStatsInfo = new HashMap<>();
     if (rawResponse.get("stats") != null) {
       final JSONObject stats = (JSONObject) rawResponse.get("stats");
       final JSONObject statsFields = (JSONObject) stats.get("stats_fields");
