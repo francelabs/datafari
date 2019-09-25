@@ -32,9 +32,7 @@ import com.francelabs.datafari.utils.AdvancedSearchConfiguration;
 /**
  * Servlet implementation class GetFixedValuesAdvancedFields
  *
- * returns a JSON object containing the list of fields that have predefined
- * values and their predefined values list. This JSON is found in the
- * advanced-search.properties file
+ * returns a JSON object containing the list of fields that have predefined values and their predefined values list. This JSON is found in the advanced-search.properties file
  */
 @WebServlet("/GetFixedValuesAdvancedFields")
 public class GetFixedValuesAdvancedFields extends HttpServlet {
@@ -50,8 +48,7 @@ public class GetFixedValuesAdvancedFields extends HttpServlet {
   }
 
   /**
-   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-   *      response)
+   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
    */
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
@@ -59,14 +56,9 @@ public class GetFixedValuesAdvancedFields extends HttpServlet {
     final JSONObject jsonResponse = new JSONObject();
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
-    try {
-      final String jsonFixedValuesFields = AdvancedSearchConfiguration.getInstance().getProperty(AdvancedSearchConfiguration.FIXEDVALUES_FIELDS);
-      jsonResponse.put("code", CodesReturned.ALLOK.getValue());
-      jsonResponse.put("fixedValuesFields", jsonFixedValuesFields);
-    } catch (final IOException e) {
-      logger.error("Impossible to retrieve fixed values fields from advanced-search.properties", e);
-      jsonResponse.put("code", CodesReturned.GENERALERROR.getValue());
-    }
+    final String jsonFixedValuesFields = AdvancedSearchConfiguration.getInstance().getProperty(AdvancedSearchConfiguration.FIXEDVALUES_FIELDS);
+    jsonResponse.put("code", CodesReturned.ALLOK.getValue());
+    jsonResponse.put("fixedValuesFields", jsonFixedValuesFields);
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);
   }

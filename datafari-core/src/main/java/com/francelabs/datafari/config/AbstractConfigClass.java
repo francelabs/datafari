@@ -1,16 +1,3 @@
-/*******************************************************************************
- * Copyright 2019 France Labs
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- *  Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
 package com.francelabs.datafari.config;
 
 import java.io.File;
@@ -19,13 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.StandardWatchEventKinds;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
 import java.util.Properties;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.logging.log4j.Logger;
@@ -34,25 +17,24 @@ import com.francelabs.datafari.utils.Environment;
 
 public abstract class AbstractConfigClass implements IConfigClass {
 
-  private final String configPropertiesFileName;
-
   private final String configPropertiesFileNameAbsolutePath;
 
   private final Logger LOGGER;
 
   protected Properties properties;
 
-  private Thread watcherThread;
+  private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
   /**
    * Load the provided properties file from $CONFIG_HOME
    *
-   * @param configPropertiesFileName the properties file name
-   * @param logger                   the logger to use
+   * @param configPropertiesFileName
+   *          the properties file name
+   * @param logger
+   *          the logger to use
    */
   protected AbstractConfigClass(final String configPropertiesFileName, final Logger logger) {
     LOGGER = logger;
-    this.configPropertiesFileName = configPropertiesFileName;
     String envPath = Environment.getEnvironmentVariable("CONFIG_HOME");
     if (envPath == null) {
       envPath = "/opt/datafari/tomcat/conf";
@@ -62,78 +44,108 @@ public abstract class AbstractConfigClass implements IConfigClass {
     }
     configPropertiesFileNameAbsolutePath = envPath + File.separator + configPropertiesFileName;
     loadProperties();
+    ConfigManager.getInstance().addFileToWatch(configPropertiesFileNameAbsolutePath, this);
   }
 
   /**
    * Load the properties file referenced by the configPropertiesFileNameAbsolutePath parameter
    *
-   * @param configPropertiesFileName             the properties file name
-   * @param configPropertiesFileNameAbsolutePath the properties file absolute path
-   * @param logger                               the logger to use
+   * @param configPropertiesFileName
+   *          the properties file name
+   * @param configPropertiesFileNameAbsolutePath
+   *          the properties file absolute path
+   * @param logger
+   *          the logger to use
    */
   protected AbstractConfigClass(final String configPropertiesFileName, final String configPropertiesFileNameAbsolutePath, final Logger logger) {
     LOGGER = logger;
     LOGGER.info("Using direct file path: " + configPropertiesFileNameAbsolutePath);
-    this.configPropertiesFileName = configPropertiesFileName;
     this.configPropertiesFileNameAbsolutePath = configPropertiesFileNameAbsolutePath;
     loadProperties();
+    ConfigManager.getInstance().addFileToWatch(configPropertiesFileNameAbsolutePath, this);
   }
 
   /**
    * Return the value of the property given as parameter
    *
-   * @param key the property name
+   * @param key
+   *          the property name
    * @return the property value
-   * @throws IOException
    */
   @Override
-  public String getProperty(final String key) throws IOException {
+  public String getProperty(final String key) {
+    lock.readLock().lock();
     final String prop = (String) properties.get(key);
     if (prop == null) {
       LOGGER.warn("Property " + key + " not found in the following property file: " + this.configPropertiesFileNameAbsolutePath);
     }
+    lock.readLock().unlock();
     return prop;
   }
 
   /**
    * Return the value of the property given as parameter
    *
-   * @param key          the property name
-   * @param defaultValue the default value to return in case of null or error
+   * @param key
+   *          the property name
+   * @param defaultValue
+   *          the default value to return in case of null or error
    * @return the property value
    */
   @Override
   public String getProperty(final String key, final String defaultValue) {
+    lock.readLock().lock();
     String prop = (String) properties.get(key);
     if (prop == null) {
       prop = defaultValue;
       LOGGER.warn("Property " + key + " not found in the following property file: " + this.configPropertiesFileNameAbsolutePath);
     }
+    lock.readLock().unlock();
     return prop;
   }
 
   @Override
   public void setProperty(final String key, final String value) {
+    lock.writeLock().lock();
     properties.setProperty(key, value);
+    lock.writeLock().unlock();
   }
 
   @Override
-  public synchronized void saveProperties() throws IOException {
+  public void saveProperties() throws IOException {
+    lock.writeLock().lock();
     try (final FileWriterWithEncoding propWriter = new FileWriterWithEncoding(new File(configPropertiesFileNameAbsolutePath), StandardCharsets.UTF_8);) {
       properties.store(propWriter, null);
+    } finally {
+      lock.writeLock().unlock();
     }
   }
 
   /**
-   * Load/reload the advanced search properties file
+   * Load/reload the properties file
    */
-  private void loadProperties() {
+  protected void loadProperties() {
+    lock.writeLock().lock();
     final File configFile = new File(configPropertiesFileNameAbsolutePath);
-    properties = new Properties();
+    // Make a copy of the current inmemory properties (if available), to restore it in case of errors
+    Properties currentState = null;
+    if (properties != null) {
+      currentState = new Properties();
+      currentState.putAll(properties);
+      properties.clear();
+    } else {
+      properties = new Properties();
+    }
     try (final InputStream stream = new FileInputStream(configFile); final InputStreamReader isr = new InputStreamReader(stream, StandardCharsets.UTF_8);) {
       properties.load(isr);
     } catch (final IOException e) {
       LOGGER.error("Cannot read file : " + configPropertiesFileNameAbsolutePath, e);
+      if (currentState != null) {
+        LOGGER.warn("Restoring last known inmemory state of " + configPropertiesFileNameAbsolutePath);
+        properties.putAll(currentState);
+      }
+    } finally {
+      lock.writeLock().unlock();
     }
   }
 
@@ -144,66 +156,6 @@ public abstract class AbstractConfigClass implements IConfigClass {
   public void onPropertiesReloaded() {
     // TODO Auto-generated method stub
 
-  }
-
-  /**
-   * Start a FileWatcher thread to detect every modification of the advanced search properties file and automatically reload it
-   */
-  private void watchPropertiesFile() {
-    watcherThread = new Thread(new Runnable() {
-
-      @Override
-      public void run() {
-        // Java Watchers work on directories so we need to extract the
-        // parent directory path of the properties file
-        String parentDir = new File(configPropertiesFileNameAbsolutePath).getAbsolutePath();
-        parentDir = parentDir.substring(0, parentDir.lastIndexOf(File.separator));
-        final Path path = new File(parentDir).toPath();
-        try (final WatchService watchService = FileSystems.getDefault().newWatchService()) {
-          // Register the service on MODIFY events
-          path.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
-          while (true) {
-            final WatchKey wk = watchService.take();
-            for (final WatchEvent<?> event : wk.pollEvents()) {
-              // we only register "ENTRY_MODIFY" so the context is
-              // always
-              // a Path.
-              final Path changed = (Path) event.context();
-              if (changed.endsWith(configPropertiesFileName) && event.count() == 1) {
-                LOGGER.info(configPropertiesFileNameAbsolutePath + " has been modified, reloading the properties");
-                Thread.sleep(200);
-                loadProperties();
-                onPropertiesReloaded();
-              }
-            }
-            // reset the key
-            wk.reset();
-          }
-        } catch (final IOException e) {
-          LOGGER.error(e.getMessage());
-          Thread.currentThread().interrupt();
-        } catch (final InterruptedException e) {
-          Thread.currentThread().interrupt();
-        }
-      }
-    });
-    watcherThread.start();
-  }
-
-  /**
-   * Listen for every changes/modifications of the advanced search properties file
-   */
-  @Override
-  public synchronized void listenChanges() {
-    watchPropertiesFile();
-  }
-
-  /**
-   * Order to stop checking any modification of the properties file
-   */
-  @Override
-  public synchronized void stopListeningChanges() {
-    watcherThread.interrupt();
   }
 
 }

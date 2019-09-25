@@ -55,35 +55,28 @@ import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.utils.DatafariMainConfiguration;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 import com.francelabs.datafari.utils.FileUtils;
-import com.francelabs.datafari.utils.SolrAPI;
 import com.francelabs.datafari.utils.SolrConfiguration;
 import com.francelabs.datafari.utils.XMLUtils;
 
 /**
  * Javadoc
  *
- * This servlet is used to see the various fields or modify the weight of those
- * fields of a Solr core It is called by the FieldWeight.html, IndexField.html
- * and FacetConfig. doGet is used to get the fields and the informations about
- * the fields, also used to clean the semaphore doPost is used to modify the
- * weight of a field The semaphores (one for each type of query) are created in
- * the constructor.
+ * This servlet is used to see the various fields or modify the weight of those fields of a Solr core It is called by the FieldWeight.html, IndexField.html and FacetConfig. doGet is used to get the
+ * fields and the informations about the fields, also used to clean the semaphore doPost is used to modify the weight of a field The semaphores (one for each type of query) are created in the
+ * constructor.
  *
  * @author Alexis Karassev
  */
@@ -103,11 +96,10 @@ public class FieldWeight extends HttpServlet {
   /** Search Handler. **/
   private Node searchHandler = null;
   private final static Logger LOGGER = LogManager.getLogger(FieldWeight.class.getName());
-  private static String mainCollection="FileShare";
+  private static String mainCollection = "FileShare";
 
   /**
-   * @see HttpServlet#HttpServlet() Gets the path Create the semaphore Checks if
-   *      the required files exist
+   * @see HttpServlet#HttpServlet() Gets the path Create the semaphore Checks if the required files exist
    */
   public FieldWeight() {
 
@@ -118,7 +110,6 @@ public class FieldWeight extends HttpServlet {
     }
     env = environnement + File.separator + "solr" + File.separator + "solrcloud" + File.separator + "FileShare" + File.separator + "conf";
 
-    
     if (new File(env + File.separator + "solrconfig.xml").exists()) {
       config = new File(env + File.separator + "solrconfig.xml");
     }
@@ -130,29 +121,18 @@ public class FieldWeight extends HttpServlet {
     if (new File(env + File.separator + "customs_solrconfig" + File.separator + "custom_search_handler.incl").exists()) {
       customSearchHandler = new File(env + File.separator + "customs_solrconfig" + File.separator + "custom_search_handler.incl");
     }
-    
-    try {
-      if (DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION)!= null)
-        mainCollection = DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION);
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    
-    
-    
+
+    if (DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION) != null)
+      mainCollection = DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION);
+
   }
 
   /**
-   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-   *      response) Used to free a semaphore on an other select without any
-   *      confirl Checks if the files still exist Gets the list of the fields
-   *      Gets the weight of a field in a type of query
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response) Used to free a semaphore on an other select without any confirl Checks if the files still exist Gets the list of
+   *      the fields Gets the weight of a field in a type of query
    */
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-    
-    
 
     final PrintWriter out = response.getWriter();
     usingCustom = false; // Reinit the usingCustom value to false in order
@@ -241,10 +221,10 @@ public class FieldWeight extends HttpServlet {
           // Use Solr Schema REST API to get the list of fields
           final HttpClient httpClient = builder.build();
           final HttpHost httpHost = new HttpHost(solrserver, Integer.parseInt(solrport), protocol);
-          final HttpGet httpGet = new HttpGet("/solr/"+mainCollection+"/schema/fields");
+          final HttpGet httpGet = new HttpGet("/solr/" + mainCollection + "/schema/fields");
           final HttpResponse httpResponse = httpClient.execute(httpHost, httpGet);
 
-       // Construct the jsonResponse
+          // Construct the jsonResponse
           final JSONObject jsonResponse = new JSONObject();
           if (httpResponse.getStatusLine().getStatusCode() == 200) {
             // Status of the API response is OK
@@ -407,9 +387,7 @@ public class FieldWeight extends HttpServlet {
   }
 
   /**
-   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-   *      response) Checks if the files still exist Used to modify the weight of
-   *      a field
+   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response) Checks if the files still exist Used to modify the weight of a field
    */
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
@@ -586,8 +564,7 @@ public class FieldWeight extends HttpServlet {
   }
 
   /**
-   * Retrieve the default search handler '/select' from a list of request
-   * handlers
+   * Retrieve the default search handler '/select' from a list of request handlers
    *
    * @param requestHandlers
    * @return the search handler or null if not found

@@ -34,8 +34,7 @@ import com.francelabs.datafari.utils.AdvancedSearchConfiguration;
 /**
  * Servlet implementation class GetExactFields
  *
- * returns the list of fields that has a specific Solr field clone for exact
- * match queries. This list is found in the advanced-search.properties file
+ * returns the list of fields that has a specific Solr field clone for exact match queries. This list is found in the advanced-search.properties file
  */
 @WebServlet("/GetExactFields")
 public class GetExactFields extends HttpServlet {
@@ -51,8 +50,7 @@ public class GetExactFields extends HttpServlet {
   }
 
   /**
-   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-   *      response)
+   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
    */
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
@@ -60,15 +58,10 @@ public class GetExactFields extends HttpServlet {
     final JSONObject jsonResponse = new JSONObject();
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
-    try {
-      final String strExactFields = AdvancedSearchConfiguration.getInstance().getProperty(AdvancedSearchConfiguration.EXACT_FIELDS);
-      final List<String> exactFieldsList = Arrays.asList(strExactFields.split(","));
-      jsonResponse.put("code", CodesReturned.ALLOK.getValue());
-      jsonResponse.put("exactFieldsList", exactFieldsList);
-    } catch (final IOException e) {
-      logger.error("Impossible to retrieve exactFields from advanced-search.properties", e);
-      jsonResponse.put("code", CodesReturned.GENERALERROR.getValue());
-    }
+    final String strExactFields = AdvancedSearchConfiguration.getInstance().getProperty(AdvancedSearchConfiguration.EXACT_FIELDS);
+    final List<String> exactFieldsList = Arrays.asList(strExactFields.split(","));
+    jsonResponse.put("code", CodesReturned.ALLOK.getValue());
+    jsonResponse.put("exactFieldsList", exactFieldsList);
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);
   }

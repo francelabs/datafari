@@ -63,17 +63,12 @@ public class SearchProxy extends HttpServlet {
     allowedHandlers.add("/");
 
     final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
-    try {
-      if (!config.getProperty(DatafariMainConfiguration.USER_ALLOWED_HANDLERS).equals("")) {
-        userAllowedHandlers = config.getProperty(DatafariMainConfiguration.USER_ALLOWED_HANDLERS);
-        final List<String> userAllowedHandlersList = Arrays.asList(userAllowedHandlers.split(","));
-        for (int i = 0; i < userAllowedHandlersList.size(); i++) {
-          allowedHandlers.add(userAllowedHandlersList.get(i));
-        }
+    if (!config.getProperty(DatafariMainConfiguration.USER_ALLOWED_HANDLERS).equals("")) {
+      userAllowedHandlers = config.getProperty(DatafariMainConfiguration.USER_ALLOWED_HANDLERS);
+      final List<String> userAllowedHandlersList = Arrays.asList(userAllowedHandlers.split(","));
+      for (int i = 0; i < userAllowedHandlersList.size(); i++) {
+        allowedHandlers.add(userAllowedHandlersList.get(i));
       }
-    } catch (final IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
     }
 
     return allowedHandlers;
@@ -134,71 +129,61 @@ public class SearchProxy extends HttpServlet {
       }
 
       switch (handler) {
-        case "/stats":
-        case "/statsQuery":
-          solr = IndexerServerManager.getIndexerServer(Core.STATISTICS);
-          params = IndexerServerManager.createQuery();
-          break;
-        default:
-          solr = IndexerServerManager.getIndexerServer(Core.FILESHARE);
-          params = IndexerServerManager.createQuery();
-          promolinkCore = IndexerServerManager.getIndexerServer(Core.PROMOLINK);
-          queryPromolink = IndexerServerManager.createQuery();
+      case "/stats":
+      case "/statsQuery":
+        solr = IndexerServerManager.getIndexerServer(Core.STATISTICS);
+        params = IndexerServerManager.createQuery();
+        break;
+      default:
+        solr = IndexerServerManager.getIndexerServer(Core.FILESHARE);
+        params = IndexerServerManager.createQuery();
+        promolinkCore = IndexerServerManager.getIndexerServer(Core.PROMOLINK);
+        queryPromolink = IndexerServerManager.createQuery();
 
-          // Add authentication
-          params.removeParam("AuthenticatedUserName");
-          if (request.getUserPrincipal() != null) {
-            String AuthenticatedUserName = request.getUserPrincipal().getName().replaceAll("[^\\\\]*\\\\", "");
-            if (AuthenticatedUserName.contains("@")) {
-              AuthenticatedUserName = AuthenticatedUserName.substring(0, AuthenticatedUserName.indexOf("@"));
-            }
-            if (!domain.equals("")) {
-              AuthenticatedUserName += "@" + domain;
-            }
-            params.setParam("AuthenticatedUserName", AuthenticatedUserName);
+        // Add authentication
+        params.removeParam("AuthenticatedUserName");
+        if (request.getUserPrincipal() != null) {
+          String AuthenticatedUserName = request.getUserPrincipal().getName().replaceAll("[^\\\\]*\\\\", "");
+          if (AuthenticatedUserName.contains("@")) {
+            AuthenticatedUserName = AuthenticatedUserName.substring(0, AuthenticatedUserName.indexOf("@"));
           }
-
-          final String queryParam = params.getParamValue("query");
-          if (queryParam != null) {
-            params.setParam("q", queryParam);
-            params.removeParam("query");
+          if (!domain.equals("")) {
+            AuthenticatedUserName += "@" + domain;
           }
+          params.setParam("AuthenticatedUserName", AuthenticatedUserName);
+        }
 
-          break;
+        final String queryParam = params.getParamValue("query");
+        if (queryParam != null) {
+          params.setParam("q", queryParam);
+          params.removeParam("query");
+        }
+
+        break;
       }
 
       params.addParams(request.getParameterMap());
 
-      try {
-        final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
-        if (config.getProperty(DatafariMainConfiguration.ONTOLOGY_ENABLED).toLowerCase().equals("true") && config.getProperty(DatafariMainConfiguration.ONTOLOGY_ENABLED).toLowerCase().equals("true")
-            && handler.equals("/select")) {
-          final boolean languageSelection = Boolean.valueOf(config.getProperty(DatafariMainConfiguration.ONTOLOGY_LANGUAGE_SELECTION));
-          String parentsLabels = config.getProperty(DatafariMainConfiguration.ONTOLOGY_PARENTS_LABELS);
-          String childrenLabels = config.getProperty(DatafariMainConfiguration.ONTOLOGY_CHILDREN_LABELS);
-          if (languageSelection) {
-            parentsLabels += "_fr";
-            childrenLabels += "_fr";
-          }
-          final int facetFieldLength = params.getParamValues("facet.field").length;
-          final String[] facetFields = Arrays.copyOf(params.getParamValues("facet.field"), facetFieldLength + 2);
-          facetFields[facetFieldLength] = "{!ex=" + parentsLabels + "}" + parentsLabels;
-          facetFields[facetFieldLength + 1] = "{!ex=" + childrenLabels + "}" + childrenLabels;
-          params.setParam("facet.field", facetFields);
-
+      final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
+      if (config.getProperty(DatafariMainConfiguration.ONTOLOGY_ENABLED).toLowerCase().equals("true") && config.getProperty(DatafariMainConfiguration.ONTOLOGY_ENABLED).toLowerCase().equals("true") && handler.equals("/select")) {
+        final boolean languageSelection = Boolean.valueOf(config.getProperty(DatafariMainConfiguration.ONTOLOGY_LANGUAGE_SELECTION));
+        String parentsLabels = config.getProperty(DatafariMainConfiguration.ONTOLOGY_PARENTS_LABELS);
+        String childrenLabels = config.getProperty(DatafariMainConfiguration.ONTOLOGY_CHILDREN_LABELS);
+        if (languageSelection) {
+          parentsLabels += "_fr";
+          childrenLabels += "_fr";
         }
-      } catch (final IOException e) {
-        LOGGER.warn("Ignored ontology facets because of error: " + e.toString());
+        final int facetFieldLength = params.getParamValues("facet.field").length;
+        final String[] facetFields = Arrays.copyOf(params.getParamValues("facet.field"), facetFieldLength + 2);
+        facetFields[facetFieldLength] = "{!ex=" + parentsLabels + "}" + parentsLabels;
+        facetFields[facetFieldLength + 1] = "{!ex=" + childrenLabels + "}" + childrenLabels;
+        params.setParam("facet.field", facetFields);
+
       }
 
-      try {
-        final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
-        if (!config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).equals("") && handler.equals("/select")) {
-          params.setParam("collection", config.getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION) + "," + config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS));
+      if (!config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).equals("") && handler.equals("/select")) {
+        params.setParam("collection", config.getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION) + "," + config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS));
 
-        }
-      } catch (final IOException e) {
-        LOGGER.warn("Ignored search multiple collections because of error: " + e.toString());
       }
 
       // perform query
@@ -233,26 +218,26 @@ public class SearchProxy extends HttpServlet {
         queryResponsePromolink = promolinkCore.executeQuery(queryPromolink);
       }
       switch (handler) {
-        case "/select":
-          // If there is no id there is no need to record stats
-          if (params.getParamValue("id") != null && !params.getParamValue("id").equals("")) {
-            // index
-            final long numFound = queryResponse.getNumFound();
-            final int QTime = queryResponse.getQTime();
-            final IndexerQuery statsParams = IndexerServerManager.createQuery();
-            statsParams.addParams(params.getParams());
-            statsParams.setParam("numFound", Long.toString(numFound));
-            if (numFound == 0) {
-              statsParams.setParam("noHits", "1");
-            }
-            statsParams.setParam("QTime", Integer.toString(QTime));
-
-            StatsPusher.pushQuery(statsParams, protocol);
+      case "/select":
+        // If there is no id there is no need to record stats
+        if (params.getParamValue("id") != null && !params.getParamValue("id").equals("")) {
+          // index
+          final long numFound = queryResponse.getNumFound();
+          final int QTime = queryResponse.getQTime();
+          final IndexerQuery statsParams = IndexerServerManager.createQuery();
+          statsParams.addParams(params.getParams());
+          statsParams.setParam("numFound", Long.toString(numFound));
+          if (numFound == 0) {
+            statsParams.setParam("noHits", "1");
           }
-          break;
-        case "/stats":
-          solr.processStatsResponse(queryResponse);
-          break;
+          statsParams.setParam("QTime", Integer.toString(QTime));
+
+          StatsPusher.pushQuery(statsParams, protocol);
+        }
+        break;
+      case "/stats":
+        solr.processStatsResponse(queryResponse);
+        break;
       }
 
       if (promolinkCore != null) {
@@ -268,8 +253,8 @@ public class SearchProxy extends HttpServlet {
 
   }
 
-  private void writeSolrJResponse(final HttpServletRequest request, final HttpServletResponse response, final IndexerQuery query, final IndexerQueryResponse queryResponse,
-      final IndexerQuery queryPromolink, final IndexerQueryResponse queryResponsePromolink) throws IOException, ParseException, org.json.simple.parser.ParseException {
+  private void writeSolrJResponse(final HttpServletRequest request, final HttpServletResponse response, final IndexerQuery query, final IndexerQueryResponse queryResponse, final IndexerQuery queryPromolink,
+      final IndexerQueryResponse queryResponsePromolink) throws IOException, ParseException, org.json.simple.parser.ParseException {
 
     final JSONParser parser = new JSONParser();
     final String wrapperFunction = request.getParameter("json.wrf");

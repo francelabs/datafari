@@ -67,7 +67,7 @@ public class TestAlertsAdmin {
   }
 
   @Test
-  public void TestSaveAlerts() throws ServletException, IOException, ManifoldCFException, NoSuchAlgorithmException, ParseException {
+  public void TestSaveAlerts() throws ServletException, IOException, ManifoldCFException, NoSuchAlgorithmException, ParseException, InterruptedException {
     final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
     final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
@@ -98,20 +98,22 @@ public class TestAlertsAdmin {
     final JSONObject jsonResponse = (JSONObject) parser.parse(sw.toString());
     assertTrue((Long) jsonResponse.get("code") == 0);
 
-    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.HOURLY_DELAY).equals("31/07/2015/08:42"));
-    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DAILY_DELAY).equals("31/07/2015/08:42"));
-    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.WEEKLY_DELAY).equals("31/07/2015/08:42"));
+    final AlertsConfiguration alertsConf = AlertsConfiguration.getInstance();
+
+    assertTrue(alertsConf.getProperty(AlertsConfiguration.HOURLY_DELAY).equals("31/07/2015/08:42"));
+    assertTrue(alertsConf.getProperty(AlertsConfiguration.DAILY_DELAY).equals("31/07/2015/08:42"));
+    assertTrue(alertsConf.getProperty(AlertsConfiguration.WEEKLY_DELAY).equals("31/07/2015/08:42"));
 
     // Properties mails
-    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_ADDRESS).equals("SMTP_ADRESS_Test"));
-    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_FROM).equals("SMTP_FROM_Test"));
-    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_USER).equals("SMTP_USER_Test"));
-    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_PASSWORD).equals("SMTP_PASSWORD_Test"));
+    assertTrue(alertsConf.getProperty(AlertsConfiguration.SMTP_ADDRESS).equals("SMTP_ADRESS_Test"));
+    assertTrue(alertsConf.getProperty(AlertsConfiguration.SMTP_FROM).equals("SMTP_FROM_Test"));
+    assertTrue(alertsConf.getProperty(AlertsConfiguration.SMTP_USER).equals("SMTP_USER_Test"));
+    assertTrue(alertsConf.getProperty(AlertsConfiguration.SMTP_PASSWORD).equals("SMTP_PASSWORD_Test"));
 
     // Properties Database
-    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DATABASE_HOST).equals("DATABASE_HOST_Test"));
-    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DATABASE_PORT).equals("DATABASE_PORT_Test"));
-    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DATABASE_NAME).equals("DATABASE_NAME_Test"));
-    assertTrue(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DATABASE_COLLECTION).equals("DATABASE_COLLECTION_Test"));
+    assertTrue(alertsConf.getProperty(AlertsConfiguration.DATABASE_HOST).equals("DATABASE_HOST_Test"));
+    assertTrue(alertsConf.getProperty(AlertsConfiguration.DATABASE_PORT).equals("DATABASE_PORT_Test"));
+    assertTrue(alertsConf.getProperty(AlertsConfiguration.DATABASE_NAME).equals("DATABASE_NAME_Test"));
+    assertTrue(alertsConf.getProperty(AlertsConfiguration.DATABASE_COLLECTION).equals("DATABASE_COLLECTION_Test"));
   }
 }

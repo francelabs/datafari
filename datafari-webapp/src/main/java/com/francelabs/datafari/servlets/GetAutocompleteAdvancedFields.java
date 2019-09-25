@@ -32,9 +32,8 @@ import com.francelabs.datafari.utils.AdvancedSearchConfiguration;
 /**
  * Servlet implementation class GetAutocompleteAdvancedFields
  *
- * returns the list of fields that have an associated suggester component in
- * Solr. The suggester is used to enable an autocomplete widget for those
- * fields. This list is found in the advanced-search.properties file
+ * returns the list of fields that have an associated suggester component in Solr. The suggester is used to enable an autocomplete widget for those fields. This list is found in the
+ * advanced-search.properties file
  *
  */
 @WebServlet("/GetAutocompleteAdvancedFields")
@@ -51,8 +50,7 @@ public class GetAutocompleteAdvancedFields extends HttpServlet {
   }
 
   /**
-   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-   *      response)
+   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
    */
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
@@ -60,14 +58,9 @@ public class GetAutocompleteAdvancedFields extends HttpServlet {
     final JSONObject jsonResponse = new JSONObject();
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
-    try {
-      final String jsonAutocompleteFields = AdvancedSearchConfiguration.getInstance().getProperty(AdvancedSearchConfiguration.AUTOCOMPLETE_FIELDS);
-      jsonResponse.put("code", CodesReturned.ALLOK.getValue());
-      jsonResponse.put("autocompleteFields", jsonAutocompleteFields);
-    } catch (final IOException e) {
-      logger.error("Impossible to retrieve autocomplete fields from advanced-search.properties", e);
-      jsonResponse.put("code", CodesReturned.GENERALERROR.getValue());
-    }
+    final String jsonAutocompleteFields = AdvancedSearchConfiguration.getInstance().getProperty(AdvancedSearchConfiguration.AUTOCOMPLETE_FIELDS);
+    jsonResponse.put("code", CodesReturned.ALLOK.getValue());
+    jsonResponse.put("autocompleteFields", jsonAutocompleteFields);
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);
   }

@@ -1,13 +1,15 @@
 /*******************************************************************************
- * Copyright 2019 France Labs
+ * Copyright 2015 France Labs
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- *  Unless required by applicable law or agreed to in writing, software
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
@@ -39,13 +41,9 @@ import com.francelabs.datafari.utils.AlertsConfiguration;
 
 /**
  *
- * This servlet is used to configure Alerts It is only called by the
- * alertsAdmin.html doGet is called at the loading of the AlertsAdmin, to get
- * the parameters from datafari.properties. doPost is called when clicking on
- * the on/off button, turns off and on the alerts Or when the save parameters
- * button is clicked, saves the parameters in datafari.properties If you are in
- * development environment, the path towards the datafari.properties is
- * hardcoded
+ * This servlet is used to configure Alerts It is only called by the alertsAdmin.html doGet is called at the loading of the AlertsAdmin, to get the parameters from datafari.properties. doPost is
+ * called when clicking on the on/off button, turns off and on the alerts Or when the save parameters button is clicked, saves the parameters in datafari.properties If you are in development
+ * environment, the path towards the datafari.properties is hardcoded
  *
  * @author Alexis Karassev
  *
@@ -66,8 +64,7 @@ public class alertsAdmin extends HttpServlet {
    * Gets the required parameters parameters
    *
    * @throws IOException
-   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-   *      response)
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
    */
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
@@ -78,28 +75,29 @@ public class alertsAdmin extends HttpServlet {
     final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy/HH:mm");
     final DateTimeFormatter formatterbis = DateTimeFormat.forPattern("dd/MM/yyyy/ HH:mm");
 
-    json.put("on", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.ALERTS_ON_OFF));
-    json.put("hourlyDate", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.HOURLY_DELAY));
-    json.put("dailyDate", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DAILY_DELAY));
-    json.put("weeklyDate", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.WEEKLY_DELAY));
-    json.put("host", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DATABASE_HOST));
-    json.put("port", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DATABASE_PORT));
-    json.put("database", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DATABASE_NAME));
-    json.put("collection", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DATABASE_COLLECTION));
+    final AlertsConfiguration alertsConf = AlertsConfiguration.getInstance();
+    json.put("on", alertsConf.getProperty(AlertsConfiguration.ALERTS_ON_OFF));
+    json.put("hourlyDate", alertsConf.getProperty(AlertsConfiguration.HOURLY_DELAY));
+    json.put("dailyDate", alertsConf.getProperty(AlertsConfiguration.DAILY_DELAY));
+    json.put("weeklyDate", alertsConf.getProperty(AlertsConfiguration.WEEKLY_DELAY));
+    json.put("host", alertsConf.getProperty(AlertsConfiguration.DATABASE_HOST));
+    json.put("port", alertsConf.getProperty(AlertsConfiguration.DATABASE_PORT));
+    json.put("database", alertsConf.getProperty(AlertsConfiguration.DATABASE_NAME));
+    json.put("collection", alertsConf.getProperty(AlertsConfiguration.DATABASE_COLLECTION));
 
-    json.put("nextHourly", getNextEvent("hourly", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.HOURLY_DELAY)));
-    json.put("hourly", new DateTime(formatter.parseDateTime(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.LAST_HOURLY_EXEC))).toString(formatterbis));
+    json.put("nextHourly", getNextEvent("hourly", alertsConf.getProperty(AlertsConfiguration.HOURLY_DELAY)));
+    json.put("hourly", new DateTime(formatter.parseDateTime(alertsConf.getProperty(AlertsConfiguration.LAST_HOURLY_EXEC))).toString(formatterbis));
 
-    json.put("nextDaily", getNextEvent("daily", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.DAILY_DELAY)));
-    json.put("daily", new DateTime(formatter.parseDateTime(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.LAST_DAILY_EXEC))).toString(formatterbis));
+    json.put("nextDaily", getNextEvent("daily", alertsConf.getProperty(AlertsConfiguration.DAILY_DELAY)));
+    json.put("daily", new DateTime(formatter.parseDateTime(alertsConf.getProperty(AlertsConfiguration.LAST_DAILY_EXEC))).toString(formatterbis));
 
-    json.put("nextWeekly", getNextEvent("weekly", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.WEEKLY_DELAY)));
-    json.put("weekly", new DateTime(formatter.parseDateTime(AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.LAST_WEEKLY_EXEC))).toString(formatterbis));
+    json.put("nextWeekly", getNextEvent("weekly", alertsConf.getProperty(AlertsConfiguration.WEEKLY_DELAY)));
+    json.put("weekly", new DateTime(formatter.parseDateTime(alertsConf.getProperty(AlertsConfiguration.LAST_WEEKLY_EXEC))).toString(formatterbis));
 
-    json.put("smtp", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_ADDRESS));
-    json.put("from", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_FROM));
-    json.put("user", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_USER));
-    json.put("pass", AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_PASSWORD));
+    json.put("smtp", alertsConf.getProperty(AlertsConfiguration.SMTP_ADDRESS));
+    json.put("from", alertsConf.getProperty(AlertsConfiguration.SMTP_FROM));
+    json.put("user", alertsConf.getProperty(AlertsConfiguration.SMTP_USER));
+    json.put("pass", alertsConf.getProperty(AlertsConfiguration.SMTP_PASSWORD));
 
     json.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 
@@ -109,23 +107,21 @@ public class alertsAdmin extends HttpServlet {
   }
 
   /**
-   * Two uses : When user clicks on turn on/off button, starts or stops the
-   * alerts When user clicks on the parameter saving button, saves all the
-   * parameters
+   * Two uses : When user clicks on turn on/off button, starts or stops the alerts When user clicks on the parameter saving button, saves all the parameters
    *
    * @throws IOException
-   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-   *      response)
+   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
    */
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
 
     response.setContentType("application/json");
     final JSONObject json = new JSONObject();
+    final AlertsConfiguration alertsConf = AlertsConfiguration.getInstance();
 
     try {
       if (request.getParameter("activated") != null) {
-        AlertsConfiguration.getInstance().setProperty(AlertsConfiguration.ALERTS_ON_OFF, request.getParameter("activated"));
+        alertsConf.setProperty(AlertsConfiguration.ALERTS_ON_OFF, request.getParameter("activated"));
         if (request.getParameter("activated").equals("on")) {
           AlertsManager.getInstance().turnOn();
         } else {
@@ -143,17 +139,17 @@ public class alertsAdmin extends HttpServlet {
         // time
         final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy/HH:mm");
 
-        AlertsConfiguration.getInstance().setProperty(AlertsConfiguration.HOURLY_DELAY, new DateTime(df.parse(request.getParameter(AlertsConfiguration.HOURLY_DELAY))).toString(formatter));
-        AlertsConfiguration.getInstance().setProperty(AlertsConfiguration.DAILY_DELAY, new DateTime(df.parse(request.getParameter(AlertsConfiguration.DAILY_DELAY))).toString(formatter));
-        AlertsConfiguration.getInstance().setProperty(AlertsConfiguration.WEEKLY_DELAY, new DateTime(df.parse(request.getParameter(AlertsConfiguration.WEEKLY_DELAY))).toString(formatter));
-        AlertsConfiguration.getInstance().setProperty(AlertsConfiguration.DATABASE_HOST, request.getParameter(AlertsConfiguration.DATABASE_HOST));
-        AlertsConfiguration.getInstance().setProperty(AlertsConfiguration.DATABASE_PORT, request.getParameter(AlertsConfiguration.DATABASE_PORT));
-        AlertsConfiguration.getInstance().setProperty(AlertsConfiguration.DATABASE_NAME, request.getParameter(AlertsConfiguration.DATABASE_NAME));
-        AlertsConfiguration.getInstance().setProperty(AlertsConfiguration.DATABASE_COLLECTION, request.getParameter(AlertsConfiguration.DATABASE_COLLECTION));
-        AlertsConfiguration.getInstance().setProperty(AlertsConfiguration.SMTP_ADDRESS, request.getParameter(AlertsConfiguration.SMTP_ADDRESS));
-        AlertsConfiguration.getInstance().setProperty(AlertsConfiguration.SMTP_FROM, request.getParameter(AlertsConfiguration.SMTP_FROM));
-        AlertsConfiguration.getInstance().setProperty(AlertsConfiguration.SMTP_USER, request.getParameter(AlertsConfiguration.SMTP_USER));
-        AlertsConfiguration.getInstance().setProperty(AlertsConfiguration.SMTP_PASSWORD, request.getParameter(AlertsConfiguration.SMTP_PASSWORD));
+        alertsConf.setProperty(AlertsConfiguration.HOURLY_DELAY, new DateTime(df.parse(request.getParameter(AlertsConfiguration.HOURLY_DELAY))).toString(formatter));
+        alertsConf.setProperty(AlertsConfiguration.DAILY_DELAY, new DateTime(df.parse(request.getParameter(AlertsConfiguration.DAILY_DELAY))).toString(formatter));
+        alertsConf.setProperty(AlertsConfiguration.WEEKLY_DELAY, new DateTime(df.parse(request.getParameter(AlertsConfiguration.WEEKLY_DELAY))).toString(formatter));
+        alertsConf.setProperty(AlertsConfiguration.DATABASE_HOST, request.getParameter(AlertsConfiguration.DATABASE_HOST));
+        alertsConf.setProperty(AlertsConfiguration.DATABASE_PORT, request.getParameter(AlertsConfiguration.DATABASE_PORT));
+        alertsConf.setProperty(AlertsConfiguration.DATABASE_NAME, request.getParameter(AlertsConfiguration.DATABASE_NAME));
+        alertsConf.setProperty(AlertsConfiguration.DATABASE_COLLECTION, request.getParameter(AlertsConfiguration.DATABASE_COLLECTION));
+        alertsConf.setProperty(AlertsConfiguration.SMTP_ADDRESS, request.getParameter(AlertsConfiguration.SMTP_ADDRESS));
+        alertsConf.setProperty(AlertsConfiguration.SMTP_FROM, request.getParameter(AlertsConfiguration.SMTP_FROM));
+        alertsConf.setProperty(AlertsConfiguration.SMTP_USER, request.getParameter(AlertsConfiguration.SMTP_USER));
+        alertsConf.setProperty(AlertsConfiguration.SMTP_PASSWORD, request.getParameter(AlertsConfiguration.SMTP_PASSWORD));
 
         if (request.getParameter("restart") == null || request.getParameter("restart").equals("") || request.getParameter("restart").equals("true")) { // restart
           // param
@@ -171,6 +167,8 @@ public class alertsAdmin extends HttpServlet {
         json.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 
       }
+      // Save the properties
+      alertsConf.saveProperties();
     } catch (final Exception e) {
       LOGGER.error("Error while accessing the alerts.properties file in the doPost of the alerts administration Servlet . Error 69020 ", e);
       json.put("message", "Error while accessing the alerts.properties file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69020");

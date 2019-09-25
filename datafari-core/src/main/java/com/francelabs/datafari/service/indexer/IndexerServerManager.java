@@ -13,7 +13,6 @@
  *******************************************************************************/
 package com.francelabs.datafari.service.indexer;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,19 +23,14 @@ import com.francelabs.datafari.utils.DatafariMainConfiguration;
 
 public class IndexerServerManager {
 
-  static String mainCollection ="FileShare";
+  static String mainCollection = "FileShare";
 
   public enum Core {
     FILESHARE {
       @Override
       public String toString() {
-        try {
-          if (DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION)!= null)
-            mainCollection = DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION);
-        } catch (IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
+        if (DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION) != null)
+          mainCollection = DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION);
         return mainCollection;
       }
     },
