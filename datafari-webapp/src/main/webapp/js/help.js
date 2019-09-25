@@ -18,7 +18,7 @@ $(function($) {
     let contentDiv = $(document).find("#solr");
     let titles = contentDiv.find("h2");
     for (let i = 0; i < titles.length - 1; i++) {
-      let current = $(titles[0]);
+      let current = $(titles[i]);
       current.attr("data-toggle", "collapse");
       current.attr("data-target", ".section" + i);
       current.html(current.html() + " <span class=\"caret\"></span>");
