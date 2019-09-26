@@ -17,13 +17,13 @@ import com.francelabs.datafari.utils.Environment;
 
 public abstract class AbstractConfigClass implements IConfigClass {
 
-  private final String configPropertiesFileNameAbsolutePath;
+  protected final String configPropertiesFileNameAbsolutePath;
 
   private final Logger LOGGER;
 
   protected Properties properties;
 
-  private final ReadWriteLock lock = new ReentrantReadWriteLock();
+  protected final ReadWriteLock lock = new ReentrantReadWriteLock();
 
   /**
    * Load the provided properties file from $CONFIG_HOME
@@ -94,13 +94,10 @@ public abstract class AbstractConfigClass implements IConfigClass {
    */
   @Override
   public String getProperty(final String key, final String defaultValue) {
-    lock.readLock().lock();
-    String prop = (String) properties.get(key);
+    String prop = getProperty(key);
     if (prop == null) {
       prop = defaultValue;
-      LOGGER.warn("Property " + key + " not found in the following property file: " + this.configPropertiesFileNameAbsolutePath);
     }
-    lock.readLock().unlock();
     return prop;
   }
 

@@ -13,8 +13,6 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils;
 
-import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -66,6 +64,7 @@ public class AlertsConfiguration extends AbstractConfigClass {
    */
   @Override
   public void setProperty(final String key, String value) {
+    lock.writeLock().lock();
     if (key.equals(SMTP_PASSWORD)) {
       try {
         value = ObfuscationTool.obfuscate(value);
@@ -74,17 +73,18 @@ public class AlertsConfiguration extends AbstractConfigClass {
       }
     }
     properties.setProperty(key, value);
-    try {
-      saveProperties();
-    } catch (final IOException e) {
-      LOGGER.error("Error happened during save process", e);
-    }
+    lock.writeLock().unlock();
   }
 
   @Override
   public String getProperty(final String key) {
+    lock.readLock().lock();
     final String result = (String) properties.get(key);
-    if (key.equals(SMTP_PASSWORD)) {
+    if (result == null) {
+      LOGGER.warn("Property " + key + " not found in the following property file: " + this.configPropertiesFileNameAbsolutePath);
+    }
+    lock.readLock().unlock();
+    if (key.equals(SMTP_PASSWORD) && result != null) {
       try {
         return ObfuscationTool.deobfuscate(result);
       } catch (final Exception e) {
