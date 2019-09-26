@@ -13,9 +13,16 @@ pipeline:
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
         when:
-          branch:
-          - master
-          - release-*
+          branch: master
+    build-release:
+        image: plugins/docker
+        repo: datafari/ce_build
+        auto_tag: true
+        secrets: [ docker_username, docker_password ]
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        when:
+          event: tag
     notify:
         image: drillster/drone-email
         from : noreply@github.com
