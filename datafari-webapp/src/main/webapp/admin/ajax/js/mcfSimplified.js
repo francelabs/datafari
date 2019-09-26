@@ -70,7 +70,7 @@ $(document)
           $("#user").attr("placeholder", window.i18n.msgStore['filerUser']);
           $("#paths").attr("placeholder", window.i18n.msgStore['paths']);
           $("#filerSourcename").attr("placeholder", window.i18n.msgStore['sourcename']);
-          ("#newFilerConfig").innerHTML = window.i18n.msgStore['confirm'];
+          $("#newFilerConfig").html(window.i18n.msgStore['confirm']);
           $("#newFilerConfig").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
 
           // Set the tooltips
