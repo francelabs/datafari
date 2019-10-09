@@ -50,68 +50,78 @@ forceStopIfNecessary(){
     rm -f $pidFile
 }
 
+spin()
+{
+  spinner="/|\\-/|\\-"
+  while :
+  do
+    for i in `seq 0 180`
+    do
+      echo -n "${spinner:$i:1}"
+      echo -en "\010"
+      sleep 1
+    done
+  done
+}
+
 waitElasticsearch() {
-  echo "Checking if Elasticsearch is up and running ..."
-  # Try to connect on Elasticsearch port 9200
-  elasticsearch_status=0
+  echo "Waiting up until 180 seconds to see Elasticsearch running..."
+  spin &
+  SPIN_ELASTICSEARCH_PID=$!
+  # Try to connect to Elasticsearch on port 9200
+  elasticsearch_status=1
   retries=1
 
-  exec 6<>/dev/tcp/localhost/9200 || elasticsearch_status=1
-  exec 6>&- # close output connection
-  exec 6<&- # close input connection
-
-  while (( retries < 6 && elasticsearch_status != 0 )); do
-    echo "Elasticsearch doesn't reply to requests on port 9200. Sleeping for a while and trying again... retry ${retries}"
-
-    elasticsearch_status=0
-
-    # Sleep for a while
-    sleep 10s
-
-    exec 6<>/dev/tcp/localhost/9200 || elasticsearch_status=1
+  while (( retries < ${RETRIES_NUMBER} && elasticsearch_status != 0 )); do
+  
+  elasticsearch_status=0
+  # Sleep for a while
+  sleep 5s
+  { exec 6<>/dev/tcp/localhost/9200; } > /dev/null 2>&1 || elasticsearch_status=1
     exec 6>&- # close output connection
     exec 6<&- # close input connection
-
     ((retries++))
   done
+  
+  kill $SPIN_ELASTICSEARCH_PID
+  wait $SPIN_ELASTICSEARCH_PID 2>/dev/null
 
   if [ $elasticsearch_status -ne 0 ]; then
-    echo "/!\ ERROR: Elasticsearch startup has ended with errors"
-    exit 1;
+    echo "/!\ ERROR: Elasticsearch startup has ended with errors; please check log file ${ELK_LOGS}/elasticsearch.log"
   else
     echo "Elasticsearch startup completed successfully --- OK"
+    sleep 2
   fi
 }
+
 
 waitKibana() {
-  echo "Checking if Kibana is up and running ..."
-  # Try to connect on Kibana port 5601
-  kibana_status=0
+  echo "Waiting up until 180 seconds to see Kibana running..."
+  spin &
+  SPIN_KIBANA_PID=$!
+  # Try to connect to Kibana on port 5601
+  kibana_status=1
   retries=1
 
-  exec 6<>/dev/tcp/localhost/5601 || kibana_status=1
-  exec 6>&- # close output connection
-  exec 6<&- # close input connection
-
-  while (( retries < 6 && kibana_status != 0 )); do
-    echo "Kibana doesn't reply to requests on port 5601. Sleeping for a while and trying again... retry ${retries}"
-
-    kibana_status=0
-
-    # Sleep for a while
-    sleep 10s
-
-    exec 6<>/dev/tcp/localhost/5601 || kibana_status=1
+  while (( retries < ${RETRIES_NUMBER} && kibana_status != 0 )); do
+  
+  kibana_status=0
+  # Sleep for a while
+  sleep 5s
+  { exec 6<>/dev/tcp/localhost/5601; } > /dev/null 2>&1 || kibana_status=1
     exec 6>&- # close output connection
     exec 6<&- # close input connection
-
     ((retries++))
   done
+  
+  kill $SPIN_KIBANA_PID
+  wait $SPIN_KIBANA_PID 2>/dev/null
 
   if [ $kibana_status -ne 0 ]; then
-    echo "/!\ ERROR: Kibana startup has ended with errors"
-    exit 1;
+    echo "/!\ ERROR: Kibana startup has ended with errors; please check log file ${ELK_LOGS}/kibana.log"
   else
     echo "Kibana startup completed successfully --- OK"
+    sleep 2
   fi
 }
+
