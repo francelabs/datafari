@@ -8,6 +8,13 @@ $(function($) {
   if (typeof langHeader !== 'undefined') {
     languages = langHeader
   }
+
+  $.get('/Datafari/applyLang?lang=' + window.i18n.language, function(data) {
+    if (data.code == 0 && data.lang != window.i18n.language) {
+      window.location.replace("/Datafari/applyLang?urlRedirect=" + window.location.href);
+    }
+  }, "json");
+
   new AjaxFranceLabs.LanguageSelectorWidget({
     // Take the languageSelector element by ID.
     languages : languages,
