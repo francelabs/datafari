@@ -11,8 +11,9 @@
 /*! Fond page */
 
 #facets {
-  height: 52em;
-  overflow: auto;
+	/* To de-comment according to client needs */
+/*   height: 52em; */
+/*   overflow: auto; */
 }
 
 .icon object {
