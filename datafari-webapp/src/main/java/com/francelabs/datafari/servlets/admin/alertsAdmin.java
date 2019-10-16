@@ -38,6 +38,7 @@ import com.francelabs.datafari.alerts.AlertsManager;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.utils.AlertsConfiguration;
+import com.francelabs.datafari.utils.PasswordMapper;
 
 /**
  *
@@ -97,7 +98,7 @@ public class alertsAdmin extends HttpServlet {
     json.put("smtp", alertsConf.getProperty(AlertsConfiguration.SMTP_ADDRESS));
     json.put("from", alertsConf.getProperty(AlertsConfiguration.SMTP_FROM));
     json.put("user", alertsConf.getProperty(AlertsConfiguration.SMTP_USER));
-    json.put("pass", alertsConf.getProperty(AlertsConfiguration.SMTP_PASSWORD));
+    json.put("pass", PasswordMapper.getInstance().mapPasswordToKey(alertsConf.getProperty(AlertsConfiguration.SMTP_PASSWORD)));
 
     json.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 
@@ -149,7 +150,7 @@ public class alertsAdmin extends HttpServlet {
         alertsConf.setProperty(AlertsConfiguration.SMTP_ADDRESS, request.getParameter(AlertsConfiguration.SMTP_ADDRESS));
         alertsConf.setProperty(AlertsConfiguration.SMTP_FROM, request.getParameter(AlertsConfiguration.SMTP_FROM));
         alertsConf.setProperty(AlertsConfiguration.SMTP_USER, request.getParameter(AlertsConfiguration.SMTP_USER));
-        alertsConf.setProperty(AlertsConfiguration.SMTP_PASSWORD, request.getParameter(AlertsConfiguration.SMTP_PASSWORD));
+        alertsConf.setProperty(AlertsConfiguration.SMTP_PASSWORD, PasswordMapper.getInstance().mapKeyToPassword(request.getParameter(AlertsConfiguration.SMTP_PASSWORD)));
 
         if (request.getParameter("restart") == null || request.getParameter("restart").equals("") || request.getParameter("restart").equals("true")) { // restart
           // param
