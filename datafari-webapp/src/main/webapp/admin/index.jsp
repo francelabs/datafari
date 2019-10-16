@@ -214,8 +214,16 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						<li id="MCFAdminUI">
 							<a target="_blank" href="<%= getMCF %>" id="MCFAdmin-AdminUI"></a>
 						</li>
+<%
+}
+if(request.isUserInRole("SearchAdministrator")){
+%>
 						<li id="MCFBackupRestore"><a id="MCFBackupRestore-AdminUI" class="ajax-link" href="./ajax/mcfBackupRestore.html"></a></li>
 						<li id="MCFChangePassword" ><a id="MCFPassword-AdminUI" class="ajax-link" href="./ajax/MCFChangePassword.html"></a></li>
+<%
+}
+if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrator")){
+%>
 						<li id="MCFSimplified"><a id="MCFSimplified-AdminUI" class="ajax-link" href="./ajax/mcfSimplified.html"></a></li>
 					</ul>
 				</li>

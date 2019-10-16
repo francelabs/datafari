@@ -56,3 +56,5 @@ export POSTGRES_PID_FILE=$PID_DIR/postmaster.pid
 export ZK_PID_FILE=$PID_DIR/zookeeper_server.pid
 export ELASTICSEARCH_PID_FILE=$PID_DIR/elasticsearch.pid
 export KIBANA_PID_FILE=$PID_DIR/kibana.pid
+
+export RETRIES_NUMBER=35

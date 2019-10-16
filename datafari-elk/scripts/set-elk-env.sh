@@ -21,3 +21,5 @@ export KIBANA_PID_FILE=$PID_DIR/kibana.pid
 
 # Kibana max mem
 export NODE_OPTIONS="--max-old-space-size=512"
+
+export RETRIES_NUMBER=35

@@ -11,8 +11,9 @@
 /*! Fond page */
 
 #facets {
-  height: 52em;
-  overflow: auto;
+	/* To de-comment according to client needs */
+/*   height: 52em; */
+/*   overflow: auto; */
 }
 
 .icon object {
@@ -1321,10 +1322,6 @@ margin-bottom: 0!important;
 
 #save_search_label, #createRelevancy {
   text-decoration: none;
-}
-
-.snippet{
-  cursor: zoom-in;
 }
 
 #facet_last_modified ul{

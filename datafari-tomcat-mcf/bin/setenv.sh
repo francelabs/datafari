@@ -13,8 +13,9 @@ LOGGING_MANAGER="-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogMan
 CATALINA_OPTS="-Dorg.apache.manifoldcf.configfile=../../mcf/mcf_home/properties.xml -server -Xms1024m -Xmx1024m"
 
 # Set redefine JAVA_OPTS
-# To change the temp directory for Tomcat (by default /tmp) add this line :
+# To change the temp directory for Tomcat (by default /tmp) add this property at the end of the JAVA_OPTS property line :
 # -Djava.io.tmpdir=/YOUR_FOLDER
+# See https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/657620997/Change+tmp+directory+in+Datafari for more information
 JAVA_OPTS="-Duser.timezone=UTC"
 
 

@@ -135,24 +135,21 @@ AjaxFranceLabs.QueryHighlightingWidget = AjaxFranceLabs.FacetCore.extend({
     widgetContentDiv.html("");
     if (data != undefined && data != null) {
       // Retrieve the query highlighting if any
-      var highlighting = data.highlighting;
+      var fileHighlighting = data.highlighting[docId];
       var termsCollection = [];
       // Fill the termsCollection with the terms found in the query highlighting
-      for ( var file in highlighting) {
-        var fileHighlighting = highlighting[file];
-        for ( var highlightField in fileHighlighting) {
-          if (highlightField.indexOf("content") != -1 || highlightField == "exactContent") {
-            if (fileHighlighting[highlightField].length > 0) {
-              var contentHighlight = fileHighlighting[highlightField][0];
-              var termRegex = /<span class="em">(.*?)<\/span>*/gm;
-              var match = termRegex.exec(contentHighlight);
-              while (match != null) {
-                var foundTerm = match[1].trim().toLowerCase();
-                if (termsCollection.indexOf(foundTerm) == -1) {
-                  termsCollection.push(foundTerm);
-                }
-                match = termRegex.exec(contentHighlight);
+      for ( var highlightField in fileHighlighting) {
+        if (highlightField.indexOf("content") != -1 || highlightField == "exactContent") {
+          if (fileHighlighting[highlightField].length > 0) {
+            var contentHighlight = fileHighlighting[highlightField][0];
+            var termRegex = /<span class="em">(.*?)<\/span>*/gm;
+            var match = termRegex.exec(contentHighlight);
+            while (match != null) {
+              var foundTerm = match[1].trim().toLowerCase();
+              if (termsCollection.indexOf(foundTerm) == -1) {
+                termsCollection.push(foundTerm);
               }
+              match = termRegex.exec(contentHighlight);
             }
           }
         }
