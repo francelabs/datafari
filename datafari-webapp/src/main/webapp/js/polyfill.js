@@ -1,4 +1,11 @@
-/*! https://mths.be/endswith v0.2.0 by @mathias */
+// isArray
+if (!Array.isArray) {
+  Array.isArray = function(arg) {
+    return Object.prototype.toString.call(arg) === '[object Array]';
+  };
+}
+
+/* ! https://mths.be/endswith v0.2.0 by @mathias */
 // endsWith
 if (!String.prototype.endsWith) {
   (function() {
@@ -9,7 +16,8 @@ if (!String.prototype.endsWith) {
         var object = {};
         var $defineProperty = Object.defineProperty;
         var result = $defineProperty(object, object, object) && $defineProperty;
-      } catch(error) {}
+      } catch (error) {
+      }
       return result;
     }());
     var toString = {}.toString;
@@ -50,9 +58,9 @@ if (!String.prototype.endsWith) {
     };
     if (defineProperty) {
       defineProperty(String.prototype, 'endsWith', {
-        'value': endsWith,
-        'configurable': true,
-        'writable': true
+        'value' : endsWith,
+        'configurable' : true,
+        'writable' : true
       });
     } else {
       String.prototype.endsWith = endsWith;
@@ -60,9 +68,9 @@ if (!String.prototype.endsWith) {
   }());
 }
 
-/*! https://mths.be/endswith v0.2.0 by @mathias */
 // startsWith
-if (!String.prototype.endsWith) {
+/* ! https://mths.be/startswith v0.2.0 by @mathias */
+if (!String.prototype.startsWith) {
   (function() {
     'use strict'; // needed to support `apply`/`call` with `undefined`/`null`
     var defineProperty = (function() {
@@ -71,11 +79,12 @@ if (!String.prototype.endsWith) {
         var object = {};
         var $defineProperty = Object.defineProperty;
         var result = $defineProperty(object, object, object) && $defineProperty;
-      } catch(error) {}
+      } catch (error) {
+      }
       return result;
     }());
     var toString = {}.toString;
-    var endsWith = function(search) {
+    var startsWith = function(search) {
       if (this == null) {
         throw TypeError();
       }
@@ -86,20 +95,15 @@ if (!String.prototype.endsWith) {
       var stringLength = string.length;
       var searchString = String(search);
       var searchLength = searchString.length;
-      var pos = stringLength;
-      if (arguments.length > 1) {
-        var position = arguments[1];
-        if (position !== undefined) {
-          // `ToInteger`
-          pos = position ? Number(position) : 0;
-          if (pos != pos) { // better `isNaN`
-            pos = 0;
-          }
-        }
+      var position = arguments.length > 1 ? arguments[1] : undefined;
+      // `ToInteger`
+      var pos = position ? Number(position) : 0;
+      if (pos != pos) { // better `isNaN`
+        pos = 0;
       }
-      var end = Math.min(Math.max(pos, 0), stringLength);
-      var start = end - searchLength;
-      if (start < 0) {
+      var start = Math.min(Math.max(pos, 0), stringLength);
+      // Avoid the `indexOf` call if no match is possible
+      if (searchLength + start > stringLength) {
         return false;
       }
       var index = -1;
@@ -111,20 +115,47 @@ if (!String.prototype.endsWith) {
       return true;
     };
     if (defineProperty) {
-      defineProperty(String.prototype, 'endsWith', {
-        'value': endsWith,
-        'configurable': true,
-        'writable': true
+      defineProperty(String.prototype, 'startsWith', {
+        'value' : startsWith,
+        'configurable' : true,
+        'writable' : true
       });
     } else {
-      String.prototype.endsWith = endsWith;
+      String.prototype.startsWith = startsWith;
     }
   }());
 }
 
 // isInteger
 Number.isInteger = Number.isInteger || function(value) {
-    return typeof value === "number" &&
-           isFinite(value) &&
-           Math.floor(value) === value;
+  return typeof value === "number" && isFinite(value) && Math.floor(value) === value;
 };
+
+/* https://stackoverflow.com/questions/31221341/ie-does-not-support-includes-method @Sunho Hong */
+if (!Array.prototype.includes) {
+  Object.defineProperty(Array.prototype, "includes", {
+    enumerable : false,
+    value : function(obj) {
+      var newArr = this.filter(function(el) {
+        return el == obj;
+      });
+      return newArr.length > 0;
+    }
+  });
+}
+
+/* https://stackoverflow.com/questions/31221341/ie-does-not-support-includes-method @InferOn and @Bill */
+if (!String.prototype.includes) {
+  String.prototype.includes = function(search, start) {
+    'use strict';
+    if (typeof start !== 'number') {
+      start = 0;
+    }
+
+    if (start + search.length > this.length) {
+      return false;
+    } else {
+      return this.indexOf(search, start) !== -1;
+    }
+  };
+}

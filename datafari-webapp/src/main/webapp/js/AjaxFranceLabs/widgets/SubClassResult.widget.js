@@ -36,6 +36,13 @@ AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
       this.queryElevator.setParentWidget(this);
       this.manager.addModule(this.queryElevator);
     }
+
+    if (typeof AjaxFranceLabs.RelevancyQueryModule === 'function') {
+      this.relevancyQuery = new AjaxFranceLabs.RelevancyQueryModule();
+      this.relevancyQuery.setParentWidget(this);
+      this.manager.addModule(this.relevancyQuery);
+      this.relevancyQuery.cleanGlobalLinks();
+    }
   },
 
   beforeRequest : function() {
@@ -134,16 +141,21 @@ AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
           }
           var urlRedirect = 'URL?url=' + url + '&id=' + Manager.store.get("id").value + '&q=' + Manager.store.get("q").value + '&position=' + position;
           elm.find('.doc:last .res').append('<a class="title" target="_blank" href="' + urlRedirect + '"></a>');
-          var title;
-          // if the document is an html file, get the extracted title metadata
-          if (doc.extension == "html") {
-            title = doc.title;
-            // for other files, get the filename from the url
-          } else {
-            title = doc.url.split('/');
-            title = title[title.length - 1];
+          var title = "";
+          if (Array.isArray(doc.title)) {
+            try {
+              title = decodeURIComponent(doc.title[0]);
+            } catch (e) {
+              title = doc.title[0];
+            }
+          } else if (doc.title != undefined && doc.title != null) {
+            try {
+              title = decodeURIComponent(doc.title);
+            } catch (e) {
+              title = doc.title;
+            }
           }
-          elm.find('.doc:last .title').append('<span title="' + decodeURIComponent(title) + '">' + decodeURIComponent(title).truncate(50, 15) + '</span>');
+          elm.find('.doc:last .title').append('<span title="' + title + '">' + title.truncate(50, 15) + '</span>');
           elm.find('.doc:last .res').append('<div class="doc-details"><div class="description"></div></div>');
           elm.find('.doc:last .description').append('<div class="snippet">' + description + '</div>');
           var address = decodeURIComponent(url);
@@ -158,6 +170,9 @@ AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
             self.queryElevator.addElevatorLinks(elm.find('.doc:last .res'), doc.id);
           }
 
+          if (typeof self.relevancyQuery !== 'undefined') {
+            self.relevancyQuery.addRelevancyLinks(elm.find('.doc:last .res'), doc.id);
+          }
         }
       });
 
