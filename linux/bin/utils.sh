@@ -114,9 +114,8 @@ waitTomcat() {
     ((retries++))
   done
   
-  kill $SPIN_TOMCAT_PID
-  wait $SPIN_TOMCAT_PID 2>/dev/null
-
+  kill -s PIPE "$SPIN_TOMCAT_PID" &
+  
   if [ $tomcat_status -ne 0 ]; then
     echo "/!\ ERROR: Tomcat startup has ended with errors; please check log file ${DATAFARI_LOGS}/tomcat.log"
   else
@@ -144,8 +143,7 @@ waitTomcatMCF() {
     ((retries++))
   done
   
-  kill $SPIN_TOMCAT_MCF_PID
-  wait $SPIN_TOMCAT_MCF_PID 2>/dev/null
+  kill -s PIPE "$SPIN_TOMCAT_MCF_PID"
 
   if [ $tomcat_mcf_status -ne 0 ]; then
     echo "/!\ ERROR: Tomcat-MCF startup has ended with errors; please check log file ${DATAFARI_LOGS}/tomcat.log"
@@ -175,8 +173,8 @@ waitCassandra() {
   exec 6<&- # close input connection
     ((retries++))
   done
-  kill $SPIN_CASSANDRA_PID
-  wait $SPIN_CASSANDRA_PID 2>/dev/null
+  
+  kill -s PIPE "$SPIN_CASSANDRA_PID" &
   
 
   if [ $cassandra_status -ne 0 ]; then

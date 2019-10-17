@@ -83,8 +83,7 @@ waitElasticsearch() {
     ((retries++))
   done
   
-  kill $SPIN_ELASTICSEARCH_PID
-  wait $SPIN_ELASTICSEARCH_PID 2>/dev/null
+  kill -s PIPE "$SPIN_ELASTICSEARCH_PID" &
 
   if [ $elasticsearch_status -ne 0 ]; then
     echo "/!\ ERROR: Elasticsearch startup has ended with errors; please check log file ${ELK_LOGS}/elasticsearch.log"
@@ -114,8 +113,7 @@ waitKibana() {
     ((retries++))
   done
   
-  kill $SPIN_KIBANA_PID
-  wait $SPIN_KIBANA_PID 2>/dev/null
+  kill -s PIPE "$SPIN_KIBANA_PID" &
 
   if [ $kibana_status -ne 0 ]; then
     echo "/!\ ERROR: Kibana startup has ended with errors; please check log file ${ELK_LOGS}/kibana.log"
