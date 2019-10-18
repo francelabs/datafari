@@ -829,6 +829,9 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
       if (window.location.hash !== "#advancedsearch") {
         // Display the basic search
         this.displayBasicSearch();
+        this.displaySaveSearch();
+        this.displayCreateRelevancy();
+        
       }
       $('.searchBar input').val(searchBarFilter);
       this.updateAddressBar();
@@ -840,6 +843,15 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
     clearActiveLinks();
     $("#basicSearchLink").addClass("active");
   },
+  
+  displaySaveSearch : function() {
+    $("#save_search_label").show();
+  },
+
+  displayCreateRelevancy : function() {
+    $("#create-relevancy").show();
+  },
+
 
   /**
    * Resets the inputs of the widget: underlying elements table and fields
