@@ -1,15 +1,3 @@
-String.prototype.truncate = function(length, length_show) {
-  var string = this.valueOf();
-
-  if (string.length > length) {
-    var between_txt = string.substring(length_show, string.length - length_show);
-
-    return string.replace(between_txt, "...");
-  } else {
-    return string;
-  }
-}
-
 AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
   elmSelector : '#results',
   id : 'documents',

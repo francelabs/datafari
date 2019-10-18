@@ -22,7 +22,6 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,7 +39,7 @@ import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
 
 public class DatafariUpdateProcessor extends UpdateRequestProcessor {
-  
+
   private final String SIMPLE_ENTITY_EXTRACTION_PARAM = "entities.extract.simple";
   private final String SIMPLE_NAME_EXTRACTION = "entities.extract.simple.name";
   private final String SIMPLE_PHONE_EXTRACTION = "entities.extract.simple.phone";
@@ -57,7 +56,6 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
   private boolean simpleSpecialExtraction = false;
   private Pattern specialExtractionPattern = Pattern.compile(REGEX_SPECIAL_DEFAULT);
   private Pattern phoneExtractionPattern = Pattern.compile(REGEX_PHONE_DEFAULT);
-  
 
   public DatafariUpdateProcessor(final SolrParams params, final UpdateRequestProcessor next) {
     super(next);
@@ -66,8 +64,8 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
       simpleNameExtraction = params.getBool(SIMPLE_NAME_EXTRACTION, false);
       simplePhoneExtraction = params.getBool(SIMPLE_PHONE_EXTRACTION, false);
       simpleSpecialExtraction = params.getBool(SIMPLE_SPECIAL_EXTRACTION, false);
-      String specialExtractionRegex = params.get(SIMPLE_SPECIAL_EXTRACTION_REGEX, REGEX_SPECIAL_DEFAULT);
-      String phoneExtractionRegex = params.get(SIMPLE_PHONE_EXTRACTION_REGEX, REGEX_PHONE_DEFAULT);
+      final String specialExtractionRegex = params.get(SIMPLE_SPECIAL_EXTRACTION_REGEX, REGEX_SPECIAL_DEFAULT);
+      final String phoneExtractionRegex = params.get(SIMPLE_PHONE_EXTRACTION_REGEX, REGEX_PHONE_DEFAULT);
       specialExtractionPattern = Pattern.compile(specialExtractionRegex);
       phoneExtractionPattern = Pattern.compile(phoneExtractionRegex);
     }
@@ -100,7 +98,7 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
       doc.remove("last_modified");
       doc.addField("last_modified", last_modified);
     }
-    
+
     /*
      * Entity extraction
      */
@@ -118,11 +116,11 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 
         if (simplePhoneExtraction) {
           final Matcher matcherPhone = phoneExtractionPattern.matcher(content);
-          Set<String> matches = new HashSet<String>();
+          final Set<String> matches = new HashSet<>();
           while (matcherPhone.find()) {
             matches.add(matcherPhone.group());
-          } 
-          for (String match : matches) {
+          }
+          for (final String match : matches) {
             doc.addField("entity_phone", match);
           }
           if (doc.getFieldValue("entity_phone") != null) {
@@ -134,11 +132,11 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 
         if (simpleSpecialExtraction) {
           final Matcher matcherSpecial = specialExtractionPattern.matcher(content);
-          Set<String> matches = new HashSet<String>();
+          final Set<String> matches = new HashSet<>();
           while (matcherSpecial.find()) {
             matches.add(matcherSpecial.group());
-          } 
-          for (String match : matches) {
+          }
+          for (final String match : matches) {
             doc.addField("entity_special", match);
           }
           if (doc.getFieldValue("entity_special") != null) {
@@ -149,26 +147,12 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
         }
       }
 
-      final SolrInputField entityPersonField = doc.get("entity_person");
-
-      if (entityPersonField != null) {
-        if (doc.getFieldValues("entity_person").size() > 1) {
-          doc.addField("entity_person_present", "true");
-        }
-      } else {
-        doc.addField("entity_person_present", "false");
-      }
     }
-    /*
-     * End entity extraction
-     */
-    
 
     final String url = (String) doc.getFieldValue("id");
 
     final String decodedUrl = URLDecoder.decode(url, StandardCharsets.UTF_8.name());
     doc.addField("url_search", decodedUrl);
-
 
     // Create path hierarchy for facet
     final List<String> urlHierarchy = new ArrayList<>();
@@ -185,7 +169,6 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
      * // Add the tokens to the urlHierarchy field doc.addField("urlHierarchy", urlHierarchy);
      */
 
-
     doc.remove("url");
     doc.addField("url", url);
 
@@ -196,7 +179,7 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     }
 
     final SolrInputField streamNameField = doc.get("ignored_stream_name");
-    if (streamNameField != null) {
+    if (streamNameField != null && !streamNameField.getFirstValue().toString().isEmpty()) {
       filename = (String) streamNameField.getFirstValue();
     } else {
       final Pattern pattern = Pattern.compile("[^/]*$");
@@ -205,42 +188,54 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
         filename = matcher.group();
       }
     }
-    
-    final SolrInputField streamSizeField = doc.get("ignored_stream_size");
-    long streamSize = Long.parseLong((String) streamSizeField.getValue());
 
-    if (doc.getFieldValue("original_file_size") == null) {
-      if (streamSizeField != null) {
-        doc.addField("original_file_size",streamSize);
-      }
+    final SolrInputField streamSizeField = doc.get("ignored_stream_size");
+
+    if (doc.getFieldValue("original_file_size") == null && streamSizeField != null) {
+      final long streamSize = Long.parseLong((String) streamSizeField.getValue());
+      doc.addField("original_file_size", streamSize);
     }
 
     if (url.startsWith("http")) {
-      if (doc.get("title") == null) {
-        if (doc.get("jsoup_title") != null) {
-          doc.removeField("title");
-          doc.addField("title", jsouptitle);
-        } else {
-          doc.addField("title", filename);
-        }
+      if (!doc.containsKey("source")) {
+        doc.addField("source", "web");
       }
-      doc.addField("source", "web");
     }
 
     if (url.startsWith("file")) {
-      // keep the filename as the first title for the searchView of Datafari
-      if (doc.getFieldValues("title") != null) {
-        final Collection<Object> titleValues = doc.getFieldValues("title");
-        doc.removeField("title");
-        doc.addField("title", filename);
-        for (final Object value : titleValues) {
-          doc.addField("title", value);
-        }
-      } else {
+      if (!doc.containsKey("source")) {
+        doc.addField("source", "file");
+      }
+    }
+
+    // The title field has lost its original value(s) after the LangDetectLanguageIdentifierUpdateProcessorFactory
+    // Need to set it back from the exactTitle field
+    if (doc.get("exactTitle") != null) {
+      for (final Object value : doc.getFieldValues("exactTitle")) {
+        doc.addField("title", value);
+      }
+    }
+    // keep the filename as the first title for the searchView of Datafari
+    if (doc.get("title") != null) {
+      final List<Object> titleValues = new ArrayList<>();
+      titleValues.addAll(doc.getFieldValues("title"));
+      doc.removeField("title");
+      if (!jsouptitle.isEmpty()) {
+        doc.addField("title", jsouptitle);
+      }
+      if (!filename.isEmpty()) {
         doc.addField("title", filename);
       }
-
-      doc.addField("source", "file");
+      for (final Object value : titleValues) {
+        doc.addField("title", value);
+      }
+    } else {
+      if (!jsouptitle.isEmpty()) {
+        doc.addField("title", jsouptitle);
+      }
+      if (!filename.isEmpty()) {
+        doc.addField("title", filename);
+      }
     }
 
     // Ensure a search-able title
@@ -248,8 +243,10 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     if (language == null) {
       language = "en";
     }
-    doc.addField("title_" + language, filename);
-    doc.addField("exactTitle", filename);
+    if (!filename.isEmpty()) {
+      doc.addField("title_" + language, filename);
+      doc.addField("exactTitle", filename);
+    }
     if (!jsouptitle.isEmpty()) {
       doc.addField("title_" + language, jsouptitle);
       doc.addField("exactTitle", jsouptitle);
@@ -277,7 +274,9 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
      * = null; if (mimeTypeField != null) { extension = extensionFromMimeTypeField(mimeTypeField); } if (extension == null) { extension = "html"; } } } else { extension =
      * extensionFromMimeTypeField(mimeTypeField); if (extension == null) { extension = FilenameUtils.getExtension(path); } }
      */
-    doc.addField("extension", extension.toLowerCase());
+    if (!doc.containsKey("extension")) {
+      doc.addField("extension", extension.toLowerCase());
+    }
     doc.addField("mime", mime.toLowerCase());
 
     super.processAdd(cmd);

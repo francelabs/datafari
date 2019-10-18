@@ -58,7 +58,7 @@ AjaxFranceLabs.DocInfosWidget = AjaxFranceLabs.WidgetCore.extend({
     } else {
       $("#docIcon").html('<img src="images/icons/default-icon-24x24.png"/>&nbsp;');
     }
-    var title = doc.title;
+    var title = doc.title[0].truncate(75, 36);
     $("#docTitle").html(title);
     var lastModified = window.i18n.msgStore['preview-modified-on'] + " ";
     if (doc.last_author != undefined && doc.last_author != null) {

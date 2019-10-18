@@ -5,6 +5,19 @@ if (!Array.isArray) {
   };
 }
 
+// truncate
+String.prototype.truncate = function(length, length_show) {
+  var string = this.valueOf();
+
+  if (string.length > length) {
+    var between_txt = string.substring(length_show, string.length - length_show);
+
+    return string.replace(between_txt, "...");
+  } else {
+    return string;
+  }
+}
+
 /* ! https://mths.be/endswith v0.2.0 by @mathias */
 // endsWith
 if (!String.prototype.endsWith) {
