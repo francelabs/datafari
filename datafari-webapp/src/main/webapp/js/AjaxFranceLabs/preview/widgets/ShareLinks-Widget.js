@@ -25,6 +25,13 @@ AjaxFranceLabs.ShareLinksWidget = AjaxFranceLabs.FacetCore.extend({
   updateWidgetContent : function(docContentDiv, widgetDiv, widgetContentDiv, docId, docPos, params, data, qId) {
     if (data != undefined && data != null) {
       var doc = data.response.docs[0];
+      // The statistics need info about the previous and next doc so they are always returned in the query response.
+      // So, the current doc that must be displayed in the preview is always the in the 2nd position of the array of docs
+      // Unless of course it is the first doc of the results. In that case the doc is the 1st of the array as it has no previous doc !
+      // This is the reason why if the docPos is present and different from 0 (1st position) then take the second doc of the array
+      if (docPos && docPos != 0) {
+        doc = data.response.docs[1];
+      }
       var idDoc = doc.id;
       var idDocLink = idDoc;
       var sharePreviewLink = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/Datafari/Preview?docId=" + idDocLink

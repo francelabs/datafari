@@ -18,6 +18,8 @@ AjaxFranceLabs.PreviewRequestWidget = AjaxFranceLabs.Class.extend({
 
   // Methods
   requestFromQuery : function(servlet, params, docPos, responseHandler) {
+    // The statistics need to also retrieve the previous and next doc of the request
+    // So set the num of rows to 3 and the startPos to original docPos - 1 (unless of course the original docPos is 0)
     let rows = 3;
     let startPos = docPos - 1;
     if (docPos == 0) {
