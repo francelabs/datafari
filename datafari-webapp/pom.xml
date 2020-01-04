@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.francelabs.datafari</groupId>
     <artifactId>datafari-parent</artifactId>
-    <version>4.4-dev-Community</version>
+    <version>4.4-Community</version>
   </parent>
   <artifactId>datafari-webapp</artifactId>
   <packaging>war</packaging>
@@ -12,12 +12,12 @@
     <dependency>
       <groupId>com.francelabs.datafari</groupId>
       <artifactId>datafari-core</artifactId>
-      <version>4.4-dev-Community</version>
+      <version>4.4-Community</version>
     </dependency>
     <dependency>
       <groupId>com.francelabs.datafari</groupId>
       <artifactId>datafari-mcf-scripts</artifactId>
-      <version>4.4-dev-Community</version>
+      <version>4.4-Community</version>
       <type>jar</type>
     </dependency>
         
