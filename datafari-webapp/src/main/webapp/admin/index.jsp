@@ -204,7 +204,7 @@
 <%
 if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrator")){
 %>
-<li id="MCFSimplified"><a id="MCFSimplified-AdminUI" class="ajax-link" href="./ajax/mcfSimplified.html"></a></li>
+
 <!-- 					<a href="./ajax/dashboard.html" class="ajax-link"> <i -->
 				<li class="dropdown" id="Connectors">
 					<a href="#" class="dropdown-toggle">
@@ -212,6 +212,7 @@ if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrat
 						 <span id="connectors-AdminUI" class="hidden-xs"></span>
 					</a>
 					<ul class="dropdown-menu">
+					<li id="MCFSimplified"><a id="MCFSimplified-AdminUI" class="ajax-link" href="./ajax/mcfSimplified.html"></a></li>
 						<li id="MCFAdminUI">
 							<a target="_blank" href="<%= getMCF %>" id="MCFAdmin-AdminUI"></a>
 						</li>
