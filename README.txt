@@ -1,4 +1,4 @@
---------------------------- DATAFARI V. 4.4-dev ------------------------
+--------------------------- DATAFARI V. 4.4 ------------------------
 
 NOTE: For the changes compared to the previous version of DATAFARI, please check CHANGES.txt.
 
