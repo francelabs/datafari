@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.francelabs.datafari</groupId>
     <artifactId>datafari-parent</artifactId>
-    <version>4.4-dev-Community</version>
+    <version>4.5-dev-Community</version>
   </parent>
   <artifactId>datafari-mcf</artifactId>
   <packaging>pom</packaging>

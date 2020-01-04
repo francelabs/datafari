@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.francelabs.datafari</groupId>
     <artifactId>datafari-parent</artifactId>
-    <version>4.4-dev-Community</version>
+    <version>4.5-dev-Community</version>
   </parent>
   <artifactId>datafari-updateprocessor</artifactId>
   <packaging>jar</packaging>
@@ -35,7 +35,7 @@
 		<dependency>
       <groupId>com.francelabs.datafari</groupId>
       <artifactId>datafari-jena</artifactId>
-      <version>4.4-dev-Community</version>
+      <version>4.5-dev-Community</version>
       <type>pom</type>
       <scope>provided</scope>
     </dependency>
