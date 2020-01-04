@@ -23,7 +23,52 @@ Datafari no longer embeds Java JDK. JDK 8 must be present on the machine and set
 
 The differences between the Community Edition and Enterprise Edition are listed here: https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/509575169/Differences+between+the+Community+and+Enterprise+Editions+of+Datafari
 
-==================  4.4-dev ==================
+==================  4.5-dev ==================
+
+==================  4.4 ==================
+
+* Version of major components :
+Solr 7.4
+ManifoldCF 2.13
+Tomcat 9.0.8
+Cassandra 3.11.2
+PostgreSQL 10.1
+Zookeeper 3.4.10
+Tika Server 1.19.1
+ElasticSearch 5.6.4
+Kibana 5.6.4
+LogStash 5.6.4
+
+* New features :
+Add German and Spanish languages text detection by default
+Added help page
+Add Spanish language
+Tag cloud widget
+Create a UI for create/modify/delete Solr fields
+* Bug fixes :
+Fix DATAFARI-421 Anormal search results with q.op/ AND condition under specific conditions
+Fix DATAFARI-413 Lost menu items after advanced search
+Fix DATAFARI-412 Modify title field content at indexing phase
+Fix DATAFARI-407 Remove password field from the alerts management page
+Fix DATAFARI-405 autocomplete concatenate intermediary results
+Fix DATAFARI-403 Copy preview link loses the language variable
+Fix doc title preview UI
+Fix DATAFARI-402 Horizontal scroll bar appearing below the facets widget
+Bugfix Preview Highlight
+Fix AlertsConfiguration locks
+New lock system for properties files 
+Update debian package scripts
+Fix mcf admin link in simplified ui
+Fix DATAFARI-396 Horizontal scroll bar appearing below the facets widget
+Fix DATAFARI-388 Modify the startup script to hide the cassandra/tomcat
+UI admin tooltips
+Reworked facet tab
+Header menu css fix
+Libs refactoring
+Update maven plugins + reorganize webapp libs
+Maj libs + fix missing slf4 logger for tomcat webapps 
+Change debian7 folder name
+
 
 
 ==================  4.3 ==================
