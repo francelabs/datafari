@@ -400,7 +400,7 @@
     "mandatoryField": "Campi obbligatori",
     "match": "matching",
     "max": "max",
-    "mcf-restore-warning": "Warning ! Restoring a configuration will completely remove the current existing crawling jobs and connectors. Would you like to proceed ?",
+    "mcf-restore-warning": "Warning ! Restoring a configuration will completely remove the current existing crawling jobs and connectors. The jobs must be stopped before doing this. Would you like to proceed ?",
     "MCFPassword-AdminUI": "Change MCF Password",
     "MCFPasswordAdmin": "Change MCF Password",
     "metricbeatOverview-AdminUI": "System Metrics Overview",
