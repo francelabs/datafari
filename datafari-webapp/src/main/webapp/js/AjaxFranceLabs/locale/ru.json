@@ -400,7 +400,7 @@
     "mandatoryField": "Обязательное поле",
     "match": "совпадающие",
     "max": "max",
-    "mcf-restore-warning": "Warning ! Restoring a configuration will completely remove the current existing crawling jobs and connectors. Would you like to proceed ?",
+    "mcf-restore-warning": "Warning ! Restoring a configuration will completely remove the current existing crawling jobs and connectors. The jobs must be stopped before doing this. Would you like to proceed ?",
     "MCFPassword-AdminUI": "Изменить пароль MCF",
     "MCFPasswordAdmin": "Пароль администратора MCF",
     "metricbeatOverview-AdminUI": "System Metrics Overview",

@@ -398,7 +398,7 @@
     "mandatoryField": "Champs obligatoires",
     "match": "Correspond",
     "max": "max",
-    "mcf-restore-warning": "Attention ! La restauration d'une configuration supprime complètement les jobs et les connecteurs existants. Voulez vous procéder ?",
+    "mcf-restore-warning": "Attention ! La restauration d'une configuration supprime complètement les jobs et les connecteurs existants. Les jobs doivent être stoppés au préalable. Voulez vous procéder ?",
     "MCFPassword-AdminUI": "Changer mot de passe MCF",
     "MCFPasswordAdmin": "Administration mot de passe MCF",
     "metricbeatOverview-AdminUI": "Vue globale des ressources du système",
