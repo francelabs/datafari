@@ -309,7 +309,7 @@ function addFilerConnector() {
           jobStarted = " and started";
         }
         var getUrl = window.location;
-        var mcfUrl = "@GET-MCF-IP@";
+        var mcfUrl = "/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp";
         $("#addFilerMessageSuccess").html(
             "<i class='fa fa-check'></i>Job " + data.job_id + " created" + jobStarted
                 + " ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='" + mcfUrl + "'>Datafari connectors status page</a>");
@@ -367,7 +367,7 @@ function addWebConnector() {
           jobStarted = " and started";
         }
         var getUrl = window.location;
-        var mcfUrl = "@GET-MCF-IP@";
+        var mcfUrl = "/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp";
         $("#addWebMessageSuccess").html(
             "<i class='fa fa-check'></i>Job " + data.job_id + " created" + jobStarted
                 + " ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='" + mcfUrl + "'>Datafari connectors status page</a>");
