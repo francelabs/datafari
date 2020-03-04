@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.francelabs.datafari</groupId>
     <artifactId>datafari-parent</artifactId>
-    <version>4.4-Community</version>
+    <version>4.4.1-Community</version>
   </parent>
   <artifactId>datafari-git-plugin</artifactId>
   <packaging>war</packaging>

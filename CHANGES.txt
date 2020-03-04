@@ -23,6 +23,24 @@ Datafari no longer embeds Java JDK. JDK 8 must be present on the machine and set
 
 The differences between the Community Edition and Enterprise Edition are listed here: https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/509575169/Differences+between+the+Community+and+Enterprise+Editions+of+Datafari
 
+
+==================  4.4.1 ==================
+
+* Version of major components :
+Solr 7.4
+ManifoldCF 2.13
+Tomcat 9.0.8
+Cassandra 3.11.2
+PostgreSQL 10.1
+Zookeeper 3.4.10
+Tika Server 1.19.1
+ElasticSearch 5.6.4
+Kibana 5.6.4
+LogStash 5.6.4
+
+* Bug fixes
+Security fix : Fix for CVE-2020-1938 Ghostcat vulnerability
+
 ==================  4.4 ==================
 
 * Version of major components :
