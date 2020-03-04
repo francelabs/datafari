@@ -111,7 +111,8 @@
     -->
 
 		<!-- Define an AJP 1.3 Connector on port 8009 -->
-    <Connector port="@AJP_PORT@" protocol="AJP/1.3" redirectPort="@SSL_PORT@" />
+        <!--  Fix for CVE-2020-1938 Ghostcat vulnerability -->
+    <!-- <Connector port="@AJP_PORT@" protocol="AJP/1.3" redirectPort="@SSL_PORT@" />  -->
 	
 
 
