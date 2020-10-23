@@ -1,2 +1,0 @@
-<!-- Put here your custom copyFields for Solr -->
-<!-- E.g  <copyField source="myField" dest="myCopy" /> -->

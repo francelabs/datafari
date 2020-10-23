@@ -1,1 +1,0 @@
-Mind the images links in the css template.css

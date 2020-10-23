@@ -1,9 +1,0 @@
-h2 {
-    cursor: pointer;
-}
-
-#solr h2 span.caret {
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-top: 8px solid #000000;
-}

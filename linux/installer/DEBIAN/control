@@ -1,8 +1,0 @@
-Package: datafari
-Version: 4.5-dev
-Section: base
-Priority: optional
-Architecture: all
-Depends: bash,curl,debconf,unzip,sudo,libc6-dev, jq,lsof
-Maintainer: France Labs (info@francelabs.com)
-Description: Datafari search solution

@@ -1,7 +1,0 @@
-<!-- Put here your custom searchComponents for Solr -->
-<!-- E.g  <searchComponent class="my.searchComponent" name="mySearchComponent">
-		<lst name="component">
-			<str name="name">default</str>
-			<str name="field">sample</str>
-		</lst>
-	</searchComponent> -->
