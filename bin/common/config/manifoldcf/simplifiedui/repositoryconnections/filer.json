@@ -1,0 +1,68 @@
+{
+  "repositoryconnection": [
+    {
+      "max_connections": "10",
+      "configuration": {
+        "_PARAMETER_": [
+          {
+            "_value_": "localhost",
+            "_attribute_name": "Server"
+          },
+          {
+            "_value_": "150000",
+            "_attribute_name": "Connection Timeout"
+          },
+          {
+            "_value_": "150000",
+            "_attribute_name": "Session Timeout"
+          },
+          {
+            "_value_": "150000",
+            "_attribute_name": "Socket Timeout"
+          },
+          {
+            "_value_": "120000",
+            "_attribute_name": "Response Timeout"
+          },
+          {
+            "_value_": "LMHOSTS,DNS,WINS",
+            "_attribute_name": "Resolve Order"
+          },
+          {
+            "_value_": "200",
+            "_attribute_name": "List Count"
+          },
+          {
+            "_value_": "",
+            "_attribute_name": "Domain/Realm"
+          },
+          {
+            "_value_": "youp",
+            "_attribute_name": "User Name"
+          },
+          {
+            "_value_": "FL9HginD1EokrGzFOJD3RXPiNdmwgahH92SUvvxnUCo=",
+            "_attribute_name": "Password"
+          },
+          {
+            "_value_": "true",
+            "_attribute_name": "Use SIDs"
+          },
+          {
+            "_value_": "SMB210",
+            "_attribute_name": "Maximum version of SMB"
+          },
+          {
+            "_value_": "",
+            "_attribute_name": "Bin Name"
+          }
+        ]
+      },
+      "acl_authority": "DatafariAuthorityGroup",
+      "name": "winshare",
+      "description": "",
+      "isnew": true,
+      "class_name": "com.francelabs.datafari.connectors.share.SharedDriveConnector"
+    }
+  ]
+}

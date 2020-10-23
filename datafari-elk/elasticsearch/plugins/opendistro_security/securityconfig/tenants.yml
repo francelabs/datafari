@@ -1,0 +1,12 @@
+---
+_meta:
+  type: "tenants"
+  config_version: 2
+
+admin_tenant:
+  reserved: false
+  description: "admin and searchadmin users"
+  
+searchexpert_tenant:
+  reserved: false
+  description: "searchexpert users"

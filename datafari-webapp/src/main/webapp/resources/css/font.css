@@ -1,0 +1,22 @@
+
+body { font: 0.80em Arial, Helvetica, Sans-Serif; }
+textarea { font: 0.9em Arial, Helvetica, Sans-Serif; }
+a:link { text-decoration: none; font-weight:bold; }
+/*
+nav a { font-weight: bold; }
+*/
+#search .search-bar input[type=text] { font-size: 1.5em; }
+.page > .title { font-size:66px; }
+.page p > .title { font-weight:bold; }
+.page ul li a { font-weight:bold; }
+.page p a { font-weight:bold; }
+.page a { text-decoration:underline; }
+footer { font-weight: bold; }
+
+
+.title { font-size:15px; font-weight:bold; }
+.news-title .date { font-size:15px; font-weight:bold; }
+
+.informations_sent { font-weight:bold; }
+
+.error.message { font-weight:bold; }

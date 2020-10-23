@@ -1,0 +1,38 @@
+#categories-select {
+   -webkit-appearance: none;
+   -moz-appearance: none;
+   appearance: none;
+   padding: 5px;
+   padding-right: 2em;
+   border-radius: 0px;
+   text-align: center;
+   border: 0em solid #CCC;
+   background: url('../images/chevron-down.png') no-repeat 95% 50% #ffffff !important;
+   background-size: 11px 7px !important;
+   outline: none;
+   color: rgba(0,0,0,0);
+   text-shadow: 0 0 0 #000;
+   width: 21.5%;
+   height: 100%;
+   position: absolute;
+   z-index: 1;
+   display:none;
+   box-sizing: border-box;
+   box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
+   transition: box-shadow 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.categories-on {
+	width: 71% !important;
+	margin-left: 22% !important;
+}
+
+.categories-off {
+  margin-left: 0% !important;
+}
+
+.searchBarWidget .searchBar .search {
+  box-sizing: border-box;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
+  transition: box-shadow 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}

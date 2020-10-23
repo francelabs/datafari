@@ -1,0 +1,85 @@
+header {
+ position: fixed;
+ top: 0;
+ width: 100%;
+ z-index: 10;
+}
+
+#admin-navbar {
+ height: 3.5rem;
+}
+
+#admin-navbar ul > li {
+ display: table;
+ height: 100%;
+}
+
+#admin-navbar ul > li > a {
+ display: table-cell;
+ vertical-align: middle;
+}
+
+#admin-navbar ul {
+ height: 100%;
+}
+
+#dropdown-user {
+ outline: none;
+ cursor: pointer;
+}
+
+.dropdown-menu {
+  min-width: 0;
+}
+
+.dropdown-item {
+  font-size: 13px;
+  text-align: center;
+}
+
+.user-mini > span.welcome {
+  font-weight: bold;
+}
+
+.ml-auto .dropdown-menu {
+  left: auto;
+  right: 0;
+  margin-top: 0;
+  border-radius: 0;
+  padding: 0;
+}
+
+#dropdown-user > span {
+  display : inline-block;
+  vertical-align: top;
+}
+
+.user-mini span {
+  display: block;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,.75);
+}
+
+.nav-link:hover .user-mini span {
+  color: #fff;  
+}
+
+.searchPageLink {
+  font-size: 15px;
+}
+
+#datafariAdminMenu {
+  line-height: 40px; /* must match the width of the .avatar > img rule */
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#admin-menu-icon {
+  width: 1em;
+  display: inline-block;
+}
+
+.avatar > img {
+  width: 40px;
+  height: 40px;
+}

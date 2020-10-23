@@ -1,0 +1,128 @@
+.select-equals,.select-not-equals {
+    margin-left: 0em !important;
+}
+
+.advancedSearchWidget .dropdown {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding: 5px;
+    padding-right: 2em;
+    border-radius: 0px;
+    text-align: center;
+    background-color: white;
+    border: 1px solid #CCC;
+    background: url('../images/chevron-down.png') no-repeat 95% 50% #ffffff !important;
+    background-size: 11px 7px !important;
+    outline: none;
+    color: black;
+    text-shadow: 0 0 0 #000;
+}
+
+.select-operator {
+
+}
+
+.advancedSearchWidget {
+    width: 98%;
+    margin-bottom: 10px;
+}
+
+.adv_field .dropdown-field {
+	margin-bottom : 0.5em;
+	margin-left: 0.5em;
+	min-width: 12em;
+}
+
+.adv_field .fromInput, .adv_field .toInput {
+    border: 1px solid;
+    display: inline-block;
+    height: 25px;
+    margin-bottom: 5px;
+    -webkit-border-radius: 1px;
+    border-color: #D9D9D9 !important;
+    border-top-color: #A1A1A1 !important;
+}
+
+.advancedSearchWidget .add-field-button {
+    font-weight: bold;
+    font-size: 2em !important;
+    color: green;
+    cursor: pointer;
+}
+
+.advancedSearchWidget .subtitle {
+    font-weight: bold;
+    font-size: 15px !important;
+    margin-bottom: 0.5em;
+    margin-right: 0.5em;
+}
+
+.advancedSearchWidget .delete_button {
+    font-weight: bold;
+    font-size: 1.2em;
+    color: red;
+    cursor: pointer;
+}
+
+.advancedSearchWidget .filter-input {
+    border: 1px solid;
+    display: inline-block;
+    height: 25px;
+    margin-bottom: 5px;
+    width: 796px;
+    -webkit-border-radius: 1px;
+    border-color: #D9D9D9 !important;
+    border-top-color: #A1A1A1 !important;
+}
+
+.advancedSearchWidget button:hover {
+    border-color: #A1A1A1;
+}
+
+.advancedSearchWidget button {
+    background-color: rgb(168,201,0);
+    border: 1px solid;
+	cursor: pointer;
+	margin-bottom: 15px;
+	margin-left: 43%;
+	padding: 5px;
+	-webkit-border-radius: 1px;
+	width: 150px;
+	border-color: #D9D9D9 !important;
+    border-top-color: #A1A1A1 !important;
+    color: white;
+}
+
+.advancedSearchWidget .advTable .title {
+    background-color: #FFF;
+    font-family: "HelveticaNeueW02-67MdCn 694060", Helvetica, Arial, sans-serif;
+    font-size: 20px;
+    text-transform: uppercase;
+    margin-left: 0;
+    width: 12em;
+}
+
+.advancedSearchWidget .advTable .left {
+    width: 1000px;
+    font-size: 13px;
+}
+
+.advancedSearchWidget .advTable .left label {
+    display: inline-block;
+    width: 200px;
+}
+
+.advancedSearchWidget .separator {
+    border-bottom-color: #D9D9D9 !important;
+    border-bottom: 1px solid;
+	display: inline-block;
+	margin: 15px 0;
+	width: 100%;
+	height: 1px;
+}
+
+.advancedSearchWidget .advTable .right {
+    font-size: 11px;
+    width: 350px;
+}

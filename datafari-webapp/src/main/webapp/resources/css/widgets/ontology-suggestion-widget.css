@@ -1,0 +1,12 @@
+.suggestionWidget { 
+	margin: 15px 0;
+	width: 480px;
+}
+
+.suggestionWidget .result { 
+	cursor: pointer; 
+	font-weight: bold; 
+	text-decoration: underline;
+	color: #204a87;
+}
+

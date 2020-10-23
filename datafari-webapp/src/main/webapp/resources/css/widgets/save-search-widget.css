@@ -1,0 +1,38 @@
+#requestName {
+  font: caption;
+  box-sizing: unset;
+}
+
+#save_result {
+  text-align: center;	
+}
+
+#save-search-popover button {
+  border: 0;
+  font-family: "HelveticaNeueW02-67MdCn 694060";
+  font-size: 14px;
+  padding: 5px 15px;
+  background-color: #666;
+  color: white;
+  vertical-align: inherit;
+  white-space: nowrap;
+  width: auto;
+  cursor: pointer;
+  margin-left: 0.5em;
+}
+
+.prompt {
+	display: block;
+}
+
+.success {
+	color: #6B956F;
+}
+
+.fail {
+	color: red;
+}
+
+.button {
+	cursor: pointer;
+}

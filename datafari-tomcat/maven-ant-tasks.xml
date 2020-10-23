@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-ant-tasks" default="setup-tomcat" basedir=".">
+	<property name="tomcat.dist" value="target/dist/tomcat" />
+
+	<target name="setup-tomcat">
+		<!-- Copy only useful Cassandra directories stripping the parent Cassandra 
+					directory (to avoid Cassandra version inclusion) -->
+		<copy toDir="${tomcat.dist}" overwrite="true" force="true">
+			<fileset dir="target">
+				<include name="*tomcat*/**" />
+				<exclude name="*tomcat*/webapps/docs/" />
+				<exclude name="*tomcat*/webapps/examples/" />
+			</fileset>
+			<cutdirsmapper dirs="1" />
+		</copy>
+
+	</target>
+
+</project>

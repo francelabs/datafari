@@ -1,0 +1,10 @@
+#export-excel {
+	float: right;
+	margin-right: 3em;
+	cursor: pointer;
+	margin-top: -0.4em;
+}
+
+.blink-message {
+	margin-top: 0em !important;
+}

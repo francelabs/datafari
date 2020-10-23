@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>com.francelabs.datafari</groupId>
+    <artifactId>datafari-ce</artifactId>
+    <version>5.0-dev-Community</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>datafari-zookeeper</artifactId>
+  <packaging>pom</packaging>
+  <name>Datafari Enterprise Search - Zookeeper module</name>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.googlecode.maven-download-plugin</groupId>
+        <artifactId>download-maven-plugin</artifactId>
+        <!-- Don't propagate configuration to child POMs -->
+        <inherited>false</inherited>
+        <executions>
+          <execution>
+            <id>install-zookeeper</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>wget</goal>
+            </goals>
+            <configuration>
+              <!-- Version of Solr should be retrieved from a property file as well 
+                as the SHA1 -->
+              <url>http://archive.apache.org/dist/zookeeper/zookeeper-${zookeeper.version}/apache-zookeeper-${zookeeper.version}-bin.tar.gz</url>
+              <sha512>4c65e56c074393835dee87256d577ebef6bbc0fbe8271cf030a50779f7e9ba5110bc274aa4b239a431de1716ad6c8a103abac02b93c3ad2c264bbea8b1c330c1</sha512>
+              <unpack>true</unpack>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <!-- Don't propagate configuration to child POMs -->
+        <inherited>false</inherited>
+        <executions>
+          <execution>
+            <id>ant-tasks</id>
+            <phase>validate</phase>
+            <configuration>
+              <target>
+                <ant antfile="maven-ant-tasks.xml" />
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

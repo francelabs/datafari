@@ -1,0 +1,13 @@
+{
+  "solrHost":"http://localhost:8983/solr/",
+  "solrCollection":"FileShare",
+  "solrCloud":false,
+  "idField": "id",
+
+  "iterations":300,
+  "rows":20,
+
+  "parameters": [],
+
+  "fixed_params": []
+}

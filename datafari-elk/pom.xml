@@ -1,0 +1,86 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>com.francelabs.datafari</groupId>
+    <artifactId>datafari-ce</artifactId>
+    <version>5.0-dev-Community</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>datafari-elk</artifactId>
+  <packaging>pom</packaging>
+  <name>Datafari Enterprise Search - ELK module</name>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.googlecode.maven-download-plugin</groupId>
+        <artifactId>download-maven-plugin</artifactId>
+        <!-- Don't propagate configuration to child POMs -->
+        <inherited>false</inherited>
+        <executions>
+          <execution>
+            <id>install-elastic</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>wget</goal>
+            </goals>
+            <configuration>
+              <url>https://d3g5vo6xdbdb9a.cloudfront.net/tarball/opendistro-elasticsearch/opendistroforelasticsearch-${open.distro.version}.tar.gz</url>
+              <sha512>2039cf51b9bd7f09ae90166c5d2005f9d24240aae0602f9aed00c87b12c00fc259a982ad6b365e837923cdae43f1a2076351db62880e0c0c200b29c72a9c71c9</sha512>
+              <unpack>true</unpack>
+            </configuration>
+          </execution>
+          <execution>
+            <id>install-kibana</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>wget</goal>
+            </goals>
+            <configuration>
+              <url>https://d3g5vo6xdbdb9a.cloudfront.net/tarball/opendistroforelasticsearch-kibana/opendistroforelasticsearch-kibana-${open.distro.version}.tar.gz</url>
+              <sha512>1db1b0077bac62a26444a6d28a72c060999adaa07aaff4c397bfad946fe19e1cc78c33f82bf7bb3309545689821917591af5cafec362d3c8d60ba2c7505ec898</sha512>
+              <!-- We unzip and untar Kibana by Ant in maven-ant-tasks.xml instead 
+                of here as the Maven's wget plugin doesn't handle correctly duplicated directory 
+                names in the path: e.g. A/B/C/B/D -->
+              <unpack>false</unpack>
+            </configuration>
+          </execution>
+          <execution>
+            <id>install-logstash</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>wget</goal>
+            </goals>
+            <configuration>
+              <url>https://artifacts.elastic.co/downloads/logstash/logstash-oss-${logstash.version}.tar.gz</url>
+              <sha512>4413ed97527eb89da3462cc401b84f4770bfb9e3e3083fb314b8ac813165655752a204f091512de3507527bf8cbea5934f67ada446448802424dd441da2d475e</sha512>
+              <!-- We unzip and untar Logstash by Ant in maven-ant-tasks.xml instead 
+                of here as the Maven's wget plugin doesn't handle correctly duplicated directory 
+                names in the path: e.g. A/B/C/B/D -->
+              <unpack>false</unpack>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <!-- Don't propagate configuration to child POMs -->
+        <inherited>false</inherited>
+        <executions>
+          <execution>
+            <id>ant-tasks</id>
+            <phase>validate</phase>
+            <configuration>
+              <target>
+                <ant antfile="maven-ant-tasks.xml" />
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

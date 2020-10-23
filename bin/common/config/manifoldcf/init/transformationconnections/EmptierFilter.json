@@ -1,0 +1,1 @@
+{"transformationconnection":[{"max_connections":"10","configuration":{},"name":"EmptierFilter","description":"","isnew":true,"class_name":"com.francelabs.datafari.transformation.emptier.EmptierFilter"}]}

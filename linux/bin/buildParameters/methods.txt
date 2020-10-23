@@ -1,0 +1,9 @@
+interactive_questions() {
+    question_ip_node
+    set_property "NODETYPE" "monoserver" $CONFIG_FILE
+    set_property "SOLRHOSTS" localhost:2181 $CONFIG_FILE
+    question_datafari_password
+    question_postgresql_password
+    question_solr_collection
+    question_solr_shards_number
+}

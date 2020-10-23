@@ -1,0 +1,10 @@
+[ req ]
+ distinguished_name="localhost"
+ prompt="no"
+
+ [ localhost ]
+ C="FR"
+ ST="PACA"
+ L="Cagnes"
+ O="FranceLabs"
+ CN="@NODEHOST@"

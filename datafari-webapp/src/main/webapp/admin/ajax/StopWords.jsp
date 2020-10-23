@@ -1,0 +1,60 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+  pageEncoding="utf-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="<c:url value="/resources/js/admin/ajax/stopwords.js" />"></script>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<!--Start Breadcrumb-->
+	<nav aria-label="breadcrumb" class="bg-dark">
+    <a href="#" class="side-menu-control"> <i class="fas fa-angle-left"></i></a>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item indexAdminUIBreadcrumbLink" id="topbar1"></li>
+      <li class="breadcrumb-item" id="topbar2"></li>
+      <li class="breadcrumb-item active" aria-current="page" id="topbar3"></li>
+    </ol>
+  </nav>
+	<!--End Breadcrumb-->
+	<!-- TODO get the list of language in the list_language.txt  -->
+	<div class="box">
+		<div class="box-header">
+			<div class="box-name">
+				<i class="fas fa-table"></i><span id="stopwordsBox"></span>
+			</div>
+			<div class="box-icons">
+			</div>
+			<div class="no-move"></div>
+		</div>
+		<div id="modBox" class="box-content">
+			<div class="documentation-style-no-margin">
+				<p class="documentation-preview"> <span id="documentation-stopwords"></span><a class="documentation-link" href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/8192057/Stopwords+Configuration" target="_blank"> ...see more</a></p>
+			</div>
+			<form>
+				<fieldset>
+					<legend id="Modify"></legend>
+					<div class="col-sm-2">
+						<select id="language" class="form-control"
+							onchange="javascript: getFile()">
+							<OPTION></OPTION>
+							<OPTION>fr</OPTION>
+							<OPTION>en</OPTION>
+							<OPTION>de</OPTION>
+							<OPTION>es</OPTION>
+						</select>
+					</div>
+				</fieldset>
+			</form>
+
+			<div id="anotherSection">
+				<fieldset>
+					<div id="ajaxResponse" style="margin-top: 10px;"></div>
+				</fieldset>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

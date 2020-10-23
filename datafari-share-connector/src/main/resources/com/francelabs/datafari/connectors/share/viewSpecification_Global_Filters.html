@@ -1,0 +1,111 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+
+
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.GlobalFilters')) $Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.IncludeFolderFilters'))</nobr>
+    </td>
+    <td class="boxcell">
+      <table class="formtable">
+        <tr class="formheaderrow">
+          <td class="formcolumnheader"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.RegularExpression'))</nobr></td>
+        </tr>
+
+  #set($includefoldercounter = 0)
+  #foreach($includefolderfilter in $INCLUDEFOLDERFILTERS)
+    #if(($includefoldercounter % 2) == 0)
+        <tr class="evenformrow">
+    #else
+        <tr class="oddformrow">
+    #end
+          <td class="formcolumncell">
+            <nobr>$Encoder.bodyEscape($includefolderfilter)</nobr>
+          </td>
+        </tr>
+    #set($includefoldercounter = $includefoldercounter + 1)
+  #end
+  
+  #if($includefoldercounter == 0)
+        <tr class="formrow"><td class="formmessage" colspan="3">$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.NoIncludeFilterSpecified'))</td></tr>
+  #end
+      </table>
+    </td>
+  </tr>
+  
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.GlobalFilters')) $Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.IncludeFileFilters'))</nobr>
+    </td>
+    <td class="boxcell">
+      <table class="formtable">
+        <tr class="formheaderrow">
+          <td class="formcolumnheader"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.RegularExpression'))</nobr></td>
+        </tr>
+
+  #set($includefilecounter = 0)
+  #foreach($includefilefilter in $INCLUDEFILEFILTERS)
+    #if(($includefilecounter % 2) == 0)
+        <tr class="evenformrow">
+    #else
+        <tr class="oddformrow">
+    #end
+          <td class="formcolumncell">
+            <nobr>$Encoder.bodyEscape($includefilefilter)</nobr>
+          </td>
+        </tr>
+    #set($includefilecounter = $includefilecounter + 1)
+  #end
+  
+  #if($includefilecounter == 0)
+        <tr class="formrow"><td class="formmessage" colspan="3">$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.NoIncludeFilterSpecified'))</td></tr>
+  #end
+      </table>
+    </td>
+  </tr>
+  
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.GlobalFilters')) $Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.ExcludeFilters'))</nobr>
+    </td>
+    <td class="boxcell">
+      <table class="formtable">
+        <tr class="formheaderrow">
+          <td class="formcolumnheader"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.RegularExpression'))</nobr></td>
+        </tr>
+
+  #set($excludecounter = 0)
+  #foreach($excludefilter in $EXCLUDEFILTERS)
+    #if(($excludecounter % 2) == 0)
+        <tr class="evenformrow">
+    #else
+        <tr class="oddformrow">
+    #end
+          <td class="formcolumncell">
+            <nobr>$Encoder.bodyEscape($excludefilter)</nobr>
+          </td>
+        </tr>
+    #set($excludecounter = $excludecounter + 1)
+  #end
+  
+  #if($excludecounter == 0)
+        <tr class="formrow"><td class="formmessage" colspan="3">$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.NoExcludeFilterSpecified'))</td></tr>
+  #end
+      </table>
+    </td>
+  </tr>

@@ -1,0 +1,82 @@
+{
+  "index_patterns": "statistics",
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 1
+    },
+    "mappings": {
+      "dynamic": "false",
+      "_doc": {
+        "properties": {
+          "QTime": {
+            "type": "integer"
+          },
+          "clicked": {
+            "type": "boolean"
+          },
+          "date": {
+            "type": "date",
+            "format": "date_time"
+          },
+          "history": {
+            "type": "nested",
+            "properties": {
+              "query": {
+                "type": "keyword"
+              },
+              "fq": {
+                "type": "keyword"
+              },
+              "numFound": {
+                "type": "integer"
+              },
+              "QTime": {
+                "type": "integer"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "url": {
+                "type": "keyword"
+              },
+              "position": {
+                "type": "integer"
+              }
+            }
+          },
+          "id": {
+            "type": "keyword"
+          },
+          "noHits": {
+            "type": "boolean"
+          },
+          "numClicks": {
+            "type": "integer"
+          },
+          "numFound": {
+            "type": "integer"
+          },
+          "positionClickTot": {
+            "type": "integer"
+          },
+          "query": {
+            "type": "text",
+            "fielddata": true,
+            "fields": {
+              "raw": {
+                "type": "keyword"
+              }
+            }
+          },
+          "url": {
+            "type": "keyword"
+          },
+          "username": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  }
+}

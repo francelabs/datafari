@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+  <Appenders>
+    <!-- ManifoldCF API appender -->
+    <RollingFile name="ManifoldCF-Scripts" fileName="${env:DATAFARI_LOGS}/mcf-scripts.log" filePattern="${env:DATAFARI_LOGS}/mcf-scripts-%d{yyyy-MM-dd}-%i.log">
+      <PatternLayout>
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="5 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="10"/>
+    </RollingFile>
+   </Appenders>
+   
+   <Loggers> 
+    <Root level="info">
+      <AppenderRef ref="ManifoldCF-Scripts"/>
+    </Root>
+   </Loggers>
+
+</Configuration>

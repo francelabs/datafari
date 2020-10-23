@@ -1,0 +1,54 @@
+@import "../color.css";
+@import "admin-header.css";
+@import "admin-sidebar.css";
+@import "admin-content-info-header.css";
+@import "admin-footer.css";
+
+.btn.btn-primary.focus, .btn.btn-primary:focus, .btn.btn-primary:active, .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:not(:disabled):not(.disabled):active:focus, .show > .btn-primary.dropdown-toggle:focus {
+  box-shadow: none;
+}
+
+.calc-height {
+  min-height: calc(100vh - 5.5rem); /* Must be 100vh - (header height + footer height) */
+  max-height: calc(100vh - 5.5rem); /* Must be 100vh - (header height + footer height) */
+}
+
+nav[aria-label="breadcrumb"] {
+  line-height: 2rem;
+  color: #fff;
+}
+
+nav[aria-label="breadcrumb"] li {
+  cursor: default;
+}
+
+.breadcrumb-item.active {
+  color: rgba(255,255,255,.5);
+}
+
+a.side-menu-control {
+  color: #fff;
+  float: left;
+  margin-left: 1rem;
+  cursor: pointer;
+}
+
+.wrapper {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 2rem; /* must match with footer height */
+  margin-top: 3.5rem; /* must match with header height */
+}
+
+#content {
+  width: calc(100% - 21rem); /* Max - admin-sidebar max width */
+  transition: all 0.3s;
+  position: absolute;
+  right: 0;
+  overflow: auto;
+  padding: 2rem;
+}
+
+#content.active {
+  width: 100%;
+}

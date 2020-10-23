@@ -1,0 +1,29 @@
+{
+  "index_patterns": "monitoring",
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 1
+    },
+    "mappings": {
+      "dynamic": "false",
+      "_doc": {
+        "properties": {
+          "timestamp": {
+            "type": "date",
+            "format": "date_time"
+          },
+          "numDocs": {
+            "type": "integer"
+          },
+          "facet": {
+            "type": "keyword"
+          },
+          "facetType": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  }
+}

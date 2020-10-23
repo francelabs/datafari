@@ -1,0 +1,59 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>com.francelabs.datafari</groupId>
+    <artifactId>datafari-ce</artifactId>
+    <version>5.0-dev-Community</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>datafari-mcf</artifactId>
+  <packaging>pom</packaging>
+  <name>Datafari Enterprise Search - ManifoldCF module</name>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.googlecode.maven-download-plugin</groupId>
+        <artifactId>download-maven-plugin</artifactId>
+        <!-- Don't propagate configuration to child POMs -->
+        <inherited>false</inherited>
+        <executions>
+          <execution>
+            <id>install-mcf</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>wget</goal>
+            </goals>
+            <configuration>
+              <!-- 2 repos : official repo : http://archive.apache.org/dist/manifoldcf/apache-manifoldcf-${mcf.version}/apache-manifoldcf-${mcf.version}-bin.tar.gz 
+                Datafari repo : http://repomcf.datafari.com/mcf/apache-manifoldcf-${mcf.version}-dev-bin-${mcf.commit.number}.tar.gz -->
+              <url>https://archive.apache.org/dist/manifoldcf/apache-manifoldcf-${mcf.version}/apache-manifoldcf-${mcf.version}-bin.tar.gz</url>
+              <sha512>67e7d464bc30f2a8c0b1f201ff7202e21c491b43a4cf03b8c35e9fe30dac30083b609b88f3633a4f6eceeb56d8df6a28c00501063beff82c72baec067bb576ed</sha512>
+              <unpack>true</unpack>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <!-- Don't propagate configuration to child POMs -->
+        <inherited>false</inherited>
+        <executions>
+          <execution>
+            <id>ant-tasks</id>
+            <phase>validate</phase>
+            <configuration>
+              <target>
+                <property name="mcf.version" value="${mcf.version}" />
+                <ant antfile="maven-ant-tasks.xml" />
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

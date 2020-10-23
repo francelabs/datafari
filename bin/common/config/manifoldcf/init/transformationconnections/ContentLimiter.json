@@ -1,0 +1,1 @@
+{"transformationconnection":[{"max_connections":"10","configuration":{},"name":"ContentLimiter","description":"","isnew":true,"class_name":"org.apache.manifoldcf.agents.transformation.contentlimiter.ContentLimiter"}]}

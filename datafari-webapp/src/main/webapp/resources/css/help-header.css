@@ -1,0 +1,5 @@
+@import "header.css";
+
+#dropdown-search-tools, #dropdown-my-account, #create-relevancy {
+	display: none;
+}

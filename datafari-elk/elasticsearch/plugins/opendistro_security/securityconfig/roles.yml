@@ -1,0 +1,72 @@
+_meta:
+  type: "roles"
+  config_version: 2
+
+# Restrict users so they can only view visualization and dashboard on kibana
+kibana_read_only:
+  reserved: true
+
+# The security REST API access role is used to assign specific users access to change the security settings through the REST API.
+security_rest_api_access:
+  reserved: true
+  
+search_expert:
+  reserved: false
+  index_permissions:
+    - index_patterns:
+      - "statistics"
+      - "monitoring"
+      allowed_actions:
+        - "read"
+  tenant_permissions:
+    - tenant_patterns:
+      - "searchexpert_tenant"
+      allowed_actions:
+        - "kibana_all_read"
+        
+search_admin:
+  reserved: false
+  cluster_permissions:
+    - "indices_all"
+  index_permissions:
+    - index_patterns:
+      - "statistics"
+      - "monitoring"
+      - "crawl"
+      - "logs-*"
+      allowed_actions:
+        - "read"
+  tenant_permissions:
+    - tenant_patterns:
+      - "searchexpert_tenant"
+      - "admin_tenant"
+      allowed_actions:
+        - "kibana_all_write"
+ 
+# Allows users to view alerts
+alerting_view_alerts:
+  reserved: true
+  index_permissions:
+    - index_patterns:
+      - ".opendistro-alerting-alert*"
+      allowed_actions:
+        - read 
+
+# Allows users to view and acknowledge alerts
+alerting_crud_alerts:
+  reserved: true
+  index_permissions:
+    - index_patterns:
+      - ".opendistro-alerting-alert*"
+      allowed_actions:
+       - crud 
+
+# Allows users to use all alerting functionality
+alerting_full_access:
+  reserved: true
+  index_permissions:
+    - index_patterns:
+      - ".opendistro-alerting-config"
+      - ".opendistro-alerting-alert*"
+      allowed_actions:
+        - crud 

@@ -1,0 +1,78 @@
+{
+	"settings" : {
+		"number_of_shards" : 1,
+		"number_of_replicas" : 1
+	},
+	"mappings": {
+		"fileshare": {
+			"_all" : {"enabled" : false},
+			"dynamic" : "false",
+			"properties": {
+				"title" : { 
+					"type" : "string"
+				},
+				"title_en": {
+					"type": "string"
+				},
+				"title_fr": {
+					"type": "string"
+				},
+				"nbLikes": {
+					"type": "string"
+				},
+				"extension": {
+					"type": "string"
+				},
+				"language": {
+					"type": "string"
+				},
+				"source": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				},
+				"last_modified": {
+					"type" : "date", 
+					"format" : "date_time"
+				},
+				"content": {
+					"type": "string"
+				},
+				"content_en": {
+					"type": "string"
+				},
+				"content_fr": {
+					"type": "string"
+				},
+				"suggest": {
+					"type": "string"
+				},
+				"spell": {
+					"type": "string"
+				},
+				"signature": {
+					"type": "string"
+				},
+				"allow_token_document": {
+					"type": "string"
+				},
+				"allow_token_parent": {
+					"type": "string"
+				},
+				"allow_token_share": {
+					"type": "string"
+				},
+				"deny_token_document": {
+					"type": "string"
+				},
+				"deny_token_parent": {
+					"type": "string"
+				},
+				"deny_token_share": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}

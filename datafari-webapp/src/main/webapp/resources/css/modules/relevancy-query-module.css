@@ -1,0 +1,62 @@
+.relevant-add {
+	float: right;
+	cursor: pointer;
+	background-image: url(../../images/icons/relevant-add-16x16.png);
+	width: 16px;
+	height: 16px;
+	margin-right: 0.3em;
+}
+
+.relevant-remove {
+	float: right;
+	cursor: pointer;
+	background-image: url(../../images/icons/relevant-remove-16x16.png);
+	width: 16px;
+	height: 16px;
+}
+
+.relevant-ok {
+	float: right;
+	cursor: pointer;
+	background-image: url(../../images/icons/relevant-ok-16x16.png);
+	width: 16px;
+	height: 16px;
+	margin-right: 0.3em;
+}
+
+#relevancy-div {
+  margin-right: 1em;
+  width: 100%;
+  text-align: right;
+  display: flex;
+}
+
+#relevancyQueryName {
+  width: 22em;
+}
+
+#create_relevancy_button, #save-relevancy-setup, #cancel_relevancy_create_button, #cancel_relevancy_save_button {
+  border: 0;
+  font-family: "HelveticaNeueW02-67MdCn 694060";
+  font-size: 14px;
+  padding: 5px 15px;
+  background-color: #666;
+  color: white;
+  vertical-align: inherit;
+  white-space: nowrap;
+  width: auto;
+  cursor: pointer;
+  margin-left: 0.5em;
+}
+
+#save-relevancy-setup, #cancel_relevancy_save_button {
+	float : left;
+}
+
+#save-relevancy-setup {
+	margin-left: 0;
+}
+
+#relevancy-save-form {
+	margin-bottom: 1em;
+}

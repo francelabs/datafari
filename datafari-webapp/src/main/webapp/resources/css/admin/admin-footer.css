@@ -1,0 +1,19 @@
+footer {
+  bottom: 0;
+  height: 2rem;
+  line-height: 30px;
+  position: fixed;
+  text-align: center;
+  width: 100%;
+  z-index: 10;
+}
+
+.bg-dark .copyrights .link {
+  color: rgba(255,255,255,.75);
+  outline: none;
+}
+
+.bg-dark .copyrights .link:hover {
+  color: #fff;
+  text-decoration: none;
+}

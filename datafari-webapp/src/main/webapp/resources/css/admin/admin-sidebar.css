@@ -1,0 +1,46 @@
+#sidebar {
+  min-width: 21rem;
+  max-width: 21rem;
+  height: 100vh;
+  overflow: auto;
+}
+
+#sidebar .list-unstyled.collapse.show.active-sub-menu {
+  background-color: #eeeff0;
+}
+
+#sidebar .active-button {
+  color: #343a40;
+  background-color: #d6d6d7;
+}
+
+#sidebar a:hover {
+  color: #343a40;
+}
+
+#sidebar i {
+  width: 1rem;
+  margin-right: 0.5rem;
+}
+
+#sidebar ul li a {
+  padding-left: 0.5rem;  
+}
+
+#sidebar ul ul a {
+  padding-left: 2rem;  
+}
+
+#sidebar a {
+  color: #999;
+  outline: none;
+  text-decoration: none;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  line-height: 1.2rem;
+  display: block;
+}
+
+#sidebar.active {
+  margin-left: -21rem;
+}

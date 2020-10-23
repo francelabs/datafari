@@ -1,0 +1,168 @@
+#connection-info-header {
+  position: fixed;
+  z-index: 10;
+  width: 100%;
+  text-align: center;
+  line-height: 2rem;
+  border: 1px solid;
+  font-size: 1rem;
+  display: none;
+}
+
+#connection-info-header .retry-button {
+  cursor: pointer;
+  color: blue; 
+  margin-left: 1rem;
+}
+
+#connection-info-header .retry-button:hover {
+  text-decoration: underline;
+}
+
+#header-menus.info {
+  margin-top: 2rem; /** Must be equals to the #connection-info-header line-height **/
+}
+
+#header-menu .active {
+  border-bottom: 0.15rem solid #A8C900;
+  padding-bottom: 0.85rem; /* must be (.navbar-nav > li > a padding-bottom) - border-bottom */
+}
+
+#save-search-popover {
+  width: 25rem;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+	#dropdown-search-tools, #dropdownAdminLink, #dropdown-my-account{
+	  padding-top: 1rem;
+		padding-bottom: 1rem;
+		line-height: 1.2rem;
+		outline: none;
+  }
+  
+  #dropdown-search-tools, #dropdownAdminLink, #dropdown-my-account, #basicSearchLink {
+    display: none;
+  }
+}
+
+@media (min-width: 769px) {
+	
+	.show.header-item {
+    display: inline-flex;
+  }
+  
+  .navbar {
+	  padding: 0;
+	}
+	
+	#logo_desktop {
+	  margin-left: 15.5%;
+  }
+}
+
+#basicSearchLink {
+  margin-right: 200px;
+}
+
+#loginDatafariLinks {
+  margin-right: 20px;
+}
+
+.popover{
+  max-width: 100%;
+  border-radius: 0;
+}
+
+.ml-auto .dropdown-menu {
+    left: auto;
+    right: 0;
+    margin-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.dropdown-menu > a {
+  font-weight: normal;
+  font-size: 14px;
+}
+
+.navbar-nav > li > a {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  line-height: 1.2rem;
+  outline: none;
+}
+
+.navbar-nav > li > a > i {
+  line-height: 1.2rem;
+}
+
+.navbar-nav > .show > a:focus, .navbar-nav > .show > a:hover {
+  color: #555;
+  background-color: #e7e7e7;
+}
+
+
+.header-item {
+  border-radius: 0;
+  background-color: transparent;
+}
+
+.dropdown-menu > li > a {
+  font-weight: normal;
+  font-size: 14px;
+}
+
+#search-tools-sub-menu > li {
+  display: inline-block;
+  float: left;
+}
+
+.header-item.show > li > a {
+  color: #666;
+  outline: none;
+}
+
+.header-item.show > li > a.active-header-link, .active-header-link, .header-item.show > li > a:hover, .header-item.show > li > a:focus, .header-item.show > li > a:active:focus {
+  background-color: transparent;
+  color: #6B956F;
+}
+
+#header-menu, .container-fluid {
+  padding: 0;
+}
+
+.head-title {
+  background-image: url("../images/patern-barre.png");
+  background-position: center center;
+  background-repeat: repeat-x;
+  height: 23px;
+  margin-left: 0 !important;
+  margin-bottom: 20px !important; 
+}
+
+.header-sub-menu-label {
+	background-color: #FFF;
+	display: inline-block;
+	font-family: "HelveticaNeueW02-67MdCn 694060", Helvetica, Arial, sans-serif;
+	font-size: 20px;
+	text-transform: uppercase;
+	margin-left: 0;
+	padding-right: 10px;
+	width: auto;
+}
+
+#logo_desktop {
+  padding: 0;
+}
+
+#logo_desktop img{
+  height: 2em;
+  vertical-align: middle;
+}
+/*OVERWRITE the default pattern in new-style.css Line 1250*/
+.dropdown-admin-second-main{
+  margin-right: 0 !important;
+  right: 3%;
+}

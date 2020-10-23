@@ -1,0 +1,11 @@
+@media all and (min-width: 481px){
+
+
+footer { border-top:1px solid; bottom:0; height:30px; line-height:30px; position:fixed; text-align:center; width:100%;z-index:10; }
+footer .links, footer .copyrights { display:inline-block; margin-top:5px; position:relative; height:22px; line-height:22px; }
+footer .copyrights { margin-left:15px; top:-5px; }
+footer .links .social-ico { display:inline-block; height:20px; width:20px; }
+footer .links .twitter { background:transparent url(../images/social-network/ico-twitter.png) no-repeat 0 0; }
+footer .links .facebook { background:transparent url(../images/social-network/ico-fb.png) no-repeat 0 0; }
+footer .links .googleplus { background:transparent url(../images/social-network/ico-gplus.png) no-repeat 0 0; }
+footer .links .link { display:inline-block; margin-left:10px; position:relative; top:-5px; }

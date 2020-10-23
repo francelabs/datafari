@@ -1,0 +1,20 @@
+#content-info-header {
+  position: fixed;
+  margin-left: 21rem; /** Must match admin-sidebar width **/
+  z-index: 1;
+  width: calc(100% - 21rem); /** Must be 100% - admin-sidebar width **/
+  text-align: center;
+  line-height: 2rem; /** Must match #content padding **/
+  border: 1px solid;
+  display:none;
+}
+
+#content-info-header .retry-button {
+  cursor: pointer;
+  color: blue; 
+  margin-left: 1rem;
+}
+
+#content-info-header .retry-button:hover {
+  text-decoration: underline;
+}

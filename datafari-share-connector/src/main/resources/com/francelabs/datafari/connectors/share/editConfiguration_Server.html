@@ -1,0 +1,120 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+#if($TabName == $ResourceBundle.getString('SharedDriveConnector.Server'))
+
+<table class="displaytable">
+	<tr><td class="separator" colspan="2"><hr/></td></tr>
+	<tr>
+		<td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.Server3'))</nobr></td>
+		<td class="value"><input type="text" size="32" name="server" value="$Encoder.attributeEscape($SERVER)"/></td>
+	</tr>
+	<tr>
+		<td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.AuthenticationDomain'))</nobr></td>
+		<td class="value"><input type="text" size="32" name="domain" value="$Encoder.attributeEscape($DOMAIN)"/></td>
+	</tr>
+	<tr>
+		<td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.UserName'))</nobr></td>
+		<td class="value"><input type="text" size="32" name="username" value="$Encoder.attributeEscape($USERNAME)"/></td>
+	</tr>
+	<tr>
+		<td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.Password'))</nobr></td>
+		<td class="value"><input type="password" size="32" name="password" value="$Encoder.attributeEscape($PASSWORD)"/></td>
+	</tr>
+	<tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.ConnectionTimeout'))</nobr></td>
+    <td class="value"><input type="text" size="32" name="connectiontimeout" value="$Encoder.attributeEscape($CONNECTIONTIMEOUT)"/></td>
+  </tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.SessionTimeout'))</nobr></td>
+    <td class="value"><input type="text" size="32" name="sessiontimeout" value="$Encoder.attributeEscape($SESSIONTIMEOUT)"/></td>
+  </tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.SocketTimeout'))</nobr></td>
+    <td class="value"><input type="text" size="32" name="sockettimeout" value="$Encoder.attributeEscape($SOCKETTIMEOUT)"/></td>
+  </tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.ResponseTimeout'))</nobr></td>
+    <td class="value"><input type="text" size="32" name="responsetimeout" value="$Encoder.attributeEscape($RESPONSETIMEOUT)"/></td>
+  </tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.ResolveOrder'))</nobr></td>
+    <td class="value"><input type="text" size="32" name="resolveorder" value="$Encoder.attributeEscape($RESOLVEORDER)"/></td>
+  </tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.ListCount'))</nobr></td>
+    <td class="value"><input type="text" size="32" name="listcount" value="$Encoder.attributeEscape($LISTCOUNT)"/></td>
+  </tr>
+	<tr><td class="separator" colspan="2"><hr/></td></tr>
+	<tr>
+		<td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.UseSIDSForSecurity'))</nobr></td>
+		<td class="value">
+		  <input type="hidden" name="resolvesidspresent" value="true"/>
+		  #if($RESOLVEIDS == 'true')
+		  <input type="checkbox" value="true" name="resolvesids" checked="true" />
+		  #else
+		  <input type="checkbox" value="true" name="resolvesids"/>
+		  #end
+		</td>
+	</tr>
+	<tr><td class="separator" colspan="2"><hr/></td></tr>
+	<tr>
+		<td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.BinName'))</nobr></td>
+		<td class="value"><input type="text" size="32" name="binname" value="$Encoder.attributeEscape($BINNAME)"/></td>
+	</tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.MaxSMBVersion'))</nobr></td>
+    <td class="value">
+	  <select name="smbmaxversion">
+		#if($SMBMAXVERSION == 'SMB1')
+		<option value="SMB1" selected>1</option>
+		#else
+		<option value="SMB1">1</option>
+		#end
+		#if($SMBMAXVERSION == 'SMB210')
+		<option value="SMB210" selected>2.1</option>
+		#else
+		<option value="SMB210">2.1</option>
+		#end
+		#if($SMBMAXVERSION == 'SMB311')
+		<option value="SMB311" selected>3.1.1 (Beta)</option>
+		#else
+		<option value="SMB311">3.1.1 (Beta)</option>
+		#end
+	  </select>
+    </td>
+  </tr>
+</table>
+
+#else
+
+<input type="hidden" name="connectiontimeout" value="$Encoder.attributeEscape($CONNECTIONTIMEOUT)"/>
+<input type="hidden" name="sessiontimeout" value="$Encoder.attributeEscape($SESSIONTIMEOUT)"/>
+<input type="hidden" name="sockettimeout" value="$Encoder.attributeEscape($SOCKETTIMEOUT)"/>
+<input type="hidden" name="responsetimeout" value="$Encoder.attributeEscape($RESPONSETIMEOUT)"/>
+<input type="hidden" name="resolveorder" value="$Encoder.attributeEscape($RESOLVEORDER)"/>
+<input type="hidden" name="listcount" value="$Encoder.attributeEscape($LISTCOUNT)"/>
+<input type="hidden" name="server" value="$Encoder.attributeEscape($SERVER)"/>
+<input type="hidden" name="domain" value="$Encoder.attributeEscape($DOMAIN)"/>
+<input type="hidden" name="username" value="$Encoder.attributeEscape($USERNAME)"/>
+<input type="hidden" name="password" value="$Encoder.attributeEscape($PASSWORD)"/>
+<input type="hidden" name="resolvesidspresent" value="true"/>
+<input type="hidden" name="resolvesids" value="$Encoder.attributeEscape($RESOLVEIDS)"/>
+<input type="hidden" name="binname" value="$Encoder.attributeEscape($BINNAME)"/>
+<input type="hidden" name="smbmaxversion" value="$Encoder.attributeEscape($SMBMAXVERSION)"/>
+
+#end

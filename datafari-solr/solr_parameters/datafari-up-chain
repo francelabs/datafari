@@ -1,0 +1,68 @@
+    <processor class="solr.CloneFieldUpdateProcessorFactory">
+      <lst name="source">
+        <str name="fieldRegex">content</str>
+      </lst>
+      <str name="dest">exactContent</str>
+    </processor>
+
+    <processor class="solr.CloneFieldUpdateProcessorFactory">
+      <lst name="source">
+        <str name="fieldRegex">content</str>
+      </lst>
+      <str name="dest">preview_content</str>
+    </processor>
+    
+   <processor class="solr.ParseDateFieldUpdateProcessorFactory">
+      	<arr name="format">
+		<!--<str>EEE, dd MMM yyyy HH:mm:ss zzz</str>-->
+		<!--<str>EEEE, dd-MMM-yy HH:mm:ss zzz</str>-->
+ 	  <str>yyyy-MM-dd['T'[HH:mm[:ss[.SSS]][z</str>
+      <str>yyyy-MM-dd['T'[HH:mm[:ss[,SSS]][z</str>
+      <str>yyyy-MM-dd HH:mm[:ss[.SSS]][z</str>
+      <str>yyyy-MM-dd HH:mm[:ss[,SSS]][z</str>
+      <str>[EEE, ]dd MMM yyyy HH:mm[:ss] z</str>
+      <str>EEEE, dd-MMM-yy HH:mm:ss z</str>
+      <str>EEE MMM ppd HH:mm:ss [z ]yyyy</str>
+		</arr>
+	</processor>
+
+    <processor class="solr.TrimFieldUpdateProcessorFactory">
+      <str name="fieldRegex">preview_content</str>
+    </processor>
+
+    <processor class="solr.TruncateFieldUpdateProcessorFactory">
+      <str name="fieldRegex">preview_content</str>
+      <int name="maxLength">1000</int>
+    </processor>
+    
+    <processor class="solr.CloneFieldUpdateProcessorFactory">
+      <lst name="source">
+        <str name="fieldRegex">title</str>
+      </lst>
+      <str name="dest">exactTitle</str>
+    </processor>
+  
+    <processor class="org.apache.solr.update.processor.LangDetectLanguageIdentifierUpdateProcessorFactory">
+      <str name="langid.fl">content,title</str>
+      <str name="langid.langField">language</str>
+      <str name="langid.map">true</str>
+      <str name="langid.whitelist">en,fr,de</str>
+      <str name="langid.fallback">en</str>
+    </processor>
+
+      <processor class="solr.processor.SignatureUpdateProcessorFactory">
+        <bool name="enabled">${deduplication.factory.enabled:false}</bool>
+        <str name="signatureField">signature</str>
+      <bool name="overwriteDupes">false</bool>
+        <str name="fields">content,content_en,content_fr</str>
+        <str name="signatureClass">solr.processor.MD5Signature</str>
+      </processor>
+
+      <processor class="com.francelabs.datafari.updateprocessor.DatafariUpdateProcessorFactory">
+        <bool name="entities.extract.simple">${entity.extract:false}</bool>
+        <bool name="entities.extract.simple.name">${entity.name:false}</bool>
+        <bool name="entities.extract.simple.phone">${entity.phone:false}</bool>
+        <bool name="entities.extract.simple.special">${entity.special:false}</bool>
+        <str name="entities.extract.simple.special.regex">.*resume*</str>
+        <!-- <str name="entities.extract.simple.phone.regex"></str> -->
+      </processor>

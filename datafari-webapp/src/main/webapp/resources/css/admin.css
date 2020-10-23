@@ -1,0 +1,97 @@
+h3 {
+	font-size:20pt ;
+}
+
+h4 {
+	font-size:16pt ;
+}
+
+#sddm
+{	margin: 0;
+	padding: 0;
+	z-index: 30}
+	
+#menu
+{	
+	height: 29px;
+	background: #3D3C3A;
+	
+	}
+
+#sddm li
+{	margin: 0;
+	padding: 0;
+	list-style: none;
+	float: left;
+	font: bold 14px arial}
+
+#sddm li a
+{	display: block;
+	margin: 0 3px 0 0;
+	padding: 4px 15px;
+	width: 150px;
+	background: #BDC831;
+	color: #FFF;
+	text-align: center;
+	text-decoration: none}
+
+#sddm li a:hover
+{	background: #D5ED29}
+
+#sddm div
+{	position: absolute;
+	visibility: hidden;
+	margin: 0;
+	padding: 0;
+	background: #EDEFB8;
+	border: 1px solid #BDC831}
+
+	#sddm div a
+	{	position: relative;
+		display: block;
+		margin: 0;
+		padding: 5px 10px;
+		width: 140;
+		white-space: nowrap;
+		text-align: left;
+		text-decoration: none;
+		background: #EDEFB8;
+		color: #BDC831;
+		font: 12px arial;
+		font-weight:bold;
+		}
+
+	#sddm div a:hover
+	{	background: #D5ED29;
+		color: #FFF}
+		
+#capsuleLeft {
+	float:left;
+	width:40%;
+	display:inline-block;
+	text-align:justify;
+	padding-top:5px;
+}
+
+
+#submitCapsule {
+	width: 85px;  	
+}
+
+#downloadCapsule { 
+	width: 85px;  
+}
+
+.adminConfig {
+	padding-left:10px;
+}
+.alertConfig {
+	padding-left:10px;
+}
+#alertLeft {
+	float:left;
+	width:60%;
+	display:inline-block;
+	text-align:justify;
+	padding-top:5px;
+}

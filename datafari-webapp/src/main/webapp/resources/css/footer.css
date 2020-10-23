@@ -1,0 +1,49 @@
+.licence-warning {
+	background-color: #cc0000 !important;
+	height: 3.3em;
+}
+ 
+#warning-message {
+	margin: auto;
+  margin-left: 1em;
+  font-size: 1.3em;
+  width: 100%;
+  color: black;
+  line-height: 1.3em;
+  display: none;
+}
+
+#footer-bar {
+  display: flex;
+}
+
+#footer-logo {
+  margin-top: auto;
+	margin-bottom: auto;
+	width: 5%;
+}
+
+#footer-link {
+	margin-top: auto;
+  margin-bottom: auto;
+  margin-left: 1em;
+  margin-right: 1em;
+  text-align: center;
+  height: 1em;
+  line-height: 1em;
+}
+
+#gdpr-link {
+  margin: auto 1em;
+}
+
+.link-warning {
+  color: black;
+  display: none;
+}
+
+@media all and (max-width: 799px){
+  	#footer-bar {
+      display: none;
+    }
+}

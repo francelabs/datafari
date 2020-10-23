@@ -1,0 +1,72 @@
+#queryElevatorModal_confirm {
+  margin-left: 1rem;
+}
+
+.select-div {
+  width: 50%;
+}
+
+#createTbody tr td {
+  vertical-align: middle;
+}
+
+#query-elevator-ui-desc {
+  display: inline-block;
+}
+
+#query-elevator_activation {
+  display: inline-block;
+  top: 0.7em;
+  left: 1em;
+  height: 1.5em;
+  margin-bottom: 2em;
+}
+
+#docs{
+	padding-top : 1em;
+}
+
+#modBox{
+	margin-bottom : 3em;
+}
+
+.movable_line {
+	cursor: pointer;
+}
+
+#saveElevateConf {
+	text-transform:uppercase;
+}
+
+#addDocButton {
+  cursor: pointer;
+}
+
+#saveNewElevate {
+	text-transform:uppercase;
+}
+
+.btn-danger {
+	background-color: #d9534f !important;
+	width: 2em;
+}
+
+.fa-trash-alt {
+	color: white;
+}
+
+.textInput {
+	width:90%;
+}
+
+.message{
+	display:none;
+	text-align:center;
+	padding-left: 1em;
+}
+.error{
+	color:red;
+}
+.success{
+	color:green;
+}

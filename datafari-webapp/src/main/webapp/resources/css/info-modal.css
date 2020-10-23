@@ -1,0 +1,23 @@
+#infoModal .modal-title {
+  font-size: 1.25rem;
+}
+
+#infoModal .modal-body {
+  font-size: 1rem;
+}
+
+#infoModal .modal-body p {
+  margin-bottom: 1rem;
+}
+
+#infoModal .modal-footer .btn {
+  text-transform: uppercase;
+  background-color: #496A84;
+  color: #fff;
+  font-weight: bold;
+  border: 1px solid transparent;
+}
+
+#infoModal .modal-footer .btn:hover {
+  background-color: #42617A;
+}

@@ -1,0 +1,208 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+#if($TABNAME == $ResourceBundle.getString('SharedDriveConnector.GlobalFilters') && ${SEQNUM} == ${SELECTEDNUM})
+
+<table class="displaytable">
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.IncludeFolderFilters'))</nobr>
+    </td>
+    <td class="boxcell">
+      <table class="formtable">
+        <tr class="formheaderrow">
+          <td class="formcolumnheader"></td>
+          <td class="formcolumnheader"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.RegularExpression'))</nobr></td>
+        </tr>
+
+  #set($includefoldercounter = 0)
+  #foreach($includefolderfilter in $INCLUDEFOLDERFILTERS)
+    #set($includefoldercounterdisplay = $includefoldercounter + 1)
+    #if(($includefoldercounter % 2) == 0)
+        <tr class="evenformrow">
+    #else
+        <tr class="oddformrow">
+    #end
+          <td class="formcolumncell">
+            <a name="s${SEQNUM}_includefolderfilter_$includefoldercounter">
+              <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('SharedDriveConnector.Delete'))" alt="$Encoder.attributeEscape($ResourceBundle.getString('SharedDriveConnector.DeleteIncludeFolderFilter'))$includefoldercounterdisplay" onclick='javascript:s${SEQNUM}_deleteIncludeFolderFilter("$includefoldercounter");'/>
+              <input type="hidden" name="s${SEQNUM}_includefolderfilter_op_$includefoldercounter" value="Continue"/>
+              <input type="hidden" name="s${SEQNUM}_includefolderfilter_regex_$includefoldercounter" value="$Encoder.attributeEscape($includefolderfilter)"/>
+            </a>
+          </td>
+          <td class="formcolumncell">
+            <nobr>$Encoder.bodyEscape($includefolderfilter)</nobr>
+          </td>
+        </tr>
+    #set($includefoldercounter = $includefoldercounter + 1)
+  #end
+  
+  #if($includefoldercounter == 0)
+        <tr class="formrow"><td class="formmessage" colspan="3">$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.NoIncludeFilterSpecified'))</td></tr>
+  #end
+      
+        <tr class="formrow"><td class="formseparator" colspan="3"><hr/></td></tr>
+        <tr class="formrow">
+          <td class="formcolumncell">
+            <a name="includefolderfilter">
+              <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('SharedDriveConnector.Add'))" alt="$Encoder.attributeEscape($ResourceBundle.getString('SharedDriveConnector.AddIncludeFolderFilter'))" onclick="javascript:s${SEQNUM}_addIncludeFolderFilter();"/>
+            </a>
+            <input type="hidden" name="s${SEQNUM}_includefolderfilter_count" value="$includefoldercounter"/>
+            <input type="hidden" name="s${SEQNUM}_includefolderfilter_op" value="Continue"/>
+          </td>
+          <td class="formcolumncell">
+            <nobr><input type="text" size="15" name="s${SEQNUM}_includefolderfilter_regex" value=""/></nobr>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.IncludeFileFilters'))</nobr>
+    </td>
+    <td class="boxcell">
+      <table class="formtable">
+        <tr class="formheaderrow">
+          <td class="formcolumnheader"></td>
+          <td class="formcolumnheader"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.RegularExpression'))</nobr></td>
+        </tr>
+
+  #set($includefilecounter = 0)
+  #foreach($includefilefilter in $INCLUDEFILEFILTERS)
+    #set($includefilecounterdisplay = $includefilecounter + 1)
+    #if(($includefilecounter % 2) == 0)
+        <tr class="evenformrow">
+    #else
+        <tr class="oddformrow">
+    #end
+          <td class="formcolumncell">
+            <a name="s${SEQNUM}_includefilefilter_$includefilecounter">
+              <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('SharedDriveConnector.Delete'))" alt="$Encoder.attributeEscape($ResourceBundle.getString('SharedDriveConnector.DeleteIncludeFileFilter'))$includefilecounterdisplay" onclick='javascript:s${SEQNUM}_deleteIncludeFileFilter("$includefilecounter");'/>
+              <input type="hidden" name="s${SEQNUM}_includefilefilter_op_$includefilecounter" value="Continue"/>
+              <input type="hidden" name="s${SEQNUM}_includefilefilter_regex_$includefilecounter" value="$Encoder.attributeEscape($includefilefilter)"/>
+            </a>
+          </td>
+          <td class="formcolumncell">
+            <nobr>$Encoder.bodyEscape($includefilefilter)</nobr>
+          </td>
+        </tr>
+    #set($includefilecounter = $includefilecounter + 1)
+  #end
+  
+  #if($includefilecounter == 0)
+        <tr class="formrow"><td class="formmessage" colspan="3">$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.NoIncludeFilterSpecified'))</td></tr>
+  #end
+      
+        <tr class="formrow"><td class="formseparator" colspan="3"><hr/></td></tr>
+        <tr class="formrow">
+          <td class="formcolumncell">
+            <a name="includefilefilter">
+              <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('SharedDriveConnector.Add'))" alt="$Encoder.attributeEscape($ResourceBundle.getString('SharedDriveConnector.AddIncludeFileFilter'))" onclick="javascript:s${SEQNUM}_addIncludeFileFilter();"/>
+            </a>
+            <input type="hidden" name="s${SEQNUM}_includefilefilter_count" value="$includefilecounter"/>
+            <input type="hidden" name="s${SEQNUM}_includefilefilter_op" value="Continue"/>
+          </td>
+          <td class="formcolumncell">
+            <nobr><input type="text" size="15" name="s${SEQNUM}_includefilefilter_regex" value=""/></nobr>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  
+  
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.ExcludeFilters'))</nobr>
+    </td>
+    <td class="boxcell">
+      <table class="formtable">
+        <tr class="formheaderrow">
+          <td class="formcolumnheader"></td>
+          <td class="formcolumnheader"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.RegularExpression'))</nobr></td>
+        </tr>
+
+  #set($excludecounter = 0)
+  #foreach($excludefilter in $EXCLUDEFILTERS)
+    #set($excludecounterdisplay = $excludecounter + 1)
+    #if(($excludecounter % 2) == 0)
+        <tr class="evenformrow">
+    #else
+        <tr class="oddformrow">
+    #end
+          <td class="formcolumncell">
+            <a name="s${SEQNUM}_excludefilter_$excludecounter">
+              <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('SharedDriveConnector.Delete'))" alt="$Encoder.attributeEscape($ResourceBundle.getString('SharedDriveConnector.DeleteExcludeFilter'))$excludecounterdisplay" onclick='javascript:s${SEQNUM}_deleteExcludeFilter("$excludecounter");'/>
+              <input type="hidden" name="s${SEQNUM}_excludefilter_op_$excludecounter" value="Continue"/>
+              <input type="hidden" name="s${SEQNUM}_excludefilter_regex_$excludecounter" value="$Encoder.attributeEscape($excludefilter)"/>
+            </a>
+          </td>
+          <td class="formcolumncell">
+            <nobr>$Encoder.bodyEscape($excludefilter)</nobr>
+          </td>
+        </tr>
+    #set($excludecounter = $excludecounter + 1)
+  #end
+  
+  #if($excludecounter == 0)
+        <tr class="formrow"><td class="formmessage" colspan="3">$Encoder.bodyEscape($ResourceBundle.getString('SharedDriveConnector.NoExcludeFilterSpecified'))</td></tr>
+  #end
+      
+        <tr class="formrow"><td class="formseparator" colspan="3"><hr/></td></tr>
+        <tr class="formrow">
+          <td class="formcolumncell">
+            <a name="excludefilter">
+              <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('SharedDriveConnector.Add'))" alt="$Encoder.attributeEscape($ResourceBundle.getString('SharedDriveConnector.AddExcludeFilter'))" onclick="javascript:s${SEQNUM}_addExcludeFilter();"/>
+            </a>
+            <input type="hidden" name="s${SEQNUM}_excludefilter_count" value="$excludecounter"/>
+            <input type="hidden" name="s${SEQNUM}_excludefilter_op" value="Continue"/>
+          </td>
+          <td class="formcolumncell">
+            <nobr><input type="text" size="15" name="s${SEQNUM}_excludefilter_regex" value=""/></nobr>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+#else
+
+  #set($includefoldercounter = 0)
+  #foreach($includefolderfilter in $INCLUDEFOLDERFILTERS)
+<input type="hidden" name="s${SEQNUM}_includefolderfilter_regex_$includefoldercounter" value="$Encoder.attributeEscape($includefolderfilter)"/>
+    #set($includefoldercounter = $includefoldercounter + 1)
+  #end
+<input type="hidden" name="s${SEQNUM}_includefolderfilter_count" value="$includefoldercounter"/>
+
+  #set($includefilecounter = 0)
+  #foreach($includefilefilter in $INCLUDEFILEFILTERS)
+<input type="hidden" name="s${SEQNUM}_includefilefilter_regex_$includefilecounter" value="$Encoder.attributeEscape($includefilefilter)"/>
+    #set($includefilecounter = $includefilecounter + 1)
+  #end
+<input type="hidden" name="s${SEQNUM}_includefilefilter_count" value="$includefilecounter"/>
+
+  #set($excludecounter = 0)
+  #foreach($excludefilter in $EXCLUDEFILTERS)
+<input type="hidden" name="s${SEQNUM}_excludefilter_regex_$excludecounter" value="$Encoder.attributeEscape($excludefilter)"/>
+    #set($excludecounter = $excludecounter + 1)
+  #end
+<input type="hidden" name="s${SEQNUM}_excludefilter_count" value="$excludecounter"/>
+
+#end

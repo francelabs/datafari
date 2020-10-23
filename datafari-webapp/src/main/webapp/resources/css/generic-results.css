@@ -1,0 +1,132 @@
+@media  (max-width : 799px){
+	.external-results-elm .doc_list .res .title {
+    color: #4C76B6 !important;	
+	}
+	
+	.external-results-elm .doc_list .res .title:hover {
+	 color: #D37324 !important;
+	}
+	
+	.external-results-elm .doc_list .res .icon span {
+		font-size: x-small;
+		margin: 0px 3px 0px 0px;
+		font-weight: bold;
+		text-transform: uppercase;
+		color: #4C76B6;
+	}
+	
+	.external-results-elm .doc_list .doc .res .description #urlMobile {
+    font-size: 1.2em;
+	}
+	
+	.external-results-elm .doc_list .doc {
+	  margin-bottom: 1em !important;
+	}
+	
+	.external-results-elm .doc_list .res.no .title {
+		text-align: center;
+		color: black !important;
+	}
+}
+
+#external_results_nav_mobile {
+	display: block;
+  height: 3em;
+  box-shadow: 0 2px 1px rgba(0,0,0,0.1), 0 0 1px rgba(0,0,0,0.1);
+  position: relative;
+}
+
+#number_external_results_mobile {
+	display: inline-block;
+  font-size: 1.3em;
+  line-height: 2.2em;
+  vertical-align: middle;
+  margin-left: 5%;
+  color: white;
+}
+
+#external_results_nav_mobile #external_nav_facets_mobile {
+	width: 30%;
+	margin-right: 2%;
+	vertical-align: middle;
+	line-height: 3em;
+	display: inline-block;
+	float: right;
+}
+
+#external_results_nav_mobile #external_nav_facets_mobile a {
+  font-size: 1.3em;
+  float: right;
+  margin-right: 3%;
+  font-weight: normal;
+  padding-right: 3%;
+  padding-left: 3%;
+  outline: 0px;
+  color: white;
+}
+
+.external-results-infos .tab_line {
+	border-bottom: 1px solid #e4e4e4;
+}
+
+.external-results-elm .doc_list {
+	margin-top: 2em;
+	margin-left: 2em;
+}
+
+.external-results-elm .doc_list .doc .res .title:hover {
+  color: #D37324;
+}
+
+.external-results-elm .doc_list .res .icon {
+	display: inline-block;
+}
+
+.external-results-elm .doc_list .res .title {
+	display: inline-block;
+	margin-left: 0.2em;
+	position: absolute;
+	color: black;
+	height: auto;
+}
+
+.external-results-elm .doc_list .res {
+	text-align: left;
+	float: left;
+  height: 100%;
+  position: relative;
+  line-height: 20px;
+  width: 100%;
+}
+
+.external-results-elm .doc_list .noResult {
+  color: black;
+  cursor: default;
+}
+
+.external-results-elm .doc_list .noResult:hover {
+  color: black !important;
+  cursor: default;
+}
+
+.external-results-elm .doc_list .bar-loader {
+  background-image: url(../images/loader-000000-circle.gif);
+  width: 32px;
+  height: 32px;
+  margin: auto;
+}
+
+.external-results-elm .doc_list .doc {
+	display: inline-block;
+  margin-bottom: 2em;
+  width: 100%;
+}
+
+.external-results-elm .doc_list .res .description {
+  line-height: 150%;
+  margin-top: 0.5em;
+}
+
+.external-results-elm .doc_list .res .address {
+  color: #378140;
+}

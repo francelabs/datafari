@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-ant-tasks" default="setup-mcf" basedir=".">
+	<property name="mcf.dist" value="target/dist/mcf" />
+
+	<condition property="project.dir" else="${basedir}/..">
+		<isset property="project.dir" />
+	</condition>
+
+	<property name="datafari.dependencies.main" value="${project.dir}/datafari-core" />
+	<property name="datafari.mcf.connectors.dependencies.main" value="${project.dir}/datafari-mcf-connectors-dependencies" />
+
+	<target name="setup-mcf">
+		<!-- Copy only useful ManifoldCF directories and files stripping the parent MCF 
+			directory (to avoid MCF version inclusion) -->
+		<copy toDir="${mcf.dist}/mcf_home" overwrite="true" force="true">
+			<fileset dir="target">
+				<include name="*manifoldcf*/*.txt" />
+				<include name="*manifoldcf*/obfuscation-utility/**" />
+				<include name="*manifoldcf*/connector-common-lib/**" />
+				<include name="*manifoldcf*/connector-lib/**" />
+				<include name="*manifoldcf*/connector-lib-proprietary/**" />
+				<include name="*manifoldcf*/lib/**" />
+				<exclude name="*manifoldcf*/connector-lib/postgresql*" />
+				<exclude name="*manifoldcf*/lib/postgresql*" />
+				<exclude name="*manifoldcf*/connectors.xml" />
+			</fileset>
+			<cutdirsmapper dirs="1" />
+		</copy>
+
+		<!-- Copy original multiprocess zk scripts -->
+		<copy toDir="${mcf.dist}/mcf_home" overwrite="true" force="true">
+			<fileset dir="target">
+				<include name="*manifoldcf*/multiprocess-zk-example/**" />
+				<exclude name="*manifoldcf*/multiprocess-zk-example/*.bat" />
+				<exclude name="*manifoldcf*/multiprocess-zk-example/*.win" />
+				<exclude name="*manifoldcf*/multiprocess-zk-example/*.xml" />
+				<exclude name="*manifoldcf*/multiprocess-zk-example/*jetty*" />
+				<exclude name="*manifoldcf*/multiprocess-zk-example/*hsqldb*" />
+				<exclude name="*manifoldcf*/multiprocess-zk-example/zookeeper.cfg" />
+				<exclude name="*manifoldcf*/multiprocess-zk-example/options.env.unix" />
+			</fileset>
+			<cutdirsmapper dirs="2" />
+		</copy>
+
+		<!-- Copy war directory stripping the parent MCF 
+			directory (to avoid MCF version inclusion) and web directory -->
+		<copy toDir="${mcf.dist}" overwrite="true" force="true">
+			<fileset dir="target">
+				<include name="*manifoldcf*/**/mcf-api-service.war" />
+				<include name="*manifoldcf*/**/mcf-authority-service.war" />
+				<include name="*manifoldcf*/**/mcf-crawler-ui.war" />
+			</fileset>
+			<cutdirsmapper dirs="2" />
+		</copy>
+		<!-- Use touch to set modification time of all custom files to current time. This will force war task to update custom files inside the war -->
+		<touch datetime="now">
+			<fileset dir="mcf_home/crawler-ui-customs" />
+		</touch>
+
+		<!-- Update mcf-crawler-ui.war to add custom CSS style -->
+		<war destfile="${mcf.dist}/war/mcf-crawler-ui.war" update="true">
+			<zipfileset dir="mcf_home/crawler-ui-customs" includes="*.png" />
+			<zipfileset dir="mcf_home/crawler-ui-customs" includes="*.xml" prefix="META-INF" />
+			<zipfileset dir="mcf_home/crawler-ui-customs" includes="*.css" prefix="css" />
+		</war>
+
+		<!-- Remove all logging libs from MCF wars as they are provided by Tomcat MCF -->
+		<zip destfile="${mcf.dist}/war/mcf-crawler-ui-tmp.war">
+			<zipfileset src="${mcf.dist}/war/mcf-crawler-ui.war" excludes="WEB-INF/lib/log4j* WEB-INF/lib/slf4j* WEB-INF/lib/commons-logging*" />
+		</zip>
+		<zip destfile="${mcf.dist}/war/mcf-api-service-tmp.war">
+			<zipfileset src="${mcf.dist}/war/mcf-api-service.war" excludes="WEB-INF/lib/log4j* WEB-INF/lib/slf4j* WEB-INF/lib/commons-logging*" />
+		</zip>
+		<zip destfile="${mcf.dist}/war/mcf-authority-service-tmp.war">
+			<zipfileset src="${mcf.dist}/war/mcf-authority-service.war" excludes="WEB-INF/lib/log4j* WEB-INF/lib/slf4j* WEB-INF/lib/commons-logging*" />
+		</zip>
+		<move file="${mcf.dist}/war/mcf-authority-service-tmp.war" tofile="${mcf.dist}/war/mcf-authority-service.war"/>
+		<move file="${mcf.dist}/war/mcf-api-service-tmp.war" tofile="${mcf.dist}/war/mcf-api-service.war"/>
+		<move file="${mcf.dist}/war/mcf-crawler-ui-tmp.war" tofile="${mcf.dist}/war/mcf-crawler-ui.war"/>
+
+		<!-- Copy bin and mcf_home directories -->
+		<copy toDir="${mcf.dist}" overwrite="true" force="true">
+			<fileset dir=".">
+				<include name="bin/**" />
+				<include name="mcf_home/**" />
+			</fileset>
+		</copy>
+
+		<!-- Set the MCF version -->
+		<replace file="${mcf.dist}/mcf_home/properties-global.xml" token="@MCF_VERSION@" value="${mcf.version}"/>
+		<replace file="${mcf.dist}/mcf_home/properties.xml" token="@MCF_VERSION@" value="${mcf.version}"/>
+
+		<!-- Create syncharea directory, otherwise we get an exception while running bash initialize-dev.sh -->
+		<mkdir dir="${mcf.dist}/mcf_home/syncharea" />
+
+		<!-- Remove old MCF libs -->
+		<delete includeemptydirs="true" failonerror="false">
+			<fileset dir="${datafari.mcf.connectors.dependencies.main}/lib/org/apache/manifoldcf/mcf-agents" includes="**/*"/>
+			<fileset dir="${datafari.dependencies.main}/lib/org/apache/manifoldcf/mcf-core" includes="**/*"/>
+			<fileset dir="${datafari.mcf.connectors.dependencies.main}/lib/org/apache/manifoldcf/mcf-pull-agent" includes="**/*"/>
+			<fileset dir="${datafari.mcf.connectors.dependencies.main}/lib/org/apache/manifoldcf/mcf-ui-core" includes="**/*"/>
+			<fileset dir="${datafari.mcf.connectors.dependencies.main}/lib/org/apache/manifoldcf/mcf-connector-common" includes="**/*"/>
+		</delete>
+		<!-- Create dir for current MCF version -->
+		<mkdir dir="${datafari.mcf.connectors.dependencies.main}/lib/org/apache/manifoldcf/mcf-agents/${mcf.version}" />
+		<mkdir dir="${datafari.dependencies.main}/lib/org/apache/manifoldcf/mcf-core/${mcf.version}" />
+		<mkdir dir="${datafari.mcf.connectors.dependencies.main}/lib/org/apache/manifoldcf/mcf-pull-agent/${mcf.version}" />
+		<mkdir dir="${datafari.mcf.connectors.dependencies.main}/lib/org/apache/manifoldcf/mcf-ui-core/${mcf.version}" />
+		<mkdir dir="${datafari.mcf.connectors.dependencies.main}/lib/org/apache/manifoldcf/mcf-connector-common/${mcf.version}" />
+		<!-- Copy the current MCF version libs -->
+		<copy toDir="${datafari.mcf.connectors.dependencies.main}/lib/org/apache/manifoldcf/mcf-agents/${mcf.version}" overwrite="true" force="true" flatten="true">
+			<fileset dir="target">
+				<include name="apache-manifoldcf-${mcf.version}*/lib/**/mcf-agents*.jar" />
+			</fileset>
+			<globmapper from="*" to="mcf-agents-${mcf.version}.jar" />
+		</copy>
+		<copy toDir="${datafari.dependencies.main}/lib/org/apache/manifoldcf/mcf-core/${mcf.version}" overwrite="true" force="true">
+			<fileset dir="target">
+				<include name="apache-manifoldcf-${mcf.version}*/lib/**/mcf-core*" />
+			</fileset>
+			<globmapper from="*.jar" to="mcf-core-${mcf.version}.jar" />
+		</copy>
+		<copy toDir="${datafari.mcf.connectors.dependencies.main}/lib/org/apache/manifoldcf/mcf-pull-agent/${mcf.version}" overwrite="true" force="true" flatten="true">
+			<fileset dir="target">
+				<include name="apache-manifoldcf-${mcf.version}*/lib/**/mcf-pull-agent*.jar" />
+			</fileset>
+			<globmapper from="*.jar" to="mcf-pull-agent-${mcf.version}.jar" />
+		</copy>
+		<copy toDir="${datafari.mcf.connectors.dependencies.main}/lib/org/apache/manifoldcf/mcf-ui-core/${mcf.version}" overwrite="true" force="true" flatten="true">
+			<fileset dir="target">
+				<include name="apache-manifoldcf-${mcf.version}*/lib/**/mcf-ui-core*.jar" />
+			</fileset>
+			<globmapper from="*.jar" to="mcf-ui-core-${mcf.version}.jar" />
+		</copy>
+		<copy toDir="${datafari.mcf.connectors.dependencies.main}/lib/org/apache/manifoldcf/mcf-connector-common/${mcf.version}" overwrite="true" force="true" flatten="true">
+			<fileset dir="target">
+				<include name="apache-manifoldcf-${mcf.version}*/connector-common-lib/**/mcf-connector-common*.jar" />
+			</fileset>
+			<globmapper from="*.jar" to="mcf-connector-common-${mcf.version}.jar" />
+		</copy>
+
+	</target>
+
+</project>

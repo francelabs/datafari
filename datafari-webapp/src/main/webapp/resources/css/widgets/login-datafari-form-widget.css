@@ -1,0 +1,23 @@
+
+input[type="submit"]#loginAdminUiBtn {
+    box-shadow: none;
+    margin-top: 1rem;
+    /*In the middle of the form
+    right: 125px;
+    ------------------------*/
+}
+
+body {
+	background-color : #F0F0F0;
+}
+
+.boxBody label{
+	font-size: 14px;
+}
+
+.boxBody #loginFormAdminUiLabel{
+	font-size: 18px;
+	margin-bottom: 20px;
+}
+
+

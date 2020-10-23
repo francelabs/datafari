@@ -1,0 +1,33 @@
+#dsfm-last_modified-fromInput.fromInput {
+	width: 6em !important;
+	margin-left: 0.5em;
+	margin-right: 1em;
+	font: caption;
+  box-sizing: unset;
+}
+
+#dsfm-last_modified-toInput.toInput {
+	width: 6em !important;
+	margin-left: 0.5em;
+	margin-right: 0.2em;
+	font: caption;
+  box-sizing: unset;
+}
+
+#li-dsfm-last_modified {
+  height: 3em;
+}
+
+.go {
+	cursor: pointer; 
+}
+
+.date-format-error {
+	color: red;
+	font-weight: bold;
+	display: none;
+}
+
+.date-input {
+	max-width: 25%;
+}

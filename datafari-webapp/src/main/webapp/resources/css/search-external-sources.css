@@ -1,0 +1,25 @@
+#search-sources-list {
+	display: inline-block;
+}
+
+#search-sources-list img {
+  max-width: 90%;
+  height: 100%;
+}
+
+#search-sources-list li {
+  height: 4em;
+  padding-top: 0.5em;
+}
+
+#search-sources-list a {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#search-sources-tabs {
+	margin-bottom: 1em;
+}

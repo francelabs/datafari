@@ -1,0 +1,16 @@
+{
+     "name":"myNewTxtField",
+     "class":"solr.TextField",
+     "positionIncrementGap":"100",
+     "analyzer" : {
+        "charFilters":[{
+           "class":"solr.PatternReplaceCharFilterFactory",
+           "replacement":"$1$1",
+           "pattern":"([a-zA-Z])\\\\1+" }],
+        "tokenizer":{ 
+           "class":"solr.WhitespaceTokenizerFactory" },
+        "filters":[{
+           "class":"solr.WordDelimiterFilterFactory",
+           "preserveOriginal":"0" }]
+      }
+}

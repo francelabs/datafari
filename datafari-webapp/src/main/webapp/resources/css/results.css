@@ -1,0 +1,25 @@
+
+@import "results-template.css";
+@import "results-color.css";
+@import "results-font.css";
+@import "results-animation.css";
+
+/*
+CSS for Datafari widgets
+*/
+@import "widgets/ontology-suggestion-widget.css";
+@import "widgets/save-search-widget.css";
+@import "widgets/tab-widget.css";
+
+/*
+CSS for Datafari modules
+*/
+@import "modules/query-elevator-module.css";
+@import "modules/relevancy-query-module.css";
+@import "modules/date-selector-facet-module.css";
+
+body { overflow-y: scroll; }
+
+.title {
+ display: block; 
+}

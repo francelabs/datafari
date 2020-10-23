@@ -1,0 +1,24 @@
+#container {
+    width: 900px;
+    margin: 0 auto;
+}
+#header {
+    margin-bottom: 20px;
+}
+#menu1, #menu2 {
+    float: left;
+    width: 128px;
+    border: 1px solid #000;
+    padding: 10px;
+}
+#content {
+    border: 1px solid #000;
+    margin: 0 10px;
+    padding: 10px;
+    width: 558px;
+    float: left;
+}
+#footer {
+    margin-top: 20px;
+    clear: both;
+}

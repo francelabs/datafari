@@ -1,0 +1,10 @@
+#search-suggest-ui {
+	float: right;
+	width: 20%;
+	margin-top: 1%;
+	display: none;
+}
+
+.reduced {
+	width: 55% !important;
+}

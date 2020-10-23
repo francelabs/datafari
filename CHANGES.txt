@@ -1,0 +1,422 @@
+
+                      Datafari Release Notes
+
+Introduction
+-------------
+Datafari is the perfect product for anyone who needs to search within its corporate big data,
+based on the most advanced open source technologies.
+Datafari combines both the Apache ManifoldCF and Solr products, and proposes to its users to search into file shares,
+cloud shares (dropbox, google drive), databases, but also emails and many more sources. 
+Available as community and enterprise edition, Datafari is different from the competition : 
+- Its open source license is not aggressive, as it uses the Apache v2 license: you are free to do whatever you want with it,
+you just need to mention that you are using it. 
+- It combines two renowned Apache projects, namely ManifoldCF and Solr, which gives Datafari a long term vision.
+
+See http://wiki.datafari.com for more information.
+
+
+Remarks
+------
+Datafari needs Python v 2.7.x. If you have only Python v3, please install Python2 (for Ubuntu 16.04 for example, install the package python-minimal).
+
+Datafari no longer embeds Java JDK. JDK 8 must be present on the machine and set JAVA HOME.
+
+
+==================  4.4 ==================
+
+
+* Version of major components :
+Solr 7.4
+ManifoldCF 2.12
+Tomcat 9.0.8
+Cassandra 3.11.2
+PostgreSQL 10.1
+Zookeeper 3.4.10
+Tika Server 1.19.1
+ElasticSearch 5.6.4
+Kibana 5.6.4
+LogStash 5.6.4
+
+* New features :
+Duplicates detection
+New log stats for preview
+Realm keycloak ready
+Tag cloud widget
+Entities autocomplete
+TranslatorAnnotator 
+New top menu
+
+
+* Bug fixes :
+Update maven plugins + reorganize webapp libs
+Fix slf4j lib in tomcat-mcf
+Maj libs + fix missing slf4 logger for tomcat webapps
+Fix for DATAFARI-376 Logs for MCF agent not properly handled
+
+
+
+==================  4.3 ==================
+
+
+* Version of major components :
+Solr 7.4
+ManifoldCF 2.12
+Tomcat 9.0.8
+Cassandra 3.11.2
+PostgreSQL 10.1
+Zookeeper 3.4.10
+Tika Server 1.19.1
+ElasticSearch 5.6.4
+Kibana 5.6.4
+LogStash 5.6.4
+
+* New features :
+Apache proxy in front of Datafari
+Add iptables to prevent direct access to Tomcat / Tomcat-MCF and ELK
+Preview UI
+Add MetricBeat to ELK
+Improve WindowsShare connector
+Dedicated folders for custom UI code modifications
+
+
+* Bug fixes :
+Improve emptier connector
+Fixes url with special characters
+Fixes license
+Fixes Solr API : push Solr configuration for many collections
+
+==================  4.2 ==================
+Note: As announced a few months ago, the AD admin page is now uniquely available in the Enterprise Edition of Datafari.
+
+* Version of major components :
+Solr 7.4
+ManifoldCF 2.12
+Tomcat 9.0.8
+Cassandra 3.11.2
+PostgreSQL 10.1
+Zookeeper 3.4.10
+Tika Server 1.19.1
+ElasticSearch 5.6.4
+Kibana 5.6.4
+LogStash 5.6.4
+
+* New features :
+Solr updated to 7.4
+ManifoldCF updated to 2.12
+PostgreSQL updated to 10.1
+Tika Server updated to 1.19.1
+DATAFARI-320 Add the possibility to also save facets in the alert 
+Redesigned menu to simplify the access to parameters and functionalities
+Scripts rework
+Change main collection name
+Session expiration automatically
+
+* Bug fixes :
+Fix DATAFARI-324 Add a button to close the database connection error 
+Fix DATAFARI-327 Delete a user does not delete it's additionnal data 
+Fix DATAFARI-330 MCF Restore erase everything...
+Fix DATAFARI-329 Bug updating synonyms 
+Fix DATAFARI-331 Pagination numbers disappear 
+Fix external result widget 
+More restrictions on simplified jobs
+Bugfixes UI mobile
+
+
+
+
+==================  4.1 ==================
+Version of major components :
+Solr 6.6.4
+ManifoldCF 2.10
+Tomcat 9.0.8
+Cassandra 3.11.2
+PostgreSQL 9.6.5
+Zookeeper 3.4.10
+Tika Server 1.18
+ElasticSearch 5.6.4
+Kibana 5.6.4
+LogStash 5.6.4
+
+New features :
+Added an interface to manage entity extraction
+New queryElevator
+Added security to spellchecker and modified author suggester
+Categories feature beta version
+Add module git plugin
+Add security to spellchecker and modified author suggester
+Autocomplete entity part 
+Enable watcher for all config files
+Enable Licence key + UI
+Reworked ELK dashboards
+Log download UI 
+Basic entity extraction
+Added a configuration to disable usage statistics
+hl maxanalyzedchars dynamic config
+Storing usage logs in Cassandra
+Previsualize widget by default
+Updated MCF style CSS
+mcf-crawl-ui war modified file
+Replace org.json by org.json.simple
+Update Tika server to 1.18
+Synchronized saveProperties
+Updated config class part 1
+Simplified UI
+Changed start/stop order of Tika server, MCF and Tomcat
+Changed Cassandra gc.log location
+Added maxstatuscount property for MCF UI
+Added new metadata to fileshare schema
+Zookeeper autopurge
+Moved JS function redefinition to a single file
+Annotator batch retry mechanism
+Added logs for annotator
+Autocomplete for advanced search
+New query statistics Kibana dashboard
+Nested history stats for ELK
+Add custom Kibana config file for pre configured SSL
+Change the way extensions are detected
+Aff file size default facet
+Add independent ZK for MCF
+HTML extractor transformation connector
+
+
+Bug fixes :
+Fix Attach repository connectors to DatafariAuthorityGroup
+Fix protwords back in schema
+Bugfix css advanced search
+Bugfix pagination
+Bugfix favorites
+Bugfix promolink
+Fix authent session for httpclient
+Fix lack of security SearchProxy
+Fixed loading wheel on mobile UI
+Fix MCF stop agent
+Harmonize Solr Community/enterprise Datafari
+Fix MCF stop agent
+SearchProxy fix
+Fix preview display
+Bug fix spellchecker + new unified highlighter
+Multi servers script updated
+Fix search bar behavior when resizing
+Bug fix stop script Solr
+Add polyfill.js to index jsp
+Fix startsWith function
+Bug fix spellchecker
+Fix search loading
+Fix AD Realm password obfuscation
+Fix TableFacetQueriesWidget
+Fix tika server JMX xmx to 5120m
+Fix several titles
+Update Postgres vacuum script
+Fix startup on low profile conf
+Fix multiple url values
+Fix sequence number type in Solr schema
+Fix Postgres password in mcf-postgres.properties
+manage properties file in UTF-8 charset
+Table widget regex fix
+Fix Tika annotator metadata-error
+Fix Cassandra low startup
+Re-enabling Italian language
+Fix auto trust certificate for HTTPs module
+Fix advanced search expression for basic search
+Update scripts for MCF ZK
+Change log configuration ZK
+
+
+==================  4.0.2 ==================
+Changes :
+Fix poms
+Update footer with Enterprise edition label
+Change for generic name tika-config lib in script
+Multiple Active Directories management
+Change authenticate api mcf
+Increase default values Solr RAM
+Fix postgres password for crawl statistics
+Bug fix exact search advanced search
+Multiple Acitve Directory bug fixes
+Datafari 4.02 change footer display and logos
+ldap i18n adjustments
+Fix default langage back to English
+Harmonize i18n files
+
+==================  4.0.1 ==================
+Changes :
+Bug fix advanced search
+Bug Fix DATAFARI-220 : Russian language not visible in the Datafari UI
+Bug fix OCR (tesseract no longer integrated in Datafari package)
+Abort previous query if not finished when new query is performed
+Bug fix autocomplete module
+Fix DATAFARI-222 : ELK IP change
+Set ZK timeout to 60 seconds
+[BETA] Promolinks now handle phrases
+[BETA] feature DATAFARI-223 timeout on queries
+Reduce suggest maxCollations from 100 to 10
+Added OpenLayers as local script
+Relative path to SearchProxy
+Avoid copy fields duplicates
+Added datafari restart script
+Added JAVA_HOME/bin to PATH
+[BETA] DATAFARI-21-choice-of-date-for-indexed-documents 
+[BETA] DATAFARI-227-Do-not-upload-managed-schema-file 
+Fix password deobfuscation DatafariRealm
+[BETA] DATAFARI-194 Synonyms etc modification behavior
+[BETA] Modification spellcheck threshold
+[BETA] DATAFARI-210 storage of email creadentials
+Updated test case for AlertsAdmin
+[BETA] DATAFARI-237-238 postgres password management
+spellcheck fix
+Fix DBContextListener
+Fix promolink behavior
+Remove hardcoded paths from start script
+Bug Fix HL
+[BETA] Added label for On/Off AD activation
+[BETA] Added Tomcat restart warning message to AD configuration UI
+[BETA] Mapped exact expression to exactContent and exactTitle for basic search
+[BETA] Keep facets when sort mode is changed
+Fix autocomplete errorHandler
+
+==================  4.0.0 ==================
+Changes : 
+Removed location_rpt from Solr schemas
+Tika updated to version 1.16 for both MCF and Solr
+Manifold CF updated to version 2.8.1
+Solr updated to version 6.6.1
+Elasticsearch updated to 5.6.4
+Logstash updated to 5.6.4
+Kibana updated to 5.6.4
+Various bug fixes
+
+
+==================  3.2.0 ==================
+
+Changes :
+Tika updated to version 1.15
+Manifold CF updated to version 2.6
+Cassandra updated to version 3.10
+New UI
+New Advanced Search
+New languages : 
+  - German
+  - Portuguese/Brazilian
+Various bug fixes
+
+==================  3.1.0 ==================
+
+Changes :
+Tika updated to version 1.14+
+Manifold CF updated to version 2.5
+Improved security for Active Directory connections
+Improved security for Tomcat JNDI Realm
+Auto-configuration of ELK on the first start of Datafari
+Bug fixes for Likes/Favorites and other features of the admin UI
+Fix saved search for IE
+
+
+
+==================  3.0.0 ==================
+
+Changes :
+Solrcloud on a single node activated by default
+Added query elevator admin fonctionnality
+Solr updated to version 5.5.1
+Postgres updated to version 9.5.3
+Usage of Tika embedded in MCF instead of Solr
+
+==================  2.2.1 ==================
+
+Changes :
+Alerts fix
+Bug fixes for Internet Explorer : display of the Admin UI
+
+
+==================  2.2 ==================
+
+Versions of Major Components 
+---------------------
+- Apache Solr 5.2.1
+- Apache ManifoldCF 2.3
+- Apache Cassandra 2.1.8
+- PostgreSQL 9.3
+- Tomcat 7.0.65
+- Java Oracle JDK 1.8u66
+---------------------
+Main changes :
+
+Project on Maven
+JVM Oracle JDK 1.8u66
+Spellcheckers fixes
+ELK added
+Migrate i18n to JS
+Special characters display fix
+Added Apache Jena dependencies + New OntologyUpdateProcessor 
+New pages for Statistics
+Previsualize Widget added
+Federated Search widget added
+Start and stop scripts are for non root user
+Custom Solr configuration folders added
+SEGY and LAS parsers for Tika added
+Tab widget added
+Advanced Search widget added
+Field weight page : bug fixes
+MCF plugin for Solr 5
+MCF updated to 2.3
+MCF autoresize UI fix
+AD fixes
+Backup/Restore MCF configuration added
+
+
+==================  2.1.3 ==================
+Cassandra startup fix
+Fix BackupManifoldCFConnectorsScript package change
+Update datafari.properties : Set ALLOWLOCALFILEREADING to false by default as it is a security leak
+
+==================  2.1.2 ==================
+Add several roles to new user fix
+AD domain SearchProxy fix
+Removed roleBase from JNDI realm to avoid errors
+Logout from ManifoldCF when logout from Datafari
+
+==================  2.1.1 ==================
+Bug fixes in the AD User UI
+Translation AD UI
+
+==================  2.1 ==================
+
+[DATAFARI-42] Fix "Impossible to login after several restarts" issue
+Tomcat version is 7.0.65 instead of 7.0.40
+Hierarchical Facet feature added :
+	- [DATAFARI-61] Hierarchical facet pagination
+	- [DATAFARI-46] Hierarchical facet pagination
+Facet fixes :
+- [DATAFARI-55] Hide facets when they have no content
+- [DATAFARI-45]Facet pager not displayed
+OpenSearch compatible format
+Development environment for Mac OS X supported
+Italian translation
+Active Directory feature fix :
+	- [DATAFARI-47] Domain hardcoded in the servlet SearchProxy
+	- [DATAFARI-50] 403 error after login of an basic AD user
+	- [DATAFARI-77] Cannot assign several roles to a datafari user
+	- [DATAFARI-48] Add AD/LDAP user role by the UI
+	- [DATAFARI-76] The "Modify a user"  admin UI shows role table users
+	- [DATAFARI-75] User suppression shows error
+	- [DATAFARI-74] User roles suppression
+	
+
+==================  2.0 ==================
+
+- New User Interface with responsive design :
+	Search interface
+	Admin interface changed with Devoops framework
+- New features added :
+	Favorites
+	Alerts (experimental)
+	Schema analysis
+	Field weight configuration
+	Facet congiguration (experimental)
+	Deduplication
+	Likes (experimental)
+	LDAP configuration (experimental)
+	
+- Architecture changed
+	Solr is now in 5.2.1 with a standalone server application (Jetty)
+	Cassandra 2.1.8

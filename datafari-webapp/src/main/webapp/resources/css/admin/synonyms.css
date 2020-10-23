@@ -1,0 +1,66 @@
+#synonymsDisplay {
+	display: none;
+}
+
+.addWord{
+	width: 17em;
+	margin-right: 1em;
+}
+
+.btn-danger {
+	text-align: center;
+	cursor: pointer;
+	background-color: #d9534f !important;
+	border-color: #d43f3a !important;
+	vertical-align: middle !important;
+}
+
+.word{
+	min-width:180px;
+}	
+
+.inline_block .form-control{
+	font-size:12px;
+	cursor:default;
+}
+
+.inline_block{
+	display:inline-block;
+	vertical-align:middle;
+	margin-right:20px;
+	margin-top:5px;
+	margin-bottom:5px;
+}
+
+.inline_block .input-group-addon.delete{
+	color:white;
+	background: #F58376;
+	cursor:pointer;
+}
+
+th{
+	text-align:center;
+}
+
+
+.success{
+	color:green;
+}
+
+.input{
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	display: inline-block;
+	width: 40%;
+	padding-top: 2%;
+	padding-bottom: 2%;
+	text-align: center;
+}
+
+.error{
+	display:inline-block;
+	color:red;
+	display:none;
+}

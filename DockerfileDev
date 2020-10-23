@@ -1,0 +1,113 @@
+# syntax=docker/dockerfile:experimental
+FROM maven:3.5-jdk-8 AS BUILD
+
+ENV ANT_VERSION=1.10.3
+ENV ANT_HOME=/opt/ant
+
+# Temporary Workaround to Surefire issue 
+ENV _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true
+
+# change to tmp folder
+WORKDIR /tmp
+
+# Download and extract apache ant to opt folder
+RUN wget --no-check-certificate --no-cookies http://archive.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz \
+    && wget --no-check-certificate --no-cookies http://archive.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz.sha512 \
+    && echo "$(cat apache-ant-${ANT_VERSION}-bin.tar.gz.sha512) apache-ant-${ANT_VERSION}-bin.tar.gz" | sha512sum -c \
+    && tar -zxf apache-ant-${ANT_VERSION}-bin.tar.gz -C /opt/ \
+    && ln -s /opt/apache-ant-${ANT_VERSION} /opt/ant \
+    && rm -f apache-ant-${ANT_VERSION}-bin.tar.gz \
+    && rm -f apache-ant-${ANT_VERSION}-bin.tar.gz.sha512
+
+# add executables to path
+RUN update-alternatives --install "/usr/bin/ant" "ant" "/opt/ant/bin/ant" 1 && \
+    update-alternatives --set "ant" "/opt/ant/bin/ant" 
+
+RUN     apt-get update && apt-get install -y \
+               git \
+	&& rm -rf /var/lib/apt/lists/*
+WORKDIR ./datafari
+COPY datafari-annotator-connector datafari-annotator-connector
+COPY datafari-annotatorbatch datafari-annotatorbatch
+COPY datafari-cassandra datafari-cassandra
+COPY datafari-core datafari-core
+COPY datafari-elk datafari-elk
+COPY datafari-emptier-connector datafari-emptier-connector
+COPY datafari-git-plugin datafari-git-plugin
+COPY datafari-handler datafari-handler
+COPY datafari-jena datafari-jena
+COPY datafari-list-share-connector datafari-list-share-connector
+COPY datafari-mcf datafari-mcf
+COPY datafari-mcf-authority-servlet datafari-mcf-authority-servlet
+COPY datafari-mcf-connectors-dependencies datafari-mcf-connectors-dependencies
+COPY datafari-mcf-scripts datafari-mcf-scripts
+COPY datafari-share-connector datafari-share-connector
+COPY datafari-sharepoint-connector datafari-sharepoint-connector
+COPY datafari-solr datafari-solr
+COPY datafari-solr-backup datafari-solr-backup
+COPY datafari-tika datafari-tika
+COPY datafari-tika-config datafari-tika-config
+COPY datafari-tika-server datafari-tika-server
+COPY datafari-tika-server-connector datafari-tika-server-connector
+COPY datafari-tomcat datafari-tomcat
+COPY datafari-tomcat-mcf datafari-tomcat-mcf
+COPY datafari-tuleap-connector datafari-tuleap-connector
+COPY datafari-updateprocessor datafari-updateprocessor
+COPY datafari-webapp datafari-webapp
+COPY datafari-zookeeper datafari-zookeeper
+COPY datafari-zookeeper-mcf datafari-zookeeper-mcf
+COPY .drone.yml .drone.yml
+COPY CHANGES.txt CHANGES.txt
+COPY LICENSE.txt LICENSE.txt
+COPY LICENSES-THIRD-PARTY.txt LICENSES-THIRD-PARTY.txt
+COPY README.txt README.txt
+COPY pom.xml pom.xml
+COPY pomDockerDev.xml pomDockerDev.xml
+RUN --mount=type=cache,target=/root/.m2 mvn -f pomDockerDev.xml -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -B clean install 
+COPY apache apache
+COPY bin/common bin/common
+COPY linux linux
+COPY opensearch opensearch
+COPY ssl-keystore ssl-keystore
+RUN ant clean-build-docker -f ./linux/buildDockerDev.xml
+
+FROM openjdk:8-jdk-stretch
+MAINTAINER Olivier Tavard FRANCE LABS <olivier.tavard@francelabs.com>
+
+# temporary allow unauthenticatedparameter due to debian repo issue
+RUN echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
+RUN echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
+RUN     apt-get update && apt-get install --allow-unauthenticated -y \
+                wget \
+                curl \
+                jq \
+                debconf \
+                python \
+                sudo \
+                vim \
+                nano \
+                netcat \
+                libc6-dev \
+                unzip \
+                lsof \
+                procps \
+                apache2 \
+                libapache2-mod-jk \
+                iptables \
+                iptables-persistent \
+                systemd \
+	&& rm -rf /var/lib/apt/lists/*
+# For dev
+RUN echo "export LANG=C.UTF-8" >> /etc/profile
+RUN echo "export JAVA_HOME=/usr/local/openjdk-8" >> /etc/profile
+RUN echo "export PATH=$JAVA_HOME/bin:$PATH" >> /etc/profile
+
+WORKDIR /opt/datafari
+RUN useradd datafari -m -s /bin/bash
+COPY --chown=datafari:root --from=BUILD /tmp/datafari/linux/installer/build/datafari/opt/datafari .
+EXPOSE 8080 8983 9080 5601 9200 80 443
+WORKDIR /opt/datafari
+RUN  sed -i -e 's/sleep 10/sleep 30/g' /opt/datafari/bin/start-datafari.sh
+CMD ["/bin/bash", "-c", "/opt/datafari/bin/deployUtils/docker/debian-dev-start-datafari.sh"]
+
+

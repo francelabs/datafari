@@ -1,0 +1,35 @@
+Where to change the amount of RAM for the different services :
+
+- Solr	
+DATAFARI_HOME/solr/bin/solr.in.sh	
+SOLR_JAVA_MEM (-Xms and -Xmx) :	2GB
+
+- ManifoldCF	
+DATAFARI_HOME/mcf/mcf_home/option.env.unix	
+-Xms and -Xmx	: 1GB (enterprise edition)
+
+- Tomcat (Main)
+DATAFARI_HOME/tomcat/bin/setenv.sh	
+CATALINA_OPTS (-Xms and -Xmx) :	1GB
+
+- Tomcat (MCF)	
+DATAFARI_HOME/tomcat-mcf/bin/setenv.sh	
+CATALINA_OPTS (-Xms and -Xmx) :	1GB
+
+- Cassandra	
+DATAFARI_HOME/cassandra/conf/jvm.options	
+-Xms and -Xmx	: 1GB
+
+- Elasticsearch	
+DATAFARI_HOME/elk/elasticsearch/config/jvm.options	
+-Xms and -Xmx	: 2 GB
+- Logstash	
+DATAFARI_HOME/elk/logstash/config/jvm.options	
+-Xms and -Xmx	: 1 GB
+- Kibana	
+DATAFARI_HOME/elk/scripts/set-elk-env.sh	
+NODE_OPTIONS (--max-old-space-size)	: 512 MB
+
+- Tika server (Enterprise Edition)	
+DATAFARI_HOME/tika-server/bin/set-tika-env.sh	
+TIKA_SPAWN_MEM (-JXms and -JXmx)	: 5 GB

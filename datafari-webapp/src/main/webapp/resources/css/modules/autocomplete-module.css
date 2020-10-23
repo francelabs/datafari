@@ -1,0 +1,35 @@
+.autocomplete-suggestion {
+	font-style: italic;
+}
+
+.entity-value {
+	font-weight: bold;
+}
+
+.autocomplete-menu .ui-state-focus {
+	border: 1px solid !important; 
+	background: url(../images/jquery-ui/ui-bg_highlight-hard_100_f6f6f6_1x100.png) 50% 50% repeat-x !important;
+}
+
+.autocomplete-menu .ui-state-focus a {
+  color: #6B956F !important;
+}
+
+.cat-id {
+	display: none;
+}
+
+.entities-highlight {
+	display: table;
+}
+
+.entities-highlight-content {
+	display: table-cell;
+  vertical-align: middle;
+  color: transparent;
+}
+
+.entity-hl {
+	border-radius: 3px;
+	background-color: #b1d5e5;
+}

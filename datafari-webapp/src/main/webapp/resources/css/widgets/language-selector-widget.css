@@ -1,0 +1,13 @@
+#basicSearchLink.active {
+/*   used to unbalance 2px solid bottom border */
+  padding-bottom: 0.85rem;
+}
+
+#dropdown-lang-menu.show > a:hover, #dropdown-lang-menu.show > a:focus, #dropdown-lang-menu.show > a:active:focus {
+  background-color: transparent;
+  color: #6B956F;
+}
+
+#dropdown-lang-menu.show > a {
+  outline: none;
+}

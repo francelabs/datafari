@@ -1,0 +1,34 @@
+.status_bar {
+    width: 100%; /* Full width */
+    background-color: #ddd; /* Grey background */
+    position: relative;
+    height: 3em;
+}
+
+.status {
+    line-height: 3em; /* Set the line-height to center the text inside the status bar, and to expand the height of the container */
+    height: 3em;
+    position: absolute;
+    text-align: center;
+}
+
+.value {
+	width:100%;
+}
+
+.status_line {
+	width: 98%;
+	margin: auto;
+}
+
+#validButton, #cancelButton {
+    margin-top: 1em;
+}
+
+#cancelButton {
+  margin-left: 1em;
+}
+
+.docs {background-color: #4CAF50;} /* Green */
+.days {background-color: #2196F3;} /* Blue */
+.users {background-color: #c501c5;} /* Purple */

@@ -1,0 +1,297 @@
+{
+  "job": [
+    {
+      "_children_": [
+        {
+          "_type_": "description",
+          "_value_": "FilerCrawl"
+        },
+        {
+          "_type_": "repository_connection",
+          "_value_": "4523803e7560452f9c632fdddca144ac"
+        },
+        {
+          "_type_": "document_specification",
+          "_children_": [
+            {
+              "_type_": "excludefilter",
+              "_value_": "",
+              "_attribute_regex": "\\/~.*"
+            },
+            {
+              "_type_": "excludefilter",
+              "_value_": "",
+              "_attribute_regex": "\\.(?i)pst(?-i)$"
+            },
+            {
+              "_type_": "excludefilter",
+              "_value_": "",
+              "_attribute_regex": "\\.(?i)gz(?-i)$"
+            },
+            {
+              "_type_": "excludefilter",
+              "_value_": "",
+              "_attribute_regex": "\\.(?i)ini(?-i)$"
+            },
+            {
+              "_type_": "excludefilter",
+              "_value_": "",
+              "_attribute_regex": "\\.(?i)tar(?-i)$"
+            },
+            {
+              "_type_": "excludefilter",
+              "_value_": "",
+              "_attribute_regex": "\\.(?i)lnk(?-i)$"
+            },
+            {
+              "_type_": "excludefilter",
+              "_value_": "",
+              "_attribute_regex": "\\.(?i)db(?-i)$"
+            },
+            {
+              "_type_": "excludefilter",
+              "_value_": "",
+              "_attribute_regex": "\\.(?i)odb(?-i)$"
+            },
+            {
+              "_type_": "excludefilter",
+              "_value_": "",
+              "_attribute_regex": "\\.(?i)mat(?-i)$"
+            },
+            {
+              "_type_": "excludefilter",
+              "_value_": "",
+              "_attribute_regex": "\\/\\..*"
+            },
+            {
+              "_type_": "excludefilter",
+              "_value_": "",
+              "_attribute_regex": "\\.(?i)tgz(?-i)$"
+            },
+            {
+              "_type_": "excludefilter",
+              "_value_": "",
+              "_attribute_regex": "\\.(?i)zip(?-i)$"
+            },
+            {
+              "_type_": "excludefilter",
+              "_value_": "",
+              "_attribute_regex": "\\.(?i)rar(?-i)$"
+            },
+            {
+              "_type_": "excludefilter",
+              "_value_": "",
+              "_attribute_regex": "\\.(?i)7z(?-i)$"
+            },
+            {
+              "_type_": "excludefilter",
+              "_value_": "",
+              "_attribute_regex": "\\.(?i)bz2(?-i)$"
+            },
+            {
+              "_type_": "security",
+              "_value_": "",
+              "_attribute_value": "off"
+            },
+            {
+              "_type_": "sharesecurity",
+              "_value_": "",
+              "_attribute_value": "off"
+            },
+            {
+              "_type_": "parentfoldersecurity",
+              "_value_": "",
+              "_attribute_value": "off"
+            }
+          ]
+        },
+        {
+          "_type_": "pipelinestage",
+          "_children_": [
+            {
+              "_type_": "stage_id",
+              "_value_": "0"
+            },
+            {
+              "_type_": "stage_isoutput",
+              "_value_": "false"
+            },
+            {
+              "_type_": "stage_connectionname",
+              "_value_": "MetadataAdjuster"
+            },
+            {
+              "_type_": "stage_specification",
+              "_children_": [
+                {
+                  "_type_": "expression",
+                  "_attribute_parameter": "repo_source",
+                  "_value_": "",
+                  "_attribute_value": "filer"
+                },
+                {
+                  "_type_": "keepAllMetadata",
+                  "_value_": "",
+                  "_attribute_value": "true"
+                },
+                {
+                  "_type_": "filterEmpty",
+                  "_value_": "",
+                  "_attribute_value": "false"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_type_": "pipelinestage",
+          "_children_": [
+            {
+              "_type_": "stage_id",
+              "_value_": "1"
+            },
+            {
+              "_type_": "stage_prerequisite",
+              "_value_": "0"
+            },
+            {
+              "_type_": "stage_isoutput",
+              "_value_": "false"
+            },
+            {
+              "_type_": "stage_connectionname",
+              "_value_": "EmptierFilter"
+            },
+            {
+              "_type_": "stage_specification",
+              "_children_": [
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)avi(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)mp4(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)mkv(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)mov(?-i)$"
+                },
+                {
+                  "_type_": "maxdocsize",
+                  "_value_": "",
+                  "_attribute_value": "100000000"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_type_": "pipelinestage",
+          "_children_": [
+            {
+              "_type_": "stage_id",
+              "_value_": "2"
+            },
+            {
+              "_type_": "stage_prerequisite",
+              "_value_": "1"
+            },
+            {
+              "_type_": "stage_isoutput",
+              "_value_": "false"
+            },
+            {
+              "_type_": "stage_connectionname",
+              "_value_": "Tika"
+            },
+            {
+              "_type_": "stage_specification",
+              "_children_": [
+                {
+                  "_type_": "keepAllMetadata",
+                  "_value_": "",
+                  "_attribute_value": "true"
+                },
+                {
+                  "_type_": "lowerNames",
+                  "_value_": "",
+                  "_attribute_value": "true"
+                },
+                {
+                  "_type_": "writeLimit",
+                  "_value_": "",
+                  "_attribute_value": "1000000"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_type_": "pipelinestage",
+          "_children_": [
+            {
+              "_type_": "stage_id",
+              "_value_": "3"
+            },
+            {
+              "_type_": "stage_prerequisite",
+              "_value_": "2"
+            },
+            {
+              "_type_": "stage_isoutput",
+              "_value_": "true"
+            },
+            {
+              "_type_": "stage_connectionname",
+              "_value_": "DatafariSolrNoTika"
+            },
+            {
+              "_type_": "stage_specification"
+            }
+          ]
+        },
+        {
+          "_type_": "start_mode",
+          "_value_": "manual"
+        },
+        {
+          "_type_": "run_mode",
+          "_value_": "scan once"
+        },
+        {
+          "_type_": "hopcount_mode",
+          "_value_": "accurate"
+        },
+        {
+          "_type_": "priority",
+          "_value_": "5"
+        },
+        {
+          "_type_": "recrawl_interval",
+          "_value_": "86400000"
+        },
+        {
+          "_type_": "max_recrawl_interval",
+          "_value_": "infinite"
+        },
+        {
+          "_type_": "expiration_interval",
+          "_value_": "infinite"
+        },
+        {
+          "_type_": "reseed_interval",
+          "_value_": "3600000"
+        }
+      ]
+    }
+  ]
+}

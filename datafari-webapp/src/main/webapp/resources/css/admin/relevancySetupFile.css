@@ -1,0 +1,12 @@
+.relevancySetupFileOK {
+	color: green;
+}
+
+.relevancySetupFileError {
+	color: red;
+}
+
+.relevancySetupFile-btn {
+	margin: 15px;
+	width: auto;
+}

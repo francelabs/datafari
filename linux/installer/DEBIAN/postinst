@@ -1,0 +1,6 @@
+#!/bin/bash
+
+. /usr/share/debconf/confmodule
+useradd datafari -m -s /bin/bash
+chmod -R 775 /opt/datafari
+chown -R datafari /opt/datafari

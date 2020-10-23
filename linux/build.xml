@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<project name="Datafari_Linux" default="clean-build" basedir=".">
+
+	<!-- ========================= PROPERTIES ============================= -->
+
+	<property name="datafari.context.app" value="Datafari" />
+
+	<!-- If project.dir not set, set it as basedir (datafari directory) -->
+	<condition property="project.dir" else="${basedir}/..">
+		<isset property="project.dir" />
+	</condition>
+
+	<!-- Source directories -->
+	<property name="datafari.home" value="/opt/datafari" />
+	<property name="apache.src.dir" value="${project.dir}/apache" />
+	<property name="ssl.src.dir" value="${project.dir}/ssl-keystore" />
+	<property name="elk.src.dir" value="${project.dir}/datafari-elk/target/dist/elk" />
+	<property name="tomcat.proj.dir" value="${project.dir}/datafari-tomcat" />
+	<property name="tomcat.src.dir" value="${tomcat.proj.dir}/target/dist/tomcat" />
+	<property name="solr.src.dir" value="${project.dir}/datafari-solr/target/dist/solr" />
+	<property name="tika-config.src.dir" value="${project.dir}/datafari-tika-config/target" />
+	<property name="datafari.webapp.dir" value="${project.dir}/datafari-webapp/target" />
+	<property name="datafari.core.dir" value="${project.dir}/datafari-core/target" />
+	<property name="jena.src.dir" value="${project.dir}/datafari-jena/target" />
+	<property name="mcf.src.dir" value="${project.dir}/datafari-mcf/target/dist/mcf" />
+	<property name="updateprocessor.src.dir" value="${project.dir}/datafari-updateprocessor/target" />
+	<property name="emptier.connector.src.dir" value="${project.dir}/datafari-emptier-connector/target" />
+	<property name="share.connector.src.dir" value="${project.dir}/datafari-share-connector/target" />
+	<property name="datafarihandler.src.dir" value="${project.dir}/datafari-handler/target" />
+	<property name="mcf-scripts.src.dir" value="${project.dir}/datafari-mcf-scripts/target" />
+	<property name="cassandra.src.dir" value="${project.dir}/datafari-cassandra/target/dist/cassandra" />
+	<property name="zookeeper.proj.dir" value="${project.dir}/datafari-zookeeper" />
+	<property name="zookeeper.src.dir" value="${zookeeper.proj.dir}/target/dist/zookeeper" />
+	<property name="bin.src.dir" value="${project.dir}/bin" />
+	<property name="tika.src.dir" value="${project.dir}/datafari-tika/" />
+	<property name="git.plugin.src.dir" value="${project.dir}/datafari-git-plugin/target" />
+
+
+	<!-- Output directories and self contained Datafari's Debian components -->
+	<property name="linux.dir" value="${project.dir}/linux" />
+	<property name="linux.dist.dir" value="${linux.dir}/dist" />
+	<property name="linux.bin.dir" value="${linux.dir}/bin" />
+
+
+	<!-- debian binaries -->
+	<property name="command.dir" value="${linux.dir}/command" />
+	<property name="pgsql.dir" value="${linux.dir}/pgsql" />
+
+	<!-- Installer directories -->
+	<property name="installer.dir" value="${linux.dir}/installer" />
+	<property name="installer.build.dir" value="${installer.dir}/build" />
+	<!-- Dist installer direcotry -->
+	<property name="installer.dist.dir" value="${installer.dir}/dist" />
+
+
+	<target name="clean-build" depends="clean,package,installer-debian" />
+
+	<target name="clean">
+		<delete includeemptydirs="true" quiet="true">
+			<fileset dir="${installer.dist.dir}" />
+		</delete>
+
+		<!-- Clean-up the installer intermediate directory -->
+		<delete dir="${installer.build.dir}" />
+
+		<!-- Clean-up the dist intermediate directory -->
+		<delete dir="${linux.dist.dir}" />
+	</target>
+
+	<target name="package" depends="copyBinaries">
+		<!-- if we want to keep a backup of Datafari -->
+		<!--
+		<copy todir="${installer.build.dir}/datafari/opt/datafari/reset">
+			<fileset dir="${linux.dist.dir}" />
+		</copy>
+		-->
+		<move todir="${installer.build.dir}/datafari/opt/datafari">
+			<fileset dir="${linux.dist.dir}" />
+		</move>
+
+		<!-- Configure tomcat port - will probably change in the futur -->
+		<replace file="${installer.build.dir}/datafari/opt/datafari/tomcat/conf/server.xml">
+			<replacefilter>
+				<replacetoken>@TOMCAT_PORT@</replacetoken>
+				<replacevalue>8080</replacevalue>
+			</replacefilter>
+			<replacefilter>
+				<replacetoken>@AJP_PORT@</replacetoken>
+				<replacevalue>8009</replacevalue>
+			</replacefilter>
+			<replacefilter>
+				<replacetoken>@ADMIN_PORT@</replacetoken>
+				<replacevalue>8005</replacevalue>
+			</replacefilter>
+			<replacefilter>
+				<replacetoken>@SSL_PORT@</replacetoken>
+				<replacevalue>8443</replacevalue>
+			</replacefilter>
+			<replacefilter token="@DATAFARI_HOME@" value="${datafari.home}" />
+		</replace>
+
+		<!-- Configure tomcat port - will probably change in the futur -->
+		<replace file="${installer.build.dir}/datafari/opt/datafari/tomcat-mcf/conf/server.xml">
+			<replacefilter>
+				<replacetoken>@TOMCAT_PORT@</replacetoken>
+				<replacevalue>9080</replacevalue>
+			</replacefilter>
+			<replacefilter>
+				<replacetoken>@AJP_PORT@</replacetoken>
+				<replacevalue>9009</replacevalue>
+			</replacefilter>
+			<replacefilter>
+				<replacetoken>@ADMIN_PORT@</replacetoken>
+				<replacevalue>9005</replacevalue>
+			</replacefilter>
+			<replacefilter>
+				<replacetoken>@SSL_PORT@</replacetoken>
+				<replacevalue>9443</replacevalue>
+			</replacefilter>
+			<replacefilter token="@DATAFARI_HOME@" value="${datafari.home}" />
+		</replace>
+
+
+	</target>
+
+	<target name="installer-debian" depends="package">
+		<copy todir="${installer.build.dir}/datafari/DEBIAN">
+			<fileset dir="${installer.dir}/DEBIAN" />
+		</copy>
+		<exec executable="chmod">
+			<arg value="-R" />
+			<arg value="755" />
+			<arg value="${installer.build.dir}/datafari/DEBIAN" />
+		</exec>
+		<exec executable="dpkg-deb">
+			<arg value="-b" />
+			<arg value="${installer.build.dir}/datafari" />
+		</exec>
+
+		<!-- Output file -->
+		<move file="${installer.build.dir}/datafari.deb" todir="${installer.dist.dir}" />
+	</target>
+
+	<target name="copyBinaries">
+
+		<mkdir dir="${linux.dist.dir}/logs" />
+		<mkdir dir="${linux.dist.dir}/logs/distant" />
+		<mkdir dir="${linux.dist.dir}/pid" />
+		<mkdir dir="${linux.dist.dir}/batch/pid" />
+		<mkdir dir="${linux.dist.dir}/tika-server/pid" />
+
+		<!-- These components need a build with Maven -->
+
+		<!-- Copy Tomcat  -->
+		<copy todir="${linux.dist.dir}/tomcat">
+			<fileset dir="${tomcat.src.dir}">
+			</fileset>
+		</copy>
+		<!-- Copy bin directory -->
+		<copy toDir="${linux.dist.dir}/tomcat/bin" overwrite="true" force="true">
+			<fileset dir="${tomcat.proj.dir}/bin-datafari">
+			</fileset>
+		</copy>
+		<!-- Copy conf directory -->
+		<copy toDir="${linux.dist.dir}/tomcat/conf" overwrite="true" force="true">
+			<fileset dir="${tomcat.proj.dir}/conf-datafari">
+			</fileset>
+		</copy>
+
+		<!-- Copy Tomcat-MCF  -->
+		<copy todir="${linux.dist.dir}/tomcat-mcf">
+			<fileset dir="${tomcat.src.dir}">
+			</fileset>
+		</copy>
+		<!-- Copy bin directory -->
+		<copy toDir="${linux.dist.dir}/tomcat-mcf/bin" overwrite="true" force="true">
+			<fileset dir="${tomcat.proj.dir}/bin-mcf">
+			</fileset>
+		</copy>
+		<!-- Copy conf directory -->
+		<copy toDir="${linux.dist.dir}/tomcat-mcf/conf" overwrite="true" force="true">
+			<fileset dir="${tomcat.proj.dir}/conf-mcf">
+			</fileset>
+		</copy>
+
+		<!-- Copy Solr -->
+		<copy todir="${linux.dist.dir}/solr">
+			<fileset dir="${solr.src.dir}">
+			</fileset>
+		</copy>
+
+		<!-- Copy Datafari update processor + dependencies -->
+		<copy todir="${linux.dist.dir}/solr/solr_home/FileShare/lib/custom">
+			<fileset dir="${updateprocessor.src.dir}">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${updateprocessor.src.dir}/dependency">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${linux.dist.dir}/solr/solr_home/Duplicates/lib/custom">
+			<fileset dir="${updateprocessor.src.dir}">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${updateprocessor.src.dir}/dependency">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<!-- Copy Git properties file -->
+		<copy todir="${linux.dist.dir}/tomcat/conf">
+			<fileset dir="${git.plugin.src.dir}">
+				<include name="*.properties" />
+			</fileset>
+		</copy>
+
+		<!-- Copy SSL keystore files -->
+		<copy todir="${linux.dist.dir}/ssl-keystore">
+			<fileset dir="${ssl.src.dir}">
+			</fileset>
+		</copy>
+
+		<!-- Copy Apache files -->
+		<copy todir="${linux.dist.dir}/apache">
+			<fileset dir="${apache.src.dir}">
+			</fileset>
+		</copy>
+
+		<!-- Copy Datafari update handler + dependencies-->
+		<copy todir="${linux.dist.dir}/solr/solr_home/FileShare/lib/custom">
+			<fileset dir="${datafarihandler.src.dir}">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${datafarihandler.src.dir}/dependency">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<!-- Copy Tika jars to Solr -->
+		<copy todir="${linux.dist.dir}/solr/solr_home/FileShare/lib/extraction">
+			<fileset dir="${tika.src.dir}/target/dependency">
+				<include name="*.jar" />
+				<exclude name="language-detector*" />
+			</fileset>
+		</copy>
+
+
+		<!-- Copy only useful Jena libraries to Solr FileShare core directory -->
+		<copy toDir="${linux.dist.dir}/solr/solr_home/FileShare/lib/jena">
+			<fileset dir="${jena.src.dir}/dependency">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<copy todir="${linux.dist.dir}/elk">
+			<fileset dir="${elk.src.dir}">
+			</fileset>
+		</copy>
+
+		<!-- Copy MCF without logging libs -->
+		<copy todir="${linux.dist.dir}/mcf">
+			<fileset dir="${mcf.src.dir}">
+				<exclude name="mcf_home/connector-lib/commons-logging-*.jar" />
+				<exclude name="mcf_home/connector-lib/jcl-over-*.jar" />
+				<exclude name="mcf_home/connector-lib/log4j-*.jar" />
+				<exclude name="mcf_home/connector-lib/slf4j-*.jar" />
+				<exclude name="mcf_home/lib/commons-logging-*.jar" />
+				<exclude name="mcf_home/lib/jcl-over-*.jar" />
+				<exclude name="mcf_home/lib/log4j-*.jar" />
+				<exclude name="mcf_home/lib/slf4j-*.jar" />
+			</fileset>
+		</copy>
+
+		<!-- Copy Datafari logging libs to MCF -->
+		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
+			<fileset dir="${datafari.core.dir}">
+				<include name="dependency/log4j-*.jar" />
+				<include name="dependency/slf4j-*.jar" />
+				<include name="dependency/commons-logging-*.jar" />
+			</fileset>
+		</copy>
+		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/lib" overwrite="true" force="true">
+			<fileset dir="${datafari.core.dir}">
+				<include name="dependency/log4j-*.jar" />
+				<include name="dependency/slf4j-*.jar" />
+				<include name="dependency/commons-logging-*.jar" />
+			</fileset>
+		</copy>
+
+		<!-- Copy Emptier connector -->
+		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
+			<fileset dir="${emptier.connector.src.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<!-- Copy Share connector -->
+		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
+			<fileset dir="${share.connector.src.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-common-lib" overwrite="true" force="true">
+			<fileset dir="${share.connector.src.dir}">
+				<include name="dependencies/**" />
+				<exclude name="dependencies/jcifs*" />
+			</fileset>
+		</copy>
+		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib-proprietary" overwrite="true" force="true">
+			<fileset dir="${share.connector.src.dir}">
+				<include name="dependencies/jcifs*" />
+			</fileset>
+		</copy>
+
+		<!-- Copy Tika OCR config in mcf lib -->
+		<copy todir="${linux.dist.dir}/mcf/mcf_home/lib">
+			<fileset dir="${tika-config.src.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<!-- Copy Manifold CF to Tomcat auto-deploy directory -->
+		<move toDir="${linux.dist.dir}/tomcat-mcf/webapps" overwrite="true" force="true">
+			<fileset dir="${linux.dist.dir}/mcf/war" />
+			<globmapper from="*.war" to="datafari-*.war" />
+		</move>
+
+		<!-- Copy Datafari War -->
+		<copy file="${datafari.webapp.dir}/Datafari.war" todir="${linux.dist.dir}/tomcat/webapps" />
+
+		<!-- Copy Datafari core lib to Tomcat -->
+		<copy flatten="true" toDir="${linux.dist.dir}/tomcat/lib" overwrite="true" force="true">
+			<fileset dir="${datafari.core.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<copy todir="${linux.dist.dir}/cassandra">
+			<fileset dir="${cassandra.src.dir}" />
+		</copy>
+
+		<copy todir="${linux.dist.dir}/bin">
+			<fileset dir="${bin.src.dir}" />
+		</copy>
+
+		<!-- Copy Datafari log4j libs to Tomcat -->
+		<copy flatten="true" toDir="${linux.dist.dir}/tomcat/lib" overwrite="true" force="true">
+			<fileset dir="${datafari.core.dir}">
+				<include name="dependency/log4j-*.jar" />
+				<include name="dependency/slf4j-*.jar" />
+				<include name="dependency/commons-logging-*.jar" />
+				<include name="dependency/commons-codec-*.jar" />
+			</fileset>
+		</copy>
+
+		<!-- Copy MCF libs to Tomcat-MCF -->
+		<copy flatten="true" toDir="${linux.dist.dir}/tomcat-mcf/lib" overwrite="true" force="true">
+			<fileset dir="${mcf.src.dir}/mcf_home/lib">
+				<include name="*.jar" />
+				<exclude name="javax.servlet*.jar" />
+				<exclude name="jetty*.jar" />
+				<exclude name="jsp-*.jar" />
+				<exclude name="jna*.jar" />
+				<exclude name="log4j-*.jar" />
+				<exclude name="jasper-*.jar" />
+				<exclude name="ecj-*.jar" />
+				<exclude name="slf4j-*.jar" />
+				<exclude name="commons-logging-*.jar" />
+			</fileset>
+		</copy>
+
+		<!-- Copy Datafari log4j & slf4j libs to Tomcat-MCF -->
+		<copy flatten="true" toDir="${linux.dist.dir}/tomcat-mcf/lib" overwrite="true" force="true">
+			<fileset dir="${datafari.core.dir}">
+				<include name="dependency/log4j-*.jar" />
+				<include name="dependency/slf4j-*.jar" />
+				<include name="dependency/commons-logging-*.jar" />
+			</fileset>
+		</copy>
+
+		<!-- Copy datafari-core jar to MCF -->
+		<copy toDir="${linux.dist.dir}/mcf/mcf_home/connector-common-lib" overwrite="true" force="true">
+			<fileset dir="${datafari.core.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<!-- Copy BackupManifoldCF script -->
+		<copy todir="${linux.dist.dir}/bin/common">
+			<fileset dir="${mcf-scripts.src.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<copy todir="${linux.dist.dir}/pgsql">
+			<fileset dir="${pgsql.dir}" />
+		</copy>
+
+		<!-- Setup zk Solr -->
+		<copy todir="${linux.dist.dir}/zookeeper">
+			<fileset dir="${zookeeper.src.dir}" />
+		</copy>
+		<copy toDir="${linux.dist.dir}/zookeeper" overwrite="true" force="true">
+			<fileset dir="${zookeeper.proj.dir}">
+			</fileset>
+			<globmapper from="bin/zkServer-solr.sh" to="bin/zkServer.sh"/>
+		</copy>
+		<copy toDir="${linux.dist.dir}/zookeeper" overwrite="true" force="true">
+			<fileset dir="${zookeeper.proj.dir}">
+			</fileset>
+			<globmapper from="conf/log4j-solr.properties" to="conf/log4j.properties"/>
+		</copy>
+		<copy toDir="${linux.dist.dir}/zookeeper" overwrite="true" force="true">
+			<fileset dir="${zookeeper.proj.dir}">
+			</fileset>
+			<globmapper from="conf/zoo-solr.cfg" to="conf/zoo.cfg"/>
+		</copy>
+
+		<!-- Setup zk MCF -->
+		<copy todir="${linux.dist.dir}/zookeeper-mcf">
+			<fileset dir="${zookeeper.src.dir}" />
+		</copy>
+		<copy toDir="${linux.dist.dir}/zookeeper-mcf" overwrite="true" force="true">
+			<fileset dir="${zookeeper.proj.dir}">
+			</fileset>
+			<globmapper from="bin/zkServer-mcf.sh" to="bin/zkServer.sh"/>
+		</copy>
+		<copy toDir="${linux.dist.dir}/zookeeper-mcf" overwrite="true" force="true">
+			<fileset dir="${zookeeper.proj.dir}">
+			</fileset>
+			<globmapper from="conf/log4j-mcf.properties" to="conf/log4j.properties"/>
+		</copy>
+		<copy toDir="${linux.dist.dir}/zookeeper-mcf" overwrite="true" force="true">
+			<fileset dir="${zookeeper.proj.dir}">
+			</fileset>
+			<globmapper from="conf/zoo-mcf.cfg" to="conf/zoo.cfg"/>
+		</copy>
+
+
+		<copy todir="${linux.dist.dir}/command">
+			<fileset dir="${command.dir}" />
+		</copy>
+
+
+		<copy todir="${linux.dist.dir}/bin">
+			<fileset dir="${linux.bin.dir}">
+				<exclude name="buildParameters/" />
+			</fileset>
+		</copy>
+
+		<!-- setup bin scripts -->
+		<loadfile srcFile="${linux.bin.dir}/buildParameters/methods.txt" property="methods" />
+		<loadfile srcFile="${linux.bin.dir}/buildParameters/webapp_params" property="webapp-params" />
+		<replace file="${linux.dist.dir}/bin/init-datafari.sh" token="@WAR_VERSION_INIT@" value="${webapp-params}" />
+		<replace file="${linux.dist.dir}/bin/init-datafari.sh" token="@VERSION-METHODS@" value="${methods}" />
+		<replace file="${linux.dist.dir}/bin/init-datafari.sh" token="@VERSION-INIT@" value="" />
+		<replace file="${linux.dist.dir}/bin/init-datafari.sh" token="@INIT-ANNOTATOR@" value="" />
+		<replace file="${linux.dist.dir}/bin/start-datafari.sh" token="@VERSION-START@" value="" />
+		<replace file="${linux.dist.dir}/bin/start-datafari.sh" token="@START-CHECKS@" value="" />
+		<replace file="${linux.dist.dir}/bin/start-datafari.sh" token="@VERSION-MONO-START@" value="" />
+		<replace file="${linux.dist.dir}/bin/stop-datafari.sh" token="@VERSION-STOP@" value="" />
+		<replace file="${linux.dist.dir}/bin/restart-datafari.sh" token="@VERSION-RESTART@" value="" />
+		<replace file="${linux.dist.dir}/bin/datafari-manager.sh" token="@VERSION-MANAGER@" value="" />
+		<replace file="${linux.dist.dir}/bin/datafari-manager.sh" token="@SOLR-INIT@" value="" />
+		<replace file="${linux.dist.dir}/bin/datafari-manager.sh" token="@ZK-INIT@" value="" />
+
+
+		<!-- Add txt files -->
+		<copy file="${project.dir}/LICENSE.txt" todir="${linux.dist.dir}/" />
+		<copy file="${project.dir}/README.txt" todir="${linux.dist.dir}/" />
+		<copy file="${project.dir}/CHANGES.txt" todir="${linux.dist.dir}/" />
+	</target>
+
+</project>
