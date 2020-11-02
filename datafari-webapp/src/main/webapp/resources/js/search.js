@@ -163,7 +163,7 @@ $(function($) {
 	    name : window.i18n.msgStore['facetcreation_date'],
 	    pagination : true,
 	    selectionType : 'ONE',
-	    queries : [ '[NOW/DAY TO NOW]', '[NOW/DAY-7DAY TO NOW/DAY]', '[NOW/DAY-30DAY TO NOW/DAY-8DAY]','[* TO NOW/DAY-31DAY]', '[1970-09-01T00:00:00Z TO 1970-09-01T00:00:00Z]' ],
+	    queries : [ '[NOW/DAY TO NOW]', '[NOW/DAY-7DAY TO NOW/DAY]', '[NOW/DAY-30DAY TO NOW/DAY-8DAY]','[1970-09-01T00:01:00Z TO NOW/DAY-31DAY]', '[1970-09-01T00:00:00Z TO 1970-09-01T00:00:00Z]' ],
 	    labels : [ window.i18n.msgStore['facetcreation_date0'], window.i18n.msgStore['facetcreation_date1'], window.i18n.msgStore['facetcreation_date2'],window.i18n.msgStore['facetcreation_date3'],window.i18n.msgStore['facetcreation_date4'] ],
 	    modules : [ new AjaxFranceLabs.DateSelectorFacetModule({
 	      id : 'dsfm-creation_date',
