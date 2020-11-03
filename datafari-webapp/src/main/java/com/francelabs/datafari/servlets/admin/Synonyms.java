@@ -67,6 +67,7 @@ public class Synonyms extends HttpServlet {
   private static final String confname = "FileShare";
   private final String server = Core.FILESHARE.toString();
   private final String env;
+  private final String langFolder = "lang";
   private final static Logger LOGGER = LogManager.getLogger(Synonyms.class.getName());
 
   /**
@@ -196,7 +197,7 @@ public class Synonyms extends HttpServlet {
 
        
         Files.move(tempFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        server.uploadFile(env,"synonyms_" + language + ".txt", Core.FILESHARE.toString());
+        server.uploadFile(env,"synonyms_" + language + ".txt", Core.FILESHARE.toString(),langFolder);
         Thread.sleep(1000);
         server.reloadCollection(Core.FILESHARE.toString());
         
@@ -208,7 +209,7 @@ public class Synonyms extends HttpServlet {
         }
         if (collectionsList != null) {
           for (String object: collectionsList) {
-            server.uploadFile(env,"synonyms_" + language + ".txt",object);
+            server.uploadFile(env,"synonyms_" + language + ".txt",object,langFolder);
             Thread.sleep(1000);
             server.reloadCollection(object);
           }

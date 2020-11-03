@@ -60,6 +60,7 @@ public class Stopwords extends HttpServlet {
   private static final String confname = "FileShare";
   private final String server = Core.FILESHARE.toString();
   private final String env;
+  private final String langFolder = "lang";
   private final static Logger LOGGER = LogManager.getLogger(Stopwords.class.getName());
 
   /**
@@ -166,7 +167,7 @@ public class Stopwords extends HttpServlet {
           fooStream.write(myBytes); // rewrite the file
           fooStream.close();
           String[] params = {file.getName()};
-          server.uploadFile(env,"stopwords_" + request.getParameter("language") + ".txt", Core.FILESHARE.toString());
+          server.uploadFile(env,"stopwords_" + request.getParameter("language") + ".txt", Core.FILESHARE.toString(),langFolder);
           Thread.sleep(1000);
           server.reloadCollection(Core.FILESHARE.toString());
           List<String> collectionsList = null;
@@ -177,7 +178,7 @@ public class Stopwords extends HttpServlet {
           }
           if (collectionsList != null) {
             for (String object: collectionsList) {
-              server.uploadFile(env,"stopwords_" + request.getParameter("language") + ".txt", Core.FILESHARE.toString());
+              server.uploadFile(env,"stopwords_" + request.getParameter("language") + ".txt", Core.FILESHARE.toString(),langFolder);
               Thread.sleep(1000);
               server.reloadCollection(object);
             }

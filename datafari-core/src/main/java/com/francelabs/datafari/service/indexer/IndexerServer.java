@@ -32,7 +32,7 @@ public interface IndexerServer {
 
   public void uploadConfig(Path configPath, String configName) throws IOException;
 
-  public void uploadFile(final String localDirectory, final String fileToUpload, final String collection) throws IOException;
+  public void uploadFile(final String localDirectory, final String fileToUpload, final String collection, final String distantDirectory) throws IOException;
 
   public void downloadConfig(Path configPath, String configName) throws IOException;
 

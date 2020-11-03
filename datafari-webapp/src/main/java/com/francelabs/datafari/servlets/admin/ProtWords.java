@@ -175,7 +175,7 @@ public class ProtWords extends HttpServlet {
               .replaceAll("</div>|</lines>|&nbsp;", "").getBytes();
           fooStream.write(myBytes); // rewrite the file
           fooStream.close();
-          server.uploadFile(env,"protwords.txt", Core.FILESHARE.toString());
+          server.uploadFile(env,"protwords.txt", Core.FILESHARE.toString(),"");
           Thread.sleep(1000);
           server.reloadCollection(Core.FILESHARE.toString());
 
@@ -187,7 +187,7 @@ public class ProtWords extends HttpServlet {
           
           if (collectionsList != null) {
             for (String object: collectionsList) {
-              server.uploadFile(env,"protwords.txt", object);
+              server.uploadFile(env,"protwords.txt", object,"");
               Thread.sleep(1000);
               server.reloadCollection(object);
             }

@@ -244,11 +244,15 @@ public class SolrIndexerServer implements IndexerServer {
   }
 
   @Override
-  public void uploadFile(final String localDirectory, final String fileToUpload, final String collection) throws IOException {
+  public void uploadFile(final String localDirectory, final String fileToUpload, final String collection, final String distantDirectory) throws IOException {
     final Path localPath = Paths.get(localDirectory + "/" + fileToUpload);
     LOGGER.debug("zkpath : " + "/configs/" + collection + "/" + fileToUpload);
     LOGGER.debug("localPath : " + localDirectory + "/" + fileToUpload);
-    ZkMaintenanceUtils.uploadToZK(zkClient, localPath, "/configs/" + collection + "/" + fileToUpload, null);
+    if (distantDirectory != null && !distantDirectory.isEmpty()) 
+      ZkMaintenanceUtils.uploadToZK(zkClient, localPath, "/configs/" + collection + "/" + distantDirectory + "/" + fileToUpload, null);
+    else 
+      ZkMaintenanceUtils.uploadToZK(zkClient, localPath, "/configs/" + collection + "/" + fileToUpload, null);
+
 
   }
 

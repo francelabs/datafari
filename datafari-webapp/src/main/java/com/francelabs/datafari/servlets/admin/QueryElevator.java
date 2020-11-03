@@ -265,7 +265,7 @@ public class QueryElevator extends HttpServlet {
         marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, new Boolean(true));
         final OutputStream os = new FileOutputStream(elevatorFile);
         marshal.marshal(elevate, os);
-        indexServer.uploadFile(env, "elevate.xml", Core.FILESHARE.toString());
+        indexServer.uploadFile(env, "elevate.xml", Core.FILESHARE.toString(),"");
         indexServer.reloadCollection(Core.FILESHARE.toString());
 
         List<String> collectionsList = null;
@@ -276,7 +276,7 @@ public class QueryElevator extends HttpServlet {
         }
         if (collectionsList != null) {
           for (final String object : collectionsList) {
-            indexServer.uploadFile(env, "elevate.xml", object);
+            indexServer.uploadFile(env, "elevate.xml", object,"");
             indexServer.reloadCollection(object);
           }
         }
@@ -358,7 +358,7 @@ public class QueryElevator extends HttpServlet {
         marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, new Boolean(true));
         final OutputStream os = new FileOutputStream(elevatorFile);
         marshal.marshal(elevate, os);
-        indexServer.uploadFile(env, "elevate.xml", Core.FILESHARE.toString());
+        indexServer.uploadFile(env, "elevate.xml", Core.FILESHARE.toString(),"");
         indexServer.reloadCollection(Core.FILESHARE.toString());
 
         List<String> collectionsList = null;
@@ -369,7 +369,7 @@ public class QueryElevator extends HttpServlet {
         }
         if (collectionsList != null) {
           for (final String object : collectionsList) {
-            indexServer.uploadFile(env, "elevate.xml", object);
+            indexServer.uploadFile(env, "elevate.xml", object,"");
             indexServer.reloadCollection(object);
           }
         }
