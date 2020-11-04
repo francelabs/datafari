@@ -361,6 +361,7 @@ clean_monoserver_node() {
 
 init_permissions() {
 	echo "Init permissions of Datafari. Please wait"
+	mkdir /opt/datafari/tmp
 	chmod -R 775 /opt/datafari
 	chown -R datafari /opt/datafari
 	chown -R postgres /opt/datafari/pgsql/
