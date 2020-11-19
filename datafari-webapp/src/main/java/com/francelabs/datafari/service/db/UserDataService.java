@@ -72,8 +72,7 @@ public class UserDataService extends CassandraService {
    * Inform if the user exists already in the database
    *
    * @return true if is exists and false if not
-   * @throws Exception
-   *           if there's a problem with Cassandra
+   * @throws Exception if there's a problem with Cassandra
    */
   public boolean isInBase(final String username) throws DatafariServerException {
     try {
@@ -96,8 +95,7 @@ public class UserDataService extends CassandraService {
    *
    * @param username
    * @return the password of the user
-   * @throws Exception
-   *           if there's a problem with Cassandra
+   * @throws Exception if there's a problem with Cassandra
    */
   public String getPassword(final String username) throws DatafariServerException {
     try {
@@ -142,11 +140,9 @@ public class UserDataService extends CassandraService {
   /**
    * Returns the roles of a user containing in the myDoc
    *
-   * @param myDoc
-   *          the document containing the user with the roles
+   * @param myDoc the document containing the user with the roles
    * @return an arrayList of roles of the user
-   * @throws Exception
-   *           if there's a probleme with database
+   * @throws Exception if there's a probleme with database
    */
   public List<String> getRoles(final String username) throws DatafariServerException {
     try {
@@ -168,11 +164,9 @@ public class UserDataService extends CassandraService {
   /**
    * get all Active Directory users with their corresponding roles
    *
-   * @param db
-   *          instance of the database that contains the identifier collection
+   * @param db instance of the database that contains the identifier collection
    * @return Map of <username, list of roles>
-   * @throws Exception
-   *           if there's a problem with Cassandra
+   * @throws Exception if there's a problem with Cassandra
    */
   public JSONArray getAllADUsers() throws DatafariServerException {
     try {
@@ -219,11 +213,9 @@ public class UserDataService extends CassandraService {
   /**
    * get all Datafari users with their corresponding roles
    *
-   * @param db
-   *          instance of the database that contains the identifier collection
+   * @param db instance of the database that contains the identifier collection
    * @return Map of <username, list of roles>
-   * @throws Exception
-   *           if there's a problem with Cassandra
+   * @throws Exception if there's a problem with Cassandra
    */
   public JSONArray getAllDatafariUsers() throws DatafariServerException {
     try {
@@ -270,11 +262,9 @@ public class UserDataService extends CassandraService {
   /**
    * get all user with the corresponding roles
    *
-   * @param db
-   *          instance of the database that contains the identifier collection
+   * @param db instance of the database that contains the identifier collection
    * @return Map of <username, list of roles>
-   * @throws Exception
-   *           if there's a problem with Cassandra
+   * @throws Exception if there's a problem with Cassandra
    */
   public JSONArray getAllUsers() throws DatafariServerException {
     try {
@@ -326,12 +316,9 @@ public class UserDataService extends CassandraService {
   /**
    * Change a password of username with the "password"
    *
-   * @param password
-   *          new password hashed
-   * @param username
-   *          the username that we want to change
-   * @throws Exception
-   *           if there's a problem with Cassandra
+   * @param password new password hashed
+   * @param username the username that we want to change
+   * @throws Exception if there's a problem with Cassandra
    */
   public void changePassword(final String passwordHashed, final String username) throws DatafariServerException {
     try {
@@ -349,10 +336,8 @@ public class UserDataService extends CassandraService {
   /**
    * Add a role to the user
    *
-   * @param role
-   *          string representing the role that we want to add
-   * @throws DatafariServerException
-   *           if there's a problem with Cassandra
+   * @param role string representing the role that we want to add
+   * @throws DatafariServerException if there's a problem with Cassandra
    */
   public void addRole(final String role, final String username) throws DatafariServerException {
     try {
@@ -376,11 +361,9 @@ public class UserDataService extends CassandraService {
    *
    * @param username
    * @param password
-   * @param role
-   *          is the array containing the roles of the user that we want to add
+   * @param role     is the array containing the roles of the user that we want to add
    * @return
-   * @throws Exception
-   *           if there's a problem with Cassandra
+   * @throws Exception if there's a problem with Cassandra
    */
   public boolean addUser(final String username, final String password, final List<String> roles, final boolean isImported) throws DatafariServerException {
     try {
@@ -406,8 +389,13 @@ public class UserDataService extends CassandraService {
   public void refreshUser(final String username) throws DatafariServerException {
     final JSONObject userObj = getUser(username);
     final List<String> roles = getRoles(username);
-    final String password = userObj.get(PASSWORDCOLUMN).toString();
-    final boolean isFromAd = (Boolean) userObj.get(ISIMPORTEDCOLUMN);
+    // If userObj is null that means that the user is not a datafari user (so from AD or Keycloak or other providers) and does not have any Datafari rights
+    String password = "";
+    boolean isFromAd = true;
+    if (userObj != null) {
+      password = userObj.get(PASSWORDCOLUMN).toString();
+      isFromAd = (Boolean) userObj.get(ISIMPORTEDCOLUMN);
+    }
     deleteUser(username);
     addUser(username, password, roles, isFromAd);
   }
@@ -415,10 +403,8 @@ public class UserDataService extends CassandraService {
   /**
    * Delete a user
    *
-   * @param username
-   *          the user to delete
-   * @throws Exception
-   *           if there's a problem with Cassandra
+   * @param username the user to delete
+   * @throws Exception if there's a problem with Cassandra
    */
   public void deleteUser(final String username) throws DatafariServerException {
     try {
@@ -437,10 +423,8 @@ public class UserDataService extends CassandraService {
   /**
    * Delete a role from the user
    *
-   * @param role
-   *          string representing the role that we want to delete
-   * @throws Exception
-   *           if there's a problem with Cassandra
+   * @param role string representing the role that we want to delete
+   * @throws Exception if there's a problem with Cassandra
    */
   public void deleteRole(final String role, final String username) throws DatafariServerException {
     try {
