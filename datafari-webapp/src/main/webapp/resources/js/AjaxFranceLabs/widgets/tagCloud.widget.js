@@ -73,6 +73,7 @@ AjaxFranceLabs.TagCloudWidget = AjaxFranceLabs.AbstractWidget.extend({
     },
 
     update : function() {
+        this.total = 0;
         if (!this.manager.response.clusters) {
             return;
         }
