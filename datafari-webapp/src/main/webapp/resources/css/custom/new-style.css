@@ -431,7 +431,6 @@ a {
 
   #solr {
     width: 69%;
-    margin-bottom: 13.5% !important;
   }
 
   .title, .title .externallinktitle, .title .externalappilinktitle {
@@ -593,6 +592,7 @@ a {
           height: 35px;
           width: 150px; }
     body .doc_list_pagination {
+      margin-bottom: 13.5% !important;
       border-top: 1px solid #666;
       padding-top: 10px; }
     body .footer-respon {
