@@ -254,7 +254,7 @@ public class SearchAggregator extends HttpServlet {
           return;
         }
         // Merge the responses
-        String finalResponseStr = mergeResponses(responses, orgStart, orgRows, wildCardQuery).toJSONString();
+        String finalResponseStr = mergeResponses(responses, orgStart, orgRows, wildCardQuery, jaExternalDatafaris.size()).toJSONString();
         final String wrapperFunction = request.getParameter("json.wrf");
         if (wrapperFunction != null) {
           finalResponseStr = wrapperFunction + "(" + finalResponseStr + ")";
@@ -378,7 +378,7 @@ public class SearchAggregator extends HttpServlet {
     }
   }
 
-  private JSONObject mergeResponses(final List<JSONObject> responses, final int originalStart, final int originalRows, final boolean wildCardQuery) {
+  private JSONObject mergeResponses(final List<JSONObject> responses, final int originalStart, final int originalRows, final boolean wildCardQuery, final int numExternalDatafaris) {
     JSONObject finalResponse = new JSONObject();
     if (responses.size() > 0) {
       finalResponse = (JSONObject) responses.get(0).clone();
@@ -459,6 +459,10 @@ public class SearchAggregator extends HttpServlet {
       neutralSpellcheck.put("suggestions", new JSONArray());
       neutralSpellcheck.put("correctlySpelled", true);
       finalResponse.put("spellcheck", neutralSpellcheck);
+      if (numExternalDatafaris == 1) {
+        // If there is only one remote, we can get the spellcheck from the response
+        finalResponse.put("spellcheck", responses.get(0).get("spellcheck"));
+      }
 
       // Construct final docs and highlighting
       final JSONArray fDocs = (JSONArray) finalResponseResp.get("docs");
