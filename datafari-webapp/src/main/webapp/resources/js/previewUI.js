@@ -165,12 +165,13 @@ $(function($) {
     docPos = parseInt(docPos);
   }
   var docId = getQueryString("docId");
+  var aggregator = getQueryString("aggregator");
   var qId = getQueryString("id");
   if (q != null) {
     var params = window.location.search;
-    manager.performRequestFromQuery("SearchProxy/select", params, docPos, queryRequestHandler);
+    manager.performRequestFromQuery("SearchAggregator/select", params, docPos, queryRequestHandler);
   } else if (docId != undefined && docId != null) {
-    manager.performRequestFromDocId("SearchProxy/select", docId, docIdRequestHandler);
+    manager.performRequestFromDocId("SearchAggregator/select", docId, docIdRequestHandler, aggregator);
   } else {
     // Update finished, hide loading-div
     $("#loading-div").hide();

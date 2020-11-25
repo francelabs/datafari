@@ -57,9 +57,9 @@ AjaxFranceLabs.PreviewManager = AjaxFranceLabs.Class.extend({
     requestWidget.requestFromQuery(servlet, params, docPos, responseHandler);
   },
 
-  performRequestFromDocId : function(servlet, docId, responseHandler) {
+  performRequestFromDocId : function(servlet, docId, responseHandler, aggregator) {
     var requestWidget = this.widgets[this.requestWidgetId]
-    requestWidget.requestFromDocId(servlet, docId, responseHandler);
+    requestWidget.requestFromDocId(servlet, docId, responseHandler, aggregator);
   },
 
   removeWidget : function(widgetId) {

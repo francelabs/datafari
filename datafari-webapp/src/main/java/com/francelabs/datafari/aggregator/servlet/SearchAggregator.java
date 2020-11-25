@@ -532,7 +532,7 @@ public class SearchAggregator extends HttpServlet {
         int insertIndex = -1;
         for (int i = 0; i < orderedDocs.size(); i++) {
           final Double orderedScore = (Double) orderedDocs.get(i).get("score");
-          if (score <= orderedScore) {
+          if (score > orderedScore) {
             insertIndex = i;
             break;
           }

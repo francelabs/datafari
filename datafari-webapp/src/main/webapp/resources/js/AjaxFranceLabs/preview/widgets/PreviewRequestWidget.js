@@ -33,7 +33,7 @@ AjaxFranceLabs.PreviewRequestWidget = AjaxFranceLabs.Class.extend({
     $.get(servlet + params + '&wt=json&json.wrf=?', responseHandler, "json");
   },
 
-  requestFromDocId : function(servlet, docId, responseHandler) {
+  requestFromDocId : function(servlet, docId, responseHandler, aggregator) {
     // Normalize docId before sending the request, which means to URI encode the docId
     var docParts = [];
     var docBase = "";
@@ -67,9 +67,13 @@ AjaxFranceLabs.PreviewRequestWidget = AjaxFranceLabs.Class.extend({
       encodedDocId = encodedDocPath;
     }
     var params = "id:(\"" + encodedDocId + "\")";
-    $.get(servlet + "?json.wrf=?", {
-      q : params,
-      wt : "json"
-    }, responseHandler, "json");
+    var queryBody = {
+        q : params,
+        wt : "json"
+    }
+    if (aggregator && aggregator.length !== 0) {
+      queryBody.aggregator = aggregator;
+    }
+    $.get(servlet + "?json.wrf=?", queryBody, responseHandler, "json");
   }
 });
