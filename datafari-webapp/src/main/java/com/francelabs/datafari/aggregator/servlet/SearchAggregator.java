@@ -165,13 +165,12 @@ public class SearchAggregator extends HttpServlet {
         final JSONArray jaExternalDatafaris = (JSONArray) parser.parse(jaExternalDatafarisStr);
         // Filter out external sources that are not selected.
         // If nothing is selected, we keep all sources
-        jaExternalDatafaris.removeIf(jsonObject -> (filterSourceList.size() != 0
-            && !filterSourceList.contains(((JSONObject) jsonObject).get("label")))
-            || !((Boolean) ((JSONObject) jsonObject).get("enabled")));
+        jaExternalDatafaris
+            .removeIf(jsonObject -> (filterSourceList.size() != 0 && !filterSourceList.contains(((JSONObject) jsonObject).get("label"))) || !((Boolean) ((JSONObject) jsonObject).get("enabled")));
 
         if (jaExternalDatafaris.size() == 0) {
           LOGGER.warn("No external Datafari activated and available to process an aggregator query.");
-          JSONObject jsonResp = new JSONObject();
+          final JSONObject jsonResp = new JSONObject();
           jsonResp.put("origin", "aggregator");
           jsonResp.put("code", 1);
           jsonResp.put("message", "No external Datafari available for this request.");
@@ -189,12 +188,11 @@ public class SearchAggregator extends HttpServlet {
           if (jaExternalDatafaris.size() == 1) {
             final JSONObject externalDatafari = (JSONObject) jaExternalDatafaris.get(0);
             final String authUsername = requestingUser;
-            String suggestResponse = externalDatafariRequest(timeoutPerRequest, handler, parameterMap, externalDatafari,
-                authUsername);
+            final String suggestResponse = externalDatafariRequest(timeoutPerRequest, handler, parameterMap, externalDatafari, authUsername);
             if (suggestResponse != null) {
               final String wrapperFunction = request.getParameter("json.wrf");
               if (wrapperFunction != null) {
-                outputString= wrapperFunction + "(" + suggestResponse + ")";
+                outputString = wrapperFunction + "(" + suggestResponse + ")";
               }
             }
           }
@@ -242,7 +240,7 @@ public class SearchAggregator extends HttpServlet {
         // None of the external Datafaris responded correctly (but they were contacted)
         if (responses.size() == 0) {
           LOGGER.warn("No external Datafari responded correctly to process an aggregator query.");
-          JSONObject jsonResp = new JSONObject();
+          final JSONObject jsonResp = new JSONObject();
           jsonResp.put("origin", "aggregator");
           jsonResp.put("code", 2);
           jsonResp.put("message", "External Datafari unavailable or unreachable for this request.");
@@ -268,12 +266,12 @@ public class SearchAggregator extends HttpServlet {
         String searchResponse = "";
         if (action != null) {
           switch (action) {
-            case "suggest":
-              searchResponse = SuggesterAPI.suggest(request);
-              break;
-            case "search":
-            default:
-              searchResponse = SearchAPI.search(request);
+          case "suggest":
+            searchResponse = SuggesterAPI.suggest(request);
+            break;
+          case "search":
+          default:
+            searchResponse = SearchAPI.search(request);
           }
         } else {
           searchResponse = SearchAPI.search(request);
@@ -299,17 +297,14 @@ public class SearchAggregator extends HttpServlet {
 
   }
 
-  private String externalDatafariRequest(final int timeoutPerRequest, final String handler,
-      final Map<String, String[]> parameterMap, final JSONObject externalDatafari, final String authUsername) {
-    try (final CloseableHttpClient client = HttpClientProvider.getInstance().newClient(timeoutPerRequest,
-        timeoutPerRequest);) {
+  private String externalDatafariRequest(final int timeoutPerRequest, final String handler, final Map<String, String[]> parameterMap, final JSONObject externalDatafari, final String authUsername) {
+    try (final CloseableHttpClient client = HttpClientProvider.getInstance().newClient(timeoutPerRequest, timeoutPerRequest);) {
       final boolean enabled = (Boolean) externalDatafari.get("enabled");
       if (enabled) {
         final String searchApiUrl = externalDatafari.get("search_api_url").toString();
         final String secret = externalDatafari.get("search_aggregator_secret").toString();
         final String tokenRequestUrl = externalDatafari.get("token_request_url").toString();
-        final String accessToken = SearchAggregatorAccessTokenManager.getInstance().getAccessToken(tokenRequestUrl,
-            secret);
+        final String accessToken = SearchAggregatorAccessTokenManager.getInstance().getAccessToken(tokenRequestUrl, secret);
         final URIBuilder uriBuilder = new URIBuilder(searchApiUrl + handler);
         parameterMap.forEach((name, values) -> {
           for (int j = 0; j < values.length; j++) {
@@ -326,8 +321,7 @@ public class SearchAggregator extends HttpServlet {
           if (getResponse.getStatusLine().getStatusCode() == 200) {
             return IOUtils.toString(getResponse.getEntity().getContent(), StandardCharsets.UTF_8);
           } else {
-            LOGGER.error("Error " + getResponse.getStatusLine().getStatusCode() + " "
-                + getResponse.getStatusLine().getReasonPhrase() + " requesting " + getReq.toString());
+            LOGGER.error("Error " + getResponse.getStatusLine().getStatusCode() + " " + getResponse.getStatusLine().getReasonPhrase() + " requesting " + getReq.toString());
           }
         }
       }
@@ -396,6 +390,10 @@ public class SearchAggregator extends HttpServlet {
       if (wildCardQuery) {
         mixDocuments(orderedDocs, responses);
       }
+
+      // Array containing doc boosted docs
+      final ArrayList<List<JSONObject>> boostedDocs = new ArrayList<List<JSONObject>>();
+
       for (final JSONObject result : responses) {
         final JSONObject resultResponse = (JSONObject) result.get("response");
         final JSONArray docs = (JSONArray) resultResponse.get("docs");
@@ -415,7 +413,11 @@ public class SearchAggregator extends HttpServlet {
 
         // Order documents
         if (!wildCardQuery) {
-          orderDocs(orderedDocs, docs);
+          if (responses.size() > 1) { // only order docs by score if there are responses from several servers
+            orderDocs(orderedDocs, boostedDocs, docs);
+          } else {
+            orderedDocs.addAll(docs);
+          }
         }
 
         // Merge highlights
@@ -464,6 +466,11 @@ public class SearchAggregator extends HttpServlet {
         finalResponse.put("spellcheck", responses.get(0).get("spellcheck"));
       }
 
+      // Add the boosted docs to the top of the orderedDocs
+      if (!boostedDocs.isEmpty()) {
+        mixBoostedDocuments(orderedDocs, boostedDocs);
+      }
+
       // Construct final docs and highlighting
       final JSONArray fDocs = (JSONArray) finalResponseResp.get("docs");
       final JSONObject highlighting = (JSONObject) finalResponse.get("highlighting");
@@ -501,17 +508,53 @@ public class SearchAggregator extends HttpServlet {
   private void mixDocuments(final LinkedList<JSONObject> orderedDocs, final List<JSONObject> responses) {
     int maxSize = 0;
     final List<JSONArray> docs = new ArrayList<JSONArray>();
-    for (final JSONObject response : responses) {
+    // If there is only one response (so only one server selected) then there is no mix to perform
+    if (responses.size() == 1) {
+      final JSONObject response = responses.get(0);
       final JSONArray respDocs = (JSONArray) ((JSONObject) response.get("response")).get("docs");
-      docs.add(respDocs);
-      if (maxSize < respDocs.size()) {
-        maxSize = respDocs.size();
+      orderedDocs.addAll(respDocs);
+    } else {
+      // Put all the responses docs array into a collection
+      for (final JSONObject response : responses) {
+        final JSONArray respDocs = (JSONArray) ((JSONObject) response.get("response")).get("docs");
+        docs.add(respDocs);
+        // Keep trace of the biggest docs array size
+        if (maxSize < respDocs.size()) {
+          maxSize = respDocs.size();
+        }
+      }
+      // Loop on the biggest docs array size and on each iteration, add one doc from each docs array to the orderedDocs
+      for (int i = 0; i < maxSize; i++) {
+        for (final JSONArray d : docs) { // iterate on each docs array
+          if (i < d.size()) { // add one doc from this docs array if the 'i' cpt does not exeed the docs array size
+            orderedDocs.add((JSONObject) d.get(i));
+          }
+        }
       }
     }
-    for (int i = 0; i < maxSize; i++) {
-      for (final JSONArray d : docs) {
-        if (i < d.size()) {
-          orderedDocs.add((JSONObject) d.get(i));
+  }
+
+  private void mixBoostedDocuments(final LinkedList<JSONObject> orderedDocs, final List<List<JSONObject>> boostedDocs) {
+    int maxSize = 0;
+    // If there is only one set of boosted docs then there is no mix to perform
+    if (boostedDocs.size() == 1) {
+      final List<JSONObject> boostedDocsSet = boostedDocs.get(0);
+      for (int i = boostedDocsSet.size() - 1; i > -1; i--) {
+        orderedDocs.addFirst(boostedDocsSet.get(i));
+      }
+    } else {
+      // Identify the biggest list size of boosted docs
+      for (final List<JSONObject> boostedDocsSet : boostedDocs) {
+        if (maxSize < boostedDocsSet.size()) {
+          maxSize = boostedDocsSet.size();
+        }
+      }
+      // Loop on the biggest list size size and on each iteration, add one doc from each list to the top of the orderedDocs
+      for (int i = maxSize - 1; i > -1; i--) {
+        for (final List<JSONObject> boostedDocsSet : boostedDocs) { // iterate on each list
+          if (i < boostedDocsSet.size()) { // add one doc from this list if the 'i' cpt does not exeed the list size
+            orderedDocs.addFirst(boostedDocsSet.get(i));
+          }
         }
       }
     }
@@ -520,13 +563,40 @@ public class SearchAggregator extends HttpServlet {
   /**
    * Order docs in a {@link LinkedList} according to their score
    *
-   * @param orderedDocs
-   *          {@link LinkedList} containing ordered docs, in which provided new docs will be inserted at the right place (according to their
-   *          score)
-   * @param docs
-   *          new docs to insert in the provided {@link LinkedList} at the right place
+   * @param orderedDocs {@link LinkedList} containing ordered docs, in which provided new docs will be inserted at the right place (according to their score)
+   * @param docs        new docs to insert in the provided {@link LinkedList} at the right place
    */
-  private void orderDocs(final LinkedList<JSONObject> orderedDocs, final JSONArray docs) {
+  private void orderDocs(final LinkedList<JSONObject> orderedDocs, final List<List<JSONObject>> boostedDocs, final JSONArray docs) {
+
+    final List<JSONObject> currentBoostedDocs = new ArrayList<JSONObject>();
+
+    // First of all detect doc boosted docs
+    // doc boosted docs can be detected as they are at the top of the docs response despite their score is lower
+    int lastBoostIndex = -1;
+    for (int i = 0; i < docs.size(); i++) {
+      if ((i + 1) < docs.size()) {
+        final JSONObject doc = (JSONObject) docs.get(i);
+        final Double score = (Double) doc.get("score");
+        final JSONObject nextDoc = (JSONObject) docs.get(i + 1);
+        final Double nextScore = (Double) nextDoc.get("score");
+        if (score < nextScore) {
+          lastBoostIndex = i;
+        }
+      }
+    }
+
+    // Add boosted docs to the boostedDocs list and remove them from the docs array
+    if (lastBoostIndex != -1) {
+      for (int i = 0; i < lastBoostIndex + 1; i++) {
+        currentBoostedDocs.add((JSONObject) docs.get(0));
+        docs.remove(0);
+      }
+    }
+    if (!currentBoostedDocs.isEmpty()) {
+      boostedDocs.add(currentBoostedDocs);
+    }
+
+    // Rank the remaining docs into the orderedDocs list according to their score
     for (final Object docObj : docs) {
       final JSONObject doc = (JSONObject) docObj;
       final Double score = (Double) doc.get("score");
@@ -548,6 +618,7 @@ public class SearchAggregator extends HttpServlet {
         }
       }
     }
+
   }
 
   private void mergeFacets(final JSONObject result, final JSONObject mergedFacetQueries, final Map<String, Map<String, Integer>> mergedFacetFieldsMap) {
@@ -609,20 +680,19 @@ public class SearchAggregator extends HttpServlet {
 
   private ArrayList<String> getSelectedSources(final String parameter, final String defaultDatafari) {
     final ArrayList<String> result = new ArrayList<>();
-    if (parameter == null && defaultDatafari != null && defaultDatafari.trim().length()>0) {
+    if (parameter == null && defaultDatafari != null && defaultDatafari.trim().length() > 0) {
       result.add(defaultDatafari);
     } else if (parameter != null && parameter.length() != 0) {
       // If the parameter is set as empty, we set an empty list meaning no filtering
       // (search on everything)
-        result.addAll(Arrays.asList(parameter.split(",")));
+      result.addAll(Arrays.asList(parameter.split(",")));
     }
     return result;
   }
 
   /**
-   * Returns an empty arraylist if both arbuments are null or empty. If one is null or empty and the other is not, returns the one that is not
-   * empty. If both arguments are not empty returns the selected sources list filtered by removing any element that is not present in the
-   * allowed sources list.
+   * Returns an empty arraylist if both arbuments are null or empty. If one is null or empty and the other is not, returns the one that is not empty. If both arguments are not empty returns the
+   * selected sources list filtered by removing any element that is not present in the allowed sources list.
    *
    * @param selectedSourcesList
    * @param allowedSources

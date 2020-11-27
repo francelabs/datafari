@@ -51,9 +51,10 @@
 			</div>
       <div class="row">
         <label id="query-elevator-ui-desc" class="col-sm-4 col-form-label"></label>
-        <div class="col-sm-3 col-form-label">
+        <div class="col-sm-1 col-form-label">
           <input type="checkbox" id="query-elevator_activation" name="query-elevator_activation" data-size="sm" data-toggle="toggle" data-onstyle="success">
         </div>
+        <div style="Display: none" class="col-sm-6 feedback-message alert alert-danger" id="query-elevator-activation-message">L'outil visuel ne peut pas être activé lorsque le Search Aggregator est activé. Voir doc pour plus d'explications</div>
       </div>
 			<form id="modifyElevateForm">
 				<fieldset>

@@ -6,23 +6,6 @@ $(document).ready(function() {
 
   // Init toggle buttons
   $('#query-elevator_activation').bootstrapToggle();
-
-  fillQuerySelector();
-  var core = "FileShare";
-
-  $.get("../WidgetManager", {
-    id : "queryelevator"
-  }, function(data) {
-    var bool = false
-    if (data.code == 0) {
-      if (data.activated == "true") {
-        $("#query-elevator_activation").bootstrapToggle('on', true);
-      } else {
-        $("#query-elevator_activation").bootstrapToggle('off', true);
-      }
-    }
-  });
-
   $("#query-elevator_activation").change(function(e) {
     e.preventDefault();
     if ($(this).is(':checked')) {
@@ -31,12 +14,50 @@ $(document).ready(function() {
       var bool = "false";
     }
     $.post("../WidgetManager", {
-      id : "queryelevator",
-      activated : bool
+      id: "queryelevator",
+      activated: bool
     }, function(data) {
       inputActivation(data);
     }, "json");
   });
+
+  var aggregatorEnabled = false;
+
+  // Check if search aggregation is enabled or not.
+  // If it is enable then the query elevator graphical feature must be disabled to avoid confusion and errors with the doc boosts
+  $.ajax({
+    url: '../SearchAdministrator/searchAggregatorConfig',
+    success: function(data) {
+      if (data.code == 0) {
+        aggregatorEnabled = data.activated;
+      }
+    },
+    dataType: "json",
+    async: false
+  });
+
+  fillQuerySelector();
+  var core = "FileShare";
+
+  if (aggregatorEnabled == true) {
+    $("#query-elevator_activation").bootstrapToggle('off', true).change();
+    $('#query-elevator_activation').bootstrapToggle('disable');
+    $("#query-elevator-activation-message").show();
+  } else {
+    $("#query-elevator-activation-message").hide();
+    $('#query-elevator_activation').bootstrapToggle('enable');
+    $.get("../WidgetManager", {
+      id: "queryelevator"
+    }, function(data) {
+      if (data.code == 0) {
+        if (data.activated == "true") {
+          $("#query-elevator_activation").bootstrapToggle('on', true);
+        } else {
+          $("#query-elevator_activation").bootstrapToggle('off', true);
+        }
+      }
+    });
+  }
 
   function inputActivation(data) {
     if (data.code == 0) {
@@ -53,7 +74,7 @@ $(document).ready(function() {
   // Make the docsTableContent lines drag and droppable
   $("#docsTableContent").sortable({
 
-    helper : function(e, tr) {
+    helper: function(e, tr) {
       var $originals = tr.children();
       var $helper = tr.clone();
       $helper.children().each(function(index) {
@@ -63,7 +84,7 @@ $(document).ready(function() {
       return $helper;
     },
 
-    stop : function(event, ui) {
+    stop: function(event, ui) {
       refreshPositions();
     }
 
@@ -89,9 +110,9 @@ $(document).ready(function() {
           docsList[index] = $(this).attr("id");
         });
         $.post("../SearchExpert/queryElevator", {
-          query : $("#query").val(),
-          docs : docsList,
-          tool : "modify"
+          query: $("#query").val(),
+          docs: docsList,
+          tool: "modify"
         }, function(data) {
           if (data.code == 0) {
             $("#message").html(window.i18n.msgStore["LocalConfSaved"]);
@@ -136,8 +157,8 @@ $(document).ready(function() {
         $("#deleteElevateConf").loading("loading");
         $("#message").hide();
         $.post("../SearchExpert/queryElevator", {
-          query : $("#query").val(),
-          tool : "delete"
+          query: $("#query").val(),
+          tool: "delete"
         }, function(data) {
           if (data.code == 0) {
             $("#message").html(window.i18n.msgStore["ConfDeleted"]);
@@ -198,9 +219,9 @@ $(document).ready(function() {
         $("#message2").hide();
 
         $.post("../SearchExpert/queryElevator", {
-          query : queryVal,
-          docs : docsList,
-          tool : "create"
+          query: queryVal,
+          docs: docsList,
+          tool: "create"
         }, function(data) {
           if (data.code == 0) {
             $("#message2").html(window.i18n.msgStore["LocalConfSaved"]);
@@ -241,8 +262,8 @@ $(document).ready(function() {
 function reinitCreateTbody() {
   $("#createTbody").empty();
   $("#createTbody").append(
-      "<tr>" + "<td><input type='text' class='textInput' id='queryInput'/></td>" + "<td><input type='text' class='textInput docInput'/></td>"
-          + "<td><img src='../images/icons/plus-icon-32x32.png' id='addDocButton'/></td>" + "</tr>");
+    "<tr>" + "<td><input type='text' class='textInput' id='queryInput'/></td>" + "<td><input type='text' class='textInput docInput'/></td>"
+    + "<td><img src='../images/icons/plus-icon-32x32.png' id='addDocButton'/></td>" + "</tr>");
   $("#addDocButton").click(function() {
     addNewDocLine();
   });
@@ -267,10 +288,10 @@ function setupLanguage() {
   document.getElementById("topbar3").innerHTML = window.i18n.msgStore['adminUI-QueryElevator'];
   document.getElementById("documentation-queryelevator").innerHTML = window.i18n.msgStore['documentation-queryelevator'];
   document.getElementById("selectQuery").innerHTML = window.i18n.msgStore['selectQuery']
-      + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Select a query which already contains elevated documents'>i</button></span>";
+    + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Select a query which already contains elevated documents'>i</button></span>";
   document.getElementById("modifyElevateLabel").innerHTML = window.i18n.msgStore['modifyElevateLabel'];
   document.getElementById("modifyDocsOderLabel").innerHTML = window.i18n.msgStore['modifyDocsOderLabel']
-      + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='The documents are ordered by priority of appearance in the search results, which is also indicated by their \"Position\" number. Here you can simply drag and drop the documents to change their position in the search results. You can also remove some of them if you want by clicking on their associated trash icon'>i</button></span>";
+    + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='The documents are ordered by priority of appearance in the search results, which is also indicated by their \"Position\" number. Here you can simply drag and drop the documents to change their position in the search results. You can also remove some of them if you want by clicking on their associated trash icon'>i</button></span>";
   document.getElementById("elevatorDocsListLabel").innerHTML = window.i18n.msgStore['elevatorDocsListLabel'];
   $("#saveElevateConf").html(window.i18n.msgStore["confirm"]);
   $("#saveElevateConf").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
@@ -278,9 +299,9 @@ function setupLanguage() {
   $("#deleteElevateConf").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['deleteElevatorConf']);
   $('.confirmElevateConf').html(window.i18n.msgStore['adminUI-ClickConfirm']);
   $('#deleteElevateConfButton')
-      .html(
-          window.i18n.msgStore['adminUI-ClickDelete']
-              + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Clicking Delete will erase all the boosts for the documents listed above, for the currently selected query'>i</button></span>");
+    .html(
+      window.i18n.msgStore['adminUI-ClickDelete']
+      + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Clicking Delete will erase all the boosts for the documents listed above, for the currently selected query'>i</button></span>");
 
   $("#createElevateLabel").html(window.i18n.msgStore["createElevateLabel"]);
   $("#queryThLabel").html(window.i18n.msgStore["queryThLabel"]);
@@ -288,6 +309,8 @@ function setupLanguage() {
   $("#saveNewElevate").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
   $("#addDocButton").attr("title", window.i18n.msgStore["elevateAddDoc"]);
   $("#query-elevator-ui-desc").html(window.i18n.msgStore["query-elevator-ui-desc"]);
+  
+  $("#query-elevator-activation-message").html(window.i18n.msgStore["query-elevator-activation-message"]);
 
   // Set the tooltips
   $("#deleteElevateConf").attr("title", window.i18n.msgStore['deleteElevateConf-tip']);
@@ -301,7 +324,7 @@ function fillQuerySelector() {
   $("#docsTableContent").empty();
 
   $.get("../SearchExpert/queryElevator", {
-    get : "queries"
+    get: "queries"
   }).done(function(data) {
     // Clean the select
     $("#query").empty();
@@ -336,19 +359,19 @@ function getQuery() {
   var query = document.getElementById("query").value;
   if (query != "") {
     $.get("../SearchExpert/queryElevator", {
-      get : "docs",
-      query : query
+      get: "docs",
+      query: query
     }).done(
-        function(data) {
-          for (var i = 0; i < data.docs.length; i++) {
-            $("#docsTableContent").append(
-                "<tr class='movable_line' id='" + data.docs[i] + "'><td>" + data.docs[i] + "</td><td class='position'>" + (i + 1)
-                    + "</td><td class='btn-danger'><a class='delete'><i class='far fa-trash-alt'></i></a></td></tr>");
-            $("#docsTableContent tr:last td:last").click(function() {
-              $(this).parent("tr").remove();
-              refreshPositions();
-            });
-          }
-        }, "json");
+      function(data) {
+        for (var i = 0; i < data.docs.length; i++) {
+          $("#docsTableContent").append(
+            "<tr class='movable_line' id='" + data.docs[i] + "'><td>" + data.docs[i] + "</td><td class='position'>" + (i + 1)
+            + "</td><td class='btn-danger'><a class='delete'><i class='far fa-trash-alt'></i></a></td></tr>");
+          $("#docsTableContent tr:last td:last").click(function() {
+            $(this).parent("tr").remove();
+            refreshPositions();
+          });
+        }
+      }, "json");
   }
 }

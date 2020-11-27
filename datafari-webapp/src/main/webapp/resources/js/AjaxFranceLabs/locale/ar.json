@@ -370,6 +370,7 @@
     "provide-threshold": "Please provide a fraction that is a number or decimal",
     "provide-userbase": "Please provide a user base",
     "qf": "الاستفسارات بكلمة واحدة ",
+    "query-elevator-activation-message":"The visual tool cannot be activated when the Search Aggregator is enabled ! See documentation for further explanations",
     "queryLabel": "تسمية الاستفسارات",
     "queryNumber": "رقم الاستفسار",
     "renew": "Renew",

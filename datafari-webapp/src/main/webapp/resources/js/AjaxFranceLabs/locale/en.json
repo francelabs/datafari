@@ -605,6 +605,7 @@
     "provide-userbase": "Please provide a user base",
     "pt_br_locale": "Português",
     "qf": "Assigning Weights per Fields for Queries",
+    "query-elevator-activation-message":"The visual tool cannot be activated when the Search Aggregator is enabled ! See documentation for further explanations",
     "query-elevator-ui-desc": "Activate/Deactivate the visual tool in search view",
     "queryLabel": "Query Label",
     "queryNumber": "Query number°",
