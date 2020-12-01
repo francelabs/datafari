@@ -11,23 +11,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.cassandra.core.CassandraOperations;
-import org.springframework.data.cassandra.core.CassandraTemplate;
 import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 
-import com.datastax.oss.driver.api.core.CqlSession;
 import com.francelabs.datafari.aggregator.utils.SearchAggregatorPasswordManager;
 import com.francelabs.datafari.security.auth.DatafariSimpleUserDetailsService;
 import com.francelabs.datafari.security.client.model.CassandraClientDetails;
 import com.francelabs.datafari.security.client.repo.CassandraClientDetailsRepository;
 import com.francelabs.datafari.security.client.service.CassandraClientDetailsService;
 import com.francelabs.datafari.security.token.store.CassandraTokenStore;
-import com.francelabs.datafari.service.db.CassandraManager;
 
 @Configuration
 @EnableAuthorizationServer
@@ -54,6 +51,9 @@ public class DatafariAuthServer extends AuthorizationServerConfigurerAdapter {
   @Autowired
   CassandraClientDetailsRepository clientDetailsRepo;
 
+  @Autowired
+  PasswordEncoder passwordEncoder;
+
   @Bean
   public CassandraTokenStore tokenStore() {
     return new CassandraTokenStore();
@@ -62,16 +62,6 @@ public class DatafariAuthServer extends AuthorizationServerConfigurerAdapter {
   @Bean
   public SearchAggregatorPasswordManager saPasswordManager() {
     return new SearchAggregatorPasswordManager();
-  }
-
-  // Tell spring witch Cassandra session to use
-  public @Bean CqlSession session() {
-    return CassandraManager.getInstance().getSession();
-  }
-
-  @Bean
-  CassandraOperations cassandraTemplate() {
-    return new CassandraTemplate(session());
   }
 
   @Override
@@ -93,8 +83,8 @@ public class DatafariAuthServer extends AuthorizationServerConfigurerAdapter {
       // Create it
       final Set<String> searchAggScopes = new HashSet<String>(Arrays.asList(SCOPE_READ));
       final Set<String> searchAggGrant = new HashSet<String>(Arrays.asList(CLIENT_CREDENTIALS, GRANT_TYPE_PASSWORD, REFRESH_TOKEN));
-      final CassandraClientDetails datafariClient = new CassandraClientDetails("datafari-client", "", new HashSet<String>(), searchAggScopes, searchAggGrant, new HashSet<String>(),
-          new HashSet<String>(), 60 * 30, 60 * 60 * 24);
+      final CassandraClientDetails datafariClient = new CassandraClientDetails("datafari-client", passwordEncoder.encode(""), new HashSet<String>(), searchAggScopes, searchAggGrant,
+          new HashSet<String>(), new HashSet<String>(), 60 * 30, 60 * 60 * 24);
       clientDetailsRepo.save(datafariClient);
       LOGGER.info("Created oauth2 client 'datafari-client'");
     }

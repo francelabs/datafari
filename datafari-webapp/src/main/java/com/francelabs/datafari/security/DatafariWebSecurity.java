@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.cassandra.core.CassandraOperations;
+import org.springframework.data.cassandra.core.CassandraTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,11 +25,13 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.datastax.oss.driver.api.core.CqlSession;
 import com.francelabs.datafari.ldap.LdapConfig;
 import com.francelabs.datafari.ldap.LdapRealm;
 import com.francelabs.datafari.security.auth.CassandraAuthenticationProvider;
 import com.francelabs.datafari.security.auth.DatafariAuthenticationSuccessHandler;
 import com.francelabs.datafari.security.auth.DatafariLdapAuthoritiesPopulator;
+import com.francelabs.datafari.service.db.CassandraManager;
 import com.francelabs.datafari.utils.DatafariMainConfiguration;
 import com.google.common.collect.ImmutableList;
 
@@ -37,6 +41,16 @@ public class DatafariWebSecurity {
   private static final Logger LOGGER = LogManager.getLogger(DatafariWebSecurity.class.getName());
 
   private static final int maxConcurrentSessions = Integer.parseInt(DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.MAX_CONCURRENT_SESSIONS));
+
+  // Tell spring witch Cassandra session to use
+  public @Bean CqlSession session() {
+    return CassandraManager.getInstance().getSession();
+  }
+
+  @Bean
+  CassandraOperations cassandraTemplate() {
+    return new CassandraTemplate(session());
+  }
 
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {

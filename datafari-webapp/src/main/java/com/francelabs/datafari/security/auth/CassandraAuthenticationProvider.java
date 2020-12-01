@@ -27,16 +27,17 @@ public class CassandraAuthenticationProvider implements AuthenticationProvider {
 
 //db constants
   private final static String USERCOLLECTION = "user";
-  private final static String ROLECOLLECTION = "role";
 
   private static final String USERNAMECOLUMN = "username";
   private final static String PASSWORDCOLUMN = "password";
-  private final static String ROLECOLUMN = "role";
 
   final static Logger logger = LogManager.getLogger(CassandraAuthenticationProvider.class.getName());
 
   @Override
   public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
+    if (authentication.getName() == null || authentication.getCredentials() == null) {
+      return null;
+    }
     final String username = authentication.getName();
     final String password = authentication.getCredentials().toString();
 
@@ -91,11 +92,9 @@ public class CassandraAuthenticationProvider implements AuthenticationProvider {
   }
 
   /**
-   * Digest the password using the specified algorithm and convert the result to a corresponding hexadecimal string. If exception, the plain
-   * credentials string is returned.
+   * Digest the password using the specified algorithm and convert the result to a corresponding hexadecimal string. If exception, the plain credentials string is returned.
    *
-   * @param credentials
-   *          Password or other credentials to use in authenticating this username
+   * @param credentials Password or other credentials to use in authenticating this username
    */
   protected String digest(final String password) {
     try {
