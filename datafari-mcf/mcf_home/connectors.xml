@@ -102,6 +102,7 @@
   <repositoryconnector name="AmazonS3" class="org.apache.manifoldcf.crawler.connectors.amazons3.AmazonS3Connector"/>
   <!--repositoryconnector name="Alfresco" class="org.apache.manifoldcf.crawler.connectors.alfresco.AlfrescoRepositoryConnector"/-->
   <repositoryconnector name="Alfresco Webscript" class="org.apache.manifoldcf.crawler.connectors.alfrescowebscript.AlfrescoConnector"/>
+  <repositoryconnector name="Solr" class="org.apache.manifoldcf.crawler.connectors.solr.SolrIngesterConnector"/>
 
     <!-- Add your notification connectors here -->
   <notificationconnector name="Slack" class="org.apache.manifoldcf.crawler.notifications.slack.SlackConnector"/>
