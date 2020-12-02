@@ -36,11 +36,8 @@ import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.jxls.template.SimpleExporter;
-import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 
 import com.francelabs.datafari.beans.DatafariFile;
-import com.francelabs.datafari.ldap.LdapUsers;
 import com.francelabs.datafari.service.indexer.IndexerQuery;
 import com.francelabs.datafari.service.indexer.IndexerQueryResponse;
 import com.francelabs.datafari.service.indexer.IndexerServer;
@@ -79,7 +76,7 @@ public class ExportResults extends HttpServlet {
       IndexerQueryResponse queryResponse = null;
 
       // Add authentication
-      String authenticatedUserName = AuthenticatedUserName.getName(request);
+      final String authenticatedUserName = AuthenticatedUserName.getName(request);
       if (authenticatedUserName != null) {
         query.setParam("AuthenticatedUserName", authenticatedUserName);
       }

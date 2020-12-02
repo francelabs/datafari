@@ -129,6 +129,12 @@
       <groupId>org.springframework.security.extensions</groupId>
       <artifactId>spring-security-saml2-core</artifactId>
       <version>${spring.security.saml2.core.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.springframework.data/spring-data-cassandra -->
     <dependency>
@@ -393,6 +399,7 @@
                   <excludes>
                     <exclude>ch.qos.logback:logback-core</exclude>
                     <exclude>ch.qos.logback:logback-classic</exclude>
+                    <exclude>xml-apis:xml-apis</exclude>
                   </excludes>
                 </bannedDependencies>
               </rules>
