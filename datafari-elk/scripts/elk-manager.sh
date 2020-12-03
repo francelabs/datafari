@@ -25,8 +25,10 @@ init_jvm_options()
 
 init_elasticsearch()
 {
-  echo "network.host: 0.0.0.0" >> $ELASTICSEARCH_HOME/config/elasticsearch.yml
-  echo "discovery.type: single-node" >> $ELASTICSEARCH_HOME/config/elasticsearch.yml
+  if ! grep -q 'network.host: 0.0.0.0' $ELASTICSEARCH_HOME/config/elasticsearch.yml; then
+    echo "network.host: 0.0.0.0" >> $ELASTICSEARCH_HOME/config/elasticsearch.yml
+    echo "discovery.type: single-node" >> $ELASTICSEARCH_HOME/config/elasticsearch.yml
+  fi
   cd $ELASTICSEARCH_HOME
   echo "Starting Elasticsearch..."
   bash opendistro-tar-install.sh -p $ELASTICSEARCH_PID_FILE &
