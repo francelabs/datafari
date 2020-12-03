@@ -96,6 +96,10 @@
 				<replacetoken>@SSL_PORT@</replacetoken>
 				<replacevalue>8443</replacevalue>
 			</replacefilter>
+			<replacefilter>
+				<replacetoken>@ACCESS_LOG@</replacetoken>
+				<replacevalue>localhost_access_log</replacevalue>
+			</replacefilter>
 			<replacefilter token="@DATAFARI_HOME@" value="${datafari.home}" />
 		</replace>
 
@@ -117,6 +121,10 @@
 				<replacetoken>@SSL_PORT@</replacetoken>
 				<replacevalue>9443</replacevalue>
 			</replacefilter>
+			<replacefilter>
+				<replacetoken>@ACCESS_LOG@</replacetoken>
+				<replacevalue>localhost_access_log_mcf</replacevalue>
+				</replacefilter>
 			<replacefilter token="@DATAFARI_HOME@" value="${datafari.home}" />
 		</replace>
 
