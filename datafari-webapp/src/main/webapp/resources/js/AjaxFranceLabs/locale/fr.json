@@ -116,6 +116,7 @@
     "adminUI-ELKSave": "Sauvegarder vos modifications",
     "adminUI-entityExtractionConf": "Extraction d'entité",
     "adminUI-ErrorWhileSaving": "Une erreur s'est produite lors de l'enregistrement'.",
+    "adminUI-extraFunctionalities": "Autres Fonctionalités",
     "adminUI-FacetConfig": "Configuration des facettes",
     "adminUI-Favorites": "Favoris",
     "adminUI-FieldWeight": "Pondération des champs",

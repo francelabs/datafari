@@ -93,7 +93,6 @@
           <i class="fas fa-clipboard"></i><span id="systemAnalysis-AdminUI" class="hidden-xs"></span>
         </a>
         <ul id="menu-system-analysis" class="list-unstyled collapse">
-         <li id="Duplicates"><a id="duplicates-AdminUI" class="ajax-link" href="?page=duplicates"></a></li>
          <%
           if(request.isUserInRole("SearchAdministrator")){
          %>
@@ -190,7 +189,14 @@
           <li id="testADAuthority"><a id="testADAuthority-AdminUI" class="ajax-link" href="?page=testADAuthority"></a></li>
         </ul>
       </li>
-      
+      <li id="Extra" class="collapse-effect">
+        <a href="#menu-extra" class="dropdown-toggle" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="menu-extra">
+          <i class="fas fa-desktop"></i><span id="extraFunctionalities-AdminUI" class="hidden-xs"></span>
+        </a>
+        <ul id="menu-extra" class="list-unstyled collapse">
+          <li id="Duplicates"><a id="duplicates-AdminUI" class="ajax-link" href="?page=duplicates"></a></li>
+        </ul>
+      </li>
       <li id="Licence">
         <a href="?page=licence" class="ajax-link">
           <i class="fas fa-barcode"></i>

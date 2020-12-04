@@ -63,10 +63,9 @@ $(function($) {
   elm.find('#fieldWeight-AdminUI').html(window.i18n.msgStore['adminUI-FieldWeight']);
   elm.find('#fieldWeightAPI-AdminUI').html(window.i18n.msgStore['adminUI-FieldWeight']);
   elm.find('#facetConfig-AdminUI').html(window.i18n.msgStore['adminUI-FacetConfig']);
-  elm.find('#deduplication-AdminUI').html(window.i18n.msgStore['adminUI-Deduplication']);
   elm.find('#likesFavoritesSearchEng-AdminUI').html(window.i18n.msgStore['adminUI-LikesAndFavorites']);
   elm.find('#servers-AdminUI').html(window.i18n.msgStore['adminUI-Servers']);
-
+  
   // Users
   elm.find('#userManagement-AdminUI').html(window.i18n.msgStore['adminUI-UserManagement']);
   elm.find('#modifyUsers-AdminUI').html(window.i18n.msgStore['adminUI-ModifyUsers']);
@@ -75,11 +74,15 @@ $(function($) {
   elm.find('#manageImportedUsers-AdminUI').html(window.i18n.msgStore['manageImportedUsers-AdminUI']);
   elm.find('#addUser-AdminUI').html(window.i18n.msgStore['adminUI-AddUser']);
   elm.find('#forgetUser-AdminUI').html(window.i18n.msgStore['adminUI-ForgetUser']);
-
+  
   // Active Directory
   elm.find('#activeDirectoryManagement-AdminUI').html(window.i18n.msgStore['adminUI-activeDirectoryManagement']);
   elm.find('#ADConfig-AdminUI').html(window.i18n.msgStore['adminUI-ADConfig']);
   elm.find('#testADAuthority-AdminUI').html(window.i18n.msgStore['adminUI-testADAuthority']);
+  
+  //Extra Functionalities
+  elm.find('#extraFunctionalities-AdminUI').html(window.i18n.msgStore['adminUI-extraFunctionalities']);
+  elm.find('#deduplication-AdminUI').html(window.i18n.msgStore['adminUI-Deduplication']);
 
   elm.find('#entityExtractionConf-AdminUI').html(window.i18n.msgStore['adminUI-entityExtractionConf']);
   elm.find('#sttEntitiesConfiguration-AdminUI').html(window.i18n.msgStore['adminUI-sttEntitiesConfiguration']);
