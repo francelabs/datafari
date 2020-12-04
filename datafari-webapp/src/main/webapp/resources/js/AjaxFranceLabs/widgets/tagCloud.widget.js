@@ -73,10 +73,10 @@ AjaxFranceLabs.TagCloudWidget = AjaxFranceLabs.AbstractWidget.extend({
     },
 
     update : function() {
-        this.total = 0;
         if (!this.manager.response.clusters) {
             return;
         }
+        this.total = parseInt(this.manager.response.responseHeader.params.rows, 10);
         var self = this;
         var data = this.assocTags(this.manager.response.clusters);
         var max = (data.length > this.maxDisplay) ? this.maxDisplay : data.length;
@@ -132,7 +132,6 @@ AjaxFranceLabs.TagCloudWidget = AjaxFranceLabs.AbstractWidget.extend({
               nb : data[i].docs.length,
               score: data[i].score
             });
-            this.total += data[i].docs.length;
           }
         }
         return tags;
