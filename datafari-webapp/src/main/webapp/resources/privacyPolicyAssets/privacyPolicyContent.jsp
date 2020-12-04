@@ -1,3 +1,5 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="utf-8"%>
 <h1>Politique de Confidentialité</h1>
 <p>
     DATAFARI est un moteur de recherche permettant la gestion de contenu (exploration, indexation et
