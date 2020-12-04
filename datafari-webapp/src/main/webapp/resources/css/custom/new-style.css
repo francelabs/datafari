@@ -16,6 +16,18 @@
 /*   overflow: auto; */
 }
 
+.filterFacetLinkValue a {
+  color: #444; }
+
+.filterFacetLinkValue a:hover {
+  color: #444;
+  text-decoration: underline;
+}
+
+.filterFacetLinkValue a:link {
+  font-weight: normal;
+}
+
 .icon object {
   width: 24px;
   height: 24px;
