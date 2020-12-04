@@ -1,6 +1,6 @@
 FROM maven:3.6.3-jdk-11 AS BUILD
 
-ENV ANT_VERSION=1.10.3
+ENV ANT_VERSION=1.10.9
 ENV ANT_HOME=/opt/ant
 
 # Temporary Workaround to Surefire issue 
