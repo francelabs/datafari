@@ -40,15 +40,12 @@
           <li id="serviceBackup"><a id="service-backup-AdminUI" class="ajax-link" href="?page=serviceBackup">Service Backup</a></li>
           <li id="serviceReinit"><a id="service-reinit-AdminUI" class="ajax-link" href="?page=serviceReinit">Service Connector Reinitialization</a></li>
 
-         <%
-          }
-          %>
         </ul>
       </li>
+      <%
+       }
+       %>
 <%-- service administration menu end --%>
-    <%
-    if(request.isUserInRole("SearchExpert")||request.isUserInRole("SearchAdministrator")){
-    %>
       <li id="Connectors" class="collapse-effect">
         <a class="dropdown-toggle" data-toggle="collapse" href="#menu-connectors" role="button" aria-expanded="false" aria-controls="menu-connectors">
           <i class="fas fa-arrows-alt"></i><span id="connectors-AdminUI" class="hidden-xs"></span>
@@ -60,7 +57,6 @@
             <a target="_blank" href="<%= getMCF %>" id="MCFAdmin-AdminUI"></a>
           </li>
           <%
-          }
           if(request.isUserInRole("SearchAdministrator")){
           %>
           <li id="MCFBackupRestore"><a id="MCFBackupRestore-AdminUI" class="ajax-link" href="?page=mcfBackupRestore"></a></li>
@@ -88,25 +84,25 @@
         </ul>
       </li>
       
+      <%
+       if(request.isUserInRole("SearchAdministrator")){
+      %>
       <li id="System Analysis" class="collapse-effect">
         <a href="#menu-system-analysis" class="dropdown-toggle" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="menu-system-analysis">
           <i class="fas fa-clipboard"></i><span id="systemAnalysis-AdminUI" class="hidden-xs"></span>
         </a>
         <ul id="menu-system-analysis" class="list-unstyled collapse">
-         <%
-          if(request.isUserInRole("SearchAdministrator")){
-         %>
          <li id="CrawlDataMonitoring"><a id="crawlDataMonitoring-AdminUI" class="ajax-link" href="?page=crawlDataMonitoring"></a></li>
          <li id="ProblematicFiles"><a id="problematicFiles-AdminUI" target="_blank" href="@PROBLEMATIC_FILES@"></a></li>
          <li id="LogsAnalysis"><a id="logsAnalysis-AdminUI" target="_blank" href="@LOG@"></a></li>
          <li id="downloadLogs"><a id="downloadLogs-AdminUI" class="ajax-link" href="?page=downloadLogs"></a></li>
 <!--          <li id="metricbeatOverview"><a id="metricbeatOverview-AdminUI" target="_blank" href="@METRICBEAT@"></a></li> -->
-         <%
-          }
-         %>
-        </ul>
-      </li>
-      
+         </ul>
+         </li>
+      <%
+      }
+      %>
+
       <li id="Admin" class="collapse-effect">
         <a href="#menu-admin" class="dropdown-toggle" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="menu-admin">
           <i class="fas fa-wrench"></i><span id="searchEngineAdmin-AdminUI" class="hidden-xs"></span>
@@ -189,6 +185,9 @@
           <li id="testADAuthority"><a id="testADAuthority-AdminUI" class="ajax-link" href="?page=testADAuthority"></a></li>
         </ul>
       </li>
+      <%
+        }
+        %>
       <li id="Extra" class="collapse-effect">
         <a href="#menu-extra" class="dropdown-toggle" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="menu-extra">
           <i class="fas fa-desktop"></i><span id="extraFunctionalities-AdminUI" class="hidden-xs"></span>
@@ -197,6 +196,9 @@
           <li id="Duplicates"><a id="duplicates-AdminUI" class="ajax-link" href="?page=duplicates"></a></li>
         </ul>
       </li>
+      <%
+        if(request.isUserInRole("SearchAdministrator")){
+      %>
       <li id="Licence">
         <a href="?page=licence" class="ajax-link">
           <i class="fas fa-barcode"></i>
