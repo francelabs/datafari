@@ -772,6 +772,7 @@ if  [[ "$STATE" = *initialized* ]];
 fi		
 		
 check_java;
+check_ram;
 is_file_present $CONFIG_FILE
 is_variable_set $INSTALLER_TYPE
 if [ "$INSTALLER_TYPE" == "interactive" ]; then

@@ -34,6 +34,18 @@ check_java()
   fi
 }
 
+check_ram()
+{
+	sizeMemory=grep MemTotal /proc/meminfo | awk '{print $2}'
+	if [[ "$sizeMemory" -lt "8120344" ]]; then
+    	echo The memory detected on your system seems very low. Please be sure that the requirements are respected. See this page : https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/1662451718/Hardware+requirements
+        echo "Wait 10 seconds"
+        sleep 10
+    else
+    	echo "RAM size detected $sizeMemory KB : OK"
+    fi 
+}
+
 check_python()
 {
   version=$(python -V 2>&1 | grep -Po '(?<=Python )(.+)')
