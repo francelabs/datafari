@@ -17,11 +17,11 @@ check_java()
   if [[ "$_java" ]]; then
       version=$("$_java" -version 2>&1 | awk -F '"' '/version/ {print $2}' | awk -F '.' '{print $1}')
       echo version "$version"
-      if [[ "$version" -ge "1" ]]; then
-          echo Java version detected is OK
+      if [[ "$version" -ge "11" ]]; then
+          echo Java version detected $version : OK
   
       else
-          echo Java version is not >=1.8. Please install at least Java 8. Program will exit
+          echo Java version is not >=11. Please install at least Java 11. Program will exit
           exit
       fi
   fi
