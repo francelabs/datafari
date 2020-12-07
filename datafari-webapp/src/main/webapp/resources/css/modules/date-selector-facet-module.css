@@ -1,21 +1,9 @@
-#dsfm-last_modified-fromInput.fromInput {
-	width: 6em !important;
-	margin-left: 0.5em;
+#dsfm-creation_date-fromInput.fromInput {
 	margin-right: 1em;
-	font: caption;
-  box-sizing: unset;
 }
 
-#dsfm-last_modified-toInput.toInput {
-	width: 6em !important;
-	margin-left: 0.5em;
+#dsfm-creation_date-toInput.toInput {
 	margin-right: 0.2em;
-	font: caption;
-  box-sizing: unset;
-}
-
-#li-dsfm-last_modified {
-  height: 3em;
 }
 
 .go {
@@ -30,4 +18,8 @@
 
 .date-input {
 	max-width: 25%;
+  margin-left: 0.5em;
+  font: caption;
+  box-sizing: unset;
+  margin-bottom: 0.5em;
 }

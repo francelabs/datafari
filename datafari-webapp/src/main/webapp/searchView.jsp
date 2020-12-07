@@ -58,6 +58,7 @@
     <script type="text/javascript" src="<c:url value="/resources/js/AjaxFranceLabs/modules/Autocomplete.module.js" />"></script>
     <script type="text/javascript" src="<c:url value="/resources/js/AjaxFranceLabs/modules/AdvancedAutocomplete.module.js" />"></script>
     <script type="text/javascript" src="<c:url value="/resources/js/AjaxFranceLabs/modules/DateSelectorFacet.module.js" />"></script>
+    <script type="text/javascript" src="<c:url value="/resources/js/AjaxFranceLabs/modules/NumberSelectorFacet.module.js" />"></script>
 <%--     <script type="text/javascript" src="<c:url value="/resources/js/search-external-sources.js" />"></script> --%>
 <%--     <script type="text/javascript" src="<c:url value="/resources/js/AjaxFranceLabs/externalSources/GenericResultsDisplayer.js" />"></script> --%>
 <%--     <script type="text/javascript" src="<c:url value="/resources/js/AjaxFranceLabs/externalSources/ExternalSourceCore.js" />"></script> --%>

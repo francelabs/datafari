@@ -187,6 +187,11 @@ $(function($) {
     selectionType : 'ONE',
     queries : [ '[0 TO 102400]', '[102400 TO 10485760]', '[10485760 TO *]' ],
     labels : [ window.i18n.msgStore['facet_Less than 100ko'], window.i18n.msgStore['facet_From 100ko to 10Mo'], window.i18n.msgStore['facet_More than 10Mo'] ],
+    modules : [ new AjaxFranceLabs.NumberSelectorFacetModule({
+        id : 'nsfm-file_size',
+        field : 'original_file_size',
+        multiplier : {"Ko" : 1024, "Mo" : 1024000, "Go" : 1024000000}
+      }) ]
   }));
   // */
 

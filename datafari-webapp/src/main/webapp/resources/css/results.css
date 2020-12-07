@@ -17,6 +17,7 @@ CSS for Datafari modules
 @import "modules/query-elevator-module.css";
 @import "modules/relevancy-query-module.css";
 @import "modules/date-selector-facet-module.css";
+@import "modules/num-selector-facet-module.css";
 
 body { overflow-y: scroll; }
 

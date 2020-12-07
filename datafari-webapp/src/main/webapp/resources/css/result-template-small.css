@@ -83,7 +83,7 @@ height:18px; width:18px;
 }
 
 
-.tableWidget ul li { border-bottom: 1px solid; height: 20px; padding: 3px 0 3px 0; }
+.tableWidget ul li { border-bottom: 1px solid; padding: 3px 0 3px 0; }
 .tableWidget ul li .filterFacetCheck { float: left; vertical-align: top; cursor: pointer; float: left; line-height: 20px; margin-left: 5px; width: 182px;}
 /**************************************/
 
@@ -202,7 +202,7 @@ height:18px; width:18px;
 /**************************************/
 
 .ui-resizable-handle { height: 10px; }
-}
+
 
 .searchModeLink {
 	margin-top: 20px;
