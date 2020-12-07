@@ -57,48 +57,6 @@
             },
             {
               "_type_": "stage_connectionname",
-              "_value_": "MetadataAdjuster"
-            },
-            {
-              "_type_": "stage_specification",
-              "_children_": [
-                {
-                  "_type_": "expression",
-                  "_attribute_parameter": "repo_source",
-                  "_value_": "",
-                  "_attribute_value": "francelabs"
-                },
-                {
-                  "_type_": "keepAllMetadata",
-                  "_value_": "",
-                  "_attribute_value": "true"
-                },
-                {
-                  "_type_": "filterEmpty",
-                  "_value_": "",
-                  "_attribute_value": "false"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "_type_": "pipelinestage",
-          "_children_": [
-            {
-              "_type_": "stage_id",
-              "_value_": "1"
-            },
-            {
-              "_type_": "stage_prerequisite",
-              "_value_": "0"
-            },
-            {
-              "_type_": "stage_isoutput",
-              "_value_": "false"
-            },
-            {
-              "_type_": "stage_connectionname",
               "_value_": "EmptierFilter"
             },
             {
@@ -133,16 +91,18 @@
             }
           ]
         },
+        
+        
         {
           "_type_": "pipelinestage",
           "_children_": [
             {
               "_type_": "stage_id",
-              "_value_": "2"
+              "_value_": "1"
             },
             {
               "_type_": "stage_prerequisite",
-              "_value_": "1"
+              "_value_": "0"
             },
             {
               "_type_": "stage_isoutput",
@@ -187,11 +147,11 @@
           "_children_": [
             {
               "_type_": "stage_id",
-              "_value_": "3"
+              "_value_": "2"
             },
             {
               "_type_": "stage_prerequisite",
-              "_value_": "2"
+              "_value_": "1"
             },
             {
               "_type_": "stage_isoutput",
@@ -199,7 +159,7 @@
             },
             {
               "_type_": "stage_connectionname",
-              "_value_": "TikaHTMLConnector"
+              "_value_": "HTMLConnector"
             },
             {
               "_type_": "stage_specification",
@@ -218,6 +178,48 @@
                   "_type_": "striphtml",
                   "_value_": "",
                   "_attribute_value": "true"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_type_": "pipelinestage",
+          "_children_": [
+            {
+              "_type_": "stage_id",
+              "_value_": "3"
+            },
+            {
+              "_type_": "stage_prerequisite",
+              "_value_": "2"
+            },
+            {
+              "_type_": "stage_isoutput",
+              "_value_": "false"
+            },
+            {
+              "_type_": "stage_connectionname",
+              "_value_": "MetadataAdjuster"
+            },
+            {
+              "_type_": "stage_specification",
+              "_children_": [
+                {
+                  "_type_": "expression",
+                  "_attribute_parameter": "repo_source",
+                  "_value_": "",
+                  "_attribute_value": "francelabs"
+                },
+                {
+                  "_type_": "keepAllMetadata",
+                  "_value_": "",
+                  "_attribute_value": "true"
+                },
+                {
+                  "_type_": "filterEmpty",
+                  "_value_": "",
+                  "_attribute_value": "false"
                 }
               ]
             }

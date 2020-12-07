@@ -356,7 +356,7 @@ init_datafariui_alpha() {
         md5DistantFile=`cat datafariui.tar.gz.md5 | awk '{ print $1 }'`
 
         if [ "$md5LocalFile" == "$md5LocalFile" ]; then
-        	tar xfvz datafariui.tar.gz
+        	tar xfz datafariui.tar.gz
             mv build /opt/datafari/www
 			datafariui_proxy_apache="Alias /datafariui /opt/datafari/www/\n<Directory \"/opt/datafari/www\">\nRequire all granted\nRewriteEngine On\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteRule ^/datafariui/ /datafariui/index.html [QSA,L]\n</Directory>"
 			sed -i -e "/^[[:space:]]*# DatafariUI_Alpha.*/a${datafariui_proxy_apache}" /opt/datafari/apache/sites-available/tomcat.conf >>$installerLog 2>&1
