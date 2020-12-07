@@ -117,12 +117,16 @@ $(document)
           });
           
           $("#webReponame").change(function(e) {
-            checkElm($("#webReponame"));
+            checkRepoName($("#webReponame"));
+          });
+
+          $("#filerReponame").change(function(e) {
+            checkRepoName($("#filerReponame"));
           });
 
           $("#addWeb").submit(function(e) {
             e.preventDefault();
-            if (checkSeeds($("#seeds")) && checkEmail($("#email")) && checkElm($("#webSourcename")) && checkElm($("#webReponame"))) {
+            if (checkSeeds($("#seeds")) && checkEmail($("#email")) && checkElm($("#webSourcename")) && checkRepoName($("#webReponame"))) {
               return addWebConnector();
             } else {
               return false;
@@ -134,7 +138,8 @@ $(document)
             $("#addFiler").removeClass('was-validated');
             $("#addFilerCheckMessageFailure").hide();
             var form = document.getElementById("addFiler");
-            if (form.checkValidity() === false) {
+            if (form.checkValidity() === false || !checkRepoName($("#filerReponame"))) {
+              checkRepoName($("#filerReponame"));
               $("#addFiler").addClass('was-validated');
               return false;
             } else {
@@ -188,6 +193,30 @@ function setErrorStatus(element, errorMsg) {
     element.siblings(".invalid-feedback").html(errorMsg);
   }
   element.addClass("is-invalid");
+}
+
+function checkRepoName(element) {
+  clearStatus(element);
+  let htmlElement = document.getElementById(element.attr('id'));
+  if (!$(element).val()) {
+    setErrorStatus(element, "Please provide a repository name");
+    return false;
+  } else {
+    let repoName = element.val();
+    let repoPattern = /^\w+$/;
+    let repoRegex = new RegExp(repoPattern);
+    if (repoName.match(repoRegex)) {
+      setOkStatus(element);
+      htmlElement.setCustomValidity("");
+      htmlElement.reportValidity();
+      return true;
+    } else {
+      htmlElement.setCustomValidity("Repository name invalid");
+      htmlElement.reportValidity();
+      setErrorStatus(element, "Repository name can only contain alphanumerical charaters and underscores (\"_\")");
+      return false;
+    }
+  }
 }
 
 function checkSeeds(element) {
