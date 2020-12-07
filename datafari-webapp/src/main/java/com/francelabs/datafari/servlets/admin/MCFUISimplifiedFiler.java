@@ -18,6 +18,8 @@ package com.francelabs.datafari.servlets.admin;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -51,7 +53,8 @@ public class MCFUISimplifiedFiler extends HttpServlet {
   private final static Logger LOGGER = LogManager.getLogger(MCFUISimplifiedFiler.class);
 
   /**
-   * @see HttpServlet#HttpServlet() Gets the environment path of Datafari installation
+   * @see HttpServlet#HttpServlet() Gets the environment path of Datafari
+   *      installation
    */
   public MCFUISimplifiedFiler() {
     env = Environment.getEnvironmentVariable("DATAFARI_HOME");
@@ -63,11 +66,14 @@ public class MCFUISimplifiedFiler extends HttpServlet {
 
   /**
    * @throws IOException
-   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response) It saves the MCF connections if action parameter is save It restores the MCF connections if action parameter is
-   *      restore It uses the backup directory in input (if specified) or a default path
+   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+   *      response) It saves the MCF connections if action parameter is save It
+   *      restores the MCF connections if action parameter is restore It uses the
+   *      backup directory in input (if specified) or a default path
    */
   @Override
-  protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+  protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
+      throws ServletException, IOException {
     final JSONObject jsonResponse = new JSONObject();
     try {
       final String server = request.getParameter("server");
@@ -79,51 +85,73 @@ public class MCFUISimplifiedFiler extends HttpServlet {
       final String security = request.getParameter("security");
       final String startJob = request.getParameter("startJob");
 
-      // Create webRepository
-      final FilerRepository filerRepo = new FilerRepository();
-      filerRepo.setServer(server);
-      filerRepo.setUser(user);
-      filerRepo.setPassword(password);
-      filerRepo.setReponame(reponame);
-      final String filerRepoName = FilerRepoConfig.getInstance().createRepoConnection(filerRepo);
-
-      if (filerRepoName == null) {
+      // Checking if the reponame is valid (alphanumerical and undescores only)
+      final Pattern repoNamePattern = Pattern.compile("^\\w+$");
+      final Matcher repoNameMatcher = repoNamePattern.matcher(reponame);
+      if (repoNameMatcher.find()) {
+        if (!repoNameMatcher.group().contentEquals(reponame)) {
+          jsonResponse.put("OK", "OK");
+          jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+          LOGGER.error("The repository name is not valid");
+        } else {
+          createFilerRepo(jsonResponse, server, user, password, reponame, paths, sourcename, security, startJob);
+        }
+      } else {
         jsonResponse.put("OK", "OK");
         jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-        LOGGER.error("Cannot create Share Repository Connection");
-
-      } else {
-
-        // Create filerJob
-        final FilerJob filerJob = new FilerJob();
-        filerJob.setRepositoryConnection(filerRepoName);
-        filerJob.setPaths(paths);
-        filerJob.setSourcename(sourcename);
-        if (security != null) {
-          filerJob.setSecurity(true);
-        }
-        final String jobId = FilerJobConfig.getInstance().createJob(filerJob);
-
-        if (jobId != null) {
-          if (startJob != null) {
-            ManifoldAPI.startJob(jobId);
-          }
-          jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-          jsonResponse.put("job_id", jobId);
-        } else {
-          jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-          LOGGER.error("Cannot create Filer job");
-        }
-        jsonResponse.put("OK", "OK");
+        LOGGER.error("The repository name is not valid");
       }
 
     } catch (final Exception e) {
       final PrintWriter out = response.getWriter();
-      out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69253");
+      out.append(
+          "Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69253");
       out.close();
       LOGGER.error("Unknown error during process", e);
     }
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);
+  }
+
+  private void createFilerRepo(JSONObject jsonResponse, String server, String user, final String password,
+      final String reponame, final String paths, final String sourcename, final String security, final String startJob)
+      throws Exception {
+    // Create webRepository
+    final FilerRepository filerRepo = new FilerRepository();
+    filerRepo.setServer(server);
+    filerRepo.setUser(user);
+    filerRepo.setPassword(password);
+    filerRepo.setReponame(reponame);
+    final String filerRepoName = FilerRepoConfig.getInstance().createRepoConnection(filerRepo);
+
+    if (filerRepoName == null) {
+      jsonResponse.put("OK", "OK");
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+      LOGGER.error("Cannot create Share Repository Connection");
+
+    } else {
+
+      // Create filerJob
+      final FilerJob filerJob = new FilerJob();
+      filerJob.setRepositoryConnection(filerRepoName);
+      filerJob.setPaths(paths);
+      filerJob.setSourcename(sourcename);
+      if (security != null) {
+        filerJob.setSecurity(true);
+      }
+      final String jobId = FilerJobConfig.getInstance().createJob(filerJob);
+
+      if (jobId != null) {
+        if (startJob != null) {
+          ManifoldAPI.startJob(jobId);
+        }
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+        jsonResponse.put("job_id", jobId);
+      } else {
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+        LOGGER.error("Cannot create Filer job");
+      }
+      jsonResponse.put("OK", "OK");
+    }
   }
 }
