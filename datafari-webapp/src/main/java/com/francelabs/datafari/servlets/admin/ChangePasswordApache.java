@@ -27,8 +27,9 @@ import com.francelabs.datafari.utils.ExecutionEnvironment;
 public class ChangePasswordApache extends HttpServlet {
   private static final long serialVersionUID = 1L;
   private static final Logger logger = LogManager.getLogger(ChangePasswordApache.class.getName());
-  private static String filePassword ;
+  private static String filePassword;
   private static final String realm = "datafari";
+  private static String datafariHome;
 
   /**
    * @see HttpServlet#HttpServlet()
@@ -41,12 +42,11 @@ public class ChangePasswordApache extends HttpServlet {
       environnement = ExecutionEnvironment.getDevExecutionEnvironment();
     }
     filePassword = environnement + "/apache/password/htpasswd";
-   
+
   }
 
   /**
-   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-   *      response)
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
    */
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
@@ -55,13 +55,13 @@ public class ChangePasswordApache extends HttpServlet {
     response.setContentType("application/json");
 
     if (request.getParameter("username") != null && request.getParameter("password") != null) {
-     String username = request.getParameter("username");
-     String password = request.getParameter("password");
+      final String username = request.getParameter("username");
+      final String password = request.getParameter("password");
       try {
         com.francelabs.datafari.utils.FileUtils.changePassApache(filePassword, username, realm, password);
-        
+
         // stop apache
-        final String[] command = { "/bin/bash", "-c", "/opt/datafari/bin/monitorUtils/monit-stop-apache.sh"  };
+        final String[] command = { "/bin/bash", "-c", datafariHome + "/bin/monitorUtils/monit-stop-apache.sh" };
         final ProcessBuilder p = new ProcessBuilder(command);
         final Process p2 = p.start();
 
@@ -82,9 +82,9 @@ public class ChangePasswordApache extends HttpServlet {
           logger.warn(s);
           errorCode = s;
         }
-        
+
         // start apache
-        final String[] commandStart = { "/bin/bash", "-c", "/opt/datafari/bin/monitorUtils/monit-start-apache.sh"  };
+        final String[] commandStart = { "/bin/bash", "-c", datafariHome + "/bin/monitorUtils/monit-start-apache.sh" };
         final ProcessBuilder p3 = new ProcessBuilder(commandStart);
         final Process p4 = p3.start();
 
@@ -105,8 +105,7 @@ public class ChangePasswordApache extends HttpServlet {
           logger.warn(s);
           errorCode2 = s2;
         }
-        
-        
+
         jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
         jsonResponse.put(OutputConstants.STATUS, "User password changed with success");
       } catch (final Exception e) {

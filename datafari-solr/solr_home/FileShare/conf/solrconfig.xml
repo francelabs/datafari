@@ -870,7 +870,7 @@
 			<str name="uprefix">ignored_</str>
 			<str name="update.chain">datafari</str>
 			<bool name="ignoreTikaException">true</bool>
-			<str name="tika.config">/opt/datafari/solr/solrcloud/FileShare/conf/tika.config</str>
+			<str name="tika.config">${SOLR_INSTALL_DIR/solrcloud/FileShare/conf/tika.config:/opt/datafari/solr/solrcloud/FileShare/conf/tika.config}</str>
     </lst>
   </requestHandler>
 

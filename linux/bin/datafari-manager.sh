@@ -249,7 +249,7 @@ init_mcf()
 {
   echo "Uploading MCF configuration"
   cd "${DATAFARI_HOME}/bin/common"
-  nohup "${JAVA_HOME}/bin/java" -Dlog4j.configurationFile=$DATAFARI_HOME/bin/mcf.scripts.logging.xml -Djavax.net.ssl.trustStore=/opt/datafari/ssl-keystore/datafari-truststore.p12 -Djavax.net.ssl.trustStorePassword=DataFariAdmin -Dorg.apache.manifoldcf.configfile=${MCF_HOME}/properties.xml -cp ./*:${MCF_HOME}/lib/mcf-core.jar:${MCF_HOME}/lib/* com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript RESTORE config/manifoldcf/init 2>/dev/null &
+  nohup "${JAVA_HOME}/bin/java" -Dlog4j.configurationFile=$DATAFARI_HOME/bin/mcf.scripts.logging.xml -Djavax.net.ssl.trustStore=${DATAFARI_HOME}/ssl-keystore/datafari-truststore.p12 -Djavax.net.ssl.trustStorePassword=DataFariAdmin -Dorg.apache.manifoldcf.configfile=${MCF_HOME}/properties.xml -cp ./*:${MCF_HOME}/lib/mcf-core.jar:${MCF_HOME}/lib/* com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript RESTORE config/manifoldcf/init 2>/dev/null &
   pid_mcf_upload=$!
   spin='-\|/'
   i=0

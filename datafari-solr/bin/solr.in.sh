@@ -183,7 +183,7 @@ SOLR_SSL_CHECK_PEER_NAME=false
 #  -DzkDigestUsername=admin-user -DzkDigestPassword=CHANGEME-ADMIN-PASSWORD \
 #  -DzkDigestReadonlyUsername=readonly-user -DzkDigestReadonlyPassword=CHANGEME-READONLY-PASSWORD"
 #SOLR_OPTS="$SOLR_OPTS $SOLR_ZK_CREDS_AND_ACLS"
-SOLR_OPTS="$SOLR_OPTS -Djava.io.tmpdir=/opt/datafari/tmp"
+SOLR_OPTS="$SOLR_OPTS -Djava.io.tmpdir=${TMP_DIR}"
 
 # Settings for common system values that may cause operational imparement when system defaults are used.
 # Solr can use many processes and many file handles. On modern operating systems the savings by leaving

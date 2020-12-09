@@ -3,7 +3,7 @@
 
 SCRIPT_PATH="${BASH_SOURCE[0]}"
 
-ELK_CERTIFICATE_PATH=/opt/datafari/ssl-keystore/elk
+ELK_CERTIFICATE_PATH=$DATAFARI_HOME/ssl-keystore/elk
 ELK_CERTIFICATE_CRT=datafari-cert.pem
 ELK_CERTIFICATE_KEY=datafari-key.pem
 

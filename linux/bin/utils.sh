@@ -36,7 +36,7 @@ check_java()
 
 check_ram()
 {
-	sizeMemory=grep MemTotal /proc/meminfo | awk '{print $2}'
+	sizeMemory=$(grep MemTotal /proc/meminfo | awk '{print $2}')
 	if [[ "$sizeMemory" -lt "8120344" ]]; then
     	echo The memory detected on your system seems very low. Please be sure that the requirements are respected. See this page : https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/1662451718/Hardware+requirements
         echo "Wait 10 seconds"
