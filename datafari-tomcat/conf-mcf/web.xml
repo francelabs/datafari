@@ -229,41 +229,6 @@
 		</init-param>
 		<load-on-startup>3</load-on-startup>
 	</servlet>
-<servlet>
-    <description>This servlet sends/gets the synonym file to/from client</description>
-    <display-name>Synonyms</display-name>
-    <servlet-name>Synonyms</servlet-name>
-    <servlet-class>com.francelabs.datafari.servlets.admin.Synonyms</servlet-class>
-</servlet>
- 
-<servlet-mapping>
-    <servlet-name>Synonyms</servlet-name>
-    <url-pattern>/admin/Synonyms</url-pattern>
-</servlet-mapping> 
-<servlet>
-    <description>This servlet sends/gets the stopword file to/from client</description>
-    <display-name>Stopwords</display-name>
-    <servlet-name>Stopwords</servlet-name>
-    <servlet-class>com.francelabs.datafari.servlets.admin.Stopwords</servlet-class>
-</servlet>
- 
-<servlet-mapping>
-    <servlet-name>Stopwords</servlet-name>
-    <url-pattern>/admin/Stopwords</url-pattern>
-</servlet-mapping>  
- <servlet>
-    <description>This servlet runs the Alerts</description>
-    <display-name>alertsAdmin</display-name>
-    <servlet-name>alertsAdmin</servlet-name>
-    <servlet-class>com.francelabs.datafari.servlets.admin.alertsAdmin</servlet-class>
-</servlet>
- 
-<servlet-mapping>
-    <servlet-name>alertsAdmin</servlet-name>
-    <url-pattern>/admin/alertsAdmin</url-pattern>
-</servlet-mapping>  
-
-
 
 	<!-- NOTE: An SSI Filter is also available as an alternative SSI -->
 	<!-- implementation. Use either the Servlet or the Filter but NOT both. -->

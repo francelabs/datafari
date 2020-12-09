@@ -15,10 +15,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.ComponentScan;
 
 import com.francelabs.datafari.initializers.IInitializer;
 
 @SpringBootApplication
+@ComponentScan({"com.francelabs.datafari.security", "com.francelabs.datafari.rest.v1_0"})
 public class DatafariWebSecurityApplication extends SpringBootServletInitializer {
 
   private static final Logger LOGGER = LogManager.getLogger(DatafariWebSecurityApplication.class.getName());
