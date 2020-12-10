@@ -16,32 +16,55 @@
 package com.francelabs.datafari.rest.v1_0.authenticate;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.simple.JSONObject;
+import com.francelabs.datafari.utils.AuthenticatedUserName;
 
-@WebServlet("/rest/v1.0/auth")
-public class Auth extends HttpServlet {
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-    /**
-     * Automatically generated serial ID
-     */
-    private static final long serialVersionUID = -7963179533577712474L;
+@RestController
+public class Auth {
 
-    @Override
-    protected void doGet(final HttpServletRequest request, final HttpServletResponse response) {
+    @GetMapping("/rest/v1.0/auth")
+    protected void doGet(final HttpServletRequest request, final HttpServletResponse response,
+            @RequestParam(name = "callback") String callbackURL) {
+        final String authenticatedUserName = AuthenticatedUserName.getName(request);
+        if (authenticatedUserName != null) {
+            if (callbackURL != null && callbackURL.length() > 0) {
+                try {
+                    response.sendRedirect(callbackURL);
+                } catch (Exception e) {
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
+            } else {
+                try {
+                    response.sendRedirect("/");
+                } catch (IOException e) {
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
+            }
+        } else {
+            try {
+                String currentURI = request.getRequestURI();
+                String[] splitURI = currentURI.split("/");
+                String newURI = "";
+                // remove the /api/auth part
+                for (int i = 0; i < splitURI.length - 3; i++) {
+                    if (!splitURI[i].contentEquals("")) {
+                        newURI += splitURI[i] + "/";
+                    }
+                }
+                response.sendRedirect("/" + newURI + "login?redirect=" + callbackURL);
+            } catch (IOException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        }
         try {
-            response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
-            final JSONObject jsonResponse = new JSONObject();
-            jsonResponse.put("error", "Not Implemented");
-            PrintWriter out;
-            out = response.getWriter();
-            out.print(jsonResponse);
+            response.sendRedirect(callbackURL);
         } catch (IOException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
