@@ -15,35 +15,80 @@
  *******************************************************************************/
 package com.francelabs.datafari.rest.v1_0.users;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.ArrayList;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.francelabs.datafari.audit.AuditLogUtil;
+import com.francelabs.datafari.exception.DatafariServerException;
+import com.francelabs.datafari.rest.v1_0.exceptions.BadRequestException;
+import com.francelabs.datafari.rest.v1_0.exceptions.DataNotFoundException;
+import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
+import com.francelabs.datafari.rest.v1_0.exceptions.NotAuthenticatedException;
+import com.francelabs.datafari.rest.v1_0.utils.RestAPIUtils;
+import com.francelabs.datafari.user.Lang;
+import com.francelabs.datafari.utils.AuthenticatedUserName;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
-@WebServlet("/rest/v1.0/users/current")
-public class Users extends HttpServlet {
+@RestController
+public class Users {
 
-    /**
-     * Automatically generated serial ID
-     */
-    private static final long serialVersionUID = -7963179533577712482L;
+    @GetMapping(value = "/rest/v1.0/users/current", produces = "application/json;charset=UTF-8")
+    protected String getUser(final HttpServletRequest request) {
+        final String authenticatedUserName = AuthenticatedUserName.getName(request);
+        JSONObject responseContent = new JSONObject();
+        if (authenticatedUserName != null) {
+            responseContent.put("name", authenticatedUserName);
+            ArrayList<String> roles = new ArrayList<>();
+            if (request.isUserInRole("SearchAdministrator")) {
+                roles.add("SearchAdministrator");
+            }
+            if (request.isUserInRole("SearchExpert")) {
+                roles.add("SearchExpert");
+            }
+            responseContent.put("roles", roles);
+            try {
+                String lang = Lang.getLang(authenticatedUserName);
+                AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
+                        "Accessed saved language for user " + authenticatedUserName);
+                responseContent.put("lang", lang);
+            } catch (DatafariServerException e) {
+                throw new InternalErrorException("Database conenction error while retrieving user language.");
+            }
+            return RestAPIUtils.buildOKResponse(responseContent);
+        } else {
+            throw new DataNotFoundException("No user currently connected.");
+        }
+    }
 
-    @Override
-    protected void doGet(final HttpServletRequest request, final HttpServletResponse response) {
-        try {
-            response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
-            final JSONObject jsonResponse = new JSONObject();
-            jsonResponse.put("error", "Not Implemented");
-            PrintWriter out;
-            out = response.getWriter();
-            out.print(jsonResponse);
-        } catch (IOException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    @PutMapping(value = "rest/v1.0/users/current", produces = "application/json;charset=UTF-8")
+    protected String modifyUser(final HttpServletRequest request, @RequestBody String jsonParam) {
+        final JSONParser parser = new JSONParser();
+        final String authenticatedUserName = AuthenticatedUserName.getName(request);
+        if (authenticatedUserName != null) {
+            try {
+                final JSONObject body = (JSONObject) parser.parse(jsonParam);
+                String bodyLang = (String) body.get("lang");
+                Lang.setLang(authenticatedUserName, bodyLang);
+                AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(),
+                        "Initialized saved language for user " + authenticatedUserName);
+                return RestAPIUtils.buildOKResponse(body);
+            } catch (ParseException e1) {
+                throw new BadRequestException("Couldn't parse the JSON body");
+            } catch (DatafariServerException e) {
+                throw new InternalErrorException("Error while saving the new lang.");
+            }
+        } else {
+            throw new NotAuthenticatedException("User must be authenticated to perform this action.");
         }
     }
 }
