@@ -37,16 +37,12 @@ public class LdapUtils {
   /**
    * Gets the AD LDAP context of the provided url
    *
-   * @param url
-   *          the url ("ldap://serverName:serverPort")
-   * @param user
-   *          the user
-   * @param password
-   *          the user's password
+   * @param url      the url ("ldap://serverName:serverPort")
+   * @param user     the user
+   * @param password the user's password
    * @return the LDAP context
    * @throws IOException
-   * @throws NamingException
-   *           .
+   * @throws NamingException .
    */
   public static LdapContext getLdapContext(final String url, final String user, final String password) throws NamingException, IOException {
     // create an initial directory context
@@ -73,6 +69,7 @@ public class LdapUtils {
     searchCtls.setReturningAttributes(returnAttributes);
 
     try {
+      logger.debug("Testing user base " + searchBase + ". Trying to find users with filter " + filter);
       final NamingEnumeration<SearchResult> users = ldapContext.search(searchBase, filter, searchCtls);
 
       while (users.hasMore()) {
@@ -84,24 +81,24 @@ public class LdapUtils {
           final long lng = Long.parseLong(bitsAttribute.get(0).toString());
           final long secondBit = lng & 2; // get bit 2
           if (secondBit == 0) { // User activated so return true as the userBase is valid
+            logger.debug("Found users in user base " + searchBase);
             return true;
           }
         }
       }
     } catch (final NamingException e) {
+      logger.error("Unable to search in user base " + searchBase, e);
       return false;
     }
-
+    logger.debug("No user found in user base " + searchBase);
     return false;
   }
 
   /**
    * Check in the Active directory if the given username exists
    *
-   * @param username
-   *          a {@link java.lang.String} object - username value
-   * @param searchBase
-   *          a {@link java.lang.String} object - search base value for scope tree for eg. DC=myjeeva,DC=com
+   * @param username   a {@link java.lang.String} object - username value
+   * @param searchBase a {@link java.lang.String} object - search base value for scope tree for eg. DC=myjeeva,DC=com
    * @return true if the username exists, false otherwise
    * @throws NamingException
    */
@@ -130,12 +127,9 @@ public class LdapUtils {
   /**
    * Search for users in the provided AD context and AD userBase
    *
-   * @param ctx
-   *          AD context
-   * @param userBase
-   *          AD userBase
-   * @param userSubTree
-   *          should search for users in subTree ?
+   * @param ctx         AD context
+   * @param userBase    AD userBase
+   * @param userSubTree should search for users in subTree ?
    * @return the list of found users
    * @throws NamingException
    * @throws IOException
