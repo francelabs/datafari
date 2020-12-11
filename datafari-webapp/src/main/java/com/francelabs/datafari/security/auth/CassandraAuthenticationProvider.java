@@ -70,19 +70,19 @@ public class CassandraAuthenticationProvider implements AuthenticationProvider {
   }
 
   protected static List<String> getRoles(final String username) {
-    String rawUsername = username;
-    if (username.contains("@")) {
-      rawUsername = username.substring(0, username.indexOf("@"));
+    String rawUsername = username.toLowerCase();
+    if (rawUsername.contains("@")) {
+      rawUsername = rawUsername.substring(0, rawUsername.indexOf("@"));
     }
     final List<String> roles = new ArrayList<>();
 
     try {
-      if (UserDataService.getInstance().isInBase(username)) {
+      if (UserDataService.getInstance().isInBase(rawUsername)) {
         roles.addAll(UserDataService.getInstance().getRoles(rawUsername));
 
         // Refresh the user data TTL
-        if (!username.contentEquals("admin")) {
-          UserDataTTLService.refreshUserDataTTL(username);
+        if (!rawUsername.contentEquals("admin")) {
+          UserDataTTLService.refreshUserDataTTL(rawUsername);
         }
       }
     } catch (final DatafariServerException e) {

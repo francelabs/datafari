@@ -45,10 +45,15 @@ public class LdapUsers {
           for (final String userBase : realm.getUserBases()) {
 
             try {
+              logger.debug("Testing user " + username + " on base " + userBase);
               if (LdapUtils.checkUser(username, userBase, context)) {
+                logger.debug("User " + username + " found in base " + userBase);
                 final String domain = extractDomainName(userBase);
+                logger.debug("Found domain " + domain + " for user " + username);
                 usersDomain.put(username, domain);
                 return domain;
+              } else {
+                logger.debug("User " + username + " not found in base " + userBase);
               }
             } catch (final NamingException e) {
               logger.error("Error when trying to find user \"" + username + "\" into realm " + realm.getConnectionURL() + " in userBase " + userBase, e);

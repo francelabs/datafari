@@ -66,7 +66,11 @@ public class AddUser extends HttpServlet {
       boolean userExists = false;
       // Check if user exists
       try {
-        final String username = request.getParameter("username");
+        String username = request.getParameter(UserConstants.USERNAMECOLUMN).toLowerCase();
+        // Remove domain from username if any, as it is not considered in Cassandra
+        if (username.contains("@")) {
+          username = username.substring(0, username.indexOf("@"));
+        }
 
         // If keycloak is enabled, as we cannot check if the user exists in Keycloak, no other choice to believe it does
         if (!keycloakEnabled) {
@@ -79,7 +83,7 @@ public class AddUser extends HttpServlet {
         }
 
         if (userExists) {
-          final User user = new User(request.getParameter(UserConstants.USERNAMECOLUMN).toString(), "", true);
+          final User user = new User(username, "", true);
           try {
             user.signup(Arrays.asList(request.getParameterValues(UserDataService.ROLECOLUMN + "[]")));
             jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
