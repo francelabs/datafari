@@ -25,7 +25,7 @@ import org.apache.logging.log4j.Logger;
 
 public class LdapUtils {
 
-  private static final String baseFilter = "(&((&(objectCategory=Person)(objectClass=User)))";
+  public static final String baseFilter = "(&(objectCategory=Person)(objectClass=User))";
   private static final String[] returnAttributes = { "sAMAccountName", "givenName", "userAccountControl" };
   private static final String departmentAttribute = "department";
   private static final String[] returnDepartmentAttributes = { "sAMAccountName", "givenName", "userAccountControl", departmentAttribute };
@@ -61,7 +61,7 @@ public class LdapUtils {
   }
 
   public static boolean testUserBase(final LdapContext ldapContext, final String searchBase) {
-    final String filter = baseFilter + ")";
+    final String filter = baseFilter;
     final int scope = SearchControls.SUBTREE_SCOPE;
     // initializing search controls
     final SearchControls searchCtls = new SearchControls();
