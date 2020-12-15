@@ -310,7 +310,7 @@ function setupLanguage() {
   $("#addDocButton").attr("title", window.i18n.msgStore["elevateAddDoc"]);
   $("#query-elevator-ui-desc").html(window.i18n.msgStore["query-elevator-ui-desc"]);
   
-  $("#query-elevator-activation-message").html(window.i18n.msgStore["query-elevator-activation-message"]);
+  $("#query-elevator-activation-message").html(window.i18n.msgStore["query-elevator-activation-message"] + ": <a href=\"https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/22052868/Boosting+documents+from+the+Search+UI\" target=\"_blank\">documentation</a>");
 
   // Set the tooltips
   $("#deleteElevateConf").attr("title", window.i18n.msgStore['deleteElevateConf-tip']);
