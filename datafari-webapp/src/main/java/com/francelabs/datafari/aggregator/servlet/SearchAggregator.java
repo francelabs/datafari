@@ -68,12 +68,8 @@ public class SearchAggregator extends HttpServlet {
 
   private static final Map<String, ExecutorService> runningThreads = new HashMap<String, ExecutorService>();
 
-  /**
-   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-   */
-  @Override
-  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
+  public static void doGetSearch(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     final SearchAggregatorConfiguration sac = SearchAggregatorConfiguration.getInstance();
     final String jaExternalDatafarisStr = sac.getProperty(SearchAggregatorConfiguration.EXTERNAL_DATAFARIS);
     final boolean activated = Boolean.valueOf(sac.getProperty(SearchAggregatorConfiguration.ACTIVATED));
@@ -287,17 +283,23 @@ public class SearchAggregator extends HttpServlet {
         response.getWriter().write(searchResponse);
       }
 
-    } catch (
-
-    final Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Search aggregator unexpected error", e);
       response.setStatus(500);
       response.getWriter().write(e.getMessage());
     }
-
   }
 
-  private String externalDatafariRequest(final int timeoutPerRequest, final String handler, final Map<String, String[]> parameterMap, final JSONObject externalDatafari, final String authUsername) {
+  /**
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+   */
+  @Override
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    doGetSearch(request, response);
+    return;
+  }
+
+  private static String externalDatafariRequest(final int timeoutPerRequest, final String handler, final Map<String, String[]> parameterMap, final JSONObject externalDatafari, final String authUsername) {
     try (final CloseableHttpClient client = HttpClientProvider.getInstance().newClient(timeoutPerRequest, timeoutPerRequest);) {
       final boolean enabled = (Boolean) externalDatafari.get("enabled");
       if (enabled) {
@@ -331,8 +333,7 @@ public class SearchAggregator extends HttpServlet {
     return null;
   }
 
-  @Override
-  protected void doPost(final HttpServletRequest request, final HttpServletResponse resp) throws ServletException, IOException {
+  public static void doPostSearch(final HttpServletRequest request, final HttpServletResponse resp) throws ServletException, IOException {
     // Retrieve username
     String requestingUser = "";
     if (request.getUserPrincipal() != null) {
@@ -372,7 +373,12 @@ public class SearchAggregator extends HttpServlet {
     }
   }
 
-  private JSONObject mergeResponses(final List<JSONObject> responses, final int originalStart, final int originalRows, final boolean wildCardQuery, final int numExternalDatafaris) {
+  @Override
+  protected void doPost(final HttpServletRequest request, final HttpServletResponse resp) throws ServletException, IOException {
+    doPostSearch(request, resp);
+  }
+
+  private static JSONObject mergeResponses(final List<JSONObject> responses, final int originalStart, final int originalRows, final boolean wildCardQuery, final int numExternalDatafaris) {
     JSONObject finalResponse = new JSONObject();
     if (responses.size() > 0) {
       finalResponse = (JSONObject) responses.get(0).clone();
@@ -505,7 +511,7 @@ public class SearchAggregator extends HttpServlet {
     return finalResponse;
   }
 
-  private void mixDocuments(final LinkedList<JSONObject> orderedDocs, final List<JSONObject> responses) {
+  private static void mixDocuments(final LinkedList<JSONObject> orderedDocs, final List<JSONObject> responses) {
     int maxSize = 0;
     final List<JSONArray> docs = new ArrayList<JSONArray>();
     // If there is only one response (so only one server selected) then there is no mix to perform
@@ -534,7 +540,7 @@ public class SearchAggregator extends HttpServlet {
     }
   }
 
-  private void mixBoostedDocuments(final LinkedList<JSONObject> orderedDocs, final List<List<JSONObject>> boostedDocs) {
+  private static void mixBoostedDocuments(final LinkedList<JSONObject> orderedDocs, final List<List<JSONObject>> boostedDocs) {
     int maxSize = 0;
     // If there is only one set of boosted docs then there is no mix to perform
     if (boostedDocs.size() == 1) {
@@ -566,7 +572,7 @@ public class SearchAggregator extends HttpServlet {
    * @param orderedDocs {@link LinkedList} containing ordered docs, in which provided new docs will be inserted at the right place (according to their score)
    * @param docs        new docs to insert in the provided {@link LinkedList} at the right place
    */
-  private void orderDocs(final LinkedList<JSONObject> orderedDocs, final List<List<JSONObject>> boostedDocs, final JSONArray docs) {
+  private static void orderDocs(final LinkedList<JSONObject> orderedDocs, final List<List<JSONObject>> boostedDocs, final JSONArray docs) {
 
     final List<JSONObject> currentBoostedDocs = new ArrayList<JSONObject>();
 
@@ -621,7 +627,7 @@ public class SearchAggregator extends HttpServlet {
 
   }
 
-  private void mergeFacets(final JSONObject result, final JSONObject mergedFacetQueries, final Map<String, Map<String, Integer>> mergedFacetFieldsMap) {
+  private static void mergeFacets(final JSONObject result, final JSONObject mergedFacetQueries, final Map<String, Map<String, Integer>> mergedFacetFieldsMap) {
     if (result.get("facet_counts") != null) {
       final JSONObject facetCounts = (JSONObject) result.get("facet_counts");
 
@@ -667,7 +673,7 @@ public class SearchAggregator extends HttpServlet {
     }
   }
 
-  private String getHandler(final HttpServletRequest servletRequest) {
+  private static String getHandler(final HttpServletRequest servletRequest) {
     String pathInfo = servletRequest.getPathInfo();
     if (pathInfo == null) {
       pathInfo = servletRequest.getServletPath();
@@ -678,7 +684,7 @@ public class SearchAggregator extends HttpServlet {
     return pathInfo.substring(pathInfo.lastIndexOf("/"), pathInfo.length());
   }
 
-  private ArrayList<String> getSelectedSources(final String parameter, final String defaultDatafari) {
+  private static ArrayList<String> getSelectedSources(final String parameter, final String defaultDatafari) {
     final ArrayList<String> result = new ArrayList<>();
     if (parameter == null && defaultDatafari != null && defaultDatafari.trim().length() > 0) {
       result.add(defaultDatafari);
@@ -698,7 +704,7 @@ public class SearchAggregator extends HttpServlet {
    * @param allowedSources
    * @return
    */
-  private ArrayList<String> mergeSelectedAndAloowedList(final ArrayList<String> selectedSourcesList, final ArrayList<String> allowedSources) {
+  private static ArrayList<String> mergeSelectedAndAloowedList(final ArrayList<String> selectedSourcesList, final ArrayList<String> allowedSources) {
     ArrayList<String> result = new ArrayList<>();
     if (selectedSourcesList != null && (allowedSources == null || allowedSources.size() == 0)) {
       result = selectedSourcesList;

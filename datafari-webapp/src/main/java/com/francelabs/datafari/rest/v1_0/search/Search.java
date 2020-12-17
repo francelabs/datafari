@@ -16,16 +16,20 @@
 package com.francelabs.datafari.rest.v1_0.search;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
-import javax.servlet.annotation.WebServlet;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.simple.JSONObject;
+import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
+import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
 
-@WebServlet("/rest/v1.0/search/*")
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
 public class Search extends HttpServlet {
 
     /**
@@ -33,17 +37,21 @@ public class Search extends HttpServlet {
      */
     private static final long serialVersionUID = -7963279533577712482L;
 
-    @Override
-    protected void doGet(final HttpServletRequest request, final HttpServletResponse response) {
+    @GetMapping("/rest/v1.0/search/*")
+    protected void performSearch(final HttpServletRequest request, final HttpServletResponse response) {
         try {
-            response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
-            final JSONObject jsonResponse = new JSONObject();
-            jsonResponse.put("error", "Not Implemented");
-            PrintWriter out;
-            out = response.getWriter();
-            out.print(jsonResponse);
-        } catch (IOException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            SearchAggregator.doGetSearch(request, response);
+        } catch (ServletException | IOException e) {
+            throw new InternalErrorException("Error while performing the search request.");
+        }
+    }
+
+    @PostMapping("/rest/v1.0/search/*")
+    protected void stopSearch(final HttpServletRequest request, final HttpServletResponse response) {
+        try {
+            SearchAggregator.doPostSearch(request, response);
+        } catch (ServletException | IOException e) {
+            throw new InternalErrorException("Error while stopping the search request.");
         }
     }
 }
