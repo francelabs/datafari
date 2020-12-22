@@ -85,7 +85,7 @@ check_java;
 
 if  [[ "$NODETYPE" = *mono* ]]; then
 
-  check_python;
+  
 
 	if  [[ "$STATE" = *initialized* ]];
 	then
@@ -134,7 +134,11 @@ if  [[ "$NODETYPE" = *mono* ]]; then
 		rm -f ${MCF_HOME}/connector-lib/tika-config.jar
 	fi
 
-  run_as ${DATAFARI_USER} "bash datafari-manager.sh start_apache";
+  if [ "$(whoami)" == "root" ]; then
+		bash datafari-manager.sh start_apache
+	else
+		run_as ${DATAFARI_USER} "bash datafari-manager.sh start_apache"
+	fi
   
   run_as ${DATAFARI_USER} "bash datafari-manager.sh start_mcf_crawler_agent";
   

@@ -48,6 +48,11 @@ check_ram()
 
 check_python()
 {
+if command -v python3 &> /dev/null
+then
+	echo "Compatible Python version detected : Python3"
+	python_version=3
+else
   version=$(python -V 2>&1 | grep -Po '(?<=Python )(.+)')
   if [[ -z "$version" ]]
   then
@@ -56,7 +61,8 @@ check_python()
   else
     case "$(python --version 2>&1)" in
     *" 2.7"*)
-      echo "Compatible Python version detected"
+      echo "Compatible Python version detected : Python > 2.7"
+      python_version=2
       ;;
     *)
       echo "Wrong Python version! Please install Python 2.7.X"
@@ -64,6 +70,8 @@ check_python()
       ;;
     esac
   fi
+ fi
+ set_property "python_version" $python_version $CONFIG_FILE
 }
 
 run_as()
