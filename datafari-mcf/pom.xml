@@ -28,7 +28,7 @@
               <!-- 2 repos : official repo : http://archive.apache.org/dist/manifoldcf/apache-manifoldcf-${mcf.version}/apache-manifoldcf-${mcf.version}-bin.tar.gz 
                 Datafari repo : http://repomcf.datafari.com/mcf/apache-manifoldcf-${mcf.version}-dev-bin-${mcf.commit.number}.tar.gz -->
               <url>https://archive.apache.org/dist/manifoldcf/apache-manifoldcf-${mcf.version}/apache-manifoldcf-${mcf.version}-bin.tar.gz</url>
-              <sha512>67e7d464bc30f2a8c0b1f201ff7202e21c491b43a4cf03b8c35e9fe30dac30083b609b88f3633a4f6eceeb56d8df6a28c00501063beff82c72baec067bb576ed</sha512>
+              <sha512>b88682bfe14e3ee3c6fa5c0720e49e0243b580059e70b0b4221adca73e0e0cf061a45b0b295843136bd752ca8409b8ede5e88278ce083b0bc48cf8dc060d024e</sha512>
               <unpack>true</unpack>
             </configuration>
           </execution>

@@ -19,7 +19,7 @@
     <keycloak.version>7.0.1</keycloak.version>
     <log4j.version>2.13.3</log4j.version>
     <logstash.version>7.8.0</logstash.version>
-    <mcf.version>2.17</mcf.version>
+    <mcf.version>2.18</mcf.version>
     <mcf.commit.number>38e4c78f1</mcf.commit.number>
     <open.distro.version>1.9.0</open.distro.version>
     <postgres.version>42.1.3</postgres.version>
