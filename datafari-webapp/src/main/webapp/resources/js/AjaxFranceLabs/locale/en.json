@@ -50,7 +50,7 @@
     "adminUI-ClusterActions-no-report": "No report found",
     "adminUI-ClusterActions-restart-in-progress": "A restart is in progress, the Datafari admin system is up, but the Datafari administration actions are disabled for safety.",
     "adminUI-ClusterActions-unexpected-error": "The admin interface cannot reach the Datafari servers. It may be normal if you are restarting Datafari, in which case you should wait a few minutes before doing a refresh of the screen. If not, please try again and check the logs or contact your system administrator if the problem persists.",
-    "adminUI-ClusterActions-ServiceBackup": "Backup",
+    "adminUI-ClusterActions-ServiceBackup": "Global Backup",
     "adminUI-ClusterActions-ServiceBackup-info":"Last backup information",
     "adminUI-ClusterActions-ServiceBackup-launch-backup":"Backup",
     "adminUI-ClusterActions-ServiceBackup-message-backup-started":"Backup has started",

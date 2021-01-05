@@ -51,7 +51,7 @@
     "adminUI-ClusterActions-no-report": "Aucun rapport trouvé",
     "adminUI-ClusterActions-restart-in-progress": "Un redémarrage est en cours, le système d'administration de Datafari est disponible, mais les actions d'administration du cluster Datafari sont désactivées par sécurité.",
     "adminUI-ClusterActions-unexpected-error": "L'interface admin n'arrive pas à joindre les serveurs Datafari. Ceci peut être normal si vous redémarrez Datafari, dans ce cas prière d'attendre quelques minutes avant de réessayer. Si ce n'est pas le cas, veuillez essayer de nouveau et contacter un administrateur si le problème persiste.",
-    "adminUI-ClusterActions-ServiceBackup": "Sauvegarde",
+    "adminUI-ClusterActions-ServiceBackup": "Sauvegarde globale",
     "adminUI-ClusterActions-ServiceBackup-info":"Information sur la dernière sauvegarde",
     "adminUI-ClusterActions-ServiceBackup-launch-backup":"Sauvegarder",
     "adminUI-ClusterActions-ServiceBackup-message-backup-started":"La sauvegarde a commencé",
