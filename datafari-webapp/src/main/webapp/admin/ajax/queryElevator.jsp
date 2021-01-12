@@ -6,6 +6,9 @@
 <head>
 	<script src="<c:url value="/resources/js/admin/ajax/queryElevator.js" />"></script>
 	<link href="<c:url value="/resources/css/admin/queryElevator.css" />" rel="stylesheet"></link>
+  <!-- selec2 lib for searchable dropdown -->
+  <script src="<c:url value="/resources/libs/select2/4.0.13/js/select2.min.js" />"></script>
+  <link href="<c:url value="/resources/libs/select2/4.0.13/css/select2.min.css" />" rel="stylesheet"></link>
 	<meta charset="UTF-8">
 </head>
 <body>
