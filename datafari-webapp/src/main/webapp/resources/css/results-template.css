@@ -710,7 +710,7 @@
 	    animation-duration: 0.2s;
 	}
 	#solr { margin:0 auto; margin-bottom:3%;  width:100%;}
-	#solr .col.left { display:inline-block; width:30%; min-width:250px; margin-top:1%; padding:0; }
+	#solr .col.left { display:inline-block; width:30%; min-width:250px; margin-top:1%; padding:0; margin-bottom: 50px;}
 	#solr .col.right { position:relative; padding:0 10px; width:40%; float:left;margin-top:1%; }
 
 
