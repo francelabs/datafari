@@ -1325,3 +1325,20 @@ input[type="checkbox"] + label span.checkboxIcon {
     margin-top: 0;
   }
 }
+
+.documentation-style{
+	font-size: 14px;
+  display: flex;
+  background-color: lightgray;
+  border-radius: 5px;
+  text-align: left;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+  padding: 5px;
+}
+
+.documentation-preview{
+	margin: 0;
+	color: dimgray;
+}

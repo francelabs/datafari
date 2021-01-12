@@ -138,7 +138,11 @@ function createSavedSearchContent() {
 
 function createAlertContent() {
   var dataString = "keyword=";
-  $("#param-content").html("<div id='addAlertDiv'><button onclick='javascript:addAlert();' id='addAlertButton'>" + window.i18n.msgStore['addAlert'] + "</button></div>");
+  var alertAggregatorWarning = "Reminder: in case you are using the aggregator mode of Datafari with multiple Datafaris, alerts are only monitoring the documents indexed in your main Datafari";
+  if (window.i18n.msgStore['alertAggregatorWarning']) {
+    alertAggregatorWarning = window.i18n.msgStore['alertAggregatorWarning'];
+  }
+  $("#param-content").html("<div id='addAlertWarning' class='documentation-style'><p class='documentation-preview'>" + alertAggregatorWarning + "</p></div><div id='addAlertDiv'><button onclick='javascript:addAlert();' id='addAlertButton'>" + window.i18n.msgStore['addAlert'] + "</button></div>");
   $("#param-content").append("<div id='alertsListDiv'></div>");
   $.ajax({ // Ajax request to the doGet of the Alerts servlet
     type : "GET",

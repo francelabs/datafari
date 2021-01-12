@@ -230,6 +230,7 @@
     "aggregator-error-no-sources":"No external Datafari defined or activated and availabe for this request.",
     "aggregator-error-sources-unreachable": "External Datafari unavailable or unreachable for this request.",
     "alertAdmin": "Amministrazione degli allarmi",
+    "alertAggregatorWarning": "Reminder: in case you are using the aggregator mode of Datafari with multiple Datafaris, alerts are only monitoring the documents indexed in your main Datafari",
     "alertList": "Lista degli allarmi",
     "alerts": "Avvisi",
     "alertsDelay": "Data e ora dell'invio",

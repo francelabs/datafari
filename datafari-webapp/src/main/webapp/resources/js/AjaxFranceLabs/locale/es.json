@@ -210,6 +210,7 @@
     "aggregator-error-sources-unreachable": "External Datafari unavailable or unreachable for this request.",
     "alert-type": "Alert type",
     "alertAdmin": "Alerts administration",
+    "alertAggregatorWarning": "Reminder: in case you are using the aggregator mode of Datafari with multiple Datafaris, alerts are only monitoring the documents indexed in your main Datafari",
     "alertList": "List of the alerts",
     "alerts": "Alerta",
     "alertsDelay": "Launching date and time",
