@@ -25,7 +25,7 @@ AjaxFranceLabs.TabWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 
   // Constructor
   buildWidget : function() {
-    $(this.elm).addClass('tabWidget').addClass('widget').append('<ul class="tab-widget-ul nav nav-tabs"></ul>');
+    $(this.elm).addClass('tabWidget').addClass('widget').append('<ul class="tab-widget-ul nav"></ul>');
     $(this.elm).hide();
     // this.manager.store.addByValue('f.' + this.field + '.facet.mincount', '0'); // Set the facet min count to 0 in order to display the
     // tabs
@@ -64,8 +64,15 @@ AjaxFranceLabs.TabWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
           active = " active"
         }
         // Create the tab and his associated click function that will trigger the facet query
-        ul.append("<li class='nav-item " + active + "'><span class='tab'><span class='name'>" + self.rawTabs[i].label + "</span><span class='href' style='display:none;'>" + self.rawTabs[i].href
-            + "</span></span></li>");
+        var urlParams = "";
+        if (self.rawTabs[i].keepURLParams) {
+          urlParams = window.location.search;
+        }
+        ul.append("<li class='nav-item " + active + "'><span class='tab'><span class='name'>" 
+          + self.rawTabs[i].label 
+          + "</span><span class='href' style='display:none;'>" 
+          + self.rawTabs[i].href + urlParams
+          + "</span></span></li>");
         ul.find('li:last-child').click(function() {
           window.location = $(this).find('.href').text();
         });

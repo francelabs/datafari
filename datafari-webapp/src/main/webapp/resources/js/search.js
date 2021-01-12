@@ -5,12 +5,19 @@ $(function($) {
   // elm : $("#facet_tabs"),
   // rawTabs : [ {
   // "label" : "Test",
-  // "href" : "http://datafariee.datafari.com"
+  // "href" : "http://datafariee.datafari.com/Datafari/Search",
+  // "keepURLParams" : true,
   // }, {
   // "label" : "Test2",
   // "href" : "http://www.google.com"
   // } ],
   // actifValue : "Test"
+  // }));
+
+  // Manager.addWidget(new AjaxFranceLabs.TabWidget({
+  //   id : 'tabwidget2',
+  //   elm : $("#facet_tabs2"),
+  //   field: "repo_source",
   // }));
 
   // Manager.addExternalSource(new AjaxFranceLabs.DropBoxExternalSource({
