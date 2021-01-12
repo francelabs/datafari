@@ -141,6 +141,22 @@ AjaxFranceLabs.TagCloudWidget = AjaxFranceLabs.AbstractWidget.extend({
 	},
 
 	afterRequest : function() {
-        this.update();
+        // Do not update and hide if more than one source is selected in aggregator
+        var elm = $(this.elm);
+        if (this.manager.store.isParamDefined("aggregator")) {
+            selectedStr = this.manager.store.get("aggregator").val();
+            if (selectedStr != null && selectedStr != undefined) {
+              var selectedList = selectedStr.split(",");
+              if (selectedList.length > 1 || selectedStr === "") {
+                elm.hide();
+              } else {
+                  this.update();
+              }
+            } else {
+                this.update();
+            }
+        } else {
+            this.update();
+        }
 	}
 });
