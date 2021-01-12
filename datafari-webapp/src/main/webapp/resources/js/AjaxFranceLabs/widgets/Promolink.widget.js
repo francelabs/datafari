@@ -17,19 +17,16 @@ AjaxFranceLabs.PromolinkWidget = AjaxFranceLabs.AbstractWidget.extend({
 
 	//Variables
 
-	type : 'promolink',
+	type: 'promolink',
 	// Number of promolinks for the current query
-	widgetContainerNum : 0,
+	widgetContainerNum: 0,
 
 	//Methods
-
-	
-
-	buildWidget : function() {
+	buildWidget: function () {
 		$(this.elm).addClass('promolinkWidget').addClass('widget');
 	},
 
-	beforeRequest : function() {
+	beforeRequest: function () {
 		var self = this;
 		// Do not hide the widget and re-init the widgetContainerNum param in case self.manager.store.isParamDefined('original_query') exists 
 		// because it means that the query has been automatically corrected (certainly by the spellchecker) so we should not erase promolinks that may have been found for the original query
@@ -37,27 +34,47 @@ AjaxFranceLabs.PromolinkWidget = AjaxFranceLabs.AbstractWidget.extend({
 			$(this.elm).empty().hide();
 			self.widgetContainerNum = 0;
 		}
-		
+
 	},
 
-	afterRequest : function() {
+	afterRequest: function () {
+		// Do not update and hide if more than one source is selected in aggregator
+		var elm = $(this.elm);
+		if (this.manager.store.isParamDefined("aggregator")) {
+			selectedStr = this.manager.store.get("aggregator").val();
+			if (selectedStr != null && selectedStr != undefined) {
+				var selectedList = selectedStr.split(",");
+				if (selectedList.length > 1 || selectedStr === "") {
+					elm.hide();
+				} else {
+					this.update();
+				}
+			} else {
+				this.update();
+			}
+		} else {
+			this.update();
+		}
+	},
+
+	update: function () {
 		var self = this;
 		var data = this.manager.response, elm = $(this.elm);
-		if(data.promolinkSearchComponent!==undefined){	
-			for(var i=0; i < data.promolinkSearchComponent.length; i++) {
+		if (data.promolinkSearchComponent !== undefined) {
+			for (var i = 0; i < data.promolinkSearchComponent.length; i++) {
 				var promolink = data.promolinkSearchComponent[i];
 				if (promolink !== undefined && promolink.title.length > 0) {
 					var title;
-					if (promolink["title_"+window.i18n.language] !== undefined){
-						title = promolink["title_"+window.i18n.language];
+					if (promolink["title_" + window.i18n.language] !== undefined) {
+						title = promolink["title_" + window.i18n.language];
 					} else {
 						title = promolink.title;
 					}
 					var content = '';
-					if (promolink["content_"+window.i18n.language] !== undefined){
-						content = promolink["content_"+window.i18n.language];
+					if (promolink["content_" + window.i18n.language] !== undefined) {
+						content = promolink["content_" + window.i18n.language];
 					} else {
-						if (promolink.content !== undefined){
+						if (promolink.content !== undefined) {
 							content = promolink.content;
 						}
 					}
@@ -65,7 +82,7 @@ AjaxFranceLabs.PromolinkWidget = AjaxFranceLabs.AbstractWidget.extend({
 						$(self.elm).append("<span class='promolink-separator'></span>");
 					}
 					$(self.elm).append('<div class="widgetContainer" id="widgetContainer' + self.widgetContainerNum + '"></div>').show();
-					$(self.elm).find('#widgetContainer' + self.widgetContainerNum).append('<span class="title">' + '<span class="annonce">Annonce</span> '+ title + '</span></br>').append('<span class="tips" id="snippet">' + content + '</span>').show();
+					$(self.elm).find('#widgetContainer' + self.widgetContainerNum).append('<span class="title">' + '<span class="annonce">Annonce</span> ' + title + '</span></br>').append('<span class="tips" id="snippet">' + content + '</span>').show();
 					// Increment the number of generated promolinks for the current query
 					self.widgetContainerNum++;
 				}
