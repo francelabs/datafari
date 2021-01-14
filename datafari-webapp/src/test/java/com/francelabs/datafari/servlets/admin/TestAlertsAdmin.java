@@ -63,21 +63,18 @@ public class TestAlertsAdmin {
     Mockito.when(request.getParameter(AlertsConfiguration.DAILY_DELAY)).thenReturn("31/07/2015/  08:42");
     Mockito.when(request.getParameter(AlertsConfiguration.WEEKLY_DELAY)).thenReturn("31/07/2015/  08:42");
 
-    Mockito.when(request.getParameter(AlertsConfiguration.SMTP_ADDRESS)).thenReturn("SMTP_ADRESS_Test");
+    Mockito.when(request.getParameter(AlertsConfiguration.SMTP_ADDRESS)).thenReturn("SMTP_ADDRESS_Test");
+    Mockito.when(request.getParameter(AlertsConfiguration.SMTP_PORT)).thenReturn("SMTP_PORT_Test");
+    Mockito.when(request.getParameter(AlertsConfiguration.SMTP_SECURITY)).thenReturn("SMTP_SECURITY_Test");
     Mockito.when(request.getParameter(AlertsConfiguration.SMTP_FROM)).thenReturn("SMTP_FROM_Test");
     Mockito.when(request.getParameter(AlertsConfiguration.SMTP_USER)).thenReturn("SMTP_USER_Test");
     Mockito.when(request.getParameter(AlertsConfiguration.SMTP_PASSWORD)).thenReturn("SMTP_PASSWORD_Test");
-
-    Mockito.when(request.getParameter(AlertsConfiguration.DATABASE_HOST)).thenReturn("DATABASE_HOST_Test");
-    Mockito.when(request.getParameter(AlertsConfiguration.DATABASE_PORT)).thenReturn("DATABASE_PORT_Test");
-    Mockito.when(request.getParameter(AlertsConfiguration.DATABASE_NAME)).thenReturn("DATABASE_NAME_Test");
-    Mockito.when(request.getParameter(AlertsConfiguration.DATABASE_COLLECTION)).thenReturn("DATABASE_COLLECTION_Test");
 
     final StringWriter sw = new StringWriter();
     final PrintWriter writer = new PrintWriter(sw);
     Mockito.when(response.getWriter()).thenReturn(writer);
 
-    new alertsAdmin().doPost(request, response);
+    new AlertsAdmin().doPost(request, response);
 
     writer.flush(); // it may not have been flushed yet...
 
@@ -92,15 +89,11 @@ public class TestAlertsAdmin {
     assertTrue(alertsConf.getProperty(AlertsConfiguration.WEEKLY_DELAY).equals("31/07/2015/08:42"));
 
     // Properties mails
-    assertTrue(alertsConf.getProperty(AlertsConfiguration.SMTP_ADDRESS).equals("SMTP_ADRESS_Test"));
+    assertTrue(alertsConf.getProperty(AlertsConfiguration.SMTP_ADDRESS).equals("SMTP_ADDRESS_Test"));
+    assertTrue(alertsConf.getProperty(AlertsConfiguration.SMTP_PORT).equals("SMTP_PORT_Test"));
+    assertTrue(alertsConf.getProperty(AlertsConfiguration.SMTP_SECURITY).equals("SMTP_SECURITY_Test"));
     assertTrue(alertsConf.getProperty(AlertsConfiguration.SMTP_FROM).equals("SMTP_FROM_Test"));
     assertTrue(alertsConf.getProperty(AlertsConfiguration.SMTP_USER).equals("SMTP_USER_Test"));
     assertTrue(alertsConf.getProperty(AlertsConfiguration.SMTP_PASSWORD).equals("SMTP_PASSWORD_Test"));
-
-    // Properties Database
-    assertTrue(alertsConf.getProperty(AlertsConfiguration.DATABASE_HOST).equals("DATABASE_HOST_Test"));
-    assertTrue(alertsConf.getProperty(AlertsConfiguration.DATABASE_PORT).equals("DATABASE_PORT_Test"));
-    assertTrue(alertsConf.getProperty(AlertsConfiguration.DATABASE_NAME).equals("DATABASE_NAME_Test"));
-    assertTrue(alertsConf.getProperty(AlertsConfiguration.DATABASE_COLLECTION).equals("DATABASE_COLLECTION_Test"));
   }
 }

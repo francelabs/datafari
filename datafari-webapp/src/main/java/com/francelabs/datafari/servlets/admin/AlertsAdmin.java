@@ -35,6 +35,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.alerts.AlertsManager;
+import com.francelabs.datafari.alerts.Mail;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.utils.AlertsConfiguration;
@@ -50,14 +51,14 @@ import com.francelabs.datafari.utils.PasswordMapper;
  *
  */
 @WebServlet("/admin/alertsAdmin")
-public class alertsAdmin extends HttpServlet {
+public class AlertsAdmin extends HttpServlet {
   private static final long serialVersionUID = 1L;
-  private final static Logger LOGGER = LogManager.getLogger(alertsAdmin.class.getName());
+  private final static Logger LOGGER = LogManager.getLogger(AlertsAdmin.class.getName());
 
   /**
    * @see HttpServlet#HttpServlet()
    */
-  public alertsAdmin() {
+  public AlertsAdmin() {
     super();
   }
 
@@ -81,10 +82,6 @@ public class alertsAdmin extends HttpServlet {
     json.put("hourlyDate", alertsConf.getProperty(AlertsConfiguration.HOURLY_DELAY));
     json.put("dailyDate", alertsConf.getProperty(AlertsConfiguration.DAILY_DELAY));
     json.put("weeklyDate", alertsConf.getProperty(AlertsConfiguration.WEEKLY_DELAY));
-    json.put("host", alertsConf.getProperty(AlertsConfiguration.DATABASE_HOST));
-    json.put("port", alertsConf.getProperty(AlertsConfiguration.DATABASE_PORT));
-    json.put("database", alertsConf.getProperty(AlertsConfiguration.DATABASE_NAME));
-    json.put("collection", alertsConf.getProperty(AlertsConfiguration.DATABASE_COLLECTION));
 
     json.put("nextHourly", getNextEvent("hourly", alertsConf.getProperty(AlertsConfiguration.HOURLY_DELAY)));
     json.put("hourly", new DateTime(formatter.parseDateTime(alertsConf.getProperty(AlertsConfiguration.LAST_HOURLY_EXEC))).toString(formatterbis));
@@ -96,6 +93,8 @@ public class alertsAdmin extends HttpServlet {
     json.put("weekly", new DateTime(formatter.parseDateTime(alertsConf.getProperty(AlertsConfiguration.LAST_WEEKLY_EXEC))).toString(formatterbis));
 
     json.put("smtp", alertsConf.getProperty(AlertsConfiguration.SMTP_ADDRESS));
+    json.put("smtp_port", alertsConf.getProperty(AlertsConfiguration.SMTP_PORT));
+    json.put("smtp_security", alertsConf.getProperty(AlertsConfiguration.SMTP_SECURITY));
     json.put("from", alertsConf.getProperty(AlertsConfiguration.SMTP_FROM));
     json.put("user", alertsConf.getProperty(AlertsConfiguration.SMTP_USER));
     json.put("pass", PasswordMapper.getInstance().mapPasswordToKey(alertsConf.getProperty(AlertsConfiguration.SMTP_PASSWORD)));
@@ -128,6 +127,16 @@ public class alertsAdmin extends HttpServlet {
         } else {
           AlertsManager.getInstance().turnOff();
         }
+      } else if (request.getParameter("test_mail") != null) {
+        final String testMail = request.getParameter("test_mail");
+        final Mail mail = new Mail();
+        try {
+          mail.sendMessage("[Datafari] - Alerts mail test", "If you receive this mail, it means that the SMTP configuration of the alerts admin works !", testMail, "");
+          json.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+        } catch (final Exception e) {
+          json.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+          json.put(OutputConstants.STATUS, e.getMessage());
+        }
       } else {
 
         final DateFormat df = new SimpleDateFormat("dd/MM/yyyy/ HH:mm"); // Create
@@ -143,11 +152,9 @@ public class alertsAdmin extends HttpServlet {
         alertsConf.setProperty(AlertsConfiguration.HOURLY_DELAY, new DateTime(df.parse(request.getParameter(AlertsConfiguration.HOURLY_DELAY))).toString(formatter));
         alertsConf.setProperty(AlertsConfiguration.DAILY_DELAY, new DateTime(df.parse(request.getParameter(AlertsConfiguration.DAILY_DELAY))).toString(formatter));
         alertsConf.setProperty(AlertsConfiguration.WEEKLY_DELAY, new DateTime(df.parse(request.getParameter(AlertsConfiguration.WEEKLY_DELAY))).toString(formatter));
-        alertsConf.setProperty(AlertsConfiguration.DATABASE_HOST, request.getParameter(AlertsConfiguration.DATABASE_HOST));
-        alertsConf.setProperty(AlertsConfiguration.DATABASE_PORT, request.getParameter(AlertsConfiguration.DATABASE_PORT));
-        alertsConf.setProperty(AlertsConfiguration.DATABASE_NAME, request.getParameter(AlertsConfiguration.DATABASE_NAME));
-        alertsConf.setProperty(AlertsConfiguration.DATABASE_COLLECTION, request.getParameter(AlertsConfiguration.DATABASE_COLLECTION));
         alertsConf.setProperty(AlertsConfiguration.SMTP_ADDRESS, request.getParameter(AlertsConfiguration.SMTP_ADDRESS));
+        alertsConf.setProperty(AlertsConfiguration.SMTP_PORT, request.getParameter(AlertsConfiguration.SMTP_PORT));
+        alertsConf.setProperty(AlertsConfiguration.SMTP_SECURITY, request.getParameter(AlertsConfiguration.SMTP_SECURITY));
         alertsConf.setProperty(AlertsConfiguration.SMTP_FROM, request.getParameter(AlertsConfiguration.SMTP_FROM));
         alertsConf.setProperty(AlertsConfiguration.SMTP_USER, request.getParameter(AlertsConfiguration.SMTP_USER));
         alertsConf.setProperty(AlertsConfiguration.SMTP_PASSWORD, PasswordMapper.getInstance().mapKeyToPassword(request.getParameter(AlertsConfiguration.SMTP_PASSWORD)));
@@ -172,7 +179,8 @@ public class alertsAdmin extends HttpServlet {
       alertsConf.saveProperties();
     } catch (final Exception e) {
       LOGGER.error("Error while accessing the alerts.properties file in the doPost of the alerts administration Servlet . Error 69020 ", e);
-      json.put("message", "Error while accessing the alerts.properties file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69020");
+      json.put("message",
+          "Error while accessing the alerts.properties file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69020");
       json.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
     }
 

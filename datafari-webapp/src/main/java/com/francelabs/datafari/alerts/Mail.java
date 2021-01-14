@@ -18,11 +18,11 @@ package com.francelabs.datafari.alerts;
 import java.io.IOException;
 import java.util.Properties;
 
+import javax.mail.Authenticator;
 import javax.mail.Message;
-import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -36,14 +36,15 @@ import com.sun.mail.util.MailSSLSocketFactory;
  * Javadoc
  *
  *
- * This class sends mails, it reads it's configuration in a text file. If it cannot find the file ,
- * it has a hardcoded default configuration. The configuration is made in the constructor.
+ * This class sends mails, it reads it's configuration in a text file. If it cannot find the file , it has a hardcoded default configuration. The configuration is made in the constructor.
  *
  * @author Alexis Karassev
  */
 public class Mail {
 
   private String smtpHost = "smtp.gmail.com"; // Default address/smtp used
+  private String smtpPort = "25";
+  private String smtpSecurity = "tls";
   private String from = "datafari.test@gmail.com";
   private String username = "datafari.test@gmail.com";
   private String password = "Datafari1";
@@ -52,6 +53,8 @@ public class Mail {
 
   public Mail() throws IOException {
     smtpHost = AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_ADDRESS);
+    smtpPort = AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_PORT);
+    smtpSecurity = AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_SECURITY);
     from = AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_FROM);
     username = AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_USER);
     password = AlertsConfiguration.getInstance().getProperty(AlertsConfiguration.SMTP_PASSWORD);
@@ -67,57 +70,64 @@ public class Mail {
    * @param text     : the text of the mail
    * @param dest     : the destination address
    * @param copyDest : (optionnal set to "" if not wanted) an other destination
-   * @throws IOException,
-   * @throws AddressException
-   * @throws MessagingException
+   * @throws Exception
    *
    */
-  public void sendMessage(final String subject, final String text, final String dest, final String copyDest) {
+  public void sendMessage(final String subject, final String text, final String dest, final String copyDest) throws Exception {
+
     try {
       final Properties props = new Properties();
       props.put("mail.smtp.host", smtpHost);
-      props.put("mail.smtp.auth", "true");
-      final MailSSLSocketFactory sf = new MailSSLSocketFactory();
-      sf.setTrustAllHosts(true);
-      props.put("mail.smtps.ssl.trust", "*");
-      props.put("mail.smtps.ssl.socketFactory", sf);
+      props.put("mail.smtp.port", smtpPort);
+      props.put("mail.smtp.ssl.trust", smtpHost);
+      props.put("mail.smtp.timeout", 30000);
 
-      final Session session = Session.getDefaultInstance(props); // Set
-      // the
-      // smtp
+      if (smtpSecurity.toLowerCase().contentEquals("tls")) {
+        props.put("mail.smtp.starttls.enable", "true");
+      } else if (smtpSecurity.toLowerCase().contentEquals("ssl")) {
+        final MailSSLSocketFactory sf = new MailSSLSocketFactory();
+        sf.setTrustedHosts(new String[] { smtpHost });
+        props.put("mail.smtp.ssl.enable", "true");
+        props.put("mail.smtp.ssl.checkserveridentity", "false");
+        props.put("mail.smtp.ssl.socketFactory", sf);
+      }
+
+      Session session;
+      if (!username.isEmpty()) {
+        props.put("mail.smtp.auth", "true");
+        session = Session.getInstance(props, new Authenticator() {
+          @Override
+          protected PasswordAuthentication getPasswordAuthentication() {
+            return new PasswordAuthentication(username, password);
+          }
+        });
+      } else {
+        props.put("mail.smtp.auth", "false");
+        session = Session.getInstance(props);
+      }
+
       session.setDebug(true);
 
       final MimeMessage message = new MimeMessage(session);
-      try {
-        message.setFrom(new InternetAddress(from)); // Set the
-        // destination and
-        // copy
-        // Destination if there are some
-        if (copyDest != "") {
-          message.addRecipients(Message.RecipientType.TO, new InternetAddress[] { new InternetAddress(dest), new InternetAddress(copyDest) });
-        } else {
-          message.addRecipient(Message.RecipientType.TO, new InternetAddress(dest));
-        }
-        message.setSubject(subject);
-        message.setText(text); // Set the content of the mail
 
-        final Transport tr = session.getTransport("smtps");
-        tr.connect(smtpHost, username, password); // Connect to the
-        // address
-        message.saveChanges();
-
-        tr.sendMessage(message, message.getAllRecipients()); // Send the
-        // message
-        tr.close();
-      } catch (final MessagingException e) {
-        LOGGER.error("Error while sending the mail. Error 69046", e);
-        return;
+      message.setFrom(new InternetAddress(from)); // Set the
+      // destination and
+      // copy
+      // Destination if there are some
+      if (copyDest != "") {
+        message.addRecipients(Message.RecipientType.TO, new InternetAddress[] { new InternetAddress(dest), new InternetAddress(copyDest) });
+      } else {
+        message.addRecipient(Message.RecipientType.TO, new InternetAddress(dest));
       }
+      message.setSubject(subject);
+      message.setText(text); // Set the content of the mail
 
+      Transport.send(message);
     } catch (final Exception e) {
-      LOGGER.error("Unindentified error while in Mail sendMessage(). Error 69523", e);
-      return;
+      LOGGER.error("Unable to send mail", e);
+      throw e;
     }
+
   }
 
 }
