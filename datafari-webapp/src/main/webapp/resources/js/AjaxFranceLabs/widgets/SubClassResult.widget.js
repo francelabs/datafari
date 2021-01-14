@@ -144,12 +144,14 @@ AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
               title = doc.title;
             }
           }
-          elm.find('.doc:last .title').append('<span title="' + title + '">' + title.truncate(50, 15) + '</span>');
+          // title.truncate(50, 15)
+          elm.find('.doc:last .title').append('<span title="' + title + '">' + title + '</span>');
           elm.find('.doc:last .res').append('<div class="doc-details"><div class="description"></div></div>');
           elm.find('.doc:last .description').append('<div class="snippet">' + description + '</div>');
           var address = decodeURIComponent(url);
           elm.find('.doc:last .description').append('<div id="urlMobile"><p class="address" title="' + address + '">');
-          elm.find('.doc:last .address').append('<span>' + AjaxFranceLabs.tinyUrl(address) + '</span>');
+          // AjaxFranceLabs.tinyUrl(address)
+          elm.find('.doc:last .address').append('<span>' + address + '</span>');
           /*
            * To enable entity extraction part 2 elm.find('.doc:last .address').append('<br/><span>Phone : ' + phone+ '</span>');
            */

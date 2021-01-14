@@ -404,7 +404,7 @@ a {
     max-width: 100% !important; }
 
   #solr .col.right {
-    width: 64%;
+    width: 75%;
     max-width: 100% !important; }
 
   .subres {
@@ -442,7 +442,7 @@ a {
     margin-left: 0px; }
 
   #solr {
-    width: 69%;
+    width: 80%;
   }
 
   .title, .title .externallinktitle, .title .externalappilinktitle {
@@ -872,7 +872,7 @@ a {
 
 
   .resultWidget .doc .res {
-    width: 70%;
+    width: 100%;
   }
 
   .searchBarWidget img {
