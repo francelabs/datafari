@@ -68,7 +68,7 @@ AjaxFranceLabs.DocInfosWidget = AjaxFranceLabs.WidgetCore.extend({
     if (doc.last_author != undefined && doc.last_author != null) {
       lastModified = window.i18n.msgStore['preview-modified-by'] + " " + doc.last_author + " " + window.i18n.msgStore['preview-on'] + " ";
     }
-    lastModified += doc.last_modified;
+    lastModified += doc.last_modified[0];
     $("#doclastModified").html(lastModified);
   }
 });

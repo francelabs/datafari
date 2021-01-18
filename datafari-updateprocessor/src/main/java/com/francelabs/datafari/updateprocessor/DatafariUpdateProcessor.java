@@ -29,6 +29,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.SolrInputField;
 import org.apache.solr.common.params.SolrParams;
@@ -39,6 +41,8 @@ import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
 
 public class DatafariUpdateProcessor extends UpdateRequestProcessor {
+
+  private static final Logger LOGGER = LogManager.getLogger(DatafariUpdateProcessor.class.getName());
 
   private final String SIMPLE_ENTITY_EXTRACTION_PARAM = "entities.extract.simple";
   private final String SIMPLE_NAME_EXTRACTION = "entities.extract.simple.name";
@@ -87,15 +91,6 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     // value in the last_modified field
     if (doc.getFieldValue("ignored_filelastmodified") != null) {
       final Object last_modified = doc.getFieldValue("ignored_filelastmodified");
-      doc.remove("last_modified");
-      doc.addField("last_modified", last_modified);
-    }
-
-    // Sometimes Tika put several last_modified dates, so we keep the first
-    // one which is always the right one
-    if (doc.getFieldValues("last_modified") != null && doc.getFieldValues("last_modified").size() > 1) {
-      final Object last_modified = doc.getFieldValue("last_modified");
-      doc.remove("last_modified");
       doc.addField("last_modified", last_modified);
     }
 

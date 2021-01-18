@@ -130,7 +130,7 @@
    <field name="url" type="string" indexed="false" stored="true"/>
    <field name="url_search" type="text_en" indexed="true" stored="false"/>
    <field name="urlHierarchy" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="last_modified" type="tdate" indexed="true" stored="true" default="NOW"/>
+   <field name="last_modified" type="tdate" indexed="true" stored="true" default="NOW" multiValued="true"/>
    <field name="content" type="text_general" indexed="false" stored="false" multiValued="true"/>
    <field name="content_en" type="text_en" indexed="true" stored="true" multiValued="true"/>
    <field name="content_de" type="text_de" indexed="true" stored="true" multiValued="true"/>
@@ -138,7 +138,7 @@
    <field name="content_fr" type="text_fr" indexed="true" stored="true" multiValued="true"/>
    <field name="exactContent" type="text_nostem" indexed="true" stored="true" multiValued="true"/>
    <field name="exactTitle" type="text_nostem" indexed="true" stored="false" multiValued="true"/>
-   <field name="crawl_date" type="tdate" indexed="true" stored="true" default="NOW"/>
+   <field name="crawl_date" type="tdate" indexed="true" stored="true" default="NOW" multiValued="false"/>
    <field name="original_file_size" type="long" indexed="true" stored="true"/>
    <field name="htmlContent" type="text_nostem" indexed="true" stored="true" multiValued="true"/>
 
@@ -161,7 +161,7 @@
    <field name="access_permission_assemble_document" type="boolean" indexed="true" stored="true" multiValued="false"/>
    <field name="access_permission_can_print" type="boolean" indexed="true" stored="true" multiValued="false"/>
    <field name="pdf_encrypted" type="boolean" indexed="true" stored="true" multiValued="false"/>
-   <field name="xmpmm_history_when" type="tdate" indexed="true" stored="true"/>
+   <field name="xmpmm_history_when" type="tdate" indexed="true" stored="true" multiValued="true"/>
    <field name="producer_search" type="text_general" indexed="true" stored="true" multiValued="true"/>
    <field name="creator_search" type="text_general" indexed="true" stored="true" multiValued="true"/>
    <field name="author" type="lowerCasedString" indexed="true" stored="true" multiValued="true"/>
