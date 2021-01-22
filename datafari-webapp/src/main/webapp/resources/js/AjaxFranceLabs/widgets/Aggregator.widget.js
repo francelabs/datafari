@@ -27,6 +27,8 @@ AjaxFranceLabs.AggregatorWidget = AjaxFranceLabs.AbstractWidget.extend({
 
   remoteList: [],
 
+  initState: true,
+
   // Methods
 
   buildWidget: function () {
@@ -49,9 +51,15 @@ AjaxFranceLabs.AggregatorWidget = AjaxFranceLabs.AbstractWidget.extend({
       .append("<ul></ul>")
       .append("<button>" + window.i18n.msgStore["validate"] + "</button>");
 
-      elm.find(".facet-actions").append("<span class='facet-tooltip-text'>" + 
-        window.i18n.msgStore["facet_external_datafaris_unchecks_all_options"] + 
-        "</span>")
+      elm
+      .find(".facet-actions")
+      .append(
+        "<span class='facet-tooltip-text'>" +
+          window.i18n.msgStore[
+            "facet_external_datafaris_unchecks_all_options"
+          ] +
+          "</span>"
+      );
 
     elm.find("#aggregator-remove-all").click(self.removeAllHandler.bind(self));
     elm.find("button").click(self.validateClick.bind(self));
@@ -375,18 +383,20 @@ AjaxFranceLabs.AggregatorWidget = AjaxFranceLabs.AbstractWidget.extend({
   },
 
   beforeRequest: function () {
-    this.manager.store.remove("aggregator");
-    if (this.remoteList && this.remoteList.length > 0) {
-      var selectedStr = this.remoteList.reduce(function (acc, currentValue) {
-        if (currentValue.selected) {
-          if (acc) {
-            acc += ",";
+    if (!this.initState) {
+      this.manager.store.remove("aggregator");
+      if (this.remoteList && this.remoteList.length > 0) {
+        var selectedStr = this.remoteList.reduce(function (acc, currentValue) {
+          if (currentValue.selected) {
+            if (acc) {
+              acc += ",";
+            }
+            acc += currentValue.label;
           }
-          acc += currentValue.label;
-        }
-        return acc;
-      }, "");
-      this.manager.store.addByValue("aggregator", selectedStr);
+          return acc;
+        }, "");
+        this.manager.store.addByValue("aggregator", selectedStr);
+      }
     }
   },
 
@@ -413,6 +423,7 @@ AjaxFranceLabs.AggregatorWidget = AjaxFranceLabs.AbstractWidget.extend({
   },
 
   validateClick: function () {
+    this.initState = false;
     this.manager.makeRequest();
   },
 

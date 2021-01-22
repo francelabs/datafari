@@ -91,6 +91,10 @@ AjaxFranceLabs.TagCloudWidget = AjaxFranceLabs.AbstractWidget.extend({
             for(var i=0;i<fqs.length;i++) {
                 queryPrefix += "fq=" + fqs[i] + "&";
             }
+            let aggregator = self.manager.store.values("aggregator");
+            for(var i=0;i<aggregator.length;i++) {
+                queryPrefix += "aggregator=" + aggregator[i] + "&";
+            }
             for (var i = 0; i < max; i++) {
                 var decodedName = decodeURIComponent(data[i].name);
                 if (decodedName !== '' && $.inArray(decodedName, self.discardedValues) == -1) {
