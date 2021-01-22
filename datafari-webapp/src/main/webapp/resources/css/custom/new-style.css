@@ -1342,3 +1342,12 @@ input[type="checkbox"] + label span.checkboxIcon {
 	margin: 0;
 	color: dimgray;
 }
+
+#facet_tag_cloud a {
+  font-weight: normal;
+  color:#444;
+}
+
+#facet_tag_cloud a:hover {
+  text-decoration: underline;
+}
