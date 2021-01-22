@@ -11,7 +11,7 @@
   <jsp:include
     page="/resources/templates/feature-not-available.jsp" >
     <jsp:param name="featureDesc" value="The advanced entity extraction" />
-    <jsp:param name="featureImg" value="/resources/images/missing-features/advanced_entities_extract_feature.png" />
+    <jsp:param name="featureImg" value="/resources/images/missing-features/advanced_entities_extract.png" />
   </jsp:include>
 </body>
 </html>
