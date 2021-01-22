@@ -10,7 +10,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
  ******************************************************************************************************************************************/
-AjaxFranceLabs.TabWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
+ var datafariTabWidgetContainers = {};
+
+ AjaxFranceLabs.TabWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 
   // Variables
 
@@ -20,6 +22,8 @@ AjaxFranceLabs.TabWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
   rawTabs : [],
   selectionType : "ONE",
   returnUnselectedFacetValues : true,
+  tabWidgetContainer: undefined,
+  indexInContainer: undefined,
 
   // Methods
 
@@ -27,6 +31,18 @@ AjaxFranceLabs.TabWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
   buildWidget : function() {
     $(this.elm).addClass('tabWidget').addClass('widget').append('<ul class="tab-widget-ul nav"></ul>');
     $(this.elm).hide();
+    if (!$(this.container).hasClass("nav-tabs")) {
+      $(this.container).addClass("nav-tabs");
+    }
+    if (this.container) {
+      if (datafariTabWidgetContainers[this.container]) {
+        this.tabWidgetContainer = datafariTabWidgetContainers[this.container];
+      } else {
+        this.tabWidgetContainer = new AjaxFranceLabs.tabWidgetContainer({elm: $(this.container)});
+        datafariTabWidgetContainers[this.container] = this.tabWidgetContainer;
+      }
+      this.indexInContainer = this.tabWidgetContainer.addTabs(false);
+    }
     // this.manager.store.addByValue('f.' + this.field + '.facet.mincount', '0'); // Set the facet min count to 0 in order to display the
     // tabs
     // even if there is no results associated to their facet
@@ -54,6 +70,7 @@ AjaxFranceLabs.TabWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
     var elm = $(this.elm);
     if (data.length !== 0 || self.rawTabs.length !== 0) { // Some values exist
       $(self.elm).show();
+      self.tabWidgetContainer.update(self.indexInContainer, true);
       elm.find('ul').empty(); // empty the widget content
       var ul = elm.children('ul'); // select the list element
 
@@ -114,8 +131,34 @@ AjaxFranceLabs.TabWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
       }
     } else {
       $(self.elm).hide();
+      self.tabWidgetContainer.update(self.indexInContainer, false);
     }
 
   }
 
+});
+
+AjaxFranceLabs.tabWidgetContainer = AjaxFranceLabs.Class.extend({
+  containedTabs: [],
+  elm: undefined,
+
+  update: function(index, isDisplayed) {
+    if (index < this.containedTabs.length && index > 0) {
+      this.containedTabs[index] = isDisplayed;
+      var display = false;
+      $.each(this.containedTabs, function(value) {
+        display = (display || value);
+      });
+      if (display){
+        this.elm.show();
+      } else {
+        this.elm.hide();
+      }
+    }
+  },
+
+  addTabs: function(isDisplayed) {
+    this.containedTabs.push(isDisplayed);
+    return this.containedTabs.length-1;
+  }
 });

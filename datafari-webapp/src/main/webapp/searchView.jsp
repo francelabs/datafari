@@ -154,7 +154,7 @@
 		    <li class="search-source nav-item force-hide"><a id="dropbox-search-link" class="nav-link"><img alt="" src="<c:url value="/resources/images/Dropbox_logo_2017.svg" />"></a></li>
 		  </ul>
 		</div>
-    <div class="nav-tabs tabs-container">
+    <div id="tabs-container" class="tabs-container">
       <div id="facet_tabs" class="search-view-ui results-elm tabs-group"></div>
       <div id="facet_tabs2" class="search-view-ui results-elm tabs-group"></div>
     </div>
