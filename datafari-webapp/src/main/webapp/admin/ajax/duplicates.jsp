@@ -11,7 +11,7 @@
   <jsp:include
     page="/resources/templates/feature-not-available.jsp" >
     <jsp:param name="featureDesc" value="The duplicates feature" />
-    <jsp:param name="featureImg" value="/resources/images/missing-features/duplicates_feature.png.png" />
+    <jsp:param name="featureImg" value="/resources/images/missing-features/duplicates_feature.png" />
   </jsp:include>
 </body>
 </html>
