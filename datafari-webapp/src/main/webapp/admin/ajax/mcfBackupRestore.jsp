@@ -55,7 +55,7 @@
 			</div>
 			<div class="row">
 				<div class="col-sm-3">
-					<label id="" for="">Restore the connectors</label>
+					<label id="" for="">Restore the connectors AND delete index</label>
 				</div>
 				<button type="button" class="backupRestore-btn btn btn-primary btn-label-right"
 					id="doRestore-btn" onclick="javascript : doRestore()">

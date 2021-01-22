@@ -143,7 +143,7 @@
     "adminUI-LogsAnalysis": "Logs Analysis",
     "adminUI-MCFBackupRestore-backupDir-label": "MCF Backup directory (full path):",
     "adminUI-MCFBackupRestore-backupDir-label-default": "Warning the folder must exist and be empty ! If no folder specified, the folder /opt/datafari/bin/backup/mcf will be used by default",
-    "adminUI-MCFBackupRestore-doRestore-btn": "Restore MCF connections",
+    "adminUI-MCFBackupRestore-doRestore-btn": "Restore MCF connections AND delete index",
     "adminUI-MCFBackupRestore-doSave-btn": "Save MCF connections",
     "adminUI-MCFBackupRestore-restoreError": "Problem while restoring MCF connections",
     "adminUI-MCFBackupRestore-restoreOK": "MCF connections correctly restored",
