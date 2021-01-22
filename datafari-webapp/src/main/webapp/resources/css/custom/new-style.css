@@ -1351,3 +1351,7 @@ input[type="checkbox"] + label span.checkboxIcon {
 #facet_tag_cloud a:hover {
   text-decoration: underline;
 }
+
+.tabs-group {
+  margin-right: 15px;
+}

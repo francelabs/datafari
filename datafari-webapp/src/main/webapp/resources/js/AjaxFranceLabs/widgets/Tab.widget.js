@@ -24,6 +24,7 @@
   returnUnselectedFacetValues : true,
   tabWidgetContainer: undefined,
   indexInContainer: undefined,
+  showEmpty: false,
 
   // Methods
 
@@ -101,9 +102,19 @@
         // number
         // For good practice, the value and the number have their own <span> tag, which allows easy tweak and CSS conf
 
+        // reinit the active value, we will get it from the facet is there is one.
+        self.actifValue = "";
         total += data[i].nb; // Calculate the total number regrouping all the values which will be used for the 'All' tab
 
         var decodedName = decodeURIComponent(data[i].name);
+        var decodedEscapedValue = AjaxFranceLabs.Parameter.escapeValue(decodedName);
+        if (self.selectionType != 'OR' && this.manager.store.find('fq', self.field + ':' + decodedEscapedValue)) {
+          self.actifValue = decodedName;
+          // escapeRegExp escapes special characters for integration into a regexp so that
+          // it is matched literally and symbols ( +[]* ...) do not get interpreted.
+        } else if (this.manager.store.find('fq', new RegExp(self.field + ':' + AjaxFranceLabs.Parameter.escapeRegExp(decodedEscapedValue) + '[ )]'))) {
+          self.actifValue = decodedName;
+        }
         var active = "";
         if (decodedName === self.actifValue) {
           active = " active"
@@ -118,7 +129,7 @@
 
       // Create the 'All' tab and his associated click function that will remove the last selected facet query to retrieve all documents on
       // the search view
-      if (total > 0) {
+      if (total > 0 || self.showEmpty) {
         var allActive = "";
         if (self.actifValue === "") {
           allActive = "active";

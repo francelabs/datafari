@@ -23,6 +23,7 @@ $(function($) {
   //   elm : $("#facet_tabs2"),
   //   container: "#tabs-container",
   //   field: "repo_source",
+  //   showEmpty: true
   // }));
 
   // Manager.addExternalSource(new AjaxFranceLabs.DropBoxExternalSource({
