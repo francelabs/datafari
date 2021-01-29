@@ -159,6 +159,7 @@ generate_certificates_elk() {
 	openssl x509 -req -days 365 -in $DATAFARI_HOME/ssl-keystore/elk/datafari.csr -signkey $DATAFARI_HOME/ssl-keystore/elk/datafari-key.pem -out $DATAFARI_HOME/ssl-keystore/elk/datafari-cert.pem
 	mv $DATAFARI_HOME/ssl-keystore/elk/datafari-key.pem $DATAFARI_HOME/elk/elasticsearch/config/
 	mv $DATAFARI_HOME/ssl-keystore/elk/datafari-cert.pem $DATAFARI_HOME/elk/elasticsearch/config/
+	sed -i -e "s/@NODEHOST@/${1}/g" $DATAFARI_HOME/elk/elasticsearch/plugins/opendistro_security/tools/install_datafari_configuration.sh >>$installerLog 2>&1
 
 }
 

@@ -253,6 +253,8 @@ else
     echo 'node.max_local_storage_nodes: 3' | $SUDO_CMD tee -a "$ES_CONF_FILE" > /dev/null
 fi
 
+echo 'opendistro_security.authcz.admin_dn:' | $SUDO_CMD tee -a "$ES_CONF_FILE" > /dev/null
+echo ' - "CN=@NODEHOST@,O=FranceLabs,L=Cagnes,ST=PACA,C=FR"' | $SUDO_CMD tee -a "$ES_CONF_FILE" > /dev/null
 
 
 echo "######## End OpenDistro for Elasticsearch Security Datafari Configuration ########" | $SUDO_CMD tee -a "$ES_CONF_FILE" > /dev/null 
