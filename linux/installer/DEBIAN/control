@@ -1,5 +1,5 @@
 Package: datafari
-Version: 5.0-dev
+Version: 5.0
 Section: base
 Priority: optional
 Architecture: all
