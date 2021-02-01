@@ -70,7 +70,7 @@ AjaxFranceLabs.SpellcheckerWidget = AjaxFranceLabs.AbstractWidget.extend({
        */
       self.doSpellcheckerQuery(data.spellcheck.collations[1]);
 
-    } else if (data.spellcheck !== undefined && data.spellcheck.collations.length > 0 && data.spellcheck.suggestions !== undefined && data.spellcheck.suggestions.length > 1
+    } else if (data.spellcheck !== null && data.spellcheck !== undefined && data.spellcheck.collations.length > 0 && data.spellcheck.suggestions !== undefined && data.spellcheck.suggestions.length > 1
         && data.spellcheck.suggestions[1].suggestion !== undefined && data.spellcheck.suggestions[1].suggestion !== null && data.spellcheck.suggestions[1].suggestion[0].freq > data.response.numFound
         && self.manager.store.isParamDefined('original_query') !== true) {
       // Create suggestButton

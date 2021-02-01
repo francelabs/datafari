@@ -39,15 +39,11 @@ public class AlertsConfiguration extends AbstractConfigClass {
 
   // Properties mails
   public final static String SMTP_ADDRESS = "smtp";
+  public final static String SMTP_PORT = "smtp_port";
+  public final static String SMTP_SECURITY = "smtp_security";
   public final static String SMTP_FROM = "from";
   public final static String SMTP_USER = "user";
   public final static String SMTP_PASSWORD = "pass";
-
-  // Properties Database
-  public final static String DATABASE_HOST = "HOST";
-  public final static String DATABASE_PORT = "PORT";
-  public final static String DATABASE_NAME = "DATABASE";
-  public final static String DATABASE_COLLECTION = "COLLECTION";
 
   private static final String configFilename = "alerts.properties";
 
@@ -58,10 +54,8 @@ public class AlertsConfiguration extends AbstractConfigClass {
   /**
    * Set a property and save it the alerts.properties
    *
-   * @param key
-   *          : the key that should be change
-   * @param value
-   *          : the new value of the key
+   * @param key   : the key that should be change
+   * @param value : the new value of the key
    * @return : true if there's an error and false if not
    */
   @Override

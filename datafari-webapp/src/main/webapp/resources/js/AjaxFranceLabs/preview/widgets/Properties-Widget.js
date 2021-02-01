@@ -94,8 +94,8 @@ AjaxFranceLabs.PropertiesWidget = AjaxFranceLabs.FacetCore.extend({
           + "</span></div>");
 
       var modified = "(" + window.i18n.msgStore['preview-no-date'] + ")";
-      if (doc.last_modified != undefined && doc.last_modified != null) {
-        modified = doc.last_modified;
+      if (doc.last_modified != undefined && doc.last_modified != null && doc.last_modified.length > 0) {
+        modified = doc.last_modified[0];
       }
       widgetContentDiv.append("<div class='property-line'><span class='property-name'>" + window.i18n.msgStore['lastModification'] + "</span> <span class='property-value'>" + modified
           + "</span></div>");

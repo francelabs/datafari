@@ -13,38 +13,38 @@ installerLog="${DATAFARI_HOME}/logs/installer.log"
 
 
 question_ip_node() {
-    echo "Specify the IP of the current host: "
-    read node_host
+    read -p  "Specify the IP of the current host [127.0.0.1]: " node_host
+    node_host=${node_host:-127.0.0.1}
     set_property "NODEHOST" $node_host $CONFIG_FILE
 }
 
 question_solr_collection() {
-    echo "What is the name of the main Solr Collection ? "
-    read solr_main_collection
+    read -p "What is the name of the main Solr Collection [FileShare]: " solr_main_collection
+    solr_main_collection=${solr_main_collection:-FileShare}
     set_property "SOLRMAINCOLLECTION" $solr_main_collection $CONFIG_FILE
 }
 
 question_solr_shards_number() {
-    echo "enter the number of shards you want for your index:"
-    read solr_shards_number
+    read -p "Enter the number of shards you want for your index [2]: " solr_shards_number
+    solr_shards_number=${solr_shards_number:-2}
     set_property "SOLRNUMSHARDS" $solr_shards_number $CONFIG_FILE
 }
 
 question_datafari_password() {
-    echo "enter the Datafari password:"
-    read datafari_password
+    read -p "Enter the Datafari password [admin]: " datafari_password
+    datafari_password=${datafari_password:-admin}
     set_property "TEMPADMINPASSWORD" $datafari_password $CONFIG_FILE
 }
 
 question_postgresql_password() {
-    echo "enter the Postgresql password:"
-    read postgresql_password
+    read -p "Enter the Postgresql password [admin]: " postgresql_password
+    postgresql_password=${postgresql_password:-admin}
     set_property "TEMPPGSQLPASSWORD" $postgresql_password $CONFIG_FILE
 }
 
 question_start_datafari() {
-	echo "Do you want Datafari to be started ? true/false"
-	read start_datafari
+	read -p "Do you want Datafari to be started ? [true]: " start_datafari
+	start_datafari=${start_datafari:-true}
 }	
     
 ## Installer functions
@@ -159,6 +159,7 @@ generate_certificates_elk() {
 	openssl x509 -req -days 365 -in $DATAFARI_HOME/ssl-keystore/elk/datafari.csr -signkey $DATAFARI_HOME/ssl-keystore/elk/datafari-key.pem -out $DATAFARI_HOME/ssl-keystore/elk/datafari-cert.pem
 	mv $DATAFARI_HOME/ssl-keystore/elk/datafari-key.pem $DATAFARI_HOME/elk/elasticsearch/config/
 	mv $DATAFARI_HOME/ssl-keystore/elk/datafari-cert.pem $DATAFARI_HOME/elk/elasticsearch/config/
+	sed -i -e "s/@NODEHOST@/${1}/g" $DATAFARI_HOME/elk/elasticsearch/plugins/opendistro_security/tools/install_datafari_configuration.sh >>$installerLog 2>&1
 
 }
 
@@ -773,6 +774,7 @@ fi
 		
 check_java;
 check_ram;
+check_python;
 is_file_present $CONFIG_FILE
 is_variable_set $INSTALLER_TYPE
 if [ "$INSTALLER_TYPE" == "interactive" ]; then

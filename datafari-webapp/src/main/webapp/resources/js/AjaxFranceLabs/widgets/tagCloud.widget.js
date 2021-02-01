@@ -91,6 +91,10 @@ AjaxFranceLabs.TagCloudWidget = AjaxFranceLabs.AbstractWidget.extend({
             for(var i=0;i<fqs.length;i++) {
                 queryPrefix += "fq=" + fqs[i] + "&";
             }
+            let aggregator = self.manager.store.values("aggregator");
+            for(var i=0;i<aggregator.length;i++) {
+                queryPrefix += "aggregator=" + aggregator[i] + "&";
+            }
             for (var i = 0; i < max; i++) {
                 var decodedName = decodeURIComponent(data[i].name);
                 if (decodedName !== '' && $.inArray(decodedName, self.discardedValues) == -1) {
@@ -141,6 +145,22 @@ AjaxFranceLabs.TagCloudWidget = AjaxFranceLabs.AbstractWidget.extend({
 	},
 
 	afterRequest : function() {
-        this.update();
+        // Do not update and hide if more than one source is selected in aggregator
+        var elm = $(this.elm);
+        if (this.manager.store.isParamDefined("aggregator")) {
+            selectedStr = this.manager.store.get("aggregator").val();
+            if (selectedStr != null && selectedStr != undefined) {
+              var selectedList = selectedStr.split(",");
+              if (selectedList.length > 1 || selectedStr === "") {
+                elm.hide();
+              } else {
+                  this.update();
+              }
+            } else {
+                this.update();
+            }
+        } else {
+            this.update();
+        }
 	}
 });

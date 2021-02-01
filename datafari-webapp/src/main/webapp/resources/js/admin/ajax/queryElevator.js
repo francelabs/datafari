@@ -4,6 +4,7 @@
 $(document).ready(function() {
   setupLanguage();
 
+
   // Init toggle buttons
   $('#query-elevator_activation').bootstrapToggle();
   $("#query-elevator_activation").change(function(e) {
@@ -345,6 +346,8 @@ function fillQuerySelector() {
       opt.value = queries[i];
       sel.appendChild(opt);
     }
+    
+    $("#query").select2();
   }, "json");
 }
 

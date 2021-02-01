@@ -1,16 +1,29 @@
 $(function($) {
 
+  // Container must be a String and not a jquery object
+  // It must resolve to the container object when calling $(container)
+  // It must be able to be used as a javascript object key
   // Manager.addWidget(new AjaxFranceLabs.TabWidget({
   // id : 'tabwidget',
   // elm : $("#facet_tabs"),
+  // container: "#tabs-container",
   // rawTabs : [ {
   // "label" : "Test",
-  // "href" : "http://datafariee.datafari.com"
+  // "href" : "http://datafariee.datafari.com/Datafari/Search",
+  // "keepURLParams" : true,
   // }, {
   // "label" : "Test2",
   // "href" : "http://www.google.com"
   // } ],
   // actifValue : "Test"
+  // }));
+
+  // Manager.addWidget(new AjaxFranceLabs.TabWidget({
+  //   id : 'tabwidget2',
+  //   elm : $("#facet_tabs2"),
+  //   container: "#tabs-container",
+  //   field: "repo_source",
+  //   showEmpty: true
   // }));
 
   // Manager.addExternalSource(new AjaxFranceLabs.DropBoxExternalSource({

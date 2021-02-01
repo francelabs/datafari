@@ -404,7 +404,7 @@ a {
     max-width: 100% !important; }
 
   #solr .col.right {
-    width: 64%;
+    width: 75%;
     max-width: 100% !important; }
 
   .subres {
@@ -442,7 +442,8 @@ a {
     margin-left: 0px; }
 
   #solr {
-    width: 69%;
+    width: 80%;
+    padding-bottom: 13.5% !important;
   }
 
   .title, .title .externallinktitle, .title .externalappilinktitle {
@@ -604,7 +605,6 @@ a {
           height: 35px;
           width: 150px; }
     body .doc_list_pagination {
-      margin-bottom: 13.5% !important;
       border-top: 1px solid #666;
       padding-top: 10px; }
     body .footer-respon {
@@ -872,7 +872,7 @@ a {
 
 
   .resultWidget .doc .res {
-    width: 70%;
+    width: 100%;
   }
 
   .searchBarWidget img {
@@ -1324,4 +1324,34 @@ input[type="checkbox"] + label span.checkboxIcon {
   #searchBarContent{
     margin-top: 0;
   }
+}
+
+.documentation-style{
+	font-size: 14px;
+  display: flex;
+  background-color: lightgray;
+  border-radius: 5px;
+  text-align: left;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+  padding: 5px;
+}
+
+.documentation-preview{
+	margin: 0;
+	color: dimgray;
+}
+
+#facet_tag_cloud a {
+  font-weight: normal;
+  color:#444;
+}
+
+#facet_tag_cloud a:hover {
+  text-decoration: underline;
+}
+
+.tabs-group {
+  margin-right: 15px;
 }

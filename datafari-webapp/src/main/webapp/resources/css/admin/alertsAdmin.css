@@ -1,3 +1,11 @@
 fieldset .row {
 	margin-bottom: 1rem;
 }
+
+#SMTPSecurity {
+ text-align: center;
+}
+
+#SMTPTestSection {
+ margin-top: 3em;
+}

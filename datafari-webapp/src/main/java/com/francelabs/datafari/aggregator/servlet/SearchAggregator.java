@@ -106,6 +106,12 @@ public class SearchAggregator extends HttpServlet {
         final ArrayList<String> selectedSourcesList = getSelectedSources(request.getParameter("aggregator"), userHomeDatafari);
         final ArrayList<String> filterSourceList = mergeSelectedAndAloowedList(selectedSourcesList, aggregatorUserConfig.getAllowedSourcesFor(requestingUser));
 
+        final JSONArray jaExternalDatafaris = (JSONArray) parser.parse(jaExternalDatafarisStr);
+        // Filter out external sources that are not selected or disabled.
+        // If nothing is selected, we keep all sources
+        jaExternalDatafaris
+            .removeIf(jsonObject -> (filterSourceList.size() != 0 && !filterSourceList.contains(((JSONObject) jsonObject).get("label"))) || !((Boolean) ((JSONObject) jsonObject).get("enabled")));
+
         // Extract original start and rows parameters
         int orgStart = 0;
         int orgRows = 10;
@@ -115,14 +121,21 @@ public class SearchAggregator extends HttpServlet {
         if (request.getParameter("rows") != null) {
           orgRows = Integer.parseInt(request.getParameter("rows"));
         }
-        // Start for aggregation requests must always be 0 as we mix results and must
-        // ask all results from 0 to x (x = page requested * rows per
-        // page) on each datafari and sort the results
-        // This way we can guarantee the same ordering for each asked page of a same
-        // request and that no document is missed
-        final int start = 0;
-        // Rows for aggregation requests must be original start + original rows
-        final int rows = orgStart + orgRows;
+
+        int start = orgStart;
+        int rows = orgRows;
+
+        // If there are several Datafari to request then change the 'start' and 'rows' parameters otherwise keep the original ones
+        if (jaExternalDatafaris.size() > 1) {
+          // Start for aggregation requests must always be 0 as we mix results and must
+          // ask all results from 0 to x (x = page requested * rows per
+          // page) on each datafari and sort the results
+          // This way we can guarantee the same ordering for each asked page of a same
+          // request and that no document is missed
+          start = 0;
+          // Rows for aggregation requests must be original start + original rows
+          rows = orgStart + orgRows;
+        }
         // Add local response
         final String handler = getHandler(request);
         final String protocol = request.getScheme() + ":";
@@ -157,12 +170,6 @@ public class SearchAggregator extends HttpServlet {
         final Map<String, String[]> localMap = new HashedMap<>(parameterMap);
         localMap.remove("rows");
         localMap.put("rows", new String[] { "0" });
-
-        final JSONArray jaExternalDatafaris = (JSONArray) parser.parse(jaExternalDatafarisStr);
-        // Filter out external sources that are not selected.
-        // If nothing is selected, we keep all sources
-        jaExternalDatafaris
-            .removeIf(jsonObject -> (filterSourceList.size() != 0 && !filterSourceList.contains(((JSONObject) jsonObject).get("label"))) || !((Boolean) ((JSONObject) jsonObject).get("enabled")));
 
         if (jaExternalDatafaris.size() == 0) {
           LOGGER.warn("No external Datafari activated and available to process an aggregator query.");
@@ -434,7 +441,7 @@ public class SearchAggregator extends HttpServlet {
         }
 
         // Merge facets
-        mergeFacets(result, mergedFacetQueries, mergedFacetFieldsMap);
+        mergeFacets(result, mergedFacetQueries, mergedFacetFieldsMap, numExternalDatafaris);
 
         // Construct mergedFacetFields from the map
         mergedFacetFieldsMap.forEach((field, mapValues) -> {
@@ -478,25 +485,27 @@ public class SearchAggregator extends HttpServlet {
       }
 
       // Construct final docs and highlighting
-      final JSONArray fDocs = (JSONArray) finalResponseResp.get("docs");
-      final JSONObject highlighting = (JSONObject) finalResponse.get("highlighting");
-      fDocs.clear();
-      highlighting.clear();
-      int maxIterations = originalStart + originalRows;
-      if (maxIterations > orderedDocs.size()) {
-        maxIterations = orderedDocs.size();
-      }
+      if (numExternalDatafaris > 1) { // We only need to rework the docs if there are several source responses, otherwise we keep the response as it is
+        final JSONArray fDocs = (JSONArray) finalResponseResp.get("docs");
+        final JSONObject highlighting = (JSONObject) finalResponse.get("highlighting");
+        fDocs.clear();
+        highlighting.clear();
+        int maxIterations = originalStart + originalRows;
+        if (maxIterations > orderedDocs.size()) {
+          maxIterations = orderedDocs.size();
+        }
 
-      // The response must contains the ordered docs between position originalStart
-      // and originalStart + Rows
-      for (int i = originalStart; i < maxIterations; i++) {
-        final JSONObject doc = orderedDocs.get(i);
-        fDocs.add(doc);
-        // Add the corresponding higlighting
-        final String docId = doc.get("id").toString();
-        if (mergedHighlightings.containsKey(docId)) {
-          final JSONObject hlObj = (JSONObject) mergedHighlightings.get(docId);
-          highlighting.put(docId, hlObj);
+        // The response must contains the ordered docs between position originalStart
+        // and originalStart + Rows
+        for (int i = originalStart; i < maxIterations; i++) {
+          final JSONObject doc = orderedDocs.get(i);
+          fDocs.add(doc);
+          // Add the corresponding higlighting
+          final String docId = doc.get("id").toString();
+          if (mergedHighlightings.containsKey(docId)) {
+            final JSONObject hlObj = (JSONObject) mergedHighlightings.get(docId);
+            highlighting.put(docId, hlObj);
+          }
         }
       }
 
@@ -627,15 +636,16 @@ public class SearchAggregator extends HttpServlet {
 
   }
 
-  private static void mergeFacets(final JSONObject result, final JSONObject mergedFacetQueries, final Map<String, Map<String, Integer>> mergedFacetFieldsMap) {
+  private static void mergeFacets(final JSONObject result, final JSONObject mergedFacetQueries, final Map<String, Map<String, Integer>> mergedFacetFieldsMap, final int numExternalDatafaris) {
     if (result.get("facet_counts") != null) {
       final JSONObject facetCounts = (JSONObject) result.get("facet_counts");
 
       // Facet Queries
       if (facetCounts.get("facet_queries") != null) {
         final JSONObject facetQueries = (JSONObject) facetCounts.get("facet_queries");
+
         facetQueries.forEach((key, value) -> {
-          if (mergedFacetQueries.containsKey(key)) {
+          if (numExternalDatafaris > 1 && mergedFacetQueries.containsKey(key)) {
             int existingValue = ((Long) mergedFacetQueries.get(key)).intValue();
             existingValue += (Long) value;
             mergedFacetQueries.put(key, existingValue);
@@ -643,15 +653,17 @@ public class SearchAggregator extends HttpServlet {
             mergedFacetQueries.put(key, value);
           }
         });
+
       }
 
       // Facet Fields
       if (facetCounts.get("facet_fields") != null) {
         final JSONObject facetFields = (JSONObject) facetCounts.get("facet_fields");
+
         facetFields.forEach((field, facets) -> {
           final JSONArray facetValues = (JSONArray) facets;
           Map<String, Integer> existingFacetValues = new HashMap<String, Integer>();
-          if (mergedFacetFieldsMap.containsKey(field)) {
+          if (numExternalDatafaris > 1 && mergedFacetFieldsMap.containsKey(field)) {
             existingFacetValues = mergedFacetFieldsMap.get(field);
           } else {
             mergedFacetFieldsMap.put(field.toString(), existingFacetValues);
@@ -667,8 +679,8 @@ public class SearchAggregator extends HttpServlet {
               existingFacetValues.put(facetValue, facetCount);
             }
           }
-
         });
+
       }
     }
   }

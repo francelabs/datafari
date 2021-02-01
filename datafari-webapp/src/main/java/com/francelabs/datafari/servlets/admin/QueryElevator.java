@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -76,10 +77,8 @@ public class QueryElevator extends HttpServlet {
   /**
    * Try to find a query tag in the provided elevate, corresponding to the provided query text
    *
-   * @param elevate
-   *          the elevate object (JAXB representation of the elevate.xml file)
-   * @param queryText
-   *          the query text to search
+   * @param elevate   the elevate object (JAXB representation of the elevate.xml file)
+   * @param queryText the query text to search
    * @return the {@link Elevate.Query} object if found in the elevate object, null otherwise
    */
   private Elevate.Query findQuery(final Elevate elevate, final String queryText) {
@@ -94,10 +93,8 @@ public class QueryElevator extends HttpServlet {
   /**
    * Try to find the doc associated to the docId in the provided query
    *
-   * @param query
-   *          {@link Elevate.Query} the query object
-   * @param docId
-   *          the docId to search
+   * @param query {@link Elevate.Query} the query object
+   * @param docId the docId to search
    * @return the {@link Elevate.Query.Doc} object if found, null otherwise
    */
   private Elevate.Query.Doc findDoc(final Elevate.Query query, final String docId) {
@@ -132,6 +129,7 @@ public class QueryElevator extends HttpServlet {
         for (final Elevate.Query query : elevate.getQuery()) {
           queriesList.add(query.getText());
         }
+        Collections.sort(queriesList);
         jsonResponse.put("queries", queriesList);
         jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
       } else if (getParam.equals("docs")) {
@@ -265,7 +263,7 @@ public class QueryElevator extends HttpServlet {
         marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, new Boolean(true));
         final OutputStream os = new FileOutputStream(elevatorFile);
         marshal.marshal(elevate, os);
-        indexServer.uploadFile(env, "elevate.xml", Core.FILESHARE.toString(),"");
+        indexServer.uploadFile(env, "elevate.xml", Core.FILESHARE.toString(), "");
         indexServer.reloadCollection(Core.FILESHARE.toString());
 
         List<String> collectionsList = null;
@@ -276,7 +274,7 @@ public class QueryElevator extends HttpServlet {
         }
         if (collectionsList != null) {
           for (final String object : collectionsList) {
-            indexServer.uploadFile(env, "elevate.xml", object,"");
+            indexServer.uploadFile(env, "elevate.xml", object, "");
             indexServer.reloadCollection(object);
           }
         }
@@ -358,7 +356,7 @@ public class QueryElevator extends HttpServlet {
         marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, new Boolean(true));
         final OutputStream os = new FileOutputStream(elevatorFile);
         marshal.marshal(elevate, os);
-        indexServer.uploadFile(env, "elevate.xml", Core.FILESHARE.toString(),"");
+        indexServer.uploadFile(env, "elevate.xml", Core.FILESHARE.toString(), "");
         indexServer.reloadCollection(Core.FILESHARE.toString());
 
         List<String> collectionsList = null;
@@ -369,7 +367,7 @@ public class QueryElevator extends HttpServlet {
         }
         if (collectionsList != null) {
           for (final String object : collectionsList) {
-            indexServer.uploadFile(env, "elevate.xml", object,"");
+            indexServer.uploadFile(env, "elevate.xml", object, "");
             indexServer.reloadCollection(object);
           }
         }

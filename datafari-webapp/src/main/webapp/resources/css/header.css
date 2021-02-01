@@ -25,7 +25,6 @@
 
 #header-menu .active {
   border-bottom: 0.15rem solid #A8C900;
-  padding-bottom: 0.85rem; /* must be (.navbar-nav > li > a padding-bottom) - border-bottom */
 }
 
 #save-search-popover {
@@ -57,7 +56,7 @@
 	}
 	
 	#logo_desktop {
-	  margin-left: 15.5%;
+	  margin-left: 10%;
   }
 }
 

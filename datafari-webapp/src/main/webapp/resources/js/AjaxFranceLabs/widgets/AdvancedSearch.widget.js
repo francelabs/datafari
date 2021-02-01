@@ -819,6 +819,7 @@ AjaxFranceLabs.AdvancedSearchWidget = AjaxFranceLabs.AbstractWidget.extend({
       }
 
       // Replace the query that was in the manager by the finalFilter value
+      this.manager.store.remove('entQ');
       this.manager.store.remove('q');
       this.manager.store.addByValue('q', finalFilter);
 

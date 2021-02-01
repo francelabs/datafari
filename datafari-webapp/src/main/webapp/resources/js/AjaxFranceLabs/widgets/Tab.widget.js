@@ -10,7 +10,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
  ******************************************************************************************************************************************/
-AjaxFranceLabs.TabWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
+ var datafariTabWidgetContainers = {};
+
+ AjaxFranceLabs.TabWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 
   // Variables
 
@@ -20,13 +22,28 @@ AjaxFranceLabs.TabWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
   rawTabs : [],
   selectionType : "ONE",
   returnUnselectedFacetValues : true,
+  tabWidgetContainer: undefined,
+  indexInContainer: undefined,
+  showEmpty: false,
 
   // Methods
 
   // Constructor
   buildWidget : function() {
-    $(this.elm).addClass('tabWidget').addClass('widget').append('<ul class="tab-widget-ul nav nav-tabs"></ul>');
+    $(this.elm).addClass('tabWidget').addClass('widget').append('<ul class="tab-widget-ul nav"></ul>');
     $(this.elm).hide();
+    if (!$(this.container).hasClass("nav-tabs")) {
+      $(this.container).addClass("nav-tabs");
+    }
+    if (this.container) {
+      if (datafariTabWidgetContainers[this.container]) {
+        this.tabWidgetContainer = datafariTabWidgetContainers[this.container];
+      } else {
+        this.tabWidgetContainer = new AjaxFranceLabs.tabWidgetContainer({elm: $(this.container)});
+        datafariTabWidgetContainers[this.container] = this.tabWidgetContainer;
+      }
+      this.indexInContainer = this.tabWidgetContainer.addTabs(false);
+    }
     // this.manager.store.addByValue('f.' + this.field + '.facet.mincount', '0'); // Set the facet min count to 0 in order to display the
     // tabs
     // even if there is no results associated to their facet
@@ -54,6 +71,7 @@ AjaxFranceLabs.TabWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
     var elm = $(this.elm);
     if (data.length !== 0 || self.rawTabs.length !== 0) { // Some values exist
       $(self.elm).show();
+      self.tabWidgetContainer.update(self.indexInContainer, true);
       elm.find('ul').empty(); // empty the widget content
       var ul = elm.children('ul'); // select the list element
 
@@ -64,8 +82,15 @@ AjaxFranceLabs.TabWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
           active = " active"
         }
         // Create the tab and his associated click function that will trigger the facet query
-        ul.append("<li class='nav-item " + active + "'><span class='tab'><span class='name'>" + self.rawTabs[i].label + "</span><span class='href' style='display:none;'>" + self.rawTabs[i].href
-            + "</span></span></li>");
+        var urlParams = "";
+        if (self.rawTabs[i].keepURLParams) {
+          urlParams = window.location.search;
+        }
+        ul.append("<li class='nav-item " + active + "'><span class='tab'><span class='name'>" 
+          + self.rawTabs[i].label 
+          + "</span><span class='href' style='display:none;'>" 
+          + self.rawTabs[i].href + urlParams
+          + "</span></span></li>");
         ul.find('li:last-child').click(function() {
           window.location = $(this).find('.href').text();
         });
@@ -77,9 +102,19 @@ AjaxFranceLabs.TabWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
         // number
         // For good practice, the value and the number have their own <span> tag, which allows easy tweak and CSS conf
 
+        // reinit the active value, we will get it from the facet is there is one.
+        self.actifValue = "";
         total += data[i].nb; // Calculate the total number regrouping all the values which will be used for the 'All' tab
 
         var decodedName = decodeURIComponent(data[i].name);
+        var decodedEscapedValue = AjaxFranceLabs.Parameter.escapeValue(decodedName);
+        if (self.selectionType != 'OR' && this.manager.store.find('fq', self.field + ':' + decodedEscapedValue)) {
+          self.actifValue = decodedName;
+          // escapeRegExp escapes special characters for integration into a regexp so that
+          // it is matched literally and symbols ( +[]* ...) do not get interpreted.
+        } else if (this.manager.store.find('fq', new RegExp(self.field + ':' + AjaxFranceLabs.Parameter.escapeRegExp(decodedEscapedValue) + '[ )]'))) {
+          self.actifValue = decodedName;
+        }
         var active = "";
         if (decodedName === self.actifValue) {
           active = " active"
@@ -94,7 +129,7 @@ AjaxFranceLabs.TabWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
 
       // Create the 'All' tab and his associated click function that will remove the last selected facet query to retrieve all documents on
       // the search view
-      if (total > 0) {
+      if (total > 0 || self.showEmpty) {
         var allActive = "";
         if (self.actifValue === "") {
           allActive = "active";
@@ -107,8 +142,34 @@ AjaxFranceLabs.TabWidget = AjaxFranceLabs.AbstractFacetWidget.extend({
       }
     } else {
       $(self.elm).hide();
+      self.tabWidgetContainer.update(self.indexInContainer, false);
     }
 
   }
 
+});
+
+AjaxFranceLabs.tabWidgetContainer = AjaxFranceLabs.Class.extend({
+  containedTabs: [],
+  elm: undefined,
+
+  update: function(index, isDisplayed) {
+    if (index < this.containedTabs.length && index > 0) {
+      this.containedTabs[index] = isDisplayed;
+      var display = false;
+      $.each(this.containedTabs, function(value) {
+        display = (display || value);
+      });
+      if (display){
+        this.elm.show();
+      } else {
+        this.elm.hide();
+      }
+    }
+  },
+
+  addTabs: function(isDisplayed) {
+    this.containedTabs.push(isDisplayed);
+    return this.containedTabs.length-1;
+  }
 });

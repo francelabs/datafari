@@ -11,6 +11,7 @@ LOGGING_MANAGER="-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogMan
 
 # Set CATALINA_OPTS
 CATALINA_OPTS="-Dorg.apache.manifoldcf.configfile=../../mcf/mcf_home/properties.xml -server -Xms1024m -Xmx1024m"
+#CATALINA_OPTS="$CATALINA_OPTS -agentlib:jdwp=transport=dt_socket,server=y,address=8697,suspend=n"
 
 # Set redefine JAVA_OPTS
 # To change the temp directory for Tomcat (by default /tmp) add this property at the end of the JAVA_OPTS property line :

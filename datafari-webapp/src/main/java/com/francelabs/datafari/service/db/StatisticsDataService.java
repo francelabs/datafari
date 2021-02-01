@@ -29,11 +29,12 @@ import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
+import com.francelabs.datafari.utils.GDPRConfiguration;
 import com.francelabs.datafari.utils.UsageStatisticsConfiguration;
 
 /**
- * Helper class to save user actions statistics to a cassandra table dedicated to them. Please refer to
- * https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/432242693/Usage+Statistics+Storage for a description of the storage schema.
+ * Helper class to save user actions statistics to a cassandra table dedicated to them. Please refer to https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/432242693/Usage+Statistics+Storage for
+ * a description of the storage schema.
  */
 public class StatisticsDataService extends CassandraService {
   private final static Logger logger = LogManager.getLogger(StatisticsDataService.class.getName());
@@ -59,12 +60,16 @@ public class StatisticsDataService extends CassandraService {
   private final PreparedStatement getUserStatistics;
   private final PreparedStatement deleteUserStatistics;
 
+  private final String userActionsTTL;
+
   private StatisticsDataService() {
     refreshSession();
     saveStatistics = session.prepare("insert into " + STATISTICS_COLLECTION + " (" + QUERY_ID_COLUMN + "," + USER_ID_COLUMN + "," + TIMESTAMP_COLUMN + "," + ACTION_COLUMN + "," + PARAMETERS_COLUMN
-        + ")" + " values (?, ?, ?, ?, ?)");
+        + ")" + " values (?, ?, ?, ?, ?) USING TTL ?");
     getUserStatistics = session.prepare("SELECT * FROM " + STATISTICS_COLLECTION + " WHERE " + USER_ID_COLUMN + " = ?");
     deleteUserStatistics = session.prepare("DELETE FROM " + STATISTICS_COLLECTION + " WHERE " + QUERY_ID_COLUMN + " = ? AND " + TIMESTAMP_COLUMN + " = ?");
+
+    userActionsTTL = GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_ACTIONS_TTL);
   }
 
   public static synchronized StatisticsDataService getInstance() throws DatafariServerException {
@@ -119,7 +124,7 @@ public class StatisticsDataService extends CassandraService {
     enabled = Boolean.parseBoolean(UsageStatisticsConfiguration.getInstance().getProperty(UsageStatisticsConfiguration.ENABLED, "false"));
     if (enabled) {
       try {
-        final BoundStatement bs = saveStatistics.bind(queryId, userId, timestamp, action.toString(), parameters.toJSONString());
+        final BoundStatement bs = saveStatistics.bind(queryId, userId, timestamp, action.toString(), parameters.toJSONString(), userActionsTTL);
         session.execute(bs);
       } catch (final DriverException e) {
         logger.warn("Unable to register statistics in cassandra for the query : " + e.getMessage());

@@ -21,6 +21,7 @@
 <configuration>
 
   <!-- Useful logs conf -->
+  <property name="org.apache.manifoldcf.agents" value="INFO"/>
   <property name="org.apache.manifoldcf.connectors" value="INFO"/>
   <property name="org.apache.manifoldcf.authorityconnectors" value="INFO"/>
   <property name="org.apache.manifoldcf.authorityservice" value="INFO"/>

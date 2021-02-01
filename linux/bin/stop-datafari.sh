@@ -64,6 +64,10 @@ else
    echo "Warn : Postgres does not seem to be running."
 fi
 
-run_as ${DATAFARI_USER} "bash datafari-manager.sh stop_apache"
+if [ "$(whoami)" == "root" ]; then
+	bash datafari-manager.sh stop_apache
+else
+	run_as ${DATAFARI_USER} "bash datafari-manager.sh stop_apache"
+fi
 
 @VERSION-STOP@

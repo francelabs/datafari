@@ -130,7 +130,7 @@
    <field name="url" type="string" indexed="false" stored="true"/>
    <field name="url_search" type="text_en" indexed="true" stored="false"/>
    <field name="urlHierarchy" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="last_modified" type="tdate" indexed="true" stored="true" default="NOW"/>
+   <field name="last_modified" type="tdate" indexed="true" stored="true" default="NOW" multiValued="true"/>
    <field name="content" type="text_general" indexed="false" stored="false" multiValued="true"/>
    <field name="content_en" type="text_en" indexed="true" stored="true" multiValued="true"/>
    <field name="content_de" type="text_de" indexed="true" stored="true" multiValued="true"/>
@@ -138,7 +138,7 @@
    <field name="content_fr" type="text_fr" indexed="true" stored="true" multiValued="true"/>
    <field name="exactContent" type="text_nostem" indexed="true" stored="true" multiValued="true"/>
    <field name="exactTitle" type="text_nostem" indexed="true" stored="false" multiValued="true"/>
-   <field name="crawl_date" type="tdate" indexed="true" stored="true" default="NOW"/>
+   <field name="crawl_date" type="tdate" indexed="true" stored="true" default="NOW" multiValued="false"/>
    <field name="original_file_size" type="long" indexed="true" stored="true"/>
    <field name="htmlContent" type="text_nostem" indexed="true" stored="true" multiValued="true"/>
 
@@ -151,17 +151,7 @@
    <field name="category_search" type="text_general" indexed="true" stored="true" multiValued="true"/>
    <field name="producer" type="string" indexed="true" stored="true" multiValued="true"/>
    <field name="creator" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="xmp_creatortool" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="xmpmm_history_softwareagent" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="access_permission_modify_annotations" type="boolean" indexed="true" stored="true" multiValued="false"/>
-   <field name="access_permission_extract_for_accessibility" type="boolean" indexed="true" stored="true" multiValued="false"/>
-   <field name="access_permission_extract_content" type="boolean" indexed="true" stored="true" multiValued="false"/>
-   <field name="access_permission_can_print_degraded" type="boolean" indexed="true" stored="true" multiValued="false"/>
-   <field name="access_permission_can_modify" type="boolean" indexed="true" stored="true" multiValued="false"/>
-   <field name="access_permission_assemble_document" type="boolean" indexed="true" stored="true" multiValued="false"/>
-   <field name="access_permission_can_print" type="boolean" indexed="true" stored="true" multiValued="false"/>
    <field name="pdf_encrypted" type="boolean" indexed="true" stored="true" multiValued="false"/>
-   <field name="xmpmm_history_when" type="tdate" indexed="true" stored="true"/>
    <field name="producer_search" type="text_general" indexed="true" stored="true" multiValued="true"/>
    <field name="creator_search" type="text_general" indexed="true" stored="true" multiValued="true"/>
    <field name="author" type="lowerCasedString" indexed="true" stored="true" multiValued="true"/>
@@ -170,8 +160,6 @@
    <field name="keywords" type="string" indexed="true" stored="true" multiValued="true"/>
    <field name="comments" type="string" indexed="true" stored="true" multiValued="true"/>
    <field name="last_author" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="application_name" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="template" type="string" indexed="true" stored="true" multiValued="true"/>
    <field name="description" type="string" indexed="true" stored="true" multiValued="true"/>
    <field name="character_count_with_spaces" type="int" indexed="true" stored="true" multiValued="false"/>
    <field name="revision_number" type="string" indexed="true" stored="true" multiValued="false"/>
@@ -225,6 +213,22 @@
 
 
     <field name="_version_" type="long" indexed="true" stored="true"/>
+    
+    <!-- Usual pdf and doc fields -->
+    <!--
+    <field name="xmp_creatortool" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="xmpmm_history_softwareagent" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="access_permission_modify_annotations" type="boolean" indexed="true" stored="true" multiValued="false"/>
+    <field name="access_permission_extract_for_accessibility" type="boolean" indexed="true" stored="true" multiValued="false"/>
+    <field name="access_permission_extract_content" type="boolean" indexed="true" stored="true" multiValued="false"/>
+    <field name="access_permission_can_print_degraded" type="boolean" indexed="true" stored="true" multiValued="false"/>
+    <field name="access_permission_can_modify" type="boolean" indexed="true" stored="true" multiValued="false"/>
+    <field name="access_permission_assemble_document" type="boolean" indexed="true" stored="true" multiValued="false"/>
+    <field name="access_permission_can_print" type="boolean" indexed="true" stored="true" multiValued="false"/>
+    <field name="xmpmm_history_when" type="tdate" indexed="true" stored="true" multiValued="true"/>
+    <field name="application_name" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="template" type="string" indexed="true" stored="true" multiValued="true"/>
+    -->
 
     <!-- EXIF fields -->
     <!--  
