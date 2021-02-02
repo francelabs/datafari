@@ -78,6 +78,7 @@ DATAFARI-364  Investigate improvement for doc result preview page
 DATAFARI-363  Upgrade ELK to 5.x to opendistro  
 DATAFARI-150  Update jquery and jquery UI
 Increase ProxyPass timeout to 300s Increase AJP timeout to 300s
+Speed up init permissions during Datafari initialization
 
 ### Task
 

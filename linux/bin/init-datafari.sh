@@ -382,15 +382,30 @@ clean_monoserver_node() {
 }
 
 init_permissions() {
-	echo "Init permissions of Datafari. Please wait"
+	echo "Init permissions of Datafari. Please wait (up to 5 minutes depending on the speed of your HDD)"
+	cd $DIR
 	mkdir $DATAFARI_HOME/tmp
-	chmod -R 775 $DATAFARI_HOME
-	chown -R datafari $DATAFARI_HOME
+	echo "Init permissions 1/6"
+	find /opt/datafari -type f -not -perm 775 > list_files_permissions.txt
+	while IFS= read -r file; do
+  		chmod 775 "$file"
+ 	done < list_files_permissions.txt
+ 	rm -rf list_files_permissions.txt
+ 	
+	find /opt/datafari \! -user datafari -print > list_files_owner.txt
+	while IFS= read -r file; do
+  		chown datafari "$file"
+ 	done < list_files_owner.txt
+ 	rm -rf list_files_owner.txt
+ 	
+ 	echo "Init permissions 3/6"
 	chown -R postgres $DATAFARI_HOME/pgsql/
+	echo "Init permissions 4/6"
 	chmod -R 700 $DATAFARI_HOME/pgsql/
+	echo "Init permissions 5/6"
 	chmod -R 777 $DATAFARI_HOME/pid
 	chmod -R 777 $DATAFARI_HOME/logs
-	chmod -R 755 $DATAFARI_HOME/elk
+	echo "Init permissions 6/6"
 	if [ -d /etc/apache2 ]; then
 		chown -R datafari /etc/apache2
 		chmod -R 775 /etc/apache2
@@ -399,6 +414,7 @@ init_permissions() {
 		chown -R datafari /etc/httpd
 		chmod -R 775 /etc/httpd
 	fi
+	echo "Init permissions end"
 	
 }
 
