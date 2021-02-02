@@ -85,7 +85,7 @@
   <!--repositoryconnector name="LiveLink" class="org.apache.manifoldcf.crawler.connectors.livelink.LivelinkConnector"/-->
   <repositoryconnector name="Jira" class="org.apache.manifoldcf.crawler.connectors.jira.JiraRepositoryConnector"/>
   <repositoryconnector name="JDBC" class="org.apache.manifoldcf.crawler.connectors.jdbc.JDBCConnector"/>
-  <repositoryconnector name="Windows shares" class="com.francelabs.datafari.connectors.share.SharedDriveConnector"/>
+  <!--  <repositoryconnector name="Windows shares" class="com.francelabs.datafari.connectors.share.SharedDriveConnector"/> -->
   <repositoryconnector name="HDFS" class="org.apache.manifoldcf.crawler.connectors.hdfs.HDFSRepositoryConnector"/>
   <repositoryconnector name="GridFS" class="org.apache.manifoldcf.crawler.connectors.gridfs.GridFSRepositoryConnector"/>
   <repositoryconnector name="GoogleDrive" class="org.apache.manifoldcf.crawler.connectors.googledrive.GoogleDriveRepositoryConnector"/>
