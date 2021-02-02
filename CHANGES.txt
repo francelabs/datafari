@@ -1,29 +1,102 @@
 
-                      Datafari Release Notes
+                      Datafari Changes Notes (Feb. 2nd, 2021)
 
 Introduction
 -------------
-Datafari is the perfect product for anyone who needs to search within its corporate big data,
-based on the most advanced open source technologies.
-Datafari combines both the Apache ManifoldCF and Solr products, and proposes to its users to search into file shares,
-cloud shares (dropbox, google drive), databases, but also emails and many more sources. 
-Available as community and enterprise edition, Datafari is different from the competition : 
-- Its open source license is not aggressive, as it uses the Apache v2 license: you are free to do whatever you want with it,
-you just need to mention that you are using it. 
-- It combines two renowned Apache projects, namely ManifoldCF and Solr, which gives Datafari a long term vision.
+Datafari is an open source enterprise search solution. It is the perfect product for anyone who needs to search and analyze its corporate data and documents, both within the content and the metadata.
+
+Available as community (open source) and enterprise (proprietary) edition, Datafari is different from the competition :
+- Its open source license is not aggressive, as it uses the Apache v2 license: you are free to do whatever you want with it, you just need to mention that you are using it.
+- It combines three renowned Apache projects, namely Cassandra, Solr and ManifoldCF, which gives Datafari a long term vision.
+- It leverages open distro ELK the reference open source stack to do business intelligence on logs.
 
 See http://wiki.datafari.com for more information.
 
+==================  5.0 ==================
+Feb. 2nd, 2021
 
-Remarks
-------
-Datafari needs Python v 2.7.x. If you have only Python v3, please install Python2 (for Ubuntu 16.04 for example, install the package python-minimal).
+* Version of major components :
+- Solr 8.5.2
+- ManifoldCF 2.18
+- Tomcat 9.0.38
+- Cassandra 4.0-beta1
+- PostgreSQL 12.4
+- Zookeeper 3.5.5
+- Tika (embedded in MCF) 1.21
+- OpenDistro 1.9.0 
+  - ElasticSearch 7.8.0
+  - Kibana 7.8.0
+  - LogStash 7.8.0
 
-Datafari no longer embeds Java JDK. JDK 8 must be present on the machine and set JAVA HOME.
+### Bug
 
+DATAFARI-519  Admin UI - error when changing elk service user password  
+DATAFARI-507  Aggregator - All tab not clickable after a specific filtered search  
+DATAFARI-506  Aggregator mode - Missing tabs   
+DATAFARI-504  Aggregator mode - Spellcheck bug  
+DATAFARI-503  Strings concatenated for multivalued false at indexing time  
+DATAFARI-499  Backup/Restore UI - Restore timeout too short  
+DATAFARI-492  Reactivate MCF backup/restore functionality in CE  
+DATAFARI-488  Popup "Loading data" for data crawling reinitialisation does not go away  
+DATAFARI-475  Search UI - Scrollbar not fully functionnal  
+DATAFARI-471  Simplified Web connector - forbid whitespaces in Repo name field  
+DATAFARI-465  The french version of the privacy policy page has encoding problems  
+DATAFARI-449  Extension icons not displayed for Firefox  
+DATAFARI-440  Button for external elk config has disappeared  
+DATAFARI-439  Tika error when crawling a website  
+DATAFARI-390  Admin menu link to solr/elk does not work with Edge  
+DATAFARI-142  Remove the appender errors at Datafari startup
+
+### Improvement
+
+DATAFARI-510  Admin UI - Change label backup and restore MCF  
+DATAFARI-508  Tags cloud - remove bold param from font used  
+DATAFARI-501  Aggregator - Improve performances of current ranking algo  
+DATAFARI-500  Aggregator - rework the default algorithm for performance  
+DATAFARI-477  Doc boost documentation link in admin UI  
+DATAFARI-474  Handle non alphanumeric characters for the graphical change of MCF admin account  
+DATAFARI-467  Doc boost admin : sort and search queries 
+DATAFARI-466  Alert Admin UI - add smtp port option 
+DATAFARI-462  Preview page - Format dates with human readable format  
+DATAFARI-452  Simplified Web connector - Add regex to the crawl exclusion list  
+DATAFARI-448  Date facet selection boxes are too large  
+DATAFARI-447  Display full facet label text as alt text when truncated  
+DATAFARI-446  Improve management of docs with no dates  
+DATAFARI-445  For documents with no dates, default to the zero date in unix format \(1970...\)  
+DATAFARI-443  Web connector - Update the handeld MIME TYPES  
+DATAFARI-436  Modify default behavior of error/success messages  
+DATAFARI-434  Modify the default choices of the Date facet  
+DATAFARI-433  Make the Date facet title more explicit  
+DATAFARI-428  Change the generated name for repositories to ease simple history  
+DATAFARI-420  Replace deprecated components into schema  
+DATAFARI-407  Remove password field from the alerts management page  
+DATAFARI-389  Display a "access forbidden" message for admin URL  
+DATAFARI-378  Set a default hop count and depth for the simplified web connector  
+DATAFARI-375  Cleanup datafari webapp folder  
+DATAFARI-373  Upgrade to PostgreSQL 10.7 \(or higher\)  
+DATAFARI-364  Investigate improvement for doc result preview page  
+DATAFARI-363  Upgrade ELK to 5.x to opendistro  
+DATAFARI-150  Update jquery and jquery UI
+Increase ProxyPass timeout to 300s Increase AJP timeout to 300s
+
+### Task
+
+DATAFARI-502  Alers admin UI- clean up code  
+DATAFARI-490  Admin - propose the restart functionality in CE  
+DATAFARI-453  Remove exclude param from simplified web job
+
+### New feature
+
+DATAFARI-461  Fill Description info with meta tag description for html types  
+DATAFARI-429  Need a link at the footer of the search page, pointing to a GDPR page
+Integration of SPRING Security
+Admin UI for restart
+Java 11 support
+Check Python improvement and support for V3 Check user who starts/stops Apache Change redirection Apache
+Solr crawling Connector
+New API mode to query Datafari
 
 ==================  4.4 ==================
-
 
 * Version of major components :
 Solr 7.4
@@ -46,17 +119,13 @@ Entities autocomplete
 TranslatorAnnotator 
 New top menu
 
-
 * Bug fixes :
 Update maven plugins + reorganize webapp libs
 Fix slf4j lib in tomcat-mcf
 Maj libs + fix missing slf4 logger for tomcat webapps
 Fix for DATAFARI-376 Logs for MCF agent not properly handled
 
-
-
 ==================  4.3 ==================
-
 
 * Version of major components :
 Solr 7.4
@@ -77,7 +146,6 @@ Preview UI
 Add MetricBeat to ELK
 Improve WindowsShare connector
 Dedicated folders for custom UI code modifications
-
 
 * Bug fixes :
 Improve emptier connector
@@ -121,11 +189,8 @@ Fix external result widget
 More restrictions on simplified jobs
 Bugfixes UI mobile
 
-
-
-
 ==================  4.1 ==================
-Version of major components :
+* Version of major components :
 Solr 6.6.4
 ManifoldCF 2.10
 Tomcat 9.0.8
@@ -137,7 +202,7 @@ ElasticSearch 5.6.4
 Kibana 5.6.4
 LogStash 5.6.4
 
-New features :
+* New features :
 Added an interface to manage entity extraction
 New queryElevator
 Added security to spellchecker and modified author suggester
@@ -178,8 +243,7 @@ Aff file size default facet
 Add independent ZK for MCF
 HTML extractor transformation connector
 
-
-Bug fixes :
+* Bug fixes :
 Fix Attach repository connectors to DatafariAuthorityGroup
 Fix protwords back in schema
 Bugfix css advanced search
@@ -221,9 +285,9 @@ Fix advanced search expression for basic search
 Update scripts for MCF ZK
 Change log configuration ZK
 
-
 ==================  4.0.2 ==================
-Changes :
+
+* Changes :
 Fix poms
 Update footer with Enterprise edition label
 Change for generic name tika-config lib in script
@@ -239,7 +303,8 @@ Fix default langage back to English
 Harmonize i18n files
 
 ==================  4.0.1 ==================
-Changes :
+
+* Changes :
 Bug fix advanced search
 Bug Fix DATAFARI-220 : Russian language not visible in the Datafari UI
 Bug fix OCR (tesseract no longer integrated in Datafari package)
@@ -275,7 +340,8 @@ Bug Fix HL
 Fix autocomplete errorHandler
 
 ==================  4.0.0 ==================
-Changes : 
+
+* Changes : 
 Removed location_rpt from Solr schemas
 Tika updated to version 1.16 for both MCF and Solr
 Manifold CF updated to version 2.8.1
@@ -288,7 +354,7 @@ Various bug fixes
 
 ==================  3.2.0 ==================
 
-Changes :
+* Changes :
 Tika updated to version 1.15
 Manifold CF updated to version 2.6
 Cassandra updated to version 3.10
@@ -301,7 +367,7 @@ Various bug fixes
 
 ==================  3.1.0 ==================
 
-Changes :
+* Changes :
 Tika updated to version 1.14+
 Manifold CF updated to version 2.5
 Improved security for Active Directory connections
@@ -310,11 +376,9 @@ Auto-configuration of ELK on the first start of Datafari
 Bug fixes for Likes/Favorites and other features of the admin UI
 Fix saved search for IE
 
-
-
 ==================  3.0.0 ==================
 
-Changes :
+* Changes :
 Solrcloud on a single node activated by default
 Added query elevator admin fonctionnality
 Solr updated to version 5.5.1
@@ -323,14 +387,13 @@ Usage of Tika embedded in MCF instead of Solr
 
 ==================  2.2.1 ==================
 
-Changes :
+* Changes :
 Alerts fix
 Bug fixes for Internet Explorer : display of the Admin UI
 
-
 ==================  2.2 ==================
 
-Versions of Major Components 
+* Versions of Major Components 
 ---------------------
 - Apache Solr 5.2.1
 - Apache ManifoldCF 2.3
@@ -339,8 +402,8 @@ Versions of Major Components
 - Tomcat 7.0.65
 - Java Oracle JDK 1.8u66
 ---------------------
-Main changes :
 
+* Main changes :
 Project on Maven
 JVM Oracle JDK 1.8u66
 Spellcheckers fixes
@@ -365,17 +428,20 @@ Backup/Restore MCF configuration added
 
 
 ==================  2.1.3 ==================
+
 Cassandra startup fix
 Fix BackupManifoldCFConnectorsScript package change
 Update datafari.properties : Set ALLOWLOCALFILEREADING to false by default as it is a security leak
 
 ==================  2.1.2 ==================
+
 Add several roles to new user fix
 AD domain SearchProxy fix
 Removed roleBase from JNDI realm to avoid errors
 Logout from ManifoldCF when logout from Datafari
 
 ==================  2.1.1 ==================
+
 Bug fixes in the AD User UI
 Translation AD UI
 
@@ -400,7 +466,6 @@ Active Directory feature fix :
 	- [DATAFARI-76] The "Modify a user"  admin UI shows role table users
 	- [DATAFARI-75] User suppression shows error
 	- [DATAFARI-74] User roles suppression
-	
 
 ==================  2.0 ==================
 
