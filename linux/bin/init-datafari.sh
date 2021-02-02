@@ -391,13 +391,12 @@ init_permissions() {
   		chmod 775 "$file"
  	done < list_files_permissions.txt
  	rm -rf list_files_permissions.txt
- 	
+ 	echo "Init permissions 2/6"
 	find /opt/datafari \! -user datafari -print > list_files_owner.txt
 	while IFS= read -r file; do
   		chown datafari "$file"
  	done < list_files_owner.txt
  	rm -rf list_files_owner.txt
- 	
  	echo "Init permissions 3/6"
 	chown -R postgres $DATAFARI_HOME/pgsql/
 	echo "Init permissions 4/6"
