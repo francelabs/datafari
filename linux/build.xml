@@ -314,11 +314,6 @@
 				<exclude name="dependencies/jcifs*" />
 			</fileset>
 		</copy>
-		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib-proprietary" overwrite="true" force="true">
-			<fileset dir="${share.connector.src.dir}">
-				<include name="dependencies/jcifs*" />
-			</fileset>
-		</copy>
 
 		<!-- Copy Tika OCR config in mcf lib -->
 		<copy todir="${linux.dist.dir}/mcf/mcf_home/lib">
