@@ -757,6 +757,7 @@
     "user-tip": "Utilisateur pouvant se connecter au serveur et accéder à tous les fichiers en mode lecture. Voir doc pour plus d'infos'",
     "user-tooltip": "dans le cas où la connexion SMTP requiert une authentification. Si ce n'est pas le cas, laissez ce paramètre vide",
     "userBaseLabel": "UserBases",
+    "userFilterLabel": "Filtre utilisateur",
     "userFromAD": "Utilisateur Active Directory",
     "userManagement": "Gestion des utilisateurs",
     "username": "Nom d'utilisateur",

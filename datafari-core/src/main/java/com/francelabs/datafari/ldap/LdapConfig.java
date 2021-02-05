@@ -27,6 +27,7 @@ public class LdapConfig {
   public static final String ATTR_CONNECTION_URL = "connectionURL";
   public static final String ATTR_CONNECTION_NAME = "connectionName";
   public static final String ATTR_CONNECTION_PW = "connectionPassword";
+  public static final String ATTR_USER_FILTER = "userFilter";
   public static final String ATTR_DOMAIN_NAME = "userBase";
 
   public static List<LdapRealm> getActiveDirectoryRealms() {

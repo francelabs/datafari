@@ -739,6 +739,7 @@
     "user-tip": "User allowed to connect to the server and access any file in read mode. Refer to doc for more info",
     "user-tooltip": "In case the SMTP connection requires an authentication. If not, leave this parameter empty",
     "userBaseLabel": "UserBases",
+    "userFilterLabel": "User filter",
     "userFromAD": "Active Directory user",
     "userManagement": "Gerenciamento de Usuário",
     "username": "Nome do Usuário",

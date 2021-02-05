@@ -457,6 +457,7 @@
     "undefined": "غير محدد ",
     "usedFile": "الملف قيد الاستخدام حاليا",
     "user": "المستخدم ",
+    "userFilterLabel": "User filter",
     "userFromAD": "Active Directory user",
     "userManagement": "ادارة المستخدم",
     "username": "Username",
