@@ -251,6 +251,8 @@ public class MetadataCleaner extends org.apache.manifoldcf.agents.transformation
 
     final SpecPacker spec = new SpecPacker(pipelineDescription.getSpecification());
 
+    final long startTime = System.currentTimeMillis();
+
     final Iterator<String> fieldsI = document.getFields();
     // As we will replace the metadata with the "cleaned" ones, we need to store them in a separate hashmap
     final Map<String, Object[]> cleanMetadata = new HashMap<>();
@@ -289,9 +291,9 @@ public class MetadataCleaner extends org.apache.manifoldcf.agents.transformation
           document.addField(cleanFieldName, (Reader[]) cleanValues);
         }
       }
-      activities.recordActivity(null, ACTIVITY_CLEAN, null, documentURI, "OK", "");
+      activities.recordActivity(startTime, ACTIVITY_CLEAN, document.getBinaryLength(), documentURI, "OK", "");
     } catch (final Exception e) {
-      activities.recordActivity(null, ACTIVITY_CLEAN, null, documentURI, "KO", e.getMessage());
+      activities.recordActivity(startTime, ACTIVITY_CLEAN, document.getBinaryLength(), documentURI, "KO", e.getMessage());
       Logging.ingest.error("Unable to clean document " + documentURI, e);
     }
 
