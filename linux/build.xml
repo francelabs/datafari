@@ -24,6 +24,7 @@
 	<property name="jena.src.dir" value="${project.dir}/datafari-jena/target" />
 	<property name="mcf.src.dir" value="${project.dir}/datafari-mcf/target/dist/mcf" />
 	<property name="updateprocessor.src.dir" value="${project.dir}/datafari-updateprocessor/target" />
+	<property name="metadatacleaner.connector.src.dir" value="${project.dir}/datafari-metadatacleaner-connector/target" />
 	<property name="emptier.connector.src.dir" value="${project.dir}/datafari-emptier-connector/target" />
 	<property name="share.connector.src.dir" value="${project.dir}/datafari-share-connector/target" />
 	<property name="datafarihandler.src.dir" value="${project.dir}/datafari-handler/target" />
@@ -301,6 +302,13 @@
 				<include name="*.jar" />
 			</fileset>
 		</copy>
+		
+		<!-- Copy Metadatacleaner connector -->
+    <copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
+      <fileset dir="${metadatacleaner.connector.src.dir}">
+        <include name="*.jar" />
+      </fileset>
+    </copy>
 
 		<!-- Copy Share connector -->
 		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">

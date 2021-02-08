@@ -1,0 +1,32 @@
+{
+  "transformationconnection": [
+    {
+      "_children_": [
+        {
+          "_type_": "isnew",
+          "_value_": "false"
+        },
+        {
+          "_type_": "name",
+          "_value_": "MetadataCleaner"
+        },
+        {
+          "_type_": "class_name",
+          "_value_": "com.francelabs.datafari.transformation.metadatacleaner.MetadataCleaner"
+        },
+        {
+          "_type_": "max_connections",
+          "_value_": "10"
+        },
+        {
+          "_type_": "description",
+          "_value_": ""
+        },
+        {
+          "_type_": "configuration"
+        }
+      ],
+      "isnew": true
+    }
+  ]
+}

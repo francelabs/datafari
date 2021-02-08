@@ -1,0 +1,91 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+
+<table class="displaytable">
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('MetadataCleaner.NameCleaners'))</nobr>
+    </td>
+    <td class="boxcell">
+      <table class="formtable">
+        <tr class="formheaderrow">
+          <td class="formcolumnheader"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('MetadataCleaner.RegularExpression'))</nobr></td>
+          <td class="formcolumnheader"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('MetadataCleaner.ReplaceValue'))</nobr></td>
+        </tr>
+
+  #set($namecounter = 0)
+  #foreach($namecleaner_regex in $NAMECLEANERS.keySet())
+    #set($namecleaner_value = $NAMECLEANERS.get($namecleaner_regex))
+    #if(($namecounter % 2) == 0)
+        <tr class="evenformrow">
+    #else
+        <tr class="oddformrow">
+    #end
+          <td class="formcolumncell">
+            <nobr>$Encoder.bodyEscape($namecleaner_regex)</nobr>
+          </td>
+          <td class="formcolumncell">
+            <nobr>$Encoder.bodyEscape($namecleaner_value)</nobr>
+          </td>
+        </tr>
+    #set($namecounter = $namecounter + 1)
+  #end
+  
+  #if($namecounter == 0)
+        <tr class="formrow"><td class="formmessage" colspan="3">$Encoder.bodyEscape($ResourceBundle.getString('MetadataCleaner.NoNameCleanerSpecified'))</td></tr>
+  #end
+      </table>
+    </td>
+  </tr>
+  
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('MetadataCleaner.ValueCleaners'))</nobr>
+    </td>
+    <td class="boxcell">
+      <table class="formtable">
+        <tr class="formheaderrow">
+          <td class="formcolumnheader"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('MetadataCleaner.RegularExpression'))</nobr></td>
+          <td class="formcolumnheader"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('MetadataCleaner.ReplaceValue'))</nobr></td>
+        </tr>
+
+  #set($valuecounter = 0)
+  #foreach($valuecleaner_regex in $VALUECLEANERS.keySet())
+    #set($valuecleaner_value = $VALUECLEANERS.get($valuecleaner_regex))
+    #if(($valuecounter % 2) == 0)
+        <tr class="evenformrow">
+    #else
+        <tr class="oddformrow">
+    #end
+          <td class="formcolumncell">
+            <nobr>$Encoder.bodyEscape($valuecleaner_regex)</nobr>
+          </td>
+          <td class="formcolumncell">
+            <nobr>$Encoder.bodyEscape($valuecleaner_value)</nobr>
+          </td>
+        </tr>
+    #set($valuecounter = $valuecounter + 1)
+  #end
+  
+  #if($valuecounter == 0)
+        <tr class="formrow"><td class="formmessage" colspan="3">$Encoder.bodyEscape($ResourceBundle.getString('MetadataCleaner.NoValueCleanerSpecified'))</td></tr>
+  #end
+      </table>
+    </td>
+  </tr>
+</table>

@@ -266,7 +266,7 @@
             }
           ]
         },
-        {
+                {
           "_type_": "pipelinestage",
           "_children_": [
             {
@@ -276,6 +276,44 @@
             {
               "_type_": "stage_prerequisite",
               "_value_": "4"
+            },
+            {
+              "_type_": "stage_isoutput",
+              "_value_": "false"
+            },
+            {
+              "_type_": "stage_connectionname",
+              "_value_": "MetadataCleaner"
+            },
+            {
+              "_type_": "stage_specification",
+              "_children_": [
+                {
+                  "_type_": "namecleaner",
+                  "_value_": "",
+                  "_attribute_value": "_{",
+                  "_attribute_regex": "\\$\\{"
+                },
+                {
+                  "_type_": "valuecleaner",
+                  "_value_": "",
+                  "_attribute_value": "_{",
+                  "_attribute_regex": "\\$\\{"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_type_": "pipelinestage",
+          "_children_": [
+            {
+              "_type_": "stage_id",
+              "_value_": "6"
+            },
+            {
+              "_type_": "stage_prerequisite",
+              "_value_": "5"
             },
             {
               "_type_": "stage_isoutput",

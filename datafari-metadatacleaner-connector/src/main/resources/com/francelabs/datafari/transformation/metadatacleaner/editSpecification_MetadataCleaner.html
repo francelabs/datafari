@@ -1,0 +1,168 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+#if($TABNAME == $ResourceBundle.getString('MetadataCleaner.CleanerTabName') && ${SEQNUM} == ${SELECTEDNUM})
+
+<table class="displaytable">
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('MetadataCleaner.NameCleaners'))</nobr>
+    </td>
+    <td class="boxcell">
+      <table class="formtable">
+        <tr class="formheaderrow">
+          <td class="formcolumnheader"></td>
+          <td class="formcolumnheader"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('MetadataCleaner.RegularExpression'))</nobr></td>
+          <td class="formcolumnheader"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('MetadataCleaner.ReplaceValue'))</nobr></td>
+        </tr>
+
+  #set($namecounter = 0)
+  #foreach($namecleaner_regex in $NAMECLEANERS.keySet())
+    #set($namecounterdisplay = $namecounter + 1)
+    #set($namecleaner_value = $NAMECLEANERS.get($namecleaner_regex))
+    #if(($namecounter % 2) == 0)
+        <tr class="evenformrow">
+    #else
+        <tr class="oddformrow">
+    #end
+          <td class="formcolumncell">
+            <a name="s${SEQNUM}_namecleaner_$namecounter">
+              <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('MetadataCleaner.Delete'))" alt="$Encoder.attributeEscape($ResourceBundle.getString('MetadataCleaner.DeleteNameCleaner'))$namecounterdisplay" onclick='javascript:s${SEQNUM}_deleteNameCleaner("$namecounter");'/>
+              <input type="hidden" name="s${SEQNUM}_namecleaner_op_$namecounter" value="Continue"/>
+              <input type="hidden" name="s${SEQNUM}_namecleaner_regex_$namecounter" value="$Encoder.attributeEscape($namecleaner_regex)"/>
+              <input type="hidden" name="s${SEQNUM}_namecleaner_value_$namecounter" value="$Encoder.attributeEscape($namecleaner_value)"/>
+            </a>
+          </td>
+          <td class="formcolumncell">
+            <nobr>$Encoder.bodyEscape($namecleaner_regex)</nobr>
+          </td>
+          <td class="formcolumncell">
+            <nobr>$Encoder.bodyEscape($namecleaner_value)</nobr>
+          </td>
+        </tr>
+    #set($namecounter = $namecounter + 1)
+  #end
+  
+  #if($namecounter == 0)
+        <tr class="formrow"><td class="formmessage" colspan="3">$Encoder.bodyEscape($ResourceBundle.getString('MetadataCleaner.NoNameCleanerSpecified'))</td></tr>
+  #end
+      
+        <tr class="formrow"><td class="formseparator" colspan="3"><hr/></td></tr>
+        <tr class="formrow">
+          <td class="formcolumncell">
+            <a name="namecleaner">
+              <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('MetadataCleaner.Add'))" alt="$Encoder.attributeEscape($ResourceBundle.getString('MetadataCleaner.AddNameCleaner'))" onclick="javascript:s${SEQNUM}_addNameCleaner();"/>
+            </a>
+            <input type="hidden" name="s${SEQNUM}_namecleaner_count" value="$namecounter"/>
+            <input type="hidden" name="s${SEQNUM}_namecleaner_op" value="Continue"/>
+          </td>
+          <td class="formcolumncell">
+            <nobr><input type="text" size="15" name="s${SEQNUM}_namecleaner_regex" value=""/></nobr>
+          </td>
+          <td class="formcolumncell">
+            <nobr><input type="text" size="15" name="s${SEQNUM}_namecleaner_value" value=""/></nobr>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('MetadataCleaner.ValueCleaners'))</nobr>
+    </td>
+    <td class="boxcell">
+      <table class="formtable">
+        <tr class="formheaderrow">
+          <td class="formcolumnheader"></td>
+          <td class="formcolumnheader"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('MetadataCleaner.RegularExpression'))</nobr></td>
+          <td class="formcolumnheader"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('MetadataCleaner.ReplaceValue'))</nobr></td>
+        </tr>
+
+  #set($valuecounter = 0)
+  #foreach($valuecleaner_regex in $VALUECLEANERS.keySet())
+    #set($valuecounterdisplay = $valuecounter + 1)
+    #set($valuecleaner_value = $VALUECLEANERS.get($valuecleaner_regex))
+    #if(($valuecounter % 2) == 0)
+        <tr class="evenformrow">
+    #else
+        <tr class="oddformrow">
+    #end
+          <td class="formcolumncell">
+            <a name="s${SEQNUM}_namecleaner_$valuecounter">
+              <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('MetadataCleaner.Delete'))" alt="$Encoder.attributeEscape($ResourceBundle.getString('MetadataCleaner.DeleteValueCleaner'))$valuecounterdisplay" onclick='javascript:s${SEQNUM}_deleteValueCleaner("$valuecounter");'/>
+              <input type="hidden" name="s${SEQNUM}_valuecleaner_op_$valuecounter" value="Continue"/>
+              <input type="hidden" name="s${SEQNUM}_valuecleaner_regex_$valuecounter" value="$Encoder.attributeEscape($valuecleaner_regex)"/>
+              <input type="hidden" name="s${SEQNUM}_valuecleaner_value_$valuecounter" value="$Encoder.attributeEscape($valuecleaner_value)"/>
+            </a>
+          </td>
+          <td class="formcolumncell">
+            <nobr>$Encoder.bodyEscape($valuecleaner_regex)</nobr>
+          </td>
+          <td class="formcolumncell">
+            <nobr>$Encoder.bodyEscape($valuecleaner_value)</nobr>
+          </td>
+        </tr>
+    #set($valuecounter = $valuecounter + 1)
+  #end
+  
+  #if($valuecounter == 0)
+        <tr class="formrow"><td class="formmessage" colspan="3">$Encoder.bodyEscape($ResourceBundle.getString('MetadataCleaner.NoValueCleanerSpecified'))</td></tr>
+  #end
+      
+        <tr class="formrow"><td class="formseparator" colspan="3"><hr/></td></tr>
+        <tr class="formrow">
+          <td class="formcolumncell">
+            <a name="valuecleaner">
+              <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('MetadataCleaner.Add'))" alt="$Encoder.attributeEscape($ResourceBundle.getString('MetadataCleaner.AddValueCleaner'))" onclick="javascript:s${SEQNUM}_addValueCleaner();"/>
+            </a>
+            <input type="hidden" name="s${SEQNUM}_valuecleaner_count" value="$valuecounter"/>
+            <input type="hidden" name="s${SEQNUM}_valuecleaner_op" value="Continue"/>
+          </td>
+          <td class="formcolumncell">
+            <nobr><input type="text" size="15" name="s${SEQNUM}_valuecleaner_regex" value=""/></nobr>
+          </td>
+          <td class="formcolumncell">
+            <nobr><input type="text" size="15" name="s${SEQNUM}_valuecleaner_value" value=""/></nobr>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+#else
+  
+  #set($namecounter = 0)
+  #foreach($namecleaner_regex in $NAMECLEANERS.keySet())
+    #set($namecleaner_value = $NAMECLEANERS.get($namecleaner_regex))
+<input type="hidden" name="s${SEQNUM}_namecleaner_regex_$namecounter" value="$Encoder.attributeEscape($namecleaner_regex)"/>
+<input type="hidden" name="s${SEQNUM}_namecleaner_value_$namecounter" value="$Encoder.attributeEscape($namecleaner_value)"/>
+    #set($namecounter = $namecounter + 1)
+  #end
+<input type="hidden" name="s${SEQNUM}_namecleaner_count" value="$namecounter"/>
+
+  #set($valuecounter = 0)
+  #foreach($valuecleaner_regex in $VALUECLEANERS.keySet())
+    #set($valuecleaner_value = $VALUECLEANERS.get($valuecleaner_regex))
+<input type="hidden" name="s${SEQNUM}_valuecleaner_regex_$valuecounter" value="$Encoder.attributeEscape($valuecleaner_regex)"/>
+<input type="hidden" name="s${SEQNUM}_valuecleaner_value_$valuecounter" value="$Encoder.attributeEscape($valuecleaner_value)"/>
+    #set($valuecounter = $valuecounter + 1)
+  #end
+<input type="hidden" name="s${SEQNUM}_valuecleaner_count" value="$valuecounter"/>
+
+#end
