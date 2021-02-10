@@ -1,0 +1,167 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+#if($TABNAME == $ResourceBundle.getString('DocFilter.DocFilterTabName') && ${SEQNUM} == ${SELECTEDNUM})
+
+<table class="displaytable">
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('DocFilter.FilterField'))</nobr></td>
+    <td class="value"><input name="s${SEQNUM}_filterfield" type="text"
+      value="$Encoder.attributeEscape($FILTERFIELD)" size="35" />
+    </td>
+  </tr>
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('DocFilter.IncludeFilters'))</nobr>
+    </td>
+    <td class="boxcell">
+      <table class="formtable">
+        <tr class="formheaderrow">
+          <td class="formcolumnheader"></td>
+          <td class="formcolumnheader"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('DocFilter.RegularExpression'))</nobr></td>
+        </tr>
+
+  #set($includecounter = 0)
+  #foreach($includefilter in $INCLUDEFILTERS)
+    #set($includecounterdisplay = $includecounter + 1)
+    #if(($includecounter % 2) == 0)
+        <tr class="evenformrow">
+    #else
+        <tr class="oddformrow">
+    #end
+          <td class="formcolumncell">
+            <a name="s${SEQNUM}_includefilter_$includecounter">
+              <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('DocFilter.Delete'))" alt="$Encoder.attributeEscape($ResourceBundle.getString('DocFilter.DeleteIncludeFilter'))$includecounterdisplay" onclick='javascript:s${SEQNUM}_deleteIncludeFilter("$includecounter");'/>
+              <input type="hidden" name="s${SEQNUM}_includefilter_op_$includecounter" value="Continue"/>
+              <input type="hidden" name="s${SEQNUM}_includefilter_regex_$includecounter" value="$Encoder.attributeEscape($includefilter)"/>
+            </a>
+          </td>
+          <td class="formcolumncell">
+            <nobr>$Encoder.bodyEscape($includefilter)</nobr>
+          </td>
+        </tr>
+    #set($includecounter = $includecounter + 1)
+  #end
+  
+  #if($includecounter == 0)
+        <tr class="formrow"><td class="formmessage" colspan="3">$Encoder.bodyEscape($ResourceBundle.getString('DocFilter.NoIncludeFilterSpecified'))</td></tr>
+  #end
+      
+        <tr class="formrow"><td class="formseparator" colspan="3"><hr/></td></tr>
+        <tr class="formrow">
+          <td class="formcolumncell">
+            <a name="includefilter">
+              <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('DocFilter.Add'))" alt="$Encoder.attributeEscape($ResourceBundle.getString('DocFilter.AddIncludeFilter'))" onclick="javascript:s${SEQNUM}_addIncludeFilter();"/>
+            </a>
+            <input type="hidden" name="s${SEQNUM}_includefilter_count" value="$includecounter"/>
+            <input type="hidden" name="s${SEQNUM}_includefilter_op" value="Continue"/>
+          </td>
+          <td class="formcolumncell">
+            <nobr><input type="text" size="15" name="s${SEQNUM}_includefilter_regex" value=""/></nobr>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('DocFilter.ExcludeFilters'))</nobr>
+    </td>
+    <td class="boxcell">
+      <table class="formtable">
+        <tr class="formheaderrow">
+          <td class="formcolumnheader"></td>
+          <td class="formcolumnheader"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('DocFilter.RegularExpression'))</nobr></td>
+        </tr>
+
+  #set($excludecounter = 0)
+  #foreach($excludefilter in $EXCLUDEFILTERS)
+    #set($excludecounterdisplay = $excludecounter + 1)
+    #if(($excludecounter % 2) == 0)
+        <tr class="evenformrow">
+    #else
+        <tr class="oddformrow">
+    #end
+          <td class="formcolumncell">
+            <a name="s${SEQNUM}_excludefilter_$excludecounter">
+              <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('DocFilter.Delete'))" alt="$Encoder.attributeEscape($ResourceBundle.getString('DocFilter.DeleteExcludeFilter'))$excludecounterdisplay" onclick='javascript:s${SEQNUM}_deleteExcludeFilter("$excludecounter");'/>
+              <input type="hidden" name="s${SEQNUM}_excludefilter_op_$excludecounter" value="Continue"/>
+              <input type="hidden" name="s${SEQNUM}_excludefilter_regex_$excludecounter" value="$Encoder.attributeEscape($excludefilter)"/>
+            </a>
+          </td>
+          <td class="formcolumncell">
+            <nobr>$Encoder.bodyEscape($excludefilter)</nobr>
+          </td>
+        </tr>
+    #set($excludecounter = $excludecounter + 1)
+  #end
+  
+  #if($excludecounter == 0)
+        <tr class="formrow"><td class="formmessage" colspan="3">$Encoder.bodyEscape($ResourceBundle.getString('DocFilter.NoExcludeFilterSpecified'))</td></tr>
+  #end
+      
+        <tr class="formrow"><td class="formseparator" colspan="3"><hr/></td></tr>
+        <tr class="formrow">
+          <td class="formcolumncell">
+            <a name="excludefilter">
+              <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('DocFilter.Add'))" alt="$Encoder.attributeEscape($ResourceBundle.getString('DocFilter.AddExcludeFilter'))" onclick="javascript:s${SEQNUM}_addExcludeFilter();"/>
+            </a>
+            <input type="hidden" name="s${SEQNUM}_excludefilter_count" value="$excludecounter"/>
+            <input type="hidden" name="s${SEQNUM}_excludefilter_op" value="Continue"/>
+          </td>
+          <td class="formcolumncell">
+            <nobr><input type="text" size="15" name="s${SEQNUM}_excludefilter_regex" value=""/></nobr>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('DocFilter.MaxDocSize'))</nobr></td>
+    <td class="value"><input name="s${SEQNUM}_maxdocsize" type="text"
+      value="$Encoder.attributeEscape($MAXDOCSIZE)" size="35" />
+    </td>
+  </tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('DocFilter.MinDocSize'))</nobr></td>
+    <td class="value"><input name="s${SEQNUM}_mindocsize" type="text"
+      value="$Encoder.attributeEscape($MINDOCSIZE)" size="35" />
+    </td>
+  </tr>
+</table>
+
+#else
+  
+  #set($includecounter = 0)
+  #foreach($includefilter in $INCLUDEFILTERS)
+<input type="hidden" name="s${SEQNUM}_includefilter_regex_$includecounter" value="$Encoder.attributeEscape($includefilter)"/>
+    #set($includecounter = $includecounter + 1)
+  #end
+<input type="hidden" name="s${SEQNUM}_includefilter_count" value="$includecounter"/>
+
+  #set($excludecounter = 0)
+  #foreach($excludefilter in $EXCLUDEFILTERS)
+<input type="hidden" name="s${SEQNUM}_excludefilter_regex_$excludecounter" value="$Encoder.attributeEscape($excludefilter)"/>
+    #set($excludecounter = $excludecounter + 1)
+  #end
+<input type="hidden" name="s${SEQNUM}_excludefilter_count" value="$excludecounter"/>
+
+<input type="hidden" name="s${SEQNUM}_maxdocsize" value="$Encoder.attributeEscape($MAXDOCSIZE)" />
+<input type="hidden" name="s${SEQNUM}_mindocsize" value="$Encoder.attributeEscape($MINDOCSIZE)" />
+<input type="hidden" name="s${SEQNUM}_filterfield" value="$Encoder.attributeEscape($FILTERFIELD)" />
+
+#end

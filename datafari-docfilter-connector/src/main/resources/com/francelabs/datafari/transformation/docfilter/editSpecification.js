@@ -26,7 +26,7 @@ function s${SEQNUM}_addIncludeFilter()
 {
   if (editjob.s${SEQNUM}_includefilter_regex.value == "")
   {
-    alert("$Encoder.bodyEscape($ResourceBundle.getString('EmptierFilter.NoRegexSpecified'))");
+    alert("$Encoder.bodyEscape($ResourceBundle.getString('DocFilter.NoRegexSpecified'))");
     editjob.s${SEQNUM}_includefilter_regex.focus();
     return;
   }
@@ -38,7 +38,7 @@ function s${SEQNUM}_addExcludeFilter()
 {
   if (editjob.s${SEQNUM}_excludefilter_regex.value == "")
   {
-    alert("$Encoder.bodyEscape($ResourceBundle.getString('EmptierFilter.NoRegexSpecified'))");
+    alert("$Encoder.bodyEscape($ResourceBundle.getString('DocFilter.NoRegexSpecified'))");
     editjob.s${SEQNUM}_excludefilter_regex.focus();
     return;
   }

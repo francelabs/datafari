@@ -16,9 +16,8 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.francelabs.datafari.transformation.emptier;
+package com.francelabs.datafari.transformation.docfilter;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,18 +49,16 @@ import com.francelabs.datafari.annotator.exception.RegexException;
  * This connector works as a transformation connector, but does nothing other than logging.
  *
  */
-public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.BaseTransformationConnector {
+public class DocFilter extends org.apache.manifoldcf.agents.transformation.BaseTransformationConnector {
   public static final String _rcsid = "@(#)$Id$";
 
   private static final String EDIT_SPECIFICATION_JS = "editSpecification.js";
-  private static final String EDIT_SPECIFICATION_EMPTIER_FILTER_HTML = "editSpecification_EmptierFilter.html";
+  private static final String EDIT_SPECIFICATION_DOCFILTER_HTML = "editSpecification_DocFilter.html";
   private static final String VIEW_SPECIFICATION_HTML = "viewSpecification.html";
 
-  private static final String emptyContent = " ";
+  protected static final String ACTIVITY_FILTER = "filter";
 
-  protected static final String ACTIVITY_EMPTY = "empty";
-
-  protected static final String[] activitiesList = new String[] { ACTIVITY_EMPTY };
+  protected static final String[] activitiesList = new String[] { ACTIVITY_FILTER };
 
   /**
    * Connect.
@@ -250,10 +247,12 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
   public int addOrReplaceDocumentWithException(final String documentURI, final VersionContext pipelineDescription, final RepositoryDocument document, final String authorityNameString,
       final IOutputAddActivity activities) throws ManifoldCFException, ServiceInterruption, IOException {
 
+    final long startTime = System.currentTimeMillis();
+
     final SpecPacker spec = new SpecPacker(pipelineDescription.getSpecification());
 
-    boolean toEmpty = false;
-    String emptyMatchingRegex = "";
+    boolean toIndex = false;
+    String includeMatchingRegex = "";
     String[] valuesToFilter = new String[1];
     valuesToFilter[0] = documentURI;
     if (!spec.filterField.isEmpty()) {
@@ -267,57 +266,62 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
           final String valueToFilter = valuesToFilter[i];
           final String matchingRegex = matchingRegex(spec.includeFilters, valueToFilter);
           if (matchingRegex != null) {
-            toEmpty = true;
-            emptyMatchingRegex = matchingRegex;
+            toIndex = true;
+            includeMatchingRegex = matchingRegex;
             break;
           }
         }
+      } else {
+        toIndex = true;
       }
     } catch (final RegexException e) {
       Logging.connectors.warn("Include regular expression syntax error: " + e.getRegex());
     }
 
-    try {
-      // Check if the file has to be excluded
-      if (!spec.excludeFilters.isEmpty()) {
-        for (int i = 0; i < valuesToFilter.length; i++) {
-          final String valueToFilter = valuesToFilter[i];
-          final String matchingRegex = matchingRegex(spec.excludeFilters, valueToFilter);
-          if (matchingRegex != null) {
-            toEmpty = false;
-            break;
+    if (!toIndex) {
+      activities.recordActivity(startTime, ACTIVITY_FILTER, null, documentURI, "FILTERED", "Document has been filtered as it does not match any include filter");
+    } else {
+      try {
+        // Check if the file has to be excluded
+        if (!spec.excludeFilters.isEmpty()) {
+          for (int i = 0; i < valuesToFilter.length; i++) {
+            final String valueToFilter = valuesToFilter[i];
+            final String matchingRegex = matchingRegex(spec.excludeFilters, valueToFilter);
+            if (matchingRegex != null) {
+              toIndex = false;
+              activities.recordActivity(startTime, ACTIVITY_FILTER, null, documentURI, "FILTERED", "Document has been filtered as it matches the following regex exclusion rule: " + matchingRegex);
+              break;
+            }
           }
         }
+      } catch (final RegexException e) {
+        Logging.connectors.warn("Exclude regular expression syntax error: " + e.getRegex());
       }
-    } catch (final RegexException e) {
-      Logging.connectors.warn("Exclude regular expression syntax error: " + e.getRegex());
     }
 
-    if (!toEmpty) {
+    if (toIndex) {
       if (spec.maxdocsize != -1 && document.getBinaryLength() > spec.maxdocsize) {
-        toEmpty = true;
-        activities.recordActivity(null, ACTIVITY_EMPTY, null, documentURI, "EMPTIED",
-            "Document has been emptied as its size (" + document.getBinaryLength() + ") exceeds the maximum defined one (" + spec.maxdocsize + ")");
+        toIndex = false;
+        activities.recordActivity(startTime, ACTIVITY_FILTER, null, documentURI, "FILTERED",
+            "Document has been filtered as its size (" + document.getBinaryLength() + ") exceeds the maximum defined one (" + spec.maxdocsize + ")");
       } else if (spec.mindocsize != -1 && document.getBinaryLength() < spec.mindocsize) {
-        toEmpty = true;
-        activities.recordActivity(null, ACTIVITY_EMPTY, null, documentURI, "EMPTIED",
-            "Document has been emptied as its size (" + document.getBinaryLength() + ") is lower than the minimum defined one (" + spec.mindocsize + ")");
+        toIndex = false;
+        activities.recordActivity(startTime, ACTIVITY_FILTER, null, documentURI, "FILTERED",
+            "Document has been filtered as its size (" + document.getBinaryLength() + ") is lower than the minimum defined one (" + spec.mindocsize + ")");
       }
-    } else {
-      activities.recordActivity(null, ACTIVITY_EMPTY, null, documentURI, "EMPTIED", "Document has been emptied as it matches the following regex inclusion rule: " + emptyMatchingRegex);
     }
 
-    if (toEmpty) {
-      final ByteArrayInputStream bais = new ByteArrayInputStream(emptyContent.getBytes());
-      document.setBinary(bais, emptyContent.length());
-      document.removeField("emptied");
-      document.addField("emptied", "true");
+    if (toIndex) {
+      String description = "";
+      if (!includeMatchingRegex.isEmpty()) {
+        description = "Document has been kept as it matches the following regex inclusion rule: " + includeMatchingRegex;
+      }
+      activities.recordActivity(startTime, ACTIVITY_FILTER, document.getBinaryLength(), documentURI, "OK", description);
+      return activities.sendDocument(documentURI, document);
     } else {
-      document.removeField("emptied");
-      document.addField("emptied", "false");
+      activities.noDocument();
+      return DOCUMENTSTATUS_REJECTED;
     }
-
-    return activities.sendDocument(documentURI, document);
 
   }
 
@@ -360,7 +364,7 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
     return "s" + connectionSequenceNumber + "_checkSpecificationForSave";
   }
 
-  protected static void fillInEmptierFilterSpecification(final Map<String, Object> paramMap, final Specification os) {
+  protected static void fillInDocFilterSpecification(final Map<String, Object> paramMap, final Specification os) {
 
     final List<String> includeFilters = new ArrayList<>();
     final List<String> excludeFilters = new ArrayList<>();
@@ -371,22 +375,22 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
     for (int i = 0; i < os.getChildCount(); i++) {
       final SpecificationNode sn = os.getChild(i);
 
-      if (sn.getType().equals(EmptierConfig.NODE_INCLUDEFILTER)) {
-        final String includeFilter = sn.getAttributeValue(EmptierConfig.ATTRIBUTE_REGEX);
+      if (sn.getType().equals(DocFilterConfig.NODE_INCLUDEFILTER)) {
+        final String includeFilter = sn.getAttributeValue(DocFilterConfig.ATTRIBUTE_REGEX);
         if (includeFilter != null) {
           includeFilters.add(includeFilter);
         }
-      } else if (sn.getType().equals(EmptierConfig.NODE_EXCLUDEFILTER)) {
-        final String excludeFilter = sn.getAttributeValue(EmptierConfig.ATTRIBUTE_REGEX);
+      } else if (sn.getType().equals(DocFilterConfig.NODE_EXCLUDEFILTER)) {
+        final String excludeFilter = sn.getAttributeValue(DocFilterConfig.ATTRIBUTE_REGEX);
         if (excludeFilter != null) {
           excludeFilters.add(excludeFilter);
         }
-      } else if (sn.getType().equals(EmptierConfig.NODE_MAXDOCSIZE)) {
-        maxDocSize = sn.getAttributeValue(EmptierConfig.ATTRIBUTE_VALUE);
-      } else if (sn.getType().equals(EmptierConfig.NODE_MINDOCSIZE)) {
-        minDocSize = sn.getAttributeValue(EmptierConfig.ATTRIBUTE_VALUE);
-      } else if (sn.getType().equals(EmptierConfig.NODE_FILTERFIELD)) {
-        filterField = sn.getAttributeValue(EmptierConfig.ATTRIBUTE_VALUE);
+      } else if (sn.getType().equals(DocFilterConfig.NODE_MAXDOCSIZE)) {
+        maxDocSize = sn.getAttributeValue(DocFilterConfig.ATTRIBUTE_VALUE);
+      } else if (sn.getType().equals(DocFilterConfig.NODE_MINDOCSIZE)) {
+        minDocSize = sn.getAttributeValue(DocFilterConfig.ATTRIBUTE_VALUE);
+      } else if (sn.getType().equals(DocFilterConfig.NODE_FILTERFIELD)) {
+        filterField = sn.getAttributeValue(DocFilterConfig.ATTRIBUTE_VALUE);
       }
     }
 
@@ -413,10 +417,10 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
     final Map<String, Object> paramMap = new HashMap<>();
     paramMap.put("SEQNUM", Integer.toString(connectionSequenceNumber));
 
-    tabsArray.add(Messages.getString(locale, "EmptierFilter.EmptierTabName"));
+    tabsArray.add(Messages.getString(locale, "DocFilter.DocFilterTabName"));
 
     // Fill in the specification header map, using data from all tabs.
-    fillInEmptierFilterSpecification(paramMap, os);
+    fillInDocFilterSpecification(paramMap, os);
 
     Messages.outputResourceWithVelocity(out, locale, EDIT_SPECIFICATION_JS, paramMap);
   }
@@ -443,9 +447,9 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
     paramMap.put("SEQNUM", Integer.toString(connectionSequenceNumber));
     paramMap.put("SELECTEDNUM", Integer.toString(actualSequenceNumber));
 
-    fillInEmptierFilterSpecification(paramMap, os);
+    fillInDocFilterSpecification(paramMap, os);
 
-    Messages.outputResourceWithVelocity(out, locale, EDIT_SPECIFICATION_EMPTIER_FILTER_HTML, paramMap);
+    Messages.outputResourceWithVelocity(out, locale, EDIT_SPECIFICATION_DOCFILTER_HTML, paramMap);
   }
 
   /**
@@ -472,7 +476,7 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
       int i = 0;
       while (i < os.getChildCount()) {
         final SpecificationNode node = os.getChild(i);
-        if (node.getType().equals(EmptierConfig.NODE_INCLUDEFILTER)) {
+        if (node.getType().equals(DocFilterConfig.NODE_INCLUDEFILTER)) {
           os.removeChild(i);
         } else {
           i++;
@@ -486,9 +490,9 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
         final String op = variableContext.getParameter(prefix + "op" + suffix);
         if (op == null || !op.equals("Delete")) {
           // Gather the includefilters etc.
-          final String regex = variableContext.getParameter(prefix + EmptierConfig.ATTRIBUTE_REGEX + suffix);
-          final SpecificationNode node = new SpecificationNode(EmptierConfig.NODE_INCLUDEFILTER);
-          node.setAttribute(EmptierConfig.ATTRIBUTE_REGEX, regex);
+          final String regex = variableContext.getParameter(prefix + DocFilterConfig.ATTRIBUTE_REGEX + suffix);
+          final SpecificationNode node = new SpecificationNode(DocFilterConfig.NODE_INCLUDEFILTER);
+          node.setAttribute(DocFilterConfig.ATTRIBUTE_REGEX, regex);
           os.addChild(os.getChildCount(), node);
         }
         i++;
@@ -497,8 +501,8 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
       final String addop = variableContext.getParameter(seqPrefix + "includefilter_op");
       if (addop != null && addop.equals("Add")) {
         final String regex = variableContext.getParameter(seqPrefix + "includefilter_regex");
-        final SpecificationNode node = new SpecificationNode(EmptierConfig.NODE_INCLUDEFILTER);
-        node.setAttribute(EmptierConfig.ATTRIBUTE_REGEX, regex);
+        final SpecificationNode node = new SpecificationNode(DocFilterConfig.NODE_INCLUDEFILTER);
+        node.setAttribute(DocFilterConfig.ATTRIBUTE_REGEX, regex);
         os.addChild(os.getChildCount(), node);
       }
     }
@@ -510,7 +514,7 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
       int i = 0;
       while (i < os.getChildCount()) {
         final SpecificationNode node = os.getChild(i);
-        if (node.getType().equals(EmptierConfig.NODE_EXCLUDEFILTER)) {
+        if (node.getType().equals(DocFilterConfig.NODE_EXCLUDEFILTER)) {
           os.removeChild(i);
         } else {
           i++;
@@ -524,9 +528,9 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
         final String op = variableContext.getParameter(prefix + "op" + suffix);
         if (op == null || !op.equals("Delete")) {
           // Gather the excludefilters etc.
-          final String regex = variableContext.getParameter(prefix + EmptierConfig.ATTRIBUTE_REGEX + suffix);
-          final SpecificationNode node = new SpecificationNode(EmptierConfig.NODE_EXCLUDEFILTER);
-          node.setAttribute(EmptierConfig.ATTRIBUTE_REGEX, regex);
+          final String regex = variableContext.getParameter(prefix + DocFilterConfig.ATTRIBUTE_REGEX + suffix);
+          final SpecificationNode node = new SpecificationNode(DocFilterConfig.NODE_EXCLUDEFILTER);
+          node.setAttribute(DocFilterConfig.ATTRIBUTE_REGEX, regex);
           os.addChild(os.getChildCount(), node);
         }
         i++;
@@ -535,8 +539,8 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
       final String addop = variableContext.getParameter(seqPrefix + "excludefilter_op");
       if (addop != null && addop.equals("Add")) {
         final String regex = variableContext.getParameter(seqPrefix + "excludefilter_regex");
-        final SpecificationNode node = new SpecificationNode(EmptierConfig.NODE_EXCLUDEFILTER);
-        node.setAttribute(EmptierConfig.ATTRIBUTE_REGEX, regex);
+        final SpecificationNode node = new SpecificationNode(DocFilterConfig.NODE_EXCLUDEFILTER);
+        node.setAttribute(DocFilterConfig.ATTRIBUTE_REGEX, regex);
         os.addChild(os.getChildCount(), node);
       }
     }
@@ -548,18 +552,18 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
       int i = 0;
       while (i < os.getChildCount()) {
         final SpecificationNode node = os.getChild(i);
-        if (node.getType().equals(EmptierConfig.NODE_MAXDOCSIZE)) {
+        if (node.getType().equals(DocFilterConfig.NODE_MAXDOCSIZE)) {
           os.removeChild(i);
         } else {
           i++;
         }
       }
-      final SpecificationNode node = new SpecificationNode(EmptierConfig.NODE_MAXDOCSIZE);
+      final SpecificationNode node = new SpecificationNode(DocFilterConfig.NODE_MAXDOCSIZE);
       final String maxdocsize = variableContext.getParameter(seqPrefix + "maxdocsize");
       if (maxdocsize != null) {
-        node.setAttribute(EmptierConfig.ATTRIBUTE_VALUE, maxdocsize);
+        node.setAttribute(DocFilterConfig.ATTRIBUTE_VALUE, maxdocsize);
       } else {
-        node.setAttribute(EmptierConfig.ATTRIBUTE_VALUE, "");
+        node.setAttribute(DocFilterConfig.ATTRIBUTE_VALUE, "");
       }
       os.addChild(os.getChildCount(), node);
     }
@@ -571,18 +575,18 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
       int i = 0;
       while (i < os.getChildCount()) {
         final SpecificationNode node = os.getChild(i);
-        if (node.getType().equals(EmptierConfig.NODE_MINDOCSIZE)) {
+        if (node.getType().equals(DocFilterConfig.NODE_MINDOCSIZE)) {
           os.removeChild(i);
         } else {
           i++;
         }
       }
-      final SpecificationNode node = new SpecificationNode(EmptierConfig.NODE_MINDOCSIZE);
+      final SpecificationNode node = new SpecificationNode(DocFilterConfig.NODE_MINDOCSIZE);
       final String mindocsize = variableContext.getParameter(seqPrefix + "mindocsize");
       if (mindocsize != null) {
-        node.setAttribute(EmptierConfig.ATTRIBUTE_VALUE, mindocsize);
+        node.setAttribute(DocFilterConfig.ATTRIBUTE_VALUE, mindocsize);
       } else {
-        node.setAttribute(EmptierConfig.ATTRIBUTE_VALUE, "");
+        node.setAttribute(DocFilterConfig.ATTRIBUTE_VALUE, "");
       }
       os.addChild(os.getChildCount(), node);
     }
@@ -594,18 +598,18 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
       int i = 0;
       while (i < os.getChildCount()) {
         final SpecificationNode node = os.getChild(i);
-        if (node.getType().equals(EmptierConfig.NODE_FILTERFIELD)) {
+        if (node.getType().equals(DocFilterConfig.NODE_FILTERFIELD)) {
           os.removeChild(i);
         } else {
           i++;
         }
       }
-      final SpecificationNode node = new SpecificationNode(EmptierConfig.NODE_FILTERFIELD);
+      final SpecificationNode node = new SpecificationNode(DocFilterConfig.NODE_FILTERFIELD);
       final String filterField = variableContext.getParameter(seqPrefix + "filterfield");
       if (filterField != null) {
-        node.setAttribute(EmptierConfig.ATTRIBUTE_VALUE, filterField);
+        node.setAttribute(DocFilterConfig.ATTRIBUTE_VALUE, filterField);
       } else {
-        node.setAttribute(EmptierConfig.ATTRIBUTE_VALUE, "");
+        node.setAttribute(DocFilterConfig.ATTRIBUTE_VALUE, "");
       }
       os.addChild(os.getChildCount(), node);
     }
@@ -627,7 +631,7 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
     final Map<String, Object> paramMap = new HashMap<>();
     paramMap.put("SEQNUM", Integer.toString(connectionSequenceNumber));
 
-    fillInEmptierFilterSpecification(paramMap, os);
+    fillInDocFilterSpecification(paramMap, os);
 
     Messages.outputResourceWithVelocity(out, locale, VIEW_SPECIFICATION_HTML, paramMap);
 
@@ -645,28 +649,28 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
       for (int i = 0; i < os.getChildCount(); i++) {
         final SpecificationNode sn = os.getChild(i);
 
-        if (sn.getType().equals(EmptierConfig.NODE_INCLUDEFILTER)) {
-          final String regex = sn.getAttributeValue(EmptierConfig.ATTRIBUTE_REGEX);
+        if (sn.getType().equals(DocFilterConfig.NODE_INCLUDEFILTER)) {
+          final String regex = sn.getAttributeValue(DocFilterConfig.ATTRIBUTE_REGEX);
           includeFilters.add(regex);
-        } else if (sn.getType().equals(EmptierConfig.NODE_EXCLUDEFILTER)) {
-          final String regex = sn.getAttributeValue(EmptierConfig.ATTRIBUTE_REGEX);
+        } else if (sn.getType().equals(DocFilterConfig.NODE_EXCLUDEFILTER)) {
+          final String regex = sn.getAttributeValue(DocFilterConfig.ATTRIBUTE_REGEX);
           excludeFilters.add(regex);
-        } else if (sn.getType().equals(EmptierConfig.NODE_MAXDOCSIZE)) {
-          final String value = sn.getAttributeValue(EmptierConfig.ATTRIBUTE_VALUE);
+        } else if (sn.getType().equals(DocFilterConfig.NODE_MAXDOCSIZE)) {
+          final String value = sn.getAttributeValue(DocFilterConfig.ATTRIBUTE_VALUE);
           if (value.length() == 0) {
             maxdocsize = -1;
           } else {
             maxdocsize = Integer.parseInt(value);
           }
-        } else if (sn.getType().equals(EmptierConfig.NODE_MINDOCSIZE)) {
-          final String value = sn.getAttributeValue(EmptierConfig.ATTRIBUTE_VALUE);
+        } else if (sn.getType().equals(DocFilterConfig.NODE_MINDOCSIZE)) {
+          final String value = sn.getAttributeValue(DocFilterConfig.ATTRIBUTE_VALUE);
           if (value.length() == 0) {
             mindocsize = -1;
           } else {
             mindocsize = Integer.parseInt(value);
           }
-        } else if (sn.getType().equals(EmptierConfig.NODE_FILTERFIELD)) {
-          filterField = sn.getAttributeValue(EmptierConfig.ATTRIBUTE_VALUE);
+        } else if (sn.getType().equals(DocFilterConfig.NODE_FILTERFIELD)) {
+          filterField = sn.getAttributeValue(DocFilterConfig.ATTRIBUTE_VALUE);
         }
       }
     }

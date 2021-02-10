@@ -42,6 +42,7 @@
   <outputconnector name="AmazonCloudSearch" class="org.apache.manifoldcf.agents.output.amazoncloudsearch.AmazonCloudSearchConnector"/>
 
     <!-- Add your transformation connectors here -->
+  <transformationconnector name="Datafari Doc Filter Connector" class="com.francelabs.datafari.transformation.docfilter.DocFilter"/>
   <transformationconnector name="Datafari Metadata Cleaner Connector" class="com.francelabs.datafari.transformation.metadatacleaner.MetadataCleaner"/>
   <transformationconnector name="Datafari Emptier Connector" class="com.francelabs.datafari.transformation.emptier.EmptierFilter"/>
   <transformationconnector name="Tika external content extractor" class="org.apache.manifoldcf.agents.transformation.tikaservice.TikaExtractor"/>
