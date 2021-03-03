@@ -186,6 +186,51 @@
                   "_attribute_regex": "\\.(?i)mov(?-i)$"
                 },
                 {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)wmv(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)flv(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)mp3(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)wav(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)wma(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)flac(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)aac(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)aiff(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)ogg(?-i)$"
+                },
+                {
                   "_type_": "maxdocsize",
                   "_value_": "",
                   "_attribute_value": "100000000"
@@ -235,7 +280,7 @@
             }
           ]
         },
-                {
+        {
           "_type_": "pipelinestage",
           "_children_": [
             {
