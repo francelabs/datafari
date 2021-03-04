@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -121,7 +123,7 @@ public class BackupManifoldCFConnectorsScript {
         LOGGER.info("Connectors Restored");
       }
       if (args[0].equals("RESTOREJOBS")) {
-     
+
         restoreAllConnections(jobsDir, ManifoldAPI.COMMANDS.JOBS);
 
         LOGGER.info("Jobs Restored");
@@ -130,7 +132,7 @@ public class BackupManifoldCFConnectorsScript {
       if (args[0].equals("STARTJOBS")) {
         LOGGER.info("Execution Start jobs");
         // takes in argument a list of job IDs : one per line
-        File f = new File(args[1]);
+        final File f = new File(args[1]);
         try (BufferedReader br = new BufferedReader(new FileReader(f))) {
           String s;
           while ((s = br.readLine()) != null) {
@@ -144,7 +146,7 @@ public class BackupManifoldCFConnectorsScript {
       if (args[0].equals("DELETEJOBS")) {
         LOGGER.info("Execution Deletion jobs");
         // takes in argument a list of job IDs : one per line
-        File f = new File(args[1]);
+        final File f = new File(args[1]);
         try (BufferedReader br = new BufferedReader(new FileReader(f))) {
           String s;
           while ((s = br.readLine()) != null) {
@@ -186,8 +188,12 @@ public class BackupManifoldCFConnectorsScript {
   private static void restoreConnection(final File connectorFile, final String command) throws Exception {
 
     final JSONObject jsonObject = JSONUtils.readJSON(connectorFile);
-    final String name = connectorFile.getName();
-    ManifoldAPI.putConfig(command, name.substring(0, name.length() - 5), jsonObject);
+    String name = connectorFile.getName();
+    // Remove the .json from the file name
+    name = name.substring(0, name.length() - 5);
+    // URL encode the name as it is used in the HTTP API call
+    name = URLEncoder.encode(name, StandardCharsets.UTF_8).replace("+", "%20");
+    ManifoldAPI.putConfig(command, name, jsonObject);
 
   }
 
