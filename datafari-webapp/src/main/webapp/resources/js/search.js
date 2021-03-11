@@ -266,9 +266,15 @@ $(function($) {
   }));
 
   if (window.isLikesAndFavoritesEnabled)
-    Manager.addWidget(new AjaxFranceLabs.LikesAndFavoritesWidget());
+    Manager.addWidget(new AjaxFranceLabs.LikesAndFavoritesWidget({
+      /* List of repo sources for which the open folder link must be displayed */
+      openFolderSources: []
+    }));
   else
-    Manager.addWidget(new AjaxFranceLabs.SubClassResultWidget());
+    Manager.addWidget(new AjaxFranceLabs.SubClassResultWidget({
+      /* List of repo sources for which the open folder link must be displayed */
+      openFolderSources: []
+    }));
   // Manager.addWidget(new AjaxFranceLabs.ExternalResultWidget());
 
   Manager.addWidget(new AjaxFranceLabs.PromolinkWidget({

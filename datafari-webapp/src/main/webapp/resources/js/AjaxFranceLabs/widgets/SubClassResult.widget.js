@@ -7,6 +7,8 @@ AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
   mutex_locked : false,
   availableImages : {},
   previewDisplayer : null,
+  // Strings in the array must match repo_source strings
+  openFolderSources : [/* "fileShareX", "SharepointZ" */],
 
   buildWidget : function() {
     var self = this;
@@ -152,6 +154,17 @@ AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
           elm.find('.doc:last .description').append('<div id="urlMobile"><p class="address" title="' + address + '">');
           // AjaxFranceLabs.tinyUrl(address)
           elm.find('.doc:last .address').append('<span>' + address + '</span>');
+          if (doc.repo_source !== null && doc.repo_source !== undefined){
+            if (self.openFolderSources.includes(doc.repo_source)) {
+              var openContainingFodler = "Open containing folder";
+              if (window.i18n.msgStore["open-containing-folder"]) {
+                openContainingFodler = window.i18n.msgStore["open-containing-folder"];
+              }
+              urlRedirect = 'URL?url=' + url.substring(0, url.lastIndexOf('/')) + '&id=' + Manager.store.get("id").value + '&q=' + Manager.store.get("q").value + '&position=' + position;
+              // elm.find('.doc:last .address').append('<a target="_blank" href="' + urlRedirect + '"><i class="far fa-folder-open openfolder" data-bs-toggle="tooltip" title="' + openContainingFodler + '"></i></a>');
+              elm.find('.doc:last .description').append('<a target="_blank" href="' + urlRedirect + '">' + openContainingFodler + '</a>');
+            }
+          }
           /*
            * To enable entity extraction part 2 elm.find('.doc:last .address').append('<br/><span>Phone : ' + phone+ '</span>');
            */
