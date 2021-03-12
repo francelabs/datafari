@@ -33,7 +33,7 @@
        that you fully re-index after changing this setting as it can
        affect both how text is indexed and queried.
   -->
-  <luceneMatchVersion>7.4.0</luceneMatchVersion>
+  <luceneMatchVersion>8.5.2</luceneMatchVersion>
 
 	<!-- TODO : change the hardcoded path add property.name=value in API Collections create -->
 
@@ -706,7 +706,7 @@
     <str name="hl.tag.post">&lt;/span&gt;</str>
 		<str name="hl.fl">content_fr content_en content_de content_es exactContent</str>
 		<str name="hl.requireFieldMatch">true</str>
-		<str name="hl.bs.type">CHARACTER</str>
+		<str name="hl.bs.type">WORD</str>
 		<str name="hl.encoder">html</str>
 		<str name="hl.fragsize">200</str>
 		<str name="hl.maxAnalyzedChars">51200</str>

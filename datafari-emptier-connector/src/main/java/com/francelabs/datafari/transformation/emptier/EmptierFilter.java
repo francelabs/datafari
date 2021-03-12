@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -67,8 +66,7 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
   /**
    * Connect.
    *
-   * @param configParameters
-   *          is the set of configuration parameters, which in this case describe the root directory.
+   * @param configParameters is the set of configuration parameters, which in this case describe the root directory.
    */
   @Override
   public void connect(final ConfigParams configParameters) {
@@ -112,17 +110,13 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
   }
 
   /**
-   * Output the configuration header section. This method is called in the head section of the connector's configuration page. Its purpose is
-   * to add the required tabs to the list, and to output any javascript methods that might be needed by the configuration editing HTML.
+   * Output the configuration header section. This method is called in the head section of the connector's configuration page. Its purpose is to add the required tabs to the list, and to output any
+   * javascript methods that might be needed by the configuration editing HTML.
    *
-   * @param threadContext
-   *          is the local thread context.
-   * @param out
-   *          is the output to which any HTML should be sent.
-   * @param parameters
-   *          are the configuration parameters, as they currently exist, for this connection being configured.
-   * @param tabsArray
-   *          is an array of tab names. Add to this array any tab names that are specific to the connector.
+   * @param threadContext is the local thread context.
+   * @param out           is the output to which any HTML should be sent.
+   * @param parameters    are the configuration parameters, as they currently exist, for this connection being configured.
+   * @param tabsArray     is an array of tab names. Add to this array any tab names that are specific to the connector.
    */
   @Override
   public void outputConfigurationHeader(final IThreadContext threadContext, final IHTTPOutput out, final Locale locale, final ConfigParams parameters, final List<String> tabsArray)
@@ -131,18 +125,13 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
   }
 
   /**
-   * Output the configuration body section. This method is called in the body section of the connector's configuration page. Its purpose is to
-   * present the required form elements for editing. The coder can presume that the HTML that is output from this configuration will be within
-   * appropriate <html>, <body>, and <form> tags. The name of the form is "editconnection".
+   * Output the configuration body section. This method is called in the body section of the connector's configuration page. Its purpose is to present the required form elements for editing. The coder
+   * can presume that the HTML that is output from this configuration will be within appropriate <html>, <body>, and <form> tags. The name of the form is "editconnection".
    *
-   * @param threadContext
-   *          is the local thread context.
-   * @param out
-   *          is the output to which any HTML should be sent.
-   * @param parameters
-   *          are the configuration parameters, as they currently exist, for this connection being configured.
-   * @param tabName
-   *          is the current tab name.
+   * @param threadContext is the local thread context.
+   * @param out           is the output to which any HTML should be sent.
+   * @param parameters    are the configuration parameters, as they currently exist, for this connection being configured.
+   * @param tabName       is the current tab name.
    */
   @Override
   public void outputConfigurationBody(final IThreadContext threadContext, final IHTTPOutput out, final Locale locale, final ConfigParams parameters, final String tabName)
@@ -151,18 +140,13 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
   }
 
   /**
-   * Process a configuration post. This method is called at the start of the connector's configuration page, whenever there is a possibility
-   * that form data for a connection has been posted. Its purpose is to gather form information and modify the configuration parameters
-   * accordingly. The name of the posted form is "editconnection".
+   * Process a configuration post. This method is called at the start of the connector's configuration page, whenever there is a possibility that form data for a connection has been posted. Its
+   * purpose is to gather form information and modify the configuration parameters accordingly. The name of the posted form is "editconnection".
    *
-   * @param threadContext
-   *          is the local thread context.
-   * @param variableContext
-   *          is the set of variables available from the post, including binary file post information.
-   * @param parameters
-   *          are the configuration parameters, as they currently exist, for this connection being configured.
-   * @return null if all is well, or a string error message if there is an error that should prevent saving of the connection (and cause a
-   *         redirection to an error page).
+   * @param threadContext   is the local thread context.
+   * @param variableContext is the set of variables available from the post, including binary file post information.
+   * @param parameters      are the configuration parameters, as they currently exist, for this connection being configured.
+   * @return null if all is well, or a string error message if there is an error that should prevent saving of the connection (and cause a redirection to an error page).
    */
   @Override
   public String processConfigurationPost(final IThreadContext threadContext, final IPostParameters variableContext, final Locale locale, final ConfigParams parameters) throws ManifoldCFException {
@@ -170,16 +154,12 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
   }
 
   /**
-   * View configuration. This method is called in the body section of the connector's view configuration page. Its purpose is to present the
-   * connection information to the user. The coder can presume that the HTML that is output from this configuration will be within appropriate
-   * <html> and <body> tags.
+   * View configuration. This method is called in the body section of the connector's view configuration page. Its purpose is to present the connection information to the user. The coder can presume
+   * that the HTML that is output from this configuration will be within appropriate <html> and <body> tags.
    *
-   * @param threadContext
-   *          is the local thread context.
-   * @param out
-   *          is the output to which any HTML should be sent.
-   * @param parameters
-   *          are the configuration parameters, as they currently exist, for this connection being configured.
+   * @param threadContext is the local thread context.
+   * @param out           is the output to which any HTML should be sent.
+   * @param parameters    are the configuration parameters, as they currently exist, for this connection being configured.
    */
   @Override
   public void viewConfiguration(final IThreadContext threadContext, final IHTTPOutput out, final Locale locale, final ConfigParams parameters) throws ManifoldCFException, IOException {
@@ -187,18 +167,15 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
   }
 
   /**
-   * Get an output version string, given an output specification. The output version string is used to uniquely describe the pertinent details
-   * of the output specification and the configuration, to allow the Connector Framework to determine whether a document will need to be
-   * output again. Note that the contents of the document cannot be considered by this method, and that a different version string (defined in
-   * IRepositoryConnector) is used to describe the version of the actual document.
+   * Get an output version string, given an output specification. The output version string is used to uniquely describe the pertinent details of the output specification and the configuration, to
+   * allow the Connector Framework to determine whether a document will need to be output again. Note that the contents of the document cannot be considered by this method, and that a different
+   * version string (defined in IRepositoryConnector) is used to describe the version of the actual document.
    *
-   * This method presumes that the connector object has been configured, and it is thus able to communicate with the output data store should
-   * that be necessary.
+   * This method presumes that the connector object has been configured, and it is thus able to communicate with the output data store should that be necessary.
    *
-   * @param os
-   *          is the current output specification for the job that is doing the crawling.
-   * @return a string, of unlimited length, which uniquely describes output configuration and specification in such a way that if two such
-   *         strings are equal, the document will not need to be sent again to the output data store.
+   * @param os is the current output specification for the job that is doing the crawling.
+   * @return a string, of unlimited length, which uniquely describes output configuration and specification in such a way that if two such strings are equal, the document will not need to be sent
+   *         again to the output data store.
    */
   @Override
   public VersionContext getPipelineDescription(final Specification os) throws ManifoldCFException, ServiceInterruption {
@@ -210,15 +187,11 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
   // checks further down
 
   /**
-   * Detect if a mime type is acceptable or not. This method is used to determine whether it makes sense to fetch a document in the first
-   * place.
+   * Detect if a mime type is acceptable or not. This method is used to determine whether it makes sense to fetch a document in the first place.
    *
-   * @param pipelineDescription
-   *          is the document's pipeline version string, for this connection.
-   * @param mimeType
-   *          is the mime type of the document.
-   * @param checkActivity
-   *          is an object including the activities that can be performed by this method.
+   * @param pipelineDescription is the document's pipeline version string, for this connection.
+   * @param mimeType            is the mime type of the document.
+   * @param checkActivity       is an object including the activities that can be performed by this method.
    * @return true if the mime type can be accepted by this connector.
    */
   @Override
@@ -227,16 +200,12 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
   }
 
   /**
-   * Pre-determine whether a document (passed here as a File object) is acceptable or not. This method is used to determine whether a document
-   * needs to be actually transferred. This hook is provided mainly to support search engines that only handle a small set of accepted file
-   * types.
+   * Pre-determine whether a document (passed here as a File object) is acceptable or not. This method is used to determine whether a document needs to be actually transferred. This hook is provided
+   * mainly to support search engines that only handle a small set of accepted file types.
    *
-   * @param pipelineDescription
-   *          is the document's pipeline version string, for this connection.
-   * @param localFile
-   *          is the local file to check.
-   * @param checkActivity
-   *          is an object including the activities that can be done by this method.
+   * @param pipelineDescription is the document's pipeline version string, for this connection.
+   * @param localFile           is the local file to check.
+   * @param checkActivity       is an object including the activities that can be done by this method.
    * @return true if the file is acceptable, false if not.
    */
   @Override
@@ -250,12 +219,9 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
   /**
    * Pre-determine whether a document's length is acceptable. This method is used to determine whether to fetch a document in the first place.
    *
-   * @param pipelineDescription
-   *          is the document's pipeline version string, for this connection.
-   * @param length
-   *          is the length of the document.
-   * @param checkActivity
-   *          is an object including the activities that can be done by this method.
+   * @param pipelineDescription is the document's pipeline version string, for this connection.
+   * @param length              is the length of the document.
+   * @param checkActivity       is an object including the activities that can be done by this method.
    * @return true if the file is acceptable, false if not.
    */
   @Override
@@ -265,47 +231,24 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
   }
 
   /**
-   * Add (or replace) a document in the output data store using the connector. This method presumes that the connector object has been
-   * configured, and it is thus able to communicate with the output data store should that be necessary. The OutputSpecification is *not*
-   * provided to this method, because the goal is consistency, and if output is done it must be consistent with the output description, since
-   * that was what was partly used to determine if output should be taking place. So it may be necessary for this method to decode an output
-   * description string in order to determine what should be done.
+   * Add (or replace) a document in the output data store using the connector. This method presumes that the connector object has been configured, and it is thus able to communicate with the output
+   * data store should that be necessary. The OutputSpecification is *not* provided to this method, because the goal is consistency, and if output is done it must be consistent with the output
+   * description, since that was what was partly used to determine if output should be taking place. So it may be necessary for this method to decode an output description string in order to determine
+   * what should be done.
    *
-   * @param documentURI
-   *          is the URI of the document. The URI is presumed to be the unique identifier which the output data store will use to process and
-   *          serve the document. This URI is constructed by the repository connector which fetches the document, and is thus universal across
-   *          all output connectors.
-   * @param outputDescription
-   *          is the description string that was constructed for this document by the getOutputDescription() method.
-   * @param document
-   *          is the document data to be processed (handed to the output data store).
-   * @param authorityNameString
-   *          is the name of the authority responsible for authorizing any access tokens passed in with the repository document. May be null.
-   * @param activities
-   *          is the handle to an object that the implementer of a pipeline connector may use to perform operations, such as logging
-   *          processing activity, or sending a modified document to the next stage in the pipeline.
+   * @param documentURI         is the URI of the document. The URI is presumed to be the unique identifier which the output data store will use to process and serve the document. This URI is
+   *                            constructed by the repository connector which fetches the document, and is thus universal across all output connectors.
+   * @param outputDescription   is the description string that was constructed for this document by the getOutputDescription() method.
+   * @param document            is the document data to be processed (handed to the output data store).
+   * @param authorityNameString is the name of the authority responsible for authorizing any access tokens passed in with the repository document. May be null.
+   * @param activities          is the handle to an object that the implementer of a pipeline connector may use to perform operations, such as logging processing activity, or sending a modified
+   *                            document to the next stage in the pipeline.
    * @return the document status (accepted or permanently rejected).
-   * @throws IOException
-   *           only if there's a stream error reading the document data.
+   * @throws IOException only if there's a stream error reading the document data.
    */
   @Override
   public int addOrReplaceDocumentWithException(final String documentURI, final VersionContext pipelineDescription, final RepositoryDocument document, final String authorityNameString,
       final IOutputAddActivity activities) throws ManifoldCFException, ServiceInterruption, IOException {
-
-    // Check licence file presence
-    final String conf_home = System.getenv("MAIN_DATAFARI_CONFIG_HOME");
-    String licenceFilePath = null;
-    File licence = null;
-    if (conf_home != null && !conf_home.isEmpty()) {
-      licenceFilePath = conf_home + File.separator + "licence.lc";
-      licence = new File(licenceFilePath);
-    }
-    if (licence == null || !licence.exists() || !licence.isFile() || !licence.canRead() || !licence.canWrite()) {
-      Logging.connectors.warn("The current connector is not allowed");
-      activities.noDocument();
-      activities.recordActivity(null, ACTIVITY_EMPTY, null, documentURI, "UNALLOWED", "The current connector is not allowed");
-      return DOCUMENTSTATUS_REJECTED;
-    }
 
     final SpecPacker spec = new SpecPacker(pipelineDescription.getSpecification());
 
@@ -367,56 +310,38 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
     if (toEmpty) {
       final ByteArrayInputStream bais = new ByteArrayInputStream(emptyContent.getBytes());
       document.setBinary(bais, emptyContent.length());
-      removeField(document, "emptied");
+      document.removeField("emptied");
       document.addField("emptied", "true");
     } else {
-      if (!hasField(document, "emptied")) {
-        document.addField("emptied", "false");
-      }
+      document.removeField("emptied");
+      document.addField("emptied", "false");
     }
 
     return activities.sendDocument(documentURI, document);
 
   }
 
+  /**
+   * This method replace the getFieldAsStrings of the MCF document to make sure it does not return a null object
+   *
+   * @param document  MCF document
+   * @param fieldName
+   * @return An array of strings that is empty if no value is found
+   * @throws IOException
+   */
   private String[] getFieldValues(final RepositoryDocument document, final String fieldName) throws IOException {
-    final Iterator<String> fields = document.getFields();
-    while (fields.hasNext()) {
-      final String fieldname = fields.next();
-      if (fieldname.toLowerCase().equals(fieldName.toLowerCase())) {
-        return document.getFieldAsStrings(fieldname);
-      }
-    }
-    return new String[0];
-  }
-
-  private boolean hasField(final RepositoryDocument document, final String fieldName) {
-    final Iterator<String> fields = document.getFields();
-    while (fields.hasNext()) {
-      final String fieldname = fields.next();
-      if (fieldname.toLowerCase().equals(fieldName.toLowerCase())) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private void removeField(final RepositoryDocument document, final String fieldName) {
-    final Iterator<String> fields = document.getFields();
-    while (fields.hasNext()) {
-      final String fieldname = fields.next();
-      if (fieldname.toLowerCase().equals(fieldName.toLowerCase())) {
-        document.removeField(fieldname);
-        break;
-      }
+    final String[] fieldValues = document.getFieldAsStrings(fieldName);
+    if (fieldValues != null) {
+      return fieldValues;
+    } else {
+      return new String[0];
     }
   }
 
   /**
    * Obtain the name of the form check javascript method to call.
    *
-   * @param connectionSequenceNumber
-   *          is the unique number of this connection within the job.
+   * @param connectionSequenceNumber is the unique number of this connection within the job.
    * @return the name of the form check javascript method.
    */
   @Override
@@ -427,8 +352,7 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
   /**
    * Obtain the name of the form presave check javascript method to call.
    *
-   * @param connectionSequenceNumber
-   *          is the unique number of this connection within the job.
+   * @param connectionSequenceNumber is the unique number of this connection within the job.
    * @return the name of the form presave check javascript method.
    */
   @Override
@@ -474,20 +398,14 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
   }
 
   /**
-   * Output the specification header section. This method is called in the head section of a job page which has selected a pipeline connection
-   * of the current type. Its purpose is to add the required tabs to the list, and to output any javascript methods that might be needed by
-   * the job editing HTML.
+   * Output the specification header section. This method is called in the head section of a job page which has selected a pipeline connection of the current type. Its purpose is to add the required
+   * tabs to the list, and to output any javascript methods that might be needed by the job editing HTML.
    *
-   * @param out
-   *          is the output to which any HTML should be sent.
-   * @param locale
-   *          is the preferred local of the output.
-   * @param os
-   *          is the current pipeline specification for this connection.
-   * @param connectionSequenceNumber
-   *          is the unique number of this connection within the job.
-   * @param tabsArray
-   *          is an array of tab names. Add to this array any tab names that are specific to the connector.
+   * @param out                      is the output to which any HTML should be sent.
+   * @param locale                   is the preferred local of the output.
+   * @param os                       is the current pipeline specification for this connection.
+   * @param connectionSequenceNumber is the unique number of this connection within the job.
+   * @param tabsArray                is an array of tab names. Add to this array any tab names that are specific to the connector.
    */
   @Override
   public void outputSpecificationHeader(final IHTTPOutput out, final Locale locale, final Specification os, final int connectionSequenceNumber, final List<String> tabsArray)
@@ -504,22 +422,16 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
   }
 
   /**
-   * Output the specification body section. This method is called in the body section of a job page which has selected a pipeline connection
-   * of the current type. Its purpose is to present the required form elements for editing. The coder can presume that the HTML that is output
-   * from this configuration will be within appropriate <html>, <body>, and <form> tags. The name of the form is "editjob".
+   * Output the specification body section. This method is called in the body section of a job page which has selected a pipeline connection of the current type. Its purpose is to present the required
+   * form elements for editing. The coder can presume that the HTML that is output from this configuration will be within appropriate <html>, <body>, and <form> tags. The name of the form is
+   * "editjob".
    *
-   * @param out
-   *          is the output to which any HTML should be sent.
-   * @param locale
-   *          is the preferred local of the output.
-   * @param os
-   *          is the current pipeline specification for this job.
-   * @param connectionSequenceNumber
-   *          is the unique number of this connection within the job.
-   * @param actualSequenceNumber
-   *          is the connection within the job that has currently been selected.
-   * @param tabName
-   *          is the current tab name.
+   * @param out                      is the output to which any HTML should be sent.
+   * @param locale                   is the preferred local of the output.
+   * @param os                       is the current pipeline specification for this job.
+   * @param connectionSequenceNumber is the unique number of this connection within the job.
+   * @param actualSequenceNumber     is the connection within the job that has currently been selected.
+   * @param tabName                  is the current tab name.
    */
   @Override
   public void outputSpecificationBody(final IHTTPOutput out, final Locale locale, final Specification os, final int connectionSequenceNumber, final int actualSequenceNumber, final String tabName)
@@ -537,20 +449,14 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
   }
 
   /**
-   * Process a specification post. This method is called at the start of job's edit or view page, whenever there is a possibility that form
-   * data for a connection has been posted. Its purpose is to gather form information and modify the transformation specification accordingly.
-   * The name of the posted form is "editjob".
+   * Process a specification post. This method is called at the start of job's edit or view page, whenever there is a possibility that form data for a connection has been posted. Its purpose is to
+   * gather form information and modify the transformation specification accordingly. The name of the posted form is "editjob".
    *
-   * @param variableContext
-   *          contains the post data, including binary file-upload information.
-   * @param locale
-   *          is the preferred local of the output.
-   * @param os
-   *          is the current pipeline specification for this job.
-   * @param connectionSequenceNumber
-   *          is the unique number of this connection within the job.
-   * @return null if all is well, or a string error message if there is an error that should prevent saving of the job (and cause a
-   *         redirection to an error page).
+   * @param variableContext          contains the post data, including binary file-upload information.
+   * @param locale                   is the preferred local of the output.
+   * @param os                       is the current pipeline specification for this job.
+   * @param connectionSequenceNumber is the unique number of this connection within the job.
+   * @return null if all is well, or a string error message if there is an error that should prevent saving of the job (and cause a redirection to an error page).
    */
   @Override
   public String processSpecificationPost(final IPostParameters variableContext, final Locale locale, final Specification os, final int connectionSequenceNumber) throws ManifoldCFException {
@@ -708,18 +614,13 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
   }
 
   /**
-   * View specification. This method is called in the body section of a job's view page. Its purpose is to present the pipeline specification
-   * information to the user. The coder can presume that the HTML that is output from this configuration will be within appropriate <html> and
-   * <body> tags.
+   * View specification. This method is called in the body section of a job's view page. Its purpose is to present the pipeline specification information to the user. The coder can presume that the
+   * HTML that is output from this configuration will be within appropriate <html> and <body> tags.
    *
-   * @param out
-   *          is the output to which any HTML should be sent.
-   * @param locale
-   *          is the preferred local of the output.
-   * @param connectionSequenceNumber
-   *          is the unique number of this connection within the job.
-   * @param os
-   *          is the current pipeline specification for this job.
+   * @param out                      is the output to which any HTML should be sent.
+   * @param locale                   is the preferred local of the output.
+   * @param connectionSequenceNumber is the unique number of this connection within the job.
+   * @param os                       is the current pipeline specification for this job.
    */
   @Override
   public void viewSpecification(final IHTTPOutput out, final Locale locale, final Specification os, final int connectionSequenceNumber) throws ManifoldCFException, IOException {
@@ -796,10 +697,8 @@ public class EmptierFilter extends org.apache.manifoldcf.agents.transformation.B
   /**
    * Test if there is at least one regular expression that match with the provided sting
    *
-   * @param regexList
-   *          the list of regular expressions
-   * @param str
-   *          the string to test
+   * @param regexList the list of regular expressions
+   * @param str       the string to test
    * @return the first matching regex found or null if no matching regex
    */
   private String matchingRegex(final List<String> regexList, final String str) throws RegexException {

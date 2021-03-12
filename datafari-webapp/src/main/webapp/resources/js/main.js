@@ -53,7 +53,7 @@ $(function($) {
     id : 'languageSelector'
   }));
 
-  var fieldList = 'title,url,id,extension,preview_content,last_modified,crawl_date,author,original_file_size,emptied';
+  var fieldList = 'title,url,id,extension,preview_content,last_modified,crawl_date,author,original_file_size,emptied,repo_source';
   for (var i = 0; i < additionalFields.length; i++) {
     fieldList += "," + additionalFields[i];
   }

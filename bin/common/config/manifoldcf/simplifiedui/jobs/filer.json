@@ -186,6 +186,51 @@
                   "_attribute_regex": "\\.(?i)mov(?-i)$"
                 },
                 {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)wmv(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)flv(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)mp3(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)wav(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)wma(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)flac(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)aac(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)aiff(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)ogg(?-i)$"
+                },
+                {
                   "_type_": "maxdocsize",
                   "_value_": "",
                   "_attribute_value": "100000000"
@@ -245,6 +290,44 @@
             {
               "_type_": "stage_prerequisite",
               "_value_": "2"
+            },
+            {
+              "_type_": "stage_isoutput",
+              "_value_": "false"
+            },
+            {
+              "_type_": "stage_connectionname",
+              "_value_": "MetadataCleaner"
+            },
+            {
+              "_type_": "stage_specification",
+              "_children_": [
+                {
+                  "_type_": "namecleaner",
+                  "_value_": "",
+                  "_attribute_value": "_{",
+                  "_attribute_regex": "\\$\\{"
+                },
+                {
+                  "_type_": "valuecleaner",
+                  "_value_": "",
+                  "_attribute_value": "_{",
+                  "_attribute_regex": "\\$\\{"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_type_": "pipelinestage",
+          "_children_": [
+            {
+              "_type_": "stage_id",
+              "_value_": "4"
+            },
+            {
+              "_type_": "stage_prerequisite",
+              "_value_": "3"
             },
             {
               "_type_": "stage_isoutput",

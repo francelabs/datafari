@@ -47,7 +47,10 @@ AjaxFranceLabs.SpellcheckerWidget = AjaxFranceLabs.AbstractWidget.extend({
      * We entered an incorrect value in search box, this is why spellcheck.suggestions is not empty => show the spellchecker widget and
      * perform a new query with the corrected value
      */
-    if (data.response.numFound == 0 && data.spellcheck !== undefined && data.spellcheck.collations.length > 0) {
+    if (data.response.numFound == 0 
+      && data.spellcheck !== undefined 
+      && data.spellcheck !== null 
+      && data.spellcheck.collations.length > 0) {
 
       $(self.elm).empty();
       $(self.elm).show();

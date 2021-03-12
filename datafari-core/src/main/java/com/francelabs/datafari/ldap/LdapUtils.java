@@ -60,8 +60,7 @@ public class LdapUtils {
     return ldapCtx;
   }
 
-  public static boolean testUserBase(final LdapContext ldapContext, final String searchBase) {
-    final String filter = baseFilter;
+  public static boolean testUserBase(final LdapContext ldapContext, final String searchBase, final String userFilter) {
     final int scope = SearchControls.SUBTREE_SCOPE;
     // initializing search controls
     final SearchControls searchCtls = new SearchControls();
@@ -69,8 +68,8 @@ public class LdapUtils {
     searchCtls.setReturningAttributes(returnAttributes);
 
     try {
-      logger.debug("Testing user base " + searchBase + ". Trying to find users with filter " + filter);
-      final NamingEnumeration<SearchResult> users = ldapContext.search(searchBase, filter, searchCtls);
+      logger.debug("Testing user base " + searchBase + ". Trying to find users with filter " + userFilter);
+      final NamingEnumeration<SearchResult> users = ldapContext.search(searchBase, userFilter, searchCtls);
 
       while (users.hasMore()) {
         final Attributes attrs = users.next().getAttributes();

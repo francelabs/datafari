@@ -50,6 +50,7 @@ public class HelpAdmin extends HttpServlet {
   private static final long serialVersionUID = 1L;
   private final String env;
   private final String fileName = "helpContent.jsp";
+  private final String charsetDef = "<%@ page language=\"java\" contentType=\"text/html; charset=utf-8\" pageEncoding=\"utf-8\"%>\n";
   private final static Logger LOGGER = LogManager.getLogger(HelpAdmin.class.getName());
 
   /**
@@ -76,7 +77,9 @@ public class HelpAdmin extends HttpServlet {
       final String filepath = env + File.separator + this.fileName;
       try {
         response.setContentType("application/octet-stream");
-        final String fileContent = readFile(filepath, StandardCharsets.UTF_8);
+        String fileContent = readFile(filepath, StandardCharsets.UTF_8);
+        // Get rid of the first line which is charset definition
+        fileContent = fileContent.substring(fileContent.indexOf('\n')+1);
         // get the file and put its content into a string
         response.setContentType("text/html");
         final PrintWriter out = response.getWriter();
@@ -117,7 +120,9 @@ public class HelpAdmin extends HttpServlet {
         try {
           final FileOutputStream fooStream = new FileOutputStream(file, false);
           // true to append, false to overwrite.
+          final byte[] charsetDefBytes = charsetDef.getBytes();
           final byte[] myBytes = request.getParameter("content").getBytes();
+          fooStream.write(charsetDefBytes);
           fooStream.write(myBytes); // rewrite the file
           fooStream.close();
         } catch (final IOException e) {

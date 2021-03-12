@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -139,7 +140,8 @@ public class ManifoldAPI {
       Thread.sleep(1000);
       result = readConfig(COMMANDS.JOBSTATUSES, id);
       LOGGER.info("job id " + id + " " + result.toString());
-      if ((result.toString().contains("\"status\":\"done\"")) || (result.toString().contains("\"status\":\"error\"")) || (result.toString().contains("\"status\":\"notifying\"")) || (result.toString().contains("\"status\":\"terminating\""))) {
+      if ((result.toString().contains("\"status\":\"done\"")) || (result.toString().contains("\"status\":\"error\"")) || (result.toString().contains("\"status\":\"notifying\""))
+          || (result.toString().contains("\"status\":\"terminating\""))) {
         LOGGER.info("job done or in error state");
         break;
       }
@@ -164,12 +166,18 @@ public class ManifoldAPI {
     if (objGet != null) {
       if (objGet instanceof JSONObject) {
         final JSONObject connector = (JSONObject) objGet;
-        delete(command, getStrAttrVal(connector, "name"));
+        String connectorName = getStrAttrVal(connector, "name");
+        // URL encode connector name because it is used in the HTTP API call
+        connectorName = URLEncoder.encode(connectorName, StandardCharsets.UTF_8).replace("+", "%20");
+        delete(command, connectorName);
       } else if (objGet instanceof JSONArray) {
         final JSONArray connectorList = (JSONArray) connectors.get(subCommands);
         for (int i = 0; i < connectorList.size(); i++) {
           final JSONObject singleConnector = (JSONObject) connectorList.get(i);
-          delete(command, getStrAttrVal(singleConnector, "name"));
+          String connectorName = getStrAttrVal(singleConnector, "name");
+          // URL encode connector name because it is used in the HTTP API call
+          connectorName = URLEncoder.encode(connectorName, StandardCharsets.UTF_8).replace("+", "%20");
+          delete(command, connectorName);
         }
       }
     }

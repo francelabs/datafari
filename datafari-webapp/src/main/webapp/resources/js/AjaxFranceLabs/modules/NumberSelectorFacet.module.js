@@ -167,8 +167,9 @@ AjaxFranceLabs.NumberSelectorFacetModule = AjaxFranceLabs.AbstractModule.extend(
 				var numberSelector = $("#" + this.id + "-number-selector");
         
         var options="";
-        Object.entries(self.multiplier).forEach(
-          ([label, multiplicator]) => options+="<option value='" + multiplicator + "'>" + label + "</option>");
+        for (var label in self.multiplier){
+          options+="<option value='" + self.multiplier[label] + "'>" + label + "</option>";
+        }
         var hiddenMultiplicators="";
         if(options == "") {
           hiddenMultiplicators="style='display:none;'";
