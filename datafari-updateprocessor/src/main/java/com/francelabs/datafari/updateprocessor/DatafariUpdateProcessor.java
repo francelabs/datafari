@@ -144,7 +144,13 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 
     }
 
-    final String url = (String) doc.getFieldValue("id");
+    String url;
+    if (doc.containsKey("url")) {
+      url = (String) doc.getFieldValue("url");
+    } else {
+      url = (String) doc.getFieldValue("id");
+      doc.addField("url", url);
+    }
 
     final String decodedUrl = URLDecoder.decode(url, StandardCharsets.UTF_8.name());
     doc.addField("url_search", decodedUrl);
@@ -163,9 +169,6 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
      *
      * // Add the tokens to the urlHierarchy field doc.addField("urlHierarchy", urlHierarchy);
      */
-
-    doc.remove("url");
-    doc.addField("url", url);
 
     String filename = "";
     String jsouptitle = "";

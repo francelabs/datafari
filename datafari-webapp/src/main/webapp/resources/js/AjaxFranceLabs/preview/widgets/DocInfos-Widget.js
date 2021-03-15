@@ -34,11 +34,11 @@ AjaxFranceLabs.DocInfosWidget = AjaxFranceLabs.WidgetCore.extend({
     widgetContentDiv.html("");
     var docIdDiv = $("<div id='docId'></div>");
     widgetContentDiv.append(docIdDiv);
-    var sourceLink = doc.id;
+    var sourceLink = doc.url;
     // If there is a qId then change the sourceLink so that the URL servlet can
     // update the statistics (one click for this doc)
     if (qId != null && qId != undefined && qId != "") {
-      sourceLink = "URL?url=" + doc.id + "&id=" + qId + "&action=OPEN_FROM_PREVIEW";
+      sourceLink = "URL?url=" + doc.url + "&id=" + qId + "&action=OPEN_FROM_PREVIEW";
     }
     widgetContentDiv.append('<div>' + '<div id="docIcon" class="doc-icon"></div>' + '<div class="heading-content">' + '<div>' + '<h1 id="docTitle"></h1>' + '</div>' + '<div class="heading-desc">'
         + '<div id="doclastModified" class="heading-date"></div>' + '<a id="sourceLink" target="_blank" class="source-doc-link heading-box" href="' + sourceLink + '">'
