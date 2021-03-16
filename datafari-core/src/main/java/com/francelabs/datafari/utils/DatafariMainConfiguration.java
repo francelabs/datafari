@@ -54,6 +54,9 @@ public class DatafariMainConfiguration extends AbstractConfigClass {
   public static final String SESSION_TIMEOUT_UNAUTH = "sessionTimeoutUnauthenticated";
   public static final String SESSION_TIMEOUT_AUTH = "sessionTimeoutAuthenticated";
   public static final String MAX_CONCURRENT_SESSIONS = "maxConcurrentSessions";
+  public static final String EMAIL_DPO = "email_dpo";
+  public static final String EMAIL_FEEDBACKS = "email_feedbacks";
+  public static final String EMAIL_BUGS = "email_bugs";
 
   private final static Logger LOGGER = LogManager.getLogger(DatafariMainConfiguration.class.getName());
 
