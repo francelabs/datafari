@@ -30,6 +30,7 @@ import com.francelabs.datafari.rest.v1_0.exceptions.NotAuthenticatedException;
 import com.francelabs.datafari.rest.v1_0.utils.RestAPIUtils;
 import com.francelabs.datafari.user.Favorite;
 import com.francelabs.datafari.utils.AuthenticatedUserName;
+import com.francelabs.datafari.utils.DatafariMainConfiguration;
 
 import org.json.simple.JSONObject;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -52,6 +53,13 @@ public class Favorites {
         final String authenticatedUserName = AuthenticatedUserName.getName(request);
         if (authenticatedUserName != null) {
             final JSONObject jsonResponse = new JSONObject();
+            final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
+            if (config.getProperty(DatafariMainConfiguration.LIKESANDFAVORTES).contentEquals("false")) {
+                // Likes and favorites are not activated, build an error response with a 503 code and not activated reason
+                JSONObject extra = new JSONObject();
+                extra.put("details", "Feature not activated");
+                return RestAPIUtils.buildErrorResponse(503, "Service unavailable", extra);
+            }
             if (ids != null && ids.length == 0) {
                 ids = null;
             }
@@ -81,6 +89,13 @@ public class Favorites {
             @RequestBody String jsonParam) {
         final String authenticatedUserName = AuthenticatedUserName.getName(request);
         if (authenticatedUserName != null) {
+            final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
+            if (config.getProperty(DatafariMainConfiguration.LIKESANDFAVORTES).contentEquals("false")) {
+                // Likes and favorites are not activated, build an error response with a 503 code and not activated reason
+                JSONObject extra = new JSONObject();
+                extra.put("details", "Feature not activated");
+                return RestAPIUtils.buildErrorResponse(503, "Service unavailable", extra);
+            }
             final JSONParser parser = new JSONParser();
             try {
                 JSONObject params = (JSONObject) parser.parse(jsonParam);
@@ -109,6 +124,13 @@ public class Favorites {
             @PathVariable("favoriteID") String favoriteID) {
         final String authenticatedUserName = AuthenticatedUserName.getName(request);
         if (authenticatedUserName != null) {
+            final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
+            if (config.getProperty(DatafariMainConfiguration.LIKESANDFAVORTES).contentEquals("false")) {
+                // Likes and favorites are not activated, build an error response with a 503 code and not activated reason
+                JSONObject extra = new JSONObject();
+                extra.put("details", "Feature not activated");
+                return RestAPIUtils.buildErrorResponse(503, "Service unavailable", extra);
+            }
             try {
                 String[] favoriteIDArray = { favoriteID };
                 List<String> favorites = Favorite.getFavorites(authenticatedUserName, favoriteIDArray);
