@@ -1,7 +1,9 @@
 >>>
 Template to declare a bug. 
 
-You have 4 priorities to chose from: Prio 1 is for critical matters, Prio 2 is for enhancements meant to be pushed within the next 2 releases, Prio 3 is for things that matter but you're not sure when to push it, Prio 4 is for enhancements that have clearly no priority at all at the time of its creation.
+First, please use the label "bug" to flag it as such.
+
+You have 4 priorities to choose from: Prio 1 is for critical matters, Prio 2 is for enhancements meant to be pushed within the next 2 releases, Prio 3 is for things that matter but you're not sure when to push it, Prio 4 is for enhancements that have clearly no priority at all at the time of its creation.
 
 You should create one ticket per Datafari version where it will be pushed, and use the linking mechanism to point to the same tickets between different versions. Versions are declared as Milestones in our Gitlab.
 
