@@ -73,7 +73,7 @@ public class Favorites {
                 jsonResponse.put("favorites", favoritesJSONList);
                 AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
                         "Accessed the list of Favorites of user " + authenticatedUserName);
-                return jsonResponse.toJSONString();
+                return RestAPIUtils.buildOKResponse(jsonResponse);
             } catch (DatafariServerException e) {
                 throw new InternalErrorException("Unexpected error while retrieving favorites");
             } catch (ParseException e) {
