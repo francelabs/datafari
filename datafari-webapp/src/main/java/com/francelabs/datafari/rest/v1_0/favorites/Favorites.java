@@ -55,7 +55,8 @@ public class Favorites {
             final JSONObject jsonResponse = new JSONObject();
             final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
             if (config.getProperty(DatafariMainConfiguration.LIKESANDFAVORTES).contentEquals("false")) {
-                // Likes and favorites are not activated, build an error response with a 503 code and not activated reason
+                // Likes and favorites are not activated, build an error response with a 503
+                // code and not activated reason
                 JSONObject extra = new JSONObject();
                 extra.put("details", "Feature not activated");
                 return RestAPIUtils.buildErrorResponse(503, "Service unavailable", extra);
@@ -91,7 +92,8 @@ public class Favorites {
         if (authenticatedUserName != null) {
             final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
             if (config.getProperty(DatafariMainConfiguration.LIKESANDFAVORTES).contentEquals("false")) {
-                // Likes and favorites are not activated, build an error response with a 503 code and not activated reason
+                // Likes and favorites are not activated, build an error response with a 503
+                // code and not activated reason
                 JSONObject extra = new JSONObject();
                 extra.put("details", "Feature not activated");
                 return RestAPIUtils.buildErrorResponse(503, "Service unavailable", extra);
@@ -119,36 +121,43 @@ public class Favorites {
         }
     }
 
-    @DeleteMapping(value = "/rest/v1.0/users/current/favorites/{favoriteID}", produces = "application/json;charset=UTF-8")
+    @DeleteMapping(value = "/rest/v1.0/users/current/favorites", produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
     public String removeFavorite(final HttpServletRequest request, final HttpServletResponse response,
-            @PathVariable("favoriteID") String favoriteID) {
+            @RequestBody String jsonParam) {
         final String authenticatedUserName = AuthenticatedUserName.getName(request);
         if (authenticatedUserName != null) {
             final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
             if (config.getProperty(DatafariMainConfiguration.LIKESANDFAVORTES).contentEquals("false")) {
-                // Likes and favorites are not activated, build an error response with a 503 code and not activated reason
+                // Likes and favorites are not activated, build an error response with a 503
+                // code and not activated reason
                 JSONObject extra = new JSONObject();
                 extra.put("details", "Feature not activated");
                 return RestAPIUtils.buildErrorResponse(503, "Service unavailable", extra);
             }
             try {
-                String[] favoriteIDArray = { favoriteID };
-                List<String> favorites = Favorite.getFavorites(authenticatedUserName, favoriteIDArray);
-                if (favorites.size() == 1) {
-                    final JSONParser parser = new JSONParser();
-                    try {
-                        final JSONObject content = (JSONObject) parser.parse(favorites.get(0));
-                        Favorite.deleteFavorite(authenticatedUserName, favoriteID);
-                        AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
-                                "Removed a favorite document for user " + authenticatedUserName);
-                        return RestAPIUtils.buildOKResponse(content);
-                    } catch (ParseException e) {
-                        throw new InternalErrorException("Error parsing internal data during favorite deletion.");
+                final JSONParser parser = new JSONParser();
+                try {
+                    JSONObject params = (JSONObject) parser.parse(jsonParam);
+                    String favoriteID = (String) params.get("id");
+                    String[] favoriteIDArray = { favoriteID };
+                    List<String> favorites = Favorite.getFavorites(authenticatedUserName, favoriteIDArray);
+                    if (favorites.size() == 1) {
+                        try {
+                            final JSONObject content = (JSONObject) parser.parse(favorites.get(0));
+                            Favorite.deleteFavorite(authenticatedUserName, favoriteID);
+                            AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
+                                    "Removed a favorite document for user " + authenticatedUserName);
+                            return RestAPIUtils.buildOKResponse(content);
+                        } catch (ParseException e) {
+                            throw new InternalErrorException("Error parsing internal data during favorite deletion.");
+                        }
                     }
+                    // Cannot delete something that is not there
+                    throw new DataNotFoundException(
+                            "Couldn't find favorite with id " + favoriteID + " for the current user.");
+                } catch (ParseException e) {
+                    throw new BadRequestException("Couldn't parse the JSON body");
                 }
-                // Cannot delete something that is not there
-                throw new DataNotFoundException(
-                        "Couldn't find favorite with id " + favoriteID + " for the current user.");
             } catch (DatafariServerException e) {
                 throw new InternalErrorException("Unexpected error while deleting favorite.");
             }
