@@ -98,6 +98,8 @@
 
   <!-- SharePoint debug fields -->
   <field name="sp_path" type="string" indexed="true" stored="true" multiValued="false"/>
+  <field name="sp_site" type="string" indexed="true" stored="true" multiValued="false"/>
+  <field name="sp_item" type="string" indexed="true" stored="true" multiValued="false"/>
 
     <!-- Common metadata fields, named specifically to match up with
      SolrCell metadata when parsing rich documents such as Word, PDF.

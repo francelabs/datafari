@@ -66,7 +66,7 @@ AjaxFranceLabs.ShareLinksWidget = AjaxFranceLabs.FacetCore.extend({
       var sharePreview = $('<div class="share-link-div"><i class="fas fa-chevron-right"></i> ' + window.i18n.msgStore['preview-share-preview'] + ' <br/><input type="text" value="' + sharePreviewLink
           + '" /></div>');
 
-      var shareDoc = $('<div class="share-link-div"><i class="fas fa-chevron-right"></i> ' + window.i18n.msgStore['preview-share-doc'] + ' <br/><input type="text" value="' + idDoc + '" /></div>');
+      var shareDoc = $('<div class="share-link-div"><i class="fas fa-chevron-right"></i> ' + window.i18n.msgStore['preview-share-doc'] + ' <br/><input type="text" value="' + doc.url + '" /></div>');
       widgetContentDiv.html("");
       widgetContentDiv.append(sharePreview).append(shareDoc);
     } else {

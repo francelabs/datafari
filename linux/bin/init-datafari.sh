@@ -359,7 +359,7 @@ init_datafariui_alpha() {
         if [ "$md5LocalFile" == "$md5LocalFile" ]; then
         	tar xfz datafariui.tar.gz
             mv build $DATAFARI_HOME/www
-			datafariui_proxy_apache="Alias /datafariui $DATAFARI_HOME/www/\n<Directory \"$DATAFARI_HOME/www\">\nRequire all granted\nRewriteEngine On\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteRule ^/datafariui/ /datafariui/index.html [QSA,L]\n</Directory>"
+			datafariui_proxy_apache="Alias /datafariui $DATAFARI_HOME/www/\n<Directory \"$DATAFARI_HOME/www\">\nRequire all granted\nRewriteEngine On\nRewriteBase \"/datafariui/\"\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteRule \"^\" \"index.html\" [QSA,L]\n</Directory>"
 			sed -i -e "/^[[:space:]]*# DatafariUI_Alpha.*/a${datafariui_proxy_apache}" $DATAFARI_HOME/apache/sites-available/tomcat.conf >>$installerLog 2>&1
 		else
 			echo "Error MD5 comparison for Datafari UI alpha download, skip that part"
