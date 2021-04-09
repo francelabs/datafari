@@ -71,20 +71,29 @@ public class LdapUtils {
       logger.debug("Testing user base " + searchBase + ". Trying to find users with filter " + userFilter);
       final NamingEnumeration<SearchResult> users = ldapContext.search(searchBase, userFilter, searchCtls);
 
-      while (users.hasMore()) {
-        final Attributes attrs = users.next().getAttributes();
-
-        // Check if the user is activated before considering we found a valid one
-        final Attribute bitsAttribute = attrs.get("userAccountControl");
-        if (bitsAttribute != null) {
-          final long lng = Long.parseLong(bitsAttribute.get(0).toString());
-          final long secondBit = lng & 2; // get bit 2
-          if (secondBit == 0) { // User activated so return true as the userBase is valid
-            logger.debug("Found users in user base " + searchBase);
-            return true;
-          }
-        }
+      if (users.hasMore()) {
+        logger.debug("Found users in user base " + searchBase);
+        return true;
       }
+
+      // This part was checking if there are active users in the found ones but depending on the AD type it does not work...
+//      while (users.hasMore()) {
+//        logger.debug("Found users in user base " + searchBase + "\r\nNow checking if there is at least one active user (userAccountControl attribute check)");
+//        final Attributes attrs = users.next().getAttributes();
+//
+//        // Check if the user is activated before considering we found a valid one
+//        final Attribute bitsAttribute = attrs.get("userAccountControl");
+//        if (bitsAttribute != null) {
+//          final long lng = Long.parseLong(bitsAttribute.get(0).toString());
+//          final long secondBit = lng & 2; // get bit 2
+//          if (secondBit == 0) { // User activated so return true as the userBase is valid
+//            logger.debug("Found active users in user base " + searchBase);
+//            return true;
+//          }
+//        } else {
+//          logger.debug("Found a user without userAccountControl attribute in user base " + searchBase);
+//        }
+//      }
     } catch (final NamingException e) {
       logger.error("Unable to search in user base " + searchBase, e);
       return false;
