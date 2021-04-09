@@ -65,4 +65,8 @@
         <bool name="entities.extract.simple.special">${entity.special:false}</bool>
         <str name="entities.extract.simple.special.regex">.*resume*</str>
         <!-- <str name="entities.extract.simple.phone.regex"></str> -->
+        
+        <bool name="hierarchical.path.processing">true</bool>
+        <str name="hierarchical.field">urlHierarchy</str>
+        <str name="hierarchical.path.separator">/</str>
       </processor>

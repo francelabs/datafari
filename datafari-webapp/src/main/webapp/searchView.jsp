@@ -77,6 +77,7 @@
     <script type="text/javascript" src="<c:url value="/resources/js/AjaxFranceLabs/widgets/Tab.widget.js" />"></script>
     <script type="text/javascript" src="<c:url value="/resources/js/AjaxFranceLabs/widgets/PrevisualizeResult.widget.js" />" charset="utf-8"></script>
     <script type="text/javascript" src="<c:url value="/resources/js/AjaxFranceLabs/widgets/Aggregator.widget.js" />" charset="utf-8"></script>
+    <script type="text/javascript" src="<c:url value="/resources/js/AjaxFranceLabs/widgets/HierarchicalFacet.widget.js" />"></script>
 
     <script type="text/javascript" src="<c:url value="/resources/js/AjaxFranceLabs/widgets/Spellchecker.widget.js" />"></script>
     <script type="text/javascript" src="<c:url value="/resources/js/AjaxFranceLabs/widgets/SubClassResult.widget.js" />" charset="utf-8"></script>
@@ -203,7 +204,7 @@
 					<div id="facet_creation_date"></div>
 					<div id="facet_extension"></div>
 					<!-- To enable Facet Hierarchical widget -->
-					<!--  <div id="facet_hierarchical_url"></div> -->
+					<div id="facet_hierarchical_url"></div>
 					<!-- To enable entity extraction -->
 					<div id="facet_entity_phone_present"></div>
 					<div id="facet_entity_phone"></div>

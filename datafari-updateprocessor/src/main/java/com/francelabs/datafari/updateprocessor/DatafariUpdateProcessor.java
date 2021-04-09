@@ -50,6 +50,9 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
   private final String SIMPLE_SPECIAL_EXTRACTION = "entities.extract.simple.special";
   private final String SIMPLE_SPECIAL_EXTRACTION_REGEX = "entities.extract.simple.special.regex";
   private final String SIMPLE_PHONE_EXTRACTION_REGEX = "entities.extract.simple.phone.regex";
+  private final String HIERARCHICAL_PATH_PROCESSING = "hierarchical.path.processing";
+  private final String HIERARCHICAL_FIELD = "hierarchical.field";
+  private final String HIERARCHICAL_PATH_SEPARATOR = "hierarchical.path.separator";
 
   private final String REGEX_PHONE_DEFAULT = "\\(?\\+[0-9]{1,3}\\)? ?-?[0-9]{1,3} ?-?[0-9]{3,5} ?-?[0-9]{4}( ?-?[0-9]{3})? ?(\\w{1,10}\\s?\\d{1,6})?";
   private final String REGEX_SPECIAL_DEFAULT = ".*resume*";
@@ -60,6 +63,10 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
   private boolean simpleSpecialExtraction = false;
   private Pattern specialExtractionPattern = Pattern.compile(REGEX_SPECIAL_DEFAULT);
   private Pattern phoneExtractionPattern = Pattern.compile(REGEX_PHONE_DEFAULT);
+  private boolean hierarchicalPathProcessing = false;
+  private String hierarchicalField = "urlHierarchy";
+  private char hierarchicalPathSeparator = '/';
+  private Pattern hierarchicalRegexPattern;
 
   public DatafariUpdateProcessor(final SolrParams params, final UpdateRequestProcessor next) {
     super(next);
@@ -68,10 +75,15 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
       simpleNameExtraction = params.getBool(SIMPLE_NAME_EXTRACTION, false);
       simplePhoneExtraction = params.getBool(SIMPLE_PHONE_EXTRACTION, false);
       simpleSpecialExtraction = params.getBool(SIMPLE_SPECIAL_EXTRACTION, false);
+      hierarchicalPathProcessing = params.getBool(HIERARCHICAL_PATH_PROCESSING, false);
       final String specialExtractionRegex = params.get(SIMPLE_SPECIAL_EXTRACTION_REGEX, REGEX_SPECIAL_DEFAULT);
       final String phoneExtractionRegex = params.get(SIMPLE_PHONE_EXTRACTION_REGEX, REGEX_PHONE_DEFAULT);
       specialExtractionPattern = Pattern.compile(specialExtractionRegex);
       phoneExtractionPattern = Pattern.compile(phoneExtractionRegex);
+      hierarchicalField = params.get(HIERARCHICAL_FIELD, "urlHierarchy");
+      hierarchicalPathSeparator = params.get(HIERARCHICAL_PATH_SEPARATOR, "/").charAt(0);
+      final String hierarchicalRegex = "[^\\" + hierarchicalPathSeparator + "]*\\" + hierarchicalPathSeparator + "[^\\" + hierarchicalPathSeparator + "]";
+      hierarchicalRegexPattern = Pattern.compile(hierarchicalRegex);
     }
   }
 
@@ -159,20 +171,38 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     final String decodedUrl = URLDecoder.decode(url, StandardCharsets.UTF_8.name());
     doc.addField("url_search", decodedUrl);
 
-    // Create path hierarchy for facet
-    final List<String> urlHierarchy = new ArrayList<>();
+    if (hierarchicalPathProcessing) {
+      // Create path hierarchy for facet
+      final List<String> urlHierarchy = new ArrayList<>();
+      final Matcher regexMatcher = hierarchicalRegexPattern.matcher(url);
+      String cleanUrl = url;
+      if (regexMatcher.find()) {
+        final int endIndex = regexMatcher.end();
+        cleanUrl = url.substring(endIndex - 2);
+      }
 
-    /*
-     * // Create path hierarchy for facet
-     *
-     * final List<String> urlHierarchy = new ArrayList<String>();
-     *
-     * final String path = url.replace("file:", ""); int previousIndex = 1; int depth = 0; // Tokenize the path and add the depth as first character for each token // (like: 0/home,
-     * 1/home/project ...) for (int i = 0; i < path.split("/").length - 2; i++) { int endIndex = path.indexOf('/', previousIndex); if (endIndex == -1) { endIndex = path.length() - 1; }
-     * urlHierarchy.add(depth + path.substring(0, endIndex)); depth++; previousIndex = endIndex + 1; }
-     *
-     * // Add the tokens to the urlHierarchy field doc.addField("urlHierarchy", urlHierarchy);
-     */
+      // Create path hierarchy for facet
+      final long separatorCount = cleanUrl.chars().filter(ch -> ch == hierarchicalPathSeparator).count();
+      int previousIndex = 0;
+      int depth = 0;
+      // Tokenize the path and add the depth as first character for each token // (like: 0/home,1/home/project ...)
+      for (int i = 0; i < separatorCount; i++) {
+        final int endIndex = cleanUrl.indexOf(hierarchicalPathSeparator, previousIndex);
+        if (endIndex == -1) {
+          break;
+        }
+        String label = cleanUrl.substring(0, endIndex);
+        if (label.isEmpty()) {
+          label = String.valueOf(hierarchicalPathSeparator);
+        }
+        urlHierarchy.add(depth + label);
+        depth++;
+        previousIndex = endIndex + 1;
+      }
+
+      doc.remove(hierarchicalField);
+      doc.addField(hierarchicalField, urlHierarchy);
+    }
 
     String filename = "";
     String jsouptitle = "";
@@ -270,11 +300,11 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     extension = nameExtension.length() > 1 && nameExtension.length() < 5 ? nameExtension : tikaExtension;
     mime = tikaExtension.length() > 1 && tikaExtension.length() < 5 ? tikaExtension : nameExtension;
     /*
-     * if (extensionFromName || mimeTypeField == null) { if (path.contains(".")){ extension = FilenameUtils.getExtension(path); if (extension.length() > 4 || extension.length() < 1) {
-     * // If length is too long, try extracting from tika information if available String tryExtension = mimeTypeField==null ? null : extensionFromMimeTypeField(mimeTypeField); if
-     * (tryExtension != null) { extension = tryExtension; } else { // Else default to bin for anything else extension = "bin"; } } } else if (urlObject.getProtocol().equals("http") ||
-     * urlObject.getProtocol().equals("https")) { extension = null; if (mimeTypeField != null) { extension = extensionFromMimeTypeField(mimeTypeField); } if (extension == null) {
-     * extension = "html"; } } } else { extension = extensionFromMimeTypeField(mimeTypeField); if (extension == null) { extension = FilenameUtils.getExtension(path); } }
+     * if (extensionFromName || mimeTypeField == null) { if (path.contains(".")){ extension = FilenameUtils.getExtension(path); if (extension.length() > 4 || extension.length() < 1) { // If length is
+     * too long, try extracting from tika information if available String tryExtension = mimeTypeField==null ? null : extensionFromMimeTypeField(mimeTypeField); if (tryExtension != null) { extension =
+     * tryExtension; } else { // Else default to bin for anything else extension = "bin"; } } } else if (urlObject.getProtocol().equals("http") || urlObject.getProtocol().equals("https")) { extension
+     * = null; if (mimeTypeField != null) { extension = extensionFromMimeTypeField(mimeTypeField); } if (extension == null) { extension = "html"; } } } else { extension =
+     * extensionFromMimeTypeField(mimeTypeField); if (extension == null) { extension = FilenameUtils.getExtension(path); } }
      */
     if (!doc.containsKey("extension")) {
       doc.addField("extension", extension.toLowerCase());

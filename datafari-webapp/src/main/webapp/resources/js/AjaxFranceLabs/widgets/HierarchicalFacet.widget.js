@@ -14,38 +14,38 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 
   // Variables
 
-  name : null,
+  name: null,
 
-  pagination : false,
+  pagination: false,
 
-  nbElmToDisplay : 10,
+  nbElmToDisplay: 10,
 
-  sort : 'occurences',
+  sort: 'occurences',
 
-  maxDisplay : 40,
+  maxDisplay: 40,
 
-  checkedOnTop : true,
+  checkedOnTop: true,
 
-  type : 'table',
+  type: 'table',
 
-  'facet.field' : true,
+  'facet.field': true,
 
   // The root level defines the depth from which the hierarchical tree will starts
-  rootLevel : 0,
+  rootLevel: 0,
 
   // Defines the maximum depth to display, starting from the root
   // For example, with rootLevel=1 and maxDepth=3, the maximum dispalyed depth will be /home/france/labs/datafari/search (/home/france =
   // rootLevel)
-  maxDepth : 3,
+  maxDepth: 3,
 
   // Separator of each level
-  separator : '/',
+  separator: '/',
 
-  LevelsHashMap : {},
+  LevelsHashMap: {},
 
   // Methods
 
-  buildWidget : function() {
+  buildWidget: function() {
     var endAnimationEvents = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
     var animation = 'animated rotateIn';
     var self = this, elm = $(this.elm);
@@ -68,8 +68,8 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
       });
     }
     elm.find('.facetSort').append('<label></label>').find('label').append(window.i18n.msgStore['sortFacet']).append('<select></select>').find('select').append('<option><span>A/Z</span></option>')
-        .append('<option><span>Z/A</span></option>').append('<option><span>Occurences</span></option>').change(function(event) {
-          switch ($('option:selected', this).index()) {
+      .append('<option><span>Z/A</span></option>').append('<option><span>Occurences</span></option>').change(function(event) {
+        switch ($('option:selected', this).index()) {
           case 0:
             self.sort = 'AtoZ';
             break;
@@ -79,24 +79,24 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
           case 2:
             self.sort = 'occurences';
             break;
-          }
-          self.sortBy(self.sort);
-        });
+        }
+        self.sortBy(self.sort);
+      });
     switch (this.sort) {
-    case 'AtoZ':
-      $(this.elm).find('.facetSort option:eq(0)').attr('selected', 'selected');
-      break;
-    case 'ZtoA':
-      $(this.elm).find('.facetSort option:eq(1)').attr('selected', 'selected');
-      break;
-    case 'occurences':
-      $(this.elm).find('.facetSort option:eq(2)').attr('selected', 'selected');
-      break;
+      case 'AtoZ':
+        $(this.elm).find('.facetSort option:eq(0)').attr('selected', 'selected');
+        break;
+      case 'ZtoA':
+        $(this.elm).find('.facetSort option:eq(1)').attr('selected', 'selected');
+        break;
+      case 'occurences':
+        $(this.elm).find('.facetSort option:eq(2)').attr('selected', 'selected');
+        break;
     }
     if (this.pagination === true) {
       this.pagination = new AjaxFranceLabs.HierarchicalPagerModule({
-        elm : this.elm,
-        updateList : function() {
+        elm: this.elm,
+        updateList: function() {
           var nbEl = 0;
           var currentPage = 0;
           var nbByPage = this.nbElmToDisplay;
@@ -130,7 +130,7 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
     }
   },
 
-  update : function() {
+  update: function() {
     var self = this, data = this.assocTags(this.manager.response.facet_counts.facet_fields[this.field]), max = (data.length > this.maxDisplay) ? this.maxDisplay : data.length, elm = $(this.elm);
     if (data.length == 0) { // if no data to display, hide the widget
       elm.hide();
@@ -141,55 +141,47 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 
       var realMaxDepth = this.rootLevel + this.maxDepth;
 
-      // Creates the hierarchy as an object
-      for (var i = this.rootLevel; i < realMaxDepth; i++) {
-        this.LevelsHashMap["level" + i] = {}; // initializes the depth levels
-      }
-
-      for (var i = 0; i < max; i++) { // For each facet result, determines the level depth, creates the corresponding level object and stock
+      for (var i = 0; i < data.length; i++) { // For each facet result, determines the level depth, creates the corresponding level object and stock
         // it in
         // the LevelsHashMap
         var levelDepth = data[i].name.substring(0, data[i].name.indexOf(this.separator)); // determines the depth of the current level
-        var levelName = data[i].name.substring(data[i].name.indexOf(this.separator)); // determines the level name
-        if (levelDepth == this.rootLevel) { // it is a root level (it's depth corresponds to the defined rootLevel depth)
+
+        if (levelDepth <= realMaxDepth) {
+          var levelName = data[i].name.substring(data[i].name.indexOf(this.separator)); // determines the level name
+          if (this.LevelsHashMap["level" + levelDepth] == undefined) {
+            this.LevelsHashMap["level" + levelDepth] = {};
+          }
+
+
           this.LevelsHashMap["level" + levelDepth][levelName] = {
-            "array" : [],
-            "nb" : data[i].nb,
-            "original" : data[i].name
+            "array": [],
+            "nb": data[i].nb,
+            "original": data[i].name
           };
-        } else if (this.rootLevel < levelDepth && levelDepth < realMaxDepth) { // check that the depth is allowed (between the rootLevel
-          // depth
-          // and the maximum depth defined), otherwise, the current level is
-          // ignored
-          var parentLevel = levelName.substring(0, levelName.lastIndexOf(this.separator)); // determines the parent level
 
-          if (this.LevelsHashMap["level" + levelDepth][levelName] == null) { // If level does not exist, creates it
-            this.LevelsHashMap["level" + levelDepth][levelName] = {
-              "array" : [],
-              "nb" : data[i].nb,
-              "original" : data[i].name
-            };
-          } else { // Otherwise set values
-            this.LevelsHashMap["level" + levelDepth][levelName].nb = data[i].nb;
-            this.LevelsHashMap["level" + levelDepth][levelName].original = data[i].name;
-          }
 
-          if (this.LevelsHashMap["level" + (levelDepth - 1)][parentLevel] == null) { // If parent level does not exist, creates it
-            this.LevelsHashMap["level" + (levelDepth - 1)][parentLevel] = {
-              "array" : [],
-              "nb" : 0,
-              "original" : ""
-            };
+          if (levelDepth > 0) {
+            var parentLevel = levelName.substring(0, levelName.lastIndexOf(this.separator)); // determines the parent level
+            if (parentLevel == "") {
+              parentLevel = self.separator;
+            }
+            if (this.LevelsHashMap["level" + (levelDepth - 1)][parentLevel] == undefined) { // If parent level does not exist, creates it
+              this.LevelsHashMap["level" + (levelDepth - 1)][parentLevel] = {
+                "array": [],
+                "nb": 0,
+                "original": ""
+              };
+            }
+            var parentLevelChildrenArray = this.LevelsHashMap["level" + (levelDepth - 1)][parentLevel].array; // retrieve the parent level
+            // children
+            // list
+            parentLevelChildrenArray[parentLevelChildrenArray.length] = levelName; // add the name of the current level in the parent level
+            // children list as a reference
           }
-          var parentLevelChildrenArray = this.LevelsHashMap["level" + (levelDepth - 1)][parentLevel].array; // retrieve the parent level
-          // children
-          // list
-          parentLevelChildrenArray[parentLevelChildrenArray.length] = levelName; // add the name of the current level in the parent level
-          // children list as a reference
         }
       }
 
-      for ( var levelName in this.LevelsHashMap["level" + this.rootLevel]) { // for each root level, constructs the hierarchy html list
+      for (var levelName in this.LevelsHashMap["level" + this.rootLevel]) { // for each root level, constructs the hierarchy html list
         this.displayLevel(this.LevelsHashMap["level" + this.rootLevel][levelName], levelName, this.rootLevel, self, ul);
       }
 
@@ -200,71 +192,71 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
     this.sortBy(this.sort);
   },
 
-  assocTags : function(data) {
+  assocTags: function(data) {
     var tags = [];
     for (var i = 0; i < data.length - 1; i++) {
       tags.push({
-        name : data[i],
-        nb : data[i + 1]
+        name: data[i],
+        nb: data[i + 1]
       });
       i++;
     }
     return tags;
   },
 
-  sortBy : function(sort) {
+  sortBy: function(sort) {
     var elm = $(this.elm);
     switch (sort) {
-    case 'AtoZ':
-      if (this.checkedOnTop === true) {
-        elm.find('ul').prepend($(this.elm).find('ul li .filterFacetCheck input:checked').parents('li'));
-        elm.find('ul li .filterFacetCheck input:checked').parents('li').each(
+      case 'AtoZ':
+        if (this.checkedOnTop === true) {
+          elm.find('ul').prepend($(this.elm).find('ul li .filterFacetCheck input:checked').parents('li'));
+          elm.find('ul li .filterFacetCheck input:checked').parents('li').each(
             function() {
               var $this = this;
               $(this).nextAll().each(
-                  function() {
-                    if ($('.filterFacetCheck .filterFacetLinkValue', $this).text().toLowerCase() > $('.filterFacetCheck .filterFacetLinkValue', this).text().toLowerCase()
-                        && $('.filterFacetCheck input', this).is(':checked'))
-                      $(this).after($($this).detach());
-                  });
+                function() {
+                  if ($('.filterFacetCheck .filterFacetLinkValue', $this).text().toLowerCase() > $('.filterFacetCheck .filterFacetLinkValue', this).text().toLowerCase()
+                    && $('.filterFacetCheck input', this).is(':checked'))
+                    $(this).after($($this).detach());
+                });
             });
-        elm.find('ul li .filterFacetCheck input:not(:checked)').parents('li').each(function() {
-          var $this = this;
-          $(this).nextAll().each(function() {
-            if ($('.filterFacetCheck .filterFacetLinkValue', $this).text().toLowerCase() > $('.filterFacetCheck .filterFacetLinkValue', this).text().toLowerCase())
-              $(this).after($($this).detach());
+          elm.find('ul li .filterFacetCheck input:not(:checked)').parents('li').each(function() {
+            var $this = this;
+            $(this).nextAll().each(function() {
+              if ($('.filterFacetCheck .filterFacetLinkValue', $this).text().toLowerCase() > $('.filterFacetCheck .filterFacetLinkValue', this).text().toLowerCase())
+                $(this).after($($this).detach());
+            });
           });
-        });
-      } else {
+        } else {
+          elm.find('ul li').each(function() {
+            var $this = this;
+            $(this).nextAll().each(function() {
+              if ($('.filterFacetCheck .filterFacetLinkValue', $this).text().toLowerCase() > $('.filterFacetCheck .filterFacetLinkValue', this).text().toLowerCase())
+                $(this).after($($this).detach());
+            });
+          });
+        }
+        break;
+      case 'ZtoA':
         elm.find('ul li').each(function() {
           var $this = this;
           $(this).nextAll().each(function() {
-            if ($('.filterFacetCheck .filterFacetLinkValue', $this).text().toLowerCase() > $('.filterFacetCheck .filterFacetLinkValue', this).text().toLowerCase())
+            if ($('.filterFacetCheck .filterFacetLinkValue', $this).text().toLowerCase() < $('.filterFacetCheck .filterFacetLinkValue', this).text().toLowerCase())
               $(this).after($($this).detach());
           });
         });
-      }
-      break;
-    case 'ZtoA':
-      elm.find('ul li').each(function() {
-        var $this = this;
-        $(this).nextAll().each(function() {
-          if ($('.filterFacetCheck .filterFacetLinkValue', $this).text().toLowerCase() < $('.filterFacetCheck .filterFacetLinkValue', this).text().toLowerCase())
-            $(this).after($($this).detach());
-        });
-      });
 
-      break;
-    case 'occurences':
-      elm.find('ul li').each(function() {
-        var $this = this;
-        $(this).nextAll().each(function() {
-          if (parseInt($($this).children('label').find('.filterFacetLinkCount span').text()) < parseInt($(this).children('label').find('.filterFacetLinkCount span').text())) {
-            $(this).after($($this).detach());
-          }
+        break;
+      case 'occurences':
+        elm.find('ul li').each(function() {
+          var $this = this;
+          $(this).nextAll().each(function() {
+            if (parseInt($($this).children('label').find('.filterFacetLinkCount span').text()) < parseInt($(this).children('label').find('.filterFacetLinkCount span').text())) {
+              $(this).after($($this).detach());
+            }
+          });
         });
-      });
-      break;
+        break;
     }
     if (this.pagination) {
       this.pagination.updateList();
@@ -274,21 +266,21 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
     AjaxFranceLabs.addMultiElementClasses($(this.elm).find('ul li:visible'));
   },
 
-  clickHandler : function() {
+  clickHandler: function() {
   },
 
-  afterRequest : function() {
+  afterRequest: function() {
     this.update();
   },
 
-  selectNoRequest : function(value) {
+  selectNoRequest: function(value) {
     var self = this;
     if (self[(self.selectionType === 'ONE' ? 'set' : 'add')](value)) {
       self.manager.store.remove('start');
     }
   },
 
-  unselectNoRequest : function(value) {
+  unselectNoRequest: function(value) {
     var self = this;
     if (self.remove(value)) {
       self.manager.store.remove('start');
@@ -302,7 +294,7 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
   // levelDepth : the level depth
   // widget : this widget
   // currentUl : the HTML list where to add the provided level as a new line
-  displayLevel : function(level, levelName, levelDepth, widget, currentUl) {
+  displayLevel: function(level, levelName, levelDepth, widget, currentUl) {
     var checkboxValue = levelName;
     var count = level.nb;
     if (levelDepth > widget.rootLevel) { // trick to keep the entire name of root levels but only the last part for non root levels (matter
@@ -311,16 +303,16 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
       checkboxValue = checkboxValue.substring(checkboxValue.lastIndexOf(widget.separator));
     }
 
-    currentUl.append('<li></li>');
-    var currentLi = currentUl.find('li:lastchild');
+    var currentLi = $('<li></li>')
+    currentUl.append(currentLi);
     // Constructs the checkbox and its attached label
     currentLi.append('<label></label>');
     currentLi.find('label').append('<span class="filterFacetCheck"></span>');
     currentLi.find('.filterFacetCheck').append('<input type="checkbox" value="' + level.original + '"/>');
     currentLi.find('.filterFacetCheck input').attr('id', widget.id + "-" + checkboxValue);
 
-    if (this.manager.store.find('fq', new RegExp(widget.field + ':'
-        + AjaxFranceLabs.Parameter.escapeValue(level.original.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&").replace(/\\/g, "\\\\")) + '[ )]'))) {
+    if (this.manager.store.find('fq', new RegExp(widget.field + ':"'
+      + level.original.replace(/\//g, "\\\\\\/") + '"'))) {
       // The checkbox value is used in the search query, so the checked attribute of the checkbox is set to 'checked'
       currentLi.find('.filterFacetCheck input').attr('checked', 'checked').parents('li').addClass('selected');
     }
@@ -341,13 +333,13 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
           // filters from the search query as the parent filter
           // covers the children ones
           if ($(this).children('label').find('.filterFacetCheck input').is(':checked')) {
-            widget.unselectNoRequest($(this).children('label').find('.filterFacetCheck input').val().replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"));
+            widget.unselectNoRequest($(this).children('label').find('.filterFacetCheck input').val());
           }
         });
 
         // standard functionality
         widget.clickHandler();
-        widget.selectHandler($(this).val().replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")); // add the checkbox value as a filter
+        widget.selectHandler($(this).val()); // add the checkbox value as a filter
         // for
         // the search query
       } else {
@@ -359,7 +351,7 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
           // query filters and adds the
           // other children values to the filter to fit to the behavior expected by the user
           if ($(this).prev('label').find('.filterFacetCheck input').is(':checked')) {
-            widget.unselectNoRequest($(this).prev('label').find('.filterFacetCheck input').val().replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")); // removes
+            widget.unselectNoRequest($(this).prev('label').find('.filterFacetCheck input').val()); // removes
             // the
             // parent
             // value
@@ -372,7 +364,7 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
             $(this).children('li').each(function() {
               // for each checked children, adds their values to the search query filters
               if ($(this).children('label').find('.filterFacetCheck input').is(':checked')) {
-                widget.selectNoRequest($(this).children('label').find('.filterFacetCheck input').val().replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"));
+                widget.selectNoRequest($(this).children('label').find('.filterFacetCheck input').val());
               }
             });
           }
@@ -380,7 +372,7 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
 
         // standard functionality
         widget.clickHandler();
-        widget.unselectNoRequest($(this).val().replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")); // removes the value of the checkbox
+        widget.unselectNoRequest($(this).val()); // removes the value of the checkbox
         // from the search query filters
         widget.manager.makeRequest(); // forces the request to update the results and facets
       }
@@ -390,11 +382,11 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
     // Apply the correct checkbox image regarding the checkbox state (checked or not checked)
     if (currentLi.find('.filterFacetCheck input').is(':checked')) {
       currentLi.find('.filterFacetCheck label').attr('for', widget.id + "-" + checkboxValue).append(
-          '<span class="checkboxIcon far fa-check-square">&nbsp;</span>' + '<span class="filterFacetLinkValue">' + AjaxFranceLabs.tinyString(checkboxValue, 19) + '</span>').append(
+        '<span class="checkboxIcon far fa-check-square">&nbsp;</span>' + '<span class="filterFacetLinkValue">' + AjaxFranceLabs.tinyString(checkboxValue, 19) + '</span>').append(
           '&nbsp;<span class="filterFacetLinkCount">(<span>' + count + '</span>)</span>');
     } else {
       currentLi.find('.filterFacetCheck label').attr('for', widget.id + "-" + checkboxValue).append(
-          '<span class="checkboxIcon far fa-square">&nbsp;</span>' + '<span class="filterFacetLinkValue">' + AjaxFranceLabs.tinyString(checkboxValue, 19) + '</span>').append(
+        '<span class="checkboxIcon far fa-square">&nbsp;</span>' + '<span class="filterFacetLinkValue">' + AjaxFranceLabs.tinyString(checkboxValue, 19) + '</span>').append(
           '&nbsp;<span class="filterFacetLinkCount">(<span>' + count + '</span>)</span>');
     }
 
@@ -417,8 +409,8 @@ AjaxFranceLabs.HierarchicalFacetWidget = AjaxFranceLabs.AbstractFacetWidget.exte
       });
 
       // creates the new ul element and recursive call this method on it in order to fill it with the children levels
-      currentLi.append('<ul></ul>');
-      var newUl = currentLi.find('ul:last-child');
+      var newUl = $('<ul></ul>');
+      currentLi.append(newUl);
       for (var index = 0; index < level.array.length; index++) {
         var childLevelName = level.array[index];
         var childLevel = widget.LevelsHashMap["level" + (levelDepth + 1)];
