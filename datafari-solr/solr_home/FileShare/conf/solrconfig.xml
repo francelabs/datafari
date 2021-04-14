@@ -718,6 +718,7 @@
     <str name="carrot.url">id</str>
     <str name="carrot.title">title</str>
     <str name="carrot.snippet">content_en,content_fr</str>
+    <bool name="carrot.produceSummary">true</bool>
     <!--<str name="carrot.lang">language</str>-->
 	</lst>
 
