@@ -473,7 +473,6 @@
 		<replace file="${linux.dist.dir}/bin/init-datafari.sh" token="@WAR_VERSION_INIT@" value="${webapp-params}" />
 		<replace file="${linux.dist.dir}/bin/init-datafari.sh" token="@VERSION-METHODS@" value="${methods}" />
 		<replace file="${linux.dist.dir}/bin/init-datafari.sh" token="@VERSION-INIT@" value="" />
-		<replace file="${linux.dist.dir}/bin/init-datafari.sh" token="@INIT-ANNOTATOR@" value="" />
 		<replace file="${linux.dist.dir}/bin/start-datafari.sh" token="@VERSION-START@" value="" />
 		<replace file="${linux.dist.dir}/bin/start-datafari.sh" token="@START-CHECKS@" value="" />
 		<replace file="${linux.dist.dir}/bin/start-datafari.sh" token="@VERSION-MONO-START@" value="" />

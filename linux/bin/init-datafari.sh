@@ -759,7 +759,6 @@ initialization_monoserver() {
   save_iptables_rules
   
   init_permissions
-  @INIT-ANNOTATOR@
   sed -i 's/\(STATE *= *\).*/\1initialized/' $INIT_STATE_FILE
   init_permissions_file_datafari_properties
 
