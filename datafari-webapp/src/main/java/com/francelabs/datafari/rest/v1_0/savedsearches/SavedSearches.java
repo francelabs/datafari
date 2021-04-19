@@ -118,8 +118,7 @@ public class SavedSearches {
             final String authenticatedUserName = AuthenticatedUserName.getName(request);
             JSONObject selectedSavedSearch = getSavedSearchFromNameForUser(savedSearchName, authenticatedUserName);
             // If it is not found in the currently authenticated user saved searches, throw
-            // an
-            // error, else delete it
+            // an error, else delete it
             if (selectedSavedSearch == null) {
                 throw new DataNotFoundException("This saved search does not exist for the current user.");
             }
@@ -127,7 +126,7 @@ public class SavedSearches {
             // creation
             final JSONParser parser = new JSONParser();
             JSONObject params = (JSONObject) parser.parse(jsonParam);
-            if (!checkJSONValidity(params)) {
+            if (!checkJSONValidity(params) || !((String) params.get("name")).contentEquals(savedSearchName)) {
                 throw new BadRequestException("The JSON data does not represent a proper saved search.");
             }
             // We can perform the update, to do so a delete and an insert are performed.
