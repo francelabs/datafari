@@ -45,7 +45,8 @@ public class SearchAggregatorAccessTokenManager {
     String accessToken = "";
     if (tokens.containsKey(key)) {
       final SearchAggregatorAccessToken token = tokens.get(key);
-      if (token.getTimeout() >= System.currentTimeMillis()) {
+      // if the timeout of the token is greater than now then use it. Otherwise ask for a new one
+      if (token.getTimeout() > System.currentTimeMillis()) {
         accessToken = token.getAccessToken();
       } else {
         tokens.remove(key);
@@ -79,8 +80,8 @@ public class SearchAggregatorAccessTokenManager {
         final JSONObject tokenInfos = (JSONObject) parser.parse(jsonToken);
         final String accessToken = tokenInfos.get("access_token").toString();
         final long expires = (Long) tokenInfos.get("expires_in");
-        // Deduce timeout = current time milli - 1s (to be safe) + expires in milliseconds
-        final long timeout = System.currentTimeMillis() - 1000 + expires * 1000;
+        // Deduce timeout = current time milli - 30s (safety margin) + expires in milliseconds
+        final long timeout = System.currentTimeMillis() - 30000 + expires * 1000;
         return new SearchAggregatorAccessToken(accessToken, timeout);
       } else {
         LOGGER.error("Error " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase() + " while requesting access token to URL " + tokenUri);

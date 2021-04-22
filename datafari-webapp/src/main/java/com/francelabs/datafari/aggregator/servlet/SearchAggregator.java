@@ -68,7 +68,6 @@ public class SearchAggregator extends HttpServlet {
 
   private static final Map<String, ExecutorService> runningThreads = new HashMap<String, ExecutorService>();
 
-
   public static void doGetSearch(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     final SearchAggregatorConfiguration sac = SearchAggregatorConfiguration.getInstance();
     final String jaExternalDatafarisStr = sac.getProperty(SearchAggregatorConfiguration.EXTERNAL_DATAFARIS);
@@ -215,11 +214,11 @@ public class SearchAggregator extends HttpServlet {
             final String authUsername = requestingUser;
             threadPool.submit(() -> {
               final String searchResponse = externalDatafariRequest(timeoutPerRequest, handler, parameterMap, externalDatafari, authUsername);
-              if (searchResponse != null) {
+              if (searchResponse != null && !searchResponse.isEmpty()) {
                 try {
                   responses.add((JSONObject) parser.parse(searchResponse));
                 } catch (final Exception e) {
-                  LOGGER.error("Error processing external Datafari request", e);
+                  LOGGER.error("Error processing external Datafari response: " + System.lineSeparator() + searchResponse, e);
                 }
               }
             });
@@ -306,7 +305,8 @@ public class SearchAggregator extends HttpServlet {
     return;
   }
 
-  private static String externalDatafariRequest(final int timeoutPerRequest, final String handler, final Map<String, String[]> parameterMap, final JSONObject externalDatafari, final String authUsername) {
+  private static String externalDatafariRequest(final int timeoutPerRequest, final String handler, final Map<String, String[]> parameterMap, final JSONObject externalDatafari,
+      final String authUsername) {
     try (final CloseableHttpClient client = HttpClientProvider.getInstance().newClient(timeoutPerRequest, timeoutPerRequest);) {
       final boolean enabled = (Boolean) externalDatafari.get("enabled");
       if (enabled) {
