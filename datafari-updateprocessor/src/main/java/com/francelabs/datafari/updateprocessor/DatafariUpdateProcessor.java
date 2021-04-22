@@ -168,8 +168,13 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
       doc.addField("url", url);
     }
 
-    final String decodedUrl = URLDecoder.decode(url, StandardCharsets.UTF_8.name());
-    doc.addField("url_search", decodedUrl);
+    try {
+      final String decodedUrl = URLDecoder.decode(url, StandardCharsets.UTF_8.name());
+      doc.addField("url_search", decodedUrl);
+    } catch (final Exception e) {
+      // The url is malformed, keep it like it is although the stemming will not be good, it is better than nothing
+      doc.addField("url_search", url);
+    }
 
     if (hierarchicalPathProcessing) {
       // Create path hierarchy for facet
