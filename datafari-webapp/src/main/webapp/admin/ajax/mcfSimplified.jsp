@@ -162,10 +162,10 @@
                     </div>
                     <div class="form-group row" id="div15">
                       <div class="col-sm-3 control-label">
-                        <label id="securityLabel" for="security" class="col-form-label"></label><span id="security-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        <label id="securityLabel" for="security" class="col-form-label"></label><span id="security-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span> <span class="alert-danger">(This feature is only available in the Enterprise Edition)</span>
                       </div>
                       <div class="col-sm-4" id="security-div">
-	                      <input type="checkbox" id="security" name="security"></input>	                      
+	                      <input type="checkbox" id="security" name="security" disabled></input>	                      
                       </div>
                     </div>
                     <div class="form-group row" id="div16">
