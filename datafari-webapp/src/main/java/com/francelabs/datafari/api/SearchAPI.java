@@ -3,6 +3,7 @@ package com.francelabs.datafari.api;
 import java.io.StringReader;
 import java.security.Principal;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -262,7 +263,13 @@ public class SearchAPI {
   public static String search(final HttpServletRequest request) {
     final String handler = getHandler(request);
     final String protocol = request.getScheme() + ":";
-    return search(protocol, handler, request.getUserPrincipal(), request.getParameterMap());
+    Map<String, String[]> parameterMap = new HashMap<String, String[]>(request.getParameterMap());
+    if (request.getParameter("id") == null && request.getAttribute("id") != null 
+      && request.getAttribute("id") instanceof String) {
+        String idParam[] = {(String) request.getAttribute("id")};
+        parameterMap.put("id", idParam);
+    }
+    return search(protocol, handler, request.getUserPrincipal(), parameterMap);
 
   }
 

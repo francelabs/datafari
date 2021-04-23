@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -74,6 +75,18 @@ public class URL extends HttpServlet {
 
     final Map<String, String[]> requestMap = new HashMap<>();
     requestMap.putAll(request.getParameterMap());
+    if (requestMap.get("id") == null) {
+      if (request.getAttribute("id") != null && request.getAttribute("id") instanceof String) {
+        String id[] = { (String) request.getAttribute("id") };
+        requestMap.put("id", id);
+      } else {
+        // Lets create a new ID else it will be registered under the "undefined" id
+        // which we don't want
+        String id[] = { UUID.randomUUID().toString() };
+        requestMap.put("id", id);
+      }
+    }
+
     final IndexerQuery query = IndexerServerManager.createQuery();
     query.addParams(requestMap);
 

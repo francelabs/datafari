@@ -16,6 +16,7 @@
 package com.francelabs.datafari.rest.v1_0.search;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -40,6 +41,10 @@ public class Search extends HttpServlet {
     @GetMapping("/rest/v1.0/search/*")
     protected void performSearch(final HttpServletRequest request, final HttpServletResponse response) {
         try {
+            if (request.getParameter("id") == null) {
+                UUID id = UUID.randomUUID();
+                request.setAttribute("id", id.toString());
+            }
             SearchAggregator.doGetSearch(request, response);
         } catch (ServletException | IOException e) {
             throw new InternalErrorException("Error while performing the search request.");
