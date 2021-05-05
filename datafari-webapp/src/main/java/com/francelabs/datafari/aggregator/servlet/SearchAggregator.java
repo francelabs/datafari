@@ -216,6 +216,7 @@ public class SearchAggregator extends HttpServlet {
               final String searchResponse = externalDatafariRequest(timeoutPerRequest, handler, parameterMap, externalDatafari, authUsername);
               if (searchResponse != null && !searchResponse.isEmpty()) {
                 try {
+                  LOGGER.debug("Received response: " + System.lineSeparator() + searchResponse);
                   responses.add((JSONObject) parser.parse(searchResponse));
                 } catch (final Exception e) {
                   LOGGER.error("Error processing external Datafari response: " + System.lineSeparator() + searchResponse, e);
@@ -646,7 +647,7 @@ public class SearchAggregator extends HttpServlet {
 
         facetQueries.forEach((key, value) -> {
           if (numExternalDatafaris > 1 && mergedFacetQueries.containsKey(key)) {
-            int existingValue = ((Long) mergedFacetQueries.get(key)).intValue();
+            Long existingValue = (Long) mergedFacetQueries.get(key);
             existingValue += (Long) value;
             mergedFacetQueries.put(key, existingValue);
           } else {
