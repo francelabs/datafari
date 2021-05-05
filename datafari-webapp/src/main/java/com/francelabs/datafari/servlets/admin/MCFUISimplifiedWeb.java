@@ -72,7 +72,7 @@ public class MCFUISimplifiedWeb extends HttpServlet {
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     final JSONObject jsonResponse = new JSONObject();
     try {
-      final String seeds = request.getParameter("seeds");
+      final String seeds = request.getParameter("seeds").replaceAll("\r", ""); // Clean the paths to remove windows CR char (end of line)
       final String email = request.getParameter("email");
       final String sourcename = request.getParameter("webSourcename");
       final String reponame = request.getParameter("webReponame");
@@ -93,30 +93,30 @@ public class MCFUISimplifiedWeb extends HttpServlet {
         final Pattern repoNamePattern = Pattern.compile("^\\w+$");
         final Matcher repoNameMatcher = repoNamePattern.matcher(reponame);
         if (!repoNameMatcher.find() || !repoNameMatcher.group().contentEquals(reponame)) {
-            jsonResponse.put("OK", "OK");
-            jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-            LOGGER.error("The repository name is not valid");
-          } else {
-            // Create webJob
-            final WebJob webJob = new WebJob();
-            webJob.setRepositoryConnection(webRepoName);
-            webJob.setSeeds(seeds);
-            webJob.setSourcename(sourcename);
-            final String jobId = WebJobConfig.getInstance().createJob(webJob);
+          jsonResponse.put("OK", "OK");
+          jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+          LOGGER.error("The repository name is not valid");
+        } else {
+          // Create webJob
+          final WebJob webJob = new WebJob();
+          webJob.setRepositoryConnection(webRepoName);
+          webJob.setSeeds(seeds);
+          webJob.setSourcename(sourcename);
+          final String jobId = WebJobConfig.getInstance().createJob(webJob);
 
-            if (jobId != null) {
-              if (startJob != null) {
-                ManifoldAPI.startJob(jobId);
-              }
-              jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-              jsonResponse.put("job_id", jobId);
-            } else {
-              jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-              LOGGER.error("Cannot create Web job");
+          if (jobId != null) {
+            if (startJob != null) {
+              ManifoldAPI.startJob(jobId);
             }
-            jsonResponse.put("OK", "OK");
+            jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+            jsonResponse.put("job_id", jobId);
+          } else {
+            jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+            LOGGER.error("Cannot create Web job");
           }
+          jsonResponse.put("OK", "OK");
         }
+      }
     } catch (final Exception e) {
       final PrintWriter out = response.getWriter();
       out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69253");

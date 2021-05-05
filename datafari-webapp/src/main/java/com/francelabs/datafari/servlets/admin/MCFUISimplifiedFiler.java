@@ -53,8 +53,7 @@ public class MCFUISimplifiedFiler extends HttpServlet {
   private final static Logger LOGGER = LogManager.getLogger(MCFUISimplifiedFiler.class);
 
   /**
-   * @see HttpServlet#HttpServlet() Gets the environment path of Datafari
-   *      installation
+   * @see HttpServlet#HttpServlet() Gets the environment path of Datafari installation
    */
   public MCFUISimplifiedFiler() {
     env = Environment.getEnvironmentVariable("DATAFARI_HOME");
@@ -66,20 +65,17 @@ public class MCFUISimplifiedFiler extends HttpServlet {
 
   /**
    * @throws IOException
-   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-   *      response) It saves the MCF connections if action parameter is save It
-   *      restores the MCF connections if action parameter is restore It uses the
-   *      backup directory in input (if specified) or a default path
+   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response) It saves the MCF connections if action parameter is save It restores the MCF connections if action parameter is
+   *      restore It uses the backup directory in input (if specified) or a default path
    */
   @Override
-  protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
-      throws ServletException, IOException {
+  protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     final JSONObject jsonResponse = new JSONObject();
     try {
       final String server = request.getParameter("server");
       final String user = request.getParameter("user");
       final String password = request.getParameter("password");
-      final String paths = request.getParameter("paths");
+      final String paths = request.getParameter("paths").replaceAll("\r", ""); // Clean the paths to remove windows CR char (end of line)
       final String sourcename = request.getParameter("filerSourcename");
       final String reponame = request.getParameter("filerReponame");
       final String security = request.getParameter("security");
@@ -104,8 +100,7 @@ public class MCFUISimplifiedFiler extends HttpServlet {
 
     } catch (final Exception e) {
       final PrintWriter out = response.getWriter();
-      out.append(
-          "Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69253");
+      out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69253");
       out.close();
       LOGGER.error("Unknown error during process", e);
     }
@@ -113,9 +108,8 @@ public class MCFUISimplifiedFiler extends HttpServlet {
     out.print(jsonResponse);
   }
 
-  private void createFilerRepo(JSONObject jsonResponse, String server, String user, final String password,
-      final String reponame, final String paths, final String sourcename, final String security, final String startJob)
-      throws Exception {
+  private void createFilerRepo(final JSONObject jsonResponse, final String server, final String user, final String password, final String reponame, final String paths, final String sourcename,
+      final String security, final String startJob) throws Exception {
     // Create webRepository
     final FilerRepository filerRepo = new FilerRepository();
     filerRepo.setServer(server);
