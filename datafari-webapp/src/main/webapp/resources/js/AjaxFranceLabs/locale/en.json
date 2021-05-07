@@ -132,6 +132,7 @@
     "adminUI-licenceDays": "Consumed Days",
     "adminUI-licenceDocsNb": "Number of indexed documents / Maximum allowed",
     "adminUI-licenceKeyLabel": "Licence Key",
+    "adminUI-licenceRefresh":"Refresh infos",
     "adminUI-licenceRenew": "Renew Licence",
     "adminUI-licenceRenew-failure": "Licence renew failure",
     "adminUI-licenceRenew-success": "Licence successfully renewed",
