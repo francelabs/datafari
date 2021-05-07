@@ -29,6 +29,10 @@
   margin-left: 1em;
 }
 
+#refreshButton {
+ margin-top: 2em;
+}
+
 .docs {background-color: #4CAF50;} /* Green */
 .days {background-color: #2196F3;} /* Blue */
 .users {background-color: #c501c5;} /* Purple */
