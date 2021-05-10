@@ -279,6 +279,40 @@ public class SearchAggregator extends HttpServlet {
         } else {
           searchResponse = SearchAPI.search(request);
         }
+
+        // Check if the searchResponse is OK
+        if (searchResponse.isEmpty()) {
+          response.setStatus(500);
+          response.setCharacterEncoding("utf-8");
+          response.setContentType("text/json;charset=utf-8");
+          response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
+          final JSONObject error = new JSONObject();
+          error.put("code", 500);
+          error.put("status", "Unkown error");
+          response.getWriter().write(error.toJSONString());
+          return;
+        } else {
+          // Check if the response is not an error
+          // If it is then get the error code and usr it for the final response
+          try {
+            final JSONParser parser = new JSONParser();
+            final JSONObject jSearchResponse = (JSONObject) parser.parse(searchResponse);
+            if (jSearchResponse.containsKey("error")) {
+              final JSONObject errorObj = (JSONObject) jSearchResponse.get("error");
+              final int errorCode = Integer.parseInt(errorObj.get("code").toString());
+              response.setStatus(errorCode);
+              response.setCharacterEncoding("utf-8");
+              response.setContentType("text/json;charset=utf-8");
+              response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
+              response.getWriter().write(errorObj.toJSONString());
+              return;
+
+            }
+          } catch (final Exception e) {
+            // Do nothing
+          }
+        }
+
         final String wrapperFunction = request.getParameter("json.wrf");
         if (wrapperFunction != null) {
           searchResponse = wrapperFunction + "(" + searchResponse + ")";
