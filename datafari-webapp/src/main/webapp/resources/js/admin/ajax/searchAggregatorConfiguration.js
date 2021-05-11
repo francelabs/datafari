@@ -1,6 +1,6 @@
 //# sourceURL=/Datafari/resources/js/admin/ajax/searchAggregatorConfiguration.js
 var externalDatafaris = null;
-var defaultDatafari = null;
+var defaultDatafaris = null;
 var regexURL = /https?:\/\/.+/;
 
 function internationalize() {
@@ -99,7 +99,10 @@ function internationalize() {
       "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title=\"Delete this external Datafari from the search aggregator configuration. Thus, it will not be requested anymore\">i</button></span>");
   $("#delete").html(window.i18n.msgStore['delete']);
   $("#delete").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['delete']);
-
+  $("#searchAggregatorAlwaysUseDefaultLabel")
+  .html(
+    window.i18n.msgStore['searchAggregatorAlwaysUseDefaultLabel']
+    + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='" + window.i18n.msgStore['searchAggregatorAlwaysUseDefaultTooltip'] + "'>i</button></span>");
 }
 
 function deleteConf() {
@@ -115,6 +118,7 @@ function deleteConf() {
       if (data.code == 0) {
         $("#message").html('<i class="fas fa-check"></i> External Datafari ' + datafariName + ' deleted !').addClass("alert-success").removeClass("alert-danger").show();
         deleteLocalExDatafariElm(index);
+        defaultDatafaris = data.default_datafari;
       } else {
         $("#message").html('<i class="fas fa-times"></i> ' + data.status).addClass("alert-danger").removeClass("alert-success").show();
       }
@@ -125,7 +129,48 @@ function deleteConf() {
   }, "json");
 }
 
-function setDefault() {
+function removeDefaultHandler(remoteName) {
+  return function(event) {
+    $("#submit-default").loading("loading");
+    $("#message").empty().hide();
+    $.post("../SearchAdministrator/searchAggregatorConfig", {
+      datafariName: remoteName,
+      action: "removedefault"
+    }, function(data) {
+      if (data !== undefined && data.code !== undefined) {
+        if (data.code === 0) {
+          defaultDatafaris = data.default_datafari;
+          buildDefaultList(defaultDatafaris);
+        }else {
+          $("#message").html('<i class="fas fa-times"></i> ' + data.status).addClass("alert-danger").removeClass("alert-success").show();
+        }
+      } else {
+        $("#message").html('<i class="fas fa-times"></i> ' + window.i18n.msgStore['error']).addClass("alert-danger").removeClass("alert-success").show();
+      }
+      $("#submit-default").loading("reset");
+    }, "json");
+  }
+}
+
+function buildDefaultList(defaultArray) {
+  var defaultDatafarisContent = [];
+  defaultArray.forEach(function(element) {
+    var newElement = $("<div id=\"default-" + element + "\"></div>");
+    newElement.append("<span class=\"default-datafari-label\">" + element + "</span>");
+    var deleteButton = $("<span><i class=\"fas fa-trash-alt\"></i></span>");
+    deleteButton.click(removeDefaultHandler(element));
+    newElement.append(deleteButton);
+    defaultDatafarisContent.push(newElement);
+  });
+  if (defaultDatafarisContent.length === 0) {
+    $("#current-default-value").html(window.i18n.msgStore['none']);
+  } else {
+    $("#current-default-value").empty();
+    $("#current-default-value").append(defaultDatafarisContent);
+  }
+}
+
+function addDefault() {
   $("#submit-default").loading("loading");
   $("#message").empty().hide();
   var index = $("#select-default-ex-datafari").val();
@@ -135,11 +180,12 @@ function setDefault() {
   }
   $.post("../SearchAdministrator/searchAggregatorConfig", {
     datafariName: datafariName,
-    action: "setdefault"
+    action: "adddefault"
   }, function(data) {
     if (data != undefined && data.code != undefined) {
       if (data.code == 0) {
-        $("#current-default-value").html(datafariName ? datafariName : window.i18n.msgStore['none']);
+        defaultDatafaris = data.default_datafari;
+        buildDefaultList(defaultDatafaris);
         $("#message").html('<i class="fas fa-check"></i>' + (datafariName ? datafariName : window.i18n.msgStore['none']) + ' ' + window.i18n.msgStore['searchAggregatorDefaultSuccessMessage']).addClass("alert-success").removeClass("alert-danger").show();
       } else {
         $("#message").html('<i class="fas fa-times"></i> ' + data.status).addClass("alert-danger").removeClass("alert-success").show();
@@ -158,17 +204,11 @@ function deleteLocalExDatafariElm(index) {
 
 function updateExDatafarisSelect(selectIndex) {
   $("#select-ex-datafari option:gt(1)").remove();
-  $("#select-default-ex-datafari option:gt(1)").remove();
-  var defaultLabel = window.i18n.msgStore['none'];
+  $("#select-default-ex-datafari option:gt(0)").remove();
   for (var i = 0; i < externalDatafaris.length; i++) {
     $("#select-ex-datafari").append("<option value='" + i + "'>" + externalDatafaris[i].label + "</option>");
     if (externalDatafaris[i].enabled) {
-      if (defaultDatafari == externalDatafaris[i].label) {
-        $("#select-default-ex-datafari").append("<option selected value='" + i + "'>" + externalDatafaris[i].label + "</option>");
-        defaultLabel = defaultDatafari;
-      } else {
-        $("#select-default-ex-datafari").append("<option value='" + i + "'>" + externalDatafaris[i].label + "</option>");
-      }
+      $("#select-default-ex-datafari").append("<option value='" + i + "'>" + externalDatafaris[i].label + "</option>");
     }
   }
   if (selectIndex !== undefined) {
@@ -176,14 +216,14 @@ function updateExDatafarisSelect(selectIndex) {
   } else {
     $('#select-ex-datafari').val("new").change();
   }
-  $("#current-default-value").html(defaultLabel);
+  buildDefaultList(defaultDatafaris);
 }
 
 function updateLocalList(index, datafariName, search_api_url, token_request_url, search_aggregator_secret, enabled) {
-  if (index == "new") {
+  if (index === "new") {
     index = externalDatafaris.length;
   }
-  if (index == 0) {
+  if (index === externalDatafaris.length) {
     externalDatafaris[index] = {};
   }
   externalDatafaris[index].label = datafariName;
@@ -291,6 +331,7 @@ $(document).ready(
 
     // Init toggle buttons
     $('#search_aggregator_activation').bootstrapToggle();
+    $('#search_aggregator_always_use_default').bootstrapToggle();
     $('#ex_datafari_activation').bootstrapToggle();
 
     // Init delete button
@@ -305,6 +346,7 @@ $(document).ready(
         var timeoutPerRequest = data.timeoutPerRequest;
         var globalTimeout = data.globalTimeout;
         var renewAvailable = data.renew_available;
+        var alwaysUseDefault = data.always_use_default;
 
         $("#timeoutPerRequest").val(timeoutPerRequest);
         $("#globalTimeout").val(globalTimeout);
@@ -313,6 +355,12 @@ $(document).ready(
           $("#search_aggregator_activation").bootstrapToggle('on', true);
         } else {
           $("#search_aggregator_activation").bootstrapToggle('off', true);
+        }
+
+        if (alwaysUseDefault == true) {
+          $("#search_aggregator_always_use_default").bootstrapToggle('on', true);
+        } else {
+          $("#search_aggregator_always_use_default").bootstrapToggle('off', true);
         }
 
         if (renewAvailable == false) {
@@ -327,22 +375,14 @@ $(document).ready(
         }
 
         externalDatafaris = data.external_datafaris;
-        defaultDatafari = data.default_datafari;
-        var defaultLabel = window.i18n.msgStore['none'];
+        defaultDatafaris = data.default_datafari
+        buildDefaultList(defaultDatafaris);
         for (var i = 0; i < externalDatafaris.length; i++) {
           $("#select-ex-datafari").append("<option value='" + i + "'>" + externalDatafaris[i].label + "</option>");
           if (externalDatafaris[i].enabled) {
-            if (defaultDatafari == externalDatafaris[i].label) {
-              $("#select-default-ex-datafari").append("<option selected value='" + i + "'>" + externalDatafaris[i].label + "</option>");
-              defaultLabel = defaultDatafari;
-            } else {
-              $("#select-default-ex-datafari").append("<option value='" + i + "'>" + externalDatafaris[i].label + "</option>");
-            }
+            $("#select-default-ex-datafari").append("<option value='" + i + "'>" + externalDatafaris[i].label + "</option>");
           }
         }
-
-        $("#current-default-value").html(defaultLabel);
-
 
         $("#select-ex-datafari").change(function() {
           $("#message").fadeOut(5000);
@@ -436,6 +476,7 @@ $(document).ready(
             if (data.code == 0) {
               $("#message").html('<i class="fas fa-check"></i> ' + window.i18n.msgStore['saved']).addClass("alert-success").removeClass("alert-danger").show();
               var newIndex = updateLocalList(index, datafariName, search_api_url, token_request_url, search_aggregator_secret, enabled);
+              defaultDatafaris = data.default_datafari;
               updateExDatafarisSelect(newIndex);
             } else {
               $("#message").html('<i class="fas fa-times"></i> ' + data.status).addClass("alert-danger").removeClass("alert-success").show();
@@ -483,6 +524,29 @@ $(document).ready(
 
     });
 
+    $("#search_aggregator_always_use_default").change(function click_handler(e) {
+      e.preventDefault();
+      $("#message").hide();
+      var element = $(this);
+
+      var enable = "true";
+      if (!element.is(':checked')) {
+        enable = "false";
+      }
+
+      $.post("../SearchAdministrator/searchAggregatorConfig", {
+        action: "setalwaysusedefault",
+        alwaysusedefault: enable
+      }, function(data) {
+        if (data.code === undefined || data.code !== 0) {
+          $("#message").html('<i class="fas fa-times"></i> ' + window.i18n.msgStore['error']);
+          $("#message").removeClass("alert-success");
+          $("#message").addClass("alert-danger");
+          $("#message").show();
+        }
+      }, "json");
+    });
+
     $("#renew_search_aggregator_secret").click(function() {
       $("#search-aggregator-secret-message, #search-aggregator-secret-message2").hide();
       $("#renew_search_aggregator_secret").loading("loading");
@@ -508,6 +572,6 @@ $(document).ready(
 
     $("#default-datafari-form").submit(function(e) {
       e.preventDefault();
-      setDefault();
+      addDefault();
     });
   });

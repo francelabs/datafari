@@ -38,6 +38,8 @@ public class SearchAggregatorConfiguration extends AbstractConfigClass {
   public static final String DEFAULT_DATAFARI = "DEFAULT_DATAFARI";
   public static final String USERS_ALLOWED_SOURCES_FILE = "USERS_ALLOWED_SOURCES_FILE";
   public static final String USERS_DEFAULT_SOURCE_FILE = "USERS_DEFAULT_SOURCE_FILE";
+  public static final String ALWAYS_USE_DEFAULT = "ALWAYS_USE_DEFAULT";
+  public static final String SITES_SEPARATOR = ",";
 
 
   private static SearchAggregatorConfiguration instance;

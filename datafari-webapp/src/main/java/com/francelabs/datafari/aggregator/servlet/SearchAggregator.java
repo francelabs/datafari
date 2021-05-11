@@ -74,13 +74,20 @@ public class SearchAggregator extends HttpServlet {
     final boolean activated = Boolean.valueOf(sac.getProperty(SearchAggregatorConfiguration.ACTIVATED));
     final int timeoutPerRequest = Integer.parseInt(sac.getProperty(SearchAggregatorConfiguration.TIMEOUT_PER_REQUEST));
     final int globalTimeout = Integer.parseInt(sac.getProperty(SearchAggregatorConfiguration.GLOBAL_TIMEOUT));
-    final String defaultDatafari = sac.getProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI) == null ? "" : sac.getProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI);
+    final String defaultDatafariString = sac.getProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI) == null ? null : sac.getProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI);
+    final boolean alwaysUseDefault = Boolean.valueOf(sac.getProperty(SearchAggregatorConfiguration.ALWAYS_USE_DEFAULT));
 
     final SearchAggregatorUserConfig aggregatorUserConfig = SearchAggregatorUserConfig.getInstance();
 
+    String[] defaultDatafarisArray = {};
+    if (defaultDatafariString != null && defaultDatafariString.trim().length() > 0) {
+      defaultDatafarisArray = defaultDatafariString.split(SearchAggregatorConfiguration.SITES_SEPARATOR);
+    }
+    ArrayList<String> defaultDatafaris = new ArrayList<>(Arrays.asList(defaultDatafarisArray));
+
     // Retrieve username
     String requestingUser = "";
-    String userHomeDatafari = "";
+    ArrayList<String> userHomeDatafari = new ArrayList<>();
     requestingUser = AuthenticatedUserName.getName(request);
     if (requestingUser == null) {
       requestingUser = "";
@@ -88,8 +95,8 @@ public class SearchAggregator extends HttpServlet {
 
     userHomeDatafari = aggregatorUserConfig.getDefaultSourceFor(requestingUser);
 
-    if (userHomeDatafari == null || userHomeDatafari.trim().length() == 0) {
-      userHomeDatafari = defaultDatafari;
+    if (userHomeDatafari.size() == 0 || alwaysUseDefault) {
+      userHomeDatafari.addAll(defaultDatafaris);
     }
 
     // Get query id if available
@@ -731,10 +738,10 @@ public class SearchAggregator extends HttpServlet {
     return pathInfo.substring(pathInfo.lastIndexOf("/"), pathInfo.length());
   }
 
-  private static ArrayList<String> getSelectedSources(final String parameter, final String defaultDatafari) {
+  private static ArrayList<String> getSelectedSources(final String parameter, final ArrayList<String> defaultDatafaris) {
     final ArrayList<String> result = new ArrayList<>();
-    if (parameter == null && defaultDatafari != null && defaultDatafari.trim().length() > 0) {
-      result.add(defaultDatafari);
+    if (parameter == null && defaultDatafaris != null && defaultDatafaris.size() > 0) {
+      result.addAll(defaultDatafaris);
     } else if (parameter != null && parameter.length() != 0) {
       // If the parameter is set as empty, we set an empty list meaning no filtering
       // (search on everything)

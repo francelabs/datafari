@@ -2,6 +2,7 @@ package com.francelabs.datafari.aggregator.servlet;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -34,8 +35,15 @@ public class AggregatorList extends HttpServlet {
         final SearchAggregatorConfiguration sac = SearchAggregatorConfiguration.getInstance();
         final String jaExternalDatafarisStr = sac.getProperty(SearchAggregatorConfiguration.EXTERNAL_DATAFARIS);
         final boolean activated = Boolean.valueOf(sac.getProperty(SearchAggregatorConfiguration.ACTIVATED));
-        final String defaultDatafari = sac.getProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI) == null ? ""
-                : sac.getProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI);
+        final String defaultDatafariString = sac.getProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI) == null ? null 
+            : sac.getProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI);
+        final boolean alwaysUseDefault = Boolean.valueOf(sac.getProperty(SearchAggregatorConfiguration.ALWAYS_USE_DEFAULT));
+
+        String[] defaultDatafarisArray = {};
+        if (defaultDatafariString != null && defaultDatafariString.trim().length() > 0) {
+            defaultDatafarisArray = defaultDatafariString.split(SearchAggregatorConfiguration.SITES_SEPARATOR);
+        }
+        ArrayList<String> defaultDatafaris = new ArrayList<>(Arrays.asList(defaultDatafarisArray));
 
         // Retrieve username
         String authenticatedUserName = "";
@@ -63,16 +71,15 @@ public class AggregatorList extends HttpServlet {
             }
         }
 
-        String userHomeDatafari = null;
+        ArrayList<String> userHomeDatafari = null;
         // Retrieve user home Datafari
         SearchAggregatorUserConfig userConfig = SearchAggregatorUserConfig.getInstance();
         userHomeDatafari = userConfig.getDefaultSourceFor(authenticatedUserName);
 
-        // Revert back to the default Datafari defined by admin if no user defined home
-        // exists
-        if (userHomeDatafari == null || userHomeDatafari.trim().length() == 0) {
-            userHomeDatafari = defaultDatafari;
+        if (userHomeDatafari.size() == 0 || alwaysUseDefault) {
+            userHomeDatafari.addAll(defaultDatafaris);
         }
+
 
         // Retrieve user allowed Datafari
         ArrayList<String> allowedDatafari = userConfig.getAllowedSourcesFor(authenticatedUserName);
@@ -92,7 +99,7 @@ public class AggregatorList extends HttpServlet {
                     if (enabled && (allowedDatafari == null || allowedDatafari.contains(label))) {
                         JSONObject externalResult = new JSONObject();
                         externalResult.put("label", label);
-                        if (label.equals(userHomeDatafari)) {
+                        if (userHomeDatafari.contains(label)) {
                             externalResult.put("selected", true);
                         }
                         result.add(externalResult);

@@ -24,18 +24,21 @@ public class SearchAggregatorUserConfig {
         return instance;
     }
 
-    public String getDefaultSourceFor(String username) {
-        String result = null;
+    public ArrayList<String> getDefaultSourceFor(String username) {
+        ArrayList<String> result = new ArrayList<>();
         String defaultSourcesFilePath = sac.getProperty(SearchAggregatorConfiguration.USERS_DEFAULT_SOURCE_FILE);
         if (defaultSourcesFilePath != null && defaultSourcesFilePath.trim().length() > 0) {
             BufferedReader defaultSourcesReader = null;
             try {
                 defaultSourcesReader = new BufferedReader(new FileReader(defaultSourcesFilePath));
                 String line = "";
-                while ((line = defaultSourcesReader.readLine()) != null && result == null) {
+                while ((line = defaultSourcesReader.readLine()) != null && result.size()==0) {
                     String[] fields = line.split(SEPARATOR);
                     if (fields.length == 2 && fields[0].equals(username)) {
-                        result = fields[1];
+                        if (fields[1] != null && fields[1].trim().length() > 0) {
+                            String[] values = fields[1].split(SITES_SEPARATOR);
+                            result.addAll(Arrays.asList(values));
+                        }
                     }
                 }
             } catch (Exception e) {

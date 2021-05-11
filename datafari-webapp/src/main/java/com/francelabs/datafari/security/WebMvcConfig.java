@@ -1,6 +1,8 @@
 package com.francelabs.datafari.security;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -223,7 +225,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
       final String externalDatafaris = sac.getProperty(SearchAggregatorConfiguration.EXTERNAL_DATAFARIS);
       final int timeoutPerRequest = Integer.parseInt(sac.getProperty(SearchAggregatorConfiguration.TIMEOUT_PER_REQUEST));
       final int globalTimeout = Integer.parseInt(sac.getProperty(SearchAggregatorConfiguration.GLOBAL_TIMEOUT));
-      final String defaultDatafari = sac.getProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI);
+      final String defaultDatafariString = sac.getProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI);
+      final Boolean alwaysUseDefault = Boolean.valueOf(sac.getProperty(SearchAggregatorConfiguration.ALWAYS_USE_DEFAULT));
+
+      String[] defaultDatafarisArray = {};
+      if (defaultDatafariString != null && defaultDatafariString.trim().length() > 0) {
+        defaultDatafarisArray = defaultDatafariString.split(SearchAggregatorConfiguration.SITES_SEPARATOR);
+      }
+      JSONArray defaultDatafaris = new JSONArray();
+      defaultDatafaris.addAll(Arrays.asList(defaultDatafarisArray));
       final JSONParser parser = new JSONParser();
       JSONArray externalDatafarisJson;
       try {
@@ -239,7 +249,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         jsonResponse.put("external_datafaris", externalDatafarisJson);
         jsonResponse.put("timeoutPerRequest", timeoutPerRequest);
         jsonResponse.put("globalTimeout", globalTimeout);
-        jsonResponse.put("default_datafari", defaultDatafari);
+        jsonResponse.put("default_datafari", defaultDatafaris);
+        jsonResponse.put("always_use_default", alwaysUseDefault);
         boolean renewAvailable = true;
         if (saPasswordManager == null) {
           renewAvailable = false;
@@ -279,7 +290,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
             jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
           } else if (action.contentEquals("delete")) {
             final String datafariName = request.getParameter("datafariName");
-            final String defaultDatafariName = sac.getProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI);
+            final String defaultDatafariString = sac.getProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI);
+            String[] defaultDatafarisArray = {};
+            if (defaultDatafariString != null && defaultDatafariString.trim().length() > 0) {
+              defaultDatafarisArray = defaultDatafariString.split(SearchAggregatorConfiguration.SITES_SEPARATOR);
+            }
+            ArrayList<String> defaultDatafaris = new ArrayList<>(Arrays.asList(defaultDatafarisArray));
             if (datafariName != null) {
               final String externalDatafaris = sac.getProperty(SearchAggregatorConfiguration.EXTERNAL_DATAFARIS);
               final JSONParser parser = new JSONParser();
@@ -291,18 +307,29 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
                 // Delete if found
                 if (indexToDelete != -1) {
-                  // If the deleted element is the one set as the default
-                  if (defaultDatafariName.contentEquals(datafariName)) {
-                    // Set the default to none
-                    sac.setProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI, "");
+                  // If the deleted element is one of the default, remove it
+                  if (defaultDatafaris.contains(datafariName)) {
+                    defaultDatafaris.remove(datafariName);
+                    String defaultDatafariValue = "";
+                    for (int i = 0; i < defaultDatafaris.size(); i++) {
+                      defaultDatafariValue += defaultDatafaris.get(i);
+                      if (i < defaultDatafaris.size() - 1) {
+                        defaultDatafariValue += SearchAggregatorConfiguration.SITES_SEPARATOR;
+                      }
+                    }
+                    sac.setProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI, defaultDatafariValue);
                   }
                   externalDatafarisJson.remove(indexToDelete);
                 }
                 // Update the properties file
                 sac.setProperty(SearchAggregatorConfiguration.EXTERNAL_DATAFARIS, externalDatafarisJson.toJSONString());
                 sac.saveProperties();
+
+                JSONArray defaultDatafarisJSON = new JSONArray();
+                defaultDatafarisJSON.addAll(defaultDatafaris);
                 jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
                 jsonResponse.put("external_datafaris", externalDatafarisJson);
+                jsonResponse.put("default_datafari", defaultDatafarisJSON);
               } catch (final ParseException e) {
                 jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
                 jsonResponse.put(OutputConstants.STATUS, "Unable to parse search aggregator configuration. The \"external_datafaris\" parameter seems not to be a JSONArray");
@@ -318,6 +345,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
             final String searchAggregatorSecret = PasswordMapper.getInstance().mapKeyToPassword(request.getParameter("search_aggregator_secret"));
             final boolean enabled = Boolean.valueOf(request.getParameter("enabled"));
             final String externalDatafaris = sac.getProperty(SearchAggregatorConfiguration.EXTERNAL_DATAFARIS);
+            final String defaultDatafariString = sac.getProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI);
+            String[] defaultDatafarisArray = {};
+            if (defaultDatafariString != null && defaultDatafariString.trim().length() > 0) {
+              defaultDatafarisArray = defaultDatafariString.split(SearchAggregatorConfiguration.SITES_SEPARATOR);
+            }
+            ArrayList<String> defaultDatafaris = new ArrayList<>(Arrays.asList(defaultDatafarisArray));
             final JSONObject receivedConf = new JSONObject();
             receivedConf.put("label", datafariName);
             receivedConf.put("search_api_url", searchApiUrl);
@@ -331,16 +364,22 @@ public class WebMvcConfig implements WebMvcConfigurer {
               if (action.contentEquals("new")) {
                 externalDatafarisJson.add(receivedConf);
               } else {
-                final String defaultDatafariName = sac.getProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI);
                 // Search the label to replace
                 final int indexToReplace = getIndex(datafariName, externalDatafarisJson);
 
                 if (indexToReplace != -1) {
                   externalDatafarisJson.set(indexToReplace, receivedConf);
-                  // If the modified element is the one set as default datafari and it has been disabled
-                  if (!enabled && defaultDatafariName.contentEquals(datafariName)) {
-                    // Set the default Datafari to none
-                    sac.setProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI, "");
+                  // If the modified element is one of the default datafari and it has been disabled remove it from default
+                  if (!enabled && defaultDatafaris.contains(datafariName)) {
+                    defaultDatafaris.remove(datafariName);
+                    String defaultDatafariValue = "";
+                    for (int i = 0; i < defaultDatafaris.size(); i++) {
+                      defaultDatafariValue += defaultDatafaris.get(i);
+                      if (i < defaultDatafaris.size() - 1) {
+                        defaultDatafariValue += SearchAggregatorConfiguration.SITES_SEPARATOR;
+                      }
+                    }
+                    sac.setProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI, defaultDatafariValue);
                   }
                 } else {
                   externalDatafarisJson.add(receivedConf);
@@ -349,28 +388,50 @@ public class WebMvcConfig implements WebMvcConfigurer {
               // Update the properties file
               sac.setProperty(SearchAggregatorConfiguration.EXTERNAL_DATAFARIS, externalDatafarisJson.toJSONString());
               sac.saveProperties();
+              JSONArray defaultDatafarisJSON = new JSONArray();
+              defaultDatafarisJSON.addAll(defaultDatafaris);
               jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
               jsonResponse.put("external_datafaris", externalDatafarisJson);
+              jsonResponse.put("default_datafari", defaultDatafarisJSON);
             } catch (final ParseException e) {
               jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
               jsonResponse.put(OutputConstants.STATUS, "Unable to parse search aggregator configuration. The \"external_datafaris\" parameter seems not to be a JSONArray");
             }
-          } else if (action.contentEquals("setdefault")) {
+          } else if (action.contentEquals("adddefault")) {
             final String datafariName = request.getParameter("datafariName");
             if (datafariName != null) {
+              final String defaultDatafariString = sac.getProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI);
+
+              String[] defaultDatafarisArray = {};
+              if (defaultDatafariString != null && defaultDatafariString.trim().length() > 0) {
+                defaultDatafarisArray = defaultDatafariString.split(SearchAggregatorConfiguration.SITES_SEPARATOR);
+              }
+              ArrayList<String> defaultDatafaris = new ArrayList<>(Arrays.asList(defaultDatafarisArray));
               final String externalDatafaris = sac.getProperty(SearchAggregatorConfiguration.EXTERNAL_DATAFARIS);
               final JSONParser parser = new JSONParser();
               JSONArray externalDatafarisJson;
               try {
                 externalDatafarisJson = (JSONArray) parser.parse(externalDatafaris);
 
-                // Set as default if empty String (no default) or valid name.
-                if (datafariName.contentEquals("") || getIndex(datafariName, externalDatafarisJson) != -1) {
-                  sac.setProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI, datafariName);
+                // Add a new default Datafari to the list if it is not already there and it exists 
+                // as an external Datafari
+                if (getIndex(datafariName, externalDatafarisJson) != -1 
+                  && defaultDatafaris.indexOf(datafariName) == -1) {
+                  defaultDatafaris.add(datafariName);
+                  String defaultDatafariValue = "";
+                  for (int i = 0; i < defaultDatafaris.size(); i++) {
+                    defaultDatafariValue += defaultDatafaris.get(i);
+                    if (i < defaultDatafaris.size() - 1) {
+                      defaultDatafariValue += SearchAggregatorConfiguration.SITES_SEPARATOR;
+                    }
+                  }
+                  sac.setProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI, defaultDatafariValue);
                   sac.saveProperties();
                 }
+                JSONArray defaultDatafarisJsonArray = new JSONArray();
+                defaultDatafarisJsonArray.addAll(defaultDatafaris);
                 jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-                jsonResponse.put("default_datafari", datafariName);
+                jsonResponse.put("default_datafari", defaultDatafarisJsonArray);
               } catch (final ParseException e) {
                 jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
                 jsonResponse.put(OutputConstants.STATUS, "Unable to parse search aggregator configuration. The \"external_datafaris\" parameter seems not to be a JSONArray");
@@ -378,6 +439,47 @@ public class WebMvcConfig implements WebMvcConfigurer {
             } else {
               jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
               jsonResponse.put(OutputConstants.STATUS, "Wrong request: Missing parameter 'datafariName'");
+            }
+          } else if (action.contentEquals("removedefault")) {
+            final String datafariName = request.getParameter("datafariName");
+            if (datafariName != null) {
+              final String defaultDatafariString = sac.getProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI);
+
+              String[] defaultDatafarisArray = {};
+              if (defaultDatafariString != null && defaultDatafariString.trim().length() > 0) {
+                defaultDatafarisArray = defaultDatafariString.split(SearchAggregatorConfiguration.SITES_SEPARATOR);
+              }
+              ArrayList<String> defaultDatafaris = new ArrayList<>(Arrays.asList(defaultDatafarisArray));
+              // If something is effectively removed, save the new value
+              if (defaultDatafaris.remove(datafariName)) {
+                String defaultDatafariValue = "";
+                for (int i = 0; i < defaultDatafaris.size(); i++) {
+                  defaultDatafariValue += defaultDatafaris.get(i);
+                  if (i < defaultDatafaris.size() - 1) {
+                    defaultDatafariValue += SearchAggregatorConfiguration.SITES_SEPARATOR;
+                  }
+                }
+                sac.setProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI, defaultDatafariValue);
+                sac.saveProperties();
+              }
+              JSONArray defaultDatafarisJsonArray = new JSONArray();
+              defaultDatafarisJsonArray.addAll(defaultDatafaris);
+              jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+              jsonResponse.put("default_datafari", defaultDatafarisJsonArray);
+            } else {
+              jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+              jsonResponse.put(OutputConstants.STATUS, "Wrong request: Missing parameter 'datafariName'");
+            }
+          } else if (action.contentEquals("setalwaysusedefault")) {
+            if (request.getParameter("alwaysusedefault") != null) {
+              final Boolean alwaysUseDefault = Boolean.valueOf(request.getParameter("alwaysusedefault"));
+              sac.setProperty(SearchAggregatorConfiguration.ALWAYS_USE_DEFAULT, alwaysUseDefault.toString());
+              sac.saveProperties();
+              jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+              jsonResponse.put("always_use_default", alwaysUseDefault);
+            } else {
+              jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+              jsonResponse.put(OutputConstants.STATUS, "Wrong request: Missing parameter 'alwaysusedefault'");
             }
           }
         } catch (final IOException e) {

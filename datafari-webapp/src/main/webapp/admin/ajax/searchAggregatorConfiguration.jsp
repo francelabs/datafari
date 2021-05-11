@@ -9,7 +9,7 @@
 <Link rel="stylesheet" href="<c:url value="/resources/css/animate.min.css" />"/>
 </head>
 <body>
-	<nav aria-label="breadcrumb" class="bg-dark">
+  <nav aria-label="breadcrumb" class="bg-dark">
     <a href="#" class="side-menu-control"> <i class="fas fa-angle-left"></i></a>
     <ol class="breadcrumb">
       <li class="breadcrumb-item indexAdminUIBreadcrumbLink" id="topbar1"></li>
@@ -17,22 +17,22 @@
       <li class="breadcrumb-item active" aria-current="page" id="topbar3"></li>
     </ol>
   </nav>
-	<div class="col-sm-12"><span id="globalAnswer"></span></div>
-	<div class="col-sm-12"></div>
-	<div class="box">
-		<div class="box-header">
-			<div class="box-name">
-				<i class="fas fa-table"></i><span  id="title"></span>
-			</div>
-			<div class="box-icons">
-				<a class="collapse-link"><i class="fas fa-chevron-up"></i></a>
-			</div>
-			<div class="no-move"></div>
-		</div>
-		<div id="thBox" class="box-content">
-			<div class="documentation-style-no-margin">
-				<p class="documentation-preview"> <span id="documentation-search-aggregator-configuration"></span><a class="documentation-link" href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/1064861698/SearchAggregator+-+Enterprise+Edition" target="_blank"> ...see more</a></p>
-			</div>
+  <div class="col-sm-12"><span id="globalAnswer"></span></div>
+  <div class="col-sm-12"></div>
+  <div class="box">
+    <div class="box-header">
+      <div class="box-name">
+        <i class="fas fa-table"></i><span  id="title"></span>
+      </div>
+      <div class="box-icons">
+        <a class="collapse-link"><i class="fas fa-chevron-up"></i></a>
+      </div>
+      <div class="no-move"></div>
+    </div>
+    <div id="thBox" class="box-content">
+      <div class="documentation-style-no-margin">
+        <p class="documentation-preview"> <span id="documentation-search-aggregator-configuration"></span><a class="documentation-link" href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/1064861698/SearchAggregator+-+Enterprise+Edition" target="_blank"> ...see more</a></p>
+      </div>
       <div id="search-aggregator-client-box" class="box">
         <div class="box-header">
           <div class="box-name">
@@ -188,30 +188,36 @@
           <form id="default-datafari-form" class="needs-validation" novalidate>
             <fieldset>
               <legend id="defaultEXDatafaris"></legend>
-                <select id="select-default-ex-datafari" class="form-control">
-                  <OPTION value="" id="label-select-default-ex-datafari" disabled></OPTION>
-                  <OPTION value="-1" id="label-no-default"></OPTION>
-                </select>
-                <div id="current-default"><span id="current-default-label"></span><span id="current-default-value"></span></div>
+              <select id="select-default-ex-datafari" class="form-control">
+                <OPTION value="" id="label-select-default-ex-datafari" disabled></OPTION>
+              </select>
             </fieldset>
             <fieldset id="fs-save-default">
-                <div class="form-group row">
-                  <label id="saveDefaultLabel" class="col-sm-3 col-form-label">
-                  </label>
-                  <div class="col-sm-3">
-                    <button id="submit-default" name="submitth" class="btn btn-primary"></button>
-                  </div>
+              <div class="form-group row">
+                <label id="saveDefaultLabel" class="col-sm-3 col-form-label">
+                </label>
+                <div class="col-sm-3">
+                  <button id="submit-default" name="submitth" class="btn btn-primary"></button>
                 </div>
-              
-               <br/>
-              
               </div>
+
+              <br/>
             </fieldset>
+            <div id="current-default">
+              <span id="current-default-label"></span>
+              <div id="current-default-value"></div>
+            </div>
           </form>
-    		  <div class="col feedback-message alert" id="message"></div>
+          <div class="form-group row">
+            <label id="searchAggregatorAlwaysUseDefaultLabel" class="col-sm-4 col-form-label"></label>
+            <div class="col-sm-3">
+              <input type="checkbox" id="search_aggregator_always_use_default" name="search_aggregator_always_use_default" data-size="sm" data-toggle="toggle" data-onstyle="success" data-offstyle="danger">
+            </div>  
+          </div>
+          <div class="col feedback-message alert" id="message"></div>
         </div>
       </div>
-		</div>
-	</div>
+    </div>
+  </div>
 </body>
 </html>
