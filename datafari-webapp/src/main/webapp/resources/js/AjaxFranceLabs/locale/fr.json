@@ -238,7 +238,7 @@
     "advancedSearch-title-label": "Titre",
     "advancedSearchLink": "Recherche Avancée",
     "aggregator-error-no-sources": "Aucun Datafari externe défini ou activé et accessible pour cette requête.",
-    "aggregator-error-sources-unreachable": "Tous les Datafari externes sélectionnés pour cette requête n'ont pas répondu.",
+    "aggregator-error-sources-unreachable": "Impossible de contacter les Datafari sélectionnés pour cette requête",
     "alert-type": "Type d'alerte",
     "alertAdmin": "Administration des alertes",
     "alertAggregatorWarning": "Rappel: Dans le cas où vous utiliseriez le mode aggregator de Datafari impliquant plusieurs Datafaris, les alertes ne surveilleront que les documents indexés dans votre Datafari principal",
