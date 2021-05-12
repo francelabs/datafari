@@ -487,8 +487,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
           jsonResponse.put(OutputConstants.STATUS, "Unable to save search aggregator properties");
         }
       }
-
-      jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+      if (jsonResponse.get(OutputConstants.CODE) == null){
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+      }
 
       return jsonResponse.toJSONString();
     }

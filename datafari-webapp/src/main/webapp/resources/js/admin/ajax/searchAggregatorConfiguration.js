@@ -117,8 +117,8 @@ function deleteConf() {
     if (data != undefined && data.code != undefined) {
       if (data.code == 0) {
         $("#message").html('<i class="fas fa-check"></i> External Datafari ' + datafariName + ' deleted !').addClass("alert-success").removeClass("alert-danger").show();
-        deleteLocalExDatafariElm(index);
         defaultDatafaris = data.default_datafari;
+        deleteLocalExDatafariElm(index);
       } else {
         $("#message").html('<i class="fas fa-times"></i> ' + data.status).addClass("alert-danger").removeClass("alert-success").show();
       }
