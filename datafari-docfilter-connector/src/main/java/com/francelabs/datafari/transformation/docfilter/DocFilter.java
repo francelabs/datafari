@@ -386,7 +386,7 @@ public class DocFilter extends org.apache.manifoldcf.agents.transformation.BaseT
       excludeFilters.add("\\.(?i)bz2(?-i)$");
     }
     String maxDocSize = "";
-    String minDocSize = "1";
+    String minDocSize = "0";
     String filterField = "";
 
     for (int i = 0; i < os.getChildCount(); i++) {
