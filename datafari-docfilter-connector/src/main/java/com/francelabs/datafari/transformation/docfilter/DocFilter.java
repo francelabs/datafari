@@ -368,8 +368,25 @@ public class DocFilter extends org.apache.manifoldcf.agents.transformation.BaseT
 
     final List<String> includeFilters = new ArrayList<>();
     final List<String> excludeFilters = new ArrayList<>();
+    if (os.getChildCount() == 0) {
+      excludeFilters.add("\\/~.*");
+      excludeFilters.add("\\.(?i)pst(?-i)$");
+      excludeFilters.add("\\.(?i)gz(?-i)$");
+      excludeFilters.add("\\.(?i)ini(?-i)$");
+      excludeFilters.add("\\.(?i)tar(?-i)$");
+      excludeFilters.add("\\.(?i)lnk(?-i)$");
+      excludeFilters.add("\\.(?i)db(?-i)$");
+      excludeFilters.add("\\.(?i)odb(?-i)$");
+      excludeFilters.add("\\.(?i)mat(?-i)$");
+      excludeFilters.add("\\/\\..*");
+      excludeFilters.add("\\.(?i)tgz(?-i)$");
+      excludeFilters.add("\\.(?i)zip(?-i)$");
+      excludeFilters.add("\\.(?i)rar(?-i)$");
+      excludeFilters.add("\\.(?i)7z(?-i)$");
+      excludeFilters.add("\\.(?i)bz2(?-i)$");
+    }
     String maxDocSize = "";
-    String minDocSize = "";
+    String minDocSize = "1";
     String filterField = "";
 
     for (int i = 0; i < os.getChildCount(); i++) {
