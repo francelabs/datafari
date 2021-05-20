@@ -890,7 +890,11 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
           Logging.connectors.warn("JCIFS: Socket timeout reading version information for document " + documentIdentifier + ": " + e.getMessage(), e);
           throw new ServiceInterruption("Timeout or other service interruption: " + e.getMessage(), e, currentTime + 300000L, currentTime + 3 * 60 * 60000L, -1, false);
         } catch (final InterruptedIOException e) {
-          throw new ManifoldCFException("Interrupted: " + e.getMessage(), e, ManifoldCFException.INTERRUPTED);
+          errorCode = "INTERRUPTEDIOEXCEPTION";
+          errorDesc = "InterruptedIOException: " + e.getMessage();
+          final long currentTime = System.currentTimeMillis();
+          Logging.connectors.warn("JCIFS: InterruptedIOException reading version information for document " + documentIdentifier + ": " + e.getMessage(), e);
+          throw new ServiceInterruption("Timeout or other service interruption: " + e.getMessage(), e, currentTime + 300000L, currentTime + 3 * 60 * 60000L, -1, false);
         } catch (final IOException e) {
           errorCode = "IOEXCEPTION";
           errorDesc = "I/O error: " + e.getMessage();
@@ -1374,10 +1378,10 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
       return;
     } else if (se.getMessage().toLowerCase(Locale.ROOT).indexOf("incorrect function") != -1) {
       Logging.connectors.error("JCIFS: Server does not support a required operation (" + operation + "?) for " + documentIdentifier);
-      throw new ManifoldCFException("Server does not support a required operation (" + operation + ", possibly?) accessing document " + documentIdentifier, se);
+      return;
     } else {
       Logging.connectors.error("SmbException thrown " + activity + " for " + documentIdentifier, se);
-      throw new ManifoldCFException("SmbException thrown: " + se.getMessage(), se);
+      throw new ServiceInterruption("Timeout or other service interruption: " + se.getMessage(), se, currentTime + 300000L, currentTime + 3 * 60 * 60000L, -1, false);
     }
   }
 
