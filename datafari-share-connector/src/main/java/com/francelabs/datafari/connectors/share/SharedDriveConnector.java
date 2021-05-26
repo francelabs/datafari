@@ -618,619 +618,605 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
       }
     }
 
-    // Check licence file presence
-    final String conf_home = System.getenv("MAIN_DATAFARI_CONFIG_HOME");
-    String licenceFilePath = null;
-    File licence = null;
-    if (conf_home != null && !conf_home.isEmpty()) {
-      licenceFilePath = conf_home + File.separator + "licence.lc";
-      licence = new File(licenceFilePath);
-    }
+    for (final String documentIdentifier : documentIdentifiers) {
 
-    if (licence == null || !licence.exists() || !licence.isFile() || !licence.canRead() || !licence.canWrite()) {
-      Logging.connectors.warn("The current connector is not allowed");
-    } else {
+      getSession();
 
-      for (final String documentIdentifier : documentIdentifiers) {
+      if (Logging.connectors.isDebugEnabled()) {
+        Logging.connectors.debug("JCIFS: Processing '" + documentIdentifier + "'");
+      }
 
-        getSession();
+      String versionString;
+      SmbFile file;
 
-        if (Logging.connectors.isDebugEnabled()) {
-          Logging.connectors.debug("JCIFS: Processing '" + documentIdentifier + "'");
-        }
+      String ingestionURI = null;
+      String pathAttributeValue = null;
 
-        String versionString;
-        SmbFile file;
+      String[] shareAllow = null;
+      String[] shareDeny = null;
+      boolean shareSecurityOn = false;
 
-        String ingestionURI = null;
-        String pathAttributeValue = null;
+      String[] parentAllow = null;
+      String[] parentDeny = null;
+      boolean parentSecurityOn = false;
 
-        String[] shareAllow = null;
-        String[] shareDeny = null;
-        boolean shareSecurityOn = false;
+      String[] documentAllow = null;
+      String[] documentDeny = null;
+      boolean documentSecurityOn = false;
 
-        String[] parentAllow = null;
-        String[] parentDeny = null;
-        boolean parentSecurityOn = false;
+      // Common info we really need to fetch only once
+      long fileLength = 0L;
+      long lastModified = 0L;
+      boolean fileExists = false;
+      boolean fileIsDirectory = false;
+      boolean matchFolder = true;
+      String errorCode = null;
+      String errorDesc = null;
 
-        String[] documentAllow = null;
-        String[] documentDeny = null;
-        boolean documentSecurityOn = false;
+      try {
+        file = new SmbFile(documentIdentifier, ctx);
+        fileExists = fileExists(file);
 
-        // Common info we really need to fetch only once
-        long fileLength = 0L;
-        long lastModified = 0L;
-        boolean fileExists = false;
-        boolean fileIsDirectory = false;
-        boolean matchFolder = true;
-        String errorCode = null;
-        String errorDesc = null;
-
-        try {
-          file = new SmbFile(documentIdentifier, ctx);
-          fileExists = fileExists(file);
-
-          // File has to exist AND have a non-null canonical path to be readable.
-          // If the canonical path is
-          // null, it means that the windows permissions are not right and
-          // directory/file is not readable!!!
-          final String newPath = getFileCanonicalPath(file);
-          // We MUST check the specification here, otherwise a recrawl may not
-          // delete what it's supposed to!
-          if (fileExists && newPath != null) {
-            fileIsDirectory = fileIsDirectory(file);
-            if (fileIsDirectory) {
-              // First of all check if document match global filters
-              try {
-                // Check if the file is included
-                // there must be declared folder filters AND the current folder must be different from a folder configured in the job specs
-                if (!gf.includeFolderFilters.isEmpty()) {
-                  final String matchingRegex = matchingRegex(gf.includeFolderFilters, documentIdentifier);
-                  if (matchingRegex == null) {
-                    if (!startPaths.contains(documentIdentifier)) {
-                      activities.recordActivity(System.currentTimeMillis(), ACTIVITY_ACCESS, 0L, documentIdentifier, "EXCLUDED", "Does not match any global include folder filters", null);
-                      activities.deleteDocument(documentIdentifier);
-                      continue;
-                    } else {
-                      matchFolder = false;
-                    }
-                  }
-                }
-              } catch (final RegexException e) {
-                Logging.connectors.warn("Global include folder filter regular expression syntax error: " + e.getRegex());
-              }
-
-            } else {
-              // First of all check if document match global filters
-              try {
-                // Check if the file is included
-                if (!gf.includeFileFilters.isEmpty()) {
-                  final String matchingRegex = matchingRegex(gf.includeFileFilters, documentIdentifier);
-                  if (matchingRegex == null) {
-                    activities.recordActivity(System.currentTimeMillis(), ACTIVITY_ACCESS, 0L, documentIdentifier, "EXCLUDED", "Does not match any global include filters", null);
+        // File has to exist AND have a non-null canonical path to be readable.
+        // If the canonical path is
+        // null, it means that the windows permissions are not right and
+        // directory/file is not readable!!!
+        final String newPath = getFileCanonicalPath(file);
+        // We MUST check the specification here, otherwise a recrawl may not
+        // delete what it's supposed to!
+        if (fileExists && newPath != null) {
+          fileIsDirectory = fileIsDirectory(file);
+          if (fileIsDirectory) {
+            // First of all check if document match global filters
+            try {
+              // Check if the file is included
+              // there must be declared folder filters AND the current folder must be different from a folder configured in the job specs
+              if (!gf.includeFolderFilters.isEmpty()) {
+                final String matchingRegex = matchingRegex(gf.includeFolderFilters, documentIdentifier);
+                if (matchingRegex == null) {
+                  if (!startPaths.contains(documentIdentifier)) {
+                    activities.recordActivity(System.currentTimeMillis(), ACTIVITY_ACCESS, 0L, documentIdentifier, "EXCLUDED", "Does not match any global include folder filters", null);
                     activities.deleteDocument(documentIdentifier);
                     continue;
+                  } else {
+                    matchFolder = false;
                   }
                 }
-              } catch (final RegexException e) {
-                Logging.connectors.warn("Global include filter regular expression syntax error: " + e.getRegex());
               }
-
-              try {
-                // Check if the file has to be excluded
-                if (!gf.excludeFilters.isEmpty()) {
-                  final String matchingRegex = matchingRegex(gf.excludeFilters, documentIdentifier);
-                  if (matchingRegex != null) {
-                    activities.recordActivity(System.currentTimeMillis(), ACTIVITY_ACCESS, 0L, documentIdentifier, "EXCLUDED",
-                        "Has been excluded by the following global exclude filter: " + matchingRegex, null);
-                    activities.deleteDocument(documentIdentifier);
-                    continue;
-                  }
-                }
-              } catch (final RegexException e) {
-                Logging.connectors.warn("Global exclude filter regular expression syntax error: " + e.getRegex());
-              }
+            } catch (final RegexException e) {
+              Logging.connectors.warn("Global include folder filter regular expression syntax error: " + e.getRegex());
             }
-            if (checkInclude(fileIsDirectory, newPath, spec)) {
-              if (fileIsDirectory) {
-                // Hmm, this is not correct; version string should be empty for
-                // windows directories, since
-                // they are not hierarchical in modified date propagation.
-                // It's a directory. The version ID will be the
-                // last modified date.
-                // long lastModified = fileLastModified(file);
-                // versionString = new Long(lastModified).toString();
-                versionString = "";
 
-              } else {
-                fileLength = fileLength(file);
-                if (checkIncludeFile(fileLength, newPath, spec, activities)) {
-                  // It's a file of acceptable length.
-                  // The ability to get ACLs, list files, and an inputstream under
-                  // DFS all work now.
-                  // The SmbFile for parentFolder acls.
-                  final SmbFile parentFolder = new SmbFile(file.getParent(), ctx);
-
-                  // Compute the security information
-                  final String[] modelArray = new String[0];
-
-                  final List<String> allowList = new ArrayList<>();
-                  final List<String> denyList = new ArrayList<>();
-                  shareSecurityOn = getFileShareSecuritySet(allowList, denyList, file, shareAcls);
-                  shareAllow = allowList.toArray(modelArray);
-                  shareDeny = denyList.toArray(modelArray);
-
-                  allowList.clear();
-                  denyList.clear();
-                  parentSecurityOn = getFileSecuritySet(allowList, denyList, parentFolder, parentFolderAcls);
-                  parentAllow = allowList.toArray(modelArray);
-                  parentDeny = denyList.toArray(modelArray);
-
-                  allowList.clear();
-                  denyList.clear();
-                  documentSecurityOn = getFileSecuritySet(allowList, denyList, file, acls);
-                  documentAllow = allowList.toArray(modelArray);
-                  documentDeny = denyList.toArray(modelArray);
-
-                  // This is stuff we need for computing the version string AND
-                  // for indexing
-                  lastModified = fileLastModified(file);
-
-                  // The format of this string changed on 11/8/2006 to be
-                  // comformant with the standard way
-                  // acls and metadata descriptions are being stuffed into the
-                  // version string across connectors.
-
-                  // The format of this string changed again on 7/3/2009 to permit
-                  // the ingestion uri/iri to be included.
-                  // This was to support filename/uri mapping functionality.
-
-                  final StringBuilder sb = new StringBuilder();
-
-                  addSecuritySet(sb, shareSecurityOn, shareAllow, shareDeny);
-                  addSecuritySet(sb, parentSecurityOn, parentAllow, parentDeny);
-                  addSecuritySet(sb, documentSecurityOn, documentAllow, documentDeny);
-
-                  // Include the path attribute name and value in the parseable
-                  // area.
-                  if (pathAttributeName != null) {
-                    sb.append('+');
-                    pack(sb, pathAttributeName, '+');
-                    // Calculate path string; we'll include that wholesale in the
-                    // version
-                    pathAttributeValue = documentIdentifier;
-                    // 3/13/2008
-                    // In looking at what comes into the path metadata attribute
-                    // by default, and cogitating a bit, I've concluded that
-                    // the smb:// and the server/domain name at the start of the
-                    // path are just plain old noise, and should be stripped.
-                    // This changes a behavior that has been around for a while,
-                    // so there is a risk, but a quick back-and-forth with the
-                    // SE's leads me to believe that this is safe.
-
-                    if (pathAttributeValue.startsWith("smb://")) {
-                      int index = pathAttributeValue.indexOf("/", "smb://".length());
-                      if (index == -1) {
-                        index = pathAttributeValue.length();
-                      }
-                      pathAttributeValue = pathAttributeValue.substring(index);
-                    }
-                    // Now, translate
-                    pathAttributeValue = matchMap.translate(pathAttributeValue);
-                    pack(sb, pathAttributeValue, '+');
-                  } else {
-                    sb.append('-');
-                  }
-
-                  // Calculate the ingestion IRI/URI, and include that in the
-                  // parseable area.
-                  ingestionURI = convertToURI(documentIdentifier, fileMap, uriMap);
-                  pack(sb, ingestionURI, '+');
-
-                  // The stuff from here on down is non-parseable.
-                  sb.append(String.valueOf(lastModified)).append(":").append(String.valueOf(fileLength));
-                  // Also include the specification-based answer for the question
-                  // of whether fingerprinting is
-                  // going to be done. Although we may not consider this to truly
-                  // be "version" information, the
-                  // specification does affect whether anything is ingested or
-                  // not, so it really is. The alternative
-                  // is to fingerprint right here, in the version part of the
-                  // world, but that's got a performance
-                  // downside, because it means that we'd have to suck over pretty
-                  // much everything just to determine
-                  // what we wanted to ingest.
-                  final boolean ifIndexable = wouldFileBeIncluded(newPath, spec, true);
-                  final boolean ifNotIndexable = wouldFileBeIncluded(newPath, spec, false);
-                  if (ifIndexable == ifNotIndexable) {
-                    sb.append("I");
-                  } else {
-                    sb.append(ifIndexable ? "Y" : "N");
-                  }
-                  versionString = sb.toString();
-                } else {
+          } else {
+            // First of all check if document match global filters
+            try {
+              // Check if the file is included
+              if (!gf.includeFileFilters.isEmpty()) {
+                final String matchingRegex = matchingRegex(gf.includeFileFilters, documentIdentifier);
+                if (matchingRegex == null) {
+                  activities.recordActivity(System.currentTimeMillis(), ACTIVITY_ACCESS, 0L, documentIdentifier, "EXCLUDED", "Does not match any global include filters", null);
                   activities.deleteDocument(documentIdentifier);
-                  activities.recordActivity(System.currentTimeMillis(), ACTIVITY_ACCESS, 0L, documentIdentifier, "FILTERED", "File does not match required specifications to be indexed", null);
                   continue;
                 }
               }
-            } else {
-              activities.recordActivity(System.currentTimeMillis(), ACTIVITY_ACCESS, 0L, documentIdentifier, "EXCLUDED", "Has been excluded by filters", null);
-              activities.deleteDocument(documentIdentifier);
-              continue;
+            } catch (final RegexException e) {
+              Logging.connectors.warn("Global include filter regular expression syntax error: " + e.getRegex());
             }
-          } else {
-            activities.deleteDocument(documentIdentifier);
-            activities.recordActivity(System.currentTimeMillis(), ACTIVITY_ACCESS, 0L, documentIdentifier, "UNREADABLE", "File does not exists, is not accessible or readable", null);
-            continue;
-          }
-        } catch (final jcifs.smb.SmbAuthException e) {
-          Logging.connectors.warn("JCIFS: Authorization exception reading version information for " + documentIdentifier + " - skipping");
-          if (e.getMessage().equals("Logon failure: unknown user name or bad password.")) {
-            throw new ManifoldCFException("SmbAuthException thrown: " + e.getMessage(), e);
-          } else {
-            errorCode = "AUTHEXCEPTION";
-            errorDesc = "Authorization exception: " + e.getMessage();
-            activities.deleteDocument(documentIdentifier);
-            continue;
-          }
-        } catch (final MalformedURLException mue) {
-          Logging.connectors.error("JCIFS: MalformedURLException thrown: " + mue.getMessage(), mue);
-          throw new ManifoldCFException("MalformedURLException thrown: " + mue.getMessage(), mue);
-        } catch (final SmbException se) {
-          errorCode = "SMBEXCEPTION";
-          errorDesc = "SMB protocol exception: " + se.getMessage();
-          processSMBException(se, documentIdentifier, "getting document version", "fetching share security");
-          activities.deleteDocument(documentIdentifier);
-          continue;
-        } catch (final java.net.SocketTimeoutException e) {
-          errorCode = "SOCKETTIMEOUT";
-          errorDesc = "Socket timeout: " + e.getMessage();
-          final long currentTime = System.currentTimeMillis();
-          Logging.connectors.warn("JCIFS: Socket timeout reading version information for document " + documentIdentifier + ": " + e.getMessage(), e);
-          throw new ServiceInterruption("Timeout or other service interruption: " + e.getMessage(), e, currentTime + 300000L, currentTime + 3 * 60 * 60000L, -1, false);
-        } catch (final InterruptedIOException e) {
-          errorCode = "INTERRUPTEDIOEXCEPTION";
-          errorDesc = "InterruptedIOException: " + e.getMessage();
-          final long currentTime = System.currentTimeMillis();
-          Logging.connectors.warn("JCIFS: InterruptedIOException reading version information for document " + documentIdentifier + ": " + e.getMessage(), e);
-          throw new ServiceInterruption("Timeout or other service interruption: " + e.getMessage(), e, currentTime + 300000L, currentTime + 3 * 60 * 60000L, -1, false);
-        } catch (final IOException e) {
-          errorCode = "IOEXCEPTION";
-          errorDesc = "I/O error: " + e.getMessage();
-          final long currentTime = System.currentTimeMillis();
-          Logging.connectors.warn("JCIFS: I/O error reading version information for document " + documentIdentifier + ": " + e.getMessage(), e);
-          throw new ServiceInterruption("Timeout or other service interruption: " + e.getMessage(), e, currentTime + 300000L, currentTime + 3 * 60 * 60000L, -1, false);
-        } finally {
-          if (errorCode != null) {
-            activities.recordActivity(System.currentTimeMillis(), ACTIVITY_ACCESS, 0L, documentIdentifier, errorCode, errorDesc, null);
-          }
-        }
-
-        if (versionString.length() == 0 || activities.checkDocumentNeedsReindexing(documentIdentifier, versionString)) {
-          Long fileLengthLong = null;
-          final long startFetchTime = System.currentTimeMillis();
-          try {
-            byte[] transferBuffer = null;
 
             try {
+              // Check if the file has to be excluded
+              if (!gf.excludeFilters.isEmpty()) {
+                final String matchingRegex = matchingRegex(gf.excludeFilters, documentIdentifier);
+                if (matchingRegex != null) {
+                  activities.recordActivity(System.currentTimeMillis(), ACTIVITY_ACCESS, 0L, documentIdentifier, "EXCLUDED",
+                      "Has been excluded by the following global exclude filter: " + matchingRegex, null);
+                  activities.deleteDocument(documentIdentifier);
+                  continue;
+                }
+              }
+            } catch (final RegexException e) {
+              Logging.connectors.warn("Global exclude filter regular expression syntax error: " + e.getRegex());
+            }
+          }
+          if (checkInclude(fileIsDirectory, newPath, spec)) {
+            if (fileIsDirectory) {
+              // Hmm, this is not correct; version string should be empty for
+              // windows directories, since
+              // they are not hierarchical in modified date propagation.
+              // It's a directory. The version ID will be the
+              // last modified date.
+              // long lastModified = fileLastModified(file);
+              // versionString = new Long(lastModified).toString();
+              versionString = "";
 
-              if (fileExists) {
-                if (fileIsDirectory) {
-                  if (Logging.connectors.isDebugEnabled()) {
-                    Logging.connectors.debug("JCIFS: '" + documentIdentifier + "' is a directory");
+            } else {
+              fileLength = fileLength(file);
+              if (checkIncludeFile(fileLength, newPath, spec, activities)) {
+                // It's a file of acceptable length.
+                // The ability to get ACLs, list files, and an inputstream under
+                // DFS all work now.
+                // The SmbFile for parentFolder acls.
+                final SmbFile parentFolder = new SmbFile(file.getParent(), ctx);
+
+                // Compute the security information
+                final String[] modelArray = new String[0];
+
+                final List<String> allowList = new ArrayList<>();
+                final List<String> denyList = new ArrayList<>();
+                shareSecurityOn = getFileShareSecuritySet(allowList, denyList, file, shareAcls);
+                shareAllow = allowList.toArray(modelArray);
+                shareDeny = denyList.toArray(modelArray);
+
+                allowList.clear();
+                denyList.clear();
+                parentSecurityOn = getFileSecuritySet(allowList, denyList, parentFolder, parentFolderAcls);
+                parentAllow = allowList.toArray(modelArray);
+                parentDeny = denyList.toArray(modelArray);
+
+                allowList.clear();
+                denyList.clear();
+                documentSecurityOn = getFileSecuritySet(allowList, denyList, file, acls);
+                documentAllow = allowList.toArray(modelArray);
+                documentDeny = denyList.toArray(modelArray);
+
+                // This is stuff we need for computing the version string AND
+                // for indexing
+                lastModified = fileLastModified(file);
+
+                // The format of this string changed on 11/8/2006 to be
+                // comformant with the standard way
+                // acls and metadata descriptions are being stuffed into the
+                // version string across connectors.
+
+                // The format of this string changed again on 7/3/2009 to permit
+                // the ingestion uri/iri to be included.
+                // This was to support filename/uri mapping functionality.
+
+                final StringBuilder sb = new StringBuilder();
+
+                addSecuritySet(sb, shareSecurityOn, shareAllow, shareDeny);
+                addSecuritySet(sb, parentSecurityOn, parentAllow, parentDeny);
+                addSecuritySet(sb, documentSecurityOn, documentAllow, documentDeny);
+
+                // Include the path attribute name and value in the parseable
+                // area.
+                if (pathAttributeName != null) {
+                  sb.append('+');
+                  pack(sb, pathAttributeName, '+');
+                  // Calculate path string; we'll include that wholesale in the
+                  // version
+                  pathAttributeValue = documentIdentifier;
+                  // 3/13/2008
+                  // In looking at what comes into the path metadata attribute
+                  // by default, and cogitating a bit, I've concluded that
+                  // the smb:// and the server/domain name at the start of the
+                  // path are just plain old noise, and should be stripped.
+                  // This changes a behavior that has been around for a while,
+                  // so there is a risk, but a quick back-and-forth with the
+                  // SE's leads me to believe that this is safe.
+
+                  if (pathAttributeValue.startsWith("smb://")) {
+                    int index = pathAttributeValue.indexOf("/", "smb://".length());
+                    if (index == -1) {
+                      index = pathAttributeValue.length();
+                    }
+                    pathAttributeValue = pathAttributeValue.substring(index);
                   }
-
-                  // Queue up stuff for directory
-                  // DFS special support no longer needed, because JCifs now does
-                  // the right thing.
-
-                  // This is the string we replace in the child canonical paths.
-                  // String matchPrefix = "";
-                  // This is what we replace it with, to get back to a DFS path.
-                  // String matchReplace = "";
-
-                  // DFS resolved.
-
-                  // Use a filter to actually do the work here. This prevents
-                  // large arrays from being
-                  // created when there are big directories.
-                  final ProcessDocumentsFilter filter = new ProcessDocumentsFilter(activities, spec, matchFolder);
-                  fileListFiles(file, filter);
-                  filter.checkAndThrow();
+                  // Now, translate
+                  pathAttributeValue = matchMap.translate(pathAttributeValue);
+                  pack(sb, pathAttributeValue, '+');
                 } else {
-                  if (Logging.connectors.isDebugEnabled()) {
-                    Logging.connectors.debug("JCIFS: '" + documentIdentifier + "' is a file");
-                  }
+                  sb.append('-');
+                }
 
-                  // We've already avoided queuing documents that we
-                  // don't want, based on file specifications.
-                  // We still need to check based on file data.
+                // Calculate the ingestion IRI/URI, and include that in the
+                // parseable area.
+                ingestionURI = convertToURI(documentIdentifier, fileMap, uriMap);
+                pack(sb, ingestionURI, '+');
 
-                  // DFS support is now implicit in JCifs.
+                // The stuff from here on down is non-parseable.
+                sb.append(String.valueOf(lastModified)).append(":").append(String.valueOf(fileLength));
+                // Also include the specification-based answer for the question
+                // of whether fingerprinting is
+                // going to be done. Although we may not consider this to truly
+                // be "version" information, the
+                // specification does affect whether anything is ingested or
+                // not, so it really is. The alternative
+                // is to fingerprint right here, in the version part of the
+                // world, but that's got a performance
+                // downside, because it means that we'd have to suck over pretty
+                // much everything just to determine
+                // what we wanted to ingest.
+                final boolean ifIndexable = wouldFileBeIncluded(newPath, spec, true);
+                final boolean ifNotIndexable = wouldFileBeIncluded(newPath, spec, false);
+                if (ifIndexable == ifNotIndexable) {
+                  sb.append("I");
+                } else {
+                  sb.append(ifIndexable ? "Y" : "N");
+                }
+                versionString = sb.toString();
+              } else {
+                activities.deleteDocument(documentIdentifier);
+                activities.recordActivity(System.currentTimeMillis(), ACTIVITY_ACCESS, 0L, documentIdentifier, "FILTERED", "File does not match required specifications to be indexed", null);
+                continue;
+              }
+            }
+          } else {
+            activities.recordActivity(System.currentTimeMillis(), ACTIVITY_ACCESS, 0L, documentIdentifier, "EXCLUDED", "Has been excluded by filters", null);
+            activities.deleteDocument(documentIdentifier);
+            continue;
+          }
+        } else {
+          activities.deleteDocument(documentIdentifier);
+          activities.recordActivity(System.currentTimeMillis(), ACTIVITY_ACCESS, 0L, documentIdentifier, "UNREADABLE", "File does not exists, is not accessible or readable", null);
+          continue;
+        }
+      } catch (final jcifs.smb.SmbAuthException e) {
+        Logging.connectors.warn("JCIFS: Authorization exception reading version information for " + documentIdentifier + " - skipping");
+        if (e.getMessage().equals("Logon failure: unknown user name or bad password.")) {
+          throw new ManifoldCFException("SmbAuthException thrown: " + e.getMessage(), e);
+        } else {
+          errorCode = "AUTHEXCEPTION";
+          errorDesc = "Authorization exception: " + e.getMessage();
+          activities.deleteDocument(documentIdentifier);
+          continue;
+        }
+      } catch (final MalformedURLException mue) {
+        Logging.connectors.error("JCIFS: MalformedURLException thrown: " + mue.getMessage(), mue);
+        throw new ManifoldCFException("MalformedURLException thrown: " + mue.getMessage(), mue);
+      } catch (final SmbException se) {
+        errorCode = "SMBEXCEPTION";
+        errorDesc = "SMB protocol exception: " + se.getMessage();
+        processSMBException(se, documentIdentifier, "getting document version", "fetching share security");
+        activities.deleteDocument(documentIdentifier);
+        continue;
+      } catch (final java.net.SocketTimeoutException e) {
+        errorCode = "SOCKETTIMEOUT";
+        errorDesc = "Socket timeout: " + e.getMessage();
+        final long currentTime = System.currentTimeMillis();
+        Logging.connectors.warn("JCIFS: Socket timeout reading version information for document " + documentIdentifier + ": " + e.getMessage(), e);
+        throw new ServiceInterruption("Timeout or other service interruption: " + e.getMessage(), e, currentTime + 300000L, currentTime + 3 * 60 * 60000L, -1, false);
+      } catch (final InterruptedIOException e) {
+        errorCode = "INTERRUPTEDIOEXCEPTION";
+        errorDesc = "InterruptedIOException: " + e.getMessage();
+        final long currentTime = System.currentTimeMillis();
+        Logging.connectors.warn("JCIFS: InterruptedIOException reading version information for document " + documentIdentifier + ": " + e.getMessage(), e);
+        throw new ServiceInterruption("Timeout or other service interruption: " + e.getMessage(), e, currentTime + 300000L, currentTime + 3 * 60 * 60000L, -1, false);
+      } catch (final IOException e) {
+        errorCode = "IOEXCEPTION";
+        errorDesc = "I/O error: " + e.getMessage();
+        final long currentTime = System.currentTimeMillis();
+        Logging.connectors.warn("JCIFS: I/O error reading version information for document " + documentIdentifier + ": " + e.getMessage(), e);
+        throw new ServiceInterruption("Timeout or other service interruption: " + e.getMessage(), e, currentTime + 300000L, currentTime + 3 * 60 * 60000L, -1, false);
+      } finally {
+        if (errorCode != null) {
+          activities.recordActivity(System.currentTimeMillis(), ACTIVITY_ACCESS, 0L, documentIdentifier, errorCode, errorDesc, null);
+        }
+      }
 
-                  final String fileName = getFileCanonicalPath(file);
-                  if (fileName != null && !file.isHidden()) {
-                    final String uri = ingestionURI;
-                    final String fileNameString = file.getName();
-                    final Date lastModifiedDate = new Date(lastModified);
-                    final Date creationDate = new Date(file.createTime());
-                    final Long originalLength = fileLength;
-                    final String contentType = mapExtensionToMimeType(fileNameString);
+      if (versionString.length() == 0 || activities.checkDocumentNeedsReindexing(documentIdentifier, versionString)) {
+        Long fileLengthLong = null;
+        final long startFetchTime = System.currentTimeMillis();
+        try {
+          byte[] transferBuffer = null;
 
-                    if (!activities.checkURLIndexable(uri)) {
-                      Logging.connectors.debug("JCIFS: Skipping file because output connector cannot accept URL ('" + uri + "')");
-                      errorCode = IHistoryActivity.EXCLUDED_URL;
-                      errorDesc = "Rejected due to URL ('" + uri + "')";
-                      activities.noDocument(documentIdentifier, versionString);
-                      continue;
-                    }
+          try {
 
-                    if (!activities.checkMimeTypeIndexable(contentType)) {
-                      Logging.connectors.debug("JCIFS: Skipping file because output connector cannot accept content type ('" + contentType + "')");
-                      errorCode = IHistoryActivity.EXCLUDED_MIMETYPE;
-                      errorDesc = "Rejected due to mime type (" + contentType + ")";
-                      activities.noDocument(documentIdentifier, versionString);
-                      continue;
-                    }
+            if (fileExists) {
+              if (fileIsDirectory) {
+                if (Logging.connectors.isDebugEnabled()) {
+                  Logging.connectors.debug("JCIFS: '" + documentIdentifier + "' is a directory");
+                }
 
-                    if (!activities.checkDateIndexable(lastModifiedDate)) {
-                      Logging.connectors.debug("JCIFS: Skipping file because output connector cannot accept date (" + lastModifiedDate + ")");
-                      errorCode = IHistoryActivity.EXCLUDED_DATE;
-                      errorDesc = "Rejected due to date (" + lastModifiedDate + ")";
-                      activities.noDocument(documentIdentifier, versionString);
-                      continue;
-                    }
+                // Queue up stuff for directory
+                // DFS special support no longer needed, because JCifs now does
+                // the right thing.
 
-                    // Initialize repository document with common stuff, and find
-                    // the URI
-                    final RepositoryDocument rd = new RepositoryDocument();
+                // This is the string we replace in the child canonical paths.
+                // String matchPrefix = "";
+                // This is what we replace it with, to get back to a DFS path.
+                // String matchReplace = "";
 
-                    // If using the lastAccess patched/Google version of jcifs
-                    // then this can be uncommented
-                    // Date lastAccessDate = new Date(file.lastAccess());
-                    final Integer attributes = file.getAttributes();
-                    final String shareName = file.getShare();
+                // DFS resolved.
 
-                    rd.setFileName(fileNameString);
-                    rd.setOriginalSize(originalLength);
+                // Use a filter to actually do the work here. This prevents
+                // large arrays from being
+                // created when there are big directories.
+                final ProcessDocumentsFilter filter = new ProcessDocumentsFilter(activities, spec, matchFolder);
+                fileListFiles(file, filter);
+                filter.checkAndThrow();
+              } else {
+                if (Logging.connectors.isDebugEnabled()) {
+                  Logging.connectors.debug("JCIFS: '" + documentIdentifier + "' is a file");
+                }
 
-                    if (contentType != null) {
-                      rd.setMimeType(contentType);
-                    }
-                    rd.addField("lastModified", lastModifiedDate.toString());
-                    rd.addField("fileLastModified", DateParser.formatISO8601Date(lastModifiedDate));
-                    rd.setModifiedDate(lastModifiedDate);
+                // We've already avoided queuing documents that we
+                // don't want, based on file specifications.
+                // We still need to check based on file data.
 
-                    // Add extra obtainable fields to the field map
-                    rd.addField("createdOn", creationDate.toString());
-                    rd.addField("fileCreatedOn", DateParser.formatISO8601Date(creationDate));
-                    rd.setCreatedDate(creationDate);
+                // DFS support is now implicit in JCifs.
 
-                    // rd.addField("lastAccess", lastModifiedDate.toString());
-                    rd.addField("attributes", Integer.toString(attributes));
-                    rd.addField("shareName", shareName);
+                final String fileName = getFileCanonicalPath(file);
+                if (fileName != null && !file.isHidden()) {
+                  final String uri = ingestionURI;
+                  final String fileNameString = file.getName();
+                  final Date lastModifiedDate = new Date(lastModified);
+                  final Date creationDate = new Date(file.createTime());
+                  final Long originalLength = fileLength;
+                  final String contentType = mapExtensionToMimeType(fileNameString);
 
-                    setDocumentSecurity(rd, shareAllow, shareDeny, parentAllow, parentDeny, documentAllow, documentDeny);
-                    setPathMetadata(rd, pathAttributeName, pathAttributeValue);
-
-                    // manipulate path to include the DFS alias, not the literal
-                    // path
-                    // String newPath = matchPrefix +
-                    // fileName.substring(matchReplace.length());
-                    final String newPath = fileName;
-                    if (checkNeedFileData(newPath, spec)) {
-                      if (Logging.connectors.isDebugEnabled()) {
-                        Logging.connectors.debug("JCIFS: Local file data needed for '" + documentIdentifier + "'");
-                      }
-
-                      // Create a temporary file, and use that for the check and
-                      // then the ingest
-                      final File tempFile = File.createTempFile("_sdc_", null);
-                      try {
-                        final FileOutputStream os = new FileOutputStream(tempFile);
-                        try {
-
-                          // Now, make a local copy so we can fingerprint
-                          final InputStream inputStream = getFileInputStream(file);
-                          try {
-                            // Copy!
-                            if (transferBuffer == null) {
-                              transferBuffer = new byte[65536];
-                            }
-                            while (true) {
-                              final int amt = inputStream.read(transferBuffer, 0, transferBuffer.length);
-                              if (amt == -1) {
-                                break;
-                              }
-                              os.write(transferBuffer, 0, amt);
-                            }
-                          } finally {
-                            inputStream.close();
-                          }
-                        } finally {
-                          os.close();
-                        }
-
-                        if (checkIngest(tempFile, newPath, spec, activities)) {
-                          // Not needed; fetched earlier: long fileLength =
-                          // tempFile.length();
-                          if (!activities.checkLengthIndexable(fileLength)) {
-                            Logging.connectors.debug("JCIFS: Skipping file because output connector cannot accept length (" + fileLength + ")");
-                            errorCode = IHistoryActivity.EXCLUDED_LENGTH;
-                            errorDesc = "Rejected due to length (" + fileLength + ")";
-                            activities.noDocument(documentIdentifier, versionString);
-                            continue;
-                          }
-
-                          if (Logging.connectors.isDebugEnabled()) {
-                            Logging.connectors.debug("JCIFS: Decided to ingest '" + documentIdentifier + "'");
-                          }
-                          // OK, do ingestion itself!
-                          final InputStream inputStream = new FileInputStream(tempFile);
-                          try {
-                            rd.setBinary(inputStream, fileLength);
-
-                            activities.ingestDocumentWithException(documentIdentifier, versionString, uri, rd);
-                            errorCode = "OK";
-                            fileLengthLong = fileLength;
-                          } finally {
-                            inputStream.close();
-                          }
-
-                        } else {
-                          // We must actively remove the document here, because
-                          // the getDocumentVersions()
-                          // method has no way of signalling this, since it does
-                          // not do the fingerprinting.
-                          if (Logging.connectors.isDebugEnabled()) {
-                            Logging.connectors.debug("JCIFS: Decided to remove '" + documentIdentifier + "'");
-                          }
-                          activities.noDocument(documentIdentifier, versionString);
-                          errorCode = "NOWORKNEEDED";
-                          errorDesc = "No indexing needed for document at this time";
-                        }
-                      } finally {
-                        tempFile.delete();
-                      }
-                    } else {
-                      if (Logging.connectors.isDebugEnabled()) {
-                        Logging.connectors.debug("JCIFS: Local file data not needed for '" + documentIdentifier + "'");
-                      }
-
-                      // Not needed; fetched earlier: long fileLength =
-                      // fileLength(file);
-                      if (!activities.checkLengthIndexable(fileLength)) {
-                        Logging.connectors.debug("JCIFS: Skipping file because output connector cannot accept length (" + fileLength + ")");
-                        errorCode = IHistoryActivity.EXCLUDED_LENGTH;
-                        errorDesc = "Rejected because of length (" + fileLength + ")";
-                        activities.noDocument(documentIdentifier, versionString);
-                        continue;
-                      }
-
-                      // Presume that since the file was queued that it fulfilled
-                      // the needed criteria.
-                      // Go off and ingest the fast way.
-
-                      // Ingest the document.
-                      final InputStream inputStream = getFileInputStream(file);
-                      try {
-                        rd.setBinary(inputStream, fileLength);
-
-                        activities.ingestDocumentWithException(documentIdentifier, versionString, uri, rd);
-                        errorCode = "OK";
-                        fileLengthLong = fileLength;
-                      } finally {
-                        inputStream.close();
-                      }
-                    }
-                  } else {
-                    Logging.connectors.debug("JCIFS: Skipping file because canonical path is null, or because file is hidden");
-                    errorCode = "NULLORHIDDEN";
-                    errorDesc = "Null canonical path or hidden file";
+                  if (!activities.checkURLIndexable(uri)) {
+                    Logging.connectors.debug("JCIFS: Skipping file because output connector cannot accept URL ('" + uri + "')");
+                    errorCode = IHistoryActivity.EXCLUDED_URL;
+                    errorDesc = "Rejected due to URL ('" + uri + "')";
                     activities.noDocument(documentIdentifier, versionString);
                     continue;
                   }
-                }
-              }
-            } catch (final MalformedURLException mue) {
-              Logging.connectors.error("MalformedURLException tossed: " + mue.getMessage(), mue);
-              errorCode = mue.getClass().getSimpleName().toUpperCase(Locale.ROOT);
-              errorDesc = "Malformed URL: " + mue.getMessage();
-              throw new ManifoldCFException("MalformedURLException tossed: " + mue.getMessage(), mue);
-            } catch (final jcifs.smb.SmbAuthException e) {
-              Logging.connectors.warn("JCIFS: Authorization exception reading document/directory " + documentIdentifier + " - skipping");
-              errorCode = e.getClass().getSimpleName().toUpperCase(Locale.ROOT);
-              errorDesc = "Authorization: " + e.getMessage();
-              if (e.getMessage().equals("Logon failure: unknown user name or bad password.")) {
-                throw new ManifoldCFException("SmbAuthException thrown: " + e.getMessage(), e);
-              } else {
-                activities.noDocument(documentIdentifier, versionString);
-                continue;
-              }
-            } catch (final SmbException se) {
-              // At least some of these are transport errors, and should be
-              // treated as service
-              // interruptions.
-              final long currentTime = System.currentTimeMillis();
-              final Throwable cause = se.getCause();
-              if (cause != null && cause instanceof jcifs.util.transport.TransportException) {
-                // See if it's an interruption
-                final jcifs.util.transport.TransportException te = (jcifs.util.transport.TransportException) cause;
-                if (te.getCause() != null && te.getCause() instanceof java.lang.InterruptedException) {
-                  throw new ManifoldCFException(te.getCause().getMessage(), te.getCause(), ManifoldCFException.INTERRUPTED);
-                }
 
-                Logging.connectors.warn("JCIFS: Timeout processing document/directory " + documentIdentifier + ": retrying...", se);
-                errorCode = cause.getClass().getSimpleName().toUpperCase(Locale.ROOT);
-                errorDesc = "Transport: " + cause.getMessage();
-                throw new ServiceInterruption("Timeout or other service interruption: " + cause.getMessage(), cause, currentTime + 300000L, currentTime + 12 * 60 * 60000L, -1, false);
-              }
-              if (se.getMessage().indexOf("reset by peer") != -1 || se.getMessage().indexOf("busy") != -1 || se.getMessage().toLowerCase(Locale.ROOT).indexOf("file in use") != -1
-                  || se.getMessage().toLowerCase(Locale.ROOT).indexOf("is being used") != -1) {
-                Logging.connectors.warn("JCIFS: 'Busy' response when processing document/directory for " + documentIdentifier + ": retrying...", se);
-                errorCode = se.getClass().getSimpleName().toUpperCase(Locale.ROOT);
-                errorDesc = "Busy: " + se.getMessage();
-                throw new ServiceInterruption("Timeout or other service interruption: " + se.getMessage(), se, currentTime + 300000L, currentTime + 3 * 60 * 60000L, -1, true);
-              } else if (se.getMessage().indexOf("handle is invalid") != -1) {
-                Logging.connectors.warn("JCIFS: 'Handle is invalid' response when processing document/directory for " + documentIdentifier + ": retrying...", se);
-                errorCode = se.getClass().getSimpleName().toUpperCase(Locale.ROOT);
-                errorDesc = "Expiration: " + se.getMessage();
-                throw new ServiceInterruption("Timeout or other service interruption: " + se.getMessage(), se, currentTime + 300000L, currentTime + 3 * 60 * 60000L, -1, false);
-              } else if (se.getMessage().indexOf("parameter is incorrect") != -1) {
-                Logging.connectors.warn("JCIFS: 'Parameter is incorrect' response when processing document/directory for " + documentIdentifier + ": retrying...", se);
-                errorCode = se.getClass().getSimpleName().toUpperCase(Locale.ROOT);
-                errorDesc = "Expiration: " + se.getMessage();
-                throw new ServiceInterruption("Timeout or other service interruption: " + se.getMessage(), se, currentTime + 300000L, currentTime + 3 * 60 * 60000L, -1, false);
-              } else if (se.getMessage().indexOf("no longer available") != -1) {
-                Logging.connectors.warn("JCIFS: 'No longer available' response when processing document/directory for " + documentIdentifier + ": retrying...", se);
-                errorCode = se.getClass().getSimpleName().toUpperCase(Locale.ROOT);
-                errorDesc = "Expiration: " + se.getMessage();
-                throw new ServiceInterruption("Timeout or other service interruption: " + se.getMessage(), se, currentTime + 300000L, currentTime + 3 * 60 * 60000L, -1, false);
-              } else if (se.getMessage().indexOf("cannot find") != -1 || se.getMessage().indexOf("cannot be found") != -1) {
-                if (Logging.connectors.isDebugEnabled()) {
-                  Logging.connectors.debug("JCIFS: Skipping document/directory " + documentIdentifier + " because it cannot be found");
+                  if (!activities.checkMimeTypeIndexable(contentType)) {
+                    Logging.connectors.debug("JCIFS: Skipping file because output connector cannot accept content type ('" + contentType + "')");
+                    errorCode = IHistoryActivity.EXCLUDED_MIMETYPE;
+                    errorDesc = "Rejected due to mime type (" + contentType + ")";
+                    activities.noDocument(documentIdentifier, versionString);
+                    continue;
+                  }
+
+                  if (!activities.checkDateIndexable(lastModifiedDate)) {
+                    Logging.connectors.debug("JCIFS: Skipping file because output connector cannot accept date (" + lastModifiedDate + ")");
+                    errorCode = IHistoryActivity.EXCLUDED_DATE;
+                    errorDesc = "Rejected due to date (" + lastModifiedDate + ")";
+                    activities.noDocument(documentIdentifier, versionString);
+                    continue;
+                  }
+
+                  // Initialize repository document with common stuff, and find
+                  // the URI
+                  final RepositoryDocument rd = new RepositoryDocument();
+
+                  // If using the lastAccess patched/Google version of jcifs
+                  // then this can be uncommented
+                  // Date lastAccessDate = new Date(file.lastAccess());
+                  final Integer attributes = file.getAttributes();
+                  final String shareName = file.getShare();
+
+                  rd.setFileName(fileNameString);
+                  rd.setOriginalSize(originalLength);
+
+                  if (contentType != null) {
+                    rd.setMimeType(contentType);
+                  }
+                  rd.addField("lastModified", lastModifiedDate.toString());
+                  rd.addField("fileLastModified", DateParser.formatISO8601Date(lastModifiedDate));
+                  rd.setModifiedDate(lastModifiedDate);
+
+                  // Add extra obtainable fields to the field map
+                  rd.addField("createdOn", creationDate.toString());
+                  rd.addField("fileCreatedOn", DateParser.formatISO8601Date(creationDate));
+                  rd.setCreatedDate(creationDate);
+
+                  // rd.addField("lastAccess", lastModifiedDate.toString());
+                  rd.addField("attributes", Integer.toString(attributes));
+                  rd.addField("shareName", shareName);
+
+                  setDocumentSecurity(rd, shareAllow, shareDeny, parentAllow, parentDeny, documentAllow, documentDeny);
+                  setPathMetadata(rd, pathAttributeName, pathAttributeValue);
+
+                  // manipulate path to include the DFS alias, not the literal
+                  // path
+                  // String newPath = matchPrefix +
+                  // fileName.substring(matchReplace.length());
+                  final String newPath = fileName;
+                  if (checkNeedFileData(newPath, spec)) {
+                    if (Logging.connectors.isDebugEnabled()) {
+                      Logging.connectors.debug("JCIFS: Local file data needed for '" + documentIdentifier + "'");
+                    }
+
+                    // Create a temporary file, and use that for the check and
+                    // then the ingest
+                    final File tempFile = File.createTempFile("_sdc_", null);
+                    try {
+                      final FileOutputStream os = new FileOutputStream(tempFile);
+                      try {
+
+                        // Now, make a local copy so we can fingerprint
+                        final InputStream inputStream = getFileInputStream(file);
+                        try {
+                          // Copy!
+                          if (transferBuffer == null) {
+                            transferBuffer = new byte[65536];
+                          }
+                          while (true) {
+                            final int amt = inputStream.read(transferBuffer, 0, transferBuffer.length);
+                            if (amt == -1) {
+                              break;
+                            }
+                            os.write(transferBuffer, 0, amt);
+                          }
+                        } finally {
+                          inputStream.close();
+                        }
+                      } finally {
+                        os.close();
+                      }
+
+                      if (checkIngest(tempFile, newPath, spec, activities)) {
+                        // Not needed; fetched earlier: long fileLength =
+                        // tempFile.length();
+                        if (!activities.checkLengthIndexable(fileLength)) {
+                          Logging.connectors.debug("JCIFS: Skipping file because output connector cannot accept length (" + fileLength + ")");
+                          errorCode = IHistoryActivity.EXCLUDED_LENGTH;
+                          errorDesc = "Rejected due to length (" + fileLength + ")";
+                          activities.noDocument(documentIdentifier, versionString);
+                          continue;
+                        }
+
+                        if (Logging.connectors.isDebugEnabled()) {
+                          Logging.connectors.debug("JCIFS: Decided to ingest '" + documentIdentifier + "'");
+                        }
+                        // OK, do ingestion itself!
+                        final InputStream inputStream = new FileInputStream(tempFile);
+                        try {
+                          rd.setBinary(inputStream, fileLength);
+
+                          activities.ingestDocumentWithException(documentIdentifier, versionString, uri, rd);
+                          errorCode = "OK";
+                          fileLengthLong = fileLength;
+                        } finally {
+                          inputStream.close();
+                        }
+
+                      } else {
+                        // We must actively remove the document here, because
+                        // the getDocumentVersions()
+                        // method has no way of signalling this, since it does
+                        // not do the fingerprinting.
+                        if (Logging.connectors.isDebugEnabled()) {
+                          Logging.connectors.debug("JCIFS: Decided to remove '" + documentIdentifier + "'");
+                        }
+                        activities.noDocument(documentIdentifier, versionString);
+                        errorCode = "NOWORKNEEDED";
+                        errorDesc = "No indexing needed for document at this time";
+                      }
+                    } finally {
+                      tempFile.delete();
+                    }
+                  } else {
+                    if (Logging.connectors.isDebugEnabled()) {
+                      Logging.connectors.debug("JCIFS: Local file data not needed for '" + documentIdentifier + "'");
+                    }
+
+                    // Not needed; fetched earlier: long fileLength =
+                    // fileLength(file);
+                    if (!activities.checkLengthIndexable(fileLength)) {
+                      Logging.connectors.debug("JCIFS: Skipping file because output connector cannot accept length (" + fileLength + ")");
+                      errorCode = IHistoryActivity.EXCLUDED_LENGTH;
+                      errorDesc = "Rejected because of length (" + fileLength + ")";
+                      activities.noDocument(documentIdentifier, versionString);
+                      continue;
+                    }
+
+                    // Presume that since the file was queued that it fulfilled
+                    // the needed criteria.
+                    // Go off and ingest the fast way.
+
+                    // Ingest the document.
+                    final InputStream inputStream = getFileInputStream(file);
+                    try {
+                      rd.setBinary(inputStream, fileLength);
+
+                      activities.ingestDocumentWithException(documentIdentifier, versionString, uri, rd);
+                      errorCode = "OK";
+                      fileLengthLong = fileLength;
+                    } finally {
+                      inputStream.close();
+                    }
+                  }
+                } else {
+                  Logging.connectors.debug("JCIFS: Skipping file because canonical path is null, or because file is hidden");
+                  errorCode = "NULLORHIDDEN";
+                  errorDesc = "Null canonical path or hidden file";
+                  activities.noDocument(documentIdentifier, versionString);
+                  continue;
                 }
-                errorCode = se.getClass().getSimpleName().toUpperCase(Locale.ROOT);
-                errorDesc = "Not found: " + se.getMessage();
-                activities.noDocument(documentIdentifier, versionString);
-              } else if (se.getMessage().indexOf("0xC0000205") != -1) {
-                Logging.connectors.warn("JCIFS: Out of resources exception reading document/directory " + documentIdentifier + " - skipping");
-                // We call the delete even if it's a directory; this is harmless
-                // and it cleans up the jobqueue row.
-                errorCode = se.getClass().getSimpleName().toUpperCase(Locale.ROOT);
-                errorDesc = "Resources: " + se.getMessage();
-                activities.noDocument(documentIdentifier, versionString);
-              } else if (se.getMessage().indexOf("is denied") != -1) {
-                Logging.connectors.warn("JCIFS: Access exception reading document/directory " + documentIdentifier + " - skipping");
-                // We call the delete even if it's a directory; this is harmless
-                // and it cleans up the jobqueue row.
-                errorCode = se.getClass().getSimpleName().toUpperCase(Locale.ROOT);
-                errorDesc = "Authorization: " + se.getMessage();
-                activities.noDocument(documentIdentifier, versionString);
-              } else {
-                Logging.connectors.error("JCIFS: SmbException tossed processing " + documentIdentifier, se);
-                errorCode = se.getClass().getSimpleName().toUpperCase(Locale.ROOT);
-                errorDesc = "Unknown: " + se.getMessage();
-                throw new ManifoldCFException("SmbException tossed: " + se.getMessage(), se);
               }
-            } catch (final IOException e) {
-              errorCode = e.getClass().getSimpleName().toUpperCase(Locale.ROOT);
-              errorDesc = e.getMessage();
-              handleIOException(documentIdentifier, e);
             }
-          } catch (final ManifoldCFException e) {
-            if (e.getErrorCode() == ManifoldCFException.INTERRUPTED) {
-              errorCode = null;
+          } catch (final MalformedURLException mue) {
+            Logging.connectors.error("MalformedURLException tossed: " + mue.getMessage(), mue);
+            errorCode = mue.getClass().getSimpleName().toUpperCase(Locale.ROOT);
+            errorDesc = "Malformed URL: " + mue.getMessage();
+            throw new ManifoldCFException("MalformedURLException tossed: " + mue.getMessage(), mue);
+          } catch (final jcifs.smb.SmbAuthException e) {
+            Logging.connectors.warn("JCIFS: Authorization exception reading document/directory " + documentIdentifier + " - skipping");
+            errorCode = e.getClass().getSimpleName().toUpperCase(Locale.ROOT);
+            errorDesc = "Authorization: " + e.getMessage();
+            if (e.getMessage().equals("Logon failure: unknown user name or bad password.")) {
+              throw new ManifoldCFException("SmbAuthException thrown: " + e.getMessage(), e);
+            } else {
+              activities.noDocument(documentIdentifier, versionString);
+              continue;
             }
-            throw e;
-          } finally {
-            if (errorCode != null) {
-              activities.recordActivity(startFetchTime, ACTIVITY_ACCESS, fileLengthLong, documentIdentifier, errorCode, errorDesc, null);
+          } catch (final SmbException se) {
+            // At least some of these are transport errors, and should be
+            // treated as service
+            // interruptions.
+            final long currentTime = System.currentTimeMillis();
+            final Throwable cause = se.getCause();
+            if (cause != null && cause instanceof jcifs.util.transport.TransportException) {
+              // See if it's an interruption
+              final jcifs.util.transport.TransportException te = (jcifs.util.transport.TransportException) cause;
+              if (te.getCause() != null && te.getCause() instanceof java.lang.InterruptedException) {
+                throw new ManifoldCFException(te.getCause().getMessage(), te.getCause(), ManifoldCFException.INTERRUPTED);
+              }
+
+              Logging.connectors.warn("JCIFS: Timeout processing document/directory " + documentIdentifier + ": retrying...", se);
+              errorCode = cause.getClass().getSimpleName().toUpperCase(Locale.ROOT);
+              errorDesc = "Transport: " + cause.getMessage();
+              throw new ServiceInterruption("Timeout or other service interruption: " + cause.getMessage(), cause, currentTime + 300000L, currentTime + 12 * 60 * 60000L, -1, false);
             }
+            if (se.getMessage().indexOf("reset by peer") != -1 || se.getMessage().indexOf("busy") != -1 || se.getMessage().toLowerCase(Locale.ROOT).indexOf("file in use") != -1
+                || se.getMessage().toLowerCase(Locale.ROOT).indexOf("is being used") != -1) {
+              Logging.connectors.warn("JCIFS: 'Busy' response when processing document/directory for " + documentIdentifier + ": retrying...", se);
+              errorCode = se.getClass().getSimpleName().toUpperCase(Locale.ROOT);
+              errorDesc = "Busy: " + se.getMessage();
+              throw new ServiceInterruption("Timeout or other service interruption: " + se.getMessage(), se, currentTime + 300000L, currentTime + 3 * 60 * 60000L, -1, false);
+            } else if (se.getMessage().indexOf("handle is invalid") != -1) {
+              Logging.connectors.warn("JCIFS: 'Handle is invalid' response when processing document/directory for " + documentIdentifier + ": retrying...", se);
+              errorCode = se.getClass().getSimpleName().toUpperCase(Locale.ROOT);
+              errorDesc = "Expiration: " + se.getMessage();
+              throw new ServiceInterruption("Timeout or other service interruption: " + se.getMessage(), se, currentTime + 300000L, currentTime + 3 * 60 * 60000L, -1, false);
+            } else if (se.getMessage().indexOf("parameter is incorrect") != -1) {
+              Logging.connectors.warn("JCIFS: 'Parameter is incorrect' response when processing document/directory for " + documentIdentifier + ": retrying...", se);
+              errorCode = se.getClass().getSimpleName().toUpperCase(Locale.ROOT);
+              errorDesc = "Expiration: " + se.getMessage();
+              throw new ServiceInterruption("Timeout or other service interruption: " + se.getMessage(), se, currentTime + 300000L, currentTime + 3 * 60 * 60000L, -1, false);
+            } else if (se.getMessage().indexOf("no longer available") != -1) {
+              Logging.connectors.warn("JCIFS: 'No longer available' response when processing document/directory for " + documentIdentifier + ": retrying...", se);
+              errorCode = se.getClass().getSimpleName().toUpperCase(Locale.ROOT);
+              errorDesc = "Expiration: " + se.getMessage();
+              throw new ServiceInterruption("Timeout or other service interruption: " + se.getMessage(), se, currentTime + 300000L, currentTime + 3 * 60 * 60000L, -1, false);
+            } else if (se.getMessage().indexOf("cannot find") != -1 || se.getMessage().indexOf("cannot be found") != -1) {
+              if (Logging.connectors.isDebugEnabled()) {
+                Logging.connectors.debug("JCIFS: Skipping document/directory " + documentIdentifier + " because it cannot be found");
+              }
+              errorCode = se.getClass().getSimpleName().toUpperCase(Locale.ROOT);
+              errorDesc = "Not found: " + se.getMessage();
+              activities.noDocument(documentIdentifier, versionString);
+            } else if (se.getMessage().indexOf("0xC0000205") != -1) {
+              Logging.connectors.warn("JCIFS: Out of resources exception reading document/directory " + documentIdentifier + " - skipping");
+              // We call the delete even if it's a directory; this is harmless
+              // and it cleans up the jobqueue row.
+              errorCode = se.getClass().getSimpleName().toUpperCase(Locale.ROOT);
+              errorDesc = "Resources: " + se.getMessage();
+              activities.noDocument(documentIdentifier, versionString);
+            } else if (se.getMessage().indexOf("is denied") != -1) {
+              Logging.connectors.warn("JCIFS: Access exception reading document/directory " + documentIdentifier + " - skipping");
+              // We call the delete even if it's a directory; this is harmless
+              // and it cleans up the jobqueue row.
+              errorCode = se.getClass().getSimpleName().toUpperCase(Locale.ROOT);
+              errorDesc = "Authorization: " + se.getMessage();
+              activities.noDocument(documentIdentifier, versionString);
+            } else {
+              Logging.connectors.error("JCIFS: SmbException tossed processing " + documentIdentifier, se);
+              errorCode = se.getClass().getSimpleName().toUpperCase(Locale.ROOT);
+              errorDesc = "Unknown: " + se.getMessage();
+              throw new ManifoldCFException("SmbException tossed: " + se.getMessage(), se);
+            }
+          } catch (final IOException e) {
+            errorCode = e.getClass().getSimpleName().toUpperCase(Locale.ROOT);
+            errorDesc = e.getMessage();
+            handleIOException(documentIdentifier, e);
           }
-
+        } catch (final ManifoldCFException e) {
+          if (e.getErrorCode() == ManifoldCFException.INTERRUPTED) {
+            errorCode = null;
+          }
+          throw e;
+        } finally {
+          if (errorCode != null) {
+            activities.recordActivity(startFetchTime, ACTIVITY_ACCESS, fileLengthLong, documentIdentifier, errorCode, errorDesc, null);
+          }
         }
+
       }
     }
   }
