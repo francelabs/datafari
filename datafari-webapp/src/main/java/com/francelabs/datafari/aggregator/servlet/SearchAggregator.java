@@ -115,8 +115,12 @@ public class SearchAggregator extends HttpServlet {
         final JSONArray jaExternalDatafaris = (JSONArray) parser.parse(jaExternalDatafarisStr);
         // Filter out external sources that are not selected or disabled.
         // If nothing is selected, we keep all sources
-        jaExternalDatafaris
-            .removeIf(jsonObject -> (filterSourceList.size() != 0 && !filterSourceList.contains(((JSONObject) jsonObject).get("label"))) || !((Boolean) ((JSONObject) jsonObject).get("enabled")));
+        // However if the filterSourceList is null, we remove everything 
+        // (conflict between selected sources and allowed / activated sources)
+        jaExternalDatafaris.removeIf(jsonObject -> filterSourceList == null
+            || !((Boolean) ((JSONObject) jsonObject).get("enabled"))
+            || (filterSourceList.size() != 0 && !filterSourceList.contains(((JSONObject) jsonObject).get("label"))));
+
 
         // Extract original start and rows parameters
         int orgStart = 0;
@@ -767,6 +771,11 @@ public class SearchAggregator extends HttpServlet {
     } else if (selectedSourcesList != null && allowedSources != null) {
       result.addAll(selectedSourcesList);
       result.removeIf(selectedName -> !allowedSources.contains(selectedName));
+      // Selected sources are not allowed for this user, send back null to notify this.
+      if (result.size() == 0) {
+        result = null;
+      }
+
     }
     return result;
   }
