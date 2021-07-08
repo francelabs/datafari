@@ -630,7 +630,6 @@
         <tokenizer class="solr.WhitespaceTokenizerFactory"/>
         <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0" splitOnCaseChange="1"/>
         <filter class="solr.StopFilterFactory" words="lang/stopwords_en.txt" ignoreCase="true"/>
-        <filter class="solr.LimitTokenCountFilterFactory" maxTokenCount="15000" consumeAllTokens="false" />
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
         <filter class="solr.PorterStemFilterFactory"/>
@@ -808,7 +807,6 @@
       <analyzer type="index">
         <tokenizer class="solr.WhitespaceTokenizerFactory"/>
         <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1" preserveOriginal="1"/>
-        <filter class="solr.LimitTokenCountFilterFactory" maxTokenCount="15000" consumeAllTokens="false" />
         <filter class="solr.LowerCaseFilterFactory"/>
 	<filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
 	<filter class="solr.StopFilterFactory" format="snowball" words="lang/stopwords_fr.txt" ignoreCase="true"/>
