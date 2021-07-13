@@ -151,6 +151,17 @@ public class ClusterBackup extends HttpServlet {
             final JSONParser parser = new JSONParser();
             JSONObject requestBody = (JSONObject) parser.parse(br);
 
+            boolean minimalBackup = false;
+            if (requestBody.get("minimalBackup") != null) {
+                try {
+                    if ((Boolean) requestBody.get("minimalBackup")) {
+                        minimalBackup = true;
+                    }
+                } catch (Exception e) {
+                    // Could not cast the property to bool, assume false in this case
+                }
+            }
+
             String lastBackupString = config.getProperty(ClusterActionsConfiguration.LAST_BACKUP_DATE);
             Instant putDate = Instant.parse((String) requestBody.get("date"));
             Instant now = Instant.now();
@@ -202,7 +213,10 @@ public class ClusterBackup extends HttpServlet {
                     // Wire up the call to the bash script
                     final String workingDirectory = SCRIPT_WORKING_DIR;
                     final String filePath = REPORT_BASE_DIR + File.separator + reportName;
-                    final String[] command = { "/bin/bash", "./backupUtils/global_backup_script.sh" };
+                    String[] command = { "/bin/bash", "./backupUtils/global_backup_script.sh" };
+                    if (minimalBackup) {
+                        command = new String[]{"/bin/bash", "./backupUtils/global_backup_script.sh", "minimal"};
+                    }
                     final ProcessBuilder p = new ProcessBuilder(command);
                     p.redirectErrorStream(true);
                     p.redirectOutput(new File(filePath));

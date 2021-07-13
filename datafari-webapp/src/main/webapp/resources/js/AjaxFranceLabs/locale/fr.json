@@ -47,6 +47,7 @@
     "adminUI-ClusterActions-installation-not-standard": "Votre installation n'est pas standard, l'interface graphique de gestion du cluster est désactivée. Contactez un administrateur pour effectuer les tâches manuellement.",
     "adminUI-ClusterActions-job-stopped-label": "Confirmez-vous que tous les jobs de moissonnage (crawling) sont correctement arrêtés ?",
     "adminUI-ClusterActions-last-request-too-recent": "La dernière requête est trop récente ! Rafraichissez la page pour vous assurer qu'aucune action n'est en cours.",
+    "adminUI-ClusterActions-minimal-backup-label": "Voulez-vous effectuer une sauvegarde minimale de Solr ?",
     "adminUI-ClusterActions-no-data": "Aucune donnée",
     "adminUI-ClusterActions-no-report": "Aucun rapport trouvé",
     "adminUI-ClusterActions-restart-in-progress": "Un redémarrage est en cours, le système d'administration de Datafari est disponible, mais les actions d'administration du cluster Datafari sont désactivées par sécurité.",
