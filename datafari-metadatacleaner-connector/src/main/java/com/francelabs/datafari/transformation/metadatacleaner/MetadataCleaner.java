@@ -23,14 +23,18 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.manifoldcf.agents.interfaces.IOutputAddActivity;
 import org.apache.manifoldcf.agents.interfaces.IOutputCheckActivity;
 import org.apache.manifoldcf.agents.interfaces.RepositoryDocument;
@@ -61,6 +65,8 @@ public class MetadataCleaner extends org.apache.manifoldcf.agents.transformation
   protected static final String ACTIVITY_CLEAN = "clean";
 
   protected static final String[] activitiesList = new String[] { ACTIVITY_CLEAN };
+
+  private static final Logger LOGGER = LogManager.getLogger(MetadataCleaner.class.getName());
 
   /**
    * Connect.
@@ -260,23 +266,67 @@ public class MetadataCleaner extends org.apache.manifoldcf.agents.transformation
       // Iterate over all the metadata, delete them and store their cleaned names and values in the cleanMetadata hashmap we just created
       while (fieldsI.hasNext()) {
         final String fieldName = fieldsI.next();
-        String cleanFieldName = fieldName;
-        for (final String nameRegex : spec.nameCleaners.keySet()) {
-          cleanFieldName = fieldName.replaceAll(nameRegex, spec.nameCleaners.get(nameRegex));
-        }
-        final Object[] fieldValues = document.getField(fieldName);
-        if (fieldValues instanceof String[]) {
-          for (final String valueRegex : spec.valueCleaners.keySet()) {
+        // We only keep the metadata if its name is not null
+        if (fieldName != null && !fieldName.isEmpty()) {
+          String cleanFieldName = fieldName;
+          // We apply the all name regex on the name
+          for (final String nameRegex : spec.nameCleaners.keySet()) {
+            cleanFieldName = fieldName.replaceAll(nameRegex, spec.nameCleaners.get(nameRegex));
+          }
+          // We apply the value regex on the values that are string values
+          Object[] fieldValues = document.getField(fieldName);
+          if (fieldValues instanceof String[]) {
+            for (final String valueRegex : spec.valueCleaners.keySet()) {
+              for (int i = 0; i < fieldValues.length; i++) {
+                if (fieldValues[i] != null) {
+                  final String cleanValue = fieldValues[i].toString().replaceAll(valueRegex, spec.valueCleaners.get(valueRegex));
+                  fieldValues[i] = cleanValue;
+                } else {
+                  fieldValues[i] = "";
+                }
+              }
+            }
+          } else if (fieldValues != null && fieldValues.length > 0) {
+            // For values that are not regex we remove all the null values
+            final Set<Integer> indexesToRemove = new HashSet<>();
             for (int i = 0; i < fieldValues.length; i++) {
-              final String cleanValue = fieldValues[i].toString().replaceAll(valueRegex, spec.valueCleaners.get(valueRegex));
-              fieldValues[i] = cleanValue;
+              if (fieldValues[i] == null) {
+                indexesToRemove.add(i);
+              }
+            }
+            if (fieldValues instanceof Date[]) {
+              final Date[] cleanValues = new Date[fieldValues.length - indexesToRemove.size()];
+              int cleanValuesCpt = 0;
+              for (int i = 0; i < fieldValues.length; i++) {
+                if (!indexesToRemove.contains(i)) {
+                  cleanValues[cleanValuesCpt] = (Date) fieldValues[i];
+                  cleanValuesCpt++;
+                }
+              }
+              fieldValues = cleanValues;
+            } else if (fieldValues instanceof Reader[]) {
+              final Reader[] cleanValues = new Reader[fieldValues.length - indexesToRemove.size()];
+              int cleanValuesCpt = 0;
+              for (int i = 0; i < fieldValues.length; i++) {
+                if (!indexesToRemove.contains(i)) {
+                  cleanValues[cleanValuesCpt] = (Reader) fieldValues[i];
+                  cleanValuesCpt++;
+                }
+              }
+              fieldValues = cleanValues;
             }
           }
+
+          // Store its "cleaned" equivalent only if fieldValues is not null and contains at least one element
+          if (fieldValues != null && fieldValues.length > 0) {
+            cleanMetadata.put(cleanFieldName, fieldValues);
+          } else {
+            LOGGER.warn("Field '" + cleanFieldName + "' of document '" + documentURI + "' ignored because it has null or empty value");
+          }
         }
+
         // Remove the current metadata
         fieldsI.remove();
-        // Store its "cleaned" equivalent
-        cleanMetadata.put(cleanFieldName, fieldValues);
 
       }
 
