@@ -347,26 +347,6 @@ init_apache_ssl() {
 	
 }
 
-init_datafariui_alpha() {
-	wget_output=$(wget -q "http://repo.datafari.com/datafariui/datafariui.tar.gz")
-	if [ $? -ne 0 ]; then
-      	echo "Error repo access repo.datafari.com, the Datafari UI alpha will not be installed"
-    else
-    	wget http://repo.datafari.com/datafariui/datafariui.tar.gz.md5
-        md5LocalFile=`md5sum datafariui.tar.gz | awk '{ print $1 }'`
-        md5DistantFile=`cat datafariui.tar.gz.md5 | awk '{ print $1 }'`
-
-        if [ "$md5LocalFile" == "$md5LocalFile" ]; then
-        	tar xfz datafariui.tar.gz
-            mv build $DATAFARI_HOME/www
-			datafariui_proxy_apache="Alias /datafariui $DATAFARI_HOME/www/\n<Directory \"$DATAFARI_HOME/www\">\nRequire all granted\nRewriteEngine On\nRewriteBase \"/datafariui/\"\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteRule \"^\" \"index.html\" [QSA,L]\n</Directory>"
-			sed -i -e "/^[[:space:]]*# DatafariUI_Alpha.*/a${datafariui_proxy_apache}" $DATAFARI_HOME/apache/sites-available/tomcat.conf >>$installerLog 2>&1
-		else
-			echo "Error MD5 comparison for Datafari UI alpha download, skip that part"
-		fi
-		rm -rf datafariui.tar.gz
-	fi
-}
 
 clean_monoserver_node() {
 	rm -rf $DATAFARI_HOME/bin/start-solr.sh
