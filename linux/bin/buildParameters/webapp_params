@@ -1,3 +1,4 @@
 sed -i -e "s/@PROBLEMATIC_FILES@/\?page=problematicFiles/g" $TOMCAT_HOME/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
+sed -i -e "s/@MONIT-IP@/\?page=monitAdmin/g" $TOMCAT_HOME/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
 sed -i -e "s/@LOG@/\?page=logs/g" $TOMCAT_HOME/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
 sed -i -e "s/@METRICBEAT@/\?page=metricBeat/g" $TOMCAT_HOME/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1

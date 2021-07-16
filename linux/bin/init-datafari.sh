@@ -261,6 +261,7 @@ init_password() {
 	apacheAdminUser=apacheadmin
 	elkAdminUser=elkadmin
 	solrAdminUser=solradmin
+	monitAdminUser=monitadmin
 	password=${1}
 	realm=datafari
 	cd $MCF_HOME/obfuscation-utility
@@ -271,9 +272,11 @@ init_password() {
 	digestAdminUser="$( printf "%s:%s:%s" "$apacheAdminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
 	digestElkUser="$( printf "%s:%s:%s" "$elkAdminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
 	digestSolrUser="$( printf "%s:%s:%s" "$solrAdminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
+	digestMonitUser="$( printf "%s:%s:%s" "$monitAdminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
 	printf "%s:%s:%s\n" "$apacheAdminUser" "$realm" "$digestAdminUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
 	printf "%s:%s:%s\n" "$elkAdminUser" "$realm" "$digestElkUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
 	printf "%s:%s:%s\n" "$solrAdminUser" "$realm" "$digestSolrUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
+	printf "%s:%s:%s\n" "$monitAdminUser" "$realm" "$digestMonitUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
 }
 
 init_password_postgresql() {
@@ -291,6 +294,7 @@ init_apache_ssl() {
 		getMCF="\"/datafari-mcf-crawler-ui/\""
 		getMCFSimplified="\"/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp\""
 		getSolrAdmin="\"/solr/\""
+		getMonitAdmin="\"/monit/\""
 		sed -i -e "s/@APACHE@/true/g" $TOMCAT_HOME/conf/datafari.properties >>$installerLog 2>&1
 		cp -r $DATAFARI_HOME/apache/html/* /var/www/html/
 
@@ -343,6 +347,7 @@ init_apache_ssl() {
 	
 	
 	sed -i -e "s~\"@GET-SOLR-IP@\"~${getSolrAdmin}~g" $TOMCAT_HOME/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
+	sed -i -e "s~\"@GET-MONIT-IP@\"~${getMonitAdmin}~g" $TOMCAT_HOME/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
 	sed -i -e "s/@APACHE-PRESENT@/${apachePresent}/g" $TOMCAT_HOME/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
 	
 }
