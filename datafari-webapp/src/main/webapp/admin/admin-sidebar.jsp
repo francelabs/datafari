@@ -97,7 +97,7 @@
          <li id="ProblematicFiles"><a id="problematicFiles-AdminUI" target="_blank" href="@PROBLEMATIC_FILES@"></a></li>
          <li id="LogsAnalysis"><a id="logsAnalysis-AdminUI" target="_blank" href="@LOG@"></a></li>
          <li id="downloadLogs"><a id="downloadLogs-AdminUI" class="ajax-link" href="?page=downloadLogs"></a></li>
-         <li id="monitAdmin"><a target="_blank" href="<%= getMonit %>" id="monitAdmin-AdminUI"></a></li>
+         <li id="monitAdmin"><a target="_blank" href="@MONIT-IP@" id="monitAdmin-AdminUI"></a></li>
 <!--          <li id="metricbeatOverview"><a id="metricbeatOverview-AdminUI" target="_blank" href="@METRICBEAT@"></a></li> -->
          </ul>
          </li>
