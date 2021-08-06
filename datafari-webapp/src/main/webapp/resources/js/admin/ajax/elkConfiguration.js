@@ -13,7 +13,7 @@ $(document)
 
           // Internationalize content
           $("#topbar1").text(window.i18n.msgStore['home']);
-          $("#topbar2").text(window.i18n.msgStore['adminUI-UserManagement']);
+          $("#topbar2").text(window.i18n.msgStore['adminUI-SearchEngineAdmin']);
           $("#topbar3").text(window.i18n.msgStore['adminUI-ELKConf']);
           $("#submit").text(window.i18n.msgStore['save']);
           $("#title").text(window.i18n.msgStore['adminUI-ELKConf']);
