@@ -42,6 +42,12 @@ question_postgresql_password() {
     set_property "TEMPPGSQLPASSWORD" $postgresql_password $CONFIG_FILE
 }
 
+question_elk_start() {
+	read -p "Do you want to start ELK (true/false) [true] ? " elk_start
+	elk_start=${elk_start:-false}
+	set_property "ELKactivation"  $elk_start $CONFIG_FILE
+}
+
 question_start_datafari() {
 	read -p "Do you want Datafari to be started ? [true]: " start_datafari
 	start_datafari=${start_datafari:-true}
