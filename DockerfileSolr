@@ -1,0 +1,8 @@
+FROM solr:8.5
+
+ENV ZK=zooa1
+ENV SOLR=solra1
+
+COPY --chown=solr ./linux/bin/deployUtils/docker/docker-compose/solr/init-zk.sh /opt/docker-solr/scripts/init-zk.sh
+RUN chmod 775 /opt/docker-solr/scripts/init-zk.sh
+

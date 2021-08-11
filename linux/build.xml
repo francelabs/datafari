@@ -133,6 +133,14 @@
 
 	</target>
 
+	<target name="docker-compose-modifications" depends="package">
+	  <copy toDir="${installer.build.dir}/datafari/opt/datafari/tomcat/conf" overwrite="true" force="true">
+	    <fileset dir="${linux.bin.dir}/deployUtils/docker/docker-compose/tomcat-conf">
+	    </fileset>
+	  </copy>
+
+	</target>
+
 	<target name="installer-debian" depends="package">
 		<copy todir="${installer.build.dir}/datafari/DEBIAN">
 			<fileset dir="${installer.dir}/DEBIAN" />
