@@ -138,6 +138,10 @@
 	    <fileset dir="${linux.bin.dir}/deployUtils/docker/docker-compose/tomcat-conf">
 	    </fileset>
 	  </copy>
+	  <copy toDir="${installer.build.dir}/datafari/opt/datafari/mcf/mcf_home" overwrite="true" force="true">
+	    <fileset dir="${linux.bin.dir}/deployUtils/docker/docker-compose/mcf">
+	    </fileset>
+	  </copy>
 
 	</target>
 

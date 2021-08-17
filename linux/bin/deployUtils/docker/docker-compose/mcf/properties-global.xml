@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<!-- This file contains ONLY global (shared) configuration, for use on systems using
+    ZooKeeper to coordinate ManifoldCF processes. -->
+<configuration>
+
+  <!-- Useful logs conf -->
+  <property name="org.apache.manifoldcf.agents" value="INFO"/>
+  <property name="org.apache.manifoldcf.connectors" value="INFO"/>
+  <property name="org.apache.manifoldcf.authorityconnectors" value="INFO"/>
+  <property name="org.apache.manifoldcf.authorityservice" value="INFO"/>
+  <property name="org.apache.manifoldcf.mappingconnectors" value="INFO"/>
+
+  <!-- Version string for UI -->
+  <property name="org.apache.manifoldcf.versionstring" value="2.18"/>
+
+  <!-- Max documents count for UI -->
+  <property name="org.apache.manifoldcf.ui.maxstatuscount" value="500000"/>
+
+  <property name="org.apache.manifoldcf.login.name" value="admin"/>
+        <property name="org.apache.manifoldcf.login.password.obfuscated" value="C5kaqukwiLmufDsL1n7YLPOTw2Mj47tXceI1r7Kh+Uo="/>
+        <property name="org.apache.manifoldcf.apilogin.password.obfuscated" value="C5kaqukwiLmufDsL1n7YLPOTw2Mj47tXceI1r7Kh+Uo="/>
+
+
+        <property name="org.apache.manifoldcf.databaseimplementationclass" value="org.apache.manifoldcf.core.database.DBInterfacePostgreSQL"/>
+        <property name="org.apache.manifoldcf.postgresql.hostname" value="postgresql"/>
+        <property name="org.apache.manifoldcf.postgresql.port" value="5432"/>
+        <property name="org.apache.manifoldcf.database.name" value="manifoldcf"/>
+        <property name="org.apache.manifoldcf.dbsuperusername" value="postgres"/>
+        <property name="org.apache.manifoldcf.dbsuperuserpassword.obfuscated" value="gDPThUHaHJg4th0Z5+j35cfAu5Wrt5CPsXcZ7Knz5LI="/>
+
+        <property name="org.apache.manifoldcf.database.maxhandles" value="200"/>
+  <property name="org.apache.manifoldcf.crawler.threads" value="50"/>
+  <property name="org.apache.manifoldcf.crawler.expirethreads" value="10"/>
+  <property name="org.apache.manifoldcf.crawler.cleanupthreads" value="10"/>
+  <property name="org.apache.manifoldcf.crawler.deletethreads" value="10"/>
+
+        <property name="org.apache.manifoldcf.crawler.historycleanupinterval" value="2592000000"/>
+
+</configuration>
