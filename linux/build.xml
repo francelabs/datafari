@@ -322,12 +322,8 @@
 		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
 			<fileset dir="${share.connector.src.dir}">
 				<include name="*.jar" />
-			</fileset>
-		</copy>
-		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-common-lib" overwrite="true" force="true">
-			<fileset dir="${share.connector.src.dir}">
 				<include name="dependencies/**" />
-				<exclude name="dependencies/jcifs*" />
+        <exclude name="dependencies/jcifs*" />
 			</fileset>
 		</copy>
 
