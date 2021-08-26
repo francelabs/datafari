@@ -2,8 +2,12 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script type="text/javascript" src="<c:url value="/resources/js/polyfill.js" />"></script>
+<meta name="csrf-param" content="${_csrf.parameterName}">
+<meta name="csrf-token" content="${_csrf.token}">
 <!-- Page specific JS -->
 <script src="<c:url value="/resources/js/admin/ajax/mcfSimplified.js" />" type="text/javascript"></script>
+<script type="text/javascript" src="<c:url value="/resources/js/polyfill.js" />"></script>
 <!-- Page specific CSS -->
 <Link rel="stylesheet" href="<c:url value="/resources/css/animate.min.css" />"/>
 <link href="<c:url value="/resources/css/admin/mcfSimplified.css" />" rel="stylesheet"></link>
@@ -143,6 +147,9 @@
                       </div>
                       <div class="col-sm-4">
                         <input required type="text" id="filerSourcename" name="filerSourcename" placeholder="" class="form-control">
+
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+
                         <div class="invalid-feedback">
                           Please provide a name for the source
                         </div>
@@ -162,10 +169,10 @@
                     </div>
                     <div class="form-group row" id="div15">
                       <div class="col-sm-3 control-label">
-                        <label id="securityLabel" for="security" class="col-form-label"></label><span id="security-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span> <span class="alert-danger">(This feature is only available in the Enterprise Edition)</span>
+                        <label id="securityLabel" for="security" class="col-form-label"></label><span id="security-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
                       <div class="col-sm-4" id="security-div">
-	                      <input type="checkbox" id="security" name="security" disabled></input>	                      
+	                      <input type="checkbox" id="security" name="security"></input>	                      
                       </div>
                     </div>
                     <div class="form-group row" id="div16">
@@ -237,6 +244,7 @@
                       </div>
                       <div class="col-sm-4">
                         <input required type="text" id="email" name="email" placeholder="" class="form-control">
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                         <div class="invalid-feedback">
                           Please provide an email
                         </div>

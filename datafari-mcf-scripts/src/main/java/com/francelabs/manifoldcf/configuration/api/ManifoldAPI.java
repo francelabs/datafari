@@ -1,6 +1,8 @@
 package com.francelabs.manifoldcf.configuration.api;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -8,6 +10,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -46,7 +49,7 @@ public class ManifoldAPI {
     static public String JOBS = "jobs";
   }
 
-  static private String urlManifoldCFAPI = "http://localhost:9080/datafari-mcf-api-service/json/";
+  static private String urlManifoldCFAPI ;
 
   public JSONObject readConfiguration() {
     return null;
@@ -78,6 +81,10 @@ public class ManifoldAPI {
     urlManifoldCFAPI = "https://localhost:9443/datafari-mcf-api-service/json/";
   }
 
+  static public void changeIP(String newip) {
+    urlManifoldCFAPI = newip;
+  }
+
   static public void cleanAll() throws Exception {
     ManifoldAPI.cleanJobs();
     ManifoldAPI.cleanConnectors(ManifoldAPI.COMMANDS.OUTPUTCONNECTIONS);
@@ -86,6 +93,34 @@ public class ManifoldAPI {
     ManifoldAPI.cleanConnectors(ManifoldAPI.COMMANDS.MAPPINGCONNECTIONS);
     ManifoldAPI.cleanConnectors(ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS);
     ManifoldAPI.cleanConnectors(ManifoldAPI.COMMANDS.AUTHORITYGROUPS);
+  }
+
+  static public String getManifoldIP() {
+    String pathmcfPropertyFile = "/opt/datafari/bin/common/mcfapi.properties";
+    File mcfPropertyFile = new File(pathmcfPropertyFile);
+    boolean exists = mcfPropertyFile.exists();
+    if (exists == true)  {
+      LOGGER.info("property file found");
+      try (InputStream input = new FileInputStream(pathmcfPropertyFile)) {
+
+        Properties prop = new Properties();
+
+        prop.load(input);
+
+        LOGGER.info(prop.getProperty("mcfurl"));
+        urlManifoldCFAPI = prop.getProperty("mcfurl");
+
+
+      } catch (IOException ex) {
+        ex.printStackTrace();
+      }
+    }
+    else {
+      LOGGER.info("No property file found into this location : "+ pathmcfPropertyFile);
+      LOGGER.info("Default local url MCF");
+      urlManifoldCFAPI = "http://localhost:9080/datafari-mcf-api-service/json/";
+    }
+    return urlManifoldCFAPI;
   }
 
   static public void cleanJobs() throws Exception {
@@ -188,7 +223,7 @@ public class ManifoldAPI {
   private static void delete(final String command, final String paramName) throws Exception {
 
     LOGGER.info("Deleting connector " + paramName);
-    final String url = urlManifoldCFAPI + command + "/" + paramName;
+    final String url = getManifoldIP() + command + "/" + paramName;
     final JSONObject result = executeCommand(url, "DELETE", null);
 
     if (result.size() != 0)
@@ -200,13 +235,13 @@ public class ManifoldAPI {
 
   static public JSONObject getInfo(final String command) throws IOException, ManifoldCFException, InterruptedException, ParseException {
 
-    final String url = urlManifoldCFAPI + command;
+    final String url = getManifoldIP() + command;
     return executeCommand(url, "GET", null);
   }
 
   static public JSONObject readConfig(final String command, final String paramName) throws IOException, ManifoldCFException, InterruptedException, ParseException {
 
-    final String url = urlManifoldCFAPI + command + "/" + paramName;
+    final String url = getManifoldIP() + command + "/" + paramName;
     return executeCommand(url, "GET", null);
   }
 
@@ -247,7 +282,7 @@ public class ManifoldAPI {
   static public void putConfig(final String command, final String paramName, final JSONObject configuration) throws Exception {
 
     LOGGER.info("Putting new config for " + paramName);
-    final String url = urlManifoldCFAPI + command + "/" + paramName;
+    final String url = getManifoldIP() + command + "/" + paramName;
     final JSONObject result = executeCommand(url, "PUT", configuration);
     if (result.size() != 0)
       throw new Exception(result.toString());
@@ -258,7 +293,7 @@ public class ManifoldAPI {
   public static JSONObject postConfig(final String command, final JSONObject configuration) throws Exception {
 
     LOGGER.info("Post new config for " + command);
-    final String url = urlManifoldCFAPI + command;
+    final String url = getManifoldIP() + command;
     final JSONObject result = executeCommand(url, "POST", configuration);
     return result;
 
@@ -267,7 +302,7 @@ public class ManifoldAPI {
   public static JSONObject startJob(final String jobId) throws Exception {
 
     LOGGER.info("Start the job " + jobId);
-    final String url = urlManifoldCFAPI + "start/" + jobId;
+    final String url = getManifoldIP() + "start/" + jobId;
     final JSONObject result = executeCommand(url, "PUT", new JSONObject());
     return result;
 
@@ -275,7 +310,7 @@ public class ManifoldAPI {
 
   static public void deleteConfig(final String command, final String paramName) throws Exception {
     LOGGER.info("Delete config for " + paramName);
-    final String url = urlManifoldCFAPI + command + "/" + paramName;
+    final String url = getManifoldIP() + command + "/" + paramName;
     final JSONObject result = executeCommand(url, "DELETE", null);
     if (result.size() != 0)
       throw new Exception(result.toString());
@@ -286,7 +321,7 @@ public class ManifoldAPI {
   static public JSONObject getConfig(final String command, final String paramName) throws Exception {
 
     LOGGER.info("Getting configuration for " + paramName);
-    final String url = urlManifoldCFAPI + command + "/" + paramName;
+    final String url = getManifoldIP() + command + "/" + paramName;
     final JSONObject result = executeCommand(url, "GET", null);
     if (result.size() != 0)
       throw new Exception(result.toString());
@@ -363,7 +398,7 @@ public class ManifoldAPI {
 
         Thread.sleep(1000);
 
-        final HttpGet request = new HttpGet(urlManifoldCFAPI + "jobstatuses");
+        final HttpGet request = new HttpGet(getManifoldIP() + "jobstatuses");
         final HttpResponse response = client.execute(request);
 
         // Get Response
@@ -390,7 +425,7 @@ public class ManifoldAPI {
   public static void authenticate(final String apiUsername, final String apiPassword, final HttpClient client) throws IOException, ManifoldCFException, InterruptedException, ParseException {
     final JSONParser parser = new JSONParser();
     final JSONObject json = (JSONObject) parser.parse("{\"userID\":\"" + apiUsername + "\", \"password\":\"" + apiPassword + "\"}");
-    executeCommand(urlManifoldCFAPI + "LOGIN", "POST", json, client);
+    executeCommand(getManifoldIP() + "LOGIN", "POST", json, client);
   }
 
   private static void append(final JSONObject json, final String key, final Object value) {
@@ -405,3 +440,4 @@ public class ManifoldAPI {
   }
 
 }
+
