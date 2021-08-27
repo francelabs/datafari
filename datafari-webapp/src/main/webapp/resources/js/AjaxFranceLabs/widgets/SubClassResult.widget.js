@@ -35,6 +35,26 @@ AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
       this.relevancyQuery.cleanGlobalLinks();
     }
   },
+  
+  decodeWebURL : function(url) {
+    var paramIndex = url.indexOf("?");
+    if(paramIndex != -1) {
+      var path = url.substring(0, paramIndex);
+      var params = url.substring(paramIndex + 1);
+      var decodedUrl = path + "?" + decodeURIComponent(params);
+      return decodedUrl;
+    } else {
+      return url;
+    }
+  },
+  
+  decodeURL : function(url) {
+    if(!url.startsWith("http")) {
+      return decodeURIComponent(url);
+    } else {
+      return this.decodeWebURL(url);
+    }
+  },
 
   beforeRequest : function() {
     var self = this;
@@ -150,7 +170,7 @@ AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
           elm.find('.doc:last .title').append('<span title="' + title + '">' + title + '</span>');
           elm.find('.doc:last .res').append('<div class="doc-details"><div class="description"></div></div>');
           elm.find('.doc:last .description').append('<div class="snippet">' + description + '</div>');
-          var address = decodeURIComponent(url);
+          var address = self.decodeURL(url);
           elm.find('.doc:last .description').append('<div id="urlMobile"><p class="address" title="' + address + '">');
           // AjaxFranceLabs.tinyUrl(address)
           elm.find('.doc:last .address').append('<span>' + address + '</span>');

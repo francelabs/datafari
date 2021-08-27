@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -159,12 +160,14 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     String url;
     if (doc.containsKey("url")) {
       url = (String) doc.getFieldValue("url");
+      url = normalizeUrl(url);
       if (doc.getFieldValues("url").size() > 1) {
         doc.remove("url");
         doc.addField("url", url);
       }
     } else {
       url = (String) doc.getFieldValue("id");
+      url = normalizeUrl(url);
       doc.addField("url", url);
     }
 
@@ -317,6 +320,18 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     doc.addField("mime", mime.toLowerCase());
 
     super.processAdd(cmd);
+  }
+
+  private String normalizeUrl(final String url) {
+    final int paramIndex = url.indexOf("?");
+    if (paramIndex != -1) {
+      final String path = url.substring(0, paramIndex);
+      final String params = url.substring(paramIndex + 1);
+      final String normalizedUrl = path + "?" + URLEncoder.encode(params, StandardCharsets.UTF_8);
+      return normalizedUrl;
+    } else {
+      return url;
+    }
   }
 
   private String extensionFromMimeTypeField(final SolrInputField mimeTypeField) {

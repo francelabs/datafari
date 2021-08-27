@@ -13,16 +13,16 @@
 AjaxFranceLabs.ShareLinksWidget = AjaxFranceLabs.FacetCore.extend({
 
   // Variables
-  elm : null,
-  name : null,
+  elm: null,
+  name: null,
 
   // Methods
 
-  initContent : function(widgetContentDiv) {
+  initContent: function(widgetContentDiv) {
 
   },
 
-  getQueryString : function () {
+  getQueryString: function() {
     var key = false, res = {}, itm = null;
     // get the query string without the ?
     var qs = window.location.search.substring(1);
@@ -46,7 +46,23 @@ AjaxFranceLabs.ShareLinksWidget = AjaxFranceLabs.FacetCore.extend({
     return key === false ? res : null;
   },
 
-  updateWidgetContent : function(docContentDiv, widgetDiv, widgetContentDiv, docId, docPos, params, data, qId) {
+  decodeURLIfWebLink: function(url) {
+    if (!url.startsWith("http")) {
+      return url;
+    } else {
+      var paramIndex = url.indexOf("?");
+      if (paramIndex != -1) {
+        var path = url.substring(0, paramIndex);
+        var params = url.substring(paramIndex + 1);
+        var decodedUrl = path + "?" + decodeURIComponent(params);
+        return decodedUrl;
+      } else {
+        return url;
+      }
+    }
+  },
+
+  updateWidgetContent: function(docContentDiv, widgetDiv, widgetContentDiv, docId, docPos, params, data, qId) {
     if (data != undefined && data != null) {
       var doc = data.response.docs[0];
       // The statistics need info about the previous and next doc so they are always returned in the query response.
@@ -57,16 +73,16 @@ AjaxFranceLabs.ShareLinksWidget = AjaxFranceLabs.FacetCore.extend({
         doc = data.response.docs[1];
       }
       var idDoc = doc.id;
-      var idDocLink = idDoc;
+      var idDocLink = encodeURIComponent(idDoc);
       var aggregator = this.getQueryString("aggregator");
       var sharePreviewLink = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/Datafari/Preview?docId=" + idDocLink;
       if (aggregator && aggregator.length !== 0) {
         sharePreviewLink = sharePreviewLink + "&aggregator=" + aggregator;
       }
       var sharePreview = $('<div class="share-link-div"><i class="fas fa-chevron-right"></i> ' + window.i18n.msgStore['preview-share-preview'] + ' <br/><input type="text" value="' + sharePreviewLink
-          + '" /></div>');
+        + '" /></div>');
 
-      var shareDoc = $('<div class="share-link-div"><i class="fas fa-chevron-right"></i> ' + window.i18n.msgStore['preview-share-doc'] + ' <br/><input type="text" value="' + doc.url + '" /></div>');
+      var shareDoc = $('<div class="share-link-div"><i class="fas fa-chevron-right"></i> ' + window.i18n.msgStore['preview-share-doc'] + ' <br/><input type="text" value="' + this.decodeURLIfWebLink(doc.url) + '" /></div>');
       widgetContentDiv.html("");
       widgetContentDiv.append(sharePreview).append(shareDoc);
     } else {
