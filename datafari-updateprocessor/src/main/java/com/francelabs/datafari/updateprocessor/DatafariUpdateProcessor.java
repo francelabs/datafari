@@ -157,14 +157,13 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 
     }
 
+    // Normalize URL
     String url;
     if (doc.containsKey("url")) {
       url = (String) doc.getFieldValue("url");
       url = normalizeUrl(url);
-      if (doc.getFieldValues("url").size() > 1) {
-        doc.remove("url");
-        doc.addField("url", url);
-      }
+      doc.remove("url");
+      doc.addField("url", url);
     } else {
       url = (String) doc.getFieldValue("id");
       url = normalizeUrl(url);
@@ -219,7 +218,7 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     }
 
     final SolrInputField streamNameField = doc.get("ignored_stream_name");
-    if (streamNameField != null && !streamNameField.getFirstValue().toString().isEmpty()) {
+    if (streamNameField != null && !streamNameField.getFirstValue().toString().isEmpty() && !streamNameField.getFirstValue().toString().toLowerCase().contentEquals("docname")) {
       filename = (String) streamNameField.getFirstValue();
     } else {
       final Pattern pattern = Pattern.compile("[^/]*$");
@@ -248,6 +247,13 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
       }
     }
 
+    // keep the jsoup or filename as the first title for the searchView of Datafari
+    if (!jsouptitle.isEmpty()) {
+      doc.addField("title", jsouptitle);
+    } else if (!filename.isEmpty()) {
+      doc.addField("title", filename);
+    }
+
     // The title field has lost its original value(s) after the LangDetectLanguageIdentifierUpdateProcessorFactory
     // Need to set it back from the exactTitle field
     if (doc.get("exactTitle") != null) {
@@ -255,28 +261,14 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
         doc.addField("title", value);
       }
     }
-    // keep the filename as the first title for the searchView of Datafari
-    if (doc.get("title") != null) {
-      final List<Object> titleValues = new ArrayList<>();
-      titleValues.addAll(doc.getFieldValues("title"));
-      doc.removeField("title");
-      if (!jsouptitle.isEmpty()) {
-        doc.addField("title", jsouptitle);
-      }
-      if (!filename.isEmpty()) {
-        doc.addField("title", filename);
-      }
-      for (final Object value : titleValues) {
-        doc.addField("title", value);
-      }
-    } else {
-      if (!jsouptitle.isEmpty()) {
-        doc.addField("title", jsouptitle);
-      }
-      if (!filename.isEmpty()) {
-        doc.addField("title", filename);
-      }
+
+    // Clean authors (remove duplicates)
+    final Set<String> authors = new HashSet<>();
+    for (final Object authorObj : doc.getFieldValues("author")) {
+      authors.add(authorObj.toString());
     }
+    doc.remove("author");
+    doc.addField("author", authors.toArray(new String[0]));
 
     // Ensure a search-able title
     String language = (String) doc.getFieldValue("language");
