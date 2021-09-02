@@ -263,12 +263,14 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     }
 
     // Clean authors (remove duplicates)
-    final Set<String> authors = new HashSet<>();
-    for (final Object authorObj : doc.getFieldValues("author")) {
-      authors.add(authorObj.toString());
+    if (doc.containsKey("author")) {
+      final Set<String> authors = new HashSet<>();
+      for (final Object authorObj : doc.getFieldValues("author")) {
+        authors.add(authorObj.toString());
+      }
+      doc.remove("author");
+      doc.addField("author", authors.toArray(new String[0]));
     }
-    doc.remove("author");
-    doc.addField("author", authors.toArray(new String[0]));
 
     // Ensure a search-able title
     String language = (String) doc.getFieldValue("language");
