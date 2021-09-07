@@ -299,8 +299,13 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     final SolrInputField mimeTypeField = doc.get("ignored_content_type");
     final String tikaExtension = mimeTypeField == null ? "" : extensionFromMimeTypeField(mimeTypeField);
 
-    extension = nameExtension.length() > 1 && nameExtension.length() < 5 ? nameExtension : tikaExtension;
     mime = tikaExtension.length() > 1 && tikaExtension.length() < 5 ? tikaExtension : nameExtension;
+    if (url.startsWith("http") && !mime.isEmpty()) {
+      extension = mime;
+    } else {
+      extension = nameExtension.length() > 1 && nameExtension.length() < 5 ? nameExtension : tikaExtension;
+    }
+
     /*
      * if (extensionFromName || mimeTypeField == null) { if (path.contains(".")){ extension = FilenameUtils.getExtension(path); if (extension.length() > 4 || extension.length() < 1) { // If length is
      * too long, try extracting from tika information if available String tryExtension = mimeTypeField==null ? null : extensionFromMimeTypeField(mimeTypeField); if (tryExtension != null) { extension =

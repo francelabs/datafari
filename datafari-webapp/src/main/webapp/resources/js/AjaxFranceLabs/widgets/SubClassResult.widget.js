@@ -150,7 +150,7 @@ AjaxFranceLabs.SubClassResultWidget = AjaxFranceLabs.ResultWidget.extend({
               elm.find('.doc:last .icon').append('<object data="resources/images/icons/default-icon-24x24.png"></object>&nbsp;');
             }
           }
-          var urlRedirect = 'URL?url=' + url + '&id=' + Manager.store.get("id").value + '&q=' + Manager.store.get("q").value + '&position=' + position;
+          var urlRedirect = 'URL?url=' + encodeURIComponent(url) + '&id=' + Manager.store.get("id").value + '&q=' + Manager.store.get("q").value + '&position=' + position;
           elm.find('.doc:last .res').append('<a class="title" target="_blank" href="' + urlRedirect + '"></a>');
           var title = "";
           if (Array.isArray(doc.title)) {
