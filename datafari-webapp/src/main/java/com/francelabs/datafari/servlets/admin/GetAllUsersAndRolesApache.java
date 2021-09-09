@@ -45,6 +45,7 @@ public class GetAllUsersAndRolesApache extends HttpServlet {
     final List<String> usersList = new ArrayList<String>();
     usersList.add("apacheadmin");
     usersList.add("solradmin");
+    usersList.add("monitadmin");
     if (usersList != null) {
       jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
       jsonResponse.put(OutputConstants.STATUS, usersList);

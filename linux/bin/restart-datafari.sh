@@ -45,6 +45,8 @@ if [ -z "$errors" ]
 then
     echo $errors
 fi
+echo "Please wait 10 seconds before the end of the restart"
+sleep 10
 echo "END OF SCRIPT"
 
 

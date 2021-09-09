@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.francelabs.datafari.ldap.LdapUsers;
+import com.francelabs.datafari.utils.AuthenticatedUserName;
 import com.francelabs.datafari.utils.SearchAggregatorConfiguration;
 import com.francelabs.datafari.utils.SearchAggregatorUserConfig;
 
@@ -19,8 +19,6 @@ import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 
 @WebServlet("/aggregatorList")
 public class AggregatorList extends HttpServlet {
@@ -46,29 +44,9 @@ public class AggregatorList extends HttpServlet {
         ArrayList<String> defaultDatafaris = new ArrayList<>(Arrays.asList(defaultDatafarisArray));
 
         // Retrieve username
-        String authenticatedUserName = "";
-        if (request.getUserPrincipal() != null) {
-            // Get the username
-            if (request.getUserPrincipal() instanceof KeycloakAuthenticationToken) {
-                final KeycloakAuthenticationToken keycloakToken = (KeycloakAuthenticationToken) request
-                        .getUserPrincipal();
-                if (keycloakToken.getDetails() instanceof SimpleKeycloakAccount) {
-                    final SimpleKeycloakAccount keycloakAccount = (SimpleKeycloakAccount) keycloakToken.getDetails();
-                    authenticatedUserName = keycloakAccount.getKeycloakSecurityContext().getToken()
-                            .getPreferredUsername();
-                    // TODO: Retrieve user Home Datafari if set
-                } else {
-                    authenticatedUserName = request.getUserPrincipal().getName().replaceAll("[^\\\\]*\\\\", "");
-                }
-            } else {
-                authenticatedUserName = request.getUserPrincipal().getName().replaceAll("[^\\\\]*\\\\", "");
-            }
-            if (!authenticatedUserName.contains("@")) {
-                final String domain = LdapUsers.getInstance().getUserDomain(authenticatedUserName);
-                if (domain != null && !domain.isEmpty()) {
-                    authenticatedUserName += "@" + domain;
-                }
-            }
+        String authenticatedUserName = AuthenticatedUserName.getName(request);
+        if (authenticatedUserName == null) {
+            authenticatedUserName = "";
         }
 
         ArrayList<String> userHomeDatafari = null;

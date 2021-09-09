@@ -45,6 +45,7 @@ $(function($) {
   elm.find('#elkConfiguration-AdminUI').html(window.i18n.msgStore['adminUI-ELKConf']);
   elm.find('#searchEngineAdmin-AdminUI').html(window.i18n.msgStore['adminUI-SearchEngineAdmin']);
   elm.find('#solrAdmin-AdminUI').html(window.i18n.msgStore['adminUI-SolrAdmin']);
+  elm.find('#monitAdmin-AdminUI').html(window.i18n.msgStore['adminUI-MonitAdmin']);
   elm.find('#alertAdmin-AdminUI').html(window.i18n.msgStore['adminUI-AlertAdmin']);
   elm.find('#indexField-AdminUI').html(window.i18n.msgStore['adminUI-IndexField']);
   elm.find('#schemaAnalysis-AdminUI').html(window.i18n.msgStore['adminUI-SchemaAnalysis']);

@@ -42,6 +42,12 @@ question_postgresql_password() {
     set_property "TEMPPGSQLPASSWORD" $postgresql_password $CONFIG_FILE
 }
 
+question_elk_start() {
+	read -p "Do you want to start ELK (true/false) [true] ? " elk_start
+	elk_start=${elk_start:-false}
+	set_property "ELKactivation"  $elk_start $CONFIG_FILE
+}
+
 question_start_datafari() {
 	read -p "Do you want Datafari to be started ? [true]: " start_datafari
 	start_datafari=${start_datafari:-true}
@@ -261,6 +267,7 @@ init_password() {
 	apacheAdminUser=apacheadmin
 	elkAdminUser=elkadmin
 	solrAdminUser=solradmin
+	monitAdminUser=monitadmin
 	password=${1}
 	realm=datafari
 	cd $MCF_HOME/obfuscation-utility
@@ -271,9 +278,11 @@ init_password() {
 	digestAdminUser="$( printf "%s:%s:%s" "$apacheAdminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
 	digestElkUser="$( printf "%s:%s:%s" "$elkAdminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
 	digestSolrUser="$( printf "%s:%s:%s" "$solrAdminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
+	digestMonitUser="$( printf "%s:%s:%s" "$monitAdminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
 	printf "%s:%s:%s\n" "$apacheAdminUser" "$realm" "$digestAdminUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
 	printf "%s:%s:%s\n" "$elkAdminUser" "$realm" "$digestElkUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
 	printf "%s:%s:%s\n" "$solrAdminUser" "$realm" "$digestSolrUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
+	printf "%s:%s:%s\n" "$monitAdminUser" "$realm" "$digestMonitUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
 }
 
 init_password_postgresql() {
@@ -291,6 +300,7 @@ init_apache_ssl() {
 		getMCF="\"/datafari-mcf-crawler-ui/\""
 		getMCFSimplified="\"/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp\""
 		getSolrAdmin="\"/solr/\""
+		getMonitAdmin="\"/monit/\""
 		sed -i -e "s/@APACHE@/true/g" $TOMCAT_HOME/conf/datafari.properties >>$installerLog 2>&1
 		cp -r $DATAFARI_HOME/apache/html/* /var/www/html/
 
@@ -343,30 +353,11 @@ init_apache_ssl() {
 	
 	
 	sed -i -e "s~\"@GET-SOLR-IP@\"~${getSolrAdmin}~g" $TOMCAT_HOME/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
+	sed -i -e "s~\"@GET-MONIT-IP@\"~${getMonitAdmin}~g" $TOMCAT_HOME/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
 	sed -i -e "s/@APACHE-PRESENT@/${apachePresent}/g" $TOMCAT_HOME/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
 	
 }
 
-init_datafariui_alpha() {
-	wget_output=$(wget -q "http://repo.datafari.com/datafariui/datafariui.tar.gz")
-	if [ $? -ne 0 ]; then
-      	echo "Error repo access repo.datafari.com, the Datafari UI alpha will not be installed"
-    else
-    	wget http://repo.datafari.com/datafariui/datafariui.tar.gz.md5
-        md5LocalFile=`md5sum datafariui.tar.gz | awk '{ print $1 }'`
-        md5DistantFile=`cat datafariui.tar.gz.md5 | awk '{ print $1 }'`
-
-        if [ "$md5LocalFile" == "$md5LocalFile" ]; then
-        	tar xfz datafariui.tar.gz
-            mv build $DATAFARI_HOME/www
-			datafariui_proxy_apache="Alias /datafariui $DATAFARI_HOME/www/\n<Directory \"$DATAFARI_HOME/www\">\nRequire all granted\nRewriteEngine On\nRewriteBase \"/datafariui/\"\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteRule \"^\" \"index.html\" [QSA,L]\n</Directory>"
-			sed -i -e "/^[[:space:]]*# DatafariUI_Alpha.*/a${datafariui_proxy_apache}" $DATAFARI_HOME/apache/sites-available/tomcat.conf >>$installerLog 2>&1
-		else
-			echo "Error MD5 comparison for Datafari UI alpha download, skip that part"
-		fi
-		rm -rf datafariui.tar.gz
-	fi
-}
 
 clean_monoserver_node() {
 	rm -rf $DATAFARI_HOME/bin/start-solr.sh

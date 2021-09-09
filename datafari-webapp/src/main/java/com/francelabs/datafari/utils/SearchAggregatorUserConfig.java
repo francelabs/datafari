@@ -25,11 +25,13 @@ public class SearchAggregatorUserConfig {
     }
 
     public ArrayList<String> getDefaultSourceFor(String username) {
+        LOGGER.debug("Calling SearchAggregatorUserConfig.getDefaultSourceFor");
         ArrayList<String> result = new ArrayList<>();
         String defaultSourcesFilePath = sac.getProperty(SearchAggregatorConfiguration.USERS_DEFAULT_SOURCE_FILE);
         if (defaultSourcesFilePath != null && defaultSourcesFilePath.trim().length() > 0) {
             BufferedReader defaultSourcesReader = null;
             try {
+                LOGGER.debug("A default sources file is defined, trying opening and reading it");
                 defaultSourcesReader = new BufferedReader(new FileReader(defaultSourcesFilePath));
                 String line = "";
                 while ((line = defaultSourcesReader.readLine()) != null && result.size()==0) {
@@ -54,15 +56,18 @@ public class SearchAggregatorUserConfig {
                 }
             }
         }
+        LOGGER.debug("Default sources found for " + username + ":\n" + result.toString());
         return result;
     }
 
     public ArrayList<String> getAllowedSourcesFor(String username) {
+        LOGGER.debug("Calling SearchAggregatorUserConfig.getAllowedSourcesFor");
         ArrayList<String> result = null;
         String allowedSroucesFilePath = sac.getProperty(SearchAggregatorConfiguration.USERS_ALLOWED_SOURCES_FILE);
         if (allowedSroucesFilePath != null && allowedSroucesFilePath.trim().length() > 0) {
             BufferedReader allowedSourcesReader = null;
             try {
+                LOGGER.debug("An allowed sources file is defined, trying opening and reading it");
                 allowedSourcesReader = new BufferedReader(new FileReader(allowedSroucesFilePath));
                 String line = "";
                 while ((line = allowedSourcesReader.readLine()) != null && result == null) {
@@ -85,6 +90,7 @@ public class SearchAggregatorUserConfig {
                 }
             }
         }
+        LOGGER.debug("Allowed sources found for " + username + ":\n" + result);
         return result;
     }
 

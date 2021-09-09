@@ -97,7 +97,8 @@ public class ChangePasswordKibana extends HttpServlet {
         final Map<String, String> hashEnvironment = hashProcessBuilder.environment();
         final List<String> varToRemove = new ArrayList<String>();
         for (final String key : hashEnvironment.keySet()) {
-          if (!key.contentEquals("PATH") && !key.contentEquals("JAVA_HOME")) {
+          // The PATH, the JAVA_HOME and the LANG variables are mandatory for the opendistro script, the others might introduce bugs so we remove them from the environment of the process
+          if (!key.contentEquals("PATH") && !key.contentEquals("JAVA_HOME") && !key.contentEquals("LANG")) {
             varToRemove.add(key);
           }
         }
