@@ -1,4 +1,5 @@
 <%-- Prevent the creation of a session --%>
+<%@page import="java.net.URLDecoder"%>
 <%@page import="org.springframework.web.util.UriUtils"%>
 <%@page import="java.nio.charset.StandardCharsets"%>
 <%@ page session="false"%>
@@ -10,31 +11,16 @@
 <head>
 <title>Redirect</title>
 <%
-String url = request.getParameter("url");
+String url = URLDecoder.decode(request.getParameter("url"), StandardCharsets.UTF_8);
 String baseUrl = url.substring(0, url.indexOf("/") + 1);
 String browser = request.getHeader("user-agent");
+// File system path needs to be re-encoded whereas URL path not
 if(baseUrl.startsWith("file:")) {
   //Encode path
   int endPathIndex = url.lastIndexOf("/");
 	String filename = url.substring(endPathIndex + 1);
   String path = url.substring(0, endPathIndex + 1);
 	url = UriUtils.encodePath(path, StandardCharsets.UTF_8.toString()) + UriUtils.encode(filename, StandardCharsets.UTF_8.toString());
-} else if (baseUrl.startsWith("http")) {
-  int paramIndex = url.indexOf("?");
-  String urlPath = "";
-  String urlParams = "";
-  if(paramIndex != -1) {
-    urlPath = url.substring(0, paramIndex);
-    urlParams = url.substring(paramIndex + 1);
-  } else {
-    urlPath = url;
-  }
-  String encodedUrlPath = UriUtils.encodePath(urlPath, StandardCharsets.UTF_8.toString());
-  url = encodedUrlPath;
-  if(!urlParams.isEmpty()) {
-    String encodedParams = UriUtils.encodeQuery(urlParams, StandardCharsets.UTF_8.toString());
-    url += "?" + encodedParams;
-  }
 }
 if(!browser.toLowerCase().contains("chrome") || baseUrl.startsWith("http")) {
   response.sendRedirect(url);

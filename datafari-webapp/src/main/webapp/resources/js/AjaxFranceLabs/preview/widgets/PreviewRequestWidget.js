@@ -34,39 +34,7 @@ AjaxFranceLabs.PreviewRequestWidget = AjaxFranceLabs.Class.extend({
   },
 
   requestFromDocId : function(servlet, docId, responseHandler, aggregator) {
-    // Normalize docId before sending the request, which means to URI encode the docId
-    var docParts = [];
-    var docBase = "";
-    // If the docId is an http link or a file link, then remove the docBase (file:// for files and http(s):// for http links) from the
-    // encoding process because the ":" char must not be encoded !
-    if (docId.startsWith("http") || docId.startsWith("file:")) {
-      var index = docId.indexOf("://") + 3;
-      docBase = docId.substring(0, index);
-      var docPath = docId.substring(index);
-      // Split on the "/" char because everything must be encoded BUT this char
-      docParts = docPath.split("/");
-    } else {
-      docParts = docId.split("/");
-    }
-    var encodedDocPath = "";
-    // URI encode every chars encountered between "/"
-    for (var i = 0; i < docParts.length; i++) {
-      var partValue = docParts[i];
-      if (partValue != "") {
-        encodedDocPath += encodeURIComponent(partValue).replace(/'/g, "%27").replace(/!/g, "%21").replace(/~/g, "%7E").replace(/\(/g, "%28").replace(/\)/g, "%29") + "/";
-      } else {
-        encodedDocPath += "/";
-      }
-    }
-    // Remove the last char as it obviously is an additional "/" char added by the previous for loop
-    encodedDocPath = encodedDocPath.substring(0, encodedDocPath.length - 1);
-    var encodedDocId = "";
-    if (docId.startsWith("http") || docId.startsWith("file:")) {
-      encodedDocId = docBase + encodedDocPath;
-    } else {
-      encodedDocId = encodedDocPath;
-    }
-    var params = "id:(\"" + encodedDocId + "\")";
+    var params = "id:(\"" + docId + "\")";
     var queryBody = {
         q : params,
         wt : "json"

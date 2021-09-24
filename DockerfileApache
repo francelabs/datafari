@@ -1,5 +1,0 @@
-FROM php:7-apache-stretch
-
-COPY ./linux/bin/deployUtils/docker/docker-compose/apache/tomcat.conf /etc/apache2/sites-available/tomcat.conf
-
-CMD ["/bin/bash", "-c", "a2enmod proxy proxy_ajp proxy_http ssl proxy_http auth_digest rewrite headers; a2dissite 000-default ;a2dissite default-ssl ; a2ensite tomcat ; apache2-foreground"]

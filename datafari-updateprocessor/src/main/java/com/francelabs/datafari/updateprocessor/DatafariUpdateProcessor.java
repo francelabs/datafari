@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -156,15 +157,16 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 
     }
 
+    // Normalize URL
     String url;
     if (doc.containsKey("url")) {
       url = (String) doc.getFieldValue("url");
-      if (doc.getFieldValues("url").size() > 1) {
-        doc.remove("url");
-        doc.addField("url", url);
-      }
+      url = normalizeUrl(url);
+      doc.remove("url");
+      doc.addField("url", url);
     } else {
       url = (String) doc.getFieldValue("id");
+      url = normalizeUrl(url);
       doc.addField("url", url);
     }
 
@@ -216,7 +218,7 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     }
 
     final SolrInputField streamNameField = doc.get("ignored_stream_name");
-    if (streamNameField != null && !streamNameField.getFirstValue().toString().isEmpty()) {
+    if (streamNameField != null && !streamNameField.getFirstValue().toString().isEmpty() && !streamNameField.getFirstValue().toString().toLowerCase().contentEquals("docname")) {
       filename = (String) streamNameField.getFirstValue();
     } else {
       final Pattern pattern = Pattern.compile("[^/]*$");
@@ -245,6 +247,13 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
       }
     }
 
+    // keep the jsoup or filename as the first title for the searchView of Datafari
+    if (!jsouptitle.isEmpty()) {
+      doc.addField("title", jsouptitle);
+    } else if (!filename.isEmpty()) {
+      doc.addField("title", filename);
+    }
+
     // The title field has lost its original value(s) after the LangDetectLanguageIdentifierUpdateProcessorFactory
     // Need to set it back from the exactTitle field
     if (doc.get("exactTitle") != null) {
@@ -252,27 +261,15 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
         doc.addField("title", value);
       }
     }
-    // keep the filename as the first title for the searchView of Datafari
-    if (doc.get("title") != null) {
-      final List<Object> titleValues = new ArrayList<>();
-      titleValues.addAll(doc.getFieldValues("title"));
-      doc.removeField("title");
-      if (!jsouptitle.isEmpty()) {
-        doc.addField("title", jsouptitle);
+
+    // Clean authors (remove duplicates)
+    if (doc.containsKey("author")) {
+      final Set<String> authors = new HashSet<>();
+      for (final Object authorObj : doc.getFieldValues("author")) {
+        authors.add(authorObj.toString());
       }
-      if (!filename.isEmpty()) {
-        doc.addField("title", filename);
-      }
-      for (final Object value : titleValues) {
-        doc.addField("title", value);
-      }
-    } else {
-      if (!jsouptitle.isEmpty()) {
-        doc.addField("title", jsouptitle);
-      }
-      if (!filename.isEmpty()) {
-        doc.addField("title", filename);
-      }
+      doc.remove("author");
+      doc.addField("author", authors.toArray(new String[0]));
     }
 
     // Ensure a search-able title
@@ -302,8 +299,13 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     final SolrInputField mimeTypeField = doc.get("ignored_content_type");
     final String tikaExtension = mimeTypeField == null ? "" : extensionFromMimeTypeField(mimeTypeField);
 
-    extension = nameExtension.length() > 1 && nameExtension.length() < 5 ? nameExtension : tikaExtension;
     mime = tikaExtension.length() > 1 && tikaExtension.length() < 5 ? tikaExtension : nameExtension;
+    if (url.startsWith("http") && !mime.isEmpty()) {
+      extension = mime;
+    } else {
+      extension = nameExtension.length() > 1 && nameExtension.length() < 5 ? nameExtension : tikaExtension;
+    }
+
     /*
      * if (extensionFromName || mimeTypeField == null) { if (path.contains(".")){ extension = FilenameUtils.getExtension(path); if (extension.length() > 4 || extension.length() < 1) { // If length is
      * too long, try extracting from tika information if available String tryExtension = mimeTypeField==null ? null : extensionFromMimeTypeField(mimeTypeField); if (tryExtension != null) { extension =
@@ -317,6 +319,18 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     doc.addField("mime", mime.toLowerCase());
 
     super.processAdd(cmd);
+  }
+
+  private String normalizeUrl(final String url) {
+    final int paramIndex = url.indexOf("?");
+    if (paramIndex != -1) {
+      final String path = url.substring(0, paramIndex);
+      final String params = url.substring(paramIndex + 1);
+      final String normalizedUrl = path + "?" + URLEncoder.encode(params, StandardCharsets.UTF_8);
+      return normalizedUrl;
+    } else {
+      return url;
+    }
   }
 
   private String extensionFromMimeTypeField(final SolrInputField mimeTypeField) {
