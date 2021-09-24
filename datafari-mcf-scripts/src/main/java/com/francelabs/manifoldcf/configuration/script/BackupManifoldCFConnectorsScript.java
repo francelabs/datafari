@@ -56,9 +56,6 @@ public class BackupManifoldCFConnectorsScript {
       backupDirectory = input.nextLine();
     } else {
       backupDirectory = args[1];
-      if (args.length == 3 && args[2].equals("https")) {
-        ManifoldAPI.useHttpsProtocol();
-      }
     }
 
     try {
