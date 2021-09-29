@@ -36,7 +36,6 @@ $(function($) {
   elm.find('#connectors-AdminUI').html(window.i18n.msgStore['adminUI-Connectors']);
   elm.find('#MCFAdmin-AdminUI').html(window.i18n.msgStore['adminUI-Connectors-Admin']);
   elm.find('#MCFPassword-AdminUI').html(window.i18n.msgStore['MCFPassword-AdminUI']);
-  elm.find('#MCFBackupRestore-AdminUI').html(window.i18n.msgStore['adminUI-Connectors-BackupRestore']);
   elm.find('#MCFSimplified-AdminUI').html(window.i18n.msgStore['adminUI-Connectors-MCFSimplified']);
   // MCF distant
 
@@ -81,6 +80,10 @@ $(function($) {
   elm.find('#ADConfig-AdminUI').html(window.i18n.msgStore['adminUI-ADConfig']);
   elm.find('#testADAuthority-AdminUI').html(window.i18n.msgStore['adminUI-testADAuthority']);
   
+  // Expert menu
+  elm.find('#expertMenu-AdminUI').html(window.i18n.msgStore['adminUI-expertMenu']);
+  elm.find('#MCFBackupRestore-AdminUI').html(window.i18n.msgStore['adminUI-Connectors-BackupRestore']);
+  elm.find('#MCFBackupRestore-AdminUI').html(window.i18n.msgStore['adminUI-Connectors-BackupRestore']);
   //Extra Functionalities
   elm.find('#extraFunctionalities-AdminUI').html(window.i18n.msgStore['adminUI-extraFunctionalities']);
   elm.find('#deduplication-AdminUI').html(window.i18n.msgStore['adminUI-Deduplication']);

@@ -116,6 +116,7 @@
     "adminUI-ELKErrorsStats": "ELK - Statistiques d'Erreurs",
     "adminUI-ELKSave": "Sauvegarder vos modifications",
     "adminUI-entityExtractionConf": "Extraction d'entité",
+    "adminUI-expertMenu": "Menu Expert",
     "adminUI-ErrorWhileSaving": "Une erreur s'est produite lors de l'enregistrement'.",
     "adminUI-extraFunctionalities": "Autres Fonctionalités",
     "adminUI-FacetConfig": "Configuration des facettes",

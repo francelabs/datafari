@@ -60,7 +60,6 @@
           <%
           if(request.isUserInRole("SearchAdministrator")){
           %>
-          <li id="MCFBackupRestore"><a id="MCFBackupRestore-AdminUI" class="ajax-link" href="?page=mcfBackupRestore"></a></li>
           <li id="MCFChangePassword" ><a id="MCFPassword-AdminUI" class="ajax-link" href="?page=MCFChangePassword"></a></li>
          
 <%-- MCF menu end --%>
@@ -190,6 +189,17 @@
       <%
         }
         %>
+<%-- Expert menu start --%>
+       <li id="Expert" class="collapse-effect">
+        <a href="#menu-expert" class="dropdown-toggle" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="menu-expert">
+          <i class="fas fa-user-graduate"></i><span id="expertMenu-AdminUI" class="hidden-xs"></span>
+        </a>
+ <ul id="menu-expert" class="list-unstyled collapse">
+<li id="MCFBackupRestore"><a id="MCFBackupRestore-AdminUI" class="ajax-link" href="?page=mcfBackupRestore"></a></li>
+        </ul>
+      </li>
+<%-- Expert menu stop --%>
+      
       <li id="Extra" class="collapse-effect">
         <a href="#menu-extra" class="dropdown-toggle" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="menu-extra">
           <i class="fas fa-desktop"></i><span id="extraFunctionalities-AdminUI" class="hidden-xs"></span>
