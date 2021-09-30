@@ -100,6 +100,10 @@
   <field name="sp_path" type="string" indexed="true" stored="true" multiValued="false"/>
   <field name="sp_site" type="string" indexed="true" stored="true" multiValued="false"/>
   <field name="sp_item" type="string" indexed="true" stored="true" multiValued="false"/>
+  
+  <!-- O365 fields -->
+  <field name="o365_attachments" type="string" indexed="true" stored="true" multiValued="true"/>
+  
 
     <!-- Common metadata fields, named specifically to match up with
      SolrCell metadata when parsing rich documents such as Word, PDF.
