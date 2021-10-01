@@ -12,6 +12,11 @@ source "${DIR}/../utils.sh"
 source $INIT_STATE_FILE
 source $CONFIG_FILE
 
+if [ "$(whoami)" != "root" ]; then
+        echo "Script must be run as user: root"
+        echo "Script will exit"
+        exit 1
+fi
 
 echo "This script will restore Datafato to factory setting."
 echo "You will loose all your data."
