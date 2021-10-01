@@ -230,8 +230,8 @@
 			<fileset dir="${git.plugin.src.dir}">
 				<include name="*.properties" />
 			</fileset>
-		</copy
-		
+		</copy>
+
 		<!-- Copy SSL keystore files -->
 		<copy todir="${linux.dist.dir}/ssl-keystore">
 			<fileset dir="${ssl.src.dir}">
