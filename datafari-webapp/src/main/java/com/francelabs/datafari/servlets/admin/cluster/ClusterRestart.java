@@ -85,6 +85,17 @@ public class ClusterRestart extends HttpServlet {
             BufferedReader br = new BufferedReader(new InputStreamReader(req.getInputStream()));
             final JSONParser parser = new JSONParser();
             JSONObject requestBody = (JSONObject) parser.parse(br);
+            
+            boolean forceRestart = false;
+            if (requestBody.get("forceRestart") != null) {
+                try {
+                    if ((Boolean) requestBody.get("forceRestart")) {
+                      forceRestart = true;
+                    }
+                } catch (Exception e) {
+                    // Could not cast the property to bool, assume false in this case
+                }
+            }
 
             String lastRestartString = config.getProperty(ClusterActionsConfiguration.LAST_RESTART_DATE);
             Instant putDate = Instant.parse((String) requestBody.get("date"));
@@ -138,7 +149,10 @@ public class ClusterRestart extends HttpServlet {
                     // Wire up the call to the bash script
                     final String workingDirectory = SCRIPT_WORKING_DIR;
                     final String filePath = REPORT_BASE_DIR + File.separator + reportName;
-                    final String[] command = { "/bin/bash", "./restart-datafari.sh" };
+                    String[] command = { "/bin/bash", "./restart-datafari.sh" };
+                    if (forceRestart) {
+                      command = new String[]{ "/bin/bash", "./restart-datafari.sh","force" };
+                  }
                     final ProcessBuilder p = new ProcessBuilder(command);
                     p.redirectErrorStream(true);
                     p.redirectOutput(new File(filePath));

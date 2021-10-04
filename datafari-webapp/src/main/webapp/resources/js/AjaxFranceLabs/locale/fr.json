@@ -439,6 +439,7 @@
     "filerUser": "Utilisateur",
     "filter": "filtrer",
     "for": "pour",
+    "forcerestart-tip":"use this option to force a restart of Datafari even if all the crawling jobs are not stopped",
     "fr_locale": "Français",
     "frequency": "Fréquence : ",
     "frequencyUnitLabel": "Unité de fréquence",

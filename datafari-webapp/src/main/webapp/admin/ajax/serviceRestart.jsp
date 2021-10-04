@@ -139,6 +139,17 @@
             crawling jobs are stopped ? (type: YES)</label>
           <input type="text" id="job-stopped-input" class="col-sm-5 form-control" />
         </div>
+        
+         <div class="row">
+          <div class="col-sm-3">
+            <label for="force-restart-input" id="force-restart-label" class="col-form-label">Force restart</label>
+            <span id="forcerestart-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+          </div>
+          <div class="col-sm-5">
+            <input type="checkbox" id="force-restart-input" class="form-check-input" style="position:absolute;top:25%;margin:revert;" />
+          </div>
+        </div>
+        
         <div class="row">
           <div class="col-sm-3">
             <label class="relevancySave col-form-label" for=""></label>

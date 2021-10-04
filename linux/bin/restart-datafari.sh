@@ -14,15 +14,14 @@ echo "Restart of Datafari"
 errors=""
 # TODO add variable for check if Monit is installed
 
-@VERSION-RESTART@
 
 #monoserver case
 if [ "$NODETYPE" != "main" ]; then
     echo "Check status of MCF jobs"
     cd $DIR/monitorUtils/
-    bash check_jobs_mcf.sh 
-    if [ $? -eq 1 ]; then
-        echo "MCF jobs still active, please stop or pause them before restarting Datafari"
+    bash check_jobs_mcf.sh
+    if [[ $? -eq 1 ]] && [[ $1 != "force" ]] ; then
+        echo "MCF jobs still active, please stop or pause them before restarting Datafari. Or you can force restart with force option at the execution of the script"
         echo "END OF SCRIPT"
         exit 1
     fi
@@ -48,5 +47,3 @@ fi
 echo "Please wait 10 seconds before the end of the restart"
 sleep 10
 echo "END OF SCRIPT"
-
-

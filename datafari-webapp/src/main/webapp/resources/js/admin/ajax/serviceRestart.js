@@ -75,6 +75,9 @@ $(document).ready(function () {
   document.getElementById("topbar3").innerHTML =
     window.i18n.msgStore["adminUI-ClusterActions-ServiceRestart"];
 
+  $("#forcerestart-tip").attr("title", window.i18n.msgStore['forcerestart-tip']);
+  $('[data-toggle="tooltip"]').tooltip();
+ 
   // Set the i18n for page elements
   if (window.i18n.msgStore["adminUI-ClusterActions-ServiceRestart-last-restart-info"]) {
     document.getElementById("box-title_restart-info").innerHTML =
@@ -270,10 +273,11 @@ $(document).ready(function () {
   $("#restart-form").submit(function (event) {
     event.preventDefault();
     if (
-      $("#datafari-not-responding-input").val() === "YES" &&
-      $("#job-stopped-input").val() === "YES"
+      ($("#datafari-not-responding-input").val() === "YES" &&
+      $("#job-stopped-input").val() === "YES") || ($("#force-restart-input").is(":checked") === true)
     ) {
-      sendRestartRequest();
+console.log($("#force-restart-input").val());
+      sendRestartRequest($("#force-restart-input").is(":checked"));
     } else {
       $("#doRestartReturnStatus-label").show();
       $("#doRestartReturnStatus-label").html(
@@ -315,9 +319,9 @@ $(document).ready(function () {
     )
   }
 
-  function sendRestartRequest() {
+  function sendRestartRequest(isForced) {
     var now = new Date();
-    var data = { date: now.toISOString() };
+    var data = { date: now.toISOString(), forceRestart: isForced };
     $.ajax("./../admin/cluster/restart", {
       data: JSON.stringify(data),
       type: "PUT",
@@ -495,7 +499,7 @@ $(document).ready(function () {
         .find(".infoblock_elm-value")
         .html(messages.inProgress);
     } else {
-      
+
       infoblockStatus.find(".infoblock_elm-value").html(messages.done);
     }
 
