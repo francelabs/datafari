@@ -46,6 +46,7 @@
   <transformationconnector name="Datafari Metadata Cleaner Connector" class="com.francelabs.datafari.transformation.metadatacleaner.MetadataCleaner"/>
   <transformationconnector name="Datafari Emptier Connector" class="com.francelabs.datafari.transformation.emptier.EmptierFilter"/>
   <transformationconnector name="Tika external content extractor" class="org.apache.manifoldcf.agents.transformation.tikaservice.TikaExtractor"/>
+  <transformationconnector name="Tika external content extractor rmeta" class="org.apache.manifoldcf.agents.transformation.tikaservice.rmeta.TikaExtractor"/>
   <transformationconnector name="Tika content extractor" class="org.apache.manifoldcf.agents.transformation.tika.TikaExtractor"/>
   <transformationconnector name="OpenNLP transformer" class="org.apache.manifoldcf.agents.transformation.opennlp.OpenNlpExtractor"/>
   <transformationconnector name="Null" class="org.apache.manifoldcf.agents.transformation.nullconnector.NullConnector"/>

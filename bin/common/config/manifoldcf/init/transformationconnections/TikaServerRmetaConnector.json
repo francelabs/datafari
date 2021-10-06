@@ -1,0 +1,43 @@
+{
+  "transformationconnection": [
+    {
+      "max_connections": "10",
+      "configuration": {
+        "_PARAMETER_": [
+          {
+            "_value_": "localhost",
+            "_attribute_name": "tikaHostname"
+          },
+          {
+            "_value_": "9998",
+            "_attribute_name": "tikaPort"
+          },
+          {
+            "_value_": "60000",
+            "_attribute_name": "connectionTimeout"
+          },
+          {
+            "_value_": "60000",
+            "_attribute_name": "socketTimeout"
+          },
+          {
+            "_value_": "10000",
+            "_attribute_name": "retryInterval"
+          },
+          {
+            "_value_":"120000",
+            "_attribute_name":"retryIntervalTikaDown"
+          },
+          {
+            "_value_": "1",
+            "_attribute_name": "retryNumber"
+          }
+        ]
+      },
+      "name": "TikaServerRmetaConnector",
+      "description": "",
+      "isnew": true,
+      "class_name": "org.apache.manifoldcf.agents.transformation.tikaservice.rmeta.TikaExtractor"
+    }
+  ]
+}
