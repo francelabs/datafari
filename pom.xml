@@ -37,6 +37,8 @@
     <spring.version>5.2.8.RELEASE</spring.version>
     <spring.oauth2.version>2.3.8.RELEASE</spring.oauth2.version>
     <tika.version>1.27</tika.version>
+    <tika-server.sha512>fc7cd6998a05d8b96760c24815cb6cc6f160d990b6f3a5c37b50738e8eff1d304e11c36e84869c31d130b0f0425f9d88ed294a20806f63f5044f2f3ca376c564</tika-server.sha512>
+    <tika-server-commit-number>5c0793e2c</tika-server-commit-number>
     <tomcat.version>9.0.38</tomcat.version>
     <slf4j.version>1.7.25</slf4j.version>
     <zookeeper.version>3.5.5</zookeeper.version>
@@ -62,6 +64,7 @@
     <module>datafari-metadatacleaner-connector</module>
     <module>datafari-tika</module>
     <module>datafari-tika-config</module>
+    <module>datafari-tika-server</module>
     <module>datafari-handler</module>
     <module>datafari-mcf-scripts</module>
     <module>datafari-share-connector</module>

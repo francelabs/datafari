@@ -297,8 +297,6 @@ stop_solr()
   forceStopIfNecessary $SOLR_PID_FILE Solr
 }
 
-@VERSION-MANAGER@
-
 COMMAND=$1
 
 case $COMMAND in

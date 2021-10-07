@@ -1,0 +1,52 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>com.francelabs.datafari</groupId>
+    <artifactId>datafari-ce</artifactId>
+    <version>5.1-dev-Community</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>datafari-tika-server</artifactId>
+  <packaging>pom</packaging>
+  <name>Datafari Enterprise Search - Tika Server module</name>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.googlecode.maven-download-plugin</groupId>
+        <artifactId>download-maven-plugin</artifactId>
+        <!-- Don't propagate configuration to child POMs -->
+        <inherited>false</inherited>
+        <executions>
+          <execution>
+            <id>install-tika-server</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>wget</goal>
+            </goals>
+            <configuration>
+              <!-- <url>http://repomcf.datafari.com/tika/tika-server-${tika-server.version}-${tika-server-commit-number}.jar</url> -->
+              <!-- <sha512>8914252131a77aefda87044063f9b114c9000d98ed3c2e627fd69a52319a83b3da76515e6b4fe7e1c86abc519c5a0f938fdafa939ad8bed0dd6453d5a3f9af47</sha512> -->
+              <url>http://archive.apache.org/dist/tika/${tika.version}/tika-server-${tika.version}.jar</url>
+              <sha512>${tika-server.sha512}</sha512>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <!-- Don't propagate configuration to child POMs -->
+        <inherited>false</inherited>
+        <executions>
+          <execution>
+            <id>ant-tasks</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

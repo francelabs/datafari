@@ -12,6 +12,7 @@ source "${DIR}/utils.sh"
 source $INIT_STATE_FILE
 source $CONFIG_FILE
 source $ELK_HOME/scripts/set-elk-env.sh
+source $TIKA_SERVER_HOME/bin/set-tika-env.sh
 
 
 if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $CATALINA_PID"; then
@@ -68,6 +69,13 @@ if [ "$(whoami)" == "root" ]; then
 	bash datafari-manager.sh stop_apache
 else
 	run_as ${DATAFARI_USER} "bash datafari-manager.sh stop_apache"
+fi
+
+if  [[ "$TIKASERVER" = *true* ]];
+then
+  cd $TIKA_SERVER_HOME/bin
+  run_as ${DATAFARI_USER} "bash tika-server.sh stop"
+  cd $DIR
 fi
 
 @VERSION-STOP@

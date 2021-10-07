@@ -256,7 +256,7 @@
             },
             {
               "_type_": "stage_connectionname",
-              "_value_": "Tika"
+              "_value_": "TikaServerRmetaConnector"
             },
             {
               "_type_": "stage_specification",
@@ -275,6 +275,11 @@
                   "_type_": "writeLimit",
                   "_value_": "",
                   "_attribute_value": "1000000"
+                },
+                {
+                  "_type_": "extractArchives",
+                  "_value_": "",
+                  "_attribute_value": "false"
                 }
               ]
             }

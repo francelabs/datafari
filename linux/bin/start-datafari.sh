@@ -12,6 +12,7 @@ source "${DIR}/utils.sh"
 source $INIT_STATE_FILE
 source $CONFIG_FILE
 source $ELK_HOME/scripts/set-elk-env.sh
+source $TIKA_SERVER_HOME/bin/set-tika-env.sh
 
 
 if  [[ "$STATE" = *installed* ]];
@@ -72,6 +73,11 @@ if run_as ${POSTGRES_USER} "bash datafari-manager.sh is_running $POSTGRES_PID_FI
    exit 1
 fi
 
+if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $TIKA_SERVER_PID_FILE"; then
+   PID=$(run_as ${DATAFARI_USER} "cat $TIKA_SERVER_PID_FILE");
+   echo "Error : Tika Server seems to be already running with PID $PID"
+   exit 1
+fi
 
 @START-CHECKS@
 
@@ -164,7 +170,12 @@ if  [[ "$NODETYPE" = *mono* ]]; then
     run_as ${DATAFARI_USER} `sed -i 's/\(STATE *= *\).*/\1active/' $INIT_STATE_FILE`
   fi
 
-  @VERSION-MONO-START@
+  if  [[ "$TIKASERVER" = *true* ]];
+  then
+    cd $TIKA_SERVER_HOME/bin
+    run_as ${DATAFARI_USER} "bash tika-server.sh start";
+    cd $DIR
+  fi
 
 fi
 
