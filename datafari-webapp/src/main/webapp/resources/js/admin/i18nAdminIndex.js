@@ -11,6 +11,7 @@ $(function($) {
   elm.find('#service-restart-AdminUI').html(window.i18n.msgStore['adminUI-ClusterActions-ServiceRestart']);
   elm.find('#service-backup-AdminUI').html(window.i18n.msgStore['adminUI-ClusterActions-ServiceBackup']);
   elm.find('#service-reinit-AdminUI').html(window.i18n.msgStore['adminUI-ClusterActions-ServiceReinitialization']);
+  elm.find('#service-reset-AdminUI').html(window.i18n.msgStore['adminUI-ClusterActions-ServiceFactoryReset']);
 
   // Statistics
   elm.find('#usagesAnalysis-AdminUI').html(window.i18n.msgStore['adminUI-UsagesAnalysis']);
