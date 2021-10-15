@@ -739,9 +739,6 @@ initialization_monoserver() {
     init_password $TEMPADMINPASSWORD
     init_password_postgresql $TEMPPGSQLPASSWORD
     init_apache_ssl
-    if [ "$DATAFARIUI_ALPHA" == "true" ]; then
-		init_datafariui_alpha
-	fi
     if [ -d /etc/httpd ]; then
       stop_firewalld_start_iptables
     fi

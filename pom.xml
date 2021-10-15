@@ -48,6 +48,7 @@
   <modules>
     <!-- Child module datafari-core added to install project dependencies in Maven 
       repo -->
+
     <module>datafari-solr</module>
     <module>datafari-mcf</module>
     <module>datafari-mcf-connectors-dependencies</module>
@@ -68,6 +69,7 @@
     <module>datafari-handler</module>
     <module>datafari-mcf-scripts</module>
     <module>datafari-share-connector</module>
+    <module>datafari-ui</module>
     <module>datafari-git-plugin</module>
   </modules>
   <build>
