@@ -28,7 +28,7 @@
               <!-- <url>http://repomcf.datafari.com/tika/tika-server-${tika-server.version}-${tika-server-commit-number}.jar</url> -->
               <!-- <sha512>8914252131a77aefda87044063f9b114c9000d98ed3c2e627fd69a52319a83b3da76515e6b4fe7e1c86abc519c5a0f938fdafa939ad8bed0dd6453d5a3f9af47</sha512> -->
               <url>http://repomcf.datafari.com/datafariuilatest/datafariui.tar.gz</url>
-              <md5>3fe69d45121d3b90381d3b31a8b831be</md5>
+              <md5>ed378e2c70bf5326dd7569b66a3362b2</md5>
               <unpack>true</unpack>
             </configuration>
           </execution>
