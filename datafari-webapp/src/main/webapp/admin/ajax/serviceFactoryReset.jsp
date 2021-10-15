@@ -22,7 +22,7 @@
 	<div id="modBox1" class="box">
 		<div class="box-header">
 				<div class="box-name">
-					<i class="fas fa-table"></i><span id="changePasswordLabel"></span>
+					<i class="fas fa-table"></i><span id="factoryResetMenu"></span>
 				</div>
 				<div class="box-icons">
 				</div>

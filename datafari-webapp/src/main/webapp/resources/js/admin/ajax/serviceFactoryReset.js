@@ -13,8 +13,9 @@ function setupLanguage(){
 	$("#topbar1").text(window.i18n.msgStore['home']);
 	$("#topbar2").text(window.i18n.msgStore['adminUI-ServiceAdministration']);
 	$("#topbar3").text(window.i18n.msgStore['adminUI-ClusterActions-ServiceFactoryReset']);
-	 document.getElementById("documentation-servicefactoryreset").innerHTML = window.i18n.msgStore['documentation-servicefactoryreset'];
-	 document.getElementById("factoryResetLabel").innerHTML = window.i18n.msgStore['factoryResetLabel'];
+	document.getElementById("factoryResetMenu").innerHTML = window.i18n.msgStore['adminUI-ClusterActions-ServiceFactoryReset'];
+	document.getElementById("documentation-servicefactoryreset").innerHTML = window.i18n.msgStore['documentation-servicefactoryreset'];
+	document.getElementById("factoryResetLabel").innerHTML = window.i18n.msgStore['factoryResetLabel'];
 	 
 	 
 	
