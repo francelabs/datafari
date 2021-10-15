@@ -265,7 +265,7 @@ awk -v pat="^$1=" -v value="$1=$2" '{ if ($0 ~ pat) print value; else print $0; 
 mv "$file".tmp "$file"
 
 if  [[ "$3" = *datafari.properties* ]]; then
-	chown datafari $3
+	chown ${DATAFARI_USER} $3
     chmod 775 $3
 fi
                 

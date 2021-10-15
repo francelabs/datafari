@@ -384,9 +384,9 @@ init_permissions() {
  	done < list_files_permissions.txt
  	rm -rf list_files_permissions.txt
  	echo "Init permissions 2/6"
-	find /opt/datafari \! -user datafari -print > list_files_owner.txt
+	find /opt/datafari \! -user ${DATAFARI_USER} -print > list_files_owner.txt
 	while IFS= read -r file; do
-  		chown datafari "$file"
+  		chown ${DATAFARI_USER} "$file"
  	done < list_files_owner.txt
  	rm -rf list_files_owner.txt
  	echo "Init permissions 3/6"
@@ -398,11 +398,11 @@ init_permissions() {
 	chmod -R 777 $DATAFARI_HOME/logs
 	echo "Init permissions 6/6"
 	if [ -d /etc/apache2 ]; then
-		chown -R datafari /etc/apache2
+		chown -R ${DATAFARI_USER} /etc/apache2
 		chmod -R 775 /etc/apache2
 	elif [ -d /etc/httpd ]; then
-		echo 'datafari ALL=NOPASSWD:/sbin/apachectl' >> /etc/sudoers
-		chown -R datafari /etc/httpd
+		echo '${DATAFARI_USER} ALL=NOPASSWD:/sbin/apachectl' >> /etc/sudoers
+		chown -R ${DATAFARI_USER} /etc/httpd
 		chmod -R 775 /etc/httpd
 	fi
 	echo "Init permissions end"
@@ -413,18 +413,18 @@ init_permissions_file_datafari_properties() {
 sleep 30
 echo "cht permissions datafari properties"
 	chmod -R 775 $TOMCAT_HOME/conf/datafari.properties
-	chown datafari $TOMCAT_HOME/conf/datafari.properties
+	chown ${DATAFARI_USER} $TOMCAT_HOME/conf/datafari.properties
 }
 
 init_users() {
 	id -u postgres >/dev/null 2>&1 || useradd postgres
-	useradd datafari -m -s /bin/bash
+	useradd ${DATAFARI_USER} -m -s /bin/bash
 	if [ -d /etc/apache2 ]; then
-		usermod -aG sudo datafari
+		usermod -aG sudo ${DATAFARI_USER}
 	elif [ -d /etc/httpd ]; then
-		usermod -aG wheel datafari
+		usermod -aG wheel ${DATAFARI_USER}
 	fi
-	echo 'datafari ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+	echo '${DATAFARI_USER} ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 }
 
 secure_tomcat() { 

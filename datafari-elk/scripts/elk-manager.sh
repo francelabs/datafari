@@ -103,7 +103,7 @@ kibana_first_init()
    
    if [[ "$pct" == 75 ]]; then
      init_kibana_index;
-     echo -ne 'Initializing Kibana [##########] ('100'%)\r'
+     echo 'Initializing Kibana [##########] ('100'%)\r'
      
    fi
       
