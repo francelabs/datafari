@@ -7,8 +7,8 @@
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-source "${DIR}/../set-datafari-env.sh"
-source "${DIR}/../utils.sh"
+source "${DIR}/../bin/set-datafari-env.sh"
+source "${DIR}/../bin/utils.sh"
 source $INIT_STATE_FILE
 source $CONFIG_FILE
 

@@ -390,7 +390,7 @@ init_permissions() {
  	done < list_files_owner.txt
  	rm -rf list_files_owner.txt
  	echo "Init permissions 3/6"
-	chown -R postgres $DATAFARI_HOME/pgsql/
+	chown -R ${POSTGRES_USER} $DATAFARI_HOME/pgsql/
 	echo "Init permissions 4/6"
 	chmod -R 700 $DATAFARI_HOME/pgsql/
 	echo "Init permissions 5/6"

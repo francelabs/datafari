@@ -1,9 +1,7 @@
 package com.francelabs.datafari.ldap;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -18,7 +16,6 @@ import javax.naming.ldap.Control;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
 import javax.naming.ldap.PagedResultsControl;
-import javax.naming.ldap.PagedResultsResponseControl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -127,73 +124,8 @@ public class LdapUtils {
   }
 
   private static String getFilter(final String username) {
-    String filter = baseFilter;
-    filter += "(samaccountname=" + username + "))";
+    final String filter = "sAMAccountName=" + username;
     return filter;
-  }
-
-  /**
-   * Search for users in the provided AD context and AD userBase
-   *
-   * @param ctx         AD context
-   * @param userBase    AD userBase
-   * @param userSubTree should search for users in subTree ?
-   * @return the list of found users
-   * @throws NamingException
-   * @throws IOException
-   */
-  public static List<String> listAllusers(final LdapContext ldapContext, final String searchBase, final boolean userSubtree) throws NamingException, IOException {
-    final List<String> usersList = new ArrayList<>();
-    final String filter = baseFilter + ")";
-    int scope = SearchControls.SUBTREE_SCOPE;
-    if (!userSubtree) {
-      scope = SearchControls.ONELEVEL_SCOPE;
-    }
-
-    // initializing search controls
-    final SearchControls searchCtls = new SearchControls();
-    searchCtls.setSearchScope(scope);
-    searchCtls.setReturningAttributes(returnAttributes);
-
-    byte[] cookie = null;
-
-    do {
-      final NamingEnumeration<SearchResult> users = ldapContext.search(searchBase, filter, searchCtls);
-
-      while (users.hasMore()) {
-        final Attributes attrs = users.next().getAttributes();
-
-        // Check if the user is activated before adding him to the list
-        final Attribute bitsAttribute = attrs.get("userAccountControl");
-        if (bitsAttribute != null) {
-          final long lng = Long.parseLong(bitsAttribute.get(0).toString());
-          final long secondBit = lng & 2; // get bit 2
-          if (secondBit == 0) { // User activated
-            final Attribute accountAttribute = attrs.get("sAMAccountName");
-            if (accountAttribute != null) {
-              usersList.add((String) accountAttribute.get(0));
-            }
-          }
-        }
-      }
-
-      // Examine the paged results control response
-      final Control[] controls = ldapContext.getResponseControls();
-      if (controls != null) {
-        for (int i = 0; i < controls.length; i++) {
-          if (controls[i] instanceof PagedResultsResponseControl) {
-            final PagedResultsResponseControl prrc = (PagedResultsResponseControl) controls[i];
-            cookie = prrc.getCookie();
-          }
-        }
-      }
-
-      // Re-activate paged results
-      ldapContext.setRequestControls(new Control[] { new PagedResultsControl(pageSize, cookie, Control.CRITICAL) });
-
-    } while (cookie != null);
-
-    return usersList;
   }
 
   public static String getUserDepartment(final String username, final String searchBase, final DirContext dirContext) {
