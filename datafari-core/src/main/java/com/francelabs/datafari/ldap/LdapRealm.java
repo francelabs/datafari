@@ -105,6 +105,7 @@ public class LdapRealm {
     json.put("connectionURL", connectionURL);
     json.put("connectionName", connectionName);
     json.put("connectionPassword", connectionPassword);
+    json.put("userFilter", userFilter);
     json.put("userBases", userBases);
     return json;
   }
