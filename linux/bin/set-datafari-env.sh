@@ -26,7 +26,6 @@ export PID_DIR=$DATAFARI_HOME/pid
 export TOMCAT_HOME=$DATAFARI_HOME/tomcat
 export TOMCAT_MCF_HOME=$DATAFARI_HOME/tomcat-mcf
 export MCF_HOME=$DATAFARI_HOME/mcf/mcf_home
-export BATCH_HOME=$DATAFARI_HOME/batch
 export SOLR_INSTALL_DIR=$DATAFARI_HOME/solr
 export SOLR_ENV=$SOLR_INSTALL_DIR/bin/solr.in.sh
 export SOLR_INCLUDE=$SOLR_ENV
