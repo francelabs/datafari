@@ -18,6 +18,7 @@ public class LdapRealm {
   private String connectionURL;;
   private final List<String> userBases;
   private String userFilter;
+  private String userSearchAttribute;
 
   private static final Logger logger = LogManager.getLogger(LdapRealm.class);
 
@@ -29,10 +30,15 @@ public class LdapRealm {
     final String[] ub = (String[]) juserBases.toArray(new String[0]);
     userBases = new ArrayList<>();
     userBases.addAll(Arrays.asList(ub));
-    if (jsonConf.containsKey("userFilter")) {
-      userFilter = jsonConf.get("userFilter").toString();
+    if (jsonConf.containsKey(LdapConfig.ATTR_USER_FILTER)) {
+      userFilter = jsonConf.get(LdapConfig.ATTR_USER_FILTER).toString();
     } else {
       userFilter = LdapUtils.baseFilter;
+    }
+    if (jsonConf.containsKey(LdapConfig.ATTR_USER_SEARCH_ATTRIBUTE)) {
+      userSearchAttribute = jsonConf.get(LdapConfig.ATTR_USER_SEARCH_ATTRIBUTE).toString();
+    } else {
+      userSearchAttribute = LdapUtils.baseSearchAttribute;
     }
   }
 
@@ -48,8 +54,10 @@ public class LdapRealm {
    * @param userSubtree            set to true if the users may have to be found deeply in the provided userBase(s)
    * @param userBases              the list of userBases (separated by char return)
    * @param userFilter             the LDAP filter to use in order to find users in the user bases
+   * @param userSearchAttribute    the LDAP filter to use in order to find a specific user (based on a unique identifier like the samaccount)
    */
-  public LdapRealm(final String connectionName, final String connectionPassword, final boolean isClearPassword, final String connectionURL, final List<String> userBases, final String userFilter) {
+  public LdapRealm(final String connectionName, final String connectionPassword, final boolean isClearPassword, final String connectionURL, final List<String> userBases, final String userFilter,
+      final String userSearchAttribute) {
     this.connectionName = connectionName;
     if (isClearPassword) {
       try {
@@ -65,6 +73,7 @@ public class LdapRealm {
     this.connectionURL = connectionURL;
     this.userBases = userBases;
     this.userFilter = userFilter;
+    this.userSearchAttribute = userSearchAttribute;
   }
 
   /**
@@ -78,9 +87,10 @@ public class LdapRealm {
    * @param authenticationProtocol the authentication protocol to use with the Active Directory
    * @param userSubtree            set to true if the users may have to be found deeply in the provided userBase(s)
    * @param userFilter             the LDAP filter to use in order to find users in the user bases
+   * @param userSearchAttribute    the LDAP attribute to use in order to find a specific user (based on a unique identifier like the samaccount)
    */
   public LdapRealm(final String connectionName, final String connectionPassword, final boolean isClearPassword, final String connectionURL, final String domainSuffix,
-      final String authenticationProtocol, final String userSubtree, final String userFilter) {
+      final String authenticationProtocol, final String userSubtree, final String userFilter, final String userSearchAttribute) {
     this.connectionName = connectionName;
     if (isClearPassword) {
       try {
@@ -98,6 +108,7 @@ public class LdapRealm {
     this.connectionURL = connectionURL;
     this.userBases = new ArrayList<>();
     this.userFilter = userFilter;
+    this.userSearchAttribute = userSearchAttribute;
   }
 
   public JSONObject toJson() {
@@ -106,6 +117,7 @@ public class LdapRealm {
     json.put("connectionName", connectionName);
     json.put("connectionPassword", connectionPassword);
     json.put("userFilter", userFilter);
+    json.put("userSearchAttribute", userSearchAttribute);
     json.put("userBases", userBases);
     return json;
   }
@@ -171,6 +183,14 @@ public class LdapRealm {
 
   public void setUserFilter(final String userFilter) {
     this.userFilter = userFilter;
+  }
+
+  public String getUserSearchAttribute() {
+    return userSearchAttribute;
+  }
+
+  public void setUserSearchAttribute(final String userSearchAttribute) {
+    this.userSearchAttribute = userSearchAttribute;
   }
 
 }

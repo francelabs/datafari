@@ -107,7 +107,7 @@ public class DatafariWebSecurity {
       final List<LdapRealm> adList = LdapConfig.getActiveDirectoryRealms();
       for (final LdapRealm adr : adList) {
         for (final String userBase : adr.getUserBases()) {
-          auth.ldapAuthentication().ldapAuthoritiesPopulator(new DatafariLdapAuthoritiesPopulator()).userSearchBase(userBase).userSearchFilter("sAMAccountName={0}").contextSource()
+          auth.ldapAuthentication().ldapAuthoritiesPopulator(new DatafariLdapAuthoritiesPopulator()).userSearchBase(userBase).userSearchFilter(adr.getUserSearchAttribute() + "={0}").contextSource()
               .managerDn(adr.getConnectionName()).managerPassword(adr.getDeobfuscatedConnectionPassword()).url(adr.getConnectionURL());
         }
       }

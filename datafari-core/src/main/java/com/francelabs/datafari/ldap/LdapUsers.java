@@ -46,7 +46,7 @@ public class LdapUsers {
 
             try {
               logger.debug("Testing user " + username + " on base " + userBase);
-              if (LdapUtils.checkUser(username, userBase, context)) {
+              if (LdapUtils.checkUser(username, realm.getUserSearchAttribute(), userBase, context)) {
                 logger.debug("User " + username + " found in base " + userBase);
                 final String domain = extractDomainName(userBase);
                 logger.debug("Found domain " + domain + " for user " + username);

@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 public class LdapUtils {
 
   public static final String baseFilter = "(&(objectCategory=Person)(objectClass=User))";
+  public static final String baseSearchAttribute = "sAMAccountName";
   private static final String[] returnAttributes = { "sAMAccountName", "givenName", "userAccountControl" };
   private static final String departmentAttribute = "department";
   private static final String[] returnDepartmentAttributes = { "sAMAccountName", "givenName", "userAccountControl", departmentAttribute };
@@ -102,14 +103,15 @@ public class LdapUtils {
   /**
    * Check in the Active directory if the given username exists
    *
-   * @param username   a {@link java.lang.String} object - username value
-   * @param searchBase a {@link java.lang.String} object - search base value for scope tree for eg. DC=myjeeva,DC=com
+   * @param username            a {@link java.lang.String} object - username value
+   * @param userSearchAttribute a {@link java.lang.String} object - userSearchAttribute, the ldap attribute that must match the provided username
+   * @param searchBase          a {@link java.lang.String} object - search base value for scope tree for eg. DC=myjeeva,DC=com
    * @return true if the username exists, false otherwise
    * @throws NamingException
    */
-  public static boolean checkUser(final String username, final String searchBase, final DirContext dirContext) throws NamingException {
+  public static boolean checkUser(final String username, final String userSearchAttribute, final String searchBase, final DirContext dirContext) throws NamingException {
 
-    final String filter = getFilter(username);
+    final String filter = getFilter(username, userSearchAttribute);
 
     // initializing search controls
     final SearchControls searchCtls = new SearchControls();
@@ -123,13 +125,13 @@ public class LdapUtils {
     }
   }
 
-  private static String getFilter(final String username) {
-    final String filter = "sAMAccountName=" + username;
+  private static String getFilter(final String username, final String userSearchAttribute) {
+    final String filter = userSearchAttribute + "=" + username;
     return filter;
   }
 
-  public static String getUserDepartment(final String username, final String searchBase, final DirContext dirContext) {
-    final String filter = getFilter(username);
+  public static String getUserDepartment(final String username, final String userSearchAttribute, final String searchBase, final DirContext dirContext) {
+    final String filter = getFilter(username, userSearchAttribute);
 
     // initializing search controls
     final SearchControls searchCtls = new SearchControls();

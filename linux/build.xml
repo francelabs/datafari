@@ -379,13 +379,6 @@
 		<!-- Copy Datafari War -->
 		<copy file="${datafari.webapp.dir}/Datafari.war" todir="${linux.dist.dir}/tomcat/webapps" />
 
-		<!-- Copy Datafari core lib to Tomcat -->
-		<copy flatten="true" toDir="${linux.dist.dir}/tomcat/lib" overwrite="true" force="true">
-			<fileset dir="${datafari.core.dir}">
-				<include name="*.jar" />
-			</fileset>
-		</copy>
-
 		<copy todir="${linux.dist.dir}/cassandra">
 			<fileset dir="${cassandra.src.dir}" />
 		</copy>
