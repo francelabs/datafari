@@ -16,6 +16,7 @@ public class LdapRealm {
   private String connectionName;
   private String connectionPassword;
   private String connectionURL;;
+  private String domainName;
   private final List<String> userBases;
   private String userFilter;
   private String userSearchAttribute;
@@ -23,10 +24,11 @@ public class LdapRealm {
   private static final Logger logger = LogManager.getLogger(LdapRealm.class);
 
   public LdapRealm(final JSONObject jsonConf) {
-    connectionName = jsonConf.get("connectionName").toString();
-    connectionPassword = jsonConf.get("connectionPassword").toString();
-    connectionURL = jsonConf.get("connectionURL").toString();
-    final JSONArray juserBases = (JSONArray) jsonConf.get("userBases");
+    connectionName = jsonConf.get(LdapConfig.ATTR_CONNECTION_NAME).toString();
+    connectionPassword = jsonConf.get(LdapConfig.ATTR_CONNECTION_PW).toString();
+    connectionURL = jsonConf.get(LdapConfig.ATTR_CONNECTION_URL).toString();
+    domainName = jsonConf.get(LdapConfig.ATTR_DOMAIN_NAME).toString();
+    final JSONArray juserBases = (JSONArray) jsonConf.get(LdapConfig.ATTR_USER_BASE);
     final String[] ub = (String[]) juserBases.toArray(new String[0]);
     userBases = new ArrayList<>();
     userBases.addAll(Arrays.asList(ub));
@@ -55,9 +57,10 @@ public class LdapRealm {
    * @param userBases              the list of userBases (separated by char return)
    * @param userFilter             the LDAP filter to use in order to find users in the user bases
    * @param userSearchAttribute    the LDAP filter to use in order to find a specific user (based on a unique identifier like the samaccount)
+   * @param domainName             the domain name (eg francelabs.com)
    */
   public LdapRealm(final String connectionName, final String connectionPassword, final boolean isClearPassword, final String connectionURL, final List<String> userBases, final String userFilter,
-      final String userSearchAttribute) {
+      final String userSearchAttribute, final String domainName) {
     this.connectionName = connectionName;
     if (isClearPassword) {
       try {
@@ -71,6 +74,7 @@ public class LdapRealm {
       this.connectionPassword = connectionPassword;
     }
     this.connectionURL = connectionURL;
+    this.domainName = domainName;
     this.userBases = userBases;
     this.userFilter = userFilter;
     this.userSearchAttribute = userSearchAttribute;
@@ -88,9 +92,10 @@ public class LdapRealm {
    * @param userSubtree            set to true if the users may have to be found deeply in the provided userBase(s)
    * @param userFilter             the LDAP filter to use in order to find users in the user bases
    * @param userSearchAttribute    the LDAP attribute to use in order to find a specific user (based on a unique identifier like the samaccount)
+   * @param domainName             the domain name (eg francelabs.com)
    */
   public LdapRealm(final String connectionName, final String connectionPassword, final boolean isClearPassword, final String connectionURL, final String domainSuffix,
-      final String authenticationProtocol, final String userSubtree, final String userFilter, final String userSearchAttribute) {
+      final String authenticationProtocol, final String userSubtree, final String userFilter, final String userSearchAttribute, final String domainName) {
     this.connectionName = connectionName;
     if (isClearPassword) {
       try {
@@ -106,6 +111,7 @@ public class LdapRealm {
 
     }
     this.connectionURL = connectionURL;
+    this.domainName = domainName;
     this.userBases = new ArrayList<>();
     this.userFilter = userFilter;
     this.userSearchAttribute = userSearchAttribute;
@@ -113,12 +119,13 @@ public class LdapRealm {
 
   public JSONObject toJson() {
     final JSONObject json = new JSONObject();
-    json.put("connectionURL", connectionURL);
-    json.put("connectionName", connectionName);
-    json.put("connectionPassword", connectionPassword);
-    json.put("userFilter", userFilter);
-    json.put("userSearchAttribute", userSearchAttribute);
-    json.put("userBases", userBases);
+    json.put(LdapConfig.ATTR_CONNECTION_URL, connectionURL);
+    json.put(LdapConfig.ATTR_CONNECTION_NAME, connectionName);
+    json.put(LdapConfig.ATTR_CONNECTION_PW, connectionPassword);
+    json.put(LdapConfig.ATTR_DOMAIN_NAME, domainName);
+    json.put(LdapConfig.ATTR_USER_FILTER, userFilter);
+    json.put(LdapConfig.ATTR_USER_SEARCH_ATTRIBUTE, userSearchAttribute);
+    json.put(LdapConfig.ATTR_USER_BASE, userBases);
     return json;
   }
 
@@ -191,6 +198,14 @@ public class LdapRealm {
 
   public void setUserSearchAttribute(final String userSearchAttribute) {
     this.userSearchAttribute = userSearchAttribute;
+  }
+
+  public String getDomainName() {
+    return domainName;
+  }
+
+  public void setDomainName(final String domainName) {
+    this.domainName = domainName;
   }
 
 }

@@ -48,7 +48,7 @@ public class LdapUsers {
               logger.debug("Testing user " + username + " on base " + userBase);
               if (LdapUtils.checkUser(username, realm.getUserSearchAttribute(), userBase, context)) {
                 logger.debug("User " + username + " found in base " + userBase);
-                final String domain = extractDomainName(userBase);
+                final String domain = realm.getDomainName();
                 logger.debug("Found domain " + domain + " for user " + username);
                 usersDomain.put(username, domain);
                 return domain;
@@ -68,22 +68,6 @@ public class LdapUsers {
       usersDomain.put(username, "");
       return null;
     }
-  }
-
-  private String extractDomainName(final String userBase) {
-    final String[] parts = userBase.toLowerCase().split(",");
-    String domain = "";
-    for (int i = 0; i < parts.length; i++) {
-      if (parts[i].indexOf("dc=") != -1) { // Check if the current
-        // part is a domain
-        // component
-        if (!domain.isEmpty()) {
-          domain += ".";
-        }
-        domain += parts[i].substring(parts[i].indexOf('=') + 1);
-      }
-    }
-    return domain;
   }
 
   public void stopSweep() {

@@ -343,6 +343,7 @@
     "documentation-synonyms": "Synonyms are a way to create a link between words. If a word A is declared as a synonym of word B, then any search for word B will end up looking also for word A. This allows for instance, to link the words internet and web, which have an identical meaning in a given context, but have a totally dissimilar spelling ",
     "documentation-testadauthority": "Here you can display the user rights of the current user (the one you are currently connected with) or a specific user ",
     "documentation-userdepartment": "This page is to be used only if you have no Active Directory is configured in Datafari or your AD does not contain the user department. You will therefore  need to manually attach a department to a user through the admin UI ",
+    "domainNameLabel": "Domain name",
     "domainSuffixLabel": "Domain suffix",
     "download": "Скачать файл",
     "downloadButton": "Скачать",

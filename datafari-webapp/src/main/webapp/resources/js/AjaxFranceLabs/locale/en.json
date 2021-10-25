@@ -357,6 +357,7 @@
     "documentation-testadauthority": "Here you can display the user rights of the current user (the one you are currently connected with) or a specific user ",
     "documentation-uploadfile": "Here you can upload the SSL certificates for your Datafari server, you have to send two files : the certificate file (.crt) and the certificate key file (.key)",
     "documentation-userdepartment": "This page is to be used only if you have no Active Directory is configured in Datafari or your AD does not contain the user department. You will therefore  need to manually attach a department to a user through the admin UI ",
+    "domainNameLabel": "Domain name",
     "domainSuffixLabel": "Domain suffix",
     "download": "Download the file",
     "downloadButton": "Download",

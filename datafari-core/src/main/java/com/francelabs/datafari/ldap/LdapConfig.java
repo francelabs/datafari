@@ -29,7 +29,8 @@ public class LdapConfig {
   public static final String ATTR_CONNECTION_PW = "connectionPassword";
   public static final String ATTR_USER_FILTER = "userFilter";
   public static final String ATTR_USER_SEARCH_ATTRIBUTE = "userSearchAttribute";
-  public static final String ATTR_DOMAIN_NAME = "userBase";
+  public static final String ATTR_USER_BASE = "userBase";
+  public static final String ATTR_DOMAIN_NAME = "domainName";
 
   public static List<LdapRealm> getActiveDirectoryRealms() {
     final List<LdapRealm> adrList = new ArrayList<>();
