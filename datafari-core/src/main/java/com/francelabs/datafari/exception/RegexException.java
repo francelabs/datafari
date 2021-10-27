@@ -1,4 +1,4 @@
-package com.francelabs.datafari.annotator.exception;
+package com.francelabs.datafari.exception;
 
 public class RegexException extends Exception {
 

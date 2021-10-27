@@ -64,7 +64,7 @@ import org.apache.manifoldcf.crawler.interfaces.ISeedingActivity;
 import org.apache.manifoldcf.crawler.system.Logging;
 import org.apache.manifoldcf.crawler.system.ManifoldCF;
 
-import com.francelabs.datafari.annotator.exception.RegexException;
+import com.francelabs.datafari.exception.RegexException;
 
 import jcifs.ACE;
 import jcifs.CIFSContext;

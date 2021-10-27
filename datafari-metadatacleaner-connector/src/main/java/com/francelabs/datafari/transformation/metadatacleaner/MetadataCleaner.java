@@ -49,7 +49,7 @@ import org.apache.manifoldcf.core.interfaces.Specification;
 import org.apache.manifoldcf.core.interfaces.SpecificationNode;
 import org.apache.manifoldcf.core.interfaces.VersionContext;
 
-import com.francelabs.datafari.annotator.exception.RegexException;
+import com.francelabs.datafari.exception.RegexException;
 
 /**
  * This connector works as a transformation connector, but does nothing other than logging.
