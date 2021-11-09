@@ -1,3 +1,4 @@
+<%@page import="org.springframework.security.web.savedrequest.DefaultSavedRequest"%>
 <%@page import="java.net.URLEncoder"%>
 <%@page import="java.util.regex.Pattern"%>
 <%@page import="java.util.regex.Matcher"%>
@@ -50,6 +51,13 @@
    <%
    String langParam = null;
    
+   // Try to retrieve the original request that has been redirected to the login page
+   String originalRequest = null;
+   Object savedRequestObj = session.getAttribute("SPRING_SECURITY_SAVED_REQUEST");
+   if(savedRequestObj != null && savedRequestObj instanceof DefaultSavedRequest) {
+     originalRequest = ((DefaultSavedRequest) savedRequestObj).getRequestURL();
+   }
+   
    // If the language parameter is defined take it, othwerwise use the referrer in the message header
    String lang = request.getParameter("lang");
    
@@ -74,6 +82,10 @@
    }
    String loginPage = "./login";
    String redirect = request.getParameter("redirect");
+   // If there is no explicit redirect but there is an original request, then set the original request as redirect
+   if(redirect == null && originalRequest != null) {
+     redirect = originalRequest;
+   }
    if(redirect != null) {
      redirect = URLEncoder.encode(redirect, "UTF-8").replace("+", "%20");
      loginPage += "?redirect=" + redirect;
