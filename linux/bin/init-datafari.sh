@@ -424,7 +424,7 @@ init_users() {
 	elif [ -d /etc/httpd ]; then
 		usermod -aG wheel ${DATAFARI_USER}
 	fi
-	echo '${DATAFARI_USER} ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+	echo "$DATAFARI_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 }
 
 secure_tomcat() { 
