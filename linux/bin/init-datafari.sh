@@ -44,7 +44,7 @@ question_postgresql_password() {
 
 question_elk_start() {
 	read -p "Do you want to start ELK (true/false) [true] ? " elk_start
-	elk_start=${elk_start:-false}
+	elk_start=${elk_start:-true}
 	set_property "ELKactivation"  $elk_start $CONFIG_FILE
 }
 
