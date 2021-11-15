@@ -54,12 +54,12 @@ public class ApplyUserLang extends HttpServlet {
   }
 
   /**
-   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-   *      response)
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
    */
   @Override
-  protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
-      throws ServletException, IOException {
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    request.setCharacterEncoding("utf8");
+    response.setContentType("application/json");
     final String authenticatedUserName = AuthenticatedUserName.getName(request);
     final JSONObject jsonResponse = new JSONObject();
     final Principal userPrincipal = request.getUserPrincipal();
@@ -76,8 +76,7 @@ public class ApplyUserLang extends HttpServlet {
       final String username = request.getUserPrincipal().getName();
       try {
         lang = Lang.getLang(username);
-        AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
-              "Accessed saved language for user " + username);
+        AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(), "Accessed saved language for user " + username);
         if (lang == null) {
           if ((reqLang != null) && !reqLang.isEmpty() && (reqLang.length() <= 5)) {
             lang = reqLang;
@@ -85,8 +84,7 @@ public class ApplyUserLang extends HttpServlet {
             lang = "fr";
           }
           Lang.setLang(username, lang);
-          AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(),
-              "Initialized saved language for user " + username);
+          AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(), "Initialized saved language for user " + username);
         }
         jsonResponse.put("code", CodesReturned.ALLOK);
         if ((request.getParameter("urlRedirect") != null) && !request.getParameter("urlRedirect").isEmpty()) {
@@ -124,12 +122,10 @@ public class ApplyUserLang extends HttpServlet {
   }
 
   /**
-   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-   *      response)
+   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
    */
   @Override
-  protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
-      throws ServletException, IOException {
+  protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     final String authenticatedUserName = AuthenticatedUserName.getName(request);
     final JSONObject jsonResponse = new JSONObject();
     final Principal userPrincipal = request.getUserPrincipal();
@@ -140,8 +136,7 @@ public class ApplyUserLang extends HttpServlet {
         try {
           Lang.updateLang(username, reqLang);
           jsonResponse.put("code", CodesReturned.ALLOK);
-          AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
-              "Changed saved language for user " + username);
+          AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(), "Changed saved language for user " + username);
         } catch (final Exception e) {
           logger.error(e);
           jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE);
