@@ -20,7 +20,7 @@ import org.springframework.context.annotation.ComponentScan;
 import com.francelabs.datafari.initializers.IInitializer;
 
 @SpringBootApplication
-@ComponentScan({"com.francelabs.datafari.security", "com.francelabs.datafari.rest.v1_0"})
+@ComponentScan({ "com.francelabs.datafari.security", "com.francelabs.datafari.rest.v1_0" })
 public class DatafariWebSecurityApplication extends SpringBootServletInitializer {
 
   private static final Logger LOGGER = LogManager.getLogger(DatafariWebSecurityApplication.class.getName());
@@ -39,6 +39,8 @@ public class DatafariWebSecurityApplication extends SpringBootServletInitializer
   @Override
   public void onStartup(final ServletContext servletContext) throws ServletException {
     super.onStartup(servletContext);
+    // Force the session cookie to be created both with https and http protocol, because some spring libraries override the default config to only enable the session cookie with https protocol
+    servletContext.getSessionCookieConfig().setSecure(false);
     final Reflections reflections = new Reflections("com.francelabs.datafari.initializers");
     final Set<Class<? extends IInitializer>> initializers = reflections.getSubTypesOf(IInitializer.class);
     initializers.forEach(c -> {
