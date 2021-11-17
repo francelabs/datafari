@@ -857,17 +857,16 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
         }
       } catch (final jcifs.smb.SmbAuthException e) {
         Logging.connectors.warn("JCIFS: Authorization exception reading version information for " + documentIdentifier + " - skipping");
-        if (e.getMessage().equals("Logon failure: unknown user name or bad password.")) {
-          throw new ManifoldCFException("SmbAuthException thrown: " + e.getMessage(), e);
-        } else {
-          errorCode = "AUTHEXCEPTION";
-          errorDesc = "Authorization exception: " + e.getMessage();
-          activities.deleteDocument(documentIdentifier);
-          continue;
-        }
+        errorCode = "AUTHEXCEPTION";
+        errorDesc = "Authorization exception: " + e.getMessage();
+        activities.deleteDocument(documentIdentifier);
+        continue;
       } catch (final MalformedURLException mue) {
-        Logging.connectors.error("JCIFS: MalformedURLException thrown: " + mue.getMessage(), mue);
-        throw new ManifoldCFException("MalformedURLException thrown: " + mue.getMessage(), mue);
+        Logging.connectors.error("JCIFS: MalformedURLException thrown: " + mue.getMessage() + " - skipping", mue);
+        errorCode = "MALFORMEDURLEXCEPTION";
+        errorDesc = "MalformedURLException thrown: " + mue.getMessage();
+        activities.deleteDocument(documentIdentifier);
+        continue;
       } catch (final SmbException se) {
         errorCode = "SMBEXCEPTION";
         errorDesc = "SMB protocol exception: " + se.getMessage();
@@ -1109,17 +1108,14 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
             Logging.connectors.error("MalformedURLException tossed: " + mue.getMessage(), mue);
             errorCode = mue.getClass().getSimpleName().toUpperCase(Locale.ROOT);
             errorDesc = "Malformed URL: " + mue.getMessage();
-            throw new ManifoldCFException("MalformedURLException tossed: " + mue.getMessage(), mue);
+            activities.noDocument(documentIdentifier, versionString);
+            continue;
           } catch (final jcifs.smb.SmbAuthException e) {
             Logging.connectors.warn("JCIFS: Authorization exception reading document/directory " + documentIdentifier + " - skipping");
             errorCode = e.getClass().getSimpleName().toUpperCase(Locale.ROOT);
             errorDesc = "Authorization: " + e.getMessage();
-            if (e.getMessage().equals("Logon failure: unknown user name or bad password.")) {
-              throw new ManifoldCFException("SmbAuthException thrown: " + e.getMessage(), e);
-            } else {
-              activities.noDocument(documentIdentifier, versionString);
-              continue;
-            }
+            activities.noDocument(documentIdentifier, versionString);
+            continue;
           } catch (final SmbException se) {
             // At least some of these are transport errors, and should be
             // treated as service
@@ -1127,12 +1123,6 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
             final long currentTime = System.currentTimeMillis();
             final Throwable cause = se.getCause();
             if (cause != null && cause instanceof jcifs.util.transport.TransportException) {
-              // See if it's an interruption
-              final jcifs.util.transport.TransportException te = (jcifs.util.transport.TransportException) cause;
-              if (te.getCause() != null && te.getCause() instanceof java.lang.InterruptedException) {
-                throw new ManifoldCFException(te.getCause().getMessage(), te.getCause(), ManifoldCFException.INTERRUPTED);
-              }
-
               Logging.connectors.warn("JCIFS: Timeout processing document/directory " + documentIdentifier + ": retrying...", se);
               errorCode = cause.getClass().getSimpleName().toUpperCase(Locale.ROOT);
               errorDesc = "Transport: " + cause.getMessage();
@@ -1181,10 +1171,10 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
               errorDesc = "Authorization: " + se.getMessage();
               activities.noDocument(documentIdentifier, versionString);
             } else {
-              Logging.connectors.error("JCIFS: SmbException tossed processing " + documentIdentifier, se);
+              Logging.connectors.error("JCIFS: SmbException tossed processing " + documentIdentifier + " - skipping", se);
               errorCode = se.getClass().getSimpleName().toUpperCase(Locale.ROOT);
               errorDesc = "Unknown: " + se.getMessage();
-              throw new ManifoldCFException("SmbException tossed: " + se.getMessage(), se);
+              activities.noDocument(documentIdentifier, versionString);
             }
           } catch (final IOException e) {
             errorCode = e.getClass().getSimpleName().toUpperCase(Locale.ROOT);
@@ -1212,7 +1202,9 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
       Logging.connectors.warn("JCIFS: Socket timeout processing " + documentIdentifier + ": " + e.getMessage(), e);
       throw new ServiceInterruption("Timeout or other service interruption: " + e.getMessage(), e, currentTime + 300000L, currentTime + 3 * 60 * 60000L, -1, false);
     } else if (e instanceof InterruptedIOException) {
-      throw new ManifoldCFException("Interrupted: " + e.getMessage(), e, ManifoldCFException.INTERRUPTED);
+      final long currentTime = System.currentTimeMillis();
+      Logging.connectors.warn("JCIFS: Interrupted processing " + documentIdentifier + ": " + e.getMessage(), e);
+      throw new ServiceInterruption("Interrupted service: " + e.getMessage(), e, currentTime + 300000L, currentTime + 3 * 60 * 60000L, -1, false);
     } else {
       final long currentTime = System.currentTimeMillis();
       Logging.connectors.warn("JCIFS: IO error processing " + documentIdentifier + ": " + e.getMessage(), e);
@@ -1305,11 +1297,6 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
     final long currentTime = System.currentTimeMillis();
     final Throwable cause = se.getCause();
     if (cause != null && cause instanceof jcifs.util.transport.TransportException) {
-      // See if it's an interruption
-      final jcifs.util.transport.TransportException te = (jcifs.util.transport.TransportException) cause;
-      if (te.getCause() != null && te.getCause() instanceof java.lang.InterruptedException) {
-        throw new ManifoldCFException(te.getCause().getMessage(), te.getCause(), ManifoldCFException.INTERRUPTED);
-      }
       Logging.connectors.warn("JCIFS: Timeout " + activity + " for " + documentIdentifier + ": retrying...", se);
       // Transport exceptions no longer abort when they give up, so we can't get
       // notified that there is a problem.
