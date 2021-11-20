@@ -268,6 +268,7 @@ init_password() {
 	elkAdminUser=elkadmin
 	solrAdminUser=solradmin
 	monitAdminUser=monitadmin
+	glancesAdminUser=glancesadmin
 	password=${1}
 	realm=datafari
 	cd $MCF_HOME/obfuscation-utility
@@ -280,10 +281,12 @@ init_password() {
 	digestElkUser="$( printf "%s:%s:%s" "$elkAdminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
 	digestSolrUser="$( printf "%s:%s:%s" "$solrAdminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
 	digestMonitUser="$( printf "%s:%s:%s" "$monitAdminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
+	digestGlancesUser="$( printf "%s:%s:%s" "$glancesAdminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
 	printf "%s:%s:%s\n" "$apacheAdminUser" "$realm" "$digestAdminUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
 	printf "%s:%s:%s\n" "$elkAdminUser" "$realm" "$digestElkUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
 	printf "%s:%s:%s\n" "$solrAdminUser" "$realm" "$digestSolrUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
 	printf "%s:%s:%s\n" "$monitAdminUser" "$realm" "$digestMonitUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
+	printf "%s:%s:%s\n" "$glancesAdminUser" "$realm" "$digestGlancesUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
 }
 
 init_password_postgresql() {
@@ -302,6 +305,7 @@ init_apache_ssl() {
 		getMCFSimplified="\"/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp\""
 		getSolrAdmin="\"/solr/\""
 		getMonitAdmin="\"/monit/\""
+		getGlancesAdmin="\"/glances/\""
 		sed -i -e "s/@APACHE@/true/g" $TOMCAT_HOME/conf/datafari.properties >>$installerLog 2>&1
 		cp -r $DATAFARI_HOME/apache/html/* /var/www/html/
 
@@ -355,6 +359,7 @@ init_apache_ssl() {
 	
 	sed -i -e "s~\"@GET-SOLR-IP@\"~${getSolrAdmin}~g" $TOMCAT_HOME/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
 	sed -i -e "s~\"@GET-MONIT-IP@\"~${getMonitAdmin}~g" $TOMCAT_HOME/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
+	sed -i -e "s~\"@GET-GLANCES-IP@\"~${getGlancesAdmin}~g" $TOMCAT_HOME/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
 	sed -i -e "s/@APACHE-PRESENT@/${apachePresent}/g" $TOMCAT_HOME/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
 	
 }
@@ -689,6 +694,18 @@ secure_elk() {
 	
 }
 
+secure_monit() {
+	iptables -A INPUT -p tcp -s 127.0.0.1 --dport 2812 -j ACCEPT
+	iptables -A INPUT -p tcp -s ${1} --dport 2812 -j ACCEPT
+	iptables -A INPUT -p tcp --dport 2812 -j DROP
+}
+
+secure_glances() {
+	iptables -A INPUT -p tcp -s 127.0.0.1 --dport 61208 -j ACCEPT
+	iptables -A INPUT -p tcp -s ${1} --dport 61208 -j ACCEPT
+	iptables -A INPUT -p tcp --dport 61208 -j DROP
+}
+
 stop_firewalld_start_iptables() {
 	systemctl stop firewalld
 	systemctl disable firewalld
@@ -744,6 +761,8 @@ initialization_monoserver() {
     fi
     secure_tomcat $NODEHOST
   secure_tomcat_mcf $NODEHOST
+  secure_monit $NODEHOST
+  secure_glances $NODEHOST
   #secure_elk $NODEHOST
   save_iptables_rules
   

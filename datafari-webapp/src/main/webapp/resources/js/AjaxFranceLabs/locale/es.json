@@ -111,6 +111,7 @@
     "adminUI-FieldWeight-Explanations": "The main fields are title_fr, title_en, content_en, content_fr, id, extension",
     "adminUI-FieldWeightConfirm": "Click to save and activate your changes",
     "adminUI-ForgetUser": "Forget user",
+    "adminUI-GlancesAdmin": "Monitoring information",
     "adminUI-GlobalDatafariErrorsStats": "Global Datafari - Errors Statistics",
     "adminUI-IndexField": "Index Fields",
     "adminUI-Licence": "Licence",

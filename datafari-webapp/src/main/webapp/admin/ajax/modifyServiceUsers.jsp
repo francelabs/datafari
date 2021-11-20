@@ -34,7 +34,7 @@
 			</div>
 			<form class="form-horizontal" role="form">
 				<div class="col">					
-					<p>Here you can change the password of a user from Apache.<br/>monitadmin user is only for Enterprise Edition</p><br/>
+					<p>Here you can change the password of a user from Apache.<br/>monitadmin and glancesadmin users are only for Enterprise Edition</p><br/>
 					
 					<table id="tableResult" class="table table-bordered table-striped">
 						<thead>
