@@ -10,7 +10,7 @@
 <body>
   <jsp:include
     page="/resources/templates/feature-not-available.jsp" >
-    <jsp:param name="featureDesc" value="The check processes UI" />
+    <jsp:param name="featureDesc" value="The monitoring information UI" />
     <jsp:param name="featureImg" value="/resources/images/missing-features/monitoring_information.png" />
   </jsp:include>
 </body>

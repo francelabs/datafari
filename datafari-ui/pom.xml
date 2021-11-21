@@ -25,8 +25,8 @@
               <goal>wget</goal>
             </goals>
             <configuration>
-              <url>http://repomcf.datafari.com/datafariuilatest/datafariui.tar.gz</url>
-              <md5>eb885eda9258c3d949338a902db2990b</md5>
+              <url>http://repomcf.datafari.com/datafariui/datafariui-${datafariui.version}.tar.gz</url>
+              <md5>2e5df873fcc6208502c5b5d0fa56038d</md5>
               <unpack>true</unpack>
             </configuration>
           </execution>
