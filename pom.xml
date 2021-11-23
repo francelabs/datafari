@@ -12,7 +12,7 @@
     <cassandra.version>4.0-beta1</cassandra.version>
     <cassandra.driver.version>4.8.0</cassandra.driver.version>
     <datafari.version>5.1-dev-Community</datafari.version>
-    <datafariui.version>1.0.0-beta-0.3.0</datafariui.version>
+    <datafariui.version>1.0.0-beta-0.5.0</datafariui.version>
     <guava.version>26.0-jre</guava.version>
     <httpclient.version>4.5.9</httpclient.version>
     <java.version>1.11</java.version>
