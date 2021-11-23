@@ -26,7 +26,7 @@
             </goals>
             <configuration>
               <url>http://repomcf.datafari.com/datafariui/datafariui-${datafariui.version}.tar.gz</url>
-              <md5>2e5df873fcc6208502c5b5d0fa56038d</md5>
+              <md5>8a0af34eada906c802cc5dbe4affc7d1</md5>
               <unpack>true</unpack>
             </configuration>
           </execution>
