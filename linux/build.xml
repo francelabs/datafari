@@ -102,7 +102,7 @@
 			</replacefilter>
 			<replacefilter>
 				<replacetoken>@ACCESS_LOG@</replacetoken>
-				<replacevalue>localhost_access_log</replacevalue>
+				<replacevalue>localhost_access_log_datafari</replacevalue>
 			</replacefilter>
 			<replacefilter token="@DATAFARI_HOME@" value="${datafari.home}" />
 		</replace>

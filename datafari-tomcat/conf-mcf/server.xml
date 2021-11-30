@@ -164,8 +164,8 @@
              Documentation at: /docs/config/valve.html
 					Note: The pattern used is equivalent to using pattern="common" -->
         <Valve className="org.apache.catalina.valves.AccessLogValve" directory="../logs"
-               prefix="localhost_access_log_mcf" suffix=".txt"
-               pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+               prefix="localhost_access_log_mcf" suffix=".txt" renameOnRotate="true"
+               pattern="%h %l %u %{yyyy-MM-dd HH:mm:ss}t &quot;%r&quot; %s %b" />
 
 			</Host>
 		</Engine>
