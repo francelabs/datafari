@@ -16,14 +16,14 @@ admin:
   
 searchexpert:
   hash: "$2a$12$VcCDgh2NDk07JGN0rjGbM.Ad41qVR/YFJcgHp0UGns5JDymv..TOG"
-  reserved: true
+  reserved: false
   backend_roles:
   - "kibanauser"
   - "serchexpert"
   
 searchadmin:
   hash: "$2a$12$VcCDgh2NDk07JGN0rjGbM.Ad41qVR/YFJcgHp0UGns5JDymv..TOG"
-  reserved: true
+  reserved: false
   backend_roles:
   - "kibanauser"
   - "serchadmin"
