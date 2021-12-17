@@ -49,6 +49,39 @@ public class ActivateELK {
   }
 
   /**
+   * Start Kibana
+   *
+   * @return
+   */
+  public void activateKibana() {
+    final String[] cmd = new String[] { "/bin/bash", ELKManagerScriptPath, "start_kibana" };
+    final Thread t = new Thread(new RunnableBashScript(cmd));
+    t.start();
+  }
+
+  /**
+   * Start Kibana
+   *
+   * @return
+   */
+  public void activateElastic() {
+    final String[] cmd = new String[] { "/bin/bash", ELKManagerScriptPath, "start_es" };
+    final Thread t = new Thread(new RunnableBashScript(cmd));
+    t.start();
+  }
+
+  /**
+   * Start Logstash
+   *
+   * @return
+   */
+  public void activateLogstash() {
+    final String[] cmd = new String[] { "/bin/bash", ELKManagerScriptPath, "start_logstash" };
+    final Thread t = new Thread(new RunnableBashScript(cmd));
+    t.start();
+  }
+
+  /**
    * Stop ELK
    *
    * @return
@@ -61,6 +94,54 @@ public class ActivateELK {
       t.join();
     } catch (final InterruptedException e) {
       logger.error("Error happened when stopping ELK", e);
+    }
+  }
+
+  /**
+   * Stop Kibana
+   *
+   * @return
+   */
+  public void deactivateKibana() {
+    final String[] cmd = new String[] { "/bin/bash", ELKManagerScriptPath, "stop_kibana" };
+    final Thread t = new Thread(new RunnableBashScript(cmd));
+    t.start();
+    try {
+      t.join();
+    } catch (final InterruptedException e) {
+      logger.error("Error happened when stopping Kibana", e);
+    }
+  }
+
+  /**
+   * Stop Elastic
+   *
+   * @return
+   */
+  public void deactivateElastic() {
+    final String[] cmd = new String[] { "/bin/bash", ELKManagerScriptPath, "stop_es" };
+    final Thread t = new Thread(new RunnableBashScript(cmd));
+    t.start();
+    try {
+      t.join();
+    } catch (final InterruptedException e) {
+      logger.error("Error happened when stopping Elastic", e);
+    }
+  }
+
+  /**
+   * Stop Logstash
+   *
+   * @return
+   */
+  public void deactivateLogstash() {
+    final String[] cmd = new String[] { "/bin/bash", ELKManagerScriptPath, "stop_logstash" };
+    final Thread t = new Thread(new RunnableBashScript(cmd));
+    t.start();
+    try {
+      t.join();
+    } catch (final InterruptedException e) {
+      logger.error("Error happened when stopping Logstash", e);
     }
   }
 
@@ -78,12 +159,49 @@ public class ActivateELK {
   }
 
   /**
-   * Stop ELK remotely
+   * Start Elastic remotely
    *
    * @param elkServer
-   *          the ELK server address
    * @param elkScriptsDir
-   *          the ELK 'scripts' directory absolute path on the server which contains the scripts to start and stop ELK
+   * @return
+   */
+  public void activateElasticRemote(final String elkServer, final String elkScriptsDir) {
+    final String[] cmd = new String[] { "ssh", "datafari@" + elkServer, "/bin/bash", formatDir(elkScriptsDir) + "elk-manager.sh", "start_es" };
+    final Thread t = new Thread(new RunnableBashScript(cmd));
+    t.start();
+  }
+
+  /**
+   * Start Kibana remotely
+   *
+   * @param elkServer
+   * @param elkScriptsDir
+   * @return
+   */
+  public void activateKibanaRemote(final String elkServer, final String elkScriptsDir) {
+    final String[] cmd = new String[] { "ssh", "datafari@" + elkServer, "/bin/bash", formatDir(elkScriptsDir) + "elk-manager.sh", "start_kibana" };
+    final Thread t = new Thread(new RunnableBashScript(cmd));
+    t.start();
+  }
+
+  /**
+   * Start Logstash remotely
+   *
+   * @param elkServer
+   * @param elkScriptsDir
+   * @return
+   */
+  public void activateLogstashRemote(final String elkServer, final String elkScriptsDir) {
+    final String[] cmd = new String[] { "ssh", "datafari@" + elkServer, "/bin/bash", formatDir(elkScriptsDir) + "elk-manager.sh", "start_logstash" };
+    final Thread t = new Thread(new RunnableBashScript(cmd));
+    t.start();
+  }
+
+  /**
+   * Stop ELK remotely
+   *
+   * @param elkServer     the ELK server address
+   * @param elkScriptsDir the ELK 'scripts' directory absolute path on the server which contains the scripts to start and stop ELK
    * @return
    */
   public void deactivateRemote(final String elkServer, final String elkScriptsDir) {
@@ -93,10 +211,48 @@ public class ActivateELK {
   }
 
   /**
+   * Stop Elastic remotely
+   *
+   * @param elkServer     the ELK server address
+   * @param elkScriptsDir the ELK 'scripts' directory absolute path on the server which contains the scripts to start and stop ELK
+   * @return
+   */
+  public void deactivateElasticRemote(final String elkServer, final String elkScriptsDir) {
+    final String[] cmd = new String[] { "ssh", "datafari@" + elkServer, "/bin/bash", formatDir(elkScriptsDir) + "elk-manager.sh", "stop_es" };
+    final Thread t = new Thread(new RunnableBashScript(cmd));
+    t.start();
+  }
+
+  /**
+   * Stop Kibana remotely
+   *
+   * @param elkServer     the ELK server address
+   * @param elkScriptsDir the ELK 'scripts' directory absolute path on the server which contains the scripts to start and stop ELK
+   * @return
+   */
+  public void deactivateKibanaRemote(final String elkServer, final String elkScriptsDir) {
+    final String[] cmd = new String[] { "ssh", "datafari@" + elkServer, "/bin/bash", formatDir(elkScriptsDir) + "elk-manager.sh", "stop_kibana" };
+    final Thread t = new Thread(new RunnableBashScript(cmd));
+    t.start();
+  }
+
+  /**
+   * Stop Logstash remotely
+   *
+   * @param elkServer     the ELK server address
+   * @param elkScriptsDir the ELK 'scripts' directory absolute path on the server which contains the scripts to start and stop ELK
+   * @return
+   */
+  public void deactivateLogstashRemote(final String elkServer, final String elkScriptsDir) {
+    final String[] cmd = new String[] { "ssh", "datafari@" + elkServer, "/bin/bash", formatDir(elkScriptsDir) + "elk-manager.sh", "stop_logstash" };
+    final Thread t = new Thread(new RunnableBashScript(cmd));
+    t.start();
+  }
+
+  /**
    * Format the dir path in order that it ends with a '/'
    *
-   * @param dir
-   *          the dir path
+   * @param dir the dir path
    * @return the dir path which ends by a '/'
    */
   private String formatDir(final String dir) {

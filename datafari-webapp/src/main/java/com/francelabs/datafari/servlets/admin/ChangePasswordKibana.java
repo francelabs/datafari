@@ -23,8 +23,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 
+import com.francelabs.datafari.elk.ActivateELK;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
+import com.francelabs.datafari.utils.ELKConfiguration;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 
@@ -36,6 +38,7 @@ public class ChangePasswordKibana extends HttpServlet {
   private static final long serialVersionUID = 1L;
   private static final Logger logger = LogManager.getLogger(ChangePasswordKibana.class.getName());
   private static String elasticsearchPath;
+  private static String kibanaPath;
   private static String toolsPath;
   private static File internalUsersFile;
 
@@ -50,6 +53,7 @@ public class ChangePasswordKibana extends HttpServlet {
       environnement = ExecutionEnvironment.getDevExecutionEnvironment();
     }
     elasticsearchPath = environnement + "/elk/elasticsearch/";
+    kibanaPath = environnement + "/elk/kibana/";
     toolsPath = elasticsearchPath + "plugins/opendistro_security/tools/";
     internalUsersFile = new File(elasticsearchPath + "plugins/opendistro_security/securityconfig/internal_users.yml");
   }
@@ -63,6 +67,7 @@ public class ChangePasswordKibana extends HttpServlet {
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
     final List<String> usersList = new ArrayList<String>();
+    usersList.add("admin");
     usersList.add("searchexpert");
     usersList.add("searchadmin");
     if (usersList != null) {
@@ -91,6 +96,7 @@ public class ChangePasswordKibana extends HttpServlet {
       final String password = request.getParameter("password");
       try {
 
+        // Prepare the process that will hash the password
         final ProcessBuilder hashProcessBuilder = new ProcessBuilder();
         hashProcessBuilder.command(toolsPath + "hash.sh", "-p", password);
         hashProcessBuilder.redirectErrorStream(true);
@@ -105,6 +111,8 @@ public class ChangePasswordKibana extends HttpServlet {
         for (final String toRemove : varToRemove) {
           hashEnvironment.remove(toRemove);
         }
+
+        // Prepare the process that will apply new password
         final ProcessBuilder securityAdminProcessBuilder = new ProcessBuilder();
         securityAdminProcessBuilder.command(elasticsearchPath + "securityadmin_datafari.sh");
         securityAdminProcessBuilder.redirectErrorStream(true);
@@ -112,41 +120,70 @@ public class ChangePasswordKibana extends HttpServlet {
         for (final String toRemove : varToRemove) {
           securityAdminEnvironment.remove(toRemove);
         }
+
+        // Start the hash password process and retrieve the hashed password
         final Process hashProcess = hashProcessBuilder.start();
         final StringWriter hashProccessStringWriter = new StringWriter();
-
         IOUtils.copy(hashProcess.getInputStream(), hashProccessStringWriter, StandardCharsets.UTF_8);
-
         final int hashExitCode = hashProcess.waitFor();
         final String hashedPasswordOutput = hashProccessStringWriter.toString().trim();
         hashProccessStringWriter.close();
+        // If the hash process ended with no errors, then set the hashed password to the config file
         if (hashExitCode == 0) {
 
-          // Replace
-          final StringBuffer newConf = new StringBuffer();
-          final BufferedReader br = new BufferedReader(new FileReader(internalUsersFile));
+          // Replace in the internal users file
+          final StringBuffer newConfElastic = new StringBuffer();
+          BufferedReader br = new BufferedReader(new FileReader(internalUsersFile));
 
           String line = br.readLine();
           boolean modifyNextline = false;
           while (line != null) {
             if (modifyNextline) {
-              newConf.append("  hash: \"" + hashedPasswordOutput + "\"");
-              newConf.append("\n");
+              newConfElastic.append("  hash: \"" + hashedPasswordOutput + "\"");
+              newConfElastic.append("\n");
               modifyNextline = false;
             } else {
               if (line.startsWith(username)) {
                 modifyNextline = true;
               }
-              newConf.append(line);
-              newConf.append("\n");
+              newConfElastic.append(line);
+              newConfElastic.append("\n");
             }
 
             line = br.readLine();
           }
           br.close();
-          final FileOutputStream fos = new FileOutputStream(internalUsersFile);
-          fos.write(newConf.toString().getBytes());
+          FileOutputStream fos = new FileOutputStream(internalUsersFile);
+          fos.write(newConfElastic.toString().getBytes());
           fos.close();
+
+          // If we change the password of the admin user, then we need to also replace the password in the Kibana config file
+          if (username.contentEquals("admin")) {
+            final String kibanaConfig = kibanaPath + "config/kibana.yml";
+            final StringBuffer newConfKibana = new StringBuffer();
+            br = new BufferedReader(new FileReader(kibanaConfig));
+
+            line = br.readLine();
+            while (line != null) {
+              if (line.startsWith("elasticsearch.password:")) {
+                newConfKibana.append("elasticsearch.password: " + password);
+              } else {
+                newConfKibana.append(line);
+              }
+              newConfKibana.append("\n");
+
+              line = br.readLine();
+            }
+            br.close();
+            fos = new FileOutputStream(kibanaConfig);
+            fos.write(newConfKibana.toString().getBytes());
+            fos.close();
+
+            // Kibana must be stopped before applying the new admin password
+            stopKibana();
+            // Wait 5 seconds that Kibana stops
+            Thread.sleep(5000);
+          }
 
           // Apply new pasword
           final Process securityAdminProcess = securityAdminProcessBuilder.start();
@@ -155,6 +192,11 @@ public class ChangePasswordKibana extends HttpServlet {
           final int securityAdminExitCode = securityAdminProcess.waitFor();
           final String securityAdminOut = securityAdminStringWriter.toString().trim();
           securityAdminStringWriter.close();
+
+          // If user admin then Kibana must be restarted
+          if (username.contentEquals("admin")) {
+            startKibana();
+          }
           if (securityAdminExitCode != 0) {
             jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
             jsonResponse.put(OutputConstants.STATUS, securityAdminOut);
@@ -181,5 +223,27 @@ public class ChangePasswordKibana extends HttpServlet {
     }
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);
+  }
+
+  private void stopKibana() {
+    final String externalELK = ELKConfiguration.getInstance().getProperty(ELKConfiguration.EXTERNAL_ELK_ON_OFF);
+    if (externalELK.contentEquals("true")) {
+      final String elkServer = ELKConfiguration.getInstance().getProperty(ELKConfiguration.ELK_SERVER);
+      final String elkScriptDir = ELKConfiguration.getInstance().getProperty(ELKConfiguration.ELK_SCRIPTS_DIR);
+      ActivateELK.getInstance().deactivateKibanaRemote(elkServer, elkScriptDir);
+    } else {
+      ActivateELK.getInstance().deactivateKibana();
+    }
+  }
+
+  private void startKibana() {
+    final String externalELK = ELKConfiguration.getInstance().getProperty(ELKConfiguration.EXTERNAL_ELK_ON_OFF);
+    if (externalELK.contentEquals("true")) {
+      final String elkServer = ELKConfiguration.getInstance().getProperty(ELKConfiguration.ELK_SERVER);
+      final String elkScriptDir = ELKConfiguration.getInstance().getProperty(ELKConfiguration.ELK_SCRIPTS_DIR);
+      ActivateELK.getInstance().activateKibanaRemote(elkServer, elkScriptDir);
+    } else {
+      ActivateELK.getInstance().activateKibana();
+    }
   }
 }
