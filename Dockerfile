@@ -73,6 +73,7 @@ RUN     apt-get update && apt-get install --allow-unauthenticated -y \
                 iptables \
                 iptables-persistent \
                 systemd \
+                zip \
 	&& rm -rf /var/lib/apt/lists/*
 # For dev
 RUN echo "export LANG=C.UTF-8" >> /etc/profile
