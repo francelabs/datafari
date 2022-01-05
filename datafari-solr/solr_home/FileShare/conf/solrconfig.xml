@@ -41,7 +41,7 @@
     <lib dir="${lib.path}lib/langid"/>
     <lib dir="${lib.path}lib/solr"/>
     <lib dir="${lib.path}lib/MCF"/>
-    <lib dir="${lib.path}lib/clustering"/>
+    <!-- <lib dir="${lib.path}lib/clustering"/> -->
     <lib dir="${lib.path}lib/custom"/>
     <lib dir="${lib.path}lib/custom/customer"/>
     
@@ -711,7 +711,7 @@
 		<str name="hl.fragsize">200</str>
 		<str name="hl.maxAnalyzedChars">51200</str>
 		<int name="facet.mincount">1</int>
-    <!-- clustering for tags cloud -->
+    <!-- clustering for tags cloud 
     <bool name="clustering">${clustering.enabled:false}</bool>
     <str name="clustering.engine">lingo</str>
     <bool name="clustering.results">true</bool>
@@ -719,13 +719,13 @@
     <str name="carrot.title">title</str>
     <str name="carrot.snippet">content_en,content_fr</str>
     <bool name="carrot.produceSummary">true</bool>
-    <!--<str name="carrot.lang">language</str>-->
+    <str name="carrot.lang">language</str>-->
 	</lst>
 
 	<arr name="last-components">
 		<str>spellcheck</str>
 		<str>elevator</str>
-    <str>clustering</str>
+    <!-- <str>clustering</str> -->
 	</arr>
 
 	<lst name="appends">
@@ -960,18 +960,18 @@
 
      -->
 
-  <searchComponent name="clustering" class="solr.clustering.ClusteringComponent">
+  <!-- <searchComponent name="clustering" class="solr.clustering.ClusteringComponent">
     <lst name="engine">
       <str name="name">lingo</str>
       <str name="carrot.algorithm">org.carrot2.clustering.lingo.LingoClusteringAlgorithm</str>
     </lst>
-    <!--
+   
     <lst name="engine">
       <str name="name">stc</str>
       <str name="carrot.algorithm">org.carrot2.clustering.lingo.STCClusteringAlgorithm</str>
     </lst>
-    -->
-  </searchComponent>
+    
+  </searchComponent> -->
 
 	<searchComponent class="solr.SuggestComponent" name="suggestAuthors">
 		<lst name="suggester">
