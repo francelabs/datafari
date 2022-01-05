@@ -98,7 +98,7 @@ ENABLE_REMOTE_JMX_OPTS="false"
 #SOLR_OPTS="$SOLR_OPTS -Dsolr.autoCommit.maxTime=60000"
 #SOLR_OPTS="$SOLR_OPTS -Dsolr.clustering.enabled=true"
 #SOLR_OPTS="$SOLR_OPTS -agentlib:jdwp=transport=dt_socket,server=y,address=8984,suspend=n"
-SOLR_OPTS="$SOLR_OPTS -Djute.maxbuffer=10000000"
+SOLR_OPTS="$SOLR_OPTS -Dsolr.disableConfigSetsCreateAuthChecks=true -Djute.maxbuffer=10000000"
 # Location where the bin/solr script will save PID files for running instances
 # If not set, the script will create PID files in $SOLR_TIP/bin
 SOLR_PID_DIR=${PID_DIR}

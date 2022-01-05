@@ -727,7 +727,7 @@ save_iptables_rules() {
 log4shell_mitigation() {
   file_array=()
 
-  for i in $(find $DATAFARI_HOME -type f \( -name \*.jar \)  -print)
+  for i in $(find $DATAFARI_HOME -type f \( -name \*.jar \) -not -path "/opt/datafari/solr*"  -print)
   do
     isVulnerability=$(unzip -l $i | grep  org/apache/logging/log4j/core/lookup/JndiLookup.class)
     if [ "$isVulnerability"  != "" ]; then

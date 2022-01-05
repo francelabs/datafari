@@ -28,7 +28,7 @@
               <!-- Version of Solr should be retrieved from a property file as well 
                 as the SHA1 -->
               <url>http://archive.apache.org/dist/lucene/solr/${solr.version}/solr-${solr.version}.tgz</url>
-              <sha512>02b9b90468f399701dba26695c9af6cd205f47916a06e26838613fe238594e9902de6ef3b42ec8257d195e37589adf8427d9b7962557731e91949fbef06bb544</sha512>
+              <sha512>4893f836aec84b03d7bfe574e59e305c03b5ede4a48020034fbe81440b8feee79e55fd9ead230e5b89b3f25124e9b56c1ddc4bb5c7f631cf4e846b9cab5f9a45</sha512>
               <unpack>true</unpack>
             </configuration>
           </execution>
