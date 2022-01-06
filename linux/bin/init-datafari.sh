@@ -43,15 +43,25 @@ question_postgresql_password() {
 }
 
 question_elk_start() {
-	read -p "Do you want to start ELK (true/false) [true] ? " elk_start
-	elk_start=${elk_start:-true}
+	read -p "Do you want to start ELK (yes/no) [yes] ? " elk_start
+	elk_start=${elk_start:-yes}
+	if [[ "$elk_start" = "yes" ]] || [[ "$elk_start" = "y" ]] || [[ "$elk_start" = "true" ]]; then
+		elk_start=true
+	else
+		elk_start=false
+	fi
 	set_property "ELKactivation"  $elk_start $CONFIG_FILE
 }
 
 question_start_datafari() {
-	read -p "Do you want Datafari to be started ? [true]: " start_datafari
+	read -p "Do you want Datafari to be started (yes/no)? [yes] ? " start_datafari
 	start_datafari=${start_datafari:-true}
-}	
+	if [[ "$start_datafari" = "yes" ]] || [[ "$start_datafari" = "y" ]] || [[ "$start_datafari" = "true" ]]; then
+		start_datafari=true
+	else
+		start_datafari=false
+	fi
+}
     
 ## Installer functions
 
