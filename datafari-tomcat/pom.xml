@@ -28,7 +28,7 @@
               <!-- Version of MCF should be retrieved from a property file as well 
                 as the MD5 -->
               <url>http://archive.apache.org/dist/tomcat/tomcat-9/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.tar.gz</url>
-              <sha512>37117164c9ab985b4f3032deac9617cee01463f8822586a62a9c498d2720fac23a8207fcf7a76cea2fcb3c6f828ff12b7b31422316a7d92e707c3bd8d687e303</sha512>
+              <sha512>b4c2c85891e84f0fbd8fec889ef0890d68a2bfa53eb31d4d39fcf5758aa483694af7ac27533ea4bc3fc3fdae56f2fa9c018d4acf872574c0ec5e37bb443599ce</sha512>
               <unpack>true</unpack>
             </configuration>
           </execution>
