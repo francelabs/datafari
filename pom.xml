@@ -21,8 +21,8 @@
     <keycloak.version>7.0.1</keycloak.version>
     <log4j.version>2.13.3</log4j.version>
     <logstash.version>7.8.0</logstash.version>
-    <mcf.version>2.20</mcf.version>
-    <mcf.sha512>9c985d761014b4ca1e64f0f730464bc94217e03c015e682e697af46aa8dc3d969e4d131678a293edcf3a045bea13eb6ae0424826de977c2bcfb454720da97ef2</mcf.sha512>
+    <mcf.version>2.21</mcf.version>
+    <mcf.sha512>84109fc537319859da4878d23dc72bb67e8c0a7f958afae2da1da0335991ffa2047e516ecb37a3c1f2371f0af4ddb74decf459b9247baf6c00172de5b689c441</mcf.sha512>
     <mcf.commit.number>38e4c78f1</mcf.commit.number>
     <netty.version>4.1.63.Final</netty.version>
     <open.distro.version>1.9.0</open.distro.version>
