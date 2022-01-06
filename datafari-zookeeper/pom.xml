@@ -28,7 +28,7 @@
               <!-- Version of Solr should be retrieved from a property file as well 
                 as the SHA1 -->
               <url>http://archive.apache.org/dist/zookeeper/zookeeper-${zookeeper.version}/apache-zookeeper-${zookeeper.version}-bin.tar.gz</url>
-              <sha512>4c65e56c074393835dee87256d577ebef6bbc0fbe8271cf030a50779f7e9ba5110bc274aa4b239a431de1716ad6c8a103abac02b93c3ad2c264bbea8b1c330c1</sha512>
+              <sha512>${zookeeper.sha512}</sha512>
               <unpack>true</unpack>
             </configuration>
           </execution>

@@ -42,7 +42,8 @@
     <tika-server-commit-number>5c0793e2c</tika-server-commit-number>
     <tomcat.version>9.0.56</tomcat.version>
     <slf4j.version>1.7.25</slf4j.version>
-    <zookeeper.version>3.5.5</zookeeper.version>
+    <zookeeper.version>3.6.2</zookeeper.version>
+    <zookeeper.sha512>caff5111bb6876b7124760bc006e6fa2523efa54b99321a3c9cd8192ea0d5596abc7d70a054b1aac9b20a411407dae7611c7aba870c23bff28eb1643ba499199</zookeeper.sha512>
   </properties>
   
   <!-- The order of modules execution is important -->
