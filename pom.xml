@@ -19,7 +19,7 @@
     <json.simple.version>1.1.1</json.simple.version>
     <jackson.version>2.12.2</jackson.version>
     <keycloak.version>7.0.1</keycloak.version>
-    <log4j.version>2.13.3</log4j.version>
+    <log4j.version>2.17.1</log4j.version>
     <logstash.version>7.8.0</logstash.version>
     <mcf.version>2.21</mcf.version>
     <mcf.sha512>84109fc537319859da4878d23dc72bb67e8c0a7f958afae2da1da0335991ffa2047e516ecb37a3c1f2371f0af4ddb74decf459b9247baf6c00172de5b689c441</mcf.sha512>
