@@ -28,7 +28,7 @@
               <!-- Version of Cassandra should be retrieved from a property file 
                 as well as the SHA1 -->
               <url>https://archive.apache.org/dist/cassandra/${cassandra.version}/apache-cassandra-${cassandra.version}-bin.tar.gz</url>
-              <sha512>240ae95f78de172333eee865f01b838433845fbd0dceea0eb91ea3a419873f74c5e266cfb62553fa0260849afa7ec5cc65335d037d1455e36b96ddc0f18effc7</sha512>
+              <sha512>${cassandra.sha512}</sha512>
               <unpack>true</unpack>
             </configuration>
           </execution>
