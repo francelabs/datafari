@@ -16,7 +16,7 @@ export JAVA_OPTS="${JAVA_OPTS} -Djavax.net.ssl.trustStore=${TRUSTSTORE_PATH} -Dj
 export INIT_STATE_FILE=${DATAFARI_HOME}/bin/common/init_state.properties
 export CONFIG_FILE=${DATAFARI_HOME}/tomcat/conf/datafari.properties
 export SOLR_CONFIG_FILE=${DATAFARI_HOME}/tomcat/conf/solr.properties
-export LOG4J_VERSION=2.13.3
+export LOG4J_VERSION=2.17.1
 export LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib
 export TMP_DIR=/tmp
 
