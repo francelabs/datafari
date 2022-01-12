@@ -11,7 +11,7 @@ LOGGING_MANAGER="-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogMan
 
 # Set CATALINA_OPTS
 
-CATALINA_OPTS="${SOLRCLOUDOPTION} -Dorg.apache.manifoldcf.configfile=../../mcf/mcf_home/properties.xml -server -Xms1024m -Xmx1024m -Djute.maxbuffer=10000000"
+CATALINA_OPTS="${SOLRCLOUDOPTION} -Dorg.apache.manifoldcf.configfile=../../mcf/mcf_home/properties.xml -server -Xms@TOMCATMEMORY@ -Xmx@TOMCATMEMORY@ -Djute.maxbuffer=10000000"
 #CATALINA_OPTS="$CATALINA_OPTS -agentlib:jdwp=transport=dt_socket,server=y,address=8696,suspend=n"
 
 # Set redefine JAVA_OPTS

@@ -32,7 +32,7 @@
 
 # Expert: If you want finer control over memory options, specify them directly
 # Comment out SOLR_HEAP if you are using this though, that takes precedence
-SOLR_JAVA_MEM="-Xms1024m -Xmx1024m"
+SOLR_JAVA_MEM="-Xms@SOLRMEMORY@ -Xmx@SOLRMEMORY@"
 
 # Enable verbose GC logging...
 #  * If this is unset, various default options will be selected depending on which JVM version is in use

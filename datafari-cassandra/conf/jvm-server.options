@@ -160,8 +160,8 @@
 # the same value to avoid stop-the-world GC pauses during resize, and
 # so that we can lock the heap in memory on startup to prevent any
 # of it from being swapped out.
--Xms1G
--Xmx1G
+-Xms@CASSANDRAMEMORY@
+-Xmx@CASSANDRAMEMORY@
 
 # Young generation size is automatically calculated by cassandra-env
 # based on this formula: min(100 * num_cores, 1/4 * heap size)

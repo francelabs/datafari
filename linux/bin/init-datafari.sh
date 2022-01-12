@@ -6,6 +6,7 @@ source "${DIR}/set-datafari-env.sh"
 source "${DIR}/utils.sh"
 source $INIT_STATE_FILE
 source $CONFIG_FILE
+source "${DATAFARI_HOME}/tomcat/conf/version.properties"
 installerLog="${DATAFARI_HOME}/logs/installer.log"
 
 
@@ -148,6 +149,24 @@ init_elk_apache() {
 		ln -s /etc/apache2/sites-available/elk.conf /etc/apache2/sites-enabled/elk.conf
 	fi
 }
+
+init_memory() {
+	
+	sed -i -e "s/@SOLRMEMORY@/${SOLRMEMORY}/g" $DATAFARI_HOME/solr/bin/solr.in.sh >>$installerLog 2>&1
+	sed -i -e "s/@MCFAGENTMEMORY@/${MCFAGENTMEMORY}/g" $DATAFARI_HOME/mcf/mcf_home/options.env.unix >>$installerLog 2>&1
+	sed -i -e "s/@TOMCATMEMORY@/${TOMCATMEMORY}/g" $DATAFARI_HOME/tomcat/bin/setenv.sh >>$installerLog 2>&1
+	sed -i -e "s/@TOMCATMCFMEMORY@/${TOMCATMCFMEMORY}/g" $DATAFARI_HOME/tomcat-mcf/bin/setenv.sh >>$installerLog 2>&1
+	sed -i -e "s/@CASSANDRAMEMORY@/${CASSANDRAMEMORY}/g" $DATAFARI_HOME/cassandra/conf/jvm-server.options >>$installerLog 2>&1
+	sed -i -e "s/@POSTGRESQLMEMORY@/${POSTGRESQLMEMORY}/g" $DATAFARI_HOME/pgsql/postgresql.conf.save >>$installerLog 2>&1
+	sed -i -e "s/@ELASTICSEARCHMEMORY@/${ELASTICSEARCHMEMORY}/g" $DATAFARI_HOME/elk/elasticsearch/config/jvm.options >>$installerLog 2>&1
+	sed -i -e "s/@LOGSTASHMEMORY@/${LOGSTASHMEMORY}/g" $DATAFARI_HOME/elk/logstash/config/jvm.options >>$installerLog 2>&1
+	sed -i -e "s/@KIBANAMEMORY@/${KIBANAMEMORY}/g" $DATAFARI_HOME/elk/scripts/set-elk-env.sh >>$installerLog 2>&1
+	sed -i -e "s/@TIKASERVERMEMORY@/${TIKASERVERMEMORY}/g" $DATAFARI_HOME/tika-server/bin/set-tika-env.sh >>$installerLog 2>&1
+	sed -i -e "s/@TIKACHILDMEMORY@/${TIKACHILDMEMORY}/g" $DATAFARI_HOME/tika-server/bin/set-tika-env.sh >>$installerLog 2>&1
+	
+	
+}
+
 
 generate_certificates() {
 	# Generate SSL certificate for datafari
@@ -784,7 +803,8 @@ initialization_monoserver() {
   generate_certificates_elk $NODEHOST
     init_collection_name $SOLRMAINCOLLECTION
     init_node_host $NODEHOST
-    
+	source "${DATAFARI_HOME}/bin/deployUtils/monoserver_${DATAFARITYPE}_memory.properties"
+    init_memory
   init_solr_node $localip
   init_solr_hosts $localip
   init_zk $localip

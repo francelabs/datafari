@@ -23,6 +23,6 @@ export KIBANA_PID_FILE=$PID_DIR/kibana.pid
 export METRICBEAT_PID_FILE=$PID_DIR/metricbeat.pid
 
 # Kibana max mem
-export NODE_OPTIONS="--max-old-space-size=1024"
+export NODE_OPTIONS="--max-old-space-size=@KIBANAMEMORY@"
 
 export RETRIES_NUMBER=35
