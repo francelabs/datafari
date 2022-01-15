@@ -4,10 +4,15 @@
 # Monitor MCF jobs and restart it if necessary
 #
 #
+
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source "${DIR}/../set-datafari-env.sh"
+source "${DIR}/../utils.sh"
+source $CONFIG_FILE
+
 JOB_IDS_TO_MONITOR="ALL"
 IP_MCF=http://localhost:9080
-PASSWORD_MCF=@MCF_ADMIN_PASSWORD@
-ALERT_MAIL=@EMAIL_NOTIFICATION@
+
 
 echo "Check the MCF job(s) status"
 
@@ -17,7 +22,7 @@ then
 	
 fi
 
-curl -c "cookie_mcfscript" -XPOST ${IP_MCF}/datafari-mcf-api-service/json/LOGIN -d '{ "userID":"","password":"'"${PASSWORD_MCF}"'" }'
+curl -c "cookie_mcfscript" -XPOST ${IP_MCF}/datafari-mcf-api-service/json/LOGIN -d '{ "userID":"","password":"'"${MCFPASSWORD}"'" }'
 
 JOBS_EXIST=$(curl -b "cookie_mcfscript" -s $IP_MCF'/datafari-mcf-api-service/json/jobstatuses')
 

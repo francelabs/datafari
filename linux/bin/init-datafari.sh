@@ -35,6 +35,7 @@ question_datafari_password() {
     read -p "Enter the Datafari password [admin]: " datafari_password
     datafari_password=${datafari_password:-admin}
     set_property "TEMPADMINPASSWORD" $datafari_password $CONFIG_FILE
+	set_property "MCFPASSWORD" $datafari_password $CONFIG_FILE
 }
 
 question_postgresql_password() {

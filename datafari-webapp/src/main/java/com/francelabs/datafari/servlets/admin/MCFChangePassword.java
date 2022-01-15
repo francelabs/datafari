@@ -48,6 +48,7 @@ import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
+import com.francelabs.datafari.utils.DatafariMainConfiguration;
 
 @WebServlet("/SearchAdministrator/MCFChangePassword")
 public class MCFChangePassword extends HttpServlet {
@@ -95,12 +96,16 @@ public class MCFChangePassword extends HttpServlet {
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
     String newMCFPassword = request.getParameter("password");
+    String newClearMCFPassword = newMCFPassword ;
     try {
       newMCFPassword = ManifoldCF.obfuscate(newMCFPassword);
     } catch (final ManifoldCFException e) {
       LOGGER.error("Exception during MCF change password ", e);
       jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
     }
+    DatafariMainConfiguration dmc = DatafariMainConfiguration.getInstance();
+    dmc.setProperty(DatafariMainConfiguration.MCF_PASSWORD,newClearMCFPassword);
+    dmc.saveProperties();
     modifyPropertiesMCF(newMCFPassword);
 
     String datafari_home = Environment.getEnvironmentVariable("DATAFARI_HOME"); // Gets

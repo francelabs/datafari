@@ -57,6 +57,7 @@ public class DatafariMainConfiguration extends AbstractConfigClass {
   public static final String EMAIL_DPO = "email_dpo";
   public static final String EMAIL_FEEDBACKS = "email_feedbacks";
   public static final String EMAIL_BUGS = "email_bugs";
+  public static final String MCF_PASSWORD = "MCFPASSWORD";
 
   private final static Logger LOGGER = LogManager.getLogger(DatafariMainConfiguration.class.getName());
 
