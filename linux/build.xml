@@ -258,9 +258,6 @@
 			<fileset dir="${datafarihandler.src.dir}">
 				<include name="*.jar" />
 			</fileset>
-			<fileset dir="${datafarihandler.src.dir}/dependency">
-				<include name="*.jar" />
-			</fileset>
 		</copy>
 
 		<!-- Copy Tika jars to Solr -->
