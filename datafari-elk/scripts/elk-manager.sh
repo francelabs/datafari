@@ -43,6 +43,7 @@ init_logstash()
   # Replace the default conf with the correct paths before starting logstash
   sed -i "/francelabs\/datafari-stats.log/c\  path => \"${DATAFARI_HOME}/logs/datafari-stats.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
   sed -i "/francelabs\/datafari-monitoring.log/c\ path => \"${DATAFARI_HOME}/logs/datafari-monitoring.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
+  sed -i "/francelabs\/localhost_access_log_datafari.txt/c\ path => \"${DATAFARI_HOME}/logs/localhost_access_log_datafari*\"" $LOGSTASH_HOME/logstash-datafari.conf
   @ADDITIONAL_LOGSTASH_INIT@
   echo "Logstash initialized !"
 }
@@ -60,6 +61,7 @@ init_kibana_index()
   echo "Initialize Kibana index through it's save objects API..."
   curl -k -u admin:admin -H 'Content-Type: application/json' -XPUT -d @${LOGSTASH_HOME}/templates/datafari-monitoring-template.json https://localhost:9200/_index_template/datafari-monitoring
   curl -k -u admin:admin -H 'Content-Type: application/json' -XPUT -d @${LOGSTASH_HOME}/templates/datafari-statistic-template.json https://localhost:9200/_index_template/datafari-statistics
+  curl -k -u admin:admin -H 'Content-Type: application/json' -XPUT -d @${LOGSTASH_HOME}/templates/datafari-access-template.json https://localhost:9200/_index_template/datafari-access
   @ADDITIONAL_TEMPLATES@
   curl -k -u searchadmin:admin -X POST https://localhost:5601/api/saved_objects/_import -H "kbn-xsrf: true" -H "securitytenant: searchexpert_tenant" --form file=@${ELK_HOME}/save/kibana-ce.ndjson
   @ADDITIONAL_IMPORTS@

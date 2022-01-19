@@ -1,0 +1,32 @@
+{
+  "index_patterns": "access-*",
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 1
+    },
+    "mappings": {
+      "dynamic": "false",
+      "_doc": {
+        "properties": {
+          "date": {
+            "type": "date",
+            "format": "yyyy-MM-dd HH:mm:ss"
+          },
+          "client_ip": {
+            "type": "keyword"
+          },
+          "access_request": {
+            "type": "keyword"
+          },
+          "access_request_code": {
+            "type": "integer"
+          },
+          "access_request_time": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}

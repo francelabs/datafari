@@ -16,6 +16,7 @@ search_expert:
     - index_patterns:
       - "statistics"
       - "monitoring"
+      - "access-*"
       allowed_actions:
         - "read"
   tenant_permissions:
