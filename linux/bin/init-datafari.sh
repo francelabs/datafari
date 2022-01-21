@@ -898,15 +898,27 @@ fi
 #is_variable_set $SOLRNUMSHARDS
 #is_variable_set $SOLRHOSTS
 #is_variable_set $SOLRMAINCOLLECTION
-echo "Initialization done. You can start Datafari :"
+
+echo "Initialization done"
 
 if [ "$INSTALLER_TYPE" == "interactive" ] && [ "$NODETYPE" == "monoserver" ]; then
     question_start_datafari
     if [ "$start_datafari" == "true" ]; then
+    	echo "Datafari is starting"
     	cd $DIR
     	bash start-datafari.sh
-    fi
+    	echo "Datafari is started. The url to access to Datafari is : https://${NODEHOST}/Datafari"
+    	echo "If you use Docker on a remote server, adapt the URL to indicate the IP or the hostname of the container"
+    else
+    	echo "You can now start Datafari. Launch the start-datafari.sh script. After Datafari is started, you can access to Datafari at this URL : https://${NODEHOST}/Datafari"
+	fi
+    	
+else
+	echo "You can now start Datafari. Launch the start-datafari.sh script. After Datafari is started, you can access to Datafari at this URL : https://${NODEHOST}/Datafari"
+	
+	
 fi
+
 
 
 
