@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
-import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -24,10 +23,11 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.skyscreamer.jsonassert.JSONAssert;
 
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.TestUtils;
+
+import uk.org.webcompere.modelassert.json.JsonAssertions;
 
 @PrepareForTest(Environment.class)
 @RunWith(PowerMockRunner.class)
@@ -53,7 +53,7 @@ public class TestQueryElevator {
   }
 
   @Test
-  public void TestQueryElevatorGetQueries() throws ServletException, IOException, ParseException, JSONException {
+  public void TestQueryElevatorGetQueries() throws ServletException, IOException, ParseException {
     final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
     final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
@@ -69,12 +69,12 @@ public class TestQueryElevator {
     final JSONObject jsonResponse = (JSONObject) parser.parse(sw.toString());
     final JSONObject jsonExpected = (JSONObject) parser.parse(TestUtils.readResource("/queryElevatorTests/out/getQueries.json"));
 
-    JSONAssert.assertEquals(jsonResponse.toJSONString(), jsonExpected.toJSONString(), true);
+    JsonAssertions.assertJson(jsonResponse.toJSONString()).isEqualTo(jsonExpected.toJSONString());
 
   }
 
   @Test
-  public void TestQueryElevatorGetDocs() throws ServletException, IOException, JSONException, ParseException {
+  public void TestQueryElevatorGetDocs() throws ServletException, IOException, ParseException {
     final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
     final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
@@ -91,7 +91,7 @@ public class TestQueryElevator {
     final JSONObject jsonResponse = (JSONObject) parser.parse(sw.toString());
     final JSONObject jsonExpected = (JSONObject) parser.parse(TestUtils.readResource("/queryElevatorTests/out/getDocs.json"));
 
-    JSONAssert.assertEquals(jsonResponse.toJSONString(), jsonExpected.toJSONString(), true);
+    JsonAssertions.assertJson(jsonResponse.toJSONString()).isEqualTo(jsonExpected.toJSONString());
   }
 
   // @Test
