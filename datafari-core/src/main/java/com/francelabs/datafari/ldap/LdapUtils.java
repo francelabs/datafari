@@ -24,7 +24,6 @@ public class LdapUtils {
 
   public static final String baseFilter = "(&(objectCategory=Person)(objectClass=User))";
   public static final String baseSearchAttribute = "sAMAccountName";
-  private static final String[] returnAttributes = { "sAMAccountName", "givenName", "userAccountControl" };
   private static final String departmentAttribute = "department";
   private static final String[] returnDepartmentAttributes = { "sAMAccountName", "givenName", "userAccountControl", departmentAttribute };
   // For paged results
@@ -58,11 +57,12 @@ public class LdapUtils {
     return ldapCtx;
   }
 
-  public static boolean testUserBase(final LdapContext ldapContext, final String searchBase, final String userFilter) {
+  public static boolean testUserBase(final LdapContext ldapContext, final String searchBase, final String userFilter, final String userSearchAttribute) {
     final int scope = SearchControls.SUBTREE_SCOPE;
     // initializing search controls
     final SearchControls searchCtls = new SearchControls();
     searchCtls.setSearchScope(scope);
+    final String[] returnAttributes = { userSearchAttribute };
     searchCtls.setReturningAttributes(returnAttributes);
 
     try {
@@ -116,6 +116,7 @@ public class LdapUtils {
     // initializing search controls
     final SearchControls searchCtls = new SearchControls();
     searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+    final String[] returnAttributes = { userSearchAttribute };
     searchCtls.setReturningAttributes(returnAttributes);
     try {
       return dirContext.search(searchBase, filter, searchCtls).hasMore();
