@@ -312,6 +312,7 @@
     "DESCRIPTIONGETSEARCHES": "All the searches that you have saved are listed in this page.</br>You can click on the link if you want to perform it or you can delete it from the searches by clicking on",
     "detailsOnQuery": "Detalhes da consulta",
     "disclaimer-enterprise": "Warning: this admin page will be removed from the Community Edition starting with Datafari 4.2",
+    "displayConsumedUsers" : "Display/Hide consumed users",
     "distinctsQuery": "consultas distintas",
     "doc-name": "Document Title",
     "documentation-adduser": "As a Search administrator you may want to add/remove or modify a user for Datafari. This can be done through the admin interface of Datafari ",

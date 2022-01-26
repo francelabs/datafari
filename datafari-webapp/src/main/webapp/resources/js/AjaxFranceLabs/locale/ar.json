@@ -176,6 +176,7 @@
     "deduplication": "الغاء البيانات المكررة",
     "DESCRIPTIONGETFAVORITES": "on”جكيع التفضيلات التي حفظتها هي مدرجة في هذه الصفحة. يمكنك ان تنقر على الاسم  اذا اردت ان تراه او يمكنك ان تمحوه من التفضيلات بنقر وضعية التشغيل. ",
     "detailsOnQuery": "Query details",
+    "displayConsumedUsers" : "Display/Hide consumed users",
     "distinctsQuery": "استفسارات مميزة ",
     "documentation-adduser": "As a Search administrator you may want to add/remove or modify a user for Datafari. This can be done through the admin interface of Datafari ",
     "documentation-alerstadmin": "The Alerts Administration UI allows to graphically edit the config file alerts.properties which is stored in InstallationDirectoryDatafari/tomcat/conf/ ",
