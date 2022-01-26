@@ -22,6 +22,7 @@ import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.service.db.CassandraManager;
 import com.francelabs.datafari.service.db.UserDataService;
 import com.francelabs.datafari.service.db.UserDataTTLService;
+import com.francelabs.datafari.user.User;
 
 public class CassandraAuthenticationProvider implements AuthenticationProvider {
 
@@ -84,6 +85,12 @@ public class CassandraAuthenticationProvider implements AuthenticationProvider {
         if (!rawUsername.contentEquals("admin")) {
           UserDataTTLService.refreshUserDataTTL(rawUsername);
         }
+      } else {
+        // First time the user logs into Datafari, add it the default role "ConnectedSearchUser"
+        // It is obviously an imported user, otherwise it would already be in the database
+        final User newUser = new User(rawUsername, "ConnectedSearchUser", true);
+        newUser.signup("ConnectedSearchUser");
+        roles.add("ConnectedSearchUser");
       }
     } catch (final DatafariServerException e) {
       logger.error("Unable to perform request on Cassandra", e);
