@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.francelabs.datafari</groupId>
     <artifactId>datafari-ce</artifactId>
-    <version>5.1-dev-Community</version>
+    <version>5.1-Community</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>datafari-ui</artifactId>
@@ -26,7 +26,7 @@
             </goals>
             <configuration>
               <url>http://repomcf.datafari.com/datafariui/datafariui-${datafariui.version}.tar.gz</url>
-              <md5>e3179cdd0e558e50647df3bd1c20e275</md5>
+              <md5>${datafariui.md5}</md5>
               <unpack>true</unpack>
             </configuration>
           </execution>

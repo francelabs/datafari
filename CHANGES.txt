@@ -12,6 +12,153 @@ Available as community (open source) and enterprise (proprietary) edition, Dataf
 
 See http://wiki.datafari.com for more information.
 
+
+==================  5.1 ==================
+Feb. 12nd, 2022
+
+* Version of major components :
+- Solr 8.11.1
+- ManifoldCF 2.21
+- Tomcat 9.0.56
+- Cassandra 4.0.1
+- PostgreSQL 12.4
+- Zookeeper 3.6.2
+- Tika Server 1.18
+- OpenDistro 1.9.0
+  - ElasticSearch 7.8.0
+  - Kibana 7.8.0
+  - LogStash 7.8.0
+
+### Issues list done
+
+#111 [DATAFARI-112] Hierarchical facet is not showing correctly for file shares
+#130 [DATAFARI-131] Autocomplete not working
+#212 [DATAFARI-213] Understand wildcards as prefix of search terms
+#250 [DATAFARI-251] Improve ManifoldCF access security
+#275 [DATAFARI-276] Create and feed a "title_metadata" search field
+#391 [DATAFARI-397] Remove the hamburger in the mobile UI
+#395 [DATAFARI-401] && statement not properly interpreted in the datafari search landing page
+#423 [DATAFARI-430] Multiple language support for privacy policy page
+#431 [DATAFARI-438] Change the creation of the FileShare configset into ZK
+#444 [DATAFARI-451] In MCF simple history, report documents that are excluded from the fetching
+#450 [DATAFARI-457] Build links to the preview, must open in a new tab
+#452 [DATAFARI-459] migrate from embedded Tika into MCF to tika server
+#465 [DATAFARI-472] Update documentation to add a new language for text analysers and/or UI display
+#466 [DATAFARI-473] Incomplete language doc for v4.4
+#467 [DATAFARI-474] Handle non alphanumeric characters for the graphical change of MCF admin account
+#476 [DATAFARI-483] Document our usage of an Apache Proxy
+#477 [DATAFARI-484] TLS Doc - Update for V5
+#478 [DATAFARI-485] Update doc on requirements for Python
+#480 [DATAFARI-487] Update doc about MCF restore functionnality
+#484 [DATAFARI-491] Update doc about ELK open distro
+#491 [DATAFARI-498] Create a transfo connector to clean up characters
+#502 [DATAFARI-509] Doc - update wiki about v5 requirements : python, dependencies, java
+#503 [DATAFARI-510] Admin UI - Change label backup and restore MCF
+#510 [DATAFARI-517] In preview, make the search bar functionnal
+#511 [DATAFARI-518] Add spellcheck capabilities to DatafariUI
+#513 [DATAFARI-520] Search UI - truncated results snippet
+#516 [DATAFARI-524] Connectors - Add a Confluence connector
+#517 [DATAFARI-525] Connectors - Add a Jira connector
+#518 [DATAFARI-526] New facet - Tag Cloud
+#519 [DATAFARI-527] Opendistro - no index created error when first connecting
+#524 [DATAFARI-532] DatafariUI - automatically search best guess if no results
+#541 [DATAFARI-549] Connectors - Add wmv to the default emptier filter
+#542 [DATAFARI-550] MCF - enable the file output connector
+#544 [DATAFARI-552] DatafariUI - Make the help page i18n
+#545 [DATAFARI-553] DatafariUI - In preview page, highlight term in widget
+#550 [DATAFARI-558] DatafariUI - Change 3 dots menu behavior in search preview
+#552 [DATAFARI-560] DatafariUI - propose open folder button in results list
+#553 [DATAFARI-561] DatafariUI - show full url in tooltip if truncated
+#556 [DATAFARI-564] DatafarUI - make search bar active in preview mode
+#557 [DATAFARI-565] DatafariUI - Display proper number of results
+#560 [DATAFARI-568] DatafariUI - character encoding issues in favorites
+#561 [DATAFARI-569] DatafariUI - take into account the activation/deactivation of favorites
+#565 [DATAFARI-573] DatafariUI - target new for favorites
+#567 [DATAFARI-575] DatafariUI - use mail API to fill in the template emails for users
+#569 [DATAFARI-577] DatafariUI - add privacy policy page
+#571 [DATAFARI-579] DatafariUI - link to the admin page from search page
+#575 [DATAFARI-583] DatafariUI - Date facets numbers are weird
+#574 [DATAFARI-582] DatafariUI - make it responsive
+#578 [DATAFARI-586] DatafariUI - typo in the autocomplete in english
+#579 [DATAFARI-587] DatafariUI - 404 error when opening previews
+#580 [DATAFARI-588] DatafariUI - cannot click on facets when loading a saved search
+#581 [DATAFARI-589] DatafariUI - wrong font used in facet
+#591 DatafariUI - review and comment code
+#592 DatafariUI - Change Date facet title
+#593 DatafariUI - display other search message in case of 0 results
+#594 DatafariUI - Make the privacy Policy i18n
+#595 DatafariUI - preview highlighted terms
+#601 DatafariUI - Created date sorting
+#604 DatafariUI - Update privacy settings page
+#607 DatafariUI - licence limit warning
+#608 DatafariUI - do not display "No results" becase redundant
+#609 DatafariUI  - Clear filter on facets causes exception
+#613 DatafariUI - documentation about i18n in confluence requires a concrete exemple
+#615 UI - Hierarchical facets not working with ajaxfrancelabs
+#616 Manage specific solr output error
+#617 Admin - Make it clear that the security checkbox is useless for simplifed connectors
+#619 DatafariUI - don't display warning before licence is over
+#620 White font over white background
+#621 Cannot remove filters in the text next to results
+#622 Bug popup title is incorrect
+#623 content when sending bugs not taken into account
+#624 Search from preview cancels target = new
+#625 "Don't find doc" popup title is incorrect
+#626 Error when saving query
+#627 Error when using alerts
+#628 logout menu does not work
+#629 Deactivate browser based autocomplete for search
+#630 Error when doing empty advanced search
+#631 Change default html meta tags
+#635 Datafariui shows still connected icon while actually not
+#636 Date text overcomes the widget box size in preview
+#645 Solr Connector - Catch error 500 arrayindexoutofboundsexception
+#652 Docfilter connector : add default values for exclude filters
+#653 WinShare connector : ignore errors
+#654 Incorrect EN label for To in date facet
+#655 Incorrect FR text
+#656 Incorrect EN/FR text for privacy settings popup
+#657 Incorrect link to share preview page
+#658 DatafariUI - add a search button to the search bar
+#659 DatafariUI - Cannot click twice in autocomplete
+#660 DatafariUI - full title not always present with mouse over
+#661 DatafariUI - weird timestamp with creation date
+#663 DatafariUI - merge settings and user upper right menu
+#664 DatafariUI - some files have missing meta attributes in preview
+#668 Update the documentation about Datafari API
+#669 Limitation of the number of indexed tokens
+#671 datafariUI - Cannot declare twice a date manually
+#672 DatafariUI - Change default favicon
+#676 Number of pages in the page navigation bar may go crazy
+#677 Add the source facet by default
+#678 Do not display replacement characters in Preview Mode
+#679 Do not keep the current results pagination when selecting a facet
+#680 Prune out extra CRLF in preview mode
+#682 Handle non alphanumeric characters for the graphical change of OpenDistro searchexpert and searchadmin account
+#683 DatafariUI - missing title for help popup
+#685 DatafariUI - Keep search icon to the right but make it more visually distinct
+#687 Do not display replacement characters in Search results mode
+#689 DatafariUI - selected language not used in the admin UI
+#692 Admin UI - Wrong path to opendistro admin
+#695 DatafariUI - hierarchical facet
+#696 DatafariUI - new suggester for entities at autocompletion
+#702 Search alerts not working
+#709 [DATAFARI-325] Propose an option to force restart
+#711 DatafariUI - hide autocomplete sections when they are empty
+#712 datafariUI - hierarchical facet display and counting issues
+#713 Support Debian 11 Bullseye
+#714 Adblock can block JS scripts
+#715 DatafariUI - display version info in an "about" menu
+#719 403 error when trying to login in HTTP mode
+#720 DatafariUI - Assess accessibility Nov 2021
+#721 DatafariUI - preview empty for some docs
+#724 ZK-MCF : Too many connections from /127.0.0.1 - max is 1000
+#726 Log4j 2 CVE-2021-45105 vulnerability
+#731 Change default answer for init script
+#732 RAM initialization per server role and type
+#734 Change MCF password into monitoring scripts
+#735 5.1 - Log4j 2 CVE-2021-44228 vulnerability
+
 ==================  5.0 ==================
 Feb. 2nd, 2021
 
