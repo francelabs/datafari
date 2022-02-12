@@ -6,14 +6,15 @@
   <artifactId>datafari-ce</artifactId>
   <!-- Main POM of datafari -->
   <packaging>pom</packaging>
-  <version>5.1-dev-Community</version>
+  <version>6.0-dev-Community</version>
   <name>Datafari Enterprise Search - Parent POM</name>
   <properties>
     <cassandra.version>4.0.1</cassandra.version>
     <cassandra.sha512>2890c054666afa93fe2978c46da5db15ed7d11d60f4890574dc642bd81f7b3af40b41d3e5b8245e6c1453a165eddebeb28bcf3fef1a2b2fc6fb3b82058d7ceb0</cassandra.sha512>
     <cassandra.driver.version>4.13.0</cassandra.driver.version>
-    <datafari.version>5.1-dev-Community</datafari.version>
-    <datafariui.version>1.0.0-beta-0.5.0</datafariui.version>
+    <datafari.version>6.0-dev-Community</datafari.version>
+    <datafariui.version>1.0.0-beta-0.6.0</datafariui.version>
+    <datafariui.md5>3b1e6bc07dcbc3d13f01718d0afc9430</datafariui.md5>
     <guava.version>26.0-jre</guava.version>
     <httpclient.version>4.5.9</httpclient.version>
     <java.version>1.11</java.version>
