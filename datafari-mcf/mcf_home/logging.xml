@@ -46,6 +46,19 @@
       </Policies>
       <DefaultRolloverStrategy max="10" />
     </RollingFile>
+    
+    <!-- SP delete appender -->
+    <RollingFile name="SPDelete" fileName="../../logs/sp-delete.log" filePattern="../../logs/sp-delete.log.%d{yyyy-MM-dd}-%i.log">
+      <PatternLayout>
+        <Pattern>%d{ISO8601} -- %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1"/>
+        <SizeBasedTriggeringPolicy size="10MB" />
+      </Policies>
+      <DefaultRolloverStrategy max="10" />
+    </RollingFile>
+    
   </Appenders>
   <Loggers>
     <Root level="warn">
@@ -59,5 +72,11 @@
     <Logger name="org.apache.manifoldcf.crawler.connectors.sharepoint.rest.SharePointRestRepositoryConnector" level="docprocess" additivity="false">
       <AppenderRef ref="DocProcess"/>
     </Logger>
+    
+    <!-- SPDelete logger -->
+    <Logger name="org.apache.manifoldcf.crawler.connectors.sharepoint.rest.DeletedDocs" level="debug" additivity="false">
+      <AppenderRef ref="SPDelete"/>
+    </Logger>
+    
   </Loggers>
 </Configuration>
