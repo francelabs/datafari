@@ -101,6 +101,7 @@
   <field name="sp_site" type="string" indexed="true" stored="true" multiValued="false"/>
   <field name="sp_item" type="string" indexed="true" stored="true" multiValued="false"/>
   <field name="sp_parentids" type="string" indexed="true" stored="true" multiValued="true"/>
+  <field name="sp_attachments" type="string" indexed="true" stored="true" multiValued="true"/>
   
   <!-- O365 fields -->
   <field name="o365_attachments" type="string" indexed="true" stored="true" multiValued="true"/>
