@@ -179,4 +179,8 @@ if  [[ "$NODETYPE" = *mono* ]]; then
 
 fi
 
+if [ "$MONIT_STATE" == "active" ]; then
+        sudo service monit start
+fi
+
 

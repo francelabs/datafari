@@ -14,6 +14,9 @@ source $CONFIG_FILE
 source $ELK_HOME/scripts/set-elk-env.sh
 source $TIKA_SERVER_HOME/bin/set-tika-env.sh
 
+if [ "$MONIT_STATE" == "active" ]; then
+        sudo service monit stop
+fi
 
 if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $CATALINA_PID"; then
     run_as ${DATAFARI_USER} "bash datafari-manager.sh stop_tomcat"

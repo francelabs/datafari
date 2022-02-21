@@ -28,17 +28,11 @@ if [ "$NODETYPE" != "main" ]; then
     sleep 10
     cd $DIR
     echo "1/2 Stop Datafari"
-    if [ "$MONIT_STATE" == "active" ]; then
-        sudo service monit stop
-    fi
-    sleep 2
     bash stop-datafari.sh
     echo "2/2 Start Datafari"
     sleep 2
     bash start-datafari.sh
-    if [ "$MONIT_STATE" == "active" ]; then
-        sudo service monit start
-    fi
+    
 fi
 if [ -z "$errors" ]
 then
