@@ -72,6 +72,16 @@
     <Logger name="org.apache.manifoldcf.crawler.connectors.sharepoint.rest.SharePointRestRepositoryConnector" level="docprocess" additivity="false">
       <AppenderRef ref="DocProcess"/>
     </Logger>
+    <Logger name="org.apache.manifoldcf.crawler.connectors.o365.exchange.ExchangeRepositoryConnector" level="docprocess" additivity="false">
+      <AppenderRef ref="DocProcess"/>
+    </Logger>
+    <Logger name="com.francelabs.datafari.connectors.list.share.SharedDriveConnector" level="docprocess" additivity="false">
+      <AppenderRef ref="DocProcess"/>
+    </Logger>
+    <Logger name="com.francelabs.datafari.connectors.tuleap.TuleapConnector" level="docprocess" additivity="false">
+      <AppenderRef ref="DocProcess"/>
+    </Logger>
+    
     
     <!-- SPDelete logger -->
     <Logger name="org.apache.manifoldcf.crawler.connectors.sharepoint.rest.DeletedDocs" level="debug" additivity="false">
