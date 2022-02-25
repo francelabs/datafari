@@ -234,12 +234,12 @@
 				<include name="*.properties" />
 			</fileset>
 		</copy>
-		
+
 		<!-- Copy Datafari UI -->
-				<copy todir="${linux.dist.dir}/www">
-					<fileset dir="${datafariui.src.dir}/build">
-					</fileset>
-				</copy>
+		<copy todir="${linux.dist.dir}/www">
+			<fileset dir="${datafariui.src.dir}/build">
+			</fileset>
+		</copy>
 
 		<!-- Copy SSL keystore files -->
 		<copy todir="${linux.dist.dir}/ssl-keystore">
@@ -300,9 +300,10 @@
 			</fileset>
 		</copy>
 
-		<!-- Copy MCF without logging libs -->
+		<!-- Copy MCF without logging libs and bcprov-jdk15on* libs -->
 		<copy todir="${linux.dist.dir}/mcf">
 			<fileset dir="${mcf.src.dir}">
+				<exclude name="mcf_home/connector-common-lib/bcprov-jdk15on*" />
 				<exclude name="mcf_home/connector-lib/commons-logging-*.jar" />
 				<exclude name="mcf_home/connector-lib/jcl-over-*.jar" />
 				<exclude name="mcf_home/connector-lib/log4j-*.jar" />
@@ -355,8 +356,11 @@
 		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
 			<fileset dir="${share.connector.src.dir}">
 				<include name="*.jar" />
-				<include name="dependencies/**" />
-				<exclude name="dependencies/jcifs*" />
+			</fileset>
+		</copy>
+		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-common-lib" overwrite="true" force="true">
+			<fileset dir="${share.connector.src.dir}">
+				<include name="dependencies/bcprov-jdk15on*" />
 			</fileset>
 		</copy>
 
