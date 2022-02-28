@@ -96,7 +96,9 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
   private static final String EDIT_SPECIFICATION_JS = "editSpecification.js";
   private static final String EDIT_SPECIFICATION_GLOBAL_FILTERS_HTML = "editSpecification_Global_Filters.html";
   private static final String EDIT_SPECIFICATION_CONTENT_LENGTH_HTML = "editSpecification_Content_Length.html";
+  private static final String EDIT_SPECIFICATION_LAST_ACCESS_HTML = "editSpecification_Last_Access.html";
   private static final String VIEW_SPECIFICATION_GLOBAL_FILTERS_HTML = "viewSpecification_Global_Filters.html";
+  private static final String VIEW_SPECIFICATION_LAST_ACCESS_HTML = "viewSpecification_Last_Access.html";
 
   // These are the share connector nodes and attributes in the document
   // specification
@@ -131,6 +133,8 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
   private static final String NODE_EXCLUDEFILTER = "excludefilter";
   private static final String INCLUDEFILTER_DEFAULT = ".*";
   private static final String ATTRIBUTE_REGEX = "regex";
+
+  private static final String NODE_PRESERVE_LAST_ACCESS = "preservelastaccess";
 
   // Default values for CIFS
   private static final String DEFAULT_LIST_COUNT = "200";
@@ -358,9 +362,9 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
   }
 
   /**
-   * Get the bin name string for a document identifier. The bin name describes the queue to which the document will be assigned for throttling purposes. Throttling controls the rate at which items in
-   * a given queue are fetched; it does not say anything about the overall fetch rate, which may operate on multiple queues or bins. For example, if you implement a web crawler, a good choice of bin
-   * name would be the server name, since that is likely to correspond to a real resource that will need real throttle protection.
+   * Get the bin name string for a document identifier. The bin name describes the queue to which the document will be assigned for throttling purposes. Throttling controls the rate
+   * at which items in a given queue are fetched; it does not say anything about the overall fetch rate, which may operate on multiple queues or bins. For example, if you implement a
+   * web crawler, a good choice of bin name would be the server name, since that is likely to correspond to a real resource that will need real throttle protection.
    *
    * @param documentIdentifier is the document identifier.
    * @return the bin name.
@@ -510,18 +514,19 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
   }
 
   /**
-   * Queue "seed" documents. Seed documents are the starting places for crawling activity. Documents are seeded when this method calls appropriate methods in the passed in ISeedingActivity object.
+   * Queue "seed" documents. Seed documents are the starting places for crawling activity. Documents are seeded when this method calls appropriate methods in the passed in
+   * ISeedingActivity object.
    *
-   * This method can choose to find repository changes that happen only during the specified time interval. The seeds recorded by this method will be viewed by the framework based on what the
-   * getConnectorModel() method returns.
+   * This method can choose to find repository changes that happen only during the specified time interval. The seeds recorded by this method will be viewed by the framework based on
+   * what the getConnectorModel() method returns.
    *
    * It is not a big problem if the connector chooses to create more seeds than are strictly necessary; it is merely a question of overall work required.
    *
-   * The end time and seeding version string passed to this method may be interpreted for greatest efficiency. For continuous crawling jobs, this method will be called once, when the job starts, and
-   * at various periodic intervals as the job executes.
+   * The end time and seeding version string passed to this method may be interpreted for greatest efficiency. For continuous crawling jobs, this method will be called once, when the
+   * job starts, and at various periodic intervals as the job executes.
    *
-   * When a job's specification is changed, the framework automatically resets the seeding version string to null. The seeding version string may also be set to null on each job run, depending on the
-   * connector model returned by getConnectorModel().
+   * When a job's specification is changed, the framework automatically resets the seeding version string to null. The seeding version string may also be set to null on each job run,
+   * depending on the connector model returned by getConnectorModel().
    *
    * Note that it is always ok to send MORE documents rather than less to this method. The connector will be connected before this method can be called.
    *
@@ -557,8 +562,9 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
   }
 
   /**
-   * Process a set of documents. This is the method that should cause each document to be fetched, processed, and the results either added to the queue of documents for the current job, and/or entered
-   * into the incremental ingestion manager. The document specification allows this class to filter what is done based on the job. The connector will be connected before this method can be called.
+   * Process a set of documents. This is the method that should cause each document to be fetched, processed, and the results either added to the queue of documents for the current
+   * job, and/or entered into the incremental ingestion manager. The document specification allows this class to filter what is done based on the job. The connector will be connected
+   * before this method can be called.
    *
    * @param documentIdentifiers  is the set of document identifiers to process.
    * @param statuses             are the currently-stored document versions for each document in the set of document identifiers passed in above.
@@ -573,6 +579,9 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
     // Check if we should abort
     activities.checkJobStillActive();
     getSession();
+
+    // Retrieve the preserve last access option
+    final boolean preserveLastAccess = preserveLastAccess(spec);
 
     // Retrieve the global filters
     final GlobalFilters gf = new GlobalFilters(spec);
@@ -661,10 +670,13 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
         boolean matchFolder = true;
         String errorCode = null;
         String errorDesc = null;
+        long orgLastAccess = 0L;
 
         try {
           file = new SmbFile(documentIdentifier, ctx);
           fileExists = fileExists(file);
+          // Save original lastAccess attribute
+          orgLastAccess = file.lastAccess();
 
           // File has to exist AND have a non-null canonical path to be readable.
           // If the canonical path is
@@ -697,6 +709,7 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
               }
 
             } else {
+
               // First of all check if document match global filters
               try {
                 // Check if the file is included
@@ -1062,6 +1075,13 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
                             fileLengthLong = fileLength;
                           } finally {
                             inputStream.close();
+                            if (preserveLastAccess && !fileIsDirectory && orgLastAccess != 0L) {
+                              try {
+                                file.setLastAccess(orgLastAccess);
+                              } catch (final Exception e) {
+                                Logging.connectors.warn("Unable to preserve last access date for " + documentIdentifier, e);
+                              }
+                            }
                           }
 
                         } else {
@@ -1731,7 +1751,8 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
   }
 
   /**
-   * Check to see whether we need the contents of the file for anything. We do this by assuming that the file is indexable, and assuming that it's not, and seeing if the same thing would happen.
+   * Check to see whether we need the contents of the file for anything. We do this by assuming that the file is indexable, and assuming that it's not, and seeing if the same thing
+   * would happen.
    *
    * @param fileName              is the name of the file.
    * @param documentSpecification is the document specification.
@@ -1742,8 +1763,8 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
   }
 
   /**
-   * Check if a file should be ingested, given a document specification and a local copy of the file. It is presumed that only files that passed checkInclude() and were also flagged as needing file
-   * data by checkNeedFileData() will be checked by this method.
+   * Check if a file should be ingested, given a document specification and a local copy of the file. It is presumed that only files that passed checkInclude() and were also flagged
+   * as needing file data by checkNeedFileData() will be checked by this method.
    *
    * @param localFile             is the file.
    * @param fileName              is the JCIFS file name.
@@ -1857,8 +1878,8 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
   }
 
   /**
-   * Match a sub-path. The sub-path must match the complete starting part of the full path, in a path sense. The returned value should point into the file name beyond the end of the matched path, or
-   * be -1 if there is no match.
+   * Match a sub-path. The sub-path must match the complete starting part of the full path, in a path sense. The returned value should point into the file name beyond the end of the
+   * matched path, or be -1 if there is no match.
    *
    * @param subPath  is the sub path.
    * @param fullPath is the full path.
@@ -2430,8 +2451,8 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
   // method, above).
 
   /**
-   * Output the configuration header section. This method is called in the head section of the connector's configuration page. Its purpose is to add the required tabs to the list, and to output any
-   * javascript methods that might be needed by the configuration editing HTML.
+   * Output the configuration header section. This method is called in the head section of the connector's configuration page. Its purpose is to add the required tabs to the list,
+   * and to output any javascript methods that might be needed by the configuration editing HTML.
    *
    * @param threadContext is the local thread context.
    * @param out           is the output to which any HTML should be sent.
@@ -2521,8 +2542,9 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
   }
 
   /**
-   * Output the configuration body section. This method is called in the body section of the connector's configuration page. Its purpose is to present the required form elements for editing. The coder
-   * can presume that the HTML that is output from this configuration will be within appropriate <html>, <body>, and <form> tags. The name of the form is "editconnection".
+   * Output the configuration body section. This method is called in the body section of the connector's configuration page. Its purpose is to present the required form elements for
+   * editing. The coder can presume that the HTML that is output from this configuration will be within appropriate <html>, <body>, and <form> tags. The name of the form is
+   * "editconnection".
    *
    * @param threadContext is the local thread context.
    * @param out           is the output to which any HTML should be sent.
@@ -2539,8 +2561,8 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
   }
 
   /**
-   * Process a configuration post. This method is called at the start of the connector's configuration page, whenever there is a possibility that form data for a connection has been posted. Its
-   * purpose is to gather form information and modify the configuration parameters accordingly. The name of the posted form is "editconnection".
+   * Process a configuration post. This method is called at the start of the connector's configuration page, whenever there is a possibility that form data for a connection has been
+   * posted. Its purpose is to gather form information and modify the configuration parameters accordingly. The name of the posted form is "editconnection".
    *
    * @param threadContext   is the local thread context.
    * @param variableContext is the set of variables available from the post, including binary file post information.
@@ -2622,8 +2644,8 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
   }
 
   /**
-   * View configuration. This method is called in the body section of the connector's view configuration page. Its purpose is to present the connection information to the user. The coder can presume
-   * that the HTML that is output from this configuration will be within appropriate <html> and <body> tags.
+   * View configuration. This method is called in the body section of the connector's view configuration page. Its purpose is to present the connection information to the user. The
+   * coder can presume that the HTML that is output from this configuration will be within appropriate <html> and <body> tags.
    *
    * @param threadContext is the local thread context.
    * @param out           is the output to which any HTML should be sent.
@@ -2706,9 +2728,27 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
     paramMap.put("MINLENGTH", minLength);
   }
 
+  protected static void fillInLastAccessSpecification(final Map<String, Object> paramMap, final Specification os) {
+
+    String preserveLastAccess = null;
+    for (int i = 0; i < os.getChildCount(); i++) {
+      final SpecificationNode sn = os.getChild(i);
+
+      if (sn.getType().equals(SharedDriveConnector.NODE_PRESERVE_LAST_ACCESS)) {
+        preserveLastAccess = sn.getAttributeValue(SharedDriveConnector.ATTRIBUTE_VALUE);
+      }
+    }
+    if (preserveLastAccess == null) {
+      preserveLastAccess = "false";
+    }
+
+    paramMap.put("PRESERVELASTACCESS", preserveLastAccess);
+  }
+
   /**
-   * Output the specification header section. This method is called in the head section of a job page which has selected a repository connection of the current type. Its purpose is to add the required
-   * tabs to the list, and to output any javascript methods that might be needed by the job editing HTML. The connector will be connected before this method can be called.
+   * Output the specification header section. This method is called in the head section of a job page which has selected a repository connection of the current type. Its purpose is
+   * to add the required tabs to the list, and to output any javascript methods that might be needed by the job editing HTML. The connector will be connected before this method can
+   * be called.
    *
    * @param out                      is the output to which any HTML should be sent.
    * @param locale                   is the locale the output is preferred to be in.
@@ -2729,14 +2769,15 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
     tabsArray.add(Messages.getString(locale, "SharedDriveConnector.ContentLength"));
     tabsArray.add(Messages.getString(locale, "SharedDriveConnector.FileMapping"));
     tabsArray.add(Messages.getString(locale, "SharedDriveConnector.URLMapping"));
+    tabsArray.add(Messages.getString(locale, "SharedDriveConnector.LastAccess"));
 
     Messages.outputResourceWithVelocity(out, locale, EDIT_SPECIFICATION_JS, paramMap);
   }
 
   /**
-   * Output the specification body section. This method is called in the body section of a job page which has selected a repository connection of the current type. Its purpose is to present the
-   * required form elements for editing. The coder can presume that the HTML that is output from this configuration will be within appropriate <html>, <body>, and <form> tags. The name of the form is
-   * always "editjob". The connector will be connected before this method can be called.
+   * Output the specification body section. This method is called in the body section of a job page which has selected a repository connection of the current type. Its purpose is to
+   * present the required form elements for editing. The coder can presume that the HTML that is output from this configuration will be within appropriate <html>, <body>, and <form>
+   * tags. The name of the form is always "editjob". The connector will be connected before this method can be called.
    *
    * @param out                      is the output to which any HTML should be sent.
    * @param locale                   is the locale the output is preferred to be in.
@@ -2759,9 +2800,11 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
     // Fill in the field mapping tab data
     fillInGlobalFiltersSpecification(paramMap, ds);
     fillInContentLengthSpecification(paramMap, ds);
+    fillInLastAccessSpecification(paramMap, ds);
 
     Messages.outputResourceWithVelocity(out, locale, EDIT_SPECIFICATION_CONTENT_LENGTH_HTML, paramMap);
     Messages.outputResourceWithVelocity(out, locale, EDIT_SPECIFICATION_GLOBAL_FILTERS_HTML, paramMap);
+    Messages.outputResourceWithVelocity(out, locale, EDIT_SPECIFICATION_LAST_ACCESS_HTML, paramMap);
 
     final String seqPrefix = "s" + connectionSequenceNumber + "_";
 
@@ -3204,8 +3247,9 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
   }
 
   /**
-   * Process a specification post. This method is called at the start of job's edit or view page, whenever there is a possibility that form data for a connection has been posted. Its purpose is to
-   * gather form information and modify the document specification accordingly. The name of the posted form is always "editjob". The connector will be connected before this method can be called.
+   * Process a specification post. This method is called at the start of job's edit or view page, whenever there is a possibility that form data for a connection has been posted. Its
+   * purpose is to gather form information and modify the document specification accordingly. The name of the posted form is always "editjob". The connector will be connected before
+   * this method can be called.
    *
    * @param variableContext          contains the post data, including binary file-upload information.
    * @param locale                   is the locale the output is preferred to be in.
@@ -3818,12 +3862,30 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
         ds.addChild(ds.getChildCount(), node);
       }
     }
+
+    // Last access
+    int i = 0;
+    while (i < ds.getChildCount()) {
+      final SpecificationNode sn = ds.getChild(i);
+      if (sn.getType().equals(SharedDriveConnector.NODE_PRESERVE_LAST_ACCESS)) {
+        ds.removeChild(i);
+      } else {
+        i++;
+      }
+    }
+    x = variableContext.getParameter(seqPrefix + "preservelastaccess");
+    if (x != null) {
+      final SpecificationNode node = new SpecificationNode(SharedDriveConnector.NODE_PRESERVE_LAST_ACCESS);
+      node.setAttribute(SharedDriveConnector.ATTRIBUTE_VALUE, x);
+      ds.addChild(ds.getChildCount(), node);
+
+    }
     return null;
   }
 
   /**
-   * View specification. This method is called in the body section of a job's view page. Its purpose is to present the document specification information to the user. The coder can presume that the
-   * HTML that is output from this configuration will be within appropriate <html> and <body> tags. The connector will be connected before this method can be called.
+   * View specification. This method is called in the body section of a job's view page. Its purpose is to present the document specification information to the user. The coder can
+   * presume that the HTML that is output from this configuration will be within appropriate <html> and <body> tags. The connector will be connected before this method can be called.
    *
    * @param out                      is the output to which any HTML should be sent.
    * @param locale                   is the locale the output is preferred to be in.
@@ -3882,6 +3944,10 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
     paramMap.put("SEQNUM", Integer.toString(connectionSequenceNumber));
     fillInGlobalFiltersSpecification(paramMap, ds);
     Messages.outputResourceWithVelocity(out, locale, VIEW_SPECIFICATION_GLOBAL_FILTERS_HTML, paramMap);
+
+    // Last Access
+    fillInLastAccessSpecification(paramMap, ds);
+    Messages.outputResourceWithVelocity(out, locale, VIEW_SPECIFICATION_LAST_ACCESS_HTML, paramMap);
 
 //    final List<String> includeFilters = new ArrayList<>();
 //    final List<String> excludeFilters = new ArrayList<>();
@@ -4511,6 +4577,21 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
         throw serviceInterruption;
       }
     }
+  }
+
+  protected static boolean preserveLastAccess(final Specification os) {
+    final boolean preserveLastAccess = false;
+    for (int i = 0; i < os.getChildCount(); i++) {
+      final SpecificationNode sn = os.getChild(i);
+
+      if (sn.getType().equals(NODE_PRESERVE_LAST_ACCESS)) {
+        final String value = sn.getAttributeValue(ATTRIBUTE_VALUE);
+        if (value != null && !value.isEmpty()) {
+          return Boolean.valueOf(value);
+        }
+      }
+    }
+    return preserveLastAccess;
   }
 
   protected static class GlobalFilters {
