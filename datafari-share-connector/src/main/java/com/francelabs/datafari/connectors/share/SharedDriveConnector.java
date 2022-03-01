@@ -1118,6 +1118,13 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
                         fileLengthLong = fileLength;
                       } finally {
                         inputStream.close();
+                        if (preserveLastAccess && !fileIsDirectory && orgLastAccess != 0L) {
+                          try {
+                            file.setLastAccess(orgLastAccess);
+                          } catch (final Exception e) {
+                            Logging.connectors.warn("Unable to preserve last access date for " + documentIdentifier, e);
+                          }
+                        }
                       }
                     }
                   } else {
