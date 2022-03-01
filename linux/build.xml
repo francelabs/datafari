@@ -57,7 +57,9 @@
 	<property name="installer.dist.dir" value="${installer.dir}/dist" />
 
 
-	<target name="clean-build" depends="clean,package,factorydatafari,installer-debian" />
+	<target name="clean-build" depends="clean,package,installer-debian" />
+	
+	<target name="clean-build-prod" depends="clean,package,factorydatafari,installer-debian" />
 
 	<target name="clean">
 		<delete includeemptydirs="true" quiet="true">
