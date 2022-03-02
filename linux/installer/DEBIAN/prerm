@@ -1,0 +1,37 @@
+#!/bin/bash
+
+service_exists() {
+    local n=$1
+    if [[ $(systemctl list-units --all -t service --full --no-legend "$n.service" | sed 's/^\s*//g' | cut -f1 -d' ') == $n.service ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+#try to stop monit
+if service_exists monit; then
+  service monit stop      
+fi
+
+#try to stop apache2
+if service_exists apache2; then
+  service apache2 stop
+fi
+
+#try to gently stop datafari 
+STOP_SCRIPT=/opt/datafari/bin/stop-datafari.sh
+if [ -f "$STOP_SCRIPT" ]; then
+  cd /opt/datafari/bin
+  bash stop-datafari.sh
+fi
+
+#kill all remaining Datafari processes
+pkill -9 -u datafari
+pkill -9 -u postgres
+
+#if some datafari processes are remaining exit uninstall
+if [[ $(ps -u datafari | wc -l) > 1 ]]; then
+    echo "Running Datafari processes has been found ! Exiting package uninstallation !"
+    exit 1
+fi

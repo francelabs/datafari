@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#check if there is a standard install of Datafari 
+DATAFARI_DIR=/opt/datafari/
+if [ -d "$DATAFARI_DIR" ]; then
+    echo "Datafari is already installed ! Exiting package installation !"
+    exit 1
+fi
+
+if [[ $(ps -u datafari | wc -l) > 1 ]]; then
+    echo "Running Datafari processes have been found ! Exiting package installation !"
+    exit 1
+fi
