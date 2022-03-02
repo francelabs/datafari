@@ -74,37 +74,37 @@ kibana_first_init()
 {
   cpt=0
   pct=0
-  until [ $cpt -gt 80 ]
+  until [ $cpt -gt 70 ]
   do
    modulo=$(expr $cpt % 2)
    if [[ "$modulo" ==  0 ]] && [[ "$cpt" -gt 0 ]]; then
      let pct+=1
    fi
    if [[ "$pct" -lt 10 ]]; then
-    echo -ne 'Initializing Kibana [          ] ('$pct'%)'
+    echo -ne 'Initializing Kibana [          ] ('$pct'%)\r'
    elif [[ "$pct" -ge 10 ]] && [[ "$pct" -lt 20 ]]; then
-       echo -ne 'Initializing Kibana [#         ] ('$pct'%)'
+       echo -ne 'Initializing Kibana [#         ] ('$pct'%)\r'
    elif [[ "$pct" -ge 20 ]] && [[ "$pct" -lt 30 ]]; then
-       echo -ne 'Initializing Kibana [##        ] ('$pct'%)'
+       echo -ne 'Initializing Kibana [##        ] ('$pct'%)\r'
    elif [[ "$pct" -ge 30 ]] && [[ "$pct" -lt 40 ]]; then
-       echo -ne 'Initializing Kibana [###       ] ('$pct'%)'
+       echo -ne 'Initializing Kibana [###       ] ('$pct'%)\r'
    elif [[ "$pct" -ge 40 ]] && [[ "$pct" -lt 50 ]]; then
-       echo -ne 'Initializing Kibana [####      ] ('$pct'%)'
+       echo -ne 'Initializing Kibana [####      ] ('$pct'%)\r'
    elif [[ "$pct" -ge 50 ]] && [[ "$pct" -lt 60 ]]; then
-       echo -ne 'Initializing Kibana [#####     ] ('$pct'%)'
+       echo -ne 'Initializing Kibana [#####     ] ('$pct'%)\r'
    elif [[ "$pct" -ge 60 ]] && [[ "$pct" -lt 70 ]]; then
-       echo -ne 'Initializing Kibana [######    ] ('$pct'%)'
+       echo -ne 'Initializing Kibana [######    ] ('$pct'%)\r'
    elif [[ "$pct" -ge 70 ]] && [[ "$pct" -lt 80 ]]; then
-       echo -ne 'Initializing Kibana [#######   ] ('$pct'%)'
+       echo -ne 'Initializing Kibana [#######   ] ('$pct'%)\r'
    elif [[ "$pct" -ge 80 ]] && [[ "$pct" -lt 90 ]]; then
-       echo -ne 'Initializing Kibana [########  ] ('$pct'%)'
+       echo -ne 'Initializing Kibana [########  ] ('$pct'%)\r'
    elif [[ "$pct" -ge 90 ]] && [[ "$pct" -lt 100 ]]; then
-       echo -ne 'Initializing Kibana [######### ] ('$pct'%)'
+       echo -ne 'Initializing Kibana [######### ] ('$pct'%)\r'
    else
-      echo -ne 'Initializing Kibana [##########] ('$pct'%)'
+      echo -ne 'Initializing Kibana [##########] ('$pct'%)\r'
    fi
    
-   if [[ "$pct" == 40 ]]; then
+   if [[ "$pct" == 35 ]]; then
      init_kibana_index;
      echo 'Initializing Kibana [##########] (100%)'
      
