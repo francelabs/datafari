@@ -23,57 +23,57 @@ if  [[ "$STATE" = *installed* ]];
 		
 		
 
-if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $CATALINA_PID"; then
+if run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh is_running $CATALINA_PID"; then
     PID=$(run_as ${DATAFARI_USER} "cat $CATALINA_PID");
     echo "Error: Tomcat seems to be already running with PID $PID"
     exit 1
 fi
 
-if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $CATALINA_MCF_PID"; then
+if run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh is_running $CATALINA_MCF_PID"; then
     PID=$(run_as ${DATAFARI_USER} "cat $CATALINA_MCF_PID");
     echo "Error: Tomcat-MCF seems to be already running with PID $PID"
     exit 1
 fi
 
-if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $MCF_PID_FILE"; then
+if run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh is_running $MCF_PID_FILE"; then
     PID=$(run_as ${DATAFARI_USER} "cat $MCF_PID_FILE");
     echo "Error: MCF Agent seems to be already running with PID $PID"
     exit 1
 fi
 
-if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $SOLR_PID_FILE"; then
+if run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh is_running $SOLR_PID_FILE"; then
    PID=$(run_as ${DATAFARI_USER} "cat $SOLR_PID_FILE");
    echo "Error : Solr seems to be already running with PID $PID"
    exit 1
 fi
 
 
-if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $CASSANDRA_PID_FILE"; then
+if run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh is_running $CASSANDRA_PID_FILE"; then
    PID=$(run_as ${DATAFARI_USER} "cat $CASSANDRA_PID_FILE");
    echo "Error : Cassandra seems to be already running with PID $PID"
    exit 1
 fi
 
-if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $ZK_PID_FILE"; then
+if run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh is_running $ZK_PID_FILE"; then
    PID=$(run_as ${DATAFARI_USER} "cat $ZK_PID_FILE");
    echo "Error : Zookeeper seems to be already running with PID $PID"
    exit 1
 fi
 
 
-if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $ZK_MCF_PID_FILE"; then
+if run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh is_running $ZK_MCF_PID_FILE"; then
    PID=$(run_as ${DATAFARI_USER} "cat $ZK_MCF_PID_FILE");
    echo "Error : Zookeeper MCF seems to be already running with PID $PID"
    exit 1
 fi
 
-if run_as ${POSTGRES_USER} "bash datafari-manager.sh is_running $POSTGRES_PID_FILE"; then
+if run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh is_running $POSTGRES_PID_FILE"; then
    PID=$(run_as ${POSTGRES_USER} "cat $POSTGRES_PID_FILE");
    echo "Error : Postgres seems to be already running with PID $PID"
    exit 1
 fi
 
-if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $TIKA_SERVER_PID_FILE"; then
+if run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh is_running $TIKA_SERVER_PID_FILE"; then
    PID=$(run_as ${DATAFARI_USER} "cat $TIKA_SERVER_PID_FILE");
    echo "Error : Tika Server seems to be already running with PID $PID"
    exit 1
@@ -101,34 +101,34 @@ if  [[ "$NODETYPE" = *mono* ]]; then
     cd $DIR		
 		
 		echo "Start postgres and cassandra and add ManifoldCF database"
-		run_as ${POSTGRES_USER} "bash datafari-manager.sh init_postgres_repertories";
-    run_as ${DATAFARI_USER} "bash datafari-manager.sh init_cassandra_repertories";
-    run_as ${DATAFARI_USER} "bash datafari-manager.sh init_zookeeper_repertory";
-    run_as ${DATAFARI_USER} "bash datafari-manager.sh init_zookeeper_mcf_repertory";
+		run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh init_postgres_repertories";
+    run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_cassandra_repertories";
+    run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_zookeeper_repertory";
+    run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_zookeeper_mcf_repertory";
    	
-   	run_as ${DATAFARI_USER} "bash datafari-manager.sh start_cassandra";
+   	run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh start_cassandra";
    	waitCassandra;
-    run_as ${DATAFARI_USER} "bash datafari-manager.sh init_cassandra";
+    run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_cassandra";
 	
-	  run_as ${POSTGRES_USER} "bash datafari-manager.sh init_postgres";
-	  run_as ${POSTGRES_USER} "bash datafari-manager.sh start_postgres";
+	  run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh init_postgres";
+	  run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh start_postgres";
 	fi
 
 
-	run_as ${DATAFARI_USER} "bash datafari-manager.sh start_zookeeper";
+	run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh start_zookeeper";
 	
-	run_as ${DATAFARI_USER} "bash datafari-manager.sh start_zookeeper_mcf";
+	run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh start_zookeeper_mcf";
 
 	if  [[ "$STATE" = *initialized* ]];
 	then
 	  echo "Wait 10s that the Zookeepers are started..."
     sleep 10
-    run_as ${DATAFARI_USER} "bash datafari-manager.sh init_mcf_crawler_agent";
-		run_as ${DATAFARI_USER} "bash datafari-manager.sh init_zk_mcf";
-		run_as ${DATAFARI_USER} "bash datafari-manager.sh init_zk";
+    run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_mcf_crawler_agent";
+		run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_zk_mcf";
+		run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_zk";
 	else
-		run_as ${POSTGRES_USER} "bash datafari-manager.sh start_postgres";
-		run_as ${DATAFARI_USER} "bash datafari-manager.sh start_cassandra";
+		run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh start_postgres";
+		run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh start_cassandra";
 		waitCassandra;
 	fi
 
@@ -142,31 +142,31 @@ if  [[ "$NODETYPE" = *mono* ]]; then
 	fi
 
   if [ "$(whoami)" == "root" ]; then
-		bash datafari-manager.sh start_apache
+		bash ${DIR}/datafari-manager.sh start_apache
 	else
-		run_as ${DATAFARI_USER} "bash datafari-manager.sh start_apache"
+		run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh start_apache"
 	fi
   
-  run_as ${DATAFARI_USER} "bash datafari-manager.sh start_mcf_crawler_agent";
+  run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh start_mcf_crawler_agent";
   
-  run_as ${DATAFARI_USER} "bash datafari-manager.sh start_solr";
+  run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh start_solr";
   
   echo "Wait 5s that Solr registers to Zookeeper..."
   sleep 5
   
   if  [[ "$STATE" = *initialized* ]];
   then
-    run_as ${DATAFARI_USER} "bash datafari-manager.sh init_solr";
+    run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_solr";
   fi
 
-	run_as ${DATAFARI_USER} "bash datafari-manager.sh start_tomcat";
+	run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh start_tomcat";
 	waitTomcat;
-	run_as ${DATAFARI_USER} "bash datafari-manager.sh start_tomcat_mcf";
+	run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh start_tomcat_mcf";
 	waitTomcatMCF;
 	
 	if  [[ "$STATE" = *initialized* ]];
   then
-    run_as ${DATAFARI_USER} "bash datafari-manager.sh init_mcf";   
+    run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_mcf";   
     #act end start initialization
     run_as ${DATAFARI_USER} `sed -i 's/\(STATE *= *\).*/\1active/' $INIT_STATE_FILE`
   fi
