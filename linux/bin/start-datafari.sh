@@ -118,10 +118,11 @@ if  [[ "$NODETYPE" = *mono* ]]; then
 	run_as ${DATAFARI_USER} "bash datafari-manager.sh start_zookeeper";
 	
 	run_as ${DATAFARI_USER} "bash datafari-manager.sh start_zookeeper_mcf";
-	
 
 	if  [[ "$STATE" = *initialized* ]];
 	then
+	  echo "Wait 10s that the Zookeepers are started..."
+    sleep 10
     run_as ${DATAFARI_USER} "bash datafari-manager.sh init_mcf_crawler_agent";
 		run_as ${DATAFARI_USER} "bash datafari-manager.sh init_zk_mcf";
 		run_as ${DATAFARI_USER} "bash datafari-manager.sh init_zk";

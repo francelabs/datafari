@@ -65,6 +65,7 @@ init_kibana_index()
   @ADDITIONAL_TEMPLATES@
   curl -k -u searchadmin:admin -X POST https://localhost:5601/api/saved_objects/_import -H "kbn-xsrf: true" -H "securitytenant: searchexpert_tenant" --form file=@${ELK_HOME}/save/kibana-ce.ndjson
   @ADDITIONAL_IMPORTS@
+  echo ""
   echo "Kibana index initialized !"
 }
 
@@ -73,39 +74,39 @@ kibana_first_init()
 {
   cpt=0
   pct=0
-  until [ $cpt -gt 150 ]
+  until [ $cpt -gt 80 ]
   do
    modulo=$(expr $cpt % 2)
    if [[ "$modulo" ==  0 ]] && [[ "$cpt" -gt 0 ]]; then
      let pct+=1
    fi
    if [[ "$pct" -lt 10 ]]; then
-    echo -ne 'Initializing Kibana [          ] ('$pct'%)\r'
+    echo -ne 'Initializing Kibana [          ] ('$pct'%)'
    elif [[ "$pct" -ge 10 ]] && [[ "$pct" -lt 20 ]]; then
-       echo -ne 'Initializing Kibana [#         ] ('$pct'%)\r'
+       echo -ne 'Initializing Kibana [#         ] ('$pct'%)'
    elif [[ "$pct" -ge 20 ]] && [[ "$pct" -lt 30 ]]; then
-       echo -ne 'Initializing Kibana [##        ] ('$pct'%)\r'
+       echo -ne 'Initializing Kibana [##        ] ('$pct'%)'
    elif [[ "$pct" -ge 30 ]] && [[ "$pct" -lt 40 ]]; then
-       echo -ne 'Initializing Kibana [###       ] ('$pct'%)\r'
+       echo -ne 'Initializing Kibana [###       ] ('$pct'%)'
    elif [[ "$pct" -ge 40 ]] && [[ "$pct" -lt 50 ]]; then
-       echo -ne 'Initializing Kibana [####      ] ('$pct'%)\r'
+       echo -ne 'Initializing Kibana [####      ] ('$pct'%)'
    elif [[ "$pct" -ge 50 ]] && [[ "$pct" -lt 60 ]]; then
-       echo -ne 'Initializing Kibana [#####     ] ('$pct'%)\r'
+       echo -ne 'Initializing Kibana [#####     ] ('$pct'%)'
    elif [[ "$pct" -ge 60 ]] && [[ "$pct" -lt 70 ]]; then
-       echo -ne 'Initializing Kibana [######    ] ('$pct'%)\r'
+       echo -ne 'Initializing Kibana [######    ] ('$pct'%)'
    elif [[ "$pct" -ge 70 ]] && [[ "$pct" -lt 80 ]]; then
-       echo -ne 'Initializing Kibana [#######   ] ('$pct'%)\r'
+       echo -ne 'Initializing Kibana [#######   ] ('$pct'%)'
    elif [[ "$pct" -ge 80 ]] && [[ "$pct" -lt 90 ]]; then
-       echo -ne 'Initializing Kibana [########  ] ('$pct'%)\r'
+       echo -ne 'Initializing Kibana [########  ] ('$pct'%)'
    elif [[ "$pct" -ge 90 ]] && [[ "$pct" -lt 100 ]]; then
-       echo -ne 'Initializing Kibana [######### ] ('$pct'%)\r'
+       echo -ne 'Initializing Kibana [######### ] ('$pct'%)'
    else
-      echo -ne 'Initializing Kibana [##########] ('$pct'%)\r'
+      echo -ne 'Initializing Kibana [##########] ('$pct'%)'
    fi
    
-   if [[ "$pct" == 75 ]]; then
+   if [[ "$pct" == 40 ]]; then
      init_kibana_index;
-     echo 'Initializing Kibana [##########] ('100'%)\r'
+     echo 'Initializing Kibana [##########] (100%)'
      
    fi
       
