@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+  <Appenders>
+    <Console name="STDOUT" target="SYSTEM_OUT">
+      <PatternLayout>
+        <Pattern>%-4r [%t] %-5p %c %x \u2013 %m%n</Pattern>
+      </PatternLayout>
+    </Console>
+
+    <RollingFile name="Tomcat" fileName="${env:TIKA_LOGS_DIR}/tika-server-child.log" filePattern="${env:TIKA_LOGS_DIR}/tika-server-child.log.%d{yyyy-MM-dd}.log">
+      <PatternLayout>
+        <Pattern>%5p %d{ISO8601} (%t) - Tika-server|Tika-server|%c{3}|%m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1" />
+        <SizeBasedTriggeringPolicy size="10MB" />
+      </Policies>
+      <DefaultRolloverStrategy max="10" />
+    </RollingFile>
+  </Appenders>
+
+  <Loggers>
+    <Root level="warn">
+      <AppenderRef ref="STDOUT" />
+      <AppenderRef ref="Tomcat" />
+    </Root>
+  </Loggers>
+</Configuration>

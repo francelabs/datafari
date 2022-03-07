@@ -20,7 +20,7 @@ cmd_start() {
    exit 1
   fi
   echo "Start Tika Server on port $TIKA_PORT"
-  nohup "$JAVA_HOME/bin/java" -cp $TIKA_SERVER_HOME/conf/ocr:$TIKA_SERVER_HOME/bin/tika-server.jar -Dtika.logs.dir=$TIKA_LOGS_DIR -Dlog4j.configuration=file:$TIKA_SERVER_HOME/conf/log4j.properties -Duser.timezone=UTC $TIKA_MEM org.apache.tika.server.TikaServerCli -spawnChild $STIKA_SPAWN $TIKA_SPAWN_MEM -JDuser.timezone=UTC -JDjava.io.tmpdir=$TMP_DIR -JDtika.logs.dir=$TIKA_LOGS_DIR -JDlog4j.configuration=file:$TIKA_SERVER_HOME/conf/log4jchild.properties  --port=$TIKA_PORT $TIKA_SPAWN_TASK_TIMEOUT $TIKA_SPAWN_PING_TIMEOUT $OCR_OPTION >/dev/null 2>&1 &
+  nohup "$JAVA_HOME/bin/java" -cp $TIKA_SERVER_HOME/conf/ocr:$TIKA_SERVER_HOME/bin/tika-server.jar -Dtika.logs.dir=$TIKA_LOGS_DIR -Dlog4j2.configurationFile=file:$TIKA_SERVER_HOME/conf/log4j2.properties.xml -Duser.timezone=UTC $TIKA_MEM org.apache.tika.server.TikaServerCli -spawnChild $STIKA_SPAWN $TIKA_SPAWN_MEM -JDuser.timezone=UTC -JDjava.io.tmpdir=$TMP_DIR -JDtika.logs.dir=$TIKA_LOGS_DIR -JDlog4j2.configurationFile=file:$TIKA_SERVER_HOME/conf/log4j2child.properties.xml  --port=$TIKA_PORT $TIKA_SPAWN_TASK_TIMEOUT $TIKA_SPAWN_PING_TIMEOUT $OCR_OPTION >/dev/null 2>&1 &
   echo $! > $TIKA_SERVER_PID_FILE
   echo "Tika Server started with PID $(cat $TIKA_SERVER_PID_FILE)"
   return 0
