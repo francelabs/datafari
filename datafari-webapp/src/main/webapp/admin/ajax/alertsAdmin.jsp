@@ -106,7 +106,9 @@
                   style="width: 100%;"><option
                     id="smtp-security-none" value="none">Aucun</option>
                   <option value="tls">TLS</option>
-                  <option value="ssl">SSL</option></select>
+                  <option value="ssl">SSL</option>
+                  <option value="tls+ssl">TLS+SSL</option>
+                </select>
               </div>
             </div>
             <div class="row">
@@ -119,6 +121,7 @@
               <div class="col-sm-3">
                 <input type="text" id="Address" class="form-control"
                   style="min-width: 150px;" value="Datafari">
+                <div class="invalid-feedback">Please provide a mail address</div>
               </div>
             </div>
             <div class="row">
@@ -131,7 +134,8 @@
               <div class="col-sm-3">
                 <input type="text" id="UserName" class="form-control"
                   style="min-width: 150px;"
-                  value="onizukadu06@gmail.com">
+                  value="">
+                <div class="invalid-feedback">If you provide a password you must provide a username !</div>
               </div>
             </div>
             <div class="row">
@@ -203,7 +207,7 @@
                 address (will receive a test mail)</label>
             </div>
             <div class="col-sm-3">
-              <input type="text" id="testAddress" />
+              <input type="text" id="testAddress" class="form-control" />
             </div>
           </div>
           <button type="button" class="btn btn-primary btn-label-center"

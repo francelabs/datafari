@@ -119,11 +119,29 @@ function setErrorStatus(element, errorMsg) {
 }
 
 function checkPasswords() {
+  var userElm = $("#UserName");
+  clearStatus(userElm);
   clearStatus($("#ConfirmPass"));
   var password = $("#Pass").val();
+  if(password && !userElm.val()) {
+    setErrorStatus(userElm);
+    return false;
+  }
   var confirmPassword = $("#ConfirmPass").val();
   if (password !== confirmPassword) {
     setErrorStatus($("#ConfirmPass"));
+    return false;
+  } else {
+    return true;
+  }
+}
+
+function checkExpeditorMail() {
+  var expeditorElm = $("#Address");
+  clearStatus(expeditorElm);
+  if (!expeditorElm.val()) {
+    setErrorStatus(expeditorElm);
+    expeditorElm.addClass("is-invalid");
     return false;
   } else {
     return true;
@@ -187,7 +205,7 @@ function doGet() {
           document.getElementById("WeeklyDelay").value = format(data.weeklyDate);
 
           // SMTP conf
-
+          $("#SMTP").val(data.smtp);
           $("#SMTPPort").val(data.smtp_port);
           $("#SMTPSecurity").val(data.smtp_security);
           $("#Address").val(data.from);
@@ -222,15 +240,12 @@ function onOff() {
 }
 
 function parameters() {
-  if (!checkPasswords()) {
+  if (!checkPasswords() || !checkExpeditorMail()) {
     return;
   }
   var data = "HOURLYDELAY=" + document.getElementById("HourlyDelay").value + "&DAILYDELAY=" + document.getElementById("DailyDelay").value + "&WEEKLYDELAY="
     + document.getElementById("WeeklyDelay").value + "&smtp=" + document.getElementById("SMTP").value + "&smtp_port=" + document.getElementById("SMTPPort").value + "&smtp_security=" + $("#SMTPSecurity").val() + "&from="
     + document.getElementById("Address").value + "&user=" + document.getElementById("UserName").value + "&pass=" + document.getElementById("Pass").value;
-  if (data.indexOf("=&") != -1) {
-    alert(window.i18n.msgStore['missingParameter']);
-  }
   $.ajax({ // Ajax request to the doGet of the Alerts servlet
     type: "POST",
     url: "./../admin/alertsAdmin",

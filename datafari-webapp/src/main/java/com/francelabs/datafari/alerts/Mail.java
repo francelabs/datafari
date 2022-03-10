@@ -66,10 +66,14 @@ public class Mail {
    *
    * sends a mail
    *
-   * @param subject  : the subject of the mail
-   * @param text     : the text of the mail
-   * @param dest     : the destination address
-   * @param copyDest : (optionnal set to "" if not wanted) an other destination
+   * @param subject
+   *          : the subject of the mail
+   * @param text
+   *          : the text of the mail
+   * @param dest
+   *          : the destination address
+   * @param copyDest
+   *          : (optionnal set to "" if not wanted) an other destination
    * @throws Exception
    *
    */
@@ -84,12 +88,23 @@ public class Mail {
 
       if (smtpSecurity.toLowerCase().contentEquals("tls")) {
         props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.ssl.enable", "false");
       } else if (smtpSecurity.toLowerCase().contentEquals("ssl")) {
         final MailSSLSocketFactory sf = new MailSSLSocketFactory();
         sf.setTrustedHosts(new String[] { smtpHost });
         props.put("mail.smtp.ssl.enable", "true");
         props.put("mail.smtp.ssl.checkserveridentity", "false");
         props.put("mail.smtp.ssl.socketFactory", sf);
+      } else if (smtpSecurity.toLowerCase().contentEquals("tls+ssl")) {
+        props.put("mail.smtp.starttls.enable", "true");
+        final MailSSLSocketFactory sf = new MailSSLSocketFactory();
+        sf.setTrustedHosts(new String[] { smtpHost });
+        props.put("mail.smtp.ssl.enable", "true");
+        props.put("mail.smtp.ssl.checkserveridentity", "false");
+        props.put("mail.smtp.ssl.socketFactory", sf);
+      } else {
+        props.put("mail.smtp.starttls.enable", "false");
+        props.put("mail.smtp.ssl.enable", "false");
       }
 
       Session session;

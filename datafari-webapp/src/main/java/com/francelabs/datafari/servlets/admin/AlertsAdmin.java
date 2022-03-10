@@ -179,8 +179,7 @@ public class AlertsAdmin extends HttpServlet {
       alertsConf.saveProperties();
     } catch (final Exception e) {
       LOGGER.error("Error while accessing the alerts.properties file in the doPost of the alerts administration Servlet . Error 69020 ", e);
-      json.put("message",
-          "Error while accessing the alerts.properties file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69020");
+      json.put("message", "Error while accessing the alerts.properties file, please make sure the file exists and retry, if the problem persists contact your system administrator. Error code : 69020");
       json.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
     }
 
