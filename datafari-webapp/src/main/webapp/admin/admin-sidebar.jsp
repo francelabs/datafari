@@ -125,7 +125,6 @@
         <%
           }
         %>
-          <li id="AnnotatorConfiguration"><a id="annotatorConfiguration-AdminUI" class="ajax-link" href="?page=annotatorConfiguration"></a></li>
           <li id="DuplicatesConfiguration"><a id="duplicatesConfiguration-AdminUI" class="ajax-link" href="?page=duplicatesConfiguration"></a></li>
           <li id="SizeLimitation"><a id="sizeLimitation-AdminUI" class="ajax-link" href="?page=SizeLimitations"></a></li>
           <li id="AutocompleteConfiguration"><a id="autocompleteConfig-AdminUI" class="ajax-link" href="?page=AutocompleteConfiguration"></a></li>
