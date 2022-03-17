@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -87,6 +87,27 @@ public class Users {
             } catch (DatafariServerException e) {
                 throw new InternalErrorException("Error while saving the new lang.");
             }
+        } else {
+            throw new NotAuthenticatedException("User must be authenticated to perform this action.");
+        }
+    }
+
+    @GetMapping(value = "rest/v1.0/users/current/history", produces = "application/json;charset=UTF-8")
+    protected String getUserHistory(final HttpServletRequest request) {
+        final JSONParser parser = new JSONParser();
+        final String authenticatedUserName = AuthenticatedUserName.getName(request);
+        if (authenticatedUserName != null) {
+            // TODO Get the user history instead of hardcoded data
+            JSONObject responseContent = new JSONObject();
+            ArrayList<String> history = new ArrayList<>();
+            history.add("france labs");
+            history.add("datafari");
+            history.add("energy");
+            responseContent.put("history", history);
+            responseContent.put("__note", "Current history data are hard coded and do not represent actual user queries.")
+            AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(),
+                    "User " + authenticatedUserName + " accessed his request history");
+            return RestAPIUtils.buildOKResponse(responseContent);
         } else {
             throw new NotAuthenticatedException("User must be authenticated to perform this action.");
         }
