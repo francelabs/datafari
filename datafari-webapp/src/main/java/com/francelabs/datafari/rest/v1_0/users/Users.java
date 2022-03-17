@@ -104,7 +104,7 @@ public class Users {
             history.add("datafari");
             history.add("energy");
             responseContent.put("history", history);
-            responseContent.put("__note", "Current history data are hard coded and do not represent actual user queries.")
+            responseContent.put("__note", "Current history data are hard coded and do not represent actual user queries.");
             AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(),
                     "User " + authenticatedUserName + " accessed his request history");
             return RestAPIUtils.buildOKResponse(responseContent);

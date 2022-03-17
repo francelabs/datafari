@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 @WebServlet("/aggregatorList")
 public class AggregatorList extends HttpServlet {
@@ -29,7 +30,27 @@ public class AggregatorList extends HttpServlet {
     @Override
     protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
+        try {
+            final JSONArray result = doGetList(request);
+            String finalResponseStr = result.toJSONString();
+            final String wrapperFunction = request.getParameter("json.wrf");
+            if (wrapperFunction != null) {
+                finalResponseStr = wrapperFunction + "(" + finalResponseStr + ")";
+            }
+            response.setStatus(200);
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("text/json;charset=utf-8");
+            response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
+            response.getWriter().write(finalResponseStr);
 
+        } catch (final Exception e) {
+            LOGGER.error("aggregatorList unexpected error", e);
+            response.setStatus(500);
+        }
+
+    }
+
+    public static JSONArray doGetList(final HttpServletRequest request) throws ParseException {
         final SearchAggregatorConfiguration sac = SearchAggregatorConfiguration.getInstance();
         final String jaExternalDatafarisStr = sac.getProperty(SearchAggregatorConfiguration.EXTERNAL_DATAFARIS);
         final boolean activated = Boolean.valueOf(sac.getProperty(SearchAggregatorConfiguration.ACTIVATED));
@@ -61,44 +82,27 @@ public class AggregatorList extends HttpServlet {
 
         // Retrieve user allowed Datafari
         ArrayList<String> allowedDatafari = userConfig.getAllowedSourcesFor(authenticatedUserName);
-
-        try {
-            final JSONArray result = new JSONArray();
-            if (activated) {
-                final JSONParser parser = new JSONParser();
-                final JSONArray jaExternalDatafaris = (JSONArray) parser.parse(jaExternalDatafarisStr);
-                for (Object json : jaExternalDatafaris) {
-                    JSONObject externalDatafari = (JSONObject) json;
-                    Boolean enabled = (Boolean) externalDatafari.get("enabled");
-                    String label = (String) externalDatafari.get("label");
-                    // Add an external Datafari only if it is enabled and part of the allowed list for
-                    // the current user. If no list is available for the current user, we assume he
-                    // can search on all datafaris (ACLs are always taken into account anyway).
-                    if (enabled && (allowedDatafari == null || allowedDatafari.contains(label))) {
-                        JSONObject externalResult = new JSONObject();
-                        externalResult.put("label", label);
-                        if (userHomeDatafari.contains(label)) {
-                            externalResult.put("selected", true);
-                        }
-                        result.add(externalResult);
+        final JSONArray result = new JSONArray();
+        if (activated) {
+            final JSONParser parser = new JSONParser();
+            final JSONArray jaExternalDatafaris = (JSONArray) parser.parse(jaExternalDatafarisStr);
+            for (Object json : jaExternalDatafaris) {
+                JSONObject externalDatafari = (JSONObject) json;
+                Boolean enabled = (Boolean) externalDatafari.get("enabled");
+                String label = (String) externalDatafari.get("label");
+                // Add an external Datafari only if it is enabled and part of the allowed list for
+                // the current user. If no list is available for the current user, we assume he
+                // can search on all datafaris (ACLs are always taken into account anyway).
+                if (enabled && (allowedDatafari == null || allowedDatafari.contains(label))) {
+                    JSONObject externalResult = new JSONObject();
+                    externalResult.put("label", label);
+                    if (userHomeDatafari.contains(label)) {
+                        externalResult.put("selected", true);
                     }
+                    result.add(externalResult);
                 }
             }
-            String finalResponseStr = result.toJSONString();
-            final String wrapperFunction = request.getParameter("json.wrf");
-            if (wrapperFunction != null) {
-                finalResponseStr = wrapperFunction + "(" + finalResponseStr + ")";
-            }
-            response.setStatus(200);
-            response.setCharacterEncoding("utf-8");
-            response.setContentType("text/json;charset=utf-8");
-            response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
-            response.getWriter().write(finalResponseStr);
-
-        } catch (final Exception e) {
-            LOGGER.error("aggregatorList unexpected error", e);
-            response.setStatus(500);
         }
-
+        return result;
     }
 }
