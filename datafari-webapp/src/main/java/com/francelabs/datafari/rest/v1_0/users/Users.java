@@ -79,9 +79,17 @@ public class Users {
             try {
                 final JSONObject body = (JSONObject) parser.parse(jsonParam);
                 String bodyLang = (String) body.get("lang");
-                Lang.setLang(authenticatedUserName, bodyLang);
-                AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(),
-                        "Initialized saved language for user " + authenticatedUserName);
+                if (bodyLang != null) {
+                    Lang.setLang(authenticatedUserName, bodyLang);
+                    AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(),
+                            "Initialized saved language for user " + authenticatedUserName);
+                }
+                String bodyUiConfig = (String) body.get("uiConfig");
+                if (bodyUiConfig != null) {
+                    UiConfig.setUiConfig(authenticatedUserName, bodyUiConfig);
+                    AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(),
+                            "Modified saved ui config for user " + authenticatedUserName);
+                }
                 return RestAPIUtils.buildOKResponse(body);
             } catch (ParseException e1) {
                 throw new BadRequestException("Couldn't parse the JSON body");
@@ -105,7 +113,8 @@ public class Users {
             history.add("datafari");
             history.add("energy");
             responseContent.put("history", history);
-            responseContent.put("__note", "Current history data are hard coded and do not represent actual user queries.");
+            responseContent.put("__note",
+                    "Current history data are hard coded and do not represent actual user queries.");
             AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(),
                     "User " + authenticatedUserName + " accessed his request history");
             return RestAPIUtils.buildOKResponse(responseContent);
@@ -141,9 +150,11 @@ public class Users {
             try {
                 final JSONObject body = (JSONObject) parser.parse(jsonParam);
                 String bodyUiConfig = (String) body.get("uiConfig");
-                UiConfig.setUiConfig(authenticatedUserName, bodyUiConfig);
-                AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(),
-                        "Modified saved ui config for user " + authenticatedUserName);
+                if (bodyUiConfig != null) {
+                    UiConfig.setUiConfig(authenticatedUserName, bodyUiConfig);
+                    AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(),
+                            "Modified saved ui config for user " + authenticatedUserName);
+                }
                 return RestAPIUtils.buildOKResponse(body);
             } catch (ParseException e1) {
                 throw new BadRequestException("Couldn't parse the JSON body");
