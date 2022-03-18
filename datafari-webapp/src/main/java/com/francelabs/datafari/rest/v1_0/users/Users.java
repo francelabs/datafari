@@ -30,21 +30,55 @@ import com.francelabs.datafari.user.Lang;
 import com.francelabs.datafari.user.UiConfig;
 import com.francelabs.datafari.utils.AuthenticatedUserName;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 @RestController
 public class Users {
 
+    private static final Logger logger = LogManager.getLogger(Users.class.getName());
+
+    protected JSONObject getUiConfigFromDB(String authenticatedUserName, HttpServletRequest request) {
+        final JSONParser parser = new JSONParser();
+        try {
+            String uiConfig = UiConfig.getUiConfig(authenticatedUserName);
+            JSONObject uiConfigObj = new JSONObject();
+            if (uiConfig != null) {
+                try {
+                    uiConfigObj = (JSONObject) parser.parse(uiConfig);
+                } catch (ParseException e) {
+                    logger.warn("Couldn't parse the ui config extracted from Cassandra for a user.");
+                }
+            }
+            AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
+                    "Accessed saved ui config for user " + authenticatedUserName);
+            return uiConfigObj;
+        } catch (DatafariServerException e) {
+            logger.error("Database conenction error while retrieving user ui config.");
+            throw new InternalErrorException("Database conenction error while retrieving user ui config.");
+        }
+    }
+
+    protected void saveUiConfigToDB(String authenticatedUserName, JSONObject body, HttpServletRequest request)
+            throws DatafariServerException {
+        JSONObject bodyUiConfig = (JSONObject) body.get("uiConfig");
+        if (bodyUiConfig != null) {
+            UiConfig.setUiConfig(authenticatedUserName, bodyUiConfig.toJSONString());
+            AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(),
+                    "Modified saved ui config for user " + authenticatedUserName);
+        }
+    }
+
     @GetMapping(value = "/rest/v1.0/users/current", produces = "application/json;charset=UTF-8")
     protected String getUser(final HttpServletRequest request) {
         final String authenticatedUserName = AuthenticatedUserName.getName(request);
-        final JSONParser parser = new JSONParser();
         JSONObject responseContent = new JSONObject();
         if (authenticatedUserName != null) {
             responseContent.put("name", authenticatedUserName);
@@ -62,19 +96,11 @@ public class Users {
                         "Accessed saved language for user " + authenticatedUserName);
                 responseContent.put("lang", lang);
             } catch (DatafariServerException e) {
+                logger.error("Database conenction error while retrieving user language.");
                 throw new InternalErrorException("Database conenction error while retrieving user language.");
             }
-            try {
-                String uiConfig = UiConfig.getUiConfig(authenticatedUserName);
-                JSONObject uiConfigObj = (JSONObject) parser.parse(uiConfig);
-                AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
-                        "Accessed saved ui config for user " + authenticatedUserName);
-                responseContent.put("uiConfig", uiConfigObj);
-            } catch (DatafariServerException e) {
-                throw new InternalErrorException("Database conenction error while retrieving user ui config.");
-            } catch (ParseException e) {
-                throw new InternalErrorException("Error while parsing json ui config from database.");
-            }
+            JSONObject uiConfigObj = getUiConfigFromDB(authenticatedUserName, request);
+            responseContent.put("uiConfig", uiConfigObj);
             return RestAPIUtils.buildOKResponse(responseContent);
         } else {
             throw new DataNotFoundException("No user currently connected.");
@@ -94,16 +120,12 @@ public class Users {
                     AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(),
                             "Initialized saved language for user " + authenticatedUserName);
                 }
-                JSONObject bodyUiConfig = (JSONObject) body.get("uiConfig");
-                if (bodyUiConfig != null) {
-                    UiConfig.setUiConfig(authenticatedUserName, bodyUiConfig.toJSONString());
-                    AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(),
-                            "Modified saved ui config for user " + authenticatedUserName);
-                }
+                saveUiConfigToDB(authenticatedUserName, body, request);
                 return RestAPIUtils.buildOKResponse(body);
             } catch (ParseException e1) {
                 throw new BadRequestException("Couldn't parse the JSON body");
             } catch (DatafariServerException e) {
+                logger.error("Error while saving the new lang.");
                 throw new InternalErrorException("Error while saving the new lang.");
             }
         } else {
@@ -136,20 +158,10 @@ public class Users {
     @GetMapping(value = "rest/v1.0/users/current/uiconfig", produces = "application/json;charset=UTF-8")
     protected String getUserUiConfig(final HttpServletRequest request) {
         final String authenticatedUserName = AuthenticatedUserName.getName(request);
-        final JSONParser parser = new JSONParser();
         JSONObject responseContent = new JSONObject();
         if (authenticatedUserName != null) {
-            try {
-                String uiConfig = UiConfig.getUiConfig(authenticatedUserName);
-                JSONObject uiConfigObj = (JSONObject) parser.parse(uiConfig);
-                AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
-                        "Accessed saved ui config for user " + authenticatedUserName);
-                responseContent.put("uiConfig", uiConfigObj);
-            } catch (DatafariServerException e) {
-                throw new InternalErrorException("Database conenction error while retrieving user ui config.");
-            } catch (ParseException e) {
-                throw new InternalErrorException("Error while parsing json ui config from database.");
-            }
+            JSONObject uiConfigObj = getUiConfigFromDB(authenticatedUserName, request);
+            responseContent.put("uiConfig", uiConfigObj);
             return RestAPIUtils.buildOKResponse(responseContent);
         } else {
             throw new DataNotFoundException("No user currently connected.");
@@ -163,16 +175,12 @@ public class Users {
         if (authenticatedUserName != null) {
             try {
                 final JSONObject body = (JSONObject) parser.parse(jsonParam);
-                JSONObject bodyUiConfig = (JSONObject) body.get("uiConfig");
-                if (bodyUiConfig != null) {
-                    UiConfig.setUiConfig(authenticatedUserName, bodyUiConfig.toJSONString());
-                    AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(),
-                            "Modified saved ui config for user " + authenticatedUserName);
-                }
+                saveUiConfigToDB(authenticatedUserName, body, request);
                 return RestAPIUtils.buildOKResponse(body);
             } catch (ParseException e1) {
                 throw new BadRequestException("Couldn't parse the JSON body");
             } catch (DatafariServerException e) {
+                logger.error("Error while saving the new ui config.");
                 throw new InternalErrorException("Error while saving the new ui config.");
             }
         } else {
