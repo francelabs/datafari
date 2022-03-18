@@ -44,6 +44,7 @@ public class Users {
     @GetMapping(value = "/rest/v1.0/users/current", produces = "application/json;charset=UTF-8")
     protected String getUser(final HttpServletRequest request) {
         final String authenticatedUserName = AuthenticatedUserName.getName(request);
+        final JSONParser parser = new JSONParser();
         JSONObject responseContent = new JSONObject();
         if (authenticatedUserName != null) {
             responseContent.put("name", authenticatedUserName);
@@ -65,11 +66,14 @@ public class Users {
             }
             try {
                 String uiConfig = UiConfig.getUiConfig(authenticatedUserName);
+                JSONObject uiConfigObj = (JSONObject) parser.parse(uiConfig);
                 AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
                         "Accessed saved ui config for user " + authenticatedUserName);
-                responseContent.put("uiConfig", uiConfig);
+                responseContent.put("uiConfig", uiConfigObj);
             } catch (DatafariServerException e) {
                 throw new InternalErrorException("Database conenction error while retrieving user ui config.");
+            } catch (ParseException e) {
+                throw new InternalErrorException("Error while parsing json ui config from database.");
             }
             return RestAPIUtils.buildOKResponse(responseContent);
         } else {
@@ -90,9 +94,9 @@ public class Users {
                     AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(),
                             "Initialized saved language for user " + authenticatedUserName);
                 }
-                String bodyUiConfig = (String) body.get("uiConfig");
+                JSONObject bodyUiConfig = (JSONObject) body.get("uiConfig");
                 if (bodyUiConfig != null) {
-                    UiConfig.setUiConfig(authenticatedUserName, bodyUiConfig);
+                    UiConfig.setUiConfig(authenticatedUserName, bodyUiConfig.toJSONString());
                     AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(),
                             "Modified saved ui config for user " + authenticatedUserName);
                 }
@@ -132,15 +136,19 @@ public class Users {
     @GetMapping(value = "rest/v1.0/users/current/uiconfig", produces = "application/json;charset=UTF-8")
     protected String getUserUiConfig(final HttpServletRequest request) {
         final String authenticatedUserName = AuthenticatedUserName.getName(request);
+        final JSONParser parser = new JSONParser();
         JSONObject responseContent = new JSONObject();
         if (authenticatedUserName != null) {
             try {
                 String uiConfig = UiConfig.getUiConfig(authenticatedUserName);
+                JSONObject uiConfigObj = (JSONObject) parser.parse(uiConfig);
                 AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
                         "Accessed saved ui config for user " + authenticatedUserName);
-                responseContent.put("uiConfig", uiConfig);
+                responseContent.put("uiConfig", uiConfigObj);
             } catch (DatafariServerException e) {
                 throw new InternalErrorException("Database conenction error while retrieving user ui config.");
+            } catch (ParseException e) {
+                throw new InternalErrorException("Error while parsing json ui config from database.");
             }
             return RestAPIUtils.buildOKResponse(responseContent);
         } else {
@@ -155,9 +163,9 @@ public class Users {
         if (authenticatedUserName != null) {
             try {
                 final JSONObject body = (JSONObject) parser.parse(jsonParam);
-                String bodyUiConfig = (String) body.get("uiConfig");
+                JSONObject bodyUiConfig = (JSONObject) body.get("uiConfig");
                 if (bodyUiConfig != null) {
-                    UiConfig.setUiConfig(authenticatedUserName, bodyUiConfig);
+                    UiConfig.setUiConfig(authenticatedUserName, bodyUiConfig.toJSONString());
                     AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(),
                             "Modified saved ui config for user " + authenticatedUserName);
                 }
