@@ -18,7 +18,6 @@ package com.francelabs.datafari.rest.v1_0.users;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.francelabs.datafari.audit.AuditLogUtil;
 import com.francelabs.datafari.exception.DatafariServerException;
@@ -35,7 +34,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -64,6 +62,14 @@ public class Users {
                 responseContent.put("lang", lang);
             } catch (DatafariServerException e) {
                 throw new InternalErrorException("Database conenction error while retrieving user language.");
+            }
+            try {
+                String uiConfig = UiConfig.getUiConfig(authenticatedUserName);
+                AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
+                        "Accessed saved ui config for user " + authenticatedUserName);
+                responseContent.put("uiConfig", uiConfig);
+            } catch (DatafariServerException e) {
+                throw new InternalErrorException("Database conenction error while retrieving user ui config.");
             }
             return RestAPIUtils.buildOKResponse(responseContent);
         } else {
@@ -134,7 +140,7 @@ public class Users {
                         "Accessed saved ui config for user " + authenticatedUserName);
                 responseContent.put("uiConfig", uiConfig);
             } catch (DatafariServerException e) {
-                throw new InternalErrorException("Database conenction error while retrieving user language.");
+                throw new InternalErrorException("Database conenction error while retrieving user ui config.");
             }
             return RestAPIUtils.buildOKResponse(responseContent);
         } else {
