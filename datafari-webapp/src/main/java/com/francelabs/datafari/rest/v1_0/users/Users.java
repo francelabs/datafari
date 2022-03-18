@@ -28,6 +28,7 @@ import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
 import com.francelabs.datafari.rest.v1_0.exceptions.NotAuthenticatedException;
 import com.francelabs.datafari.rest.v1_0.utils.RestAPIUtils;
 import com.francelabs.datafari.user.Lang;
+import com.francelabs.datafari.user.UiConfig;
 import com.francelabs.datafari.utils.AuthenticatedUserName;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -108,6 +109,47 @@ public class Users {
             AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(),
                     "User " + authenticatedUserName + " accessed his request history");
             return RestAPIUtils.buildOKResponse(responseContent);
+        } else {
+            throw new NotAuthenticatedException("User must be authenticated to perform this action.");
+        }
+    }
+
+    @GetMapping(value = "rest/v1.0/users/current/uiconfig", produces = "application/json;charset=UTF-8")
+    protected String getUserUiConfig(final HttpServletRequest request) {
+        final String authenticatedUserName = AuthenticatedUserName.getName(request);
+        JSONObject responseContent = new JSONObject();
+        if (authenticatedUserName != null) {
+            try {
+                String uiConfig = UiConfig.getUiConfig(authenticatedUserName);
+                AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
+                        "Accessed saved ui config for user " + authenticatedUserName);
+                responseContent.put("uiConfig", uiConfig);
+            } catch (DatafariServerException e) {
+                throw new InternalErrorException("Database conenction error while retrieving user language.");
+            }
+            return RestAPIUtils.buildOKResponse(responseContent);
+        } else {
+            throw new DataNotFoundException("No user currently connected.");
+        }
+    }
+
+    @PutMapping(value = "rest/v1.0/users/current/uiconfig", produces = "application/json;charset=UTF-8")
+    protected String setUserUiConfig(final HttpServletRequest request, @RequestBody String jsonParam) {
+        final JSONParser parser = new JSONParser();
+        final String authenticatedUserName = AuthenticatedUserName.getName(request);
+        if (authenticatedUserName != null) {
+            try {
+                final JSONObject body = (JSONObject) parser.parse(jsonParam);
+                String bodyUiConfig = (String) body.get("uiConfig");
+                UiConfig.setUiConfig(authenticatedUserName, bodyUiConfig);
+                AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(),
+                        "Modified saved ui config for user " + authenticatedUserName);
+                return RestAPIUtils.buildOKResponse(body);
+            } catch (ParseException e1) {
+                throw new BadRequestException("Couldn't parse the JSON body");
+            } catch (DatafariServerException e) {
+                throw new InternalErrorException("Error while saving the new ui config.");
+            }
         } else {
             throw new NotAuthenticatedException("User must be authenticated to perform this action.");
         }

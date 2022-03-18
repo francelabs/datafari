@@ -123,6 +123,12 @@ CREATE TABLE lang (
 	last_refresh timestamp
 );
 
+CREATE TABLE ui_config (
+	username varchar PRIMARY KEY,
+	ui_config varchar,
+	last_refresh timestamp
+);
+
 CREATE TABLE role (
   username varchar,
   role varchar,
