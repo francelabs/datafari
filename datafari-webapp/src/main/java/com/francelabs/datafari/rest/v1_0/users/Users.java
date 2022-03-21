@@ -76,9 +76,7 @@ public class Users {
         }
     }
 
-    @GetMapping(value = "/rest/v1.0/users/current", produces = "application/json;charset=UTF-8")
-    protected String getUser(final HttpServletRequest request) {
-        final String authenticatedUserName = AuthenticatedUserName.getName(request);
+    protected JSONObject getUserInfoFromDB(final String authenticatedUserName, final HttpServletRequest request) {
         JSONObject responseContent = new JSONObject();
         if (authenticatedUserName != null) {
             responseContent.put("name", authenticatedUserName);
@@ -101,10 +99,17 @@ public class Users {
             }
             JSONObject uiConfigObj = getUiConfigFromDB(authenticatedUserName, request);
             responseContent.put("uiConfig", uiConfigObj);
-            return RestAPIUtils.buildOKResponse(responseContent);
+            return responseContent;
         } else {
             throw new DataNotFoundException("No user currently connected.");
         }
+    }
+
+    @GetMapping(value = "/rest/v1.0/users/current", produces = "application/json;charset=UTF-8")
+    protected String getUser(final HttpServletRequest request) {
+        final String authenticatedUserName = AuthenticatedUserName.getName(request);
+        JSONObject responseContent = getUserInfoFromDB(authenticatedUserName, request);
+        return RestAPIUtils.buildOKResponse(responseContent);
     }
 
     @PutMapping(value = "rest/v1.0/users/current", produces = "application/json;charset=UTF-8")
@@ -121,7 +126,8 @@ public class Users {
                             "Initialized saved language for user " + authenticatedUserName);
                 }
                 saveUiConfigToDB(authenticatedUserName, body, request);
-                return RestAPIUtils.buildOKResponse(body);
+                JSONObject responseContent = getUserInfoFromDB(authenticatedUserName, request);
+                return RestAPIUtils.buildOKResponse(responseContent);
             } catch (ParseException e1) {
                 throw new BadRequestException("Couldn't parse the JSON body");
             } catch (DatafariServerException e) {
