@@ -18,7 +18,6 @@
 	<property name="tomcat.proj.dir" value="${project.dir}/datafari-tomcat" />
 	<property name="tomcat.src.dir" value="${tomcat.proj.dir}/target/dist/tomcat" />
 	<property name="solr.src.dir" value="${project.dir}/datafari-solr/target/dist/solr" />
-	<property name="tika-config.src.dir" value="${project.dir}/datafari-tika-config/target" />
 	<property name="datafari.webapp.dir" value="${project.dir}/datafari-webapp/target" />
 	<property name="datafari.core.dir" value="${project.dir}/datafari-core/target" />
 	<property name="jena.src.dir" value="${project.dir}/datafari-jena/target" />
@@ -35,7 +34,6 @@
 	<property name="zookeeper.proj.dir" value="${project.dir}/datafari-zookeeper" />
 	<property name="zookeeper.src.dir" value="${zookeeper.proj.dir}/target/dist/zookeeper" />
 	<property name="bin.src.dir" value="${project.dir}/bin" />
-	<property name="tika.src.dir" value="${project.dir}/datafari-tika/" />
 	<property name="git.plugin.src.dir" value="${project.dir}/datafari-git-plugin/target" />
 	<property name="datafariui.src.dir" value="${project.dir}/datafari-ui/target" />
 
@@ -262,14 +260,6 @@
 			</fileset>
 		</copy>
 
-		<!-- Copy Tika jars to Solr -->
-		<copy todir="${linux.dist.dir}/solr/solr_home/FileShare/lib/extraction">
-			<fileset dir="${tika.src.dir}/target/dependency">
-				<include name="*.jar" />
-				<exclude name="language-detector*" />
-			</fileset>
-		</copy>
-
 		<!-- Copy Tika Server JAR in tika-server folder -->
 		<copy todir="${linux.dist.dir}/tika-server">
 			<fileset dir="${tika-server.src.dir}/tika-server">
@@ -363,13 +353,6 @@
 		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-common-lib" overwrite="true" force="true">
 			<fileset dir="${share.connector.src.dir}">
 				<include name="dependencies/bcprov-jdk15on*" />
-			</fileset>
-		</copy>
-
-		<!-- Copy Tika OCR config in mcf lib -->
-		<copy todir="${linux.dist.dir}/mcf/mcf_home/lib">
-			<fileset dir="${tika-config.src.dir}">
-				<include name="*.jar" />
 			</fileset>
 		</copy>
 

@@ -39,8 +39,8 @@
     <spring.security.saml2.core.version>1.0.10.RELEASE</spring.security.saml2.core.version>
     <spring.version>5.2.8.RELEASE</spring.version>
     <spring.oauth2.version>2.3.8.RELEASE</spring.oauth2.version>
-    <tika.version>1.28.1</tika.version>
-    <tika-server.sha512>c2213fba48549ba16a27a044e8ccfdc7f8b5b3881761998e4a2aa81376a99483883a903585f5a948f0d61a0067f85d943cd5034f61e74e6c224f1af669992d81</tika-server.sha512>
+    <tika.version>2.3.0</tika.version>
+    <tika-server.sha512>45e81cd4a92618d2ad987695b87125c2e7214c0f6d9bdc5a80c9ef321312526407a484d9df34414f17341916a48e74d253f807455de656ad34ee0e95c212474b</tika-server.sha512>
     <tika-server-commit-number>5c0793e2c</tika-server-commit-number>
     <tomcat.version>9.0.56</tomcat.version>
     <slf4j.version>1.7.25</slf4j.version>
@@ -67,8 +67,6 @@
     <module>datafari-docfilter-connector</module>
     <module>datafari-emptier-connector</module>
     <module>datafari-metadatacleaner-connector</module>
-    <module>datafari-tika</module>
-    <module>datafari-tika-config</module>
     <module>datafari-tika-server</module>
     <module>datafari-handler</module>
     <module>datafari-mcf-scripts</module>

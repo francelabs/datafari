@@ -163,7 +163,7 @@ init_memory() {
 	sed -i -e "s/@LOGSTASHMEMORY@/${LOGSTASHMEMORY}/g" $DATAFARI_HOME/elk/logstash/config/jvm.options >>$installerLog 2>&1
 	sed -i -e "s/@KIBANAMEMORY@/${KIBANAMEMORY}/g" $DATAFARI_HOME/elk/scripts/set-elk-env.sh >>$installerLog 2>&1
 	sed -i -e "s/@TIKASERVERMEMORY@/${TIKASERVERMEMORY}/g" $DATAFARI_HOME/tika-server/bin/set-tika-env.sh >>$installerLog 2>&1
-	sed -i -e "s/@TIKACHILDMEMORY@/${TIKACHILDMEMORY}/g" $DATAFARI_HOME/tika-server/bin/set-tika-env.sh >>$installerLog 2>&1
+	sed -i -e "s/@TIKACHILDMEMORY@/${TIKACHILDMEMORY}/g" $DATAFARI_HOME/tika-server/conf/tika-config.xml >>$installerLog 2>&1
 	
 	
 }
