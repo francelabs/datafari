@@ -67,6 +67,7 @@
     <module>datafari-docfilter-connector</module>
     <module>datafari-emptier-connector</module>
     <module>datafari-metadatacleaner-connector</module>
+    <module>datafari-spacy-fastapi-connector</module>
     <module>datafari-tika-server</module>
     <module>datafari-handler</module>
     <module>datafari-mcf-scripts</module>

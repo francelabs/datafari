@@ -28,6 +28,7 @@
 	<property name="docfilter.connector.src.dir" value="${project.dir}/datafari-docfilter-connector/target" />
 	<property name="emptier.connector.src.dir" value="${project.dir}/datafari-emptier-connector/target" />
 	<property name="share.connector.src.dir" value="${project.dir}/datafari-share-connector/target" />
+	<property name="spacy.connector.src.dir" value="${project.dir}/datafari-spacy-fastapi-connector/target" />
 	<property name="datafarihandler.src.dir" value="${project.dir}/datafari-handler/target" />
 	<property name="mcf-scripts.src.dir" value="${project.dir}/datafari-mcf-scripts/target" />
 	<property name="cassandra.src.dir" value="${project.dir}/datafari-cassandra/target/dist/cassandra" />
@@ -353,6 +354,13 @@
 		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-common-lib" overwrite="true" force="true">
 			<fileset dir="${share.connector.src.dir}">
 				<include name="dependencies/bcprov-jdk15on*" />
+			</fileset>
+		</copy>
+
+		<!-- Copy SpacyFastapi connector -->
+		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
+			<fileset dir="${spacy.connector.src.dir}">
+				<include name="*.jar" />
 			</fileset>
 		</copy>
 
