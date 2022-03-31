@@ -50,6 +50,9 @@
 <!--   <autoDetectParserConfig> -->
 <!--     <metadataWriteFilterFactory class="org.apache.tika.metadata.StandardWriteFilterFactory"> -->
 <!--       <params> -->
+<!--         <maxKeySize>1000</maxKeySize> -->
+<!--         <maxFieldSize>25000</maxFieldSize> -->
+<!--         <maxValuesPerField>20</maxValuesPerField> -->
 <!--         <maxEstimatedBytes>500000</maxEstimatedBytes> -->
 <!--       </params> -->
 <!--     </metadataWriteFilterFactory> -->
