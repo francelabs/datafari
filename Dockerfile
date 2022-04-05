@@ -77,7 +77,7 @@ RUN     apt-get update && apt-get install --allow-unauthenticated -y \
 	&& rm -rf /var/lib/apt/lists/*
 # For dev
 RUN echo "export LANG=C.UTF-8" >> /etc/profile
-RUN echo "export JAVA_HOME=/usr/local/openjdk-8" >> /etc/profile
+RUN echo "export JAVA_HOME=/usr/local/openjdk-11" >> /etc/profile
 RUN echo "export PATH=$JAVA_HOME/bin:$PATH" >> /etc/profile
 RUN echo "export LOG4J_FORMAT_MSG_NO_LOOKUPS=true" >> /etc/profile
 
