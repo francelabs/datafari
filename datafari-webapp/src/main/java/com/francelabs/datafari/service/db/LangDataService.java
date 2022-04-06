@@ -66,7 +66,9 @@ public class LangDataService extends CassandraService {
   public synchronized String getLang(final String username) {
     String lang = null;
     try {
-      final String query = "SELECT " + LANGCOLUMN + " FROM " + LANGCOLLECTION + " where " + USERNAMECOLUMN + "='" + username + "'";
+      final String query = "SELECT " + LANGCOLUMN 
+          + " FROM " + LANGCOLLECTION 
+          + " where " + USERNAMECOLUMN + "='" + username + "'";
       final ResultSet result = session.execute(query);
       final Row row = result.one();
       if (row != null && !row.isNull(LANGCOLUMN) && !row.getString(LANGCOLUMN).isEmpty()) {
@@ -92,8 +94,14 @@ public class LangDataService extends CassandraService {
       if (username.contentEquals("admin")) {
         ttlToUse = "0";
       }
-      final String query = "INSERT INTO " + LANGCOLLECTION + " (" + USERNAMECOLUMN + "," + LANGCOLUMN + "," + LASTREFRESHCOLUMN + ")" + " values ('" + username + "','" + lang
-          + "',toTimeStamp(NOW())) USING TTL " + ttlToUse;
+      final String query = "INSERT INTO " + LANGCOLLECTION 
+          + " (" + USERNAMECOLUMN + "," 
+          + LANGCOLUMN + "," 
+          + LASTREFRESHCOLUMN + ")" 
+          + " values ('" + username + "',"
+          + "'" + lang + "',"
+          + "toTimeStamp(NOW()))"
+          + " USING TTL " + ttlToUse;
       session.execute(query);
     } catch (final Exception e) {
       logger.warn("Unable to insert lang for user " + username + " : " + e.getMessage());
@@ -113,7 +121,15 @@ public class LangDataService extends CassandraService {
    */
   public int updateLang(final String username, final String lang) throws DatafariServerException {
     try {
-      final String query = "UPDATE " + LANGCOLLECTION + " SET " + LANGCOLUMN + " = '" + lang + "' WHERE " + USERNAMECOLUMN + " = '" + username + "'";
+      String ttlToUse = userDataTTL;
+      if (username.contentEquals("admin")) {
+        ttlToUse = "0";
+      }
+      final String query = "UPDATE " + LANGCOLLECTION 
+          + " USING TTL " + ttlToUse
+          + " SET " + LANGCOLUMN + " = '" + lang + "',"
+          + LASTREFRESHCOLUMN + " = toTimeStamp(NOW())"
+          + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
       session.execute(query);
     } catch (final Exception e) {
       logger.warn("Unable to update lang for user " + username + " : " + e.getMessage());
@@ -126,8 +142,7 @@ public class LangDataService extends CassandraService {
   public void refreshLang(final String username) throws DatafariServerException {
     final String userLang = getLang(username);
     if (userLang != null) {
-      deleteLang(username);
-      setLang(username, userLang);
+      updateLang(username, userLang);
     }
   }
 

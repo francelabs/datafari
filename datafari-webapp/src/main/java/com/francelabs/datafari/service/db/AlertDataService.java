@@ -71,7 +71,9 @@ public class AlertDataService extends CassandraService {
       final List<Properties> alerts = getUserAlerts(username);
       for (final Properties alert : alerts) {
         final String alertID = alert.getProperty("_id");
-        final String query = "DELETE FROM " + ALERTCOLLECTION + " WHERE " + ID_COLUMN + "=" + alertID + " IF EXISTS;";
+        final String query = "DELETE FROM " + ALERTCOLLECTION 
+            + " WHERE " + ID_COLUMN + "=" + alertID 
+            + " IF EXISTS;";
         session.execute(query);
       }
     } catch (final DriverException e) {
@@ -90,10 +92,26 @@ public class AlertDataService extends CassandraService {
       if (alertProp.getProperty(USER_COLUMN).contentEquals("admin")) {
         ttlToUse = "0";
       }
-      final String query = "insert into " + ALERTCOLLECTION + " (" + ID_COLUMN + ", " + KEYWORD_COLUMN + ", " + FILTERS_COLUMN + ", " + CORE_COLUMN + ", " + FREQUENCY_COLUMN + ", " + MAIL_COLUMN
-          + ", " + SUBJECT_COLUMN + ", " + USER_COLUMN + "," + LASTREFRESHCOLUMN + ") values (" + "uuid()," + "$$" + alertProp.getProperty(KEYWORD_COLUMN) + "$$," + "$$"
-          + alertProp.getProperty(FILTERS_COLUMN) + "$$," + "'" + alertProp.getProperty(CORE_COLUMN) + "'," + "'" + alertProp.getProperty(FREQUENCY_COLUMN) + "'," + "'"
-          + alertProp.getProperty(MAIL_COLUMN) + "'," + "'" + alertProp.getProperty(SUBJECT_COLUMN) + "'," + "'" + alertProp.getProperty(USER_COLUMN) + "',toTimeStamp(NOW())) USING TTL " + ttlToUse;
+      final String query = "insert into " + ALERTCOLLECTION
+          + " (" + ID_COLUMN + ", "
+          + KEYWORD_COLUMN + ", "
+          + FILTERS_COLUMN + ", "
+          + CORE_COLUMN + ", "
+          + FREQUENCY_COLUMN + ", "
+          + MAIL_COLUMN + ", "
+          + SUBJECT_COLUMN + ", "
+          + USER_COLUMN + ","
+          + LASTREFRESHCOLUMN + ") "
+          + "values (" + "uuid(),"
+          + "$$" + alertProp.getProperty(KEYWORD_COLUMN) + "$$,"
+          + "$$" + alertProp.getProperty(FILTERS_COLUMN) + "$$,"
+          + "'" + alertProp.getProperty(CORE_COLUMN) + "',"
+          + "'" + alertProp.getProperty(FREQUENCY_COLUMN) + "',"
+          + "'" + alertProp.getProperty(MAIL_COLUMN) + "',"
+          + "'" + alertProp.getProperty(SUBJECT_COLUMN) + "',"
+          + "'" + alertProp.getProperty(USER_COLUMN) + "',"
+          + "toTimeStamp(NOW())) "
+          + "USING TTL " + ttlToUse;
       session.execute(query);
       return uuid.toString();
     } catch (final DriverException e) {
@@ -131,7 +149,8 @@ public class AlertDataService extends CassandraService {
   public List<Properties> getUserAlerts(final String username) throws DatafariServerException {
     try {
       final List<Properties> alerts = new ArrayList<>();
-      final ResultSet results = session.execute("SELECT * FROM " + ALERTCOLLECTION + " WHERE " + USER_COLUMN + "='" + username + "' ALLOW FILTERING");
+      final ResultSet results = session.execute(
+          "SELECT * FROM " + ALERTCOLLECTION + " WHERE " + USER_COLUMN + "='" + username + "' ALLOW FILTERING");
       for (final Row row : results) {
         final Properties alertProp = new Properties();
         final UUID id = row.getUuid("id");
@@ -153,12 +172,30 @@ public class AlertDataService extends CassandraService {
     }
   }
 
+  public void updateAlert(final Properties alertProp) {
+    String ttlToUse = userDataTTL;
+    if (alertProp.getProperty(USER_COLUMN).contentEquals("admin")) {
+      ttlToUse = "0";
+    }
+    final String query = "UPDATE " + ALERTCOLLECTION
+        + " USING TTL " + ttlToUse
+        + " SET " + KEYWORD_COLUMN + " = $$" + alertProp.getProperty(KEYWORD_COLUMN) + "$$, "
+        + FILTERS_COLUMN + " = $$" + alertProp.getProperty(FILTERS_COLUMN) + "$$, "
+        + CORE_COLUMN + " = $$" + alertProp.getProperty(CORE_COLUMN) + "$$, "
+        + FREQUENCY_COLUMN + " = $$" + alertProp.getProperty(FREQUENCY_COLUMN) + "$$, "
+        + MAIL_COLUMN + " = $$" + alertProp.getProperty(MAIL_COLUMN) + "$$, "
+        + SUBJECT_COLUMN + " = $$" + alertProp.getProperty(SUBJECT_COLUMN) + "$$, "
+        + USER_COLUMN + " = $$" + alertProp.getProperty(USER_COLUMN) + "$$, "
+        + LASTREFRESHCOLUMN + " = toTimeStamp(NOW()) "
+        + "WHERE " + ID_COLUMN + " = " + alertProp.getProperty("_id");
+    session.execute(query);
+  }
+
   public void refreshUserAlerts(final String username) throws DatafariServerException {
     final List<Properties> userAlerts = getUserAlerts(username);
     if (userAlerts != null && !userAlerts.isEmpty()) {
-      deleteUserAlerts(username);
       for (final Properties userAlert : userAlerts) {
-        addAlert(userAlert);
+        updateAlert(userAlert);
       }
     }
   }

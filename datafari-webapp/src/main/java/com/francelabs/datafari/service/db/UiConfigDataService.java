@@ -65,7 +65,9 @@ public class UiConfigDataService extends CassandraService {
     public synchronized String getUiConfig(final String username) {
         String uiConfig = null;
         try {
-            final String query = "SELECT " + UICONFIGCOLUMN + " FROM " + UICONFIGCOLLECTION + " where " + USERNAMECOLUMN + "='"
+            final String query = "SELECT " + UICONFIGCOLUMN 
+                    + " FROM " + UICONFIGCOLLECTION 
+                    + " where " + USERNAMECOLUMN + "='"
                     + username + "'";
             final ResultSet result = session.execute(query);
             final Row row = result.one();
@@ -92,9 +94,14 @@ public class UiConfigDataService extends CassandraService {
             if (username.contentEquals("admin")) {
                 ttlToUse = "0";
             }
-            final String query = "INSERT INTO " + UICONFIGCOLLECTION + " (" + USERNAMECOLUMN + "," + UICONFIGCOLUMN + ","
-                    + LASTREFRESHCOLUMN + ")" + " values ('" + username + "','" + uiConfig
-                    + "',toTimeStamp(NOW())) USING TTL " + ttlToUse;
+            final String query = "INSERT INTO " + UICONFIGCOLLECTION 
+                    + " (" + USERNAMECOLUMN + "," 
+                    + UICONFIGCOLUMN + ","
+                    + LASTREFRESHCOLUMN + ")" 
+                    + " values ('" + username + "',"
+                    + "'" + uiConfig + "',"
+                    + "toTimeStamp(NOW()))"
+                    + " USING TTL " + ttlToUse;
             session.execute(query);
         } catch (final Exception e) {
             logger.warn("Unable to insert ui config for user " + username + " : " + e.getMessage());
@@ -114,8 +121,14 @@ public class UiConfigDataService extends CassandraService {
      */
     public int updateUiConfig(final String username, final String uiConfig) throws DatafariServerException {
         try {
-            final String query = "UPDATE " + UICONFIGCOLLECTION + " SET " + UICONFIGCOLUMN + " = '" + uiConfig + "' WHERE "
-                    + USERNAMECOLUMN + " = '" + username + "'";
+            String ttlToUse = userDataTTL;
+            if (username.contentEquals("admin")) {
+                ttlToUse = "0";
+            }
+            final String query = "UPDATE " + UICONFIGCOLLECTION 
+                    + " USING TTL " + ttlToUse
+                    + " SET " + UICONFIGCOLUMN + " = '" + uiConfig + "'"
+                    + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
             session.execute(query);
         } catch (final Exception e) {
             logger.warn("Unable to update ui config for user " + username + " : " + e.getMessage());
@@ -128,8 +141,7 @@ public class UiConfigDataService extends CassandraService {
     public void refreshUiConfig(final String username) throws DatafariServerException {
         final String userUiConfig = getUiConfig(username);
         if (userUiConfig != null) {
-            deleteUiConfig(username);
-            setUiConfig(username, userUiConfig);
+            updateUiConfig(username, userUiConfig);
         }
     }
 
@@ -141,11 +153,12 @@ public class UiConfigDataService extends CassandraService {
      */
     public int deleteUiConfig(final String username) throws DatafariServerException {
         try {
-            final String query = "DELETE FROM " + UICONFIGCOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username
-                    + "' IF EXISTS";
+            final String query = "DELETE FROM " + UICONFIGCOLLECTION 
+                    + " WHERE " + USERNAMECOLUMN + " = '" + username + "'"
+                    + " IF EXISTS";
             session.execute(query);
         } catch (final Exception e) {
-            logger.warn("Unable to update ui config for user " + username + " : " + e.getMessage());
+            logger.warn("Unable to delete ui config for user " + username + " : " + e.getMessage());
             // TODO catch specific exception
             throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
         }

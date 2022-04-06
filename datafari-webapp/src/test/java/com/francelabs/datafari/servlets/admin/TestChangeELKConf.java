@@ -46,7 +46,7 @@ public class TestChangeELKConf {
 
     // set datafari_home to temp dir
     PowerMockito.mockStatic(Environment.class);
-    Mockito.when(Environment.getEnvironmentVariable("CONFIG_HOME")).thenReturn(tempDirectory.toFile().getAbsolutePath());
+    PowerMockito.when(Environment.getEnvironmentVariable("CONFIG_HOME")).thenReturn(tempDirectory.toFile().getAbsolutePath());
 
   }
 

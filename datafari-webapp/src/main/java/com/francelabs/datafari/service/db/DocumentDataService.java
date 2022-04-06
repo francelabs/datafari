@@ -17,6 +17,7 @@ package com.francelabs.datafari.service.db;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -72,10 +73,11 @@ public class DocumentDataService extends CassandraService {
    * Add a document to the list of documents liked by the user
    *
    * @param username
-   *          of the user
+   *                   of the user
    * @param idDocument
-   *          the id that should be liked
-   * @return Like.ALREADYPERFORMED if the like was already done, CodesUser.ALLOK if all was ok
+   *                   the id that should be liked
+   * @return Like.ALREADYPERFORMED if the like was already done, CodesUser.ALLOK
+   *         if all was ok
    */
   public void addLike(final String username, final String idDocument) throws DatafariServerException {
     try {
@@ -83,8 +85,14 @@ public class DocumentDataService extends CassandraService {
       if (username.contentEquals("admin")) {
         ttlToUse = "0";
       }
-      final String query = "insert into " + LIKECOLLECTION + " (" + USERNAMECOLUMN + "," + DOCUMENTIDCOLUMN + "," + LASTREFRESHCOLUMN + ")" + " values ('" + username + "',$$" + idDocument
-          + "$$,toTimeStamp(NOW())) USING TTL " + ttlToUse;
+      final String query = "insert into " + LIKECOLLECTION
+          + " (" + USERNAMECOLUMN + ","
+          + " " + DOCUMENTIDCOLUMN + ","
+          + " " + LASTREFRESHCOLUMN + ")"
+          + " values ('" + username + "',"
+          + " $$" + idDocument + "$$,"
+          + " toTimeStamp(NOW()))"
+          + " USING TTL " + ttlToUse;
       session.execute(query);
     } catch (final DriverException e) {
       logger.warn("Unable to add like : " + e.getMessage());
@@ -98,16 +106,19 @@ public class DocumentDataService extends CassandraService {
    * unlike a document
    *
    * @param username
-   *          of the user who unlike a document
+   *                   of the user who unlike a document
    * @param idDocument
-   *          the id that should be unliked
-   * @return Like.ALREADYPERFORMED if the like was already done, Like.ALLOK if all was ok and Like.CodesReturned.CASSANDRAN if there's an
+   *                   the id that should be unliked
+   * @return Like.ALREADYPERFORMED if the like was already done, Like.ALLOK if all
+   *         was ok and Like.CodesReturned.CASSANDRAN if there's an
    *         error
    * @throws DatafariServerException
    */
   public void unlike(final String username, final String idDocument) throws DatafariServerException {
     try {
-      final String query = "DELETE FROM " + LIKECOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "'" + " AND " + DOCUMENTIDCOLUMN + " = $$" + idDocument + "$$";
+      final String query = "DELETE FROM " + LIKECOLLECTION
+          + " WHERE " + USERNAMECOLUMN + " = '" + username + "'"
+          + " AND " + DOCUMENTIDCOLUMN + " = $$" + idDocument + "$$";
       session.execute(query);
     } catch (final DriverException e) {
       logger.warn("Unable to unlike : " + e.getMessage());
@@ -120,15 +131,18 @@ public class DocumentDataService extends CassandraService {
    * get all the likes of a user
    *
    * @param username
-   *          of the user
+   *                    of the user
    * @param documentIDs
-   * @return an array list of all the the likes of the user. Return null if there's an error.
+   * @return an array list of all the the likes of the user. Return null if
+   *         there's an error.
    */
   public List<String> getLikes(final String username, final String[] documentIDs) throws DatafariServerException {
     try {
       final List<String> likes = new ArrayList<>();
       if (documentIDs == null) {
-        final ResultSet results = session.execute("SELECT " + DOCUMENTIDCOLUMN + " FROM " + LIKECOLLECTION + " where " + USERNAMECOLUMN + "='" + username + "'");
+        final ResultSet results = session.execute("SELECT " + DOCUMENTIDCOLUMN
+            + " FROM " + LIKECOLLECTION
+            + " where " + USERNAMECOLUMN + "='" + username + "'");
         for (final Row row : results) {
           likes.add(row.getString(DOCUMENTIDCOLUMN));
         }
@@ -136,7 +150,10 @@ public class DocumentDataService extends CassandraService {
       } else {
         for (final String documentID : documentIDs) {
           final ResultSet results = session
-              .execute("SELECT " + DOCUMENTIDCOLUMN + " FROM " + LIKECOLLECTION + " where " + USERNAMECOLUMN + "='" + username + "' AND " + DOCUMENTIDCOLUMN + "=$$" + documentID + "$$");
+              .execute("SELECT " + DOCUMENTIDCOLUMN
+                  + " FROM " + LIKECOLLECTION
+                  + " where " + USERNAMECOLUMN + "='" + username + "'"
+                  + " AND " + DOCUMENTIDCOLUMN + "=$$" + documentID + "$$");
           for (final Row row : results) {
             likes.add(row.getString(DOCUMENTIDCOLUMN));
           }
@@ -155,13 +172,17 @@ public class DocumentDataService extends CassandraService {
    * Delete all likes of a user without deleting also his favorites
    *
    * @param username
-   * @return CodesReturned.ALLOK if the operation was success and CodesReturned.PROBLEMCONNECTIONDATABASE
+   * @return CodesReturned.ALLOK if the operation was success and
+   *         CodesReturned.PROBLEMCONNECTIONDATABASE
    */
   public void removeLikes(final String username) throws DatafariServerException {
     try {
       final List<String> likes = getLikes(username, null);
       for (final String like : likes) {
-        final String query = "DELETE FROM " + LIKESCOLUMN + " WHERE " + USERNAMECOLUMN + " = '" + username + "' AND " + DOCUMENTIDCOLUMN + "=$$" + like + "$$ IF EXISTS";
+        final String query = "DELETE FROM " + LIKECOLLECTION
+            + " WHERE " + USERNAMECOLUMN + " = '" + username + "'"
+            + " AND " + DOCUMENTIDCOLUMN + "=$$" + like + "$$"
+            + " IF EXISTS";
         session.execute(query);
       }
     } catch (final DriverException e) {
@@ -173,11 +194,24 @@ public class DocumentDataService extends CassandraService {
 
   public void refreshLikes(final String username) throws DatafariServerException {
     final List<String> userLikes = getLikes(username, null);
-    if (userLikes != null && !userLikes.isEmpty()) {
-      removeLikes(username);
-      for (final String userLike : userLikes) {
-        addLike(username, userLike);
+    final String userLikesAsString = userLikes.stream()
+        .map(s -> "$$" + s + "$$")
+        .collect(Collectors.joining(",","(",")"));
+    try {
+      String ttlToUse = userDataTTL;
+      if (username.contentEquals("admin")) {
+        ttlToUse = "0";
       }
+      final String query = "UPDATE " + LIKECOLLECTION
+          + " USING TTL " + ttlToUse
+          + " SET " + LASTREFRESHCOLUMN + " = toTimeStamp(NOW())"
+          + " WHERE " + USERNAMECOLUMN + " = $$" + username + "$$"
+          + " AND " + DOCUMENTIDCOLUMN + " IN " + userLikesAsString;
+      session.execute(query);
+    } catch (final DriverException e) {
+      logger.warn("Unable to refresh likes for user " + username + " : " + e.getMessage());
+      // TODO catch specific exception
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
   }
 
@@ -185,22 +219,31 @@ public class DocumentDataService extends CassandraService {
    * Add a document to the favorites list of the user
    *
    * @param username
-   *          of the user
+   *                      of the user
    * @param idDocument
-   *          the id that should be add as a favorite
+   *                      the id that should be add as a favorite
    * @param titleDocument
-   *          the title associated to the id
+   *                      the title associated to the id
    * @return true if it was success and false if not
    * @throws DatafariServerException
    */
-  public void addFavorite(final String username, final String idDocument, final String titleDocument) throws DatafariServerException {
+  public void addFavorite(final String username, final String idDocument, final String titleDocument)
+      throws DatafariServerException {
     try {
       String ttlToUse = userDataTTL;
       if (username.contentEquals("admin")) {
         ttlToUse = "0";
       }
-      final String query = "insert into " + FAVORITECOLLECTION + " (" + USERNAMECOLUMN + "," + DOCUMENTIDCOLUMN + "," + DOCUMENTTITLECOLUMN + "," + LASTREFRESHCOLUMN + ")" + " values ('" + username
-          + "',$$" + idDocument + "$$, '" + titleDocument + "',toTimeStamp(NOW())) USING TTL " + ttlToUse;
+      final String query = "insert into " + FAVORITECOLLECTION 
+          + " (" + USERNAMECOLUMN + "," 
+          + DOCUMENTIDCOLUMN + ","
+          + DOCUMENTTITLECOLUMN + "," 
+          + LASTREFRESHCOLUMN + ")" 
+          + " values ('" + username + "',"
+          + " $$" + idDocument + "$$,"
+          +" '" + titleDocument + "',"
+          + " toTimeStamp(NOW()))"
+          + " USING TTL " + ttlToUse;
       session.execute(query);
     } catch (final DriverException e) {
       logger.warn("Unable add favorite " + username + " : " + e.getMessage());
@@ -213,14 +256,16 @@ public class DocumentDataService extends CassandraService {
    * delete a document from the favorites list of the user
    *
    * @param username
-   *          of the user
+   *                   of the user
    * @param idDocument
-   *          the id that should be deleted from the favorites
+   *                   the id that should be deleted from the favorites
    * @return true if it was success and false if not
    */
   public void deleteFavorite(final String username, final String idDocument) throws DatafariServerException {
     try {
-      final String query = "DELETE FROM " + FAVORITECOLLECTION + " WHERE " + DOCUMENTIDCOLUMN + " = $$" + idDocument + "$$ AND " + USERNAMECOLUMN + " = '" + username + "'";
+      final String query = "DELETE FROM " + FAVORITECOLLECTION 
+          + " WHERE " + DOCUMENTIDCOLUMN + " = $$" + idDocument + "$$"
+          + " AND " + USERNAMECOLUMN + " = '" + username + "'";
       session.execute(query);
     } catch (final DriverException e) {
       logger.warn("Unable delete favorite " + username + " : " + e.getMessage());
@@ -233,17 +278,21 @@ public class DocumentDataService extends CassandraService {
    * get all the favorites of a user
    *
    * @param username
-   *          of the user
+   *                    of the user
    * @param documentIDs
-   *          : list of document id to check (if null, check all)
-   * @return an array list of all the favorites document of the user. Return null if there's an error.
+   *                    : list of document id to check (if null, check all)
+   * @return an array list of all the favorites document of the user. Return null
+   *         if there's an error.
    * @throws DatafariServerException
    */
   public List<String> getFavorites(final String username, final String[] documentIDs) throws DatafariServerException {
     try {
       final List<String> favorites = new ArrayList<>();
       if (documentIDs == null) {
-        final ResultSet results = session.execute("SELECT " + DOCUMENTIDCOLUMN + ", " + DOCUMENTTITLECOLUMN + " FROM " + FAVORITECOLLECTION + " where " + USERNAMECOLUMN + "='" + username + "'");
+        final ResultSet results = session.execute("SELECT " + DOCUMENTIDCOLUMN + ", " 
+            + DOCUMENTTITLECOLUMN 
+            + " FROM " + FAVORITECOLLECTION 
+            + " where " + USERNAMECOLUMN + "='" + username + "'");
         for (final Row row : results) {
           final JSONObject fav = new JSONObject();
           fav.put("id", row.getString(DOCUMENTIDCOLUMN));
@@ -252,8 +301,11 @@ public class DocumentDataService extends CassandraService {
         }
       } else {
         for (final String documentID : documentIDs) {
-          final ResultSet results = session.execute("SELECT " + DOCUMENTIDCOLUMN + ", " + DOCUMENTTITLECOLUMN + " FROM " + FAVORITECOLLECTION + " where " + USERNAMECOLUMN + "='" + username + "' AND "
-              + DOCUMENTIDCOLUMN + "=$$" + documentID + "$$");
+          final ResultSet results = session.execute("SELECT " + DOCUMENTIDCOLUMN + ", " 
+              + DOCUMENTTITLECOLUMN 
+              + " FROM " + FAVORITECOLLECTION 
+              + " where " + USERNAMECOLUMN + "='" + username + "'"
+              + " AND " + DOCUMENTIDCOLUMN + "=$$" + documentID + "$$");
           for (final Row row : results) {
             final JSONObject fav = new JSONObject();
             fav.put("id", row.getString(DOCUMENTIDCOLUMN));
@@ -274,7 +326,8 @@ public class DocumentDataService extends CassandraService {
    * Delete all favorites of a user without deleting also his likes
    *
    * @param username
-   * @return CodesReturned.ALLOK if the operation was success and CodesReturned.PROBLEMCONNECTIONMONGODB if the mongoDB isn't running
+   * @return CodesReturned.ALLOK if the operation was success and
+   *         CodesReturned.PROBLEMCONNECTIONMONGODB if the mongoDB isn't running
    * @throws DatafariServerException
    */
   public void removeFavorites(final String username) throws DatafariServerException {
@@ -283,7 +336,10 @@ public class DocumentDataService extends CassandraService {
       for (final String jsonFavorite : favorites) {
         final JSONParser parser = new JSONParser();
         final JSONObject favorite = (JSONObject) parser.parse(jsonFavorite);
-        final String query = "DELETE FROM " + FAVORITECOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "' AND " + DOCUMENTIDCOLUMN + "=$$" + favorite.get("id") + "$$ IF EXISTS";
+        final String query = "DELETE FROM " + FAVORITECOLLECTION 
+            + " WHERE " + USERNAMECOLUMN + " = '" + username + "'"
+            + " AND " + DOCUMENTIDCOLUMN + "=$$" + favorite.get("id") + "$$"
+            + " IF EXISTS";
         session.execute(query);
       }
     } catch (final DriverException | ParseException e) {
@@ -300,18 +356,33 @@ public class DocumentDataService extends CassandraService {
 
   public void refreshFavorites(final String username) throws DatafariServerException {
     final List<String> userFavorites = getFavorites(username, null);
-    if (userFavorites != null && !userFavorites.isEmpty()) {
-      removeFavorites(username);
-      for (final String userFavorite : userFavorites) {
-        final JSONParser parser = new JSONParser();
-        try {
-          final JSONObject jUserFav = (JSONObject) parser.parse(userFavorite);
-          addFavorite(username, jUserFav.get("id").toString(), jUserFav.get("title").toString());
-        } catch (final ParseException e) {
-          throw new DatafariServerException(CodesReturned.GENERALERROR, "Unable to parse user favorite JSON: " + userFavorite);
-        }
-
+    final JSONParser parser = new JSONParser();
+    final String userFavoritesAsString = userFavorites.stream()
+        .map(s -> {
+          try {
+            JSONObject fav = (JSONObject) parser.parse(s);
+            return (String) "$$" + fav.get("id") + "$$";
+          } catch (Exception e) {
+            return null;
+          }
+        })
+        .filter(s -> s != null)
+        .collect(Collectors.joining(",","(",")"));
+    try {
+      String ttlToUse = userDataTTL;
+      if (username.contentEquals("admin")) {
+        ttlToUse = "0";
       }
+      final String query = "UPDATE " + FAVORITECOLLECTION
+          + " USING TTL " + ttlToUse
+          + " SET " + LASTREFRESHCOLUMN + " = toTimeStamp(NOW())"
+          + " WHERE " + USERNAMECOLUMN + " = $$" + username + "$$"
+          + " AND " + DOCUMENTIDCOLUMN + " IN " + userFavoritesAsString;
+      session.execute(query);
+    } catch (final DriverException e) {
+      logger.warn("Unable to refresh favorites for user " + username + " : " + e.getMessage());
+      // TODO catch specific exception
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
   }
 

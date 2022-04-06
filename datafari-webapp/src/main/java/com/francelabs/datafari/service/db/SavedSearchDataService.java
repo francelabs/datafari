@@ -77,8 +77,16 @@ public class SavedSearchDataService extends CassandraService {
       if (username.contentEquals("admin")) {
         ttlToUse = "0";
       }
-      final String query = "insert into " + SEARCHCOLLECTION + " (" + USERNAMECOLUMN + "," + REQUESTNAMECOLUMN + "," + REQUESTCOLUMN + "," + LASTREFRESHCOLUMN + ")" + " values ('" + username + "',$$"
-          + requestName + "$$,$$" + request + "$$,toTimeStamp(NOW())) USING TTL " + ttlToUse;
+      final String query = "insert into " + SEARCHCOLLECTION 
+          + " (" + USERNAMECOLUMN + "," 
+          + REQUESTNAMECOLUMN + "," 
+          + REQUESTCOLUMN + "," 
+          + LASTREFRESHCOLUMN + ")" 
+          + " values ('" + username + "',"
+          + "$$" + requestName + "$$,"
+          + "$$" + request + "$$,"
+          + "toTimeStamp(NOW()))"
+          + " USING TTL " + ttlToUse;
       session.execute(query);
       // TODO change exception
     } catch (final Exception e) {
@@ -103,8 +111,11 @@ public class SavedSearchDataService extends CassandraService {
    */
   public int deleteSearch(final String username, final String requestName, final String request) throws Exception {
     try {
-      final String query = "DELETE FROM " + SEARCHCOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "'" + " AND " + REQUESTCOLUMN + " = $$" + request + "$$ AND " + REQUESTNAMECOLUMN
-          + " = $$" + requestName + "$$ IF EXISTS";
+      final String query = "DELETE FROM " + SEARCHCOLLECTION 
+          + " WHERE " + USERNAMECOLUMN + " = '" + username + "'" 
+          + " AND " + REQUESTCOLUMN + " = $$" + request + "$$"
+          + " AND " + REQUESTNAMECOLUMN + " = $$" + requestName + "$$"
+          + " IF EXISTS";
       session.execute(query);
     } catch (final Exception e) {
       logger.error("Unable to delete search in database for user: " + username, e);
@@ -122,7 +133,10 @@ public class SavedSearchDataService extends CassandraService {
    */
   public Map<String, String> getSearches(final String username) throws Exception {
     final Map<String, String> searches = new HashMap<>();
-    final ResultSet results = session.execute("SELECT " + REQUESTNAMECOLUMN + ", " + REQUESTCOLUMN + " FROM " + SEARCHCOLLECTION + " where " + USERNAMECOLUMN + "='" + username + "'");
+    final ResultSet results = session.execute("SELECT " + REQUESTNAMECOLUMN + ", " 
+        + REQUESTCOLUMN 
+        + " FROM " + SEARCHCOLLECTION 
+        + " where " + USERNAMECOLUMN + "='" + username + "'");
     for (final Row row : results) {
       searches.put(row.getString(REQUESTNAMECOLUMN), row.getString(REQUESTCOLUMN));
     }
@@ -139,9 +153,45 @@ public class SavedSearchDataService extends CassandraService {
     final Map<String, String> searches = getSearches(username);
     for (final String searchName : searches.keySet()) {
       final String search = searches.get(searchName);
-      final String query = "DELETE FROM " + SEARCHCOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "' AND " + REQUESTNAMECOLUMN + "=$$" + searchName + "$$ AND " + REQUESTCOLUMN + "=$$"
-          + search + "$$ IF EXISTS";
+      final String query = "DELETE FROM " + SEARCHCOLLECTION 
+          + " WHERE " + USERNAMECOLUMN + " = '" + username + "'"
+          + " AND " + REQUESTNAMECOLUMN + "=$$" + searchName + "$$"
+          + " AND " + REQUESTCOLUMN + "=$$" + search + "$$"
+          + " IF EXISTS";
       session.execute(query);
+    }
+    return CodesReturned.ALLOK.getValue();
+  }
+
+  /**
+   * refresh a search
+   *
+   * @param username
+   *          of the user
+   * @param requestName
+   *          the request name
+   * @param request
+   *          the search request
+   * @return CodesReturned.ALLOK if all was ok
+   */
+  public int refreshSearch(final String username, final String requestName, final String request) throws Exception {
+    try {
+      String ttlToUse = userDataTTL;
+      if (username.contentEquals("admin")) {
+        ttlToUse = "0";
+      }
+      final String query = "UPDATE " + SEARCHCOLLECTION
+          + " USING TTL " + ttlToUse 
+          + " SET " + LASTREFRESHCOLUMN + " = toTimeStamp(NOW())" 
+          + " WHERE " + USERNAMECOLUMN + " = '" + username + "'" 
+          + " AND " + REQUESTCOLUMN + " = $$" + request + "$$"
+          + " AND " + REQUESTNAMECOLUMN + " = $$" + requestName + "$$"
+          + " IF EXISTS";
+      session.execute(query);
+    } catch (final Exception e) {
+      logger.warn("Unable to refresh search in database for user: " + username, e);
+      // TODO catch specific exception
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
     return CodesReturned.ALLOK.getValue();
   }
@@ -150,11 +200,10 @@ public class SavedSearchDataService extends CassandraService {
     try {
       final Map<String, String> userSearches = getSearches(username);
       if (userSearches != null && !userSearches.isEmpty()) {
-        removeSearches(username);
         for (final Map.Entry<String, String> entry : userSearches.entrySet()) {
           final String requestName = entry.getKey();
           final String request = entry.getValue();
-          saveSearch(username, requestName, request);
+          refreshSearch(username, requestName, request);
         }
       }
     } catch (final Exception e) {

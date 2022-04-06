@@ -375,6 +375,18 @@
       <version>4.13.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
+      <version>1.16.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>cassandra</artifactId>
+      <version>1.16.3</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -399,8 +411,8 @@
               <rules>
                 <bannedDependencies>
                   <excludes>
-                    <exclude>ch.qos.logback:logback-core</exclude>
-                    <exclude>ch.qos.logback:logback-classic</exclude>
+                    <exclude>ch.qos.logback:logback-core:*:*:compile</exclude>
+                    <exclude>ch.qos.logback:logback-classic:*:*:compile</exclude>
                     <exclude>xml-apis:xml-apis</exclude>
                   </excludes>
                 </bannedDependencies>
@@ -408,6 +420,14 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M3</version>
+        <configuration>
+          <argLine>-noverify</argLine>
+        </configuration>
       </plugin>
     </plugins>
     <finalName>Datafari</finalName>

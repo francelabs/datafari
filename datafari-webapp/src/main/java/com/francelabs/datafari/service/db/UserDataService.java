@@ -76,7 +76,8 @@ public class UserDataService extends CassandraService {
    */
   public boolean isInBase(final String username) throws DatafariServerException {
     try {
-      final ResultSet results = session.execute("SELECT * FROM " + USERCOLLECTION + " where " + USERNAMECOLUMN + " = '" + username + "'");
+      final ResultSet results = session.execute("SELECT * FROM " + USERCOLLECTION 
+          + " where " + USERNAMECOLUMN + " = '" + username + "'");
       if (results.one() != null) {
         return true;
       } else {
@@ -100,7 +101,8 @@ public class UserDataService extends CassandraService {
   public String getPassword(final String username) throws DatafariServerException {
     try {
 
-      final ResultSet results = session.execute("SELECT * FROM " + USERCOLLECTION + " where " + USERNAMECOLUMN + " = '" + username + "'");
+      final ResultSet results = session.execute("SELECT * FROM " + USERCOLLECTION 
+          + " where " + USERNAMECOLUMN + " = '" + username + "'");
       final Row entry = results.one();
       if (entry == null) {
         return null;
@@ -118,7 +120,8 @@ public class UserDataService extends CassandraService {
   private JSONObject getUser(final String username) throws DatafariServerException {
     try {
 
-      final ResultSet results = session.execute("SELECT * FROM " + USERCOLLECTION + " where " + USERNAMECOLUMN + " = '" + username + "'");
+      final ResultSet results = session.execute("SELECT * FROM " + USERCOLLECTION 
+          + " where " + USERNAMECOLUMN + " = '" + username + "'");
       final Row entry = results.one();
       if (entry == null) {
         return null;
@@ -148,7 +151,9 @@ public class UserDataService extends CassandraService {
     try {
 
       final List<String> roles = new ArrayList<>();
-      final ResultSet results = session.execute("SELECT " + ROLECOLUMN + " FROM " + ROLECOLLECTION + " where " + USERNAMECOLUMN + " = '" + username + "'");
+      final ResultSet results = session.execute("SELECT " + ROLECOLUMN 
+          + " FROM " + ROLECOLLECTION 
+          + " where " + USERNAMECOLUMN + " = '" + username + "'");
 
       for (final Row row : results) {
         roles.add(row.getString(ROLECOLUMN));
@@ -174,7 +179,10 @@ public class UserDataService extends CassandraService {
 
       final Map<String, JSONObject> listJsonUsers = new HashMap<String, JSONObject>();
 
-      final ResultSet userResults = session.execute("SELECT " + USERNAMECOLUMN + ", " + ISIMPORTEDCOLUMN + " FROM " + USERCOLLECTION + " WHERE " + ISIMPORTEDCOLUMN + "=true");
+      final ResultSet userResults = session.execute("SELECT " + USERNAMECOLUMN 
+          + ", " + ISIMPORTEDCOLUMN 
+          + " FROM " + USERCOLLECTION 
+          + " WHERE " + ISIMPORTEDCOLUMN + "=true");
       for (final Row row : userResults) {
         final String username = row.getString(USERNAMECOLUMN);
         final boolean isImported = row.getBoolean(ISIMPORTEDCOLUMN);
@@ -223,7 +231,10 @@ public class UserDataService extends CassandraService {
 
       final Map<String, JSONObject> listJsonUsers = new HashMap<String, JSONObject>();
 
-      final ResultSet userResults = session.execute("SELECT " + USERNAMECOLUMN + ", " + ISIMPORTEDCOLUMN + " FROM " + USERCOLLECTION + " WHERE " + ISIMPORTEDCOLUMN + "=false");
+      final ResultSet userResults = session.execute("SELECT " + USERNAMECOLUMN 
+          + ", " + ISIMPORTEDCOLUMN 
+          + " FROM " + USERCOLLECTION 
+          + " WHERE " + ISIMPORTEDCOLUMN + "=false");
       for (final Row row : userResults) {
         final String username = row.getString(USERNAMECOLUMN);
         final boolean isImported = row.getBoolean(ISIMPORTEDCOLUMN);
@@ -272,7 +283,9 @@ public class UserDataService extends CassandraService {
 
       final Map<String, JSONObject> listJsonUsers = new HashMap<String, JSONObject>();
 
-      final ResultSet userResults = session.execute("SELECT " + USERNAMECOLUMN + ", " + ISIMPORTEDCOLUMN + " FROM " + USERCOLLECTION);
+      final ResultSet userResults = session.execute("SELECT " + USERNAMECOLUMN 
+          + ", " + ISIMPORTEDCOLUMN 
+          + " FROM " + USERCOLLECTION);
       for (final Row row : userResults) {
         final String username = row.getString(USERNAMECOLUMN);
         final boolean isImported = row.getBoolean(ISIMPORTEDCOLUMN);
@@ -323,7 +336,9 @@ public class UserDataService extends CassandraService {
   public void changePassword(final String passwordHashed, final String username) throws DatafariServerException {
     try {
 
-      final String query = "update " + USERCOLLECTION + " set " + PASSWORDCOLUMN + " = '" + passwordHashed + "' where " + USERNAMECOLUMN + " = '" + username + "'";
+      final String query = "update " + USERCOLLECTION 
+          + " set " + PASSWORDCOLUMN + " = '" + passwordHashed + "'"
+          + " where " + USERNAMECOLUMN + " = '" + username + "'";
       session.execute(query);
     } catch (final DriverException e) {
 
@@ -345,8 +360,14 @@ public class UserDataService extends CassandraService {
       if (username.contentEquals("admin")) {
         ttlToUse = "0";
       }
-      final String query = "insert into " + ROLECOLLECTION + " (" + USERNAMECOLUMN + "," + ROLECOLUMN + "," + LASTREFRESHCOLUMN + ")" + " values ('" + username + "','" + role
-          + "',toTimeStamp(NOW())) USING TTL " + ttlToUse;
+      final String query = "insert into " + ROLECOLLECTION 
+          + " (" + USERNAMECOLUMN + "," 
+          + ROLECOLUMN + "," 
+          + LASTREFRESHCOLUMN + ")" 
+          + " values ('" + username + "',"
+          + "'" + role + "',"
+          + "toTimeStamp(NOW()))"
+          + " USING TTL " + ttlToUse;
       session.execute(query);
     } catch (final DriverException e) {
 
@@ -371,8 +392,16 @@ public class UserDataService extends CassandraService {
       if (username.contentEquals("admin")) {
         ttlToUse = "0";
       }
-      final String query = "insert into " + USERCOLLECTION + " (" + USERNAMECOLUMN + "," + PASSWORDCOLUMN + "," + ISIMPORTEDCOLUMN + "," + LASTREFRESHCOLUMN + ")" + " values ('" + username + "','"
-          + password + "'," + isImported + ",toTimeStamp(NOW())) USING TTL " + ttlToUse;
+      final String query = "insert into " + USERCOLLECTION 
+          + " (" + USERNAMECOLUMN + "," 
+          + PASSWORDCOLUMN + "," 
+          + ISIMPORTEDCOLUMN + "," 
+          + LASTREFRESHCOLUMN + ")" 
+          + " values ('" + username + "',"
+          + "'" + password + "'," 
+          + isImported + ","
+          + "toTimeStamp(NOW()))"
+          + " USING TTL " + ttlToUse;
       session.execute(query);
       for (final String role : roles) {
         this.addRole(role, username);
@@ -386,18 +415,49 @@ public class UserDataService extends CassandraService {
     return true;
   }
 
-  public void refreshUser(final String username) throws DatafariServerException {
-    final JSONObject userObj = getUser(username);
-    final List<String> roles = getRoles(username);
-    // If userObj is null that means that the user is not a datafari user (so from AD or Keycloak or other providers) and does not have any Datafari rights
-    String password = "";
-    boolean isFromAd = true;
-    if (userObj != null) {
-      password = userObj.get(PASSWORDCOLUMN).toString();
-      isFromAd = (Boolean) userObj.get(ISIMPORTEDCOLUMN);
+  private void refreshRoles(final String username, final List<String> roles) throws DatafariServerException {
+    for (final String role : roles) {
+      try {
+        String ttlToUse = userDataTTL;
+        if (username.contentEquals("admin")) {
+          ttlToUse = "0";
+        }
+        final String query = "UPDATE " + ROLECOLLECTION 
+            + " USING TTL " + ttlToUse
+            + " SET " + LASTREFRESHCOLUMN + " = toTimeStamp(NOW())"
+            + " WHERE " + USERNAMECOLUMN + " = '" + username + "'"
+            + " AND " + ROLECOLUMN + " = '" + role + "'";
+        session.execute(query);
+      } catch (final DriverException e) {
+  
+        logger.warn("Unable to change password : " + e.getMessage());
+        // TODO catch specific exception
+        throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+      }
     }
-    deleteUser(username);
-    addUser(username, password, roles, isFromAd);
+  }
+
+  public void refreshUser(final String username) throws DatafariServerException {
+    final List<String> roles = getRoles(username);
+    // Refresh the raw for this user in the user collection
+    try {
+      String ttlToUse = userDataTTL;
+      if (username.contentEquals("admin")) {
+        ttlToUse = "0";
+      }
+      final String query = "UPDATE " + USERCOLLECTION 
+          + " USING TTL " + ttlToUse
+          + " SET " + LASTREFRESHCOLUMN + " = toTimeStamp(NOW())"
+          + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
+      session.execute(query);
+    } catch (final DriverException e) {
+
+      logger.warn("Unable to change password : " + e.getMessage());
+      // TODO catch specific exception
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+    }
+    // Refresh all raws for this user in the role collection
+    refreshRoles(username, roles);
   }
 
   /**
@@ -408,10 +468,12 @@ public class UserDataService extends CassandraService {
    */
   public void deleteUser(final String username) throws DatafariServerException {
     try {
-      final String queryUser = "DELETE FROM " + USERCOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
+      final String queryUser = "DELETE FROM " + USERCOLLECTION 
+          + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
       session.execute(queryUser);
 
-      final String queryRole = "DELETE FROM " + ROLECOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
+      final String queryRole = "DELETE FROM " + ROLECOLLECTION 
+          + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
       session.execute(queryRole);
     } catch (final DriverException e) {
       logger.warn("Unable to remove user : " + e.getMessage());
@@ -429,7 +491,9 @@ public class UserDataService extends CassandraService {
   public void deleteRole(final String role, final String username) throws DatafariServerException {
     try {
 
-      final String query = "DELETE FROM " + ROLECOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "'" + " AND " + ROLECOLUMN + " = '" + role + "'";
+      final String query = "DELETE FROM " + ROLECOLLECTION 
+          + " WHERE " + USERNAMECOLUMN + " = '" + username + "'" 
+          + " AND " + ROLECOLUMN + " = '" + role + "'";
       session.execute(query);
     } catch (final DriverException e) {
       logger.warn("Unable to remove roles : " + e.getMessage());

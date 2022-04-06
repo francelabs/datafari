@@ -66,7 +66,9 @@ public class DepartmentDataService extends CassandraService {
   public String getDepartment(final String username) {
     String department = null;
     try {
-      final String query = "SELECT " + DEPARTMENTCOLUMN + " FROM " + DEPARTMENTCOLLECTION + " where " + USERNAMECOLUMN + "='" + username + "'";
+      final String query = "SELECT " + DEPARTMENTCOLUMN 
+          + " FROM " + DEPARTMENTCOLLECTION 
+          + " where " + USERNAMECOLUMN + "='" + username + "'";
       final ResultSet result = session.execute(query);
       final Row row = result.one();
       if (row != null && !row.isNull(DEPARTMENTCOLUMN) && !row.getString(DEPARTMENTCOLUMN).isEmpty()) {
@@ -92,8 +94,14 @@ public class DepartmentDataService extends CassandraService {
       if (username.contentEquals("admin")) {
         ttlToUse = "0";
       }
-      final String query = "INSERT INTO " + DEPARTMENTCOLUMN + " (" + USERNAMECOLUMN + "," + DEPARTMENTCOLUMN + "," + LASTREFRESHCOLUMN + ")" + " values ('" + username + "','" + department
-          + "',toTimeStamp(NOW())) USING TTL " + ttlToUse;
+      final String query = "INSERT INTO " + DEPARTMENTCOLUMN 
+          + " (" + USERNAMECOLUMN + "," 
+          + DEPARTMENTCOLUMN + "," 
+          + LASTREFRESHCOLUMN + ")" 
+          + " values ('" + username + "'," 
+          + "'" + department + "',"
+          + "toTimeStamp(NOW()))"
+          + " USING TTL " + ttlToUse;
       session.execute(query);
     } catch (final Exception e) {
       logger.warn("Unable to insert lang for user " + username + " : " + e.getMessage());
@@ -113,7 +121,15 @@ public class DepartmentDataService extends CassandraService {
    */
   public int updateDepartment(final String username, final String department) throws DatafariServerException {
     try {
-      final String query = "UPDATE " + DEPARTMENTCOLLECTION + " SET " + DEPARTMENTCOLUMN + " = '" + department + "' WHERE " + USERNAMECOLUMN + " = '" + username + "'";
+      String ttlToUse = userDataTTL;
+      if (username.contentEquals("admin")) {
+        ttlToUse = "0";
+      }
+      final String query = "UPDATE " + DEPARTMENTCOLLECTION
+          + " USING TTL " + ttlToUse
+          + " SET " + DEPARTMENTCOLUMN + " = '" + department + "',"
+          + LASTREFRESHCOLUMN + "= toTimeStamp(NOW())"
+          + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
       session.execute(query);
     } catch (final Exception e) {
       logger.warn("Unable to update department for user " + username + " : " + e.getMessage());
@@ -132,7 +148,9 @@ public class DepartmentDataService extends CassandraService {
    */
   public int deleteDepartment(final String username) throws DatafariServerException {
     try {
-      final String query = "DELETE FROM " + DEPARTMENTCOLLECTION + " WHERE " + USERNAMECOLUMN + " = '" + username + "' IF EXISTS";
+      final String query = "DELETE FROM " + DEPARTMENTCOLLECTION 
+          + " WHERE " + USERNAMECOLUMN + " = '" + username + "'"
+          + " IF EXISTS";
       session.execute(query);
     } catch (final Exception e) {
       logger.warn("Unable to delete department for user " + username + " : " + e.getMessage());
@@ -145,8 +163,7 @@ public class DepartmentDataService extends CassandraService {
   public void refreshDepartment(final String username) throws DatafariServerException {
     final String userDepartment = getDepartment(username);
     if (userDepartment != null && !userDepartment.isEmpty()) {
-      deleteDepartment(username);
-      setDepartment(username, userDepartment);
+      updateDepartment(username, userDepartment);
     }
   }
 

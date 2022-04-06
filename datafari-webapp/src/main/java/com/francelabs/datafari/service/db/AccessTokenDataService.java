@@ -72,8 +72,12 @@ public class AccessTokenDataService extends CassandraService {
   public AccessToken getToken(final String username, final String api) {
     AccessToken token = null;
     try {
-      final String query = "SELECT " + TOKEN_COLUMN + "," + IDENTIFIER_COLUMN + " FROM " + ACCESS_TOKENS_COLLECTION + " WHERE " + USERNAME_COLUMN + "='" + username + "' AND " + API_COLUMN + "='" + api
-          + "'";
+      final String query = "SELECT " 
+          + TOKEN_COLUMN + "," 
+          + IDENTIFIER_COLUMN 
+          + " FROM " + ACCESS_TOKENS_COLLECTION 
+          + " WHERE " + USERNAME_COLUMN + "='" + username + "'" 
+          + " AND " + API_COLUMN + "='" + api + "'";
       final ResultSet result = session.execute(query);
       final Row row = result.one();
       if (row != null && !row.isNull(TOKEN_COLUMN) && !row.getString(TOKEN_COLUMN).isEmpty()) {
@@ -103,8 +107,18 @@ public class AccessTokenDataService extends CassandraService {
       if (username.contentEquals("admin")) {
         ttlToUse = "0";
       }
-      final String query = "INSERT INTO " + ACCESS_TOKENS_COLLECTION + " (" + USERNAME_COLUMN + "," + API_COLUMN + "," + IDENTIFIER_COLUMN + "," + TOKEN_COLUMN + "," + LASTREFRESHCOLUMN + ")"
-          + " values ('" + username + "','" + api + "',$$" + identifier + "$$,$$" + token + "$$,toTimeStamp(NOW())) USING TTL " + ttlToUse;
+      final String query = "INSERT INTO " + ACCESS_TOKENS_COLLECTION 
+          + " (" + USERNAME_COLUMN  + "," 
+          + API_COLUMN + "," 
+          + IDENTIFIER_COLUMN + "," 
+          + TOKEN_COLUMN + "," 
+          + LASTREFRESHCOLUMN + ")"
+          + " values ('" + username + "'," 
+          + "$$" + api + "$$," 
+          + "$$" + identifier + "$$," 
+          + "$$" + token + "$$," 
+          + "toTimeStamp(NOW()))"
+          + " USING TTL " + ttlToUse;
       session.execute(query);
     } catch (final Exception e) {
       logger.warn("Unable to insert Token for user " + username + " for API " + api, e);
@@ -126,7 +140,13 @@ public class AccessTokenDataService extends CassandraService {
    */
   public int updateToken(final String username, final String api, final String identifier, final String token) throws DatafariServerException {
     try {
-      final String query = "UPDATE " + ACCESS_TOKENS_COLLECTION + " SET " + TOKEN_COLUMN + " = '" + token + "' WHERE " + USERNAME_COLUMN + " = '" + username + "' AND " + API_COLUMN + " = '" + api
+      String ttlToUse = userDataTTL;
+      final String query = "UPDATE " + ACCESS_TOKENS_COLLECTION 
+          + " USING TTL " + ttlToUse 
+          + " SET " + TOKEN_COLUMN + " = '" + token + "'," 
+          + LASTREFRESHCOLUMN + " = toTimeStamp(NOW())"
+          + " WHERE " + USERNAME_COLUMN + " = '" + username 
+          + "' AND " + API_COLUMN + " = '" + api 
           + "' AND " + IDENTIFIER_COLUMN + " = $$" + identifier + "$$";
       session.execute(query);
     } catch (final Exception e) {
@@ -149,8 +169,11 @@ public class AccessTokenDataService extends CassandraService {
    */
   public int deleteToken(final String username, final String api, final String identifier) throws DatafariServerException {
     try {
-      final String query = "DELETE FROM " + ACCESS_TOKENS_COLLECTION + " WHERE " + USERNAME_COLUMN + " = '" + username + "' AND " + API_COLUMN + " = '" + api + "' AND " + IDENTIFIER_COLUMN + " = $$"
-          + identifier + "$$ IF EXISTS";
+      final String query = "DELETE FROM " + ACCESS_TOKENS_COLLECTION 
+          + " WHERE " + USERNAME_COLUMN + " = '" + username 
+          + "' AND " + API_COLUMN + " = '" + api 
+          + "' AND " + IDENTIFIER_COLUMN + " = $$" + identifier + "$$"
+          + " IF EXISTS";
       session.execute(query);
     } catch (final Exception e) {
       logger.warn("Unable to delete Token for user " + username + " for API " + api, e);
@@ -170,7 +193,11 @@ public class AccessTokenDataService extends CassandraService {
   public JSONArray getTokens(final String username) throws Exception {
     final JSONArray tokens = new JSONArray();
     final ResultSet results = session
-        .execute("SELECT " + API_COLUMN + "," + IDENTIFIER_COLUMN + "," + TOKEN_COLUMN + " FROM " + ACCESS_TOKENS_COLLECTION + " WHERE " + USERNAME_COLUMN + "='" + username + "'");
+        .execute("SELECT " + API_COLUMN + "," 
+            + IDENTIFIER_COLUMN + "," 
+            + TOKEN_COLUMN 
+            + " FROM " + ACCESS_TOKENS_COLLECTION 
+            + " WHERE " + USERNAME_COLUMN + "='" + username + "'");
     for (final Row row : results) {
       final JSONObject token = new JSONObject();
       token.put(API_COLUMN, row.getString(API_COLUMN));
@@ -194,9 +221,11 @@ public class AccessTokenDataService extends CassandraService {
         final JSONObject token = (JSONObject) tokens.get(i);
         final String api = token.get(API_COLUMN).toString();
         final String identifier = token.get(IDENTIFIER_COLUMN).toString();
-        final String tokenValue = token.get(TOKEN_COLUMN).toString();
-        final String query = "DELETE FROM " + ACCESS_TOKENS_COLLECTION + " WHERE " + USERNAME_COLUMN + " = '" + username + "' AND " + API_COLUMN + "='" + api + "' AND " + IDENTIFIER_COLUMN + "=$$"
-            + identifier + "$$ AND " + TOKEN_COLUMN + "=$$" + tokenValue + "$$ IF EXISTS";
+        final String query = "DELETE FROM " + ACCESS_TOKENS_COLLECTION 
+            + " WHERE " + USERNAME_COLUMN + " = '" + username + "'"
+            + " AND " + API_COLUMN + "='" + api + "'"
+            + " AND " + IDENTIFIER_COLUMN + "=$$" + identifier + "$$" 
+            + " IF EXISTS";
         session.execute(query);
       }
       return CodesReturned.ALLOK.getValue();
@@ -209,13 +238,12 @@ public class AccessTokenDataService extends CassandraService {
     try {
       final JSONArray userTokens = getTokens(username);
       if (userTokens != null && !userTokens.isEmpty()) {
-        removeTokens(username);
         for (final Object oToken : userTokens) {
           final JSONObject userToken = (JSONObject) oToken;
           final String api = userToken.get(API_COLUMN).toString();
           final String identifier = userToken.get(IDENTIFIER_COLUMN).toString();
           final String token = userToken.get(TOKEN_COLUMN).toString();
-          setToken(username, api, identifier, token);
+          updateToken(username, api, identifier, token);
         }
       }
     } catch (final Exception e) {

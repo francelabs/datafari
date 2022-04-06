@@ -99,7 +99,10 @@ public class LicenceDataService extends CassandraService {
       oos.writeObject(licence);
       baos.flush();
       final ByteBuffer bb = ByteBuffer.wrap(baos.toByteArray());
-      final PreparedStatement ps = session.prepare("INSERT INTO " + LICENCECOLUMN + " (" + IDCOLUMN + "," + LICENCECOLUMN + ")" + " values (?,?)");
+      final PreparedStatement ps = session.prepare("INSERT INTO " + LICENCECOLUMN 
+          + " (" + IDCOLUMN + "," 
+          + LICENCECOLUMN + ")" 
+          + " values (?,?)");
       final BoundStatement bs = ps.bind(licenceId, bb);
       session.execute(bs);
 
@@ -129,7 +132,9 @@ public class LicenceDataService extends CassandraService {
 
   private void deleteLicence(final String licenceId) {
     try {
-      final String query = "DELETE FROM " + LICENCECOLLECTION + " WHERE " + IDCOLUMN + " = '" + licenceId + "' IF EXISTS";
+      final String query = "DELETE FROM " + LICENCECOLLECTION 
+          + " WHERE " + IDCOLUMN + " = '" + licenceId + "'"
+          + " IF EXISTS";
       session.execute(query);
     } catch (final Exception e) {
       logger.warn("Unable to delete licence: " + licenceId, e);

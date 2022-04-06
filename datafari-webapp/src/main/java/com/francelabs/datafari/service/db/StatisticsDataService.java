@@ -64,10 +64,19 @@ public class StatisticsDataService extends CassandraService {
 
   private StatisticsDataService() {
     refreshSession();
-    saveStatistics = session.prepare("insert into " + STATISTICS_COLLECTION + " (" + QUERY_ID_COLUMN + "," + USER_ID_COLUMN + "," + TIMESTAMP_COLUMN + "," + ACTION_COLUMN + "," + PARAMETERS_COLUMN
-        + ")" + " values (?, ?, ?, ?, ?) USING TTL ?");
-    getUserStatistics = session.prepare("SELECT * FROM " + STATISTICS_COLLECTION + " WHERE " + USER_ID_COLUMN + " = ?");
-    deleteUserStatistics = session.prepare("DELETE FROM " + STATISTICS_COLLECTION + " WHERE " + QUERY_ID_COLUMN + " = ? AND " + TIMESTAMP_COLUMN + " = ?");
+    saveStatistics = session.prepare("insert into " + STATISTICS_COLLECTION 
+        + " (" + QUERY_ID_COLUMN + "," 
+        + USER_ID_COLUMN + "," 
+        + TIMESTAMP_COLUMN + "," 
+        + ACTION_COLUMN + "," 
+        + PARAMETERS_COLUMN + ")" 
+        + " values (?, ?, ?, ?, ?)"
+        + " USING TTL ?");
+    getUserStatistics = session.prepare("SELECT * FROM " + STATISTICS_COLLECTION 
+        + " WHERE " + USER_ID_COLUMN + " = ?");
+    deleteUserStatistics = session.prepare("DELETE FROM " + STATISTICS_COLLECTION 
+        + " WHERE " + QUERY_ID_COLUMN + " = ?"
+        + " AND " + TIMESTAMP_COLUMN + " = ?");
 
     userActionsTTL = GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_ACTIONS_TTL);
   }
@@ -168,8 +177,14 @@ public class StatisticsDataService extends CassandraService {
   }
 
   public static enum UserActions {
-    SEARCH("SEARCH"), OPEN("OPEN"), RESULT_PAGE_CHANGE("RESULT_PAGE_CHANGE"), FACET_CLICK("FACET_CLICK"), OPEN_PREVIEW("OPEN_PREVIEW"), PREVIEW_CHANGE_DOC("PREVIEW_CHANGE_DOC"),
-    PREVIEW_OPEN_DOC("PREVIEW_OPEN_DOC"), OPEN_PREVIEW_SHARED("OPEN_PREVIEW_SHARED");
+    SEARCH("SEARCH"), 
+    OPEN("OPEN"), 
+    RESULT_PAGE_CHANGE("RESULT_PAGE_CHANGE"), 
+    FACET_CLICK("FACET_CLICK"), 
+    OPEN_PREVIEW("OPEN_PREVIEW"), 
+    PREVIEW_CHANGE_DOC("PREVIEW_CHANGE_DOC"),
+    PREVIEW_OPEN_DOC("PREVIEW_OPEN_DOC"), 
+    OPEN_PREVIEW_SHARED("OPEN_PREVIEW_SHARED");
 
     private String name;
 

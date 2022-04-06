@@ -19,6 +19,8 @@ public class UserDataTTLService {
       DocumentDataService.getInstance().refreshFavorites(username);
       SavedSearchDataService.getInstance().refreshSavedSearches(username);
       AccessTokenDataService.getInstance().refreshAccessTokens(username);
+      UserHistoryDataService.getInstance().refreshHistory(username);
+      UiConfigDataService.getInstance().refreshUiConfig(username);
     } catch (final DatafariServerException e) {
       logger.error("Unable to refresh user '" + username + "' data TTL", e);
     }
