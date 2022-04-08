@@ -25,22 +25,13 @@ pipeline:
           event: tag
     notify:
         image: drillster/drone-email
-        from : noreply@github.com
+        from : noreply@datafari.com
         skip_verify: true
         when:
             status: [ success, failure ]
         secrets: [ email_username, email_password, email_port, email_host, email_recipients ]
-    rancher:
-        image: peloton/drone-rancher
-        url: http://rancher.datafari.com:8080
-        service: datafarice
-        docker_image: datafari/ce_build
-        start_first: false
-        confirm: true
-        timeout: 18000
-        secrets: [ RANCHER_ACCESS_KEY, RANCHER_SECRET_KEY ]
-        when:
-          branch:
-          - master
-          - release-*
-
+    ssh:
+        image: appleboy/drone-ssh
+        secrets: [ ssh_host, ssh_username, ssh_key, ssh_port ]
+        script:
+          - cd /var/work/dockerswarm/datafariee && docker stack deploy -c datafariee.yml datafariee --with-registry-auth
