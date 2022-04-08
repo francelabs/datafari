@@ -16,6 +16,8 @@
 package com.francelabs.datafari.rest.v1_0.users;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -26,6 +28,7 @@ import com.francelabs.datafari.rest.v1_0.exceptions.DataNotFoundException;
 import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
 import com.francelabs.datafari.rest.v1_0.exceptions.NotAuthenticatedException;
 import com.francelabs.datafari.rest.v1_0.utils.RestAPIUtils;
+import com.francelabs.datafari.service.db.UserHistoryDataService;
 import com.francelabs.datafari.user.Lang;
 import com.francelabs.datafari.user.UiConfig;
 import com.francelabs.datafari.utils.AuthenticatedUserName;
@@ -77,7 +80,7 @@ public class Users {
     }
 
     protected JSONObject getUserInfoFromDB(final String authenticatedUserName, final HttpServletRequest request) {
-        JSONObject responseContent = new JSONObject();
+        HashMap<String, Object> responseContent = new HashMap<>();
         if (authenticatedUserName != null) {
             responseContent.put("name", authenticatedUserName);
             ArrayList<String> roles = new ArrayList<>();
@@ -99,7 +102,7 @@ public class Users {
             }
             JSONObject uiConfigObj = getUiConfigFromDB(authenticatedUserName, request);
             responseContent.put("uiConfig", uiConfigObj);
-            return responseContent;
+            return new JSONObject(responseContent);
         } else {
             throw new DataNotFoundException("No user currently connected.");
         }
@@ -141,21 +144,20 @@ public class Users {
 
     @GetMapping(value = "rest/v1.0/users/current/history", produces = "application/json;charset=UTF-8")
     protected String getUserHistory(final HttpServletRequest request) {
-        final JSONParser parser = new JSONParser();
         final String authenticatedUserName = AuthenticatedUserName.getName(request);
         if (authenticatedUserName != null) {
-            // TODO Get the user history instead of hardcoded data
-            JSONObject responseContent = new JSONObject();
-            ArrayList<String> history = new ArrayList<>();
-            history.add("france labs");
-            history.add("datafari");
-            history.add("energy");
-            responseContent.put("history", history);
-            responseContent.put("__note",
-                    "Current history data are hard coded and do not represent actual user queries.");
-            AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(),
+            HashMap<String, Object> responseContent = new HashMap<>();
+            List<String> history;
+            try {
+                history = UserHistoryDataService.getInstance().getHistory(authenticatedUserName);
+                responseContent.put("history", history);
+                AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(),
                     "User " + authenticatedUserName + " accessed his request history");
-            return RestAPIUtils.buildOKResponse(responseContent);
+            } catch (DatafariServerException e) {
+                logger.error("Error while retrieving the history for a user.");
+                throw new InternalErrorException("Error while retrieving the history.");
+            }
+            return RestAPIUtils.buildOKResponse(new JSONObject(responseContent));
         } else {
             throw new NotAuthenticatedException("User must be authenticated to perform this action.");
         }
@@ -164,11 +166,11 @@ public class Users {
     @GetMapping(value = "rest/v1.0/users/current/uiconfig", produces = "application/json;charset=UTF-8")
     protected String getUserUiConfig(final HttpServletRequest request) {
         final String authenticatedUserName = AuthenticatedUserName.getName(request);
-        JSONObject responseContent = new JSONObject();
+        HashMap<String, Object> responseContent = new HashMap<>();
         if (authenticatedUserName != null) {
             JSONObject uiConfigObj = getUiConfigFromDB(authenticatedUserName, request);
             responseContent.put("uiConfig", uiConfigObj);
-            return RestAPIUtils.buildOKResponse(responseContent);
+            return RestAPIUtils.buildOKResponse(new JSONObject(responseContent));
         } else {
             throw new DataNotFoundException("No user currently connected.");
         }

@@ -18,6 +18,7 @@ package com.francelabs.datafari.service.db;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,10 +32,13 @@ import com.francelabs.datafari.utils.GDPRConfiguration;
 public class UserHistoryDataService extends CassandraService {
     final static Logger logger = LogManager.getLogger(UserHistoryDataService.class.getName());
 
+    public static final int MAX_HISTORY_LENGTH = 10;
+
     public static final String HISTORYCOLLECTION = "user_history";
     public static final String USERNAMECOLUMN = "username";
     public static final String HISTORYCOLUMN = "history";
     public final static String LASTREFRESHCOLUMN = "last_refresh";
+
 
     private final String userDataTTL;
 
@@ -96,12 +100,16 @@ public class UserHistoryDataService extends CassandraService {
             if (username.contentEquals("admin")) {
                 ttlToUse = "0";
             }
+            List<String> savedHistory = new ArrayList<>(history);
+            while (savedHistory.size() > MAX_HISTORY_LENGTH) {
+                savedHistory.remove(savedHistory.size()-1);
+            }
             final String query = "INSERT INTO " + HISTORYCOLLECTION 
                     + " (" + USERNAMECOLUMN + "," 
                     + HISTORYCOLUMN + ","
                     + LASTREFRESHCOLUMN + ")" 
                     + " values ('" + username + "',"
-                    + history.stream().map(s->"'" + s.replace("'", "''") + "'").collect(Collectors.joining(",", "[", "]")) + ","
+                    + savedHistory.stream().map(s->"'" + s.replace("'", "''") + "'").collect(Collectors.joining(",", "[", "]")) + ","
                     + "toTimeStamp(NOW()))"
                     + " USING TTL " + ttlToUse;
             session.execute(query);
@@ -127,9 +135,13 @@ public class UserHistoryDataService extends CassandraService {
             if (username.contentEquals("admin")) {
                 ttlToUse = "0";
             }
+            List<String> savedHistory = new ArrayList<>(history);
+            while (savedHistory.size() > MAX_HISTORY_LENGTH) {
+                savedHistory.remove(savedHistory.size()-1);
+            }
             final String query = "UPDATE " + HISTORYCOLLECTION 
                     + " USING TTL " + ttlToUse
-                    + " SET " + HISTORYCOLUMN + " = " + history.stream().map(s->"'" + s.replace("'", "''") + "'").collect(Collectors.joining(",", "[", "]")) + ","
+                    + " SET " + HISTORYCOLUMN + " = " + savedHistory.stream().map(s->"'" + s.replace("'", "''") + "'").collect(Collectors.joining(",", "[", "]")) + ","
                     + LASTREFRESHCOLUMN + " = toTimeStamp(NOW())"
                     + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
             session.execute(query);
