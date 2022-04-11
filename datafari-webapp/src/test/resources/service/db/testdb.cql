@@ -216,9 +216,6 @@ VALUES ('john', 'document_id 3', toTimeStamp(NOW()));
 INSERT INTO lang (username, lang, last_refresh)
 VALUES ('john', 'lang 1', toTimeStamp(NOW()));
 
-INSERT INTO licence (licence_id, licence)
-VALUES ('licence_id_1', textAsBlob('test licence blob string'));
-
 INSERT INTO search (username, name, request, last_refresh)
 VALUES ('john', 'name 1', 'request 1',toTimeStamp(NOW()));
 INSERT INTO search (username, name, request, last_refresh)

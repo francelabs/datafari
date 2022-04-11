@@ -174,7 +174,7 @@ public class SavedSearchDataService extends CassandraService {
    *          the search request
    * @return CodesReturned.ALLOK if all was ok
    */
-  public int refreshSearch(final String username, final String requestName, final String request) throws Exception {
+  private int refreshSearch(final String username, final String requestName, final String request) throws Exception {
     try {
       String ttlToUse = userDataTTL;
       if (username.contentEquals("admin")) {

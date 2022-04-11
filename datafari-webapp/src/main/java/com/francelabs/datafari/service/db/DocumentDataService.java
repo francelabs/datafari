@@ -16,6 +16,7 @@
 package com.francelabs.datafari.service.db;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -294,10 +295,10 @@ public class DocumentDataService extends CassandraService {
             + " FROM " + FAVORITECOLLECTION 
             + " where " + USERNAMECOLUMN + "='" + username + "'");
         for (final Row row : results) {
-          final JSONObject fav = new JSONObject();
+          final HashMap<String, String> fav = new HashMap<>();
           fav.put("id", row.getString(DOCUMENTIDCOLUMN));
           fav.put("title", row.getString(DOCUMENTTITLECOLUMN));
-          favorites.add(fav.toJSONString());
+          favorites.add(new JSONObject(fav).toJSONString());
         }
       } else {
         for (final String documentID : documentIDs) {
@@ -307,10 +308,10 @@ public class DocumentDataService extends CassandraService {
               + " where " + USERNAMECOLUMN + "='" + username + "'"
               + " AND " + DOCUMENTIDCOLUMN + "=$$" + documentID + "$$");
           for (final Row row : results) {
-            final JSONObject fav = new JSONObject();
+            final HashMap<String, String> fav = new HashMap<>();
             fav.put("id", row.getString(DOCUMENTIDCOLUMN));
             fav.put("title", row.getString(DOCUMENTTITLECOLUMN));
-            favorites.add(fav.toJSONString());
+            favorites.add(new JSONObject(fav).toJSONString());
           }
         }
 
