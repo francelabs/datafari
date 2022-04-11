@@ -43,9 +43,6 @@ public class DatafariAuthServer extends AuthorizationServerConfigurerAdapter {
   private AuthenticationManager authenticationManager;
 
   @Autowired
-  private CassandraTokenStore tokenStore;
-
-  @Autowired
   private CassandraClientDetailsService cassandraClientDetailsService;
 
   @Autowired
@@ -66,7 +63,7 @@ public class DatafariAuthServer extends AuthorizationServerConfigurerAdapter {
 
   @Override
   public void configure(final AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-    endpoints.authenticationManager(authenticationManager).tokenStore(tokenStore).userDetailsService(new DatafariSimpleUserDetailsService());
+    endpoints.authenticationManager(authenticationManager).tokenStore(tokenStore()).userDetailsService(new DatafariSimpleUserDetailsService());
   }
 
   @Override
