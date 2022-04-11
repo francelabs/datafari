@@ -20,6 +20,7 @@
     <guava.version>26.0-jre</guava.version>
     <httpclient.version>4.5.13</httpclient.version>
     <java.version>1.11</java.version>
+    <jena-libs.version>4.4.0</jena-libs.version>
     <json.simple.version>1.1.1</json.simple.version>
     <jackson.version>2.13.2</jackson.version>
     <jackson-databind.version>2.13.2.2</jackson-databind.version>
