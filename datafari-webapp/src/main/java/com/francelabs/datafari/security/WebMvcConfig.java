@@ -73,45 +73,41 @@ public class WebMvcConfig implements WebMvcConfigurer {
       final int httpErrorCode = httpResponse.getStatus();
 
       switch (httpErrorCode) {
-        case 400: {
-          errorPage.setViewName("400");
-          errorMsg = "Http Error Code: 400. Bad Request";
-          break;
-        }
-        case 401: {
-          errorPage.setViewName("401");
-          errorMsg = "Http Error Code: 401. Unauthorized";
-          break;
-        }
-        case 403: {
-          errorPage.setViewName("403");
-          errorMsg = "Http Error Code: 403. Unauthorized";
-          break;
-        }
-        case 404: {
-          errorPage.setViewName("404");
-          errorMsg = "Http Error Code: 404. Resource not found";
-          break;
-        }
-        case 503: {
-          errorPage.setViewName("503");
-          errorMsg = "Http Error Code: 503. Internal Server Error";
-          break;
-        }
-        case 504: {
-          errorPage.setViewName("504");
-          errorMsg = "Http Error Code: 504. Internal Server Error";
-          break;
-        }
+      case 400: {
+        errorPage.setViewName("400");
+        errorMsg = "Http Error Code: 400. Bad Request";
+        break;
+      }
+      case 401: {
+        errorPage.setViewName("401");
+        errorMsg = "Http Error Code: 401. Unauthorized";
+        break;
+      }
+      case 403: {
+        errorPage.setViewName("403");
+        errorMsg = "Http Error Code: 403. Unauthorized";
+        break;
+      }
+      case 404: {
+        errorPage.setViewName("404");
+        errorMsg = "Http Error Code: 404. Resource not found";
+        break;
+      }
+      case 503: {
+        errorPage.setViewName("503");
+        errorMsg = "Http Error Code: 503. Internal Server Error";
+        break;
+      }
+      case 504: {
+        errorPage.setViewName("504");
+        errorMsg = "Http Error Code: 504. Internal Server Error";
+        break;
+      }
       }
       errorPage.addObject("errorMsg", errorMsg);
       return errorPage;
     }
 
-    @Override
-    public String getErrorPath() {
-      return "/WEB-INF/view/";
-    }
   }
 
   @Controller
@@ -232,7 +228,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
       if (defaultDatafariString != null && defaultDatafariString.trim().length() > 0) {
         defaultDatafarisArray = defaultDatafariString.split(SearchAggregatorConfiguration.SITES_SEPARATOR);
       }
-      JSONArray defaultDatafaris = new JSONArray();
+      final JSONArray defaultDatafaris = new JSONArray();
       defaultDatafaris.addAll(Arrays.asList(defaultDatafarisArray));
       final JSONParser parser = new JSONParser();
       JSONArray externalDatafarisJson;
@@ -295,7 +291,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
             if (defaultDatafariString != null && defaultDatafariString.trim().length() > 0) {
               defaultDatafarisArray = defaultDatafariString.split(SearchAggregatorConfiguration.SITES_SEPARATOR);
             }
-            ArrayList<String> defaultDatafaris = new ArrayList<>(Arrays.asList(defaultDatafarisArray));
+            final ArrayList<String> defaultDatafaris = new ArrayList<>(Arrays.asList(defaultDatafarisArray));
             if (datafariName != null) {
               final String externalDatafaris = sac.getProperty(SearchAggregatorConfiguration.EXTERNAL_DATAFARIS);
               final JSONParser parser = new JSONParser();
@@ -325,7 +321,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 sac.setProperty(SearchAggregatorConfiguration.EXTERNAL_DATAFARIS, externalDatafarisJson.toJSONString());
                 sac.saveProperties();
 
-                JSONArray defaultDatafarisJSON = new JSONArray();
+                final JSONArray defaultDatafarisJSON = new JSONArray();
                 defaultDatafarisJSON.addAll(defaultDatafaris);
                 jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
                 jsonResponse.put("external_datafaris", externalDatafarisJson);
@@ -350,7 +346,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
             if (defaultDatafariString != null && defaultDatafariString.trim().length() > 0) {
               defaultDatafarisArray = defaultDatafariString.split(SearchAggregatorConfiguration.SITES_SEPARATOR);
             }
-            ArrayList<String> defaultDatafaris = new ArrayList<>(Arrays.asList(defaultDatafarisArray));
+            final ArrayList<String> defaultDatafaris = new ArrayList<>(Arrays.asList(defaultDatafarisArray));
             final JSONObject receivedConf = new JSONObject();
             receivedConf.put("label", datafariName);
             receivedConf.put("search_api_url", searchApiUrl);
@@ -388,7 +384,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
               // Update the properties file
               sac.setProperty(SearchAggregatorConfiguration.EXTERNAL_DATAFARIS, externalDatafarisJson.toJSONString());
               sac.saveProperties();
-              JSONArray defaultDatafarisJSON = new JSONArray();
+              final JSONArray defaultDatafarisJSON = new JSONArray();
               defaultDatafarisJSON.addAll(defaultDatafaris);
               jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
               jsonResponse.put("external_datafaris", externalDatafarisJson);
@@ -406,17 +402,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
               if (defaultDatafariString != null && defaultDatafariString.trim().length() > 0) {
                 defaultDatafarisArray = defaultDatafariString.split(SearchAggregatorConfiguration.SITES_SEPARATOR);
               }
-              ArrayList<String> defaultDatafaris = new ArrayList<>(Arrays.asList(defaultDatafarisArray));
+              final ArrayList<String> defaultDatafaris = new ArrayList<>(Arrays.asList(defaultDatafarisArray));
               final String externalDatafaris = sac.getProperty(SearchAggregatorConfiguration.EXTERNAL_DATAFARIS);
               final JSONParser parser = new JSONParser();
               JSONArray externalDatafarisJson;
               try {
                 externalDatafarisJson = (JSONArray) parser.parse(externalDatafaris);
 
-                // Add a new default Datafari to the list if it is not already there and it exists 
+                // Add a new default Datafari to the list if it is not already there and it exists
                 // as an external Datafari
-                if (getIndex(datafariName, externalDatafarisJson) != -1 
-                  && defaultDatafaris.indexOf(datafariName) == -1) {
+                if (getIndex(datafariName, externalDatafarisJson) != -1 && defaultDatafaris.indexOf(datafariName) == -1) {
                   defaultDatafaris.add(datafariName);
                   String defaultDatafariValue = "";
                   for (int i = 0; i < defaultDatafaris.size(); i++) {
@@ -428,7 +423,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                   sac.setProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI, defaultDatafariValue);
                   sac.saveProperties();
                 }
-                JSONArray defaultDatafarisJsonArray = new JSONArray();
+                final JSONArray defaultDatafarisJsonArray = new JSONArray();
                 defaultDatafarisJsonArray.addAll(defaultDatafaris);
                 jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
                 jsonResponse.put("default_datafari", defaultDatafarisJsonArray);
@@ -449,7 +444,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
               if (defaultDatafariString != null && defaultDatafariString.trim().length() > 0) {
                 defaultDatafarisArray = defaultDatafariString.split(SearchAggregatorConfiguration.SITES_SEPARATOR);
               }
-              ArrayList<String> defaultDatafaris = new ArrayList<>(Arrays.asList(defaultDatafarisArray));
+              final ArrayList<String> defaultDatafaris = new ArrayList<>(Arrays.asList(defaultDatafarisArray));
               // If something is effectively removed, save the new value
               if (defaultDatafaris.remove(datafariName)) {
                 String defaultDatafariValue = "";
@@ -462,7 +457,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 sac.setProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI, defaultDatafariValue);
                 sac.saveProperties();
               }
-              JSONArray defaultDatafarisJsonArray = new JSONArray();
+              final JSONArray defaultDatafarisJsonArray = new JSONArray();
               defaultDatafarisJsonArray.addAll(defaultDatafaris);
               jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
               jsonResponse.put("default_datafari", defaultDatafarisJsonArray);
@@ -487,7 +482,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
           jsonResponse.put(OutputConstants.STATUS, "Unable to save search aggregator properties");
         }
       }
-      if (jsonResponse.get(OutputConstants.CODE) == null){
+      if (jsonResponse.get(OutputConstants.CODE) == null) {
         jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
       }
 

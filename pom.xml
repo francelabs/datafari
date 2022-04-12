@@ -9,6 +9,8 @@
   <version>6.0-dev-Community</version>
   <name>Datafari Enterprise Search - Parent POM</name>
   <properties>
+    <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
+    <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
     <cassandra.version>4.0.1</cassandra.version>
     <cassandra.sha512>2890c054666afa93fe2978c46da5db15ed7d11d60f4890574dc642bd81f7b3af40b41d3e5b8245e6c1453a165eddebeb28bcf3fef1a2b2fc6fb3b82058d7ceb0</cassandra.sha512>
     <cassandra.driver.version>4.13.0</cassandra.driver.version>
@@ -16,10 +18,12 @@
     <datafariui.version>1.0.0-beta-0.6.0</datafariui.version>
     <datafariui.md5>3b1e6bc07dcbc3d13f01718d0afc9430</datafariui.md5>
     <guava.version>26.0-jre</guava.version>
-    <httpclient.version>4.5.9</httpclient.version>
+    <httpclient.version>4.5.13</httpclient.version>
     <java.version>1.11</java.version>
+    <jena-libs.version>4.4.0</jena-libs.version>
     <json.simple.version>1.1.1</json.simple.version>
-    <jackson.version>2.12.2</jackson.version>
+    <jackson.version>2.13.2</jackson.version>
+    <jackson-databind.version>2.13.2.2</jackson-databind.version>
     <keycloak.version>7.0.1</keycloak.version>
     <log4j.version>2.17.1</log4j.version>
     <logstash.version>7.8.0</logstash.version>
@@ -32,18 +36,19 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <solr.version>8.11.1</solr.version>
-    <spring.boot.version>2.3.3.RELEASE</spring.boot.version>
-    <spring.data.cassandra.version>3.0.3.RELEASE</spring.data.cassandra.version>
-    <spring.security.version>5.3.4.RELEASE</spring.security.version>
+    <spring.boot.version>2.6.6</spring.boot.version>
+    <spring.data.cassandra.version>3.3.3</spring.data.cassandra.version>
+    <spring.security.version>5.6.2</spring.security.version>
     <spring.security.kerberos.version>1.0.1.RELEASE</spring.security.kerberos.version>
     <spring.security.saml2.core.version>1.0.10.RELEASE</spring.security.saml2.core.version>
-    <spring.version>5.2.8.RELEASE</spring.version>
+    <spring.version>5.3.18</spring.version>
     <spring.oauth2.version>2.3.8.RELEASE</spring.oauth2.version>
     <tika.version>2.3.0</tika.version>
     <tika-server.sha512>45e81cd4a92618d2ad987695b87125c2e7214c0f6d9bdc5a80c9ef321312526407a484d9df34414f17341916a48e74d253f807455de656ad34ee0e95c212474b</tika-server.sha512>
     <tika-server-commit-number>5c0793e2c</tika-server-commit-number>
     <tomcat.version>9.0.56</tomcat.version>
     <slf4j.version>1.7.25</slf4j.version>
+    <xmlsec.version>2.3.0</xmlsec.version>
     <zookeeper.version>3.6.2</zookeeper.version>
     <zookeeper.sha512>caff5111bb6876b7124760bc006e6fa2523efa54b99321a3c9cd8192ea0d5596abc7d70a054b1aac9b20a411407dae7611c7aba870c23bff28eb1643ba499199</zookeeper.sha512>
   </properties>
