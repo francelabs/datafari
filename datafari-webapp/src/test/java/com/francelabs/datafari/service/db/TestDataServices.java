@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -25,8 +26,10 @@ import java.util.concurrent.TimeUnit;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.service.db.AccessTokenDataService.AccessToken;
+import com.francelabs.datafari.service.db.StatisticsDataService.UserActions;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.GDPRConfiguration;
+import com.francelabs.datafari.utils.UsageStatisticsConfiguration;
 import com.francelabs.licence.Licence;
 import com.francelabs.licence.exception.LicenceException;
 
@@ -51,20 +54,20 @@ import org.testcontainers.containers.Container;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 
-
 // Data services tests are gathered in a single class to reuse the cassandra container as much as possible.
 // The database mocking code is also the same for all the data services.
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({CassandraManager.class, Environment.class})
+@PrepareForTest({ CassandraManager.class, Environment.class, UsageStatisticsConfiguration.class })
 @PowerMockIgnore({ "javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.*" })
 public class TestDataServices {
 
-    private static GenericContainer<?> cassandraContainer = new GenericContainer<>(DockerImageName.parse("cassandra:4.0.3"))
-        .withClasspathResourceMapping("service/db/testdb.cql",
-                                        "/etc/testdb.cql",
-                                        BindMode.READ_ONLY)
-        .withExposedPorts(9042)
-        .withStartupTimeout(Duration.ofMinutes(5));
+    private static GenericContainer<?> cassandraContainer = new GenericContainer<>(
+            DockerImageName.parse("cassandra:4.0.3"))
+            .withClasspathResourceMapping("service/db/testdb.cql",
+                    "/etc/testdb.cql",
+                    BindMode.READ_ONLY)
+            .withExposedPorts(9042)
+            .withStartupTimeout(Duration.ofMinutes(5));
 
     final static String configHomeTemp = "conf";
     final static String resourcePathStr = "src/test/resources/testDatafariConf";
@@ -82,27 +85,25 @@ public class TestDataServices {
         do {
             Container.ExecResult result = cassandraContainer.execInContainer("cqlsh", "-f", "/etc/testdb.cql");
             stderr = result.getStderr();
-            if (stderr.contains("Connection refused")){
+            if (stderr.contains("Connection refused")) {
                 TimeUnit.SECONDS.sleep(5);
             }
         } while (stderr.contains("Connection refused"));
-        
+
         // setting up the cassandra session
         final CqlSessionBuilder sessionBuilder = new CqlSessionBuilder()
-            .addContactPoint(
-                new InetSocketAddress(
-                    cassandraContainer.getHost(), 
-                    cassandraContainer.getMappedPort(9042)
-                )
-            )
-            .withLocalDatacenter("datacenter1")
-            .withKeyspace("datafari");
+                .addContactPoint(
+                        new InetSocketAddress(
+                                cassandraContainer.getHost(),
+                                cassandraContainer.getMappedPort(9042)))
+                .withLocalDatacenter("datacenter1")
+                .withKeyspace("datafari");
         session = sessionBuilder.build();
 
         // create temp dir for config files mocking
         Path tempDirectory = Files.createTempDirectory(configHomeTemp);
         FileUtils.copyDirectory(new File(resourcePathStr), tempDirectory.toFile());
-        
+
         // set datafari_home to temp dir
         PowerMockito.mockStatic(Environment.class);
         PowerMockito.when(Environment.getEnvironmentVariable("CONFIG_HOME"))
@@ -114,88 +115,21 @@ public class TestDataServices {
         PowerMockito.doNothing().when(mockedManager).closeSession();
         PowerMockito.mockStatic(CassandraManager.class);
         PowerMockito.when(CassandraManager.getInstance()).thenReturn(mockedManager);
+
+        // Mock usage statistics configuration to always return true
+        UsageStatisticsConfiguration mockedUsageStatisticsConfig = PowerMockito
+                .mock(UsageStatisticsConfiguration.class);
+        PowerMockito.when(
+                mockedUsageStatisticsConfig.getProperty(UsageStatisticsConfiguration.ENABLED, "false"))
+                .thenReturn("true");
+        PowerMockito.mockStatic(UsageStatisticsConfiguration.class);
+        PowerMockito.when(UsageStatisticsConfiguration.getInstance()).thenReturn(mockedUsageStatisticsConfig);
+
     }
 
     /**********************************************************
      *
-     *             Testing UserDataService
-     *
-     **********************************************************/
-    @Test
-    public void testGetHistory() throws IOException {
-        try {
-            List<String> history = UserHistoryDataService.getInstance().getHistory("john");
-            List<String> expected = Arrays.asList("enron energy", "france labs search engine");
-            Assert.assertEquals(expected, history);
-            return;
-        } catch (Exception e) {
-            Assert.fail("An exception was raised while retrieving history: " + e.getMessage());
-        }
-    }
-
-    @Test
-    public void testSetHistory() {
-        try {
-            List<String> history = Arrays.asList("testa", "tes'pl$^'tb");
-            int code = UserHistoryDataService.getInstance().setHistory("jack", history);
-            List<String> retrievedHistory = UserHistoryDataService.getInstance().getHistory("jack");
-            Assert.assertEquals(history, retrievedHistory);
-            Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
-        } catch (Exception e) {
-            Assert.fail("An exception was raised while setting history: " + e.getMessage());
-        }
-    }
-    
-    @Test
-    public void testUpdateHistory() {
-        try {
-            List<String> history = Arrays.asList("testa", "tes'pl$^'tb");
-            int code = UserHistoryDataService.getInstance().setHistory("john", history);
-            List<String> retrievedHistory = UserHistoryDataService.getInstance().getHistory("john");
-            Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
-            Assert.assertEquals(history, retrievedHistory);
-        } catch (Exception e) {
-            Assert.fail("An exception was raised while setting history: " + e.getMessage());
-        }
-    }
-
-    @Test
-    public void testDeleteHistory() {
-        try {
-            int code = UserHistoryDataService.getInstance().deleteHistory("john");
-            List<String> retrievedHistory = UserHistoryDataService.getInstance().getHistory("john");
-            Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
-            Assert.assertNull(retrievedHistory);
-        } catch (Exception e) {
-            Assert.fail("An exception was raised while deleting history: " + e.getMessage());
-        }
-    }
-    
-    @Test
-    public void testRefreshHistory() {
-        try {
-            int userDataTTL = Integer.parseInt(GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL));
-            TimeUnit.SECONDS.sleep(10);
-            ResultSet results = session.execute("SELECT last_refresh, TTL(last_refresh) FROM user_history WHERE username='john'");
-            Row result = results.one();
-            Instant originalTimestamp = result.get("last_refresh", new TimestampCodec());
-            Integer originalTTL = result.getInt("ttl(last_refresh)");
-            UserHistoryDataService.getInstance().refreshHistory("john");
-            results = session.execute("SELECT last_refresh, TTL(last_refresh) FROM user_history WHERE username='john'");
-            result = results.one();
-            Instant refreshedTimestamp = result.get("last_refresh", new TimestampCodec());
-            Integer refreshedTTL = result.getInt("ttl(last_refresh)");
-            Assert.assertTrue("Has the timestamp been refreshed", refreshedTimestamp.isAfter(originalTimestamp));
-            Assert.assertTrue("Is refreshed TTL greater that original TTL", refreshedTTL > originalTTL);
-            Assert.assertTrue("Original TTL should be at least 10 less than userDataTTL", originalTTL <= userDataTTL - 10);
-        } catch (Exception e) {
-            Assert.fail("An exception was raised while setting history: " + e.getMessage());
-        }
-    }
-
-    /**********************************************************
-     *
-     *             Testing AccessTokenDataService
+     * Testing AccessTokenDataService
      *
      **********************************************************/
     @Test
@@ -228,7 +162,8 @@ public class TestDataServices {
             token.put("a_token", "A token 2");
             expectedTokensList.add(new JSONObject(token));
             // No way to parametrize the addAll call to org.json.simple.JSONArray
-            // And it does not support a constructor taking a List or Collection as parameter.
+            // And it does not support a constructor taking a List or Collection as
+            // parameter.
             // Thus the suppress warning used on this method
             expectedTokens.addAll(expectedTokensList);
             Assert.assertEquals(expectedTokens, retrievedTokens);
@@ -250,11 +185,12 @@ public class TestDataServices {
             Assert.fail("An exception was raised while setting token: " + e.getMessage());
         }
     }
-    
+
     @Test
     public void testUpdateToken() {
         try {
-            int code = AccessTokenDataService.getInstance().updateToken("john", "An api 1", "An identifier 1", "new token 1");
+            int code = AccessTokenDataService.getInstance().updateToken("john", "An api 1", "An identifier 1",
+                    "new token 1");
             AccessToken retrieved = AccessTokenDataService.getInstance().getToken("john", "An api 1");
             Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
             Assert.assertEquals("An api 1", retrieved.getApi());
@@ -288,15 +224,18 @@ public class TestDataServices {
             Assert.fail("An exception was raised while removing tokens: " + e.getMessage());
         }
     }
-    
+
     @Test
     public void testRefreshTokens() {
         try {
-            int userDataTTL = Integer.parseInt(GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL));
+            int userDataTTL = Integer
+                    .parseInt(GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL));
             TimeUnit.SECONDS.sleep(10);
-            ResultSet originalResults = session.execute("SELECT last_refresh, TTL(last_refresh) FROM access_tokens WHERE username='john'");
+            ResultSet originalResults = session
+                    .execute("SELECT last_refresh, TTL(last_refresh) FROM access_tokens WHERE username='john'");
             AccessTokenDataService.getInstance().refreshAccessTokens("john");
-            ResultSet postRefreshResults = session.execute("SELECT last_refresh, TTL(last_refresh) FROM access_tokens WHERE username='john'");
+            ResultSet postRefreshResults = session
+                    .execute("SELECT last_refresh, TTL(last_refresh) FROM access_tokens WHERE username='john'");
             Iterator<Row> originalIt = originalResults.iterator();
             Iterator<Row> postRefreshIt = postRefreshResults.iterator();
             while (originalIt.hasNext() && postRefreshIt.hasNext()) {
@@ -308,7 +247,8 @@ public class TestDataServices {
                 Integer refreshedTTL = postRefreshRow.getInt("ttl(last_refresh)");
                 Assert.assertTrue("Has the timestamp been refreshed", refreshedTimestamp.isAfter(originalTimestamp));
                 Assert.assertTrue("Is refreshed TTL greater that original TTL", refreshedTTL > originalTTL);
-                Assert.assertTrue("Original TTL should be at least 10 less than userDataTTL", originalTTL <= userDataTTL - 10);
+                Assert.assertTrue("Original TTL should be at least 10 less than userDataTTL",
+                        originalTTL <= userDataTTL - 10);
             }
             Assert.assertFalse(originalIt.hasNext());
             Assert.assertFalse(postRefreshIt.hasNext());
@@ -319,7 +259,7 @@ public class TestDataServices {
 
     /**********************************************************
      *
-     *             Testing AlertDataService
+     * Testing AlertDataService
      *
      **********************************************************/
     @Test
@@ -429,7 +369,7 @@ public class TestDataServices {
             Assert.fail("An exception was raised while adding alert: " + e.getMessage());
         }
     }
-    
+
     @Test
     public void testUpdateAlert() {
         try {
@@ -442,7 +382,7 @@ public class TestDataServices {
             alertProp.put("mail", "mail 2 modified");
             alertProp.put("subject", "subject 2 modified");
             AlertDataService.getInstance().updateAlert(alertProp);
-            
+
             alerts = AlertDataService.getInstance().getUserAlerts("alice");
             Assert.assertEquals(1, alerts.size());
             List<Properties> targetAlerts = new ArrayList<>();
@@ -490,15 +430,18 @@ public class TestDataServices {
             Assert.fail("An exception was raised while deleting user alerts: " + e.getMessage());
         }
     }
-    
+
     @Test
     public void testRefreshAlerts() {
         try {
-            int userDataTTL = Integer.parseInt(GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL));
+            int userDataTTL = Integer
+                    .parseInt(GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL));
             TimeUnit.SECONDS.sleep(10);
-            ResultSet originalResults = session.execute("SELECT last_refresh, TTL(last_refresh) FROM alerts WHERE user='john'");
+            ResultSet originalResults = session
+                    .execute("SELECT last_refresh, TTL(last_refresh) FROM alerts WHERE user='john'");
             AlertDataService.getInstance().refreshUserAlerts("john");
-            ResultSet postRefreshResults = session.execute("SELECT last_refresh, TTL(last_refresh) FROM alerts WHERE user='john'");
+            ResultSet postRefreshResults = session
+                    .execute("SELECT last_refresh, TTL(last_refresh) FROM alerts WHERE user='john'");
             Iterator<Row> originalIt = originalResults.iterator();
             Iterator<Row> postRefreshIt = postRefreshResults.iterator();
             while (originalIt.hasNext() && postRefreshIt.hasNext()) {
@@ -508,9 +451,11 @@ public class TestDataServices {
                 Integer originalTTL = originalRow.getInt("ttl(last_refresh)");
                 Instant refreshedTimestamp = postRefreshRow.get("last_refresh", new TimestampCodec());
                 Integer refreshedTTL = postRefreshRow.getInt("ttl(last_refresh)");
-                Assert.assertTrue("The timestamp in last_refresh has been updated", refreshedTimestamp.isAfter(originalTimestamp));
+                Assert.assertTrue("The timestamp in last_refresh has been updated",
+                        refreshedTimestamp.isAfter(originalTimestamp));
                 Assert.assertTrue("Refreshed TTL is greater that original TTL", refreshedTTL > originalTTL);
-                Assert.assertTrue("Original TTL should be at least 10 less than userDataTTL", originalTTL <= userDataTTL - 10);
+                Assert.assertTrue("Original TTL should be at least 10 less than userDataTTL",
+                        originalTTL <= userDataTTL - 10);
             }
             Assert.assertFalse(originalIt.hasNext());
             Assert.assertFalse(postRefreshIt.hasNext());
@@ -521,7 +466,7 @@ public class TestDataServices {
 
     /**********************************************************
      *
-     *             Testing DepartmentDataService
+     * Testing DepartmentDataService
      *
      **********************************************************/
     @Test
@@ -545,7 +490,7 @@ public class TestDataServices {
             Assert.fail("An exception was raised while setting department: " + e.getMessage());
         }
     }
-    
+
     @Test
     public void testUpdateDepartment() {
         try {
@@ -572,14 +517,14 @@ public class TestDataServices {
 
     /**********************************************************
      *
-     *             Testing DocumentDataService
+     * Testing DocumentDataService
      *
      **********************************************************/
     @Test
     public void testGetLikes() throws IOException {
         try {
             List<String> likes = DocumentDataService.getInstance().getLikes("john", null);
-            List<String> expectedList = Arrays.asList("document_id 3","document_id 2");
+            List<String> expectedList = Arrays.asList("document_id 3", "document_id 2");
             Assert.assertEquals("Should have the same size", expectedList.size(), likes.size());
             Assert.assertTrue("Should contain all expected document id", likes.containsAll(expectedList));
         } catch (Exception e) {
@@ -590,7 +535,7 @@ public class TestDataServices {
     @Test
     public void testGetLikesWithList() throws IOException {
         try {
-            String[] param = {"test", "truc", "bidule", "document_id 2"};
+            String[] param = { "test", "truc", "bidule", "document_id 2" };
             List<String> likes = DocumentDataService.getInstance().getLikes("john", param);
             List<String> expectedList = Arrays.asList("document_id 2");
             Assert.assertEquals("Should have the same size", expectedList.size(), likes.size());
@@ -616,14 +561,14 @@ public class TestDataServices {
     public void testUnlike() {
         try {
             DocumentDataService.getInstance().unlike("john", "document_id 2");
-            String[] param = {"document_id 2"};
+            String[] param = { "document_id 2" };
             List<String> retrieved = DocumentDataService.getInstance().getLikes("john", param);
             Assert.assertEquals(0, retrieved.size());
         } catch (Exception e) {
             Assert.fail("An exception was raised while using unlike: " + e.getMessage());
         }
     }
-    
+
     @Test
     public void testRemoveLikes() {
         try {
@@ -638,11 +583,14 @@ public class TestDataServices {
     @Test
     public void testRefreshLikes() {
         try {
-            int userDataTTL = Integer.parseInt(GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL));
+            int userDataTTL = Integer
+                    .parseInt(GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL));
             TimeUnit.SECONDS.sleep(10);
-            ResultSet originalResults = session.execute("SELECT last_refresh, TTL(last_refresh) FROM like WHERE username='john'");
+            ResultSet originalResults = session
+                    .execute("SELECT last_refresh, TTL(last_refresh) FROM like WHERE username='john'");
             DocumentDataService.getInstance().refreshLikes("john");
-            ResultSet postRefreshResults = session.execute("SELECT last_refresh, TTL(last_refresh) FROM like WHERE username='john'");
+            ResultSet postRefreshResults = session
+                    .execute("SELECT last_refresh, TTL(last_refresh) FROM like WHERE username='john'");
             Iterator<Row> originalIt = originalResults.iterator();
             Iterator<Row> postRefreshIt = postRefreshResults.iterator();
             while (originalIt.hasNext() && postRefreshIt.hasNext()) {
@@ -654,7 +602,8 @@ public class TestDataServices {
                 Integer refreshedTTL = postRefreshRow.getInt("ttl(last_refresh)");
                 Assert.assertTrue("Has the timestamp been refreshed", refreshedTimestamp.isAfter(originalTimestamp));
                 Assert.assertTrue("Is refreshed TTL greater that original TTL", refreshedTTL > originalTTL);
-                Assert.assertTrue("Original TTL should be at least 10 less than userDataTTL", originalTTL <= userDataTTL - 10);
+                Assert.assertTrue("Original TTL should be at least 10 less than userDataTTL",
+                        originalTTL <= userDataTTL - 10);
             }
             Assert.assertFalse(originalIt.hasNext());
             Assert.assertFalse(postRefreshIt.hasNext());
@@ -686,7 +635,7 @@ public class TestDataServices {
     @Test
     public void testGetFavoritesWithList() throws IOException {
         try {
-            String[] param = {"test", "truc", "bidule", "document_id 2"};
+            String[] param = { "test", "truc", "bidule", "document_id 2" };
             List<String> favorites = DocumentDataService.getInstance().getFavorites("john", param);
             List<String> expectedList = new ArrayList<>();
             HashMap<String, Object> objContent = new HashMap<String, Object>();
@@ -703,7 +652,8 @@ public class TestDataServices {
     @Test
     public void testAddFavorite() {
         try {
-            DocumentDataService.getInstance().addFavorite("alice", "idDocument4", "titleDocument4");;
+            DocumentDataService.getInstance().addFavorite("alice", "idDocument4", "titleDocument4");
+            ;
             List<String> favorites = DocumentDataService.getInstance().getFavorites("alice", null);
             List<String> expectedList = new ArrayList<>();
             HashMap<String, Object> objContent = new HashMap<String, Object>();
@@ -720,15 +670,16 @@ public class TestDataServices {
     @Test
     public void testDeleteFavorite() {
         try {
-            DocumentDataService.getInstance().deleteFavorite("john", "document_id 1");;
-            String[] param = {"document_id 1"};
+            DocumentDataService.getInstance().deleteFavorite("john", "document_id 1");
+            ;
+            String[] param = { "document_id 1" };
             List<String> favorites = DocumentDataService.getInstance().getFavorites("john", param);
             Assert.assertEquals("Should be empty", 0, favorites.size());
         } catch (Exception e) {
             Assert.fail("An exception was raised while deleting favorite: " + e.getMessage());
         }
     }
-    
+
     @Test
     public void testRemoveFavorites() {
         try {
@@ -756,11 +707,14 @@ public class TestDataServices {
     @Test
     public void testRefreshFavorites() {
         try {
-            int userDataTTL = Integer.parseInt(GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL));
+            int userDataTTL = Integer
+                    .parseInt(GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL));
             TimeUnit.SECONDS.sleep(10);
-            ResultSet originalResults = session.execute("SELECT last_refresh, TTL(last_refresh) FROM favorite WHERE username='john'");
+            ResultSet originalResults = session
+                    .execute("SELECT last_refresh, TTL(last_refresh) FROM favorite WHERE username='john'");
             DocumentDataService.getInstance().refreshFavorites("john");
-            ResultSet postRefreshResults = session.execute("SELECT last_refresh, TTL(last_refresh) FROM favorite WHERE username='john'");
+            ResultSet postRefreshResults = session
+                    .execute("SELECT last_refresh, TTL(last_refresh) FROM favorite WHERE username='john'");
             Iterator<Row> originalIt = originalResults.iterator();
             Iterator<Row> postRefreshIt = postRefreshResults.iterator();
             while (originalIt.hasNext() && postRefreshIt.hasNext()) {
@@ -772,7 +726,8 @@ public class TestDataServices {
                 Integer refreshedTTL = postRefreshRow.getInt("ttl(last_refresh)");
                 Assert.assertTrue("Has the timestamp been refreshed", refreshedTimestamp.isAfter(originalTimestamp));
                 Assert.assertTrue("Is refreshed TTL greater that original TTL", refreshedTTL > originalTTL);
-                Assert.assertTrue("Original TTL should be at least 10 less than userDataTTL", originalTTL <= userDataTTL - 10);
+                Assert.assertTrue("Original TTL should be at least 10 less than userDataTTL",
+                        originalTTL <= userDataTTL - 10);
             }
             Assert.assertFalse(originalIt.hasNext());
             Assert.assertFalse(postRefreshIt.hasNext());
@@ -783,8 +738,7 @@ public class TestDataServices {
 
     /**********************************************************
      *
-     *             Testing LangDataService
-     *
+     * Testing LangDataService
      *
      **********************************************************/
 
@@ -813,13 +767,15 @@ public class TestDataServices {
     @Test
     public void testUpdateLang() throws DatafariServerException, InterruptedException {
         TimeUnit.SECONDS.sleep(2);
-        ResultSet originalResults = session.execute("SELECT last_refresh, TTL(last_refresh) FROM lang WHERE username='john'");
+        ResultSet originalResults = session
+                .execute("SELECT last_refresh, TTL(last_refresh) FROM lang WHERE username='john'");
         Row originalRow = originalResults.one();
         Instant originalTimestamp = originalRow.get("last_refresh", new TimestampCodec());
         Integer originalTTL = originalRow.getInt("ttl(last_refresh)");
         int code = LangDataService.getInstance().updateLang("john", "en");
         Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
-        ResultSet postUpdateResults = session.execute("SELECT last_refresh, TTL(last_refresh) FROM lang WHERE username='john'");
+        ResultSet postUpdateResults = session
+                .execute("SELECT last_refresh, TTL(last_refresh) FROM lang WHERE username='john'");
         Row postUpdateRow = postUpdateResults.one();
         Instant postUpdateTimestamp = postUpdateRow.get("last_refresh", new TimestampCodec());
         Integer postUpdateTTL = postUpdateRow.getInt("ttl(last_refresh)");
@@ -831,26 +787,26 @@ public class TestDataServices {
 
     @Test
     public void testRefreshLang() throws DatafariServerException, InterruptedException {
-        int userDataTTL = Integer.parseInt(GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL));
-            TimeUnit.SECONDS.sleep(10);
-            ResultSet results = session.execute("SELECT last_refresh, TTL(last_refresh) FROM lang WHERE username='john'");
-            Row result = results.one();
-            Instant originalTimestamp = result.get("last_refresh", new TimestampCodec());
-            Integer originalTTL = result.getInt("ttl(last_refresh)");
-            LangDataService.getInstance().refreshLang("john");
-            results = session.execute("SELECT last_refresh, TTL(last_refresh) FROM lang WHERE username='john'");
-            result = results.one();
-            Instant refreshedTimestamp = result.get("last_refresh", new TimestampCodec());
-            Integer refreshedTTL = result.getInt("ttl(last_refresh)");
-            Assert.assertTrue("Has the timestamp been refreshed", refreshedTimestamp.isAfter(originalTimestamp));
-            Assert.assertTrue("Is refreshed TTL greater that original TTL", refreshedTTL > originalTTL);
-            Assert.assertTrue("Original TTL should be at least 10 less than userDataTTL", originalTTL <= userDataTTL - 10);
+        int userDataTTL = Integer
+                .parseInt(GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL));
+        TimeUnit.SECONDS.sleep(10);
+        ResultSet results = session.execute("SELECT last_refresh, TTL(last_refresh) FROM lang WHERE username='john'");
+        Row result = results.one();
+        Instant originalTimestamp = result.get("last_refresh", new TimestampCodec());
+        Integer originalTTL = result.getInt("ttl(last_refresh)");
+        LangDataService.getInstance().refreshLang("john");
+        results = session.execute("SELECT last_refresh, TTL(last_refresh) FROM lang WHERE username='john'");
+        result = results.one();
+        Instant refreshedTimestamp = result.get("last_refresh", new TimestampCodec());
+        Integer refreshedTTL = result.getInt("ttl(last_refresh)");
+        Assert.assertTrue("Has the timestamp been refreshed", refreshedTimestamp.isAfter(originalTimestamp));
+        Assert.assertTrue("Is refreshed TTL greater that original TTL", refreshedTTL > originalTTL);
+        Assert.assertTrue("Original TTL should be at least 10 less than userDataTTL", originalTTL <= userDataTTL - 10);
     }
 
     /**********************************************************
      *
-     *             Testing LicenceDataService
-     *
+     * Testing LicenceDataService
      *
      **********************************************************/
 
@@ -878,71 +834,344 @@ public class TestDataServices {
 
     /**********************************************************
      *
-     *             Testing SavedSearchDataService
-     *
+     * Testing SavedSearchDataService
      *
      **********************************************************/
 
     @Test
-    public void testGetSearches() throws DatafariServerException {
-        // String lang = LangDataService.getInstance().getLang("john");
-        // Assert.assertEquals("lang 1", lang);
+    public void testGetSearches() throws Exception {
+        Map<String, String> searches = SavedSearchDataService.getInstance().getSearches("john");
+        Map<String, String> expected = new HashMap<>();
+        expected.put("name 1", "request 1");
+        expected.put("name 2", "request 2");
+        Assert.assertEquals(expected.size(), searches.size());
+        searches.forEach((key, value) -> {
+            Assert.assertTrue(expected.containsKey(key));
+            Assert.assertEquals(expected.get(key), value);
+        });
     }
 
     @Test
-    public void testSaveSearch() throws DatafariServerException {
-        // int code = LangDataService.getInstance().setLang("alice", "fr");
-        // Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
-        // String lang = LangDataService.getInstance().getLang("alice");
-        // Assert.assertEquals("fr", lang);
+    public void testSaveSearch() throws Exception {
+        int code = SavedSearchDataService.getInstance().saveSearch("alice", "name test", "request test");
+        Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
+        Map<String, String> searches = SavedSearchDataService.getInstance().getSearches("alice");
+        Map<String, String> expected = new HashMap<>();
+        expected.put("name test", "request test");
+        expected.put("name 3", "request 3");
+        Assert.assertEquals(expected.size(), searches.size());
+        searches.forEach((key, value) -> {
+            Assert.assertTrue(expected.containsKey(key));
+            Assert.assertEquals(expected.get(key), value);
+        });
     }
 
     @Test
-    public void testDeleteSearch() throws DatafariServerException {
-        // int code = LangDataService.getInstance().deleteLang("john");
-        // Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
-        // String lang = LangDataService.getInstance().getLang("john");
-        // Assert.assertNull(lang);
+    public void testDeleteSearch() throws Exception {
+        int code = SavedSearchDataService.getInstance().deleteSearch("john", "name 1", "request 1");
+        Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
+        Map<String, String> searches = SavedSearchDataService.getInstance().getSearches("john");
+        Map<String, String> expected = new HashMap<>();
+        expected.put("name 2", "request 2");
+        Assert.assertEquals(expected.size(), searches.size());
+        searches.forEach((key, value) -> {
+            Assert.assertTrue(expected.containsKey(key));
+            Assert.assertEquals(expected.get(key), value);
+        });
     }
 
     @Test
-    public void testRemoveSearches() throws DatafariServerException, InterruptedException {
-        // TimeUnit.SECONDS.sleep(2);
-        // ResultSet originalResults = session.execute("SELECT last_refresh, TTL(last_refresh) FROM lang WHERE username='john'");
-        // Row originalRow = originalResults.one();
-        // Instant originalTimestamp = originalRow.get("last_refresh", new TimestampCodec());
-        // Integer originalTTL = originalRow.getInt("ttl(last_refresh)");
-        // int code = LangDataService.getInstance().updateLang("john", "en");
-        // Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
-        // ResultSet postUpdateResults = session.execute("SELECT last_refresh, TTL(last_refresh) FROM lang WHERE username='john'");
-        // Row postUpdateRow = postUpdateResults.one();
-        // Instant postUpdateTimestamp = postUpdateRow.get("last_refresh", new TimestampCodec());
-        // Integer postUpdateTTL = postUpdateRow.getInt("ttl(last_refresh)");
-        // Assert.assertTrue("Has the timestamp been refreshed", postUpdateTimestamp.isAfter(originalTimestamp));
-        // Assert.assertTrue("Is refreshed TTL greater that original TTL", postUpdateTTL > originalTTL);
-        // String lang = LangDataService.getInstance().getLang("john");
-        // Assert.assertEquals("en", lang);
+    public void testRemoveSearches() throws Exception {
+        int code = SavedSearchDataService.getInstance().removeSearches("john");
+        Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
+        Map<String, String> searches = SavedSearchDataService.getInstance().getSearches("john");
+        Assert.assertEquals(0, searches.size());
     }
 
     @Test
     public void testRefreshSavedSearches() throws DatafariServerException, InterruptedException {
-        // int userDataTTL = Integer.parseInt(GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL));
-        // TimeUnit.SECONDS.sleep(10);
-        // ResultSet results = session.execute("SELECT last_refresh, TTL(last_refresh) FROM lang WHERE username='john'");
-        // Row result = results.one();
-        // Instant originalTimestamp = result.get("last_refresh", new TimestampCodec());
-        // Integer originalTTL = result.getInt("ttl(last_refresh)");
-        // LangDataService.getInstance().refreshLang("john");
-        // results = session.execute("SELECT last_refresh, TTL(last_refresh) FROM lang WHERE username='john'");
-        // result = results.one();
-        // Instant refreshedTimestamp = result.get("last_refresh", new TimestampCodec());
-        // Integer refreshedTTL = result.getInt("ttl(last_refresh)");
-        // Assert.assertTrue("Has the timestamp been refreshed", refreshedTimestamp.isAfter(originalTimestamp));
-        // Assert.assertTrue("Is refreshed TTL greater that original TTL", refreshedTTL > originalTTL);
-        // Assert.assertTrue("Original TTL should be at least 10 less than userDataTTL", originalTTL <= userDataTTL - 10);
+        int userDataTTL = Integer
+                .parseInt(GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL));
+        TimeUnit.SECONDS.sleep(10);
+        ResultSet originalResults = session
+                .execute("SELECT last_refresh, TTL(last_refresh) FROM search WHERE username='john'");
+        SavedSearchDataService.getInstance().refreshSavedSearches("john");
+        ResultSet postRefreshResults = session
+                .execute("SELECT last_refresh, TTL(last_refresh) FROM search WHERE username='john'");
+        Iterator<Row> originalIt = originalResults.iterator();
+        Iterator<Row> postRefreshIt = postRefreshResults.iterator();
+        while (originalIt.hasNext() && postRefreshIt.hasNext()) {
+            Row originalRow = originalIt.next();
+            Row postRefreshRow = postRefreshIt.next();
+            Instant originalTimestamp = originalRow.get("last_refresh", new TimestampCodec());
+            Integer originalTTL = originalRow.getInt("ttl(last_refresh)");
+            Instant refreshedTimestamp = postRefreshRow.get("last_refresh", new TimestampCodec());
+            Integer refreshedTTL = postRefreshRow.getInt("ttl(last_refresh)");
+            Assert.assertTrue("Has the timestamp been refreshed", refreshedTimestamp.isAfter(originalTimestamp));
+            Assert.assertTrue("Is refreshed TTL greater that original TTL", refreshedTTL > originalTTL);
+            Assert.assertTrue("Original TTL should be at least 10 less than userDataTTL",
+                    originalTTL <= userDataTTL - 10);
+        }
+        Assert.assertFalse(originalIt.hasNext());
+        Assert.assertFalse(postRefreshIt.hasNext());
     }
-    
-    
+
+    /**********************************************************
+     *
+     * Testing StatisticsDataService
+     *
+     **********************************************************/
+
+    // Suppress warnings caused by JSONArray manipulations. Can't do anything
+    // about it with json.simple.
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testGetUserStatistics() throws Exception {
+        final JSONArray statistics = StatisticsDataService.getInstance().getUserStatistics("alice");
+        HashMap<String, Object> stat = new HashMap<>();
+        stat.put("query_id", "query 1");
+        stat.put("user_id", "alice");
+        stat.put("action", "action 1");
+        stat.put("time_stamp", Instant.parse("2022-04-01T12:34:56.000Z"));
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("param1", "value1");
+        stat.put("parameters", new JSONObject(params));
+        final JSONObject stat1 = new JSONObject(stat);
+        stat = new HashMap<>();
+        stat.put("query_id", "query 2");
+        stat.put("user_id", "alice");
+        stat.put("action", "action 2");
+        stat.put("time_stamp", Instant.parse("2022-04-01T12:34:56.001Z"));
+        params = new HashMap<>();
+        params.put("param2", "value2");
+        stat.put("parameters", new JSONObject(params));
+        final JSONObject stat2 = new JSONObject(stat);
+        Assert.assertEquals(2, statistics.size());
+        statistics.forEach((value) -> {
+            JSONObject jsonValue = (JSONObject) value;
+            if (((String) jsonValue.get("query_id")).contentEquals("query 1")) {
+                Assert.assertEquals(stat1, jsonValue);
+            } else if (((String) jsonValue.get("query_id")).contentEquals("query 2")) {
+                Assert.assertEquals(stat2, jsonValue);
+            } else {
+                Assert.fail();
+            }
+        });
+    }
+
+    @Test
+    public void testSaveQueryStatistics() throws Exception {
+        UUID testId = UUID.randomUUID();
+        Instant testInstant = Instant.parse("2022-04-01T12:34:56.123Z");
+        boolean success = StatisticsDataService.getInstance().saveQueryStatistics(
+                testId.toString(),
+                "query test",
+                "john",
+                23,
+                testInstant);
+        Assert.assertTrue(success);
+        final JSONArray statistics = StatisticsDataService.getInstance().getUserStatistics("john");
+        Assert.assertEquals(1, statistics.size());
+        HashMap<String, Object> props = new HashMap<>();
+        props.put("query_id", testId.toString());
+        props.put("user_id", "john");
+        props.put("action", UserActions.SEARCH.toString());
+        props.put("time_stamp", testInstant);
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("query", "query test");
+        params.put("num_hit", 23);
+        props.put("parameters", new JSONObject(params));
+        JSONObject expected = new JSONObject(props);
+        Assert.assertEquals(
+                expected.toJSONString(),
+                ((JSONObject) statistics.get(0)).toJSONString());
+    }
+
+    @Test
+    public void testSaveClickStatistics() throws Exception {
+        UUID testId = UUID.randomUUID();
+        Instant testInstant = Instant.parse("2022-04-01T12:34:56.123Z");
+        boolean success = StatisticsDataService.getInstance().saveClickStatistics(
+                testId.toString(),
+                "query test",
+                "john",
+                "document test",
+                5,
+                testInstant);
+        Assert.assertTrue(success);
+        final JSONArray statistics = StatisticsDataService.getInstance().getUserStatistics("john");
+        Assert.assertEquals(1, statistics.size());
+        HashMap<String, Object> props = new HashMap<>();
+        props.put("doc_id", "document test");
+        props.put("rank", 5);
+        final JSONObject parameters = new JSONObject(props);
+        props = new HashMap<>();
+        props.put("query_id", testId.toString());
+        props.put("user_id", "john");
+        props.put("action", UserActions.OPEN.toString());
+        props.put("time_stamp", testInstant);
+        props.put("parameters", parameters);
+        JSONObject expected = new JSONObject(props);
+        Assert.assertEquals(
+                expected.toJSONString(),
+                ((JSONObject) statistics.get(0)).toJSONString());
+    }
+
+    @Test
+    public void testDeleteUserStatistics() throws Exception {
+        int code = StatisticsDataService.getInstance().deleteUserStatistics("alice");
+        Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
+        final JSONArray statistics = StatisticsDataService.getInstance().getUserStatistics("alice");
+        Assert.assertEquals(0, statistics.size());
+    }
+
+    /**********************************************************
+     *
+     * Testing UiConfigDataService
+     *
+     **********************************************************/
+
+    @Test
+    public void testGetUiConfig() throws DatafariServerException {
+        String uiConfig = UiConfigDataService.getInstance().getUiConfig("john");
+        Assert.assertEquals("{\"left\": [],\"center\": [],\"right\": []}", uiConfig);
+    }
+
+    @Test
+    public void testSetUiConfig() throws DatafariServerException {
+        int code = UiConfigDataService.getInstance().setUiConfig("alice", "{\"left\": [],\"center\": [],\"right\": []}");
+        Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
+        String uiConfig = UiConfigDataService.getInstance().getUiConfig("alice");
+        Assert.assertEquals("{\"left\": [],\"center\": [],\"right\": []}", uiConfig);
+    }
+
+    @Test
+    public void testDeleteUiConfig() throws DatafariServerException {
+        int code = UiConfigDataService.getInstance().deleteUiConfig("john");
+        Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
+        String uiConfig = UiConfigDataService.getInstance().getUiConfig("john");
+        Assert.assertNull(uiConfig);
+    }
+
+    @Test
+    public void testUpdateUiConfig() throws DatafariServerException, InterruptedException {
+        TimeUnit.SECONDS.sleep(2);
+        ResultSet originalResults = session
+                .execute("SELECT last_refresh, TTL(last_refresh) FROM ui_config WHERE username='john'");
+        Row originalRow = originalResults.one();
+        Instant originalTimestamp = originalRow.get("last_refresh", new TimestampCodec());
+        Integer originalTTL = originalRow.getInt("ttl(last_refresh)");
+        int code = UiConfigDataService.getInstance().updateUiConfig("john", "{\"left\": [{\"test\":\"truc\"}],\"center\": [],\"right\": []}");
+        Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
+        ResultSet postUpdateResults = session
+                .execute("SELECT last_refresh, TTL(last_refresh) FROM ui_config WHERE username='john'");
+        Row postUpdateRow = postUpdateResults.one();
+        Instant postUpdateTimestamp = postUpdateRow.get("last_refresh", new TimestampCodec());
+        Integer postUpdateTTL = postUpdateRow.getInt("ttl(last_refresh)");
+        Assert.assertTrue("Has the timestamp been refreshed", postUpdateTimestamp.isAfter(originalTimestamp));
+        Assert.assertTrue("Is refreshed TTL greater that original TTL", postUpdateTTL > originalTTL);
+        String uiConfig = UiConfigDataService.getInstance().getUiConfig("john");
+        Assert.assertEquals("{\"left\": [{\"test\":\"truc\"}],\"center\": [],\"right\": []}", uiConfig);
+    }
+
+    @Test
+    public void testRefreshUiConfig() throws DatafariServerException, InterruptedException {
+        int userDataTTL = Integer
+                .parseInt(GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL));
+        TimeUnit.SECONDS.sleep(10);
+        ResultSet results = session.execute("SELECT last_refresh, TTL(last_refresh) FROM ui_config WHERE username='john'");
+        Row result = results.one();
+        Instant originalTimestamp = result.get("last_refresh", new TimestampCodec());
+        Integer originalTTL = result.getInt("ttl(last_refresh)");
+        UiConfigDataService.getInstance().refreshUiConfig("john");
+        results = session.execute("SELECT last_refresh, TTL(last_refresh) FROM ui_config WHERE username='john'");
+        result = results.one();
+        Instant refreshedTimestamp = result.get("last_refresh", new TimestampCodec());
+        Integer refreshedTTL = result.getInt("ttl(last_refresh)");
+        Assert.assertTrue("Has the timestamp been refreshed", refreshedTimestamp.isAfter(originalTimestamp));
+        Assert.assertTrue("Is refreshed TTL greater that original TTL", refreshedTTL > originalTTL);
+        Assert.assertTrue("Original TTL should be at least 10 less than userDataTTL", originalTTL <= userDataTTL - 10);
+    }
+
+    /**********************************************************
+     *
+     * Testing UserDataService
+     *
+     **********************************************************/
+    @Test
+    public void testGetHistory() throws IOException {
+        try {
+            List<String> history = UserHistoryDataService.getInstance().getHistory("john");
+            List<String> expected = Arrays.asList("enron energy", "france labs search engine");
+            Assert.assertEquals(expected, history);
+            return;
+        } catch (Exception e) {
+            Assert.fail("An exception was raised while retrieving history: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testSetHistory() {
+        try {
+            List<String> history = Arrays.asList("testa", "tes'pl$^'tb");
+            int code = UserHistoryDataService.getInstance().setHistory("jack", history);
+            List<String> retrievedHistory = UserHistoryDataService.getInstance().getHistory("jack");
+            Assert.assertEquals(history, retrievedHistory);
+            Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
+        } catch (Exception e) {
+            Assert.fail("An exception was raised while setting history: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testUpdateHistory() {
+        try {
+            List<String> history = Arrays.asList("testa", "tes'pl$^'tb");
+            int code = UserHistoryDataService.getInstance().setHistory("john", history);
+            List<String> retrievedHistory = UserHistoryDataService.getInstance().getHistory("john");
+            Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
+            Assert.assertEquals(history, retrievedHistory);
+        } catch (Exception e) {
+            Assert.fail("An exception was raised while setting history: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testDeleteHistory() {
+        try {
+            int code = UserHistoryDataService.getInstance().deleteHistory("john");
+            List<String> retrievedHistory = UserHistoryDataService.getInstance().getHistory("john");
+            Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
+            Assert.assertNull(retrievedHistory);
+        } catch (Exception e) {
+            Assert.fail("An exception was raised while deleting history: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testRefreshHistory() {
+        try {
+            int userDataTTL = Integer
+                    .parseInt(GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL));
+            TimeUnit.SECONDS.sleep(10);
+            ResultSet results = session
+                    .execute("SELECT last_refresh, TTL(last_refresh) FROM user_history WHERE username='john'");
+            Row result = results.one();
+            Instant originalTimestamp = result.get("last_refresh", new TimestampCodec());
+            Integer originalTTL = result.getInt("ttl(last_refresh)");
+            UserHistoryDataService.getInstance().refreshHistory("john");
+            results = session.execute("SELECT last_refresh, TTL(last_refresh) FROM user_history WHERE username='john'");
+            result = results.one();
+            Instant refreshedTimestamp = result.get("last_refresh", new TimestampCodec());
+            Integer refreshedTTL = result.getInt("ttl(last_refresh)");
+            Assert.assertTrue("Has the timestamp been refreshed", refreshedTimestamp.isAfter(originalTimestamp));
+            Assert.assertTrue("Is refreshed TTL greater that original TTL", refreshedTTL > originalTTL);
+            Assert.assertTrue("Original TTL should be at least 10 less than userDataTTL",
+                    originalTTL <= userDataTTL - 10);
+        } catch (Exception e) {
+            Assert.fail("An exception was raised while setting history: " + e.getMessage());
+        }
+    }
 
     @After
     public void tearDown() throws Exception {

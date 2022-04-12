@@ -220,6 +220,13 @@ INSERT INTO search (username, name, request, last_refresh)
 VALUES ('john', 'name 1', 'request 1',toTimeStamp(NOW()));
 INSERT INTO search (username, name, request, last_refresh)
 VALUES ('john', 'name 2', 'request 2',toTimeStamp(NOW()));
+INSERT INTO search (username, name, request, last_refresh)
+VALUES ('alice', 'name 3', 'request 3',toTimeStamp(NOW()));
+
+INSERT INTO user_search_actions (user_id, query_id, action, parameters, time_stamp)
+VALUES ('alice', 'query 1', 'action 1', '{"param1":"value1"}','2022-04-01T12:34:56.000+0000');
+INSERT INTO user_search_actions (user_id, query_id, action, parameters, time_stamp)
+VALUES ('alice', 'query 2', 'action 2', '{"param2":"value2"}','2022-04-01T12:34:56.001+0000');
 
 INSERT INTO ui_config (username, ui_config, last_refresh)
 VALUES ('john', '{"left": [],"center": [],"right": []}', toTimeStamp(NOW()));

@@ -127,7 +127,8 @@ public class UiConfigDataService extends CassandraService {
             }
             final String query = "UPDATE " + UICONFIGCOLLECTION 
                     + " USING TTL " + ttlToUse
-                    + " SET " + UICONFIGCOLUMN + " = '" + uiConfig + "'"
+                    + " SET " + UICONFIGCOLUMN + " = '" + uiConfig + "',"
+                    + " " + LASTREFRESHCOLUMN + " = toTimeStamp(NOW())"
                     + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
             session.execute(query);
         } catch (final Exception e) {
