@@ -5,6 +5,7 @@ import java.security.Principal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -268,6 +269,17 @@ public class SearchAPI {
       && request.getAttribute("id") instanceof String) {
         String idParam[] = {(String) request.getAttribute("id")};
         parameterMap.put("id", idParam);
+    }
+    // Override parameters with request attributes (set by the code and not from the client, so
+    // they prevail over what has been given as a parameter)
+    Iterator<String> attributeNamesIt = request.getAttributeNames().asIterator();
+    while (attributeNamesIt.hasNext()) {
+      String name = attributeNamesIt.next();
+      if (request.getAttribute(name) != null 
+          && request.getAttribute(name) instanceof String) {
+        String value[] = {(String) request.getAttribute(name)};
+        parameterMap.put(name, value);
+      }
     }
     return search(protocol, handler, request.getUserPrincipal(), parameterMap);
 

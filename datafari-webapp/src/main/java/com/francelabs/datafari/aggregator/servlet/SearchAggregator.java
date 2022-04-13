@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -100,7 +101,11 @@ public class SearchAggregator extends HttpServlet {
     }
 
     // Get query id if available
-    final String queryId = request.getParameter("id");
+    String queryId = request.getParameter("id");
+    if (request.getAttribute("id") != null 
+            && request.getAttribute("id") instanceof String) {
+      queryId = (String) request.getAttribute("id");
+    }
 
     // Get the action from the request: null or searchAPI = search, suggest = suggestAPI
     final String action = request.getParameter("action");
@@ -151,6 +156,17 @@ public class SearchAggregator extends HttpServlet {
         final String protocol = request.getScheme() + ":";
         final Map<String, String[]> parameterMap = new HashedMap<String, String[]>();
         parameterMap.putAll(request.getParameterMap());
+        // Override parameters with request attributes (set by the code and not from the client, so
+        // they prevail over what has been given as a parameter)
+        Iterator<String> attributeNamesIt = request.getAttributeNames().asIterator();
+        while (attributeNamesIt.hasNext()) {
+          String name = attributeNamesIt.next();
+          if (request.getAttribute(name) != null 
+            && request.getAttribute(name) instanceof String){
+            String value[] = {(String) request.getAttribute(name)};
+            parameterMap.put(name, value);
+          }
+        }
         // Remove potential AuthenticatedUserName param, as this param should only be
         // set by the search aggregator
         parameterMap.remove("AuthenticatedUserName");

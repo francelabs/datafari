@@ -16,6 +16,7 @@
 package com.francelabs.datafari.rest.v1_0.search;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -30,10 +31,14 @@ import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
 import com.francelabs.datafari.rest.v1_0.users.Users;
 import com.francelabs.datafari.service.db.UserHistoryDataService;
+import com.francelabs.datafari.servlets.GetUserQueryConf;
 import com.francelabs.datafari.utils.AuthenticatedUserName;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -88,6 +93,25 @@ public class Search extends HttpServlet {
             if (request.getParameter("id") == null) {
                 UUID id = UUID.randomUUID();
                 request.setAttribute("id", id.toString());
+            }
+            
+            String userConf = GetUserQueryConf.getUserQueryConf(request);
+            if (userConf != null && userConf.length() > 0) {
+                JSONParser parser = new JSONParser();
+                try {
+                    JSONObject jsonConf = (JSONObject) parser.parse(userConf);
+                    String qf = (String) jsonConf.get("qf");
+                    String pf = (String) jsonConf.get("pf");
+                    if (qf != null && qf.length() > 0) {
+                        request.setAttribute("qf", qf);
+                    }
+                    
+                    if (pf != null && pf.length() > 0) {
+                        request.setAttribute("pf", pf);
+                    }
+                } catch (ParseException e) {
+                    logger.warn("An issue has occured while reading user query conf", e);
+                }
             }
             saveToUserHistory(request);
             SearchAggregator.doGetSearch(request, response);
