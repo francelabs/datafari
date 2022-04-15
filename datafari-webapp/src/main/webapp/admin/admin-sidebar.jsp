@@ -56,16 +56,15 @@
         <ul id="menu-connectors" class="list-unstyled collapse">
 <%-- MCF menu start --%>
           <li id="MCFSimplified"><a id="MCFSimplified-AdminUI" class="ajax-link" href="?page=mcfSimplified"></a></li>
+<%-- MCF menu end --%>
           <li id="MCFAdminUI">
             <a target="_blank" href="<%= getMCF %>" id="MCFAdmin-AdminUI"></a>
           </li>
           <%
           if(request.isUserInRole("SearchAdministrator")){
           %>
-          <li id="MCFChangePassword" ><a id="MCFPassword-AdminUI" class="ajax-link" href="?page=MCFChangePassword"></a></li>
-         
-<%-- MCF menu end --%>
-         <%
+            <li id="MCFChangePassword" ><a id="MCFPassword-AdminUI" class="ajax-link" href="?page=MCFChangePassword"></a></li>
+          <%
           }
           %>
         </ul>

@@ -62,9 +62,9 @@ export POSTGRES_PID_FILE=$PID_DIR/postmaster.pid
 export ZK_PID_FILE=$PID_DIR/zookeeper-solr.pid
 export ZK_MCF_PID_FILE=$PID_DIR/zookeeper-mcf.pid
 if [ -d /etc/apache2 ]; then
-	export APACHE_PID_FILE=$PID_DIR/apache2.pid
+  export APACHE_PID_FILE=$PID_DIR/apache2.pid
 elif [ -d /etc/httpd ]; then
-	export APACHE_PID_FILE=$PID_DIR/apache/apache2.pid
+  export APACHE_PID_FILE=$PID_DIR/apache/apache2.pid
 fi
 
 export RETRIES_NUMBER=35

@@ -15,37 +15,36 @@ source $CONFIG_FILE
 NUMSHARDS="`echo ${SOLRNUMSHARDS} | tr -d '\r'`"
 
 is_running() {
-    local pidFile=$1
-    if ! [ -f $pidFile ]; then
-      return 1
-    fi
-    local pid
-    pid=$(cat $pidFile)
-    if ! ps -p $pid 1>/dev/null 2>&1; then
-        echo "Warn: a PID file was detected, removing it."
-        rm -f $pidFile
-        return 1
-    fi
-    return 0
+  local pidFile=$1
+  if ! [ -f $pidFile ]; then
+    return 1
+  fi
+  local pid
+  pid=$(cat $pidFile)
+  if ! ps -p $pid 1>/dev/null 2>&1; then
+    echo "Warn: a PID file was detected, removing it."
+    rm -f $pidFile
+    return 1
+  fi
+  return 0
 }
 
 forceStopIfNecessary(){
-    local pidFile=$1
-    if ! [ -f $pidFile ]; then
-        return 0
-    fi
-    local pid
-    pid=$(cat $pidFile)
-    kill $pid
-    waitpid $pid 30 .
-    if [ $? -ne 0 ]; then
-        echo
-        echo "Warn: failed to stop $2 in 30 seconds, sending SIGKILL"
-        kill -9 $pid
-        sleep 1
-    fi
-    echo "stopped"
-    rm -f $pidFile
+  local pidFile=$1
+  if ! [ -f $pidFile ]; then
+    return 0
+  fi
+  local pid
+  pid=$(cat $pidFile)
+  kill $pid
+  waitpid $pid 30 .
+  if [ $? -ne 0 ]; then
+    echo "Warn: failed to stop $2 in 30 seconds, sending SIGKILL"
+    kill -9 $pid
+    sleep 1
+  fi
+  echo "stopped"
+  rm -f $pidFile
 }
 
 init_postgres_repertories()
@@ -255,9 +254,9 @@ init_mcf()
   i=0
   while kill -0 $pid_mcf_upload 2>/dev/null
   do
-      i=$(( (i+1) %4 ))
-      printf "\r${spin:$i:1}"
-      sleep .2
+    i=$(( (i+1) %4 ))
+    printf "\r${spin:$i:1}"
+    sleep .2
   done
   sleep 2
   echo "end uploading MCF conf"
@@ -300,97 +299,97 @@ stop_solr()
 COMMAND=$1
 
 case $COMMAND in
-    init_postgres_repertories)
-        init_postgres_repertories
-        ;;
-    init_cassandra_repertories)
-        init_cassandra_repertories
-        ;;
-    init_zookeeper_repertory)
-        init_zookeeper_repertory
-        ;;
-    init_zookeeper_mcf_repertory)
-        init_zookeeper_mcf_repertory
-        ;;
-    init_postgres)
-        init_postgres
-        ;;
-    start_postgres)
-        start_postgres
-        ;;
-    stop_postgres)
-        stop_postgres
-        ;;
-    start_cassandra)
-        start_cassandra
-        ;;
-    stop_cassandra)
-        stop_cassandra
-        ;;
-    init_cassandra)
-        init_cassandra
-        ;;
-    start_zookeeper)
-        start_zookeeper
-        ;;
-    stop_zookeeper)
-        stop_zookeeper
-        ;;
-    init_zk)
-        init_zk
-        ;;
-    start_zookeeper_mcf)
-        start_zookeeper_mcf
-        ;;
-    stop_zookeeper_mcf)
-        stop_zookeeper_mcf
-        ;;
-    init_zk_mcf)
-        init_zk_mcf
-        ;;
-    init_mcf_crawler_agent)
-        init_mcf_crawler_agent
-        ;;
-    start_mcf_crawler_agent)
-        start_mcf_crawler_agent
-        ;;
-    stop_mcf_crawler_agent)
-        stop_mcf_crawler_agent
-        ;;
-    start_tomcat)
-        start_tomcat
-        ;;
-    stop_tomcat)
-        stop_tomcat
-        ;;
-    start_tomcat_mcf)
-        start_tomcat_mcf
-        ;;
-    stop_tomcat_mcf)
-        stop_tomcat_mcf
-        ;;    
-    init_mcf)
-        init_mcf
-        ;;
-    start_solr)
-        start_solr
-        ;;
-    init_solr)
-        init_solr
-        ;;
-    stop_solr)
-        stop_solr
-        ;;
-    start_apache)
-        start_apache
-        ;;
-    stop_apache)
-        stop_apache
-        ;;
-    is_running)
-        is_running $2
-        ;;
-    forceStopIfNecessary)
-        forceStopIfNecessary $2 $3
-        ;;
+  init_postgres_repertories)
+    init_postgres_repertories
+  ;;
+  init_cassandra_repertories)
+    init_cassandra_repertories
+  ;;
+  init_zookeeper_repertory)
+    init_zookeeper_repertory
+  ;;
+  init_zookeeper_mcf_repertory)
+    init_zookeeper_mcf_repertory
+  ;;
+  init_postgres)
+    init_postgres
+  ;;
+  start_postgres)
+    start_postgres
+  ;;
+  stop_postgres)
+    stop_postgres
+  ;;
+  start_cassandra)
+    start_cassandra
+  ;;
+  stop_cassandra)
+    stop_cassandra
+  ;;
+  init_cassandra)
+    init_cassandra
+  ;;
+  start_zookeeper)
+    start_zookeeper
+  ;;
+  stop_zookeeper)
+    stop_zookeeper
+  ;;
+  init_zk)
+    init_zk
+  ;;
+  start_zookeeper_mcf)
+    start_zookeeper_mcf
+  ;;
+  stop_zookeeper_mcf)
+    stop_zookeeper_mcf
+  ;;
+  init_zk_mcf)
+    init_zk_mcf
+  ;;
+  init_mcf_crawler_agent)
+    init_mcf_crawler_agent
+  ;;
+  start_mcf_crawler_agent)
+    start_mcf_crawler_agent
+  ;;
+  stop_mcf_crawler_agent)
+    stop_mcf_crawler_agent
+  ;;
+  start_tomcat)
+    start_tomcat
+  ;;
+  stop_tomcat)
+    stop_tomcat
+  ;;
+  start_tomcat_mcf)
+    start_tomcat_mcf
+  ;;
+  stop_tomcat_mcf)
+    stop_tomcat_mcf
+  ;;    
+  init_mcf)
+    init_mcf
+  ;;
+  start_solr)
+    start_solr
+  ;;
+  init_solr)
+    init_solr
+  ;;
+  stop_solr)
+    stop_solr
+  ;;
+  start_apache)
+    start_apache
+  ;;
+  stop_apache)
+    stop_apache
+  ;;
+  is_running)
+    is_running $2
+  ;;
+  forceStopIfNecessary)
+    forceStopIfNecessary $2 $3
+  ;;
 esac

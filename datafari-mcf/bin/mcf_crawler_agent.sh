@@ -15,7 +15,7 @@ OPTIONS=$(cat "$OPTIONSFILE")
 cmd_start() {
     echo "Starting MCF Agent ..."
     ./executecommand.sh org.apache.manifoldcf.core.LockClean
-    nohup "$JAVA_HOME/bin/java" $OPTIONS org.apache.manifoldcf.agents.AgentRun > $DATAFARI_HOME/logs/mcf-agent.log &
+    nohup "$JAVA_HOME/bin/java" $OPTIONS org.apache.manifoldcf.agents.AgentRun > $DATAFARI_HOME/logs/mcf-agent.log 2>&1 &
     echo $! > $MCF_PID_FILE
 	echo "MCF Agent started with PID $(cat $MCF_PID_FILE)"
     return 0

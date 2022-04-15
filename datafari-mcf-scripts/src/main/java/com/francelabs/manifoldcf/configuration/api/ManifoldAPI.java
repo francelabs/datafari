@@ -49,7 +49,7 @@ public class ManifoldAPI {
     static public String JOBS = "jobs";
   }
 
-  static private String urlManifoldCFAPI ;
+  static private String urlManifoldCFAPI;
 
   public JSONObject readConfiguration() {
     return null;
@@ -81,7 +81,7 @@ public class ManifoldAPI {
     urlManifoldCFAPI = "https://localhost:9443/datafari-mcf-api-service/json/";
   }
 
-  static public void changeIP(String newip) {
+  static public void changeIP(final String newip) {
     urlManifoldCFAPI = newip;
   }
 
@@ -96,27 +96,29 @@ public class ManifoldAPI {
   }
 
   static public String getManifoldIP() {
-    String pathmcfPropertyFile = "/opt/datafari/bin/common/mcfapi.properties";
-    File mcfPropertyFile = new File(pathmcfPropertyFile);
-    boolean exists = mcfPropertyFile.exists();
-    if (exists == true)  {
+    String homePath = System.getenv("DATAFARI_HOME");
+    if (homePath == null) {
+      homePath = "/opt/datafari";
+    }
+    final String pathmcfPropertyFile = homePath + "/bin/common/mcfapi.properties";
+    final File mcfPropertyFile = new File(pathmcfPropertyFile);
+    final boolean exists = mcfPropertyFile.exists();
+    if (exists == true) {
       LOGGER.info("property file found");
       try (InputStream input = new FileInputStream(pathmcfPropertyFile)) {
 
-        Properties prop = new Properties();
+        final Properties prop = new Properties();
 
         prop.load(input);
 
         LOGGER.info(prop.getProperty("mcfurl"));
         urlManifoldCFAPI = prop.getProperty("mcfurl");
 
-
-      } catch (IOException ex) {
+      } catch (final IOException ex) {
         ex.printStackTrace();
       }
-    }
-    else {
-      LOGGER.info("No property file found into this location : "+ pathmcfPropertyFile);
+    } else {
+      LOGGER.info("No property file found into this location : " + pathmcfPropertyFile);
       LOGGER.info("Default local url MCF");
       urlManifoldCFAPI = "http://localhost:9080/datafari-mcf-api-service/json/";
     }
@@ -440,4 +442,3 @@ public class ManifoldAPI {
   }
 
 }
-

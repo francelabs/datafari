@@ -80,7 +80,7 @@ waitElasticsearch() {
   { exec 6<>/dev/tcp/localhost/9200; } > /dev/null 2>&1 || elasticsearch_status=1
     exec 6>&- # close output connection
     exec 6<&- # close input connection
-    ((retries++))
+    retries=$((retries+1))
   done
   
   kill -s PIPE "$SPIN_ELASTICSEARCH_PID" &
@@ -110,7 +110,7 @@ waitKibana() {
   { exec 6<>/dev/tcp/localhost/5601; } > /dev/null 2>&1 || kibana_status=1
     exec 6>&- # close output connection
     exec 6<&- # close input connection
-    ((retries++))
+    retries=$((retries+1))
   done
   
  kill -s PIPE "$SPIN_KIBANA_PID" &

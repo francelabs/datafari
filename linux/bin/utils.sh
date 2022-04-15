@@ -45,13 +45,13 @@ check_java()
 
 check_ram()
 {
-	sizeMemory=$(grep MemTotal /proc/meminfo | awk '{print $2}')
-	if [[ "$sizeMemory" -lt "8120344" ]]; then
-    	echo The memory detected on your system seems very low. Please be sure that the requirements are respected. See this page : https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/1662451718/Hardware+requirements
+  sizeMemory=$(grep MemTotal /proc/meminfo | awk '{print $2}')
+  if [[ "$sizeMemory" -lt "8120344" ]]; then
+      echo The memory detected on your system seems very low. Please be sure that the requirements are respected. See this page : https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/1662451718/Hardware+requirements
         echo "Wait 10 seconds"
         sleep 10
     else
-    	echo "RAM size detected $sizeMemory KB : OK"
+      echo "RAM size detected $sizeMemory KB : OK"
     fi 
 }
 
@@ -59,8 +59,8 @@ check_python()
 {
 if command -v python3 &> /dev/null
 then
-	echo "Compatible Python version detected : Python3"
-	python_version=3
+  echo "Compatible Python version detected : Python3"
+  python_version=3
 else
   version=$(python -V 2>&1 | grep -Po '(?<=Python )(.+)')
   if [[ -z "$version" ]]
@@ -140,7 +140,7 @@ waitTomcat() {
   { exec 6<>/dev/tcp/localhost/8080; } > /dev/null 2>&1 || tomcat_status=1
     exec 6>&- # close output connection
     exec 6<&- # close input connection
-    ((retries++))
+    retries=$((retries+1))
   done
   
   kill -s PIPE "$SPIN_TOMCAT_PID" &
@@ -169,7 +169,7 @@ waitTomcatMCF() {
   { exec 6<>/dev/tcp/localhost/9080; } > /dev/null 2>&1 || tomcat_mcf_status=1
     exec 6>&- # close output connection
     exec 6<&- # close input connection
-    ((retries++))
+    retries=$((retries+1))
   done
   
   kill -s PIPE "$SPIN_TOMCAT_MCF_PID"
@@ -200,7 +200,7 @@ waitCassandra() {
   { exec 6<>/dev/tcp/localhost/7199; } > /dev/null 2>&1 || cassandra_status=1
   exec 6>&- # close output connection
   exec 6<&- # close input connection
-    ((retries++))
+    retries=$((retries+1))
   done
   kill -s PIPE "$SPIN_CASSANDRA_PID" &
   
@@ -274,7 +274,7 @@ awk -v pat="^$1=" -v value="$1=$2" '{ if ($0 ~ pat) print value; else print $0; 
 mv "$file".tmp "$file"
 
 if  [[ "$3" = *datafari.properties* ]]; then
-	chown ${DATAFARI_USER} $3
+  chown ${DATAFARI_USER} $3
     chmod 775 $3
 fi
                 
