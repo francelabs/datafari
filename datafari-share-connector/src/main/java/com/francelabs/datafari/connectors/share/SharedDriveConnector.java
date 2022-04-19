@@ -1223,7 +1223,7 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
           }
 
         }
-      } catch (final Throwable e) {
+      } catch (final RuntimeException e) {
         activities.recordActivity(System.currentTimeMillis(), ACTIVITY_ACCESS, 0L, documentIdentifier, "KO", "Encountered runtime exception: " + e.getMessage(), null);
         Logging.connectors.error("Encountered runtime exception: " + e.getMessage(), e);
       } finally {
