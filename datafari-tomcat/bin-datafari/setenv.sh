@@ -18,4 +18,4 @@ CATALINA_OPTS="${SOLRCLOUDOPTION} -Dorg.apache.manifoldcf.configfile=../../mcf/m
 # To change the temp directory for Tomcat (by default /tmp) add this property at the end of the JAVA_OPTS property line :
 # -Djava.io.tmpdir=/YOUR_FOLDER
 # See https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/657620997/Change+tmp+directory+in+Datafari for more information
-JAVA_OPTS="-Duser.timezone=UTC -Djava.io.tmpdir=$TMP_DIR"
+JAVA_OPTS="-Duser.timezone=UTC -Djava.io.tmpdir=@TOMCATTMPDIR@"

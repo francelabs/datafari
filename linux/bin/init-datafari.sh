@@ -168,6 +168,16 @@ init_memory() {
   
 }
 
+init_temp_directory() {
+  
+  sed -i -e "s~@TOMCATTMPDIR@~${TOMCATTMPDIR}~g" $DATAFARI_HOME/tomcat/bin/setenv.sh >>$installerLog 2>&1
+  sed -i -e "s~@TOMCATMCFTMPDIR@~${TOMCATMCFTMPDIR}~g" $DATAFARI_HOME/tomcat_mcf/bin/setenv.sh >>$installerLog 2>&1
+  sed -i -e "s~@MCFTMPDIR@~${MCFTMPDIR}~g" $DATAFARI_HOME/mcf/mcf_home/options.env.unix >>$installerLog 2>&1
+  sed -i -e "s~@SOLRTMPDIR@~${SOLRTMPDIR}~g" $DATAFARI_HOME/solr/bin/solr.in.sh >>$installerLog 2>&1
+  sed -i -e "s~@TIKATMPDIR@~${TIKATMPDIR}~g" $DATAFARI_HOME/tika-server/conf/tika-config.xml >>$installerLog 2>&1  
+}
+
+
 
 generate_certificates() {
   # Generate SSL certificate for datafari
@@ -804,6 +814,8 @@ initialization_monoserver() {
     init_node_host $NODEHOST
   source "${DATAFARI_HOME}/bin/deployUtils/monoserver_${DATAFARITYPE}_memory.properties"
     init_memory
+  source "${DATAFARI_HOME}/bin/deployUtils/temp_directory.properties"
+    init_temp_directory
   init_solr_node $localip
   init_solr_hosts $localip
   init_zk $localip
