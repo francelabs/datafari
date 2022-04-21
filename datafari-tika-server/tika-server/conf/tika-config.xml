@@ -32,7 +32,7 @@
         <arg>-Xms@TIKACHILDMEMORY@</arg>
         <arg>-Dlog4j2.configurationFile=${env:TIKA_SERVER_HOME}/conf/log4j2child.properties.xml</arg>
         <arg>-Duser.timezone=UTC</arg>
-        <arg>-Djava.io.tmpdir=/opt/datafari/tmp</arg>
+        <arg>-Djava.io.tmpdir=@TIKATMPDIR@</arg>
       </forkedJvmArgs>
       <!-- this must be set to true for any handler that uses a fetcher or emitter. These pipes features are inherently unsecure because the client has the same read/write access as the tika-server process. 
         Implementers must secure Tika server so that only their clients can reach it. A byproduct of setting this to true is that the /status endpoint is turned on -->
