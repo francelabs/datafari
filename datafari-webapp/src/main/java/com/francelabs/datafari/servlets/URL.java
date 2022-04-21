@@ -23,6 +23,7 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.net.URLConnection;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -68,7 +69,10 @@ public class URL extends HttpServlet {
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
       throws ServletException, IOException {
+        performGet(request, response);
+  }
 
+  public static void performGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
     request.setCharacterEncoding("UTF-8");
 
     final String protocol = request.getScheme() + ":";
@@ -132,8 +136,7 @@ public class URL extends HttpServlet {
       final File file = new File(fileName);
       int length = 0;
       final ServletOutputStream outStream = response.getOutputStream();
-      final ServletContext context = getServletConfig().getServletContext();
-      String mimetype = context.getMimeType(fileName);
+      String mimetype = URLConnection.guessContentTypeFromName(fileName);
 
       // sets response content type
       if (mimetype == null) {

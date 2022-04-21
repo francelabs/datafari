@@ -69,7 +69,7 @@ public class SearchAggregator extends HttpServlet {
 
   private static final Map<String, ExecutorService> runningThreads = new HashMap<String, ExecutorService>();
 
-  public static void doGetSearch(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+  public static JSONObject doGetSearch(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     final SearchAggregatorConfiguration sac = SearchAggregatorConfiguration.getInstance();
     final String jaExternalDatafarisStr = sac.getProperty(SearchAggregatorConfiguration.EXTERNAL_DATAFARIS);
     final boolean activated = Boolean.valueOf(sac.getProperty(SearchAggregatorConfiguration.ACTIVATED));
@@ -199,38 +199,24 @@ public class SearchAggregator extends HttpServlet {
 
         if (jaExternalDatafaris.size() == 0) {
           LOGGER.warn("No external Datafari activated and available to process an aggregator query.");
-          final JSONObject jsonResp = new JSONObject();
-          jsonResp.put("origin", "aggregator");
-          jsonResp.put("code", 1);
-          jsonResp.put("message", "No external Datafari available for this request.");
-          response.setStatus(500);
-          response.setCharacterEncoding("utf-8");
-          response.setContentType("text/json;charset=utf-8");
-          response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
-          response.getWriter().write(jsonResp.toJSONString());
-          return;
+          final HashMap<String, Object> respContent = new HashMap<String, Object>();
+          respContent.put("origin", "aggregator");
+          respContent.put("code", 1);
+          respContent.put("message", "No external Datafari available for this request.");
+          return new JSONObject(respContent);
         }
         // If request is a suggest request then perform the query if there is only one Datafari to request
         // Otherwise return an empty json
         if (action != null && action.contentEquals("suggest")) {
-          String outputString = "{}";
           if (jaExternalDatafaris.size() == 1) {
             final JSONObject externalDatafari = (JSONObject) jaExternalDatafaris.get(0);
             final String authUsername = requestingUser;
             final String suggestResponse = externalDatafariRequest(timeoutPerRequest, handler, parameterMap, externalDatafari, authUsername);
             if (suggestResponse != null) {
-              final String wrapperFunction = request.getParameter("json.wrf");
-              if (wrapperFunction != null) {
-                outputString = wrapperFunction + "(" + suggestResponse + ")";
-              }
+              return (JSONObject) parser.parse(suggestResponse);
             }
           }
-          response.setStatus(200);
-          response.setCharacterEncoding("utf-8");
-          response.setContentType("text/json;charset=utf-8");
-          response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
-          response.getWriter().write(outputString);
-          return;
+          return new JSONObject();
         }
 
         if (jaExternalDatafaris.size() > 0) {
@@ -270,28 +256,14 @@ public class SearchAggregator extends HttpServlet {
         // None of the external Datafaris responded correctly (but they were contacted)
         if (responses.size() == 0) {
           LOGGER.warn("No external Datafari responded correctly to process an aggregator query.");
-          final JSONObject jsonResp = new JSONObject();
-          jsonResp.put("origin", "aggregator");
-          jsonResp.put("code", 2);
-          jsonResp.put("message", "External Datafari unavailable or unreachable for this request.");
-          response.setStatus(500);
-          response.setCharacterEncoding("utf-8");
-          response.setContentType("text/json;charset=utf-8");
-          response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
-          response.getWriter().write(jsonResp.toJSONString());
-          return;
+          final HashMap<String, Object> responseContent = new HashMap<>();
+          responseContent.put("origin", "aggregator");
+          responseContent.put("code", 2);
+          responseContent.put("message", "External Datafari unavailable or unreachable for this request.");
+          return new JSONObject(responseContent);
         }
         // Merge the responses
-        String finalResponseStr = mergeResponses(responses, orgStart, orgRows, wildCardQuery, jaExternalDatafaris.size()).toJSONString();
-        final String wrapperFunction = request.getParameter("json.wrf");
-        if (wrapperFunction != null) {
-          finalResponseStr = wrapperFunction + "(" + finalResponseStr + ")";
-        }
-        response.setStatus(200);
-        response.setCharacterEncoding("utf-8");
-        response.setContentType("text/json;charset=utf-8");
-        response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
-        response.getWriter().write(finalResponseStr);
+        return mergeResponses(responses, orgStart, orgRows, wildCardQuery, jaExternalDatafaris.size());
       } else {
         String searchResponse = "";
         if (action != null) {
@@ -309,52 +281,38 @@ public class SearchAggregator extends HttpServlet {
 
         // Check if the searchResponse is OK
         if (searchResponse.isEmpty()) {
-          response.setStatus(500);
-          response.setCharacterEncoding("utf-8");
-          response.setContentType("text/json;charset=utf-8");
-          response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
-          final JSONObject error = new JSONObject();
+          final HashMap<String, Object> error = new HashMap<>();
           error.put("code", 500);
           error.put("status", "Unkown error");
-          response.getWriter().write(error.toJSONString());
-          return;
+          return new JSONObject(error);
         } else {
           // Check if the response is not an error
-          // If it is then get the error code and usr it for the final response
+          // If it is then return the error object
           try {
             final JSONParser parser = new JSONParser();
             final JSONObject jSearchResponse = (JSONObject) parser.parse(searchResponse);
             if (jSearchResponse.containsKey("error")) {
-              final JSONObject errorObj = (JSONObject) jSearchResponse.get("error");
-              final int errorCode = Integer.parseInt(errorObj.get("code").toString());
-              response.setStatus(errorCode);
-              response.setCharacterEncoding("utf-8");
-              response.setContentType("text/json;charset=utf-8");
-              response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
-              response.getWriter().write(errorObj.toJSONString());
-              return;
-
+              return (JSONObject) jSearchResponse.get("error");
             }
+            return jSearchResponse;
           } catch (final Exception e) {
-            // Do nothing
+            // We copuldn't parse the response as JSON.
+            // Return an error object
+            LOGGER.error("COuldn't parse search response to JSONObject", e);
+            final HashMap<String, Object> responseContent = new HashMap<>();
+            responseContent.put("code", 500);
+            responseContent.put("message", "Couldn't parse search response into json");
+            return new JSONObject(responseContent);
           }
         }
-
-        final String wrapperFunction = request.getParameter("json.wrf");
-        if (wrapperFunction != null) {
-          searchResponse = wrapperFunction + "(" + searchResponse + ")";
-        }
-        response.setStatus(200);
-        response.setCharacterEncoding("utf-8");
-        response.setContentType("text/json;charset=utf-8");
-        response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
-        response.getWriter().write(searchResponse);
       }
 
     } catch (final Exception e) {
       LOGGER.error("Search aggregator unexpected error", e);
-      response.setStatus(500);
-      response.getWriter().write(e.getMessage());
+      HashMap<String, Object> responseContent = new HashMap<>();
+      responseContent.put("code", 500);
+      responseContent.put("message", e.getMessage());
+      return new JSONObject(responseContent);
     }
   }
 
@@ -363,7 +321,27 @@ public class SearchAggregator extends HttpServlet {
    */
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-    doGetSearch(request, response);
+    JSONObject jsonResp = doGetSearch(request, response);
+    Integer code = (Integer) jsonResp.get("code");
+    // If there is a code, we got an error.
+    if (code != null){
+      response.setStatus(500);
+      response.setCharacterEncoding("utf-8");
+      response.setContentType("text/json;charset=utf-8");
+      response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
+      response.getWriter().write(jsonResp.toJSONString());
+    } else {
+      String outputString = jsonResp.toJSONString();
+      final String wrapperFunction = request.getParameter("json.wrf");
+      if (wrapperFunction != null) {
+        outputString = wrapperFunction + "(" + outputString + ")";
+      }
+      response.setStatus(200);
+      response.setCharacterEncoding("utf-8");
+      response.setContentType("text/json;charset=utf-8");
+      response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
+      response.getWriter().write(outputString);
+    }
     return;
   }
 
