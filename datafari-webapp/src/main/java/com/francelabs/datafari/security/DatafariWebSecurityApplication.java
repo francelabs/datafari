@@ -20,7 +20,7 @@ import org.springframework.context.annotation.ComponentScan;
 import com.francelabs.datafari.initializers.IInitializer;
 
 @SpringBootApplication
-@ComponentScan({ "com.francelabs.datafari.security", "com.francelabs.datafari.rest.v1_0" })
+@ComponentScan({ "com.francelabs.datafari.security", "com.francelabs.datafari.rest.v1_0", "com.francelabs.datafari.rest.v2_0" })
 public class DatafariWebSecurityApplication extends SpringBootServletInitializer {
 
   private static final Logger LOGGER = LogManager.getLogger(DatafariWebSecurityApplication.class.getName());
