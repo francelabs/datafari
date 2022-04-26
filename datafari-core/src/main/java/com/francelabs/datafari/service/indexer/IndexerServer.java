@@ -12,7 +12,7 @@ public interface IndexerServer {
    *
    * @return the number of indexed documents, -1 if there is a problem to retrieve this info
    */
-  public int getNumberOfIndexedDocuments();
+  public long getNumberOfIndexedDocuments();
 
   public IndexerQueryResponse executeQuery(final IndexerQuery query) throws Exception;
 

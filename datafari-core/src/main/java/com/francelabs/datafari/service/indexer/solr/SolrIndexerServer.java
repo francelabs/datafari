@@ -2,23 +2,15 @@ package com.francelabs.datafari.service.indexer.solr;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -60,6 +52,7 @@ import com.francelabs.datafari.service.indexer.IndexerQuery;
 import com.francelabs.datafari.service.indexer.IndexerQueryResponse;
 import com.francelabs.datafari.service.indexer.IndexerResponseDocument;
 import com.francelabs.datafari.service.indexer.IndexerServer;
+import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.service.indexer.IndexerUpdateRequest;
 import com.francelabs.datafari.solr.custom.ModifiedHttpSolrClient;
 import com.francelabs.datafari.statistics.StatsUtils;
@@ -78,8 +71,7 @@ public class SolrIndexerServer implements IndexerServer {
   private static final String defaultLocation = "/solr/";
   private final Logger LOGGER = LogManager.getLogger(SolrIndexerServer.class.getName());
   /**
-   * queryClient must only be used for executeQuery method as it is configured not to treat the solr response and get a raw response (json)
-   * instead of a SolrJ object
+   * queryClient must only be used for executeQuery method as it is configured not to treat the solr response and get a raw response (json) instead of a SolrJ object
    */
   private CloudSolrClient queryClient;
   /**
@@ -161,40 +153,18 @@ public class SolrIndexerServer implements IndexerServer {
   }
 
   @Override
-  public int getNumberOfIndexedDocuments() {
-    int numDocs = 0;
+  public long getNumberOfIndexedDocuments() {
     try {
-      final HttpClientBuilder builder = HttpClientBuilder.create();
-      final HttpClient httpClient = builder.build();
-      final String solrHost = SolrConfiguration.getInstance().getProperty(SolrConfiguration.SOLRHOST);
-      final int solrPort = Integer.parseInt(SolrConfiguration.getInstance().getProperty(SolrConfiguration.SOLRPORT));
-      final String solrProtocol = SolrConfiguration.getInstance().getProperty(SolrConfiguration.SOLRPROTOCOL);
-      final HttpHost httpHost = new HttpHost(solrHost, solrPort, solrProtocol);
-      final Set<String> coreList = new HashSet<>();
-      HttpGet httpGet = new HttpGet("/solr/admin/collections?action=CLUSTERSTATUS&collection=" + indexCore + "&wt=json");
-      HttpResponse httpResponse = httpClient.execute(httpHost, httpGet);
-      String response = IOUtils.toString(httpResponse.getEntity().getContent(), StandardCharsets.UTF_8);
-      JSONObject jsonResponse = null;
-      final JSONParser parser = new JSONParser();
-      jsonResponse = (JSONObject) parser.parse(response);
-      JSONObject shardsJSON = (JSONObject) jsonResponse.get("cluster");
-      shardsJSON = (JSONObject) shardsJSON.get("collections");
-      shardsJSON = (JSONObject) shardsJSON.get(indexCore);
-      shardsJSON = (JSONObject) shardsJSON.get("shards");
-
-      httpGet = new HttpGet("/solr/" + indexCore + "/admin/luke?q=*:*&wt=json");
-      httpResponse = httpClient.execute(httpHost, httpGet);
-      response = IOUtils.toString(httpResponse.getEntity().getContent(), StandardCharsets.UTF_8);
-      jsonResponse = (JSONObject) parser.parse(response);
-      final JSONObject index = (JSONObject) jsonResponse.get("index");
-
-      numDocs = Integer.parseInt(index.get("numDocs").toString());
-
-    } catch (IOException | ParseException e) {
+      final IndexerQuery query = IndexerServerManager.createQuery();
+      query.setRequestHandler("/opensearch");
+      query.setQuery("*:*");
+      query.addParam("fl", "id");
+      final IndexerQueryResponse response = executeQuery(query);
+      return response.getNumFound();
+    } catch (final Exception e) {
       LOGGER.warn("Unable to retrieve the number of indexed documents", e);
-      return -1;
+      return -1L;
     }
-    return numDocs;
   }
 
   @Override
@@ -248,11 +218,10 @@ public class SolrIndexerServer implements IndexerServer {
     final Path localPath = Paths.get(localDirectory + "/" + fileToUpload);
     LOGGER.debug("zkpath : " + "/configs/" + collection + "/" + fileToUpload);
     LOGGER.debug("localPath : " + localDirectory + "/" + fileToUpload);
-    if (distantDirectory != null && !distantDirectory.isEmpty()) 
+    if (distantDirectory != null && !distantDirectory.isEmpty())
       ZkMaintenanceUtils.uploadToZK(zkClient, localPath, "/configs/" + collection + "/" + distantDirectory + "/" + fileToUpload, null);
-    else 
+    else
       ZkMaintenanceUtils.uploadToZK(zkClient, localPath, "/configs/" + collection + "/" + fileToUpload, null);
-
 
   }
 
