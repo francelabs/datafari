@@ -337,59 +337,59 @@ init_apache_ssl() {
   getMCF=""
   getMCFSimplified=""
   getSolrAdmin=""
-    apachePresent="true"
-    getMCFAdmin="\"/datafari-mcf-crawler-ui/\""
-    getMCF="\"/datafari-mcf-crawler-ui/\""
-    getMCFSimplified="\"/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp\""
-    getSolrAdmin="\"/solr/\""
-    getMonitAdmin="\"/monit/\""
-    getGlancesAdmin="\"/glances/\""
-    sed -i -e "s/@APACHE@/true/g" $TOMCAT_HOME/conf/datafari.properties >>$installerLog 2>&1
-    cp -r $DATAFARI_HOME/apache/html/* /var/www/html/
+  apachePresent="true"
+  getMCFAdmin="\"/datafari-mcf-crawler-ui/\""
+  getMCF="\"/datafari-mcf-crawler-ui/\""
+  getMCFSimplified="\"/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp\""
+  getSolrAdmin="\"/solr/\""
+  getMonitAdmin="\"/monit/\""
+  getGlancesAdmin="\"/glances/\""
+  sed -i -e "s/@APACHE@/true/g" $TOMCAT_HOME/conf/datafari.properties >>$installerLog 2>&1
+  cp -r $DATAFARI_HOME/apache/html/* /var/www/html/
 
-    if [ -d /etc/apache2 ]; then
-      cp $DATAFARI_HOME/ssl-keystore/apache/config/tomcat.conf /etc/apache2/sites-available/
-      cp $DATAFARI_HOME/ssl-keystore/apache/config/envvars /etc/apache2/
-      ln -s /etc/apache2/* $DATAFARI_HOME/apache/
-      rm -f /var/www/html/index.jsp
-      mkdir /var/apache
-      mkdir /var/apache/logs
-      ln -s /var/apache/logs $DATAFARI_HOME/logs/apache
-      a2enmod proxy
-      a2enmod proxy_ajp
-      a2enmod proxy_http
-      a2enmod ssl
-      a2enmod proxy_http
-      a2enmod auth_digest
-      a2enmod rewrite
-      a2enmod headers
-      a2dissite 000-default
-      a2dissite default-ssl
-      a2ensite tomcat
-      /etc/init.d/apache2 start
-      /etc/init.d/apache2 stop
-      update-rc.d apache2 disable
-      
-    elif [ -d /etc/httpd ]; then
-      cp $DATAFARI_HOME/ssl-keystore/apache/config/httpd.conf /etc/httpd/conf/
-      mkdir /etc/httpd/sites-available /etc/httpd/sites-enabled
-      mkdir /var/apache
-      mkdir /var/apache/pid
-      mkdir /var/apache/logs
-      chmod -R 775 /var/apache
-      chown -R $DATAFARI_USER /var/apache
-      cp $DATAFARI_HOME/ssl-keystore/apache/config/tomcat.conf /etc/httpd/sites-available/
-      ln -s /etc/httpd/sites-available/tomcat.conf /etc/httpd/sites-enabled/tomcat.conf
-      ln -s /var/apache/pid $DATAFARI_HOME/pid/apache
-      ln -s /var/apache/logs $DATAFARI_HOME/logs/apache
-      cp $DATAFARI_HOME/ssl-keystore/apache/config/envvars /etc/httpd/
-      ln -s /etc/httpd/* $DATAFARI_HOME/apache/
-      rm -f /var/www/html/index.jsp
-      /usr/sbin/setsebool -P httpd_can_network_connect 1
-      apachectl start
-      apachectl stop
-      
-    fi
+  if [ -d /etc/apache2 ]; then
+    cp $DATAFARI_HOME/ssl-keystore/apache/config/tomcat.conf /etc/apache2/sites-available/
+    cp $DATAFARI_HOME/ssl-keystore/apache/config/envvars /etc/apache2/
+    ln -s /etc/apache2/* $DATAFARI_HOME/apache/
+    rm -f /var/www/html/index.jsp
+    mkdir /var/apache
+    mkdir /var/apache/logs
+    ln -s /var/apache/logs $DATAFARI_HOME/logs/apache
+    a2enmod proxy
+    a2enmod proxy_ajp
+    a2enmod proxy_http
+    a2enmod ssl
+    a2enmod proxy_http
+    a2enmod auth_digest
+    a2enmod rewrite
+    a2enmod headers
+    a2dissite 000-default
+    a2dissite default-ssl
+    a2ensite tomcat
+    /etc/init.d/apache2 start
+    /etc/init.d/apache2 stop
+    update-rc.d apache2 disable
+    
+  elif [ -d /etc/httpd ]; then
+    cp $DATAFARI_HOME/ssl-keystore/apache/config/httpd.conf /etc/httpd/conf/
+    mkdir /etc/httpd/sites-available /etc/httpd/sites-enabled
+    mkdir /var/apache
+    mkdir /var/apache/pid
+    mkdir /var/apache/logs
+    chmod -R 775 /var/apache
+    chown -R $DATAFARI_USER /var/apache
+    cp $DATAFARI_HOME/ssl-keystore/apache/config/tomcat.conf /etc/httpd/sites-available/
+    ln -s /etc/httpd/sites-available/tomcat.conf /etc/httpd/sites-enabled/tomcat.conf
+    ln -s /var/apache/pid $DATAFARI_HOME/pid/apache
+    ln -s /var/apache/logs $DATAFARI_HOME/logs/apache
+    cp $DATAFARI_HOME/ssl-keystore/apache/config/envvars /etc/httpd/
+    ln -s /etc/httpd/* $DATAFARI_HOME/apache/
+    rm -f /var/www/html/index.jsp
+    /usr/sbin/setsebool -P httpd_can_network_connect 1
+    apachectl start
+    apachectl stop
+    
+  fi
   sed -i -e "s~\"@GET-MCF-IP@\"~${getMCFAdmin}~g" $TOMCAT_HOME/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
   sed -i -e "s~\"@GET-MCF-IP@\"~${getMCF}~g" $TOMCAT_HOME/webapps/Datafari/resources/js/header.js >>$installerLog 2>&1
   sed -i -e "s~\"@GET-MCF-IP@\"~${getMCFSimplified}~g" $TOMCAT_HOME/webapps/Datafari/resources/js/admin/ajax/mcfSimplified.js >>$installerLog 2>&1
@@ -423,13 +423,13 @@ init_permissions() {
   echo "Init permissions 1/6"
   find $DATAFARI_HOME -type f -not -perm 775 > list_files_permissions.txt
   while IFS= read -r file; do
-      chmod 775 "$file"
+    chmod 775 "$file"
   done < list_files_permissions.txt
   rm -rf list_files_permissions.txt
   echo "Init permissions 2/6"
   find $DATAFARI_HOME \! -user ${DATAFARI_USER} -print > list_files_owner.txt
   while IFS= read -r file; do
-      chown ${DATAFARI_USER} "$file"
+    chown ${DATAFARI_USER} "$file"
   done < list_files_owner.txt
   rm -rf list_files_owner.txt
   echo "Init permissions 3/6"
@@ -798,40 +798,40 @@ fi
 # initialization node types
    
 initialization_monoserver() {
-    echo "initialization for monoserver"
-    localip=localhost
-    #delete_certificates
-    init_users
+  echo "initialization for monoserver"
+  localip=localhost
+  #delete_certificates
+  init_users
   init_war
   init_git
   init_folders
-    init_elk localhost "mono"
-    init_logstash localhost
-    generate_certificates $NODEHOST
+  init_elk localhost "mono"
+  init_logstash localhost
+  generate_certificates $NODEHOST
   generate_certificates_apache $NODEHOST
   generate_certificates_elk $NODEHOST
-    init_collection_name $SOLRMAINCOLLECTION
-    init_node_host $NODEHOST
+  init_collection_name $SOLRMAINCOLLECTION
+  init_node_host $NODEHOST
   source "${DATAFARI_HOME}/bin/deployUtils/monoserver_${DATAFARITYPE}_memory.properties"
-    init_memory
+  init_memory
   source "${DATAFARI_HOME}/bin/deployUtils/temp_directory.properties"
-    init_temp_directory
+  init_temp_directory
   init_solr_node $localip
   init_solr_hosts $localip
   init_zk $localip
   init_zk_mcf
   init_mcf "A"
-    init_shards $SOLRNUMSHARDS
-    init_main_node
+  init_shards $SOLRNUMSHARDS
+  init_main_node
   init_solrcloud
-    clean_monoserver_node
-    init_password $TEMPADMINPASSWORD
-    init_password_postgresql $TEMPPGSQLPASSWORD
-    init_apache_ssl
-    if [ -d /etc/httpd ]; then
-      stop_firewalld_start_iptables
-    fi
-    secure_tomcat $NODEHOST
+  clean_monoserver_node
+  init_password $TEMPADMINPASSWORD
+  init_password_postgresql $TEMPPGSQLPASSWORD
+  init_apache_ssl
+  if [ -d /etc/httpd ]; then
+    stop_firewalld_start_iptables
+  fi
+  secure_tomcat $NODEHOST
   secure_tomcat_mcf $NODEHOST
   secure_monit $NODEHOST
   secure_glances $NODEHOST
@@ -854,17 +854,17 @@ initialization_monoserver() {
 init_datafari() {
 
 if [ "$(whoami)" != "root" ]; then
-        echo "Script must be run as user: root"
-        echo "Script will exit"
-        exit 1
+  echo "Script must be run as user: root"
+  echo "Script will exit"
+  exit 1
 fi
 
 if  [[ "$STATE" = *initialized* ]];
-    then
-      echo "Datafari is already initialized. You can start Datafari directly."
-      echo "If you want to reinitialize Datafari, edit the file $DATAFARI_HOME/bin/common/init_state.properties and replace the content by that : STATE=installed "
-      echo "The script will now exit"
-      exit 0
+then
+  echo "Datafari is already initialized. You can start Datafari directly."
+  echo "If you want to reinitialize Datafari, edit the file $DATAFARI_HOME/bin/common/init_state.properties and replace the content by that : STATE=installed "
+  echo "The script will now exit"
+  exit 0
 fi    
     
 check_java;

@@ -1,1 +1,21 @@
-{"authoritygroup":{"isnew":"true","name":"DatafariAuthorityGroup","description":""}}
+{
+  "authoritygroup": [
+    {
+      "_children_": [
+        {
+          "_type_": "isnew",
+          "_value_": "false"
+        },
+        {
+          "_type_": "name",
+          "_value_": "DatafariAuthorityGroup"
+        },
+        {
+          "_type_": "description",
+          "_value_": ""
+        }
+      ],
+      "isnew": true
+    }
+  ]
+}

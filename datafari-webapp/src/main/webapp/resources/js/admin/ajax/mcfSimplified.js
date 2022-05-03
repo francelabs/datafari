@@ -2,6 +2,7 @@
 //# sourceURL=/Datafari/resources/js/admin/ajax//mcfSimplified.js
 
 var timeouts = [];
+var mcfUrl = "@GET-MCF-IP@";
 var returnData = undefined;
 var clearTimeouts = function() {
   for (var i = 0; i < timeouts.length; i++) {
@@ -126,6 +127,10 @@ $(document)
 
           $("#addWeb").submit(function(e) {
             e.preventDefault();
+            $("#addWeb").removeClass('was-validated');
+            $("#addWebMessageSuccess").hide();
+            $("#addWebMessageFailure").hide();
+            $("#addWebCheckMessageFailure").hide();
             if (checkSeeds($("#seeds")) && checkEmail($("#email")) && checkElm($("#webSourcename")) && checkRepoName($("#webReponame"))) {
               return addWebConnector();
             } else {
@@ -136,11 +141,11 @@ $(document)
           $("#addFiler").submit(function(e) {
             e.preventDefault();
             $("#addFiler").removeClass('was-validated');
+            $("#addFilerMessageSuccess").hide();
+            $("#addFilerMessageFailure").hide();
             $("#addFilerCheckMessageFailure").hide();
             var form = document.getElementById("addFiler");
             if (form.checkValidity() === false || !checkRepoName($("#filerReponame"))) {
-              checkRepoName($("#filerReponame"));
-              $("#addFiler").addClass('was-validated');
               return false;
             } else {
               $.get("./../admin/CheckMCFConfiguration", {
@@ -162,7 +167,7 @@ $(document)
             }
           });
 
-        });
+});
 
 function checkElm(element) {
   clearStatus(element);
@@ -307,10 +312,7 @@ function addFilerConnector() {
     success : function(data, textStatus, jqXHR) {
       data = JSON.parse(data);
       if (data['code'] !== 0) {
-        $("#addFilerMessageFailure").show().removeClass("animated fadeOut");
-        timeouts.push(setTimeout(function() {
-          $("#addFilerMessageFailure").addClass("animated fadeOut");
-        }, 1500));
+        $("#addFilerMessageFailure").show();
       } else {
         $("#addFiler").trigger("reset");
         var jobStarted = "";
@@ -318,11 +320,10 @@ function addFilerConnector() {
           jobStarted = " and started";
         }
         var getUrl = window.location;
-        var mcfUrl = "@GET-MCF-IP@";
         $("#addFilerMessageSuccess").html(
             "<i class='fa fa-check'></i>Job " + data.job_id + " created" + jobStarted
                 + " ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='" + mcfUrl + "'>Datafari connectors status page</a>");
-        $("#addFilerMessageSuccess").show().removeClass("animated fadeOut");
+        $("#addFilerMessageSuccess").show();
         timeouts.push(setTimeout(function() {
           clearStatus($("#server"));
           clearStatus($("#user"));
@@ -365,10 +366,7 @@ function addWebConnector() {
     success : function(data, textStatus, jqXHR) {
       data = JSON.parse(data);
       if (data['code'] !== 0) {
-        $("#addWebMessageFailure").show().removeClass("animated fadeOut");
-        timeouts.push(setTimeout(function() {
-          $("#addWebMessageFailure").addClass("animated fadeOut");
-        }, 1500));
+        $("#addWebMessageFailure").show();
       } else {
         $("#addWeb").trigger("reset");
         var jobStarted = "";
@@ -376,11 +374,10 @@ function addWebConnector() {
           jobStarted = " and started";
         }
         var getUrl = window.location;
-        var mcfUrl = "@GET-MCF-IP@";
         $("#addWebMessageSuccess").html(
             "<i class='fa fa-check'></i>Job " + data.job_id + " created" + jobStarted
                 + " ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='" + mcfUrl + "'>Datafari connectors status page</a>");
-        $("#addWebMessageSuccess").show().removeClass("animated fadeOut");
+        $("#addWebMessageSuccess").show();
         timeouts.push(setTimeout(function() {
           clearStatus($("#seeds"));
           clearStatus($("#email"));
