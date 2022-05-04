@@ -329,6 +329,8 @@ function addFilerConnector() {
           clearStatus($("#user"));
           clearStatus($('#password'));
           clearStatus($('#paths'));
+          clearStatus($("#filerReponame"));
+          clearStatus($("#filerSourcename"));
         }, 1500));
       }
     },
