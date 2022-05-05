@@ -146,6 +146,7 @@ $(document)
             $("#addFilerCheckMessageFailure").hide();
             var form = document.getElementById("addFiler");
             if (form.checkValidity() === false || !checkRepoName($("#filerReponame"))) {
+              $("#addFiler").addClass('was-validated');
               return false;
             } else {
               $.get("./../admin/CheckMCFConfiguration", {
