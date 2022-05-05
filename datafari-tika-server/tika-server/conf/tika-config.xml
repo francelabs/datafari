@@ -46,17 +46,16 @@
   </server>
 
   <!-- Autodetect parser config to limit amount of metadata per doc -->
-  <!-- Will be compatible with Tika server 2.4.0, for now must stay commented -->
-<!--   <autoDetectParserConfig> -->
-<!--     <metadataWriteFilterFactory class="org.apache.tika.metadata.writefilter.StandardWriteFilterFactory"> -->
-<!--       <params> -->
-<!--         <maxKeySize>1000</maxKeySize> -->
-<!--         <maxFieldSize>25000</maxFieldSize> -->
-<!--         <maxValuesPerField>20</maxValuesPerField> -->
-<!--         <maxTotalEstimatedBytes>500000</maxTotalEstimatedBytes> -->
-<!--       </params> -->
-<!--     </metadataWriteFilterFactory> -->
-<!--   </autoDetectParserConfig> -->
+  <autoDetectParserConfig>
+    <metadataWriteFilterFactory class="org.apache.tika.metadata.writefilter.StandardWriteFilterFactory">
+      <params>
+        <maxKeySize>1000</maxKeySize>
+        <maxFieldSize>25000</maxFieldSize>
+        <maxValuesPerField>20</maxValuesPerField>
+        <maxTotalEstimatedBytes>500000</maxTotalEstimatedBytes>
+      </params>
+    </metadataWriteFilterFactory>
+  </autoDetectParserConfig>
 
   <!-- Parsers specific config -->
   <parsers>
