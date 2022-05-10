@@ -171,13 +171,13 @@
    <field name="description" type="string" indexed="true" stored="true" multiValued="true"/>
    <field name="character_count_with_spaces" type="int" indexed="true" stored="true" multiValued="false"/>
    <field name="revision_number" type="string" indexed="true" stored="true" multiValued="false"/>
-   <field name="line_count" type="int" indexed="true" stored="true" multiValued="false"/>
-   <field name="word_count" type="int" indexed="true" stored="true" multiValued="false"/>
-   <field name="paragraph_count" type="int" indexed="true" stored="true" multiValued="false"/>
-   <field name="total_time" type="int" indexed="true" stored="true" multiValued="false"/>
-   <field name="character_count" type="int" indexed="true" stored="true" multiValued="false"/>
-   <field name="page_count" type="int" indexed="true" stored="true" multiValued="false"/>
-   <field name="xmptpg_npages" type="int" indexed="true" stored="true" multiValued="false"/>
+   <field name="line_count" type="long" indexed="true" stored="true" multiValued="false"/>
+   <field name="word_count" type="long" indexed="true" stored="true" multiValued="false"/>
+   <field name="paragraph_count" type="long" indexed="true" stored="true" multiValued="false"/>
+   <field name="total_time" type="long" indexed="true" stored="true" multiValued="false"/>
+   <field name="character_count" type="long" indexed="true" stored="true" multiValued="false"/>
+   <field name="page_count" type="long" indexed="true" stored="true" multiValued="false"/>
+   <field name="xmptpg_npages" type="long" indexed="true" stored="true" multiValued="false"/>
    <field name="author_search" type="text_general" indexed="true" stored="false" multiValued="true"/>
    <field name="subject_search" type="text_general" indexed="true" stored="false" multiValued="true"/>
    <field name="keywords_search" type="text_general" indexed="true" stored="false" multiValued="true"/>
