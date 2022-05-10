@@ -366,6 +366,16 @@
                   "_attribute_value": "1000000"
                 },
                 {
+                  "_type_": "maxMetadataValueLength",
+                  "_value_": "",
+                  "_attribute_value": "250000"
+                },
+                {
+                  "_type_": "totalMetadataLimit",
+                  "_value_": "",
+                  "_attribute_value": "500000"
+                },
+                {
                   "_type_": "extractArchives",
                   "_value_": "",
                   "_attribute_value": "false"

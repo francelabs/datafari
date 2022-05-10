@@ -27,8 +27,8 @@
     <keycloak.version>7.0.1</keycloak.version>
     <log4j.version>2.17.1</log4j.version>
     <logstash.version>7.8.0</logstash.version>
-    <mcf.version>2.21</mcf.version>
-    <mcf.sha512>84109fc537319859da4878d23dc72bb67e8c0a7f958afae2da1da0335991ffa2047e516ecb37a3c1f2371f0af4ddb74decf459b9247baf6c00172de5b689c441</mcf.sha512>
+    <mcf.version>2.22</mcf.version>
+    <mcf.sha512>30fc8166e52bcc3cdb58d97bdff765cb5254e8364c4f0c251ae4fb7a513f22813bde0a6771f2c9c62076fbaeb0ae1e88cdfabedd073bcd581e80371a9e8ee4e5</mcf.sha512>
     <mcf.commit.number>38e4c78f1</mcf.commit.number>
     <netty.version>4.1.63.Final</netty.version>
     <open.distro.version>1.9.0</open.distro.version>
@@ -47,7 +47,7 @@
     <tika-server.sha512>51911d738234499b6118ef03202850549f976012ba3280f21704104275f6e68abac52bbcfaf5f115d29181ccb8225cbe00dc11277cc1fdfbe71d2c4ab6995232</tika-server.sha512>
     <tika-server-commit-number>5c0793e2c</tika-server-commit-number>
     <tomcat.version>9.0.56</tomcat.version>
-    <slf4j.version>1.7.25</slf4j.version>
+    <slf4j.version>1.7.36</slf4j.version>
     <xmlsec.version>2.3.0</xmlsec.version>
     <zookeeper.version>3.6.2</zookeeper.version>
     <zookeeper.sha512>caff5111bb6876b7124760bc006e6fa2523efa54b99321a3c9cd8192ea0d5596abc7d70a054b1aac9b20a411407dae7611c7aba870c23bff28eb1643ba499199</zookeeper.sha512>
