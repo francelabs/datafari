@@ -15,8 +15,8 @@
     <cassandra.sha512>2890c054666afa93fe2978c46da5db15ed7d11d60f4890574dc642bd81f7b3af40b41d3e5b8245e6c1453a165eddebeb28bcf3fef1a2b2fc6fb3b82058d7ceb0</cassandra.sha512>
     <cassandra.driver.version>4.13.0</cassandra.driver.version>
     <datafari.version>6.0-dev-Community</datafari.version>
-    <datafariui.version>1.0.0-beta-0.7.0</datafariui.version>
-    <datafariui.md5>6b3138072f34d800a56b02801b5ac0b6</datafariui.md5>
+    <datafariui.version>1.0</datafariui.version>
+    <datafariui.md5>34191a7fe86e025b6a6c8cf05a6940b5</datafariui.md5>
     <guava.version>26.0-jre</guava.version>
     <httpclient.version>4.5.13</httpclient.version>
     <java.version>1.11</java.version>
@@ -205,61 +205,6 @@ Datafari is the ideal product for those who want to search through their data, w
     <name>France Labs - Search Experts</name>
     <url>http://www.francelabs.com/en/</url>
   </organization>
-  <developers>
-    <developer>
-      <id>culmer</id>
-      <name>Cedric Ulmer</name>
-      <email>cedric.ulmer@francelabs.com</email>
-      <organization>France Labs</organization>
-      <roles>
-        <role>architect</role>
-        <role>developer</role>
-      </roles>
-      <timezone>Europe/Paris</timezone>
-    </developer>
-    <developer>
-      <id>otavard</id>
-      <name>Olivier Tavard</name>
-      <email>olivier.tavard@francelabs.com</email>
-      <organization>France Labs</organization>
-      <roles>
-        <role>architect</role>
-        <role>developer</role>
-      </roles>
-      <timezone>Europe/Paris</timezone>
-    </developer>
-    <developer>
-      <id>amazoyer</id>
-      <name>Aurelien Mazoyer</name>
-      <email>aurelien.mazoyer@francelabs.com</email>
-      <organization>France Labs</organization>
-      <roles>
-        <role>architect</role>
-        <role>developer</role>
-      </roles>
-      <timezone>Europe/Paris</timezone>
-    </developer>
-    <developer>
-      <id>jmassiera</id>
-      <name>Julien Massiera</name>
-      <email>julien.massiera@francelabs.com</email>
-      <organization>France Labs</organization>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>Europe/Paris</timezone>
-    </developer>
-    <developer>
-      <id>gusai</id>
-      <name>Giovanni Usai</name>
-      <email>giovanni.usai@francelabs.com</email>
-      <organization>France Labs</organization>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>Europe/Paris</timezone>
-    </developer>
-  </developers>
   <issueManagement>
     <system>JIRA</system>
     <url>https://datafari.atlassian.net/secure/Dashboard.jspa</url>
