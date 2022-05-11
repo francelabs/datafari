@@ -64,7 +64,7 @@
          "name":"Web",
          "description":"",
          "isnew":true,
-         "class_name":"org.apache.manifoldcf.crawler.connectors.webcrawler.WebcrawlerConnector"
+         "class_name":"com.francelabs.datafari.connectors.webcrawler.WebcrawlerConnector"
       }
    ]
 }

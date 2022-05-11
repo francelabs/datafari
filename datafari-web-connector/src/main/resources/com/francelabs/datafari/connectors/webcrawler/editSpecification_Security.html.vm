@@ -1,0 +1,68 @@
+#**
+* Licensed to the Apache Software Foundation (ASF) under one or more
+* contributor license agreements. See the NOTICE file distributed with
+* this work for additional information regarding copyright ownership.
+* The ASF licenses this file to You under the Apache License, Version 2.0
+* (the "License"); you may not use this file except in compliance with
+* the License. You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*#
+
+#set( $SEQPREFIX = 's' + $SEQNUM + '_' )
+#if($TABNAME == $ResourceBundle.getString('WebcrawlerConnector.Security') && ${SEQNUM} == ${SELECTEDNUM})
+<div class="row">
+  <div class="col-md-8">
+    <ul class="list-group">
+  #foreach($TOKEN in $TOKENS)
+    #set( $ACCESSDESC = "_" + $foreach.index )
+    #set( $ACCESSOPNAME = $SEQPREFIX + "accessop" + $ACCESSDESC )
+      <li class="list-group-item">
+        <input type="hidden" name="$ACCESSOPNAME" value=""/>
+        <input type="hidden" name="${SEQPREFIX}spectoken${ACCESSDESC}" value="$Encoder.attributeEscape($TOKEN)" />
+        $Encoder.bodyEscape($TOKEN)
+        <span class="pull-right">
+          <button class="btn btn-xs btn-danger" type="button" onClick='Javascript:${SEQPREFIX}SpecOp("$ACCESSOPNAME","Delete","${SEQPREFIX}token_${foreach.index}")' alt="$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.DeleteToken'))$foreach.index"><i class="fa fa-minus-circle fa-fw" aria-hidden="true"></i>$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.Delete'))</button>
+        </span>
+      </li>
+  #end
+    </ul>
+  </div>
+</div>
+
+  #set( $COUNTER = $TOKENS.size() )
+  #if($COUNTER == 0)
+<div class="row">
+  <div class="col-xs-12">
+    <div class="alert alert-warning">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.NoAccessTokensPresent'))</div>
+  </div>
+</div>
+  #end
+
+<hr/>
+<div class="row">
+  <div class="col-md-8 form-inline">
+    <div class="form-group">
+      <input type="hidden" name="${SEQPREFIX}tokencount" value="$COUNTER"/>
+      <input type="hidden" name="${SEQPREFIX}accessop" value=""/>
+      <label for="${SEQPREFIX}spectoken" class="sr-only">Token:</label>
+      <input class="form-control" type="text" name="${SEQPREFIX}spectoken" id="${SEQPREFIX}spectoken" value="" placeholder="Token" />
+    </div>
+    <button class="btn btn-primary" type="button" onClick='Javascript:${SEQPREFIX}SpecAddToken("${SEQPREFIX}token_${COUNTER}")' title="$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.AddAccessToken'))"><i class="fa fa-plus-circle fa-fw" aria-hidden="true"></i>$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.Add'))</button>
+  </div>
+</div>
+#else
+  #foreach($TOKEN in $TOKENS)
+    #set( $ACCESSDESC = "_" + $foreach.index )
+    #set( $ACCESSOPNAME = $SEQPREFIX + "accessop" + $ACCESSDESC )
+<input type="hidden" name="${SEQPREFIX}spectoken${ACCESSDESC}" value="$Encoder.attributeEscape($TOKEN)" />
+  #end
+  #set( $COUNTER = $TOKENS.size() )
+<input type="hidden" name="${SEQPREFIX}tokencount" value="$COUNTER" />
+#end

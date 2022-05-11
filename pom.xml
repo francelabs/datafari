@@ -76,6 +76,7 @@
     <module>datafari-tika-server</module>
     <module>datafari-handler</module>
     <module>datafari-mcf-scripts</module>
+    <module>datafari-web-connector</module>
     <module>datafari-share-connector</module>
     <module>datafari-ui</module>
     <module>datafari-git-plugin</module>

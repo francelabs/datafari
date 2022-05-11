@@ -1,0 +1,395 @@
+#**
+* Licensed to the Apache Software Foundation (ASF) under one or more
+* contributor license agreements. See the NOTICE file distributed with
+* this work for additional information regarding copyright ownership.
+* The ASF licenses this file to You under the Apache License, Version 2.0
+* (the "License"); you may not use this file except in compliance with
+* the License. You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*#
+
+#set( $COUNTER = 0)
+#if($TABNAME == $ResourceBundle.getString('WebcrawlerConnector.AccessCredentials'))
+<script type="text/javascript">
+  $(function(){
+      $('#accordion-session-access .btn-danger').hover(function(){
+        $(this).closest('.panel').removeClass('panel-default').addClass('panel-danger');
+      },function(){
+        $(this).closest('.panel').removeClass('panel-danger').addClass('panel-default');
+      });
+
+      $('.collapse').on('shown.bs.collapse', function () {
+        var collapseId = $(this).attr("id");
+        if(window.sessionStorage){
+          sessionStorage.setItem("webcrawler_session_collapse",collapseId)
+        }
+      })
+
+      //if post-back, open the same collapse
+      if(window.sessionStorage){
+        if(sessionStorage.getItem("webcrawler_session_collapse")){
+          var collapseId = sessionStorage.getItem("webcrawler_session_collapse");
+          if(collapseId) {
+              //Remove the previous selected Pane.
+            $("#accordion-session-access .in").removeClass("in");
+
+            $('#' + collapseId).collapse("show");
+          }
+        }
+      }
+  });
+</script>
+<style type="text/css">
+  .list-group.webcrawler-access-credentials .form-group
+  {
+    display: block !important;
+  }
+</style>
+<h5><strong>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.PageAccessCredentials'))</strong></h5>
+<ul class="list-group webcrawler-access-credentials">
+      <li class="list-group-item list-group-item-header">
+        <div class="row form-inline">
+          <div class="col-md-1"></div>
+          <div class="col-md-3"><strong>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.URLRegularExpression'))</strong></div>
+          <div class="col-md-2"><strong>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.AuthenticationType'))</strong></div>
+          <div class="col-md-2"><strong>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.Domain'))</strong></div>
+          <div class="col-md-2"><strong>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.UserName'))</strong></div>
+          <div class="col-md-2"><strong>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.Password'))</strong></div>
+        </div>
+      </li>
+  #foreach($pageAccessMap in $PAGEACCESSMAPLIST)
+    #set( $PREFIX = "acredential_" + $COUNTER )
+      <li class="list-group-item">
+            <div class="row form-inline">
+              <div class="col-md-1">
+                <button class="btn btn-danger btn-sm" type="button" title="$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.DeletePageAuthenticationUrlRegularExpression'))$foreach.count" onclick='javascript:deleteARegexp($COUNTER);'><i class="fa fa-minus-circle fa-lg" aria-hidden="true"></i></button>
+                <input type="hidden" name="op_$PREFIX" value="Continue"/>
+                <input type="hidden" name="regexp_$PREFIX" value="$Encoder.attributeEscape($pageAccessMap["regexp"])"/>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <p class="form-control-static">$Encoder.bodyEscape($pageAccessMap["regexp"])</p>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <div class="checkbox">
+                    <label><input type="radio" name="type_$PREFIX" value="basic" #if($pageAccessMap["type"] == 'basic') checked #{else} "" #end />$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.BasicAuthentication'))</label>
+                    <label><input type="radio" name="type_$PREFIX" value="ntlm" #if($pageAccessMap["type"] == 'ntlm') checked #{else} "" #end />$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.NTLMAuthentication'))</label>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <input class="form-control" type="text" size="16" name="domain_$PREFIX" value="$Encoder.attributeEscape($pageAccessMap["domain"])"/>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <input class="form-control" type="text" size="16" name="username_$PREFIX" value="$Encoder.attributeEscape($pageAccessMap["userName"])"/>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <input class="form-control" type="password" size="16" name="password_$PREFIX" value="$Encoder.attributeEscape($pageAccessMap["password"])"/>
+                </div>
+              </div>
+            </div>
+          </li>
+    #set( $COUNTER = $COUNTER + 1)
+  #end
+  #if($COUNTER == "0")
+      <li class="list-group-item list-group-item-warning">
+        $Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.NoPageAccessCredentialsSpecified'))
+      </li>
+  #end
+      <li class="list-group-item">
+        <div class="row form-inline">
+          <div class="col-md-1">
+            <button class="btn btn-success btn-sm" type="button" title="$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.AddPageAuthenticationUrlRegularExpression'))" onclick="javascript:addARegexp();"><i class="fa fa-plus-circle fa-lg" aria-hidden="true"></i></button>
+            <input type="hidden" name="acredential_count" value="$COUNTER"/>
+            <input type="hidden" name="acredential_op" value="Continue"/>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <input class="form-control" type="text" size="30" name="regexp_acredential" value=""/>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <div class="checkbox">
+                <label><input type="radio" name="type_acredential" value="basic" checked="" />&nbsp;$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.BasicAuthentication'))</label>
+                <label><input type="radio" name="type_acredential" value="ntlm" />&nbsp;$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.NTLMAuthentication'))</label>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <div class="form-group">
+                <input class="form-control" type="text" size="16" name="domain_acredential" value=""/>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <input class="form-control" type="text" size="16" name="username_acredential" value=""/>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <input class="form-control" type="password" size="16" name="password_acredential" value=""/>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+<h5><strong>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.SessionBasedAccessCredentials'))</strong></h5>
+<div class="panel-group" id="accordion-session-access" role="tablist" aria-multiselectable="true">
+  #set( $COUNTER = 0)
+  #foreach($sessionAccessMap in $SESSIONACCESSMAPLIST)
+    #set( $PREFIX = "scredential_" + $COUNTER )
+  <div class="panel panel-default">
+    <div class="panel-heading clearfix" role="tab" id="heading_$PREFIX">
+      <h4 class="panel-title pull-left">
+        <a role="button" data-toggle="collapse" data-parent="#accordion-session-access" href="#collapse_$PREFIX" aria-expanded="true" aria-controls="collapse_$PREFIX">
+          $Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.URLRegularExpression')):&nbsp;$Encoder.bodyEscape($sessionAccessMap["regexp"])
+        </a>
+      </h4>
+      <div class="pull-right">
+        <button class="btn btn-danger btn-xs" type="button" title="$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.DeleteSessionAuthenticationUrlRegularExpression'))$foreach.count" onclick='javascript:deleteSRegexp($COUNTER);'><i class="fa fa-minus-circle fa-fw" aria-hidden="true"></i>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.Delete'))</button>
+        <input type="hidden" name="${PREFIX}_op" value="Continue"/>
+        <input type="hidden" name="${PREFIX}_regexp" value="$Encoder.attributeEscape($sessionAccessMap["regexp"])"/>
+      </div>
+    </div>
+    <div id="collapse_$PREFIX" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading_$PREFIX">
+      <div class="panel-body">
+        <h5><strong>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.LoginPages'))</strong></h5>
+    #set( $AUTHPAGECOUNTER = 0 )
+    #set( $AUTHPAGEMAPLIST = $sessionAccessMap["authPageMapList"])
+    #foreach($authPageMap in $AUTHPAGEMAPLIST)
+      #set( $AUTHPAGEPREFIX = $PREFIX + "_" + $AUTHPAGECOUNTER)
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="form-group">
+              <button class="btn btn-danger btn-xs pull-right" type="button" title="$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.DeleteLoginPage'))$foreach.count for url regular expression #$AUTHPAGECOUNTER" onclick='javascript:deleteLoginPage($COUNTER,$AUTHPAGECOUNTER);'><i class="fa fa-minus-circle fa-fw" aria-hidden="true"></i>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.Delete'))</button>
+              <input type="hidden" name="${AUTHPAGEPREFIX}_op" value="Continue"/>
+              <input type="hidden" name="${AUTHPAGEPREFIX}_regexp" value="$Encoder.attributeEscape($authPageMap["pageRegexp"])"/>
+              <input type="hidden" name="${AUTHPAGEPREFIX}_type" value="$Encoder.attributeEscape($authPageMap["pageType"])"/>
+            </div>
+            <div class="form-group">
+              <div class="row">
+                <div class="col-md-6">
+                  <label class="control-label">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.LoginURLRegularExpression'))</label>
+                  <p class="form-control-static">$Encoder.bodyEscape($authPageMap["pageRegexp"])</p>
+                </div>
+                <div class="col-md-6">
+                  <label class="control-label">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.PageType'))</label>
+                  <p class="form-control-static">$authPageMap["pageType"]</p>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="row">
+                <div class="col-md-6">
+                  <label class="control-label" for="${AUTHPAGEPREFIX}_matchregexp">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.FormNamelinkTargetRegularExpression'))</label>
+                  <input class="form-control" type="text" size="30" name="${AUTHPAGEPREFIX}_matchregexp" id="${AUTHPAGEPREFIX}_matchregexp" value="$Encoder.attributeEscape($authPageMap["matchRegexp"])"/>
+                </div>
+                <div class="col-md-6">
+                  <label class="control-label" for="${AUTHPAGEPREFIX}_overridetargeturl">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.OverrideTargetURL'))</label>
+                  <input class="form-control" type="text" size="30" name="${AUTHPAGEPREFIX}_overridetargeturl" id="${AUTHPAGEPREFIX}_overridetargeturl" value="$Encoder.attributeEscape($authPageMap["overrideTargetURL"])"/>
+                </div>
+              </div>
+            </div>
+          </div>
+      #if($authPageMap["pageType"] == "form")
+          <h5 style="padding-left:15px;"><strong>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.OverrideFormParameters'))</strong></h5>
+          <ul class="list-group webcrawler-access-credentials">
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-4"><strong>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.ParameterRegularExpression'))</strong></div>
+                <div class="col-md-3"><strong>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.Value'))</strong></div>
+                <div class="col-md-3"><strong>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.Password'))</strong></div>
+              </div>
+            </li>
+        #set( $AUTHPARAMCOUNTER = 0)
+        #set( $AUTHPAGEPARAMMAPLIST = $authPageMap["authPageParamMapList"] )
+        #foreach($authPageParamMap in $AUTHPAGEPARAMMAPLIST)
+          #set( $AUTHPARAMPREFIX = $AUTHPAGEPREFIX + "_" + $AUTHPARAMCOUNTER)
+            <li class="list-group-item">
+              <div class="row form-inline">
+                <div class="col-md-2">
+                  <button class="btn btn-danger btn-xs" type="button" title="$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.DeleteParameter'))$foreach.count$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.ForLoginPage'))$AUTHPAGECOUNTER$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.ForCredential'))$COUNTER" onclick='javascript:deleteLoginPageParameter($COUNTER,$AUTHPAGECOUNTER,$AUTHPARAMCOUNTER);'><i class="fa fa-minus-circle fa-fw" aria-hidden="true"></i>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.Delete'))</button>
+                  <input type="hidden" name="${AUTHPARAMPREFIX}_op" value="Continue"/>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <input class="form-control" type="text" size="30" name="${AUTHPARAMPREFIX}_param" value="$Encoder.attributeEscape($authPageParamMap["param"])"/>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <input class="form-control" type="text" size="15" name="${AUTHPARAMPREFIX}_value" value="$Encoder.attributeEscape($authPageParamMap["value"])"/>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <input class="form-control" type="password" size="15" name="${AUTHPARAMPREFIX}_password" value="$Encoder.attributeEscape($authPageParamMap["password"])"/>
+                  </div>
+                </div>
+              </div>
+            </li>
+          #set( $AUTHPARAMCOUNTER = $AUTHPARAMCOUNTER + 1)
+        #end
+        #if($AUTHPAGEPARAMMAPLIST.size() == 0)
+            <li class="list-group-item list-group-item-warning">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.NoFormParametersSpecified'))</li>
+        #end
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-md-2">
+                  <button class="btn btn-success btn-xs" type="button" title="$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.AddParameterToLoginPage'))$AUTHPAGECOUNTER$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.ForCredential'))$COUNTER" onclick='javascript:addLoginPageParameter($COUNTER,$AUTHPAGECOUNTER);'><i class="fa fa-plus-circle fa-fw" aria-hidden="true"></i>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.Add'))</button>
+                  <input type="hidden" name="${AUTHPAGEPREFIX}_loginparamcount" value="$AUTHPARAMCOUNTER"/>
+                  <input type="hidden" name="${AUTHPAGEPREFIX}_loginparamop" value="Continue"/>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <input class="form-control" type="text" size="30" name="${AUTHPAGEPREFIX}_loginparamname" value=""/>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <input class="form-control" type="text" size="15" name="${AUTHPAGEPREFIX}_loginparamvalue" value=""/>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <input class="form-control" type="password" size="15" name="${AUTHPAGEPREFIX}_loginparampassword" value=""/>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+      #end
+        </div>
+      #set( $AUTHPAGECOUNTER = $AUTHPAGECOUNTER + 1 )
+    #end
+        <div class="panel panel-default">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-md-4">
+                    <label class="control-label" for="${PREFIX}_loginpageregexp">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.LoginURLRegularExpression'))</label>
+                    <input class="form-control" type="text" size="30" name="${PREFIX}_loginpageregexp" id="${PREFIX}_loginpageregexp" value=""/>
+                  </div>
+                  <div class="col-md-8">
+                    <label class="control-label">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.PageType'))</label>
+                    <div class="checkbox">
+                      <label class="checkbox-inline"><input type="radio" name="${PREFIX}_loginpagetype" value="form" checked=""/>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.FormName'))</label>
+                      <label class="checkbox-inline"><input type="radio" name="${PREFIX}_loginpagetype" value="link"/>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.LinkTarget'))</label>
+                      <label class="checkbox-inline"><input type="radio" name="${PREFIX}_loginpagetype" value="redirection"/>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.RedirectionTo'))</label>
+                      <label class="checkbox-inline"><input type="radio" name="${PREFIX}_loginpagetype" value="content"/>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.PageContent'))</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-md-6">
+                    <label for="${PREFIX}_loginpagematchregexp">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.FormNamelinkTargetRegularExpression'))</label>
+                    <input class="form-control" type="text" size="30" name="${PREFIX}_loginpagematchregexp" id="${PREFIX}_loginpagematchregexp" value=""/>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="${PREFIX}_loginpageoverridetargeturl">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.OverrideTargetURL'))</label>
+                    <input class="form-control" type="text" size="30" name="${PREFIX}_loginpageoverridetargeturl" id="${PREFIX}_loginpageoverridetargeturl" value=""/>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <button class="btn btn-success pull-right" type="button" title="$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.AddLoginPageToCredential'))$foreach.count" onclick='javascript:addLoginPage($COUNTER);'><i class="fa fa-plus-circle fa-fw" aria-hidden="true"></i>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.Add'))</button>
+              <input type="hidden" name="${PREFIX}_loginpagecount" value="$AUTHPAGECOUNTER"/>
+              <input type="hidden" name="${PREFIX}_loginpageop" value="Continue"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+    #set( $COUNTER = $COUNTER + 1)
+  #end
+</div>
+
+  #if($COUNTER == 0)
+<div class="callout callout-warning">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.NoSessionBasedAccessCredentialsSpecified'))</div>
+  #end
+<hr/>
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <label for="scredential_regexp">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.URLRegularExpression'))</label>
+      <input class="form-control" type="text" size="30" name="scredential_regexp" id="scredential_regexp" value=""/>
+    </div>
+    <div class="form-group">
+      <button class="btn btn-success pull-right" type="button" title="$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.AddSessionAuthenticationUrlRegularExpression'))" onclick="javascript:addSRegexp();"><i class="fa fa-plus-circle fa-fw" aria-hidden="true"></i>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.Add'))</button>
+      <input type="hidden" name="scredential_count" value="$COUNTER"/>
+      <input type="hidden" name="scredential_op" value="Continue"/>
+    </div>
+  </div>
+</div>
+
+#else
+  #foreach($pageAccessMap in $PAGEACCESSMAPLIST)
+    #set( $PREFIX = "acredential_" + $COUNTER )
+<input type="hidden" name="regexp_$PREFIX" value="$Encoder.attributeEscape($pageAccessMap["regexp"])" />
+<input type="hidden" name="type_$PREFIX" value="$pageAccessMap["type"]" />
+<input type="hidden" name="domain_$PREFIX" value="$Encoder.attributeEscape($pageAccessMap["domain"])" />
+<input type="hidden" name="username_$PREFIX" value="$Encoder.attributeEscape($pageAccessMap["userName"])" />
+<input type="hidden" name="password_$PREFIX" value="$Encoder.attributeEscape($pageAccessMap["password"])" />
+    #set( $COUNTER = $COUNTER + 1)
+  #end
+<input type="hidden" name="acredential_count" value="$COUNTER"/>
+
+  #set( $COUNTER = 0)
+  #foreach($sessionAccessMap in $SESSIONACCESSMAPLIST)
+    #set( $PREFIX = "scredential_" + $COUNTER )
+<input type="hidden" name="${PREFIX}_regexp" value="$Encoder.attributeEscape($sessionAccessMap["regexp"])"/>
+    #set( $AUTHPAGECOUNTER = 0 )
+    #set( $AUTHPAGEMAPLIST = $sessionAccessMap["authPageMapList"])
+    #foreach($authPageMap in $AUTHPAGEMAPLIST)
+      #set( $AUTHPAGEPREFIX = $PREFIX + "_" + $AUTHPAGECOUNTER)
+<input type="hidden" name="${AUTHPAGEPREFIX}_regexp" value="$Encoder.attributeEscape($authPageMap["pageRegexp"])" />
+<input type="hidden" name="${AUTHPAGEPREFIX}_type" value="$Encoder.attributeEscape($authPageMap["pageType"])" />
+<input type="hidden" name="${AUTHPAGEPREFIX}_matchregexp" value="$Encoder.attributeEscape($authPageMap["matchRegexp"])" />
+<input type="hidden" name="${AUTHPAGEPREFIX}_overridetargeturl" value="$Encoder.attributeEscape($authPageMap["overrideTargetURL"])" />
+      #if($authPageMap["pageType"] == "form")
+        #set( $AUTHPARAMCOUNTER = 0)
+        #set( $AUTHPAGEPARAMMAPLIST = $authPageMap["authPageParamMapList"] )
+        #foreach($authPageParamMap in $AUTHPAGEPARAMMAPLIST)
+          #set( $AUTHPARAMPREFIX = $AUTHPAGEPREFIX + "_" + $AUTHPARAMCOUNTER)
+<input type="hidden" name="${AUTHPARAMPREFIX}_op" value="Continue"/>
+<input type="hidden" name="${AUTHPARAMPREFIX}_param" value="$Encoder.attributeEscape($authPageParamMap["param"])" />
+<input type="hidden" name="${AUTHPARAMPREFIX}_value" value="$Encoder.attributeEscape($authPageParamMap["value"])" />
+<input type="hidden" name="${AUTHPARAMPREFIX}_password" value="$Encoder.attributeEscape($authPageParamMap["password"])" />
+          #set( $AUTHPARAMCOUNTER = $AUTHPARAMCOUNTER + 1)
+        #end
+<input type="hidden" name="${AUTHPAGEPREFIX}_loginparamcount" value="$AUTHPARAMCOUNTER"/>
+      #end
+      #set( $AUTHPAGECOUNTER = $AUTHPAGECOUNTER + 1 )
+    #end
+<input type="hidden" name="${PREFIX}_loginpagecount" value="$AUTHPAGECOUNTER" />
+    #set( $COUNTER = $COUNTER + 1)
+  #end
+<input type="hidden" name="scredential_count" value="$COUNTER" />
+#end

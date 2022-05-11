@@ -1,0 +1,40 @@
+#**
+* Licensed to the Apache Software Foundation (ASF) under one or more
+* contributor license agreements. See the NOTICE file distributed with
+* this work for additional information regarding copyright ownership.
+* The ASF licenses this file to You under the Apache License, Version 2.0
+* (the "License"); you may not use this file except in compliance with
+* the License. You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*#
+
+#set( $SEQPREFIX = 's' + $SEQNUM + '_' )
+#if($TABNAME == $ResourceBundle.getString('WebcrawlerConnector.Exclusions') && ${SEQNUM} == ${SELECTEDNUM})
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <label for="${SEQPREFIX}exclusions">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.ExcludeFromCrawl'))</label>
+      <textarea class="form-control" rows="15" name="${SEQPREFIX}exclusions" id="${SEQPREFIX}exclusions">$Encoder.bodyEscape($EXCLUSIONS)</textarea>
+    </div>
+    <div class="form-group">
+      <label for="${SEQPREFIX}exclusionsindex">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.ExcludeFromIndex'))</label>
+      <textarea class="form-control" rows="10" name="${SEQPREFIX}exclusionsindex" id="${SEQPREFIX}exclusionsindex">$Encoder.bodyEscape($EXCLUSIONSINDEX)</textarea>
+    </div>
+    <div class="form-group">
+      <label for="">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.ExcludeContentFromIndex'))</label>
+      <textarea class="form-control" rows="10" name="${SEQPREFIX}exclusionscontentindex" id="${SEQPREFIX}exclusionscontentindex">$Encoder.bodyEscape($EXCLUSIONSCONTENTINDEX)</textarea>
+    </div>
+  </div>
+</div>
+#else
+<input type="hidden" name="${SEQPREFIX}exclusions" value="$Encoder.attributeEscape($EXCLUSIONS)"/>
+<input type="hidden" name="${SEQPREFIX}exclusionsindex" value="$Encoder.attributeEscape($EXCLUSIONSINDEX)"/>
+<input type="hidden" name="${SEQPREFIX}exclusionscontentindex" value="$Encoder.attributeEscape($EXCLUSIONSCONTENTINDEX)"/>
+#end

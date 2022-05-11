@@ -7,27 +7,15 @@
     <version>6.0-dev-Community</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>datafari-share-connector</artifactId>
+  <artifactId>datafari-web-connector</artifactId>
   <packaging>jar</packaging>
-  <name>Datafari Enterprise Search - Share connector module</name>
+  <name>Datafari Enterprise Search - Web connector module</name>
   <dependencies>
     <dependency>
       <groupId>com.francelabs.datafari</groupId>
       <artifactId>datafari-mcf-connectors-dependencies</artifactId>
       <version>6.0-dev-Community</version>
       <type>pom</type>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>eu.agno3.jcifs</groupId>
-      <artifactId>jcifs-ng</artifactId>
-      <version>2.1.7</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-        </exclusion>
-      </exclusions>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -47,5 +35,27 @@
         </includes>
       </resource>
     </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <excludeScope>provided</excludeScope>
+              <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 </project>

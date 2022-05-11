@@ -1,0 +1,61 @@
+#**
+* Licensed to the Apache Software Foundation (ASF) under one or more
+* contributor license agreements. See the NOTICE file distributed with
+* this work for additional information regarding copyright ownership.
+* The ASF licenses this file to You under the Apache License, Version 2.0
+* (the "License"); you may not use this file except in compliance with
+* the License. You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*#
+
+#if($TABNAME == $ResourceBundle.getString('WebcrawlerConnector.Proxy'))
+<div class="row">
+  <div class="col-lg-4 col-md-5">
+    <div class="form-group">
+      <label for="proxyhost">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.ProxyHostColon'))</label>
+      <input class="form-control" type="text" size="40" name="proxyhost" id="proxyhost" value="$Encoder.attributeEscape($PROXYHOST)"/>
+    </div>
+  </div>
+  <div class="col-lg-2 col-md-3">
+    <div class="form-group">
+      <label for="proxyport">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.ProxyPortColon'))</label>
+      <input class="form-control" type="text" size="5" name="proxyport" id="proxyport" value="$Encoder.attributeEscape($PROXYPORT)"/>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-6 col-md-8">
+    <div class="form-group">
+      <label for="proxyauthdomain">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.ProxyAuthenticationDomainColon'))</label>
+      <input class="form-control" type="text" size="32" name="proxyauthdomain" id="proxyauthdomain" value="$Encoder.attributeEscape($PROXYAUTHDOMAIN)"/>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-3 col-md-4">
+    <div class="form-group">
+      <label for="proxyauthusername">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.ProxyAuthenticationUserNameColon'))</label>
+      <input class="form-control" type="text" size="32" name="proxyauthusername" id="proxyauthusername" value="$Encoder.attributeEscape($PROXYAUTHUSERNAME)"/>
+    </div>
+  </div>
+  <div class="col-lg-3 col-md-4">
+    <div class="form-group">
+      <label for="proxyauthpassword">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.ProxyAuthenticationPasswordColon'))</label>
+      <input class="form-control" type="password" size="16" name="proxyauthpassword" id="proxyauthpassword" value="$Encoder.attributeEscape($PROXYAUTHPASSWORD)"/>
+    </div>
+  </div>
+</div>
+#else
+<input type="hidden" name="proxyhost" value="$Encoder.attributeEscape($PROXYHOST)"/>
+<input type="hidden" name="proxyport" value="$Encoder.attributeEscape($PROXYPORT)"/>
+<input type="hidden" name="proxyauthusername" value="$Encoder.attributeEscape($PROXYAUTHUSERNAME)"/>
+<input type="hidden" name="proxyauthdomain" value="$Encoder.attributeEscape($PROXYAUTHDOMAIN)"/>
+<input type="hidden" name="proxyauthpassword" value="$Encoder.attributeEscape($PROXYAUTHPASSWORD)"/>
+#end

@@ -1,0 +1,38 @@
+#**
+* Licensed to the Apache Software Foundation (ASF) under one or more
+* contributor license agreements. See the NOTICE file distributed with
+* this work for additional information regarding copyright ownership.
+* The ASF licenses this file to You under the Apache License, Version 2.0
+* (the "License"); you may not use this file except in compliance with
+* the License. You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*#
+
+#set( $SEQPREFIX = 's' + $SEQNUM + '_' )
+#if($TABNAME == $ResourceBundle.getString('WebcrawlerConnector.Metadata') && ${SEQNUM} == ${SELECTEDNUM})
+<div class="row">
+  <div class="col-md-6">
+    <h5>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.ExcludedHeadersColon'))</h5>
+    <input type="hidden" name="${SEQPREFIX}excludedheaders_present" value="true"/>
+    <div class="list-group">
+  #foreach($potentiallyExcludedHeader in $POTENTIALLYEXCLUDEDHEADERS)
+      <label class="list-group-item">
+        <input type="checkbox" name="${SEQPREFIX}excludedheaders" value="$Encoder.attributeEscape($potentiallyExcludedHeader)" #if($EXCLUDEDHEADERS.contains($potentiallyExcludedHeader)) checked="true" #end />&nbsp;&nbsp;$Encoder.bodyEscape($potentiallyExcludedHeader)
+      </label>
+  #end
+    </div>
+  </div>
+</div>
+#else
+<input type="hidden" name="${SEQPREFIX}excludedheaders_present" value="true"/>
+  #foreach($excludedHeader in $EXCLUDEDHEADERS)
+<input type="hidden" name="${SEQPREFIX}excludedheaders" value="$Encoder.attributeEscape($excludedHeader)" />
+  #end
+#end

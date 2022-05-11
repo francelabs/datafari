@@ -27,6 +27,7 @@
 	<property name="metadatacleaner.connector.src.dir" value="${project.dir}/datafari-metadatacleaner-connector/target" />
 	<property name="docfilter.connector.src.dir" value="${project.dir}/datafari-docfilter-connector/target" />
 	<property name="emptier.connector.src.dir" value="${project.dir}/datafari-emptier-connector/target" />
+	<property name="web.connector.src.dir" value="${project.dir}/datafari-web-connector/target" />
 	<property name="share.connector.src.dir" value="${project.dir}/datafari-share-connector/target" />
 	<property name="spacy.connector.src.dir" value="${project.dir}/datafari-spacy-fastapi-connector/target" />
 	<property name="datafarihandler.src.dir" value="${project.dir}/datafari-handler/target" />
@@ -331,16 +332,18 @@
 				<include name="*.jar" />
 			</fileset>
 		</copy>
+		
+		<!-- Copy Web connector -->
+    <copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
+      <fileset dir="${web.connector.src.dir}">
+        <include name="*.jar" />
+      </fileset>
+    </copy>
 
 		<!-- Copy Share connector -->
 		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
 			<fileset dir="${share.connector.src.dir}">
 				<include name="*.jar" />
-			</fileset>
-		</copy>
-		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-common-lib" overwrite="true" force="true">
-			<fileset dir="${share.connector.src.dir}">
-				<include name="dependencies/bcprov-jdk15on*" />
 			</fileset>
 		</copy>
 

@@ -1,0 +1,97 @@
+#**
+* Licensed to the Apache Software Foundation (ASF) under one or more
+* contributor license agreements. See the NOTICE file distributed with
+* this work for additional information regarding copyright ownership.
+* The ASF licenses this file to You under the Apache License, Version 2.0
+* (the "License"); you may not use this file except in compliance with
+* the License. You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*#
+
+#set( $COUNTER = 0)
+#if($TABNAME == $ResourceBundle.getString('WebcrawlerConnector.Certificates'))
+<div class="row">
+  <div class="col-md-12 col-lg-8">
+    <h5>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.TrustCertificates'))</h5>
+    <ul class="list-group">
+      <li class="list-group-item" style="padding: 5px 15px;">
+        <div class="row">
+          <div class="col-md-5"><strong>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.URLRegularExpression'))</strong></div>
+          <div class="col-md-5"><strong>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.Certificate'))</strong></div>
+          <div class="col-md-2"></div>
+        </div>
+      </li>
+  #foreach($trustMap in $TRUSTMAPLIST)
+    #set( $PREFIX = "trust_" + $COUNTER )
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-5">$Encoder.bodyEscape($trustMap["regexp"])</div>
+          <div class="col-md-5">
+    #if($trustMap["trustEverything"] == "true")
+            <i>$Encoder.bodyEscape($ResourceBundle.getString("WebcrawlerConnector.TrustEverything"))</i>
+    #else
+            $Encoder.bodyEscape($trustMap["shortenedDescription"])
+  #end
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-danger btn-xs pull-right" type="button" title="$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.DeleteTrustUrlRegularExpression'))$foreach.count" onclick="javascript:deleteTRegexp($COUNTER);"><i class="fa fa-minus-circle fa-fw" aria-hidden="true"></i>$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.Delete'))</button>
+            <input type="hidden" name="op_$PREFIX" value="Continue"/>
+            <input type="hidden" name="regexp_$PREFIX" value="$Encoder.attributeEscape($trustMap["regexp"])"/>
+            <input type="hidden" name="trustall_$PREFIX" value="$Encoder.attributeEscape($trustMap["trustEverything"])"/>
+            <input type="hidden" name="truststore_$PREFIX" value="#if($trustMap["trustEverything"] == "true") "" #{else} $Encoder.attributeEscape($trustMap["trustStore"]) #end"/>
+          </div>
+        </div>
+      </li>
+    #set( $COUNTER = $COUNTER + 1)
+  #end
+    </ul>
+  </div>
+</div>
+  #if($COUNTER == "0")
+<div class="row">
+  <div class="col-xs-12">
+    <div class="callout callout-warning">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.NoTrustCertificatesSpecified'))</div>
+  </div>
+</div>
+  #end
+<hr/>
+<div class="row">
+  <div class="col-md-6 col-lg-4">
+    <div class="form-group">
+      <label for="regexp_trust">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.URLRegularExpression'))</label>
+      <input class="form-control" type="text" size="30" name="regexp_trust" id="regexp_trust" value=""/>
+    </div>
+    <div class="form-group">
+      <label for="certificate_trust">$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.UploadCertificate'))</label>
+      <input name="certificate_trust" id="certificate_trust" type="file"/>
+    </div>
+    <div class="form-group">
+      <div class="checkbox">
+        <label><input type="checkbox" name="all_trust" value="true"/>$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.TrustEverything'))</label>
+      </div>
+    </div>
+    <div class="form-group">
+      <button class="btn btn-success" type="button" title="$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.AddUrlRegularExpressionForTruststore'))" onclick="javascript:addTRegexp();"><i class="fa fa-plus-circle fa-fw" aria-hidden="true"></i>$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.Add'))</button>
+      <input type="hidden" name="trust_count" value="$COUNTER"/>
+      <input type="hidden" name="trust_op" value="Continue"/>
+    </div>
+  </div>
+</div>
+#else
+  #foreach($trustMap in $TRUSTMAPLIST)
+    #set( $PREFIX = "trust_" + $COUNTER )
+<input type="hidden" name="regexp_$PREFIX" value="$Encoder.attributeEscape($trustMap.get("regexp"))"/>
+<input type="hidden" name="truststore_$PREFIX" value="#if($trustMap.get("trustEverything") == "false") $Encoder.attributeEscape($trustMap.get("trustStore")) #end"/>
+<input type="hidden" name="trustall_$PREFIX" value="$Encoder.attributeEscape($trustMap.get("trustEverything"))"/>
+    #set( $COUNTER = $COUNTER + 1)
+  #end
+<input type="hidden" name="trust_count" value="$COUNTER"/>
+#end
+

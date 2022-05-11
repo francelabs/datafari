@@ -81,7 +81,7 @@
     
     <!-- Add your repository connectors here -->
   <repositoryconnector name="Wiki" class="org.apache.manifoldcf.crawler.connectors.wiki.WikiConnector"/>
-  <repositoryconnector name="Web" class="org.apache.manifoldcf.crawler.connectors.webcrawler.WebcrawlerConnector"/>
+  <repositoryconnector name="Web" class="com.francelabs.datafari.connectors.webcrawler.WebcrawlerConnector"/>
   <repositoryconnector name="SharePoint" class="org.apache.manifoldcf.crawler.connectors.sharepoint.SharePointRepository"/>
   <repositoryconnector name="RSS" class="org.apache.manifoldcf.crawler.connectors.rss.RSSConnector"/>
   <repositoryconnector name="Nuxeo" class="org.apache.manifoldcf.crawler.connectors.nuxeo.NuxeoRepositoryConnector"/>

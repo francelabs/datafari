@@ -21,6 +21,7 @@
 				<include name="*manifoldcf*/connector-lib-proprietary/**" />
 				<include name="*manifoldcf*/lib/**" />
 				<exclude name="*manifoldcf*/connector-lib/postgresql*" />
+				<exclude name="*manifoldcf*/connector-lib/mcf-webcrawler*" />
 				<exclude name="*manifoldcf*/lib/postgresql*" />
 				<exclude name="*manifoldcf*/connectors.xml" />
 			</fileset>

@@ -1,0 +1,96 @@
+#**
+* Licensed to the Apache Software Foundation (ASF) under one or more
+* contributor license agreements. See the NOTICE file distributed with
+* this work for additional information regarding copyright ownership.
+* The ASF licenses this file to You under the Apache License, Version 2.0
+* (the "License"); you may not use this file except in compliance with
+* the License. You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*#
+
+#set( $SEQPREFIX = 's' + $SEQNUM + '_' )
+#if($TABNAME == $ResourceBundle.getString('WebcrawlerConnector.URLMappings') && ${SEQNUM} == ${SELECTEDNUM})
+<style type="text/css">
+  .mapping{
+    width:100%;
+  }
+  .mapping > div{
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mapping-regexp{
+    width:35%;
+  }
+  .mapping-arrow{
+    width:10%;
+  }
+  .mapping-match{
+    width: 35%;
+  }
+</style>
+
+<input type="hidden" name="${SEQPREFIX}rssop" value=""/>
+<input type="hidden" name="${SEQPREFIX}rssindex" value=""/>
+<input type="hidden" name="${SEQPREFIX}rssmapcount" value="$REGEXPLIST.size()"/>
+<div class="row">
+  <div class="col-md-8">
+    <ul class="list-group">
+  #foreach($REGEXP in $REGEXPLIST)
+    #set( $PREFIX = $SEQPREFIX + "rssregexp_" + $foreach.index +"_" )
+      <li class="list-group-item">
+        <input type="hidden" name="${PREFIX}match" value="$Encoder.attributeEscape($REGEXP)"/>
+        <div class="mapping">
+          <div class="text-right mapping-regexp">$Encoder.bodyEscape($REGEXP)</div>
+          <div class="text-center mapping-arrow"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></div>
+          <div class="text-left mapping-match">
+    #set( $MATCH = $MATCHSTRINGS.get($foreach.index))
+            <input type="hidden" name="${PREFIX}map" value="$Encoder.attributeEscape($MATCH)"/>
+    #if($MATCH.length() == 0)
+            &lt;as is&gt;
+    #else
+            $Encoder.bodyEscape($MATCH)
+    #end
+          </div>
+          <div class="pull-right">
+            <button class="btn btn-xs btn-danger" type="button" onclick='javascript:${SEQPREFIX}RemoveRegexp($foreach.index,"${SEQPREFIX}regexp_$foreach.index")' title="$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.RemoveRegexp'))$foreach.index"><i class="fa fa-minus-circle fa-fw" aria-hidden="true"></i>$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.Remove'))</button>
+          </div>
+        </div>
+      </li>
+  #end
+    </ul>
+  </div>
+</div>
+<hr/>
+  #set( $COUNTER = $REGEXPLIST.size() )
+  #set( $NEXTCOUNTER = $COUNTER + 1 )
+<div class="row">
+  <div class="col-lg-8 form-inline">
+    <div class="form-group">
+      <input class="form-control" type="text" name="${SEQPREFIX}rssmatch" value=""/>
+    </div>
+    <i class="fa fa-long-arrow-right fa-fw fa-lg" aria-hidden="true"></i>
+    <div class="form-group">
+      <input class="form-control" type="text" name="${SEQPREFIX}rssmap" value=""/>
+    </div>
+    <button class="btn btn-primary" type="button" onclick='javascript:${SEQPREFIX}AddRegexp("${SEQPREFIX}regexp_${NEXTCOUNTER}")' title="$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.AddRegexp'))"><i class="fa fa-plus-circle fa-fw" aria-hidden="true"></i>$Encoder.attributeEscape($ResourceBundle.getString('WebcrawlerConnector.Add'))</button>
+  </div>
+</div>
+#else
+  #set( $COUNTER = $REGEXPLIST.size() )
+  <input type="hidden" name="${SEQPREFIX}rssmapcount" value="$COUNTER"/>
+  #foreach($REGEXP in $REGEXPLIST)
+    #set( $PREFIX = $SEQPREFIX + "rssregexp_" + $foreach.index +"_" )
+  <input type="hidden" name="${PREFIX}match" value="$Encoder.attributeEscape($REGEXP)"/>
+    #set( $MATCH = $MATCHSTRINGS.get($foreach.index))
+  <input type="hidden" name="${PREFIX}map" value="$Encoder.attributeEscape($MATCH)"/>
+  #end
+#end
