@@ -66,6 +66,9 @@
     </Root>
     
     <!-- DocProcess loggers -->
+    <Logger name="com.francelabs.datafari.connectors.webcrawler.WebcrawlerConnector" level="docprocess" additivity="false">
+      <AppenderRef ref="DocProcess"/>
+    </Logger>
     <Logger name="com.francelabs.datafari.connectors.share.SharedDriveConnector" level="docprocess" additivity="false">
       <AppenderRef ref="DocProcess"/>
     </Logger>
