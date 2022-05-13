@@ -87,6 +87,7 @@ public class MCFUISimplifiedWeb extends HttpServlet {
       if (webRepoName == null) {
         jsonResponse.put("OK", "OK");
         jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+        jsonResponse.put(OutputConstants.STATUS, "Cannot create Web Repository Connection");
         LOGGER.error("Cannot create Web Repository Connection");
       } else {
         // Checking if the reponame is valid (alphanumerical and undescores only)
@@ -95,6 +96,7 @@ public class MCFUISimplifiedWeb extends HttpServlet {
         if (!repoNameMatcher.find() || !repoNameMatcher.group().contentEquals(reponame)) {
           jsonResponse.put("OK", "OK");
           jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+          jsonResponse.put(OutputConstants.STATUS, "The repository name is not valid");
           LOGGER.error("The repository name is not valid");
         } else {
           // Create webJob
@@ -112,15 +114,15 @@ public class MCFUISimplifiedWeb extends HttpServlet {
             jsonResponse.put("job_id", jobId);
           } else {
             jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+            jsonResponse.put(OutputConstants.STATUS, "Cannot create Web job");
             LOGGER.error("Cannot create Web job");
           }
           jsonResponse.put("OK", "OK");
         }
       }
     } catch (final Exception e) {
-      final PrintWriter out = response.getWriter();
-      out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69253");
-      out.close();
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+      jsonResponse.put(OutputConstants.STATUS, e.getMessage());
       LOGGER.error("Unknown error during process", e);
     }
     final PrintWriter out = response.getWriter();

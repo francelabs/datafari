@@ -43,47 +43,42 @@ public class FilerRepoConfig {
   }
 
   @SuppressWarnings("unchecked")
-  public String createRepoConnection(final FilerRepository filerRepo) {
+  public String createRepoConnection(final FilerRepository filerRepo) throws Exception {
 
-    try {
-      final JSONObject json = JSONUtils.readJSON(filerRepoJSON);
-      final JSONArray repositoryconnection = (JSONArray) json.get(repositoryConnectionElement);
-      final JSONObject filerRepoConnection = (JSONObject) repositoryconnection.get(0);
-      final JSONObject configuration = (JSONObject) filerRepoConnection.get(configurationElement);
-      final JSONArray parameters = (JSONArray) configuration.get(parameterElement);
-      for (int i = 0; i < parameters.size(); i++) {
-        final JSONObject parameter = (JSONObject) parameters.get(i);
-        // Set the server
-        if (parameter.get(attributeNameElement).toString().equals(serverAttribute)) {
-          parameter.replace(valueElement, filerRepo.getServer());
-        }
-
-        // Set the user
-        if (parameter.get(attributeNameElement).toString().equals(userAttribute)) {
-          parameter.replace(valueElement, filerRepo.getUser());
-        }
-
-        // Set the password
-        if (parameter.get(attributeNameElement).toString().equals(passwordAttribute)) {
-          parameter.replace(valueElement, filerRepo.getPassword());
-        }
+    final JSONObject json = JSONUtils.readJSON(filerRepoJSON);
+    final JSONArray repositoryconnection = (JSONArray) json.get(repositoryConnectionElement);
+    final JSONObject filerRepoConnection = (JSONObject) repositoryconnection.get(0);
+    final JSONObject configuration = (JSONObject) filerRepoConnection.get(configurationElement);
+    final JSONArray parameters = (JSONArray) configuration.get(parameterElement);
+    for (int i = 0; i < parameters.size(); i++) {
+      final JSONObject parameter = (JSONObject) parameters.get(i);
+      // Set the server
+      if (parameter.get(attributeNameElement).toString().equals(serverAttribute)) {
+        parameter.replace(valueElement, filerRepo.getServer());
       }
 
-      // Generate unique name to avoid mistakes in jobs
-      String repoName = filerRepo.getReponame() + "_" + UUID.randomUUID().toString();
-      repoName = repoName.replaceAll("-", "");
-      if (repoName.length() > 32) {
-        repoName = repoName.substring(0, 32);
+      // Set the user
+      if (parameter.get(attributeNameElement).toString().equals(userAttribute)) {
+        parameter.replace(valueElement, filerRepo.getUser());
       }
-      filerRepoConnection.replace(nameElement, repoName);
 
-      ManifoldAPI.putConfig(repoConnectionsCommand, repoName, json);
-
-      return repoName;
-    } catch (final Exception e) {
-      logger.error("FATAL ERROR", e);
-      return null;
+      // Set the password
+      if (parameter.get(attributeNameElement).toString().equals(passwordAttribute)) {
+        parameter.replace(valueElement, filerRepo.getPassword());
+      }
     }
+
+    // Generate unique name to avoid mistakes in jobs
+    String repoName = filerRepo.getReponame() + "_" + UUID.randomUUID().toString();
+    repoName = repoName.replaceAll("-", "");
+    if (repoName.length() > 32) {
+      repoName = repoName.substring(0, 32);
+    }
+    filerRepoConnection.replace(nameElement, repoName);
+
+    ManifoldAPI.putConfig(repoConnectionsCommand, repoName, json);
+
+    return repoName;
 
   }
 

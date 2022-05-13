@@ -42,8 +42,8 @@ public class FilerJobConfig {
   private final static String jobsCommand = "jobs";
 
   private FilerJobConfig() {
-    final String filePath = Environment.getEnvironmentVariable("DATAFARI_HOME") + File.separator + "bin" + File.separator + "common" + File.separator + "config" + File.separator + "manifoldcf" + File.separator + "simplifiedui" + File.separator + "jobs"
-        + File.separator + "filer.json";
+    final String filePath = Environment.getEnvironmentVariable("DATAFARI_HOME") + File.separator + "bin" + File.separator + "common" + File.separator + "config" + File.separator + "manifoldcf"
+        + File.separator + "simplifiedui" + File.separator + "jobs" + File.separator + "filer.json";
     filerJobJSON = new File(filePath);
   }
 
@@ -55,108 +55,103 @@ public class FilerJobConfig {
   }
 
   @SuppressWarnings("unchecked")
-  public String createJob(final FilerJob filerJob) {
+  public String createJob(final FilerJob filerJob) throws Exception {
 
-    try {
-      final JSONObject json = JSONUtils.readJSON(filerJobJSON);
-      final JSONArray job = (JSONArray) json.get(jobElement);
-      final JSONObject filerJobEl = (JSONObject) job.get(0);
-      final JSONArray jobChildrenEl = (JSONArray) filerJobEl.get(childrenElement);
-      JSONArray documentSpec = new JSONArray();
-      JSONObject repoSource = null;
+    final JSONObject json = JSONUtils.readJSON(filerJobJSON);
+    final JSONArray job = (JSONArray) json.get(jobElement);
+    final JSONObject filerJobEl = (JSONObject) job.get(0);
+    final JSONArray jobChildrenEl = (JSONArray) filerJobEl.get(childrenElement);
+    JSONArray documentSpec = new JSONArray();
+    JSONObject repoSource = null;
 
-      for (int i = 0; i < jobChildrenEl.size(); i++) {
-        final JSONObject jobChild = (JSONObject) jobChildrenEl.get(i);
-        if (jobChild.get(type).equals(repositoryConnectionElement)) {
-          // Set repositoryName
-          jobChild.replace(value, filerJob.getRepositoryConnection());
-        }
+    for (int i = 0; i < jobChildrenEl.size(); i++) {
+      final JSONObject jobChild = (JSONObject) jobChildrenEl.get(i);
+      if (jobChild.get(type).equals(repositoryConnectionElement)) {
+        // Set repositoryName
+        jobChild.replace(value, filerJob.getRepositoryConnection());
+      }
 
-        if (jobChild.get(type).equals(descriptionElement)) {
-          // Set description
-          jobChild.replace(value, "Crawl_" + filerJob.getRepositoryConnection());
-        }
+      if (jobChild.get(type).equals(descriptionElement)) {
+        // Set description
+        jobChild.replace(value, "Crawl_" + filerJob.getRepositoryConnection());
+      }
 
-        if (jobChild.get(type).equals(documentSpecificationElement)) {
-          // Get document spec element
-          documentSpec = (JSONArray) jobChild.get(childrenElement);
-        }
+      if (jobChild.get(type).equals(documentSpecificationElement)) {
+        // Get document spec element
+        documentSpec = (JSONArray) jobChild.get(childrenElement);
+      }
 
-        boolean metadataAdjuster = false;
-        if (jobChild.get(type).equals(pipelinestageElement)) {
+      boolean metadataAdjuster = false;
+      if (jobChild.get(type).equals(pipelinestageElement)) {
 
-          final JSONArray children = (JSONArray) jobChild.get(childrenElement);
-          for (int j = 0; j < children.size(); j++) {
-            final JSONObject child = (JSONObject) children.get(j);
-            if (child.get(type).equals(stageConnectionNameElement) && child.get(value).equals("MetadataAdjuster")) {
-              metadataAdjuster = true;
-            } else if (child.get(type).equals(stageSpecificationElement) && metadataAdjuster) {
-              final JSONArray metadataChildren = (JSONArray) child.get(childrenElement);
-              for (int k = 0; k < metadataChildren.size(); k++) {
-                final JSONObject metadataChild = (JSONObject) metadataChildren.get(k);
-                if (metadataChild.get(type).equals(expressionElement) && metadataChild.get(attributeParameter).equals("repo_source")) {
-                  repoSource = metadataChild;
-                  break;
-                }
+        final JSONArray children = (JSONArray) jobChild.get(childrenElement);
+        for (int j = 0; j < children.size(); j++) {
+          final JSONObject child = (JSONObject) children.get(j);
+          if (child.get(type).equals(stageConnectionNameElement) && child.get(value).equals("MetadataAdjuster")) {
+            metadataAdjuster = true;
+          } else if (child.get(type).equals(stageSpecificationElement) && metadataAdjuster) {
+            final JSONArray metadataChildren = (JSONArray) child.get(childrenElement);
+            for (int k = 0; k < metadataChildren.size(); k++) {
+              final JSONObject metadataChild = (JSONObject) metadataChildren.get(k);
+              if (metadataChild.get(type).equals(expressionElement) && metadataChild.get(attributeParameter).equals("repo_source")) {
+                repoSource = metadataChild;
+                break;
               }
-              metadataAdjuster = false;
-              break;
             }
-
+            metadataAdjuster = false;
+            break;
           }
+
         }
       }
-
-      for (int i = 0; i < documentSpec.size(); i++) {
-        final JSONObject docSpecChild = (JSONObject) documentSpec.get(i);
-
-        if (docSpecChild.get(type).equals(securityElement) && filerJob.isSecurity()) {
-          // Set security
-          docSpecChild.replace(attributeValue, "on");
-        }
-      }
-
-      // Set paths
-      final String[] paths = filerJob.getPaths().split("\n");
-      for (int i = 0; i < paths.length; i++) {
-        final JSONObject path = new JSONObject();
-        final JSONArray include = new JSONArray();
-        final JSONObject file = new JSONObject();
-        final JSONObject directory = new JSONObject();
-
-        path.put(type, startpointElement);
-
-        // Create include rules
-        file.put(attributeIndexable, "yes");
-        file.put(attributeFilespec, "*");
-        file.put(value, "");
-        file.put(attributeType, FilterType.FILE.toString());
-        include.add(file);
-
-        directory.put(type, RuleType.INCLUDE.toString());
-        directory.put(attributeFilespec, "*");
-        directory.put(value, "");
-        directory.put(attributeType, FilterType.DIRECTORY.toString());
-        include.add(directory);
-
-        path.put(includeElement, include);
-        path.put(attributePath, paths[i]);
-        path.put(value, "");
-
-        documentSpec.add(path);
-      }
-
-      // Set sourcename
-      if (repoSource != null) {
-        repoSource.replace(attributeValue, filerJob.getSourcename());
-      }
-
-      final JSONObject response = ManifoldAPI.postConfig(jobsCommand, json);
-      return response.get("job_id").toString();
-    } catch (final Exception e) {
-      logger.error("FATAL ERROR", e);
-      return null;
     }
+
+    for (int i = 0; i < documentSpec.size(); i++) {
+      final JSONObject docSpecChild = (JSONObject) documentSpec.get(i);
+
+      if (docSpecChild.get(type).equals(securityElement) && filerJob.isSecurity()) {
+        // Set security
+        docSpecChild.replace(attributeValue, "on");
+      }
+    }
+
+    // Set paths
+    final String[] paths = filerJob.getPaths().split("\n");
+    for (int i = 0; i < paths.length; i++) {
+      final JSONObject path = new JSONObject();
+      final JSONArray include = new JSONArray();
+      final JSONObject file = new JSONObject();
+      final JSONObject directory = new JSONObject();
+
+      path.put(type, startpointElement);
+
+      // Create include rules
+      file.put(attributeIndexable, "yes");
+      file.put(attributeFilespec, "*");
+      file.put(value, "");
+      file.put(attributeType, FilterType.FILE.toString());
+      include.add(file);
+
+      directory.put(type, RuleType.INCLUDE.toString());
+      directory.put(attributeFilespec, "*");
+      directory.put(value, "");
+      directory.put(attributeType, FilterType.DIRECTORY.toString());
+      include.add(directory);
+
+      path.put(includeElement, include);
+      path.put(attributePath, paths[i]);
+      path.put(value, "");
+
+      documentSpec.add(path);
+    }
+
+    // Set sourcename
+    if (repoSource != null) {
+      repoSource.replace(attributeValue, filerJob.getSourcename());
+    }
+
+    final JSONObject response = ManifoldAPI.postConfig(jobsCommand, json);
+    return response.get("job_id").toString();
 
   }
 

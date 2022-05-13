@@ -48,79 +48,74 @@ public class WebJobConfig {
   }
 
   @SuppressWarnings("unchecked")
-  public String createJob(final WebJob webJob) {
+  public String createJob(final WebJob webJob) throws Exception {
 
-    try {
-      final JSONObject json = JSONUtils.readJSON(webJobJSON);
-      final JSONArray job = (JSONArray) json.get(jobElement);
-      final JSONObject webJobEl = (JSONObject) job.get(0);
-      final JSONArray jobChildrenEl = (JSONArray) webJobEl.get(childrenElement);
-      JSONArray documentSpec = new JSONArray();
-      JSONObject repoSource = null;
+    final JSONObject json = JSONUtils.readJSON(webJobJSON);
+    final JSONArray job = (JSONArray) json.get(jobElement);
+    final JSONObject webJobEl = (JSONObject) job.get(0);
+    final JSONArray jobChildrenEl = (JSONArray) webJobEl.get(childrenElement);
+    JSONArray documentSpec = new JSONArray();
+    JSONObject repoSource = null;
 
-      for (int i = 0; i < jobChildrenEl.size(); i++) {
-        final JSONObject jobChild = (JSONObject) jobChildrenEl.get(i);
+    for (int i = 0; i < jobChildrenEl.size(); i++) {
+      final JSONObject jobChild = (JSONObject) jobChildrenEl.get(i);
 
-        if (jobChild.get(type).equals(repositoryConnectionElement)) {
-          // Set repositoryName
-          jobChild.replace(value, webJob.getRepositoryConnection());
-        }
+      if (jobChild.get(type).equals(repositoryConnectionElement)) {
+        // Set repositoryName
+        jobChild.replace(value, webJob.getRepositoryConnection());
+      }
 
-        if (jobChild.get(type).equals(descriptionElement)) {
-          // Set description
-          jobChild.replace(value, "Crawl_" + webJob.getRepositoryConnection());
-        }
+      if (jobChild.get(type).equals(descriptionElement)) {
+        // Set description
+        jobChild.replace(value, "Crawl_" + webJob.getRepositoryConnection());
+      }
 
-        if (jobChild.get(type).equals(documentSpecificationElement)) {
-          // Get document spec element
-          documentSpec = (JSONArray) jobChild.get(childrenElement);
-        }
+      if (jobChild.get(type).equals(documentSpecificationElement)) {
+        // Get document spec element
+        documentSpec = (JSONArray) jobChild.get(childrenElement);
+      }
 
-        boolean metadataAdjuster = false;
-        if (jobChild.get(type).equals(pipelinestageElement)) {
+      boolean metadataAdjuster = false;
+      if (jobChild.get(type).equals(pipelinestageElement)) {
 
-          final JSONArray children = (JSONArray) jobChild.get(childrenElement);
-          for (int j = 0; j < children.size(); j++) {
-            final JSONObject child = (JSONObject) children.get(j);
-            if (child.get(type).equals(stageConnectionNameElement) && child.get(value).equals("MetadataAdjuster")) {
-              metadataAdjuster = true;
-            } else if (child.get(type).equals(stageSpecificationElement) && metadataAdjuster) {
-              final JSONArray metadataChildren = (JSONArray) child.get(childrenElement);
-              for (int k = 0; k < metadataChildren.size(); k++) {
-                final JSONObject metadataChild = (JSONObject) metadataChildren.get(k);
-                if (metadataChild.get(type).equals(expressionElement) && metadataChild.get(attributeParameter).equals("repo_source")) {
-                  repoSource = metadataChild;
-                  break;
-                }
+        final JSONArray children = (JSONArray) jobChild.get(childrenElement);
+        for (int j = 0; j < children.size(); j++) {
+          final JSONObject child = (JSONObject) children.get(j);
+          if (child.get(type).equals(stageConnectionNameElement) && child.get(value).equals("MetadataAdjuster")) {
+            metadataAdjuster = true;
+          } else if (child.get(type).equals(stageSpecificationElement) && metadataAdjuster) {
+            final JSONArray metadataChildren = (JSONArray) child.get(childrenElement);
+            for (int k = 0; k < metadataChildren.size(); k++) {
+              final JSONObject metadataChild = (JSONObject) metadataChildren.get(k);
+              if (metadataChild.get(type).equals(expressionElement) && metadataChild.get(attributeParameter).equals("repo_source")) {
+                repoSource = metadataChild;
+                break;
               }
-              metadataAdjuster = false;
-              break;
             }
-
+            metadataAdjuster = false;
+            break;
           }
+
         }
       }
-
-      for (int i = 0; i < documentSpec.size(); i++) {
-        final JSONObject docSpecChild = (JSONObject) documentSpec.get(i);
-
-        if (docSpecChild.get(type).equals(seedsElement)) {
-          // Set seeds
-          docSpecChild.replace(value, webJob.getSeeds());
-        }
-      }
-
-      // Set sourcename
-      if (repoSource != null) {
-        repoSource.replace(attributeValue, webJob.getSourcename());
-      }
-
-      final JSONObject response = ManifoldAPI.postConfig(jobsCommand, json);
-      return response.get("job_id").toString();
-    } catch (final Exception e) {
-      logger.error("FATAL ERROR", e);
-      return null;
     }
+
+    for (int i = 0; i < documentSpec.size(); i++) {
+      final JSONObject docSpecChild = (JSONObject) documentSpec.get(i);
+
+      if (docSpecChild.get(type).equals(seedsElement)) {
+        // Set seeds
+        docSpecChild.replace(value, webJob.getSeeds());
+      }
+    }
+
+    // Set sourcename
+    if (repoSource != null) {
+      repoSource.replace(attributeValue, webJob.getSourcename());
+    }
+
+    final JSONObject response = ManifoldAPI.postConfig(jobsCommand, json);
+    return response.get("job_id").toString();
 
   }
 

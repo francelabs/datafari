@@ -313,6 +313,11 @@ function addFilerConnector() {
     success : function(data, textStatus, jqXHR) {
       data = JSON.parse(data);
       if (data['code'] !== 0) {
+        if(data['status'] !== null && data['status'] !== undefined) {
+          $("#addFilerMessageFailure").html(data['status']);
+        } else {
+          $("#addFilerMessageFailure").html("An unkown problem occurred while saving the configuration");
+        }
         $("#addFilerMessageFailure").show();
       } else {
         $("#addFiler").trigger("reset");
@@ -369,6 +374,11 @@ function addWebConnector() {
     success : function(data, textStatus, jqXHR) {
       data = JSON.parse(data);
       if (data['code'] !== 0) {
+        if(data['status'] !== null && data['status'] !== undefined) {
+          $("#addWebMessageFailure").html(data['status']);
+        } else {
+          $("#addWebMessageFailure").html("An unkown problem occurred while saving the configuration");
+        }
         $("#addWebMessageFailure").show();
       } else {
         $("#addWeb").trigger("reset");

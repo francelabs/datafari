@@ -41,36 +41,31 @@ public class WebRepoConfig {
   }
 
   @SuppressWarnings("unchecked")
-  public String createRepoConnection(final WebRepository webRepo) {
+  public String createRepoConnection(final WebRepository webRepo) throws Exception {
 
-    try {
-      final JSONObject json = JSONUtils.readJSON(webRepoJSON);
-      final JSONArray repositoryconnection = (JSONArray) json.get(repositoryConnectionElement);
-      final JSONObject webRepoConnection = (JSONObject) repositoryconnection.get(0);
-      final JSONObject configuration = (JSONObject) webRepoConnection.get(configurationElement);
-      final JSONArray parameters = (JSONArray) configuration.get(parameterElement);
-      for (int i = 0; i < parameters.size(); i++) {
-        final JSONObject parameter = (JSONObject) parameters.get(i);
-        if (parameter.get(attributeNameElement).toString().equals(emailAttribute)) {
-          parameter.replace(valueElement, webRepo.getEmail());
-        }
+    final JSONObject json = JSONUtils.readJSON(webRepoJSON);
+    final JSONArray repositoryconnection = (JSONArray) json.get(repositoryConnectionElement);
+    final JSONObject webRepoConnection = (JSONObject) repositoryconnection.get(0);
+    final JSONObject configuration = (JSONObject) webRepoConnection.get(configurationElement);
+    final JSONArray parameters = (JSONArray) configuration.get(parameterElement);
+    for (int i = 0; i < parameters.size(); i++) {
+      final JSONObject parameter = (JSONObject) parameters.get(i);
+      if (parameter.get(attributeNameElement).toString().equals(emailAttribute)) {
+        parameter.replace(valueElement, webRepo.getEmail());
       }
-
-      // Generate unique name to avoid mistakes in jobs
-      String repoName = webRepo.getRepoName() + "_" + UUID.randomUUID().toString();
-      repoName = repoName.replaceAll("-", "");
-      if (repoName.length() > 32) {
-        repoName = repoName.substring(0, 32);
-      }
-      webRepoConnection.replace(nameElement, repoName);
-
-      ManifoldAPI.putConfig(repoConnectionsCommand, repoName, json);
-
-      return repoName;
-    } catch (final Exception e) {
-      logger.error("FATAL ERROR", e);
-      return null;
     }
+
+    // Generate unique name to avoid mistakes in jobs
+    String repoName = webRepo.getRepoName() + "_" + UUID.randomUUID().toString();
+    repoName = repoName.replaceAll("-", "");
+    if (repoName.length() > 32) {
+      repoName = repoName.substring(0, 32);
+    }
+    webRepoConnection.replace(nameElement, repoName);
+
+    ManifoldAPI.putConfig(repoConnectionsCommand, repoName, json);
+
+    return repoName;
 
   }
 

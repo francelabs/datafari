@@ -88,6 +88,7 @@ public class MCFUISimplifiedFiler extends HttpServlet {
         if (!repoNameMatcher.group().contentEquals(reponame)) {
           jsonResponse.put("OK", "OK");
           jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+          jsonResponse.put(OutputConstants.STATUS, "The repository name is not valid");
           LOGGER.error("The repository name is not valid");
         } else {
           createFilerRepo(jsonResponse, server, user, password, reponame, paths, sourcename, security, startJob);
@@ -95,13 +96,13 @@ public class MCFUISimplifiedFiler extends HttpServlet {
       } else {
         jsonResponse.put("OK", "OK");
         jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+        jsonResponse.put(OutputConstants.STATUS, "The repository name is not valid");
         LOGGER.error("The repository name is not valid");
       }
 
     } catch (final Exception e) {
-      final PrintWriter out = response.getWriter();
-      out.append("Something bad happened, please retry, if the problem persists contact your system administrator. Error code : 69253");
-      out.close();
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+      jsonResponse.put(OutputConstants.STATUS, e.getMessage());
       LOGGER.error("Unknown error during process", e);
     }
     final PrintWriter out = response.getWriter();
