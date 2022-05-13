@@ -739,7 +739,7 @@
     "spRestHost-tip": "SharePoint hostname. Example: francelabs.sharepoint.com",
     "spRestHttps": "Disable HTTPS protocol",
     "spRestPaths": "Sites paths",
-    "spRestPaths-tip": "Relative paths to the SharePoint sites to crawl. The paths must start by a '/' and each path must be separated by a line return. Example : /sites/TestSite/",
+    "spRestPaths-tip": "Relative paths to the SharePoint sites to crawl. The paths must start by a '/' and each path must be separated by a line return. Example : /sites/TestSite/. You can also let this parameter empty, in that case all SharePoint sites will be crawled !",
     "spRestSecurity-tip": "Enable ACL respect for SharePoint documents. Requires that the Active Directory configuration has been done and a working SharePoint authority connector. Refer to doc for more details",
     "spRestSts-tip": "URL to the endpoint configured in the ADFS that delivers SAML token based on a username and password",
     "spRestUser-tip": "User allowed to connect to the SharePoint and access to all resources you want to crawl. Refer to doc for more info",

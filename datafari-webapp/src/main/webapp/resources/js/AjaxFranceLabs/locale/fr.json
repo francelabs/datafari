@@ -741,7 +741,7 @@
     "spRestHost-tip": "Nom d'hôte SharePoint. Exemple: francelabs.sharepoint.com",
     "spRestHttps": "Désactiver le protocole HTTPS",
     "spRestPaths": "Chemin des sites SharePoint",
-    "spRestPaths-tip": "Chemins relatif aux sites SharePoint à moissonner. Les chemins doivent commencer par un slash (/) et chaque chemin doit être séparé par un retour à la ligne. Exemple : /sites/TestSite/",
+    "spRestPaths-tip": "Chemins relatif aux sites SharePoint à moissonner. Les chemins doivent commencer par un slash (/) et chaque chemin doit être séparé par un retour à la ligne. Exemple : /sites/TestSite/. Vous pouvez également laisser ce paramètre vide, dans ce cas, tous les sites SharePoint seront moissonnés",
     "spRestSecurity-tip": "Activer le respect du contrôle d'accès aux documents SharePoint. Nécessite la configuration de l'Active Directory ainsi que d'un authority connector SharePoint. Se référer à la doc pour plus de détails",
     "spRestSts-tip": "URL du point de terminaison configuré dans l'ADFS qui délivre des jetons SAML à partir d'un nom d'utilisateur et d'un mot de passe",
     "spRestUser-tip": "Utilisateur autorisé à se connecter au SharePoint et à avoir accès en lecture à toutes les resources que vous voulez moissonner. Se référer à la doc pour plus d'infos",
