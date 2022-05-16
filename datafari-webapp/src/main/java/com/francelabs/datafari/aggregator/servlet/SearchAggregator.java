@@ -84,7 +84,7 @@ public class SearchAggregator extends HttpServlet {
     if (defaultDatafariString != null && defaultDatafariString.trim().length() > 0) {
       defaultDatafarisArray = defaultDatafariString.split(SearchAggregatorConfiguration.SITES_SEPARATOR);
     }
-    ArrayList<String> defaultDatafaris = new ArrayList<>(Arrays.asList(defaultDatafarisArray));
+    final ArrayList<String> defaultDatafaris = new ArrayList<>(Arrays.asList(defaultDatafarisArray));
 
     // Retrieve username
     String requestingUser = "";
@@ -102,8 +102,7 @@ public class SearchAggregator extends HttpServlet {
 
     // Get query id if available
     String queryId = request.getParameter("id");
-    if (request.getAttribute("id") != null 
-            && request.getAttribute("id") instanceof String) {
+    if (request.getAttribute("id") != null && request.getAttribute("id") instanceof String) {
       queryId = (String) request.getAttribute("id");
     }
 
@@ -120,12 +119,10 @@ public class SearchAggregator extends HttpServlet {
         final JSONArray jaExternalDatafaris = (JSONArray) parser.parse(jaExternalDatafarisStr);
         // Filter out external sources that are not selected or disabled.
         // If nothing is selected, we keep all sources
-        // However if the filterSourceList is null, we remove everything 
+        // However if the filterSourceList is null, we remove everything
         // (conflict between selected sources and allowed / activated sources)
-        jaExternalDatafaris.removeIf(jsonObject -> filterSourceList == null
-            || !((Boolean) ((JSONObject) jsonObject).get("enabled"))
+        jaExternalDatafaris.removeIf(jsonObject -> filterSourceList == null || !((Boolean) ((JSONObject) jsonObject).get("enabled"))
             || (filterSourceList.size() != 0 && !filterSourceList.contains(((JSONObject) jsonObject).get("label"))));
-
 
         // Extract original start and rows parameters
         int orgStart = 0;
@@ -158,12 +155,11 @@ public class SearchAggregator extends HttpServlet {
         parameterMap.putAll(request.getParameterMap());
         // Override parameters with request attributes (set by the code and not from the client, so
         // they prevail over what has been given as a parameter)
-        Iterator<String> attributeNamesIt = request.getAttributeNames().asIterator();
+        final Iterator<String> attributeNamesIt = request.getAttributeNames().asIterator();
         while (attributeNamesIt.hasNext()) {
-          String name = attributeNamesIt.next();
-          if (request.getAttribute(name) != null 
-            && request.getAttribute(name) instanceof String){
-            String value[] = {(String) request.getAttribute(name)};
+          final String name = attributeNamesIt.next();
+          if (request.getAttribute(name) != null && request.getAttribute(name) instanceof String) {
+            final String value[] = { (String) request.getAttribute(name) };
             parameterMap.put(name, value);
           }
         }
@@ -309,7 +305,7 @@ public class SearchAggregator extends HttpServlet {
 
     } catch (final Exception e) {
       LOGGER.error("Search aggregator unexpected error", e);
-      HashMap<String, Object> responseContent = new HashMap<>();
+      final HashMap<String, Object> responseContent = new HashMap<>();
       responseContent.put("code", 500);
       responseContent.put("message", e.getMessage());
       return new JSONObject(responseContent);
@@ -321,10 +317,9 @@ public class SearchAggregator extends HttpServlet {
    */
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-    JSONObject jsonResp = doGetSearch(request, response);
-    Integer code = (Integer) jsonResp.get("code");
+    final JSONObject jsonResp = doGetSearch(request, response);
     // If there is a code, we got an error.
-    if (code != null){
+    if (jsonResp.get("code") != null) {
       response.setStatus(500);
       response.setCharacterEncoding("utf-8");
       response.setContentType("text/json;charset=utf-8");
