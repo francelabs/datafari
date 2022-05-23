@@ -10,7 +10,7 @@
 
     <RollingFile name="Tomcat" fileName="${env:TIKA_LOGS_DIR}/tika-server-child.log" filePattern="${env:TIKA_LOGS_DIR}/tika-server-child.log.%d{yyyy-MM-dd}.log">
       <PatternLayout>
-        <Pattern>%5p %d{ISO8601} (%t) - Tika-server|Tika-server|%c{3}|%m%n</Pattern>
+        <Pattern>%5p %d{yyyy-MM-dd'T'HH:mm:ss'Z'} (%t) - Tika-server|Tika-server|%c{3}|%m%n</Pattern>
       </PatternLayout>
       <Policies>
         <TimeBasedTriggeringPolicy interval="1" />

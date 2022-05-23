@@ -86,6 +86,9 @@
 # GENERAL JVM SETTINGS #
 ########################
 
+# Set UTC timezone
+-Duser.timezone=UTC
+
 # enable assertions. highly suggested for correct application functionality.
 -ea
 

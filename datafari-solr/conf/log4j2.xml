@@ -25,7 +25,7 @@
         filePattern="${env:DATAFARI_LOGS}/solr.log.%d{yyyy-MM-dd}.log" >
       <PatternLayout>
         <Pattern>
-          %5p %d{ISO8601} (%t) - Solr|Solr|%c{3}|[%X{collection} %X{shard} %X{replica} %X{core}] %c{1.} %m%n
+          %5p %d{yyyy-MM-dd'T'HH:mm:ss'Z'} (%t) - Solr|Solr|%c{3}|[%X{collection} %X{shard} %X{replica} %X{core}] %c{1.} %m%n
         </Pattern>
       </PatternLayout>
      <Policies>

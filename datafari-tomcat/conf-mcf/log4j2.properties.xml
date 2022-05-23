@@ -11,7 +11,7 @@
 		<!-- Tomcat appender -->
 		<RollingFile name="Tomcat" fileName="${env:DATAFARI_LOGS}/tomcat-mcf.log" filePattern="${env:DATAFARI_LOGS}/tomcat-mcf.log.%d{yyyy-MM-dd}.log">
       <PatternLayout>
-        <Pattern>%5p %d{ISO8601} (%t) - TomcatMCF|Tomcat|%c{3}|%m%n</Pattern>
+        <Pattern>%5p %d{yyyy-MM-dd'T'HH:mm:ss'Z'} (%t) - TomcatMCF|Tomcat|%c{3}|%m%n</Pattern>
       </PatternLayout>
       <Policies>
         <TimeBasedTriggeringPolicy interval="1"/>
@@ -24,7 +24,7 @@
     <!-- ManifoldCF appender -->
     <RollingFile name="Manifold" fileName="${env:DATAFARI_LOGS}/manifoldcf-webservices.log" filePattern="${env:DATAFARI_LOGS}/manifoldcf-webservices.log.%d{yyyy-MM-dd}.log">
       <PatternLayout>
-        <Pattern>%5p %d{ISO8601} (%t) - TomcatMCF|Manifold|%c{3}|%m%n</Pattern>
+        <Pattern>%5p %d{yyyy-MM-dd'T'HH:mm:ss'Z'} (%t) - TomcatMCF|Manifold|%c{3}|%m%n</Pattern>
       </PatternLayout>
       <Policies>
         <TimeBasedTriggeringPolicy interval="1"/>

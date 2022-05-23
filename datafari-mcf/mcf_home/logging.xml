@@ -26,7 +26,7 @@
   <Appenders>
     <RollingFile name="main" fileName="../../logs/manifoldcf.log" filePattern="../../logs/manifoldcf.log.%d{yyyy-MM-dd}.%i.log">
       <PatternLayout>
-        <Pattern>%5p %d{ISO8601} (%t) - MCF|MCF-agent|%c{3}|%m%n</Pattern>
+        <Pattern>%5p %d{yyyy-MM-dd'T'HH:mm:ss'Z'} (%t) - MCF|MCF-agent|%c{3}|%m%n</Pattern>
       </PatternLayout>
       <Policies>
         <TimeBasedTriggeringPolicy interval="1"/>
@@ -38,7 +38,7 @@
     <!-- DocProcess appender -->
     <RollingFile name="DocProcess" fileName="../../logs/doc-process.log" filePattern="../../logs/doc-process.log.%d{yyyy-MM-dd}-%i.log">
       <PatternLayout>
-        <Pattern>%d{ISO8601} |%m%n</Pattern>
+        <Pattern>%d{yyyy-MM-dd'T'HH:mm:ss'Z'} |%m%n</Pattern>
       </PatternLayout>
       <Policies>
         <TimeBasedTriggeringPolicy interval="1"/>
@@ -50,7 +50,7 @@
     <!-- SP delete appender -->
     <RollingFile name="SPDelete" fileName="../../logs/sp-delete.log" filePattern="../../logs/sp-delete.log.%d{yyyy-MM-dd}-%i.log">
       <PatternLayout>
-        <Pattern>%d{ISO8601} -- %m%n</Pattern>
+        <Pattern>%d{yyyy-MM-dd'T'HH:mm:ss'Z'} -- %m%n</Pattern>
       </PatternLayout>
       <Policies>
         <TimeBasedTriggeringPolicy interval="1"/>

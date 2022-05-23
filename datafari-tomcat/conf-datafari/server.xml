@@ -165,7 +165,7 @@
 					Note: The pattern used is equivalent to using pattern="common" -->
         <Valve className="org.apache.catalina.valves.AccessLogValve" directory="../logs"
                prefix="@ACCESS_LOG@" suffix=".txt" renameOnRotate="true"
-               pattern="%h %{yyyy-MM-dd HH:mm:ss}t &quot;%r&quot; %s %b" />
+               pattern="%h %{yyyy-MM-dd'T'HH:mm:ss'Z'}t &quot;%r&quot; %s %b" />
 
 			</Host>
 		</Engine>

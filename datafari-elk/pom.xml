@@ -19,33 +19,6 @@
         <inherited>false</inherited>
         <executions>
           <execution>
-            <id>install-elastic</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>wget</goal>
-            </goals>
-            <configuration>
-              <url>https://d3g5vo6xdbdb9a.cloudfront.net/tarball/opendistro-elasticsearch/opendistroforelasticsearch-${open.distro.version}.tar.gz</url>
-              <sha512>2039cf51b9bd7f09ae90166c5d2005f9d24240aae0602f9aed00c87b12c00fc259a982ad6b365e837923cdae43f1a2076351db62880e0c0c200b29c72a9c71c9</sha512>
-              <unpack>true</unpack>
-            </configuration>
-          </execution>
-          <execution>
-            <id>install-kibana</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>wget</goal>
-            </goals>
-            <configuration>
-              <url>https://d3g5vo6xdbdb9a.cloudfront.net/tarball/opendistroforelasticsearch-kibana/opendistroforelasticsearch-kibana-${open.distro.version}.tar.gz</url>
-              <sha512>1db1b0077bac62a26444a6d28a72c060999adaa07aaff4c397bfad946fe19e1cc78c33f82bf7bb3309545689821917591af5cafec362d3c8d60ba2c7505ec898</sha512>
-              <!-- We unzip and untar Kibana by Ant in maven-ant-tasks.xml instead 
-                of here as the Maven's wget plugin doesn't handle correctly duplicated directory 
-                names in the path: e.g. A/B/C/B/D -->
-              <unpack>false</unpack>
-            </configuration>
-          </execution>
-          <execution>
             <id>install-logstash</id>
             <phase>validate</phase>
             <goals>

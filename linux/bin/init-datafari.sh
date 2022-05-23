@@ -141,7 +141,7 @@ init_elk() {
 }
 
 init_logstash() {
-  sed -i -e "s/@ES_HOST@/$1:9200/g" $DATAFARI_HOME/elk/logstash/logstash-datafari.conf >>$installerLog 2>&1
+  sed -i -e "s/@SOLR_HOST@/$1/g" $DATAFARI_HOME/elk/logstash/logstash-datafari.conf >>$installerLog 2>&1
 }
 
 init_elk_apache() {
@@ -249,7 +249,7 @@ init_solr_hosts() {
 init_zk() {
   #sed -i -e "s/@NODEHOST@/${1}/g" $TOMCAT_HOME/conf/datafari.properties >>$installerLog 2>&1
   sed -i -e "s/@ZKHOST@/${1}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolrNoTika.json >>$installerLog 2>&1
-  @VERSION-INIT-ZK@
+@VERSION-INIT-ZK@
 }
 
 init_zk_data() {
@@ -278,11 +278,7 @@ init_main_node() {
 
 init_solrcloud() {
   mkdir -p $SOLR_INSTALL_DIR/solrcloud
-  mv $SOLR_INSTALL_DIR/solr_home/FileShare $SOLR_INSTALL_DIR/solrcloud
-  mv $SOLR_INSTALL_DIR/solr_home/Statistics $SOLR_INSTALL_DIR/solrcloud
-  mv $SOLR_INSTALL_DIR/solr_home/Promolink $SOLR_INSTALL_DIR/solrcloud
-  mv $SOLR_INSTALL_DIR/solr_home/Entities $SOLR_INSTALL_DIR/solrcloud
-  mv $SOLR_INSTALL_DIR/solr_home/Duplicates $SOLR_INSTALL_DIR/solrcloud
+  mv $SOLR_INSTALL_DIR/solr_home/*/ $SOLR_INSTALL_DIR/solrcloud
   mkdir -p $SOLR_INSTALL_DIR/solrcloud/FileShare/lib/custom/customer
 
 }

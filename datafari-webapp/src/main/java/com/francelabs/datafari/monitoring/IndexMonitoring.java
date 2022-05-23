@@ -95,18 +95,18 @@ public class IndexMonitoring {
   private long getPeriod() {
     long multiplicator;
     switch (selectedMonitoringLogFrequencyUnit) {
-      case HOUR:
-        multiplicator = 60 * 60;
-        break;
-      case MINUTE:
-        multiplicator = 60;
-        break;
-      case DAY:
-        multiplicator = 60 * 60 * 24;
-        break;
-      default:
-        multiplicator = 60 * 60;
-        break;
+    case HOUR:
+      multiplicator = 60 * 60;
+      break;
+    case MINUTE:
+      multiplicator = 60;
+      break;
+    case DAY:
+      multiplicator = 60 * 60 * 24;
+      break;
+    default:
+      multiplicator = 60 * 60;
+      break;
     }
     return 1000 * multiplicator * frequencyValue;
   }
@@ -128,18 +128,16 @@ public class IndexMonitoring {
   /**
    * Thread that will log the state of the FileShare Solr Core
    * <p>
-   * The goal is to have the number of documents indexed and how those documents are distributed. For this purpose, this thread will query the
-   * FileShare core with some facet fields like for example "extension", "language" or "source" The query response is then analyzed to extract
-   * the global number of docs and split the number of docs per facet. The results are then formated into logs (one log per facet value) like
-   * this:<br>
+   * The goal is to have the number of documents indexed and how those documents are distributed. For this purpose, this thread will query the FileShare core with some facet fields like for example
+   * "extension", "language" or "source" The query response is then analyzed to extract the global number of docs and split the number of docs per facet. The results are then formated into logs (one
+   * log per facet value) like this:<br>
    * [id]|[number_of_docs]|[facet_value]|[facet_type]
    * <p>
-   * For example, if the FileShare core contains 28 documents, 14 of witch are in french, and 14 of witch are in english, and the "language"
-   * facet field is added to the query, the following logs will be generated:<br>
+   * For example, if the FileShare core contains 28 documents, 14 of witch are in french, and 14 of witch are in english, and the "language" facet field is added to the query, the following logs will
+   * be generated:<br>
    * Aefs646|28|no|no G5sfP|14|fr|language MtuL78|14|en|language
    * <p>
-   * The log with the total number of documents is always generated. For this log, the facet value and the facet type are both set to "no"
-   * (like shown above)
+   * The log with the total number of documents is always generated. For this log, the facet value and the facet type are both set to "no" (like shown above)
    *
    */
   private final class FileShareMonitoringLog implements Runnable {
@@ -165,7 +163,7 @@ public class IndexMonitoring {
         // Create an instance of SimpleDateFormat used for
         // formatting
         // the string representation of date
-        final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+        final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         final String currentDate = df.format(new Date());
         String log = "";
         final IndexerServer server = IndexerServerManager.getIndexerServer(Core.FILESHARE);
@@ -204,8 +202,8 @@ public class IndexMonitoring {
     /**
      * Generates an ID for the log, which is needed to exploit the monitoring logs with ELK (Elasticsearch Logstash Kibana).
      * <p>
-     * The ID must be UNIQUE per monitoring event, per facet value. This is the reason why the facet value and the facet type are required. The
-     * ID is a MD5 calculated on a string composed by the currentDate(midnight), the facet value and the facet type.
+     * The ID must be UNIQUE per monitoring event, per facet value. This is the reason why the facet value and the facet type are required. The ID is a MD5 calculated on a string composed by the
+     * currentDate(midnight), the facet value and the facet type.
      *
      * @param facetValue the facet value
      * @param facetType  facet type
