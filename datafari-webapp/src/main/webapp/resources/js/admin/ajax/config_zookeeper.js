@@ -21,6 +21,10 @@ $(document).ready(function() {
   $("#reload").text(window.i18n.msgStore['reloadButton']);
   $("#reload").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['reloadButton']);
 
+  $("#configZookeeperModalLabel").html("<i class='fas fa-exclamation-triangle'></i> " + window.i18n.msgStore['warning']);
+  $("#configZookeeperModal_cancel").html(window.i18n.msgStore['cancel']);
+  $("#configZookeeperModal .modal-body").html(window.i18n.msgStore['solr-interruption']);
+
   $("#download").click(function(e) {
     e.preventDefault();
     // Disable the button until the called servlet responds
@@ -64,8 +68,15 @@ $(document).ready(function() {
   $("#reload").click(function(e) {
     e.preventDefault();
     // Disable the button until the called servlet responds
-    $("#reload").loading("loading");
-    $.get("../SearchExpert/zookeeperConf?action=reload", function(data) {
+   
+   
+    $("#configZookeeperModal_confirm").prop("onclick", null).off("click");
+    $("#configZookeeperModal_confirm").click(function() {  
+        
+   
+   $("#configZookeeperModal").modal('hide');
+   $("#reload").loading("loading");
+      $.get("../SearchExpert/zookeeperConf?action=reload", function(data) {
       // Re-enable the button
       $("#reload").loading("reset");
       if (data.code == 0) {
@@ -78,6 +89,12 @@ $(document).ready(function() {
         $("#reloadResult").addClass("error");
         $("#reloadResult").show();
       }
-    });
-  });
+   
+});
+});
+$("#configZookeeperModal").modal();
+});
+
+
+
 });

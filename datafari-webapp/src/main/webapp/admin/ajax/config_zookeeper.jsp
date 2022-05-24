@@ -10,6 +10,25 @@
 <title>Insert title here</title>
 </head>
 <body>
+
+	<!-- Confirm modal -->
+<div class="modal fade" id="configZookeeperModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="configZookeeperModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="configZookeeperModalLabel">Warning</h5>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="configZookeeperModal_cancel" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="configZookeeperModal_confirm">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 	<!--Start Breadcrumb-->
 	<nav aria-label="breadcrumb" class="bg-dark">
     <a href="#" class="side-menu-control"> <i class="fas fa-angle-left"></i></a>
