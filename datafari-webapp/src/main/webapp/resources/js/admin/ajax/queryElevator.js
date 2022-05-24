@@ -254,7 +254,7 @@ $(document).ready(function() {
           }
         }, "json");
       });
-
+      $("#queryElevatorModal").modal();
     }
 
   });
