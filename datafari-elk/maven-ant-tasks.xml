@@ -42,7 +42,6 @@
 		<!-- *** Setup logstash-datafari.conf *** -->
 		<replace file="${elk.dist}/logstash/logstash-datafari.conf" token="@ADDITIONAL_INPUTS@" value=""/>
 		<replace file="${elk.dist}/logstash/logstash-datafari.conf" token="@ADDITIONAL_FILTERS@" value=""/>
-		<replace file="${elk.dist}/logstash/logstash-datafari.conf" token="@ADDITIONAL_EXPLOITS@" value=""/>
 		<replace file="${elk.dist}/logstash/logstash-datafari.conf" token="@ADDITIONAL_OUTPUTS@" value=""/>
 
 	</target>

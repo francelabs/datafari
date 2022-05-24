@@ -25,8 +25,8 @@
               <goal>wget</goal>
             </goals>
             <configuration>
-              <url>https://artifacts.elastic.co/downloads/logstash/logstash-oss-${logstash.version}.tar.gz</url>
-              <sha512>4413ed97527eb89da3462cc401b84f4770bfb9e3e3083fb314b8ac813165655752a204f091512de3507527bf8cbea5934f67ada446448802424dd441da2d475e</sha512>
+              <url>https://artifacts.elastic.co/downloads/logstash/logstash-oss-${logstash.version}-linux-x86_64.tar.gz</url>
+              <sha512>${logstash.sha512}</sha512>
               <!-- We unzip and untar Logstash by Ant in maven-ant-tasks.xml instead 
                 of here as the Maven's wget plugin doesn't handle correctly duplicated directory 
                 names in the path: e.g. A/B/C/B/D -->
