@@ -115,8 +115,9 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
   /**
    * This represents a list of the mime types that this connector knows how to extract links from. Documents that are indexable are described by the output connector.
    */
-  protected static final String[] interestingMimeTypeArray = new String[] { "application/rtf", "application/xls", "text/html", "text/rtf", "application/x-excel", "application/x-msexcel", "application/x-mspowerpoint", "application/x-msword-doc",
-      "application/x-msword", "application/x-word", "text/xml", "application/xml", "no-type", "text/plain", "application/x-rtf", "application/x-pdf", "text/richtext", "Text", "Text/html" };
+  protected static final String[] interestingMimeTypeArray = new String[] { "application/rtf", "application/xls", "text/html", "text/rtf", "application/x-excel", "application/x-msexcel",
+      "application/x-mspowerpoint", "application/x-msword-doc", "application/x-msword", "application/x-word", "text/xml", "application/xml", "no-type", "text/plain", "application/x-rtf",
+      "application/x-pdf", "text/richtext", "Text", "Text/html" };
 
   protected static final Set<String> interestingMimeTypeMap;
   static {
@@ -253,8 +254,7 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
   /**
    * Install the connector. This method is called to initialize persistent storage for the connector, such as database tables etc. It is called when the connector is registered.
    *
-   * @param threadContext
-   *          is the current thread context.
+   * @param threadContext is the current thread context.
    */
   @Override
   public void install(final IThreadContext threadContext) throws ManifoldCFException {
@@ -283,8 +283,7 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
   /**
    * Uninstall the connector. This method is called to remove persistent storage for the connector, such as database tables etc. It is called when the connector is deregistered.
    *
-   * @param threadContext
-   *          is the current thread context.
+   * @param threadContext is the current thread context.
    */
   @Override
   public void deinstall(final IThreadContext threadContext) throws ManifoldCFException {
@@ -448,8 +447,7 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
    * a given queue are fetched; it does not say anything about the overall fetch rate, which may operate on multiple queues or bins. For example, if you implement a web crawler, a good choice of bin
    * name would be the server name, since that is likely to correspond to a real resource that will need real throttle protection.
    *
-   * @param documentIdentifier
-   *          is the document identifier.
+   * @param documentIdentifier is the document identifier.
    * @return the bin name.
    */
   @Override
@@ -479,20 +477,16 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
    *
    * Note that it is always ok to send MORE documents rather than less to this method. The connector will be connected before this method can be called.
    *
-   * @param activities
-   *          is the interface this method should use to perform whatever framework actions are desired.
-   * @param spec
-   *          is a document specification (that comes from the job).
-   * @param seedTime
-   *          is the end of the time range of documents to consider, exclusive.
-   * @param lastSeedVersion
-   *          is the last seeding version string for this job, or null if the job has no previous seeding version string.
-   * @param jobMode
-   *          is an integer describing how the job is being run, whether continuous or once-only.
+   * @param activities      is the interface this method should use to perform whatever framework actions are desired.
+   * @param spec            is a document specification (that comes from the job).
+   * @param seedTime        is the end of the time range of documents to consider, exclusive.
+   * @param lastSeedVersion is the last seeding version string for this job, or null if the job has no previous seeding version string.
+   * @param jobMode         is an integer describing how the job is being run, whether continuous or once-only.
    * @return an updated seeding version string, to be stored with the job.
    */
   @Override
-  public String addSeedDocuments(final ISeedingActivity activities, final Specification spec, final String lastSeedVersion, final long seedTime, final int jobMode) throws ManifoldCFException, ServiceInterruption {
+  public String addSeedDocuments(final ISeedingActivity activities, final Specification spec, final String lastSeedVersion, final long seedTime, final int jobMode)
+      throws ManifoldCFException, ServiceInterruption {
     getSession();
 
     final DocumentURLFilter filter = new DocumentURLFilter(spec);
@@ -541,20 +535,15 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
    * Process a set of documents. This is the method that should cause each document to be fetched, processed, and the results either added to the queue of documents for the current job, and/or entered
    * into the incremental ingestion manager. The document specification allows this class to filter what is done based on the job. The connector will be connected before this method can be called.
    *
-   * @param documentIdentifiers
-   *          is the set of document identifiers to process.
-   * @param statuses
-   *          are the currently-stored document versions for each document in the set of document identifiers passed in above.
-   * @param activities
-   *          is the interface this method should use to queue up new document references and ingest documents.
-   * @param jobMode
-   *          is an integer describing how the job is being run, whether continuous or once-only.
-   * @param usesDefaultAuthority
-   *          will be true only if the authority in use for these documents is the default one.
+   * @param documentIdentifiers  is the set of document identifiers to process.
+   * @param statuses             are the currently-stored document versions for each document in the set of document identifiers passed in above.
+   * @param activities           is the interface this method should use to queue up new document references and ingest documents.
+   * @param jobMode              is an integer describing how the job is being run, whether continuous or once-only.
+   * @param usesDefaultAuthority will be true only if the authority in use for these documents is the default one.
    */
   @Override
-  public void processDocuments(final String[] documentIdentifiers, final IExistingVersions statuses, final Specification spec, final IProcessActivity activities, final int jobMode, final boolean usesDefaultAuthority)
-      throws ManifoldCFException, ServiceInterruption {
+  public void processDocuments(final String[] documentIdentifiers, final IExistingVersions statuses, final Specification spec, final IProcessActivity activities, final int jobMode,
+      final boolean usesDefaultAuthority) throws ManifoldCFException, ServiceInterruption {
     getSession();
 
     // Forced acls
@@ -624,12 +613,14 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
             switch (fetchStatus.resultSignal) {
             case RESULT_NO_DOCUMENT:
               if (Logging.connectors.isDebugEnabled())
-                Logging.connectors.debug("WEB: Removing url '" + documentIdentifier + "'" + ((fetchStatus.contextMessage != null) ? " because " + fetchStatus.contextMessage : ""), fetchStatus.contextException);
+                Logging.connectors.debug("WEB: Removing url '" + documentIdentifier + "'" + ((fetchStatus.contextMessage != null) ? " because " + fetchStatus.contextMessage : ""),
+                    fetchStatus.contextException);
               activities.deleteDocument(documentIdentifier);
               break;
             case RESULT_NO_VERSION:
               if (Logging.connectors.isDebugEnabled())
-                Logging.connectors.debug("WEB: Ignoring url '" + documentIdentifier + "'" + ((fetchStatus.contextMessage != null) ? " because " + fetchStatus.contextMessage : ""), fetchStatus.contextException);
+                Logging.connectors.debug("WEB: Ignoring url '" + documentIdentifier + "'" + ((fetchStatus.contextMessage != null) ? " because " + fetchStatus.contextMessage : ""),
+                    fetchStatus.contextException);
 
               // We get here when a document didn't fetch.
               // No version
@@ -707,7 +698,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
             case RESULT_RETRY_DOCUMENT:
               // Document could not be processed right now.
               if (Logging.connectors.isDebugEnabled())
-                Logging.connectors.debug("WEB: Retrying url '" + documentIdentifier + "' later" + ((fetchStatus.contextMessage != null) ? " because " + fetchStatus.contextMessage : ""), fetchStatus.contextException);
+                Logging.connectors.debug("WEB: Retrying url '" + documentIdentifier + "' later" + ((fetchStatus.contextMessage != null) ? " because " + fetchStatus.contextMessage : ""),
+                    fetchStatus.contextException);
               activities.retryDocumentProcessing(documentIdentifier);
               break;
             default:
@@ -736,8 +728,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
     }
   }
 
-  protected void loginAndFetch(final FetchStatus fetchStatus, final IProcessActivity activities, final String documentIdentifier, final SequenceCredentials sessionCredential, final String globalSequenceEvent)
-      throws ManifoldCFException, ServiceInterruption {
+  protected void loginAndFetch(final FetchStatus fetchStatus, final IProcessActivity activities, final String documentIdentifier, final SequenceCredentials sessionCredential,
+      final String globalSequenceEvent) throws ManifoldCFException, ServiceInterruption {
     final long currentTime = System.currentTimeMillis();
     // Here's the maximum number of connections we are going to allow.
     final int connectionLimit = 200;
@@ -793,8 +785,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
           trustStore = KeystoreManagerFactory.make("");
         // Check robots, if enabled, and if we're fetching the primary document identifier. See comment above.
         int robotsStatus = RESULTSTATUS_TRUE;
-        if (!documentIdentifier.equals(currentURI) || robotsUsage < ROBOTS_DATA || (robotsStatus = checkFetchAllowed(documentIdentifier, protocol, ipAddress, port, credential, trustStore, hostName, binNames, currentTime, url.getFile(), activities,
-            connectionLimit, proxyHost, proxyPort, proxyAuthDomain, proxyAuthUsername, proxyAuthPassword)) == RESULTSTATUS_TRUE) {
+        if (!documentIdentifier.equals(currentURI) || robotsUsage < ROBOTS_DATA || (robotsStatus = checkFetchAllowed(documentIdentifier, protocol, ipAddress, port, credential, trustStore, hostName,
+            binNames, currentTime, url.getFile(), activities, connectionLimit, proxyHost, proxyPort, proxyAuthDomain, proxyAuthUsername, proxyAuthPassword)) == RESULTSTATUS_TRUE) {
           // Passed the robots check!
 
           // Find whatever login parameters apply. This will be null if currentURI is not a login page, and will contain
@@ -806,8 +798,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
 
           // Prepare to perform the fetch, and decide what to do with the document.
           //
-          final IThrottledConnection connection = ThrottledFetcher.getConnection(currentContext, throttleGroupName, protocol, ipAddress, port, credential, trustStore, throttleDescription, binNames, connectionLimit, proxyHost, proxyPort,
-              proxyAuthDomain, proxyAuthUsername, proxyAuthPassword, socketTimeoutMilliseconds, connectionTimeoutMilliseconds, activities);
+          final IThrottledConnection connection = ThrottledFetcher.getConnection(currentContext, throttleGroupName, protocol, ipAddress, port, credential, trustStore, throttleDescription, binNames,
+              connectionLimit, proxyHost, proxyPort, proxyAuthDomain, proxyAuthUsername, proxyAuthPassword, socketTimeoutMilliseconds, connectionTimeoutMilliseconds, activities);
           try {
             connection.beginFetch((fetchStatus.sessionState == SESSIONSTATE_LOGIN) ? FETCH_LOGIN : FETCH_STANDARD);
             try {
@@ -977,7 +969,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
                 isLoginPage = true;
               } else if (preferredRedirection != null) {
                 if (Logging.connectors.isDebugEnabled())
-                  Logging.connectors.debug("WEB: Document '" + currentURI + "' matches preferred redirection, so determined to be login page for sequence '" + sessionCredential.getSequenceKey() + "'");
+                  Logging.connectors
+                      .debug("WEB: Document '" + currentURI + "' matches preferred redirection, so determined to be login page for sequence '" + sessionCredential.getSequenceKey() + "'");
                 isLoginPage = true;
               } else if (contentLink != null) {
                 if (Logging.connectors.isDebugEnabled())
@@ -1067,7 +1060,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
               if (targetURI == null || targetURI.length() == 0) {
                 // == Exiting login mode ==
                 activities.completeEventSequence(globalSequenceEvent);
-                activities.recordActivity(null, WebcrawlerConnector.ACTIVITY_LOGON_END, null, sessionCredential.getSequenceKey(), "NEXTLINKNOTFOUND", "Could not find a usable link to the next page: " + fetchStatus.contextMessage, null);
+                activities.recordActivity(null, WebcrawlerConnector.ACTIVITY_LOGON_END, null, sessionCredential.getSequenceKey(), "NEXTLINKNOTFOUND",
+                    "Could not find a usable link to the next page: " + fetchStatus.contextMessage, null);
                 fetchStatus.sessionState = SESSIONSTATE_NORMAL;
                 // Make sure we go back and try the original document again, no matter where we got directed to
                 currentURI = documentIdentifier;
@@ -1081,7 +1075,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
               // and of course it will retry, but that's neither here nor there.
               // == Exiting login mode ==
               activities.completeEventSequence(globalSequenceEvent);
-              activities.recordActivity(null, WebcrawlerConnector.ACTIVITY_LOGON_END, null, sessionCredential.getSequenceKey(), "LINKTARGETUNSUITABLE", "Page was unsuitable for a login sequence because: " + fetchStatus.contextMessage, null);
+              activities.recordActivity(null, WebcrawlerConnector.ACTIVITY_LOGON_END, null, sessionCredential.getSequenceKey(), "LINKTARGETUNSUITABLE",
+                  "Page was unsuitable for a login sequence because: " + fetchStatus.contextMessage, null);
               fetchStatus.sessionState = SESSIONSTATE_NORMAL;
               // Fall through, leaving everything else alone.
             }
@@ -1126,8 +1121,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
 
   }
 
-  protected void processDocument(final IProcessActivity activities, final String documentIdentifier, final String versionString, final boolean indexDocument, final Map<String, Set<String>> metaHash, final String[] acls,
-      final DocumentURLFilter filter) throws ManifoldCFException, ServiceInterruption {
+  protected void processDocument(final IProcessActivity activities, final String documentIdentifier, final String versionString, final boolean indexDocument, final Map<String, Set<String>> metaHash,
+      final String[] acls, final DocumentURLFilter filter) throws ManifoldCFException, ServiceInterruption {
     // Consider this document for ingestion.
     String errorCode = null;
     String errorDesc = null;
@@ -1380,17 +1375,14 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
    * Output the configuration header section. This method is called in the head section of the connector's configuration page. Its purpose is to add the required tabs to the list, and to output any
    * javascript methods that might be needed by the configuration editing HTML.
    *
-   * @param threadContext
-   *          is the local thread context.
-   * @param out
-   *          is the output to which any HTML should be sent.
-   * @param parameters
-   *          are the configuration parameters, as they currently exist, for this connection being configured.
-   * @param tabsArray
-   *          is an array of tab names. Add to this array any tab names that are specific to the connector.
+   * @param threadContext is the local thread context.
+   * @param out           is the output to which any HTML should be sent.
+   * @param parameters    are the configuration parameters, as they currently exist, for this connection being configured.
+   * @param tabsArray     is an array of tab names. Add to this array any tab names that are specific to the connector.
    */
   @Override
-  public void outputConfigurationHeader(final IThreadContext threadContext, final IHTTPOutput out, final Locale locale, final ConfigParams parameters, final List<String> tabsArray) throws ManifoldCFException, IOException {
+  public void outputConfigurationHeader(final IThreadContext threadContext, final IHTTPOutput out, final Locale locale, final ConfigParams parameters, final List<String> tabsArray)
+      throws ManifoldCFException, IOException {
     tabsArray.add(Messages.getString(locale, "WebcrawlerConnector.Email"));
     tabsArray.add(Messages.getString(locale, "WebcrawlerConnector.Robots"));
     tabsArray.add(Messages.getString(locale, "WebcrawlerConnector.Bandwidth"));
@@ -1399,7 +1391,7 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
     tabsArray.add(Messages.getString(locale, "WebcrawlerConnector.Proxy"));
 
     final Map<String, Object> velocityContext = new HashMap<>();
-    Messages.outputResourceWithVelocity(out, locale, "editConfiguration.js.vm", velocityContext);
+    Messages.outputResourceWithVelocity(out, locale, "editConfiguration.js", velocityContext);
   }
 
   private void fillInEmailTab(final Map<String, Object> velocityContext, final IHTTPOutput out, final ConfigParams parameters) {
@@ -1659,17 +1651,14 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
    * Output the configuration body section. This method is called in the body section of the connector's configuration page. Its purpose is to present the required form elements for editing. The coder
    * can presume that the HTML that is output from this configuration will be within appropriate &lt;html&gt;, &lt;body&gt;, and &lt;form&gt; tags. The name of the form is "editconnection".
    *
-   * @param threadContext
-   *          is the local thread context.
-   * @param out
-   *          is the output to which any HTML should be sent.
-   * @param parameters
-   *          are the configuration parameters, as they currently exist, for this connection being configured.
-   * @param tabName
-   *          is the current tab name.
+   * @param threadContext is the local thread context.
+   * @param out           is the output to which any HTML should be sent.
+   * @param parameters    are the configuration parameters, as they currently exist, for this connection being configured.
+   * @param tabName       is the current tab name.
    */
   @Override
-  public void outputConfigurationBody(final IThreadContext threadContext, final IHTTPOutput out, final Locale locale, final ConfigParams parameters, final String tabName) throws ManifoldCFException, IOException {
+  public void outputConfigurationBody(final IThreadContext threadContext, final IHTTPOutput out, final Locale locale, final ConfigParams parameters, final String tabName)
+      throws ManifoldCFException, IOException {
 
     final Map<String, Object> velocityContext = new HashMap<>();
     velocityContext.put("TABNAME", tabName);
@@ -1682,17 +1671,17 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
     fillInProxyTab(velocityContext, out, parameters);
 
     // Email tab
-    Messages.outputResourceWithVelocity(out, locale, "editConfiguration_Email.html.vm", velocityContext);
+    Messages.outputResourceWithVelocity(out, locale, "editConfiguration_Email.html", velocityContext);
     // Robots tab
-    Messages.outputResourceWithVelocity(out, locale, "editConfiguration_Robots.html.vm", velocityContext);
+    Messages.outputResourceWithVelocity(out, locale, "editConfiguration_Robots.html", velocityContext);
     // Bandwidth tab
-    Messages.outputResourceWithVelocity(out, locale, "editConfiguration_Bandwidth.html.vm", velocityContext);
+    Messages.outputResourceWithVelocity(out, locale, "editConfiguration_Bandwidth.html", velocityContext);
     // Access Credentials tab
-    Messages.outputResourceWithVelocity(out, locale, "editConfiguration_Access.html.vm", velocityContext);
+    Messages.outputResourceWithVelocity(out, locale, "editConfiguration_Access.html", velocityContext);
     // Certificates tab
-    Messages.outputResourceWithVelocity(out, locale, "editConfiguration_Certificates.html.vm", velocityContext);
+    Messages.outputResourceWithVelocity(out, locale, "editConfiguration_Certificates.html", velocityContext);
     // Proxy tab
-    Messages.outputResourceWithVelocity(out, locale, "editConfiguration_Proxy.html.vm", velocityContext);
+    Messages.outputResourceWithVelocity(out, locale, "editConfiguration_Proxy.html", velocityContext);
 
   }
 
@@ -1700,12 +1689,9 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
    * Process a configuration post. This method is called at the start of the connector's configuration page, whenever there is a possibility that form data for a connection has been posted. Its
    * purpose is to gather form information and modify the configuration parameters accordingly. The name of the posted form is "editconnection".
    *
-   * @param threadContext
-   *          is the local thread context.
-   * @param variableContext
-   *          is the set of variables available from the post, including binary file post information.
-   * @param parameters
-   *          are the configuration parameters, as they currently exist, for this connection being configured.
+   * @param threadContext   is the local thread context.
+   * @param variableContext is the set of variables available from the post, including binary file post information.
+   * @param parameters      are the configuration parameters, as they currently exist, for this connection being configured.
    * @return null if all is well, or a string error message if there is an error that should prevent saving of the connection (and cause a redirection to an error page).
    */
   @Override
@@ -2054,12 +2040,9 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
    * View configuration. This method is called in the body section of the connector's view configuration page. Its purpose is to present the connection information to the user. The coder can presume
    * that the HTML that is output from this configuration will be within appropriate &lt;html&gt; and &lt;body&gt;tags.
    *
-   * @param threadContext
-   *          is the local thread context.
-   * @param out
-   *          is the output to which any HTML should be sent.
-   * @param parameters
-   *          are the configuration parameters, as they currently exist, for this connection being configured.
+   * @param threadContext is the local thread context.
+   * @param out           is the output to which any HTML should be sent.
+   * @param parameters    are the configuration parameters, as they currently exist, for this connection being configured.
    */
   @Override
   public void viewConfiguration(final IThreadContext threadContext, final IHTTPOutput out, final Locale locale, final ConfigParams parameters) throws ManifoldCFException, IOException {
@@ -2073,7 +2056,7 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
     fillInCertificatesTab(velocityContext, out, parameters);
     fillInProxyTab(velocityContext, out, parameters);
 
-    Messages.outputResourceWithVelocity(out, locale, "viewConfiguration.html.vm", velocityContext);
+    Messages.outputResourceWithVelocity(out, locale, "viewConfiguration.html", velocityContext);
 
   }
 
@@ -2081,19 +2064,15 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
    * Output the specification header section. This method is called in the head section of a job page which has selected a repository connection of the current type. Its purpose is to add the required
    * tabs to the list, and to output any javascript methods that might be needed by the job editing HTML. The connector will be connected before this method can be called.
    *
-   * @param out
-   *          is the output to which any HTML should be sent.
-   * @param locale
-   *          is the locale the output is preferred to be in.
-   * @param ds
-   *          is the current document specification for this job.
-   * @param connectionSequenceNumber
-   *          is the unique number of this connection within the job.
-   * @param tabsArray
-   *          is an array of tab names. Add to this array any tab names that are specific to the connector.
+   * @param out                      is the output to which any HTML should be sent.
+   * @param locale                   is the locale the output is preferred to be in.
+   * @param ds                       is the current document specification for this job.
+   * @param connectionSequenceNumber is the unique number of this connection within the job.
+   * @param tabsArray                is an array of tab names. Add to this array any tab names that are specific to the connector.
    */
   @Override
-  public void outputSpecificationHeader(final IHTTPOutput out, final Locale locale, final Specification ds, final int connectionSequenceNumber, final List<String> tabsArray) throws ManifoldCFException, IOException {
+  public void outputSpecificationHeader(final IHTTPOutput out, final Locale locale, final Specification ds, final int connectionSequenceNumber, final List<String> tabsArray)
+      throws ManifoldCFException, IOException {
     tabsArray.add(Messages.getString(locale, "WebcrawlerConnector.Seeds"));
     tabsArray.add(Messages.getString(locale, "WebcrawlerConnector.Canonicalization"));
     tabsArray.add(Messages.getString(locale, "WebcrawlerConnector.URLMappings"));
@@ -2105,7 +2084,7 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
     final Map<String, Object> velocityContext = new HashMap<>();
     velocityContext.put("SEQNUM", connectionSequenceNumber);
 
-    Messages.outputResourceWithVelocity(out, locale, "editSpecification.js.vm", velocityContext);
+    Messages.outputResourceWithVelocity(out, locale, "editSpecification.js", velocityContext);
   }
 
   private void fillInSeedsTab(final Map<String, Object> velocityContext, final IHTTPOutput out, final Specification ds) {
@@ -2146,14 +2125,16 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
           allowReorder = WebcrawlerConfig.ATTRVALUE_NO;
           allowReorderOutput = Messages.getBodyString(locale, "WebcrawlerConnector.no");
         } else
-          allowReorderOutput = allowReorder.equals(WebcrawlerConfig.ATTRVALUE_NO) ? Messages.getBodyString(locale, "WebcrawlerConnector.no") : Messages.getBodyString(locale, "WebcrawlerConnector.yes");
+          allowReorderOutput = allowReorder.equals(WebcrawlerConfig.ATTRVALUE_NO) ? Messages.getBodyString(locale, "WebcrawlerConnector.no")
+              : Messages.getBodyString(locale, "WebcrawlerConnector.yes");
         String allowJavaSessionRemoval = specNode.getAttributeValue(WebcrawlerConfig.ATTR_JAVASESSIONREMOVAL);
         String allowJavaSessionRemovalOutput;
         if (allowJavaSessionRemoval == null || allowJavaSessionRemoval.length() == 0) {
           allowJavaSessionRemoval = WebcrawlerConfig.ATTRVALUE_NO;
           allowJavaSessionRemovalOutput = Messages.getBodyString(locale, "WebcrawlerConnector.no");
         } else
-          allowJavaSessionRemovalOutput = allowJavaSessionRemoval.equals(WebcrawlerConfig.ATTRVALUE_NO) ? Messages.getBodyString(locale, "WebcrawlerConnector.no") : Messages.getBodyString(locale, "WebcrawlerConnector.yes");
+          allowJavaSessionRemovalOutput = allowJavaSessionRemoval.equals(WebcrawlerConfig.ATTRVALUE_NO) ? Messages.getBodyString(locale, "WebcrawlerConnector.no")
+              : Messages.getBodyString(locale, "WebcrawlerConnector.yes");
         ;
         String allowASPSessionRemoval = specNode.getAttributeValue(WebcrawlerConfig.ATTR_ASPSESSIONREMOVAL);
         String allowASPSessionRemovalOutput;
@@ -2161,7 +2142,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
           allowASPSessionRemoval = WebcrawlerConfig.ATTRVALUE_NO;
           allowASPSessionRemovalOutput = Messages.getBodyString(locale, "WebcrawlerConnector.no");
         } else
-          allowASPSessionRemovalOutput = allowASPSessionRemoval.equals(WebcrawlerConfig.ATTRVALUE_NO) ? Messages.getBodyString(locale, "WebcrawlerConnector.no") : Messages.getBodyString(locale, "WebcrawlerConnector.yes");
+          allowASPSessionRemovalOutput = allowASPSessionRemoval.equals(WebcrawlerConfig.ATTRVALUE_NO) ? Messages.getBodyString(locale, "WebcrawlerConnector.no")
+              : Messages.getBodyString(locale, "WebcrawlerConnector.yes");
         ;
         String allowPHPSessionRemoval = specNode.getAttributeValue(WebcrawlerConfig.ATTR_PHPSESSIONREMOVAL);
         String allowPHPSessionRemovalOutput;
@@ -2169,7 +2151,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
           allowPHPSessionRemoval = WebcrawlerConfig.ATTRVALUE_NO;
           allowPHPSessionRemovalOutput = Messages.getBodyString(locale, "WebcrawlerConnector.no");
         } else
-          allowPHPSessionRemovalOutput = allowPHPSessionRemoval.equals(WebcrawlerConfig.ATTRVALUE_NO) ? Messages.getBodyString(locale, "WebcrawlerConnector.no") : Messages.getBodyString(locale, "WebcrawlerConnector.yes");
+          allowPHPSessionRemovalOutput = allowPHPSessionRemoval.equals(WebcrawlerConfig.ATTRVALUE_NO) ? Messages.getBodyString(locale, "WebcrawlerConnector.no")
+              : Messages.getBodyString(locale, "WebcrawlerConnector.yes");
         ;
         String allowBVSessionRemoval = specNode.getAttributeValue(WebcrawlerConfig.ATTR_BVSESSIONREMOVAL);
         String allowBVSessionRemovalOutput;
@@ -2177,7 +2160,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
           allowBVSessionRemoval = WebcrawlerConfig.ATTRVALUE_NO;
           allowBVSessionRemovalOutput = Messages.getBodyString(locale, "WebcrawlerConnector.no");
         } else
-          allowBVSessionRemovalOutput = allowBVSessionRemoval.equals(WebcrawlerConfig.ATTRVALUE_NO) ? Messages.getBodyString(locale, "WebcrawlerConnector.no") : Messages.getBodyString(locale, "WebcrawlerConnector.yes");
+          allowBVSessionRemovalOutput = allowBVSessionRemoval.equals(WebcrawlerConfig.ATTRVALUE_NO) ? Messages.getBodyString(locale, "WebcrawlerConnector.no")
+              : Messages.getBodyString(locale, "WebcrawlerConnector.yes");
         ;
         String allowLowercasing = specNode.getAttributeValue(WebcrawlerConfig.ATTR_LOWERCASE);
         String allowLowercasingOutput;
@@ -2185,7 +2169,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
           allowLowercasing = WebcrawlerConfig.ATTRVALUE_NO;
           allowLowercasingOutput = Messages.getBodyString(locale, "WebcrawlerConnector.no");
         } else
-          allowLowercasingOutput = allowLowercasing.equals(WebcrawlerConfig.ATTRVALUE_NO) ? Messages.getBodyString(locale, "WebcrawlerConnector.no") : Messages.getBodyString(locale, "WebcrawlerConnector.yes");
+          allowLowercasingOutput = allowLowercasing.equals(WebcrawlerConfig.ATTRVALUE_NO) ? Messages.getBodyString(locale, "WebcrawlerConnector.no")
+              : Messages.getBodyString(locale, "WebcrawlerConnector.yes");
         ;
 
         canonicalizationMap.put("regexpString", regexpString);
@@ -2344,21 +2329,16 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
    * required form elements for editing. The coder can presume that the HTML that is output from this configuration will be within appropriate &lt;html&gt;, &lt;body&gt;, and &lt;form&gt; tags. The
    * name of the form is always "editjob". The connector will be connected before this method can be called.
    *
-   * @param out
-   *          is the output to which any HTML should be sent.
-   * @param locale
-   *          is the locale the output is preferred to be in.
-   * @param ds
-   *          is the current document specification for this job.
-   * @param connectionSequenceNumber
-   *          is the unique number of this connection within the job.
-   * @param actualSequenceNumber
-   *          is the connection within the job that has currently been selected.
-   * @param tabName
-   *          is the current tab name. (actualSequenceNumber, tabName) form a unique tuple within the job.
+   * @param out                      is the output to which any HTML should be sent.
+   * @param locale                   is the locale the output is preferred to be in.
+   * @param ds                       is the current document specification for this job.
+   * @param connectionSequenceNumber is the unique number of this connection within the job.
+   * @param actualSequenceNumber     is the connection within the job that has currently been selected.
+   * @param tabName                  is the current tab name. (actualSequenceNumber, tabName) form a unique tuple within the job.
    */
   @Override
-  public void outputSpecificationBody(final IHTTPOutput out, final Locale locale, final Specification ds, final int connectionSequenceNumber, final int actualSequenceNumber, final String tabName) throws ManifoldCFException, IOException {
+  public void outputSpecificationBody(final IHTTPOutput out, final Locale locale, final Specification ds, final int connectionSequenceNumber, final int actualSequenceNumber, final String tabName)
+      throws ManifoldCFException, IOException {
 
     final Map<String, Object> velocityContext = new HashMap<>();
     velocityContext.put("TABNAME", tabName);
@@ -2374,19 +2354,19 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
     fillInMetadataTab(velocityContext, out, ds);
 
     // Seeds tab
-    Messages.outputResourceWithVelocity(out, locale, "editSpecification_Seeds.html.vm", velocityContext);
+    Messages.outputResourceWithVelocity(out, locale, "editSpecification_Seeds.html", velocityContext);
     // Canonicalization tab
-    Messages.outputResourceWithVelocity(out, locale, "editSpecification_Canonicalization.html.vm", velocityContext);
+    Messages.outputResourceWithVelocity(out, locale, "editSpecification_Canonicalization.html", velocityContext);
     // Mappings tab
-    Messages.outputResourceWithVelocity(out, locale, "editSpecification_Mappings.html.vm", velocityContext);
+    Messages.outputResourceWithVelocity(out, locale, "editSpecification_Mappings.html", velocityContext);
     // Inclusions tab
-    Messages.outputResourceWithVelocity(out, locale, "editSpecification_Inclusions.html.vm", velocityContext);
+    Messages.outputResourceWithVelocity(out, locale, "editSpecification_Inclusions.html", velocityContext);
     // Exclusions tab
-    Messages.outputResourceWithVelocity(out, locale, "editSpecification_Exclusions.html.vm", velocityContext);
+    Messages.outputResourceWithVelocity(out, locale, "editSpecification_Exclusions.html", velocityContext);
     // Security tab
-    Messages.outputResourceWithVelocity(out, locale, "editSpecification_Security.html.vm", velocityContext);
+    Messages.outputResourceWithVelocity(out, locale, "editSpecification_Security.html", velocityContext);
     // "Metadata" tab
-    Messages.outputResourceWithVelocity(out, locale, "editSpecification_Metadata.html.vm", velocityContext);
+    Messages.outputResourceWithVelocity(out, locale, "editSpecification_Metadata.html", velocityContext);
 
   }
 
@@ -2394,14 +2374,10 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
    * Process a specification post. This method is called at the start of job's edit or view page, whenever there is a possibility that form data for a connection has been posted. Its purpose is to
    * gather form information and modify the document specification accordingly. The name of the posted form is always "editjob". The connector will be connected before this method can be called.
    *
-   * @param variableContext
-   *          contains the post data, including binary file-upload information.
-   * @param locale
-   *          is the locale the output is preferred to be in.
-   * @param ds
-   *          is the current document specification for this job.
-   * @param connectionSequenceNumber
-   *          is the unique number of this connection within the job.
+   * @param variableContext          contains the post data, including binary file-upload information.
+   * @param locale                   is the locale the output is preferred to be in.
+   * @param ds                       is the current document specification for this job.
+   * @param connectionSequenceNumber is the unique number of this connection within the job.
    * @return null if all is well, or a string error message if there is an error that should prevent saving of the job (and cause a redirection to an error page).
    */
   @Override
@@ -2748,14 +2724,10 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
    * View specification. This method is called in the body section of a job's view page. Its purpose is to present the document specification information to the user. The coder can presume that the
    * HTML that is output from this configuration will be within appropriate &lt;html&gt; and &lt;body&gt;tags. The connector will be connected before this method can be called.
    *
-   * @param out
-   *          is the output to which any HTML should be sent.
-   * @param locale
-   *          is the locale the output is preferred to be in.
-   * @param ds
-   *          is the current document specification for this job.
-   * @param connectionSequenceNumber
-   *          is the unique number of this connection within the job.
+   * @param out                      is the output to which any HTML should be sent.
+   * @param locale                   is the locale the output is preferred to be in.
+   * @param ds                       is the current document specification for this job.
+   * @param connectionSequenceNumber is the unique number of this connection within the job.
    */
   @Override
   public void viewSpecification(final IHTTPOutput out, final Locale locale, final Specification ds, final int connectionSequenceNumber) throws ManifoldCFException, IOException {
@@ -2771,7 +2743,7 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
     fillInSecurityTab(velocityContext, out, ds);
     fillInMetadataTab(velocityContext, out, ds);
 
-    Messages.outputResourceWithVelocity(out, locale, "viewSpecification.html.vm", velocityContext);
+    Messages.outputResourceWithVelocity(out, locale, "viewSpecification.html", velocityContext);
 
   }
 
@@ -2797,7 +2769,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
    *
    * @return appropriate status.
    */
-  protected int lookupIPAddress(final String documentIdentifier, final IProcessActivity activities, final String hostName, final long currentTime, final StringBuilder ipAddressBuffer) throws ManifoldCFException, ServiceInterruption {
+  protected int lookupIPAddress(final String documentIdentifier, final IProcessActivity activities, final String hostName, final long currentTime, final StringBuilder ipAddressBuffer)
+      throws ManifoldCFException, ServiceInterruption {
     final String eventName = makeDNSEventName(activities, hostName);
     final DNSManager.DNSInfo info = dnsManager.lookup(hostName, currentTime);
     if (info != null) {
@@ -2862,9 +2835,10 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
    *
    * @return appropriate resultstatus code.
    */
-  protected int checkFetchAllowed(final String documentIdentifier, final String protocol, final String hostIPAddress, final int port, final PageCredentials credential, final IKeystoreManager trustStore, final String hostName, final String[] binNames,
-      final long currentTime, final String pathString, final IProcessActivity versionActivities, final int connectionLimit, final String proxyHost, final int proxyPort, final String proxyAuthDomain, final String proxyAuthUsername,
-      final String proxyAuthPassword) throws ManifoldCFException, ServiceInterruption {
+  protected int checkFetchAllowed(final String documentIdentifier, final String protocol, final String hostIPAddress, final int port, final PageCredentials credential,
+      final IKeystoreManager trustStore, final String hostName, final String[] binNames, final long currentTime, final String pathString, final IProcessActivity versionActivities,
+      final int connectionLimit, final String proxyHost, final int proxyPort, final String proxyAuthDomain, final String proxyAuthUsername, final String proxyAuthPassword)
+      throws ManifoldCFException, ServiceInterruption {
     // hostNameAndPort is the key for looking up the robots file in the database
     final String hostNameAndPort = makeRobotsKey(protocol, hostName, port);
     final String hostIPAddressAndPort = hostIPAddress + ":" + port;
@@ -2886,8 +2860,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
     if (versionActivities.beginEventSequence(robotsEventName)) {
       // We've successfully obtained a lock on reading robots for this server! Now, guarantee that we'll free it, by instantiating a try/finally
       try {
-        final IThrottledConnection connection = ThrottledFetcher.getConnection(currentContext, throttleGroupName, protocol, hostIPAddress, port, credential, trustStore, throttleDescription, binNames, connectionLimit, proxyHost, proxyPort,
-            proxyAuthDomain, proxyAuthUsername, proxyAuthPassword, socketTimeoutMilliseconds, connectionTimeoutMilliseconds, versionActivities);
+        final IThrottledConnection connection = ThrottledFetcher.getConnection(currentContext, throttleGroupName, protocol, hostIPAddress, port, credential, trustStore, throttleDescription, binNames,
+            connectionLimit, proxyHost, proxyPort, proxyAuthDomain, proxyAuthUsername, proxyAuthPassword, socketTimeoutMilliseconds, connectionTimeoutMilliseconds, versionActivities);
         try {
           connection.beginFetch(FETCH_ROBOTS);
           try {
@@ -2914,7 +2888,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
           } catch (final ServiceInterruption e) {
             // A service interruption on a robots fetch should save the fact that no robots.txt is available, and leave it be for 6 hours that way.
             if (Logging.connectors.isDebugEnabled())
-              Logging.connectors.debug("Web: Timeout fetching robots.txt from " + protocol + "://" + hostIPAddressAndPort + "(host='" + hostName + "'); assuming robots missing for now: " + e.getMessage(), e);
+              Logging.connectors
+                  .debug("Web: Timeout fetching robots.txt from " + protocol + "://" + hostIPAddressAndPort + "(host='" + hostName + "'); assuming robots missing for now: " + e.getMessage(), e);
             final long expirationTime = currentTime + 1000 * 60 * 60 * 6;
             try {
               robotsManager.writeRobotsData(hostNameAndPort, expirationTime, null);
@@ -2923,7 +2898,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
             }
           } catch (final java.net.SocketTimeoutException e) {
             if (Logging.connectors.isDebugEnabled())
-              Logging.connectors.debug("Web: Fetch of robots.txt from " + protocol + "://" + hostIPAddressAndPort + "(host='" + hostName + "') generated Socket Timeout Exception: " + e.getMessage(), e);
+              Logging.connectors.debug("Web: Fetch of robots.txt from " + protocol + "://" + hostIPAddressAndPort + "(host='" + hostName + "') generated Socket Timeout Exception: " + e.getMessage(),
+                  e);
             // This COULD be a transient error, so we are more aggressive about retrying a fetch of robots.txt in that case
             final long expirationTime = currentTime + 1000 * 60 * 60 * 6;
             try {
@@ -2940,7 +2916,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
             }
           } catch (final ConnectTimeoutException e) {
             if (Logging.connectors.isDebugEnabled())
-              Logging.connectors.debug("Web: Fetch of robots.txt from " + protocol + "://" + hostIPAddressAndPort + "(host='" + hostName + "') generated Socket Connect Timeout Exception: " + e.getMessage(), e);
+              Logging.connectors
+                  .debug("Web: Fetch of robots.txt from " + protocol + "://" + hostIPAddressAndPort + "(host='" + hostName + "') generated Socket Connect Timeout Exception: " + e.getMessage(), e);
             // This COULD be a transient error, so we are more aggressive about retrying a fetch of robots.txt in that case
             final long expirationTime = currentTime + 1000 * 60 * 60 * 6;
             try {
@@ -3002,12 +2979,9 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
    * (Doing so would destroy the ability of virtually hosted sites to do the right thing, since the original host name would be lost.) Thus, we do the conversion to IP address right before we actually
    * fetch the document.
    *
-   * @param parentIdentifier
-   *          the identifier of the document in which the raw url was found, or null if none.
-   * @param rawURL
-   *          the starting, un-normalized, un-canonicalized URL.
-   * @param filter
-   *          the filter object, used to remove unmatching URLs.
+   * @param parentIdentifier the identifier of the document in which the raw url was found, or null if none.
+   * @param rawURL           the starting, un-normalized, un-canonicalized URL.
+   * @param filter           the filter object, used to remove unmatching URLs.
    * @return the canonical URL (the document identifier), or null if the url was illegal.
    */
   protected String makeDocumentIdentifier(final String parentIdentifier, final String rawURL, final DocumentURLFilter filter, final IHistoryActivity activities) throws ManifoldCFException {
@@ -3288,7 +3262,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
   /**
    * Code to check if data is interesting, based on response code and content type.
    */
-  protected boolean isContentInteresting(final IFingerprintActivity activities, final String documentIdentifier, final int response, final String contentType) throws ServiceInterruption, ManifoldCFException {
+  protected boolean isContentInteresting(final IFingerprintActivity activities, final String documentIdentifier, final int response, final String contentType)
+      throws ServiceInterruption, ManifoldCFException {
     // Additional filtering only done if it's a 200 response
     if (response != 200)
       return true;
@@ -3461,8 +3436,7 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
     /**
      * Inform the world of a discovered link.
      *
-     * @param rawURL
-     *          is the raw discovered url. This may be relative, malformed, or otherwise unsuitable for use until final form is acheived.
+     * @param rawURL is the raw discovered url. This may be relative, malformed, or otherwise unsuitable for use until final form is acheived.
      */
     @Override
     public void noteDiscoveredLink(final String rawURL) throws ManifoldCFException {
@@ -3619,8 +3593,7 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
     /**
      * Inform the world of a discovered ttl value.
      *
-     * @param rawTtlValue
-     *          is the raw discovered ttl value. Null indicates we should set the default.
+     * @param rawTtlValue is the raw discovered ttl value. Null indicates we should set the default.
      */
     @Override
     public void noteDiscoveredTtlValue(final String rawTtlValue) throws ManifoldCFException {
@@ -3675,8 +3648,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
       // We ONLY look for XML if the content type *says* it is XML.
       final String contentType = extractContentType(cache.getContentType(documentURI));
       final String mimeType = extractMimeType(contentType);
-      final boolean isXML = mimeType.equals("text/xml") || mimeType.equals("application/rss+xml") || mimeType.equals("application/xml") || mimeType.equals("application/atom+xml") || mimeType.equals("application/xhtml+xml")
-          || mimeType.equals("text/XML") || mimeType.equals("application/rdf+xml") || mimeType.equals("text/application") || mimeType.equals("XML");
+      final boolean isXML = mimeType.equals("text/xml") || mimeType.equals("application/rss+xml") || mimeType.equals("application/xml") || mimeType.equals("application/atom+xml")
+          || mimeType.equals("application/xhtml+xml") || mimeType.equals("text/XML") || mimeType.equals("application/rdf+xml") || mimeType.equals("text/application") || mimeType.equals("XML");
 
       if (!isXML)
         return;
@@ -3792,7 +3765,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
     /** Link notification interface */
     protected IXMLHandler handler;
 
-    public RSSContextClass(final XMLFuzzyHierarchicalParseState theStream, final String namespace, final String localName, final String qName, final Map<String, String> atts, final String documentURI, final IXMLHandler handler) {
+    public RSSContextClass(final XMLFuzzyHierarchicalParseState theStream, final String namespace, final String localName, final String qName, final Map<String, String> atts, final String documentURI,
+        final IXMLHandler handler) {
       super(theStream, namespace, localName, qName, atts);
       this.documentURI = documentURI;
       this.handler = handler;
@@ -3831,7 +3805,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
     /** TTL value is set on a per-channel basis */
     protected String ttlValue = null;
 
-    public RSSChannelContextClass(final XMLFuzzyHierarchicalParseState theStream, final String namespace, final String localName, final String qName, final Map<String, String> atts, final String documentURI, final IXMLHandler handler) {
+    public RSSChannelContextClass(final XMLFuzzyHierarchicalParseState theStream, final String namespace, final String localName, final String qName, final Map<String, String> atts,
+        final String documentURI, final IXMLHandler handler) {
       super(theStream, namespace, localName, qName, atts);
       this.documentURI = documentURI;
       this.handler = handler;
@@ -3948,7 +3923,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
     /** ttl value */
     protected String ttlValue = null;
 
-    public RDFContextClass(final XMLFuzzyHierarchicalParseState theStream, final String namespace, final String localName, final String qName, final Map<String, String> atts, final String documentURI, final IXMLHandler handler) {
+    public RDFContextClass(final XMLFuzzyHierarchicalParseState theStream, final String namespace, final String localName, final String qName, final Map<String, String> atts, final String documentURI,
+        final IXMLHandler handler) {
       super(theStream, namespace, localName, qName, atts);
       this.documentURI = documentURI;
       this.handler = handler;
@@ -4052,7 +4028,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
     /** ttl value */
     protected String ttlValue = null;
 
-    public FeedContextClass(final XMLFuzzyHierarchicalParseState theStream, final String namespace, final String localName, final String qName, final Map<String, String> atts, final String documentURI, final IXMLHandler handler) {
+    public FeedContextClass(final XMLFuzzyHierarchicalParseState theStream, final String namespace, final String localName, final String qName, final Map<String, String> atts,
+        final String documentURI, final IXMLHandler handler) {
       super(theStream, namespace, localName, qName, atts);
       this.documentURI = documentURI;
       this.handler = handler;
@@ -4150,7 +4127,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
     /** ttl value */
     protected String ttlValue = null;
 
-    public UrlsetContextClass(final XMLFuzzyHierarchicalParseState theStream, final String namespace, final String localName, final String qName, final Map<String, String> atts, final String documentURI, final IXMLHandler handler) {
+    public UrlsetContextClass(final XMLFuzzyHierarchicalParseState theStream, final String namespace, final String localName, final String qName, final Map<String, String> atts,
+        final String documentURI, final IXMLHandler handler) {
       super(theStream, namespace, localName, qName, atts);
       this.documentURI = documentURI;
       this.handler = handler;
@@ -4433,8 +4411,7 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
   /**
    * Grab forced acl out of document specification.
    *
-   * @param spec
-   *          is the document specification.
+   * @param spec is the document specification.
    * @return the acls.
    */
   protected static String[] getAcls(final Specification spec) {
@@ -4701,7 +4678,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
     protected final boolean removeBVSession;
     protected final boolean lowercasing;
 
-    public CanonicalizationPolicy(final Pattern matchPattern, final boolean reorder, final boolean removeJavaSession, final boolean removeAspSession, final boolean removePhpSession, final boolean removeBVSession, final boolean lowercasing) {
+    public CanonicalizationPolicy(final Pattern matchPattern, final boolean reorder, final boolean removeJavaSession, final boolean removeAspSession, final boolean removePhpSession,
+        final boolean removeBVSession, final boolean lowercasing) {
       this.matchPattern = matchPattern;
       this.reorder = reorder;
       this.removeJavaSession = removeJavaSession;
@@ -5011,7 +4989,8 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
           }
 
           try {
-            canonicalizationPolicies.addRule(new CanonicalizationPolicy(Pattern.compile(urlRegexp), reorderValue, javaSessionValue, aspSessionValue, phpSessionValue, bvSessionValue, lowercasingValue));
+            canonicalizationPolicies
+                .addRule(new CanonicalizationPolicy(Pattern.compile(urlRegexp), reorderValue, javaSessionValue, aspSessionValue, phpSessionValue, bvSessionValue, lowercasingValue));
           } catch (final java.util.regex.PatternSyntaxException e) {
             throw new ManifoldCFException("Canonicalization regular expression '" + urlRegexp + "' is illegal: " + e.getMessage(), e);
           }
