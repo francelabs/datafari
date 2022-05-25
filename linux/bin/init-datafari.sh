@@ -766,26 +766,26 @@ log4shell_mitigation() {
     isVulnerability=$(unzip -l $i | grep  org/apache/logging/log4j/core/lookup/JndiLookup.class)
     if [ "$isVulnerability"  != "" ]; then
       array_entry="$i"
-echo "Found this file to patch : $i"
-    file_array+=($array_entry)
-fi
+      echo "Found this file to patch : $i"
+      file_array+=($array_entry)
+    fi
   done
 
 
-if [ ${#file_array[@]} -eq 0 ]; then
+  if [ ${#file_array[@]} -eq 0 ]; then
     echo "No files need to be patched"
-else
-echo "Patch going to be applied on previous files"
+  else
+    echo "Patch going to be applied on previous files"
 
-for file_entry in "${file_array[@]}"
-  do
-echo $file_entry
-zip -qd $file_entry org/apache/logging/log4j/core/lookup/JndiLookup.class
-        chmod 775 $file_entry
-        chown datafari $file_entry
-done
+    for file_entry in "${file_array[@]}"
+    do
+      echo $file_entry
+      zip -qd $file_entry org/apache/logging/log4j/core/lookup/JndiLookup.class
+      chmod 775 $file_entry
+      chown ${DATAFARI_USER} $file_entry
+    done
 
-fi
+  fi
 
 }
 
