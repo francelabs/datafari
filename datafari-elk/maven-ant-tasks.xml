@@ -2,6 +2,7 @@
 <project name="maven-ant-tasks" default="setup-elk" basedir=".">
 
 	<property name="elk.dist" value="target/dist/elk"/>
+	<property name="zeppelin-solr-version" value="0.1.6"/>
 
 
 	<!-- Right now we use ELK (Elasticsearch - Logstash - Kibana stack) only for Debian distribution of Datafari -->
@@ -10,7 +11,6 @@
 
 		<!-- We unzip and untar Logstash here instead of Maven's plugin Wget (like done for the other components)
 				 as it doesn't handle correctly duplicated directory names in the path: e.g. A/B/C/B/D -->
-
 		<untar dest="${elk.dist}/logstash" compression="gzip">
 			<fileset dir="target">
 				<include name="*logstash*.tar.gz" />
@@ -18,15 +18,12 @@
 			<cutdirsmapper dirs="1" />
 		</untar>
 		
-		<!-- Delete tar.gz files -->
-		<delete>
-		  <fileset dir="target" includes="*.tar.gz"/>
-		</delete>
-
 		<!-- Copy Datafari-specific directories and files for ELK -->
 		<copy toDir="${elk.dist}" overwrite="true" force="true">
 			<fileset dir="." >
-				<exclude name="**/target/**" />
+				<include name="logstash/**" />
+				<include name="scripts/**" />
+				<include name="zeppelin/**" />
 			</fileset>
 		</copy>
 
@@ -43,6 +40,28 @@
 		<replace file="${elk.dist}/logstash/logstash-datafari.conf" token="@ADDITIONAL_INPUTS@" value=""/>
 		<replace file="${elk.dist}/logstash/logstash-datafari.conf" token="@ADDITIONAL_FILTERS@" value=""/>
 		<replace file="${elk.dist}/logstash/logstash-datafari.conf" token="@ADDITIONAL_OUTPUTS@" value=""/>
+		
+		<!-- Untar zeppelin -->
+		<untar dest="${elk.dist}/zeppelin" compression="gzip">
+      <fileset dir="target">
+        <include name="zeppelin*" />
+      </fileset>
+      <cutdirsmapper dirs="1" />
+    </untar>
+		
+		<!-- Install Zeppelin Solr Interpreter -->
+		<!--<exec executable="/bin/bash">
+	    <arg value="${elk.dist}/zeppelin/bin/install-interpreter.sh"/>
+	    <arg value="-name solr -artifact com.lucidworks.zeppelin:zeppelin-solr:${zeppelin-solr-version}"/>
+	  </exec>-->
+		
+		<!-- Delete tar.gz and tgz files -->
+    <delete>
+      <fileset dir="target"> 
+        <include name="*.tar.gz"/>
+      	<include name="*.tgz"/>
+      </fileset>
+    </delete>
 
 	</target>
 

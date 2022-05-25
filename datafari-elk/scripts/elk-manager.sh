@@ -56,21 +56,41 @@ stop_logstash()
   forceStopIfNecessary $LOGSTASH_PID_FILE Logstash
 }
 
+start_zeppelin()
+{
+  if is_running $ZEPPELIN_PID_DIR/zeppelin.pid; then
+    echo "Error : Zeppelin seems to be already running with PID $(cat $ZEPPELIN_PID_DIR/zeppelin.pid)"
+  else
+    cd $ZEPPELIN_HOME
+    echo "Starting Zeppelin..."
+    bash bin/zeppelin-daemon.sh start >/dev/null 2>&1 &
+    echo $! > $ZEPPELIN_PID_DIR/zeppelin.pid
+    echo "Zeppelin started !"
+    cd $DIR
+  fi
+}
+
+stop_zeppelin()
+{
+  cd $ZEPPELIN_HOME
+  echo "Stopping Zeppelin..."
+  bash bin/zeppelin-daemon.sh stop >/dev/null 2>&1 &
+  echo "Zeppelin stopped !"
+  cd $DIR
+  forceStopIfNecessary $ZEPPELIN_PID_DIR/zeppelin.pid Zeppelin
+}
+
 cmd_start() {
   start_logstash;
+  start_zeppelin;
 }
 
 cmd_stop() {
   stop_logstash;
+  stop_zeppelin;
 }
 
 cmd_status() {
-  if is_running $ELASTICSEARCH_PID_FILE; then
-      echo "Elasticsearch is running:"
-      ps -o pid,cmd --width 5000 -p $(cat $ELASTICSEARCH_PID_FILE)
-  else
-      echo "Elasticsearch is not running."
-  fi
   
   if is_running $LOGSTASH_PID_FILE; then
       echo "Logstash is running:"
@@ -79,11 +99,11 @@ cmd_status() {
       echo "Logstash is not running."
   fi
   
-  if is_running $KIBANA_PID_FILE; then
-      echo "Kibana is running:"
-      ps -o pid,cmd --width 5000 -p $(cat $KIBANA_PID_FILE)
+  if is_running $ZEPPELIN_PID_DIR/zeppelin.pid; then
+      echo "Zeppelin is running:"
+      ps -o pid,cmd --width 5000 -p $(cat $ZEPPELIN_PID_DIR/zeppelin.pid)
   else
-      echo "Kibana is not running."
+      echo "Zeppelin is not running."
   fi
 }
 
@@ -121,6 +141,12 @@ case $COMMAND in
     ;;
   stop_logstash)
     stop_logstash
+    ;;
+  start_zeppelin)
+    start_zeppelin
+    ;;
+  stop_zeppelin)
+    stop_zeppelin
     ;;
   init_elk)
     init_elk

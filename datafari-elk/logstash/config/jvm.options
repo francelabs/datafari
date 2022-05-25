@@ -6,6 +6,9 @@
 -Xms@LOGSTASHMEMORY@
 -Xmx@LOGSTASHMEMORY@
 
+# Set UTC timezone
+-Duser.timezone=UTC
+
 ################################################################
 ## Expert settings
 ################################################################

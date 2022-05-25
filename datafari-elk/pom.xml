@@ -33,6 +33,18 @@
               <unpack>false</unpack>
             </configuration>
           </execution>
+          <execution>
+            <id>install-zeppelin</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>wget</goal>
+            </goals>
+            <configuration>
+              <url>https://dlcdn.apache.org/zeppelin/zeppelin-${zeppelin.version}/zeppelin-${zeppelin.version}-bin-netinst.tgz</url>
+              <sha512>${zeppelin.sha512}</sha512>
+              <unpack>false</unpack>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>

@@ -50,6 +50,8 @@
     <tomcat.version>9.0.56</tomcat.version>
     <slf4j.version>1.7.36</slf4j.version>
     <xmlsec.version>2.3.0</xmlsec.version>
+    <zeppelin.version>0.10.1</zeppelin.version>
+    <zeppelin.sha512>59d7261adfd3b17b6648e083cc2e06cfb0c5aedd7e76498175073a80c224c6bc05ab562739b2fe8f0db566d01b99203a5fb09b0e680916b046ae58f3146695a9</zeppelin.sha512>
     <zookeeper.version>3.6.2</zookeeper.version>
     <zookeeper.sha512>caff5111bb6876b7124760bc006e6fa2523efa54b99321a3c9cd8192ea0d5596abc7d70a054b1aac9b20a411407dae7611c7aba870c23bff28eb1643ba499199</zookeeper.sha512>
   </properties>
