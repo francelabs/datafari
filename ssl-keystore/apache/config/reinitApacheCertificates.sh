@@ -4,18 +4,33 @@
 # Reinit SSL certificates for Apache
 #
 #
-defaultpathCertificates=/opt/datafari/ssl-keystore/apache
-apacheConfFile=/opt/datafari/apache/sites-available/tomcat.conf
-defaultcertificatefile=${defaultpathCertificates}/datafari.crt
-defaultcertificatekeyfile=${defaultpathCertificates}/datafari.key
 
-sed -i "s|\(SSLCertificateFile *\).*|\1${defaultcertificatefile}|" ${apacheConfFile}
-sed -i "s|\(SSLCertificateKeyFile *\).*|\1${defaultcertificatekeyfile}|" ${apacheConfFile}
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source "${DIR}/../../../bin/set-datafari-env.sh"
+source "${DIR}/../../../bin/utils.sh"
 
-if [ -d /etc/apache2 ]; then
-	/etc/init.d/apache2 stop
-    /etc/init.d/apache2 start
-elif [ -d /etc/httpd ]; then
-	apachectl stop
-    apachectl start
+
+if [ "$(whoami)" != "$DATAFARI_USER" ]; then
+        echo "Script must be run as user: $DATAFARI_USER"
+        echo "Script will exit"
+        exit 1
 fi
+
+
+
+defaultpathCertificates=${DIR}/..
+certificatefile=${defaultpathCertificates}/datafari.crt
+certificatekeyfile=${defaultpathCertificates}/datafari.key
+
+defaultcertificatefile=${defaultpathCertificates}/backup/datafari.crt
+defaultcertificatekeyfile=${defaultpathCertificates}/backup/datafari.key
+echo "Change of default Apache certificates"
+
+cp $defaultcertificatefile $certificatefile 
+cp $defaultcertificatekeyfile $certificatekeyfile
+
+echo "Certificates changed to default. Restart of Apache needed"
+#cd /opt/datafari/bin/monitorUtils
+#bash monit-stop-apache.sh
+#bash monit-start-apache.sh
+#echo "Restart done"

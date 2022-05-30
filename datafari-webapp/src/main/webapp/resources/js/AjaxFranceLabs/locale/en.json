@@ -788,6 +788,8 @@
     "upldZKconf": "Push my modifications to the System Configuration Manager",
     "upldZKconfLabel": "Push my modifications to the System Configuration Manager. This needs to be done before committing these modifications using the \"Apply my modifications to this Datafari instance\" button",
     "uploadButton": "Push",
+    "uploadCertificateCertificateLabel": "Certificate file (crt/pem)",
+    "uploadCertificateKeyLabel": "Key certificate file (key/pem)",
     "usedFile": "File already in use",
     "user": "User : ",
     "user-department-label": "User department",

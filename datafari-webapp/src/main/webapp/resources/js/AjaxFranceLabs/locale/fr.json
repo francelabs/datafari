@@ -790,6 +790,8 @@
     "upldZKconf": "Pousser mes modifications au System Configuration Manager",
     "upldZKconfLabel": "Pousser mes modifications au System Configuration Manager. Cela nécessite d'être fait avant de commiter ces modifications en utilisant le bouton \"Appliquer mes modifications sur cette instance de Datafari\"",
     "uploadButton": "Pousser",
+    "uploadCertificateCertificateLabel": "Fichier certificat (crt/pem)",
+    "uploadCertificateKeyLabel": "Fichier clé de certificat (key/pem)",
     "usedFile": "Fichier en cours d'utilisation",
     "user": "Utilisateurs : ",
     "user-department-label": "Département de l'utilisateur",
