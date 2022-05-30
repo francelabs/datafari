@@ -367,7 +367,7 @@
     "documentation-stopwords": "Si un mot présent dans le fichier stopwords est trouvé, alors Datafari l’ignorera à l’indexation ",
     "documentation-synonyms": "Les synonymes permettent de créer des associations entre mots. Si un mot A est déclaré comme synonyme d’un mot B, alors toute recherche pour le mot B fera aussi une recherche sur le mot A. ",
     "documentation-testadauthority": "Permet d'afficher les droits associés à l’utilisateur actuel (celui avec lequel vous êtes connecté) ou un autre utilisateur ",
-    "documentation-uploadfile": "Permet de téléverser les certificats SSL pour votre serveur Datafari. Nécessite deux fichiers: le fichier certificat (.crt) and le fichier clé de certificat (.key)",
+    "documentation-uploadfile": "Permet de téléverser les certificats SSL pour votre serveur Datafari. Nécessite deux fichiers: le fichier certificat (.crt ou .pem) et le fichier clé de certificat (.key ou .pem)",
     "documentation-userdepartment": "Cette page ne doit être utilisée que dans le cas où vous n’avez pas d’Active Directory configuré dans Datafari, ou si votre AD ne contient pas département. Le cas échéant, vous devrez associer manuellement un département à un utilisateur depuis cette page d’admin, si vous voulez pouvoir contextualiser la pertinence par département ",
     "domainNameLabel": "Nom de domaine",
     "domainSuffixLabel": "Suffixe du Domaine",
