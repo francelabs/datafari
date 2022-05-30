@@ -11,6 +11,7 @@ export DATAFARI_HOME=$( cd "$( dirname "${BASH_SOURCE[0]}" )/../.." && pwd )
 export PID_DIR=$DATAFARI_HOME/pid
 export ELK_HOME=$DATAFARI_HOME/elk
 export ELK_LOGS=$DATAFARI_HOME/logs/elk
+export ZEPPELIN_LOG_DIR=$ELK_LOGS
 export LOGSTASH_HOME=$ELK_HOME/logstash
 export ZEPPELIN_HOME=$ELK_HOME/zeppelin
 export TIKA_SERVER_HOME=$DATAFARI_HOME/tika-server

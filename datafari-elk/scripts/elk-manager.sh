@@ -64,7 +64,6 @@ start_zeppelin()
     cd $ZEPPELIN_HOME
     echo "Starting Zeppelin..."
     bash bin/zeppelin-daemon.sh start >/dev/null 2>&1 &
-    echo $! > $ZEPPELIN_PID_DIR/zeppelin.pid
     echo "Zeppelin started !"
     cd $DIR
   fi

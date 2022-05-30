@@ -23,7 +23,6 @@
 			<fileset dir="." >
 				<include name="logstash/**" />
 				<include name="scripts/**" />
-				<include name="zeppelin/**" />
 			</fileset>
 		</copy>
 
@@ -50,10 +49,24 @@
     </untar>
 		
 		<!-- Install Zeppelin Solr Interpreter -->
-		<!--<exec executable="/bin/bash">
-	    <arg value="${elk.dist}/zeppelin/bin/install-interpreter.sh"/>
-	    <arg value="-name solr -artifact com.lucidworks.zeppelin:zeppelin-solr:${zeppelin-solr-version}"/>
-	  </exec>-->
+    <exec executable="/bin/bash">
+      <arg value="${elk.dist}/zeppelin/bin/install-interpreter.sh"/>
+      <arg value="--name solr --artifact com.lucidworks.zeppelin:zeppelin-solr:${zeppelin-solr-version}"/>
+    </exec>
+		
+		<!-- Remove Zeppelin Default Notebooks -->
+		<delete includeemptydirs="true">
+      <fileset dir="${elk.dist}/zeppelin/notebook"> 
+        <include name="**/*"/>
+      </fileset>
+    </delete>
+		
+		<!-- Copy Datafari specific Zeppelin files -->
+		<copy toDir="${elk.dist}" overwrite="true" force="true">
+      <fileset dir="." >
+        <include name="zeppelin/**" />
+      </fileset>
+    </copy>
 		
 		<!-- Delete tar.gz and tgz files -->
     <delete>
