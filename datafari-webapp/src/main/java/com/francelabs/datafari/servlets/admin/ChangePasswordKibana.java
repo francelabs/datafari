@@ -23,10 +23,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 
-import com.francelabs.datafari.elk.ActivateELK;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
-import com.francelabs.datafari.utils.ELKConfiguration;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
 
@@ -180,7 +178,7 @@ public class ChangePasswordKibana extends HttpServlet {
             fos.close();
 
             // Kibana must be stopped before applying the new admin password
-            stopKibana();
+            // stopKibana();
             // Wait 5 seconds that Kibana stops
             Thread.sleep(5000);
           }
@@ -195,7 +193,7 @@ public class ChangePasswordKibana extends HttpServlet {
 
           // If user admin then Kibana must be restarted
           if (username.contentEquals("admin")) {
-            startKibana();
+            // startKibana();
           }
           if (securityAdminExitCode != 0) {
             jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
@@ -223,27 +221,5 @@ public class ChangePasswordKibana extends HttpServlet {
     }
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);
-  }
-
-  private void stopKibana() {
-    final String externalELK = ELKConfiguration.getInstance().getProperty(ELKConfiguration.EXTERNAL_ELK_ON_OFF);
-    if (externalELK.contentEquals("true")) {
-      final String elkServer = ELKConfiguration.getInstance().getProperty(ELKConfiguration.ELK_SERVER);
-      final String elkScriptDir = ELKConfiguration.getInstance().getProperty(ELKConfiguration.ELK_SCRIPTS_DIR);
-      ActivateELK.getInstance().deactivateKibanaRemote(elkServer, elkScriptDir);
-    } else {
-      ActivateELK.getInstance().deactivateKibana();
-    }
-  }
-
-  private void startKibana() {
-    final String externalELK = ELKConfiguration.getInstance().getProperty(ELKConfiguration.EXTERNAL_ELK_ON_OFF);
-    if (externalELK.contentEquals("true")) {
-      final String elkServer = ELKConfiguration.getInstance().getProperty(ELKConfiguration.ELK_SERVER);
-      final String elkScriptDir = ELKConfiguration.getInstance().getProperty(ELKConfiguration.ELK_SCRIPTS_DIR);
-      ActivateELK.getInstance().activateKibanaRemote(elkServer, elkScriptDir);
-    } else {
-      ActivateELK.getInstance().activateKibana();
-    }
   }
 }

@@ -4,7 +4,7 @@
       "title": "Doc Language Distribution",
       "text": "search(Monitoring, q\u003d\"facetType:language\", fl\u003d\"facet, numDocs\")",
       "user": "anonymous",
-      "dateUpdated": "2022-05-30 15:54:53.761",
+      "dateUpdated": "2022-05-31 15:34:09.544",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -86,13 +86,15 @@
       "jobName": "paragraph_1653926093761_1082412445",
       "id": "paragraph_1653912089334_1211927621",
       "dateCreated": "2022-05-30 15:54:53.761",
-      "status": "READY"
+      "dateStarted": "2022-05-31 15:34:09.546",
+      "dateFinished": "2022-05-31 15:34:09.554",
+      "status": "FINISHED"
     },
     {
       "title": "Doc Type Distribution",
-      "text": "search(Monitoring, q\u003d\"facetType:extension\", fl\u003d\"facet, numDocs\")",
+      "text": "search(Monitoring, q\u003d\"facetType:extension\", fl\u003d\"facet, numDocs\", rows\u003d250)",
       "user": "anonymous",
-      "dateUpdated": "2022-05-30 15:54:53.761",
+      "dateUpdated": "2022-05-31 15:34:27.331",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -174,7 +176,9 @@
       "jobName": "paragraph_1653926093761_579274318",
       "id": "paragraph_1653912192239_1171858547",
       "dateCreated": "2022-05-30 15:54:53.761",
-      "status": "READY"
+      "dateStarted": "2022-05-31 15:34:27.332",
+      "dateFinished": "2022-05-31 15:34:27.344",
+      "status": "FINISHED"
     },
     {
       "title": "Doc Source Distribution",
@@ -265,8 +269,9 @@
       "status": "READY"
     },
     {
+      "text": "",
       "user": "anonymous",
-      "dateUpdated": "2022-05-30 15:54:53.762",
+      "dateUpdated": "2022-05-31 14:48:19.827",
       "progress": 0,
       "config": {},
       "settings": {

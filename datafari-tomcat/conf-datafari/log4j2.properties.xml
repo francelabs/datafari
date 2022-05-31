@@ -78,7 +78,7 @@
     </RollingFile>
     
     <!-- ELK appender -->
-    <RollingFile name="ELK" fileName="${env:ELK_HOME}/logs/elk-startup.log" filePattern="${env:ELK_HOME}/logs/elk-startup.log.%d{yyyy-MM-dd}-%i.log">
+    <RollingFile name="ELK" fileName="${env:DATAFARI_LOGS}/elk-startup.log" filePattern="${env:DATAFARI_LOGS}/elk-startup.log.%d{yyyy-MM-dd}-%i.log">
       <PatternLayout>
         <Pattern>%d{yyyy-MM-dd'T'HH:mm:ss'Z'} %-5p %c{1}:%L - %m%n</Pattern>
       </PatternLayout>

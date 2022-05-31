@@ -42,8 +42,7 @@ public class ELKAdmin extends HttpServlet {
   /**
    * Check if the provided URL exists or return an error code
    *
-   * @param urlString
-   *          the URL to check
+   * @param urlString the URL to check
    * @return true if URL exists, false otherwise
    * @throws MalformedURLException
    * @throws IOException
@@ -96,12 +95,8 @@ public class ELKAdmin extends HttpServlet {
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
 
-    jsonResponse.put(ELKConfiguration.KIBANA_URI, ELKConfiguration.getInstance().getProperty(ELKConfiguration.KIBANA_URI));
-    jsonResponse.put(ELKConfiguration.EXTERNAL_ELK_ON_OFF, ELKConfiguration.getInstance().getProperty(ELKConfiguration.EXTERNAL_ELK_ON_OFF));
-    jsonResponse.put(ELKConfiguration.ELK_SERVER, ELKConfiguration.getInstance().getProperty(ELKConfiguration.ELK_SERVER));
-    jsonResponse.put(ELKConfiguration.ELK_SCRIPTS_DIR, ELKConfiguration.getInstance().getProperty(ELKConfiguration.ELK_SCRIPTS_DIR));
     final boolean activated = Boolean.parseBoolean(ELKConfiguration.getInstance().getProperty(ELKConfiguration.ELK_ACTIVATION));
-    final boolean urlUp = isURLUp(ELKConfiguration.getInstance().getProperty(ELKConfiguration.KIBANA_URI));
+    final boolean urlUp = isURLUp("http://localhost:8888");
 
     if (activated) {
       jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
@@ -132,31 +127,14 @@ public class ELKAdmin extends HttpServlet {
       jsonResponse.put(OutputConstants.STATUS, "Query Malformed");
       logger.error("Query Malformed, some parameters are empty or missing: " + req.getQueryString());
     } else {
-      String elkActivation = req.getParameter(ELKConfiguration.ELK_ACTIVATION);
+      final String elkActivation = req.getParameter(ELKConfiguration.ELK_ACTIVATION);
 
       try {
         if (elkActivation.equals("true")) {
-          if (req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF) != null && req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF).toString().equals("true")) {
-            if (req.getParameter(ELKConfiguration.ELK_SERVER) != null && req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR) != null) {
-              ActivateELK.getInstance().activateRemote(req.getParameter(ELKConfiguration.ELK_SERVER), req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR));
-            } else {
-              logger.warn("Unable to activate ELK : wrong parameters");
-              elkActivation = "false";
-            }
-          } else {
-            ActivateELK.getInstance().activate();
-          }
+          ActivateELK.getInstance().activate();
         } else {
-          if (req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF) != null && req.getParameter(ELKConfiguration.EXTERNAL_ELK_ON_OFF).toString().equals("true")) {
-            if (req.getParameter(ELKConfiguration.ELK_SERVER) != null && req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR) != null) {
-              ActivateELK.getInstance().deactivateRemote(req.getParameter(ELKConfiguration.ELK_SERVER), req.getParameter(ELKConfiguration.ELK_SCRIPTS_DIR));
-            } else {
-              logger.warn("Unable to unactivate ELK : wrong parameters");
-              elkActivation = "true";
-            }
-          } else {
-            ActivateELK.getInstance().deactivate();
-          }
+
+          ActivateELK.getInstance().deactivate();
         }
         try {
           ELKConfiguration.getInstance().setProperty(ELKConfiguration.ELK_ACTIVATION, elkActivation);

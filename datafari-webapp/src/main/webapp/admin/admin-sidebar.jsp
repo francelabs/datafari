@@ -10,21 +10,19 @@
   String getSolrSchemaAdmin ="";
   String getPath = getProtocol+"://"+getDomain+":"+getPort+path;
   String ApachePresent = "@APACHE-PRESENT@";
-  String pathKibana="";
+  String pathZeppelin="";
   String getMCF = "@GET-MCF-IP@" ;
   String getSolr = "@GET-SOLR-IP@" ;
   String getMonit = "@GET-MONIT-IP@" ;
   String getGlances = "@GET-GLANCES-IP@" ;
-  pathKibana = "https://"+getDomain+":5601";
+  pathZeppelin = "http://localhost:8888";
   getSolrSchemaAnalysis = getSolr + "/#/"+mainCollection + "/analysis";
   getSolrSchemaAdmin = getSolr + "/#/"+ mainCollection + "/schema";
   
-  String getKibanaCorpusAnalysis = pathKibana +"/app/kibana?security_tenant=searchexpert_tenant#/dashboard/Content-Analysis";
-  String getKibanaCorpusAnalysisOverTime = pathKibana +"/app/kibana?security_tenant=searchexpert_tenant#/dashboard/Content-Analysis-Over-Time";
-  String getKibanaQueriesAnalysis = pathKibana +"/app/kibana?security_tenant=searchexpert_tenant#/dashboard/Queries-Statistics";
-  String getKibanaProblematicFiles = pathKibana +"/app/kibana?security_tenant=admin_tenant#/dashboard/Crawl-monitoring-dashboard";
-  String getKibanaLog = pathKibana +"/app/kibana?security_tenant=admin_tenant#/dashboard/Global-Datafari-Dashboard" ;
-  String getKibanaMetricBeatOverview = pathKibana +"/app/kibana#/dashboard/Metricbeat-system-overview";    
+  String getZeppelinCorpusAnalysis = pathZeppelin +"/#/notebook/2H4J4UEEM";
+  String getZeppelinQueriesAnalysis = pathZeppelin +"/#/notebook/2H4J4UEEM";
+  String getZeppelinProblematicFiles = pathZeppelin +"/#/notebook/2H6MSJCE6";
+  String getZeppelinLog = pathZeppelin +"/#/notebook/2H5EXYG6K" ;  
 %>
 <nav id="sidebar" class="bg-light calc-height">
   <ul class="list-unstyled">
@@ -79,9 +77,8 @@
           <i class="fas fa-chart-bar"></i><span id="usagesAnalysis-AdminUI" class="hidden-xs"></span>
         </a>
         <ul id="menu-usages-analysis" class="list-unstyled collapse">
-          <li id="CorpusAnalysis"><a id="corpusAnalysis-AdminUI" target="_blank" href="<%= getKibanaCorpusAnalysis %>"></a></li>
-          <li id="CorpusOTAnalysis"><a id="corpusOTAnalysis-AdminUI" target="_blank" href="<%= getKibanaCorpusAnalysisOverTime %>"></a></li>
-          <li id="QueriesAnalysis"><a id="queriesAnalysis-AdminUI" target="_blank" href="<%= getKibanaQueriesAnalysis %>"></a></li>
+          <li id="CorpusAnalysis"><a id="corpusAnalysis-AdminUI" target="_blank" href="<%= getZeppelinCorpusAnalysis %>"></a></li>
+          <li id="QueriesAnalysis"><a id="queriesAnalysis-AdminUI" target="_blank" href="<%= getZeppelinQueriesAnalysis %>"></a></li>
         </ul>
       </li>
       
@@ -99,7 +96,6 @@
          <li id="downloadLogs"><a id="downloadLogs-AdminUI" class="ajax-link" href="?page=downloadLogs"></a></li>
          <li id="monitAdmin"><a target="_blank" href="@MONIT-IP@" id="monitAdmin-AdminUI"></a></li>
          <li id="glancesAdmin"><a target="_blank" href="@GLANCES-IP@" id="glancesAdmin-AdminUI"></a></li>
-<!--          <li id="metricbeatOverview"><a id="metricbeatOverview-AdminUI" target="_blank" href="@METRICBEAT@"></a></li> -->
          </ul>
          </li>
       <%

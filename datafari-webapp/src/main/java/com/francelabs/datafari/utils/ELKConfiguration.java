@@ -30,10 +30,6 @@ public class ELKConfiguration extends AbstractConfigClass {
 
   // Properties
   public static final String ELK_ACTIVATION = "ELKactivation";
-  public static final String KIBANA_URI = "KibanaURI";
-  public static final String EXTERNAL_ELK_ON_OFF = "externalELK";
-  public static final String ELK_SERVER = "ELKServer";
-  public static final String ELK_SCRIPTS_DIR = "ELKScriptsDir";
   public static final String SERVER_TYPE = "NODETYPE";
   private static final String configFilename = "datafari.properties";
 

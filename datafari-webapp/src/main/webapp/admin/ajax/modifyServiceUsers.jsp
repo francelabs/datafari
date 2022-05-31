@@ -18,56 +18,40 @@
     </ol>
   </nav>
 		<div class="box">
-		<div class="box-header">
-			<div class="box-name">
-				<i class="fas fa-table"></i><span  id="title">Modify Users</span>
-			</div>
-			<div class="box-icons">
-				<a class="collapse-link"><i class="fas fa-chevron-up"></i></a>
-			</div>
-			<div class="no-move"></div>
-		</div>
-		<div id="thBox" class="box-content">
-			<h1>Modify a User  <i style="color:#A8C900" class="fas fa-users"></i></h1><br/>
-			<div class="documentation-style-no-margin">
-				<p class="documentation-preview"> <span id="documentation-modifyusersapache"></span><a class="documentation-link" href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/644448261/Users+management+in+Apache+proxy+-+Enterprise+edition" target="_blank"> ...see more</a></p>
-			</div>
-			<form class="form-horizontal" role="form">
-				<div class="col">					
-					<p>Here you can change the password of a user from Apache.<br/>monitadmin and glancesadmin users are only for Enterprise Edition</p><br/>
-					
-					<table id="tableResult" class="table table-bordered table-striped">
-						<thead>
-							<tr>
-								<th>Username</th>
-								<th>Change Password<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Be carefull that once you type enter after having entered your new password, it will be immediately taken into account. No further confirmation will be displayed'>i</button></span></th>
-							</tr>
-						</thead>
-						<tbody id="apacheBody">
-									
-						</tbody>
-					</table>
-					<div id="Message"><i class="fas fa-check success"></i> Change done. The web proxy is restarting, please wait 2 minutes before using the admin pages again</i></div>
-				</div>
-			</form>
-      <br/>
-      <form class="form-horizontal" role="form">
-        <div class="col">         
-          <p>Here you can change the password of a user from Kibana</p><br/>
-          <table id="tableResultKibana" class="table table-bordered table-striped">
-            <thead>
-              <tr>
-                <th>Username</th>
-                <th>Change Password<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Be carefull that once you type enter after having entered your new password, it will be immediately taken into account. No further confirmation will be displayed'>i</button></span></th>
-              </tr>
-            </thead>
-            <tbody id="kibanaBody">
-                  
-            </tbody>
-          </table>
-          <div id="MessageKibana"><i class='fa fa-spinner fa-spin'></i> Please wait</div>
-        </div>
-      </form>
-		</div>	
+  		<div class="box-header">
+  			<div class="box-name">
+  				<i class="fas fa-table"></i><span  id="title">Modify Users</span>
+  			</div>
+  			<div class="box-icons">
+  				<a class="collapse-link"><i class="fas fa-chevron-up"></i></a>
+  			</div>
+  			<div class="no-move"></div>
+  		</div>
+  		<div id="thBox" class="box-content">
+  			<h1>Modify a User  <i style="color:#A8C900" class="fas fa-users"></i></h1><br/>
+  			<div class="documentation-style-no-margin">
+  				<p class="documentation-preview"> <span id="documentation-modifyusersapache"></span><a class="documentation-link" href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/644448261/Users+management+in+Apache+proxy+-+Enterprise+edition" target="_blank"> ...see more</a></p>
+  			</div>
+  			<form class="form-horizontal" role="form">
+  				<div class="col">					
+  					<p>Here you can change the password of a user from Apache.<br/>monitadmin and glancesadmin users are only for Enterprise Edition</p><br/>
+  					
+  					<table id="tableResult" class="table table-bordered table-striped">
+  						<thead>
+  							<tr>
+  								<th>Username</th>
+  								<th>Change Password<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Be carefull that once you type enter after having entered your new password, it will be immediately taken into account. No further confirmation will be displayed'>i</button></span></th>
+  							</tr>
+  						</thead>
+  						<tbody id="apacheBody">
+  									
+  						</tbody>
+  					</table>
+  					<div id="Message"><i class="fas fa-check success"></i> Change done. The web proxy is restarting, please wait 2 minutes before using the admin pages again</i></div>
+  				</div>
+  			</form>
+        <br/>
+  		</div>	
+    </div>
 </body>
 </html>

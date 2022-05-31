@@ -28,10 +28,6 @@
 
 		<!-- *** Setup elk-manager.sh *** -->
 		<replace file="${elk.dist}/scripts/elk-manager.sh" token="@ADDITIONAL_LOGSTASH_INIT@" value=""/>
-		<replace file="${elk.dist}/scripts/elk-manager.sh" token="@ADDITIONAL_TEMPLATES@" value=""/>
-		<replace file="${elk.dist}/scripts/elk-manager.sh" token="@ADDITIONAL_IMPORTS@" value=""/>
-		<replace file="${elk.dist}/scripts/elk-manager.sh" token="@ADDITIONAL_START@" value=""/>
-		<replace file="${elk.dist}/scripts/elk-manager.sh" token="@ADDITIONAL_STOP@" value=""/>
 		<replace file="${elk.dist}/scripts/elk-manager.sh" token="@ADDITIONAL_FUNCTIONS@" value=""/>
 		<replace file="${elk.dist}/scripts/elk-manager.sh" token="@ADDITIONAL_COMMANDS@" value=""/>
 
@@ -48,18 +44,26 @@
       <cutdirsmapper dirs="1" />
     </untar>
 		
-		<!-- Install Zeppelin Solr Interpreter -->
-    <exec executable="/bin/bash">
-      <arg value="${elk.dist}/zeppelin/bin/install-interpreter.sh"/>
-      <arg value="--name solr --artifact com.lucidworks.zeppelin:zeppelin-solr:${zeppelin-solr-version}"/>
-    </exec>
-		
 		<!-- Remove Zeppelin Default Notebooks -->
 		<delete includeemptydirs="true">
       <fileset dir="${elk.dist}/zeppelin/notebook"> 
         <include name="**/*"/>
       </fileset>
     </delete>
+		
+		<!-- Remove Zeppelin Unused Interpreters -->
+    <delete includeemptydirs="true">
+      <fileset dir="${elk.dist}/zeppelin/interpreter"> 
+        <include name="**/*"/>
+      	<exclude name="*.jar"/>
+      </fileset>
+    </delete>
+		
+		<!-- Install Zeppelin Solr Interpreter -->
+    <exec executable="/bin/bash">
+      <arg value="${elk.dist}/zeppelin/bin/install-interpreter.sh"/>
+      <arg value="--name solr --artifact com.lucidworks.zeppelin:zeppelin-solr:${zeppelin-solr-version}"/>
+    </exec>
 		
 		<!-- Copy Datafari specific Zeppelin files -->
 		<copy toDir="${elk.dist}" overwrite="true" force="true">

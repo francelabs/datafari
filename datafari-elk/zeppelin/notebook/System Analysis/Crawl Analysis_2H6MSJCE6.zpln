@@ -1,0 +1,628 @@
+{
+  "paragraphs": [
+    {
+      "title": "Crawl hosts",
+      "text": "facet(Crawl, fq\u003d\"starttime:[NOW-7DAY TO NOW]\", buckets\u003dhost)",
+      "user": "anonymous",
+      "dateUpdated": "2022-05-31 14:17:52.833",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "pieChart",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "host": "string",
+                      "count(*)": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "host\tcount(*)\nfrancelabs-VirtualBox\t80\n"
+          },
+          {
+            "type": "HTML",
+            "data": "\u003cfont color\u003dblue\u003eNumber of results:1.\u003c/font\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1654004738384_1615702234",
+      "id": "paragraph_1654004738384_1615702234",
+      "dateCreated": "2022-05-31 13:45:38.384",
+      "dateStarted": "2022-05-31 14:17:52.834",
+      "dateFinished": "2022-05-31 14:17:52.845",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Crawl activities failure status",
+      "text": "facet(Crawl, q\u003d\"-resultcode:OK\", fq\u003d\"starttime:[NOW-7DAY TO NOW]\", buckets\u003dresultcode, rows\u003d50)",
+      "user": "anonymous",
+      "dateUpdated": "2022-05-31 15:30:18.824",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "pieChart",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "count(*)": "string",
+                      "resultcode": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "pieChart": {}
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "resultcode",
+                  "index": 1.0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "count(*)",
+                  "index": 0.0,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "count(*)\tresultcode\n1\tTIKAEXCEPTION\n"
+          },
+          {
+            "type": "HTML",
+            "data": "\u003cfont color\u003dblue\u003eNumber of results:1.\u003c/font\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1654004886673_659255446",
+      "id": "paragraph_1654004886673_659255446",
+      "dateCreated": "2022-05-31 13:48:06.673",
+      "dateStarted": "2022-05-31 15:30:18.825",
+      "dateFinished": "2022-05-31 15:30:18.838",
+      "status": "FINISHED"
+    },
+    {
+      "title": "File types failures",
+      "text": "facet(Crawl, q\u003d\"-resultcode:OK\", fq\u003d\"starttime:[NOW-7DAY TO NOW]\", buckets\u003dextension, rows\u003d500)",
+      "user": "anonymous",
+      "dateUpdated": "2022-05-31 15:28:38.361",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "pieChart",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "extension": "string",
+                      "count(*)": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "extension\tcount(*)\nhtml\t1\n"
+          },
+          {
+            "type": "HTML",
+            "data": "\u003cfont color\u003dblue\u003eNumber of results:1.\u003c/font\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1654005070091_5002312",
+      "id": "paragraph_1654005070091_5002312",
+      "dateCreated": "2022-05-31 13:51:10.091",
+      "dateStarted": "2022-05-31 15:28:38.362",
+      "dateFinished": "2022-05-31 15:28:38.375",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Tika extraction failures",
+      "text": "facet(Crawl, q\u003d\"-resultcode:OK and activitytype:extract*\", fq\u003d\"starttime:[NOW-7DAY TO NOW]\", buckets\u003dresultcode)",
+      "user": "anonymous",
+      "dateUpdated": "2022-05-31 14:16:55.862",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "colWidth": 6.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "pieChart",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "count(*)": "string",
+                      "resultcode": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "pieChart": {}
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "resultcode",
+                  "index": 1.0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "count(*)",
+                  "index": 0.0,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "count(*)\tresultcode\n1\tTIKAEXCEPTION\n"
+          },
+          {
+            "type": "HTML",
+            "data": "\u003cfont color\u003dblue\u003eNumber of results:1.\u003c/font\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1654005370566_168727504",
+      "id": "paragraph_1654005370566_168727504",
+      "dateCreated": "2022-05-31 13:56:10.566",
+      "dateStarted": "2022-05-31 14:16:55.863",
+      "dateFinished": "2022-05-31 14:16:55.879",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Solr ingest failures",
+      "text": "facet(Crawl, q\u003d\"-resultcode:OK and activitytype:(document\\ ingest*)\", fq\u003d\"starttime:[NOW-7DAY TO NOW]\", buckets\u003dresultcode)",
+      "user": "anonymous",
+      "dateUpdated": "2022-05-31 14:29:22.414",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "pieChart",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "count(*)": "string",
+                      "resultcode": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "pieChart": {}
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "resultcode",
+                  "index": 1.0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "count(*)",
+                  "index": 0.0,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cfont color\u003dred\u003eZero results for the query.\u003c/font\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1654006174011_801352639",
+      "id": "paragraph_1654006174011_801352639",
+      "dateCreated": "2022-05-31 14:09:34.012",
+      "dateStarted": "2022-05-31 14:28:39.242",
+      "dateFinished": "2022-05-31 14:28:39.253",
+      "status": "FINISHED"
+    },
+    {
+      "title": "Raw Logs",
+      "text": "search(Crawl, fl\u003d\"starttime, endtime, host, entityid, resultcode, resultdesc, activitytype, connector\", rows\u003d200000)",
+      "user": "anonymous",
+      "dateUpdated": "2022-05-31 15:31:37.409",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300.0,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {
+                    "columns": [
+                      {
+                        "name": "starttime4",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "endtime2",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "host1",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "entityid3",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {
+                            "term": ""
+                          }
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "resultcode5",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {
+                          "priority": 0.0,
+                          "direction": "desc"
+                        },
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "resultdesc7",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "activitytype6",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "connector0",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      }
+                    ],
+                    "scrollFocus": {},
+                    "selection": [],
+                    "grouping": {
+                      "grouping": [],
+                      "aggregations": [],
+                      "rowExpandedStates": {}
+                    },
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1.0,
+                      "paginationPageSize": 250.0
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "updated": false,
+                    "names": {
+                      "connector": "string",
+                      "host": "string",
+                      "endtime": "string",
+                      "entityid": "string",
+                      "starttime": "string",
+                      "resultcode": "string",
+                      "activitytype": "string",
+                      "resultdesc": "string"
+                    }
+                  },
+                  "updated": false,
+                  "initialized": false,
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": true,
+                    "showAggregationFooter": false
+                  }
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "connector\thost\tendtime\tentityid\tstarttime\tresultcode\tactivitytype\tresultdesc\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:04Z\tfile://///localhost/test/index.html\t2022-05-30T13:00:04Z\tTIKAEXCEPTION\textract [TikaServerRmetaConnector]\tX-TIKA:EXCEPTION:container_exception: org.xml.sax.SAXParseException; lineNumber: 6; columnNumber: 138; The element type \"img\" must be terminated by the matching end-tag \"\u003c/img\u003e\".at org.apache.xerces.util.ErrorHandlerWrapper.createSAXParseException(Unknown Source)at org.apache.xerces.util.ErrorHandlerWrapper.fatalError(Unknown Source)at org.apache.xerces.impl.XMLErrorReporter.reportError(Unknown Source)at org.apache.xerces.impl.XMLErrorReporter.reportError(Unknown Source)at org.apache.xerces.impl.XMLErrorReporter.reportError(Unknown Source)at org.apache.xerces.impl.XMLScanner.reportFatalError(Unknown Source)at org.apache.xerces.impl.XMLNSDocumentScannerImpl.scanEndElement(Unknown Source)at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl$FragmentContentDispatcher.dispatch(Unknown Source)at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl.scanDocument(Unknown Source)at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source)at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source)at org.apache.xerces.parsers.XMLParser.parse(Unknown Source)at org.apache.xerces.parsers.AbstractSAXParser.parse(Unknown Source)at org.apache.xerces.jaxp.SAXParserImpl$JAXPSAXParser.parse(Unknown Source)at org.apache.xerces.jaxp.SAXParserImpl.parse(Unknown Source)at java.xml/javax.xml.parsers.SAXParser.parse(SAXParser.java:197)at org.apache.tika.utils.XMLReaderUtils.parseSAX(XMLReaderUtils.java:479)at org.apache.tika.parser.xml.XMLParser.parse(XMLParser.java:71)at org.apache.tika.parser.CompositeParser.parse(CompositeParser.java:298)at org.apache.tika.parser.CompositeParser.parse(CompositeParser.java:298)at org.apache.tika.parser.CompositeParser.parse(CompositeParser.java:298)at org.apache.tika.parser.AutoDetectParser.parse(AutoDetectParser.java:180)at org.apache.tika.parser.RecursiveParserWrapper.parse(RecursiveParserWrapper.java:157)at org.apache.tika.server.core.resource.TikaResource.parse(TikaResource.java:347)at org.apache.tika.server.core.resource.RecursiveMetadataResource.parseMetadata(RecursiveMetadataResource.java:78)at org.apache.tika.server.core.resource.RecursiveMetadataResource.parseMetadataToMetadataList(RecursiveMetadataResource.java:190)at org.apache.tika.server.core.resource.RecursiveMetadataResource.getMetadata(RecursiveMetadataResource.java:179)at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)at java.base/java.lang.reflect.Method.invoke(Method.java:566)at org.apache.cxf.service.invoker.AbstractInvoker.performInvocation(AbstractInvoker.java:179)at org.apache.cxf.service.invoker.AbstractInvoker.invoke(AbstractInvoker.java:96)at org.apache.cxf.jaxrs.JAXRSInvoker.invoke(JAXRSInvoker.java:201)at org.apache.cxf.jaxrs.JAXRSInvoker.invoke(JAXRSInvoker.java:104)at org.apache.cxf.interceptor.ServiceInvokerInterceptor$1.run(ServiceInvokerInterceptor.java:59)at org.apache.cxf.interceptor.ServiceInvokerInterceptor.handleMessage(ServiceInvokerInterceptor.java:96)at org.apache.cxf.phase.PhaseInterceptorChain.doIntercept(PhaseInterceptorChain.java:307)at org.apache.cxf.transport.ChainInitiationObserver.onMessage(ChainInitiationObserver.java:121)at org.apache.cxf.transport.http.AbstractHTTPDestination.invoke(AbstractHTTPDestination.java:265)at org.apache.cxf.transport.http_jetty.JettyHTTPDestination.doService(JettyHTTPDestination.java:247)at org.apache.cxf.transport.http_jetty.JettyHTTPHandler.handle(JettyHTTPHandler.java:79)at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:127)at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:235)at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1440)at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:190)at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1355)at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:191)at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:127)at org.eclipse.jetty.server.Server.handle(Server.java:516)at org.eclipse.jetty.server.HttpChannel.lambda$handle$1(HttpChannel.java:487)at org.eclipse.jetty.server.HttpChannel.dispatch(HttpChannel.java:732)at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:479)at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:277)at org.eclipse.jetty.io.AbstractConnection$ReadCallback.succeeded(AbstractConnection.java:311)at org.eclipse.jetty.io.FillInterest.fillable(FillInterest.java:105)at org.eclipse.jetty.io.ChannelEndPoint$1.run(ChannelEndPoint.java:104)at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.runTask(EatWhatYouKill.java:338)at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.doProduce(EatWhatYouKill.java:315)at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.tryProduce(EatWhatYouKill.java:173)at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.run(EatWhatYouKill.java:131)at org.eclipse.jetty.util.thread.ReservedThreadExecutor$ReservedThread.run(ReservedThreadExecutor.java:409)at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:883)at org.eclipse.jetty.util.thread.QueuedThreadPool$Runner.run(QueuedThreadPool.java:1034)at java.base/java.lang.Thread.run(Thread.java:829)\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/test-metadata.docx\t2022-05-30T13:00:05Z\tOK\tdocument ingest (DatafariSolrNoTika)\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:06Z\tfile://///localhost/test/test3%264.txt\t2022-05-30T13:00:06Z\tOK\tclean [MetadataCleaner]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:08Z\tsmb://localhost/test/dossier1/sousdossier1/test1.docx\t2022-05-30T13:00:08Z\tOK\taccess\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/test-metadata.docx\t2022-05-30T13:00:05Z\tOK\tclean [MetadataCleaner]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:06Z\tfile://///localhost/test/dossier2/test1.dotx\t2022-05-30T13:00:06Z\tOK\textract [TikaServerRmetaConnector]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:06Z\tfile://///localhost/test/dossier2/test1.dot\t2022-05-30T13:00:06Z\tOK\tclean [MetadataCleaner]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:04Z\tfile://///localhost/test/test1.txt\t2022-05-30T13:00:04Z\tOK\tclean [MetadataCleaner]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:04Z\tfile://///localhost/test/test-metadata.pdf\t2022-05-30T13:00:03Z\tOK\textract [TikaServerRmetaConnector]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:04Z\tfile://///localhost/test/test-metadata.pdf\t2022-05-30T13:00:04Z\tOK\tclean [MetadataCleaner]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:04Z\tsmb://localhost/test/image_merdique.jpg\t2022-05-30T13:00:04Z\tOK\taccess\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/Datafari%20Enterprise%20Search%20-%20Documentation.html\t2022-05-30T13:00:05Z\tOK\tclean [MetadataCleaner]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:06Z\tfile://///localhost/test/test3%264.txt\t2022-05-30T13:00:06Z\tOK\textract [TikaServerRmetaConnector]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:08Z\tfile://///localhost/test/dossier1/sousdossier1/test1.docx\t2022-05-30T13:00:08Z\tOK\tdocument ingest (DatafariSolrNoTika)\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/test-metadata.docx\t2022-05-30T13:00:05Z\tOK\textract [TikaServerRmetaConnector]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tsmb://localhost/test/Datafari Enterprise Search - Documentation.html\t2022-05-30T13:00:05Z\tOK\taccess\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:06Z\tsmb://localhost/test/test3\u00264.txt\t2022-05-30T13:00:06Z\tOK\taccess\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:06Z\tfile://///localhost/test/dossier2/test1.dot\t2022-05-30T13:00:06Z\tOK\textract [TikaServerRmetaConnector]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:04Z\tfile://///localhost/test/test1.txt\t2022-05-30T13:00:03Z\tOK\textract [TikaServerRmetaConnector]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:04Z\tsmb://localhost/test/test-metadata.pdf\t2022-05-30T13:00:03Z\tOK\taccess\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:04Z\tfile://///localhost/test/result\t2022-05-30T13:00:04Z\tOK\textract [TikaServerRmetaConnector]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:04Z\tfile://///localhost/test/result\t2022-05-30T13:00:04Z\tOK\tclean [MetadataCleaner]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:04Z\tfile://///localhost/test/test1.txt\t2022-05-30T13:00:04Z\tOK\tdocument ingest (DatafariSolrNoTika)\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:04Z\tsmb://localhost/test/test1.txt\t2022-05-30T13:00:03Z\tOK\taccess\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:04Z\tfile://///localhost/test/result\t2022-05-30T13:00:04Z\tOK\tdocument ingest (DatafariSolrNoTika)\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:04Z\tsmb://localhost/test/result\t2022-05-30T13:00:04Z\tOK\taccess\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:04Z\tfile://///localhost/test/image_merdique.jpg\t2022-05-30T13:00:04Z\tOK\textract [TikaServerRmetaConnector]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:04Z\tfile://///localhost/test/image_merdique.jpg\t2022-05-30T13:00:04Z\tOK\tclean [MetadataCleaner]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:04Z\tfile://///localhost/test/Datafari%20Enterprise%20Search.html\t2022-05-30T13:00:04Z\tOK\textract [TikaServerRmetaConnector]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:04Z\tfile://///localhost/test/Datafari%20Enterprise%20Search.html\t2022-05-30T13:00:04Z\tOK\tclean [MetadataCleaner]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:04Z\tfile://///localhost/test/image_merdique.jpg\t2022-05-30T13:00:04Z\tOK\tdocument ingest (DatafariSolrNoTika)\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/Datafari%20Enterprise%20Search%20-%20Documentation.html\t2022-05-30T13:00:05Z\tOK\textract [TikaServerRmetaConnector]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/test1.docx\t2022-05-30T13:00:05Z\tOK\tclean [MetadataCleaner]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:06Z\tsmb://localhost/test/test1.docx\t2022-05-30T13:00:05Z\tOK\taccess\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/test1-TOTALDOC.pdf\t2022-05-30T13:00:05Z\tOK\tclean [MetadataCleaner]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/Datafari%20Enterprise%20Search%20-%20Documentation.html\t2022-05-30T13:00:05Z\tOK\tdocument ingest (DatafariSolrNoTika)\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tsmb://localhost/test/test1-TOTALDOC.pdf\t2022-05-30T13:00:05Z\tOK\taccess\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:06Z\tfile://///localhost/test/test3%264.txt\t2022-05-30T13:00:06Z\tOK\tdocument ingest (DatafariSolrNoTika)\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:06Z\tfile://///localhost/test/dossier2/test1.dotx\t2022-05-30T13:00:06Z\tOK\tdocument ingest (DatafariSolrNoTika)\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:06Z\tfile://///localhost/test/dossier2/test1.dot\t2022-05-30T13:00:06Z\tOK\tdocument ingest (DatafariSolrNoTika)\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:06Z\tsmb://localhost/test/dossier2/test1.dot\t2022-05-30T13:00:06Z\tOK\taccess\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:08Z\tfile://///localhost/test/dossier1/sousdossier1/test1.docx\t2022-05-30T13:00:08Z\tOK\textract [TikaServerRmetaConnector]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:08Z\tfile://///localhost/test/dossier1/sousdossier1/test1.docx\t2022-05-30T13:00:08Z\tOK\tclean [MetadataCleaner]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:08Z\tfile://///localhost/test/dossier2/sousdossier2/test1.pdf\t2022-05-30T13:00:08Z\tOK\textract [TikaServerRmetaConnector]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:08Z\tfile://///localhost/test/dossier2/sousdossier2/test1.pdf\t2022-05-30T13:00:08Z\tOK\tclean [MetadataCleaner]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:08Z\tfile://///localhost/test/dossier1/sousdossier1/test1.doc\t2022-05-30T13:00:08Z\tOK\textract [TikaServerRmetaConnector]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:08Z\tfile://///localhost/test/dossier1/sousdossier1/test1.doc\t2022-05-30T13:00:08Z\tOK\tclean [MetadataCleaner]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:08Z\tfile://///localhost/test/dossier2/sousdossier2/test1.pdf\t2022-05-30T13:00:08Z\tOK\tdocument ingest (DatafariSolrNoTika)\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:08Z\tsmb://localhost/test/dossier2/sousdossier2/test1.pdf\t2022-05-30T13:00:08Z\tOK\taccess\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:08Z\tfile://///localhost/test/dossier1/sousdossier1/test1.doc\t2022-05-30T13:00:08Z\tOK\tdocument ingest (DatafariSolrNoTika)\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:10Z\tfile://///localhost/test/fichiers%20pb/BdC-ITALIE_metadatabig.pdf\t2022-05-30T13:00:06Z\tOK\textract [TikaServerRmetaConnector]\tSome metadata have been truncated by Tika because they exceeded the limits specified in the Tika conf\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:10Z\tfile://///localhost/test/fichiers%20pb/BdC-ITALIE_metadatabig.pdf\t2022-05-30T13:00:10Z\tOK\tclean [MetadataCleaner]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:10Z\tfile://///localhost/test/fichiers%20pb/BdC-ITALIE_metadatabig.pdf\t2022-05-30T13:00:10Z\tOK\tdocument ingest (DatafariSolrNoTika)\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:04Z\tfile://///localhost/test/test-metadata.pdf\t2022-05-30T13:00:04Z\tOK\tdocument ingest (DatafariSolrNoTika)\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:04Z\tfile://///localhost/test/index.html\t2022-05-30T13:00:04Z\tOK\tclean [MetadataCleaner]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/Datafari%20Enterprise%20Search.html\t2022-05-30T13:00:04Z\tOK\tdocument ingest (DatafariSolrNoTika)\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/index.html\t2022-05-30T13:00:05Z\tOK\tdocument ingest (DatafariSolrNoTika)\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tsmb://localhost/test/Datafari Enterprise Search.html\t2022-05-30T13:00:04Z\tOK\taccess\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tsmb://localhost/test/index.html\t2022-05-30T13:00:04Z\tOK\taccess\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/test2.pdf\t2022-05-30T13:00:05Z\tOK\textract [TikaServerRmetaConnector]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/test2.pdf\t2022-05-30T13:00:05Z\tOK\tclean [MetadataCleaner]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/test2.pdf\t2022-05-30T13:00:05Z\tOK\tdocument ingest (DatafariSolrNoTika)\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tsmb://localhost/test/test2.pdf\t2022-05-30T13:00:05Z\tOK\taccess\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/test2.txt\t2022-05-30T13:00:05Z\tOK\textract [TikaServerRmetaConnector]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/test2.txt\t2022-05-30T13:00:05Z\tOK\tclean [MetadataCleaner]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/test2.txt\t2022-05-30T13:00:05Z\tOK\tdocument ingest (DatafariSolrNoTika)\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tsmb://localhost/test/test2.txt\t2022-05-30T13:00:05Z\tOK\taccess\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/%26%7E%23%27%7B%28%5B-%60_%5E%40%C2%B0%29%5D%2B%3D%7D%2C%3B%21%C2%A7%25%C2%A4%24%C2%A3%C2%B5fichier%20pourri.txt\t2022-05-30T13:00:05Z\tOK\textract [TikaServerRmetaConnector]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/%26%7E%23%27%7B%28%5B-%60_%5E%40%C2%B0%29%5D%2B%3D%7D%2C%3B%21%C2%A7%25%C2%A4%24%C2%A3%C2%B5fichier%20pourri.txt\t2022-05-30T13:00:05Z\tOK\tclean [MetadataCleaner]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/%26%7E%23%27%7B%28%5B-%60_%5E%40%C2%B0%29%5D%2B%3D%7D%2C%3B%21%C2%A7%25%C2%A4%24%C2%A3%C2%B5fichier%20pourri.txt\t2022-05-30T13:00:05Z\tOK\tdocument ingest (DatafariSolrNoTika)\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tsmb://localhost/test/\u0026~#\u0027{([-`_^@°)]+\u003d},;!§%¤$£µfichier pourri.txt\t2022-05-30T13:00:05Z\tOK\taccess\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/test1.docx\t2022-05-30T13:00:05Z\tOK\textract [TikaServerRmetaConnector]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:06Z\tfile://///localhost/test/test1.docx\t2022-05-30T13:00:06Z\tOK\tdocument ingest (DatafariSolrNoTika)\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/test1-TOTALDOC.pdf\t2022-05-30T13:00:05Z\tOK\textract [TikaServerRmetaConnector]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tfile://///localhost/test/test1-TOTALDOC.pdf\t2022-05-30T13:00:05Z\tOK\tdocument ingest (DatafariSolrNoTika)\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:05Z\tsmb://localhost/test/test-metadata.docx\t2022-05-30T13:00:05Z\tOK\taccess\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:06Z\tfile://///localhost/test/dossier2/test1.dotx\t2022-05-30T13:00:06Z\tOK\tclean [MetadataCleaner]\t\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:06Z\tsmb://localhost/test/dossier2/test1.dotx\t2022-05-30T13:00:06Z\tOK\taccess\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:08Z\tsmb://localhost/test/dossier1/sousdossier1/test1.doc\t2022-05-30T13:00:08Z\tOK\taccess\tnull\nTestRepo_871ce43603014967b0d1394\tfrancelabs-VirtualBox\t2022-05-30T13:00:10Z\tsmb://localhost/test/fichiers pb/BdC-ITALIE_metadatabig.pdf\t2022-05-30T13:00:06Z\tOK\taccess\tnull\n"
+          },
+          {
+            "type": "HTML",
+            "data": "\u003cfont color\u003dblue\u003eNumber of results:80.\u003c/font\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1654006888404_379680112",
+      "id": "paragraph_1654006888404_379680112",
+      "dateCreated": "2022-05-31 14:21:28.404",
+      "dateStarted": "2022-05-31 15:31:32.263",
+      "dateFinished": "2022-05-31 15:31:32.280",
+      "status": "FINISHED"
+    },
+    {
+      "text": "",
+      "user": "anonymous",
+      "dateUpdated": "2022-05-31 15:28:06.074",
+      "progress": 0,
+      "config": {},
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1654007415623_1114258813",
+      "id": "paragraph_1654007415623_1114258813",
+      "dateCreated": "2022-05-31 14:30:15.623",
+      "status": "READY"
+    }
+  ],
+  "name": "Crawl Analysis",
+  "id": "2H6MSJCE6",
+  "defaultInterpreterGroup": "solr",
+  "version": "0.10.1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false
+  },
+  "info": {}
+}
