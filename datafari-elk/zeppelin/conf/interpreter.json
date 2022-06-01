@@ -1,0 +1,57 @@
+{
+  "interpreterSettings": {
+    "solr": {
+      "id": "solr",
+      "name": "solr",
+      "group": "solr",
+      "properties": {
+        "solr.baseUrl": {
+          "name": "solr.baseUrl",
+          "value": "http://localhost:8983/solr",
+          "type": "string",
+          "description": "The base Url of the Solr instance Zeppelin is connecting to"
+        },
+        "solr.collection": {
+          "name": "solr.collection",
+          "value": "Statistics",
+          "type": "string",
+          "description": "The default collection to send requests to."
+        },
+        "jdbc.url": {
+          "name": "jdbc.url",
+          "value": "jdbc:hive2://localhost:8768/default;transportMode\u003dhttp;httpPath\u003dfusion;user\u003dadmin;password\u003dpassword123",
+          "type": "string",
+          "description": "The jdbc connection url (Only used with the jdbc Streaming Expression if the connection is not specified.))"
+        },
+        "jdbc.driver": {
+          "name": "jdbc.driver",
+          "value": "org.apache.hive.jdbc.HiveDriver",
+          "type": "string",
+          "description": "The jdbc driver (Only used with the jdbc Streaming Expression if the connection is not specified.)"
+        }
+      },
+      "status": "READY",
+      "interpreterGroup": [
+        {
+          "name": "solr",
+          "class": "com.lucidworks.zeppelin.solr.SolrInterpreter",
+          "defaultInterpreter": false,
+          "editor": {
+            "editOnDblClick": false
+          }
+        }
+      ],
+      "dependencies": [],
+      "option": {
+        "remote": true,
+        "port": -1,
+        "perNote": "shared",
+        "perUser": "shared",
+        "isExistingProcess": false,
+        "setPermission": false,
+        "owners": [],
+        "isUserImpersonate": false
+      }
+    }
+  }
+}

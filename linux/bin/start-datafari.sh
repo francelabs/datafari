@@ -96,7 +96,7 @@ if  [[ "$NODETYPE" = *mono* ]]; then
   if  [[ "$STATE" = *initialized* ]];
   then
     cd $ELK_HOME/scripts
-    run_as ${DATAFARI_USER} "bash elk-manager.sh init_elk";
+    run_as ${DATAFARI_USER} "bash elk-manager.sh init_logstash";
       
     cd $DIR   
     
@@ -177,6 +177,11 @@ if  [[ "$NODETYPE" = *mono* ]]; then
     run_as ${DATAFARI_USER} "bash tika-server.sh start";
     cd $DIR
   fi
+  
+  #Run Analytic Stack
+  cd $ELK_HOME/scripts
+  run_as ${DATAFARI_USER} "bash elk-manager.sh start";
+  cd $DIR
 
 fi
 

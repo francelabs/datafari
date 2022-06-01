@@ -12,17 +12,14 @@ set_logs_paths()
 {
   echo "Set logs paths..."
   sed -i "/path.logs/c\path.logs: ${ELK_LOGS}" $LOGSTASH_HOME/config/logstash.yml
-  echo "Logs paths correctly set"
-}
-
-init_jvm_options()
-{
   sed -i -e "s~@ELK_LOGS@~$ELK_LOGS~g" $LOGSTASH_HOME/config/jvm.options
+  echo "Logs paths correctly set"
 }
 
 init_logstash()
 {
   echo "Initialize Logstash..."
+  set_logs_paths;
   # Install logstash-output-solr plugin
   bash $LOGSTASH_HOME/bin/logstash-plugin install file://$LOGSTASH_HOME/logstash-offline-solr-plugin.zip
   # patch logstash-output-solr plugin
@@ -32,7 +29,7 @@ init_logstash()
   sed -i "/francelabs\/datafari-stats.log/c\    path => \"${DATAFARI_HOME}/logs/datafari-stats.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
   sed -i "/francelabs\/datafari-monitoring.log/c\    path => \"${DATAFARI_HOME}/logs/datafari-monitoring.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
   sed -i "/francelabs\/localhost_access_log_datafari.txt/c\    path => \"${DATAFARI_HOME}/logs/localhost_access_log_datafari*\"" $LOGSTASH_HOME/logstash-datafari.conf
-  @ADDITIONAL_LOGSTASH_INIT@
+@ADDITIONAL_LOGSTASH_INIT@
   echo "Logstash initialized !"
 }
 
@@ -74,7 +71,6 @@ stop_zeppelin()
   cd $ZEPPELIN_HOME
   echo "Stopping Zeppelin..."
   bash bin/zeppelin-daemon.sh stop >/dev/null 2>&1 &
-  echo "Zeppelin stopped !"
   cd $DIR
   forceStopIfNecessary $ZEPPELIN_PID_DIR/zeppelin.pid Zeppelin
 }
@@ -110,7 +106,6 @@ init_elk()
 {
   echo "Initializing ELK..."
   set_logs_paths;
-  init_jvm_options;
   init_logstash;
   echo "ELK initialized !"
 }
@@ -147,10 +142,6 @@ case $COMMAND in
   stop_zeppelin)
     stop_zeppelin
     ;;
-  init_elk)
-    init_elk
-    ;;
-  @ADDITIONAL_COMMANDS@
 esac
 
 

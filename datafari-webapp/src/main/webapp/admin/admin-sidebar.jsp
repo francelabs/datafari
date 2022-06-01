@@ -15,7 +15,7 @@
   String getSolr = "@GET-SOLR-IP@" ;
   String getMonit = "@GET-MONIT-IP@" ;
   String getGlances = "@GET-GLANCES-IP@" ;
-  pathZeppelin = "http://localhost:8888";
+  pathZeppelin = "http://@ZEPPELIN_HOST@:8888";
   getSolrSchemaAnalysis = getSolr + "/#/"+mainCollection + "/analysis";
   getSolrSchemaAdmin = getSolr + "/#/"+ mainCollection + "/schema";
   
@@ -107,19 +107,11 @@
           <i class="fas fa-wrench"></i><span id="searchEngineAdmin-AdminUI" class="hidden-xs"></span>
         </a>
         <ul id="menu-admin" class="list-unstyled collapse">
-        <li id="SolrAdmin"><a target="_blank" href="<%= getSolr %>" id="solrAdmin-AdminUI"></a></li>
-        <li id="SolrSchemaAdmin"><a target="_blank" href="<%= getSolrSchemaAdmin %>" id="schemaAdmin-AdminUI"></a></li>
-        <li id="AlertAdmin"><a id="alertAdmin-AdminUI" class="ajax-link" href="?page=alertsAdmin"></a></li>
-        <li id="IndexField"><a id="indexField-AdminUI" class="ajax-link" href="?page=IndexField"></a></li>
-        <li id="SchemaAnalysis"><a target="_blank" id="schemaAnalysis-AdminUI" href="<%= getSolrSchemaAnalysis %>"></a></li>
-          
-        <%
-          if(request.isUserInRole("SearchAdministrator")){
-        %>          
-          <li id="ELKConfiguration"><a id="elkConfiguration-AdminUI" class="ajax-link" href="?page=elkConfiguration"></a></li>
-        <%
-          }
-        %>
+          <li id="SolrAdmin"><a target="_blank" href="<%= getSolr %>" id="solrAdmin-AdminUI"></a></li>
+          <li id="SolrSchemaAdmin"><a target="_blank" href="<%= getSolrSchemaAdmin %>" id="schemaAdmin-AdminUI"></a></li>
+          <li id="AlertAdmin"><a id="alertAdmin-AdminUI" class="ajax-link" href="?page=alertsAdmin"></a></li>
+          <li id="IndexField"><a id="indexField-AdminUI" class="ajax-link" href="?page=IndexField"></a></li>
+          <li id="SchemaAnalysis"><a target="_blank" id="schemaAnalysis-AdminUI" href="<%= getSolrSchemaAnalysis %>"></a></li>
           <li id="DuplicatesConfiguration"><a id="duplicatesConfiguration-AdminUI" class="ajax-link" href="?page=duplicatesConfiguration"></a></li>
           <li id="SizeLimitation"><a id="sizeLimitation-AdminUI" class="ajax-link" href="?page=SizeLimitations"></a></li>
           <li id="AutocompleteConfiguration"><a id="autocompleteConfig-AdminUI" class="ajax-link" href="?page=AutocompleteConfiguration"></a></li>

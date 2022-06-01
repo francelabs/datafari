@@ -485,7 +485,6 @@
 		<replace file="${linux.dist.dir}/bin/init-datafari.sh" token="@VERSION-INIT-ZK@" value="" />
 		<replace file="${linux.dist.dir}/bin/start-datafari.sh" token="@VERSION-START@" value="" />
 		<replace file="${linux.dist.dir}/bin/start-datafari.sh" token="@START-CHECKS@" value="" />
-		<replace file="${linux.dist.dir}/bin/stop-datafari.sh" token="@VERSION-STOP@" value="" />
 		<replace file="${linux.dist.dir}/bin/restart-datafari.sh" token="@VERSION-RESTART@" value="" />
 		<replace file="${linux.dist.dir}/bin/datafari-manager.sh" token="@SOLR-INIT@" value="" />
 		<replace file="${linux.dist.dir}/bin/datafari-manager.sh" token="@ZK-INIT@" value="" />

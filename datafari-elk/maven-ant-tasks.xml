@@ -29,7 +29,6 @@
 		<!-- *** Setup elk-manager.sh *** -->
 		<replace file="${elk.dist}/scripts/elk-manager.sh" token="@ADDITIONAL_LOGSTASH_INIT@" value=""/>
 		<replace file="${elk.dist}/scripts/elk-manager.sh" token="@ADDITIONAL_FUNCTIONS@" value=""/>
-		<replace file="${elk.dist}/scripts/elk-manager.sh" token="@ADDITIONAL_COMMANDS@" value=""/>
 
 		<!-- *** Setup logstash-datafari.conf *** -->
 		<replace file="${elk.dist}/logstash/logstash-datafari.conf" token="@ADDITIONAL_INPUTS@" value=""/>

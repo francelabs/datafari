@@ -81,4 +81,7 @@ then
   cd $DIR
 fi
 
-@VERSION-STOP@
+#Stop Analytic Stack
+cd $ELK_HOME/scripts
+run_as ${DATAFARI_USER} "bash elk-manager.sh stop";
+cd $DIR

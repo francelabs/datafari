@@ -44,17 +44,6 @@ question_postgresql_password() {
     set_property "TEMPPGSQLPASSWORD" $postgresql_password $CONFIG_FILE
 }
 
-question_elk_start() {
-  read -p "Do you want to start ELK (yes/no) [yes] ? " elk_start
-  elk_start=${elk_start:-yes}
-  if [[ "$elk_start" = "yes" ]] || [[ "$elk_start" = "y" ]] || [[ "$elk_start" = "true" ]]; then
-    elk_start=true
-  else
-    elk_start=false
-  fi
-  set_property "ELKactivation"  $elk_start $CONFIG_FILE
-}
-
 question_start_datafari() {
   read -p "Do you want Datafari to be started (yes/no)? [yes] ? " start_datafari
   start_datafari=${start_datafari:-true}
@@ -126,29 +115,12 @@ init_git() {
 
 }
 
-init_elk() {
-  #change elk address
-  sed -i -e "s/localhost/${1}/g" $TOMCAT_HOME/conf/elk.properties >>$installerLog 2>&1
-  sed -i "/server.host:/c\server.host: 0.0.0.0" $DATAFARI_HOME/elk/kibana/config/kibana.yml >>$installerLog 2>&1
-  
-  # Init MetricBeat
-  if [ "$2" = "mono" ]; then
-    sed -i -e "s~@METRICBEAT-CONFIGURATION@~mono~g" $DATAFARI_HOME/elk/scripts/elk-manager.sh >>$installerLog 2>&1
-  else
-    sed -i -e "s~@METRICBEAT-CONFIGURATION@~multi~g" $DATAFARI_HOME/elk/scripts/elk-manager.sh >ƒ>$installerLog 2>&1
-  fi
-
-}
-
 init_logstash() {
   sed -i -e "s/@SOLR_HOST@/$1/g" $DATAFARI_HOME/elk/logstash/logstash-datafari.conf >>$installerLog 2>&1
 }
 
-init_elk_apache() {
-  if [ -d /etc/apache2 ]; then
-    cp $DATAFARI_HOME/elk/proxy/elk.conf /etc/apache2/sites-available/
-    ln -s /etc/apache2/sites-available/elk.conf /etc/apache2/sites-enabled/elk.conf
-  fi
+init_zeppelin_host() {
+  sed -i -e "s/@ZEPPELIN_HOST@/$1/g" $DATAFARI_HOME/tomcat/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
 }
 
 init_memory() {
@@ -700,34 +672,6 @@ IFS=', ' read -r -a array <<<"$SOLRHOSTS"
 
 }
 
-secure_elk() { 
-  iptables -A INPUT -p tcp -s 127.0.0.1 --dport 9200 -j ACCEPT
-  if [ "$NODETYPE" == "main" ]; then
-    for ((i=1;i<=$solrNodesNumber;i++)); do
-
-      solrvalue=solr$i
-      solrproperty=$(echo $solrvalue)
-      solrServer=`getProperty $solrproperty $CONFIG_FILE`
-
-      iptables -A INPUT -p tcp -s ${solrServer} --dport 9200 -j ACCEPT
-    done
-  
-    if [ $mcfNodesNumber -ne 0 ]; then
-      for ((i=1;i<=$mcfNodesNumber;i++)); do
-
-        mcfvalue=mcf$i
-        mcfproperty=$(echo $mcfvalue)
-        mcfServer=`getProperty $mcfproperty $CONFIG_FILE`
-        iptables -A INPUT -p tcp -s ${mcfServer} --dport 9200 -j ACCEPT
-  
-      done
-    fi
-  fi
-  iptables -A INPUT -p tcp -s ${1} --dport 9200 -j ACCEPT
-  iptables -A INPUT -p tcp --dport 9200 -j DROP
-  
-}
-
 secure_monit() {
   iptables -A INPUT -p tcp -s 127.0.0.1 --dport 2812 -j ACCEPT
   iptables -A INPUT -p tcp -s ${1} --dport 2812 -j ACCEPT
@@ -801,8 +745,8 @@ initialization_monoserver() {
   init_war
   init_git
   init_folders
-  init_elk localhost "mono"
   init_logstash localhost
+  init_zeppelin_host localhost
   generate_certificates $NODEHOST
   generate_certificates_apache $NODEHOST
   generate_certificates_elk $NODEHOST
@@ -831,7 +775,6 @@ initialization_monoserver() {
   secure_tomcat_mcf $NODEHOST
   secure_monit $NODEHOST
   secure_glances $NODEHOST
-  #secure_elk $NODEHOST
   save_iptables_rules
   
   log4shell_mitigation
@@ -869,28 +812,26 @@ check_python;
 is_file_present $CONFIG_FILE
 is_variable_set $INSTALLER_TYPE
 if [ "$INSTALLER_TYPE" == "interactive" ]; then
-    echo "Interactive installer mode. You need to answer some questions to initialize Datafari"
-    interactive_questions
+  echo "Interactive installer mode. You need to answer some questions to initialize Datafari"
+  interactive_questions
 fi
 source $CONFIG_FILE
 is_variable_set $NODETYPE
 if [ "$NODETYPE" == "monoserver" ]; then
-    echo "Monoserver initialization"
-    echo "check of the variables of the properties file are set"
-    echo "nodehost check"
-    is_variable_set $NODEHOST
-    echo "numshards check"
-    is_variable_set $SOLRNUMSHARDS
-    echo "solrhosts check"
+  echo "Monoserver initialization"
+  echo "check of the variables of the properties file are set"
+  echo "nodehost check"
+  is_variable_set $NODEHOST
+  echo "numshards check"
+  is_variable_set $SOLRNUMSHARDS
+  echo "solrhosts check"
   is_variable_set $SOLRHOSTS
-    echo "maincollection check"
-    is_variable_set $SOLRMAINCOLLECTION
+  echo "maincollection check"
+  is_variable_set $SOLRMAINCOLLECTION
   echo "datafari password check"
-    is_variable_set $TEMPADMINPASSWORD
+  is_variable_set $TEMPADMINPASSWORD
   echo "postgresql password check"
-    is_variable_set $TEMPPGSQLPASSWORD
-    echo "elk activation check"
-    is_variable_set $ELKactivation
+  is_variable_set $TEMPPGSQLPASSWORD
     
   echo "Check complete."
 
