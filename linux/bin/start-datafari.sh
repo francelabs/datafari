@@ -178,10 +178,12 @@ if  [[ "$NODETYPE" = *mono* ]]; then
     cd $DIR
   fi
   
-  #Run Analytic Stack
-  cd $ELK_HOME/scripts
-  run_as ${DATAFARI_USER} "bash elk-manager.sh start";
-  cd $DIR
+  if  [[ "$AnalyticsActivation" = *true* ]]; then
+    #Run Analytic Stack
+    cd $ELK_HOME/scripts
+    run_as ${DATAFARI_USER} "bash elk-manager.sh start";
+    cd $DIR
+  fi
 
 fi
 

@@ -53,6 +53,17 @@ question_start_datafari() {
     start_datafari=false
   fi
 }
+
+question_analytics_start() {
+  read -p "Do you want to enable analytic stack (yes/no) [yes] ? " analytics_start
+  analytics_start=${analytics_start:-yes}
+  if [[ "$analytics_start" = "yes" ]] || [[ "$analytics_start" = "y" ]] || [[ "$analytics_start" = "true" ]]; then
+    analytics_start=true
+  else
+    analytics_start=false
+  fi
+  set_property "AnalyticsActivation"  $analytics_start $CONFIG_FILE
+}
     
 ## Installer functions
 
@@ -832,6 +843,7 @@ if [ "$NODETYPE" == "monoserver" ]; then
   is_variable_set $TEMPADMINPASSWORD
   echo "postgresql password check"
   is_variable_set $TEMPPGSQLPASSWORD
+  is_variable_set $AnalyticsActivation
     
   echo "Check complete."
 

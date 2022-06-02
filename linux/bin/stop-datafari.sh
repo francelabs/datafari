@@ -81,7 +81,9 @@ then
   cd $DIR
 fi
 
-#Stop Analytic Stack
-cd $ELK_HOME/scripts
-run_as ${DATAFARI_USER} "bash elk-manager.sh stop";
-cd $DIR
+if  [[ "$AnalyticsActivation" = *true* ]]; then
+  #Stop Analytic Stack
+  cd $ELK_HOME/scripts
+  run_as ${DATAFARI_USER} "bash elk-manager.sh stop";
+  cd $DIR
+fi

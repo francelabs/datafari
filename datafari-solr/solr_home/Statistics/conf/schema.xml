@@ -70,9 +70,9 @@
    <field name="date" type="tdate" indexed="true" stored="true" default="NOW" /> 
    <field name="q_search" type="text_general" indexed="true" stored="true"  /> 
    <field name="numFound" type="int" indexed="true" stored="true"  /> 
-   <field name="noHits" type="int" indexed="true" stored="true" default="0" /> 
+   <field name="noHits" type="string" indexed="true" stored="true" default="Hits" /> 
    <field name="QTime" type="int" indexed="true" stored="true"  /> 
-   <field name="click" type="int" indexed="true" stored="true" default="0" /> 
+   <field name="click" type="string" indexed="true" stored="true" default="No Click" /> 
    <field name="numClicks" type="int" indexed="true" stored="true" default="0" /> 
    <field name="positionClickTot" type="int" indexed="true" stored="true" /> 
    <field name="history" type="string" indexed="true" stored="true" multiValued="true"/> 

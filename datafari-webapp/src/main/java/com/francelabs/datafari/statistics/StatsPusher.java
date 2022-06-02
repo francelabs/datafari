@@ -56,14 +56,11 @@ public class StatsPusher {
       final Map<String, Integer> increment = new HashMap<>();
       increment.put("inc", 1);
 
-      final Map<String, Integer> setToOne = new HashMap<>();
-      setToOne.put("set", 1);
-
       final Map<String, Integer> incrementPosition = new HashMap<>();
       incrementPosition.put("inc", Integer.parseInt(query.getParamValue("position")));
 
       final IndexerInputDocument doc = IndexerServerManager.createDocument();
-      doc.addField("click", setToOne);
+      doc.addField("click", "Clicked");
       doc.addField("numClicks", increment);
       doc.addField("positionClickTot", incrementPosition);
 

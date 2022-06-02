@@ -77,18 +77,6 @@
       <DefaultRolloverStrategy max="10" />
     </RollingFile>
     
-    <!-- ELK appender -->
-    <RollingFile name="ELK" fileName="${env:DATAFARI_LOGS}/elk-startup.log" filePattern="${env:DATAFARI_LOGS}/elk-startup.log.%d{yyyy-MM-dd}-%i.log">
-      <PatternLayout>
-        <Pattern>%d{yyyy-MM-dd'T'HH:mm:ss'Z'} %-5p %c{1}:%L - %m%n</Pattern>
-      </PatternLayout>
-      <Policies>
-        <TimeBasedTriggeringPolicy interval="1"/>
-        <SizeBasedTriggeringPolicy size="10MB" />
-      </Policies>
-      <DefaultRolloverStrategy max="10" />
-    </RollingFile>
-    
     <!-- Crawl appender -->
     <RollingFile name="Crawl" fileName="${env:DATAFARI_LOGS}/datafari-crawl.log" filePattern="${env:DATAFARI_LOGS}/datafari-crawl.log.%d{yyyy-MM-dd}-%i.log">
       <ThresholdFilter level="DEBUG" onMatch="DENY" onMismatch="ACCEPT"/>
@@ -133,11 +121,6 @@
     <!-- Monitoring logger -->
     <Logger name="com.francelabs.datafari.monitoring" level="monitoring" additivity="false">
       <AppenderRef ref="Monitoring"/>
-    </Logger>
-    
-    <!-- ELK logger -->
-    <Logger name="com.francelabs.datafari.elk" level="elk" additivity="false">
-      <AppenderRef ref="ELK"/>
     </Logger>
     
     <!-- Crawl logger -->

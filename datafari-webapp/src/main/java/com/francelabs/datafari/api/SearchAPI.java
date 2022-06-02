@@ -97,27 +97,27 @@ public class SearchAPI {
     try {
 
       switch (handler) {
-        case "/stats":
-        case "/statsQuery":
-          solr = IndexerServerManager.getIndexerServer(Core.STATISTICS);
-          break;
-        default:
-          solr = IndexerServerManager.getIndexerServer(Core.FILESHARE);
-          promolinkCore = IndexerServerManager.getIndexerServer(Core.PROMOLINK);
-          queryPromolink = IndexerServerManager.createQuery();
+      case "/stats":
+      case "/statsQuery":
+        solr = IndexerServerManager.getIndexerServer(Core.STATISTICS);
+        break;
+      default:
+        solr = IndexerServerManager.getIndexerServer(Core.FILESHARE);
+        promolinkCore = IndexerServerManager.getIndexerServer(Core.PROMOLINK);
+        queryPromolink = IndexerServerManager.createQuery();
 
-          // Add AuthenticatedUserName param if user authenticated
-          if (!requestingUser.isEmpty()) {
-            params.setParam("AuthenticatedUserName", requestingUser);
-          }
+        // Add AuthenticatedUserName param if user authenticated
+        if (!requestingUser.isEmpty()) {
+          params.setParam("AuthenticatedUserName", requestingUser);
+        }
 
-          final String queryParam = params.getParamValue("query");
-          if (queryParam != null) {
-            params.setParam("q", queryParam);
-            params.removeParam("query");
-          }
+        final String queryParam = params.getParamValue("query");
+        if (queryParam != null) {
+          params.setParam("q", queryParam);
+          params.removeParam("query");
+        }
 
-          break;
+        break;
       }
 
       // If entities are present in the query, need to modify the query in order to
@@ -222,26 +222,26 @@ public class SearchAPI {
         queryResponsePromolink = promolinkCore.executeQuery(queryPromolink);
       }
       switch (handler) {
-        case "/select":
-          // If there is no id there is no need to record stats
-          if (params.getParamValue("id") != null && !params.getParamValue("id").equals("")) {
-            // index
-            final long numFound = queryResponse.getNumFound();
-            final int QTime = queryResponse.getQTime();
-            final IndexerQuery statsParams = IndexerServerManager.createQuery();
-            statsParams.addParams(params.getParams());
-            statsParams.setParam("numFound", Long.toString(numFound));
-            if (numFound == 0) {
-              statsParams.setParam("noHits", "1");
-            }
-            statsParams.setParam("QTime", Integer.toString(QTime));
-
-            StatsPusher.pushQuery(statsParams, protocol);
+      case "/select":
+        // If there is no id there is no need to record stats
+        if (params.getParamValue("id") != null && !params.getParamValue("id").equals("")) {
+          // index
+          final long numFound = queryResponse.getNumFound();
+          final int QTime = queryResponse.getQTime();
+          final IndexerQuery statsParams = IndexerServerManager.createQuery();
+          statsParams.addParams(params.getParams());
+          statsParams.setParam("numFound", Long.toString(numFound));
+          if (numFound == 0) {
+            statsParams.setParam("noHits", "No Hits");
           }
-          break;
-        case "/stats":
-          solr.processStatsResponse(queryResponse);
-          break;
+          statsParams.setParam("QTime", Integer.toString(QTime));
+
+          StatsPusher.pushQuery(statsParams, protocol);
+        }
+        break;
+      case "/stats":
+        solr.processStatsResponse(queryResponse);
+        break;
       }
 
       if (promolinkCore != null) {
@@ -264,20 +264,18 @@ public class SearchAPI {
   public static String search(final HttpServletRequest request) {
     final String handler = getHandler(request);
     final String protocol = request.getScheme() + ":";
-    Map<String, String[]> parameterMap = new HashMap<String, String[]>(request.getParameterMap());
-    if (request.getParameter("id") == null && request.getAttribute("id") != null 
-      && request.getAttribute("id") instanceof String) {
-        String idParam[] = {(String) request.getAttribute("id")};
-        parameterMap.put("id", idParam);
+    final Map<String, String[]> parameterMap = new HashMap<String, String[]>(request.getParameterMap());
+    if (request.getParameter("id") == null && request.getAttribute("id") != null && request.getAttribute("id") instanceof String) {
+      final String idParam[] = { (String) request.getAttribute("id") };
+      parameterMap.put("id", idParam);
     }
     // Override parameters with request attributes (set by the code and not from the client, so
     // they prevail over what has been given as a parameter)
-    Iterator<String> attributeNamesIt = request.getAttributeNames().asIterator();
+    final Iterator<String> attributeNamesIt = request.getAttributeNames().asIterator();
     while (attributeNamesIt.hasNext()) {
-      String name = attributeNamesIt.next();
-      if (request.getAttribute(name) != null 
-          && request.getAttribute(name) instanceof String) {
-        String value[] = {(String) request.getAttribute(name)};
+      final String name = attributeNamesIt.next();
+      if (request.getAttribute(name) != null && request.getAttribute(name) instanceof String) {
+        final String value[] = { (String) request.getAttribute(name) };
         parameterMap.put(name, value);
       }
     }

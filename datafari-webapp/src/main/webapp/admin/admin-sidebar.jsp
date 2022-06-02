@@ -20,7 +20,7 @@
   getSolrSchemaAdmin = getSolr + "/#/"+ mainCollection + "/schema";
   
   String getZeppelinCorpusAnalysis = pathZeppelin +"/#/notebook/2H4J4UEEM";
-  String getZeppelinQueriesAnalysis = pathZeppelin +"/#/notebook/2H4J4UEEM";
+  String getZeppelinQueriesAnalysis = pathZeppelin +"/#/notebook/2H6NXBJ88";
   String getZeppelinProblematicFiles = pathZeppelin +"/#/notebook/2H6MSJCE6";
   String getZeppelinLog = pathZeppelin +"/#/notebook/2H5EXYG6K" ;  
 %>

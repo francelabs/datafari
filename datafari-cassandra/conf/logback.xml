@@ -43,7 +43,7 @@ appender reference in the root level section below.
       <maxFileSize>10MB</maxFileSize>
     </triggeringPolicy>
     <encoder>
-      <pattern>%level %date{yyyy-MM-dd'T'HH:mm:ss'Z'} [%thread] - Cassandra|Cassandra|%c|%msg%n</pattern>
+      <pattern>%level %date{yyyy-MM-dd'T'HH:mm:ss'Z'} [%thread] - Cassandra|Cassandra System|%c|%msg%n</pattern>
     </encoder>
   </appender>
 
@@ -60,7 +60,7 @@ appender reference in the root level section below.
       <maxFileSize>10MB</maxFileSize>
     </triggeringPolicy>
     <encoder>
-      <pattern>%-5level %date{yyyy-MM-dd'T'HH:mm:ss'Z'} [%thread] - Cassandra|Cassandra|%c|%msg%n</pattern>
+      <pattern>%-5level %date{yyyy-MM-dd'T'HH:mm:ss'Z'} [%thread] - Cassandra|Cassandra Debug|%c|%msg%n</pattern>
     </encoder>
   </appender>
 
@@ -80,7 +80,7 @@ appender reference in the root level section below.
       <level>INFO</level>
     </filter>
     <encoder>
-      <pattern>%-5level %date{yyyy-MM-dd'T'HH:mm:ss'Z'} [%thread] - Cassandra|Cassandra|%c|%msg%n</pattern>
+      <pattern>%-5level %date{yyyy-MM-dd'T'HH:mm:ss'Z'} [%thread] - Cassandra|Cassandra STDOUT|%c|%msg%n</pattern>
     </encoder>
   </appender>
 
