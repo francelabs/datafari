@@ -11,7 +11,7 @@ source "${DIR}/set-datafari-env.sh"
 source "${DIR}/utils.sh"
 source $INIT_STATE_FILE
 source $CONFIG_FILE
-source $ELK_HOME/scripts/set-elk-env.sh
+source $AS_HOME/scripts/set-as-env.sh
 source $TIKA_SERVER_HOME/bin/set-tika-env.sh
 
 if [ "$MONIT_STATE" == "active" ]; then
@@ -83,7 +83,7 @@ fi
 
 if  [[ "$AnalyticsActivation" = *true* ]]; then
   #Stop Analytic Stack
-  cd $ELK_HOME/scripts
-  run_as ${DATAFARI_USER} "bash elk-manager.sh stop";
+  cd $AS_HOME/scripts
+  run_as ${DATAFARI_USER} "bash as-manager.sh stop";
   cd $DIR
 fi

@@ -11,8 +11,8 @@ source "${DIR}/set-datafari-env.sh"
 source "${DIR}/utils.sh"
 source $INIT_STATE_FILE
 source $CONFIG_FILE
-source "${DIR}/../elk/scripts/set-elk-env.sh"
-source "${DIR}/../elk/scripts/elk-utils.sh"
+source "${$AS_HOME}/scripts/set-as-env.sh"
+source "${$AS_HOME}/scripts/as-utils.sh"
 
 
 if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $SOLR_PID_FILE"; then
@@ -31,19 +31,19 @@ then
 
   if  [[ "$AnalyticsActivation" = *true* ]]; then
     if  [[ "$STATE" = *initialized* ]]; then
-      cd $ELK_HOME/scripts
-      run_as ${DATAFARI_USER} "bash elk-manager.sh init_logstash";
+      cd $AS_HOME/scripts
+      run_as ${DATAFARI_USER} "bash as-manager.sh init_logstash";
       cd $DIR
         
     fi
     
-    cd $ELK_HOME/scripts
-    run_as ${DATAFARI_USER} "bash elk-manager.sh start_logstash";
+    cd $AS_HOME/scripts
+    run_as ${DATAFARI_USER} "bash as-manager.sh start_logstash";
     cd $DIR
     
     if  [[ "$currentSolrNumber" = 1 ]]; then
-      cd $ELK_HOME/scripts
-      run_as ${DATAFARI_USER} "bash elk-manager.sh start_zeppelin";
+      cd $AS_HOME/scripts
+      run_as ${DATAFARI_USER} "bash as-manager.sh start_zeppelin";
       cd $DIR
     fi
         

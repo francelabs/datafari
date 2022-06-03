@@ -75,7 +75,7 @@
 ## GC logging
 
 ## JDK 8 GC logging
-#-Xloggc:@ELK_LOGS@/logstash-gc.log
+#-Xloggc:@AS_LOGS@/logstash-gc.log
 #-XX:+PrintGCDetails
 #-XX:+PrintGCTimeStamps
 #-XX:+PrintGCDateStamps
@@ -84,7 +84,7 @@
 #-XX:+PrintGCApplicationStoppedTime
 
 ## JDK 9+ GC logging
-#-Xlog:gc*,gc+age=trace,safepoint:file=@ELK_LOGS@/logstash-gc.log:utctime,pid,tags:filecount=32,filesize=64m
+#-Xlog:gc*,gc+age=trace,safepoint:file=@AS_LOGS@/logstash-gc.log:utctime,pid,tags:filecount=32,filesize=64m
 
 # log GC status to a file with time stamps
 # ensure the directory exists

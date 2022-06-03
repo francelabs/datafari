@@ -51,7 +51,7 @@
     <module>datafari-cassandra</module>
     <module>datafari-tomcat</module>
     <module>datafari-tomcat-mcf</module>
-    <module>datafari-elk</module>
+    <module>datafari-analytic-stack</module>
     <module>datafari-updateprocessor</module>
     <module>datafari-emptier-connector</module>
     <module>datafari-tika</module>

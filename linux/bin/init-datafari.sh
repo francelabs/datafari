@@ -127,7 +127,7 @@ init_git() {
 }
 
 init_logstash() {
-  sed -i -e "s/@SOLR_HOST@/$1/g" $DATAFARI_HOME/elk/logstash/logstash-datafari.conf >>$installerLog 2>&1
+  sed -i -e "s/@SOLR_HOST@/$1/g" $AS_HOME/logstash/logstash-datafari.conf >>$installerLog 2>&1
 }
 
 init_zeppelin_host() {
@@ -142,9 +142,9 @@ init_memory() {
   sed -i -e "s/@TOMCATMCFMEMORY@/${TOMCATMCFMEMORY}/g" $DATAFARI_HOME/tomcat-mcf/bin/setenv.sh >>$installerLog 2>&1
   sed -i -e "s/@CASSANDRAMEMORY@/${CASSANDRAMEMORY}/g" $DATAFARI_HOME/cassandra/conf/jvm-server.options >>$installerLog 2>&1
   sed -i -e "s/@POSTGRESQLMEMORY@/${POSTGRESQLMEMORY}/g" $DATAFARI_HOME/pgsql/postgresql.conf.save >>$installerLog 2>&1
-  sed -i -e "s/@ELASTICSEARCHMEMORY@/${ELASTICSEARCHMEMORY}/g" $DATAFARI_HOME/elk/elasticsearch/config/jvm.options >>$installerLog 2>&1
-  sed -i -e "s/@LOGSTASHMEMORY@/${LOGSTASHMEMORY}/g" $DATAFARI_HOME/elk/logstash/config/jvm.options >>$installerLog 2>&1
-  sed -i -e "s/@KIBANAMEMORY@/${KIBANAMEMORY}/g" $DATAFARI_HOME/elk/scripts/set-elk-env.sh >>$installerLog 2>&1
+  sed -i -e "s/@ELASTICSEARCHMEMORY@/${ELASTICSEARCHMEMORY}/g" $AS_HOME/elasticsearch/config/jvm.options >>$installerLog 2>&1
+  sed -i -e "s/@LOGSTASHMEMORY@/${LOGSTASHMEMORY}/g" $AS_HOME/logstash/config/jvm.options >>$installerLog 2>&1
+  sed -i -e "s/@KIBANAMEMORY@/${KIBANAMEMORY}/g" $AS_HOME/scripts/set-as-env.sh >>$installerLog 2>&1
   sed -i -e "s/@TIKASERVERMEMORY@/${TIKASERVERMEMORY}/g" $DATAFARI_HOME/tika-server/bin/set-tika-env.sh >>$installerLog 2>&1
   sed -i -e "s/@TIKACHILDMEMORY@/${TIKACHILDMEMORY}/g" $DATAFARI_HOME/tika-server/conf/tika-config.xml >>$installerLog 2>&1
   
@@ -177,18 +177,6 @@ generate_certificates_apache() {
   sed -i -e "s/@NODEHOST@/${1}/g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-services.conf >>$installerLog 2>&1
   openssl req -config $DATAFARI_HOME/ssl-keystore/apache/config/datafari-config.csr -new -newkey rsa:2048 -nodes -keyout $DATAFARI_HOME/ssl-keystore/apache/datafari.key -out $DATAFARI_HOME/ssl-keystore/apache/datafari.csr
   openssl x509 -req -days 365 -in $DATAFARI_HOME/ssl-keystore/apache/datafari.csr -signkey $DATAFARI_HOME/ssl-keystore/apache/datafari.key -out $DATAFARI_HOME/ssl-keystore/apache/datafari.crt
-
-}
-
-generate_certificates_elk() {
-
-  # Generate SSL certificate for Apache
-  sed -i -e "s/@NODEHOST@/${1}/g" $DATAFARI_HOME/ssl-keystore/elk/config/datafari-config.csr >>$installerLog 2>&1
-  openssl req -config $DATAFARI_HOME/ssl-keystore/elk/config/datafari-config.csr -new -newkey rsa:2048 -nodes -keyout $DATAFARI_HOME/ssl-keystore/elk/datafari-key.pem -out $DATAFARI_HOME/ssl-keystore/elk/datafari.csr
-  openssl x509 -req -days 365 -in $DATAFARI_HOME/ssl-keystore/elk/datafari.csr -signkey $DATAFARI_HOME/ssl-keystore/elk/datafari-key.pem -out $DATAFARI_HOME/ssl-keystore/elk/datafari-cert.pem
-  mv $DATAFARI_HOME/ssl-keystore/elk/datafari-key.pem $DATAFARI_HOME/elk/elasticsearch/config/
-  mv $DATAFARI_HOME/ssl-keystore/elk/datafari-cert.pem $DATAFARI_HOME/elk/elasticsearch/config/
-  sed -i -e "s/@NODEHOST@/${1}/g" $DATAFARI_HOME/elk/elasticsearch/plugins/opendistro_security/tools/install_datafari_configuration.sh >>$installerLog 2>&1
 
 }
 
@@ -267,7 +255,7 @@ init_solrcloud() {
 }
 
 init_folders() {
-  mkdir -p $DATAFARI_HOME/logs/elk
+  mkdir -p $DATAFARI_HOME/logs/analytic-stack
   mkdir -p $DATAFARI_HOME/logs/tika-server
   mkdir -p $DATAFARI_HOME/bin/backup/
   mkdir -p $DATAFARI_HOME/bin/backup/cassandra
@@ -282,7 +270,6 @@ init_folders() {
 
 init_password() {
   apacheAdminUser=apacheadmin
-  elkAdminUser=elkadmin
   solrAdminUser=solradmin
   monitAdminUser=monitadmin
   glancesAdminUser=glancesadmin
@@ -295,12 +282,10 @@ init_password() {
   sed -i -e "s~@MCF_ADMIN_PASSWORD@~${1}~g" $DATAFARI_HOME/bin/purgeUtils/vacuum-mcf.sh >>$installerLog 2>&1
   sed -i -e "s~@MCF_ADMIN_PASSWORD@~${1}~g" $DATAFARI_HOME/bin/monitorUtils/check_jobs_mcf.sh >>$installerLog 2>&1
   digestAdminUser="$( printf "%s:%s:%s" "$apacheAdminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
-  digestElkUser="$( printf "%s:%s:%s" "$elkAdminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
   digestSolrUser="$( printf "%s:%s:%s" "$solrAdminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
   digestMonitUser="$( printf "%s:%s:%s" "$monitAdminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
   digestGlancesUser="$( printf "%s:%s:%s" "$glancesAdminUser" "$realm" "$password" | md5sum | awk '{print $1}' )"
   printf "%s:%s:%s\n" "$apacheAdminUser" "$realm" "$digestAdminUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
-  printf "%s:%s:%s\n" "$elkAdminUser" "$realm" "$digestElkUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
   printf "%s:%s:%s\n" "$solrAdminUser" "$realm" "$digestSolrUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
   printf "%s:%s:%s\n" "$monitAdminUser" "$realm" "$digestMonitUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
   printf "%s:%s:%s\n" "$glancesAdminUser" "$realm" "$digestGlancesUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
@@ -716,7 +701,7 @@ save_iptables_rules() {
 log4shell_mitigation() {
   file_array=()
 
-  for i in $(find $DATAFARI_HOME/elk -type f \( -name \*.jar \) -print)
+  for i in $(find $AS_HOME -type f \( -name \*.jar \) -print)
   do
     isVulnerability=$(unzip -l $i | grep  org/apache/logging/log4j/core/lookup/JndiLookup.class)
     if [ "$isVulnerability"  != "" ]; then
@@ -760,7 +745,6 @@ initialization_monoserver() {
   init_zeppelin_host localhost
   generate_certificates $NODEHOST
   generate_certificates_apache $NODEHOST
-  generate_certificates_elk $NODEHOST
   init_collection_name $SOLRMAINCOLLECTION
   init_node_host $NODEHOST
   source "${DATAFARI_HOME}/bin/deployUtils/monoserver_${DATAFARITYPE}_memory.properties"

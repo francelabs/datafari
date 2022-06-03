@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<project name="maven-ant-tasks" default="setup-elk" basedir=".">
+<project name="maven-ant-tasks" default="setup-as" basedir=".">
 
-	<property name="elk.dist" value="target/dist/elk"/>
+	<property name="as.dist" value="target/dist/analytic-stack"/>
 	<property name="zeppelin-solr-version" value="0.1.6"/>
 
 
 	<!-- Right now we use ELK (Elasticsearch - Logstash - Kibana stack) only for Debian distribution of Datafari -->
-	<target name="setup-elk">
+	<target name="setup-as">
 		<!-- *** Setup Logstash *** -->
 
 		<!-- We unzip and untar Logstash here instead of Maven's plugin Wget (like done for the other components)
 				 as it doesn't handle correctly duplicated directory names in the path: e.g. A/B/C/B/D -->
-		<untar dest="${elk.dist}/logstash" compression="gzip">
+		<untar dest="${as.dist}/logstash" compression="gzip">
 			<fileset dir="target">
 				<include name="*logstash*.tar.gz" />
 			</fileset>
@@ -19,24 +19,24 @@
 		</untar>
 		
 		<!-- Copy Datafari-specific directories and files for ELK -->
-		<copy toDir="${elk.dist}" overwrite="true" force="true">
+		<copy toDir="${as.dist}" overwrite="true" force="true">
 			<fileset dir="." >
 				<include name="logstash/**" />
 				<include name="scripts/**" />
 			</fileset>
 		</copy>
 
-		<!-- *** Setup elk-manager.sh *** -->
-		<replace file="${elk.dist}/scripts/elk-manager.sh" token="@ADDITIONAL_LOGSTASH_INIT@" value=""/>
-		<replace file="${elk.dist}/scripts/elk-manager.sh" token="@ADDITIONAL_FUNCTIONS@" value=""/>
+		<!-- *** Setup as-manager.sh *** -->
+		<replace file="${as.dist}/scripts/as-manager.sh" token="@ADDITIONAL_LOGSTASH_INIT@" value=""/>
+		<replace file="${as.dist}/scripts/as-manager.sh" token="@ADDITIONAL_FUNCTIONS@" value=""/>
 
 		<!-- *** Setup logstash-datafari.conf *** -->
-		<replace file="${elk.dist}/logstash/logstash-datafari.conf" token="@ADDITIONAL_INPUTS@" value=""/>
-		<replace file="${elk.dist}/logstash/logstash-datafari.conf" token="@ADDITIONAL_FILTERS@" value=""/>
-		<replace file="${elk.dist}/logstash/logstash-datafari.conf" token="@ADDITIONAL_OUTPUTS@" value=""/>
+		<replace file="${as.dist}/logstash/logstash-datafari.conf" token="@ADDITIONAL_INPUTS@" value=""/>
+		<replace file="${as.dist}/logstash/logstash-datafari.conf" token="@ADDITIONAL_FILTERS@" value=""/>
+		<replace file="${as.dist}/logstash/logstash-datafari.conf" token="@ADDITIONAL_OUTPUTS@" value=""/>
 		
 		<!-- Untar zeppelin -->
-		<untar dest="${elk.dist}/zeppelin" compression="gzip">
+		<untar dest="${as.dist}/zeppelin" compression="gzip">
       <fileset dir="target">
         <include name="zeppelin*" />
       </fileset>
@@ -45,14 +45,14 @@
 		
 		<!-- Remove Zeppelin Default Notebooks -->
 		<delete includeemptydirs="true">
-      <fileset dir="${elk.dist}/zeppelin/notebook"> 
+      <fileset dir="${as.dist}/zeppelin/notebook"> 
         <include name="**/*"/>
       </fileset>
     </delete>
 		
 		<!-- Remove Zeppelin Unused Interpreters -->
     <delete includeemptydirs="true">
-      <fileset dir="${elk.dist}/zeppelin/interpreter"> 
+      <fileset dir="${as.dist}/zeppelin/interpreter"> 
         <include name="**/*"/>
       	<exclude name="*.jar"/>
       </fileset>
@@ -60,12 +60,12 @@
 		
 		<!-- Install Zeppelin Solr Interpreter -->
     <exec executable="/bin/bash">
-      <arg value="${elk.dist}/zeppelin/bin/install-interpreter.sh"/>
+      <arg value="${as.dist}/zeppelin/bin/install-interpreter.sh"/>
       <arg value="--name solr --artifact com.lucidworks.zeppelin:zeppelin-solr:${zeppelin-solr-version}"/>
     </exec>
 		
 		<!-- Copy Datafari specific Zeppelin files -->
-		<copy toDir="${elk.dist}" overwrite="true" force="true">
+		<copy toDir="${as.dist}" overwrite="true" force="true">
       <fileset dir="." >
         <include name="zeppelin/**" />
       </fileset>

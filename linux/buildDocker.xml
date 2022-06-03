@@ -14,7 +14,7 @@
 	<property name="datafari.home" value="/opt/datafari" />
 	<property name="ssl.src.dir" value="${project.dir}/ssl-keystore" />
 	<property name="apache.src.dir" value="${project.dir}/apache" />
-	<property name="elk.src.dir" value="${project.dir}/datafari-elk/target/dist/elk" />
+	<property name="as.src.dir" value="${project.dir}/datafari-analytic-stack/target/dist/analytic-stack" />
 	<property name="tomcat.src.dir" value="${project.dir}/datafari-tomcat/target/dist/tomcat" />
 	<property name="tomcat-mcf.src.dir" value="${project.dir}/datafari-tomcat-mcf/target/dist/tomcat" />
 	<property name="solr.src.dir" value="${project.dir}/datafari-solr/target/dist/solr" />
@@ -294,8 +294,8 @@
 			</fileset>
 		</copy>
 
-		<copy todir="${linux.dist.dir}/elk">
-			<fileset dir="${elk.src.dir}">
+		<copy todir="${linux.dist.dir}/analytic-stack">
+			<fileset dir="${as.src.dir}">
 			</fileset>
 		</copy>
 

@@ -39,7 +39,7 @@ export ZK_HOME=$DATAFARI_HOME/zookeeper
 export ZK_ENV=$ZK_HOME/bin/zkEnvh.sh
 export ZK_HOME_MCF=$DATAFARI_HOME/zookeeper-mcf
 export ZK_ENV_MCF=$ZK_HOME_MCF/bin/zkEnvh.sh
-export ELK_HOME=$DATAFARI_HOME/elk
+export AS_HOME=$DATAFARI_HOME/analytic-stack
 export TIKA_SERVER_HOME=$DATAFARI_HOME/tika-server
 
 # Logs directory: needed for Cassandra startup

@@ -20,15 +20,9 @@ CATALINA_OPTS (-Xms and -Xmx) :	1GB
 DATAFARI_HOME/cassandra/conf/jvm.options	
 -Xms and -Xmx	: 1GB
 
-- Elasticsearch	
-DATAFARI_HOME/elk/elasticsearch/config/jvm.options	
--Xms and -Xmx	: 2 GB
 - Logstash	
-DATAFARI_HOME/elk/logstash/config/jvm.options	
+DATAFARI_HOME/analytic-stack/logstash/config/jvm.options	
 -Xms and -Xmx	: 1 GB
-- Kibana	
-DATAFARI_HOME/elk/scripts/set-elk-env.sh	
-NODE_OPTIONS (--max-old-space-size)	: 512 MB
 
 - Tika server (Enterprise Edition)	
 DATAFARI_HOME/tika-server/bin/set-tika-env.sh	

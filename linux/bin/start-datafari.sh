@@ -11,7 +11,7 @@ source "${DIR}/set-datafari-env.sh"
 source "${DIR}/utils.sh"
 source $INIT_STATE_FILE
 source $CONFIG_FILE
-source $ELK_HOME/scripts/set-elk-env.sh
+source $AS_HOME/scripts/set-as-env.sh
 source $TIKA_SERVER_HOME/bin/set-tika-env.sh
 
 
@@ -95,8 +95,8 @@ if  [[ "$NODETYPE" = *mono* ]]; then
 
   if  [[ "$STATE" = *initialized* ]];
   then
-    cd $ELK_HOME/scripts
-    run_as ${DATAFARI_USER} "bash elk-manager.sh init_logstash";
+    cd $AS_HOME/scripts
+    run_as ${DATAFARI_USER} "bash as-manager.sh init_logstash";
       
     cd $DIR   
     
@@ -180,8 +180,8 @@ if  [[ "$NODETYPE" = *mono* ]]; then
   
   if  [[ "$AnalyticsActivation" = *true* ]]; then
     #Run Analytic Stack
-    cd $ELK_HOME/scripts
-    run_as ${DATAFARI_USER} "bash elk-manager.sh start";
+    cd $AS_HOME/scripts
+    run_as ${DATAFARI_USER} "bash as-manager.sh start";
     cd $DIR
   fi
 

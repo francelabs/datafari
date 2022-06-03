@@ -5,14 +5,14 @@
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-source "${DIR}/set-elk-env.sh"
-source "${DIR}/elk-utils.sh"
+source "${DIR}/set-as-env.sh"
+source "${DIR}/as-utils.sh"
 
 set_logs_paths()
 {
   echo "Set logs paths..."
-  sed -i "/path.logs/c\path.logs: ${ELK_LOGS}" $LOGSTASH_HOME/config/logstash.yml
-  sed -i -e "s~@ELK_LOGS@~$ELK_LOGS~g" $LOGSTASH_HOME/config/jvm.options
+  sed -i "/path.logs/c\path.logs: ${AS_LOGS}" $LOGSTASH_HOME/config/logstash.yml
+  sed -i -e "s~@AS_LOGS@~$AS_LOGS~g" $LOGSTASH_HOME/config/jvm.options
   echo "Logs paths correctly set"
 }
 
@@ -100,14 +100,6 @@ cmd_status() {
   else
       echo "Zeppelin is not running."
   fi
-}
-
-init_elk()
-{
-  echo "Initializing ELK..."
-  set_logs_paths;
-  init_logstash;
-  echo "ELK initialized !"
 }
 
 @ADDITIONAL_FUNCTIONS@

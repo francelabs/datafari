@@ -7,9 +7,9 @@
     <version>6.0-dev-Community</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>datafari-elk</artifactId>
+  <artifactId>datafari-analytic-stack</artifactId>
   <packaging>pom</packaging>
-  <name>Datafari Enterprise Search - ELK module</name>
+  <name>Datafari Enterprise Search - Analytic Stack module</name>
   <build>
     <plugins>
       <plugin>
