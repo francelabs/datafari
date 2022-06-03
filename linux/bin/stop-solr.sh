@@ -23,14 +23,16 @@ else
 fi
 
 
-if  [[ "$ELKactivation" = *true* ]]; then
-  if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $LOGSTASH_PID_FILE"; then
-    cd $ELK_HOME/scripts
-    run_as ${DATAFARI_USER} "bash elk-manager.sh stop_logstash";
-    cd $DIR
-  else
-    echo "Error : Logstash does not seem to be running."
-      
-  fi
+if  [[ "$AnalyticsActivation" = *true* ]]; then
+  
+  cd $ELK_HOME/scripts
+  run_as ${DATAFARI_USER} "bash elk-manager.sh stop_logstash";
+  cd $DIR
     
+  if  [[ "$currentSolrNumber" = 1 ]]; then
+    cd $ELK_HOME/scripts
+    run_as ${DATAFARI_USER} "bash elk-manager.sh stop_zeppelin";
+    cd $DIR
+  fi
+     
 fi

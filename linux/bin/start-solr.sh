@@ -29,20 +29,23 @@ then
 
 
 
-  if  [[ "$ELKactivation" = *true* ]]; then
+  if  [[ "$AnalyticsActivation" = *true* ]]; then
     if  [[ "$STATE" = *initialized* ]]; then
       cd $ELK_HOME/scripts
-      run_as ${DATAFARI_USER} "bash elk-manager.sh init_standalone_logstash";
+      run_as ${DATAFARI_USER} "bash elk-manager.sh init_logstash";
       cd $DIR
         
     fi
-    if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $LOGSTASH_PID_FILE"; then
-      echo "Error : Logstash seems to be already running with PID $(cat $LOGSTASH_PID_FILE)"
-      exit 1
-    fi
+    
     cd $ELK_HOME/scripts
     run_as ${DATAFARI_USER} "bash elk-manager.sh start_logstash";
     cd $DIR
+    
+    if  [[ "$currentSolrNumber" = 1 ]]; then
+      cd $ELK_HOME/scripts
+      run_as ${DATAFARI_USER} "bash elk-manager.sh start_zeppelin";
+      cd $DIR
+    fi
         
     
   fi
