@@ -15,7 +15,7 @@
   String getSolr = "@GET-SOLR-IP@" ;
   String getMonit = "@GET-MONIT-IP@" ;
   String getGlances = "@GET-GLANCES-IP@" ;
-  pathZeppelin = "http://@ZEPPELIN_HOST@:8888";
+  pathZeppelin = "https://@ZEPPELIN_HOST@/zeppelin";
   getSolrSchemaAnalysis = getSolr + "/#/"+mainCollection + "/analysis";
   getSolrSchemaAdmin = getSolr + "/#/"+ mainCollection + "/schema";
   
