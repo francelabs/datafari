@@ -4,7 +4,7 @@
       "title": "Doc Language Distribution",
       "text": "search(Monitoring, q\u003d\"facetType:language\", fl\u003d\"facet, numDocs\")",
       "user": "anonymous",
-      "dateUpdated": "2022-05-31 15:34:09.544",
+      "dateUpdated": "2022-06-08 16:29:15.337",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -72,7 +72,7 @@
         "msg": [
           {
             "type": "TABLE",
-            "data": "numDocs\tfacet\n6\ten\n14\tfr\n"
+            "data": "numDocs\tfacet\n14\tfr\n6\ten\n"
           },
           {
             "type": "HTML",
@@ -86,15 +86,15 @@
       "jobName": "paragraph_1653926093761_1082412445",
       "id": "paragraph_1653912089334_1211927621",
       "dateCreated": "2022-05-30 15:54:53.761",
-      "dateStarted": "2022-05-31 15:34:09.546",
-      "dateFinished": "2022-05-31 15:34:09.554",
+      "dateStarted": "2022-06-08 16:29:15.339",
+      "dateFinished": "2022-06-08 16:29:15.349",
       "status": "FINISHED"
     },
     {
       "title": "Doc Type Distribution",
       "text": "search(Monitoring, q\u003d\"facetType:extension\", fl\u003d\"facet, numDocs\", rows\u003d250)",
       "user": "anonymous",
-      "dateUpdated": "2022-05-31 15:34:27.331",
+      "dateUpdated": "2022-06-08 16:29:15.439",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -162,7 +162,7 @@
         "msg": [
           {
             "type": "TABLE",
-            "data": "numDocs\tfacet\n3\tdocx\n1\tdotx\n5\ttxt\n1\tdot\n3\thtml\n1\tjpg\n5\tpdf\n1\tdoc\n"
+            "data": "numDocs\tfacet\n5\tpdf\n5\ttxt\n3\tdocx\n3\thtml\n1\tdoc\n1\tdot\n1\tdotx\n1\tjpg\n"
           },
           {
             "type": "HTML",
@@ -176,15 +176,15 @@
       "jobName": "paragraph_1653926093761_579274318",
       "id": "paragraph_1653912192239_1171858547",
       "dateCreated": "2022-05-30 15:54:53.761",
-      "dateStarted": "2022-05-31 15:34:27.332",
-      "dateFinished": "2022-05-31 15:34:27.344",
+      "dateStarted": "2022-06-08 16:29:15.441",
+      "dateFinished": "2022-06-08 16:29:15.454",
       "status": "FINISHED"
     },
     {
       "title": "Doc Source Distribution",
       "text": "search(Monitoring, q\u003d\"facetType:source\", fl\u003d\"facet, numDocs\")",
       "user": "anonymous",
-      "dateUpdated": "2022-05-30 15:54:53.761",
+      "dateUpdated": "2022-06-08 16:29:15.541",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -266,14 +266,25 @@
       "jobName": "paragraph_1653926093761_810405089",
       "id": "paragraph_1653925473190_771269629",
       "dateCreated": "2022-05-30 15:54:53.761",
-      "status": "READY"
+      "dateStarted": "2022-06-08 16:29:15.542",
+      "dateFinished": "2022-06-08 16:29:15.568",
+      "status": "FINISHED"
     },
     {
       "text": "",
       "user": "anonymous",
-      "dateUpdated": "2022-05-31 14:48:19.827",
+      "dateUpdated": "2022-06-08 16:29:15.642",
       "progress": 0,
-      "config": {},
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined"
+      },
       "settings": {
         "params": {},
         "forms": {}
@@ -284,7 +295,7 @@
       "jobName": "paragraph_1653926093761_424041744",
       "id": "paragraph_1653925641164_1400205643",
       "dateCreated": "2022-05-30 15:54:53.761",
-      "status": "READY"
+      "status": "FINISHED"
     }
   ],
   "name": "Corpus Analysis",
@@ -297,5 +308,7 @@
   "config": {
     "isZeppelinNotebookCronEnable": false
   },
-  "info": {}
+  "info": {
+    "isRunning": true
+  }
 }

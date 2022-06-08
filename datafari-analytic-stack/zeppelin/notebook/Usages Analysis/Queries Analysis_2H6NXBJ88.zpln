@@ -4,7 +4,7 @@
       "title": "Clients who have connected to Datafari",
       "text": "facet(Access, buckets\u003d\"client_ip\", fq\u003d\"date:[NOW-7DAY TO NOW]\", rows\u003d\"20\")",
       "user": "anonymous",
-      "dateUpdated": "2022-06-02 15:43:16.896",
+      "dateUpdated": "2022-06-08 14:35:43.194",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -93,7 +93,7 @@
         "msg": [
           {
             "type": "TABLE",
-            "data": "client_ip\tcount(*)\n10.0.2.15\t456\n"
+            "data": "client_ip\tcount(*)\n10.0.2.15\t394\n"
           },
           {
             "type": "HTML",
@@ -107,15 +107,15 @@
       "jobName": "paragraph_1654177739839_2085758266",
       "id": "paragraph_1654177739839_2085758266",
       "dateCreated": "2022-06-02 13:48:59.839",
-      "dateStarted": "2022-06-02 15:18:24.398",
-      "dateFinished": "2022-06-02 15:18:24.439",
+      "dateStarted": "2022-06-08 14:35:43.208",
+      "dateFinished": "2022-06-08 14:35:45.706",
       "status": "FINISHED"
     },
     {
       "title": "Top 20 User searches with no search results",
       "text": "facet(Statistics, buckets\u003d\"q, numFound\", q\u003d\"numFound:0\", fq\u003d\"date:[NOW-7DAY TO NOW]\", rows\u003d\"20\")",
       "user": "anonymous",
-      "dateUpdated": "2022-06-02 15:43:42.609",
+      "dateUpdated": "2022-06-08 14:35:45.723",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -168,7 +168,7 @@
         "msg": [
           {
             "type": "TABLE",
-            "data": "q\tnumFound\tcount(*)\ntest\t0\t2\n"
+            "data": "q\tnumFound\tcount(*)\n*:*\t0\t2\n"
           },
           {
             "type": "HTML",
@@ -182,15 +182,15 @@
       "jobName": "paragraph_1654177858983_1085038467",
       "id": "paragraph_1654177858983_1085038467",
       "dateCreated": "2022-06-02 13:50:58.984",
-      "dateStarted": "2022-06-02 15:32:21.866",
-      "dateFinished": "2022-06-02 15:32:21.880",
+      "dateStarted": "2022-06-08 14:35:45.726",
+      "dateFinished": "2022-06-08 14:35:45.756",
       "status": "FINISHED"
     },
     {
       "title": "Top 20 User searches with search results but no clicks",
       "text": "facet(Statistics, buckets\u003d\"q, numFound, click\", q\u003d\"-numFound:0 and click:No\\ Click\", df\u003d\"id\", fq\u003d\"date:[NOW-7DAY TO NOW]\", rows\u003d\"20\")",
       "user": "anonymous",
-      "dateUpdated": "2022-06-02 15:34:44.707",
+      "dateUpdated": "2022-06-08 14:35:45.826",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -297,12 +297,8 @@
         "code": "SUCCESS",
         "msg": [
           {
-            "type": "TABLE",
-            "data": "q\tnumFound\tcount(*)\tclick\ntest\t20\t1\tNo Click\ntest de document\t1\t1\tNo Click\n"
-          },
-          {
             "type": "HTML",
-            "data": "\u003cfont color\u003dblue\u003eNumber of results:2.\u003c/font\u003e"
+            "data": "\u003cfont color\u003dred\u003eZero results for the query.\u003c/font\u003e"
           }
         ]
       },
@@ -312,15 +308,15 @@
       "jobName": "paragraph_1654178636934_17793320",
       "id": "paragraph_1654178636934_17793320",
       "dateCreated": "2022-06-02 14:03:56.934",
-      "dateStarted": "2022-06-02 15:32:29.222",
-      "dateFinished": "2022-06-02 15:32:29.237",
+      "dateStarted": "2022-06-08 14:35:45.829",
+      "dateFinished": "2022-06-08 14:35:45.854",
       "status": "FINISHED"
     },
     {
       "title": "Top 10 Query terms",
       "text": "facet(Statistics, buckets\u003d\"q_search, click\", fq\u003d\"date:[NOW-7DAY TO NOW]\", rows\u003d\"10\")",
       "user": "anonymous",
-      "dateUpdated": "2022-06-02 15:36:29.975",
+      "dateUpdated": "2022-06-08 14:35:45.929",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -400,12 +396,8 @@
         "code": "SUCCESS",
         "msg": [
           {
-            "type": "TABLE",
-            "data": "q_search\tcount(*)\tclick\ntest\t4\tNo Click\ntest\t1\tClicked\ndocument\t1\tClicked\ndocument\t1\tNo Click\nde\t1\tNo Click\n"
-          },
-          {
             "type": "HTML",
-            "data": "\u003cfont color\u003dblue\u003eNumber of results:5.\u003c/font\u003e"
+            "data": "\u003cfont color\u003dred\u003eZero results for the query.\u003c/font\u003e"
           }
         ]
       },
@@ -415,15 +407,15 @@
       "jobName": "paragraph_1654179255865_846519264",
       "id": "paragraph_1654179255865_846519264",
       "dateCreated": "2022-06-02 14:14:15.866",
-      "dateStarted": "2022-06-02 15:33:13.262",
-      "dateFinished": "2022-06-02 15:33:13.284",
+      "dateStarted": "2022-06-08 14:35:45.931",
+      "dateFinished": "2022-06-08 14:35:45.949",
       "status": "FINISHED"
     },
     {
       "title": "Top 10 User searches",
       "text": "facet(Statistics, buckets\u003d\"q\", fq\u003d\"date:[NOW-7DAY TO NOW]\", rows\u003d\"10\")",
       "user": "anonymous",
-      "dateUpdated": "2022-06-02 15:36:18.753",
+      "dateUpdated": "2022-06-08 14:35:46.031",
       "progress": 0,
       "config": {
         "colWidth": 6.0,
@@ -474,11 +466,11 @@
         "msg": [
           {
             "type": "TABLE",
-            "data": "q\tcount(*)\ntest\t4\ndocument\t1\ntest de document\t1\n"
+            "data": "q\tcount(*)\n*:*\t2\n"
           },
           {
             "type": "HTML",
-            "data": "\u003cfont color\u003dblue\u003eNumber of results:3.\u003c/font\u003e"
+            "data": "\u003cfont color\u003dblue\u003eNumber of results:1.\u003c/font\u003e"
           }
         ]
       },
@@ -488,15 +480,15 @@
       "jobName": "paragraph_1654180383369_1595221350",
       "id": "paragraph_1654180383369_1595221350",
       "dateCreated": "2022-06-02 14:33:03.372",
-      "dateStarted": "2022-06-02 15:35:43.284",
-      "dateFinished": "2022-06-02 15:35:43.296",
+      "dateStarted": "2022-06-08 14:35:46.033",
+      "dateFinished": "2022-06-08 14:35:46.050",
       "status": "FINISHED"
     },
     {
       "title": "Searches with hits / Searches with no hits",
       "text": "facet(Statistics, buckets\u003d\"noHits\", fq\u003d\"date:[NOW-7DAY TO NOW]\")",
       "user": "anonymous",
-      "dateUpdated": "2022-06-02 15:40:38.724",
+      "dateUpdated": "2022-06-08 14:35:46.133",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -548,11 +540,11 @@
         "msg": [
           {
             "type": "TABLE",
-            "data": "noHits\tcount(*)\nHits\t4\nNo Hits\t2\n"
+            "data": "noHits\tcount(*)\nNo Hits\t2\n"
           },
           {
             "type": "HTML",
-            "data": "\u003cfont color\u003dblue\u003eNumber of results:2.\u003c/font\u003e"
+            "data": "\u003cfont color\u003dblue\u003eNumber of results:1.\u003c/font\u003e"
           }
         ]
       },
@@ -562,15 +554,15 @@
       "jobName": "paragraph_1654184113752_631532874",
       "id": "paragraph_1654184113752_631532874",
       "dateCreated": "2022-06-02 15:35:13.752",
-      "dateStarted": "2022-06-02 15:38:19.004",
-      "dateFinished": "2022-06-02 15:38:19.020",
+      "dateStarted": "2022-06-08 14:35:46.135",
+      "dateFinished": "2022-06-08 14:35:46.154",
       "status": "FINISHED"
     },
     {
       "title": "Searches with clicks / Searches with no clicks",
       "text": "facet(Statistics, buckets\u003d\"click\", fq\u003d\"date:[NOW-7DAY TO NOW]\")",
       "user": "anonymous",
-      "dateUpdated": "2022-06-02 15:41:06.701",
+      "dateUpdated": "2022-06-08 14:35:46.235",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -638,11 +630,11 @@
         "msg": [
           {
             "type": "TABLE",
-            "data": "count(*)\tclick\n4\tNo Click\n2\tClicked\n"
+            "data": "count(*)\tclick\n2\tNo Click\n"
           },
           {
             "type": "HTML",
-            "data": "\u003cfont color\u003dblue\u003eNumber of results:2.\u003c/font\u003e"
+            "data": "\u003cfont color\u003dblue\u003eNumber of results:1.\u003c/font\u003e"
           }
         ]
       },
@@ -652,15 +644,15 @@
       "jobName": "paragraph_1654184299004_1764013639",
       "id": "paragraph_1654184299004_1764013639",
       "dateCreated": "2022-06-02 15:38:19.004",
-      "dateStarted": "2022-06-02 15:40:15.069",
-      "dateFinished": "2022-06-02 15:40:15.087",
+      "dateStarted": "2022-06-08 14:35:46.240",
+      "dateFinished": "2022-06-08 14:35:46.262",
       "status": "FINISHED"
     },
     {
       "title": "Average response time (ms)",
       "text": "timeseries(Statistics, field\u003d\"date\", start\u003d\"NOW-1HOUR\", end\u003d\"NOW\", gap\u003d\"+10MINUTES\", avg(QTime)) ",
       "user": "anonymous",
-      "dateUpdated": "2022-06-02 15:53:51.763",
+      "dateUpdated": "2022-06-08 14:35:46.338",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -745,7 +737,7 @@
         "msg": [
           {
             "type": "TABLE",
-            "data": "date\tavg(QTime)\n2022-06-02T14:52:22.974Z\t0\n2022-06-02T15:02:22.974Z\t0\n2022-06-02T15:12:22.974Z\t202.0\n2022-06-02T15:22:22.974Z\t129.0\n2022-06-02T15:32:22.974Z\t0\n2022-06-02T15:42:22.974Z\t0\n"
+            "data": "date\tavg(QTime)\n2022-06-08T13:35:46.362Z\t0\n2022-06-08T13:45:46.362Z\t0\n2022-06-08T13:55:46.362Z\t0\n2022-06-08T14:05:46.362Z\t282.0\n2022-06-08T14:15:46.362Z\t0\n2022-06-08T14:25:46.362Z\t0\n"
           },
           {
             "type": "HTML",
@@ -759,15 +751,15 @@
       "jobName": "paragraph_1654184385416_1396373556",
       "id": "paragraph_1654184385416_1396373556",
       "dateCreated": "2022-06-02 15:39:45.416",
-      "dateStarted": "2022-06-02 15:52:22.965",
-      "dateFinished": "2022-06-02 15:52:22.989",
+      "dateStarted": "2022-06-08 14:35:46.341",
+      "dateFinished": "2022-06-08 14:35:46.383",
       "status": "FINISHED"
     },
     {
       "title": "Number of searches",
       "text": "timeseries(Statistics, field\u003d\"date\", start\u003d\"NOW-1HOUR\", end\u003d\"NOW\", gap\u003d\"+10MINUTES\", count(*)) ",
       "user": "anonymous",
-      "dateUpdated": "2022-06-02 15:56:50.049",
+      "dateUpdated": "2022-06-08 14:35:46.441",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -840,7 +832,7 @@
         "msg": [
           {
             "type": "TABLE",
-            "data": "date\tcount(*)\n2022-06-02T14:55:50.171Z\t0\n2022-06-02T15:05:50.171Z\t0\n2022-06-02T15:15:50.171Z\t5\n2022-06-02T15:25:50.171Z\t1\n2022-06-02T15:35:50.171Z\t0\n2022-06-02T15:45:50.171Z\t0\n"
+            "data": "date\tcount(*)\n2022-06-08T13:35:46.460Z\t0\n2022-06-08T13:45:46.460Z\t0\n2022-06-08T13:55:46.460Z\t0\n2022-06-08T14:05:46.460Z\t2\n2022-06-08T14:15:46.460Z\t0\n2022-06-08T14:25:46.460Z\t0\n"
           },
           {
             "type": "HTML",
@@ -854,15 +846,15 @@
       "jobName": "paragraph_1654185119226_1554384603",
       "id": "paragraph_1654185119226_1554384603",
       "dateCreated": "2022-06-02 15:51:59.226",
-      "dateStarted": "2022-06-02 15:55:50.156",
-      "dateFinished": "2022-06-02 15:55:50.176",
+      "dateStarted": "2022-06-08 14:35:46.444",
+      "dateFinished": "2022-06-08 14:35:46.471",
       "status": "FINISHED"
     },
     {
       "title": "Searches explore",
       "text": "search(Statistics, q\u003d\"*:*\", fl\u003d\"date, numClicks, QTime, click, q, noHits, numFound\", fq\u003d\"date:[NOW-7DAY TO NOW]\", rows\u003d\"2000000\")",
       "user": "anonymous",
-      "dateUpdated": "2022-06-02 16:05:10.657",
+      "dateUpdated": "2022-06-08 14:35:46.544",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -1003,11 +995,11 @@
         "msg": [
           {
             "type": "TABLE",
-            "data": "date\tq\tnumClicks\tnoHits\tQTime\tnumFound\tclick\n2022-06-02T15:16:23.019Z\ttest\t0\tNo Hits\t38\t0\tNo Click\n2022-06-02T15:16:28.075Z\ttest\t0\tNo Hits\t422\t0\tNo Click\n2022-06-02T15:17:30.819Z\ttest\t0\tHits\t186\t20\tNo Click\n2022-06-02T15:17:47.097Z\tdocument\t2\tHits\t248\t5\tClicked\n2022-06-02T15:19:01.635Z\ttest\t1\tHits\t116\t20\tClicked\n2022-06-02T15:31:33.562Z\ttest de document\t0\tHits\t129\t1\tNo Click\n"
+            "data": "date\tq\tnumClicks\tnoHits\tQTime\tnumFound\tclick\n2022-06-08T14:10:33.925Z\t*:*\t0\tNo Hits\t33\t0\tNo Click\n2022-06-08T14:10:38.882Z\t*:*\t0\tNo Hits\t531\t0\tNo Click\n"
           },
           {
             "type": "HTML",
-            "data": "\u003cfont color\u003dblue\u003eNumber of results:6.\u003c/font\u003e"
+            "data": "\u003cfont color\u003dblue\u003eNumber of results:2.\u003c/font\u003e"
           }
         ]
       },
@@ -1017,14 +1009,24 @@
       "jobName": "paragraph_1654185350155_137891903",
       "id": "paragraph_1654185350155_137891903",
       "dateCreated": "2022-06-02 15:55:50.155",
-      "dateStarted": "2022-06-02 16:01:21.605",
-      "dateFinished": "2022-06-02 16:01:21.618",
+      "dateStarted": "2022-06-08 14:35:46.555",
+      "dateFinished": "2022-06-08 14:35:46.576",
       "status": "FINISHED"
     },
     {
       "user": "anonymous",
+      "dateUpdated": "2022-06-08 14:35:46.654",
       "progress": 0,
-      "config": {},
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/undefined"
+      },
       "settings": {
         "params": {},
         "forms": {}
@@ -1035,7 +1037,7 @@
       "jobName": "paragraph_1654185530451_1490729410",
       "id": "paragraph_1654185530451_1490729410",
       "dateCreated": "2022-06-02 15:58:50.451",
-      "status": "READY"
+      "status": "FINISHED"
     }
   ],
   "name": "Queries Analysis",
@@ -1049,6 +1051,6 @@
     "isZeppelinNotebookCronEnable": false
   },
   "info": {
-    "isRunning": false
+    "isRunning": true
   }
 }
