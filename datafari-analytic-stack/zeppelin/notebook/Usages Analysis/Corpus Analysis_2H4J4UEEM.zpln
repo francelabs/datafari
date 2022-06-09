@@ -71,12 +71,8 @@
         "code": "SUCCESS",
         "msg": [
           {
-            "type": "TABLE",
-            "data": "numDocs\tfacet\n14\tfr\n6\ten\n"
-          },
-          {
             "type": "HTML",
-            "data": "\u003cfont color\u003dblue\u003eNumber of results:2.\u003c/font\u003e"
+            "data": "\u003cfont color\u003dred\u003eZero results for the query.\u003c/font\u003e"
           }
         ]
       },
@@ -161,12 +157,8 @@
         "code": "SUCCESS",
         "msg": [
           {
-            "type": "TABLE",
-            "data": "numDocs\tfacet\n5\tpdf\n5\ttxt\n3\tdocx\n3\thtml\n1\tdoc\n1\tdot\n1\tdotx\n1\tjpg\n"
-          },
-          {
             "type": "HTML",
-            "data": "\u003cfont color\u003dblue\u003eNumber of results:8.\u003c/font\u003e"
+            "data": "\u003cfont color\u003dred\u003eZero results for the query.\u003c/font\u003e"
           }
         ]
       },
@@ -251,12 +243,8 @@
         "code": "SUCCESS",
         "msg": [
           {
-            "type": "TABLE",
-            "data": "numDocs\tfacet\n20\tTest\n"
-          },
-          {
             "type": "HTML",
-            "data": "\u003cfont color\u003dblue\u003eNumber of results:1.\u003c/font\u003e"
+            "data": "\u003cfont color\u003dred\u003eZero results for the query.\u003c/font\u003e"
           }
         ]
       },

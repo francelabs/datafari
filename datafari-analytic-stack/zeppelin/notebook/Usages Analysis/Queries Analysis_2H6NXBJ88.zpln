@@ -92,12 +92,8 @@
         "code": "SUCCESS",
         "msg": [
           {
-            "type": "TABLE",
-            "data": "client_ip\tcount(*)\n10.0.2.15\t394\n"
-          },
-          {
             "type": "HTML",
-            "data": "\u003cfont color\u003dblue\u003eNumber of results:1.\u003c/font\u003e"
+            "data": "\u003cfont color\u003dred\u003eZero results for the query.\u003c/font\u003e"
           }
         ]
       },
@@ -167,12 +163,8 @@
         "code": "SUCCESS",
         "msg": [
           {
-            "type": "TABLE",
-            "data": "q\tnumFound\tcount(*)\n*:*\t0\t2\n"
-          },
-          {
             "type": "HTML",
-            "data": "\u003cfont color\u003dblue\u003eNumber of results:1.\u003c/font\u003e"
+            "data": "\u003cfont color\u003dred\u003eZero results for the query.\u003c/font\u003e"
           }
         ]
       },
@@ -465,12 +457,8 @@
         "code": "SUCCESS",
         "msg": [
           {
-            "type": "TABLE",
-            "data": "q\tcount(*)\n*:*\t2\n"
-          },
-          {
             "type": "HTML",
-            "data": "\u003cfont color\u003dblue\u003eNumber of results:1.\u003c/font\u003e"
+            "data": "\u003cfont color\u003dred\u003eZero results for the query.\u003c/font\u003e"
           }
         ]
       },
@@ -539,12 +527,8 @@
         "code": "SUCCESS",
         "msg": [
           {
-            "type": "TABLE",
-            "data": "noHits\tcount(*)\nNo Hits\t2\n"
-          },
-          {
             "type": "HTML",
-            "data": "\u003cfont color\u003dblue\u003eNumber of results:1.\u003c/font\u003e"
+            "data": "\u003cfont color\u003dred\u003eZero results for the query.\u003c/font\u003e"
           }
         ]
       },
@@ -629,12 +613,8 @@
         "code": "SUCCESS",
         "msg": [
           {
-            "type": "TABLE",
-            "data": "count(*)\tclick\n2\tNo Click\n"
-          },
-          {
             "type": "HTML",
-            "data": "\u003cfont color\u003dblue\u003eNumber of results:1.\u003c/font\u003e"
+            "data": "\u003cfont color\u003dred\u003eZero results for the query.\u003c/font\u003e"
           }
         ]
       },
@@ -736,12 +716,8 @@
         "code": "SUCCESS",
         "msg": [
           {
-            "type": "TABLE",
-            "data": "date\tavg(QTime)\n2022-06-08T13:35:46.362Z\t0\n2022-06-08T13:45:46.362Z\t0\n2022-06-08T13:55:46.362Z\t0\n2022-06-08T14:05:46.362Z\t282.0\n2022-06-08T14:15:46.362Z\t0\n2022-06-08T14:25:46.362Z\t0\n"
-          },
-          {
             "type": "HTML",
-            "data": "\u003cfont color\u003dblue\u003eNumber of results:6.\u003c/font\u003e"
+            "data": "\u003cfont color\u003dred\u003eZero results for the query.\u003c/font\u003e"
           }
         ]
       },
@@ -831,12 +807,8 @@
         "code": "SUCCESS",
         "msg": [
           {
-            "type": "TABLE",
-            "data": "date\tcount(*)\n2022-06-08T13:35:46.460Z\t0\n2022-06-08T13:45:46.460Z\t0\n2022-06-08T13:55:46.460Z\t0\n2022-06-08T14:05:46.460Z\t2\n2022-06-08T14:15:46.460Z\t0\n2022-06-08T14:25:46.460Z\t0\n"
-          },
-          {
             "type": "HTML",
-            "data": "\u003cfont color\u003dblue\u003eNumber of results:6.\u003c/font\u003e"
+            "data": "\u003cfont color\u003dred\u003eZero results for the query.\u003c/font\u003e"
           }
         ]
       },
@@ -994,12 +966,8 @@
         "code": "SUCCESS",
         "msg": [
           {
-            "type": "TABLE",
-            "data": "date\tq\tnumClicks\tnoHits\tQTime\tnumFound\tclick\n2022-06-08T14:10:33.925Z\t*:*\t0\tNo Hits\t33\t0\tNo Click\n2022-06-08T14:10:38.882Z\t*:*\t0\tNo Hits\t531\t0\tNo Click\n"
-          },
-          {
             "type": "HTML",
-            "data": "\u003cfont color\u003dblue\u003eNumber of results:2.\u003c/font\u003e"
+            "data": "\u003cfont color\u003dred\u003eZero results for the query.\u003c/font\u003e"
           }
         ]
       },
