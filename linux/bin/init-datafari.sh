@@ -327,6 +327,7 @@ init_apache_ssl() {
     a2enmod auth_digest
     a2enmod rewrite
     a2enmod headers
+    a2enmod proxy_wstunnel
     a2dissite 000-default
     a2dissite default-ssl
     a2ensite tomcat
