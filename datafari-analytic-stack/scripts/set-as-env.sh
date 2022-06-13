@@ -21,7 +21,7 @@ export LS_JAVA_HOME=$JAVA_HOME
 export ZEPPELIN_JAVA_OPTS="-Duser.timezone=UTC"
 export ZEPPELIN_PORT=8888
 export ZEPPELIN_MEM="-Xms1024m -Xmx1024m -XX:MaxMetaspaceSize=512m"
-
+export ZEPPELIN_ADDR="0.0.0.0"
 # pid files 
 export LOGSTASH_PID_FILE=$PID_DIR/logstash.pid
 export ZEPPELIN_PID_DIR=$PID_DIR
