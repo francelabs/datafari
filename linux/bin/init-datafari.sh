@@ -308,6 +308,7 @@ init_apache_ssl() {
   getSolrAdmin="\"/solr/\""
   getMonitAdmin="\"/monit/\""
   getGlancesAdmin="\"/glances/\""
+  getZeppelinAdmin="\"/zeppelin/\""
   sed -i -e "s/@APACHE@/true/g" $TOMCAT_HOME/conf/datafari.properties >>$installerLog 2>&1
   cp -r $DATAFARI_HOME/apache/html/* /var/www/html/
 
@@ -363,6 +364,7 @@ init_apache_ssl() {
   sed -i -e "s~\"@GET-SOLR-IP@\"~${getSolrAdmin}~g" $TOMCAT_HOME/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
   sed -i -e "s~\"@GET-MONIT-IP@\"~${getMonitAdmin}~g" $TOMCAT_HOME/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
   sed -i -e "s~\"@GET-GLANCES-IP@\"~${getGlancesAdmin}~g" $TOMCAT_HOME/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
+  sed -i -e "s~\"@GET-ZEPPELIN-IP@\"~${getZeppelinAdmin}~g" $TOMCAT_HOME/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
   sed -i -e "s/@APACHE-PRESENT@/${apachePresent}/g" $TOMCAT_HOME/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
   
 }

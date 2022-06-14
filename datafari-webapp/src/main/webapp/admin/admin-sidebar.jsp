@@ -10,19 +10,19 @@
   String getSolrSchemaAdmin ="";
   String getPath = getProtocol+"://"+getDomain+":"+getPort+path;
   String ApachePresent = "@APACHE-PRESENT@";
-  String pathZeppelin="";
+  
   String getMCF = "@GET-MCF-IP@" ;
   String getSolr = "@GET-SOLR-IP@" ;
   String getMonit = "@GET-MONIT-IP@" ;
   String getGlances = "@GET-GLANCES-IP@" ;
-  pathZeppelin = "https://@ZEPPELIN_HOST@/zeppelin";
+  String getZeppelin = "@GET-ZEPPELIN-IP@";
   getSolrSchemaAnalysis = getSolr + "/#/"+mainCollection + "/analysis";
   getSolrSchemaAdmin = getSolr + "/#/"+ mainCollection + "/schema";
   
-  String getZeppelinCorpusAnalysis = pathZeppelin +"/#/notebook/2H4J4UEEM";
-  String getZeppelinQueriesAnalysis = pathZeppelin +"/#/notebook/2H6NXBJ88";
-  String getZeppelinProblematicFiles = pathZeppelin +"/#/notebook/2H6MSJCE6";
-  String getZeppelinLog = pathZeppelin +"/#/notebook/2H5EXYG6K" ;  
+  String getZeppelinCorpusAnalysis = getZeppelin +"/#/notebook/2H4J4UEEM";
+  String getZeppelinQueriesAnalysis = getZeppelin +"/#/notebook/2H6NXBJ88";
+  String getZeppelinProblematicFiles = getZeppelin +"/#/notebook/2H6MSJCE6";
+  String getZeppelinLog = getZeppelin +"/#/notebook/2H5EXYG6K" ;  
 %>
 <nav id="sidebar" class="bg-light calc-height">
   <ul class="list-unstyled">
