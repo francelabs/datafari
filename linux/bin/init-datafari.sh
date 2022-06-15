@@ -130,8 +130,8 @@ init_logstash() {
   sed -i -e "s/@SOLR_HOST@/$1/g" $AS_HOME/logstash/logstash-datafari.conf >>$installerLog 2>&1
 }
 
-init_zeppelin_host() {
-  sed -i -e "s/@ZEPPELIN_HOST@/$1/g" $DATAFARI_HOME/tomcat/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
+init_zeppelin_node() {
+  sed -i -e "s/@ZEPPELINNODEIP@/${1}/g" $DATAFARI_HOME/ssl-keystore/apache/config/tomcat.conf >>$installerLog 2>&1
 }
 
 init_memory() {
@@ -759,6 +759,7 @@ initialization_monoserver() {
   init_zk $localip
   init_zk_mcf
   init_mcf "A"
+  init_zeppelin_node $localip
   init_shards $SOLRNUMSHARDS
   init_main_node
   init_solrcloud
