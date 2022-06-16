@@ -27,3 +27,7 @@ echo "Uploading configuration to zookeeper"
 "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost @SOLRHOSTS@ -confdir "${DATAFARI_HOME}/solr/solrcloud/FileShare/conf" -confname Init
 "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost @SOLRHOSTS@ -confdir "${DATAFARI_HOME}/solr/solrcloud/Statistics/conf" -confname Statistics
 "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost @SOLRHOSTS@ -confdir "${DATAFARI_HOME}/solr/solrcloud/Promolink/conf" -confname Promolink
+"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost @SOLRHOSTS@ -confdir "${DATAFARI_HOME}/solr/solrcloud/Access/conf" -confname Access
+"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost @SOLRHOSTS@ -confdir "${DATAFARI_HOME}/solr/solrcloud/Monitoring/conf" -confname Monitoring
+"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost @SOLRHOSTS@ -confdir "${DATAFARI_HOME}/solr/solrcloud/Crawl/conf" -confname Crawl
+"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost @SOLRHOSTS@ -confdir "${DATAFARI_HOME}/solr/solrcloud/Logs/conf" -confname Logs
