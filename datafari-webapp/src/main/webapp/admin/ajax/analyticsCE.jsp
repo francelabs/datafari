@@ -5,13 +5,13 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Problematic Files</title>
+  <title>System Analysis</title>
 </head>
 <body>
   <jsp:include
     page="/resources/templates/feature-not-available.jsp" >
-    <jsp:param name="featureDesc" value="This Kibana dashboard" />
-    <jsp:param name="featureImg" value="/resources/images/missing-features/elk_problematic_files_feature.png" />
+    <jsp:param name="featureDesc" value="This dashboard type" />
+    <jsp:param name="featureImg" value="/resources/images/missing-features/zeppelin_system_dashboards_feature.png" />
   </jsp:include>
 </body>
 </html>

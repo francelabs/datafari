@@ -11,7 +11,7 @@
   <jsp:include
     page="/resources/templates/feature-not-available.jsp" >
     <jsp:param name="featureDesc" value="The crawl data monitoring feature" />
-    <jsp:param name="featureImg" value="/resources/images/not-available.png" />
+    <jsp:param name="featureImg" value="/resources/images/missing-features/crawl_data_monitoring_feature.png" />
   </jsp:include>
 </body>
 </html>

@@ -50,7 +50,6 @@ public class DatafariMainConfiguration extends AbstractConfigClass {
   public static final String SOLR_SECONDARY_COLLECTIONS = "SOLRSECONDARYCOLLECTION";
   public static final String EMAIL_LICENSE = "emailLicense";
   public static final String USER_ALLOWED_HANDLERS = "userAllowedHandlers";
-  public static final String BATCH_ACTIVATION = "BATCH";
   public static final String SESSION_TIMEOUT_UNAUTH = "sessionTimeoutUnauthenticated";
   public static final String SESSION_TIMEOUT_AUTH = "sessionTimeoutAuthenticated";
   public static final String MAX_CONCURRENT_SESSIONS = "maxConcurrentSessions";
@@ -58,6 +57,7 @@ public class DatafariMainConfiguration extends AbstractConfigClass {
   public static final String EMAIL_FEEDBACKS = "email_feedbacks";
   public static final String EMAIL_BUGS = "email_bugs";
   public static final String MCF_PASSWORD = "MCFPASSWORD";
+  public static final String ANALYTICS_ACTIVATION = "AnalyticsActivation";
 
   private final static Logger LOGGER = LogManager.getLogger(DatafariMainConfiguration.class.getName());
 
