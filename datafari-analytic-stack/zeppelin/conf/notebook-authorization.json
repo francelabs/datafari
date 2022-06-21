@@ -1,0 +1,66 @@
+{
+  "authInfo": {
+    "2H6NXBJ88": {
+      "readers": [
+        "searchexpert",
+        "admin"
+      ],
+      "owners": [
+        "searchexpert",
+        "admin"
+      ],
+      "writers": [
+        "admin"
+      ],
+      "runners": [
+        "searchexpert",
+        "admin"
+      ]
+    },
+    "2H4J4UEEM": {
+      "readers": [
+        "searchexpert",
+        "admin"
+      ],
+      "owners": [
+        "searchexpert",
+        "admin"
+      ],
+      "writers": [
+        "admin"
+      ],
+      "runners": [
+        "searchexpert",
+        "admin"
+      ]
+    },
+    "2H5EXYG6K": {
+      "readers": [
+        "admin"
+      ],
+      "owners": [
+        "admin"
+      ],
+      "writers": [
+        "admin"
+      ],
+      "runners": [
+        "admin"
+      ]
+    },
+    "2H6MSJCE6": {
+      "readers": [
+        "admin"
+      ],
+      "owners": [
+        "admin"
+      ],
+      "writers": [
+        "admin"
+      ],
+      "runners": [
+        "admin"
+      ]
+    }
+  }
+}
