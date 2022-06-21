@@ -4,18 +4,31 @@
 # Set SSL certificates for Apache
 #
 #
-pathCertificates=/opt/datafari/ssl-keystore/customerCertificates
-apacheConfFile=/opt/datafari/apache/sites-available/tomcat.conf
+
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+source "${DIR}/../../../bin/set-datafari-env.sh"
+source "${DIR}/../../../bin/utils.sh"
+
+
+if [ "$(whoami)" != "$DATAFARI_USER" ]; then
+        echo "Script must be run as user: $DATAFARI_USER"
+        echo "Script will exit"
+        exit 1
+fi
+
+
+pathCertificates=${DIR}/../../customerCertificates
 certificatefile=${pathCertificates}/certificate.crt
 certificatekeyfile=${pathCertificates}/certificateKey.key
 
-sed -i "s|\(SSLCertificateFile *\).*|\1${certificatefile}|" ${apacheConfFile}
-sed -i "s|\(SSLCertificateKeyFile *\).*|\1${certificatekeyfile}|" ${apacheConfFile}
+echo "Change of Apache certificates"
 
-if [ -d /etc/apache2 ]; then
-	/etc/init.d/apache2 stop
-    /etc/init.d/apache2 start
-elif [ -d /etc/httpd ]; then
-	apachectl stop
-    apachectl start
-fi
+cp $certificatefile ${DIR}/../datafari.crt
+cp $certificatekeyfile ${DIR}/../datafari.key
+
+echo "Certificates changed. Restart of Apache needed"
+#cd /opt/datafari/bin/monitorUtils
+#bash monit-stop-apache.sh
+#bash monit-start-apache.sh
+#echo "Restart done"

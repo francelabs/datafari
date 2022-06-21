@@ -1,3 +1,8 @@
 .r-col {
 	margin-top: 1em;
 }
+
+
+#configZookeeperModal_confirm {
+	margin-left: 1rem;
+  }
