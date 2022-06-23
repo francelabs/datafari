@@ -37,6 +37,26 @@ $(document)
           document.getElementById("mcfsimplified-title-label").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-title'];
           document.getElementById("createWebJob").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-createWebJob'];
           document.getElementById("createFilerJob").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-createFilerJob'];
+          $("#createDbJob").html(window.i18n.msgStore['adminUI-MCFSimplified-dbJobFormEdit']);
+
+          $("#dbJobTitle").html(window.i18n.msgStore['adminUI-MCFSimplified-dbJobFormEdit']);
+          $("#dbAddLegend").html(window.i18n.msgStore['param']);
+          $("#dbTypeLabel").html(window.i18n.msgStore['dbType']);
+          $("#dbHostLabel").html(window.i18n.msgStore['dbHost']);
+          $("#dbNameLabel").html(window.i18n.msgStore['dbName']);
+          $("#dbConnStrLabel").html(window.i18n.msgStore['dbConnStr']);
+          $("#dbUsernameLabel").html(window.i18n.msgStore['filerUser']);
+          $("#dbPasswordLabel").html(window.i18n.msgStore['adminUI-Password']);
+          $("#dbSeedingLabel").html(window.i18n.msgStore['dbSeeding']);
+          $("#dbVersionLabel").html(window.i18n.msgStore['dbVersion']);
+          $("#dbAccessTokenLabel").html(window.i18n.msgStore['dbAccessToken']);
+          $("#dbDataLabel").html(window.i18n.msgStore['dbData']);
+          $("#dbSecurityLabel").html(window.i18n.msgStore['security']);
+          $("#dbSourcenameLabel").html(window.i18n.msgStore['sourcename']);
+          $("#dbReponameLabel").html(window.i18n.msgStore['reponame']);
+          $("#dbSourcename").attr("placeholder", window.i18n.msgStore['sourcename']);
+          $("#dbReponame").attr("placeholder", window.i18n.msgStore['reponame']);
+          $("#dbStartJobLabel").html(window.i18n.msgStore['startJob']);
 
           document.getElementById("webJobTitle").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-webjobFormEdit'];
           document.getElementById("webAddLegend").innerHTML = window.i18n.msgStore['param'];
@@ -277,13 +297,24 @@ function getJobForm() {
   $("#ajaxResponse").empty();
   $('#webJobDiv').hide();
   $('#filerJobDiv').hide();
+  $('#dbJobDiv').hide();
   $("#addFilerMessageSuccess").hide();
+  $("#addFilerMessageFailure").hide();
+  $("#addFilerCheckMessageFailure").hide();
+  $("#addDbMessageSuccess").hide();
+  $("#addDbMessageFailure").hide();
+  $("#addDbCheckMessageFailure").hide();
   $("#addWebMessageSuccess").hide();
+  $("#addWebMessageFailure").hide();
+  $("#addWebCheckMessageFailure").hide();
+  
   // get the language
   if (jobType == "webjob") {
     webJobForm();
   } else if (jobType == "filerjob") {
     filerJobForm();
+  } else if (jobType == "dbjob") {
+    dbJobForm();
   }
 
 }
@@ -294,6 +325,10 @@ function webJobForm() {
 
 function filerJobForm() {
   $('#filerJobDiv').show();
+}
+
+function dbJobForm() {
+  $('#dbJobDiv').show();
 }
 
 function addFilerConnector() {

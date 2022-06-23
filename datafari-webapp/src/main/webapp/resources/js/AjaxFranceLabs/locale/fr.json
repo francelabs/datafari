@@ -1,4 +1,14 @@
 {
+    "adminUI-MCFSimplified-dbJobFormEdit": "Create Database Job",
+    "dbType": "Database type",
+    "dbHost": "Database host (and port)",
+    "dbName": "Database name",
+    "dbConnStr": "Database raw connection string",
+    "dbSeeding": "Seeding query",
+    "dbVersion": "Version query",
+    "dbAccessToken": "Access Token query",
+    "dbData": "Data query",
+    
     "abnormalQueryTime": "Requête trop longue",
     "access-token-label": "Access Token",
     "ad-connection-ko": "La connexion à l'Active Directory ne fonctionne pas avec les identifiants fournis",

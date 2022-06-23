@@ -2,8 +2,8 @@ input#security {
   vertical-align: bottom;
 }
 
-#security-div, #startJob-div, #startJobWeb-div {
-	padding-top: 4px;
+.checkbox-div {
+	padding-top: 5px;
 }
 
 .backupRestoreOK {

@@ -1,4 +1,14 @@
 {
+    "adminUI-MCFSimplified-dbJobFormEdit": "Create Database Job",
+    "dbType": "Database type",
+    "dbHost": "Database host (and port)",
+    "dbName": "Database name",
+    "dbConnStr": "Database raw connection string",
+    "dbSeeding": "Seeding query",
+    "dbVersion": "Version query",
+    "dbAccessToken": "Access Token query",
+    "dbData": "Data query",
+    
     "abnormalQueryTime": "وقت استفسار غير عادي - استفسارات طويلة جدا ",
     "ad-connection-ko": "The connection with the Active Directory does not work with the provided credentials",
     "ad-connection-ok": "Connection successful with the Active Directory",
