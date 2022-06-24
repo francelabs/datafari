@@ -259,7 +259,6 @@
                     </div>
                     <div class="form-group row" id="db-conn-str-div">
                       <div class="col-sm-3 control-label">
-                        <span class="fas fa-asterisk " style="color : red"></span>
                         <label id="dbConnStrLabel" for="dbConnStr" class="col-form-label"></label><span id="dbConnStr-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
                       <div class="col-sm-4">
@@ -316,11 +315,10 @@
                     </div>
                     <div class="form-group row" id="db-access-token-div">
                       <div class="col-sm-3 control-label">
-                        <span class="fas fa-asterisk " style="color : red"></span>
                         <label id="dbAccessTokenLabel" for="dbAccessToken" class="col-form-label"></label><span id="dbAccessToken-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
                       <div class="col-sm-4">
-                        <textarea required id="dbAccessToken" name="dbAccessToken" placeholder="" class="form-control"></textarea>
+                        <textarea id="dbAccessToken" name="dbAccessToken" placeholder="" class="form-control"></textarea>
                         <div class="invalid-feedback">
                           Please provide an access token query
                         </div>

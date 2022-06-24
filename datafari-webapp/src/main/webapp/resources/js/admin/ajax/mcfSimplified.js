@@ -57,6 +57,23 @@ $(document)
           $("#dbSourcename").attr("placeholder", window.i18n.msgStore['sourcename']);
           $("#dbReponame").attr("placeholder", window.i18n.msgStore['reponame']);
           $("#dbStartJobLabel").html(window.i18n.msgStore['startJob']);
+          $("#dbSeeding").html("SELECT idfield AS $(IDCOLUMN) FROM documenttable WHERE modifydatefield > $(STARTTIME) AND modifydatefield <= $(ENDTIME)");
+          $("#dbVersion").html("SELECT idfield AS $(IDCOLUMN), versionfield AS $(VERSIONCOLUMN) FROM documenttable WHERE idfield IN $(IDLIST)");
+          $("#dbAccessToken").html("SELECT docidfield AS $(IDCOLUMN), aclfield AS $(TOKENCOLUMN) FROM acltable WHERE docidfield IN $(IDLIST)");
+          $("#dbData").html("SELECT idfield AS $(IDCOLUMN), urlfield AS $(URLCOLUMN), datafield AS $(DATACOLUMN) FROM documenttable WHERE idfield IN $(IDLIST)");
+          $("#dbSourcename-tip").attr("title", window.i18n.msgStore['sourcename-tip']);
+          $("#dbReponame-tip").attr("title", window.i18n.msgStore['reponame-tip']);
+          $("#dbSecurity-tip").attr("title", window.i18n.msgStore['dbSecurity-tip']);
+          $("#dbType-tip").attr("title", window.i18n.msgStore['dbType-tip']);
+          $("#dbHost-tip").attr("title", window.i18n.msgStore['dbHost-tip']);
+          $("#dbName-tip").attr("title", window.i18n.msgStore['dbName-tip']);
+          $("#dbConnStr-tip").attr("title", window.i18n.msgStore['dbConnStr-tip']);
+          $("#dbUsername-tip").attr("title", window.i18n.msgStore['dbUsername-tip']);
+          $("#dbPassword-tip").attr("title", window.i18n.msgStore['password-tip']);
+          $("#dbSeeding-tip").attr("title", window.i18n.msgStore['dbSeeding-tip']);
+          $("#dbVersion-tip").attr("title", window.i18n.msgStore['dbVersion-tip']);
+          $("#dbAccessToken-tip").attr("title", window.i18n.msgStore['dbAccessToken-tip']);
+          $("#dbData-tip").attr("title", window.i18n.msgStore['dbData-tip']);
 
           document.getElementById("webJobTitle").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-webjobFormEdit'];
           document.getElementById("webAddLegend").innerHTML = window.i18n.msgStore['param'];

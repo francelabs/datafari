@@ -1,4 +1,15 @@
 {
+    "dbSecurity-tip": "Enable ACL respect for database documents. Requires that the Token query is set AND that a corresponding authority connector is configured",
+    "dbType-tip": "Type of Database to connect to",
+    "dbHost-tip": "Database Host (port may be required if not the default one)",
+    "dbName-tip": "Name of the Database to connect to by default",
+    "dbConnStr-tip": "Raw connection string (optional)",
+    "dbUsername-tip": "Username that can connect to the Database, can perform all the queries without restrictions and having full read access to the data",
+    "dbSeeding-tip": "Seeding query that must return the IDs of all documents to crawl",
+    "dbVersion-tip": "Version query that must return a hash/value representing the version of a document",
+    "dbAccessToken-tip": "Access Token query that must return access tokens for documents",
+    "dbData-tip": "Data query that must return the main content of documents. The content type must be either binary or text",
+    
     "adminUI-MCFSimplified-dbJobFormEdit": "Create Database Job",
     "dbType": "Database type",
     "dbHost": "Database host (and port)",
