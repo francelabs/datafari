@@ -161,6 +161,50 @@ $(document)
           $("#filerReponame").change(function(e) {
             checkRepoName($("#filerReponame"));
           });
+          
+          
+          $("#dbHost").change(function(e) {
+            checkElm($("#dbHost"));
+          });
+          $("#dbName").change(function(e) {
+            checkElm($("#dbName"));
+          });
+          $("#dbUsername").change(function(e) {
+            checkElm($("#dbUsername"));
+          });
+          $("#dbPassword").change(function(e) {
+            checkElm($("#dbPassword"));
+          });
+          $("#dbSeeding").change(function(e) {
+            checkElm($("#dbSeeding"));
+          });
+          $("#dbVersion").change(function(e) {
+            checkElm($("#dbVersion"));
+          });
+          $("#dbData").change(function(e) {
+            checkElm($("#dbData"));
+          });
+          $("#dbSourcename").change(function(e) {
+            checkElm($("#dbSourcename"));
+          });
+          $("#dbReponame").change(function(e) {
+            checkRepoName($("#dbReponame"));
+          });
+          
+          $("#addDb").submit(function(e) {
+            e.preventDefault();
+            $("#addDb").removeClass('was-validated');
+            $("#addDbMessageSuccess").hide();
+            $("#addDbMessageFailure").hide();
+            $("#addDbCheckMessageFailure").hide();
+            var form = document.getElementById("addDb");
+            if (form.checkValidity() === false || !checkRepoName($("#dbReponame"))) {
+              $("#addDb").addClass('was-validated');
+              return false;
+            } else {
+              return addDbConnector();
+            }
+          });
 
           $("#addWeb").submit(function(e) {
             e.preventDefault();
@@ -346,6 +390,68 @@ function filerJobForm() {
 
 function dbJobForm() {
   $('#dbJobDiv').show();
+}
+
+function addDbConnector() {
+  if ($("#newDbConfig").hasClass('disabled')) {
+    return;
+  }
+  $("#newDbConfig").loading("loading");
+  $('#addDb').attr("disabled", true);
+  // Put the Data of the form into a global variable and serialize it
+  formData = $("#addDb").serialize();
+  $.ajax({ // Ajax Request to the doGet of Admin to check if there is already a
+    // promoLink with this keyword
+    type : "POST",
+    url : "./../admin/MCFUISimplified/Db",
+    data : formData,
+    // if received a response from the server
+    success : function(data, textStatus, jqXHR) {
+      data = JSON.parse(data);
+      if (data['code'] !== 0) {
+        if(data['status'] !== null && data['status'] !== undefined) {
+          $("#addDbMessageFailure").html(data['status']);
+        } else {
+          $("#addDbMessageFailure").html("An unkown problem occurred while saving the configuration");
+        }
+        $("#addDbMessageFailure").show();
+      } else {
+        $("#addDb").trigger("reset");
+        var jobStarted = "";
+        if (document.getElementById('dbStartJob').checked) {
+          jobStarted = " and started";
+        }
+        var getUrl = window.location;
+        $("#addDbMessageSuccess").html(
+            "<i class='fa fa-check'></i>Job " + data.job_id + " created" + jobStarted
+                + " ! Based on your configuration, it may not crawl immediately.\n Check the status in the <a target='_blank' href='" + mcfUrl + "'>Datafari connectors status page</a>");
+        $("#addDbMessageSuccess").show();
+        timeouts.push(setTimeout(function() {
+          clearStatus($("#dbHost"));
+          clearStatus($("#dbName"));
+          clearStatus($('#dbConnStr'));
+          clearStatus($('#dbUsername'));
+          clearStatus($("#dbPassword"));
+          clearStatus($("#dbSourcename"));
+          clearStatus($("#dbReponame"));
+        }, 1500));
+      }
+    },
+    error : function(jqXHR, textStatus, errorThrown) {
+      console.log("Something really bad happened " + textStatus);
+      $("#addPromForm").html(jqXHR.responseText);
+    },
+    // capture the request before it was sent to server
+    beforeSend : function(jqXHR, settings) {
+      // disable the button until we get the response
+      $('#addFiler').attr("disabled", true);
+    },
+    // this is called after the response or error functions are finsihed
+    complete : function(jqXHR, textStatus) {
+      // enable the button
+      $("#newFilerConfig").loading("reset");
+    }
+  });
 }
 
 function addFilerConnector() {
