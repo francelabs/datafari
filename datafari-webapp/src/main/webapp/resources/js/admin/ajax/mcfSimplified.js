@@ -444,12 +444,12 @@ function addDbConnector() {
     // capture the request before it was sent to server
     beforeSend : function(jqXHR, settings) {
       // disable the button until we get the response
-      $('#addFiler').attr("disabled", true);
+      $('#addDb').attr("disabled", true);
     },
     // this is called after the response or error functions are finsihed
     complete : function(jqXHR, textStatus) {
       // enable the button
-      $("#newFilerConfig").loading("reset");
+      $("#newDbConfig").loading("reset");
     }
   });
 }

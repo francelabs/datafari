@@ -1,0 +1,66 @@
+{
+  "repositoryconnection": [
+    {
+      "_children_": [
+        {
+          "_type_": "isnew",
+          "_value_": "false"
+        },
+        {
+          "_type_": "name",
+          "_value_": "dbRepo"
+        },
+        {
+          "_type_": "class_name",
+          "_value_": "org.apache.manifoldcf.crawler.connectors.jdbc.JDBCConnector"
+        },
+        {
+          "_type_": "max_connections",
+          "_value_": "10"
+        },
+        {
+          "_type_": "description",
+          "_value_": ""
+        },
+        {
+          "_type_": "configuration",
+          "_PARAMETER_": [
+            {
+              "_value_": "postgresql:\/\/",
+              "_attribute_name": "JDBC Provider"
+            },
+            {
+              "_value_": "name",
+              "_attribute_name": "JDBC column access method"
+            },
+            {
+              "_value_": "localhost",
+              "_attribute_name": "Host"
+            },
+            {
+              "_value_": "manifoldcf",
+              "_attribute_name": "Database name"
+            },
+            {
+              "_value_": "",
+              "_attribute_name": "Raw driver string"
+            },
+            {
+              "_value_": "postgres",
+              "_attribute_name": "User name"
+            },
+            {
+              "_value_": "",
+              "_attribute_name": "Password"
+            }
+          ]
+        },
+        {
+          "_type_": "acl_authority",
+          "_value_": "DatafariAuthorityGroup"
+        }
+      ],
+      "isnew": true
+    }
+  ]
+}

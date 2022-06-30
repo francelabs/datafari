@@ -225,11 +225,11 @@
                       </div>
                       <div class="col-sm-4">
                         <select id="dbType" name="dbType" class="form-control">
-                          <OPTION value="oracle" selected>Oracle</OPTION>
-                          <OPTION value="postgres">Postgres</OPTION>
-                          <OPTION value="mssql">Microsoft SQL Server</OPTION>
-                          <OPTION value="sybase">Sybase</OPTION>
-                          <OPTION value="mysql">MySQL</OPTION>
+                          <OPTION value="oracle:thin:@" selected>Oracle</OPTION>
+                          <OPTION value="postgresql://">Postgres</OPTION>
+                          <OPTION value="jtds:sqlserver://">Microsoft SQL Server</OPTION>
+                          <OPTION value="jtds:sybase://">Sybase</OPTION>
+                          <OPTION value="mysql://">MySQL</OPTION>
                         </select>
                       </div>
                     </div>                      

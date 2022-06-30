@@ -1,0 +1,415 @@
+{
+  "job": [
+    {
+      "_children_": [
+        {
+          "_type_": "description",
+          "_value_": "FilerCrawl"
+        },
+        {
+          "_type_": "repository_connection",
+          "_value_": "4523803e7560452f9c632fdddca144ac"
+        },
+        {
+          "_type_": "document_specification",
+          "_children_": [
+            {
+              "_type_": "idquery",
+              "_value_": "SELECT idfield AS $(IDCOLUMN) FROM documenttable WHERE modifydatefield > $(STARTTIME) AND modifydatefield <= $(ENDTIME)"
+            },
+            {
+              "_type_": "versionquery",
+              "_value_": "SELECT idfield AS $(IDCOLUMN), versionfield AS $(VERSIONCOLUMN) FROM documenttable WHERE idfield IN $(IDLIST)"
+            },
+            {
+              "_type_": "aclquery",
+              "_value_": "SELECT docidfield AS $(IDCOLUMN), aclfield AS $(TOKENCOLUMN) FROM acltable WHERE docidfield IN $(IDLIST)"
+            },
+            {
+              "_type_": "dataquery",
+              "_value_": "SELECT idfield AS $(IDCOLUMN), urlfield AS $(URLCOLUMN), datafield AS $(DATACOLUMN) FROM documenttable WHERE idfield IN $(IDLIST)"
+            },
+            {
+              "_type_": "security",
+              "_value_": "",
+              "_attribute_value": "off"
+            }
+          ]
+        },
+        {
+          "_type_": "pipelinestage",
+          "_children_": [
+            {
+              "_type_": "stage_id",
+              "_value_": "0"
+            },
+            {
+              "_type_": "stage_isoutput",
+              "_value_": "false"
+            },
+            {
+              "_type_": "stage_connectionname",
+              "_value_": "MetadataAdjuster"
+            },
+            {
+              "_type_": "stage_specification",
+              "_children_": [
+                {
+                  "_type_": "expression",
+                  "_attribute_parameter": "repo_source",
+                  "_value_": "",
+                  "_attribute_value": "filer"
+                },
+                {
+                  "_type_": "keepAllMetadata",
+                  "_value_": "",
+                  "_attribute_value": "true"
+                },
+                {
+                  "_type_": "filterEmpty",
+                  "_value_": "",
+                  "_attribute_value": "false"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_type_": "pipelinestage",
+          "_children_": [
+            {
+              "_type_": "stage_id",
+              "_value_": "1"
+            },
+            {
+              "_type_": "stage_prerequisite",
+              "_value_": "0"
+            },
+            {
+              "_type_": "stage_isoutput",
+              "_value_": "false"
+            },
+            {
+              "_type_": "stage_connectionname",
+              "_value_": "EmptierFilter"
+            },
+            {
+              "_type_": "stage_specification",
+              "_children_": [
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)avi(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)mp4(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)mpeg(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)mkv(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)mov(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)wmv(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)flv(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)mp3(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)wav(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)wma(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)flac(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)aac(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)aiff(?-i)$"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "\\.(?i)ogg(?-i)$"
+                },
+                {
+                  "_type_": "maxdocsize",
+                  "_value_": "",
+                  "_attribute_value": "100000000"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_type_": "pipelinestage",
+          "_children_": [
+            {
+              "_type_": "stage_id",
+              "_value_": "2"
+            },
+            {
+              "_type_": "stage_prerequisite",
+              "_value_": "1"
+            },
+            {
+              "_type_": "stage_isoutput",
+              "_value_": "false"
+            },
+            {
+              "_type_": "stage_connectionname",
+              "_value_": "TikaServerRmetaConnector"
+            },
+            {
+              "_type_": "stage_specification",
+              "_children_": [
+                {
+                  "_type_": "fieldmap",
+                  "_attribute_target": "author",
+                  "_value_": "",
+                  "_attribute_source": "dc_creator"
+                },
+                {
+                  "_type_": "fieldmap",
+                  "_attribute_target": "last_author",
+                  "_value_": "",
+                  "_attribute_source": "meta_last_author"
+                },
+                {
+                  "_type_": "fieldmap",
+                  "_attribute_target": "title",
+                  "_value_": "",
+                  "_attribute_source": "dc_title"
+                },
+                {
+                  "_type_": "fieldmap",
+                  "_attribute_target": "creation_date",
+                  "_value_": "",
+                  "_attribute_source": "dcterms_created"
+                },
+                {
+                  "_type_": "fieldmap",
+                  "_attribute_target": "last_modified",
+                  "_value_": "",
+                  "_attribute_source": "dcterms_modified"
+                },
+                {
+                  "_type_": "fieldmap",
+                  "_attribute_target": "character_count",
+                  "_value_": "",
+                  "_attribute_source": "meta_character_count"
+                },
+                {
+                  "_type_": "fieldmap",
+                  "_attribute_target": "keywords",
+                  "_value_": "",
+                  "_attribute_source": "meta_keyword"
+                },
+                {
+                  "_type_": "fieldmap",
+                  "_attribute_target": "subject",
+                  "_value_": "",
+                  "_attribute_source": "dc_subject"
+                },
+                {
+                  "_type_": "fieldmap",
+                  "_attribute_target": "page_count",
+                  "_value_": "",
+                  "_attribute_source": "meta_page_count"
+                },
+                {
+                  "_type_": "fieldmap",
+                  "_attribute_target": "revision_number",
+                  "_value_": "",
+                  "_attribute_source": "cp_revision"
+                },
+                {
+                  "_type_": "fieldmap",
+                  "_attribute_target": "word_count",
+                  "_value_": "",
+                  "_attribute_source": "meta_word_count"
+                },
+                {
+                  "_type_": "fieldmap",
+                  "_attribute_target": "publisher",
+                  "_value_": "",
+                  "_attribute_source": "dc_publisher"
+                },
+                {
+                  "_type_": "fieldmap",
+                  "_attribute_target": "description",
+                  "_value_": "",
+                  "_attribute_source": "dc_description"
+                },
+                {
+                  "_type_": "fieldmap",
+                  "_attribute_target": "total_time",
+                  "_value_": "",
+                  "_attribute_source": "extended_properties_totaltime"
+                },
+                {
+                  "_type_": "keepAllMetadata",
+                  "_value_": "",
+                  "_attribute_value": "true"
+                },
+                {
+                  "_type_": "lowerNames",
+                  "_value_": "",
+                  "_attribute_value": "true"
+                },
+                {
+                  "_type_": "writeLimit",
+                  "_value_": "",
+                  "_attribute_value": "1000000"
+                },
+                {
+                  "_type_": "maxMetadataValueLength",
+                  "_value_": "",
+                  "_attribute_value": "250000"
+                },
+                {
+                  "_type_": "totalMetadataLimit",
+                  "_value_": "",
+                  "_attribute_value": "500000"
+                },
+                {
+                  "_type_": "extractArchives",
+                  "_value_": "",
+                  "_attribute_value": "false"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_type_": "pipelinestage",
+          "_children_": [
+            {
+              "_type_": "stage_id",
+              "_value_": "3"
+            },
+            {
+              "_type_": "stage_prerequisite",
+              "_value_": "2"
+            },
+            {
+              "_type_": "stage_isoutput",
+              "_value_": "false"
+            },
+            {
+              "_type_": "stage_connectionname",
+              "_value_": "MetadataCleaner"
+            },
+            {
+              "_type_": "stage_specification",
+              "_children_": [
+                {
+                  "_type_": "namecleaner",
+                  "_value_": "",
+                  "_attribute_value": "_{",
+                  "_attribute_regex": "\\$\\{"
+                },
+                {
+                  "_type_": "valuecleaner",
+                  "_value_": "",
+                  "_attribute_value": "_{",
+                  "_attribute_regex": "\\$\\{"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_type_": "pipelinestage",
+          "_children_": [
+            {
+              "_type_": "stage_id",
+              "_value_": "4"
+            },
+            {
+              "_type_": "stage_prerequisite",
+              "_value_": "3"
+            },
+            {
+              "_type_": "stage_isoutput",
+              "_value_": "true"
+            },
+            {
+              "_type_": "stage_connectionname",
+              "_value_": "DatafariSolrNoTika"
+            },
+            {
+              "_type_": "stage_specification"
+            }
+          ]
+        },
+        {
+          "_type_": "start_mode",
+          "_value_": "manual"
+        },
+        {
+          "_type_": "run_mode",
+          "_value_": "scan once"
+        },
+        {
+          "_type_": "hopcount_mode",
+          "_value_": "accurate"
+        },
+        {
+          "_type_": "priority",
+          "_value_": "5"
+        },
+        {
+          "_type_": "recrawl_interval",
+          "_value_": "86400000"
+        },
+        {
+          "_type_": "max_recrawl_interval",
+          "_value_": "infinite"
+        },
+        {
+          "_type_": "expiration_interval",
+          "_value_": "infinite"
+        },
+        {
+          "_type_": "reseed_interval",
+          "_value_": "3600000"
+        }
+      ]
+    }
+  ]
+}

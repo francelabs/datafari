@@ -33,7 +33,12 @@ import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
+import com.francelabs.datafari.simplifiedui.utils.DbJob;
+import com.francelabs.datafari.simplifiedui.utils.DbJobConfig;
+import com.francelabs.datafari.simplifiedui.utils.DbRepoConfig;
+import com.francelabs.datafari.simplifiedui.utils.DbRepository;
 import com.francelabs.datafari.utils.Environment;
+import com.francelabs.manifoldcf.configuration.api.ManifoldAPI;
 
 /**
  *
@@ -110,44 +115,51 @@ public class MCFUISimplifiedDb extends HttpServlet {
     out.print(jsonResponse);
   }
 
-  private void createDbRepo(final JSONObject jsonResponse, final String dbType, final String dbHost, final String dbName, final String dbConnStr, final String dbUsername, final String dbPassword, final String dbSeeding, final String dbVersion,
-      final String dbAccessToken, final String dbData, final String reponame, final String sourcename, final String security, final String startJob) throws Exception {
+  private void createDbRepo(final JSONObject jsonResponse, final String dbType, final String dbHost, final String dbName, final String dbConnStr, final String dbUsername, final String dbPassword,
+      final String dbSeeding, final String dbVersion, final String dbAccessToken, final String dbData, final String reponame, final String sourcename, final String security, final String startJob)
+      throws Exception {
     // Create dbRepository
-    // final DbRepository dbRepo = new DbRepository();
-    // dbRepo.setServer(server);
-    // dbRepo.setUser(user);
-    // dbRepo.setPassword(password);
-    // dbRepo.setReponame(reponame);
-    // final String filerRepoName = DbRepoConfig.getInstance().createRepoConnection(dbRepo);
-    //
-    // if (filerRepoName == null) {
-    // jsonResponse.put("OK", "OK");
-    // jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-    // LOGGER.error("Cannot create Share Repository Connection");
-    //
-    // } else {
-    //
-    // // Create filerJob
-    // final DbJob filerJob = new DbJob();
-    // filerJob.setRepositoryConnection(filerRepoName);
-    // filerJob.setPaths(paths);
-    // filerJob.setSourcename(sourcename);
-    // if (security != null) {
-    // filerJob.setSecurity(true);
-    // }
-    // final String jobId = FilerJobConfig.getInstance().createJob(filerJob);
-    //
-    // if (jobId != null) {
-    // if (startJob != null) {
-    // ManifoldAPI.startJob(jobId);
-    // }
-    // jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-    // jsonResponse.put("job_id", jobId);
-    // } else {
-    // jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-    // LOGGER.error("Cannot create Filer job");
-    // }
-    // jsonResponse.put("OK", "OK");
-    // }
+    final DbRepository dbRepo = new DbRepository();
+    dbRepo.setType(dbType);
+    dbRepo.setHost(dbHost);
+    dbRepo.setDbName(dbName);
+    dbRepo.setConnectionStr(dbConnStr);
+    dbRepo.setUser(dbUsername);
+    dbRepo.setPassword(dbPassword);
+    dbRepo.setReponame(reponame);
+    final String dbRepoName = DbRepoConfig.getInstance().createRepoConnection(dbRepo);
+
+    if (dbRepoName == null) {
+      jsonResponse.put("OK", "OK");
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+      LOGGER.error("Cannot create Share Repository Connection");
+
+    } else {
+
+      // Create dbJob
+      final DbJob dbJob = new DbJob();
+      dbJob.setRepositoryConnection(dbRepoName);
+      dbJob.setSeedingQ(dbSeeding);
+      dbJob.setVersionQ(dbVersion);
+      dbJob.setAccessTokenQ(dbAccessToken);
+      dbJob.setDataQ(dbData);
+      dbJob.setSourcename(sourcename);
+      if (security != null) {
+        dbJob.setSecurity(true);
+      }
+      final String jobId = DbJobConfig.getInstance().createJob(dbJob);
+
+      if (jobId != null) {
+        if (startJob != null) {
+          ManifoldAPI.startJob(jobId);
+        }
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+        jsonResponse.put("job_id", jobId);
+      } else {
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+        LOGGER.error("Cannot create Filer job");
+      }
+      jsonResponse.put("OK", "OK");
+    }
   }
 }
