@@ -43,10 +43,14 @@ public class GetAllUsersAndRolesApache extends HttpServlet {
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
     final List<String> usersList = new ArrayList<String>();
+    usersList.add("admin");
+    /* add these lines if you need role access on Apache realms */
+    /*
     usersList.add("apacheadmin");
     usersList.add("solradmin");
     usersList.add("monitadmin");
     usersList.add("glancesadmin");
+    */
     if (usersList != null) {
       jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
       jsonResponse.put(OutputConstants.STATUS, usersList);
