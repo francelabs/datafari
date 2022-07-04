@@ -1,6 +1,36 @@
 {
   "paragraphs": [
     {
+      "title": "To update the visualizations with fresh data, you MUST manually refresh this dashboard by clicking on the run button (play icon) located next to the dashboard title above",
+      "user": "anonymous",
+      "dateUpdated": "2022-07-04 09:40:00.057",
+      "progress": 0,
+      "config": {
+        "tableHide": true,
+        "editorSetting": {
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "title": true,
+        "results": {},
+        "enabled": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1656927566056_331768098",
+      "id": "paragraph_1656927566056_331768098",
+      "dateCreated": "2022-07-04 09:39:26.056",
+      "status": "READY"
+    },
+    {
       "title": "Clients who have connected to Datafari",
       "text": "facet(Access, buckets\u003d\"client_ip\", fq\u003d\"date:[NOW-7DAY TO NOW]\", rows\u003d\"20\")",
       "user": "anonymous",
@@ -1018,7 +1048,5 @@
   "config": {
     "isZeppelinNotebookCronEnable": false
   },
-  "info": {
-    "isRunning": true
-  }
+  "info": {}
 }
