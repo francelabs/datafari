@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.francelabs.datafari</groupId>
     <artifactId>datafari-ce</artifactId>
-    <version>6.0-dev-Community</version>
+    <version>5.2-Community</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>datafari-mcf-connectors-dependencies</artifactId>
@@ -20,7 +20,7 @@
     <dependency>
       <groupId>com.francelabs.datafari</groupId>
       <artifactId>datafari-core</artifactId>
-      <version>6.0-dev-Community</version>
+      <version>5.2-Community</version>
     </dependency>
     <dependency>
       <groupId>org.apache.manifoldcf</groupId>
