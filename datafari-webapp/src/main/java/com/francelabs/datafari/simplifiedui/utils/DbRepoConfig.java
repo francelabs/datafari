@@ -31,7 +31,7 @@ public class DbRepoConfig {
   private final static String dbNameAttribute = "Database name";
   private final static String accessMethodAttribute = "JDBC column access method";
   private final static String connectionStrAttribute = "Raw driver string";
-  private final static String userAttribute = "User Name";
+  private final static String userAttribute = "User name";
   private final static String passwordAttribute = "Password";
   private final static String nameElement = "name";
   private final static String repoConnectionsCommand = "repositoryconnections";
