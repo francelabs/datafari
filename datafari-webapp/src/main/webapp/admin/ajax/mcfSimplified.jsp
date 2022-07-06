@@ -314,17 +314,6 @@
                         </div>
                       </div>                      
                     </div>
-                    <div class="form-group row" id="db-access-token-div">
-                      <div class="col-sm-3 control-label">
-                        <label id="dbAccessTokenLabel" for="dbAccessToken" class="col-form-label"></label><span id="dbAccessToken-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
-                      </div>
-                      <div class="col-sm-4">
-                        <textarea id="dbAccessToken" name="dbAccessToken" placeholder="" class="form-control"></textarea>
-                        <div class="invalid-feedback">
-                          Please provide an access token query
-                        </div>
-                      </div>                      
-                    </div>
                     <div class="form-group row" id="db-data-div">
                       <div class="col-sm-3 control-label">
                         <span class="fas fa-asterisk " style="color : red"></span>
@@ -368,6 +357,17 @@
                       <div class="col-sm-4 checkbox-div">
                        <input type="checkbox" id="dbSecurity" name="dbSecurity" disabled></input>                       
                       </div>
+                    </div>
+                    <div class="form-group row" id="db-access-token-div">
+                      <div class="col-sm-3 control-label">
+                        <label id="dbAccessTokenLabel" for="dbAccessToken" class="col-form-label"></label><span id="dbAccessToken-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                      </div>
+                      <div class="col-sm-4">
+                        <textarea id="dbAccessToken" name="dbAccessToken" placeholder="" class="form-control"></textarea>
+                        <div class="invalid-feedback">
+                          Please provide an access token query
+                        </div>
+                      </div>                      
                     </div>
                     <div class="form-group row">
                       <div class="col-sm-3 control-label">
