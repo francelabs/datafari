@@ -230,6 +230,7 @@
                           <OPTION value="jtds:sqlserver://">Microsoft SQL Server</OPTION>
                           <OPTION value="jtds:sybase://">Sybase</OPTION>
                           <OPTION value="mysql://">MySQL</OPTION>
+                          <OPTION value="mariadb://">MariaDB</OPTION>
                         </select>
                       </div>
                     </div>                      
