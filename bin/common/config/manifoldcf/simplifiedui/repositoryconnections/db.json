@@ -30,7 +30,7 @@
               "_attribute_name": "JDBC Provider"
             },
             {
-              "_value_": "name",
+              "_value_": "label",
               "_attribute_name": "JDBC column access method"
             },
             {
