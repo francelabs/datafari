@@ -4,7 +4,7 @@
       "_children_": [
         {
           "_type_": "description",
-          "_value_": "FilerCrawl"
+          "_value_": "DbCrawl"
         },
         {
           "_type_": "repository_connection",
