@@ -1,5 +1,4 @@
-
-                      Datafari Changes Notes (Feb. 2nd, 2021)
+                      Datafari Changes Notes
 
 Introduction
 -------------
@@ -8,11 +7,9 @@ Datafari is an open source enterprise search solution. It is the perfect product
 Available as community (open source) and enterprise (proprietary) edition, Datafari is different from the competition :
 - Its open source license is not aggressive, as it uses the Apache v2 license: you are free to do whatever you want with it, you just need to mention that you are using it.
 - It combines three renowned Apache projects, namely Cassandra, Solr and ManifoldCF, which gives Datafari a long term vision.
-- It leverages open distro ELK the reference open source stack to do business intelligence on logs.
+- It leverages Apache Zeppelin to propose analytics dashboards.
 
-See http://wiki.datafari.com for more information.
-
-
+See https://wiki.datafari.com for more information.
 
 ==================  5.2 ==================
 July 5th, 2022
@@ -26,52 +23,69 @@ July 5th, 2022
 - Zookeeper 3.6.2
 - Tika Server 2.4.0
 - Zeppelin 0.10.1
+- DatafariUI 1.1
 
 ### Issues list done
 
+#416 [DATAFARI-423] Incorrect type for Size facet
+#440 [DATAFARI-447] Display full facet label text as alt text when truncated
+#535 [DATAFARI-543] Ajaxfrancelabs - opening files with FILE API
+#632 Save and load language preference of a user
+#698 Ajaxfrancelabs - autocomplete at welcome page different from results page
 
 #307 [DATAFARI-311] Add warnings for users validating changes in ZK
-#535 [DATAFARI-543] Ajaxfrancelabs - opening files with FILE API
-#606 Datafari API - Create an API endpoint to access aggregator related information
+#691 Admin UI - Grey out dashboard menu items when opendistro offline
+#812 Admin - Harmonise the admin users with the same login
+
+#727 Add processing logs in web connector
+#783 Store users past queries in a cassandra collection
+#811 Temporary partition for components
+
 #611 DatafariUI - Add information about logo preferred format in the README
-#614 Datafari - API must store user actions
-#632 Save and load language preference of a user
 #633 Add a warning when title for saving a query already exists
-#649 Fully transition statistics dashboards to rely only on Cassandra storage
 #666 datafariUI - use the arrow to scroll in the autocomplete list
-#710 Adapt the file connector to jcifs-ng 2.1.6+
-#728 Improve OOM management of MCF stuffer thread
+#779 DatafariUI - create an aggregator widget
 #729 DatafarifUI - Some terms don't seem to have autocomplete
 #730 DatafariUI - for some terms searched, autocomplete displayed AFTER search is done
-#737 Datafari API - Modify document URL to embed tracking before sending response
 #739 DatafariUI - store user preference about datafariUI display
 #742 DatafariUI - refactor main page using react
 #746 DatafariUI - update readme about config file
-#750 Investigate migrating away from opendistro
-#778 Create an endpoint for the aggregator functionality
-#779 DatafariUI - create an aggregator widget
-#781 Datafari API - Update the search endpoint to handle user context
-#782 Datafari API - create endpoint to retrieve user past queries
-#783 Store users past queries in a cassandra collection
 #785 DatafariUI - propose a bar chart facet
 #789 DatafariUI - enable possibility to have facets both on the left and on the right
 #806 DatafariUI - div width changes depending on query
 #807 DatafariUI - display date facet with customfacetdate only
 #808 DatafariUI - cannot overwrite saved query
 #809 DatafariUI - update json configuration for sendToSolr
-#810 Catch Runtime exceptions in repository connectors
-#811 Temporary partition for components
-#815 Update Tika Server to v2.4.0
-#818 Update MCF to v2.22
-#819 Error message during dpkg install
-#821 DatafariAPI issue with undeclared or unauthorized handlers
 #822 DatafariUI - truncate facet values text if too long
 #825 DatafariUI - rename facet label
-#826 Improve error description of simplified jobs
 #827 DatafariUI - avoid auto refresh every 60secs
-#831 Update Logstash OSS to v8.2.0
-#835 Protect Zeppelin notebooks with apache2 auth
 
+#606 Datafari API - Create an API endpoint to access aggregator related information
+#614 Datafari - API must store user actions
+#737 Datafari API - Modify document URL to embed tracking before sending response
+#778 Create an endpoint for the aggregator functionality
+#781 Datafari API - Update the search endpoint to handle user context
+#782 Datafari API - create endpoint to retrieve user past queries
+#821 DatafariAPI issue with undeclared or unauthorized handlers
+
+#728 Improve OOM management of MCF stuffer thread
+#810 Catch Runtime exceptions in repository connectors
+#819 Error message during dpkg install
+#826 Improve error description of simplified jobs
+
+#710 Adapt the file connector to jcifs-ng 2.1.6+
+#815 Update Tika Server to v2.4.0
+#818 Update MCF to v2.22
+#831 Update Logstash OSS to v8.2.0
+
+#834 MCF - Simplified DB job
+
+#482 [DATAFARI-489] Add a permanent text widget to opendistro
+#488 [DATAFARI-495] Admin - Graphically change ELK admin user password
+#489 [DATAFARI-496] Install script - ask for elk admin password
+#649 Fully transition statistics dashboards to rely only on Cassandra storage
+#750 Investigate migrating away from opendistro - migration to Apache Zeppelin
+#835 Protect Zeppelin notebooks with apache2 auth
 
 ==================  5.1 ==================
 Feb. 12nd, 2022
