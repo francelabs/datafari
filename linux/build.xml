@@ -58,7 +58,7 @@
 
 
 	<target name="clean-build" depends="clean,package,installer-debian" />
-	
+
 	<target name="clean-build-prod" depends="clean,package,factorydatafari,installer-debian" />
 
 	<target name="clean">
@@ -302,6 +302,17 @@
 				<exclude name="mcf_home/lib/slf4j-*.jar" />
 			</fileset>
 		</copy>
+		<!-- Copy ZK libs & dependencies  -->
+		<copy todir="${linux.dist.dir}/mcf/mcf_home/lib" overwrite="true" force="true">
+			<fileset dir="${zookeeper.proj.dir}/target/dependency">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${linux.dist.dir}/mcf/mcf_home/connector-common-lib" overwrite="true" force="true">
+			<fileset dir="${zookeeper.proj.dir}/target/dependency">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
 
 		<!-- Copy Datafari logging libs to MCF -->
 		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/lib" overwrite="true" force="true">
@@ -332,13 +343,13 @@
 				<include name="*.jar" />
 			</fileset>
 		</copy>
-		
+
 		<!-- Copy Web connector -->
-    <copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
-      <fileset dir="${web.connector.src.dir}">
-        <include name="*.jar" />
-      </fileset>
-    </copy>
+		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
+			<fileset dir="${web.connector.src.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
 
 		<!-- Copy Share connector -->
 		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
