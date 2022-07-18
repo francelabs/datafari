@@ -1,5 +1,6 @@
 package com.francelabs.datafari.security;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -46,11 +47,11 @@ public class DatafariWebSecurityApplication extends SpringBootServletInitializer
     initializers.forEach(c -> {
       try {
         LOGGER.debug("Found initializer " + c.getClass().getSimpleName());
-        final IInitializer initializer = c.newInstance();
+        final IInitializer initializer = c.getDeclaredConstructor().newInstance();
         listInitializers.add(initializer);
         initializer.initialize();
         LOGGER.debug("Initializer " + c.getClass().getSimpleName() + " enabled !");
-      } catch (InstantiationException | IllegalAccessException e) {
+      } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
         LOGGER.error("Unable to instanciate the initializer class: " + c.getSimpleName(), e);
       }
     });
