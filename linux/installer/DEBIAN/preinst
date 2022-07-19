@@ -7,7 +7,11 @@ if [ -d "$DATAFARI_DIR" ]; then
     exit 1
 fi
 
-if [[ $(ps -u datafari | wc -l) > 1 ]]; then
+
+if id "datafari" &>/dev/null; then
+	
+  if [[ $(ps -u datafari | wc -l) > 1 ]]; then
     echo "Running Datafari processes have been found ! Exiting package installation !"
     exit 1
+  fi
 fi
