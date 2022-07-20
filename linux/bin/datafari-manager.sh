@@ -196,7 +196,7 @@ init_mcf_crawler_agent()
 {
   cd $MCF_HOME
   echo "Init MCF crawler agent libs"
-  LIBS=$(echo lib/*.jar | tr ' ' ':')
+  LIBS=$(echo lib/*.jar connector-lib-proprietary/*.jar | sed 's/[^ ]*jcifs-ng[^ ]*//g' | tr ' ' ':')
   #Remove log4j-1 lib
   LOG4J1=$(echo lib/log4j-1.2.*.jar):
   LIBS=$(echo "${LIBS/$LOG4J1/}")

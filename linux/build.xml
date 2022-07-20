@@ -195,6 +195,13 @@
 			<fileset dir="${tomcat.src.dir}">
 			</fileset>
 		</copy>
+		<!-- Copy MCF proprietary libs to Tomcat-MCF  -->
+    <copy todir="${linux.dist.dir}/tomcat-mcf/lib">
+      <fileset dir="${mcf.src.dir}/mcf_home/connector-lib-proprietary">
+      	<include name="*.jar" />
+      	<exclude name="jcifs-ng*.jar" />
+      </fileset>
+    </copy>
 		<!-- Copy bin directory -->
 		<copy toDir="${linux.dist.dir}/tomcat-mcf/bin" overwrite="true" force="true">
 			<fileset dir="${tomcat.proj.dir}/bin-mcf">

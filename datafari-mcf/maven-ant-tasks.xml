@@ -30,6 +30,13 @@
 			</fileset>
 			<cutdirsmapper dirs="1" />
 		</copy>
+		
+		<!-- Copy dependencies (which are proprietary libs like jdbc drivers) -->
+		<copy toDir="${mcf.dist}/mcf_home/connector-lib-proprietary" overwrite="true" force="true">
+      <fileset dir="target/dependencies">
+        <include name="*.jar" />
+      </fileset>
+    </copy>
 
 		<!-- Copy original multiprocess zk scripts -->
 		<copy toDir="${mcf.dist}/mcf_home" overwrite="true" force="true">

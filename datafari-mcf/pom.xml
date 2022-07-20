@@ -10,8 +10,42 @@
   <artifactId>datafari-mcf</artifactId>
   <packaging>pom</packaging>
   <name>Datafari Enterprise Search - ManifoldCF module</name>
+  <dependencies>
+    <!-- https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc10 -->
+    <dependency>
+      <groupId>com.oracle.database.jdbc</groupId>
+      <artifactId>ojdbc10</artifactId>
+      <version>${ojdbc.version}</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
+    <dependency>
+      <groupId>com.microsoft.sqlserver</groupId>
+      <artifactId>mssql-jdbc</artifactId>
+      <version>${mssql-jdbc.version}</version>
+    </dependency>
+  </dependencies>
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <excludeScope>provided</excludeScope>
+              <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>com.googlecode.maven-download-plugin</groupId>
         <artifactId>download-maven-plugin</artifactId>
