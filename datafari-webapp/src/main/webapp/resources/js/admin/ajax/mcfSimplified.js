@@ -176,13 +176,16 @@ $(document)
             checkElm($("#dbPassword"));
           });
           $("#dbSeeding").change(function(e) {
-            checkElm($("#dbSeeding"));
+            checkSeedingQuery($("#dbSeeding"));
           });
           $("#dbVersion").change(function(e) {
-            checkElm($("#dbVersion"));
+            checkVersionQuery($("#dbVersion"));
           });
           $("#dbData").change(function(e) {
-            checkElm($("#dbData"));
+            checkDataQuery($("#dbData"));
+          });
+          $("#dbAccessToken").change(function(e) {
+            checkAccessTokenQuery($("#dbAccessToken"));
           });
           $("#dbSourcename").change(function(e) {
             checkElm($("#dbSourcename"));
@@ -198,8 +201,7 @@ $(document)
             $("#addDbMessageFailure").hide();
             $("#addDbCheckMessageFailure").hide();
             var form = document.getElementById("addDb");
-            if (form.checkValidity() === false || !checkRepoName($("#dbReponame"))) {
-              $("#addDb").addClass('was-validated');
+            if (form.checkValidity() === false || !checkRepoName($("#dbReponame")) || !checkSeedingQuery($("#dbSeeding"))  || !checkVersionQuery($("#dbVersion"))  || !checkDataQuery($("#dbData"))  || !checkAccessTokenQuery($("#dbAccessToken"))) {
               return false;
             } else {
               return addDbConnector();
@@ -227,7 +229,6 @@ $(document)
             $("#addFilerCheckMessageFailure").hide();
             var form = document.getElementById("addFiler");
             if (form.checkValidity() === false || !checkRepoName($("#filerReponame"))) {
-              $("#addFiler").addClass('was-validated');
               return false;
             } else {
               $.get("./../admin/CheckMCFConfiguration", {
@@ -280,6 +281,100 @@ function setErrorStatus(element, errorMsg) {
     element.siblings(".invalid-feedback").html(errorMsg);
   }
   element.addClass("is-invalid");
+}
+
+function checkSeedingQuery(element) {
+  clearStatus(element);
+  if (!$(element).val()) {
+    setErrorStatus(element, "Please provide a seeding query");
+    return false;
+  } else {
+    let sq = element.val();
+    if (sq.indexOf("$(IDCOLUMN)") == -1) {
+      setErrorStatus(element, "The seeding query must return $(IDCOLUMN) in the result");
+      return false;
+    } else {
+      setOkStatus(element);
+      return true;
+    }
+  }
+}
+
+function checkVersionQuery(element) {
+  clearStatus(element);
+  if (!$(element).val()) {
+    setErrorStatus(element, "Please provide a version query");
+    return false;
+  } else {
+    let sq = element.val();
+    if (sq.indexOf("$(IDCOLUMN)") == -1) {
+      setErrorStatus(element, "The version query must return $(IDCOLUMN) in the result");
+      return false;
+    } else if (sq.indexOf("$(VERSIONCOLUMN)") == -1) {
+      setErrorStatus(element, "The version query must return $(VERSIONCOLUMN) in the result");
+      return false;
+    } else if (sq.indexOf("$(IDLIST)") == -1) {
+      setErrorStatus(element, "The version query must return $(IDLIST) in the result");
+      return false;
+    } else {
+      setOkStatus(element);
+      return true;
+    }
+  }
+}
+
+function checkDataQuery(element) {
+  clearStatus(element);
+  if (!$(element).val()) {
+    setErrorStatus(element, "Please provide a data query");
+    return false;
+  } else {
+    let sq = element.val();
+    if (sq.indexOf("$(IDCOLUMN)") == -1) {
+      setErrorStatus(element, "The data query must return $(IDCOLUMN) in the result");
+      return false;
+    } else if (sq.indexOf("$(URLCOLUMN)") == -1) {
+      setErrorStatus(element, "The data query must return $(URLCOLUMN) in the result");
+      return false;
+    } else if (sq.indexOf("$(DATACOLUMN)") == -1) {
+      setErrorStatus(element, "The data query must return $(DATACOLUMN) in the result");
+      return false;
+    } else if (sq.indexOf("$(IDLIST)") == -1) {
+      setErrorStatus(element, "The data query must return $(IDLIST) in the result");
+      return false;
+    } else {
+      setOkStatus(element);
+      return true;
+    }
+  }
+}
+
+function checkAccessTokenQuery(element) {
+  clearStatus(element);
+  if ($('#dbSecurity').prop('checked') && !$(element).val()) {
+    setErrorStatus(element, "Please provide an access token query");
+    return false;
+  } else {
+    if($(element).val()) {
+      let sq = element.val();
+      if (sq.indexOf("$(IDCOLUMN)") == -1) {
+        setErrorStatus(element, "The data query must return $(IDCOLUMN) in the result");
+        return false;
+      } else if (sq.indexOf("$(TOKENCOLUMN)") == -1) {
+        setErrorStatus(element, "The access token query must return $(TOKENCOLUMN) in the result");
+        return false;
+      } else if (sq.indexOf("$(IDLIST)") == -1) {
+        setErrorStatus(element, "The access token query must return $(IDLIST) in the result");
+        return false;
+      } else {
+        setOkStatus(element);
+        return true;
+      }
+    } else {
+      setOkStatus(element);
+      return true;
+    }
+  }
 }
 
 function checkRepoName(element) {
