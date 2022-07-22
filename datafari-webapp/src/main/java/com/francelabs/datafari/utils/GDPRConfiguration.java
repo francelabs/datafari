@@ -33,6 +33,7 @@ public class GDPRConfiguration extends AbstractConfigClass {
   // Properties
   public static final String USER_DATA_TTL = "USER_DATA_TTL";
   public static final String USER_ACTIONS_TTL = "USER_ACTIONS_TTL";
+  public static final String USER_HISTORY_ENABLED = "USER_HISTORY_ENABLED";
 
   private static GDPRConfiguration instance;
 

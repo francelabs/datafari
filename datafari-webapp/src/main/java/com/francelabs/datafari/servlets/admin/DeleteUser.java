@@ -20,6 +20,7 @@ import com.francelabs.datafari.licence.LicenceManagement;
 import com.francelabs.datafari.service.db.AccessTokenDataService;
 import com.francelabs.datafari.service.db.StatisticsDataService;
 import com.francelabs.datafari.service.db.UserDataService;
+import com.francelabs.datafari.service.db.UserHistoryDataService;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.user.Alert;
 import com.francelabs.datafari.user.Department;
@@ -63,6 +64,7 @@ public class DeleteUser extends HttpServlet {
 
       try {
         user.deleteUser();
+        UserHistoryDataService.getInstance().deleteHistory(username);
         Alert.deleteAllAlerts(username);
         Department.deleteDepartment(username);
         Favorite.removeFavoritesAndLikesDB(username);
