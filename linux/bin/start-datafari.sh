@@ -95,9 +95,11 @@ if  [[ "$NODETYPE" = *mono* ]]; then
 
   if  [[ "$STATE" = *initialized* ]];
   then
-    cd $AS_HOME/scripts
-    run_as ${DATAFARI_USER} "bash as-manager.sh init_logstash";
-      
+  	if  [[ "$AnalyticsActivation" = *true* ]]; then
+      cd $AS_HOME/scripts
+      run_as ${DATAFARI_USER} "bash as-manager.sh init_logstash";
+    fi
+     
     cd $DIR   
     
     echo "Start postgres and cassandra and add ManifoldCF database"
