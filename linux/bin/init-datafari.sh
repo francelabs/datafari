@@ -708,36 +708,6 @@ save_iptables_rules() {
   fi
 }
 
-log4shell_mitigation() {
-  file_array=()
-
-  for i in $(find $AS_HOME -type f \( -name \*.jar \) -print)
-  do
-    isVulnerability=$(unzip -l $i | grep  org/apache/logging/log4j/core/lookup/JndiLookup.class)
-    if [ "$isVulnerability"  != "" ]; then
-      array_entry="$i"
-      echo "Found this file to patch : $i"
-      file_array+=($array_entry)
-    fi
-  done
-
-
-  if [ ${#file_array[@]} -eq 0 ]; then
-    echo "No files need to be patched"
-  else
-    echo "Patch going to be applied on previous files"
-
-    for file_entry in "${file_array[@]}"
-    do
-      echo $file_entry
-      zip -qd $file_entry org/apache/logging/log4j/core/lookup/JndiLookup.class
-      chmod 775 $file_entry
-      chown ${DATAFARI_USER} $file_entry
-    done
-
-  fi
-
-}
 
 
 ########
@@ -782,7 +752,6 @@ initialization_monoserver() {
   secure_glances $NODEHOST
   save_iptables_rules
   
-  log4shell_mitigation
   init_permissions
   sed -i 's/\(STATE *= *\).*/\1initialized/' $INIT_STATE_FILE
   init_permissions_file_datafari_properties
