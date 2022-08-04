@@ -34,4 +34,4 @@ pipeline:
         image: appleboy/drone-ssh
         secrets: [ ssh_host, ssh_username, ssh_key, ssh_port ]
         script:
-          - cd /var/work/dockerswarm/datafariee && docker stack deploy -c datafariee.yml datafariee --with-registry-auth
+          - cd /var/work/dockerswarm/datafarice && docker stack deploy -c datafarice.yml datafarice --with-registry-auth
