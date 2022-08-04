@@ -30,7 +30,7 @@
   		<div id="thBox" class="box-content">
   			<h1>Modify a User  <i style="color:#A8C900" class="fas fa-users"></i></h1><br/>
   			<div class="documentation-style-no-margin">
-  				<p class="documentation-preview"> <span id="documentation-modifyusersapache"></span><a class="documentation-link" href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/644448261/Users+management+in+Apache+proxy+-+Enterprise+edition" target="_blank"> ...see more</a></p>
+  				<p class="documentation-preview"> <span id="documentation-modifyusersapache"></span><a class="documentation-link" href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/644448261/Users+management+in+Apache+proxy" target="_blank"> ...see more</a></p>
   			</div>
   			<form class="form-horizontal" role="form">
   				<div class="col">					

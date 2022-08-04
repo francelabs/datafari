@@ -752,7 +752,6 @@ initialization_monoserver() {
   init_git
   init_folders
   init_logstash localhost
-  init_zeppelin_host localhost
   generate_certificates $NODEHOST
   generate_certificates_apache $NODEHOST
   init_collection_name $SOLRMAINCOLLECTION
