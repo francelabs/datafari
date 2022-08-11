@@ -48,7 +48,7 @@ RUN ls
 #COPY datafari-ee/ssl-keystore ssl-keystore
 RUN ant clean-build -f ./linux/build.xml
 
-FROM openjdk:11.0.8-jdk-buster
+FROM eclipse-temurin:11-jdk-jammy
 MAINTAINER Olivier Tavard FRANCE LABS <olivier.tavard@francelabs.com>
 
 # temporary allow unauthenticatedparameter due to debian repo issue
@@ -59,7 +59,8 @@ RUN     apt-get update && apt-get install --allow-unauthenticated -y \
                 curl \
                 jq \
                 debconf \
-                python \
+                python3 \
+                python-is-python3 \
                 sudo \
                 vim \
                 nano \
