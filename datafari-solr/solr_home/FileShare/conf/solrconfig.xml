@@ -338,7 +338,7 @@
                 indexing, this requires 8 bytes (long) * numVersionBuckets
                 of heap space per Solr core.
     -->
-    <updateLog class="${cdcr.class:solr.update.UpdateLog}">
+    <updateLog>
       <str name="dir">${solr.ulog.dir:}</str>
       <int name="numVersionBuckets">${solr.ulog.numVersionBuckets:65536}</int>
     </updateLog>

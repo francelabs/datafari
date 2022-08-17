@@ -22,16 +22,12 @@ lib_path_duplicates="${SOLR_INSTALL_DIR}/solrcloud/Duplicates/"
 mcf_ip="@NODEHOST@"
 mcf_port=""
 mcf_path="datafari-mcf-authority-service"
-cdcr_class_cdcr="solr.CdcrUpdateLog"
-cdcr_class="solr.update.UpdateLog"
-cdcr_processor_cdcr="cdcr-processor-chain"
-cdcr_processor=""
 baseConfigSet="Init"
 url_protocol=""
 
 
 create_collection() {
-	curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=$1&collection.configName=$2&numShards=$3&maxShardsPerNode=${maxShardsPerNode}&replicationFactor=$4&property.lib.path=${lib_path}&property.mcf.ip=$url_protocol://${mcf_ip}:${mcf_port}/${mcf_path}&property.cdcr.class=$5&property.cdcr.processor=$6"
+	curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=$1&collection.configName=$2&numShards=$3&maxShardsPerNode=${maxShardsPerNode}&replicationFactor=$4&property.lib.path=${lib_path}&property.mcf.ip=$url_protocol://${mcf_ip}:${mcf_port}/${mcf_path}"
 	curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"autocomplete.threshold": "0.005"}}' $url_protocol://${ip_solr}/solr/$1/config
   	curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"entity.extract": "false"}}' $url_protocol://${ip_solr}/solr/$1/config
   	curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"entity.name": "false"}}' $url_protocol://${ip_solr}/solr/$1/config
@@ -49,34 +45,11 @@ create_collection() {
   
 }
 
-
-
-init_cdcr_target() {
-	curl -X POST --insecure -H 'Content-type:application/json' -d '{ "add-requesthandler": { "name": "/cdcr", "class": "solr.CdcrRequestHandler", "buffer": { "defaultstate": "disabled"  }}}' $url_protocol://${ip_solr}/api/collections/$1/config
-
-}
-
-init_cdcr_source() {
-	curl -X POST --insecure -H 'Content-type:application/json' -d '{ "add-requesthandler": { "name": "/cdcr", "class": "solr.CdcrRequestHandler", "replica":[ { "zkHost": "'"$2"'", "source" : "'"$1"'", "target" : "'"$3"'"},{ "zkHost": "'"$4"'", "source" : "'"$1"'", "target" : "'"$5"'"}],"replicator": { "threadPoolSize" : 8, "schedule" : 1000, "batchSize" : 128 }, "updateLogSynchronizer" : { "schedule": 1000 }  }}}' $url_protocol://${ip_solr}/api/collections/$1/config
-}
-
-update_cdcr_source() {
-	curl -X POST --insecure -H 'Content-type:application/json' -d '{ "update-requesthandler": { "name": "/cdcr", "class": "solr.CdcrRequestHandler", "replica":[ { "zkHost": "'"$2"'", "source" : "'"$1"'", "target" : "'"$3"'"},{ "zkHost": "'"$4"'", "source" : "'"$1"'", "target" : "'"$5"'"}],"replicator": { "threadPoolSize" : 8, "schedule" : 1000, "batchSize" : 128 }, "updateLogSynchronizer" : { "schedule": 1000 }  }}}' $url_protocol://${ip_solr}/api/collections/$1/config
-}
-
 init_configset() {
 	curl -X POST --insecure -H 'Content-type: application/json' -d '{  "create":{ "name": "'"$1"'",  "baseConfigSet": "'"$baseConfigSet"'" }}' $url_protocol://${ip_solr}/api/cluster/configs?omitHeader=true
 }
 
-update_cdcr_source() {
-	curl -X POST --insecure -H 'Content-type:application/json' -d '{ "update-requesthandler": { "name": "/cdcr", "class": "solr.CdcrRequestHandler", "replica":[ { "zkHost": "'"$2"'", "source" : "'"$1"'", "target" : "'"$3"'"},{ "zkHost": "'"$4"'", "source" : "'"$1"'", "target" : "'"$5"'"}],"replicator": { "threadPoolSize" : 8, "schedule" : 1000, "batchSize" : 128 }, "updateLogSynchronizer" : { "schedule": 1000 }  }}}' $url_protocol://${ip_solr}/api/collections/$1/config
-}
 
-
-
-
-#For Updating CDCR target URLs
-#update_cdcr_source "SOURCE_COLLECTION" "IP_ZK_DISTANT_1:2181" "TARGET_COLLECTION_1" "IP_ZK_DISTANT_2:2181" "TARGET_COLLECTION_2"
 
 if [ "$SSL_ALL" == "true" ]; then
         url_protocol="https"
@@ -127,54 +100,8 @@ if (($number_collections > 0)); then
 		fileshare_replication=$replicationFactor
 		echo $fileshare_replication
 
-		cdcr_activate=$cdcr
-		echo $cdcr_activate
-
-
-		if [[ $cdcr_activate == no ]]; then
-			create_collection $name_collection  $name_configset $fileshare_shards $fileshare_replication $cdcr_class $cdcr_processor
-		else
-			read -p "Are you on the Solr source (yes/no) ?: " cdcr_source
-			cdcr_source=${cdcr_source:-yes}
-			echo $cdcr_source
-
-			if [[ $cdcr_source == yes ]]; then
-
-				read -p "What are the IPs of the DISTANT Zookeeper cluster (x.y.z:2181,a.b.c:2181) ?: " cdcr_distant_zk
-				cdcr_distant_zk=${cdcr_distant_zk}
-				echo $cdcr_distant_zk
-
-				read -p "What is the name of the distant collection ?: " cdcr_collection_distant
-				cdcr_collection_distant=${cdcr_collection_distant}
-				echo $cdcr_collection_distant
-				
-				read -p "What are the IPs of the 2nd DISTANT Zookeeper cluster (x.y.z:2181,a.b.c:2181) ?: " cdcr_distant_zk_2
-				cdcr_distant_zk_2=${cdcr_distant_zk_2}
-				echo $cdcr_distant_zk_2
-
-				read -p "What is the name of the 2nd distant collection ?: " cdcr_collection_distant_2
-				cdcr_collection_distant_2=${cdcr_collection_distant_2}
-				echo $cdcr_collection_distant_2
-
-				create_collection $name_collection  $name_configset $fileshare_shards $fileshare_replication $cdcr_class_cdcr $cdcr_processor
-				
-				init_cdcr_source $name_collection $cdcr_distant_zk $cdcr_collection_distant $cdcr_distant_zk_2 $cdcr_collection_distant_2
-
-            else
-				read -p "Are you on the Solr target (yes/no) ?: " cdcr_target
-				cdcr_target=${cdcr_target:yes}
-				echo $cdcr_target
-
-				if [[ $cdcr_target == yes ]]; then
-					create_collection $name_collection  $name_configset $fileshare_shards $fileshare_replication $cdcr_class_cdcr $cdcr_processor_cdcr
-					init_cdcr_target $name_collection
-
-				else
-					exit 0
-				fi
-			fi
-
-		fi
+		create_collection $name_collection  $name_configset $fileshare_shards $fileshare_replication
+		
 
 		if (($i == 2)); then
 			secondary_collections=$name_collection
