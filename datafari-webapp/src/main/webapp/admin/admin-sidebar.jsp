@@ -138,7 +138,8 @@
           %>
           <li id="EntityExtractionConf"><a id="entityExtractionConf-AdminUI" class="ajax-link" href="?page=entityExtractionConf"></a></li>
           <li id="STTEntitiesConfiguration"><a id="sttEntitiesConfiguration-AdminUI" class="ajax-link" href="?page=sttEntitiesConfiguration">Advanced Entitiy Extraction</a></li>
-          <li id="tagCloudConfiguration"><a id="tagCloudConfiguration-AdminUI" class="ajax-link" href="?page=tagCloudConfiguration">Tag Cloud</a></li> 
+          <!--  Tag cloud deactivated for now - not supported anymore in this version of Solr -->
+          <!--  <li id="tagCloudConfiguration"><a id="tagCloudConfiguration-AdminUI" class="ajax-link" href="?page=tagCloudConfiguration">Tag Cloud</a></li> -->
           <%
             }
           %>
