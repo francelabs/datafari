@@ -76,7 +76,7 @@
     "adminUI-ClusterActions-ServiceRestart-retry-msg": "Next status check",
     "adminUI-ClusterActions-ServiceRestart-too-much-retries-msg": "We cannot check if the server successfully restarted. What do you want to do ?",
     "adminUI-ClusterActions-ServiceRestart-wait-more-msg": "Try to wait for 10 more retries",
-    "adminUI-ClusterActions-ServiceRestart-warning-msg": "Do NOT close this window NOR refresh your screen. Datafari is currently restarting, the admin UI is not available at this time. The service status is checked regularly.",
+    "adminUI-ClusterActions-ServiceRestart-warning-msg": "Do NOT close this window NOR refresh your screen. Datafari is currently restarting, the admin UI is not available at this time. In a few seconds, an error message will popup to announce that you have lost connection to the server. This message is normal, please click on ok to continue. Please press F5 to refresh the page in order to get the actual status of the restart. The service status is checked regularly.",
     "adminUI-ClusterActions-unexpected-error": "The admin interface cannot reach the Datafari servers. It may be normal if you are restarting Datafari, in which case you should wait for a few minutes before doing a refresh of the screen. If not, please try again and check the logs or contact your system administrator if the problem remains.",
     "adminUI-ClusterActions-wait-button": "I acknowledge and wait",
     "adminUI-Confirm": "Confirm and activate your changes",

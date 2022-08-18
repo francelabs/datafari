@@ -78,7 +78,7 @@
     "adminUI-ClusterActions-ServiceRestart-retry-msg": "Prochaine vérification de l'état du redémarrage",
     "adminUI-ClusterActions-ServiceRestart-too-much-retries-msg": "Impossible de vérifier si Datafari a été correctement redémarré. Que souhaitez-vous faire?",
     "adminUI-ClusterActions-ServiceRestart-wait-more-msg": "Tenter un nouveau cycle d'attente",
-    "adminUI-ClusterActions-ServiceRestart-warning-msg": "Ne PAS fermer cette fenêtre, NI rafraîchir la page. Datafari est en cours de redémarrage, l'interface d'administration n'est actuellement pas disponible. L'état du serveur est vérifié à intervalle régulier.",
+    "adminUI-ClusterActions-ServiceRestart-warning-msg": "Ne PAS fermer cette fenêtre, NI rafraîchir la page. Datafari est en cours de redémarrage, l'interface d'administration n'est actuellement pas disponible. Dans quelques secondes, un message d'erreur va vous avertir d'une perte de connexion avec le serveur. Ce message est normal, merci de cliquer sur ok afin de continuer.Merci de rafraîchir la page (F5) pour avoir le statut réel du redémarrage. L'état du serveur est vérifié à intervalle régulier.",
     "adminUI-ClusterActions-unexpected-error": "L'interface admin n'arrive pas à joindre les serveurs Datafari. Ceci peut être normal si vous redémarrez Datafari, dans ce cas prière d'attendre quelques minutes avant de réessayer. Si ce n'est pas le cas, veuillez essayer de nouveau et contacter un administrateur si le problème persiste.",
     "adminUI-ClusterActions-wait-button": "Je comprends et j'attends",
     "adminUI-Confirm": "Confirmer et activer vos changements",
