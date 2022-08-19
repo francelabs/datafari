@@ -835,13 +835,18 @@
     
 
     <fieldType name="key_phrases" class="solr.TextField" sortMissingLast="true" omitNorms="true">
-<analyzer>
-  <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-            <filter class="solr.ShingleFilterFactory" minShingleSize="2" maxShingleSize="5" outputUnigramsIfNoShingles="true" />
-            <filter class="solr.KeepWordFilterFactory" words="keep_phrases.txt" ignoreCase="true" />
-    <filter class="solr.LowerCaseFilterFactory"/>
-  </analyzer>
-</fieldType>
+      <analyzer type="index">
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.ShingleFilterFactory" minShingleSize="2" maxShingleSize="5" outputUnigramsIfNoShingles="true" />
+        <filter class="solr.KeepWordFilterFactory" words="keep_phrases.txt" ignoreCase="true" />
+        <filter class="solr.LowerCaseFilterFactory"/>
+       </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.ShingleFilterFactory" minShingleSize="2" maxShingleSize="5" outputUnigramsIfNoShingles="true" />
+        <filter class="solr.LowerCaseFilterFactory"/>
+       </analyzer>
+    </fieldType>
 
 
     <!-- German -->
