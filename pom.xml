@@ -24,7 +24,7 @@
     <json.simple.version>1.1.1</json.simple.version>
     <jackson.version>2.13.3</jackson.version>
     <jackson-databind.version>2.13.3</jackson-databind.version>
-    <keycloak.version>7.0.1</keycloak.version>
+    <keycloak.version>19.0.1</keycloak.version>
     <log4j.version>2.17.1</log4j.version>
     <logstash.version>8.2.0</logstash.version>
     <logstash.sha512>7276117b1885c59952ba6b5551ef243e2e2a27b7da7d558e109c7b06a960ac6c8e7a2cf6b92d08309ead1cd1bbecb67c83965937deb0d61bda81a8def7d7a38e</logstash.sha512>
