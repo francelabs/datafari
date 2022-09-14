@@ -3,7 +3,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>Modify Users</title>
+	<title>Modify User</title>
 	<link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/admin/modifyUsers.css" />" />
 	<Link rel="stylesheet" href="<c:url value="/resources/css/animate.min.css" />"/>
 </head>
@@ -34,7 +34,7 @@
   			</div>
   			<form class="form-horizontal" role="form">
   				<div class="col">					
-  					<p>Here you can change the password of a user from Apache.<br/>monitadmin and glancesadmin users are only for Enterprise Edition</p><br/>
+  					<p>Here you can change the password of a user from Apache.<br/></p><br/>
   					
   					<table id="tableResult" class="table table-bordered table-striped">
   						<thead>
