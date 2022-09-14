@@ -28,8 +28,8 @@
     <log4j.version>2.17.1</log4j.version>
     <logstash.version>8.2.0</logstash.version>
     <logstash.sha512>7276117b1885c59952ba6b5551ef243e2e2a27b7da7d558e109c7b06a960ac6c8e7a2cf6b92d08309ead1cd1bbecb67c83965937deb0d61bda81a8def7d7a38e</logstash.sha512>
-    <mcf.version>2.22.1</mcf.version>
-    <mcf.sha512>c668c9e28ff89c6f37b0c38b2e7a69cd651afb22fdc36887489025454bb6a6c31d18a5bc27308c31a860affb840e7a00ec5c7555d43cacd9708dfd064242b8e1</mcf.sha512>
+    <mcf.version>2.23</mcf.version>
+    <mcf.sha512>ff3fd366cfaed5920f460bbbf3d3509b01a0c9e39fdca3e987dbeab1ac99752204410ddf2533f9d748eee964a319d9bde8a53aabc0192e484bc85e0e22a129e9</mcf.sha512>
     <mcf.commit.number>38e4c78f1</mcf.commit.number>
     <mssql-jdbc.version>10.2.1.jre11</mssql-jdbc.version>
     <netty.version>4.1.63.Final</netty.version>
