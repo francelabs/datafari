@@ -32,7 +32,7 @@
     },
     {
       "title": "Clients who have connected to Datafari",
-      "text": "facet(Access, buckets\u003d\"client_ip\", fq\u003d\"date:[NOW-7DAY TO NOW]\", rows\u003d\"20\")",
+      "text": "facet(Access, buckets\u003d\"client_ip\", fq\u003d\"date:[NOW-100DAY TO NOW]\", rows\u003d\"20\")",
       "user": "anonymous",
       "dateUpdated": "2022-06-08 14:35:43.194",
       "progress": 0,
@@ -139,7 +139,7 @@
     },
     {
       "title": "Top 20 User searches with no search results",
-      "text": "facet(Statistics, buckets\u003d\"q, numFound\", q\u003d\"numFound:0\", fq\u003d\"date:[NOW-7DAY TO NOW]\", rows\u003d\"20\")",
+      "text": "facet(Statistics, buckets\u003d\"q, numFound\", q\u003d\"numFound:0\", fq\u003d\"date:[NOW-100DAY TO NOW]\", rows\u003d\"20\")",
       "user": "anonymous",
       "dateUpdated": "2022-06-08 14:35:45.723",
       "progress": 0,
@@ -210,7 +210,7 @@
     },
     {
       "title": "Top 20 User searches with search results but no clicks",
-      "text": "facet(Statistics, buckets\u003d\"q, numFound, click\", q\u003d\"-numFound:0 and click:No\\ Click\", df\u003d\"id\", fq\u003d\"date:[NOW-7DAY TO NOW]\", rows\u003d\"20\")",
+      "text": "facet(Statistics, buckets\u003d\"q, numFound, click\", q\u003d\"-numFound:0 and click:No\\ Click\", df\u003d\"id\", fq\u003d\"date:[NOW-100DAY TO NOW]\", rows\u003d\"20\")",
       "user": "anonymous",
       "dateUpdated": "2022-06-08 14:35:45.826",
       "progress": 0,
@@ -336,7 +336,7 @@
     },
     {
       "title": "Top 10 Query terms",
-      "text": "facet(Statistics, buckets\u003d\"q_search, click\", fq\u003d\"date:[NOW-7DAY TO NOW]\", rows\u003d\"10\")",
+      "text": "facet(Statistics, buckets\u003d\"q_search, click\", fq\u003d\"date:[NOW-100DAY TO NOW]\", rows\u003d\"10\")",
       "user": "anonymous",
       "dateUpdated": "2022-06-08 14:35:45.929",
       "progress": 0,
@@ -435,7 +435,7 @@
     },
     {
       "title": "Top 10 User searches",
-      "text": "facet(Statistics, buckets\u003d\"q\", fq\u003d\"date:[NOW-7DAY TO NOW]\", rows\u003d\"10\")",
+      "text": "facet(Statistics, buckets\u003d\"q\", fq\u003d\"date:[NOW-100DAY TO NOW]\", rows\u003d\"10\")",
       "user": "anonymous",
       "dateUpdated": "2022-06-08 14:35:46.031",
       "progress": 0,
@@ -504,7 +504,7 @@
     },
     {
       "title": "Searches with hits / Searches with no hits",
-      "text": "facet(Statistics, buckets\u003d\"noHits\", fq\u003d\"date:[NOW-7DAY TO NOW]\")",
+      "text": "facet(Statistics, buckets\u003d\"noHits\", fq\u003d\"date:[NOW-100DAY TO NOW]\")",
       "user": "anonymous",
       "dateUpdated": "2022-06-08 14:35:46.133",
       "progress": 0,
@@ -574,7 +574,7 @@
     },
     {
       "title": "Searches with clicks / Searches with no clicks",
-      "text": "facet(Statistics, buckets\u003d\"click\", fq\u003d\"date:[NOW-7DAY TO NOW]\")",
+      "text": "facet(Statistics, buckets\u003d\"click\", fq\u003d\"date:[NOW-100DAY TO NOW]\")",
       "user": "anonymous",
       "dateUpdated": "2022-06-08 14:35:46.235",
       "progress": 0,
@@ -854,7 +854,7 @@
     },
     {
       "title": "Searches explore",
-      "text": "search(Statistics, q\u003d\"*:*\", fl\u003d\"date, numClicks, QTime, click, q, noHits, numFound\", fq\u003d\"date:[NOW-7DAY TO NOW]\", rows\u003d\"2000000\")",
+      "text": "search(Statistics, q\u003d\"*:*\", fl\u003d\"date, numClicks, QTime, click, q, noHits, numFound\", fq\u003d\"date:[NOW-100DAY TO NOW]\", rows\u003d\"2000000\")",
       "user": "anonymous",
       "dateUpdated": "2022-06-08 14:35:46.544",
       "progress": 0,
