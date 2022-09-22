@@ -11,7 +11,7 @@ Available as community (open source) and enterprise (proprietary) edition, Dataf
 
 See https://wiki.datafari.com for more information.
 
-==================  5.2 ==================
+==================  5.3 ==================
 Sept. 22th, 2022
 
 * Version of major components :
