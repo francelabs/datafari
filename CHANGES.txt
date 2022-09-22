@@ -11,6 +11,30 @@ Available as community (open source) and enterprise (proprietary) edition, Dataf
 
 See https://wiki.datafari.com for more information.
 
+==================  5.3 ==================
+Sept. 22th, 2022
+
+* Version of major components :
+- Solr 8.11.1
+- ManifoldCF 2.22.1
+- Tomcat 9.0.56
+- Cassandra 4.0.1
+- PostgreSQL 12.4
+- Zookeeper 3.6.2
+- Tika Server 2.4.0
+- Zeppelin 0.10.1
+- DatafariUI 1.1
+
+#824 DatafariUI - suggestions with whitespace not properly handled
+#847 Suggestions for entities do not respect exact search
+#159 [DATAFARI-160] Query facet display for value with 0 document
+
+#833 Datafari does not work on Ubuntu 22
+#849 Datafari does not work with Python 3
+
+#850 Upgrade MCF to 2.23 version
+#486 Update wiki docs to reflect usage of Zeppelin
+
 ==================  5.2 ==================
 July 5th, 2022
 
