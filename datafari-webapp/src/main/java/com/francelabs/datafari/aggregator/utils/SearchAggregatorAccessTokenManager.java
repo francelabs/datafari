@@ -29,7 +29,7 @@ public class SearchAggregatorAccessTokenManager {
   private static final Logger LOGGER = LogManager.getLogger(SearchAggregatorAccessTokenManager.class.getName());
 
   private SearchAggregatorAccessTokenManager() {
-    tokens = new HashMap<String, SearchAggregatorAccessToken>();
+    tokens = new HashMap<>();
 
   }
 
@@ -84,8 +84,9 @@ public class SearchAggregatorAccessTokenManager {
         final long timeout = System.currentTimeMillis() - 30000 + expires * 1000;
         return new SearchAggregatorAccessToken(accessToken, timeout);
       } else {
-        LOGGER.error("Error " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase() + " while requesting access token to URL " + tokenUri);
-        throw new IOException("Error " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase() + " while requesting access token to URL " + tokenUri);
+        final String errorDescription = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+        LOGGER.error("Error " + response.getStatusLine().getStatusCode() + ": " + errorDescription + " ; while requesting access token to URL " + tokenUri);
+        throw new IOException("Error " + response.getStatusLine().getStatusCode() + ": " + errorDescription + " ; while requesting access token to URL " + tokenUri);
       }
     } catch (final Exception e) {
       LOGGER.error("Error requesting access token to URL " + tokenUri, e);
