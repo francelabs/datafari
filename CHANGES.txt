@@ -15,8 +15,8 @@ See https://wiki.datafari.com for more information.
 Sept. 22th, 2022
 
 * Version of major components :
-- Solr 8.11.1
-- ManifoldCF 2.22.1
+- Solr 8.11.2
+- ManifoldCF 2.23
 - Tomcat 9.0.56
 - Cassandra 4.0.1
 - PostgreSQL 12.4
