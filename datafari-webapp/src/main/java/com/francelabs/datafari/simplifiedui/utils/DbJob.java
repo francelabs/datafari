@@ -9,6 +9,7 @@ public class DbJob {
   private String dataQ;
   private String sourcename;
   private boolean security = false;
+  private boolean duplicatesDetection = false;
 
   public DbJob() {
 
@@ -68,6 +69,14 @@ public class DbJob {
 
   public void setSecurity(final boolean security) {
     this.security = security;
+  }
+
+  public boolean isDuplicatesDetectionEnabled() {
+    return duplicatesDetection;
+  }
+
+  public void setDuplicatesDetection(final boolean duplicatesDetection) {
+    this.duplicatesDetection = duplicatesDetection;
   }
 
 }

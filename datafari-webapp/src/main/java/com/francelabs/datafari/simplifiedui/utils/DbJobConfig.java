@@ -36,6 +36,8 @@ public class DbJobConfig {
   private final static String type = "_type_";
   private final static String childrenElement = "_children_";
   private final static String jobsCommand = "jobs";
+  private final static String stageIdElement = "stage_id";
+  private final static String stageIsOutputElement = "stage_isoutput";
 
   private DbJobConfig() {
     String datafariHome = Environment.getEnvironmentVariable("DATAFARI_HOME");
@@ -58,13 +60,22 @@ public class DbJobConfig {
 
   @SuppressWarnings("unchecked")
   public String createJob(final DbJob dbJob) throws Exception {
-
+    boolean isPipelineStage = false;
+    boolean isOutputStage = false;
+    int stageId = 0;
     final JSONObject json = JSONUtils.readJSON(dbJobJSON);
     final JSONArray job = (JSONArray) json.get(jobElement);
     final JSONObject dbJobEl = (JSONObject) job.get(0);
     final JSONArray jobChildrenEl = (JSONArray) dbJobEl.get(childrenElement);
     JSONArray documentSpec = new JSONArray();
     JSONObject repoSource = null;
+
+    // Stage id of the last transformation connector in the pipeline
+    int lastTransfoPipelineStageId = 0;
+    // Stage id of the last connector in the pipeline
+    int lastPipelineStageId = 0;
+    // JSONArray index of the last connector in the pipeline
+    int lastPipelineStageIndex = 0;
 
     for (int i = 0; i < jobChildrenEl.size(); i++) {
       final JSONObject jobChild = (JSONObject) jobChildrenEl.get(i);
@@ -85,7 +96,7 @@ public class DbJobConfig {
 
       boolean metadataAdjuster = false;
       if (jobChild.get(type).equals(pipelinestageElement)) {
-
+        isPipelineStage = true;
         final JSONArray children = (JSONArray) jobChild.get(childrenElement);
         for (int j = 0; j < children.size(); j++) {
           final JSONObject child = (JSONObject) children.get(j);
@@ -101,10 +112,42 @@ public class DbJobConfig {
               }
             }
             metadataAdjuster = false;
-            break;
+          } else if (child.get(type).equals(stageIdElement)) {
+            stageId = Integer.parseInt((String) child.get(value));
+          } else if (child.get(type).equals(stageIsOutputElement)) {
+            isOutputStage = Boolean.parseBoolean((String) child.get(value));
           }
 
         }
+      }
+
+      // Save the lastTransfoPipelineStageId
+      if (isPipelineStage && !isOutputStage && stageId > lastTransfoPipelineStageId) {
+        lastTransfoPipelineStageId = stageId;
+      }
+
+      // Save the index and stage id of the last pipeline stage
+      if (isPipelineStage && stageId > lastPipelineStageId) {
+        lastPipelineStageId = stageId;
+        lastPipelineStageIndex = i;
+      }
+    }
+
+    // Sets the docFilter and duplicatesOutput stages if the duplicates detection is enabled
+    if (dbJob.isDuplicatesDetectionEnabled()) {
+      final int docFilterStageId = lastPipelineStageId + 1;
+      final int docFilterStagePrereqId = lastTransfoPipelineStageId;
+      final int duplicatesOutputStageId = docFilterStageId + 1;
+      final int duplicatesOutputStagePrereqId = docFilterStageId;
+
+      final JSONObject docFilterOutputStage = JobStageCreator.getInstance().createDocFilterStage(docFilterStageId, docFilterStagePrereqId);
+      final JSONObject duplicatesOutputStage = JobStageCreator.getInstance().createDuplicatesOutputStage(duplicatesOutputStageId, duplicatesOutputStagePrereqId);
+
+      // Insertion in JSONARRAY at a specific index shifts the elements starting at the specified position to the right (add one to their indice)
+      // Thus we need to first insert the last element which is the duplicate output, then we insert the docfFilter transfo as it is before the duplicate output in the pipeline
+      if (duplicatesOutputStage != null && docFilterOutputStage != null) {
+        jobChildrenEl.add(lastPipelineStageIndex + 1, duplicatesOutputStage);
+        jobChildrenEl.add(lastPipelineStageIndex + 1, docFilterOutputStage);
       }
     }
 

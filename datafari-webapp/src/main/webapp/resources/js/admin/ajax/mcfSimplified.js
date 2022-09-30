@@ -26,17 +26,17 @@ $(document)
                       + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Be careful, if you do not check the “Start the job once created” checkbox, the job will be saved and it will present in the crawlers admin interface, but it will not start automatically'>i</button></span>");
 
           // Set the breadcrumbs
-          document.getElementById("topbar1").innerHTML = window.i18n.msgStore['home'];
-          document.getElementById("topbar2").innerHTML = window.i18n.msgStore['adminUI-Connectors'];
-          document.getElementById("topbar3").innerHTML = window.i18n.msgStore['adminUI-Connectors-MCFSimplified'];
-          document.getElementById("topbar2").innerHTML = window.i18n.msgStore['adminUI-Connectors'];
+          $("#topbar1").html(window.i18n.msgStore['home']);
+          $("#topbar2").html(window.i18n.msgStore['adminUI-Connectors']);
+          $("#topbar3").html(window.i18n.msgStore['adminUI-Connectors-MCFSimplified']);
+          $("#topbar2").html(window.i18n.msgStore['adminUI-Connectors']);
           // Set the i18n for page elements
-          document.getElementById("box-title").innerHTML = window.i18n.msgStore['adminUI-Connectors-MCFSimplified'];
-          document.getElementById("documentation-mcfsimplified").innerHTML = window.i18n.msgStore['documentation-mcfsimplified'];
+          $("#box-title").html(window.i18n.msgStore['adminUI-Connectors-MCFSimplified']);
+          $("#documentation-mcfsimplified").html(window.i18n.msgStore['documentation-mcfsimplified']);
 
-          document.getElementById("mcfsimplified-title-label").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-title'];
-          document.getElementById("createWebJob").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-createWebJob'];
-          document.getElementById("createFilerJob").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-createFilerJob'];
+          $("#mcfsimplified-title-label").html(window.i18n.msgStore['adminUI-MCFSimplified-title']);
+          $("#createWebJob").html(window.i18n.msgStore['adminUI-MCFSimplified-createWebJob']);
+          $("#createFilerJob").html(window.i18n.msgStore['adminUI-MCFSimplified-createFilerJob']);
           $("#createDbJob").html(window.i18n.msgStore['adminUI-MCFSimplified-dbJobFormEdit']);
 
           $("#dbJobTitle").html(window.i18n.msgStore['adminUI-MCFSimplified-dbJobFormEdit']);
@@ -52,6 +52,7 @@ $(document)
           $("#dbAccessTokenLabel").html(window.i18n.msgStore['dbAccessToken']);
           $("#dbDataLabel").html(window.i18n.msgStore['dbData']);
           $("#dbSecurityLabel").html(window.i18n.msgStore['security']);
+          $("#dbDuplicatesDetectionLabel").html(window.i18n.msgStore['duplicatesDetection']);
           $("#dbSourcenameLabel").html(window.i18n.msgStore['sourcename']);
           $("#dbReponameLabel").html(window.i18n.msgStore['reponame']);
           $("#dbSourcename").attr("placeholder", window.i18n.msgStore['sourcename']);
@@ -74,28 +75,31 @@ $(document)
           $("#dbVersion-tip").attr("title", window.i18n.msgStore['dbVersion-tip']);
           $("#dbAccessToken-tip").attr("title", window.i18n.msgStore['dbAccessToken-tip']);
           $("#dbData-tip").attr("title", window.i18n.msgStore['dbData-tip']);
+          $("#dbDuplicatesDetection-tip").attr("title", window.i18n.msgStore['duplicatesDetection-tip']);
 
-          document.getElementById("webJobTitle").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-webjobFormEdit'];
-          document.getElementById("webAddLegend").innerHTML = window.i18n.msgStore['param'];
-          document.getElementById("webSeedsLabel").innerHTML = window.i18n.msgStore['seeds'];
-          document.getElementById("webEmailLabel").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-email'];
-          document.getElementById("webSourcenameLabel").innerHTML = window.i18n.msgStore['sourcename'];
-          document.getElementById("webReponameLabel").innerHTML = window.i18n.msgStore['reponame'];
+          $("#webJobTitle").html(window.i18n.msgStore['adminUI-MCFSimplified-webjobFormEdit']);
+          $("#webAddLegend").html(window.i18n.msgStore['param']);
+          $("#webSeedsLabel").html(window.i18n.msgStore['seeds']);
+          $("#webEmailLabel").html(window.i18n.msgStore['adminUI-MCFSimplified-email']);
+          $("#webSourcenameLabel").html(window.i18n.msgStore['sourcename']);
+          $("#webReponameLabel").html(window.i18n.msgStore['reponame']);
+          $("#webDuplicatesDetectionLabel").html(window.i18n.msgStore['duplicatesDetection']);
           $("#seeds").attr("placeholder", window.i18n.msgStore['seeds']);
           $("#email").attr("placeholder", window.i18n.msgStore['adminUI-MCFSimplified-email']);
           $("#exclusions").attr("placeholder", window.i18n.msgStore['exclusions']);
           $("#newWebConfig").html(window.i18n.msgStore['confirm']);
           $("#newWebConfig").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
 
-          document.getElementById("filerJobTitle").innerHTML = window.i18n.msgStore['adminUI-MCFSimplified-filerjobFormEdit'];
-          document.getElementById("filerAddLegend").innerHTML = window.i18n.msgStore['param'];
-          document.getElementById("serverLabel").innerHTML = window.i18n.msgStore['server'];
-          document.getElementById("userLabel").innerHTML = window.i18n.msgStore['filerUser'];
-          document.getElementById("passwordLabel").innerHTML = window.i18n.msgStore['adminUI-Password'];
-          document.getElementById("pathsLabel").innerHTML = window.i18n.msgStore['paths'];
-          document.getElementById("filerSourcenameLabel").innerHTML = window.i18n.msgStore['sourcename'];
-          document.getElementById("filerReponameLabel").innerHTML = window.i18n.msgStore['reponame'];
-          document.getElementById("securityLabel").innerHTML = window.i18n.msgStore['security'];
+          $("#filerJobTitle").html(window.i18n.msgStore['adminUI-MCFSimplified-filerjobFormEdit']);
+          $("#filerAddLegend").html(window.i18n.msgStore['param']);
+          $("#serverLabel").html(window.i18n.msgStore['server']);
+          $("#userLabel").html(window.i18n.msgStore['filerUser']);
+          $("#passwordLabel").html(window.i18n.msgStore['adminUI-Password']);
+          $("#pathsLabel").html(window.i18n.msgStore['paths']);
+          $("#filerSourcenameLabel").html(window.i18n.msgStore['sourcename']);
+          $("#filerReponameLabel").html(window.i18n.msgStore['reponame']);
+          $("#securityLabel").html(window.i18n.msgStore['security']);
+          $("#duplicatesDetectionLabel").html(window.i18n.msgStore['duplicatesDetection']);
           $("#startJobLabel").html(window.i18n.msgStore['startJob']);
           $("#startJobWebLabel").html(window.i18n.msgStore['startJob']);
           $("#server").attr("placeholder", window.i18n.msgStore['server']);
@@ -115,12 +119,14 @@ $(document)
           $("#filerSourcename-tip").attr("title", window.i18n.msgStore['sourcename-tip']);
           $("#filerReponame-tip").attr("title", window.i18n.msgStore['reponame-tip']);
           $("#security-tip").attr("title", window.i18n.msgStore['security-tip']);
+          $("#duplicatesDetection-tip").attr("title", window.i18n.msgStore['duplicatesDetection-tip']);
 
           $("#seeds-tip").attr("title", window.i18n.msgStore['seeds-tip']);
           $("#email-tip").attr("title", window.i18n.msgStore['email-tip']);
           $("#exclusions-tip").attr("title", window.i18n.msgStore['exclusions-tip']);
           $("#webSourcename-tip").attr("title", window.i18n.msgStore['sourcename-tip']);
           $("#webReponame-tip").attr("title", window.i18n.msgStore['reponame-tip']);
+          $("#webDuplicatesDetection-tip").attr("title", window.i18n.msgStore['duplicatesDetection-tip']);
 
           $(".asteriskLabel").html(window.i18n.msgStore['mandatoryField']);
 

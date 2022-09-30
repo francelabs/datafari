@@ -408,6 +408,8 @@
     "duplicates-nb": "Nombre de duplicats",
     "duplicates-quant": "Ratio quant",
     "duplicates-sync-activation": "Activer la synchronization des suppressions avec la collection principale de Datafari",
+    "duplicatesDetection": "Détection des duplicatas",
+    "duplicatesDetection-tip": "Active la détection des documents dupliqués (a un faible impact sur le temps de moissonnage)",
     "elevateAddDoc": "ajouter un autre doc ID",
     "elevatorDocsListLabel": "Liste des documents",
     "elkActivationLabel": "Activation de ELK",

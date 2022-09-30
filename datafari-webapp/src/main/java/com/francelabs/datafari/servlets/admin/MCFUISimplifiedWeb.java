@@ -77,6 +77,10 @@ public class MCFUISimplifiedWeb extends HttpServlet {
       final String sourcename = request.getParameter("webSourcename");
       final String reponame = request.getParameter("webReponame");
       final String startJob = request.getParameter("startJobWeb");
+      boolean duplicatesDetection = false;
+      if (request.getParameter("webDuplicatesDetection") != null) {
+        duplicatesDetection = true;
+      }
 
       // Create webRepository
       final WebRepository webRepo = new WebRepository();
@@ -104,6 +108,7 @@ public class MCFUISimplifiedWeb extends HttpServlet {
           webJob.setRepositoryConnection(webRepoName);
           webJob.setSeeds(seeds);
           webJob.setSourcename(sourcename);
+          webJob.setDuplicatesDetection(duplicatesDetection);
           final String jobId = WebJobConfig.getInstance().createJob(webJob);
 
           if (jobId != null) {

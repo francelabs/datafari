@@ -6,6 +6,7 @@ public class FilerJob {
   private String paths;
   private String sourcename;
   private boolean security = false;
+  private boolean duplicatesDetection = false;
 
   public FilerJob() {
 
@@ -41,6 +42,14 @@ public class FilerJob {
 
   public void setSecurity(final boolean security) {
     this.security = security;
+  }
+
+  public boolean isDuplicatesDetectionEnabled() {
+    return duplicatesDetection;
+  }
+
+  public void setDuplicatesDetection(final boolean duplicatesDetection) {
+    this.duplicatesDetection = duplicatesDetection;
   }
 
 }

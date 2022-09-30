@@ -161,14 +161,22 @@
 	                      </div>
 	                    </div>                      
 	                  </div>
-	                  <div class="form-group row" id="div15">
-	                    <div class="col-sm-3 control-label">
-	                      <label id="securityLabel" for="security" class="col-form-label"></label><span id="security-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span> <span class="alert-danger">(This feature is only available in the Enterprise Edition)</span>
-	                    </div>
-	                    <div class="col-sm-4 checkbox-div">
-	                     <input type="checkbox" id="security" name="security" disabled></input>	                      
-	                    </div>
-	                  </div>
+                    <div class="form-group row" id="div15">
+                      <div class="col-sm-3 control-label">
+                        <label id="securityLabel" for="security" class="col-form-label"></label><span id="security-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span> <span class="alert-danger">(This feature is only available in the Enterprise Edition)</span>
+                      </div>
+                      <div class="col-sm-4 checkbox-div">
+                       <input type="checkbox" id="security" name="security" disabled></input>                       
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <div class="col-sm-3 control-label">
+                        <label id="duplicatesDetectionLabel" for="duplicatesDetection" class="col-form-label"></label><span id="duplicatesDetection-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span> <span class="alert-danger">(This feature is only available in the Enterprise Edition)</span>
+                      </div>
+                      <div class="col-sm-4 checkbox-div">
+                       <input type="checkbox" id="duplicatesDetection" name="duplicatesDetection" disabled></input>                       
+                      </div>
+                    </div>
 	                  <div class="form-group row" id="div16">
 	                    <div class="col-sm-3 control-label">
 	                      <label id="startJobLabel" for="startJob" class="col-form-label"></label>
@@ -371,6 +379,14 @@
                     </div>
                     <div class="form-group row">
                       <div class="col-sm-3 control-label">
+                        <label id="dbDuplicatesDetectionLabel" for="dbDuplicatesDetection" class="col-form-label"></label><span id="dbDuplicatesDetection-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span> <span class="alert-danger">(This feature is only available in the Enterprise Edition)</span>
+                      </div>
+                      <div class="col-sm-4 checkbox-div">
+                       <input type="checkbox" id="dbDuplicatesDetection" name="dbDuplicatesDetection" disabled></input>                       
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <div class="col-sm-3 control-label">
                         <label id="dbStartJobLabel" for="dbStartJob" class="col-form-label"></label>
                       </div>
                       <div class="col-sm-4 checkbox-div">
@@ -466,6 +482,14 @@
                           Please provide a name for the repository
                         </div>
                       </div>                      
+                    </div>
+                    <div class="form-group row">
+                      <div class="col-sm-3 control-label">
+                        <label id="webDuplicatesDetectionLabel" for="dbDuplicatesDetection" class="col-form-label"></label><span id="webDuplicatesDetection-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span> <span class="alert-danger">(This feature is only available in the Enterprise Edition)</span>
+                      </div>
+                      <div class="col-sm-4 checkbox-div">
+                       <input type="checkbox" id="webDuplicatesDetection" name="webDuplicatesDetection" disabled></input>                       
+                      </div>
                     </div>
                     <div class="form-group row" id="div13">
                       <div class="col-sm-3 control-label">

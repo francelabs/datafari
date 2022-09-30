@@ -252,6 +252,8 @@
     "duplicates-nb": "Number of duplicates",
     "duplicates-quant": "Quant rate",
     "duplicates-sync-activation": "Activate deletion synchronization with Datafari main collection",
+    "duplicatesDetection": "Duplicates detection",
+    "duplicatesDetection-tip": "Enable the detection of duplicate documents (has a small impact on the crawling time)",
     "emptied_content": "Preview not available ! The content of this document has been rejected as the document size did not match the specified limitations !",
     "english_locale": "English",
     "errorDate": "تاريخ البدء يأتي بعد تاريخ الانتهاء",

@@ -361,6 +361,8 @@
     "downZKconf": "Download configuration files from The System Configuration Manager (experts only)",
     "downZKconfLabel": "Download the FileShare configuration from the System Configuration Manager (stored in /opt/datafari/bin/backup/solr)",
     "duplicates": "Duplicates",
+    "duplicatesDetection": "Duplicates detection",
+    "duplicatesDetection-tip": "Enable the detection of duplicate documents (has a small impact on the crawling time)",
     "elevateAddDoc": "add another doc ID",
     "elevatorDocsListLabel": "Documents list",
     "elkActivationLabel": "ELK activation",

@@ -5,6 +5,7 @@ public class WebJob {
   private String repositoryConnection;
   private String seeds;
   private String sourcename;
+  private boolean duplicatesDetection = false;
 
   public WebJob() {
 
@@ -32,6 +33,14 @@ public class WebJob {
 
   public void setSourcename(final String sourcename) {
     this.sourcename = sourcename;
+  }
+
+  public boolean isDuplicatesDetectionEnabled() {
+    return duplicatesDetection;
+  }
+
+  public void setDuplicatesDetection(final boolean duplicatesDetection) {
+    this.duplicatesDetection = duplicatesDetection;
   }
 
 }
