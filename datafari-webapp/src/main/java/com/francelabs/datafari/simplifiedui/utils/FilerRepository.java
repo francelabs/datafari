@@ -3,12 +3,11 @@ package com.francelabs.datafari.simplifiedui.utils;
 import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 import org.apache.manifoldcf.core.system.ManifoldCF;
 
-public class FilerRepository {
+public class FilerRepository extends GenericRepository {
 
   private String server;
   private String user;
   private String password;
-  private String reponame;
 
   public FilerRepository() {
 
@@ -40,14 +39,6 @@ public class FilerRepository {
     } catch (final ManifoldCFException e) {
       this.password = password;
     }
-  }
-
-  public String getReponame() {
-    return reponame;
-  }
-
-  public void setReponame(final String reponame) {
-    this.reponame = reponame;
   }
 
 }

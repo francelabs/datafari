@@ -1,0 +1,61 @@
+{
+  "_type_": "pipelinestage",
+  "_children_": [
+    {
+      "_type_": "stage_id",
+      "_value_": "4"
+    },
+    {
+      "_type_": "stage_prerequisite",
+      "_value_": "3"
+    },
+    {
+      "_type_": "stage_isoutput",
+      "_value_": "false"
+    },
+    {
+      "_type_": "stage_connectionname",
+      "_value_": "DocFilter"
+    },
+    {
+      "_type_": "stage_specification",
+      "_children_": [
+        {
+          "_type_": "includefilter",
+          "_value_": "",
+          "_attribute_regex": "\\.(?i)pdf(?-i)$"
+        },
+        {
+          "_type_": "includefilter",
+          "_value_": "",
+          "_attribute_regex": "\\.(?i)png?-i)$"
+        },
+        {
+          "_type_": "includefilter",
+          "_value_": "",
+          "_attribute_regex": "\\.(?i)jpeg(?-i)$"
+        },
+        {
+          "_type_": "includefilter",
+          "_value_": "",
+          "_attribute_regex": "\\.(?i)jpg(?-i)$"
+        },
+        {
+          "_type_": "includefilter",
+          "_value_": "",
+          "_attribute_regex": "\\.(?i)tif(?-i)$"
+        },
+        {
+          "_type_": "includefilter",
+          "_value_": "",
+          "_attribute_regex": "\\.(?i)bmp(?-i)$"
+        },
+        {
+          "_type_": "mindocsize",
+          "_value_": "",
+          "_attribute_value": "10"
+        }
+      ]
+    }
+  ]
+}

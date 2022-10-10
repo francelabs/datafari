@@ -21,7 +21,6 @@ public class WebJobConfig {
   private final static String repositoryConnectionElement = "repository_connection";
   private final static String descriptionElement = "description";
   private final static String documentSpecificationElement = "document_specification";
-  private final static String excludesElement = "excludes";
   private final static String seedsElement = "seeds";
   private final static String jobsCommand = "jobs";
   private final static String childrenElement = "_children_";
@@ -52,9 +51,9 @@ public class WebJobConfig {
   @SuppressWarnings("unchecked")
   public String createJob(final WebJob webJob) throws Exception {
 
-    final JSONObject json = JSONUtils.readJSON(webJobJSON);
-    final JSONArray job = (JSONArray) json.get(jobElement);
-    final JSONObject webJobEl = (JSONObject) job.get(0);
+    final JSONObject webJobObj = JSONUtils.readJSON(webJobJSON);
+    final JSONArray webJobArr = (JSONArray) webJobObj.get(jobElement);
+    final JSONObject webJobEl = (JSONObject) webJobArr.get(0);
     final JSONArray jobChildrenEl = (JSONArray) webJobEl.get(childrenElement);
     JSONArray documentSpec = new JSONArray();
     JSONObject repoSource = null;
@@ -158,7 +157,13 @@ public class WebJobConfig {
       repoSource.replace(attributeValue, webJob.getSourcename());
     }
 
-    final JSONObject response = ManifoldAPI.postConfig(jobsCommand, json);
+    // If OCR enable then create the corresponding OCR job
+    if (webJob.isOCREnabled()) {
+      final String ocrJobName = "CrawlOCR_" + webJob.getRepositoryConnection();
+      JobCreator.getInstance().createOCRJob(webJobObj, ocrJobName, webJob.getTikaOCRName(), webJob.getTikaOCRHost(), webJob.getTikaOCRPort());
+    }
+
+    final JSONObject response = ManifoldAPI.postConfig(jobsCommand, webJobObj);
     return response.get("job_id").toString();
 
   }

@@ -1,9 +1,8 @@
 package com.francelabs.datafari.simplifiedui.utils;
 
-public class WebRepository {
+public class WebRepository extends GenericRepository {
 
   private String email;
-  private String repoName;
 
   public WebRepository() {
 
@@ -15,14 +14,6 @@ public class WebRepository {
 
   public void setEmail(final String email) {
     this.email = email;
-  }
-
-  public String getRepoName() {
-    return repoName;
-  }
-
-  public void setRepoName(final String repoName) {
-    this.repoName = repoName;
   }
 
 }

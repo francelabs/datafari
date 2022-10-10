@@ -177,6 +177,49 @@
                        <input type="checkbox" id="duplicatesDetection" name="duplicatesDetection" disabled></input>                       
                       </div>
                     </div>
+                    <div class="form-group row" id="filerCreateOCR-div">
+                      <div class="col-sm-3 control-label">
+                        <label id="filerCreateOCRLabel" for="filerCreateOCR" class="col-form-label"></label><span id="filerCreateOCR-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                      </div>
+                      <div class="col-sm-4 checkbox-div">
+                        <input type="checkbox" id="filerCreateOCR" name="filerCreateOCR"></input>                       
+                      </div>
+                    </div>
+                    <div id="filerOCR" style="display:none;">
+                      <div class="form-group row" id="filerTikaOCRHost-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="filerTikaOCRHostLabel" for="filerTikaOCRHost" class="col-form-label"></label><span id="filerTikaOCRHost-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="filerTikaOCRHost" name="filerTikaOCRHost" class="form-control"></input>    
+                          <div class="invalid-feedback">
+                          Please provide a Tika server host
+                        </div>                   
+                        </div>
+                      </div>
+                      <div class="form-group row" id="filerTikaOCRPort-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="filerTikaOCRPortLabel" for="filerTikaOCRPort" class="col-form-label"></label><span id="filerTikaOCRPort-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="filerTikaOCRPort" name="filerTikaOCRPort" class="form-control"></input>  
+                          <div class="invalid-feedback">
+                          Please provide a Tika server port
+                        </div>                     
+                        </div>
+                      </div>
+                      <div class="form-group row" id="filerTikaOCRName-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="filerTikaOCRNameLabel" for="filerTikaOCRName" class="col-form-label"></label><span id="filerTikaOCRName-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="filerTikaOCRName" name="filerTikaOCRName" class="form-control"></input>
+                          <div class="invalid-feedback">
+                          Please provide a Tika server name
+                        </div>                       
+                        </div>
+                      </div>
+                    </div>
 	                  <div class="form-group row" id="div16">
 	                    <div class="col-sm-3 control-label">
 	                      <label id="startJobLabel" for="startJob" class="col-form-label"></label>
@@ -385,6 +428,49 @@
                        <input type="checkbox" id="dbDuplicatesDetection" name="dbDuplicatesDetection" disabled></input>                       
                       </div>
                     </div>
+                    <div class="form-group row" id="dbCreateOCR-div">
+                      <div class="col-sm-3 control-label">
+                        <label id="dbCreateOCRLabel" for="dbCreateOCR" class="col-form-label"></label><span id="dbCreateOCR-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                      </div>
+                      <div class="col-sm-4 checkbox-div">
+                        <input type="checkbox" id="dbCreateOCR" name="dbCreateOCR"></input>                       
+                      </div>
+                    </div>
+                    <div id="dbOCR" style="display:none;">
+                      <div class="form-group row" id="dbTikaOCRHost-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="dbTikaOCRHostLabel" for="dbTikaOCRHost" class="col-form-label"></label><span id="dbTikaOCRHost-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="dbTikaOCRHost" name="dbTikaOCRHost" class="form-control"></input>    
+                          <div class="invalid-feedback">
+                          Please provide a Tika server host
+                        </div>                   
+                        </div>
+                      </div>
+                      <div class="form-group row" id="dbTikaOCRPort-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="dbTikaOCRPortLabel" for="dbTikaOCRPort" class="col-form-label"></label><span id="dbTikaOCRPort-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="dbTikaOCRPort" name="dbTikaOCRPort" class="form-control"></input>  
+                          <div class="invalid-feedback">
+                          Please provide a Tika server port
+                        </div>                     
+                        </div>
+                      </div>
+                      <div class="form-group row" id="dbTikaOCRName-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="dbTikaOCRNameLabel" for="dbTikaOCRName" class="col-form-label"></label><span id="dbTikaOCRName-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="dbTikaOCRName" name="dbTikaOCRName" class="form-control"></input>
+                          <div class="invalid-feedback">
+                          Please provide a Tika server name
+                        </div>                       
+                        </div>
+                      </div>
+                    </div>
                     <div class="form-group row">
                       <div class="col-sm-3 control-label">
                         <label id="dbStartJobLabel" for="dbStartJob" class="col-form-label"></label>
@@ -489,6 +575,49 @@
                       </div>
                       <div class="col-sm-4 checkbox-div">
                        <input type="checkbox" id="webDuplicatesDetection" name="webDuplicatesDetection" disabled></input>                       
+                      </div>
+                    </div>
+                    <div class="form-group row" id="webCreateOCR-div">
+                      <div class="col-sm-3 control-label">
+                        <label id="webCreateOCRLabel" for="webCreateOCR" class="col-form-label"></label><span id="webCreateOCR-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                      </div>
+                      <div class="col-sm-4 checkbox-div">
+                        <input type="checkbox" id="webCreateOCR" name="webCreateOCR"></input>                       
+                      </div>
+                    </div>
+                    <div id="webOCR" style="display:none;">
+                      <div class="form-group row" id="webTikaOCRHost-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="webTikaOCRHostLabel" for="webTikaOCRHost" class="col-form-label"></label><span id="webTikaOCRHost-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="webTikaOCRHost" name="webTikaOCRHost" class="form-control"></input>    
+                          <div class="invalid-feedback">
+                          Please provide a Tika server host
+                        </div>                   
+                        </div>
+                      </div>
+                      <div class="form-group row" id="webTikaOCRPort-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="webTikaOCRPortLabel" for="webTikaOCRPort" class="col-form-label"></label><span id="webTikaOCRPort-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="webTikaOCRPort" name="webTikaOCRPort" class="form-control"></input>  
+                          <div class="invalid-feedback">
+                          Please provide a Tika server port
+                        </div>                     
+                        </div>
+                      </div>
+                      <div class="form-group row" id="webTikaOCRName-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="webTikaOCRNameLabel" for="webTikaOCRName" class="col-form-label"></label><span id="webTikaOCRName-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="webTikaOCRName" name="webTikaOCRName" class="form-control"></input>
+                          <div class="invalid-feedback">
+                          Please provide a Tika server name
+                        </div>                       
+                        </div>
                       </div>
                     </div>
                     <div class="form-group row" id="div13">

@@ -59,9 +59,9 @@ public class FilerJobConfig {
   @SuppressWarnings("unchecked")
   public String createJob(final FilerJob filerJob) throws Exception {
 
-    final JSONObject json = JSONUtils.readJSON(filerJobJSON);
-    final JSONArray job = (JSONArray) json.get(jobElement);
-    final JSONObject filerJobEl = (JSONObject) job.get(0);
+    final JSONObject filerJobObj = JSONUtils.readJSON(filerJobJSON);
+    final JSONArray filerJobArr = (JSONArray) filerJobObj.get(jobElement);
+    final JSONObject filerJobEl = (JSONObject) filerJobArr.get(0);
     final JSONArray jobChildrenEl = (JSONArray) filerJobEl.get(childrenElement);
     JSONArray documentSpec = new JSONArray();
     JSONObject repoSource = null;
@@ -194,7 +194,13 @@ public class FilerJobConfig {
       repoSource.replace(attributeValue, filerJob.getSourcename());
     }
 
-    final JSONObject response = ManifoldAPI.postConfig(jobsCommand, json);
+    // If OCR enable then create the corresponding OCR job
+    if (filerJob.isOCREnabled()) {
+      final String ocrJobName = "CrawlOCR_" + filerJob.getRepositoryConnection();
+      JobCreator.getInstance().createOCRJob(filerJobObj, ocrJobName, filerJob.getTikaOCRName(), filerJob.getTikaOCRHost(), filerJob.getTikaOCRPort());
+    }
+
+    final JSONObject response = ManifoldAPI.postConfig(jobsCommand, filerJobObj);
     return response.get("job_id").toString();
 
   }

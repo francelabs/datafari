@@ -56,7 +56,7 @@ public class WebRepoConfig {
     }
 
     // Generate unique name to avoid mistakes in jobs
-    String repoName = webRepo.getRepoName() + "_" + UUID.randomUUID().toString();
+    String repoName = webRepo.getReponame() + "_" + UUID.randomUUID().toString();
     repoName = repoName.replaceAll("-", "");
     if (repoName.length() > 32) {
       repoName = repoName.substring(0, 32);

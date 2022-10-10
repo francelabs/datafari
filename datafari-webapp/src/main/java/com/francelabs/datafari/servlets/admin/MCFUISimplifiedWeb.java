@@ -81,11 +81,18 @@ public class MCFUISimplifiedWeb extends HttpServlet {
       if (request.getParameter("webDuplicatesDetection") != null) {
         duplicatesDetection = true;
       }
+      boolean createOCR = false;
+      if (request.getParameter("webCreateOCR") != null) {
+        createOCR = true;
+      }
+      final String tikaOCRHost = request.getParameter("webTikaOCRHost");
+      final String tikaOCRPort = request.getParameter("webTikaOCRPort");
+      final String tikaOCRName = request.getParameter("webTikaOCRName");
 
       // Create webRepository
       final WebRepository webRepo = new WebRepository();
       webRepo.setEmail(email);
-      webRepo.setRepoName(reponame);
+      webRepo.setReponame(reponame);
       final String webRepoName = WebRepoConfig.getInstance().createRepoConnection(webRepo);
 
       if (webRepoName == null) {
@@ -109,6 +116,10 @@ public class MCFUISimplifiedWeb extends HttpServlet {
           webJob.setSeeds(seeds);
           webJob.setSourcename(sourcename);
           webJob.setDuplicatesDetection(duplicatesDetection);
+          webJob.setCreateOCR(createOCR);
+          webJob.setTikaOCRHost(tikaOCRHost);
+          webJob.setTikaOCRPort(tikaOCRPort);
+          webJob.setTikaOCRName(tikaOCRName);
           final String jobId = WebJobConfig.getInstance().createJob(webJob);
 
           if (jobId != null) {

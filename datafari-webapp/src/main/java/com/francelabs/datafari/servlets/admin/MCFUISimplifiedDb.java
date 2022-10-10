@@ -90,6 +90,13 @@ public class MCFUISimplifiedDb extends HttpServlet {
       if (request.getParameter("dbDuplicatesDetection") != null) {
         duplicatesDetection = true;
       }
+      boolean createOCR = false;
+      if (request.getParameter("dbCreateOCR") != null) {
+        createOCR = true;
+      }
+      final String tikaOCRHost = request.getParameter("dbTikaOCRHost");
+      final String tikaOCRPort = request.getParameter("dbTikaOCRPort");
+      final String tikaOCRName = request.getParameter("dbTikaOCRName");
 
       // Checking if the reponame is valid (alphanumerical and undescores only)
       final Pattern repoNamePattern = Pattern.compile("^\\w+$");
@@ -102,7 +109,7 @@ public class MCFUISimplifiedDb extends HttpServlet {
           LOGGER.error("The repository name is not valid");
         } else {
           createDbRepo(jsonResponse, dbType, dbHost, dbName, dbConnStr, dbUsername, dbPassword, dbSeeding, dbVersion, dbAccessToken, dbData, reponame, sourcename, security, duplicatesDetection,
-              startJob);
+              createOCR, tikaOCRHost, tikaOCRPort, tikaOCRName, startJob);
         }
       } else {
         jsonResponse.put("OK", "OK");
@@ -122,7 +129,7 @@ public class MCFUISimplifiedDb extends HttpServlet {
 
   private void createDbRepo(final JSONObject jsonResponse, final String dbType, final String dbHost, final String dbName, final String dbConnStr, final String dbUsername, final String dbPassword,
       final String dbSeeding, final String dbVersion, final String dbAccessToken, final String dbData, final String reponame, final String sourcename, final String security,
-      final boolean duplicatesDetection, final String startJob) throws Exception {
+      final boolean duplicatesDetection, final boolean createOCR, final String tikaOCRHost, final String tikaOCRPort, final String tikaOCRName, final String startJob) throws Exception {
     // Create dbRepository
     final DbRepository dbRepo = new DbRepository();
     dbRepo.setType(dbType);
@@ -153,6 +160,10 @@ public class MCFUISimplifiedDb extends HttpServlet {
       if (security != null) {
         dbJob.setSecurity(true);
       }
+      dbJob.setCreateOCR(createOCR);
+      dbJob.setTikaOCRHost(tikaOCRHost);
+      dbJob.setTikaOCRPort(tikaOCRPort);
+      dbJob.setTikaOCRName(tikaOCRName);
       final String jobId = DbJobConfig.getInstance().createJob(dbJob);
 
       if (jobId != null) {

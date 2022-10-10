@@ -3,7 +3,7 @@ package com.francelabs.datafari.simplifiedui.utils;
 import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 import org.apache.manifoldcf.core.system.ManifoldCF;
 
-public class DbRepository {
+public class DbRepository extends GenericRepository {
 
   private String type;
   private String name;
@@ -11,7 +11,6 @@ public class DbRepository {
   private String connectionStr;
   private String user;
   private String password;
-  private String reponame;
 
   public DbRepository() {
 
@@ -67,14 +66,6 @@ public class DbRepository {
     } catch (final ManifoldCFException e) {
       this.password = password;
     }
-  }
-
-  public String getReponame() {
-    return reponame;
-  }
-
-  public void setReponame(final String reponame) {
-    this.reponame = reponame;
   }
 
 }

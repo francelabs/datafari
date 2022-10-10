@@ -63,9 +63,9 @@ public class DbJobConfig {
     boolean isPipelineStage = false;
     boolean isOutputStage = false;
     int stageId = 0;
-    final JSONObject json = JSONUtils.readJSON(dbJobJSON);
-    final JSONArray job = (JSONArray) json.get(jobElement);
-    final JSONObject dbJobEl = (JSONObject) job.get(0);
+    final JSONObject dbJobObj = JSONUtils.readJSON(dbJobJSON);
+    final JSONArray dbJobArr = (JSONArray) dbJobObj.get(jobElement);
+    final JSONObject dbJobEl = (JSONObject) dbJobArr.get(0);
     final JSONArray jobChildrenEl = (JSONArray) dbJobEl.get(childrenElement);
     JSONArray documentSpec = new JSONArray();
     JSONObject repoSource = null;
@@ -189,7 +189,13 @@ public class DbJobConfig {
       repoSource.replace(attributeValue, dbJob.getSourcename());
     }
 
-    final JSONObject response = ManifoldAPI.postConfig(jobsCommand, json);
+    // If OCR enable then create the corresponding OCR job
+    if (dbJob.isOCREnabled()) {
+      final String ocrJobName = "CrawlOCR_" + dbJob.getRepositoryConnection();
+      JobCreator.getInstance().createOCRJob(dbJobObj, ocrJobName, dbJob.getTikaOCRName(), dbJob.getTikaOCRHost(), dbJob.getTikaOCRPort());
+    }
+
+    final JSONObject response = ManifoldAPI.postConfig(jobsCommand, dbJobObj);
     return response.get("job_id").toString();
 
   }

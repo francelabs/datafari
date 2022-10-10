@@ -127,48 +127,96 @@ $(document)
           $("#webSourcename-tip").attr("title", window.i18n.msgStore['sourcename-tip']);
           $("#webReponame-tip").attr("title", window.i18n.msgStore['reponame-tip']);
           $("#webDuplicatesDetection-tip").attr("title", window.i18n.msgStore['duplicatesDetection-tip']);
+          
+          // OCR filer
+          $("#filerCreateOCRLabel").html(window.i18n.msgStore['createOCR']);
+          $("#filerTikaOCRHostLabel").html(window.i18n.msgStore['tikaOCRHost']);
+          $("#filerTikaOCRPortLabel").html(window.i18n.msgStore['tikaOCRPort']);
+          $("#filerTikaOCRNameLabel").html(window.i18n.msgStore['tikaOCRName']);
+          $("#filerCreateOCR-tip").attr("title", window.i18n.msgStore['createOCR-tip']);
+          $("#filerTikaOCRHost-tip").attr("title", window.i18n.msgStore['tikaOCRHost-tip']);
+          $("#filerTikaOCRPort-tip").attr("title", window.i18n.msgStore['tikaOCRPort-tip']);
+          $("#filerTikaOCRName-tip").attr("title", window.i18n.msgStore['tikaOCRName-tip']);
+          
+          // OCR web
+          $("#webCreateOCRLabel").html(window.i18n.msgStore['createOCR']);
+          $("#webTikaOCRHostLabel").html(window.i18n.msgStore['tikaOCRHost']);
+          $("#webTikaOCRPortLabel").html(window.i18n.msgStore['tikaOCRPort']);
+          $("#webTikaOCRNameLabel").html(window.i18n.msgStore['tikaOCRName']);
+          $("#webCreateOCR-tip").attr("title", window.i18n.msgStore['createOCR-tip']);
+          $("#webTikaOCRHost-tip").attr("title", window.i18n.msgStore['tikaOCRHost-tip']);
+          $("#webTikaOCRPort-tip").attr("title", window.i18n.msgStore['tikaOCRPort-tip']);
+          $("#webTikaOCRName-tip").attr("title", window.i18n.msgStore['tikaOCRName-tip']);
+          
+          // OCR db
+          $("#dbCreateOCRLabel").html(window.i18n.msgStore['createOCR']);
+          $("#dbTikaOCRHostLabel").html(window.i18n.msgStore['tikaOCRHost']);
+          $("#dbTikaOCRPortLabel").html(window.i18n.msgStore['tikaOCRPort']);
+          $("#dbTikaOCRNameLabel").html(window.i18n.msgStore['tikaOCRName']);
+          $("#dbCreateOCR-tip").attr("title", window.i18n.msgStore['createOCR-tip']);
+          $("#dbTikaOCRHost-tip").attr("title", window.i18n.msgStore['tikaOCRHost-tip']);
+          $("#dbTikaOCRPort-tip").attr("title", window.i18n.msgStore['tikaOCRPort-tip']);
+          $("#dbTikaOCRName-tip").attr("title", window.i18n.msgStore['tikaOCRName-tip']);
 
           $(".asteriskLabel").html(window.i18n.msgStore['mandatoryField']);
 
           $('[data-toggle="tooltip"]').tooltip();
 
+          // Filer change functions
+          $("#filerCreateOCR").change(function(e) {
+            if($('#filerCreateOCR').is(':checked')) {
+              $("#filerOCR").show();
+            } else {
+              $("#filerOCR").hide();
+            }
+          });
           $("#server").change(function(e) {
             checkElm($("#server"));
           });
-
           $("#user").change(function(e) {
             checkElm($("#user"));
           });
-
           $("#password").change(function(e) {
             checkElm($("#password"));
           });
-
           $("#paths").change(function(e) {
             checkElm($("#paths"));
           });
-
           $("#seeds").change(function(e) {
             checkSeeds($("#seeds"));
           });
 
+          
+          // Web change functions
+          $("#webCreateOCR").change(function(e) {
+            if($('#webCreateOCR').is(':checked')) {
+              $("#webOCR").show();
+            } else {
+              $("#webOCR").hide();
+            }
+          });
           $("#email").change(function(e) {
             checkEmail($("#email"));
           });
-
           $("#webSourcename").change(function(e) {
             checkElm($("#webSourcename"));
           });
-          
           $("#webReponame").change(function(e) {
             checkRepoName($("#webReponame"));
           });
-
           $("#filerReponame").change(function(e) {
             checkRepoName($("#filerReponame"));
           });
           
           
+          // DB change functions
+          $("#dbCreateOCR").change(function(e) {
+            if($('#dbCreateOCR').is(':checked')) {
+              $("#dbOCR").show();
+            } else {
+              $("#dbOCR").hide();
+            }
+          });
           $("#dbHost").change(function(e) {
             checkElm($("#dbHost"));
           });
@@ -207,7 +255,7 @@ $(document)
             $("#addDbMessageFailure").hide();
             $("#addDbCheckMessageFailure").hide();
             var form = document.getElementById("addDb");
-            if (form.checkValidity() === false || !checkRepoName($("#dbReponame")) || !checkSeedingQuery($("#dbSeeding"))  || !checkVersionQuery($("#dbVersion"))  || !checkDataQuery($("#dbData"))  || !checkAccessTokenQuery($("#dbAccessToken"))) {
+            if (form.checkValidity() === false || !checkRepoName($("#dbReponame")) || !checkSeedingQuery($("#dbSeeding"))  || !checkVersionQuery($("#dbVersion"))  || !checkDataQuery($("#dbData"))  || !checkAccessTokenQuery($("#dbAccessToken")) || !checkOCR($("#dbCreateOCR"), $("#dbTikaOCRHost"), $("#dbTikaOCRPort"), $("#dbTikaOCRName"))) {
               return false;
             } else {
               return addDbConnector();
@@ -220,7 +268,7 @@ $(document)
             $("#addWebMessageSuccess").hide();
             $("#addWebMessageFailure").hide();
             $("#addWebCheckMessageFailure").hide();
-            if (checkSeeds($("#seeds")) && checkEmail($("#email")) && checkElm($("#webSourcename")) && checkRepoName($("#webReponame"))) {
+            if (checkSeeds($("#seeds")) && checkEmail($("#email")) && checkElm($("#webSourcename")) && checkRepoName($("#webReponame")) && checkOCR($("#webCreateOCR"), $("#webTikaOCRHost"), $("#webTikaOCRPort"), $("#webTikaOCRName"))) {
               return addWebConnector();
             } else {
               return false;
@@ -234,7 +282,7 @@ $(document)
             $("#addFilerMessageFailure").hide();
             $("#addFilerCheckMessageFailure").hide();
             var form = document.getElementById("addFiler");
-            if (form.checkValidity() === false || !checkRepoName($("#filerReponame"))) {
+            if (form.checkValidity() === false || !checkRepoName($("#filerReponame")) || !checkOCR($("#filerCreateOCR"), $("#filerTikaOCRHost"), $("#filerTikaOCRPort"), $("#filerTikaOCRName"))) {
               return false;
             } else {
               $.get("./../admin/CheckMCFConfiguration", {
@@ -257,6 +305,43 @@ $(document)
           });
 
 });
+
+function checkOCR(checkboxEl, tikaHostEl, tikaPortEl, tikaNameEl) {
+  clearStatus(tikaHostEl);
+  clearStatus(tikaPortEl);
+  clearStatus(tikaNameEl);
+  if (checkboxEl.is(':checked')) {
+    if (!tikaHostEl.val()) {
+      setErrorStatus(tikaHostEl, null);
+      tikaHostEl.addClass("is-invalid");
+      return false;
+    } else {
+      setOkStatus(tikaHostEl);
+    }
+    if (!tikaPortEl.val()) {
+      setErrorStatus(tikaPortEl, null);
+      tikaPortEl.addClass("is-invalid");
+      return false;
+    } else if (isNaN(tikaPortEl.val())) {
+      setErrorStatus(tikaPortEl, "Please set a number");
+      tikaPortEl.addClass("is-invalid");
+      return false;
+    } else {
+      setOkStatus(tikaPortEl);
+    }
+    if (!tikaNameEl.val()) {
+      setErrorStatus(tikaNameEl, null);
+      tikaNameEl.addClass("is-invalid");
+      return false;
+    } else {
+      setOkStatus(tikaNameEl);
+    }
+
+    return true;
+  } else {
+    return true;
+  }
+}
 
 function checkElm(element) {
   clearStatus(element);
@@ -518,6 +603,7 @@ function addDbConnector() {
         $("#addDbMessageFailure").show();
       } else {
         $("#addDb").trigger("reset");
+        $("#dbOCR").hide();
         var jobStarted = "";
         if (document.getElementById('dbStartJob').checked) {
           jobStarted = " and started";
@@ -535,6 +621,9 @@ function addDbConnector() {
           clearStatus($("#dbPassword"));
           clearStatus($("#dbSourcename"));
           clearStatus($("#dbReponame"));
+          clearStatus($("#dbTikaOCRHost"));
+          clearStatus($("#dbTikaOCRPort"));
+          clearStatus($("#dbTikaOCRName"));
         }, 1500));
       }
     },
@@ -580,6 +669,7 @@ function addFilerConnector() {
         $("#addFilerMessageFailure").show();
       } else {
         $("#addFiler").trigger("reset");
+        $("#filerOCR").hide();
         var jobStarted = "";
         if (document.getElementById('startJob').checked) {
           jobStarted = " and started";
@@ -596,6 +686,9 @@ function addFilerConnector() {
           clearStatus($('#paths'));
           clearStatus($("#filerReponame"));
           clearStatus($("#filerSourcename"));
+          clearStatus($("#filerTikaOCRHost"));
+          clearStatus($("#filerTikaOCRPort"));
+          clearStatus($("#filerTikaOCRName"));
         }, 1500));
       }
     },
@@ -641,6 +734,7 @@ function addWebConnector() {
         $("#addWebMessageFailure").show();
       } else {
         $("#addWeb").trigger("reset");
+        $("#webOCR").hide();
         var jobStarted = "";
         if (document.getElementById('startJobWeb').checked) {
           jobStarted = " and started";
@@ -655,6 +749,9 @@ function addWebConnector() {
           clearStatus($("#email"));
           clearStatus($('#webSourcename'));
           clearStatus($('#webReponame'));
+          clearStatus($("#webTikaOCRHost"));
+          clearStatus($("#webTikaOCRPort"));
+          clearStatus($("#webTikaOCRName"));
         }, 1500));
       }
     },
