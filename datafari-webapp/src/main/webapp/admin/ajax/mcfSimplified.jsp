@@ -39,7 +39,7 @@
         <p class="documentation-preview"> <span id="documentation-mcfsimplified"></span><a href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/682754069/MCF+Simplified+UI+configuration" target="_blank">...see more</a></p>
       </div>  
       <div class="row">
-        <label id="mcfsimplified-title-label" class="col-sm-4 control-label"></label>
+        <label id="mcfsimplified-title-label" class="col-sm-12 control-label"></label>
         <label id="mcfsimplified-choice-label" class="col-sm-4 control-label"></label>
 
       <br>
