@@ -163,6 +163,7 @@
     "adminUI-MCFSimplified-createSPRest2013Job": "Create SharePoint On Premise 2013 Job",
     "adminUI-MCFSimplified-createSPRestJob": "Create SharePoint REST (2016+) Job",
     "adminUI-MCFSimplified-createWebJob": "Create Web job",
+    "adminUI-MCFSimplified-datafaricloud": "If this is your first connection, this is where this starts: you need to index content. The simplest is do it here for several types of connectors. If what you need to index is not present here, please contact support@francelabs.com",
     "adminUI-MCFSimplified-dbJobFormEdit": "Create Database Job",
     "adminUI-MCFSimplified-email": "Email",
     "adminUI-MCFSimplified-filerjobFormEdit": "Edit MCF Filer Job",

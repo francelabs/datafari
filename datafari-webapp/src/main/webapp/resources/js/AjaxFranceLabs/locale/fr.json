@@ -165,6 +165,7 @@
     "adminUI-MCFSimplified-createSPRest2013Job": "Créer un job SharePoint On Premise 2013",
     "adminUI-MCFSimplified-createSPRestJob": "Créer un job SharePoint REST (2016+)",
     "adminUI-MCFSimplified-createWebJob": "Créer un Job Web",
+    "adminUI-MCFSimplified-datafaricloud": "S'il s'agit de votre première connexion, c'est ici que tout commence : vous devez indexer du contenu. Le plus simple est de le faire ici pour les différents types de connecteurs. Si ce que vous souhaitez indexer n'est pas présent ici, merci de contacter support@francelabs.com",
     "adminUI-MCFSimplified-dbJobFormEdit": "Créer un job base de données",
     "adminUI-MCFSimplified-email": "Email",
     "adminUI-MCFSimplified-filerjobFormEdit": "Editer le job MCF Filer",
