@@ -39,6 +39,7 @@
           <li id="serviceRestart"><a id="service-restart-AdminUI" class="ajax-link" href="?page=serviceRestart">Service Restart</a></li>
           <li id="serviceBackup"><a id="service-backup-AdminUI" class="ajax-link" href="?page=serviceBackup">Service Backup</a></li>
           <li id="serviceReinit"><a id="service-reinit-AdminUI" class="ajax-link" href="?page=serviceReinit">Service Connector Reinitialization</a></li>
+          <li id="serviceRestore"><a id="service-restore-AdminUI" class="ajax-link" href="?page=serviceRestore">Service Restore</a></li>
           <li id="serviceFactoryReset"><a id="service-reset-AdminUI" class="ajax-link" href="?page=serviceFactoryReset">Service Factory Reset</a></li>
 
         </ul>
