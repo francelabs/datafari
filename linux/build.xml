@@ -196,12 +196,12 @@
 			</fileset>
 		</copy>
 		<!-- Copy MCF proprietary libs to Tomcat-MCF  -->
-    <copy todir="${linux.dist.dir}/tomcat-mcf/lib">
-      <fileset dir="${mcf.src.dir}/mcf_home/connector-lib-proprietary">
-      	<include name="*.jar" />
-      	<exclude name="jcifs-ng*.jar" />
-      </fileset>
-    </copy>
+		<copy todir="${linux.dist.dir}/tomcat-mcf/lib">
+			<fileset dir="${mcf.src.dir}/mcf_home/connector-lib-proprietary">
+				<include name="*.jar" />
+				<exclude name="jcifs-ng*.jar" />
+			</fileset>
+		</copy>
 		<!-- Copy bin directory -->
 		<copy toDir="${linux.dist.dir}/tomcat-mcf/bin" overwrite="true" force="true">
 			<fileset dir="${tomcat.proj.dir}/bin-mcf">
@@ -264,6 +264,13 @@
 
 		<!-- Copy Datafari update handler + dependencies-->
 		<copy todir="${linux.dist.dir}/solr/solr_home/FileShare/lib/custom">
+			<fileset dir="${datafarihandler.src.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<!-- Copy Datafari handler to Duplicates Solr core -->
+		<copy todir="${linux.dist.dir}/solr/solr_home/Duplicates/lib/custom">
 			<fileset dir="${datafarihandler.src.dir}">
 				<include name="*.jar" />
 			</fileset>

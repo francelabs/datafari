@@ -223,6 +223,7 @@ init_solr_hosts() {
 init_zk() {
   #sed -i -e "s/@NODEHOST@/${1}/g" $TOMCAT_HOME/conf/datafari.properties >>$installerLog 2>&1
   sed -i -e "s/@ZKHOST@/${1}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolrNoTika.json >>$installerLog 2>&1
+  sed -i -e "s/@ZKHOST@/${1}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/Duplicates.json >>$installerLog 2>&1
 @VERSION-INIT-ZK@
 }
 

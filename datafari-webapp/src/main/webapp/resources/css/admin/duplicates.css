@@ -1,0 +1,71 @@
+.signature {
+  display: none;
+}
+
+.get-details {
+  cursor: pointer;
+}
+
+.get-details:hover {
+  background-color: #eaeaea;
+}
+
+table.dataTable tbody tr.odd {
+  background-color: #f9f9f9;
+}
+
+#duplicates-explanation {
+  font-weight: bold;
+  padding-bottom: 1em;
+}
+
+#duplicates_details_table_info {
+  display: inline-block;
+  padding-top: 0.755em;
+}
+
+#duplicates_details_table_paginate {
+  display: inline-block;
+  float: right;
+  padding-top: 0.25em;
+}
+
+#duplicates_details_table_paginate .paginate_button{
+  box-sizing: border-box;
+  display: inline-block;
+  min-width: 1.5em;
+  padding: 0.5em 1em;
+  margin-left: 2px;
+  text-align: center;
+  text-decoration: none !important;
+  cursor: pointer;
+  *cursor: hand;
+  color: #333 !important;
+  border: 1px solid transparent;
+  border-radius: 2px;
+}
+
+#duplicates_details_table_paginate .paginate_button:hover{
+  color: white !important;
+  border: 1px solid #111;
+  background: linear-gradient(to bottom, #585858 0%, #111 100%);
+}
+
+#duplicates_details_table_paginate .paginate_button:active{
+  outline: none;
+  box-shadow: inset 0 0 3px #111;
+}
+
+#duplicates_details_table_paginate .paginate_button.current{
+  color: #333 !important;
+  border: 1px solid #979797;
+  background: linear-gradient(to bottom, #fff 0%, #dcdcdc 100%);
+}
+
+#duplicates_details_table_paginate .paginate_button.disabled, #duplicates_details_table_paginate .paginate_button.disabled:hover{
+  cursor: default;
+  color: #666 !important;
+  border: 1px solid transparent;
+  background: transparent;
+  box-shadow: none;
+}

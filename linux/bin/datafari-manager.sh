@@ -166,6 +166,7 @@ init_zk()
   "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Promolink/conf" -confname Promolink
   "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Access/conf" -confname Access
   "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Monitoring/conf" -confname Monitoring
+  "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Duplicates/conf" -confname Duplicates
   
   @ZK-INIT@
 }
@@ -279,6 +280,7 @@ init_solr()
   #curl --insecure -XGET "https://localhost:8983/solr/admin/collections?action=CREATE&name=Promolink&collection.configName=Promolink&numShards=1&maxShardsPerNode=1&replicationFactor=1"
   #curl --insecure -XGET "https://localhost:8983/solr/admin/collections?action=CREATE&name=Access&collection.configName=Access&numShards=1&maxShardsPerNode=1&replicationFactor=1"
   #curl --insecure -XGET "https://localhost:8983/solr/admin/collections?action=CREATE&name=Monitoring&collection.configName=Monitoring&numShards=1&maxShardsPerNode=1&replicationFactor=1"
+  #curl --insecure -XGET "https://localhost:8983/solr/admin/collections?action=CREATE&name=Duplicates&collection.configName=Duplicates&numShards=1&maxShardsPerNode=1&replicationFactor=1"
   #curl --insecure -XPOST https://localhost:8983/solr/@MAINCOLLECTION@/config/params -H 'Content-type:application/json'  -d '{"set":{"mySearch":{"qf":"title_fr^50 title_en^50 title_de^50 title_es^50 content_fr^10 content_en^10 content_de^10 content_es^10 source^20 id^3 url_search^3","pf":"title_en^500 title_fr^500 title_de^500 title_es^500 content_fr^100 content_en^100 content_de^500 content_es^500 url_search^30","hl.maxAnalyzedChars":51200}}}'
   #curl --insecure -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"autocomplete.threshold": "0.005"}}' https://localhost:8983/solr/@MAINCOLLECTION@/config
   
@@ -289,9 +291,15 @@ init_solr()
   curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=Promolink&collection.configName=Promolink&numShards=1&maxShardsPerNode=1&replicationFactor=1"
   curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=Access&collection.configName=Access&numShards=1&maxShardsPerNode=1&replicationFactor=1"
   curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=Monitoring&collection.configName=Monitoring&numShards=1&maxShardsPerNode=1&replicationFactor=1"
+  curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=Duplicates&collection.configName=Duplicates&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/Duplicates/"
   curl -XPOST http://localhost:8983/solr/@MAINCOLLECTION@/config/params -H 'Content-type:application/json'  -d '{"set":{"mySearch":{"qf":"title_fr^50 title_en^50 title_de^50 title_es^50 content_fr^10 content_en^10 content_de^10 content_es^10 source^20 id^3 url_search^3","pf":"title_en^500 title_fr^500 title_de^500 title_es^500 content_fr^100 content_en^100 content_de^100 content_es^100 url_search^30","hl.maxAnalyzedChars":51200}}}'
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"autocomplete.threshold": "0.005"}}' http://localhost:8983/solr/@MAINCOLLECTION@/config
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"clustering.enabled": "false"}}' http://localhost:8983/solr/@MAINCOLLECTION@/config
+  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.enabled": "false"}}' http://localhost:8983/solr/@MAINCOLLECTION@/config
+  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.solr.host": "localhost:2181"}}' http://localhost:8983/solr/@MAINCOLLECTION@/config
+  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.collection": "Duplicates"}}' http://localhost:8983/solr/@MAINCOLLECTION@/config
+  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.hash.fields": "content"}}' http://localhost:8983/solr/Duplicates/config
+  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.quant.rate": "0.1"}}' http://localhost:8983/solr/Duplicates/config 
   
   @SOLR-INIT@
 }

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<schema name="Duplicates" version="1.5">
+
+  <fields>
+    <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+    <field name="content" type="text_general" indexed="false" stored="false" multiValued="true"/>
+    <field name="signature" type="string" stored="true" indexed="true" multiValued="false" />
+    <field name="_version_" type="long" indexed="true" stored="true"/>
+    <dynamicField name="ignored_*" type="ignored" multiValued="true"/>
+  </fields>
+ 
+ <uniqueKey>id</uniqueKey>
+
+  <types>
+    <fieldtype name="ignored" stored="false" indexed="false" multiValued="true" class="solr.StrField" />
+    <fieldType name="string" class="solr.StrField" sortMissingLast="true" />
+    <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
+    <fieldType name="int" class="solr.IntPointField" />
+    <fieldType name="float" class="solr.FloatPointField" />
+    <fieldType name="long" class="solr.LongPointField" />
+    <fieldType name="double" class="solr.DoublePointField" />
+    <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+    </fieldType>
+ </types>
+</schema>
