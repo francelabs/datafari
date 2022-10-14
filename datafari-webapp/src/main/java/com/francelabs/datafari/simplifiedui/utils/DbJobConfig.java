@@ -189,6 +189,10 @@ public class DbJobConfig {
       repoSource.replace(attributeValue, dbJob.getSourcename());
     }
 
+    // Set schedule task
+    final JSONObject scheduleJobConf = JobScheduleCreator.getInstance().createDefaultJobSchedule(dbJob.getTimezone());
+    jobChildrenEl.add(scheduleJobConf);
+
     // If OCR enable then create the corresponding OCR job
     if (dbJob.isOCREnabled()) {
       final String ocrJobName = "CrawlOCR_" + dbJob.getRepositoryConnection();

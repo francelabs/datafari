@@ -4,6 +4,7 @@ public abstract class GenericJob {
 
   private String repositoryConnection;
   private String sourcename;
+  private String timezone;
   private boolean security = false;
   private boolean duplicatesDetection = false;
   private boolean createOCR = false;
@@ -77,6 +78,14 @@ public abstract class GenericJob {
 
   public boolean isOCREnabled() {
     return createOCR;
+  }
+
+  public String getTimezone() {
+    return timezone;
+  }
+
+  public void setTimezone(final String timezone) {
+    this.timezone = timezone;
   }
 
 }

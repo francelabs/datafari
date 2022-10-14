@@ -510,6 +510,8 @@
     "tikaOCRPort": "Tika server OCR Port",
     "tikaOCRPort-tip": "The port of the Tika server configured to perform OCR",
     "timeoutPerRequestLabel": "Timeout per request (milliseconds)",
+    "timezone-selection": "Select your TimeZone",
+    "timezone-selection-tip": "The TimeZone will be used to configure scheduled crawl",
     "title": "العنوان",
     "tokenRequestUrlLabel": "Token Request URL",
     "tooltip-changepassword": "The new password will be active just few seconds after you changed it",

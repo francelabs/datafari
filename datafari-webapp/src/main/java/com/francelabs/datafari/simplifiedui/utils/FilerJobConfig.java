@@ -194,6 +194,10 @@ public class FilerJobConfig {
       repoSource.replace(attributeValue, filerJob.getSourcename());
     }
 
+    // Set schedule task
+    final JSONObject scheduleJobConf = JobScheduleCreator.getInstance().createDefaultJobSchedule(filerJob.getTimezone());
+    jobChildrenEl.add(scheduleJobConf);
+
     // If OCR enable then create the corresponding OCR job
     if (filerJob.isOCREnabled()) {
       final String ocrJobName = "CrawlOCR_" + filerJob.getRepositoryConnection();

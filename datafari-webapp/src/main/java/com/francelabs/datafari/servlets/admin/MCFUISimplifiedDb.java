@@ -86,6 +86,7 @@ public class MCFUISimplifiedDb extends HttpServlet {
       final String reponame = request.getParameter("dbReponame");
       final String security = request.getParameter("dbSecurity");
       final String startJob = request.getParameter("dbStartJob");
+      final String timezone = request.getParameter("dbTimeZone");
       boolean duplicatesDetection = false;
       if (request.getParameter("dbDuplicatesDetection") != null) {
         duplicatesDetection = true;
@@ -108,8 +109,8 @@ public class MCFUISimplifiedDb extends HttpServlet {
           jsonResponse.put(OutputConstants.STATUS, "The repository name is not valid");
           LOGGER.error("The repository name is not valid");
         } else {
-          createDbRepo(jsonResponse, dbType, dbHost, dbName, dbConnStr, dbUsername, dbPassword, dbSeeding, dbVersion, dbAccessToken, dbData, reponame, sourcename, security, duplicatesDetection,
-              createOCR, tikaOCRHost, tikaOCRPort, tikaOCRName, startJob);
+          createDbRepo(jsonResponse, dbType, dbHost, dbName, dbConnStr, dbUsername, dbPassword, dbSeeding, dbVersion, dbAccessToken, dbData, reponame, sourcename, timezone, security,
+              duplicatesDetection, createOCR, tikaOCRHost, tikaOCRPort, tikaOCRName, startJob);
         }
       } else {
         jsonResponse.put("OK", "OK");
@@ -128,7 +129,7 @@ public class MCFUISimplifiedDb extends HttpServlet {
   }
 
   private void createDbRepo(final JSONObject jsonResponse, final String dbType, final String dbHost, final String dbName, final String dbConnStr, final String dbUsername, final String dbPassword,
-      final String dbSeeding, final String dbVersion, final String dbAccessToken, final String dbData, final String reponame, final String sourcename, final String security,
+      final String dbSeeding, final String dbVersion, final String dbAccessToken, final String dbData, final String reponame, final String sourcename, final String timezone, final String security,
       final boolean duplicatesDetection, final boolean createOCR, final String tikaOCRHost, final String tikaOCRPort, final String tikaOCRName, final String startJob) throws Exception {
     // Create dbRepository
     final DbRepository dbRepo = new DbRepository();
@@ -156,6 +157,7 @@ public class MCFUISimplifiedDb extends HttpServlet {
       dbJob.setAccessTokenQ(dbAccessToken);
       dbJob.setDataQ(dbData);
       dbJob.setSourcename(sourcename);
+      dbJob.setTimezone(timezone);
       dbJob.setDuplicatesDetection(duplicatesDetection);
       if (security != null) {
         dbJob.setSecurity(true);

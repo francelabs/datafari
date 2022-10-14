@@ -1,0 +1,25 @@
+{
+  "_type_": "schedule",
+  "_children_": [
+    {
+      "_type_": "requestminimum",
+      "_value_": "false"
+    },
+    {
+      "_type_": "timezone",
+      "_value_": "Europe/Paris"
+    },
+    {
+      "_type_": "duration",
+      "_value_": "43200000"
+    },
+    {
+      "_type_": "hourofday",
+      "value": "19"
+    },
+    {
+      "_type_": "minutesofhour",
+      "value": "0"
+    }
+  ]
+}

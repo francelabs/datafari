@@ -742,6 +742,8 @@
     "tikaOCRPort": "Tika server OCR Port",
     "tikaOCRPort-tip": "The port of the Tika server configured to perform OCR",
     "timeoutPerRequestLabel": "Timeout per request (milliseconds)",
+    "timezone-selection": "Select your TimeZone",
+    "timezone-selection-tip": "The TimeZone will be used to configure scheduled crawl",
     "title": "Título : ",
     "toDate": "Hasta",
     "token-remove-error": "Unable to remove the token, check the logs",

@@ -15,9 +15,12 @@ var clearTimeouts = function() {
   $('#main').unbind('DOMNodeRemoved');
 }
 
+var timezones;
+
 $(document)
     .ready(
         function() {
+          refreshTimeZones();
           $('#main').bind('DOMNodeRemoved', clearTimeouts);
           $('backupDir-label').text(window.i18n.msgStore["adminUI-MCFBackupRestore-backupDir-label"]);
           $('.MCFSave')
@@ -76,6 +79,8 @@ $(document)
           $("#dbAccessToken-tip").attr("title", window.i18n.msgStore['dbAccessToken-tip']);
           $("#dbData-tip").attr("title", window.i18n.msgStore['dbData-tip']);
           $("#dbDuplicatesDetection-tip").attr("title", window.i18n.msgStore['duplicatesDetection-tip']);
+          $("#dbTimeZoneLabel").html(window.i18n.msgStore['timezone-selection']);
+          $("#dbTimeZone-tip").attr("title", window.i18n.msgStore['timezone-selection-tip']);
 
           $("#webJobTitle").html(window.i18n.msgStore['adminUI-MCFSimplified-webjobFormEdit']);
           $("#webAddLegend").html(window.i18n.msgStore['param']);
@@ -89,6 +94,7 @@ $(document)
           $("#exclusions").attr("placeholder", window.i18n.msgStore['exclusions']);
           $("#newWebConfig").html(window.i18n.msgStore['confirm']);
           $("#newWebConfig").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
+          $("#webTimeZoneLabel").html(window.i18n.msgStore['timezone-selection']);
 
           $("#filerJobTitle").html(window.i18n.msgStore['adminUI-MCFSimplified-filerjobFormEdit']);
           $("#filerAddLegend").html(window.i18n.msgStore['param']);
@@ -110,6 +116,7 @@ $(document)
           $("#filerReponame").attr("placeholder", window.i18n.msgStore['reponame']);
           $("#newFilerConfig").html(window.i18n.msgStore['confirm']);
           $("#newFilerConfig").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
+          $("#filerTimeZoneLabel").html(window.i18n.msgStore['timezone-selection']);
 
           // Set the tooltips
           $("#server-tip").attr("title", window.i18n.msgStore['server-tip']);
@@ -120,6 +127,7 @@ $(document)
           $("#filerReponame-tip").attr("title", window.i18n.msgStore['reponame-tip']);
           $("#security-tip").attr("title", window.i18n.msgStore['security-tip']);
           $("#duplicatesDetection-tip").attr("title", window.i18n.msgStore['duplicatesDetection-tip']);
+          $("#filerTimeZone-tip").attr("title", window.i18n.msgStore['timezone-selection-tip']);
 
           $("#seeds-tip").attr("title", window.i18n.msgStore['seeds-tip']);
           $("#email-tip").attr("title", window.i18n.msgStore['email-tip']);
@@ -127,6 +135,7 @@ $(document)
           $("#webSourcename-tip").attr("title", window.i18n.msgStore['sourcename-tip']);
           $("#webReponame-tip").attr("title", window.i18n.msgStore['reponame-tip']);
           $("#webDuplicatesDetection-tip").attr("title", window.i18n.msgStore['duplicatesDetection-tip']);
+          $("#webTimeZone-tip").attr("title", window.i18n.msgStore['timezone-selection-tip']);
           
           // OCR filer
           $("#filerCreateOCRLabel").html(window.i18n.msgStore['createOCR']);
@@ -157,6 +166,11 @@ $(document)
           $("#dbTikaOCRHost-tip").attr("title", window.i18n.msgStore['tikaOCRHost-tip']);
           $("#dbTikaOCRPort-tip").attr("title", window.i18n.msgStore['tikaOCRPort-tip']);
           $("#dbTikaOCRName-tip").attr("title", window.i18n.msgStore['tikaOCRName-tip']);
+          
+          //Set the timezones
+          setTimeZones($("#filerTimeZone"));
+          setTimeZones($("#dbTimeZone"));
+          setTimeZones($("#webTimeZone"));
 
           $(".asteriskLabel").html(window.i18n.msgStore['mandatoryField']);
 
@@ -305,6 +319,25 @@ $(document)
           });
 
 });
+
+function refreshTimeZones() {
+  $.ajax({
+    type: "GET",
+    url: "./../GetAvailableTimeZones",
+    success: function(data, textStatus, jqXHR) {
+      if (data.code === 0) {
+        timezones = data.TimeZones;
+      }
+    },
+    async: false
+  });
+}
+
+function setTimeZones(selectEl) {
+  for (var i = 0; i < timezones.length; i++) {
+    selectEl.append($("<option />").val(timezones[i]).text(timezones[i]));
+  }
+}
 
 function checkOCR(checkboxEl, tikaHostEl, tikaPortEl, tikaNameEl) {
   clearStatus(tikaHostEl);

@@ -157,6 +157,10 @@ public class WebJobConfig {
       repoSource.replace(attributeValue, webJob.getSourcename());
     }
 
+    // Set schedule task
+    final JSONObject scheduleJobConf = JobScheduleCreator.getInstance().createDefaultJobSchedule(webJob.getTimezone());
+    jobChildrenEl.add(scheduleJobConf);
+
     // If OCR enable then create the corresponding OCR job
     if (webJob.isOCREnabled()) {
       final String ocrJobName = "CrawlOCR_" + webJob.getRepositoryConnection();

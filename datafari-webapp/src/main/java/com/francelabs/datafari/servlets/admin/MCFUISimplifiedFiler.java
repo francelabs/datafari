@@ -80,6 +80,7 @@ public class MCFUISimplifiedFiler extends HttpServlet {
       final String reponame = request.getParameter("filerReponame");
       final String security = request.getParameter("security");
       final String startJob = request.getParameter("startJob");
+      final String timezone = request.getParameter("filerTimeZone");
       boolean duplicatesDetection = false;
       if (request.getParameter("duplicatesDetection") != null) {
         duplicatesDetection = true;
@@ -102,7 +103,7 @@ public class MCFUISimplifiedFiler extends HttpServlet {
           jsonResponse.put(OutputConstants.STATUS, "The repository name is not valid");
           LOGGER.error("The repository name is not valid");
         } else {
-          createFilerRepo(jsonResponse, server, user, password, reponame, paths, sourcename, security, duplicatesDetection, createOCR, tikaOCRHost, tikaOCRPort, tikaOCRName, startJob);
+          createFilerRepo(jsonResponse, server, user, password, reponame, paths, sourcename, timezone, security, duplicatesDetection, createOCR, tikaOCRHost, tikaOCRPort, tikaOCRName, startJob);
         }
       } else {
         jsonResponse.put("OK", "OK");
@@ -121,8 +122,8 @@ public class MCFUISimplifiedFiler extends HttpServlet {
   }
 
   private void createFilerRepo(final JSONObject jsonResponse, final String server, final String user, final String password, final String reponame, final String paths, final String sourcename,
-      final String security, final boolean duplicatesDetection, final boolean createOCR, final String tikaOCRHost, final String tikaOCRPort, final String tikaOCRName, final String startJob)
-      throws Exception {
+      final String timezone, final String security, final boolean duplicatesDetection, final boolean createOCR, final String tikaOCRHost, final String tikaOCRPort, final String tikaOCRName,
+      final String startJob) throws Exception {
     // Create webRepository
     final FilerRepository filerRepo = new FilerRepository();
     filerRepo.setServer(server);
@@ -143,6 +144,7 @@ public class MCFUISimplifiedFiler extends HttpServlet {
       filerJob.setRepositoryConnection(filerRepoName);
       filerJob.setPaths(paths);
       filerJob.setSourcename(sourcename);
+      filerJob.setTimezone(timezone);
       filerJob.setDuplicatesDetection(duplicatesDetection);
       filerJob.setCreateOCR(createOCR);
       filerJob.setTikaOCRHost(tikaOCRHost);

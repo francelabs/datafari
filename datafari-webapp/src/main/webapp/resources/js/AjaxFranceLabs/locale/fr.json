@@ -803,6 +803,8 @@
     "tikaOCRPort": "Tika server OCR Port",
     "tikaOCRPort-tip": "Le port du serveur Tika configuré pour faire de l'OCR",
     "timeoutPerRequestLabel": "Délai par requête (millisecondes)",
+    "timezone-selection": "Sélectionnez votre fuseau horaire",
+    "timezone-selection-tip": "Le fuseau horaire sera utilisé pour configurer une tâche planifiée de moissonnage",
     "title": "Titre : ",
     "toDate": "Au",
     "token-remove-error": "Impossible de supprimer le token, vérifiez les logs",

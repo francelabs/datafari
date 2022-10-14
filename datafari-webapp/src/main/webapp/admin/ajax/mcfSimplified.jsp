@@ -161,6 +161,16 @@
 	                      </div>
 	                    </div>                      
 	                  </div>
+                    <div class="form-group row">
+                      <div class="col-sm-3 control-label">
+                        <label id="filerTimeZoneLabel" for="filerTimeZone" class="col-form-label"></label><span id="filerTimeZone-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                      </div>
+                      <div class="col-sm-4">
+                        <select id="filerTimeZone" name="filerTimeZone" class="form-control">
+                          <OPTION disabled selected>Select your TimeZone</OPTION>
+                        </select>
+                      </div>
+                    </div>
                     <div class="form-group row" id="div15">
                       <div class="col-sm-3 control-label">
                         <label id="securityLabel" for="security" class="col-form-label"></label><span id="security-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span> <span class="alert-danger">(This feature is only available in the Enterprise Edition)</span>
@@ -403,6 +413,16 @@
                     </div>
                     <div class="form-group row">
                       <div class="col-sm-3 control-label">
+                        <label id="dbTimeZoneLabel" for="dbTimeZone" class="col-form-label"></label><span id="dbTimeZone-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                      </div>
+                      <div class="col-sm-4">
+                        <select id="dbTimeZone" name="dbTimeZone" class="form-control">
+                          <OPTION disabled selected>Select your TimeZone</OPTION>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <div class="col-sm-3 control-label">
                         <label id="dbSecurityLabel" for="dbSecurity" class="col-form-label"></label><span id="dbSecurity-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span> <span class="alert-danger">(This feature is only available in the Enterprise Edition)</span>
                       </div>
                       <div class="col-sm-4 checkbox-div">
@@ -568,6 +588,16 @@
                           Please provide a name for the repository
                         </div>
                       </div>                      
+                    </div>
+                    <div class="form-group row">
+                      <div class="col-sm-3 control-label">
+                        <label id="webTimeZoneLabel" for="webTimeZone" class="col-form-label"></label><span id="webTimeZone-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                      </div>
+                      <div class="col-sm-4">
+                        <select id="webTimeZone" name="webTimeZone" class="form-control">
+                          <OPTION disabled selected>Select your TimeZone</OPTION>
+                        </select>
+                      </div>
                     </div>
                     <div class="form-group row">
                       <div class="col-sm-3 control-label">
