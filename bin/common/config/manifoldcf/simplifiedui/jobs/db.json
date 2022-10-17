@@ -379,7 +379,7 @@
         },
         {
           "_type_": "start_mode",
-          "_value_": "manual"
+          "_value_": "schedule window start"
         },
         {
           "_type_": "run_mode",

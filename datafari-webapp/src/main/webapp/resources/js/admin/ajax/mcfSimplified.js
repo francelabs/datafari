@@ -337,6 +337,9 @@ function setTimeZones(selectEl) {
   for (var i = 0; i < timezones.length; i++) {
     selectEl.append($("<option />").val(timezones[i]).text(timezones[i]));
   }
+  selectEl.select2({
+    width: 'resolve' // need to override the changed default
+  });
 }
 
 function checkOCR(checkboxEl, tikaHostEl, tikaPortEl, tikaNameEl) {

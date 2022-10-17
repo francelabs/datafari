@@ -4,9 +4,11 @@
 <head>
 <!-- Page specific JS -->
 <script src="<c:url value="/resources/js/admin/ajax/mcfSimplified.js" />" type="text/javascript"></script>
+<script src="<c:url value="/resources/libs/select2/4.0.13/js/select2.min.js" />" type="text/javascript"></script>
 <!-- Page specific CSS -->
 <Link rel="stylesheet" href="<c:url value="/resources/css/animate.min.css" />"/>
 <link href="<c:url value="/resources/css/admin/mcfSimplified.css" />" rel="stylesheet"></link>
+<link href="<c:url value="/resources/libs/select2/4.0.13/css/select2.min.css" />" rel="stylesheet"></link>
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
@@ -166,7 +168,7 @@
                         <label id="filerTimeZoneLabel" for="filerTimeZone" class="col-form-label"></label><span id="filerTimeZone-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
                       <div class="col-sm-4">
-                        <select id="filerTimeZone" name="filerTimeZone" class="form-control">
+                        <select id="filerTimeZone" name="filerTimeZone" class="form-control"  style="width: 100%">
                           <OPTION disabled selected>Select your TimeZone</OPTION>
                         </select>
                       </div>
@@ -416,7 +418,7 @@
                         <label id="dbTimeZoneLabel" for="dbTimeZone" class="col-form-label"></label><span id="dbTimeZone-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
                       <div class="col-sm-4">
-                        <select id="dbTimeZone" name="dbTimeZone" class="form-control">
+                        <select id="dbTimeZone" name="dbTimeZone" class="form-control"  style="width: 100%">
                           <OPTION disabled selected>Select your TimeZone</OPTION>
                         </select>
                       </div>
@@ -594,7 +596,7 @@
                         <label id="webTimeZoneLabel" for="webTimeZone" class="col-form-label"></label><span id="webTimeZone-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
                       <div class="col-sm-4">
-                        <select id="webTimeZone" name="webTimeZone" class="form-control">
+                        <select id="webTimeZone" name="webTimeZone" class="form-control"  style="width: 100%">
                           <OPTION disabled selected>Select your TimeZone</OPTION>
                         </select>
                       </div>
