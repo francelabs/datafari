@@ -23,6 +23,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -317,6 +318,26 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
       doc.addField("extension", extension.toLowerCase());
     }
     doc.addField("mime", mime.toLowerCase());
+
+    // remove useless dates to only keep one for last_modified and creation_date fields
+    String lastmodifiedField = "last_modified";
+    String creationdateField = "creation_date";
+
+    if (doc.containsKey(lastmodifiedField) && doc.getFieldValue(lastmodifiedField) != null && !doc.getFieldValue(lastmodifiedField).toString().isEmpty()) {
+      Collection<Object> lastmodifiedCollection = doc.getFieldValues("last_modified");
+      Object firsLastModified = lastmodifiedCollection.iterator().next();
+      doc.remove(lastmodifiedField);
+      doc.addField(lastmodifiedField, firsLastModified);
+    }
+
+    if (doc.containsKey(creationdateField) && doc.getFieldValue(creationdateField) != null && !doc.getFieldValue(creationdateField).toString().isEmpty()) {
+      Collection<Object> creationDateCollection = doc.getFieldValues("creation_date");
+      Object firstCreationDate = creationDateCollection.iterator().next();
+      doc.remove(creationdateField);
+      doc.addField(creationdateField, firstCreationDate);
+    }
+
+
 
     super.processAdd(cmd);
   }
