@@ -744,7 +744,7 @@
 		</arr>
 	</requestHandler>
 	
-	<requestHandler class="org.apache.solr.handler.component.SearchHandler" name="/suggestEntitytAuthors">
+	<requestHandler class="org.apache.solr.handler.component.SearchHandler" name="/suggestEntityAuthors">
 		<lst name="defaults">
 			<str name="suggest">true</str>
 			<str name="suggest.dictionary">suggesterEntityAuthors</str>
