@@ -744,7 +744,7 @@
 		</arr>
 	</requestHandler>
 	
-	<requestHandler class="org.apache.solr.handler.component.SearchHandler" name="/suggesEntitytAuthors">
+	<requestHandler class="org.apache.solr.handler.component.SearchHandler" name="/suggestEntitytAuthors">
 		<lst name="defaults">
 			<str name="suggest">true</str>
 			<str name="suggest.dictionary">suggesterEntityAuthors</str>
@@ -1003,7 +1003,7 @@
       <str name="suggestAnalyzerFieldType">text_general</str>
       <str name="lookupImpl">AnalyzingInfixLookupFactory</str>
       <str name="maxEdits">0</str>
-      <str name="field">authorTokens</str>
+      <str name="field">entity_person</str>
       <str name="highlight">false</str>
       <str name="dictionaryImpl">HighFrequencyDictionaryFactory</str>
       <str name="buildOnCommit">true</str>
