@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+  <service-loader initializableProblemHandler="ignore" loadErrorHandler="WARN" />
+
+  <!-- Tika server general conf -->
+  <server>
+    <params>
+      <port>9998</port>
+      <host>localhost</host>
+      <!-- whether or not to allow CORS requests. Set to 'ALL' if you want to allow all CORS requests. Set to NONE or leave blank if you do not want to enable CORS. -->
+      <cors>NONE</cors>
+      <!-- which digests to calculate, comma delimited (e.g. md5,sha256); optionally specify encoding followed by a colon (e.g. "sha1:32"). Can be empty if you don't want to calculate a digest -->
+      <digest></digest>
+      <!-- how much to read to memory during the digest phase before spooling to disc...only if digest is selected -->
+      <digestMarkLimit>1000000</digestMarkLimit>
+      <!-- request URI log level 'debug' or 'info' -->
+      <logLevel>info</logLevel>
+      <!-- whether or not to return the stacktrace in the data returned to the user when a parse exception happens -->
+      <returnStackTrace>false</returnStackTrace>
+      <!-- maximum time to allow per parse before shutting down and restarting the forked parser. Not allowed if noFork=true. -->
+      <taskTimeoutMillis>120000</taskTimeoutMillis>
+      <!-- how often to check whether a parse has timed out. Not allowed if noFork=true. -->
+      <taskPulseMillis>10000</taskPulseMillis>
+      <!-- maximum amount of time to wait for a forked process to start up. Not allowed if noFork=true. -->
+      <maxForkedStartupMillis>120000</maxForkedStartupMillis>
+      <!-- maximum number of times to allow a specific forked process to be restarted. Not allowed if noFork=true. -->
+      <maxRestarts>-1</maxRestarts>
+      <!-- maximum files to parse per forked process before restarting the forked process to clear potential memory leaks. Not allowed if noFork=true. -->
+      <maxFiles>100000</maxFiles>
+      <!-- jvm args to use in the forked process -->
+      <forkedJvmArgs>
+        <arg>-Xms5g</arg>
+        <arg>-Dlog4j2.configurationFile=${env:TIKA_SERVER_HOME}/conf/log4j2child.properties.xml</arg>
+        <arg>-Duser.timezone=UTC</arg>
+        <arg>-Djava.io.tmpdir=@TIKATMPDIR@</arg>
+      </forkedJvmArgs>
+      <!-- this must be set to true for any handler that uses a fetcher or emitter. These pipes features are inherently unsecure because the client has the same read/write access as the tika-server process. 
+        Implementers must secure Tika server so that only their clients can reach it. A byproduct of setting this to true is that the /status endpoint is turned on -->
+      <enableUnsecureFeatures>false</enableUnsecureFeatures>
+      <!-- you can optionally select specific endpoints to turn on/load. This can improve resource usage and decrease your attack surface. If you want to access the status endpoint, specify it here or 
+        set unsecureFeatures to true -->
+      <endpoints>
+        <endpoint>rmeta</endpoint>
+      </endpoints>
+    </params>
+  </server>
+
+  <!-- Autodetect parser config to limit amount of metadata per doc -->
+  <autoDetectParserConfig>
+    <metadataWriteFilterFactory class="org.apache.tika.metadata.writefilter.StandardWriteFilterFactory">
+      <params>
+        <maxKeySize>1000</maxKeySize>
+        <maxFieldSize>25000</maxFieldSize>
+        <maxValuesPerField>20</maxValuesPerField>
+        <maxTotalEstimatedBytes>500000</maxTotalEstimatedBytes>
+      </params>
+    </metadataWriteFilterFactory>
+  </autoDetectParserConfig>
+
+  <!-- Parsers specific config -->
+  <parsers>
+    <parser class="org.apache.tika.parser.DefaultParser">
+      <!-- comment this parser-exclude tag to activate OCR parser -->
+      <parser-exclude class="org.apache.tika.parser.ocr.TesseractOCRParser" />
+    </parser>
+    <parser class="org.apache.tika.parser.pdf.PDFParser">
+      <params>
+        <!-- these are the defaults; you only need to specify the ones you want to modify -->
+        <param name="allowExtractionForAccessibility" type="bool">true</param>
+        <param name="averageCharTolerance" type="float">0.3</param>
+        <param name="catchIntermediateIOExceptions" type="bool">true</param>
+        <param name="checkExtractAccessPermission" type="bool">false</param>
+        <!-- whether or not to add processing to detect angles and extract text accordingly -->
+        <param name="detectAngles" type="bool">false</param>
+        <param name="dropThreshold" type="float">2.5</param>
+        <param name="enableAutoSpace" type="bool">true</param>
+        <param name="extractAcroFormContent" type="bool">true</param>
+        <param name="extractActions" type="bool">false</param>
+        <param name="extractAnnotationText" type="bool">true</param>
+        <param name="extractBookMarksText" type="bool">true</param>
+        <param name="extractFontNames" type="bool">false</param>
+        <param name="extractInlineImages" type="bool">false</param>
+        <param name="extractUniqueInlineImagesOnly" type="bool">true</param>
+        <param name="ifXFAExtractOnlyXFA" type="bool">false</param>
+        <!-- Use up to 500MB when loading a pdf into a PDDocument -->
+        <param name="maxMainMemoryBytes" type="long">524288000</param>
+        <!-- dots per inch for the ocr rendering of the page image -->
+        <param name="ocrDPI" type="int">300</param>
+        <!--if you request tif, make sure you have imageio jars on your classpath! -->
+        <param name="ocrImageFormatName" type="string">png</param>
+        <param name="ocrImageQuality" type="float">1.0</param>
+        <!-- options: argb, binary, gray, rgb -->
+        <param name="ocrImageType" type="string">gray</param>
+        <param name="ocrRenderingStrategy" type="string">ALL</param>
+        <!-- options: no_ocr, auto, ocr_only, ocr_and_text_extraction -->
+        <param name="ocrStrategy" type="string">no_ocr</param>
+        <param name="ocrStrategyAuto" type="string">better</param>
+        <!-- whether or not to set KCMS for faster (but legacy/unsupported) image rendering -->
+        <param name="setKCMS" type="bool">false</param>
+        <param name="sortByPosition" type="bool">false</param>
+        <param name="spacingTolerance" type="float">0.5</param>
+        <param name="suppressDuplicateOverlappingText" type="bool">false</param>
+      </params>
+    </parser>
+    <!-- Uncomment this part to activate OCR parser -->
+    <!-- <parser class="org.apache.tika.parser.ocr.TesseractOCRParser"> -->
+    <!-- <params> -->
+    <!-- <param name="applyRotation" type="bool">false</param> -->
+    <!-- <param name="colorSpace" type="string">gray</param> -->
+    <!-- <param name="density" type="int">300</param> -->
+    <!-- <param name="depth" type="int">4</param> -->
+    <!-- <param name="enableImagePreprocessing" type="bool">false</param> -->
+    <!-- <param name="filter" type="string">triangle</param> -->
+    <!-- <param name="imageMagickPath" type="string"></param> -->
+    <!-- <param name="language" type="string">eng+fra</param> -->
+    <!-- <param name="maxFileSizeToOcr" type="long">2147483647</param> -->
+    <!-- <param name="minFileSizeToOcr" type="long">1000</param> -->
+    <!-- <param name="pageSegMode" type="string">1</param> -->
+    <!-- <param name="pageSeparator" type="string"></param> -->
+    <!-- <param name="preserveInterwordSpacing" type="bool">false</param> -->
+    <!-- <param name="resize" type="int">900</param> -->
+    <!-- <param name="skipOcr" type="bool">false</param> -->
+    <!-- <param name="tessdataPath" type="string"></param> -->
+    <!-- <param name="tesseractPath" type="string"></param> -->
+    <!-- <param name="timeoutSeconds" type="int">1200</param> -->
+    <!-- </params> -->
+    <!-- </parser> -->
+  </parsers>
+</properties>
