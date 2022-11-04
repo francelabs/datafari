@@ -63,8 +63,8 @@ ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 
 WORKDIR ./datafari
 COPY . .
-RUN mvn -f pom.xml -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -B clean install 
-RUN ant clean-build -f ./linux/build.xml
+RUN mvn -f pom.xml -DfailIfNoTests=false -Dtest='!TestDataServices' -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -B clean install
+RUN ant clean-build-prod-redhat -f ./linux/build.xml
 
 RUN mkdir /root/rpmbuild
 RUN mv linux/installer/redhat/* /root/rpmbuild
