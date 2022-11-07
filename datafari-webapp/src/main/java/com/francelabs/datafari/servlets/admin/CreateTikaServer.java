@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
@@ -48,32 +49,42 @@ public class CreateTikaServer extends HttpServlet {
     final String ocrStrategy = request.getParameter("ocrStrategy");
     final String port = request.getParameter("tikaPort");
     final String host = request.getParameter("tikaHost");
-    final String tmpDir = request.getParameter("tempDir");
-    final String installFolderPath = request.getParameter("installFolderPath");
-    final String localUse = request.getParameter("localUse");
+    final String tmpDir = request.getParameter("tikaTempDir");
+    final String installDir = request.getParameter("installDir");
+    final String externalInstallation = request.getParameter("externalTika");
 
     int returnCode = CodesReturned.ALLOK.getValue();
     String status = "Tika server created with success";
 
-    if (tikaType != null && host != null && port != null && installFolderPath != null && tmpDir != null) {
+    if (tikaType != null && host != null && port != null && installDir != null && tmpDir != null) {
       try {
-        if (tikaType.contentEquals("OCR")) {
+        if (tikaType.contentEquals("ocr")) {
           if (ocrStrategy != null) {
-            TikaServerCreator.getInstance().createTikaOCRServer(installFolderPath, ocrStrategy, host, port, tmpDir);
+            TikaServerCreator.getInstance().createTikaOCRServer(installDir, ocrStrategy, host, port, tmpDir);
           } else {
             returnCode = CodesReturned.PROBLEMQUERY.getValue();
             status = "The required parameter 'ocrStrategy' has not been provided";
             logger.error("Problem with request, The required parameter 'ocrStrategy' has not been provided");
           }
-        } else if (tikaType.contentEquals("Simple") || tikaType.contentEquals("Entity")) {
-          TikaServerCreator.getInstance().createTikaSimpleServer(installFolderPath, host, port, tmpDir);
+        } else if (tikaType.contentEquals("simple") || tikaType.contentEquals("entity")) {
+          TikaServerCreator.getInstance().createTikaSimpleServer(installDir, host, port, tmpDir);
         }
 
         // If the tika server is not meant to be used locally, create a zip of the files
-        final String zipFilePath = installFolderPath + "/tika-server.zip";
-        final File installFolderFile = new File(installFolderPath);
-        final File[] filesToZip = installFolderFile.listFiles();
-        ZipUtils.zipFiles(filesToZip, zipFilePath);
+        if (externalInstallation != null) {
+          final String zipFilePath = installDir + "/tika-server.zip";
+          final File installFolderFile = new File(installDir);
+          final File[] filesToZip = installFolderFile.listFiles();
+          ZipUtils.zipFiles(filesToZip, zipFilePath);
+          // Delete zipped files
+          for (final File fileToDelete : filesToZip) {
+            if (fileToDelete.isDirectory()) {
+              FileUtils.deleteDirectory(fileToDelete);
+            } else {
+              FileUtils.forceDelete(fileToDelete);
+            }
+          }
+        }
       } catch (final Exception e) {
         returnCode = CodesReturned.GENERALERROR.getValue();
         status = "Something went wrong during Tika server creation: " + e.getMessage();

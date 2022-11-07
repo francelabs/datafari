@@ -177,9 +177,9 @@ public class TikaServerCreator {
     fw.close();
 
     // Copy other files
-    final File installFolderBinFolderFile = new File(installConfFolderPath + "/bin");
+    final File installFolderBinFolderFile = new File(installFolderPath + "/bin");
     FileUtils.copyDirectory(originalTikaBinFolderFile, installFolderBinFolderFile);
-    final File installFolderTikaServerJarFile = new File(installConfFolderPath + "/bin/tika-server.jar");
+    final File installFolderTikaServerJarFile = new File(installFolderBinFolderFile + "/tika-server.jar");
     FileUtils.copyFile(tikaServerJarFile, installFolderTikaServerJarFile);
   }
 

@@ -185,10 +185,13 @@
         <a href="#menu-expert" class="dropdown-toggle" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="menu-expert">
           <i class="fas fa-user-graduate"></i><span id="expertMenu-AdminUI" class="hidden-xs"></span>
         </a>
- <ul id="menu-expert" class="list-unstyled collapse">
-<li id="MCFBackupRestore"><a id="MCFBackupRestore-AdminUI" class="ajax-link" href="?page=mcfBackupRestore"></a></li>
-        </ul>
-      </li>
+      <ul id="menu-expert" class="list-unstyled collapse">
+        <li id="MCFBackupRestore"><a id="MCFBackupRestore-AdminUI"
+          class="ajax-link" href="?page=mcfBackupRestore"></a></li>
+        <li id="tikaCreator"><a id="tikaCreator-AdminUI"
+          class="ajax-link" href="?page=tikaCreator"></a></li>
+      </ul>
+    </li>
 <%-- Expert menu stop --%>
       
       <li id="Extra" class="collapse-effect">
