@@ -491,10 +491,10 @@
       These fields support doc values, but they require the field to be
       single-valued and either be required or have a default value.
     -->
-    <fieldType name="int" class="solr.IntPointField" />
-    <fieldType name="float" class="solr.FloatPointField" />
-    <fieldType name="long" class="solr.LongPointField" />
-    <fieldType name="double" class="solr.DoublePointField" />
+    <fieldType name="int" class="solr.IntPointField" docValues="true" />
+    <fieldType name="float" class="solr.FloatPointField" docValues="true" />
+    <fieldType name="long" class="solr.LongPointField" docValues="true" />
+    <fieldType name="double" class="solr.DoublePointField" docValues="true" />
 
    
 
