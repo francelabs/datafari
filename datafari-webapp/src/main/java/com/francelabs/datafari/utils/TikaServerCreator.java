@@ -3,6 +3,7 @@ package com.francelabs.datafari.utils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -181,6 +182,11 @@ public class TikaServerCreator {
     FileUtils.copyDirectory(originalTikaBinFolderFile, installFolderBinFolderFile);
     final File installFolderTikaServerJarFile = new File(installFolderBinFolderFile + "/tika-server.jar");
     FileUtils.copyFile(tikaServerJarFile, installFolderTikaServerJarFile);
+    // Create pid and logs directories
+    final File installFolderPidFolderFile = new File(installFolderPath + "/pid");
+    Files.createDirectory(installFolderPidFolderFile.toPath());
+    final File installFolderLogsFolderFile = new File(installFolderPath + "/logs");
+    Files.createDirectory(installFolderLogsFolderFile.toPath());
   }
 
 }

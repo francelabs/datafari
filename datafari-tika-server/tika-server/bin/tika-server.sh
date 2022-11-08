@@ -15,7 +15,7 @@ cmd_start() {
    echo "Error : Tika Server seems to be already running with PID $PID"
    exit 1
   fi
-  echo "Start Tika Server on port $TIKA_PORT"
+  echo "Starting Tika Server"
   nohup "$JAVA_HOME/bin/java" -Dlog4j2.configurationFile=file:$TIKA_SERVER_HOME/conf/log4j2.properties.xml -Duser.timezone=UTC $TIKA_MEM -jar $TIKA_SERVER_HOME/bin/tika-server.jar -c $TIKA_SERVER_HOME/conf/tika-config.xml >/dev/null 2>&1 &
   echo $! > $TIKA_SERVER_PID_FILE
   echo "Tika Server started with PID $(cat $TIKA_SERVER_PID_FILE)"
