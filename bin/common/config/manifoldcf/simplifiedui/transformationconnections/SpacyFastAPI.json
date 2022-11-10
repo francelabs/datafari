@@ -1,0 +1,46 @@
+{
+  "transformationconnection": [
+    {
+      "_children_": [
+        {
+          "_type_": "isnew",
+          "_value_": "false"
+        },
+        {
+          "_type_": "name",
+          "_value_": "SpacyFastAPI"
+        },
+        {
+          "_type_": "class_name",
+          "_value_": "com.francelabs.datafari.transformation.spacy.fastapi.SpacyNER"
+        },
+        {
+          "_type_": "max_connections",
+          "_value_": "10"
+        },
+        {
+          "_type_": "description",
+          "_value_": ""
+        },
+        {
+          "_type_": "configuration",
+          "_PARAMETER_": [
+            {
+              "_value_": "http:\/\/127.0.0.1:5000",
+              "_attribute_name": "serverAddress"
+            },
+            {
+              "_value_": "120000",
+              "_attribute_name": "connection_timeout"
+            },
+            {
+              "_value_": "900000",
+              "_attribute_name": "socket_timeout"
+            }
+          ]
+        }
+      ],
+      "isnew": true
+    }
+  ]
+}

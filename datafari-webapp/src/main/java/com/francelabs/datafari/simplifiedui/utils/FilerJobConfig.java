@@ -139,14 +139,14 @@ public class FilerJobConfig {
       final int duplicatesOutputStageId = docFilterStageId + 1;
       final int duplicatesOutputStagePrereqId = docFilterStageId;
 
-      final JSONObject docFilterOutputStage = JobStageCreator.getInstance().createDocFilterStage(docFilterStageId, docFilterStagePrereqId);
+      final JSONObject docFilterStage = JobStageCreator.getInstance().createDocFilterStage(docFilterStageId, docFilterStagePrereqId);
       final JSONObject duplicatesOutputStage = JobStageCreator.getInstance().createDuplicatesOutputStage(duplicatesOutputStageId, duplicatesOutputStagePrereqId);
 
       // Insertion in JSONARRAY at a specific index shifts the elements starting at the specified position to the right (add one to their indice)
       // Thus we need to first insert the last element which is the duplicate output, then we insert the docfFilter transfo as it is before the duplicate output in the pipeline
-      if (duplicatesOutputStage != null && docFilterOutputStage != null) {
+      if (duplicatesOutputStage != null && docFilterStage != null) {
         jobChildrenEl.add(lastPipelineStageIndex + 1, duplicatesOutputStage);
-        jobChildrenEl.add(lastPipelineStageIndex + 1, docFilterOutputStage);
+        jobChildrenEl.add(lastPipelineStageIndex + 1, docFilterStage);
       }
     }
 

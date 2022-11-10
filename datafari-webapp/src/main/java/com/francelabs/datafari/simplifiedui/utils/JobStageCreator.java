@@ -17,12 +17,19 @@ public class JobStageCreator {
   private final File docFilterStageJSON;
   private final File docFilterOCRStageJSON;
   private final File duplicatesOutputJSON;
+  private final File spacyFastAPIStageJSON;
 
   private final static String value = "_value_";
+  private final static String attribute_value = "_attribute_value";
   private final static String type = "_type_";
   private final static String childrenElement = "_children_";
   private final static String stageIdElement = "stage_id";
   private final static String stagePrerequisiteElement = "stage_prerequisite";
+  private final static String stageConnectionNameElement = "stage_connectionname";
+  private final static String stageSpecificationElement = "stage_specification";
+  private final static String modelToUseElement = "modelToUse";
+  private final static String endpointToUseElement = "endpointToUse";
+  private final static String outputFieldPrefixElement = "outputFieldPrefix";
 
   private JobStageCreator() {
     String datafariHomePath = Environment.getEnvironmentVariable("DATAFARI_HOME");
@@ -42,6 +49,10 @@ public class JobStageCreator {
     final String duplicatesOutputStagePath = datafariHomePath + File.separator + "bin" + File.separator + "common" + File.separator + "config" + File.separator + "manifoldcf" + File.separator
         + "simplifiedui" + File.separator + "utils" + File.separator + "duplicatesOutputStage.json";
     duplicatesOutputJSON = new File(duplicatesOutputStagePath);
+
+    final String spacyFastAPIStagePath = datafariHomePath + File.separator + "bin" + File.separator + "common" + File.separator + "config" + File.separator + "manifoldcf" + File.separator
+        + "simplifiedui" + File.separator + "utils" + File.separator + "spacyFastAPIStage.json";
+    spacyFastAPIStageJSON = new File(spacyFastAPIStagePath);
   }
 
   public static JobStageCreator getInstance() {
@@ -77,6 +88,35 @@ public class JobStageCreator {
       }
     }
     return docFilterOCRStage;
+  }
+
+  public JSONObject createSpacyFastAPIStage(final int stageId, final int prerequisiteStageId, final String stageConnectionName, final String modelToUse, final String endpointToUse,
+      final String outputFieldPrefix) throws IOException, ParseException {
+    final JSONObject spacyFastAPIStage = JSONUtils.readJSON(spacyFastAPIStageJSON);
+    final JSONArray spacyFastAPIStageChildrenEl = (JSONArray) spacyFastAPIStage.get(childrenElement);
+    for (int i = 0; i < spacyFastAPIStageChildrenEl.size(); i++) {
+      final JSONObject child = (JSONObject) spacyFastAPIStageChildrenEl.get(i);
+      if (child.get(type).equals(stageIdElement)) {
+        child.replace(value, String.valueOf(stageId));
+      } else if (child.get(type).equals(stagePrerequisiteElement)) {
+        child.replace(value, String.valueOf(prerequisiteStageId));
+      } else if (child.get(type).equals(stageConnectionNameElement)) {
+        child.replace(value, String.valueOf(stageConnectionName));
+      } else if (child.get(type).equals(stageSpecificationElement)) {
+        final JSONArray stageSpecificationChildrenEl = (JSONArray) child.get(childrenElement);
+        for (int j = 0; j < stageSpecificationChildrenEl.size(); j++) {
+          final JSONObject stageChild = (JSONObject) stageSpecificationChildrenEl.get(j);
+          if (stageChild.get(type).equals(modelToUseElement)) {
+            stageChild.replace(attribute_value, String.valueOf(modelToUse));
+          } else if (stageChild.get(type).equals(endpointToUseElement)) {
+            stageChild.replace(attribute_value, String.valueOf(endpointToUse));
+          } else if (stageChild.get(type).equals(outputFieldPrefixElement)) {
+            stageChild.replace(attribute_value, String.valueOf(outputFieldPrefix));
+          }
+        }
+      }
+    }
+    return spacyFastAPIStage;
   }
 
   public JSONObject createDuplicatesOutputStage(final int stageId, final int prerequisiteStageId) throws IOException, ParseException {
