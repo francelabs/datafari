@@ -11,6 +11,12 @@ public abstract class GenericJob {
   private String tikaOCRHost;
   private String tikaOCRPort;
   private String tikaOCRName;
+  private boolean createSpacy = false;
+  private String spacyConnectorName;
+  private String spacyServerAddress;
+  private String spacyModelToUse;
+  private String spacyEndpointToUse;
+  private String spacyOutputFieldPrefix;
 
   public GenericJob() {
 
@@ -86,6 +92,54 @@ public abstract class GenericJob {
 
   public void setTimezone(final String timezone) {
     this.timezone = timezone;
+  }
+
+  public String getSpacyConnectorName() {
+    return spacyConnectorName;
+  }
+
+  public void setSpacyConnectorName(final String spacyConnectorName) {
+    this.spacyConnectorName = spacyConnectorName;
+  }
+
+  public String getSpacyServerAddress() {
+    return spacyServerAddress;
+  }
+
+  public void setSpacyServerAddress(final String spacyServerAddress) {
+    this.spacyServerAddress = spacyServerAddress;
+  }
+
+  public String getSpacyModelToUse() {
+    return spacyModelToUse;
+  }
+
+  public void setSpacyModelToUse(final String spacyModelToUse) {
+    this.spacyModelToUse = spacyModelToUse;
+  }
+
+  public String getSpacyEndpointToUse() {
+    return spacyEndpointToUse;
+  }
+
+  public void setSpacyEndpointToUse(final String spacyEndpointToUse) {
+    this.spacyEndpointToUse = spacyEndpointToUse;
+  }
+
+  public String getSpacyOutputFieldPrefix() {
+    return spacyOutputFieldPrefix;
+  }
+
+  public void setSpacyOutputFieldPrefix(final String spacyOutputFieldPrefix) {
+    this.spacyOutputFieldPrefix = spacyOutputFieldPrefix;
+  }
+
+  public void setCreateSpacy(final boolean createSpacy) {
+    this.createSpacy = createSpacy;
+  }
+
+  public boolean isSpacyEnabled() {
+    return createSpacy;
   }
 
 }

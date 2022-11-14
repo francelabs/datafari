@@ -52,9 +52,10 @@ public class JobCreator {
    * @param tikaOCRName the name of the Tika Server connector that will be created
    * @param tikaOCRHost the hostname of the Tika server that is configured to perform OCR
    * @param tikaOCRPort the port of the Tika server that is configured to perform OCR
+   * @return
    * @throws Exception
    */
-  public void createOCRJob(final JSONObject originalJob, final String ocrJobName, final String tikaOCRName, final String tikaOCRHost, final String tikaOCRPort) throws Exception {
+  public JSONObject createOCRJob(final JSONObject originalJob, final String ocrJobName, final String tikaOCRName, final String tikaOCRHost, final String tikaOCRPort) throws Exception {
 
     final JSONObject ocrJob = JSONUtils.cloneJSON(originalJob);
 
@@ -143,23 +144,35 @@ public class JobCreator {
     }
 
     // Push the job to MCF
-    ManifoldAPI.postConfig(ManifoldAPI.COMMANDS.JOBS, ocrJob);
+    return ManifoldAPI.postConfig(ManifoldAPI.COMMANDS.JOBS, ocrJob);
   }
 
-  public void createSpacyJob(final JSONObject originalJob, final String spacyJobName, final String spacyFastAPIName, final String spacyServerAddress, final String modelToUse,
+  /**
+   *
+   * @param originalJob        the original job that will be used to create the Spacy job
+   * @param spacyJobName       the job name to set for the Spacy job
+   * @param spacyConnectorName the name to set for the spacy connector
+   * @param spacyServerAddress the address of the Spacy FastAPI server
+   * @param modelToUse         the Spacy model to use (may be empty)
+   * @param endpointToUse      the Spacy endpoint to use (leave empty if no specific endpoint must be used)
+   * @param outputFieldPrefix  the prefix you want to use for the metadata that will be added to the document for the entities
+   * @return the job creation JSON response
+   * @throws Exception
+   */
+  public JSONObject createSpacyJob(final JSONObject originalJob, final String spacyJobName, final String spacyConnectorName, final String spacyServerAddress, final String modelToUse,
       final String endpointToUse, final String outputFieldPrefix) throws Exception {
 
     final JSONObject spacyJob = JSONUtils.cloneJSON(originalJob);
 
     // Prepare the Spacy connector
-    final JSONObject spacyFastAPIJSONObj = ConnectorCreator.getInstance().createSpacyFastAPIConnector(spacyFastAPIName, spacyServerAddress);
+    final JSONObject spacyFastAPIJSONObj = ConnectorCreator.getInstance().createSpacyFastAPIConnector(spacyConnectorName, spacyServerAddress);
 
     // Push the Spacy connector to MCF
     try {
-      ManifoldAPI.putConfig(ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS, spacyFastAPIName, spacyFastAPIJSONObj);
+      ManifoldAPI.putConfig(ManifoldAPI.COMMANDS.TRANSFORMATIONCONNECTIONS, spacyConnectorName, spacyFastAPIJSONObj);
     } catch (final Exception e) {
-      if (e.getMessage().contains("Transformation connection '" + spacyFastAPIName + "' already exists")) {
-        logger.warn("The SpacyFastAPI connector to create already exists with the provided name '" + spacyFastAPIName + "'. The existing one will be used for the Spacy job");
+      if (e.getMessage().contains("Transformation connection '" + spacyConnectorName + "' already exists")) {
+        logger.warn("The SpacyFastAPI connector to create already exists with the provided name '" + spacyConnectorName + "'. The existing one will be used for the Spacy job");
       } else {
         throw e;
       }
@@ -212,7 +225,7 @@ public class JobCreator {
     final int spacyFastAPIStageId = lastTransfoPipelineStageId + 1;
     final int spacyFastAPIStageIndex = lastTransfoPipelineStageIndex + 1;
     final int spacyFastAPIStagePrerequisiteStageId = lastTransfoPipelineStageId;
-    final JSONObject spacyFastAPIStage = JobStageCreator.getInstance().createSpacyFastAPIStage(spacyFastAPIStageId, spacyFastAPIStagePrerequisiteStageId, spacyFastAPIName, modelToUse, endpointToUse,
+    final JSONObject spacyFastAPIStage = JobStageCreator.getInstance().createSpacyFastAPIStage(spacyFastAPIStageId, spacyFastAPIStagePrerequisiteStageId, spacyConnectorName, modelToUse, endpointToUse,
         outputFieldPrefix);
 
     // Insert the spacyFastAPI stage
@@ -227,7 +240,7 @@ public class JobCreator {
           final JSONObject child = (JSONObject) children.get(j);
           if (child.get(type).equals(stageIdElement)) {
             int stageId = Integer.parseInt((String) child.get(value));
-            if (stageId >= spacyFastAPIStageIndex) {
+            if (stageId >= spacyFastAPIStageId) {
               stageId++;
               child.replace(value, String.valueOf(stageId));
             }
@@ -243,7 +256,7 @@ public class JobCreator {
     }
 
     // Push the job to MCF
-    ManifoldAPI.postConfig(ManifoldAPI.COMMANDS.JOBS, spacyJob);
+    return ManifoldAPI.postConfig(ManifoldAPI.COMMANDS.JOBS, spacyJob);
   }
 
 }

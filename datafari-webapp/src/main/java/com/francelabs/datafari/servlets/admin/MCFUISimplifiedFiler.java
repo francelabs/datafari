@@ -93,6 +93,16 @@ public class MCFUISimplifiedFiler extends HttpServlet {
       final String tikaOCRPort = request.getParameter("filerTikaOCRPort");
       final String tikaOCRName = request.getParameter("filerTikaOCRName");
 
+      boolean createSpacy = false;
+      if (request.getParameter("filerCreateSpacy") != null) {
+        createSpacy = true;
+      }
+      final String spacyConnectorName = request.getParameter("filerSpacyConnectorName");
+      final String spacyServerAddress = request.getParameter("filerSpacyServerAddress");
+      final String spacyModelToUse = request.getParameter("filerSpacyModelToUse");
+      final String spacyEndpointToUse = request.getParameter("filerSpacyEndpointToUse");
+      final String spacyOutputFieldPrefix = request.getParameter("filerSpacyOutputFieldPrefix");
+
       // Checking if the reponame is valid (alphanumerical and undescores only)
       final Pattern repoNamePattern = Pattern.compile("^\\w+$");
       final Matcher repoNameMatcher = repoNamePattern.matcher(reponame);
@@ -103,7 +113,8 @@ public class MCFUISimplifiedFiler extends HttpServlet {
           jsonResponse.put(OutputConstants.STATUS, "The repository name is not valid");
           LOGGER.error("The repository name is not valid");
         } else {
-          createFilerRepo(jsonResponse, server, user, password, reponame, paths, sourcename, timezone, security, duplicatesDetection, createOCR, tikaOCRHost, tikaOCRPort, tikaOCRName, startJob);
+          createFilerRepo(jsonResponse, server, user, password, reponame, paths, sourcename, timezone, security, duplicatesDetection, createOCR, tikaOCRHost, tikaOCRPort, tikaOCRName, createSpacy,
+              spacyConnectorName, spacyServerAddress, spacyModelToUse, spacyEndpointToUse, spacyOutputFieldPrefix, startJob);
         }
       } else {
         jsonResponse.put("OK", "OK");
@@ -123,6 +134,7 @@ public class MCFUISimplifiedFiler extends HttpServlet {
 
   private void createFilerRepo(final JSONObject jsonResponse, final String server, final String user, final String password, final String reponame, final String paths, final String sourcename,
       final String timezone, final String security, final boolean duplicatesDetection, final boolean createOCR, final String tikaOCRHost, final String tikaOCRPort, final String tikaOCRName,
+      final boolean createSpacy, final String spacyConnectorName, final String spacyServerAddress, final String spacyModelToUse, final String spacyEndpointToUse, final String spacyOutputFieldPrefix,
       final String startJob) throws Exception {
     // Create webRepository
     final FilerRepository filerRepo = new FilerRepository();
@@ -150,6 +162,12 @@ public class MCFUISimplifiedFiler extends HttpServlet {
       filerJob.setTikaOCRHost(tikaOCRHost);
       filerJob.setTikaOCRPort(tikaOCRPort);
       filerJob.setTikaOCRName(tikaOCRName);
+      filerJob.setCreateSpacy(createSpacy);
+      filerJob.setSpacyConnectorName(spacyConnectorName);
+      filerJob.setSpacyServerAddress(spacyServerAddress);
+      filerJob.setSpacyModelToUse(spacyModelToUse);
+      filerJob.setSpacyEndpointToUse(spacyEndpointToUse);
+      filerJob.setSpacyOutputFieldPrefix(spacyOutputFieldPrefix);
       if (security != null) {
         filerJob.setSecurity(true);
       }

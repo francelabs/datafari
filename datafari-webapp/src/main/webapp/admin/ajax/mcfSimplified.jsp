@@ -171,6 +171,9 @@
                         <select id="filerTimeZone" name="filerTimeZone" class="form-control"  style="width: 100%">
                           <OPTION disabled selected>Select your TimeZone</OPTION>
                         </select>
+                        <div class="invalid-feedback">
+                          Please select a timezone
+                        </div>
                       </div>
                     </div>
                     <div class="form-group row" id="div15">
@@ -229,6 +232,65 @@
                           <div class="invalid-feedback">
                           Please provide a Tika server name
                         </div>                       
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group row" id="filerCreateSpacy-div">
+                      <div class="col-sm-3 control-label">
+                        <label id="filerCreateSpacyLabel" for="filerCreateSpacy" class="col-form-label"></label><span id="filerCreateSpacy-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                      </div>
+                      <div class="col-sm-4 checkbox-div">
+                        <input type="checkbox" id="filerCreateSpacy" name="filerCreateSpacy"></input>                       
+                      </div>
+                    </div>
+                    <div id="filerSpacy" style="display:none;">
+                      <div class="form-group row" id="filerSpacyConnectorName-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="filerSpacyConnectorNameLabel" for="filerSpacyConnectorName" class="col-form-label"></label><span id="filerSpacyConnectorName-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="filerSpacyConnectorName" name="filerSpacyConnectorName" class="form-control"></input>    
+                          <div class="invalid-feedback">
+                          Please provide a name for the Spacy Connector
+                        </div>                   
+                        </div>
+                      </div>
+                      <div class="form-group row" id="filerSpacyServerAddress-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="filerSpacyServerAddressLabel" for="filerSpacyServerAddress" class="col-form-label"></label><span id="filerSpacyServerAddress-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="filerSpacyServerAddress" name="filerSpacyServerAddress" class="form-control"></input>  
+                          <div class="invalid-feedback">
+                          Please provide a Spacy server address
+                          </div>                     
+                        </div>
+                      </div>
+                      <div class="form-group row" id="filerSpacyModelToUse-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="filerSpacyModelToUseLabel" for="filerSpacyModelToUse" class="col-form-label"></label><span id="filerSpacyModelToUse-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="filerSpacyModelToUse" name="filerSpacyModelToUse" class="form-control"></input>                     
+                        </div>
+                      </div>
+                      <div class="form-group row" id="filerSpacyEndpointToUse-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="filerSpacyEndpointToUseLabel" for="filerSpacyEndpointToUse" class="col-form-label"></label><span id="filerSpacyEndpointToUse-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="filerSpacyEndpointToUse" name="filerSpacyEndpointToUse" class="form-control"></input>
+                          <div class="invalid-feedback">
+                          Please provide a Spacy endpoint to use
+                          </div>                       
+                        </div>
+                      </div>
+                      <div class="form-group row" id="filerSpacyOutputFieldPrefix-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="filerSpacyOutputFieldPrefixLabel" for="filerSpacyOutputFieldPrefix" class="col-form-label"></label><span id="filerSpacyOutputFieldPrefix-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="filerSpacyOutputFieldPrefix" name="filerSpacyOutputFieldPrefix" class="form-control"></input>                     
                         </div>
                       </div>
                     </div>
@@ -421,6 +483,9 @@
                         <select id="dbTimeZone" name="dbTimeZone" class="form-control"  style="width: 100%">
                           <OPTION disabled selected>Select your TimeZone</OPTION>
                         </select>
+                        <div class="invalid-feedback">
+                          Please select a timezone
+                        </div>
                       </div>
                     </div>
                     <div class="form-group row">
@@ -490,6 +555,65 @@
                           <div class="invalid-feedback">
                           Please provide a Tika server name
                         </div>                       
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group row" id="dbCreateSpacy-div">
+                      <div class="col-sm-3 control-label">
+                        <label id="dbCreateSpacyLabel" for="dbCreateSpacy" class="col-form-label"></label><span id="dbCreateSpacy-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                      </div>
+                      <div class="col-sm-4 checkbox-div">
+                        <input type="checkbox" id="dbCreateSpacy" name="dbCreateSpacy"></input>                       
+                      </div>
+                    </div>
+                    <div id="dbSpacy" style="display:none;">
+                      <div class="form-group row" id="dbSpacyConnectorName-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="dbSpacyConnectorNameLabel" for="dbSpacyConnectorName" class="col-form-label"></label><span id="dbSpacyConnectorName-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="dbSpacyConnectorName" name="dbSpacyConnectorName" class="form-control"></input>    
+                          <div class="invalid-feedback">
+                          Please provide a name for the Spacy Connector
+                        </div>                   
+                        </div>
+                      </div>
+                      <div class="form-group row" id="dbSpacyServerAddress-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="dbSpacyServerAddressLabel" for="dbSpacyServerAddress" class="col-form-label"></label><span id="dbSpacyServerAddress-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="dbSpacyServerAddress" name="dbSpacyServerAddress" class="form-control"></input>  
+                          <div class="invalid-feedback">
+                          Please provide a Spacy server address
+                          </div>                     
+                        </div>
+                      </div>
+                      <div class="form-group row" id="dbSpacyModelToUse-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="dbSpacyModelToUseLabel" for="dbSpacyModelToUse" class="col-form-label"></label><span id="dbSpacyModelToUse-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="dbSpacyModelToUse" name="dbSpacyModelToUse" class="form-control"></input>                     
+                        </div>
+                      </div>
+                      <div class="form-group row" id="dbSpacyEndpointToUse-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="dbSpacyEndpointToUseLabel" for="dbSpacyEndpointToUse" class="col-form-label"></label><span id="dbSpacyEndpointToUse-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="dbSpacyEndpointToUse" name="dbSpacyEndpointToUse" class="form-control"></input>
+                          <div class="invalid-feedback">
+                          Please provide a Spacy endpoint to use
+                          </div>                       
+                        </div>
+                      </div>
+                      <div class="form-group row" id="dbSpacyOutputFieldPrefix-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="dbSpacyOutputFieldPrefixLabel" for="dbSpacyOutputFieldPrefix" class="col-form-label"></label><span id="dbSpacyOutputFieldPrefix-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="dbSpacyOutputFieldPrefix" name="dbSpacyOutputFieldPrefix" class="form-control"></input>                     
                         </div>
                       </div>
                     </div>
@@ -599,6 +723,9 @@
                         <select id="webTimeZone" name="webTimeZone" class="form-control"  style="width: 100%">
                           <OPTION disabled selected>Select your TimeZone</OPTION>
                         </select>
+                        <div class="invalid-feedback">
+                          Please select a timezone
+                        </div>
                       </div>
                     </div>
                     <div class="form-group row">
@@ -649,6 +776,65 @@
                           <div class="invalid-feedback">
                           Please provide a Tika server name
                         </div>                       
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group row" id="webCreateSpacy-div">
+                      <div class="col-sm-3 control-label">
+                        <label id="webCreateSpacyLabel" for="webCreateSpacy" class="col-form-label"></label><span id="webCreateSpacy-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                      </div>
+                      <div class="col-sm-4 checkbox-div">
+                        <input type="checkbox" id="webCreateSpacy" name="webCreateSpacy"></input>                       
+                      </div>
+                    </div>
+                    <div id="webSpacy" style="display:none;">
+                      <div class="form-group row" id="webSpacyConnectorName-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="webSpacyConnectorNameLabel" for="webSpacyConnectorName" class="col-form-label"></label><span id="webSpacyConnectorName-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="webSpacyConnectorName" name="webSpacyConnectorName" class="form-control"></input>    
+                          <div class="invalid-feedback">
+                          Please provide a name for the Spacy Connector
+                        </div>                   
+                        </div>
+                      </div>
+                      <div class="form-group row" id="webSpacyServerAddress-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="webSpacyServerAddressLabel" for="webSpacyServerAddress" class="col-form-label"></label><span id="webSpacyServerAddress-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="webSpacyServerAddress" name="webSpacyServerAddress" class="form-control"></input>  
+                          <div class="invalid-feedback">
+                          Please provide a Spacy server address
+                          </div>                     
+                        </div>
+                      </div>
+                      <div class="form-group row" id="webSpacyModelToUse-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="webSpacyModelToUseLabel" for="webSpacyModelToUse" class="col-form-label"></label><span id="webSpacyModelToUse-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="webSpacyModelToUse" name="webSpacyModelToUse" class="form-control"></input>                     
+                        </div>
+                      </div>
+                      <div class="form-group row" id="webSpacyEndpointToUse-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="webSpacyEndpointToUseLabel" for="webSpacyEndpointToUse" class="col-form-label"></label><span id="webSpacyEndpointToUse-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="webSpacyEndpointToUse" name="webSpacyEndpointToUse" class="form-control"></input>
+                          <div class="invalid-feedback">
+                          Please provide a Spacy endpoint to use
+                          </div>                       
+                        </div>
+                      </div>
+                      <div class="form-group row" id="webSpacyOutputFieldPrefix-div">
+                        <div class="col-sm-3 control-label">
+                          <label id="webSpacyOutputFieldPrefixLabel" for="webSpacyOutputFieldPrefix" class="col-form-label"></label><span id="webSpacyOutputFieldPrefix-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4 checkbox-div">
+                          <input type="text" id="webSpacyOutputFieldPrefix" name="webSpacyOutputFieldPrefix" class="form-control"></input>                     
                         </div>
                       </div>
                     </div>

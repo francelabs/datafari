@@ -204,6 +204,13 @@ public class FilerJobConfig {
       JobCreator.getInstance().createOCRJob(filerJobObj, ocrJobName, filerJob.getTikaOCRName(), filerJob.getTikaOCRHost(), filerJob.getTikaOCRPort());
     }
 
+    // If Spacy NER enabled then create the corresponding Spacy job
+    if (filerJob.isSpacyEnabled()) {
+      final String spacyJobName = "CrawlNER_" + filerJob.getRepositoryConnection();
+      JobCreator.getInstance().createSpacyJob(filerJobObj, spacyJobName, filerJob.getSpacyConnectorName(), filerJob.getSpacyServerAddress(), filerJob.getSpacyModelToUse(),
+          filerJob.getSpacyEndpointToUse(), filerJob.getSpacyOutputFieldPrefix());
+    }
+
     final JSONObject response = ManifoldAPI.postConfig(jobsCommand, filerJobObj);
     return response.get("job_id").toString();
 

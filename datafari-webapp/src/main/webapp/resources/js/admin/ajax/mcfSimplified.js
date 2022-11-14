@@ -171,6 +171,48 @@ $(document)
           setTimeZones($("#filerTimeZone"));
           setTimeZones($("#dbTimeZone"));
           setTimeZones($("#webTimeZone"));
+          
+          // Spacy filer
+          $("#filerCreateSpacyLabel").html(window.i18n.msgStore['createSpacy']);
+          $("#filerSpacyConnectorNameLabel").html(window.i18n.msgStore['spacyConnectorName']);
+          $("#filerSpacyServerAddressLabel").html(window.i18n.msgStore['spacyServerAddress']);
+          $("#filerSpacyModelToUseLabel").html(window.i18n.msgStore['spacyModelToUse']);
+          $("#filerSpacyEndpointToUseLabel").html(window.i18n.msgStore['spacyEndpointToUse']);
+          $("#filerSpacyOutputFieldPrefixLabel").html(window.i18n.msgStore['spacyOutputFieldPrefix']);
+          $("#filerCreateSpacy-tip").attr("title", window.i18n.msgStore['createSpacy-tip']);
+          $("#filerSpacyConnectorName-tip").attr("title", window.i18n.msgStore['spacyConnectorName-tip']);
+          $("#filerSpacyServerAddress-tip").attr("title", window.i18n.msgStore['spacyServerAddress-tip']);
+          $("#filerSpacyModelToUse-tip").attr("title", window.i18n.msgStore['spacyModelToUse-tip']);
+          $("#filerSpacyEndpointToUse-tip").attr("title", window.i18n.msgStore['spacyEndpointToUse-tip']);
+          $("#filerSpacyOutputFieldPrefix-tip").attr("title", window.i18n.msgStore['spacyOutputFieldPrefix-tip']);
+          
+          // Spacy db
+          $("#dbCreateSpacyLabel").html(window.i18n.msgStore['createSpacy']);
+          $("#dbSpacyConnectorNameLabel").html(window.i18n.msgStore['spacyConnectorName']);
+          $("#dbSpacyServerAddressLabel").html(window.i18n.msgStore['spacyServerAddress']);
+          $("#dbSpacyModelToUseLabel").html(window.i18n.msgStore['spacyModelToUse']);
+          $("#dbSpacyEndpointToUseLabel").html(window.i18n.msgStore['spacyEndpointToUse']);
+          $("#dbSpacyOutputFieldPrefixLabel").html(window.i18n.msgStore['spacyOutputFieldPrefix']);
+          $("#dbCreateSpacy-tip").attr("title", window.i18n.msgStore['createSpacy-tip']);
+          $("#dbSpacyConnectorName-tip").attr("title", window.i18n.msgStore['spacyConnectorName-tip']);
+          $("#dbSpacyServerAddress-tip").attr("title", window.i18n.msgStore['spacyServerAddress-tip']);
+          $("#dbSpacyModelToUse-tip").attr("title", window.i18n.msgStore['spacyModelToUse-tip']);
+          $("#dbSpacyEndpointToUse-tip").attr("title", window.i18n.msgStore['spacyEndpointToUse-tip']);
+          $("#dbSpacyOutputFieldPrefix-tip").attr("title", window.i18n.msgStore['spacyOutputFieldPrefix-tip']);
+          
+          // Spacy web
+          $("#webCreateSpacyLabel").html(window.i18n.msgStore['createSpacy']);
+          $("#webSpacyConnectorNameLabel").html(window.i18n.msgStore['spacyConnectorName']);
+          $("#webSpacyServerAddressLabel").html(window.i18n.msgStore['spacyServerAddress']);
+          $("#webSpacyModelToUseLabel").html(window.i18n.msgStore['spacyModelToUse']);
+          $("#webSpacyEndpointToUseLabel").html(window.i18n.msgStore['spacyEndpointToUse']);
+          $("#webSpacyOutputFieldPrefixLabel").html(window.i18n.msgStore['spacyOutputFieldPrefix']);
+          $("#webCreateSpacy-tip").attr("title", window.i18n.msgStore['createSpacy-tip']);
+          $("#webSpacyConnectorName-tip").attr("title", window.i18n.msgStore['spacyConnectorName-tip']);
+          $("#webSpacyServerAddress-tip").attr("title", window.i18n.msgStore['spacyServerAddress-tip']);
+          $("#webSpacyModelToUse-tip").attr("title", window.i18n.msgStore['spacyModelToUse-tip']);
+          $("#webSpacyEndpointToUse-tip").attr("title", window.i18n.msgStore['spacyEndpointToUse-tip']);
+          $("#webSpacyOutputFieldPrefix-tip").attr("title", window.i18n.msgStore['spacyOutputFieldPrefix-tip']);
 
           $(".asteriskLabel").html(window.i18n.msgStore['mandatoryField']);
 
@@ -182,6 +224,13 @@ $(document)
               $("#filerOCR").show();
             } else {
               $("#filerOCR").hide();
+            }
+          });
+          $("#filerCreateSpacy").change(function(e) {
+            if($('#filerCreateSpacy').is(':checked')) {
+              $("#filerSpacy").show();
+            } else {
+              $("#filerSpacy").hide();
             }
           });
           $("#server").change(function(e) {
@@ -209,6 +258,13 @@ $(document)
               $("#webOCR").hide();
             }
           });
+          $("#webCreateSpacy").change(function(e) {
+            if($('#webCreateSpacy').is(':checked')) {
+              $("#webSpacy").show();
+            } else {
+              $("#webSpacy").hide();
+            }
+          });
           $("#email").change(function(e) {
             checkEmail($("#email"));
           });
@@ -229,6 +285,13 @@ $(document)
               $("#dbOCR").show();
             } else {
               $("#dbOCR").hide();
+            }
+          });
+          $("#dbCreateSpacy").change(function(e) {
+            if($('#dbCreateSpacy').is(':checked')) {
+              $("#dbSpacy").show();
+            } else {
+              $("#dbSpacy").hide();
             }
           });
           $("#dbHost").change(function(e) {
@@ -269,7 +332,7 @@ $(document)
             $("#addDbMessageFailure").hide();
             $("#addDbCheckMessageFailure").hide();
             var form = document.getElementById("addDb");
-            if (form.checkValidity() === false || !checkRepoName($("#dbReponame")) || !checkSeedingQuery($("#dbSeeding"))  || !checkVersionQuery($("#dbVersion"))  || !checkDataQuery($("#dbData"))  || !checkAccessTokenQuery($("#dbAccessToken")) || !checkOCR($("#dbCreateOCR"), $("#dbTikaOCRHost"), $("#dbTikaOCRPort"), $("#dbTikaOCRName"))) {
+            if (form.checkValidity() === false || !checkRepoName($("#dbReponame")) || !checkSeedingQuery($("#dbSeeding"))  || !checkVersionQuery($("#dbVersion"))  || !checkDataQuery($("#dbData"))  || !checkAccessTokenQuery($("#dbAccessToken")) || !checkElm($("#dbTimeZone")) || !checkOCR($("#dbCreateOCR"), $("#dbTikaOCRHost"), $("#dbTikaOCRPort"), $("#dbTikaOCRName")) || !checkSpacy($("#dbCreateSpacy"), $("#dbSpacyConnectorName"), $("#dbSpacyServerAddress"))) {
               return false;
             } else {
               return addDbConnector();
@@ -282,7 +345,7 @@ $(document)
             $("#addWebMessageSuccess").hide();
             $("#addWebMessageFailure").hide();
             $("#addWebCheckMessageFailure").hide();
-            if (checkSeeds($("#seeds")) && checkEmail($("#email")) && checkElm($("#webSourcename")) && checkRepoName($("#webReponame")) && checkOCR($("#webCreateOCR"), $("#webTikaOCRHost"), $("#webTikaOCRPort"), $("#webTikaOCRName"))) {
+            if (checkSeeds($("#seeds")) && checkEmail($("#email")) && checkElm($("#webSourcename")) && checkRepoName($("#webReponame")) && checkElm($("#webTimeZone")) && checkOCR($("#webCreateOCR"), $("#webTikaOCRHost"), $("#webTikaOCRPort"), $("#webTikaOCRName")) || !checkSpacy($("#webCreateSpacy"), $("#webSpacyConnectorName"), $("#webSpacyServerAddress"))) {
               return addWebConnector();
             } else {
               return false;
@@ -296,7 +359,7 @@ $(document)
             $("#addFilerMessageFailure").hide();
             $("#addFilerCheckMessageFailure").hide();
             var form = document.getElementById("addFiler");
-            if (form.checkValidity() === false || !checkRepoName($("#filerReponame")) || !checkOCR($("#filerCreateOCR"), $("#filerTikaOCRHost"), $("#filerTikaOCRPort"), $("#filerTikaOCRName"))) {
+            if (form.checkValidity() === false || !checkRepoName($("#filerReponame")) || !checkElm($("#filerTimeZone")) || !checkOCR($("#filerCreateOCR"), $("#filerTikaOCRHost"), $("#filerTikaOCRPort"), $("#filerTikaOCRName")) || !checkSpacy($("#filerCreateSpacy"), $("#filerSpacyConnectorName"), $("#filerSpacyServerAddress"))) {
               return false;
             } else {
               $.get("./../admin/CheckMCFConfiguration", {
@@ -373,6 +436,30 @@ function checkOCR(checkboxEl, tikaHostEl, tikaPortEl, tikaNameEl) {
       setOkStatus(tikaNameEl);
     }
 
+    return true;
+  } else {
+    return true;
+  }
+}
+
+function checkSpacy(spacyCheckBoxEl, spacyConnectorNameEl, spacyServerAddressEl) {
+  clearStatus(spacyConnectorNameEl);
+  clearStatus(spacyServerAddressEl);
+  if (spacyCheckBoxEl.is(':checked')) {
+    if (!spacyConnectorNameEl.val()) {
+      setErrorStatus(spacyConnectorNameEl, null);
+      spacyConnectorNameEl.addClass("is-invalid");
+      return false;
+    } else {
+      setOkStatus(spacyConnectorNameEl);
+    }
+    if (!spacyServerAddressEl.val()) {
+      setErrorStatus(spacyServerAddressEl, null);
+      spacyServerAddressEl.addClass("is-invalid");
+      return false;
+    } else {
+      setOkStatus(spacyServerAddressEl);
+    }
     return true;
   } else {
     return true;
