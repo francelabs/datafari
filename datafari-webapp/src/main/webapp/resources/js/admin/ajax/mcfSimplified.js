@@ -727,6 +727,7 @@ function addDbConnector() {
       } else {
         $("#addDb").trigger("reset");
         $("#dbOCR").hide();
+        $("#dbSpacy").hide();
         var jobStarted = "";
         if (document.getElementById('dbStartJob').checked) {
           jobStarted = " and started";
@@ -747,6 +748,8 @@ function addDbConnector() {
           clearStatus($("#dbTikaOCRHost"));
           clearStatus($("#dbTikaOCRPort"));
           clearStatus($("#dbTikaOCRName"));
+          clearStatus($("#dbSpacyConnectorName"));
+          clearStatus($("#dbSpacyServerAddress"));
         }, 1500));
       }
     },
@@ -793,6 +796,7 @@ function addFilerConnector() {
       } else {
         $("#addFiler").trigger("reset");
         $("#filerOCR").hide();
+        $("#filerSpacy").hide();
         var jobStarted = "";
         if (document.getElementById('startJob').checked) {
           jobStarted = " and started";
@@ -812,6 +816,8 @@ function addFilerConnector() {
           clearStatus($("#filerTikaOCRHost"));
           clearStatus($("#filerTikaOCRPort"));
           clearStatus($("#filerTikaOCRName"));
+          clearStatus($("#filerSpacyConnectorName"));
+          clearStatus($("#filerSpacyServerAddress"));
         }, 1500));
       }
     },
@@ -858,6 +864,7 @@ function addWebConnector() {
       } else {
         $("#addWeb").trigger("reset");
         $("#webOCR").hide();
+        $("#webSpacy").hide();
         var jobStarted = "";
         if (document.getElementById('startJobWeb').checked) {
           jobStarted = " and started";
@@ -875,6 +882,8 @@ function addWebConnector() {
           clearStatus($("#webTikaOCRHost"));
           clearStatus($("#webTikaOCRPort"));
           clearStatus($("#webTikaOCRName"));
+          clearStatus($("#webSpacyConnectorName"));
+          clearStatus($("#webSpacyServerAddress"));
         }, 1500));
       }
     },
