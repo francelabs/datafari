@@ -30,6 +30,8 @@ public class JobStageCreator {
   private final static String modelToUseElement = "modelToUse";
   private final static String endpointToUseElement = "endpointToUse";
   private final static String outputFieldPrefixElement = "outputFieldPrefix";
+  
+  private final static String DEFAULT_SPACY_ENDPOINT = "/split_detect_and_process/";
 
   private JobStageCreator() {
     String datafariHomePath = Environment.getEnvironmentVariable("DATAFARI_HOME");
@@ -109,7 +111,11 @@ public class JobStageCreator {
           if (stageChild.get(type).equals(modelToUseElement)) {
             stageChild.replace(attribute_value, String.valueOf(modelToUse));
           } else if (stageChild.get(type).equals(endpointToUseElement)) {
-            stageChild.replace(attribute_value, String.valueOf(endpointToUse));
+            String finalEndPointToUse = DEFAULT_SPACY_ENDPOINT;
+            if(endpointToUse != null && !endpointToUse.isEmpty()) {
+              finalEndPointToUse = endpointToUse;
+            }
+            stageChild.replace(attribute_value, String.valueOf(finalEndPointToUse));
           } else if (stageChild.get(type).equals(outputFieldPrefixElement)) {
             stageChild.replace(attribute_value, String.valueOf(outputFieldPrefix));
           }

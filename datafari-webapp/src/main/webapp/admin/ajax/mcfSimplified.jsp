@@ -266,7 +266,7 @@
                           </div>                     
                         </div>
                       </div>
-                      <div class="form-group row" id="filerSpacyModelToUse-div">
+                      <div class="form-group row" id="filerSpacyModelToUse-div" style="display:none;">
                         <div class="col-sm-3 control-label">
                           <label id="filerSpacyModelToUseLabel" for="filerSpacyModelToUse" class="col-form-label"></label><span id="filerSpacyModelToUse-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                         </div>
@@ -274,7 +274,7 @@
                           <input type="text" id="filerSpacyModelToUse" name="filerSpacyModelToUse" class="form-control"></input>                     
                         </div>
                       </div>
-                      <div class="form-group row" id="filerSpacyEndpointToUse-div">
+                      <div class="form-group row" id="filerSpacyEndpointToUse-div" style="display:none;">
                         <div class="col-sm-3 control-label">
                           <label id="filerSpacyEndpointToUseLabel" for="filerSpacyEndpointToUse" class="col-form-label"></label><span id="filerSpacyEndpointToUse-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                         </div>
@@ -285,7 +285,7 @@
                           </div>                       
                         </div>
                       </div>
-                      <div class="form-group row" id="filerSpacyOutputFieldPrefix-div">
+                      <div class="form-group row" id="filerSpacyOutputFieldPrefix-div" style="display:none;">
                         <div class="col-sm-3 control-label">
                           <label id="filerSpacyOutputFieldPrefixLabel" for="filerSpacyOutputFieldPrefix" class="col-form-label"></label><span id="filerSpacyOutputFieldPrefix-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                         </div>
@@ -589,7 +589,7 @@
                           </div>                     
                         </div>
                       </div>
-                      <div class="form-group row" id="dbSpacyModelToUse-div">
+                      <div class="form-group row" id="dbSpacyModelToUse-div" style="display:none;">
                         <div class="col-sm-3 control-label">
                           <label id="dbSpacyModelToUseLabel" for="dbSpacyModelToUse" class="col-form-label"></label><span id="dbSpacyModelToUse-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                         </div>
@@ -597,7 +597,7 @@
                           <input type="text" id="dbSpacyModelToUse" name="dbSpacyModelToUse" class="form-control"></input>                     
                         </div>
                       </div>
-                      <div class="form-group row" id="dbSpacyEndpointToUse-div">
+                      <div class="form-group row" id="dbSpacyEndpointToUse-div" style="display:none;">
                         <div class="col-sm-3 control-label">
                           <label id="dbSpacyEndpointToUseLabel" for="dbSpacyEndpointToUse" class="col-form-label"></label><span id="dbSpacyEndpointToUse-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                         </div>
@@ -608,7 +608,7 @@
                           </div>                       
                         </div>
                       </div>
-                      <div class="form-group row" id="dbSpacyOutputFieldPrefix-div">
+                      <div class="form-group row" id="dbSpacyOutputFieldPrefix-div" style="display:none;">
                         <div class="col-sm-3 control-label">
                           <label id="dbSpacyOutputFieldPrefixLabel" for="dbSpacyOutputFieldPrefix" class="col-form-label"></label><span id="dbSpacyOutputFieldPrefix-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                         </div>
@@ -810,7 +810,7 @@
                           </div>                     
                         </div>
                       </div>
-                      <div class="form-group row" id="webSpacyModelToUse-div">
+                      <div class="form-group row" id="webSpacyModelToUse-div" style="display:none;">
                         <div class="col-sm-3 control-label">
                           <label id="webSpacyModelToUseLabel" for="webSpacyModelToUse" class="col-form-label"></label><span id="webSpacyModelToUse-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                         </div>
@@ -818,7 +818,7 @@
                           <input type="text" id="webSpacyModelToUse" name="webSpacyModelToUse" class="form-control"></input>                     
                         </div>
                       </div>
-                      <div class="form-group row" id="webSpacyEndpointToUse-div">
+                      <div class="form-group row" id="webSpacyEndpointToUse-div" style="display:none;">
                         <div class="col-sm-3 control-label">
                           <label id="webSpacyEndpointToUseLabel" for="webSpacyEndpointToUse" class="col-form-label"></label><span id="webSpacyEndpointToUse-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                         </div>
@@ -829,7 +829,7 @@
                           </div>                       
                         </div>
                       </div>
-                      <div class="form-group row" id="webSpacyOutputFieldPrefix-div">
+                      <div class="form-group row" id="webSpacyOutputFieldPrefix-div" style="display:none;">
                         <div class="col-sm-3 control-label">
                           <label id="webSpacyOutputFieldPrefixLabel" for="webSpacyOutputFieldPrefix" class="col-form-label"></label><span id="webSpacyOutputFieldPrefix-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                         </div>
