@@ -196,8 +196,8 @@
                       <div class="col-sm-3 control-label">
                         <label id="filerCreateOCRLabel" for="filerCreateOCR" class="col-form-label"></label><span id="filerCreateOCR-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
-                      <div class="col-sm-4 checkbox-div">
-                        <input type="checkbox" id="filerCreateOCR" name="filerCreateOCR"></input>                       
+                      <div class="col-sm checkbox-div">
+                        <input type="checkbox" id="filerCreateOCR" name="filerCreateOCR"></input> <label id="filerCreateOCRWarnLabel" class="col-form-label alert-danger" for=""></label>                     
                       </div>
                     </div>
                     <div id="filerOCR" style="display:none;">
@@ -239,8 +239,8 @@
                       <div class="col-sm-3 control-label">
                         <label id="filerCreateSpacyLabel" for="filerCreateSpacy" class="col-form-label"></label><span id="filerCreateSpacy-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
-                      <div class="col-sm-4 checkbox-div">
-                        <input type="checkbox" id="filerCreateSpacy" name="filerCreateSpacy"></input>                       
+                      <div class="col-sm checkbox-div">
+                        <input type="checkbox" id="filerCreateSpacy" name="filerCreateSpacy"></input> <label id="filerCreateSpacyWarnLabel" class="col-form-label alert-danger" for=""></label>                      
                       </div>
                     </div>
                     <div id="filerSpacy" style="display:none;">
@@ -296,10 +296,10 @@
                     </div>
 	                  <div class="form-group row" id="div16">
 	                    <div class="col-sm-3 control-label">
-	                      <label id="startJobLabel" for="startJob" class="col-form-label"></label>
+	                      <label id="startJobLabel" for="startJob" class="col-form-label"></label> 
 	                    </div>
-	                    <div class="col-sm-4 checkbox-div" >
-	                      <input type="checkbox" id="startJob" name="startJob"></input>
+	                    <div class="col-sm checkbox-div" >
+	                      <input type="checkbox" id="startJob" name="startJob"></input> <label id="filerStartJobWarnLabel" class="col-form-label alert-danger" for=""></label>
 	                    </div>
 	                  </div>
 	                  </fieldset>
@@ -519,8 +519,8 @@
                       <div class="col-sm-3 control-label">
                         <label id="dbCreateOCRLabel" for="dbCreateOCR" class="col-form-label"></label><span id="dbCreateOCR-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
-                      <div class="col-sm-4 checkbox-div">
-                        <input type="checkbox" id="dbCreateOCR" name="dbCreateOCR"></input>                       
+                      <div class="col-sm checkbox-div">
+                        <input type="checkbox" id="dbCreateOCR" name="dbCreateOCR"></input> <label id="dbCreateOCRWarnLabel" class="col-form-label alert-danger" for=""></label>                      
                       </div>
                     </div>
                     <div id="dbOCR" style="display:none;">
@@ -562,8 +562,8 @@
                       <div class="col-sm-3 control-label">
                         <label id="dbCreateSpacyLabel" for="dbCreateSpacy" class="col-form-label"></label><span id="dbCreateSpacy-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
-                      <div class="col-sm-4 checkbox-div">
-                        <input type="checkbox" id="dbCreateSpacy" name="dbCreateSpacy"></input>                       
+                      <div class="col-sm checkbox-div">
+                        <input type="checkbox" id="dbCreateSpacy" name="dbCreateSpacy"></input> <label id="dbCreateSpacyWarnLabel" class="col-form-label alert-danger" for=""></label>                       
                       </div>
                     </div>
                     <div id="dbSpacy" style="display:none;">
@@ -621,8 +621,8 @@
                       <div class="col-sm-3 control-label">
                         <label id="dbStartJobLabel" for="dbStartJob" class="col-form-label"></label>
                       </div>
-                      <div class="col-sm-4 checkbox-div">
-                        <input type="checkbox" id="dbStartJob" name="dbStartJob"></input>
+                      <div class="col-sm checkbox-div">
+                        <input type="checkbox" id="dbStartJob" name="dbStartJob"></input> <label id="dbStartJobWarnLabel" class="col-form-label alert-danger" for=""></label>
                       </div>
                     </div>
                     </fieldset>
@@ -740,8 +740,8 @@
                       <div class="col-sm-3 control-label">
                         <label id="webCreateOCRLabel" for="webCreateOCR" class="col-form-label"></label><span id="webCreateOCR-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
-                      <div class="col-sm-4 checkbox-div">
-                        <input type="checkbox" id="webCreateOCR" name="webCreateOCR"></input>                       
+                      <div class="col-sm checkbox-div">
+                        <input type="checkbox" id="webCreateOCR" name="webCreateOCR"></input> <label id="webCreateOCRWarnLabel" class="col-form-label alert-danger" for=""></label>                       
                       </div>
                     </div>
                     <div id="webOCR" style="display:none;">
@@ -783,8 +783,8 @@
                       <div class="col-sm-3 control-label">
                         <label id="webCreateSpacyLabel" for="webCreateSpacy" class="col-form-label"></label><span id="webCreateSpacy-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
-                      <div class="col-sm-4 checkbox-div">
-                        <input type="checkbox" id="webCreateSpacy" name="webCreateSpacy"></input>                       
+                      <div class="col-sm checkbox-div">
+                        <input type="checkbox" id="webCreateSpacy" name="webCreateSpacy"></input> <label id="webCreateSpacyWarnLabel" class="col-form-label alert-danger" for=""></label>                      
                       </div>
                     </div>
                     <div id="webSpacy" style="display:none;">
@@ -842,8 +842,8 @@
                       <div class="col-sm-3 control-label">
                         <label id="startJobWebLabel" for="startJobWeb" class="col-form-label"></label>
                       </div>
-                      <div class="col-sm-4 checkbox-div">
-                        <input type="checkbox" id="startJobWeb" name="startJobWeb"></input>
+                      <div class="col-sm checkbox-div">
+                        <input type="checkbox" id="startJobWeb" name="startJobWeb"></input> <label id="webStartJobWarnLabel" class="col-form-label alert-danger" for=""></label>
                       </div>
                     </div>
                     </fieldset>

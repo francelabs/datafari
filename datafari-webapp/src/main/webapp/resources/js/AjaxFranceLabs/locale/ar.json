@@ -245,6 +245,7 @@
     "domainNameLabel": "Domain name",
     "domainSuffixLabel": "Domain suffix",
     "download": "حمل الملف ",
+    "duplicateJobWarn": "The duplicate jobs are not automatically started, they need to be started manually",
     "duplicates": "نسخة مكررة ",
     "duplicates-algorithm-conf": "Algorithm configuration",
     "duplicates-collection": "Collection name",

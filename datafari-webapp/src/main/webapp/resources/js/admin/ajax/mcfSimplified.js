@@ -61,6 +61,7 @@ $(document)
           $("#dbSourcename").attr("placeholder", window.i18n.msgStore['sourcename']);
           $("#dbReponame").attr("placeholder", window.i18n.msgStore['reponame']);
           $("#dbStartJobLabel").html(window.i18n.msgStore['startJob']);
+          $("#dbStartJobWarnLabel").html(window.i18n.msgStore['duplicateJobWarn']);
           $("#dbSeeding").html("SELECT idfield AS $(IDCOLUMN) FROM documenttable WHERE modifydatefield > $(STARTTIME) AND modifydatefield <= $(ENDTIME)");
           $("#dbVersion").html("SELECT idfield AS $(IDCOLUMN), versionfield AS $(VERSIONCOLUMN) FROM documenttable WHERE idfield IN $(IDLIST)");
           $("#dbAccessToken").html("SELECT docidfield AS $(IDCOLUMN), aclfield AS $(TOKENCOLUMN) FROM acltable WHERE docidfield IN $(IDLIST)");
@@ -107,7 +108,9 @@ $(document)
           $("#securityLabel").html(window.i18n.msgStore['security']);
           $("#duplicatesDetectionLabel").html(window.i18n.msgStore['duplicatesDetection']);
           $("#startJobLabel").html(window.i18n.msgStore['startJob']);
+          $("#filerStartJobWarnLabel").html(window.i18n.msgStore['duplicateJobWarn']);
           $("#startJobWebLabel").html(window.i18n.msgStore['startJob']);
+          $("#webStartJobWarnLabel").html(window.i18n.msgStore['duplicateJobWarn']);
           $("#server").attr("placeholder", window.i18n.msgStore['server']);
           $("#password").attr("placeholder", window.i18n.msgStore['adminUI-Password']);
           $("#user").attr("placeholder", window.i18n.msgStore['filerUser']);
@@ -139,6 +142,7 @@ $(document)
           
           // OCR filer
           $("#filerCreateOCRLabel").html(window.i18n.msgStore['createOCR']);
+          $("#filerCreateOCRWarnLabel").html(window.i18n.msgStore['duplicateJobWarn']);
           $("#filerTikaOCRHostLabel").html(window.i18n.msgStore['tikaOCRHost']);
           $("#filerTikaOCRPortLabel").html(window.i18n.msgStore['tikaOCRPort']);
           $("#filerTikaOCRNameLabel").html(window.i18n.msgStore['tikaOCRName']);
@@ -149,6 +153,7 @@ $(document)
           
           // OCR web
           $("#webCreateOCRLabel").html(window.i18n.msgStore['createOCR']);
+          $("#webCreateOCRWarnLabel").html(window.i18n.msgStore['duplicateJobWarn']);
           $("#webTikaOCRHostLabel").html(window.i18n.msgStore['tikaOCRHost']);
           $("#webTikaOCRPortLabel").html(window.i18n.msgStore['tikaOCRPort']);
           $("#webTikaOCRNameLabel").html(window.i18n.msgStore['tikaOCRName']);
@@ -157,8 +162,10 @@ $(document)
           $("#webTikaOCRPort-tip").attr("title", window.i18n.msgStore['tikaOCRPort-tip']);
           $("#webTikaOCRName-tip").attr("title", window.i18n.msgStore['tikaOCRName-tip']);
           
+          
           // OCR db
           $("#dbCreateOCRLabel").html(window.i18n.msgStore['createOCR']);
+          $("#dbCreateOCRWarnLabel").html(window.i18n.msgStore['duplicateJobWarn']);
           $("#dbTikaOCRHostLabel").html(window.i18n.msgStore['tikaOCRHost']);
           $("#dbTikaOCRPortLabel").html(window.i18n.msgStore['tikaOCRPort']);
           $("#dbTikaOCRNameLabel").html(window.i18n.msgStore['tikaOCRName']);
@@ -174,6 +181,7 @@ $(document)
           
           // Spacy filer
           $("#filerCreateSpacyLabel").html(window.i18n.msgStore['createSpacy']);
+          $("#filerCreateSpacyWarnLabel").html(window.i18n.msgStore['duplicateJobWarn']);
           $("#filerSpacyConnectorNameLabel").html(window.i18n.msgStore['spacyConnectorName']);
           $("#filerSpacyServerAddressLabel").html(window.i18n.msgStore['spacyServerAddress']);
           $("#filerSpacyModelToUseLabel").html(window.i18n.msgStore['spacyModelToUse']);
@@ -188,6 +196,7 @@ $(document)
           
           // Spacy db
           $("#dbCreateSpacyLabel").html(window.i18n.msgStore['createSpacy']);
+          $("#dbCreateSpacyWarnLabel").html(window.i18n.msgStore['duplicateJobWarn']);
           $("#dbSpacyConnectorNameLabel").html(window.i18n.msgStore['spacyConnectorName']);
           $("#dbSpacyServerAddressLabel").html(window.i18n.msgStore['spacyServerAddress']);
           $("#dbSpacyModelToUseLabel").html(window.i18n.msgStore['spacyModelToUse']);
@@ -202,6 +211,7 @@ $(document)
           
           // Spacy web
           $("#webCreateSpacyLabel").html(window.i18n.msgStore['createSpacy']);
+          $("#webCreateSpacyWarnLabel").html(window.i18n.msgStore['duplicateJobWarn']);
           $("#webSpacyConnectorNameLabel").html(window.i18n.msgStore['spacyConnectorName']);
           $("#webSpacyServerAddressLabel").html(window.i18n.msgStore['spacyServerAddress']);
           $("#webSpacyModelToUseLabel").html(window.i18n.msgStore['spacyModelToUse']);
