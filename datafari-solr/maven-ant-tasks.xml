@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<project name="maven-ant-tasks" default="setup-solr" basedir=".">
+<project name="maven-ant-tasks" default="setup-solr-and-plugin" basedir=".">
 
 	<condition property="project.dir" else="${basedir}/..">
 		<isset property="project.dir" />
@@ -9,7 +9,8 @@
 	<property name="datafari.mcf.connectors.lib" value="${project.dir}/datafari-mcf/mcf_home/connector-lib" />
 
 
-
+	<target name="setup-solr-and-plugin" depends="setup-solr, setup-mcf-solr-plugin">
+	</target>
 
 	<target name="setup-solr">
 
@@ -82,6 +83,14 @@
 		<replace file="${solr.dist}/solr_home/FileShare/conf/solrconfig.xml" token="@DATAFARI-UP-CHAIN@" value="${datafari-up-chain}" />
 		<replace file="${solr.dist}/solr_home/FileShare/conf/solrconfig.xml" token="@OTHER-PROCESSOR-CHAINS@" value="" />
 		<replace file="${solr.dist}/solr_home/FileShare/conf/solrconfig.xml" token="@UPDATE-REQUEST-CHAIN@" value="" />
+	</target>
+	
+	<target name="setup-mcf-solr-plugin">
+		<!-- Copy mcf-solr-plugin jar to FileShare collection -->
+    <copy toDir="${solr.dist}/solr_home/FileShare/lib/MCF" overwrite="true" force="true">
+      <fileset dir="target" includes="apache-manifoldcf-solr-*/*.jar" />
+      <cutdirsmapper dirs="1" />
+    </copy>
 	</target>
 
 

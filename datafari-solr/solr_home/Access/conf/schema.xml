@@ -12,7 +12,7 @@
   general text fields, use copyField to copy them to the catchall "text" field, and use that for searching. - For maximum indexing performance, use the StreamingUpdateSolrServer java client. - Remember to 
   run the JVM in server mode, and use a higher logging level that avoids logging every request -->
 
-<schema name="access-schema" version="1.5">
+<schema name="access-schema" version="1.6">
 
   <fields>
     <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" />

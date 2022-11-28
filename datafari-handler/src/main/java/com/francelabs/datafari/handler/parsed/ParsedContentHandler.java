@@ -3,20 +3,15 @@ package com.francelabs.datafari.handler.parsed;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.SolrParams;
-import org.apache.solr.handler.extraction.ExtractingParams;
 import org.apache.solr.schema.IndexSchema;
-import org.apache.solr.schema.NumberType;
 import org.apache.solr.schema.SchemaField;
-import org.apache.tika.metadata.TikaMetadataKeys;
 
-public class ParsedContentHandler implements ExtractingParams {
+public class ParsedContentHandler {
 
   private final SolrInputDocument document;
   private final SolrParams params;
@@ -26,6 +21,46 @@ public class ParsedContentHandler implements ExtractingParams {
   private final IndexSchema schema;
   private final InputStream is;
   private final String defaultField;
+
+  /**
+   * Optional. If specified and the name of a potential field cannot be determined, the default Field specified will be used instead.
+   */
+  public static final String DEFAULT_FIELD = "defaultField";
+  /**
+   * Map all generated attribute names to field names with lowercase and underscores.
+   */
+  public static final String LOWERNAMES = "lowernames";
+  /**
+   * Optional. If specified, the prefix will be prepended to all Metadata, such that it would be possible to setup a dynamic field to automatically capture it
+   */
+  public static final String UNKNOWN_FIELD_PREFIX = "uprefix";
+
+  /**
+   * Pass in literal values to be added to the document, as in
+   *
+   * <pre>
+   * literal.myField = Foo
+   * </pre>
+   *
+   */
+  public static final String LITERALS_PREFIX = "literal.";
+
+  /**
+   * The param prefix for mapping Tika metadata to Solr fields.
+   * <p>
+   * To map a field, add a name like:
+   *
+   * <pre>
+   * fmap.title = solr.title
+   * </pre>
+   *
+   * In this example, the tika "title" metadata value will be added to a Solr field named "solr.title"
+   *
+   *
+   */
+  public static final String MAP_PREFIX = "fmap.";
+
+  public static final String RESOURCE_NAME_KEY = "resourceName";
 
   public ParsedContentHandler(final SolrParams params, final IndexSchema schema, final InputStream is) {
     this.params = params;
@@ -44,8 +79,7 @@ public class ParsedContentHandler implements ExtractingParams {
   }
 
   /**
-   * Add in the literals to the document using the {@link #params} and the
-   * {@link #LITERALS_PREFIX}.
+   * Add in the literals to the document using the {@link #params} and the {@link #LITERALS_PREFIX}.
    */
   private void addLiterals() {
     final Iterator<String> paramNames = params.getParameterNamesIterator();
@@ -86,11 +120,9 @@ public class ParsedContentHandler implements ExtractingParams {
     if (sf == null && unknownFieldPrefix.length() > 0) {
       name = unknownFieldPrefix + name;
       sf = schema.getFieldOrNull(name);
-    } else if (sf == null && defaultField.length() > 0 && name.equals(
-        TikaMetadataKeys.RESOURCE_NAME_KEY) == false /*
-                                                      * let the fall through
-                                                      * below handle this
-                                                      */) {
+    } else if (sf == null && defaultField.length() > 0 && name.equals(RESOURCE_NAME_KEY) == false /*
+                                                                                                   * let the fall through below handle this
+                                                                                                   */) {
       name = defaultField;
       sf = schema.getFieldOrNull(name);
     }
@@ -104,7 +136,7 @@ public class ParsedContentHandler implements ExtractingParams {
     // field just because you specified a resource.name parameter to the
     // handler, should
     // you?
-    if (sf == null && unknownFieldPrefix.length() == 0 && name == TikaMetadataKeys.RESOURCE_NAME_KEY) {
+    if (sf == null && unknownFieldPrefix.length() == 0 && name == RESOURCE_NAME_KEY) {
       return;
     }
 
@@ -131,36 +163,20 @@ public class ParsedContentHandler implements ExtractingParams {
     }
 
     if (fval != null) {
-      document.addField(name,fval);
+      document.addField(name, fval);
     }
 
     if (vals != null) {
       for (final String val : vals) {
-        document.addField(name,val);
+        document.addField(name, val);
       }
     }
   }
 
   /**
-   * Can be used to transform input values based on their
-   * {@link org.apache.solr.schema.SchemaField}
-   * <p>
-   * This implementation only formats dates using the
-   * {@link ExtractionDateUtil}.
-   *
-   * @param val
-   *          The value to transform
-   * @param schFld
-   *          The {@link org.apache.solr.schema.SchemaField}
-   * @return The potentially new value.
-   */
-  
-
-  /**
    * Get the name mapping
    *
-   * @param name
-   *          The name to check to see if there is a mapping
+   * @param name The name to check to see if there is a mapping
    * @return The new name, if there is one, else <code>name</code>
    */
   protected String findMappedName(final String name) {

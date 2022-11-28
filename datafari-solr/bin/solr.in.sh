@@ -98,7 +98,7 @@ ENABLE_REMOTE_JMX_OPTS="false"
 #SOLR_OPTS="$SOLR_OPTS -Dsolr.autoCommit.maxTime=60000"
 #SOLR_OPTS="$SOLR_OPTS -Dsolr.clustering.enabled=true"
 #SOLR_OPTS="$SOLR_OPTS -agentlib:jdwp=transport=dt_socket,server=y,address=8984,suspend=n"
-SOLR_OPTS="$SOLR_OPTS -Dsolr.disableConfigSetsCreateAuthChecks=true -Djute.maxbuffer=10000000 -Dsolr.allowPaths=*"
+SOLR_OPTS="$SOLR_OPTS -Dsolr.log.requestlog.retaindays=90 -Dsolr.disableConfigSetsCreateAuthChecks=true -Djute.maxbuffer=10000000 -Dsolr.allowPaths=*"
 # Location where the bin/solr script will save PID files for running instances
 # If not set, the script will create PID files in $SOLR_TIP/bin
 SOLR_PID_DIR=${PID_DIR}
@@ -131,6 +131,24 @@ SOLR_LOG_PRESTART_ROTATION=false
 # Sets the port Solr binds to, default is 8983
 SOLR_PORT=8983
 
+# Restrict access to solr by IP address.
+# Specify a comma-separated list of addresses or networks, for example:
+#   127.0.0.1, 192.168.0.0/24, [::1], [2000:123:4:5::]/64
+#SOLR_IP_ALLOWLIST=
+
+# Block access to solr from specific IP addresses.
+# Specify a comma-separated list of addresses or networks, for example:
+#   127.0.0.1, 192.168.0.0/24, [::1], [2000:123:4:5::]/64
+#SOLR_IP_DENYLIST=
+
+# Sets the network interface the Solr binds to. To prevent administrators from
+# accidentally exposing Solr more widely than intended, this defaults to 127.0.0.1.
+# Administrators should think carefully about their deployment environment and
+# set this value as narrowly as required before going to production. In
+# environments where security is not a concern, 0.0.0.0 can be used to allow
+# Solr to accept connections on all network interfaces.
+#SOLR_JETTY_HOST="127.0.0.1"
+
 # Enables HTTPS. It is implictly true if you set SOLR_SSL_KEY_STORE. Use this config
 # to enable https module with custom jetty configuration.
 #SOLR_SSL_ENABLED=true
@@ -144,6 +162,8 @@ SOLR_PORT=8983
 #SOLR_SSL_NEED_CLIENT_AUTH=false
 # Enable clients to authenticate (but not require)
 #SOLR_SSL_WANT_CLIENT_AUTH=false
+# Verify client's hostname during SSL handshake
+#SOLR_SSL_CLIENT_HOSTNAME_VERIFICATION=false
 # SSL Certificates contain host/ip "peer name" information that is validated by default. Setting
 # this to false can be useful to disable these checks when re-using a certificate on many hosts
 SOLR_SSL_CHECK_PEER_NAME=false
@@ -170,6 +190,7 @@ SOLR_SSL_CHECK_PEER_NAME=false
 # * javax.net.ssl.trustStorePassword
 # More info: https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/CredentialProviderAPI.html
 #SOLR_HADOOP_CREDENTIAL_PROVIDER_PATH=localjceks://file/home/solr/hadoop-credential-provider.jceks
+#SOLR_OPTS=" -Dsolr.ssl.credential.provider.chain=hadoop"
 
 # Settings for authentication
 # Please configure only one of SOLR_AUTHENTICATION_CLIENT_BUILDER or SOLR_AUTH_TYPE parameters
@@ -178,12 +199,27 @@ SOLR_SSL_CHECK_PEER_NAME=false
 #SOLR_AUTHENTICATION_OPTS="-Dbasicauth=solr:SolrRocks"
 
 # Settings for ZK ACL
-#SOLR_ZK_CREDS_AND_ACLS="-DzkACLProvider=org.apache.solr.common.cloud.VMParamsAllAndReadonlyDigestZkACLProvider \
-#  -DzkCredentialsProvider=org.apache.solr.common.cloud.VMParamsSingleSetCredentialsDigestZkCredentialsProvider \
+#SOLR_ZK_CREDS_AND_ACLS="-DzkACLProvider=org.apache.solr.common.cloud.DigestZkACLProvider \
+#  -DzkCredentialsProvider=org.apache.solr.common.cloud.DigestZkCredentialsProvider \
+#  -DzkCredentialsInjector=org.apache.solr.common.cloud.VMParamsZkCredentialsInjector \
 #  -DzkDigestUsername=admin-user -DzkDigestPassword=CHANGEME-ADMIN-PASSWORD \
 #  -DzkDigestReadonlyUsername=readonly-user -DzkDigestReadonlyPassword=CHANGEME-READONLY-PASSWORD"
 #SOLR_OPTS="$SOLR_OPTS $SOLR_ZK_CREDS_AND_ACLS"
 SOLR_OPTS="$SOLR_OPTS -Djava.io.tmpdir=@SOLRTMPDIR@"
+
+# optionally, you can use using a a Java properties file 'zkDigestCredentialsFile'
+#...
+#   -DzkDigestCredentialsFile=/path/to/zkDigestCredentialsFile.properties
+#...
+
+# Use a custom injector to inject ZK credentials into DigestZkACLProvider
+# -DzkCredentialsInjector expects a class implementing org.apache.solr.common.cloud.ZkCredentialsInjector
+# ...
+#   -DzkCredentialsInjector=fully.qualified.class.CustomInjectorClassName"
+# ...
+
+# Jetty GZIP module enabled by default
+#SOLR_GZIP_ENABLED=true
 
 # Settings for common system values that may cause operational imparement when system defaults are used.
 # Solr can use many processes and many file handles. On modern operating systems the savings by leaving

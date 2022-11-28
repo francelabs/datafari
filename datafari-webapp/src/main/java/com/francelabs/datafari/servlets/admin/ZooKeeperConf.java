@@ -32,6 +32,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.zookeeper.KeeperException;
 import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.exception.CodesReturned;
@@ -42,7 +43,6 @@ import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.utils.DatafariMainConfiguration;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.ExecutionEnvironment;
-
 import com.francelabs.datafari.utils.SolrConfiguration;
 
 @WebServlet("/SearchExpert/zookeeperConf")
@@ -50,11 +50,10 @@ public class ZooKeeperConf extends HttpServlet {
   private final String env;
   private final String downloadFolder;
   private String configName;
-  private String tempFolder;
+  private final String tempFolder;
   private static final String confname = "FileShare";
   private static final long serialVersionUID = 1L;
   private final static Logger LOGGER = LogManager.getLogger(ZooKeeperConf.class.getName());
-
 
   /**
    * @see HttpServlet#HttpServlet()
@@ -70,14 +69,13 @@ public class ZooKeeperConf extends HttpServlet {
     env = environnement + "/solr/solrcloud/FileShare/conf/";
     tempFolder = environnement + "/bin/tmp";
     downloadFolder = environnement + "/bin/backup/solr";
-    configName="FileShare";
+    configName = "FileShare";
 
   }
 
   /**
    * @throws IOException
-   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-   *      response)
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
    */
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
@@ -88,7 +86,7 @@ public class ZooKeeperConf extends HttpServlet {
     List<String> collectionsList = null;
 
     final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
-    String listFilesExcluded = SolrConfiguration.getInstance().getProperty(SolrConfiguration.FILESTONOTBEUPLOADED);
+    final String listFilesExcluded = SolrConfiguration.getInstance().getProperty(SolrConfiguration.FILESTONOTBEUPLOADED);
     if (!config.getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION).equals("")) {
       configName = config.getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION);
 
@@ -103,7 +101,9 @@ public class ZooKeeperConf extends HttpServlet {
       final PrintWriter out = response.getWriter();
       out.append("Error while getting the Solr core, please make sure the core dedicated to PromoLinks has booted up. Error code : 69000");
       out.close();
-      LOGGER.error("Error while getting the Solr core in doGet, admin servlet, make sure the core dedicated to Promolink has booted up and is still called promolink or that the code has been changed to match the changes. Error 69000 ", e1);
+      LOGGER.error(
+          "Error while getting the Solr core in doGet, admin servlet, make sure the core dedicated to Promolink has booted up and is still called promolink or that the code has been changed to match the changes. Error 69000 ",
+          e1);
       return;
 
     } catch (final Exception e) {
@@ -115,24 +115,24 @@ public class ZooKeeperConf extends HttpServlet {
       if (actionParam.toLowerCase().equals("download")) {
         final File folderConf = new File(downloadFolder);
         FileUtils.cleanDirectory(folderConf);
-        server.downloadConfig(Paths.get(downloadFolder), configName);
+        server.downloadConfig(downloadFolder, configName);
       } else if (actionParam.toLowerCase().equals("upload")) {
         // copy source to temporary folder
         FileUtils.copyDirectory(Paths.get(env).toFile(), new File(tempFolder));
         // clean files
         com.francelabs.datafari.utils.FileUtils.cleanFilesFromFolder(new File(tempFolder), listFilesExcluded);
         // upload conf to ZK
-        server.uploadConfig(Paths.get(tempFolder), configName);
+        server.uploadConfig(tempFolder, configName);
         // delete temp folder
         FileUtils.deleteDirectory(new File(tempFolder));
         if (collectionsList != null) {
-          for (String object: collectionsList) {
+          for (final String object : collectionsList) {
             // copy source to temporary folder
             FileUtils.copyDirectory(Paths.get(env).toFile(), new File(tempFolder));
             // clean files
             com.francelabs.datafari.utils.FileUtils.cleanFilesFromFolder(new File(tempFolder), listFilesExcluded);
             // upload conf to ZK
-            server.uploadConfig(Paths.get(tempFolder), object);
+            server.uploadConfig(tempFolder, object);
             // delete temp folder
             FileUtils.deleteDirectory(new File(tempFolder));
           }
@@ -140,14 +140,14 @@ public class ZooKeeperConf extends HttpServlet {
       } else if (actionParam.toLowerCase().equals("reload")) {
         server.reloadCollection(Core.FILESHARE.toString());
         if (collectionsList != null) {
-          for (String object: collectionsList) {
+          for (final String object : collectionsList) {
             server.reloadCollection(object);
           }
         }
-      } 
+      }
 
       jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-    } catch (final IOException | SolrServerException e) {
+    } catch (final IOException | SolrServerException | KeeperException | InterruptedException e) {
       LOGGER.error("Exception during action " + actionParam, e);
       jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
     }
@@ -157,8 +157,7 @@ public class ZooKeeperConf extends HttpServlet {
 
   /**
    * @throws IOException
-   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-   *      response)
+   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
    */
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
