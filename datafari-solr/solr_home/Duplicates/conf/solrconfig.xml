@@ -3,8 +3,6 @@
 
   <luceneMatchVersion>9.3</luceneMatchVersion>
   
-  <lib dir="./lib/custom"/>
-  
   <dataDir>${solr.data.dir:}</dataDir>
   
   <directoryFactory class="${solr.directoryFactory:solr.NRTCachingDirectoryFactory}" name="DirectoryFactory"></directoryFactory>
@@ -45,7 +43,7 @@
     <filterCache autowarmCount="0" class="solr.search.CaffeineCache" initialSize="512" size="512"/>
     <queryResultCache autowarmCount="0" class="solr.search.CaffeineCache" initialSize="512" size="512"/>
     <documentCache autowarmCount="0" class="solr.search.CaffeineCache" initialSize="512" size="512"/>
-    <cache autowarmCount="10" class="solr.search.LRUCache" initialSize="0" name="perSegFilter" regenerator="solr.NoOpRegenerator" size="10"/>
+    <cache autowarmCount="10" class="solr.search.CaffeineCache" initialSize="0" name="perSegFilter" regenerator="solr.NoOpRegenerator" size="10"/>
     <enableLazyFieldLoading>true</enableLazyFieldLoading>
     <queryResultWindowSize>20</queryResultWindowSize>
     <queryResultMaxDocsCached>200</queryResultMaxDocsCached>

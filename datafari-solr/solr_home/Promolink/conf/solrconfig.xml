@@ -479,7 +479,7 @@
     -->
     <!-- custom cache currently used by block join --> 
     <cache name="perSegFilter"
-      class="solr.search.LRUCache"
+      class="solr.search.CaffeineCache"
       size="10"
       initialSize="0"
       autowarmCount="10"

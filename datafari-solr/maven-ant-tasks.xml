@@ -17,56 +17,8 @@
 		<!-- Copy only useful Solr server directories stripping the parent Solr 
 			directory (to avoid Solr version inclusion) -->
 		<copy toDir="${solr.dist}" overwrite="true" force="true">
-			<fileset dir="target" includes="*solr*/bin/**,*solr*/server/**,*solr*/licenses/**,*solr*/*.txt" />
+			<fileset dir="target" includes="*solr*/bin/**,*solr*/modules/**,*solr*/server/**,*solr*/licenses/**,*solr*/*.txt" />
 			<cutdirsmapper dirs="1" />
-		</copy>
-
-		<!-- Copy contrib Jars to solr_home/FileShare/lib/FEATURE_DIR_NAME directory -->
-		<copy toDir="${solr.dist}/solr_home/FileShare/lib" overwrite="true" force="true">
-			<!-- Copy Jars that are inside contrib directory -->
-			<!-- Copy LangId and clustering contrib (for tag cloud) -->
-			<fileset dir="target">
-				<include name="*solr*/contrib/langid/**/*.jar" />
-				<include name="*solr*/contrib/clustering/**/*.jar" />
-			</fileset>
-			<chainedmapper>
-				<!-- Strip solr*/contrib directory -->
-				<cutdirsmapper dirs="2" />
-				<filtermapper>
-					<!-- Strip lib directory under each group of Jars-->
-					<replacestring from="lib" to="" />
-				</filtermapper>
-			</chainedmapper>
-		</copy>
-
-		<!-- Copy Solr dist Jars to solr_home/FileShare/lib/solr directory -->
-		<copy toDir="${solr.dist}/solr_home/FileShare/lib/solr" overwrite="true" force="true">
-			<!-- Copy Jars that are inside dist directory -->
-			<!-- Copy only Jars that we need -->
-			<fileset dir="target" includes="*solr*/dist/solr-langid-*.jar" />
-			<fileset dir="target" includes="*solr*/dist/solr-cell-*.jar" />
-			<fileset dir="target" includes="*solr*/dist/solr-dataimporthandler-*.jar" />
-			<fileset dir="target" includes="*solr*/dist/solr-clustering-*.jar" />
-
-			<chainedmapper>
-				<!-- Strip solr*/dist directory -->
-				<cutdirsmapper dirs="2" />
-			</chainedmapper>
-		</copy>
-
-		<!-- Copy Solr dist Jars to solr_home/FileShare/lib/solr directory -->
-		<copy toDir="${solr.dist}/solr_home/Duplicates/lib/solr" overwrite="true" force="true">
-			<!-- Copy Jars that are inside dist directory -->
-			<!-- Copy only Jars that we need -->
-			<fileset dir="target" includes="*solr*/dist/solr-langid-*.jar" />
-			<fileset dir="target" includes="*solr*/dist/solr-cell-*.jar" />
-			<fileset dir="target" includes="*solr*/dist/solr-dataimporthandler-*.jar" />
-			<fileset dir="target" includes="*solr*/dist/solr-clustering-*.jar" />
-
-			<chainedmapper>
-				<!-- Strip solr*/dist directory -->
-				<cutdirsmapper dirs="2" />
-			</chainedmapper>
 		</copy>
 
 		<copy toDir="${solr.dist}" overwrite="true" force="true">

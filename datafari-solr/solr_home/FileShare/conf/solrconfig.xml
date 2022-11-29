@@ -37,9 +37,12 @@
 
 	<!-- TODO : change the hardcoded path add property.name=value in API Collections create -->
 
-    <lib dir="./lib/MCF"/>
-    <lib dir="./lib/custom"/>
-    <lib dir="./lib/custom/customer"/>
+    <lib dir="${solr.install.dir}/modules/extraction/lib" regex=".*\.jar" />
+    <lib dir="${solr.install.dir}/modules/clustering/lib/" regex=".*\.jar" />
+    <lib dir="${solr.install.dir}/modules/langid/lib/" regex=".*\.jar" />
+    <lib dir="${lib.path}lib/MCF"/>
+    <lib dir="${lib.path}lib/custom"/>
+    <lib dir="${lib.path}lib/custom/customer"/>
     
 
    <!-- ////////////////////////// -->
@@ -479,7 +482,7 @@
     <documentCache autowarmCount="0" class="solr.search.CaffeineCache" initialSize="512" size="512"/>
 
     <!-- custom cache currently used by block join -->
-    <cache autowarmCount="10" class="solr.search.LRUCache" initialSize="0" name="perSegFilter" regenerator="solr.NoOpRegenerator" size="10"/>
+    <cache autowarmCount="10" class="solr.search.CaffeineCache" initialSize="0" name="perSegFilter" regenerator="solr.NoOpRegenerator" size="10"/>
 
 
     <!-- Lazy Field Loading
