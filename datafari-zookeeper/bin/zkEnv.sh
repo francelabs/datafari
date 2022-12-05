@@ -28,7 +28,6 @@
 ZOO_LOG_DIR=${DATAFARI_HOME}/logs
 ZOOBINDIR="${ZOOBINDIR:-/usr/bin}"
 ZOOKEEPER_PREFIX="${ZOOBINDIR}/.."
-ZOO_LOG4J_PROP="INFO, ROLLINGFILE"
 
 #check to see if the conf dir is given as an optional argument
 if [ $# -gt 1 ]
@@ -70,11 +69,6 @@ fi
 if [ "x${ZOO_LOG_DIR}" = "x" ]
 then
     ZOO_LOG_DIR="$ZOOKEEPER_PREFIX/logs"
-fi
-
-if [ "x${ZOO_LOG4J_PROP}" = "x" ]
-then
-    ZOO_LOG4J_PROP="INFO,CONSOLE"
 fi
 
 if [[ -n "$JAVA_HOME" ]] && [[ -x "$JAVA_HOME/bin/java" ]];  then

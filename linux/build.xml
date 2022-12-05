@@ -461,7 +461,7 @@
 		<copy toDir="${linux.dist.dir}/zookeeper" overwrite="true" force="true">
 			<fileset dir="${zookeeper.proj.dir}">
 			</fileset>
-			<globmapper from="conf/log4j-solr.properties" to="conf/log4j.properties"/>
+			<globmapper from="conf/logback-solr.xml" to="conf/logback.xml"/>
 		</copy>
 		<copy toDir="${linux.dist.dir}/zookeeper" overwrite="true" force="true">
 			<fileset dir="${zookeeper.proj.dir}">
@@ -481,7 +481,7 @@
 		<copy toDir="${linux.dist.dir}/zookeeper-mcf" overwrite="true" force="true">
 			<fileset dir="${zookeeper.proj.dir}">
 			</fileset>
-			<globmapper from="conf/log4j-mcf.properties" to="conf/log4j.properties"/>
+			<globmapper from="conf/logback-mcf.xml" to="conf/logback.xml"/>
 		</copy>
 		<copy toDir="${linux.dist.dir}/zookeeper-mcf" overwrite="true" force="true">
 			<fileset dir="${zookeeper.proj.dir}">
