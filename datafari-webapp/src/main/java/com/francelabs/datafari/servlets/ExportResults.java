@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,6 +68,10 @@ public class ExportResults extends HttpServlet {
    */
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    performExport(request, response);
+  }
+
+  public static void performExport(final HttpServletRequest request, final HttpServletResponse response) throws UnsupportedEncodingException {
     request.setCharacterEncoding("utf8");
     final String type = request.getParameter("type");
 
@@ -130,7 +135,6 @@ public class ExportResults extends HttpServlet {
     } catch (final Exception e) {
       logger.error("Unable to export results", e);
     }
-
   }
 
 }
