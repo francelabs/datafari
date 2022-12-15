@@ -208,7 +208,7 @@ public class SearchAggregator extends HttpServlet {
           if (jaExternalDatafaris.size() == 1) {
             final JSONObject externalDatafari = (JSONObject) jaExternalDatafaris.get(0);
             final String authUsername = requestingUser;
-            final String suggestResponse = externalDatafariRequest(timeoutPerRequest, handler, parameterMap, externalDatafari, authUsername);
+            final String suggestResponse = externalDatafariRequest(failedRequests, timeoutPerRequest, handler, parameterMap, externalDatafari, authUsername);
             if (suggestResponse != null) {
               return (JSONObject) parser.parse(suggestResponse);
             }
@@ -226,7 +226,7 @@ public class SearchAggregator extends HttpServlet {
               final String datafariName = externalDatafari.get("label").toString();
               final String searchApiUrl = externalDatafari.get("search_api_url").toString();
               try {
-                final String searchResponse = externalDatafariRequest(timeoutPerRequest, handler, parameterMap, externalDatafari, authUsername);
+                final String searchResponse = externalDatafariRequest(failedRequests, timeoutPerRequest, handler, parameterMap, externalDatafari, authUsername);
                 if (searchResponse != null && !searchResponse.isEmpty()) {
                   try {
                     LOGGER.debug("Received response: " + System.lineSeparator() + searchResponse);
@@ -272,6 +272,7 @@ public class SearchAggregator extends HttpServlet {
           responseContent.put("origin", "aggregator");
           responseContent.put("code", 2);
           responseContent.put("message", "External Datafari unavailable or unreachable for this request.");
+          responseContent.put("aggregator_errors", failedRequests);
           return new JSONObject(responseContent);
         }
         // Merge the responses
@@ -356,8 +357,8 @@ public class SearchAggregator extends HttpServlet {
     return;
   }
 
-  private static String externalDatafariRequest(final int timeoutPerRequest, final String handler, final Map<String, String[]> parameterMap, final JSONObject externalDatafari,
-      final String authUsername) throws Exception {
+  private static String externalDatafariRequest(final List<JSONObject> failedRequests, final int timeoutPerRequest, final String handler, final Map<String, String[]> parameterMap,
+      final JSONObject externalDatafari, final String authUsername) throws Exception {
     final String datafariName = externalDatafari.get("label").toString();
     final String searchApiUrl = externalDatafari.get("search_api_url").toString();
     try (final CloseableHttpClient client = HttpClientProvider.getInstance().newClient(timeoutPerRequest, timeoutPerRequest);) {
@@ -382,7 +383,13 @@ public class SearchAggregator extends HttpServlet {
           if (getResponse.getStatusLine().getStatusCode() == 200) {
             return IOUtils.toString(getResponse.getEntity().getContent(), StandardCharsets.UTF_8);
           } else {
-            LOGGER.error("Error " + getResponse.getStatusLine().getStatusCode() + " " + getResponse.getStatusLine().getReasonPhrase() + " requesting " + getReq.toString());
+            final String errorDesc = "Error " + getResponse.getStatusLine().getStatusCode() + " " + getResponse.getStatusLine().getReasonPhrase() + " ; while requesting " + getReq.toString();
+            LOGGER.error(errorDesc);
+            final JSONObject errorDescObj = new JSONObject();
+            errorDescObj.put("datafari_name", datafariName);
+            errorDescObj.put("search_api_url", searchApiUrl);
+            errorDescObj.put("error_msg", errorDesc);
+            failedRequests.add(errorDescObj);
           }
         }
       }
