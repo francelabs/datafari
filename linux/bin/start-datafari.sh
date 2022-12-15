@@ -95,10 +95,8 @@ if  [[ "$NODETYPE" = *mono* ]]; then
 
   if  [[ "$STATE" = *initialized* ]];
   then
-  	if  [[ "$AnalyticsActivation" = *true* ]]; then
-      cd $AS_HOME/scripts
-      run_as ${DATAFARI_USER} "bash as-manager.sh init_logstash";
-    fi
+    cd $AS_HOME/scripts
+    run_as ${DATAFARI_USER} "bash as-manager.sh init_logstash";
      
     cd $DIR   
     
