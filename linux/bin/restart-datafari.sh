@@ -11,9 +11,11 @@ source "${DIR}/utils.sh"
 source $CONFIG_FILE
 
 echo "Restart of Datafari"
+echo "Restart Start time : `date`"
 errors=""
-# TODO add variable for check if Monit is installed
 
+
+@VERSION-RESTART@
 
 #monoserver case
 if [ "$NODETYPE" != "main" ]; then
@@ -39,4 +41,5 @@ then
 fi
 echo "Please wait 10 seconds before the end of the restart"
 sleep 10
+echo "End restart time : `date`"
 echo "END OF SCRIPT"
