@@ -10,7 +10,28 @@ var retryCptBaseVal = 15; // default retry cpt, expressed in seconds
 var retryCpt = retryCptBaseVal; // current retry cpt
 var retryNb = 0;
 var keycloakUser = false;
-var samlEnabled = false;
+var ssoEnabled = false;
+
+function setSSOEnabled(resp) {
+  // Determine if a SSO protocol is enabled
+  var samlEnabled = false;
+  var casEnabled = false;
+  if ((resp.samlEnabled != undefined && resp.samlEnabled != null)) {
+    samlEnabled = resp.samlEnabled;
+  }
+  if (resp.casEnabled != undefined && resp.casEnabled != null) {
+    casEnabled = resp.casEnabled;
+  }
+  if(samlEnabled || casEnabled) {
+    ssoEnabled = true;
+  }
+}
+
+function setDefaultTimeout(resp) {
+  if (resp.sessionTimeout != undefined && resp.sessionTimeout != null) {
+    sessionDefaultTimeout = resp.sessionTimeout;
+  }
+}
 
 $(document).ready(function() {
 
@@ -26,12 +47,9 @@ $(document).ready(function() {
       if (resp.sessionTimeout != undefined && resp.sessionTimeout != null) {
         sessionDefaultTimeout = resp.sessionTimeout;
       }
-      if (resp.keycloakUser != undefined && resp.keycloakUser != null) {
-        keycloakUser = resp.keycloakUser;
-      }
-      if (resp.samlEnabled != undefined && resp.samlEnabled != null) {
-        samlEnabled = resp.samlEnabled;
-      }
+      
+      setDefaultTimeout(resp);
+      setSSOEnabled(resp);
     }
   });
 
@@ -97,34 +115,37 @@ function checkIdleTime() {
       timeout : 1000,
       success : function(resp) {
         connectionSucceededReinit();
+        // Refresh session timeout param
+        setDefaultTimeout(resp);
+        // Refresh ssoEnabled param
+        setSSOEnabled(resp);
         if (resp.code != 0) { // session has expired or is invalid, so redirect the user to the login page
           window.location.href = "../login?timeout=expired&redirect=" + encodeURIComponent(window.location.href);
+          return;
         } else {
           if (logged !== resp.user && resp.isAdmin) { // admin user but different user so reload
             window.location.reload();
+            return;
           } else if (!resp.isAdmin) { // new user and isn't an admin user, so redirect to the search page
             window.location.href = "../";
+            return;
           }
           // session has been successfully refreshed so update the lastActiveTime
           lastActiveTime = new Date().getTime();
         }
-        if (resp.sessionTimeout != undefined && resp.sessionTimeout != null) {
-          sessionDefaultTimeout = resp.sessionTimeout;
-        }
         if (resp.keycloakUser != undefined && resp.keycloakUser != null) {
           keycloakUser = resp.keycloakUser;
-        }
-        if (resp.samlEnabled != undefined && resp.samlEnabled != null) {
-          samlEnabled = resp.samlEnabled;
         }
       },
       error : function(request, status, err) {
         if (status !== "timeout") {
-          if (request.status === 401 || (request.responseText != undefined && request.responseText.indexOf("session has been expired") !== -1) || (request.status === 0 && samlEnabled)) {
-            if (!keycloakUser && !samlEnabled) {
+          if (request.status === 401 || (request.responseText != undefined && request.responseText.indexOf("session has been expired") !== -1) || (request.status === 0 && ssoEnabled)) {
+            if (!keycloakUser && !ssoEnabled) {
               window.location.href = "../login?timeout=expired&redirect=" + encodeURIComponent(window.location.href);
+              return;
             } else {
               window.location.reload();
+              return;
             }
           }
           retryNb++;

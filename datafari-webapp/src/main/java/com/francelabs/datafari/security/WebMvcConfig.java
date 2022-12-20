@@ -111,7 +111,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
   }
 
   @Controller
-  @ConditionalOnExpression("${saml.enabled:false}==false && ${keycloak.enabled:false}==false")
+  @ConditionalOnExpression("${saml.enabled:false}==false && ${keycloak.enabled:false}==false && ${cas.enabled:false}==false")
   public class LoginController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -189,6 +189,17 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public String logout(final HttpServletRequest request) throws Exception {
       return "redirect:/saml/logout";
+    }
+
+  }
+
+  @Controller
+  @ConditionalOnProperty(name = "cas.enabled", havingValue = "true", matchIfMissing = false)
+  public class CASLogoutController {
+
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public String logout(final HttpServletRequest request) throws Exception {
+      return "redirect:/logout/cas";
     }
 
   }

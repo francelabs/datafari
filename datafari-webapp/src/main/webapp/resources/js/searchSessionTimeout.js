@@ -9,7 +9,28 @@ var retryCountdownIntervalID = null; // stocks the id of the interval thread tha
 var retryCptBaseVal = 15; // default retry cpt, expressed in seconds
 var retryCpt = retryCptBaseVal; // current retry cpt
 var retryNb = 0;
-var samlEnabled = false;
+var ssoEnabled = false;
+
+function setSSOEnabled(resp) {
+  // Determine if a SSO protocol is enabled
+  var samlEnabled = false;
+  var casEnabled = false;
+  if ((resp.samlEnabled != undefined && resp.samlEnabled != null)) {
+    samlEnabled = resp.samlEnabled;
+  }
+  if (resp.casEnabled != undefined && resp.casEnabled != null) {
+    casEnabled = resp.casEnabled;
+  }
+  if(samlEnabled || casEnabled) {
+    ssoEnabled = true;
+  }
+}
+
+function setDefaultTimeout(resp) {
+  if (resp.sessionTimeout != undefined && resp.sessionTimeout != null) {
+    sessionDefaultTimeout = resp.sessionTimeout;
+  }
+}
 
 $(document).ready(function() {
 
@@ -22,12 +43,9 @@ $(document).ready(function() {
       if (resp.code == 0) {
         logged = resp.user;
       }
-      if (resp.sessionTimeout != undefined && resp.sessionTimeout != null) {
-        sessionDefaultTimeout = resp.sessionTimeout;
-      }
-      if (resp.samlEnabled != undefined && resp.samlEnabled != null) {
-        samlEnabled = resp.samlEnabled;
-      }
+      
+      setDefaultTimeout(resp);
+      setSSOEnabled(resp);
     }
   });
 
@@ -97,30 +115,31 @@ function checkIdleTime() {
       timeout : 1000,
       success : function(resp) {
         connectionSucceededReinit();
+        // Refresh session timeout param
+        setDefaultTimeout(resp);
+        // Refresh ssoEnabled param
+        setSSOEnabled(resp);
         if (resp.code !== 0 && logged != null) {
           // resp code !== 0 means not logged, so if the logged var is not null , it means we currently think we are logged, so need to
           // reload the page to be unlogged
           window.location.reload();
+          return;
         } else {
           // resp code == 0 means logged, so if the logged var null , it means we currently think we are not logged, so need to
           // reload the page to be logged
           // if the logged var is not equals to the resp.user it means we are not the user what we think we are, so reload the page
           if (resp.code == 0 && logged == null || resp.code == 0 && logged !== resp.user) {
             window.location.reload();
+            return;
           }
           lastActiveTime = new Date().getTime();
-        }
-        if (resp.sessionTimeout != undefined && resp.sessionTimeout != null) {
-          sessionDefaultTimeout = resp.sessionTimeout;
-        }
-        if (resp.samlEnabled != undefined && resp.samlEnabled != null) {
-          samlEnabled = resp.samlEnabled;
         }
       },
       error : function(request, status, err) {
         if (status !== "timeout") {
-          if (request.status === 401 || (request.responseText != undefined && request.responseText.indexOf("session has been expired") !== -1) || (request.status === 0 && samlEnabled)) {
+          if (request.status === 401 || (request.responseText != undefined && request.responseText.indexOf("session has been expired") !== -1) || (request.status === 0 && ssoEnabled)) {
             window.location.reload();
+            return;
           }
           retryNb++;
           retryCpt = retryCptBaseVal * retryNb;

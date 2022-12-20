@@ -18,18 +18,32 @@ public class DatafariSessionListener implements HttpSessionListener {
   @Override
   public void sessionCreated(final HttpSessionEvent se) {
 
-    String keycloakEnabled = null;
+    boolean keycloakEnabled = false;
+    boolean samlEnabled = false;
+    boolean casEnabled = false;
+    boolean kerberosEnabled = false;
 
     try (InputStream is = this.getClass().getClassLoader().getResourceAsStream("application.properties");) {
       final Properties appProps = new Properties();
       appProps.load(is);
-      keycloakEnabled = appProps.getProperty("keycloak.enabled", "false");
+      final String keycloakEnabledStr = appProps.getProperty("keycloak.enabled", "false");
+      keycloakEnabled = Boolean.parseBoolean(keycloakEnabledStr);
+      final String samlEnabledStr = appProps.getProperty("saml.enabled", "false");
+      samlEnabled = Boolean.parseBoolean(samlEnabledStr);
+      final String casEnabledStr = appProps.getProperty("cas.enabled", "false");
+      casEnabled = Boolean.parseBoolean(casEnabledStr);
+      final String kerberosEnabledStr = appProps.getProperty("kerberos.enabled", "false");
+      kerberosEnabled = Boolean.parseBoolean(kerberosEnabledStr);
+
     } catch (final Exception e) {
-      keycloakEnabled = "false";
+      keycloakEnabled = false;
+      samlEnabled = false;
+      casEnabled = false;
+      kerberosEnabled = false;
     }
 
     final HttpSession session = se.getSession();
-    if (keycloakEnabled.contentEquals("false")) {
+    if (!keycloakEnabled) {
       // Set session timeout
       int sessionTimeout = defaultUnauthenticatedSessionTimeout;
       try {
