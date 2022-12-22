@@ -72,10 +72,7 @@
     The wildcard * is also allowed, which triggers a search for any word that starts with the same characters as the ones declared in the query. <br>
     For instance, searching ret* will return documents containing words such as return, retired, retreat.
 </p>
-<p>    
-    Examples and more operators are presented here: <br/>
-    <a target="blank" href="https://lucene.apache.org/solr/guide/7_6/the-standard-query-parser.html#the-standard-query-parser">https://lucene.apache.org/solr/guide/7_6/the-standard-query-parser.html#the-standard-query-parser</a> 
-</p>
+
 
 <h2>Facets:</h2>
 <p>
