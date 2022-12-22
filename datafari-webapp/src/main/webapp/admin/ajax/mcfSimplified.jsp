@@ -356,7 +356,8 @@
                           <OPTION value="jtds:sybase://">Sybase</OPTION>
                           <OPTION value="mysql://">MySQL</OPTION>
                           <OPTION value="mariadb://">MariaDB</OPTION>
-                          <OPTION value="xbib:csv:">CSV</OPTION>
+                          <!-- This option will only be available with MCF 2.25                        
+                          <OPTION value="xbib:csv:">CSV</OPTION> -->
                         </select>
                       </div>
                     </div>                      
