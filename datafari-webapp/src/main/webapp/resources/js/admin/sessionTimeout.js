@@ -16,13 +16,17 @@ function setSSOEnabled(resp) {
   // Determine if a SSO protocol is enabled
   var samlEnabled = false;
   var casEnabled = false;
-  if ((resp.samlEnabled != undefined && resp.samlEnabled != null)) {
+  var kerberosEnabled = false;
+  if (resp.samlEnabled != undefined && resp.samlEnabled != null) {
     samlEnabled = resp.samlEnabled;
   }
   if (resp.casEnabled != undefined && resp.casEnabled != null) {
     casEnabled = resp.casEnabled;
   }
-  if(samlEnabled || casEnabled) {
+  if (resp.kerberosEnabled != undefined && resp.kerberosEnabled != null) {
+    kerberosEnabled = resp.kerberosEnabled;
+  }
+  if(samlEnabled || casEnabled || kerberosEnabled) {
     ssoEnabled = true;
   }
 }
