@@ -123,7 +123,6 @@ if  [[ "$NODETYPE" = *mono* ]]; then
   then
     echo "Wait 10s that the Zookeepers are started..."
     sleep 10
-    run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_mcf_crawler_agent";
     run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_zk_mcf";
     run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_zk";
   else

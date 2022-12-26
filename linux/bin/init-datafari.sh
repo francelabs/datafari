@@ -239,6 +239,15 @@ init_zk_mcf() {
 
 init_mcf() {
   sed -i -e "s/@MCFPROCESSID@/${1}/g" $MCF_HOME/options.env.unix >>$installerLog 2>&1
+  
+  cd $MCF_HOME
+  echo "Init MCF crawler agent libs"
+  LIBS=$(echo lib/*.jar connector-lib-proprietary/*.jar | sed 's/[^ ]*jcifs-ng[^ ]*//g' | tr ' ' ':')
+  #Remove log4j-1 lib
+  LOG4J1=$(echo lib/log4j-1.2.*.jar):
+  LIBS=$(echo "${LIBS/$LOG4J1/}")
+  sed -i -e "s#@LIBS@#$LIBS#g" options.env.unix
+  
 }
 
 init_shards() {
