@@ -756,11 +756,19 @@ initialization_monoserver() {
   if [ -d /etc/httpd ]; then
     stop_firewalld_start_iptables
   fi
-  secure_tomcat $NODEHOST
-  secure_tomcat_mcf $NODEHOST
-  secure_monit $NODEHOST
-  secure_glances $NODEHOST
-  save_iptables_rules
+  if [ $# -eq 0 ]
+    then
+    echo "Securization of Datafari"
+    secure_tomcat $NODEHOST
+    secure_tomcat_mcf $NODEHOST
+    secure_monit $NODEHOST
+    secure_glances $NODEHOST
+    save_iptables_rules
+  elif [[ "$1" == *nosecurization* ]]
+    then
+    echo "No securization of Datafari"
+    
+  fi
   
   init_permissions
   sed -i 's/\(STATE *= *\).*/\1initialized/' $INIT_STATE_FILE
@@ -820,7 +828,7 @@ if [ "$NODETYPE" == "monoserver" ]; then
     
   echo "Check complete."
 
-    initialization_monoserver
+    initialization_monoserver $1
 fi
 
 @VERSION-INIT@
