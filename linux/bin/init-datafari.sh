@@ -866,4 +866,4 @@ fi
 }
 
 
-init_datafari;
+init_datafari $1;
