@@ -406,7 +406,7 @@
     "downloading": "Downloading",
     "downZKconf": "Download configuration files from The System Configuration Manager (experts only)",
     "downZKconfLabel": "Download the FileShare configuration from the System Configuration Manager (stored in /opt/datafari/bin/backup/solr)",
-    "duplicateJobWarn": "The duplicate jobs are not automatically started, they need to be started manually",
+    "duplicateJobWarn": "This option is not automatically started, you will need to start it manually in expert mode",
     "duplicates": "Duplicates",
     "duplicates-algorithm-conf": "Algorithm configuration",
     "duplicates-collection": "Collection name",
