@@ -407,7 +407,7 @@
     "downloading": "Téléchargement",
     "downZKconf": "Télécharger les fichiers de configuration depuis le System Configuration Manager (experts only)",
     "downZKconfLabel": "Télécharger les fichiers de configuration depuis le System Configuration Manager (stocké dans /opt/datafari/bin/backup/solr)",
-    "duplicateJobWarn": "Les jobs duplicatas ne sont pas démarrés automatiquement, ils doivent être démarrés à la main",
+    "duplicateJobWarn": "Cette option ne se lance pas automatiquement, vous devez l'activer manuellement en mode expert",
     "duplicates": "Doublons",
     "duplicates-algorithm-conf": "Configuration de l'algorithme'",
     "duplicates-collection": "Nom de la collection",
