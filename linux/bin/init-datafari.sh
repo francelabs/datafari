@@ -309,6 +309,8 @@ init_password() {
 }
 
 init_password_postgresql() {
+  cd $MCF_HOME/obfuscation-utility
+  chmod -R 777 $MCF_HOME/obfuscation-utility/obfuscate.sh
   sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${1})~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${1})~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESPASSWORD@~${1}~g" $DATAFARI_HOME/pgsql/pwd.conf >>$installerLog 2>&1
