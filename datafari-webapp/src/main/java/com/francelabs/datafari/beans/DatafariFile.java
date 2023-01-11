@@ -18,7 +18,7 @@ public class DatafariFile {
       title = (String) ((JSONArray) jsonDoc.get("title")).get(0);
     }
     if (jsonDoc.get("last_modified") != null) {
-      String strDate = (String) jsonDoc.get("last_modified");
+      String strDate = (String) ((JSONArray) jsonDoc.get("last_modified")).get(0);
       strDate = strDate.substring(0, strDate.indexOf("T"));
       final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
       try {
