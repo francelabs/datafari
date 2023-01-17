@@ -4,7 +4,7 @@ $(function($) {
   var elm = $(this);
 
   // Set the language parameter for search page
-  elm.find('#datafariSearchUiLink').prop('href', "/Datafari/Search?lang=" + window.i18n.language);
+  elm.find('#datafariSearchUiLink').prop('href', "/");
 
   // Service Administration
   elm.find('#service-administration-AdminUI').html(window.i18n.msgStore['adminUI-ServiceAdministration']);
