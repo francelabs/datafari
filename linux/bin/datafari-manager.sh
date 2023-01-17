@@ -289,7 +289,7 @@ init_solr()
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.collection": "Duplicates"}}' http://localhost:8983/solr/@MAINCOLLECTION@/config
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.hash.fields": "content"}}' http://localhost:8983/solr/Duplicates/config
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.quant.rate": "0.1"}}' http://localhost:8983/solr/Duplicates/config 
-  
+  cd ${SOLR_INSTALL_DIR}/solrcloud/FileShare/conf/customs_schema && bash addCustomSchemaInfo.sh
   @SOLR-INIT@
 }
 
