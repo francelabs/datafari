@@ -19,6 +19,24 @@ question_ip_node() {
     set_property "NODEHOST" $node_host $CONFIG_FILE
 }
 
+check_ip_node() {
+    ping -c 1 $node_host
+    if [ $? -eq 0 ]
+    then
+      echo "ping ok to server"
+    else
+  	  echo "Problem with ping command for IP : $node_host"
+  	  read -p "Are you sure that the IP is correct, enter yes to continue (yes/no)? [yes] ? " confirmation_nodehost
+      if [[ "$confirmation_nodehost" = "yes" ]] || [[ "$confirmation_nodehost" = "y" ]] || [[ "$confirmation_nodehost" = "true" ]]; then
+        echo "IP confirmed. The script will continue."
+  	  else
+    	echo "Script will stop"
+    	exit 0
+      fi
+    fi
+
+}
+
 question_solr_collection() {
     read -p "What is the name of the main Solr Collection [FileShare]: " solr_main_collection
     solr_main_collection=${solr_main_collection:-FileShare}
