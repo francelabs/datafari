@@ -200,6 +200,7 @@
         </a>
         <ul id="menu-extra" class="list-unstyled collapse">
           <li id="Duplicates"><a id="duplicates-AdminUI" class="ajax-link" href="?page=duplicates"></a></li>
+          <li id="universalConnectorUploadConf"><a id="universalConnectorUploadConf-AdminUI" class="ajax-link" href="?page=universalConnectorUploadConf"></a></li>
         </ul>
       </li>
       <%
