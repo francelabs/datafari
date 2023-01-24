@@ -5,7 +5,7 @@
   See the License for the specific language governing permissions and limitations under the License. -->
 
 <config>
-  <luceneMatchVersion>8.5.2</luceneMatchVersion>
+  <luceneMatchVersion>8.11.2</luceneMatchVersion>
   <dataDir>${solr.data.dir:}</dataDir>
 
   <directoryFactory name="DirectoryFactory" class="${solr.directoryFactory:solr.NRTCachingDirectoryFactory}" />
@@ -19,7 +19,6 @@
     <infoStream>true</infoStream>
   </indexConfig>
 
-  <jmx />
 
   <updateHandler class="solr.DirectUpdateHandler2">
 
