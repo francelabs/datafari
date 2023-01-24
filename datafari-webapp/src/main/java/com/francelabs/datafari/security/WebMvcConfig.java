@@ -63,7 +63,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
   }
 
   @RestController
-  public class ErrorController implements org.springframework.boot.web.servlet.error.ErrorController {
+  public class StandardErrorController implements org.springframework.boot.web.servlet.error.ErrorController {
 
     @RequestMapping("/error")
     public ModelAndView renderErrorPage(final HttpServletResponse httpResponse) {
@@ -112,11 +112,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
   @Controller
   @ConditionalOnExpression("${saml.enabled:false}==false && ${keycloak.enabled:false}==false && ${cas.enabled:false}==false")
-  public class LoginController {
-
+  public class StandardLoginController {
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String loginPage(@RequestParam(value = "error", required = false) final String error, @RequestParam(value = "logout", required = false) final String logout,
-        @RequestParam(value = "timeout", required = false) final String timeout, final Model model) {
+    public String loginPage(@RequestParam(value = "error", required = false) final String error, @RequestParam(value = "logout", required = false) final String logout, @RequestParam(value = "timeout", required = false) final String timeout,
+        final Model model) {
       String errorMessage = null;
       String errorType = null;
       if (error != null) {
@@ -135,6 +134,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
       model.addAttribute("errorType", errorType);
       return "login";
     }
+  }
+
+  @Controller
+  @ConditionalOnExpression("${saml.enabled:false}==false && ${keycloak.enabled:false}==false && ${cas.enabled:false}==false")
+  public class StandardLogoutController {
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public String logoutPage(final HttpServletRequest request, final HttpServletResponse response) {

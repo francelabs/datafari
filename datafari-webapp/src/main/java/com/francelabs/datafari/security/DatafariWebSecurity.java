@@ -11,6 +11,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.cassandra.core.CassandraOperations;
 import org.springframework.data.cassandra.core.CassandraTemplate;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -98,7 +99,19 @@ public class DatafariWebSecurity {
       http.sessionManagement().sessionFixation().migrateSession().maximumSessions(maxConcurrentSessions);
       http.formLogin().loginPage("/login").defaultSuccessUrl("/index.jsp", false).successHandler(new DatafariAuthenticationSuccessHandler());
       http.logout().logoutSuccessUrl("/index.jsp").invalidateHttpSession(true);
-      http.authorizeRequests().antMatchers("/*").permitAll().antMatchers("/admin/*").hasAnyRole("SearchExpert", "SearchAdministrator");
+      // Only handles requests that does not contain any authorization header or containing basic auth header
+      http.requestMatcher(request -> {
+        final String auth = request.getHeader(HttpHeaders.AUTHORIZATION);
+        boolean handles = false;
+        if (auth == null || (auth != null && auth.toLowerCase().startsWith("basic"))) {
+          handles = true;
+        }
+        return handles;
+      }).authorizeRequests()
+      .antMatchers("/admin/*").hasAnyRole("SearchExpert", "SearchAdministrator")
+      .antMatchers("/rest/v2.0/files/**").hasRole("SearchAdministrator")
+      .antMatchers("/rest/v2.0/management/**").hasRole("SearchAdministrator")
+      .anyRequest().permitAll();
     }
 
     @Override
@@ -107,8 +120,8 @@ public class DatafariWebSecurity {
       final List<LdapRealm> adList = LdapConfig.getActiveDirectoryRealms();
       for (final LdapRealm adr : adList) {
         for (final String userBase : adr.getUserBases()) {
-          auth.ldapAuthentication().ldapAuthoritiesPopulator(new DatafariLdapAuthoritiesPopulator()).userSearchBase(userBase).userSearchFilter("(" + adr.getUserSearchAttribute() + "={0})")
-              .contextSource().managerDn(adr.getConnectionName()).managerPassword(adr.getDeobfuscatedConnectionPassword()).url(adr.getConnectionURL());
+          auth.ldapAuthentication().ldapAuthoritiesPopulator(new DatafariLdapAuthoritiesPopulator()).userSearchBase(userBase).userSearchFilter("(" + adr.getUserSearchAttribute() + "={0})").contextSource().managerDn(adr.getConnectionName())
+              .managerPassword(adr.getDeobfuscatedConnectionPassword()).url(adr.getConnectionURL());
         }
       }
     }
