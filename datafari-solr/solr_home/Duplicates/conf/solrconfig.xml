@@ -4,7 +4,7 @@
   <lib dir="${lib.path}lib/solr"/>
   <lib dir="${lib.path}lib/custom"/>
 
-  <luceneMatchVersion>7.4.0</luceneMatchVersion>
+  <luceneMatchVersion>8.11.2</luceneMatchVersion>
   
   <dataDir>${solr.data.dir:}</dataDir>
   
@@ -22,7 +22,6 @@
      <infoStream>true</infoStream>
   </indexConfig>
 
-  <jmx/>
   
   <updateHandler class="solr.DirectUpdateHandler2">
     <updateLog>
