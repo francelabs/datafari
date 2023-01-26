@@ -108,9 +108,8 @@ public class DatafariWebSecurity {
         }
         return handles;
       }).authorizeRequests()
-      .antMatchers("/admin/*").hasAnyRole("SearchExpert", "SearchAdministrator")
-      .antMatchers("/rest/v2.0/files/**").hasRole("SearchAdministrator")
-      .antMatchers("/rest/v2.0/management/**").hasRole("SearchAdministrator")
+      .antMatchers("/admin/*", "/SearchExpert/*").hasAnyRole("SearchExpert", "SearchAdministrator")
+      .antMatchers("/SearchAdministrator/*", "/rest/v2.0/files/**", "/rest/v2.0/management/**").hasRole("SearchAdministrator")
       .anyRequest().permitAll();
     }
 

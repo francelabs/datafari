@@ -8,7 +8,11 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 
 @Configuration
 @EnableResourceServer
-public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
+/**
+ * Declare that any /rest/** API is a oauth resource being able to handle oauth2 tokens
+ *
+ */
+public class OauthResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
   @Override
   public void configure(final HttpSecurity http) throws Exception {
