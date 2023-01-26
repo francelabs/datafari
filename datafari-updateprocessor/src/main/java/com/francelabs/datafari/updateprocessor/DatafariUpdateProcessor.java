@@ -93,6 +93,78 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
   public void processAdd(final AddUpdateCommand cmd) throws IOException {
     final SolrInputDocument doc = cmd.getSolrInputDocument();
 
+    // Tika specific mapping
+    if (doc.getFieldValue("ignored_dc_creator") != null) {
+      doc.getFieldValues("ignored_dc_creator").forEach(value -> {
+        doc.addField("author", value);
+      });
+    }
+    if (doc.getFieldValue("ignored_meta_last_author") != null) {
+      doc.getFieldValues("ignored_meta_last_author").forEach(value -> {
+        doc.addField("last_author", value);
+      });
+    }
+    if (doc.getFieldValue("ignored_dc_title") != null) {
+      doc.getFieldValues("ignored_dc_title").forEach(value -> {
+        doc.addField("title", value);
+      });
+    }
+    if (doc.getFieldValue("ignored_dcterms_created") != null) {
+      doc.getFieldValues("ignored_dcterms_created").forEach(value -> {
+        doc.addField("creation_date", value);
+      });
+    }
+    if (doc.getFieldValue("ignored_dcterms_modified") != null) {
+      doc.getFieldValues("ignored_dcterms_modified").forEach(value -> {
+        doc.addField("last_modified", value);
+      });
+    }
+    if (doc.getFieldValue("ignored_meta_character_count") != null) {
+      doc.getFieldValues("ignored_meta_character_count").forEach(value -> {
+        doc.addField("character_count", value);
+      });
+    }
+    if (doc.getFieldValue("ignored_meta_keyword") != null) {
+      doc.getFieldValues("ignored_meta_keyword").forEach(value -> {
+        doc.addField("keywords", value);
+      });
+    }
+    if (doc.getFieldValue("ignored_dc_subject") != null) {
+      doc.getFieldValues("ignored_dc_subject").forEach(value -> {
+        doc.addField("subject", value);
+      });
+    }
+    if (doc.getFieldValue("ignored_meta_page_count") != null) {
+      doc.getFieldValues("ignored_meta_page_count").forEach(value -> {
+        doc.addField("page_count", value);
+      });
+    }
+    if (doc.getFieldValue("ignored_cp_revision") != null) {
+      doc.getFieldValues("ignored_cp_revision").forEach(value -> {
+        doc.addField("revision_number", value);
+      });
+    }
+    if (doc.getFieldValue("ignored_meta_word_count") != null) {
+      doc.getFieldValues("ignored_meta_word_count").forEach(value -> {
+        doc.addField("word_count", value);
+      });
+    }
+    if (doc.getFieldValue("ignored_dc_publisher") != null) {
+      doc.getFieldValues("ignored_dc_publisher").forEach(value -> {
+        doc.addField("publisher", value);
+      });
+    }
+    if (doc.getFieldValue("ignored_dc_description") != null) {
+      doc.getFieldValues("ignored_dc_description").forEach(value -> {
+        doc.addField("description", value);
+      });
+    }
+    if (doc.getFieldValue("ignored_extended_properties_totaltime") != null) {
+      doc.getFieldValues("ignored_extended_properties_totaltime").forEach(value -> {
+        doc.addField("total_time", value);
+      });
+    }
+
     // Sometimes Tika put several ids so we keep the first one which is
     // always the right one
     if (doc.getFieldValues("id").size() > 1) {
@@ -320,24 +392,22 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     doc.addField("mime", mime.toLowerCase());
 
     // remove useless dates to only keep one for last_modified and creation_date fields
-    String lastmodifiedField = "last_modified";
-    String creationdateField = "creation_date";
+    final String lastmodifiedField = "last_modified";
+    final String creationdateField = "creation_date";
 
     if (doc.containsKey(lastmodifiedField) && doc.getFieldValue(lastmodifiedField) != null && !doc.getFieldValue(lastmodifiedField).toString().isEmpty()) {
-      Collection<Object> lastmodifiedCollection = doc.getFieldValues("last_modified");
-      Object firsLastModified = lastmodifiedCollection.iterator().next();
+      final Collection<Object> lastmodifiedCollection = doc.getFieldValues("last_modified");
+      final Object firsLastModified = lastmodifiedCollection.iterator().next();
       doc.remove(lastmodifiedField);
       doc.addField(lastmodifiedField, firsLastModified);
     }
 
     if (doc.containsKey(creationdateField) && doc.getFieldValue(creationdateField) != null && !doc.getFieldValue(creationdateField).toString().isEmpty()) {
-      Collection<Object> creationDateCollection = doc.getFieldValues("creation_date");
-      Object firstCreationDate = creationDateCollection.iterator().next();
+      final Collection<Object> creationDateCollection = doc.getFieldValues("creation_date");
+      final Object firstCreationDate = creationDateCollection.iterator().next();
       doc.remove(creationdateField);
       doc.addField(creationdateField, firstCreationDate);
     }
-
-
 
     super.processAdd(cmd);
   }
