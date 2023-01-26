@@ -27,7 +27,7 @@ $(document).ready(function() {
   // Check if search aggregation is enabled or not.
   // If it is enable then the query elevator graphical feature must be disabled to avoid confusion and errors with the doc boosts
   $.ajax({
-    url: '../SearchAdministrator/searchAggregatorConfig',
+    url: '../rest/v2.0/management/searchAggregatorConfig',
     success: function(data) {
       if (data.code == 0) {
         aggregatorEnabled = data.activated;

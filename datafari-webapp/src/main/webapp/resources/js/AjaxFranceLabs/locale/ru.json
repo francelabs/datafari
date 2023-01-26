@@ -699,6 +699,8 @@
     "score": "Релевантность",
     "search": "Поиск",
     "searchAggregatorActivationLabel": "Enable/Disable results aggregation",
+    "searchAggregatorAlwaysUseDefaultLabel": "Always use default",
+    "searchAggregatorAlwaysUseDefaultTooltip": "Forces the the default Datafari set to be be called in addition to the default list of the user. See documentation for more details",
     "searchAggregatorClientConfig": "Search aggregator: client configuration",
     "searchAggregatorCurrentDefaultLabel": "The current default Datafari is: ",
     "searchAggregatorDefaultLabel": "Default Datafari",

@@ -725,6 +725,8 @@
     "score": "Pertinence",
     "search": "Recherche",
     "searchAggregatorActivationLabel": "Activer/Désactiver l'aggrégation de résultats",
+    "searchAggregatorAlwaysUseDefaultLabel": "Toujours utiliser les Datafaris par défaut",
+    "searchAggregatorAlwaysUseDefaultTooltip": "Force l ensemble de Datafaris par défaut à être appellé additionnellement aux Datafaris sélectionnés par l utilisateur. Voir la doc pour plus de détails",
     "searchAggregatorClientConfig": "Search aggregator: configuration du client",
     "searchAggregatorCurrentDefaultLabel": "Le Datafari actuel par défault est : ",
     "searchAggregatorDefaultLabel": "Datafari par défault",
