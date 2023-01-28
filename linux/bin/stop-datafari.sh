@@ -81,6 +81,14 @@ then
   cd $DIR
 fi
 
+ 
+  if  [[ "$TIKASERVER_ANNOTATOR" = *true* ]];
+  then
+    cd $TIKA_SERVER_HOME_ANNOTATOR/bin
+    run_as ${DATAFARI_USER} "bash tika-server.sh stop";
+    cd $DIR
+  fi
+
 if  [[ "$AnalyticsActivation" = *true* ]]; then
   #Stop Analytic Stack
   cd $AS_HOME/scripts
