@@ -38,6 +38,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
+import com.francelabs.datafari.api.SearchAPI;
+import com.francelabs.datafari.api.SuggesterAPI;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
 import com.francelabs.datafari.service.db.UserHistoryDataService;
@@ -53,6 +55,45 @@ public class Search2 extends HttpServlet {
   private static final long serialVersionUID = -7963279533577712482L;
 
   private static final Logger logger = LogManager.getLogger(Search2.class.getName());
+
+  /**
+   * Check if a search session id is provided in the request, if not then create a random one. Search session id is used by Datafari to save statistics about a search session (documents clicked/not
+   * clicked etc.)
+   *
+   * @param request the original request
+   */
+  private void setSearchSessionId(final HttpServletRequest request) {
+    if (request.getParameter("id") == null) {
+      final UUID id = UUID.randomUUID();
+      request.setAttribute("id", id.toString());
+    }
+  }
+
+  /**
+   * Apply user's specific query config (specific boosts related to user context) on the request
+   *
+   * @param request the original request
+   */
+  private void applyUserQueryConf(final HttpServletRequest request) {
+    final String userConf = GetUserQueryConf.getUserQueryConf(request);
+    if (userConf != null && userConf.length() > 0) {
+      final JSONParser parser = new JSONParser();
+      try {
+        final JSONObject jsonConf = (JSONObject) parser.parse(userConf);
+        final String qf = (String) jsonConf.get("qf");
+        final String pf = (String) jsonConf.get("pf");
+        if (qf != null && qf.length() > 0) {
+          request.setAttribute("qf", qf);
+        }
+
+        if (pf != null && pf.length() > 0) {
+          request.setAttribute("pf", pf);
+        }
+      } catch (final ParseException e) {
+        logger.warn("An issue has occured while reading user query conf", e);
+      }
+    }
+  }
 
   private void saveToUserHistory(final HttpServletRequest request) {
     final String authenticatedUserName = AuthenticatedUserName.getName(request);
@@ -93,30 +134,10 @@ public class Search2 extends HttpServlet {
   @GetMapping(value = "/rest/v2.0/search/*", produces = "application/json;charset=UTF-8")
   protected String performSearch(final HttpServletRequest request, final HttpServletResponse response) {
     try {
-      if (request.getParameter("id") == null) {
-        final UUID id = UUID.randomUUID();
-        request.setAttribute("id", id.toString());
-      }
-
-      final String userConf = GetUserQueryConf.getUserQueryConf(request);
-      if (userConf != null && userConf.length() > 0) {
-        final JSONParser parser = new JSONParser();
-        try {
-          final JSONObject jsonConf = (JSONObject) parser.parse(userConf);
-          final String qf = (String) jsonConf.get("qf");
-          final String pf = (String) jsonConf.get("pf");
-          if (qf != null && qf.length() > 0) {
-            request.setAttribute("qf", qf);
-          }
-
-          if (pf != null && pf.length() > 0) {
-            request.setAttribute("pf", pf);
-          }
-        } catch (final ParseException e) {
-          logger.warn("An issue has occured while reading user query conf", e);
-        }
-      }
+      setSearchSessionId(request);
+      applyUserQueryConf(request);
       saveToUserHistory(request);
+
       final JSONObject jsonResponse = SearchAggregator.doGetSearch(request, response);
       // Check if we get a code, if this is the case, we got an error
       // We will throw an internal error exception with the message if there is one
@@ -147,6 +168,29 @@ public class Search2 extends HttpServlet {
     } catch (ServletException | IOException e) {
       throw new InternalErrorException("Error while performing the search request.");
     }
+  }
+
+  @GetMapping(value = "/rest/v2.0/search/noaggregator/*", produces = "application/json;charset=UTF-8")
+  protected String performAggregatorlessSearch(final HttpServletRequest request, final HttpServletResponse response) {
+    setSearchSessionId(request);
+    applyUserQueryConf(request);
+    saveToUserHistory(request);
+
+    String searchResponse = "";
+    final String action = request.getParameter("action");
+    if (action != null) {
+      switch (action) {
+      case "suggest":
+        searchResponse = SuggesterAPI.suggest(request);
+        break;
+      case "search":
+      default:
+        searchResponse = SearchAPI.search(request);
+      }
+    } else {
+      searchResponse = SearchAPI.search(request);
+    }
+    return searchResponse;
   }
 
   @PostMapping("/rest/v2.0/search/*")
