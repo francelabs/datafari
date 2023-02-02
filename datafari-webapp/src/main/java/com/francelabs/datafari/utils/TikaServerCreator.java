@@ -119,7 +119,7 @@ public class TikaServerCreator {
     com.francelabs.datafari.utils.FileUtils.appendUsingFileWriter(setEnvScriptPath,"export TIKA_SERVER_HOME_ANNOTATOR="+installationPath);
 
     copyTikaFiles(installationPath, tikaConfigDoc, log4j2Conf, log4j2ChildConf);
-
+    com.francelabs.datafari.utils.FileUtils.replaceString(installationPath+"/bin/set-tika-env.sh","tika.pid", "tika2.pid");
     File monitStartFile = new File(monitScriptStartTikaServerPath);
     if (monitStartFile.exists()) {
       com.francelabs.datafari.utils.FileUtils.replaceAndCopy(monitScriptStartTikaServerPath, monitScriptStartTikaServerPathNew, "\\$TIKA_SERVER_HOME", installationPath);

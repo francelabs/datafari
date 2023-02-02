@@ -113,6 +113,15 @@ public class FileUtils {
 
   }
   
+  public static void replaceString(String sourceFile,String regex, String stringReplaced) throws IOException {
+  Path path = Paths.get(sourceFile);
+  Charset charset = StandardCharsets.UTF_8;
+
+  String content = new String(Files.readAllBytes(path), charset);
+  content = content.replaceAll(regex,stringReplaced);
+  Files.write(path, content.getBytes(charset));
+  }
+  
   public static void appendUsingFileWriter(String filePath, String text) {
     File file = new File(filePath);
     FileWriter fr = null;
