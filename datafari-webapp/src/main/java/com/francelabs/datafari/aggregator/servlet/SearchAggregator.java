@@ -69,10 +69,24 @@ public class SearchAggregator extends HttpServlet {
 
   private static final Map<String, ExecutorService> runningThreads = new HashMap<String, ExecutorService>();
 
-  public static JSONObject doGetSearch(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+  /**
+   * Perform search
+   *
+   * @param request          the search request
+   * @param response         the response
+   * @param forceLocalSearch set true to force a local search and disable the aggregator for this search, false for default behavior
+   * @return the JSONObject representing the search response
+   * @throws ServletException
+   * @throws IOException
+   */
+  public static JSONObject doGetSearch(final HttpServletRequest request, final HttpServletResponse response, final boolean forceLocalSearch) throws ServletException, IOException {
     final SearchAggregatorConfiguration sac = SearchAggregatorConfiguration.getInstance();
     final String jaExternalDatafarisStr = sac.getProperty(SearchAggregatorConfiguration.EXTERNAL_DATAFARIS);
-    final boolean activated = Boolean.valueOf(sac.getProperty(SearchAggregatorConfiguration.ACTIVATED));
+    // If the forceLocalSearch is set to true then disable the aggregator otherwise, use the aggregator configuration to enable or not the aggregator
+    boolean activated = Boolean.valueOf(sac.getProperty(SearchAggregatorConfiguration.ACTIVATED));
+    if (forceLocalSearch) {
+      activated = false;
+    }
     final int timeoutPerRequest = Integer.parseInt(sac.getProperty(SearchAggregatorConfiguration.TIMEOUT_PER_REQUEST));
     final int globalTimeout = Integer.parseInt(sac.getProperty(SearchAggregatorConfiguration.GLOBAL_TIMEOUT));
     final String defaultDatafariString = sac.getProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI) == null ? null : sac.getProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI);
@@ -278,7 +292,7 @@ public class SearchAggregator extends HttpServlet {
         // Merge the responses
         return mergeResponses(responses, failedRequests, orgStart, orgRows, wildCardQuery, jaExternalDatafaris.size());
       } else {
-        String searchResponse = "";
+        JSONObject searchResponse;
         if (action != null) {
           switch (action) {
           case "suggest":
@@ -293,7 +307,7 @@ public class SearchAggregator extends HttpServlet {
         }
 
         // Check if the searchResponse is OK
-        if (searchResponse.isEmpty()) {
+        if (searchResponse == null || searchResponse.isEmpty()) {
           final HashMap<String, Object> error = new HashMap<>();
           error.put("code", 500);
           error.put("status", "Unkown error");
@@ -302,12 +316,11 @@ public class SearchAggregator extends HttpServlet {
           // Check if the response is not an error
           // If it is then return the error object
           try {
-            final JSONParser parser = new JSONParser();
-            final JSONObject jSearchResponse = (JSONObject) parser.parse(searchResponse);
-            if (jSearchResponse.containsKey("error")) {
-              return (JSONObject) jSearchResponse.get("error");
+
+            if (searchResponse.containsKey("error")) {
+              return (JSONObject) searchResponse.get("error");
             }
-            return jSearchResponse;
+            return searchResponse;
           } catch (final Exception e) {
             // We copuldn't parse the response as JSON.
             // Return an error object
@@ -327,6 +340,10 @@ public class SearchAggregator extends HttpServlet {
       responseContent.put("message", e.getMessage());
       return new JSONObject(responseContent);
     }
+  }
+
+  public static JSONObject doGetSearch(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    return doGetSearch(request, response, false);
   }
 
   /**
@@ -776,8 +793,8 @@ public class SearchAggregator extends HttpServlet {
   }
 
   /**
-   * Returns an empty arraylist if both arbuments are null or empty. If one is null or empty and the other is not, returns the one that is not empty. If both arguments are not empty returns the
-   * selected sources list filtered by removing any element that is not present in the allowed sources list.
+   * Returns an empty arraylist if both arbuments are null or empty. If one is null or empty and the other is not, returns the one that is not empty. If both arguments are not empty
+   * returns the selected sources list filtered by removing any element that is not present in the allowed sources list.
    *
    * @param selectedSourcesList
    * @param allowedSources

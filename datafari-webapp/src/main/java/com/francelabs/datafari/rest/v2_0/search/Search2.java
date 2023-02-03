@@ -38,8 +38,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
-import com.francelabs.datafari.api.SearchAPI;
-import com.francelabs.datafari.api.SuggesterAPI;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
 import com.francelabs.datafari.service.db.UserHistoryDataService;
@@ -57,8 +55,8 @@ public class Search2 extends HttpServlet {
   private static final Logger logger = LogManager.getLogger(Search2.class.getName());
 
   /**
-   * Check if a search session id is provided in the request, if not then create a random one. Search session id is used by Datafari to save statistics about a search session (documents clicked/not
-   * clicked etc.)
+   * Check if a search session id is provided in the request, if not then create a random one. Search session id is used by Datafari to save statistics about a search session
+   * (documents clicked/not clicked etc.)
    *
    * @param request the original request
    */
@@ -131,66 +129,81 @@ public class Search2 extends HttpServlet {
     }
   }
 
+  /**
+   * Check if search response contains errors and throw an {@link InternalErrorException} if it is the case
+   *
+   * @param searchResponse the JSONObject representing the search response to check
+   */
+  private void checkException(final JSONObject searchResponse) {
+    // Check if we get a code, if this is the case, we got an error
+    // We will throw an internal error exception with the message if there is one
+    final Long code = (Long) searchResponse.get("code");
+    if (code != null) {
+      final String message = (String) searchResponse.get("message");
+      if (message != null) {
+        throw new InternalErrorException(message);
+      } else {
+        throw new InternalErrorException("Error while performing the search request.");
+      }
+    }
+  }
+
+  /**
+   * Add a new 'click_url' field to result docs of the provided search response to point to the URL REST API. The URL REST API allows to keep track of clicked documents even if
+   * clicked from an external UI
+   *
+   * @param searchResponse The search response to modify
+   * @param request        The {@link HttpServletRequest} that performed the search request
+   * @param searchEndpoint The search endpoint from which the provided searchResponse is issued from
+   */
+  private void switchDocURLToURLAPI(final JSONObject searchResponse, final HttpServletRequest request, final String searchEndpoint) {
+    final JSONObject responseObj = (JSONObject) searchResponse.get("response");
+    final JSONArray docsArray = (JSONArray) responseObj.get("docs");
+    for (final Object docObj : docsArray) {
+      final JSONObject jsonDoc = (JSONObject) docObj;
+      final String url = (String) jsonDoc.get("url");
+      if (url != null) {
+        // temper with the URL to point on our URL endpoint
+        // Also add a path array giving path information for display purposes
+        final StringBuffer currentURL = request.getRequestURL();
+        String newUrl = currentURL.substring(0, currentURL.indexOf(searchEndpoint));
+        newUrl += "/rest/v2.0/url?url=" + URLEncoder.encode(url, StandardCharsets.UTF_8);
+        jsonDoc.put("click_url", newUrl);
+      }
+    }
+  }
+
   @GetMapping(value = "/rest/v2.0/search/*", produces = "application/json;charset=UTF-8")
-  protected String performSearch(final HttpServletRequest request, final HttpServletResponse response) {
+  protected JSONObject performSearch(final HttpServletRequest request, final HttpServletResponse response) {
     try {
       setSearchSessionId(request);
       applyUserQueryConf(request);
       saveToUserHistory(request);
 
       final JSONObject jsonResponse = SearchAggregator.doGetSearch(request, response);
-      // Check if we get a code, if this is the case, we got an error
-      // We will throw an internal error exception with the message if there is one
-      final Long code = (Long) jsonResponse.get("code");
-      if (code != null) {
-        final String message = (String) jsonResponse.get("message");
-        if (message != null) {
-          throw new InternalErrorException(message);
-        } else {
-          throw new InternalErrorException("Error while performing the search request.");
-        }
-      }
-      final JSONObject responseObj = (JSONObject) jsonResponse.get("response");
-      final JSONArray docsArray = (JSONArray) responseObj.get("docs");
-      for (final Object docObj : docsArray) {
-        final JSONObject jsonDoc = (JSONObject) docObj;
-        final String url = (String) jsonDoc.get("url");
-        if (url != null) {
-          // temper with the URL to point on our URL endpoint
-          // Also add a path array giving path information for display purposes
-          final StringBuffer currentURL = request.getRequestURL();
-          String newUrl = currentURL.substring(0, currentURL.indexOf("/rest/v2.0/search/"));
-          newUrl += "/rest/v2.0/url?url=" + URLEncoder.encode(url, StandardCharsets.UTF_8);
-          jsonDoc.put("click_url", newUrl);
-        }
-      }
-      return jsonResponse.toJSONString();
+      checkException(jsonResponse);
+      switchDocURLToURLAPI(jsonResponse, request, "/rest/v2.0/search/");
+
+      return jsonResponse;
     } catch (ServletException | IOException e) {
       throw new InternalErrorException("Error while performing the search request.");
     }
   }
 
   @GetMapping(value = "/rest/v2.0/search/noaggregator/*", produces = "application/json;charset=UTF-8")
-  protected String performAggregatorlessSearch(final HttpServletRequest request, final HttpServletResponse response) {
-    setSearchSessionId(request);
-    applyUserQueryConf(request);
-    saveToUserHistory(request);
+  protected JSONObject performAggregatorlessSearch(final HttpServletRequest request, final HttpServletResponse response) {
+    try {
+      setSearchSessionId(request);
+      applyUserQueryConf(request);
+      saveToUserHistory(request);
 
-    String searchResponse = "";
-    final String action = request.getParameter("action");
-    if (action != null) {
-      switch (action) {
-      case "suggest":
-        searchResponse = SuggesterAPI.suggest(request);
-        break;
-      case "search":
-      default:
-        searchResponse = SearchAPI.search(request);
-      }
-    } else {
-      searchResponse = SearchAPI.search(request);
+      final JSONObject jsonResponse = SearchAggregator.doGetSearch(request, response, true);
+      checkException(jsonResponse);
+      switchDocURLToURLAPI(jsonResponse, request, "/rest/v2.0/search/noaggregator/");
+      return jsonResponse;
+    } catch (ServletException | IOException e) {
+      throw new InternalErrorException("Error while performing the search request.");
     }
-    return searchResponse;
   }
 
   @PostMapping("/rest/v2.0/search/*")

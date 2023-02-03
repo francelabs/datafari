@@ -39,25 +39,23 @@ public class SearchProxy extends HttpServlet {
   private static final Logger LOGGER = LogManager.getLogger(SearchProxy.class.getName());
 
   /**
-   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-   *      response)
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
    */
   @Override
-  protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
-      throws ServletException, IOException {
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
-    String searchResponse = "";
+    String searchResponse;
     if (request.getParameter("action") != null) {
       switch (request.getParameter("action")) {
-        case "suggest":
-          searchResponse = SuggesterAPI.suggest(request);
-          break;
-        case "search":
-        default:
-          searchResponse = SearchAPI.search(request);
+      case "suggest":
+        searchResponse = SuggesterAPI.suggest(request).toJSONString();
+        break;
+      case "search":
+      default:
+        searchResponse = SearchAPI.search(request).toJSONString();
       }
     } else {
-      searchResponse = SearchAPI.search(request);
+      searchResponse = SearchAPI.search(request).toJSONString();
     }
     final String wrapperFunction = request.getParameter("json.wrf");
     if (wrapperFunction != null) {

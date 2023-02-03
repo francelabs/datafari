@@ -57,7 +57,7 @@ public class SearchAPI {
     return allowedHandlers;
   }
 
-  public static String search(final String protocol, final String handler, final Principal principal, final Map<String, String[]> parameterMap) {
+  public static JSONObject search(final String protocol, final String handler, final Principal principal, final Map<String, String[]> parameterMap) {
     final JSONObject response = new JSONObject();
 
     final Set<String> allowedHandlers = getAllowedHandlers();
@@ -67,7 +67,7 @@ public class SearchAPI {
       error.put("code", 401);
       error.put("message", "Unauthorized handler. Allowed handlers are " + allowedHandlers.toString());
       response.put("error", error);
-      return response.toJSONString();
+      return response;
     }
 
     IndexerServer solr;
@@ -257,11 +257,11 @@ public class SearchAPI {
       error.put("code", 500);
       error.put("message", e.getMessage());
       response.put("error", error);
-      return response.toJSONString();
+      return response;
     }
   }
 
-  public static String search(final HttpServletRequest request) {
+  public static JSONObject search(final HttpServletRequest request) {
     final String handler = getHandler(request);
     final String protocol = request.getScheme() + ":";
     final Map<String, String[]> parameterMap = new HashMap<String, String[]>(request.getParameterMap());
