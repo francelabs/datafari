@@ -1,14 +1,10 @@
     <processor class="solr.CloneFieldUpdateProcessorFactory">
-      <lst name="source">
-        <str name="fieldRegex">content</str>
-      </lst>
+      <str name="source">content</str>
       <str name="dest">exactContent</str>
     </processor>
 
     <processor class="solr.CloneFieldUpdateProcessorFactory">
-      <lst name="source">
-        <str name="fieldRegex">content</str>
-      </lst>
+      <str name="source">content</str>
       <str name="dest">preview_content</str>
     </processor>
     

@@ -76,7 +76,7 @@ public class DatafariWebSecurity {
   }
 
   @Configuration
-  @ConditionalOnExpression("${saml.enabled:false}==false && ${keycloak.enabled:false}==false && ${kerberos.enabled:false}==false  && ${cas.enabled:false}==false")
+  @ConditionalOnExpression("${saml.enabled:false}==false && ${keycloak.enabled:false}==false && ${kerberos.enabled:false}==false && ${cas.enabled:false}==false")
   @Order(Ordered.LOWEST_PRECEDENCE)
   public static class StandardSecurity extends WebSecurityConfigurerAdapter {
 
