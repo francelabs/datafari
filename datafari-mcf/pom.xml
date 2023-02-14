@@ -59,9 +59,8 @@
               <goal>wget</goal>
             </goals>
             <configuration>
-              <!-- 2 repos : official repo : http://archive.apache.org/dist/manifoldcf/apache-manifoldcf-${mcf.version}/apache-manifoldcf-${mcf.version}-bin.tar.gz 
-                Datafari repo : http://repomcf.datafari.com/mcf/apache-manifoldcf-${mcf.version}-dev-bin-${mcf.commit.number}.tar.gz -->
-              <url>https://archive.apache.org/dist/manifoldcf/apache-manifoldcf-${mcf.version}/apache-manifoldcf-${mcf.version}-bin.tar.gz</url>
+              <!-- <url>https://archive.apache.org/dist/manifoldcf/apache-manifoldcf-${mcf.version}/apache-manifoldcf-${mcf.version}-bin.tar.gz</url> -->
+              <url>https://dlcdn.apache.org/manifoldcf/apache-manifoldcf-${mcf.version}/apache-manifoldcf-${mcf.version}-bin.tar.gz</url>
               <sha512>${mcf.sha512}</sha512>
               <unpack>true</unpack>
             </configuration>

@@ -65,7 +65,8 @@
             <configuration>
               <!-- Version of Solr should be retrieved from a property file as well 
                 as the SHA1 -->
-              <url>http://archive.apache.org/dist/zookeeper/zookeeper-${zookeeper.version}/apache-zookeeper-${zookeeper.version}-bin.tar.gz</url>
+              <!-- <url>http://archive.apache.org/dist/zookeeper/zookeeper-${zookeeper.version}/apache-zookeeper-${zookeeper.version}-bin.tar.gz</url> -->
+              <url>https://repo.datafari.com/zookeeper/${zookeeper.version}/apache-zookeeper-${zookeeper.version}-bin.tar.gz</url>
               <sha512>${zookeeper.sha512}</sha512>
               <unpack>true</unpack>
             </configuration>
