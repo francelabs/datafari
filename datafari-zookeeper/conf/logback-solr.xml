@@ -108,7 +108,7 @@
     <appender-ref ref="RFAAUDIT" />
   </logger-->
 
-  <root level="INFO">
+  <root level="warn">
     <appender-ref ref="ROLLINGFILE" />
   </root>
 </configuration>

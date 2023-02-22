@@ -21,46 +21,6 @@
 	<div class="documentation-style-no-margin">
     You can configure Datafari to detect duplicated files and display them in a specific admin UI. The default algorithm used to determine duplicates is the one provided by this Solr update processor<a href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/681574448/Detect+duplicates+configuration+-+Enterprise+Edition" target="_blank">...see more</a>
   </div>
-	<div class="box">
-		<div class="box-header">
-			<div class="box-name">
-				<i class="fas fa-table"></i><span  id="title"></span>
-			</div>
-			<div class="box-icons">
-				<a class="collapse-link"><i class="fas fa-chevron-up"></i></a>
-			</div>
-			<div class="no-move"></div>
-		</div>
-		<div id="thBox" class="box-content">
-			<form id="duplicates-conf-form" name="duplicates-conf-form" class="form-horizontal" role="form">
-					
-					<div class="row baseline-content">
-            <label id="duplicatesActivationLabel" class="col-sm-4 control-label"></label>
-						<div class="col-sm-5 p-0">
-						  <input type="checkbox" id="duplicates_activation" name="duplicates_activation" data-height="36" data-toggle="toggle" data-onstyle="success">
-						</div>	
-					</div>
-			
-          <div class="row baseline-content">
-            <label id="duplicatesHostLabel" class="col-sm-4 control-label"></label>
-            <input type="text" id="duplicatesHost" class="col-sm-5">
-          </div>
-          <div class="row baseline-content">
-            <label id="duplicatesCollectionLabel" class="col-sm-4 control-label"></label>
-            <input type="text" id="duplicatesCollection" class="col-sm-5">
-          </div>
-					<div class="row baseline-content">
-            <label id="duplicatesConfSaveLabel" class="col-sm-4 control-label"></label>
-						<button id="submit" name="submitth" class="btn btn-primary btn-label-left"></button>
-					</div>
-					
-					<br/>
-					
-				
-			</form>
-			<div id="duplicates-conf-message" style="visibility:hidden;" class="feedback-message alert alert-success"><i class="fas fa-check"></i>Configuration successfully saved.</div>
-		</div>
-	</div>
   <div class="box">
     <div class="box-header">
       <div class="box-name">

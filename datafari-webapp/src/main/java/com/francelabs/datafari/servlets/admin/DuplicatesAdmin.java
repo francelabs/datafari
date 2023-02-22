@@ -44,14 +44,6 @@ public class DuplicatesAdmin extends HttpServlet {
     response.setContentType("application/json");
 
     try {
-      final JSONObject fileshareOverlay = SolrAPI.readConfigOverlay(Core.FILESHARE.toString());
-      final String enabled = SolrAPI.getUserProp(fileshareOverlay, "duplicates.enabled");
-      final String solrHost = SolrAPI.getUserProp(fileshareOverlay, "duplicates.solr.host");
-      final String collection = SolrAPI.getUserProp(fileshareOverlay, "duplicates.collection");
-      jsonResponse.put("enabled", enabled);
-      jsonResponse.put("host", solrHost);
-      jsonResponse.put("collection", collection);
-
       final JSONObject duplicatesOverlay = SolrAPI.readConfigOverlay(Core.DUPLICATES.toString());
       final String hashFields = SolrAPI.getUserProp(duplicatesOverlay, "duplicates.hash.fields");
       final String quantRate = SolrAPI.getUserProp(duplicatesOverlay, "duplicates.quant.rate");
@@ -75,25 +67,7 @@ public class DuplicatesAdmin extends HttpServlet {
     final String config = req.getParameter("config");
     if (config != null) {
 
-      if (config.equals("synchronization")) {
-        final String enabled = req.getParameter("enabled");
-        final String solrHost = req.getParameter("host");
-        final String collection = req.getParameter("collection");
-
-        if (enabled != null && solrHost != null && collection != null) {
-          final Map<String, String> properties = new HashMap<String, String>();
-          properties.put("duplicates.enabled", enabled);
-          properties.put("duplicates.solr.host", solrHost);
-          properties.put("duplicates.collection", collection);
-          try {
-            SolrAPI.setUserProp(Core.FILESHARE.toString(), properties);
-          } catch (InterruptedException | ParseException e) {
-            logger.error(e);
-            jsonResponse.put("error", e.getMessage());
-          }
-        }
-
-      } else if (config.equals("algorithm")) {
+      if (config.equals("algorithm")) {
         final String hashFields = req.getParameter("fields");
         final String quantRate = req.getParameter("quant");
 
