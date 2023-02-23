@@ -169,7 +169,7 @@
                       </div>
                       <div class="col-sm-4">
                         <select id="filerTimeZone" name="filerTimeZone" class="form-control"  style="width: 100%">
-                          <OPTION disabled selected>Select your TimeZone</OPTION>
+                          <OPTION value="" disabled selected>Select your TimeZone</OPTION>
                         </select>
                         <div class="invalid-feedback">
                           Please select a timezone
@@ -356,6 +356,8 @@
                           <OPTION value="jtds:sybase://">Sybase</OPTION>
                           <OPTION value="mysql://">MySQL</OPTION>
                           <OPTION value="mariadb://">MariaDB</OPTION>
+                          <!-- This option will only be available with MCF 2.25                        
+                          <OPTION value="xbib:csv:">CSV</OPTION> -->
                         </select>
                       </div>
                     </div>                      
@@ -481,7 +483,7 @@
                       </div>
                       <div class="col-sm-4">
                         <select id="dbTimeZone" name="dbTimeZone" class="form-control"  style="width: 100%">
-                          <OPTION disabled selected>Select your TimeZone</OPTION>
+                          <OPTION value="" disabled selected>Select your TimeZone</OPTION>
                         </select>
                         <div class="invalid-feedback">
                           Please select a timezone
@@ -721,7 +723,7 @@
                       </div>
                       <div class="col-sm-4">
                         <select id="webTimeZone" name="webTimeZone" class="form-control"  style="width: 100%">
-                          <OPTION disabled selected>Select your TimeZone</OPTION>
+                          <OPTION value="" disabled selected>Select your TimeZone</OPTION>
                         </select>
                         <div class="invalid-feedback">
                           Please select a timezone

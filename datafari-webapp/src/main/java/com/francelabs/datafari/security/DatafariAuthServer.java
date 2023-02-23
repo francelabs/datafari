@@ -51,6 +51,9 @@ public class DatafariAuthServer extends AuthorizationServerConfigurerAdapter {
   @Autowired
   PasswordEncoder passwordEncoder;
 
+  @Autowired
+  private DatafariSimpleUserDetailsService datafariUserDetailService;
+
   @Bean
   public CassandraTokenStore tokenStore() {
     return new CassandraTokenStore();
@@ -63,7 +66,7 @@ public class DatafariAuthServer extends AuthorizationServerConfigurerAdapter {
 
   @Override
   public void configure(final AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-    endpoints.authenticationManager(authenticationManager).tokenStore(tokenStore()).userDetailsService(new DatafariSimpleUserDetailsService());
+    endpoints.authenticationManager(authenticationManager).tokenStore(tokenStore()).userDetailsService(datafariUserDetailService);
   }
 
   @Override
@@ -78,10 +81,10 @@ public class DatafariAuthServer extends AuthorizationServerConfigurerAdapter {
     final Optional<CassandraClientDetails> oClientDetails = clientDetailsRepo.findByClientId("datafari-client");
     if (!oClientDetails.isPresent()) {
       // Create it
-      final Set<String> searchAggScopes = new HashSet<String>(Arrays.asList(SCOPE_READ));
-      final Set<String> searchAggGrant = new HashSet<String>(Arrays.asList(CLIENT_CREDENTIALS, GRANT_TYPE_PASSWORD, REFRESH_TOKEN));
-      final CassandraClientDetails datafariClient = new CassandraClientDetails("datafari-client", passwordEncoder.encode(""), new HashSet<String>(), searchAggScopes, searchAggGrant,
-          new HashSet<String>(), new HashSet<String>(), 60 * 30, 60 * 60 * 24);
+      final Set<String> searchAggScopes = new HashSet<>(Arrays.asList(SCOPE_READ));
+      final Set<String> searchAggGrant = new HashSet<>(Arrays.asList(CLIENT_CREDENTIALS, GRANT_TYPE_PASSWORD, REFRESH_TOKEN));
+      final CassandraClientDetails datafariClient = new CassandraClientDetails("datafari-client", passwordEncoder.encode(""), new HashSet<String>(), searchAggScopes, searchAggGrant, new HashSet<String>(), new HashSet<String>(), 60 * 30,
+          60 * 60 * 24);
       clientDetailsRepo.save(datafariClient);
       LOGGER.info("Created oauth2 client 'datafari-client'");
     }

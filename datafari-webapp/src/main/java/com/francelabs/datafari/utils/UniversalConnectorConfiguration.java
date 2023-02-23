@@ -16,7 +16,6 @@
 package com.francelabs.datafari.utils;
 
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.francelabs.datafari.config.AbstractConfigClass;
 
@@ -26,24 +25,24 @@ import com.francelabs.datafari.config.AbstractConfigClass;
  * @author France Labs
  *
  */
-public class ExportResultsConfiguration extends AbstractConfigClass {
-
-  // Properties
-  public static final String SAVE_DIRECTORY_PATH = "SAVEDIRECTORYPATH";
+public class UniversalConnectorConfiguration extends AbstractConfigClass {
 
   // Config filename
-  private static final String configFilename = "export-results.properties";
+  private static final String configFilename = "universal-connector.properties";
 
-  private static ExportResultsConfiguration instance;
+  // Properties
+  public static final String STORAGE_FOLDER_PATH = "STORAGE_FOLDER_PATH";
+
+  private static UniversalConnectorConfiguration instance;
 
   /**
    *
    * Get the instance
    *
    */
-  public static synchronized ExportResultsConfiguration getInstance() {
+  public static synchronized UniversalConnectorConfiguration getInstance() {
     if (null == instance) {
-      instance = new ExportResultsConfiguration();
+      instance = new UniversalConnectorConfiguration();
     }
     return instance;
   }
@@ -53,9 +52,9 @@ public class ExportResultsConfiguration extends AbstractConfigClass {
    * Read the properties file to get the parameters to create instance
    *
    */
-  private ExportResultsConfiguration() {
+  private UniversalConnectorConfiguration() {
 
-    super(configFilename, LogManager.getLogger(ExportResultsConfiguration.class.getName()));
+    super(configFilename, LogManager.getLogger(UniversalConnectorConfiguration.class.getName()));
   }
 
 }

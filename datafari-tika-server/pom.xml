@@ -25,9 +25,8 @@
               <goal>wget</goal>
             </goals>
             <configuration>
-              <!-- <url>http://repomcf.datafari.com/tika/tika-server-${tika-server.version}-${tika-server-commit-number}.jar</url> -->
-              <!-- <sha512>8914252131a77aefda87044063f9b114c9000d98ed3c2e627fd69a52319a83b3da76515e6b4fe7e1c86abc519c5a0f938fdafa939ad8bed0dd6453d5a3f9af47</sha512> -->
-              <url>http://archive.apache.org/dist/tika/${tika.version}/tika-server-standard-${tika.version}.jar</url>
+              <!-- <url>http://archive.apache.org/dist/tika/${tika.version}/tika-server-standard-${tika.version}.jar</url> -->
+              <url>https://repo.datafari.com/tika/${tika.version}/tika-server-standard-${tika.version}.jar</url>
               <sha512>${tika-server.sha512}</sha512>
             </configuration>
           </execution>

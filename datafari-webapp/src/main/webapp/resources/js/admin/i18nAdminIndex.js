@@ -4,7 +4,7 @@ $(function($) {
   var elm = $(this);
 
   // Set the language parameter for search page
-  elm.find('#datafariSearchUiLink').prop('href', "/Datafari/Search?lang=" + window.i18n.language);
+  elm.find('#datafariSearchUiLink').prop('href', "/");
 
   // Service Administration
   elm.find('#service-administration-AdminUI').html(window.i18n.msgStore['adminUI-ServiceAdministration']);
@@ -89,6 +89,7 @@ $(function($) {
   //Extra Functionalities
   elm.find('#extraFunctionalities-AdminUI').html(window.i18n.msgStore['adminUI-extraFunctionalities']);
   elm.find('#deduplication-AdminUI').html(window.i18n.msgStore['adminUI-Deduplication']);
+  $("#universalConnectorUploadConf-AdminUI").html(window.i18n.msgStore['universalConnectorUploadConf-AdminUI']);
 
   elm.find('#entityExtractionConf-AdminUI').html(window.i18n.msgStore['adminUI-entityExtractionConf']);
   elm.find('#sttEntitiesConfiguration-AdminUI').html(window.i18n.msgStore['adminUI-sttEntitiesConfiguration']);

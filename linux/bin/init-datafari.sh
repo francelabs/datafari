@@ -19,6 +19,24 @@ question_ip_node() {
     set_property "NODEHOST" $node_host $CONFIG_FILE
 }
 
+check_ip_node() {
+    ping -c 1 $node_host
+    if [ $? -eq 0 ]
+    then
+      echo "ping ok to server"
+    else
+  	  echo "Problem with ping command for IP : $node_host"
+  	  read -p "Are you sure that the IP is correct, enter yes to continue (yes/no)? [yes] ? " confirmation_nodehost
+      if [[ "$confirmation_nodehost" = "yes" ]] || [[ "$confirmation_nodehost" = "y" ]] || [[ "$confirmation_nodehost" = "true" ]]; then
+        echo "IP confirmed. The script will continue."
+  	  else
+    	echo "Script will stop"
+    	exit 0
+      fi
+    fi
+
+}
+
 question_solr_collection() {
     read -p "What is the name of the main Solr Collection [FileShare]: " solr_main_collection
     solr_main_collection=${solr_main_collection:-FileShare}
@@ -239,6 +257,15 @@ init_zk_mcf() {
 
 init_mcf() {
   sed -i -e "s/@MCFPROCESSID@/${1}/g" $MCF_HOME/options.env.unix >>$installerLog 2>&1
+  
+  cd $MCF_HOME
+  echo "Init MCF crawler agent libs"
+  LIBS=$(echo lib/*.jar connector-lib-proprietary/*.jar | sed 's/[^ ]*jcifs-ng[^ ]*//g' | tr ' ' ':')
+  #Remove log4j-1 lib
+  LOG4J1=$(echo lib/log4j-1.2.*.jar):
+  LIBS=$(echo "${LIBS/$LOG4J1/}")
+  sed -i -e "s#@LIBS@#$LIBS#g" options.env.unix
+  
 }
 
 init_shards() {
@@ -300,6 +327,8 @@ init_password() {
 }
 
 init_password_postgresql() {
+  cd $MCF_HOME/obfuscation-utility
+  chmod -R 777 $MCF_HOME/obfuscation-utility/obfuscate.sh
   sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${1})~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${1})~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESPASSWORD@~${1}~g" $DATAFARI_HOME/pgsql/pwd.conf >>$installerLog 2>&1
@@ -747,11 +776,19 @@ initialization_monoserver() {
   if [ -d /etc/httpd ]; then
     stop_firewalld_start_iptables
   fi
-  secure_tomcat $NODEHOST
-  secure_tomcat_mcf $NODEHOST
-  secure_monit $NODEHOST
-  secure_glances $NODEHOST
-  save_iptables_rules
+  if [ $# -eq 0 ]
+    then
+    echo "Securization of Datafari"
+    secure_tomcat $NODEHOST
+    secure_tomcat_mcf $NODEHOST
+    secure_monit $NODEHOST
+    secure_glances $NODEHOST
+    save_iptables_rules
+  elif [[ "$1" == *nosecurization* ]]
+    then
+    echo "No securization of Datafari"
+    
+  fi
   
   init_permissions
   sed -i 's/\(STATE *= *\).*/\1initialized/' $INIT_STATE_FILE
@@ -811,7 +848,7 @@ if [ "$NODETYPE" == "monoserver" ]; then
     
   echo "Check complete."
 
-    initialization_monoserver
+    initialization_monoserver $1
 fi
 
 @VERSION-INIT@
@@ -849,4 +886,4 @@ fi
 }
 
 
-init_datafari;
+init_datafari $1;

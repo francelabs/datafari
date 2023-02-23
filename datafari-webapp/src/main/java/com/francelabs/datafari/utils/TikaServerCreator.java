@@ -99,8 +99,33 @@ public class TikaServerCreator {
     final String tikaName = "Tika-Simple-Server";
     final Document log4j2Conf = createTikaLog4j2PropertiesDoc(tikaName);
     final Document log4j2ChildConf = createTikaLog4j2ChildPropertiesDoc(tikaName);
+    String datafariHomePath = Environment.getEnvironmentVariable("DATAFARI_HOME");
+    if (datafariHomePath == null) {
+      // if no variable is set, use the default installation path
+      datafariHomePath = "/opt/datafari";
+    }
+
+   
+    DatafariMainConfiguration.getInstance().setProperty(DatafariMainConfiguration.TIKASERVER_ANNOTATOR, "true");
+
+    final String monitScriptStartTikaServerPath = datafariHomePath + "/bin/monitorUtils/monit-start-tika-server.sh";
+    final String monitScriptStopTikaServerPath = datafariHomePath + "/bin/monitorUtils/monit-stop-tika-server.sh";
+
+    final String monitScriptStartTikaServerPathNew = datafariHomePath + "/bin/monitorUtils/monit-start-tika-server2.sh";
+    final String monitScriptStopTikaServerPathNew = datafariHomePath + "/bin/monitorUtils/monit-stop-tika-server2.sh";
+    
+    final String setEnvScriptPath = datafariHomePath + "/bin/set-datafari-env.sh";
+    
+    com.francelabs.datafari.utils.FileUtils.appendUsingFileWriter(setEnvScriptPath,"export TIKA_SERVER_HOME_ANNOTATOR="+installationPath);
 
     copyTikaFiles(installationPath, tikaConfigDoc, log4j2Conf, log4j2ChildConf);
+    com.francelabs.datafari.utils.FileUtils.replaceString(installationPath+"/bin/set-tika-env.sh","tika.pid", "tika2.pid");
+    File monitStartFile = new File(monitScriptStartTikaServerPath);
+    if (monitStartFile.exists()) {
+      com.francelabs.datafari.utils.FileUtils.replaceAndCopy(monitScriptStartTikaServerPath, monitScriptStartTikaServerPathNew, "\\$TIKA_SERVER_HOME", installationPath);
+      com.francelabs.datafari.utils.FileUtils.replaceAndCopy(monitScriptStopTikaServerPath, monitScriptStopTikaServerPathNew, "\\$TIKA_SERVER_HOME", installationPath);
+
+    }
   }
 
   private void updateTikaConf(final Element tikaConfigRoot, final String tikaHost, final String tikaPort, final String tmpDir) throws XPathExpressionException {

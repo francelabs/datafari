@@ -1,7 +1,9 @@
 package com.francelabs.datafari.utils;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -98,4 +100,46 @@ public class FileUtils {
     }
     return hashPass.toLowerCase();
   }
+
+
+  public static void replaceAndCopy(String sourceFile, String targetFile, String regex, String stringReplaced) throws IOException {
+    try (PrintWriter pw = new PrintWriter(Paths.get(targetFile).toFile(), StandardCharsets.UTF_8)) {
+      Files.readAllLines(Path.of(sourceFile), StandardCharsets.UTF_8)
+      .stream()
+      .map(s -> s.replaceAll(regex, stringReplaced)
+          )
+      .forEachOrdered(pw::println);
+    }
+
+  }
+  
+  public static void replaceString(String sourceFile,String regex, String stringReplaced) throws IOException {
+  Path path = Paths.get(sourceFile);
+  Charset charset = StandardCharsets.UTF_8;
+
+  String content = new String(Files.readAllBytes(path), charset);
+  content = content.replaceAll(regex,stringReplaced);
+  Files.write(path, content.getBytes(charset));
+  }
+  
+  public static void appendUsingFileWriter(String filePath, String text) {
+    File file = new File(filePath);
+    FileWriter fr = null;
+    try {
+      fr = new FileWriter(file, true);
+      fr.write(text);
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    } finally {
+      try {
+        fr.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+
+
 }

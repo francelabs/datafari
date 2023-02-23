@@ -42,7 +42,7 @@ function getFields(){										//Get the fields from the schema.xml
 	        				$("#"+i).append("<th>"+data.field[i].stored+"</th>");
 	        			}
 	        			if(data.field[i].required===undefined){
-	        				$("#"+i).append("<th>true</th>");
+	        				$("#"+i).append("<th>false</th>");
 	        			}else{
 	        				$("#"+i).append("<th>"+data.field[i].required+"</th>");
 	        			}

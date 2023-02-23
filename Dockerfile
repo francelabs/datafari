@@ -75,6 +75,7 @@ RUN     apt-get update && apt-get install --allow-unauthenticated -y \
                 iptables-persistent \
                 systemd \
                 zip \
+                iputils-ping \
 	&& rm -rf /var/lib/apt/lists/*
 # For dev
 RUN echo "export LANG=C.UTF-8" >> /etc/profile

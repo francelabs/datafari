@@ -78,7 +78,7 @@ public class SuggesterAPI {
     return allowedHandlers;
   }
 
-  public static String suggest(final String protocol, final String handler, final Principal principal, final Map<String, String[]> parameterMap) {
+  public static JSONObject suggest(final String protocol, final String handler, final Principal principal, final Map<String, String[]> parameterMap) {
     LOGGER.info("Suggester API called");
 
     final JSONObject response = new JSONObject();
@@ -91,7 +91,7 @@ public class SuggesterAPI {
       error.put("code", 401);
       error.put("message", "Unauthorized handler. Allowed suggester handlers are " + allowedHandlers.toString());
       response.put("error", error);
-      return response.toJSONString();
+      return response;
     }
 
     IndexerServer solr;
@@ -158,12 +158,12 @@ public class SuggesterAPI {
       error.put("code", 500);
       error.put("message", e.getMessage());
       response.put("error", error);
-      return response.toJSONString();
+      return response;
     }
 
   }
 
-  public static String suggest(final HttpServletRequest request) {
+  public static JSONObject suggest(final HttpServletRequest request) {
     final String handler = getHandler(request);
     final String protocol = request.getScheme() + ":";
     return suggest(protocol, handler, request.getUserPrincipal(), request.getParameterMap());

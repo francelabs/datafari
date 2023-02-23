@@ -410,9 +410,17 @@ function setTimeZones(selectEl) {
   for (var i = 0; i < timezones.length; i++) {
     selectEl.append($("<option />").val(timezones[i]).text(timezones[i]));
   }
+  initSelect2(selectEl);
+}
+
+function initSelect2(selectEl) {
   selectEl.select2({
     width: 'resolve' // need to override the changed default
   });
+}
+
+function reinitSelect2(selectEl) {
+  selectEl.val('').trigger('change') ;
 }
 
 function checkOCR(checkboxEl, tikaHostEl, tikaPortEl, tikaNameEl) {
@@ -736,6 +744,7 @@ function addDbConnector() {
         $("#addDbMessageFailure").show();
       } else {
         $("#addDb").trigger("reset");
+        reinitSelect2($("#dbTimeZone"));
         $("#dbOCR").hide();
         $("#dbSpacy").hide();
         var jobStarted = "";
@@ -805,6 +814,7 @@ function addFilerConnector() {
         $("#addFilerMessageFailure").show();
       } else {
         $("#addFiler").trigger("reset");
+        reinitSelect2($("#filerTimeZone"));
         $("#filerOCR").hide();
         $("#filerSpacy").hide();
         var jobStarted = "";
@@ -873,6 +883,7 @@ function addWebConnector() {
         $("#addWebMessageFailure").show();
       } else {
         $("#addWeb").trigger("reset");
+        reinitSelect2($("#webTimeZone"));
         $("#webOCR").hide();
         $("#webSpacy").hide();
         var jobStarted = "";

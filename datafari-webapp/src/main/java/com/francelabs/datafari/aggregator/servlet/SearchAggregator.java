@@ -69,10 +69,24 @@ public class SearchAggregator extends HttpServlet {
 
   private static final Map<String, ExecutorService> runningThreads = new HashMap<String, ExecutorService>();
 
-  public static JSONObject doGetSearch(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+  /**
+   * Perform search
+   *
+   * @param request          the search request
+   * @param response         the response
+   * @param forceLocalSearch set true to force a local search and disable the aggregator for this search, false for default behavior
+   * @return the JSONObject representing the search response
+   * @throws ServletException
+   * @throws IOException
+   */
+  public static JSONObject doGetSearch(final HttpServletRequest request, final HttpServletResponse response, final boolean forceLocalSearch) throws ServletException, IOException {
     final SearchAggregatorConfiguration sac = SearchAggregatorConfiguration.getInstance();
     final String jaExternalDatafarisStr = sac.getProperty(SearchAggregatorConfiguration.EXTERNAL_DATAFARIS);
-    final boolean activated = Boolean.valueOf(sac.getProperty(SearchAggregatorConfiguration.ACTIVATED));
+    // If the forceLocalSearch is set to true then disable the aggregator otherwise, use the aggregator configuration to enable or not the aggregator
+    boolean activated = Boolean.valueOf(sac.getProperty(SearchAggregatorConfiguration.ACTIVATED));
+    if (forceLocalSearch) {
+      activated = false;
+    }
     final int timeoutPerRequest = Integer.parseInt(sac.getProperty(SearchAggregatorConfiguration.TIMEOUT_PER_REQUEST));
     final int globalTimeout = Integer.parseInt(sac.getProperty(SearchAggregatorConfiguration.GLOBAL_TIMEOUT));
     final String defaultDatafariString = sac.getProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI) == null ? null : sac.getProperty(SearchAggregatorConfiguration.DEFAULT_DATAFARI);
@@ -112,6 +126,7 @@ public class SearchAggregator extends HttpServlet {
     try {
       if (activated) {
         final List<JSONObject> responses = new ArrayList<JSONObject>();
+        final List<JSONObject> failedRequests = new ArrayList<JSONObject>();
         final JSONParser parser = new JSONParser();
         final ArrayList<String> selectedSourcesList = getSelectedSources(request.getParameter("aggregator"), userHomeDatafari);
         final ArrayList<String> filterSourceList = mergeSelectedAndAloowedList(selectedSourcesList, aggregatorUserConfig.getAllowedSourcesFor(requestingUser));
@@ -207,7 +222,7 @@ public class SearchAggregator extends HttpServlet {
           if (jaExternalDatafaris.size() == 1) {
             final JSONObject externalDatafari = (JSONObject) jaExternalDatafaris.get(0);
             final String authUsername = requestingUser;
-            final String suggestResponse = externalDatafariRequest(timeoutPerRequest, handler, parameterMap, externalDatafari, authUsername);
+            final String suggestResponse = externalDatafariRequest(failedRequests, timeoutPerRequest, handler, parameterMap, externalDatafari, authUsername);
             if (suggestResponse != null) {
               return (JSONObject) parser.parse(suggestResponse);
             }
@@ -222,14 +237,29 @@ public class SearchAggregator extends HttpServlet {
             final JSONObject externalDatafari = (JSONObject) jaExternalDatafaris.get(i);
             final String authUsername = requestingUser;
             threadPool.submit(() -> {
-              final String searchResponse = externalDatafariRequest(timeoutPerRequest, handler, parameterMap, externalDatafari, authUsername);
-              if (searchResponse != null && !searchResponse.isEmpty()) {
-                try {
-                  LOGGER.debug("Received response: " + System.lineSeparator() + searchResponse);
-                  responses.add((JSONObject) parser.parse(searchResponse));
-                } catch (final Exception e) {
-                  LOGGER.error("Error processing external Datafari response: " + System.lineSeparator() + searchResponse, e);
+              final String datafariName = externalDatafari.get("label").toString();
+              final String searchApiUrl = externalDatafari.get("search_api_url").toString();
+              try {
+                final String searchResponse = externalDatafariRequest(failedRequests, timeoutPerRequest, handler, parameterMap, externalDatafari, authUsername);
+                if (searchResponse != null && !searchResponse.isEmpty()) {
+                  try {
+                    LOGGER.debug("Received response: " + System.lineSeparator() + searchResponse);
+                    responses.add((JSONObject) parser.parse(searchResponse));
+                  } catch (final Exception e) {
+                    LOGGER.error("Error processing external Datafari response: " + System.lineSeparator() + searchResponse, e);
+                    final JSONObject errorDesc = new JSONObject();
+                    errorDesc.put("datafari_name", datafariName);
+                    errorDesc.put("search_api_url", searchApiUrl);
+                    errorDesc.put("error_msg", "Unable to parse response: " + e.getMessage());
+                    failedRequests.add(errorDesc);
+                  }
                 }
+              } catch (final Exception e) {
+                final JSONObject errorDesc = new JSONObject();
+                errorDesc.put("datafari_name", datafariName);
+                errorDesc.put("search_api_url", searchApiUrl);
+                errorDesc.put("error_msg", "Request error: " + e.getMessage());
+                failedRequests.add(errorDesc);
               }
             });
           }
@@ -256,12 +286,13 @@ public class SearchAggregator extends HttpServlet {
           responseContent.put("origin", "aggregator");
           responseContent.put("code", 2);
           responseContent.put("message", "External Datafari unavailable or unreachable for this request.");
+          responseContent.put("aggregator_errors", failedRequests);
           return new JSONObject(responseContent);
         }
         // Merge the responses
-        return mergeResponses(responses, orgStart, orgRows, wildCardQuery, jaExternalDatafaris.size());
+        return mergeResponses(responses, failedRequests, orgStart, orgRows, wildCardQuery, jaExternalDatafaris.size());
       } else {
-        String searchResponse = "";
+        JSONObject searchResponse;
         if (action != null) {
           switch (action) {
           case "suggest":
@@ -276,7 +307,7 @@ public class SearchAggregator extends HttpServlet {
         }
 
         // Check if the searchResponse is OK
-        if (searchResponse.isEmpty()) {
+        if (searchResponse == null || searchResponse.isEmpty()) {
           final HashMap<String, Object> error = new HashMap<>();
           error.put("code", 500);
           error.put("status", "Unkown error");
@@ -285,16 +316,15 @@ public class SearchAggregator extends HttpServlet {
           // Check if the response is not an error
           // If it is then return the error object
           try {
-            final JSONParser parser = new JSONParser();
-            final JSONObject jSearchResponse = (JSONObject) parser.parse(searchResponse);
-            if (jSearchResponse.containsKey("error")) {
-              return (JSONObject) jSearchResponse.get("error");
+
+            if (searchResponse.containsKey("error")) {
+              return (JSONObject) searchResponse.get("error");
             }
-            return jSearchResponse;
+            return searchResponse;
           } catch (final Exception e) {
             // We copuldn't parse the response as JSON.
             // Return an error object
-            LOGGER.error("COuldn't parse search response to JSONObject", e);
+            LOGGER.error("Couldn't parse search response to JSONObject", e);
             final HashMap<String, Object> responseContent = new HashMap<>();
             responseContent.put("code", 500);
             responseContent.put("message", "Couldn't parse search response into json");
@@ -310,6 +340,10 @@ public class SearchAggregator extends HttpServlet {
       responseContent.put("message", e.getMessage());
       return new JSONObject(responseContent);
     }
+  }
+
+  public static JSONObject doGetSearch(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    return doGetSearch(request, response, false);
   }
 
   /**
@@ -340,12 +374,13 @@ public class SearchAggregator extends HttpServlet {
     return;
   }
 
-  private static String externalDatafariRequest(final int timeoutPerRequest, final String handler, final Map<String, String[]> parameterMap, final JSONObject externalDatafari,
-      final String authUsername) {
+  private static String externalDatafariRequest(final List<JSONObject> failedRequests, final int timeoutPerRequest, final String handler, final Map<String, String[]> parameterMap,
+      final JSONObject externalDatafari, final String authUsername) throws Exception {
+    final String datafariName = externalDatafari.get("label").toString();
+    final String searchApiUrl = externalDatafari.get("search_api_url").toString();
     try (final CloseableHttpClient client = HttpClientProvider.getInstance().newClient(timeoutPerRequest, timeoutPerRequest);) {
       final boolean enabled = (Boolean) externalDatafari.get("enabled");
       if (enabled) {
-        final String searchApiUrl = externalDatafari.get("search_api_url").toString();
         final String secret = externalDatafari.get("search_aggregator_secret").toString();
         final String tokenRequestUrl = externalDatafari.get("token_request_url").toString();
         final String accessToken = SearchAggregatorAccessTokenManager.getInstance().getAccessToken(tokenRequestUrl, secret);
@@ -365,12 +400,22 @@ public class SearchAggregator extends HttpServlet {
           if (getResponse.getStatusLine().getStatusCode() == 200) {
             return IOUtils.toString(getResponse.getEntity().getContent(), StandardCharsets.UTF_8);
           } else {
-            LOGGER.error("Error " + getResponse.getStatusLine().getStatusCode() + " " + getResponse.getStatusLine().getReasonPhrase() + " requesting " + getReq.toString());
+            final String errorDesc = "Error " + getResponse.getStatusLine().getStatusCode() + " " + getResponse.getStatusLine().getReasonPhrase() + " ; while requesting " + getReq.toString();
+            LOGGER.error(errorDesc);
+            final JSONObject errorDescObj = new JSONObject();
+            errorDescObj.put("datafari_name", datafariName);
+            errorDescObj.put("search_api_url", searchApiUrl);
+            errorDescObj.put("error_msg", errorDesc);
+            failedRequests.add(errorDescObj);
           }
         }
       }
+    } catch (final IOException e) {
+      LOGGER.error("Connection error when processing external Datafari request. Datafari name: '" + datafariName + "' ; API URL: " + searchApiUrl, e);
+      throw e;
     } catch (final Exception e) {
-      LOGGER.error("Error processing external Datafari request", e);
+      LOGGER.error("Unknown error when processing external Datafari request. Datafari name: '" + datafariName + "' ; API URL: " + searchApiUrl, e);
+      throw e;
     }
     return null;
   }
@@ -420,7 +465,8 @@ public class SearchAggregator extends HttpServlet {
     doPostSearch(request, resp);
   }
 
-  private static JSONObject mergeResponses(final List<JSONObject> responses, final int originalStart, final int originalRows, final boolean wildCardQuery, final int numExternalDatafaris) {
+  private static JSONObject mergeResponses(final List<JSONObject> responses, final List<JSONObject> failedRequests, final int originalStart, final int originalRows, final boolean wildCardQuery,
+      final int numExternalDatafaris) {
     JSONObject finalResponse = new JSONObject();
     if (responses.size() > 0) {
       finalResponse = (JSONObject) responses.get(0).clone();
@@ -551,6 +597,9 @@ public class SearchAggregator extends HttpServlet {
         // Replace facet fields
         facetCounts.put("facet_fields", mergedFacetFields);
       }
+
+      // Add the failed aggregator requests to the response
+      finalResponse.put("aggregator_errors", failedRequests);
     }
     return finalResponse;
   }
@@ -744,8 +793,8 @@ public class SearchAggregator extends HttpServlet {
   }
 
   /**
-   * Returns an empty arraylist if both arbuments are null or empty. If one is null or empty and the other is not, returns the one that is not empty. If both arguments are not empty returns the
-   * selected sources list filtered by removing any element that is not present in the allowed sources list.
+   * Returns an empty arraylist if both arbuments are null or empty. If one is null or empty and the other is not, returns the one that is not empty. If both arguments are not empty
+   * returns the selected sources list filtered by removing any element that is not present in the allowed sources list.
    *
    * @param selectedSourcesList
    * @param allowedSources

@@ -10,7 +10,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.saml.SAMLCredential;
 import org.springframework.security.saml.userdetails.SAMLUserDetailsService;
+import org.springframework.stereotype.Service;
 
+@Service
 public class DatafariSAMLUserDetailsService implements SAMLUserDetailsService {
 
   @Override

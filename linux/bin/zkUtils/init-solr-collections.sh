@@ -41,7 +41,7 @@ create_collection() {
   	curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.collection": "Duplicates"}}' $url_protocol://${ip_solr}/solr/$1/config
   	curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.hash.fields": "content"}}' $url_protocol://${ip_solr}/solr/Duplicates/config
   	curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.quant.rate": "0.1"}}' $url_protocol://${ip_solr}/solr/Duplicates/config
-  
+    cd ${SOLR_INSTALL_DIR}/solrcloud/FileShare/conf/customs_schema && bash addCustomSchemaInfo.sh
   
 }
 

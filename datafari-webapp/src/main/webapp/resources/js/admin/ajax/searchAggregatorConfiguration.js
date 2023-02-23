@@ -110,7 +110,7 @@ function deleteConf() {
   $("#message").empty().hide();
   var datafariName = $("#datafariName").val();
   var index = $("#select-ex-datafari").val();
-  $.post("../SearchAdministrator/searchAggregatorConfig", {
+  $.post("../rest/v2.0/management/searchAggregatorConfig", {
     datafariName: datafariName,
     action: "delete"
   }, function(data) {
@@ -133,7 +133,7 @@ function removeDefaultHandler(remoteName) {
   return function(event) {
     $("#submit-default").loading("loading");
     $("#message").empty().hide();
-    $.post("../SearchAdministrator/searchAggregatorConfig", {
+    $.post("../rest/v2.0/management/searchAggregatorConfig", {
       datafariName: remoteName,
       action: "removedefault"
     }, function(data) {
@@ -178,7 +178,7 @@ function addDefault() {
   if (index != -1) {
     datafariName = externalDatafaris[index].label
   }
-  $.post("../SearchAdministrator/searchAggregatorConfig", {
+  $.post("../rest/v2.0/management/searchAggregatorConfig", {
     datafariName: datafariName,
     action: "adddefault"
   }, function(data) {
@@ -340,7 +340,7 @@ $(document).ready(
     });
 
     // init search_aggregator_activation
-    $.get("../SearchAdministrator/searchAggregatorConfig", function(data) {
+    $.get("../rest/v2.0/management/searchAggregatorConfig", function(data) {
       if (data.code == 0) {
         var activated = data.activated;
         var timeoutPerRequest = data.timeoutPerRequest;
@@ -428,7 +428,7 @@ $(document).ready(
       var timeoutPerRequest = $("#timeoutPerRequest").val();
       var globalTimeout = $("#globalTimeout").val();
       var action = "timeouts";
-      $.post("../SearchAdministrator/searchAggregatorConfig", {
+      $.post("../rest/v2.0/management/searchAggregatorConfig", {
         timeoutPerRequest: timeoutPerRequest,
         globalTimeout: globalTimeout,
         action: action
@@ -464,7 +464,7 @@ $(document).ready(
         if (!$("#ex_datafari_activation").is(':checked')) {
           enabled = false;
         }
-        $.post("../SearchAdministrator/searchAggregatorConfig", {
+        $.post("../rest/v2.0/management/searchAggregatorConfig", {
           datafariName: datafariName,
           search_api_url: search_api_url,
           token_request_url: token_request_url,
@@ -501,7 +501,7 @@ $(document).ready(
         enable = "false";
       }
 
-      $.post("../SearchAdministrator/searchAggregatorConfig", {
+      $.post("../rest/v2.0/management/searchAggregatorConfig", {
         action: "activate",
         activated: enable
       }, function(data) {
@@ -534,7 +534,7 @@ $(document).ready(
         enable = "false";
       }
 
-      $.post("../SearchAdministrator/searchAggregatorConfig", {
+      $.post("../rest/v2.0/management/searchAggregatorConfig", {
         action: "setalwaysusedefault",
         alwaysusedefault: enable
       }, function(data) {
@@ -550,7 +550,7 @@ $(document).ready(
     $("#renew_search_aggregator_secret").click(function() {
       $("#search-aggregator-secret-message, #search-aggregator-secret-message2").hide();
       $("#renew_search_aggregator_secret").loading("loading");
-      $.post("../SearchAdministrator/searchAggregatorConfig", {
+      $.post("../rest/v2.0/management/searchAggregatorConfig", {
         action: "renew"
       }, function(data) {
         $("#renew_search_aggregator_secret").loading("reset");

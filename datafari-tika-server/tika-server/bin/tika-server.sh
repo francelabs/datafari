@@ -16,7 +16,7 @@ cmd_start() {
    exit 1
   fi
   echo "Starting Tika Server"
-  nohup "$JAVA_HOME/bin/java" -Dlog4j2.configurationFile=file:$TIKA_SERVER_HOME/conf/log4j2.properties.xml -Duser.timezone=UTC $TIKA_MEM -jar $TIKA_SERVER_HOME/bin/tika-server.jar -c $TIKA_SERVER_HOME/conf/tika-config.xml >/dev/null 2>&1 &
+  nohup "$JAVA_HOME/bin/java" -Dlog4j2.configurationFile=file:$TIKA_SERVER_HOME/conf/log4j2.properties.xml -Duser.timezone=UTC $TIKA_MEM -cp $TIKA_SERVER_HOME/bin/tika-server.jar org.apache.tika.server.core.TikaServerCli -c $TIKA_SERVER_HOME/conf/tika-config.xml >/dev/null 2>&1 &
   echo $! > $TIKA_SERVER_PID_FILE
   echo "Tika Server started with PID $(cat $TIKA_SERVER_PID_FILE)"
   return 0

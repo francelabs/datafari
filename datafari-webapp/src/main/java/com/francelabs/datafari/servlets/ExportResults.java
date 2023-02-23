@@ -16,9 +16,11 @@
 package com.francelabs.datafari.servlets;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +46,6 @@ import com.francelabs.datafari.service.indexer.IndexerServer;
 import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 import com.francelabs.datafari.utils.AuthenticatedUserName;
-import com.francelabs.datafari.utils.ExportResultsConfiguration;
 
 /**
  * Servlet implementation class ExportResults
@@ -67,6 +68,10 @@ public class ExportResults extends HttpServlet {
    */
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    performExport(request, response);
+  }
+
+  public static void performExport(final HttpServletRequest request, final HttpServletResponse response) throws UnsupportedEncodingException {
     request.setCharacterEncoding("utf8");
     final String type = request.getParameter("type");
 
@@ -81,21 +86,33 @@ public class ExportResults extends HttpServlet {
         query.setParam("AuthenticatedUserName", authenticatedUserName);
       }
 
-      query.setParam("q", request.getParameter("query"));
-      query.setParam("fl", request.getParameter("fl"));
+      // Set the parameters to the Solr query
+      // Set the default query to *:* if not provided
+      final String q = request.getParameter("query") != null ? request.getParameter("query") : "*:*";
+      query.setParam("q", q);
+      if (request.getParameter("fl") != null) {
+        query.setParam("fl", request.getParameter("fl"));
+      }
       query.setParam("q.op", "AND");
-      query.setParam("sort", request.getParameter("sort"));
-      query.setParam("rows", request.getParameter("nbResults"));
+      final String sort = request.getParameter("sort") != null ? request.getParameter("sort") : "score desc";
+      query.setParam("sort", sort);
+      // Set the default nummber of results to 10 if not provided
+      final String nbResults = request.getParameter("nbResults") != null ? request.getParameter("nbResults") : "10";
+      query.setParam("rows", nbResults);
       query.setRequestHandler("/select");
       final String[] fq = request.getParameterValues("fq[]");
       if (fq != null) {
         query.addFilterQuery(fq);
       }
       final String[] facetField = request.getParameterValues("facetField[]");
+      if (facetField != null) {
+        query.addFacetField(facetField);
+      }
       final String[] facetQuery = request.getParameterValues("facetQuery[]");
-      query.addFacetField(facetField);
-      for (int i = 0; i < facetQuery.length; i++) {
-        query.addFacetQuery(facetQuery[i]);
+      if (facetQuery != null) {
+        for (int i = 0; i < facetQuery.length; i++) {
+          query.addFacetQuery(facetQuery[i]);
+        }
       }
       queryResponse = solr.executeQuery(query);
 
@@ -114,23 +131,43 @@ public class ExportResults extends HttpServlet {
 
           final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
           final String strDate = sdf.format(new Date());
-          final String extractFilePath = ExportResultsConfiguration.getInstance().getProperty(ExportResultsConfiguration.SAVE_DIRECTORY_PATH) + "/export_" + strDate + ".xls";
-          final File extractFile = new File(extractFilePath);
-          final File parentDir = new File(extractFile.getParent());
-          parentDir.mkdirs();
+          final File extractFile = File.createTempFile("export_" + strDate + "-", ".xls");
           final OutputStream os = new FileOutputStream(extractFile);
 
           final SimpleExporter exporter = new SimpleExporter();
           exporter.gridExport(headers, docsList, "title, last_modified, url", os);
 
-          response.getWriter().print(extractFilePath);
+          final String mimeType = "application/xls";
+          final FileInputStream inStream = new FileInputStream(extractFile);
+          // modifies response
+          response.setContentType(mimeType);
+          response.setContentLength((int) extractFile.length());
+
+          // forces download
+          final String headerKey = "Content-Disposition";
+          final String headerValue = String.format("attachment; filename=\"%s\"", extractFile.getName());
+          response.setHeader(headerKey, headerValue);
+
+          // obtains response's output stream
+          final OutputStream outStream = response.getOutputStream();
+
+          final byte[] buffer = new byte[4096];
+          int bytesRead = -1;
+
+          while ((bytesRead = inStream.read(buffer)) != -1) {
+            outStream.write(buffer, 0, bytesRead);
+          }
+
+          inStream.close();
+          outStream.close();
+
+          extractFile.delete();
 
         }
       }
     } catch (final Exception e) {
       logger.error("Unable to export results", e);
     }
-
   }
 
 }

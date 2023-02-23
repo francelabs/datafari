@@ -127,7 +127,7 @@
                 <div class="form-group row">
                   <label id="searchAPIUrlLabel" class="col-sm-4 col-form-label"></label>
                   <div class="col-sm-5">
-                    <input type="text" id="search_api_url" name="search_api_url" class="form-control"  placeholder="http://localhost:8080/Datafari/api/search">
+                    <input type="text" id="search_api_url" name="search_api_url" class="form-control"  placeholder="http://localhost:8080/Datafari/rest/v2.0/search/noaggregator">
                     <div class="invalid-feedback">
                       Please provide a search API url
                     </div>

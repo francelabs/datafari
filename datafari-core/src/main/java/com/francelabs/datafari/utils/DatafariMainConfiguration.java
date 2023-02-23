@@ -58,6 +58,8 @@ public class DatafariMainConfiguration extends AbstractConfigClass {
   public static final String EMAIL_BUGS = "email_bugs";
   public static final String MCF_PASSWORD = "MCFPASSWORD";
   public static final String ANALYTICS_ACTIVATION = "AnalyticsActivation";
+  public static final String MONIT_STATE = "MONIT_STATE";
+  public static final String TIKASERVER_ANNOTATOR= "TIKASERVER_ANNOTATOR";
 
   private final static Logger LOGGER = LogManager.getLogger(DatafariMainConfiguration.class.getName());
 

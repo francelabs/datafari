@@ -44,6 +44,7 @@ public class RefreshSession extends HttpServlet {
 
   String keycloakEnabled = null;
   String samlEnabled = null;
+  String casEnabled = null;
   String kerberosEnabled = null;
 
   /**
@@ -56,6 +57,7 @@ public class RefreshSession extends HttpServlet {
       appProps.load(is);
       keycloakEnabled = appProps.getProperty("keycloak.enabled", "false");
       samlEnabled = appProps.getProperty("saml.enabled", "false");
+      casEnabled = appProps.getProperty("cas.enabled", "false");
       kerberosEnabled = appProps.getProperty("kerberos.enabled", "false");
     } catch (final Exception e) {
       keycloakEnabled = "false";
@@ -75,6 +77,7 @@ public class RefreshSession extends HttpServlet {
 
     jsonResponse.put("keycloakEnabled", Boolean.valueOf(keycloakEnabled));
     jsonResponse.put("samlEnabled", Boolean.valueOf(samlEnabled));
+    jsonResponse.put("casEnabled", Boolean.valueOf(casEnabled));
     jsonResponse.put("kerberosEnabled", Boolean.valueOf(kerberosEnabled));
 
     final Principal userPrincipal = request.getUserPrincipal();

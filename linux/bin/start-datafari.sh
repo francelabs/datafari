@@ -79,6 +79,12 @@ if run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh is_running $TIKA_SER
   exit 1
 fi
 
+if run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh is_running $TIKA_SERVER_PID_FILE"; then
+  PID=$(run_as ${DATAFARI_USER} "cat $TIKA_SERVER_PID_FILE");
+  echo "Error : Tika Server seems to be already running with PID $PID"
+  exit 1
+fi
+
 @START-CHECKS@
 
 
@@ -95,10 +101,8 @@ if  [[ "$NODETYPE" = *mono* ]]; then
 
   if  [[ "$STATE" = *initialized* ]];
   then
-  	if  [[ "$AnalyticsActivation" = *true* ]]; then
-      cd $AS_HOME/scripts
-      run_as ${DATAFARI_USER} "bash as-manager.sh init_logstash";
-    fi
+    cd $AS_HOME/scripts
+    run_as ${DATAFARI_USER} "bash as-manager.sh init_logstash";
      
     cd $DIR   
     
@@ -125,7 +129,6 @@ if  [[ "$NODETYPE" = *mono* ]]; then
   then
     echo "Wait 10s that the Zookeepers are started..."
     sleep 10
-    run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_mcf_crawler_agent";
     run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_zk_mcf";
     run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_zk";
   else
@@ -134,14 +137,6 @@ if  [[ "$NODETYPE" = *mono* ]]; then
     waitCassandra;
   fi
 
-
-  if  [[ "$OCR" = *true* ]];
-  then
-    echo "Using Tesseract OCR..."
-    cp -f ${MCF_HOME}/tika-config.jar ${MCF_HOME}/connector-lib/  
-  else
-    rm -f ${MCF_HOME}/connector-lib/tika-config.jar
-  fi
 
   if [ "$(whoami)" == "root" ]; then
     bash ${DIR}/datafari-manager.sh start_apache
@@ -176,6 +171,13 @@ if  [[ "$NODETYPE" = *mono* ]]; then
   if  [[ "$TIKASERVER" = *true* ]];
   then
     cd $TIKA_SERVER_HOME/bin
+    run_as ${DATAFARI_USER} "bash tika-server.sh start";
+    cd $DIR
+  fi
+  
+  if  [[ "$TIKASERVER_ANNOTATOR" = *true* ]];
+  then
+    cd $TIKA_SERVER_HOME_ANNOTATOR/bin
     run_as ${DATAFARI_USER} "bash tika-server.sh start";
     cd $DIR
   fi

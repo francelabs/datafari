@@ -1,5 +1,8 @@
 package com.francelabs.datafari.beans;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,12 +16,12 @@ public class DatafariFile {
   private Date last_modified;
   private String url = "";
 
-  public DatafariFile(final JSONObject jsonDoc) {
+  public DatafariFile(final JSONObject jsonDoc) throws UnsupportedEncodingException {
     if (jsonDoc.get("title") != null) {
       title = (String) ((JSONArray) jsonDoc.get("title")).get(0);
     }
     if (jsonDoc.get("last_modified") != null) {
-      String strDate = (String) jsonDoc.get("last_modified");
+      String strDate = (String) ((JSONArray) jsonDoc.get("last_modified")).get(0);
       strDate = strDate.substring(0, strDate.indexOf("T"));
       final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
       try {
@@ -29,6 +32,7 @@ public class DatafariFile {
     }
     if (jsonDoc.get("url") != null) {
       url = (String) jsonDoc.get("url");
+      url = URLDecoder.decode(url, StandardCharsets.UTF_8.name());
     }
   }
 
