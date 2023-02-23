@@ -3,6 +3,8 @@
 
   <luceneMatchVersion>9.3</luceneMatchVersion>
   
+  <lib dir="${lib.path}lib/custom"/>
+  
   <dataDir>${solr.data.dir:}</dataDir>
   
   <directoryFactory class="${solr.directoryFactory:solr.NRTCachingDirectoryFactory}" name="DirectoryFactory"></directoryFactory>
