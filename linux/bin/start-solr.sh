@@ -11,8 +11,7 @@ source "${DIR}/set-datafari-env.sh"
 source "${DIR}/utils.sh"
 source $INIT_STATE_FILE
 source $CONFIG_FILE
-source "${$AS_HOME}/scripts/set-as-env.sh"
-source "${$AS_HOME}/scripts/as-utils.sh"
+source $AS_HOME/scripts/set-as-env.sh
 
 
 if run_as ${DATAFARI_USER} "bash datafari-manager.sh is_running $SOLR_PID_FILE"; then

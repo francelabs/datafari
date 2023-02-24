@@ -11,8 +11,7 @@ source "${DIR}/set-datafari-env.sh"
 source "${DIR}/utils.sh"
 source $INIT_STATE_FILE
 source $CONFIG_FILE
-source "${$AS_HOME}/scripts/set-as-env.sh"
-source "${$AS_HOME}/scripts/as-utils.sh"
+source $AS_HOME/scripts/set-as-env.sh
 
 
 
