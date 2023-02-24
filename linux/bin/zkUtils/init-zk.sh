@@ -20,7 +20,7 @@ NUMSHARDS="`echo ${NUMSHARDS} | tr -d '\r'`"
 
 echo "Uploading configuration to zookeeper"
 # Start SSL configuration
-#"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -zkhost @SOLRHOSTS@ -cmd clusterprop -name urlScheme -val https
+"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -zkhost @SOLRHOSTS@ -cmd clusterprop -name urlScheme -val https
 # End SSL configuration
 "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost @SOLRHOSTS@ -confdir "${DATAFARI_HOME}/solr/solrcloud/Duplicates/conf" -confname Duplicates
 "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost @SOLRHOSTS@ -confdir "${DATAFARI_HOME}/solr/solrcloud/Entities/conf" -confname Entities

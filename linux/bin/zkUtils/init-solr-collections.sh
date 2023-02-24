@@ -15,7 +15,7 @@ source $CONFIG_FILE
 
 secondary_collections=''
 
-ip_solr="@SOLRNODEIP@:8983"
+ip_solr="@SOLRNODEIP@:443"
 maxShardsPerNode=50
 lib_path="${SOLR_INSTALL_DIR}/solrcloud/FileShare/"
 lib_path_duplicates="${SOLR_INSTALL_DIR}/solrcloud/Duplicates/"
@@ -51,13 +51,10 @@ init_configset() {
 
 
 
-if [ "$SSL_ALL" == "true" ]; then
-        url_protocol="https"
-        mcf_port=9443
-else
-        url_protocol="http"
-        mcf_port=9080
-fi
+
+url_protocol="https"
+mcf_port=443
+
 
 
 

@@ -180,12 +180,6 @@ init_temp_directory() {
 
 
 
-generate_certificates() {
-  # Generate SSL certificate for datafari
-  $JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA -keystore $DATAFARI_HOME/ssl-keystore/datafari-keystore.p12 -validity 9999 -storepass DataFariAdmin -keypass DataFariAdmin -dname "cn=${1}, ou=francelabs, o=francelabs, l=nice, st=paca, c=pa" -ext "SAN:c=DNS:localhost,IP:127.0.0.1,IP:${1}"
-  $JAVA_HOME/bin/keytool -export -keystore $DATAFARI_HOME/ssl-keystore/datafari-keystore.p12 -storetype PKCS12 -alias tomcat -storepass DataFariAdmin -file $DATAFARI_HOME/ssl-keystore/datafari-cert.csr
-  $JAVA_HOME/bin/keytool -import -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storetype PKCS12 -storepass DataFariAdmin -alias tomcat -noprompt -file $DATAFARI_HOME/ssl-keystore/datafari-cert.csr
-}
 
 generate_certificates_apache() {
 
@@ -195,6 +189,7 @@ generate_certificates_apache() {
   sed -i -e "s/@NODEHOST@/${1}/g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-services.conf >>$installerLog 2>&1
   openssl req -config $DATAFARI_HOME/ssl-keystore/apache/config/datafari-config.csr -new -newkey rsa:2048 -nodes -keyout $DATAFARI_HOME/ssl-keystore/apache/datafari.key -out $DATAFARI_HOME/ssl-keystore/apache/datafari.csr
   openssl x509 -req -days 365 -in $DATAFARI_HOME/ssl-keystore/apache/datafari.csr -signkey $DATAFARI_HOME/ssl-keystore/apache/datafari.key -out $DATAFARI_HOME/ssl-keystore/apache/datafari.crt
+  $JAVA_HOME/bin/keytool -importcert -noprompt -alias datafari -file $DATAFARI_HOME/ssl-keystore/apache/datafari.crt -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
   mkdir -p $DATAFARI_HOME/ssl-keystore/apache/backup/
   cp $DATAFARI_HOME/ssl-keystore/apache/datafari.key $DATAFARI_HOME/ssl-keystore/apache/backup/
   cp $DATAFARI_HOME/ssl-keystore/apache/datafari.crt $DATAFARI_HOME/ssl-keystore/apache/backup/
@@ -366,6 +361,7 @@ init_apache_ssl() {
     a2enmod rewrite
     a2enmod headers
     a2enmod proxy_wstunnel
+    a2enmod http2
     a2dissite 000-default
     a2dissite default-ssl
     a2ensite tomcat
@@ -752,7 +748,6 @@ initialization_monoserver() {
   init_git
   init_folders
   init_logstash localhost
-  generate_certificates $NODEHOST
   generate_certificates_apache $NODEHOST
   init_collection_name $SOLRMAINCOLLECTION
   init_node_host $NODEHOST
