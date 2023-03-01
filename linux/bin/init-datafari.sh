@@ -372,6 +372,8 @@ init_apache_ssl() {
     
   elif [ -d /etc/httpd ]; then
     cp $DATAFARI_HOME/ssl-keystore/apache/config/httpd.conf /etc/httpd/conf/
+    sed -i "s|\(SSLCertificateFile *\).*|\1${DATAFARI_HOME}\/ssl-keystore\/apache\/datafari.crt|" /etc/httpd/conf.d/ssl.conf >>$installerLog 2>&1
+    sed -i "s|\(SSLCertificateKeyFile *\).*|\1${DATAFARI_HOME}\/ssl-keystore\/apache\/datafari.key|" /etc/httpd/conf.d/ssl.conf >>$installerLog 2>&1
     mkdir /etc/httpd/sites-available /etc/httpd/sites-enabled
     mkdir /var/apache
     mkdir /var/apache/pid
