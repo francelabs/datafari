@@ -25,6 +25,8 @@ init_logstash()
   # patch logstash-output-solr plugin
   sed -i "/@solr.add(documents)/c\    @solr.add\(documents, :add_attributes => \{:commitWithin=>10000\}, :params => \{:tr => @tr\}\)" $LOGSTASH_HOME/vendor/bundle/jruby/2.5.0/gems/logstash-output-solr_http-3.0.5/lib/logstash/outputs/solr_http.rb
   sed -i "/document\[\"@timestamp\"\]\.iso8601/c\ " $LOGSTASH_HOME/vendor/bundle/jruby/2.5.0/gems/logstash-output-solr_http-3.0.5/lib/logstash/outputs/solr_http.rb
+  ssl_logstash="require 'openssl'\nOpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE\n"
+  sed -i -e "/^require \"uuidtools\"/a${ssl_logstash}" $LOGSTASH_HOME/vendor/bundle/jruby/2.5.0/gems/logstash-output-solr_http-3.0.5/lib/logstash/outputs/solr_http.rb
   # Replace the default conf with the correct paths before starting logstash
   sed -i "/francelabs\/datafari-stats.log/c\    path => \"${DATAFARI_HOME}/logs/datafari-stats.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
   sed -i "/francelabs\/datafari-monitoring.log/c\    path => \"${DATAFARI_HOME}/logs/datafari-monitoring.log*\"" $LOGSTASH_HOME/logstash-datafari.conf
