@@ -48,6 +48,12 @@ then
         
     
   fi
+  
+  if [ "$(whoami)" == "root" ]; then
+    bash ${DIR}/datafari-manager.sh start_apache
+  else
+    run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh start_apache"
+  fi
 
   if  [[ "$STATE" = *initialized* ]]; then
     run_as ${DATAFARI_USER} `sed -i 's/\(STATE *= *\).*/\1active/' $INIT_STATE_FILE`  

@@ -35,3 +35,9 @@ if  [[ "$AnalyticsActivation" = *true* ]]; then
   fi
      
 fi
+
+if [ "$(whoami)" == "root" ]; then
+  bash ${DIR}/datafari-manager.sh stop_apache
+else
+  run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh stop_apache"
+fi
