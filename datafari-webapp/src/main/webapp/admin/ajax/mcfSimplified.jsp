@@ -299,7 +299,7 @@
 	                      <label id="startJobLabel" for="startJob" class="col-form-label"></label> 
 	                    </div>
 	                    <div class="col-sm checkbox-div" >
-	                      <input type="checkbox" id="startJob" name="startJob"></input> <label id="filerStartJobWarnLabel" class="col-form-label alert-danger" for=""></label>
+	                      <input type="checkbox" id="startJob" name="startJob"></input> 
 	                    </div>
 	                  </div>
 	                  </fieldset>
@@ -624,7 +624,7 @@
                         <label id="dbStartJobLabel" for="dbStartJob" class="col-form-label"></label>
                       </div>
                       <div class="col-sm checkbox-div">
-                        <input type="checkbox" id="dbStartJob" name="dbStartJob"></input> <label id="dbStartJobWarnLabel" class="col-form-label alert-danger" for=""></label>
+                        <input type="checkbox" id="dbStartJob" name="dbStartJob"></input> 
                       </div>
                     </div>
                     </fieldset>
@@ -845,7 +845,7 @@
                         <label id="startJobWebLabel" for="startJobWeb" class="col-form-label"></label>
                       </div>
                       <div class="col-sm checkbox-div">
-                        <input type="checkbox" id="startJobWeb" name="startJobWeb"></input> <label id="webStartJobWarnLabel" class="col-form-label alert-danger" for=""></label>
+                        <input type="checkbox" id="startJobWeb" name="startJobWeb"></input> 
                       </div>
                     </div>
                     </fieldset>
