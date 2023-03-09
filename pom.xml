@@ -16,7 +16,7 @@
     <cassandra.driver.version>4.14.1</cassandra.driver.version>
     <datafari.version>6.0-dev-Community</datafari.version>
     <datafariui.version>1.2</datafariui.version>
-    <datafariui.md5>80add9fa7ad95fc524492a66f786cff6</datafariui.md5>
+    <datafariui.md5>5a2da6087694d94af9d7e79560f40cb6</datafariui.md5>
     <guava.version>26.0-jre</guava.version>
     <httpclient.version>4.5.13</httpclient.version>
     <java.version>1.11</java.version>
