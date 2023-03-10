@@ -165,6 +165,7 @@
 	                  </div>
                     <div class="form-group row">
                       <div class="col-sm-3 control-label">
+                      <span class="fas fa-asterisk " style="color : red"></span>
                         <label id="filerTimeZoneLabel" for="filerTimeZone" class="col-form-label"></label><span id="filerTimeZone-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
                       <div class="col-sm-4">
@@ -479,6 +480,7 @@
                     </div>
                     <div class="form-group row">
                       <div class="col-sm-3 control-label">
+                        <span class="fas fa-asterisk " style="color : red"></span>
                         <label id="dbTimeZoneLabel" for="dbTimeZone" class="col-form-label"></label><span id="dbTimeZone-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
                       <div class="col-sm-4">
@@ -719,6 +721,7 @@
                     </div>
                     <div class="form-group row">
                       <div class="col-sm-3 control-label">
+                      <span class="fas fa-asterisk " style="color : red"></span>
                         <label id="webTimeZoneLabel" for="webTimeZone" class="col-form-label"></label><span id="webTimeZone-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
                       </div>
                       <div class="col-sm-4">
