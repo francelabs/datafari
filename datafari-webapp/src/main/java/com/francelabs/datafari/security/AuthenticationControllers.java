@@ -20,6 +20,46 @@ import org.springframework.web.servlet.ModelAndView;
 @Configuration
 public class AuthenticationControllers {
 
+  @Controller
+  public class AuthAndRedirectController {
+    @RequestMapping(value = "/auth/redirect", method = RequestMethod.GET)
+    /**
+     * Protected endpoint that triggers the authentication and then simply redirect to the url specified by the 'redirect' request parameter
+     *
+     * @param request  the request
+     * @param response the response
+     * @return a redirect instruction to the specified URL in the 'redirect' request parameter, or the main Datafari search page otherwise
+     */
+    public String authAndRedirect(final HttpServletRequest request, final HttpServletResponse response) {
+      final String redirectPrefix = "redirect:";
+      String urlRedirect = "/applyLang";
+      final String mainPage = request.getContextPath();
+      final String redirect = request.getParameter("redirect");
+
+      if (redirect != null) {
+        urlRedirect = redirect;
+      } else {
+        String langParam = null;
+        // If the language parameter is defined take it, otherwise use the referrer in the message header
+        final String lang = request.getParameter("lang");
+
+        if (lang != null) {
+          langParam = "?lang=" + lang;
+        }
+
+        // If the language param was defined in the source URL, append the language
+        // selection to the adminUi page URL to be able to display it in the correct language
+        if (langParam != null) {
+          urlRedirect = urlRedirect + langParam + "&urlRedirect=" + mainPage + "/Search";
+        } else {
+          urlRedirect = urlRedirect + "?urlRedirect=" + mainPage + "/Search";
+        }
+      }
+
+      return redirectPrefix + urlRedirect;
+    }
+  }
+
   @RestController
   public class StandardErrorController implements ErrorController {
 
@@ -72,8 +112,8 @@ public class AuthenticationControllers {
   @ConditionalOnExpression("${saml.enabled:false}==false && ${keycloak.enabled:false}==false && ${cas.enabled:false}==false")
   public class StandardLoginController {
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String loginPage(@RequestParam(value = "error", required = false) final String error, @RequestParam(value = "logout", required = false) final String logout, @RequestParam(value = "timeout", required = false) final String timeout,
-        final Model model) {
+    public String loginPage(@RequestParam(value = "error", required = false) final String error, @RequestParam(value = "logout", required = false) final String logout,
+        @RequestParam(value = "timeout", required = false) final String timeout, final Model model) {
       String errorMessage = null;
       String errorType = null;
       if (error != null) {

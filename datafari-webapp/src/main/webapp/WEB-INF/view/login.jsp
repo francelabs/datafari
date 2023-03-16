@@ -80,7 +80,8 @@
        }     
      }
    }
-   String loginPage = "./login";
+   final String mainPage = request.getContextPath();
+   String loginPage = mainPage + "/login";
    String redirect = request.getParameter("redirect");
    // If there is no explicit redirect but there is an original request, then set the original request as redirect
    if(redirect == null && originalRequest != null) {

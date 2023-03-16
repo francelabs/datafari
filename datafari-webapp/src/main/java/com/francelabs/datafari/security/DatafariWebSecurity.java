@@ -110,6 +110,7 @@ public class DatafariWebSecurity {
       }).authorizeRequests()
       .antMatchers("/admin/*", "/SearchExpert/*").hasAnyRole("SearchExpert", "SearchAdministrator")
       .antMatchers("/SearchAdministrator/*", "/rest/v2.0/files/**", "/rest/v2.0/management/**").hasRole("SearchAdministrator")
+      .antMatchers("/auth/redirect*").authenticated()
       .anyRequest().permitAll();
     }
 
