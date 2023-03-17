@@ -89,18 +89,18 @@ public class RefreshSession extends HttpServlet {
       jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
       jsonResponse.put(OutputConstants.STATUS, "Logged");
       String AuthenticatedUserName = "";
-      if (request.getUserPrincipal() instanceof KeycloakAuthenticationToken) {
+      if (userPrincipal instanceof KeycloakAuthenticationToken) {
         jsonResponse.put("keycloakUser", true);
-        final KeycloakAuthenticationToken keycloakToken = (KeycloakAuthenticationToken) request.getUserPrincipal();
+        final KeycloakAuthenticationToken keycloakToken = (KeycloakAuthenticationToken) userPrincipal;
         if (keycloakToken.getDetails() instanceof SimpleKeycloakAccount) {
           final SimpleKeycloakAccount keycloakAccount = (SimpleKeycloakAccount) keycloakToken.getDetails();
           AuthenticatedUserName = keycloakAccount.getKeycloakSecurityContext().getToken().getPreferredUsername();
         } else {
-          AuthenticatedUserName = request.getUserPrincipal().getName().replaceAll("[^\\\\]*\\\\", "");
+          AuthenticatedUserName = userPrincipal.getName().replaceAll("[^\\\\]*\\\\", "");
         }
       } else {
         jsonResponse.put("keycloakUser", false);
-        AuthenticatedUserName = request.getUserPrincipal().getName();
+        AuthenticatedUserName = userPrincipal.getName();
       }
       jsonResponse.put("user", AuthenticatedUserName);
       if (request.isUserInRole("SearchAdministrator") || request.isUserInRole("SearchExpert")) {
