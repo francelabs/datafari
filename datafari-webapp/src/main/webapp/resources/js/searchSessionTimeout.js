@@ -16,6 +16,7 @@ function setSSOEnabled(resp) {
   var samlEnabled = false;
   var casEnabled = false;
   var kerberosEnabled = false;
+  var oidcEnabled = false;
   if (resp.samlEnabled != undefined && resp.samlEnabled != null) {
     samlEnabled = resp.samlEnabled;
   }
@@ -25,7 +26,10 @@ function setSSOEnabled(resp) {
   if (resp.kerberosEnabled != undefined && resp.kerberosEnabled != null) {
     kerberosEnabled = resp.kerberosEnabled;
   }
-  if(samlEnabled || casEnabled || kerberosEnabled) {
+  if (resp.oidcEnabled != undefined && resp.oidcEnabled != null) {
+    oidcEnabled = resp.oidcEnabled;
+  }
+  if(samlEnabled || casEnabled || kerberosEnabled || oidcEnabled) {
     ssoEnabled = true;
   }
 }

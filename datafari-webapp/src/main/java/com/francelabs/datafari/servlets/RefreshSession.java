@@ -16,10 +16,8 @@
 package com.francelabs.datafari.servlets;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.security.Principal;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -34,6 +32,7 @@ import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
+import com.francelabs.datafari.utils.SpringSecurityConfiguration;
 
 /**
  * Servlet implementation class GetFavorites
@@ -46,23 +45,25 @@ public class RefreshSession extends HttpServlet {
   String samlEnabled = null;
   String casEnabled = null;
   String kerberosEnabled = null;
+  String oidcEnabled = null;
 
   /**
    * @see HttpServlet#HttpServlet()
    */
   public RefreshSession() {
     super();
-    try (InputStream is = this.getClass().getClassLoader().getResourceAsStream("application.properties");) {
-      final Properties appProps = new Properties();
-      appProps.load(is);
+    try {
+      final SpringSecurityConfiguration appProps = SpringSecurityConfiguration.getInstance();
       keycloakEnabled = appProps.getProperty("keycloak.enabled", "false");
       samlEnabled = appProps.getProperty("saml.enabled", "false");
       casEnabled = appProps.getProperty("cas.enabled", "false");
       kerberosEnabled = appProps.getProperty("kerberos.enabled", "false");
+      oidcEnabled = appProps.getProperty("oidc.enabled", "false");
     } catch (final Exception e) {
       keycloakEnabled = "false";
       samlEnabled = "false";
       kerberosEnabled = "false";
+      oidcEnabled = "false";
     }
   }
 
@@ -79,6 +80,7 @@ public class RefreshSession extends HttpServlet {
     jsonResponse.put("samlEnabled", Boolean.valueOf(samlEnabled));
     jsonResponse.put("casEnabled", Boolean.valueOf(casEnabled));
     jsonResponse.put("kerberosEnabled", Boolean.valueOf(kerberosEnabled));
+    jsonResponse.put("oidcEnabled", Boolean.valueOf(oidcEnabled));
 
     final Principal userPrincipal = request.getUserPrincipal();
     // checking if the user is connected
