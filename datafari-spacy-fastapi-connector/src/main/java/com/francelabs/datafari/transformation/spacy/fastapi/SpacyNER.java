@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -473,7 +474,7 @@ public class SpacyNER extends org.apache.manifoldcf.agents.transformation.BaseTr
   @Override
   public int addOrReplaceDocumentWithException(final String documentURI, final VersionContext pipelineDescription, final RepositoryDocument document, final String authorityNameString,
       final IOutputAddActivity activities) throws ManifoldCFException, ServiceInterruption, IOException {
-    
+
     long startTime = System.currentTimeMillis();
     // First of all init session
     getSession();
@@ -501,19 +502,24 @@ public class SpacyNER extends org.apache.manifoldcf.agents.transformation.BaseTr
       final String outputFieldPrefix = spec.getOutputFieldPrefix().isEmpty() ? "spacyEntities_" : spec.getOutputFieldPrefix();
 
       // StringBuilder that will handle the doc content to process
-      StringBuilder contentToProcess = new StringBuilder();
-
-      // Read the doc content line by line
-      String line = br.readLine();
-      while (line != null) {
-        // Do not remove empty line or anything as we need to know the positions 
-        // of characters for NER information to be usefull. It provides the range
-        // of characters in which each entity has been identified.
-        contentToProcess.append(line);
-        line = br.readLine();
+      StringBuilder contentToProcess = null;
+      if (isr != null) {
+        contentToProcess = new StringBuilder();
+        String str = br.readLine();
+        if (str != null) {
+          contentToProcess.append(str);
+          while ((str = br.readLine()) != null) {
+            contentToProcess.append('\n');
+            contentToProcess.append(str);
+            LOGGER.debug("text line by line :"+str);
+          }
+        }
       }
 
-      final JSONArray detectedEntities = sendNerExtractionRequest(contentToProcess.toString(), modelToUse, endpointToUse);
+      LOGGER.debug("final contentToProcess : "+contentToProcess.toString());
+      String contentToProcessEncoded = URLEncoder.encode(contentToProcess.toString(),java.nio.charset.StandardCharsets.UTF_8.toString());
+      contentToProcessEncoded = contentToProcessEncoded.replace("+", "%20");
+      final JSONArray detectedEntities = sendNerExtractionRequest(contentToProcessEncoded, modelToUse, endpointToUse);
       if (detectedEntities == null) {
         // Either there was no text to process or the JSON response was weird (not the right keys, no entities)
         status = "NOTPROCESSED";
@@ -529,9 +535,10 @@ public class SpacyNER extends org.apache.manifoldcf.agents.transformation.BaseTr
           }
           entitiesByTypes.get(type).add((String) (currentEntity.get("text")));
         }
-        
+
         for (Map.Entry<String, HashSet<String>> entry : entitiesByTypes.entrySet()) {
           document.addField(outputFieldPrefix + entry.getKey(), entry.getValue().toArray(new String[1]));
+
         }
       }
 
@@ -601,6 +608,7 @@ public class SpacyNER extends org.apache.manifoldcf.agents.transformation.BaseTr
             }
           }
         } else {
+          LOGGER.debug("raw response :"+IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8.name()));
           final int responseCode = response.getStatusLine().getStatusCode();
           final String message = response.getStatusLine().getReasonPhrase();
           throw new IOException("Bad response for Spacy fastapi request: " + responseCode + " - " + message);
