@@ -2,14 +2,12 @@ package com.francelabs.datafari.security.auth;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
@@ -48,10 +46,7 @@ public class DatafariGrantedAuthoritiesMapper implements GrantedAuthoritiesMappe
           return;
         }
         // Retrieve Datafari rights
-        final List<String> cassandraRoles = CassandraAuthenticationProvider.getRoles(username);
-        cassandraRoles.forEach(role -> {
-          mappedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role));
-        });
+        mappedAuthorities.addAll(CassandraAuthenticationProvider.getGrantedAuthorities(username));
 
       } else if (OAuth2UserAuthority.class.isInstance(authority)) {
         final OAuth2UserAuthority oauth2UserAuthority = (OAuth2UserAuthority) authority;
@@ -66,10 +61,7 @@ public class DatafariGrantedAuthoritiesMapper implements GrantedAuthoritiesMappe
           return;
         }
         // Retrieve Datafari rights
-        final List<String> cassandraRoles = CassandraAuthenticationProvider.getRoles(username);
-        cassandraRoles.forEach(role -> {
-          mappedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role));
-        });
+        mappedAuthorities.addAll(CassandraAuthenticationProvider.getGrantedAuthorities(username));
 
       }
     });

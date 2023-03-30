@@ -70,7 +70,16 @@ public class CassandraAuthenticationProvider implements AuthenticationProvider {
     }
   }
 
-  protected static List<String> getRoles(final String username) {
+  public static List<GrantedAuthority> getGrantedAuthorities(final String username) {
+    final List<String> roles = getRoles(username);
+    final List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+    roles.forEach(role -> {
+      grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+    });
+    return grantedAuthorities;
+  }
+
+  private static List<String> getRoles(final String username) {
     String rawUsername = username.toLowerCase();
     if (rawUsername.contains("@")) {
       rawUsername = rawUsername.substring(0, rawUsername.indexOf("@"));

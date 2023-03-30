@@ -1,11 +1,8 @@
 package com.francelabs.datafari.security.auth;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,11 +14,7 @@ public class DatafariSimpleUserDetailsService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-    final Collection<GrantedAuthority> authorities = new ArrayList<>();
-    final List<String> cassandraRoles = CassandraAuthenticationProvider.getRoles(username);
-    cassandraRoles.forEach(role -> {
-      authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
-    });
+    final Collection<GrantedAuthority> authorities = CassandraAuthenticationProvider.getGrantedAuthorities(username);
     return new User(username, "notUsed", true, true, true, true, authorities);
   }
 
