@@ -49,18 +49,17 @@ public class DatafariAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
   @Override
   protected String determineTargetUrl(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) {
 
-    final String mainPage = request.getContextPath();
-    final String redirect = request.getParameter("redirect");
+    final SavedRequest savedRequest = this.requestCache.getRequest(request, response);
 
-    if (redirect != null) {
-      return redirect;
+    if (savedRequest != null) {
+      return savedRequest.getRedirectUrl();
     } else {
-
-      final SavedRequest savedRequest = this.requestCache.getRequest(request, response);
-      if (savedRequest != null) {
+      final String redirect = request.getParameter("redirect");
+      if (redirect != null) {
         // Use the DefaultSavedRequest URL
-        return savedRequest.getRedirectUrl();
+        return redirect;
       } else {
+        final String mainPage = request.getContextPath();
         String langParam = null;
         // If the language parameter is defined take it, otherwise use the referrer in the message header
         final String lang = request.getParameter("lang");
