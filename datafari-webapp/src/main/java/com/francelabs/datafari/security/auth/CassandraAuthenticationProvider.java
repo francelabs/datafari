@@ -97,7 +97,7 @@ public class CassandraAuthenticationProvider implements AuthenticationProvider {
       } else {
         // First time the user logs into Datafari, add it the default role "ConnectedSearchUser"
         // It is obviously an imported user, otherwise it would already be in the database
-        final User newUser = new User(rawUsername, "ConnectedSearchUser", true);
+        final User newUser = new User(rawUsername, "", true);
         newUser.signup("ConnectedSearchUser");
         roles.add("ConnectedSearchUser");
       }
