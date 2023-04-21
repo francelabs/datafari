@@ -19,6 +19,18 @@ question_ip_node() {
     set_property "NODEHOST" $node_host $CONFIG_FILE
 }
 
+question_disk_type() {
+	read -p  "Specify if hour hard drive is SSD type [yes] " disk_type
+    ssd_disk=${ssd_disk:-true}
+    if [[ "$ssd_disk" = "yes" ]] || [[ "$ssd_disk" = "y" ]] || [[ "$ssd_disk" = "true" ]]; then
+      ssd_disk=true
+    else
+      ssd_disk=false
+    fi
+    set_property "SSD_DISK" $ssd_disk $CONFIG_FILE
+
+}
+
 check_ip_node() {
     ping -c 1 $node_host
     if [ $? -eq 0 ]
@@ -332,6 +344,15 @@ init_password_postgresql() {
   sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${1})~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${1})~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESPASSWORD@~${1}~g" $DATAFARI_HOME/pgsql/pwd.conf >>$installerLog 2>&1
+}
+
+optimize_postgresql_ssd() {
+  if [ "$SSD_DISK" == "true" ]; then
+    echo "# SSD optimization" >> $DATAFARI_HOME/pgsql/postgresql.conf.save 
+    echo "random_page_cost = 1.1" >> $DATAFARI_HOME/pgsql/postgresql.conf.save 
+    echo "effective_io_concurrency = 1000" >> $DATAFARI_HOME/pgsql/postgresql.conf.save 
+  fi
+
 }
 
 init_apache_ssl() { 
@@ -752,6 +773,7 @@ initialization_monoserver() {
   init_git
   init_folders
   init_logstash localhost
+  optimize_postgresql_ssd
   generate_certificates $NODEHOST
   generate_certificates_apache $NODEHOST
   init_collection_name $SOLRMAINCOLLECTION
@@ -845,7 +867,6 @@ if [ "$NODETYPE" == "monoserver" ]; then
   echo "postgresql password check"
   is_variable_set $TEMPPGSQLPASSWORD
   is_variable_set $AnalyticsActivation
-    
   echo "Check complete."
 
     initialization_monoserver $1
