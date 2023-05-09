@@ -71,7 +71,7 @@ public class Users {
   protected void saveUiConfigToDB(final String authenticatedUserName, final JSONObject body, final HttpServletRequest request) throws DatafariServerException {
     final JSONObject bodyUiConfig = (JSONObject) body.get("uiConfig");
     if (bodyUiConfig != null) {
-      UiConfig.setUiConfig(authenticatedUserName, bodyUiConfig.toJSONString());
+      UiConfig.setUiConfig(authenticatedUserName, bodyUiConfig.toJSONString().replaceAll("'","''"));
       AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(), "Modified saved ui config for user " + authenticatedUserName);
     }
   }
