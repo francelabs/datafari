@@ -6,7 +6,7 @@
   <artifactId>datafari-ce</artifactId>
   <!-- Main POM of datafari -->
   <packaging>pom</packaging>
-  <version>6.0-dev-Community</version>
+  <version>5.5-Community</version>
   <name>Datafari Enterprise Search - Parent POM</name>
   <properties>
     <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
@@ -14,7 +14,7 @@
     <cassandra.version>4.0.5</cassandra.version>
     <cassandra.sha512>188e131392ea0e48b46f24b1be297ef6335197f4480c9421328006507e069dce659ce3ce473906398273a5926e331960cbf824362e40cb4c74670cde95458349</cassandra.sha512>
     <cassandra.driver.version>4.14.1</cassandra.driver.version>
-    <datafari.version>6.0-dev-Community</datafari.version>
+    <datafari.version>5.5-Community</datafari.version>
     <datafariui.version>1.3</datafariui.version>
     <datafariui.md5>e8954aef3ade49fb9e1f6c7840bba945</datafariui.md5>
     <guava.version>26.0-jre</guava.version>
