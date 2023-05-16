@@ -39,7 +39,9 @@ NOTE: to crawl files, you need to install an extra jar that we cannot distribute
 NOTE BIS: Java 11 is now REQUIRED
 
 * New features compared to v5.3
-- OCR and Spacy options in connectors simplified mode
+- Optimisation for SSD users at install phase
+
+- OCR and Spacy options in crawlers simplified mode
 - New admin UI to deploy a Tika Server
 - New duplicate detector functionality
 - Various bugfixes
@@ -53,6 +55,7 @@ NOTE BIS: Java 11 is now REQUIRED
 - Zookeeper 3.6.2
 - Tika Server 2.7.0
 - Zeppelin 0.10.1
+- DatafariUI 1.3
 
 The complete list of changes and bugfixes can be found in CHANGES.TXT
 
