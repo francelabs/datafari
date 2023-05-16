@@ -11,6 +11,47 @@ Available as community (open source) and enterprise (proprietary) edition, Dataf
 
 See https://wiki.datafari.com for more information.
 
+================== 5.5 ==================
+
+May 16th, 2023
+
+* Version of major components :
+
+- Solr 8.11.2
+- ManifoldCF 2.24
+- Tomcat 9.0.56
+- Cassandra 4.0.1
+- PostgreSQL 12.4
+- Zookeeper 3.6.2
+- Tika Server 2.7.0
+- Zeppelin 0.10.1
+- DatafariUI 1.3
+
+#846 DatafariUI - update to search REST API v2
+#852 DatafariUI - Exception not handled for licence issue into DatafariUI (EE)
+#866 DatafariUI - Adapt the Export Results to the new menu
+#870 DatafariUI - Aggregator facet does not seem to work
+#894 DatafariUI - UI config not saved sometimes
+#880 DatafariUI - hierarchical facet incorrect behavior
+#882 DatafariUI - facets not saved when checking the dedicated checkbox
+#883 DatafariUI - search alerts not saving the query
+#886 DatafariUI - Modifications to theme.json are ignored
+#888 DatafariUI - Warning licence messages not properly work
+#889 DatafariUI - Propose an SSO option
+
+#871 Improve simple entity extraction by experimenting native Tika feature
+#872 MCF - add gif to the OCR simplified job default inclusion filter
+
+#885 Propose SSD conf in install script for PostgreSQL
+
+#887 Redirect to asked resource on successful authentication
+#892 CVE-2022-42889 “Text4Shell” vulnerability
+#884 Provide a protected endpoint that performs a simple redirect
+
+#893 Keep persistence after a restart of Docker container for CE
+#864 Factory reset not present into Datafari 5.3 release
+
+
 ================== 5.4 ==================
 
 March 10th, 2023
