@@ -31,6 +31,7 @@
 	<property name="share.connector.src.dir" value="${project.dir}/datafari-share-connector/target" />
 	<property name="list.share.connector.src.dir" value="${project.dir}/datafari-list-share-connector/target" />
 	<property name="tuleap.connector.src.dir" value="${project.dir}/datafari-tuleap-connector/target" />
+  <property name="regexentity.connector.src.dir" value="${project.dir}/datafari-regex-entity-connector/target" />
 	<property name="datafarihandler.src.dir" value="${project.dir}/datafari-handler/target" />
 	<property name="mcf-scripts.src.dir" value="${project.dir}/datafari-mcf-scripts/target" />
 	<property name="cassandra.src.dir" value="${project.dir}/datafari-cassandra/target/dist/cassandra" />
@@ -414,6 +415,13 @@
 				<include name="*.jar" />
 			</fileset>
 		</copy>
+
+    <!-- Copy RegexEntity connector -->
+    <copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
+      <fileset dir="${regexentity.connector.src.dir}">
+        <include name="*.jar" />
+      </fileset>
+    </copy>
 
 		<!-- Copy Tika OCR config in mcf lib -->
 		<copy todir="${linux.dist.dir}/mcf/mcf_home/lib">

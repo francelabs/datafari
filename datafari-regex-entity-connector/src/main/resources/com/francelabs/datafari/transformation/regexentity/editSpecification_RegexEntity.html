@@ -1,0 +1,102 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+#if($TABNAME == $ResourceBundle.getString('RegexEntity.TabName') && ${SEQNUM} == ${SELECTEDNUM})
+
+<table class="displaytable">
+  <tr>
+    <td></td>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.MetadataField'))</nobr></td>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.RegexField'))</nobr></td>
+  </tr>
+
+  <!-- ----------------------------------------------- Existing couple metadata/regex ----------------------------------------------------------------------- --> 
+  #set($counter = 0)
+  <!-- Iterates over Map of metadata (key of the map) and regex values -->
+  #foreach($metadata in $METADATA_REGEX_MAP.keySet())
+    #set($regexValue = $METADATA_REGEX_MAP.get($metadata))
+
+    <tr>
+      <td class="formcolumncell">
+        <a name="s${SEQNUM}_metaRegex${foreach.count}">
+
+	        <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.Delete'))" 
+	        alt="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.DeleteAlt'))"
+	        title="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.DeleteAlt'))"
+	        onclick='javascript:s${SEQNUM}_deleteMetaRegex("$counter");'/>
+	        
+	        <input type="hidden" name="s${SEQNUM}_metaRegex_op$counter" value="Continue"/>
+	        <input type="hidden" name="s${SEQNUM}_metadataField$counter" value="$Encoder.attributeEscape($metadata)"/>
+	        <input type="hidden" name="s${SEQNUM}_regexField$counter" value="$Encoder.attributeEscape($regexValue)"/>
+        
+        </a>
+      </td>
+      
+      <td class="formcolumncell">
+        <nobr>$Encoder.attributeEscape($metadata)</nobr>
+      </td>
+      <td class="formcolumncell">
+        <nobr>$Encoder.attributeEscape($regexValue)</nobr>
+      </td>
+    </tr>
+    #set($counter = $counter + 1)
+  #end
+  #if($counter == 0)
+    <tr>
+      <td></td>
+      <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoMetadataSpecified'))</td>
+      <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoRegexSpecified'))</td>
+    </tr>
+  #end
+
+
+  <!-- ----------------------------------------------- To add a new couple metadata/regex ----------------------------------------------------------------------- -->  
+	<tr class="formrow"><td class="formseparator" colspan="3"><hr/></td></tr>
+	<tr class="formrow">
+	  <td class="formcolumncell">
+	    <a name="metaRegex">
+	      <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.Add'))"
+	      alt="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.AddAlt'))"
+        title="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.AddAlt'))"
+        onclick='javascript:s${SEQNUM}_addMetaRegex();'/>
+	    </a>
+	    <input type="hidden" name="s${SEQNUM}_metaRegex_count" value="$counter"/>
+	    <input type="hidden" name="s${SEQNUM}_metaRegex_op" value="Continue"/>
+	  </td>
+    <td class="formcolumncell">
+      <nobr><input type="text" size="35" name="s${SEQNUM}_metadataField" value="" 
+      placeholder="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.PlaceholderMetadata'))"/></nobr>
+    </td>
+    <td class="formcolumncell">
+      <nobr><input type="text" size="35" name="s${SEQNUM}_regexField" value="" 
+      placeholder="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.PlaceholderRegex'))"/></nobr>
+    </td>
+	</tr>
+  
+</table>
+
+#else
+  #set($counter = 0)
+  #foreach($metadata in $METADATA_REGEX_MAP.keySet())
+    #set($regexValue = $METADATA_REGEX_MAP.get($metadata))
+     <input type="hidden" name="s${SEQNUM}_metadataField${foreach.index}" value="$Encoder.attributeEscape($metadata)" />
+     <input type="hidden" name="s${SEQNUM}_regexField${foreach.index}" value="$Encoder.attributeEscape($regexValue)" />
+    #set($counter = $counter + 1)
+  #end
+  <input type="hidden" name="s${SEQNUM}_metaRegex_count" value="$counter"/>
+  
+#end

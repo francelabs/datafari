@@ -30,6 +30,7 @@
 	<property name="web.connector.src.dir" value="${project.dir}/datafari-web-connector/target" />
 	<property name="share.connector.src.dir" value="${project.dir}/datafari-share-connector/target" />
 	<property name="spacy.connector.src.dir" value="${project.dir}/datafari-spacy-fastapi-connector/target" />
+  <property name="regexentity.connector.src.dir" value="${project.dir}/datafari-regex-entity-connector/target" />
 	<property name="datafarihandler.src.dir" value="${project.dir}/datafari-handler/target" />
 	<property name="mcf-scripts.src.dir" value="${project.dir}/datafari-mcf-scripts/target" />
 	<property name="cassandra.src.dir" value="${project.dir}/datafari-cassandra/target/dist/cassandra" />
@@ -378,6 +379,13 @@
 				<include name="*.jar" />
 			</fileset>
 		</copy>
+
+    <!-- Copy RegexEntity connector -->
+    <copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
+      <fileset dir="${regexentity.connector.src.dir}">
+        <include name="*.jar" />
+      </fileset>
+    </copy>
 
 		<!-- Copy Manifold CF to Tomcat auto-deploy directory -->
 		<move toDir="${linux.dist.dir}/tomcat-mcf/webapps" overwrite="true" force="true">

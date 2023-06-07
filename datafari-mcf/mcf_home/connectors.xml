@@ -55,6 +55,7 @@
   <transformationconnector name="Content limiter" class="org.apache.manifoldcf.agents.transformation.contentlimiter.ContentLimiter"/>
   <transformationconnector name="HTML Extractor Connector" class="org.apache.manifoldcf.agents.transformation.htmlextractor.HtmlExtractor"/>
   <transformationconnector name="Datafari Spacy fastapi Connector" class="com.francelabs.datafari.transformation.spacy.fastapi.SpacyNER"/>
+  <transformationconnector name="Regex Entity Connector" class="com.francelabs.datafari.transformation.regexentity.RegexEntity"/>
 
     <!-- Add your mapping connectors here -->
   <mappingconnector name="Regular expression mapper" class="org.apache.manifoldcf.authorities.mappers.regexp.RegexpMapper"/>

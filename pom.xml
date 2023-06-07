@@ -84,6 +84,7 @@
     <module>datafari-share-connector</module>
     <module>datafari-ui</module>
     <module>datafari-git-plugin</module>
+    <module>datafari-regex-entity-connector</module>
   </modules>
   <build>
     <pluginManagement>
