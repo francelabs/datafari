@@ -22,6 +22,7 @@
     <td></td>
     <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.MetadataField'))</nobr></td>
     <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.RegexField'))</nobr></td>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.SolrField'))</nobr></td>
   </tr>
 
   <!-- ----------------------------------------------- Existing couple metadata/regex ----------------------------------------------------------------------- --> 
@@ -29,37 +30,43 @@
   <!-- Iterates over Map of metadata (key of the map) and regex values -->
   #foreach($metadata in $METADATA_REGEX_MAP.keySet())
     #set($regexValue = $METADATA_REGEX_MAP.get($metadata))
+    #set($solrField = $METADATA_SOLR_FIELD_MAP.get($metadata))
 
     <tr>
-      <td class="formcolumncell">
-        <a name="s${SEQNUM}_metaRegex${foreach.count}">
+        <td class="formcolumncell">
+            <a name="s${SEQNUM}_metaRegex${foreach.count}">
 
-	        <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.Delete'))" 
-	        alt="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.DeleteAlt'))"
-	        title="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.DeleteAlt'))"
-	        onclick='javascript:s${SEQNUM}_deleteMetaRegex("$counter");'/>
-	        
-	        <input type="hidden" name="s${SEQNUM}_metaRegex_op$counter" value="Continue"/>
-	        <input type="hidden" name="s${SEQNUM}_metadataField$counter" value="$Encoder.attributeEscape($metadata)"/>
-	        <input type="hidden" name="s${SEQNUM}_regexField$counter" value="$Encoder.attributeEscape($regexValue)"/>
-        
-        </a>
-      </td>
-      
-      <td class="formcolumncell">
-        <nobr>$Encoder.attributeEscape($metadata)</nobr>
-      </td>
-      <td class="formcolumncell">
-        <nobr>$Encoder.attributeEscape($regexValue)</nobr>
-      </td>
+                <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.Delete'))"
+                alt="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.DeleteAlt'))"
+                title="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.DeleteAlt'))"
+                onclick='javascript:s${SEQNUM}_deleteMetaRegex("$counter");'/>
+
+                <input type="hidden" name="s${SEQNUM}_metaRegex_op$counter" value="Continue"/>
+                <input type="hidden" name="s${SEQNUM}_metadataField$counter" value="$Encoder.attributeEscape($metadata)"/>
+                <input type="hidden" name="s${SEQNUM}_regexField$counter" value="$Encoder.attributeEscape($regexValue)"/>
+                <input type="hidden" name="s${SEQNUM}_solrField$counter" value="$Encoder.attributeEscape($solrField)"/>
+
+            </a>
+        </td>
+
+        <td class="formcolumncell">
+            <nobr>$Encoder.attributeEscape($metadata)</nobr>
+        </td>
+        <td class="formcolumncell">
+            <nobr>$Encoder.attributeEscape($regexValue)</nobr>
+        </td>
+        <td class="formcolumncell">
+            <nobr>$Encoder.attributeEscape($solrField)</nobr>
+        </td>
     </tr>
     #set($counter = $counter + 1)
   #end
   #if($counter == 0)
     <tr>
-      <td></td>
-      <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoMetadataSpecified'))</td>
-      <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoRegexSpecified'))</td>
+        <td></td>
+        <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoMetadataSpecified'))</td>
+        <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoRegexSpecified'))</td>
+        <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoSolrFieldSpecified'))</td>
     </tr>
   #end
 
@@ -76,16 +83,20 @@
 	    </a>
 	    <input type="hidden" name="s${SEQNUM}_metaRegex_count" value="$counter"/>
 	    <input type="hidden" name="s${SEQNUM}_metaRegex_op" value="Continue"/>
-	  </td>
-    <td class="formcolumncell">
-      <nobr><input type="text" size="35" name="s${SEQNUM}_metadataField" value="" 
-      placeholder="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.PlaceholderMetadata'))"/></nobr>
-    </td>
-    <td class="formcolumncell">
-      <nobr><input type="text" size="35" name="s${SEQNUM}_regexField" value="" 
-      placeholder="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.PlaceholderRegex'))"/></nobr>
-    </td>
-	</tr>
+      </td>
+      <td class="formcolumncell">
+         <nobr><input type="text" size="35" name="s${SEQNUM}_metadataField" value=""
+                         placeholder="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.PlaceholderMetadata'))"/></nobr>
+      </td>
+      <td class="formcolumncell">
+        <nobr><input type="text" size="35" name="s${SEQNUM}_regexField" value=""
+        placeholder="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.PlaceholderRegex'))"/></nobr>
+      </td>
+      <td class="formcolumncell">
+          <nobr><input type="text" size="35" name="s${SEQNUM}_solrField" value=""
+                       placeholder="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.PlaceholderSolrField'))"/></nobr>
+      </td>
+    </tr>
   
 </table>
 
@@ -93,8 +104,10 @@
   #set($counter = 0)
   #foreach($metadata in $METADATA_REGEX_MAP.keySet())
     #set($regexValue = $METADATA_REGEX_MAP.get($metadata))
+    #set($solrField = $METADATA_SOLR_FIELD_MAP.get($metadata))
      <input type="hidden" name="s${SEQNUM}_metadataField${foreach.index}" value="$Encoder.attributeEscape($metadata)" />
      <input type="hidden" name="s${SEQNUM}_regexField${foreach.index}" value="$Encoder.attributeEscape($regexValue)" />
+     <input type="hidden" name="s${SEQNUM}_solrField${foreach.index}" value="$Encoder.attributeEscape($solrField)" />
     #set($counter = $counter + 1)
   #end
   <input type="hidden" name="s${SEQNUM}_metaRegex_count" value="$counter"/>

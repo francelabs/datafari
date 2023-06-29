@@ -243,7 +243,7 @@ public class RegexEntity extends BaseTransformationConnector {
    *
    * @param documentURI         is the URI of the document. The URI is presumed to be the unique identifier which the output data store will use to process and serve the document. This URI is
    *                            constructed by the repository connector which fetches the document, and is thus universal across all output connectors.
-   * @param outputDescription   is the description string that was constructed for this document by the getOutputDescription() method.
+   * @param pipelineDescription is the description string that was constructed for this document by the getOutputDescription() method.
    * @param document            is the document data to be processed (handed to the output data store).
    * @param authorityNameString is the name of the authority responsible for authorizing any access tokens passed in with the repository document. May be null.
    * @param activities          is the handle to an object that the implementer of a pipeline connector may use to perform operations, such as logging processing activity, or sending a modified
@@ -257,80 +257,165 @@ public class RegexEntity extends BaseTransformationConnector {
 
     Specification spec = pipelineDescription.getSpecification();
     SpecificationNode specNodeRegex = spec.getChild(RegexEntityConfig.POS_NODE_REGEX_ENTITY);
+    SpecificationNode specNodeSolrField = spec.getChild(RegexEntityConfig.POS_NODE_REGEX_ENTITY_SOLR_FIELD);
+
+    Map<String, String> mapMetadataRegex;
+    Map<String, Map<String, String>> mapSolrFieldMetadataRegex = new HashMap<>();
+
+    Iterator<String> itMetadata = specNodeRegex.getAttributes();
+    String metadata;
+    String regex;
+    String solrField;
+
+    // Create a Map<String(SolrFiedl), Map<String(Metadata), String(Regex)>> with the SpecificationNodes
+    while (itMetadata.hasNext()) {
+      metadata = itMetadata.next();
+      regex = specNodeRegex.getAttributeValue(metadata);
+      solrField = specNodeSolrField.getAttributeValue(metadata);
+      mapMetadataRegex = mapSolrFieldMetadataRegex.get(solrField);
+
+      if (mapMetadataRegex == null) {
+        mapMetadataRegex = new HashMap<>();
+        mapMetadataRegex.put(metadata, regex);
+        mapSolrFieldMetadataRegex.put(solrField, mapMetadataRegex);
+      } else {
+        mapSolrFieldMetadataRegex.get(solrField).put(metadata, regex);
+      }
+    }
 
     final long startTime = System.currentTimeMillis();
 
     // Prepare storage for reading document content. A suitable storage depending on content size.
     DestinationStorage storage = DestinationStorage.getDestinationStorage(document.getBinaryLength(), getClass());
     try {
-      try {
-        
-        // Transfert document content to the storage
-        long binaryLength = document.getBinaryStream().transferTo(storage.getOutputStream());
-        
-        // The input stream of the document has been totally read by previous instruction, so set a new one
-        document.setBinary(storage.getInputStream(), binaryLength);
-        
-        
-        // Prepare reading of document copied to extract metadata
-        BufferedReader buffRead = new BufferedReader(new InputStreamReader(storage.getInputStream()));
-  
+      // Reading file content
+      if (mapSolrFieldMetadataRegex.get("content") != null) {
+        try {
+
+              // Transfert document content to the storage
+              long binaryLength = document.getBinaryStream().transferTo(storage.getOutputStream());
+
+              // The input stream of the document has been totally read by previous instruction, so set a new one
+              document.setBinary(storage.getInputStream(), binaryLength);
+
+
+              // Prepare reading of document copied to extract metadata
+              BufferedReader buffRead = new BufferedReader(new InputStreamReader(storage.getInputStream()));
+
+              // Map of metadata associated to lines found : < metadata, Set<linesFound> >
+              Map<String, List<String>> matchedMetadata = new HashMap<>();
+
+              // Read lines
+              String line = buffRead.readLine();
+              while (line != null) {
+                searchMatchesForMetadata(line, mapSolrFieldMetadataRegex.get("content"), matchedMetadata);
+                line = buffRead.readLine();
+              }
+              buffRead.close();
+
+              addMetadataFieldsToDocument(document, matchedMetadata);
+
+              activities.recordActivity(startTime, ACTIVITY_REGEX, document.getBinaryLength(), documentURI, "OK", "");
+        } catch (Exception e) {
+          activities.recordActivity(startTime, ACTIVITY_REGEX, document.getBinaryLength(), documentURI, "KO", e.getMessage());
+          Logging.ingest.error("Unable to browse document " + documentURI, e);
+        }
+      }
+
+      // Apply regex verification to the file Solr fields
+      if (specNodeContainsExactContent(specNodeSolrField)) {
+        Logging.ingest.info("Scanning metadatas");
+
         // Map of metadata associated to lines found : < metadata, Set<linesFound> >
         Map<String, List<String>> matchedMetadata = new HashMap<>();
 
-        // Read lines
-        String line = buffRead.readLine();
-        while (line != null) {
-          searchMatchesForMetadata(line, specNodeRegex, matchedMetadata);
-          line = buffRead.readLine();
+        for (Map.Entry<String, Map<String, String>> entry : mapSolrFieldMetadataRegex.entrySet()) {
+          solrField = entry.getKey();
+          mapMetadataRegex = entry.getValue();
+          String[] solrFieldContent = document.getFieldAsStrings(solrField);
+
+          for (String line : solrFieldContent) {
+            searchMatchesForMetadata(line, mapMetadataRegex, matchedMetadata);
+          }
         }
-        buffRead.close();
 
         addMetadataFieldsToDocument(document, matchedMetadata);
-        
-        activities.recordActivity(startTime, ACTIVITY_REGEX, document.getBinaryLength(), documentURI, "OK", "");
-      } catch (Exception e) {
-        activities.recordActivity(startTime, ACTIVITY_REGEX, document.getBinaryLength(), documentURI, "KO", e.getMessage());
-        Logging.ingest.error("Unable to browse document " + documentURI, e);
+
+        // activities.recordActivity(startTime, ACTIVITY_REGEX, document.getBinaryLength(), documentURI, "OK", "");
       }
+
       return activities.sendDocument(documentURI, document);
 
     } finally {
-      // Clean storage (for instance, delete temporary file) after all treatment on document done (Solr indexing). 
+      // Clean storage (for instance, delete temporary file) after all treatment on document done (Solr indexing).
       storage.close();
     }
 
+    //return activities.sendDocument(documentURI, document);
+
   }
-  
+
+  /**
+   * Search in specification node if a search in the file content is required
+   * Returns true if the specification node contain the Solr field "exactContent"
+   *
+   * @param specNodeSolrField a SpecificationNode containing all metadata/solrfield couple to find in the document.
+   */
+  private boolean specNodeContainsExactContent(SpecificationNode specNodeSolrField) {
+    Iterator<String> itMetadata = specNodeSolrField.getAttributes();
+    String metadata;
+    String solrField;
+
+    while (itMetadata.hasNext()) {
+      metadata = itMetadata.next();
+      solrField = specNodeSolrField.getAttributeValue(metadata);
+      if ("exactContent".equals(solrField)) return true;
+    }
+    return false;
+  }
+
+  /**
+   * Search in specification node if a search in the file metadata is required
+   * Returns true if the specification node contain the Solr field different from "exactContent"
+   *
+   * @param specNodeSolrField a SpecificationNode containing all metadata/solrfield couple to find in the document.
+   */
+  private boolean specNodeContainsMetadataFields(SpecificationNode specNodeSolrField) {
+    Iterator<String> itMetadata = specNodeSolrField.getAttributes();
+    String metadata;
+    String solrField;
+
+    while (itMetadata.hasNext()) {
+      metadata = itMetadata.next();
+      solrField = specNodeSolrField.getAttributeValue(metadata);
+      if (!"exactContent".equals(solrField)) return true;
+    }
+    return false;
+  }
+
   /**
    * Search in the line for regular expression contained in the specification node. Each regular expression is associated with a metadata.
    * Fill in the Map of metadata associated.
    * 
    * @param line one line of the document being read.
-   * @param specNodeRegex a SpecificationNode containing all metadata/regular expression couple to find in the document.
+   * @param mapMetadataRegex a Map containing all metadata/regular expression couple to find in the document.
    * @param matchedMetadata the line is added to the Set of lines associated with its metadata. A new metadata is put in the map if not exists yet.
    */
-  private void searchMatchesForMetadata(final String line, final SpecificationNode specNodeRegex, Map<String, List<String>> matchedMetadata) {
-    Iterator<String> itMetadata = specNodeRegex.getAttributes();
+  private void searchMatchesForMetadata(final String line, final Map<String, String> mapMetadataRegex, Map<String, List<String>> matchedMetadata) {
+
     String metadata;
     String regex;
     List<String> matchesFound;
     Matcher matcher;
-    
-    //Browse metadata to populate with regex matches
-    while (itMetadata.hasNext()) {
-      metadata = itMetadata.next();
-      regex = specNodeRegex.getAttributeValue(metadata);
-  
+
+    for (Map.Entry<String, String> entry : mapMetadataRegex.entrySet()) {
+      metadata = entry.getKey();
+      regex = entry.getValue();
+
       matcher = Pattern.compile(regex).matcher(line);
       if (matcher.find()) {
-        matchesFound = matchedMetadata.get(metadata);
-        
-        if (matchesFound == null) {
-          matchesFound = new ArrayList<>();
-          matchedMetadata.put(metadata, matchesFound);
-        }
-  
+        matchesFound = matchedMetadata.computeIfAbsent(metadata, k -> new ArrayList<>());
+
         //Retrieve all matches
         matcher.reset();
         while (matcher.find()) {
@@ -339,7 +424,6 @@ public class RegexEntity extends BaseTransformationConnector {
 
       }
     }
-    
   }
   
   /**
@@ -446,9 +530,11 @@ public class RegexEntity extends BaseTransformationConnector {
     
     // Fill in Specification object used to propagate posted variables to the edit or view pages.
     // First create a Node
-    SpecificationNode specNode = new SpecificationNode(RegexEntityConfig.NODE_REGEX_ENTITY);
+    SpecificationNode specNode = new SpecificationNode(RegexEntityConfig.NODE_METADATA_REGEX);
+    SpecificationNode specNodeSolr = new SpecificationNode(RegexEntityConfig.NODE_METADATA_SOLR_FIELD);
     spec.addChild(RegexEntityConfig.POS_NODE_REGEX_ENTITY, specNode);
-    
+    spec.addChild(RegexEntityConfig.POS_NODE_REGEX_ENTITY_SOLR_FIELD, specNodeSolr);
+
     String nbMetaRegexParam = variableContext.getParameter(seqPrefix + "metaRegex_count");
     if (nbMetaRegexParam != null &&!nbMetaRegexParam.isEmpty()) {
       final int nbMetaRegex = Integer.parseInt(nbMetaRegexParam);
@@ -456,14 +542,17 @@ public class RegexEntity extends BaseTransformationConnector {
       String operation;
       String metadataField;
       String regexField;
-      
+      String solrField;
+
       for (int i = 0; i < nbMetaRegex; i++) {
         operation = variableContext.getParameter(prefix + "op" + i);
         if(!"Delete".equals(operation)) {
           // Gather metadata/regex couple
           metadataField = variableContext.getParameter(seqPrefix + RegexEntityConfig.ATTRIBUTE_METADATA_FIELD + i);
           regexField = variableContext.getParameter(seqPrefix + RegexEntityConfig.ATTRIBUTE_REGEX_FIELD + i);
+          solrField = variableContext.getParameter(seqPrefix + RegexEntityConfig.ATTRIBUTE_SOLR_FIELD + i);
           specNode.setAttribute(metadataField, regexField);
+          specNodeSolr.setAttribute(metadataField, solrField);
         }
       }
       
@@ -471,7 +560,9 @@ public class RegexEntity extends BaseTransformationConnector {
       if (operation != null && operation.equals("Add")) {
         metadataField = variableContext.getParameter(seqPrefix + RegexEntityConfig.ATTRIBUTE_METADATA_FIELD);
         regexField = variableContext.getParameter(seqPrefix + RegexEntityConfig.ATTRIBUTE_REGEX_FIELD);
+        solrField = variableContext.getParameter(seqPrefix + RegexEntityConfig.ATTRIBUTE_SOLR_FIELD);
         specNode.setAttribute(metadataField, regexField);
+        specNodeSolr.setAttribute(metadataField, solrField);
       }
 
     }
@@ -510,13 +601,14 @@ public class RegexEntity extends BaseTransformationConnector {
    */
   protected void fillInVelocityContextParam(final Map<String, Object> paramMap, final Specification spec) {
     Map<String, String> metadataRegexAttribute = new TreeMap<>();
+    Map<String, String> metadataSolrFieldAttribute = new TreeMap<>();
     String metadataField;
     String regexField;
-
+    String solrField;
     for (int i = 0; i < spec.getChildCount(); i++) {
       final SpecificationNode specNode = spec.getChild(i);
 
-      if (specNode.getType().equals(RegexEntityConfig.NODE_REGEX_ENTITY)) {
+      if (specNode.getType().equals(RegexEntityConfig.NODE_METADATA_REGEX)) {
         Iterator<String> itMetadata = specNode.getAttributes();
 
         while (itMetadata.hasNext()) {
@@ -527,9 +619,22 @@ public class RegexEntity extends BaseTransformationConnector {
         }
 
       }
+
+      if (specNode.getType().equals(RegexEntityConfig.NODE_METADATA_SOLR_FIELD)) {
+        Iterator<String> itMetadata = specNode.getAttributes();
+
+        while (itMetadata.hasNext()) {
+          metadataField = itMetadata.next();
+          solrField = specNode.getAttributeValue(metadataField);
+
+          metadataSolrFieldAttribute.put(metadataField, solrField);
+        }
+
+      }
     }
     
     paramMap.put(RegexEntityConfig.ATTRIBUTE_METADATA_REGEX_MAP, metadataRegexAttribute);
+    paramMap.put(RegexEntityConfig.ATTRIBUTE_METADATA_SOLR_FIELD_MAP, metadataSolrFieldAttribute);
   }
   
   /**

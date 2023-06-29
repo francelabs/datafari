@@ -37,6 +37,13 @@
       editjob.s${SEQNUM}_regexField.focus();
       return;
     }
+
+    if (editjob.s${SEQNUM}_solrField.value == "")
+    {
+      alert("$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoSolrFieldSpecified'))");
+      editjob.s${SEQNUM}_solrField.focus();
+      return;
+    }
     editjob.s${SEQNUM}_metaRegex_op.value="Add";
     postFormSetAnchor("s${SEQNUM}_metaRegex");
   }

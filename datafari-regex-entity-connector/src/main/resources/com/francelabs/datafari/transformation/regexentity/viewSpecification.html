@@ -20,23 +20,27 @@
   <tr>
     <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.MetadataField'))</nobr></td>
     <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.RegexField'))</nobr></td>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.SolrField'))</nobr></td>
   </tr>
 
   <!-- Iterates over Map of metadata (key of the map) and regex values -->
   #foreach($metadata in $METADATA_REGEX_MAP.keySet())
     #set($regexValue = $METADATA_REGEX_MAP.get($metadata))
+    #set($solrField = $METADATA_SOLR_FIELD_MAP.get($metadata))
     <tr>
       <td class="value"><nobr>$Encoder.bodyEscape($metadata)</nobr></td>
       <td class="value"><nobr>$Encoder.bodyEscape($regexValue)</nobr></td>
+      <td class="value"><nobr>$Encoder.bodyEscape($solrField)</nobr></td>
     </tr>
     
 	#end
 	
 	#if($METADATA_REGEX_MAP.isEmpty())
 	<tr>
-    <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoMetadataSpecified'))</td>
-    <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoRegexSpecified'))</td>
-  </tr>
+      <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoMetadataSpecified'))</td>
+      <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoRegexSpecified'))</td>
+      <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoSolrFieldSpecified'))</td>
+    </tr>
   #end
 	
 
