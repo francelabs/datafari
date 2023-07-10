@@ -19,7 +19,12 @@ then
     cd /opt/datafari/bin && bash init-datafari.sh
 	if [ $# -eq 0 ]; then
 		rm -rf /opt/datafari/apache/sites-available/tomcat.conf
-		cp /opt/datafari/bin/deployUtils/docker/tomcat.conf /opt/datafari/apache/sites-available/tomcat.conf
+		if [[ "$DATAFARIUIDEV" == true ]]
+		then
+		  cp /opt/datafari/bin/deployUtils/docker/tomcat-datafariuidev.conf /opt/datafari/apache/sites-available/tomcat.conf
+		else
+		  cp /opt/datafari/bin/deployUtils/docker/tomcat.conf /opt/datafari/apache/sites-available/tomcat.conf
+        fi
         chown datafari /opt/datafari/apache/sites-available/tomcat.conf
         chmod 755 /opt/datafari/apache/sites-available/tomcat.conf
 	fi
