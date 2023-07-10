@@ -18,28 +18,45 @@
 
 <table class="displaytable">
   <tr>
-    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.MetadataField'))</nobr></td>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.DestinationMetadataField'))</nobr></td>
     <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.RegexField'))</nobr></td>
-    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.SolrField'))</nobr></td>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.SourceMetadataField'))</nobr></td>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.ValueIfTrue'))</nobr></td>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.ValueIfFalse'))</nobr></td>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.KeepOnlyOne'))</nobr></td>
   </tr>
 
   <!-- Iterates over Map of metadata (key of the map) and regex values -->
-  #foreach($metadata in $METADATA_REGEX_MAP.keySet())
-    #set($regexValue = $METADATA_REGEX_MAP.get($metadata))
-    #set($solrField = $METADATA_SOLR_FIELD_MAP.get($metadata))
+  #foreach($specification in $SPECIFICATION_MAP.entrySet())
+    #set($sourceMetadata = $specification.value.getSourceMetadata())
+    #set($regexValue = $specification.value.getRegexValue())
+    #set($destinationMetadata = $specification.value.getDestinationMetadata())
+    #set($valueIfTrue = $specification.value.getValueIfTrue())
+    #set($valueIfFalse = $specification.value.getValueIfFalse())
+    #set($keepOnlyOne = $specification.value.getKeepOnlyOne())
     <tr>
-      <td class="value"><nobr>$Encoder.bodyEscape($metadata)</nobr></td>
+      <td class="value"><nobr>$Encoder.bodyEscape($sourceMetadata)</nobr></td>
       <td class="value"><nobr>$Encoder.bodyEscape($regexValue)</nobr></td>
-      <td class="value"><nobr>$Encoder.bodyEscape($solrField)</nobr></td>
+      <td class="value"><nobr>$Encoder.bodyEscape($destinationMetadata)</nobr></td>
+      <td class="value"><nobr>$Encoder.bodyEscape($valueIfTrue)</nobr></td>
+      <td class="value"><nobr>$Encoder.bodyEscape($valueIfFalse)</nobr></td>
+      <td class="value">
+        #if($keepOnlyOne)
+          <nobr><input type="checkbox" disabled checked /></nobr>
+        #end
+      </td>
     </tr>
     
-	#end
+  #end
 	
-	#if($METADATA_REGEX_MAP.isEmpty())
+  #if($SPECIFICATION_MAP.isEmpty())
 	<tr>
-      <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoMetadataSpecified'))</td>
+      <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoDestinationMetadataSpecified'))</td>
       <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoRegexSpecified'))</td>
-      <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoSolrFieldSpecified'))</td>
+      <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoSourceMetadataSpecified'))</td>
+      <td></td>
+      <td></td>
+      <td></td>
     </tr>
   #end
 	

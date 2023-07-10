@@ -4,17 +4,26 @@ public class RegexEntityConfig {
   // Configuration parameters
 
   // Specification nodes and values
-  public static final String NODE_METADATA_REGEX = "regexEntityNode";
-  public static final String NODE_METADATA_SOLR_FIELD = "regexEntityNodeSolrField";
+  public static final String NODE_SOURCE_METADATA = "regexEntityNodeSourceMetadata";
+  public static final String NODE_REGEX = "regexEntityNodeRegex";
+  public static final String NODE_DESTINATION_METADATA = "regexEntityNodeDestinationMetadata";
+  public static final String NODE_VALUE_IF_TRUE = "regexEntityNodeValueIfTrue";
+  public static final String NODE_VALUE_IF_FALSE = "regexEntityNodeValueIfFalse";
+  public static final String NODE_KEEP_ONLY_ONE = "regexEntityNodeKeepOnlyOne";
   /** Position for Regex Entity node */
-  public static final int POS_NODE_REGEX_ENTITY = 0;
-  public static final int POS_NODE_REGEX_ENTITY_SOLR_FIELD = 1;
-  
-  // Basic field names in html pages. Can be completed by a suffix and/or a prefix
-  public static final String ATTRIBUTE_REGEX_FIELD = "regexField";
-  public static final String ATTRIBUTE_METADATA_FIELD = "metadataField";
-  public static final String ATTRIBUTE_SOLR_FIELD = "solrField";
+  public static final int POS_NODE_SOURCE_METADATA = 0;
+  public static final int POS_NODE_REGEX = 1;
+  public static final int POS_NODE_DESTINATION_METADATA = 2;
+  public static final int POS_NODE_VALUE_IF_TRUE = 3;
+  public static final int POS_NODE_VALUE_IF_FALSE = 4;
+  public static final int POS_NODE_KEEP_ONLY_ONE = 5;
 
-  public static final String ATTRIBUTE_METADATA_REGEX_MAP = "METADATA_REGEX_MAP";
-  public static final String ATTRIBUTE_METADATA_SOLR_FIELD_MAP = "METADATA_SOLR_FIELD_MAP";
+  // Basic field names in html pages. Can be completed by a suffix and/or a prefix
+  public static final String ATTRIBUTE_DESTINATION_METADATA_FIELD = "destinationMetadataField";
+  public static final String ATTRIBUTE_REGEX_FIELD = "regexField";
+  public static final String ATTRIBUTE_SOURCE_METADATA_FIELD = "sourceMetadataField";
+  public static final String ATTRIBUTE_VALUE_IF_TRUE_FIELD = "valueIfTrueField";
+  public static final String ATTRIBUTE_VALUE_IF_FALSE_FIELD = "valueIfFalseField";
+  public static final String ATTRIBUTE_KEEP_ONLY_ONE_FIELD = "keepOnlyOneField";
+  public static final String ATTRIBUTE_SPECIFICATION_MAP = "SPECIFICATION_MAP";
 }

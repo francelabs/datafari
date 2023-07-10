@@ -24,10 +24,10 @@
   function s${SEQNUM}_addMetaRegex()
   {
     
-    if (editjob.s${SEQNUM}_metadataField.value == "")
+    if (editjob.s${SEQNUM}_destinationMetadataField.value == "")
     {
-      alert("$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoMetadataSpecified'))");
-      editjob.s${SEQNUM}_metadataField.focus();
+      alert("$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoDestinationMetadataSpecified'))");
+      editjob.s${SEQNUM}_destinationMetadataField.focus();
       return;
     }
     
@@ -38,10 +38,10 @@
       return;
     }
 
-    if (editjob.s${SEQNUM}_solrField.value == "")
+    if (editjob.s${SEQNUM}_sourceMetadataField.value == "")
     {
-      alert("$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoSolrFieldSpecified'))");
-      editjob.s${SEQNUM}_solrField.focus();
+      alert("$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoSourceMetadataSpecified'))");
+      editjob.s${SEQNUM}_sourceMetadataField.focus();
       return;
     }
     editjob.s${SEQNUM}_metaRegex_op.value="Add";
