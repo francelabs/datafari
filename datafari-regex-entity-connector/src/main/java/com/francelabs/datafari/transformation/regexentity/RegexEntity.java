@@ -256,42 +256,13 @@ public class RegexEntity extends BaseTransformationConnector {
     SpecificationNode specNodeRegex = spec.getChild(RegexEntityConfig.POS_NODE_REGEX);
 
     Iterator<String> itSpecifications = specNodeRegex.getAttributes();
-    String index;
-    String regex;
-    String sourceMetadata;
-    String destinationMetadata;
-    String valueIfTrue;
-    String valueIfFalse;
-    String keepOnlyOneString;
-    boolean keepOnlyOne;
-    RegexEntitySpecification regexEntitySpecification;
 
-    Map<String, RegexEntitySpecification> regexEntitySpecificationsMap;
+    String sourceMetadata;
+
     Map<String, Map<String, RegexEntitySpecification>> regexEntitySpecificationsMapBySource = new TreeMap<>();
 
     // Create a Map<String(Source), Map<String, RegexEntitySpecification>> with the SpecificationNodes
-    while (itSpecifications.hasNext()) {
-      index = itSpecifications.next();
-      sourceMetadata = readNodeValue(spec, RegexEntityConfig.POS_NODE_SOURCE_METADATA, index);
-      regex = readNodeValue(spec, RegexEntityConfig.POS_NODE_REGEX, index);
-      destinationMetadata = readNodeValue(spec, RegexEntityConfig.POS_NODE_DESTINATION_METADATA, index);
-      valueIfTrue = readNodeValue(spec, RegexEntityConfig.POS_NODE_VALUE_IF_TRUE, index);
-      valueIfFalse = readNodeValue(spec, RegexEntityConfig.POS_NODE_VALUE_IF_FALSE, index);
-      keepOnlyOneString = readNodeValue(spec, RegexEntityConfig.POS_NODE_KEEP_ONLY_ONE, index);
-      keepOnlyOne = "true".equals(keepOnlyOneString);
-
-      regexEntitySpecification = new RegexEntitySpecification(sourceMetadata,
-              regex, destinationMetadata, valueIfTrue,
-              valueIfFalse, keepOnlyOne);
-      if (regexEntitySpecification.isTargetingContent()) {
-        sourceMetadata = CONTENT;
-      }
-      if (regexEntitySpecification.isValidObject()) {
-        regexEntitySpecificationsMap = regexEntitySpecificationsMapBySource.computeIfAbsent(sourceMetadata, k -> new TreeMap<>());
-        regexEntitySpecificationsMap.put(index, regexEntitySpecification);
-        regexEntitySpecificationsMapBySource.put(sourceMetadata, regexEntitySpecificationsMap);
-      }
-    }
+    regexSpecificationsExtraction(spec, itSpecifications, regexEntitySpecificationsMapBySource);
 
     final long startTime = System.currentTimeMillis();
 
@@ -364,6 +335,41 @@ public class RegexEntity extends BaseTransformationConnector {
       storage.close();
     }
 
+  }
+
+  private void regexSpecificationsExtraction(Specification spec, Iterator<String> itSpecifications, Map<String, Map<String, RegexEntitySpecification>> regexEntitySpecificationsMapBySource) {
+    String regex;
+    String keepOnlyOneString;
+    RegexEntitySpecification regexEntitySpecification;
+    String index;
+    Map<String, RegexEntitySpecification> regexEntitySpecificationsMap;
+    String sourceMetadata;
+    String valueIfTrue;
+    boolean keepOnlyOne;
+    String valueIfFalse;
+    String destinationMetadata;
+    while (itSpecifications.hasNext()) {
+      index = itSpecifications.next();
+      sourceMetadata = readNodeValue(spec, RegexEntityConfig.POS_NODE_SOURCE_METADATA, index);
+      regex = readNodeValue(spec, RegexEntityConfig.POS_NODE_REGEX, index);
+      destinationMetadata = readNodeValue(spec, RegexEntityConfig.POS_NODE_DESTINATION_METADATA, index);
+      valueIfTrue = readNodeValue(spec, RegexEntityConfig.POS_NODE_VALUE_IF_TRUE, index);
+      valueIfFalse = readNodeValue(spec, RegexEntityConfig.POS_NODE_VALUE_IF_FALSE, index);
+      keepOnlyOneString = readNodeValue(spec, RegexEntityConfig.POS_NODE_KEEP_ONLY_ONE, index);
+      keepOnlyOne = "true".equals(keepOnlyOneString);
+
+      regexEntitySpecification = new RegexEntitySpecification(sourceMetadata,
+              regex, destinationMetadata, valueIfTrue,
+              valueIfFalse, keepOnlyOne);
+      if (regexEntitySpecification.isTargetingContent()) {
+        sourceMetadata = CONTENT;
+      }
+      if (regexEntitySpecification.isValidObject()) {
+        regexEntitySpecificationsMap = regexEntitySpecificationsMapBySource.computeIfAbsent(sourceMetadata, k -> new TreeMap<>());
+        regexEntitySpecificationsMap.put(index, regexEntitySpecification);
+        regexEntitySpecificationsMapBySource.put(sourceMetadata, regexEntitySpecificationsMap);
+      }
+    }
   }
 
 
