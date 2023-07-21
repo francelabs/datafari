@@ -7,6 +7,8 @@
 <config>
 
   <luceneMatchVersion>8.11.2</luceneMatchVersion>
+  
+  <lib dir="${lib.path}lib/custom"/>
   <dataDir>${solr.data.dir:}</dataDir>
 
   <directoryFactory name="DirectoryFactory" class="${solr.directoryFactory:solr.NRTCachingDirectoryFactory}">
@@ -98,6 +100,9 @@
   </requestHandler>
 
   <requestHandler name="/update" class="solr.UpdateRequestHandler">
+    <lst name="defaults">
+      <str name="update.chain">noip-processor-chain</str>
+    </lst>
   </requestHandler>
 
   <requestHandler name="/analysis/field" startup="lazy" class="solr.FieldAnalysisRequestHandler" />
@@ -110,6 +115,12 @@
       <str name="echoHandler">true</str>
     </lst>
   </requestHandler>
+  
+  <updateRequestProcessorChain name="noip-processor-chain">
+    <processor class="com.francelabs.datafari.updateprocessor.AnonymiseIpUpdateProcessorFactory" />
+    <processor class="solr.LogUpdateProcessorFactory" />
+    <processor class="solr.RunUpdateProcessorFactory"/>
+  </updateRequestProcessorChain>
 
   <queryResponseWriter name="json" class="solr.JSONResponseWriter">
     <str name="content-type">text/plain; charset=UTF-8</str>
