@@ -233,6 +233,7 @@ init_node_host() {
   sed -i -e "s/@NODEHOST@/${1}/g" $SOLR_INSTALL_DIR/server/etc/jetty.xml >>$installerLog 2>&1
   sed -i -e "s/@NODEHOST@/${1}/g" $DATAFARI_HOME/bin/zkUtils/reloadCollections.sh >>$installerLog 2>&1
   sed -i -e "s/@NODEHOST@/${1}/g" $DATAFARI_HOME/bin/zkUtils/init-solr-collections.sh >>$installerLog 2>&1
+  
 }
 
 init_solr_node() {
@@ -240,7 +241,7 @@ init_solr_node() {
   sed -i -e "s/@SOLRNODEIP@/${1}/g" $DATAFARI_HOME/bin/zkUtils/init-solr-collections.sh >>$installerLog 2>&1
   sed -i -e "s/@SOLRNODEIP@/${1}/g" $TOMCAT_HOME/conf/solr.properties >>$installerLog 2>&1
   sed -i -e "s/@SOLRNODEIP@/${1}/g" $DATAFARI_HOME/ssl-keystore/apache/config/tomcat.conf >>$installerLog 2>&1
-  
+  sed -i -e "s/@SOLRNODEIP@/${1}/g" $SOLR_INSTALL_DIR/solr_home/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
     
 }
 
