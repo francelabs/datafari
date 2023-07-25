@@ -258,6 +258,7 @@ public class RegexEntity extends BaseTransformationConnector {
     Iterator<String> itSpecifications = specNodeRegex.getAttributes();
 
     String sourceMetadata;
+    boolean hasError = false;
 
     Map<String, Map<String, RegexEntitySpecification>> regexEntitySpecificationsMapBySource = new TreeMap<>();
 
@@ -297,8 +298,8 @@ public class RegexEntity extends BaseTransformationConnector {
 
               checkNoMatchRegex(regexEntitySpecificationsForContent, matchedMetadata);
 
-              activities.recordActivity(startTime, ACTIVITY_REGEX, document.getBinaryLength(), documentURI, "OK", "");
         } catch (Exception e) {
+          hasError = true;
           activities.recordActivity(startTime, ACTIVITY_REGEX, document.getBinaryLength(), documentURI, "KO", e.getMessage());
           Logging.ingest.error("Unable to browse document " + documentURI, e);
         }
@@ -324,9 +325,9 @@ public class RegexEntity extends BaseTransformationConnector {
           checkNoMatchRegex(entry.getValue(), matchedMetadata);
         }
 
-        activities.recordActivity(startTime, ACTIVITY_REGEX, document.getBinaryLength(), documentURI, "OK", "");
       }
 
+      if (!hasError) activities.recordActivity(startTime, ACTIVITY_REGEX, document.getBinaryLength(), documentURI, "OK", "");
       addMetadataFieldsToDocument(document, matchedMetadata);
       return activities.sendDocument(documentURI, document);
 
@@ -766,7 +767,6 @@ public class RegexEntity extends BaseTransformationConnector {
         }
       }
     }
-    
     return versionString.toString();
   }
   
