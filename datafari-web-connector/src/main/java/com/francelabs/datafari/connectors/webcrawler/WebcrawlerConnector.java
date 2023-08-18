@@ -22,13 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1141,6 +1135,7 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
       }
 
       final int responseCode = cache.getResponseCode(documentIdentifier);
+
       if (responseCode != 200) {
         if (Logging.connectors.isDebugEnabled())
           Logging.connectors.debug("Web: For document '" + documentIdentifier + "', not indexing because response code not indexable: " + responseCode);
@@ -1329,6 +1324,29 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
       return trialSuffix.substring(0, semi).trim();
     }
     return null;
+  }
+
+  /**
+   * If the initial url is permanently or temporarly redirected (code 301 or 302), the method returns the destination url
+   * @param url The initial url
+   * @return the url after redirection
+   * @throws IOException
+   */
+  public static String getFinalURL(String url) throws IOException, URISyntaxException {
+    URL formattedUrl = new URL(url);
+    URLConnection urlConnection = formattedUrl.openConnection();
+    HttpURLConnection con = (HttpURLConnection) urlConnection;
+    con.setInstanceFollowRedirects(false);
+    con.connect();
+    con.getInputStream();
+
+    if (con.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM || con.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
+      String redirectUrl = con.getHeaderField("Location");
+      return getFinalURL(redirectUrl);
+    }
+
+    final java.net.URI uri = new URI(url);
+    return uri.getHost();
   }
 
   protected static String extractMimeType(String contentType) {
@@ -2229,6 +2247,7 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
     String inclusions = ".*\n";
     String inclusionsIndex = ".*\n";
     boolean includeMatching = true;
+    boolean forceInclusion = true;
 
     i = 0;
     while (i < ds.getChildCount()) {
@@ -2247,12 +2266,19 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
           includeMatching = false;
         else
           includeMatching = true;
+      } else if (sn.getType().equals(WebcrawlerConfig.NODE_FORCEINCLUSION)) {
+        final String value = sn.getAttributeValue(WebcrawlerConfig.ATTR_VALUE);
+        if (value == null || "false".equals(value))
+          forceInclusion = false;
+        else
+          forceInclusion = true;
       }
     }
 
     velocityContext.put("INCLUSIONS", inclusions);
     velocityContext.put("INCLUSIONSINDEX", inclusionsIndex);
     velocityContext.put("INCLUDEMATCHING", includeMatching);
+    velocityContext.put("FORCEINCLUSION", forceInclusion);
 
   }
 
@@ -2534,6 +2560,25 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
       final String matchingHosts = variableContext.getParameter(seqPrefix + "matchinghosts");
       final SpecificationNode cn = new SpecificationNode(WebcrawlerConfig.NODE_LIMITTOSEEDS);
       cn.setAttribute(WebcrawlerConfig.ATTR_VALUE, (matchingHosts == null || matchingHosts.equals("false")) ? "false" : "true");
+      ds.addChild(ds.getChildCount(), cn);
+    }
+
+    // Handle the force-inclusion switch
+    final String forceInclusionPresent = variableContext.getParameter(seqPrefix + "forceinclusion_present");
+    if (forceInclusionPresent != null) {
+      // Delete existing switch record first
+      int i = 0;
+      while (i < ds.getChildCount()) {
+        final SpecificationNode sn = ds.getChild(i);
+        if (sn.getType().equals(WebcrawlerConfig.NODE_FORCEINCLUSION))
+          ds.removeChild(i);
+        else
+          i++;
+      }
+
+      final String forceInclusion = variableContext.getParameter(seqPrefix + "forceInclusion");
+      final SpecificationNode cn = new SpecificationNode(WebcrawlerConfig.NODE_FORCEINCLUSION);
+      cn.setAttribute(WebcrawlerConfig.ATTR_VALUE, (forceInclusion == null || forceInclusion.equals("false")) ? "false" : "true");
       ds.addChild(ds.getChildCount(), cn);
     }
 
@@ -4887,6 +4932,7 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
       final List<String> packList = new ArrayList<>();
       final String[] packStuff = new String[2];
       boolean limitToSeeds = false;
+      boolean forceInclusion = false;
       int i = 0;
       while (i < spec.getChildCount()) {
         final SpecificationNode sn = spec.getChild(i++);
@@ -4936,6 +4982,9 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
             limitToSeeds = false;
           else
             limitToSeeds = true;
+        } else if (sn.getType().equals(WebcrawlerConfig.NODE_FORCEINCLUSION)) {
+          final String value = sn.getAttributeValue(WebcrawlerConfig.ATTR_VALUE);
+            forceInclusion = value != null && !value.equals(WebcrawlerConfig.ATTRVALUE_FALSE);
         } else if (sn.getType().equals(WebcrawlerConfig.NODE_URLSPEC)) {
           String urlRegexp = sn.getAttributeValue(WebcrawlerConfig.ATTR_REGEXP);
           if (urlRegexp == null)
@@ -5035,8 +5084,18 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
 
             final String host = url.getHost();
 
-            if (host != null)
+            if (host != null) {
               seedHosts.add(host);
+              if (forceInclusion) {
+                // In case of redirection, if "Force the inclusion of redirects" is set to true, we add the redirected url to seedHosts
+                try {
+                  seedHosts.add(getFinalURL(urlCandidate));
+                } catch (IOException e) {
+                  // Skip the entry
+                }
+              }
+            }
+
           } catch (final java.net.URISyntaxException e) {
             // Skip the entry
           } catch (final java.lang.IllegalArgumentException e) {
