@@ -23,8 +23,8 @@
     <jena-libs.version>4.4.0</jena-libs.version>
     <json.simple.version>1.1.1</json.simple.version>
     <jackson.version>2.13.3</jackson.version>
-    <jackson-databind.version>2.13.3</jackson-databind.version>
-    <keycloak.version>19.0.1</keycloak.version>
+    <jackson-databind.version>2.13.4.1</jackson-databind.version>
+    <keycloak.version>22.0.1</keycloak.version>
     <log4j.version>2.17.1</log4j.version>
     <logstash.version>8.2.0</logstash.version>
     <logstash.sha512>7276117b1885c59952ba6b5551ef243e2e2a27b7da7d558e109c7b06a960ac6c8e7a2cf6b92d08309ead1cd1bbecb67c83965937deb0d61bda81a8def7d7a38e</logstash.sha512>
@@ -38,19 +38,19 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <solr.version>8.11.2</solr.version>
-    <spring.boot.version>2.6.6</spring.boot.version>
-    <spring.data.cassandra.version>3.3.3</spring.data.cassandra.version>
-    <spring.security.version>5.6.2</spring.security.version>
+    <spring.boot.version>2.7.14</spring.boot.version>
+    <spring.data.cassandra.version>3.4.15</spring.data.cassandra.version>
+    <spring.security.version>5.8.5</spring.security.version>
     <spring.security.kerberos.version>1.0.1.RELEASE</spring.security.kerberos.version>
     <spring.security.saml2.core.version>1.0.10.RELEASE</spring.security.saml2.core.version>
-    <spring.version>5.3.18</spring.version>
-    <spring.oauth2.version>2.3.8.RELEASE</spring.oauth2.version>
+    <spring.version>5.3.29</spring.version>
+    <spring.oauth2.version>2.5.2.RELEASE</spring.oauth2.version>
     <tika.version>2.7.0</tika.version>
     <tika-server.sha512>23759bacee231bc700765d4f934da9eeabfa8e407381b72472d66da532509f2edd976bce33fd38c34a8bf43b2b28a1e19ab9ddfc187f9cd96f8a31a285248e13</tika-server.sha512>
     <tika-server-commit-number>5c0793e2c</tika-server-commit-number>
     <tomcat.version>9.0.56</tomcat.version>
     <slf4j.version>1.7.36</slf4j.version>
-    <xmlsec.version>2.3.0</xmlsec.version>
+    <xmlsec.version>2.3.3</xmlsec.version>
     <zeppelin.version>0.10.1</zeppelin.version>
     <zeppelin.sha512>59d7261adfd3b17b6648e083cc2e06cfb0c5aedd7e76498175073a80c224c6bc05ab562739b2fe8f0db566d01b99203a5fb09b0e680916b046ae58f3146695a9</zeppelin.sha512>
     <zookeeper.version>3.6.2</zookeeper.version>
