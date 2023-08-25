@@ -11,8 +11,8 @@
   <properties>
     <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
     <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
-    <cassandra.version>4.0.5</cassandra.version>
-    <cassandra.sha512>188e131392ea0e48b46f24b1be297ef6335197f4480c9421328006507e069dce659ce3ce473906398273a5926e331960cbf824362e40cb4c74670cde95458349</cassandra.sha512>
+    <cassandra.version>4.0.9</cassandra.version>
+    <cassandra.sha512>94ec77fec09ed69912dd1da98f39e5e5d68aba8003180b62a0b0599cf6bae895a0944c9e0ac2b966d4e7658c188782025ab82f32e9f3139c5090d28be470e0a2</cassandra.sha512>
     <cassandra.driver.version>4.14.1</cassandra.driver.version>
     <datafari.version>5.5-Community</datafari.version>
     <datafariui.version>1.3</datafariui.version>
