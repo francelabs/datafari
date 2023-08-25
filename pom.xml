@@ -48,7 +48,7 @@
     <tika.version>2.7.0</tika.version>
     <tika-server.sha512>23759bacee231bc700765d4f934da9eeabfa8e407381b72472d66da532509f2edd976bce33fd38c34a8bf43b2b28a1e19ab9ddfc187f9cd96f8a31a285248e13</tika-server.sha512>
     <tika-server-commit-number>5c0793e2c</tika-server-commit-number>
-    <tomcat.version>9.0.56</tomcat.version>
+    <tomcat.version>9.0.79</tomcat.version>
     <slf4j.version>1.7.36</slf4j.version>
     <xmlsec.version>2.3.0</xmlsec.version>
     <zeppelin.version>0.10.1</zeppelin.version>
