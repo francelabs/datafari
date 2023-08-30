@@ -32,6 +32,7 @@ public class JobStageCreator {
   private final static String outputFieldPrefixElement = "outputFieldPrefix";
   
   private final static String DEFAULT_SPACY_ENDPOINT = "/split_detect_and_process/";
+  private final static String DEFAULT_SPACY_PREFIX = "entity_";
 
   private JobStageCreator() {
     String datafariHomePath = Environment.getEnvironmentVariable("DATAFARI_HOME");
@@ -115,9 +116,13 @@ public class JobStageCreator {
             if(endpointToUse != null && !endpointToUse.isEmpty()) {
               finalEndPointToUse = endpointToUse;
             }
-            stageChild.replace(attribute_value, String.valueOf(finalEndPointToUse));
+            stageChild.replace(attribute_value, finalEndPointToUse);
           } else if (stageChild.get(type).equals(outputFieldPrefixElement)) {
-            stageChild.replace(attribute_value, String.valueOf(outputFieldPrefix));
+            String finalPrefixToUse = DEFAULT_SPACY_PREFIX;
+            if(outputFieldPrefix != null && !outputFieldPrefix.isEmpty()) {
+              finalPrefixToUse = outputFieldPrefix;
+            }
+            stageChild.replace(attribute_value, finalPrefixToUse);
           }
         }
       }

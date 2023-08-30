@@ -143,6 +143,7 @@ public class SpacyNER extends org.apache.manifoldcf.agents.transformation.BaseTr
 
   private static final String getModelsPath = "/models";
   private static final String processPath = "/process/";
+  private static final String defaultPrefix = "entity_";
 
   private static final Logger LOGGER = LogManager.getLogger(SpacyNER.class.getName());
 
@@ -499,7 +500,7 @@ public class SpacyNER extends org.apache.manifoldcf.agents.transformation.BaseTr
       // Get the endpoint to use
       final String endpointToUse = spec.getEndpointToUse().isEmpty() ? processPath : spec.getEndpointToUse();
 
-      final String outputFieldPrefix = spec.getOutputFieldPrefix().isEmpty() ? "spacyEntities_" : spec.getOutputFieldPrefix();
+      final String outputFieldPrefix = spec.getOutputFieldPrefix().isEmpty() ? defaultPrefix : spec.getOutputFieldPrefix();
 
       // StringBuilder that will handle the doc content to process
       StringBuilder contentToProcess = null;
