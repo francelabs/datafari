@@ -17,7 +17,6 @@ package com.francelabs.datafari.rest.v1_0.users;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -38,7 +37,6 @@ import com.francelabs.datafari.rest.v1_0.exceptions.DataNotFoundException;
 import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
 import com.francelabs.datafari.rest.v1_0.exceptions.NotAuthenticatedException;
 import com.francelabs.datafari.rest.v1_0.utils.RestAPIUtils;
-import com.francelabs.datafari.service.db.UserHistoryDataService;
 import com.francelabs.datafari.user.Lang;
 import com.francelabs.datafari.user.UiConfig;
 import com.francelabs.datafari.utils.AuthenticatedUserName;
@@ -132,28 +130,6 @@ public class Users {
         logger.error("Error while saving the new lang.");
         throw new InternalErrorException("Error while saving the new lang.");
       }
-    } else {
-      throw new NotAuthenticatedException("User must be authenticated to perform this action.");
-    }
-  }
-
-  @GetMapping(value = "rest/v1.0/users/current/history", produces = "application/json;charset=UTF-8")
-  protected String getUserHistory(final HttpServletRequest request) {
-    final String authenticatedUserName = AuthenticatedUserName.getName(request);
-    if (authenticatedUserName != null) {
-      final HashMap<String, Object> responseContent = new HashMap<>();
-      List<String> history = new ArrayList<>();
-      try {
-        if (UserHistoryDataService.getInstance().isHistoryEnabled()) {
-          history = UserHistoryDataService.getInstance().getHistory(authenticatedUserName);
-        }
-        responseContent.put("history", history);
-        AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(), "User " + authenticatedUserName + " accessed his request history");
-      } catch (final DatafariServerException e) {
-        logger.error("Error while retrieving the history for a user.");
-        throw new InternalErrorException("Error while retrieving the history.");
-      }
-      return RestAPIUtils.buildOKResponse(new JSONObject(responseContent));
     } else {
       throw new NotAuthenticatedException("User must be authenticated to perform this action.");
     }

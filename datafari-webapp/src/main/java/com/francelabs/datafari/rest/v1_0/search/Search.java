@@ -16,8 +16,6 @@
 package com.francelabs.datafari.rest.v1_0.search;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
@@ -35,12 +33,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
-import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
-import com.francelabs.datafari.rest.v1_0.users.Users;
-import com.francelabs.datafari.service.db.UserHistoryDataService;
 import com.francelabs.datafari.servlets.GetUserQueryConf;
-import com.francelabs.datafari.utils.AuthenticatedUserName;
 
 @RestController
 public class Search extends HttpServlet {
@@ -50,43 +44,7 @@ public class Search extends HttpServlet {
    */
   private static final long serialVersionUID = -7963279533577712482L;
 
-  private static final Logger logger = LogManager.getLogger(Users.class.getName());
-
-  private void saveToUserHistory(final HttpServletRequest request) {
-    final String authenticatedUserName = AuthenticatedUserName.getName(request);
-    if (authenticatedUserName != null) {
-      try {
-        if (request.getParameter("action") == null || request.getParameter("action").contentEquals("search")) {
-          final UserHistoryDataService historyService = UserHistoryDataService.getInstance();
-          if (historyService.isHistoryEnabled()) {
-            final List<String> history = historyService.getHistory(authenticatedUserName);
-            final String currentQuery = request.getParameter("q");
-            if (history == null) {
-              // History does not exist, create it and set it
-              final ArrayList<String> newHistory = new ArrayList<>();
-              newHistory.add(currentQuery);
-              historyService.setHistory(authenticatedUserName, newHistory);
-            } else {
-              if (history.contains(currentQuery)) {
-                // If the current query is in the history, first remove it
-                final int index = history.indexOf(currentQuery);
-                history.remove(index);
-              }
-              // Add the current query to the top of the history
-              history.add(0, currentQuery);
-              // Remove the last query from the history if it gets too large
-              if (history.size() > UserHistoryDataService.MAX_HISTORY_LENGTH) {
-                history.remove(history.size() - 1);
-              }
-              historyService.updateHistory(authenticatedUserName, history);
-            }
-          }
-        }
-      } catch (final DatafariServerException e) {
-        logger.warn("Couldn't save query to user history", e);
-      }
-    }
-  }
+  private static final Logger logger = LogManager.getLogger(Search.class.getName());
 
   @GetMapping(value = "/rest/v1.0/search/*", produces = "application/json;charset=UTF-8")
   protected String performSearch(final HttpServletRequest request, final HttpServletResponse response) {
@@ -114,7 +72,6 @@ public class Search extends HttpServlet {
           logger.warn("An issue has occured while reading user query conf", e);
         }
       }
-      saveToUserHistory(request);
       final JSONObject jsonResponse = SearchAggregator.doGetSearch(request, response);
       // Check if we get a code, if this is the case, we got an error
       // We will throw an internal error exception with the message if there is one
