@@ -16,7 +16,10 @@
 package com.francelabs.datafari.service.db;
 
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -100,6 +103,38 @@ public class StatisticsDataService extends CassandraService {
     deleteUserStatistics = session.prepare("DELETE FROM " + STATISTICS_COLLECTION 
         + " WHERE " + QUERY_ID_COLUMN + " = ?"
         + " AND " + TIMESTAMP_COLUMN + " = ?");
+  }
+
+  /**
+   * Get user history from user_seach_actions table
+   *
+   * @param username - the logged user_id
+   * @return the user history
+   */
+  public synchronized JSONArray getHistory(String username) {
+    final JSONParser parser = new JSONParser();
+    final JSONArray userStatisticsObj = new JSONArray();
+    final BoundStatement bs = getUserStatistics.bind(username);
+    final ResultSet results = session.execute(bs);
+
+    final String PATTERN_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PATTERN_FORMAT)
+            .withZone(ZoneId.systemDefault());
+
+    for (final Row row : results) {
+      try {
+        final HashMap<String, Object> stat = new HashMap<>();
+        stat.put(QUERY_ID_COLUMN, row.getString(QUERY_ID_COLUMN));
+        stat.put(USER_ID_COLUMN, row.getString(USER_ID_COLUMN));
+        stat.put(ACTION_COLUMN, row.getString(ACTION_COLUMN));
+        stat.put(TIMESTAMP_COLUMN, formatter.format(Objects.requireNonNull(row.getInstant(TIMESTAMP_COLUMN))));
+        stat.put(PARAMETERS_COLUMN, parser.parse(row.getString(PARAMETERS_COLUMN)));
+        userStatisticsObj.add(new JSONObject(stat));
+      } catch (ParseException e) {
+        logger.warn("Skipping a stat entry because the parameter column is not a valid json.", e);
+      }
+    }
+    return userStatisticsObj;
   }
 
   public boolean saveQueryStatistics(final String queryId, final String query, final String userId, final int num_hit, final Instant timestamp) throws DatafariServerException {
