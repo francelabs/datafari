@@ -230,16 +230,14 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 
     }
 
-    // Normalize URL
+    
     String url;
     if (doc.containsKey("url")) {
       url = (String) doc.getFieldValue("url");
-      url = normalizeUrl(url);
       doc.remove("url");
       doc.addField("url", url);
-    } else {
+    } else {    
       url = (String) doc.getFieldValue("id");
-      url = normalizeUrl(url);
       doc.addField("url", url);
     }
 
