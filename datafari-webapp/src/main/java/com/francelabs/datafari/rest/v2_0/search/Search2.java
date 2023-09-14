@@ -18,8 +18,6 @@ package com.francelabs.datafari.rest.v2_0.search;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
@@ -64,6 +62,7 @@ public class Search2 extends HttpServlet {
     }
   }
 
+
   /**
    * Apply user's specific query config (specific boosts related to user context) on the request
    *
@@ -71,7 +70,7 @@ public class Search2 extends HttpServlet {
    */
   private void applyUserQueryConf(final HttpServletRequest request) {
     final String userConf = GetUserQueryConf.getUserQueryConf(request);
-    if (userConf != null && userConf.length() > 0) {
+    if (userConf != null && !userConf.isEmpty()) {
       final JSONParser parser = new JSONParser();
       try {
         final JSONObject jsonConf = (JSONObject) parser.parse(userConf);
@@ -127,8 +126,10 @@ public class Search2 extends HttpServlet {
         // temper with the URL to point on our URL endpoint
         // Also add a path array giving path information for display purposes
         final StringBuffer currentURL = request.getRequestURL();
+        String queryId = request.getAttribute("id").toString();
         String newUrl = currentURL.substring(0, currentURL.indexOf(searchEndpoint));
         newUrl += "/rest/v2.0/url?url=" + URLEncoder.encode(url, StandardCharsets.UTF_8);
+        newUrl += "&id=" + queryId;
         jsonDoc.put("click_url", newUrl);
       }
     }
