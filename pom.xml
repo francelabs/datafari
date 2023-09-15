@@ -9,6 +9,8 @@
   <version>6.0-dev-Community</version>
   <name>Datafari Enterprise Search - Parent POM</name>
   <properties>
+	<adminui.version>main</adminui.version>
+	<adminui.md5>b3bc0ded4700f325df22cf9da087f6a7</adminui.md5>
     <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
     <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
     <cassandra.version>4.0.9</cassandra.version>
@@ -83,6 +85,7 @@
     <module>datafari-web-connector</module>
     <module>datafari-share-connector</module>
     <module>datafari-ui</module>
+     <module>datafari-adminui</module>
     <module>datafari-git-plugin</module>
     <module>datafari-regex-entity-connector</module>
   </modules>
