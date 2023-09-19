@@ -25,6 +25,7 @@
 				<exclude name="*manifoldcf*/connector-common-lib/zookeeper-*" />
 				<exclude name="*manifoldcf*/connector-lib/postgresql*" />
 				<exclude name="*manifoldcf*/connector-lib/mcf-webcrawler*" />
+				<exclude name="*manifoldcf*/connector-lib/mcf-activedirectory-connector.jar" />
 				<exclude name="*manifoldcf*/lib/postgresql*" />
 				<exclude name="*manifoldcf*/connectors.xml" />
 			</fileset>

@@ -24,6 +24,7 @@
 	<property name="mcf.src.dir" value="${project.dir}/datafari-mcf/target/dist/mcf" />
 	<property name="tika-server.src.dir" value="${project.dir}/datafari-tika-server" />
 	<property name="updateprocessor.src.dir" value="${project.dir}/datafari-updateprocessor/target" />
+	<property name="activedirectory.connector.src.dir" value="${project.dir}/datafari-active-directory-connector/target" />
 	<property name="metadatacleaner.connector.src.dir" value="${project.dir}/datafari-metadatacleaner-connector/target" />
 	<property name="docfilter.connector.src.dir" value="${project.dir}/datafari-docfilter-connector/target" />
 	<property name="emptier.connector.src.dir" value="${project.dir}/datafari-emptier-connector/target" />
@@ -343,6 +344,13 @@
 				<include name="dependency/log4j-*.jar" />
 				<include name="dependency/slf4j-*.jar" />
 				<include name="dependency/commons-logging-*.jar" />
+			</fileset>
+		</copy>
+
+		<!-- Copy Active Directory connector -->
+		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
+			<fileset dir="${activedirectory.connector.src.dir}">
+				<include name="*.jar" />
 			</fileset>
 		</copy>
 
