@@ -18,8 +18,6 @@ package com.francelabs.datafari.rest.v2_0.search;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
@@ -38,11 +36,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
-import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
-import com.francelabs.datafari.service.db.UserHistoryDataService;
 import com.francelabs.datafari.servlets.GetUserQueryConf;
-import com.francelabs.datafari.utils.AuthenticatedUserName;
 
 @RestController
 public class Search2 extends HttpServlet {
@@ -67,6 +62,7 @@ public class Search2 extends HttpServlet {
     }
   }
 
+
   /**
    * Apply user's specific query config (specific boosts related to user context) on the request
    *
@@ -74,7 +70,7 @@ public class Search2 extends HttpServlet {
    */
   private void applyUserQueryConf(final HttpServletRequest request) {
     final String userConf = GetUserQueryConf.getUserQueryConf(request);
-    if (userConf != null && userConf.length() > 0) {
+    if (userConf != null && !userConf.isEmpty()) {
       final JSONParser parser = new JSONParser();
       try {
         final JSONObject jsonConf = (JSONObject) parser.parse(userConf);
@@ -89,42 +85,6 @@ public class Search2 extends HttpServlet {
         }
       } catch (final ParseException e) {
         logger.warn("An issue has occured while reading user query conf", e);
-      }
-    }
-  }
-
-  private void saveToUserHistory(final HttpServletRequest request) {
-    final String authenticatedUserName = AuthenticatedUserName.getName(request);
-    if (authenticatedUserName != null) {
-      try {
-        if (request.getParameter("action") == null || request.getParameter("action").contentEquals("search")) {
-          final UserHistoryDataService historyService = UserHistoryDataService.getInstance();
-          if (historyService.isHistoryEnabled()) {
-            final List<String> history = historyService.getHistory(authenticatedUserName);
-            final String currentQuery = request.getParameter("q");
-            if (history == null) {
-              // History does not exist, create it and set it
-              final ArrayList<String> newHistory = new ArrayList<>();
-              newHistory.add(currentQuery);
-              historyService.setHistory(authenticatedUserName, newHistory);
-            } else {
-              if (history.contains(currentQuery)) {
-                // If the current query is in the history, first remove it
-                final int index = history.indexOf(currentQuery);
-                history.remove(index);
-              }
-              // Add the current query to the top of the history
-              history.add(0, currentQuery);
-              // Remove the last query from the history if it gets too large
-              if (history.size() > UserHistoryDataService.MAX_HISTORY_LENGTH) {
-                history.remove(history.size() - 1);
-              }
-              historyService.updateHistory(authenticatedUserName, history);
-            }
-          }
-        }
-      } catch (final DatafariServerException e) {
-        logger.warn("Couldn't save query to user history", e);
       }
     }
   }
@@ -166,8 +126,10 @@ public class Search2 extends HttpServlet {
         // temper with the URL to point on our URL endpoint
         // Also add a path array giving path information for display purposes
         final StringBuffer currentURL = request.getRequestURL();
+        String queryId = request.getAttribute("id").toString();
         String newUrl = currentURL.substring(0, currentURL.indexOf(searchEndpoint));
         newUrl += "/rest/v2.0/url?url=" + URLEncoder.encode(url, StandardCharsets.UTF_8);
+        newUrl += "&id=" + queryId;
         jsonDoc.put("click_url", newUrl);
       }
     }
@@ -178,7 +140,6 @@ public class Search2 extends HttpServlet {
     try {
       setSearchSessionId(request);
       applyUserQueryConf(request);
-      saveToUserHistory(request);
 
       final JSONObject jsonResponse = SearchAggregator.doGetSearch(request, response);
       checkException(jsonResponse);
@@ -195,7 +156,6 @@ public class Search2 extends HttpServlet {
     try {
       setSearchSessionId(request);
       applyUserQueryConf(request);
-      saveToUserHistory(request);
 
       final JSONObject jsonResponse = SearchAggregator.doGetSearch(request, response, true);
       checkException(jsonResponse);

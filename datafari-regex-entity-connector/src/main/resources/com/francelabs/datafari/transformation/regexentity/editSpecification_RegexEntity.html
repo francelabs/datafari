@@ -1,0 +1,156 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+#if($TABNAME == $ResourceBundle.getString('RegexEntity.TabName') && ${SEQNUM} == ${SELECTEDNUM})
+
+<table class="displaytable">
+  <tr>
+      <td></td>
+      <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.SourceMetadataField'))</nobr></td>
+      <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.RegexField'))</nobr></td>
+      <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.DestinationMetadataField'))</nobr></td>
+      <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.ValueIfTrue'))</nobr></td>
+      <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.ValueIfFalse'))</nobr></td>
+      <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.KeepOnlyOne'))</nobr></td>
+  </tr>
+
+  <!-- ----------------------------------------------- Existing couple metadata/regex ----------------------------------------------------------------------- --> 
+  #set($counter = 0)
+  <!-- Iterates over Map of metadata (key of the map) and regex values -->
+  #foreach($specification in $SPECIFICATION_MAP.entrySet())
+    #set($sourceMetadata = $specification.value.getSourceMetadata())
+    #set($regexValue = $specification.value.getRegexValue())
+    #set($destinationMetadata = $specification.value.getDestinationMetadata())
+    #set($valueIfTrue = $specification.value.getValueIfTrue())
+    #set($valueIfFalse = $specification.value.getValueIfFalse())
+    #set($keepOnlyOne = $specification.value.getKeepOnlyOne())
+
+    <tr>
+        <td class="formcolumncell">
+            <a name="s${SEQNUM}_metaRegex${foreach.count}">
+                <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.Delete'))"
+                alt="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.DeleteAlt'))"
+                title="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.DeleteAlt'))"
+                onclick='javascript:s${SEQNUM}_deleteMetaRegex("$counter");'/>
+
+                <input type="hidden" name="s${SEQNUM}_metaRegex_op$counter" value="Continue"/>
+                <input type="hidden" name="s${SEQNUM}_sourceMetadataField$counter" value="$Encoder.attributeEscape($sourceMetadata)"/>
+                <input type="hidden" name="s${SEQNUM}_regexField$counter" value="$Encoder.attributeEscape($regexValue)"/>
+                <input type="hidden" name="s${SEQNUM}_destinationMetadataField$counter" value="$Encoder.attributeEscape($destinationMetadata)"/>
+                <input type="hidden" name="s${SEQNUM}_valueIfTrueField$counter" value="$Encoder.attributeEscape($valueIfTrue)" />
+                <input type="hidden" name="s${SEQNUM}_valueIfFalseField$counter" value="$Encoder.attributeEscape($valueIfFalse)" />
+                <input type="hidden" name="s${SEQNUM}_keepOnlyOneField$counter" value="$Encoder.attributeEscape($keepOnlyOne)" />
+
+            </a>
+        </td>
+
+        <td class="formcolumncell">
+            <nobr>$Encoder.attributeEscape($sourceMetadata)</nobr>
+        </td>
+        <td class="formcolumncell">
+            <nobr>$Encoder.attributeEscape($regexValue)</nobr>
+        </td>
+        <td class="formcolumncell">
+            <nobr>$Encoder.attributeEscape($destinationMetadata)</nobr>
+        </td>
+        <td class="formcolumncell">
+            <nobr>$Encoder.attributeEscape($valueIfTrue)</nobr>
+        </td>
+        <td class="formcolumncell">
+            <nobr>$Encoder.attributeEscape($valueIfFalse)</nobr>
+        </td>
+        <td class="formcolumncell">
+            #if($keepOnlyOne)
+                <nobr><input type="checkbox" disabled checked /></nobr>
+            #end
+        </td>
+    </tr>
+    #set($counter = $counter + 1)
+  #end
+  #if($counter == 0)
+    <tr>
+        <td></td>
+        <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoSourceMetadataSpecified'))</td>
+        <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoRegexSpecified'))</td>
+        <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoDestinationMetadataSpecified'))</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+  #end
+
+
+  <!-- ----------------------------------------------- To add a new couple metadata/regex ----------------------------------------------------------------------- -->  
+	<tr class="formrow"><td class="formseparator" colspan="3"><hr/></td></tr>
+	<tr class="formrow">
+        <td class="formcolumncell">
+            <a name="metaRegex">
+              <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.Add'))"
+              alt="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.AddAlt'))"
+            title="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.AddAlt'))"
+            onclick='javascript:s${SEQNUM}_addMetaRegex();'/>
+            </a>
+            <input type="hidden" name="s${SEQNUM}_metaRegex_count" value="$counter"/>
+            <input type="hidden" name="s${SEQNUM}_metaRegex_op" value="Continue"/>
+        </td>
+        <td class="formcolumncell">
+            <nobr><input type="text" size="35" name="s${SEQNUM}_sourceMetadataField" value=""
+                         placeholder="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.PlaceholderSourceMetadata'))"/></nobr>
+        </td>
+        <td class="formcolumncell">
+            <nobr><input type="text" size="35" name="s${SEQNUM}_regexField" value=""
+            placeholder="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.PlaceholderRegex'))"/></nobr>
+        </td>
+        <td class="formcolumncell">
+            <nobr><input type="text" size="35" name="s${SEQNUM}_destinationMetadataField" value=""
+                         placeholder="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.PlaceholderDestinationMetadata'))"/></nobr>
+        </td>
+        <td class="formcolumncell">
+            <nobr><input type="text" size="35" name="s${SEQNUM}_valueIfTrueField" value=""
+                         placeholder="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.PlaceholderValueIfTrue'))"/></nobr>
+        </td>
+        <td class="formcolumncell">
+            <nobr><input type="text" size="35" name="s${SEQNUM}_valueIfFalseField" value=""
+                         placeholder="$Encoder.attributeEscape($ResourceBundle.getString('RegexEntity.PlaceholderValueIfFalse'))"/></nobr>
+        </td>
+        <td class="formcolumncell">
+            <nobr><input type="checkbox" name="s${SEQNUM}_keepOnlyOneField" value="true"/></nobr>
+        </td>
+    </tr>
+  
+</table>
+
+#else
+  #set($counter = 0)
+  #foreach($specification in $SPECIFICATION_MAP.entrySet())
+    #set($sourceMetadata = $specification.value.getSourceMetadata())
+    #set($regexValue = $specification.value.getRegexValue())
+    #set($destinationMetadata = $specification.value.getDestinationMetadata())
+    #set($valueIfTrue = $specification.value.getValueIfTrue())
+    #set($valueIfFalse = $specification.value.getValueIfFalse())
+    #set($keepOnlyOne = $specification.value.getKeepOnlyOne())
+     <input type="hidden" name="s${SEQNUM}_destinationMetadataField${foreach.index}" value="$Encoder.attributeEscape($destinationMetadata)" />
+     <input type="hidden" name="s${SEQNUM}_regexField${foreach.index}" value="$Encoder.attributeEscape($regexValue)" />
+     <input type="hidden" name="s${SEQNUM}_sourceMetadataField${foreach.index}" value="$Encoder.attributeEscape($sourceMetadata)" />
+     <input type="hidden" name="s${SEQNUM}_valueIfTrueField${foreach.index}" value="$Encoder.attributeEscape($valueIfTrue)" />
+     <input type="hidden" name="s${SEQNUM}_valueIfFalseField${foreach.index}" value="$Encoder.attributeEscape($valueIfFalse)" />
+     <input type="hidden" name="s${SEQNUM}_keepOnlyOneField${foreach.index}" value="$Encoder.attributeEscape($keepOnlyOne)" />
+    #set($counter = $counter + 1)
+  #end
+  <input type="hidden" name="s${SEQNUM}_metaRegex_count" value="$counter"/>
+  
+#end

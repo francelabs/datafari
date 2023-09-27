@@ -38,37 +38,24 @@ https://localhost/Datafari/admin/?lang=en
 NOTE: to crawl files, you need to install an extra jar that we cannot distribute for open source licence conflict rationales (Apachev2 and LGPL). Please follow this documentation: https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/662700036/Add+the+JCIFS-NG+Connector+to+Datafari+-+Community+Edition
 NOTE BIS: Java 11 is now REQUIRED
 
-* New features compared to v5.0
-- New Confluence and Jira connectors
-- New simplified connectors for DB, Sharepoint and O365
-- New search UI based on React
-- Additional APIs to directly query Datafari without the UI
-- Move from the opendistro stack to Apache Zeppelin
-- Isolation of Apache Tika in a dedicated server
-- Capability to restart Datafari from the admin UI
+* New features compared to v5.3
+- Optimisation for SSD users at install phase
+
+- OCR and Spacy options in crawlers simplified mode
+- New admin UI to deploy a Tika Server
+- New duplicate detector functionality
 - Various bugfixes
 
-* Major changes of components compared to v4.4
-- Datafari requires Java 11
-- Solr updated to version 8.5.2
-- ELK updated to 7.8.0 (with OpenDistro 1.9.0)
-- MCF updated to 2.18
-- Cassandra updated to 4.0-beta1
-- PostgreSQL updated to 12.4
-
-* New features compared to v4.3
-- New tag cloud widget
-- New help page
-- Adding German and Spanish as preconfigured languages
-- New user menu
-- API mode to directly query Datafari without the UI
-- Aggregator mode to aggregate several Datafaris
-- Move from the official ELK stack to the opendistro stack
-- SSL/TLS activated by default between the client browser and the Datafari server
-- SSL/TLS activated by default between the client browser and the opendistro component
-- Simplified installation procedure
-- A connector to index Solr
-- Various bugfixes
+* Major components versions
+- Solr 8.11.2
+- ManifoldCF 2.24
+- Tomcat 9.0.56
+- Cassandra 4.0.1
+- PostgreSQL 12.4
+- Zookeeper 3.6.2
+- Tika Server 2.7.0
+- Zeppelin 0.10.1
+- DatafariUI 1.3
 
 The complete list of changes and bugfixes can be found in CHANGES.TXT
 

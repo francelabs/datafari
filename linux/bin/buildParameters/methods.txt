@@ -8,4 +8,5 @@ interactive_questions() {
     question_solr_collection
     question_solr_shards_number
     question_analytics_start
+    question_disk_type
 }

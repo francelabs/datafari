@@ -48,6 +48,11 @@
         {
           "_type_": "includefilter",
           "_value_": "",
+          "_attribute_regex": "\\.(?i)gif(?-i)$"
+        },
+        {
+          "_type_": "includefilter",
+          "_value_": "",
           "_attribute_regex": "\\.(?i)bmp(?-i)$"
         },
         {

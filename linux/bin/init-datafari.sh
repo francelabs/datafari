@@ -19,6 +19,18 @@ question_ip_node() {
     set_property "NODEHOST" $node_host $CONFIG_FILE
 }
 
+question_disk_type() {
+	read -p  "Specify if hour hard drive is SSD type [yes] " disk_type
+    ssd_disk=${ssd_disk:-true}
+    if [[ "$ssd_disk" = "yes" ]] || [[ "$ssd_disk" = "y" ]] || [[ "$ssd_disk" = "true" ]]; then
+      ssd_disk=true
+    else
+      ssd_disk=false
+    fi
+    set_property "SSD_DISK" $ssd_disk $CONFIG_FILE
+
+}
+
 check_ip_node() {
     ping -c 1 $node_host
     if [ $? -eq 0 ]
@@ -180,6 +192,12 @@ init_temp_directory() {
 
 
 
+generate_certificates() {
+  # Generate SSL certificate for datafari
+  $JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA -keystore $DATAFARI_HOME/ssl-keystore/datafari-keystore.p12 -validity 9999 -storepass DataFariAdmin -keypass DataFariAdmin -dname "cn=${1}, ou=francelabs, o=francelabs, l=nice, st=paca, c=pa" -ext "SAN:c=DNS:localhost,IP:127.0.0.1,IP:${1}"
+  $JAVA_HOME/bin/keytool -export -keystore $DATAFARI_HOME/ssl-keystore/datafari-keystore.p12 -storetype PKCS12 -alias tomcat -storepass DataFariAdmin -file $DATAFARI_HOME/ssl-keystore/datafari-cert.csr
+  $JAVA_HOME/bin/keytool -import -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storetype PKCS12 -storepass DataFariAdmin -alias tomcat -noprompt -file $DATAFARI_HOME/ssl-keystore/datafari-cert.csr
+}
 
 generate_certificates_apache() {
 
@@ -217,6 +235,7 @@ init_node_host() {
   sed -i -e "s/@NODEHOST@/${1}/g" $SOLR_INSTALL_DIR/server/etc/jetty.xml >>$installerLog 2>&1
   sed -i -e "s/@NODEHOST@/${1}/g" $DATAFARI_HOME/bin/zkUtils/reloadCollections.sh >>$installerLog 2>&1
   sed -i -e "s/@NODEHOST@/${1}/g" $DATAFARI_HOME/bin/zkUtils/init-solr-collections.sh >>$installerLog 2>&1
+  
 }
 
 init_solr_node() {
@@ -224,7 +243,7 @@ init_solr_node() {
   sed -i -e "s/@SOLRNODEIP@/${1}/g" $DATAFARI_HOME/bin/zkUtils/init-solr-collections.sh >>$installerLog 2>&1
   sed -i -e "s/@SOLRNODEIP@/${1}/g" $TOMCAT_HOME/conf/solr.properties >>$installerLog 2>&1
   sed -i -e "s/@SOLRNODEIP@/${1}/g" $DATAFARI_HOME/ssl-keystore/apache/config/tomcat.conf >>$installerLog 2>&1
-  
+  sed -i -e "s/@SOLRNODEIP@/${1}/g" $SOLR_INSTALL_DIR/solr_home/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
     
 }
 
@@ -328,6 +347,15 @@ init_password_postgresql() {
   sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${1})~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${1})~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESPASSWORD@~${1}~g" $DATAFARI_HOME/pgsql/pwd.conf >>$installerLog 2>&1
+}
+
+optimize_postgresql_ssd() {
+  if [ "$SSD_DISK" == "true" ]; then
+    echo "# SSD optimization" >> $DATAFARI_HOME/pgsql/postgresql.conf.save 
+    echo "random_page_cost = 1.1" >> $DATAFARI_HOME/pgsql/postgresql.conf.save 
+    echo "effective_io_concurrency = 1000" >> $DATAFARI_HOME/pgsql/postgresql.conf.save 
+  fi
+
 }
 
 init_apache_ssl() { 
@@ -751,6 +779,7 @@ initialization_monoserver() {
   init_git
   init_folders
   init_logstash localhost
+  optimize_postgresql_ssd
   generate_certificates_apache $NODEHOST
   init_collection_name $SOLRMAINCOLLECTION
   init_node_host $NODEHOST
@@ -843,7 +872,6 @@ if [ "$NODETYPE" == "monoserver" ]; then
   echo "postgresql password check"
   is_variable_set $TEMPPGSQLPASSWORD
   is_variable_set $AnalyticsActivation
-    
   echo "Check complete."
 
     initialization_monoserver $1

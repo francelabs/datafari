@@ -51,6 +51,8 @@ RUN ant clean-build -f ./linux/build.xml
 FROM eclipse-temurin:11-jdk-jammy
 MAINTAINER Olivier Tavard FRANCE LABS <olivier.tavard@francelabs.com>
 
+ENV DATAFARIUIDEV=false
+
 # temporary allow unauthenticatedparameter due to debian repo issue
 RUN echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
 RUN echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections

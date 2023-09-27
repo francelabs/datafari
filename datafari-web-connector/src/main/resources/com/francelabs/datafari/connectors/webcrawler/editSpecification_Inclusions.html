@@ -33,11 +33,19 @@
         <input type="hidden" name="${SEQPREFIX}matchinghosts_present" value="true"/>
       </div>
     </div>
+    <!-- Todo -->
+    <div class="form-group">
+      <div class="checkbox">
+        <label><input type="checkbox" name="${SEQPREFIX}forceInclusion" value="true" #if($FORCEINCLUSION) checked="yes" #end />$Encoder.bodyEscape($ResourceBundle.getString('WebcrawlerConnector.ForceInclusionOfRedirects'))</label>
+        <input type="hidden" name="${SEQPREFIX}forceinclusion_present" value="true"/>
+      </div>
+    </div>
   </div>
 </div>
 #else
 <input type="hidden" name="${SEQPREFIX}inclusions" value="$Encoder.attributeEscape($INCLUSIONS)"/>
 <input type="hidden" name="${SEQPREFIX}inclusionsindex" value="$Encoder.attributeEscape($INCLUSIONSINDEX)"/>
 <input type="hidden" name="${SEQPREFIX}matchinghosts" value="#if($INCLUDEMATCHING)true#{else}false#end" />
+<input type="hidden" name="${SEQPREFIX}forceInclusion" value="#if($FORCEINCLUSION)true#{else}false#end" />
 <input type="hidden" name="${SEQPREFIX}matchinghosts_present" value="true"/>
 #end

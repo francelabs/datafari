@@ -11,12 +11,12 @@
   <properties>
     <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
     <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
-    <cassandra.version>4.0.5</cassandra.version>
-    <cassandra.sha512>188e131392ea0e48b46f24b1be297ef6335197f4480c9421328006507e069dce659ce3ce473906398273a5926e331960cbf824362e40cb4c74670cde95458349</cassandra.sha512>
+    <cassandra.version>4.0.9</cassandra.version>
+    <cassandra.sha512>94ec77fec09ed69912dd1da98f39e5e5d68aba8003180b62a0b0599cf6bae895a0944c9e0ac2b966d4e7658c188782025ab82f32e9f3139c5090d28be470e0a2</cassandra.sha512>
     <cassandra.driver.version>4.14.1</cassandra.driver.version>
     <datafari.version>6.0-dev-Community</datafari.version>
-    <datafariui.version>1.1</datafariui.version>
-    <datafariui.md5>d7f50952171f691c43e342c1bc4519f6</datafariui.md5>
+    <datafariui.version>1.3</datafariui.version>
+    <datafariui.md5>e8954aef3ade49fb9e1f6c7840bba945</datafariui.md5>
     <guava.version>26.0-jre</guava.version>
     <httpclient.version>4.5.13</httpclient.version>
     <java.version>1.11</java.version>
@@ -28,8 +28,8 @@
     <log4j.version>2.17.1</log4j.version>
     <logstash.version>8.2.0</logstash.version>
     <logstash.sha512>7276117b1885c59952ba6b5551ef243e2e2a27b7da7d558e109c7b06a960ac6c8e7a2cf6b92d08309ead1cd1bbecb67c83965937deb0d61bda81a8def7d7a38e</logstash.sha512>
-    <mcf.version>2.23</mcf.version>
-    <mcf.sha512>ff3fd366cfaed5920f460bbbf3d3509b01a0c9e39fdca3e987dbeab1ac99752204410ddf2533f9d748eee964a319d9bde8a53aabc0192e484bc85e0e22a129e9</mcf.sha512>
+    <mcf.version>2.24</mcf.version>
+    <mcf.sha512>5cf1e851d5f4598feed6dea0f42b0ee1b251a9e058c1bfdd0c89025c42a53148779c87dba1c37d68d723c9b7ce62602911dc4b612ad96d109f714f994cc3af23</mcf.sha512>
     <mcf.commit.number>38e4c78f1</mcf.commit.number>
     <mssql-jdbc.version>10.2.1.jre11</mssql-jdbc.version>
     <netty.version>4.1.63.Final</netty.version>
@@ -45,10 +45,10 @@
     <spring.security.saml2.core.version>1.0.10.RELEASE</spring.security.saml2.core.version>
     <spring.version>5.3.18</spring.version>
     <spring.oauth2.version>2.3.8.RELEASE</spring.oauth2.version>
-    <tika.version>2.4.0</tika.version>
-    <tika-server.sha512>51911d738234499b6118ef03202850549f976012ba3280f21704104275f6e68abac52bbcfaf5f115d29181ccb8225cbe00dc11277cc1fdfbe71d2c4ab6995232</tika-server.sha512>
+    <tika.version>2.7.0</tika.version>
+    <tika-server.sha512>23759bacee231bc700765d4f934da9eeabfa8e407381b72472d66da532509f2edd976bce33fd38c34a8bf43b2b28a1e19ab9ddfc187f9cd96f8a31a285248e13</tika-server.sha512>
     <tika-server-commit-number>5c0793e2c</tika-server-commit-number>
-    <tomcat.version>9.0.56</tomcat.version>
+    <tomcat.version>9.0.79</tomcat.version>
     <slf4j.version>1.7.36</slf4j.version>
     <xmlsec.version>2.3.0</xmlsec.version>
     <zeppelin.version>0.10.1</zeppelin.version>
@@ -84,6 +84,8 @@
     <module>datafari-share-connector</module>
     <module>datafari-ui</module>
     <module>datafari-git-plugin</module>
+    <module>datafari-regex-entity-connector</module>
+    <module>datafari-active-directory-connector</module>
   </modules>
   <build>
     <pluginManagement>

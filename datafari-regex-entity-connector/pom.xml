@@ -1,0 +1,44 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.francelabs.datafari</groupId>
+    <artifactId>datafari-ce</artifactId>
+    <version>6.0-dev-Community</version>
+  </parent>
+  <artifactId>datafari-regex-entity-connector</artifactId>
+  <name>Datafari Enterprise Search - Regex Entity connector module</name>
+
+
+  <dependencies>
+    <dependency>
+      <groupId>com.francelabs.datafari</groupId>
+      <artifactId>datafari-mcf-connectors-dependencies</artifactId>
+      <version>6.0-dev-Community</version>
+      <type>pom</type>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <resources>
+      
+      <resource>
+        <directory>./src/main/native2ascii</directory>
+        <includes>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+      
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>**/*.html</include>
+          <include>**/*.js</include>
+        </includes>
+      </resource>
+      
+    </resources>
+  </build>
+
+
+</project>

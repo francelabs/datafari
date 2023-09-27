@@ -17,6 +17,7 @@ function setSSOEnabled(resp) {
   var samlEnabled = false;
   var casEnabled = false;
   var kerberosEnabled = false;
+  var oidcEnabled = false;
   if (resp.samlEnabled != undefined && resp.samlEnabled != null) {
     samlEnabled = resp.samlEnabled;
   }
@@ -26,7 +27,10 @@ function setSSOEnabled(resp) {
   if (resp.kerberosEnabled != undefined && resp.kerberosEnabled != null) {
     kerberosEnabled = resp.kerberosEnabled;
   }
-  if(samlEnabled || casEnabled || kerberosEnabled) {
+  if (resp.oidcEnabled != undefined && resp.oidcEnabled != null) {
+    oidcEnabled = resp.oidcEnabled;
+  }
+  if(samlEnabled || casEnabled || kerberosEnabled || oidcEnabled) {
     ssoEnabled = true;
   }
 }
@@ -123,8 +127,12 @@ function checkIdleTime() {
         setDefaultTimeout(resp);
         // Refresh ssoEnabled param
         setSSOEnabled(resp);
-        if (resp.code != 0) { // session has expired or is invalid, so redirect the user to the login page
-          window.location.href = "../login?timeout=expired&redirect=" + encodeURIComponent(window.location.href);
+        if (resp.code != 0) { // session has expired or is invalid
+          if(ssoEnabled) { // if sso is enabled we simply need to reload the page
+            window.location.reload();
+          } else {
+            window.location.href = "../login?timeout=expired&redirect=" + encodeURIComponent(window.location.href);
+          }
           return;
         } else {
           if (logged !== resp.user && resp.isAdmin) { // admin user but different user so reload

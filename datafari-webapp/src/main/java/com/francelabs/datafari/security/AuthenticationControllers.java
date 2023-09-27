@@ -69,11 +69,11 @@ public class AuthenticationControllers {
   }
 
   @Controller
-  @ConditionalOnExpression("${saml.enabled:false}==false && ${keycloak.enabled:false}==false && ${cas.enabled:false}==false")
+  @ConditionalOnExpression("${oidc.enabled:false}==false && ${saml.enabled:false}==false && ${keycloak.enabled:false}==false && ${cas.enabled:false}==false")
   public class StandardLoginController {
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String loginPage(@RequestParam(value = "error", required = false) final String error, @RequestParam(value = "logout", required = false) final String logout, @RequestParam(value = "timeout", required = false) final String timeout,
-        final Model model) {
+    public String loginPage(@RequestParam(value = "error", required = false) final String error, @RequestParam(value = "logout", required = false) final String logout,
+        @RequestParam(value = "timeout", required = false) final String timeout, final Model model) {
       String errorMessage = null;
       String errorType = null;
       if (error != null) {
@@ -95,7 +95,7 @@ public class AuthenticationControllers {
   }
 
   @Controller
-  @ConditionalOnExpression("${saml.enabled:false}==false && ${keycloak.enabled:false}==false && ${cas.enabled:false}==false")
+  @ConditionalOnExpression("${oidc.enabled:false}==false && ${saml.enabled:false}==false && ${keycloak.enabled:false}==false && ${cas.enabled:false}==false")
   public class StandardLogoutController {
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)

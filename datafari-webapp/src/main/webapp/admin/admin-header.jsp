@@ -1,3 +1,4 @@
+<%@page import="com.francelabs.datafari.utils.AuthenticatedUserName"%>
 <%@page import="org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount"%>
 <%@page import="org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
@@ -18,14 +19,7 @@
           <span class="user-mini">
             <span id="welcomeAdminUiMsg" class="welcome"></span>
             <span><% 
-            String name = request.getUserPrincipal().getName();
-            if(request.getUserPrincipal() instanceof KeycloakAuthenticationToken) {
-              final KeycloakAuthenticationToken keycloakToken = (KeycloakAuthenticationToken) request.getUserPrincipal();
-              if (keycloakToken.getDetails() instanceof SimpleKeycloakAccount) {
-                final SimpleKeycloakAccount keycloakAccount = (SimpleKeycloakAccount) keycloakToken.getDetails();
-                name = keycloakAccount.getKeycloakSecurityContext().getToken().getPreferredUsername();
-              }
-            }
+            String name = AuthenticatedUserName.getName(request);
             out.print(name);
             %></span>
           </span>

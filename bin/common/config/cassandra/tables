@@ -129,12 +129,6 @@ CREATE TABLE ui_config (
 	last_refresh timestamp
 );
 
-CREATE TABLE user_history (
-  username varchar PRIMARY KEY,
-  history list<text>,
-  last_refresh timestamp
-);
-
 CREATE TABLE role (
   username varchar,
   role varchar,

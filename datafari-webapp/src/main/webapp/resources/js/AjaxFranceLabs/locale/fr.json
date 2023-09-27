@@ -789,7 +789,7 @@
     "spacyModelToUse": "Modèle Spacy à utiliser",
     "spacyModelToUse-tip": "Si un modèle spécifique doit être inclus dans les requêtes sur le endpoint utilisé, indiquez le ici. Peut être laissé vide si aucun modèle ne doit être fourni",
     "spacyOutputFieldPrefix": "Préfix des champs de sortie Spacy",
-    "spacyOutputFieldPrefix-tip": "Le préfixe que vous souhaitez utiliser pour les métadonnées qui seront ajoutées aux documents pour les entités. Il est fortement conseillé d'en définir un. Les métadonnées seront nommées [prefix][entity_label]. Si laissé vide, 'spacyEntities_' sera utilisé par défaut",
+    "spacyOutputFieldPrefix-tip": "Le préfixe que vous souhaitez utiliser pour les métadonnées qui seront ajoutées aux documents pour les entités. Il est fortement conseillé d'en définir un. Les métadonnées seront nommées [prefix][entity_label]. Si laissé vide, 'entity_' sera utilisé par défaut",
     "spacyServerAddress": "Adresse du serveur Spacy FastAPI",
     "spacyServerAddress-tip": "Adresse complète sur serveur Spacy FastAPI. Ce paramètre doit comprendre le protocole, l'adresse IP, ainsi que le port (ex: http://192.168.0.1:5000)",
     "spellcheckerProposal": "Vous pouvez avoir plus de résultats avec: ",

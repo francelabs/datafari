@@ -20,8 +20,6 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.francelabs.datafari.utils.AuthenticatedUserName;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,44 +27,29 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class Auth {
 
-    @GetMapping("/rest/v1.0/auth")
-    protected void doGet(final HttpServletRequest request, final HttpServletResponse response,
-            @RequestParam(name = "callback") String callbackURL) {
-        final String authenticatedUserName = AuthenticatedUserName.getName(request);
-        if (authenticatedUserName != null) {
-            if (callbackURL != null && callbackURL.length() > 0) {
-                try {
-                    response.sendRedirect(callbackURL);
-                } catch (Exception e) {
-                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                }
-            } else {
-                try {
-                    response.sendRedirect("/");
-                } catch (IOException e) {
-                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                }
-            }
-        } else {
-            try {
-                String currentURI = request.getRequestURI();
-                String[] splitURI = currentURI.split("/");
-                String newURI = "";
-                // remove the /api/auth part
-                for (int i = 0; i < splitURI.length - 3; i++) {
-                    if (!splitURI[i].contentEquals("")) {
-                        newURI += splitURI[i] + "/";
-                    }
-                }
-                response.sendRedirect("/" + newURI + "login?redirect=" + callbackURL);
-            } catch (IOException e) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            }
-        }
-        try {
-            response.sendRedirect(callbackURL);
-        } catch (IOException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
+  @GetMapping("/rest/v1.0/auth")
+  /**
+   * Protected endpoint that triggers the authentication and then simply redirect to the URL specified by the 'callback' request parameter
+   *
+   * @param request
+   * @param response
+   * @param callbackURL the URL to redirect to
+   */
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response, @RequestParam(name = "callback") final String callbackURL) {
+    if (callbackURL != null && callbackURL.length() > 0) {
+      try {
+        response.sendRedirect(callbackURL);
+      } catch (final Exception e) {
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      }
+    } else {
+      // No callback URL provided, so we redirect to the main context of the request !
+      try {
+        final String mainContext = request.getContextPath();
+        response.sendRedirect(mainContext);
+      } catch (final IOException e) {
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      }
     }
+  }
 }

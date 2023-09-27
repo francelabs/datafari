@@ -70,7 +70,16 @@ public class CassandraAuthenticationProvider implements AuthenticationProvider {
     }
   }
 
-  protected static List<String> getRoles(final String username) {
+  public static List<GrantedAuthority> getGrantedAuthorities(final String username) {
+    final List<String> roles = getRoles(username);
+    final List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+    roles.forEach(role -> {
+      grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+    });
+    return grantedAuthorities;
+  }
+
+  private static List<String> getRoles(final String username) {
     String rawUsername = username.toLowerCase();
     if (rawUsername.contains("@")) {
       rawUsername = rawUsername.substring(0, rawUsername.indexOf("@"));
@@ -88,7 +97,7 @@ public class CassandraAuthenticationProvider implements AuthenticationProvider {
       } else {
         // First time the user logs into Datafari, add it the default role "ConnectedSearchUser"
         // It is obviously an imported user, otherwise it would already be in the database
-        final User newUser = new User(rawUsername, "ConnectedSearchUser", true);
+        final User newUser = new User(rawUsername, "", true);
         newUser.signup("ConnectedSearchUser");
         roles.add("ConnectedSearchUser");
       }

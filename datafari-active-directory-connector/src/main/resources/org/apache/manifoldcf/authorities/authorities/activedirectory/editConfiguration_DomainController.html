@@ -1,0 +1,138 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+#if($TabName == $ResourceBundle.getString('ActiveDirectoryAuthority.DomainController'))
+
+<table class="displaytable">
+  <tr><td class="separator" colspan="2"><hr/></td></tr>
+  <tr>
+    <td class="description">$Encoder.bodyEscape($ResourceBundle.getString('ActiveDirectoryAuthority.DomainControllers'))</td>
+    <td class="boxcell">
+      <table class="formtable">
+        <tr class="formheaderrow">
+          <td class="formcolumnheader"></td>
+          <td class="formcolumnheader">$Encoder.bodyEscape($ResourceBundle.getString('ActiveDirectoryAuthority.DomainControllerName'))</td>
+          <td class="formcolumnheader">$Encoder.bodyEscape($ResourceBundle.getString('ActiveDirectoryAuthority.DomainSuffix'))</td>
+          <td class="formcolumnheader">$Encoder.bodyEscape($ResourceBundle.getString('ActiveDirectoryAuthority.AdministrativeUserName'))</td>
+          <td class="formcolumnheader">$Encoder.bodyEscape($ResourceBundle.getString('ActiveDirectoryAuthority.AdministrativePassword'))</td>
+          <td class="formcolumnheader">$Encoder.bodyEscape($ResourceBundle.getString('ActiveDirectoryAuthority.Authentication'))</td>
+          <td class="formcolumnheader">$Encoder.bodyEscape($ResourceBundle.getString('ActiveDirectoryAuthority.LoginNameADAttribute'))</td>
+        </tr>
+  #set($dccounter = 0)
+  #foreach($domaincontroller in $DOMAINCONTROLLERS)
+    #if(($dccounter % 2) == 0)
+        <tr class="evenformrow">
+    #else
+        <tr class="oddformrow">
+    #end
+          <td class="formcolumncell">
+            <a name="dcrecord_$dccounter">
+              <nobr>
+                <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('ActiveDirectoryAuthority.Delete'))"
+                alt="$Encoder.attributeEscape($ResourceBundle.getString('ActiveDirectoryAuthority.DeleteRuleNumber'))$dccounter" onclick="javascript:deleteDC($dccounter);"/>
+                <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('ActiveDirectoryAuthority.InsertBefore'))"
+                alt="$Encoder.attributeEscape($ResourceBundle.getString('ActiveDirectoryAuthority.InsertBeforeRuleNumber'))$dccounter" onclick="javascript:insertDC($dccounter);"/>
+              </nobr>
+            </a>
+            <input type="hidden" name="dcrecord_op_$dccounter" value="Continue"/>
+            <input type="hidden" name="dcrecord_domaincontrollername_$dccounter" value="$Encoder.attributeEscape($domaincontroller.get('DOMAINCONTROLLER'))"/>
+          </td>
+          <td class="formcolumncell"><nobr>$Encoder.bodyEscape($domaincontroller.get('DOMAINCONTROLLER'))</nobr></td>
+          <td class="formcolumncell"><nobr><input name="dcrecord_suffix_$dccounter" type="text" size="10" value="$Encoder.attributeEscape($domaincontroller.get('SUFFIX'))"/></nobr></td>
+          <td class="formcolumncell"><nobr><input name="dcrecord_username_$dccounter" type="text" size="10" value="$Encoder.attributeEscape($domaincontroller.get('USERNAME'))"/></nobr></td>
+          <td class="formcolumncell"><nobr><input name="dcrecord_password_$dccounter" type="password" size="6" value="$Encoder.attributeEscape($domaincontroller.get('PASSWORD'))"/></nobr></td>
+          <td class="formcolumncell"><nobr><input name="dcrecord_authentication_$dccounter" type="text" size="10" value="$Encoder.attributeEscape($domaincontroller.get('AUTHENTICATION'))"/></nobr></td>
+          <td class="formcolumncell">
+            <nobr>
+              <select name="dcrecord_userACLsUsername_$dccounter">
+    #if($domaincontroller.get('USERACLsUSERNAME') == 'sAMAccountName')
+                <option value="sAMAccountName" selected="true">
+    #else
+                <option value="sAMAccountName">
+    #end
+                  sAMAccountName
+                </option>
+    #if($domaincontroller.get('USERACLsUSERNAME') == 'userPrincipalName')
+                <option value="userPrincipalName" selected="true">
+    #else
+                <option value="userPrincipalName">
+    #end
+                  userPrincipalName
+                </option>
+              </select>
+            </nobr>
+          </td>
+        </tr>
+    #set($dccounter = $dccounter + 1)
+  #end
+        <tr class="formrow"><td class="formseparator" colspan="7"><hr/></td></tr>
+        <tr class="formrow">
+          <td class="formcolumncell">
+            <a name="dcrecord">
+              <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('ActiveDirectoryAuthority.AddToEnd'))"
+              alt="$Encoder.attributeEscape($ResourceBundle.getString('ActiveDirectoryAuthority.AddRuleToEnd'))" onclick="javascript:addDC();"/>
+            </a>
+            <input type="hidden" name="dcrecord_count" value="$dccounter"/>
+            <input type="hidden" name="dcrecord_op" value="Continue"/>
+          </td>
+          <td class="formcolumncell"><nobr><input name="dcrecord_domaincontrollername" type="text" size="32" value=""/></nobr></td>
+          <td class="formcolumncell"><nobr><input name="dcrecord_suffix" type="text" size="10" value=""/></nobr></td>
+          <td class="formcolumncell"><nobr><input name="dcrecord_username" type="text" size="10" value=""/></nobr></td>
+          <td class="formcolumncell"><nobr><input name="dcrecord_password" type="password" size="6" value=""/></nobr></td>
+          <td class="formcolumncell"><nobr><input name="dcrecord_authentication" type="text" size="10" value="DIGEST-MD5 GSSAPI"/></nobr></td>
+          <td class="formcolumncell">
+            <nobr>
+              <select name="dcrecord_userACLsUsername">
+                <option value="sAMAccountName" selected="true">
+                  sAMAccountName
+                </option>
+                <option value="userPrincipalName">
+                  userPrincipalName
+                </option>
+              </select>
+            </nobr>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr><td class="separator" colspan="2"><hr/></td></tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('ActiveDirectoryAuthority.ConnectionTimeout'))</nobr></td>
+    <td class="value"><input type="text" size="5" name="ldapconnectiontimeout" value="$Encoder.attributeEscape($LDAPCONNECTIONTIMEOUT)"/> $Encoder.bodyEscape($ResourceBundle.getString('ActiveDirectoryAuthority.milliseconds'))</td>
+  </tr>
+</table>
+
+#else
+
+  #set($dccounter = 0)
+  #foreach($domaincontroller in $DOMAINCONTROLLERS)
+
+<input type="hidden" name="dcrecord_suffix_$dccounter" value="$Encoder.attributeEscape($domaincontroller.get('SUFFIX'))"/>
+<input type="hidden" name="dcrecord_domaincontrollername_$dccounter" value="$Encoder.attributeEscape($domaincontroller.get('DOMAINCONTROLLER'))"/>
+<input type="hidden" name="dcrecord_username_$dccounter" value="$Encoder.attributeEscape($domaincontroller.get('USERNAME'))"/>
+<input type="hidden" name="dcrecord_password_$dccounter" value="$Encoder.attributeEscape($domaincontroller.get('PASSWORD'))"/>
+<input type="hidden" name="dcrecord_authentication_$dccounter" value="$Encoder.attributeEscape($domaincontroller.get('AUTHENTICATION'))"/>
+<input type="hidden" name="dcrecord_userACLsUsername_$dccounter" value="$Encoder.attributeEscape($domaincontroller.get('USERACLsUSERNAME'))"/>
+
+    #set($dccounter = $dccounter + 1)
+  #end
+
+<input type="hidden" name="dcrecord_count" value="$dccounter"/>
+<input type="hidden" name="ldapconnectiontimeout" value="$LDAPCONNECTIONTIMEOUT"/>
+
+#end

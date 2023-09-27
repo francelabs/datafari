@@ -129,12 +129,6 @@ CREATE TABLE ui_config (
 	last_refresh timestamp
 );
 
-CREATE TABLE user_history (
-  username varchar PRIMARY KEY,
-  history list<text>,
-  last_refresh timestamp
-);
-
 CREATE TABLE role (
   username varchar,
   role varchar,
@@ -236,6 +230,3 @@ VALUES ('john', 'password 1', false, toTimeStamp(NOW()));
 
 INSERT INTO role (username, role, last_refresh)
 VALUES ('john', 'SearchAdministrator', toTimeStamp(NOW()));
-
-INSERT INTO user_history (username, history, last_refresh)
-VALUES ('john', [$$enron energy$$,$$france labs search engine$$], toTimeStamp(NOW()));

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -76,7 +77,7 @@ public class DatafariWebSecurity {
   }
 
   @Configuration
-  @ConditionalOnExpression("${saml.enabled:false}==false && ${keycloak.enabled:false}==false && ${kerberos.enabled:false}==false && ${cas.enabled:false}==false")
+  @ConditionalOnExpression("${oidc.enabled:false}==false && ${saml.enabled:false}==false && ${keycloak.enabled:false}==false && ${kerberos.enabled:false}==false && ${cas.enabled:false}==false && ${header.enabled:false}==false")
   @Order(Ordered.LOWEST_PRECEDENCE)
   public static class StandardSecurity extends WebSecurityConfigurerAdapter {
 
@@ -110,6 +111,7 @@ public class DatafariWebSecurity {
       }).authorizeRequests()
       .antMatchers("/admin/*", "/SearchExpert/*").hasAnyRole("SearchExpert", "SearchAdministrator")
       .antMatchers("/SearchAdministrator/*", "/rest/v2.0/files/**", "/rest/v2.0/management/**").hasRole("SearchAdministrator")
+      .antMatchers("/rest/v1.0/auth*").authenticated()
       .anyRequest().permitAll();
     }
 

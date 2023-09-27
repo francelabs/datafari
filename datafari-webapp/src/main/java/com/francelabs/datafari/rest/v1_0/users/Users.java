@@ -21,8 +21,10 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.francelabs.datafari.service.db.StatisticsDataService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -38,7 +40,6 @@ import com.francelabs.datafari.rest.v1_0.exceptions.DataNotFoundException;
 import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
 import com.francelabs.datafari.rest.v1_0.exceptions.NotAuthenticatedException;
 import com.francelabs.datafari.rest.v1_0.utils.RestAPIUtils;
-import com.francelabs.datafari.service.db.UserHistoryDataService;
 import com.francelabs.datafari.user.Lang;
 import com.francelabs.datafari.user.UiConfig;
 import com.francelabs.datafari.utils.AuthenticatedUserName;
@@ -71,7 +72,7 @@ public class Users {
   protected void saveUiConfigToDB(final String authenticatedUserName, final JSONObject body, final HttpServletRequest request) throws DatafariServerException {
     final JSONObject bodyUiConfig = (JSONObject) body.get("uiConfig");
     if (bodyUiConfig != null) {
-      UiConfig.setUiConfig(authenticatedUserName, bodyUiConfig.toJSONString());
+      UiConfig.setUiConfig(authenticatedUserName, bodyUiConfig.toJSONString().replaceAll("'","''"));
       AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(), "Modified saved ui config for user " + authenticatedUserName);
     }
   }
@@ -137,16 +138,14 @@ public class Users {
     }
   }
 
-  @GetMapping(value = "rest/v1.0/users/current/history", produces = "application/json;charset=UTF-8")
+  @GetMapping(value = "rest/v2.0/users/current/history", produces = "application/json;charset=UTF-8")
   protected String getUserHistory(final HttpServletRequest request) {
     final String authenticatedUserName = AuthenticatedUserName.getName(request);
     if (authenticatedUserName != null) {
       final HashMap<String, Object> responseContent = new HashMap<>();
-      List<String> history = new ArrayList<>();
+      JSONArray history;
       try {
-        if (UserHistoryDataService.getInstance().isHistoryEnabled()) {
-          history = UserHistoryDataService.getInstance().getHistory(authenticatedUserName);
-        }
+        history = StatisticsDataService.getInstance().getHistory(authenticatedUserName);
         responseContent.put("history", history);
         AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(), "User " + authenticatedUserName + " accessed his request history");
       } catch (final DatafariServerException e) {
