@@ -30,9 +30,6 @@
     <logstash.sha512>7276117b1885c59952ba6b5551ef243e2e2a27b7da7d558e109c7b06a960ac6c8e7a2cf6b92d08309ead1cd1bbecb67c83965937deb0d61bda81a8def7d7a38e</logstash.sha512>
     <mcf-solr-plugin.version>9.x-plugin-2.2</mcf-solr-plugin.version>
     <mcf-solr-plugin.sha512>38261a93265c1697db2742947ec72dfdfbb31f4dcab7a343484b06bb57416a668c750a98d5130fadf97464587a09677bb927e2623b862e618e45a3922b67d20b</mcf-solr-plugin.sha512>
-    <mcf.version>2.23</mcf.version>
-    <mcf.sha512>ff3fd366cfaed5920f460bbbf3d3509b01a0c9e39fdca3e987dbeab1ac99752204410ddf2533f9d748eee964a319d9bde8a53aabc0192e484bc85e0e22a129e9</mcf.sha512>
-    <mcf.commit.number>38e4c78f1</mcf.commit.number>
     <mssql-jdbc.version>10.2.1.jre11</mssql-jdbc.version>
     <netty.version>4.1.63.Final</netty.version>
     <ojdbc.version>19.15.0.0.1</ojdbc.version>
@@ -56,8 +53,10 @@
     <xmlsec.version>2.3.0</xmlsec.version>
     <zeppelin.version>0.10.1</zeppelin.version>
     <zeppelin.sha512>59d7261adfd3b17b6648e083cc2e06cfb0c5aedd7e76498175073a80c224c6bc05ab562739b2fe8f0db566d01b99203a5fb09b0e680916b046ae58f3146695a9</zeppelin.sha512>
-    <zookeeper.version>3.8.0</zookeeper.version>
-    <zookeeper.sha512>d66e3a40451f840406901b2cd940992b001f92049a372ae48d8b420891605871cd1ae5f6cceb3b10665491e7abef36a4078dace158bd1e0938fcd3567b5234ca</zookeeper.sha512>
+<mcf.version>2.26</mcf.version>
+<mcf.sha512>363ddd635b4ad3926870eaff5d9a3db31b7dca4af2fbd8b0d699acfe81423a6c286733d28e428be1111738039b7093e7e090394e70ec852a22df2dd1c0313757</mcf.sha512>
+ <zookeeper.version>3.8.0</zookeeper.version>
+ <zookeeper.sha512>d66e3a40451f840406901b2cd940992b001f92049a372ae48d8b420891605871cd1ae5f6cceb3b10665491e7abef36a4078dace158bd1e0938fcd3567b5234ca</zookeeper.sha512>
   </properties>
   
   <!-- The order of modules execution is important -->
