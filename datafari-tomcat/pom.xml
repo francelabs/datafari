@@ -29,7 +29,7 @@
                 as the MD5 -->
               <!-- <url>http://archive.apache.org/dist/tomcat/tomcat-9/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.tar.gz</url> -->
               <url>https://repo.datafari.com/tomcat/${tomcat.version}/apache-tomcat-${tomcat.version}.tar.gz</url>
-              <sha512>7a0d99b5fc37c9e9ac26b554fab9147ce0a2ba59fad41e2565b15e9f6e137bf0105f5c9cd6b7b508837ff24feb7b95b2aba49e0abc7b1480a30a11606e79802a</sha512>
+              <sha512>919957776addb26570f4c4cc2a65159409baf6b5851b3524cc07ffb7ede289ce00f454e547d309eb772e543eea0956201067e0a7b4627d182eff7e2ce042e298</sha512>
               <unpack>true</unpack>
             </configuration>
           </execution>
