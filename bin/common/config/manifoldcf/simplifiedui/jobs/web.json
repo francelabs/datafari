@@ -31,6 +31,11 @@
               "_attribute_value": "true"
             },
             {
+              "_type_": "forceinclusionofredirects",
+              "_value_": "",
+              "_attribute_value": "true"
+            },
+            {
               "_type_": "excludes",
               "_value_": "(/[^\\/]+){7}/?.*\r\n.*\\.css.*\r\n.*\\.jpg.*\r\n.*\\.jpeg.*\r\n.*\\.bmp.*\r\n.*\\.gif.*\r\n.*\\.png.*\r\n.*\\.ico.*\r\n.*\\.svg.*\r\n.*\\.ico.*\r\n.*\\.js.*"
             },
