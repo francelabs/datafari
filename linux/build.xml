@@ -41,7 +41,6 @@
 	<property name="git.plugin.src.dir" value="${project.dir}/datafari-git-plugin/target" />
 	<property name="datafariui.src.dir" value="${project.dir}/datafari-ui/target" />
 
-
 	<!-- Output directories and self contained Datafari's Debian components -->
 	<property name="linux.dir" value="${project.dir}/linux" />
 	<property name="linux.dist.dir" value="${linux.dir}/dist" />
@@ -485,7 +484,7 @@
 		<copy toDir="${linux.dist.dir}/zookeeper" overwrite="true" force="true">
 			<fileset dir="${zookeeper.proj.dir}">
 			</fileset>
-			<globmapper from="conf/log4j-solr.properties" to="conf/log4j.properties"/>
+			<globmapper from="conf/log4j-solr.xml" to="conf/logback.xml"/>
 		</copy>
 		<copy toDir="${linux.dist.dir}/zookeeper" overwrite="true" force="true">
 			<fileset dir="${zookeeper.proj.dir}">
@@ -505,7 +504,7 @@
 		<copy toDir="${linux.dist.dir}/zookeeper-mcf" overwrite="true" force="true">
 			<fileset dir="${zookeeper.proj.dir}">
 			</fileset>
-			<globmapper from="conf/log4j-mcf.properties" to="conf/log4j.properties"/>
+			<globmapper from="conf/logback-mcf.xml" to="conf/logback.xml"/>
 		</copy>
 		<copy toDir="${linux.dist.dir}/zookeeper-mcf" overwrite="true" force="true">
 			<fileset dir="${zookeeper.proj.dir}">

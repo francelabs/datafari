@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <config>
 
-  <lib dir="${lib.path}lib/solr"/>
+  <luceneMatchVersion>9.3</luceneMatchVersion>
+  
   <lib dir="${lib.path}lib/custom"/>
-
-  <luceneMatchVersion>8.11.2</luceneMatchVersion>
   
   <dataDir>${solr.data.dir:}</dataDir>
   
@@ -42,10 +41,10 @@
 
   <query>
     <maxBooleanClauses>1024</maxBooleanClauses>
-    <filterCache autowarmCount="0" class="solr.FastLRUCache" initialSize="512" size="512"/>
-    <queryResultCache autowarmCount="0" class="solr.LRUCache" initialSize="512" size="512"/>
-    <documentCache autowarmCount="0" class="solr.LRUCache" initialSize="512" size="512"/>
-    <cache autowarmCount="10" class="solr.search.LRUCache" initialSize="0" name="perSegFilter" regenerator="solr.NoOpRegenerator" size="10"/>
+    <filterCache autowarmCount="0" class="solr.search.CaffeineCache" initialSize="512" size="512"/>
+    <queryResultCache autowarmCount="0" class="solr.search.CaffeineCache" initialSize="512" size="512"/>
+    <documentCache autowarmCount="0" class="solr.search.CaffeineCache" initialSize="512" size="512"/>
+    <cache autowarmCount="10" class="solr.search.CaffeineCache" initialSize="0" name="perSegFilter" regenerator="solr.NoOpRegenerator" size="10"/>
     <enableLazyFieldLoading>true</enableLazyFieldLoading>
     <queryResultWindowSize>20</queryResultWindowSize>
     <queryResultMaxDocsCached>200</queryResultMaxDocsCached>
@@ -164,12 +163,6 @@
 	
   <queryResponseWriter class="solr.JSONResponseWriter" name="json">
     <str name="content-type">text/plain; charset=UTF-8</str>
-  </queryResponseWriter>
-
-  <queryResponseWriter class="solr.VelocityResponseWriter" name="velocity" startup="lazy"/>
-
-  <queryResponseWriter class="solr.XSLTResponseWriter" name="xslt">
-    <int name="xsltCacheLifetimeSeconds">5</int>
   </queryResponseWriter>
 
   <admin>

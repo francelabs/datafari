@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<schema name="Duplicates" version="1.5">
+<schema name="Duplicates" version="1.6">
 
   <fields>
     <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" />

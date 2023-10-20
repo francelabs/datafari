@@ -18,7 +18,6 @@ package com.francelabs.datafari.servlets.admin;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Paths;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -48,13 +47,9 @@ import com.francelabs.datafari.utils.FileUtils;
 import com.francelabs.datafari.utils.XMLUtils;
 
 /**
- * This Servlet is used to print and modify the textContent of various nodes of
- * the solrConfig.xml It is called by SizeLimitations.html and by
- * AutocompleteConfiguration.html You must give as a parameter "type" the
- * content of the attribute "name" of the node you search DoGet is used to get
- * the value of the requested node cleans and creates the semaphores DoPost is
- * used to modify the value of the requested node There is one semaphore by node
- * requested since the start/restart of Datafari
+ * This Servlet is used to print and modify the textContent of various nodes of the solrConfig.xml It is called by SizeLimitations.html and by AutocompleteConfiguration.html You must give as a
+ * parameter "type" the content of the attribute "name" of the node you search DoGet is used to get the value of the requested node cleans and creates the semaphores DoPost is used to modify the value
+ * of the requested node There is one semaphore by node requested since the start/restart of Datafari
  *
  * @author Alexis Karassev
  */
@@ -68,8 +63,7 @@ public class ModifyNodeContent extends HttpServlet {
   private final static Logger LOGGER = LogManager.getLogger(ModifyNodeContent.class.getName());
 
   /**
-   * @see HttpServlet#HttpServlet() Gets the path Checks if the required file
-   *      exist
+   * @see HttpServlet#HttpServlet() Gets the path Checks if the required file exist
    */
   public ModifyNodeContent() {
     String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
@@ -85,9 +79,7 @@ public class ModifyNodeContent extends HttpServlet {
   }
 
   /**
-   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-   *      response) Used to release the semaphore Or create and or acquire the
-   *      semaphore, then read the file to get the requested node
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response) Used to release the semaphore Or create and or acquire the semaphore, then read the file to get the requested node
    */
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
@@ -112,17 +104,15 @@ public class ModifyNodeContent extends HttpServlet {
           // run
           // Checks if it exists now
           if (!new File(env + "/solrconfig.xml").exists()) {
-            LOGGER
-                .error("Error while opening the configuration file, solrconfig.xml, in ModifyNodeContent doGet, please make sure this file exists at "
-                    + env + "/solr/solrcloud/" + server + "/conf/ . Error 69033"); // If
+            LOGGER.error("Error while opening the configuration file, solrconfig.xml, in ModifyNodeContent doGet, please make sure this file exists at " + env + "/solr/solrcloud/" + server
+                + "/conf/ . Error 69033"); // If
             // not
             // an
             // error
             // is
             // printed
             final PrintWriter out = response.getWriter();
-            out.append(
-                "Error while opening the configuration file, please retry, if the problem persists contact your system administrator. Error Code : 69033");
+            out.append("Error while opening the configuration file, please retry, if the problem persists contact your system administrator. Error Code : 69033");
             out.close();
             return;
           } else {
@@ -160,33 +150,29 @@ public class ModifyNodeContent extends HttpServlet {
   }
 
   /**
-   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-   *      response) Read the file and search for the requested node, then set
-   *      it's textContent to the parameter
+   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response) Read the file and search for the requested node, then set it's textContent to the parameter
    */
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
-	  IndexerServer server = null;
-      try {
-        server = IndexerServerManager.getIndexerServer(Core.FILESHARE);
-      } catch (final IOException e1) {
-        final PrintWriter out = response.getWriter();
-        out.append(
-            "Error while getting the Solr core, please make sure the core dedicated to FileShare has booted up. Error code : 69000");
-        out.close();
-        LOGGER.error(
-            "Error while getting the Solr core in doGet, admin servlet, make sure the core dedicated to Promolink has booted up and is still called promolink or that the code has been changed to match the changes. Error 69000 ",
-            e1);
-        return;
+    IndexerServer server = null;
+    try {
+      server = IndexerServerManager.getIndexerServer(Core.FILESHARE);
+    } catch (final IOException e1) {
+      final PrintWriter out = response.getWriter();
+      out.append("Error while getting the Solr core, please make sure the core dedicated to FileShare has booted up. Error code : 69000");
+      out.close();
+      LOGGER.error(
+          "Error while getting the Solr core in doGet, admin servlet, make sure the core dedicated to Promolink has booted up and is still called promolink or that the code has been changed to match the changes. Error 69000 ",
+          e1);
+      return;
 
-      } catch (Exception e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	  
-	  
-	  try {
+    } catch (final Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    try {
       final String type = request.getParameter("type");
       final String value = request.getParameter("value");
       final String attr = request.getParameter("attr");
@@ -223,7 +209,7 @@ public class ModifyNodeContent extends HttpServlet {
         return;
       }
 
-      server.uploadConfig(Paths.get(env),Core.FILESHARE.toString());
+      server.uploadConfig(env, Core.FILESHARE.toString());
       Thread.sleep(1000);
       server.reloadCollection(Core.FILESHARE.toString());
     } catch (final Exception e) {

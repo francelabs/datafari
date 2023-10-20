@@ -35,7 +35,7 @@
        that you fully re-index after changing this setting as it can
        affect both how text is indexed and queried.
   -->
-  <luceneMatchVersion>8.11.2</luceneMatchVersion>
+  <luceneMatchVersion>9.3</luceneMatchVersion>
 
   <!-- <lib/> directives can be used to instruct Solr to load an Jars
        identified and use them to resolve any "plugins" specified in
@@ -431,7 +431,7 @@
            autowarmCount - the number of entries to prepopulate from
                and old cache.  
       -->
-    <filterCache class="solr.FastLRUCache"
+    <filterCache class="solr.search.CaffeineCache"
                  size="512"
                  initialSize="512"
                  autowarmCount="0"/>
@@ -441,7 +441,7 @@
          Caches results of searches - ordered lists of document ids
          (DocList) based on a query, a sort, and the range of documents requested.  
       -->
-    <queryResultCache class="solr.LRUCache"
+    <queryResultCache class="solr.search.CaffeineCache"
                      size="512"
                      initialSize="512"
                      autowarmCount="0"/>
@@ -453,14 +453,14 @@
          this cache will not be autowarmed.  
       -->
 <!--
-    <documentCache class="solr.LRUCache"
+    <documentCache class="solr.search.CaffeineCache"
                    size="512"
                    initialSize="512"
                    autowarmCount="0"/>
     -->
     <!-- custom cache currently used by block join --> 
     <cache name="perSegFilter"
-      class="solr.search.LRUCache"
+      class="solr.search.CaffeineCache"
       size="10"
       initialSize="0"
       autowarmCount="10"
@@ -998,21 +998,6 @@
       If you expect a MIME type of "application/json" just remove this override.
      -->
     <str name="content-type">text/plain; charset=UTF-8</str>
-  </queryResponseWriter>
-  
-  <!--
-     Custom response writers can be declared as needed...
-    -->
-    <queryResponseWriter class="solr.VelocityResponseWriter" name="velocity" startup="lazy"/>
-  
-  
-
-  <!-- XSLT response writer transforms the XML output by any xslt file found
-       in Solr's conf/xslt directory.  Changes to xslt files are checked for
-       every xsltCacheLifetimeSeconds.  
-    -->
-  <queryResponseWriter class="solr.XSLTResponseWriter" name="xslt">
-    <int name="xsltCacheLifetimeSeconds">5</int>
   </queryResponseWriter>
 
   <!-- Query Parsers

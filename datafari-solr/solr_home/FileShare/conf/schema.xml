@@ -44,7 +44,7 @@
   - Remember to run the JVM in server mode, and use a higher logging level
     that avoids logging every request
 -->
-<schema name="example" version="1.5">
+<schema name="example" version="1.6">
 
 
 

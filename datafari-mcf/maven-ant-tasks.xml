@@ -20,7 +20,6 @@
 				<include name="*manifoldcf*/connector-lib/**" />
 				<include name="*manifoldcf*/connector-lib-proprietary/**" />
 				<include name="*manifoldcf*/lib/**" />
-				<exclude name="*manifoldcf*/lib/commons-lang-*" />
 				<exclude name="*manifoldcf*/lib/zookeeper-*" />
 				<exclude name="*manifoldcf*/connector-common-lib/zookeeper-*" />
 				<exclude name="*manifoldcf*/connector-lib/postgresql*" />

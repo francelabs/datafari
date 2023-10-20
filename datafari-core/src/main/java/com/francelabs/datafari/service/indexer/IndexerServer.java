@@ -1,9 +1,9 @@
 package com.francelabs.datafari.service.indexer;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.zookeeper.KeeperException;
 
 public interface IndexerServer {
 
@@ -30,11 +30,11 @@ public interface IndexerServer {
 
   public void processStatsResponse(final IndexerQueryResponse queryResponse);
 
-  public void uploadConfig(Path configPath, String configName) throws IOException;
+  public void uploadConfig(String configPath, String configName) throws IOException, SolrServerException, KeeperException, InterruptedException;
 
   public void uploadFile(final String localDirectory, final String fileToUpload, final String collection, final String distantDirectory) throws IOException;
 
-  public void downloadConfig(Path configPath, String configName) throws IOException;
+  public void downloadConfig(String configPath, String configName) throws IOException, SolrServerException, KeeperException, InterruptedException;
 
   public void downloadFile(final String localDirectory, final String fileToUpload, final String collection) throws IOException;
 

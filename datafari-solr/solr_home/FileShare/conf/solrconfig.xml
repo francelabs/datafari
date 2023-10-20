@@ -33,14 +33,14 @@
        that you fully re-index after changing this setting as it can
        affect both how text is indexed and queried.
   -->
-  <luceneMatchVersion>8.11.2</luceneMatchVersion>
+  <luceneMatchVersion>9.3</luceneMatchVersion>
 
 	<!-- TODO : change the hardcoded path add property.name=value in API Collections create -->
 
-    <lib dir="${lib.path}lib/langid"/>
-    <lib dir="${lib.path}lib/solr"/>
+    <lib dir="${solr.install.dir}/modules/extraction/lib" regex=".*\.jar" />
+    <lib dir="${solr.install.dir}/modules/clustering/lib/" regex=".*\.jar" />
+    <lib dir="${solr.install.dir}/modules/langid/lib/" regex=".*\.jar" />
     <lib dir="${lib.path}lib/MCF"/>
-    <!-- <lib dir="${lib.path}lib/clustering"/> -->
     <lib dir="${lib.path}lib/custom"/>
     <lib dir="${lib.path}lib/custom/customer"/>
     
@@ -445,14 +445,14 @@
            autowarmCount - the number of entries to prepopulate from
                and old cache.
       -->
-    <filterCache autowarmCount="0" class="solr.FastLRUCache" initialSize="512" size="512"/>
+    <filterCache autowarmCount="0" class="solr.search.CaffeineCache" initialSize="512" size="512"/>
 
     <!-- Query Result Cache
 
          Caches results of searches - ordered lists of document ids
          (DocList) based on a query, a sort, and the range of documents requested.
       -->
-    <queryResultCache autowarmCount="0" class="solr.LRUCache" initialSize="512" size="512"/>
+    <queryResultCache autowarmCount="0" class="solr.search.CaffeineCache" initialSize="512" size="512"/>
 
     <!-- Document Cache
 
@@ -460,10 +460,10 @@
          document).  Since Lucene internal document ids are transient,
          this cache will not be autowarmed.
       -->
-    <documentCache autowarmCount="0" class="solr.LRUCache" initialSize="512" size="512"/>
+    <documentCache autowarmCount="0" class="solr.search.CaffeineCache" initialSize="512" size="512"/>
 
     <!-- custom cache currently used by block join -->
-    <cache autowarmCount="10" class="solr.search.LRUCache" initialSize="0" name="perSegFilter" regenerator="solr.NoOpRegenerator" size="10"/>
+    <cache autowarmCount="10" class="solr.search.CaffeineCache" initialSize="0" name="perSegFilter" regenerator="solr.NoOpRegenerator" size="10"/>
 
 
     <!-- Lazy Field Loading
@@ -830,15 +830,6 @@
        if the 'wt' parameter is not explicit
     -->
   <requestHandler class="solr.UpdateRequestHandler" name="/update">
-    <!-- See below for information on defining
-         updateRequestProcessorChains that can be used by name
-         on each Update Request
-      -->
-
-       <lst name="defaults">
-        @UPDATE-REQUEST-CHAIN@
-       </lst>
-
   </requestHandler>
 
   <requestHandler class="com.francelabs.datafari.handler.parsed.ParsedRequestHandler" name="/update/no-tika" startup="lazy">
@@ -1262,9 +1253,6 @@
       <processor class="solr.RunUpdateProcessorFactory"/>
   
 	</updateRequestProcessorChain>
-
-
-  @OTHER-PROCESSOR-CHAINS@
 	
 	
   <queryResponseWriter class="solr.JSONResponseWriter" name="json">
@@ -1273,21 +1261,6 @@
       If you expect a MIME type of "application/json" just remove this override.
      -->
     <str name="content-type">text/plain; charset=UTF-8</str>
-  </queryResponseWriter>
-
-  <!--
-     Custom response writers can be declared as needed...
-    -->
-    <queryResponseWriter class="solr.VelocityResponseWriter" name="velocity" startup="lazy"/>
-
-
-
-  <!-- XSLT response writer transforms the XML output by any xslt file found
-       in Solr's conf/xslt directory.  Changes to xslt files are checked for
-       every xsltCacheLifetimeSeconds.
-    -->
-  <queryResponseWriter class="solr.XSLTResponseWriter" name="xslt">
-    <int name="xsltCacheLifetimeSeconds">5</int>
   </queryResponseWriter>
 
   <!-- Query Parsers
