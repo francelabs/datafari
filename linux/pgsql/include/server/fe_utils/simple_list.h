@@ -7,7 +7,7 @@
  * facilities, but it's all we need in, eg, pg_dump.
  *
  *
- * Portions Copyright (c) 1996-2019, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/fe_utils/simple_list.h
@@ -57,9 +57,11 @@ typedef struct SimplePtrList
 
 extern void simple_oid_list_append(SimpleOidList *list, Oid val);
 extern bool simple_oid_list_member(SimpleOidList *list, Oid val);
+extern void simple_oid_list_destroy(SimpleOidList *list);
 
 extern void simple_string_list_append(SimpleStringList *list, const char *val);
 extern bool simple_string_list_member(SimpleStringList *list, const char *val);
+extern void simple_string_list_destroy(SimpleStringList *list);
 
 extern const char *simple_string_list_not_touched(SimpleStringList *list);
 

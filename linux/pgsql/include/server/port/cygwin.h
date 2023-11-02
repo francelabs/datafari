@@ -1,21 +1,18 @@
 /* src/include/port/cygwin.h */
 
-#include <cygwin/version.h>
-
 /*
- * Check for b20.1 and disable AF_UNIX family socket support.
+ * Variables declared in the core backend and referenced by loadable
+ * modules need to be marked "dllimport" in the core build, but
+ * "dllexport" when the declaration is read in a loadable module.
+ * No special markings should be used when compiling frontend code.
  */
-#if CYGWIN_VERSION_DLL_MAJOR < 1001
-#undef HAVE_UNIX_SOCKETS
-#endif
-
+#ifndef FRONTEND
 #ifdef BUILDING_DLL
 #define PGDLLIMPORT __declspec (dllexport)
 #else
 #define PGDLLIMPORT __declspec (dllimport)
 #endif
-
-#define PGDLLEXPORT
+#endif
 
 /*
  * Cygwin has a strtof() which is literally just (float)strtod(), which means

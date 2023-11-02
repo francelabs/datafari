@@ -4,7 +4,7 @@
  *	  prototypes for typecmds.c.
  *
  *
- * Portions Copyright (c) 1996-2019, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/commands/typecmds.h
@@ -16,7 +16,7 @@
 
 #include "access/htup.h"
 #include "catalog/dependency.h"
-#include "nodes/parsenodes.h"
+#include "parser/parse_node.h"
 
 
 #define DEFAULT_TYPDELIM		','
@@ -25,10 +25,12 @@ extern ObjectAddress DefineType(ParseState *pstate, List *names, List *parameter
 extern void RemoveTypeById(Oid typeOid);
 extern ObjectAddress DefineDomain(CreateDomainStmt *stmt);
 extern ObjectAddress DefineEnum(CreateEnumStmt *stmt);
-extern ObjectAddress DefineRange(CreateRangeStmt *stmt);
+extern ObjectAddress DefineRange(ParseState *pstate, CreateRangeStmt *stmt);
 extern ObjectAddress AlterEnum(AlterEnumStmt *stmt);
 extern ObjectAddress DefineCompositeType(RangeVar *typevar, List *coldeflist);
 extern Oid	AssignTypeArrayOid(void);
+extern Oid	AssignTypeMultirangeOid(void);
+extern Oid	AssignTypeMultirangeArrayOid(void);
 
 extern ObjectAddress AlterDomainDefault(List *names, Node *defaultRaw);
 extern ObjectAddress AlterDomainNotNull(List *names, bool notNull);
@@ -53,5 +55,7 @@ extern Oid	AlterTypeNamespaceInternal(Oid typeOid, Oid nspOid,
 									   bool isImplicitArray,
 									   bool errorOnTableType,
 									   ObjectAddresses *objsMoved);
+
+extern ObjectAddress AlterType(AlterTypeStmt *stmt);
 
 #endif							/* TYPECMDS_H */

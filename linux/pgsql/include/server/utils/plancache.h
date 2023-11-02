@@ -5,7 +5,7 @@
  *
  * See plancache.c for comments.
  *
- * Portions Copyright (c) 1996-2019, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/utils/plancache.h
@@ -18,7 +18,10 @@
 #include "access/tupdesc.h"
 #include "lib/ilist.h"
 #include "nodes/params.h"
+#include "tcop/cmdtag.h"
 #include "utils/queryenvironment.h"
+#include "utils/resowner.h"
+
 
 /* Forward declaration, to avoid including parsenodes.h here */
 struct RawStmt;
@@ -32,7 +35,7 @@ typedef enum
 }			PlanCacheMode;
 
 /* GUC parameter */
-extern int	plan_cache_mode;
+extern PGDLLIMPORT int plan_cache_mode;
 
 #define CACHEDPLANSOURCE_MAGIC		195726186
 #define CACHEDPLAN_MAGIC			953717834
@@ -95,7 +98,7 @@ typedef struct CachedPlanSource
 	int			magic;			/* should equal CACHEDPLANSOURCE_MAGIC */
 	struct RawStmt *raw_parse_tree; /* output of raw_parser(), or NULL */
 	const char *query_string;	/* source text of query */
-	const char *commandTag;		/* command tag (a constant!), or NULL */
+	CommandTag	commandTag;		/* 'nuff said */
 	Oid		   *param_types;	/* array of parameter type OIDs, or NULL */
 	int			num_params;		/* length of param_types array */
 	ParserSetupHook parserSetup;	/* alternative parameter spec method */
@@ -127,7 +130,8 @@ typedef struct CachedPlanSource
 	/* State kept to help decide whether to use custom or generic plans: */
 	double		generic_cost;	/* cost of generic plan, or -1 if not known */
 	double		total_custom_cost;	/* total cost of custom plans so far */
-	int			num_custom_plans;	/* number of plans included in total */
+	int64		num_custom_plans;	/* # of custom plans included in total */
+	int64		num_generic_plans;	/* # of generic plans */
 } CachedPlanSource;
 
 /*
@@ -186,10 +190,10 @@ extern void ResetPlanCache(void);
 
 extern CachedPlanSource *CreateCachedPlan(struct RawStmt *raw_parse_tree,
 										  const char *query_string,
-										  const char *commandTag);
+										  CommandTag commandTag);
 extern CachedPlanSource *CreateOneShotCachedPlan(struct RawStmt *raw_parse_tree,
 												 const char *query_string,
-												 const char *commandTag);
+												 CommandTag commandTag);
 extern void CompleteCachedPlan(CachedPlanSource *plansource,
 							   List *querytree_list,
 							   MemoryContext querytree_context,
@@ -215,9 +219,16 @@ extern List *CachedPlanGetTargetList(CachedPlanSource *plansource,
 
 extern CachedPlan *GetCachedPlan(CachedPlanSource *plansource,
 								 ParamListInfo boundParams,
-								 bool useResOwner,
+								 ResourceOwner owner,
 								 QueryEnvironment *queryEnv);
-extern void ReleaseCachedPlan(CachedPlan *plan, bool useResOwner);
+extern void ReleaseCachedPlan(CachedPlan *plan, ResourceOwner owner);
+
+extern bool CachedPlanAllowsSimpleValidityCheck(CachedPlanSource *plansource,
+												CachedPlan *plan,
+												ResourceOwner owner);
+extern bool CachedPlanIsSimplyValid(CachedPlanSource *plansource,
+									CachedPlan *plan,
+									ResourceOwner owner);
 
 extern CachedExpression *GetCachedExpression(Node *expr);
 extern void FreeCachedExpression(CachedExpression *cexpr);

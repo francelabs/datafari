@@ -4,7 +4,7 @@
  *	  prototypes for functions in backend/catalog/namespace.c
  *
  *
- * Portions Copyright (c) 1996-2019, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/catalog/namespace.h
@@ -30,6 +30,7 @@ typedef struct _FuncCandidateList
 	struct _FuncCandidateList *next;
 	int			pathpos;		/* for internal use of namespace lookup */
 	Oid			oid;			/* the function or operator's OID */
+	int			nominalnargs;	/* either pronargs or length(proallargtypes) */
 	int			nargs;			/* number of arg types returned */
 	int			nvargs;			/* number of args to become variadic array */
 	int			ndargs;			/* number of defaulted args */
@@ -49,12 +50,17 @@ typedef enum TempNamespaceStatus
 
 /*
  *	Structure for xxxOverrideSearchPath functions
+ *
+ * The generation counter is private to namespace.c and shouldn't be touched
+ * by other code.  It can be initialized to zero if necessary (that means
+ * "not known equal to the current active path").
  */
 typedef struct OverrideSearchPath
 {
 	List	   *schemas;		/* OIDs of explicitly named schemas */
 	bool		addCatalog;		/* implicitly prepend pg_catalog? */
 	bool		addTemp;		/* implicitly prepend temp schema? */
+	uint64		generation;		/* for quick detection of equality to active */
 } OverrideSearchPath;
 
 /*
@@ -94,6 +100,7 @@ extern FuncCandidateList FuncnameGetCandidates(List *names,
 											   int nargs, List *argnames,
 											   bool expand_variadic,
 											   bool expand_defaults,
+											   bool include_out_arguments,
 											   bool missing_ok);
 extern bool FunctionIsVisible(Oid funcid);
 
@@ -115,7 +122,7 @@ extern Oid	ConversionGetConid(const char *conname);
 extern bool ConversionIsVisible(Oid conid);
 
 extern Oid	get_statistics_object_oid(List *names, bool missing_ok);
-extern bool StatisticsObjIsVisible(Oid stxid);
+extern bool StatisticsObjIsVisible(Oid relid);
 
 extern Oid	get_ts_parser_oid(List *names, bool missing_ok);
 extern bool TSParserIsVisible(Oid prsId);
@@ -149,7 +156,6 @@ extern bool isTempOrTempToastNamespace(Oid namespaceId);
 extern bool isAnyTempNamespace(Oid namespaceId);
 extern bool isOtherTempNamespace(Oid namespaceId);
 extern TempNamespaceStatus checkTempNamespaceStatus(Oid namespaceId);
-extern bool isTempNamespaceInUse(Oid namespaceId);
 extern int	GetTempNamespaceBackendId(Oid namespaceId);
 extern Oid	GetTempToastNamespace(void);
 extern void GetTempNamespaceState(Oid *tempNamespaceId,
@@ -176,7 +182,7 @@ extern void AtEOSubXact_Namespace(bool isCommit, SubTransactionId mySubid,
 								  SubTransactionId parentSubid);
 
 /* stuff for search_path GUC variable */
-extern char *namespace_search_path;
+extern PGDLLIMPORT char *namespace_search_path;
 
 extern List *fetch_search_path(bool includeImplicit);
 extern int	fetch_search_path_array(Oid *sarray, int sarray_len);

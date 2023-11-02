@@ -3,7 +3,7 @@
  * gistxlog.h
  *	  gist xlog routines
  *
- * Portions Copyright (c) 1996-2019, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/access/gistxlog.h
@@ -26,6 +26,7 @@
  /* #define XLOG_GIST_INSERT_COMPLETE	 0x40 */	/* not used anymore */
  /* #define XLOG_GIST_CREATE_INDEX		 0x50 */	/* not used anymore */
 #define XLOG_GIST_PAGE_DELETE		0x60
+#define XLOG_GIST_ASSIGN_LSN		0x70	/* nop, assign new LSN */
 
 /*
  * Backup Blk 0: updated page.

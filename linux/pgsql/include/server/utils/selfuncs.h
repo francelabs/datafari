@@ -5,7 +5,7 @@
  *	  infrastructure for selectivity and cost estimation.
  *
  *
- * Portions Copyright (c) 1996-2019, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/utils/selfuncs.h
@@ -16,6 +16,7 @@
 #define SELFUNCS_H
 
 #include "access/htup.h"
+#include "fmgr.h"
 #include "nodes/pathnodes.h"
 
 
@@ -38,8 +39,14 @@
 /* default selectivity estimate for range inequalities "A > b AND A < c" */
 #define DEFAULT_RANGE_INEQ_SEL	0.005
 
+/* default selectivity estimate for multirange inequalities "A > b AND A < c" */
+#define DEFAULT_MULTIRANGE_INEQ_SEL	0.005
+
 /* default selectivity estimate for pattern-match operators such as LIKE */
 #define DEFAULT_MATCH_SEL	0.005
+
+/* default selectivity estimate for other matching operators */
+#define DEFAULT_MATCHING_SEL	0.010
 
 /* default number of distinct values in a table */
 #define DEFAULT_NUM_DISTINCT  200
@@ -61,6 +68,20 @@
 			p = 1.0; \
 	} while (0)
 
+/*
+ * A set of flags which some selectivity estimation functions can pass back to
+ * callers to provide further details about some assumptions which were made
+ * during the estimation.
+ */
+#define SELFLAG_USED_DEFAULT		(1 << 0)	/* Estimation fell back on one
+												 * of the DEFAULTs as defined
+												 * above. */
+
+typedef struct EstimationInfo
+{
+	uint32		flags;			/* Flags, as defined above to mark special
+								 * properties of the estimation. */
+} EstimationInfo;
 
 /* Return data from examine_variable and friends */
 typedef struct VariableStatData
@@ -109,7 +130,7 @@ typedef struct
 	double		numIndexPages;	/* number of leaf pages visited */
 	double		numIndexTuples; /* number of leaf tuples visited */
 	double		spc_random_page_cost;	/* relevant random_page_cost value */
-	double		num_sa_scans;	/* # indexscans from ScalarArrayOps */
+	double		num_sa_scans;	/* # indexscans from ScalarArrayOpExprs */
 } GenericCosts;
 
 /* Hooks for plugins to get control when we ask for stats */
@@ -140,40 +161,31 @@ extern void get_join_variables(PlannerInfo *root, List *args,
 							   bool *join_is_reversed);
 extern double get_variable_numdistinct(VariableStatData *vardata,
 									   bool *isdefault);
-extern double mcv_selectivity(VariableStatData *vardata, FmgrInfo *opproc,
+extern double mcv_selectivity(VariableStatData *vardata,
+							  FmgrInfo *opproc, Oid collation,
 							  Datum constval, bool varonleft,
 							  double *sumcommonp);
-extern double mcv_selectivity_ext(VariableStatData *vardata,
-								  FmgrInfo *opproc, Oid collation,
-								  Datum constval, bool varonleft,
-								  double *sumcommonp);
-extern double histogram_selectivity(VariableStatData *vardata, FmgrInfo *opproc,
+extern double histogram_selectivity(VariableStatData *vardata,
+									FmgrInfo *opproc, Oid collation,
 									Datum constval, bool varonleft,
 									int min_hist_size, int n_skip,
 									int *hist_size);
-extern double histogram_selectivity_ext(VariableStatData *vardata,
-										FmgrInfo *opproc, Oid collation,
-										Datum constval, bool varonleft,
-										int min_hist_size, int n_skip,
-										int *hist_size);
+extern double generic_restriction_selectivity(PlannerInfo *root,
+											  Oid oproid, Oid collation,
+											  List *args, int varRelid,
+											  double default_selectivity);
 extern double ineq_histogram_selectivity(PlannerInfo *root,
 										 VariableStatData *vardata,
-										 FmgrInfo *opproc, bool isgt, bool iseq,
+										 Oid opoid, FmgrInfo *opproc,
+										 bool isgt, bool iseq,
+										 Oid collation,
 										 Datum constval, Oid consttype);
-extern double ineq_histogram_selectivity_ext(PlannerInfo *root,
-											 VariableStatData *vardata,
-											 FmgrInfo *opproc,
-											 bool isgt, bool iseq,
-											 Oid collation,
-											 Datum constval, Oid consttype);
-extern double var_eq_const(VariableStatData *vardata, Oid oproid,
+extern double var_eq_const(VariableStatData *vardata,
+						   Oid oproid, Oid collation,
 						   Datum constval, bool constisnull,
 						   bool varonleft, bool negate);
-extern double var_eq_const_ext(VariableStatData *vardata,
+extern double var_eq_non_const(VariableStatData *vardata,
 							   Oid oproid, Oid collation,
-							   Datum constval, bool constisnull,
-							   bool varonleft, bool negate);
-extern double var_eq_non_const(VariableStatData *vardata, Oid oproid,
 							   Node *other,
 							   bool varonleft, bool negate);
 
@@ -199,13 +211,14 @@ extern void mergejoinscansel(PlannerInfo *root, Node *clause,
 							 Selectivity *rightstart, Selectivity *rightend);
 
 extern double estimate_num_groups(PlannerInfo *root, List *groupExprs,
-								  double input_rows, List **pgset);
+								  double input_rows, List **pgset,
+								  EstimationInfo *estinfo);
 
 extern void estimate_hash_bucket_stats(PlannerInfo *root,
 									   Node *hashkey, double nbuckets,
 									   Selectivity *mcv_freq,
 									   Selectivity *bucketsize_frac);
-extern double estimate_hashagg_tablesize(Path *path,
+extern double estimate_hashagg_tablesize(PlannerInfo *root, Path *path,
 										 const AggClauseCosts *agg_costs,
 										 double dNumGroups);
 

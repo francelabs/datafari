@@ -4,7 +4,7 @@
  *	  prototypes for pquery.c.
  *
  *
- * Portions Copyright (c) 1996-2019, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/tcop/pquery.h
@@ -16,6 +16,8 @@
 
 #include "nodes/parsenodes.h"
 #include "utils/portal.h"
+
+struct PlannedStmt;				/* avoid including plannodes.h here */
 
 
 extern PGDLLIMPORT Portal ActivePortal;
@@ -35,11 +37,15 @@ extern void PortalSetResultFormat(Portal portal, int nFormats,
 
 extern bool PortalRun(Portal portal, long count, bool isTopLevel,
 					  bool run_once, DestReceiver *dest, DestReceiver *altdest,
-					  char *completionTag);
+					  QueryCompletion *qc);
 
 extern uint64 PortalRunFetch(Portal portal,
 							 FetchDirection fdirection,
 							 long count,
 							 DestReceiver *dest);
+
+extern bool PlannedStmtRequiresSnapshot(struct PlannedStmt *pstmt);
+
+extern void EnsurePortalSnapshotExists(void);
 
 #endif							/* PQUERY_H */

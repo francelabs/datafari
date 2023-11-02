@@ -4,7 +4,7 @@
  *	  POSTGRES internal predicate locking definitions.
  *
  *
- * Portions Copyright (c) 1996-2019, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/storage/predicate_internals.h
@@ -52,7 +52,7 @@ typedef uint64 SerCommitSeqNo;
  *
  * Eligibility for cleanup of committed transactions is generally determined
  * by comparing the transaction's finishedBefore field to
- * SerializableGlobalXmin.
+ * SxactGlobalXmin.
  */
 typedef struct SERIALIZABLEXACT
 {
@@ -92,8 +92,12 @@ typedef struct SERIALIZABLEXACT
 	SHM_QUEUE	finishedLink;	/* list link in
 								 * FinishedSerializableTransactions */
 
-	LWLock		predicateLockListLock;	/* protects predicateLocks in parallel
-										 * mode */
+	/*
+	 * perXactPredicateListLock is only used in parallel queries: it protects
+	 * this SERIALIZABLEXACT's predicate lock list against other workers of
+	 * the same session.
+	 */
+	LWLock		perXactPredicateListLock;
 
 	/*
 	 * for r/o transactions: list of concurrent r/w transactions that we could
@@ -109,6 +113,7 @@ typedef struct SERIALIZABLEXACT
 	TransactionId xmin;			/* the transaction's snapshot xmin */
 	uint32		flags;			/* OR'd combination of values defined below */
 	int			pid;			/* pid of associated process */
+	int			pgprocno;		/* pgprocno of associated process */
 } SERIALIZABLEXACT;
 
 #define SXACT_FLAG_COMMITTED			0x00000001	/* already committed */

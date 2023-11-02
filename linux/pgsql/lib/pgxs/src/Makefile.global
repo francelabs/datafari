@@ -23,7 +23,7 @@ standard_targets = all install installdirs uninstall distprep clean distclean ma
 # these targets should recurse even into subdirectories not being built:
 standard_always_targets = distprep clean distclean maintainer-clean
 
-.PHONY: $(standard_targets) install-strip html man installcheck-parallel maintainer-check
+.PHONY: $(standard_targets) install-strip html man installcheck-parallel update-unicode
 
 # make `all' the default target
 all:
@@ -36,9 +36,11 @@ all:
 .SECONDARY:
 
 # PostgreSQL version number
-VERSION = 12.4
-MAJORVERSION = 12
-VERSION_NUM = 120004
+VERSION = 15.4
+MAJORVERSION = 15
+VERSION_NUM = 150004
+
+PACKAGE_URL = https://www.postgresql.org/
 
 # Set top_srcdir, srcdir, and VPATH.
 ifdef PGXS
@@ -59,8 +61,8 @@ endif
 endif
 else # not PGXS
 vpath_build = no
-abs_top_builddir = /postgresql-12.4
-abs_top_srcdir = /postgresql-12.4
+abs_top_builddir = /var/postgresql-15.4
+abs_top_srcdir = /var/postgresql-15.4
 
 ifneq ($(vpath_build),yes)
 top_srcdir = $(top_builddir)
@@ -73,9 +75,6 @@ endif
 endif # not PGXS
 
 vpathsearch = `for f in $(addsuffix /$(1),$(subst :, ,. $(VPATH))); do test -r $$f && echo $$f && break; done`
-
-# Saved arguments from configure
-configure_args =  '--without-readline' '--without-zlib'
 
 
 ##########################################################################
@@ -184,7 +183,8 @@ with_icu	= no
 with_perl	= no
 with_python	= no
 with_tcl	= no
-with_openssl	= no
+with_ssl	= no
+with_readline	= yes
 with_selinux	= no
 with_systemd	= no
 with_gssapi	= no
@@ -195,7 +195,7 @@ with_libxslt	= no
 with_llvm	= no
 with_system_tzdata = 
 with_uuid	= no
-with_zlib	= no
+with_zlib	= yes
 enable_rpath	= yes
 enable_nls	= no
 enable_debug	= no
@@ -223,7 +223,7 @@ TCL_INCLUDE_SPEC	=
 TCL_SHARED_BUILD	= 
 TCL_SHLIB_LD_LIBS	= 
 
-PTHREAD_CFLAGS		= -pthread -D_REENTRANT -D_THREAD_SAFE -D_POSIX_PTHREAD_SEMANTICS
+PTHREAD_CFLAGS		= -pthread -D_REENTRANT -D_THREAD_SAFE
 PTHREAD_LIBS		= 
 
 LLVM_CONFIG = 
@@ -257,13 +257,14 @@ CC = gcc
 GCC = yes
 SUN_STUDIO_CC = no
 CXX = g++
-CFLAGS = -Wall -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement -Werror=vla -Wendif-labels -Wmissing-format-attribute -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -Wno-format-truncation -Wno-stringop-truncation -O2
+CFLAGS = -Wall -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement -Werror=vla -Wendif-labels -Wmissing-format-attribute -Wimplicit-fallthrough=3 -Wcast-function-type -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -Wno-format-truncation -Wno-stringop-truncation -O2
 CFLAGS_SL = -fPIC
-CFLAGS_VECTOR =  -funroll-loops -ftree-vectorize
+CFLAGS_UNROLL_LOOPS =  -funroll-loops
+CFLAGS_VECTORIZE =  -ftree-vectorize
 CFLAGS_SSE42 = -msse4.2
 CFLAGS_ARMV8_CRC32C = 
 PERMIT_DECLARATION_AFTER_STATEMENT = -Wno-declaration-after-statement
-CXXFLAGS = -Wall -Wpointer-arith -O2
+CXXFLAGS = -Wall -Wpointer-arith -Wendif-labels -Wmissing-format-attribute -Wimplicit-fallthrough=3 -Wcast-function-type -Wformat-security -fno-strict-aliasing -fwrapv -O2
 
 LLVM_CPPFLAGS = 
 LLVM_CFLAGS = 
@@ -284,11 +285,10 @@ ZIC =
 AR = ar
 DLLTOOL = 
 DLLWRAP = 
-LIBS = -lpthread -lrt -lcrypt -ldl -lm 
+LIBS = -lz -lreadline -lm 
 LDAP_LIBS_FE = 
 LDAP_LIBS_BE = 
 UUID_LIBS = 
-UUID_EXTRA_OBJS = 
 LLVM_LIBS=
 LD = /usr/bin/ld
 with_gnu_ld = yes
@@ -345,11 +345,29 @@ MSGFMT  =
 MSGFMT_FLAGS = 
 MSGMERGE = 
 PYTHON	= 
-TAR	= /bin/tar
+TAR	= /usr/bin/tar
 XGETTEXT = 
 
 GZIP	= gzip
 BZIP2	= bzip2
+LZ4	= 
+ZSTD	= 
+
+DOWNLOAD = wget -O $@ --no-use-server-timestamps
+#DOWNLOAD = curl -o $@
+
+
+# Unicode data information
+
+# Before each major release, update these and run make update-unicode.
+
+# Pick a release from here: <https://www.unicode.org/Public/>.  Note
+# that the most recent release listed there is often a pre-release;
+# don't pick that one, except for testing.
+UNICODE_VERSION = 14.0.0
+
+# Pick a release from here: <http://cldr.unicode.org/index/downloads>
+CLDR_VERSION = 41
 
 
 # Tree-wide build support
@@ -422,26 +440,49 @@ ld_library_path_var = LD_LIBRARY_PATH
 # need something more here. If not defined then the expansion does
 # nothing.
 with_temp_install = \
-	PATH="$(abs_top_builddir)/tmp_install$(bindir):$$PATH" \
+	PATH="$(abs_top_builddir)/tmp_install$(bindir):$(CURDIR):$$PATH" \
 	$(call add_to_path,$(strip $(ld_library_path_var)),$(abs_top_builddir)/tmp_install$(libdir)) \
 	$(with_temp_install_extra)
 
 ifeq ($(enable_tap_tests),yes)
 
+ifndef PGXS
 define prove_installcheck
-rm -rf '$(CURDIR)'/tmp_check
-$(MKDIR_P) '$(CURDIR)'/tmp_check
-cd $(srcdir) && TESTDIR='$(CURDIR)' PATH="$(bindir):$$PATH" PGPORT='6$(DEF_PGPORT)' top_builddir='$(CURDIR)/$(top_builddir)' PG_REGRESS='$(CURDIR)/$(top_builddir)/src/test/regress/pg_regress' REGRESS_SHLIB='$(abs_top_builddir)/src/test/regress/regress$(DLSUFFIX)' $(PROVE) $(PG_PROVE_FLAGS) $(PROVE_FLAGS) $(if $(PROVE_TESTS),$(PROVE_TESTS),t/*.pl)
+echo "+++ tap install-check in $(subdir) +++" && \
+rm -rf '$(CURDIR)'/tmp_check && \
+$(MKDIR_P) '$(CURDIR)'/tmp_check && \
+cd $(srcdir) && \
+   TESTDIR='$(CURDIR)' PATH="$(bindir):$(CURDIR):$$PATH" \
+   PGPORT='6$(DEF_PGPORT)' top_builddir='$(CURDIR)/$(top_builddir)' \
+   PG_REGRESS='$(CURDIR)/$(top_builddir)/src/test/regress/pg_regress' \
+   $(PROVE) $(PG_PROVE_FLAGS) $(PROVE_FLAGS) $(if $(PROVE_TESTS),$(PROVE_TESTS),t/*.pl)
 endef
+else # PGXS case
+define prove_installcheck
+echo "+++ tap install-check in $(subdir) +++" && \
+rm -rf '$(CURDIR)'/tmp_check && \
+$(MKDIR_P) '$(CURDIR)'/tmp_check && \
+cd $(srcdir) && \
+   TESTDIR='$(CURDIR)' PATH="$(bindir):$(CURDIR):$$PATH" \
+   PGPORT='6$(DEF_PGPORT)' \
+   PG_REGRESS='$(top_builddir)/src/test/regress/pg_regress' \
+   $(PROVE) $(PG_PROVE_FLAGS) $(PROVE_FLAGS) $(if $(PROVE_TESTS),$(PROVE_TESTS),t/*.pl)
+endef
+endif # PGXS
 
 define prove_check
-rm -rf '$(CURDIR)'/tmp_check
-$(MKDIR_P) '$(CURDIR)'/tmp_check
-cd $(srcdir) && TESTDIR='$(CURDIR)' $(with_temp_install) PGPORT='6$(DEF_PGPORT)' PG_REGRESS='$(CURDIR)/$(top_builddir)/src/test/regress/pg_regress' REGRESS_SHLIB='$(abs_top_builddir)/src/test/regress/regress$(DLSUFFIX)' $(PROVE) $(PG_PROVE_FLAGS) $(PROVE_FLAGS) $(if $(PROVE_TESTS),$(PROVE_TESTS),t/*.pl)
+echo "+++ tap check in $(subdir) +++" && \
+rm -rf '$(CURDIR)'/tmp_check && \
+$(MKDIR_P) '$(CURDIR)'/tmp_check && \
+cd $(srcdir) && \
+   TESTDIR='$(CURDIR)' $(with_temp_install) PGPORT='6$(DEF_PGPORT)' \
+   top_builddir='$(CURDIR)/$(top_builddir)' \
+   PG_REGRESS='$(CURDIR)/$(top_builddir)/src/test/regress/pg_regress' \
+   $(PROVE) $(PG_PROVE_FLAGS) $(PROVE_FLAGS) $(if $(PROVE_TESTS),$(PROVE_TESTS),t/*.pl)
 endef
 
 else
-prove_installcheck = @echo "TAP tests not enabled"
+prove_installcheck = @echo "TAP tests not enabled. Try configuring with --enable-tap-tests"
 prove_check = $(prove_installcheck)
 endif
 
@@ -461,12 +502,12 @@ INSTALL_SHLIB	= $(INSTALL_SHLIB_ENV) $(INSTALL) $(INSTALL_SHLIB_OPTS) $(INSTALL_
 # Override in Makefile.port if necessary
 INSTALL_SHLIB_OPTS = -m 755
 
-MKDIR_P = /bin/mkdir -p
+MKDIR_P = /usr/bin/mkdir -p
 
 missing		= $(SHELL) $(top_srcdir)/config/missing
 
 STRIP		= strip
-STRIP_STATIC_LIB = strip -x
+STRIP_STATIC_LIB = strip --strip-unneeded
 STRIP_SHARED_LIB = strip --strip-unneeded
 
 # Documentation
@@ -481,11 +522,6 @@ XSLTPROC		=
 GCOV = 
 LCOV = 
 GENHTML = 
-
-ifeq ($(enable_coverage),yes)
-# ccache loses .gcno files
-export CCACHE_DISABLE = 1
-endif
 
 # Feature settings
 
@@ -507,15 +543,13 @@ host_tuple = x86_64-pc-linux-gnu
 host_os = linux-gnu
 host_cpu = x86_64
 
-# This is mainly for use on FreeBSD, where we have both a.out and elf
-# systems now.  May be applicable to other systems to?
-ELF_SYSTEM= true
-
 # Backend stack size limit has to be hard-wired on Windows (it's in bytes)
 WIN32_STACK_RLIMIT=4194304
 
 # Set if we have a working win32 crashdump header
 have_win32_dbghelp = no
+
+DLSUFFIX = .so
 
 # Pull in platform-specific magic
 include $(top_builddir)/src/Makefile.port
@@ -600,7 +634,6 @@ submake-libpgfeutils: | submake-generated-headers
 
 ifneq ($(USE_MODULE_DB),)
   PL_TESTDB = pl_regression_$(NAME)
-  # Replace this with $(or ...) if we ever require GNU make 3.81.
   ifneq ($(MODULE_big),)
     CONTRIB_TESTDB=contrib_regression_$(MODULE_big)
     ISOLATION_TESTDB=isolation_regression_$(MODULE_big)
@@ -633,6 +666,7 @@ pg_regress_locale_flags = $(if $(ENCODING),--encoding=$(ENCODING)) $(NOLOCALE)
 pg_regress_clean_files = results/ regression.diffs regression.out tmp_check/ tmp_check_iso/ log/ output_iso/
 
 pg_regress_check = \
+    echo "+++ regress check in $(subdir) +++" && \
     $(with_temp_install) \
     $(top_builddir)/src/test/regress/pg_regress \
     --temp-instance=./tmp_check \
@@ -641,12 +675,14 @@ pg_regress_check = \
     $(TEMP_CONF) \
     $(pg_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
 pg_regress_installcheck = \
+    echo "+++ regress install-check in $(subdir) +++" && \
     $(top_builddir)/src/test/regress/pg_regress \
     --inputdir=$(srcdir) \
     --bindir='$(bindir)' \
     $(pg_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
 
 pg_isolation_regress_check = \
+    echo "+++ isolation check in $(subdir) +++" && \
     $(with_temp_install) \
     $(top_builddir)/src/test/isolation/pg_isolation_regress \
     --temp-instance=./tmp_check_iso \
@@ -655,6 +691,7 @@ pg_isolation_regress_check = \
     $(TEMP_CONF) \
     $(pg_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
 pg_isolation_regress_installcheck = \
+    echo "+++ isolation install-check in $(subdir) +++" && \
     $(top_builddir)/src/test/isolation/pg_isolation_regress \
     --inputdir=$(srcdir) --outputdir=output_iso \
     --bindir='$(bindir)' \
@@ -709,7 +746,7 @@ endif
 # substitute implementations of C library routines (see src/port/)
 # note we already included -L.../src/port in LDFLAGS above
 
-LIBOBJS =  ${LIBOBJDIR}fls$U.o ${LIBOBJDIR}strlcat$U.o ${LIBOBJDIR}strlcpy$U.o ${LIBOBJDIR}getpeereid$U.o
+LIBOBJS =  ${LIBOBJDIR}fls$U.o ${LIBOBJDIR}getpeereid$U.o ${LIBOBJDIR}strlcat$U.o ${LIBOBJDIR}strlcpy$U.o
 
 # files needed for the chosen CRC-32C implementation
 PG_CRC32C_OBJS = pg_crc32c_sse42.o pg_crc32c_sb8.o pg_crc32c_sse42_choose.o
@@ -833,11 +870,11 @@ install-strip:
 # allows parallel make across directories and lets make -k and -q work
 # correctly.
 
-# We need the $(eval) function and order-only prerequisites, which are
-# available in GNU make 3.80.  That also happens to be the version
-# where the .VARIABLES variable was introduced, so this is a simple check.
-ifndef .VARIABLES
-$(error GNU make 3.80 or newer is required.  You are using version $(MAKE_VERSION))
+# We need the ability to export target-specific variables, which was
+# added in GNU make 3.81.  That also happens to be the version
+# where the .FEATURES variable was introduced, so this is a simple check.
+ifndef .FEATURES
+$(error GNU make 3.81 or newer is required.  You are using version $(MAKE_VERSION))
 endif
 
 # This function is only for internal use below.  It should be called
@@ -845,7 +882,7 @@ endif
 # given subdirectory.  For the tree-wide all/install/check/installcheck cases,
 # ensure we do our one-time tasks before recursing (see targets above).
 # Note that to avoid a nasty bug in make 3.80,
-# this function has to avoid using any complicated constructs (like
+# this function was written to not use any complicated constructs (like
 # multiple targets on a line) and also not contain any lines that expand
 # to more than about 200 bytes.  This is why we make it apply to just one
 # subdirectory at a time, rather than to a list of subdirectories.

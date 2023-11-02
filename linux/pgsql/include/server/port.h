@@ -3,7 +3,7 @@
  * port.h
  *	  Header for src/port/ compatibility functions.
  *
- * Portions Copyright (c) 1996-2019, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/port.h
@@ -14,8 +14,6 @@
 #define PG_PORT_H
 
 #include <ctype.h>
-#include <netdb.h>
-#include <pwd.h>
 
 /*
  * Windows has enough specialized port stuff that we push most of it off
@@ -35,6 +33,11 @@ typedef int pgsocket;
 typedef SOCKET pgsocket;
 
 #define PGINVALID_SOCKET INVALID_SOCKET
+#endif
+
+/* if platform lacks socklen_t, we assume this will work */
+#ifndef HAVE_SOCKLEN_T
+typedef unsigned int socklen_t;
 #endif
 
 /* non-blocking */
@@ -75,40 +78,74 @@ extern void get_parent_directory(char *path);
 extern char **pgfnames(const char *path);
 extern void pgfnames_cleanup(char **filenames);
 
+#define IS_NONWINDOWS_DIR_SEP(ch)	((ch) == '/')
+#define is_nonwindows_absolute_path(filename) \
+( \
+	IS_NONWINDOWS_DIR_SEP((filename)[0]) \
+)
+
+#define IS_WINDOWS_DIR_SEP(ch)	((ch) == '/' || (ch) == '\\')
+/* See path_is_relative_and_below_cwd() for how we handle 'E:abc'. */
+#define is_windows_absolute_path(filename) \
+( \
+	IS_WINDOWS_DIR_SEP((filename)[0]) || \
+	(isalpha((unsigned char) ((filename)[0])) && (filename)[1] == ':' && \
+	 IS_WINDOWS_DIR_SEP((filename)[2])) \
+)
+
 /*
- *	is_absolute_path
+ *	is_absolute_path and IS_DIR_SEP
  *
- *	By making this a macro we avoid needing to include path.c in libpq.
+ *	By using macros here we avoid needing to include path.c in libpq.
  */
 #ifndef WIN32
-#define IS_DIR_SEP(ch)	((ch) == '/')
-
-#define is_absolute_path(filename) \
-( \
-	IS_DIR_SEP((filename)[0]) \
-)
+#define IS_DIR_SEP(ch) IS_NONWINDOWS_DIR_SEP(ch)
+#define is_absolute_path(filename) is_nonwindows_absolute_path(filename)
 #else
-#define IS_DIR_SEP(ch)	((ch) == '/' || (ch) == '\\')
-
-/* See path_is_relative_and_below_cwd() for how we handle 'E:abc'. */
-#define is_absolute_path(filename) \
-( \
-	IS_DIR_SEP((filename)[0]) || \
-	(isalpha((unsigned char) ((filename)[0])) && (filename)[1] == ':' && \
-	 IS_DIR_SEP((filename)[2])) \
-)
+#define IS_DIR_SEP(ch) IS_WINDOWS_DIR_SEP(ch)
+#define is_absolute_path(filename) is_windows_absolute_path(filename)
 #endif
+
+/*
+ * This macro provides a centralized list of all errnos that identify
+ * hard failure of a previously-established network connection.
+ * The macro is intended to be used in a switch statement, in the form
+ * "case ALL_CONNECTION_FAILURE_ERRNOS:".
+ *
+ * Note: this groups EPIPE and ECONNRESET, which we take to indicate a
+ * probable server crash, with other errors that indicate loss of network
+ * connectivity without proving much about the server's state.  Places that
+ * are actually reporting errors typically single out EPIPE and ECONNRESET,
+ * while allowing the network failures to be reported generically.
+ */
+#define ALL_CONNECTION_FAILURE_ERRNOS \
+	EPIPE: \
+	case ECONNRESET: \
+	case ECONNABORTED: \
+	case EHOSTDOWN: \
+	case EHOSTUNREACH: \
+	case ENETDOWN: \
+	case ENETRESET: \
+	case ENETUNREACH: \
+	case ETIMEDOUT
 
 /* Portable locale initialization (in exec.c) */
 extern void set_pglocale_pgservice(const char *argv0, const char *app);
 
-/* Portable way to find binaries (in exec.c) */
+/* Portable way to find and execute binaries (in exec.c) */
+extern int	validate_exec(const char *path);
 extern int	find_my_exec(const char *argv0, char *retpath);
 extern int	find_other_exec(const char *argv0, const char *target,
 							const char *versionstr, char *retpath);
+extern char *pipe_read_line(char *cmd, char *line, int maxsize);
 
 /* Doesn't belong here, but this is used with find_other_exec(), so... */
 #define PG_BACKEND_VERSIONSTR "postgres (PostgreSQL) " PG_VERSION "\n"
+
+#ifdef EXEC_BACKEND
+/* Disable ASLR before exec, for developer builds only (in exec.c) */
+extern int	pg_disable_aslr(void);
+#endif
 
 
 #if defined(WIN32) || defined(__CYGWIN__)
@@ -212,10 +249,6 @@ extern char *pg_strerror_r(int errnum, char *buf, size_t buflen);
 /* Wrap strsignal(), or provide our own version if necessary */
 extern const char *pg_strsignal(int signum);
 
-/* Portable prompt handling */
-extern void simple_prompt(const char *prompt, char *destination, size_t destlen,
-						  bool echo);
-
 extern int	pclose_check(FILE *stream);
 
 /* Global variable holding time zone information. */
@@ -270,6 +303,7 @@ extern bool rmtree(const char *path, bool rmtopdir);
  * passing of other special options.
  */
 #define		O_DIRECT	0x80000000
+extern HANDLE pgwin32_open_handle(const char *, int, bool);
 extern int	pgwin32_open(const char *, int,...);
 extern FILE *pgwin32_fopen(const char *, const char *);
 #define		open(a,b,c) pgwin32_open(a,b,c)
@@ -330,40 +364,23 @@ extern int	gettimeofday(struct timeval *tp, struct timezone *tzp);
  * Default "extern" declarations or macro substitutes for library routines.
  * When necessary, these routines are provided by files in src/port/.
  */
-#ifndef HAVE_CRYPT
-extern char *crypt(const char *key, const char *setting);
-#endif
 
-/* WIN32 handled in port/win32_port.h */
-#ifndef WIN32
+/* Type to use with fseeko/ftello */
+#ifndef WIN32					/* WIN32 is handled in port/win32_port.h */
 #define pgoff_t off_t
-#ifdef __NetBSD__
-extern int	fseeko(FILE *stream, off_t offset, int whence);
-extern off_t ftello(FILE *stream);
 #endif
-#endif
-
-extern double pg_erand48(unsigned short xseed[3]);
-extern long pg_lrand48(void);
-extern long pg_jrand48(unsigned short xseed[3]);
-extern void pg_srand48(long seed);
 
 #ifndef HAVE_FLS
 extern int	fls(int mask);
 #endif
 
-#ifndef HAVE_FSEEKO
-#define fseeko(a, b, c) fseek(a, b, c)
-#define ftello(a)		ftell(a)
-#endif
-
-#if !defined(HAVE_GETPEEREID) && !defined(WIN32)
+#ifndef HAVE_GETPEEREID
+/* On Windows, Perl might have incompatible definitions of uid_t and gid_t. */
+#ifndef PLPERL_HAVE_UID_GID
 extern int	getpeereid(int sock, uid_t *uid, gid_t *gid);
 #endif
+#endif
 
-#ifndef HAVE_ISINF
-extern int	isinf(double x);
-#else
 /*
  * Glibc doesn't use the builtin for clang due to a *gcc* bug in a version
  * newer than the gcc compatibility clang claims to have. This would cause a
@@ -379,7 +396,10 @@ extern int	isinf(double x);
 #define isinf __builtin_isinf
 #endif							/* __has_builtin(isinf) */
 #endif							/* __clang__ && !__cplusplus */
-#endif							/* !HAVE_ISINF */
+
+#ifndef HAVE_EXPLICIT_BZERO
+extern void explicit_bzero(void *buf, size_t len);
+#endif
 
 #ifndef HAVE_STRTOF
 extern float strtof(const char *nptr, char **endptr);
@@ -390,12 +410,12 @@ extern float pg_strtof(const char *nptr, char **endptr);
 #define strtof(a,b) (pg_strtof((a),(b)))
 #endif
 
-#ifndef HAVE_MKDTEMP
-extern char *mkdtemp(char *path);
+#ifndef HAVE_LINK
+extern int	link(const char *src, const char *dst);
 #endif
 
-#ifndef HAVE_RINT
-extern double rint(double x);
+#ifndef HAVE_MKDTEMP
+extern char *mkdtemp(char *path);
 #endif
 
 #ifndef HAVE_INET_ATON
@@ -421,6 +441,8 @@ extern ssize_t pg_pread(int fd, void *buf, size_t nbyte, off_t offset);
 extern ssize_t pg_pwrite(int fd, const void *buf, size_t nbyte, off_t offset);
 #endif
 
+/* For pg_pwritev() and pg_preadv(), see port/pg_iovec.h. */
+
 #if !HAVE_DECL_STRLCAT
 extern size_t strlcat(char *dst, const char *src, size_t siz);
 #endif
@@ -433,20 +455,12 @@ extern size_t strlcpy(char *dst, const char *src, size_t siz);
 extern size_t strnlen(const char *str, size_t maxlen);
 #endif
 
-#if !defined(HAVE_RANDOM)
-extern long random(void);
+#ifndef HAVE_SETENV
+extern int	setenv(const char *name, const char *value, int overwrite);
 #endif
 
 #ifndef HAVE_UNSETENV
-extern void unsetenv(const char *name);
-#endif
-
-#ifndef HAVE_SRANDOM
-extern void srandom(unsigned int seed);
-#endif
-
-#ifndef HAVE_SSL_GET_CURRENT_COMPRESSION
-#define SSL_get_current_compression(x) 0
+extern int	unsetenv(const char *name);
 #endif
 
 #ifndef HAVE_DLOPEN
@@ -472,17 +486,11 @@ extern char *dlerror(void);
 #define RTLD_GLOBAL 0
 #endif
 
-/* thread.h */
+/* thread.c */
 #ifndef WIN32
-extern int	pqGetpwuid(uid_t uid, struct passwd *resultbuf, char *buffer,
-					   size_t buflen, struct passwd **result);
+extern bool pg_get_user_name(uid_t user_id, char *buffer, size_t buflen);
+extern bool pg_get_user_home_dir(uid_t user_id, char *buffer, size_t buflen);
 #endif
-
-extern int	pqGethostbyname(const char *name,
-							struct hostent *resultbuf,
-							char *buffer, size_t buflen,
-							struct hostent **result,
-							int *herrno);
 
 extern void pg_qsort(void *base, size_t nel, size_t elsize,
 					 int (*cmp) (const void *, const void *));
@@ -495,6 +503,14 @@ typedef int (*qsort_arg_comparator) (const void *a, const void *b, void *arg);
 extern void qsort_arg(void *base, size_t nel, size_t elsize,
 					  qsort_arg_comparator cmp, void *arg);
 
+extern void qsort_interruptible(void *base, size_t nel, size_t elsize,
+								qsort_arg_comparator cmp, void *arg);
+
+extern void *bsearch_arg(const void *key, const void *base,
+						 size_t nmemb, size_t size,
+						 int (*compar) (const void *, const void *, void *),
+						 void *arg);
+
 /* port/chklocale.c */
 extern int	pg_get_encoding_from_locale(const char *ctype, bool write_message);
 
@@ -503,10 +519,11 @@ extern int	pg_codepage_to_encoding(UINT cp);
 #endif
 
 /* port/inet_net_ntop.c */
-extern char *inet_net_ntop(int af, const void *src, int bits,
-						   char *dst, size_t size);
+extern char *pg_inet_net_ntop(int af, const void *src, int bits,
+							  char *dst, size_t size);
 
 /* port/pg_strong_random.c */
+extern void pg_strong_random_init(void);
 extern bool pg_strong_random(void *buf, size_t len);
 
 /*
@@ -524,11 +541,6 @@ extern int	pg_mkdir_p(char *path, int omode);
 /* port/pqsignal.c */
 typedef void (*pqsigfunc) (int signo);
 extern pqsigfunc pqsignal(int signo, pqsigfunc func);
-#ifndef WIN32
-extern pqsigfunc pqsignal_no_restart(int signo, pqsigfunc func);
-#else
-#define pqsignal_no_restart(signo, func) pqsignal(signo, func)
-#endif
 
 /* port/quotes.c */
 extern char *escape_single_quotes_ascii(const char *src);

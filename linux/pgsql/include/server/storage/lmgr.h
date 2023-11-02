@@ -4,7 +4,7 @@
  *	  POSTGRES lock manager definitions.
  *
  *
- * Portions Copyright (c) 1996-2019, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/storage/lmgr.h
@@ -38,6 +38,7 @@ extern void RelationInitLockInfo(Relation relation);
 
 /* Lock a relation */
 extern void LockRelationOid(Oid relid, LOCKMODE lockmode);
+extern void LockRelationId(LockRelId *relid, LOCKMODE lockmode);
 extern bool ConditionalLockRelationOid(Oid relid, LOCKMODE lockmode);
 extern void UnlockRelationId(LockRelId *relid, LOCKMODE lockmode);
 extern void UnlockRelationOid(Oid relid, LOCKMODE lockmode);
@@ -58,6 +59,9 @@ extern void UnlockRelationForExtension(Relation relation, LOCKMODE lockmode);
 extern bool ConditionalLockRelationForExtension(Relation relation,
 												LOCKMODE lockmode);
 extern int	RelationExtensionLockWaiterCount(Relation relation);
+
+/* Lock to recompute pg_database.datfrozenxid in the current database */
+extern void LockDatabaseFrozenIds(LOCKMODE lockmode);
 
 /* Lock a page (currently only used within indexes) */
 extern void LockPage(Relation relation, BlockNumber blkno, LOCKMODE lockmode);

@@ -2,7 +2,7 @@
  * brin_tuple.h
  *		Declarations for dealing with BRIN-specific tuples.
  *
- * Portions Copyright (c) 1996-2019, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION
@@ -14,6 +14,11 @@
 #include "access/brin_internal.h"
 #include "access/tupdesc.h"
 
+/*
+ * The BRIN opclasses may register serialization callback, in case the on-disk
+ * and in-memory representations differ (e.g. for performance reasons).
+ */
+typedef void (*brin_serialize_callback_type) (BrinDesc *bdesc, Datum src, Datum *dst);
 
 /*
  * A BRIN index stores one index tuple per page range.  Each index tuple
@@ -27,6 +32,9 @@ typedef struct BrinValues
 	bool		bv_hasnulls;	/* are there any nulls in the page range? */
 	bool		bv_allnulls;	/* are all values nulls in the page range? */
 	Datum	   *bv_values;		/* current accumulated values */
+	Datum		bv_mem_value;	/* expanded accumulated values */
+	MemoryContext bv_context;
+	brin_serialize_callback_type bv_serialize;
 } BrinValues;
 
 /*
@@ -36,6 +44,7 @@ typedef struct BrinValues
 typedef struct BrinMemTuple
 {
 	bool		bt_placeholder; /* this is a placeholder tuple */
+	bool		bt_empty_range;	/* range represents no tuples */
 	BlockNumber bt_blkno;		/* heap blkno that the tuple is for */
 	MemoryContext bt_context;	/* memcxt holding the bt_columns values */
 	/* output arrays for brin_deform_tuple: */
@@ -61,7 +70,7 @@ typedef struct BrinTuple
 	 *
 	 * 7th (high) bit: has nulls
 	 * 6th bit: is placeholder tuple
-	 * 5th bit: unused
+	 * 5th bit: range is empty
 	 * 4-0 bit: offset of data
 	 * ---------------
 	 */
@@ -74,13 +83,14 @@ typedef struct BrinTuple
  * bt_info manipulation macros
  */
 #define BRIN_OFFSET_MASK		0x1F
-/* bit 0x20 is not used at present */
+#define BRIN_EMPTY_RANGE_MASK	0x20
 #define BRIN_PLACEHOLDER_MASK	0x40
 #define BRIN_NULLS_MASK			0x80
 
 #define BrinTupleDataOffset(tup)	((Size) (((BrinTuple *) (tup))->bt_info & BRIN_OFFSET_MASK))
 #define BrinTupleHasNulls(tup)	(((((BrinTuple *) (tup))->bt_info & BRIN_NULLS_MASK)) != 0)
 #define BrinTupleIsPlaceholder(tup) (((((BrinTuple *) (tup))->bt_info & BRIN_PLACEHOLDER_MASK)) != 0)
+#define BrinTupleIsEmptyRange(tup) (((((BrinTuple *) (tup))->bt_info & BRIN_EMPTY_RANGE_MASK)) != 0)
 
 
 extern BrinTuple *brin_form_tuple(BrinDesc *brdesc, BlockNumber blkno,

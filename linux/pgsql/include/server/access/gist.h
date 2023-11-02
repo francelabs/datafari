@@ -6,7 +6,7 @@
  *	  changes should be made with care.
  *
  *
- * Portions Copyright (c) 1996-2019, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/access/gist.h
@@ -16,6 +16,7 @@
 #ifndef GIST_H
 #define GIST_H
 
+#include "access/itup.h"
 #include "access/transam.h"
 #include "access/xlog.h"
 #include "access/xlogdefs.h"
@@ -35,7 +36,9 @@
 #define GIST_EQUAL_PROC					7
 #define GIST_DISTANCE_PROC				8
 #define GIST_FETCH_PROC					9
-#define GISTNProcs					9
+#define GIST_OPTIONS_PROC				10
+#define GIST_SORTSUPPORT_PROC			11
+#define GISTNProcs					11
 
 /*
  * Page opaque data in a GiST index page.
@@ -48,12 +51,20 @@
 #define F_HAS_GARBAGE		(1 << 4)	/* some tuples on the page are dead,
 										 * but not deleted yet */
 
+/*
+ * NSN (node sequence number) is a special-purpose LSN which is stored on each
+ * index page in GISTPageOpaqueData and updated only during page splits.  By
+ * recording the parent's LSN in GISTSearchItem.parentlsn, it is possible to
+ * detect concurrent child page splits by checking if parentlsn < child's NSN,
+ * and handle them properly.  The child page's LSN is insufficient for this
+ * purpose since it is updated for every page change.
+ */
 typedef XLogRecPtr GistNSN;
 
 /*
- * A bogus LSN / NSN value used during index build. Must be smaller than any
- * real or fake unlogged LSN, so that after an index build finishes, all the
- * splits are considered completed.
+ * A fake LSN / NSN value used during index builds. Must be smaller than any
+ * real or fake (unlogged) LSN generated after the index build completes so
+ * that all splits are considered complete.
  */
 #define GistBuildLSN	((XLogRecPtr) 1)
 
@@ -72,6 +83,24 @@ typedef struct GISTPageOpaqueData
 } GISTPageOpaqueData;
 
 typedef GISTPageOpaqueData *GISTPageOpaque;
+
+/*
+ * Maximum possible sizes for GiST index tuple and index key.  Calculation is
+ * based on assumption that GiST page should fit at least 4 tuples.  In theory,
+ * GiST index can be functional when page can fit 3 tuples.  But that seems
+ * rather inefficient, so we use a bit conservative estimate.
+ *
+ * The maximum size of index key is true for unicolumn index.  Therefore, this
+ * estimation should be used to figure out which maximum size of GiST index key
+ * makes sense at all.  For multicolumn indexes, user might be able to tune
+ * key size using opclass parameters.
+ */
+#define GISTMaxIndexTupleSize	\
+	MAXALIGN_DOWN((BLCKSZ - SizeOfPageHeaderData - sizeof(GISTPageOpaqueData)) / \
+				  4 - sizeof(ItemIdData))
+
+#define GISTMaxIndexKeySize	\
+	(GISTMaxIndexTupleSize - MAXALIGN(sizeof(IndexTupleData)))
 
 /*
  * The page ID is for the convenience of pg_filedump and similar utilities,

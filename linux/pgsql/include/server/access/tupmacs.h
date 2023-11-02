@@ -4,7 +4,7 @@
  *	  Tuple macros used by both index tuples and heap tuples.
  *
  *
- * Portions Copyright (c) 1996-2019, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/access/tupmacs.h
@@ -13,6 +13,8 @@
  */
 #ifndef TUPMACS_H
 #define TUPMACS_H
+
+#include "catalog/pg_type_d.h"	/* for TYPALIGN macros */
 
 
 /*
@@ -137,19 +139,19 @@
  *	* we need to estimate alignment padding cost abstractly, ie without
  *	  reference to a real tuple.  We must assume the worst case that
  *	  all varlenas are aligned.
- *	* within arrays, we unconditionally align varlenas (XXX this should be
- *	  revisited, probably).
+ *	* within arrays and multiranges, we unconditionally align varlenas (XXX this
+ *	  should be revisited, probably).
  *
  * The attalign cases are tested in what is hopefully something like their
  * frequency of occurrence.
  */
 #define att_align_nominal(cur_offset, attalign) \
 ( \
-	((attalign) == 'i') ? INTALIGN(cur_offset) : \
-	 (((attalign) == 'c') ? (uintptr_t) (cur_offset) : \
-	  (((attalign) == 'd') ? DOUBLEALIGN(cur_offset) : \
+	((attalign) == TYPALIGN_INT) ? INTALIGN(cur_offset) : \
+	 (((attalign) == TYPALIGN_CHAR) ? (uintptr_t) (cur_offset) : \
+	  (((attalign) == TYPALIGN_DOUBLE) ? DOUBLEALIGN(cur_offset) : \
 	   ( \
-			AssertMacro((attalign) == 's'), \
+			AssertMacro((attalign) == TYPALIGN_SHORT), \
 			SHORTALIGN(cur_offset) \
 	   ))) \
 )

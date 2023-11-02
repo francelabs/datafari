@@ -4,7 +4,7 @@
  *	  internal structures for hash joins
  *
  *
- * Portions Copyright (c) 1996-2019, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/executor/hashjoin.h
@@ -88,7 +88,7 @@ typedef struct HashJoinTupleData
  * outer relation tuples with these hash values are matched against that
  * table instead of the main one.  Thus, tuples with these hash values are
  * effectively handled as part of the first batch and will never go to disk.
- * The skew hashtable is limited to SKEW_WORK_MEM_PERCENT of the total memory
+ * The skew hashtable is limited to SKEW_HASH_MEM_PERCENT of the total memory
  * allowed for the join; while building the hashtables, we decrease the number
  * of MCVs being specially treated if needed to stay under this limit.
  *
@@ -107,7 +107,7 @@ typedef struct HashSkewBucket
 
 #define SKEW_BUCKET_OVERHEAD  MAXALIGN(sizeof(HashSkewBucket))
 #define INVALID_SKEW_BUCKET_NO	(-1)
-#define SKEW_WORK_MEM_PERCENT  2
+#define SKEW_HASH_MEM_PERCENT  2
 #define SKEW_MIN_OUTER_FRACTION  0.01
 
 /*
@@ -258,7 +258,8 @@ typedef struct ParallelHashJoinState
 #define PHJ_BUILD_ALLOCATING			1
 #define PHJ_BUILD_HASHING_INNER			2
 #define PHJ_BUILD_HASHING_OUTER			3
-#define PHJ_BUILD_DONE					4
+#define PHJ_BUILD_RUNNING				4
+#define PHJ_BUILD_DONE					5
 
 /* The phases for probing each batch, used by for batch_barrier. */
 #define PHJ_BATCH_ELECTING				0

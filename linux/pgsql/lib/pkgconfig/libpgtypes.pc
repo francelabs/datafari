@@ -1,9 +1,14 @@
+prefix=/usr/local/pgsql
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
 Name: libpgtypes
 Description: PostgreSQL libpgtypes library
-Url: http://www.postgresql.org/
-Version: 12.4
+Url: https://www.postgresql.org/
+Version: 15.4
 Requires: 
 Requires.private: 
-Cflags: -I/usr/local/pgsql/include
-Libs: -L/usr/local/pgsql/lib -lpgtypes
-Libs.private:  -lm
+Cflags: -I${includedir}
+Libs: -L${libdir} -lpgtypes
+Libs.private:  -lpgcommon -lpgport -lm

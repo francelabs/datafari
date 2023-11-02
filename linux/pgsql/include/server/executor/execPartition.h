@@ -2,7 +2,7 @@
  * execPartition.h
  *		POSTGRES partitioning executor interface
  *
- * Portions Copyright (c) 1996-2019, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION
@@ -22,32 +22,16 @@
 typedef struct PartitionDispatchData *PartitionDispatch;
 typedef struct PartitionTupleRouting PartitionTupleRouting;
 
-/*
- * PartitionRoutingInfo
- *
- * Additional result relation information specific to routing tuples to a
- * table partition.
- */
-typedef struct PartitionRoutingInfo
-{
-	/*
-	 * Map for converting tuples in root partitioned table format into
-	 * partition format, or NULL if no conversion is required.
-	 */
-	TupleConversionMap *pi_RootToPartitionMap;
+extern PartitionTupleRouting *ExecSetupPartitionTupleRouting(EState *estate,
+															 Relation rel);
+extern ResultRelInfo *ExecFindPartition(ModifyTableState *mtstate,
+										ResultRelInfo *rootResultRelInfo,
+										PartitionTupleRouting *proute,
+										TupleTableSlot *slot,
+										EState *estate);
+extern void ExecCleanupTupleRouting(ModifyTableState *mtstate,
+									PartitionTupleRouting *proute);
 
-	/*
-	 * Map for converting tuples in partition format into the root partitioned
-	 * table format, or NULL if no conversion is required.
-	 */
-	TupleConversionMap *pi_PartitionToRootMap;
-
-	/*
-	 * Slot to store tuples in partition format, or NULL when no translation
-	 * is required between root and partition.
-	 */
-	TupleTableSlot *pi_PartitionTupleSlot;
-} PartitionRoutingInfo;
 
 /*
  * PartitionedRelPruningData - Per-partitioned-table data for run-time pruning
@@ -137,20 +121,11 @@ typedef struct PartitionPruneState
 	PartitionPruningData *partprunedata[FLEXIBLE_ARRAY_MEMBER];
 } PartitionPruneState;
 
-extern PartitionTupleRouting *ExecSetupPartitionTupleRouting(EState *estate,
-															 ModifyTableState *mtstate,
-															 Relation rel);
-extern ResultRelInfo *ExecFindPartition(ModifyTableState *mtstate,
-										ResultRelInfo *rootResultRelInfo,
-										PartitionTupleRouting *proute,
-										TupleTableSlot *slot,
-										EState *estate);
-extern void ExecCleanupTupleRouting(ModifyTableState *mtstate,
-									PartitionTupleRouting *proute);
-extern PartitionPruneState *ExecCreatePartitionPruneState(PlanState *planstate,
-														  PartitionPruneInfo *partitionpruneinfo);
-extern Bitmapset *ExecFindMatchingSubPlans(PartitionPruneState *prunestate);
-extern Bitmapset *ExecFindInitialMatchingSubPlans(PartitionPruneState *prunestate,
-												  int nsubplans);
+extern PartitionPruneState *ExecInitPartitionPruning(PlanState *planstate,
+													 int n_total_subplans,
+													 PartitionPruneInfo *pruneinfo,
+													 Bitmapset **initially_valid_subplans);
+extern Bitmapset *ExecFindMatchingSubPlans(PartitionPruneState *prunestate,
+										   bool initial_prune);
 
 #endif							/* EXECPARTITION_H */

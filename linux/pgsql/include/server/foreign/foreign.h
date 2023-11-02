@@ -4,7 +4,7 @@
  *	  support for foreign-data wrappers, servers and user mappings.
  *
  *
- * Portions Copyright (c) 1996-2019, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
  *
  * src/include/foreign/foreign.h
  *
@@ -20,17 +20,6 @@
 #define MappingUserName(userid) \
 	(OidIsValid(userid) ? GetUserNameFromId(userid, false) : "public")
 
-
-/*
- * Generic option types for validation.
- * NB! These are treated as flags, so use only powers of two here.
- */
-typedef enum
-{
-	ServerOpt = 1,				/* options applicable to SERVER */
-	UserMappingOpt = 2,			/* options for USER MAPPING */
-	FdwOpt = 4					/* options for FOREIGN DATA WRAPPER */
-} GenericOptionFlags;
 
 typedef struct ForeignDataWrapper
 {

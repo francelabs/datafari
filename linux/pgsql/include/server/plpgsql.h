@@ -3,7 +3,7 @@
  * plpgsql.h		- Definitions for the PL/pgSQL
  *			  procedural language
  *
- * Portions Copyright (c) 1996-2019, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -64,7 +64,6 @@ typedef enum PLpgSQL_datum_type
 	PLPGSQL_DTYPE_ROW,
 	PLPGSQL_DTYPE_REC,
 	PLPGSQL_DTYPE_RECFIELD,
-	PLPGSQL_DTYPE_ARRAYELEM,
 	PLPGSQL_DTYPE_PROMISE
 } PLpgSQL_datum_type;
 
@@ -128,8 +127,7 @@ typedef enum PLpgSQL_stmt_type
 	PLPGSQL_STMT_PERFORM,
 	PLPGSQL_STMT_CALL,
 	PLPGSQL_STMT_COMMIT,
-	PLPGSQL_STMT_ROLLBACK,
-	PLPGSQL_STMT_SET
+	PLPGSQL_STMT_ROLLBACK
 } PLpgSQL_stmt_type;
 
 /*
@@ -218,10 +216,10 @@ typedef struct PLpgSQL_type
  */
 typedef struct PLpgSQL_expr
 {
-	char	   *query;
-	SPIPlanPtr	plan;
+	char	   *query;			/* query string, verbatim from function body */
+	RawParseMode parseMode;		/* raw_parser() mode to use */
+	SPIPlanPtr	plan;			/* plan, or NULL if not made yet */
 	Bitmapset  *paramnos;		/* all dnos referenced by this query */
-	int			rwparam;		/* dno of read/write param, or -1 if none */
 
 	/* function containing this expr (not set until we first parse query) */
 	struct PLpgSQL_function *func;
@@ -231,9 +229,30 @@ typedef struct PLpgSQL_expr
 
 	/* fields for "simple expression" fast-path execution: */
 	Expr	   *expr_simple_expr;	/* NULL means not a simple expr */
-	int			expr_simple_generation; /* plancache generation we checked */
 	Oid			expr_simple_type;	/* result type Oid, if simple */
 	int32		expr_simple_typmod; /* result typmod, if simple */
+	bool		expr_simple_mutable;	/* true if simple expr is mutable */
+
+	/*
+	 * These fields are used to optimize assignments to expanded-datum
+	 * variables.  If this expression is the source of an assignment to a
+	 * simple variable, target_param holds that variable's dno; else it's -1.
+	 * If we match a Param within expr_simple_expr to such a variable, that
+	 * Param's address is stored in expr_rw_param; then expression code
+	 * generation will allow the value for that Param to be passed read/write.
+	 */
+	int			target_param;	/* dno of assign target, or -1 if none */
+	Param	   *expr_rw_param;	/* read/write Param within expr, if any */
+
+	/*
+	 * If the expression was ever determined to be simple, we remember its
+	 * CachedPlanSource and CachedPlan here.  If expr_simple_plan_lxid matches
+	 * current LXID, then we hold a refcount on expr_simple_plan in the
+	 * current transaction.  Otherwise we need to get one before re-using it.
+	 */
+	CachedPlanSource *expr_simple_plansource;	/* extracted from "plan" */
+	CachedPlan *expr_simple_plan;	/* extracted from "plan" */
+	LocalTransactionId expr_simple_plan_lxid;
 
 	/*
 	 * if expr is simple AND prepared in current transaction,
@@ -250,7 +269,7 @@ typedef struct PLpgSQL_expr
  * Generic datum array item
  *
  * PLpgSQL_datum is the common supertype for PLpgSQL_var, PLpgSQL_row,
- * PLpgSQL_rec, PLpgSQL_recfield, and PLpgSQL_arrayelem.
+ * PLpgSQL_rec, and PLpgSQL_recfield.
  */
 typedef struct PLpgSQL_datum
 {
@@ -412,30 +431,6 @@ typedef struct PLpgSQL_recfield
 } PLpgSQL_recfield;
 
 /*
- * Element of array variable
- */
-typedef struct PLpgSQL_arrayelem
-{
-	PLpgSQL_datum_type dtype;
-	int			dno;
-	/* end of PLpgSQL_datum fields */
-
-	PLpgSQL_expr *subscript;
-	int			arrayparentno;	/* dno of parent array variable */
-
-	/* Remaining fields are cached info about the array variable's type */
-	Oid			parenttypoid;	/* type of array variable; 0 if not yet set */
-	int32		parenttypmod;	/* typmod of array variable */
-	Oid			arraytypoid;	/* OID of actual array type */
-	int32		arraytypmod;	/* typmod of array (and its elements too) */
-	int16		arraytyplen;	/* typlen of array type */
-	Oid			elemtypoid;		/* OID of array element type */
-	int16		elemtyplen;		/* typlen of element type */
-	bool		elemtypbyval;	/* element type is pass-by-value? */
-	char		elemtypalign;	/* typalign of element type */
-} PLpgSQL_arrayelem;
-
-/*
  * Item in the compilers namespace tree
  */
 typedef struct PLpgSQL_nsitem
@@ -571,17 +566,6 @@ typedef struct PLpgSQL_stmt_rollback
 } PLpgSQL_stmt_rollback;
 
 /*
- * SET statement
- */
-typedef struct PLpgSQL_stmt_set
-{
-	PLpgSQL_stmt_type cmd_type;
-	int			lineno;
-	unsigned int stmtid;
-	PLpgSQL_expr *expr;
-} PLpgSQL_stmt_set;
-
-/*
  * GET DIAGNOSTICS item
  */
 typedef struct PLpgSQL_diag_item
@@ -696,7 +680,7 @@ typedef struct PLpgSQL_stmt_fori
 /*
  * PLpgSQL_stmt_forq represents a FOR statement running over a SQL query.
  * It is the common supertype of PLpgSQL_stmt_fors, PLpgSQL_stmt_forc
- * and PLpgSQL_dynfors.
+ * and PLpgSQL_stmt_dynfors.
  */
 typedef struct PLpgSQL_stmt_forq
 {
@@ -823,7 +807,7 @@ typedef struct PLpgSQL_stmt_exit
 	int			lineno;
 	unsigned int stmtid;
 	bool		is_exit;		/* Is this an exit or a continue? */
-	char	   *label;			/* NULL if it's an unlabelled EXIT/CONTINUE */
+	char	   *label;			/* NULL if it's an unlabeled EXIT/CONTINUE */
 	PLpgSQL_expr *cond;
 } PLpgSQL_stmt_exit;
 
@@ -909,8 +893,8 @@ typedef struct PLpgSQL_stmt_execsql
 	int			lineno;
 	unsigned int stmtid;
 	PLpgSQL_expr *sqlstmt;
-	bool		mod_stmt;		/* is the stmt INSERT/UPDATE/DELETE?  Note:
-								 * mod_stmt is set when we plan the query */
+	bool		mod_stmt;		/* is the stmt INSERT/UPDATE/DELETE/MERGE? */
+	bool		mod_stmt_set;	/* is mod_stmt valid yet? */
 	bool		into;			/* INTO supplied? */
 	bool		strict;			/* INTO STRICT flag */
 	PLpgSQL_variable *target;	/* INTO target (record or row) */
@@ -1013,9 +997,6 @@ typedef struct PLpgSQL_function
 	int			extra_warnings;
 	int			extra_errors;
 
-	/* count of statements inside function */
-	unsigned int nstatements;
-
 	/* the datums representing the function's local variables */
 	int			ndatums;
 	PLpgSQL_datum **datums;
@@ -1023,6 +1004,10 @@ typedef struct PLpgSQL_function
 
 	/* function body parsetree */
 	PLpgSQL_stmt_block *action;
+
+	/* data derived while parsing body */
+	unsigned int nstatements;	/* counter for assigning stmtids */
+	bool		requires_procedure_resowner;	/* contains CALL or DO? */
 
 	/* these fields change when the function is used */
 	struct PLpgSQL_execstate *cur_estate;
@@ -1081,12 +1066,16 @@ typedef struct PLpgSQL_execstate
 	 */
 	ParamListInfo paramLI;
 
-	/* EState to use for "simple" expression evaluation */
+	/* EState and resowner to use for "simple" expression evaluation */
 	EState	   *simple_eval_estate;
+	ResourceOwner simple_eval_resowner;
+
+	/* if running nonatomic procedure or DO block, resowner to use for CALL */
+	ResourceOwner procedure_resowner;
 
 	/* lookup table to use for executing type casts */
 	HTAB	   *cast_hash;
-	MemoryContext cast_hash_context;
+	MemoryContext cast_hash_context;	/* not used; now always NULL */
 
 	/* memory context for statement-lifespan temporary values */
 	MemoryContext stmt_mcontext;	/* current stmt context, or NULL if none */
@@ -1099,6 +1088,7 @@ typedef struct PLpgSQL_execstate
 
 	/* status information for error context reporting */
 	PLpgSQL_stmt *err_stmt;		/* current stmt */
+	PLpgSQL_variable *err_var;	/* current variable, if in a DECLARE section */
 	const char *err_text;		/* additional state info */
 
 	void	   *plugin_info;	/* reserved for use by optional plugin */
@@ -1110,8 +1100,6 @@ typedef struct PLpgSQL_execstate
  * variable "PLpgSQL_plugin" and set it to point to a PLpgSQL_plugin struct.
  * Typically the struct could just be static data in the plugin library.
  * We expect that a plugin would do this at library load time (_PG_init()).
- * It must also be careful to set the rendezvous variable back to NULL
- * if it is unloaded (_PG_fini()).
  *
  * This structure is basically a collection of function pointers --- at
  * various interesting points in pl_exec.c, we call these functions
@@ -1130,9 +1118,17 @@ typedef struct PLpgSQL_execstate
  * statement.
  *
  * Also, immediately before any call to func_setup, PL/pgSQL fills in the
- * error_callback and assign_expr fields with pointers to its own
- * plpgsql_exec_error_callback and exec_assign_expr functions.  This is
- * a somewhat ad-hoc expedient to simplify life for debugger plugins.
+ * remaining fields with pointers to some of its own functions, allowing the
+ * plugin to invoke those functions conveniently.  The exposed functions are:
+ *		plpgsql_exec_error_callback
+ *		exec_assign_expr
+ *		exec_assign_value
+ *		exec_eval_datum
+ *		exec_cast_value
+ * (plpgsql_exec_error_callback is not actually meant to be called by the
+ * plugin, but rather to allow it to identify PL/pgSQL error context stack
+ * frames.  The others are useful for debugger-like plugins to examine and
+ * set variables.)
  */
 typedef struct PLpgSQL_plugin
 {
@@ -1145,8 +1141,20 @@ typedef struct PLpgSQL_plugin
 
 	/* Function pointers set by PL/pgSQL itself */
 	void		(*error_callback) (void *arg);
-	void		(*assign_expr) (PLpgSQL_execstate *estate, PLpgSQL_datum *target,
+	void		(*assign_expr) (PLpgSQL_execstate *estate,
+								PLpgSQL_datum *target,
 								PLpgSQL_expr *expr);
+	void		(*assign_value) (PLpgSQL_execstate *estate,
+								 PLpgSQL_datum *target,
+								 Datum value, bool isNull,
+								 Oid valtype, int32 valtypmod);
+	void		(*eval_datum) (PLpgSQL_execstate *estate, PLpgSQL_datum *datum,
+							   Oid *typeId, int32 *typetypmod,
+							   Datum *value, bool *isnull);
+	Datum		(*cast_value) (PLpgSQL_execstate *estate,
+							   Datum value, bool *isnull,
+							   Oid valtype, int32 valtypmod,
+							   Oid reqtype, int32 reqtypmod);
 } PLpgSQL_plugin;
 
 /*
@@ -1267,6 +1275,8 @@ extern void _PG_init(void);
 extern Datum plpgsql_exec_function(PLpgSQL_function *func,
 								   FunctionCallInfo fcinfo,
 								   EState *simple_eval_estate,
+								   ResourceOwner simple_eval_resowner,
+								   ResourceOwner procedure_resowner,
 								   bool atomic);
 extern HeapTuple plpgsql_exec_trigger(PLpgSQL_function *func,
 									  TriggerData *trigdata);

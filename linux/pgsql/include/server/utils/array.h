@@ -51,7 +51,7 @@
  * arrays holding the elements.
  *
  *
- * Portions Copyright (c) 1996-2019, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/utils/array.h
@@ -70,6 +70,11 @@ struct ExprContext;
 
 
 /*
+ * Maximum number of array subscripts (arbitrary limit)
+ */
+#define MAXDIM 6
+
+/*
  * Arrays are varlena objects, so must meet the varlena convention that
  * the first int32 of the object contains the total object size in bytes.
  * Be sure to use VARSIZE() and SET_VARSIZE() to access it, though!
@@ -77,7 +82,7 @@ struct ExprContext;
  * CAUTION: if you change the header for ordinary arrays you will also
  * need to change the headers for oidvector and int2vector!
  */
-typedef struct
+typedef struct ArrayType
 {
 	int32		vl_len_;		/* varlena header (do not touch directly!) */
 	int			ndim;			/* # of dimensions */
@@ -334,7 +339,7 @@ typedef struct ArrayIteratorData *ArrayIterator;
 /*
  * GUC parameter
  */
-extern bool Array_nulls;
+extern PGDLLIMPORT bool Array_nulls;
 
 /*
  * prototypes for functions defined in arrayfuncs.c
@@ -438,6 +443,7 @@ extern void array_free_iterator(ArrayIterator iterator);
 extern int	ArrayGetOffset(int n, const int *dim, const int *lb, const int *indx);
 extern int	ArrayGetOffset0(int n, const int *tup, const int *scale);
 extern int	ArrayGetNItems(int ndim, const int *dims);
+extern void ArrayCheckBounds(int ndim, const int *dims, const int *lb);
 extern void mda_get_range(int n, int *span, const int *st, const int *endp);
 extern void mda_get_prod(int n, const int *range, int *prod);
 extern void mda_get_offset_values(int n, int *dist, const int *prod, const int *span);

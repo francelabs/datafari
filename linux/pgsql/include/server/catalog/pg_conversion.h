@@ -3,7 +3,7 @@
  * pg_conversion.h
  *	  definition of the "conversion" system catalog (pg_conversion)
  *
- * Portions Copyright (c) 1996-2019, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/catalog/pg_conversion.h
@@ -18,9 +18,8 @@
 #define PG_CONVERSION_H
 
 #include "catalog/genbki.h"
-#include "catalog/pg_conversion_d.h"
-
 #include "catalog/objectaddress.h"
+#include "catalog/pg_conversion_d.h"
 
 /* ----------------
  *		pg_conversion definition.  cpp turns this into
@@ -36,10 +35,10 @@ CATALOG(pg_conversion,2607,ConversionRelationId)
 	NameData	conname;
 
 	/* namespace that the conversion belongs to */
-	Oid			connamespace BKI_DEFAULT(PGNSP);
+	Oid			connamespace BKI_DEFAULT(pg_catalog) BKI_LOOKUP(pg_namespace);
 
 	/* owner of the conversion */
-	Oid			conowner BKI_DEFAULT(PGUID);
+	Oid			conowner BKI_DEFAULT(POSTGRES) BKI_LOOKUP(pg_authid);
 
 	/* FOR encoding id */
 	int32		conforencoding BKI_LOOKUP(encoding);
@@ -61,12 +60,15 @@ CATALOG(pg_conversion,2607,ConversionRelationId)
  */
 typedef FormData_pg_conversion *Form_pg_conversion;
 
+DECLARE_UNIQUE_INDEX(pg_conversion_default_index, 2668, ConversionDefaultIndexId, on pg_conversion using btree(connamespace oid_ops, conforencoding int4_ops, contoencoding int4_ops, oid oid_ops));
+DECLARE_UNIQUE_INDEX(pg_conversion_name_nsp_index, 2669, ConversionNameNspIndexId, on pg_conversion using btree(conname name_ops, connamespace oid_ops));
+DECLARE_UNIQUE_INDEX_PKEY(pg_conversion_oid_index, 2670, ConversionOidIndexId, on pg_conversion using btree(oid oid_ops));
+
 
 extern ObjectAddress ConversionCreate(const char *conname, Oid connamespace,
 									  Oid conowner,
 									  int32 conforencoding, int32 contoencoding,
 									  Oid conproc, bool def);
-extern void RemoveConversionById(Oid conversionOid);
 extern Oid	FindDefaultConversion(Oid connamespace, int32 for_encoding,
 								  int32 to_encoding);
 
