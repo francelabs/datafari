@@ -26,8 +26,8 @@
     <jackson-databind.version>2.13.3</jackson-databind.version>
     <keycloak.version>19.0.1</keycloak.version>
     <log4j.version>2.17.1</log4j.version>
-    <logstash.version>8.2.0</logstash.version>
-    <logstash.sha512>7276117b1885c59952ba6b5551ef243e2e2a27b7da7d558e109c7b06a960ac6c8e7a2cf6b92d08309ead1cd1bbecb67c83965937deb0d61bda81a8def7d7a38e</logstash.sha512>
+    <logstash.version>8.5.3</logstash.version>
+    <logstash.sha512>e8d4b7b96a85162b7ca67640a9747b9e549057db81861844d4d4db23a5488947702dc703c35b14c8cc3741c0e0ad0996f1fbf8cbab1c0f2e31fb3ee9932be2c0</logstash.sha512>
     <mcf-solr-plugin.version>9.x-plugin-2.2</mcf-solr-plugin.version>
     <mcf-solr-plugin.sha512>38261a93265c1697db2742947ec72dfdfbb31f4dcab7a343484b06bb57416a668c750a98d5130fadf97464587a09677bb927e2623b862e618e45a3922b67d20b</mcf-solr-plugin.sha512>
     <mssql-jdbc.version>10.2.1.jre11</mssql-jdbc.version>
@@ -54,7 +54,7 @@
     <zeppelin.version>0.10.1</zeppelin.version>
     <zeppelin.sha512>59d7261adfd3b17b6648e083cc2e06cfb0c5aedd7e76498175073a80c224c6bc05ab562739b2fe8f0db566d01b99203a5fb09b0e680916b046ae58f3146695a9</zeppelin.sha512>
 <mcf.version>2.26</mcf.version>
-<mcf.sha512>43413c48ee24a11afe7d1012afbcca513a302d62379e1eec57cc6d4749e22db630b1a26d29220dac43437d9e115b29d25c8c61fcaea9815f54e94ff7e8449cf5</mcf.sha512>
+<mcf.sha512>d4dec806995ff05343b95a36bb485db7f7ac2a56b993634ac95bc84ca641bbd6b2fdb4aac36191dac353b7276d304685df8cf013a7ba8d318cc53cfa31b9ccf2</mcf.sha512>
 <zookeeper.version>3.8.0</zookeeper.version>
  <zookeeper.sha512>d66e3a40451f840406901b2cd940992b001f92049a372ae48d8b420891605871cd1ae5f6cceb3b10665491e7abef36a4078dace158bd1e0938fcd3567b5234ca</zookeeper.sha512>
   </properties>
