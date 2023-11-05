@@ -61,8 +61,8 @@ endif
 endif
 else # not PGXS
 vpath_build = no
-abs_top_builddir = /var/postgresql-15.4
-abs_top_srcdir = /var/postgresql-15.4
+abs_top_builddir = /root/postgresql-15.4
+abs_top_srcdir = /root/postgresql-15.4
 
 ifneq ($(vpath_build),yes)
 top_srcdir = $(top_builddir)
@@ -184,7 +184,7 @@ with_perl	= no
 with_python	= no
 with_tcl	= no
 with_ssl	= no
-with_readline	= yes
+with_readline	= no
 with_selinux	= no
 with_systemd	= no
 with_gssapi	= no
@@ -195,7 +195,7 @@ with_libxslt	= no
 with_llvm	= no
 with_system_tzdata = 
 with_uuid	= no
-with_zlib	= yes
+with_zlib	= no
 enable_rpath	= yes
 enable_nls	= no
 enable_debug	= no
@@ -285,7 +285,7 @@ ZIC =
 AR = ar
 DLLTOOL = 
 DLLWRAP = 
-LIBS = -lz -lreadline -lm 
+LIBS = -lpthread -lrt -ldl -lm 
 LDAP_LIBS_FE = 
 LDAP_LIBS_BE = 
 UUID_LIBS = 

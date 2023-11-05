@@ -32,7 +32,7 @@
 #define BLCKSZ 8192
 
 /* Saved arguments from configure */
-#define CONFIGURE_ARGS ""
+#define CONFIGURE_ARGS " '--without-readline' '--without-zlib'"
 
 /* Define to the default TCP port number on which the server listens and to
    which clients will try to connect. This can be overridden at run-time, but
@@ -64,7 +64,7 @@
 #endif
 
 /* Define to 1 if you have the `append_history' function. */
-#define HAVE_APPEND_HISTORY 1
+/* #undef HAVE_APPEND_HISTORY */
 
 /* Define to 1 if you have the `ASN1_STRING_get0_data' function. */
 /* #undef HAVE_ASN1_STRING_GET0_DATA */
@@ -270,7 +270,7 @@
 /* #undef HAVE_HISTORY_H */
 
 /* Define to 1 if you have the `history_truncate_file' function. */
-#define HAVE_HISTORY_TRUNCATE_FILE 1
+/* #undef HAVE_HISTORY_TRUNCATE_FILE */
 
 /* Define to 1 if you have the `HMAC_CTX_free' function. */
 /* #undef HAVE_HMAC_CTX_FREE */
@@ -339,7 +339,7 @@
 /* #undef HAVE_LIBPAM */
 
 /* Define if you have a function readline library */
-#define HAVE_LIBREADLINE 1
+/* #undef HAVE_LIBREADLINE */
 
 /* Define to 1 if you have the `selinux' library (-lselinux). */
 /* #undef HAVE_LIBSELINUX */
@@ -357,7 +357,7 @@
 /* #undef HAVE_LIBXSLT */
 
 /* Define to 1 if you have the `z' library (-lz). */
-#define HAVE_LIBZ 1
+/* #undef HAVE_LIBZ */
 
 /* Define to 1 if you have the `zstd' library (-lzstd). */
 /* #undef HAVE_LIBZSTD */
@@ -456,10 +456,10 @@
 /* #undef HAVE_READLINE_H */
 
 /* Define to 1 if you have the <readline/history.h> header file. */
-#define HAVE_READLINE_HISTORY_H 1
+/* #undef HAVE_READLINE_HISTORY_H */
 
 /* Define to 1 if you have the <readline/readline.h> header file. */
-#define HAVE_READLINE_READLINE_H 1
+/* #undef HAVE_READLINE_READLINE_H */
 
 /* Define to 1 if you have the `readlink' function. */
 #define HAVE_READLINK 1
@@ -468,28 +468,28 @@
 #define HAVE_READV 1
 
 /* Define to 1 if you have the `rl_completion_matches' function. */
-#define HAVE_RL_COMPLETION_MATCHES 1
+/* #undef HAVE_RL_COMPLETION_MATCHES */
 
 /* Define to 1 if you have the global variable 'rl_completion_suppress_quote'.
    */
-#define HAVE_RL_COMPLETION_SUPPRESS_QUOTE 1
+/* #undef HAVE_RL_COMPLETION_SUPPRESS_QUOTE */
 
 /* Define to 1 if you have the `rl_filename_completion_function' function. */
-#define HAVE_RL_FILENAME_COMPLETION_FUNCTION 1
+/* #undef HAVE_RL_FILENAME_COMPLETION_FUNCTION */
 
 /* Define to 1 if you have the global variable 'rl_filename_quote_characters'.
    */
-#define HAVE_RL_FILENAME_QUOTE_CHARACTERS 1
+/* #undef HAVE_RL_FILENAME_QUOTE_CHARACTERS */
 
 /* Define to 1 if you have the global variable 'rl_filename_quoting_function'.
    */
-#define HAVE_RL_FILENAME_QUOTING_FUNCTION 1
+/* #undef HAVE_RL_FILENAME_QUOTING_FUNCTION */
 
 /* Define to 1 if you have the `rl_reset_screen_size' function. */
-#define HAVE_RL_RESET_SCREEN_SIZE 1
+/* #undef HAVE_RL_RESET_SCREEN_SIZE */
 
 /* Define to 1 if you have the `rl_variable_bind' function. */
-#define HAVE_RL_VARIABLE_BIND 1
+/* #undef HAVE_RL_VARIABLE_BIND */
 
 /* Define to 1 if you have the <security/pam_appl.h> header file. */
 /* #undef HAVE_SECURITY_PAM_APPL_H */
@@ -848,7 +848,7 @@
 #define PG_VERSION_NUM 150004
 
 /* A string containing the version number, platform, and C compiler */
-#define PG_VERSION_STR "PostgreSQL 15.4 on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14) 12.2.0, 64-bit"
+#define PG_VERSION_STR "PostgreSQL 15.4 on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit"
 
 /* Define to 1 to allow profiling output to be saved separately for each
    process. */
