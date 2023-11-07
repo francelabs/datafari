@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>com.francelabs.datafari</groupId>
+    <artifactId>datafari-ce</artifactId>
+    <version>6.0-dev-Community</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>datafari-adminui</artifactId>
+  <packaging>pom</packaging>
+  <name>Datafari Enterprise Search - Admin UI module</name>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.googlecode.maven-download-plugin</groupId>
+        <artifactId>download-maven-plugin</artifactId>
+        <!-- Don't propagate configuration to child POMs -->
+        <inherited>false</inherited>
+        <executions>
+          <execution>
+            <id>install-datafari-ui</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>wget</goal>
+            </goals>
+            <configuration>
+              <url>https://repo.datafari.com/adminui/adminui-${adminui.version}.tar.gz</url>
+              <md5>${adminui.md5}</md5>
+              <unpack>true</unpack>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <!-- Don't propagate configuration to child POMs -->
+        <inherited>false</inherited>
+        <executions>
+          <execution>
+            <id>ant-tasks</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -40,6 +40,7 @@
 	<property name="bin.src.dir" value="${project.dir}/bin" />
 	<property name="git.plugin.src.dir" value="${project.dir}/datafari-git-plugin/target" />
 	<property name="datafariui.src.dir" value="${project.dir}/datafari-ui/target" />
+	<property name="adminui.src.dir" value="${project.dir}/datafari-adminui/target" />
 
 	<!-- Output directories and self contained Datafari's Debian components -->
 	<property name="linux.dir" value="${project.dir}/linux" />
@@ -258,6 +259,12 @@
 			<fileset dir="${datafariui.src.dir}/build">
 			</fileset>
 		</copy>
+		
+		<!-- Copy Admin UI -->
+				<copy todir="${linux.dist.dir}/adminui">
+					<fileset dir="${adminui.src.dir}/build">
+					</fileset>
+				</copy>
 
 		<!-- Copy SSL keystore files -->
 		<copy todir="${linux.dist.dir}/ssl-keystore">
