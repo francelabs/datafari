@@ -9,8 +9,8 @@
   <version>6.0-dev-Community</version>
   <name>Datafari Enterprise Search - Parent POM</name>
   <properties>
-	<adminui.version>main</adminui.version>
-	<adminui.md5>2c485a2c459d9a62ab099fc98fd97e9d</adminui.md5>
+	<adminui.version>0.9</adminui.version>
+	<adminui.md5>0c5c5a4b8a6470adf0f1d4aa6ef10db6</adminui.md5>
     <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
     <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
     <cassandra.version>4.0.9</cassandra.version>
