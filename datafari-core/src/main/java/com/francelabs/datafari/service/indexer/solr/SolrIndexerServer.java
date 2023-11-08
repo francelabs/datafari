@@ -95,6 +95,9 @@ public class SolrIndexerServer implements IndexerServer {
     // Zookeeper Hosts
     final List<String> zkHosts = DatafariMainConfiguration.getInstance().getZkHosts();
 
+    SolrZkClient.Builder zkBuilder = new SolrZkClient.Builder();
+    zkBuilder.zkServerAddress = zkHosts.get(0);
+    zkBuilder.zkClientTimeout = 60000;
     try {
       queryClient = new CloudSolrClient.Builder(zkHosts, Optional.empty()).build();
       cloudClient = new CloudSolrClient.Builder(zkHosts, Optional.empty()).build();
@@ -108,7 +111,8 @@ public class SolrIndexerServer implements IndexerServer {
         LOGGER.warn("Unable to get Solr port from Solr properties, switching to default value: " + defaultSolrPort);
         port = defaultSolrPort;
       }
-      zkClient = new SolrZkClient(zkHosts.get(0), 60000);
+      //zkClient = new SolrZkClient(zkHosts.get(0), 60000);
+      zkClient = zkBuilder.build();
       queryClient.setDefaultCollection(core);
       cloudClient.setDefaultCollection(core);
       final NoOpResponseParser jsonWriter = new NoOpResponseParser();
@@ -121,7 +125,8 @@ public class SolrIndexerServer implements IndexerServer {
       try {
         queryClient = new CloudSolrClient.Builder(defaultZkHosts, Optional.empty()).build();
         cloudClient = new CloudSolrClient.Builder(defaultZkHosts, Optional.empty()).build();
-        zkClient = new SolrZkClient(defaultZkHosts.get(0), 60000);
+        zkBuilder.zkServerAddress = defaultZkHosts.get(0);
+        zkClient = zkBuilder.build();
         queryClient.setDefaultCollection(core);
         cloudClient.setDefaultCollection(core);
         final NoOpResponseParser jsonWriter = new NoOpResponseParser();
