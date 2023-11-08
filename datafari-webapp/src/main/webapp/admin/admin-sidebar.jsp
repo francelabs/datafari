@@ -15,14 +15,9 @@
   String getSolr = "@GET-SOLR-IP@" ;
   String getMonit = "@GET-MONIT-IP@" ;
   String getGlances = "@GET-GLANCES-IP@" ;
-  String getZeppelin = "@GET-ZEPPELIN-IP@";
   getSolrSchemaAnalysis = getSolr + "/#/"+mainCollection + "/analysis";
   getSolrSchemaAdmin = getSolr + "/#/"+ mainCollection + "/schema";
-  
-  String getZeppelinCorpusAnalysis = "2H4J4UEEM";
-  String getZeppelinQueriesAnalysis = "2H6NXBJ88";
-  String getZeppelinProblematicFiles = "2H6MSJCE6";
-  String getZeppelinLog = "2H5EXYG6K" ;  
+ 
 %>
 <nav id="sidebar" class="bg-light calc-height">
   <ul class="list-unstyled">
@@ -78,8 +73,8 @@
           <i class="fas fa-chart-bar"></i><span id="usagesAnalysis-AdminUI" class="hidden-xs"></span>
         </a>
         <ul id="menu-usages-analysis" class="list-unstyled collapse">
-          <li id="CorpusAnalysis"><a id="corpusAnalysis-AdminUI" target="_blank" href="../SearchExpert/zeppelinRedirect?notebookType=usages&notebookId=<%= getZeppelinCorpusAnalysis %>"></a></li>
-          <li id="QueriesAnalysis"><a id="queriesAnalysis-AdminUI" target="_blank" href="../SearchExpert/zeppelinRedirect?notebookType=usages&notebookId=<%= getZeppelinQueriesAnalysis %>"></a></li>
+          <li id="CorpusAnalysis"><a id="corpusAnalysis-AdminUI" target="_blank" href="../../analytics/corpus"></a></li>
+          <li id="QueriesAnalysis"><a id="queriesAnalysis-AdminUI" target="_blank" href="../../analytics/queries"></a></li>
         </ul>
       </li>
       
@@ -92,8 +87,8 @@
         </a>
         <ul id="menu-system-analysis" class="list-unstyled collapse">
          <li id="CrawlDataMonitoring"><a id="crawlDataMonitoring-AdminUI" class="ajax-link" href="?page=crawlDataMonitoring"></a></li>
-         <li id="ProblematicFiles"><a id="problematicFiles-AdminUI" target="_blank" href="../SearchExpert/zeppelinRedirect?notebookType=system&notebookId=<%= getZeppelinProblematicFiles %>"></a></li>
-         <li id="LogsAnalysis"><a id="logsAnalysis-AdminUI" target="_blank" href="../SearchExpert/zeppelinRedirect?notebookType=system&notebookId=<%= getZeppelinLog %>"></a></li>
+         <li id="ProblematicFiles"><a id="problematicFiles-AdminUI" target="_blank" href="../../analytics/crawl"></a></li>
+         <li id="LogsAnalysis"><a id="logsAnalysis-AdminUI" target="_blank" href="../../analytics/logs"></a></li>
          <li id="downloadLogs"><a id="downloadLogs-AdminUI" class="ajax-link" href="?page=downloadLogs"></a></li>
          <li id="monitAdmin"><a target="_blank" href="@MONIT-IP@" id="monitAdmin-AdminUI"></a></li>
          <li id="glancesAdmin"><a target="_blank" href="@GLANCES-IP@" id="glancesAdmin-AdminUI"></a></li>

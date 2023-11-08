@@ -2,7 +2,6 @@
 <project name="maven-ant-tasks" default="setup-as" basedir=".">
 
 	<property name="as.dist" value="target/dist/analytic-stack"/>
-	<property name="zeppelin-solr-version" value="0.1.6"/>
 
 
 	<!-- Right now we use ELK (Elasticsearch - Logstash - Kibana stack) only for Debian distribution of Datafari -->
@@ -35,41 +34,6 @@
 		<replace file="${as.dist}/logstash/logstash-datafari.conf" token="@ADDITIONAL_FILTERS@" value=""/>
 		<replace file="${as.dist}/logstash/logstash-datafari.conf" token="@ADDITIONAL_OUTPUTS@" value=""/>
 		
-		<!-- Untar zeppelin -->
-		<untar dest="${as.dist}/zeppelin" compression="gzip">
-      <fileset dir="target">
-        <include name="zeppelin*" />
-      </fileset>
-      <cutdirsmapper dirs="1" />
-    </untar>
-		
-		<!-- Remove Zeppelin Default Notebooks -->
-		<delete includeemptydirs="true">
-      <fileset dir="${as.dist}/zeppelin/notebook"> 
-        <include name="**/*"/>
-      </fileset>
-    </delete>
-		
-		<!-- Remove Zeppelin Unused Interpreters -->
-    <delete includeemptydirs="true">
-      <fileset dir="${as.dist}/zeppelin/interpreter"> 
-        <include name="**/*"/>
-      	<exclude name="*.jar"/>
-      </fileset>
-    </delete>
-		
-		<!-- Install Zeppelin Solr Interpreter -->
-    <exec executable="/bin/bash">
-      <arg value="${as.dist}/zeppelin/bin/install-interpreter.sh"/>
-      <arg value="--name solr --artifact com.lucidworks.zeppelin:zeppelin-solr:${zeppelin-solr-version}"/>
-    </exec>
-		
-		<!-- Copy Datafari specific Zeppelin files -->
-		<copy toDir="${as.dist}" overwrite="true" force="true">
-      <fileset dir="." >
-        <include name="zeppelin/**" />
-      </fileset>
-    </copy>
 		
 		<!-- Delete tar.gz and tgz files -->
     <delete>

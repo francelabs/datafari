@@ -55,36 +55,12 @@ stop_logstash()
   forceStopIfNecessary $LOGSTASH_PID_FILE Logstash
 }
 
-start_zeppelin()
-{
-  if is_running $ZEPPELIN_PID_DIR/zeppelin.pid; then
-    echo "Error : Zeppelin seems to be already running with PID $(cat $ZEPPELIN_PID_DIR/zeppelin.pid)"
-  else
-    cd $ZEPPELIN_HOME
-    echo "Starting Zeppelin..."
-    bash bin/zeppelin-daemon.sh start >/dev/null 2>&1 &
-    echo "Zeppelin started !"
-    cd $DIR
-  fi
-}
-
-stop_zeppelin()
-{
-  cd $ZEPPELIN_HOME
-  echo "Stopping Zeppelin..."
-  bash bin/zeppelin-daemon.sh stop >/dev/null 2>&1 &
-  cd $DIR
-  forceStopIfNecessary $ZEPPELIN_PID_DIR/zeppelin.pid Zeppelin
-}
-
 cmd_start() {
   start_logstash;
-  start_zeppelin;
 }
 
 cmd_stop() {
   stop_logstash;
-  stop_zeppelin;
 }
 
 cmd_status() {
@@ -94,13 +70,6 @@ cmd_status() {
       ps -o pid,cmd --width 5000 -p $(cat $LOGSTASH_PID_FILE)
   else
       echo "Logstash is not running."
-  fi
-  
-  if is_running $ZEPPELIN_PID_DIR/zeppelin.pid; then
-      echo "Zeppelin is running:"
-      ps -o pid,cmd --width 5000 -p $(cat $ZEPPELIN_PID_DIR/zeppelin.pid)
-  else
-      echo "Zeppelin is not running."
   fi
 }
 
@@ -129,12 +98,6 @@ case $COMMAND in
     ;;
   stop_logstash)
     stop_logstash
-    ;;
-  start_zeppelin)
-    start_zeppelin
-    ;;
-  stop_zeppelin)
-    stop_zeppelin
     ;;
 esac
 
