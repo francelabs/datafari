@@ -25,7 +25,7 @@
               <goal>wget</goal>
             </goals>
             <configuration>
-              <url>https://repo.datafari.com/adminui/adminui-${adminui.version}.tar.gz</url>
+              <url>https://repo.datafari.com/adminui/${adminui.version}/adminui-${adminui.version}.tar.gz</url>
               <md5>${adminui.md5}</md5>
               <unpack>true</unpack>
             </configuration>
