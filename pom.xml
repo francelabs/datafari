@@ -7,7 +7,7 @@
   <!-- Main POM of datafari -->
   <packaging>pom</packaging>
   <version>6.0-dev-Community</version>
-  <name>Datafari Enterprise Search - Parent POM</name>
+  <name>Datafari Enterprise Search CE - Parent POM</name>
   <properties>
 	<adminui.version>0.9</adminui.version>
 	<adminui.md5>0c5c5a4b8a6470adf0f1d4aa6ef10db6</adminui.md5>
@@ -38,8 +38,8 @@
     <postgres.version>42.1.3</postgres.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <solr.sha512>16715fe50a74bc4906f655531523875e9e5d4a013aea22afff10a52dc6f05a8b62e079aee75cd9f2e250300e40071140c0a966cbd51af811a622f2f1f0b0c926</solr.sha512>
-    <solr.version>9.1.0</solr.version>
+    <solr.sha512>7147caaec5290049b721f9a4e8b0c09b1775315fc4aa790fa7a88a783a45a61815b3532a938731fd583e91195492c4176f3c87d0438216dab26a07a4da51c1f5</solr.sha512>
+    <solr.version>9.4.0</solr.version>
      <spring.boot.version>2.7.14</spring.boot.version>
     <spring.data.cassandra.version>3.4.15</spring.data.cassandra.version>
     <spring.security.version>5.8.5</spring.security.version>
@@ -55,8 +55,8 @@
     <xmlsec.version>2.3.0</xmlsec.version>
 <mcf.version>2.26</mcf.version>
 <mcf.sha512>d4dec806995ff05343b95a36bb485db7f7ac2a56b993634ac95bc84ca641bbd6b2fdb4aac36191dac353b7276d304685df8cf013a7ba8d318cc53cfa31b9ccf2</mcf.sha512>
-<zookeeper.version>3.8.0</zookeeper.version>
- <zookeeper.sha512>d66e3a40451f840406901b2cd940992b001f92049a372ae48d8b420891605871cd1ae5f6cceb3b10665491e7abef36a4078dace158bd1e0938fcd3567b5234ca</zookeeper.sha512>
+<zookeeper.version>3.9.1</zookeeper.version>
+ <zookeeper.sha512>6a1c56557ee8de63dc0730de6c55640afa8ae9043e57539fed393120fe3adfb7f30a6ac13af0a6331ff34ba9c6f2b31e41e40c5446e669651522fffb9ce64e48</zookeeper.sha512>
   </properties>
   
   <!-- The order of modules execution is important  -->
