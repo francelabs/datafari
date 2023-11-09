@@ -209,6 +209,13 @@ SOLR_SSL_CHECK_PEER_NAME=false
 #SOLR_OPTS="$SOLR_OPTS $SOLR_ZK_CREDS_AND_ACLS"
 SOLR_OPTS="$SOLR_OPTS -Djava.io.tmpdir=@SOLRTMPDIR@"
 
+# Runs solr in java security manager sandbox. This can protect against some attacks.
+# Runtime properties are passed to the security policy file (server/etc/security.policy)
+# You can also tweak via standard JDK files such as ~/.java.policy, see https://s.apache.org/java8policy
+# This is experimental! It may not work at all with Hadoop/HDFS features.
+SOLR_SECURITY_MANAGER_ENABLED=false
+
+
 # optionally, you can use using a a Java properties file 'zkDigestCredentialsFile'
 #...
 #   -DzkDigestCredentialsFile=/path/to/zkDigestCredentialsFile.properties
