@@ -67,7 +67,7 @@
 
 <fields>
     <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
-    
+
     <!-- Tuleap connector fields -->
     <field name="artifact_id" type="int" indexed="true" stored="true" multiValued="false"/>
     <field name="artifact_title" type="string" indexed="false" stored="true" multiValued="false"/>
@@ -102,10 +102,10 @@
   <field name="sp_item" type="string" indexed="true" stored="true" multiValued="false"/>
   <field name="sp_parentids" type="string" indexed="true" stored="true" multiValued="true"/>
   <field name="sp_attachments" type="string" indexed="true" stored="true" multiValued="true"/>
-  
+
   <!-- O365 fields -->
   <field name="o365_attachments" type="string" indexed="true" stored="true" multiValued="true"/>
-  
+
 
     <!-- Common metadata fields, named specifically to match up with
      SolrCell metadata when parsing rich documents such as Word, PDF.
@@ -116,16 +116,16 @@
        "resourcename": From SolrCell request param resource.name
    -->
   <field name="title" type="text_general" indexed="false" stored="true" multiValued="true"/>
-  <field name="title_en" type="text_en" indexed="true" stored="false" multiValued="true"/>
-   <field name="title_fr" type="text_fr" indexed="true" stored="false" multiValued="true"/>
-   <field name="title_de" type="text_de" indexed="true" stored="false" multiValued="true"/>
-   <field name="title_es" type="text_es" indexed="true" stored="false" multiValued="true"/>
+  <field name="title_en" type="text_en" indexed="true" stored="true" multiValued="true"/>
+   <field name="title_fr" type="text_fr" indexed="true" stored="true" multiValued="true"/>
+   <field name="title_de" type="text_de" indexed="true" stored="true" multiValued="true"/>
+   <field name="title_es" type="text_es" indexed="true" stored="true" multiValued="true"/>
    <field name="jsoup_title" type="text_general" indexed="false" stored="true" multiValued="true"/>
-   <field name="nbLikes" type="likes"   />
-   
+   <field name="nbLikes" type="likes" stored="true"/>
+
    <!-- Field filled by the Emptier connector -->
    <field name="emptied" type="boolean" indexed="true" stored="true" default="false" multiValued="false" />
-   
+
    <!-- Field filled by the Tika server connector -->
    <field name="truncated" type="boolean" indexed="true" stored="true" default="false" multiValued="false" />
    <field name="document_entities" type="string" indexed="true" stored="true" multiValued="true"/>
@@ -139,13 +139,13 @@
    <field name="url_search" type="text_en" indexed="true" stored="false"/>
    <field name="urlHierarchy" type="string" indexed="true" stored="true" multiValued="true"/>
    <field name="last_modified" type="tdate" indexed="true" stored="true" default="NOW" multiValued="true"/>
-   <field name="content" type="text_general" indexed="false" stored="false" multiValued="true"/>
+   <field name="content" type="text_general" indexed="false" stored="true" multiValued="true"/>
    <field name="content_en" type="text_en" indexed="true" stored="true" multiValued="true"/>
    <field name="content_de" type="text_de" indexed="true" stored="true" multiValued="true"/>
    <field name="content_es" type="text_es" indexed="true" stored="true" multiValued="true"/>
    <field name="content_fr" type="text_fr" indexed="true" stored="true" multiValued="true"/>
    <field name="exactContent" type="text_nostem" indexed="true" stored="true" multiValued="true"/>
-   <field name="exactTitle" type="text_nostem" indexed="true" stored="false" multiValued="true"/>
+   <field name="exactTitle" type="text_nostem" indexed="true" stored="true" multiValued="true"/>
    <field name="crawl_date" type="tdate" indexed="true" stored="true" default="NOW" multiValued="false"/>
    <field name="original_file_size" type="long" indexed="true" stored="true"/>
    <field name="htmlContent" type="text_nostem" indexed="true" stored="true" multiValued="true"/>
@@ -221,7 +221,7 @@
 
 
     <field name="_version_" type="long" indexed="true" stored="true"/>
-    
+
     <!-- Usual pdf and doc fields -->
     <!--
     <field name="xmp_creatortool" type="string" indexed="true" stored="true" multiValued="true"/>
@@ -239,7 +239,7 @@
     -->
 
     <!-- EXIF fields -->
-    <!--  
+    <!--
     <field name="ae_warning" type="string" indexed="true" stored="true" multiValued="true"/>
     <field name="custom_rendered" type="string" indexed="true" stored="true" multiValued="true"/>
     <field name="scene_capture_type" type="string" indexed="true" stored="true" multiValued="true"/>
@@ -402,7 +402,7 @@
 
    <copyField source="url_search" dest="suggest" />
    <copyField source="url_search" dest="spell" />
-   
+
    <copyField source="publisher" dest="publisher_search" />
    <copyField source="manager" dest="manager_search" />
    <copyField source="category" dest="category_search" />
@@ -415,7 +415,7 @@
    <copyField source="producer" dest="producer_search" />
    <copyField source="creator" dest="creator_search" />
    <copyField source="description" dest="description_search" />
-   
+
    <!-- Tuleap copyFields -->
    <copyField source="artifact_title" dest="artifact_title_search" />
    <copyField source="artifact_status_label" dest="artifact_status_label_search" />
@@ -448,7 +448,7 @@
 				<filter class="solr.LowerCaseFilterFactory" />
 			</analyzer>
 	</fieldType>
-  
+
   <fieldType name="simpleTokens" class="solr.TextField" positionIncrementGap="100">
       <analyzer>
         <tokenizer class="solr.WhitespaceTokenizerFactory" />
@@ -508,7 +508,7 @@
     <fieldType name="long" class="solr.LongPointField" docValues="true" />
     <fieldType name="double" class="solr.DoublePointField" docValues="true" />
 
-   
+
 
     <!-- The format for this date field is of the form 1995-12-31T23:59:59Z, and
          is a more restricted form of the canonical representation of dateTime
@@ -843,8 +843,8 @@
       </analyzer>
     </fieldType>
     <!--  Entity extraction -->
-    
-    
+
+
 
     <fieldType name="key_phrases" class="solr.TextField" sortMissingLast="true" omitNorms="true">
       <analyzer type="index">
@@ -863,7 +863,7 @@
 
     <!-- German -->
     <fieldType name="text_de" class="solr.TextField" positionIncrementGap="100">
-      <analyzer type="index"> 
+      <analyzer type="index">
         <tokenizer class="solr.StandardTokenizerFactory"/>
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_de.txt" format="snowball" />
@@ -872,7 +872,7 @@
         <!-- less aggressive: <filter class="solr.GermanMinimalStemFilterFactory"/> -->
         <!-- more aggressive: <filter class="solr.SnowballPorterFilterFactory" language="German2"/> -->
       </analyzer>
-      <analyzer type="query"> 
+      <analyzer type="query">
         <tokenizer class="solr.StandardTokenizerFactory"/>
         <filter class="solr.SynonymGraphFilterFactory" expand="true" ignoreCase="true" synonyms="lang/synonyms_de.txt"/>
         <filter class="solr.LowerCaseFilterFactory"/>
@@ -883,19 +883,19 @@
         <!-- more aggressive: <filter class="solr.SnowballPorterFilterFactory" language="German2"/> -->
       </analyzer>
     </fieldType>
-    
-   
-    
+
+
+
     <!-- Spanish -->
     <fieldType name="text_es" class="solr.TextField" positionIncrementGap="100">
-      <analyzer type="index"> 
+      <analyzer type="index">
         <tokenizer class="solr.StandardTokenizerFactory"/>
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_es.txt" format="snowball" />
         <filter class="solr.SpanishLightStemFilterFactory"/>
         <!-- more aggressive: <filter class="solr.SnowballPorterFilterFactory" language="Spanish"/> -->
       </analyzer>
-      <analyzer type="query"> 
+      <analyzer type="query">
         <tokenizer class="solr.StandardTokenizerFactory"/>
         <filter class="solr.SynonymGraphFilterFactory" expand="true" ignoreCase="true" synonyms="lang/synonyms_es.txt"/>
         <filter class="solr.LowerCaseFilterFactory"/>
@@ -904,8 +904,8 @@
         <!-- more aggressive: <filter class="solr.SnowballPorterFilterFactory" language="Spanish"/> -->
       </analyzer>
     </fieldType>
-    
-  
+
+
 
  </types>
 
