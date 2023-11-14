@@ -32,7 +32,7 @@
         <p class="documentation-preview"> <span id="documentation-entityextraction"></span><a class="documentation-link" href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/495321093/Basic+Text+Tagging+at+indexing+and+Searching+time" target="_blank"> ...see more</a></p>
       </div>
     <div id="thBox" class="box-content">      
-      <div class="alert alert-danger"><i class='fa fa-exclamation-triangle'></i> Changes in those parameters require reloading the solr core and indexing your content from scratch (by deleting your jobs and creating them from scratch).</div>
+      <div class="alert alert-danger"><i class='fa fa-exclamation-triangle'></i>DEPRECATED! Will be removed from Datafari in the next version. Changes in those parameters require reloading the solr core and indexing your content from scratch (by deleting your jobs and creating them from scratch).</div>
       <form class="form-horizontal" role="form" id="simpleEntityExtractionForm">
         <div class="form-group">
           <label class="col-sm-3 control-label" for="activateSimpleExtraction" id="activateSimpleExtractionLabel">Enable simple entity extraction:</label>
