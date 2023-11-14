@@ -100,7 +100,8 @@ ENABLE_REMOTE_JMX_OPTS="false"
 #SOLR_OPTS="$SOLR_OPTS -agentlib:jdwp=transport=dt_socket,server=y,address=8984,suspend=n"
 SOLR_OPTS="$SOLR_OPTS -Dsolr.disableConfigSetsCreateAuthChecks=true -Djute.maxbuffer=10000000 -Dsolr.allowPaths=*"
 #SOLR_OPTS="$SOLR_OPTS -Dsolr.port.advertise=443"
-#SOLR_OPTS="$SOLR_OPTS -Dsolr.log.requestlog.retaindays=90 -Djavax.net.ssl.trustStore=/opt/datafari/ssl-keystore/datafari-truststore.p12 -Djavax.net.ssl.trustStorePassword=DataFariAdmin"
+#SOLR_OPTS="$SOLR_OPTS -Djavax.net.ssl.trustStore=/opt/datafari/ssl-keystore/datafari-truststore.p12 -Djavax.net.ssl.trustStorePassword=DataFariAdmin"
+SOLR_OPTS="$SOLR_OPTS -Dsolr.log.requestlog.retaindays=90 -Dsolr.ssl.checkPeerName=false"
 # Location where the bin/solr script will save PID files for running instances
 # If not set, the script will create PID files in $SOLR_TIP/bin
 SOLR_PID_DIR=${PID_DIR}
