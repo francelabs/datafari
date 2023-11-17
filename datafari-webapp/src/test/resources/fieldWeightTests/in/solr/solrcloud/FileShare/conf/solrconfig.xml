@@ -1155,7 +1155,7 @@
 			<str name="langid.fl">content,title</str>
 			<str name="langid.langField">language</str>
 			<str name="langid.map">true</str>
-			<str name="langid.whitelist">en,fr</str>
+			<str name="langid.allowlist">en,fr</str>
 			<str name="langid.fallback">en</str>
 		</processor>
 
