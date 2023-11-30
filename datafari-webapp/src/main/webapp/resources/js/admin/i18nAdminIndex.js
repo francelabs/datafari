@@ -40,7 +40,7 @@ $(function($) {
   elm.find('#MCFPassword-AdminUI').html(window.i18n.msgStore['MCFPassword-AdminUI']);
   elm.find('#MCFSimplified-AdminUI').html(window.i18n.msgStore['adminUI-Connectors-MCFSimplified']);
   // MCF distant
-
+  // Monitoring Solr
   elm.find('#annotatorConfiguration-AdminUI').html(window.i18n.msgStore['adminUI-AnnotatorConf']);
   elm.find('#duplicatesConfiguration-AdminUI').html(window.i18n.msgStore['adminUI-DuplicatesConf']);
   elm.find('#searchEngineAdmin-AdminUI').html(window.i18n.msgStore['adminUI-SearchEngineAdmin']);

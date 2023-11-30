@@ -92,6 +92,7 @@
          <li id="downloadLogs"><a id="downloadLogs-AdminUI" class="ajax-link" href="?page=downloadLogs"></a></li>
          <li id="monitAdmin"><a target="_blank" href="@MONIT-IP@" id="monitAdmin-AdminUI"></a></li>
          <li id="glancesAdmin"><a target="_blank" href="@GLANCES-IP@" id="glancesAdmin-AdminUI"></a></li>
+<%-- Monitoring Solr --%>        
          </ul>
          </li>
       <%
