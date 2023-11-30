@@ -126,7 +126,13 @@ public class Search2 extends HttpServlet {
         // temper with the URL to point on our URL endpoint
         // Also add a path array giving path information for display purposes
         final StringBuffer currentURL = request.getRequestURL();
-        String queryId = request.getAttribute("id").toString();
+
+        // Get query id if available
+        String queryId = request.getParameter("id");
+        if (request.getAttribute("id") != null) {
+          queryId = (String) request.getAttribute("id");
+        }
+
         String newUrl = currentURL.substring(0, currentURL.indexOf(searchEndpoint));
         newUrl += "/rest/v2.0/url?url=" + URLEncoder.encode(url, StandardCharsets.UTF_8);
         newUrl += "&id=" + queryId;
