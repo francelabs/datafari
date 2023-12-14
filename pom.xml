@@ -85,10 +85,12 @@
     <module>datafari-web-connector</module>
     <module>datafari-share-connector</module>
     <module>datafari-ui</module>
-     <module>datafari-adminui</module>
+    <module>datafari-adminui</module>
     <module>datafari-git-plugin</module>
     <module>datafari-regex-entity-connector</module>
     <module>datafari-active-directory-connector</module>
+    <module>datafari-confluence-v6-connector</module>
+    <module>datafari-solr-connector</module>
   </modules>
   <build>
     <pluginManagement>

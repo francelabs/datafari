@@ -1,0 +1,57 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+#if($TABNAME == $ResourceBundle.getString('SolrIngester.SecurityTabName') && ${SEQNUM} == ${SELECTEDNUM})
+
+<table class="displaytable">
+  <tr><td class="separator" colspan="2"><hr/></td></tr>
+  
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.SecurityActivation'))</nobr></td>
+    <td class="value">
+  #if($SECURITYACTIVATION == 'true')
+       <input type="checkbox" checked="true" name="s${SEQNUM}_securityactivated" value="true"/>
+  #else
+       <input type="checkbox" name="s${SEQNUM}_securityactivated" value="true"/>
+  #end
+    </td>
+  </tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.SecurityField'))</nobr></td>
+    <td class="value"><input name="s${SEQNUM}_securityfield" type="text"
+      value="$Encoder.attributeEscape($SECURITYFIELD)" size="20" />
+    </td>
+  </tr>
+  
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SolrIngester.SecurityField2'))</nobr></td>
+    <td class="value"><input name="s${SEQNUM}_securityfield2" type="text"
+      value="$Encoder.attributeEscape($SECURITYFIELD2)" size="20" />
+    </td>
+  </tr>
+</table>
+      
+#else
+
+  
+
+<input type="hidden" name="s${SEQNUM}_securityactivated" value="$Encoder.bodyEscape($SECURITYACTIVATION)"/>
+<input type="hidden" name="s${SEQNUM}_securityfield" value="$Encoder.bodyEscape($SECURITYFIELD)"/>
+<input type="hidden" name="s${SEQNUM}_securityfield2" value="$Encoder.bodyEscape($SECURITYFIELD2)"/>
+
+
+#end
