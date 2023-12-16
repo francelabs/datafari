@@ -19,9 +19,8 @@ public class SolrAtomicUpdateLauncher {
 
   public static void main(String[] args) throws SolrServerException, IOException {
 
-    String solrCollection = FILESHARE;
     //"https://dev.datafari.com/solr"
-    DocumentsCollector docCollect = new DocumentsCollector("http://localhost:8983/solr", solrCollection, MAX_DOC_PER_QUERY);
+    DocumentsCollector docCollect = new DocumentsCollector("http://localhost:8983/solr", FILESHARE, MAX_DOC_PER_QUERY);
 
     //FIXME test code: retrieve parameters from config file.
     Calendar calendar = Calendar.getInstance(Locale.ROOT);
@@ -30,12 +29,16 @@ public class SolrAtomicUpdateLauncher {
     //------------------------------------------------------
     List<String> docIDs = docCollect.collectDocuments(fromDate);
 
-    //FIXME test code: print result
-    //testCodeCollectDoc(docIDs, solrCollection, fromDate);
+    //FIXME test code: -------------------------------------
+    // print result
+    //testCodeCollectDoc(docIDs, FILESHARE, fromDate);
+    // Corrupt one ID to fail one update
+    //docIDs.set(1, "titi");
+    //------------------------------------------------------
 
 
     // Update documents
-    UpdateResponse updateResponse = new DocumentsUpdator("http://localhost:8983/solr", solrCollection, MAX_DOC_PER_QUERY)
+    UpdateResponse updateResponse = new DocumentsUpdator("http://localhost:8983/solr", FILESHARE, MAX_DOC_PER_QUERY)
         .updateDocuments(docIDs);
     System.out.println(updateResponse);
   }
