@@ -1,5 +1,7 @@
 package solraccessors;
 
+import config.CollectionPathConfig;
+import config.JobConfig;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.Http2SolrClient;
 
@@ -10,13 +12,19 @@ public abstract class AbstractDocuments {
   final protected String solrCollection;
   final protected int maxDocsPerQuery;
 
-  public AbstractDocuments(final String baseSolrUrl, final String solrCollection, final int maxDocsPerQuery) {
-    this.solrClient = getSolrClient(baseSolrUrl);
+  final protected JobConfig jobConfig;
 
-    this.solrCollection = solrCollection;
+  public AbstractDocuments(final JobConfig jobConfig, final int maxDocsPerQuery) {
+    this.jobConfig = jobConfig;
+    final CollectionPathConfig collectionPath = getCollectionPath();
+    this.solrClient = getSolrClient(collectionPath.getBaseUrl());
+
+    this.solrCollection = collectionPath.getSolrCollection();
     this.maxDocsPerQuery = maxDocsPerQuery;
 
   }
+
+  protected abstract CollectionPathConfig getCollectionPath();
 
   protected SolrClient getSolrClient(final String baseSolrUrl){
     //TODO best for SolrCloud mode

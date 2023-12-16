@@ -1,15 +1,21 @@
+import com.fasterxml.jackson.databind.ObjectMapper;
+import config.AtomicUpdateConfig;
+import config.CollectionPathConfig;
+import config.JobConfig;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.UpdateResponse;
+import org.apache.solr.common.SolrDocument;
 import solraccessors.DocumentsCollector;
 import solraccessors.DocumentsUpdator;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class SolrAtomicUpdateLauncher {
   final static int MAX_DOC_PER_QUERY = 1000;
@@ -18,34 +24,38 @@ public class SolrAtomicUpdateLauncher {
   final static String SPACY = "Spacy";
 
   public static void main(String[] args) throws SolrServerException, IOException {
+    //Read config file
+    ObjectMapper objectMapper = new ObjectMapper();
+    AtomicUpdateConfig config = objectMapper.readValue(new File("/home/guylaine/IdeaProjects/datafariee/datafari-ce/datafari-solr-atomic-update/src/main/resources/atomicUpdate-cfg.json"), AtomicUpdateConfig.class);
+    JobConfig job = config.getJobs().get("SPACY");
 
     //"https://dev.datafari.com/solr"
-    DocumentsCollector docCollect = new DocumentsCollector("http://localhost:8983/solr", FILESHARE, MAX_DOC_PER_QUERY);
+    DocumentsCollector docCollect = new DocumentsCollector(job, MAX_DOC_PER_QUERY);
 
     //FIXME test code: retrieve parameters from config file.
     Calendar calendar = Calendar.getInstance(Locale.ROOT);
     calendar.add(Calendar.YEAR, -20); //20 pour Spacy et 6 pour les autres
     Date fromDate = calendar.getTime();
     //------------------------------------------------------
-    List<String> docIDs = docCollect.collectDocuments(fromDate);
+    List<SolrDocument> docsList = docCollect.collectDocuments(fromDate);
 
     //FIXME test code: -------------------------------------
     // print result
-    //testCodeCollectDoc(docIDs, FILESHARE, fromDate);
+    testCodeCollectDoc(docsList, SPACY, fromDate);
     // Corrupt one ID to fail one update
     //docIDs.set(1, "titi");
     //------------------------------------------------------
 
 
     // Update documents
-    UpdateResponse updateResponse = new DocumentsUpdator("http://localhost:8983/solr", FILESHARE, MAX_DOC_PER_QUERY)
-        .updateDocuments(docIDs);
+    UpdateResponse updateResponse = new DocumentsUpdator(job, MAX_DOC_PER_QUERY)
+        .updateDocuments(docsList);
     System.out.println(updateResponse);
   }
 
   //FIXME test code: print result
-  private static void testCodeCollectDoc(List<String> docIDs, String solrCollection, Date fromDate){
-    long numDocsFound = docIDs.size();
+  private static void testCodeCollectDoc(List<SolrDocument> docsList, String solrCollection, Date fromDate){
+    long numDocsFound = docsList.size();
     System.out.println("Found " + numDocsFound + " documents");
     if (fromDate == null) {
       if (FILESHARE.equals(solrCollection)) {
@@ -65,5 +75,8 @@ public class SolrAtomicUpdateLauncher {
       }
     }
 
+    for (SolrDocument doc : docsList){
+      System.out.println(doc.getFieldValue("id") + " - " + doc.getFieldValue("entity_loc") + " - " + doc.getFieldValue("entity_product"));
+    }
   }
 }

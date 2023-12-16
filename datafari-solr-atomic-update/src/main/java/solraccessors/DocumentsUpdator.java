@@ -1,8 +1,11 @@
 package solraccessors;
 
+import config.CollectionPathConfig;
+import config.JobConfig;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.UpdateResponse;
+import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.CommonParams;
 
@@ -11,15 +14,20 @@ import java.util.*;
 
 public class DocumentsUpdator extends AbstractDocuments {
 
-  public DocumentsUpdator(String baseSolrUrl, String solrCollection, int maxDocsPerQuery) {
-    super(baseSolrUrl, solrCollection, maxDocsPerQuery);
+  public DocumentsUpdator(JobConfig jobConfig, int maxDocsPerQuery) {
+    super(jobConfig, maxDocsPerQuery);
   }
 
-  public UpdateResponse updateDocuments(List<String> docIDs) {
+  @Override
+  protected CollectionPathConfig getCollectionPath() {
+    return jobConfig.getDestination();
+  }
+
+  public UpdateResponse updateDocuments(List<SolrDocument> solrDocuments) {
     List<SolrInputDocument> docsToUpdate = new ArrayList<>();
-    for (String docID : docIDs){
+    for (SolrDocument doc : solrDocuments){
       //Prepare query to Solr
-      docsToUpdate.add(createSolrDocToUpdate(docID));
+      docsToUpdate.add(createSolrDocToUpdate(doc));
     }
 
     try {
@@ -42,13 +50,28 @@ public class DocumentsUpdator extends AbstractDocuments {
     return null;
   }
 
-  private SolrInputDocument createSolrDocToUpdate(String docID){
+  private SolrInputDocument createSolrDocToUpdate(SolrDocument doc){
     // create the atomic document
     SolrInputDocument atomicDoc = new SolrInputDocument();
-    atomicDoc.addField("id", docID);
-    Map<String, Object> fieldModifier = new HashMap<>(1);
-    fieldModifier.put("set", "val_" + new Date().toInstant().toString());
-    atomicDoc.addField("mon_champ1", fieldModifier);
+    //atomicDoc.addField(CommonParams.ID, doc.getFieldValue(CommonParams.ID));
+
+    Map<String, Object> fieldModifier;
+    String fieldValue;
+    for(String fieldName : doc.getFieldNames()){
+      fieldValue = (String) doc.getFieldValue(fieldName);
+
+      //FIXME Work in progress
+      fieldModifier = new HashMap<>(1);
+      fieldModifier.put("set", "val_" + new Date().toInstant().toString());
+      if (CommonParams.ID.equals(fieldName)){
+        atomicDoc.addField(fieldName, fieldValue);
+
+      } else {
+        atomicDoc.addField(fieldName, fieldModifier);
+      }
+
+    }
+
     // Optimistic Concurrency: the document must exist to be updated
     atomicDoc.addField(CommonParams.VERSION_FIELD, 1);
 

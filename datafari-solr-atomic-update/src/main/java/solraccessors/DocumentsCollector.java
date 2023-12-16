@@ -1,32 +1,39 @@
 package solraccessors;
 
-import org.apache.solr.client.solrj.SolrClient;
+import config.CollectionPathConfig;
+import config.JobConfig;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.Http2SolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.CursorMarkParams;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 public class DocumentsCollector extends AbstractDocuments{
 
-  public DocumentsCollector(final String baseSolrUrl, final String solrCollection, final int maxDocsPerQuery){
-    super(baseSolrUrl, solrCollection, maxDocsPerQuery);
+  public DocumentsCollector(JobConfig jobConfig, int maxDocsPerQuery) {
+    super(jobConfig, maxDocsPerQuery);
   }
 
-  public ArrayList<String> collectDocuments(Date fromDate) throws SolrServerException, IOException {
+  @Override
+  protected CollectionPathConfig getCollectionPath() {
+    return jobConfig.getSource();
+  }
+
+  public ArrayList<SolrDocument> collectDocuments(Date fromDate) throws SolrServerException, IOException {
     //Prepare query to Solr
-    SolrQuery queryParams = getSolrQuery(fromDate);
+    SolrQuery queryParams = getSolrQuery(fromDate, jobConfig.getFieldsOperation().keySet());
 
     //Retrieve documents in x-packet batches (x = maxDocsPerQuery).
     String cursorMark = CursorMarkParams.CURSOR_MARK_START;
-    ArrayList<String> listIDs = new ArrayList<>();
+    ArrayList<SolrDocument> docsResultList = new ArrayList<>();
     boolean done = false;
     String nextCursorMark;
     while (! done) {
@@ -40,7 +47,7 @@ public class DocumentsCollector extends AbstractDocuments{
       //Retrieve the documents list
       SolrDocumentList documents = response.getResults();
       for(SolrDocument document : documents) {
-        listIDs.add((String) document.getFieldValue("id"));
+        docsResultList.add(document);
       }
       if (cursorMark.equals(nextCursorMark)) {
         done = true;
@@ -48,17 +55,21 @@ public class DocumentsCollector extends AbstractDocuments{
       cursorMark = nextCursorMark;
     }
 
-    return listIDs;
+    return docsResultList;
 
   }
 
-  private SolrQuery getSolrQuery(Date fromDate){
+  private SolrQuery getSolrQuery(Date fromDate, Collection<String> fieldsToUpdate){
     final SolrQuery query = new SolrQuery("*:*");
-    query.addField("id");
+    query.addField(CommonParams.ID);
+    for (String field: fieldsToUpdate) {
+      query.addField(field);
+    }
+
     if (fromDate != null) {
       query.addFilterQuery("last_modified:[" + fromDate.toInstant().toString() + " TO NOW]");
     }
-    query.setSort("id", SolrQuery.ORDER.asc);
+    query.setSort(CommonParams.ID, SolrQuery.ORDER.asc);
     query.setRows(maxDocsPerQuery);
     return query;
   }
