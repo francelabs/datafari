@@ -1,3 +1,5 @@
+package solraccessors;
+
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -12,25 +14,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-public class DocumentsCollector {
-  final private SolrClient solrClient;
-  final private String solrCollection;
-  final private int maxDocsPerQuery;
+public class DocumentsCollector extends AbstractDocuments{
 
   public DocumentsCollector(final String baseSolrUrl, final String solrCollection, final int maxDocsPerQuery){
-    //TODO best for SolrCloud mode
-    /*final List<String> zkServers = new ArrayList<>();
-    //zkServers.add("zookeeper1:2181");
-    //zkServers.add("zookeeper2:2181");
-    zkServers.add("https://dev.datafari.com:2181"); // ?
-    solrClient = new CloudSolrClient.Builder(zkServers, Optional.of("/solr")).build();*/
-    solrClient = new Http2SolrClient.Builder(baseSolrUrl)
-        .withConnectionTimeout(10000, TimeUnit.MILLISECONDS)
-        .withIdleTimeout(60000, TimeUnit.MILLISECONDS)
-        .build();
-
-    this.solrCollection = solrCollection;
-    this.maxDocsPerQuery = maxDocsPerQuery;
+    super(baseSolrUrl, solrCollection, maxDocsPerQuery);
   }
 
   public ArrayList<String> collectDocuments(Date fromDate) throws SolrServerException, IOException {
