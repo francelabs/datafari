@@ -27,6 +27,9 @@ public class DocumentsCollector extends AbstractDocuments{
   }
 
   public ArrayList<SolrDocument> collectDocuments(Date fromDate) throws SolrServerException, IOException {
+    return collectDocuments(fromDate.toInstant().toString());
+  }
+  public ArrayList<SolrDocument> collectDocuments(String fromDate) throws SolrServerException, IOException {
     //Prepare query to Solr
     SolrQuery queryParams = getSolrQuery(fromDate, jobConfig.getFieldsOperation().keySet());
 
@@ -54,11 +57,12 @@ public class DocumentsCollector extends AbstractDocuments{
       cursorMark = nextCursorMark;
     }
 
+    solrClient.close();
     return docsResultList;
 
   }
 
-  private SolrQuery getSolrQuery(Date fromDate, Collection<String> fieldsToUpdate){
+  private SolrQuery getSolrQuery(String fromDate, Collection<String> fieldsToUpdate){
     final SolrQuery query = new SolrQuery("*:*");
     query.addField(CommonParams.ID);
     for (String field: fieldsToUpdate) {
@@ -66,7 +70,7 @@ public class DocumentsCollector extends AbstractDocuments{
     }
 
     if (fromDate != null) {
-      query.addFilterQuery("last_modified:[" + fromDate.toInstant().toString() + " TO NOW]");
+      query.addFilterQuery("last_modified:[" + fromDate + " TO NOW]");
     }
     query.setSort(CommonParams.ID, SolrQuery.ORDER.asc);
     query.setRows(maxDocsPerQuery);

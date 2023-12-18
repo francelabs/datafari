@@ -23,38 +23,30 @@ public class DocumentsUpdator extends AbstractDocuments {
     return jobConfig.getDestination();
   }
 
-  public UpdateResponse updateDocuments(List<SolrDocument> solrDocuments) {
+  public UpdateResponse updateDocuments(List<SolrDocument> solrDocuments) throws IOException, SolrServerException {
     List<SolrInputDocument> docsToUpdate = new ArrayList<>();
     //Prepare query to Solr with all documents to update.
-    int count=0;
     for (SolrDocument doc : solrDocuments){
       //Do not update documents that have all fields null except ID field.
       if(doc.size() > 1) {
         docsToUpdate.add(createSolrDocToUpdate(doc));
-        count++;
       }
     }
 
-    try {
+    UpdateResponse updateResponse = null;
+    if (!docsToUpdate.isEmpty()){
       UpdateRequest solrRequest = new UpdateRequest();
       // Do not reject all update batch for some version conflicts
       solrRequest.setParam("failOnVersionConflicts", "false");
       solrRequest.add(docsToUpdate);
 
-      UpdateResponse updateResponse = solrRequest.process(solrClient, solrCollection);
-      solrClient.close();
+      updateResponse = solrRequest.process(solrClient, solrCollection);
       //FIXME replace with log
-      System.out.println("Number of documents sent for update: " + count);
-      return updateResponse;
-    } catch (IOException e) {
-      //TODO logs
-      e.printStackTrace();
-    } catch (SolrServerException e) {
-      //TODO logs
-      e.printStackTrace();
+      System.out.println("Number of documents sent for update: " + docsToUpdate.size());
     }
 
-    return null;
+    solrClient.close();
+    return updateResponse;
   }
 
   private SolrInputDocument createSolrDocToUpdate(SolrDocument doc) {
