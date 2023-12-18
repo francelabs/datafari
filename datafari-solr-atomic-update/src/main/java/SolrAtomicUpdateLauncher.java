@@ -1,6 +1,5 @@
-import com.fasterxml.jackson.databind.ObjectMapper;
 import config.AtomicUpdateConfig;
-import config.CollectionPathConfig;
+import config.ConfigLoader;
 import config.JobConfig;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.UpdateResponse;
@@ -8,7 +7,6 @@ import org.apache.solr.common.SolrDocument;
 import solraccessors.DocumentsCollector;
 import solraccessors.DocumentsUpdator;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
@@ -25,8 +23,7 @@ public class SolrAtomicUpdateLauncher {
 
   public static void main(String[] args) throws SolrServerException, IOException {
     //Read config file
-    ObjectMapper objectMapper = new ObjectMapper();
-    AtomicUpdateConfig config = objectMapper.readValue(new File("/home/guylaine/IdeaProjects/datafariee/datafari-ce/datafari-solr-atomic-update/src/main/resources/atomicUpdate-cfg.json"), AtomicUpdateConfig.class);
+    AtomicUpdateConfig config = ConfigLoader.getConfig();
     JobConfig job = config.getJobs().get("SPACY");
 
     //"https://dev.datafari.com/solr"
