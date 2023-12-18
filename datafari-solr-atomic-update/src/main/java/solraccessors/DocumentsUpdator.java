@@ -57,31 +57,26 @@ public class DocumentsUpdator extends AbstractDocuments {
     return null;
   }
 
-  private SolrInputDocument createSolrDocToUpdate(SolrDocument doc){
+  private SolrInputDocument createSolrDocToUpdate(SolrDocument doc) {
     // create the atomic document
     SolrInputDocument atomicDoc = new SolrInputDocument();
-    //atomicDoc.addField(CommonParams.ID, doc.getFieldValue(CommonParams.ID));
+    atomicDoc.addField(CommonParams.ID, doc.getFieldValue(CommonParams.ID));
 
-    Map<String, Object> fieldModifier;
-    Object fieldValue;
-    for(String fieldName : doc.getFieldNames()){
-      fieldValue = doc.getFieldValue(fieldName);
+    // Retrieve fields to apply Atomic Update on and their operator
+    for (Map.Entry<String, String> fieldConfig : jobConfig.getFieldsOperation().entrySet()) {
+      String fieldName = fieldConfig.getKey();
+      String modifierName = fieldConfig.getValue();
+      Object fieldValue = doc.getFieldValue(fieldName);
 
-      //Retrieve the field modifier from job configuration
-      String modifierName = jobConfig.getFieldsOperation().get(fieldName);
-      if (modifierName != null){
-        fieldModifier = new HashMap<>(1);
-        fieldModifier.put(modifierName, fieldValue);
+      Map<String, Object> fieldModifier = new HashMap<>(1);
+      fieldModifier.put(modifierName, fieldValue);
 
-        //check for field mapping
-        String finalFieldName = jobConfig.getFieldsMapping().get(fieldName);
-        if (finalFieldName != null){
-          fieldName = finalFieldName;
-        }
-        atomicDoc.addField(fieldName, fieldModifier);
-      } else {
-        atomicDoc.addField(fieldName, fieldValue);
+      //check for field mapping
+      String finalFieldName = jobConfig.getFieldsMapping().get(fieldName);
+      if (finalFieldName != null) {
+        fieldName = finalFieldName;
       }
+      atomicDoc.addField(fieldName, fieldModifier);
     }
 
     // Optimistic Concurrency: the document must exist to be updated
