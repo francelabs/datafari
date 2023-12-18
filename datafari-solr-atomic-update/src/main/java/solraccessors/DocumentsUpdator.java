@@ -25,9 +25,14 @@ public class DocumentsUpdator extends AbstractDocuments {
 
   public UpdateResponse updateDocuments(List<SolrDocument> solrDocuments) {
     List<SolrInputDocument> docsToUpdate = new ArrayList<>();
+    //Prepare query to Solr with all documents to update.
+    int count=0;
     for (SolrDocument doc : solrDocuments){
-      //Prepare query to Solr
-      docsToUpdate.add(createSolrDocToUpdate(doc));
+      //Do not update documents that have all fields null except ID field.
+      if(doc.size() > 1) {
+        docsToUpdate.add(createSolrDocToUpdate(doc));
+        count++;
+      }
     }
 
     try {
@@ -38,6 +43,8 @@ public class DocumentsUpdator extends AbstractDocuments {
 
       UpdateResponse updateResponse = solrRequest.process(solrClient, solrCollection);
       solrClient.close();
+      //FIXME replace with log
+      System.out.println("Number of documents sent for update: " + count);
       return updateResponse;
     } catch (IOException e) {
       //TODO logs
@@ -56,20 +63,19 @@ public class DocumentsUpdator extends AbstractDocuments {
     //atomicDoc.addField(CommonParams.ID, doc.getFieldValue(CommonParams.ID));
 
     Map<String, Object> fieldModifier;
-    String fieldValue;
+    Object fieldValue;
     for(String fieldName : doc.getFieldNames()){
-      fieldValue = (String) doc.getFieldValue(fieldName);
+      fieldValue = doc.getFieldValue(fieldName);
 
-      //FIXME Work in progress
-      fieldModifier = new HashMap<>(1);
-      fieldModifier.put("set", "val_" + new Date().toInstant().toString());
-      if (CommonParams.ID.equals(fieldName)){
-        atomicDoc.addField(fieldName, fieldValue);
-
-      } else {
+      //Retrieve the field modifier from job configuration
+      String modifierName = jobConfig.getFieldsOperation().get(fieldName);
+      if (modifierName != null){
+        fieldModifier = new HashMap<>(1);
+        fieldModifier.put(modifierName, fieldValue);
         atomicDoc.addField(fieldName, fieldModifier);
+      } else {
+        atomicDoc.addField(fieldName, fieldValue);
       }
-
     }
 
     // Optimistic Concurrency: the document must exist to be updated
