@@ -72,6 +72,12 @@ public class DocumentsUpdator extends AbstractDocuments {
       if (modifierName != null){
         fieldModifier = new HashMap<>(1);
         fieldModifier.put(modifierName, fieldValue);
+
+        //check for field mapping
+        String finalFieldName = jobConfig.getFieldsMapping().get(fieldName);
+        if (finalFieldName != null){
+          fieldName = finalFieldName;
+        }
         atomicDoc.addField(fieldName, fieldModifier);
       } else {
         atomicDoc.addField(fieldName, fieldValue);

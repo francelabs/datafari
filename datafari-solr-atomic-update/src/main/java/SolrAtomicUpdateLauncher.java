@@ -35,7 +35,7 @@ public class SolrAtomicUpdateLauncher {
     //FIXME test code: retrieve parameters from config file.
     Calendar calendar = Calendar.getInstance(Locale.ROOT);
     calendar.add(Calendar.YEAR, -20); //20 pour Spacy et 6 pour les autres
-    Date fromDate = calendar.getTime();
+    Date fromDate = null; //calendar.getTime();
     //------------------------------------------------------
     List<SolrDocument> docsList = docCollect.collectDocuments(fromDate);
 
@@ -75,8 +75,8 @@ public class SolrAtomicUpdateLauncher {
       }
     }
 
-    for (SolrDocument doc : docsList){
+/*    for (SolrDocument doc : docsList){
       System.out.println(doc.getFieldValue("id") + " - " + doc.getFieldValue("entity_loc") + " - " + doc.getFieldValue("entity_product"));
-    }
+    }*/
   }
 }

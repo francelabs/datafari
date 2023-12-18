@@ -9,6 +9,7 @@ public class JobConfig {
   private CollectionPathConfig source;
   private CollectionPathConfig destination;
   private Map<String, String> fieldsOperation;
+  private Map<String, String> fieldsMapping;
 
   public CollectionPathConfig getSource() {
     return source;
@@ -34,5 +35,15 @@ public class JobConfig {
   @JsonAnySetter
   public void setFieldsOperation(Map<String, String> fieldsOperation) {
     this.fieldsOperation = fieldsOperation;
+  }
+
+  @JsonAnyGetter
+  public Map<String, String> getFieldsMapping() {
+    return fieldsMapping;
+  }
+
+  @JsonAnySetter
+  public void setFieldsMapping(Map<String, String> fieldsMapping) {
+    this.fieldsMapping = fieldsMapping;
   }
 }

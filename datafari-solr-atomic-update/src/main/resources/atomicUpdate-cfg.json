@@ -11,7 +11,11 @@
       },
       "fieldsOperation": {
         "entity_product": "set",
-        "entity_loc": "set"
+        "entity_loc": "set",
+        "last_author": "add-distinct"
+      },
+      "fieldsMapping": {
+        "last_author": "author"
       }
     },
     "OCR": {
