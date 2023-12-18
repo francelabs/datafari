@@ -24,6 +24,9 @@ import java.io.InterruptedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -66,6 +69,8 @@ import org.apache.manifoldcf.crawler.interfaces.IProcessActivity;
 import org.apache.manifoldcf.crawler.interfaces.ISeedingActivity;
 import org.apache.manifoldcf.crawler.system.Logging;
 import org.apache.manifoldcf.crawler.system.ManifoldCF;
+
+import javax.net.ssl.*;
 
 /**
  * This is the Web Crawler implementation of the IRepositoryConnector interface. This connector may be superceded by one that calls out to python, or by a entirely python Connector Framework,
@@ -1332,21 +1337,39 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
    * @return the url after redirection
    * @throws IOException
    */
-  public static String getFinalURL(String url) throws IOException, URISyntaxException {
-    URL formattedUrl = new URL(url);
-    URLConnection urlConnection = formattedUrl.openConnection();
-    HttpURLConnection con = (HttpURLConnection) urlConnection;
-    con.setInstanceFollowRedirects(false);
-    con.connect();
-    con.getInputStream();
+  public static String getFinalURL(String url) throws IOException, URISyntaxException, KeyManagementException {
+    try {
+      // Required to ignore SSL verification while retrieving final URL from redirections
+      TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+        @Override
+        public java.security.cert.X509Certificate[] getAcceptedIssuers() { return null; }
+        public void checkClientTrusted(X509Certificate[] certs, String authType) { }
+        public void checkServerTrusted(X509Certificate[] certs, String authType) { }
 
-    if (con.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM || con.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
-      String redirectUrl = con.getHeaderField("Location");
-      return getFinalURL(redirectUrl);
+      } };
+
+      SSLContext sc = SSLContext.getInstance("SSL");
+      sc.init(null, trustAllCerts, new java.security.SecureRandom());
+      HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+      URL formattedUrl = new URL(url);
+      URLConnection urlConnection = formattedUrl.openConnection();
+      HttpsURLConnection con = (HttpsURLConnection) urlConnection;
+      con.setInstanceFollowRedirects(false);
+      con.connect();
+      con.getInputStream();
+
+      if (con.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM || con.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
+        String redirectUrl = con.getHeaderField("Location");
+        return getFinalURL(redirectUrl);
+      }
+
+      final java.net.URI uri = new URI(url);
+      return uri.getHost();
+    } catch (IOException | NoSuchAlgorithmException e) {
+      throw new IOException(e);
+    } catch (KeyManagementException e) {
+      throw new KeyManagementException(e);
     }
-
-    final java.net.URI uri = new URI(url);
-    return uri.getHost();
   }
 
   protected static String extractMimeType(String contentType) {
@@ -5090,15 +5113,14 @@ public class WebcrawlerConnector extends org.apache.manifoldcf.crawler.connector
                 // In case of redirection, if "Force the inclusion of redirects" is set to true, we add the redirected url to seedHosts
                 try {
                   seedHosts.add(getFinalURL(urlCandidate));
-                } catch (IOException e) {
+                } catch (IOException | URISyntaxException | KeyManagementException e) {
                   // Skip the entry
+                  Logging.connectors.error("An error occured while retrieving the final URL");
                 }
               }
             }
 
-          } catch (final java.net.URISyntaxException e) {
-            // Skip the entry
-          } catch (final java.lang.IllegalArgumentException e) {
+          } catch (final URISyntaxException | IllegalArgumentException e) {
             // Skip the entry
           }
 
