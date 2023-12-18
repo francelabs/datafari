@@ -1,7 +1,7 @@
-package solraccessors;
+package com.francelabs.datafari.solraccessors;
 
-import config.CollectionPathConfig;
-import config.JobConfig;
+import com.francelabs.datafari.config.CollectionPathConfig;
+import com.francelabs.datafari.config.JobConfig;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 public class DocumentsCollector extends AbstractDocuments{
 

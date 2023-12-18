@@ -1,11 +1,13 @@
-import config.AtomicUpdateConfig;
-import config.ConfigLoader;
-import config.JobConfig;
+package com.francelabs.datafari;
+
+import com.francelabs.datafari.config.AtomicUpdateConfig;
+import com.francelabs.datafari.config.ConfigLoader;
+import com.francelabs.datafari.config.JobConfig;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrDocument;
-import solraccessors.DocumentsCollector;
-import solraccessors.DocumentsUpdator;
+import com.francelabs.datafari.solraccessors.DocumentsCollector;
+import com.francelabs.datafari.solraccessors.DocumentsUpdator;
 
 import java.io.IOException;
 import java.util.Calendar;

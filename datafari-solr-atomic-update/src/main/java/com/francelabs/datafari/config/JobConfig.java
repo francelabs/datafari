@@ -1,4 +1,4 @@
-package config;
+package com.francelabs.datafari.config;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;

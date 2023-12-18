@@ -1,4 +1,4 @@
-package config;
+package com.francelabs.datafari.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.francelabs.datafari.utils.Environment;

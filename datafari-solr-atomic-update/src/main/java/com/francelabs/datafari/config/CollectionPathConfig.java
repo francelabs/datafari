@@ -1,4 +1,4 @@
-package config;
+package com.francelabs.datafari.config;
 
 public class CollectionPathConfig {
   private String baseUrl;

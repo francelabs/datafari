@@ -1,7 +1,7 @@
-package solraccessors;
+package com.francelabs.datafari.solraccessors;
 
-import config.CollectionPathConfig;
-import config.JobConfig;
+import com.francelabs.datafari.config.CollectionPathConfig;
+import com.francelabs.datafari.config.JobConfig;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.UpdateResponse;

@@ -1,8 +1,7 @@
-package config;
+package com.francelabs.datafari.config;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonGetter;
 
 import java.util.Map;
 
