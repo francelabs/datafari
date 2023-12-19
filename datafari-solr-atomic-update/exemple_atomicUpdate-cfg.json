@@ -1,0 +1,44 @@
+// This is an exemple of config file. Remove all comments to use it.
+// This file is intended to be copied in [DATAFARI_HOME]/tomcat/conf folder with name atomicUpdate-cfg.json
+{
+  "jobs": {
+    "OCR": { // Arbitrary name for a job
+      "source": {
+        "baseUrl": "https://dev.datafari.com/solr",
+        "solrCollection": "OCR"
+      },
+      "destination": {
+        "baseUrl": "https://dev.datafari.com/solr",
+        "solrCollection": "FileShare"
+      },
+      "fieldsOperation": { // field and Atomic Update operation like: set, add, remove, etc...
+        "field_1": "set",
+        "field_2": "add",
+        "field_3": "add-distinct",
+        "field_4": "set"
+      },
+      "fieldsMapping": { // Optional: to specify a mapping between source and destination collections
+        "field_3": "dest_field_1",
+        "field_2": "dest_field_2"
+      }
+    },
+    "SPACY": {
+      "source": {
+        "baseUrl": "https://dev.datafari.com/solr",
+        "solrCollection": "Spacy"
+      },
+      "destination": {
+        "baseUrl": "https://dev.datafari.com/solr",
+        "solrCollection": "FileShare"
+      },
+      "fieldsOperation": {
+        "entity_product": "set",
+        "entity_loc": "set",
+        "last_author": "add-distinct"
+      },
+      "fieldsMapping": {
+        "last_author": "author"
+      }
+    }
+  }
+}
