@@ -10,9 +10,8 @@ import java.util.Date;
 import java.util.Properties;
 
 public class JobSaver {
-  private static final String ROOT_PATH = Thread.currentThread().getContextClassLoader().getResource("").getPath();
-  private static final String FILENAME = ROOT_PATH + "atomicUpdateLastExec";
-  private static Properties jobsInfo = new Properties();
+  private static final String FILENAME = "./atomicUpdateLastExec";
+  private static final Properties jobsInfo = new Properties();
   private final static Logger LOGGER = LogManager.getLogger(JobSaver.class.getName());
 
   static {
