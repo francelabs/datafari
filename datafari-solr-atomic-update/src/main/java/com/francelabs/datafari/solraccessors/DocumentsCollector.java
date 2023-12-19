@@ -16,9 +16,10 @@ import java.util.Collection;
 import java.util.Date;
 
 public class DocumentsCollector extends AbstractDocuments{
+  private String cursorMark = null;
 
-  public DocumentsCollector(JobConfig jobConfig, int maxDocsPerQuery) {
-    super(jobConfig, maxDocsPerQuery);
+  public DocumentsCollector(JobConfig jobConfig) {
+    super(jobConfig);
   }
 
   @Override
@@ -34,31 +35,23 @@ public class DocumentsCollector extends AbstractDocuments{
     SolrQuery queryParams = getSolrQuery(fromDate, jobConfig.getFieldsOperation().keySet());
 
     //Retrieve documents in x-packet batches (x = maxDocsPerQuery).
-    String cursorMark = CursorMarkParams.CURSOR_MARK_START;
-    ArrayList<SolrDocument> docsResultList = new ArrayList<>();
-    boolean done = false;
-    String nextCursorMark;
-    while (! done) {
-      queryParams.set(CursorMarkParams.CURSOR_MARK_PARAM, cursorMark);
-      //Send the query
-      QueryResponse response = solrClient.query(solrCollection,queryParams);
-
-      //Retrieve the next results page cursor
-      nextCursorMark = response.getNextCursorMark();
-
-      //Retrieve the documents list
-      SolrDocumentList documents = response.getResults();
-      for(SolrDocument document : documents) {
-        docsResultList.add(document);
-      }
-      if (cursorMark.equals(nextCursorMark)) {
-        done = true;
-      }
-      cursorMark = nextCursorMark;
+    if (cursorMark == null) {
+      cursorMark = CursorMarkParams.CURSOR_MARK_START;
     }
+    queryParams.set(CursorMarkParams.CURSOR_MARK_PARAM, cursorMark);
+    //Send the query
+    QueryResponse response = solrClient.query(solrCollection,queryParams);
 
-    solrClient.close();
-    return docsResultList;
+    //Retrieve the next results page cursor
+    String nextCursorMark = response.getNextCursorMark();
+
+    //Retrieve the documents list
+    SolrDocumentList documents = response.getResults();
+    if (cursorMark.equals(nextCursorMark)) {
+      solrClient.close();
+    }
+    cursorMark = nextCursorMark;
+    return documents;
 
   }
 

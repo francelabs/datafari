@@ -10,6 +10,7 @@ public class JobConfig {
   private CollectionPathConfig destination;
   private Map<String, String> fieldsOperation;
   private Map<String, String> fieldsMapping;
+  private int nbDocsPerBatch;
 
   public CollectionPathConfig getSource() {
     return source;
@@ -45,5 +46,13 @@ public class JobConfig {
   @JsonAnySetter
   public void setFieldsMapping(Map<String, String> fieldsMapping) {
     this.fieldsMapping = fieldsMapping;
+  }
+
+  public int getNbDocsPerBatch() {
+    return nbDocsPerBatch;
+  }
+
+  public void setNbDocsPerBatch(int nbDocsPerBatch) {
+    this.nbDocsPerBatch = nbDocsPerBatch;
   }
 }

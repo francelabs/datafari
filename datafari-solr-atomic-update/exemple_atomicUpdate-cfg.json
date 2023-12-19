@@ -17,6 +17,7 @@
         "field_3": "add-distinct",
         "field_4": "set"
       },
+      "nbDocsPerBatch": 1000, // The documents are selected and updated per batches. Each batch is stored in RAM so this number depends on the documents size.
       "fieldsMapping": { // Optional: to specify a mapping between source and destination collections
         "field_3": "dest_field_1",
         "field_2": "dest_field_2"
@@ -31,6 +32,7 @@
         "baseUrl": "https://dev.datafari.com/solr",
         "solrCollection": "FileShare"
       },
+      "nbDocsPerBatch": 2000,
       "fieldsOperation": {
         "entity_product": "set",
         "entity_loc": "set",
@@ -40,5 +42,7 @@
         "last_author": "author"
       }
     }
+  },
+  "generalParams": {
   }
 }

@@ -15,8 +15,6 @@ import java.util.Date;
 import java.util.List;
 
 public class SolrAtomicUpdateLauncher {
-  final static int MAX_DOC_PER_QUERY = 1000;
-
   public static void main(String[] args) throws SolrServerException, IOException {
     //Read jobs config file
     AtomicUpdateConfig config = ConfigLoader.getConfig();
@@ -27,13 +25,19 @@ public class SolrAtomicUpdateLauncher {
     System.out.println(fromDate);
     Date startDate = new Date();
 
-    DocumentsCollector docCollect = new DocumentsCollector(job, MAX_DOC_PER_QUERY);
-    List<SolrDocument> docsList = docCollect.collectDocuments(fromDate);
 
-    // Update documents
-    UpdateResponse updateResponse = new DocumentsUpdator(job, MAX_DOC_PER_QUERY)
-        .updateDocuments(docsList);
-    System.out.println(updateResponse);
+    DocumentsCollector docCollect = new DocumentsCollector(job);
+    List<SolrDocument> docsList;
+    do {
+      docsList = docCollect.collectDocuments(fromDate);
+      if (!docsList.isEmpty()) {
+        System.out.println(docsList.size());
+        // Update documents
+        UpdateResponse updateResponse = new DocumentsUpdator(job)
+            .updateDocuments(docsList);
+        System.out.println(updateResponse);
+      }
+    } while (!docsList.isEmpty());
 
     // Write the start execution date of the job
     JobSaver.writeExecutionDate(args[0], startDate);

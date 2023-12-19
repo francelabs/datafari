@@ -14,13 +14,13 @@ public abstract class AbstractDocuments {
 
   final protected JobConfig jobConfig;
 
-  public AbstractDocuments(final JobConfig jobConfig, final int maxDocsPerQuery) {
+  public AbstractDocuments(final JobConfig jobConfig) {
     this.jobConfig = jobConfig;
     final CollectionPathConfig collectionPath = getCollectionPath();
     this.solrClient = getSolrClient(collectionPath.getBaseUrl());
 
     this.solrCollection = collectionPath.getSolrCollection();
-    this.maxDocsPerQuery = maxDocsPerQuery;
+    this.maxDocsPerQuery = jobConfig.getNbDocsPerBatch();
 
   }
 

@@ -14,8 +14,8 @@ import java.util.*;
 
 public class DocumentsUpdator extends AbstractDocuments {
 
-  public DocumentsUpdator(JobConfig jobConfig, int maxDocsPerQuery) {
-    super(jobConfig, maxDocsPerQuery);
+  public DocumentsUpdator(JobConfig jobConfig) {
+    super(jobConfig);
   }
 
   @Override
