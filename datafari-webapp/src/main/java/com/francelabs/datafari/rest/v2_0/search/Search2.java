@@ -118,27 +118,30 @@ public class Search2 extends HttpServlet {
    */
   private void switchDocURLToURLAPI(final JSONObject searchResponse, final HttpServletRequest request, final String searchEndpoint) {
     final JSONObject responseObj = (JSONObject) searchResponse.get("response");
-    final JSONArray docsArray = (JSONArray) responseObj.get("docs");
-    for (final Object docObj : docsArray) {
-      final JSONObject jsonDoc = (JSONObject) docObj;
-      final String url = (String) jsonDoc.get("url");
-      if (url != null) {
-        // temper with the URL to point on our URL endpoint
-        // Also add a path array giving path information for display purposes
-        final StringBuffer currentURL = request.getRequestURL();
+    if (responseObj != null) {
+      final JSONArray docsArray = (JSONArray) responseObj.get("docs");
+      for (final Object docObj : docsArray) {
+        final JSONObject jsonDoc = (JSONObject) docObj;
+        final String url = (String) jsonDoc.get("url");
+        if (url != null) {
+          // temper with the URL to point on our URL endpoint
+          // Also add a path array giving path information for display purposes
+          final StringBuffer currentURL = request.getRequestURL();
 
-        // Get query id if available
-        String queryId = request.getParameter("id");
-        if (request.getAttribute("id") != null) {
-          queryId = (String) request.getAttribute("id");
+          // Get query id if available
+          String queryId = request.getParameter("id");
+          if (request.getAttribute("id") != null) {
+            queryId = (String) request.getAttribute("id");
+          }
+
+          String newUrl = currentURL.substring(0, currentURL.indexOf(searchEndpoint));
+          newUrl += "/rest/v2.0/url?url=" + URLEncoder.encode(url, StandardCharsets.UTF_8);
+          newUrl += "&id=" + queryId;
+          jsonDoc.put("click_url", newUrl);
         }
-
-        String newUrl = currentURL.substring(0, currentURL.indexOf(searchEndpoint));
-        newUrl += "/rest/v2.0/url?url=" + URLEncoder.encode(url, StandardCharsets.UTF_8);
-        newUrl += "&id=" + queryId;
-        jsonDoc.put("click_url", newUrl);
       }
     }
+
   }
 
   @GetMapping(value = "/rest/v2.0/search/*", produces = "application/json;charset=UTF-8")
