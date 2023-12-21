@@ -15,11 +15,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-public class DocumentsCollector extends AbstractDocuments{
+public class DocumentsCollector extends AbstractDocuments {
+  private static DocumentsCollector thisInstance = null;
   private String cursorMark = null;
 
-  public DocumentsCollector(JobConfig jobConfig) {
-    super(jobConfig);
+  public static DocumentsCollector getInstance(JobConfig jobConfig) throws IOException {
+    if (thisInstance == null){
+      thisInstance = new DocumentsCollector();
+    }
+    thisInstance.setJobConfig(jobConfig);
+    return thisInstance;
   }
 
   @Override
@@ -55,6 +60,12 @@ public class DocumentsCollector extends AbstractDocuments{
 
   }
 
+  /**
+   *
+   * @param fromDate if null no selection from the last_modified field of documents.
+   * @param fieldsToUpdate set of Solr fields used to update the destination documents.
+   * @return the Solr query created to be sent to Solr
+   */
   private SolrQuery getSolrQuery(String fromDate, Collection<String> fieldsToUpdate){
     final SolrQuery query = new SolrQuery("*:*");
     query.addField(CommonParams.ID);

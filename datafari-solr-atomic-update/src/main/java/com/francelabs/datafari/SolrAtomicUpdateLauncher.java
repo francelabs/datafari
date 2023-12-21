@@ -4,18 +4,16 @@ import com.francelabs.datafari.config.AtomicUpdateConfig;
 import com.francelabs.datafari.config.ConfigLoader;
 import com.francelabs.datafari.config.JobConfig;
 import com.francelabs.datafari.save.JobSaver;
+import com.francelabs.datafari.save.Status;
 import com.francelabs.datafari.solraccessors.DocumentsCollector;
 import com.francelabs.datafari.solraccessors.DocumentsUpdator;
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrDocument;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class SolrAtomicUpdateLauncher {
   /**
@@ -64,31 +62,40 @@ public class SolrAtomicUpdateLauncher {
     System.out.println("Select documents modified from: " + fromDate + " (null indicates a full crawl))");
     return fromDate;
   }
-  public static void main(String[] args) throws SolrServerException, IOException, ParseException {
+  public static void main(String[] args) throws ParseException {
+    String jobName = args[0];
     //Read jobs config file
     AtomicUpdateConfig config = ConfigLoader.getConfig();
-    JobConfig job = config.getJobs().get(args[0]);
+    JobConfig job = config.getJobs().get(jobName);
 
     String fromDate = getStartDateForDocumentsSelection(args);
 
-    // Prepare start date of the job to be written at the end if job succeeded
-    Date startDate = new Date();
+    JobSaver jobSaver = new JobSaver(jobName);
+    Status jobStatus = jobSaver.getJobLastStatus();
+    if (Status.FAILED.equals(jobStatus)){
+      fromDate = null;
+    } else if (Status.RUNNING.equals(jobStatus)){
+      return;
+    }
 
 
-    DocumentsCollector docCollect = new DocumentsCollector(job);
-    List<SolrDocument> docsList;
-    do {
-      docsList = docCollect.collectDocuments(fromDate);
-      if (!docsList.isEmpty()) {
+    jobSaver.notifyJobRunning();
+    try ( DocumentsCollector docCollect = DocumentsCollector.getInstance(job);
+          DocumentsUpdator docUpdator = DocumentsUpdator.getInstance(job)) {
+      List<SolrDocument> docsList;
+      do {
+        docsList = docCollect.collectDocuments(fromDate);
         System.out.println(docsList.size());
-        // Update documents
-        UpdateResponse updateResponse = new DocumentsUpdator(job)
-            .updateDocuments(docsList);
-        System.out.println(updateResponse);
-      }
-    } while (!docsList.isEmpty());
+        if (!docsList.isEmpty()) {
+          // Update documents
+          UpdateResponse updateResponse = docUpdator.updateDocuments(docsList);
+          System.out.println(updateResponse);
+        }
+      } while (!docsList.isEmpty());
 
-    // Write the start execution date of the job
-    JobSaver.writeExecutionDate(args[0], startDate);
+      jobSaver.notifyJobDone();
+    } catch (Exception e){
+      jobSaver.notifyJobFailed();
+    }
   }
 }

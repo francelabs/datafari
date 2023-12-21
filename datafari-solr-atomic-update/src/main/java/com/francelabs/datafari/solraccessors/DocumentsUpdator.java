@@ -13,9 +13,14 @@ import java.io.IOException;
 import java.util.*;
 
 public class DocumentsUpdator extends AbstractDocuments {
+  private static DocumentsUpdator thisInstance = null;
 
-  public DocumentsUpdator(JobConfig jobConfig) {
-    super(jobConfig);
+  public static DocumentsUpdator getInstance(JobConfig jobConfig) throws IOException {
+    if (thisInstance == null){
+      thisInstance = new DocumentsUpdator();
+    }
+    thisInstance.setJobConfig(jobConfig);
+    return thisInstance;
   }
 
   @Override
@@ -45,7 +50,6 @@ public class DocumentsUpdator extends AbstractDocuments {
       System.out.println("Number of documents sent for update: " + docsToUpdate.size());
     }
 
-    solrClient.close();
     return updateResponse;
   }
 

@@ -5,18 +5,22 @@ import com.francelabs.datafari.config.JobConfig;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.Http2SolrClient;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-public abstract class AbstractDocuments {
-  final protected SolrClient solrClient;
-  final protected String solrCollection;
-  final protected int maxDocsPerQuery;
+public abstract class AbstractDocuments implements AutoCloseable{
+  protected SolrClient solrClient;
+  protected String solrCollection;
+  protected int maxDocsPerQuery;
 
-  final protected JobConfig jobConfig;
+  protected JobConfig jobConfig;
 
-  public AbstractDocuments(final JobConfig jobConfig) {
+  public void setJobConfig(final JobConfig jobConfig) throws IOException {
     this.jobConfig = jobConfig;
     final CollectionPathConfig collectionPath = getCollectionPath();
+    if (solrClient != null){
+        solrClient.close();
+    }
     this.solrClient = getSolrClient(collectionPath.getBaseUrl());
 
     this.solrCollection = collectionPath.getSolrCollection();
@@ -39,4 +43,9 @@ public abstract class AbstractDocuments {
         .build();
 
   }
+  @Override
+  public void close() throws Exception {
+    solrClient.close();
+  }
+
 }
