@@ -10,12 +10,15 @@ import com.francelabs.datafari.solraccessors.DocumentsUpdator;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
 public class SolrAtomicUpdateLauncher {
+  private static final Logger LOGGER = LoggerFactory.getLogger(SolrAtomicUpdateLauncher.class);
   /**
    * Get the date from which to select documents. This date is intended to be used with the last_modified field of the document.
    * Uses arguments from main method, with:
@@ -50,16 +53,18 @@ public class SolrAtomicUpdateLauncher {
           Date dFromDate = DateUtils.parseDate(args[1],datePatterns);
           fromDate = dFromDate.toInstant().toString();
         } catch (Exception e){
-          System.out.println("Unable to parse date for the \"fromDate\" = \"" + fromDate + "\". Formats expected: ");
+          StringBuilder message = new StringBuilder("Unable to parse date for the \"fromDate\" = \"" + fromDate + "\". Formats expected: ");
           for (String pattern : datePatterns){
-            System.out.println("- " + pattern);
+            message.append("\n- " );
+            message.append(pattern);
           }
+          LOGGER.error(message.toString());
           throw e;
         }
       }
     }
 
-    System.out.println("Select documents modified from: " + fromDate + " (null indicates a full crawl))");
+    LOGGER.info(args[0] + " Job: Select documents modified from: " + fromDate + " (null indicates a full crawl))");
     return fromDate;
   }
   public static void main(String[] args) throws ParseException {
@@ -67,6 +72,7 @@ public class SolrAtomicUpdateLauncher {
     //Read jobs config file
     AtomicUpdateConfig config = ConfigLoader.getConfig();
     JobConfig job = config.getJobs().get(jobName);
+    LOGGER.info(jobName + " Job started !");
 
     String fromDate = getStartDateForDocumentsSelection(args);
 
@@ -74,27 +80,31 @@ public class SolrAtomicUpdateLauncher {
     Status jobStatus = jobSaver.getJobLastStatus();
     if (Status.FAILED.equals(jobStatus)){
       fromDate = null;
+      LOGGER.info(jobName + " Job: Last state was " + Status.FAILED + ", so a full crawl is done for this run.");
     } else if (Status.RUNNING.equals(jobStatus)){
       return;
     }
 
 
     jobSaver.notifyJobRunning();
+    int nbDocsProcessed = 0;
     try ( DocumentsCollector docCollect = DocumentsCollector.getInstance(job);
           DocumentsUpdator docUpdator = DocumentsUpdator.getInstance(job)) {
       List<SolrDocument> docsList;
       do {
         docsList = docCollect.collectDocuments(fromDate);
-        System.out.println(docsList.size());
         if (!docsList.isEmpty()) {
           // Update documents
           UpdateResponse updateResponse = docUpdator.updateDocuments(docsList);
-          System.out.println(updateResponse);
+          if (updateResponse.getStatus() == 0) {
+            nbDocsProcessed = nbDocsProcessed + docsList.size();
+          }
         }
       } while (!docsList.isEmpty());
 
       jobSaver.notifyJobDone();
     } catch (Exception e){
+      LOGGER.error(jobName + " Job: Total number of documents processed: " + nbDocsProcessed, e);
       jobSaver.notifyJobFailed();
     }
   }

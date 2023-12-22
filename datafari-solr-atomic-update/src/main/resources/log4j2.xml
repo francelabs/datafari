@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+    <Appenders>
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout>
+                <Pattern>%5p %d{yyyy-MM-dd'T'HH:mm:ss'Z'} (%t) - Datafari-jar|Atomic Update|%c{3}|%m%n</Pattern>
+            </PatternLayout>
+        </Console>
+
+        <!-- FIXME remplacer le chemin en dur par ${env:DATAFARI_LOGS}/atomic-update.log -->
+        <RollingFile
+                name="RollingFile"
+                fileName="/opt/datafari/logs/atomic-update.log"
+                filePattern="/opt/datafari/logs/atomic-update.log.%d{yyyy-MM-dd}.log" >
+            <PatternLayout>
+                <Pattern>
+                    %5p %d{yyyy-MM-dd'T'HH:mm:ss'Z'} (%t) - Datafari-jar|Atomic Update|%c{3}|%m%n
+                </Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="5MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10" />
+        </RollingFile>
+
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="STDOUT"/>
+            <AppenderRef ref="RollingFile"/>
+        </Root>
+    </Loggers>
+</Configuration>

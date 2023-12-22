@@ -2,6 +2,7 @@ package com.francelabs.datafari.config;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Map;
 
@@ -11,6 +12,8 @@ public class JobConfig {
   private Map<String, String> fieldsOperation;
   private Map<String, String> fieldsMapping;
   private int nbDocsPerBatch;
+  @JsonIgnore
+  private String jobName;
 
   public CollectionPathConfig getSource() {
     return source;
@@ -54,5 +57,13 @@ public class JobConfig {
 
   public void setNbDocsPerBatch(int nbDocsPerBatch) {
     this.nbDocsPerBatch = nbDocsPerBatch;
+  }
+
+  public String getJobName() {
+    return jobName;
+  }
+
+  public void setJobName(String jobName) {
+    this.jobName = jobName;
   }
 }

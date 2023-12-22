@@ -1,7 +1,6 @@
 package com.francelabs.datafari.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.francelabs.datafari.utils.Environment;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,9 +12,9 @@ public class ConfigLoader {
   public static AtomicUpdateConfig getConfig(){
     if (config == null){
 
-      String configFileAbsolutePath = Environment.getEnvironmentVariable("MAIN_DATAFARI_CONFIG_HOME");
+      String configFileAbsolutePath = System.getenv("MAIN_DATAFARI_CONFIG_HOME");
       if (configFileAbsolutePath == null){
-        configFileAbsolutePath = Environment.getEnvironmentVariable("CONFIG_HOME");
+        configFileAbsolutePath = System.getenv("CONFIG_HOME");
         if (configFileAbsolutePath == null){
           configFileAbsolutePath = "/opt/datafari/tomcat/conf";
         }

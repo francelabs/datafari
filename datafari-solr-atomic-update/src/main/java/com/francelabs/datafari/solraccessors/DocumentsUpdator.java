@@ -8,12 +8,15 @@ import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.CommonParams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
 
 public class DocumentsUpdator extends AbstractDocuments {
   private static DocumentsUpdator thisInstance = null;
+  private static final Logger LOGGER = LoggerFactory.getLogger(DocumentsUpdator.class);
 
   public static DocumentsUpdator getInstance(JobConfig jobConfig) throws IOException {
     if (thisInstance == null){
@@ -28,7 +31,7 @@ public class DocumentsUpdator extends AbstractDocuments {
     return jobConfig.getDestination();
   }
 
-  public UpdateResponse updateDocuments(List<SolrDocument> solrDocuments) throws IOException, SolrServerException {
+  public UpdateResponse updateDocuments(List<SolrDocument> solrDocuments) throws SolrServerException, IOException {
     List<SolrInputDocument> docsToUpdate = new ArrayList<>();
     //Prepare query to Solr with all documents to update.
     for (SolrDocument doc : solrDocuments){
@@ -45,9 +48,19 @@ public class DocumentsUpdator extends AbstractDocuments {
       solrRequest.setParam("failOnVersionConflicts", "false");
       solrRequest.add(docsToUpdate);
 
-      updateResponse = solrRequest.process(solrClient, solrCollection);
-      //FIXME replace with log
-      System.out.println("Number of documents sent for update: " + docsToUpdate.size());
+      try {
+        updateResponse = solrRequest.process(solrClient, solrCollection);
+
+      } catch (Exception e) {
+        LOGGER.error(jobConfig.getJobName() + " Job:", e);
+        LOGGER.error(jobConfig.getJobName() + " Job: was sending these documents : number = " + docsToUpdate.size());
+        for (SolrInputDocument doc :docsToUpdate){
+          LOGGER.error(jobConfig.getJobName() + " Job: \t" + doc.toString());
+        }
+        LOGGER.error(jobConfig.getJobName() + " Job: Solr response: " + updateResponse);
+        throw e;
+      }
+
     }
 
     return updateResponse;

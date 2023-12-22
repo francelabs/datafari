@@ -9,6 +9,8 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.CursorMarkParams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ import java.util.Date;
 
 public class DocumentsCollector extends AbstractDocuments {
   private static DocumentsCollector thisInstance = null;
+  private static final Logger LOGGER = LoggerFactory.getLogger(DocumentsCollector.class);
   private String cursorMark = null;
 
   public static DocumentsCollector getInstance(JobConfig jobConfig) throws IOException {
@@ -45,7 +48,14 @@ public class DocumentsCollector extends AbstractDocuments {
     }
     queryParams.set(CursorMarkParams.CURSOR_MARK_PARAM, cursorMark);
     //Send the query
-    QueryResponse response = solrClient.query(solrCollection,queryParams);
+    QueryResponse response = null;
+    try {
+      response = solrClient.query(solrCollection,queryParams);
+    } catch (Exception e) {
+      LOGGER.error("Query to the server : " + queryParams, e);
+      LOGGER.error(jobConfig.getJobName() + " Job: Solr response: " + response);
+      throw e;
+    }
 
     //Retrieve the next results page cursor
     String nextCursorMark = response.getNextCursorMark();

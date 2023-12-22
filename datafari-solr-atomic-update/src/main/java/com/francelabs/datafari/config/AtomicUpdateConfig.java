@@ -15,5 +15,8 @@ public class AtomicUpdateConfig {
   @JsonAnySetter
   public void setJobs(Map<String, JobConfig> jobs) {
     this.jobs = jobs;
+    for (Map.Entry<String, JobConfig> jobEntry : this.jobs.entrySet()){
+      jobEntry.getValue().setJobName(jobEntry.getKey());
+    }
   }
 }

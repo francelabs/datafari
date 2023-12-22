@@ -1,7 +1,8 @@
 package com.francelabs.datafari.save;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -16,7 +17,7 @@ import java.util.Properties;
 public class JobSaver {
   private static final String FILENAME = "./atomicUpdateLastExec";
   private static final Properties jobsInfo = new Properties();
-  private static final Logger LOGGER = LogManager.getLogger(JobSaver.class.getName());
+  private static final Logger LOGGER = LoggerFactory.getLogger(JobSaver.class);
   private static final String STATUS_KEY = ".STATUS";
   private static final String LAST_EXEC_KEY = ".LAST_EXEC";
   private String currentJobName;
@@ -32,7 +33,8 @@ public class JobSaver {
 
   public static String getExecutionDate(String jobName){
     String fromDate = jobsInfo.getProperty(jobName+LAST_EXEC_KEY);
-    if (fromDate.isEmpty()){
+
+    if (StringUtils.isBlank(fromDate)){
       fromDate = null;
     }
     return fromDate;
@@ -64,6 +66,7 @@ public class JobSaver {
   }
   private void writeStatus(Status status){
     writeProperty(currentJobName+STATUS_KEY, status.toString());
+    LOGGER.info("Job " + currentJobName + " " + status);
   }
   private void writeExecutionDate(){
     writeProperty(currentJobName+LAST_EXEC_KEY, startedDate.toInstant().toString());
@@ -74,6 +77,7 @@ public class JobSaver {
     try {
       jobsInfo.store(new FileWriter(FILENAME), "");
     } catch (IOException e) {
+      LOGGER.error("Error trying to write to: " + FILENAME + " file.");
       throw new RuntimeException(e);
     }
 
