@@ -688,11 +688,8 @@ public class SolrIngesterConnector extends BaseRepositoryConnector {
 
               // TODO
               // For now you can indicate the date field of the source. But the date field of the target is hardcoded and its value is last_modified
-              if (document.getFieldValues(dateField).size() > 1) { // ensure that the date field is single valued
-                doc.addField(date_target_field, (Date) document.getFirstValue(dateField));
-              }
-              else {
-                doc.addField(date_target_field, (Date) document.getFieldValue(dateField));
+             if (document.get(dateField)!= null) {
+               doc.addField(date_target_field, (Date) document.getFirstValue(dateField));
               }
               doc.setFileName((String) document.getFieldValue(idFieldName));
 
