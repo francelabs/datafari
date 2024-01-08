@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.francelabs.datafari.utils.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
@@ -111,8 +112,8 @@ public class AddUser extends HttpServlet {
         logger.error(e);
         allOK = false;
       }
-    } else if (request.getParameter(UserDataService.USERNAMECOLUMN) != null && request.getParameter(UserDataService.PASSWORDCOLUMN) != null
-        && request.getParameter(UserDataService.ROLECOLUMN + "[]") != null) {
+    } else if (hasValidUsernameAndPassword(request.getParameter(UserDataService.USERNAMECOLUMN), request.getParameter(UserDataService.PASSWORDCOLUMN))
+            && request.getParameter(UserDataService.ROLECOLUMN + "[]") != null) {
       final User user = new User(request.getParameter(UserDataService.USERNAMECOLUMN).toString(), request.getParameter(UserDataService.PASSWORDCOLUMN).toString(), false);
       try {
         user.signup(Arrays.asList(request.getParameterValues(UserDataService.ROLECOLUMN + "[]")));
@@ -147,6 +148,12 @@ public class AddUser extends HttpServlet {
 
       AuditLogUtil.log("Cassandra", authenticatedUserName, request.getRemoteAddr(), "Error trying to create user " + createdUser + " with roles " + userRoles);
     }
+  }
+
+  boolean hasValidUsernameAndPassword(String username, String password) {
+    return username != null
+            && password != null
+            && !StringUtils.hasUppercaseLetters(username);
   }
 
 }
