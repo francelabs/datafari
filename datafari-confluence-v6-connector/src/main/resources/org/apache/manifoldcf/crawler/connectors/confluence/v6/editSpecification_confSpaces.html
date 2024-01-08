@@ -1,0 +1,74 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+
+#if($TabName == $ResourceBundle.getString('ConfluenceRepositoryConnector.Spaces') && ${SeqNum} == ${SelectedNum})
+
+<table class="displaytable">
+  <tr><td class="separator" colspan="2"><hr/></td></tr>
+
+  #set($spacecounter = 0)
+  #foreach($space in $SPACES)
+
+  <tr>
+    <td class="description">
+      <input type="hidden" name="s${SeqNum}_spaceop_$spacecounter" value=""/>
+      <input type="hidden" name="s${SeqNum}_space_$spacecounter" value="$Encoder.attributeEscape($space)"/>
+      <a name="s${SeqNum}_tokenspace_$spacecounter">
+        <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('ConfluenceRepositoryConnector.Delete'))" onClick='Javascript:s${SeqNum}_SpecDeleteSpace($spacecounter)' alt="$Encoder.attributeEscape($ResourceBundle.getString('ConfluenceRepositoryConnector.DeleteSpace'))$spacecounter"/>
+      </a>
+    </td>
+    <td class="value">$Encoder.bodyEscape($space)</td>
+  </tr>
+
+    #set($spacecounter = $spacecounter + 1)
+  #end
+
+  #set($nextspace = $spacecounter + 1)
+
+  #if($spacecounter == 0)
+  <tr>
+    <td class="message" colspan="2">$Encoder.bodyEscape($ResourceBundle.getString('ConfluenceRepositoryConnector.NoSpacesConfigured'))</td>
+  </tr>
+  #end
+
+  <tr><td class="lightseparator" colspan="2"><hr/></td></tr>
+  
+  <tr>
+    <td class="description">
+      <input type="hidden" name="s${SeqNum}_spacescount" value="$spacecounter"/>
+      <input type="hidden" name="s${SeqNum}_spaceop" value=""/>
+      <a name="space_$spacecounter">
+        <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('ConfluenceRepositoryConnector.Add'))" onClick='Javascript:s${SeqNum}_SpecAddSpace($nextspace)' alt="$Encoder.attributeEscape($ResourceBundle.getString('ConfluenceRepositoryConnector.AddSpace'))"/>
+      </a>
+    </td>
+    <td class="value">
+      <input type="text" size="30" name="s${SeqNum}_space" value=""/>
+    </td>
+  </tr>
+</table>
+
+#else
+
+  #set($spacecounter = 0)
+  #foreach($space in $SPACES)
+<input type="hidden" name="s${SeqNum}_space_$spacecounter" value="$Encoder.attributeEscape($space)"/>
+    #set($spacecounter = $spacecounter + 1)
+  #end
+<input type="hidden" name="s${SeqNum}_spacescount" value="$spacecounter"/>
+
+#end

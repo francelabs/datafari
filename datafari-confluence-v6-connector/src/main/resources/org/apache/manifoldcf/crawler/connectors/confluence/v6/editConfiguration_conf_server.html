@@ -1,0 +1,200 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+#if($TABNAME == $ResourceBundle.getString('ConfluenceRepositoryConnector.Server'))
+
+<table class="displaytable">
+  <tr><td class="separator" colspan="2"><hr/></td></tr>
+
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('ConfluenceRepositoryConnector.ProtocolColon'))</nobr>
+    </td>
+    <td class="value">
+      <select size="2" name="confluence_protocol">
+#if($CONFLUENCE_PROTOCOL == 'http')
+        <option value="http" selected="true">http</option>
+#else
+        <option value="http">http</option>
+#end
+#if($CONFLUENCE_PROTOCOL == 'https')
+        <option value="https" selected="true">https</option>
+#else
+        <option value="https">https</option>
+#end
+      </select>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('ConfluenceRepositoryConnector.HostColon'))</nobr>
+    </td>
+    <td class="value">
+      <input size="32" type="text" id="confluence_host" name="confluence_host" value="$Encoder.attributeEscape($CONFLUENCE_HOST)" />
+    </td>
+  </tr>
+
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('ConfluenceRepositoryConnector.PortColon'))</nobr>
+    </td>
+    <td class="value">
+      <input size="5" type="text" id="confluence_port" name="confluence_port" value="$Encoder.attributeEscape($CONFLUENCE_PORT)" />
+    </td>
+  </tr>
+
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('ConfluenceRepositoryConnector.PathColon'))</nobr>
+    </td>
+    <td class="value">
+      <input size="32" type="text" id="confluence_path" name="confluence_path" value="$Encoder.attributeEscape($CONFLUENCE_PATH)" />
+    </td>
+  </tr>
+  
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('ConfluenceRepositoryConnector.SocketTimeoutColon'))</nobr>
+    </td>
+    <td class="value">
+      <input size="32" type="text" id="confluence_socket_timeout" name="confluence_socket_timeout" value="$Encoder.attributeEscape($CONFLUENCE_SOCKET_TIMEOUT)" />
+    </td>
+  </tr>
+  
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('ConfluenceRepositoryConnector.ConnectionTimeoutColon'))</nobr>
+    </td>
+    <td class="value">
+      <input size="32" type="text" id="confluence_connection_timeout" name="confluence_connection_timeout" value="$Encoder.attributeEscape($CONFLUENCE_CONNECTION_TIMEOUT)" />
+    </td>
+  </tr>
+  
+  <tr><td class="separator" colspan="2"><hr/></td></tr>
+  
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('ConfluenceRepositoryConnector.UsernameColon'))</nobr>
+    </td>
+    <td class="value">
+      <input size="16" type="text" id="confluence_username" name="confluence_username" value="$Encoder.attributeEscape($CONFLUENCE_USERNAME)" />
+    </td>
+  </tr>
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('ConfluenceRepositoryConnector.PasswordColon'))</nobr>
+    </td>
+    <td class="value">
+      <input size="16" type="password" id="confluence_password" name="confluence_password" value="$Encoder.attributeEscape($CONFLUENCE_PASSWORD)" />
+    </td>
+  </tr>
+  <tr>
+  <td class="description">
+    <nobr>$Encoder.bodyEscape($ResourceBundle.getString('ConfluenceRepositoryConnector.RetryInterval'))</nobr>
+  </td>
+  <td class="value">
+    <input size="20" type="text" id="confluence_retryInterval" name="confluence_retryInterval" value="$Encoder.attributeEscape($CONFLUENCE_RETRYINTERVAL)"/>
+  </td>
+	</tr>
+	<tr>
+	  <td class="description">
+	    <nobr>$Encoder.bodyEscape($ResourceBundle.getString('ConfluenceRepositoryConnector.RetryNumber'))</nobr>
+	  </td>
+	  <td class="value">
+	    <input size="10" type="text" id="confluence_retryNumber" name="confluence_retryNumber" value="$Encoder.attributeEscape($CONFLUENCE_RETRYNUMBER)"/>
+	  </td>
+	</tr>
+  <tr><td class="separator" colspan="2"><hr/></td></tr>
+  <tr><td class="separator" colspan="2"><hr/></td></tr>
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('ConfluenceRepositoryConnector.ProxyProtocolColon'))</nobr>
+    </td>
+    <td class="value">
+      <select size="2" name="confluence_proxy_protocol">
+#if($CONFLUENCE_PROXY_PROTOCOL == 'http')
+        <option value="http" selected="true">http</option>
+#else
+        <option value="http">http</option>
+#end
+#if($CONFLUENCE_PROXY_PROTOCOL == 'https')
+        <option value="https" selected="true">https</option>
+#else
+        <option value="https">https</option>
+#end
+      </select>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('ConfluenceRepositoryConnector.ProxyHostColon'))</nobr>
+    </td>
+    <td class="value">
+      <input size="32" type="text" id="confluence_proxy_host" name="confluence_proxy_host" value="$Encoder.attributeEscape($CONFLUENCE_PROXY_HOST)" />
+    </td>
+  </tr>
+
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('ConfluenceRepositoryConnector.ProxyPortColon'))</nobr>
+    </td>
+    <td class="value">
+      <input size="5" type="text" id="confluence_proxy_port" name="confluence_proxy_port" value="$Encoder.attributeEscape($CONFLUENCE_PROXY_PORT)" />
+    </td>
+  </tr>
+
+  <tr><td class="separator" colspan="2"><hr/></td></tr>
+  
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('ConfluenceRepositoryConnector.ProxyUsernameColon'))</nobr>
+    </td>
+    <td class="value">
+      <input size="16" type="text" id="confluence_proxy_username" name="confluence_proxy_username" value="$Encoder.attributeEscape($CONFLUENCE_PROXY_USERNAME)" />
+    </td>
+  </tr>
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('ConfluenceRepositoryConnector.ProxyPasswordColon'))</nobr>
+    </td>
+    <td class="value">
+      <input size="16" type="password" id="confluence_proxy_password" name="confluence_proxy_password" value="$Encoder.attributeEscape($CONFLUENCE_PROXY_PASSWORD)" />
+    </td>
+  </tr>
+</table>
+
+#else
+
+<input type="hidden" name="confluence_protocol" value="$Encoder.attributeEscape($CONFLUENCE_PROTOCOL)" />
+<input type="hidden" name="confluence_host" value="$Encoder.attributeEscape($CONFLUENCE_HOST)" />
+<input type="hidden" name="confluence_port" value="$Encoder.attributeEscape($CONFLUENCE_PORT)" />
+<input type="hidden" name="confluence_path" value="$Encoder.attributeEscape($CONFLUENCE_PATH)" />
+<input type="hidden" name="confluence_username" value="$Encoder.attributeEscape($CONFLUENCE_USERNAME)" />
+<input type="hidden" name="confluence_password" value="$Encoder.attributeEscape($CONFLUENCE_PASSWORD)" />
+<input type="hidden" name="confluence_socket_timeout" value="$Encoder.attributeEscape($CONFLUENCE_SOCKET_TIMEOUT)" />
+<input type="hidden" name="confluence_connection_timeout" value="$Encoder.attributeEscape($CONFLUENCE_CONNECTION_TIMEOUT)" />
+<input type="hidden" name="confluence_retryInterval" value="$Encoder.attributeEscape($CONFLUENCE_RETRYINTERVAL)"/>
+<input type="hidden" name="confluence_retryNumber" value="$Encoder.attributeEscape($CONFLUENCE_RETRYNUMBER)"/>
+<input type="hidden" name="confluence_proxy_protocol" value="$Encoder.attributeEscape($CONFLUENCE_PROXY_PROTOCOL)" />
+<input type="hidden" name="confluence_proxy_host" value="$Encoder.attributeEscape($CONFLUENCE_PROXY_HOST)" />
+<input type="hidden" name="confluence_proxy_port" value="$Encoder.attributeEscape($CONFLUENCE_PROXY_PORT)" />
+<input type="hidden" name="confluence_proxy_username" value="$Encoder.attributeEscape($CONFLUENCE_PROXY_USERNAME)" />
+<input type="hidden" name="confluence_proxy_password" value="$Encoder.attributeEscape($CONFLUENCE_PROXY_PASSWORD)" />
+
+#end
