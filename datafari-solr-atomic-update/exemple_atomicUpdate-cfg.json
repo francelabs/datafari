@@ -4,11 +4,11 @@
   "jobs": {
     "OCR": { // Arbitrary name for a job
       "source": {
-        "baseUrl": "https://dev.datafari.com/solr",
+        "baseUrl": "dev.datafari.com:2181", // Solr Cloud base Url. You can specify Solr or Zookeeper host. Syntax for Solr host: "http://datafari_domain:8983/solr", ex: "http://localhost:8983/solr" ; you need to specify all Solr hosts. Syntax for Zookeeper: "datafari_domain:2181", ex: "localhost:2181" ; No http prefix because it's another protocol. Whatever host type, you can define several severs by separating URLs with comma: "http://solr1:8983/solr, http://solr2:8983/solr,...".
         "solrCollection": "OCR"
       },
       "destination": {
-        "baseUrl": "https://dev.datafari.com/solr",
+        "baseUrl": "dev.datafari.com:2181",
         "solrCollection": "FileShare"
       },
       "fieldsOperation": { // field and Atomic Update operation like: set, add, remove, etc...
@@ -25,11 +25,11 @@
     },
     "SPACY": {
       "source": {
-        "baseUrl": "https://dev.datafari.com/solr",
+        "baseUrl": "dev.datafari.com:2181",
         "solrCollection": "Spacy"
       },
       "destination": {
-        "baseUrl": "https://dev.datafari.com/solr",
+        "baseUrl": "dev.datafari.com:2181",
         "solrCollection": "FileShare"
       },
       "nbDocsPerBatch": 2000,
