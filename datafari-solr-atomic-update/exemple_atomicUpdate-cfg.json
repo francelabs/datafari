@@ -1,6 +1,7 @@
 // This is an exemple of config file. Remove all comments to use it.
 // This file is intended to be copied in [DATAFARI_HOME]/tomcat/conf folder with name atomicUpdate-cfg.json
 {
+  "logConfigFile": "/opt/datafari/tomcat/conf/atomicUpdate-log4j2.xml", // Specify the log configuration file location.
   "jobs": {
     "OCR": { // Arbitrary name for a job
       "source": {

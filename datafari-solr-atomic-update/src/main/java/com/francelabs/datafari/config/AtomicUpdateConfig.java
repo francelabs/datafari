@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class AtomicUpdateConfig {
   private Map<String, JobConfig> jobs;
+  private String logConfigFile;
 
   @JsonAnyGetter
   public Map<String, JobConfig> getJobs() {
@@ -19,4 +20,13 @@ public class AtomicUpdateConfig {
       jobEntry.getValue().setJobName(jobEntry.getKey());
     }
   }
+
+  public String getLogConfigFile() {
+    return logConfigFile;
+  }
+  public void setLogConfigFile(String logConfigFile) {
+    this.logConfigFile = logConfigFile;
+  }
+
+
 }

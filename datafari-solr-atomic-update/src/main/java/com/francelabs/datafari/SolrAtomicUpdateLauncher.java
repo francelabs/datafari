@@ -18,7 +18,15 @@ import java.util.Date;
 import java.util.List;
 
 public class SolrAtomicUpdateLauncher {
-  private static final Logger LOGGER = LoggerFactory.getLogger(SolrAtomicUpdateLauncher.class);
+  private static final Logger LOGGER;
+  private static final AtomicUpdateConfig config;
+  static {
+    //Read jobs config file
+    config = ConfigLoader.getConfig();
+
+    System.setProperty("log4j2.configurationFile", config.getLogConfigFile());
+    LOGGER = LoggerFactory.getLogger(SolrAtomicUpdateLauncher.class);
+  }
   /**
    * Get the date from which to select documents. This date is intended to be used with the last_modified field of the document.
    * Uses arguments from main method, with:
@@ -69,8 +77,6 @@ public class SolrAtomicUpdateLauncher {
   }
   public static void main(String[] args) throws ParseException {
     String jobName = args[0];
-    //Read jobs config file
-    AtomicUpdateConfig config = ConfigLoader.getConfig();
     JobConfig job = config.getJobs().get(jobName);
     LOGGER.info(jobName + " Job started !");
 

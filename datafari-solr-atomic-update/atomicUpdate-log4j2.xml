@@ -8,11 +8,10 @@
             </PatternLayout>
         </Console>
 
-        <!-- FIXME remplacer le chemin en dur par ${env:DATAFARI_LOGS}/atomic-update.log -->
         <RollingFile
                 name="RollingFile"
-                fileName="/opt/datafari/logs/atomic-update.log"
-                filePattern="/opt/datafari/logs/atomic-update.log.%d{yyyy-MM-dd}.log" >
+                fileName="${env:DATAFARI_LOGS}/atomic-update.log"
+                filePattern="${env:DATAFARI_LOGS}/atomic-update.log.%d{yyyy-MM-dd}.log" >
             <PatternLayout>
                 <Pattern>
                     %5p %d{yyyy-MM-dd'T'HH:mm:ss'Z'} (%t) - Datafari-jar|Atomic Update|%c{3}|%m%n
@@ -32,5 +31,7 @@
             <AppenderRef ref="STDOUT"/>
             <AppenderRef ref="RollingFile"/>
         </Root>
+        <Logger name="org.apache.zookeeper" level="error"/>
+        <Logger name="org.apache.solr.common.cloud" level="error"/>
     </Loggers>
 </Configuration>
