@@ -5,6 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * This class instantiates the {@link AtomicUpdateConfig} object using the configuration file "atomicUpdate-cfg.json".
+ * The configuration file is searched first in directory specified in MAIN_DATAFARI_CONFIG_HOME environment variable,
+ * then in CONFIG_HOME and last in "/opt/datafari/tomcat/conf".
+ */
 public class ConfigLoader {
   private static AtomicUpdateConfig config = null;
 

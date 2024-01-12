@@ -17,16 +17,22 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * The main class used to launch an Atomic Update Job and manage principal steps of the job.
+ */
 public class SolrAtomicUpdateLauncher {
   private static final Logger LOGGER;
   private static final AtomicUpdateConfig config;
+
   static {
     //Read jobs config file
     config = ConfigLoader.getConfig();
 
+    // Set the location of the logger configuration file.
     System.setProperty("log4j2.configurationFile", config.getLogConfigFile());
     LOGGER = LoggerFactory.getLogger(SolrAtomicUpdateLauncher.class);
   }
+
   /**
    * Get the date from which to select documents. This date is intended to be used with the last_modified field of the document.
    * Uses arguments from main method, with:
@@ -75,6 +81,28 @@ public class SolrAtomicUpdateLauncher {
     LOGGER.info(args[0] + " Job: Select documents modified from: " + fromDate + " (null indicates a full crawl))");
     return fromDate;
   }
+
+  /**
+   * Starting point of Atomic Update Job.
+   * <ul>
+   *   <li>Get job configuration (Solr host, collections, and fields to update)</li>
+   *   <li>Get the date from which documents will be selected</li>
+   *   <li>Check for last status of the job. If "Failed", a full crawl is done. If "Running", nothing done. If "Done"
+   *   the job is run normally</li>
+   *   <li>Collect the documents to be updated according to the "from date". Split documents per batches of X documents.
+   *   Loop until all documents are selected.</li>
+   *   <li>Update these documents (each list of the batch)</li>
+   *   <li>When all documents are treated, ends the job by writing the execution date and "Done" status (if no error
+   *   occurs during treatment)</li>
+   * </ul>
+   *
+   *
+   * @param args <ul>
+   *             <li>args[0] (required) = job name,</li>
+   *             <li>args[1] (optional) = a valid date for document to select. See getStartDateForDocumentsSelection() comments more about the date format</li>
+   *             </ul>
+   * @throws ParseException
+   */
   public static void main(String[] args) throws ParseException {
     String jobName = args[0];
     JobConfig job = config.getJobs().get(jobName);

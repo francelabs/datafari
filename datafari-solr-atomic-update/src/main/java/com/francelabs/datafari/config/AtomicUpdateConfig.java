@@ -5,6 +5,14 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 
 import java.util.Map;
 
+/**
+ * Represents the whole configuration of this module, with elements like:
+ * <ul>
+ *   <li>Log config file location</li>
+ *   <li>Atomic Update jobs available and their configuration (see {@link JobConfig})</li>
+ * </ul>
+ *
+ */
 public class AtomicUpdateConfig {
   private Map<String, JobConfig> jobs;
   private String logConfigFile;

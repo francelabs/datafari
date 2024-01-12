@@ -14,10 +14,21 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * Solr Accessor to update documents. Related to the <b>Destination Collection</b> of an Atomic Update Job.
+ */
 public class DocumentsUpdator extends AbstractDocuments {
   private static DocumentsUpdator thisInstance = null;
   private static final Logger LOGGER = LoggerFactory.getLogger(DocumentsUpdator.class);
 
+  /**
+   * Create a unique instance of this Accessor. Configure all necessary parameters to access Solr collection with the
+   * given jobConfig. Creates and configure the Solr Client to access the target Solr collection.
+   *
+   * @param jobConfig the configuration object of the job associated with this Accessor.
+   * @return
+   * @throws IOException if an I/O exception occurs while configuring this instance (precisely the Solr Client).
+   */
   public static DocumentsUpdator getInstance(JobConfig jobConfig) throws IOException {
     if (thisInstance == null){
       thisInstance = new DocumentsUpdator();
@@ -31,6 +42,17 @@ public class DocumentsUpdator extends AbstractDocuments {
     return jobConfig.getDestination();
   }
 
+  /**
+   * Update the given Solr documents list with atomic update query. That is to say, only the fields given in the
+   * {@link JobConfig} object (related to this module configuration file) will be updated according to the given
+   * operation associated. (see {@link JobConfig for more information}
+   *
+   * @param solrDocuments the current list of Solr documents to be updated. This list more often comes from the
+   * {@link DocumentsCollector}.
+   * @return The Solr response for this update query.
+   * @throws SolrServerException
+   * @throws IOException
+   */
   public UpdateResponse updateDocuments(List<SolrDocument> solrDocuments) throws SolrServerException, IOException {
     List<SolrInputDocument> docsToUpdate = new ArrayList<>();
     //Prepare query to Solr with all documents to update.
@@ -66,6 +88,14 @@ public class DocumentsUpdator extends AbstractDocuments {
     return updateResponse;
   }
 
+  /**
+   * Create the Solr document object used for the update query.
+   * Apply field mapping if necessary (from {@link JobConfig}).
+   * Use Optimistic Concurrency: the document must exist to be updated
+   *
+   * @param doc a Solr document resulting from a select query to Solr.
+   * @return the object used for the update query
+   */
   private SolrInputDocument createSolrDocToUpdate(SolrDocument doc) {
     // create the atomic document
     SolrInputDocument atomicDoc = new SolrInputDocument();
