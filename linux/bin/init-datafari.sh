@@ -893,15 +893,15 @@ if [ "$INSTALLER_TYPE" == "interactive" ] && [ "$NODETYPE" == "monoserver" ]; th
       echo "Datafari is starting"
       cd $DIR
       bash start-datafari.sh
-      echo "Datafari is started. The url to access to Datafari is : https://${NODEHOST}/Datafari"
+      echo "Datafari is started. The url to access to Datafari is : https://${NODEHOST}/datafariui"
       echo "If you use Docker on a remote server, adapt the URL to indicate the IP or the hostname of the container"
       echo "For the Enterprise Edition, we strongly encourage to launch the global_monitoring_script.sh located into $DATAFARI_HOME/bin/monitorUtils to allow for the automatic restart of services, purge of logs and monitoring"
     else
-      echo "You can now start Datafari. Launch the start-datafari.sh script. After Datafari is started, you can access to Datafari at this URL : https://${NODEHOST}/Datafari"
+      echo "You can now start Datafari. Launch the start-datafari.sh script. After Datafari is started, you can access to Datafari at this URL : https://${NODEHOST}/datafariui"
   fi
       
 else
-  echo "You can now start Datafari. Launch the start-datafari.sh script. After Datafari is started, you can access to Datafari at this URL : https://${NODEHOST}/Datafari"
+  echo "You can now start Datafari. Launch the start-datafari.sh script. After Datafari is started, you can access to Datafari at this URL : https://${NODEHOST}/datafariui"
   
   
 fi
