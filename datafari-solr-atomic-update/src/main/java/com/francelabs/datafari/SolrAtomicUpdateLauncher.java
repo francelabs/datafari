@@ -101,7 +101,7 @@ public class SolrAtomicUpdateLauncher {
    *             <li>args[0] (required) = job name,</li>
    *             <li>args[1] (optional) = a valid date for document to select. See getStartDateForDocumentsSelection() comments more about the date format</li>
    *             </ul>
-   * @throws ParseException
+   * @throws ParseException if it is impossible to parse the date in args[1] if specified.
    */
   public static void main(String[] args) throws ParseException {
     String jobName = args[0];
@@ -116,6 +116,7 @@ public class SolrAtomicUpdateLauncher {
       fromDate = null;
       LOGGER.info(jobName + " Job: Last state was " + Status.FAILED + ", so a full crawl is done for this run.");
     } else if (Status.RUNNING.equals(jobStatus)){
+      LOGGER.info(jobName + " Job is already running: exit process.");
       return;
     }
 
@@ -132,6 +133,7 @@ public class SolrAtomicUpdateLauncher {
           UpdateResponse updateResponse = docUpdator.updateDocuments(docsList);
           if (updateResponse.getStatus() == 0) {
             nbDocsProcessed = nbDocsProcessed + docsList.size();
+            LOGGER.info(jobName + " Docs processed : " + nbDocsProcessed);
           }
         }
       } while (!docsList.isEmpty());
