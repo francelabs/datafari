@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.francelabs.datafari.api.RagAPI;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
@@ -121,7 +122,7 @@ public class SearchAggregator extends HttpServlet {
     }
 
     // Get the action from the request: null or searchAPI = search, suggest = suggestAPI
-    final String action = request.getParameter("action");
+    final String action = request.getParameter("action"); // Todo : case RAG
 
     try {
       if (activated) {
@@ -295,6 +296,10 @@ public class SearchAggregator extends HttpServlet {
         JSONObject searchResponse;
         if (action != null) {
           switch (action) {
+            // Todo : case IA
+          case "rag":
+            searchResponse = RagAPI.rag(request);
+            break;
           case "suggest":
             searchResponse = SuggesterAPI.suggest(request);
             break;

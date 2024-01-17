@@ -222,26 +222,28 @@ public class SearchAPI {
         queryResponsePromolink = promolinkCore.executeQuery(queryPromolink);
       }
       switch (handler) {
-      case "/select":
-        // If there is no id there is no need to record stats
-        if (params.getParamValue("id") != null && !params.getParamValue("id").equals("")) {
-          // index
-          final long numFound = queryResponse.getNumFound();
-          final int QTime = queryResponse.getQTime();
-          final IndexerQuery statsParams = IndexerServerManager.createQuery();
-          statsParams.addParams(params.getParams());
-          statsParams.setParam("numFound", Long.toString(numFound));
-          if (numFound == 0) {
-            statsParams.setParam("noHits", "No Hits");
-          }
-          statsParams.setParam("QTime", Integer.toString(QTime));
+        case "/select":
+          // If there is no id there is no need to record stats
+          if (params.getParamValue("id") != null && !params.getParamValue("id").equals("")) {
+            // index
+            final long numFound = queryResponse.getNumFound();
+            final int QTime = queryResponse.getQTime();
+            final IndexerQuery statsParams = IndexerServerManager.createQuery();
+            statsParams.addParams(params.getParams());
+            statsParams.setParam("numFound", Long.toString(numFound));
+            if (numFound == 0) {
+              statsParams.setParam("noHits", "No Hits");
+            }
+            statsParams.setParam("QTime", Integer.toString(QTime));
 
-          StatsPusher.pushQuery(statsParams, protocol);
-        }
-        break;
-      case "/stats":
-        solr.processStatsResponse(queryResponse);
-        break;
+            StatsPusher.pushQuery(statsParams, protocol);
+          }
+          break;
+        case "/stats":
+          solr.processStatsResponse(queryResponse);
+          break;
+        default:
+          break;
       }
 
       if (promolinkCore != null) {
@@ -283,7 +285,7 @@ public class SearchAPI {
 
   }
 
-  private static String getHandler(final HttpServletRequest servletRequest) {
+  static String getHandler(final HttpServletRequest servletRequest) {
     String pathInfo = servletRequest.getPathInfo();
     if (pathInfo == null) {
       pathInfo = servletRequest.getServletPath();
