@@ -153,8 +153,8 @@ $(document).ready(
         clearStatus(element);
         // $("#username-tip-text").text("")
         // Check the username does not contain capital letters
-        if (/[A-Z]/.test(element.val())) {
-          setErrorStatus(element, "Username must not contain uppercase letters");
+        if (/[^a-z0-9\-@_\.]/.test(element.val())) {
+          setErrorStatus(element, "Username must not contain uppercase letters or special characters others than '-', '_', '.' or '@'");
         } else if (element.val() != "") {
           $.get("../SearchAdministrator/isUserInBase", {
             username : element.val()

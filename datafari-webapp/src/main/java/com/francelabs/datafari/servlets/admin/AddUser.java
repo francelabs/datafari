@@ -153,7 +153,7 @@ public class AddUser extends HttpServlet {
   boolean hasValidUsernameAndPassword(String username, String password) {
     return username != null
             && password != null
-            && !StringUtils.hasUppercaseLetters(username);
+            && !StringUtils.hasSpecialChars(username);
   }
 
 }
