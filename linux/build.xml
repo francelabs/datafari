@@ -182,10 +182,11 @@
 		<!-- Copy Atomic Updates into bin/atomicupdates folder  -->
 		<copy todir="${linux.dist.dir}/bin/atomicupdates">
 		  <fileset dir="${solratomicupdate.src.dir}/target">
-		    <include name="*.with-dependencies.jar" />
+		    <include name="*.jar" />
 		  </fileset>
 		  <fileset dir="${solratomicupdate.src.dir}/">
 		    <include name="*.xml" />
+				<exclude name="pom.xml" />
 		  </fileset>
 		  <fileset dir="${solratomicupdate.src.dir}/">
 		    <include name="*.json" />
