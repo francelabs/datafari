@@ -1,6 +1,8 @@
 package com.francelabs.datafari.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.francelabs.datafari.SolrAtomicUpdateLauncher;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,25 +14,31 @@ import java.io.IOException;
  */
 public class ConfigLoader {
   private static AtomicUpdateConfig config = null;
+  private static String configFileAbsolutePath;
 
   private ConfigLoader(){}
   public static AtomicUpdateConfig getConfig(){
     if (config == null){
 
-      String configFileAbsolutePath = System.getenv("MAIN_DATAFARI_CONFIG_HOME");
-      if (configFileAbsolutePath == null){
-        configFileAbsolutePath = System.getenv("CONFIG_HOME");
-        if (configFileAbsolutePath == null){
-          configFileAbsolutePath = "/opt/datafari/tomcat/conf";
-        }
-      }
-
       try {
+        configFileAbsolutePath = SolrAtomicUpdateLauncher.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        int lastDirectoryIndex = configFileAbsolutePath.lastIndexOf(File.separator);
+        configFileAbsolutePath = configFileAbsolutePath.substring(0,lastDirectoryIndex);
         config = new ObjectMapper().readValue(new File(configFileAbsolutePath + File.separator + "atomicUpdate-cfg.json"), AtomicUpdateConfig.class);
+
+        String logConfigFile = config.getLogConfigFile();
+        if (StringUtils.isBlank(logConfigFile)){
+          config.setLogConfigFile(configFileAbsolutePath + File.separator + "atomicUpdate-log4j2.xml");
+        }
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
+
     }
     return config;
+  }
+
+  public static String getConfigFileAbsolutePath(){
+    return configFileAbsolutePath;
   }
 }

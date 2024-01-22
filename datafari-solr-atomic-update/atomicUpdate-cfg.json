@@ -1,9 +1,8 @@
 // This is an exemple of config file. Remove all comments to use it.
-// This file is intended to be copied in [DATAFARI_HOME]/tomcat/conf folder with name atomicUpdate-cfg.json
 {
-  "logConfigFile": "/opt/datafari/tomcat/conf/atomicUpdate-log4j2.xml", // Specify the log configuration file location.
+  "logConfigFile": "", // Specify the log configuration file location if it is different from the provided one in the "atomicupdates" directory or if you want to move it in another location.
   "jobs": {
-    "OCR": { // Arbitrary name for a job
+    "OCR": { // Arbitrary name for a job. Put the name you want. It will be the name of the job when you launch the jar.
       "source": {
         "baseUrl": "dev.datafari.com:2181", // Solr Cloud base Url. You can specify Solr or Zookeeper host. Syntax for Solr host: "http://datafari_domain:8983/solr", ex: "http://localhost:8983/solr" ; you need to specify all Solr hosts. Syntax for Zookeeper: "datafari_domain:2181", ex: "localhost:2181" ; No http prefix because it's another protocol. Whatever host type, you can define several severs by separating URLs with comma: "http://solr1:8983/solr, http://solr2:8983/solr,...".
         "solrCollection": "OCR"

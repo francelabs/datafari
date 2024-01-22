@@ -40,7 +40,7 @@ public class SolrAtomicUpdateLauncher {
    *   <li> args[0] is the job name launched. Used to get the last start date of the job.</li>
    *   <li> args[1] (Optional) is the fromDate used. The last start date of the job is not taken into account.</li>
    *   <ul>
-   *     <li>The expected date format is "yyyy-MM-dd HH:mm" with or without time specified, and french order is supported.</li>
+   *     <li>The expected date format is "yyyy-MM-dd HH:mm" with or without time specified, and french format is supported.</li>
    *     <li>Specify "full" (not case sensitive) to force full crawl</li>
    *     <li>If not specified, the date is retrieved from "atomicUpdateLastExec" file (generally used this way).</li>
    *   </ul>
