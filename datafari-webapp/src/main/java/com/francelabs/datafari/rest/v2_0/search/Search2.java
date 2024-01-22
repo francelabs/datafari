@@ -97,8 +97,7 @@ public class Search2 extends HttpServlet {
   private void checkException(final JSONObject searchResponse) {
     // Check if we get a code, if this is the case, we got an error
     // We will throw an internal error exception with the message if there is one
-    final Long code = (Long) searchResponse.get("code");
-    if (code != null) {
+    if (searchResponse.get("code") != null) {
       final String message = (String) searchResponse.get("message");
       if (message != null) {
         throw new InternalErrorException(message);
