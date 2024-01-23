@@ -118,7 +118,6 @@ public class RagAPI extends SearchAPI {
     // Set API configuration using
     Properties prop = new Properties();
     String fileName = "rag.config";
-   // try (FileInputStream fis = new FileInputStream(fileName)) {
     try (InputStream fis = RagAPI.class.getClassLoader().getResourceAsStream(fileName)) {
       prop.load(fis);
       apiKey = prop.getProperty("rag.api.token");
@@ -134,7 +133,6 @@ public class RagAPI extends SearchAPI {
       connection.setRequestProperty("Content-Type", "application/json");
 
       // The request body
-      // Todo : construct dynamic query with documents and prompt
       String body = "{\"model\": \"" + model + "\",\"temperature\": " + temperature + ",\"max_tokens\": " + maxTokens + ", \"messages\": [";
       body +=        "{\"role\": \"system\", \"content\": \"" + instructions.replace("\n", " ").replace("\r", " ").replace("\t", " ") + "\"},";
 
