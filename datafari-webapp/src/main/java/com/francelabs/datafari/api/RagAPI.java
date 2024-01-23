@@ -136,7 +136,7 @@ public class RagAPI extends SearchAPI {
       // The request body
       // Todo : construct dynamic query with documents and prompt
       String body = "{\"model\": \"" + model + "\",\"temperature\": " + temperature + ",\"max_tokens\": " + maxTokens + ", \"messages\": [";
-      body +=        "{\"role\": \"system\", \"content\": \"" + instructions.replace("\n", " ").replace("\r", " ").replace("\t", " ").replaceAll("\\s+", "") + "\"},";
+      body +=        "{\"role\": \"system\", \"content\": \"" + instructions.replace("\n", " ").replace("\r", " ").replace("\t", " ") + "\"},";
 
       for (String doc : documents)
       {
