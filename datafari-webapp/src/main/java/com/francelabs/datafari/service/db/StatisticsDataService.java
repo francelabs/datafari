@@ -111,7 +111,7 @@ public class StatisticsDataService extends CassandraService {
    * @param username - the logged user_id
    * @return the user history
    */
-  public synchronized JSONArray getHistory(String username) {
+  public synchronized JSONArray getHistory(String username, String query) {
     final JSONParser parser = new JSONParser();
     final JSONArray userStatisticsObj = new JSONArray();
     final BoundStatement bs = getUserStatistics.bind(username);
@@ -123,6 +123,13 @@ public class StatisticsDataService extends CassandraService {
 
     for (final Row row : results) {
       try {
+        // If query parameter is set, stats that does not match the query are filtered
+        if (row.getString(PARAMETERS_COLUMN) != null
+                && query != null
+                && !java.util.regex.Pattern.compile(".*query.*" + query + ".*")
+                .matcher(Objects.requireNonNull(row.getString(PARAMETERS_COLUMN)))
+                .matches())
+          continue;
         final HashMap<String, Object> stat = new HashMap<>();
         stat.put(QUERY_ID_COLUMN, row.getString(QUERY_ID_COLUMN));
         stat.put(USER_ID_COLUMN, row.getString(USER_ID_COLUMN));

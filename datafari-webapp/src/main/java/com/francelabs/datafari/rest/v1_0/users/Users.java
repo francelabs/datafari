@@ -145,7 +145,8 @@ public class Users {
       final HashMap<String, Object> responseContent = new HashMap<>();
       JSONArray history;
       try {
-        history = StatisticsDataService.getInstance().getHistory(authenticatedUserName);
+        String query = request.getParameter("query");
+        history = StatisticsDataService.getInstance().getHistory(authenticatedUserName, query);
         responseContent.put("history", history);
         AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(), "User " + authenticatedUserName + " accessed his request history");
       } catch (final DatafariServerException e) {
