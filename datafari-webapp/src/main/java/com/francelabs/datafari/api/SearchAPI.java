@@ -58,6 +58,10 @@ public class SearchAPI {
   }
 
   public static JSONObject search(final String protocol, final String handler, final Principal principal, final Map<String, String[]> parameterMap) {
+
+    // This value was set arbitrarily
+    final int querySizeLimit = 4000;
+
     final JSONObject response = new JSONObject();
 
     final Set<String> allowedHandlers = getAllowedHandlers();
@@ -66,6 +70,15 @@ public class SearchAPI {
       final JSONObject error = new JSONObject();
       error.put("code", 401);
       error.put("message", "Unauthorized handler. Allowed handlers are " + allowedHandlers.toString());
+      response.put("error", error);
+      return response;
+    }
+
+    // The query must not exceed 4000 characters
+    if (parameterMap.get("q") != null && parameterMap.get("q")[0].length() > querySizeLimit) {
+      final JSONObject error = new JSONObject();
+      error.put("code", 413);
+      error.put("message", "The query is too long");
       response.put("error", error);
       return response;
     }
