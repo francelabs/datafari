@@ -39,6 +39,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import jcifs.smb.*;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -74,10 +75,6 @@ import jcifs.CIFSContext;
 import jcifs.CIFSException;
 import jcifs.config.PropertyConfiguration;
 import jcifs.context.BaseContext;
-import jcifs.smb.NtlmPasswordAuthenticator;
-import jcifs.smb.SmbException;
-import jcifs.smb.SmbFile;
-import jcifs.smb.SmbFileFilter;
 
 /**
  * This is the "repository connector" for a smb/cifs shared drive file system. It's a relative of the share crawler, and should have comparable basic functionality.
@@ -1211,6 +1208,12 @@ public class SharedDriveConnector extends org.apache.manifoldcf.crawler.connecto
                 // and it cleans up the jobqueue row.
                 errorCode = se.getClass().getSimpleName().toUpperCase(Locale.ROOT);
                 errorDesc = "Authorization: " + se.getMessage();
+                activities.noDocument(documentIdentifier, versionString);
+              } else if (se instanceof SmbUnsupportedOperationException) {
+                Logging.connectors.warn("JCIFS: SmbUnsupportedOperationException tossed processing " + documentIdentifier + " - skipping" +
+                    " (A cause may be that the SMB server has not been found, or that you are using a deprecated functionality from SMB1, but it may be other reasons)", se);
+                errorCode = se.getClass().getSimpleName().toUpperCase(Locale.ROOT);
+                errorDesc = "Unsupported Operation: " + se.getMessage();
                 activities.noDocument(documentIdentifier, versionString);
               } else {
                 Logging.connectors.error("JCIFS: SmbException tossed processing " + documentIdentifier + " - skipping", se);
