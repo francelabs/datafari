@@ -619,7 +619,7 @@
     "paramReg": "Sauvegarder ces paramètres",
     "paramRegEmail": "Activate/Deactivate the Email alerts agent” (also needed to validate the changes)",
     "paramRegText": "Click to save your changes (still needs a restart of the agent to be taken into account)",
-    "pass": "Mot de passe",
+    "pass": "Changer le mot de passe",
     "passProblem": "Problème de mot de passe : vide ou ne correspondent pas",
     "passSaved": "Mot de passe MCF changé avec succès",
     "passSaveError": "Erreur de sauvegarde du mot de passe MCF",

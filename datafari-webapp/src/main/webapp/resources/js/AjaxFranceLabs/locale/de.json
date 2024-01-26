@@ -592,7 +592,7 @@
     "paramReg": "Ok",
     "paramRegEmail": "Activate/Deactivate the Email alerts agent” (also needed to validate the changes)",
     "paramRegText": "Click to save your changes (still needs a restart of the agent to be taken into account)",
-    "pass": "Passwort",
+    "pass": "Passwort ändern",
     "passProblem": "Problem des eingegebenen Passworts: leer oder nicht übereinstimmend",
     "passSaved": "MCF-Passwort erfolgreich gespeichert. Starte Datafari neu, um es zu benutzen.",
     "passSaveError": "Fehler beim Speichern des neuen MCF-Passworts",

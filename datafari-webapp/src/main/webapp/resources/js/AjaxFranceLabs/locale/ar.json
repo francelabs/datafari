@@ -385,7 +385,7 @@
     "paramReg": " حفظ تلك المعايير",
     "paramRegEmail": "Activate/Deactivate the Email alerts agent” (also needed to validate the changes)",
     "paramRegText": "Click to save your changes (still needs a restart of the agent to be taken into account)",
-    "pass": "كلمة المرور ",
+    "pass": "تغيير كلمة المرور",
     "passwordAdminUi": "كلمة المرور ",
     "pf": "استعلامات بشأن عدة كلمات",
     "phones": "phones",

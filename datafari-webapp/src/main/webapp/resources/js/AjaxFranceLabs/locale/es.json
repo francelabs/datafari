@@ -559,7 +559,7 @@
     "parametersLink": "Parameters",
     "parameterType": "tipo",
     "paramReg": " Save those parameters",
-    "pass": "Password",
+    "pass": "Change password",
     "passProblem": "Problem of entered password : empty or not matching",
     "passSaved": "MCF password correctly saved",
     "passSaveError": "Error when trying to save the new MCF password",

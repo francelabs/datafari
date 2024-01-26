@@ -595,7 +595,7 @@
     "paramReg": " Сохранить эти параметры",
     "paramRegEmail": "Activate/Deactivate the Email alerts agent” (also needed to validate the changes)",
     "paramRegText": "Click to save your changes (still needs a restart of the agent to be taken into account)",
-    "pass": "Пароль",
+    "pass": "Изменить пароль",
     "passProblem": "Проблема с паролем: введённые пароли не совпадают или пусты",
     "passSaved": "Пароль MCF успешно сохранён. Перезапустите Datafari чтобы его использовать.",
     "passSaveError": "Ошибка изменения пароля MCF",

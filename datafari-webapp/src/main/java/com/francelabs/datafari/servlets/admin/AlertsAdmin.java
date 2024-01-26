@@ -97,7 +97,6 @@ public class AlertsAdmin extends HttpServlet {
     json.put("smtp_security", alertsConf.getProperty(AlertsConfiguration.SMTP_SECURITY));
     json.put("from", alertsConf.getProperty(AlertsConfiguration.SMTP_FROM));
     json.put("user", alertsConf.getProperty(AlertsConfiguration.SMTP_USER));
-    json.put("pass", PasswordMapper.getInstance().mapPasswordToKey(alertsConf.getProperty(AlertsConfiguration.SMTP_PASSWORD)));
 
     json.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 
