@@ -1,0 +1,46 @@
+// This is an exemple of config file. Remove all comments to use it.
+{
+  "logConfigFile": "", // Specify the log configuration file location if it is different from the provided one in the "atomicupdates" directory or if you want to move it in another location.
+  "jobs": {
+    "OCR": { // Arbitrary name for a job. Put the name you want. It will be the name of the job when you launch the jar.
+      "source": {
+        "baseUrl": "dev.datafari.com:2181", // Solr Cloud base Url. You can specify Solr or Zookeeper host. Syntax for Solr host: "http://datafari_domain:8983/solr", ex: "http://localhost:8983/solr" ; you need to specify all Solr hosts. Syntax for Zookeeper: "datafari_domain:2181", ex: "localhost:2181" ; No http prefix because it's another protocol. Whatever host type, you can define several severs by separating URLs with comma: "http://solr1:8983/solr, http://solr2:8983/solr,...".
+        "solrCollection": "OCR"
+      },
+      "destination": {
+        "baseUrl": "dev.datafari.com:2181",
+        "solrCollection": "FileShare"
+      },
+      "fieldsOperation": { // field and Atomic Update operation like: set, add, remove, etc...
+        "field_1": "set",
+        "field_2": "add",
+        "field_3": "add-distinct",
+        "field_4": "set"
+      },
+      "nbDocsPerBatch": 1000, // The documents are selected and updated per batches. Each batch is stored in RAM so this number depends on the documents size.
+      "fieldsMapping": { // Optional: to specify a mapping between source and destination collections
+        "field_3": "dest_field_1",
+        "field_2": "dest_field_2"
+      }
+    },
+    "SPACY": {
+      "source": {
+        "baseUrl": "dev.datafari.com:2181",
+        "solrCollection": "Spacy"
+      },
+      "destination": {
+        "baseUrl": "dev.datafari.com:2181",
+        "solrCollection": "FileShare"
+      },
+      "nbDocsPerBatch": 2000,
+      "fieldsOperation": {
+        "entity_product": "set",
+        "entity_loc": "set",
+        "last_author": "add-distinct"
+      },
+      "fieldsMapping": {
+        "last_author": "author"
+      }
+    }
+  }
+}

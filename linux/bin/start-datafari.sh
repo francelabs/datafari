@@ -154,6 +154,7 @@ if  [[ "$NODETYPE" = *mono* ]]; then
   if  [[ "$STATE" = *initialized* ]];
   then
     run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_solr";
+    run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_solr_annotators";
   fi
 
   run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh start_tomcat";

@@ -90,6 +90,7 @@ $(function($) {
   elm.find('#extraFunctionalities-AdminUI').html(window.i18n.msgStore['adminUI-extraFunctionalities']);
   elm.find('#deduplication-AdminUI').html(window.i18n.msgStore['adminUI-Deduplication']);
   $("#universalConnectorUploadConf-AdminUI").html(window.i18n.msgStore['universalConnectorUploadConf-AdminUI']);
+  elm.find('#adminUI-atomicUpdate').html(window.i18n.msgStore['adminUI-atomicUpdate']);
 
   elm.find('#entityExtractionConf-AdminUI').html(window.i18n.msgStore['adminUI-entityExtractionConf']);
   elm.find('#sttEntitiesConfiguration-AdminUI').html(window.i18n.msgStore['adminUI-sttEntitiesConfiguration']);

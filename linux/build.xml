@@ -41,6 +41,7 @@
 	<property name="git.plugin.src.dir" value="${project.dir}/datafari-git-plugin/target" />
 	<property name="datafariui.src.dir" value="${project.dir}/datafari-ui/target" />
 	<property name="adminui.src.dir" value="${project.dir}/datafari-adminui/target" />
+	<property name="solratomicupdate.src.dir" value="${project.dir}/datafari-solr-atomic-update" />
 	<property name="confluencev6.connector.src.dir" value="${project.dir}/datafari-confluence-v6-connector/target" />
 	<property name="solr.connector.src.dir" value="${project.dir}/datafari-solr-connector/target" />
 
@@ -177,6 +178,20 @@
 		<mkdir dir="${linux.dist.dir}/www" />
 
 		<!-- These components need a build with Maven -->
+
+		<!-- Copy Atomic Updates into bin/atomicupdates folder  -->
+		<copy todir="${linux.dist.dir}/bin/atomicupdates">
+		  <fileset dir="${solratomicupdate.src.dir}/target">
+		    <include name="*.jar" />
+		  </fileset>
+		  <fileset dir="${solratomicupdate.src.dir}/">
+		    <include name="*.xml" />
+				<exclude name="pom.xml" />
+		  </fileset>
+		  <fileset dir="${solratomicupdate.src.dir}/">
+		    <include name="*.json" />
+		  </fileset>
+		</copy>
 
 		<!-- Copy Tomcat  -->
 		<copy todir="${linux.dist.dir}/tomcat">

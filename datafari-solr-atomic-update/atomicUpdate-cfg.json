@@ -1,0 +1,45 @@
+{
+  "logConfigFile": "",
+  "jobs": {
+    "OCR": {
+      "source": {
+        "baseUrl": "localhost:2181",
+        "solrCollection": "OCR"
+      },
+      "destination": {
+        "baseUrl": "localhost:2181",
+        "solrCollection": "FileShare"
+      },
+      "fieldsOperation": {
+        "field_1": "set",
+        "field_2": "add",
+        "field_3": "add-distinct",
+        "field_4": "set"
+      },
+      "nbDocsPerBatch": 1000,
+      "fieldsMapping": {
+        "field_3": "dest_field_1",
+        "field_2": "dest_field_2"
+      }
+    },
+    "SPACY": {
+      "source": {
+        "baseUrl": "dev.datafari.com:2181",
+        "solrCollection": "Spacy"
+      },
+      "destination": {
+        "baseUrl": "dev.datafari.com:2181",
+        "solrCollection": "FileShare"
+      },
+      "nbDocsPerBatch": 2000,
+      "fieldsOperation": {
+        "entity_product": "set",
+        "entity_loc": "set",
+        "last_author": "add-distinct"
+      },
+      "fieldsMapping": {
+        "last_author": "author"
+      }
+    }
+  }
+}

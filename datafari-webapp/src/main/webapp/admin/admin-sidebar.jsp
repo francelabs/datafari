@@ -54,6 +54,7 @@
           <li id="MCFAdminUI">
             <a target="_blank" href="<%= getMCF %>" id="MCFAdmin-AdminUI"></a>
           </li>
+          <li id="atomicUpdate"><a id="adminUI-atomicUpdate" class="ajax-link" href="?page=atomicUpdate"></a></li>
           <%
           if(request.isUserInRole("SearchAdministrator")){
           %>
