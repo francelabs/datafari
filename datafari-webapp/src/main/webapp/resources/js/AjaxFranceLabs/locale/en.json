@@ -692,6 +692,7 @@
     "relevancyQueryName_placeholder": "Enter a name for the relevancy query",
     "relevancySetupFile-label": "Relevancy setup filepath",
     "reloadButton": "Apply",
+    "removedEntityExtraction":"This functionality has been removed since Datafari v6.0. Please use our new regex transformator, accessible from the Data Crawlers Expert Mode administration site",
     "renew": "Renew",
     "replace": "Replace",
     "reponame": "Repository name",

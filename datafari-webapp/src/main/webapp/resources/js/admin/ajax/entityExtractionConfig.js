@@ -48,6 +48,7 @@ $(document)
             $("#topbar3").text(window.i18n.msgStore['adminUI-entityExtractionConf']);
             $("#title").text(window.i18n.msgStore['adminUI-entityExtractionConf']);
             $("#documentation-entityextraction").text(window.i18n.msgStore['documentation-entityextraction']);
+             $("#removedEntityExtraction").text(window.i18n.msgStore['removedEntityExtraction']);
             $("#activateSimpleExtractionLabel")
                 .html(
                     window.i18n.msgStore['adminUI-SimpleEntityExtractionActivate']

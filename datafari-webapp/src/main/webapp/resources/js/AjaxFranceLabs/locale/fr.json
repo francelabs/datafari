@@ -697,6 +697,7 @@
     "relevancyQueryName_placeholder": "Entrez un nom pour la requête de pertinence",
     "relevancySetupFile-label": "Chemin du fichier de système de pertinence",
     "reloadButton": "Appliquer",
+    "removedEntityExtraction":"Cette fonctionnalité a été supprimée à partir de Datafari v6.0. Merci d'utiliser notre nouveau regex transformator, accessible depuis le site d'administration des Moissonneurs de données en mode expert",
     "renew": "Renouveler",
     "replace": "Remplacer",
     "reponame": "Nom du repository",
