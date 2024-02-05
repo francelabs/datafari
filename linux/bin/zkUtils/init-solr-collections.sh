@@ -30,18 +30,11 @@ url_protocol=""
 create_collection() {
 	curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=$1&collection.configName=$2&numShards=$3&maxShardsPerNode=${maxShardsPerNode}&replicationFactor=$4&property.lib.path=${lib_path}&property.mcf.ip=$url_protocol://${mcf_ip}:${mcf_port}/${mcf_path}"
 	curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"autocomplete.threshold": "0.005"}}' $url_protocol://${ip_solr}/solr/$1/config
-  	curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"entity.extract": "false"}}' $url_protocol://${ip_solr}/solr/$1/config
-  	curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"entity.name": "false"}}' $url_protocol://${ip_solr}/solr/$1/config
-  	curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"entity.phone": "false"}}' $url_protocol://${ip_solr}/solr/$1/config
-  	curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"entity.special": "false"}}' $url_protocol://${ip_solr}/solr/$1/config
+	curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"clustering.enabled": "false"}}' $url_protocol://${ip_solr}/solr/$1/config
   	curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"texttagger.enabled": "false"}}' $url_protocol://${ip_solr}/solr/$1/config
     curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"texttagger.host": "localhost:2181"}}' $url_protocol://${ip_solr}/solr/$1/config
   	curl -XPOST --insecure $url_protocol://${ip_solr}/solr/$1/config/params -H 'Content-type:application/json'  -d '{"set":{"mySearch":{"qf":"exactContent^500 exactTitle^500 title_fr^50 title_en^50 title_de^50 title_es^50 content_fr^10 content_en^10 content_de^50 content_es^50 source^20 id^3 url_search^3","pf":"exactContent^500 exactTitle^500 title_en^500 title_fr^500 title_de^500 title_es^500 content_fr^100 content_en^100 content_de^100 content_es^100 url_search^30","hl.maxAnalyzedChars":51200}}}'
-  	curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.enabled": "false"}}' $url_protocol://${ip_solr}/solr/$1/config
-  	curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.solr.host": "localhost:2181"}}' $url_protocol://${ip_solr}/solr/$1/config
-  	curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.collection": "Duplicates"}}' $url_protocol://${ip_solr}/solr/$1/config
-  	curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.hash.fields": "content"}}' $url_protocol://${ip_solr}/solr/Duplicates/config
-  	curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.quant.rate": "0.1"}}' $url_protocol://${ip_solr}/solr/Duplicates/config
+  	curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"solr.autoCommit.maxTime": "60000"}}' $url_protocol://${ip_solr}/solr/$1/config
     cd ${SOLR_INSTALL_DIR}/solrcloud/FileShare/conf/customs_schema && bash addCustomSchemaInfo.sh
   
 }
@@ -73,6 +66,28 @@ curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=
 curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=Monitoring&collection.configName=Monitoring&numShards=1&maxShardsPerNode=1&replicationFactor=1"
 curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=Crawl&collection.configName=Crawl&numShards=1&maxShardsPerNode=1&replicationFactor=1"
 curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=Logs&collection.configName=Logs&numShards=1&maxShardsPerNode=1&replicationFactor=1"
+
+curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.hash.fields": "content"}}' $url_protocol://${ip_solr}/solr/Duplicates/config
+curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.quant.rate": "0.1"}}' $url_protocol://${ip_solr}/solr/Duplicates/config 
+
+
+  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"solr.autoCommit.maxTime": "60000"}}' $url_protocol://${ip_solr}/solr/Statistics/config
+  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"solr.autoCommit.maxTime": "60000"}}' $url_protocol://${ip_solr}/solr/Promolink/config
+  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"solr.autoCommit.maxTime": "60000"}}' $url_protocol://${ip_solr}/solr/Access/config
+  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"solr.autoCommit.maxTime": "60000"}}' $url_protocol://${ip_solr}/solr/Monitoring/config
+  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"solr.autoCommit.maxTime": "60000"}}' $url_protocol://${ip_solr}/solr/Duplicates/config
+  
+  curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=OCR&collection.configName=@MAINCOLLECTION@&numShards=1&maxShardsPerNode=5&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/FileShare/"
+  curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=Spacy&collection.configName=@MAINCOLLECTION@&numShards=1&maxShardsPerNode=5&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/FileShare/"
+  curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=GenericAnnotator&collection.configName=@MAINCOLLECTION@&numShards=1&maxShardsPerNode=5&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/FileShare/"
+  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"autocomplete.threshold": "0.005"}}' $url_protocol://${ip_solr}/solr/OCR/config
+  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"clustering.enabled": "false"}}' $url_protocol://${ip_solr}/solr/OCR/config
+  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"autocomplete.threshold": "0.005"}}' $url_protocol://${ip_solr}/solr/Spacy/config
+  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"clustering.enabled": "false"}}' $url_protocol://${ip_solr}/solr/Spacy/config
+  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"autocomplete.threshold": "0.005"}}' $url_protocol://${ip_solr}/solr/GenericAnnotator/config
+  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"clustering.enabled": "false"}}' $url_protocol://${ip_solr}/solr/GenericAnnotator/config
+  
+  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"solr.autoCommit.maxTime": "300000"}}' $url_protocol://${ip_solr}/solr/@MAINCOLLECTION@/config
 
 number_collections=$numCollections
 

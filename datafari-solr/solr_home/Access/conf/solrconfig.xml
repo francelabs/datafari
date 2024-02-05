@@ -33,7 +33,7 @@
     </updateLog>
 
     <autoCommit>
-      <maxTime>10000</maxTime>
+      <maxTime>${solr.autoCommit.maxTime:60000}</maxTime>
       <openSearcher>true</openSearcher>
     </autoCommit>
 
