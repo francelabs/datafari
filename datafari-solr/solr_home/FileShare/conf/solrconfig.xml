@@ -1250,6 +1250,7 @@
       &custom_update_processors;
       
       <processor class="solr.LogUpdateProcessorFactory"/>
+      <processor class="solr.DistributedUpdateProcessorFactory"/>
       <processor class="solr.RunUpdateProcessorFactory"/>
   
 	</updateRequestProcessorChain>
