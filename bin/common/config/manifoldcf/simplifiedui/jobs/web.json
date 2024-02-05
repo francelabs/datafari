@@ -225,6 +225,16 @@
                   "_attribute_regex": "body"
                 },
                 {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "jsoup_keywords"
+                },
+                {
+                  "_type_": "includefilter",
+                  "_value_": "",
+                  "_attribute_regex": "jsoup_description"
+                },
+                {
                   "_type_": "excludefilter",
                   "_value_": "",
                   "_attribute_regex": "script"
@@ -265,6 +275,18 @@
                   "_attribute_parameter": "repo_source",
                   "_value_": "",
                   "_attribute_value": "francelabs"
+                },
+                {
+                  "_type_": "expression",
+                  "_attribute_parameter": "description",
+                  "_value_": "",
+                  "_attribute_value": "${jsoup_description}"
+                },
+                {
+                  "_type_": "expression",
+                  "_attribute_parameter": "keywords",
+                  "_value_": "",
+                  "_attribute_value": "${jsoup_keywords}"
                 },
                 {
                   "_type_": "keepAllMetadata",
