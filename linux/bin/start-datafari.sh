@@ -183,6 +183,13 @@ if  [[ "$NODETYPE" = *mono* ]]; then
     cd $DIR
   fi
   
+  if  [[ "$TIKASERVER_OCR" = *true* ]];
+  then
+    cd $TIKA_SERVER_HOME_OCR/bin
+    run_as ${DATAFARI_USER} "bash tika-server.sh start";
+    cd $DIR
+  fi
+  
   if  [[ "$AnalyticsActivation" = *true* ]]; then
     #Run Analytic Stack
     cd $AS_HOME/scripts

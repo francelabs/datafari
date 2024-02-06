@@ -88,6 +88,13 @@ fi
     run_as ${DATAFARI_USER} "bash tika-server.sh stop";
     cd $DIR
   fi
+  
+  if  [[ "$TIKASERVER_OCR" = *true* ]];
+  then
+    cd $TIKA_SERVER_HOME_OCR/bin
+    run_as ${DATAFARI_USER} "bash tika-server.sh stop";
+    cd $DIR
+  fi
 
 if  [[ "$AnalyticsActivation" = *true* ]]; then
   #Stop Analytic Stack
