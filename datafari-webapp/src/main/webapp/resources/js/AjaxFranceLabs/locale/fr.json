@@ -238,7 +238,7 @@
     "adminUI-Welcome": "Bienvenue,",
     "adminUI-Zookeeper": "Gestionnaire de la configuration système",
     "adminUI-ZooKeeperErrorsStats": "ZooKeeper - Statistiques d'Erreurs",
-    "adminUI-atomicUpdate": "Atomic Update Management",
+    "adminUI-atomicUpdate": "Gestionnaire des Atomic Updates",
     "atomicUpdate-doc-label": "Configuration et lancement de l'Atomic Update",
     "adminUiLink": "Administration",
     "adNote": "Ici vous pouvez ajouter des rôles Datafari à des utilisateurs de l'AD. Il est à noter que pour afficher la liste des utilisateurs de l'AD, vous DEVEZ renseigner dans la partie configuration, un utilisateur disposant des droits suffisants.</br>La liste ci-dessous AFFICHE UNIQUEMENT les UTILISATEURS ACTIVÉS de l'Active Directory !",

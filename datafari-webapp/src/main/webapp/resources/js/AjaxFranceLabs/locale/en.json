@@ -27,6 +27,7 @@
     "adminUI-AlertAdmin": "Alerts Administration",
     "adminUI-Alerts": "Create Alerts",
     "adminUI-AnnotatorConf": "Annotator Configuration",
+    "adminUI-atomicUpdate": "Atomic Update Management",
     "adminUI-AutocompleteConfig": "Autocomplete Configuration",
     "adminUI-ClickConfirm": "Click to confirm and activate",
     "adminUI-ClickDelete": "Click to delete the boosts for the selected query",
