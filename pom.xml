@@ -15,7 +15,7 @@
     <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
     <cassandra.version>4.0.9</cassandra.version>
     <cassandra.sha512>94ec77fec09ed69912dd1da98f39e5e5d68aba8003180b62a0b0599cf6bae895a0944c9e0ac2b966d4e7658c188782025ab82f32e9f3139c5090d28be470e0a2</cassandra.sha512>
-    <cassandra.driver.version>4.14.1</cassandra.driver.version>
+    <cassandra.driver.version>4.17.0</cassandra.driver.version>
     <datafari.version>6.0-dev-Community</datafari.version>
     <datafariui.version>1.3</datafariui.version>
     <datafariui.md5>e8954aef3ade49fb9e1f6c7840bba945</datafariui.md5>
