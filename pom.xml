@@ -13,8 +13,8 @@
 	<adminui.md5>0c5c5a4b8a6470adf0f1d4aa6ef10db6</adminui.md5>
     <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
     <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
-    <cassandra.version>4.0.9</cassandra.version>
-    <cassandra.sha512>94ec77fec09ed69912dd1da98f39e5e5d68aba8003180b62a0b0599cf6bae895a0944c9e0ac2b966d4e7658c188782025ab82f32e9f3139c5090d28be470e0a2</cassandra.sha512>
+    <cassandra.version>4.1.3</cassandra.version>
+    <cassandra.sha512>393443a5b9849645362df2f7536e734e1fc6d513aadf440fab8dda3063553394a138805098796d35f9d4d31e2899ecab630a2ec2a44d00d5e63bed549a2e844c</cassandra.sha512>
     <cassandra.driver.version>4.17.0</cassandra.driver.version>
     <datafari.version>6.0-dev-Community</datafari.version>
     <datafariui.version>1.3</datafariui.version>
