@@ -464,6 +464,8 @@
     "fieldWeight": "Feldwertigkeit",
     "fieldWeightExpert": "Field weight (Expert mode)",
     "filerUser": "User",
+    "mode-selection": "Mode",
+    "mode-selection-tip": "In 'Office mode', job will filter any document that does not have an extension related to an Office software (doc, xlsx, pdf, odf...)",
     "filter": "Filter",
     "for": "für",
     "forcerestart-tip": "use this option to force a restart of Datafari even if all the crawling jobs are not stopped",

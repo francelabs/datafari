@@ -25,7 +25,7 @@ public class FilerFilterRule {
   }
 
   public static enum RuleType {
-    INCLUDE("include"), EXCLUDE("exclude");
+    INCLUDE("include"), EXCLUDE("exclude"), INCLUDEFILTER("includefilefilter");
 
     private final String name;
 

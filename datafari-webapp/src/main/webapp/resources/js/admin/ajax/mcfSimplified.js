@@ -96,6 +96,8 @@ $(document)
           $("#newWebConfig").html(window.i18n.msgStore['confirm']);
           $("#newWebConfig").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
           $("#webTimeZoneLabel").html(window.i18n.msgStore['timezone-selection']);
+          $("#filerModeLabel").html(window.i18n.msgStore['mode-selection']);
+
 
           $("#filerJobTitle").html(window.i18n.msgStore['adminUI-MCFSimplified-filerjobFormEdit']);
           $("#filerAddLegend").html(window.i18n.msgStore['param']);
@@ -120,6 +122,7 @@ $(document)
           $("#newFilerConfig").html(window.i18n.msgStore['confirm']);
           $("#newFilerConfig").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
           $("#filerTimeZoneLabel").html(window.i18n.msgStore['timezone-selection']);
+          $("#filerModeLabel").html(window.i18n.msgStore['mode-selection']);
 
           // Set the tooltips
           $("#server-tip").attr("title", window.i18n.msgStore['server-tip']);
@@ -131,6 +134,7 @@ $(document)
           $("#security-tip").attr("title", window.i18n.msgStore['security-tip']);
           $("#duplicatesDetection-tip").attr("title", window.i18n.msgStore['duplicatesDetection-tip']);
           $("#filerTimeZone-tip").attr("title", window.i18n.msgStore['timezone-selection-tip']);
+          $("#filerMode-tip").attr("title", window.i18n.msgStore['mode-selection-tip']);
 
           $("#seeds-tip").attr("title", window.i18n.msgStore['seeds-tip']);
           $("#email-tip").attr("title", window.i18n.msgStore['email-tip']);
@@ -139,6 +143,8 @@ $(document)
           $("#webReponame-tip").attr("title", window.i18n.msgStore['reponame-tip']);
           $("#webDuplicatesDetection-tip").attr("title", window.i18n.msgStore['duplicatesDetection-tip']);
           $("#webTimeZone-tip").attr("title", window.i18n.msgStore['timezone-selection-tip']);
+          $("#filerMode-tip").attr("title", window.i18n.msgStore['mode-selection-tip']);
+
           
           // OCR filer
           $("#filerCreateOCRLabel").html(window.i18n.msgStore['createOCR']);

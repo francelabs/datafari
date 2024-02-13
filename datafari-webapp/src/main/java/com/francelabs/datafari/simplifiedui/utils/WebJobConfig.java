@@ -143,6 +143,22 @@ public class WebJobConfig {
       }
     }
 
+    // Add include filters depending on the filtering mode
+    String inclusion = ".*";
+    if ("office".equals(webJob.getMode())) {
+      inclusion = ".*\\.txt.*\r\n.*\\.pdf.*\r\n" +
+              ".*\\.xls.*\r\n.*\\.xlt.*\r\n.*\\.xlm.*\r\n.*\\.xla.*\r\n" +
+              ".*\\.doc.*\r\n.*\\.wwl.*\r\n.*\\.wll.*\r\n.*\\.dot.*\r\n" +
+              ".*\\.ppt.*\r\n.*\\.pot.*\r\n.*\\.pps.*\r\n.*\\.ppa.*\r\n.*\\.sld.*\r\n" +
+              ".*\\.one.*\r\n.*\\.ecf.*\r\n.*\\.pub.*\r\n" +
+              ".*\\.odt.*\r\n.*\\.ods.*\r\n.*\\.odp.*\r\n.*\\.odg.*";
+    }
+    final JSONObject include = new JSONObject();
+    // Create include rules
+    include.put(value, inclusion);
+    include.put(type, "includesindex");
+    documentSpec.add(include);
+
     for (int i = 0; i < documentSpec.size(); i++) {
       final JSONObject docSpecChild = (JSONObject) documentSpec.get(i);
 

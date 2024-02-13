@@ -22,10 +22,6 @@
               "_value_": ".*"
             },
             {
-              "_type_": "includesindex",
-              "_value_": ".*"
-            },
-            {
               "_type_": "limittoseeds",
               "_value_": "",
               "_attribute_value": "true"

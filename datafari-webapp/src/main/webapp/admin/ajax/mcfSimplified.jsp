@@ -163,20 +163,38 @@
 	                      </div>
 	                    </div>                      
 	                  </div>
-                    <div class="form-group row">
-                      <div class="col-sm-3 control-label">
-                      <span class="fas fa-asterisk " style="color : red"></span>
-                        <label id="filerTimeZoneLabel" for="filerTimeZone" class="col-form-label"></label><span id="filerTimeZone-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
-                      </div>
-                      <div class="col-sm-4">
-                        <select id="filerTimeZone" name="filerTimeZone" class="form-control"  style="width: 100%">
-                          <OPTION value="" disabled selected>Select your TimeZone</OPTION>
-                        </select>
-                        <div class="invalid-feedback">
-                          Please select a timezone
+
+                      <div class="form-group row">
+                        <div class="col-sm-3 control-label">
+                          <span class="fas fa-asterisk " style="color : red"></span>
+                          <label id="filerTimeZoneLabel" for="filerTimeZone" class="col-form-label"></label><span id="filerTimeZone-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4">
+                          <select id="filerTimeZone" name="filerTimeZone" class="form-control"  style="width: 100%">
+                            <OPTION value="" disabled selected>Select your TimeZone</OPTION>
+                          </select>
+                          <div class="invalid-feedback">
+                            Please select a timezone
+                          </div>
                         </div>
                       </div>
-                    </div>
+
+                      <div class="form-group row">
+                        <div class="col-sm-3 control-label">
+                          <span class="fas fa-asterisk " style="color : red"></span>
+                          <label id="filerModeLabel" for="filerMode" class="col-form-label"></label><span id="filerMode-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                        </div>
+                        <div class="col-sm-4">
+                          <select id="filerMode" name="filerMode" class="form-control" style="width: 100%">
+                            <OPTION value="extended" selected>Extended mode</OPTION>
+                            <OPTION value="office">Office mode</OPTION>
+                          </select>
+                          <div class="invalid-feedback">
+                            Please select a mode
+                          </div>
+                        </div>
+                      </div>
+
                     <div class="form-group row" id="div15">
                       <div class="col-sm-3 control-label">
                         <label id="securityLabel" for="security" class="col-form-label"></label><span id="security-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span> <span class="alert-danger">(This feature is only available in the Enterprise Edition)</span>
@@ -730,6 +748,21 @@
                         </select>
                         <div class="invalid-feedback">
                           Please select a timezone
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <div class="col-sm-3 control-label">
+                        <span class="fas fa-asterisk " style="color : red"></span>
+                        <label id="webModeLabel" for="webMode" class="col-form-label"></label><span id="webMode-tip" class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" title=""></span>
+                      </div>
+                      <div class="col-sm-4">
+                        <select id="webMode" name="webMode" class="form-control" style="width: 100%">
+                          <OPTION value="extended" selected>Extended mode</OPTION>
+                          <OPTION value="office">Office mode</OPTION>
+                        </select>
+                        <div class="invalid-feedback">
+                           Please select a mode
                         </div>
                       </div>
                     </div>

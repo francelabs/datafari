@@ -33,6 +33,7 @@ public class FilerJobConfig {
   private final static String attributeIndexable = "_attribute_indexable";
   private final static String attributeFilespec = "_attribute_filespec";
   private final static String attributeType = "_attribute_type";
+  private final static String attributeRegex = "_attribute_regex";
   private final static String attributePath = "_attribute_path";
   private final static String value = "_value_";
   private final static String type = "_type_";
@@ -150,13 +151,36 @@ public class FilerJobConfig {
       }
     }
 
-    for (int i = 0; i < documentSpec.size(); i++) {
-      final JSONObject docSpecChild = (JSONObject) documentSpec.get(i);
+      for (Object o : documentSpec) {
+          final JSONObject docSpecChild = (JSONObject) o;
 
-      if (docSpecChild.get(type).equals(securityElement) && filerJob.isSecurity()) {
-        // Set security
-        docSpecChild.replace(attributeValue, "on");
+          if (docSpecChild.get(type).equals(securityElement) && filerJob.isSecurity()) {
+              // Set security
+              docSpecChild.replace(attributeValue, "on");
+          }
       }
+
+    // Add include filters depending on the filtering mode
+    if ("office".equals(filerJob.getMode())) {
+      final String[] inclusions = new String[]{
+              "\\.(?i)(txt|pdf)(?-i)$",
+              "\\.(?i)(xls|xlsx|xlsm|xlt|xltx|xltm|xlm|xla)(?-i)$",
+              "\\.(?i)(doc|docx|wwl|wll|dotm|dot)(?-i)$",
+              "\\.(?i)(ppt|pot|pps|ppa|pptx|pptm|potx|ppam|ppsx|ppsm|sldx|sldm|ppam)(?-i)$",
+              "\\.(?i)(one|ecf|pub)(?-i)$",
+              "\\.(?i)(odt|ods|odp|odg)(?-i)$"
+      };
+      for (String inclusion : inclusions) {
+        final JSONObject include = new JSONObject();
+        String includeRuleType = RuleType.INCLUDEFILTER.toString();
+        // Create include rules
+        include.put(value, "");
+        include.put(attributeRegex, inclusion);
+        include.put(type, includeRuleType);
+
+        documentSpec.add(include);
+      }
+
     }
 
     // Set paths
