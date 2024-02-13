@@ -89,7 +89,7 @@ run_as()
   command=$2
   current_user=`whoami`
   if [ $current_user != $user ] ; then
-    sudo -E su $user -p -c "$command"
+    sudo -E su $user -c "$command"
   else
     $command
   fi
