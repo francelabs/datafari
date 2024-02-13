@@ -203,7 +203,7 @@
     </plugins>
   </build>
   <description>
-Datafari is the ideal product for those who want to search through their data, while using advanced open source technologies. Datafari combines Apache ManifoldCF and Apache Solr, to allow its users to search through many different and diverse data sources: their file shares, their cloud shares (dropbox, google drive…), their databases, but also their emails and many more.
+Datafari is the ideal product for those who want to search through their data, while using advanced open source technologies. Datafari combines Apache ManifoldCF and Apache Solr, to allow its users to search through many different and diverse data sources: their file shares, their cloud shares (dropbox, google drive???), their databases, but also their emails and many more.
     </description>
   <url>http://www.datafari.com/en/</url>
   <inceptionYear>2011</inceptionYear>
