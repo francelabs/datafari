@@ -28,8 +28,8 @@
     <jackson-databind.version>2.13.4.1</jackson-databind.version>
     <keycloak.version>22.0.1</keycloak.version>
     <log4j.version>2.17.1</log4j.version>
-    <logstash.version>8.2.0</logstash.version>
-    <logstash.sha512>7276117b1885c59952ba6b5551ef243e2e2a27b7da7d558e109c7b06a960ac6c8e7a2cf6b92d08309ead1cd1bbecb67c83965937deb0d61bda81a8def7d7a38e</logstash.sha512>
+    <logstash.version>8.12.1</logstash.version>
+    <logstash.sha512>df516962f9518a20809a92655605766607f2177287f7e296e2de40e4970680d3004e7e5cbad57b15add1271f5c7a0c166a950b0fd995eaf57417d8efb16f6ed8</logstash.sha512>
     <mcf-solr-plugin.version>9.x-plugin-2.2</mcf-solr-plugin.version>
     <mcf-solr-plugin.sha512>38261a93265c1697db2742947ec72dfdfbb31f4dcab7a343484b06bb57416a668c750a98d5130fadf97464587a09677bb927e2623b862e618e45a3922b67d20b</mcf-solr-plugin.sha512>
     <mssql-jdbc.version>10.2.1.jre11</mssql-jdbc.version>
