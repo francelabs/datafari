@@ -96,7 +96,7 @@ $(document)
           $("#newWebConfig").html(window.i18n.msgStore['confirm']);
           $("#newWebConfig").attr("data-loading-text", "<i class='fa fa-spinner fa-spin'></i> " + window.i18n.msgStore['confirm']);
           $("#webTimeZoneLabel").html(window.i18n.msgStore['timezone-selection']);
-          $("#filerModeLabel").html(window.i18n.msgStore['mode-selection']);
+          $("#webModeLabel").html(window.i18n.msgStore['mode-selection']);
 
 
           $("#filerJobTitle").html(window.i18n.msgStore['adminUI-MCFSimplified-filerjobFormEdit']);
@@ -143,7 +143,7 @@ $(document)
           $("#webReponame-tip").attr("title", window.i18n.msgStore['reponame-tip']);
           $("#webDuplicatesDetection-tip").attr("title", window.i18n.msgStore['duplicatesDetection-tip']);
           $("#webTimeZone-tip").attr("title", window.i18n.msgStore['timezone-selection-tip']);
-          $("#filerMode-tip").attr("title", window.i18n.msgStore['mode-selection-tip']);
+          $("#webMode-tip").attr("title", window.i18n.msgStore['mode-selection-tip']);
 
           
           // OCR filer
