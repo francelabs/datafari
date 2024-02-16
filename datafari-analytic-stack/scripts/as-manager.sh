@@ -23,7 +23,7 @@ init_logstash()
   # Install logstash-output-solr plugin
   bash $LOGSTASH_HOME/bin/logstash-plugin install file://$LOGSTASH_HOME/logstash-offline-solr-plugin.zip
   # patch logstash-output-solr plugin
-  sed -i "/@solr.add(documents)/c\    @solr.add\(documents, :add_attributes => \{:commitWithin=>10000\}, :params => \{:tr => @tr\}\)" $LOGSTASH_HOME/vendor/bundle/jruby/*/gems/logstash-output-solr_http-*/lib/logstash/outputs/solr_http.rb
+  sed -i "/@solr.add(documents)/c\    @solr.add\(documents, :add_attributes => \{:commitWithin=>3600000\}, :params => \{:tr => @tr\}\)" $LOGSTASH_HOME/vendor/bundle/jruby/*/gems/logstash-output-solr_http-*/lib/logstash/outputs/solr_http.rb
   sed -i "/document\[\"@timestamp\"\]\.iso8601/c\ " $LOGSTASH_HOME/vendor/bundle/jruby/*/gems/logstash-output-solr_http-*/lib/logstash/outputs/solr_http.rb
   ssl_logstash="require 'openssl'\nOpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE\n"
   sed -i -e "/^require \"uuidtools\"/a${ssl_logstash}" $LOGSTASH_HOME/vendor/bundle/jruby/*/gems/logstash-output-solr_http-*/lib/logstash/outputs/solr_http.rb
