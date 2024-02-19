@@ -22,19 +22,19 @@ check_java()
       echo "no Java detected. Please install Java. Program will exit."
       exit
   fi
-  
+
   if [[ "$_java" ]]; then
       version=$("$_java" -version 2>&1 | awk -F '"' '/version/ {print $2}' | awk -F '.' '{print $1}')
-      echo version "$version"
-      if [[ "$version" -ge "11" ]]; then
-          echo Java version detected $version : OK
-  
+      echo "Java version detected : $version"
+      if [[ "$version" -eq "11" ]]; then
+          echo "Java version detected $version : OK"
+
       else
-          echo Java version is not >=11. Please install at least Java 11. Program will exit
+          echo "Java version installed is not Java 11. Please install ONLY Java 11.See this page for more information : https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/110788634/Software+requirements. Program will exit"
           exit
       fi
   fi
-  
+
   if [ -e "$JAVA_HOME"/bin/java ]; then
     echo "JAVA HOME is correctly set"
   else
