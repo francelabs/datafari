@@ -55,7 +55,7 @@ public class SuggesterAPI {
     // -any handler defined together with an entity suggester.
     final Set<String> allowedHandlers = new HashSet<>();
     allowedHandlers.add("/suggest");
-    allowedHandlers.add("/suggestSearch");
+    allowedHandlers.add("/proposals");
 
     try {
       final JSONParser parser = new JSONParser();

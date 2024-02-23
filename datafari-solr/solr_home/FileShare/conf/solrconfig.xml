@@ -714,7 +714,7 @@
 </requestHandler>
 
 
-	<requestHandler class="solr.SearchHandler" name="/suggestSearch" useParams="mySearch">
+	<requestHandler class="solr.SearchHandler" name="/proposals" useParams="mySearch">
 		<lst name="defaults">
 			<str name="echoParams">explicit</str>
 			<str name="defType">edismax</str>
