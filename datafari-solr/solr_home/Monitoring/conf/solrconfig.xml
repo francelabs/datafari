@@ -6,7 +6,7 @@
 
 <config>
 
-  <luceneMatchVersion>9.3</luceneMatchVersion>
+  <luceneMatchVersion>9.5</luceneMatchVersion>
   <dataDir>${solr.data.dir:}</dataDir>
 
   <directoryFactory name="DirectoryFactory" class="${solr.directoryFactory:solr.NRTCachingDirectoryFactory}">
@@ -56,7 +56,7 @@
     <queryResultWindowSize>20</queryResultWindowSize>
     <queryResultMaxDocsCached>200</queryResultMaxDocsCached>
     <useColdSearcher>false</useColdSearcher>
-    <maxWarmingSearchers>2</maxWarmingSearchers>
+    
 
   </query>
 

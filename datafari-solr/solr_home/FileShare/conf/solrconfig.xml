@@ -33,7 +33,7 @@
        that you fully re-index after changing this setting as it can
        affect both how text is indexed and queried.
   -->
-  <luceneMatchVersion>9.4</luceneMatchVersion>
+  <luceneMatchVersion>9.5</luceneMatchVersion>
 
 	<!-- TODO : change the hardcoded path add property.name=value in API Collections create -->
 
@@ -562,7 +562,7 @@
          Recommend values of 1-2 for read-only slaves, higher for
          masters w/o cache warming.
       -->
-    <maxWarmingSearchers>2</maxWarmingSearchers>
+    
 
   </query>
 

@@ -5,7 +5,7 @@
   See the License for the specific language governing permissions and limitations under the License. -->
 
 <config>
-  <luceneMatchVersion>9.3</luceneMatchVersion>
+  <luceneMatchVersion>9.5</luceneMatchVersion>
   <dataDir>${solr.data.dir:}</dataDir>
 
   <directoryFactory name="DirectoryFactory" class="${solr.directoryFactory:solr.NRTCachingDirectoryFactory}" />
@@ -59,7 +59,7 @@
 
     <useColdSearcher>false</useColdSearcher>
 
-    <maxWarmingSearchers>2</maxWarmingSearchers>
+   
 
   </query>
 
