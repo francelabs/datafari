@@ -31,6 +31,10 @@ public class SolrAPI {
   private static String solrport = "8983";
   private static String protocol = "http";
 
+  public static String QUERY_QF = "qf";
+  public static String QUERY_PF = "pf";
+  public static String QUERY_BQ = "bq";
+
   
 
   public JSONObject readConfiguration() {
@@ -173,14 +177,14 @@ public class SolrAPI {
   static public String getFieldsWeight(final JSONObject object) throws IOException, ManifoldCFException, InterruptedException, ParseException {
 
     final JSONObject mySearch = (JSONObject) ((JSONObject) ((JSONObject) object.get("response")).get("params")).get("mySearch");
-    final String fieldsWeight = (String) mySearch.get("qf");
+    final String fieldsWeight = (String) mySearch.get(QUERY_QF);
     return fieldsWeight;
   }
 
   static public String getPhraseFieldsWeight(final JSONObject object) throws IOException, ManifoldCFException, InterruptedException, ParseException {
 
     final JSONObject mySearch = (JSONObject) ((JSONObject) ((JSONObject) object.get("response")).get("params")).get("mySearch");
-    final String phraseFieldsWeight = (String) mySearch.get("pf");
+    final String phraseFieldsWeight = (String) mySearch.get(QUERY_PF);
     return phraseFieldsWeight;
   }
 
@@ -206,7 +210,7 @@ public class SolrAPI {
     final JSONObject mysearch = new JSONObject();
     final JSONObject qf = new JSONObject();
 
-    qf.put("qf", fieldsWeight);
+    qf.put(QUERY_QF, fieldsWeight);
     mysearch.put("mySearch", qf);
     objet.put("update", mysearch);
 
@@ -221,7 +225,7 @@ public class SolrAPI {
     final JSONObject mysearch = new JSONObject();
     final JSONObject pf = new JSONObject();
 
-    pf.put("pf", fieldsWeight);
+    pf.put(QUERY_PF, fieldsWeight);
     mysearch.put("mySearch", pf);
     objet.put("update", mysearch);
 

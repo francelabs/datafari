@@ -25,6 +25,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.francelabs.datafari.utils.SolrAPI;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -68,20 +70,25 @@ public class Search2 extends HttpServlet {
    *
    * @param request the original request
    */
-  private void applyUserQueryConf(final HttpServletRequest request) {
+  public static void applyUserQueryConf(final HttpServletRequest request, Logger logger) {
     final String userConf = GetUserQueryConf.getUserQueryConf(request);
     if (userConf != null && !userConf.isEmpty()) {
       final JSONParser parser = new JSONParser();
       try {
         final JSONObject jsonConf = (JSONObject) parser.parse(userConf);
-        final String qf = (String) jsonConf.get("qf");
-        final String pf = (String) jsonConf.get("pf");
+        final String qf = (String) jsonConf.get(SolrAPI.QUERY_QF);
+        final String pf = (String) jsonConf.get(SolrAPI.QUERY_PF);
+        final String bq = (String) jsonConf.get(SolrAPI.QUERY_BQ);
         if (qf != null && qf.length() > 0) {
-          request.setAttribute("qf", qf);
+          request.setAttribute(SolrAPI.QUERY_QF, qf);
         }
 
         if (pf != null && pf.length() > 0) {
-          request.setAttribute("pf", pf);
+          request.setAttribute(SolrAPI.QUERY_PF, pf);
+        }
+
+        if (StringUtils.isNotBlank(bq)){
+          request.setAttribute(SolrAPI.QUERY_BQ, bq);
         }
       } catch (final ParseException e) {
         logger.warn("An issue has occured while reading user query conf", e);
@@ -147,7 +154,7 @@ public class Search2 extends HttpServlet {
   protected JSONObject performSearch(final HttpServletRequest request, final HttpServletResponse response) {
     try {
       setSearchSessionId(request);
-      applyUserQueryConf(request);
+      applyUserQueryConf(request, logger);
 
       final JSONObject jsonResponse = SearchAggregator.doGetSearch(request, response);
       checkException(jsonResponse);
@@ -163,7 +170,7 @@ public class Search2 extends HttpServlet {
   protected JSONObject performAggregatorlessSearch(final HttpServletRequest request, final HttpServletResponse response) {
     try {
       setSearchSessionId(request);
-      applyUserQueryConf(request);
+      applyUserQueryConf(request, logger);
 
       final JSONObject jsonResponse = SearchAggregator.doGetSearch(request, response, true);
       checkException(jsonResponse);

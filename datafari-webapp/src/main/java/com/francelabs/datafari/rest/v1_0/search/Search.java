@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.francelabs.datafari.rest.v2_0.search.Search2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
@@ -54,24 +55,8 @@ public class Search extends HttpServlet {
         request.setAttribute("id", id.toString());
       }
 
-      final String userConf = GetUserQueryConf.getUserQueryConf(request);
-      if (userConf != null && userConf.length() > 0) {
-        final JSONParser parser = new JSONParser();
-        try {
-          final JSONObject jsonConf = (JSONObject) parser.parse(userConf);
-          final String qf = (String) jsonConf.get("qf");
-          final String pf = (String) jsonConf.get("pf");
-          if (qf != null && qf.length() > 0) {
-            request.setAttribute("qf", qf);
-          }
+      Search2.applyUserQueryConf(request, logger);
 
-          if (pf != null && pf.length() > 0) {
-            request.setAttribute("pf", pf);
-          }
-        } catch (final ParseException e) {
-          logger.warn("An issue has occured while reading user query conf", e);
-        }
-      }
       final JSONObject jsonResponse = SearchAggregator.doGetSearch(request, response);
       // Check if we get a code, if this is the case, we got an error
       // We will throw an internal error exception with the message if there is one
