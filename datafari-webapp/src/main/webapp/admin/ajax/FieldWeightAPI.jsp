@@ -79,26 +79,47 @@
 				<p class="documentation-preview">Because the concepts of PF and QF can be challenging to understand, both are available only via the expert mode. In order to better understand these concepts, please consult the Solr documentation on the edismax query parser<a class="documentation-link" href="https://lucene.apache.org/solr/guide/7_5/the-dismax-query-parser.html" target="_blank"> ...see more</a></p>
 			</div>
 			<form class="form-horizontal" role="form">
-				<div class="row">					
-					<label id="labelth" class="col-sm-4 col-form-label"></label>
+		  <div class="row">
+				<label id="labelth" class="col-sm-4 col-form-label"></label>
           <div class="col-sm-5 col-form-label">
             <input type="text"  id="qfAPI" name="qfAPI" class="form-control">
           </div>	
         </div>
         								
-				<div class="row">
-					<label id="labelth2" class="col-sm-4 col-form-label"></label>
+		<div class="row">
+		  <label id="labelth2" class="col-sm-4 col-form-label"></label>
           <div class="col-sm-5 col-form-label">
             <input type="text"  id="pfAPI" name="pfAPI" class="form-control">
           </div>
-				</div>		
+		</div>
+
+		<div class="row">
+		  <label id="labelth3" class="col-sm-4 col-form-label" for="boostAPI"></label>
+          <div class="col-sm-5 col-form-label">
+            <input type="text"  id="boostAPI" name="boostAPI" class="form-control">
+          </div>
+		</div>
+
+		<div class="row">
+		  <label id="labelth4" class="col-sm-4 col-form-label" for="bqAPI"></label>
+          <div class="col-sm-5 col-form-label">
+            <input type="text"  id="bqAPI" name="bqAPI" class="form-control">
+          </div>
+		</div>
+
+		<div class="row">
+		  <label id="labelth5" class="col-sm-4 col-form-label" for="bfAPI"></label>
+          <div class="col-sm-5 col-form-label">
+            <input type="text"  id="bfAPI" name="bfAPI" class="form-control">
+          </div>
+		</div>
         			
-				<div class="row" id="field-weight-expert-margin">		
+		<div class="row" id="field-weight-expert-margin">
           <label class="col-sm-3 col-form-label" id="fieldWeightExpertConfirm" for=""></label>				
-					<div class="col-sm-3 col-form-label">
-						<button id="submitth" name="submitth" class="btn btn-primary btn-label-left"></button>
-					</div>
-				</div>
+		  <div class="col-sm-3 col-form-label">
+			<button id="submitth" name="submitth" class="btn btn-primary btn-label-left"></button>
+		  </div>
+		</div>
         <div class="col p-0"><span id="answerth"></span></div>
 			</form>
 		</div>
