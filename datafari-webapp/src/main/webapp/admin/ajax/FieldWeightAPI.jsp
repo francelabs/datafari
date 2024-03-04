@@ -96,21 +96,21 @@
 		<div class="row">
 		  <label id="labelth3" class="col-sm-4 col-form-label" for="boostAPI"></label>
           <div class="col-sm-5 col-form-label">
-            <input type="text"  id="boostAPI" name="boostAPI" class="form-control">
+            <input type="text"  id="boostAPI" name="boostAPI" class="form-control" placeholder="original_file_size">
           </div>
 		</div>
 
 		<div class="row">
 		  <label id="labelth4" class="col-sm-4 col-form-label" for="bqAPI"></label>
           <div class="col-sm-5 col-form-label">
-            <input type="text"  id="bqAPI" name="bqAPI" class="form-control">
+            <input type="text"  id="bqAPI" name="bqAPI" class="form-control" placeholder="extension:pdf^50">
           </div>
 		</div>
 
 		<div class="row">
 		  <label id="labelth5" class="col-sm-4 col-form-label" for="bfAPI"></label>
           <div class="col-sm-5 col-form-label">
-            <input type="text"  id="bfAPI" name="bfAPI" class="form-control">
+            <input type="text"  id="bfAPI" name="bfAPI" class="form-control" placeholder="sum(original_file_size,word_count)">
           </div>
 		</div>
         			
