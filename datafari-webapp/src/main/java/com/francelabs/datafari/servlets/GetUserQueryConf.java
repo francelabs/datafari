@@ -25,5 +25,6 @@ public class GetUserQueryConf {
   public static String getUserQueryConf(final HttpServletRequest request) {
     return null;
   }
+  public static void triggerUpdateUserQueryPreferences(final HttpServletRequest request) {}
 
 }
