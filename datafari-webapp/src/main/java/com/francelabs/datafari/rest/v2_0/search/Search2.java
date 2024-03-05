@@ -15,31 +15,25 @@
  *******************************************************************************/
 package com.francelabs.datafari.rest.v2_0.search;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
+import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
+import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
+import com.francelabs.datafari.servlets.GetUserQueryConf;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.francelabs.datafari.utils.SolrAPI;
-import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
-import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
-import com.francelabs.datafari.servlets.GetUserQueryConf;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 @RestController
 public class Search2 extends HttpServlet {
@@ -64,37 +58,6 @@ public class Search2 extends HttpServlet {
     }
   }
 
-
-  /**
-   * Apply user's specific query config (specific boosts related to user context) on the request
-   *
-   * @param request the original request
-   */
-  public static void applyUserQueryConf(final HttpServletRequest request, Logger logger) {
-    final String userConf = GetUserQueryConf.getUserQueryConf(request);
-    if (userConf != null && !userConf.isEmpty()) {
-      final JSONParser parser = new JSONParser();
-      try {
-        final JSONObject jsonConf = (JSONObject) parser.parse(userConf);
-        final String qf = (String) jsonConf.get(SolrAPI.QUERY_QF);
-        final String pf = (String) jsonConf.get(SolrAPI.QUERY_PF);
-        final String bq = (String) jsonConf.get(SolrAPI.QUERY_BQ);
-        if (qf != null && qf.length() > 0) {
-          request.setAttribute(SolrAPI.QUERY_QF, qf);
-        }
-
-        if (pf != null && pf.length() > 0) {
-          request.setAttribute(SolrAPI.QUERY_PF, pf);
-        }
-
-        if (StringUtils.isNotBlank(bq)){
-          request.setAttribute(SolrAPI.QUERY_BQ, bq);
-        }
-      } catch (final ParseException e) {
-        logger.warn("An issue has occured while reading user query conf", e);
-      }
-    }
-  }
 
   /**
    * Check if search response contains errors and throw an {@link InternalErrorException} if it is the case
@@ -154,7 +117,7 @@ public class Search2 extends HttpServlet {
   protected JSONObject performSearch(final HttpServletRequest request, final HttpServletResponse response) {
     try {
       setSearchSessionId(request);
-      applyUserQueryConf(request, logger);
+      GetUserQueryConf.applyUserQueryConf(request, logger);
 
       final JSONObject jsonResponse = SearchAggregator.doGetSearch(request, response);
       checkException(jsonResponse);
@@ -170,7 +133,7 @@ public class Search2 extends HttpServlet {
   protected JSONObject performAggregatorlessSearch(final HttpServletRequest request, final HttpServletResponse response) {
     try {
       setSearchSessionId(request);
-      applyUserQueryConf(request, logger);
+      GetUserQueryConf.applyUserQueryConf(request, logger);
 
       final JSONObject jsonResponse = SearchAggregator.doGetSearch(request, response, true);
       checkException(jsonResponse);

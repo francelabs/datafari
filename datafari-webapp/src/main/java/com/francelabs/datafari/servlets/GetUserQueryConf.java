@@ -15,6 +15,8 @@
  *******************************************************************************/
 package com.francelabs.datafari.servlets;
 
+import org.apache.logging.log4j.Logger;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -22,9 +24,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class GetUserQueryConf {
 
-  public static String getUserQueryConf(final HttpServletRequest request) {
-    return null;
-  }
+  public static void applyUserQueryConf(final HttpServletRequest request, Logger logger) {}
   public static void triggerUpdateUserQueryPreferences(final HttpServletRequest request) {}
 
 }

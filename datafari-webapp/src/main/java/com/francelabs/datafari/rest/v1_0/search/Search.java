@@ -15,27 +15,22 @@
  *******************************************************************************/
 package com.francelabs.datafari.rest.v1_0.search;
 
-import java.io.IOException;
-import java.util.UUID;
+import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
+import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
+import com.francelabs.datafari.servlets.GetUserQueryConf;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONObject;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.francelabs.datafari.rest.v2_0.search.Search2;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
-import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
-import com.francelabs.datafari.servlets.GetUserQueryConf;
+import java.io.IOException;
+import java.util.UUID;
 
 @RestController
 public class Search extends HttpServlet {
@@ -55,7 +50,7 @@ public class Search extends HttpServlet {
         request.setAttribute("id", id.toString());
       }
 
-      Search2.applyUserQueryConf(request, logger);
+      GetUserQueryConf.applyUserQueryConf(request, logger);
 
       final JSONObject jsonResponse = SearchAggregator.doGetSearch(request, response);
       // Check if we get a code, if this is the case, we got an error
