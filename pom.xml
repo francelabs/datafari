@@ -10,7 +10,7 @@
   <name>Datafari Enterprise Search CE - Parent POM</name>
   <properties>
     <adminui.version>1.0</adminui.version>
-    <adminui.md5>a13d398513fdfd63001130e308e986dd</adminui.md5>
+    <adminui.md5>ae9ca787e5067f3bedb1f2cdad4408b0</adminui.md5>
     <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
     <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
     <cassandra.version>4.1.3</cassandra.version>
@@ -18,7 +18,7 @@
     <cassandra.driver.version>4.17.0</cassandra.driver.version>
     <datafari.version>6.0-dev-Community</datafari.version>
    <datafariui.version>1.4</datafariui.version>
-   <datafariui.md5>618176c2453e9b6dea5730593006d759</datafariui.md5>
+   <datafariui.md5>12beb3f66e55c08e2dddff18c746b2ff</datafariui.md5>
     <guava.version>26.0-jre</guava.version>
     <httpclient.version>4.5.13</httpclient.version>
     <java.version>1.11</java.version>
