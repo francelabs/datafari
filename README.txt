@@ -42,7 +42,8 @@ New regex transformation connector, for simple declaration of entities extracted
 New CSV connector, to index each live of a CSV as a separate line in the index
 Reduced hardware requirements by removing Apache Zeppelin for the dashboards
 Atomic updates to remove the need to reindex the full data of a document when only some fields have changed
-Capacity to ingest and indedx content hosted on Apache Solr 9.x
+Capacity to ingest and index content hosted on Apache Solr 9.x
+Graphical admin to boost relevancy based on a field values
 
 * Major components versions
 - Solr 9.5
