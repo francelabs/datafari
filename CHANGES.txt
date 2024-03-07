@@ -51,8 +51,7 @@ March 7th, 2024
 #934 Improve default exact match results
 #946 Datafari API - user specific search history
 #951 Create new Solr configuration for annotators collections
-#953 Develop an atomic service for Solr updates
-
+#953 Develop an atomic service for Solr update
 #861 Upgrade Solr from 8.11.2 to 9
 #875 Update dependencies required into control file for Debian
 #935 Update Solr to version 9.4.1
@@ -66,7 +65,6 @@ March 7th, 2024
 #957 Update Zookeeper to 3.9.1 version
 #958 Update DatafariUI to 1.4 version
 #959 Update AdminUI to 1.0 version
-
 #647 Broken Statistics and user sessions dashboards when using DatafariUI
 #744 DatafariUI - hierarchical facet displays duplicates html files
 #897 DatafariUI - Entity Autocomplete does not work with v2 Datafari search API
@@ -79,6 +77,7 @@ March 7th, 2024
 #936 Postgresql logs have moved
 #937 Issue with scripts for automatic Tika server creation for OCR
 #950 Problem with CQLSH with Cassandra 4.1
+#963 CVE-2021-26291 Update Postgresql JDBC driver
 
 ================== 5.5 ==================
 
