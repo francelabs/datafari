@@ -13,16 +13,12 @@ I. HOW TO INSTALL DATAFARI :
 i. DOCKER:
 The easiest is probably to use our docker container: https://hub.docker.com/r/datafari/datafari
 To avoid most crashes, be sure to assign enough resources to your container:
-- 2+ GHz Quad Core recommended
--- Without Zeppelin - no OCR: Min 12GB, recommended 16 GB
-- At least 20GB on an SSD (recommended)
+See https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/1662451718/Hardware+requirements for information about the requirements
 
 ii. OVA:
 If you don't fancy docker, you can opt for a Virtual Machine, which is fully preconfigured: https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/66125825/Quick+Start+Guide
 To avoid most crashes, be sure to assign enough resources to your container:
-- 2+ GHz Quad Core recommended
-- 16GB RAM without Zeppelin, 24 GB with Zeppelin recommended
-- At least 20GB on an SSD (recommended)
+See https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/1662451718/Hardware+requirements for more information about the requirements
 
 iii. For any other installation modes, refer to: https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/66125825/Quick+Start+Guide
 
