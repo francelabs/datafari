@@ -12,7 +12,6 @@ export PID_DIR=$DATAFARI_HOME/pid
 export AS_HOME=$DATAFARI_HOME/analytic-stack
 export AS_LOGS=$DATAFARI_HOME/logs
 export LOGSTASH_HOME=$AS_HOME/logstash
-export ZEPPELIN_HOME=$AS_HOME/zeppelin
 export TIKA_SERVER_HOME=$DATAFARI_HOME/tika-server
 export LS_JAVA_HOME=$JAVA_HOME
 
