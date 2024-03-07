@@ -36,5 +36,8 @@
           <span id="atomicUpdate-doc-label"></span>
           <span><a href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/2939387906/Atomic+Update+Management" target="_blank">https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/2939387906/Atomic+Update+Management</a></span>
         </p>
+        <p>
+          <span><a id="atomicUpdate-log-link" class="ajax-link" href="?page=downloadLogs"></a></span>
+        </p>
 			</div>
 		</html>
