@@ -11,7 +11,7 @@ Available as community (open source) and enterprise (proprietary) edition, Dataf
 See https://wiki.datafari.com for more information.
 
 
-================== 6.0-DEV ==================
+================== 6.0 ==================
 
 March 7th, 2024
 
