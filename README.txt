@@ -5,7 +5,6 @@ Datafari is an open source enterprise search solution. It is the perfect product
 Available as community (open source) and enterprise (proprietary) edition, Datafari is different from the competition :
 - Its open source license is not aggressive, as it uses the Apache v2 license: you are free to do whatever you want with it, you just need to mention that you are using it.
 - It combines three renowned Apache projects, namely Cassandra, Solr and ManifoldCF, which gives Datafari a long term vision.
-- It leverages Apache Zeppelin to care about the analytics dashboards (search behavior and system monitoring).
 
 The complete documentation (for users, admins and developers) is available here : https://datafari.atlassian.net/wiki/display/DATAFARI/Datafari
 
@@ -35,27 +34,26 @@ https://localhost/datafariui/
 ii. Admin UI :
 https://localhost/Datafari/admin/?lang=en
 
-NOTE: to crawl files, you need to install an extra jar that we cannot distribute for open source licence conflict rationales (Apachev2 and LGPL). Please follow this documentation: https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/662700036/Add+the+JCIFS-NG+Connector+to+Datafari+-+Community+Edition
-NOTE BIS: Java 11 is now REQUIRED
+NOTE 1: Java 11 is REQUIRED
+NOTE 2: to crawl files, you need to install an extra jar that we cannot distribute for open source licence conflict rationales (Apachev2 and LGPL). Please follow this documentation: https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/662700036/Add+the+JCIFS-NG+Connector+to+Datafari+-+Community+Edition
 
-* New features compared to v5.3
-- Optimisation for SSD users at install phase
-
-- OCR and Spacy options in crawlers simplified mode
-- New admin UI to deploy a Tika Server
-- New duplicate detector functionality
-- Various bugfixes
+* Major new features compared to v5.5 :
+New regex transformation connector, for simple declaration of entities extracted based on regular expressions
+New CSV connector, to index each live of a CSV as a separate line in the index
+Reduced hardware requirements by removing Apache Zeppelin for the dashboards
+Atomic updates to remove the need to reindex the full data of a document when only some fields have changed
+Capacity to ingest and indedx content hosted on Apache Solr 9.x
 
 * Major components versions
-- Solr 8.11.2
-- ManifoldCF 2.24
-- Tomcat 9.0.56
-- Cassandra 4.0.1
-- PostgreSQL 12.4
-- Zookeeper 3.6.2
-- Tika Server 2.7.0
-- Zeppelin 0.10.1
-- DatafariUI 1.3
+- Solr 9.5
+- ManifoldCF 2.26
+- Tomcat 9.0.81
+- Cassandra 4.1.3
+- PostgreSQL 15.4
+- Zookeeper 3.9.1
+- Tika Server 2.9.1
+- DatafariUI 1.4
+- AdminUI 1.0
 
 The complete list of changes and bugfixes can be found in CHANGES.TXT
 
