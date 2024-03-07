@@ -35,7 +35,7 @@
     <mssql-jdbc.version>10.2.1.jre11</mssql-jdbc.version>
     <netty.version>4.1.63.Final</netty.version>
     <ojdbc.version>19.15.0.0.1</ojdbc.version>
-    <postgres.version>42.7.2</postgres.version>
+    <postgres.version>42.1.3</postgres.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <solr.sha512>e34b2421db8586691ff41b86beca77bcb61243ce8edfade74eda8da4b0fabde0078884db301350a0d0dfc4a6fee46320ddf059469300444da4e3693220df5e40</solr.sha512>
