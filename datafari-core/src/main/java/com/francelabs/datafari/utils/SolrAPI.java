@@ -34,6 +34,8 @@ public class SolrAPI {
   public static String QUERY_QF = "qf";
   public static String QUERY_PF = "pf";
   public static String QUERY_BQ = "bq";
+  public static String QUERY_BOOST = "boost";
+  public static String QUERY_BF = "bf";
 
 
 
@@ -191,19 +193,19 @@ public class SolrAPI {
   static public String getBoost(final JSONObject object) throws IOException, ManifoldCFException, InterruptedException, ParseException {
 
     final JSONObject mySearch = (JSONObject) ((JSONObject) ((JSONObject) object.get("response")).get("params")).get("mySearch");
-    return (String) mySearch.get("boost");
+    return (String) mySearch.get(QUERY_BOOST);
   }
 
   static public String getBoostQuery(final JSONObject object) throws IOException, ManifoldCFException, InterruptedException, ParseException {
 
     final JSONObject mySearch = (JSONObject) ((JSONObject) ((JSONObject) object.get("response")).get("params")).get("mySearch");
-    return (String) mySearch.get("bq");
+    return (String) mySearch.get(QUERY_BQ);
   }
 
   static public String getBoostFunction(final JSONObject object) throws IOException, ManifoldCFException, InterruptedException, ParseException {
 
     final JSONObject mySearch = (JSONObject) ((JSONObject) ((JSONObject) object.get("response")).get("params")).get("mySearch");
-    return (String) mySearch.get("bf");
+    return (String) mySearch.get(QUERY_BF);
   }
 
   static public JSONObject setHLcharacters(final String collection, final long nbCharactersHL) throws IOException, InterruptedException, ParseException {
