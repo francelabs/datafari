@@ -17,12 +17,11 @@ package com.francelabs.datafari.rest.v1_0.users;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.francelabs.datafari.service.db.StatisticsDataService;
-import com.francelabs.datafari.servlets.GetUserQueryConf;
+import com.francelabs.datafari.utils.userqueryconf.UserPrefQueryConf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -76,7 +75,7 @@ public class Users {
       UiConfig.setUiConfig(authenticatedUserName, bodyUiConfig.toJSONString().replaceAll("'","''"));
       AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(), "Modified saved ui config for user " + authenticatedUserName);
       // this ui configuration may impact the user's query preferences.
-      GetUserQueryConf.triggerUpdateUserQueryPreferences(request);
+      UserPrefQueryConf.triggerUpdateUserQueryPreferences(request);
     }
   }
 

@@ -17,7 +17,7 @@ package com.francelabs.datafari.rest.v2_0.search;
 
 import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
 import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
-import com.francelabs.datafari.servlets.GetUserQueryConf;
+import com.francelabs.datafari.utils.userqueryconf.UserQueryAllConf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -117,7 +117,7 @@ public class Search2 extends HttpServlet {
   protected JSONObject performSearch(final HttpServletRequest request, final HttpServletResponse response) {
     try {
       setSearchSessionId(request);
-      GetUserQueryConf.applyUserQueryConf(request, logger);
+      UserQueryAllConf.apply(request);
 
       final JSONObject jsonResponse = SearchAggregator.doGetSearch(request, response);
       checkException(jsonResponse);
@@ -133,7 +133,7 @@ public class Search2 extends HttpServlet {
   protected JSONObject performAggregatorlessSearch(final HttpServletRequest request, final HttpServletResponse response) {
     try {
       setSearchSessionId(request);
-      GetUserQueryConf.applyUserQueryConf(request, logger);
+      UserQueryAllConf.apply(request);
 
       final JSONObject jsonResponse = SearchAggregator.doGetSearch(request, response, true);
       checkException(jsonResponse);

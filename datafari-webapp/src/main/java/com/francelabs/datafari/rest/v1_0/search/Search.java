@@ -17,7 +17,7 @@ package com.francelabs.datafari.rest.v1_0.search;
 
 import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
 import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
-import com.francelabs.datafari.servlets.GetUserQueryConf;
+import com.francelabs.datafari.utils.userqueryconf.UserQueryAllConf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
@@ -50,7 +50,7 @@ public class Search extends HttpServlet {
         request.setAttribute("id", id.toString());
       }
 
-      GetUserQueryConf.applyUserQueryConf(request, logger);
+      UserQueryAllConf.apply(request);
 
       final JSONObject jsonResponse = SearchAggregator.doGetSearch(request, response);
       // Check if we get a code, if this is the case, we got an error
