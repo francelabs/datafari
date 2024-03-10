@@ -33,7 +33,7 @@
        that you fully re-index after changing this setting as it can
        affect both how text is indexed and queried.
   -->
-  <luceneMatchVersion>9.4</luceneMatchVersion>
+  <luceneMatchVersion>9.5</luceneMatchVersion>
 
 	<!-- TODO : change the hardcoded path add property.name=value in API Collections create -->
 
@@ -562,7 +562,7 @@
          Recommend values of 1-2 for read-only slaves, higher for
          masters w/o cache warming.
       -->
-    <maxWarmingSearchers>2</maxWarmingSearchers>
+    
 
   </query>
 
@@ -712,6 +712,28 @@
 		<str name="fq">{!manifoldCFSecurity}</str>
 	</lst>
 </requestHandler>
+
+
+	<requestHandler class="solr.SearchHandler" name="/proposals" useParams="mySearch">
+		<lst name="defaults">
+			<str name="echoParams">explicit</str>
+			<str name="defType">edismax</str>
+			<str name="qf">exactContent^500 exactTitle^500 title_en^50 content_fr^10 content_en^10 source^20 extension^30 id^3 url_search^3</str>
+			<str name="pf">exactContent^5000 exactTitle^5000 title_en^500 title_fr^500 content_fr^100 content_en^100 url_search^30</str>
+			<int name="rows">5</int>
+			<str name="spellcheck">true</str>
+			<str name="spellcheck.onlyMorePopular">true</str>
+			<str name="spellcheck.count">1</str>
+			<str name="spellcheck.collate">true</str>
+			<str name="spellcheck.maxCollationTries">1</str>
+			<str name="spellcheck.extendedResults">true</str>
+			<str name="fl">title preview_content url</str>
+		</lst>
+
+		<lst name="appends">
+			<str name="fq">{!manifoldCFSecurity}</str>
+		</lst>
+	</requestHandler>
 
 	<requestHandler class="org.apache.solr.handler.component.SearchHandler" name="/suggestAuthors">
 		<lst name="defaults">
@@ -1069,8 +1091,6 @@
 	    <str name="fq">{!manifoldCFSecurity}</str>
 	  </lst>
 	</requestHandler>
-
-
 
 	<!-- Highlighting Component http://wiki.apache.org/solr/HighlightingParameters -->
 	<searchComponent class="solr.HighlightComponent" name="highlight">

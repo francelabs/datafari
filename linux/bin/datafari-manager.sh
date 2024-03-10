@@ -167,6 +167,7 @@ init_zk()
   "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Access/conf" -confname Access
   "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Monitoring/conf" -confname Monitoring
   "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Duplicates/conf" -confname Duplicates
+  "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Duplicates/conf" -confname GenericAnnotator
   
   @ZK-INIT@
 }
@@ -290,15 +291,10 @@ init_solr()
 }
 
 init_solr_annotators() {
-  curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=OCR&collection.configName=@MAINCOLLECTION@&numShards=1&maxShardsPerNode=5&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/FileShare/"
-  curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=Spacy&collection.configName=@MAINCOLLECTION@&numShards=1&maxShardsPerNode=5&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/FileShare/"
-  curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=GenericAnnotator&collection.configName=@MAINCOLLECTION@&numShards=1&maxShardsPerNode=5&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/FileShare/"
-  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"autocomplete.threshold": "0.005"}}' http://localhost:8983/solr/OCR/config
-  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"clustering.enabled": "false"}}' http://localhost:8983/solr/OCR/config
-  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"autocomplete.threshold": "0.005"}}' http://localhost:8983/solr/Spacy/config
-  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"clustering.enabled": "false"}}' http://localhost:8983/solr/Spacy/config
-  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"autocomplete.threshold": "0.005"}}' http://localhost:8983/solr/GenericAnnotator/config
-  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"clustering.enabled": "false"}}' http://localhost:8983/solr/GenericAnnotator/config
+  curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=OCR&collection.configName=GenericAnnotator&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/GenericAnnotator/"
+  curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=Spacy&collection.configName=GenericAnnotator&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/GenericAnnotator/"
+  curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=GenericAnnotator&collection.configName=GenericAnnotator&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/GenericAnnotator/"
+  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"solr.autoCommit.maxTime": "60000"}}' http://localhost:8983/solr/GenericAnnotator/config
  
 }
 

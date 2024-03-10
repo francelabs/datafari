@@ -2,7 +2,7 @@
   <parent>
     <groupId>com.francelabs.datafari</groupId>
     <artifactId>datafari-ce</artifactId>
-    <version>6.0-dev-Community</version>
+    <version>6.1-dev-Community</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>datafari-webapp</artifactId>
@@ -12,7 +12,7 @@
     <dependency>
       <groupId>com.francelabs.datafari</groupId>
       <artifactId>datafari-core</artifactId>
-      <version>6.0-dev-Community</version>
+      <version>6.1-dev-Community</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime -->
     <dependency>
@@ -47,7 +47,7 @@
     <dependency>
       <groupId>com.francelabs.datafari</groupId>
       <artifactId>datafari-mcf-scripts</artifactId>
-      <version>6.0-dev-Community</version>
+      <version>6.1-dev-Community</version>
     </dependency>
 
     <dependency>

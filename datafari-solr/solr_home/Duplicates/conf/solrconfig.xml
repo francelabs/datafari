@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <config>
 
-  <luceneMatchVersion>9.3</luceneMatchVersion>
+  <luceneMatchVersion>9.5</luceneMatchVersion>
   
   <lib dir="${lib.path}lib/custom"/>
   
@@ -61,7 +61,6 @@
     </listener>
 	
     <useColdSearcher>false</useColdSearcher>
-    <maxWarmingSearchers>2</maxWarmingSearchers>
 
   </query>
 

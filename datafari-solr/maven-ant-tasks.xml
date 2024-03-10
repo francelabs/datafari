@@ -35,6 +35,12 @@
 		<replace file="${solr.dist}/solr_home/FileShare/conf/solrconfig.xml" token="@DATAFARI-UP-CHAIN@" value="${datafari-up-chain}" />
 		<replace file="${solr.dist}/solr_home/FileShare/conf/solrconfig.xml" token="@OTHER-PROCESSOR-CHAINS@" value="" />
 		<replace file="${solr.dist}/solr_home/FileShare/conf/solrconfig.xml" token="@UPDATE-REQUEST-CHAIN@" value="" />
+		
+		<!-- *** Setup GenericAnnotator solrconfig.xml *** -->
+		<loadfile srcFile="solr_parameters/datafari-up-chain" property="datafari-up-chain" />
+		<replace file="${solr.dist}/solr_home/GenericAnnotator/conf/solrconfig.xml" token="@DATAFARI-UP-CHAIN@" value="${datafari-up-chain}" />
+		<replace file="${solr.dist}/solr_home/GenericAnnotator/conf/solrconfig.xml" token="@OTHER-PROCESSOR-CHAINS@" value="" />
+		<replace file="${solr.dist}/solr_home/GenericAnnotator/conf/solrconfig.xml" token="@UPDATE-REQUEST-CHAIN@" value="" />
 	</target>
 	
 	<target name="setup-mcf-solr-plugin">

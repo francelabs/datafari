@@ -35,7 +35,7 @@ public class SolrAPI {
   public static String QUERY_PF = "pf";
   public static String QUERY_BQ = "bq";
 
-  
+
 
   public JSONObject readConfiguration() {
     return null;
@@ -188,6 +188,24 @@ public class SolrAPI {
     return phraseFieldsWeight;
   }
 
+  static public String getBoost(final JSONObject object) throws IOException, ManifoldCFException, InterruptedException, ParseException {
+
+    final JSONObject mySearch = (JSONObject) ((JSONObject) ((JSONObject) object.get("response")).get("params")).get("mySearch");
+    return (String) mySearch.get("boost");
+  }
+
+  static public String getBoostQuery(final JSONObject object) throws IOException, ManifoldCFException, InterruptedException, ParseException {
+
+    final JSONObject mySearch = (JSONObject) ((JSONObject) ((JSONObject) object.get("response")).get("params")).get("mySearch");
+    return (String) mySearch.get("bq");
+  }
+
+  static public String getBoostFunction(final JSONObject object) throws IOException, ManifoldCFException, InterruptedException, ParseException {
+
+    final JSONObject mySearch = (JSONObject) ((JSONObject) ((JSONObject) object.get("response")).get("params")).get("mySearch");
+    return (String) mySearch.get("bf");
+  }
+
   static public JSONObject setHLcharacters(final String collection, final long nbCharactersHL) throws IOException, InterruptedException, ParseException {
 
     final String url = getSolrUrl() + getConfigAPI(collection);
@@ -203,33 +221,19 @@ public class SolrAPI {
 
   }
 
-  static public JSONObject setFieldsWeight(final String collection, final String fieldsWeight) throws IOException, InterruptedException, ParseException {
+  static public JSONObject setQueryParameter(final String qpFieldName, final String collection, final String qpFieldValue) throws IOException, InterruptedException, ParseException {
 
     final String url = getSolrUrl() + getConfigAPI(collection);
     final JSONObject objet = new JSONObject();
     final JSONObject mysearch = new JSONObject();
-    final JSONObject qf = new JSONObject();
+    final JSONObject qpParamObj = new JSONObject();
 
-    qf.put(QUERY_QF, fieldsWeight);
-    mysearch.put("mySearch", qf);
+    qpParamObj.put(qpFieldName, qpFieldValue);
+    mysearch.put("mySearch", qpParamObj);
     objet.put("update", mysearch);
 
     return executeCommand(url, "POST", objet);
 
-  }
-
-  static public JSONObject setPhraseFieldsWeight(final String collection, final String fieldsWeight) throws IOException, InterruptedException, ParseException {
-
-    final String url = getSolrUrl() + getConfigAPI(collection);
-    final JSONObject objet = new JSONObject();
-    final JSONObject mysearch = new JSONObject();
-    final JSONObject pf = new JSONObject();
-
-    pf.put(QUERY_PF, fieldsWeight);
-    mysearch.put("mySearch", pf);
-    objet.put("update", mysearch);
-
-    return executeCommand(url, "POST", objet);
   }
 
   static public String getUserProp(final JSONObject object, final String userProp) throws IOException, ManifoldCFException, InterruptedException, ParseException {

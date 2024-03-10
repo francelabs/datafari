@@ -55,6 +55,7 @@ public class SuggesterAPI {
     // -any handler defined together with an entity suggester.
     final Set<String> allowedHandlers = new HashSet<>();
     allowedHandlers.add("/suggest");
+    allowedHandlers.add("/proposals");
 
     try {
       final JSONParser parser = new JSONParser();
@@ -180,4 +181,18 @@ public class SuggesterAPI {
     return pathInfo.substring(pathInfo.lastIndexOf("/"), pathInfo.length());
   }
 
+  public static JSONObject suggestAndSearch(HttpServletRequest request) {
+    JSONObject response = new JSONObject();
+    response.put("search", SearchAPI.search(request));
+    response.put("suggest", SuggesterAPI.suggest(request));
+
+    if (((JSONObject) response.get("search")).containsKey("error") || ((JSONObject) response.get("suggest")).containsKey("error")) {
+      final JSONObject error = new JSONObject();
+      error.put("code", 500);
+      error.put("message", "And error was met while retrieving suggestions");
+      response.put("error", error);
+      return response;
+    }
+    return response;
+  }
 }

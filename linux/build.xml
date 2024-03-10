@@ -247,6 +247,14 @@
 				<include name="*.jar" />
 			</fileset>
 		</copy>
+		<copy todir="${linux.dist.dir}/solr/solr_home/GenericAnnotator/lib/custom">
+					<fileset dir="${updateprocessor.src.dir}">
+						<include name="*.jar" />
+					</fileset>
+					<fileset dir="${updateprocessor.src.dir}/dependency">
+						<include name="*.jar" />
+					</fileset>
+		</copy>
 		<copy todir="${linux.dist.dir}/solr/solr_home/Duplicates/lib/custom">
 			<fileset dir="${updateprocessor.src.dir}">
 				<include name="*.jar" />
@@ -301,6 +309,13 @@
 				<include name="*.jar" />
 			</fileset>
 		</copy>
+		
+		<!-- Copy Datafari update handler + dependencies to GenericAnnotator -->
+				<copy todir="${linux.dist.dir}/solr/solr_home/GenericAnnotator/lib/custom">
+					<fileset dir="${datafarihandler.src.dir}">
+						<include name="*.jar" />
+					</fileset>
+				</copy>
 
 		<!-- Copy Datafari handler to Duplicates Solr core -->
 		<copy todir="${linux.dist.dir}/solr/solr_home/Duplicates/lib/custom">
