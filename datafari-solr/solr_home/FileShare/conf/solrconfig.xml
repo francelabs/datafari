@@ -40,6 +40,7 @@
     <lib dir="${solr.install.dir}/modules/extraction/lib" regex=".*\.jar" />
     <lib dir="${solr.install.dir}/modules/clustering/lib/" regex=".*\.jar" />
     <lib dir="${solr.install.dir}/modules/langid/lib/" regex=".*\.jar" />
+    <lib dir="${solr.install.dir}/modules/scripting/lib/" regex=".*\.jar" />
     <lib dir="${lib.path}lib/MCF"/>
     <lib dir="${lib.path}lib/custom"/>
     <lib dir="${lib.path}lib/custom/customer"/>
