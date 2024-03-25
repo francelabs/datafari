@@ -66,7 +66,7 @@ curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-propert
   curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=GenericAnnotator&collection.configName=GenericAnnotator&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/GenericAnnotator/"
   
   
-  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"solr.autoCommit.maxTime": "60000"}}' http://localhost:8983/solr/GenericAnnotator/config
+  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"solr.autoCommit.maxTime": "60000"}}' $url_protocol://${ip_solr}/solr/GenericAnnotator/config
   
 
   
