@@ -1,5 +1,5 @@
 #!/bin/bash
-server=http://@SOLRNODEIP@:8983/solr/@MAINCOLLECTION@/schema
+server=@PROTOCOL@://@SOLRNODEIP@:@PORT@/solr/@MAINCOLLECTION@/schema
 
 sendCommand() {
 	# test if command is empty
@@ -8,10 +8,10 @@ sendCommand() {
 	fi
 	echo $1
 	# call API with an ADD command, if answer is "already exist", use REPLACE command instead
-	resp=$(echo '{ "add-'$2'": '$1' }' | curl -s -X POST -H 'Content-type:application/json' --data-binary @- $server)
+	resp=$(echo '{ "add-'$2'": '$1' }' | curl --insecure -s -X POST -H 'Content-type:application/json' --data-binary @- $server)
         if [[ $resp == *"already"* ]]
            then
-              resp=$(echo '{ "replace-'$2'": '$1' }' | curl -s -X POST -H 'Content-type:application/json' --data-binary @- $server)
+              resp=$(echo '{ "replace-'$2'": '$1' }' | curl --insecure -s -X POST -H 'Content-type:application/json' --data-binary @- $server)
               echo $resp;
            else 
               echo $resp;
@@ -26,7 +26,7 @@ deleteCopyFields() {
 	source=$(echo $1 | jq '.source')
 	for row in $(echo $1 | jq '.dest[]'); do
 		delete_item="{ \"source\":$source, \"dest\":$row }"
-		resp=$(echo '{ "delete-'$2'": '$delete_item' }' | curl -s -X POST -H 'Content-type:application/json' --data-binary @- $server)
+		resp=$(echo '{ "delete-'$2'": '$delete_item' }' | curl --insecure -s -X POST -H 'Content-type:application/json' --data-binary @- $server)
 		echo $resp
 	done
 }
