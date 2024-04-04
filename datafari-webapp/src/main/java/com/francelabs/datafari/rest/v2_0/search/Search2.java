@@ -16,6 +16,7 @@
 package com.francelabs.datafari.rest.v2_0.search;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -134,7 +135,7 @@ public class Search2 extends HttpServlet {
           }
 
           String newUrl = currentURL.substring(0, currentURL.indexOf(searchEndpoint));
-          newUrl += "/rest/v2.0/url?url=" + URLEncoder.encode(url, StandardCharsets.UTF_8);
+          newUrl += "/rest/v2.0/url?url=" + URLEncoder.encode(URLDecoder.decode(url, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
           newUrl += "&id=" + queryId;
           jsonDoc.put("click_url", newUrl);
         }
