@@ -860,6 +860,7 @@
 			<str name="lowernames">true</str>
 			<str name="fmap.language">ignored_</str>
 			<str name="fmap.source">ignored_</str>
+			<str name="fmap._version_">ignored_</str>
 			<str name="uprefix">ignored_</str>
 			<str name="update.chain">datafari</str>
     </lst>
