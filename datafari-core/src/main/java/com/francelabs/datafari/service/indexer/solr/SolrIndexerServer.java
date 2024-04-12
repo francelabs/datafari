@@ -1,21 +1,15 @@
 package com.francelabs.datafari.service.indexer.solr;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
+import com.francelabs.datafari.service.indexer.*;
+import com.francelabs.datafari.statistics.StatsUtils;
+import com.francelabs.datafari.utils.DatafariMainConfiguration;
+import com.francelabs.datafari.utils.SolrConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest.METHOD;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.CloudHttp2SolrClient;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.impl.NoOpResponseParser;
 import org.apache.solr.client.solrj.request.CollectionAdminRequest;
@@ -35,6 +29,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.cloud.SolrZkClient;
 import org.apache.solr.common.cloud.ZkMaintenanceUtils;
 import org.apache.solr.common.util.NamedList;
+import org.apache.solr.common.util.Utils;
 import org.apache.zookeeper.KeeperException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -42,19 +37,12 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.noggit.JSONUtil;
 
-import com.francelabs.datafari.service.indexer.IndexerFacetFieldCount;
-import com.francelabs.datafari.service.indexer.IndexerFacetStatsInfo;
-import com.francelabs.datafari.service.indexer.IndexerFieldStatsInfo;
-import com.francelabs.datafari.service.indexer.IndexerInputDocument;
-import com.francelabs.datafari.service.indexer.IndexerQuery;
-import com.francelabs.datafari.service.indexer.IndexerQueryResponse;
-import com.francelabs.datafari.service.indexer.IndexerResponseDocument;
-import com.francelabs.datafari.service.indexer.IndexerServer;
-import com.francelabs.datafari.service.indexer.IndexerServerManager;
-import com.francelabs.datafari.service.indexer.IndexerUpdateRequest;
-import com.francelabs.datafari.statistics.StatsUtils;
-import com.francelabs.datafari.utils.DatafariMainConfiguration;
-import com.francelabs.datafari.utils.SolrConfiguration;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.Normalizer;
+import java.util.*;
 
 public class SolrIndexerServer implements IndexerServer {
 
@@ -161,7 +149,46 @@ public class SolrIndexerServer implements IndexerServer {
   public IndexerQueryResponse executeQuery(final IndexerQuery query) throws Exception {
     final SolrQuery solrQuery = ((SolrIndexerQuery) query).prepareQuery();
     final QueryRequest req = new QueryRequest(solrQuery);
-    final NamedList<Object> response = queryClient.request(req);
+
+    NamedList<Object> response = null;
+    int nbTry = 3;
+    final Map<String, String> reqHeaders = req.getHeaders();
+    while (nbTry > 0) {
+      try {
+        response = queryClient.request(req);
+
+        nbTry = 0;
+      } catch (Exception solrException) {
+        nbTry--;
+        String errorMessage = solrException.getMessage();
+        if (LOGGER.isDebugEnabled()){
+          LOGGER.error(errorMessage, solrException);
+        }
+
+        if (nbTry > 0) {
+          int sleepTime = 500;
+          if (LOGGER.isDebugEnabled()){
+            LOGGER.debug("Prepare to resend request to Solr due to exception above - wait for {}ms - nbTry remaining : {}", sleepTime, nbTry);
+
+            CloudHttp2SolrClient clientDebug = ((CloudHttp2SolrClient)queryClient);
+            LOGGER.debug("Request: {} - on Collection: {}", req.getPath(), clientDebug.getDefaultCollection());
+            boolean hasLiveNode = false;
+            for (String liveNode : clientDebug.getClusterState().getLiveNodes()){
+              hasLiveNode = true;
+              LOGGER.debug("liveNode = {}", Utils.getBaseUrlForNodeName(liveNode,"http"));
+            }
+            if (!hasLiveNode){
+              LOGGER.debug("No live Node found !");
+            }
+
+          }
+          Thread.sleep(sleepTime);
+        } else {
+          throw solrException;
+        }
+      }
+    }
+
     final JSONParser parser = new JSONParser();
 
     // the response may be encapsulated in a jQuery wrapper function, so remove it
