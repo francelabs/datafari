@@ -243,7 +243,7 @@ public class MetadataCleaner extends org.apache.manifoldcf.agents.transformation
    *
    * @param documentURI         is the URI of the document. The URI is presumed to be the unique identifier which the output data store will use to process and serve the document. This URI is
    *                            constructed by the repository connector which fetches the document, and is thus universal across all output connectors.
-   * @param outputDescription   is the description string that was constructed for this document by the getOutputDescription() method.
+   * @param pipelineDescription is the document's pipeline version string, for this connection.
    * @param document            is the document data to be processed (handed to the output data store).
    * @param authorityNameString is the name of the authority responsible for authorizing any access tokens passed in with the repository document. May be null.
    * @param activities          is the handle to an object that the implementer of a pipeline connector may use to perform operations, such as logging processing activity, or sending a modified
