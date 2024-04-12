@@ -22,11 +22,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -161,7 +157,7 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     }
     if (doc.getFieldValue("ignored_extended_properties_totaltime") != null) {
       doc.getFieldValues("ignored_extended_properties_totaltime").forEach(value -> {
-        doc.addField("total_time", value);
+        if (isValidLong(value)) doc.addField("total_time", value);
       });
     }
 
@@ -397,14 +393,14 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
       final Collection<Object> lastmodifiedCollection = doc.getFieldValues("last_modified");
       final Object firsLastModified = lastmodifiedCollection.iterator().next();
       doc.remove(lastmodifiedField);
-      doc.addField(lastmodifiedField, firsLastModified);
+      if (isValidDate(firsLastModified)) doc.addField(lastmodifiedField, firsLastModified);
     }
 
     if (doc.containsKey(creationdateField) && doc.getFieldValue(creationdateField) != null && !doc.getFieldValue(creationdateField).toString().isEmpty()) {
       final Collection<Object> creationDateCollection = doc.getFieldValues("creation_date");
       final Object firstCreationDate = creationDateCollection.iterator().next();
       doc.remove(creationdateField);
-      doc.addField(creationdateField, firstCreationDate);
+      if (isValidDate(firstCreationDate)) doc.addField(creationdateField, firstCreationDate);
     }
 
     super.processAdd(cmd);
@@ -446,5 +442,26 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
       }
     }
     return extension;
+  }
+
+  /**
+   * Check if a String is castable to Long
+   * @return boolean
+   */
+  boolean isValidLong(Object str) {
+    try {
+      Long.parseLong(String.valueOf(str));
+    } catch(Exception e) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Check if a String is castable to Date and if it is not only digits
+   * @return boolean
+   */
+  boolean isValidDate(Object str) {
+    return !String.valueOf(str).matches("[0-9]+"); // This value should not be a stringified timespamp
   }
 }
