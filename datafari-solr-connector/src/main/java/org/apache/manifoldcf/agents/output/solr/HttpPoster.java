@@ -37,6 +37,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import com.francelabs.datafari.utils.WaitAndSchedule;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Consts;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -779,63 +780,59 @@ public class HttpPoster {
             currentSolrDoc = buildSolrDocument(length, is);
           }
 
-          // Fire off the request.
-          // Note: I need to know whether the document has been permanently rejected or not, but we currently have
-          // no means to determine that. Analysis of SolrServerExceptions that have been thrown is likely needed.
-          try {
-            readFromDocumentStreamYet = true;
-            UpdateResponse response;
-            if (useExtractUpdateHandler) {
-              response = contentStreamUpdateRequest.process(solrServer);
-            } else {
-              final ModifiableSolrParams params = new ModifiableSolrParams();
-              // Write the arguments
-              for (final String name : arguments.keySet()) {
-                final List<String> values = arguments.get(name);
-                writeField(params, name, values);
+
+          int nbTry = 3;
+          while (nbTry > 0) {
+            // Fire off the request.
+            // Note: I need to know whether the document has been permanently rejected or not, but we currently have
+            // no means to determine that. Analysis of SolrServerExceptions that have been thrown is likely needed.
+            try {
+              sendSolrRequest(contentStreamUpdateRequest, currentSolrDoc);
+
+              // Successful completion
+              activityStart = new Long(fullStartTime);
+              activityBytes = new Long(length);
+              activityCode = "OK";
+              activityDetails = null;
+
+              rval = true;
+              nbTry = 0;
+            } catch (final SolrServerException e) {
+              // Log what happened to us
+              activityStart = new Long(fullStartTime);
+              activityBytes = new Long(length);
+              activityDetails = e.getMessage() + ((e.getCause() != null) ? ": " + e.getCause().getMessage() : "");
+
+              // Broken pipe exceptions we log specially because they usually mean
+              // Solr has rejected the document, and the user will want to know that.
+              if (e.getCause() != null && e.getCause().getClass().getName().equals("java.net.SocketException") && (activityDetails.toLowerCase(Locale.ROOT).indexOf("broken pipe") != -1
+                  || activityDetails.toLowerCase(Locale.ROOT).indexOf("connection reset") != -1 || activityDetails.toLowerCase(Locale.ROOT).indexOf("target server failed to respond") != -1))
+                activityCode = "SOLRREJECT";
+              else
+                activityCode = e.getClass().getSimpleName().toUpperCase(Locale.ROOT);
+
+              nbTry--;
+              if (nbTry > 0) {
+                WaitAndSchedule.wait(500);
+              } else {
+                // Rethrow; will interpret at a higher level
+                throw e;
               }
-              final UpdateRequest req = new UpdateRequest();
-              req.setParams(params);
-              req.add(currentSolrDoc);
-              if (commitWithin != null) {
-                req.setCommitWithin(Integer.parseInt(commitWithin));
+            } catch (final SolrException e) {
+              // Log what happened to us
+              activityStart = new Long(fullStartTime);
+              activityBytes = new Long(length);
+              activityCode = Integer.toString(e.code());
+              activityDetails = e.getMessage() + ((e.getCause() != null) ? ": " + e.getCause().getMessage() : "");
+
+              nbTry--;
+              if (nbTry > 0) {
+                WaitAndSchedule.wait(500);
+              } else {
+                // Rethrow; will interpret at a higher level
+                throw e;
               }
-              response = req.process(solrServer);
             }
-
-            // Successful completion
-            activityStart = new Long(fullStartTime);
-            activityBytes = new Long(length);
-            activityCode = "OK";
-            activityDetails = null;
-
-            rval = true;
-            return;
-          } catch (final SolrServerException e) {
-            // Log what happened to us
-            activityStart = new Long(fullStartTime);
-            activityBytes = new Long(length);
-            activityDetails = e.getMessage() + ((e.getCause() != null) ? ": " + e.getCause().getMessage() : "");
-
-            // Broken pipe exceptions we log specially because they usually mean
-            // Solr has rejected the document, and the user will want to know that.
-            if (e.getCause() != null && e.getCause().getClass().getName().equals("java.net.SocketException") && (activityDetails.toLowerCase(Locale.ROOT).indexOf("broken pipe") != -1
-                || activityDetails.toLowerCase(Locale.ROOT).indexOf("connection reset") != -1 || activityDetails.toLowerCase(Locale.ROOT).indexOf("target server failed to respond") != -1))
-              activityCode = "SOLRREJECT";
-            else
-              activityCode = e.getClass().getSimpleName().toUpperCase(Locale.ROOT);
-
-            // Rethrow; will interpret at a higher level
-            throw e;
-          } catch (final SolrException e) {
-            // Log what happened to us
-            activityStart = new Long(fullStartTime);
-            activityBytes = new Long(length);
-            activityCode = Integer.toString(e.code());
-            activityDetails = e.getMessage() + ((e.getCause() != null) ? ": " + e.getCause().getMessage() : "");
-
-            // Rethrow; we'll interpret at the next level
-            throw e;
           }
         } catch (final IOException ioe) {
           if ((ioe instanceof InterruptedIOException) && (!(ioe instanceof java.net.SocketTimeoutException)))
@@ -853,6 +850,28 @@ public class HttpPoster {
       } catch (final Throwable e) {
         this.exception = e;
       }
+    }
+
+    private void sendSolrRequest(final ContentStreamUpdateRequest contentStreamUpdateRequest, SolrInputDocument currentSolrDoc) throws SolrServerException, IOException {
+      readFromDocumentStreamYet = true;
+      if (useExtractUpdateHandler) {
+        contentStreamUpdateRequest.process(solrServer);
+      } else {
+        final ModifiableSolrParams params = new ModifiableSolrParams();
+        // Write the arguments
+        for (final String name : arguments.keySet()) {
+          final List<String> values = arguments.get(name);
+          writeField(params, name, values);
+        }
+        final UpdateRequest req = new UpdateRequest();
+        req.setParams(params);
+        req.add(currentSolrDoc);
+        if (commitWithin != null) {
+          req.setCommitWithin(Integer.parseInt(commitWithin));
+        }
+        req.process(solrServer);
+      }
+
     }
 
     private SolrInputDocument buildSolrDocument(final long length, final InputStream is) throws IOException {
