@@ -203,8 +203,8 @@ generate_certificates_apache() {
   sed -i -e "s/@NODEHOST@/${1}/g" $DATAFARI_HOME/ssl-keystore/apache/config/tomcat.conf >>$installerLog 2>&1
   sed -i -e "s/@NODEHOST@/${1}/g" $DATAFARI_HOME/ssl-keystore/apache/config/solr.conf >>$installerLog 2>&1
   sed -i -e "s/@NODEHOST@/${1}/g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-services.conf >>$installerLog 2>&1
-  openssl req -config $DATAFARI_HOME/ssl-keystore/apache/config/datafari-config.csr -new -newkey rsa:2048 -nodes -keyout $DATAFARI_HOME/ssl-keystore/apache/datafari.key -out $DATAFARI_HOME/ssl-keystore/apache/datafari.csr
-  openssl x509 -req -days 365 -in $DATAFARI_HOME/ssl-keystore/apache/datafari.csr -signkey $DATAFARI_HOME/ssl-keystore/apache/datafari.key -out $DATAFARI_HOME/ssl-keystore/apache/datafari.crt
+  openssl req -config $DATAFARI_HOME/ssl-keystore/apache/config/datafari-config.csr -new -newkey rsa:2048 -nodes -keyout $DATAFARI_HOME/ssl-keystore/apache/datafari.key -out $DATAFARI_HOME/ssl-keystore/apache/datafari.csr -extensions v3_req
+  openssl x509 -req -days 365 -in $DATAFARI_HOME/ssl-keystore/apache/datafari.csr -signkey $DATAFARI_HOME/ssl-keystore/apache/datafari.key -extfile $DATAFARI_HOME/ssl-keystore/apache/config/datafari-config.csr -out $DATAFARI_HOME/ssl-keystore/apache/datafari.crt -extensions v3_req
   $JAVA_HOME/bin/keytool -importcert -noprompt -alias datafari -file $DATAFARI_HOME/ssl-keystore/apache/datafari.crt -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
   mkdir -p $DATAFARI_HOME/ssl-keystore/apache/backup/
   cp $DATAFARI_HOME/ssl-keystore/apache/datafari.key $DATAFARI_HOME/ssl-keystore/apache/backup/
