@@ -515,7 +515,9 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
     String title = normalizeTitle(document.getFileName());
     document.setFileName(title);
 
-    //logRepositoryDocument(document, documentURI);
+    if (Logging.connectors.isDebugEnabled()) {
+      logRepositoryDocument(document, documentURI);
+    }
 
     // Now, go off and call the ingest API.
     if (poster.indexPost(documentURI, document, sp.getArgs(), authorityNameString, activities))
@@ -1633,7 +1635,7 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
    */
   //TODO refactor this method so that it can be used in any MCF connectors.
   private void logRepositoryDocument(RepositoryDocument document, String docID){
-    StringBuilder toLog = new StringBuilder("\n!! Contenu GROS Objet Sorl Connector ------------------------------------- !!\nfilename = ");
+    StringBuilder toLog = new StringBuilder("\n!! RepositoryDocument content ------------------------------------- !!\nfilename = ");
     final String filename = document.getFileName();
     toLog.append(filename).append("\n");
     toLog.append("Document identifier = ").append(docID).append("\n");
@@ -1694,7 +1696,7 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
     }
     toLog.append("!! End - ").append(filename).append("--------------------------------------------- !!\n");
 
-    Logging.connectors.warn("DEBUG| " + toLog);
+    Logging.connectors.debug(toLog);
   }
 
   private void logReaderField(StringBuilder toLog, Reader reader){
