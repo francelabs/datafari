@@ -150,6 +150,8 @@ init_git() {
       fi
     done <"$file"
   fi
+  # Force the version number manually
+  version=6.0.1
   sed -i -e "s/@VERSION@/$version/g" $TOMCAT_HOME/webapps/Datafari/footer.jsp >>$installerLog 2>&1
   sed -i -e "s/@VERSION@/$version/g" $TOMCAT_HOME/webapps/Datafari/admin/admin-footer.jsp >>$installerLog 2>&1
   sed -i -e "s/@COMMIT@/$commit/g" $TOMCAT_HOME/webapps/Datafari/admin/admin-footer.jsp >>$installerLog 2>&1
