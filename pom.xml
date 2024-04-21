@@ -47,8 +47,8 @@
     <spring.security.saml2.core.version>1.0.10.RELEASE</spring.security.saml2.core.version>
     <spring.version>5.3.29</spring.version>
     <spring.oauth2.version>2.5.2.RELEASE</spring.oauth2.version>
-    <tika.version>2.9.1</tika.version>
-    <tika-server.sha512>2650d35be781879f2b13bd623bac6fc4f5d0788fc7a077ecb5c4529bd8e45bb340d8a9deb433d87fac151f5bf41e6c91607e55d6ba01021ecf95029992987f78</tika-server.sha512>
+    <tika.version>2.9.2</tika.version>
+    <tika-server.sha512>540b6a1ba20f2ce951a1928a609a00d4552dcc075bc204c3a4ba3697b4a86c8853d450d913a6bb165693dafc3c581a170769ff6a816cbc6a59ac3360904d40f9</tika-server.sha512>
     <tika-server-commit-number>5c0793e2c</tika-server-commit-number>
     <tomcat.version>9.0.81</tomcat.version>
     <slf4j.version>1.7.36</slf4j.version>
