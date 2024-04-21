@@ -197,7 +197,15 @@ generate_certificates() {
 }
 
 generate_certificates_apache() {
-
+  # Check if user entered an IP or a FQDN
+  echo "Check if IP or FQDN for $1"
+  if [[ $1 =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo "IP entered"
+  else
+    echo "FQDN entered"
+    sed -i 's/IP.2/DNS.1/g' $DATAFARI_HOME/ssl-keystore/apache/config/datafari-config.csr
+  fi
+  
   # Generate SSL certificate for Apache
   sed -i -e "s/@NODEHOST@/${1}/g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-config.csr >>$installerLog 2>&1
   sed -i -e "s/@NODEHOST@/${1}/g" $DATAFARI_HOME/ssl-keystore/apache/config/tomcat.conf >>$installerLog 2>&1
