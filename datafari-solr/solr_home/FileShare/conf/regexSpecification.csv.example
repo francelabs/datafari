@@ -1,0 +1,30 @@
+Source field|expression|Destination field|Value if match|Value if no match|activate regex
+
+# Source field : the Solr field used to apply "expression"
+# expression : the value to be compared to Source field. It's the exact value by default. If "activate regex" = true, it's a regular expression
+# Destination field : the Solr field that will receive the value if "expression" match
+# Value if match : (Optional) a value to put in "Destination field" if there is a match of "expression" in "Source field".
+# Value if no match : (Optional) a value to put in "Destination field" if there is NO MATCH of "expression" in "Source field".
+# activate regex : (Optional) to set "expression" as regular expression (true) or not (false or empty).
+#
+# if "activate regex" = true and "Value if match" is empty, "Destination field" will receive the result of the matching regex.
+# see more in our documentation on https://datafari.atlassian.net/wiki/home.
+
+
+# Examples for grouping file extensions in category:
+#   - extension : the Solr field for file extension
+#   - 7z, avi, doc... : the value of the extension
+#   - type_category : the Solr field that will be set with the match
+#   - archives, multimedia... : the value put in type_category if extension match with the value expected (7z, avi, doc...)
+
+extension|7z|type_category|archives|
+extension|avi|type_category|multimedia|
+extension|bat|type_category|développement|
+extension|bdd|type_category|développement|
+extension|bmp|type_category|multimedia|
+extension|doc|type_category|bureautique|
+extension|docm|type_category|bureautique|
+extension|docx|type_category|bureautique|
+
+# Example if the term "word" is not found in title_en, then put "No word here" in entity_words. If there is a match, the title_en will be copied in entity_words
+title_en|.*word.*|entity_words||No word here|true

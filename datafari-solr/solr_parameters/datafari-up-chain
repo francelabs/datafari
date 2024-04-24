@@ -89,3 +89,7 @@
         <str name="hierarchical.field">urlHierarchy</str>
         <str name="hierarchical.path.separator">/</str>
       </processor>
+
+      <processor class="com.francelabs.datafari.updateprocessor.RegexEntityUpdateProcessorFactory">
+        <str name="regexFile">regexSpecification.csv</str>
+      </processor>
