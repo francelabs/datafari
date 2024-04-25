@@ -37,8 +37,7 @@ public class RagAPI extends SearchAPI {
     // Todo : validate query
     String userQuery = request.getParameter("q");
     if (userQuery == null) {
-      final JSONObject response = new JSONObject();
-      return (JSONObject) response.put("error", writeJsonError(422, "No query provided."));
+      return writeJsonError(422, "No query provided.");
     }
 
     // If the content is extracted from highlighting, then the user can configure the size of the extracts
@@ -47,7 +46,7 @@ public class RagAPI extends SearchAPI {
         request.setAttribute("hl.fragsize", Integer.valueOf(config.getHlFragsize()));
       }
     } catch (NumberFormatException e) {
-      return (JSONObject) new JSONObject().put("error", writeJsonError(500, "Invalid value for rag.hl.fragsize property. Integer expected."));
+      return writeJsonError(500, "Invalid value for rag.hl.fragsize property. Integer expected.");
     }
 
     // Override parameters with request attributes (set by the code and not from the client, so
@@ -75,57 +74,54 @@ public class RagAPI extends SearchAPI {
     // If we chose to send the highlighting to the webservice, then we need to use a specific method
     if (HIGHLIGHTING.equals(config.getSolrField())) {
       JSONObject searchResponse = (JSONObject) searchResult.get(HIGHLIGHTING);
-      documentsContent = extractDocumentsContentFromHighlighting(searchResponse);
+      documentsContent = extractDocumentsContentFromHighlighting(searchResponse, config);
     } else if (ALLOWED_FIELDS_VALUE.contains(config.getSolrField())) {
       JSONObject searchResponse = (JSONObject) searchResult.get("response");
-      documentsContent = extractDocumentsContentFromResponse(searchResponse);
+      documentsContent = extractDocumentsContentFromResponse(searchResponse, config);
     } else {
       // If rag.solrField is not one of the allowed fields (ALLOW_FIELDS_VALUE), an error is returned.
-      response.put("error", writeJsonError(500, "Invalid value for rag.solrField property. Valid values are \"highlighting\", \"preview_content\" and \"exact_content\"."));
-      return response;
+      return writeJsonError(500, "Invalid value for rag.solrField property. Valid values are \"highlighting\", \"preview_content\" and \"exact_content\".");
     }
 
     if (documentsContent.isEmpty()) {
-      response.put("error", writeJsonError(428, "The query cannot be answered because no associated documents were found."));
-      return response;
+      return writeJsonError(428, "The query cannot be answered because no associated documents were found.");
     }
 
     String llmStrResponse = getLlmResponse(prompt, documentsContent, config);
     //String llmStrResponse = "Datafari connait certainement la réponse à votre requête, mais moi, je suis juste un bouchon.";
 
-
-
-    System.out.println(llmStrResponse);
-
     // Todo : check the validity of the response
     if (!llmStrResponse.isEmpty()) {
       response.put("status", "OK");
-      response.put("content", llmStrResponse);
+      JSONObject content = new JSONObject();
+      content.put("message", llmStrResponse);
+      response.put("content", content);
       return response;
     } else {
-      response.put("error", writeJsonError(428, "The webservice could not provide a valid response."));
-      return response;
+      return writeJsonError(428, "The webservice could not provide a valid response.");
     }
   }
 
   private static JSONObject writeJsonError(int code, String message) {
+    final JSONObject response = new JSONObject();
     final JSONObject error = new JSONObject();
-    error.put("status", "ERROR");
+    response.put("status", "ERROR");
     error.put("code", code);
-    error.put("message", message);
-    return error;
+    error.put("reason", message);
+    response.put("content", error);
+    return response;
   }
 
-  private static List<String> extractDocumentsContentFromResponse(JSONObject response) {
+  private static List<String> extractDocumentsContentFromResponse(JSONObject response, RagConfiguration config) {
     try {
-      int maxFiles = 3;
+      int maxFiles = config.getMaxFiles();
       List<String> documentsContent = new ArrayList<>();
 
       if (response != null && response.get("docs") != null) {
         JSONArray docs = (JSONArray) response.get("docs");
         if (docs.size() < maxFiles) maxFiles = docs.size(); // MaxFiles must not exceed the number of provided documents
         for (int i = 0; i < maxFiles; i++) {
-          JSONArray exactContent = (JSONArray) ((JSONObject) docs.get(i)).get("preview_content"); // You can use exactContent to send the whole file content
+          JSONArray exactContent = (JSONArray) ((JSONObject) docs.get(i)).get(config.getSolrField()); // You can use exactContent to send the whole file content
           if (exactContent != null && exactContent.get(0) != null) {
             documentsContent.add(exactContent.get(0).toString());
           }
@@ -138,9 +134,9 @@ public class RagAPI extends SearchAPI {
     return Collections.emptyList();
   }
 
-  private static List<String> extractDocumentsContentFromHighlighting(JSONObject highlighting) {
+  private static List<String> extractDocumentsContentFromHighlighting(JSONObject highlighting, RagConfiguration config) {
     try {
-      int maxFiles = 3;
+      int maxFiles = config.getMaxFiles();
       int fileCount = 0;
       List<String> documentsContent = new ArrayList<>();
 
@@ -320,12 +316,12 @@ public class RagAPI extends SearchAPI {
 
 
   /**
-   * Read the rag.config file to create a RagConfiguration object
+   * Read the rag.properties file to create a RagConfiguration object
    * @return RagConfiguration The configuration used to access the RAG API
    */
   private static RagConfiguration getRagConf() throws FileNotFoundException {
     Properties prop = new Properties();
-    String fileName = "rag.config";
+    String fileName = "rag.properties";
     try (InputStream fis = RagAPI.class.getClassLoader().getResourceAsStream(fileName)) {
       prop.load(fis);
 
@@ -335,6 +331,7 @@ public class RagAPI extends SearchAPI {
       config.setModel(prop.getProperty("rag.model"));
       config.setTemperature(prop.getProperty("rag.temperature"));
       config.setMaxTokens(prop.getProperty("rag.maxTokens"));
+      config.setMaxFiles(prop.getProperty("rag.maxFiles"));
       config.setAddInstructions(prop.getProperty("rag.addInstructions"));
       config.setTemplate(prop.getProperty("rag.template"));
       config.setSolrField(prop.getProperty("rag.solrField"));
@@ -344,6 +341,8 @@ public class RagAPI extends SearchAPI {
 
     } catch (FileNotFoundException e) {
       throw new FileNotFoundException("An error occurred during the configuration. Configuration file not found.");
+    } catch (NumberFormatException e) {
+      throw new FileNotFoundException("An error occurred during the configuration. Invalid value for rag.maxTokens or rag.hl.fragsize or rag.maxFiles");
     } catch (IOException e) {
       throw new RuntimeException("An error occurred during the configuration.");
     }

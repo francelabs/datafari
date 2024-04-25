@@ -5,6 +5,7 @@ public class RagConfiguration {
     String endpoint;
     String temperature;
     String maxTokens;
+    int maxFiles;
     String model;
     boolean addInstructions;
     String template;
@@ -17,17 +18,6 @@ public class RagConfiguration {
 
     public RagConfiguration() {
     }
-
-    /*public RagConfiguration(String token, String endpoint, String temperature, String maxTokens, String model, boolean addInstructions, String template, String solrField) {
-        this.token = token;
-        this.endpoint = endpoint;
-        this.temperature = temperature;
-        this.maxTokens = maxTokens;
-        this.model = model;
-        this.addInstructions = addInstructions;
-        this.template = template;
-        this.solrField = solrField;
-    }*/
 
     public String getTemplate() {
         return template;
@@ -103,5 +93,17 @@ public class RagConfiguration {
 
     public void setHlFragsize(String hlFragsize) {
         this.hlFragsize = hlFragsize;
+    }
+
+    public int getMaxFiles() {
+        return maxFiles;
+    }
+
+    public void setMaxFiles(int maxFiles) {
+        this.maxFiles = maxFiles;
+    }
+
+    public void setMaxFiles(String maxFiles) {
+        this.maxFiles = Integer.parseInt(maxFiles);
     }
 }
