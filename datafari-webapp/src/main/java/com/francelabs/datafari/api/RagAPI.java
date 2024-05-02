@@ -17,8 +17,8 @@ public class RagAPI extends SearchAPI {
   private static final Logger LOGGER = LogManager.getLogger(RagAPI.class.getName());
   public static final List<String> HIGHLIGHTING_FIELDS = List.of("content_en", "content_fr", "exactContent");
   public static final String HIGHLIGHTING = "highlighting";
-  public static final String EXACT_CONTENT = "exact_content";
-  public static final String PREVIEW_CONTENT = "preview_content";
+  public static final String EXACT_CONTENT = "exactContent";
+  public static final String PREVIEW_CONTENT = "previewContent";
   public static final List<String> ALLOWED_FIELDS_VALUE = List.of(HIGHLIGHTING, EXACT_CONTENT, PREVIEW_CONTENT);
 
   public static JSONObject rag(final HttpServletRequest request) throws IOException {
@@ -80,7 +80,7 @@ public class RagAPI extends SearchAPI {
       documentsContent = extractDocumentsContentFromResponse(searchResponse, config);
     } else {
       // If rag.solrField is not one of the allowed fields (ALLOW_FIELDS_VALUE), an error is returned.
-      return writeJsonError(500, "Invalid value for rag.solrField property. Valid values are \"highlighting\", \"preview_content\" and \"exact_content\".");
+      return writeJsonError(500, "Invalid value for rag.solrField property. Valid values are \"highlighting\", \"previewContent\" and \"exactContent\".");
     }
 
     if (documentsContent.isEmpty()) {
@@ -198,7 +198,8 @@ public class RagAPI extends SearchAPI {
           body = generateJsonBodyForOpenAI(prompt, documents, config);
           break;
       }
-
+      return body; //todo : remove
+/*
       connection.setDoOutput(true);
       OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
       writer.write(body);
@@ -224,7 +225,7 @@ public class RagAPI extends SearchAPI {
         default:
           return extractMessageFromOpenAiJSONResponse(response.toString());
       }
-
+*/
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
