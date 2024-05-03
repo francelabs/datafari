@@ -250,17 +250,22 @@ init_solr_node() {
   sed -i -e "s/@SOLRNODEIP@/${1}/g" $DATAFARI_HOME/bin/zkUtils/init-solr-collections.sh >>$installerLog 2>&1
   sed -i -e "s/@SOLRNODEIP@/${1}/g" $TOMCAT_HOME/conf/solr.properties >>$installerLog 2>&1
   sed -i -e "s/@SOLRNODEIP@/${1}/g" $DATAFARI_HOME/ssl-keystore/apache/config/tomcat.conf >>$installerLog 2>&1
-  sed -i -e "s/@SOLRNODEIP@/${1}/g" $DATAFARI_HOME/bin/purgeUtils/analyticsPurge.sh >>$installerLog 2>&1
     
 }
 
 init_solr_custom_conf() {
    sed -i -e "s/@SOLRNODEIP@/${1}/g" $SOLR_INSTALL_DIR/solr_home/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
    sed -i -e "s/@SOLRNODEIP@/${1}/g" $DATAFARI_HOME/solr/solrcloud/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
+   sed -i -e "s/@SOLRNODEIP@/${1}/g" $DATAFARI_HOME/bin/purgeUtils/analyticsPurge.sh >>$installerLog 2>&1
+   
    sed -i -e "s/@PROTOCOL@/${2}/g" $SOLR_INSTALL_DIR/solr_home/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
    sed -i -e "s/@PROTOCOL@/${2}/g" $DATAFARI_HOME/solr/solrcloud/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
+   sed -i -e "s/@PROTOCOL@/${2}/g" $DATAFARI_HOME/bin/purgeUtils/analyticsPurge.sh >>$installerLog 2>&1
+   
    sed -i -e "s/@PORT@/${3}/g" $SOLR_INSTALL_DIR/solr_home/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
    sed -i -e "s/@PORT@/${3}/g" $DATAFARI_HOME/solr/solrcloud/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
+   sed -i -e "s/@PORT@/${3}/g" $DATAFARI_HOME/bin/purgeUtils/analyticsPurge.sh >>$installerLog 2>&1
+   
      
 }
 
