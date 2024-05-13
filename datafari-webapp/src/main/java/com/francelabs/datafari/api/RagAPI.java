@@ -68,17 +68,23 @@ public class RagAPI extends SearchAPI {
   }
 
   private static JSONObject callAiApi(String prompt, JSONObject searchResult, RagConfiguration config) throws IOException {
-    List<String> documentsContent;
+    List<String> documentsContent = new ArrayList<>();
+    JSONArray documentsList; // List of simplified documents (id, url, name)
+
+    JSONObject searchResponse = (JSONObject) searchResult.get("response");
 
     // The response that will be sent to user
     final JSONObject response = new JSONObject();
 
+    // Todo : Récupérer la liste des documents : id, title, url
+    documentsList = getDocumentList(searchResponse, documentsContent, config);
+
     // If we chose to send the highlighting to the webservice, then we need to use a specific method
     if (HIGHLIGHTING.equals(config.getSolrField())) {
-      JSONObject searchResponse = (JSONObject) searchResult.get(HIGHLIGHTING);
-      documentsContent = extractDocumentsContentFromHighlighting(searchResponse, config);
+      JSONObject searchHighlighting = (JSONObject) searchResult.get(HIGHLIGHTING);
+      documentsContent = extractDocumentsContentFromHighlighting(searchHighlighting, config, documentsList);
     } else if (ALLOWED_FIELDS_VALUE.contains(config.getSolrField())) {
-      JSONObject searchResponse = (JSONObject) searchResult.get("response");
+      //JSONObject searchResponse = (JSONObject) searchResult.get("response");
       documentsContent = extractDocumentsContentFromResponse(searchResponse, config);
     } else {
       // If rag.solrField is not one of the allowed fields (ALLOW_FIELDS_VALUE), an error is returned.
@@ -97,11 +103,46 @@ public class RagAPI extends SearchAPI {
       response.put("status", "OK");
       JSONObject content = new JSONObject();
       content.put("message", llmStrResponse);
+      content.put("documents", documentsList);
       response.put("content", content);
       return response;
     } else {
       return writeJsonError(428, "The webservice could not provide a valid response.");
     }
+  }
+
+  private static JSONArray getDocumentList(JSONObject response, List<String> documentsContent, RagConfiguration config) {
+    try {
+      int maxFiles = config.getMaxFiles();
+      JSONArray documentsList = new JSONArray();
+
+      if (response != null && response.get("docs") != null) {
+        JSONArray docs = (JSONArray) response.get("docs");
+        if (docs.size() < maxFiles) maxFiles = docs.size(); // MaxFiles must not exceed the number of provided documents
+        for (int i = 0; i < maxFiles; i++) {
+
+          JSONObject document = new JSONObject();
+          String title = (String) ((JSONObject) docs.get(i)).get("title");
+          String id = (String) ((JSONObject) docs.get(i)).get("id");
+          String url = (String) ((JSONObject) docs.get(i)).get("url");
+
+          document.put("id", id);
+          document.put("title", title);
+          document.put("url", url);
+          documentsList.add(document);
+          // If SolrField is not highlighting, the extract is added to documentsContent
+          JSONArray content = (JSONArray) ((JSONObject) docs.get(i)).get(config.getSolrField()); // You can use exactContent to send the whole file content
+          if (content != null && content.get(0) != null) {
+            documentsContent.add(content.get(0).toString());
+          }
+        }
+        return documentsList;
+      }
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+    return new JSONArray();
+
   }
 
   private static JSONObject writeJsonError(int code, String message) {
@@ -114,6 +155,11 @@ public class RagAPI extends SearchAPI {
     return response;
   }
 
+  /**
+   * @param response : the object "response" obtained from search
+   * @param config : the RAG configuration
+   * @return A list of documents pieces extracted from response
+   */
   private static List<String> extractDocumentsContentFromResponse(JSONObject response, RagConfiguration config) {
     try {
       int maxFiles = config.getMaxFiles();
@@ -136,6 +182,12 @@ public class RagAPI extends SearchAPI {
     return Collections.emptyList();
   }
 
+
+  /**
+   * @param highlighting : the object "highlighting" obtained from search
+   * @param config : the RAG configuration
+   * @return A list of documents pieces extracted from highlightings
+   */
   private static List<String> extractDocumentsContentFromHighlighting(JSONObject highlighting, RagConfiguration config) {
     try {
       int maxFiles = config.getMaxFiles();
@@ -161,6 +213,70 @@ public class RagAPI extends SearchAPI {
 
       return documentsContent;
 
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+    return Collections.emptyList();
+  }
+
+
+  /**
+   * @param highlighting : the object "highlighting" obtained from search
+   * @param documentList : a list of objects containing data about documents (id, url, title)
+   * @param config : the RAG configuration
+   * @return A list of documents pieces extracted from highlightings
+   */
+  private static List<String> extractDocumentsContentFromHighlighting(JSONObject highlighting, RagConfiguration config, JSONArray documentList) {
+    try {
+      int maxFiles = Math.min(config.getMaxFiles(), documentList.size());
+      int fileCount = 0;
+      List<String> documentsContent = new ArrayList<>();
+
+      for (int i = 0; i < maxFiles; i++) {
+        String key = ((JSONObject) documentList.get(i)).get("id").toString();
+
+        if (highlighting.get(key) instanceof JSONObject) {
+          JSONObject highlightContent = (JSONObject) highlighting.get(key);
+          for (String typeOfContent : HIGHLIGHTING_FIELDS) {
+            // typeOfContent is one of the allowed fields in highlighting : content_fr, content_en or exactContent
+            if (highlightContent.get(typeOfContent) != null) {
+              String highlightedContent = ((JSONArray) highlightContent.get(typeOfContent)).get(0).toString();
+              documentsContent.add(highlightedContent);
+            }
+          }
+        }
+      }
+
+      return documentsContent;
+
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+    return Collections.emptyList();
+  }
+
+  /**
+   * Send a query to Datafari RAG API
+   * @param response : the object "response" obtained from search
+   * @param config : the RAG configuration
+   * @return A list of documents pieces extracted from response
+   */
+  private static List<String> extractDocumentsNamesAndUrl(JSONObject response, RagConfiguration config) {
+    try {
+      int maxFiles = config.getMaxFiles();
+      List<String> documentsContent = new ArrayList<>();
+
+      if (response != null && response.get("docs") != null) {
+        JSONArray docs = (JSONArray) response.get("docs");
+        if (docs.size() < maxFiles) maxFiles = docs.size(); // MaxFiles must not exceed the number of provided documents
+        for (int i = 0; i < maxFiles; i++) {
+          JSONArray exactContent = (JSONArray) ((JSONObject) docs.get(i)).get(config.getSolrField()); // You can use exactContent to send the whole file content
+          if (exactContent != null && exactContent.get(0) != null) {
+            documentsContent.add(exactContent.get(0).toString());
+          }
+        }
+        return documentsContent;
+      }
     } catch (Exception e) {
       System.out.println(e);
     }
