@@ -95,8 +95,9 @@ public class RagAPI extends SearchAPI {
       return writeJsonError(428, "The query cannot be answered because no associated documents were found.");
     }
 
-    String llmStrResponse = getLlmResponse(prompt, documentsContent, config);
-    //String llmStrResponse = "Datafari connait certainement la réponse à votre requête, mais moi, je suis juste un bouchon.";
+    // Todo : débouchonner
+    //String llmStrResponse = getLlmResponse(prompt, documentsContent, config);
+    String llmStrResponse = "Ceci est un bouchon. RagAPI n'interragit actuellement pas avec le LLM. Cette réponse est un placeholder.";
 
     // Todo : check the validity of the response
     if (!llmStrResponse.isEmpty()) {
@@ -113,16 +114,15 @@ public class RagAPI extends SearchAPI {
 
   private static JSONArray getDocumentList(JSONObject response, List<String> documentsContent, RagConfiguration config) {
     try {
-      int maxFiles = config.getMaxFiles();
       JSONArray documentsList = new JSONArray();
 
       if (response != null && response.get("docs") != null) {
         JSONArray docs = (JSONArray) response.get("docs");
-        if (docs.size() < maxFiles) maxFiles = docs.size(); // MaxFiles must not exceed the number of provided documents
+        int maxFiles = Math.min(config.getMaxFiles(), docs.size()); // MaxFiles must not exceed the number of provided documents
         for (int i = 0; i < maxFiles; i++) {
 
           JSONObject document = new JSONObject();
-          String title = (String) ((JSONObject) docs.get(i)).get("title");
+          String title = ((JSONArray) ((JSONObject) docs.get(i)).get("title")).get(0).toString();
           String id = (String) ((JSONObject) docs.get(i)).get("id");
           String url = (String) ((JSONObject) docs.get(i)).get("url");
 

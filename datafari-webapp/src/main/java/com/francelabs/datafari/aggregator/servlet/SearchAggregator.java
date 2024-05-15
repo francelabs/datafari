@@ -296,7 +296,6 @@ public class SearchAggregator extends HttpServlet {
         JSONObject searchResponse;
         if (action != null) {
           switch (action) {
-            // Todo : case IA
           case "rag":
             searchResponse = RagAPI.rag(request);
             break;
