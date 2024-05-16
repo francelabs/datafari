@@ -95,9 +95,9 @@ public class RagAPI extends SearchAPI {
       return writeJsonError(428, "The query cannot be answered because no associated documents were found.");
     }
 
-    // Todo : débouchonner
-    //String llmStrResponse = getLlmResponse(prompt, documentsContent, config);
-    String llmStrResponse = "Ceci est un bouchon. RagAPI n'interragit actuellement pas avec le LLM. Cette réponse est un placeholder.";
+    // Todo : Bouchonner / débouchonner
+    String llmStrResponse = getLlmResponse(prompt, documentsContent, config);
+    //String llmStrResponse = "Ceci est un bouchon. RagAPI n'interragit actuellement pas avec le LLM. Cette réponse est un placeholder.";
 
     // Todo : check the validity of the response
     if (!llmStrResponse.isEmpty()) {
@@ -380,7 +380,7 @@ public class RagAPI extends SearchAPI {
     {
       context += "\\n\\r Document "+ (documents.indexOf(doc) + 1) + " \\n\\r " + doc.replace("\n", " ").replace("\r", " ").replace("\t", " ").replace("\"", "`");
     }
-      return "{\"input\":{\"context\": \"" + context + "\",\"temperature\": " + config.getTemperature() + ",\"max_tokens\": " + config.getMaxTokens()+ ",\"question\": \"" + prompt + "\"}}";
+      return "{\"input\":{\"content\": \"" + context + "\",\"temperature\": " + config.getTemperature() + ",\"max_tokens\": " + config.getMaxTokens()+ ",\"question\": \"" + prompt + "\"}}";
   }
 
   /**
