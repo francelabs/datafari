@@ -38,8 +38,8 @@
     <postgres.version>42.7.2</postgres.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <solr.sha512>e34b2421db8586691ff41b86beca77bcb61243ce8edfade74eda8da4b0fabde0078884db301350a0d0dfc4a6fee46320ddf059469300444da4e3693220df5e40</solr.sha512>
-    <solr.version>9.5.0</solr.version>
+    <solr.sha512>9c5b6c15db575468b2ddaf4538078a875bf15696ab2611db9d5190cf3d9c2aa6a24c303398231932a7ca85d7f5e441a24b3ef60f50547073167bc62a29b7c839</solr.sha512>
+    <solr.version>9.6.0</solr.version>
      <spring.boot.version>2.7.14</spring.boot.version>
     <spring.data.cassandra.version>3.4.15</spring.data.cassandra.version>
     <spring.security.version>5.8.5</spring.security.version>
