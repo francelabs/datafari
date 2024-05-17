@@ -17,13 +17,7 @@ package com.francelabs.datafari.aggregator.servlet;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -34,6 +28,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.datastax.oss.driver.shaded.guava.common.base.Function;
+import com.datastax.oss.driver.shaded.guava.common.collect.ImmutableMap;
+import com.datastax.oss.driver.shaded.guava.common.collect.Ordering;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
@@ -746,11 +743,9 @@ public class SearchAggregator extends HttpServlet {
 
         facetFields.forEach((field, facets) -> {
           final JSONArray facetValues = (JSONArray) facets;
-          Map<String, Integer> existingFacetValues = new HashMap<String, Integer>();
+          Map<String, Integer> existingFacetValues = new HashMap<>();
           if (numExternalDatafaris > 1 && mergedFacetFieldsMap.containsKey(field)) {
             existingFacetValues = mergedFacetFieldsMap.get(field);
-          } else {
-            mergedFacetFieldsMap.put(field.toString(), existingFacetValues);
           }
           for (int i = 0; i < facetValues.size(); i += 2) {
             final String facetValue = facetValues.get(i).toString();
@@ -763,6 +758,21 @@ public class SearchAggregator extends HttpServlet {
               existingFacetValues.put(facetValue, facetCount);
             }
           }
+
+          // Getting a sorted Map
+          Ordering<Map.Entry<String, Integer>> entryOrdering = Ordering.natural()
+                  .onResultOf((Function<Map.Entry<String, Integer>, Integer>) stringIntegerEntry -> stringIntegerEntry != null ? stringIntegerEntry.getValue() : null).reverse();
+          // Desired entries in desired order.  Put them in an ImmutableMap in this order.
+          ImmutableMap.Builder<String, Integer> builder = ImmutableMap.builder();
+          for (Map.Entry<String, Integer> entry :
+                  entryOrdering.sortedCopy(existingFacetValues.entrySet())) {
+            builder.put(entry.getKey(), entry.getValue());
+          }
+          existingFacetValues = builder.build();
+
+          // Override existing map with the sorted one
+          mergedFacetFieldsMap.put(field.toString(), existingFacetValues);
+
         });
 
       }
