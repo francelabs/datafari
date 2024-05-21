@@ -20,6 +20,10 @@ public class RagAPI extends SearchAPI {
   public static final String EXACT_CONTENT = "exactContent";
   public static final String PREVIEW_CONTENT = "preview_content";
   public static final List<String> ALLOWED_FIELDS_VALUE = List.of(HIGHLIGHTING, EXACT_CONTENT, PREVIEW_CONTENT);
+  private static int MAX_JSON_LENGTH = Integer.MAX_VALUE;
+
+  // For development only
+  private static boolean DISABLE_WS_CALL = false; // Todo : remove the variable for prod
 
   public static JSONObject rag(final HttpServletRequest request) throws IOException {
     final String handler = getHandler(request);
@@ -95,9 +99,7 @@ public class RagAPI extends SearchAPI {
       return writeJsonError(428, "The query cannot be answered because no associated documents were found.");
     }
 
-    // Todo : Bouchonner / débouchonner
     String llmStrResponse = getLlmResponse(prompt, documentsContent, config);
-    //String llmStrResponse = "Ceci est un bouchon. RagAPI n'interragit actuellement pas avec le LLM. Cette réponse est un placeholder.";
 
     // Todo : check the validity of the response
     if (!llmStrResponse.isEmpty()) {
@@ -317,6 +319,9 @@ public class RagAPI extends SearchAPI {
           break;
       }
 
+      // Todo : Bouchonner / débouchonner (to delete for prod)
+      if (DISABLE_WS_CALL) return "Ceci est un bouchon. RagAPI n'interragit actuellement pas avec le LLM. Cette réponse est un placeholder.";
+
       connection.setDoOutput(true);
       OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
       writer.write(body);
@@ -380,7 +385,12 @@ public class RagAPI extends SearchAPI {
     {
       context += "\\n\\r Document "+ (documents.indexOf(doc) + 1) + " \\n\\r " + doc.replace("\n", " ").replace("\r", " ").replace("\t", " ").replace("\"", "`");
     }
-      return "{\"input\":{\"content\": \"" + context + "\",\"temperature\": " + config.getTemperature() + ",\"max_tokens\": " + config.getMaxTokens()+ ",\"question\": \"" + prompt + "\"}}";
+    if (context.length() > MAX_JSON_LENGTH-1000) {
+      // Truncate the context
+      context = context.substring(0, MAX_JSON_LENGTH-1000);
+    }
+
+    return "{\"input\":{\"content\": \"" + context + "\",\"temperature\": " + config.getTemperature() + ",\"max_tokens\": " + config.getMaxTokens()+ ",\"question\": \"" + prompt + "\"}}";
   }
 
   /**
@@ -454,13 +464,14 @@ public class RagAPI extends SearchAPI {
       config.setTemplate(prop.getProperty("rag.template"));
       config.setSolrField(prop.getProperty("rag.solrField"));
       config.setHlFragsize(prop.getProperty("rag.hl.fragsize"));
+      if (!prop.getProperty("rag.maxJsonLength").isEmpty()) MAX_JSON_LENGTH = Integer.parseInt(prop.getProperty("rag.maxJsonLength"));
 
       return config;
 
     } catch (FileNotFoundException e) {
       throw new FileNotFoundException("An error occurred during the configuration. Configuration file not found.");
     } catch (NumberFormatException e) {
-      throw new FileNotFoundException("An error occurred during the configuration. Invalid value for rag.maxTokens or rag.hl.fragsize or rag.maxFiles");
+      throw new FileNotFoundException("An error occurred during the configuration. Invalid value for rag.maxTokens or rag.hl.fragsize or rag.maxFiles or rag.maxJsonLength. Integers expected.");
     } catch (IOException e) {
       throw new RuntimeException("An error occurred during the configuration.");
     }
