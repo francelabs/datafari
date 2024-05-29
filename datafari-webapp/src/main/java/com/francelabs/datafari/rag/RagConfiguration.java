@@ -9,6 +9,8 @@ public class RagConfiguration {
     String model;
     boolean addInstructions;
     String template;
+    String format;
+    boolean logsEnabled;
 
     // The field that contains the corpus to send to the webservice. This value can be : "highlighting", "exact_content", "preview_content".
     String solrField;
@@ -105,5 +107,25 @@ public class RagConfiguration {
 
     public void setMaxFiles(String maxFiles) {
         this.maxFiles = Integer.parseInt(maxFiles);
+    }
+
+    public boolean isLogsEnabled() {
+        return logsEnabled;
+    }
+
+    public void setLogsEnabled(boolean logsEnabled) {
+        this.logsEnabled = logsEnabled;
+    }
+
+    public void setLogsEnabled(String logsEnabled) {
+        this.logsEnabled = ("true".equals(logsEnabled));
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
     }
 }

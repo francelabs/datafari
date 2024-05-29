@@ -15,12 +15,13 @@ import java.util.*;
 public class RagAPI extends SearchAPI {
 
   private static final Logger LOGGER = LogManager.getLogger(RagAPI.class.getName());
-  public static final List<String> HIGHLIGHTING_FIELDS = List.of("content_en", "content_fr", "exactContent");
+  public static final List<String> FORMAT_VALUES = List.of("bulletpoint", "text", "stepbystep");
   public static final String HIGHLIGHTING = "highlighting";
   public static final String EXACT_CONTENT = "exactContent";
   public static final String PREVIEW_CONTENT = "preview_content";
   public static final List<String> ALLOWED_FIELDS_VALUE = List.of(HIGHLIGHTING, EXACT_CONTENT, PREVIEW_CONTENT);
-  private static int MAX_JSON_LENGTH = Integer.MAX_VALUE;
+  public static final List<String> HIGHLIGHTING_FIELDS = List.of("content_en", "content_fr", EXACT_CONTENT);
+  private static int maxJsonLength = Integer.MAX_VALUE;
 
   // For development only
   private static boolean DISABLE_WS_CALL = false; // Todo : remove the variable for prod
@@ -28,7 +29,7 @@ public class RagAPI extends SearchAPI {
   public static JSONObject rag(final HttpServletRequest request) throws IOException {
     final String handler = getHandler(request);
     final String protocol = request.getScheme() + ":";
-    final Map<String, String[]> parameterMap = new HashMap<String, String[]>(request.getParameterMap());
+    final Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());
 
     // Get RAG specific configuration
     RagConfiguration config = getRagConf();
@@ -38,10 +39,16 @@ public class RagAPI extends SearchAPI {
       parameterMap.put("id", idParam);
     }
 
-    // Todo : validate query
     String userQuery = request.getParameter("q");
     if (userQuery == null) {
       return writeJsonError(422, "No query provided.");
+    } else if (config.isLogsEnabled()) {
+      LOGGER.info("Request processed by RagAPI : {}", userQuery);
+    }
+
+    String format = request.getParameter("format");
+    if (format != null && !format.isEmpty() && FORMAT_VALUES.contains(format)) {
+      config.setFormat(format);
     }
 
     // If the content is extracted from highlighting, then the user can configure the size of the extracts
@@ -77,10 +84,7 @@ public class RagAPI extends SearchAPI {
 
     JSONObject searchResponse = (JSONObject) searchResult.get("response");
 
-    // The response that will be sent to user
-    final JSONObject response = new JSONObject();
-
-    // Todo : Récupérer la liste des documents : id, title, url
+    // Retrieving list of documents : id, title, url
     documentsList = getDocumentList(searchResponse, documentsContent, config);
 
     // If we chose to send the highlighting to the webservice, then we need to use a specific method
@@ -88,7 +92,6 @@ public class RagAPI extends SearchAPI {
       JSONObject searchHighlighting = (JSONObject) searchResult.get(HIGHLIGHTING);
       documentsContent = extractDocumentsContentFromHighlighting(searchHighlighting, config, documentsList);
     } else if (ALLOWED_FIELDS_VALUE.contains(config.getSolrField())) {
-      //JSONObject searchResponse = (JSONObject) searchResult.get("response");
       documentsContent = extractDocumentsContentFromResponse(searchResponse, config);
     } else {
       // If rag.solrField is not one of the allowed fields (ALLOW_FIELDS_VALUE), an error is returned.
@@ -101,8 +104,8 @@ public class RagAPI extends SearchAPI {
 
     String llmStrResponse = getLlmResponse(prompt, documentsContent, config);
 
-    // Todo : check the validity of the response
     if (!llmStrResponse.isEmpty()) {
+      final JSONObject response = new JSONObject();
       response.put("status", "OK");
       JSONObject content = new JSONObject();
       content.put("message", llmStrResponse);
@@ -141,7 +144,7 @@ public class RagAPI extends SearchAPI {
         return documentsList;
       }
     } catch (Exception e) {
-      System.out.println(e);
+      LOGGER.error("An error occurred while retrieving the list of documents.", e);
     }
     return new JSONArray();
 
@@ -179,44 +182,7 @@ public class RagAPI extends SearchAPI {
         return documentsContent;
       }
     } catch (Exception e) {
-      System.out.println(e);
-    }
-    return Collections.emptyList();
-  }
-
-
-  /**
-   * @param highlighting : the object "highlighting" obtained from search
-   * @param config : the RAG configuration
-   * @return A list of documents pieces extracted from highlightings
-   */
-  private static List<String> extractDocumentsContentFromHighlighting(JSONObject highlighting, RagConfiguration config) {
-    try {
-      int maxFiles = config.getMaxFiles();
-      int fileCount = 0;
-      List<String> documentsContent = new ArrayList<>();
-
-      Iterator<String> keys = highlighting.keySet().iterator();
-
-      while(keys.hasNext() && maxFiles > fileCount) {
-        fileCount++;
-        String key = keys.next();
-        if (highlighting.get(key) instanceof JSONObject) {
-          JSONObject highlightContent = (JSONObject) highlighting.get(key);
-          for (String typeOfContent : HIGHLIGHTING_FIELDS) {
-            // typeOfContent is one of the allowed fields in highlighting : content_fr, content_en or exactContent
-            if (highlightContent.get(typeOfContent) != null) {
-              String highlightedContent = ((JSONArray) highlightContent.get(typeOfContent)).get(0).toString();
-              documentsContent.add(highlightedContent);
-            }
-          }
-        }
-      }
-
-      return documentsContent;
-
-    } catch (Exception e) {
-      System.out.println(e);
+      LOGGER.error("An error occurred while extracting content from webservices response.", e);
     }
     return Collections.emptyList();
   }
@@ -231,7 +197,6 @@ public class RagAPI extends SearchAPI {
   private static List<String> extractDocumentsContentFromHighlighting(JSONObject highlighting, RagConfiguration config, JSONArray documentList) {
     try {
       int maxFiles = Math.min(config.getMaxFiles(), documentList.size());
-      int fileCount = 0;
       List<String> documentsContent = new ArrayList<>();
 
       for (int i = 0; i < maxFiles; i++) {
@@ -252,35 +217,7 @@ public class RagAPI extends SearchAPI {
       return documentsContent;
 
     } catch (Exception e) {
-      System.out.println(e);
-    }
-    return Collections.emptyList();
-  }
-
-  /**
-   * Send a query to Datafari RAG API
-   * @param response : the object "response" obtained from search
-   * @param config : the RAG configuration
-   * @return A list of documents pieces extracted from response
-   */
-  private static List<String> extractDocumentsNamesAndUrl(JSONObject response, RagConfiguration config) {
-    try {
-      int maxFiles = config.getMaxFiles();
-      List<String> documentsContent = new ArrayList<>();
-
-      if (response != null && response.get("docs") != null) {
-        JSONArray docs = (JSONArray) response.get("docs");
-        if (docs.size() < maxFiles) maxFiles = docs.size(); // MaxFiles must not exceed the number of provided documents
-        for (int i = 0; i < maxFiles; i++) {
-          JSONArray exactContent = (JSONArray) ((JSONObject) docs.get(i)).get(config.getSolrField()); // You can use exactContent to send the whole file content
-          if (exactContent != null && exactContent.get(0) != null) {
-            documentsContent.add(exactContent.get(0).toString());
-          }
-        }
-        return documentsContent;
-      }
-    } catch (Exception e) {
-      System.out.println(e);
+      LOGGER.error("An error occurred while extracting highlightings from webservices response.", e);
     }
     return Collections.emptyList();
   }
@@ -332,7 +269,7 @@ public class RagAPI extends SearchAPI {
       BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
       String line;
 
-      StringBuffer response = new StringBuffer();
+      StringBuilder response = new StringBuilder();
 
       while ((line = br.readLine()) != null) {
         response.append(line);
@@ -349,7 +286,7 @@ public class RagAPI extends SearchAPI {
       }
       
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException("An error occurred while calling external webservices.", e);
     }
   }
 
@@ -360,16 +297,16 @@ public class RagAPI extends SearchAPI {
    * @return The generated JSON body to attach to the HTTP POST request for an OpenAI API
    */
   private static String generateJsonBodyForOpenAI(String prompt, List<String> documents, RagConfiguration config) throws IOException {
-    String body = "{\"model\": \"" + config.getModel() + "\",\"temperature\": " + config.getTemperature() + ",\"max_tokens\": " + config.getMaxTokens() + ", \"messages\": [";
-    body +=        "{\"role\": \"system\", \"content\": \"" + getInstructions().replace("\n", " ").replace("\r", " ").replace("\t", " ") + "\"},";
+    StringBuilder body = new StringBuilder("{\"model\": \"" + config.getModel() + "\",\"temperature\": " + config.getTemperature() + ",\"max_tokens\": " + config.getMaxTokens() + ", \"messages\": [");
+    body.append("{\"role\": \"system\", \"content\": \"").append(getInstructions().replace("\n", " ").replace("\r", " ").replace("\t", " ")).append("\"},");
 
     for (String doc : documents)
     {
-      body += "{\"role\": \"user\", \"content\": \"Here is one of the documents: " + doc.replace("\n", " ").replace("\r", " ").replace("\t", " ").replace("\"", "`") + "\"},";
+      body.append("{\"role\": \"user\", \"content\": \"Here is one of the documents: ```").append(cleanContext(doc)).append("```\"},");
     }
-    body += "{\"role\": \"user\", \"content\": \"The user question is: " + prompt + "\"}";
-    body += "]}";
-    return body;
+    body.append("{\"role\": \"user\", \"content\": \"The user question is: ").append(prompt).append("\"}");
+    body.append("]}");
+    return body.toString();
   }
 
 
@@ -380,17 +317,34 @@ public class RagAPI extends SearchAPI {
    * @return The generated JSON body to attach to the HTTP POST request for a Datafari-RAG API
    */
   private static String generateJsonBodyForDatafariRag(String prompt, List<String> documents, RagConfiguration config) throws IOException {
-    String context = (config.getAddInstructions()) ? getInstructions() + "\\n\\r" : "";
+    StringBuilder context = new StringBuilder((config.getAddInstructions()) ? getInstructions() + "\\n\\r" : "");
     for (String doc : documents)
     {
-      context += "\\n\\r Document "+ (documents.indexOf(doc) + 1) + " \\n\\r " + doc.replace("\n", " ").replace("\r", " ").replace("\t", " ").replace("\"", "`");
+      context.append("\\n\\r Document ").append(documents.indexOf(doc) + 1).append(" \\n\\r ```").append(doc).append("```");
     }
-    if (context.length() > MAX_JSON_LENGTH-1000) {
+    if (context.length() > maxJsonLength -1000) {
       // Truncate the context
-      context = context.substring(0, MAX_JSON_LENGTH-1000);
+      context = new StringBuilder(context.substring(0, maxJsonLength - 1000));
     }
+    context = new StringBuilder(cleanContext(context.toString()));
+    String format = (config.getFormat() != null && !config.getFormat().isEmpty() && FORMAT_VALUES.contains(config.getFormat())) ? ", \"format\": \"" + config.getFormat() + "\"" : "";
 
-    return "{\"input\":{\"content\": \"" + context + "\",\"temperature\": " + config.getTemperature() + ",\"max_tokens\": " + config.getMaxTokens()+ ",\"question\": \"" + prompt + "\"}}";
+    return "{\"input\":{\"content\": \"" + context + "\",\"temperature\": " + config.getTemperature() + ",\"max_tokens\": " + config.getMaxTokens()+ ",\"question\": \"" + cleanContext(prompt) + "\" " + format + " }}";
+  }
+
+
+  /**
+   * @param context The context, containing documents content
+   * @return A clean context, with no characters or element that could cause an error or a prompt injection
+   */
+  private static String cleanContext(String context) {
+    context = context.replace("\\", "/")
+            .replace("\n", " ")
+            .replace("\r", " ")
+            .replace("\t", " ")
+            .replace("\b", "")
+            .replace("\"", "`");
+    return context;
   }
 
   /**
@@ -409,7 +363,7 @@ public class RagAPI extends SearchAPI {
     response = response.replace("\\\"", "`");
     int start = response.indexOf("content")+ 11;
     int end = response.indexOf("\"", start);
-    return response.substring(start, end);
+    return response.substring(start, end).trim();
   }
 
   /**
@@ -421,7 +375,7 @@ public class RagAPI extends SearchAPI {
     response = response.replace("\\\"", "`");
     int start = response.indexOf("output")+ 9;
     int end = response.indexOf("\"", start);
-    return response.substring(start, end);
+    return response.substring(start, end).trim();
   }
 
   /**
@@ -464,7 +418,8 @@ public class RagAPI extends SearchAPI {
       config.setTemplate(prop.getProperty("rag.template"));
       config.setSolrField(prop.getProperty("rag.solrField"));
       config.setHlFragsize(prop.getProperty("rag.hl.fragsize"));
-      if (!prop.getProperty("rag.maxJsonLength").isEmpty()) MAX_JSON_LENGTH = Integer.parseInt(prop.getProperty("rag.maxJsonLength"));
+      config.setLogsEnabled(prop.getProperty("rag.enable.logs"));
+      if (!prop.getProperty("rag.maxJsonLength").isEmpty()) maxJsonLength = Integer.parseInt(prop.getProperty("rag.maxJsonLength"));
 
       return config;
 
