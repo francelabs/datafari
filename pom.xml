@@ -53,8 +53,8 @@
     <tomcat.version>9.0.81</tomcat.version>
     <slf4j.version>1.7.36</slf4j.version>
     <xmlsec.version>2.3.0</xmlsec.version>
-<mcf.version>2.26</mcf.version>
-<mcf.sha512>d4dec806995ff05343b95a36bb485db7f7ac2a56b993634ac95bc84ca641bbd6b2fdb4aac36191dac353b7276d304685df8cf013a7ba8d318cc53cfa31b9ccf2</mcf.sha512>
+<mcf.version>2.26-a2343428</mcf.version>
+<mcf.sha512>b53d7fd2a6e43968479ce7cf9dec007a344404234b10b1b30e2876e216c96b91640fd71e840128ade2fccc48d9144e72d42602c5139d5db92967dd01f1bf32b7</mcf.sha512>
 <zookeeper.version>3.9.1</zookeeper.version>
  <zookeeper.sha512>6a1c56557ee8de63dc0730de6c55640afa8ae9043e57539fed393120fe3adfb7f30a6ac13af0a6331ff34ba9c6f2b31e41e40c5446e669651522fffb9ce64e48</zookeeper.sha512>
   </properties>
