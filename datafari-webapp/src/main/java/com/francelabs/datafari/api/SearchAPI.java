@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import com.francelabs.datafari.utils.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
@@ -30,10 +31,6 @@ import com.francelabs.datafari.service.indexer.IndexerServer;
 import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 import com.francelabs.datafari.statistics.StatsPusher;
-import com.francelabs.datafari.utils.AuthenticatedUserName;
-import com.francelabs.datafari.utils.DatafariMainConfiguration;
-import com.francelabs.datafari.utils.EntityAutocompleteConfiguration;
-import com.francelabs.datafari.utils.ResponseTools;
 
 public class SearchAPI {
 
@@ -58,6 +55,7 @@ public class SearchAPI {
   }
 
   public static JSONObject search(final String protocol, final String handler, final Principal principal, final Map<String, String[]> parameterMap) {
+    Timer timer = new Timer(SearchAPI.class.getName(), "search");
 
     // This value was set arbitrarily
     final int querySizeLimit = 4000;
@@ -71,6 +69,7 @@ public class SearchAPI {
       error.put("code", 401);
       error.put("message", "Unauthorized handler. Allowed handlers are " + allowedHandlers.toString());
       response.put("error", error);
+      timer.stop();
       return response;
     }
 
@@ -80,9 +79,11 @@ public class SearchAPI {
       error.put("code", 413);
       error.put("message", "The query is too long");
       response.put("error", error);
+      timer.stop();
       return response;
     }
 
+    timer.top("1");
     IndexerServer solr;
     IndexerServer promolinkCore = null;
     IndexerQueryResponse queryResponse = null;
@@ -97,6 +98,8 @@ public class SearchAPI {
       requestingUser = "";
     }
 
+    timer.top("2");
+
     // If the user is the search-agregator, it is allowed to pass the user as parameter so retrieve it
     // Otherwise keep the current user and format it
     if (requestingUser.toLowerCase().contentEquals("search-aggregator") || requestingUser.toLowerCase().contentEquals("service-account-search-aggregator")) {
@@ -107,6 +110,8 @@ public class SearchAPI {
 
     // Remove potential AuthenticatedUserName param, as this param should only be set by the API
     params.removeParam("AuthenticatedUserName");
+
+    timer.top("3");
     try {
 
       switch (handler) {
@@ -133,6 +138,7 @@ public class SearchAPI {
         break;
       }
 
+      timer.top("4");
       // If entities are present in the query, need to modify the query in order to
       // take them into account. Don't rely on entQ if we are performing a spellcheked request
       // (i.e. original_query is defined)
@@ -196,6 +202,7 @@ public class SearchAPI {
         params.removeParam("entQ");
       }
 
+      timer.top("5");
       final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
       final String ontologyStatus = config.getProperty(DatafariMainConfiguration.ONTOLOGY_ENABLED, "false");
       if (ontologyStatus.equals("true") && handler.equals("/select")) {
@@ -217,6 +224,7 @@ public class SearchAPI {
         params.setParam("collection", config.getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION) + "," + config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS));
       }
 
+      timer.top("6");
       // perform query define the request handler which may change if a specific
       // source has been provided
       String requestHandler = handler;
@@ -225,7 +233,9 @@ public class SearchAPI {
       }
       params.removeParam("source");
       params.setRequestHandler(requestHandler);
+      timer.top("7");
       queryResponse = solr.executeQuery(params);
+      timer.top("8");
       if (promolinkCore != null && !params.getParamValue("q").toString().equals("*:*")) {
         // launch a request in the promolink core only if it's a request onZ the
         // FileShare core
@@ -257,6 +267,7 @@ public class SearchAPI {
         break;
       }
 
+      timer.stop();
       if (promolinkCore != null) {
         return ResponseTools.writeSolrJResponse(handler, params, queryResponse, queryPromolink, queryResponsePromolink, requestingUser);
       } else {
@@ -270,6 +281,7 @@ public class SearchAPI {
       error.put("code", 500);
       error.put("message", e.getMessage());
       response.put("error", error);
+      timer.stop();
       return response;
     }
   }

@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.francelabs.datafari.utils.Timer;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Ordering;
@@ -64,7 +65,7 @@ public class SearchAggregator extends HttpServlet {
 
   private static final Logger LOGGER = LogManager.getLogger(SearchAggregator.class.getName());
 
-  private static final Map<String, ExecutorService> runningThreads = new HashMap<String, ExecutorService>();
+  private static final Map<String, ExecutorService> runningThreads = new HashMap<>();
 
   /**
    * Perform search
@@ -77,6 +78,7 @@ public class SearchAggregator extends HttpServlet {
    * @throws IOException
    */
   public static JSONObject doGetSearch(final HttpServletRequest request, final HttpServletResponse response, final boolean forceLocalSearch) throws ServletException, IOException {
+    Timer timer = new Timer(SearchAggregator.class.getName(), "doGetSearch");
     final SearchAggregatorConfiguration sac = SearchAggregatorConfiguration.getInstance();
     final String jaExternalDatafarisStr = sac.getProperty(SearchAggregatorConfiguration.EXTERNAL_DATAFARIS);
     // If the forceLocalSearch is set to true then disable the aggregator otherwise, use the aggregator configuration to enable or not the aggregator
@@ -221,9 +223,11 @@ public class SearchAggregator extends HttpServlet {
             final String authUsername = requestingUser;
             final String suggestResponse = externalDatafariRequest(failedRequests, timeoutPerRequest, handler, parameterMap, externalDatafari, authUsername);
             if (suggestResponse != null) {
+              timer.stop();
               return (JSONObject) parser.parse(suggestResponse);
             }
           }
+          timer.stop();
           return new JSONObject();
         }
 
@@ -286,6 +290,7 @@ public class SearchAggregator extends HttpServlet {
           responseContent.put("aggregator_errors", failedRequests);
           return new JSONObject(responseContent);
         }
+        timer.stop();
         // Merge the responses
         return mergeResponses(responses, failedRequests, orgStart, orgRows, wildCardQuery, jaExternalDatafaris.size());
       } else {
@@ -308,12 +313,14 @@ public class SearchAggregator extends HttpServlet {
           final HashMap<String, Object> error = new HashMap<>();
           error.put("code", 500);
           error.put("status", "Unkown error");
+          timer.stop();
           return new JSONObject(error);
         } else {
           // Check if the response is not an error
           // If it is then return the error object
           try {
 
+            timer.stop();
             if (searchResponse.containsKey("error")) {
               return (JSONObject) searchResponse.get("error");
             }
@@ -325,6 +332,7 @@ public class SearchAggregator extends HttpServlet {
             final HashMap<String, Object> responseContent = new HashMap<>();
             responseContent.put("code", 500);
             responseContent.put("message", "Couldn't parse search response into json");
+            timer.stop();
             return new JSONObject(responseContent);
           }
         }
@@ -335,6 +343,7 @@ public class SearchAggregator extends HttpServlet {
       final HashMap<String, Object> responseContent = new HashMap<>();
       responseContent.put("code", 500);
       responseContent.put("message", e.getMessage());
+      timer.stop();
       return new JSONObject(responseContent);
     }
   }
@@ -348,6 +357,7 @@ public class SearchAggregator extends HttpServlet {
    */
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    Timer timer = new Timer(SearchAggregator.class.getName(), "doGet");
     final JSONObject jsonResp = doGetSearch(request, response);
     // If there is a code, we got an error.
     if (jsonResp.get("code") != null) {
@@ -368,11 +378,12 @@ public class SearchAggregator extends HttpServlet {
       response.setHeader("Content-Type", "application/json;charset=UTF-8 ");
       response.getWriter().write(outputString);
     }
-    return;
+    timer.stop();
   }
 
   private static String externalDatafariRequest(final List<JSONObject> failedRequests, final int timeoutPerRequest, final String handler, final Map<String, String[]> parameterMap,
       final JSONObject externalDatafari, final String authUsername) throws Exception {
+    Timer timer = new Timer(SearchAggregator.class.getName(), "externalDatafariRequest");
     final String datafariName = externalDatafari.get("label").toString();
     final String searchApiUrl = externalDatafari.get("search_api_url").toString();
     try (final CloseableHttpClient client = HttpClientProvider.getInstance().newClient(timeoutPerRequest, timeoutPerRequest);) {
@@ -395,6 +406,7 @@ public class SearchAggregator extends HttpServlet {
         getReq.addHeader(HttpHeaders.AUTHORIZATION, "bearer " + accessToken);
         try (CloseableHttpResponse getResponse = client.execute(getReq);) {
           if (getResponse.getStatusLine().getStatusCode() == 200) {
+            timer.stop();
             return IOUtils.toString(getResponse.getEntity().getContent(), StandardCharsets.UTF_8);
           } else {
             final String errorDesc = "Error " + getResponse.getStatusLine().getStatusCode() + " " + getResponse.getStatusLine().getReasonPhrase() + " ; while requesting " + getReq.toString();
@@ -408,16 +420,20 @@ public class SearchAggregator extends HttpServlet {
         }
       }
     } catch (final IOException e) {
+      timer.stop();
       LOGGER.error("Connection error when processing external Datafari request. Datafari name: '" + datafariName + "' ; API URL: " + searchApiUrl, e);
       throw e;
     } catch (final Exception e) {
+      timer.stop();
       LOGGER.error("Unknown error when processing external Datafari request. Datafari name: '" + datafariName + "' ; API URL: " + searchApiUrl, e);
       throw e;
     }
+    timer.stop();
     return null;
   }
 
   public static void doPostSearch(final HttpServletRequest request, final HttpServletResponse resp) throws ServletException, IOException {
+    Timer timer = new Timer(SearchAggregator.class.getName(), "doPostSearch");
     // Retrieve username
     String requestingUser = "";
     if (request.getUserPrincipal() != null) {
@@ -455,6 +471,7 @@ public class SearchAggregator extends HttpServlet {
       runningThreads.get(threadPoolId).shutdownNow();
       runningThreads.remove(threadPoolId);
     }
+    timer.stop();
   }
 
   @Override
@@ -464,6 +481,7 @@ public class SearchAggregator extends HttpServlet {
 
   private static JSONObject mergeResponses(final List<JSONObject> responses, final List<JSONObject> failedRequests, final int originalStart, final int originalRows, final boolean wildCardQuery,
       final int numExternalDatafaris) {
+    Timer timer = new Timer(SearchAggregator.class.getName(), "mergeResponses");
     JSONObject finalResponse = new JSONObject();
     if (responses.size() > 0) {
       finalResponse = (JSONObject) responses.get(0).clone();
@@ -598,10 +616,12 @@ public class SearchAggregator extends HttpServlet {
       // Add the failed aggregator requests to the response
       finalResponse.put("aggregator_errors", failedRequests);
     }
+    timer.stop();
     return finalResponse;
   }
 
   private static void mixDocuments(final LinkedList<JSONObject> orderedDocs, final List<JSONObject> responses) {
+    Timer timer = new Timer(SearchAggregator.class.getName(), "mixDocuments");
     int maxSize = 0;
     final List<JSONArray> docs = new ArrayList<JSONArray>();
     // If there is only one response (so only one server selected) then there is no mix to perform
@@ -628,6 +648,7 @@ public class SearchAggregator extends HttpServlet {
         }
       }
     }
+    timer.stop();
   }
 
   private static void mixBoostedDocuments(final LinkedList<JSONObject> orderedDocs, final List<List<JSONObject>> boostedDocs) {
@@ -663,6 +684,7 @@ public class SearchAggregator extends HttpServlet {
    * @param docs        new docs to insert in the provided {@link LinkedList} at the right place
    */
   private static void orderDocs(final LinkedList<JSONObject> orderedDocs, final List<List<JSONObject>> boostedDocs, final JSONArray docs) {
+    Timer timer = new Timer(SearchAggregator.class.getName(), "orderDocs");
 
     final List<JSONObject> currentBoostedDocs = new ArrayList<JSONObject>();
 
@@ -714,6 +736,7 @@ public class SearchAggregator extends HttpServlet {
         }
       }
     }
+    timer.stop();
 
   }
 
