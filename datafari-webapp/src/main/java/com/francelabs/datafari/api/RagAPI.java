@@ -55,8 +55,9 @@ public class RagAPI extends SearchAPI {
     try {
       if (HIGHLIGHTING.equals(config.getSolrField()) && config.getHlFragsize() != null) {
         request.setAttribute("hl.fragsize", Integer.valueOf(config.getHlFragsize()));
-        request.setAttribute("hl.tag.pre", Integer.valueOf(config.getHlFragsize()));
-        request.setAttribute("hl.tag.post", Integer.valueOf(config.getHlFragsize()));
+        request.setAttribute("hl.tag.pre", "");
+        request.setAttribute("hl.tag.post", "");
+        request.setAttribute("q.op", "AND");
       }
     } catch (NumberFormatException e) {
       return writeJsonError(500, "Invalid value for rag.hl.fragsize property. Integer expected.");
