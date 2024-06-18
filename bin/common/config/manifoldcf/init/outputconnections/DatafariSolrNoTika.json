@@ -12,7 +12,7 @@
                "_attribute_name":"Solr type"
             },
             {
-               "_value_":"http",
+               "_value_":"@PROTOCOL@",
                "_attribute_name":"Server protocol"
             },
             {
@@ -20,7 +20,7 @@
                "_attribute_name":"Server name"
             },
             {
-               "_value_":"8983",
+               "_value_":"@PORT@",
                "_attribute_name":"Server port"
             },
             {

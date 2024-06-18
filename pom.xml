@@ -6,19 +6,19 @@
   <artifactId>datafari-ce</artifactId>
   <!-- Main POM of datafari -->
   <packaging>pom</packaging>
-  <version>6.0-dev-Community</version>
+  <version>6.1-dev-Community</version>
   <name>Datafari Enterprise Search CE - Parent POM</name>
   <properties>
-	<adminui.version>0.9</adminui.version>
-	<adminui.md5>0c5c5a4b8a6470adf0f1d4aa6ef10db6</adminui.md5>
+    <adminui.version>1.0</adminui.version>
+    <adminui.md5>ae9ca787e5067f3bedb1f2cdad4408b0</adminui.md5>
     <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
     <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
-    <cassandra.version>4.0.9</cassandra.version>
-    <cassandra.sha512>94ec77fec09ed69912dd1da98f39e5e5d68aba8003180b62a0b0599cf6bae895a0944c9e0ac2b966d4e7658c188782025ab82f32e9f3139c5090d28be470e0a2</cassandra.sha512>
-    <cassandra.driver.version>4.14.1</cassandra.driver.version>
-    <datafari.version>6.0-dev-Community</datafari.version>
-    <datafariui.version>1.3</datafariui.version>
-    <datafariui.md5>e8954aef3ade49fb9e1f6c7840bba945</datafariui.md5>
+    <cassandra.version>4.1.3</cassandra.version>
+    <cassandra.sha512>393443a5b9849645362df2f7536e734e1fc6d513aadf440fab8dda3063553394a138805098796d35f9d4d31e2899ecab630a2ec2a44d00d5e63bed549a2e844c</cassandra.sha512>
+    <cassandra.driver.version>4.17.0</cassandra.driver.version>
+    <datafari.version>6.1-dev-Community</datafari.version>
+   <datafariui.version>1.4.1</datafariui.version>
+   <datafariui.md5>160b64c77dc0160611afcbedc4b891f5</datafariui.md5>
     <guava.version>26.0-jre</guava.version>
     <httpclient.version>4.5.13</httpclient.version>
     <java.version>1.11</java.version>
@@ -28,18 +28,18 @@
     <jackson-databind.version>2.13.4.1</jackson-databind.version>
     <keycloak.version>22.0.1</keycloak.version>
     <log4j.version>2.17.1</log4j.version>
-    <logstash.version>8.2.0</logstash.version>
-    <logstash.sha512>7276117b1885c59952ba6b5551ef243e2e2a27b7da7d558e109c7b06a960ac6c8e7a2cf6b92d08309ead1cd1bbecb67c83965937deb0d61bda81a8def7d7a38e</logstash.sha512>
+    <logstash.version>8.12.1</logstash.version>
+    <logstash.sha512>df516962f9518a20809a92655605766607f2177287f7e296e2de40e4970680d3004e7e5cbad57b15add1271f5c7a0c166a950b0fd995eaf57417d8efb16f6ed8</logstash.sha512>
     <mcf-solr-plugin.version>9.x-plugin-2.2</mcf-solr-plugin.version>
     <mcf-solr-plugin.sha512>38261a93265c1697db2742947ec72dfdfbb31f4dcab7a343484b06bb57416a668c750a98d5130fadf97464587a09677bb927e2623b862e618e45a3922b67d20b</mcf-solr-plugin.sha512>
     <mssql-jdbc.version>10.2.1.jre11</mssql-jdbc.version>
     <netty.version>4.1.63.Final</netty.version>
     <ojdbc.version>19.15.0.0.1</ojdbc.version>
-    <postgres.version>42.1.3</postgres.version>
+    <postgres.version>42.7.2</postgres.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <solr.sha512>7147caaec5290049b721f9a4e8b0c09b1775315fc4aa790fa7a88a783a45a61815b3532a938731fd583e91195492c4176f3c87d0438216dab26a07a4da51c1f5</solr.sha512>
-    <solr.version>9.4.0</solr.version>
+    <solr.sha512>7e16aa71fc01f9d9b05e5514e35798104a18253a211426aa669aa3b91225d110a4fa1c78c9ec86b7e1909e2aae63696deffd877536790303cd0638eb7f1a8c63</solr.sha512>
+    <solr.version>9.6.1</solr.version>
      <spring.boot.version>2.7.14</spring.boot.version>
     <spring.data.cassandra.version>3.4.15</spring.data.cassandra.version>
     <spring.security.version>5.8.5</spring.security.version>
@@ -47,14 +47,14 @@
     <spring.security.saml2.core.version>1.0.10.RELEASE</spring.security.saml2.core.version>
     <spring.version>5.3.29</spring.version>
     <spring.oauth2.version>2.5.2.RELEASE</spring.oauth2.version>
-    <tika.version>2.7.0</tika.version>
-    <tika-server.sha512>23759bacee231bc700765d4f934da9eeabfa8e407381b72472d66da532509f2edd976bce33fd38c34a8bf43b2b28a1e19ab9ddfc187f9cd96f8a31a285248e13</tika-server.sha512>
+    <tika.version>2.9.2</tika.version>
+    <tika-server.sha512>540b6a1ba20f2ce951a1928a609a00d4552dcc075bc204c3a4ba3697b4a86c8853d450d913a6bb165693dafc3c581a170769ff6a816cbc6a59ac3360904d40f9</tika-server.sha512>
     <tika-server-commit-number>5c0793e2c</tika-server-commit-number>
     <tomcat.version>9.0.81</tomcat.version>
     <slf4j.version>1.7.36</slf4j.version>
     <xmlsec.version>2.3.0</xmlsec.version>
-<mcf.version>2.26</mcf.version>
-<mcf.sha512>d4dec806995ff05343b95a36bb485db7f7ac2a56b993634ac95bc84ca641bbd6b2fdb4aac36191dac353b7276d304685df8cf013a7ba8d318cc53cfa31b9ccf2</mcf.sha512>
+<mcf.version>2.26-a2343428</mcf.version>
+<mcf.sha512>b53d7fd2a6e43968479ce7cf9dec007a344404234b10b1b30e2876e216c96b91640fd71e840128ade2fccc48d9144e72d42602c5139d5db92967dd01f1bf32b7</mcf.sha512>
 <zookeeper.version>3.9.1</zookeeper.version>
  <zookeeper.sha512>6a1c56557ee8de63dc0730de6c55640afa8ae9043e57539fed393120fe3adfb7f30a6ac13af0a6331ff34ba9c6f2b31e41e40c5446e669651522fffb9ce64e48</zookeeper.sha512>
   </properties>
@@ -85,10 +85,13 @@
     <module>datafari-web-connector</module>
     <module>datafari-share-connector</module>
     <module>datafari-ui</module>
-     <module>datafari-adminui</module>
+    <module>datafari-adminui</module>
     <module>datafari-git-plugin</module>
     <module>datafari-regex-entity-connector</module>
     <module>datafari-active-directory-connector</module>
+    <module>datafari-solr-atomic-update</module>
+    <module>datafari-confluence-v6-connector</module>
+    <module>datafari-solr-connector</module>
   </modules>
   <build>
     <pluginManagement>
@@ -200,7 +203,7 @@
     </plugins>
   </build>
   <description>
-Datafari is the ideal product for those who want to search through their data, while using advanced open source technologies. Datafari combines Apache ManifoldCF and Apache Solr, to allow its users to search through many different and diverse data sources: their file shares, their cloud shares (dropbox, google drive…), their databases, but also their emails and many more.
+Datafari is the ideal product for those who want to search through their data, while using advanced open source technologies. Datafari combines Apache ManifoldCF and Apache Solr, to allow its users to search through many different and diverse data sources: their file shares, their cloud shares (dropbox, google drive???), their databases, but also their emails and many more.
     </description>
   <url>http://www.datafari.com/en/</url>
   <inceptionYear>2011</inceptionYear>

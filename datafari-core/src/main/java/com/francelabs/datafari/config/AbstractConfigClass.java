@@ -1,19 +1,16 @@
 package com.francelabs.datafari.config;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import com.francelabs.datafari.utils.Environment;
+import org.apache.logging.log4j.Logger;
+
+import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Properties;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import org.apache.commons.io.output.FileWriterWithEncoding;
-import org.apache.logging.log4j.Logger;
-
-import com.francelabs.datafari.utils.Environment;
 
 public abstract class AbstractConfigClass implements IConfigClass {
 
@@ -111,7 +108,9 @@ public abstract class AbstractConfigClass implements IConfigClass {
   @Override
   public void saveProperties() throws IOException {
     lock.writeLock().lock();
-    try (final FileWriterWithEncoding propWriter = new FileWriterWithEncoding(new File(configPropertiesFileNameAbsolutePath), StandardCharsets.UTF_8);) {
+    try (final BufferedWriter propWriter = Files.newBufferedWriter(Path.of(configPropertiesFileNameAbsolutePath), StandardCharsets.UTF_8,
+        // Delete content at opening: bug fix https://gitlab.datafari.com/datafari-enterprise/datafariee/-/issues/556
+        StandardOpenOption.TRUNCATE_EXISTING)) {
       properties.store(propWriter, null);
     } finally {
       lock.writeLock().unlock();

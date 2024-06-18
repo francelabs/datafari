@@ -154,6 +154,7 @@ if  [[ "$NODETYPE" = *mono* ]]; then
   if  [[ "$STATE" = *initialized* ]];
   then
     run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_solr";
+    run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_solr_annotators";
   fi
 
   run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh start_tomcat";
@@ -178,6 +179,13 @@ if  [[ "$NODETYPE" = *mono* ]]; then
   if  [[ "$TIKASERVER_ANNOTATOR" = *true* ]];
   then
     cd $TIKA_SERVER_HOME_ANNOTATOR/bin
+    run_as ${DATAFARI_USER} "bash tika-server.sh start";
+    cd $DIR
+  fi
+  
+  if  [[ "$TIKASERVER_OCR" = *true* ]];
+  then
+    cd $TIKA_SERVER_HOME_OCR/bin
     run_as ${DATAFARI_USER} "bash tika-server.sh start";
     cd $DIR
   fi

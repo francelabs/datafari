@@ -95,15 +95,15 @@ fi
 if [ $JAVA_VERSION -ge 11 ] ; then
     # See description of https://bugs.openjdk.java.net/browse/JDK-8046148 for details about the syntax
     # The following is the equivalent to -XX:+PrintGCDetails -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=10M
-    echo "$JVM_OPTS" | grep -q "^-[X]log:gc"
+    echo "$JVM_OPTS" | grep -qe "-[X]log:gc"
     if [ "$?" = "1" ] ; then # [X] to prevent ccm from replacing this line
         # only add -Xlog:gc if it's not mentioned in jvm-server.options file
         mkdir -p ${CASSANDRA_LOG_DIR}
-        JVM_OPTS="$JVM_OPTS -Xlog:gc=info,heap*=trace,age*=debug,safepoint=info,promotion*=trace:file=${CASSANDRA_LOG_DIR}/cassandra-gc.log:time,uptime,pid,tid,level:filecount=10,filesize=10m"
+        JVM_OPTS="$JVM_OPTS -Xlog:gc=info,heap*=trace,age*=debug,safepoint=info,promotion*=trace:file=${CASSANDRA_LOG_DIR}/gc.log:time,uptime,pid,tid,level:filecount=10,filesize=10485760"
     fi
 else
     # Java 8
-    echo "$JVM_OPTS" | grep -q "^-[X]loggc"
+    echo "$JVM_OPTS" | grep -qe "-[X]loggc"
     if [ "$?" = "1" ] ; then # [X] to prevent ccm from replacing this line
         # only add -Xlog:gc if it's not mentioned in jvm-server.options file
         mkdir -p ${CASSANDRA_LOG_DIR}
@@ -276,7 +276,7 @@ JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.password.file=/etc/cassandra/
 # To use mx4j, an HTML interface for JMX, add mx4j-tools.jar to the lib/
 # directory.
 # See http://cassandra.apache.org/doc/latest/operating/metrics.html#jmx
-# By default mx4j listens on 0.0.0.0:8081. Uncomment the following lines
+# By default mx4j listens on the broadcast_address, port 8081. Uncomment the following lines
 # to control its listen address and port.
 #MX4J_ADDRESS="127.0.0.1"
 #MX4J_PORT="8081"

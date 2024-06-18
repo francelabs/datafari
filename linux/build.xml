@@ -31,7 +31,7 @@
 	<property name="web.connector.src.dir" value="${project.dir}/datafari-web-connector/target" />
 	<property name="share.connector.src.dir" value="${project.dir}/datafari-share-connector/target" />
 	<property name="spacy.connector.src.dir" value="${project.dir}/datafari-spacy-fastapi-connector/target" />
-  <property name="regexentity.connector.src.dir" value="${project.dir}/datafari-regex-entity-connector/target" />
+  	<property name="regexentity.connector.src.dir" value="${project.dir}/datafari-regex-entity-connector/target" />
 	<property name="datafarihandler.src.dir" value="${project.dir}/datafari-handler/target" />
 	<property name="mcf-scripts.src.dir" value="${project.dir}/datafari-mcf-scripts/target" />
 	<property name="cassandra.src.dir" value="${project.dir}/datafari-cassandra/target/dist/cassandra" />
@@ -41,6 +41,9 @@
 	<property name="git.plugin.src.dir" value="${project.dir}/datafari-git-plugin/target" />
 	<property name="datafariui.src.dir" value="${project.dir}/datafari-ui/target" />
 	<property name="adminui.src.dir" value="${project.dir}/datafari-adminui/target" />
+	<property name="solratomicupdate.src.dir" value="${project.dir}/datafari-solr-atomic-update" />
+	<property name="confluencev6.connector.src.dir" value="${project.dir}/datafari-confluence-v6-connector/target" />
+	<property name="solr.connector.src.dir" value="${project.dir}/datafari-solr-connector/target" />
 
 	<!-- Output directories and self contained Datafari's Debian components -->
 	<property name="linux.dir" value="${project.dir}/linux" />
@@ -176,6 +179,20 @@
 
 		<!-- These components need a build with Maven -->
 
+		<!-- Copy Atomic Updates into bin/atomicupdates folder  -->
+		<copy todir="${linux.dist.dir}/bin/atomicupdates">
+		  <fileset dir="${solratomicupdate.src.dir}/target">
+		    <include name="*.jar" />
+		  </fileset>
+		  <fileset dir="${solratomicupdate.src.dir}/">
+		    <include name="*.xml" />
+				<exclude name="pom.xml" />
+		  </fileset>
+		  <fileset dir="${solratomicupdate.src.dir}/">
+		    <include name="*.json" />
+		  </fileset>
+		</copy>
+
 		<!-- Copy Tomcat  -->
 		<copy todir="${linux.dist.dir}/tomcat">
 			<fileset dir="${tomcat.src.dir}">
@@ -229,6 +246,14 @@
 			<fileset dir="${updateprocessor.src.dir}/dependency">
 				<include name="*.jar" />
 			</fileset>
+		</copy>
+		<copy todir="${linux.dist.dir}/solr/solr_home/GenericAnnotator/lib/custom">
+					<fileset dir="${updateprocessor.src.dir}">
+						<include name="*.jar" />
+					</fileset>
+					<fileset dir="${updateprocessor.src.dir}/dependency">
+						<include name="*.jar" />
+					</fileset>
 		</copy>
 		<copy todir="${linux.dist.dir}/solr/solr_home/Duplicates/lib/custom">
 			<fileset dir="${updateprocessor.src.dir}">
@@ -284,6 +309,13 @@
 				<include name="*.jar" />
 			</fileset>
 		</copy>
+		
+		<!-- Copy Datafari update handler + dependencies to GenericAnnotator -->
+				<copy todir="${linux.dist.dir}/solr/solr_home/GenericAnnotator/lib/custom">
+					<fileset dir="${datafarihandler.src.dir}">
+						<include name="*.jar" />
+					</fileset>
+				</copy>
 
 		<!-- Copy Datafari handler to Duplicates Solr core -->
 		<copy todir="${linux.dist.dir}/solr/solr_home/Duplicates/lib/custom">
@@ -402,12 +434,12 @@
 			</fileset>
 		</copy>
 
-    <!-- Copy RegexEntity connector -->
-    <copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
-      <fileset dir="${regexentity.connector.src.dir}">
-        <include name="*.jar" />
-      </fileset>
-    </copy>
+		<!-- Copy RegexEntity connector -->
+		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
+		  <fileset dir="${regexentity.connector.src.dir}">
+			<include name="*.jar" />
+		  </fileset>
+		</copy>
 
 		<!-- Copy Manifold CF to Tomcat auto-deploy directory -->
 		<move toDir="${linux.dist.dir}/tomcat-mcf/webapps" overwrite="true" force="true">
@@ -477,6 +509,20 @@
 
 		<copy todir="${linux.dist.dir}/pgsql">
 			<fileset dir="${pgsql.dir}" />
+		</copy>
+
+		<!-- Copy Confluence V6 connector -->
+		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
+			<fileset dir="${confluencev6.connector.src.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<!-- Copy Solr connector -->
+		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
+			<fileset dir="${solr.connector.src.dir}">
+				<include name="*.jar" />
+			</fileset>
 		</copy>
 
 		<!-- Setup zk Solr -->

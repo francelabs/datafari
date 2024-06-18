@@ -42,12 +42,11 @@ public class ConfigManager {
     String parentDir = new File(absoluteFilePath).getAbsolutePath();
     parentDir = parentDir.substring(0, parentDir.lastIndexOf(File.separator));
     final Path path = new File(parentDir).toPath();
-    // Register the service on MODIFY events
     try {
-      // we only register "ENTRY_MODIFY" so the context is
-      // always
-      // a Path.
-      path.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
+      // Register the Watch Service to the directory Path
+      // Watch for MODIFY and CREATE events: some IDEs create a copy of the file you modify, then on saving, the copy file
+      // is renamed to the actual name.
+      path.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_CREATE);
       filesToWatch.put(absoluteFilePath, config);
     } catch (final IOException e) {
       LOGGER.error("Unable to register the file " + absoluteFilePath, e);

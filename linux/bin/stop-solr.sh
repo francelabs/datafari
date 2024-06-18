@@ -28,11 +28,6 @@ if  [[ "$AnalyticsActivation" = *true* ]]; then
   run_as ${DATAFARI_USER} "bash as-manager.sh stop_logstash";
   cd $DIR
     
-  if  [[ "$currentSolrNumber" = 1 ]]; then
-    cd $AS_HOME/scripts
-    run_as ${DATAFARI_USER} "bash as-manager.sh stop_zeppelin";
-    cd $DIR
-  fi
      
 fi
 

@@ -78,6 +78,8 @@ public class MCFUISimplifiedWeb extends HttpServlet {
       final String reponame = request.getParameter("webReponame");
       final String timezone = request.getParameter("webTimeZone");
       final String startJob = request.getParameter("startJobWeb");
+      final String mode = request.getParameter("webMode");
+
       boolean duplicatesDetection = false;
       if (request.getParameter("webDuplicatesDetection") != null) {
         duplicatesDetection = true;
@@ -117,6 +119,7 @@ public class MCFUISimplifiedWeb extends HttpServlet {
           webJob.setSeeds(seeds);
           webJob.setSourcename(sourcename);
           webJob.setTimezone(timezone);
+          webJob.setMode(mode);
           webJob.setDuplicatesDetection(duplicatesDetection);
           webJob.setCreateOCR(createOCR);
           webJob.setTikaOCRHost(tikaOCRHost);

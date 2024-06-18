@@ -3,6 +3,7 @@ package com.francelabs.datafari.simplifiedui.utils;
 public class WebJob extends GenericJob {
 
   private String seeds;
+  private String mode;
 
   public WebJob() {
 
@@ -16,4 +17,11 @@ public class WebJob extends GenericJob {
     this.seeds = seeds;
   }
 
+  public String getMode() {
+    return mode;
+  }
+
+  public void setMode(String mode) {
+    this.mode = mode;
+  }
 }

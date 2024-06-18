@@ -111,16 +111,25 @@ public class FieldWeightAPI extends HttpServlet {
 
     String queryFields = "";
     String phraseFields = "";
+    String boost = "";
+    String boostQuery = "";
+    String boostFunction = "";
     JSONObject jsonresponse = new JSONObject();
 
     try {
       jsonresponse = SolrAPI.readConfig(Core.FILESHARE.toString());
       queryFields = SolrAPI.getFieldsWeight(jsonresponse);
       phraseFields = SolrAPI.getPhraseFieldsWeight(jsonresponse);
+      boost = SolrAPI.getBoost(jsonresponse);
+      boostQuery = SolrAPI.getBoostQuery(jsonresponse);
+      boostFunction = SolrAPI.getBoostFunction(jsonresponse);
       LOGGER.debug("fieldWeight" + jsonresponse.toJSONString());
       // Write the values to the response object and send
       jsonResponse.put("qfAPI", queryFields);
       jsonResponse.put("pfAPI", phraseFields);
+      jsonResponse.put("boostAPI", boost);
+      jsonResponse.put("bqAPI", boostQuery);
+      jsonResponse.put("bfAPI", boostFunction);
       jsonResponse.put("code", CodesReturned.ALLOK.getValue());
     } catch (final Exception e) {
       jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
@@ -143,8 +152,11 @@ public class FieldWeightAPI extends HttpServlet {
     response.setContentType("application/json");
 
     try {
-      SolrAPI.setFieldsWeight(Core.FILESHARE.toString(),request.getParameter("qfAPI"));
-      SolrAPI.setPhraseFieldsWeight(Core.FILESHARE.toString(),request.getParameter("pfAPI"));
+      SolrAPI.setQueryParameter("qf", Core.FILESHARE.toString(),request.getParameter("qfAPI"));
+      SolrAPI.setQueryParameter("pf", Core.FILESHARE.toString(),request.getParameter("pfAPI"));
+      SolrAPI.setQueryParameter("boost", Core.FILESHARE.toString(),request.getParameter("boostAPI"));
+      SolrAPI.setQueryParameter("bq", Core.FILESHARE.toString(),request.getParameter("bqAPI"));
+      SolrAPI.setQueryParameter("bf", Core.FILESHARE.toString(),request.getParameter("bfAPI"));
 
       List<String> collectionsList = null;
 
@@ -155,8 +167,11 @@ public class FieldWeightAPI extends HttpServlet {
 
       if (collectionsList != null) {
         for (String object: collectionsList) {
-          SolrAPI.setFieldsWeight(object,request.getParameter("qfAPI"));
-          SolrAPI.setPhraseFieldsWeight(object,request.getParameter("pfAPI"));
+          SolrAPI.setQueryParameter("qf", object,request.getParameter("qfAPI"));
+          SolrAPI.setQueryParameter("pf", object,request.getParameter("pfAPI"));
+          SolrAPI.setQueryParameter("boost", object,request.getParameter("boostAPI"));
+          SolrAPI.setQueryParameter("bq", object,request.getParameter("bqAPI"));
+          SolrAPI.setQueryParameter("bf", object,request.getParameter("bfAPI"));
 
         }
       }
@@ -164,7 +179,7 @@ public class FieldWeightAPI extends HttpServlet {
     } catch (final Exception e) {
       jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
       jsonResponse.put(OutputConstants.STATUS, "Error with SolrAPI: " + e.getMessage());
-      LOGGER.error("Solr API setFieldsWeight and/or setPhraseFieldsWeight request error", e);
+      LOGGER.error("Solr API setWeightConfiguration request error", e);
     }
 
     final PrintWriter out = response.getWriter();

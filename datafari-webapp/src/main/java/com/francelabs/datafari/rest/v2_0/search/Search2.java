@@ -16,6 +16,7 @@
 package com.francelabs.datafari.rest.v2_0.search;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.francelabs.datafari.utils.Timer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -69,6 +71,7 @@ public class Search2 extends HttpServlet {
    * @param request the original request
    */
   private void applyUserQueryConf(final HttpServletRequest request) {
+    Timer timer = new Timer(this.getClass().getName(), "applyUserQueryConf");
     final String userConf = GetUserQueryConf.getUserQueryConf(request);
     if (userConf != null && !userConf.isEmpty()) {
       final JSONParser parser = new JSONParser();
@@ -87,6 +90,7 @@ public class Search2 extends HttpServlet {
         logger.warn("An issue has occured while reading user query conf", e);
       }
     }
+    timer.stop();
   }
 
   /**
@@ -97,7 +101,6 @@ public class Search2 extends HttpServlet {
   private void checkException(final JSONObject searchResponse) {
     // Check if we get a code, if this is the case, we got an error
     // We will throw an internal error exception with the message if there is one
-    // final Integer code = (Integer) searchResponse.get("code");
     if (searchResponse.get("code") != null) {
       final String message = (String) searchResponse.get("message");
       if (message != null) {
@@ -117,6 +120,8 @@ public class Search2 extends HttpServlet {
    * @param searchEndpoint The search endpoint from which the provided searchResponse is issued from
    */
   private void switchDocURLToURLAPI(final JSONObject searchResponse, final HttpServletRequest request, final String searchEndpoint) {
+    Timer timer = new Timer(this.getClass().getName(), "switchDocURLToURLAPI");
+
     final JSONObject responseObj = (JSONObject) searchResponse.get("response");
     if (responseObj != null) {
       final JSONArray docsArray = (JSONArray) responseObj.get("docs");
@@ -135,17 +140,18 @@ public class Search2 extends HttpServlet {
           }
 
           String newUrl = currentURL.substring(0, currentURL.indexOf(searchEndpoint));
-          newUrl += "/rest/v2.0/url?url=" + URLEncoder.encode(url, StandardCharsets.UTF_8);
+          newUrl += "/rest/v2.0/url?url=" + URLEncoder.encode(URLDecoder.decode(url, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
           newUrl += "&id=" + queryId;
           jsonDoc.put("click_url", newUrl);
         }
       }
     }
-
+    timer.stop();
   }
 
   @GetMapping(value = "/rest/v2.0/search/*", produces = "application/json;charset=UTF-8")
   protected JSONObject performSearch(final HttpServletRequest request, final HttpServletResponse response) {
+    Timer timer = new Timer(this.getClass().getName(), "perfomSearch");
     try {
       setSearchSessionId(request);
       applyUserQueryConf(request);
@@ -153,15 +159,17 @@ public class Search2 extends HttpServlet {
       final JSONObject jsonResponse = SearchAggregator.doGetSearch(request, response);
       checkException(jsonResponse);
       switchDocURLToURLAPI(jsonResponse, request, "/rest/v2.0/search/");
-
+      timer.stop();
       return jsonResponse;
     } catch (ServletException | IOException e) {
+      timer.stop();
       throw new InternalErrorException("Error while performing the search request.");
     }
   }
 
   @GetMapping(value = "/rest/v2.0/search/noaggregator/*", produces = "application/json;charset=UTF-8")
   protected JSONObject performAggregatorlessSearch(final HttpServletRequest request, final HttpServletResponse response) {
+    Timer timer = new Timer(this.getClass().getName(), "performAggregatorlessSearch");
     try {
       setSearchSessionId(request);
       applyUserQueryConf(request);
@@ -169,8 +177,10 @@ public class Search2 extends HttpServlet {
       final JSONObject jsonResponse = SearchAggregator.doGetSearch(request, response, true);
       checkException(jsonResponse);
       switchDocURLToURLAPI(jsonResponse, request, "/rest/v2.0/search/noaggregator/");
+      timer.stop();
       return jsonResponse;
     } catch (ServletException | IOException e) {
+      timer.stop();
       throw new InternalErrorException("Error while performing the search request.");
     }
   }

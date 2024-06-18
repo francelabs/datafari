@@ -11,7 +11,7 @@
   <jsp:include
     page="/resources/templates/feature-not-available.jsp" >
     <jsp:param name="featureDesc" value="This dashboard type" />
-    <jsp:param name="featureImg" value="/resources/images/missing-features/zeppelin_system_dashboards_feature.png" />
+    <jsp:param name="featureImg" value="/resources/images/missing-features/system_dashboards_feature.png" />
   </jsp:include>
 </body>
 </html>

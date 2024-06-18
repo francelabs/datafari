@@ -9,6 +9,12 @@ $(document).ready(function() {
     document.getElementById("documentation-fieldweightapi").innerHTML = window.i18n.msgStore['documentation-fieldweightapi'];
     document.getElementById("labelth").innerHTML = window.i18n.msgStore['qf']+" : ";
     document.getElementById("labelth2").innerHTML = window.i18n.msgStore['pf']+" : ";
+    $('#labelth3').html(window.i18n.msgStore['boost']
+        + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Only one field value can be added here. If you need more that one Boost, consider editing Solr configuration.'>i</button></span> :");
+    $('#labelth4').html(window.i18n.msgStore['bq']
+        + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Only one field value can be added here. If you need more that one Boost Query, consider editing Solr configuration.'>i</button></span> :");
+    $('#labelth5').html(window.i18n.msgStore['bf']
+        + "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Only one field value can be added here. If you need more that one Boost Function, consider editing Solr configuration.'>i</button></span> :");
     document.getElementById("submitth").innerHTML = window.i18n.msgStore['confirm'];
     document.getElementById("submittab").innerHTML = window.i18n.msgStore['confirm'];
     document.getElementById("addRow").innerHTML = window.i18n.msgStore['addField'];
@@ -54,6 +60,9 @@ $(document).ready(function() {
         if(data.code == 0) { 
             document.getElementById("qfAPI").value = data.qfAPI;
             document.getElementById("pfAPI").value = data.pfAPI;
+            document.getElementById("boostAPI").value = data.boostAPI;
+            document.getElementById("bqAPI").value = data.bqAPI;
+            document.getElementById("bfAPI").value = data.bfAPI;
             $('#submitth').attr("disabled", false);
             $('#qfAPI').attr("disabled", false);
             var qfAPI = data.qfAPI;
@@ -83,7 +92,8 @@ $(document).ready(function() {
     $("#submitth").click(function(e){
         e.preventDefault();
 
-        $.post('./FieldWeightAPI', {qfAPI : document.getElementById("qfAPI").value, pfAPI : document.getElementById("pfAPI").value }, function(data) {
+        $.post('./FieldWeightAPI', {qfAPI : document.getElementById("qfAPI").value, pfAPI : document.getElementById("pfAPI").value,
+                boostAPI : document.getElementById("boostAPI").value, bqAPI : document.getElementById("bqAPI").value, bfAPI : document.getElementById("bfAPI").value}, function(data) {
             if(data.code == 0) {
                 document.getElementById("answerth").innerHTML = window.i18n.msgStore['modifDoneImmediateEffect'];
                 var qfAPI = document.getElementById("qfAPI").value;
@@ -159,7 +169,8 @@ $(document).ready(function() {
         }
         
 
-        $.post('./FieldWeightAPI', {qfAPI : newQF, pfAPI : document.getElementById("pfAPI").value  }, function(data) {
+        $.post('./FieldWeightAPI', {qfAPI : newQF, pfAPI : document.getElementById("pfAPI").value,
+                boostAPI : document.getElementById("boostAPI").value, bqAPI : document.getElementById("bqAPI").value, bfAPI : document.getElementById("bfAPI").value}, function(data) {
             if(data.code == 0) {
                 document.getElementById("answerth").innerHTML = window.i18n.msgStore['modifDoneImmediateEffect'];
                 document.getElementById("qfAPI").value = newQF;
@@ -182,7 +193,8 @@ $(document).ready(function() {
     $("#submitth").click(function(e){
         e.preventDefault();
 
-        $.post('./FieldWeightAPI', {qfAPI : document.getElementById("qfAPI").value, pfAPI : document.getElementById("pfAPI").value }, function(data) {
+        $.post('./FieldWeightAPI', {qfAPI : document.getElementById("qfAPI").value, pfAPI : document.getElementById("pfAPI").value,
+                boostAPI : document.getElementById("boostAPI").value, bqAPI : document.getElementById("bqAPI").value, bfAPI : document.getElementById("bfAPI").value }, function(data) {
             if(data.code == 0) {
                 document.getElementById("answerth").innerHTML = window.i18n.msgStore['modifDoneImmediateEffect'];
                 var qfAPI = document.getElementById("qfAPI").value;

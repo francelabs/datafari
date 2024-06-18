@@ -35,7 +35,7 @@
        that you fully re-index after changing this setting as it can
        affect both how text is indexed and queried.
   -->
-  <luceneMatchVersion>9.3</luceneMatchVersion>
+  <luceneMatchVersion>9.5</luceneMatchVersion>
 
   <!-- <lib/> directives can be used to instruct Solr to load an Jars
        identified and use them to resolve any "plugins" specified in
@@ -331,7 +331,7 @@
          have some sort of hard autoCommit to limit the log size.
       -->
      <autoCommit> 
-       <maxTime>10000</maxTime> 
+       <maxTime>${solr.autoCommit.maxTime:60000}</maxTime> 
        <openSearcher>true</openSearcher> 
      </autoCommit>
 
@@ -546,7 +546,7 @@
          Recommend values of 1-2 for read-only slaves, higher for
          masters w/o cache warming.
       -->
-    <maxWarmingSearchers>2</maxWarmingSearchers>
+   
 
   </query>
 
