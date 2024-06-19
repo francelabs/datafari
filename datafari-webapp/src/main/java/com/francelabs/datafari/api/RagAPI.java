@@ -103,7 +103,7 @@ public class RagAPI extends SearchAPI {
       return writeJsonError(428, "The query cannot be answered because no associated documents were found.");
     }
 
-    String llmStrResponse = getLlmResponse(prompt, documentsContent, config);
+    String llmStrResponse = getLlmResponse(prompt, documentsContent, config, documentsList);
 
     if (!llmStrResponse.isEmpty()) {
       final JSONObject response = new JSONObject();
@@ -135,12 +135,15 @@ public class RagAPI extends SearchAPI {
           document.put("id", id);
           document.put("title", title);
           document.put("url", url);
-          documentsList.add(document);
+
           // If SolrField is not highlighting, the extract is added to documentsContent
           JSONArray content = (JSONArray) ((JSONObject) docs.get(i)).get(config.getSolrField()); // You can use exactContent to send the whole file content
           if (content != null && content.get(0) != null) {
             documentsContent.add(content.get(0).toString());
+            document.put("content", cleanContext(content.get(0).toString()));
           }
+
+          documentsList.add(document);
         }
         return documentsList;
       }
@@ -202,6 +205,7 @@ public class RagAPI extends SearchAPI {
 
       for (int i = 0; i < maxFiles; i++) {
         String key = ((JSONObject) documentList.get(i)).get("id").toString();
+        StringBuilder content = new StringBuilder();
 
         if (highlighting.get(key) instanceof JSONObject) {
           JSONObject highlightContent = (JSONObject) highlighting.get(key);
@@ -209,16 +213,18 @@ public class RagAPI extends SearchAPI {
             // typeOfContent is one of the allowed fields in highlighting : content_fr, content_en or exactContent
             if (highlightContent.get(typeOfContent) != null) {
               String highlightedContent = ((JSONArray) highlightContent.get(typeOfContent)).get(0).toString();
+              content.append(highlightedContent);
               documentsContent.add(highlightedContent);
             }
           }
+          ((JSONObject) documentList.get(i)).put("content", cleanContext(content.toString()));
         }
       }
 
       return documentsContent;
 
     } catch (Exception e) {
-      LOGGER.error("An error occurred while extracting highlightings from webservices response.", e);
+      LOGGER.error("An error occurred while extracting highlightings from Datafari search results.", e);
     }
     return Collections.emptyList();
   }
@@ -229,7 +235,7 @@ public class RagAPI extends SearchAPI {
    * @param documents : A list of String documents to send with the user prompt
    * @return The extracted response from the LLM API
    */
-  public static String getLlmResponse(String prompt, List<String> documents, RagConfiguration config) throws IOException {
+  public static String getLlmResponse(String prompt, List<String> documents, RagConfiguration config, JSONArray documentList) throws IOException {
     String url;
     String apiKey;
     String template;
@@ -249,7 +255,7 @@ public class RagAPI extends SearchAPI {
       String body;
       switch (template) {
         case "datafari":
-          body = generateJsonBodyForDatafariRag(prompt, documents, config);
+          body = generateJsonBodyForDatafariRag(prompt, documents, config, documentList);
           break;
         case "openai":
         default:
@@ -317,9 +323,10 @@ public class RagAPI extends SearchAPI {
    * @param config The global RAG configuration
    * @return The generated JSON body to attach to the HTTP POST request for a Datafari-RAG API
    */
-  private static String generateJsonBodyForDatafariRag(String prompt, List<String> documents, RagConfiguration config) throws IOException {
+  private static String generateJsonBodyForDatafariRag(String prompt, List<String> documents, RagConfiguration config, JSONArray documentList) throws IOException {
     StringBuilder context = new StringBuilder((config.getAddInstructions()) ? getInstructions() + "\\n\\r" : "");
-    for (String doc : documents)
+    // Todo : delete comments
+  /*  for (String doc : documents)
     {
       context.append("\\n\\r Document ").append(documents.indexOf(doc) + 1).append(" \\n\\r ```").append(doc).append("```");
     }
@@ -328,9 +335,19 @@ public class RagAPI extends SearchAPI {
       context = new StringBuilder(context.substring(0, maxJsonLength - 1000));
     }
     context = new StringBuilder(cleanContext(context.toString()));
-    String format = (config.getFormat() != null && !config.getFormat().isEmpty() && FORMAT_VALUES.contains(config.getFormat())) ? ", \"format\": \"" + config.getFormat() + "\"" : "";
 
     return "{\"input\":{\"content\": \"" + context + "\",\"temperature\": " + config.getTemperature() + ",\"max_tokens\": " + config.getMaxTokens()+ ",\"question\": \"" + cleanContext(prompt) + "\" " + format + " }}";
+    String format = (config.getFormat() != null && !config.getFormat().isEmpty() && FORMAT_VALUES.contains(config.getFormat())) ? ", \"format\": \"" + config.getFormat() + "\"" : "";*/
+    JSONObject queryBody = new JSONObject();
+    JSONObject input = new JSONObject();
+    if (!config.getTemperature().isEmpty()) input.put("temperature", config.getTemperature());
+    if (!config.getMaxTokens().isEmpty()) input.put("max_tokens", config.getMaxTokens());
+    if (config.getFormat() != null && !config.getFormat().isEmpty() && FORMAT_VALUES.contains(config.getFormat())) input.put("format", config.getFormat());
+    input.put("question", cleanContext(prompt));
+    input.put("documents", documentList);
+
+    queryBody.put("input", input);
+    return queryBody.toJSONString();
   }
 
 
@@ -345,6 +362,10 @@ public class RagAPI extends SearchAPI {
             .replace("\t", " ")
             .replace("\b", "")
             .replace("\"", "`");
+    if (context.length() > maxJsonLength -1000) {
+      // Truncate the context if too long
+      context = context.substring(0, maxJsonLength - 1000);
+    }
     return context;
   }
 
