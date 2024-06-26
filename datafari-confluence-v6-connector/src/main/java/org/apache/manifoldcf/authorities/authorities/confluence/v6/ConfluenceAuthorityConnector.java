@@ -297,6 +297,11 @@ public class ConfluenceAuthorityConnector extends BaseAuthorityConnector {
             + ConfluenceConfiguration.Server.PATH
             + " required but not set");
       }
+      // The path is expected with "/" at the beginning and without at the end.
+      if (!StringUtils.startsWith(path, "/")){
+        path = "/" + path;
+      }
+      path = StringUtils.stripEnd(path, "/");
 
       if (Logging.authorityConnectors.isDebugEnabled()) {
         Logging.authorityConnectors.debug("Confluence path = '" + path + "'");
