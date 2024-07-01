@@ -690,12 +690,6 @@ public class ConfluenceAuthorityConnector extends BaseAuthorityConnector {
     public AuthorizationResponse getAuthorizationResponse(String userName)
         throws ManifoldCFException {
       
-      String finalUsername = userName;
-      // If the username contains the domain, must clean it
-      if(finalUsername.indexOf("@") != -1) {
-        finalUsername = finalUsername.substring(0, finalUsername.indexOf("@"));
-      }
-      
       if (Logging.authorityConnectors != null && Logging.authorityConnectors.isDebugEnabled()) {
         Logging.authorityConnectors.debug("Get Confluence autorizations for user '" + finalUsername + "'");
       }
@@ -703,7 +697,7 @@ public class ConfluenceAuthorityConnector extends BaseAuthorityConnector {
       if(cacheManager != null) {
       
         // Construct a cache description object
-        final ICacheDescription objectDescription = new AuthorizationResponseDescription(finalUsername, this.responseLifetime, this.LRUsize);
+        final ICacheDescription objectDescription = new AuthorizationResponseDescription(userName, this.responseLifetime, this.LRUsize);
   
         // Enter the cache
         final ICacheHandle ch = cacheManager.enterCache(new ICacheDescription[] { objectDescription }, null, null);
@@ -714,12 +708,12 @@ public class ConfluenceAuthorityConnector extends BaseAuthorityConnector {
             AuthorizationResponse response = (AuthorizationResponse) cacheManager.lookupObject(createHandle, objectDescription);
             if (response != null) {
               if (Logging.authorityConnectors != null && Logging.authorityConnectors.isDebugEnabled()) {
-                Logging.authorityConnectors.debug("Found cached Confluence autorizations for user '" + finalUsername + "'");
+                Logging.authorityConnectors.debug("Found cached Confluence autorizations for user '" + userName + "'");
               }
               return response;
             }
             // Create the object.
-            response = getAuthorizationResponseUncached(finalUsername);
+            response = getAuthorizationResponseUncached(userName);
             // Save it in the cache
             cacheManager.saveObject(createHandle, objectDescription, response);
             // And return it...
@@ -731,7 +725,7 @@ public class ConfluenceAuthorityConnector extends BaseAuthorityConnector {
           cacheManager.leaveCache(ch);
         }
       } else {
-        return getAuthorizationResponseUncached(finalUsername);
+        return getAuthorizationResponseUncached(userName);
       }
     }
     
