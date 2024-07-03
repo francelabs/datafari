@@ -27,7 +27,12 @@ import java.util.List;
  *
  */
 public class ConfluenceUser {
-    private final String username;
+  /**
+   * Username for anonymous users (without account in Confluence)
+   */
+  public static final String ANONYMOUS = "anonymous";
+
+  private final String username;
     private final List<String> authorities;
 
     public ConfluenceUser(String username, List<String> authorities) {
