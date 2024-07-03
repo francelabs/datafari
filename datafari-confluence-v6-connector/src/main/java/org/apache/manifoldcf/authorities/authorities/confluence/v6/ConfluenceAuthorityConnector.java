@@ -43,6 +43,7 @@ import org.apache.manifoldcf.crawler.connectors.confluence.v6.ConfluenceConfigur
 import org.apache.manifoldcf.crawler.connectors.confluence.v6.client.ConfluenceClient;
 import org.apache.manifoldcf.crawler.connectors.confluence.v6.model.ConfluenceUser;
 import org.apache.manifoldcf.authorities.system.Logging;
+import org.apache.manifoldcf.crawler.connectors.confluence.v6.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -213,7 +214,8 @@ public class ConfluenceAuthorityConnector extends BaseAuthorityConnector {
     
     cacheLifetime = params.getParameter(ConfluenceConfiguration.Authority.CACHE_LIFETIME);
     if (cacheLifetime == null) {
-      cacheLifetime = "1";
+      // Value in minute.
+      cacheLifetime = "360";
     }
     cacheLRUsize = params.getParameter(ConfluenceConfiguration.Authority.CACHE_LRU_SIZE);
     if (cacheLRUsize == null) {
@@ -379,12 +381,29 @@ public class ConfluenceAuthorityConnector extends BaseAuthorityConnector {
           proxyPortInt = -1;
       }
 
+      int cacheLifetimeInt;
+      if (cacheLifetime != null && cacheLifetime.length() > 0) {
+        try
+        {
+          cacheLifetimeInt = Integer.parseInt(cacheLifetime);
+
+        }
+        catch (NumberFormatException e)
+        {
+          throw new ManifoldCFException("Bad number for Cache Life Time: "
+              + e.getMessage(), e);
+        }
+      }
+      else{
+        cacheLifetimeInt = 360;
+      }
+
       /* Generating a client to perform Confluence requests */
       confluenceClient = new ConfluenceClient(protocol, host, portInt,
-          path, username, password, socketTimeoutInt, connectionTimeoutInt,
-          proxyUsername, proxyPassword, proxyProtocol, proxyHost, proxyPortInt);
-    }
-
+           path, username, password, socketTimeoutInt, connectionTimeoutInt, cacheLifetimeInt,
+           proxyUsername, proxyPassword, proxyProtocol, proxyHost, proxyPortInt);
+     }
+ 
   }
 
   /**
@@ -488,15 +507,15 @@ public class ConfluenceAuthorityConnector extends BaseAuthorityConnector {
     serverMap.put(PARAMETER_PREFIX
         + ConfluenceConfiguration.Server.CONNECTION_TIMEOUT, confluenceConnectionTimeout);
     serverMap.put(PARAMETER_PREFIX
-            + ConfluenceConfiguration.Server.PROXY_USERNAME, confluenceProxyUsername);
+        + ConfluenceConfiguration.Server.PROXY_USERNAME, confluenceProxyUsername);
     serverMap.put(PARAMETER_PREFIX
-            + ConfluenceConfiguration.Server.PROXY_PASSWORD, confluenceProxyPassword);
+        + ConfluenceConfiguration.Server.PROXY_PASSWORD, confluenceProxyPassword);
     serverMap.put(PARAMETER_PREFIX
         + ConfluenceConfiguration.Server.PROXY_PROTOCOL, confluenceProxyProtocol);
     serverMap.put(PARAMETER_PREFIX + ConfluenceConfiguration.Server.PROXY_HOST,
-            confluenceProxyHost);
+        confluenceProxyHost);
     serverMap.put(PARAMETER_PREFIX + ConfluenceConfiguration.Server.PROXY_PORT,
-            confluenceProxyPort);
+        confluenceProxyPort);
   }
 
   @Override
@@ -568,10 +587,9 @@ public class ConfluenceAuthorityConnector extends BaseAuthorityConnector {
    * org.apache.manifoldcf.core.interfaces.ConfigParams)
    */
   @Override
-  public String processConfigurationPost(IThreadContext threadContext,
-      IPostParameters variableContext, ConfigParams parameters)
+  public String processConfigurationPost(IThreadContext threadContext, IPostParameters variableContext, ConfigParams parameters)
       throws ManifoldCFException {
-    
+
     // Cache parameters
     final String cacheLifetime = variableContext.getParameter(ConfluenceConfiguration.Authority.CACHE_LIFETIME);
     if (cacheLifetime != null) {
@@ -621,14 +639,14 @@ public class ConfluenceAuthorityConnector extends BaseAuthorityConnector {
       parameters.setObfuscatedParameter(
           ConfluenceConfiguration.Server.PASSWORD,
           variableContext.mapKeyToPassword(confluencePassword));
-    
+
     String confluenceSocketTimeout = variableContext
         .getParameter(PARAMETER_PREFIX
             + ConfluenceConfiguration.Server.SOCKET_TIMEOUT);
     if (confluenceSocketTimeout != null)
       parameters.setParameter(ConfluenceConfiguration.Server.SOCKET_TIMEOUT,
           confluenceSocketTimeout);
-    
+
     String confluenceConnectionTimeout = variableContext
         .getParameter(PARAMETER_PREFIX
             + ConfluenceConfiguration.Server.CONNECTION_TIMEOUT);
@@ -636,8 +654,8 @@ public class ConfluenceAuthorityConnector extends BaseAuthorityConnector {
       parameters.setParameter(ConfluenceConfiguration.Server.CONNECTION_TIMEOUT,
           confluenceConnectionTimeout);
     String confluenceProxyProtocol = variableContext
-            .getParameter(PARAMETER_PREFIX
-                + ConfluenceConfiguration.Server.PROXY_PROTOCOL);
+        .getParameter(PARAMETER_PREFIX
+            + ConfluenceConfiguration.Server.PROXY_PROTOCOL);
     if (confluenceProxyProtocol != null)
       parameters.setParameter(ConfluenceConfiguration.Server.PROXY_PROTOCOL,
           confluenceProxyProtocol);
@@ -691,7 +709,7 @@ public class ConfluenceAuthorityConnector extends BaseAuthorityConnector {
         throws ManifoldCFException {
       
       if (Logging.authorityConnectors != null && Logging.authorityConnectors.isDebugEnabled()) {
-        Logging.authorityConnectors.debug("Get Confluence autorizations for user '" + finalUsername + "'");
+        Logging.authorityConnectors.debug("Get Confluence autorizations for user '" + userName + "'");
       }
       
       if(cacheManager != null) {
@@ -728,7 +746,7 @@ public class ConfluenceAuthorityConnector extends BaseAuthorityConnector {
         return getAuthorizationResponseUncached(userName);
       }
     }
-    
+  
     private AuthorizationResponse getAuthorizationResponseUncached(final String userName) throws ManifoldCFException {
       if (Logging.authorityConnectors != null && Logging.authorityConnectors.isDebugEnabled()) {
         Logging.authorityConnectors.debug("Get uncached Confluence autorizations for user '" + userName + "'");
@@ -739,18 +757,19 @@ public class ConfluenceAuthorityConnector extends BaseAuthorityConnector {
             || confluenceUser.getUsername().isEmpty()
             || confluenceUser.getAuthorities().isEmpty()) {
           if (Logging.authorityConnectors != null && Logging.authorityConnectors.isDebugEnabled()) {
-            Logging.authorityConnectors.debug("No Confluence user found for user '" + userName + "'");
+            Logging.authorityConnectors.info("No Confluence user found for user '" + userName + "'");
           }
           return RESPONSE_USERNOTFOUND;
         } else {
           if (Logging.authorityConnectors != null && Logging.authorityConnectors.isDebugEnabled()) {
-            Logging.authorityConnectors.debug("Found Confluence corresponding user for user '" + userName + "'");
+            Logging.authorityConnectors.info("Found Confluence corresponding user for user '" + userName + "'");
           }
           return new AuthorizationResponse(
               confluenceUser.getAuthorities().toArray(new String[confluenceUser.getAuthorities().size()]),
               AuthorizationResponse.RESPONSE_OK);
         }
       } catch (Exception e) {
+        Logging.authorityConnectors.error("Exception "+e.getMessage(), e);
         return RESPONSE_UNREACHABLE;
       }
 
