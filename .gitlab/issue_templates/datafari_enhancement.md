@@ -22,3 +22,13 @@ Once you have closed the ticket, don't forget to mention as comment the commit.
 ## VERSION CONCERNED
 #### On which version of Datafari was the enhancement not present 
 #### This is not the target version for the fix, as this is a milestone.
+
+## CHECKLIST BEFORE CLOSING TICKET
+- [ ] Documentation
+  - [ ] I have created the functional documentation in the wiki
+  - [ ] I have created the technical documentation in the wiki 
+  - [ ] I have added javadoc comments on key functions in my code
+- [ ] Security 
+  - [ ] I have cleaned up any input coming from users
+  - [ ] I have not put any token APIs, passwords or the like in my code
+  - [ ] I am not using 3rd party libraries that are deprecated or not maintained
