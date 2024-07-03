@@ -20,6 +20,8 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -123,7 +125,7 @@ public class Search2 extends HttpServlet {
       for (final Object docObj : docsArray) {
         final JSONObject jsonDoc = (JSONObject) docObj;
         final String url = (String) jsonDoc.get("url");
-        if (url != null) {
+        if (url != null && isUrlSafe(URLDecoder.decode(url, StandardCharsets.UTF_8))) {
           // temper with the URL to point on our URL endpoint
           // Also add a path array giving path information for display purposes
           final StringBuffer currentURL = request.getRequestURL();
@@ -138,10 +140,25 @@ public class Search2 extends HttpServlet {
           newUrl += "/rest/v2.0/url?url=" + URLEncoder.encode(URLDecoder.decode(url, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
           newUrl += "&id=" + queryId;
           jsonDoc.put("click_url", newUrl);
+        } else if (url != null) {
+          jsonDoc.put("click_url", url);
         }
       }
     }
 
+  }
+
+
+  /**
+   * Check if a String (url) contains characters out of the whitelist :
+   * ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=ÀÁÂàáâãäåÃÄÅ?ÈÉÊËèéêëÌÍÎÏìíîïÒÓÔòóôõöÕÖÙÚÛÜùúûüÇçÑñÆæŒœ
+   * @param url A String url
+   */
+  private boolean isUrlSafe(String url) {
+    String blacklist = "[^A-Za-z0-9-._~:/?#\\[\\]@!$%&'()*+,;={}^¨€£\"`<>|ÀÁÂàáâãäåÃÄÅÈÉÊËèéêëÌÍÎÏìíîïÒÓÔòóôõöÕÖÙÚÛÜùúûüÇçÑñÆæ ]";
+    Pattern p = Pattern.compile(blacklist);
+    Matcher m = p.matcher(url);
+    return !m.find();
   }
 
   @GetMapping(value = "/rest/v2.0/search/*", produces = "application/json;charset=UTF-8")
