@@ -17,8 +17,8 @@
     <cassandra.sha512>393443a5b9849645362df2f7536e734e1fc6d513aadf440fab8dda3063553394a138805098796d35f9d4d31e2899ecab630a2ec2a44d00d5e63bed549a2e844c</cassandra.sha512>
     <cassandra.driver.version>4.17.0</cassandra.driver.version>
     <datafari.version>6.1-dev-Community</datafari.version>
-    <datafariui.version>1.4.2</datafariui.version>
-    <datafariui.md5>07ea154d167d13afa8107d4cae9a1fa0</datafariui.md5>
+    <datafariui.version>1.4.3</datafariui.version>
+    <datafariui.md5>5eb80358b9cfd7c765134ab7dbb5039d</datafariui.md5>
     <guava.version>26.0-jre</guava.version>
     <httpclient.version>4.5.13</httpclient.version>
     <java.version>1.11</java.version>
