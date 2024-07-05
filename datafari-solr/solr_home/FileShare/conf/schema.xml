@@ -115,7 +115,7 @@
        "content_type": From the HTTP headers of incoming stream
        "resourcename": From SolrCell request param resource.name
    -->
-  <field name="title" type="text_general" indexed="false" stored="true" multiValued="true"/>
+  <field name="title" type="text_general" indexed="true" stored="true" multiValued="true"/>
   <field name="title_en" type="text_en" indexed="true" stored="true" multiValued="true"/>
    <field name="title_fr" type="text_fr" indexed="true" stored="true" multiValued="true"/>
    <field name="title_de" type="text_de" indexed="true" stored="true" multiValued="true"/>
