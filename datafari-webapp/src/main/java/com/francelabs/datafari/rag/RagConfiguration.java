@@ -1,6 +1,15 @@
 package com.francelabs.datafari.rag;
 
+import com.francelabs.datafari.api.RagAPI;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Properties;
+
 public class RagConfiguration {
+    boolean enabled = false;
     String token;
     String endpoint;
     String temperature;
@@ -10,6 +19,9 @@ public class RagConfiguration {
     boolean addInstructions;
     String template;
     String format;
+    int maxJsonLength;
+
+    String operator = "AND";
     boolean logsEnabled;
 
     // The field that contains the corpus to send to the webservice. This value can be : "highlighting", "exact_content", "preview_content".
@@ -18,7 +30,50 @@ public class RagConfiguration {
     // Only required when using "highlighting" as Solr field. Defines the size in characters of the document extract.
     String hlFragsize;
 
-    public RagConfiguration() {
+    /*public RagConfiguration() {
+    }*/
+
+    public RagConfiguration() throws FileNotFoundException {
+        Properties prop = new Properties();
+        String fileName = "rag.properties";
+        try (InputStream fis = RagAPI.class.getClassLoader().getResourceAsStream(fileName)) {
+            prop.load(fis);
+
+            this.setEnabled(prop.getProperty("rag.enabled"));
+            this.setToken(prop.getProperty("rag.api.token"));
+            this.setEndpoint(prop.getProperty("rag.api.endpoint"));
+            this.setModel(prop.getProperty("rag.model"));
+            this.setTemperature(prop.getProperty("rag.temperature"));
+            this.setMaxTokens(prop.getProperty("rag.maxTokens"));
+            this.setMaxFiles(prop.getProperty("rag.maxFiles"));
+            this.setAddInstructions(prop.getProperty("rag.addInstructions"));
+            this.setTemplate(prop.getProperty("rag.template"));
+            this.setSolrField(prop.getProperty("rag.solrField"));
+            this.setHlFragsize(prop.getProperty("rag.hl.fragsize"));
+            this.setLogsEnabled(prop.getProperty("rag.enable.logs"));
+            this.setOperator(prop.getProperty("rag.operator"));
+            this.setMaxJsonLength(Integer.parseInt(prop.getProperty("rag.maxJsonLength")));
+
+
+        } catch (FileNotFoundException e) {
+            throw new FileNotFoundException("An error occurred during the configuration. Configuration file not found.");
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("An error occurred during the configuration. Invalid value for rag.maxTokens or rag.hl.fragsize or rag.maxFiles or rag.maxJsonLength. Integers expected.");
+        } catch (IOException e) {
+            throw new RuntimeException("An error occurred during the configuration.");
+        }
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public void setEnabled(String enabled) {
+        this.enabled = "true".equals(enabled);
     }
 
     public String getTemplate() {
@@ -127,5 +182,21 @@ public class RagConfiguration {
 
     public void setFormat(String format) {
         this.format = format;
+    }
+
+    public String getOperator() {
+        return operator;
+    }
+
+    public void setOperator(String operator) {
+        this.operator = (List.of("OR", "AND").contains(operator)) ? operator : "AND";
+    }
+
+    public int getMaxJsonLength() {
+        return maxJsonLength;
+    }
+
+    public void setMaxJsonLength(int maxJsonLength) {
+        this.maxJsonLength = maxJsonLength;
     }
 }

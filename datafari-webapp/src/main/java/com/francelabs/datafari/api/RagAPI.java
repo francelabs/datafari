@@ -57,7 +57,7 @@ public class RagAPI extends SearchAPI {
         request.setAttribute("hl.fragsize", Integer.valueOf(config.getHlFragsize()));
         request.setAttribute("hl.tag.pre", "");
         request.setAttribute("hl.tag.post", "");
-        request.setAttribute("q.op", "AND");
+        if (!config.getOperator().isEmpty()) request.setAttribute("q.op", config.getOperator());
       }
     } catch (NumberFormatException e) {
       return writeJsonError(500, "Invalid value for rag.hl.fragsize property. Integer expected.");
@@ -324,20 +324,9 @@ public class RagAPI extends SearchAPI {
    * @return The generated JSON body to attach to the HTTP POST request for a Datafari-RAG API
    */
   private static String generateJsonBodyForDatafariRag(String prompt, List<String> documents, RagConfiguration config, JSONArray documentList) throws IOException {
-    StringBuilder context = new StringBuilder((config.getAddInstructions()) ? getInstructions() + "\\n\\r" : "");
-    // Todo : delete comments
-  /*  for (String doc : documents)
-    {
-      context.append("\\n\\r Document ").append(documents.indexOf(doc) + 1).append(" \\n\\r ```").append(doc).append("```");
-    }
-    if (context.length() > maxJsonLength -1000) {
-      // Truncate the context
-      context = new StringBuilder(context.substring(0, maxJsonLength - 1000));
-    }
-    context = new StringBuilder(cleanContext(context.toString()));
+    // Todo : handle instruction to send to the Datafari External Webservice
+    //StringBuilder context = new StringBuilder((config.getAddInstructions()) ? getInstructions() + "\\n\\r" : "");
 
-    return "{\"input\":{\"content\": \"" + context + "\",\"temperature\": " + config.getTemperature() + ",\"max_tokens\": " + config.getMaxTokens()+ ",\"question\": \"" + cleanContext(prompt) + "\" " + format + " }}";
-    String format = (config.getFormat() != null && !config.getFormat().isEmpty() && FORMAT_VALUES.contains(config.getFormat())) ? ", \"format\": \"" + config.getFormat() + "\"" : "";*/
     JSONObject queryBody = new JSONObject();
     JSONObject input = new JSONObject();
     if (!config.getTemperature().isEmpty()) input.put("temperature", config.getTemperature());
@@ -424,31 +413,16 @@ public class RagAPI extends SearchAPI {
    * @return RagConfiguration The configuration used to access the RAG API
    */
   private static RagConfiguration getRagConf() throws FileNotFoundException {
-    Properties prop = new Properties();
-    String fileName = "rag.properties";
-    try (InputStream fis = RagAPI.class.getClassLoader().getResourceAsStream(fileName)) {
-      prop.load(fis);
-
+    try  {
       RagConfiguration config = new RagConfiguration();
-      config.setToken(prop.getProperty("rag.api.token"));
-      config.setEndpoint(prop.getProperty("rag.api.endpoint"));
-      config.setModel(prop.getProperty("rag.model"));
-      config.setTemperature(prop.getProperty("rag.temperature"));
-      config.setMaxTokens(prop.getProperty("rag.maxTokens"));
-      config.setMaxFiles(prop.getProperty("rag.maxFiles"));
-      config.setAddInstructions(prop.getProperty("rag.addInstructions"));
-      config.setTemplate(prop.getProperty("rag.template"));
-      config.setSolrField(prop.getProperty("rag.solrField"));
-      config.setHlFragsize(prop.getProperty("rag.hl.fragsize"));
-      config.setLogsEnabled(prop.getProperty("rag.enable.logs"));
-      if (!prop.getProperty("rag.maxJsonLength").isEmpty()) maxJsonLength = Integer.parseInt(prop.getProperty("rag.maxJsonLength"));
+      if (config.getMaxJsonLength() != 0) maxJsonLength = config.getMaxJsonLength();
 
       return config;
 
     } catch (FileNotFoundException e) {
       throw new FileNotFoundException("An error occurred during the configuration. Configuration file not found.");
     } catch (NumberFormatException e) {
-      throw new FileNotFoundException("An error occurred during the configuration. Invalid value for rag.maxTokens or rag.hl.fragsize or rag.maxFiles or rag.maxJsonLength. Integers expected.");
+      throw new NumberFormatException("An error occurred during the configuration. Invalid value for rag.maxTokens or rag.hl.fragsize or rag.maxFiles or rag.maxJsonLength. Integers expected.");
     } catch (IOException e) {
       throw new RuntimeException("An error occurred during the configuration.");
     }

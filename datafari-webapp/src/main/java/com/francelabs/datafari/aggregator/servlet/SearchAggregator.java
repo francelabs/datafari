@@ -121,7 +121,7 @@ public class SearchAggregator extends HttpServlet {
     }
 
     // Get the action from the request: null or searchAPI = search, suggest = suggestAPI
-    final String action = request.getParameter("action"); // Todo : case RAG
+    final String action = request.getParameter("action");
 
     try {
       if (activated) {
