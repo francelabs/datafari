@@ -676,7 +676,7 @@ public class ConfluenceClient {
 
     // Retrieve anonymous authorities from cache living.
     // cacheLifeTime is in minutes
-    if ((thisTime - cacheSpaceTime) < (cacheLifetime * 60000) && !anonymousAuthoritiesComputed) {
+    if ((thisTime - cacheSpaceTime) < (cacheLifetime * 60000) && anonymousAuthoritiesComputed) {
       if (Logging.connectors != null && Logging.connectors.isDebugEnabled()) {
         Logging.connectors.debug("get anonymousAuthorities from cache cacheTime :" + new Date(cacheSpaceTime) + "/ now :" + new Date(thisTime));
       }
