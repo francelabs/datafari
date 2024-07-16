@@ -11,6 +11,36 @@ Available as community (open source) and enterprise (proprietary) edition, Dataf
 See https://wiki.datafari.com for more information.
 
 
+
+================== 6.0.4 ==================
+
+June 15th, 2024
+
+* Version of major components :
+
+- Solr 9.6.1
+- ManifoldCF 2.26 custom
+- Tomcat 9.0.81
+- Cassandra 4.1.3
+- PostgreSQL 15.4
+- Zookeeper 3.9.1
+- Tika Server 2.9.2
+- DatafariUI 1.4.4
+- AdminUI 1.0
+
+### Datafari CE Issues list done
+#982 Group extensions types into a new type_category field
+#995 DatafariUI - Display the complete user name somewhere in search page
+#994  DatafariUI - Enable html processing in document previews
+#989 UnsupportedOperationException in SearchAggregator
+#1003 DatafariUI - One file for Portuguese translation
+#970 DatafariUI - normal autocomplete incorrectly using solr response
+#993 Confluence Connector: path="/" not supported anymore
+#997 Confluence Authority connector: change username strategy
+#998 Confluence Connector: improve user authorities search (new USERNOTFOUND management)
+#1000 Postgresql conf: uncomment some useful parameters
+
+
 ================== 6.0.3 ==================
 
 June 20th, 2024
@@ -28,8 +58,6 @@ June 20th, 2024
 - AdminUI 1.0
 
 
-### Datafari EE Issues list done
-#609 Fix O365 Authority Connector
 
 ### Datafari CE Issues list done
 #988 Update DatafariUI to 1.4.2 version
