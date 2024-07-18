@@ -184,7 +184,8 @@ init_temp_directory() {
   sed -i -e "s~@TOMCATMCFTMPDIR@~${TOMCATMCFTMPDIR}~g" $DATAFARI_HOME/tomcat_mcf/bin/setenv.sh >>$installerLog 2>&1
   sed -i -e "s~@MCFTMPDIR@~${MCFTMPDIR}~g" $DATAFARI_HOME/mcf/mcf_home/options.env.unix >>$installerLog 2>&1
   sed -i -e "s~@SOLRTMPDIR@~${SOLRTMPDIR}~g" $DATAFARI_HOME/solr/bin/solr.in.sh >>$installerLog 2>&1
-  sed -i -e "s~@TIKATMPDIR@~${TIKATMPDIR}~g" $DATAFARI_HOME/tika-server/conf/tika-config.xml >>$installerLog 2>&1  
+  sed -i -e "s~@TIKATMPDIR@~${TIKATMPDIR}~g" $DATAFARI_HOME/tika-server/conf/tika-config.xml >>$installerLog 2>&1
+  sed -i -e "s~@CASSANDRATMPDIR@~${CASSANDRATMPDIR}~g" $DATAFARI_HOME/cassandra/conf/jvm-server.options >>$installerLog 2>&1
 }
 
 
