@@ -23,9 +23,6 @@ public class RagAPI extends SearchAPI {
   public static final List<String> HIGHLIGHTING_FIELDS = List.of("content_en", "content_fr", EXACT_CONTENT);
   private static int maxJsonLength = Integer.MAX_VALUE;
 
-  // For development only
-  private static boolean DISABLE_WS_CALL = false; // Todo : remove the variable for prod
-
   public static JSONObject rag(final HttpServletRequest request) throws IOException {
     final String handler = getHandler(request);
     final String protocol = request.getScheme() + ":";
@@ -264,7 +261,7 @@ public class RagAPI extends SearchAPI {
       }
 
       // Todo : Bouchonner / débouchonner (to delete for prod)
-      if (DISABLE_WS_CALL) return "Ceci est un bouchon. RagAPI n'interragit actuellement pas avec le LLM. Cette réponse est un placeholder.";
+      if (!config.isEnabled()) return "RAG feature is currently disabled. This is a placeholder message. \\n Enable the feature by editing rag.properties file.";
 
       connection.setDoOutput(true);
       OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
@@ -331,6 +328,7 @@ public class RagAPI extends SearchAPI {
     JSONObject input = new JSONObject();
     if (!config.getTemperature().isEmpty()) input.put("temperature", config.getTemperature());
     if (!config.getMaxTokens().isEmpty()) input.put("max_tokens", config.getMaxTokens());
+    if (!config.getModel().isEmpty()) input.put("model", config.getModel());
     if (config.getFormat() != null && !config.getFormat().isEmpty() && FORMAT_VALUES.contains(config.getFormat())) input.put("format", config.getFormat());
     input.put("question", cleanContext(prompt));
     input.put("documents", documentList);
