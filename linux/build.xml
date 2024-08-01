@@ -588,6 +588,7 @@
 		<replace file="${linux.dist.dir}/bin/start-datafari.sh" token="@START-CHECKS@" value="" />
 		<replace file="${linux.dist.dir}/bin/restart-datafari.sh" token="@VERSION-RESTART@" value="" />
 		<replace file="${linux.dist.dir}/bin/datafari-manager.sh" token="@SOLR-INIT@" value="" />
+		<replace file="${linux.dist.dir}/bin/datafari-manager.sh" token="@SOLR-INIT-ANNOTATORS@" value="" />
 		<replace file="${linux.dist.dir}/bin/datafari-manager.sh" token="@ZK-INIT@" value="" />
 
 

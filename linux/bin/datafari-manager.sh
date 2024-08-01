@@ -299,6 +299,8 @@ init_solr_annotators() {
   do
     curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-property": {"updateHandler.autoCommit.maxTime": "60000"}}' http://localhost:8983/solr/${index}/config
   done
+  
+  @SOLR-INIT-ANNOTATORS@
 }
 
 stop_solr()
