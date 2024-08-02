@@ -537,7 +537,7 @@
 		<copy toDir="${linux.dist.dir}/zookeeper" overwrite="true" force="true">
 			<fileset dir="${zookeeper.proj.dir}">
 			</fileset>
-			<globmapper from="conf/log4j-solr.xml" to="conf/logback.xml"/>
+			<globmapper from="conf/logback-solr.xml" to="conf/logback.xml"/>
 		</copy>
 		<copy toDir="${linux.dist.dir}/zookeeper" overwrite="true" force="true">
 			<fileset dir="${zookeeper.proj.dir}">
