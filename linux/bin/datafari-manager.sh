@@ -303,6 +303,20 @@ init_solr_annotators() {
   @SOLR-INIT-ANNOTATORS@
 }
 
+
+init_solr_analytics() {
+  curl -XGET --insecure "http://localhost:8983/solr/admin/collections?action=CREATE&name=Statistics&collection.configName=Statistics&numShards=1&replicationFactor=1"
+  curl -XGET --insecure "http://localhost:8983/solr/admin/collections?action=CREATE&name=Access&collection.configName=Access&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/Access/"
+  curl -XGET --insecure "http://localhost:8983/solr/admin/collections?action=CREATE&name=Monitoring&collection.configName=Monitoring&numShards=1&maxShardsPerNode=1&replicationFactor=1"
+  curl -XGET --insecure "http://localhost:8983/solr/admin/collections?action=CREATE&name=Crawl&collection.configName=Crawl&numShards=1&maxShardsPerNode=1&replicationFactor=1"
+  curl -XGET --insecure "http://localhost:8983/solr/admin/collections?action=CREATE&name=Logs&collection.configName=Logs&numShards=1&maxShardsPerNode=1&replicationFactor=1"
+  collections_autocommit=("Statistics" "Access" "Monitoring" "Crawl" "Logs")
+  for index in "${collections_autocommit[@]}"
+  do
+    curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-property": {"updateHandler.autoCommit.maxTime": "600000"}}' http://localhost:8983/solr/${index}/config
+  done
+}
+
 stop_solr()
 {
   $SOLR_INSTALL_DIR/bin/solr stop
@@ -389,6 +403,9 @@ case $COMMAND in
   ;;
   init_solr_annotators)
     init_solr_annotators
+  ;;
+  init_solr_analytics)
+    init_solr_analytics
   ;;
   stop_solr)
     stop_solr

@@ -313,6 +313,7 @@ init_shards() {
 
 init_main_node() {
   sed -i -e "s/@ISMAINNODE@/true/g" $TOMCAT_HOME/conf/datafari.properties >>$installerLog 2>&1
+  sed -i 's/\(ZK_HOST *= *\).*/\1localhost:2181/' $DATAFARI_HOME/solr/bin/solr.in.sh >>$installerLog 2>&1
   
 }
 
