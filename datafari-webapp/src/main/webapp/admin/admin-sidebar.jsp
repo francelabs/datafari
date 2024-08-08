@@ -187,6 +187,7 @@
           class="ajax-link" href="?page=mcfBackupRestore"></a></li>
         <li id="tikaCreator"><a id="tikaCreator-AdminUI"
           class="ajax-link" href="?page=tikaCreator"></a></li>
+ <%-- Analytics Solr --%>
       </ul>
     </li>
 <%-- Expert menu stop --%>

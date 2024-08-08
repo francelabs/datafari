@@ -86,6 +86,7 @@ $(function($) {
   elm.find('#expertMenu-AdminUI').html(window.i18n.msgStore['adminUI-expertMenu']);
   elm.find('#MCFBackupRestore-AdminUI').html(window.i18n.msgStore['adminUI-Connectors-BackupRestore']);
   $("#tikaCreator-AdminUI").html(window.i18n.msgStore['adminUI-tikaCreator']);
+  $("#solranalyticsmain-AdminUI").html(window.i18n.msgStore['adminUI-solrAnalyticsMain']);
   //Extra Functionalities
   elm.find('#extraFunctionalities-AdminUI').html(window.i18n.msgStore['adminUI-extraFunctionalities']);
   elm.find('#deduplication-AdminUI').html(window.i18n.msgStore['adminUI-Deduplication']);
