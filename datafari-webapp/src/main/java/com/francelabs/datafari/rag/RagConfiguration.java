@@ -21,6 +21,8 @@ public class RagConfiguration {
     String format;
     int maxJsonLength;
 
+    int chunkSize;
+
     String operator = "AND";
     boolean logsEnabled;
 
@@ -29,9 +31,6 @@ public class RagConfiguration {
 
     // Only required when using "highlighting" as Solr field. Defines the size in characters of the document extract.
     String hlFragsize;
-
-    /*public RagConfiguration() {
-    }*/
 
     public RagConfiguration() throws FileNotFoundException {
         Properties prop = new Properties();
@@ -53,6 +52,7 @@ public class RagConfiguration {
             this.setLogsEnabled(prop.getProperty("rag.enable.logs"));
             this.setOperator(prop.getProperty("rag.operator"));
             this.setMaxJsonLength(Integer.parseInt(prop.getProperty("rag.maxJsonLength")));
+            this.setChunkSize(Integer.parseInt(prop.getProperty("rag.chunk.size")));
 
 
         } catch (FileNotFoundException e) {
@@ -198,5 +198,13 @@ public class RagConfiguration {
 
     public void setMaxJsonLength(int maxJsonLength) {
         this.maxJsonLength = maxJsonLength;
+    }
+
+    public int getChunkSize() {
+        return chunkSize;
+    }
+
+    public void setChunkSize(int chunkSize) {
+        this.chunkSize = chunkSize;
     }
 }

@@ -1,5 +1,7 @@
 package com.francelabs.datafari.api;
 
+import com.francelabs.datafari.rag.DatafariLlmConnector;
+import com.francelabs.datafari.rag.LlmConnector;
 import com.francelabs.datafari.rag.RagConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,6 +48,7 @@ public class RagAPI extends SearchAPI {
     String format = request.getParameter("format");
     if (format != null && !format.isEmpty() && FORMAT_VALUES.contains(format)) {
       config.setFormat(format);
+      // Todo : Warning, this method might no longer work after the configuration reworking
     }
 
     // If the content is extracted from highlighting, then the user can configure the size of the extracts
