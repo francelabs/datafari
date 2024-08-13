@@ -145,8 +145,21 @@ public class Search2 extends HttpServlet {
           newUrl += "/rest/v2.0/url?url=" + URLEncoder.encode(URLDecoder.decode(url, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
           newUrl += "&id=" + queryId;
           jsonDoc.put("click_url", newUrl);
+
+          String newUrlFolder = currentURL.substring(0, currentURL.indexOf(searchEndpoint));
+          if (url.contains("/")) {
+            newUrlFolder += "/rest/v2.0/url?url=" + URLEncoder.encode(URLDecoder.decode(url.substring(0,url.lastIndexOf('/')), StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+          }
+          else 
+          {
+            newUrl += "/rest/v2.0/url?url=" + URLEncoder.encode(URLDecoder.decode(url, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+          }
+          //newUrlFolder += "&id=" + queryId;
+          jsonDoc.put("folder_url", newUrlFolder);
+
         } else if (url != null) {
           jsonDoc.put("click_url", url);
+          jsonDoc.put("folder_url", url);
         }
       }
     }
