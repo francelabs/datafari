@@ -1,5 +1,6 @@
 package com.francelabs.datafari.rag;
 
+import com.francelabs.datafari.utils.rag.PromptUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -9,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DatafariLlmConnector implements LlmConnector {
@@ -17,7 +19,7 @@ public class DatafariLlmConnector implements LlmConnector {
     String temperature;
     String maxToken;
     String model;
-    String apiKey; // Todo : remove ?
+    String apiKey; // If not used in the future, this might be removed
 
     public DatafariLlmConnector(RagConfiguration config) {
         this.url = config.getEndpoint();
@@ -33,10 +35,30 @@ public class DatafariLlmConnector implements LlmConnector {
      * @param prompts A list of prompts. Each prompt contains instructions for the model, document content and the user query
      * @return The string LLM response
      */
-    public String invoke(List<String> prompts, RagConfiguration config) {
+    public String invoke(List<String> prompts, RagConfiguration config, String userQuery) throws IOException {
+        String body = generateRequestBody(prompts);
+
+        // The first call returns a concatenated responses from each chunk
+        String message = generate(body, config);
+
+        message = PromptUtils.createPrompt(config, userQuery, message);
+        prompts = new ArrayList<>();
+        prompts.add("```" + message + "```");
+        body = generateRequestBody(prompts);
+        message = generate(body, config);
+        return message;
+
+    }
+
+
+    /**
+     * Call the Datafari External LLM Webservice
+     * @param prompts A list of prompts. Each prompt contains instructions for the model, document content and the user query
+     * @return The string LLM response
+     */
+    public String generate(String prompts, RagConfiguration config) {
 
         try {
-            String body = generateRequestBody(prompts);
 
             URL obj = new URL(url);
             HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
@@ -49,7 +71,7 @@ public class DatafariLlmConnector implements LlmConnector {
 
             connection.setDoOutput(true);
             OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-            writer.write(body);
+            writer.write(prompts);
             writer.flush();
             writer.close();
 

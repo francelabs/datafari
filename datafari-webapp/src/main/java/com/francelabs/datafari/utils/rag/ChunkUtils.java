@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils.rag;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.francelabs.datafari.rag.RagConfiguration;
@@ -38,7 +39,7 @@ public class ChunkUtils {
      * @param documentList : JSONArray containing a list of documents (ID, title, url and content)
      * @return The document list. Big documents are chunked into multiple documents.
      */
-    public JSONArray chunkDocuments(RagConfiguration config, JSONArray documentList) {
+    public static JSONArray chunkDocuments(RagConfiguration config, JSONArray documentList) {
         JSONArray chunkedDocumentList = new JSONArray();
 
         ObjectMapper mapper = new ObjectMapper();
@@ -72,7 +73,7 @@ public class ChunkUtils {
      * @param doc : a Document objet
      * @return a list of one or subdocuments
      */
-    private List<String> extractChunksFromDocument(DocumentForRag doc, RagConfiguration config) {
+    private static List<String> extractChunksFromDocument(DocumentForRag doc, RagConfiguration config) {
         return splitStringBySize(doc.getContent(), config.getChunkSize());
     }
 
@@ -85,12 +86,22 @@ public class ChunkUtils {
     }
 }
 
-// Todo : delete ?
 class DocumentForRag {
+
+    @JsonProperty("id")
     String id;
+
+    @JsonProperty("url")
     String url;
+
+    @JsonProperty("title")
     String title;
+
+    @JsonProperty("content")
     String content;
+
+    public DocumentForRag() {
+    }
 
     public DocumentForRag(String id, String url, String title, String content) {
         this.id = id;
