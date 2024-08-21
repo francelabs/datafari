@@ -152,7 +152,7 @@ public class Search2 extends HttpServlet {
           }
           else 
           {
-            newUrl += "/rest/v2.0/url?url=" + URLEncoder.encode(URLDecoder.decode(url, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+            newUrlFolder += "/rest/v2.0/url?url=" + URLEncoder.encode(URLDecoder.decode(url, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
           }
           //newUrlFolder += "&id=" + queryId;
           jsonDoc.put("folder_url", newUrlFolder);
