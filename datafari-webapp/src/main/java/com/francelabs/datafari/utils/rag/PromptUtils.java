@@ -20,12 +20,14 @@ import com.francelabs.datafari.rag.RagConfiguration;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Prompt Utility class for RAG
@@ -43,19 +45,21 @@ public class PromptUtils {
 
     /**
      * Transform a JSONArray of documents (ID, title, url, content) into a list of prompts
-     * @param config : Global RAG configuration
+     *
+     * @param config        : Global RAG configuration
      * @param documentsList : A JSONArray list of documents
+     * @param request : The HTTP request
      * @return a prompt ready to be sent to the LLM service
      */
-    public static List<String> documentsListToPrompts(RagConfiguration config, JSONArray documentsList, String userQuery) throws IOException {
+    public static List<String> documentsListToPrompts(RagConfiguration config, JSONArray documentsList, HttpServletRequest request) throws IOException {
 
         List<String> prompts = new ArrayList<>();
         for (Object document : documentsList) {
             JSONObject doc = (JSONObject) document;
             // format document
-            String content = formatDocument(config, doc.get("title").toString(), doc.get("content").toString());
+            String content = formatDocument(doc.get("title").toString(), doc.get("content").toString());
             // create prompt
-            String prompt = createPrompt(config, userQuery, content);
+            String prompt = createPrompt(config, content, request);
             prompts.add(prompt);
         }
 
@@ -66,22 +70,24 @@ public class PromptUtils {
     /**
      * Create a full prompt usable by a LLM, user the user prompt, the provided content and the configuration
      * @param config : Global RAG configuration
-     * @param prompt : User query
      * @param content : Chunked documents provided by the search
+     * @param request : The request object
      * @return a prompt ready to be sent to the LLM service
      */
-    public static String createPrompt(RagConfiguration config, String prompt, String content) throws IOException {
+    public static String createPrompt(RagConfiguration config, String content, HttpServletRequest request) throws IOException {
         // Retrieve the prompt template from instructions file.
         String template = getInstructions();
+        String userQuery = request.getParameter("q");
 
         template = template.replace("{format}", getResponseFormat(config));
-        template = template.replace("{prompt}", prompt);
+        template = template.replace("{prompt}", userQuery);
         template = template.replace("{content}", content);
+        template = template.replace("{language}", getUserLanguage(request));
 
         return cleanContext(template);
     }
 
-    public static String formatDocument(RagConfiguration config, String title, String content) {
+    public static String formatDocument(String title, String content) {
         String template = "Document title:```{title}```\nDocument content:```{chunk}```";
         return template.replace("{title}", title).replace("{chunk}", content);
     }
@@ -138,6 +144,17 @@ public class PromptUtils {
             }
         }
         return resultStringBuilder.toString();
+    }
+
+
+    /**
+     * Create a full prompt usable by a LLM, user the user prompt, the provided content and the configuration
+     * @param request : Http
+     * @return a prompt ready to be sent to the LLM service
+     */
+    public static String getUserLanguage(HttpServletRequest request) {
+        Locale locale = request.getLocale();
+        return locale.getDisplayLanguage(Locale.ENGLISH);
     }
 	
 }

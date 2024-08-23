@@ -66,7 +66,7 @@ public class RagAPI extends SearchAPI {
     documentsList = ChunkUtils.chunkDocuments(config, documentsList);
 
     // Prompt
-    List<String> prompts = PromptUtils.documentsListToPrompts(config, documentsList, request.getParameter("q"));
+    List<String> prompts = PromptUtils.documentsListToPrompts(config, documentsList, request);
 
 
     // Select an LLM Connector
@@ -81,7 +81,7 @@ public class RagAPI extends SearchAPI {
         connector = new DatafariLlmConnector(config);
     }
 
-    String message = connector.invoke(prompts, config, request.getParameter("q"));
+    String message = connector.invoke(prompts, config, request);
 
 
     LOGGER.debug("LLM response: {}", message);
@@ -113,7 +113,6 @@ public class RagAPI extends SearchAPI {
     message = message.replace("\n ", "\n");
     message = message.replace("•", "\n•");
     message = message.replace("\n+", "\n");
-    message = message.replace("\n", "<br/>");
     message = message.trim();
 
     return message;

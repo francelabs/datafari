@@ -1,13 +1,16 @@
 package com.francelabs.datafari.rag;
 
+import com.francelabs.datafari.utils.rag.PromptUtils;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+import org.apache.commons.math3.exception.NoDataException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,7 +25,7 @@ public class OpenAiLlmConnector implements LlmConnector {
     String url;
     double temperature;
     int maxToken;
-    String model = "";
+    String model;
     String apiKey;
     static final String DEFAULT_MODEL = "gpt-3.5-turbo";
 
@@ -45,7 +48,7 @@ public class OpenAiLlmConnector implements LlmConnector {
      * @param prompts A list of prompts. Each prompt contains instructions for the model, document content and the user query
      * @return The string LLM response
      */
-    public String invoke(List<String> prompts, RagConfiguration config, String userQuery) throws IOException {
+    public String invoke(List<String> prompts, RagConfiguration config, HttpServletRequest request) throws IOException {
 
         ChatLanguageModel llm = OpenAiChatModel.builder()
                 .apiKey(apiKey)
@@ -54,23 +57,26 @@ public class OpenAiLlmConnector implements LlmConnector {
                 .modelName(model)
                 .build();
 
-        List<ChatMessage> chatMessages = generateChatMessagesList(prompts);
-        AiMessage response = llm.generate(chatMessages).content();
-        return response.text();
-    }
+        StringBuilder concatenatedResponses = new StringBuilder();
+        String message;
 
-
-    /**
-     * Transform String prompts into a list a ChatMessages
-     * @param prompts A String prompts
-     * @return a list a ChatMessages
-     */
-    public List<ChatMessage> generateChatMessagesList(List<String> prompts){
-        List<ChatMessage> chatMessages = new ArrayList<>();
+        // The first calls returns a concatenated responses from each chunk
         for (String prompt : prompts) {
-            ChatMessage message = UserMessage.from(prompt);
-            chatMessages.add(message);
+            String response = llm.generate(prompt);
+            concatenatedResponses.append(response);
         }
-        return chatMessages;
+
+        // If the is only one prompt to send, we get the answer from the response
+        // Otherwise, we concatenate all the responses, and generate a new response to summarize the results
+        if (prompts.size() == 1) {
+            message = concatenatedResponses.toString();
+        } else if (prompts.size() > 1) {
+            String body = PromptUtils.createPrompt(config, "```" + concatenatedResponses + "```", request);
+            message = llm.generate(body);
+        } else {
+            throw new RuntimeException("Could not find data to send to the LLM");
+        }
+
+        return message;
     }
 }

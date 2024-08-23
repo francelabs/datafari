@@ -4,13 +4,13 @@ import com.francelabs.datafari.utils.rag.PromptUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 public class DatafariLlmConnector implements LlmConnector {
@@ -35,17 +35,29 @@ public class DatafariLlmConnector implements LlmConnector {
      * @param prompts A list of prompts. Each prompt contains instructions for the model, document content and the user query
      * @return The string LLM response
      */
-    public String invoke(List<String> prompts, RagConfiguration config, String userQuery) throws IOException {
-        String body = generateRequestBody(prompts);
+    public String invoke(List<String> prompts, RagConfiguration config, HttpServletRequest request) throws IOException {
 
-        // The first call returns a concatenated responses from each chunk
-        String message = generate(body, config);
+        StringBuilder concatenatedResponses = new StringBuilder();
+        String message;
 
-        message = PromptUtils.createPrompt(config, userQuery, message);
-        prompts = new ArrayList<>();
-        prompts.add("```" + message + "```");
-        body = generateRequestBody(prompts);
-        message = generate(body, config);
+        // The first calls returns a concatenated responses from each chunk
+        for (String prompt : prompts) {
+            String body = generateRequestBody(prompt);
+            concatenatedResponses.append(generate(body, config));
+        }
+
+        // If the is only one prompt to send, we get the answer from the response
+        // Otherwise, we concatenate all the responses, and generate a new response to summarize the results
+        if (prompts.size() == 1) {
+            message = concatenatedResponses.toString();
+        } else if (prompts.size() > 1) {
+            String body = PromptUtils.createPrompt(config, "```" + concatenatedResponses + "```", request);
+            body = generateRequestBody(body);
+            message = generate(body, config);
+        } else {
+            throw new RuntimeException("Could not find data to send to the LLM");
+        }
+
         return message;
 
     }
@@ -86,21 +98,19 @@ public class DatafariLlmConnector implements LlmConnector {
             }
             br.close();
 
-            String message = extractMessageFromResponse(response.toString());
-            return message;
+            return extractMessageFromResponse(response.toString());
 
         } catch (IOException e) {
             throw new RuntimeException("An error occurred while calling external webservices.", e);
         }
     }
 
-
     /**
      * Generate the body attached to the request sent to the LLM
-     * @param prompts A list of prompts. Each prompt contains instructions for the model, document content and the user query
+     * @param prompt A single String prompt. Each prompt contains instructions for the model, document content and the user query
      * @return A JSON String
      */
-    public String generateRequestBody(List<String> prompts) {
+    public String generateRequestBody(String prompt) {
 
         JSONObject queryBody = new JSONObject();
         JSONObject input = new JSONObject();
@@ -109,13 +119,9 @@ public class DatafariLlmConnector implements LlmConnector {
         if (!maxToken.isEmpty()) input.put("max_tokens", maxToken);
         if (!model.isEmpty()) input.put("model", model);
 
-        for (String prompt : prompts) {
-            JSONObject query = new JSONObject();
-            if (!prompt.isEmpty()) {
-                query.put("content", prompt);
-                queries.add(query);
-            }
-        }
+        JSONObject query = new JSONObject();
+        query.put("content", prompt);
+        queries.add(query);
 
         input.put("queries", queries);
         queryBody.put("input", input);
