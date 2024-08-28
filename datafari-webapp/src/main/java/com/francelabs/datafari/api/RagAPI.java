@@ -1,11 +1,23 @@
 package com.francelabs.datafari.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.francelabs.datafari.rag.DatafariLlmConnector;
 import com.francelabs.datafari.rag.LlmConnector;
 import com.francelabs.datafari.rag.OpenAiLlmConnector;
 import com.francelabs.datafari.rag.RagConfiguration;
 import com.francelabs.datafari.utils.rag.ChunkUtils;
+import com.francelabs.datafari.utils.rag.DocumentForRag;
 import com.francelabs.datafari.utils.rag.PromptUtils;
+import dev.langchain4j.data.document.Document;
+import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
+import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
+import dev.langchain4j.service.AiServices;
+import dev.langchain4j.service.Result;
+import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
+import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -13,8 +25,6 @@ import org.json.simple.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.*;
 
 public class RagAPI extends SearchAPI {
@@ -67,7 +77,7 @@ public class RagAPI extends SearchAPI {
 
     // Prompt
     List<String> prompts = PromptUtils.documentsListToPrompts(config, documentsList, request);
-
+    String message;
 
     // Select an LLM Connector
     LlmConnector connector;
@@ -75,13 +85,17 @@ public class RagAPI extends SearchAPI {
     switch(llmConnector) {
       case "openai":
         connector = new OpenAiLlmConnector(config);
+        message = connector.invoke(prompts, config, request);
+        break;
+      case "vector-openai":
+        Result<String> llmResponse = vectorRag(config, documentsList, request);
+        message = llmResponse.content();
         break;
       case "datafari":
       default:
         connector = new DatafariLlmConnector(config);
+        message = connector.invoke(prompts, config, request);
     }
-
-    String message = connector.invoke(prompts, config, request);
 
 
     LOGGER.debug("LLM response: {}", message);
@@ -298,6 +312,46 @@ public class RagAPI extends SearchAPI {
     }
   }
 
+  /**
+   * Read the rag.properties file to create a RagConfiguration object
+   * @return RagConfiguration The configuration used to access the RAG API
+   */
+  private static Result<String> vectorRag(RagConfiguration config, JSONArray documentList, HttpServletRequest request) {
 
+    // Création de la liste de documents Langchain4j
+    List<Document> documents = new ArrayList<>();
 
+    ObjectMapper mapper = new ObjectMapper();
+    documentList.forEach(item -> {
+      JSONObject jsonDoc = (JSONObject) item;
+      DocumentForRag doc = null;
+      try {
+        doc = mapper.readValue(jsonDoc.toJSONString(), DocumentForRag.class);
+        Document s4jdoc = new Document(doc.getContent());
+        s4jdoc.metadata().put("title", doc.getTitle());
+        documents.add(s4jdoc);
+      } catch (JsonProcessingException e) {
+        throw new RuntimeException("An error occurred during chunking.");
+      }
+    });
+
+    // Embedding
+    InMemoryEmbeddingStore<TextSegment> embeddingStore = new InMemoryEmbeddingStore<>();
+    EmbeddingStoreIngestor.ingest(documents, embeddingStore);
+
+    Assistant assistant = AiServices.builder(Assistant.class)
+            .chatLanguageModel(OpenAiChatModel.withApiKey(config.getToken()))
+            .chatMemory(MessageWindowChatMemory.withMaxMessages(10))
+            .contentRetriever(EmbeddingStoreContentRetriever.from(embeddingStore))
+            .build();
+
+    Result<String> response = assistant.chat(request.getParameter("q"));
+    LOGGER.info("EBE - Source : {}", response.sources());
+    return response;
+  }
+
+}
+
+interface Assistant {
+  Result<String> chat(String userMessage);
 }

@@ -3,14 +3,13 @@ package com.francelabs.datafari.rag;
 import com.francelabs.datafari.utils.rag.PromptUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.List;
 
 public class DatafariLlmConnector implements LlmConnector {
@@ -72,35 +71,27 @@ public class DatafariLlmConnector implements LlmConnector {
 
         try {
 
-            URL obj = new URL(url);
-            HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
-            connection.setRequestMethod("POST");
-            if (!apiKey.isEmpty()) connection.setRequestProperty("Authorization", "Bearer " + apiKey);
-            connection.setRequestProperty("Content-Type", "application/json");
 
             // Mock the webservices (to delete for prod, for test and dev purposes)
             if (!config.isEnabled()) return "RAG feature is currently disabled. This is a placeholder message. \\n Enable the feature by editing rag.properties file.";
 
-            connection.setDoOutput(true);
-            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-            writer.write(prompts);
-            writer.flush();
-            writer.close();
-
-            // Response from LLM API
-            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String line;
-
-            StringBuilder response = new StringBuilder();
-
-            while ((line = br.readLine()) != null) {
-                response.append(line);
+            RestTemplate template = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            if (!apiKey.isEmpty()) headers.setBearerAuth(apiKey);
+            HttpEntity<String> requestEntity = new HttpEntity<>(prompts, headers);
+            String resp = "";
+            try{
+                DatafariRagResponse response = template.postForObject(url, requestEntity,  DatafariRagResponse.class);
+                resp = response.getOutput();
+                return resp;
             }
-            br.close();
+            catch(NullPointerException e){
+                throw new RuntimeException("An error occurred while calling external webservices.", e);
+            }
 
-            return extractMessageFromResponse(response.toString());
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException("An error occurred while calling external webservices.", e);
         }
     }
@@ -138,5 +129,13 @@ public class DatafariLlmConnector implements LlmConnector {
         int start = response.indexOf("output")+ 9;
         int end = response.indexOf("\"", start);
         return response.substring(start, end).trim();
+    }
+}
+
+class DatafariRagResponse {
+
+    String output;
+    public String getOutput() {
+        return output;
     }
 }

@@ -1,23 +1,11 @@
 package com.francelabs.datafari.rag;
 
 import com.francelabs.datafari.utils.rag.PromptUtils;
-import dev.langchain4j.data.message.AiMessage;
-import dev.langchain4j.data.message.ChatMessage;
-import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
-import org.apache.commons.math3.exception.NoDataException;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 public class OpenAiLlmConnector implements LlmConnector {

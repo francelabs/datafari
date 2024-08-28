@@ -16,7 +16,6 @@ public class RagConfiguration {
     String maxTokens;
     int maxFiles;
     String model;
-    boolean addInstructions;
     String template;
     String format;
     int maxJsonLength;
@@ -45,7 +44,6 @@ public class RagConfiguration {
             this.setTemperature(prop.getProperty("rag.temperature"));
             this.setMaxTokens(prop.getProperty("rag.maxTokens"));
             this.setMaxFiles(prop.getProperty("rag.maxFiles"));
-            this.setAddInstructions(prop.getProperty("rag.addInstructions"));
             this.setTemplate(prop.getProperty("rag.template"));
             this.setSolrField(prop.getProperty("rag.solrField"));
             this.setHlFragsize(prop.getProperty("rag.hl.fragsize"));
@@ -82,18 +80,6 @@ public class RagConfiguration {
 
     public void setTemplate(String template) {
         this.template = template;
-    }
-
-    public boolean getAddInstructions() {
-        return addInstructions;
-    }
-
-    public void setAddInstructions(String addInstructions) {
-        this.addInstructions = ("true".equals(addInstructions));
-    }
-
-    public void setAddInstructions(boolean addInstructions) {
-        this.addInstructions = addInstructions;
     }
 
     public String getMaxTokens() {
