@@ -48,21 +48,20 @@ public class StatsPusher {
 
   private final static Logger LOGGER = LogManager.getLogger(StatsPusher.class.getName());
 
-  public static void pushDocument(final IndexerQuery query, final String protocol) {
+  public static void pushDocument(final IndexerQuery query) {
     try {
-
-      final IndexerServer server = IndexerServerManager.getIndexerServer(Core.STATISTICS);
-
       final Map<String, Integer> increment = new HashMap<>();
       increment.put("inc", 1);
 
       final Map<String, Integer> incrementPosition = new HashMap<>();
       incrementPosition.put("inc", Integer.parseInt(query.getParamValue("position")));
 
-      final IndexerInputDocument doc = IndexerServerManager.createDocument();
-      doc.addField("click", "Clicked");
-      doc.addField("numClicks", increment);
-      doc.addField("positionClickTot", incrementPosition);
+      final HashMap<String, Object> doc = new HashMap<>();
+
+      doc.put("click", "Clicked");
+      doc.put("numClicks", increment);
+      doc.put("positionClickTot", incrementPosition);
+      doc.put("history", "");
 
       final Map<String, String> paramsMap = new HashMap<>();
 
@@ -74,43 +73,16 @@ public class StatsPusher {
 
       for (final Entry<String, String> entry : paramsMap.entrySet()) {
         if (documentParams.contains(entry.getKey())) {
-          doc.addField(entry.getKey(), entry.getValue());
+          doc.put(entry.getKey(), entry.getValue());
         }
       }
-
-      //////////
-      final JSONArray jsonHistories = new JSONArray();
-      final JSONObject jHistory = new JSONObject();
-      jHistory.put("query", "");
-      jHistory.put("fq", "");
-      jHistory.put("numFound", 0);
-      jHistory.put("QTime", 0);
-      jHistory.put("page", 0);
-      jHistory.put("url", paramsMap.get("url"));
-      jHistory.put("position", Integer.parseInt(paramsMap.get("position")));
-
-      final Map<String, String> addValue = new HashMap<>();
-      addValue.put("add", jHistory.toString());
-
-      doc.addField("history", addValue);
-
-      server.pushDoc(doc, 10000);
-
-      final IndexerResponseDocument insertedSolrDoc = server.getDocById(doc.getFieldValue("id").toString());
-      for (final Object historyValue : insertedSolrDoc.getFieldValues("history")) {
-        final JSONParser parser = new JSONParser();
-        final JSONObject jHistoryValue = (JSONObject) parser.parse(historyValue.toString());
-        jsonHistories.add(jHistoryValue);
-      }
-      insertedSolrDoc.removeField("history");
-      insertedSolrDoc.addField("history", jsonHistories);
 
       String username = "";
       if (query.getParamValue("AuthenticatedUserName") != null) {
         username = query.getParamValue("AuthenticatedUserName");
       }
 
-      LOGGER.log(StatLevel.STAT, StatsUtils.createStatLog(insertedSolrDoc, username));
+      LOGGER.log(StatLevel.STAT, StatsUtils.createStatLog(doc, username));
 
       // Pushing to the cassandra user_search_actions collection
       // TODO: Consider using url params or cookie to get the timestamp from the client side. (Involves changing the behavior of pushDocument
@@ -120,21 +92,19 @@ public class StatsPusher {
           Integer.parseInt(query.getParamValue("position")), new Date().toInstant());
 
     } catch (final Exception e) {
-      LOGGER.error("Cannot add doc for statistic component : " + e.getMessage(), e);
+      LOGGER.error("Cannot add doc for statistic component : {}", e.getMessage(), e);
       e.printStackTrace();
     }
   }
 
   public static void pushQuery(final IndexerQuery inputQuery, final String protocol) {
-    // Pushing to the Statistics core in solr
     try {
 
-      final IndexerServer server = IndexerServerManager.getIndexerServer(Core.STATISTICS);
-
-      final IndexerInputDocument doc = IndexerServerManager.createDocument();
-      doc.addField("id", inputQuery.getParamValue("id"));
+      final HashMap<String, Object> doc = new HashMap<>();
+      doc.put("id", inputQuery.getParamValue("id"));
 
       final Map<String, String> paramsMap = new HashMap<>();
+      paramsMap.put("id", inputQuery.getParamValue("id"));
 
       for (final String paramName : inputQuery.getParamNames()) {
         for (final String paramValue : inputQuery.getParamValues(paramName)) {
@@ -144,51 +114,17 @@ public class StatsPusher {
 
       for (final Entry<String, String> entry : paramsMap.entrySet()) {
         if (queryParams.contains(entry.getKey())) {
-          doc.addField(entry.getKey(), entry.getValue());
+          doc.put(entry.getKey(), entry.getValue());
         }
       }
 
-      /////////////
-      final JSONArray jsonHistories = new JSONArray();
-      final JSONObject jHistory = new JSONObject();
-      jHistory.put("query", paramsMap.get("q"));
-      if (paramsMap.get("fq") != null) {
-        jHistory.put("fq", paramsMap.get("fq"));
-      } else {
-        jHistory.put("fq", "");
-      }
-      jHistory.put("numFound", Integer.parseInt(paramsMap.get("numFound")));
-      jHistory.put("QTime", Integer.parseInt(paramsMap.get("QTime")));
-      if (paramsMap.get("start") != null && paramsMap.get("rows") != null) {
-        jHistory.put("page", (int) (Double.parseDouble(paramsMap.get("start")) / Double.parseDouble(paramsMap.get("rows")) + 1));
-      } else {
-        jHistory.put("page", 1);
-      }
-      jHistory.put("url", "");
-      jHistory.put("position", 0);
-
-      final Map<String, String> addValue = new HashMap<>();
-      addValue.put("add", jHistory.toString());
-
-      doc.addField("history", addValue);
-
-      server.pushDoc(doc, 10000);
-
-      final IndexerResponseDocument insertedSolrDoc = server.getDocById(doc.getFieldValue("id").toString());
-      for (final Object historyValue : insertedSolrDoc.getFieldValues("history")) {
-        final JSONParser parser = new JSONParser();
-        final JSONObject jHistoryValue = (JSONObject) parser.parse(historyValue.toString());
-        jsonHistories.add(jHistoryValue);
-      }
-      insertedSolrDoc.removeField("history");
-      insertedSolrDoc.addField("history", jsonHistories);
-
+      doc.put("history", "");
       String username = "";
       if (inputQuery.getParamValue("AuthenticatedUserName") != null) {
         username = inputQuery.getParamValue("AuthenticatedUserName");
       }
 
-      LOGGER.log(StatLevel.STAT, StatsUtils.createStatLog(insertedSolrDoc, username));
+      LOGGER.log(StatLevel.STAT, StatsUtils.createStatLog(doc, username));
 
       // Pushing to the cassandra user_search_actions collection
       // TODO: Consider using url params or cookie to get the timestamp from the client side. (Involves changing the behavior of pushDocument
