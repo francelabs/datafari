@@ -13,9 +13,12 @@ import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.rag.content.Content;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
+import dev.langchain4j.rag.query.Query;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.Result;
+import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import org.apache.logging.log4j.LogManager;
@@ -75,8 +78,7 @@ public class RagAPI extends SearchAPI {
     // Chunking
     documentsList = ChunkUtils.chunkDocuments(config, documentsList);
 
-    // Prompt
-    List<String> prompts = PromptUtils.documentsListToPrompts(config, documentsList, request);
+    List<String> prompts;
     String message;
 
     // Select an LLM Connector
@@ -84,17 +86,23 @@ public class RagAPI extends SearchAPI {
     String llmConnector = config.getTemplate();
     switch(llmConnector) {
       case "openai":
+        prompts = PromptUtils.documentsListToPrompts(config, documentsList, request);
         connector = new OpenAiLlmConnector(config);
-        message = connector.invoke(prompts, config, request);
+        message = connector.invoke(prompts, request);
         break;
       case "vector-openai":
-        Result<String> llmResponse = vectorRag(config, documentsList, request);
-        message = llmResponse.content();
+        connector = new OpenAiLlmConnector(config);
+        message = connector.vectorRag(documentsList, request);
+        break;
+      case "vector-datafari":
+        connector = new DatafariLlmConnector(config);
+        message = connector.vectorRag(documentsList, request);
         break;
       case "datafari":
       default:
+        prompts = PromptUtils.documentsListToPrompts(config, documentsList, request);
         connector = new DatafariLlmConnector(config);
-        message = connector.invoke(prompts, config, request);
+        message = connector.invoke(prompts, request);
     }
 
 
@@ -312,46 +320,4 @@ public class RagAPI extends SearchAPI {
     }
   }
 
-  /**
-   * Read the rag.properties file to create a RagConfiguration object
-   * @return RagConfiguration The configuration used to access the RAG API
-   */
-  private static Result<String> vectorRag(RagConfiguration config, JSONArray documentList, HttpServletRequest request) {
-
-    // Création de la liste de documents Langchain4j
-    List<Document> documents = new ArrayList<>();
-
-    ObjectMapper mapper = new ObjectMapper();
-    documentList.forEach(item -> {
-      JSONObject jsonDoc = (JSONObject) item;
-      DocumentForRag doc = null;
-      try {
-        doc = mapper.readValue(jsonDoc.toJSONString(), DocumentForRag.class);
-        Document s4jdoc = new Document(doc.getContent());
-        s4jdoc.metadata().put("title", doc.getTitle());
-        documents.add(s4jdoc);
-      } catch (JsonProcessingException e) {
-        throw new RuntimeException("An error occurred during chunking.");
-      }
-    });
-
-    // Embedding
-    InMemoryEmbeddingStore<TextSegment> embeddingStore = new InMemoryEmbeddingStore<>();
-    EmbeddingStoreIngestor.ingest(documents, embeddingStore);
-
-    Assistant assistant = AiServices.builder(Assistant.class)
-            .chatLanguageModel(OpenAiChatModel.withApiKey(config.getToken()))
-            .chatMemory(MessageWindowChatMemory.withMaxMessages(10))
-            .contentRetriever(EmbeddingStoreContentRetriever.from(embeddingStore))
-            .build();
-
-    Result<String> response = assistant.chat(request.getParameter("q"));
-    LOGGER.info("EBE - Source : {}", response.sources());
-    return response;
-  }
-
-}
-
-interface Assistant {
-  Result<String> chat(String userMessage);
 }
