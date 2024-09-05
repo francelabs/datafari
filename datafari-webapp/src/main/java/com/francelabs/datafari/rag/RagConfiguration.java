@@ -18,7 +18,6 @@ public class RagConfiguration {
     String model;
     String template;
     String format;
-    int maxJsonLength;
 
     int chunkSize;
 
@@ -49,14 +48,13 @@ public class RagConfiguration {
             this.setHlFragsize(prop.getProperty("rag.hl.fragsize"));
             this.setLogsEnabled(prop.getProperty("rag.enable.logs"));
             this.setOperator(prop.getProperty("rag.operator"));
-            this.setMaxJsonLength(Integer.parseInt(prop.getProperty("rag.maxJsonLength")));
             this.setChunkSize(Integer.parseInt(prop.getProperty("rag.chunk.size")));
 
 
         } catch (FileNotFoundException e) {
             throw new FileNotFoundException("An error occurred during the configuration. Configuration file not found.");
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("An error occurred during the configuration. Invalid value for rag.maxTokens or rag.hl.fragsize or rag.maxFiles or rag.maxJsonLength. Integers expected.");
+            throw new NumberFormatException("An error occurred during the configuration. Invalid value for rag.maxTokens or rag.hl.fragsize or rag.maxFiles. Integers expected.");
         } catch (IOException e) {
             throw new RuntimeException("An error occurred during the configuration.");
         }
@@ -176,14 +174,6 @@ public class RagConfiguration {
 
     public void setOperator(String operator) {
         this.operator = (List.of("OR", "AND").contains(operator)) ? operator : "AND";
-    }
-
-    public int getMaxJsonLength() {
-        return maxJsonLength;
-    }
-
-    public void setMaxJsonLength(int maxJsonLength) {
-        this.maxJsonLength = maxJsonLength;
     }
 
     public int getChunkSize() {

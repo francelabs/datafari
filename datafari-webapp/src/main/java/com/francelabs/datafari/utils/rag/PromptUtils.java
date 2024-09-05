@@ -16,9 +16,8 @@
 package com.francelabs.datafari.utils.rag;
 
 import com.francelabs.datafari.api.RagAPI;
+import com.francelabs.datafari.rag.DocumentForRag;
 import com.francelabs.datafari.rag.RagConfiguration;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
@@ -37,30 +36,34 @@ import java.util.Locale;
  */
 public class PromptUtils {
 
-    static Integer maxJsonLength = Integer.MAX_VALUE;
-
     private PromptUtils() {
         // Constructor
     }
 
     /**
-     * Transform a JSONArray of documents (ID, title, url, content) into a list of prompts
+     * Transform a list of documents (ID, title, url, content) into a list of prompts
      *
      * @param config        : Global RAG configuration
      * @param documentsList : A JSONArray list of documents
      * @param request : The HTTP request
      * @return a prompt ready to be sent to the LLM service
      */
-    public static List<String> documentsListToPrompts(RagConfiguration config, JSONArray documentsList, HttpServletRequest request) throws IOException {
+    public static List<String> documentsListToPrompts(RagConfiguration config, List<DocumentForRag> documentsList, HttpServletRequest request) throws IOException {
 
         List<String> prompts = new ArrayList<>();
-        for (Object document : documentsList) {
-            JSONObject doc = (JSONObject) document;
-            // format document
-            String content = formatDocument(doc.get("title").toString(), doc.get("content").toString());
-            // create prompt
-            String prompt = createPrompt(config, content, request);
+        String uniqueContent = formatDocuments(documentsList);
+        if (uniqueContent.length() < config.getChunkSize()) {
+            // All documents are merged into one prompt
+            String prompt = createPrompt(config, uniqueContent, request);
             prompts.add(prompt);
+        } else {
+            for (DocumentForRag document : documentsList) {
+                // format document
+                String content = formatDocument(document.getTitle(), document.getContent());
+                // create prompt
+                String prompt = createPrompt(config, content, request);
+                prompts.add(prompt);
+            }
         }
 
         return prompts;
@@ -84,12 +87,23 @@ public class PromptUtils {
         template = template.replace("{content}", content);
         template = template.replace("{language}", getUserLanguage(request));
 
-        return cleanContext(template);
+        return cleanContext(template, config);
     }
 
     public static String formatDocument(String title, String content) {
         String template = "Document title:```{title}```\nDocument content:```{chunk}```";
         return template.replace("{title}", title).replace("{chunk}", content);
+    }
+
+    public static String formatDocuments(List<DocumentForRag> documents) {
+        String template = "Document title:```{title}```\nDocument content:```{chunk}```";
+        StringBuilder prompt = new StringBuilder();
+        for (DocumentForRag document : documents) {
+            prompt.append(template.replace("{title}", document.getTitle()).replace("{chunk}", document.getContent()));
+            prompt.append("\n\n");
+        }
+
+        return prompt.toString();
     }
 
     public static String getResponseFormat(RagConfiguration config) {
@@ -107,16 +121,16 @@ public class PromptUtils {
      * @param context The context, containing documents content
      * @return A clean context, with no characters or element that could cause an error or a prompt injection
      */
-    private static String cleanContext(String context) {
+    private static String cleanContext(String context, RagConfiguration config) {
         context = context.replace("\\", "/")
-                .replace("\n", " ") // Todo : See if it works with "\\n"
+                .replace("\n", " ")
                 .replace("\r", " ")
                 .replace("\t", " ")
                 .replace("\b", "")
                 .replace("\"", "`");
-        if (context.length() > maxJsonLength -1000) { // Todo : Get maxJsonLenght from configuration
+        if (context.length() > config.getChunkSize() ) {
             // Truncate the context if too long
-            context = context.substring(0, maxJsonLength - 1000);
+            context = context.substring(0, config.getChunkSize());
         }
         return context;
     }

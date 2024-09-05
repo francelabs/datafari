@@ -13,11 +13,5 @@ public interface LlmConnector {
      * @return The string LLM response
      */
     String invoke(List<String> prompts, HttpServletRequest request) throws IOException;
-    /**
-     *
-     * @param documentList A list of document that should be loaded in a vector DB, queried, and used to generate a response
-     * @return The string LLM response
-     */
-    String vectorRag(JSONArray documentList, HttpServletRequest request) throws IOException;
 
 }

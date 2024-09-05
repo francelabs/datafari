@@ -15,12 +15,8 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils.rag;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.francelabs.datafari.rag.DocumentForRag;
 import com.francelabs.datafari.rag.RagConfiguration;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,31 +35,24 @@ public class ChunkUtils {
      * @param documentList : JSONArray containing a list of documents (ID, title, url and content)
      * @return The document list. Big documents are chunked into multiple documents.
      */
-    public static JSONArray chunkDocuments(RagConfiguration config, JSONArray documentList) {
-        JSONArray chunkedDocumentList = new JSONArray();
+    public static List<DocumentForRag> chunkDocuments(RagConfiguration config, List<DocumentForRag> documentList) {
+        List<DocumentForRag> chunkedDocumentList = new ArrayList<>();
 
-        ObjectMapper mapper = new ObjectMapper();
 
-        documentList.forEach(item -> {
-            JSONObject jsonDoc = (JSONObject) item;
-            DocumentForRag doc = null;
-            try {
-                doc = mapper.readValue(jsonDoc.toJSONString(), DocumentForRag.class);
-                List<String> chunks = extractChunksFromDocument(doc, config);
+        for(DocumentForRag document : documentList) {
 
-                // Each chunk is added to "chunkedDocumentList" as a document
-                for (String chunk : chunks) {
-                    JSONObject docToAdd = new JSONObject();
-                    docToAdd.put("title", doc.getTitle());
-                    docToAdd.put("id", doc.getTitle());
-                    docToAdd.put("url", doc.getTitle());
-                    docToAdd.put("content", chunk);
-                    chunkedDocumentList.add(docToAdd);
-                }
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException("An error occurred during chunking.");
+            List<String> chunks = extractChunksFromDocument(document, config);
+
+            // Each chunk is added to "chunkedDocumentList" as a document
+            for (String chunk : chunks) {
+                DocumentForRag docToAdd = new DocumentForRag();
+                docToAdd.setTitle(document.getTitle());
+                docToAdd.setId(document.getId());
+                docToAdd.setUrl(document.getUrl());
+                docToAdd.setContent(chunk);
+                chunkedDocumentList.add(docToAdd);
             }
-        });
+        }
 
         return chunkedDocumentList;
     }

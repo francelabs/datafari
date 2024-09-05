@@ -1,4 +1,4 @@
-package com.francelabs.datafari.utils.rag;
+package com.francelabs.datafari.rag;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -56,5 +56,15 @@ public class DocumentForRag {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof DocumentForRag)
+        {
+            DocumentForRag doc = (DocumentForRag) obj;
+            return this.id.equals(doc.id) && this.url.equals(doc.url) && this.title.equals(doc.title);
+        }
+        return false;
     }
 }

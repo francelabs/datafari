@@ -2,7 +2,6 @@ package com.francelabs.datafari.rag;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.francelabs.datafari.utils.rag.DocumentForRag;
 import com.francelabs.datafari.utils.rag.PromptUtils;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.segment.TextSegment;
@@ -74,63 +73,6 @@ public class DatafariLlmConnector implements LlmConnector {
         return message;
 
     }
-
-
-    /**
-     * Call the Datafari External LLM Webservice
-     * @param documentList A list of documents.
-     * @return The string LLM response
-     */
-    public String vectorRag(JSONArray documentList, HttpServletRequest request) throws IOException {
-
-        List<Document> documents = new ArrayList<>();
-        String message;
-        StringBuilder concatenatedResponses = new StringBuilder();
-
-        // Create a list of Langchain4j Documents
-        ObjectMapper mapper = new ObjectMapper();
-        documentList.forEach(item -> {
-            JSONObject jsonDoc = (JSONObject) item;
-            DocumentForRag doc = null;
-            try {
-                doc = mapper.readValue(jsonDoc.toJSONString(), DocumentForRag.class);
-                Document s4jdoc = new Document(doc.getContent());
-                s4jdoc.metadata().put("title", doc.getTitle());
-                documents.add(s4jdoc);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException("An error occurred during chunking.");
-            }
-        });
-
-        // Embedding the documents and store them into vector DB
-        InMemoryEmbeddingStore<TextSegment> embeddingStore = new InMemoryEmbeddingStore<>();
-        EmbeddingStoreIngestor.ingest(documents, embeddingStore);
-
-        // Vector query
-        List<Content> contents = EmbeddingStoreContentRetriever.from(embeddingStore).retrieve(Query.from(request.getParameter("q")));
-
-
-        // The first calls returns a concatenated responses from each chunk
-        for (Content content : contents) {
-            String body = generateRequestBody(content.textSegment().text());
-            concatenatedResponses.append(generate(body));
-        }
-
-        // If the is only one prompt to send, we get the answer from the response
-        // Otherwise, we concatenate all the responses, and generate a new response to summarize the results
-        if (contents.size() == 1) {
-            message = concatenatedResponses.toString();
-        } else if (contents.size() > 1) {
-            String body = PromptUtils.createPrompt(config, "```" + concatenatedResponses + "```", request);
-            body = generateRequestBody(body);
-            message = generate(body);
-        } else {
-            throw new RuntimeException("Could not find relevant data to generate an answer.");
-        }
-
-        return message;
-    }
-
 
     /**
      * Call the Datafari External LLM Webservice

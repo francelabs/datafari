@@ -1,30 +1,13 @@
 package com.francelabs.datafari.rag;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.francelabs.datafari.utils.rag.DocumentForRag;
 import com.francelabs.datafari.utils.rag.PromptUtils;
-import dev.langchain4j.data.document.Document;
-import dev.langchain4j.data.segment.TextSegment;
-import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
-import dev.langchain4j.rag.content.Content;
-import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
-import dev.langchain4j.rag.query.Query;
-import dev.langchain4j.service.AiServices;
-import dev.langchain4j.service.Result;
-import dev.langchain4j.service.SystemMessage;
-import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
-import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class OpenAiLlmConnector implements LlmConnector {
@@ -89,55 +72,4 @@ public class OpenAiLlmConnector implements LlmConnector {
 
         return message;
     }
-
-
-    /**
-     * Read the rag.properties file to create a RagConfiguration object
-     * @return RagConfiguration The configuration used to access the RAG API
-     */
-    public String vectorRag(JSONArray documentList, HttpServletRequest request) {
-
-        // Création de la liste de documents Langchain4j
-        List<Document> documents = new ArrayList<>();
-
-        ObjectMapper mapper = new ObjectMapper();
-        documentList.forEach(item -> {
-            JSONObject jsonDoc = (JSONObject) item;
-            DocumentForRag doc = null;
-            try {
-                doc = mapper.readValue(jsonDoc.toJSONString(), DocumentForRag.class);
-                Document s4jdoc = new Document(doc.getContent());
-                s4jdoc.metadata().put("title", doc.getTitle());
-                documents.add(s4jdoc);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException("An error occurred during chunking.");
-            }
-        });
-
-        // Embedding
-        InMemoryEmbeddingStore<TextSegment> embeddingStore = new InMemoryEmbeddingStore<>();
-        EmbeddingStoreIngestor.ingest(documents, embeddingStore);
-
-        ChatLanguageModel llm = OpenAiChatModel.builder()
-                .apiKey(apiKey)
-                .temperature(temperature)
-                .maxTokens(maxToken)
-                .modelName(model)
-                .build();
-
-        Assistant assistant = AiServices.builder(Assistant.class)
-                .chatLanguageModel(llm)
-                .chatMemory(MessageWindowChatMemory.withMaxMessages(10))
-                .contentRetriever(EmbeddingStoreContentRetriever.from(embeddingStore))
-                .build();
-
-        Result<String> response = assistant.chat(request.getParameter("q"));
-
-        return response.content();
-    }
-}
-
-
-interface Assistant {
-    Result<String> chat(String userMessage);
 }

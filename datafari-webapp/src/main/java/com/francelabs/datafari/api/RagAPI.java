@@ -1,26 +1,13 @@
 package com.francelabs.datafari.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.francelabs.datafari.rag.DatafariLlmConnector;
 import com.francelabs.datafari.rag.LlmConnector;
 import com.francelabs.datafari.rag.OpenAiLlmConnector;
 import com.francelabs.datafari.rag.RagConfiguration;
 import com.francelabs.datafari.utils.rag.ChunkUtils;
-import com.francelabs.datafari.utils.rag.DocumentForRag;
+import com.francelabs.datafari.rag.DocumentForRag;
 import com.francelabs.datafari.utils.rag.PromptUtils;
-import dev.langchain4j.data.document.Document;
-import dev.langchain4j.data.segment.TextSegment;
-import dev.langchain4j.memory.chat.MessageWindowChatMemory;
-import dev.langchain4j.model.openai.OpenAiChatModel;
-import dev.langchain4j.rag.content.Content;
-import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
-import dev.langchain4j.rag.query.Query;
-import dev.langchain4j.service.AiServices;
-import dev.langchain4j.service.Result;
-import dev.langchain4j.service.SystemMessage;
-import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
-import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
+import com.francelabs.datafari.utils.rag.VectorUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -39,7 +26,6 @@ public class RagAPI extends SearchAPI {
   public static final String PREVIEW_CONTENT = "preview_content";
   public static final List<String> ALLOWED_FIELDS_VALUE = List.of(HIGHLIGHTING, EXACT_CONTENT, PREVIEW_CONTENT);
   public static final List<String> HIGHLIGHTING_FIELDS = List.of("content_en", "content_fr", EXACT_CONTENT);
-  private static int maxJsonLength = Integer.MAX_VALUE;
 
 
   public static JSONObject rag(final HttpServletRequest request) throws IOException {
@@ -58,27 +44,41 @@ public class RagAPI extends SearchAPI {
     }
 
     // Search
-    JSONObject result = new JSONObject();
+    JSONObject result;
     try {
       result = processSearch(config, request);
     } catch (NumberFormatException e) {
+      LOGGER.error("RAG error. Invalid value for rag.hl.fragsize property. Integer expected.");
       return writeJsonError(500, "Invalid value for rag.hl.fragsize property. Integer expected.");
+    } catch (Exception e) {
+      LOGGER.error("RAG error. An error occurred while retrieving data.", e);
+      return writeJsonError(500, "RAG error. An error occurred while retrieving data.");
     }
 
     // Extract document content and data
-    JSONArray documentsList;
+    List<DocumentForRag> initialDocumentsList;
+    List<DocumentForRag> documentsList;
     try {
-      documentsList = extractDocumentsList(result, config);
+      initialDocumentsList = extractDocumentsList(result, config);
     } catch (InvalidPropertiesFormatException e) {
+      LOGGER.error("RAG error. Invalid value for rag.solrField property. Valid values are \"highlighting\", \"preview_content\" and \"exactContent\".");
       return writeJsonError(500, "Invalid value for rag.solrField property. Valid values are \"highlighting\", \"preview_content\" and \"exactContent\".");
     } catch (FileNotFoundException e) {
+      LOGGER.warn("RAG warning. The query cannot be answered because no associated documents were found.");
       return writeJsonError(428, "The query cannot be answered because no associated documents were found.");
     }
 
-    // Chunking
-    documentsList = ChunkUtils.chunkDocuments(config, documentsList);
 
+    // Vector embedding
+    initialDocumentsList = VectorUtils.processVectorSearch(initialDocumentsList, request);
+
+    // Chunking
+    documentsList = ChunkUtils.chunkDocuments(config, initialDocumentsList);
+
+    // Prompting
     List<String> prompts;
+    prompts = PromptUtils.documentsListToPrompts(config, documentsList, request);
+
     String message;
 
     // Select an LLM Connector
@@ -86,25 +86,14 @@ public class RagAPI extends SearchAPI {
     String llmConnector = config.getTemplate();
     switch(llmConnector) {
       case "openai":
-        prompts = PromptUtils.documentsListToPrompts(config, documentsList, request);
         connector = new OpenAiLlmConnector(config);
-        message = connector.invoke(prompts, request);
-        break;
-      case "vector-openai":
-        connector = new OpenAiLlmConnector(config);
-        message = connector.vectorRag(documentsList, request);
-        break;
-      case "vector-datafari":
-        connector = new DatafariLlmConnector(config);
-        message = connector.vectorRag(documentsList, request);
         break;
       case "datafari":
       default:
-        prompts = PromptUtils.documentsListToPrompts(config, documentsList, request);
         connector = new DatafariLlmConnector(config);
-        message = connector.invoke(prompts, request);
     }
 
+    message = connector.invoke(prompts, request);
 
     LOGGER.debug("LLM response: {}", message);
 
@@ -115,7 +104,7 @@ public class RagAPI extends SearchAPI {
       response.put("status", "OK");
       JSONObject content = new JSONObject();
       content.put("message", message);
-      content.put("documents", documentsList);
+      content.put("documents", mergeSimilarDocuments(documentsList));
       response.put("content", content);
       return response;
     } else {
@@ -148,9 +137,9 @@ public class RagAPI extends SearchAPI {
    * @throws InvalidPropertiesFormatException
    * @throws FileNotFoundException
    */
-  private static JSONArray extractDocumentsList(JSONObject result, RagConfiguration config) throws InvalidPropertiesFormatException, FileNotFoundException {
+  private static List<DocumentForRag> extractDocumentsList(JSONObject result, RagConfiguration config) throws InvalidPropertiesFormatException, FileNotFoundException {
     // Handling search results
-    JSONArray documentsList; // List of simplified documents (id, url, name)
+    List<DocumentForRag> documentsList; // List of simplified documents (id, url, name)
     // Retrieving list of documents : id, title, url
     documentsList = getDocumentList(result, config);
 
@@ -171,7 +160,7 @@ public class RagAPI extends SearchAPI {
    * @param request the original user request
    * @return A JSONObject containing the search results
    */
-  private static JSONObject processSearch(RagConfiguration config, HttpServletRequest request) throws NumberFormatException {
+  private static JSONObject processSearch(RagConfiguration config, HttpServletRequest request) throws Exception {
 
     final Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());
     final String handler = getHandler(request);
@@ -180,7 +169,8 @@ public class RagAPI extends SearchAPI {
     // Preparing query for Search process
     String userQuery = request.getParameter("q");
     if (userQuery == null) {
-      return writeJsonError(422, "No query provided.");
+      LOGGER.error("RAG error : No query provided.");
+      throw new Exception("No query provided.");
     } else if (config.isLogsEnabled()) {
       LOGGER.info("Request processed by RagAPI : {}", userQuery);
     }
@@ -217,34 +207,34 @@ public class RagAPI extends SearchAPI {
    * @param config RAG configuration
    * @return JSONArray
    */
-  private static JSONArray getDocumentList(JSONObject result, RagConfiguration config) {
+  private static List<DocumentForRag> getDocumentList(JSONObject result, RagConfiguration config) {
     try {
 
       JSONObject response = (JSONObject) result.get("response");
-      JSONObject highlighting = (JSONObject) result.get("highlighting");
-      JSONArray documentsList = new JSONArray();
+      JSONObject highlighting = (JSONObject) result.get(HIGHLIGHTING);
+      List<DocumentForRag> documentsList = new ArrayList<>();
 
       if (response != null && response.get("docs") != null) {
         JSONArray docs = (JSONArray) response.get("docs");
         int maxFiles = Math.min(config.getMaxFiles(), docs.size()); // MaxFiles must not exceed the number of provided documents
         for (int i = 0; i < maxFiles; i++) {
 
-          JSONObject document = new JSONObject();
+          DocumentForRag document = new DocumentForRag();
           String title = ((JSONArray) ((JSONObject) docs.get(i)).get("title")).get(0).toString();
           String id = (String) ((JSONObject) docs.get(i)).get("id");
           String url = (String) ((JSONObject) docs.get(i)).get("url");
 
-          document.put("id", id);
-          document.put("title", title);
-          document.put("url", url);
+          document.setId(id);
+          document.setTitle(title);
+          document.setUrl(url);
 
           // Add the content to the processed document
           JSONArray content = (JSONArray) ((JSONObject) docs.get(i)).get(config.getSolrField());
           if (content != null && content.get(0) != null) {
-            document.put("content", content.get(0).toString());
+            document.setContent(content.get(0).toString());
           } else if (HIGHLIGHTING.equals(config.getSolrField())) {
             String documentHighlighting = extractDocumentsHighlighting(highlighting, id);
-            if (!documentHighlighting.isEmpty()) document.put("content", documentHighlighting);
+            if (!documentHighlighting.isEmpty()) document.setContent(documentHighlighting);
           }
 
           documentsList.add(document);
@@ -254,7 +244,7 @@ public class RagAPI extends SearchAPI {
     } catch (Exception e) {
       LOGGER.error("An error occurred while retrieving the list of documents.", e);
     }
-    return new JSONArray();
+    return new ArrayList<>();
 
   }
 
@@ -306,18 +296,34 @@ public class RagAPI extends SearchAPI {
    */
   private static RagConfiguration getRagConf() throws FileNotFoundException {
     try  {
-      RagConfiguration config = new RagConfiguration();
-      if (config.getMaxJsonLength() != 0) maxJsonLength = config.getMaxJsonLength();
-
-      return config;
+      return new RagConfiguration();
 
     } catch (FileNotFoundException e) {
       throw new FileNotFoundException("An error occurred during the configuration. Configuration file not found.");
     } catch (NumberFormatException e) {
-      throw new NumberFormatException("An error occurred during the configuration. Invalid value for rag.maxTokens or rag.hl.fragsize or rag.maxFiles or rag.maxJsonLength. Integers expected.");
-    } catch (IOException e) {
+      throw new NumberFormatException("An error occurred during the configuration. Invalid value for rag.maxTokens or rag.hl.fragsize or rag.maxFiles. Integers expected.");
+    } catch (Exception e) {
       throw new RuntimeException("An error occurred during the configuration.");
     }
+  }
+
+
+  /**
+   * The "documentList" containing sources of the answer might contain duplicates.
+   * This methode merge thoses duplicated entries.
+   * @return List<DocumentForRag> The final list
+   */
+  private static List<DocumentForRag> mergeSimilarDocuments(List<DocumentForRag> documentList) {
+    // Removing Duplicates
+    Map<String, DocumentForRag> map = new HashMap<>();
+    for (DocumentForRag doc : documentList) {
+      String id = doc.getId();
+        if (map.containsKey(id)) {
+            continue;
+        }
+        map.put(id, doc);
+    }
+    return new ArrayList<>(map.values());
   }
 
 }
