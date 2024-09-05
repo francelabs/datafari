@@ -162,6 +162,7 @@ init_zk()
   echo "Uploading configuration to zookeeper"
   #"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -zkhost localhost:2181 -cmd clusterprop -name urlScheme -val https
   "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/FileShare/conf" -confname FileShare
+  "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Statistics/conf" -confname Statistics
   "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Promolink/conf" -confname Promolink
   "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Access/conf" -confname Access
   "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Monitoring/conf" -confname Monitoring
@@ -265,6 +266,7 @@ init_solr()
  
   
   curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=@MAINCOLLECTION@&collection.configName=@MAINCOLLECTION@&numShards=${NUMSHARDS}&maxShardsPerNode=${NUMSHARDS}&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/FileShare/"
+  curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=Statistics&collection.configName=Statistics&numShards=1&maxShardsPerNode=1&replicationFactor=1"
   curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=Promolink&collection.configName=Promolink&numShards=1&maxShardsPerNode=1&replicationFactor=1"
   curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=Access&collection.configName=Access&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/Access/"
   curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=Monitoring&collection.configName=Monitoring&numShards=1&maxShardsPerNode=1&replicationFactor=1"
@@ -277,7 +279,7 @@ init_solr()
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.hash.fields": "content"}}' http://localhost:8983/solr/Duplicates/config
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.quant.rate": "0.1"}}' http://localhost:8983/solr/Duplicates/config 
   
-  collections_autocommit=("Access" "Duplicates" "@MAINCOLLECTION@" "Monitoring" "Promolink")
+  collections_autocommit=("Access" "Duplicates" "@MAINCOLLECTION@" "Monitoring" "Promolink" "Statistics")
   for index in "${collections_autocommit[@]}"
   do
     curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-property": {"updateHandler.autoCommit.maxTime": "60000"}}' http://localhost:8983/solr/${index}/config
@@ -303,11 +305,12 @@ init_solr_annotators() {
 
 
 init_solr_analytics() {
+  curl -XGET --insecure "http://localhost:8983/solr/admin/collections?action=CREATE&name=Statistics&collection.configName=Statistics&numShards=1&replicationFactor=1"
   curl -XGET --insecure "http://localhost:8983/solr/admin/collections?action=CREATE&name=Access&collection.configName=Access&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/Access/"
   curl -XGET --insecure "http://localhost:8983/solr/admin/collections?action=CREATE&name=Monitoring&collection.configName=Monitoring&numShards=1&maxShardsPerNode=1&replicationFactor=1"
   curl -XGET --insecure "http://localhost:8983/solr/admin/collections?action=CREATE&name=Crawl&collection.configName=Crawl&numShards=1&maxShardsPerNode=1&replicationFactor=1"
   curl -XGET --insecure "http://localhost:8983/solr/admin/collections?action=CREATE&name=Logs&collection.configName=Logs&numShards=1&maxShardsPerNode=1&replicationFactor=1"
-  collections_autocommit=("Access" "Monitoring" "Crawl" "Logs")
+  collections_autocommit=("Statistics" "Access" "Monitoring" "Crawl" "Logs")
   for index in "${collections_autocommit[@]}"
   do
     curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-property": {"updateHandler.autoCommit.maxTime": "600000"}}' http://localhost:8983/solr/${index}/config

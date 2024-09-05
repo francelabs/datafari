@@ -41,8 +41,9 @@ create_collection() {
 echo "--- NOTE --- Please be sure that all your Solr servers are up !!!"
 
 
-echo "Creation of Solr Collections Promolinks and Entities"
+echo "Creation of Solr Collections Statistics, Promolinks and Entities"
 curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=Duplicates&collection.configName=Duplicates&numShards=1&replicationFactor=1&maxShardsPerNode=1&property.lib.path=${lib_path_duplicates}"
+curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=Statistics&collection.configName=Statistics&numShards=1&replicationFactor=1"
 curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=Promolink&collection.configName=Promolink&numShards=1&replicationFactor=1"
 curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=Entities&collection.configName=Entities&numShards=1&replicationFactor=1"
 curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=Access&collection.configName=Access&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${lib_path_access}"
@@ -57,7 +58,7 @@ curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-propert
   curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=Spacy&collection.configName=GenericAnnotator&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/GenericAnnotator/"
   curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=GenericAnnotator&collection.configName=GenericAnnotator&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/GenericAnnotator/"
   
-  collections_autocommit=("Access" "Crawl" "Duplicates" "Entities" "$1" "GenericAnnotator" "Logs" "Monitoring" "OCR" "Promolink" "Spacy")
+  collections_autocommit=("Access" "Crawl" "Duplicates" "Entities" "$1" "GenericAnnotator" "Logs" "Monitoring" "OCR" "Promolink" "Spacy" "Statistics")
   for index in "${collections_autocommit[@]}"
   do
     curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-property": {"updateHandler.autoCommit.maxTime": "600000"}}' $url_protocol://${ip_solr}/solr/${index}/config

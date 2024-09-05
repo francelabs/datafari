@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional information regarding copyright ownership. 
+  The ASF licenses this file to You under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  See the License for the specific language governing permissions and limitations under the License. -->
+
+<config>
+  <luceneMatchVersion>9.5</luceneMatchVersion>
+  <dataDir>${solr.data.dir:}</dataDir>
+
+  <directoryFactory name="DirectoryFactory" class="${solr.directoryFactory:solr.NRTCachingDirectoryFactory}" />
+
+  <codecFactory class="solr.SchemaCodecFactory" />
+
+  <schemaFactory class="ClassicIndexSchemaFactory" />
+
+  <indexConfig>
+    <lockType>${solr.lock.type:native}</lockType>
+    <infoStream>true</infoStream>
+  </indexConfig>
+
+
+  <updateHandler class="solr.DirectUpdateHandler2">
+
+    <updateLog>
+      <str name="dir">${solr.ulog.dir:}</str>
+      <int name="numVersionBuckets">${solr.ulog.numVersionBuckets:65536}</int>
+    </updateLog>
+
+    <autoCommit>
+      <maxTime>${solr.autoCommit.maxTime:60000}</maxTime> 
+      <openSearcher>false</openSearcher>
+    </autoCommit>
+
+    <autoSoftCommit>
+      <maxTime>${solr.autoSoftCommit.maxTime:-1}</maxTime>
+    </autoSoftCommit>
+
+  </updateHandler>
+
+
+  <query>
+
+    <maxBooleanClauses>1024</maxBooleanClauses>
+
+    <filterCache class="solr.search.CaffeineCache" size="512" initialSize="512" autowarmCount="0" />
+
+    <queryResultCache class="solr.search.CaffeineCache" size="512" initialSize="512" autowarmCount="0" />
+
+    <documentCache class="solr.search.CaffeineCache" size="512" initialSize="512" autowarmCount="0" />
+
+    <cache name="perSegFilter" class="solr.search.CaffeineCache" size="10" initialSize="0" autowarmCount="10" regenerator="solr.NoOpRegenerator" />
+
+    <enableLazyFieldLoading>true</enableLazyFieldLoading>
+
+    <queryResultWindowSize>20</queryResultWindowSize>
+
+    <queryResultMaxDocsCached>200</queryResultMaxDocsCached>
+
+    <useColdSearcher>false</useColdSearcher>
+
+   
+
+  </query>
+
+
+  <requestDispatcher handleSelect="false">
+
+    <requestParsers multipartUploadLimitInKB="2048000" formdataUploadLimitInKB="2048" addHttpRequestToContext="false" />
+
+    <httpCaching never304="true" />
+  </requestDispatcher>
+
+  <requestHandler class="solr.RealTimeGetHandler" name="/get">
+    <lst name="defaults">
+      <str name="omitHeader">true</str>
+      <str name="wt">json</str>
+      <str name="indent">true</str>
+    </lst>
+  </requestHandler>
+
+  <requestHandler class="solr.UpdateRequestHandler" name="/update">
+  </requestHandler>
+
+
+  <requestHandler name="/select" class="solr.SearchHandler">
+    <lst name="defaults">
+      <str name="defType">edismax</str>
+      <str name="q.alt">*:*</str>
+      <str name="df">q_search</str>
+      <str name="qf">q_search</str>
+    </lst>
+  </requestHandler>
+
+  <requestHandler name="/stats" class="solr.SearchHandler">
+    <lst name="defaults">
+      <str name="defType">edismax</str>
+      <str name="q.alt">*:*</str>
+      <str name="qf">q_search</str>
+      <int name="rows">0</int>
+      <str name="facet">on</str>
+      <str name="facet.field">q</str>
+      <str name="facet.mincount">1</str>
+      <str name="stats">on</str>
+      <str name="stats.facet">q</str>
+      <str name="stats.field">numFound</str>
+      <str name="stats.field">noHits</str>
+      <str name="stats.field">QTime</str>
+      <str name="stats.field">click</str>
+      <str name="stats.field">numClicks</str>
+      <str name="stats.field">positionClickTot</str>
+    </lst>
+  </requestHandler>
+
+
+  <requestHandler name="/statsQuery" class="solr.SearchHandler">
+    <!-- default values for query parameters can be specified, these will be overridden by parameters in the request -->
+    <lst name="defaults">
+      <str name="defType">edismax</str>
+      <str name="q.alt">*:*</str>
+      <str name="qf">q_search</str>
+      <int name="rows">100</int>
+      <str name="fl">id,q,date,numFound,QTime,numClicks,positionClickTot</str>
+    </lst>
+  </requestHandler>
+
+  <requestHandler name="/analysis/field" startup="lazy" class="solr.FieldAnalysisRequestHandler" />
+
+  <requestHandler name="/analysis/document" class="solr.DocumentAnalysisRequestHandler" startup="lazy" />
+
+  <requestHandler name="/debug/dump" class="solr.DumpRequestHandler">
+    <lst name="defaults">
+      <str name="echoParams">explicit</str>
+      <str name="echoHandler">true</str>
+    </lst>
+  </requestHandler>
+
+  <searchComponent name="terms" class="solr.TermsComponent" />
+
+
+
+
+  <!-- Highlighting Component http://wiki.apache.org/solr/HighlightingParameters -->
+  <searchComponent class="solr.HighlightComponent" name="highlight">
+    <highlighting>
+      <!-- Configure the standard fragmenter -->
+      <!-- This could most likely be commented out in the "default" case -->
+      <fragmenter class="solr.highlight.GapFragmenter" default="true" name="gap">
+        <lst name="defaults">
+          <int name="hl.fragsize">100</int>
+        </lst>
+      </fragmenter>
+
+      <!-- A regular-expression-based fragmenter (for sentence extraction) -->
+      <fragmenter class="solr.highlight.RegexFragmenter" name="regex">
+        <lst name="defaults">
+          <!-- slightly smaller fragsizes work better because of slop -->
+          <int name="hl.fragsize">70</int>
+          <!-- allow 50% slop on fragment sizes -->
+          <float name="hl.regex.slop">0.5</float>
+          <!-- a basic sentence pattern -->
+          <str name="hl.regex.pattern">[-\w ,/\n\"']{20,200}</str>
+        </lst>
+      </fragmenter>
+
+      <!-- Configure the standard formatter -->
+      <formatter class="solr.highlight.HtmlFormatter" default="true" name="html">
+        <lst name="defaults">
+          <str name="hl.simple.pre"><![CDATA[<em>]]></str>
+          <str name="hl.simple.post"><![CDATA[</em>]]></str>
+        </lst>
+      </formatter>
+
+      <!-- Configure the standard encoder -->
+      <encoder class="solr.highlight.HtmlEncoder" name="html" />
+
+      <!-- Configure the standard fragListBuilder -->
+      <fragListBuilder class="solr.highlight.SimpleFragListBuilder" name="simple" />
+
+      <!-- Configure the single fragListBuilder -->
+      <fragListBuilder class="solr.highlight.SingleFragListBuilder" name="single" />
+
+      <!-- Configure the weighted fragListBuilder -->
+      <fragListBuilder class="solr.highlight.WeightedFragListBuilder" default="true" name="weighted" />
+
+      <!-- default tag FragmentsBuilder -->
+      <fragmentsBuilder class="solr.highlight.ScoreOrderFragmentsBuilder" default="true" name="default">
+        <!-- <lst name="defaults"> <str name="hl.multiValuedSeparatorChar">/</str> </lst> -->
+      </fragmentsBuilder>
+
+      <!-- multi-colored tag FragmentsBuilder -->
+      <fragmentsBuilder class="solr.highlight.ScoreOrderFragmentsBuilder" name="colored">
+        <lst name="defaults">
+          <str name="hl.tag.pre"><![CDATA[
+               <b style="background:yellow">,<b style="background:lawgreen">,
+               <b style="background:aquamarine">,<b style="background:magenta">,
+               <b style="background:palegreen">,<b style="background:coral">,
+               <b style="background:wheat">,<b style="background:khaki">,
+               <b style="background:lime">,<b style="background:deepskyblue">]]></str>
+          <str name="hl.tag.post"><![CDATA[</b>]]></str>
+        </lst>
+      </fragmentsBuilder>
+
+      <boundaryScanner class="solr.highlight.SimpleBoundaryScanner" default="true" name="default">
+        <lst name="defaults">
+          <str name="hl.bs.maxScan">10</str>
+          <str name="hl.bs.chars">.,!?
+            &#13;</str>
+        </lst>
+      </boundaryScanner>
+
+      <boundaryScanner class="solr.highlight.BreakIteratorBoundaryScanner" name="breakIterator">
+        <lst name="defaults">
+          <!-- type should be one of CHARACTER, WORD(default), LINE and SENTENCE -->
+          <str name="hl.bs.type">WORD</str>
+          <!-- language and country are used when constructing Locale object. -->
+          <!-- And the Locale object will be used when getting instance of BreakIterator -->
+          <str name="hl.bs.language">en</str>
+          <str name="hl.bs.country">US</str>
+        </lst>
+      </boundaryScanner>
+    </highlighting>
+  </searchComponent>
+
+  <queryResponseWriter name="json" class="solr.JSONResponseWriter">
+    <!-- For the purposes of the tutorial, JSON responses are written as plain text so that they are easy to read in *any* browser. If you expect a MIME type of "application/json" just remove this override. -->
+    <str name="content-type">text/plain; charset=UTF-8</str>
+  </queryResponseWriter>
+
+  <admin>
+    <defaultQuery>*:*</defaultQuery>
+  </admin>
+
+</config>
