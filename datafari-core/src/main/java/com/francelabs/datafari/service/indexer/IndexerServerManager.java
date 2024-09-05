@@ -28,12 +28,6 @@ public class IndexerServerManager {
         return mainCollection;
       }
     },
-    STATISTICS {
-      @Override
-      public String toString() {
-        return "Statistics";
-      }
-    },
     PROMOLINK {
       @Override
       public String toString() {

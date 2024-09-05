@@ -34,13 +34,12 @@ import com.francelabs.datafari.statistics.StatsPusher;
 
 public class SearchAPI {
 
+
   private static final Logger LOGGER = LogManager.getLogger(SearchAPI.class.getName());
 
   private static Set<String> getAllowedHandlers() {
     final Set<String> allowedHandlers = new HashSet<>();
     allowedHandlers.add("/select");
-    allowedHandlers.add("/stats");
-    allowedHandlers.add("/statsQuery");
     allowedHandlers.add("/");
 
     final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
@@ -62,8 +61,8 @@ public class SearchAPI {
 
     final JSONObject response = new JSONObject();
 
+    // Check the handler
     final Set<String> allowedHandlers = getAllowedHandlers();
-
     if (!allowedHandlers.contains(handler)) {
       final JSONObject error = new JSONObject();
       error.put("code", 401);
@@ -114,28 +113,19 @@ public class SearchAPI {
     timer.top("3");
     try {
 
-      switch (handler) {
-      case "/stats":
-      case "/statsQuery":
-        solr = IndexerServerManager.getIndexerServer(Core.STATISTICS);
-        break;
-      default:
-        solr = IndexerServerManager.getIndexerServer(Core.FILESHARE);
-        promolinkCore = IndexerServerManager.getIndexerServer(Core.PROMOLINK);
-        queryPromolink = IndexerServerManager.createQuery();
+      solr = IndexerServerManager.getIndexerServer(Core.FILESHARE);
+      promolinkCore = IndexerServerManager.getIndexerServer(Core.PROMOLINK);
+      queryPromolink = IndexerServerManager.createQuery();
 
-        // Add AuthenticatedUserName param if user authenticated
-        if (!requestingUser.isEmpty()) {
-          params.setParam("AuthenticatedUserName", requestingUser);
-        }
+      // Add AuthenticatedUserName param if user authenticated
+      if (!requestingUser.isEmpty()) {
+        params.setParam("AuthenticatedUserName", requestingUser);
+      }
 
-        final String queryParam = params.getParamValue("query");
-        if (queryParam != null) {
-          params.setParam("q", queryParam);
-          params.removeParam("query");
-        }
-
-        break;
+      final String queryParam = params.getParamValue("query");
+      if (queryParam != null) {
+        params.setParam("q", queryParam);
+        params.removeParam("query");
       }
 
       timer.top("4");
@@ -244,8 +234,8 @@ public class SearchAPI {
         queryPromolink.setFilterQueries("-dateBeginning:[NOW/DAY+1DAY TO *]", "-dateEnd:[* TO NOW/DAY]");
         queryResponsePromolink = promolinkCore.executeQuery(queryPromolink);
       }
-      switch (handler) {
-      case "/select":
+
+      if (handler.equals("/select")) {
         // If there is no id there is no need to record stats
         if (params.getParamValue("id") != null && !params.getParamValue("id").equals("")) {
           // index
@@ -261,10 +251,6 @@ public class SearchAPI {
 
           StatsPusher.pushQuery(statsParams, protocol);
         }
-        break;
-      case "/stats":
-        solr.processStatsResponse(queryResponse);
-        break;
       }
 
       timer.stop();
