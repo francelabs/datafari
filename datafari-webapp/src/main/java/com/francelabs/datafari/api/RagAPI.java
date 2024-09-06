@@ -31,16 +31,11 @@ public class RagAPI extends SearchAPI {
   public static JSONObject rag(final HttpServletRequest request) throws IOException {
 
     // Get RAG specific configuration
-    RagConfiguration config = getRagConf();
+    RagConfiguration config = RagConfiguration.getInstance();
     final Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());
     if (request.getParameter("id") == null && request.getAttribute("id") != null && request.getAttribute("id") instanceof String) {
       final String idParam[] = { (String) request.getAttribute("id") };
       parameterMap.put("id", idParam);
-    }
-    String format = request.getParameter("format");
-    if (format != null && !format.isEmpty() && FORMAT_VALUES.contains(format)) {
-      config.setFormat(format);
-      // Todo : Warning, this method might no longer work after the configuration reworking
     }
 
     // Search
@@ -83,7 +78,7 @@ public class RagAPI extends SearchAPI {
 
     // Select an LLM Connector
     LlmConnector connector;
-    String llmConnector = config.getTemplate();
+    String llmConnector = config.getProperty(RagConfiguration.LLM_SERVICE);
     switch(llmConnector) {
       case "openai":
         connector = new OpenAiLlmConnector(config);
@@ -143,7 +138,8 @@ public class RagAPI extends SearchAPI {
     // Retrieving list of documents : id, title, url
     documentsList = getDocumentList(result, config);
 
-    if (!ALLOWED_FIELDS_VALUE.contains(config.getSolrField())) {
+    // Todo : SUPPRIMER SOLR_FIELD
+    if (!ALLOWED_FIELDS_VALUE.contains(config.getProperty(RagConfiguration.SOLR_FIELD))) {
       // If rag.solrField is not one of the allowed fields (ALLOW_FIELDS_VALUE), an error is returned.
       throw new InvalidPropertiesFormatException("Invalid value for rag.solrField property. Valid values are \"highlighting\", \"preview_content\" and \"exactContent\".");
     }
@@ -171,17 +167,19 @@ public class RagAPI extends SearchAPI {
     if (userQuery == null) {
       LOGGER.error("RAG error : No query provided.");
       throw new Exception("No query provided.");
-    } else if (config.isLogsEnabled()) {
+    } else if (config.getBooleanProperty(RagConfiguration.ENABLE_LOGS)) {
       LOGGER.info("Request processed by RagAPI : {}", userQuery);
     }
 
     // If the content is extracted from highlighting, then the user can configure the size of the extracts
     try {
-      if (HIGHLIGHTING.equals(config.getSolrField()) && config.getHlFragsize() != null) {
-        request.setAttribute("hl.fragsize", Integer.valueOf(config.getHlFragsize()));
+      // TODO : SUPPRIMER SOLR FIELD OPTIONS
+      if (HIGHLIGHTING.equals(config.getProperty(RagConfiguration.SOLR_FIELD)) && config.getIntegerProperty(RagConfiguration.SOLR_HL_FRAGSIZE) != null) {
+        request.setAttribute("hl.fragsize", Integer.valueOf(config.getIntegerProperty(RagConfiguration.SOLR_HL_FRAGSIZE)));
         request.setAttribute("hl.tag.pre", "");
         request.setAttribute("hl.tag.post", "");
-        if (!config.getOperator().isEmpty()) request.setAttribute("q.op", config.getOperator());
+        if (!config.getProperty(RagConfiguration.SEARCH_OPERATOR).isEmpty())
+          request.setAttribute("q.op", config.getProperty(RagConfiguration.SEARCH_OPERATOR));
       }
     } catch (NumberFormatException e) {
       throw new NumberFormatException("Invalid value for rag.hl.fragsize property. Integer expected.");
@@ -216,7 +214,7 @@ public class RagAPI extends SearchAPI {
 
       if (response != null && response.get("docs") != null) {
         JSONArray docs = (JSONArray) response.get("docs");
-        int maxFiles = Math.min(config.getMaxFiles(), docs.size()); // MaxFiles must not exceed the number of provided documents
+        int maxFiles = Math.min(config.getIntegerProperty(RagConfiguration.MAX_FILES), docs.size()); // MaxFiles must not exceed the number of provided documents
         for (int i = 0; i < maxFiles; i++) {
 
           DocumentForRag document = new DocumentForRag();
@@ -229,10 +227,11 @@ public class RagAPI extends SearchAPI {
           document.setUrl(url);
 
           // Add the content to the processed document
-          JSONArray content = (JSONArray) ((JSONObject) docs.get(i)).get(config.getSolrField());
+          // TODO : REMOVE SOLR_FIELD OPTIONS
+          JSONArray content = (JSONArray) ((JSONObject) docs.get(i)).get(config.getProperty(RagConfiguration.SOLR_FIELD));
           if (content != null && content.get(0) != null) {
             document.setContent(content.get(0).toString());
-          } else if (HIGHLIGHTING.equals(config.getSolrField())) {
+          } else if (HIGHLIGHTING.equals(config.getProperty(RagConfiguration.SOLR_FIELD))) {
             String documentHighlighting = extractDocumentsHighlighting(highlighting, id);
             if (!documentHighlighting.isEmpty()) document.setContent(documentHighlighting);
           }
@@ -287,24 +286,6 @@ public class RagAPI extends SearchAPI {
       LOGGER.error("An error occurred while extracting highlightings from Datafari search results.", e);
     }
     return "";
-  }
-
-
-  /**
-   * Read the rag.properties file to create a RagConfiguration object
-   * @return RagConfiguration The configuration used to access the RAG API
-   */
-  private static RagConfiguration getRagConf() throws FileNotFoundException {
-    try  {
-      return new RagConfiguration();
-
-    } catch (FileNotFoundException e) {
-      throw new FileNotFoundException("An error occurred during the configuration. Configuration file not found.");
-    } catch (NumberFormatException e) {
-      throw new NumberFormatException("An error occurred during the configuration. Invalid value for rag.maxTokens or rag.hl.fragsize or rag.maxFiles. Integers expected.");
-    } catch (Exception e) {
-      throw new RuntimeException("An error occurred during the configuration.");
-    }
   }
 
 

@@ -1,15 +1,6 @@
 package com.francelabs.datafari.rag;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.francelabs.datafari.utils.rag.PromptUtils;
-import dev.langchain4j.data.document.Document;
-import dev.langchain4j.data.segment.TextSegment;
-import dev.langchain4j.rag.content.Content;
-import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
-import dev.langchain4j.rag.query.Query;
-import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
-import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpEntity;
@@ -20,7 +11,6 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class DatafariLlmConnector implements LlmConnector {
@@ -33,11 +23,11 @@ public class DatafariLlmConnector implements LlmConnector {
     RagConfiguration config;
 
     public DatafariLlmConnector(RagConfiguration config) {
-        this.url = config.getEndpoint();
-        this.temperature = config.getTemperature();
-        this.maxToken = config.getMaxTokens();
-        this.model = config.getModel();
-        this.apiKey = config.getToken();
+        this.url = config.getProperty(RagConfiguration.API_ENDPOINT);
+        this.temperature = config.getProperty(RagConfiguration.LLM_TEMPERATURE);
+        this.maxToken = config.getProperty(RagConfiguration.LLM_MAX_TOKENS);
+        this.model = config.getProperty(RagConfiguration.LLM_MODEL);
+        this.apiKey = config.getProperty(RagConfiguration.API_TOKEN);
         this.config = config;
     }
 
@@ -83,9 +73,8 @@ public class DatafariLlmConnector implements LlmConnector {
 
         try {
 
-
             // Mock the webservices (to delete for prod, for test and dev purposes)
-            if (!config.isEnabled()) return "RAG feature is currently disabled. This is a placeholder message. \\n Enable the feature by editing rag.properties file.";
+            if (!config.getBooleanProperty(RagConfiguration.ENABLE_RAG)) return "RAG feature is currently disabled. This is a placeholder message. \\n Enable the feature by editing rag.properties file.";
 
             RestTemplate template = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
@@ -140,18 +129,6 @@ public class DatafariLlmConnector implements LlmConnector {
         input.put("queries", queries);
         queryBody.put("input", input);
         return queryBody.toJSONString();
-    }
-
-    /**
-     * Extract message from LLM response
-     * @param response A String JSON provided by the LLM
-     * @return A simple String message
-     */
-    public String extractMessageFromResponse(String response){
-        response = response.replace("\\\"", "`");
-        int start = response.indexOf("output")+ 9;
-        int end = response.indexOf("\"", start);
-        return response.substring(start, end).trim();
     }
 }
 

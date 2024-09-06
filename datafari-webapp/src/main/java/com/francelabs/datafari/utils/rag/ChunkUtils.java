@@ -29,6 +29,10 @@ import java.util.List;
  */
 public class ChunkUtils {
 
+    private ChunkUtils() {
+        // Constructor
+    }
+
     /**
      *
      * @param config : RAG configuration
@@ -63,7 +67,7 @@ public class ChunkUtils {
      * @return a list of one or subdocuments
      */
     private static List<String> extractChunksFromDocument(DocumentForRag doc, RagConfiguration config) {
-        return splitStringBySize(doc.getContent(), config.getChunkSize());
+        return splitStringBySize(doc.getContent(), config.getIntegerProperty(RagConfiguration.CHUNK_SIZE));
     }
 
     private static List<String> splitStringBySize(String str, int size) {

@@ -22,16 +22,16 @@ public class OpenAiLlmConnector implements LlmConnector {
     static final String DEFAULT_MODEL = "gpt-3.5-turbo";
 
     public OpenAiLlmConnector(RagConfiguration config) {
-        this.url = config.getEndpoint();
+        this.url = config.getProperty(RagConfiguration.API_ENDPOINT);
         try {
-            this.temperature = Double.parseDouble(config.getTemperature());
-            this.maxToken = Integer.parseInt(config.getMaxTokens());
+            this.temperature = Double.parseDouble(config.getProperty(RagConfiguration.LLM_TEMPERATURE));
+            this.maxToken = config.getIntegerProperty(RagConfiguration.LLM_MAX_TOKENS);
         } catch (NumberFormatException e) {
             this.temperature = 0.0;
             this.maxToken = 200;
         }
-        this.model = config.getModel().isEmpty() ? DEFAULT_MODEL : config.getModel();
-        this.apiKey = config.getToken();
+        this.model = config.getProperty(RagConfiguration.LLM_MODEL).isEmpty() ? DEFAULT_MODEL : config.getProperty(RagConfiguration.LLM_MODEL);
+        this.apiKey = config.getProperty(RagConfiguration.API_TOKEN);
         this.config = config;
     }
 

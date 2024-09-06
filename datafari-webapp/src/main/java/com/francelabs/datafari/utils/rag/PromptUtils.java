@@ -52,7 +52,7 @@ public class PromptUtils {
 
         List<String> prompts = new ArrayList<>();
         String uniqueContent = formatDocuments(documentsList);
-        if (uniqueContent.length() < config.getChunkSize()) {
+        if (uniqueContent.length() < config.getIntegerProperty(RagConfiguration.CHUNK_SIZE)) {
             // All documents are merged into one prompt
             String prompt = createPrompt(config, uniqueContent, request);
             prompts.add(prompt);
@@ -82,7 +82,7 @@ public class PromptUtils {
         String template = getInstructions();
         String userQuery = request.getParameter("q");
 
-        template = template.replace("{format}", getResponseFormat(config));
+        template = template.replace("{format}", getResponseFormat(request));
         template = template.replace("{prompt}", userQuery);
         template = template.replace("{content}", content);
         template = template.replace("{language}", getUserLanguage(request));
@@ -106,15 +106,20 @@ public class PromptUtils {
         return prompt.toString();
     }
 
-    public static String getResponseFormat(RagConfiguration config) {
+    public static String getResponseFormat(HttpServletRequest request) {
 
-        if("stepbystep".equals(config.getFormat()))
-            return " If relevant, your response should take the form step-by-step instructions.\n";
-        else if ("bulletpoint".equals(config.getFormat()))
-            return " If relevant, your response should take the form of a bullet-point list.\n";
-        else if ("text".equals(config.getFormat()))
-            return " If relevant, your response should take the form of a text.\n";
-        else return "";
+        String format = request.getParameter("format");
+        if (format == null) return "";
+        switch (format) {
+            case "stepbystep":
+                return " If relevant, your response should take the form step-by-step instructions.\n";
+            case "bulletpoint":
+                return " If relevant, your response should take the form of a bullet-point list.\n";
+            case "text":
+                return " If relevant, your response should take the form of a text.\n";
+            default:
+                return "";
+        }
     }
 
     /**
@@ -128,9 +133,9 @@ public class PromptUtils {
                 .replace("\t", " ")
                 .replace("\b", "")
                 .replace("\"", "`");
-        if (context.length() > config.getChunkSize() ) {
+        if (context.length() > config.getIntegerProperty(RagConfiguration.CHUNK_SIZE) ) {
             // Truncate the context if too long
-            context = context.substring(0, config.getChunkSize());
+            context = context.substring(0, config.getIntegerProperty(RagConfiguration.CHUNK_SIZE));
         }
         return context;
     }
