@@ -20,6 +20,7 @@ public class OpenAiLlmConnector implements LlmConnector {
     double temperature;
     int maxToken;
     static final String DEFAULT_MODEL = "gpt-3.5-turbo";
+    static final String DEFAULT_URL = "https://api.openai.com/v1/";
 
     public OpenAiLlmConnector(RagConfiguration config) {
         this.url = config.getProperty(RagConfiguration.API_ENDPOINT);
@@ -31,6 +32,7 @@ public class OpenAiLlmConnector implements LlmConnector {
             this.maxToken = 200;
         }
         this.model = config.getProperty(RagConfiguration.LLM_MODEL).isEmpty() ? DEFAULT_MODEL : config.getProperty(RagConfiguration.LLM_MODEL);
+        this.url = config.getProperty(RagConfiguration.API_ENDPOINT).isEmpty() ? DEFAULT_URL : config.getProperty(RagConfiguration.API_ENDPOINT);
         this.apiKey = config.getProperty(RagConfiguration.API_TOKEN);
         this.config = config;
     }
@@ -48,6 +50,7 @@ public class OpenAiLlmConnector implements LlmConnector {
                 .temperature(temperature)
                 .maxTokens(maxToken)
                 .modelName(model)
+                .baseUrl(url)
                 .build();
 
         StringBuilder concatenatedResponses = new StringBuilder();
@@ -67,6 +70,7 @@ public class OpenAiLlmConnector implements LlmConnector {
             String body = PromptUtils.createPrompt(config, "```" + concatenatedResponses + "```", request);
             message = llm.generate(body);
         } else {
+            LOGGER.error("RAG - No prompt found in OpenAiLlmConnector");
             throw new RuntimeException("Could not find data to send to the LLM");
         }
 

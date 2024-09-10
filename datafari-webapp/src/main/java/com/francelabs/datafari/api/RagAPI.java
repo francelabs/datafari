@@ -21,11 +21,7 @@ public class RagAPI extends SearchAPI {
 
   private static final Logger LOGGER = LogManager.getLogger(RagAPI.class.getName());
   public static final List<String> FORMAT_VALUES = List.of("bulletpoint", "text", "stepbystep");
-  public static final String HIGHLIGHTING = "highlighting";
   public static final String EXACT_CONTENT = "exactContent";
-  public static final String PREVIEW_CONTENT = "preview_content";
-  public static final List<String> ALLOWED_FIELDS_VALUE = List.of(HIGHLIGHTING, EXACT_CONTENT, PREVIEW_CONTENT);
-  public static final List<String> HIGHLIGHTING_FIELDS = List.of("content_en", "content_fr", EXACT_CONTENT);
 
 
   public static JSONObject rag(final HttpServletRequest request) throws IOException {
@@ -42,9 +38,6 @@ public class RagAPI extends SearchAPI {
     JSONObject result;
     try {
       result = processSearch(config, request);
-    } catch (NumberFormatException e) {
-      LOGGER.error("RAG error. Invalid value for rag.hl.fragsize property. Integer expected.");
-      return writeJsonError(500, "Invalid value for rag.hl.fragsize property. Integer expected.");
     } catch (Exception e) {
       LOGGER.error("RAG error. An error occurred while retrieving data.", e);
       return writeJsonError(500, "RAG error. An error occurred while retrieving data.");
@@ -55,9 +48,6 @@ public class RagAPI extends SearchAPI {
     List<DocumentForRag> documentsList;
     try {
       initialDocumentsList = extractDocumentsList(result, config);
-    } catch (InvalidPropertiesFormatException e) {
-      LOGGER.error("RAG error. Invalid value for rag.solrField property. Valid values are \"highlighting\", \"preview_content\" and \"exactContent\".");
-      return writeJsonError(500, "Invalid value for rag.solrField property. Valid values are \"highlighting\", \"preview_content\" and \"exactContent\".");
     } catch (FileNotFoundException e) {
       LOGGER.warn("RAG warning. The query cannot be answered because no associated documents were found.");
       return writeJsonError(428, "The query cannot be answered because no associated documents were found.");
@@ -65,10 +55,19 @@ public class RagAPI extends SearchAPI {
 
 
     // Vector embedding
-    initialDocumentsList = VectorUtils.processVectorSearch(initialDocumentsList, request);
+    if (config.getBooleanProperty(RagConfiguration.ENABLE_VECTOR_SEARCH)) {
+      initialDocumentsList = VectorUtils.processVectorSearch(initialDocumentsList, request);
+    } else if (config.getBooleanProperty(RagConfiguration.ENABLE_LOGS)) {
+      LOGGER.info("Vector search was ignored due to configuration");
+    }
 
     // Chunking
-    documentsList = ChunkUtils.chunkDocuments(config, initialDocumentsList);
+    documentsList = initialDocumentsList;
+    if (config.getBooleanProperty(RagConfiguration.ENABLE_CHUNKING)) {
+      documentsList = ChunkUtils.chunkDocuments(config, initialDocumentsList);
+    } else if (config.getBooleanProperty(RagConfiguration.ENABLE_LOGS)) {
+      LOGGER.info("Chunking was ignored due to configuration");
+    }
 
     // Prompting
     List<String> prompts;
@@ -134,15 +133,9 @@ public class RagAPI extends SearchAPI {
    */
   private static List<DocumentForRag> extractDocumentsList(JSONObject result, RagConfiguration config) throws InvalidPropertiesFormatException, FileNotFoundException {
     // Handling search results
-    List<DocumentForRag> documentsList; // List of simplified documents (id, url, name)
     // Retrieving list of documents : id, title, url
+    List<DocumentForRag> documentsList;
     documentsList = getDocumentList(result, config);
-
-    // Todo : SUPPRIMER SOLR_FIELD
-    if (!ALLOWED_FIELDS_VALUE.contains(config.getProperty(RagConfiguration.SOLR_FIELD))) {
-      // If rag.solrField is not one of the allowed fields (ALLOW_FIELDS_VALUE), an error is returned.
-      throw new InvalidPropertiesFormatException("Invalid value for rag.solrField property. Valid values are \"highlighting\", \"preview_content\" and \"exactContent\".");
-    }
 
     if (documentsList.isEmpty()) {
       throw new FileNotFoundException("The query cannot be answered because no associated documents were found.");
@@ -171,19 +164,8 @@ public class RagAPI extends SearchAPI {
       LOGGER.info("Request processed by RagAPI : {}", userQuery);
     }
 
-    // If the content is extracted from highlighting, then the user can configure the size of the extracts
-    try {
-      // TODO : SUPPRIMER SOLR FIELD OPTIONS
-      if (HIGHLIGHTING.equals(config.getProperty(RagConfiguration.SOLR_FIELD)) && config.getIntegerProperty(RagConfiguration.SOLR_HL_FRAGSIZE) != null) {
-        request.setAttribute("hl.fragsize", Integer.valueOf(config.getIntegerProperty(RagConfiguration.SOLR_HL_FRAGSIZE)));
-        request.setAttribute("hl.tag.pre", "");
-        request.setAttribute("hl.tag.post", "");
-        if (!config.getProperty(RagConfiguration.SEARCH_OPERATOR).isEmpty())
-          request.setAttribute("q.op", config.getProperty(RagConfiguration.SEARCH_OPERATOR));
-      }
-    } catch (NumberFormatException e) {
-      throw new NumberFormatException("Invalid value for rag.hl.fragsize property. Integer expected.");
-    }
+    if (!config.getProperty(RagConfiguration.SEARCH_OPERATOR).isEmpty())
+      request.setAttribute("q.op", config.getProperty(RagConfiguration.SEARCH_OPERATOR));
 
     // Override parameters with request attributes (set by the code and not from the client, so
     // they prevail over what has been given as a parameter)
@@ -201,7 +183,7 @@ public class RagAPI extends SearchAPI {
 
   /**
    * Get a JSONArray containing a list of documents (ID, url, title and content) returned by the Search
-   * @param result : The result of the search, including Solr documents and highlighting
+   * @param result : The result of the search, containing Solr documents
    * @param config RAG configuration
    * @return JSONArray
    */
@@ -209,7 +191,6 @@ public class RagAPI extends SearchAPI {
     try {
 
       JSONObject response = (JSONObject) result.get("response");
-      JSONObject highlighting = (JSONObject) result.get(HIGHLIGHTING);
       List<DocumentForRag> documentsList = new ArrayList<>();
 
       if (response != null && response.get("docs") != null) {
@@ -227,13 +208,9 @@ public class RagAPI extends SearchAPI {
           document.setUrl(url);
 
           // Add the content to the processed document
-          // TODO : REMOVE SOLR_FIELD OPTIONS
-          JSONArray content = (JSONArray) ((JSONObject) docs.get(i)).get(config.getProperty(RagConfiguration.SOLR_FIELD));
+          JSONArray content = (JSONArray) ((JSONObject) docs.get(i)).get(EXACT_CONTENT);
           if (content != null && content.get(0) != null) {
             document.setContent(content.get(0).toString());
-          } else if (HIGHLIGHTING.equals(config.getProperty(RagConfiguration.SOLR_FIELD))) {
-            String documentHighlighting = extractDocumentsHighlighting(highlighting, id);
-            if (!documentHighlighting.isEmpty()) document.setContent(documentHighlighting);
           }
 
           documentsList.add(document);
@@ -255,37 +232,6 @@ public class RagAPI extends SearchAPI {
     error.put("reason", message);
     response.put("content", error);
     return response;
-  }
-
-
-  /**
-   * Extract the content of the highlighting specific to one document
-   * @param highlighting : A JSONObject containing all the highlightings
-   * @param id : The ID of the document
-   * @return
-   */
-  private static String extractDocumentsHighlighting(JSONObject highlighting, String id) {
-
-    try {
-      JSONObject documentHighlighting = (JSONObject) highlighting.get(id);
-
-        StringBuilder content = new StringBuilder();
-
-        if (documentHighlighting != null) {
-          for (String typeOfContent : HIGHLIGHTING_FIELDS) {
-            // typeOfContent is one of the allowed fields in highlighting : content_fr, content_en or exactContent
-            if (documentHighlighting.get(typeOfContent) != null) {
-              String highlightedContent = ((JSONArray) documentHighlighting.get(typeOfContent)).get(0).toString();
-              content.append(highlightedContent);
-            }
-          }
-          return content.toString();
-        }
-
-    } catch (Exception e) {
-      LOGGER.error("An error occurred while extracting highlightings from Datafari search results.", e);
-    }
-    return "";
   }
 
 

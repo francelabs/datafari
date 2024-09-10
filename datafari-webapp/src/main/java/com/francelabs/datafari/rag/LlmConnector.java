@@ -1,7 +1,5 @@
 package com.francelabs.datafari.rag;
 
-import org.json.simple.JSONArray;
-
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
