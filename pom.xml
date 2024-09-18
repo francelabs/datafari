@@ -38,8 +38,8 @@
     <postgres.version>42.7.2</postgres.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <solr.sha512>7e16aa71fc01f9d9b05e5514e35798104a18253a211426aa669aa3b91225d110a4fa1c78c9ec86b7e1909e2aae63696deffd877536790303cd0638eb7f1a8c63</solr.sha512>
-    <solr.version>9.6.1</solr.version>
+    <solr.sha512>a80417a79c8371d2049868573927c587b4a5b7b37e938ca6e64e8a8842449f49eddc987968ddad5d6b6b1f4395990c1edc4576a884b3a62c4fbcd97091a659d9</solr.sha512>
+    <solr.version>9.7.0</solr.version>
      <spring.boot.version>2.7.14</spring.boot.version>
     <spring.data.cassandra.version>3.4.15</spring.data.cassandra.version>
     <spring.security.version>5.8.5</spring.security.version>
@@ -55,8 +55,8 @@
     <xmlsec.version>2.3.0</xmlsec.version>
 <mcf.version>2.26-a2343428</mcf.version>
 <mcf.sha512>b53d7fd2a6e43968479ce7cf9dec007a344404234b10b1b30e2876e216c96b91640fd71e840128ade2fccc48d9144e72d42602c5139d5db92967dd01f1bf32b7</mcf.sha512>
-<zookeeper.version>3.9.1</zookeeper.version>
- <zookeeper.sha512>6a1c56557ee8de63dc0730de6c55640afa8ae9043e57539fed393120fe3adfb7f30a6ac13af0a6331ff34ba9c6f2b31e41e40c5446e669651522fffb9ce64e48</zookeeper.sha512>
+<zookeeper.version>3.9.2</zookeeper.version>
+ <zookeeper.sha512>2b5ae02d618a27ca8cd54924855d5344263b7d9dee760181f9d66bafa9230324d2ad31786895f0654c969dc38d4a3d0077f74cc376b58b5fa2fb94beb1ab445f</zookeeper.sha512>
   </properties>
   
   <!-- The order of modules execution is important  -->
