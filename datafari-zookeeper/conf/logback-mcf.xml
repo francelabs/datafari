@@ -23,7 +23,7 @@
   <!-- Uncomment this if you would like to expose Logback JMX beans -->
   <!--jmxConfigurator /-->
 
-  <property name="zookeeper.console.threshold" value="INFO" />
+  <property name="zookeeper.console.threshold" value="WARN" />
 
   <property name="zookeeper.log.dir" value="${DATAFARI_LOGS}" />
   <property name="zookeeper.log.file" value="zookeeper-mcf.log" />
