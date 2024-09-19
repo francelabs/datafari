@@ -98,7 +98,7 @@ public class RagAPI extends SearchAPI {
       response.put("status", "OK");
       JSONObject content = new JSONObject();
       content.put("message", message);
-      content.put("documents", mergeSimilarDocuments(documentsList));
+      content.put("documents", mergeSimilarDocuments(documentsList, message));
       response.put("content", content);
       return response;
     } else {
@@ -237,15 +237,16 @@ public class RagAPI extends SearchAPI {
 
   /**
    * The "documentList" containing sources of the answer might contain duplicates.
-   * This methode merge thoses duplicated entries.
+   * Some document might not be used in the LLM response.
+   * This methode merge thoses duplicated entries, and remove useless ones.
    * @return List<DocumentForRag> The final list
    */
-  private static List<DocumentForRag> mergeSimilarDocuments(List<DocumentForRag> documentList) {
+  private static List<DocumentForRag> mergeSimilarDocuments(List<DocumentForRag> documentList, String response) {
     // Removing Duplicates
     Map<String, DocumentForRag> map = new HashMap<>();
     for (DocumentForRag doc : documentList) {
       String id = doc.getId();
-        if (map.containsKey(id)) {
+        if (map.containsKey(id) || !response.toUpperCase().contains(doc.getTitle().toUpperCase())) {
             continue;
         }
         map.put(id, doc);
