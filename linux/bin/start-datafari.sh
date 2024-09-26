@@ -117,7 +117,7 @@ if  [[ "$NODETYPE" = *mono* ]]; then
     run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_cassandra";
   
     run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh init_postgres";
-    if  [[ "$POSTGRESQL_EXTERNAL" = no ]]; then
+    if  [[ "$POSTGRESQL_EXTERNAL" = false ]]; then
     run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh start_postgres";
     fi
   fi
@@ -134,7 +134,7 @@ if  [[ "$NODETYPE" = *mono* ]]; then
     run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_zk_mcf";
     run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_zk";
   else
-    if  [[ "$POSTGRESQL_EXTERNAL" = no ]]; then
+    if  [[ "$POSTGRESQL_EXTERNAL" = false ]]; then
     run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh start_postgres";
     fi
     run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh start_cassandra";

@@ -3,7 +3,7 @@ interactive_questions() {
     check_ip_node
     set_property "NODETYPE" "monoserver" $CONFIG_FILE
     set_property "SOLRHOSTS" localhost:2181 $CONFIG_FILE
-    set_property "POSTGRESQL_EXTERNAL" "no" $CONFIG_FILE
+    set_property "POSTGRESQL_EXTERNAL" "false" $CONFIG_FILE
     set_property "POSTGRESQL_HOSTNAME" "localhost" $CONFIG_FILE
     set_property "POSTGRESQL_DATABASE" "manifoldcf" $CONFIG_FILE
     set_property "POSTGRESQL_USERNAME" "postgres" $CONFIG_FILE
