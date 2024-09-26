@@ -82,12 +82,9 @@
    <field name="suggest" type="text_auto" indexed="true" stored="false" multiValued="true" />
    <field name="spell" type="textSpell" indexed="true" stored="false" multiValued="true" />
    
-   
-   
-   
-
    <field name="_version_" type="long" indexed="true" stored="true"/>
-   
+  
+   <dynamicField name="*" type="ignored" multiValued="true"/>   
  </fields>
 
 

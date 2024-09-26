@@ -15,6 +15,20 @@
  *******************************************************************************/
 package com.francelabs.datafari.rest.v2_0.search;
 
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.francelabs.datafari.utils.Timer;
 import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
 import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
 import com.francelabs.datafari.utils.userqueryconf.UserQueryAllConf;
@@ -22,6 +36,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -60,6 +76,35 @@ public class Search2 extends HttpServlet {
 
 
   /**
+   * Apply user's specific query config (specific boosts related to user context) on the request
+   *
+   * @param request the original request
+   */
+  //FIXME à supprimer
+  private void applyUserQueryConf(final HttpServletRequest request) {
+    Timer timer = new Timer(this.getClass().getName(), "applyUserQueryConf");
+    final String userConf = GetUserQueryConf.getUserQueryConf(request);
+    if (userConf != null && !userConf.isEmpty()) {
+      final JSONParser parser = new JSONParser();
+      try {
+        final JSONObject jsonConf = (JSONObject) parser.parse(userConf);
+        final String qf = (String) jsonConf.get("qf");
+        final String pf = (String) jsonConf.get("pf");
+        if (qf != null && qf.length() > 0) {
+          request.setAttribute("qf", qf);
+        }
+
+        if (pf != null && pf.length() > 0) {
+          request.setAttribute("pf", pf);
+        }
+      } catch (final ParseException e) {
+        logger.warn("An issue has occured while reading user query conf", e);
+      }
+    }
+    timer.stop();
+  }
+
+  /**
    * Check if search response contains errors and throw an {@link InternalErrorException} if it is the case
    *
    * @param searchResponse the JSONObject representing the search response to check
@@ -86,13 +131,15 @@ public class Search2 extends HttpServlet {
    * @param searchEndpoint The search endpoint from which the provided searchResponse is issued from
    */
   private void switchDocURLToURLAPI(final JSONObject searchResponse, final HttpServletRequest request, final String searchEndpoint) {
+    Timer timer = new Timer(this.getClass().getName(), "switchDocURLToURLAPI");
+
     final JSONObject responseObj = (JSONObject) searchResponse.get("response");
     if (responseObj != null) {
       final JSONArray docsArray = (JSONArray) responseObj.get("docs");
       for (final Object docObj : docsArray) {
         final JSONObject jsonDoc = (JSONObject) docObj;
         final String url = (String) jsonDoc.get("url");
-        if (url != null) {
+        if (url != null && isUrlSafe(URLDecoder.decode(url, StandardCharsets.UTF_8))) {
           // temper with the URL to point on our URL endpoint
           // Also add a path array giving path information for display purposes
           final StringBuffer currentURL = request.getRequestURL();
@@ -104,13 +151,38 @@ public class Search2 extends HttpServlet {
           }
 
           String newUrl = currentURL.substring(0, currentURL.indexOf(searchEndpoint));
-          newUrl += "/rest/v2.0/url?url=" + URLEncoder.encode(url, StandardCharsets.UTF_8);
+          String newUrlFolder = newUrl;
+          newUrl += "/rest/v2.0/url?url=" + URLEncoder.encode(URLDecoder.decode(url, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+          if (url.contains("/")) {
+            newUrlFolder += "/rest/v2.0/url?url=" + URLEncoder.encode(URLDecoder.decode(url.substring(0,url.lastIndexOf('/')), StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+          } else {
+            newUrlFolder = newUrl;
+          }
+          jsonDoc.put("folder_url", newUrlFolder);
+
           newUrl += "&id=" + queryId;
           jsonDoc.put("click_url", newUrl);
+
+        } else if (url != null) {
+          jsonDoc.put("click_url", url);
+          jsonDoc.put("folder_url", url);
         }
       }
     }
+    timer.stop();
+  }
 
+
+  /**
+   * Check if a String (url) contains characters out of the whitelist :
+   * ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=ÀÁÂàáâãäåÃÄÅ?ÈÉÊËèéêëÌÍÎÏìíîïÒÓÔòóôõöÕÖÙÚÛÜùúûüÇçÑñÆæŒœ
+   * @param url A String url
+   */
+  private boolean isUrlSafe(String url) {
+    String blacklist = "[^A-Za-z0-9-._~:/?#\\[\\]@!$%&'()*+,;={}^¨€£\"`<>|ÀÁÂàáâãäåÃÄÅÈÉÊËèéêëÌÍÎÏìíîïÒÓÔòóôõöÕÖÙÚÛÜùúûüÇçÑñÆæ ]";
+    Pattern p = Pattern.compile(blacklist);
+    Matcher m = p.matcher(url);
+    return !m.find();
   }
 
   @GetMapping(value = "/rest/v2.0/search/*", produces = "application/json;charset=UTF-8")
@@ -122,15 +194,17 @@ public class Search2 extends HttpServlet {
       final JSONObject jsonResponse = SearchAggregator.doGetSearch(request, response);
       checkException(jsonResponse);
       switchDocURLToURLAPI(jsonResponse, request, "/rest/v2.0/search/");
-
+      timer.stop();
       return jsonResponse;
     } catch (ServletException | IOException e) {
+      timer.stop();
       throw new InternalErrorException("Error while performing the search request.");
     }
   }
 
   @GetMapping(value = "/rest/v2.0/search/noaggregator/*", produces = "application/json;charset=UTF-8")
   protected JSONObject performAggregatorlessSearch(final HttpServletRequest request, final HttpServletResponse response) {
+    Timer timer = new Timer(this.getClass().getName(), "performAggregatorlessSearch");
     try {
       setSearchSessionId(request);
       UserQueryAllConf.apply(request);
@@ -138,8 +212,10 @@ public class Search2 extends HttpServlet {
       final JSONObject jsonResponse = SearchAggregator.doGetSearch(request, response, true);
       checkException(jsonResponse);
       switchDocURLToURLAPI(jsonResponse, request, "/rest/v2.0/search/noaggregator/");
+      timer.stop();
       return jsonResponse;
     } catch (ServletException | IOException e) {
+      timer.stop();
       throw new InternalErrorException("Error while performing the search request.");
     }
   }

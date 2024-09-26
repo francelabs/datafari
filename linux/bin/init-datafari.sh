@@ -184,7 +184,8 @@ init_temp_directory() {
   sed -i -e "s~@TOMCATMCFTMPDIR@~${TOMCATMCFTMPDIR}~g" $DATAFARI_HOME/tomcat_mcf/bin/setenv.sh >>$installerLog 2>&1
   sed -i -e "s~@MCFTMPDIR@~${MCFTMPDIR}~g" $DATAFARI_HOME/mcf/mcf_home/options.env.unix >>$installerLog 2>&1
   sed -i -e "s~@SOLRTMPDIR@~${SOLRTMPDIR}~g" $DATAFARI_HOME/solr/bin/solr.in.sh >>$installerLog 2>&1
-  sed -i -e "s~@TIKATMPDIR@~${TIKATMPDIR}~g" $DATAFARI_HOME/tika-server/conf/tika-config.xml >>$installerLog 2>&1  
+  sed -i -e "s~@TIKATMPDIR@~${TIKATMPDIR}~g" $DATAFARI_HOME/tika-server/conf/tika-config.xml >>$installerLog 2>&1
+  sed -i -e "s~@CASSANDRATMPDIR@~${CASSANDRATMPDIR}~g" $DATAFARI_HOME/cassandra/conf/jvm-server.options >>$installerLog 2>&1
 }
 
 
@@ -197,15 +198,33 @@ generate_certificates() {
 }
 
 generate_certificates_apache() {
-
+  # Check if user entered an IP or a FQDN
+  echo "Check if IP or FQDN for $1"
+  if [[ $1 =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo "IP entered"
+  else
+    echo "FQDN entered"
+    sed -i 's/IP.2/DNS.1/g' $DATAFARI_HOME/ssl-keystore/apache/config/datafari-config.csr
+  fi
+  
   # Generate SSL certificate for Apache
   sed -i -e "s/@NODEHOST@/${1}/g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-config.csr >>$installerLog 2>&1
   sed -i -e "s/@NODEHOST@/${1}/g" $DATAFARI_HOME/ssl-keystore/apache/config/tomcat.conf >>$installerLog 2>&1
   sed -i -e "s/@NODEHOST@/${1}/g" $DATAFARI_HOME/ssl-keystore/apache/config/solr.conf >>$installerLog 2>&1
   sed -i -e "s/@NODEHOST@/${1}/g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-services.conf >>$installerLog 2>&1
-  openssl req -config $DATAFARI_HOME/ssl-keystore/apache/config/datafari-config.csr -new -newkey rsa:2048 -nodes -keyout $DATAFARI_HOME/ssl-keystore/apache/datafari.key -out $DATAFARI_HOME/ssl-keystore/apache/datafari.csr
-  openssl x509 -req -days 365 -in $DATAFARI_HOME/ssl-keystore/apache/datafari.csr -signkey $DATAFARI_HOME/ssl-keystore/apache/datafari.key -out $DATAFARI_HOME/ssl-keystore/apache/datafari.crt
+  openssl req -config $DATAFARI_HOME/ssl-keystore/apache/config/datafari-config.csr -new -newkey rsa:2048 -nodes -keyout $DATAFARI_HOME/ssl-keystore/apache/datafari.key -out $DATAFARI_HOME/ssl-keystore/apache/datafari.csr -extensions v3_req
+  openssl x509 -req -days 365 -in $DATAFARI_HOME/ssl-keystore/apache/datafari.csr -signkey $DATAFARI_HOME/ssl-keystore/apache/datafari.key -extfile $DATAFARI_HOME/ssl-keystore/apache/config/datafari-config.csr -out $DATAFARI_HOME/ssl-keystore/apache/datafari.crt -extensions v3_req
   $JAVA_HOME/bin/keytool -importcert -noprompt -alias datafari -file $DATAFARI_HOME/ssl-keystore/apache/datafari.crt -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
+  
+  $JAVA_HOME/bin/keytool -importcert -noprompt -alias microsoft_ecc_root_certificate_authority_2017 -file $DATAFARI_HOME/ssl-keystore/rootCertificates/Microsoft_ECC_Root_Certificate_Authority_2017.crt -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
+  $JAVA_HOME/bin/keytool -importcert -noprompt -alias microsoft_rsa_root_certificate_authority_2017 -file $DATAFARI_HOME/ssl-keystore/rootCertificates/Microsoft_RSA_Root_Certificate_Authority_2017.crt -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
+  
+  $JAVA_HOME/bin/keytool -importcert -noprompt -alias baltimorecybertrustroot -file $DATAFARI_HOME/ssl-keystore/rootCertificates/BaltimoreCyberTrustRoot.crt -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
+  $JAVA_HOME/bin/keytool -importcert -noprompt -alias digicertglobalrootca -file $DATAFARI_HOME/ssl-keystore/rootCertificates/DigiCertGlobalRootCA.crt -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
+  $JAVA_HOME/bin/keytool -importcert -noprompt -alias digicertglobalrootg2 -file $DATAFARI_HOME/ssl-keystore/rootCertificates/DigiCertGlobalRootG2.crt -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
+  $JAVA_HOME/bin/keytool -importcert -noprompt -alias digicertglobalrootg3 -file $DATAFARI_HOME/ssl-keystore/rootCertificates/DigiCertGlobalRootG3.crt -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
+  $JAVA_HOME/bin/keytool -importcert -noprompt -alias entrustg2ca -file $DATAFARI_HOME/ssl-keystore/rootCertificates/entrust_g2_ca.cer -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
+  
   mkdir -p $DATAFARI_HOME/ssl-keystore/apache/backup/
   cp $DATAFARI_HOME/ssl-keystore/apache/datafari.key $DATAFARI_HOME/ssl-keystore/apache/backup/
   cp $DATAFARI_HOME/ssl-keystore/apache/datafari.crt $DATAFARI_HOME/ssl-keystore/apache/backup/
@@ -240,8 +259,23 @@ init_solr_node() {
   sed -i -e "s/@SOLRNODEIP@/${1}/g" $DATAFARI_HOME/bin/zkUtils/init-solr-collections.sh >>$installerLog 2>&1
   sed -i -e "s/@SOLRNODEIP@/${1}/g" $TOMCAT_HOME/conf/solr.properties >>$installerLog 2>&1
   sed -i -e "s/@SOLRNODEIP@/${1}/g" $DATAFARI_HOME/ssl-keystore/apache/config/tomcat.conf >>$installerLog 2>&1
-  sed -i -e "s/@SOLRNODEIP@/${1}/g" $SOLR_INSTALL_DIR/solr_home/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
     
+}
+
+init_solr_custom_conf() {
+   sed -i -e "s/@SOLRNODEIP@/${1}/g" $SOLR_INSTALL_DIR/solr_home/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
+   sed -i -e "s/@SOLRNODEIP@/${1}/g" $DATAFARI_HOME/solr/solrcloud/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
+   sed -i -e "s/@SOLRNODEIP@/${1}/g" $DATAFARI_HOME/bin/purgeUtils/analyticsPurge.sh >>$installerLog 2>&1
+   
+   sed -i -e "s/@PROTOCOL@/${2}/g" $SOLR_INSTALL_DIR/solr_home/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
+   sed -i -e "s/@PROTOCOL@/${2}/g" $DATAFARI_HOME/solr/solrcloud/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
+   sed -i -e "s/@PROTOCOL@/${2}/g" $DATAFARI_HOME/bin/purgeUtils/analyticsPurge.sh >>$installerLog 2>&1
+   
+   sed -i -e "s/@PORT@/${3}/g" $SOLR_INSTALL_DIR/solr_home/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
+   sed -i -e "s/@PORT@/${3}/g" $DATAFARI_HOME/solr/solrcloud/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
+   sed -i -e "s/@PORT@/${3}/g" $DATAFARI_HOME/bin/purgeUtils/analyticsPurge.sh >>$installerLog 2>&1
+   
+     
 }
 
 init_solr_hosts() {
@@ -253,6 +287,8 @@ init_solr_hosts() {
 init_zk() {
   #sed -i -e "s/@NODEHOST@/${1}/g" $TOMCAT_HOME/conf/datafari.properties >>$installerLog 2>&1
   sed -i -e "s/@ZKHOST@/${1}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolrNoTika.json >>$installerLog 2>&1
+  sed -i -e "s/@PROTOCOL@/${2}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolrNoTika.json >>$installerLog 2>&1
+  sed -i -e "s/@PORT@/${3}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolrNoTika.json >>$installerLog 2>&1
   sed -i -e "s/@ZKHOST@/${1}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/Duplicates.json >>$installerLog 2>&1
 @VERSION-INIT-ZK@
 }
@@ -287,6 +323,7 @@ init_shards() {
 
 init_main_node() {
   sed -i -e "s/@ISMAINNODE@/true/g" $TOMCAT_HOME/conf/datafari.properties >>$installerLog 2>&1
+  sed -i 's/\(ZK_HOST *= *\).*/\1localhost:2181/' $DATAFARI_HOME/solr/bin/solr.in.sh >>$installerLog 2>&1
   
 }
 
@@ -470,7 +507,7 @@ init_permissions() {
     chown -R ${DATAFARI_USER} /etc/apache2
     chmod -R 775 /etc/apache2
   elif [ -d /etc/httpd ]; then
-    echo '$DATAFARI_USER ALL=NOPASSWD:/sbin/apachectl' >> /etc/sudoers
+    echo "$DATAFARI_USER ALL=NOPASSWD:/sbin/apachectl" >> /etc/sudoers
     chown -R ${DATAFARI_USER} /etc/httpd
     chmod -R 775 /etc/httpd
   fi
@@ -783,8 +820,9 @@ initialization_monoserver() {
   source "${DATAFARI_HOME}/bin/deployUtils/temp_directory.properties"
   init_temp_directory
   init_solr_node $localip
+  init_solr_custom_conf $localip http 8983
   init_solr_hosts $localip
-  init_zk $localip
+  init_zk $localip http 8983
   init_zk_mcf
   init_mcf "A"
   init_shards $SOLRNUMSHARDS

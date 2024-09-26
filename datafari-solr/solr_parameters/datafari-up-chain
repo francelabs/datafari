@@ -13,19 +13,37 @@
     </processor>
     
     
-   <processor class="solr.ParseDateFieldUpdateProcessorFactory">
-      	<arr name="format">
-		<!--<str>EEE, dd MMM yyyy HH:mm:ss zzz</str>-->
-		<!--<str>EEEE, dd-MMM-yy HH:mm:ss zzz</str>-->
- 	  <str>yyyy-MM-dd['T'[HH:mm[:ss[.SSS]][z</str>
-      <str>yyyy-MM-dd['T'[HH:mm[:ss[,SSS]][z</str>
-      <str>yyyy-MM-dd HH:mm[:ss[.SSS]][z</str>
-      <str>yyyy-MM-dd HH:mm[:ss[,SSS]][z</str>
-      <str>[EEE, ]dd MMM yyyy HH:mm[:ss] z</str>
-      <str>EEEE, dd-MMM-yy HH:mm:ss z</str>
-      <str>EEE MMM ppd HH:mm:ss [z ]yyyy</str>
-		</arr>
-	</processor>
+    <processor class="solr.ParseDateFieldUpdateProcessorFactory">
+      <arr name="format">
+ 		    <str>yyyy-MM-dd['T'[HH:mm[:ss[.SSS]][z</str>
+      	<str>yyyy-MM-dd['T'[HH:mm[:ss[,SSS]][z</str>
+     	 	<str>yyyy-MM-dd HH:mm[:ss[.SSS]][z</str>
+     	  <str>yyyy-MM-dd HH:mm[:ss[,SSS]][z</str>
+        <str>[EEE][,][ ][ ]dd [ ]MMM [ ]yyyy [ ]HH:mm[:ss][ z</str>
+        <str>[EEE][,][ ][ ]dd-MMM-yy [ ]HH:mm[:ss][ z</str>
+        <str>[EEE][,][ ][ ]MMM [ ]ppd [ ]HH:mm[:ss] [z ]yyyy</str>
+        <str>EEE[,][ ][ ]dd [ ]MMM [ ]HH:mm[:ss] [z ]yyyy</str>
+        <str>dd [ ]MMM [ ]HH:mm[:ss] [z ]yyyy</str>
+        <str>[EEE][,][ ][ ]MMM[.][ ][ ]dd[,][ ][ ]yyyy</str>
+        <str>EEE[,][ ][ ]dd[,][ ][ ]MMM[.][ ][ ]yyyy</str>
+        <str>dd[,][ ][ ]MMM[.][ ][ ]yyyy</str>
+        <str>MM/dd/yyyy[ HH:mm[:ss]</str>
+	    </arr>
+	  </processor>
+
+    <processor class="solr.ParseDateFieldUpdateProcessorFactory">
+      <str name="locale">fr_FR</str>
+      <arr name="format">
+        <str>[EEE][,][ ][ ]dd [ ]MMM [ ]yyyy [ ]HH:mm[:ss][ z</str>
+        <str>dd-MMMM-yy [ ]HH:mm[:ss][ z</str>
+        <str>[EEE][,][ ][ ]MMM [ ]ppd [ ]HH:mm[:ss] [z ]yyyy</str>
+        <str>EEE[,][ ][ ]dd [ ]MMM [ ]HH:mm[:ss] [z ]yyyy</str>
+        <str>dd [ ]MMM [ ]HH:mm[:ss] [z ]yyyy</str>
+        <str>[EEE][,][ ][ ]MMM[.][ ][ ]dd[,][ ][ ]yyyy</str>
+        <str>EEE[,][ ][ ]dd[,][ ][ ]MMM[.][ ][ ]yyyy</str>
+        <str>dd[,][ ][ ]MMM[.][ ][ ]yyyy</str>
+	    </arr>
+	  </processor>
 
     <processor class="solr.TrimFieldUpdateProcessorFactory">
       <str name="fieldRegex">preview_content</str>
@@ -70,4 +88,8 @@
         <bool name="hierarchical.path.processing">true</bool>
         <str name="hierarchical.field">urlHierarchy</str>
         <str name="hierarchical.path.separator">/</str>
+      </processor>
+
+      <processor class="com.francelabs.datafari.updateprocessor.RegexEntityUpdateProcessorFactory">
+        <str name="regexFile">regexSpecification.csv</str>
       </processor>

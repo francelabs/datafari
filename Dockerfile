@@ -79,6 +79,7 @@ RUN     apt-get update && apt-get install --allow-unauthenticated -y \
                 zip \
                 iputils-ping \
                 bc \
+				netcat-openbsd \
 	&& rm -rf /var/lib/apt/lists/*
 # For dev
 RUN echo "export LANG=C.UTF-8" >> /etc/profile

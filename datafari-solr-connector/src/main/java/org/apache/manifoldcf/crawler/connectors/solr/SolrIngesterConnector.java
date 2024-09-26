@@ -98,6 +98,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.SolrException;
 import org.apache.solr.common.params.CursorMarkParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 
@@ -778,7 +779,7 @@ public class SolrIngesterConnector extends BaseRepositoryConnector {
               } catch (final IOException e) {
                 errorCode = "ERROR";
                 description = "Unable to perform Solr requests";
-                Logging.connectors.error("Unable to perform Solr requests", e);
+                Logging.connectors.error(description, e);
               }
 
             }
@@ -792,7 +793,11 @@ public class SolrIngesterConnector extends BaseRepositoryConnector {
       } catch (final SolrServerException | IOException e) {
         errorCode = "ERROR";
         description = "Unable to perform Solr requests";
-        Logging.connectors.error("Unable to perform Solr requests", e);
+        Logging.connectors.error(description, e);
+      } catch (final SolrException solrException) {
+        errorCode = String.valueOf(solrException.code());
+        description = solrException.getMessage();
+        Logging.connectors.error(description, solrException);
       }
 
       /*
@@ -803,6 +808,9 @@ public class SolrIngesterConnector extends BaseRepositoryConnector {
           activities.deleteDocument(documentIdentifiers[i]);
           activities.recordActivity(new Long(startFetchTime), ACTIVITY_GET, 0L, documentIdentifiers[i], "NOTFOUND", "Document not found in Solr", null);
         } else if (errorCode != null) {
+          Logging.connectors.warn("Prepare to skip document with id=" + documentIdentifiers[i] + ", due to error: " + errorCode + " - " + description);
+          activities.deleteDocument(documentIdentifiers[i]);
+          Logging.connectors.warn("Document with id=" + documentIdentifiers[i] + " skipped OK !");
           activities.recordActivity(new Long(startFetchTime), ACTIVITY_GET, 0L, documentIdentifiers[i], errorCode, description, null);
         }
 

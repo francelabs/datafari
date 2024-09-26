@@ -18,15 +18,11 @@
 */
 package org.apache.manifoldcf.agents.output.solr;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.io.Reader;
+import java.util.*;
 
 import org.apache.manifoldcf.agents.interfaces.IOutputAddActivity;
 import org.apache.manifoldcf.agents.interfaces.IOutputCheckActivity;
@@ -46,6 +42,7 @@ import org.apache.manifoldcf.core.interfaces.IThreadContext;
 import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 import org.apache.manifoldcf.core.interfaces.Specification;
 import org.apache.manifoldcf.core.interfaces.VersionContext;
+import org.apache.manifoldcf.crawler.system.Logging;
 
 /**
  * This is the output connector for SOLR. Currently, no frills.
@@ -514,6 +511,13 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
 
     // Establish a session
     getSession();
+
+    String title = normalizeTitle(document.getFileName());
+    document.setFileName(title);
+
+    if (Logging.connectors.isDebugEnabled()) {
+      logRepositoryDocument(document, documentURI);
+    }
 
     // Now, go off and call the ingest API.
     if (poster.indexPost(documentURI, document, sp.getArgs(), authorityNameString, activities))
@@ -1605,6 +1609,134 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
       return args;
     }
 
+  }
+
+  private String normalizeTitle (String titleToNormalize){
+    if (titleToNormalize == null){
+      return titleToNormalize;
+    }
+
+    String title = titleToNormalize.replaceAll("[^a-zA-Z0-9 -]", "");
+    return truncate(title);
+  }
+
+  private String truncate(String toTruncate){
+    if (toTruncate != null && toTruncate.length() > 100) {
+      toTruncate = toTruncate.substring(0, 100);
+    }
+    return toTruncate;
+  }
+
+  /**
+   * Use this method to log {@link RepositoryDocument} object content.
+   *
+   * @param document the current {@link RepositoryDocument} that is used to send the update request to Solr.
+   * @param docID the MCF document ID. This ID is given by the Repository Connector that creates the RepositoryDocument.
+   */
+  //TODO refactor this method so that it can be used in any MCF connectors.
+  private void logRepositoryDocument(RepositoryDocument document, String docID){
+    StringBuilder toLog = new StringBuilder("\n!! RepositoryDocument content ------------------------------------- !!\nfilename = ");
+    final String filename = document.getFileName();
+    toLog.append(filename).append("\n");
+    toLog.append("Document identifier = ").append(docID).append("\n");
+    toLog.append("Getters:\n");
+    toLog.append("getCreatedDate = ").append(document.getCreatedDate()).append("\n");
+    toLog.append("getModifiedDate = ").append(document.getModifiedDate()).append("\n");
+    toLog.append("getIndexingDate = ").append(document.getIndexingDate()).append("\n");
+    toLog.append("getMimeType = ").append(document.getMimeType()).append("\n");
+    toLog.append("getModifiedDate = ").append(document.getModifiedDate()).append("\n");
+    toLog.append("getOriginalSize = ").append(document.getOriginalSize()).append("\n");
+    logList(toLog, "getRootPath", document.getRootPath().toArray());
+    logList(toLog, "getSourcePath", document.getSourcePath().toArray());
+    toLog.append("Security Success:\n");
+    logList(toLog, "getSecurityACL [SECURITY_TYPE_DIRECTORY_LEVEL]", document.getSecurityACL(RepositoryDocument.SECURITY_TYPE_DIRECTORY_LEVEL));
+    logList(toLog, "getSecurityACL [SECURITY_TYPE_DOCUMENT]", document.getSecurityACL(RepositoryDocument.SECURITY_TYPE_DOCUMENT));
+    logList(toLog, "getSecurityACL [SECURITY_TYPE_SHARE]", document.getSecurityACL(RepositoryDocument.SECURITY_TYPE_SHARE));
+    logList(toLog, "getSecurityACL [SECURITY_TYPE_PARENT]", document.getSecurityACL(RepositoryDocument.SECURITY_TYPE_PARENT));
+    toLog.append("Security Deny:\n");
+    logList(toLog, "getSecurityDenyACL [SECURITY_TYPE_DIRECTORY_LEVEL]", document.getSecurityDenyACL(RepositoryDocument.SECURITY_TYPE_DIRECTORY_LEVEL));
+    logList(toLog, "getSecurityDenyACL [SECURITY_TYPE_DOCUMENT]", document.getSecurityDenyACL(RepositoryDocument.SECURITY_TYPE_DOCUMENT));
+    logList(toLog, "getSecurityDenyACL [SECURITY_TYPE_SHARE]", document.getSecurityDenyACL(RepositoryDocument.SECURITY_TYPE_SHARE));
+    logList(toLog, "getSecurityDenyACL [SECURITY_TYPE_PARENT]", document.getSecurityDenyACL(RepositoryDocument.SECURITY_TYPE_PARENT));
+
+
+    // Other Fields not fixed
+    toLog.append("\nFields:\n");
+    Iterator<String> itFields = document.getFields();
+    String fieldName;
+    Object[] fieldValues;
+    while (itFields.hasNext()) {
+      fieldName = itFields.next();
+      fieldValues = document.getField(fieldName);
+      logList(toLog, fieldName, fieldValues);
+    }
+
+
+    // Specific treatment for content
+    // Read content : create a copy before reading for connector after, otherwise the content can't be read for ingestion.
+    toLog.append("\nDocument BinaryStream (content field) = \n");
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream((int)document.getBinaryLength());
+    // Transfert document content to the storage
+    long binaryLength = 0;
+    try {
+      binaryLength = document.getBinaryStream().transferTo(outputStream);
+    } catch (IOException e) {
+      Logging.connectors.error(e.getMessage(), e);
+    }
+
+    // The input stream of the document has been totally read by previous instruction, so set a new one
+    document.setBinary(new ByteArrayInputStream(outputStream.toByteArray()), binaryLength);
+
+    try (Scanner scanner = new Scanner(new ByteArrayInputStream(outputStream.toByteArray()))) {
+      String line;
+      while (scanner.hasNext()){
+        line = scanner.nextLine();
+        toLog.append(line).append("\n");
+      }
+    }
+    toLog.append("!! End - ").append(filename).append("--------------------------------------------- !!\n");
+
+    Logging.connectors.debug(toLog);
+  }
+
+  private void logReaderField(StringBuilder toLog, Reader reader){
+    if (reader == null){
+      toLog.append("null\n");
+      return;
+    }
+
+    try (Scanner scanner = new Scanner(reader)){
+      String line;
+      while (scanner.hasNext()){
+        line = scanner.nextLine();
+        toLog.append(line).append("\n");
+      }
+    }
+  }
+
+  private void logList(StringBuilder toLog, String fieldName, Object[] fieldValues){
+    toLog.append(fieldName).append(" = ");
+    if (fieldValues == null){
+      toLog.append("null\n");
+      return;
+    }
+    if (fieldValues.length > 1){
+      toLog.append("[");
+    }
+    for (Object oneValue : fieldValues) {
+      if (oneValue instanceof Reader) {
+        logReaderField(toLog, (Reader)oneValue);
+      } else {
+        toLog.append(oneValue.toString());
+        if (fieldValues.length > 1) {
+          toLog.append(" ; ");
+        }
+      }
+    }
+    if (fieldValues.length > 1){
+      toLog.append("]");
+    }
+    toLog.append("\n");
   }
 
 }

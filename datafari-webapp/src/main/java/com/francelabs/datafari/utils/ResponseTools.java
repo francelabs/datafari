@@ -14,6 +14,7 @@ public class ResponseTools {
 
   public static final JSONObject writeSolrJResponse(final String handler, final IndexerQuery query, final IndexerQueryResponse queryResponse, final IndexerQuery queryPromolink,
       final IndexerQueryResponse queryResponsePromolink, final String username) throws IOException, ParseException, org.json.simple.parser.ParseException {
+    Timer timer = new Timer(ResponseTools.class.getName(), "writeSolrJResponse");
 
     final JSONParser parser = new JSONParser();
     final String jsonStrQueryResponse = queryResponse.getStrJSONResponse();
@@ -34,7 +35,7 @@ public class ResponseTools {
       }
 
     }
-
+    timer.stop();
     return json;
   }
 

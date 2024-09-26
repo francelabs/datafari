@@ -241,7 +241,7 @@ init_mcf()
 {
   echo "Uploading MCF configuration"
   cd "${DATAFARI_HOME}/bin/common"
-  nohup "${JAVA_HOME}/bin/java" -Dlog4j.configurationFile=$DATAFARI_HOME/bin/mcf.scripts.logging.xml -Djavax.net.ssl.trustStore=${DATAFARI_HOME}/ssl-keystore/datafari-truststore.p12 -Djavax.net.ssl.trustStorePassword=DataFariAdmin -Dorg.apache.manifoldcf.configfile=${MCF_HOME}/properties.xml -cp ./*:${MCF_HOME}/lib/mcf-core.jar:${MCF_HOME}/lib/* com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript RESTORE config/manifoldcf/init 2>/dev/null &
+  nohup "${JAVA_HOME}/bin/java" -Dlog4j.configurationFile=$DATAFARI_HOME/bin/mcf.scripts.logging.xml -Dlogback.configurationFile=${DATAFARI_HOME}/zookeeper-mcf/conf/logback.xml -Djavax.net.ssl.trustStore=${DATAFARI_HOME}/ssl-keystore/datafari-truststore.p12 -Djavax.net.ssl.trustStorePassword=DataFariAdmin -Dorg.apache.manifoldcf.configfile=${MCF_HOME}/properties.xml -cp ./*:${MCF_HOME}/lib/mcf-core.jar:${MCF_HOME}/lib/* com.francelabs.manifoldcf.configuration.script.BackupManifoldCFConnectorsScript RESTORE config/manifoldcf/init 2>/dev/null &
   pid_mcf_upload=$!
   spin='-\|/'
   i=0
@@ -278,13 +278,12 @@ init_solr()
   
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.hash.fields": "content"}}' http://localhost:8983/solr/Duplicates/config
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.quant.rate": "0.1"}}' http://localhost:8983/solr/Duplicates/config 
- 
-  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"solr.autoCommit.maxTime": "60000"}}' http://localhost:8983/solr/@MAINCOLLECTION@/config
-  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"solr.autoCommit.maxTime": "60000"}}' http://localhost:8983/solr/Statistics/config
-  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"solr.autoCommit.maxTime": "60000"}}' http://localhost:8983/solr/Promolink/config
-  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"solr.autoCommit.maxTime": "60000"}}' http://localhost:8983/solr/Access/config
-  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"solr.autoCommit.maxTime": "60000"}}' http://localhost:8983/solr/Monitoring/config
-  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"solr.autoCommit.maxTime": "60000"}}' http://localhost:8983/solr/Duplicates/config
+  
+  collections_autocommit=("Access" "Duplicates" "@MAINCOLLECTION@" "Monitoring" "Promolink" "Statistics")
+  for index in "${collections_autocommit[@]}"
+  do
+    curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-property": {"updateHandler.autoCommit.maxTime": "60000"}}' http://localhost:8983/solr/${index}/config
+  done
  
   cd ${SOLR_INSTALL_DIR}/solrcloud/FileShare/conf/customs_schema && bash addCustomSchemaInfo.sh
   @SOLR-INIT@
@@ -294,8 +293,28 @@ init_solr_annotators() {
   curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=OCR&collection.configName=GenericAnnotator&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/GenericAnnotator/"
   curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=Spacy&collection.configName=GenericAnnotator&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/GenericAnnotator/"
   curl -XGET "http://localhost:8983/solr/admin/collections?action=CREATE&name=GenericAnnotator&collection.configName=GenericAnnotator&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/GenericAnnotator/"
-  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"solr.autoCommit.maxTime": "60000"}}' http://localhost:8983/solr/GenericAnnotator/config
- 
+
+  collections_annotators_autocommit=("GenericAnnotator" "Spacy" "OCR")
+  for index in "${collections_annotators_autocommit[@]}"
+  do
+    curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-property": {"updateHandler.autoCommit.maxTime": "60000"}}' http://localhost:8983/solr/${index}/config
+  done
+  
+  @SOLR-INIT-ANNOTATORS@
+}
+
+
+init_solr_analytics() {
+  curl -XGET --insecure "http://localhost:8983/solr/admin/collections?action=CREATE&name=Statistics&collection.configName=Statistics&numShards=1&replicationFactor=1"
+  curl -XGET --insecure "http://localhost:8983/solr/admin/collections?action=CREATE&name=Access&collection.configName=Access&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/Access/"
+  curl -XGET --insecure "http://localhost:8983/solr/admin/collections?action=CREATE&name=Monitoring&collection.configName=Monitoring&numShards=1&maxShardsPerNode=1&replicationFactor=1"
+  curl -XGET --insecure "http://localhost:8983/solr/admin/collections?action=CREATE&name=Crawl&collection.configName=Crawl&numShards=1&maxShardsPerNode=1&replicationFactor=1"
+  curl -XGET --insecure "http://localhost:8983/solr/admin/collections?action=CREATE&name=Logs&collection.configName=Logs&numShards=1&maxShardsPerNode=1&replicationFactor=1"
+  collections_autocommit=("Statistics" "Access" "Monitoring" "Crawl" "Logs")
+  for index in "${collections_autocommit[@]}"
+  do
+    curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-property": {"updateHandler.autoCommit.maxTime": "600000"}}' http://localhost:8983/solr/${index}/config
+  done
 }
 
 stop_solr()
@@ -384,6 +403,9 @@ case $COMMAND in
   ;;
   init_solr_annotators)
     init_solr_annotators
+  ;;
+  init_solr_analytics)
+    init_solr_analytics
   ;;
   stop_solr)
     stop_solr

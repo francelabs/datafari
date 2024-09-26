@@ -33,13 +33,14 @@
        that you fully re-index after changing this setting as it can
        affect both how text is indexed and queried.
   -->
-  <luceneMatchVersion>9.5</luceneMatchVersion>
+  <luceneMatchVersion>9.11</luceneMatchVersion>
 
 	<!-- TODO : change the hardcoded path add property.name=value in API Collections create -->
 
     <lib dir="${solr.install.dir}/modules/extraction/lib" regex=".*\.jar" />
     <lib dir="${solr.install.dir}/modules/clustering/lib/" regex=".*\.jar" />
     <lib dir="${solr.install.dir}/modules/langid/lib/" regex=".*\.jar" />
+    <lib dir="${solr.install.dir}/modules/scripting/lib/" regex=".*\.jar" />
     <lib dir="${lib.path}lib/MCF"/>
     <lib dir="${lib.path}lib/custom"/>
     <lib dir="${lib.path}lib/custom/customer"/>
@@ -859,6 +860,8 @@
 			<str name="lowernames">true</str>
 			<str name="fmap.language">ignored_</str>
 			<str name="fmap.source">ignored_</str>
+			<str name="fmap.version">ignored_</str>
+			<str name="fmap._version_">ignored_</str>
 			<str name="uprefix">ignored_</str>
 			<str name="update.chain">datafari</str>
     </lst>

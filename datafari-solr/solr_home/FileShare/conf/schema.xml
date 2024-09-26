@@ -115,7 +115,7 @@
        "content_type": From the HTTP headers of incoming stream
        "resourcename": From SolrCell request param resource.name
    -->
-  <field name="title" type="text_general" indexed="false" stored="true" multiValued="true"/>
+  <field name="title" type="text_general" indexed="true" stored="true" multiValued="true"/>
   <field name="title_en" type="text_en" indexed="true" stored="true" multiValued="true"/>
    <field name="title_fr" type="text_fr" indexed="true" stored="true" multiValued="true"/>
    <field name="title_de" type="text_de" indexed="true" stored="true" multiValued="true"/>
@@ -149,6 +149,9 @@
    <field name="crawl_date" type="tdate" indexed="true" stored="true" default="NOW" multiValued="false"/>
    <field name="original_file_size" type="long" indexed="true" stored="true"/>
    <field name="htmlContent" type="text_nostem" indexed="true" stored="true" multiValued="true"/>
+
+   <!-- Field filled by the Regex Entity Update Processor-->
+   <field name="type_category" type="string" indexed="true" stored="true"/>
 
    <!-- Usual encountered metadata -->
    <field name="publisher" type="string" indexed="true" stored="true" multiValued="true"/>

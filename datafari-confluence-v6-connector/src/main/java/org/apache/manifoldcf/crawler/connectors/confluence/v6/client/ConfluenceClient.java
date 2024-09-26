@@ -25,6 +25,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Date;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
@@ -134,6 +135,30 @@ public class ConfluenceClient {
   private CloseableHttpClient httpClient;
   private HttpClientContext httpContext;
 
+  // variables for cache
+  /**
+   * Cache for Confluence Spaces
+   */
+  private List<Space> cacheSpaces = new ArrayList<>();
+  /**
+   * Confluence Spaces cache duration
+   */
+  private long cacheSpaceTime = System.currentTimeMillis();
+  /**
+   * Lifetime of the cache(s) managed in this class.
+   */
+  private int cacheLifetime;
+  /**
+   * Confluence spaces requiring a user account
+   */
+  private List<Space> notAnonymousSpaces = new ArrayList<>();
+  /**
+   * Authorities for users without Confluence account.
+   */
+  private List<String> anonymousAuthorities = new ArrayList<>();
+
+  private boolean anonymousAuthoritiesComputed = false;
+
   /**
    * <p>
    * Creates a new client instance using the given parameters
@@ -148,7 +173,7 @@ public class ConfluenceClient {
    * @throws ManifoldCFException
    */
   public ConfluenceClient(final String protocol, final String host, final Integer port, final String path, final String username, final String password, final int socketTimeout,
-      final int connectionTimeout, final String proxyUsername, final String proxyPassword, final String proxyProtocol, final String proxyHost, final int proxyPort) throws ManifoldCFException {
+      final int connectionTimeout, final int cacheLifetime, final String proxyUsername, final String proxyPassword, final String proxyProtocol, final String proxyHost, final int proxyPort) throws ManifoldCFException {
     this.protocol = protocol;
     this.host = host;
     this.port = port;
@@ -157,6 +182,7 @@ public class ConfluenceClient {
     this.password = password;
     this.socketTimeout = socketTimeout;
     this.connectionTimeout = connectionTimeout;
+    this.cacheLifetime = cacheLifetime;
     this.proxyUsername = proxyUsername;
     this.proxyPassword = proxyPassword;
     this.proxyProtocol = proxyProtocol;
@@ -638,32 +664,102 @@ public class ConfluenceClient {
   }
 
   /**
+   * Retrieve authorities for anonymous users (users without a Confluence account).
+   *
+   * @return the list of authorities for anonymous users.
+   * @throws Exception
+   */
+  private List<String> getAnonymousAuthorities() throws Exception {
+
+    final List<Space> spaces = getSpaces();
+    long thisTime = System.currentTimeMillis();
+
+    // Retrieve anonymous authorities from cache living.
+    // cacheLifeTime is in minutes
+    if ((thisTime - cacheSpaceTime) < (cacheLifetime * 60000) && anonymousAuthoritiesComputed) {
+      if (Logging.connectors != null && Logging.connectors.isDebugEnabled()) {
+        Logging.connectors.debug("get anonymousAuthorities from cache cacheTime :" + new Date(cacheSpaceTime) + "/ now :" + new Date(thisTime));
+      }
+
+      return anonymousAuthorities;
+    }
+
+    // Create or refresh anonymousAuthorities
+    anonymousAuthorities = new ArrayList<>();
+    if (Logging.connectors != null && Logging.connectors.isDebugEnabled()) {
+      Logging.connectors.debug("calculate anonymous Authorites");
+    }
+    anonymousAuthoritiesComputed = true;
+    for (final Space space : spaces) {
+      final List<String> permissions = getSpacePermissionsForUser(space, ConfluenceUser.ANONYMOUS);
+      if (permissions.contains(VIEW_PERMISSION)) {
+        anonymousAuthorities.add("space-" + space.getKey());
+      } else { // Space where anonymous user is not allowed.
+        // For optimization: to calculate the authorities of an authenticated Confluence user.
+        notAnonymousSpaces.add(space);
+      }
+    }
+    return anonymousAuthorities;
+  }
+
+  /**
    *
    * @param username
    * @return
    * @throws Exception
    */
   public ConfluenceUser getUserAuthorities(final String username) throws Exception {
-    final List<String> authorities = Lists.<String>newArrayList();
+    final List<String> authorities = new ArrayList<>();
+
+    if (Logging.connectors != null && Logging.connectors.isDebugEnabled()) {
+      Logging.connectors.debug("Check if user " + username + " exists first");
+    }
+    // check first if user exists
+    User user = null;
+
+    try { // CAUTION, this try/catch is specific to manage anonymous user identified in this method. If more treatments must be added, consider creating a specific Exception returning 404 error for anonymous user detection.
+      user = getConfluenceUser(username);
+    } catch (Exception e) {
+      if (Logging.connectors != null && Logging.connectors.isDebugEnabled()) {
+        Logging.connectors.debug("Confluence user not found Exeption for username=" + username + " internal Exception : " + e.getMessage(), e);
+      }
+      // Check for possible anonymous authorities if the user is not found
+      // return because for anonymous user there no more kind of authorities to retrieve.
+      return new ConfluenceUser(ConfluenceUser.ANONYMOUS, getAnonymousAuthorities());
+    }
+
     final List<Group> groups = getUserGroups(username);
     groups.forEach(group -> {
       authorities.add("group-" + group.getName());
     });
-    final User user = getConfluenceUser(username);
+
     if (user != null) {
       authorities.add("user-" + user.getUserKey());
     }
-    final List<Space> spaces = getSpaces();
-    for (final Space space : spaces) {
+
+    // A user with an account in Confluence also has all the authorities of anonymous users.
+    authorities.addAll(getAnonymousAuthorities());
+
+    // Add authorities calculation for spaces allowed only to authenticated users.
+    for (final Space space : notAnonymousSpaces) {
       final List<String> permissions = getSpacePermissionsForUser(space, username);
       if (permissions.contains(VIEW_PERMISSION)) {
         authorities.add("space-" + space.getKey());
       }
     }
+
     return new ConfluenceUser(username, authorities);
 
   }
 
+  /**
+   * Retrieve a Confluence user (User with Confluence account).
+   *
+   * @param username
+   * @return
+   * @throws Exception If the Confluence server returns an error other than 404. Depending on your version of Confluence,
+   * this exception may mean that you need to check the permissions available for anonymous users.
+   */
   private User getConfluenceUser(final String username) throws Exception {
     final String url = String.format(Locale.ROOT, "%s://%s:%s%s%s?username=%s", protocol, host, port, path, USER_PATH, username);
     final HttpGet httpGet = createGetRequest(url);
@@ -671,6 +767,8 @@ public class ConfluenceClient {
       if (response.getStatusLine().getStatusCode() != 200) {
         final String errorDesc = response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase();
         if (response.getStatusLine().getStatusCode() != 404) {
+          // Better Exception handling with, for example, a ConfluenceException that store the status code.
+          // To be used for example, to detect when anonymous user authorities must be calculated.in the caller method.
           throw new Exception("Confluence error. " + errorDesc);
         } else {
           logger.error("[Processing] Failed to get page {}. Error: {}", url, errorDesc);
@@ -750,6 +848,13 @@ public class ConfluenceClient {
     CloseableHttpResponse response = null;
     try {
       response = httpClient.execute(request, httpContext);
+      if (response.getStatusLine().getStatusCode() != 200) {
+        final String errorDesc = response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase();
+        response.close();
+        // Better Exception handling with, for example, a ConfluenceException that store the status code.
+        // To be used for example, to detect when anonymous user authorities must be calculated.in the caller method.
+        throw new Exception("Confluence error. " + errorDesc);
+      }
       return response;
     } catch (final Exception e) {
       if (response != null) {
@@ -860,6 +965,15 @@ public class ConfluenceClient {
    * @throws Exception
    */
   private List<Space> getSpaces() throws Exception {
+    // Retrieve Spaces from living cache.
+    long thisTime = System.currentTimeMillis();
+    if ((thisTime - cacheSpaceTime) < (cacheLifetime*60000) && ! cacheSpaces.isEmpty()) 
+    {
+      logger.info("get spaces from cache cacheTime :"+new Date(cacheSpaceTime)+ "/ now :"+new Date(thisTime));
+      
+      return cacheSpaces;
+    }
+
     final List<Space> spaces = new ArrayList<>();
     long lastStart = 0;
     final long defaultSize = 25;
@@ -879,6 +993,8 @@ public class ConfluenceClient {
         break;
       }
     } while (!isLast);
+    cacheSpaces = spaces;
+    cacheSpaceTime = thisTime;
     return spaces;
   }
 
@@ -928,4 +1044,5 @@ public class ConfluenceClient {
 
     return permissions;
   }
+
 }

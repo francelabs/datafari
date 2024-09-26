@@ -75,8 +75,6 @@ public class URL extends HttpServlet {
   public static void performGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
     request.setCharacterEncoding("UTF-8");
 
-    final String protocol = request.getScheme() + ":";
-
     final Map<String, String[]> requestMap = new HashMap<>();
     requestMap.putAll(request.getParameterMap());
     if (requestMap.get("id") == null) {
@@ -109,7 +107,7 @@ public class URL extends HttpServlet {
     if (action != null && action.equals("OPEN_FROM_PREVIEW")) {
       // TODO: Gather information and call pushUserAction
     } else {
-      StatsPusher.pushDocument(query, protocol);
+      StatsPusher.pushDocument(query);
     }
     // String surl = URLDecoder.decode(request.getParameter("url"),
     // "ISO-8859-1");

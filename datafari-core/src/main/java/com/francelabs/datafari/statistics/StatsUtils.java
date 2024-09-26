@@ -21,10 +21,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-
-import com.francelabs.datafari.service.indexer.IndexerResponseDocument;
+import java.util.Map;
 
 public class StatsUtils {
 
@@ -45,47 +43,10 @@ public class StatsUtils {
    * Each statField value is separated by a '|', if a value is null or empty the
    * '|' separator is still put
    *
-   * @param solrDocStat
+   * @param doc
    * @return
    */
-  public static String createStatLog(final IndexerResponseDocument solrDocStat, final String username) {
-    String stat = "";
-    int cpt = 0;
-    for (final String statField : statFields) {
-      if (cpt > 0) {
-        stat += "|";
-      } else {
-        cpt++;
-      }
-      final Object value = solrDocStat.getFieldValue(statField);
-      if (value != null) {
-        if (value instanceof Date) {
-          // Create an instance of SimpleDateFormat used for
-          // formatting
-          // the string representation of date
-          final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
-          final Date date = (Date) value;
-          stat += df.format(date);
-        } else {
-          stat += value.toString();
-        }
-      }
-    }
-    stat += "|" + username;
-    return stat;
-  }
-
-  /**
-   * Format the statFields values (extracted from the input Solr document) into
-   * a String. The generated String will be used to generate a statistic log
-   * <p>
-   * Each statField value is separated by a '|', if a value is null or empty the
-   * '|' separator is still put
-   *
-   * @param solrDocStat
-   * @return
-   */
-  public static String createStatLog(final HashMap<String, Object> doc, final String username) {
+  public static String createStatLog(final Map<String, Object> doc, final String username) {
     String stat = "";
     int cpt = 0;
     for (final String statField : statFields) {
