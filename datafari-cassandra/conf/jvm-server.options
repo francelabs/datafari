@@ -86,6 +86,10 @@
 # GENERAL JVM SETTINGS #
 ########################
 
+# Set Cassandra temporary files location
+-Djava.io.tmpdir=@CASSANDRATMPDIR@
+-Djna.tmpdir=@CASSANDRATMPDIR@
+
 # Set UTC timezone
 -Duser.timezone=UTC
 

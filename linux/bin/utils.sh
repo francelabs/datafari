@@ -270,7 +270,12 @@ else
   file=$3
 fi
 
-awk -v pat="^$1=" -v value="$1=$2" '{ if ($0 ~ pat) print value; else print $0; }' "$file" > "$file".tmp
+modifValue=$2
+modifValue="${modifValue//#/\\#}"
+modifValue="${modifValue//=/\\=}"
+modifValue="${modifValue//:/\\:}"
+
+awk -v pat="^$1=" -v value="$1=$modifValue" '{ if ($0 ~ pat) print value; else print $0; }' "$file" > "$file".tmp
 mv "$file".tmp "$file"
 
 if  [[ "$3" = *datafari.properties* ]]; then

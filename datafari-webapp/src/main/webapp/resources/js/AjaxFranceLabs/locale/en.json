@@ -211,6 +211,7 @@
     "adminUI-SizeLimitation": "Highlighting Limitations",
     "adminUI-SizeLimitationText": "Confirm and activate your changes",
     "adminUI-SolrAdmin": "Solr Administration",
+    "adminUI-solrAnalyticsMain" : "Analytics Solr Administration",
     "adminUI-SolrErrorsStats": "Solr - Errors Statistics",
     "adminUI-Statistics": "Statistics",
     "adminUI-Stopwords": "Stopwords",
