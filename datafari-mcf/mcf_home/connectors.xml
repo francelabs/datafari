@@ -106,6 +106,7 @@
   <repositoryconnector name="Confluence v6+" class="org.apache.manifoldcf.crawler.connectors.confluence.v6.ConfluenceRepositoryConnector"/>
   <repositoryconnector name="CMIS" class="org.apache.manifoldcf.crawler.connectors.cmis.CmisRepositoryConnector"/>
   <repositoryconnector name="AmazonS3" class="org.apache.manifoldcf.crawler.connectors.amazons3.AmazonS3Connector"/>
+  <repositoryconnector name="CSV" class="org.apache.manifoldcf.crawler.connectors.csv.CSVConnector"/>
   <!--repositoryconnector name="Alfresco" class="org.apache.manifoldcf.crawler.connectors.alfresco.AlfrescoRepositoryConnector"/-->
   <repositoryconnector name="Alfresco Webscript" class="org.apache.manifoldcf.crawler.connectors.alfrescowebscript.AlfrescoConnector"/>
   <repositoryconnector name="Solr" class="org.apache.manifoldcf.crawler.connectors.solr.SolrIngesterConnector"/>

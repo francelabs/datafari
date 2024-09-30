@@ -212,6 +212,7 @@
     "adminUI-SizeLimitation": "Limitations du surlignage",
     "adminUI-SizeLimitationText": "Confirmer et activer vos changements",
     "adminUI-SolrAdmin": "Administration de Solr",
+    "adminUI-solrAnalyticsMain" : "Administration de Solr Analytics",
     "adminUI-SolrErrorsStats": "Solr - Statistiques d'Erreurs",
     "adminUI-Statistics": "Statistiques",
     "adminUI-Stopwords": "Stopwords",

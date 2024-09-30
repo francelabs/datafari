@@ -538,7 +538,7 @@
 		<copy toDir="${linux.dist.dir}/zookeeper" overwrite="true" force="true">
 			<fileset dir="${zookeeper.proj.dir}">
 			</fileset>
-			<globmapper from="conf/log4j-solr.xml" to="conf/logback.xml"/>
+			<globmapper from="conf/logback-solr.xml" to="conf/logback.xml"/>
 		</copy>
 		<copy toDir="${linux.dist.dir}/zookeeper" overwrite="true" force="true">
 			<fileset dir="${zookeeper.proj.dir}">
@@ -589,6 +589,7 @@
 		<replace file="${linux.dist.dir}/bin/start-datafari.sh" token="@START-CHECKS@" value="" />
 		<replace file="${linux.dist.dir}/bin/restart-datafari.sh" token="@VERSION-RESTART@" value="" />
 		<replace file="${linux.dist.dir}/bin/datafari-manager.sh" token="@SOLR-INIT@" value="" />
+		<replace file="${linux.dist.dir}/bin/datafari-manager.sh" token="@SOLR-INIT-ANNOTATORS@" value="" />
 		<replace file="${linux.dist.dir}/bin/datafari-manager.sh" token="@ZK-INIT@" value="" />
 
 

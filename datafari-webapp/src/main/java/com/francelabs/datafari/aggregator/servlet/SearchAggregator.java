@@ -497,7 +497,8 @@ public class SearchAggregator extends HttpServlet {
       Double maxScore = 0.0;
       final JSONObject mergedFacetQueries = new JSONObject();
       final JSONObject mergedFacetFields = new JSONObject();
-      final Map<String, Map<String, Integer>> mergedFacetFieldsMap = new HashMap<String, Map<String, Integer>>();
+      final Map<String, ImmutableMap<String, Integer>> mergedFacetFieldsMap = new HashMap<String, ImmutableMap<String, Integer>>();
+
 
       // If wildcard query then mix documents equally
       if (wildCardQuery) {
@@ -744,7 +745,7 @@ public class SearchAggregator extends HttpServlet {
 
   }
 
-  private static void mergeFacets(final JSONObject result, final JSONObject mergedFacetQueries, final Map<String, Map<String, Integer>> mergedFacetFieldsMap, final int numExternalDatafaris) {
+  private static void mergeFacets(final JSONObject result, final JSONObject mergedFacetQueries, final Map<String, ImmutableMap<String, Integer>> mergedFacetFieldsMap, final int numExternalDatafaris) {
     if (result.get("facet_counts") != null) {
       final JSONObject facetCounts = (JSONObject) result.get("facet_counts");
 
@@ -770,9 +771,9 @@ public class SearchAggregator extends HttpServlet {
 
         facetFields.forEach((field, facets) -> {
           final JSONArray facetValues = (JSONArray) facets;
-          Map<String, Integer> existingFacetValues = new HashMap<>();
+          HashMap<String, Integer> existingFacetValues = new HashMap<>();
           if (numExternalDatafaris > 1 && mergedFacetFieldsMap.containsKey(field)) {
-            existingFacetValues = mergedFacetFieldsMap.get(field);
+            existingFacetValues.putAll(mergedFacetFieldsMap.get(field));
           }
           for (int i = 0; i < facetValues.size(); i += 2) {
             final String facetValue = facetValues.get(i).toString();
@@ -795,10 +796,9 @@ public class SearchAggregator extends HttpServlet {
                   entryOrdering.sortedCopy(existingFacetValues.entrySet())) {
             builder.put(entry.getKey(), entry.getValue());
           }
-          existingFacetValues = builder.build();
 
           // Override existing map with the sorted one
-          mergedFacetFieldsMap.put(field.toString(), existingFacetValues);
+          mergedFacetFieldsMap.put(field.toString(), builder.build());
 
         });
 
@@ -856,3 +856,4 @@ public class SearchAggregator extends HttpServlet {
   }
 
 }
+

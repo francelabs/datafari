@@ -162,6 +162,7 @@ public class ConfluenceRepositoryConnector extends BaseRepositoryConnector {
   protected String connectionTimeout = null;
   protected String retryIntervalString = null;
   protected String retryNumberString = null;
+  protected String cacheLifetime = null;
 
   protected String proxyUsername = null;
   protected String proxyPassword = null;
@@ -224,6 +225,7 @@ public class ConfluenceRepositoryConnector extends BaseRepositoryConnector {
     connectionTimeout = null;
     retryIntervalString = null;
     retryNumberString = null;
+    cacheLifetime = null;
     proxyUsername = null;
     proxyPassword = null;
     proxyProtocol = null;
@@ -251,6 +253,10 @@ public class ConfluenceRepositoryConnector extends BaseRepositoryConnector {
     connectionTimeout = params.getParameter(ConfluenceConfiguration.Server.CONNECTION_TIMEOUT);
     retryIntervalString = configParams.getParameter(ConfluenceConfiguration.Server.RETRY_INTERVAL);
     retryNumberString = configParams.getParameter(ConfluenceConfiguration.Server.RETRY_NUMBER);
+    cacheLifetime = params.getParameter(ConfluenceConfiguration.Authority.CACHE_LIFETIME);
+    if (cacheLifetime == null) {
+      cacheLifetime = "360";
+    }
 
     proxyUsername = params.getParameter(ConfluenceConfiguration.Server.PROXY_USERNAME);
     proxyPassword = params.getObfuscatedParameter(ConfluenceConfiguration.Server.PROXY_PASSWORD);
@@ -406,8 +412,25 @@ public class ConfluenceRepositoryConnector extends BaseRepositoryConnector {
           proxyPortInt = -1;
       }
 
+      int cacheLifetimeInt;
+      if (cacheLifetime != null && cacheLifetime.length() > 0) {
+        try
+        {
+          cacheLifetimeInt = Integer.parseInt(cacheLifetime);
+
+        }
+        catch (NumberFormatException e)
+        {
+          throw new ManifoldCFException("Bad number: "
+              + e.getMessage(), e);
+        }
+      }
+      else{
+        cacheLifetimeInt = 3600;
+      }
+
       /* Generating a client to perform Confluence requests */
-      confluenceClient = new ConfluenceClient(protocol, host, portInt, path, username, password, socketTimeoutInt, connectionTimeoutInt,
+      confluenceClient = new ConfluenceClient(protocol, host, portInt, path, username, password, socketTimeoutInt, connectionTimeoutInt, cacheLifetimeInt, 
               proxyUsername, proxyPassword, proxyProtocol, proxyHost, proxyPortInt);
       lastSessionFetch = System.currentTimeMillis();
     }
@@ -587,8 +610,8 @@ public class ConfluenceRepositoryConnector extends BaseRepositoryConnector {
   /*
    * Repository specification post handle, (server and proxy & client secret etc)
    *
-   * @see org.apache.manifoldcf.core.connector.BaseConnector#processConfigurationPost (org.apache.manifoldcf.core.interfaces.IThreadContext, org.apache.manifoldcf.core.interfaces.IPostParameters,
-   * org.apache.manifoldcf.core.interfaces.ConfigParams)
+   * @see org.apache.manifoldcf.core.connector.BaseConnector#processConfigurationPost (org.apache.manifoldcf.core.interfaces.IThreadContext,
+   * org.apache.manifoldcf.core.interfaces.IPostParameters, org.apache.manifoldcf.core.interfaces.ConfigParams)
    */
   @Override
   public String processConfigurationPost(final IThreadContext threadContext, final IPostParameters variableContext, final ConfigParams parameters) throws ManifoldCFException {

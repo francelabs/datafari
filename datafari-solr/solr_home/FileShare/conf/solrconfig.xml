@@ -33,7 +33,7 @@
        that you fully re-index after changing this setting as it can
        affect both how text is indexed and queried.
   -->
-  <luceneMatchVersion>9.5</luceneMatchVersion>
+  <luceneMatchVersion>9.11</luceneMatchVersion>
 
 	<!-- TODO : change the hardcoded path add property.name=value in API Collections create -->
 
