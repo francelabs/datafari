@@ -74,6 +74,8 @@ question_postgresql_password() {
     set_property "TEMPPGSQLPASSWORD" $postgresql_password $CONFIG_FILE
 }
 
+
+
 question_start_datafari() {
   read -p "Do you want Datafari to be started (yes/no)? [yes] ? " start_datafari
   start_datafari=${start_datafari:-true}
@@ -373,6 +375,13 @@ init_password() {
   #printf "%s:%s:%s\n" "$solrAdminUser" "$realm" "$digestSolrUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
   #printf "%s:%s:%s\n" "$monitAdminUser" "$realm" "$digestMonitUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
   #printf "%s:%s:%s\n" "$glancesAdminUser" "$realm" "$digestGlancesUser" >> "$DATAFARI_HOME/apache/password/htpasswd"
+}
+
+init_postgresql() {
+  sed -i -e "s~@POSTGRESQLHOSTNAME@~${POSTGRESQL_HOSTNAME}~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQLPORT@~${POSTGRESQL_PORT}~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQLDATABASE@~${POSTGRESQL_DATABASE}~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQLUSERNAME@~${POSTGRESQL_USERNAME}~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
 }
 
 init_password_postgresql() {
@@ -831,6 +840,7 @@ initialization_monoserver() {
   clean_monoserver_node
   init_password $TEMPADMINPASSWORD
   init_password_postgresql $TEMPPGSQLPASSWORD
+  init_postgresql
   init_apache_ssl
   if [ -d /etc/httpd ]; then
     stop_firewalld_start_iptables
