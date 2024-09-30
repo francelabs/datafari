@@ -1,0 +1,653 @@
+/**
+* Licensed to the Apache Software Foundation (ASF) under one or more
+* contributor license agreements. See the NOTICE file distributed with
+* this work for additional information regarding copyright ownership.
+* The ASF licenses this file to You under the Apache License, Version 2.0
+* (the "License"); you may not use this file except in compliance with
+* the License. You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+package com.francelabs.datafari.transformation.llm;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
+
+import com.francelabs.datafari.transformation.llm.connectors.DatafariLlmService;
+import com.francelabs.datafari.transformation.llm.connectors.LlmService;
+import com.francelabs.datafari.transformation.llm.connectors.OpenAiLlmService;
+import com.francelabs.datafari.transformation.llm.model.LlmSpecification;
+import org.apache.manifoldcf.agents.interfaces.IOutputAddActivity;
+import org.apache.manifoldcf.agents.interfaces.IOutputCheckActivity;
+import org.apache.manifoldcf.agents.interfaces.RepositoryDocument;
+import org.apache.manifoldcf.agents.interfaces.ServiceInterruption;
+import org.apache.manifoldcf.agents.system.Logging;
+import org.apache.manifoldcf.agents.transformation.BaseTransformationConnector;
+import org.apache.manifoldcf.core.interfaces.ConfigParams;
+import org.apache.manifoldcf.core.interfaces.IHTTPOutput;
+import org.apache.manifoldcf.core.interfaces.IPostParameters;
+import org.apache.manifoldcf.core.interfaces.IThreadContext;
+import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
+import org.apache.manifoldcf.core.interfaces.Specification;
+import org.apache.manifoldcf.core.interfaces.SpecificationNode;
+import org.apache.manifoldcf.core.interfaces.VersionContext;
+
+import com.francelabs.datafari.transformation.llm.utils.storage.DestinationStorage;
+
+
+
+/**
+ * Connector to extract entities using a regular expression from document content and put them in metadata.
+ *
+ */
+public class Llm extends BaseTransformationConnector {
+
+  public static final String _rcsid = "@(#)$Id: "+ Llm.class.getName() + " $";
+  public static final String DEFAULT_ENDPOINT = "https://api.openai.com/v1/";
+
+  private static final String EDIT_CONFIGURATION_JS = "editConfiguration.js";
+  private static final String EDIT_CONFIGURATION_SERVER_HTML = "editConfiguration_llm.html";
+  private static final String VIEW_CONFIGURATION_HTML = "viewConfiguration.html";
+  private static final String EDIT_SPECIFICATION_JS = "editSpecification.js";
+  private static final String EDIT_SPECIFICATION_HTML = "editSpecification_llm.html";
+  private static final String VIEW_SPECIFICATION_HTML = "viewSpecification.html";
+
+  
+  protected static final String ACTIVITY_LLM = "LLM";
+  protected static final String CONTENT = "content";
+  protected static final String SEQNUM = "SEQNUM";
+
+  protected static final String[] activitiesList = new String[] { ACTIVITY_LLM };
+
+  
+
+  /**
+   * Connect this connector. The configuration parameters are included.
+   * 
+   * @param configParams are the configuration parameters for this connection.
+   */
+  @Override
+  public void connect(ConfigParams configParams) {
+    super.connect(configParams);
+  }
+
+  /**
+   * Close the connection. Call this before discarding the repository connector.
+   */
+  @Override
+  public void disconnect() throws ManifoldCFException {
+    super.disconnect();
+  }
+
+  /**
+   * This method is periodically called for all connectors that are connected but
+   * not in active use.
+   */
+  @Override
+  public void poll() throws ManifoldCFException {
+  }
+
+  /**
+   * This method is called to assess whether to count this connector instance should actually be counted as being connected.
+   *
+   * @return true if the connector instance is actually connected.
+   */
+  @Override
+  public boolean isConnected() {
+    return true;
+  }
+
+
+  /**
+   * Return a list of activities that this connector generates. The connector does NOT need to be connected before this method is called.
+   *
+   * @return the set of activities.
+   */
+  @Override
+  public String[] getActivitiesList() {
+    return activitiesList;
+  }
+
+  /**
+   * Output the configuration header section. This method is called in the head section of the connector's configuration page. Its purpose is to add the required tabs to the list, and to output any
+   * javascript methods that might be needed by the configuration editing HTML.
+   *
+   * @param threadContext is the local thread context.
+   * @param out           is the output to which any HTML should be sent.
+   * @param parameters    are the configuration parameters, as they currently exist, for this connection being configured.
+   * @param tabsArray     is an array of tab names. Add to this array any tab names that are specific to the connector.
+   */
+  @Override
+  public void outputConfigurationHeader(final IThreadContext threadContext, final IHTTPOutput out, final Locale locale, final ConfigParams parameters, final List<String> tabsArray)
+          throws ManifoldCFException, IOException {
+    tabsArray.add(Messages.getString(locale, "llm.TabName"));
+    Messages.outputResourceWithVelocity(out, locale, EDIT_CONFIGURATION_JS, null);
+  }
+
+  /**
+   * Output the configuration body section. This method is called in the body section of the connector's configuration page. Its purpose is to present the required form elements for editing. The coder
+   * can presume that the HTML that is output from this configuration will be within appropriate <html>, <body>, and <form> tags. The name of the form is "editconnection".
+   *
+   * @param threadContext is the local thread context.
+   * @param out           is the output to which any HTML should be sent.
+   * @param parameters    are the configuration parameters, as they currently exist, for this connection being configured.
+   * @param tabName       is the current tab name.
+   */
+  @Override
+  public void outputConfigurationBody(final IThreadContext threadContext, final IHTTPOutput out, final Locale locale, final ConfigParams parameters, final String tabName)
+          throws ManifoldCFException, IOException {
+    final Map<String, Object> velocityContext = new HashMap<>();
+    velocityContext.put("TabName", tabName);
+    fillInAPITab(velocityContext, out, parameters);
+    Messages.outputResourceWithVelocity(out, locale, EDIT_CONFIGURATION_SERVER_HTML, velocityContext);
+  }
+
+  /**
+   * Process a configuration post. This method is called at the start of the connector's configuration page, whenever there is a possibility that form data for a connection has been posted. Its
+   * purpose is to gather form information and modify the configuration parameters accordingly. The name of the posted form is "editconnection".
+   *
+   * @param threadContext   is the local thread context.
+   * @param variableContext is the set of variables available from the post, including binary file post information.
+   * @param parameters      are the configuration parameters, as they currently exist, for this connection being configured.
+   * @return null if all is well, or a string error message if there is an error that should prevent saving of the connection (and cause a redirection to an error page).
+   */
+  @Override
+  public String processConfigurationPost(final IThreadContext threadContext, final IPostParameters variableContext, final Locale locale, final ConfigParams parameters) throws ManifoldCFException {
+
+    if (variableContext.getParameter("llmService") != null) {
+      parameters.setParameter(LlmConfig.NODE_LLM_SERVICE, variableContext.getParameter("llmService"));
+    }
+    if (variableContext.getParameter("llmService") != null) {
+      parameters.setParameter(LlmConfig.NODE_ENDPOINT, variableContext.getParameter("endpointToUse"));
+    }
+    if (variableContext.getParameter("llmService") != null) {
+      parameters.setParameter(LlmConfig.NODE_LLM, variableContext.getParameter("llmToUse"));
+    }
+    if (variableContext.getParameter("llmService") != null) {
+      parameters.setParameter(LlmConfig.NODE_EMBEDDINGS_MODEL, variableContext.getParameter("embeddingsModelToUse"));
+    }
+    if (variableContext.getParameter("llmService") != null) {
+      parameters.setParameter(LlmConfig.NODE_APIKEY, variableContext.getParameter("llmApiKey"));
+    }
+
+    return null;
+  }
+
+  /**
+   * View configuration. This method is called in the body section of the connector's view configuration page. Its purpose is to present the connection information to the user. The coder can presume
+   * that the HTML that is output from this configuration will be within appropriate <html> and <body> tags.
+   *
+   * @param threadContext is the local thread context.
+   * @param out           is the output to which any HTML should be sent.
+   * @param parameters    are the configuration parameters, as they currently exist, for this connection being configured.
+   */
+  @Override
+  public void viewConfiguration(final IThreadContext threadContext, final IHTTPOutput out, final Locale locale, final ConfigParams parameters) throws ManifoldCFException, IOException {
+    final Map<String, Object> velocityContext = new HashMap<>();
+    fillInAPITab(velocityContext, out, parameters);
+    Messages.outputResourceWithVelocity(out, locale, VIEW_CONFIGURATION_HTML, velocityContext);
+  }
+
+
+  protected static void fillInAPITab(final Map<String, Object> velocityContext, final IHTTPOutput out, final ConfigParams parameters) throws ManifoldCFException {
+
+    String endpointToUse = (parameters.getParameter(LlmConfig.NODE_ENDPOINT) != null) ? parameters.getParameter(LlmConfig.NODE_ENDPOINT) : "";
+    String llmService = (parameters.getParameter(LlmConfig.NODE_LLM) != null) ? parameters.getParameter(LlmConfig.NODE_ENDPOINT) : "";
+    String llmToUse = (parameters.getParameter(LlmConfig.NODE_ENDPOINT) != null) ? parameters.getParameter(LlmConfig.NODE_ENDPOINT) : "openai";
+    String embeddingsModelToUse = (parameters.getParameter(LlmConfig.NODE_ENDPOINT) != null) ? parameters.getParameter(LlmConfig.NODE_ENDPOINT) : DEFAULT_ENDPOINT;
+    String llmApiKey = (parameters.getParameter(LlmConfig.NODE_ENDPOINT) != null) ? parameters.getParameter(LlmConfig.NODE_ENDPOINT) : "";
+
+
+    // Fill in context
+    velocityContext.put("ENDPOINT", endpointToUse);
+    velocityContext.put("LLMTYPE", llmService);
+    velocityContext.put("EMBEDDINGMODEL", embeddingsModelToUse);
+    velocityContext.put("LLM", llmToUse);
+    velocityContext.put("APIKEY", llmApiKey);
+  }
+
+  /**
+   * Get an output version string, given an output specification. The output version string is used to uniquely describe the pertinent details of the output specification and the configuration, to
+   * allow the Connector Framework to determine whether a document will need to be output again. Note that the contents of the document cannot be considered by this method, and that a different
+   * version string (defined in IRepositoryConnector) is used to describe the version of the actual document.
+   *
+   * This method presumes that the connector object has been configured, and it is thus able to communicate with the output data store should that be necessary.
+   *
+   * @param spec is the current output specification for the job that is doing the crawling.
+   * @return a string, of unlimited length, which uniquely describes output configuration and specification in such a way that if two such strings are equal, the document will not need to be sent
+   *         again to the output data store.
+   */
+  @Override
+  public VersionContext getPipelineDescription(final Specification spec) throws ManifoldCFException, ServiceInterruption {
+    String versionString = getVersionString(spec);
+    return new VersionContext(versionString, params, spec);
+  }
+
+  // ------------------------------------------------------------------------------------------------------------------------------------------------
+  // We intercept checks pertaining to the document format and send modified checks further down
+  // ------------------------------------------------------------------------------------------------------------------------------------------------
+
+  /**
+   * Detect if a mime type is acceptable or not. This method is used to determine whether it makes sense to fetch a document in the first place.
+   *
+   * @param pipelineDescription is the document's pipeline version string, for this connection.
+   * @param mimeType            is the mime type of the document.
+   * @param checkActivity       is an object including the activities that can be performed by this method.
+   * @return true if the mime type can be accepted by this connector.
+   */
+  @Override
+  public boolean checkMimeTypeIndexable(final VersionContext pipelineDescription, final String mimeType, final IOutputCheckActivity checkActivity) throws ManifoldCFException, ServiceInterruption {
+    return true;
+  }
+
+  /**
+   * Pre-determine whether a document (passed here as a File object) is acceptable or not. This method is used to determine whether a document needs to be actually transferred. This hook is provided
+   * mainly to support search engines that only handle a small set of accepted file types.
+   *
+   * @param pipelineDescription is the document's pipeline version string, for this connection.
+   * @param localFile           is the local file to check.
+   * @param checkActivity       is an object including the activities that can be done by this method.
+   * @return true if the file is acceptable, false if not.
+   */
+  @Override
+  public boolean checkDocumentIndexable(final VersionContext pipelineDescription, final File localFile, final IOutputCheckActivity checkActivity) throws ManifoldCFException, ServiceInterruption {
+    // Document contents are not germane anymore, unless it looks like Tika
+    // won't accept them.
+    // Not sure how to check that...
+    return true;
+  }
+
+  /**
+   * Pre-determine whether a document's length is acceptable. This method is used to determine whether to fetch a document in the first place.
+   *
+   * @param pipelineDescription is the document's pipeline version string, for this connection.
+   * @param length              is the length of the document.
+   * @param checkActivity       is an object including the activities that can be done by this method.
+   * @return true if the file is acceptable, false if not.
+   */
+  @Override
+  public boolean checkLengthIndexable(final VersionContext pipelineDescription, final long length, final IOutputCheckActivity checkActivity) throws ManifoldCFException, ServiceInterruption {
+    // Always true
+    return true;
+  }
+  
+  // End Checks -------------------------------------------------------------------------------------------------------------------------------------
+
+  /**
+   * Add (or replace) a document in the output data store using the connector. This method presumes that the connector object has been configured, and it is thus able to communicate with the output
+   * data store should that be necessary. The OutputSpecification is *not* provided to this method, because the goal is consistency, and if output is done it must be consistent with the output
+   * description, since that was what was partly used to determine if output should be taking place. So it may be necessary for this method to decode an output description string in order to determine
+   * what should be done.
+   * </br></br>
+   * This override method's fonctionnality: 
+   *
+   * @param documentURI         is the URI of the document. The URI is presumed to be the unique identifier which the output data store will use to process and serve the document. This URI is
+   *                            constructed by the repository connector which fetches the document, and is thus universal across all output connectors.
+   * @param pipelineDescription is the description string that was constructed for this document by the getOutputDescription() method.
+   * @param document            is the document data to be processed (handed to the output data store).
+   * @param authorityNameString is the name of the authority responsible for authorizing any access tokens passed in with the repository document. May be null.
+   * @param activities          is the handle to an object that the implementer of a pipeline connector may use to perform operations, such as logging processing activity, or sending a modified
+   *                            document to the next stage in the pipeline.
+   * @return the document status (accepted or permanently rejected).
+   * @throws IOException only if there's a stream error reading the document data.
+   */
+  @Override
+  public int addOrReplaceDocumentWithException(final String documentURI, final VersionContext pipelineDescription, final RepositoryDocument document, final String authorityNameString,
+      final IOutputAddActivity activities) throws ManifoldCFException, ServiceInterruption, IOException {
+
+
+    final LlmSpecification spec = new LlmSpecification(pipelineDescription.getSpecification());
+
+    boolean hasError = false;
+    final long startTime = System.currentTimeMillis();
+
+    // Map of metadata associated to lines found : < metadata, Set<linesFound> >
+    Map<String, List<String>> matchedMetadata = new HashMap<>();
+
+    // Prepare storage for reading document content. A suitable storage depending on content size.
+    DestinationStorage storage = DestinationStorage.getDestinationStorage(document.getBinaryLength(), getClass());
+    StringBuilder contentBuilder = new StringBuilder();
+    try {
+      // Reading file content
+      try {
+              // Transfert document content to the storage
+              long binaryLength = document.getBinaryStream().transferTo(storage.getOutputStream());
+
+              // The input stream of the document has been totally read by previous instruction, so set a new one
+              document.setBinary(storage.getInputStream(), binaryLength);
+
+              // Prepare reading of document copied to extract metadata
+              BufferedReader buffRead = new BufferedReader(new InputStreamReader(storage.getInputStream()));
+
+              // Read lines
+              String line = buffRead.readLine();
+              while (line != null ) {
+                contentBuilder.append(line);
+                line = buffRead.readLine();
+              }
+              buffRead.close();
+
+      } catch (Exception e) {
+          hasError = true;
+          activities.recordActivity(startTime, ACTIVITY_LLM, document.getBinaryLength(), documentURI, "KO", e.getMessage());
+          Logging.ingest.error("Unable to browse document " + documentURI, e);
+      }
+
+      String content = contentBuilder.toString();
+      content = content.substring(0, 50000);
+
+      // Select the proper service depending on the LLM
+      LlmService service;
+      switch (spec.getTypeOfLlm()) {
+        case "openai":
+          service = new OpenAiLlmService(spec);
+          break;
+        case "datafari":
+        default:
+          service = new DatafariLlmService(spec);
+          break;
+      }
+
+
+      // SUMMARIZE DOCUMENTS
+      if (spec.getEnableSummarize()) {
+        String summary = service.summarize(content, spec);
+        document.addField("summary", summary);
+        // Todo : handle empty and errors
+      }
+
+
+      // EMBBED DOCUMENTS
+      // Truncate content
+      // Send chunk to LLM for embedding
+      if (spec.getEnableVectorEmbedding()) {
+        float[] response = service.embeddings(content);
+        //List<Float> vector = new ArrayList<>();
+        String[] strvector = new String[response.length];
+        for (int i = 0; i < response.length; i++ ) {
+          strvector[i] = Float.toString(response[i]);
+        }
+        document.addField("vector", strvector);
+        // Todo : handle empty and errors
+      }
+
+      // CATEGORIZE DOCUMENTS
+      // Invoice, Call for Tenders, Request for Quotations, Technical paper, Presentation, Resumes, Others
+      if (spec.getEnableCategorize()) {
+        String category = extractCategory(service.summarize(content, spec));
+        document.addField("category", category);
+        // Todo : handle empty and errors
+      }
+
+
+
+      if (!hasError) activities.recordActivity(startTime, ACTIVITY_LLM, document.getBinaryLength(), documentURI, "OK", "");
+      addMetadataFieldsToDocument(document, matchedMetadata);
+      return activities.sendDocument(documentURI, document);
+
+    } finally {
+      // Clean storage (for instance, delete temporary file) after all treatment on document done (Solr indexing).
+      storage.close();
+    }
+
+  }
+
+  /**
+   * Extract the category from the LLM response
+   *
+   * @param message  The LLM esponse
+   * @return The category
+   */
+  public String extractCategory(String message) {
+    String[] categories = {"Invoice", "Call for Tenders", "Request for Quotations", "Technical paper", "Presentation", "Resumes"};
+    for (String category : categories) {
+      if (message.contains(category)) return category;
+    }
+    return "Others";
+  }
+
+
+  /**
+   * This method replace the getFieldAsStrings of the MCF document to make sure it does not return a null object
+   *
+   * @param document  MCF document
+   * @param fieldName Name of the document field to find
+   * @return An array of strings that is empty if no value is found
+   */
+  private String[] getFieldValues(final RepositoryDocument document, final String fieldName) throws IOException {
+    // Todo : see if useful
+    final String[] fieldValues = document.getFieldAsStrings(fieldName);
+    return Objects.requireNonNullElseGet(fieldValues, () -> new String[0]);
+  }
+
+
+  
+  /**
+   * Add metadata to a document using Matched Metadata Map.
+   * 
+   * @param document the document fill with metadata
+   * @param matchedMetadata Map of metadata associated with their matched lines (< metadata, Set<linesFound> >)
+   * 
+   * @throws ManifoldCFException ManifoldCF Exception
+   */
+  private void addMetadataFieldsToDocument(RepositoryDocument document, Map<String, List<String>> matchedMetadata) throws ManifoldCFException {
+    // Todo : check if useful
+    List<String> linesFound;
+    String metadata;
+    for (Map.Entry<String, List<String>> entry : matchedMetadata.entrySet()) {
+      metadata = entry.getKey();
+      linesFound = entry.getValue();
+      document.addField(metadata, linesFound.toArray(new String[0]));
+    }
+  }
+
+  
+  /**
+   * Obtain the name of the form check javascript method to call.
+   *
+   * @param connectionSequenceNumber is the unique number of this connection within the job.
+   * @return the name of the form check javascript method.
+   */
+  @Override
+  public String getFormCheckJavascriptMethodName(final int connectionSequenceNumber) {
+    return "s" + connectionSequenceNumber + "_checkSpecification";
+  }
+
+  /**
+   * Obtain the name of the form presave check javascript method to call.
+   *
+   * @param connectionSequenceNumber is the unique number of this connection within the job.
+   * @return the name of the form presave check javascript method.
+   */
+  @Override
+  public String getFormPresaveCheckJavascriptMethodName(final int connectionSequenceNumber) {
+    return "s" + connectionSequenceNumber + "_checkSpecificationForSave";
+  }
+
+  /**
+   * Output the specification header section. This method is called in the head section of a job page which has selected a pipeline connection of the current type. Its purpose is to add the required
+   * tabs to the list, and to output any javascript methods that might be needed by the job editing HTML.
+   *
+   * @param out                      is the output to which any HTML should be sent.
+   * @param locale                   is the preferred local of the output.
+   * @param spec                       is the current pipeline specification for this connection.
+   * @param connectionSequenceNumber is the unique number of this connection within the job.
+   * @param tabsArray                is an array of tab names. Add to this array any tab names that are specific to the connector.
+   */
+  @Override
+  public void outputSpecificationHeader(final IHTTPOutput out, final Locale locale, final Specification spec, final int connectionSequenceNumber, final List<String> tabsArray)
+      throws ManifoldCFException, IOException {
+    final Map<String, Object> paramMap = new HashMap<>();
+    paramMap.put(SEQNUM, Integer.toString(connectionSequenceNumber));
+
+    tabsArray.add(Messages.getString(locale, "llm.TabName"));
+
+    // Fill in the specification header map, using data from all tabs.
+    fillInLlmSpecificationMap(paramMap, spec);
+
+    Messages.outputResourceWithVelocity(out, locale, EDIT_SPECIFICATION_JS, paramMap);
+  }
+
+  /**
+   * Output the specification body section. This method is called in the body section of a job page which has selected a pipeline connection of the current type. Its purpose is to present the required
+   * form elements for editing. The coder can presume that the HTML that is output from this configuration will be within appropriate <html>, <body>, and <form> tags. The name of the form is
+   * "editjob".
+   *
+   * @param out                      is the output to which any HTML should be sent.
+   * @param locale                   is the preferred local of the output.
+   * @param spec                       is the current pipeline specification for this job.
+   * @param connectionSequenceNumber is the unique number of this connection within the job.
+   * @param actualSequenceNumber     is the connection within the job that has currently been selected.
+   * @param tabName                  is the current tab name.
+   */
+  @Override
+  public void outputSpecificationBody(final IHTTPOutput out, final Locale locale, final Specification spec, final int connectionSequenceNumber, final int actualSequenceNumber, final String tabName)
+      throws ManifoldCFException, IOException {
+    final Map<String, Object> paramMap = new HashMap<>();
+
+    // Set the tab name
+    paramMap.put("TABNAME", tabName);
+    paramMap.put(SEQNUM, Integer.toString(connectionSequenceNumber));
+    paramMap.put("SELECTEDNUM", Integer.toString(actualSequenceNumber));
+
+    // Fill in the field mapping tab data
+    fillInLlmSpecificationMap(paramMap, spec);
+
+
+    Messages.outputResourceWithVelocity(out, locale, EDIT_SPECIFICATION_HTML, paramMap);
+  }
+
+  /**
+   * Process a specification post. This method is called at the start of job's edit or view page, whenever there is a possibility that form data for a connection has been posted. Its purpose is to
+   * gather form information and modify the transformation specification accordingly. The name of the posted form is "editjob".
+   *
+   * @param variableContext          contains the post data, including binary file-upload information.
+   * @param locale                   is the preferred local of the output.
+   * @param spec                     is the current pipeline specification for this job.
+   * @param connectionSequenceNumber is the unique number of this connection within the job.
+   * @return null if all is well, or a string error message if there is an error that should prevent saving of the job (and cause a redirection to an error page).
+   */
+  @Override
+  public String processSpecificationPost(final IPostParameters variableContext, final Locale locale, final Specification spec, final int connectionSequenceNumber) throws ManifoldCFException {
+
+    final String seqPrefix = "s" + connectionSequenceNumber + "_";
+
+    addChildToSpec(variableContext, spec, seqPrefix + "enableSummarize", LlmConfig.NODE_ENABLE_SUMMARIZE);
+    addChildToSpec(variableContext, spec, seqPrefix + "enableCategorize", LlmConfig.NODE_ENABLE_CATEGORIZE);
+    addChildToSpec(variableContext, spec, seqPrefix + "enableEmbeddings", LlmConfig.NODE_ENABLE_EMBEDDINGS);
+    addChildToSpec(variableContext, spec, seqPrefix + "maxTokens", LlmConfig.NODE_MAXTOKENS);
+    addChildToSpec(variableContext, spec, seqPrefix + "summariesLanguage", LlmConfig.NODE_SUMMARIES_LANGUAGE);
+
+    return null;
+  }
+
+  private static void addChildToSpec(IPostParameters variableContext, Specification spec, String fieldName, String nodeName) {
+    final SpecificationNode node = new SpecificationNode(nodeName);
+    final String value = variableContext.getParameter(fieldName);
+    if (value != null) {
+      node.setAttribute(LlmConfig.ATTRIBUTE_VALUE, fieldName);
+    } else {
+      node.setAttribute(LlmConfig.ATTRIBUTE_VALUE, "");
+    }
+    spec.addChild(spec.getChildCount(), node);
+  }
+
+
+  /**
+   * View specification. This method is called in the body section of a job's view page. Its purpose is to present the pipeline specification information to the user. The coder can presume that the
+   * HTML that is output from this configuration will be within appropriate <html> and <body> tags.
+   *
+   * @param out                      is the output to which any HTML should be sent.
+   * @param locale                   is the preferred local of the output.
+   * @param connectionSequenceNumber is the unique number of this connection within the job.
+   * @param spec                       is the current pipeline specification for this job.
+   */
+  @Override
+  public void viewSpecification(final IHTTPOutput out, final Locale locale, final Specification spec, final int connectionSequenceNumber) throws ManifoldCFException, IOException {
+    final Map<String, Object> paramMap = new HashMap<>();
+    paramMap.put(SEQNUM, Integer.toString(connectionSequenceNumber));
+
+    // Fill in the map with data from all tabs
+    fillInLlmSpecificationMap(paramMap, spec);
+
+    Messages.outputResourceWithVelocity(out, locale, VIEW_SPECIFICATION_HTML, paramMap);
+
+  }
+
+  protected static void fillInLlmSpecificationMap(final Map<String, Object> paramMap, final Specification os) {
+    // Prep for field mappings
+    boolean enableSummarize = false;
+    boolean enableCategorize = false;
+    boolean enableEmbeddings = false;
+    int maxTokens = 400;
+    String summariesLanguage = "";
+
+    for (int i = 0; i < os.getChildCount(); i++) {
+      final SpecificationNode sn = os.getChild(i);
+      if (sn.getType().equals(LlmConfig.NODE_ENABLE_SUMMARIZE)) {
+        enableSummarize = "true".equals(sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE));
+      } else if (sn.getType().equals(LlmConfig.NODE_ENABLE_CATEGORIZE)) {
+        enableCategorize = "true".equals(sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE));
+      } else if (sn.getType().equals(LlmConfig.NODE_ENABLE_EMBEDDINGS)) {
+        enableEmbeddings = "true".equals(sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE));
+      } else if (sn.getType().equals(LlmConfig.NODE_MAXTOKENS)) {
+        maxTokens = Integer.parseInt(sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE));
+      } else if (sn.getType().equals(LlmConfig.NODE_SUMMARIES_LANGUAGE)) {
+        summariesLanguage = sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE);
+      }
+    }
+    paramMap.put("ENABLESUMMARIZE", enableSummarize);
+    paramMap.put("ENABLECATEGORIZE", enableCategorize);
+    paramMap.put("ENABLEEMBEDDINGS", enableEmbeddings);
+    paramMap.put("MAXTOKENS", maxTokens);
+    paramMap.put("SUMMARIESLANGUAGE", summariesLanguage);
+  }
+
+  /**
+   * Create a Version String for this connector configuration. To be used by getPipelineDescription().
+   * 
+   * @param spec the specification object associated with this connector.
+   * @return the Version String
+   */
+  protected String getVersionString(Specification spec) {
+    StringBuilder versionString = new StringBuilder();
+    
+    // Browse specification nodes and their attributes
+    int nbNodes = spec.getChildCount();
+    SpecificationNode specNode;
+    Iterator<String> itAttributesName;
+    String attributeValue;
+    String attributeName;
+    for (int i=0; i < nbNodes; i++) {
+      specNode = spec.getChild(i);
+      if (i > 0) {
+        versionString.append('+');
+      }
+      versionString.append(specNode.getType());
+      
+      itAttributesName = specNode.getAttributes();
+      while (itAttributesName.hasNext()) {
+        attributeName = itAttributesName.next();
+        attributeValue = specNode.getAttributeValue(attributeName);
+        
+        if (!attributeValue.isEmpty()) {
+          versionString.append('+');
+          versionString.append(attributeName);
+          versionString.append(':');
+          versionString.append(attributeValue);
+        }
+      }
+    }
+    return versionString.toString();
+  }
+  
+}
