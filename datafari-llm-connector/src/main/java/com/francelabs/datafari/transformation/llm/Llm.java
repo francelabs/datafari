@@ -53,6 +53,7 @@ public class Llm extends BaseTransformationConnector {
 
   public static final String _rcsid = "@(#)$Id: "+ Llm.class.getName() + " $";
   public static final String DEFAULT_ENDPOINT = "https://api.openai.com/v1/";
+  private static final int DEFAULT_MAXTOKENS = 500;
 
   private static final String EDIT_CONFIGURATION_JS = "editConfiguration.js";
   private static final String EDIT_CONFIGURATION_SERVER_HTML = "editConfiguration_llm.html";
@@ -68,7 +69,6 @@ public class Llm extends BaseTransformationConnector {
 
   protected static final String[] activitiesList = new String[] { ACTIVITY_LLM };
 
-  
 
   /**
    * Connect this connector. The configuration parameters are included.
@@ -166,16 +166,16 @@ public class Llm extends BaseTransformationConnector {
     if (variableContext.getParameter("llmService") != null) {
       parameters.setParameter(LlmConfig.NODE_LLM_SERVICE, variableContext.getParameter("llmService"));
     }
-    if (variableContext.getParameter("llmService") != null) {
+    if (variableContext.getParameter("endpointToUse") != null) {
       parameters.setParameter(LlmConfig.NODE_ENDPOINT, variableContext.getParameter("endpointToUse"));
     }
-    if (variableContext.getParameter("llmService") != null) {
+    if (variableContext.getParameter("llmToUse") != null) {
       parameters.setParameter(LlmConfig.NODE_LLM, variableContext.getParameter("llmToUse"));
     }
-    if (variableContext.getParameter("llmService") != null) {
+    if (variableContext.getParameter("embeddingsModelToUse") != null) {
       parameters.setParameter(LlmConfig.NODE_EMBEDDINGS_MODEL, variableContext.getParameter("embeddingsModelToUse"));
     }
-    if (variableContext.getParameter("llmService") != null) {
+    if (variableContext.getParameter("llmApiKey") != null) {
       parameters.setParameter(LlmConfig.NODE_APIKEY, variableContext.getParameter("llmApiKey"));
     }
 
@@ -200,11 +200,11 @@ public class Llm extends BaseTransformationConnector {
 
   protected static void fillInAPITab(final Map<String, Object> velocityContext, final IHTTPOutput out, final ConfigParams parameters) throws ManifoldCFException {
 
-    String endpointToUse = (parameters.getParameter(LlmConfig.NODE_ENDPOINT) != null) ? parameters.getParameter(LlmConfig.NODE_ENDPOINT) : "";
-    String llmService = (parameters.getParameter(LlmConfig.NODE_LLM) != null) ? parameters.getParameter(LlmConfig.NODE_ENDPOINT) : "";
-    String llmToUse = (parameters.getParameter(LlmConfig.NODE_ENDPOINT) != null) ? parameters.getParameter(LlmConfig.NODE_ENDPOINT) : "openai";
-    String embeddingsModelToUse = (parameters.getParameter(LlmConfig.NODE_ENDPOINT) != null) ? parameters.getParameter(LlmConfig.NODE_ENDPOINT) : DEFAULT_ENDPOINT;
-    String llmApiKey = (parameters.getParameter(LlmConfig.NODE_ENDPOINT) != null) ? parameters.getParameter(LlmConfig.NODE_ENDPOINT) : "";
+    String endpointToUse = (parameters.getParameter(LlmConfig.NODE_ENDPOINT) != null) ? parameters.getParameter(LlmConfig.NODE_ENDPOINT) : DEFAULT_ENDPOINT;
+    String llmService = (parameters.getParameter(LlmConfig.NODE_LLM_SERVICE) != null) ? parameters.getParameter(LlmConfig.NODE_LLM_SERVICE) : "openai";
+    String llmToUse = (parameters.getParameter(LlmConfig.NODE_LLM) != null) ? parameters.getParameter(LlmConfig.NODE_LLM) : "";
+    String embeddingsModelToUse = (parameters.getParameter(LlmConfig.NODE_EMBEDDINGS_MODEL) != null) ? parameters.getParameter(LlmConfig.NODE_EMBEDDINGS_MODEL) : "";
+    String llmApiKey = (parameters.getParameter(LlmConfig.NODE_APIKEY) != null) ? parameters.getParameter(LlmConfig.NODE_APIKEY) : "";
 
 
     // Fill in context
@@ -311,7 +311,7 @@ public class Llm extends BaseTransformationConnector {
     final long startTime = System.currentTimeMillis();
 
     // Map of metadata associated to lines found : < metadata, Set<linesFound> >
-    Map<String, List<String>> matchedMetadata = new HashMap<>();
+    Map<String, List<String>> matchedMetadata = new HashMap<>(); // todo : remove
 
     // Prepare storage for reading document content. A suitable storage depending on content size.
     DestinationStorage storage = DestinationStorage.getDestinationStorage(document.getBinaryLength(), getClass());
@@ -391,7 +391,7 @@ public class Llm extends BaseTransformationConnector {
 
 
       if (!hasError) activities.recordActivity(startTime, ACTIVITY_LLM, document.getBinaryLength(), documentURI, "OK", "");
-      addMetadataFieldsToDocument(document, matchedMetadata);
+      addMetadataFieldsToDocument(document, matchedMetadata); // todo remove
       return activities.sendDocument(documentURI, document);
 
     } finally {
@@ -554,7 +554,7 @@ public class Llm extends BaseTransformationConnector {
     final SpecificationNode node = new SpecificationNode(nodeName);
     final String value = variableContext.getParameter(fieldName);
     if (value != null) {
-      node.setAttribute(LlmConfig.ATTRIBUTE_VALUE, fieldName);
+      node.setAttribute(LlmConfig.ATTRIBUTE_VALUE, value);
     } else {
       node.setAttribute(LlmConfig.ATTRIBUTE_VALUE, "");
     }
@@ -585,22 +585,26 @@ public class Llm extends BaseTransformationConnector {
 
   protected static void fillInLlmSpecificationMap(final Map<String, Object> paramMap, final Specification os) {
     // Prep for field mappings
-    boolean enableSummarize = false;
-    boolean enableCategorize = false;
-    boolean enableEmbeddings = false;
+    String enableSummarize = "false";
+    String enableCategorize = "false";
+    String enableEmbeddings = "false";
     int maxTokens = 400;
     String summariesLanguage = "";
 
     for (int i = 0; i < os.getChildCount(); i++) {
       final SpecificationNode sn = os.getChild(i);
       if (sn.getType().equals(LlmConfig.NODE_ENABLE_SUMMARIZE)) {
-        enableSummarize = "true".equals(sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE));
+        enableSummarize = sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE);
       } else if (sn.getType().equals(LlmConfig.NODE_ENABLE_CATEGORIZE)) {
-        enableCategorize = "true".equals(sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE));
+        enableCategorize = sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE);
       } else if (sn.getType().equals(LlmConfig.NODE_ENABLE_EMBEDDINGS)) {
-        enableEmbeddings = "true".equals(sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE));
+        enableEmbeddings = sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE);
       } else if (sn.getType().equals(LlmConfig.NODE_MAXTOKENS)) {
-        maxTokens = Integer.parseInt(sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE));
+        try {
+          maxTokens = Integer.parseInt(sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE));
+        } catch (NumberFormatException ex) {
+          maxTokens = DEFAULT_MAXTOKENS;
+        }
       } else if (sn.getType().equals(LlmConfig.NODE_SUMMARIES_LANGUAGE)) {
         summariesLanguage = sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE);
       }

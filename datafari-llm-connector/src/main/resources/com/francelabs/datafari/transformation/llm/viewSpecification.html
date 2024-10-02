@@ -20,15 +20,27 @@
   <tr><td class="separator" colspan="2"><hr/></td></tr>
   <tr>
     <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('llm.EnableSummarize'))</nobr></td>
-    <td class="value"><nobr>$Encoder.bodyEscape(ENABLESUMMARIZE)</nobr></td>
+    <td class="value">
+      #if($ENABLESUMMARIZE)
+        <nobr><input type="checkbox" disabled checked /></nobr>
+      #end
+    </td>
   </tr>
   <tr>
     <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('llm.EnableCategorize'))</nobr></td>
-    <td class="value"><nobr>$Encoder.bodyEscape(ENABLECATEGORIZE)</nobr></td>
+    <td class="value">
+      #if($ENABLECATEGORIZE)
+      <nobr><input type="checkbox" disabled checked /></nobr>
+      #end
+    </td>
   </tr>
   <tr>
     <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('llm.EnableEmbeddings'))</nobr></td>
-    <td class="value"><nobr>$Encoder.bodyEscape(ENABLEEMBEDDINGS)</nobr></td>
+    <td class="value">
+      #if($ENABLEEMBEDDINGS)
+      <nobr><input type="checkbox" disabled checked /></nobr>
+      #end
+    </td>
   </tr>
   <tr><td class="separator" colspan="2"><hr/></td></tr>
   <tr>

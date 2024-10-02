@@ -23,30 +23,30 @@
     <tr>
         <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('llm.EnableSummarize'))</nobr></td>
         <td class="value"><input name="s${SEQNUM}_enableSummarize" type="checkbox"
-                                 #if($Encoder.attributeEscape($ENABLESUMMARIZE)) checked #end
-                                 value="$Encoder.attributeEscape($ENABLESUMMARIZE)" />
+                                 #if($Encoder.attributeEscape($ENABLESUMMARIZE) == 'true') checked #end
+                                 value="true" />
         </td>
     </tr>
 
     <tr>
         <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('llm.EnableCategorize'))</nobr></td>
         <td class="value"><input name="s${SEQNUM}_enableCategorize" type="checkbox"
-                                 #if($Encoder.attributeEscape(ENABLECATEGORIZE)) checked #end
-                                 value="$Encoder.attributeEscape(ENABLECATEGORIZE)" />
+                                 #if($Encoder.attributeEscape($ENABLECATEGORIZE) == 'true') checked #end
+                                 value="true" />
         </td>
     </tr>
 
     <tr>
         <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('llm.EnableEmbeddings'))</nobr></td>
         <td class="value"><input name="s${SEQNUM}_enableEmbeddings" type="checkbox"
-                                 #if($Encoder.attributeEscape(ENABLEEMBEDDINGS)) checked #end
-                                 value="$Encoder.attributeEscape(ENABLEEMBEDDINGS)" />
+                                 #if($Encoder.attributeEscape($ENABLEEMBEDDINGS) == 'true') checked #end
+                                 value="true" />
         </td>
     </tr>
 
     <tr>
         <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('llm.MaxTokens'))</nobr></td>
-        <td class="value"><input name="s${SEQNUM}_modelToUse" type="number"
+        <td class="value"><input name="s${SEQNUM}_maxTokens" type="number"
                                  value="$Encoder.attributeEscape($MAXTOKENS)"  min="20" max="10000"  />
         </td>
     </tr>
@@ -54,13 +54,13 @@
         <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('llm.SummariesLanguage'))</nobr></td>
         <td class="value">
             <select name="s${SEQNUM}_summariesLanguage">
-                <option value="" #if($LLMTYPE == '') selected="selected" #end >Default</option>
-                <option value="en_EN" #if($LLMTYPE == 'en_EN') selected="selected" #end >English</option>
-                <option value="fr_FR" #if($LLMTYPE == 'fr_FR') selected="selected" #end >French</option>
-                <option value="de_DE" #if($LLMTYPE == 'de_DE') selected="selected" #end >German</option>
-                <option value="es_ES" #if($LLMTYPE == 'es_ES') selected="selected" #end >Spanish</option>
-                <option value="it_IT" #if($LLMTYPE == 'it_IT') selected="selected" #end >Italian</option>
-                <option value="pt_PT" #if($LLMTYPE == 'pt_PT') selected="selected" #end >Portuguese</option>
+                <option value="" #if($SUMMARIESLANGUAGE == '') selected="selected" #end >Default</option>
+                <option value="en_EN" #if($SUMMARIESLANGUAGE == 'en_EN') selected="selected" #end >English</option>
+                <option value="fr_FR" #if($SUMMARIESLANGUAGE == 'fr_FR') selected="selected" #end >French</option>
+                <option value="de_DE" #if($SUMMARIESLANGUAGE == 'de_DE') selected="selected" #end >German</option>
+                <option value="es_ES" #if($SUMMARIESLANGUAGE == 'es_ES') selected="selected" #end >Spanish</option>
+                <option value="it_IT" #if($SUMMARIESLANGUAGE == 'it_IT') selected="selected" #end >Italian</option>
+                <option value="pt_PT" #if($SUMMARIESLANGUAGE == 'pt_PT') selected="selected" #end >Portuguese</option>
             </select>
         </td>
     </tr>

@@ -25,7 +25,7 @@
 
       <select name="llmService">
         <option value="datafari" #if($LLMTYPE == 'datafari') selected="selected" #end>$Encoder.bodyEscape($ResourceBundle.getString('llm.option.datafariws'))</option>
-        <option value="openai" #if($LLMTYPE == 'openai') selected="selected" #end>$Encoder.bodyEscape($ResourceBundle.getString('llm.option.datafariws'))</option>
+        <option value="openai" #if($LLMTYPE == 'openai') selected="selected" #end>$Encoder.bodyEscape($ResourceBundle.getString('llm.option.openai'))</option>
         <!-- TODO : select default value -->
       </select>
     </td>
@@ -36,7 +36,7 @@
       <nobr>$Encoder.bodyEscape($ResourceBundle.getString('llm.endPointToUse'))</nobr>
     </td>
     <td class="value">
-      <input type="text" id="endPointToUse" name="endPointToUse" value="$Encoder.attributeEscape($ENDPOINTTOUSE)" />
+      <input type="text" id="endpointToUse" name="endpointToUse" value="$Encoder.attributeEscape($ENDPOINT)" />
     </td>
   </tr>
   

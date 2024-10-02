@@ -29,7 +29,7 @@
   <tr>
     <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('SpacyNER.endpointToUse'))</nobr></td>
     <td class="value"><input name="s${SEQNUM}_endpointToUse" type="text"
-      value="$Encoder.attributeEscape($ENDPOINTTOUSE)" size="16" />
+      value="$Encoder.attributeEscape($ENDPOINT)" size="16" />
     </td>
   </tr>
   <tr>
@@ -42,7 +42,7 @@
       
 #else
 <input type="hidden" name="s${SEQNUM}_modelToUse" value="$Encoder.bodyEscape($MODELTOUSE)"/>
-<input type="hidden" name="s${SEQNUM}_endpointToUse" value="$Encoder.bodyEscape($ENDPOINTTOUSE)"/>
+<input type="hidden" name="s${SEQNUM}_endpointToUse" value="$Encoder.bodyEscape($ENDPOINT)"/>
 <input type="hidden" name="s${SEQNUM}_outputFieldPrefix" value="$Encoder.bodyEscape($OUTPUTFIELDPREFIX)"/>
 
 #end
