@@ -46,7 +46,7 @@ public class PromptUtils {
             Locale loc = new Locale(spec.getSummariesLanguage());
             if (!loc.getDisplayLanguage(new Locale("en")).isEmpty()) language = " in " +loc.getDisplayLanguage(Locale.ENGLISH);
         }
-        prompt = "\"\"\"Summarize this document " + language + ": \n\n" + content.substring(0, 30000) + "\"\"\"";
+        prompt = "\"\"\"Summarize this document " + language + ": \n\n" + content + "\"\"\"";
         return prompt;
     }
 

@@ -17,7 +17,6 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.List;
 
 public class DatafariLlmService implements LlmService {
 
@@ -36,35 +35,7 @@ public class DatafariLlmService implements LlmService {
         this.maxToken = spec.getMaxTokens();
         this.model = spec.getLlm();
         this.apiKey = spec.getApiKey();
-    }
-
-
-    /**
-     * Call the Datafari External LLM Webservice
-     * @param prompts A list of prompts. Each prompt contains instructions for the model, document content and the user query
-     * @return The string LLM response
-     */
-    public String invoke(List<String> prompts) throws IOException {
-
-        StringBuilder concatenatedResponses = new StringBuilder();
-        String message;
-
-        // The first calls returns a concatenated responses from each chunk
-        for (String prompt : prompts) {
-            String body = generateRequestBody(prompt);
-            concatenatedResponses.append(generate(body));
-        }
-
-        // If the is only one prompt to send, we get the answer from the response
-        // Otherwise, we concatenate all the responses, and generate a new response to summarize the results
-        if (prompts.size() == 1) {
-            message = concatenatedResponses.toString();
-        } else {
-            throw new RuntimeException("Could not find data to send to the LLM");
-        }
-
-        return message;
-
+        this.spec = spec;
     }
 
     /**

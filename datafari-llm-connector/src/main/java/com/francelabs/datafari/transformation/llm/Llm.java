@@ -305,7 +305,7 @@ public class Llm extends BaseTransformationConnector {
       final IOutputAddActivity activities) throws ManifoldCFException, ServiceInterruption, IOException {
 
 
-    final LlmSpecification spec = new LlmSpecification(pipelineDescription.getSpecification());
+    final LlmSpecification spec = new LlmSpecification(pipelineDescription.getSpecification(), getConfiguration());
 
     boolean hasError = false;
     final long startTime = System.currentTimeMillis();
@@ -343,7 +343,10 @@ public class Llm extends BaseTransformationConnector {
       }
 
       String content = contentBuilder.toString();
-      content = content.substring(0, 50000);
+
+      if (content.length() > 20000) {
+        content = content.substring(0, 20000);
+      }
 
       // Select the proper service depending on the LLM
       LlmService service;
@@ -361,7 +364,7 @@ public class Llm extends BaseTransformationConnector {
       // SUMMARIZE DOCUMENTS
       if (spec.getEnableSummarize()) {
         String summary = service.summarize(content, spec);
-        document.addField("summary", summary);
+        document.addField("llm_summary", summary);
         // Todo : handle empty and errors
       }
 
@@ -376,7 +379,7 @@ public class Llm extends BaseTransformationConnector {
         for (int i = 0; i < response.length; i++ ) {
           strvector[i] = Float.toString(response[i]);
         }
-        document.addField("vector", strvector);
+        document.addField("llm_vector", strvector);
         // Todo : handle empty and errors
       }
 
@@ -384,7 +387,7 @@ public class Llm extends BaseTransformationConnector {
       // Invoice, Call for Tenders, Request for Quotations, Technical paper, Presentation, Resumes, Others
       if (spec.getEnableCategorize()) {
         String category = extractCategory(service.summarize(content, spec));
-        document.addField("category", category);
+        document.addField("llm_categories", category);
         // Todo : handle empty and errors
       }
 

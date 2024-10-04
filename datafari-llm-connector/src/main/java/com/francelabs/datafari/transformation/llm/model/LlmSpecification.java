@@ -1,6 +1,8 @@
 package com.francelabs.datafari.transformation.llm.model;
 
 import com.francelabs.datafari.transformation.llm.LlmConfig;
+import org.apache.manifoldcf.core.interfaces.ConfigNode;
+import org.apache.manifoldcf.core.interfaces.ConfigParams;
 import org.apache.manifoldcf.core.interfaces.Specification;
 import org.apache.manifoldcf.core.interfaces.SpecificationNode;
 
@@ -11,17 +13,17 @@ import java.util.Objects;
  */
 public class LlmSpecification {
 
-    String summariesLanguage;
-    boolean enableSummarize;
-    boolean enableCategorize;
-    boolean enableVectorEmbedding;
-    String llmEndpoint;
-    int vectorDimension;
-    String apiKey;
-    String llm;
-    String embeddingsModel;
-    int maxTokens;
-    String typeOfLlm;
+    String summariesLanguage = "en_US";
+    boolean enableSummarize = false;
+    boolean enableCategorize = false;
+    boolean enableVectorEmbedding = false;
+    String llmEndpoint = "";
+    int vectorDimension = 0;
+    String apiKey = "";
+    String llm = "";
+    String embeddingsModel = "";
+    int maxTokens = 500;
+    String typeOfLlm = "";
 
     public LlmSpecification(Boolean enableSummarize, Boolean enableCategorize, Boolean enableVectorEmbedding,
                             String llmEndpoint, int vectorDimension, String apiKey, String model) {
@@ -34,7 +36,7 @@ public class LlmSpecification {
         this.llm = model;
     }
 
-    public LlmSpecification(Specification os) {
+    public LlmSpecification(Specification os, ConfigParams config) {
 
         for (int i = 0; i < os.getChildCount(); i++) {
             final SpecificationNode sn = os.getChild(i);
@@ -45,22 +47,27 @@ public class LlmSpecification {
                 this.enableCategorize = "true".equals(sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE));
             } else if (sn.getType().equals(LlmConfig.NODE_ENABLE_EMBEDDINGS)) {
                 this.enableVectorEmbedding = "true".equals(sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE));
-            } else if (sn.getType().equals(LlmConfig.NODE_ENDPOINT)) {
-                this.llmEndpoint = sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE);
-            } else if (sn.getType().equals(LlmConfig.NODE_VECTOR_DIMENSION)) {
-                this.vectorDimension = Integer.parseInt(sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE));
-            } else if (sn.getType().equals(LlmConfig.NODE_APIKEY)) {
-                this.apiKey = sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE);
-            } else if (sn.getType().equals(LlmConfig.NODE_LLM)) {
-                this.llm = sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE);
-            } else if (sn.getType().equals(LlmConfig.NODE_EMBEDDINGS_MODEL)) {
-                this.embeddingsModel = sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE);
-            } else if (sn.getType().equals(LlmConfig.NODE_LLM_SERVICE)) {
-                this.typeOfLlm = sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE);
             } else if (sn.getType().equals(LlmConfig.NODE_MAXTOKENS)) {
                 this.maxTokens = Integer.parseInt(sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE));
             } else if (sn.getType().equals(LlmConfig.NODE_SUMMARIES_LANGUAGE)) {
                 this.summariesLanguage = sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE);
+            }
+        }
+        for (int i = 0; i < config.getChildCount(); i++) {
+            final ConfigNode cn = config.getChild(i);
+
+            if (cn.getAttributeValue("name").equals(LlmConfig.NODE_ENDPOINT)) {
+                this.llmEndpoint = cn.getValue();
+            } else if (cn.getAttributeValue("name").equals(LlmConfig.NODE_VECTOR_DIMENSION)) {
+                this.vectorDimension = Integer.parseInt(cn.getValue());
+            } else if (cn.getAttributeValue("name").equals(LlmConfig.NODE_APIKEY)) {
+                this.apiKey = cn.getValue();
+            } else if (cn.getAttributeValue("name").equals(LlmConfig.NODE_LLM)) {
+                this.llm = cn.getValue();
+            } else if (cn.getAttributeValue("name").equals(LlmConfig.NODE_EMBEDDINGS_MODEL)) {
+                this.embeddingsModel = cn.getValue();
+            } else if (cn.getAttributeValue("name").equals(LlmConfig.NODE_LLM_SERVICE)) {
+                this.typeOfLlm = cn.getValue();
             }
         }
     }
