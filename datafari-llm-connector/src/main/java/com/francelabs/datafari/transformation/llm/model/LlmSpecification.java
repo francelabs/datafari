@@ -25,15 +25,8 @@ public class LlmSpecification {
     int maxTokens = 500;
     String typeOfLlm = "";
 
-    public LlmSpecification(Boolean enableSummarize, Boolean enableCategorize, Boolean enableVectorEmbedding,
-                            String llmEndpoint, int vectorDimension, String apiKey, String model) {
-        this.enableSummarize = enableSummarize;
-        this.enableCategorize = enableCategorize;
-        this.enableVectorEmbedding = enableVectorEmbedding;
-        this.llmEndpoint = llmEndpoint;
-        this.vectorDimension = vectorDimension;
-        this.apiKey = apiKey;
-        this.llm = model;
+    public LlmSpecification() {
+        // Empty connector
     }
 
     public LlmSpecification(Specification os, ConfigParams config) {

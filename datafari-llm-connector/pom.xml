@@ -41,18 +41,23 @@
       <version>0.33.0</version>
       <scope>compile</scope>
     </dependency>
-      <dependency>
+    <dependency>
           <groupId>dev.langchain4j</groupId>
           <artifactId>langchain4j</artifactId>
           <version>0.34.0</version>
           <scope>compile</scope>
-      </dependency>
-      <dependency>
+    </dependency>
+    <dependency>
           <groupId>dev.langchain4j</groupId>
           <artifactId>langchain4j-embeddings-all-minilm-l6-v2</artifactId>
           <version>0.34.0</version>
-          <scope>compile</scope>
-      </dependency>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>RELEASE</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
