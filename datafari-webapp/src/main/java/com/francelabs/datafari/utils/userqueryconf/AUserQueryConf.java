@@ -2,6 +2,7 @@ package com.francelabs.datafari.utils.userqueryconf;
 
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.utils.SolrAPI;
+import com.francelabs.datafari.utils.Timer;
 import com.sun.istack.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
@@ -52,6 +53,8 @@ public abstract class AUserQueryConf {
      * @param request the original request
      */
   public void applyUserQueryConf(final HttpServletRequest request) {
+    Timer timer = new Timer(this.getClass().getName(), "applyUserQueryConf");
+
     final String userConf;
     try {
       userConf = getUserQueryConf(request);
@@ -79,6 +82,8 @@ public abstract class AUserQueryConf {
       getLogger().error("Impossible to retrieve User query configuration due to internal database error (see previous errors reported).");
     } catch (IOException e) {
       getLogger().error("Impossible to retrieve User query configuration (see previous errors reported).");
+    } finally {
+      timer.stop();
     }
   }
 }

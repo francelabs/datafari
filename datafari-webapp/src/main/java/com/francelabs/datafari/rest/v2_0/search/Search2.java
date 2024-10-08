@@ -76,35 +76,6 @@ public class Search2 extends HttpServlet {
 
 
   /**
-   * Apply user's specific query config (specific boosts related to user context) on the request
-   *
-   * @param request the original request
-   */
-  //FIXME à supprimer
-  private void applyUserQueryConf(final HttpServletRequest request) {
-    Timer timer = new Timer(this.getClass().getName(), "applyUserQueryConf");
-    final String userConf = GetUserQueryConf.getUserQueryConf(request);
-    if (userConf != null && !userConf.isEmpty()) {
-      final JSONParser parser = new JSONParser();
-      try {
-        final JSONObject jsonConf = (JSONObject) parser.parse(userConf);
-        final String qf = (String) jsonConf.get("qf");
-        final String pf = (String) jsonConf.get("pf");
-        if (qf != null && qf.length() > 0) {
-          request.setAttribute("qf", qf);
-        }
-
-        if (pf != null && pf.length() > 0) {
-          request.setAttribute("pf", pf);
-        }
-      } catch (final ParseException e) {
-        logger.warn("An issue has occured while reading user query conf", e);
-      }
-    }
-    timer.stop();
-  }
-
-  /**
    * Check if search response contains errors and throw an {@link InternalErrorException} if it is the case
    *
    * @param searchResponse the JSONObject representing the search response to check
@@ -187,6 +158,7 @@ public class Search2 extends HttpServlet {
 
   @GetMapping(value = "/rest/v2.0/search/*", produces = "application/json;charset=UTF-8")
   protected JSONObject performSearch(final HttpServletRequest request, final HttpServletResponse response) {
+    Timer timer = new Timer(this.getClass().getName(), "perfomSearch");
     try {
       setSearchSessionId(request);
       UserQueryAllConf.apply(request);

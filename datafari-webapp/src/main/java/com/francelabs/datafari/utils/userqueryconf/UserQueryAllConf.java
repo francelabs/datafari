@@ -1,5 +1,6 @@
 package com.francelabs.datafari.utils.userqueryconf;
 
+import com.francelabs.datafari.utils.Timer;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
