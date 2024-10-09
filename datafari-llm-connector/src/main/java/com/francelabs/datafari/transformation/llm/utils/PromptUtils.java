@@ -57,7 +57,7 @@ public class PromptUtils {
      */
     public static String promptForCategorization(String content) {
         String prompt;
-        prompt = "\"\"\"Categorize the document above in one of the following categories: Invoice, Call for Tenders, Request for Quotations, Technical paper, Presentation, Resumes, Others. If you don't know, say \"Others\". \n\n" + content.substring(0, 30000) + "\"\"\"";
+        prompt = "\"\"\"Categorize the following document in one of the following categories: Invoice, Call for Tenders, Request for Quotations, Technical paper, Presentation, Resumes, Others. If you don't know, say \"Others\". \n\n" + content.substring(0, 30000) + "\"\"\"";
         return prompt;
     }
 	
