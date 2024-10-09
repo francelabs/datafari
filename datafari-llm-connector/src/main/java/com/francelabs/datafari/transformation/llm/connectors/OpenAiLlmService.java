@@ -5,8 +5,8 @@ import com.francelabs.datafari.transformation.llm.utils.PromptUtils;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
-import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import dev.langchain4j.model.output.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,28 +17,32 @@ public class OpenAiLlmService implements LlmService {
 
     private static final Logger LOGGER = LogManager.getLogger(OpenAiLlmService.class.getName());
     LlmSpecification spec;
-    String url;
-    String model;
-    String embeddingsModel;
-    String apiKey;
+
     double temperature;
     int maxToken;
+    int dimensions = 124;
     static final String DEFAULT_LLM_MODEL = "gpt-3.5-turbo";
     static final String DEFAULT_EMBEDDINGS_MODEL = "text-embedding-3-small";
+    static final int DEFAULT_DIMENSION = 250;
     static final String DEFAULT_URL = "https://api.openai.com/v1/";
 
     public OpenAiLlmService(LlmSpecification spec) {
+        this.temperature = 0;
         try {
-            this.temperature = 0;
             this.maxToken = spec.getMaxTokens();
         } catch (NumberFormatException e) {
-            this.temperature = 0.0;
-            this.maxToken = 200;
+            spec.setMaxTokens(200);
         }
-        this.model = spec.getLlm().isEmpty() ? DEFAULT_LLM_MODEL : spec.getLlm();
-        this.embeddingsModel = spec.getEmbeddingsModel().isEmpty() ? DEFAULT_EMBEDDINGS_MODEL : spec.getEmbeddingsModel();
-        this.url = spec.getLlmEndpoint().isEmpty() ? DEFAULT_URL : spec.getLlmEndpoint();
-        this.apiKey = spec.getApiKey();
+        try {
+            this.dimensions = (spec.getVectorDimension() < 1) ? DEFAULT_DIMENSION : spec.getVectorDimension();
+        } catch (NumberFormatException e) {
+            spec.setVectorDimension(124);
+        }
+
+        if (spec.getLlm().isEmpty()) spec.setLlm(DEFAULT_LLM_MODEL);
+        if (spec.getEmbeddingsModel().isEmpty()) spec.setEmbeddingsModel(DEFAULT_EMBEDDINGS_MODEL);
+        if (spec.getLlmEndpoint().isEmpty()) spec.setLlmEndpoint(DEFAULT_URL);
+
         this.spec = spec;
     }
 
@@ -52,11 +56,11 @@ public class OpenAiLlmService implements LlmService {
     public String invoke(String prompt) throws IOException {
 
         ChatLanguageModel llm = OpenAiChatModel.builder()
-                .apiKey(apiKey)
+                .apiKey(spec.getApiKey())
                 .temperature(temperature)
-                .maxTokens(maxToken)
-                .modelName(model)
-                .baseUrl(url)
+                .maxTokens(spec.getMaxTokens())
+                .modelName(spec.getLlm())
+                .baseUrl(spec.getLlmEndpoint())
                 .build();
 
         return llm.generate(prompt);
@@ -65,10 +69,14 @@ public class OpenAiLlmService implements LlmService {
     @Override
     public float[] embeddings(String content) throws IOException {
 
-        // Embedding the document
-        EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
-        Response<Embedding> embedding = embeddingModel.embed(content);
+        EmbeddingModel llm = OpenAiEmbeddingModel.builder()
+                .apiKey(spec.getApiKey())
+                .modelName(spec.getEmbeddingsModel())
+                .baseUrl(spec.getLlmEndpoint())
+                .dimensions(spec.getVectorDimension())
+                .build();
 
+        Response<Embedding> embedding = llm.embed(content);
         LOGGER.info("Vector embedding : {}", embedding);
         return embedding.content().vector();
     }

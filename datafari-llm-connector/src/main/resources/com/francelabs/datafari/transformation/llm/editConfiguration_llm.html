@@ -26,7 +26,6 @@
       <select name="llmService">
         <option value="datafari" #if($LLMTYPE == 'datafari') selected="selected" #end>$Encoder.bodyEscape($ResourceBundle.getString('llm.option.datafariws'))</option>
         <option value="openai" #if($LLMTYPE == 'openai') selected="selected" #end>$Encoder.bodyEscape($ResourceBundle.getString('llm.option.openai'))</option>
-        <!-- TODO : select default value -->
       </select>
     </td>
   </tr>
@@ -56,7 +55,7 @@
     <td class="value">
       <input type="text" id="embeddingsModelToUse" name="embeddingsModelToUse" value="$Encoder.attributeEscape($EMBEDDINGMODEL)" />
     </td>
-    <!-- TODO : disable if embedding is disabled. -->
+    <!-- TODO : hide if embedding is disabled. -->
   </tr>
 
   <tr>
@@ -67,6 +66,15 @@
       <input type="text" id="llmApiKey" name="llmApiKey" value="$Encoder.attributeEscape($APIKEY)" />
     </td>
   </tr>
+
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('llm.vectorDimensions'))</nobr>
+    </td>
+    <td class="value">
+      <input type="text" id="dimensions" name="dimensions" value="$Encoder.attributeEscape($DIMENSIONS)" />
+    </td>
+  </tr>
 </table>
 #else
 
@@ -75,5 +83,6 @@
 <input type="hidden" name="llmToUse" value="$Encoder.attributeEscape($LLM)"/>
 <input type="hidden" name="embeddingsModelToUse" value="$Encoder.attributeEscape($EMBEDDINGMODEL)"/>
 <input type="hidden" name="llmApiKey" value="$Encoder.attributeEscape($APIKEY)"/>
+<input type="hidden" name="dimensions" value="$Encoder.attributeEscape($DIMENSIONS)"/>
 
 #end

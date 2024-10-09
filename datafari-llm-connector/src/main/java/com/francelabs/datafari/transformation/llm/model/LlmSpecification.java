@@ -18,7 +18,7 @@ public class LlmSpecification {
     boolean enableCategorize = false;
     boolean enableVectorEmbedding = false;
     String llmEndpoint = "";
-    int vectorDimension = 0;
+    int vectorDimension = 250;
     String apiKey = "";
     String llm = "";
     String embeddingsModel = "";

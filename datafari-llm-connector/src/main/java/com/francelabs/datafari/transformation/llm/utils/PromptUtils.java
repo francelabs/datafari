@@ -42,7 +42,6 @@ public class PromptUtils {
         String prompt;
         String language = "";
         if (!spec.getSummariesLanguage().isEmpty()) {
-            // Todo : test
             Locale loc = new Locale(spec.getSummariesLanguage());
             if (!loc.getDisplayLanguage(new Locale("en")).isEmpty()) language = " in " +loc.getDisplayLanguage(Locale.ENGLISH);
         }

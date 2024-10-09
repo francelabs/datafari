@@ -26,6 +26,8 @@ import com.francelabs.datafari.transformation.llm.connectors.DatafariLlmService;
 import com.francelabs.datafari.transformation.llm.connectors.LlmService;
 import com.francelabs.datafari.transformation.llm.connectors.OpenAiLlmService;
 import com.francelabs.datafari.transformation.llm.model.LlmSpecification;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.manifoldcf.agents.interfaces.IOutputAddActivity;
 import org.apache.manifoldcf.agents.interfaces.IOutputCheckActivity;
 import org.apache.manifoldcf.agents.interfaces.RepositoryDocument;
@@ -68,6 +70,7 @@ public class Llm extends BaseTransformationConnector {
   protected static final String SEQNUM = "SEQNUM";
 
   protected static final String[] activitiesList = new String[] { ACTIVITY_LLM };
+  private static final Logger LOGGER = LogManager.getLogger(Llm.class.getName());
 
 
   /**
@@ -178,6 +181,9 @@ public class Llm extends BaseTransformationConnector {
     if (variableContext.getParameter("llmApiKey") != null) {
       parameters.setParameter(LlmConfig.NODE_APIKEY, variableContext.getParameter("llmApiKey"));
     }
+    if (variableContext.getParameter("dimensions") != null) {
+      parameters.setParameter(LlmConfig.NODE_VECTOR_DIMENSION, variableContext.getParameter("dimensions"));
+    }
 
     return null;
   }
@@ -205,6 +211,7 @@ public class Llm extends BaseTransformationConnector {
     String llmToUse = (parameters.getParameter(LlmConfig.NODE_LLM) != null) ? parameters.getParameter(LlmConfig.NODE_LLM) : "";
     String embeddingsModelToUse = (parameters.getParameter(LlmConfig.NODE_EMBEDDINGS_MODEL) != null) ? parameters.getParameter(LlmConfig.NODE_EMBEDDINGS_MODEL) : "";
     String llmApiKey = (parameters.getParameter(LlmConfig.NODE_APIKEY) != null) ? parameters.getParameter(LlmConfig.NODE_APIKEY) : "";
+    String dimensions = (parameters.getParameter(LlmConfig.NODE_VECTOR_DIMENSION) != null) ? parameters.getParameter(LlmConfig.NODE_VECTOR_DIMENSION) : "250";
 
 
     // Fill in context
@@ -213,6 +220,7 @@ public class Llm extends BaseTransformationConnector {
     velocityContext.put("EMBEDDINGMODEL", embeddingsModelToUse);
     velocityContext.put("LLM", llmToUse);
     velocityContext.put("APIKEY", llmApiKey);
+    velocityContext.put("DIMENSIONS", dimensions);
   }
 
   /**
@@ -310,9 +318,6 @@ public class Llm extends BaseTransformationConnector {
     boolean hasError = false;
     final long startTime = System.currentTimeMillis();
 
-    // Map of metadata associated to lines found : < metadata, Set<linesFound> >
-    Map<String, List<String>> matchedMetadata = new HashMap<>(); // todo : remove
-
     // Prepare storage for reading document content. A suitable storage depending on content size.
     DestinationStorage storage = DestinationStorage.getDestinationStorage(document.getBinaryLength(), getClass());
     StringBuilder contentBuilder = new StringBuilder();
@@ -363,38 +368,46 @@ public class Llm extends BaseTransformationConnector {
 
       // SUMMARIZE DOCUMENTS
       if (spec.getEnableSummarize()) {
-        String summary = service.summarize(content, spec);
-        document.addField("llm_summary", summary);
-        // Todo : handle empty and errors
-      }
-
-
-      // EMBBED DOCUMENTS
-      // Truncate content
-      // Send chunk to LLM for embedding
-      if (spec.getEnableVectorEmbedding()) {
-        float[] response = service.embeddings(content);
-        //List<Float> vector = new ArrayList<>();
-        String[] strvector = new String[response.length];
-        for (int i = 0; i < response.length; i++ ) {
-          strvector[i] = Float.toString(response[i]);
+        try {
+          String summary = service.summarize(content, spec);
+          if (summary.isEmpty()) throw new RuntimeException("Could not generate a summary for document: " + documentURI);
+          document.addField("llm_summary", summary);
+        } catch (Exception e) {
+          LOGGER.warn("Could not generate a summary for document: {}", documentURI);
         }
-        document.addField("llm_vector", strvector);
-        // Todo : handle empty and errors
       }
 
       // CATEGORIZE DOCUMENTS
       // Invoice, Call for Tenders, Request for Quotations, Technical paper, Presentation, Resumes, Others
       if (spec.getEnableCategorize()) {
-        String category = extractCategory(service.summarize(content, spec));
-        document.addField("llm_categories", category);
-        // Todo : handle empty and errors
+        try {
+          String category = extractCategory(service.summarize(content, spec));
+          if (category.isEmpty()) throw new RuntimeException("Could not generate a summary for document: " + documentURI);
+          document.addField("llm_categories", category);
+        } catch (Exception e) {
+          LOGGER.warn("Could not find category for document: {}", documentURI);
+        }
+      }
+
+
+      // EMBBED DOCUMENTS
+      // Send chunk to LLM for embedding
+      if (spec.getEnableVectorEmbedding()) {
+
+        if (content.length() > 15000) {
+          content = content.substring(0, 15000);
+        }
+        float[] response = service.embeddings(content);
+        String[] strvector = new String[response.length];
+        for (int i = 0; i < response.length; i++ ) {
+          strvector[i] = Float.toString(response[i]);
+        }
+        document.addField("llm_vector", strvector);
       }
 
 
 
       if (!hasError) activities.recordActivity(startTime, ACTIVITY_LLM, document.getBinaryLength(), documentURI, "OK", "");
-      addMetadataFieldsToDocument(document, matchedMetadata); // todo remove
       return activities.sendDocument(documentURI, document);
 
     } finally {
@@ -416,41 +429,6 @@ public class Llm extends BaseTransformationConnector {
       if (message.contains(category)) return category;
     }
     return "Others";
-  }
-
-
-  /**
-   * This method replace the getFieldAsStrings of the MCF document to make sure it does not return a null object
-   *
-   * @param document  MCF document
-   * @param fieldName Name of the document field to find
-   * @return An array of strings that is empty if no value is found
-   */
-  private String[] getFieldValues(final RepositoryDocument document, final String fieldName) throws IOException {
-    // Todo : see if useful
-    final String[] fieldValues = document.getFieldAsStrings(fieldName);
-    return Objects.requireNonNullElseGet(fieldValues, () -> new String[0]);
-  }
-
-
-  
-  /**
-   * Add metadata to a document using Matched Metadata Map.
-   * 
-   * @param document the document fill with metadata
-   * @param matchedMetadata Map of metadata associated with their matched lines (< metadata, Set<linesFound> >)
-   * 
-   * @throws ManifoldCFException ManifoldCF Exception
-   */
-  private void addMetadataFieldsToDocument(RepositoryDocument document, Map<String, List<String>> matchedMetadata) throws ManifoldCFException {
-    // Todo : check if useful
-    List<String> linesFound;
-    String metadata;
-    for (Map.Entry<String, List<String>> entry : matchedMetadata.entrySet()) {
-      metadata = entry.getKey();
-      linesFound = entry.getValue();
-      document.addField(metadata, linesFound.toArray(new String[0]));
-    }
   }
 
   
