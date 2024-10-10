@@ -53,8 +53,9 @@ public class DatafariLlmService implements LlmService {
             if (!apiKey.isEmpty()) headers.setBearerAuth(apiKey);
             HttpEntity<String> requestEntity = new HttpEntity<>(prompts, headers);
             String resp = "";
+            String endpoint = url + "/invoke";
             try{
-                DatafariRagResponse response = template.postForObject(url, requestEntity,  DatafariRagResponse.class);
+                DatafariRagResponse response = template.postForObject(endpoint, requestEntity,  DatafariRagResponse.class);
                 if (response == null) {
                     throw new RestClientException("An error occurred while calling external webservices. The response does not provide any information");
                 } else if (response.getOutput().isEmpty() && !response.getError().isEmpty()) {
