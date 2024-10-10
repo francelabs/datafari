@@ -3,6 +3,11 @@ interactive_questions() {
     check_ip_node
     set_property "NODETYPE" "monoserver" $CONFIG_FILE
     set_property "SOLRHOSTS" localhost:2181 $CONFIG_FILE
+    set_property "POSTGRESQL_EXTERNAL" "false" $CONFIG_FILE
+    set_property "POSTGRESQL_HOSTNAME" "localhost" $CONFIG_FILE
+    set_property "POSTGRESQL_DATABASE" "manifoldcf" $CONFIG_FILE
+    set_property "POSTGRESQL_USERNAME" "postgres" $CONFIG_FILE
+    set_property "POSTGRESQL_PORT" "5432" $CONFIG_FILE
     question_datafari_password
     question_postgresql_password
     question_solr_collection
