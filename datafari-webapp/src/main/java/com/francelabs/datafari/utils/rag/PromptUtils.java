@@ -16,8 +16,20 @@
 package com.francelabs.datafari.utils.rag;
 
 import com.francelabs.datafari.api.RagAPI;
+import com.francelabs.datafari.audit.AuditLogUtil;
+import com.francelabs.datafari.exception.CodesReturned;
+import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.rag.DocumentForRag;
 import com.francelabs.datafari.rag.RagConfiguration;
+import com.francelabs.datafari.rest.v1_0.exceptions.DataNotFoundException;
+import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
+import com.francelabs.datafari.rest.v1_0.users.Users;
+import com.francelabs.datafari.user.Lang;
+import com.francelabs.datafari.user.UiConfig;
+import com.francelabs.datafari.utils.AuthenticatedUserName;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
@@ -25,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -167,13 +180,41 @@ public class PromptUtils {
 
 
     /**
-     * Create a full prompt usable by a LLM, user the user prompt, the provided content and the configuration
+     * Return the preferred language or the user, or by defaut, his browser language
      * @param request : Http
      * @return a prompt ready to be sent to the LLM service
      */
     public static String getUserLanguage(HttpServletRequest request) {
-        Locale locale = request.getLocale();
-        return locale.getDisplayLanguage(Locale.ENGLISH);
+        final String authenticatedUserName = AuthenticatedUserName.getName(request);
+        try {
+            final String lang = getDisplayedName(Lang.getLang(authenticatedUserName));
+            if (lang.isEmpty()) throw new DatafariServerException(CodesReturned.ALLOK, "");
+            return lang;
+        } catch (final DatafariServerException e) {
+            Locale locale = request.getLocale();
+            return locale.getDisplayLanguage(Locale.ENGLISH);
+        }
     }
-	
+
+    public static String getDisplayedName(String lang) {
+        switch (lang) {
+            case "en":
+                return "English";
+            case "fr":
+                return "French";
+            case "it":
+                return "Italian";
+            case "pt":
+            case "pt_br":
+                return "Portuguese";
+            case "de":
+                return "German";
+            case "es":
+                return "Spanish";
+            case "ru":
+                return "Russian";
+            default:
+                return "";
+        }
+    }
 }
