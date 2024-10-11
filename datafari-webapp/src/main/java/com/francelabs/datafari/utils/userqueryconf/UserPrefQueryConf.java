@@ -15,7 +15,6 @@ import org.json.simple.parser.ParseException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +24,18 @@ public class UserPrefQueryConf extends AUserQueryConf {
 
 
   public static final String SESSION_USER_QUERY_PREFERENCES = "query_preferences";
+
+  // Boost query parameters
+  /**
+   * Product function for the Boost query parser
+   */
+  public static final String BOOST_PRODUCT_FUNC = "product";
+  public static final String BOOST_SUM_FUNC = "sum";
+  public static final String BOOST_FUNC_SEPARATOR = ", ";
+  /**
+   * The weight multiplier to apply to the field when its value matches the If condition
+   */
+  public static final float BOOST_WEIGHT_MULTIPLIER = 0.5f;
 
   /**
    * Used to extract in user preferences, the Solr fields to be boosted.
@@ -36,7 +47,7 @@ public class UserPrefQueryConf extends AUserQueryConf {
   static {
     USER_QUERY_PREF_MAPPER.put("sources", "repo_source");
     USER_QUERY_PREF_MAPPER.put("langues", "language");
-    USER_QUERY_PREF_MAPPER.put("extension", "extension");
+    USER_QUERY_PREF_MAPPER.put("extensions", "extension");
   }
 
   private UserPrefQueryConf(){}
@@ -99,7 +110,8 @@ public class UserPrefQueryConf extends AUserQueryConf {
    * @return the json formatted Solr query parameter for the given user. Return an empty string if no configuration found
    * @throws DatafariServerException if an error occur while getting {@link UiConfigDataService} instance.
    */
-  private @NotNull String buildUserQueryByPreferences(String username) throws DatafariServerException {
+  //FIXME repasser en private
+  public @NotNull String buildUserQueryByPreferences(String username) throws DatafariServerException {
     String uiConfig = UiConfigDataService.getInstance().getUiConfig(username);
     if (org.apache.commons.lang.StringUtils.isBlank(uiConfig)){
       return "";
@@ -118,10 +130,10 @@ public class UserPrefQueryConf extends AUserQueryConf {
         if (preferenceValues != null && preferenceValues.size()>1){
           solrField = userPrefMapEntry.getValue();
 
-          // Compute query parameter for this solrField: product( product( if( eq(field,value1), weight1,1), if( eq(field,value2), weight2, 1) ) ), if(...) )
+          // Compute query parameter for this solrField: product( if( eq(field,value1), weight1,1), if( eq(field,value2), weight2, 1), if(...) )
           queryFieldPart = computeQueryBoostParameterField(solrField, preferenceValues);
-          // Wrap into "product" function when 2 values are available.
-          result = wrapProduct(result, queryFieldPart);
+          result.append(queryFieldPart).append(BOOST_FUNC_SEPARATOR);
+
         }
       }
     } catch (ParseException e) {
@@ -130,6 +142,7 @@ public class UserPrefQueryConf extends AUserQueryConf {
     }
 
     if (StringUtils.isNotBlank(result.toString())){
+      wrapWithFunction(result, BOOST_PRODUCT_FUNC);
       // Complete configuration syntax:
       //   - result comes with functions_conditions.
       //   - we must wrap functions_conditions with: "boost":"functions_conditions"
@@ -140,13 +153,14 @@ public class UserPrefQueryConf extends AUserQueryConf {
   }
 
   /**
-   * Creates one "boost" query field parameter, with "if" function to give a weight to the value of the field, and "product" function to wrap "if" functions and "product"
-   * to combine like this : product( product( if( eq(repo_source, 'source2'),30,1 ), if( eq(repo_source, 'source3'),20,1 )), if( eq(repo_source, 'enron'),10,1 )
+   * Creates one "boost" query field parameter, with "if" function to give a weight to the value of the field, and "product" function to wrap "if" functions like this : <br>
+   * product( if_1, if_2, if_3, ...). <br>
+   * Detailed example : product( if( eq(repo_source, 'source2'),30,1 ), if( eq(repo_source, 'source3'),20,1 ), if( eq(repo_source, 'enron'),10,1 ) )
    *
    * @param solrField the solr field to compute the configuration for. In the example above solrField=repo_source
    * @param orderedValues the field values ordered to have the biggest weight first and then decrease. In the example above
    *                      orderedValues=[source_3, source_2, source_1]. The weights 3*X, 2*X and 1*X will be assigned.
-   * @return a nested sequence of IFs and Products for the given solrField. In another word, combination of "product" and "if" functions for a field and its values/weight.
+   * @return a Product of IFs sequence for the given solrField, each "if" to assign a weight to the field value.
    */
   private StringBuilder computeQueryBoostParameterField(String solrField, JSONArray orderedValues){
     StringBuilder result = new StringBuilder();
@@ -155,16 +169,20 @@ public class UserPrefQueryConf extends AUserQueryConf {
     for (Object value : orderedValues) {
       // create "if" function
       ifFunction = createIF(solrField, value.toString(), nbValues);
-      // Wrap into "product" function when 2 values are available.
-      result = wrapProduct(result, ifFunction);
+      result.append(ifFunction);
 
       nbValues--;
+      if (nbValues > 0){
+        result.append(BOOST_FUNC_SEPARATOR);
+      }
     }
+    //FIXME Code de test
+    //wrapWithFunction(result, BOOST_PRODUCT_FUNC);
     return result;
   }
 
   /**
-   * Create the "if" function
+   * Create the "if" function to give a weight to the given value of the given Solr field. For example: if( eq(repo_source, 'source2'),30,1 )
    *
    * @param solrField
    * @param value
@@ -173,26 +191,20 @@ public class UserPrefQueryConf extends AUserQueryConf {
    */
   private StringBuilder createIF(String solrField, String value, int initialWeight){
     StringBuilder ifFunction = new StringBuilder("if(eq(");
-    ifFunction.append(solrField).append(",'").append(value).append("'),").append(initialWeight*10).append(",1)");
+    ifFunction.append(solrField).append(",'").append(value).append("'),").append(initialWeight* BOOST_WEIGHT_MULTIPLIER).append(",1)");
     return ifFunction;
   }
 
-  /**
-   * Wrap into a "product" function the 2 given values. Resulting in a multiplication between first value and second value in a query boost.
-   *
-   * @param firstValue
-   * @param secondValue
-   * @return the String "product(firstValue, secondValue)" if the 2 values are filled. Otherwise, returns the second value if filled.
-   * Otherwise, returns the firstValue.
-   */
-  private StringBuilder wrapProduct(StringBuilder firstValue, StringBuilder secondValue){
-    if (StringUtils.isNotBlank(firstValue) && StringUtils.isNotBlank(secondValue)) {
-      firstValue.insert(0, "product( ").append(", ").append(secondValue).append(" )");
-    } else if (StringUtils.isNotBlank(secondValue)) {
-      firstValue = secondValue;
+  private void wrapWithFunction(StringBuilder toWrap, String boostFunction){
+    toWrap.insert(0, boostFunction + "( ");
+
+    if (toWrap.toString().endsWith(BOOST_FUNC_SEPARATOR)) {
+      // Delete last function bloc separator if exists
+      int end = toWrap.length();
+      int start = end - BOOST_FUNC_SEPARATOR.length();
+      toWrap.delete(start, end);
     }
 
-    return firstValue;
+    toWrap.append(" )");
   }
-
 }
