@@ -1,15 +1,13 @@
 package com.francelabs.datafari.api;
 
-import com.francelabs.datafari.rag.DatafariLlmConnector;
-import com.francelabs.datafari.rag.LlmConnector;
-import com.francelabs.datafari.rag.OpenAiLlmConnector;
-import com.francelabs.datafari.rag.RagConfiguration;
+import com.francelabs.datafari.rag.*;
+import com.francelabs.datafari.rag.OpenAiLlmService;
 import com.francelabs.datafari.utils.rag.ChunkUtils;
-import com.francelabs.datafari.rag.DocumentForRag;
 import com.francelabs.datafari.utils.rag.PromptUtils;
 import com.francelabs.datafari.utils.rag.VectorUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -34,13 +32,17 @@ public class RagAPI extends SearchAPI {
       parameterMap.put("id", idParam);
     }
 
+    // Is RAG enabled ?
+    if (!config.getBooleanProperty(RagConfiguration.ENABLE_RAG))
+      return writeJsonError(422, "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.");
+
     // Search
     JSONObject result;
     try {
       result = processSearch(config, request);
     } catch (Exception e) {
       LOGGER.error("RAG error. An error occurred while retrieving data.", e);
-      return writeJsonError(500, "RAG error. An error occurred while retrieving data.");
+      return writeJsonError(500, "ragTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.");
     }
 
     // Extract document content and data
@@ -50,7 +52,7 @@ public class RagAPI extends SearchAPI {
       initialDocumentsList = extractDocumentsList(result, config);
     } catch (FileNotFoundException e) {
       LOGGER.warn("RAG warning. The query cannot be answered because no associated documents were found.");
-      return writeJsonError(428, "The query cannot be answered because no associated documents were found.");
+      return writeJsonError(428, "ragNoFileFound", "Sorry, I couldn't find any relevant document to answer your request.");
     }
 
 
@@ -75,36 +77,55 @@ public class RagAPI extends SearchAPI {
 
     String message;
 
-    // Select an LLM Connector
-    LlmConnector connector;
-    String llmConnector = config.getProperty(RagConfiguration.LLM_SERVICE);
-    switch(llmConnector) {
+    // Select an LLM service
+    LlmService service;
+    String llmService = config.getProperty(RagConfiguration.LLM_SERVICE);
+    switch(llmService) {
       case "openai":
-        connector = new OpenAiLlmConnector(config);
+        service = new OpenAiLlmService(config);
         break;
       case "datafari":
       default:
-        connector = new DatafariLlmConnector(config);
+        service = new DatafariLlmService(config);
     }
 
-    message = connector.invoke(prompts, request);
+    message = service.invoke(prompts, request);
 
     LOGGER.debug("LLM response: {}", message);
 
     // Return final message
     if (!message.isEmpty()) {
       message = cleanLlmFinalMessage(message);
-      final JSONObject response = new JSONObject();
-      response.put("status", "OK");
-      JSONObject content = new JSONObject();
-      content.put("message", message);
-      content.put("documents", mergeSimilarDocuments(documentsList, message));
-      response.put("content", content);
+      final JSONObject response = writeJsonResponse(message, documentsList);
       return response;
     } else {
-      return writeJsonError(428, "The webservice could not provide a valid response.");
+      return writeJsonError(428, "ragNoValidAnswer", "Sorry, I could not find an answer to your question.");
     }
 
+  }
+
+  private static @NotNull JSONObject writeJsonResponse(String message, List<DocumentForRag> documentsList) {
+    final JSONObject response = new JSONObject();
+    response.put("status", "OK");
+    JSONObject content = new JSONObject();
+    content.put("message", message);
+    content.put("documents", mergeSimilarDocuments(documentsList, message));
+    response.put("content", content);
+    return response;
+  }
+
+  private static JSONObject writeJsonError(int code, String errorLabel, String message) {
+    final JSONObject response = new JSONObject();
+    final JSONObject error = new JSONObject();
+    final JSONObject content = new JSONObject();
+    response.put("status", "ERROR");
+    error.put("code", code);
+    error.put("label", errorLabel);
+    response.put("message", message);
+    response.put("documents", new ArrayList<>());
+    response.put("error", error);
+    response.put("content", content);
+    return response;
   }
 
   /**
@@ -222,16 +243,6 @@ public class RagAPI extends SearchAPI {
     }
     return new ArrayList<>();
 
-  }
-
-  private static JSONObject writeJsonError(int code, String message) {
-    final JSONObject response = new JSONObject();
-    final JSONObject error = new JSONObject();
-    response.put("status", "ERROR");
-    error.put("code", code);
-    error.put("reason", message);
-    response.put("content", error);
-    return response;
   }
 
 

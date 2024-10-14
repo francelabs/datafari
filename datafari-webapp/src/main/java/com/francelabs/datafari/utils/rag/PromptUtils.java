@@ -197,6 +197,7 @@ public class PromptUtils {
     }
 
     public static String getDisplayedName(String lang) {
+        if (lang == null) return "";
         switch (lang) {
             case "en":
                 return "English";

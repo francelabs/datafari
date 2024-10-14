@@ -19,6 +19,7 @@ import com.francelabs.datafari.rag.DocumentForRag;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.rag.content.Content;
+import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
 import dev.langchain4j.rag.query.Query;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
@@ -63,7 +64,18 @@ public class VectorUtils {
         EmbeddingStoreIngestor.ingest(documents, embeddingStore);
 
         // Vector query
-        List<Content> contents = EmbeddingStoreContentRetriever.from(embeddingStore).retrieve(Query.from(request.getParameter("q")));
+        Query query = Query.from(request.getParameter("q"));
+
+        /*List<Content> contents = EmbeddingStoreContentRetriever.from(embeddingStore)
+                .retrieve(query);*/
+        // Todo : maxResults
+
+        ContentRetriever contentRetriever = EmbeddingStoreContentRetriever.builder()
+                .embeddingStore(embeddingStore)
+                .maxResults(5)
+                .build();
+        List<Content> contents = contentRetriever.retrieve(query);
+
 
         // The first calls returns a concatenated responses from each chunk
         for (Content content : contents) {

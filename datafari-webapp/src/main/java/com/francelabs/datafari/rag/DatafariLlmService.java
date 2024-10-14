@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 
-public class DatafariLlmConnector implements LlmConnector {
+public class DatafariLlmService implements LlmService {
 
     String url;
     String temperature;
@@ -22,7 +22,7 @@ public class DatafariLlmConnector implements LlmConnector {
     String apiKey; // If not used in the future, this might be removed
     RagConfiguration config;
 
-    public DatafariLlmConnector(RagConfiguration config) {
+    public DatafariLlmService(RagConfiguration config) {
         this.url = config.getProperty(RagConfiguration.API_ENDPOINT);
         this.temperature = config.getProperty(RagConfiguration.LLM_TEMPERATURE);
         this.maxToken = config.getProperty(RagConfiguration.LLM_MAX_TOKENS);
@@ -72,9 +72,6 @@ public class DatafariLlmConnector implements LlmConnector {
     public String generate(String prompts) {
 
         try {
-
-            // Mock the webservices (to delete for prod, for test and dev purposes)
-            if (!config.getBooleanProperty(RagConfiguration.ENABLE_RAG)) return "RAG feature is currently disabled. This is a placeholder message. \\n Enable the feature by editing rag.properties file.";
 
             RestTemplate template = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();

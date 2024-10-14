@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 
-public class OpenAiLlmConnector implements LlmConnector {
+public class OpenAiLlmService implements LlmService {
 
-    private static final Logger LOGGER = LogManager.getLogger(OpenAiLlmConnector.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(OpenAiLlmService.class.getName());
     RagConfiguration config;
     String url;
     String model;
@@ -22,7 +22,7 @@ public class OpenAiLlmConnector implements LlmConnector {
     static final String DEFAULT_MODEL = "gpt-3.5-turbo";
     static final String DEFAULT_URL = "https://api.openai.com/v1/";
 
-    public OpenAiLlmConnector(RagConfiguration config) {
+    public OpenAiLlmService(RagConfiguration config) {
         this.url = config.getProperty(RagConfiguration.API_ENDPOINT);
         try {
             this.temperature = Double.parseDouble(config.getProperty(RagConfiguration.LLM_TEMPERATURE));
@@ -70,7 +70,7 @@ public class OpenAiLlmConnector implements LlmConnector {
             String body = PromptUtils.createPrompt(config, "```" + concatenatedResponses + "```", request);
             message = llm.generate(body);
         } else {
-            LOGGER.error("RAG - No prompt found in OpenAiLlmConnector");
+            LOGGER.error("RAG - No prompt found in OpenAiLlmService");
             throw new RuntimeException("Could not find data to send to the LLM");
         }
 

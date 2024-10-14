@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 
-public interface LlmConnector {
+public interface LlmService {
     /**
      *
      * @param prompts A list of prompts. Each prompt contains instructions for the model, document content and the user query
