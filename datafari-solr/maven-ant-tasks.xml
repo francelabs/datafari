@@ -41,6 +41,14 @@
 		<replace file="${solr.dist}/solr_home/GenericAnnotator/conf/solrconfig.xml" token="@DATAFARI-UP-CHAIN@" value="${datafari-up-chain}" />
 		<replace file="${solr.dist}/solr_home/GenericAnnotator/conf/solrconfig.xml" token="@OTHER-PROCESSOR-CHAINS@" value="" />
 		<replace file="${solr.dist}/solr_home/GenericAnnotator/conf/solrconfig.xml" token="@UPDATE-REQUEST-CHAIN@" value="" />
+		
+		<!-- *** Setup VectorMain solrconfig.xml *** -->
+		<loadfile srcFile="solr_parameters/datafari-up-chain" property="datafari-up-chain" />
+		<replace file="${solr.dist}/solr_home/VectorMain/conf/solrconfig.xml" token="@DATAFARI-UP-CHAIN@" value="${datafari-up-chain}" />
+		<replace file="${solr.dist}/solr_home/VectorMain/conf/solrconfig.xml" token="@OTHER-PROCESSOR-CHAINS@" value="" />
+		<replace file="${solr.dist}/solr_home/VectorMain/conf/solrconfig.xml" token="@UPDATE-REQUEST-CHAIN@" value="" />
+		
+		
 	</target>
 	
 	<target name="setup-mcf-solr-plugin">
@@ -49,6 +57,12 @@
       <fileset dir="target" includes="apache-manifoldcf-solr-*/*.jar" />
       <cutdirsmapper dirs="1" />
     </copy>
+	
+		<!-- Copy mcf-solr-plugin jar to VectorMain collection -->
+		    <copy toDir="${solr.dist}/solr_home/VectorMain/lib/MCF" overwrite="true" force="true">
+		      <fileset dir="target" includes="apache-manifoldcf-solr-*/*.jar" />
+		      <cutdirsmapper dirs="1" />
+		    </copy>
 	</target>
 
 
