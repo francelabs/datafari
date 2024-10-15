@@ -382,12 +382,6 @@ init_postgresql() {
   sed -i -e "s~@POSTGRESQLPORT@~${POSTGRESQL_PORT}~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQLDATABASE@~${POSTGRESQL_DATABASE}~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQLUSERNAME@~${POSTGRESQL_USERNAME}~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
-  
-  sed -i -e "s~@POSTGRESQLHOSTNAME@~${POSTGRESQL_HOSTNAME}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
-  sed -i -e "s~@POSTGRESQLPORT@~${POSTGRESQL_PORT}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
-  sed -i -e "s~@POSTGRESQLDATABASE@~${POSTGRESQL_DATABASE}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
-  sed -i -e "s~@POSTGRESQLUSERNAME@~${POSTGRESQL_USERNAME}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
-  
 }
 
 init_password_postgresql() {

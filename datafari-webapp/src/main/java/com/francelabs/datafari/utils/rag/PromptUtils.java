@@ -16,20 +16,12 @@
 package com.francelabs.datafari.utils.rag;
 
 import com.francelabs.datafari.api.RagAPI;
-import com.francelabs.datafari.audit.AuditLogUtil;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.rag.DocumentForRag;
 import com.francelabs.datafari.rag.RagConfiguration;
-import com.francelabs.datafari.rest.v1_0.exceptions.DataNotFoundException;
-import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
-import com.francelabs.datafari.rest.v1_0.users.Users;
 import com.francelabs.datafari.user.Lang;
-import com.francelabs.datafari.user.UiConfig;
 import com.francelabs.datafari.utils.AuthenticatedUserName;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
@@ -37,7 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 

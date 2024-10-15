@@ -7,7 +7,6 @@ import com.francelabs.datafari.utils.rag.PromptUtils;
 import com.francelabs.datafari.utils.rag.VectorUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -96,15 +95,14 @@ public class RagAPI extends SearchAPI {
     // Return final message
     if (!message.isEmpty()) {
       message = cleanLlmFinalMessage(message);
-      final JSONObject response = writeJsonResponse(message, documentsList);
-      return response;
+        return writeJsonResponse(message, documentsList);
     } else {
       return writeJsonError(428, "ragNoValidAnswer", "Sorry, I could not find an answer to your question.");
     }
 
   }
 
-  private static @NotNull JSONObject writeJsonResponse(String message, List<DocumentForRag> documentsList) {
+  private static JSONObject writeJsonResponse(String message, List<DocumentForRag> documentsList) {
     final JSONObject response = new JSONObject();
     response.put("status", "OK");
     JSONObject content = new JSONObject();
@@ -244,7 +242,6 @@ public class RagAPI extends SearchAPI {
     return new ArrayList<>();
 
   }
-
 
   /**
    * The "documentList" containing sources of the answer might contain duplicates.

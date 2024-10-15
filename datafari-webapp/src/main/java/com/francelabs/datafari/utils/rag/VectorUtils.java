@@ -66,16 +66,11 @@ public class VectorUtils {
         // Vector query
         Query query = Query.from(request.getParameter("q"));
 
-        /*List<Content> contents = EmbeddingStoreContentRetriever.from(embeddingStore)
-                .retrieve(query);*/
-        // Todo : maxResults
-
         ContentRetriever contentRetriever = EmbeddingStoreContentRetriever.builder()
                 .embeddingStore(embeddingStore)
                 .maxResults(5)
                 .build();
         List<Content> contents = contentRetriever.retrieve(query);
-
 
         // The first calls returns a concatenated responses from each chunk
         for (Content content : contents) {
