@@ -73,9 +73,6 @@ public class DatafariLlmConnector implements LlmConnector {
 
         try {
 
-            // Mock the webservices (to delete for prod, for test and dev purposes)
-            if (!config.getBooleanProperty(RagConfiguration.ENABLE_RAG)) return "RAG feature is currently disabled. This is a placeholder message. \\n Enable the feature by editing rag.properties file.";
-
             RestTemplate template = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
