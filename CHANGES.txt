@@ -11,6 +11,43 @@ Available as community (open source) and enterprise (proprietary) edition, Dataf
 See https://wiki.datafari.com for more information.
 
 
+
+================== 6.1 ==================
+
+October 21st, 2024
+
+* Version of major components :
+
+- Solr 9.7
+- ManifoldCF 2.26
+- Tomcat 9.0.81
+- Cassandra 4.1.3
+- PostgreSQL 15.4
+- Zookeeper 3.9.2
+- Tika Server 2.9.1
+- DatafariUI 1.4
+- AdminUI 1.0
+
+#699 DatafariUI - Create an independent minimal search bar
+#979 create helper script to push Solr configs other than FileShare
+#984 Update Solr to 9.6 version
+#991 Solr connector - bug into UI administration
+#992 Solr connector - infinite loop when receiving Solr error
+#996 Cannot use special characters for passwords at install phase
+#1001 DatafariUI - Datagari RAG tool UI mockup
+#1005 Cassandra temporary files path
+#1006 Cassandra JNA temporary files path
+#1008 ZK Logs still empty
+#1009 Activate CSV connector
+#1010 Open folder link does not work anymore
+#1011 CSV connector error
+#1012 Update DatafariUI to version 1.5
+#1013 Feed the Solr Statistics collection by Logstash instead of StatsPusher
+#1016 DatafariUI - customisable title truncation
+#1018 Update Solr version to 9.7
+#1019 Update Zookeeper version to 3.9.2
+
+
 ================== 6.0 ==================
 
 March 7th, 2024
