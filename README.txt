@@ -42,15 +42,16 @@ Capacity to ingest and index content hosted on Apache Solr 9.x
 Graphical admin to boost relevancy based on a field values
 
 * Major components versions
-- Solr 9.7
+- Solr 9.5
 - ManifoldCF 2.26
 - Tomcat 9.0.81
 - Cassandra 4.1.3
 - PostgreSQL 15.4
-- Zookeeper 3.9.2
+- Zookeeper 3.9.1
 - Tika Server 2.9.1
 - DatafariUI 1.4
 - AdminUI 1.0
+
 The complete list of changes and bugfixes can be found in CHANGES.TXT
 
 Enjoy 🙂
