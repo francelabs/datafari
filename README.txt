@@ -1,4 +1,4 @@
---------------------------- DATAFARI 6.1 ------------------------
+--------------------------- DATAFARI 6.1-DEV ------------------------
 
 Datafari is an open source enterprise search solution. It is the perfect product for anyone who needs to search and analyze its corporate data and documents, both within the content and the metadata.
 
