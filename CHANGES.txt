@@ -16,18 +16,6 @@ See https://wiki.datafari.com for more information.
 
 October 21st, 2024
 
-* Version of major components :
-
-- Solr 9.7
-- ManifoldCF 2.26
-- Tomcat 9.0.81
-- Cassandra 4.1.3
-- PostgreSQL 15.4
-- Zookeeper 3.9.2
-- Tika Server 2.9.1
-- DatafariUI 1.4
-- AdminUI 1.0
-
 #699 DatafariUI - Create an independent minimal search bar
 #979 create helper script to push Solr configs other than FileShare
 #984 Update Solr to 9.6 version
