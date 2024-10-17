@@ -318,6 +318,14 @@
 				<include name="*.jar" />
 			</fileset>
 		</copy>
+
+                <!-- Copy Datafari update handler + dependencies to VectorMain -->
+                 <!-- Copy Datafari update handler + dependencies-->
+                <copy todir="${linux.dist.dir}/solr/solr_home/VectorMain/lib/custom">
+                        <fileset dir="${datafarihandler.src.dir}">
+                                <include name="*.jar" />
+                        </fileset>
+                </copy>
 		
 		<!-- Copy Datafari update handler + dependencies to GenericAnnotator -->
 				<copy todir="${linux.dist.dir}/solr/solr_home/GenericAnnotator/lib/custom">
