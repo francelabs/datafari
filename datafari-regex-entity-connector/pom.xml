@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.francelabs.datafari</groupId>
     <artifactId>datafari-ce</artifactId>
-    <version>6.1-dev-Community</version>
+    <version>6.2-dev-Community</version>
   </parent>
   <artifactId>datafari-regex-entity-connector</artifactId>
   <name>Datafari Enterprise Search - Regex Entity connector module</name>
@@ -13,7 +13,7 @@
     <dependency>
       <groupId>com.francelabs.datafari</groupId>
       <artifactId>datafari-mcf-connectors-dependencies</artifactId>
-      <version>6.1-dev-Community</version>
+      <version>6.2-dev-Community</version>
       <type>pom</type>
       <scope>provided</scope>
     </dependency>
