@@ -490,7 +490,6 @@
                   <excludes>
                     <exclude>ch.qos.logback:logback-core:*:*:compile</exclude>
                     <exclude>ch.qos.logback:logback-classic:*:*:compile</exclude>
-                    <exclude>xml-apis:xml-apis</exclude>
                   </excludes>
                 </bannedDependencies>
               </rules>
