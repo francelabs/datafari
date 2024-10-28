@@ -37,6 +37,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.SolrInputField;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.update.AddUpdateCommand;
+import org.apache.solr.update.DeleteUpdateCommand;
 import org.apache.solr.update.processor.UpdateRequestProcessor;
 
 public class VectorUpdateProcessor extends UpdateRequestProcessor {
@@ -65,6 +66,7 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
       LOGGER.info("Vector Update processor");
 
       String content = "";
+      String parentId = (String) doc.get("id").getValue();
       final SolrInputField contentFieldFr = doc.get("content_fr");
       final SolrInputField contentFieldEn = doc.get("content_en");
       if (contentFieldFr != null) {
@@ -73,6 +75,7 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
         content = (String) contentFieldEn.getFirstValue();
       }
 
+      deleteExistingChildren(client, parentId);
 
       if (content != null && !content.isEmpty()) {
         LOGGER.info(content);
@@ -81,7 +84,6 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
         DocumentSplitter splitter = new DocumentByParagraphSplitter(CHUNK_SIZE, MAX_OVERLAP_SIZE);
         Document document = new Document(content);
         List<TextSegment> chunks = splitter.split(document);
-        String parentId = (String) doc.get("id").getValue();
 
         deleteExistingChildren(client, parentId);
 
@@ -119,6 +121,13 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
       // VERY IMPORTANT ! without this line of code any other Update Processor declared AFTER this one in the conf WILL NOT EXECUTE
       super.processAdd(cmd);
     }
+  }
+
+  @Override
+  public void processDelete(DeleteUpdateCommand cmd) throws IOException {
+    final String id = cmd.getId();
+    deleteExistingChildren(client, id);
+    super.processDelete(cmd);
   }
 
   private void deleteExistingChildren(CloudSolrClient client, String parentId) {
