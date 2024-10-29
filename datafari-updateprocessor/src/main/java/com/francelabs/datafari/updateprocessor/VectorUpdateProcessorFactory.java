@@ -63,6 +63,10 @@ public class VectorUpdateProcessorFactory extends UpdateRequestProcessorFactory 
     }
   }
 
+  /**
+   * Initiate the SolrClient if it does not exist yet
+   * @return true if the operation succeeded
+   */
   private boolean tryInitClient() {
     if (client == null) {
       try {

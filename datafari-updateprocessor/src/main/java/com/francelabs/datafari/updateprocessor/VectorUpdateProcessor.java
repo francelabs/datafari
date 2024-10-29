@@ -75,7 +75,7 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
         content = (String) contentFieldEn.getFirstValue();
       }
 
-      deleteExistingChildren(client, parentId);
+      deleteExistingChildren(parentId);
 
       if (content != null && !content.isEmpty()) {
         LOGGER.info(content);
@@ -84,8 +84,6 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
         DocumentSplitter splitter = new DocumentByParagraphSplitter(CHUNK_SIZE, MAX_OVERLAP_SIZE);
         Document document = new Document(content);
         List<TextSegment> chunks = splitter.split(document);
-
-        deleteExistingChildren(client, parentId);
 
         for (TextSegment chunk : chunks) {
           if(chunk != null && !chunk.text().isEmpty()) {
@@ -126,11 +124,15 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
   @Override
   public void processDelete(DeleteUpdateCommand cmd) throws IOException {
     final String id = cmd.getId();
-    deleteExistingChildren(client, id);
+    deleteExistingChildren(id);
     super.processDelete(cmd);
   }
 
-  private void deleteExistingChildren(CloudSolrClient client, String parentId) {
+  /**
+   * Delete all the children of the parent document in VectorMain collection
+   * @param parentId : The ID of the parent
+   */
+  private void deleteExistingChildren(String parentId) {
     try {
       client.deleteByQuery("parent_doc:\"" + parentId + "\"");
       client.commit();
@@ -139,6 +141,11 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
     }
   }
 
+  /**
+   *
+   * @param content
+   * @return
+   */
   private List<Float> vectorEmbeddings(String content) {
     // TODO : This method should be edited to implement the Solr Embeddings Model
 
