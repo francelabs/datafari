@@ -28,7 +28,8 @@ import dev.langchain4j.data.document.splitter.DocumentByParagraphSplitter;
 import dev.langchain4j.data.segment.TextSegment;
 
 
-
+import dev.langchain4j.model.Tokenizer;
+import dev.langchain4j.model.openai.OpenAiTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -45,8 +46,8 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
   boolean enabled = false;
   CloudSolrClient client;
 
-  private static final int CHUNK_SIZE = 20000;
-  private static final int MAX_OVERLAP_SIZE = 200;
+  private static final int CHUNK_SIZE = 4000;
+  private static final int MAX_OVERLAP_SIZE = 100;
   private static final int VECTOR_DIMENSION = 4;
 
   public VectorUpdateProcessor(CloudSolrClient client, final SolrParams params, final UpdateRequestProcessor next) {
@@ -81,19 +82,21 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
         LOGGER.info(content);
 
         // Chunking
-        DocumentSplitter splitter = new DocumentByParagraphSplitter(CHUNK_SIZE, MAX_OVERLAP_SIZE);
+        Tokenizer tokenizer = new OpenAiTokenizer();
+        DocumentSplitter splitter = new DocumentByParagraphSplitter(CHUNK_SIZE, MAX_OVERLAP_SIZE, tokenizer);
         Document document = new Document(content);
         List<TextSegment> chunks = splitter.split(document);
 
         for (TextSegment chunk : chunks) {
           if(chunk != null && !chunk.text().isEmpty()) {
-            LOGGER.debug(chunk.text());
-            SolrInputDocument vectorDocument = new SolrInputDocument();
 
+            // Vector embeddings
             List<Float> vector = vectorEmbeddings(chunk.text());
 
+            // Sub-document creation
             if (chunk.text() != null && vector.size() == VECTOR_DIMENSION) {
 
+              SolrInputDocument vectorDocument = new SolrInputDocument();
               String id = doc.get("id") + "_" + chunks.indexOf(chunk);
               vectorDocument.addField("id", id);
               vectorDocument.addField("vector", vector);
