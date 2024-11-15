@@ -185,12 +185,18 @@ public class PromptUtils {
      * @return a prompt ready to be sent to the LLM service
      */
     public static String getUserLanguage(HttpServletRequest request) {
+
         final String authenticatedUserName = AuthenticatedUserName.getName(request);
         try {
-            final String lang = getDisplayedName(Lang.getLang(authenticatedUserName));
+            // Retrieving user language from query GET parameters
+            String lang = getDisplayedName(request.getParameter("lang"));
+
+            // If no language is provided in the GET parameters, retrieving user language from Cassandra lang database
+            if (lang == null || lang.isEmpty()) lang = getDisplayedName(Lang.getLang(authenticatedUserName));
             if (lang.isEmpty()) throw new DatafariServerException(CodesReturned.ALLOK, "");
             return lang;
         } catch (final DatafariServerException e) {
+            // If the language retrieving failed, use English as default
             Locale locale = request.getLocale();
             return locale.getDisplayLanguage(Locale.ENGLISH);
         }
