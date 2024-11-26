@@ -1,0 +1,11 @@
+{   
+      "name":"sell-by",
+      "type":"tdate",
+      "stored":true
+}
+&&
+{
+      "name":"sell-by2",
+      "type":"tdate",
+      "stored":true
+} 

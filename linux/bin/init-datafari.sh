@@ -291,6 +291,9 @@ init_zk() {
   sed -i -e "s/@ZKHOST@/${1}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolrNoTika.json >>$installerLog 2>&1
   sed -i -e "s/@PROTOCOL@/${2}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolrNoTika.json >>$installerLog 2>&1
   sed -i -e "s/@PORT@/${3}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolrNoTika.json >>$installerLog 2>&1
+  sed -i -e "s/@ZKHOST@/${1}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolrVector.json >>$installerLog 2>&1
+  sed -i -e "s/@PROTOCOL@/${2}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolrVector.json >>$installerLog 2>&1
+  sed -i -e "s/@PORT@/${3}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolrVector.json >>$installerLog 2>&1
   sed -i -e "s/@ZKHOST@/${1}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/Duplicates.json >>$installerLog 2>&1
 @VERSION-INIT-ZK@
 }

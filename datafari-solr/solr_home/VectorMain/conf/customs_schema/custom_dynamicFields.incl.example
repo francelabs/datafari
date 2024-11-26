@@ -1,0 +1,11 @@
+{
+     "name":"*_s",
+     "type":"string",
+     "stored":true
+} 
+&&
+{
+     "name":"*_i",
+     "type":"tint",
+     "stored":true 
+}

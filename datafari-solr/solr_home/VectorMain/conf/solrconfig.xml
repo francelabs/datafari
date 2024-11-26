@@ -853,9 +853,6 @@
        if the 'wt' parameter is not explicit
     -->
   <requestHandler class="solr.UpdateRequestHandler" name="/update">
-	  <lst name="defaults">
-		  <str name="update.chain">datafari_delete</str>
-	  </lst>
   </requestHandler>
 
   <requestHandler class="com.francelabs.datafari.handler.parsed.ParsedRequestHandler" name="/update/no-tika" startup="lazy">
@@ -1279,20 +1276,6 @@
       <processor class="solr.DistributedUpdateProcessorFactory"/>
       <processor class="solr.RunUpdateProcessorFactory"/>
   
-	</updateRequestProcessorChain>
-
-	<updateRequestProcessorChain name="datafari_delete">
-
-		<processor class="com.francelabs.datafari.updateprocessor.VectorUpdateProcessorFactory">
-			<str name="host">${vector.host:localhost\:2181}</str>
-			<str name="collection">${vector.collection:VectorMain}</str>
-			<bool name="enabled">${vector.enabled:false}</bool>
-		</processor>
-
-		<processor class="solr.LogUpdateProcessorFactory"/>
-		<processor class="solr.DistributedUpdateProcessorFactory"/>
-		<processor class="solr.RunUpdateProcessorFactory"/>
-
 	</updateRequestProcessorChain>
 	
 	
