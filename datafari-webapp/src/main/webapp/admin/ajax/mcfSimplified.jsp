@@ -371,7 +371,8 @@
                         <select id="dbType" name="dbType" class="form-control">
                           <OPTION value="oracle:thin:@" selected>Oracle</OPTION>
                           <OPTION value="postgresql://">Postgres</OPTION>
-                          <OPTION value="jtds:sqlserver://">Microsoft SQL Server</OPTION>
+                          <OPTION value="jtds:sqlserver://">Microsoft SQL Server (V6.5+)</OPTION>
+                          <OPTION value="sqlserver://">Microsoft SQL Server (2012+)</OPTION>
                           <OPTION value="jtds:sybase://">Sybase</OPTION>
                           <OPTION value="mysql://">MySQL</OPTION>
                           <OPTION value="mariadb://">MariaDB</OPTION>
