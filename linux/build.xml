@@ -441,6 +441,7 @@
 		  </fileset>
 		</copy>
 
+
 		<!-- Copy Manifold CF to Tomcat auto-deploy directory -->
 		<move toDir="${linux.dist.dir}/tomcat-mcf/webapps" overwrite="true" force="true">
 			<fileset dir="${linux.dist.dir}/mcf/war" />

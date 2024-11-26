@@ -113,7 +113,7 @@ May 16th, 2023
 #885 Propose SSD conf in install script for PostgreSQL
 
 #887 Redirect to asked resource on successful authentication
-#892 CVE-2022-42889 “Text4Shell” vulnerability
+#892 CVE-2022-42889 ???Text4Shell??? vulnerability
 #884 Provide a protected endpoint that performs a simple redirect
 
 #893 Keep persistence after a restart of Docker container for CE
