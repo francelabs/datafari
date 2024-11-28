@@ -1,10 +1,8 @@
-package com.francelabs.datafari.transformation.llm.connectors;
+package com.francelabs.datafari.transformation.llm.services;
 
 import com.francelabs.datafari.transformation.llm.model.LlmSpecification;
 import org.junit.jupiter.api.Assertions;
 
-
-import static org.junit.jupiter.api.Assertions.*;
 class OpenAiLlmServiceTest {
 
     @org.junit.jupiter.api.Test

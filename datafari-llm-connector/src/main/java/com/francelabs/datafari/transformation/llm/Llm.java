@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
-import com.francelabs.datafari.transformation.llm.connectors.DatafariLlmService;
-import com.francelabs.datafari.transformation.llm.connectors.LlmService;
-import com.francelabs.datafari.transformation.llm.connectors.OpenAiLlmService;
+import com.francelabs.datafari.transformation.llm.services.DatafariLlmService;
+import com.francelabs.datafari.transformation.llm.services.LlmService;
+import com.francelabs.datafari.transformation.llm.services.OpenAiLlmService;
 import com.francelabs.datafari.transformation.llm.model.LlmSpecification;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

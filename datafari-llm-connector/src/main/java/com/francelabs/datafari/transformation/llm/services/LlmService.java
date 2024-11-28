@@ -1,4 +1,4 @@
-package com.francelabs.datafari.transformation.llm.connectors;
+package com.francelabs.datafari.transformation.llm.services;
 
 import com.francelabs.datafari.transformation.llm.model.LlmSpecification;
 
