@@ -12,4 +12,11 @@ public interface LlmService {
      */
     String invoke(List<String> prompts, HttpServletRequest request) throws IOException;
 
+    /**
+     *
+     * @param prompts A list of prompts. Each prompt contains instructions for the model, document content and the user query
+     * @return The string LLM response
+     */
+    String generate(List<Message> prompts, HttpServletRequest request) throws IOException;
+
 }

@@ -16,20 +16,15 @@
 package com.francelabs.datafari.utils.rag;
 
 import com.francelabs.datafari.api.RagAPI;
-import com.francelabs.datafari.audit.AuditLogUtil;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.rag.DocumentForRag;
+import com.francelabs.datafari.rag.Message;
 import com.francelabs.datafari.rag.RagConfiguration;
-import com.francelabs.datafari.rest.v1_0.exceptions.DataNotFoundException;
-import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
-import com.francelabs.datafari.rest.v1_0.users.Users;
 import com.francelabs.datafari.user.Lang;
-import com.francelabs.datafari.user.UiConfig;
 import com.francelabs.datafari.utils.AuthenticatedUserName;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import dev.langchain4j.data.document.Metadata;
+import dev.langchain4j.data.segment.TextSegment;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
@@ -37,7 +32,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -67,14 +61,14 @@ public class PromptUtils {
         String uniqueContent = formatDocuments(documentsList);
         if (uniqueContent.length() < config.getIntegerProperty(RagConfiguration.CHUNK_SIZE)) {
             // All documents are merged into one prompt
-            String prompt = createPrompt(config, uniqueContent, request);
+            String prompt = createInitialRagPrompt(config, uniqueContent, request);
             prompts.add(prompt);
         } else {
             for (DocumentForRag document : documentsList) {
                 // format document
                 String content = formatDocument(document.getTitle(), document.getContent());
                 // create prompt
-                String prompt = createPrompt(config, content, request);
+                String prompt = createInitialRagPrompt(config, content, request);
                 prompts.add(prompt);
             }
         }
@@ -90,9 +84,9 @@ public class PromptUtils {
      * @param request : The request object
      * @return a prompt ready to be sent to the LLM service
      */
-    public static String createPrompt(RagConfiguration config, String content, HttpServletRequest request) throws IOException {
+    public static String createInitialRagPrompt(RagConfiguration config, String content, HttpServletRequest request) throws IOException {
         // Retrieve the prompt template from instructions file.
-        String template = getInstructions();
+        String template = getInstructions("template-rag.txt");
         String userQuery = request.getParameter("q");
 
         template = template.replace("{format}", getResponseFormat(request));
@@ -103,11 +97,29 @@ public class PromptUtils {
         return cleanContext(template, config);
     }
 
+    /**
+     * @return Retrieve the instructions used to summarize a document.
+     */
+    public static Message createInitialPromptForSummarization() throws IOException {
+        String prompt = getInstructions("template-initialPromptForSummarization.txt");
+        return new Message("system", prompt);
+    }
+
+    /**
+     * @return Retrieve the instructions used to merge multiple summaries into one.
+     */
+    public static Message createPromptForMergeAllSummaries() throws IOException {
+        String prompt =  getInstructions("template-mergeAllSummaries.txt");
+        return new Message("user", prompt);
+    }
+
+    // Todo : Replace with a clean Message generator
     public static String formatDocument(String title, String content) {
         String template = "Document title:```{title}```\nDocument content:```{chunk}```";
         return template.replace("{title}", title).replace("{chunk}", content);
     }
 
+    // Todo : Replace with a clean Message generator
     public static String formatDocuments(List<DocumentForRag> documents) {
         String template = "Document title:```{title}```\nDocument content:```{chunk}```";
         StringBuilder prompt = new StringBuilder();
@@ -154,10 +166,27 @@ public class PromptUtils {
     }
 
     /**
-     * @return The instructions prompts stored in rag-instructions.txt file
+     * @return The instructions prompts stored in resources/prompts folder
      */
-    private static String getInstructions() throws IOException {
-        return readFromInputStream(RagAPI.class.getClassLoader().getResourceAsStream("rag-instructions.txt"));
+    private static String getInstructions(String filename) throws IOException {
+        return readFromInputStream(RagAPI.class.getClassLoader().getResourceAsStream("prompts/" + filename));
+    }
+
+    /**
+     *
+     * @param segment A TextSegment to convert to a Message
+     * @param role The role of the Message sender. Defaut is "user".
+     * @return A list of TextSegments, that contain metadata. Big documents are chunked into multiple documents.
+     */
+    public static Message textSegmentsToMessage(TextSegment segment, String role, RagConfiguration config) throws IOException {
+        String template = getInstructions("template-fromTextSegment.txt");
+        Metadata metadata = segment.metadata();
+        String content = cleanContext(segment.text(), config);
+        template = template.replace("{content}", content);
+        template = template.replace("{id}", metadata.getString("id"));
+        template = template.replace("{title}", metadata.getString("title"));
+        template = template.replace("{url}", metadata.getString("url"));
+        return new Message(role, template);
     }
 
     /**
@@ -192,7 +221,7 @@ public class PromptUtils {
             String lang = getDisplayedName(request.getParameter("lang"));
 
             // If no language is provided in the GET parameters, retrieving user language from Cassandra lang database
-            if (lang == null || lang.isEmpty()) lang = getDisplayedName(Lang.getLang(authenticatedUserName));
+            if (lang.isEmpty()) lang = getDisplayedName(Lang.getLang(authenticatedUserName));
             if (lang.isEmpty()) throw new DatafariServerException(CodesReturned.ALLOK, "");
             return lang;
         } catch (final DatafariServerException e) {

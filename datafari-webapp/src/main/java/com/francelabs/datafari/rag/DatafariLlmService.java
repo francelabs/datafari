@@ -53,7 +53,41 @@ public class DatafariLlmService implements LlmService {
         if (prompts.size() == 1) {
             message = concatenatedResponses.toString();
         } else if (prompts.size() > 1) {
-            String body = PromptUtils.createPrompt(config, "```" + concatenatedResponses + "```", request);
+            String body = PromptUtils.createInitialRagPrompt(config, "```" + concatenatedResponses + "```", request);
+            body = generateRequestBody(body);
+            message = generate(body);
+        } else {
+            throw new RuntimeException("Could not find data to send to the LLM");
+        }
+
+        return message;
+
+    }
+
+
+    /**
+     * Call the Datafari External LLM Webservice
+     * @param prompts A list of prompts. Each prompt contains instructions for the model, document content and the user query
+     * @return The string LLM response
+     */
+    public String generate(List<Message> prompts, HttpServletRequest request) throws IOException {
+
+        StringBuilder concatenatedResponses = new StringBuilder();
+        String message;
+
+        // The first calls returns a concatenated responses from each chunk
+        for (Message msg : prompts) {
+            String prompt = msg.content;
+            String body = generateRequestBody(prompt);
+            concatenatedResponses.append(generate(body));
+        }
+
+        // If the is only one prompt to send, we get the answer from the response
+        // Otherwise, we concatenate all the responses, and generate a new response to summarize the results
+        if (prompts.size() == 1) {
+            message = concatenatedResponses.toString();
+        } else if (prompts.size() > 1) {
+            String body = PromptUtils.createInitialRagPrompt(config, "```" + concatenatedResponses + "```", request);
             body = generateRequestBody(body);
             message = generate(body);
         } else {

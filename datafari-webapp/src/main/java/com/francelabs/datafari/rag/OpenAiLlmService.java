@@ -1,6 +1,7 @@
 package com.francelabs.datafari.rag;
 
 import com.francelabs.datafari.utils.rag.PromptUtils;
+import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.apache.logging.log4j.LogManager;
@@ -67,7 +68,7 @@ public class OpenAiLlmService implements LlmService {
         if (prompts.size() == 1) {
             message = concatenatedResponses.toString();
         } else if (prompts.size() > 1) {
-            String body = PromptUtils.createPrompt(config, "```" + concatenatedResponses + "```", request);
+            String body = PromptUtils.createInitialRagPrompt(config, "```" + concatenatedResponses + "```", request);
             message = llm.generate(body);
         } else {
             LOGGER.error("RAG - No prompt found in OpenAiLlmService");
@@ -75,5 +76,19 @@ public class OpenAiLlmService implements LlmService {
         }
 
         return message;
+    }
+
+    @Override
+    public String generate(List<Message> prompts, HttpServletRequest request) throws IOException {
+
+        ChatLanguageModel llm = OpenAiChatModel.builder()
+                .apiKey(apiKey)
+                .temperature(temperature)
+                .maxTokens(maxToken)
+                .modelName(model)
+                .baseUrl(url)
+                .build();
+
+        return llm.generate((ChatMessage) prompts).content().text();
     }
 }

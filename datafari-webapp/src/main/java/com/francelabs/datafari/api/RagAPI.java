@@ -5,6 +5,8 @@ import com.francelabs.datafari.rag.OpenAiLlmService;
 import com.francelabs.datafari.utils.rag.ChunkUtils;
 import com.francelabs.datafari.utils.rag.PromptUtils;
 import com.francelabs.datafari.utils.rag.VectorUtils;
+import dev.langchain4j.data.document.Metadata;
+import dev.langchain4j.data.segment.TextSegment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -78,6 +80,23 @@ public class RagAPI extends SearchAPI {
     String message;
 
     // Select an LLM service
+    LlmService service = getLlmService(config);
+
+    message = service.invoke(prompts, request);
+
+    LOGGER.debug("LLM response: {}", message);
+
+    // Return final message
+    if (!message.isEmpty()) {
+      message = cleanLlmFinalMessage(message);
+      return writeJsonResponse(message, documentsList);
+    } else {
+      return writeJsonError(428, "ragNoValidAnswer", "Sorry, I could not find an answer to your question.");
+    }
+
+  }
+
+  private static @NotNull LlmService getLlmService(RagConfiguration config) {
     LlmService service;
     String llmService = config.getProperty(RagConfiguration.LLM_SERVICE);
     switch(llmService) {
@@ -88,18 +107,44 @@ public class RagAPI extends SearchAPI {
       default:
         service = new DatafariLlmService(config);
     }
+    return service;
+  }
 
-    message = service.invoke(prompts, request);
+  public static String summarize(final HttpServletRequest request, String content, Metadata metadata) throws IOException {
+    // Get RAG configuration
+    RagConfiguration config = RagConfiguration.getInstance();
+    // Select an LLM service
+    LlmService service = getLlmService(config);
 
-    LOGGER.debug("LLM response: {}", message);
+    // Chunk document
+    List<TextSegment> segments = ChunkUtils.chunkContent(content, metadata, config);
 
-    // Return final message
-    if (!message.isEmpty()) {
-      message = cleanLlmFinalMessage(message);
-      final JSONObject response = writeJsonResponse(message, documentsList);
-      return response;
+    // Setup prompt
+    Message initialPrompt = PromptUtils.createInitialPromptForSummarization();
+
+    // Summarize all chunks
+    List<Message> summaries = new ArrayList<>();
+    for (TextSegment segment: segments) {
+      List<Message> prompts = new ArrayList<>();
+      prompts.add(initialPrompt);
+      prompts.add(PromptUtils.textSegmentsToMessage(segment, "user", config));
+
+      String response = service.generate(prompts, request);
+      Message responseMessage = new Message("assistant", response);
+      summaries.add(responseMessage);
+    }
+
+    // Merge all summaries
+    if (summaries.size() > 1) {
+      // Merge All Summaries as prompts and add an extra instruction to generate a synthesis
+      Message mergeAllSummariesPrompt = PromptUtils.createPromptForMergeAllSummaries();
+      summaries.add(mergeAllSummariesPrompt);
+      return service.generate(summaries, request);
+
+    } else if (summaries.size() == 1) {
+      return summaries.get(0).getContent();
     } else {
-      return writeJsonError(428, "ragNoValidAnswer", "Sorry, I could not find an answer to your question.");
+      throw new IOException("Could not generate any summary for this document");
     }
 
   }

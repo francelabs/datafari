@@ -17,6 +17,11 @@ package com.francelabs.datafari.utils.rag;
 
 import com.francelabs.datafari.rag.DocumentForRag;
 import com.francelabs.datafari.rag.RagConfiguration;
+import dev.langchain4j.data.document.Document;
+import dev.langchain4j.data.document.DocumentSplitter;
+import dev.langchain4j.data.document.Metadata;
+import dev.langchain4j.data.document.splitter.DocumentByParagraphSplitter;
+import dev.langchain4j.data.segment.TextSegment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +64,19 @@ public class ChunkUtils {
         }
 
         return chunkedDocumentList;
+    }
+
+    /**
+     *
+     * @param content : A string content to be chunked
+     * @param metadata : Information about the original file (title, url, id...)
+     * @param config : RAG configuration
+     * @return A list of TextSegments, that contain metadata. Big documents are chunked into multiple documents.
+     */
+    public static List<TextSegment> chunkContent(String content, Metadata metadata, RagConfiguration config) {
+        Document doc = new Document(content, metadata);
+        DocumentSplitter splitter = new DocumentByParagraphSplitter(100, config.getIntegerProperty(RagConfiguration.LLM_MAX_TOKENS));
+        return splitter.split(doc);
     }
 
     /**
