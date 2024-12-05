@@ -7,11 +7,13 @@ import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import dev.langchain4j.data.document.Metadata;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 import org.json.simple.JSONObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 
 @RestController
 public class AiPowered {
@@ -24,6 +26,9 @@ public class AiPowered {
     public String summarizeDocument(final HttpServletRequest request) {
 
         String id = request.getParameter("id"); // The ID of the target document
+        if (id == null)
+            return generateErrorJson(422, "Please provide the ID of the document to summarize.", null);
+
         IndexerResponseDocument doc; // The target document
         String summary; // The summary of the document
         final JSONObject jsonResponse = new JSONObject();
@@ -37,7 +42,8 @@ public class AiPowered {
                 return generateErrorJson(422, "The document cannot be retrieved.", null);
 
             summary = (String) doc.getFieldValue(LLM_SUMMARY_FIELD);
-            String content = (String) doc.getFieldValue(EXACT_CONTENT);
+            String content;
+            content = extractContentFromDoc(doc);
 
             if ((summary == null || summary.isEmpty()) && (content != null && !content.isEmpty())) {
                 // Summary not found in Solr Document, but existing content
@@ -46,11 +52,16 @@ public class AiPowered {
                 summary = RagAPI.summarize(request, content, metadata);
                 jsonResponse.put("status", "OK");
                 jsonResponse.put("content", summary);
+                return jsonResponse.toJSONString();
 
             } else if (content == null || content.isEmpty()) {
                 // Error : No content, no summary
                 LOGGER.error("Could not retrieve summary or content from file {}.", id);
                 return generateErrorJson(422, "Unable to generate a content, since the file has no content.", null);
+            } else {
+                jsonResponse.put("status", "OK");
+                jsonResponse.put("content", summary);
+                return jsonResponse.toJSONString();
             }
 
             //  TODO: This feature can be improved by implementing Atomic Update.
@@ -58,10 +69,19 @@ public class AiPowered {
 
 
         } catch (final Exception e) {
-            return generateErrorJson(500, "", e);
+            return generateErrorJson(500, e.getMessage(), e);
         }
 
-        return jsonResponse.toJSONString();
+    }
+
+    private static @Nullable String extractContentFromDoc(IndexerResponseDocument doc) {
+        String content;
+        try {
+            content = (String) ((ArrayList<?>) doc.getFieldValue(EXACT_CONTENT)).get(0);
+        } catch (final NullPointerException e) {
+            content = null;
+        }
+        return content;
     }
 
     private Metadata getMetadataFromSolrDoc(IndexerResponseDocument doc) {

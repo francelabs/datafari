@@ -22,6 +22,8 @@ import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.document.splitter.DocumentByParagraphSplitter;
 import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.model.Tokenizer;
+import dev.langchain4j.model.openai.OpenAiTokenizer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +77,7 @@ public class ChunkUtils {
      */
     public static List<TextSegment> chunkContent(String content, Metadata metadata, RagConfiguration config) {
         Document doc = new Document(content, metadata);
-        DocumentSplitter splitter = new DocumentByParagraphSplitter(100, config.getIntegerProperty(RagConfiguration.LLM_MAX_TOKENS));
+        DocumentSplitter splitter = new DocumentByParagraphSplitter(config.getIntegerProperty(RagConfiguration.CHUNK_SIZE), 50);
         return splitter.split(doc);
     }
 

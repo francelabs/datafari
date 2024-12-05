@@ -100,12 +100,15 @@ public class RagAPI extends SearchAPI {
     LlmService service;
     String llmService = config.getProperty(RagConfiguration.LLM_SERVICE);
     switch(llmService) {
-      case "openai":
-        service = new OpenAiLlmService(config);
-        break;
       case "datafari":
-      default:
+        // Todo : Clean remove DatafariLlmService
+        LOGGER.warn("The DatafariLlmService is deprecated, since the Datafari AI Agent is now OpenAI-compatible.");
+        LOGGER.warn("Please use OpenAiLlmService instead.");
         service = new DatafariLlmService(config);
+        break;
+      case "openai":
+      default:
+        service = new OpenAiLlmService(config);
     }
     return service;
   }
