@@ -1,8 +1,8 @@
-package com.francelabs.datafari.rag;
+package com.francelabs.datafari.utils.rag;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class DocumentForRag {
+public class AiDocument {
 
     @JsonProperty("id")
     String id;
@@ -16,10 +16,10 @@ public class DocumentForRag {
     @JsonProperty("content")
     String content;
 
-    public DocumentForRag() {
+    public AiDocument() {
     }
 
-    public DocumentForRag(String id, String url, String title, String content) {
+    public AiDocument(String id, String url, String title, String content) {
         this.id = id;
         this.url = url;
         this.title = title;
@@ -60,9 +60,9 @@ public class DocumentForRag {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof DocumentForRag)
+        if(obj instanceof AiDocument)
         {
-            DocumentForRag doc = (DocumentForRag) obj;
+            AiDocument doc = (AiDocument) obj;
             return this.id.equals(doc.id) && this.url.equals(doc.url) && this.title.equals(doc.title);
         }
         return false;

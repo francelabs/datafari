@@ -17,6 +17,7 @@ public class RagConfiguration extends AbstractConfigClass {
     public static final String ENABLE_LOGS = "rag.enable.logs";
     public static final String ENABLE_CHUNKING = "rag.enable.chunking";
     public static final String ENABLE_VECTOR_SEARCH = "rag.enable.vector.search";
+    public static final String ENABLE_SUMMARIZATION = "ai.summarization.enabled";
 
     // WEB SERVICES PARAMETERS
     public static final String API_ENDPOINT = "rag.api.endpoint";

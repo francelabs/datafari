@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.util.List;
 
 public class DatafariLlmService implements LlmService {
+    // TODO : This class should be removed, since Datafari AI Agent is now OpenAI-compatible.
+    // TODO : Code should be updated.
 
     String url;
     String temperature;

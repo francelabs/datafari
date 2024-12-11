@@ -49,6 +49,7 @@ public class OpenAiLlmService implements LlmService {
      * @return The string LLM response
      */
     public String invoke(List<String> prompts, HttpServletRequest request) throws IOException {
+        // Todo : Edit RAG process to use generate methods instead of invoke.
 
         ChatLanguageModel llm = getChatLanguageModel();
 

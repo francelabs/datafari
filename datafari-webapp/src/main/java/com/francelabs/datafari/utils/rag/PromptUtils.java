@@ -18,7 +18,6 @@ package com.francelabs.datafari.utils.rag;
 import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
-import com.francelabs.datafari.rag.DocumentForRag;
 import com.francelabs.datafari.rag.Message;
 import com.francelabs.datafari.rag.RagConfiguration;
 import com.francelabs.datafari.user.Lang;
@@ -55,7 +54,7 @@ public class PromptUtils {
      * @param request : The HTTP request
      * @return a prompt ready to be sent to the LLM service
      */
-    public static List<String> documentsListToPrompts(RagConfiguration config, List<DocumentForRag> documentsList, HttpServletRequest request) throws IOException {
+    public static List<String> documentsListToPrompts(RagConfiguration config, List<AiDocument> documentsList, HttpServletRequest request) throws IOException {
 
         List<String> prompts = new ArrayList<>();
         String uniqueContent = formatDocuments(documentsList);
@@ -64,7 +63,7 @@ public class PromptUtils {
             String prompt = createInitialRagPrompt(config, uniqueContent, request);
             prompts.add(prompt);
         } else {
-            for (DocumentForRag document : documentsList) {
+            for (AiDocument document : documentsList) {
                 // format document
                 String content = formatDocument(document.getTitle(), document.getContent());
                 // create prompt
@@ -120,10 +119,10 @@ public class PromptUtils {
     }
 
     // Todo : Replace with a clean Message generator
-    public static String formatDocuments(List<DocumentForRag> documents) {
+    public static String formatDocuments(List<AiDocument> documents) {
         String template = "Document title:```{title}```\nDocument content:```{chunk}```";
         StringBuilder prompt = new StringBuilder();
-        for (DocumentForRag document : documents) {
+        for (AiDocument document : documents) {
             prompt.append(template.replace("{title}", document.getTitle()).replace("{chunk}", document.getContent()));
             prompt.append("\n\n");
         }
