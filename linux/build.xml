@@ -25,6 +25,7 @@
 	<property name="tika-server.src.dir" value="${project.dir}/datafari-tika-server" />
 	<property name="updateprocessor.src.dir" value="${project.dir}/datafari-updateprocessor/target" />
 	<property name="activedirectory.connector.src.dir" value="${project.dir}/datafari-active-directory-connector/target" />
+	<property name="jdbc.connector.src.dir" value="${project.dir}/datafari-jdbc-connector/target" />
 	<property name="metadatacleaner.connector.src.dir" value="${project.dir}/datafari-metadatacleaner-connector/target" />
 	<property name="docfilter.connector.src.dir" value="${project.dir}/datafari-docfilter-connector/target" />
 	<property name="emptier.connector.src.dir" value="${project.dir}/datafari-emptier-connector/target" />
@@ -392,6 +393,14 @@
 			</fileset>
 		</copy>
 
+		<!-- Copy Active Directory connector -->
+		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
+			<fileset dir="${jdbc.connector.src.dir}">
+				<include name="*.jar" />
+				<include name="dependencies/**" />
+			</fileset>
+		</copy>
+
 		<!-- Copy Doc Filter connector -->
 		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
 			<fileset dir="${docfilter.connector.src.dir}">
@@ -440,6 +449,7 @@
 			<include name="*.jar" />
 		  </fileset>
 		</copy>
+
 
 		<!-- Copy Manifold CF to Tomcat auto-deploy directory -->
 		<move toDir="${linux.dist.dir}/tomcat-mcf/webapps" overwrite="true" force="true">

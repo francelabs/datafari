@@ -366,6 +366,12 @@
     <field name="entity_misc" type="string" indexed="true" stored="true" multiValued="true"/>
     <field name="entity_per" type="string" indexed="true" stored="true" multiValued="true"/>
 
+    <!-- Field used by Datafari LLM Transformation Connector -->
+    <field name="llm_categories" type="string" indexed="true" stored="true" multiValued="true"/>
+    <field name="llm_summary" type="string" indexed="true" stored="true"/>
+    <!-- Todo : Make this field knn dense vector -->
+    <field name="llm_vector" type="string" indexed="true" stored="true"/>
+
     <dynamicField name="ignored_*" type="ignored" multiValued="true"/>
     <dynamicField name="ontology_*" type="string" multiValued="true"/>
 
