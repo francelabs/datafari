@@ -53,8 +53,7 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
   public VectorUpdateProcessor(CloudSolrClient client, final SolrParams params, final UpdateRequestProcessor next) {
     super(next);
     if (params != null) {
-      boolean enabled = params.getBool("enabled", false);
-      this.enabled = enabled;
+      this.enabled = params.getBool("enabled", false);
       this.client = client;
     }
   }
@@ -162,7 +161,7 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
     for (float f : vectorToSearch) {
       vector.add(f);
     }*/
-    List<Float> vector = Arrays.asList(0.25f , 4.1f, 3.7f, 5.1f);
+    List<Float> vector = Arrays.asList(0.25f , -0.1f, 0.7f, -0.1f);
 
     return vector;
   }

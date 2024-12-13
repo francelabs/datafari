@@ -1,6 +1,10 @@
 package com.francelabs.datafari.rag;
 
 import com.francelabs.datafari.utils.rag.PromptUtils;
+import dev.langchain4j.data.embedding.Embedding;
+import dev.langchain4j.model.embedding.EmbeddingModel;
+import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
+import dev.langchain4j.model.output.Response;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpEntity;
@@ -79,8 +83,9 @@ public class DatafariLlmService implements LlmService {
             if (!apiKey.isEmpty()) headers.setBearerAuth(apiKey);
             HttpEntity<String> requestEntity = new HttpEntity<>(prompts, headers);
             String resp = "";
+            String batchUrl = url + "/batch";
             try{
-                DatafariRagResponse response = template.postForObject(url, requestEntity,  DatafariRagResponse.class);
+                DatafariRagResponse response = template.postForObject(batchUrl, requestEntity,  DatafariRagResponse.class);
                 if (response == null) {
                     throw new RestClientException("An error occurred while calling external webservices. The response does not provide any information");
                 } else if (response.getOutput().isEmpty() && !response.getError().isEmpty()) {
@@ -126,6 +131,23 @@ public class DatafariLlmService implements LlmService {
         input.put("queries", queries);
         queryBody.put("input", input);
         return queryBody.toJSONString();
+    }
+
+    /**
+     * Generate the body attached to the request sent to the LLM
+     * @param prompt A single String prompt. Each prompt contains instructions for the model, document content and the user query
+     * @return A JSON String
+     */
+    public float[] embed(String prompt) {
+
+        EmbeddingModel embdModel = OpenAiEmbeddingModel.builder()
+                .apiKey(apiKey)
+                .baseUrl(url)
+                .modelName(model)
+                .build();
+
+        Response<Embedding> embeddings = embdModel.embed(prompt);
+        return embeddings.content().vector();
     }
 }
 

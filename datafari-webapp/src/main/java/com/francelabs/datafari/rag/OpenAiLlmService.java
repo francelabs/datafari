@@ -1,8 +1,12 @@
 package com.francelabs.datafari.rag;
 
 import com.francelabs.datafari.utils.rag.PromptUtils;
+import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
+import dev.langchain4j.model.output.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -75,5 +79,22 @@ public class OpenAiLlmService implements LlmService {
         }
 
         return message;
+    }
+
+    /**
+     * Generate the body attached to the request sent to the LLM
+     * @param prompt A single String prompt. Each prompt contains instructions for the model, document content and the user query
+     * @return A JSON String
+     */
+    public float[] embed(String prompt) {
+
+        EmbeddingModel embdModel = OpenAiEmbeddingModel.builder()
+                .apiKey(apiKey)
+                .baseUrl(url)
+                .modelName(model)
+                .build();
+
+        Response<Embedding> embeddings = embdModel.embed(prompt);
+        return embeddings.content().vector();
     }
 }

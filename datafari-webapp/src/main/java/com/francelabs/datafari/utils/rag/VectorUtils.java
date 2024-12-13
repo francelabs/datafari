@@ -16,6 +16,7 @@
 package com.francelabs.datafari.utils.rag;
 
 import com.francelabs.datafari.rag.DocumentForRag;
+import com.francelabs.datafari.rag.RagConfiguration;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.rag.content.Content;
@@ -47,7 +48,7 @@ public class VectorUtils {
      * @param documentList : A list containing a list of documents (ID, title, url and content)
      * @return The document list. Big documents are chunked into multiple documents.
      */
-    public static List<DocumentForRag> processVectorSearch(List<DocumentForRag> documentList, HttpServletRequest request) {
+    public static List<DocumentForRag> processVectorSearch(List<DocumentForRag> documentList, HttpServletRequest request, RagConfiguration config) {
 
         List<Document> documents = new ArrayList<>();
         List<DocumentForRag> embeddedDocumentList = new ArrayList<>();
@@ -70,9 +71,10 @@ public class VectorUtils {
                 .retrieve(query);*/
         // Todo : maxResults
 
+        int maxResult = config.getIntegerProperty(RagConfiguration.MAX_CHUNKS, 5);
         ContentRetriever contentRetriever = EmbeddingStoreContentRetriever.builder()
                 .embeddingStore(embeddingStore)
-                .maxResults(5)
+                .maxResults(maxResult)
                 .build();
         List<Content> contents = contentRetriever.retrieve(query);
 
