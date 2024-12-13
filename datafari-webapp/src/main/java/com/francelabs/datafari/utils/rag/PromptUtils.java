@@ -24,7 +24,6 @@ import com.francelabs.datafari.user.Lang;
 import com.francelabs.datafari.utils.AuthenticatedUserName;
 import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.segment.TextSegment;
-
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;

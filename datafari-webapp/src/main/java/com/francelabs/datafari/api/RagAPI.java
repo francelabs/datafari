@@ -32,13 +32,6 @@ public class RagAPI extends SearchAPI {
     // Get RAG specific configuration
     RagConfiguration config = RagConfiguration.getInstance();
 
-    // Todo : This code looks dead. Check if it can be deleted.
-    final Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());
-    if (request.getParameter("id") == null && request.getAttribute("id") != null && request.getAttribute("id") instanceof String) {
-      final String idParam[] = { (String) request.getAttribute("id") };
-      parameterMap.put("id", idParam);
-    }
-
     // Is RAG enabled ?
     if (!config.getBooleanProperty(RagConfiguration.ENABLE_RAG))
       return writeJsonError(422, "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.");
