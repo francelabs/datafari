@@ -31,6 +31,7 @@ public class AiPowered {
     public String summarizeDocument(final HttpServletRequest request, @RequestBody JSONObject jsonDoc) {
 
         String id;
+        String lang;
         String title;
         String content;
         String summary;
@@ -42,6 +43,11 @@ public class AiPowered {
             id = (String) jsonDoc.get(ID_FIELD);
         } else {
             return generateErrorJson(422, "Please provide the ID of the document to summarize.", null);
+        }
+        // Retrieve language
+        if (jsonDoc.get("lang") != null) {
+            lang = (String) jsonDoc.get("lang");
+            request.setAttribute("lang", lang);
         }
 
         LOGGER.info("Summary of the document {} requested.", id);
@@ -83,7 +89,7 @@ public class AiPowered {
     }
 
     /**
-     * Generate a
+     * Generate a summary for a document, or returns it if it already exists
      * @param request HttpServletRequest
      * @param summary String The summary of the documents if it already exists
      * @param content String The exactContent of the document
@@ -93,7 +99,8 @@ public class AiPowered {
      * @param jsonResponse String
      * @return a response JSONObject
      */
-    private String getDocumentSummary(HttpServletRequest request, String summary, String content, String id, String title, String url, JSONObject jsonResponse) throws IOException {
+    private String getDocumentSummary(HttpServletRequest request, String summary, String content, String id,
+                                      String title, String url, JSONObject jsonResponse) throws IOException {
         if ((summary == null || summary.isEmpty()) && (content != null && !content.isEmpty())) {
             // If there is no existing summary, but content is found, use RagAPI service to generate a summary
             LOGGER.debug("No summary found for file {}", id);

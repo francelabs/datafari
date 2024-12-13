@@ -98,16 +98,18 @@ public class PromptUtils {
     /**
      * @return Retrieve the instructions used to summarize a document.
      */
-    public static Message createInitialPromptForSummarization() throws IOException {
-        String prompt = getInstructions("template-initialPromptForSummarization.txt");
+    public static Message createInitialPromptForSummarization(HttpServletRequest request) throws IOException {
+        String prompt = getInstructions("template-initialPromptForSummarization.txt")
+                .replace("{language}", getUserLanguage(request));
         return new Message("system", prompt);
     }
 
     /**
      * @return Retrieve the instructions used to merge multiple summaries into one.
      */
-    public static Message createPromptForMergeAllSummaries() throws IOException {
-        String prompt =  getInstructions("template-mergeAllSummaries.txt");
+    public static Message createPromptForMergeAllSummaries(HttpServletRequest request) throws IOException {
+        String prompt =  getInstructions("template-mergeAllSummaries.txt")
+                .replace("{language}", getUserLanguage(request));
         return new Message("user", prompt);
     }
 
@@ -215,8 +217,12 @@ public class PromptUtils {
 
         final String authenticatedUserName = AuthenticatedUserName.getName(request);
         try {
-            // Retrieving user language from query GET parameters
+            // Retrieving user language from request parameters
             String lang = getDisplayedName(request.getParameter("lang"));
+
+            // Retrieving user language from request attributes
+            if (lang.isEmpty() && request.getAttribute("lang") != null)
+                lang = getDisplayedName((String) request.getAttribute("lang"));
 
             // If no language is provided in the GET parameters, retrieving user language from Cassandra lang database
             if (lang.isEmpty()) lang = getDisplayedName(Lang.getLang(authenticatedUserName));

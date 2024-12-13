@@ -131,7 +131,7 @@ public class RagAPI extends SearchAPI {
     List<TextSegment> segments = ChunkUtils.chunkContent(doc, config);
 
     // Setup prompt
-    Message initialPrompt = PromptUtils.createInitialPromptForSummarization();
+    Message initialPrompt = PromptUtils.createInitialPromptForSummarization(request);
 
     // Summarize all chunks
     List<Message> summaries = new ArrayList<>();
@@ -148,7 +148,7 @@ public class RagAPI extends SearchAPI {
     // Merge all summaries
     if (summaries.size() > 1) {
       // Merge All Summaries as prompts and add an extra instruction to generate a synthesis
-      Message mergeAllSummariesPrompt = PromptUtils.createPromptForMergeAllSummaries();
+      Message mergeAllSummariesPrompt = PromptUtils.createPromptForMergeAllSummaries(request);
       summaries.add(mergeAllSummariesPrompt);
       return service.generate(summaries, request);
 
