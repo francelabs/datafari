@@ -62,7 +62,7 @@ public class AiPowered {
                 return generateErrorJson(422, "The document cannot be retrieved.", null);
             }
 
-        } catch (final NullPointerException e) {
+        } catch (final NullPointerException|IndexOutOfBoundsException e) {
             return generateErrorJson(422, "The document cannot be retrieved.", null);
         } catch (final Exception e) {
             return generateErrorJson(500, e.getMessage(), e);
@@ -151,6 +151,7 @@ public class AiPowered {
         final JSONObject jsonResponse = new JSONObject();
         LOGGER.error("An error occurred: {}", message, e);
         final JSONObject error = new JSONObject();
+        jsonResponse.put("status", "ERROR");
         error.put("code", code);
         error.put("message", message);
         jsonResponse.put("error", error);

@@ -1,7 +1,6 @@
 package com.francelabs.datafari.api;
 
 import com.francelabs.datafari.rag.*;
-import com.francelabs.datafari.rag.OpenAiLlmService;
 import com.francelabs.datafari.utils.rag.AiDocument;
 import com.francelabs.datafari.utils.rag.ChunkUtils;
 import com.francelabs.datafari.utils.rag.PromptUtils;
@@ -16,7 +15,8 @@ import org.json.simple.JSONObject;
 import org.springframework.security.authentication.DisabledException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.*;
 
@@ -184,9 +184,9 @@ public class RagAPI extends SearchAPI {
     response.put("status", "ERROR");
     error.put("code", code);
     error.put("label", errorLabel);
-    response.put("message", message);
-    response.put("documents", new ArrayList<>());
-    response.put("error", error);
+    content.put("message", message);
+    content.put("documents", new ArrayList<>());
+    content.put("error", error);
     response.put("content", content);
     return response;
   }
