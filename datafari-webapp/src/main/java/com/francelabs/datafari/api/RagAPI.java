@@ -124,7 +124,7 @@ public class RagAPI extends SearchAPI {
 
     // Vector embedding
     if (!config.getBooleanProperty(RagConfiguration.ENABLE_SUMMARIZATION)) {
-      throw new DisabledException("The summarization feature is disabled.");
+      throw new DisabledException("The summary generation feature is disabled.");
     }
 
     // Chunk document
