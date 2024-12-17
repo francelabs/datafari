@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.utils.Timer;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
@@ -297,6 +298,9 @@ public class SearchAggregator extends HttpServlet {
         JSONObject searchResponse;
         if (action != null) {
           switch (action) {
+          case "rag":
+            searchResponse = RagAPI.rag(request);
+            break;
           case "suggest":
             searchResponse = SuggesterAPI.suggest(request);
             break;
@@ -494,6 +498,7 @@ public class SearchAggregator extends HttpServlet {
       final JSONObject mergedFacetQueries = new JSONObject();
       final JSONObject mergedFacetFields = new JSONObject();
       final Map<String, ImmutableMap<String, Integer>> mergedFacetFieldsMap = new HashMap<String, ImmutableMap<String, Integer>>();
+
 
       // If wildcard query then mix documents equally
       if (wildCardQuery) {
@@ -851,3 +856,4 @@ public class SearchAggregator extends HttpServlet {
   }
 
 }
+

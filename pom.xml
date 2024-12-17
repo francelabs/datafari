@@ -6,7 +6,7 @@
   <artifactId>datafari-ce</artifactId>
   <!-- Main POM of datafari -->
   <packaging>pom</packaging>
-  <version>6.1-dev-Community</version>
+  <version>6.2-dev-Community</version>
   <name>Datafari Enterprise Search CE - Parent POM</name>
   <properties>
     <adminui.version>1.0</adminui.version>
@@ -16,7 +16,7 @@
     <cassandra.version>4.1.3</cassandra.version>
     <cassandra.sha512>393443a5b9849645362df2f7536e734e1fc6d513aadf440fab8dda3063553394a138805098796d35f9d4d31e2899ecab630a2ec2a44d00d5e63bed549a2e844c</cassandra.sha512>
     <cassandra.driver.version>4.17.0</cassandra.driver.version>
-    <datafari.version>6.1-dev-Community</datafari.version>
+    <datafari.version>6.2-dev-Community</datafari.version>
     <datafariui.version>1.5</datafariui.version>
     <datafariui.md5>3eb37c4a9c013275b44db5ddaec10143</datafariui.md5>
     <guava.version>26.0-jre</guava.version>
@@ -27,12 +27,13 @@
     <jackson.version>2.13.3</jackson.version>
     <jackson-databind.version>2.13.4.1</jackson-databind.version>
     <keycloak.version>22.0.1</keycloak.version>
-    <log4j.version>2.17.1</log4j.version>
+    <log4j.version>2.17.2</log4j.version>
     <logstash.version>8.12.1</logstash.version>
     <logstash.sha512>df516962f9518a20809a92655605766607f2177287f7e296e2de40e4970680d3004e7e5cbad57b15add1271f5c7a0c166a950b0fd995eaf57417d8efb16f6ed8</logstash.sha512>
     <mcf-solr-plugin.version>9.x-plugin-2.2</mcf-solr-plugin.version>
     <mcf-solr-plugin.sha512>38261a93265c1697db2742947ec72dfdfbb31f4dcab7a343484b06bb57416a668c750a98d5130fadf97464587a09677bb927e2623b862e618e45a3922b67d20b</mcf-solr-plugin.sha512>
     <mssql-jdbc.version>10.2.1.jre11</mssql-jdbc.version>
+    <postgresql.version>42.7.2</postgresql.version>
     <netty.version>4.1.63.Final</netty.version>
     <ojdbc.version>19.15.0.0.1</ojdbc.version>
     <postgres.version>42.7.2</postgres.version>
@@ -53,8 +54,8 @@
     <tomcat.version>9.0.81</tomcat.version>
     <slf4j.version>1.7.36</slf4j.version>
     <xmlsec.version>2.3.0</xmlsec.version>
-<mcf.version>2.26-a2343428</mcf.version>
-<mcf.sha512>b53d7fd2a6e43968479ce7cf9dec007a344404234b10b1b30e2876e216c96b91640fd71e840128ade2fccc48d9144e72d42602c5139d5db92967dd01f1bf32b7</mcf.sha512>
+<mcf.version>2.27</mcf.version>
+<mcf.sha512>ecb8e22bf42cfb90f5011f660f104cb8b36a9e341085d0fd27169535d6ca25df6c450a184fa437e923bd1b5a7c8b86e99d49f1052bb8c2479b0a7521ea287d63</mcf.sha512>
 <zookeeper.version>3.9.2</zookeeper.version>
  <zookeeper.sha512>2b5ae02d618a27ca8cd54924855d5344263b7d9dee760181f9d66bafa9230324d2ad31786895f0654c969dc38d4a3d0077f74cc376b58b5fa2fb94beb1ab445f</zookeeper.sha512>
   </properties>
@@ -92,6 +93,7 @@
     <module>datafari-solr-atomic-update</module>
     <module>datafari-confluence-v6-connector</module>
     <module>datafari-solr-connector</module>
+    <module>datafari-jdbc-connector</module>
   </modules>
   <build>
     <pluginManagement>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datafari RAG - Demo</title>
+</head>
+<body>
+
+<div>
+    <label for="inputText">Entrez du texte :</label>
+    <input type="text" id="inputText" />
+    <button onclick="callAPI()">Envoyer</button>
+</div>
+
+<div id="resultBlock">
+    <!-- Le résultat de la requête s'affichera ici -->
+</div>
+
+<script>
+    function callAPI() {
+        // Récupérer la valeur de l'input
+        var inputValue = document.getElementById('inputText').value;
+
+        // Construire l'URL de l'API avec la valeur en paramètre
+        var apiUrl = 'https://127.0.0.1/Datafari/rest/v2.0/search/select?action=rag&q=' + encodeURIComponent(inputValue);
+
+        // Effectuer la requête GET avec fetch
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                // Afficher le résultat dans le bloc résultat
+                document.getElementById('resultBlock').innerText = JSON.stringify(data);
+            })
+            .catch(error => {
+                console.error('Erreur lors de la requête API:', error);
+                // Afficher une erreur dans le bloc résultat en cas d'échec de la requête
+                document.getElementById('resultBlock').innerText = 'Erreur lors de la requête API';
+            });
+    }
+</script>
+
+</body>
+</html>

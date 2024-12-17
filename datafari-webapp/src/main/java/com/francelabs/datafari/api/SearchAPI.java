@@ -234,7 +234,7 @@ public class SearchAPI {
         queryPromolink.setFilterQueries("-dateBeginning:[NOW/DAY+1DAY TO *]", "-dateEnd:[* TO NOW/DAY]");
         queryResponsePromolink = promolinkCore.executeQuery(queryPromolink);
       }
-
+      
       if (handler.equals("/select")) {
         // If there is no id there is no need to record stats
         if (params.getParamValue("id") != null && !params.getParamValue("id").equals("")) {
@@ -294,7 +294,7 @@ public class SearchAPI {
 
   }
 
-  private static String getHandler(final HttpServletRequest servletRequest) {
+  static String getHandler(final HttpServletRequest servletRequest) {
     String pathInfo = servletRequest.getPathInfo();
     if (pathInfo == null) {
       pathInfo = servletRequest.getServletPath();
