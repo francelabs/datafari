@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils.rag;
 
+import com.francelabs.datafari.rag.RagConfiguration;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.rag.content.Content;
@@ -65,13 +66,10 @@ public class VectorUtils {
         // Vector query
         Query query = Query.from(request.getParameter("q"));
 
-        /*List<Content> contents = EmbeddingStoreContentRetriever.from(embeddingStore)
-                .retrieve(query);*/
-        // Todo : maxResults
-
+        int maxResult = RagConfiguration.getInstance().getIntegerProperty(RagConfiguration.MAX_CHUNKS, 5);
         ContentRetriever contentRetriever = EmbeddingStoreContentRetriever.builder()
                 .embeddingStore(embeddingStore)
-                .maxResults(5)
+                .maxResults(maxResult)
                 .build();
         List<Content> contents = contentRetriever.retrieve(query);
 

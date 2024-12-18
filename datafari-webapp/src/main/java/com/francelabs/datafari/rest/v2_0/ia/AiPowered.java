@@ -2,6 +2,7 @@ package com.francelabs.datafari.rest.v2_0.ia;
 
 import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
 import com.francelabs.datafari.api.RagAPI;
+import com.francelabs.datafari.rag.RagConfiguration;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
@@ -26,6 +27,7 @@ public class AiPowered {
     private static final String URL_FIELD = "url";
     private static final String LLM_SUMMARY_FIELD = "llm_summary";
     public static final String EXACT_CONTENT_FIELD = "exactContent";
+    private static final String QUERY_FIELD = "query";
 
     @PostMapping("/rest/v2.0/ia/summarize")
     public String summarizeDocument(final HttpServletRequest request, @RequestBody JSONObject jsonDoc) {
@@ -88,6 +90,60 @@ public class AiPowered {
         }
     }
 
+    @PostMapping("/rest/v2.0/ia/rag")
+    public String rag(final HttpServletRequest request, @RequestBody JSONObject jsonDoc) {
+
+        String query; // The user request
+        String id;
+        String lang;
+        JSONObject searchResults;
+
+        // Get RAG configuration
+        RagConfiguration config = RagConfiguration.getInstance();
+
+        // Is RAG enabled ?
+        if (!config.getBooleanProperty(RagConfiguration.ENABLE_RAG))
+            return generateErrorJson(422, "Sorry, it seems the feature is not enabled.", null);
+
+        // Retrieve query from JSON input
+        if (jsonDoc.get(QUERY_FIELD) != null) {
+            query = (String) jsonDoc.get(QUERY_FIELD);
+        } else {
+            return generateErrorJson(422, "Missing query parameter.", null);
+        }
+
+        // Search using Datafari API methods
+        try {
+            // Retrieve ID from JSON input
+            if (jsonDoc.get(ID_FIELD) != null) {
+                id = (String) jsonDoc.get(ID_FIELD);
+                LOGGER.info("RAG request for document {} received.", id);
+                searchResults = performSearchById(request, id);
+            } else {
+                request.setAttribute("q.op", config.getProperty(RagConfiguration.SEARCH_OPERATOR));
+                searchResults = performSearch(request, query);
+            }
+        } catch (IOException|ServletException e) {
+            LOGGER.error("RAG error. An error occurred while retrieving documents.", e);
+            return generateErrorJson(422, "An unexpected error occurred during the search process.", e);
+        }
+
+        // Retrieve language
+        if (jsonDoc.get("lang") != null) {
+            lang = (String) jsonDoc.get("lang");
+            request.setAttribute("lang", lang);
+        }
+
+        try {
+            // Process the document(s) using RagAPI methods
+            EditableHttpServletRequest editablerequest = new EditableHttpServletRequest(request);
+            editablerequest.addParameter("q", query);
+            return RagAPI.rag(editablerequest, searchResults).toJSONString();
+        } catch (final Exception e) {
+            return generateErrorJson(500, e.getMessage(), e);
+        }
+    }
+
     /**
      * Generate a summary for a document, or returns it if it already exists
      * @param request HttpServletRequest
@@ -144,8 +200,26 @@ public class AiPowered {
         request.addParameter("fl", "id,title,exactContent,url,llm_summary");
         request.setPathInfo("/select");
 
-        final JSONObject jsonResponse = SearchAggregator.doGetSearch(request, null);
-        return jsonResponse;
+        return SearchAggregator.doGetSearch(request, null);
+    }
+
+    /**
+     * Find a documents by its ID from Solr, using Datafari API methods.
+     * This method uses an editable version of the original HttpServletRequest.
+     * The updated request object is updated in order to process.
+     * @param originalRequest : The HttpServletRequest
+     * @param q The user query
+     * @return a JSONObject containing search results, with the following fields :
+     *      id, title, exactContent, url, llm_summary
+     */
+    private static JSONObject performSearch(HttpServletRequest originalRequest, String q) throws ServletException, IOException {
+        EditableHttpServletRequest request = new EditableHttpServletRequest(originalRequest);
+        request.addParameter("q", q);
+        request.addParameter("hl", "false");
+        request.addParameter("fl", "id,title,exactContent,url,llm_summary");
+        request.setPathInfo("/select");
+
+        return RagAPI.processSearch(RagConfiguration.getInstance(), request);
     }
 
     /**

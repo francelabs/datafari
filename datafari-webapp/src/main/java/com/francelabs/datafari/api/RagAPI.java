@@ -27,7 +27,7 @@ public class RagAPI extends SearchAPI {
   public static final String EXACT_CONTENT = "exactContent";
 
 
-  public static JSONObject rag(final HttpServletRequest request) throws IOException {
+  public static JSONObject rag(final HttpServletRequest request, JSONObject searchResults) throws IOException {
 
     // Get RAG specific configuration
     RagConfiguration config = RagConfiguration.getInstance();
@@ -37,19 +37,21 @@ public class RagAPI extends SearchAPI {
       return writeJsonError(422, "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.");
 
     // Search
-    JSONObject result;
-    try {
-      result = processSearch(config, request);
-    } catch (Exception e) {
-      LOGGER.error("RAG error. An error occurred while retrieving data.", e);
-      return writeJsonError(500, "ragTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.");
+    // If the search result has not been provided, process a search
+    if (searchResults == null) {
+      try {
+        searchResults = processSearch(config, request);
+      } catch (Exception e) {
+        LOGGER.error("RAG error. An error occurred while retrieving data.", e);
+        return writeJsonError(500, "ragTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.");
+      }
     }
 
     // Extract document content and data
     List<AiDocument> initialDocumentsList;
     List<AiDocument> documentsList;
     try {
-      initialDocumentsList = extractDocumentsList(result, config);
+      initialDocumentsList = extractDocumentsList(searchResults, config);
     } catch (FileNotFoundException e) {
       LOGGER.warn("RAG warning. The query cannot be answered because no associated documents were found.");
       return writeJsonError(428, "ragNoFileFound", "Sorry, I couldn't find any relevant document to answer your request.");
@@ -225,7 +227,7 @@ public class RagAPI extends SearchAPI {
    * @param request the original user request
    * @return A JSONObject containing the search results
    */
-  private static JSONObject processSearch(RagConfiguration config, HttpServletRequest request) throws InvalidParameterException {
+  public static JSONObject processSearch(RagConfiguration config, HttpServletRequest request) throws InvalidParameterException {
 
     final Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());
     final String handler = getHandler(request);
@@ -307,17 +309,20 @@ public class RagAPI extends SearchAPI {
    * This methode merge thoses duplicated entries, and remove useless ones.
    * @return List<AiDocument> The final list
    */
-  private static List<AiDocument> mergeSimilarDocuments(List<AiDocument> documentList, String response) {
+  private static JSONArray mergeSimilarDocuments(List<AiDocument> documentList, String response) {
     // Removing Duplicates
     Map<String, AiDocument> map = new HashMap<>();
+    JSONArray displayedDocuments = new JSONArray();
     for (AiDocument doc : documentList) {
       String id = doc.getId();
         if (map.containsKey(id) || !response.toUpperCase().contains(doc.getTitle().toUpperCase())) {
+            // Skip if the document has already been added
             continue;
         }
         map.put(id, doc);
+        if (!doc.toJSONObject().isEmpty()) displayedDocuments.add(doc.toJSONObject());
     }
-    return new ArrayList<>(map.values());
+    return displayedDocuments;
   }
 
 }

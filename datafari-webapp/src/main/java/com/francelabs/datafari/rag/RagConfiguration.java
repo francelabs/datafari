@@ -28,9 +28,12 @@ public class RagConfiguration extends AbstractConfigClass {
     public static final String LLM_TEMPERATURE = "rag.temperature";
     public static final String LLM_MAX_TOKENS = "rag.maxTokens";
     public static final String LLM_MODEL = "rag.model";
+    public static final String LLM_EMBEDDINGS_MODEL = "rag.embeddings.model";
+
 
     // DATAFARI RAG PRE-PROCESSING PROPERTIES
     public static final String MAX_FILES = "rag.maxFiles";
+    public static final String MAX_CHUNKS = "rag.maxChunks";
     public static final String CHUNK_SIZE = "rag.chunk.size";
     public static final String SEARCH_OPERATOR = "rag.operator";
 
@@ -61,6 +64,16 @@ public class RagConfiguration extends AbstractConfigClass {
 
     public Integer getIntegerProperty(final String key) {
         return Integer.valueOf(getProperty(key));
+    }
+
+    public Integer getIntegerProperty(final String key, int defaultValue) {
+        try {
+            int value = Integer.parseInt(getProperty(key));
+            if (value < 1) return defaultValue;
+            return value;
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
     }
 
     public boolean getBooleanProperty(final String key) {
