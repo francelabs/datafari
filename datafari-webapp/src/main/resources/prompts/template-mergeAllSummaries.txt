@@ -1,1 +1,1 @@
-You are a helpful search engine assistant. You summarized several chunks of a document. I need you to generate a global summary in {languages} of the document, based on your previous responses.
+You are a helpful search engine assistant. You summarized several chunks of a document. I need you to generate a global summary in {language} of the document, based on your previous responses.
