@@ -28,6 +28,7 @@ public class AiPowered {
     private static final String LLM_SUMMARY_FIELD = "llm_summary";
     public static final String EXACT_CONTENT_FIELD = "exactContent";
     private static final String QUERY_FIELD = "query";
+    private static final String STATUS_FIELD = "status";
 
     @PostMapping("/rest/v2.0/ia/summarize")
     public String summarizeDocument(final HttpServletRequest request, @RequestBody JSONObject jsonDoc) {
@@ -115,7 +116,7 @@ public class AiPowered {
         // Search using Datafari API methods
         try {
             // Retrieve ID from JSON input
-            if (jsonDoc.get(ID_FIELD) != null) {
+            if (jsonDoc.get(ID_FIELD) != null && !((String) jsonDoc.get(ID_FIELD)).isEmpty()) {
                 id = (String) jsonDoc.get(ID_FIELD);
                 LOGGER.info("RAG request for document {} received.", id);
                 searchResults = performSearchById(request, id);
@@ -169,8 +170,10 @@ public class AiPowered {
             Document doc = new Document(content, metadata);
 
             summary = RagAPI.summarize(request, doc);
-            jsonResponse.put("status", "OK");
-            jsonResponse.put("content", summary);
+            JSONObject jsonContent = new JSONObject();
+            jsonContent.put("message", summary);
+            jsonResponse.put(STATUS_FIELD, "OK");
+            jsonResponse.put("content", jsonContent);
             return jsonResponse.toJSONString();
 
         } else if (content == null || content.isEmpty()) {
@@ -178,7 +181,7 @@ public class AiPowered {
             LOGGER.warn("Could not retrieve summary or content from file {}.", id);
             return generateErrorJson(422, "Unable to generate a summary, since the file has no content.", null);
         } else {
-            jsonResponse.put("status", "OK");
+            jsonResponse.put(STATUS_FIELD, "OK");
             jsonResponse.put("content", summary);
             return jsonResponse.toJSONString();
         }
@@ -232,7 +235,7 @@ public class AiPowered {
         final JSONObject jsonResponse = new JSONObject();
         LOGGER.error("An error occurred: {}", message, e);
         final JSONObject error = new JSONObject();
-        jsonResponse.put("status", "ERROR");
+        jsonResponse.put(STATUS_FIELD, "ERROR");
         error.put("code", code);
         error.put("message", message);
         jsonResponse.put("error", error);
