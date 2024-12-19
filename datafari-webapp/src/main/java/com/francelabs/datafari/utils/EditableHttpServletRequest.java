@@ -8,7 +8,6 @@ import java.util.Map;
 public class EditableHttpServletRequest extends HttpServletRequestWrapper {
 
     private final HashMap<String,String[]> params = new HashMap<>();
-    private final HashMap<String,String> attributes = new HashMap<>();
     private String pathInfo;
 
     public EditableHttpServletRequest(HttpServletRequest request) {
@@ -35,23 +34,8 @@ public class EditableHttpServletRequest extends HttpServletRequestWrapper {
         return map;
     }
 
-    @Override
-    public Object getAttribute(String name) {
-        // if we added one, return that one
-        if ( attributes.get(name) != null ) {
-            return attributes.get(name);
-        }
-        // otherwise return what's in the original request
-        HttpServletRequest req = (HttpServletRequest) super.getRequest();
-        return req.getAttribute(name);
-    }
-
     public void addParameter( String name, String value ) {
         params.put( name, new String[]{value});
-    }
-
-    public void addAttribute( String name, String value ) {
-        attributes.put( name, value );
     }
 
     @Override
