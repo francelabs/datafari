@@ -1,4 +1,4 @@
-package com.francelabs.datafari.rest.v2_0.ia;
+package com.francelabs.datafari.rest.v2_0.ai;
 
 import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
 import com.francelabs.datafari.api.RagAPI;
@@ -30,7 +30,7 @@ public class AiPowered {
     private static final String QUERY_FIELD = "query";
     private static final String STATUS_FIELD = "status";
 
-    @PostMapping("/rest/v2.0/ia/summarize")
+    @PostMapping("/rest/v2.0/ai/summarize")
     public String summarizeDocument(final HttpServletRequest request, @RequestBody JSONObject jsonDoc) {
 
         String id;
@@ -91,7 +91,7 @@ public class AiPowered {
         }
     }
 
-    @PostMapping("/rest/v2.0/ia/rag")
+    @PostMapping("/rest/v2.0/ai/rag")
     public String rag(final HttpServletRequest request, @RequestBody JSONObject jsonDoc) {
 
         String query; // The user request
