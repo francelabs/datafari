@@ -1,8 +1,14 @@
-package com.francelabs.datafari.rag;
+package com.francelabs.datafari.utils.rag;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import java.util.Objects;
 
-public class DocumentForRag {
+public class AiDocument {
 
     @JsonProperty("id")
     String id;
@@ -16,10 +22,10 @@ public class DocumentForRag {
     @JsonProperty("content")
     String content;
 
-    public DocumentForRag() {
+    public AiDocument() {
     }
 
-    public DocumentForRag(String id, String url, String title, String content) {
+    public AiDocument(String id, String url, String title, String content) {
         this.id = id;
         this.url = url;
         this.title = title;
@@ -58,13 +64,29 @@ public class DocumentForRag {
         this.content = content;
     }
 
+    public JSONObject toJSONObject() {
+        try {
+            String jsonString = new ObjectMapper().writeValueAsString(this);
+            final JSONParser parser = new JSONParser();
+            final JSONObject jsonCategories = (JSONObject) parser.parse(jsonString);
+            return jsonCategories;
+        } catch (JsonProcessingException | ParseException e) {
+            return new JSONObject();
+        }
+    }
+
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof DocumentForRag)
+        if(obj instanceof AiDocument)
         {
-            DocumentForRag doc = (DocumentForRag) obj;
+            AiDocument doc = (AiDocument) obj;
             return this.id.equals(doc.id) && this.url.equals(doc.url) && this.title.equals(doc.title);
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, url, title, content);
     }
 }

@@ -299,7 +299,7 @@ public class SearchAggregator extends HttpServlet {
         if (action != null) {
           switch (action) {
           case "rag":
-            searchResponse = RagAPI.rag(request);
+            searchResponse = RagAPI.rag(request, null);
             break;
           case "suggest":
             searchResponse = SuggesterAPI.suggest(request);

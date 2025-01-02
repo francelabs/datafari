@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils.rag;
 
-import com.francelabs.datafari.rag.DocumentForRag;
 import com.francelabs.datafari.rag.RagConfiguration;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.segment.TextSegment;
@@ -48,14 +47,14 @@ public class VectorUtils {
      * @param documentList : A list containing a list of documents (ID, title, url and content)
      * @return The document list. Big documents are chunked into multiple documents.
      */
-    public static List<DocumentForRag> processVectorSearch(List<DocumentForRag> documentList, HttpServletRequest request, RagConfiguration config) {
+    public static List<AiDocument> processVectorSearch(List<AiDocument> documentList, HttpServletRequest request) {
 
         List<Document> documents = new ArrayList<>();
-        List<DocumentForRag> embeddedDocumentList = new ArrayList<>();
+        List<AiDocument> embeddedDocumentList = new ArrayList<>();
 
         // Create a list of Langchain4j Documents
-        for (DocumentForRag document : documentList) {
-            // Convert DocumentForRag to Lanchain4j Document
+        for (AiDocument document : documentList) {
+            // Convert AiDocument to Lanchain4j Document
             Document l4jDoc = convertDocuments(document);
             documents.add(l4jDoc);
         }
@@ -67,11 +66,7 @@ public class VectorUtils {
         // Vector query
         Query query = Query.from(request.getParameter("q"));
 
-        /*List<Content> contents = EmbeddingStoreContentRetriever.from(embeddingStore)
-                .retrieve(query);*/
-        // Todo : maxResults
-
-        int maxResult = config.getIntegerProperty(RagConfiguration.MAX_CHUNKS, 5);
+        int maxResult = RagConfiguration.getInstance().getIntegerProperty(RagConfiguration.MAX_CHUNKS, 5);
         ContentRetriever contentRetriever = EmbeddingStoreContentRetriever.builder()
                 .embeddingStore(embeddingStore)
                 .maxResults(maxResult)
@@ -82,7 +77,7 @@ public class VectorUtils {
         // The first calls returns a concatenated responses from each chunk
         for (Content content : contents) {
             String embeddedContent = content.textSegment().text();
-            DocumentForRag docToInsert = new DocumentForRag();
+            AiDocument docToInsert = new AiDocument();
             docToInsert.setContent(embeddedContent);
             docToInsert.setTitle(content.textSegment().metadata().getString("title"));
             docToInsert.setId(content.textSegment().metadata().getString("id"));
@@ -93,7 +88,7 @@ public class VectorUtils {
         return embeddedDocumentList;
     }
 
-    private static Document convertDocuments(DocumentForRag doc4rag) {
+    private static Document convertDocuments(AiDocument doc4rag) {
         Document lc4jDoc = new Document(doc4rag.getContent());
         lc4jDoc.metadata().put("title", doc4rag.getTitle())
                 .put("id", doc4rag.getId())

@@ -4,5 +4,5 @@ Do not provide any information that does not belong in documents.
 If you can't find the answer in the documents, or if you are not certain of the response, just say that you can't find the answer.
 {format}{content}
 Answer in {language} without citing the word source.
-Answer the question: ```{prompt}```, and name the source from which you have taken the answer.
+Answer the question: ```{prompt}```, and name the sources from which you have taken the answer.
 Answer: 

@@ -17,6 +17,8 @@ public interface LlmService {
      * @param prompts A list of prompts. Each prompt contains instructions for the model, document content and the user query
      * @return The string LLM response
      */
+    String generate(List<Message> prompts, HttpServletRequest request) throws IOException;
+
     float[] embed(String prompts) throws IOException;
 
 }

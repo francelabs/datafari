@@ -2,6 +2,10 @@ package com.francelabs.datafari.rag;
 
 import com.francelabs.datafari.utils.rag.PromptUtils;
 import dev.langchain4j.data.embedding.Embedding;
+import dev.langchain4j.data.message.AiMessage;
+import dev.langchain4j.data.message.ChatMessage;
+import dev.langchain4j.data.message.SystemMessage;
+import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
@@ -12,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OpenAiLlmService implements LlmService {
@@ -48,14 +53,9 @@ public class OpenAiLlmService implements LlmService {
      * @return The string LLM response
      */
     public String invoke(List<String> prompts, HttpServletRequest request) throws IOException {
+        // Todo : Edit RAG process to use generate methods instead of invoke.
 
-        ChatLanguageModel llm = OpenAiChatModel.builder()
-                .apiKey(apiKey)
-                .temperature(temperature)
-                .maxTokens(maxToken)
-                .modelName(model)
-                .baseUrl(url)
-                .build();
+        ChatLanguageModel llm = getChatLanguageModel();
 
         StringBuilder concatenatedResponses = new StringBuilder();
         String message;
@@ -71,7 +71,7 @@ public class OpenAiLlmService implements LlmService {
         if (prompts.size() == 1) {
             message = concatenatedResponses.toString();
         } else if (prompts.size() > 1) {
-            String body = PromptUtils.createPrompt(config, "```" + concatenatedResponses + "```", request);
+            String body = PromptUtils.createInitialRagPrompt(config, "```" + concatenatedResponses + "```", request);
             message = llm.generate(body);
         } else {
             LOGGER.error("RAG - No prompt found in OpenAiLlmService");
@@ -96,5 +96,56 @@ public class OpenAiLlmService implements LlmService {
 
         Response<Embedding> embeddings = embdModel.embed(prompt);
         return embeddings.content().vector();
+    }
+
+    /**
+     * Sends a list of Messages to a LLM.
+     * @param prompts The list of Messages
+     * @return A single string response
+     */
+    @Override
+    public String generate(List<Message> prompts, HttpServletRequest request) throws IOException {
+        ChatLanguageModel llm = getChatLanguageModel();
+        return llm.generate(convertMessageList(prompts)).content().text();
+    }
+
+    /**
+     * Sends a single Message to a LLM.
+     * @param prompt The Message
+     * @return A single string response
+     */
+    public String generate(Message prompt) {
+        ChatLanguageModel llm = getChatLanguageModel();
+        return llm.generate(convertMessage(prompt)).content().text();
+    }
+
+    private ChatLanguageModel getChatLanguageModel() {
+        return OpenAiChatModel.builder()
+                .apiKey(apiKey)
+                .temperature(temperature)
+                .maxTokens(maxToken)
+                .modelName(model)
+                .baseUrl(url)
+                .build();
+    }
+
+    private ChatMessage convertMessage(Message message) {
+        switch (message.getRole()) {
+            case "assistant":
+                return new AiMessage(message.content);
+            case "system":
+                return new SystemMessage(message.content);
+            case "user":
+            default:
+                return new UserMessage(message.content);
+        }
+    }
+
+    private List<ChatMessage> convertMessageList(List<Message> messages) {
+        List<ChatMessage> chatMessages = new ArrayList<>();
+        for (Message message: messages) {
+            chatMessages.add(convertMessage(message));
+        }
+        return chatMessages;
     }
 }

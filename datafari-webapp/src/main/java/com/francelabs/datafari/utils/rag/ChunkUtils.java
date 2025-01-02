@@ -15,8 +15,11 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils.rag;
 
-import com.francelabs.datafari.rag.DocumentForRag;
 import com.francelabs.datafari.rag.RagConfiguration;
+import dev.langchain4j.data.document.Document;
+import dev.langchain4j.data.document.DocumentSplitter;
+import dev.langchain4j.data.document.splitter.DocumentByParagraphSplitter;
+import dev.langchain4j.data.segment.TextSegment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,17 +42,17 @@ public class ChunkUtils {
      * @param documentList : JSONArray containing a list of documents (ID, title, url and content)
      * @return The document list. Big documents are chunked into multiple documents.
      */
-    public static List<DocumentForRag> chunkDocuments(RagConfiguration config, List<DocumentForRag> documentList) {
-        List<DocumentForRag> chunkedDocumentList = new ArrayList<>();
+    public static List<AiDocument> chunkDocuments(RagConfiguration config, List<AiDocument> documentList) {
+        List<AiDocument> chunkedDocumentList = new ArrayList<>();
 
 
-        for(DocumentForRag document : documentList) {
+        for(AiDocument document : documentList) {
 
             List<String> chunks = extractChunksFromDocument(document, config);
 
             // Each chunk is added to "chunkedDocumentList" as a document
             for (String chunk : chunks) {
-                DocumentForRag docToAdd = new DocumentForRag();
+                AiDocument docToAdd = new AiDocument();
                 docToAdd.setTitle(document.getTitle());
                 docToAdd.setId(document.getId());
                 docToAdd.setUrl(document.getUrl());
@@ -63,10 +66,21 @@ public class ChunkUtils {
 
     /**
      *
+     * @param doc : A Document object containing content and metadata (title, url, id...)
+     * @param config : RAG configuration
+     * @return A list of TextSegments, that contain metadata. Big documents are chunked into multiple documents.
+     */
+    public static List<TextSegment> chunkContent(Document doc, RagConfiguration config) {
+        DocumentSplitter splitter = new DocumentByParagraphSplitter(config.getIntegerProperty(RagConfiguration.CHUNK_SIZE), 50);
+        return splitter.split(doc);
+    }
+
+    /**
+     *
      * @param doc : a Document objet
      * @return a list of one or subdocuments
      */
-    private static List<String> extractChunksFromDocument(DocumentForRag doc, RagConfiguration config) {
+    private static List<String> extractChunksFromDocument(AiDocument doc, RagConfiguration config) {
         return splitStringBySize(doc.getContent(), config.getIntegerProperty(RagConfiguration.CHUNK_SIZE));
     }
 
