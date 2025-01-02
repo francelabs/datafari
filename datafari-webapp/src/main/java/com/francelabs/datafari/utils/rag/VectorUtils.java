@@ -88,11 +88,16 @@ public class VectorUtils {
         return embeddedDocumentList;
     }
 
-    private static Document convertDocuments(AiDocument doc4rag) {
-        Document lc4jDoc = new Document(doc4rag.getContent());
-        lc4jDoc.metadata().put("title", doc4rag.getTitle())
-                .put("id", doc4rag.getId())
-                .put("url", doc4rag.getUrl());
+    /**
+     * Convert a Datafari AI Document into a Langchain4j document
+     * @param aiDocument
+     * @return
+     */
+    private static Document convertDocuments(AiDocument aiDocument) {
+        Document lc4jDoc = new Document(aiDocument.getContent());
+        lc4jDoc.metadata().put("title", aiDocument.getTitle())
+                .put("id", aiDocument.getId())
+                .put("url", aiDocument.getUrl());
         return lc4jDoc;
     }
 }

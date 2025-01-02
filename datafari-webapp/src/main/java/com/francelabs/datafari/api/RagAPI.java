@@ -76,7 +76,7 @@ public class RagAPI extends SearchAPI {
 
     // Vector embedding
     if (config.getBooleanProperty(RagConfiguration.ENABLE_VECTOR_SEARCH)) {
-      initialDocumentsList = VectorUtils.processVectorSearch(initialDocumentsList, request, config);
+      initialDocumentsList = VectorUtils.processVectorSearch(initialDocumentsList, request);
     } else if (config.getBooleanProperty(RagConfiguration.ENABLE_LOGS)) {
       LOGGER.info("Vector search was ignored due to configuration");
     }
