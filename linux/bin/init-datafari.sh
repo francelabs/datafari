@@ -38,7 +38,7 @@ check_ip_node() {
       echo "ping ok to server"
     else
   	  echo "Problem with ping command for IP : $node_host"
-  	  read -p "Are you sure that the IP is correct, enter yes to continue (yes/no)? [yes] ? " confirmation_nodehost
+  	  read -p "Are you sure that the IP is correct, enter yes to continue (yes/no)? [no] ? " confirmation_nodehost
       if [[ "$confirmation_nodehost" = "yes" ]] || [[ "$confirmation_nodehost" = "y" ]] || [[ "$confirmation_nodehost" = "true" ]]; then
         echo "IP confirmed. The script will continue."
   	  else
@@ -551,8 +551,14 @@ init_users() {
   echo "$DATAFARI_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 }
 
+secure_configure_nft() {
+	systemctl start nftables
+	nft add table ip datafari
+	nft add chain ip datafari INPUT { type filter hook input priority 0 \; } 
+}
+
 secure_tomcat() { 
-  iptables -A INPUT -p tcp -s 127.0.0.1 --dport 8080 -j ACCEPT
+  nft add rule ip datafari INPUT ip saddr 127.0.0.1 tcp dport 8080 counter accept
   if [ "$NODETYPE" == "main" ]; then
     for ((i=1;i<=$solrNodesNumber;i++)); do
 
@@ -560,7 +566,7 @@ secure_tomcat() {
       solrproperty=$(echo $solrvalue)
       solrServer=`getProperty $solrproperty $CONFIG_FILE`
 
-      iptables -A INPUT -p tcp -s ${solrServer} --dport 8080 -j ACCEPT
+      nft add rule ip datafari INPUT ip saddr ${solrServer} tcp dport 8080 counter accept
     done
   
     if [ $mcfNodesNumber -ne 0 ]; then
@@ -569,15 +575,17 @@ secure_tomcat() {
         mcfvalue=mcf$i
         mcfproperty=$(echo $mcfvalue)
         mcfServer=`getProperty $mcfproperty $CONFIG_FILE`
-        iptables -A INPUT -p tcp -s ${mcfServer} --dport 8080 -j ACCEPT
+        nft add rule ip datafari INPUT ip saddr ${mcfServer} tcp dport 8080 counter accept
+       
   
       done
     fi
   fi
-  iptables -A INPUT -p tcp -s ${1} --dport 8080 -j ACCEPT
-  iptables -A INPUT -p tcp --dport 8080 -j DROP
+  nft add rule ip datafari INPUT ip saddr ${1} tcp dport 8080 counter accept
+  nft add rule ip datafari INPUT tcp dport 8080 counter drop
   
-  iptables -A INPUT -p tcp -s 127.0.0.1 --dport 8009 -j ACCEPT
+  
+  nft  add rule ip datafari INPUT ip saddr 127.0.0.1 tcp dport 8009 counter accept
   if [ "$NODETYPE" == "main" ]; then
     for ((i=1;i<=$solrNodesNumber;i++)); do
 
@@ -585,7 +593,7 @@ secure_tomcat() {
       solrproperty=$(echo $solrvalue)
       solrServer=`getProperty $solrproperty $CONFIG_FILE`
 
-      iptables -A INPUT -p tcp -s ${solrServer} --dport 8009 -j ACCEPT
+      nft add rule ip datafari INPUT ip saddr ${solrServer} tcp dport 8009 counter accept
     done
   
     if [ $mcfNodesNumber -ne 0 ]; then
@@ -594,15 +602,19 @@ secure_tomcat() {
         mcfvalue=mcf$i
         mcfproperty=$(echo $mcfvalue)
         mcfServer=`getProperty $mcfproperty $CONFIG_FILE`
-        iptables -A INPUT -p tcp -s ${mcfServer} --dport 8009 -j ACCEPT
+        
+        nft add rule ip datafari INPUT ip saddr ${mcfServer} tcp dport 8009 counter accept
+        
   
       done
     fi
   fi
-  iptables -A INPUT -p tcp -s ${1} --dport 8009 -j ACCEPT
-  iptables -A INPUT -p tcp --dport 8009 -j DROP
+ 
+  nft add rule ip datafari INPUT ip saddr ${1} tcp dport 8009 counter accept
+  nft add rule ip datafari INPUT tcp dport 8009 counter drop
   
-  iptables -A INPUT -p tcp -s 127.0.0.1 --dport 8443 -j ACCEPT
+  
+  nft add rule ip datafari INPUT ip saddr 127.0.0.1 tcp dport 8443 counter accept
   if [ "$NODETYPE" == "main" ]; then
     for ((i=1;i<=$solrNodesNumber;i++)); do
 
@@ -610,7 +622,7 @@ secure_tomcat() {
       solrproperty=$(echo $solrvalue)
       solrServer=`getProperty $solrproperty $CONFIG_FILE`
 
-      iptables -A INPUT -p tcp -s ${solrServer} --dport 8443 -j ACCEPT
+      nft add rule ip datafari INPUT ip saddr ${solrServer} tcp dport 8443 counter accept
     done
   
     if [ $mcfNodesNumber -ne 0 ]; then
@@ -619,20 +631,21 @@ secure_tomcat() {
         mcfvalue=mcf$i
         mcfproperty=$(echo $mcfvalue)
         mcfServer=`getProperty $mcfproperty $CONFIG_FILE`
-        iptables -A INPUT -p tcp -s ${mcfServer} --dport 8443 -j ACCEPT
+        nft add rule ip datafari INPUT ip saddr ${mcfServer} tcp dport 8443 counter accept
+        
   
       done
     fi
   fi
-  iptables -A INPUT -p tcp -s ${1} --dport 8443 -j ACCEPT
-  iptables -A INPUT -p tcp --dport 8443 -j DROP
+  nft add rule ip datafari INPUT ip saddr ${1} tcp dport 8443 counter accept
+  nft add rule ip datafari INPUT tcp dport 8443 counter drop
 }
 
 
 
 
 secure_tomcat_mcf() {
-  iptables -A INPUT -p tcp -s 127.0.0.1 --dport 9080 -j ACCEPT
+  nft add rule ip datafari INPUT ip saddr 127.0.0.1 tcp dport 9080 counter accept
   if [ "$NODETYPE" == "main" ]; then
     for ((i=1;i<=$solrNodesNumber;i++)); do
 
@@ -640,7 +653,8 @@ secure_tomcat_mcf() {
       solrproperty=$(echo $solrvalue)
       solrServer=`getProperty $solrproperty $CONFIG_FILE`
 
-      iptables -A INPUT -p tcp -s ${solrServer} --dport 9080 -j ACCEPT
+      
+      nft add rule ip datafari INPUT ip saddr ${solrServer} tcp dport 9080 counter accept
     done
   
     if [ $mcfNodesNumber -ne 0 ]; then
@@ -649,15 +663,17 @@ secure_tomcat_mcf() {
         mcfvalue=mcf$i
         mcfproperty=$(echo $mcfvalue)
         mcfServer=`getProperty $mcfproperty $CONFIG_FILE`
-        iptables -A INPUT -p tcp -s ${mcfServer} --dport 9080 -j ACCEPT
+        
+        nft add rule ip datafari INPUT ip saddr ${mcfServer} tcp dport 9080 counter accept
   
       done
     fi
   fi
-  iptables -A INPUT -p tcp -s ${1} --dport 9080 -j ACCEPT
-  iptables -A INPUT -p tcp --dport 9080 -j DROP
   
-  iptables -A INPUT -p tcp -s 127.0.0.1 --dport 9009 -j ACCEPT
+  nft add rule ip datafari INPUT ip saddr ${1} tcp dport 9080 counter accept
+  nft add rule ip datafari INPUT tcp dport 9080 counter drop
+  
+  nft add rule ip datafari INPUT ip saddr 127.0.0.1 tcp dport 9009 counter accept
   if [ "$NODETYPE" == "main" ]; then
     for ((i=1;i<=$solrNodesNumber;i++)); do
 
@@ -665,7 +681,8 @@ secure_tomcat_mcf() {
       solrproperty=$(echo $solrvalue)
       solrServer=`getProperty $solrproperty $CONFIG_FILE`
 
-      iptables -A INPUT -p tcp -s ${solrServer} --dport 9009 -j ACCEPT
+      
+      nft add rule ip datafari INPUT ip saddr ${solrServer} tcp dport 9009 counter accept
     done
   
     if [ $mcfNodesNumber -ne 0 ]; then
@@ -674,15 +691,16 @@ secure_tomcat_mcf() {
         mcfvalue=mcf$i
         mcfproperty=$(echo $mcfvalue)
         mcfServer=`getProperty $mcfproperty $CONFIG_FILE`
-        iptables -A INPUT -p tcp -s ${mcfServer} --dport 9009 -j ACCEPT
+        nft add rule ip datafari INPUT ip saddr ${mcfServer} tcp dport 9009 counter accept
   
       done
     fi
   fi
-  iptables -A INPUT -p tcp -s ${1} --dport 9009 -j ACCEPT
-  iptables -A INPUT -p tcp --dport 9009 -j DROP
 
-  iptables -A INPUT -p tcp -s 127.0.0.1 --dport 9443 -j ACCEPT
+  nft add rule ip datafari INPUT ip saddr ${1} tcp dport 9009 counter accept
+  nft add rule ip datafari INPUT tcp dport 9009 counter drop
+  
+  nft add rule ip datafari INPUT ip saddr 127.0.0.1 tcp dport 9443 counter accept
   if [ "$NODETYPE" == "main" ]; then
     for ((i=1;i<=$solrNodesNumber;i++)); do
 
@@ -690,7 +708,7 @@ secure_tomcat_mcf() {
       solrproperty=$(echo $solrvalue)
       solrServer=`getProperty $solrproperty $CONFIG_FILE`
 
-      iptables -A INPUT -p tcp -s ${solrServer} --dport 9443 -j ACCEPT
+      nft add rule ip datafari INPUT ip saddr ${solrServer} tcp dport 9443 counter accept
     done
   
     if [ $mcfNodesNumber -ne 0 ]; then
@@ -699,18 +717,19 @@ secure_tomcat_mcf() {
         mcfvalue=mcf$i
         mcfproperty=$(echo $mcfvalue)
         mcfServer=`getProperty $mcfproperty $CONFIG_FILE`
-        iptables -A INPUT -p tcp -s ${mcfServer} --dport 9443 -j ACCEPT
+        nft add rule ip datafari INPUT ip saddr ${mcfServer} tcp dport 9443 counter accept
   
       done
     fi
   fi
-  iptables -A INPUT -p tcp -s ${1} --dport 9443 -j ACCEPT
-  iptables -A INPUT -p tcp --dport 9443 -j DROP
+  
+  nft add rule ip datafari INPUT ip saddr ${1} tcp dport 9443 counter accept
+  nft add rule ip datafari INPUT tcp dport 9443 counter drop
   
 }
 
 secure_zk_solr() {
-iptables -A INPUT -p tcp -s 127.0.0.1 --dport 2181 -j ACCEPT
+nft add rule ip datafari INPUT ip saddr 127.0.0.1 tcp dport 2181 counter accept
   
     
 IFS=', ' read -r -a array <<<"$SOLRHOSTS"
@@ -718,7 +737,7 @@ IFS=', ' read -r -a array <<<"$SOLRHOSTS"
     echo "$index ${array[index]}"
     var2=${array[index]}
     var2=${var2%:2181}
-    iptables -A INPUT -p tcp -s ${var2} --dport 2181 -j ACCEPT
+    nft add rule ip datafari INPUT ip saddr ${var2} tcp dport 2181 counter accept
   done
   
     if [ $mcfNodesNumber -ne 0 ]; then
@@ -726,22 +745,22 @@ IFS=', ' read -r -a array <<<"$SOLRHOSTS"
   for index in "${!array[@]}"; do
     echo "$index ${array[index]}"
     var2=${array[index]}
-    iptables -A INPUT -p tcp -s ${var2} --dport 2181 -j ACCEPT
+    nft add rule ip datafari INPUT ip saddr ${var2} tcp dport 2181 counter accept
   done
     fi
   
-  iptables -A INPUT -p tcp -s $MAINNODEHOST --dport 2181 -j ACCEPT
-  iptables -A INPUT -p tcp -s ${1} --dport 2181 -j ACCEPT
-  iptables -A INPUT -p tcp --dport 2181 -j DROP
+  nft add rule ip datafari INPUT ip saddr ${MAINNODEHOST} tcp dport 2181 counter accept
+  nft add rule ip datafari INPUT ip saddr ${1} tcp dport 2181 counter accept
+  nft add rule ip datafari INPUT tcp dport 2181 counter drop
   
-  iptables -A INPUT -p tcp -s 127.0.0.1 --dport 2888 -j ACCEPT
+  nft add rule ip datafari INPUT ip saddr 127.0.0.1 tcp dport 2888 counter accept
   
     IFS=', ' read -r -a array <<<"$SOLRHOSTS"
   for index in "${!array[@]}"; do
     echo "$index ${array[index]}"
     var2=${array[index]}
     var2=${var2%:2181}
-    iptables -A INPUT -p tcp -s ${var2} --dport 2888 -j ACCEPT
+    nft add rule ip datafari INPUT ip saddr ${var2} tcp dport 2888 counter accept
   done
   
     if [ $mcfNodesNumber -ne 0 ]; then
@@ -749,23 +768,23 @@ IFS=', ' read -r -a array <<<"$SOLRHOSTS"
   for index in "${!array[@]}"; do
     echo "$index ${array[index]}"
     var2=${array[index]}
-    iptables -A INPUT -p tcp -s ${var2} --dport 2888 -j ACCEPT
+    nft add rule ip datafari INPUT ip saddr ${var2} tcp dport 2888 counter accept
   done
     fi
   
-  iptables -A INPUT -p tcp -s $MAINNODEHOST --dport 2888 -j ACCEPT
-  iptables -A INPUT -p tcp -s ${1} --dport 2888 -j ACCEPT
+  nft add rule ip datafari INPUT ip saddr ${MAINNODEHOST} tcp dport 2888 counter accept
+  nft add rule ip datafari INPUT ip saddr ${1} tcp dport 2888 counter accept
   
-  iptables -A INPUT -p tcp --dport 2888 -j DROP
+  nft add rule ip datafari INPUT tcp dport 2888 counter drop
   
-  iptables -A INPUT -p tcp -s 127.0.0.1 --dport 3888 -j ACCEPT
+  nft add rule ip datafari INPUT ip saddr 127.0.0.1 tcp dport 3888 counter accept
   
     IFS=', ' read -r -a array <<<"$SOLRHOSTS"
   for index in "${!array[@]}"; do
     echo "$index ${array[index]}"
     var2=${array[index]}
     var2=${var2%:2181}
-    iptables -A INPUT -p tcp -s ${var2} --dport 3888 -j ACCEPT
+    nft add rule ip datafari INPUT ip saddr ${var2} tcp dport 3888 counter accept
   done
   
     if [ $mcfNodesNumber -ne 0 ]; then
@@ -773,46 +792,43 @@ IFS=', ' read -r -a array <<<"$SOLRHOSTS"
   for index in "${!array[@]}"; do
     echo "$index ${array[index]}"
     var2=${array[index]}
-    iptables -A INPUT -p tcp -s ${var2} --dport 3888 -j ACCEPT
+    nft add rule ip datafari INPUT ip saddr ${var2} tcp dport 3888 counter accept
   done
     fi
   
-  iptables -A INPUT -p tcp -s $MAINNODEHOST --dport 3888 -j ACCEPT
-  iptables -A INPUT -p tcp -s ${1} --dport 3888 -j ACCEPT
+  nft add rule ip datafari INPUT ip saddr ${MAINNODEHOST} tcp dport 3888 counter accept
+  nft add rule ip datafari INPUT ip saddr ${1} tcp dport 3888 counter accept
   
-  iptables -A INPUT -p tcp --dport 3888 -j DROP
+  nft add rule ip datafari INPUT tcp dport 3888 counter drop
   
 
 }
 
 secure_monit() {
-  iptables -A INPUT -p tcp -s 127.0.0.1 --dport 2812 -j ACCEPT
-  iptables -A INPUT -p tcp -s ${1} --dport 2812 -j ACCEPT
-  iptables -A INPUT -p tcp --dport 2812 -j DROP
+  nft add rule ip datafari INPUT ip saddr 127.0.0.1 tcp dport 2812 counter accept
+  nft add rule ip datafari INPUT ip saddr ${1} tcp dport 2812 counter accept
+  nft add rule ip datafari INPUT tcp dport 2812 counter drop
 }
 
 secure_glances() {
-  iptables -A INPUT -p tcp -s 127.0.0.1 --dport 61208 -j ACCEPT
-  iptables -A INPUT -p tcp -s ${1} --dport 61208 -j ACCEPT
-  iptables -A INPUT -p tcp --dport 61208 -j DROP
+  nft add rule ip datafari INPUT ip saddr 127.0.0.1 tcp dport 61208 counter accept
+  nft add rule ip datafari INPUT ip saddr ${1} tcp dport 61208 counter accept
+  nft add rule ip datafari INPUT tcp dport 61208 counter drop
 }
 
-stop_firewalld_start_iptables() {
+stop_firewalld_start_nftables() {
   systemctl stop firewalld
   systemctl disable firewalld
   systemctl mask firewalld
-  systemctl enable iptables
-  systemctl start iptables
-  iptables -F
+  systemctl start nftables
 }
-save_iptables_rules() { 
-
-  if [ -d /etc/apache2 ]; then
-    iptables-save > /etc/iptables/rules.v4
+save_nft_rules() { 
+  if [ -d /etc/apache2 ]; then	
+     nft list ruleset > /etc/nftables.conf
   elif [ -d /etc/httpd ]; then
-    
-    service iptables save
+  	nft list ruleset >/etc/sysconfig/nftables.conf 
   fi
+  systemctl enable nftables
 }
 
 
@@ -851,17 +867,19 @@ initialization_monoserver() {
   init_password_postgresql $TEMPPGSQLPASSWORD
   init_postgresql
   init_apache_ssl
-  if [ -d /etc/httpd ]; then
-    stop_firewalld_start_iptables
-  fi
+  
   if [ $# -eq 0 ]
     then
     echo "Securization of Datafari"
+    if [ -d /etc/httpd ]; then
+      stop_firewalld_start_nftables
+    fi
+    secure_configure_nft
     secure_tomcat $NODEHOST
     secure_tomcat_mcf $NODEHOST
     secure_monit $NODEHOST
     secure_glances $NODEHOST
-    save_iptables_rules
+    save_nft_rules
   elif [[ "$1" == *nosecurization* ]]
     then
     echo "No securization of Datafari"
