@@ -82,6 +82,13 @@ public class SearchAPI {
       return response;
     }
 
+    String collection;
+    if (parameterMap.get("vector") != null && "true".equals(parameterMap.get("vector")[0])) {
+      collection = "VectorMain";
+    } else {
+      collection = Core.FILESHARE.toString();
+    }
+
     timer.top("1");
     IndexerServer solr;
     IndexerServer promolinkCore = null;
@@ -113,7 +120,10 @@ public class SearchAPI {
     timer.top("3");
     try {
 
-      solr = IndexerServerManager.getIndexerServer(Core.FILESHARE);
+      solr = IndexerServerManager.getIndexerServer(collection);
+
+      // TODO : vector search
+
       promolinkCore = IndexerServerManager.getIndexerServer(Core.PROMOLINK);
       queryPromolink = IndexerServerManager.createQuery();
 

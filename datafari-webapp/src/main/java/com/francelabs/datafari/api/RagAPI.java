@@ -55,8 +55,7 @@ public class RagAPI extends SearchAPI {
     // If the search result has not been provided, process a search
     if (searchResults == null) {
       try {
-        // searchResults = processSearch(config, request);
-      	searchResults = processVectorSearch(request.getParameter("q"), service);
+        searchResults = processSearch(config, request);
       } catch (Exception e) {
         LOGGER.error("RAG error. An error occurred while retrieving data.", e);
         return writeJsonError(500, "ragTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.");
@@ -271,13 +270,17 @@ public class RagAPI extends SearchAPI {
     }
 
     // Add Solr vectorizer tag in the query, overwrite q param
+    if (config.getBooleanProperty(RagConfiguration.ENABLE_VECTOR_SEARCH)) {
+      final String[] enabled = { "true" };
+      parameterMap.put("vector", enabled);
 
-    String model = config.getProperty(RagConfiguration.LLM_EMBEDDINGS_MODEL);
-        // TODO Default value for embeddings model?
-    String topK = config.getProperty(RagConfiguration.MAX_CHUNKS);
-    userQuery = "{!text_to_vector model="+model+" f=vector topK="+topK+"}" + userQuery;
-    final String[] value = { userQuery };
-    parameterMap.put("q", value);
+      String model = config.getProperty(RagConfiguration.LLM_EMBEDDINGS_MODEL);
+      // TODO Default value for embeddings model?
+      String topK = config.getProperty(RagConfiguration.MAX_CHUNKS);
+      userQuery = "{!text_to_vector model="+model+" f=vector topK="+topK+"}" + userQuery;
+      final String[] value = { userQuery };
+      parameterMap.put("q", value);
+    }
 
     return search(protocol, handler, request.getUserPrincipal(), parameterMap);
   }
@@ -349,35 +352,35 @@ public class RagAPI extends SearchAPI {
     return displayedDocuments;
   }
 
-  private static JSONObject processVectorSearch(String q, LlmService service) throws SolrServerException, IOException {
-    JSONObject jsonObject = new JSONObject();
-    LOGGER.info("search q={}", q);
-
-
-    // Process search
-    try  {
-        final QueryResponse response;
-        try (CloudSolrClient client = initClient()) {
-            // Query vector embedding
-            float[] vector = service.embed(q);
-
-            // ?q={!text_to_vector model=a-model f=vector topK=10}hello world query
-            final Map<String, String> queryParamMap = new HashMap<>();
-            queryParamMap.put("q", Arrays.toString(vector));
-            queryParamMap.put("fl", "id, vector, parent_donc, content");
-            MapSolrParams queryParams = new MapSolrParams(queryParamMap);
-
-            response = client.query(queryParams);
-        }
-        final SolrDocumentList documents = response.getResults();
-        jsonObject.put("documents", documents);
-        return jsonObject;
-    } catch (Exception e) {
-      LOGGER.error("Error during vector search", e);
-      return jsonObject;
-    }
-
-  }
+//  private static JSONObject processVectorSearch(String q, LlmService service) throws SolrServerException, IOException {
+//    JSONObject jsonObject = new JSONObject();
+//    LOGGER.info("search q={}", q);
+//
+//
+//    // Process search
+//    try  {
+//        final QueryResponse response;
+//        try (CloudSolrClient client = initClient()) {
+//            // Query vector embedding
+//            float[] vector = service.embed(q);
+//
+//            // ?q={!text_to_vector model=a-model f=vector topK=10}hello world query
+//            final Map<String, String> queryParamMap = new HashMap<>();
+//            queryParamMap.put("q", Arrays.toString(vector));
+//            queryParamMap.put("fl", "id, vector, parent_donc, content");
+//            MapSolrParams queryParams = new MapSolrParams(queryParamMap);
+//
+//            response = client.query(queryParams);
+//        }
+//        final SolrDocumentList documents = response.getResults();
+//        jsonObject.put("documents", documents);
+//        return jsonObject;
+//    } catch (Exception e) {
+//      LOGGER.error("Error during vector search", e);
+//      return jsonObject;
+//    }
+//
+//  }
 
   /**
    * Initiate the SolrClient

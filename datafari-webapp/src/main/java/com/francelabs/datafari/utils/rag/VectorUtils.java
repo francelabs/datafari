@@ -90,8 +90,6 @@ public class VectorUtils {
 
     /**
      * Convert a Datafari AI Document into a Langchain4j document
-     * @param aiDocument
-     * @return
      */
     private static Document convertDocuments(AiDocument aiDocument) {
         Document lc4jDoc = new Document(aiDocument.getContent());
