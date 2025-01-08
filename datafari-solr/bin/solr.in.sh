@@ -241,3 +241,6 @@ SOLR_SECURITY_MANAGER_ENABLED=false
 #SOLR_RECOMMENDED_MAX_PROCESSES=
 #SOLR_ULIMIT_CHECKS=
 
+# Enable LLM module for RAG and vector search features
+SOLR_MODULES=llm
+

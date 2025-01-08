@@ -20,6 +20,8 @@ import java.io.IOException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentSplitter;
@@ -40,6 +42,8 @@ import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.update.AddUpdateCommand;
 import org.apache.solr.update.DeleteUpdateCommand;
 import org.apache.solr.update.processor.UpdateRequestProcessor;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 public class VectorUpdateProcessor extends UpdateRequestProcessor {
   private static final Logger LOGGER = LogManager.getLogger(VectorUpdateProcessor.class.getName());
@@ -61,14 +65,12 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
   @Override
   public void processAdd(final AddUpdateCommand cmd) throws IOException {
     if (enabled) {
-      final SolrInputDocument doc = cmd.getSolrInputDocument();
-
-      LOGGER.info("Vector Update processor");
+      final SolrInputDocument parentDoc = cmd.getSolrInputDocument();
 
       String content = "";
-      String parentId = (String) doc.get("id").getValue();
-      final SolrInputField contentFieldFr = doc.get("content_fr");
-      final SolrInputField contentFieldEn = doc.get("content_en");
+      String parentId = (String) parentDoc.get("id").getValue();
+      final SolrInputField contentFieldFr = parentDoc.get("content_fr");
+      final SolrInputField contentFieldEn = parentDoc.get("content_en");
       if (contentFieldFr != null) {
         content = (String) contentFieldFr.getFirstValue();
       } else if (contentFieldEn != null) {
@@ -78,7 +80,6 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
       deleteExistingChildren(parentId);
 
       if (content != null && !content.isEmpty()) {
-        LOGGER.info(content);
 
         // Chunking
         Tokenizer tokenizer = new OpenAiTokenizer();
@@ -95,22 +96,71 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
             // Sub-document creation
             if (chunk.text() != null && vector.size() == VECTOR_DIMENSION) {
 
-              SolrInputDocument vectorDocument = new SolrInputDocument();
-              String id = doc.get("id") + "_" + chunks.indexOf(chunk);
+              SolrInputDocument vectorDocument = parentDoc.deepCopy();
+              String id = parentId + "_" + chunks.indexOf(chunk);
+              vectorDocument.removeField("id");
               vectorDocument.addField("id", id);
               vectorDocument.addField("vector", vector);
               vectorDocument.addField("parent_doc", parentId);
-              vectorDocument.addField("content", chunk.text());
+              vectorDocument.addField("exactContent", chunk.text());
+              vectorDocument.removeField("content_en");
+              vectorDocument.removeField("content_fr");
+
+              // URL
+              String url;
+              if (parentDoc.containsKey("url")) {
+                url = (String) parentDoc.getFieldValue("url");
+                vectorDocument.addField("url", url);
+              } else {
+                url = (String) parentDoc.getFieldValue("id");
+                vectorDocument.addField("url", url);
+              }
+
+              // TITLES
+              if (parentDoc.getFieldValue("ignored_dc_title") != null) {
+                parentDoc.getFieldValues("ignored_dc_title").forEach(value ->
+                        vectorDocument.addField("title", value));
+              }
+
+              // keep the jsoup or filename as the first title for the searchView of Datafari
+              String jsouptitle = "";
+              String filename = "";
+              if (parentDoc.getField("jsoup_title") != null) {
+                jsouptitle = (String) parentDoc.getFieldValue("jsoup_title");
+              }
+
+              final SolrInputField streamNameField = parentDoc.get("ignored_stream_name");
+              if (streamNameField != null && !streamNameField.getFirstValue().toString().isEmpty() && !streamNameField.getFirstValue().toString().toLowerCase().contentEquals("docname")) {
+                filename = (String) streamNameField.getFirstValue();
+              } else {
+                final Pattern pattern = Pattern.compile("[^/]*$");
+                final Matcher matcher = pattern.matcher(url);
+                if (matcher.find()) {
+                  filename = matcher.group();
+                }
+              }
+              if (!jsouptitle.isEmpty()) {
+                vectorDocument.addField("title", jsouptitle);
+              } else if (!filename.isEmpty()) {
+                vectorDocument.addField("title", filename);
+              }
+              // The title field has lost its original value(s) after the LangDetectLanguageIdentifierUpdateProcessorFactory
+              // Need to set it back from the exactTitle field
+              if (parentDoc.get("exactTitle") != null) {
+                for (final Object value : parentDoc.getFieldValues("exactTitle")) {
+                  vectorDocument.addField("title", value);
+                }
+              }
 
               try {
                 client.add(vectorDocument);
                 client.commit();
               } catch (SolrServerException e) {
-                LOGGER.warn("Warning : the document assiciated to the chunk {} could not be added.", id);
+                LOGGER.warn("Warning : the document associated to the chunk {} could not be added.", id);
               }
             }
           } else {
-            LOGGER.warn("The file {} appears to be empty and has been ignored during vector embeddings.", doc.get("id").getValue());
+            LOGGER.warn("The file {} appears to be empty and has been ignored during vector embeddings.", parentDoc.get("id").getValue());
           }
         }
 
@@ -145,16 +195,15 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
 
   /**
    *
-   * @param content
-   * @return
+   * @param content : The text content to embbed
+   * @return The generated vector
    */
   private List<Float> vectorEmbeddings(String content) {
     // TODO : This method should be edited to implement the Solr Embeddings Model
-
-    /*
+/*
     SolrEmbeddingModel embedder = modelStore.getModel(embeddingModelName);
-    float[] vectorToSearch = embedder.vectorise(qstr);
-     */
+    float[] vectorToSearch = embedder.vectorise(qstr);*/
+
 
     /*
     List<Float> vector = new ArrayList<>();

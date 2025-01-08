@@ -12,9 +12,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.request.SolrPing;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.SolrDocumentList;
-import org.apache.solr.common.params.MapSolrParams;
 import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -350,49 +347,5 @@ public class RagAPI extends SearchAPI {
         if (!doc.toJSONObject().isEmpty()) displayedDocuments.add(doc.toJSONObject());
     }
     return displayedDocuments;
-  }
-
-//  private static JSONObject processVectorSearch(String q, LlmService service) throws SolrServerException, IOException {
-//    JSONObject jsonObject = new JSONObject();
-//    LOGGER.info("search q={}", q);
-//
-//
-//    // Process search
-//    try  {
-//        final QueryResponse response;
-//        try (CloudSolrClient client = initClient()) {
-//            // Query vector embedding
-//            float[] vector = service.embed(q);
-//
-//            // ?q={!text_to_vector model=a-model f=vector topK=10}hello world query
-//            final Map<String, String> queryParamMap = new HashMap<>();
-//            queryParamMap.put("q", Arrays.toString(vector));
-//            queryParamMap.put("fl", "id, vector, parent_donc, content");
-//            MapSolrParams queryParams = new MapSolrParams(queryParamMap);
-//
-//            response = client.query(queryParams);
-//        }
-//        final SolrDocumentList documents = response.getResults();
-//        jsonObject.put("documents", documents);
-//        return jsonObject;
-//    } catch (Exception e) {
-//      LOGGER.error("Error during vector search", e);
-//      return jsonObject;
-//    }
-//
-//  }
-
-  /**
-   * Initiate the SolrClient
-   * @return The SolrClient
-   */
-  private static CloudSolrClient initClient() throws SolrServerException, IOException {
-    CloudSolrClient client;
-    client = new CloudSolrClient.Builder(new ArrayList<>(Collections.singletonList(DEFAULT_HOST)), Optional.empty())
-            .withDefaultCollection(COLLECTION)
-            .build();
-    final SolrPing ping = new SolrPing();
-    client.request(ping);
-    return client;
   }
 }
