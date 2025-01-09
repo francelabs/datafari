@@ -28,12 +28,6 @@ public class IndexerServerManager {
         return mainCollection;
       }
     },
-    VECTORMAIN {
-      @Override
-      public String toString() {
-        return "VectorMain";
-      }
-    },
     PROMOLINK {
       @Override
       public String toString() {

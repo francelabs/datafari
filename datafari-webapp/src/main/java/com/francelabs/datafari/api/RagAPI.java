@@ -267,14 +267,16 @@ public class RagAPI extends SearchAPI {
     }
 
     // Add Solr vectorizer tag in the query, overwrite q param
-    if (config.getBooleanProperty(RagConfiguration.ENABLE_VECTOR_SEARCH)) {
+    if (config.getBooleanProperty(RagConfiguration.ENABLE_SOLR_VECTOR_SEARCH)) {
       final String[] enabled = { "true" };
       parameterMap.put("vector", enabled);
 
       String model = config.getProperty(RagConfiguration.LLM_EMBEDDINGS_MODEL);
       // TODO Default value for embeddings model?
       String topK = config.getProperty(RagConfiguration.MAX_CHUNKS);
-      userQuery = "{!text_to_vector model="+model+" f=vector topK="+topK+"}" + userQuery;
+      String vector_field = config.getProperty(RagConfiguration.SOLR_VECTOR_FIELD);
+
+      userQuery = "{!text_to_vector model="+model+" f="+vector_field+" topK="+topK+"}" + userQuery;
       final String[] value = { userQuery };
       parameterMap.put("q", value);
     }

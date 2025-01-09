@@ -17,6 +17,7 @@ public class RagConfiguration extends AbstractConfigClass {
     public static final String ENABLE_LOGS = "rag.enable.logs";
     public static final String ENABLE_CHUNKING = "rag.enable.chunking";
     public static final String ENABLE_VECTOR_SEARCH = "rag.enable.vector.search";
+    public static final String ENABLE_SOLR_VECTOR_SEARCH = "rag.enable.solr.vector.search";
     public static final String ENABLE_SUMMARIZATION = "ai.summarization.enabled";
 
     // WEB SERVICES PARAMETERS
@@ -35,6 +36,7 @@ public class RagConfiguration extends AbstractConfigClass {
     public static final String MAX_CHUNKS = "rag.maxChunks";
     public static final String CHUNK_SIZE = "rag.chunk.size";
     public static final String SEARCH_OPERATOR = "rag.operator";
+    public static final String SOLR_VECTOR_FIELD = "solr.vector.field";
 
 
     /**

@@ -1319,6 +1319,10 @@
 	<queryParser class="org.apache.solr.mcf.ManifoldCFQParserPlugin" name="manifoldCFSecurity">
 		<str name="AuthorityServiceBaseURL">${mcf.ip:http://localhost:9080/datafari-mcf-authority-service}</str>
 	</queryParser>
+
+	<!-- Solr Vector embeddings component -->
+	<queryParser name="knn_text_to_vector" class="org.apache.solr.llm.texttovector.search.TextToVectorQParserPlugin"/>
+
   <!-- example of registering a query parser -->
   <!--
      <queryParser name="myparser" class="com.mycompany.MyQParserPlugin"/>

@@ -97,10 +97,12 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
             if (chunk.text() != null && vector.size() == VECTOR_DIMENSION) {
 
               SolrInputDocument vectorDocument = parentDoc.deepCopy();
+              String vectorField = "vector_1536";
+
               String id = parentId + "_" + chunks.indexOf(chunk);
               vectorDocument.removeField("id");
               vectorDocument.addField("id", id);
-              vectorDocument.addField("vector", vector);
+              //vectorDocument.addField(vectorField, vector);
               vectorDocument.addField("parent_doc", parentId);
               vectorDocument.addField("exactContent", chunk.text());
               vectorDocument.removeField("content_en");

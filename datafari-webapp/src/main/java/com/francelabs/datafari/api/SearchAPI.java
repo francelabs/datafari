@@ -82,11 +82,11 @@ public class SearchAPI {
       return response;
     }
 
-    Core collection;
+    String collection;
     if (parameterMap.get("vector") != null && "true".equals(parameterMap.get("vector")[0])) {
-      collection = Core.VECTORMAIN;
+      collection = "VectorMain";
     } else {
-      collection = Core.FILESHARE;
+      collection = Core.FILESHARE.toString();
     }
 
     timer.top("1");

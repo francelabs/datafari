@@ -34,6 +34,9 @@
 # Comment out SOLR_HEAP if you are using this though, that takes precedence
 SOLR_JAVA_MEM="-Xms@SOLRMEMORY@ -Xmx@SOLRMEMORY@"
 
+# Enable LLM module for RAG and vector search features
+SOLR_MODULES=llm
+
 # Enable verbose GC logging...
 #  * If this is unset, various default options will be selected depending on which JVM version is in use
 #  * For Java 8: if this is set, additional params will be added to specify the log file & rotation
@@ -240,7 +243,4 @@ SOLR_SECURITY_MANAGER_ENABLED=false
 #SOLR_RECOMMENDED_OPEN_FILES=
 #SOLR_RECOMMENDED_MAX_PROCESSES=
 #SOLR_ULIMIT_CHECKS=
-
-# Enable LLM module for RAG and vector search features
-SOLR_MODULES=llm
 
