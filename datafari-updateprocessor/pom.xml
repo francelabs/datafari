@@ -21,6 +21,13 @@
       <version>${solr.version}</version>
       <scope>provided</scope>
     </dependency>
+    <!--dependency>
+      <groupId>org.apache.solr</groupId>
+      <artifactId>solr-llm</artifactId>
+      <version>9.7.0</version>
+      <scope>system</scope>
+      <systemPath>${solr.jar.path}</systemPath>
+    </dependency-->
     <dependency>
       <groupId>com.googlecode.json-simple</groupId>
       <artifactId>json-simple</artifactId>
@@ -61,18 +68,17 @@
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-core</artifactId>
-      <version>0.34.0</version>
+      <version>0.35.0</version>
     </dependency>
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j</artifactId>
-      <version>0.34.0</version>
+      <version>0.35.0</version>
     </dependency>
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-open-ai</artifactId>
-      <version>0.33.0</version>
-      <scope>compile</scope>
+      <version>0.35.0</version>
     </dependency>
       <dependency>
           <groupId>commons-io</groupId>

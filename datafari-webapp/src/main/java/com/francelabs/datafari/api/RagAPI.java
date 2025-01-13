@@ -276,9 +276,15 @@ public class RagAPI extends SearchAPI {
       String topK = config.getProperty(RagConfiguration.MAX_CHUNKS);
       String vector_field = config.getProperty(RagConfiguration.SOLR_VECTOR_FIELD);
 
-      userQuery = "{!text_to_vector model="+model+" f="+vector_field+" topK="+topK+"}" + userQuery;
+      userQuery = "{!knn_text_to_vector model="+model+" f="+vector_field+" topK="+topK+"}" + userQuery;
+      final String[] debugQuery = { "on" }; // Todo
+      final String[] debug = { "query" }; // todo
+      final String[] defType = { "knn_text_to_vector" }; // todo
       final String[] value = { userQuery };
       parameterMap.put("q", value);
+      //parameterMap.put("debugQuery", debugQuery); // todo : remove
+      parameterMap.put("debug", debug); // todo : remove
+      parameterMap.put("defType", defType); // todo : remove
     }
 
     return search(protocol, handler, request.getUserPrincipal(), parameterMap);

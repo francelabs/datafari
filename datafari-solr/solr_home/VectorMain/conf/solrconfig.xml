@@ -682,9 +682,9 @@
 		<str name="spellcheck.extendedResults">true</str>
 		<str name="hl">on</str>
 		<str name="hl.method">unified</str>
-    <str name="hl.defaultSummary">false</str>
-    <str name="hl.tag.pre">&lt;span class="em"&gt;</str>
-    <str name="hl.tag.post">&lt;/span&gt;</str>
+		<str name="hl.defaultSummary">false</str>
+		<str name="hl.tag.pre">&lt;span class="em"&gt;</str>
+		<str name="hl.tag.post">&lt;/span&gt;</str>
 		<str name="hl.fl">content_fr content_en content_de content_es exactContent</str>
 		<str name="hl.requireFieldMatch">true</str>
 		<str name="hl.bs.type">WORD</str>
@@ -712,7 +712,29 @@
 	<lst name="appends">
 		<str name="fq">{!manifoldCFSecurity}</str>
 	</lst>
+	<!--lst name="appends">
+		<str name="q">{!knn_text_to_vector}</str>
+	</lst-->
 </requestHandler>
+
+	<requestHandler class="solr.SearchHandler" name="/vector" useParams="mySearch">
+		<lst name="defaults">
+			<str name="echoParams">explicit</str>
+			<str name="defType">knn_text_to_vector</str>
+			<int name="rows">10</int>
+			<int name="facet.mincount">1</int>
+			<str name="model">openai-1</str>
+			<str name="f">vector_1536</str>
+			<str name="topK">5</str>
+		</lst>
+
+		<!--lst name="appends">
+            <str name="fq">{!manifoldCFSecurity}</str>
+        </lst-->
+		<lst name="appends">
+			<str name="q">{!knn_text_to_vector}</str>
+		</lst>
+	</requestHandler>
 
 
 	<requestHandler class="solr.SearchHandler" name="/proposals" useParams="mySearch">
@@ -731,9 +753,10 @@
 			<str name="fl">title preview_content url</str>
 		</lst>
 
-		<lst name="appends">
-			<str name="fq">{!manifoldCFSecurity}</str>
-		</lst>
+
+		<!--lst name="appends">
+            <str name="fq">{!manifoldCFSecurity}</str>
+        </lst-->
 	</requestHandler>
 
 	<requestHandler class="org.apache.solr.handler.component.SearchHandler" name="/suggestAuthors">
@@ -1090,9 +1113,9 @@
 			<str>query</str>
 		</arr>
 
-		<lst name="appends">
-	    <str name="fq">{!manifoldCFSecurity}</str>
-	  </lst>
+		<!--lst name="appends">
+            <str name="fq">{!manifoldCFSecurity}</str>
+        </lst-->
 	</requestHandler>
 
 	<!-- Highlighting Component http://wiki.apache.org/solr/HighlightingParameters -->
