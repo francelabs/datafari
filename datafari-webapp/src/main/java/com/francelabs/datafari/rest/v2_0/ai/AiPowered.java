@@ -122,7 +122,7 @@ public class AiPowered {
                 searchResults = performSearchById(request, id);
             } else {
                 request.setAttribute("q.op", config.getProperty(RagConfiguration.SEARCH_OPERATOR));
-                searchResults = performSearch(request, query);
+                searchResults = performSearch(request, query, config.getBooleanProperty(RagConfiguration.ENABLE_VECTOR_SEARCH));
             }
         } catch (IOException|ServletException e) {
             LOGGER.error("RAG error. An error occurred while retrieving documents.", e);
@@ -215,12 +215,14 @@ public class AiPowered {
      * @return a JSONObject containing search results, with the following fields :
      *      id, title, exactContent, url, llm_summary
      */
-    private static JSONObject performSearch(HttpServletRequest originalRequest, String q) throws ServletException, IOException {
+    private static JSONObject performSearch(HttpServletRequest originalRequest, String q, boolean vectorSearch) throws ServletException, IOException {
         EditableHttpServletRequest request = new EditableHttpServletRequest(originalRequest);
         request.addParameter("q", q);
         request.addParameter("hl", "false");
         request.addParameter("fl", "id,title,exactContent,url,llm_summary");
-        request.setPathInfo("/select");
+
+        String handler = vectorSearch ? "/vector" : "/select";
+        request.setPathInfo(handler);
 
         return RagAPI.processSearch(RagConfiguration.getInstance(), request);
     }

@@ -16,27 +16,30 @@ public class RagConfiguration extends AbstractConfigClass {
     public static final String ENABLE_RAG = "rag.enabled";
     public static final String ENABLE_LOGS = "rag.enable.logs";
     public static final String ENABLE_CHUNKING = "rag.enable.chunking";
-    public static final String ENABLE_VECTOR_SEARCH = "rag.enable.vector.search";
-    public static final String ENABLE_SOLR_VECTOR_SEARCH = "rag.enable.solr.vector.search";
+    public static final String ENABLE_VECTOR_SEARCH = "rag.enable.vector.search"; // Deprecated, see SOLR_ENABLE_VECTOR_SEARCH
     public static final String ENABLE_SUMMARIZATION = "ai.summarization.enabled";
 
     // WEB SERVICES PARAMETERS
-    public static final String API_ENDPOINT = "rag.api.endpoint";
-    public static final String API_TOKEN = "rag.api.token";
-    public static final String LLM_SERVICE = "rag.llm.service";
+    public static final String API_ENDPOINT = "ai.api.endpoint";
+    public static final String API_TOKEN = "ai.api.token";
+    public static final String LLM_SERVICE = "ai.llm.service";
 
     // LLM PARAMETERS
-    public static final String LLM_TEMPERATURE = "rag.temperature";
-    public static final String LLM_MAX_TOKENS = "rag.maxTokens";
-    public static final String LLM_MODEL = "rag.model";
-    public static final String LLM_EMBEDDINGS_MODEL = "rag.embeddings.model";
+    public static final String LLM_TEMPERATURE = "llm.temperature";
+    public static final String LLM_MAX_TOKENS = "llm.maxTokens";
+    public static final String LLM_MODEL = "llm.model";
 
     // DATAFARI RAG PRE-PROCESSING PROPERTIES
     public static final String MAX_FILES = "rag.maxFiles";
     public static final String MAX_CHUNKS = "rag.maxChunks";
     public static final String CHUNK_SIZE = "rag.chunk.size";
     public static final String SEARCH_OPERATOR = "rag.operator";
+
+    // SOLR VECTOR SEARCH
+    public static final String SOLR_ENABLE_VECTOR_SEARCH = "solr.enable.vector.search";
+    public static final String SOLR_EMBEDDINGS_MODEL = "solr.embeddings.model";
     public static final String SOLR_VECTOR_FIELD = "solr.vector.field";
+    public static final String SOLR_TOPK = "solr.topK";
 
 
     /**

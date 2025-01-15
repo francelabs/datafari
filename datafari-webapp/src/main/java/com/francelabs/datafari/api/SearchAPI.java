@@ -40,6 +40,7 @@ public class SearchAPI {
   private static Set<String> getAllowedHandlers() {
     final Set<String> allowedHandlers = new HashSet<>();
     allowedHandlers.add("/select");
+    allowedHandlers.add("/vector");
     allowedHandlers.add("/");
 
     final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();

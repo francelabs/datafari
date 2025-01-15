@@ -240,7 +240,7 @@ public class RagAPI extends SearchAPI {
   public static JSONObject processSearch(RagConfiguration config, HttpServletRequest request) throws InvalidParameterException {
 
     final Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());
-    final String handler = getHandler(request);
+    String handler = getHandler(request);
     final String protocol = request.getScheme() + ":";
 
     // Preparing query for Search process
@@ -267,24 +267,18 @@ public class RagAPI extends SearchAPI {
     }
 
     // Add Solr vectorizer tag in the query, overwrite q param
-    if (config.getBooleanProperty(RagConfiguration.ENABLE_SOLR_VECTOR_SEARCH)) {
+    if (config.getBooleanProperty(RagConfiguration.SOLR_ENABLE_VECTOR_SEARCH)) {
       final String[] enabled = { "true" };
       parameterMap.put("vector", enabled);
+      handler = "/vector";
 
-      String model = config.getProperty(RagConfiguration.LLM_EMBEDDINGS_MODEL);
-      // TODO Default value for embeddings model?
-      String topK = config.getProperty(RagConfiguration.MAX_CHUNKS);
-      String vector_field = config.getProperty(RagConfiguration.SOLR_VECTOR_FIELD);
+      String model = config.getProperty(RagConfiguration.SOLR_EMBEDDINGS_MODEL, "default-model");
+      String topK = config.getProperty(RagConfiguration.SOLR_TOPK, "5");
+      String vectorField = config.getProperty(RagConfiguration.SOLR_VECTOR_FIELD);
 
-      userQuery = "{!knn_text_to_vector model="+model+" f="+vector_field+" topK="+topK+"}" + userQuery;
-      final String[] debugQuery = { "on" }; // Todo
-      final String[] debug = { "query" }; // todo
-      final String[] defType = { "knn_text_to_vector" }; // todo
+      userQuery = "{!knn_text_to_vector model="+model+" f="+vectorField+" topK="+topK+"}" + userQuery;
       final String[] value = { userQuery };
       parameterMap.put("q", value);
-      //parameterMap.put("debugQuery", debugQuery); // todo : remove
-      parameterMap.put("debug", debug); // todo : remove
-      parameterMap.put("defType", defType); // todo : remove
     }
 
     return search(protocol, handler, request.getUserPrincipal(), parameterMap);
