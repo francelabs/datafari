@@ -215,13 +215,6 @@
 			<fileset dir="${tomcat.src.dir}">
 			</fileset>
 		</copy>
-		<!-- Copy MCF proprietary libs to Tomcat-MCF  -->
-		<copy todir="${linux.dist.dir}/tomcat-mcf/lib">
-			<fileset dir="${mcf.src.dir}/mcf_home/connector-lib-proprietary">
-				<include name="*.jar" />
-				<exclude name="jcifs-ng*.jar" />
-			</fileset>
-		</copy>
 		<!-- Copy bin directory -->
 		<copy toDir="${linux.dist.dir}/tomcat-mcf/bin" overwrite="true" force="true">
 			<fileset dir="${tomcat.proj.dir}/bin-mcf">
@@ -475,31 +468,6 @@
 				<include name="dependency/slf4j-*.jar" />
 				<include name="dependency/commons-logging-*.jar" />
 				<include name="dependency/commons-codec-*.jar" />
-			</fileset>
-		</copy>
-
-		<!-- Copy MCF libs to Tomcat-MCF -->
-		<copy flatten="true" toDir="${linux.dist.dir}/tomcat-mcf/lib" overwrite="true" force="true">
-			<fileset dir="${mcf.src.dir}/mcf_home/lib">
-				<include name="*.jar" />
-				<exclude name="javax.servlet*.jar" />
-				<exclude name="jetty*.jar" />
-				<exclude name="jsp-*.jar" />
-				<exclude name="jna*.jar" />
-				<exclude name="log4j-*.jar" />
-				<exclude name="jasper-*.jar" />
-				<exclude name="ecj-*.jar" />
-				<exclude name="slf4j-*.jar" />
-				<exclude name="commons-logging-*.jar" />
-			</fileset>
-		</copy>
-
-		<!-- Copy Datafari log4j & slf4j libs to Tomcat-MCF -->
-		<copy flatten="true" toDir="${linux.dist.dir}/tomcat-mcf/lib" overwrite="true" force="true">
-			<fileset dir="${datafari.core.dir}">
-				<include name="dependency/log4j-*.jar" />
-				<include name="dependency/slf4j-*.jar" />
-				<include name="dependency/commons-logging-*.jar" />
 			</fileset>
 		</copy>
 
