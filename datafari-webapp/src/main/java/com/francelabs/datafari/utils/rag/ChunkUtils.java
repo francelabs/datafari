@@ -37,30 +37,22 @@ public class ChunkUtils {
     }
 
     /**
-     *
-     * @param config : RAG configuration
-     * @param documentList : JSONArray containing a list of documents (ID, title, url and content)
+     * @param documentList : A list of documents (content and metadata) to chunk
+     * @param config       : RAG configuration
      * @return The document list. Big documents are chunked into multiple documents.
      */
-    public static List<AiDocument> chunkDocuments(RagConfiguration config, List<AiDocument> documentList) {
-        List<AiDocument> chunkedDocumentList = new ArrayList<>();
+    public static List<Document> chunkDocuments(List<Document> documentList, RagConfiguration config) {
+        List<Document> chunkedDocumentList = new ArrayList<>();
 
+        for(Document document : documentList) {
+            List<TextSegment> chunks = chunkContent(document, config);
 
-        for(AiDocument document : documentList) {
-
-            List<String> chunks = extractChunksFromDocument(document, config);
-
-            // Each chunk is added to "chunkedDocumentList" as a document
-            for (String chunk : chunks) {
-                AiDocument docToAdd = new AiDocument();
-                docToAdd.setTitle(document.getTitle());
-                docToAdd.setId(document.getId());
-                docToAdd.setUrl(document.getUrl());
-                docToAdd.setContent(chunk);
+            // Each chunk is added to "chunkedDocumentList" as a Document
+            for (TextSegment chunk : chunks) {
+                Document docToAdd = new Document(chunk.text(), chunk.metadata());
                 chunkedDocumentList.add(docToAdd);
             }
         }
-
         return chunkedDocumentList;
     }
 
@@ -73,22 +65,5 @@ public class ChunkUtils {
     public static List<TextSegment> chunkContent(Document doc, RagConfiguration config) {
         DocumentSplitter splitter = new DocumentByParagraphSplitter(config.getIntegerProperty(RagConfiguration.CHUNK_SIZE), 50);
         return splitter.split(doc);
-    }
-
-    /**
-     *
-     * @param doc : a Document objet
-     * @return a list of one or subdocuments
-     */
-    private static List<String> extractChunksFromDocument(AiDocument doc, RagConfiguration config) {
-        return splitStringBySize(doc.getContent(), config.getIntegerProperty(RagConfiguration.CHUNK_SIZE));
-    }
-
-    private static List<String> splitStringBySize(String str, int size) {
-        ArrayList<String> split = new ArrayList<>();
-        for (int i = 0; i <= str.length() / size; i++) {
-            split.add(str.substring(i * size, Math.min((i + 1) * size, str.length())));
-        }
-        return split;
     }
 }
