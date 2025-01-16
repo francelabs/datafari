@@ -309,6 +309,10 @@ init_solr_annotators() {
   @SOLR-INIT-ANNOTATORS@
 }
 
+init_solr_rag() {
+  curl -XPUT 'http://localhost:8983/solr/VectorMain/schema/text-to-vector-model-store' --data-binary "@./zkUtils/openai.json" -H 'Content-type:application/json'
+}
+
 
 init_solr_analytics() {
   curl -XGET --insecure "http://localhost:8983/solr/admin/collections?action=CREATE&name=Statistics&collection.configName=Statistics&numShards=1&replicationFactor=1"

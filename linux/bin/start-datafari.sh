@@ -159,6 +159,8 @@ if  [[ "$NODETYPE" = *mono* ]]; then
   then
     run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_solr";
     run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_solr_annotators";
+    # TODO add parameter to activate or not
+    run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_solr_rag";
   fi
 
   run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh start_tomcat";
