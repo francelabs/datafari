@@ -714,19 +714,21 @@
 	</lst>
 </requestHandler>
 
-	<requestHandler class="solr.SearchHandler" name="/vector" useParams="mySearch">
-		<lst name="defaults">
-			<str name="echoParams">explicit</str>
-			<str name="defType">lucene</str>
-			<int name="rows">10</int>
-			<int name="facet.mincount">1</int>
-		</lst>
-
-		<lst name="appends">
-            <str name="fq">{!manifoldCFSecurity}</str>
-			<!--str name="q">{!knn_text_to_vector model=openai f=vector_1536 topK=10}</str-->
-		</lst>
-	</requestHandler>
+	<requestHandler class="solr.SearchHandler" name="/vector">
+      <lst name="defaults">
+        <str name="echoParams">explicit</str>
+        <str name="defType">lucene</str>
+        <int name="rows">10</int>
+      </lst>
+      
+      <lst name="invariants">
+        <str name="q">{!knn_text_to_vector model=openai-1 f=vector_1536 topK=10 v=$queryrag}</str>
+      </lst>
+      
+      <lst name="appends">
+        <str name="fq">{!manifoldCFSecurity}</str>
+      </lst>
+    </requestHandler>
 
 
 	<requestHandler class="solr.SearchHandler" name="/proposals" useParams="mySearch">
