@@ -13,11 +13,11 @@ public class RagConfiguration extends AbstractConfigClass {
 
 
     // GLOBAL RAG PROPERTIES
-    public static final String ENABLE_RAG = "rag.enabled";
+    public static final String ENABLE_RAG = "ai.enable.rag";
     public static final String ENABLE_LOGS = "rag.enable.logs";
     public static final String ENABLE_CHUNKING = "rag.enable.chunking";
     public static final String ENABLE_VECTOR_SEARCH = "rag.enable.vector.search"; // Deprecated, see SOLR_ENABLE_VECTOR_SEARCH
-    public static final String ENABLE_SUMMARIZATION = "ai.summarization.enabled";
+    public static final String ENABLE_SUMMARIZATION = "ai.enable.summarization";
 
     // WEB SERVICES PARAMETERS
     public static final String API_ENDPOINT = "ai.api.endpoint";

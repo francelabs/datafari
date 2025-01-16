@@ -87,19 +87,6 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
         Document document = new Document(content);
         List<TextSegment> chunks = splitter.split(document);
 
-        LOGGER.info("EBE - Nombre de chunks : {}",  chunks.size());
-
-        for (TextSegment chunk : chunks) {
-          LOGGER.info("EBE - Nombre de chunks pour {} : {}", parentId,  chunks.size());
-          // TODO : remove
-          LOGGER.info("EBE - Taille du chunk {} pour {} : {}", chunks.indexOf(chunk), parentId, chunk.text().length());
-          try {
-            LOGGER.info("EBE - Chunk {}_{} : {}", parentId, chunks.indexOf(chunk), chunk.text().substring(0, 50).replaceAll("[\r\n]+", ""));
-          } catch (Exception e) {
-            LOGGER.info("EBE - Chunk {}_{} : {}", parentId, chunks.indexOf(chunk), chunk.text().substring(0, 2));
-          }
-        }
-
         for (TextSegment chunk : chunks) {
           if(chunk != null && !chunk.text().isEmpty()) {
 
