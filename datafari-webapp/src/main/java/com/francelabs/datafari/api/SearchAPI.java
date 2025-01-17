@@ -123,8 +123,6 @@ public class SearchAPI {
 
       solr = IndexerServerManager.getIndexerServer(collection);
 
-      // TODO : vector search
-
       promolinkCore = IndexerServerManager.getIndexerServer(Core.PROMOLINK);
       queryPromolink = IndexerServerManager.createQuery();
 

@@ -272,13 +272,15 @@ public class RagAPI extends SearchAPI {
       parameterMap.put("vector", enabled);
       handler = "/vector";
 
-      String model = config.getProperty(RagConfiguration.SOLR_EMBEDDINGS_MODEL, "default-model");
-      String topK = config.getProperty(RagConfiguration.SOLR_TOPK, "5");
-      String vectorField = config.getProperty(RagConfiguration.SOLR_VECTOR_FIELD);
+      String[] model = {config.getProperty(RagConfiguration.SOLR_EMBEDDINGS_MODEL, "default-model")};
+      String[] topK = {config.getProperty(RagConfiguration.SOLR_TOPK, "5")};
+      String[] vectorField = {config.getProperty(RagConfiguration.SOLR_VECTOR_FIELD)};
+      String[] queryrag = { userQuery };
 
-      userQuery = "{!knn_text_to_vector model="+model+" f="+vectorField+" topK="+topK+"}" + userQuery;
-      final String[] value = { userQuery };
-      parameterMap.put("q", value);
+      parameterMap.put("queryrag", queryrag);
+      parameterMap.put("model", model);
+      parameterMap.put("topK", topK);
+      parameterMap.put("vectorField", vectorField);
     }
 
     return search(protocol, handler, request.getUserPrincipal(), parameterMap);

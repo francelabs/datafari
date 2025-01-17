@@ -722,7 +722,7 @@
       </lst>
       
       <lst name="invariants">
-        <str name="q">{!knn_text_to_vector model=openai-1 f=vector_1536 topK=10 v=$queryrag}</str>
+        <str name="q">{!knn_text_to_vector model=$model f=$vectorField topK=$topK v=$queryrag}</str>
       </lst>
       
       <lst name="appends">
