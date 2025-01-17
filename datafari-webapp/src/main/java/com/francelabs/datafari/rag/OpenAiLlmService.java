@@ -48,57 +48,6 @@ public class OpenAiLlmService implements LlmService {
 
 
     /**
-     * Call the Datafari External LLM Webservice
-     * @param prompts A list of prompts. Each prompt contains instructions for the model, document content and the user query
-     * @return The string LLM response
-     */
-    public String invoke(List<String> prompts, HttpServletRequest request) throws IOException {
-        // Todo : Edit RAG process to use generate methods instead of invoke.
-
-        ChatLanguageModel llm = getChatLanguageModel();
-
-        StringBuilder concatenatedResponses = new StringBuilder();
-        String message;
-
-        // The first calls returns a concatenated responses from each chunk
-        for (String prompt : prompts) {
-            String response = llm.generate(prompt);
-            concatenatedResponses.append(response);
-        }
-
-        // If the is only one prompt to send, we get the answer from the response
-        // Otherwise, we concatenate all the responses, and generate a new response to summarize the results
-        if (prompts.size() == 1) {
-            message = concatenatedResponses.toString();
-        } else if (prompts.size() > 1) {
-            String body = PromptUtils.createInitialRagPrompt(config, "```" + concatenatedResponses + "```", request);
-            message = llm.generate(body);
-        } else {
-            LOGGER.error("RAG - No prompt found in OpenAiLlmService");
-            throw new RuntimeException("Could not find data to send to the LLM");
-        }
-
-        return message;
-    }
-
-    /**
-     * Generate the body attached to the request sent to the LLM
-     * @param prompt A single String prompt. Each prompt contains instructions for the model, document content and the user query
-     * @return A JSON String
-     */
-    public float[] embed(String prompt) {
-
-        EmbeddingModel embdModel = OpenAiEmbeddingModel.builder()
-                .apiKey(apiKey)
-                .baseUrl(url)
-                .modelName(model)
-                .build();
-
-        Response<Embedding> embeddings = embdModel.embed(prompt);
-        return embeddings.content().vector();
-    }
-
-    /**
      * Sends a list of Messages to a LLM.
      * @param prompts The list of Messages
      * @return A single string response

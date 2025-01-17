@@ -97,6 +97,7 @@ public class AiPowered {
         String query; // The user request
         String id;
         String lang;
+        boolean ragBydocument = false;
         JSONObject searchResults;
 
         // Get RAG configuration
@@ -120,6 +121,7 @@ public class AiPowered {
                 id = (String) jsonDoc.get(ID_FIELD);
                 LOGGER.info("RAG request for document {} received.", id);
                 searchResults = performSearchById(request, id);
+                ragBydocument = true;
             } else {
                 request.setAttribute("q.op", config.getProperty(RagConfiguration.SEARCH_OPERATOR));
                 searchResults = performSearch(request, query, config.getBooleanProperty(RagConfiguration.ENABLE_VECTOR_SEARCH));
@@ -139,7 +141,7 @@ public class AiPowered {
             // Process the document(s) using RagAPI methods
             EditableHttpServletRequest editablerequest = new EditableHttpServletRequest(request);
             editablerequest.addParameter("q", query);
-            return RagAPI.rag(editablerequest, searchResults).toJSONString();
+            return RagAPI.rag(editablerequest, searchResults, ragBydocument).toJSONString();
         } catch (final Exception e) {
             return generateErrorJson(500, e.getMessage(), e);
         }

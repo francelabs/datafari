@@ -22,6 +22,7 @@ import com.francelabs.datafari.rag.Message;
 import com.francelabs.datafari.rag.RagConfiguration;
 import com.francelabs.datafari.user.Lang;
 import com.francelabs.datafari.utils.AuthenticatedUserName;
+import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.segment.TextSegment;
 import javax.servlet.http.HttpServletRequest;
@@ -46,29 +47,20 @@ public class PromptUtils {
     }
 
     /**
-     * Transform a list of documents (ID, title, url, content) into a list of prompts
+     * Transform a list of Documents (content + metadata) into a list of prompts
      *
-     * @param config        : Global RAG configuration
      * @param documentsList : A JSONArray list of documents
-     * @param request : The HTTP request
      * @return a prompt ready to be sent to the LLM service
      */
-    public static List<String> documentsListToPrompts(RagConfiguration config, List<AiDocument> documentsList, HttpServletRequest request) throws IOException {
+    public static List<Message> documentsListToMessages(List<Document> documentsList) throws IOException {
 
-        List<String> prompts = new ArrayList<>();
-        String uniqueContent = formatDocuments(documentsList);
-        if (uniqueContent.length() < config.getIntegerProperty(RagConfiguration.CHUNK_SIZE)) {
-            // All documents are merged into one prompt
-            String prompt = createInitialRagPrompt(config, uniqueContent, request);
-            prompts.add(prompt);
-        } else {
-            for (AiDocument document : documentsList) {
-                // format document
-                String content = formatDocument(document.getTitle(), document.getContent());
-                // create prompt
-                String prompt = createInitialRagPrompt(config, content, request);
-                prompts.add(prompt);
-            }
+        List<Message> prompts = new ArrayList<>();
+        for (Document document : documentsList) {
+            // format document
+            String content = formatDocument(document.metadata().getString("title"), document.text());
+            // create prompt
+            Message message = new Message("system", content);
+            prompts.add(message);
         }
 
         return prompts;
@@ -78,21 +70,37 @@ public class PromptUtils {
     /**
      * Create a full prompt usable by a LLM, user the user prompt, the provided content and the configuration
      * @param config : Global RAG configuration
-     * @param content : Chunked documents provided by the search
      * @param request : The request object
      * @return a prompt ready to be sent to the LLM service
      */
-    public static String createInitialRagPrompt(RagConfiguration config, String content, HttpServletRequest request) throws IOException {
-        // Retrieve the prompt template from instructions file.
-        String template = getInstructions("template-rag.txt");
-        String userQuery = request.getParameter("q");
+    public static Message createInitialRagPrompt(RagConfiguration config, HttpServletRequest request, boolean ragBydocument) throws IOException {
+
+        // Retrieve the initial prompt template from instructions file.
+        String template = ragBydocument ?
+                getInstructions("template-ragByDocument.txt") : getInstructions("template-rag.txt");
 
         template = template.replace("{format}", getResponseFormat(request));
-        template = template.replace("{prompt}", userQuery);
-        template = template.replace("{content}", content);
         template = template.replace("{language}", getUserLanguage(request));
 
-        return cleanContext(template, config);
+        return new Message("system", cleanContext(template, config));
+    }
+
+    /**
+     * Create a full prompt usable by a LLM, user the user prompt, the provided content and the configuration
+     * @param config : Global RAG configuration
+     * @param request : The request object
+     * @return a prompt ready to be sent to the LLM service
+     */
+    public static Message createPromptForMergeAllRag(RagConfiguration config, HttpServletRequest request, boolean ragBydocument) throws IOException {
+
+        // Retrieve the initial prompt template from instructions file.
+        String template = ragBydocument ?
+                getInstructions("template-mergeAllRagByDocument.txt") : getInstructions("template-mergeAllRag.txt");
+
+        template = template.replace("{format}", getResponseFormat(request));
+        template = template.replace("{language}", getUserLanguage(request));
+
+        return new Message("system", cleanContext(template, config));
     }
 
     /**
@@ -113,22 +121,16 @@ public class PromptUtils {
         return new Message("user", prompt);
     }
 
-    // Todo : Replace with a clean Message generator
-    public static String formatDocument(String title, String content) {
-        String template = "Document title:```{title}```\nDocument content:```{chunk}```";
-        return template.replace("{title}", title).replace("{chunk}", content);
-    }
-
-    // Todo : Replace with a clean Message generator
-    public static String formatDocuments(List<AiDocument> documents) {
-        String template = "Document title:```{title}```\nDocument content:```{chunk}```";
-        StringBuilder prompt = new StringBuilder();
-        for (AiDocument document : documents) {
-            prompt.append(template.replace("{title}", document.getTitle()).replace("{chunk}", document.getContent()));
-            prompt.append("\n\n");
-        }
-
-        return prompt.toString();
+    /**
+     * Generate a string prompt containing a chunk of document and the document title
+     * @param title Title of the document
+     * @param content Chunk of document
+     * @return String prompt for the LLM
+     * @throws IOException
+     */
+    public static String formatDocument(String title, String content) throws IOException {
+        String template =  getInstructions("template-fromTextSegment.txt");
+        return template.replace("{title}", title).replace("{content}", content);
     }
 
     public static String getResponseFormat(HttpServletRequest request) {
@@ -256,5 +258,17 @@ public class PromptUtils {
             default:
                 return "";
         }
+    }
+
+    /**
+     * Returns the total size (in character) of a list of prompts (List<Message>)
+     * @return The total size of the final prompt (int)
+     */
+    public static int getTotalPromptSize(List<Message> messages) {
+        int size = 0;
+        for (Message message : messages) {
+            size = size + message.getContent().length();
+        }
+        return size;
     }
 }
