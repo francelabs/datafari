@@ -217,6 +217,10 @@ SOLR_OPTS="$SOLR_OPTS -Djava.io.tmpdir=@SOLRTMPDIR@"
 SOLR_SECURITY_MANAGER_ENABLED=false
 
 
+# The bundled plugins in the "modules" folder can easily be enabled as a comma-separated list in SOLR_MODULES variable
+SOLR_MODULES=llm
+
+
 # optionally, you can use using a a Java properties file 'zkDigestCredentialsFile'
 #...
 #   -DzkDigestCredentialsFile=/path/to/zkDigestCredentialsFile.properties
@@ -241,5 +245,3 @@ SOLR_SECURITY_MANAGER_ENABLED=false
 #SOLR_RECOMMENDED_MAX_PROCESSES=
 #SOLR_ULIMIT_CHECKS=
 
-# Enable LLM module for RAG and vector search features
-SOLR_MODULES=llm
