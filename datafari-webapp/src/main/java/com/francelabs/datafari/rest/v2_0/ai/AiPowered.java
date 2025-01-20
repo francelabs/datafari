@@ -83,7 +83,7 @@ public class AiPowered {
             return getDocumentSummary(request, summary, content, id, title, url, jsonResponse);
 
             //  TODO: This feature can be improved by implementing Atomic Update.
-            //  TODO: When a summary is generated in the method, the Solr Document from FILESHARE should be updated.
+            //   When a summary is generated in the method, the Solr Document from FILESHARE should be updated.
 
 
         } catch (final Exception e) {

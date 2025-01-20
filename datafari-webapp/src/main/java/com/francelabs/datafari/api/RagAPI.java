@@ -9,9 +9,6 @@ import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.segment.TextSegment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.CloudSolrClient;
-import org.apache.solr.client.solrj.request.SolrPing;
 import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -28,12 +25,6 @@ public class RagAPI extends SearchAPI {
   private static final Logger LOGGER = LogManager.getLogger(RagAPI.class.getName());
   public static final List<String> FORMAT_VALUES = List.of("bulletpoint", "text", "stepbystep");
   public static final String EXACT_CONTENT = "exactContent";
-
-  // SOLR CLIENT
-  private static final String DEFAULT_COLLECTION = "VectorMain";
-  private static final String DEFAULT_HOST = "localhost:2181";
-  private static final String COLLECTION = "collection";
-  private static final String HOST = "host";
 
 
   public static JSONObject rag(final HttpServletRequest request, JSONObject searchResults, boolean ragBydocument) throws IOException {
@@ -87,9 +78,6 @@ public class RagAPI extends SearchAPI {
 
     // Prompting : Convert all documents chunks into prompt Messages
     List<Message> contents = PromptUtils.documentsListToMessages(documentsList);
-
-    // Select an LLM service
-    LlmService service = getLlmService(config);
 
     // Process the RAG query using the selected service, the contents list and the user query
     String message = processRagQuery(contents, service, config, request, ragBydocument);

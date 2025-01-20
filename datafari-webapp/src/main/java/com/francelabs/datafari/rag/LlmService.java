@@ -15,7 +15,4 @@ public interface LlmService {
      * @return The string LLM response
      */
     String generate(List<Message> prompts, HttpServletRequest request) throws IOException;
-
-    float[] embed(String prompts) throws IOException;
-
 }
