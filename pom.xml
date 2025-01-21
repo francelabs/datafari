@@ -34,7 +34,6 @@
     <mcf-solr-plugin.sha512>38261a93265c1697db2742947ec72dfdfbb31f4dcab7a343484b06bb57416a668c750a98d5130fadf97464587a09677bb927e2623b862e618e45a3922b67d20b</mcf-solr-plugin.sha512>
     <mssql-jdbc.version>10.2.1.jre11</mssql-jdbc.version>
     <postgresql.version>42.7.2</postgresql.version>
-    <netty.version>4.1.63.Final</netty.version>
     <ojdbc.version>19.15.0.0.1</ojdbc.version>
     <postgres.version>42.7.2</postgres.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
