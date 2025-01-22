@@ -2,7 +2,7 @@
   <parent>
     <groupId>com.francelabs.datafari</groupId>
     <artifactId>datafari-ce</artifactId>
-    <version>6.1-dev-Community</version>
+    <version>6.2-dev-Community</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>datafari-webapp</artifactId>
@@ -12,7 +12,7 @@
     <dependency>
       <groupId>com.francelabs.datafari</groupId>
       <artifactId>datafari-core</artifactId>
-      <version>6.1-dev-Community</version>
+      <version>6.2-dev-Community</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime -->
     <dependency>
@@ -36,17 +36,22 @@
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j</artifactId>
-      <version>0.33.0</version>
+      <version>0.35.0</version>
+    </dependency>
+    <dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j-core</artifactId>
+      <version>0.35.0</version>
     </dependency>
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-open-ai</artifactId>
-      <version>0.33.0</version>
+      <version>0.35.0</version>
     </dependency>
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-easy-rag</artifactId>
-      <version>0.33.0</version>
+      <version>0.35.0</version>
     </dependency>
 
 
@@ -63,7 +68,7 @@
     <dependency>
       <groupId>com.francelabs.datafari</groupId>
       <artifactId>datafari-mcf-scripts</artifactId>
-      <version>6.1-dev-Community</version>
+      <version>6.2-dev-Community</version>
     </dependency>
 
     <dependency>
@@ -490,7 +495,6 @@
                   <excludes>
                     <exclude>ch.qos.logback:logback-core:*:*:compile</exclude>
                     <exclude>ch.qos.logback:logback-classic:*:*:compile</exclude>
-                    <exclude>xml-apis:xml-apis</exclude>
                   </excludes>
                 </bannedDependencies>
               </rules>

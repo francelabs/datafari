@@ -15,10 +15,11 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils.rag;
 
-import com.francelabs.datafari.rag.DocumentForRag;
+import com.francelabs.datafari.rag.RagConfiguration;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.rag.content.Content;
+import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
 import dev.langchain4j.rag.query.Query;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
@@ -43,47 +44,34 @@ public class VectorUtils {
     /**
      *
      * @param request : The HttpServletRequest request
-     * @param documentList : A list containing a list of documents (ID, title, url and content)
+     * @param documentList : A list containing a list of documents (content and metadata)
      * @return The document list. Big documents are chunked into multiple documents.
      */
-    public static List<DocumentForRag> processVectorSearch(List<DocumentForRag> documentList, HttpServletRequest request) {
+    public static List<Document> processVectorSearch(List<Document> documentList, HttpServletRequest request) {
 
-        List<Document> documents = new ArrayList<>();
-        List<DocumentForRag> embeddedDocumentList = new ArrayList<>();
-
-        // Create a list of Langchain4j Documents
-        for (DocumentForRag document : documentList) {
-            // Convert DocumentForRag to Lanchain4j Document
-            Document l4jDoc = convertDocuments(document);
-            documents.add(l4jDoc);
-        }
+        List<Document> embeddedDocumentList = new ArrayList<>();
 
         // Embedding the documents and store them into vector DB
         InMemoryEmbeddingStore<TextSegment> embeddingStore = new InMemoryEmbeddingStore<>();
-        EmbeddingStoreIngestor.ingest(documents, embeddingStore);
+        EmbeddingStoreIngestor.ingest(documentList, embeddingStore);
 
         // Vector query
-        List<Content> contents = EmbeddingStoreContentRetriever.from(embeddingStore).retrieve(Query.from(request.getParameter("q")));
+        Query query = Query.from(request.getParameter("q"));
+
+        int maxResult = RagConfiguration.getInstance().getIntegerProperty(RagConfiguration.MAX_CHUNKS, 5);
+        ContentRetriever contentRetriever = EmbeddingStoreContentRetriever.builder()
+                .embeddingStore(embeddingStore)
+                .maxResults(maxResult)
+                .build();
+        List<Content> contents = contentRetriever.retrieve(query);
+
 
         // The first calls returns a concatenated responses from each chunk
         for (Content content : contents) {
-            String embeddedContent = content.textSegment().text();
-            DocumentForRag docToInsert = new DocumentForRag();
-            docToInsert.setContent(embeddedContent);
-            docToInsert.setTitle(content.textSegment().metadata().getString("title"));
-            docToInsert.setId(content.textSegment().metadata().getString("id"));
-            docToInsert.setUrl(content.textSegment().metadata().getString("url"));
+            Document docToInsert = new Document(content.textSegment().text(), content.textSegment().metadata());
             embeddedDocumentList.add(docToInsert);
         }
 
         return embeddedDocumentList;
-    }
-
-    private static Document convertDocuments(DocumentForRag doc4rag) {
-        Document lc4jDoc = new Document(doc4rag.getContent());
-        lc4jDoc.metadata().put("title", doc4rag.getTitle())
-                .put("id", doc4rag.getId())
-                .put("url", doc4rag.getUrl());
-        return lc4jDoc;
     }
 }

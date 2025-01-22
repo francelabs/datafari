@@ -15,8 +15,11 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils.rag;
 
-import com.francelabs.datafari.rag.DocumentForRag;
 import com.francelabs.datafari.rag.RagConfiguration;
+import dev.langchain4j.data.document.Document;
+import dev.langchain4j.data.document.DocumentSplitter;
+import dev.langchain4j.data.document.splitter.DocumentByParagraphSplitter;
+import dev.langchain4j.data.segment.TextSegment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,47 +37,33 @@ public class ChunkUtils {
     }
 
     /**
-     *
-     * @param config : RAG configuration
-     * @param documentList : JSONArray containing a list of documents (ID, title, url and content)
+     * @param documentList : A list of documents (content and metadata) to chunk
+     * @param config       : RAG configuration
      * @return The document list. Big documents are chunked into multiple documents.
      */
-    public static List<DocumentForRag> chunkDocuments(RagConfiguration config, List<DocumentForRag> documentList) {
-        List<DocumentForRag> chunkedDocumentList = new ArrayList<>();
+    public static List<Document> chunkDocuments(List<Document> documentList, RagConfiguration config) {
+        List<Document> chunkedDocumentList = new ArrayList<>();
 
+        for(Document document : documentList) {
+            List<TextSegment> chunks = chunkContent(document, config);
 
-        for(DocumentForRag document : documentList) {
-
-            List<String> chunks = extractChunksFromDocument(document, config);
-
-            // Each chunk is added to "chunkedDocumentList" as a document
-            for (String chunk : chunks) {
-                DocumentForRag docToAdd = new DocumentForRag();
-                docToAdd.setTitle(document.getTitle());
-                docToAdd.setId(document.getId());
-                docToAdd.setUrl(document.getUrl());
-                docToAdd.setContent(chunk);
+            // Each chunk is added to "chunkedDocumentList" as a Document
+            for (TextSegment chunk : chunks) {
+                Document docToAdd = new Document(chunk.text(), chunk.metadata());
                 chunkedDocumentList.add(docToAdd);
             }
         }
-
         return chunkedDocumentList;
     }
 
     /**
      *
-     * @param doc : a Document objet
-     * @return a list of one or subdocuments
+     * @param doc : A Document object containing content and metadata (title, url, id...)
+     * @param config : RAG configuration
+     * @return A list of TextSegments, that contain metadata. Big documents are chunked into multiple documents.
      */
-    private static List<String> extractChunksFromDocument(DocumentForRag doc, RagConfiguration config) {
-        return splitStringBySize(doc.getContent(), config.getIntegerProperty(RagConfiguration.CHUNK_SIZE));
-    }
-
-    private static List<String> splitStringBySize(String str, int size) {
-        ArrayList<String> split = new ArrayList<>();
-        for (int i = 0; i <= str.length() / size; i++) {
-            split.add(str.substring(i * size, Math.min((i + 1) * size, str.length())));
-        }
-        return split;
+    public static List<TextSegment> chunkContent(Document doc, RagConfiguration config) {
+        DocumentSplitter splitter = new DocumentByParagraphSplitter(config.getIntegerProperty(RagConfiguration.CHUNK_SIZE), 50);
+        return splitter.split(doc);
     }
 }

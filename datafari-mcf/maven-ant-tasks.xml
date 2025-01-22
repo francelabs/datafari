@@ -27,6 +27,7 @@
 				<exclude name="*manifoldcf*/connector-lib/mcf-activedirectory-connector.jar" />
 				<exclude name="*manifoldcf*/connector-lib/mcf-confluence-v6-connector.jar" />
 				<exclude name="*manifoldcf*/connector-lib/mcf-solr-connector.jar" />
+				<exclude name="*manifoldcf*/connector-lib/mcf-jdbc-connector*" />
 				<exclude name="*manifoldcf*/lib/postgresql*" />
 				<exclude name="*manifoldcf*/connectors.xml" />
 			</fileset>

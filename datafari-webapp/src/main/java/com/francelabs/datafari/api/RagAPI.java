@@ -1,20 +1,23 @@
 package com.francelabs.datafari.api;
 
-import com.francelabs.datafari.rag.DatafariLlmConnector;
-import com.francelabs.datafari.rag.LlmConnector;
-import com.francelabs.datafari.rag.OpenAiLlmConnector;
-import com.francelabs.datafari.rag.RagConfiguration;
+import com.francelabs.datafari.rag.*;
 import com.francelabs.datafari.utils.rag.ChunkUtils;
-import com.francelabs.datafari.rag.DocumentForRag;
 import com.francelabs.datafari.utils.rag.PromptUtils;
 import com.francelabs.datafari.utils.rag.VectorUtils;
+import dev.langchain4j.data.document.Document;
+import dev.langchain4j.data.document.Metadata;
+import dev.langchain4j.data.segment.TextSegment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.security.authentication.DisabledException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.security.InvalidParameterException;
 import java.util.*;
 
 public class RagAPI extends SearchAPI {
@@ -24,33 +27,34 @@ public class RagAPI extends SearchAPI {
   public static final String EXACT_CONTENT = "exactContent";
 
 
-  public static JSONObject rag(final HttpServletRequest request) throws IOException {
+  public static JSONObject rag(final HttpServletRequest request, JSONObject searchResults, boolean ragBydocument) throws IOException {
 
     // Get RAG specific configuration
     RagConfiguration config = RagConfiguration.getInstance();
-    final Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());
-    if (request.getParameter("id") == null && request.getAttribute("id") != null && request.getAttribute("id") instanceof String) {
-      final String idParam[] = { (String) request.getAttribute("id") };
-      parameterMap.put("id", idParam);
-    }
+
+    // Is RAG enabled ?
+    if (!config.getBooleanProperty(RagConfiguration.ENABLE_RAG))
+      return writeJsonError(422, "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.");
 
     // Search
-    JSONObject result;
-    try {
-      result = processSearch(config, request);
-    } catch (Exception e) {
-      LOGGER.error("RAG error. An error occurred while retrieving data.", e);
-      return writeJsonError(500, "RAG error. An error occurred while retrieving data.");
+    // If the search result has not been provided, process a search
+    if (searchResults == null) {
+      try {
+        searchResults = processSearch(config, request);
+      } catch (Exception e) {
+        LOGGER.error("RAG error. An error occurred while retrieving data.", e);
+        return writeJsonError(500, "ragTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.");
+      }
     }
 
     // Extract document content and data
-    List<DocumentForRag> initialDocumentsList;
-    List<DocumentForRag> documentsList;
+    List<Document> initialDocumentsList;
+    List<Document> documentsList;
     try {
-      initialDocumentsList = extractDocumentsList(result, config);
+      initialDocumentsList = extractDocumentsList(searchResults, config);
     } catch (FileNotFoundException e) {
       LOGGER.warn("RAG warning. The query cannot be answered because no associated documents were found.");
-      return writeJsonError(428, "The query cannot be answered because no associated documents were found.");
+      return writeJsonError(428, "ragNoFileFound", "Sorry, I couldn't find any relevant document to answer your request.");
     }
 
 
@@ -64,47 +68,170 @@ public class RagAPI extends SearchAPI {
     // Chunking
     documentsList = initialDocumentsList;
     if (config.getBooleanProperty(RagConfiguration.ENABLE_CHUNKING)) {
-      documentsList = ChunkUtils.chunkDocuments(config, initialDocumentsList);
+      documentsList = ChunkUtils.chunkDocuments(initialDocumentsList, config);
     } else if (config.getBooleanProperty(RagConfiguration.ENABLE_LOGS)) {
       LOGGER.info("Chunking was ignored due to configuration");
     }
 
-    // Prompting
-    List<String> prompts;
-    prompts = PromptUtils.documentsListToPrompts(config, documentsList, request);
+    // Prompting : Convert all documents chunks into prompt Messages
+    List<Message> contents = PromptUtils.documentsListToMessages(documentsList);
 
-    String message;
 
-    // Select an LLM Connector
-    LlmConnector connector;
-    String llmConnector = config.getProperty(RagConfiguration.LLM_SERVICE);
-    switch(llmConnector) {
-      case "openai":
-        connector = new OpenAiLlmConnector(config);
-        break;
-      case "datafari":
-      default:
-        connector = new DatafariLlmConnector(config);
-    }
+    // Select an LLM service
+    LlmService service = getLlmService(config);
 
-    message = connector.invoke(prompts, request);
+    // Process the RAG query using the selected service, the contents list and the user query
+    String message = processRagQuery(contents, service, config, request, ragBydocument);
 
     LOGGER.debug("LLM response: {}", message);
 
     // Return final message
     if (!message.isEmpty()) {
       message = cleanLlmFinalMessage(message);
-      final JSONObject response = new JSONObject();
-      response.put("status", "OK");
-      JSONObject content = new JSONObject();
-      content.put("message", message);
-      content.put("documents", mergeSimilarDocuments(documentsList, message));
-      response.put("content", content);
-      return response;
+      return writeJsonResponse(message, documentsList);
     } else {
-      return writeJsonError(428, "The webservice could not provide a valid response.");
+      return writeJsonError(428, "ragNoValidAnswer", "Sorry, I could not find an answer to your question.");
     }
 
+  }
+
+
+  /**
+   * Start RAG process
+   * content List of prompt Messages containing documents chunks
+   * service the LlmService
+   * ragByDocument Does the query focus on one single document ?
+   * @return The string LLM response
+   */
+  public static String processRagQuery(List<Message> contents, LlmService service, RagConfiguration config, HttpServletRequest request, boolean ragBydocument) throws IOException {
+
+
+    // Setup prompt
+    Message initialPrompt = PromptUtils.createInitialRagPrompt(config, request, ragBydocument);
+    Message mergeAllPrompt = PromptUtils.createPromptForMergeAllRag(config, request, ragBydocument);
+    Message userPrompt = new Message("user", request.getParameter("q"));
+
+    // Can we send all chunks at one to the LLM ?
+    List<Message> finalPrompts = new ArrayList<>();
+    finalPrompts.add(initialPrompt);
+    finalPrompts.addAll(contents);
+    finalPrompts.add(userPrompt);
+
+    if (PromptUtils.getTotalPromptSize(finalPrompts) > config.getIntegerProperty(RagConfiguration.CHUNK_SIZE) || contents.size() <= 1) {
+
+      // Send all Messages at once
+      return service.generate(finalPrompts, request);
+
+    } else {
+
+      // Send all chunks one by one
+      List<Message> prompts;
+      List<Message> responseMessages = new ArrayList<>();
+      for (Message content: contents) {
+        prompts = new ArrayList<>();
+        prompts.add(PromptUtils.createInitialRagPrompt(config, request, ragBydocument));
+        prompts.add(content);
+        prompts.add(userPrompt);
+
+        String response = service.generate(prompts, request);
+        Message responseMessage = new Message("assistant", response);
+        responseMessages.add(responseMessage);
+      }
+
+      // Then, merge all responses into one
+      prompts = new ArrayList<>();
+      prompts.add(mergeAllPrompt);
+      prompts.addAll(responseMessages);
+      prompts.add(userPrompt);
+      return service.generate(prompts, request);
+
+    }
+
+  }
+
+  /**
+   * Select the proper LlmService class, based on RagConfiguration
+   * @param config RagConfiguration
+   * @return LlmService
+   */
+  private static @NotNull LlmService getLlmService(RagConfiguration config) {
+    LlmService service;
+    String llmService = config.getProperty(RagConfiguration.LLM_SERVICE);
+    switch(llmService) {
+      case "datafari":
+      case "openai":
+      default:
+        service = new OpenAiLlmService(config);
+    }
+    return service;
+  }
+
+  public static String summarize(final HttpServletRequest request, Document doc) throws IOException {
+    // Get RAG configuration
+    RagConfiguration config = RagConfiguration.getInstance();
+    // Select an LLM service
+    LlmService service = getLlmService(config);
+
+    // Check if summarization is enabled
+    if (!config.getBooleanProperty(RagConfiguration.ENABLE_SUMMARIZATION)) {
+      throw new DisabledException("The summary generation feature is disabled.");
+    }
+
+    // Chunk document
+    List<TextSegment> segments = ChunkUtils.chunkContent(doc, config);
+
+    // Setup prompt
+    Message initialPrompt = PromptUtils.createInitialPromptForSummarization(request);
+
+    // Summarize all chunks
+    List<Message> summaries = new ArrayList<>();
+    for (TextSegment segment: segments) {
+      List<Message> prompts = new ArrayList<>();
+      prompts.add(initialPrompt);
+      prompts.add(PromptUtils.textSegmentsToMessage(segment, "user", config));
+
+      String response = service.generate(prompts, request);
+      Message responseMessage = new Message("assistant", response);
+      summaries.add(responseMessage);
+    }
+
+    // Merge all summaries
+    if (summaries.size() > 1) {
+      // Merge All Summaries as prompts and add an extra instruction to generate a synthesis
+      Message mergeAllSummariesPrompt = PromptUtils.createPromptForMergeAllSummaries(request);
+      summaries.add(mergeAllSummariesPrompt);
+      return service.generate(summaries, request);
+
+    } else if (summaries.size() == 1) {
+      return summaries.get(0).getContent();
+    } else {
+      throw new IOException("Could not generate any summary for this document");
+    }
+
+  }
+
+  private static @NotNull JSONObject writeJsonResponse(String message, List<Document> documentsList) {
+    final JSONObject response = new JSONObject();
+    response.put("status", "OK");
+    JSONObject content = new JSONObject();
+    content.put("message", message);
+    content.put("documents", mergeSimilarDocuments(documentsList, message));
+    response.put("content", content);
+    return response;
+  }
+
+  private static JSONObject writeJsonError(int code, String errorLabel, String message) {
+    final JSONObject response = new JSONObject();
+    final JSONObject error = new JSONObject();
+    final JSONObject content = new JSONObject();
+    response.put("status", "ERROR");
+    error.put("code", code);
+    error.put("label", errorLabel);
+    content.put("message", message);
+    content.put("documents", new ArrayList<>());
+    content.put("error", error);
+    response.put("content", content);
+    return response;
   }
 
   /**
@@ -125,16 +252,15 @@ public class RagAPI extends SearchAPI {
 
   /**
    *
-   * @param result The Search result
-   * @param config
-   * @return
-   * @throws InvalidPropertiesFormatException
-   * @throws FileNotFoundException
+   * @param result The raw Solr Search result
+   * @param config RagConfiguration
+   * @return A List of Documents
+   * @throws FileNotFoundException if the provided results doesn't contain any document
    */
-  private static List<DocumentForRag> extractDocumentsList(JSONObject result, RagConfiguration config) throws InvalidPropertiesFormatException, FileNotFoundException {
+  private static List<Document> extractDocumentsList(JSONObject result, RagConfiguration config) throws FileNotFoundException {
     // Handling search results
     // Retrieving list of documents : id, title, url
-    List<DocumentForRag> documentsList;
+    List<Document> documentsList;
     documentsList = getDocumentList(result, config);
 
     if (documentsList.isEmpty()) {
@@ -149,7 +275,7 @@ public class RagAPI extends SearchAPI {
    * @param request the original user request
    * @return A JSONObject containing the search results
    */
-  private static JSONObject processSearch(RagConfiguration config, HttpServletRequest request) throws Exception {
+  public static JSONObject processSearch(RagConfiguration config, HttpServletRequest request) throws InvalidParameterException {
 
     final Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());
     final String handler = getHandler(request);
@@ -159,7 +285,7 @@ public class RagAPI extends SearchAPI {
     String userQuery = request.getParameter("q");
     if (userQuery == null) {
       LOGGER.error("RAG error : No query provided.");
-      throw new Exception("No query provided.");
+      throw new InvalidParameterException("No query provided.");
     } else if (config.getBooleanProperty(RagConfiguration.ENABLE_LOGS)) {
       LOGGER.info("Request processed by RagAPI : {}", userQuery);
     }
@@ -187,33 +313,33 @@ public class RagAPI extends SearchAPI {
    * @param config RAG configuration
    * @return JSONArray
    */
-  private static List<DocumentForRag> getDocumentList(JSONObject result, RagConfiguration config) {
+  private static List<Document> getDocumentList(JSONObject result, RagConfiguration config) {
     try {
 
       JSONObject response = (JSONObject) result.get("response");
-      List<DocumentForRag> documentsList = new ArrayList<>();
+      List<Document> documentsList = new ArrayList<>();
 
       if (response != null && response.get("docs") != null) {
         JSONArray docs = (JSONArray) response.get("docs");
         int maxFiles = Math.min(config.getIntegerProperty(RagConfiguration.MAX_FILES), docs.size()); // MaxFiles must not exceed the number of provided documents
         for (int i = 0; i < maxFiles; i++) {
 
-          DocumentForRag document = new DocumentForRag();
-          String title = ((JSONArray) ((JSONObject) docs.get(i)).get("title")).get(0).toString();
-          String id = (String) ((JSONObject) docs.get(i)).get("id");
-          String url = (String) ((JSONObject) docs.get(i)).get("url");
-
-          document.setId(id);
-          document.setTitle(title);
-          document.setUrl(url);
-
-          // Add the content to the processed document
+          // If the document has content, we generate a Document object with its content and metadata
           JSONArray content = (JSONArray) ((JSONObject) docs.get(i)).get(EXACT_CONTENT);
           if (content != null && content.get(0) != null) {
-            document.setContent(content.get(0).toString());
+            String title = ((JSONArray) ((JSONObject) docs.get(i)).get("title")).get(0).toString();
+            String id = (String) ((JSONObject) docs.get(i)).get("id");
+            String url = (String) ((JSONObject) docs.get(i)).get("url");
+
+            Metadata metadata = new Metadata();
+            metadata.put("title", title);
+            metadata.put("id", id);
+            metadata.put("url", url);
+
+            Document document = new Document(content.get(0).toString(), metadata);
+            documentsList.add(document);
           }
 
-          documentsList.add(document);
         }
         return documentsList;
       }
@@ -224,34 +350,33 @@ public class RagAPI extends SearchAPI {
 
   }
 
-  private static JSONObject writeJsonError(int code, String message) {
-    final JSONObject response = new JSONObject();
-    final JSONObject error = new JSONObject();
-    response.put("status", "ERROR");
-    error.put("code", code);
-    error.put("reason", message);
-    response.put("content", error);
-    return response;
-  }
-
 
   /**
    * The "documentList" containing sources of the answer might contain duplicates.
    * Some document might not be used in the LLM response.
    * This methode merge thoses duplicated entries, and remove useless ones.
-   * @return List<DocumentForRag> The final list
+   * @return List<Document> The final list
    */
-  private static List<DocumentForRag> mergeSimilarDocuments(List<DocumentForRag> documentList, String response) {
+  private static JSONArray mergeSimilarDocuments(List<Document> documentList, String response) {
     // Removing Duplicates
-    Map<String, DocumentForRag> map = new HashMap<>();
-    for (DocumentForRag doc : documentList) {
-      String id = doc.getId();
-        if (map.containsKey(id) || !response.toUpperCase().contains(doc.getTitle().toUpperCase())) {
-            continue;
-        }
-        map.put(id, doc);
+    Map<String, Document> map = new HashMap<>();
+    JSONArray displayedDocuments = new JSONArray();
+    for (Document doc : documentList) {
+      String id = doc.metadata().getString("id");
+      if (map.containsKey(id) || !response.toUpperCase().contains(doc.metadata().getString("title").toUpperCase())) {
+        // Skip if the document has already been added
+        continue;
+      }
+      map.put(id, doc);
+      // Add document to displayedDocuments if it isn't there yet and if it is mentioned by the LLM
+      JSONObject jsonDoc = new JSONObject();
+      jsonDoc.put("id", id);
+      jsonDoc.put("title", doc.metadata().getString("title"));
+      jsonDoc.put("url", doc.metadata().getString("url"));
+      jsonDoc.put("content", doc.text());
+      displayedDocuments.add(jsonDoc);
     }
-    return new ArrayList<>(map.values());
+    return displayedDocuments;
   }
 
 }
