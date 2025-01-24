@@ -18,6 +18,7 @@ package com.francelabs.datafari.transformation.llm.utils;
 
 import com.francelabs.datafari.transformation.llm.model.LlmSpecification;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -55,10 +56,23 @@ public class PromptUtils {
      * @param content : The document content
      * @return a prompt ready to be sent to the LLM service
      */
-    public static String promptForCategorization(String content) {
+    public static String promptForCategorization(String content, LlmSpecification spec) {
         String prompt;
-        prompt = "\"\"\"Categorize the following document in one of the following categories: Invoice, Call for Tenders, Request for Quotations, Technical paper, Presentation, Resumes, Others. If you don't know, say \"Others\". \n\n" + content.substring(0, 30000) + "\"\"\"";
-        return prompt;
+        List<String> categories = spec.getCategories();
+        StringBuilder sbCategories = new StringBuilder();
+        for (String cat : categories) sbCategories.append(cat).append(", ");
+        sbCategories.append("Others");
+
+        prompt = "\"\"\"Categorize the following document in one of the following categories: {categories}. If you don't know, say \"Others\". \n\n" + truncate(content, 30000) + "\"\"\"";
+        return prompt.replace("{categories}", sbCategories.toString());
+    }
+
+    static String truncate(String text, int length) {
+        if (text.length() <= length) {
+            return text;
+        } else {
+            return text.substring(0, length);
+        }
     }
 	
 }

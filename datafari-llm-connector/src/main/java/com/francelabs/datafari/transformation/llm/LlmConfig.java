@@ -16,5 +16,6 @@ public class LlmConfig {
   public static final String NODE_ENABLE_EMBEDDINGS = "enableEmbeddings";
   public static final String NODE_MAXTOKENS = "maxTokens";
   public static final String NODE_SUMMARIES_LANGUAGE = "summariesLanguage";
+  public static final String NODE_CATEGORIES = "categories";
   public static final String ATTRIBUTE_VALUE = "value";
 }

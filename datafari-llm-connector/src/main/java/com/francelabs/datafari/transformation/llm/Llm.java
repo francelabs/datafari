@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
-import com.francelabs.datafari.transformation.llm.services.DatafariLlmService;
 import com.francelabs.datafari.transformation.llm.services.LlmService;
 import com.francelabs.datafari.transformation.llm.services.OpenAiLlmService;
 import com.francelabs.datafari.transformation.llm.model.LlmSpecification;
@@ -357,11 +356,9 @@ public class Llm extends BaseTransformationConnector {
       LlmService service;
       switch (spec.getTypeOfLlm()) {
         case "openai":
-          service = new OpenAiLlmService(spec);
-          break;
         case "datafari":
         default:
-          service = new DatafariLlmService(spec);
+          service = new OpenAiLlmService(spec);
           break;
       }
 
@@ -379,11 +376,13 @@ public class Llm extends BaseTransformationConnector {
 
       // CATEGORIZE DOCUMENTS
       // Invoice, Call for Tenders, Request for Quotations, Technical paper, Presentation, Resumes, Others
-      if (spec.getEnableCategorize()) {
+      if (spec.getEnableCategorize() && !spec.getCategories().isEmpty()) {
         try {
-          String category = extractCategory(service.summarize(content, spec));
-          if (category.isEmpty()) throw new RuntimeException("Could not generate a summary for document: " + documentURI);
-          document.addField("llm_categories", category);
+          List<String> allowedCategories = spec.getCategories();
+          String llmResponse = service.categorize(content, spec);
+          List<String> docCategories = extractCategories(llmResponse, allowedCategories);
+          if (docCategories.isEmpty()) throw new RuntimeException("Could not generate a summary for document: " + documentURI);
+          document.addField("llm_categories", docCategories.toArray(new String[0]));
         } catch (Exception e) {
           LOGGER.warn("Could not find category for document: {}", documentURI);
         }
@@ -423,12 +422,13 @@ public class Llm extends BaseTransformationConnector {
    * @param message  The LLM esponse
    * @return The category
    */
-  public String extractCategory(String message) {
-    String[] categories = {"Invoice", "Call for Tenders", "Request for Quotations", "Technical paper", "Presentation", "Resumes"};
-    for (String category : categories) {
-      if (message.contains(category)) return category;
+  public List<String> extractCategories(String message, List<String> allowedCategories) {
+    List<String> categories = new ArrayList<>();
+    for (String category : allowedCategories) {
+      if (message.contains(category)) categories.add(category);
     }
-    return "Others";
+    if (categories.isEmpty()) categories.add("Others");
+    return categories;
   }
 
   
@@ -522,6 +522,46 @@ public class Llm extends BaseTransformationConnector {
 
     final String seqPrefix = "s" + connectionSequenceNumber + "_";
 
+    // Categories
+    String x;
+    x = variableContext.getParameter(seqPrefix + "category_count");
+    if (x != null && !x.isEmpty()) {
+      // About to gather the category nodes, so get rid of the old ones.
+      int i = 0;
+      while (i < spec.getChildCount()) {
+        final SpecificationNode node = spec.getChild(i);
+        if (node.getType().equals(LlmConfig.NODE_CATEGORIES)) {
+          spec.removeChild(i);
+        } else {
+          i++;
+        }
+      }
+
+      final int count = Integer.parseInt(x);
+      i = 0;
+      while (i < count) {
+        final String prefix = seqPrefix + "category_";
+        final String suffix = "_" + i;
+        final String op = variableContext.getParameter(prefix + "op" + suffix);
+        if (op == null || !op.equals("Delete")) {
+          // Gather the categories etc.
+          final String category = variableContext.getParameter(prefix + LlmConfig.ATTRIBUTE_VALUE + suffix);
+          final SpecificationNode node = new SpecificationNode(LlmConfig.NODE_CATEGORIES);
+          node.setAttribute(LlmConfig.ATTRIBUTE_VALUE, category);
+          spec.addChild(spec.getChildCount(), node);
+        }
+        i++;
+      }
+
+      final String addop = variableContext.getParameter(seqPrefix + "category_op");
+      if (addop != null && addop.equals("Add")) {
+        final String category = variableContext.getParameter(seqPrefix + "category_value");
+        final SpecificationNode node = new SpecificationNode(LlmConfig.NODE_CATEGORIES);
+        node.setAttribute(LlmConfig.ATTRIBUTE_VALUE, category);
+        spec.addChild(spec.getChildCount(), node);
+      }
+    }
+
     addChildToSpec(variableContext, spec, seqPrefix + "enableSummarize", LlmConfig.NODE_ENABLE_SUMMARIZE);
     addChildToSpec(variableContext, spec, seqPrefix + "enableCategorize", LlmConfig.NODE_ENABLE_CATEGORIZE);
     addChildToSpec(variableContext, spec, seqPrefix + "enableEmbeddings", LlmConfig.NODE_ENABLE_EMBEDDINGS);
@@ -572,6 +612,17 @@ public class Llm extends BaseTransformationConnector {
     int maxTokens = 400;
     String summariesLanguage = "";
 
+    // Default categories : Invoice, Call for Tenders, Request for Quotations, Technical paper, Presentation, Resumes
+    List<String> categories = new ArrayList<>();
+    if (os.getChildCount() == 0) {
+      categories.add("Invoice");
+      categories.add("Call for Tenders");
+      categories.add("Request for Quotations");
+      categories.add("Technical paper");
+      categories.add("Presentation");
+      categories.add("Resumes");
+    }
+
     for (int i = 0; i < os.getChildCount(); i++) {
       final SpecificationNode sn = os.getChild(i);
       if (sn.getType().equals(LlmConfig.NODE_ENABLE_SUMMARIZE)) {
@@ -588,6 +639,11 @@ public class Llm extends BaseTransformationConnector {
         }
       } else if (sn.getType().equals(LlmConfig.NODE_SUMMARIES_LANGUAGE)) {
         summariesLanguage = sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE);
+      } else if (sn.getType().equals(LlmConfig.NODE_CATEGORIES)) {
+        final String category = sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE);
+        if (category != null) {
+          categories.add(category);
+        }
       }
     }
     paramMap.put("ENABLESUMMARIZE", enableSummarize);
@@ -595,6 +651,7 @@ public class Llm extends BaseTransformationConnector {
     paramMap.put("ENABLEEMBEDDINGS", enableEmbeddings);
     paramMap.put("MAXTOKENS", maxTokens);
     paramMap.put("SUMMARIESLANGUAGE", summariesLanguage);
+    paramMap.put("CATEGORIES", categories);
   }
 
   /**

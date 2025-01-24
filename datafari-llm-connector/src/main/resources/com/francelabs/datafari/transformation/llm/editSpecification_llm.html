@@ -64,6 +64,56 @@
             </select>
         </td>
     </tr>
+
+    <tr>
+        <td class="description">
+            <nobr>$Encoder.bodyEscape($ResourceBundle.getString('llm.categories'))</nobr>
+        </td>
+        <td class="boxcell">
+            <table class="formtable">
+
+                #set($categorycounter = 0)
+                #foreach($category in $CATEGORIES)
+                    #set($categorycounterdisplay = $categorycounter + 1)
+                    #if(($categorycounter % 2) == 0)
+                    <tr class="evenformrow">
+                        #else
+                    <tr class="oddformrow">
+                        #end
+                        <td class="formcolumncell">
+                            <a name="s${SEQNUM}_category_$categorycounter">
+                                <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('llm.delete'))" alt="$Encoder.attributeEscape($ResourceBundle.getString('llm.deleteCategory'))$categorycounterdisplay" onclick='javascript:s${SEQNUM}_deleteCategory("$categorycounter");'/>
+                                <input type="hidden" name="s${SEQNUM}_category_op_$categorycounter" value="Continue"/>
+                                <input type="hidden" name="s${SEQNUM}_category_value_$categorycounter" value="$Encoder.attributeEscape($category)"/>
+                            </a>
+                        </td>
+                        <td class="formcolumncell">
+                            <nobr>$Encoder.bodyEscape($category)</nobr>
+                        </td>
+                    </tr>
+                    #set($categorycounter = $categorycounter + 1)
+                #end
+
+                #if($categorycounter == 0)
+                <tr class="formrow"><td class="formmessage" colspan="3">$Encoder.bodyEscape($ResourceBundle.getString('llm.noCategorySpecified'))</td></tr>
+                #end
+
+                <tr class="formrow"><td class="formseparator" colspan="3"><hr/></td></tr>
+                <tr class="formrow">
+                    <td class="formcolumncell">
+                        <a name="category">
+                            <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('llm.add'))" alt="$Encoder.attributeEscape($ResourceBundle.getString('llm.addCategory'))" onclick="javascript:s${SEQNUM}_addCategory();"/>
+                        </a>
+                        <input type="hidden" name="s${SEQNUM}_category_count" value="$categorycounter"/>
+                        <input type="hidden" name="s${SEQNUM}_category_op" value="Continue"/>
+                    </td>
+                    <td class="formcolumncell">
+                        <nobr><input type="text" size="15" name="s${SEQNUM}_category_value" value=""/></nobr>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
 </table>
 
 #else
@@ -72,5 +122,12 @@
 <input type="hidden" name="s${SEQNUM}_enableEmbeddings" value="$Encoder.bodyEscape($ENABLEEMBEDDINGS)"/>
 <input type="hidden" name="s${SEQNUM}_maxTokens" value="$Encoder.bodyEscape($MAXTOKENS)"/>
 <input type="hidden" name="s${SEQNUM}_summariesLanguage" value="$Encoder.bodyEscape($SUMMARIESLANGUAGE)"/>
+
+#set($categorycounter = 0)
+#foreach($category in $CATEGORIES)
+    <input type="hidden" name="s${SEQNUM}_category_value_$categorycounter" value="$Encoder.attributeEscape($category)"/>
+    #set($categorycounter = $categorycounter + 1)
+#end
+<input type="hidden" name="s${SEQNUM}_category_count" value="$categorycounter"/>
 
 #end

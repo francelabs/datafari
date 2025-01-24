@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.List;
 
 public class OpenAiLlmService implements LlmService {
 
@@ -88,8 +89,8 @@ public class OpenAiLlmService implements LlmService {
     }
 
     @Override
-    public String categorize(String content) throws IOException {
-        String prompt = PromptUtils.promptForCategorization(content);
+    public String categorize(String content, LlmSpecification spec) throws IOException {
+        String prompt = PromptUtils.promptForCategorization(content, spec);
         return invoke(prompt);
     }
 }

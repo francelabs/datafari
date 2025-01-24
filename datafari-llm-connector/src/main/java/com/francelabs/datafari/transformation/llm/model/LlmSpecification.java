@@ -6,6 +6,8 @@ import org.apache.manifoldcf.core.interfaces.ConfigParams;
 import org.apache.manifoldcf.core.interfaces.Specification;
 import org.apache.manifoldcf.core.interfaces.SpecificationNode;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -24,6 +26,7 @@ public class LlmSpecification {
     String embeddingsModel = "";
     int maxTokens = 500;
     String typeOfLlm = "";
+    List<String> categories = new ArrayList<>();
 
     public LlmSpecification() {
         // Empty connector
@@ -44,6 +47,8 @@ public class LlmSpecification {
                 this.maxTokens = Integer.parseInt(sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE));
             } else if (sn.getType().equals(LlmConfig.NODE_SUMMARIES_LANGUAGE)) {
                 this.summariesLanguage = sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE);
+            } else if (sn.getType().equals(LlmConfig.NODE_CATEGORIES)) {
+                this.categories.add(sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE));
             }
         }
         for (int i = 0; i < config.getChildCount(); i++) {
@@ -151,6 +156,14 @@ public class LlmSpecification {
 
     public void setMaxTokens(int maxTokens) {
         this.maxTokens = maxTokens;
+    }
+
+    public List<String> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<String> categories) {
+        this.categories = categories;
     }
 
     @Override
