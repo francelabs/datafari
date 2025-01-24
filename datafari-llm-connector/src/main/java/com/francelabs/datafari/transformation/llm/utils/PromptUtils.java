@@ -63,7 +63,7 @@ public class PromptUtils {
         for (String cat : categories) sbCategories.append(cat).append(", ");
         sbCategories.append("Others");
 
-        prompt = "\"\"\"Categorize the following document in one of the following categories: {categories}. If you don't know, say \"Others\". \n\n" + truncate(content, 30000) + "\"\"\"";
+        prompt = "\"\"\"Categorize the following document in one (or more) of the following categories: {categories}. If you don't know, say \"Others\". \n\n" + truncate(content, 30000) + "\"\"\"";
         return prompt.replace("{categories}", sbCategories.toString());
     }
 
