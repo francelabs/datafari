@@ -26,6 +26,7 @@
       <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.ValueIfTrue'))</nobr></td>
       <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.ValueIfFalse'))</nobr></td>
       <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.KeepOnlyOne'))</nobr></td>
+      <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.extractRegexGroups'))</nobr></td>
   </tr>
 
   <!-- ----------------------------------------------- Existing couple metadata/regex ----------------------------------------------------------------------- --> 
@@ -38,6 +39,7 @@
     #set($valueIfTrue = $specification.value.getValueIfTrue())
     #set($valueIfFalse = $specification.value.getValueIfFalse())
     #set($keepOnlyOne = $specification.value.getKeepOnlyOne())
+    #set($extractRegexGroups = $specification.value.getExtractRegexGroups())
 
     <tr>
         <td class="formcolumncell">
@@ -54,6 +56,7 @@
                 <input type="hidden" name="s${SEQNUM}_valueIfTrueField$counter" value="$Encoder.attributeEscape($valueIfTrue)" />
                 <input type="hidden" name="s${SEQNUM}_valueIfFalseField$counter" value="$Encoder.attributeEscape($valueIfFalse)" />
                 <input type="hidden" name="s${SEQNUM}_keepOnlyOneField$counter" value="$Encoder.attributeEscape($keepOnlyOne)" />
+                <input type="hidden" name="s${SEQNUM}_extractRegexGroupsField$counter" value="$Encoder.attributeEscape($extractRegexGroups)" />
 
             </a>
         </td>
@@ -76,6 +79,11 @@
         <td class="formcolumncell">
             #if($keepOnlyOne)
                 <nobr><input type="checkbox" disabled checked /></nobr>
+            #end
+        </td>
+        <td class="formcolumncell">
+            #if($extractRegexGroups)
+            <nobr><input type="checkbox" disabled checked /></nobr>
             #end
         </td>
     </tr>
@@ -130,6 +138,9 @@
         <td class="formcolumncell">
             <nobr><input type="checkbox" name="s${SEQNUM}_keepOnlyOneField" value="true"/></nobr>
         </td>
+        <td class="formcolumncell">
+            <nobr><input type="checkbox" name="s${SEQNUM}_extractRegexGroupsField" value="true"/></nobr>
+        </td>
     </tr>
   
 </table>
@@ -143,12 +154,14 @@
     #set($valueIfTrue = $specification.value.getValueIfTrue())
     #set($valueIfFalse = $specification.value.getValueIfFalse())
     #set($keepOnlyOne = $specification.value.getKeepOnlyOne())
+    #set($extractRegexGroups = $specification.value.getExtractRegexGroups())
      <input type="hidden" name="s${SEQNUM}_destinationMetadataField${foreach.index}" value="$Encoder.attributeEscape($destinationMetadata)" />
      <input type="hidden" name="s${SEQNUM}_regexField${foreach.index}" value="$Encoder.attributeEscape($regexValue)" />
      <input type="hidden" name="s${SEQNUM}_sourceMetadataField${foreach.index}" value="$Encoder.attributeEscape($sourceMetadata)" />
      <input type="hidden" name="s${SEQNUM}_valueIfTrueField${foreach.index}" value="$Encoder.attributeEscape($valueIfTrue)" />
      <input type="hidden" name="s${SEQNUM}_valueIfFalseField${foreach.index}" value="$Encoder.attributeEscape($valueIfFalse)" />
      <input type="hidden" name="s${SEQNUM}_keepOnlyOneField${foreach.index}" value="$Encoder.attributeEscape($keepOnlyOne)" />
+     <input type="hidden" name="s${SEQNUM}_extractRegexGroupsField${foreach.index}" value="$Encoder.attributeEscape($extractRegexGroups)" />
     #set($counter = $counter + 1)
   #end
   <input type="hidden" name="s${SEQNUM}_metaRegex_count" value="$counter"/>
