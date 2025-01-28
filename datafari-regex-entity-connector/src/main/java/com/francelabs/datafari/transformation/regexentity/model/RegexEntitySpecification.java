@@ -13,16 +13,19 @@ public class RegexEntitySpecification {
     String valueIfTrue;
     String valueIfFalse;
     Boolean keepOnlyOne;
+    Boolean extractRegexGroups;
 
     boolean hasMatch;
 
-    public RegexEntitySpecification(String sourceMetadata, String regexValue, String destinationMetadata, String valueIfTrue, String valueIfFalse, Boolean keepOnlyOne) {
+    public RegexEntitySpecification(String sourceMetadata, String regexValue, String destinationMetadata, String valueIfTrue, String valueIfFalse, Boolean keepOnlyOne,
+                                    Boolean extractRegexGroups) {
         this.sourceMetadata = sourceMetadata;
         this.regexValue = regexValue;
         this.destinationMetadata = destinationMetadata;
         this.valueIfTrue = (valueIfTrue != null) ? valueIfTrue : "";
         this.valueIfFalse = (valueIfFalse != null) ? valueIfFalse : "";
         this.keepOnlyOne = (keepOnlyOne != null) && keepOnlyOne;
+        this.extractRegexGroups = (extractRegexGroups != null) && extractRegexGroups;
         this.hasMatch = false;
     }
 
@@ -73,6 +76,10 @@ public class RegexEntitySpecification {
     public void setKeepOnlyOne(Boolean keepOnlyOne) {
         this.keepOnlyOne = keepOnlyOne;
     }
+
+    public Boolean getExtractRegexGroups() { return extractRegexGroups; }
+
+    public void setExtractRegexGroups(Boolean extractRegexGroups) { this.extractRegexGroups = extractRegexGroups; }
 
     public boolean getHasMatch() {
         return hasMatch;

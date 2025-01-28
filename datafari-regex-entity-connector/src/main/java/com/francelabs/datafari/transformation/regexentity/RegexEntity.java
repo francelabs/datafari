@@ -347,6 +347,8 @@ public class RegexEntity extends BaseTransformationConnector {
     String sourceMetadata;
     String valueIfTrue;
     boolean keepOnlyOne;
+    String extractRegexGroupsString;
+    boolean extractRegexGroups;
     String valueIfFalse;
     String destinationMetadata;
     while (itSpecifications.hasNext()) {
@@ -357,11 +359,13 @@ public class RegexEntity extends BaseTransformationConnector {
       valueIfTrue = readNodeValue(spec, RegexEntityConfig.POS_NODE_VALUE_IF_TRUE, index);
       valueIfFalse = readNodeValue(spec, RegexEntityConfig.POS_NODE_VALUE_IF_FALSE, index);
       keepOnlyOneString = readNodeValue(spec, RegexEntityConfig.POS_NODE_KEEP_ONLY_ONE, index);
-      keepOnlyOne = "true".equals(keepOnlyOneString);
+      keepOnlyOne = Boolean.valueOf(keepOnlyOneString);
+      extractRegexGroupsString = readNodeValue(spec, RegexEntityConfig.POS_NODE_EXTRACT_REGEX_GROUPS, index);
+      extractRegexGroups = Boolean.valueOf(extractRegexGroupsString);
 
       regexEntitySpecification = new RegexEntitySpecification(sourceMetadata,
               regex, destinationMetadata, valueIfTrue,
-              valueIfFalse, keepOnlyOne);
+              valueIfFalse, keepOnlyOne, extractRegexGroups);
       if (regexEntitySpecification.isTargetingContent()) {
         sourceMetadata = CONTENT;
       }
@@ -426,12 +430,14 @@ public class RegexEntity extends BaseTransformationConnector {
     Matcher matcher;
     String valueIfTrue;
     boolean keepOnlyOne;
+    boolean extractRegexGroups;
 
     for (Map.Entry<String, RegexEntitySpecification> entry : regexConfigurationList.entrySet()) {
       metadata = entry.getValue().getDestinationMetadata();
       regex = entry.getValue().getRegexValue();
       valueIfTrue = entry.getValue().getValueIfTrue();
       keepOnlyOne = entry.getValue().getKeepOnlyOne();
+      extractRegexGroups = entry.getValue().getExtractRegexGroups();
 
       // If the regex specification has already encountered a match and is looking for a new one
       if (canRegexSpecificationBeIgnored(entry.getValue())) continue;
@@ -448,12 +454,12 @@ public class RegexEntity extends BaseTransformationConnector {
         } else if (keepOnlyOne) {
           // Retrieve the first match if keepOnlyOne is set to true
           if (matcher.find()) {
-            matchesFound.add(matcher.group());
+            addMatchesFound(matchesFound, matcher, extractRegexGroups);
           }
         } else {
           // Retrieve all matches if keepOnlyOne is set to false
           while (matcher.find()) {
-            matchesFound.add(matcher.group());
+            addMatchesFound(matchesFound, matcher, extractRegexGroups);
           }
         }
       }
@@ -461,6 +467,27 @@ public class RegexEntity extends BaseTransformationConnector {
 
     // Withdraw the matching regex from configuration
     regexConfigurationList.entrySet().removeIf(entry -> canRegexSpecificationBeIgnored(entry.getValue()));
+  }
+
+  /**
+   * Adds the regex match in the list of matchesFound. Two options: add the complete match or only the captured groups.
+   * That means that if you have this regex: <tag>(.*?)</tag> you can extract what is between <tag> and </tag>. Another example,
+   * <tag>(.*?)between(.*?)</tag>, if the line was <tag>what is between the tags</tag>, the values added in matchesFound are
+   * "what is " and " the tags".
+   *
+   * @param matchesFound the matches to be added to the metadata (Solr field at the end)
+   * @param matcher the {@link Matcher} object which is the result of a Regex compile method: Pattern.compile(regex).matcher(String).
+   * @param extractRegexGroups true if only the groups captured should be added.
+   */
+  private void addMatchesFound(List<String> matchesFound, Matcher matcher, boolean extractRegexGroups){
+    if (!extractRegexGroups) {
+      matchesFound.add(matcher.group());
+    } else {
+      int nbGroups = matcher.groupCount();
+      for (int i=1; i <= nbGroups; i++){
+        matchesFound.add(matcher.group(i));
+      }
+    }
   }
 
   /**
@@ -587,6 +614,7 @@ public class RegexEntity extends BaseTransformationConnector {
     SpecificationNode specNodeValueIfTrue = new SpecificationNode(RegexEntityConfig.NODE_VALUE_IF_TRUE);
     SpecificationNode specNodeValueIfFalse = new SpecificationNode(RegexEntityConfig.NODE_VALUE_IF_FALSE);
     SpecificationNode specNodeKeepOnlyOne = new SpecificationNode(RegexEntityConfig.NODE_KEEP_ONLY_ONE);
+    SpecificationNode specNodeExtractRegexGroups = new SpecificationNode(RegexEntityConfig.NODE_EXTRACT_REGEX_GROUPS);
 
     spec.addChild(RegexEntityConfig.POS_NODE_SOURCE_METADATA, specNodeSourceMetadata);
     spec.addChild(RegexEntityConfig.POS_NODE_REGEX, specNodeRegex);
@@ -594,6 +622,7 @@ public class RegexEntity extends BaseTransformationConnector {
     spec.addChild(RegexEntityConfig.POS_NODE_VALUE_IF_TRUE, specNodeValueIfTrue);
     spec.addChild(RegexEntityConfig.POS_NODE_VALUE_IF_FALSE, specNodeValueIfFalse);
     spec.addChild(RegexEntityConfig.POS_NODE_KEEP_ONLY_ONE, specNodeKeepOnlyOne);
+    spec.addChild(RegexEntityConfig.POS_NODE_EXTRACT_REGEX_GROUPS, specNodeExtractRegexGroups);
 
     String nbMetaRegexParam = variableContext.getParameter(seqPrefix + "metaRegex_count");
     if (nbMetaRegexParam != null &&!nbMetaRegexParam.isEmpty()) {
@@ -608,6 +637,7 @@ public class RegexEntity extends BaseTransformationConnector {
       String valueIfTrueField;
       String valueIfFalseField;
       String keepOnlyOneField;
+      String extractRegexGroups;
 
       for (int i = 0; i < nbMetaRegex; i++) {
         operation = variableContext.getParameter(prefix + "op" + i);
@@ -619,6 +649,7 @@ public class RegexEntity extends BaseTransformationConnector {
           valueIfTrueField = variableContext.getParameter(seqPrefix + RegexEntityConfig.ATTRIBUTE_VALUE_IF_TRUE_FIELD + i);
           valueIfFalseField = variableContext.getParameter(seqPrefix + RegexEntityConfig.ATTRIBUTE_VALUE_IF_FALSE_FIELD + i);
           keepOnlyOneField = variableContext.getParameter(seqPrefix + RegexEntityConfig.ATTRIBUTE_KEEP_ONLY_ONE_FIELD + i);
+          extractRegexGroups = variableContext.getParameter(seqPrefix + RegexEntityConfig.ATTRIBUTE_EXTRACT_REGEX_GROUPS_FIELD + i);
 
           specNodeSourceMetadata.setAttribute(keyPrefix + i, sourceMetadataField);
           specNodeRegex.setAttribute(keyPrefix + i, regexField);
@@ -626,6 +657,7 @@ public class RegexEntity extends BaseTransformationConnector {
           specNodeValueIfTrue.setAttribute(keyPrefix + i, valueIfTrueField);
           specNodeValueIfFalse.setAttribute(keyPrefix + i, valueIfFalseField);
           specNodeKeepOnlyOne.setAttribute(keyPrefix + i, keepOnlyOneField);
+          specNodeExtractRegexGroups.setAttribute(keyPrefix + i, extractRegexGroups);
         }
       }
       
@@ -638,6 +670,7 @@ public class RegexEntity extends BaseTransformationConnector {
         valueIfTrueField = variableContext.getParameter(seqPrefix + RegexEntityConfig.ATTRIBUTE_VALUE_IF_TRUE_FIELD);
         valueIfFalseField = variableContext.getParameter(seqPrefix + RegexEntityConfig.ATTRIBUTE_VALUE_IF_FALSE_FIELD);
         keepOnlyOneField = variableContext.getParameter(seqPrefix + RegexEntityConfig.ATTRIBUTE_KEEP_ONLY_ONE_FIELD);
+        extractRegexGroups = variableContext.getParameter(seqPrefix + RegexEntityConfig.ATTRIBUTE_EXTRACT_REGEX_GROUPS_FIELD);
 
         specNodeSourceMetadata.setAttribute(keyPrefix + count, sourceMetadataField);
         specNodeRegex.setAttribute(keyPrefix + count, regexField);
@@ -645,6 +678,7 @@ public class RegexEntity extends BaseTransformationConnector {
         specNodeValueIfTrue.setAttribute(keyPrefix + count, valueIfTrueField);
         specNodeValueIfFalse.setAttribute(keyPrefix + count, valueIfFalseField);
         specNodeKeepOnlyOne.setAttribute(keyPrefix + count, keepOnlyOneField);
+        specNodeExtractRegexGroups.setAttribute(keyPrefix + count, extractRegexGroups);
       }
 
     }
@@ -690,6 +724,8 @@ public class RegexEntity extends BaseTransformationConnector {
     String valueIfFalse;
     String keepOnlyOneString;
     boolean keepOnlyOne;
+    String extractRegexGroupsString;
+    boolean extractRegexGroups;
     String index;
     RegexEntitySpecification regexEntitySpecification;
 
@@ -704,11 +740,13 @@ public class RegexEntity extends BaseTransformationConnector {
       valueIfTrue = readNodeValue(spec, RegexEntityConfig.POS_NODE_VALUE_IF_TRUE, index);
       valueIfFalse = readNodeValue(spec, RegexEntityConfig.POS_NODE_VALUE_IF_FALSE, index);
       keepOnlyOneString = readNodeValue(spec, RegexEntityConfig.POS_NODE_KEEP_ONLY_ONE, index);
-      keepOnlyOne = "true".equals(keepOnlyOneString);
+      keepOnlyOne = Boolean.valueOf(keepOnlyOneString);
+      extractRegexGroupsString = readNodeValue(spec, RegexEntityConfig.POS_NODE_EXTRACT_REGEX_GROUPS, index);
+      extractRegexGroups = Boolean.valueOf(extractRegexGroupsString);
 
       regexEntitySpecification = new RegexEntitySpecification(sourceMetadata,
               regex, destinationMetadata, valueIfTrue,
-              valueIfFalse, keepOnlyOne);
+              valueIfFalse, keepOnlyOne, extractRegexGroups);
 
       metadataSourceMetadataAttribute.put(index, regexEntitySpecification);
     }

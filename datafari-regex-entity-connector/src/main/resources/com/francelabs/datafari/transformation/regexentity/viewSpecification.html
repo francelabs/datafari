@@ -24,6 +24,7 @@
     <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.ValueIfTrue'))</nobr></td>
     <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.ValueIfFalse'))</nobr></td>
     <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.KeepOnlyOne'))</nobr></td>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.extractRegexGroups'))</nobr></td>
   </tr>
 
   <!-- Iterates over Map of metadata (key of the map) and regex values -->
@@ -34,6 +35,8 @@
     #set($valueIfTrue = $specification.value.getValueIfTrue())
     #set($valueIfFalse = $specification.value.getValueIfFalse())
     #set($keepOnlyOne = $specification.value.getKeepOnlyOne())
+    #set($extractRegexGroups = $specification.value.getExtractRegexGroups())
+
     <tr>
       <td class="value"><nobr>$Encoder.bodyEscape($sourceMetadata)</nobr></td>
       <td class="value"><nobr>$Encoder.bodyEscape($regexValue)</nobr></td>
@@ -42,6 +45,11 @@
       <td class="value"><nobr>$Encoder.bodyEscape($valueIfFalse)</nobr></td>
       <td class="value">
         #if($keepOnlyOne)
+          <nobr><input type="checkbox" disabled checked /></nobr>
+        #end
+      </td>
+      <td class="value">
+        #if($extractRegexGroups)
           <nobr><input type="checkbox" disabled checked /></nobr>
         #end
       </td>
@@ -54,6 +62,7 @@
       <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoSourceMetadataSpecified'))</td>
       <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoRegexSpecified'))</td>
       <td>$Encoder.bodyEscape($ResourceBundle.getString('RegexEntity.NoDestinationMetadataSpecified'))</td>
+      <td></td>
       <td></td>
       <td></td>
       <td></td>

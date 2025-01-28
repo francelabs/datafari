@@ -34,13 +34,12 @@
     <mcf-solr-plugin.sha512>38261a93265c1697db2742947ec72dfdfbb31f4dcab7a343484b06bb57416a668c750a98d5130fadf97464587a09677bb927e2623b862e618e45a3922b67d20b</mcf-solr-plugin.sha512>
     <mssql-jdbc.version>10.2.1.jre11</mssql-jdbc.version>
     <postgresql.version>42.7.2</postgresql.version>
-    <netty.version>4.1.63.Final</netty.version>
     <ojdbc.version>19.15.0.0.1</ojdbc.version>
     <postgres.version>42.7.2</postgres.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <solr.sha512>a0d8934e9986b9d82bba70eb4e1352c33104961618920d36ec7c07db137e3d7e5057519a09faeb8907c78252cbdb9bdad49749bacecb8450a6274934fec2ce54</solr.sha512>
-    <solr.version>9.7.0</solr.version>
+    <solr.sha512>e5db4fe32b5df45671c679d3ec5653bd5a969f43e28dad7e5f1b7633837c059250b610db7d593c13f674bf0edbaf4fe11ecb94c24fef6a22de952c6f2781800c</solr.sha512>
+    <solr.version>9.8.0</solr.version>
      <spring.boot.version>2.7.14</spring.boot.version>
     <spring.data.cassandra.version>3.4.15</spring.data.cassandra.version>
     <spring.security.version>5.8.5</spring.security.version>
@@ -54,8 +53,8 @@
     <tomcat.version>9.0.81</tomcat.version>
     <slf4j.version>1.7.36</slf4j.version>
     <xmlsec.version>2.3.0</xmlsec.version>
-<mcf.version>2.27</mcf.version>
-<mcf.sha512>ecb8e22bf42cfb90f5011f660f104cb8b36a9e341085d0fd27169535d6ca25df6c450a184fa437e923bd1b5a7c8b86e99d49f1052bb8c2479b0a7521ea287d63</mcf.sha512>
+<mcf.version>2.28</mcf.version>
+<mcf.sha512>780a7988ed0ddba8c5e0c97267f767f851e0c170799009b6f6f1e5f4e5c0895fe16a01e5aafd8866e2ca7c35317f7a15c6d93351d05500d123fc1f81c983ba51</mcf.sha512>
 <zookeeper.version>3.9.2</zookeeper.version>
  <zookeeper.sha512>2b5ae02d618a27ca8cd54924855d5344263b7d9dee760181f9d66bafa9230324d2ad31786895f0654c969dc38d4a3d0077f74cc376b58b5fa2fb94beb1ab445f</zookeeper.sha512>
   </properties>

@@ -59,7 +59,7 @@ public class ElasticsearchUpdateProcessorFactory extends UpdateRequestProcessorF
   @Override
   public void init(@SuppressWarnings("rawtypes") final NamedList args) {
     if (args != null) {
-      final SolrParams params = SolrParams.toSolrParams(args);
+      final SolrParams params = args.toSolrParams();
       this.elasticsearchHost = params.get(ELASTICSEARCH_HOST, ELASTICSEARCH_HOST_DEFAULT);
       this.elasticsearchPort = params.get(ELASTICSEARCH_PORT, ELASTICSEARCH_PORT_DEFAULT);
       this.elasticsearchIndex = params.get(ELASTICSEARCH_INDEX, ELASTICSEARCH_INDEX_DEFAULT);
