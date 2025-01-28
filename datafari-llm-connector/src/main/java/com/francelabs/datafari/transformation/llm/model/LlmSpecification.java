@@ -25,6 +25,9 @@ public class LlmSpecification {
     String llm = "";
     String embeddingsModel = "";
     int maxTokens = 500;
+    int maxChunkSizeInTokens = 12000; // TODO : Make it configurable
+    int maxChunkSizeInChar = 18000; // TODO : Make it configurable
+    int maxIteration = 10; // The number of chunks processed // TODO : Make it configurable
     String typeOfLlm = "";
     List<String> categories = new ArrayList<>();
 
@@ -156,6 +159,30 @@ public class LlmSpecification {
 
     public void setMaxTokens(int maxTokens) {
         this.maxTokens = maxTokens;
+    }
+
+    public int getMaxChunkSizeInChar() {
+        return maxChunkSizeInChar;
+    }
+
+    public void setMaxChunkSizeInChar(int maxChunkSizeInChar) {
+        this.maxChunkSizeInChar = maxChunkSizeInChar;
+    }
+
+    public int getMaxIteration() {
+        return maxIteration;
+    }
+
+    public void setMaxIteration(int maxIteration) {
+        this.maxIteration = maxIteration;
+    }
+
+    public int getMaxChunkSizeInTokens() {
+        return maxChunkSizeInTokens;
+    }
+
+    public void setMaxChunkSizeInTokens(int maxChunkSizeInTokens) {
+        this.maxChunkSizeInTokens = maxChunkSizeInTokens;
     }
 
     public List<String> getCategories() {

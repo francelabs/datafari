@@ -22,9 +22,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
+import com.francelabs.datafari.transformation.llm.services.ILlmService;
 import com.francelabs.datafari.transformation.llm.services.LlmService;
 import com.francelabs.datafari.transformation.llm.services.OpenAiLlmService;
 import com.francelabs.datafari.transformation.llm.model.LlmSpecification;
+import com.francelabs.datafari.transformation.llm.utils.ChunkUtils;
+import dev.langchain4j.data.document.Document;
+import dev.langchain4j.data.segment.TextSegment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.manifoldcf.agents.interfaces.IOutputAddActivity;
@@ -346,7 +350,9 @@ public class Llm extends BaseTransformationConnector {
           Logging.ingest.error("Unable to browse document " + documentURI, e);
       }
 
+      // TODO : Handle chunking
       String content = contentBuilder.toString();
+      List<TextSegment> chunks = ChunkUtils.chunkRepositoryDocument(content, document, spec);
 
       if (content.length() > 20000) {
         content = content.substring(0, 20000);
@@ -366,13 +372,14 @@ public class Llm extends BaseTransformationConnector {
       // SUMMARIZE DOCUMENTS
       if (spec.getEnableSummarize()) {
         try {
-          String summary = service.summarize(content, spec);
+          String summary = service.summarizeRecursively(chunks, spec);
           if (summary.isEmpty()) throw new RuntimeException("Could not generate a summary for document: " + documentURI);
           document.addField("llm_summary", summary);
         } catch (Exception e) {
           LOGGER.warn("Could not generate a summary for document: {}", documentURI);
         }
       }
+
 
       // CATEGORIZE DOCUMENTS
       // Invoice, Call for Tenders, Request for Quotations, Technical paper, Presentation, Resumes, Others
@@ -387,23 +394,6 @@ public class Llm extends BaseTransformationConnector {
           LOGGER.warn("Could not find category for document: {}", documentURI);
         }
       }
-
-
-      // EMBBED DOCUMENTS
-      // Send chunk to LLM for embedding
-      if (spec.getEnableVectorEmbedding()) {
-
-        if (content.length() > 15000) {
-          content = content.substring(0, 15000);
-        }
-        float[] response = service.embeddings(content);
-        String[] strvector = new String[response.length];
-        for (int i = 0; i < response.length; i++ ) {
-          strvector[i] = Float.toString(response[i]);
-        }
-        document.addField("llm_vector", strvector);
-      }
-
 
 
       if (!hasError) activities.recordActivity(startTime, ACTIVITY_LLM, document.getBinaryLength(), documentURI, "OK", "");

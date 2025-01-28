@@ -17,6 +17,7 @@ package com.francelabs.datafari.transformation.llm.utils;
 
 
 import com.francelabs.datafari.transformation.llm.model.LlmSpecification;
+import dev.langchain4j.data.segment.TextSegment;
 
 import java.util.List;
 import java.util.Locale;
@@ -48,6 +49,34 @@ public class PromptUtils {
         }
         prompt = "\"\"\"Summarize this document " + language + ": \n\n" + content + "\"\"\"";
         return prompt;
+    }
+
+    /**
+     * Create a prompt for summarization
+     *
+     * @param segment : The document chunk
+     * @return a prompt ready to be sent to the LLM service
+     */
+    public static String promptForRecursiveSummarization(TextSegment segment, String previousSummary, int index, LlmSpecification spec) {
+        String prompt;
+        String language = "";
+        String documentName = segment.metadata().getString("filename");
+        if (!spec.getSummariesLanguage().isEmpty()) {
+            Locale loc = new Locale(spec.getSummariesLanguage());
+            if (!loc.getDisplayLanguage(new Locale("en")).isEmpty()) language = " in " +loc.getDisplayLanguage(Locale.ENGLISH);
+        }
+        prompt = "Here is the a summary of the document `" + documentName + "` you wrote, based on {parts 1 to [index-1]}:\n\n\"\"\"" + previousSummary + "\"\"\" \n\n";
+        prompt = prompt + "Here is the part " + index + " of the document:\n\n\"\"\"" + segment.text() + "\"\"\" \n\n";
+        prompt = prompt + "Write a global summary " + language + " of the document.";
+        return prompt;
+    }
+
+    String getIndexFork(int index) {
+        if (index == 2) {
+            return "part 1";
+        }
+        int indexMinusOne = index - 1;
+        return "parts 1 to " + indexMinusOne;
     }
 
     /**
