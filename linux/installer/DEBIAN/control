@@ -3,6 +3,6 @@ Version: 6.2-dev
 Section: base
 Priority: optional
 Architecture: all
-Depends: bash,curl,debconf,unzip,sudo,libc6-dev,jq,lsof,apache2,libapache2-mod-jk,iptables,iptables-persistent,zip,iputils-ping,systemd,procps,bc
+Depends: bash,curl,debconf,unzip,sudo,libc6-dev,jq,lsof,apache2,libapache2-mod-jk,zip,iputils-ping,systemd,procps,bc
 Maintainer: France Labs (support@francelabs.com)
 Description: Datafari search solution

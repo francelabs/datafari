@@ -15,26 +15,22 @@
  *******************************************************************************/
 package com.francelabs.datafari.rest.v1_0.search;
 
-import java.io.IOException;
-import java.util.UUID;
+import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
+import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
+import com.francelabs.datafari.utils.userqueryconf.UserQueryAllConf;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONObject;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
-import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
-import com.francelabs.datafari.servlets.GetUserQueryConf;
+import java.io.IOException;
+import java.util.UUID;
 
 @RestController
 public class Search extends HttpServlet {
@@ -54,24 +50,8 @@ public class Search extends HttpServlet {
         request.setAttribute("id", id.toString());
       }
 
-      final String userConf = GetUserQueryConf.getUserQueryConf(request);
-      if (userConf != null && userConf.length() > 0) {
-        final JSONParser parser = new JSONParser();
-        try {
-          final JSONObject jsonConf = (JSONObject) parser.parse(userConf);
-          final String qf = (String) jsonConf.get("qf");
-          final String pf = (String) jsonConf.get("pf");
-          if (qf != null && qf.length() > 0) {
-            request.setAttribute("qf", qf);
-          }
+      UserQueryAllConf.apply(request);
 
-          if (pf != null && pf.length() > 0) {
-            request.setAttribute("pf", pf);
-          }
-        } catch (final ParseException e) {
-          logger.warn("An issue has occured while reading user query conf", e);
-        }
-      }
       final JSONObject jsonResponse = SearchAggregator.doGetSearch(request, response);
       // Check if we get a code, if this is the case, we got an error
       // We will throw an internal error exception with the message if there is one

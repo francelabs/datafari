@@ -73,8 +73,7 @@ RUN     apt-get update && apt-get install --allow-unauthenticated -y \
                 procps \
                 apache2 \
                 libapache2-mod-jk \
-                iptables \
-                iptables-persistent \
+				nftables \
                 systemd \
                 zip \
                 iputils-ping \

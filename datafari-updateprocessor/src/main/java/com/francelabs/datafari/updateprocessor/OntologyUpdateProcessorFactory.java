@@ -75,7 +75,8 @@ public class OntologyUpdateProcessorFactory extends UpdateRequestProcessorFactor
 	@Override
 	public void init(@SuppressWarnings("rawtypes") final NamedList args) {
 		if (args != null) {
-			final SolrParams params = SolrParams.toSolrParams(args);
+
+			final SolrParams params = args.toSolrParams();
 			this.enabled = params.getBool(ENABLED_PARAM, true);
 
 			this.annotationField = params.get(ANNOTATION_FIELD_PARAM);
