@@ -350,13 +350,16 @@ public class Llm extends BaseTransformationConnector {
           Logging.ingest.error("Unable to browse document " + documentURI, e);
       }
 
-      // TODO : Handle chunking
+      // Get content
       String content = contentBuilder.toString();
-      List<TextSegment> chunks = ChunkUtils.chunkRepositoryDocument(content, document, spec);
 
-      if (content.length() > 20000) {
-        content = content.substring(0, 20000);
+      // If content is empty, stop here
+      if (content.isBlank()) {
+        return activities.sendDocument(documentURI, document);
       }
+
+      // Chunking
+      List<TextSegment> chunks = ChunkUtils.chunkRepositoryDocument(content, document, spec);
 
       // Select the proper service depending on the LLM
       LlmService service;
