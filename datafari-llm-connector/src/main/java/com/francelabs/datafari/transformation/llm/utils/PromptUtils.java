@@ -54,24 +54,31 @@ public class PromptUtils {
     /**
      * Create a prompt for summarization
      *
-     * @param segment : The document chunk
+     * @param chunk : The document chunk
      * @return a prompt ready to be sent to the LLM service
      */
-    public static String promptForRecursiveSummarization(TextSegment segment, String previousSummary, int index, LlmSpecification spec) {
+    public static String promptForRecursiveSummarization(TextSegment chunk, String previousSummary, int index, LlmSpecification spec) {
         String prompt;
         String language = "";
-        String documentName = segment.metadata().getString("filename");
+        String fileName = chunk.metadata().getString("filename");
         if (!spec.getSummariesLanguage().isEmpty()) {
             Locale loc = new Locale(spec.getSummariesLanguage());
             if (!loc.getDisplayLanguage(new Locale("en")).isEmpty()) language = " in " +loc.getDisplayLanguage(Locale.ENGLISH);
         }
-        prompt = "Here is the a summary of the document `" + documentName + "` you wrote, based on {parts 1 to [index-1]}:\n\n\"\"\"" + previousSummary + "\"\"\" \n\n";
-        prompt = prompt + "Here is the part " + index + " of the document:\n\n\"\"\"" + segment.text() + "\"\"\" \n\n";
-        prompt = prompt + "Write a global summary " + language + " of the document.";
-        return prompt;
+        prompt = "Here is the a summary of the document `{fileName}` you wrote, based on {indexFork}:\n\n\"\"\"{previousSummary}\"\"\" \n\n"
+                + "Here is the part {index} of the document:\n\n\"\"\"{content}\"\"\" \n\n"
+                + "Write a global summary {language} of the document.";
+        return prompt
+                .replace("{fileName}", fileName)
+                .replace("{indexFork}", getIndexFork(index))
+                .replace("{previousSummary}", previousSummary)
+                .replace("{index}", String.valueOf(index))
+                .replace("{content}", chunk.text())
+                .replace("{language}", language)
+        ;
     }
 
-    String getIndexFork(int index) {
+    static String getIndexFork(int index) {
         if (index == 2) {
             return "part 1";
         }
@@ -82,18 +89,21 @@ public class PromptUtils {
     /**
      * Create a prompt for summarization
      *
-     * @param content : The document content
+     * @param chunk : The first chunk of the document
      * @return a prompt ready to be sent to the LLM service
      */
-    public static String promptForCategorization(String content, LlmSpecification spec) {
+    public static String promptForCategorization(TextSegment chunk, LlmSpecification spec) {
         String prompt;
         List<String> categories = spec.getCategories();
         StringBuilder sbCategories = new StringBuilder();
         for (String cat : categories) sbCategories.append(cat).append(", ");
         sbCategories.append("Others");
 
-        prompt = "\"\"\"Categorize the following document in one (or more) of the following categories: {categories}. If you don't know, say \"Others\". \n\n" + truncate(content, 30000) + "\"\"\"";
-        return prompt.replace("{categories}", sbCategories.toString());
+        prompt = "Categorize the following document titled `{filename}` in one (or more) of the following categories: {categories}. If you don't know, say \"Others\". \n\n\"\"\"{content}\"\"\""
+                .replace("{categories}", sbCategories.toString())
+                .replace("{filename}", chunk.metadata().getString("filename"))
+                .replace("{content}", truncate(chunk.text(), spec.getMaxChunkSizeInChar()));
+        return prompt;
     }
 
     static String truncate(String text, int length) {

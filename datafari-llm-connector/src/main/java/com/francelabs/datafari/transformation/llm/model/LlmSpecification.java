@@ -25,9 +25,9 @@ public class LlmSpecification {
     String llm = "";
     String embeddingsModel = "";
     int maxTokens = 500;
-    int maxChunkSizeInTokens = 10000; // TODO : Make it configurable
-    int maxChunkSizeInChar = 15000; // TODO : Make it configurable
-    int maxIteration = 5; // The number of chunks processed // TODO : Make it configurable
+    int maxChunkSizeInTokens = 10000;
+    int maxChunkSizeInChar = 12000;
+    int maxIterations = 0; // The max number of chunks processed by document
     String typeOfLlm = "";
     List<String> categories = new ArrayList<>();
 
@@ -69,6 +69,12 @@ public class LlmSpecification {
                 this.embeddingsModel = cn.getValue();
             } else if (cn.getAttributeValue("name").equals(LlmConfig.NODE_LLM_SERVICE)) {
                 this.typeOfLlm = cn.getValue();
+            } else if (cn.getAttributeValue("name").equals(LlmConfig.NODE_MAX_CHUNK_SIZE_IN_CHAR)) {
+                this.maxChunkSizeInChar = Integer.parseInt(cn.getValue());
+            } else if (cn.getAttributeValue("name").equals(LlmConfig.NODE_MAX_CHUNK_SIZE_IN_TOKENS)) {
+                this.maxChunkSizeInTokens = Integer.parseInt(cn.getValue());
+            } else if (cn.getAttributeValue("name").equals(LlmConfig.NODE_MAX_ITERATIONS)) {
+                this.maxIterations = Integer.parseInt(cn.getValue());
             }
         }
     }
@@ -169,12 +175,12 @@ public class LlmSpecification {
         this.maxChunkSizeInChar = maxChunkSizeInChar;
     }
 
-    public int getMaxIteration() {
-        return maxIteration;
+    public int getMaxIterations() {
+        return maxIterations;
     }
 
-    public void setMaxIteration(int maxIteration) {
-        this.maxIteration = maxIteration;
+    public void setMaxIterations(int maxIterations) {
+        this.maxIterations = maxIterations;
     }
 
     public int getMaxChunkSizeInTokens() {

@@ -74,7 +74,7 @@ public abstract class LlmService {
         if (chunks.size() > 1) {
             // For each chunk, we create a new summary based on the chunk content and the previous summary.
             for (int i = 1; i < chunks.size(); i++) {
-                if (spec.getMaxIteration() <= i && spec.getMaxIteration() != 0) break;
+                if (spec.getMaxIterations() <= i && spec.getMaxIterations() != 0) break;
                 TextSegment segment = chunks.get(i);
                 String prompt = PromptUtils.promptForRecursiveSummarization(segment, lastSummary, i, spec);
                 LOGGER.debug("Processing segment {}", index);
@@ -82,15 +82,14 @@ public abstract class LlmService {
             }
         }
 
-        // TODO : Chunking strategy
         return lastSummary;
     }
 
     /**
      * Categorize a document into available categories
      */
-    public String categorize(String content, LlmSpecification spec) throws IOException {
-        String prompt = PromptUtils.promptForCategorization(content, spec);
+    public String categorize(TextSegment chunk, LlmSpecification spec) throws IOException {
+        String prompt = PromptUtils.promptForCategorization(chunk, spec);
         // TODO : Chunking strategy
         return invoke(prompt).trim();
     }

@@ -43,7 +43,7 @@ public class ChunkUtils {
 
 	public static List<TextSegment> chunkString(String text, LlmSpecification spec) {
         Tokenizer tokenizer = new OpenAiTokenizer();
-        int maxChunkSizeInTokens = spec.getMaxChunkSizeInChar();
+        int maxChunkSizeInTokens = spec.getMaxChunkSizeInTokens();
         DocumentSplitter splitter = new DocumentByParagraphSplitter(maxChunkSizeInTokens, 10, tokenizer);
         Document document = new Document(text);
         List<TextSegment> segments = splitter.split(document);
@@ -52,7 +52,7 @@ public class ChunkUtils {
 
     public static List<TextSegment> chunkRepositoryDocument(String content, RepositoryDocument repoDoc, LlmSpecification spec) {
         Tokenizer tokenizer = new OpenAiTokenizer();
-        int maxChunkSizeInTokens = spec.getMaxChunkSizeInChar();
+        int maxChunkSizeInTokens = spec.getMaxChunkSizeInTokens();
         DocumentSplitter splitter = new DocumentByParagraphSplitter(maxChunkSizeInTokens, 10, tokenizer);
         Metadata metadata = new Metadata().put("filename", repoDoc.getFileName());
         Document document = new Document(content, metadata);

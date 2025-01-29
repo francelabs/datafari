@@ -8,6 +8,9 @@ public class LlmConfig {
   public static final String NODE_EMBEDDINGS_MODEL = "llmNodeEmbeddingsModel";
   public static final String NODE_APIKEY = "llmNodeApiKey";
   public static final String NODE_VECTOR_DIMENSION = "llmNodeVectorDimension";
+  public static final String NODE_MAX_CHUNK_SIZE_IN_CHAR = "llmNodeMaxChunkSizeInChar";
+  public static final String NODE_MAX_CHUNK_SIZE_IN_TOKENS = "llmNodeMaxChunkSizeInTokens";
+  public static final String NODE_MAX_ITERATIONS = "llmNodeMaxIterationsForSummarization";
 
   // Specification nodes and values
   public static final String NODE_LLM_SERVICE = "llmService";

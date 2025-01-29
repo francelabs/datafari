@@ -185,8 +185,14 @@ public class Llm extends BaseTransformationConnector {
     if (variableContext.getParameter("llmApiKey") != null) {
       parameters.setParameter(LlmConfig.NODE_APIKEY, variableContext.getParameter("llmApiKey"));
     }
-    if (variableContext.getParameter("dimensions") != null) {
-      parameters.setParameter(LlmConfig.NODE_VECTOR_DIMENSION, variableContext.getParameter("dimensions"));
+    if (variableContext.getParameter("maxChunkSizeInTokens") != null) {
+      parameters.setParameter(LlmConfig.NODE_MAX_CHUNK_SIZE_IN_TOKENS, variableContext.getParameter("maxChunkSizeInTokens"));
+    }
+    if (variableContext.getParameter("maxChunkSizeInChar") != null) {
+      parameters.setParameter(LlmConfig.NODE_MAX_CHUNK_SIZE_IN_CHAR, variableContext.getParameter("maxChunkSizeInChar"));
+    }
+    if (variableContext.getParameter("maxIterations") != null) {
+      parameters.setParameter(LlmConfig.NODE_MAX_ITERATIONS, variableContext.getParameter("maxIterations"));
     }
 
     return null;
@@ -216,6 +222,9 @@ public class Llm extends BaseTransformationConnector {
     String embeddingsModelToUse = (parameters.getParameter(LlmConfig.NODE_EMBEDDINGS_MODEL) != null) ? parameters.getParameter(LlmConfig.NODE_EMBEDDINGS_MODEL) : "";
     String llmApiKey = (parameters.getParameter(LlmConfig.NODE_APIKEY) != null) ? parameters.getParameter(LlmConfig.NODE_APIKEY) : "";
     String dimensions = (parameters.getParameter(LlmConfig.NODE_VECTOR_DIMENSION) != null) ? parameters.getParameter(LlmConfig.NODE_VECTOR_DIMENSION) : "250";
+    String maxIterations = (parameters.getParameter(LlmConfig.NODE_MAX_ITERATIONS) != null) ? parameters.getParameter(LlmConfig.NODE_MAX_ITERATIONS) : "0";
+    String maxChunkSizeInTokens = (parameters.getParameter(LlmConfig.NODE_MAX_CHUNK_SIZE_IN_TOKENS) != null) ? parameters.getParameter(LlmConfig.NODE_MAX_CHUNK_SIZE_IN_TOKENS) : "10000";
+    String maxChunkSizeInChar = (parameters.getParameter(LlmConfig.NODE_MAX_CHUNK_SIZE_IN_CHAR) != null) ? parameters.getParameter(LlmConfig.NODE_MAX_CHUNK_SIZE_IN_CHAR) : "15000";
 
 
     // Fill in context
@@ -225,6 +234,9 @@ public class Llm extends BaseTransformationConnector {
     velocityContext.put("LLM", llmToUse);
     velocityContext.put("APIKEY", llmApiKey);
     velocityContext.put("DIMENSIONS", dimensions);
+    velocityContext.put("MAXITERATIONS", maxIterations);
+    velocityContext.put("MAXCHUNKSIZEINCHAR", maxChunkSizeInChar);
+    velocityContext.put("MAXCHUNKSIZEINTOKENS", maxChunkSizeInTokens);
   }
 
   /**
@@ -367,6 +379,7 @@ public class Llm extends BaseTransformationConnector {
       switch (spec.getTypeOfLlm()) {
         case "datafari":
           service = new DatafariAiAgentLlmService(spec);
+          break;
         case "openai":
         default:
           service = new OpenAiLlmService(spec);
@@ -379,7 +392,7 @@ public class Llm extends BaseTransformationConnector {
 
 
       // CATEGORIZE DOCUMENTS
-      categorize(documentURI, document, activities, spec, service, content, startTime);
+      categorize(documentURI, document, activities, spec, service, chunks, startTime);
 
 
       if (!hasError) activities.recordActivity(startTime, ACTIVITY_LLM, document.getBinaryLength(), documentURI, "OK", "");
@@ -392,12 +405,12 @@ public class Llm extends BaseTransformationConnector {
 
   }
 
-  private void categorize(String documentURI, RepositoryDocument document, IOutputAddActivity activities, LlmSpecification spec, LlmService service, String content, long startTime) throws ManifoldCFException {
+  private void categorize(String documentURI, RepositoryDocument document, IOutputAddActivity activities, LlmSpecification spec, LlmService service, List<TextSegment> chunks, long startTime) throws ManifoldCFException {
     // Invoice, Call for Tenders, Request for Quotations, Technical paper, Presentation, Resumes, Others
     if (spec.getEnableCategorize() && !spec.getCategories().isEmpty()) {
       try {
         List<String> allowedCategories = spec.getCategories();
-        String llmResponse = service.categorize(content, spec);
+        String llmResponse = service.categorize(chunks.get(0), spec);
         List<String> docCategories = extractCategories(llmResponse, allowedCategories);
         if (docCategories.isEmpty()) throw new RuntimeException("Could not generate a summary for document: " + documentURI);
         document.addField("llm_categories", docCategories.toArray(new String[0]));
