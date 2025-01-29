@@ -1,18 +1,14 @@
 package com.francelabs.datafari.transformation.llm.services;
 
 import com.francelabs.datafari.transformation.llm.model.LlmSpecification;
-import com.francelabs.datafari.transformation.llm.utils.PromptUtils;
 import dev.ai4j.openai4j.OpenAiHttpException;
-import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
-import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
-import dev.langchain4j.model.output.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.time.Duration;
 
 public class OpenAiLlmService extends LlmService implements ILlmService {
 
@@ -46,8 +42,9 @@ public class OpenAiLlmService extends LlmService implements ILlmService {
                 .modelName(spec.getLlm())
                 .baseUrl(spec.getLlmEndpoint())
                 .maxRetries(3)
+                .timeout(Duration.ofSeconds(1200))
                 .build();
-        String response = "";
+        String response;
 
         // TODO : Delay between attempts. See https://github.com/langchain4j/langchain4j/issues/814
 

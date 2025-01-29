@@ -25,9 +25,9 @@ public class LlmSpecification {
     String llm = "";
     String embeddingsModel = "";
     int maxTokens = 500;
-    int maxChunkSizeInTokens = 12000; // TODO : Make it configurable
-    int maxChunkSizeInChar = 18000; // TODO : Make it configurable
-    int maxIteration = 10; // The number of chunks processed // TODO : Make it configurable
+    int maxChunkSizeInTokens = 10000; // TODO : Make it configurable
+    int maxChunkSizeInChar = 15000; // TODO : Make it configurable
+    int maxIteration = 5; // The number of chunks processed // TODO : Make it configurable
     String typeOfLlm = "";
     List<String> categories = new ArrayList<>();
 

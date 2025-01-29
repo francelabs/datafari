@@ -60,7 +60,7 @@ public abstract class LlmService {
      */
     public String summarize(String content, LlmSpecification spec) throws IOException {
         String prompt = PromptUtils.promptForSummarization(content, spec);
-        return invoke(prompt);
+        return invoke(prompt).trim();
     }
 
     /**
@@ -74,11 +74,11 @@ public abstract class LlmService {
         if (chunks.size() > 1) {
             // For each chunk, we create a new summary based on the chunk content and the previous summary.
             for (int i = 1; i < chunks.size(); i++) {
-                // TODO : Check "spec.maxIteration" and break the loop if needed
+                if (spec.getMaxIteration() <= i && spec.getMaxIteration() != 0) break;
                 TextSegment segment = chunks.get(i);
                 String prompt = PromptUtils.promptForRecursiveSummarization(segment, lastSummary, i, spec);
                 LOGGER.debug("Processing segment {}", index);
-                lastSummary = invoke(prompt);
+                lastSummary = invoke(prompt).trim();
             }
         }
 
@@ -92,6 +92,6 @@ public abstract class LlmService {
     public String categorize(String content, LlmSpecification spec) throws IOException {
         String prompt = PromptUtils.promptForCategorization(content, spec);
         // TODO : Chunking strategy
-        return invoke(prompt);
+        return invoke(prompt).trim();
     }
 }

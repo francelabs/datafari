@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
+import com.francelabs.datafari.transformation.llm.services.DatafariAiAgentLlmService;
 import com.francelabs.datafari.transformation.llm.services.ILlmService;
 import com.francelabs.datafari.transformation.llm.services.LlmService;
 import com.francelabs.datafari.transformation.llm.services.OpenAiLlmService;
@@ -364,8 +365,9 @@ public class Llm extends BaseTransformationConnector {
       // Select the proper service depending on the LLM
       LlmService service;
       switch (spec.getTypeOfLlm()) {
-        case "openai":
         case "datafari":
+          service = new DatafariAiAgentLlmService(spec);
+        case "openai":
         default:
           service = new OpenAiLlmService(spec);
           break;
@@ -373,30 +375,11 @@ public class Llm extends BaseTransformationConnector {
 
 
       // SUMMARIZE DOCUMENTS
-      if (spec.getEnableSummarize()) {
-        try {
-          String summary = service.summarizeRecursively(chunks, spec);
-          if (summary.isEmpty()) throw new RuntimeException("Could not generate a summary for document: " + documentURI);
-          document.addField("llm_summary", summary);
-        } catch (Exception e) {
-          LOGGER.warn("Could not generate a summary for document: {}", documentURI);
-        }
-      }
+      summarize(documentURI, document, activities, spec, service, chunks, startTime);
 
 
       // CATEGORIZE DOCUMENTS
-      // Invoice, Call for Tenders, Request for Quotations, Technical paper, Presentation, Resumes, Others
-      if (spec.getEnableCategorize() && !spec.getCategories().isEmpty()) {
-        try {
-          List<String> allowedCategories = spec.getCategories();
-          String llmResponse = service.categorize(content, spec);
-          List<String> docCategories = extractCategories(llmResponse, allowedCategories);
-          if (docCategories.isEmpty()) throw new RuntimeException("Could not generate a summary for document: " + documentURI);
-          document.addField("llm_categories", docCategories.toArray(new String[0]));
-        } catch (Exception e) {
-          LOGGER.warn("Could not find category for document: {}", documentURI);
-        }
-      }
+      categorize(documentURI, document, activities, spec, service, content, startTime);
 
 
       if (!hasError) activities.recordActivity(startTime, ACTIVITY_LLM, document.getBinaryLength(), documentURI, "OK", "");
@@ -407,6 +390,35 @@ public class Llm extends BaseTransformationConnector {
       storage.close();
     }
 
+  }
+
+  private void categorize(String documentURI, RepositoryDocument document, IOutputAddActivity activities, LlmSpecification spec, LlmService service, String content, long startTime) throws ManifoldCFException {
+    // Invoice, Call for Tenders, Request for Quotations, Technical paper, Presentation, Resumes, Others
+    if (spec.getEnableCategorize() && !spec.getCategories().isEmpty()) {
+      try {
+        List<String> allowedCategories = spec.getCategories();
+        String llmResponse = service.categorize(content, spec);
+        List<String> docCategories = extractCategories(llmResponse, allowedCategories);
+        if (docCategories.isEmpty()) throw new RuntimeException("Could not generate a summary for document: " + documentURI);
+        document.addField("llm_categories", docCategories.toArray(new String[0]));
+      } catch (Exception e) {
+        activities.recordActivity(startTime, ACTIVITY_LLM, document.getBinaryLength(), documentURI, "WARNING", "Document could not be categorized");
+        LOGGER.warn("Could not find category for document: {}", documentURI);
+      }
+    }
+  }
+
+  private static void summarize(String documentURI, RepositoryDocument document, IOutputAddActivity activities, LlmSpecification spec, LlmService service, List<TextSegment> chunks, long startTime) throws ManifoldCFException {
+    if (spec.getEnableSummarize()) {
+      try {
+        String summary = service.summarizeRecursively(chunks, spec);
+        if (summary.isEmpty()) throw new RuntimeException("Could not generate a summary for document: " + documentURI);
+        document.addField("llm_summary", summary);
+      } catch (Exception e) {
+        activities.recordActivity(startTime, ACTIVITY_LLM, document.getBinaryLength(), documentURI, "WARNING", "Document could not be summarized");
+        LOGGER.warn("Could not generate a summary for document: {}", documentURI);
+      }
+    }
   }
 
   /**

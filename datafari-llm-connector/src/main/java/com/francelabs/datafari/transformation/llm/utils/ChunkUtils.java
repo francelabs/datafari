@@ -27,7 +27,6 @@ import dev.langchain4j.model.openai.OpenAiTokenizer;
 import org.apache.manifoldcf.agents.interfaces.RepositoryDocument;
 
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Prompt Utility class for RAG
@@ -45,7 +44,7 @@ public class ChunkUtils {
 	public static List<TextSegment> chunkString(String text, LlmSpecification spec) {
         Tokenizer tokenizer = new OpenAiTokenizer();
         int maxChunkSizeInTokens = spec.getMaxChunkSizeInChar();
-        DocumentSplitter splitter = new DocumentByParagraphSplitter(maxChunkSizeInTokens, 50, tokenizer);
+        DocumentSplitter splitter = new DocumentByParagraphSplitter(maxChunkSizeInTokens, 10, tokenizer);
         Document document = new Document(text);
         List<TextSegment> segments = splitter.split(document);
         return segments;
@@ -54,7 +53,7 @@ public class ChunkUtils {
     public static List<TextSegment> chunkRepositoryDocument(String content, RepositoryDocument repoDoc, LlmSpecification spec) {
         Tokenizer tokenizer = new OpenAiTokenizer();
         int maxChunkSizeInTokens = spec.getMaxChunkSizeInChar();
-        DocumentSplitter splitter = new DocumentByParagraphSplitter(maxChunkSizeInTokens, 50, tokenizer);
+        DocumentSplitter splitter = new DocumentByParagraphSplitter(maxChunkSizeInTokens, 10, tokenizer);
         Metadata metadata = new Metadata().put("filename", repoDoc.getFileName());
         Document document = new Document(content, metadata);
         List<TextSegment> segments = splitter.split(document);
