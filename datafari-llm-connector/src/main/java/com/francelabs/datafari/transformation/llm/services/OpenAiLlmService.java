@@ -53,7 +53,7 @@ public class OpenAiLlmService extends LlmService implements ILlmService {
         } catch (OpenAiHttpException exception) {
             LOGGER.error(exception);
             LOGGER.error("EBE - REQUEST FAILED");
-            LOGGER.warn("Waiting 2 seconds before trying again.");
+            LOGGER.warn("Waiting 1 second before trying again.");
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {

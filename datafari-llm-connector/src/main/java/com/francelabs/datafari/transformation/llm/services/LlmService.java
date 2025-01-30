@@ -58,8 +58,8 @@ public abstract class LlmService {
     /**
      * Generate a summary from a document
      */
-    public String summarize(String content, LlmSpecification spec) throws IOException {
-        String prompt = PromptUtils.promptForSummarization(content, spec);
+    public String summarize(TextSegment chunk, LlmSpecification spec) throws IOException {
+        String prompt = PromptUtils.promptForSummarization(chunk, spec);
         return invoke(prompt).trim();
     }
 
@@ -67,7 +67,7 @@ public abstract class LlmService {
      * Generate a summary from a document
      */
     public String summarizeRecursively(List<TextSegment> chunks, LlmSpecification spec) throws IOException {
-        String lastSummary = summarize(chunks.get(0).text(), spec);
+        String lastSummary = summarize(chunks.get(0), spec);
 
         int index = 1;
 

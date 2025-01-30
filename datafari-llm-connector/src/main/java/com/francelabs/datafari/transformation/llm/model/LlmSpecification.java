@@ -15,7 +15,7 @@ import java.util.Objects;
  */
 public class LlmSpecification {
 
-    String summariesLanguage = "en_US";
+    String summariesLanguage = "en";
     boolean enableSummarize = false;
     boolean enableCategorize = false;
     boolean enableVectorEmbedding = false;

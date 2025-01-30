@@ -37,17 +37,20 @@ public class PromptUtils {
     /**
      * Create a prompt for summarization
      *
-     * @param content : The document content
+     * @param chunk : The document content
      * @return a prompt ready to be sent to the LLM service
      */
-    public static String promptForSummarization(String content, LlmSpecification spec) {
+    public static String promptForSummarization(TextSegment chunk, LlmSpecification spec) {
         String prompt;
         String language = "";
         if (!spec.getSummariesLanguage().isEmpty()) {
             Locale loc = new Locale(spec.getSummariesLanguage());
             if (!loc.getDisplayLanguage(new Locale("en")).isEmpty()) language = " in " +loc.getDisplayLanguage(Locale.ENGLISH);
         }
-        prompt = "\"\"\"Summarize this document " + language + ": \n\n" + content + "\"\"\"";
+        prompt = "Summarize this document titled `{fileName}`{language}: \n\n\"\"\"{content}\"\"\""
+                .replace("{fileName}", chunk.metadata().getString("filename"))
+                .replace("{content}", chunk.text())
+                .replace("{language}", language);
         return prompt;
     }
 
@@ -107,7 +110,7 @@ public class PromptUtils {
     }
 
     static String truncate(String text, int length) {
-        if (text.length() <= length) {
+        if (text.length() <= length && length > 0) {
             return text;
         } else {
             return text.substring(0, length);
