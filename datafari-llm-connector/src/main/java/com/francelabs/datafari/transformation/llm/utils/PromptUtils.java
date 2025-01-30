@@ -75,18 +75,17 @@ public class PromptUtils {
                 .replace("{fileName}", fileName)
                 .replace("{indexFork}", getIndexFork(index))
                 .replace("{previousSummary}", previousSummary)
-                .replace("{index}", String.valueOf(index))
+                .replace("{index}", String.valueOf(index+1))
                 .replace("{content}", chunk.text())
                 .replace("{language}", language)
         ;
     }
 
     static String getIndexFork(int index) {
-        if (index == 2) {
+        if (index == 1) {
             return "part 1";
         }
-        int indexMinusOne = index - 1;
-        return "parts 1 to " + indexMinusOne;
+        return "parts 1 to " + index;
     }
 
     /**

@@ -69,16 +69,22 @@ public abstract class LlmService {
     public String summarizeRecursively(List<TextSegment> chunks, LlmSpecification spec) throws IOException {
         String lastSummary = summarize(chunks.get(0), spec);
 
-        int index = 1;
+        int maxIterations = spec.getMaxIterations();
 
         if (chunks.size() > 1) {
             // For each chunk, we create a new summary based on the chunk content and the previous summary.
-            for (int i = 1; i < chunks.size(); i++) {
-                if (spec.getMaxIterations() <= i && spec.getMaxIterations() != 0) break;
+            // The index should not exceed maxIterations
+            for (int i = 1; i < chunks.size() && (maxIterations > i || maxIterations == 0); i++) {
                 TextSegment segment = chunks.get(i);
                 String prompt = PromptUtils.promptForRecursiveSummarization(segment, lastSummary, i, spec);
-                LOGGER.debug("Processing segment {}", index);
-                lastSummary = invoke(prompt).trim();
+                LOGGER.debug("Processing segment {}", i+1);
+                String response = invoke(prompt).trim();
+                if (response.isEmpty()) {
+                    lastSummary = response;
+                } else {
+                    break;
+                }
+
             }
         }
 

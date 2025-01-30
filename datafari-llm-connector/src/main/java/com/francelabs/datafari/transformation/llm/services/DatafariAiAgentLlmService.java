@@ -19,6 +19,11 @@ public class DatafariAiAgentLlmService extends OpenAiLlmService implements ILlmS
     public DatafariAiAgentLlmService(LlmSpecification spec) {
         super(spec);
 
+        // API key in not always required for Datafari AI Agent
+        // However, it must not be empty for the OpenAiChatModel
+        if (spec.getLlm().isEmpty()) spec.setApiKey("xxx");
+
+        // Remove the default models inherited from OpenAiLlmService
         if (spec.getLlm().isEmpty()) spec.setLlm(DEFAULT_LLM_MODEL);
         if (spec.getEmbeddingsModel().isEmpty()) spec.setEmbeddingsModel(DEFAULT_EMBEDDINGS_MODEL);
         if (spec.getLlmEndpoint().isEmpty()) spec.setLlmEndpoint(DEFAULT_URL);

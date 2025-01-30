@@ -46,8 +46,7 @@ public class ChunkUtils {
         int maxChunkSizeInTokens = spec.getMaxChunkSizeInTokens();
         DocumentSplitter splitter = new DocumentByParagraphSplitter(maxChunkSizeInTokens, 10, tokenizer);
         Document document = new Document(text);
-        List<TextSegment> segments = splitter.split(document);
-        return segments;
+        return splitter.split(document);
     }
 
     public static List<TextSegment> chunkRepositoryDocument(String content, RepositoryDocument repoDoc, LlmSpecification spec) {
@@ -56,7 +55,6 @@ public class ChunkUtils {
         DocumentSplitter splitter = new DocumentByParagraphSplitter(maxChunkSizeInTokens, 10, tokenizer);
         Metadata metadata = new Metadata().put("filename", repoDoc.getFileName());
         Document document = new Document(content, metadata);
-        List<TextSegment> segments = splitter.split(document);
-        return segments;
+        return splitter.split(document);
     }
 }
