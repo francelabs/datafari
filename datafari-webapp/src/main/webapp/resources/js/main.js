@@ -2,18 +2,18 @@ $(function($) {
 
   /*
    * Absolute path instead of js/Ajax.. from the root of the context, to be able to be used for: - search.jsp (context in /Datafari) - and
-   * login.jsp (context in /Datafari/admin)
+   * login.jsp (context in /@WEBAPPNAME@/admin)
    */
-  window.i18n.setLanguageUrl('/Datafari/resources/js/AjaxFranceLabs/locale/');
-  window.i18n.setCustomLanguageUrl('/Datafari/resources/customs/i18n/');
+  window.i18n.setLanguageUrl('/@WEBAPPNAME@/resources/js/AjaxFranceLabs/locale/');
+  window.i18n.setCustomLanguageUrl('/@WEBAPPNAME@/resources/customs/i18n/');
 
   window.i18n.setupLanguage('Datafari home page');
 
   // Force user preferred language if available and not corresponding to the
   // current one
-  $.get('/Datafari/applyLang?lang=' + window.i18n.language, function(data) {
+  $.get('/@WEBAPPNAME@/applyLang?lang=' + window.i18n.language, function(data) {
     if (data.code == 0 && data.lang != window.i18n.language) {
-      window.location.replace("/Datafari/applyLang?urlRedirect=" + encodeURIComponent(window.location.href));
+      window.location.replace("/@WEBAPPNAME@/applyLang?urlRedirect=" + encodeURIComponent(window.location.href));
     }
   }, "json");
 
@@ -24,8 +24,8 @@ $(function($) {
   }
 
   Manager = new AjaxFranceLabs.Manager({
-    serverUrl : '/Datafari/SearchAggregator/',
-    // serverUrl : '/Datafari/SearchProxy/',
+    serverUrl : '/@WEBAPPNAME@/SearchAggregator/',
+    // serverUrl : '/@WEBAPPNAME@/SearchProxy/',
     constellio : false,
     connectionInfo : {
       autocomplete : {
