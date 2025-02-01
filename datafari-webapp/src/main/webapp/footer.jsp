@@ -6,6 +6,6 @@
 <footer  class="bar-footer" id="footer-bar"> 
    <img id="footer-logo" class="datafari-logo" src="<c:url value="/resources/images/empty-pixel.png" />">
    <a  id="footer-link" href="mailto:support@francelabs.com" class="link"> Datafari @VERSION@ &copy; Copyright France Labs</a>
-   <a id="gdpr-link" href="/Datafari/privacypolicy" class="link">privacy policy</a>
+   <a id="gdpr-link" href="/@WEBAPPNAME@/privacypolicy" class="link">privacy policy</a>
    <div id="warning-message"></div>
 </footer>

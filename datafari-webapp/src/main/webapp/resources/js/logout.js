@@ -7,10 +7,10 @@ function logout() {
 
   if (window.i18n.language !== null && window.i18n.language !== undefined) {
     window.open(mcfUrl, "_self");
-    window.open("/Datafari/logout?lang=" + window.i18n.language, "_self");
+    window.open("/@WEBAPPNAME@/logout?lang=" + window.i18n.language, "_self");
   } else {
     window.open(mcfUrl, "_self");
-    window.open("/Datafari/logout", "_self");
+    window.open("/@WEBAPPNAME@/logout", "_self");
   }
 
 }
