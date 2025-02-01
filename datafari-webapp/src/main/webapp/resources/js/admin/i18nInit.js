@@ -1,7 +1,7 @@
 $(function($) {
 
-  window.i18n.setLanguageUrl('/@WEBAPPNAME@/resources/js/AjaxFranceLabs/locale/');
-  window.i18n.setCustomLanguageUrl('/@WEBAPPNAME@/resources/customs/i18n/');
+  window.i18n.setLanguageUrl('/Datafari/resources/js/AjaxFranceLabs/locale/');
+  window.i18n.setCustomLanguageUrl('/Datafari/resources/customs/i18n/');
 
   window.i18n.setupLanguage('Datafari admin home page');
 

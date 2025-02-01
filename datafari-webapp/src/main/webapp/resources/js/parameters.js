@@ -81,7 +81,7 @@ function createSavedSearchContent() {
               "<table id='searchesTable' class='table table-striped table-bordered'><thead><tr><th>" + window.i18n.msgStore['search'] + "</th><th>" + window.i18n.msgStore['link'] + "</th><th>"
                   + window.i18n.msgStore['delete'] + "</th></tr></thead><tbody></tbody></table>");
           $.each(data.searchesList, function(name, search) {
-            var line = $('<tr class="tr">' + '<td>' + name + '</td>' + '<td><a href="/@WEBAPPNAME@/Search?lang=' + window.i18n.language + '&request=' + encodeURIComponent(search) + '">'
+            var line = $('<tr class="tr">' + '<td>' + name + '</td>' + '<td><a href="/Datafari/Search?lang=' + window.i18n.language + '&request=' + encodeURIComponent(search) + '">'
                 + window.i18n.msgStore['exec-search'] + '</a></td>' + "<td><a class='delete-button'>x</a></td>" + '</tr>');
             line.data("id", search);
             line.data("name", name);

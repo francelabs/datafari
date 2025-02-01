@@ -8,7 +8,7 @@
   </head>
   <body>
     <div class="header">
-      <a href="/@WEBAPPNAME@"><img src="<c:url value="/resources/images/datafari_small_text_logo.png" />"></a>
+      <a href="/Datafari"><img src="<c:url value="/resources/images/datafari_small_text_logo.png" />"></a>
     </div>  
     <img class="sammy" src="<c:url value="/resources/images/errors/Datafari_000_Backrground_Picture.jpg" />"></img>
     <div class="waves"></div>

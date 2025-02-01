@@ -29,7 +29,7 @@ src="<c:url value="/resources/js/AjaxFranceLabs/widgets/LoginDatafariForm.widget
     <nav class="navbar navbar-expand-md navbar-light bg-light">
       <div id="container-viewport-switch" class="container-fluid">
         <div id="logo_desktop" class="navbar-brand">
-            <a href="/@WEBAPPNAME@/Search"><img class="datafari-mini-logo" src="<c:url value="/resources/images/empty-pixel.png" />"></a>
+            <a href="/Datafari/Search"><img class="datafari-mini-logo" src="<c:url value="/resources/images/empty-pixel.png" />"></a>
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#header-menu" aria-controls="header-menu" aria-expanded="false" aria-label="Toggle navigation">
 	        <span class="navbar-toggler-icon"></span>
@@ -114,7 +114,7 @@ src="<c:url value="/resources/js/AjaxFranceLabs/widgets/LoginDatafariForm.widget
             <%
             }
             %>
-            <li class="nav-item"><a id="helpLink" class="nav-link" href="/@WEBAPPNAME@/help">Help</a></li>
+            <li class="nav-item"><a id="helpLink" class="nav-link" href="/Datafari/help">Help</a></li>
           </ul>
         </div>
       </div>

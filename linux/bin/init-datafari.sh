@@ -190,24 +190,6 @@ init_temp_directory() {
   sed -i -e "s~@CASSANDRATMPDIR@~${CASSANDRATMPDIR}~g" $DATAFARI_HOME/cassandra/conf/jvm-server.options >>$installerLog 2>&1
 }
 
-init_webapp_name() {
-  sed -i -e "s/@WEBAPPNAME@/${1}/g" $TOMCAT_HOME/webapps/Datafari/WEB-INF/view/400.jsp >>$installerLog 2>&1
-  sed -i -e "s/@WEBAPPNAME@/${1}/g" $TOMCAT_HOME/webapps/Datafari/WEB-INF/view/401.jsp >>$installerLog 2>&1
-  sed -i -e "s/@WEBAPPNAME@/${1}/g" $TOMCAT_HOME/webapps/Datafari/WEB-INF/view/403.jsp >>$installerLog 2>&1
-  sed -i -e "s/@WEBAPPNAME@/${1}/g" $TOMCAT_HOME/webapps/Datafari/WEB-INF/view/404.jsp >>$installerLog 2>&1
-  sed -i -e "s/@WEBAPPNAME@/${1}/g" $TOMCAT_HOME/webapps/Datafari/WEB-INF/view/503.jsp >>$installerLog 2>&1
-  sed -i -e "s/@WEBAPPNAME@/${1}/g" $TOMCAT_HOME/webapps/Datafari/WEB-INF/view/504.jsp >>$installerLog 2>&1
-  sed -i -e "s/@WEBAPPNAME@/${1}/g" $TOMCAT_HOME/webapps/Datafari/WEB-INF/view/default-error.jsp >>$installerLog 2>&1
-  sed -i -e "s/@WEBAPPNAME@/${1}/g" $TOMCAT_HOME/webapps/Datafari/footer.jsp >>$installerLog 2>&1
-  sed -i -e "s/@WEBAPPNAME@/${1}/g" $TOMCAT_HOME/webapps/Datafari/header.jsp >>$installerLog 2>&1
-  sed -i -e "s/@WEBAPPNAME@/${1}/g" $TOMCAT_HOME/webapps/Datafari/resources/js/admin/i18nInit.js >>$installerLog 2>&1
-  sed -i -e "s/@WEBAPPNAME@/${1}/g" $TOMCAT_HOME/webapps/Datafari/resources/js/header.js >>$installerLog 2>&1
-  sed -i -e "s/@WEBAPPNAME@/${1}/g" $TOMCAT_HOME/webapps/Datafari/resources/js/help.js >>$installerLog 2>&1
-  sed -i -e "s/@WEBAPPNAME@/${1}/g" $TOMCAT_HOME/webapps/Datafari/resources/js/logout.js >>$installerLog 2>&1
-  sed -i -e "s/@WEBAPPNAME@/${1}/g" $TOMCAT_HOME/webapps/Datafari/resources/js/main.js >>$installerLog 2>&1
-  sed -i -e "s/@WEBAPPNAME@/${1}/g" $TOMCAT_HOME/webapps/Datafari/resources/js/parameters.js >>$installerLog 2>&1
-}
-
 
 
 generate_certificates() {
@@ -877,7 +859,6 @@ initialization_monoserver() {
   init_shards $SOLRNUMSHARDS
   init_main_node
   init_solrcloud
-  init_webapp_name "Datafari"
   clean_monoserver_node
   init_password $TEMPADMINPASSWORD
   init_password_postgresql $TEMPPGSQLPASSWORD
