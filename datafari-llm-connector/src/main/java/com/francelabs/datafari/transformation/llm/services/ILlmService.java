@@ -1,5 +1,7 @@
 package com.francelabs.datafari.transformation.llm.services;
 
+import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
+
 import java.io.IOException;
 
 /**
@@ -12,6 +14,6 @@ public interface ILlmService {
      * @param content The document content
      * @return The string LLM response
      */
-    String invoke(String content) throws IOException;
+    String invoke(String content) throws ManifoldCFException;
 
 }

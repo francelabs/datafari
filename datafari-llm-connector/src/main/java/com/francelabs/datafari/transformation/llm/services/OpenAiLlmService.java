@@ -6,6 +6,7 @@ import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -33,7 +34,7 @@ public class OpenAiLlmService extends LlmService implements ILlmService {
      * @return The string LLM response
      */
     @Override
-    public String invoke(String prompt) throws IOException {
+    public String invoke(String prompt) throws ManifoldCFException {
 
         ChatLanguageModel llm = OpenAiChatModel.builder()
                 .apiKey(spec.getApiKey())
@@ -44,25 +45,41 @@ public class OpenAiLlmService extends LlmService implements ILlmService {
                 .maxRetries(3)
                 .timeout(Duration.ofSeconds(1200))
                 .build();
-        String response;
+        String response = "";
 
-        // TODO : Delay between attempts. See https://github.com/langchain4j/langchain4j/issues/814
 
         try {
             response = llm.generate(prompt);
-        } catch (OpenAiHttpException exception) {
-            LOGGER.error(exception);
-            LOGGER.error("EBE - REQUEST FAILED");
-            LOGGER.warn("Waiting 1 second before trying again.");
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                LOGGER.error("EBE - COULDN'T SLEEP.");
-                throw new RuntimeException(e);
+
+            // Wait for a few ms after the request to avoid exceeding rate limit
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (OpenAiHttpException e) {
+            Thread.currentThread().interrupt();
+            LOGGER.error("An error occurred while calling LLM AI request.", e);
+
+            if (isErrorFatal(e)) {
+                throw new ManifoldCFException(e);
             }
-            LOGGER.error("EBE - ATTEMPTING AGAIN");
-            return llm.generate(prompt);
+
+            // Retrying after 2 seconds...
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException ex2) {
+                Thread.currentThread().interrupt();
+            }
+
+            response = llm.generate(prompt);
         }
         return response;
+    }
+
+    private boolean isErrorFatal(Exception e) {
+        String errormessage = e.getMessage();
+
+        // TODO : Look for blocking errors (like missing token, unknown model...)
+        return errormessage.contains("Invalid Authentication")
+                || errormessage.contains("Incorrect API key provided");
     }
 }

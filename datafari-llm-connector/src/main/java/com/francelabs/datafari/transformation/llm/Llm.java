@@ -407,29 +407,39 @@ public class Llm extends BaseTransformationConnector {
 
   private void categorize(String documentURI, RepositoryDocument document, IOutputAddActivity activities, LlmSpecification spec, LlmService service, List<TextSegment> chunks, long startTime) throws ManifoldCFException {
     // Invoice, Call for Tenders, Request for Quotations, Technical paper, Presentation, Resumes, Others
-    if (spec.getEnableCategorize() && !spec.getCategories().isEmpty()) {
+    if (spec.getEnableCategorize() && !spec.getCategories().isEmpty() && !chunks.isEmpty()) {
       try {
         List<String> allowedCategories = spec.getCategories();
         String llmResponse = service.categorize(chunks.get(0), spec);
         List<String> docCategories = extractCategories(llmResponse, allowedCategories);
-        if (docCategories.isEmpty()) throw new RuntimeException("Could not generate a summary for document: " + documentURI);
+        if (docCategories.isEmpty()) throw new RuntimeException("Could not find categories for document: " + documentURI);
         document.addField("llm_categories", docCategories.toArray(new String[0]));
+      } catch (ManifoldCFException e) {
+        // If the error is a ManifoldCFException, the job should stop
+        LOGGER.warn("Fatal error while processing {}: {}", documentURI, e.getLocalizedMessage());
+        activities.recordActivity(startTime, ACTIVITY_LLM, document.getBinaryLength(), documentURI, "ERROR", e.getLocalizedMessage());
+        throw new ManifoldCFException("Error in LLM Connector.", e);
       } catch (Exception e) {
+        LOGGER.warn("Error while processing {}: {}", documentURI, e.getLocalizedMessage());
         activities.recordActivity(startTime, ACTIVITY_LLM, document.getBinaryLength(), documentURI, "WARNING", "Document could not be categorized");
-        LOGGER.warn("Could not find category for document: {}", documentURI);
       }
     }
   }
 
   private static void summarize(String documentURI, RepositoryDocument document, IOutputAddActivity activities, LlmSpecification spec, LlmService service, List<TextSegment> chunks, long startTime) throws ManifoldCFException {
-    if (spec.getEnableSummarize()) {
+    if (spec.getEnableSummarize() && !chunks.isEmpty()) {
       try {
         String summary = service.summarizeRecursively(chunks, spec);
-        if (summary.isEmpty()) throw new RuntimeException("Could not generate a summary for document: " + documentURI);
+        if (summary.isEmpty()) throw new IOException("Could not generate a summary for document: " + documentURI);
         document.addField("llm_summary", summary);
+      } catch (ManifoldCFException e) {
+          // If the error is a ManifoldCFException, the job should stop
+          activities.recordActivity(startTime, ACTIVITY_LLM, document.getBinaryLength(), documentURI, "ERROR", e.getLocalizedMessage());
+          throw new ManifoldCFException("Error in LLM Connector.", e);
       } catch (Exception e) {
-        activities.recordActivity(startTime, ACTIVITY_LLM, document.getBinaryLength(), documentURI, "WARNING", "Document could not be summarized");
-        LOGGER.warn("Could not generate a summary for document: {}", documentURI);
+          LOGGER.warn("Error while processing {}:", documentURI, e);
+          activities.recordActivity(startTime, ACTIVITY_LLM, document.getBinaryLength(), documentURI, "WARNING", "Document could not be summarized");
+          LOGGER.warn("Could not generate a summary for document {}", documentURI);
       }
     }
   }
@@ -627,7 +637,7 @@ public class Llm extends BaseTransformationConnector {
     String enableSummarize = "false";
     String enableCategorize = "false";
     String enableEmbeddings = "false";
-    int maxTokens = 400;
+    int maxTokens = 500;
     String summariesLanguage = "";
 
     // Default categories : Invoice, Call for Tenders, Request for Quotations, Technical paper, Presentation, Resumes

@@ -3,6 +3,7 @@ package com.francelabs.datafari.transformation.llm.services;
 import com.francelabs.datafari.transformation.llm.model.LlmSpecification;
 import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.segment.TextSegment;
+import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;
@@ -14,7 +15,7 @@ class OpenAiLlmServiceTest {
     }
 
     @org.junit.jupiter.api.Test
-    void summarize() throws IOException {
+    void summarize() throws ManifoldCFException {
 
         LlmSpecification spec = new LlmSpecification();
         spec.setEnableVectorEmbedding(true);
