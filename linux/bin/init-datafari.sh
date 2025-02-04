@@ -430,9 +430,15 @@ init_apache_ssl() {
   getMCFSimplified=""
   getSolrAdmin=""
   apachePresent="true"
-  getMCFAdmin="\"/datafari-mcf-crawler-ui/\""
-  getMCF="\"/datafari-mcf-crawler-ui/\""
-  getMCFSimplified="\"/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp\""
+  if [ "$NODETYPE" == "mcf" ]; then
+    getMCFAdmin="\"/connectorsmcf"${currentMCFNumber}"/\""
+    getMCF="\"/connectorsmcf"${currentMCFNumber}"/\""
+    getMCFSimplified="\"/connectorsmcf"${currentMCFNumber}"/index.jsp?p=showjobstatus.jsp\""
+  else
+    getMCFAdmin="\"/datafari-mcf-crawler-ui/\""
+    getMCF="\"/datafari-mcf-crawler-ui/\""
+    getMCFSimplified="\"/datafari-mcf-crawler-ui/index.jsp?p=showjobstatus.jsp\""
+  fi
   getSolrAdmin="\"/solr/\""
   getMonitAdmin="\"/monit/\""
   getGlancesAdmin="\"/glances/\""
