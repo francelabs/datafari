@@ -870,6 +870,15 @@
        if the 'wt' parameter is not explicit
     -->
   <requestHandler class="solr.UpdateRequestHandler" name="/update">
+	  <lst name="defaults">
+		  <str name="lowernames">true</str>
+		  <str name="fmap.language">ignored_</str>
+		  <str name="fmap.source">ignored_</str>
+		  <str name="fmap.version">ignored_</str>
+		  <str name="fmap._version_">ignored_</str>
+		  <str name="uprefix">ignored_</str>
+		  <str name="update.chain">datafari</str>
+	  </lst>
   </requestHandler>
 
   <requestHandler class="com.francelabs.datafari.handler.parsed.ParsedRequestHandler" name="/update/no-tika" startup="lazy">
@@ -1285,13 +1294,18 @@
   
     @DATAFARI-UP-CHAIN@
       
-      <!-- ////////////////////////// -->
-      <!-- Includes additional updateProcessors -->
-      &custom_update_processors;
-      
-      <processor class="solr.LogUpdateProcessorFactory"/>
-      <processor class="solr.DistributedUpdateProcessorFactory"/>
-      <processor class="solr.RunUpdateProcessorFactory"/>
+		<!-- ////////////////////////// -->
+		<!-- Includes additional updateProcessors -->
+		&custom_update_processors;
+
+		<processor class="solr.llm.texttovector.update.processor.TextToVectorUpdateProcessorFactory">
+			<str name="inputField">content</str>
+			<str name="outputField">${texttovector.outputfield:vector_1536}</str>
+			<str name="model">${texttovector.model:default_model}</str>
+		</processor>
+      	<processor class="solr.LogUpdateProcessorFactory"/>
+      	<processor class="solr.DistributedUpdateProcessorFactory"/>
+      	<processor class="solr.RunUpdateProcessorFactory"/>
   
 	</updateRequestProcessorChain>
 	

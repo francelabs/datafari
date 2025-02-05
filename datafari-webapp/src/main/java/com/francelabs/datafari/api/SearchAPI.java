@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import com.francelabs.datafari.rag.RagConfiguration;
 import com.francelabs.datafari.utils.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -84,8 +85,23 @@ public class SearchAPI {
     }
 
     String collection;
-    if (parameterMap.get("vector") != null && "true".equals(parameterMap.get("vector")[0])) {
+    if ("/vector".equals(handler)) {
       collection = "VectorMain";
+
+      RagConfiguration ragConfiguration = RagConfiguration.getInstance();
+      parameterMap.put("q", new String[]{});
+      if (!parameterMap.containsKey("topK")) {
+        String[] topK = new String[] { ragConfiguration.getProperty(RagConfiguration.SOLR_TOPK, "10") };
+        parameterMap.put("topK", topK);
+      }
+      if (!parameterMap.containsKey("model")) {
+        String[] model = new String[] { ragConfiguration.getProperty(RagConfiguration.SOLR_EMBEDDINGS_MODEL, "default_model") };
+        parameterMap.put("model", model);
+      }
+      if (!parameterMap.containsKey("vectorField")) {
+        String[] vectorField = new String[] { ragConfiguration.getProperty(RagConfiguration.SOLR_VECTOR_FIELD, "vector_1536") };
+        parameterMap.put("vectorField", vectorField);
+      }
     } else {
       collection = Core.FILESHARE.toString();
     }

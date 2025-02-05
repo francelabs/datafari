@@ -306,19 +306,19 @@ public class RagAPI extends SearchAPI {
 
     // Add Solr vectorizer tag in the query, overwrite q param
     if (config.getBooleanProperty(RagConfiguration.SOLR_ENABLE_VECTOR_SEARCH)) {
-      final String[] enabled = { "true" };
-      parameterMap.put("vector", enabled);
+
       handler = "/vector";
 
-      String[] model = {config.getProperty(RagConfiguration.SOLR_EMBEDDINGS_MODEL, "default-model")};
+      String[] queryrag = { userQuery };
+      parameterMap.put("queryrag", queryrag);
+
+// TODO : remove knn params, since they can be added in SearchAPI
+/*      String[] model = {config.getProperty(RagConfiguration.SOLR_EMBEDDINGS_MODEL, "default_model")};
       String[] topK = {config.getProperty(RagConfiguration.SOLR_TOPK, "5")};
       String[] vectorField = {config.getProperty(RagConfiguration.SOLR_VECTOR_FIELD)};
-      String[] queryrag = { userQuery };
-
-      parameterMap.put("queryrag", queryrag);
       parameterMap.put("model", model);
       parameterMap.put("topK", topK);
-      parameterMap.put("vectorField", vectorField);
+      parameterMap.put("vectorField", vectorField);*/
     }
 
     return search(protocol, handler, request.getUserPrincipal(), parameterMap);

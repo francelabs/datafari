@@ -76,12 +76,6 @@
         <str name="fields">content,content_en,content_fr</str>
         <str name="signatureClass">solr.processor.MD5Signature</str>
       </processor>
-      
-      <processor class="com.francelabs.datafari.updateprocessor.VectorUpdateProcessorFactory">
-          <str name="host">${vector.host:localhost\:2181}</str>
-          <str name="collection">${vector.collection:VectorMain}</str>
-          <bool name="enabled">${vector.enabled:false}</bool>
-      </processor>
 
       <processor class="com.francelabs.datafari.updateprocessor.DatafariUpdateProcessorFactory">
         <bool name="entities.extract.simple">${entity.extract:false}</bool>
@@ -94,6 +88,12 @@
         <bool name="hierarchical.path.processing">true</bool>
         <str name="hierarchical.field">urlHierarchy</str>
         <str name="hierarchical.path.separator">/</str>
+      </processor>
+
+      <processor class="com.francelabs.datafari.updateprocessor.VectorUpdateProcessorFactory">
+          <str name="host">${vector.host:localhost\:2181}</str>
+          <str name="collection">${vector.collection:VectorMain}</str>
+          <bool name="enabled">${vector.enabled:false}</bool>
       </processor>
 
       <processor class="com.francelabs.datafari.updateprocessor.RegexEntityUpdateProcessorFactory">

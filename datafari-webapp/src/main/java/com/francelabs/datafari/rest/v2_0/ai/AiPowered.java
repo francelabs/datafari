@@ -30,7 +30,7 @@ public class AiPowered {
     private static final String QUERY_FIELD = "query";
     private static final String STATUS_FIELD = "status";
 
-    @PostMapping("/rest/v2.0/ai/summarize")
+    @PostMapping(value = "/rest/v2.0/ai/summarize", produces = "application/json;charset=UTF-8")
     public String summarizeDocument(final HttpServletRequest request, @RequestBody JSONObject jsonDoc) {
 
         String id;
@@ -91,7 +91,7 @@ public class AiPowered {
         }
     }
 
-    @PostMapping("/rest/v2.0/ai/rag")
+    @PostMapping(value = "/rest/v2.0/ai/rag", produces = "application/json;charset=UTF-8")
     public String rag(final HttpServletRequest request, @RequestBody JSONObject jsonDoc) {
 
         String query; // The user request
@@ -203,7 +203,7 @@ public class AiPowered {
         request.addParameter("q", "id:" + id);
         request.addParameter("hl", "false");
         request.addParameter("fl", "id,title,exactContent,url,llm_summary");
-        request.setPathInfo("/select");
+        request.setPathInfo("/select"); // TODO : vector search for chunking ?
 
         return SearchAggregator.doGetSearch(request, null);
     }
