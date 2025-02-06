@@ -70,10 +70,7 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
       if (content != null && !content.isEmpty()) {
 
         // Chunking
-        Tokenizer tokenizer = new OpenAiTokenizer();
-        DocumentSplitter splitter = new DocumentByParagraphSplitter(CHUNK_SIZE, MAX_OVERLAP_SIZE, tokenizer);
-        Document document = new Document(content);
-        List<TextSegment> chunks = splitter.split(document);
+        List<TextSegment> chunks = chunkDocument(content);
 
         List<SolrInputDocument> batchDocs = new ArrayList<>();
 
@@ -100,8 +97,7 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
               vectorDocument.addField("exactContent", chunk.text());
               vectorDocument.addField("embedded_content", chunk.text());
 
-              // Todo : Check if usefull
-  /*            // URL
+              // URL
               String url;
               if (parentDoc.containsKey("url")) {
                 url = (String) parentDoc.getFieldValue("url");
@@ -109,7 +105,7 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
               } else {
                 url = (String) parentDoc.getFieldValue("id");
                 vectorDocument.addField("url", url);
-              }*/
+              }
 
               batchDocs.add(vectorDocument);
             }
@@ -133,19 +129,17 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
     }
   }
 
+  private static List<TextSegment> chunkDocument(String content) {
+    Tokenizer tokenizer = new OpenAiTokenizer();
+    DocumentSplitter splitter = new DocumentByParagraphSplitter(CHUNK_SIZE, MAX_OVERLAP_SIZE, tokenizer);
+    Document document = new Document(content);
+    return splitter.split(document);
+  }
+
   private static String extractContent(SolrInputDocument parentDoc) {
     String content = "";
     if (parentDoc.get("exactContent") != null) {
       content = (String) parentDoc.get("exactContent").getFirstValue();
-    } else {
-      LOGGER.warn("EBE - exactContent not found !"); // TODO : check if needed
-      final SolrInputField contentFieldFr = parentDoc.get("content_fr");
-      final SolrInputField contentFieldEn = parentDoc.get("content_en");
-      if (contentFieldFr != null) {
-        content = (String) contentFieldFr.getFirstValue();
-      } else if (contentFieldEn != null) {
-        content = (String) contentFieldEn.getFirstValue();
-      }
     }
     return content;
   }

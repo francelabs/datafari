@@ -75,7 +75,8 @@ public class SearchAPI {
     }
 
     // The query must not exceed 4000 characters
-    if (parameterMap.get("q") != null && parameterMap.get("q")[0].length() > querySizeLimit) {
+    if (parameterMap.get("q") != null && parameterMap.get("q").length > 0
+            && parameterMap.get("q")[0].length() > querySizeLimit) {
       final JSONObject error = new JSONObject();
       error.put("code", 413);
       error.put("message", "The query is too long");
@@ -89,7 +90,7 @@ public class SearchAPI {
       collection = "VectorMain";
 
       RagConfiguration ragConfiguration = RagConfiguration.getInstance();
-      parameterMap.put("q", new String[]{});
+      parameterMap.put("q", new String[]{ "" });
       if (!parameterMap.containsKey("topK")) {
         String[] topK = new String[] { ragConfiguration.getProperty(RagConfiguration.SOLR_TOPK, "10") };
         parameterMap.put("topK", topK);

@@ -117,7 +117,7 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     }
     if (doc.getFieldValue("ignored_meta_character_count") != null) {
       doc.getFieldValues("ignored_meta_character_count").forEach(value -> {
-        doc.addField("character_count", value);
+        doc.setField("character_count", value);
       });
     }
     if (doc.getFieldValue("ignored_meta_keyword") != null) {

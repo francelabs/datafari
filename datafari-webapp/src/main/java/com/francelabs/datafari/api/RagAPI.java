@@ -311,14 +311,6 @@ public class RagAPI extends SearchAPI {
 
       String[] queryrag = { userQuery };
       parameterMap.put("queryrag", queryrag);
-
-// TODO : remove knn params, since they can be added in SearchAPI
-/*      String[] model = {config.getProperty(RagConfiguration.SOLR_EMBEDDINGS_MODEL, "default_model")};
-      String[] topK = {config.getProperty(RagConfiguration.SOLR_TOPK, "5")};
-      String[] vectorField = {config.getProperty(RagConfiguration.SOLR_VECTOR_FIELD)};
-      parameterMap.put("model", model);
-      parameterMap.put("topK", topK);
-      parameterMap.put("vectorField", vectorField);*/
     }
 
     return search(protocol, handler, request.getUserPrincipal(), parameterMap);

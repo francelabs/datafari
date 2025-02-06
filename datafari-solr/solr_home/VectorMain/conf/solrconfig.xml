@@ -1299,7 +1299,7 @@
 		&custom_update_processors;
 
 		<processor class="solr.llm.texttovector.update.processor.TextToVectorUpdateProcessorFactory">
-			<str name="inputField">content</str>
+			<str name="inputField">embedded_content</str>
 			<str name="outputField">${texttovector.outputfield:vector_1536}</str>
 			<str name="model">${texttovector.model:default_model}</str>
 		</processor>
