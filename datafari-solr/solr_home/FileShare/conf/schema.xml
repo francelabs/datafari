@@ -370,6 +370,18 @@
     <field name="llm_categories" type="string" indexed="true" stored="true" multiValued="true"/>
     <field name="llm_summary" type="string" indexed="true" stored="true"/>
 
+    <!-- Vector fields for vector search -->
+    <field name="embedded_content" type="text_general" indexed="false" stored="true" multiValued="false"/>
+    <field name="vector_4" type="knn_vector_4" indexed="true" stored="true"/>
+    <field name="vector_256" type="knn_vector_256" indexed="true" stored="true"/>
+    <field name="vector_384" type="knn_vector_384" indexed="true" stored="true"/>
+    <field name="vector_512" type="knn_vector_512" indexed="true" stored="true"/>
+    <field name="vector_768" type="knn_vector_768" indexed="true" stored="true"/>
+    <field name="vector_1024" type="knn_vector_1024" indexed="true" stored="true"/>
+    <field name="vector_1536" type="knn_vector_1536" indexed="true" stored="true"/>
+    <field name="vector_3072" type="knn_vector_3072" indexed="true" stored="true"/>
+    <field name="vector_4096" type="knn_vector_4096" indexed="true" stored="true"/>
+
     <dynamicField name="ignored_*" type="ignored" multiValued="true"/>
     <dynamicField name="ontology_*" type="string" multiValued="true"/>
 
@@ -912,6 +924,17 @@
       </analyzer>
     </fieldType>
 
+
+      <!-- Vector fields for vector search -->
+      <fieldType name="knn_vector_4" class="solr.DenseVectorField" vectorDimension="4" similarityFunction="cosine"/>
+      <fieldType name="knn_vector_256" class="solr.DenseVectorField" vectorDimension="256" similarityFunction="cosine"/>
+      <fieldType name="knn_vector_384" class="solr.DenseVectorField" vectorDimension="384" similarityFunction="cosine"/>
+      <fieldType name="knn_vector_512" class="solr.DenseVectorField" vectorDimension="512" similarityFunction="cosine"/>
+      <fieldType name="knn_vector_768" class="solr.DenseVectorField" vectorDimension="768" similarityFunction="cosine"/>
+      <fieldType name="knn_vector_1024" class="solr.DenseVectorField" vectorDimension="1024" similarityFunction="cosine"/>
+      <fieldType name="knn_vector_1536" class="solr.DenseVectorField" vectorDimension="1536" similarityFunction="cosine"/>
+      <fieldType name="knn_vector_3072" class="solr.DenseVectorField" vectorDimension="3072" similarityFunction="cosine"/>
+      <fieldType name="knn_vector_4096" class="solr.DenseVectorField" vectorDimension="4096" similarityFunction="cosine"/>
 
 
  </types>
