@@ -226,6 +226,7 @@ generate_certificates_apache() {
   $JAVA_HOME/bin/keytool -importcert -noprompt -alias digicertglobalrootg2 -file $DATAFARI_HOME/ssl-keystore/rootCertificates/DigiCertGlobalRootG2.crt -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
   $JAVA_HOME/bin/keytool -importcert -noprompt -alias digicertglobalrootg3 -file $DATAFARI_HOME/ssl-keystore/rootCertificates/DigiCertGlobalRootG3.crt -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
   $JAVA_HOME/bin/keytool -importcert -noprompt -alias entrustg2ca -file $DATAFARI_HOME/ssl-keystore/rootCertificates/entrust_g2_ca.cer -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
+  $JAVA_HOME/bin/keytool -importcert -noprompt -alias openai -file $DATAFARI_HOME/ssl-keystore/rootCertificates/openai.pem -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
   
   mkdir -p $DATAFARI_HOME/ssl-keystore/apache/backup/
   cp $DATAFARI_HOME/ssl-keystore/apache/datafari.key $DATAFARI_HOME/ssl-keystore/apache/backup/

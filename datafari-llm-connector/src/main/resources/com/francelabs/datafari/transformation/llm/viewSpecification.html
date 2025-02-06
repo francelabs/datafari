@@ -1,0 +1,87 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+
+<table class="displaytable">
+  <tr><td class="separator" colspan="2"><hr/></td></tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('llm.EnableSummarize'))</nobr></td>
+    <td class="value">
+      #if($ENABLESUMMARIZE)
+        <nobr><input type="checkbox" disabled checked /></nobr>
+      #end
+    </td>
+  </tr>
+
+  #if($ENABLESUMMARIZE)
+    <tr>
+      <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('llm.SummariesLanguage'))</nobr></td>
+      <td class="value"><nobr>$Encoder.bodyEscape($SUMMARIESLANGUAGE)</nobr></td>
+    </tr>
+  #end
+
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('llm.EnableCategorize'))</nobr></td>
+    <td class="value">
+      #if($ENABLECATEGORIZE)
+      <nobr><input type="checkbox" disabled checked /></nobr>
+      #end
+    </td>
+  </tr>
+
+  #if($ENABLECATEGORIZE)
+    <tr>
+      <td class="description">$Encoder.bodyEscape($ResourceBundle.getString('llm.categories'))</td>
+      <td class="boxcell">
+        <table class="formtable">
+
+          #set($categorycounter = 0)
+          #foreach($category in $CATEGORIES)
+          #if(($categorycounter % 2) == 0)
+          <tr class="evenformrow">
+            #else
+          <tr class="oddformrow">
+            #end
+            <td class="formcolumncell">
+              <nobr>$Encoder.bodyEscape($category)</nobr>
+            </td>
+          </tr>
+          #set($categorycounter = $categorycounter + 1)
+          #end
+
+          #if($categorycounter == 0)
+          <tr class="formrow"><td class="formmessage" colspan="3">$Encoder.bodyEscape($ResourceBundle.getString('llm.noCategorySpecified'))</td></tr>
+          #end
+        </table>
+      </td>
+    </tr>
+  #end
+
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('llm.EnableEmbeddings'))</nobr></td>
+    <td class="value">
+      #if($ENABLEEMBEDDINGS)
+      <nobr><input type="checkbox" disabled checked /></nobr>
+      #end
+    </td>
+  </tr>
+  <tr><td class="separator" colspan="2"><hr/></td></tr>
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('llm.MaxTokens'))</nobr></td>
+    <td class="value"><nobr>$Encoder.bodyEscape($MAXTOKENS)</nobr></td>
+  </tr>
+</table>

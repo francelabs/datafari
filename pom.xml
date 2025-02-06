@@ -88,6 +88,7 @@
     <module>datafari-adminui</module>
     <module>datafari-git-plugin</module>
     <module>datafari-regex-entity-connector</module>
+    <module>datafari-llm-connector</module>
     <module>datafari-active-directory-connector</module>
     <module>datafari-solr-atomic-update</module>
     <module>datafari-confluence-v6-connector</module>
