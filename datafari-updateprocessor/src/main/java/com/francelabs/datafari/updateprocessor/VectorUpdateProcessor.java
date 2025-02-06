@@ -60,9 +60,7 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
     if (enabled) {
       final SolrInputDocument parentDoc = cmd.getSolrInputDocument();
 
-      // Todo : retrieve exactContent ! content_* fields are stemmed, and should not be used here.
       String parentId = (String) parentDoc.get("id").getValue();
-
       String content = extractContent(parentDoc);
 
       deleteExistingChildren(parentId);
@@ -80,7 +78,7 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
             // Sub-document creation
             if (chunk.text() != null) {
 
-              SolrInputDocument vectorDocument = parentDoc.deepCopy(); // Todo : create new object instead of DeepCopy
+              SolrInputDocument vectorDocument = parentDoc.deepCopy();
 
               String id = parentId + "_" + chunks.indexOf(chunk);
               vectorDocument.removeField("id");
