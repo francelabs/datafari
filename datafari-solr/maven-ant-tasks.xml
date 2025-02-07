@@ -27,6 +27,7 @@
 				<include name="conf/**" />
 				<include name="server/**" />
 				<include name="solr_home/**" />
+                                <include name="modules/**" />
 			</fileset>
 		</copy>
 
