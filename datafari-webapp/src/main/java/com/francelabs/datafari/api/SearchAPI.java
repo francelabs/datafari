@@ -90,7 +90,13 @@ public class SearchAPI {
       collection = "VectorMain";
 
       RagConfiguration ragConfiguration = RagConfiguration.getInstance();
-      parameterMap.put("q", new String[]{ "" });
+      if (!parameterMap.containsKey("q")) {
+        // Even if not useful, q must not be empty
+        parameterMap.put("q", new String[]{ "" });
+      } else if (!parameterMap.containsKey("queryrag")) {
+        // If q is present but queryrag is missing, we add it with q value
+        parameterMap.put("queryrag", parameterMap.get("q"));
+      }
       if (!parameterMap.containsKey("topK")) {
         String[] topK = new String[] { ragConfiguration.getProperty(RagConfiguration.SOLR_TOPK, "10") };
         parameterMap.put("topK", topK);
