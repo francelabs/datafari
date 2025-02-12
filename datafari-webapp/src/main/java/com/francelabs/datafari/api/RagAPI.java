@@ -116,7 +116,7 @@ public class RagAPI extends SearchAPI {
     finalPrompts.addAll(contents);
     finalPrompts.add(userPrompt);
 
-    if (PromptUtils.getTotalPromptSize(finalPrompts) > config.getIntegerProperty(RagConfiguration.CHUNK_SIZE) || contents.size() <= 1) {
+    if (PromptUtils.getTotalPromptSize(finalPrompts) < config.getIntegerProperty(RagConfiguration.CHUNK_SIZE) || contents.size() <= 1) {
 
       // Send all Messages at once
       return service.generate(finalPrompts, request);
@@ -198,6 +198,7 @@ public class RagAPI extends SearchAPI {
     // Merge all summaries
     if (summaries.size() > 1) {
       // Merge All Summaries as prompts and add an extra instruction to generate a synthesis
+      LOGGER.debug("Generating a summary for document {}, with {} chunk(s).", doc.metadata().getString("id"), segments.size());
       Message mergeAllSummariesPrompt = PromptUtils.createPromptForMergeAllSummaries(request);
       summaries.add(mergeAllSummariesPrompt);
       return service.generate(summaries, request);
