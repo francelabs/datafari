@@ -25,6 +25,7 @@ public class OpenAiLlmService implements LlmService {
     int maxToken;
     static final String DEFAULT_MODEL = "gpt-3.5-turbo";
     static final String DEFAULT_URL = "https://api.openai.com/v1/";
+    ChatLanguageModel llm;
 
     public OpenAiLlmService(RagConfiguration config) {
         this.url = config.getProperty(RagConfiguration.API_ENDPOINT);
@@ -39,6 +40,7 @@ public class OpenAiLlmService implements LlmService {
         this.url = config.getProperty(RagConfiguration.API_ENDPOINT).isEmpty() ? DEFAULT_URL : config.getProperty(RagConfiguration.API_ENDPOINT);
         this.apiKey = config.getProperty(RagConfiguration.API_TOKEN);
         this.config = config;
+        this.llm = getChatLanguageModel();
     }
 
 
@@ -49,7 +51,12 @@ public class OpenAiLlmService implements LlmService {
      */
     @Override
     public String generate(List<Message> prompts, HttpServletRequest request) throws IOException {
-        ChatLanguageModel llm = getChatLanguageModel();
+        if (this.config.getBooleanProperty(RagConfiguration.ENABLE_LOGS)) {
+            LOGGER.debug("OpenAiLlmService is processing a request with multiple messages.");
+            for (Message prompt : prompts) {
+                LOGGER.debug("{} :\r\n{}", prompt.getRole(), prompt.getContent());
+            }
+        }
         return llm.generate(convertMessageList(prompts)).content().text();
     }
 
@@ -59,7 +66,11 @@ public class OpenAiLlmService implements LlmService {
      * @return A single string response
      */
     public String generate(Message prompt) {
-        ChatLanguageModel llm = getChatLanguageModel();
+
+        if (this.config.getBooleanProperty(RagConfiguration.ENABLE_LOGS)) {
+            LOGGER.debug("OpenAiLlmService is processing a request with a single message.\r\n" +
+                    "{} :\r\n{}", prompt.getRole(), prompt.getContent());
+        }
         return llm.generate(convertMessage(prompt)).content().text();
     }
 

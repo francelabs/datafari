@@ -29,6 +29,7 @@ public class RagAPI extends SearchAPI {
 
   public static JSONObject rag(final HttpServletRequest request, JSONObject searchResults, boolean ragBydocument) throws IOException {
 
+
     // Get RAG specific configuration
     RagConfiguration config = RagConfiguration.getInstance();
 
@@ -43,9 +44,10 @@ public class RagAPI extends SearchAPI {
     // If the search result has not been provided, process a search
     if (searchResults == null) {
       try {
+        LOGGER.debug("RagAPI - No search results provided in the method parameters. Processing a new search using request parameters.");
         searchResults = processSearch(config, request);
       } catch (Exception e) {
-        LOGGER.error("RAG error. An error occurred while retrieving data.", e);
+        LOGGER.error("RagAPI - ERROR. An error occurred while retrieving data.", e);
         return writeJsonError(500, "ragTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.");
       }
     }
@@ -54,26 +56,32 @@ public class RagAPI extends SearchAPI {
     List<Document> initialDocumentsList;
     List<Document> documentsList;
     try {
+      LOGGER.debug("RagAPI - Extracting documents list from search result...");
       initialDocumentsList = extractDocumentsList(searchResults, config);
+      LOGGER.debug("RagAPI - {} documents extracted.", initialDocumentsList.size());
     } catch (FileNotFoundException e) {
-      LOGGER.warn("RAG warning. The query cannot be answered because no associated documents were found.");
+      LOGGER.warn("RagAPI -  WARNING. The query cannot be answered because no associated documents were found.");
       return writeJsonError(428, "ragNoFileFound", "Sorry, I couldn't find any relevant document to answer your request.");
     }
 
 
-    // Vector embedding
+    // Local vector search using a vector storage
     if (config.getBooleanProperty(RagConfiguration.ENABLE_VECTOR_SEARCH)) {
+      LOGGER.debug("RagAPI - Local vector search is enabled.");
       initialDocumentsList = VectorUtils.processVectorSearch(initialDocumentsList, request);
-    } else if (config.getBooleanProperty(RagConfiguration.ENABLE_LOGS)) {
-      LOGGER.info("Vector search was ignored due to configuration");
+      LOGGER.debug("RagAPI - The 'FAISS' vector search returned {} chunk(s).", initialDocumentsList.size());
+    } else {
+      LOGGER.debug("RagAPI - Vector search was ignored due to configuration");
     }
 
     // Chunking
     documentsList = initialDocumentsList;
     if (config.getBooleanProperty(RagConfiguration.ENABLE_CHUNKING)) {
+      LOGGER.debug("RagAPI - Chunking is enabled.");
       documentsList = ChunkUtils.chunkDocuments(initialDocumentsList, config);
-    } else if (config.getBooleanProperty(RagConfiguration.ENABLE_LOGS)) {
-      LOGGER.info("Chunking was ignored due to configuration");
+      LOGGER.debug("RagAPI - The chunking returned {} chunk(s).", documentsList.size());
+    } else {
+      LOGGER.debug("RagAPI - Chunking was ignored due to configuration");
     }
 
     // Prompting : Convert all documents chunks into prompt Messages
@@ -82,7 +90,7 @@ public class RagAPI extends SearchAPI {
     // Process the RAG query using the selected service, the contents list and the user query
     String message = processRagQuery(contents, service, config, request, ragBydocument);
 
-    LOGGER.debug("LLM response: {}", message);
+    LOGGER.debug("RagAPI - LLM response: {}", message);
 
     // Return final message
     if (!message.isEmpty()) {
@@ -104,6 +112,9 @@ public class RagAPI extends SearchAPI {
    */
   public static String processRagQuery(List<Message> contents, LlmService service, RagConfiguration config, HttpServletRequest request, boolean ragBydocument) throws IOException {
 
+    LOGGER.debug("RagAPI - Processing RAG query. {} chunk(s) received.", contents.size());
+    LOGGER.debug("RagAPI - Processing RAG query : q={}.", request.getParameter("q"));
+    if (ragBydocument) LOGGER.debug("RagAPI - RAG by Document ");
 
     // Setup prompt
     Message initialPrompt = PromptUtils.createInitialRagPrompt(config, request, ragBydocument);
@@ -116,12 +127,18 @@ public class RagAPI extends SearchAPI {
     finalPrompts.addAll(contents);
     finalPrompts.add(userPrompt);
 
-    if (PromptUtils.getTotalPromptSize(finalPrompts) < config.getIntegerProperty(RagConfiguration.CHUNK_SIZE) || contents.size() <= 1) {
+    LOGGER.debug("RagAPI - Prompt prepared. The total request size is {} characters. ", PromptUtils.getTotalPromptSize(finalPrompts));
+    LOGGER.debug("RagAPI - Max size allowed for a single request in configuration is {} characters. ", config.getIntegerProperty(RagConfiguration.CHUNK_SIZE));
 
+    if (PromptUtils.getTotalPromptSize(finalPrompts) < config.getIntegerProperty(RagConfiguration.CHUNK_SIZE) || contents.size() <= 1) {
+      LOGGER.debug("The request and the associated content for the RAG query is considered short enough to be processed in a single LLM request.");
       // Send all Messages at once
       return service.generate(finalPrompts, request);
 
     } else {
+
+      LOGGER.debug("The request and the associated content for the RAG query is considered too long" +
+              " to be processed in a single LLM request. Chunked will be processed individually.");
 
       // Send all chunks one by one
       List<Message> prompts;
@@ -167,6 +184,9 @@ public class RagAPI extends SearchAPI {
 
 
   public static String summarize(final HttpServletRequest request, Document doc) throws IOException {
+
+    LOGGER.debug("RagAPI - Summary for document {} requested.", doc.metadata().getString("id"));
+
     // Get RAG configuration
     RagConfiguration config = RagConfiguration.getInstance();
     // Select an LLM service
@@ -174,6 +194,7 @@ public class RagAPI extends SearchAPI {
 
     // Check if summarization is enabled
     if (!config.getBooleanProperty(RagConfiguration.ENABLE_SUMMARIZATION)) {
+      LOGGER.debug("AiPowered - Summarize - Summarization is disabled");
       throw new DisabledException("The summary generation feature is disabled.");
     }
 
@@ -198,14 +219,17 @@ public class RagAPI extends SearchAPI {
     // Merge all summaries
     if (summaries.size() > 1) {
       // Merge All Summaries as prompts and add an extra instruction to generate a synthesis
-      LOGGER.debug("Generating a summary for document {}, with {} chunk(s).", doc.metadata().getString("id"), segments.size());
+      LOGGER.debug("RagAPI - Summarize - Multiple chunk summaries have been generated.");
+      LOGGER.debug("RagAPI - Summarize - Merging summaries for document {}, with {} chunk(s).", doc.metadata().getString("id"), segments.size());
       Message mergeAllSummariesPrompt = PromptUtils.createPromptForMergeAllSummaries(request);
       summaries.add(mergeAllSummariesPrompt);
       return service.generate(summaries, request);
 
     } else if (summaries.size() == 1) {
+      LOGGER.debug("RagAPI - Summarize - One single summary have been generated for document {}.", doc.metadata().getString("id"));
       return summaries.get(0).getContent();
     } else {
+      LOGGER.debug("RagAPI - Summarize - Something happened while processing summarization for document {}. ", doc.metadata().getString("id"));
       throw new IOException("Could not generate any summary for this document");
     }
 
@@ -218,6 +242,12 @@ public class RagAPI extends SearchAPI {
     content.put("message", message);
     content.put("documents", mergeSimilarDocuments(documentsList, message));
     response.put("content", content);
+
+    LOGGER.debug("");
+    LOGGER.debug("##### RAG final JSON response #####");
+    LOGGER.debug(response.toJSONString());
+    LOGGER.debug("");
+
     return response;
   }
 
@@ -232,6 +262,13 @@ public class RagAPI extends SearchAPI {
     content.put("documents", new ArrayList<>());
     content.put("error", error);
     response.put("content", content);
+
+    LOGGER.debug("RagAPI - ERROR. An error occurred while processing the query.");
+    LOGGER.debug("");
+    LOGGER.debug("##### RAG final JSON response #####");
+    LOGGER.debug(response.toJSONString());
+    LOGGER.debug("");
+
     return response;
   }
 
@@ -285,10 +322,10 @@ public class RagAPI extends SearchAPI {
     // Preparing query for Search process
     String userQuery = request.getParameter("q");
     if (userQuery == null) {
-      LOGGER.error("RAG error : No query provided.");
+      LOGGER.error("RagAPI - ERROR. No query provided.");
       throw new InvalidParameterException("No query provided.");
-    } else if (config.getBooleanProperty(RagConfiguration.ENABLE_LOGS)) {
-      LOGGER.info("Request processed by RagAPI : {}", userQuery);
+    } else {
+      LOGGER.debug("RagAPI - Processing search for request : q={}", userQuery);
     }
 
     if (!config.getProperty(RagConfiguration.SEARCH_OPERATOR).isEmpty())
@@ -305,11 +342,11 @@ public class RagAPI extends SearchAPI {
       }
     }
 
-    // Add Solr vectorizer tag in the query, overwrite q param
+    // Add Solr "/vector" handler is Solr Vector Search is enabled
     if (config.getBooleanProperty(RagConfiguration.SOLR_ENABLE_VECTOR_SEARCH)) {
 
+      LOGGER.debug("RagAPI - Solr Vector Search is enabled.");
       handler = "/vector";
-
       String[] queryrag = { userQuery };
       parameterMap.put("queryrag", queryrag);
     }
@@ -330,6 +367,8 @@ public class RagAPI extends SearchAPI {
       JSONObject response = (JSONObject) result.get("response");
       List<Document> documentsList = new ArrayList<>();
 
+
+      LOGGER.debug("RagAPI - Converting search results into a List of Documents.");
       if (response != null && response.get("docs") != null) {
         JSONArray docs = (JSONArray) response.get("docs");
         int maxFiles = Math.min(config.getIntegerProperty(RagConfiguration.MAX_FILES), docs.size()); // MaxFiles must not exceed the number of provided documents
@@ -352,10 +391,11 @@ public class RagAPI extends SearchAPI {
           }
 
         }
+        LOGGER.debug("RagAPI - Max files allowed : {}. Documents list size : {}.", maxFiles, documentsList.size());
         return documentsList;
       }
     } catch (Exception e) {
-      LOGGER.error("An error occurred while retrieving the list of documents.", e);
+      LOGGER.error("RagAPI - An error occurred while retrieving the list of documents.", e);
     }
     return new ArrayList<>();
 
@@ -374,10 +414,13 @@ public class RagAPI extends SearchAPI {
     JSONArray displayedDocuments = new JSONArray();
     for (Document doc : documentList) {
       String id = doc.metadata().getString("id");
-      if (map.containsKey(id) || !response.toUpperCase().contains(doc.metadata().getString("title").toUpperCase())) {
+      if (map.containsKey(id) ||
+              !response.toUpperCase().replaceAll("\\s+","").contains( doc.metadata().getString("title").toUpperCase().replaceAll("\\s+","") )) {
         // Skip if the document has already been added
+        LOGGER.debug("RagAPI - RAG - Document {} is not contained in the LLM response, or is already in the list to return to the user.", doc.metadata().getString("id"));
         continue;
       }
+      LOGGER.debug("RagAPI - RAG - Document {} is mentioned in LLM response, and will returned to the user.", doc.metadata().getString("id"));
       map.put(id, doc);
       // Add document to displayedDocuments if it isn't there yet and if it is mentioned by the LLM
       JSONObject jsonDoc = new JSONObject();
@@ -387,6 +430,8 @@ public class RagAPI extends SearchAPI {
       jsonDoc.put("content", doc.text());
       displayedDocuments.add(jsonDoc);
     }
+
     return displayedDocuments;
   }
+
 }

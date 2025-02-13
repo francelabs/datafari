@@ -41,6 +41,7 @@ public class AiPowered {
         String url;
         final JSONObject jsonResponse = new JSONObject();
 
+
         // Retrieve ID from JSON input
         if (jsonDoc.get(ID_FIELD) != null) {
             id = (String) jsonDoc.get(ID_FIELD);
@@ -53,7 +54,7 @@ public class AiPowered {
             request.setAttribute("lang", lang);
         }
 
-        LOGGER.info("Summary of the document {} requested.", id);
+        LOGGER.info("AiPowered - Summarize - Summary of the document {} requested.", id);
 
         // Retrieve document from Solr using Datafari API methods
         try {
@@ -94,6 +95,8 @@ public class AiPowered {
     @PostMapping(value = "/rest/v2.0/ai/rag", produces = "application/json;charset=UTF-8")
     public String rag(final HttpServletRequest request, @RequestBody JSONObject jsonDoc) {
 
+        LOGGER.debug("AiPowered - RAG - RAG request received.");
+
         String query; // The user request
         String id;
         String lang;
@@ -110,7 +113,9 @@ public class AiPowered {
         // Retrieve query from JSON input
         if (jsonDoc.get(QUERY_FIELD) != null) {
             query = (String) jsonDoc.get(QUERY_FIELD);
+            LOGGER.debug("AiPowered - RAG - RAG query : {}", query);
         } else {
+            LOGGER.warn("AiPowered - RAG - Missing query parameter");
             return generateErrorJson(422, "Missing query parameter.", null);
         }
 
@@ -119,15 +124,16 @@ public class AiPowered {
             // Retrieve ID from JSON input
             if (jsonDoc.get(ID_FIELD) != null && !((String) jsonDoc.get(ID_FIELD)).isEmpty()) {
                 id = (String) jsonDoc.get(ID_FIELD);
-                LOGGER.info("RAG request for document {} received.", id);
+                LOGGER.debug("AiPowered - RAG - Retrieving document {} for RAG by Document.", id);
                 searchResults = performSearchById(request, id);
                 ragBydocument = true;
             } else {
+                LOGGER.debug("AiPowered - RAG - Performing search.");
                 request.setAttribute("q.op", config.getProperty(RagConfiguration.SEARCH_OPERATOR));
                 searchResults = performSearch(request, query, config.getBooleanProperty(RagConfiguration.ENABLE_VECTOR_SEARCH));
             }
         } catch (IOException|ServletException e) {
-            LOGGER.error("RAG error. An error occurred while retrieving documents.", e);
+            LOGGER.error("AiPowered - RAG - ERROR. An error occurred while retrieving documents.", e);
             return generateErrorJson(422, "An unexpected error occurred during the search process.", e);
         }
 
@@ -143,6 +149,7 @@ public class AiPowered {
             editablerequest.addParameter("q", query);
             return RagAPI.rag(editablerequest, searchResults, ragBydocument).toJSONString();
         } catch (final Exception e) {
+            LOGGER.error("AiPowered - RAG - ERROR", e);
             return generateErrorJson(500, e.getMessage(), e);
         }
     }
@@ -162,7 +169,7 @@ public class AiPowered {
                                       String title, String url, JSONObject jsonResponse) throws IOException {
         if ((summary == null || summary.isEmpty()) && (content != null && !content.isEmpty())) {
             // If there is no existing summary, but content is found, use RagAPI service to generate a summary
-            LOGGER.debug("No summary found for file {}", id);
+            LOGGER.debug("AiPowered - Summarize - No summary found for document {}.", id);
 
             // Instantiate a Langchain4j Document
             Metadata metadata = new Metadata();
@@ -171,6 +178,7 @@ public class AiPowered {
             if (url != null) metadata.put(URL_FIELD, url);
             Document doc = new Document(content, metadata);
 
+            LOGGER.debug("AiPowered - Summarize - Generating a summary for document {}.", id);
             summary = RagAPI.summarize(request, doc);
             JSONObject jsonContent = new JSONObject();
             jsonContent.put("message", summary);
@@ -180,7 +188,7 @@ public class AiPowered {
 
         } else if (content == null || content.isEmpty()) {
             // Error : No content, no summary
-            LOGGER.warn("Could not retrieve summary or content from file {}.", id);
+            LOGGER.warn("AiPowered - Summarize - Could not retrieve summary or content from file {}.", id);
             return generateErrorJson(422, "Unable to generate a summary, since the file has no content.", null);
         } else {
             jsonResponse.put(STATUS_FIELD, "OK");
@@ -205,6 +213,7 @@ public class AiPowered {
         request.addParameter("fl", "id,title,exactContent,url,llm_summary");
         request.setPathInfo("/select"); // TODO : vector search for chunking ?
 
+        LOGGER.debug("AiPowered - Retrieving document {}.", id);
         return SearchAggregator.doGetSearch(request, null);
     }
 
@@ -226,6 +235,7 @@ public class AiPowered {
         String handler = vectorSearch ? "/vector" : "/select";
         request.setPathInfo(handler);
 
+        LOGGER.debug("AiPowered - Performing search using {} handler. q={}", handler, q);
         return RagAPI.processSearch(RagConfiguration.getInstance(), request);
     }
 
@@ -237,7 +247,7 @@ public class AiPowered {
      */
     private String generateErrorJson(int code, String message, Exception e) {
         final JSONObject jsonResponse = new JSONObject();
-        LOGGER.error("An error occurred: {}", message, e);
+        LOGGER.error("AiPowered - ERROR. An error occurred: {}", message, e);
         final JSONObject error = new JSONObject();
         jsonResponse.put(STATUS_FIELD, "ERROR");
         error.put("code", code);
