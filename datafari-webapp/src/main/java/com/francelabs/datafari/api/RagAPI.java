@@ -413,20 +413,20 @@ public class RagAPI extends SearchAPI {
     Map<String, Document> map = new HashMap<>();
     JSONArray displayedDocuments = new JSONArray();
     for (Document doc : documentList) {
-      String id = doc.metadata().getString("id");
-      if (map.containsKey(id) ||
+      String url = doc.metadata().getString("url");
+      if (map.containsKey(url) ||
               !response.toUpperCase().replaceAll("\\s+","").contains( doc.metadata().getString("title").toUpperCase().replaceAll("\\s+","") )) {
         // Skip if the document has already been added
         LOGGER.debug("RagAPI - RAG - Document {} is not contained in the LLM response, or is already in the list to return to the user.", doc.metadata().getString("id"));
         continue;
       }
-      LOGGER.debug("RagAPI - RAG - Document {} is mentioned in LLM response, and will returned to the user.", doc.metadata().getString("id"));
-      map.put(id, doc);
+      LOGGER.debug("RagAPI - RAG - Document {} is mentioned in LLM response, and will returned to the user.", url);
+      map.put(url, doc);
       // Add document to displayedDocuments if it isn't there yet and if it is mentioned by the LLM
       JSONObject jsonDoc = new JSONObject();
-      jsonDoc.put("id", id);
+      jsonDoc.put("id", url);
       jsonDoc.put("title", doc.metadata().getString("title"));
-      jsonDoc.put("url", doc.metadata().getString("url"));
+      jsonDoc.put("url", url);
       jsonDoc.put("content", doc.text());
       displayedDocuments.add(jsonDoc);
     }
