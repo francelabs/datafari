@@ -160,7 +160,7 @@ public class PromptUtils {
                 .replace("\t", " ")
                 .replace("\b", "")
                 .replace("\"", "`");
-        if (context.length() > config.getIntegerProperty(RagConfiguration.CHUNK_SIZE) ) {
+        if (context.length() > config.getIntegerProperty(RagConfiguration.CHUNK_SIZE) ) { // TODO : check this when chunk size will be defined in token instead of characters
             // Truncate the context if too long
             context = context.substring(0, config.getIntegerProperty(RagConfiguration.CHUNK_SIZE));
         }

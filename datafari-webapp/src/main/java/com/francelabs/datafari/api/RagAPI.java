@@ -130,7 +130,7 @@ public class RagAPI extends SearchAPI {
     LOGGER.debug("RagAPI - Prompt prepared. The total request size is {} characters. ", PromptUtils.getTotalPromptSize(finalPrompts));
     LOGGER.debug("RagAPI - Max size allowed for a single request in configuration is {} characters. ", config.getIntegerProperty(RagConfiguration.CHUNK_SIZE));
 
-    if (PromptUtils.getTotalPromptSize(finalPrompts) < config.getIntegerProperty(RagConfiguration.CHUNK_SIZE) || contents.size() <= 1) {
+    if (PromptUtils.getTotalPromptSize(finalPrompts) < config.getIntegerProperty(RagConfiguration.MAX_REQUEST_SIZE) || contents.size() <= 1) {
       LOGGER.debug("The request and the associated content for the RAG query is considered short enough to be processed in a single LLM request.");
       // Send all Messages at once
       return service.generate(finalPrompts, request);

@@ -33,6 +33,7 @@ public class RagConfiguration extends AbstractConfigClass {
     public static final String MAX_FILES = "rag.maxFiles";
     public static final String MAX_CHUNKS = "rag.maxChunks";
     public static final String CHUNK_SIZE = "rag.chunk.size";
+    public static final String MAX_REQUEST_SIZE = "rag.max.request.size";
     public static final String SEARCH_OPERATOR = "rag.operator";
 
     // SOLR VECTOR SEARCH
