@@ -716,7 +716,6 @@ public class RegexEntity extends BaseTransformationConnector {
    * @param spec the Specification Object filled with configuration attributes for job running with this connector. 
    */
   protected void fillInVelocityContextParam(final Map<String, Object> paramMap, final Specification spec) {
-    Map<String, RegexEntitySpecification> metadataSourceMetadataAttribute = new TreeMap<>();
     String destinationMetadata;
     String regex;
     String sourceMetadata;
@@ -729,8 +728,14 @@ public class RegexEntity extends BaseTransformationConnector {
     String index;
     RegexEntitySpecification regexEntitySpecification;
 
+    if (spec.getChildCount() == 0){
+      return;
+    }
+
     final SpecificationNode specNode = spec.getChild(1);
     Iterator<String> itMetadata = specNode.getAttributes();
+
+    Map<String, RegexEntitySpecification> metadataSourceMetadataAttribute = new TreeMap<>();
 
     while (itMetadata.hasNext()) {
       index = itMetadata.next();
