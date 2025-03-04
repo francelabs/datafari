@@ -16,31 +16,22 @@
 */
 package com.francelabs.datafari.transformation.regexentity;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.francelabs.datafari.transformation.regexentity.model.RegexEntitySpecification;
+import com.francelabs.datafari.utils.DataEncoding;
+import com.francelabs.datafari.utils.storage.DestinationStorage;
 import org.apache.manifoldcf.agents.interfaces.IOutputAddActivity;
 import org.apache.manifoldcf.agents.interfaces.IOutputCheckActivity;
 import org.apache.manifoldcf.agents.interfaces.RepositoryDocument;
 import org.apache.manifoldcf.agents.interfaces.ServiceInterruption;
 import org.apache.manifoldcf.agents.system.Logging;
 import org.apache.manifoldcf.agents.transformation.BaseTransformationConnector;
-import org.apache.manifoldcf.core.interfaces.ConfigParams;
-import org.apache.manifoldcf.core.interfaces.IHTTPOutput;
-import org.apache.manifoldcf.core.interfaces.IPostParameters;
-import org.apache.manifoldcf.core.interfaces.IThreadContext;
-import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
-import org.apache.manifoldcf.core.interfaces.Specification;
-import org.apache.manifoldcf.core.interfaces.SpecificationNode;
-import org.apache.manifoldcf.core.interfaces.VersionContext;
+import org.apache.manifoldcf.core.interfaces.*;
 
-import com.francelabs.datafari.utils.storage.DestinationStorage;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -285,8 +276,14 @@ public class RegexEntity extends BaseTransformationConnector {
               document.setBinary(storage.getInputStream(), binaryLength);
 
 
-              // Prepare reading of document copied to extract metadata
-              BufferedReader buffRead = new BufferedReader(new InputStreamReader(storage.getInputStream()));
+              // Prepare reading of document copied to extract metadata.
+              //--------------------------------------------------------
+              // First detect the data encoding to read and extract data with the good encoding Charset.
+              InputStream inputStream = storage.getInputStream();
+              Charset charset = DataEncoding.detect(inputStream);
+              // Prepare the Reader with the good encoding.
+              InputStreamReader inputStreamReader = new InputStreamReader(inputStream, charset);
+              BufferedReader buffRead = new BufferedReader(inputStreamReader);
 
               // Read lines
               String line = buffRead.readLine();
@@ -716,7 +713,6 @@ public class RegexEntity extends BaseTransformationConnector {
    * @param spec the Specification Object filled with configuration attributes for job running with this connector. 
    */
   protected void fillInVelocityContextParam(final Map<String, Object> paramMap, final Specification spec) {
-    Map<String, RegexEntitySpecification> metadataSourceMetadataAttribute = new TreeMap<>();
     String destinationMetadata;
     String regex;
     String sourceMetadata;
@@ -729,8 +725,14 @@ public class RegexEntity extends BaseTransformationConnector {
     String index;
     RegexEntitySpecification regexEntitySpecification;
 
+    if (spec.getChildCount() == 0){
+      return;
+    }
+
     final SpecificationNode specNode = spec.getChild(1);
     Iterator<String> itMetadata = specNode.getAttributes();
+
+    Map<String, RegexEntitySpecification> metadataSourceMetadataAttribute = new TreeMap<>();
 
     while (itMetadata.hasNext()) {
       index = itMetadata.next();

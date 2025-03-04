@@ -226,7 +226,7 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 
     }
 
-    
+
     String url;
     if (doc.containsKey("url")) {
       url = (String) doc.getFieldValue("url");
@@ -315,10 +315,24 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     }
 
     // keep the jsoup or filename as the first title for the searchView of Datafari
+
+    // Source WEB
     if (!jsouptitle.isEmpty()) {
+      Collection<Object> tempTitles = doc.getFieldValues("title");
+      doc.remove("title");
       doc.addField("title", jsouptitle);
-    } else if (!filename.isEmpty()) {
-      doc.addField("title", filename);
+      doc.addField("title",tempTitles);
+      if (!filename.isEmpty())
+        doc.addField("title", filename);
+    }
+    else {
+      if (!filename.isEmpty()) {
+
+        Collection<Object> tempTitles = doc.getFieldValues("title");
+        doc.remove("title");
+        doc.addField("title", filename);
+        doc.addField("title",tempTitles);
+      }
     }
 
     // The title field has lost its original value(s) after the LangDetectLanguageIdentifierUpdateProcessorFactory
