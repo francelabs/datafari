@@ -80,6 +80,6 @@ elif [ "$conf_action" = "download" ];
 then
   read -p "What is the location of the folder that will contain the downloaded configuration ?" download_folder
   echo $download_folder
-  "$DATAFARI_HOME/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd downconfig -zkhost $zk_url -confdir $download_folder -confname $conf_name
+  "$DATAFARI_HOME/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd downconfig -zkhost $zk_ip_script -confdir $download_folder -confname $conf_name
 
 fi
