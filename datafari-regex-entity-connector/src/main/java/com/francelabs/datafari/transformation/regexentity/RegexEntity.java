@@ -478,15 +478,20 @@ public class RegexEntity extends BaseTransformationConnector {
    */
   private void addMatchesFound(List<String> matchesFound, Matcher matcher, boolean extractRegexGroups){
     if (!extractRegexGroups) {
-      matchesFound.add(matcher.group());
+      addMatchesFoundFormated(matchesFound, matcher.group());
     } else {
       int nbGroups = matcher.groupCount();
       for (int i=1; i <= nbGroups; i++){
-        matchesFound.add(matcher.group(i));
+        addMatchesFoundFormated(matchesFound, matcher.group(i));
       }
     }
   }
 
+  private void addMatchesFoundFormated(List<String> matchesFound, String match){
+    if (match != null){
+      matchesFound.add(match.trim());
+    }
+  }
   /**
    * Check if a regex specification can be removed from the list.
    *
