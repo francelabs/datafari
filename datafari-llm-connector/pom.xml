@@ -32,25 +32,20 @@
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-core</artifactId>
-      <version>0.34.0</version>
+      <version>0.35.0</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-open-ai</artifactId>
-      <version>0.33.0</version>
+      <version>0.35.0</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
           <groupId>dev.langchain4j</groupId>
           <artifactId>langchain4j</artifactId>
-          <version>0.34.0</version>
+          <version>0.35.0</version>
           <scope>compile</scope>
-    </dependency>
-    <dependency>
-          <groupId>dev.langchain4j</groupId>
-          <artifactId>langchain4j-embeddings-all-minilm-l6-v2</artifactId>
-          <version>0.34.0</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -58,12 +53,6 @@
       <version>5.9.1</version>
       <scope>test</scope>
     </dependency>
-      <dependency>
-          <groupId>dev.langchain4j</groupId>
-          <artifactId>langchain4j-core</artifactId>
-          <version>0.35.0</version>
-          <scope>compile</scope>
-      </dependency>
   </dependencies>
 
   <build>

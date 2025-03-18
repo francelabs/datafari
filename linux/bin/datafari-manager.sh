@@ -284,6 +284,8 @@ init_solr()
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"vector.enabled": "true"}}' http://localhost:8983/solr/FileShare/config
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"vector.collection": "VectorMain"}}' http://localhost:8983/solr/FileShare/config
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"vector.host": "localhost:2181"}}' http://localhost:8983/solr/FileShare/config
+  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"vector.chunksize": "300"}}' http://localhost:8983/solr/FileShare/config
+  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"vector.maxoverlap": "0"}}' http://localhost:8983/solr/FileShare/config
 
   collections_autocommit=("Access" "Duplicates" "@MAINCOLLECTION@" "Monitoring" "Promolink" "Statistics" "VectorMain")
   for index in "${collections_autocommit[@]}"

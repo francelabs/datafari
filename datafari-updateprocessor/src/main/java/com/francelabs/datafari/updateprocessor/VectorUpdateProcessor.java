@@ -20,11 +20,10 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentSplitter;
-import dev.langchain4j.data.document.splitter.DocumentByParagraphSplitter;
+import dev.langchain4j.data.document.splitter.*;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.Tokenizer;
 import dev.langchain4j.model.openai.OpenAiTokenizer;
@@ -33,7 +32,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.common.SolrInputDocument;
-import org.apache.solr.common.SolrInputField;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.update.AddUpdateCommand;
 import org.apache.solr.update.DeleteUpdateCommand;
@@ -42,6 +40,9 @@ import org.apache.solr.update.processor.UpdateRequestProcessor;
 public class VectorUpdateProcessor extends UpdateRequestProcessor {
   private static final Logger LOGGER = LogManager.getLogger(VectorUpdateProcessor.class.getName());
   boolean enabled = false;
+  String splitterType = "splitterByParagraph";
+  int chunksize = 300;
+  int maxoverlap = 0;
   CloudSolrClient client;
 
   private static final int CHUNK_SIZE = 4000;
@@ -51,6 +52,9 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
     super(next);
     if (params != null) {
       this.enabled = params.getBool("enabled", false);
+      this.chunksize = params.getInt("chunksize", 300);
+      this.maxoverlap = params.getInt("maxoverlap", 0);
+      this.splitterType = params.get("splitter", "splitterByParagraph");
       this.client = client;
     }
   }
@@ -127,10 +131,41 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
     }
   }
 
-  private static List<TextSegment> chunkDocument(String content) {
-    Tokenizer tokenizer = new OpenAiTokenizer();
-    DocumentSplitter splitter = new DocumentByParagraphSplitter(CHUNK_SIZE, MAX_OVERLAP_SIZE, tokenizer);
-    Document document = new Document(content);
+  /**
+   * Chunking uses the following parameters:
+   * *** splitter: A String specifying the splitter type
+   * *** chunksize: The max size (in tokens) allowed for a chunk.
+   * Since we are using OpenAI tokenizer, the chunk size in token may vary depending on the model you use.
+   *
+   * @param content: The content to be chunked
+   * @return a list of TextSegment
+   */
+  private List<TextSegment> chunkDocument(String content) {
+    Tokenizer tokenizer = new OpenAiTokenizer("gtp-4o-mini");
+    DocumentSplitter splitter;
+
+
+    // Chunking
+    switch (this.splitterType) {
+      case "splitterBySentence":
+        splitter = new DocumentBySentenceSplitter(CHUNK_SIZE, MAX_OVERLAP_SIZE, tokenizer);
+        break;
+      case "splitterByLine":
+        splitter = new DocumentByLineSplitter(CHUNK_SIZE, MAX_OVERLAP_SIZE, tokenizer);
+        // code block
+        break;
+      case "splitterByCharacter":
+        splitter = new DocumentByCharacterSplitter(CHUNK_SIZE, MAX_OVERLAP_SIZE, tokenizer);
+        break;
+      case "recursiveSplitter":
+        splitter = DocumentSplitters.recursive(CHUNK_SIZE, MAX_OVERLAP_SIZE, tokenizer);
+        break;
+      case "splitterByParagraph":
+      default:
+        splitter = new DocumentByParagraphSplitter(CHUNK_SIZE, MAX_OVERLAP_SIZE, tokenizer);
+    }
+
+    Document document = Document.from(content);
     return splitter.split(document);
   }
 

@@ -1287,6 +1287,9 @@
 			<str name="host">${vector.host:localhost\:2181}</str>
 			<str name="collection">${vector.collection:VectorMain}</str>
 			<bool name="enabled">${vector.enabled:false}</bool>
+			<int name="chunksize">${vector.chunksize:300}</int>
+			<int name="maxoverlap">${vector.maxoverlap:0}</int>
+			<str name="splitter">${vector.splitter:splitterByParagraph}</str>
 		</processor>
 
 		<processor class="solr.LogUpdateProcessorFactory"/>
