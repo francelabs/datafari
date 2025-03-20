@@ -40,13 +40,10 @@ import org.apache.solr.update.processor.UpdateRequestProcessor;
 public class VectorUpdateProcessor extends UpdateRequestProcessor {
   private static final Logger LOGGER = LogManager.getLogger(VectorUpdateProcessor.class.getName());
   boolean enabled = false;
-  String splitterType = "splitterByParagraph";
+  String splitterType = "recursiveSplitter";
   int chunksize = 300;
   int maxoverlap = 0;
   CloudSolrClient client;
-
-  private static final int CHUNK_SIZE = 4000;
-  private static final int MAX_OVERLAP_SIZE = 100;
 
   public VectorUpdateProcessor(CloudSolrClient client, final SolrParams params, final UpdateRequestProcessor next) {
     super(next);
@@ -54,7 +51,7 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
       this.enabled = params.getBool("enabled", false);
       this.chunksize = params.getInt("chunksize", 300);
       this.maxoverlap = params.getInt("maxoverlap", 0);
-      this.splitterType = params.get("splitter", "splitterByParagraph");
+      this.splitterType = params.get("splitter", "recursiveSplitter");
       this.client = client;
     }
   }
@@ -141,28 +138,27 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
    * @return a list of TextSegment
    */
   private List<TextSegment> chunkDocument(String content) {
-    Tokenizer tokenizer = new OpenAiTokenizer("gtp-4o-mini");
+    Tokenizer tokenizer = new OpenAiTokenizer();
     DocumentSplitter splitter;
 
 
     // Chunking
     switch (this.splitterType) {
       case "splitterBySentence":
-        splitter = new DocumentBySentenceSplitter(CHUNK_SIZE, MAX_OVERLAP_SIZE, tokenizer);
+        splitter = new DocumentBySentenceSplitter(this.chunksize, this.maxoverlap, tokenizer);
         break;
       case "splitterByLine":
-        splitter = new DocumentByLineSplitter(CHUNK_SIZE, MAX_OVERLAP_SIZE, tokenizer);
-        // code block
+        splitter = new DocumentByLineSplitter(this.chunksize, this.maxoverlap, tokenizer);
         break;
       case "splitterByCharacter":
-        splitter = new DocumentByCharacterSplitter(CHUNK_SIZE, MAX_OVERLAP_SIZE, tokenizer);
-        break;
-      case "recursiveSplitter":
-        splitter = DocumentSplitters.recursive(CHUNK_SIZE, MAX_OVERLAP_SIZE, tokenizer);
+        splitter = new DocumentByCharacterSplitter(this.chunksize, this.maxoverlap, tokenizer);
         break;
       case "splitterByParagraph":
+        splitter = new DocumentByParagraphSplitter(this.chunksize, this.maxoverlap, tokenizer);
+        break;
+      case "recursiveSplitter":
       default:
-        splitter = new DocumentByParagraphSplitter(CHUNK_SIZE, MAX_OVERLAP_SIZE, tokenizer);
+        splitter = DocumentSplitters.recursive(this.chunksize, this.maxoverlap, tokenizer);
     }
 
     Document document = Document.from(content);
