@@ -545,6 +545,7 @@ init_permissions() {
   if [ -d /etc/apache2 ]; then
     chown -R ${DATAFARI_USER} /etc/apache2
     chmod -R 775 /etc/apache2
+    chown -R ${DATAFARI_USER} /var/log/apache2
   elif [ -d /etc/httpd ]; then
     echo "$DATAFARI_USER ALL=NOPASSWD:/sbin/apachectl" >> /etc/sudoers
     chown -R ${DATAFARI_USER} /etc/httpd
