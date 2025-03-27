@@ -130,7 +130,7 @@ public class AiPowered {
             } else {
                 LOGGER.debug("AiPowered - RAG - Performing search.");
                 request.setAttribute("q.op", config.getProperty(RagConfiguration.SEARCH_OPERATOR));
-                searchResults = performSearch(request, query, config.getBooleanProperty(RagConfiguration.ENABLE_VECTOR_SEARCH));
+                searchResults = performSearch(request, query, config.getBooleanProperty(RagConfiguration.SOLR_ENABLE_VECTOR_SEARCH));
             }
         } catch (IOException|ServletException e) {
             LOGGER.error("AiPowered - RAG - ERROR. An error occurred while retrieving documents.", e);
