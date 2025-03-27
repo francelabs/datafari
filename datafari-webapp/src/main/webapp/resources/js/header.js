@@ -11,7 +11,7 @@ function setupLinks() {
     if (text) {
       linkDOMElement.html(text);
     }
-    linkDOMElement.prop("href", "/Datafari/Search?lang=" + window.i18n.language + "#advancedsearch");
+    linkDOMElement.prop("href", "/@WEBAPPNAME@/Search?lang=" + window.i18n.language + "#advancedsearch");
   }
 
   // If user is already connected
@@ -30,7 +30,7 @@ function setupLinks() {
     if (text) {
       linkDOMElement.html(text);
     }
-    linkDOMElement.prop("href", "/Datafari/Search?lang=" + window.i18n.language + "#savedsearch");
+    linkDOMElement.prop("href", "/@WEBAPPNAME@/Search?lang=" + window.i18n.language + "#savedsearch");
   }
 
   // If user is already connected
@@ -49,7 +49,7 @@ function setupLinks() {
     if (text) {
       linkDOMElement.html(text);
     }
-    linkDOMElement.prop("href", "/Datafari/Search?lang=" + window.i18n.language + "#alert");
+    linkDOMElement.prop("href", "/@WEBAPPNAME@/Search?lang=" + window.i18n.language + "#alert");
   }
 
   // If user is already connected
@@ -59,7 +59,7 @@ function setupLinks() {
     if (text) {
       linkDOMElement.html(text);
     }
-    linkDOMElement.prop("href", "/Datafari/Search?lang=" + window.i18n.language + "#save_search_button");
+    linkDOMElement.prop("href", "/@WEBAPPNAME@/Search?lang=" + window.i18n.language + "#save_search_button");
   }
 
   // If user is already connected
@@ -69,7 +69,7 @@ function setupLinks() {
     if (text) {
       linkDOMElement.html(text);
     }
-    linkDOMElement.prop("href", "/Datafari/Search?lang=" + window.i18n.language + "#favorites");
+    linkDOMElement.prop("href", "/@WEBAPPNAME@/Search?lang=" + window.i18n.language + "#favorites");
   }
 
   // If user is already connected
@@ -88,7 +88,7 @@ function setupLinks() {
     if (text) {
       linkDOMElement.html(text);
     }
-    linkDOMElement.prop('href', '/Datafari/admin/?lang=' + window.i18n.language);
+    linkDOMElement.prop('href', '/@WEBAPPNAME@/admin/?lang=' + window.i18n.language);
   }
 
   // If user is already connected.
@@ -130,7 +130,7 @@ function setupLinks() {
     if (text) {
       linkDOMElement.html(text);
     }
-    linkDOMElement.prop("href", "/Datafari/Search?lang=" + window.i18n.language + "#externalSources");
+    linkDOMElement.prop("href", "/@WEBAPPNAME@/Search?lang=" + window.i18n.language + "#externalSources");
   }
 
   // If user is already connected
@@ -140,7 +140,7 @@ function setupLinks() {
     if (text) {
       linkDOMElement.html(text);
     }
-    linkDOMElement.prop('href', '/Datafari/admin/?lang=' + window.i18n.language);
+    linkDOMElement.prop('href', '/@WEBAPPNAME@/admin/?lang=' + window.i18n.language);
   }
 
   // If user is already connected
@@ -159,7 +159,7 @@ function setupLinks() {
     if (text) {
       linkDOMElement.html(text);
     }
-    linkDOMElement.prop('href', '/Datafari/login?lang=' + window.i18n.language + "&redirect=" + encodeURIComponent(window.location.href));
+    linkDOMElement.prop('href', '/@WEBAPPNAME@/login?lang=' + window.i18n.language + "&redirect=" + encodeURIComponent(window.location.href));
   }
 
   // Help link
@@ -169,7 +169,7 @@ function setupLinks() {
     if (text) {
       linkDOMElement.html(text);
     }
-    linkDOMElement.prop('href', '/Datafari/help?lang=' + window.i18n.language);
+    linkDOMElement.prop('href', '/@WEBAPPNAME@/help?lang=' + window.i18n.language);
   }
 }
 

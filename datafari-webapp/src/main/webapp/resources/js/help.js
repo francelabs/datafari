@@ -5,7 +5,7 @@ $(function($) {
   // The basic search link from this page needs to get us back
   // to the search page, not just load the search widget as it
   // is not part of the page.
-  $("a#basicSearchLink").prop("href", "/Datafari/Search?lang=" + window.i18n.language);
+  $("a#basicSearchLink").prop("href", "/@WEBAPPNAME@/Search?lang=" + window.i18n.language);
   let basicSearchText = window.i18n.msgStore['search'];
   if (basicSearchText) {
     $("#basicSearchLink").html(basicSearchText);
