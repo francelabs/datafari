@@ -31,6 +31,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.apache.solr.client.solrj.request.UpdateRequest;
+import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.update.AddUpdateCommand;
@@ -62,6 +64,7 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
       final SolrInputDocument parentDoc = cmd.getSolrInputDocument();
 
       String parentId = (String) parentDoc.get("id").getValue();
+      LOGGER.debug("Processing chunking for document {}", parentId);
       String content = extractContent(parentDoc);
 
       deleteExistingChildren(parentId);
@@ -112,13 +115,23 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
             LOGGER.warn("The file {} appears to be empty and has been ignored during vector embeddings.", parentDoc.get("id").getValue());
           }
 
-          // Send chunks to VectorMain
+        }
+
+        // Send chunks to VectorMain
+        LOGGER.debug("Chunking - {} chunks for document {}", batchDocs.size(), parentDoc.get("id").getValue());
+        if (!batchDocs.isEmpty()){
+          UpdateRequest solrRequest = new UpdateRequest();
+          // Do not reject all update batch for some version conflicts
+          solrRequest.setParam("failOnVersionConflicts", "false");
+          solrRequest.add(batchDocs);
+
           try {
-            client.add(batchDocs);
-            client.commit();
-          } catch (SolrServerException e) {
-            LOGGER.warn("Warning : chunks from document {} could not be added.", parentDoc.get("id"));
+            solrRequest.process(client, "VectorMain");
+          } catch (Exception e) {
+            LOGGER.warn("Warning : chunks from document {} could not be added.", parentDoc.get("id").getValue());
+            LOGGER.warn(e);
           }
+
         }
 
       }
@@ -187,7 +200,7 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
   private void deleteExistingChildren(String parentId) {
     try {
       client.deleteByQuery("parent_doc:\"" + parentId + "\"");
-      client.commit();
+    //  client.commit();
     } catch (SolrServerException|IOException e) {
       LOGGER.error("Could not delete existing children for this document");
     }
