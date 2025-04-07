@@ -19,6 +19,7 @@ import com.francelabs.datafari.rag.RagConfiguration;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.document.splitter.DocumentByParagraphSplitter;
+import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.segment.TextSegment;
 
 import java.util.ArrayList;
@@ -43,7 +44,8 @@ public class ChunkUtils {
      */
     public static List<Document> chunkDocuments(List<Document> documentList, RagConfiguration config) {
         List<Document> chunkedDocumentList = new ArrayList<>();
-
+        int maxFiles = config.getIntegerProperty(RagConfiguration.MAX_FILES); // MaxFiles must not exceed the number of provided documents
+        int i = 0;
         for(Document document : documentList) {
             List<TextSegment> chunks = chunkContent(document, config);
 
@@ -52,6 +54,8 @@ public class ChunkUtils {
                 Document docToAdd = new Document(chunk.text(), chunk.metadata());
                 chunkedDocumentList.add(docToAdd);
             }
+            i++;
+            if (maxFiles <= i) return chunkedDocumentList;
         }
         return chunkedDocumentList;
     }
@@ -63,7 +67,7 @@ public class ChunkUtils {
      * @return A list of TextSegments, that contain metadata. Big documents are chunked into multiple documents.
      */
     public static List<TextSegment> chunkContent(Document doc, RagConfiguration config) {
-        DocumentSplitter splitter = new DocumentByParagraphSplitter(config.getIntegerProperty(RagConfiguration.CHUNK_SIZE), 50);
+        DocumentSplitter splitter = DocumentSplitters.recursive(config.getIntegerProperty(RagConfiguration.CHUNK_SIZE), 0);
         return splitter.split(doc);
     }
 }

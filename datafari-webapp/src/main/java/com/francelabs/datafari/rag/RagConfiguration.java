@@ -14,9 +14,8 @@ public class RagConfiguration extends AbstractConfigClass {
 
     // GLOBAL RAG PROPERTIES
     public static final String ENABLE_RAG = "ai.enable.rag";
-    public static final String ENABLE_LOGS = "rag.enable.logs";
-    public static final String ENABLE_CHUNKING = "rag.enable.chunking";
-    public static final String ENABLE_VECTOR_SEARCH = "rag.enable.vector.search"; // Deprecated, see SOLR_ENABLE_VECTOR_SEARCH
+    public static final String ENABLE_CHUNKING = "chunking.enable";
+    public static final String ENABLE_VECTOR_SEARCH = "inMemory.enable.vector.search"; // Deprecated, see SOLR_ENABLE_VECTOR_SEARCH
     public static final String ENABLE_SUMMARIZATION = "ai.enable.summarization";
 
     // WEB SERVICES PARAMETERS
@@ -30,10 +29,10 @@ public class RagConfiguration extends AbstractConfigClass {
     public static final String LLM_MODEL = "llm.model";
 
     // DATAFARI RAG PRE-PROCESSING PROPERTIES
-    public static final String MAX_FILES = "rag.maxFiles";
+    public static final String MAX_FILES = "chunking.maxFiles";
     public static final String MAX_CHUNKS = "rag.maxChunks";
-    public static final String CHUNK_SIZE = "rag.chunk.size";
-    public static final String MAX_REQUEST_SIZE = "rag.max.request.size";
+    public static final String CHUNK_SIZE = "chunking.chunk.size";
+    public static final String MAX_REQUEST_SIZE = "llm.max.request.size";
     public static final String SEARCH_OPERATOR = "rag.operator";
 
     // SOLR VECTOR SEARCH

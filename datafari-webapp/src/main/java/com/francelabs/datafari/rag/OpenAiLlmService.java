@@ -51,11 +51,9 @@ public class OpenAiLlmService implements LlmService {
      */
     @Override
     public String generate(List<Message> prompts, HttpServletRequest request) throws IOException {
-        if (this.config.getBooleanProperty(RagConfiguration.ENABLE_LOGS)) {
-            LOGGER.debug("OpenAiLlmService is processing a request with multiple messages.");
-            for (Message prompt : prompts) {
-                LOGGER.debug("{} :\r\n{}", prompt.getRole(), prompt.getContent());
-            }
+        LOGGER.debug("OpenAiLlmService is processing a request with multiple messages.");
+        for (Message prompt : prompts) {
+            LOGGER.debug("{} :\r\n{}", prompt.getRole(), prompt.getContent());
         }
         return llm.generate(convertMessageList(prompts)).content().text();
     }
@@ -66,11 +64,8 @@ public class OpenAiLlmService implements LlmService {
      * @return A single string response
      */
     public String generate(Message prompt) {
-
-        if (this.config.getBooleanProperty(RagConfiguration.ENABLE_LOGS)) {
-            LOGGER.debug("OpenAiLlmService is processing a request with a single message.\r\n" +
+        LOGGER.debug("OpenAiLlmService is processing a request with a single message.\r\n" +
                     "{} :\r\n{}", prompt.getRole(), prompt.getContent());
-        }
         return llm.generate(convertMessage(prompt)).content().text();
     }
 

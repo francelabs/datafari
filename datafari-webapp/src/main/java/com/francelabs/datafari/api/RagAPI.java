@@ -78,6 +78,7 @@ public class RagAPI extends SearchAPI {
     documentsList = initialDocumentsList;
     if (config.getBooleanProperty(RagConfiguration.ENABLE_CHUNKING)) {
       LOGGER.debug("RagAPI - Chunking is enabled.");
+      LOGGER.debug("RagAPI - Max size allowed for a single request in configuration is {} characters. ", config.getIntegerProperty(RagConfiguration.CHUNK_SIZE));
       documentsList = ChunkUtils.chunkDocuments(initialDocumentsList, config);
       LOGGER.debug("RagAPI - The chunking returned {} chunk(s).", documentsList.size());
     } else {
@@ -110,7 +111,8 @@ public class RagAPI extends SearchAPI {
    * ragByDocument Does the query focus on one single document ?
    * @return The string LLM response
    */
-  public static String processRagQuery(List<Message> contents, LlmService service, RagConfiguration config, HttpServletRequest request, boolean ragBydocument) throws IOException {
+  public static String processRagQuery(List<Message> contents, LlmService service, RagConfiguration config,
+                                       HttpServletRequest request, boolean ragBydocument) throws IOException {
 
     LOGGER.debug("RagAPI - Processing RAG query. {} chunk(s) received.", contents.size());
     LOGGER.debug("RagAPI - Processing RAG query : q={}.", request.getParameter("q"));
@@ -128,7 +130,6 @@ public class RagAPI extends SearchAPI {
     finalPrompts.add(userPrompt);
 
     LOGGER.debug("RagAPI - Prompt prepared. The total request size is {} characters. ", PromptUtils.getTotalPromptSize(finalPrompts));
-    LOGGER.debug("RagAPI - Max size allowed for a single request in configuration is {} characters. ", config.getIntegerProperty(RagConfiguration.CHUNK_SIZE));
 
     if (PromptUtils.getTotalPromptSize(finalPrompts) < config.getIntegerProperty(RagConfiguration.MAX_REQUEST_SIZE) || contents.size() <= 1) {
       LOGGER.debug("The request and the associated content for the RAG query is considered short enough to be processed in a single LLM request.");
@@ -371,8 +372,8 @@ public class RagAPI extends SearchAPI {
       LOGGER.debug("RagAPI - Converting search results into a List of Documents.");
       if (response != null && response.get("docs") != null) {
         JSONArray docs = (JSONArray) response.get("docs");
-        int maxFiles = Math.min(config.getIntegerProperty(RagConfiguration.MAX_FILES), docs.size()); // MaxFiles must not exceed the number of provided documents
-        for (int i = 0; i < maxFiles; i++) {
+        int nbDocs = docs.size(); // MaxFiles must not exceed the number of provided documents
+        for (int i = 0; i < nbDocs; i++) {
 
           // If the document has content, we generate a Document object with its content and metadata
           JSONArray content = (JSONArray) ((JSONObject) docs.get(i)).get(EXACT_CONTENT);
@@ -391,7 +392,6 @@ public class RagAPI extends SearchAPI {
           }
 
         }
-        LOGGER.debug("RagAPI - Max files allowed : {}. Documents list size : {}.", maxFiles, documentsList.size());
         return documentsList;
       }
     } catch (Exception e) {
