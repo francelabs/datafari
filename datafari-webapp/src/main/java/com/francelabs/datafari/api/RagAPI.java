@@ -1,5 +1,21 @@
+/*******************************************************************************
+ * Copyright 2015 France Labs
+ * *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package com.francelabs.datafari.api;
 
+import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.rag.*;
 import com.francelabs.datafari.utils.rag.ChunkUtils;
 import com.francelabs.datafari.utils.rag.PromptUtils;
@@ -89,7 +105,13 @@ public class RagAPI extends SearchAPI {
     List<Message> contents = PromptUtils.documentsListToMessages(documentsList);
 
     // Process the RAG query using the selected service, the contents list and the user query
-    String message = processRagQuery(contents, service, config, request, ragBydocument);
+    String message;
+    try {
+      message = processRagQuery(contents, service, config, request, ragBydocument);
+    } catch (DatafariServerException e) {
+      LOGGER.error("An error occurred while processing RAG query.", e);
+      return writeJsonError(500, "ragTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.");
+    }
 
     LOGGER.debug("RagAPI - LLM response: {}", message);
 
@@ -112,55 +134,98 @@ public class RagAPI extends SearchAPI {
    * @return The string LLM response
    */
   public static String processRagQuery(List<Message> contents, LlmService service, RagConfiguration config,
-                                       HttpServletRequest request, boolean ragBydocument) throws IOException {
+                                       HttpServletRequest request, boolean ragBydocument) throws IOException, DatafariServerException {
 
     LOGGER.debug("RagAPI - Processing RAG query. {} chunk(s) received.", contents.size());
     LOGGER.debug("RagAPI - Processing RAG query : q={}.", request.getParameter("q"));
     if (ragBydocument) LOGGER.debug("RagAPI - RAG by Document ");
 
-    // Setup prompt
-    Message initialPrompt = PromptUtils.createInitialRagPrompt(config, request, ragBydocument);
-    Message mergeAllPrompt = PromptUtils.createPromptForMergeAllRag(config, request, ragBydocument);
-    Message userPrompt = new Message("user", request.getParameter("q"));
+    // Retrieve and sanitize user query
+    String userquery = PromptUtils.sanitizeInput(request.getParameter("q"));
 
-    // Can we send all chunks at one to the LLM ?
-    List<Message> finalPrompts = new ArrayList<>();
-    finalPrompts.add(initialPrompt);
-    finalPrompts.addAll(contents);
-    finalPrompts.add(userPrompt);
+    if ("mapreduce".equals(config.getProperty(RagConfiguration.PROMPT_CHUNKING_STRATEGY, "refine"))){
 
-    LOGGER.debug("RagAPI - Prompt prepared. The total request size is {} characters. ", PromptUtils.getTotalPromptSize(finalPrompts));
-
-    if (PromptUtils.getTotalPromptSize(finalPrompts) < config.getIntegerProperty(RagConfiguration.MAX_REQUEST_SIZE) || contents.size() <= 1) {
-      LOGGER.debug("The request and the associated content for the RAG query is considered short enough to be processed in a single LLM request.");
-      // Send all Messages at once
-      return service.generate(finalPrompts, request);
-
-    } else {
-
-      LOGGER.debug("The request and the associated content for the RAG query is considered too long" +
-              " to be processed in a single LLM request. Chunked will be processed individually.");
+      // Map Reduce method
+      LOGGER.debug("RagAPI - The sources associated to the RAG request will be processed using Map Reduce method.");
 
       // Send all chunks one by one
       List<Message> prompts;
       List<Message> responseMessages = new ArrayList<>();
-      for (Message content: contents) {
-        prompts = new ArrayList<>();
-        prompts.add(PromptUtils.createInitialRagPrompt(config, request, ragBydocument));
-        prompts.add(content);
-        prompts.add(userPrompt);
+      String template = PromptUtils.getInitialRagTemplateMapReduce(request)
+              .replace(PromptUtils.USER_QUERY_TAG, userquery)
+              .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request));
+      String filledTemplate;
+      String generatedResponse = "";
 
-        String response = service.generate(prompts, request);
-        Message responseMessage = new Message("assistant", response);
+      int rqCounter = 0;
+      while (!contents.isEmpty()) {
+        rqCounter++;
+        filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config);
+        prompts = new ArrayList<>();
+        Message prompt = new Message("user", PromptUtils.cleanContext(filledTemplate));
+        prompts.add(prompt);
+
+        generatedResponse = service.generate(prompts, request);
+        LOGGER.debug("RagAPI - Map Reduce - Last response : {}", generatedResponse);
+
+        // Add the new response to the list
+        Message responseMessage = new Message("assistant", "* " + generatedResponse + "\n");
         responseMessages.add(responseMessage);
       }
 
+      // If the LLM was called only once, no need to call it again
+      if (rqCounter <= 1) return generatedResponse;
+
       // Then, merge all responses into one
+      template = PromptUtils.getFinalRagTemplateMapReduce(request);
+      filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, responseMessages, config);
+      filledTemplate = filledTemplate.replace(PromptUtils.USER_QUERY_TAG, userquery)
+              .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request));
       prompts = new ArrayList<>();
-      prompts.add(mergeAllPrompt);
-      prompts.addAll(responseMessages);
-      prompts.add(userPrompt);
+      Message prompt = new Message("user", PromptUtils.cleanContext(filledTemplate));
+      prompts.add(prompt);
+
+      //prompts = PromptUtils.addChatHistory
       return service.generate(prompts, request);
+
+    } else {
+
+      // Iterative Refining method
+      LOGGER.debug("RagAPI - The sources associated to the RAG request will be processed using Iterative Refining method.");
+
+      /*
+        Variables:
+        - snippets (formatted list of TextSegments)
+        - userquery (userquery)
+        - lastresponse (the last generated response)
+        - format (Sentence enforcing the response format : bulletpoint, stepbystep, text, default... optional)
+       */
+
+      // Initial call with a fist set of snippets
+      List<Message> prompts = new ArrayList<>();
+      String template = PromptUtils.getInitialRagTemplateRefining(request);
+      String filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config);
+      filledTemplate = filledTemplate.replace("{userquery}", userquery)
+              .replace("{format}", PromptUtils.getResponseFormat(request));
+
+      Message prompt = new Message("user", PromptUtils.cleanContext(filledTemplate));
+      prompts.add(prompt);
+      String lastresponse = service.generate(prompts, request);
+
+      // Refining response with each snippet pack
+      template = PromptUtils.getRefineRagTemplateRefining(request);
+      while (!contents.isEmpty()) {
+        filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config);
+        filledTemplate = filledTemplate.replace("{userquery}", userquery)
+                .replace("{format}", PromptUtils.getResponseFormat(request))
+                .replace("{lastresponse}", lastresponse);
+        prompts = new ArrayList<>();
+        prompt = new Message("user", PromptUtils.cleanContext(filledTemplate));
+        prompts.add(prompt);
+        lastresponse = service.generate(prompts, request);
+        LOGGER.debug("RagAPI - Iterative Refining - Last generated response : {}", lastresponse);
+      }
+      return lastresponse;
 
     }
 
@@ -247,6 +312,7 @@ public class RagAPI extends SearchAPI {
     LOGGER.debug("");
     LOGGER.debug("##### RAG final JSON response #####");
     LOGGER.debug(response.toJSONString());
+    LOGGER.debug("###################################");
     LOGGER.debug("");
 
     return response;
@@ -268,6 +334,7 @@ public class RagAPI extends SearchAPI {
     LOGGER.debug("");
     LOGGER.debug("##### RAG final JSON response #####");
     LOGGER.debug(response.toJSONString());
+    LOGGER.debug("###################################");
     LOGGER.debug("");
 
     return response;
@@ -300,7 +367,7 @@ public class RagAPI extends SearchAPI {
     // Handling search results
     // Retrieving list of documents : id, title, url
     List<Document> documentsList;
-    documentsList = getDocumentList(result, config);
+    documentsList = getDocumentList(result);
 
     if (documentsList.isEmpty()) {
       throw new FileNotFoundException("The query cannot be answered because no associated documents were found.");
@@ -359,10 +426,9 @@ public class RagAPI extends SearchAPI {
   /**
    * Get a JSONArray containing a list of documents (ID, url, title and content) returned by the Search
    * @param result : The result of the search, containing Solr documents
-   * @param config RAG configuration
    * @return JSONArray
    */
-  private static List<Document> getDocumentList(JSONObject result, RagConfiguration config) {
+  private static List<Document> getDocumentList(JSONObject result) {
     try {
 
       JSONObject response = (JSONObject) result.get("response");

@@ -28,11 +28,14 @@ public class RagConfiguration extends AbstractConfigClass {
     public static final String LLM_MAX_TOKENS = "llm.maxTokens";
     public static final String LLM_MODEL = "llm.model";
 
+    // PROMPTING
+    public static final String PROMPT_CHUNKING_STRATEGY = "prompt.chunking.strategy"; // mapreduce or refine
+    public static final String MAX_REQUEST_SIZE = "prompt.max.request.size";
+
     // DATAFARI RAG PRE-PROCESSING PROPERTIES
+    public static final String IN_MEMORY_TOP_K = "inMemory.topK";
     public static final String MAX_FILES = "chunking.maxFiles";
-    public static final String MAX_CHUNKS = "rag.maxChunks";
     public static final String CHUNK_SIZE = "chunking.chunk.size";
-    public static final String MAX_REQUEST_SIZE = "llm.max.request.size";
     public static final String SEARCH_OPERATOR = "rag.operator";
 
     // SOLR VECTOR SEARCH

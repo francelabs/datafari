@@ -30,14 +30,14 @@ public class OpenAiLlmService implements LlmService {
     public OpenAiLlmService(RagConfiguration config) {
         this.url = config.getProperty(RagConfiguration.API_ENDPOINT);
         try {
-            this.temperature = Double.parseDouble(config.getProperty(RagConfiguration.LLM_TEMPERATURE));
-            this.maxToken = config.getIntegerProperty(RagConfiguration.LLM_MAX_TOKENS);
+            this.temperature = Double.parseDouble(config.getProperty(RagConfiguration.LLM_TEMPERATURE, "0"));
+            this.maxToken = config.getIntegerProperty(RagConfiguration.LLM_MAX_TOKENS, 200);
         } catch (NumberFormatException e) {
             this.temperature = 0.0;
             this.maxToken = 200;
         }
-        this.model = config.getProperty(RagConfiguration.LLM_MODEL).isEmpty() ? DEFAULT_MODEL : config.getProperty(RagConfiguration.LLM_MODEL);
-        this.url = config.getProperty(RagConfiguration.API_ENDPOINT).isEmpty() ? DEFAULT_URL : config.getProperty(RagConfiguration.API_ENDPOINT);
+        this.model = config.getProperty(RagConfiguration.LLM_MODEL, DEFAULT_MODEL);
+        this.url = config.getProperty(RagConfiguration.API_ENDPOINT, DEFAULT_URL);
         this.apiKey = config.getProperty(RagConfiguration.API_TOKEN);
         this.config = config;
         this.llm = getChatLanguageModel();
@@ -51,7 +51,7 @@ public class OpenAiLlmService implements LlmService {
      */
     @Override
     public String generate(List<Message> prompts, HttpServletRequest request) throws IOException {
-        LOGGER.debug("OpenAiLlmService is processing a request with multiple messages.");
+        LOGGER.debug("OpenAiLlmService is processing a request with {} message(s).", prompts.size());
         for (Message prompt : prompts) {
             LOGGER.debug("{} :\r\n{}", prompt.getRole(), prompt.getContent());
         }
@@ -84,6 +84,7 @@ public class OpenAiLlmService implements LlmService {
             case "assistant":
                 return new AiMessage(message.content);
             case "system":
+            case "developer":
                 return new SystemMessage(message.content);
             case "user":
             default:

@@ -102,6 +102,7 @@ public class AiPowered {
         String lang;
         boolean ragBydocument = false;
         JSONObject searchResults;
+        JSONArray history = new JSONArray();
 
         // Get RAG configuration
         RagConfiguration config = RagConfiguration.getInstance();
@@ -117,6 +118,13 @@ public class AiPowered {
         } else {
             LOGGER.warn("AiPowered - RAG - Missing query parameter");
             return generateErrorJson(422, "Missing query parameter.", null);
+        }
+
+        // Retrieve query from JSON input
+        if (jsonDoc.get("history") != null) {
+            history = (JSONArray) jsonDoc.get("history");
+            request.setAttribute("history", history);
+            LOGGER.debug("AiPowered - RAG - Conversation history retrieved from request : {}", query);
         }
 
         // Search using Datafari API methods

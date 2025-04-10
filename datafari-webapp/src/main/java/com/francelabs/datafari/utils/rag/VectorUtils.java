@@ -58,7 +58,7 @@ public class VectorUtils {
         // Vector query
         Query query = Query.from(request.getParameter("q"));
 
-        int maxResult = RagConfiguration.getInstance().getIntegerProperty(RagConfiguration.MAX_CHUNKS, 5);
+        int maxResult = RagConfiguration.getInstance().getIntegerProperty(RagConfiguration.IN_MEMORY_TOP_K, 10);
         ContentRetriever contentRetriever = EmbeddingStoreContentRetriever.builder()
                 .embeddingStore(embeddingStore)
                 .maxResults(maxResult)

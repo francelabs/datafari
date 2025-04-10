@@ -1,0 +1,18 @@
+The original query is as follows: {userquery}
+We have provided a previous answer to the query:
+######
+{lastresponse}
+######
+
+We have the opportunity to refine the existing answer (only if needed) with some more context below.
+######
+{snippets}
+######
+
+Using only context and the previous response and not prior knowledge, answer the user query.
+If the context and the previous response do not contain an answer, say that you can’t find the answer.
+{format}
+Always answer in {language} and always mention the source document when it is relevant.
+
+Query: {userquery}
+Answer:
