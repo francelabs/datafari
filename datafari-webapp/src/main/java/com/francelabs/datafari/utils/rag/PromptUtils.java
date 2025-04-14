@@ -15,6 +15,8 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils.rag;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
@@ -27,6 +29,8 @@ import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.segment.TextSegment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
@@ -34,9 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Prompt Utility class for RAG
@@ -397,5 +399,46 @@ public class PromptUtils {
             size = size + message.getContent().length();
         }
         return size;
+    }
+
+    public static List<Message> addChatHistoryToList(List<Message> prompts, HttpServletRequest request, RagConfiguration config) {
+        if (!config.getBooleanProperty(RagConfiguration.CHAT_MEMORY_ENABLED)) return prompts;
+
+        Object historyAttribute = request.getAttribute("history");
+        if (historyAttribute instanceof ArrayList<?>) {
+            ArrayList<?> historyList  = (ArrayList<?>) historyAttribute;
+            try {
+                // Get Message list from JSONArray
+                List<Message> history = new ArrayList<>();
+
+                // LinkedHashmap to Message
+                for (Object obj : historyList ) {
+                    if (obj instanceof Map) {
+                        @SuppressWarnings("unchecked")
+                        Map<String, String> map = (LinkedHashMap<String, String>) obj;
+                        if (map.containsKey("role") && map.containsKey("content")) {
+                            Message message = new Message(map.get("role"), map.get("content"));
+                            history.add(message);
+                        } else {
+                            LOGGER.warn("A message from the chat history in invalid, and will be ignored.");
+                        }
+                    }
+                }
+
+                // The number of history message must not exceed the limit set in chat.memory.history.size (rag.properties)
+                int historyMaxSize = config.getIntegerProperty(RagConfiguration.CHAT_MEMORY_HISTORY_SIZE, 6);
+                if (history.size() > historyMaxSize) {
+                    history = history.subList(history.size() - historyMaxSize, history.size());
+                }
+
+                history.addAll(prompts);
+                return history;
+            } catch (Exception e) {
+                LOGGER.warn("The conversation history could not be read. Chat memory is ignored.", e);
+            }
+        } else {
+            LOGGER.debug("PromptUtils - RAG - No valid chat history found in request. ");
+        }
+        return prompts;
     }
 }

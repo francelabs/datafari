@@ -36,8 +36,8 @@ public class OpenAiLlmService implements LlmService {
             this.temperature = 0.0;
             this.maxToken = 200;
         }
-        this.model = config.getProperty(RagConfiguration.LLM_MODEL, DEFAULT_MODEL);
-        this.url = config.getProperty(RagConfiguration.API_ENDPOINT, DEFAULT_URL);
+        this.model = config.getProperty(RagConfiguration.LLM_MODEL, DEFAULT_MODEL).isEmpty() ? DEFAULT_MODEL : config.getProperty(RagConfiguration.LLM_MODEL);
+        this.url = config.getProperty(RagConfiguration.API_ENDPOINT, DEFAULT_URL).isEmpty() ? DEFAULT_URL : config.getProperty(RagConfiguration.API_ENDPOINT);
         this.apiKey = config.getProperty(RagConfiguration.API_TOKEN);
         this.config = config;
         this.llm = getChatLanguageModel();

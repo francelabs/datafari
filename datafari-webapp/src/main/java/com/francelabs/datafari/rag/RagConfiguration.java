@@ -38,6 +38,10 @@ public class RagConfiguration extends AbstractConfigClass {
     public static final String CHUNK_SIZE = "chunking.chunk.size";
     public static final String SEARCH_OPERATOR = "rag.operator";
 
+    // CHAT HISTORY
+    public static final String CHAT_MEMORY_ENABLED = "chat.memory.enabled";
+    public static final String CHAT_MEMORY_HISTORY_SIZE = "chat.memory.history.size";
+
     // SOLR VECTOR SEARCH
     public static final String SOLR_ENABLE_VECTOR_SEARCH = "solr.enable.vector.search";
     public static final String SOLR_EMBEDDINGS_MODEL = "solr.embeddings.model";

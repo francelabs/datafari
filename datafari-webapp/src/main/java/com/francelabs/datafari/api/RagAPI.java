@@ -185,7 +185,7 @@ public class RagAPI extends SearchAPI {
       Message prompt = new Message("user", PromptUtils.cleanContext(filledTemplate));
       prompts.add(prompt);
 
-      //prompts = PromptUtils.addChatHistory
+      prompts = PromptUtils.addChatHistoryToList(prompts, request, config);
       return service.generate(prompts, request);
 
     } else {
@@ -210,6 +210,7 @@ public class RagAPI extends SearchAPI {
 
       Message prompt = new Message("user", PromptUtils.cleanContext(filledTemplate));
       prompts.add(prompt);
+      prompts = PromptUtils.addChatHistoryToList(prompts, request, config);
       String lastresponse = service.generate(prompts, request);
 
       // Refining response with each snippet pack
@@ -220,8 +221,10 @@ public class RagAPI extends SearchAPI {
                 .replace("{format}", PromptUtils.getResponseFormat(request))
                 .replace("{lastresponse}", lastresponse);
         prompts = new ArrayList<>();
+        prompts = PromptUtils.addChatHistoryToList(prompts, request, config);
         prompt = new Message("user", PromptUtils.cleanContext(filledTemplate));
         prompts.add(prompt);
+        prompts = PromptUtils.addChatHistoryToList(prompts, request, config);
         lastresponse = service.generate(prompts, request);
         LOGGER.debug("RagAPI - Iterative Refining - Last generated response : {}", lastresponse);
       }
