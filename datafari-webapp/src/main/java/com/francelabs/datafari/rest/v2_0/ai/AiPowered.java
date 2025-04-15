@@ -2,6 +2,7 @@ package com.francelabs.datafari.rest.v2_0.ai;
 
 import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
 import com.francelabs.datafari.api.RagAPI;
+import com.francelabs.datafari.rag.Message;
 import com.francelabs.datafari.rag.RagConfiguration;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
 import dev.langchain4j.data.document.Document;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 
 @RestController
 public class AiPowered {
@@ -117,6 +119,22 @@ public class AiPowered {
         } else {
             LOGGER.warn("AiPowered - RAG - Missing query parameter");
             return generateErrorJson(422, "Missing query parameter.", null);
+        }
+
+        // Retrieve history from JSON input
+//        if (jsonDoc.get("history") != null) {
+//            history = (JSONArray) jsonDoc.get("history");
+//            request.setAttribute("history", history);
+//            LOGGER.debug("AiPowered - RAG - Conversation history retrieved from request : {}", query);
+//        }
+        if (jsonDoc.containsKey("history")) {
+            Object history = jsonDoc.get("history");
+            if (history != null) {
+                request.setAttribute("history", history);
+                LOGGER.debug("AiPowered - RAG - Conversation history retrieved for request: {}", query);
+            } else {
+                LOGGER.warn("AiPowered - RAG - History found but is not a valid JSONArray. Ignored.");
+            }
         }
 
         // Search using Datafari API methods

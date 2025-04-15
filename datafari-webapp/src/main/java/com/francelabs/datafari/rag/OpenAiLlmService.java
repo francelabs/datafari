@@ -30,14 +30,14 @@ public class OpenAiLlmService implements LlmService {
     public OpenAiLlmService(RagConfiguration config) {
         this.url = config.getProperty(RagConfiguration.API_ENDPOINT);
         try {
-            this.temperature = Double.parseDouble(config.getProperty(RagConfiguration.LLM_TEMPERATURE));
-            this.maxToken = config.getIntegerProperty(RagConfiguration.LLM_MAX_TOKENS);
+            this.temperature = Double.parseDouble(config.getProperty(RagConfiguration.LLM_TEMPERATURE, "0"));
+            this.maxToken = config.getIntegerProperty(RagConfiguration.LLM_MAX_TOKENS, 200);
         } catch (NumberFormatException e) {
             this.temperature = 0.0;
             this.maxToken = 200;
         }
-        this.model = config.getProperty(RagConfiguration.LLM_MODEL).isEmpty() ? DEFAULT_MODEL : config.getProperty(RagConfiguration.LLM_MODEL);
-        this.url = config.getProperty(RagConfiguration.API_ENDPOINT).isEmpty() ? DEFAULT_URL : config.getProperty(RagConfiguration.API_ENDPOINT);
+        this.model = config.getProperty(RagConfiguration.LLM_MODEL, DEFAULT_MODEL).isEmpty() ? DEFAULT_MODEL : config.getProperty(RagConfiguration.LLM_MODEL);
+        this.url = config.getProperty(RagConfiguration.API_ENDPOINT, DEFAULT_URL).isEmpty() ? DEFAULT_URL : config.getProperty(RagConfiguration.API_ENDPOINT);
         this.apiKey = config.getProperty(RagConfiguration.API_TOKEN);
         this.config = config;
         this.llm = getChatLanguageModel();
@@ -51,11 +51,9 @@ public class OpenAiLlmService implements LlmService {
      */
     @Override
     public String generate(List<Message> prompts, HttpServletRequest request) throws IOException {
-        if (this.config.getBooleanProperty(RagConfiguration.ENABLE_LOGS)) {
-            LOGGER.debug("OpenAiLlmService is processing a request with multiple messages.");
-            for (Message prompt : prompts) {
-                LOGGER.debug("{} :\r\n{}", prompt.getRole(), prompt.getContent());
-            }
+        LOGGER.debug("OpenAiLlmService is processing a request with {} message(s).", prompts.size());
+        for (Message prompt : prompts) {
+            LOGGER.debug("{} :\r\n{}", prompt.getRole(), prompt.getContent());
         }
         return llm.generate(convertMessageList(prompts)).content().text();
     }
@@ -66,11 +64,8 @@ public class OpenAiLlmService implements LlmService {
      * @return A single string response
      */
     public String generate(Message prompt) {
-
-        if (this.config.getBooleanProperty(RagConfiguration.ENABLE_LOGS)) {
-            LOGGER.debug("OpenAiLlmService is processing a request with a single message.\r\n" +
+        LOGGER.debug("OpenAiLlmService is processing a request with a single message.\r\n" +
                     "{} :\r\n{}", prompt.getRole(), prompt.getContent());
-        }
         return llm.generate(convertMessage(prompt)).content().text();
     }
 
@@ -89,6 +84,7 @@ public class OpenAiLlmService implements LlmService {
             case "assistant":
                 return new AiMessage(message.content);
             case "system":
+            case "developer":
                 return new SystemMessage(message.content);
             case "user":
             default:

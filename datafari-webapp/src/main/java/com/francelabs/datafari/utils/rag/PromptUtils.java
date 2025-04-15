@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2015 France Labs
- *
+ * *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * *
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,8 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils.rag;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
@@ -25,14 +27,18 @@ import com.francelabs.datafari.utils.AuthenticatedUserName;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.segment.TextSegment;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.text.Normalizer;
+import java.util.*;
 
 /**
  * Prompt Utility class for RAG
@@ -41,6 +47,12 @@ import java.util.Locale;
  *
  */
 public class PromptUtils {
+
+    private static final Logger LOGGER = LogManager.getLogger(PromptUtils.class.getName());
+    public static final String SNIPPETS_TAG = "{snippets}";
+    public static final String SYSTEM_ROLE = "system";
+    public static final String USER_QUERY_TAG = "{userquery}";
+    public static final String FORMAT_TAG = "{format}";
 
     private PromptUtils() {
         // Constructor
@@ -59,7 +71,7 @@ public class PromptUtils {
             // format document
             String content = formatDocument(document.metadata().getString("title"), document.text());
             // create prompt
-            Message message = new Message("system", content);
+            Message message = new Message(SYSTEM_ROLE, content);
             prompts.add(message);
         }
 
@@ -73,17 +85,18 @@ public class PromptUtils {
      * @param request : The request object
      * @return a prompt ready to be sent to the LLM service
      */
-    public static Message createInitialRagPrompt(RagConfiguration config, HttpServletRequest request, boolean ragBydocument) throws IOException {
+    // TODO DELETE
+/*    public static Message createInitialRagPrompt(RagConfiguration config, HttpServletRequest request, boolean ragBydocument) throws IOException {
 
         // Retrieve the initial prompt template from instructions file.
         String template = ragBydocument ?
-                getInstructions("template-ragByDocument.txt") : getInstructions("template-rag.txt");
+                getInstructions("rag/template-ragByDocument.txt") : getInstructions("rag/template-rag.txt");
 
         template = template.replace("{format}", getResponseFormat(request));
         template = template.replace("{language}", getUserLanguage(request));
 
-        return new Message("system", cleanContext(template, config));
-    }
+        return new Message("system", cleanContext(template));
+    }*/
 
     /**
      * Create a full prompt usable by a LLM, user the user prompt, the provided content and the configuration
@@ -91,23 +104,24 @@ public class PromptUtils {
      * @param request : The request object
      * @return a prompt ready to be sent to the LLM service
      */
-    public static Message createPromptForMergeAllRag(RagConfiguration config, HttpServletRequest request, boolean ragBydocument) throws IOException {
+    // TODO DELETE
+    /*public static Message createPromptForMergeAllRag(RagConfiguration config, HttpServletRequest request, boolean ragBydocument) throws IOException {
 
         // Retrieve the initial prompt template from instructions file.
         String template = ragBydocument ?
-                getInstructions("template-mergeAllRagByDocument.txt") : getInstructions("template-mergeAllRag.txt");
+                getInstructions("rag/template-mergeAllRagByDocument.txt") : getInstructions("rag/template-mergeAllRag.txt");
 
         template = template.replace("{format}", getResponseFormat(request));
         template = template.replace("{language}", getUserLanguage(request));
 
-        return new Message("system", cleanContext(template, config));
-    }
+        return new Message("system", cleanContext(template));
+    }*/
 
     /**
      * @return Retrieve the instructions used to summarize a document.
      */
     public static Message createInitialPromptForSummarization(HttpServletRequest request) throws IOException {
-        String prompt = getInstructions("template-initialPromptForSummarization.txt")
+        String prompt = getInstructions("summarization/template-initialPromptForSummarization.txt")
                 .replace("{language}", getUserLanguage(request));
         return new Message("system", prompt);
     }
@@ -116,9 +130,43 @@ public class PromptUtils {
      * @return Retrieve the instructions used to merge multiple summaries into one.
      */
     public static Message createPromptForMergeAllSummaries(HttpServletRequest request) throws IOException {
-        String prompt =  getInstructions("template-mergeAllSummaries.txt")
+        String prompt =  getInstructions("summarization/template-summarization-mergeAll.txt")
                 .replace("{language}", getUserLanguage(request));
         return new Message("user", prompt);
+    }
+
+
+    /**
+     * @return Retrieve the instructions for the initial request of Refining method.
+     */
+    public static String getInitialRagTemplateRefining(HttpServletRequest request) throws IOException {
+        return getInstructions("rag/template-refine-initial.txt")
+                .replace("{language}", getUserLanguage(request));
+    }
+
+
+    /**
+     * @return Retrieve the instructions for the initial request of Refining method.
+     */
+    public static String getRefineRagTemplateRefining(HttpServletRequest request) throws IOException {
+        return getInstructions("rag/template-refine-refining.txt")
+                .replace("{language}", getUserLanguage(request));
+    }
+
+    /**
+     * @return Retrieve the instructions for the initial request of Map Reduce method.
+     */
+    public static String getInitialRagTemplateMapReduce(HttpServletRequest request) throws IOException {
+        return getInstructions("rag/template-rag.txt")
+                .replace("{language}", getUserLanguage(request));
+    }
+
+    /**
+     * @return Retrieve the instructions for the initial request of Map Reduce method.
+     */
+    public static String getFinalRagTemplateMapReduce(HttpServletRequest request) throws IOException {
+        return getInstructions("rag/template-mergeAllRag.txt")
+                .replace("{language}", getUserLanguage(request));
     }
 
     /**
@@ -129,7 +177,7 @@ public class PromptUtils {
      * @throws IOException
      */
     public static String formatDocument(String title, String content) throws IOException {
-        String template =  getInstructions("template-fromTextSegment.txt");
+        String template =  getInstructions("rag/template-fromTextSegment.txt");
         return template.replace("{title}", title).replace("{content}", content);
     }
 
@@ -150,21 +198,102 @@ public class PromptUtils {
     }
 
     /**
+     * Fill a provided prompt template with as many snippets as possible, without exceeding the limit set in
+     * prompt.max.request.size (rag.properties). The snippet list replaces the require {snippets} tag.
+     * @param template : A String prompt template, containing the {snippets} tag
+     * @param contents : A list of formatted message, each containing one chunk/snippet
+     * @param config : The RagConfiguration
+     * @return : The original template, filled with as many snippets as possible.
+     * @throws DatafariServerException : The template is missing the  {snippets} tag.
+     */
+    public static String stuffAsManySnippetsAsPossible(String template, List<Message> contents, RagConfiguration config) throws DatafariServerException {
+
+        if (!template.contains(SNIPPETS_TAG)) throw new DatafariServerException(CodesReturned.GENERALERROR, "Invalid prompt template: {snippets} tag is missing.");
+
+        StringBuilder snippets = new StringBuilder();
+        String prompt = template.replace(SNIPPETS_TAG, snippets.toString());
+        List<Message> processedSnippets = new ArrayList<>();
+        int i = 0;
+
+        for (Message message : contents) {
+            // Adding a snippet to the list, and check if the length is not exceeding the limit
+            String snippet = message.getContent();
+            snippets.append("\n").append(snippet);
+            if (template.replace(SNIPPETS_TAG, snippets.toString()).length() < config.getIntegerProperty(RagConfiguration.MAX_REQUEST_SIZE)) {
+                prompt = template.replace(SNIPPETS_TAG, snippets.toString());
+                processedSnippets.add(message);
+                i++;
+            } else {
+                break;
+            }
+        }
+
+        // Remove the processed snippets from contents
+        contents.removeAll(processedSnippets);
+
+        // If the list is empty due to an excessive content size, the first chunk is stuffed in
+        if (snippets.toString().isEmpty() && !contents.isEmpty()) {
+            i = 0;
+            snippets = new StringBuilder(contents.get(0).getContent());
+            prompt = template.replace(SNIPPETS_TAG, snippets.toString());
+        }
+        LOGGER.debug("{} chunks processed in an LLM request. {} more to go.", i, contents.size());
+        return prompt;
+    }
+
+    /**
      * @param context The context, containing documents content
      * @return A clean context, with no characters or element that could cause an error or a prompt injection
      */
-    private static String cleanContext(String context, RagConfiguration config) {
+    public static String cleanContext(String context) {
         context = context.replace("\\", "/")
                 .replace("\n", " ")
                 .replace("\r", " ")
                 .replace("\t", " ")
                 .replace("\b", "")
                 .replace("\"", "`");
-        if (context.length() > config.getIntegerProperty(RagConfiguration.CHUNK_SIZE) ) { // TODO : check this when chunk size will be defined in token instead of characters
-            // Truncate the context if too long
-            context = context.substring(0, config.getIntegerProperty(RagConfiguration.CHUNK_SIZE));
-        }
         return context;
+    }
+
+    /**
+     * @param query The user query
+     * @return A clean query, with no characters or element that could cause an error or a prompt injection
+     */
+    public static String sanitizeInput(String query) {
+        if (query == null || query.isEmpty()) {
+            return "";
+        }
+
+        // 1. Trim whitespace
+        query = query.trim();
+
+        // Normalize Unicode characters (é → e)
+        query = Normalizer.normalize(query, Normalizer.Form.NFD);
+        query = query.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+
+        // Remove control characters (including newlines)
+        query = query.replaceAll("\\p{Cntrl}", " ");
+
+        // Escape or neutralize Lucene/Solr special characters
+        // These characters have special meaning in Solr query parsers (e.g., edismax)
+        // They may also have side effects with the LLM
+        // Here, we replace them by space to avoid misparsing
+        String[] specialChars = {
+                "+", "&&", "||", "{", "}", "[", "]",
+                "^", "~", "*", "\\", "<", ">", "=", "#"
+        };
+        for (String ch : specialChars) {
+            query = query.replace(ch, " ");
+        }
+        // Replace multiple whitespace with single space
+        query = query.replaceAll("\\s+", " ");
+        // Length limit for user query arbitrarily set to 500 char
+        int maxLength = 500;
+        if (query.length() > maxLength) {
+            query = query.substring(0, maxLength);
+        }
+
+        return query.trim();
     }
 
     /**
@@ -181,9 +310,9 @@ public class PromptUtils {
      * @return A list of TextSegments, that contain metadata. Big documents are chunked into multiple documents.
      */
     public static Message textSegmentsToMessage(TextSegment segment, String role, RagConfiguration config) throws IOException {
-        String template = getInstructions("template-fromTextSegment.txt");
+        String template = getInstructions("rag/template-fromTextSegment.txt");
         Metadata metadata = segment.metadata();
-        String content = cleanContext(segment.text(), config);
+        String content = cleanContext(segment.text());
         template = template.replace("{content}", content);
         template = template.replace("{id}", metadata.getString("id"));
         template = template.replace("{title}", metadata.getString("title"));
@@ -270,5 +399,46 @@ public class PromptUtils {
             size = size + message.getContent().length();
         }
         return size;
+    }
+
+    public static List<Message> addChatHistoryToList(List<Message> prompts, HttpServletRequest request, RagConfiguration config) {
+        if (!config.getBooleanProperty(RagConfiguration.CHAT_MEMORY_ENABLED)) return prompts;
+
+        Object historyAttribute = request.getAttribute("history");
+        if (historyAttribute instanceof ArrayList<?>) {
+            ArrayList<?> historyList  = (ArrayList<?>) historyAttribute;
+            try {
+                // Get Message list from JSONArray
+                List<Message> history = new ArrayList<>();
+
+                // LinkedHashmap to Message
+                for (Object obj : historyList ) {
+                    if (obj instanceof Map) {
+                        @SuppressWarnings("unchecked")
+                        Map<String, String> map = (LinkedHashMap<String, String>) obj;
+                        if (map.containsKey("role") && map.containsKey("content")) {
+                            Message message = new Message(map.get("role"), map.get("content"));
+                            history.add(message);
+                        } else {
+                            LOGGER.warn("A message from the chat history in invalid, and will be ignored.");
+                        }
+                    }
+                }
+
+                // The number of history message must not exceed the limit set in chat.memory.history.size (rag.properties)
+                int historyMaxSize = config.getIntegerProperty(RagConfiguration.CHAT_MEMORY_HISTORY_SIZE, 6);
+                if (history.size() > historyMaxSize) {
+                    history = history.subList(history.size() - historyMaxSize, history.size());
+                }
+
+                history.addAll(prompts);
+                return history;
+            } catch (Exception e) {
+                LOGGER.warn("The conversation history could not be read. Chat memory is ignored.", e);
+            }
+        } else {
+            LOGGER.debug("PromptUtils - RAG - No valid chat history found in request. ");
+        }
+        return prompts;
     }
 }

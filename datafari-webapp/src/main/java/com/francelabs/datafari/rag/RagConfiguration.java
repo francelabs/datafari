@@ -14,9 +14,8 @@ public class RagConfiguration extends AbstractConfigClass {
 
     // GLOBAL RAG PROPERTIES
     public static final String ENABLE_RAG = "ai.enable.rag";
-    public static final String ENABLE_LOGS = "rag.enable.logs";
-    public static final String ENABLE_CHUNKING = "rag.enable.chunking";
-    public static final String ENABLE_VECTOR_SEARCH = "rag.enable.vector.search"; // Deprecated, see SOLR_ENABLE_VECTOR_SEARCH
+    public static final String ENABLE_CHUNKING = "chunking.enable";
+    public static final String ENABLE_VECTOR_SEARCH = "inMemory.enable.vector.search"; // Deprecated, see SOLR_ENABLE_VECTOR_SEARCH
     public static final String ENABLE_SUMMARIZATION = "ai.enable.summarization";
 
     // WEB SERVICES PARAMETERS
@@ -29,12 +28,19 @@ public class RagConfiguration extends AbstractConfigClass {
     public static final String LLM_MAX_TOKENS = "llm.maxTokens";
     public static final String LLM_MODEL = "llm.model";
 
+    // PROMPTING
+    public static final String PROMPT_CHUNKING_STRATEGY = "prompt.chunking.strategy"; // mapreduce or refine
+    public static final String MAX_REQUEST_SIZE = "prompt.max.request.size";
+
     // DATAFARI RAG PRE-PROCESSING PROPERTIES
-    public static final String MAX_FILES = "rag.maxFiles";
-    public static final String MAX_CHUNKS = "rag.maxChunks";
-    public static final String CHUNK_SIZE = "rag.chunk.size";
-    public static final String MAX_REQUEST_SIZE = "rag.max.request.size";
+    public static final String IN_MEMORY_TOP_K = "inMemory.topK";
+    public static final String MAX_FILES = "chunking.maxFiles";
+    public static final String CHUNK_SIZE = "chunking.chunk.size";
     public static final String SEARCH_OPERATOR = "rag.operator";
+
+    // CHAT HISTORY
+    public static final String CHAT_MEMORY_ENABLED = "chat.memory.enabled";
+    public static final String CHAT_MEMORY_HISTORY_SIZE = "chat.memory.history.size";
 
     // SOLR VECTOR SEARCH
     public static final String SOLR_ENABLE_VECTOR_SEARCH = "solr.enable.vector.search";
