@@ -221,7 +221,7 @@ public class RagAPI extends SearchAPI {
                 .replace("{format}", PromptUtils.getResponseFormat(request))
                 .replace("{lastresponse}", lastresponse);
         prompts = new ArrayList<>();
-        prompts = PromptUtils.addChatHistoryToList(prompts, request, config);
+//        prompts = PromptUtils.addChatHistoryToList(prompts, request, config); // TODO : can I remove here ?
         prompt = new Message("user", PromptUtils.cleanContext(filledTemplate));
         prompts.add(prompt);
         prompts = PromptUtils.addChatHistoryToList(prompts, request, config);
