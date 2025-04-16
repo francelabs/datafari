@@ -51,7 +51,7 @@ public class RagAPI extends SearchAPI {
 
     // Is RAG enabled ?
     if (!config.getBooleanProperty(RagConfiguration.ENABLE_RAG))
-      return writeJsonError(422, "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.");
+      return writeJsonError(422, "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", null);
 
     // Set LlmService
     LlmService service = getLlmService(config);
@@ -64,7 +64,7 @@ public class RagAPI extends SearchAPI {
         searchResults = processSearch(config, request);
       } catch (Exception e) {
         LOGGER.error("RagAPI - ERROR. An error occurred while retrieving data.", e);
-        return writeJsonError(500, "ragTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.");
+        return writeJsonError(500, "ragTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e);
       }
     }
 
@@ -77,7 +77,7 @@ public class RagAPI extends SearchAPI {
       LOGGER.debug("RagAPI - {} documents extracted.", initialDocumentsList.size());
     } catch (FileNotFoundException e) {
       LOGGER.warn("RagAPI -  WARNING. The query cannot be answered because no associated documents were found.");
-      return writeJsonError(428, "ragNoFileFound", "Sorry, I couldn't find any relevant document to answer your request.");
+      return writeJsonError(428, "ragNoFileFound", "Sorry, I couldn't find any relevant document to answer your request.", e);
     }
 
 
@@ -109,8 +109,11 @@ public class RagAPI extends SearchAPI {
     try {
       message = processRagQuery(contents, service, config, request, ragBydocument);
     } catch (DatafariServerException e) {
-      LOGGER.error("An error occurred while processing RAG query.", e);
-      return writeJsonError(500, "ragTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.");
+      LOGGER.error("An error occurred while calling external LLM service.", e);
+      return writeJsonError(500, "ragTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e);
+    }catch (Exception e) {
+      LOGGER.error("An unexpected error occurred while processing RAG query.", e);
+      return writeJsonError(500, "ragTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e);
     }
 
     LOGGER.debug("RagAPI - LLM response: {}", message);
@@ -120,7 +123,7 @@ public class RagAPI extends SearchAPI {
       message = cleanLlmFinalMessage(message);
       return writeJsonResponse(message, documentsList);
     } else {
-      return writeJsonError(428, "ragNoValidAnswer", "Sorry, I could not find an answer to your question.");
+      return writeJsonError(428, "ragNoValidAnswer", "Sorry, I could not find an answer to your question.", null);
     }
 
   }
@@ -321,13 +324,14 @@ public class RagAPI extends SearchAPI {
     return response;
   }
 
-  private static JSONObject writeJsonError(int code, String errorLabel, String message) {
+  private static JSONObject writeJsonError(int code, String errorLabel, String message, Exception ex) {
     final JSONObject response = new JSONObject();
     final JSONObject error = new JSONObject();
     final JSONObject content = new JSONObject();
     response.put("status", "ERROR");
     error.put("code", code);
     error.put("label", errorLabel);
+    if (ex != null) error.put("message", ex.getLocalizedMessage());
     content.put("message", message);
     content.put("documents", new ArrayList<>());
     content.put("error", error);

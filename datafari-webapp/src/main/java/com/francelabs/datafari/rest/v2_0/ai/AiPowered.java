@@ -48,7 +48,7 @@ public class AiPowered {
         if (jsonDoc.get(ID_FIELD) != null) {
             id = (String) jsonDoc.get(ID_FIELD);
         } else {
-            return generateErrorJson(422, "Please provide the ID of the document to summarize.", null);
+            return generateErrorJson(422, "summarizationBadRequest", "Sorry, It appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.", null);
         }
         // Retrieve language
         if (jsonDoc.get("lang") != null) {
@@ -71,13 +71,13 @@ public class AiPowered {
                 summary = (String) jsonAiDocument.get(LLM_SUMMARY_FIELD);
                 content = (String) ((JSONArray) jsonAiDocument.get(EXACT_CONTENT_FIELD)).get(0);
             } else {
-                return generateErrorJson(422, "The document cannot be retrieved.", null);
+                return generateErrorJson(422, "summarizationNoFileFound", "The document cannot be retrieved.", null);
             }
 
         } catch (final NullPointerException|IndexOutOfBoundsException e) {
-            return generateErrorJson(422, "The document cannot be retrieved.", null);
+            return generateErrorJson(422, "summarizationNoFileFound", "The document cannot be retrieved.", null);
         } catch (final Exception e) {
-            return generateErrorJson(500, e.getMessage(), e);
+            return generateErrorJson(500, "summarizationTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e);
         }
 
 
@@ -90,7 +90,7 @@ public class AiPowered {
 
 
         } catch (final Exception e) {
-            return generateErrorJson(500, e.getMessage(), e);
+            return generateErrorJson(500, "summarizationTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e);
         }
     }
 
@@ -110,7 +110,7 @@ public class AiPowered {
 
         // Is RAG enabled ?
         if (!config.getBooleanProperty(RagConfiguration.ENABLE_RAG))
-            return generateErrorJson(422, "Sorry, it seems the feature is not enabled.", null);
+            return generateErrorJson(422, "ragErrorNotEnabled ", "Sorry, it seems the feature is not enabled.", null);
 
         // Retrieve query from JSON input
         if (jsonDoc.get(QUERY_FIELD) != null) {
@@ -118,15 +118,9 @@ public class AiPowered {
             LOGGER.debug("AiPowered - RAG - RAG query : {}", query);
         } else {
             LOGGER.warn("AiPowered - RAG - Missing query parameter");
-            return generateErrorJson(422, "Missing query parameter.", null);
+            return generateErrorJson(422, "ragBadRequest", "Sorry, It appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.", null);
         }
 
-        // Retrieve history from JSON input
-//        if (jsonDoc.get("history") != null) {
-//            history = (JSONArray) jsonDoc.get("history");
-//            request.setAttribute("history", history);
-//            LOGGER.debug("AiPowered - RAG - Conversation history retrieved from request : {}", query);
-//        }
         if (jsonDoc.containsKey("history")) {
             Object history = jsonDoc.get("history");
             if (history != null) {
@@ -152,7 +146,7 @@ public class AiPowered {
             }
         } catch (IOException|ServletException e) {
             LOGGER.error("AiPowered - RAG - ERROR. An error occurred while retrieving documents.", e);
-            return generateErrorJson(422, "An unexpected error occurred during the search process.", e);
+            return generateErrorJson(500, "ragTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e);
         }
 
         // Retrieve language
@@ -168,7 +162,7 @@ public class AiPowered {
             return RagAPI.rag(editablerequest, searchResults, ragBydocument).toJSONString();
         } catch (final Exception e) {
             LOGGER.error("AiPowered - RAG - ERROR", e);
-            return generateErrorJson(500, e.getMessage(), e);
+            return generateErrorJson(500, "ragTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e);
         }
     }
 
@@ -197,7 +191,12 @@ public class AiPowered {
             Document doc = new Document(content, metadata);
 
             LOGGER.debug("AiPowered - Summarize - Generating a summary for document {}.", id);
-            summary = RagAPI.summarize(request, doc);
+            try {
+                summary = RagAPI.summarize(request, doc);
+            } catch (Exception e) {
+                LOGGER.error("Summarization failed !");
+                return generateErrorJson(500, "summarizationTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e);
+            }
             JSONObject jsonContent = new JSONObject();
             jsonContent.put("message", summary);
             jsonResponse.put(STATUS_FIELD, "OK");
@@ -207,7 +206,8 @@ public class AiPowered {
         } else if (content == null || content.isEmpty()) {
             // Error : No content, no summary
             LOGGER.warn("AiPowered - Summarize - Could not retrieve summary or content from file {}.", id);
-            return generateErrorJson(422, "Unable to generate a summary, since the file has no content.", null);
+            return generateErrorJson(422, "summarizationEmptyFile", "Sorry, I am unable to generate a summary, since the file has no content.", null);
+
         } else {
             jsonResponse.put(STATUS_FIELD, "OK");
             jsonResponse.put("content", summary);
@@ -260,18 +260,30 @@ public class AiPowered {
     /**
      * @param code : the integer HTTP error code
      * @param message : The message of the error, displayed in response
-     * @param e : The Exception (if any), displayed in logs
+     * @param ex : The Exception (if any), displayed in logs
      * @return a JSON error response
      */
-    private String generateErrorJson(int code, String message, Exception e) {
-        final JSONObject jsonResponse = new JSONObject();
-        LOGGER.error("AiPowered - ERROR. An error occurred: {}", message, e);
+    private static String generateErrorJson(int code, String errorLabel, String message, Exception ex) {
+        final JSONObject response = new JSONObject();
         final JSONObject error = new JSONObject();
-        jsonResponse.put(STATUS_FIELD, "ERROR");
+        final JSONObject content = new JSONObject();
+        response.put("status", "ERROR");
         error.put("code", code);
-        error.put("message", message);
-        jsonResponse.put("error", error);
-        return jsonResponse.toJSONString();
+        error.put("label", errorLabel);
+        if (ex != null) error.put("message", ex.getLocalizedMessage());
+        content.put("message", message);
+        content.put("documents", new ArrayList<>());
+        content.put("error", error);
+        response.put("content", content);
+
+        LOGGER.debug("RagAPI - ERROR. An error occurred while processing the query.");
+        LOGGER.debug("");
+        LOGGER.debug("##### RAG final JSON response #####");
+        LOGGER.debug(response.toJSONString());
+        LOGGER.debug("###################################");
+        LOGGER.debug("");
+
+        return response.toJSONString();
     }
 
 }
