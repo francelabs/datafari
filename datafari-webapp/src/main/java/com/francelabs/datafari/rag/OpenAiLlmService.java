@@ -23,7 +23,7 @@ public class OpenAiLlmService implements LlmService {
     String apiKey;
     double temperature;
     int maxToken;
-    static final String DEFAULT_MODEL = "gpt-3.5-turbo";
+    static final String DEFAULT_MODEL = "gpt-4o-mini";
     static final String DEFAULT_URL = "https://api.openai.com/v1/";
     ChatLanguageModel llm;
 
