@@ -146,6 +146,10 @@ public class RagAPI extends SearchAPI {
     // Retrieve and sanitize user query
     String userquery = PromptUtils.sanitizeInput(request.getParameter("q"));
 
+    // Get history (if enabled)
+    List<Message> chatHistory = PromptUtils.getChatHistoryToList(request, config);
+    int historySize = PromptUtils.getHistorySize(chatHistory, config);
+
     if ("mapreduce".equals(config.getProperty(RagConfiguration.PROMPT_CHUNKING_STRATEGY, "refine"))){
 
       // Map Reduce method
@@ -163,7 +167,7 @@ public class RagAPI extends SearchAPI {
       int rqCounter = 0;
       while (!contents.isEmpty()) {
         rqCounter++;
-        filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config);
+        filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config, historySize);
         prompts = new ArrayList<>();
         Message prompt = new Message("user", PromptUtils.cleanContext(filledTemplate));
         prompts.add(prompt);
@@ -181,14 +185,15 @@ public class RagAPI extends SearchAPI {
 
       // Then, merge all responses into one
       template = PromptUtils.getFinalRagTemplateMapReduce(request);
-      filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, responseMessages, config);
+      filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, responseMessages, config, historySize);
       filledTemplate = filledTemplate.replace(PromptUtils.USER_QUERY_TAG, userquery)
               .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request));
-      prompts = new ArrayList<>();
+
+      prompts = new ArrayList<>(chatHistory);
+
       Message prompt = new Message("user", PromptUtils.cleanContext(filledTemplate));
       prompts.add(prompt);
 
-      prompts = PromptUtils.addChatHistoryToList(prompts, request, config);
       return service.generate(prompts, request);
 
     } else {
@@ -205,29 +210,26 @@ public class RagAPI extends SearchAPI {
        */
 
       // Initial call with a fist set of snippets
-      List<Message> prompts = new ArrayList<>();
+      List<Message> prompts = new ArrayList<>(chatHistory);
       String template = PromptUtils.getInitialRagTemplateRefining(request);
-      String filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config);
+      String filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config, historySize);
       filledTemplate = filledTemplate.replace("{userquery}", userquery)
               .replace("{format}", PromptUtils.getResponseFormat(request));
 
       Message prompt = new Message("user", PromptUtils.cleanContext(filledTemplate));
       prompts.add(prompt);
-      prompts = PromptUtils.addChatHistoryToList(prompts, request, config);
       String lastresponse = service.generate(prompts, request);
 
       // Refining response with each snippet pack
       template = PromptUtils.getRefineRagTemplateRefining(request);
       while (!contents.isEmpty()) {
-        filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config);
+        filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config, historySize);
         filledTemplate = filledTemplate.replace("{userquery}", userquery)
                 .replace("{format}", PromptUtils.getResponseFormat(request))
                 .replace("{lastresponse}", lastresponse);
-        prompts = new ArrayList<>();
-//        prompts = PromptUtils.addChatHistoryToList(prompts, request, config); // TODO : can I remove here ?
+        prompts = new ArrayList<>(chatHistory);
         prompt = new Message("user", PromptUtils.cleanContext(filledTemplate));
         prompts.add(prompt);
-        prompts = PromptUtils.addChatHistoryToList(prompts, request, config);
         lastresponse = service.generate(prompts, request);
         LOGGER.debug("RagAPI - Iterative Refining - Last generated response : {}", lastresponse);
       }
@@ -331,7 +333,7 @@ public class RagAPI extends SearchAPI {
     response.put("status", "ERROR");
     error.put("code", code);
     error.put("label", errorLabel);
-    if (ex != null) error.put("message", ex.getLocalizedMessage());
+    if (ex != null) error.put("reason", ex.getLocalizedMessage());
     content.put("message", message);
     content.put("documents", new ArrayList<>());
     content.put("error", error);
