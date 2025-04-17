@@ -15,8 +15,6 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils.rag;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
@@ -29,8 +27,6 @@ import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.segment.TextSegment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
@@ -77,45 +73,6 @@ public class PromptUtils {
 
         return prompts;
     }
-
-
-    /**
-     * Create a full prompt usable by a LLM, user the user prompt, the provided content and the configuration
-     * @param config : Global RAG configuration
-     * @param request : The request object
-     * @return a prompt ready to be sent to the LLM service
-     */
-    // TODO DELETE
-/*    public static Message createInitialRagPrompt(RagConfiguration config, HttpServletRequest request, boolean ragBydocument) throws IOException {
-
-        // Retrieve the initial prompt template from instructions file.
-        String template = ragBydocument ?
-                getInstructions("rag/template-ragByDocument.txt") : getInstructions("rag/template-rag.txt");
-
-        template = template.replace("{format}", getResponseFormat(request));
-        template = template.replace("{language}", getUserLanguage(request));
-
-        return new Message("system", cleanContext(template));
-    }*/
-
-    /**
-     * Create a full prompt usable by a LLM, user the user prompt, the provided content and the configuration
-     * @param config : Global RAG configuration
-     * @param request : The request object
-     * @return a prompt ready to be sent to the LLM service
-     */
-    // TODO DELETE
-    /*public static Message createPromptForMergeAllRag(RagConfiguration config, HttpServletRequest request, boolean ragBydocument) throws IOException {
-
-        // Retrieve the initial prompt template from instructions file.
-        String template = ragBydocument ?
-                getInstructions("rag/template-mergeAllRagByDocument.txt") : getInstructions("rag/template-mergeAllRag.txt");
-
-        template = template.replace("{format}", getResponseFormat(request));
-        template = template.replace("{language}", getUserLanguage(request));
-
-        return new Message("system", cleanContext(template));
-    }*/
 
     /**
      * @return Retrieve the instructions used to summarize a document.
@@ -206,7 +163,7 @@ public class PromptUtils {
      * @return : The original template, filled with as many snippets as possible.
      * @throws DatafariServerException : The template is missing the  {snippets} tag.
      */
-    public static String stuffAsManySnippetsAsPossible(String template, List<Message> contents, RagConfiguration config) throws DatafariServerException {
+    public static String stuffAsManySnippetsAsPossible(String template, List<Message> contents, RagConfiguration config, int historySize) throws DatafariServerException {
 
         if (!template.contains(SNIPPETS_TAG)) throw new DatafariServerException(CodesReturned.GENERALERROR, "Invalid prompt template: {snippets} tag is missing.");
 
@@ -401,15 +358,18 @@ public class PromptUtils {
         return size;
     }
 
-    public static List<Message> addChatHistoryToList(List<Message> prompts, HttpServletRequest request, RagConfiguration config) {
-        if (!config.getBooleanProperty(RagConfiguration.CHAT_MEMORY_ENABLED)) return prompts;
+    public static List<Message> getChatHistoryToList(HttpServletRequest request, RagConfiguration config) {
+
+        List<Message> history = new ArrayList<>();
+
+        if (!config.getBooleanProperty(RagConfiguration.CHAT_MEMORY_ENABLED)) return history;
 
         Object historyAttribute = request.getAttribute("history");
         if (historyAttribute instanceof ArrayList<?>) {
             ArrayList<?> historyList  = (ArrayList<?>) historyAttribute;
             try {
                 // Get Message list from JSONArray
-                List<Message> history = new ArrayList<>();
+                history = new ArrayList<>();
 
                 // LinkedHashmap to Message
                 for (Object obj : historyList ) {
@@ -431,7 +391,6 @@ public class PromptUtils {
                     history = history.subList(history.size() - historyMaxSize, history.size());
                 }
 
-                history.addAll(prompts);
                 return history;
             } catch (Exception e) {
                 LOGGER.warn("The conversation history could not be read. Chat memory is ignored.", e);
@@ -439,6 +398,14 @@ public class PromptUtils {
         } else {
             LOGGER.debug("PromptUtils - RAG - No valid chat history found in request. ");
         }
-        return prompts;
+        return history;
+    }
+
+    public static int getHistorySize(List<Message> history, RagConfiguration config) {
+        if (!config.getBooleanProperty(RagConfiguration.CHAT_MEMORY_ENABLED)) {
+            return 0;
+        } else {
+            return getTotalPromptSize(history);
+        }
     }
 }

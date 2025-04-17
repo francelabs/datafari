@@ -270,7 +270,7 @@ public class AiPowered {
         response.put("status", "ERROR");
         error.put("code", code);
         error.put("label", errorLabel);
-        if (ex != null) error.put("message", ex.getLocalizedMessage());
+        if (ex != null) error.put("reason", ex.getLocalizedMessage());
         content.put("message", message);
         content.put("documents", new ArrayList<>());
         content.put("error", error);
