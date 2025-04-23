@@ -17,13 +17,12 @@
 package com.francelabs.datafari.transformation.binary;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import com.francelabs.datafari.transformation.binary.services.DatafariAiAgentExternalService;
-import com.francelabs.datafari.transformation.binary.services.DatakeenExternalService;
-import com.francelabs.datafari.transformation.binary.services.ExternalService;
-import com.francelabs.datafari.transformation.binary.services.OpenAiExternalService;
+import com.francelabs.datafari.transformation.binary.services.*;
 import com.francelabs.datafari.transformation.binary.model.BinarySpecification;
+import com.francelabs.datafari.transformation.binary.utils.JsonUtils;
 import dev.langchain4j.data.segment.TextSegment;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -256,57 +255,29 @@ public class Binary extends BaseTransformationConnector {
   public int addOrReplaceDocumentWithException(final String documentURI, final VersionContext pipelineDescription, final RepositoryDocument document, final String authorityNameString,
       final IOutputAddActivity activities) throws ManifoldCFException, ServiceInterruption, IOException {
 
-
     final BinarySpecification spec = new BinarySpecification(pipelineDescription.getSpecification(), getConfiguration());
+    Map<String, String> filters = spec.getMapProperty(BinaryConfig.NODE_FILTERS);
+    Map<String, String> extractedMetadata = spec.getMapProperty(BinaryConfig.NODE_EXTRACTED_METADATA);
 
     boolean hasError = false;
     final long startTime = System.currentTimeMillis();
-    // Prepare storage for reading document content. A suitable storage depending on content size.
-//    DestinationStorage storage = DestinationStorage.getDestinationStorage(document.getBinaryLength(), getClass());
-//    StringBuilder contentBuilder = new StringBuilder();
+
+    // TODO : Check filters here
 
     try {
-/*
-      // Reading file content
-      try {
-              // Transfert document content to the storage
-              long binaryLength = document.getBinaryStream().transferTo(storage.getOutputStream());
 
-              // The input stream of the document has been totally read by previous instruction, so set a new one
-              document.setBinary(storage.getInputStream(), binaryLength);
-
-              // Prepare reading of document copied to extract metadata
-              BufferedReader buffRead = new BufferedReader(new InputStreamReader(storage.getInputStream()));
-
-              // Read lines
-              String line = buffRead.readLine();
-              while (line != null ) {
-                contentBuilder.append(line);
-                line = buffRead.readLine();
-              }
-              buffRead.close();
-
-      } catch (Exception e) {
-          hasError = true;
-          activities.recordActivity(startTime, ACTIVITY_BINARY, document.getBinaryLength(), documentURI, "KO", e.getMessage());
-          Logging.ingest.error("Unable to browse document " + documentURI, e);
-      }*/
-
-      InputStream binaryStream = document.getBinaryStream();
-      byte[] imageBytes = IOUtils.toByteArray(binaryStream);
-      String base64Image = Base64.getEncoder().encodeToString(imageBytes);
-
-
+      byte[] originalBytes = readAndRestoreBinary(document);
+      String base64Content = Base64.getEncoder().encodeToString(originalBytes);
 
       // If content is empty, stop here
-      if (base64Image.isBlank()) {
+      if (base64Content.isBlank()) {
         return activities.sendDocument(documentURI, document);
       }
 
       // Select the proper service depending on the External API
-      ExternalService service;
+      IExternalService service;
       // TODO : pick service
-      /*switch (spec.getStringProperty(BinaryConfig.NODE_TYPE_OF_SERVICE)) {
+      switch (spec.getStringProperty(BinaryConfig.NODE_TYPE_OF_SERVICE)) {
         case "datafari":
           service = new DatafariAiAgentExternalService(spec);
           break;
@@ -314,43 +285,80 @@ public class Binary extends BaseTransformationConnector {
           service = new DatakeenExternalService(spec);
           break;
         case "openai":
-        default:
           service = new OpenAiExternalService(spec);
           break;
-      }*/
-      service = new OpenAiExternalService(spec);
+        default:
+          LOGGER.error("Invalid service type specified.");
+          activities.recordActivity(startTime, ACTIVITY_BINARY, document.getBinaryLength(), documentURI, "KO", "Invalid service type");
+          return activities.sendDocument(documentURI, document);
+      }
 
       // Get image description
-      getImageDescription(documentURI, document, activities, service, base64Image, startTime);
-
-/*
-      // SUMMARIZE DOCUMENTS
-      summarize(documentURI, document, activities, spec, service, chunks, startTime);
+      String jsonResponse = getImageDescription(documentURI, document, activities, service, base64Content, startTime);
 
 
-      // CATEGORIZE DOCUMENTS
-      categorize(documentURI, document, activities, spec, service, chunks, startTime);*/
+      if (jsonResponse != null && !jsonResponse.isEmpty()) {
+
+        String extractedResponse;
+
+        for (Map.Entry<String, String> entry : extractedMetadata.entrySet()) {
+          extractedResponse = JsonUtils.extractResponse(jsonResponse, entry.getValue());
+
+          if (extractedResponse == null || extractedResponse.isEmpty()) {
+            LOGGER.warn("No content found in service response matching with location {}.", entry.getValue());
+          } else if ("content".equals(entry.getKey()) ) {
+            // Override binary content
+            byte[] contentBytes = extractedResponse.getBytes(StandardCharsets.UTF_8);
+            InputStream newInputStream = new ByteArrayInputStream(contentBytes);
+            document.setBinary(newInputStream, contentBytes.length);
+            document.setMimeType("text/plain");
+          } else {
+            try {
+              document.addField(entry.getKey(), extractedResponse);
+            } catch (Exception e) {
+              LOGGER.error("Could not add extracted content to the following Solr field: {}", entry.getKey(), e);
+            }
+          }
+        }
 
 
-      if (!hasError) activities.recordActivity(startTime, ACTIVITY_BINARY, document.getBinaryLength(), documentURI, "OK", "");
+      }
+
+      if (!hasError)
+        activities.recordActivity(startTime, ACTIVITY_BINARY, document.getBinaryLength(), documentURI, "OK", "");
       return activities.sendDocument(documentURI, document);
 
-    } finally {
-      // Clean storage (for instance, delete temporary file) after all treatment on document done (Solr indexing).
-      //storage.close();
+    } catch (Exception e){
+      LOGGER.error("An error occurred.", e);
+      activities.recordActivity(startTime, ACTIVITY_BINARY, document.getBinaryLength(), documentURI, "KO", e.getLocalizedMessage());
+      return activities.sendDocument(documentURI, document);
     }
 
   }
 
-  private void getImageDescription(String documentURI, RepositoryDocument document, IOutputAddActivity activities, ExternalService service, String base64Image, long startTime) throws ManifoldCFException {
+  /**
+   * Read a Document binary, without emptying its content
+   * @param document
+   * @return bytes[]
+   * @throws IOException
+   */
+  public byte[] readAndRestoreBinary(RepositoryDocument document) throws IOException {
+    InputStream binaryStream = document.getBinaryStream();
+    byte[] bytes = IOUtils.toByteArray(binaryStream);
+    document.setBinary(new ByteArrayInputStream(bytes), bytes.length);
+    return bytes;
+  }
+
+  // TODO : maybe rename this method
+  private String getImageDescription(String documentURI, RepositoryDocument document, IOutputAddActivity activities,
+                                     IExternalService service, String base64Image, long startTime) throws ManifoldCFException {
+    String jsonResponse = null;
     // Get content for OpenAI
     if (isSupportedImageMimeType(document.getMimeType()) && !base64Image.isBlank()) {
       LOGGER.info("Image detected for document {}. Trying to generate a text content.", documentURI);
       try {
-        String response = service.invoke(base64Image);
-        if (response.isEmpty()) throw new RuntimeException("Image identification failed: " + documentURI);
-        document.addField("embedded_content", response);
-        LOGGER.info("EBE - Content generated : {}", response);
+        jsonResponse = service.invoke(base64Image);
+        if (jsonResponse.isEmpty()) throw new RuntimeException("Image identification failed: " + documentURI);
       } catch (ManifoldCFException e) {
         // If the error is a ManifoldCFException, the job should stop
         LOGGER.warn("Fatal error while processing {}: {}", documentURI, e.getLocalizedMessage());
@@ -361,6 +369,7 @@ public class Binary extends BaseTransformationConnector {
         activities.recordActivity(startTime, ACTIVITY_BINARY, document.getBinaryLength(), documentURI, "WARNING", "Document could not be categorized");
       }
     }
+    return jsonResponse;
   }
 
   private boolean isSupportedImageMimeType(String mimeType) {

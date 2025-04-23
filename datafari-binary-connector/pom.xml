@@ -30,6 +30,18 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.13.5</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>2.13.5</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-core</artifactId>
       <version>0.35.0</version>
@@ -54,6 +66,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
 
   <build>
     <resources>

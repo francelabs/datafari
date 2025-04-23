@@ -42,9 +42,10 @@ public class OpenAiExternalService extends ExternalService implements IExternalS
 
         String openAiApiKey = spec.getStringProperty(BinaryConfig.NODE_SERVICE_SECURITY_TOKEN);
         HttpClient client = HttpClient.newHttpClient();
+        String model = this.spec.getStringProperty(BinaryConfig.NODE_SERVICE_ENDPOINT);
 
         String requestBody = "{" +
-                "  \"model\": \"gpt-4-vision-preview\"," +
+                "  \"model\": \"" + model + "\"," +
                 "  \"messages\": [{" +
                 "    \"role\": \"user\"," +
                 "    \"content\": [" +
@@ -78,7 +79,6 @@ public class OpenAiExternalService extends ExternalService implements IExternalS
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        String jsonResponse = response.body();
-        return jsonResponse;
+        return response.body();
     }
 }

@@ -18,12 +18,6 @@ public class DatakeenExternalService extends ExternalService implements IExterna
         super(spec);
     }
 
-
-    /**
-     * Call the LLM API (OpenAI, Datafari AI Agent...) with a simple String prompt.
-     * @param prompt A ready-to-use prompt for the LLM
-     * @return The string LLM response
-     */
     public String invoke(String prompt) throws ManifoldCFException {
         return "";
     }

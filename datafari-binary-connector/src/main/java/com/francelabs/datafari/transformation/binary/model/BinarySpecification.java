@@ -49,9 +49,9 @@ public class BinarySpecification {
             setProperty(attributeName, cn.getValue());
         }
 
-        for (int i = 0; i < config.getChildCount(); i++) {
+        for (int i = 0; i < os.getChildCount(); i++) {
             final SpecificationNode sn = os.getChild(i);
-            String attributeName = sn.getAttributeValue("name");
+            String attributeName = sn.getType();
             setProperty(attributeName, sn.getAttributeValue(BinaryConfig.ATTRIBUTE_VALUE));
         }
     }

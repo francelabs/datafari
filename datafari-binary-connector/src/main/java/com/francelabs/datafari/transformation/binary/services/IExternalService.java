@@ -14,6 +14,6 @@ public interface IExternalService {
      * @param content The document content
      * @return The string response
      */
-    //String invoke(String content) throws ManifoldCFException;
+    String invoke(String content) throws ManifoldCFException;
 
 }
