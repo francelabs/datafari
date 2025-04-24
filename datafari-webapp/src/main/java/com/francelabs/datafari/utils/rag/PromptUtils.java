@@ -126,6 +126,12 @@ public class PromptUtils {
                 .replace("{language}", getUserLanguage(request));
     }
 
+
+    public static String getRewriteQueryTemplate(HttpServletRequest request) throws IOException {
+        return getInstructions("rag/template-rewriteSearchQuery.txt")
+                .replace("{language}", getUserLanguage(request));
+    }
+
     /**
      * Generate a string prompt containing a chunk of document and the document title
      * @param title Title of the document
@@ -185,15 +191,17 @@ public class PromptUtils {
             }
         }
 
-        // Remove the processed snippets from contents
-        contents.removeAll(processedSnippets);
-
         // If the list is empty due to an excessive content size, the first chunk is stuffed in
-        if (snippets.toString().isEmpty() && !contents.isEmpty()) {
+        if (processedSnippets.isEmpty() && !contents.isEmpty()) {
             i = 0;
             snippets = new StringBuilder(contents.get(0).getContent());
             prompt = template.replace(SNIPPETS_TAG, snippets.toString());
+            processedSnippets.add(contents.get(0));
         }
+
+        // Remove the processed snippets from contents
+        contents.removeAll(processedSnippets);
+
         LOGGER.debug("{} chunks processed in an LLM request. {} more to go.", i, contents.size());
         return prompt;
     }

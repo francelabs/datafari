@@ -121,6 +121,10 @@ public class AiPowered {
             return generateErrorJson(422, "ragBadRequest", "Sorry, It appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.", null);
         }
 
+        //
+        // HISTORY
+        // Retrieve, if enabled, the chat history
+        //
         if (jsonDoc.containsKey("history")) {
             Object history = jsonDoc.get("history");
             if (history != null) {
@@ -131,7 +135,29 @@ public class AiPowered {
             }
         }
 
-        // Search using Datafari API methods
+        // TODO : Query re-writing for search
+
+        //
+        // QUERY REWRITING
+        // If enabled, we use a LLM to reformulate the user query into a search query
+        //
+        String searchQuery;
+        if (config.getBooleanProperty(RagConfiguration.CHAT_QUERY_REWRITING_ENABLED)) {
+            try {
+                searchQuery = RagAPI.rewriteSearchQuery(query, request, config);
+            } catch (IOException e) {
+                LOGGER.error("Query rewriting failed ! Initial user query will be use for the search.", e);
+                searchQuery = query;
+            }
+        } else {
+            searchQuery = query;
+        }
+
+
+        //
+        // RETRIEVAL
+        // Retrieve documents or snippets using Datafari search API
+        //
         try {
             // Retrieve ID from JSON input
             if (jsonDoc.get(ID_FIELD) != null && !((String) jsonDoc.get(ID_FIELD)).isEmpty()) {
@@ -142,7 +168,7 @@ public class AiPowered {
             } else {
                 LOGGER.debug("AiPowered - RAG - Performing search.");
                 request.setAttribute("q.op", config.getProperty(RagConfiguration.SEARCH_OPERATOR));
-                searchResults = performSearch(request, query, config.getBooleanProperty(RagConfiguration.SOLR_ENABLE_VECTOR_SEARCH));
+                searchResults = performSearch(request, searchQuery, config.getBooleanProperty(RagConfiguration.SOLR_ENABLE_VECTOR_SEARCH));
             }
         } catch (IOException|ServletException e) {
             LOGGER.error("AiPowered - RAG - ERROR. An error occurred while retrieving documents.", e);
@@ -155,6 +181,11 @@ public class AiPowered {
             request.setAttribute("lang", lang);
         }
 
+
+        //
+        // RAG RESPONSE GENERATION
+        // The request is processed using Datafari Rag API
+        //
         try {
             // Process the document(s) using RagAPI methods
             EditableHttpServletRequest editablerequest = new EditableHttpServletRequest(request);
@@ -240,8 +271,8 @@ public class AiPowered {
      * This method uses an editable version of the original HttpServletRequest.
      * The updated request object is updated in order to process.
      * @param originalRequest : The HttpServletRequest
-     * @param q The user query
-     * @return a JSONObject containing search results, with the following fields :
+     * @param q The user query (or a rewritten one)
+     * @return a JSONObject containing search results, with the following fields:
      *      id, title, exactContent, url, llm_summary
      */
     private static JSONObject performSearch(HttpServletRequest originalRequest, String q, boolean vectorSearch) throws ServletException, IOException {

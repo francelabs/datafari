@@ -257,6 +257,48 @@ public class RagAPI extends SearchAPI {
   }
 
 
+  /**
+   * Convert a natural-language user query into a search query, using the LLM
+   * @param userQuery : The initial user query
+   * @param request HttpServletRequest
+   * @param config RagConfiguration
+   * @return A ready-to-user search query
+   */
+  public static String rewriteSearchQuery(String userQuery,  final HttpServletRequest request, RagConfiguration config) throws IOException {
+
+    LOGGER.debug("RagAPI - Rewriting user query into a search query.");
+
+    List<Message> chatHistory = PromptUtils.getChatHistoryToList(request, config);
+    StringBuilder strHistory = new StringBuilder();
+    for (Message message : chatHistory) {
+      strHistory.append("- ")
+              .append(message.getRole())
+              .append(": ")
+              .append(message.getContent())
+              .append(" \n");
+    }
+
+    // Select an LLM service
+    LlmService service = getLlmService(config);
+
+    String template = PromptUtils.getRewriteQueryTemplate(request)
+            .replace("{userQuery}", userQuery)
+            .replace("{history}", strHistory);
+    List<Message> prompts = new ArrayList<>();
+    prompts.add(new Message("user", template)) ;
+
+    try {
+      String response = service.generate(prompts, request);
+      return (response != null && !response.isEmpty()) ? response : userQuery;
+    } catch (Exception e) {
+      LOGGER.error("Query rewriting failed. Using initial user query for the search.", e);
+      return userQuery;
+    }
+
+
+  }
+
+
   public static String summarize(final HttpServletRequest request, Document doc) throws IOException {
 
     LOGGER.debug("RagAPI - Summary for document {} requested.", doc.metadata().getString("id"));
