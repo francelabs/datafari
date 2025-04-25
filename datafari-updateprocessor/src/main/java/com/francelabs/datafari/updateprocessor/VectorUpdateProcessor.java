@@ -45,6 +45,8 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
   String splitterType = "recursiveSplitter";
   int chunksize = 300;
   int maxoverlap = 0;
+  static int minChunkLength = 1;
+  double minAlphaNumRatio = 0.0;
   CloudSolrClient client;
 
   public VectorUpdateProcessor(CloudSolrClient client, final SolrParams params, final UpdateRequestProcessor next) {
@@ -54,6 +56,8 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
       this.chunksize = params.getInt("chunksize", 300);
       this.maxoverlap = params.getInt("maxoverlap", 0);
       this.splitterType = params.get("splitter", "recursiveSplitter");
+      this.minChunkLength = params.getInt("minchunklength", 1);
+      this.minAlphaNumRatio = params.getDouble("minalphanumratio", 0.0);
       this.client = client;
     }
   }
@@ -79,9 +83,10 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
         for (TextSegment chunk : chunks) {
           if(chunk != null && !chunk.text().isEmpty()) {
 
-            // Sub-document creation
-            if (chunk.text() != null) {
+            // check if chunk is worth embedding
+            if (isChunkTextValid(chunk.text())) {
 
+              // Sub-document creation
               SolrInputDocument vectorDocument = parentDoc.deepCopy();
 
               String id = parentId + "_" + chunks.indexOf(chunk);
@@ -139,6 +144,30 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
       // VERY IMPORTANT ! without this line of code any other Update Processor declared AFTER this one in the conf WILL NOT EXECUTE
       super.processAdd(cmd);
     }
+  }
+
+  /**
+   * Check if the chunk has a content worth embedding
+   * @param text String
+   * @return true or false
+   */
+  private boolean isChunkTextValid(String text) {
+
+    // The content must not be empty
+    String cleaned = text.trim();
+    if (cleaned.isEmpty()) return false;
+
+    // The chunk must constain at least minChunkLength alphanumerical characters
+    long alphaNumCount = cleaned.chars()
+            .filter(Character::isLetterOrDigit)
+            .count();
+    if (alphaNumCount < minChunkLength) return false;
+
+    // Ratio ALPHANUM CHAR / LENGTH should be greater than minAlphaNumRatio
+    int length = cleaned.length();
+    double alphaNumRatio = (double) alphaNumCount / length;
+
+    return alphaNumRatio >= minAlphaNumRatio;
   }
 
   /**
