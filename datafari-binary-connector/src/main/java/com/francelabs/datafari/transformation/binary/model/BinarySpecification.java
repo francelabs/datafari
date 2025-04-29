@@ -69,8 +69,7 @@ public class BinarySpecification {
         Object currentValue = this.spec.get(attributeName);
 
         if (currentValue == null) {
-            // TODO : set to debug level
-            LOGGER.warn("No default type registered for property '{}'. Ignoring set operation.", attributeName);
+            LOGGER.debug("No default type registered for property '{}'. Ignoring set operation.", attributeName);
             return;
         }
 

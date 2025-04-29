@@ -20,10 +20,10 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import com.francelabs.datafari.transformation.binary.model.DocumentFilter;
 import com.francelabs.datafari.transformation.binary.services.*;
 import com.francelabs.datafari.transformation.binary.model.BinarySpecification;
 import com.francelabs.datafari.transformation.binary.utils.JsonUtils;
-import dev.langchain4j.data.segment.TextSegment;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,7 +31,6 @@ import org.apache.manifoldcf.agents.interfaces.IOutputAddActivity;
 import org.apache.manifoldcf.agents.interfaces.IOutputCheckActivity;
 import org.apache.manifoldcf.agents.interfaces.RepositoryDocument;
 import org.apache.manifoldcf.agents.interfaces.ServiceInterruption;
-import org.apache.manifoldcf.agents.system.Logging;
 import org.apache.manifoldcf.agents.transformation.BaseTransformationConnector;
 import org.apache.manifoldcf.core.interfaces.ConfigParams;
 import org.apache.manifoldcf.core.interfaces.IHTTPOutput;
@@ -41,9 +40,6 @@ import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 import org.apache.manifoldcf.core.interfaces.Specification;
 import org.apache.manifoldcf.core.interfaces.SpecificationNode;
 import org.apache.manifoldcf.core.interfaces.VersionContext;
-
-import com.francelabs.datafari.transformation.binary.utils.storage.DestinationStorage;
-
 
 
 /**
@@ -262,7 +258,12 @@ public class Binary extends BaseTransformationConnector {
     boolean hasError = false;
     final long startTime = System.currentTimeMillis();
 
-    // TODO : Check filters here
+    // Filter documents
+    DocumentFilter docFilter = new DocumentFilter(filters);
+    if (!docFilter.accept(document)) {
+      activities.recordActivity(startTime, ACTIVITY_BINARY, document.getBinaryLength(), documentURI, "OK", "Document filtered");
+      return activities.sendDocument(documentURI, document);
+    }
 
     try {
 
@@ -276,11 +277,10 @@ public class Binary extends BaseTransformationConnector {
 
       // Select the proper service depending on the External API
       IExternalService service;
-      // TODO : pick service
       switch (spec.getStringProperty(BinaryConfig.NODE_TYPE_OF_SERVICE)) {
-        case "datafari":
+  /*      case "datafari":
           service = new DatafariAiAgentExternalService(spec);
-          break;
+          break;*/
         case "datakeen":
           service = new DatakeenExternalService(spec);
           break;
@@ -294,7 +294,7 @@ public class Binary extends BaseTransformationConnector {
       }
 
       // Get image description
-      String jsonResponse = getImageDescription(documentURI, document, activities, service, base64Content, startTime);
+      String jsonResponse = getServiceJsonResponse(documentURI, document, activities, service, base64Content, startTime);
 
 
       if (jsonResponse != null && !jsonResponse.isEmpty()) {
@@ -350,11 +350,10 @@ public class Binary extends BaseTransformationConnector {
   }
 
   // TODO : maybe rename this method
-  private String getImageDescription(String documentURI, RepositoryDocument document, IOutputAddActivity activities,
-                                     IExternalService service, String base64Image, long startTime) throws ManifoldCFException {
+  private String getServiceJsonResponse(String documentURI, RepositoryDocument document, IOutputAddActivity activities,
+                                        IExternalService service, String base64Image, long startTime) throws ManifoldCFException {
     String jsonResponse = null;
-    // Get content for OpenAI
-    if (isSupportedImageMimeType(document.getMimeType()) && !base64Image.isBlank()) {
+
       LOGGER.info("Image detected for document {}. Trying to generate a text content.", documentURI);
       try {
         jsonResponse = service.invoke(base64Image);
@@ -368,7 +367,7 @@ public class Binary extends BaseTransformationConnector {
         LOGGER.warn("Error while processing {}: {}", documentURI, e.getLocalizedMessage());
         activities.recordActivity(startTime, ACTIVITY_BINARY, document.getBinaryLength(), documentURI, "WARNING", "Document could not be categorized");
       }
-    }
+
     return jsonResponse;
   }
 
