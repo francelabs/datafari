@@ -15,14 +15,12 @@ public class OpenAiLlmService extends LlmService implements ILlmService {
     private static final Logger LOGGER = LogManager.getLogger(OpenAiLlmService.class.getName());
 
     static final String DEFAULT_LLM_MODEL = "gpt-3.5-turbo";
-    static final String DEFAULT_EMBEDDINGS_MODEL = "text-embedding-3-small";
     static final String DEFAULT_URL = "https://api.openai.com/v1/";
 
     public OpenAiLlmService(LlmSpecification spec) {
         super(spec);
 
         if (spec.getLlm().isEmpty()) spec.setLlm(DEFAULT_LLM_MODEL);
-        if (spec.getEmbeddingsModel().isEmpty()) spec.setEmbeddingsModel(DEFAULT_EMBEDDINGS_MODEL);
         if (spec.getLlmEndpoint().isEmpty()) spec.setLlmEndpoint(DEFAULT_URL);
     }
 

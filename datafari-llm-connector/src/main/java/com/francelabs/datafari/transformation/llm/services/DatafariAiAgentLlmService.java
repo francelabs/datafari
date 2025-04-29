@@ -13,7 +13,6 @@ public class DatafariAiAgentLlmService extends OpenAiLlmService implements ILlmS
     private static final Logger LOGGER = LogManager.getLogger(DatafariAiAgentLlmService.class.getName());
 
     static final String DEFAULT_LLM_MODEL = "";
-    static final String DEFAULT_EMBEDDINGS_MODEL = "";
 
     public DatafariAiAgentLlmService(LlmSpecification spec) {
         super(spec);

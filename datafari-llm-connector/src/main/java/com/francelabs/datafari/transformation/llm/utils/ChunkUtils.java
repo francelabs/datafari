@@ -20,7 +20,7 @@ import com.francelabs.datafari.transformation.llm.model.LlmSpecification;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.document.Metadata;
-import dev.langchain4j.data.document.splitter.DocumentByParagraphSplitter;
+import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.Tokenizer;
 import dev.langchain4j.model.openai.OpenAiTokenizer;
@@ -44,7 +44,7 @@ public class ChunkUtils {
 	public static List<TextSegment> chunkString(String text, LlmSpecification spec) {
         Tokenizer tokenizer = new OpenAiTokenizer();
         int maxChunkSizeInTokens = spec.getMaxChunkSizeInTokens();
-        DocumentSplitter splitter = new DocumentByParagraphSplitter(maxChunkSizeInTokens, 10, tokenizer);
+        DocumentSplitter splitter = DocumentSplitters.recursive(maxChunkSizeInTokens, 10, tokenizer);
         Document document = new Document(text);
         return splitter.split(document);
     }
@@ -52,7 +52,7 @@ public class ChunkUtils {
     public static List<TextSegment> chunkRepositoryDocument(String content, RepositoryDocument repoDoc, LlmSpecification spec) {
         Tokenizer tokenizer = new OpenAiTokenizer();
         int maxChunkSizeInTokens = spec.getMaxChunkSizeInTokens();
-        DocumentSplitter splitter = new DocumentByParagraphSplitter(maxChunkSizeInTokens, 10, tokenizer);
+        DocumentSplitter splitter = DocumentSplitters.recursive(maxChunkSizeInTokens, 10, tokenizer);
         Metadata metadata = new Metadata().put("filename", repoDoc.getFileName());
         Document document = new Document(content, metadata);
         return splitter.split(document);
