@@ -15,8 +15,8 @@
  limitations under the License.
 -->
 
-#if($TABNAME == $ResourceBundle.getString('binary.TabName') && ${SEQNUM} == ${SELECTEDNUM})
-
+#set( $binaryTab = "$ResourceBundle.getString('binary.TabName') (${SEQNUM})" )
+#if($TABNAME == $binaryTab  && ${SEQNUM} == ${SELECTEDNUM})
 <table class="displaytable">
     <tr><td class="separator" colspan="2"><hr/></td></tr>
 

@@ -419,7 +419,7 @@ public class Binary extends BaseTransformationConnector {
     final Map<String, Object> paramMap = new HashMap<>();
     paramMap.put(SEQNUM, Integer.toString(connectionSequenceNumber));
 
-    tabsArray.add(Messages.getString(locale, "binary.TabName"));
+    tabsArray.add(Messages.getString(locale, "binary.TabName") + " (" + connectionSequenceNumber + ")");
 
     // Fill in the specification header map, using data from all tabs.
     fillInSpecificationMap(paramMap, spec);
