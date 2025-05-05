@@ -1,11 +1,11 @@
 Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base.
-####
+######
 Conversation history:
-{history}
-####
+{conversation}
+######
 New question:
-- user: {userQuery}
-####
+- user: {userquery}
+######
 
 You have access to a Search Engine index with 100's of documents.
 Generate a search query based on the conversation and the new question.
