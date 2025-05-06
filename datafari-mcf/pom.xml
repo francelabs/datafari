@@ -11,12 +11,7 @@
   <packaging>pom</packaging>
   <name>Datafari Enterprise Search - ManifoldCF module</name>
   <dependencies>
-    <!-- https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc10 -->
-    <dependency>
-      <groupId>com.oracle.database.jdbc</groupId>
-      <artifactId>ojdbc10</artifactId>
-      <version>${ojdbc.version}</version>
-    </dependency>
+   
     <!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
     <dependency>
       <groupId>com.microsoft.sqlserver</groupId>
