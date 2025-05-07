@@ -260,8 +260,8 @@ public class Binary extends BaseTransformationConnector {
 
     // Filter documents
     DocumentFilter docFilter = new DocumentFilter(filters);
-    if (!docFilter.accept(document)) {
-      activities.recordActivity(startTime, ACTIVITY_BINARY, document.getBinaryLength(), documentURI, "OK", "Document filtered");
+    if (!docFilter.accept(document) || !spec.getBooleanProperty(BinaryConfig.NODE_ENABLE_BINARY_CONNECTOR)) {
+      activities.recordActivity(startTime, ACTIVITY_BINARY, document.getBinaryLength(), documentURI, "OK", "");
       return activities.sendDocument(documentURI, document);
     }
 
@@ -269,12 +269,12 @@ public class Binary extends BaseTransformationConnector {
 
       byte[] originalBytes = readAndRestoreBinary(document);
       String base64Content = Base64.getEncoder().encodeToString(originalBytes);
+      String base64ContentWithHeader = "data:" + document.getMimeType() + ";base64," + base64Content;
 
       // If content is empty, stop here
       if (base64Content.isBlank()) {
         return activities.sendDocument(documentURI, document);
       }
-
       // Select the proper service depending on the External API
       IExternalService service;
       switch (spec.getStringProperty(BinaryConfig.NODE_TYPE_OF_SERVICE)) {
@@ -294,7 +294,7 @@ public class Binary extends BaseTransformationConnector {
       }
 
       // Get image description
-      String jsonResponse = getServiceJsonResponse(documentURI, document, activities, service, base64Content, startTime);
+      String jsonResponse = getServiceJsonResponse(documentURI, document, activities, service, base64ContentWithHeader, startTime);
 
 
       if (jsonResponse != null && !jsonResponse.isEmpty()) {
@@ -349,14 +349,13 @@ public class Binary extends BaseTransformationConnector {
     return bytes;
   }
 
-  // TODO : maybe rename this method
   private String getServiceJsonResponse(String documentURI, RepositoryDocument document, IOutputAddActivity activities,
-                                        IExternalService service, String base64Image, long startTime) throws ManifoldCFException {
+                                        IExternalService service, String base64Content, long startTime) throws ManifoldCFException {
     String jsonResponse = null;
 
       LOGGER.info("Image detected for document {}. Trying to generate a text content.", documentURI);
       try {
-        jsonResponse = service.invoke(base64Image);
+        jsonResponse = service.invoke(base64Content);
         if (jsonResponse.isEmpty()) throw new RuntimeException("Image identification failed: " + documentURI);
       } catch (ManifoldCFException e) {
         // If the error is a ManifoldCFException, the job should stop
@@ -365,7 +364,7 @@ public class Binary extends BaseTransformationConnector {
         throw new ManifoldCFException("Error in Binary Connector.", e);
       } catch (Exception e) {
         LOGGER.warn("Error while processing {}: {}", documentURI, e.getLocalizedMessage());
-        activities.recordActivity(startTime, ACTIVITY_BINARY, document.getBinaryLength(), documentURI, "WARNING", "Document could not be categorized");
+        activities.recordActivity(startTime, ACTIVITY_BINARY, document.getBinaryLength(), documentURI, "WARNING", "Document could not be processed: " + e.getLocalizedMessage());
       }
 
     return jsonResponse;

@@ -21,7 +21,7 @@ public abstract class ExternalService {
 
         // Add here common constructor code for all ExternalServices
         String hostname = spec.getStringProperty(BinaryConfig.NODE_SERVICE_HOSTNAME);
-        String endpoint = spec.getStringProperty(BinaryConfig.NODE_SERVICE_HOSTNAME);
+        String endpoint = spec.getStringProperty(BinaryConfig.NODE_SERVICE_ENDPOINT);
         if (hostname != null && endpoint != null
                 && !hostname.isBlank() && !endpoint.isBlank()) {
             this.url = URI.create(hostname + endpoint);

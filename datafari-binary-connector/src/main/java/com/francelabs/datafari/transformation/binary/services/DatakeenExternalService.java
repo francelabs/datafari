@@ -2,11 +2,8 @@ package com.francelabs.datafari.transformation.binary.services;
 
 import com.francelabs.datafari.transformation.binary.BinaryConfig;
 import com.francelabs.datafari.transformation.binary.model.BinarySpecification;
-import dev.ai4j.openai4j.OpenAiHttpException;
-import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.openai.OpenAiChatModel;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
+import com.francelabs.datafari.transformation.binary.utils.JsonUtils;
+import com.francelabs.datafari.transformation.binary.utils.PromptUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
@@ -16,7 +13,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Duration;
+import java.util.Map;
 
 public class DatakeenExternalService extends ExternalService implements IExternalService {
 
@@ -24,10 +21,14 @@ public class DatakeenExternalService extends ExternalService implements IExterna
 
     static final String DEFAULT_URL = "https://api.datakeen.co/api/v1/";
     static final String DEFAULT_ENDPOINT = "/reco/multi-doc";
+    // TODO : Remove debug boolean
+    static final boolean DEBUG = false;
 
     public DatakeenExternalService(BinarySpecification spec) {
         // ALWAYS CALL SUPER AT THE BEGINING OF THE CONSTRUCTOR
         super(spec);
+
+        // Get token
 
         // Default URL
         if (this.url == null) {
@@ -37,8 +38,8 @@ public class DatakeenExternalService extends ExternalService implements IExterna
 
     public String invoke(String base64content) throws ManifoldCFException {
 
-        String openAiApiKey = spec.getStringProperty(BinaryConfig.NODE_SERVICE_SECURITY_TOKEN);
-        if (openAiApiKey == null || openAiApiKey.isBlank()) {
+        String apiToken = getSecurityToken();
+        if (apiToken == null || apiToken.isBlank()) {
             throw new ManifoldCFException("Invalid or empty security token.");
         }
         HttpClient client = HttpClient.newHttpClient();
@@ -47,7 +48,47 @@ public class DatakeenExternalService extends ExternalService implements IExterna
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(this.url)
-                .header("Authorization", "Bearer " + openAiApiKey)
+                .header("Authorization", "Bearer " + apiToken)
+                .header("accept", "application/json")
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+
+        HttpResponse<String> response;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException|InterruptedException e) {
+            throw new ManifoldCFException("Unexpected error occured while calling Datakeen services.",e);
+        }
+
+        // Error management
+        String errorCode = JsonUtils.extractResponse(response.body(), "code");
+        if (errorCode != null && !errorCode.isBlank()) {
+            String description = JsonUtils.extractResponse(response.body(), "description");
+            int code = Integer.parseInt(errorCode);
+            throw new ManifoldCFException(description, code);
+        }
+
+        return response.body();
+    }
+
+    public String getSecurityToken() throws ManifoldCFException {
+
+        // TODO : Remove this mock :
+        if (DEBUG) return "DEBUG_MODE_TOKEN";
+        Map<String, String> parameters = spec.getMapProperty(BinaryConfig.NODE_SERVICE_ADDITIONAL_PARAMETERS);
+        String username = parameters.getOrDefault("username", "");
+        String password = parameters.getOrDefault("password", "");
+
+        if (username.isEmpty() || password.isEmpty()) {
+            throw new ManifoldCFException("Additional parameters 'username' and 'password' are required for this service.");
+        }
+        HttpClient client = HttpClient.newHttpClient();
+
+        String requestBody =  "{\"paramDict\":{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}}";
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://api.datakeen.co/auth"))
                 .header("accept", "application/json")
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
@@ -62,6 +103,7 @@ public class DatakeenExternalService extends ExternalService implements IExterna
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        return response.body();
+
+        return JsonUtils.extractResponse(response.body(), "access_token");
     }
 }

@@ -21,7 +21,7 @@ public class OpenAiExternalService extends ExternalService implements IExternalS
     static final String DEFAULT_URL = "https://api.openai.com/v1/";
     static final String DEFAULT_ENDPOINT = "/chat/completions";
     static final String DEFAULT_MODEL = "gpt-4o-mini";
-    static final String DEFAULT_MAX_TOKENS = "1000";
+    static final String DEFAULT_MAX_TOKENS = "500";
 
     private String model;
     private String maxTokens = "1000";
@@ -64,7 +64,7 @@ public class OpenAiExternalService extends ExternalService implements IExternalS
                 "      {" +
                 "        \"type\": \"image_url\"," +
                 "        \"image_url\": {" +
-                "          \"url\": \"data:image/png;base64," + base64content  + "\"" +
+                "          \"url\": \"" + base64content  + "\"" +
                 "        }" +
                 "      }," +
                 "      {" +

@@ -42,30 +42,31 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>dev.langchain4j</groupId>
-      <artifactId>langchain4j-core</artifactId>
-      <version>0.35.0</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>dev.langchain4j</groupId>
-      <artifactId>langchain4j-open-ai</artifactId>
-      <version>0.35.0</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-          <groupId>dev.langchain4j</groupId>
-          <artifactId>langchain4j</artifactId>
-          <version>0.35.0</version>
-          <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <version>5.9.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>2.13.5</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.13.5</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+        <version>2.13.5</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
 
   <build>
@@ -87,8 +88,7 @@
       </resource>
       
     </resources>
-    <plugins>
-      <!-- any other plugins -->
+    <!--plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
@@ -105,7 +105,7 @@
           </descriptorRefs>
         </configuration>
       </plugin>
-    </plugins>
+    </plugins -->
   </build>
 
 

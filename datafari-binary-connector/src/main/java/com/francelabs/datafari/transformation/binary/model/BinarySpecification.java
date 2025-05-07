@@ -130,7 +130,7 @@ public class BinarySpecification {
     }
 
     public Boolean getBooleanProperty(String attributeName, Boolean defaultValue) {
-        Object value = this.spec.get("attributeName");
+        Object value = this.spec.get(attributeName);
         if (value instanceof Boolean) {
             return (Boolean) value;
         }

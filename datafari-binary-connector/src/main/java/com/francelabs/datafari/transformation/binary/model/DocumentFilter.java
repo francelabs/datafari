@@ -7,6 +7,7 @@ import org.apache.manifoldcf.agents.interfaces.RepositoryDocument;
 import java.io.File;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class DocumentFilter {
 
@@ -26,21 +27,35 @@ public class DocumentFilter {
     private Set<String> includeMimeTypes;
     private long minSize = -1;
     private long maxSize = Long.MAX_VALUE;
-    private Map<String, Pattern> includeMetadata;
-    private Map<String, Pattern> excludeMetadata;
+    private Map<String, Pattern> includeMetadata = new HashMap<>();
+    private Map<String, Pattern> excludeMetadata = new HashMap<>();
 
     public DocumentFilter(Map<String, String> config) {
         if (config.containsKey("inc_extension")) {
-            includeExtensions = new HashSet<>(Arrays.asList(config.get("inc_extension").split(",")));
+            includeExtensions = Arrays.stream(config.get("inc_extension").split(","))
+                    .map(s -> s.trim().toLowerCase())
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toSet());
         }
         if (config.containsKey("exc_extension")) {
-            excludeExtensions = new HashSet<>(Arrays.asList(config.get("exc_extension").split(",")));
+            excludeExtensions = Arrays.stream(config.get("exc_extension").split(","))
+                    .map(s -> s.trim().toLowerCase())
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toSet());
         }
-        if (config.containsKey("inc_mime")) {
-            includeMimeTypes = new HashSet<>(Arrays.asList(config.get("inc_mime").split(",")));
+        if (config.containsKey("inc_mimetype")) {
+            // inc_mimetype=image/png, image/jpeg, application/pdf
+            includeMimeTypes = Arrays.stream(config.get("inc_mimetype").split(","))
+                    .map(s -> s.trim().toLowerCase())
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toSet());
         }
-        if (config.containsKey("exc_mime")) {
-            excludeMimeTypes = new HashSet<>(Arrays.asList(config.get("exc_mime").split(",")));
+        if (config.containsKey("exc_mimetype")) {
+            // exc_mime=image/png, image/jpeg, application/pdf
+            excludeMimeTypes = Arrays.stream(config.get("exc_mimetype").split(","))
+                    .map(s -> s.trim().toLowerCase())
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toSet());
         }
         if (config.containsKey("min_size")) {
             minSize = Long.parseLong(config.get("min_size"));
@@ -108,7 +123,7 @@ public class DocumentFilter {
         if (lastIndexOf == -1) {
             return ""; // empty extension
         }
-        return filename.substring(lastIndexOf + 1);
+        return filename.substring(lastIndexOf + 1).toLowerCase().trim();
     }
 
     private Map<String, Pattern> parseMetadataPatterns(String metadataConfig) {
