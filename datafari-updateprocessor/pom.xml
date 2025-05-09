@@ -69,6 +69,7 @@
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-core</artifactId>
       <version>0.35.0</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>dev.langchain4j</groupId>
@@ -79,6 +80,7 @@
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-open-ai</artifactId>
       <version>0.35.0</version>
+      <scope>provided</scope>
     </dependency>
       <dependency>
           <groupId>commons-io</groupId>

@@ -18,12 +18,9 @@ public class LlmSpecification {
     String summariesLanguage = "en";
     boolean enableSummarize = false;
     boolean enableCategorize = false;
-    boolean enableVectorEmbedding = false;
     String llmEndpoint = "";
-    int vectorDimension = 250;
     String apiKey = "";
     String llm = "";
-    String embeddingsModel = "";
     int maxTokens = 500;
     int maxChunkSizeInTokens = 10000;
     int maxChunkSizeInChar = 12000;
@@ -44,8 +41,6 @@ public class LlmSpecification {
                 this.enableSummarize = "true".equals(sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE));
             } else if (sn.getType().equals(LlmConfig.NODE_ENABLE_CATEGORIZE)) {
                 this.enableCategorize = "true".equals(sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE));
-            } else if (sn.getType().equals(LlmConfig.NODE_ENABLE_EMBEDDINGS)) {
-                this.enableVectorEmbedding = "true".equals(sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE));
             } else if (sn.getType().equals(LlmConfig.NODE_MAXTOKENS)) {
                 this.maxTokens = Integer.parseInt(sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE));
             } else if (sn.getType().equals(LlmConfig.NODE_SUMMARIES_LANGUAGE)) {
@@ -59,14 +54,10 @@ public class LlmSpecification {
 
             if (cn.getAttributeValue("name").equals(LlmConfig.NODE_ENDPOINT)) {
                 this.llmEndpoint = cn.getValue();
-            } else if (cn.getAttributeValue("name").equals(LlmConfig.NODE_VECTOR_DIMENSION)) {
-                this.vectorDimension = Integer.parseInt(cn.getValue());
             } else if (cn.getAttributeValue("name").equals(LlmConfig.NODE_APIKEY)) {
                 this.apiKey = cn.getValue();
             } else if (cn.getAttributeValue("name").equals(LlmConfig.NODE_LLM)) {
                 this.llm = cn.getValue();
-            } else if (cn.getAttributeValue("name").equals(LlmConfig.NODE_EMBEDDINGS_MODEL)) {
-                this.embeddingsModel = cn.getValue();
             } else if (cn.getAttributeValue("name").equals(LlmConfig.NODE_LLM_SERVICE)) {
                 this.typeOfLlm = cn.getValue();
             } else if (cn.getAttributeValue("name").equals(LlmConfig.NODE_MAX_CHUNK_SIZE_IN_CHAR)) {
@@ -95,14 +86,6 @@ public class LlmSpecification {
         this.enableCategorize = enableCategorize;
     }
 
-    public boolean getEnableVectorEmbedding() {
-        return enableVectorEmbedding;
-    }
-
-    public void setEnableVectorEmbedding(Boolean enableVectorEmbedding) {
-        this.enableVectorEmbedding = enableVectorEmbedding;
-    }
-
     public String getLlmEndpoint() {
         return llmEndpoint;
     }
@@ -111,28 +94,12 @@ public class LlmSpecification {
         this.llmEndpoint = llmEndpoint;
     }
 
-    public int getVectorDimension() {
-        return vectorDimension;
-    }
-
-    public void setVectorDimension(int vectorDimension) {
-        this.vectorDimension = vectorDimension;
-    }
-
     public String getApiKey() {
         return apiKey;
     }
 
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
-    }
-
-    public String getEmbeddingsModel() {
-        return embeddingsModel;
-    }
-
-    public void setEmbeddingsModel(String embeddingsModel) {
-        this.embeddingsModel = embeddingsModel;
     }
 
     public String getSummariesLanguage() {
@@ -204,11 +171,13 @@ public class LlmSpecification {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LlmSpecification that = (LlmSpecification) o;
-        return vectorDimension == that.vectorDimension && maxTokens == that.maxTokens && Objects.equals(summariesLanguage, that.summariesLanguage) && Objects.equals(enableSummarize, that.enableSummarize) && Objects.equals(enableCategorize, that.enableCategorize) && Objects.equals(enableVectorEmbedding, that.enableVectorEmbedding) && Objects.equals(llmEndpoint, that.llmEndpoint) && Objects.equals(apiKey, that.apiKey) && Objects.equals(llm, that.llm) && Objects.equals(embeddingsModel, that.embeddingsModel) && Objects.equals(typeOfLlm, that.typeOfLlm);
+        return maxTokens == that.maxTokens && Objects.equals(summariesLanguage, that.summariesLanguage) && Objects.equals(enableSummarize, that.enableSummarize)
+                && Objects.equals(enableCategorize, that.enableCategorize) && Objects.equals(llmEndpoint, that.llmEndpoint) && Objects.equals(apiKey, that.apiKey)
+                && Objects.equals(llm, that.llm) && Objects.equals(typeOfLlm, that.typeOfLlm);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(summariesLanguage, enableSummarize, enableCategorize, enableVectorEmbedding, llmEndpoint, vectorDimension, apiKey, llm, embeddingsModel, maxTokens, typeOfLlm);
+        return Objects.hash(summariesLanguage, enableSummarize, enableCategorize, llmEndpoint, apiKey, llm, maxTokens, typeOfLlm);
     }
 }

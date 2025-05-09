@@ -18,10 +18,7 @@ public abstract class LlmService {
 
     double temperature;
     int maxToken;
-    int dimensions = 124;
     static final String DEFAULT_LLM_MODEL = "gpt-3.5-turbo";
-    static final String DEFAULT_EMBEDDINGS_MODEL = "text-embedding-3-small";
-    static final int DEFAULT_DIMENSION = 250;
     static final String DEFAULT_URL = "https://api.openai.com/v1/";
 
     protected LlmService(LlmSpecification spec) {
@@ -31,14 +28,8 @@ public abstract class LlmService {
         } catch (NumberFormatException e) {
             spec.setMaxTokens(200);
         }
-        try {
-            this.dimensions = (spec.getVectorDimension() < 1) ? DEFAULT_DIMENSION : spec.getVectorDimension();
-        } catch (NumberFormatException e) {
-            spec.setVectorDimension(124);
-        }
 
         if (spec.getLlm().isEmpty()) spec.setLlm(DEFAULT_LLM_MODEL);
-        if (spec.getEmbeddingsModel().isEmpty()) spec.setEmbeddingsModel(DEFAULT_EMBEDDINGS_MODEL);
         if (spec.getLlmEndpoint().isEmpty()) spec.setLlmEndpoint(DEFAULT_URL);
 
         this.spec = spec;

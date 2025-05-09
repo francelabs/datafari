@@ -7,6 +7,8 @@ Given the context information and not prior knowledge, answer the query.
 Your response must be accurate, concise, must not include any invented information, and must always mention the source document when it is relevant.
 If the documents do not contain an answer, say that you can’t find the answer.
 {format}
+{history}
+
 Now, answer the user’s question in {language} using only this information.
 
 Query: {userquery}

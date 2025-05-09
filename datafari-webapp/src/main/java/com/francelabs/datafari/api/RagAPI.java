@@ -148,7 +148,9 @@ public class RagAPI extends SearchAPI {
 
     // Get history (if enabled)
     List<Message> chatHistory = PromptUtils.getChatHistoryToList(request, config);
-    int historySize = PromptUtils.getHistorySize(chatHistory, config);
+    String chatHistoryStr = PromptUtils.getStringHistory(chatHistory);
+    String conversationStr = PromptUtils.getStringHistoryLines(chatHistory);
+//    int historySize = chatHistoryStr.length();
 
     if ("mapreduce".equals(config.getProperty(RagConfiguration.PROMPT_CHUNKING_STRATEGY, "refine"))){
 
@@ -160,16 +162,18 @@ public class RagAPI extends SearchAPI {
       List<Message> responseMessages = new ArrayList<>();
       String template = PromptUtils.getInitialRagTemplateMapReduce(request)
               .replace(PromptUtils.USER_QUERY_TAG, userquery)
-              .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request));
+              .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request))
+              .replace(PromptUtils.HISTORY_TAG, chatHistoryStr)
+              .replace(PromptUtils.CONVERSATION_TAG, conversationStr);
       String filledTemplate;
       String generatedResponse = "";
 
       int rqCounter = 0;
       while (!contents.isEmpty()) {
         rqCounter++;
-        filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config, historySize);
+        filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config);
         prompts = new ArrayList<>();
-        Message prompt = new Message("user", PromptUtils.cleanContext(filledTemplate));
+        Message prompt = new Message("user", filledTemplate);
         prompts.add(prompt);
 
         generatedResponse = service.generate(prompts, request);
@@ -185,13 +189,15 @@ public class RagAPI extends SearchAPI {
 
       // Then, merge all responses into one
       template = PromptUtils.getFinalRagTemplateMapReduce(request);
-      filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, responseMessages, config, historySize);
+      filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, responseMessages, config);
       filledTemplate = filledTemplate.replace(PromptUtils.USER_QUERY_TAG, userquery)
-              .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request));
+              .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request))
+              .replace(PromptUtils.HISTORY_TAG, chatHistoryStr)
+              .replace(PromptUtils.CONVERSATION_TAG, conversationStr);
 
-      prompts = new ArrayList<>(chatHistory);
+      prompts = new ArrayList<>();
 
-      Message prompt = new Message("user", PromptUtils.cleanContext(filledTemplate));
+      Message prompt = new Message("user", filledTemplate);
       prompts.add(prompt);
 
       return service.generate(prompts, request);
@@ -207,28 +213,34 @@ public class RagAPI extends SearchAPI {
         - userquery (userquery)
         - lastresponse (the last generated response)
         - format (Sentence enforcing the response format : bulletpoint, stepbystep, text, default... optional)
+        - history (chat history, including prompt and conversation lines)
+        - conversation : String formatted lines (e.g. "- user: hello world\n- assistant: Hello user !"
        */
 
       // Initial call with a fist set of snippets
-      List<Message> prompts = new ArrayList<>(chatHistory);
+      List<Message> prompts = new ArrayList<>();
       String template = PromptUtils.getInitialRagTemplateRefining(request);
-      String filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config, historySize);
-      filledTemplate = filledTemplate.replace("{userquery}", userquery)
-              .replace("{format}", PromptUtils.getResponseFormat(request));
+      String filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config);
+      filledTemplate = filledTemplate.replace(PromptUtils.USER_QUERY_TAG, PromptUtils.cleanContext(userquery))
+              .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request))
+              .replace(PromptUtils.HISTORY_TAG, chatHistoryStr)
+              .replace(PromptUtils.CONVERSATION_TAG, conversationStr);
 
-      Message prompt = new Message("user", PromptUtils.cleanContext(filledTemplate));
+      Message prompt = new Message("user", filledTemplate);
       prompts.add(prompt);
       String lastresponse = service.generate(prompts, request);
 
       // Refining response with each snippet pack
       template = PromptUtils.getRefineRagTemplateRefining(request);
       while (!contents.isEmpty()) {
-        filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config, historySize);
-        filledTemplate = filledTemplate.replace("{userquery}", userquery)
-                .replace("{format}", PromptUtils.getResponseFormat(request))
-                .replace("{lastresponse}", lastresponse);
-        prompts = new ArrayList<>(chatHistory);
-        prompt = new Message("user", PromptUtils.cleanContext(filledTemplate));
+        filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config);
+        filledTemplate = filledTemplate.replace(PromptUtils.USER_QUERY_TAG, userquery)
+                .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request))
+                .replace(PromptUtils.LAST_RESPONSE_TAG, lastresponse)
+                .replace(PromptUtils.HISTORY_TAG, chatHistoryStr)
+                .replace(PromptUtils.CONVERSATION_TAG, conversationStr);
+        prompts = new ArrayList<>();
+        prompt = new Message("user", filledTemplate);
         prompts.add(prompt);
         lastresponse = service.generate(prompts, request);
         LOGGER.debug("RagAPI - Iterative Refining - Last generated response : {}", lastresponse);
@@ -254,6 +266,42 @@ public class RagAPI extends SearchAPI {
         service = new OpenAiLlmService(config);
     }
     return service;
+  }
+
+
+  /**
+   * Convert a natural-language user query into a search query, using the LLM
+   * @param userQuery : The initial user query
+   * @param request HttpServletRequest
+   * @param config RagConfiguration
+   * @return A ready-to-user search query
+   */
+  public static String rewriteSearchQuery(String userQuery,  final HttpServletRequest request, RagConfiguration config) throws IOException {
+
+    LOGGER.debug("RagAPI - Rewriting user query into a search query.");
+
+    List<Message> chatHistory = PromptUtils.getChatHistoryToList(request, config);
+    String chatHistoryStr = PromptUtils.getStringHistoryLines(chatHistory);
+
+
+    // Select an LLM service
+    LlmService service = getLlmService(config);
+
+    String template = PromptUtils.getRewriteQueryTemplate(request)
+            .replace("{userquery}", userQuery)
+            .replace("{conversation}", chatHistoryStr);
+    List<Message> prompts = new ArrayList<>();
+    prompts.add(new Message("user", template)) ;
+
+    try {
+      String response = service.generate(prompts, request);
+      return (response != null && !response.isEmpty()) ? response : userQuery;
+    } catch (Exception e) {
+      LOGGER.error("Query rewriting failed. Using initial user query for the search.", e);
+      return userQuery;
+    }
+
+
   }
 
 
@@ -283,7 +331,7 @@ public class RagAPI extends SearchAPI {
     for (TextSegment segment: segments) {
       List<Message> prompts = new ArrayList<>();
       prompts.add(initialPrompt);
-      prompts.add(PromptUtils.textSegmentsToMessage(segment, "user", config));
+      prompts.add(PromptUtils.textSegmentsToMessage(segment, "user"));
 
       String response = service.generate(prompts, request);
       Message responseMessage = new Message("assistant", response);

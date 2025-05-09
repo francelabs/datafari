@@ -27,6 +27,7 @@ import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.segment.TextSegment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
@@ -49,6 +50,9 @@ public class PromptUtils {
     public static final String SYSTEM_ROLE = "system";
     public static final String USER_QUERY_TAG = "{userquery}";
     public static final String FORMAT_TAG = "{format}";
+    public static final String HISTORY_TAG = "{history}";
+    public static final String CONVERSATION_TAG = "{conversation}";
+    public static final String LAST_RESPONSE_TAG = "{lastresponse}";
 
     private PromptUtils() {
         // Constructor
@@ -127,6 +131,51 @@ public class PromptUtils {
     }
 
     /**
+     * @return Retrieve the instructions for query rewriting.
+     */
+    public static String getRewriteQueryTemplate(HttpServletRequest request) throws IOException {
+        return getInstructions("rag/template-rewriteSearchQuery.txt")
+                .replace("{language}", getUserLanguage(request));
+    }
+
+
+    /**
+     * Generate the part of the prompt containing the user history (including instructions and chat messages)
+     * @param chatHistory A list of Messages from chat history (user/assistant)
+     * @return
+     */
+    public static String getStringHistory(List<Message> chatHistory) throws IOException {
+        if (chatHistory.isEmpty()) {
+            return "";
+        } else {
+            String conversation = getStringHistoryLines(chatHistory);
+
+            return getInstructions("rag/template-history.txt")
+                    .replace("{conversation}", conversation);
+        }
+
+    }
+
+    /**
+     * Generate a string conversation based on the provided history. E.g.:
+     *      - user: Hello world
+     *      - assistant: Hello. How may I help you?
+     * @param chatHistory A list of Messages from chat history (user/assistant)
+     * @return The string conversation
+     */
+    public static String getStringHistoryLines(List<Message> chatHistory) throws IOException {
+        if (chatHistory.isEmpty()) return "";
+        StringBuilder conversation = new StringBuilder();
+        String messageTemplate = getInstructions("rag/template-history-message.txt");
+        for (Message message : chatHistory) {
+            String line = messageTemplate.replace("{role}", message.getRole())
+                            .replace("{content}", message.getContent());
+            conversation.append(line).append("\n");
+        }
+        return conversation.toString();
+    }
+
+    /**
      * Generate a string prompt containing a chunk of document and the document title
      * @param title Title of the document
      * @param content Chunk of document
@@ -163,7 +212,7 @@ public class PromptUtils {
      * @return : The original template, filled with as many snippets as possible.
      * @throws DatafariServerException : The template is missing the  {snippets} tag.
      */
-    public static String stuffAsManySnippetsAsPossible(String template, List<Message> contents, RagConfiguration config, int historySize) throws DatafariServerException {
+    public static String stuffAsManySnippetsAsPossible(String template, List<Message> contents, RagConfiguration config) throws DatafariServerException {
 
         if (!template.contains(SNIPPETS_TAG)) throw new DatafariServerException(CodesReturned.GENERALERROR, "Invalid prompt template: {snippets} tag is missing.");
 
@@ -185,15 +234,17 @@ public class PromptUtils {
             }
         }
 
-        // Remove the processed snippets from contents
-        contents.removeAll(processedSnippets);
-
         // If the list is empty due to an excessive content size, the first chunk is stuffed in
-        if (snippets.toString().isEmpty() && !contents.isEmpty()) {
+        if (processedSnippets.isEmpty() && !contents.isEmpty()) {
             i = 0;
             snippets = new StringBuilder(contents.get(0).getContent());
             prompt = template.replace(SNIPPETS_TAG, snippets.toString());
+            processedSnippets.add(contents.get(0));
         }
+
+        // Remove the processed snippets from contents
+        contents.removeAll(processedSnippets);
+
         LOGGER.debug("{} chunks processed in an LLM request. {} more to go.", i, contents.size());
         return prompt;
     }
@@ -204,10 +255,12 @@ public class PromptUtils {
      */
     public static String cleanContext(String context) {
         context = context.replace("\\", "/")
-                .replace("\n", " ")
+                .replace("\n", "\\n")
                 .replace("\r", " ")
                 .replace("\t", " ")
                 .replace("\b", "")
+                .replace("'''", "")
+                .replace("######", "") // This string is specifically used as separator in our default prompts, and should be avoided in context
                 .replace("\"", "`");
         return context;
     }
@@ -236,7 +289,7 @@ public class PromptUtils {
         // They may also have side effects with the LLM
         // Here, we replace them by space to avoid misparsing
         String[] specialChars = {
-                "+", "&&", "||", "{", "}", "[", "]",
+                "+", "&&", "||", "{", "}", "[", "]", "\n",
                 "^", "~", "*", "\\", "<", ">", "=", "#"
         };
         for (String ch : specialChars) {
@@ -266,7 +319,7 @@ public class PromptUtils {
      * @param role The role of the Message sender. Defaut is "user".
      * @return A list of TextSegments, that contain metadata. Big documents are chunked into multiple documents.
      */
-    public static Message textSegmentsToMessage(TextSegment segment, String role, RagConfiguration config) throws IOException {
+    public static Message textSegmentsToMessage(TextSegment segment, String role) throws IOException {
         String template = getInstructions("rag/template-fromTextSegment.txt");
         Metadata metadata = segment.metadata();
         String content = cleanContext(segment.text());

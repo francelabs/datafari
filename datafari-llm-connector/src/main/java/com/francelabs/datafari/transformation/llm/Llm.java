@@ -179,9 +179,6 @@ public class Llm extends BaseTransformationConnector {
     if (variableContext.getParameter("llmToUse") != null) {
       parameters.setParameter(LlmConfig.NODE_LLM, variableContext.getParameter("llmToUse"));
     }
-    if (variableContext.getParameter("embeddingsModelToUse") != null) {
-      parameters.setParameter(LlmConfig.NODE_EMBEDDINGS_MODEL, variableContext.getParameter("embeddingsModelToUse"));
-    }
     if (variableContext.getParameter("llmApiKey") != null) {
       parameters.setParameter(LlmConfig.NODE_APIKEY, variableContext.getParameter("llmApiKey"));
     }
@@ -219,9 +216,7 @@ public class Llm extends BaseTransformationConnector {
     String endpointToUse = (parameters.getParameter(LlmConfig.NODE_ENDPOINT) != null) ? parameters.getParameter(LlmConfig.NODE_ENDPOINT) : DEFAULT_ENDPOINT;
     String llmService = (parameters.getParameter(LlmConfig.NODE_LLM_SERVICE) != null) ? parameters.getParameter(LlmConfig.NODE_LLM_SERVICE) : "openai";
     String llmToUse = (parameters.getParameter(LlmConfig.NODE_LLM) != null) ? parameters.getParameter(LlmConfig.NODE_LLM) : "";
-    String embeddingsModelToUse = (parameters.getParameter(LlmConfig.NODE_EMBEDDINGS_MODEL) != null) ? parameters.getParameter(LlmConfig.NODE_EMBEDDINGS_MODEL) : "";
     String llmApiKey = (parameters.getParameter(LlmConfig.NODE_APIKEY) != null) ? parameters.getParameter(LlmConfig.NODE_APIKEY) : "";
-    String dimensions = (parameters.getParameter(LlmConfig.NODE_VECTOR_DIMENSION) != null) ? parameters.getParameter(LlmConfig.NODE_VECTOR_DIMENSION) : "250";
     String maxIterations = (parameters.getParameter(LlmConfig.NODE_MAX_ITERATIONS) != null) ? parameters.getParameter(LlmConfig.NODE_MAX_ITERATIONS) : "0";
     String maxChunkSizeInTokens = (parameters.getParameter(LlmConfig.NODE_MAX_CHUNK_SIZE_IN_TOKENS) != null) ? parameters.getParameter(LlmConfig.NODE_MAX_CHUNK_SIZE_IN_TOKENS) : "10000";
     String maxChunkSizeInChar = (parameters.getParameter(LlmConfig.NODE_MAX_CHUNK_SIZE_IN_CHAR) != null) ? parameters.getParameter(LlmConfig.NODE_MAX_CHUNK_SIZE_IN_CHAR) : "15000";
@@ -230,10 +225,8 @@ public class Llm extends BaseTransformationConnector {
     // Fill in context
     velocityContext.put("ENDPOINT", endpointToUse);
     velocityContext.put("LLMTYPE", llmService);
-    velocityContext.put("EMBEDDINGMODEL", embeddingsModelToUse);
     velocityContext.put("LLM", llmToUse);
     velocityContext.put("APIKEY", llmApiKey);
-    velocityContext.put("DIMENSIONS", dimensions);
     velocityContext.put("MAXITERATIONS", maxIterations);
     velocityContext.put("MAXCHUNKSIZEINCHAR", maxChunkSizeInChar);
     velocityContext.put("MAXCHUNKSIZEINTOKENS", maxChunkSizeInTokens);
@@ -592,7 +585,6 @@ public class Llm extends BaseTransformationConnector {
 
     addChildToSpec(variableContext, spec, seqPrefix + "enableSummarize", LlmConfig.NODE_ENABLE_SUMMARIZE);
     addChildToSpec(variableContext, spec, seqPrefix + "enableCategorize", LlmConfig.NODE_ENABLE_CATEGORIZE);
-    addChildToSpec(variableContext, spec, seqPrefix + "enableEmbeddings", LlmConfig.NODE_ENABLE_EMBEDDINGS);
     addChildToSpec(variableContext, spec, seqPrefix + "maxTokens", LlmConfig.NODE_MAXTOKENS);
     addChildToSpec(variableContext, spec, seqPrefix + "summariesLanguage", LlmConfig.NODE_SUMMARIES_LANGUAGE);
 
@@ -636,7 +628,6 @@ public class Llm extends BaseTransformationConnector {
     // Prep for field mappings
     String enableSummarize = "false";
     String enableCategorize = "false";
-    String enableEmbeddings = "false";
     int maxTokens = 500;
     String summariesLanguage = "";
 
@@ -657,8 +648,6 @@ public class Llm extends BaseTransformationConnector {
         enableSummarize = sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE);
       } else if (sn.getType().equals(LlmConfig.NODE_ENABLE_CATEGORIZE)) {
         enableCategorize = sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE);
-      } else if (sn.getType().equals(LlmConfig.NODE_ENABLE_EMBEDDINGS)) {
-        enableEmbeddings = sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE);
       } else if (sn.getType().equals(LlmConfig.NODE_MAXTOKENS)) {
         try {
           maxTokens = Integer.parseInt(sn.getAttributeValue(LlmConfig.ATTRIBUTE_VALUE));
@@ -676,7 +665,6 @@ public class Llm extends BaseTransformationConnector {
     }
     paramMap.put("ENABLESUMMARIZE", enableSummarize);
     paramMap.put("ENABLECATEGORIZE", enableCategorize);
-    paramMap.put("ENABLEEMBEDDINGS", enableEmbeddings);
     paramMap.put("MAXTOKENS", maxTokens);
     paramMap.put("SUMMARIESLANGUAGE", summariesLanguage);
     paramMap.put("CATEGORIES", categories);
