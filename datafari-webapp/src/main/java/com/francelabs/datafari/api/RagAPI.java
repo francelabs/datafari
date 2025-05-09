@@ -41,6 +41,7 @@ public class RagAPI extends SearchAPI {
   private static final Logger LOGGER = LogManager.getLogger(RagAPI.class.getName());
   public static final List<String> FORMAT_VALUES = List.of("bulletpoint", "text", "stepbystep");
   public static final String EXACT_CONTENT = "exactContent";
+  public static final String EMBEDDED_CONTENT = "embedded_content";
 
 
   public static JSONObject rag(final HttpServletRequest request, JSONObject searchResults, boolean ragBydocument) throws IOException {
@@ -92,9 +93,9 @@ public class RagAPI extends SearchAPI {
 
     // Chunking
     documentsList = initialDocumentsList;
-    if (config.getBooleanProperty(RagConfiguration.ENABLE_CHUNKING)) {
-      LOGGER.debug("RagAPI - Chunking is enabled.");
-      LOGGER.debug("RagAPI - Max size allowed for a single request in configuration is {} characters. ", config.getIntegerProperty(RagConfiguration.CHUNK_SIZE));
+    if (config.getBooleanProperty(RagConfiguration.ENABLE_CHUNKING, true)) {
+      LOGGER.debug("RagAPI - Chunking starting...");
+      LOGGER.debug("RagAPI - Max size allowed for a single chunk in configuration is {} characters. ", config.getIntegerProperty(RagConfiguration.CHUNK_SIZE));
       documentsList = ChunkUtils.chunkDocuments(initialDocumentsList, config);
       LOGGER.debug("RagAPI - The chunking returned {} chunk(s).", documentsList.size());
     } else {
@@ -150,7 +151,6 @@ public class RagAPI extends SearchAPI {
     List<Message> chatHistory = PromptUtils.getChatHistoryToList(request, config);
     String chatHistoryStr = PromptUtils.getStringHistory(chatHistory);
     String conversationStr = PromptUtils.getStringHistoryLines(chatHistory);
-//    int historySize = chatHistoryStr.length();
 
     if ("mapreduce".equals(config.getProperty(RagConfiguration.PROMPT_CHUNKING_STRATEGY, "refine"))){
 
@@ -422,7 +422,7 @@ public class RagAPI extends SearchAPI {
    */
   private static List<Document> extractDocumentsList(JSONObject result, RagConfiguration config) throws FileNotFoundException {
     // Handling search results
-    // Retrieving list of documents : id, title, url
+    // Retrieving list of documents: id, title, url
     List<Document> documentsList;
     documentsList = getDocumentList(result);
 
@@ -474,6 +474,10 @@ public class RagAPI extends SearchAPI {
       handler = "/vector";
       String[] queryrag = { userQuery };
       parameterMap.put("queryrag", queryrag);
+    } else {
+      // If search is BM25, set the result limit
+      String[] rows = { config.getProperty(RagConfiguration.MAX_FILES, "3") };
+      parameterMap.put("rows", rows);
     }
 
     return search(protocol, handler, request.getUserPrincipal(), parameterMap);
@@ -495,22 +499,33 @@ public class RagAPI extends SearchAPI {
       LOGGER.debug("RagAPI - Converting search results into a List of Documents.");
       if (response != null && response.get("docs") != null) {
         JSONArray docs = (JSONArray) response.get("docs");
+        JSONObject jsonObject;
         int nbDocs = docs.size(); // MaxFiles must not exceed the number of provided documents
         for (int i = 0; i < nbDocs; i++) {
 
+          jsonObject = (JSONObject) docs.get(i);
+
           // If the document has content, we generate a Document object with its content and metadata
-          JSONArray content = (JSONArray) ((JSONObject) docs.get(i)).get(EXACT_CONTENT);
-          if (content != null && content.get(0) != null) {
-            String title = ((JSONArray) ((JSONObject) docs.get(i)).get("title")).get(0).toString();
-            String id = (String) ((JSONObject) docs.get(i)).get("id");
-            String url = (String) ((JSONObject) docs.get(i)).get("url");
+          JSONArray contentArray = (JSONArray) jsonObject.get(EXACT_CONTENT);
+          String content;
+          if (contentArray != null && contentArray.get(0) != null) {
+            content = contentArray.get(0).toString();
+          } else {
+            // If exactContent is not provided, we try to retrieve embedded_content
+            content = (String) jsonObject.get(EMBEDDED_CONTENT); // TODO : check what happends if exactContent is missing
+          }
+
+          if (content != null && !content.isBlank()) {
+            String title = ((JSONArray) jsonObject.get("title")).get(0).toString();
+            String id = (String) jsonObject.get("id");
+            String url = (String) jsonObject.get("url");
 
             Metadata metadata = new Metadata();
             metadata.put("title", title);
             metadata.put("id", id);
             metadata.put("url", url);
 
-            Document document = new Document(content.get(0).toString(), metadata);
+            Document document = new Document(content, metadata);
             documentsList.add(document);
           }
 

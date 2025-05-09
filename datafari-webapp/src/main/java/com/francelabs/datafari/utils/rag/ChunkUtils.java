@@ -18,7 +18,6 @@ package com.francelabs.datafari.utils.rag;
 import com.francelabs.datafari.rag.RagConfiguration;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentSplitter;
-import dev.langchain4j.data.document.splitter.DocumentByParagraphSplitter;
 import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.segment.TextSegment;
 
@@ -44,8 +43,6 @@ public class ChunkUtils {
      */
     public static List<Document> chunkDocuments(List<Document> documentList, RagConfiguration config) {
         List<Document> chunkedDocumentList = new ArrayList<>();
-        int maxFiles = config.getIntegerProperty(RagConfiguration.MAX_FILES); // MaxFiles must not exceed the number of provided documents
-        int i = 0;
         for(Document document : documentList) {
             List<TextSegment> chunks = chunkContent(document, config);
 
@@ -54,8 +51,6 @@ public class ChunkUtils {
                 Document docToAdd = new Document(chunk.text(), chunk.metadata());
                 chunkedDocumentList.add(docToAdd);
             }
-            i++;
-            if (maxFiles <= i) return chunkedDocumentList;
         }
         return chunkedDocumentList;
     }
