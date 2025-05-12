@@ -94,6 +94,11 @@ public class RagConfiguration extends AbstractConfigClass {
         return "true".equals(getProperty(key));
     }
 
+    public boolean getBooleanProperty(final String key, boolean defaultValue) {
+        String parsedBoolean = (defaultValue) ? getProperty(key, "true") : getProperty(key, "false");
+        return "true".equals(parsedBoolean);
+    }
+
     private RagConfiguration() {
         super(CONFIG_FILENAME, LOGGER);
     }

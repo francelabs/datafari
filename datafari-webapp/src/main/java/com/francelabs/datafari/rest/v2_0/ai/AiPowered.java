@@ -2,7 +2,6 @@ package com.francelabs.datafari.rest.v2_0.ai;
 
 import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
 import com.francelabs.datafari.api.RagAPI;
-import com.francelabs.datafari.rag.Message;
 import com.francelabs.datafari.rag.RagConfiguration;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
 import dev.langchain4j.data.document.Document;
@@ -62,7 +61,7 @@ public class AiPowered {
         try {
 
             // Retrieve document
-            JSONObject searchresult = performSearchById(request, id);
+            JSONObject searchresult = findDocumentById(request, id);
             JSONObject jsonAiDocument = (JSONObject) ((JSONArray) ((JSONObject) searchresult.get("response")).get("docs")).get(0);
 
             if (jsonAiDocument.get(ID_FIELD) != null && id.equals(jsonAiDocument.get(ID_FIELD))) {
@@ -163,12 +162,12 @@ public class AiPowered {
             if (jsonDoc.get(ID_FIELD) != null && !((String) jsonDoc.get(ID_FIELD)).isEmpty()) {
                 id = (String) jsonDoc.get(ID_FIELD);
                 LOGGER.debug("AiPowered - RAG - Retrieving document {} for RAG by Document.", id);
-                searchResults = performSearchById(request, id);
+                searchResults = findDocumentById(request, id);
                 ragBydocument = true;
             } else {
                 LOGGER.debug("AiPowered - RAG - Performing search.");
                 request.setAttribute("q.op", config.getProperty(RagConfiguration.SEARCH_OPERATOR));
-                searchResults = performSearch(request, searchQuery, config.getBooleanProperty(RagConfiguration.SOLR_ENABLE_VECTOR_SEARCH));
+                searchResults = performSearch(request, searchQuery, config.getBooleanProperty(RagConfiguration.SOLR_ENABLE_VECTOR_SEARCH), null, config);
             }
         } catch (IOException|ServletException e) {
             LOGGER.error("AiPowered - RAG - ERROR. An error occurred while retrieving documents.", e);
@@ -255,12 +254,12 @@ public class AiPowered {
      * @return a JSONObject containing search resultats, with the following fields :
      *      id, title, exactContent, url, llm_summary
      */
-    private static JSONObject performSearchById(HttpServletRequest originalRequest, String id) throws ServletException, IOException {
+    private static JSONObject findDocumentById(HttpServletRequest originalRequest, String id) throws ServletException, IOException {
         EditableHttpServletRequest request = new EditableHttpServletRequest(originalRequest);
         request.addParameter("q", "id:" + id);
         request.addParameter("hl", "false");
         request.addParameter("fl", "id,title,exactContent,url,llm_summary");
-        request.setPathInfo("/select"); // TODO : vector search for chunking ?
+        request.setPathInfo("/select");
 
         LOGGER.debug("AiPowered - Retrieving document {}.", id);
         return SearchAggregator.doGetSearch(request, null);
@@ -272,17 +271,26 @@ public class AiPowered {
      * The updated request object is updated in order to process.
      * @param originalRequest : The HttpServletRequest
      * @param q The user query (or a rewritten one)
+     * @param id Optional ; the ID of a document to restrict the search.
      * @return a JSONObject containing search results, with the following fields:
      *      id, title, exactContent, url, llm_summary
      */
-    private static JSONObject performSearch(HttpServletRequest originalRequest, String q, boolean vectorSearch) throws ServletException, IOException {
+    private static JSONObject performSearch(HttpServletRequest originalRequest, String q, boolean vectorSearch, String id, RagConfiguration config) throws ServletException, IOException {
         EditableHttpServletRequest request = new EditableHttpServletRequest(originalRequest);
         request.addParameter("q", q);
         request.addParameter("hl", "false");
-        request.addParameter("fl", "id,title,exactContent,url,llm_summary");
+        request.addParameter("fl", "id,title,exactContent,embedded_content,url,llm_summary");
+
+        // If BM25, the number of results is limited to MAX_FILES
+        if (!vectorSearch) {
+            request.addParameter("rows", config.getProperty(RagConfiguration.MAX_FILES, "3"));
+        }
 
         String handler = vectorSearch ? "/vector" : "/select";
         request.setPathInfo(handler);
+
+        String fqField = vectorSearch ? "parent_doc" : "id";
+        if (id != null) request.addParameter("fq", fqField + ":\"" + id + "\"");
 
         LOGGER.debug("AiPowered - Performing search using {} handler. q={}", handler, q);
         return RagAPI.processSearch(RagConfiguration.getInstance(), request);

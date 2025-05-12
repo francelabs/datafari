@@ -101,7 +101,6 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
               vectorDocument.removeField("exactContent");
 
               // ExactContent should ony contain the chunk content:
-              vectorDocument.addField("exactContent", chunk.text());
               vectorDocument.addField("embedded_content", chunk.text());
 
               // URL
