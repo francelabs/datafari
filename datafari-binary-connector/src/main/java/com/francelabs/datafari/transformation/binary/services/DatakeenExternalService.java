@@ -21,14 +21,10 @@ public class DatakeenExternalService extends ExternalService implements IExterna
 
     static final String DEFAULT_URL = "https://api.datakeen.co/api/v1/";
     static final String DEFAULT_ENDPOINT = "/reco/multi-doc";
-    // TODO : Remove debug boolean
-    static final boolean DEBUG = false;
 
     public DatakeenExternalService(BinarySpecification spec) {
         // ALWAYS CALL SUPER AT THE BEGINING OF THE CONSTRUCTOR
         super(spec);
-
-        // Get token
 
         // Default URL
         if (this.url == null) {
@@ -40,7 +36,7 @@ public class DatakeenExternalService extends ExternalService implements IExterna
 
         String apiToken = getSecurityToken();
         if (apiToken == null || apiToken.isBlank()) {
-            throw new ManifoldCFException("Invalid or empty security token.");
+            throw new ManifoldCFException("Unable to retrieve security token.");
         }
         HttpClient client = HttpClient.newHttpClient();
 
@@ -74,8 +70,9 @@ public class DatakeenExternalService extends ExternalService implements IExterna
 
     public String getSecurityToken() throws ManifoldCFException {
 
-        // TODO : Remove this mock :
-        if (DEBUG) return "DEBUG_MODE_TOKEN";
+        String datakeenAiApiKey = spec.getStringProperty(BinaryConfig.NODE_SERVICE_SECURITY_TOKEN);
+        if (datakeenAiApiKey != null && !datakeenAiApiKey.isBlank()) return datakeenAiApiKey;
+
         Map<String, String> parameters = spec.getMapProperty(BinaryConfig.NODE_SERVICE_ADDITIONAL_PARAMETERS);
         String username = parameters.getOrDefault("username", "");
         String password = parameters.getOrDefault("password", "");
@@ -98,7 +95,6 @@ public class DatakeenExternalService extends ExternalService implements IExterna
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException e) {
-            // Todo : handle specific errors
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

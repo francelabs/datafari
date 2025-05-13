@@ -15,7 +15,7 @@ public class JsonUtils {
     }
 
     /**
-     * Exctract data from a provided JSON, based on a location key
+     * Extract data from a provided JSON, based on a location key
      * @param jsonResponse A String JSON
      * @param dataLocation The location key (e.g.: content.results.entities[0].firstName)
      * @return

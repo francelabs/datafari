@@ -278,9 +278,6 @@ public class Binary extends BaseTransformationConnector {
       // Select the proper service depending on the External API
       IExternalService service;
       switch (spec.getStringProperty(BinaryConfig.NODE_TYPE_OF_SERVICE)) {
-  /*      case "datafari":
-          service = new DatafariAiAgentExternalService(spec);
-          break;*/
         case "datakeen":
           service = new DatakeenExternalService(spec);
           break;
