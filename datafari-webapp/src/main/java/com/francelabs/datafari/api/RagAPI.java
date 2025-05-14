@@ -512,7 +512,7 @@ public class RagAPI extends SearchAPI {
             content = contentArray.get(0).toString();
           } else {
             // If exactContent is not provided, we try to retrieve embedded_content
-            content = (String) jsonObject.get(EMBEDDED_CONTENT); // TODO : check what happends if exactContent is missing
+            content = (String) jsonObject.get(EMBEDDED_CONTENT);
           }
 
           if (content != null && !content.isBlank()) {

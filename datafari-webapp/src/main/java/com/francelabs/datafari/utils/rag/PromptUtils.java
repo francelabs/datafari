@@ -274,7 +274,7 @@ public class PromptUtils {
             return "";
         }
 
-        // 1. Trim whitespace
+        // Trim whitespace
         query = query.trim();
 
         // Normalize Unicode characters (é → e)
@@ -297,7 +297,7 @@ public class PromptUtils {
         }
         // Replace multiple whitespace with single space
         query = query.replaceAll("\\s+", " ");
-        // Length limit for user query arbitrarily set to 500 char
+        // Length limit for the user query arbitrarily set to 500 char
         int maxLength = 500;
         if (query.length() > maxLength) {
             query = query.substring(0, maxLength);

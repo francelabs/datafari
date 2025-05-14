@@ -134,8 +134,6 @@ public class AiPowered {
             }
         }
 
-        // TODO : Query re-writing for search
-
         //
         // QUERY REWRITING
         // If enabled, we use a LLM to reformulate the user query into a search query
