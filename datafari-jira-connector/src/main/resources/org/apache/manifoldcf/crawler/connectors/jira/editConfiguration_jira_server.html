@@ -1,0 +1,99 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+#if($TabName == $ResourceBundle.getString('JiraRepositoryConnector.Server'))
+
+<table class="displaytable">
+  <tr><td class="separator" colspan="2"><hr/></td></tr>
+
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('JiraRepositoryConnector.JiraProtocolColon'))</nobr>
+    </td>
+    <td class="value">
+      <select size="2" name="jiraprotocol">
+#if($JIRAPROTOCOL == 'http')
+        <option value="http" selected="true">http</option>
+#else
+        <option value="http">http</option>
+#end
+#if($JIRAPROTOCOL == 'https')
+        <option value="https" selected="true">https</option>
+#else
+        <option value="https">https</option>
+#end
+      </select>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('JiraRepositoryConnector.JiraHostColon'))</nobr>
+    </td>
+    <td class="value">
+      <input size="32" type="text" id="jirahost" name="jirahost" value="$Encoder.attributeEscape($JIRAHOST)" />
+    </td>
+  </tr>
+
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('JiraRepositoryConnector.JiraPortColon'))</nobr>
+    </td>
+    <td class="value">
+      <input size="5" type="text" id="jiraport" name="jiraport" value="$Encoder.attributeEscape($JIRAPORT)" />
+    </td>
+  </tr>
+
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('JiraRepositoryConnector.JiraRESTAPIPathColon'))</nobr>
+    </td>
+    <td class="value">
+      <input size="32" type="text" id="jirapath" name="jirapath" value="$Encoder.attributeEscape($JIRAPATH)" />
+    </td>
+  </tr>
+  
+  <tr><td class="separator" colspan="2"><hr/></td></tr>
+  
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('JiraRepositoryConnector.ClientIDColon'))</nobr>
+    </td>
+    <td class="value">
+      <input size="16" type="text" id="clientid" name="clientid" value="$Encoder.attributeEscape($CLIENTID)" />
+    </td>
+  </tr>
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('JiraRepositoryConnector.ClientSecretColon'))</nobr>
+    </td>
+    <td class="value">
+      <input size="16" type="password" id="clientsecret" name="clientsecret" value="$Encoder.attributeEscape($CLIENTSECRET)" />
+    </td>
+  </tr>
+</table>
+
+#else
+
+<input type="hidden" name="jiraprotocol" value="$Encoder.attributeEscape($JIRAPROTOCOL)" />
+<input type="hidden" name="jirahost" value="$Encoder.attributeEscape($JIRAHOST)" />
+<input type="hidden" name="jiraport" value="$Encoder.attributeEscape($JIRAPORT)" />
+<input type="hidden" name="jirapath" value="$Encoder.attributeEscape($JIRAPATH)" />
+<input type="hidden" name="clientid" value="$Encoder.attributeEscape($CLIENTID)" />
+<input type="hidden" name="clientsecret" value="$Encoder.attributeEscape($CLIENTSECRET)" />
+
+#end
