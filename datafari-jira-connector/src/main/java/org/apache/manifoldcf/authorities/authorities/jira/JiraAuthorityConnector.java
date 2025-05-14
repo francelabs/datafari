@@ -606,6 +606,9 @@ public class JiraAuthorityConnector extends BaseAuthorityConnector {
     } catch (IOException e) {
       handleIOException(e);
     } catch (ResponseException e) {
+      if (e.getMessage().contains("404") || e.getMessage().matches(".*user.*(not exist|not found).*")){
+        return false;
+      }
       handleResponseException(e);
     }
     return false;
