@@ -1,0 +1,60 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<table class="displaytable">
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('JiraRepositoryConnector.JiraQueryColon'))</nobr>
+    </td>
+    <td class="value">
+      <nobr>$Encoder.bodyEscape($JIRAQUERY)</nobr>
+    </td>
+  </tr>
+  <tr><td class="separator" colspan="2"><hr/></td></tr>
+  <tr>
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('JiraRepositoryConnector.SecurityColon'))</nobr>
+    </td>
+    <td class="value">
+#if($SECURITYON == 'on')
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('JiraRepositoryConnector.Enabled'))</nobr>
+#else
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('JiraRepositoryConnector.Disabled'))</nobr>
+#end
+    </td>
+  </tr>
+  <tr><td class="separator" colspan="2"><hr/></td></tr>
+  <tr>
+#if($ACCESSTOKENS.size() == 0)
+    <td class="message" colspan="2">
+      $Encoder.bodyEscape($ResourceBundle.getString('JiraRepositoryConnector.NoAccessTokensPresent'))
+    </td>
+#else
+    <td class="description">
+      <nobr>$Encoder.bodyEscape($ResourceBundle.getString('JiraRepositoryConnector.AccessTokensColon'))</nobr>
+    </td>
+    <td class="value">
+  #set($atcounter = 0)
+  #foreach($atoken in $ACCESSTOKENS)
+    <nobr>$Encoder.bodyEscape($atoken.get('TOKEN'))</nobr><br/>
+    #set($atcounter = $atcounter + 1)
+  #end
+    </td>
+#end
+  </tr>
+
+</table>

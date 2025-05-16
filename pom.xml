@@ -94,6 +94,7 @@
     <module>datafari-confluence-v6-connector</module>
     <module>datafari-solr-connector</module>
     <module>datafari-jdbc-connector</module>
+    <module>datafari-jira-connector</module>
   </modules>
   <build>
     <pluginManagement>

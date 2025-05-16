@@ -1,0 +1,95 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+#if($TabName == $ResourceBundle.getString('JiraRepositoryConnector.Security') && ${SeqNum} == ${SelectedNum})
+
+<table class="displaytable">
+  <tr><td class="separator" colspan="2"><hr/></td></tr>
+  
+  <tr>
+    <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('JiraRepositoryConnector.SecurityColon'))</nobr></td>
+    <td class="value">
+  #if($SECURITYON == 'on')
+      <input type="radio" name="s${SeqNum}_specsecurity" value="on" checked="true"/>
+  #else
+      <input type="radio" name="s${SeqNum}_specsecurity" value="on"/>
+  #end
+      $Encoder.bodyEscape($ResourceBundle.getString('JiraRepositoryConnector.Enabled'))
+  #if($SECURITYON == 'off')
+      <input type="radio" name="s${SeqNum}_specsecurity" value="off" checked="true"/>
+  #else
+      <input type="radio" name="s${SeqNum}_specsecurity" value="off"/>
+  #end
+      $Encoder.bodyEscape($ResourceBundle.getString('JiraRepositoryConnector.Disabled'))
+    </td>
+  </tr>
+  
+  <tr><td class="separator" colspan="2"><hr/></td></tr>
+
+  #set($atcounter = 0)
+  #foreach($atoken in $ACCESSTOKENS)
+
+  <tr>
+    <td class="description">
+      <input type="hidden" name="s${SeqNum}_accessop_$atcounter" value=""/>
+      <input type="hidden" name="s${SeqNum}_spectoken_$atcounter" value="$Encoder.attributeEscape($atoken.get('TOKEN'))"/>
+      <a name="s${SeqNum}_token_$atcounter">
+        <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('JiraRepositoryConnector.Delete'))" onClick='Javascript:s${SeqNum}_SpecDeleteToken($atcounter)' alt="$Encoder.attributeEscape($ResourceBundle.getString('JiraRepositoryConnector.DeleteToken'))$atcounter"/>
+      </a>
+    </td>
+    <td class="value">$Encoder.bodyEscape($atoken.get('TOKEN'))</td>
+  </tr>
+
+    #set($atcounter = $atcounter + 1)
+  #end
+
+  #set($nexttoken = $atcounter + 1)
+
+  #if($atcounter == 0)
+  <tr>
+    <td class="message" colspan="2">$Encoder.bodyEscape($ResourceBundle.getString('JiraRepositoryConnector.NoAccessTokensPresent'))</td>
+  </tr>
+  #end
+
+  <tr><td class="lightseparator" colspan="2"><hr/></td></tr>
+  
+  <tr>
+    <td class="description">
+      <input type="hidden" name="s${SeqNum}_tokencount" value="$atcounter"/>
+      <input type="hidden" name="s${SeqNum}_accessop" value=""/>
+      <a name="s${SeqNum}_token_$atcounter">
+        <input type="button" value="$Encoder.attributeEscape($ResourceBundle.getString('JiraRepositoryConnector.Add'))" onClick='Javascript:s${SeqNum}_SpecAddToken($nexttoken)' alt="$Encoder.attributeEscape($ResourceBundle.getString('JiraRepositoryConnector.AddAccessToken'))"/>
+      </a>
+    </td>
+    <td class="value">
+      <input type="text" size="30" name="s${SeqNum}_spectoken" value=""/>
+    </td>
+  </tr>
+</table>
+
+#else
+
+<input type="hidden" name="s${SeqNum}_specsecurity" value="$SECURITYON"/>
+
+  #set($atcounter = 0)
+  #foreach($atoken in $ACCESSTOKENS)
+<input type="hidden" name="s${SeqNum}_spectoken_$atcounter" value="$Encoder.attributeEscape($atoken.get('TOKEN'))"/>
+    #set($atcounter = $atcounter + 1)
+  #end
+<input type="hidden" name="s${SeqNum}_tokencount" value="$atcounter"/>
+
+#end

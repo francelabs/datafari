@@ -10,6 +10,105 @@ service_exists() {
     fi
 }
 
+check_service_tcp() {
+  local name="$1"
+  local host="$2"
+  local port="$3"
+  local result
+
+  if (echo > /dev/tcp/"$host"/"$port") >/dev/null 2>&1; then
+    result="✅ OK         "
+  else
+    result="❌ KO         "
+    STATUS=1
+  fi
+
+  echo "│ $(printf '%-20s' "$name") │ $result│"
+}
+
+
+check_service() {
+  local name="$1"
+  local test_cmd="$2"
+  local result
+
+  if eval "$test_cmd"; then
+    result="✅ OK         "  # 10 caractères + 3 espaces = largeur visuelle correcte
+  else
+    result="❌ KO         "  # ❌ est légèrement plus large → 4 espaces ici
+    STATUS=1
+  fi
+
+  echo "│ $(printf '%-20s' "$name") │ $result│" 
+}
+
+check_service_pid() {
+  local name="$1"
+  local pidfile="$2"
+  local result
+
+if [[ -f "$pidfile" ]]; then
+    pid=$(cat "$pidfile" 2>/dev/null)
+    if [[ "$pid" =~ ^[0-9]+$ ]] && ps -p "$pid" > /dev/null 2>&1; then
+result="✅ OK         "  # 10 caractères + 3 espaces = largeur visuelle correcte
+  else
+    result="❌ KO         "  # ❌ est légèrement plus large → 4 espaces ici
+    STATUS=1
+  fi
+else
+ result="❌ KO         "  # ❌ est légèrement plus large → 4 espaces ici
+    STATUS=1
+  fi
+
+echo "│ $(printf '%-20s' "$name") │ $result│" 
+}
+
+check_services() {
+
+
+echo
+echo "┌──────────────────────┬───────────────┐"
+echo "│ Component            │ State         │" 
+echo "├──────────────────────┼───────────────┤" 
+
+STATUS=0
+if  [[ "$NODETYPE" != *solr* ]]; then
+  check_service "Tomcat"    "curl -s http://localhost:8080 > /dev/null"
+  check_service "Tomcat-MCF"    "curl -s http://localhost:9080 > /dev/null"
+  if  [[ "$NODETYPE" != *mcf* ]]; then
+    check_service "Solr" "curl -s -o /dev/null -w '%{http_code}' http://localhost:8983/solr/FileShare/select?q=datafarirocks\&rows=0 | grep -q 200"
+  fi
+  check_service_tcp "Zookeeper"     localhost 2181
+  check_service_tcp "Zookeeper-MCF" localhost 2182
+  check_service_tcp "Cassandra"     localhost 9042
+  check_service_tcp "PostgreSQL"    localhost 5432
+  check_service_tcp "Tika Server"   localhost 9998
+  check_service_pid "MCF Agent"  $DATAFARI_HOME/pid/mcf_crawler_agent.pid
+  if  [[ "$AnalyticsActivation" = *true* ]]; then
+    check_service_pid "Logstash"  $DATAFARI_HOME/pid/logstash.pid
+  fi
+  check_service "Apache"      "curl -s --insecure https://localhost/datafariui > /dev/null"
+
+elif [[ "$NODETYPE" == *solr* ]]; then
+  check_service "Solr" "curl -s -o /dev/null -w '%{http_code}' http://localhost:8983/solr/FileShare/select?q=datafarirocks\&rows=0 | grep -q 200"
+  check_service_tcp "Zookeeper"     localhost 2181
+  check_service "Apache"      "curl -s --insecure https://localhost/datafariui > /dev/null"
+  if  [[ "$AnalyticsActivation" = *true* ]]; then
+    check_service_pid "Logstash"  $DATAFARI_HOME/pid/logstash.pid
+  fi
+fi
+
+echo "└──────────────────────┴───────────────┘" 
+
+if [ "$STATUS" -eq 0 ]; then
+  echo "[CHECK] ✅ All services are ready. Start OK." 
+  exit 0
+else
+  echo "[CHECK] ❌ Some services are missing or unfunctional"
+  exit 1
+fi
+
+}
 check_java()
 {
   if type -p java; then
@@ -211,6 +310,8 @@ waitCassandra() {
     sleep 2
   fi
 }
+
+
 
 
 setProperty(){

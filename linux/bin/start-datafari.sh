@@ -206,7 +206,9 @@ if  [[ "$NODETYPE" = *mono* ]]; then
 fi
 
 if [ "$MONIT_STATE" == "active" ]; then
-  sudo service monit start
+  sudo systemctl start monit
 fi
 
-
+echo "Check services state, wait 5 seconds that all services are started"
+sleep 5
+check_services
