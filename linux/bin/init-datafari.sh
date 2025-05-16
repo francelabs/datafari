@@ -355,6 +355,7 @@ init_solrcloud() {
   mkdir -p $SOLR_INSTALL_DIR/solrcloud
   mv $SOLR_INSTALL_DIR/solr_home/*/ $SOLR_INSTALL_DIR/solrcloud
   mkdir -p $SOLR_INSTALL_DIR/solrcloud/FileShare/lib/custom/customer
+  mkdir -p $SOLR_INSTALL_DIR/solrcloud/VectorMain/lib/custom/customer/
 
 }
 
@@ -367,7 +368,9 @@ init_folders() {
   mkdir -p $DATAFARI_HOME/bin/backup/mcf-script
   mkdir -p $DATAFARI_HOME/bin/backup/mcf
   mkdir -p $DATAFARI_HOME/bin/backup/solr
+  mkdir -p $DATAFARI_HOME/bin/backup/solr_vectormain
   mkdir -p $SOLR_INSTALL_DIR/solr_home/FileShare/lib/custom/customer/
+  mkdir -p $SOLR_INSTALL_DIR/solr_home/VectorMain/lib/custom/customer/
   
   
 }
