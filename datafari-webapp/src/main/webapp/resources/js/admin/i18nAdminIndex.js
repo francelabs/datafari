@@ -99,6 +99,7 @@ $(function($) {
   elm.find('#zookeeper-AdminUI').html(window.i18n.msgStore['adminUI-Zookeeper']);
   elm.find('#helpPage-AdminUI').html(window.i18n.msgStore['adminUI-helpPageEditor']);
   elm.find('#upload-AdminUI').html(window.i18n.msgStore['adminUI-UploadFile']);
+  elm.find('#solrVectorSearch-AdminUI').html(window.i18n.msgStore['adminUI-solrVectorSearch']);
 
   $("#logs-AdminUI").html(window.i18n.msgStore['adminUI-Logs']);
   $("#downloadLogs-AdminUI").html(window.i18n.msgStore['adminUI-Download-Logs']);

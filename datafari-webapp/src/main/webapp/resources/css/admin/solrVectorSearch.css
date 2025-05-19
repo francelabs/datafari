@@ -1,0 +1,80 @@
+#search-aggregator-client-box, #search-aggregator-server-box {
+  padding-bottom: 0;  
+}
+
+#search-aggregator-server-box {
+ margin-top: 3em;
+}
+
+
+#select-ex-datafari {
+  margin-bottom: 1em;
+  width: auto;
+}
+
+#external-datafaris-form, #timeout-form {
+  margin-top: 3em;
+}
+
+#pwd-spinner {
+  background-color: transparent;
+  border: none;
+}
+
+#warning-icon {
+	width: 32px;
+	height: 32px;
+	background-image: url("../images/icons/warning-icon-32x32.png");
+	display: inline-block;
+  vertical-align: middle;
+}​
+	
+.inline_block .form-control{
+	font-size:12px;
+	cursor:default;
+}
+
+.inline_block{
+	display:inline-block;
+	vertical-align:middle;
+	margin-right:20px;
+	margin-top:5px;
+	margin-bottom:5px;
+}
+
+.inline_block .input-group-addon.delete{
+	color:white;
+	background: #F58376;
+	cursor:pointer;
+}
+
+.warning{
+	color: red;
+	display: none;
+}
+
+th{
+	text-align:center;
+}
+
+#message, #search-aggregator-message, #timeouts-message{
+	display:none;
+	text-align:center;
+	margin-bottom:1%;
+}
+
+.error{
+	color:red;
+}
+
+.success{
+	color:green;
+}
+
+.box{
+	padding-bottom : 5%;
+}
+
+.default-datafari-label {
+	padding-right: 8px;
+}
