@@ -25,7 +25,7 @@
               <goal>wget</goal>
             </goals>
             <configuration>
-              <url>https://repo.datafari.com/solr/9.8.0/solr-9.8.0.tgz</url>
+              <url>https://repo.datafari.com/solr/${solr.version}/solr-${solr.version}.tgz</url>
               <sha512>${solr.sha512}</sha512>
               <unpack>true</unpack>
             </configuration>
