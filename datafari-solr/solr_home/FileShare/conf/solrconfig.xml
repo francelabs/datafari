@@ -1289,7 +1289,7 @@
 			<bool name="enabled">${vector.enabled:false}</bool>
 			<int name="chunksize">${vector.chunksize:300}</int>
 			<int name="maxoverlap">${vector.maxoverlap:0}</int>
-			<str name="splitter">${vector.splitter:splitterByParagraph}</str>
+			<str name="splitter">${vector.splitter:recursiveSplitter}</str>
 			<str name="minchunklength">${vector.filter.minchunklength:1}</str>
 			<str name="minalphanumratio">${vector.filter.minalphanumratio:0.0}</str>
 		</processor>
