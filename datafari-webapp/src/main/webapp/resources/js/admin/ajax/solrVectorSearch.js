@@ -126,6 +126,18 @@ $(document).ready(function () {
     aiagent: "dev.langchain4j.model.openai.OpenAiEmbeddingModel"
   };
 
+  function selectActiveModelOrFallback(data) {
+    const modelSelect = $('#model');
+    const active = data.modelName;
+    const exists = modelSelect.find(`option[value="${active}"]`).length > 0;
+
+    if (active && exists) {
+      modelSelect.val(active).trigger('change');
+    } else {
+      modelSelect.val("new").trigger('change');
+    }
+  }
+
   function loadFormData() {
     $.get("../rest/v2.0/management/solrvectorsearch", function (data) {
         // List of existing models
@@ -144,6 +156,7 @@ $(document).ready(function () {
 
         // Check or uncheck "Enable Vector Search"
         $("#enableVectorSearch").prop("checked", data.enableVectorSearch === true).change();
+
 
         // Retrieving and updating vector fields list
         if (data.availableFields && Array.isArray(data.availableFields)) {
@@ -216,16 +229,7 @@ $(document).ready(function () {
         });
 
         // Si un modèle par défaut est défini, on le sélectionne automatiquement
-        if (data.modelName && modelSelect.find(`option[value="${data.modelName}"]`).length > 0) {
-          modelSelect.val(data.modelName).trigger('change');
-          $('#deleteModelContainer').show();
-        } else {
-            const selected = $('#modelTemplate').val();
-            const defaults = defaultModelValues[selected] || {};
-            $('#baseUrl').val(defaults.baseUrl || "");
-            $('#modelName').val(defaults.modelName || "");
-            $('#apiKey').val(defaults.apiKey || "");
-        }
+        selectActiveModelOrFallback(data);
       }, "json");
   }
 
@@ -291,6 +295,7 @@ $(document).ready(function () {
       return;
     }
 
+    // Call DELETE service
     $.ajax({
       url: `../rest/v2.0/management/solrvectorsearch?modelName=${encodeURIComponent(modelName)}`,
       type: 'DELETE',
@@ -300,9 +305,7 @@ $(document).ready(function () {
           .addClass('alert-success')
           .text("Model deleted successfully")
           .show();
-        setTimeout(() => {
-          loadFormData();
-        }, 1000);
+        loadFormData();
       },
       error: function () {
         $('#message')
@@ -370,7 +373,7 @@ $(document).ready(function () {
     });
     setTimeout(() => {
       $('#message').fadeOut();
-    }, 5000);
+    }, 4000);
 
   });
 });
