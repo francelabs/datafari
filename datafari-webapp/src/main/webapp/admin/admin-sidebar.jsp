@@ -197,6 +197,8 @@
           <i class="fas fa-desktop"></i><span id="extraFunctionalities-AdminUI" class="hidden-xs"></span>
         </a>
         <ul id="menu-extra" class="list-unstyled collapse">
+          <li id="solrVectorSearch"><a id="solrVectorSearch-AdminUI" class="ajax-link" href="?page=solrVectorSearch"></a></li>
+          <li id="ragConf"><a id="ragConf-AdminUI" class="ajax-link" href="?page=ragConf"></a></li>
           <li id="Duplicates"><a id="duplicates-AdminUI" class="ajax-link" href="?page=duplicates"></a></li>
           <li id="universalConnectorUploadConf"><a id="universalConnectorUploadConf-AdminUI" class="ajax-link" href="?page=universalConnectorUploadConf"></a></li>
         </ul>
