@@ -143,6 +143,7 @@ public class SolrVectorSearchConfig {
         propertiesVectorMain.put("texttovector.outputfield", input.get("vectorField").toString());
         // Update the solr vector field in rag.properties
         config.setProperty(RagConfiguration.SOLR_VECTOR_FIELD, input.get("vectorField").toString());
+        config.saveProperties();
       }
       if (input.containsKey("maxoverlap")) {
         properties.put("vector.maxoverlap", input.get("maxoverlap").toString());

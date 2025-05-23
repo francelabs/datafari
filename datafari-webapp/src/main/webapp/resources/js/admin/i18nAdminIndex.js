@@ -91,6 +91,8 @@ $(function($) {
   elm.find('#extraFunctionalities-AdminUI').html(window.i18n.msgStore['adminUI-extraFunctionalities']);
   elm.find('#deduplication-AdminUI').html(window.i18n.msgStore['adminUI-Deduplication']);
   $("#universalConnectorUploadConf-AdminUI").html(window.i18n.msgStore['universalConnectorUploadConf-AdminUI']);
+  elm.find("#ragConf-AdminUI").html(window.i18n.msgStore['ragConf-AdminUI']);
+  elm.find('#solrVectorSearch-AdminUI').html(window.i18n.msgStore['adminUI-solrVectorSearch']);
   elm.find('#adminUI-atomicUpdate').html(window.i18n.msgStore['adminUI-atomicUpdate']);
 
   elm.find('#entityExtractionConf-AdminUI').html(window.i18n.msgStore['adminUI-entityExtractionConf']);
@@ -99,7 +101,6 @@ $(function($) {
   elm.find('#zookeeper-AdminUI').html(window.i18n.msgStore['adminUI-Zookeeper']);
   elm.find('#helpPage-AdminUI').html(window.i18n.msgStore['adminUI-helpPageEditor']);
   elm.find('#upload-AdminUI').html(window.i18n.msgStore['adminUI-UploadFile']);
-  elm.find('#solrVectorSearch-AdminUI').html(window.i18n.msgStore['adminUI-solrVectorSearch']);
 
   $("#logs-AdminUI").html(window.i18n.msgStore['adminUI-Logs']);
   $("#downloadLogs-AdminUI").html(window.i18n.msgStore['adminUI-Download-Logs']);
