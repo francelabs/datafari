@@ -40,7 +40,7 @@
         <p class="documentation-preview">
           <span id="documentation-solrVectorSearch"></span>Datafari Enterprise v6.2 provides an AI powered "Vector Search" feature<a
             class="documentation-link"
-            href="solrVectorSearch"
+            href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/3920297985"
             target="_blank"> ...see more</a>
         </p>
       </div>
