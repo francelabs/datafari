@@ -50,7 +50,7 @@
     <tika.version>2.9.2</tika.version>
     <tika-server.sha512>540b6a1ba20f2ce951a1928a609a00d4552dcc075bc204c3a4ba3697b4a86c8853d450d913a6bb165693dafc3c581a170769ff6a816cbc6a59ac3360904d40f9</tika-server.sha512>
     <tika-server-commit-number>5c0793e2c</tika-server-commit-number>
-    <tomcat.version>9.0.81</tomcat.version>
+    <tomcat.version>9.0.105</tomcat.version>
     <slf4j.version>1.7.36</slf4j.version>
     <xmlsec.version>2.3.0</xmlsec.version>
 <mcf.version>2.28</mcf.version>
