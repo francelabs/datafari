@@ -3,6 +3,8 @@ package com.francelabs.datafari.rest.v2_0.management;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.rag.RagConfiguration;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
+import com.francelabs.datafari.utils.DatafariMainConfiguration;
+import com.francelabs.datafari.utils.SolrConfiguration;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -27,9 +29,8 @@ import java.util.Map;
 public class SolrVectorSearchConfig {
 
 
-
-  private static final String SOLR_URL = "http://localhost:8983/solr";
-  private static final String CORE_NAME = "FileShare";
+  private static final String CORE_NAME = getMainCollection();
+  private static final String SOLR_URL = getSolrUrl();
 
   @RequestMapping("/rest/v2.0/management/solrvectorsearch")
   public String solrVectorSearchConfigManagement(final HttpServletRequest request) {
@@ -46,6 +47,19 @@ public class SolrVectorSearchConfig {
       return jsonResponse.toJSONString();
     }
   }
+
+  protected static String getSolrUrl() {
+    SolrConfiguration solrConf = SolrConfiguration.getInstance();
+    String solrserver = solrConf.getProperty(SolrConfiguration.SOLRHOST, "localhost");
+    String solrport = solrConf.getProperty(SolrConfiguration.SOLRPORT, "8983");
+    String protocol = solrConf.getProperty(SolrConfiguration.SOLRPROTOCOL, "http");
+    return protocol + "://" + solrserver + ":" + solrport + "/solr";
+  }
+
+  protected static String getMainCollection() {
+    return DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION, "FileShare");
+  }
+
 
   protected String doGet(final HttpServletRequest request) {
     JSONObject jsonResponse = new JSONObject();
