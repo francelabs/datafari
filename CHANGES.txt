@@ -2,7 +2,7 @@
 
 Introduction
 -------------
-Datafari is an open source enterprise search solution. It is the perfect product for anyone who needs to search and analyze its corporate data and documents, both within the content and the metadata.
+Datafari is an open source enterprise search solution augmented with AI. It is the perfect product for anyone who needs to search and analyze its corporate data and documents, both within the content and the metadata.
 
 Available as community (open source) and enterprise (proprietary) edition, Datafari is different from the competition :
 - Its open source license is not aggressive, as it uses the Apache v2 license: you are free to do whatever you want with it, you just need to mention that you are using it.
@@ -10,6 +10,74 @@ Available as community (open source) and enterprise (proprietary) edition, Dataf
 
 See https://wiki.datafari.com for more information.
 
+================== 6.2 ==================
+
+May 26th, 2025
+
+* Version of major components :
+
+- Solr 9.8.1
+- ManifoldCF 2.28
+- Tomcat 9.0.105
+- Cassandra 4.1.3
+- PostgreSQL 15.4
+- Zookeeper 3.9.2
+- Tika Server 2.9.4
+- DatafariUI-v2 1.0
+- AdminUI 1.0
+
+#213 Improve wildcards management
+#673 Store entites in dedicated fields
+#693 Change the domain archive.apache.org for dependencies download
+#740 web connector - Index by default meta description and meta keywords
+#787 Extend simplified job with 2 filtering possibilities
+#792 Don't transfer the current email admin password
+#881 Transfo Connector - Regex associated to Metadata
+#895 Transfo Connector - Add options to the regex connector
+#896 Admin - remove cat jdk warning message in install script
+#899 Improve Java check at startup of Datafari
+#900 Web connector - Follow redirection when receiving code 301
+#901 DatafariUI - Create yellow page widget
+#902 Regex connector - add possibility to have other types of values in the destination field
+#903 DatafariUI - Create quick links widget
+#907 Datafari must support Debian 12
+#911 Enable https for the logstash output to Solr
+#921 Change of constructor SolrZkClient between Solr 9.1 and 9.4 needs modification of Datafari code
+#922 Remove simplified Person Entity Extraction
+#924 Add processing logs to connectors
+#925 Changes needed for aggregator mode
+#928 Solr ingester connector evolution for Solr 9
+#934 Improve default exact match results
+#946 Datafari API - user specific search history
+#951 Create new Solr configuration for annotators collections
+#953 Develop an atomic service for Solr updates
+
+#861 Upgrade Solr from 8.11.2 to 9
+#875 Update dependencies required into control file for Debian
+#935 Update Solr to version 9.4.1
+#941 Update Cassandra from 4.0.9 to 4.1.3
+#947 Update Logstash to 8.12.1 version
+#948 Update Solr to version 9.5
+#949 Update Cassandra Java driver to 4.17
+#954 Update Tika to version 2.9.1
+#955 Update MCF to 2.26 version
+#956 Update PostgreSQL to 15.4 version
+#957 Update Zookeeper to 3.9.1 version
+#958 Update DatafariUI to 1.4 version
+#959 Update AdminUI to 1.0 version
+
+#647 Broken Statistics and user sessions dashboards when using DatafariUI
+#744 DatafariUI - hierarchical facet displays duplicates html files
+#897 DatafariUI - Entity Autocomplete does not work with v2 Datafari search API
+#898 DatafariUI - Entity Autocomplete should work into v2 API
+#923 Web connector : issue with 301 redirect
+#926 Admin - Uppercase chars not handled for non imported users
+#927 Issue regarding the indexation of dates for some types of files
+#929 Error when indexing with Spacy transformation connector : Form with too many parts
+#932 Old UI URL provided in the console during installation
+#936 Postgresql logs have moved
+#937 Issue with scripts for automatic Tika server creation for OCR
+#950 Problem with CQLSH with Cassandra 4.1
 
 ================== 6.0 ==================
 

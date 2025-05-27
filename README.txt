@@ -1,6 +1,6 @@
 --------------------------- DATAFARI 6.2-DEV ------------------------
 
-Datafari is an open source enterprise search solution. It is the perfect product for anyone who needs to search and analyze its corporate data and documents, both within the content and the metadata.
+Datafari is an open source enterprise search solution enriched with AI. It is the perfect product for anyone who needs to search and analyze its corporate data and documents, both within the content and the metadata. Plus, with its genAI modules, it allows to easily leverage mistral, openai, or local LLMs for your company data.
 
 Available as community (open source) and enterprise (proprietary) edition, Datafari is different from the competition :
 - Its open source license is not aggressive, as it uses the Apache v2 license: you are free to do whatever you want with it, you just need to mention that you are using it.
@@ -33,23 +33,24 @@ https://localhost/Datafari/admin/?lang=en
 NOTE 1: Java 11 is REQUIRED
 NOTE 2: to crawl files, you need to install an extra jar that we cannot distribute for open source licence conflict rationales (Apachev2 and LGPL). Please follow this documentation: https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/662700036/Add+the+JCIFS-NG+Connector+to+Datafari+-+Community+Edition
 
-* Major new features compared to v5.5 :
-New regex transformation connector, for simple declaration of entities extracted based on regular expressions
-New CSV connector, to index each live of a CSV as a separate line in the index
-Reduced hardware requirements by removing Apache Zeppelin for the dashboards
-Atomic updates to remove the need to reindex the full data of a document when only some fields have changed
-Capacity to ingest and index content hosted on Apache Solr 9.x
-Graphical admin to boost relevancy based on a field values
+* Major new features compared to v6.0 :
+New genAI functionalities: 
+*** RAG at search time including vector search for retrieval
+*** Vector collection with automatic chunking at indexing time
+*** Transformation connectors at indexing time
+AI agent (external repo but open source) to prototype local usage of LLMs
+New UI Framework allowing for easier updates
+Autosuggestion to directly access to documents from the search dropdown
 
 * Major components versions
-- Solr 9.5
-- ManifoldCF 2.26
-- Tomcat 9.0.81
+- Solr 9.8.1
+- ManifoldCF 2.28
+- Tomcat 9.0.105
 - Cassandra 4.1.3
 - PostgreSQL 15.4
-- Zookeeper 3.9.1
-- Tika Server 2.9.1
-- DatafariUI 1.4
+- Zookeeper 3.9.2
+- Tika Server 2.9.4
+- DatafariUI-v2 1.0
 - AdminUI 1.0
 
 The complete list of changes and bugfixes can be found in CHANGES.TXT
