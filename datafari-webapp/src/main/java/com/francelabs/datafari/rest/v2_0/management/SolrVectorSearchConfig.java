@@ -13,6 +13,11 @@ import org.json.simple.parser.ParseException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +29,9 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import java.nio.charset.StandardCharsets;
+import java.security.cert.X509Certificate;
 
 @RestController
 public class SolrVectorSearchConfig {
@@ -286,8 +294,30 @@ public class SolrVectorSearchConfig {
   }
 
 
+  private void disableSSLCertificateChecking() throws Exception {
+    TrustManager[] trustAllCerts = new TrustManager[]{
+        new X509TrustManager() {
+            public X509Certificate[] getAcceptedIssuers() { return null; }
+            public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+            public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+        }
+    };
+
+    SSLContext sc = SSLContext.getInstance("SSL");
+    sc.init(null, trustAllCerts, new java.security.SecureRandom());
+    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+    HostnameVerifier allHostsValid = (hostname, session) -> true;
+    HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+}
+
   // Utils HTTP (GET)
   private JSONObject getJsonFromSolr(String url) throws IOException, ParseException {
+    try {
+      disableSSLCertificateChecking();
+    } catch (Exception e) {
+      throw new IOException("Erreur lors de la désactivation de la vérification SSL", e);
+    }
     URLConnection conn = new URL(url).openConnection();
     try (InputStream is = conn.getInputStream();
          InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
