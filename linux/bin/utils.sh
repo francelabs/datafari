@@ -75,7 +75,7 @@ STATUS=0
 if  [[ "$NODETYPE" != *solr* ]]; then
   check_service "Tomcat"    "curl -s http://localhost:8080 > /dev/null"
   check_service "Tomcat-MCF"    "curl -s http://localhost:9080 > /dev/null"
-  if  [[ "$NODETYPE" != *mcf* ]]; then
+  if  [[ "$NODETYPE" == "monoserver" ]] ; then
     check_service "Solr" "curl -s -o /dev/null -w '%{http_code}' http://localhost:8983/solr/FileShare/select?q=datafarirocks\&rows=0 | grep -q 200"
   fi
   check_service_tcp "Zookeeper"     localhost 2181
