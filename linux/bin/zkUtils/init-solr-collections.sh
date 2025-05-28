@@ -16,6 +16,7 @@ source $CONFIG_FILE
 secondary_collections=''
 
 ip_solr="@SOLRNODEIP@:443"
+ip_zk="@SOLRNODEIP@:2181"
 maxShardsPerNode=50
 lib_path="${SOLR_INSTALL_DIR}/solrcloud/FileShare/"
 lib_path_duplicates="${SOLR_INSTALL_DIR}/solrcloud/Duplicates/"
@@ -55,7 +56,7 @@ curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-propert
 curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.quant.rate": "0.1"}}' $url_protocol://${ip_solr}/solr/Duplicates/config
 
   curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"vector.collection": "VectorMain"}}' $url_protocol://${ip_solr}/solr/FileShare/config
-  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"vector.host": "localhost:2181"}}' $url_protocol://${ip_solr}/solr/FileShare/config
+  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"vector.host": "'"${ip_zk}"'"}}' $url_protocol://${ip_solr}/solr/FileShare/config
   curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"vector.chunksize": "300"}}' $url_protocol://${ip_solr}/solr/FileShare/config
   curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"vector.maxoverlap": "0"}}' $url_protocol://${ip_solr}/solr/FileShare/config
 
