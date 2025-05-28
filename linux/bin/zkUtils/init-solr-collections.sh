@@ -54,6 +54,11 @@ curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=
 curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.hash.fields": "content"}}' $url_protocol://${ip_solr}/solr/Duplicates/config
 curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.quant.rate": "0.1"}}' $url_protocol://${ip_solr}/solr/Duplicates/config
 
+  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"vector.collection": "VectorMain"}}' $url_protocol://${ip_solr}/solr/FileShare/config
+  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"vector.host": "localhost:2181"}}' $url_protocol://${ip_solr}/solr/FileShare/config
+  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"vector.chunksize": "300"}}' $url_protocol://${ip_solr}/solr/FileShare/config
+  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"vector.maxoverlap": "0"}}' $url_protocol://${ip_solr}/solr/FileShare/config
+
   curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=OCR&collection.configName=GenericAnnotator&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/GenericAnnotator/"
   curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=Spacy&collection.configName=GenericAnnotator&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/GenericAnnotator/"
   curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=GenericAnnotator&collection.configName=GenericAnnotator&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/GenericAnnotator/"
