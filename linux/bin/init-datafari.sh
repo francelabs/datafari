@@ -244,7 +244,12 @@ generate_certificates_apache() {
   $JAVA_HOME/bin/keytool -importcert -noprompt -alias digicertglobalrootg2 -file $DATAFARI_HOME/ssl-keystore/rootCertificates/DigiCertGlobalRootG2.crt -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
   $JAVA_HOME/bin/keytool -importcert -noprompt -alias digicertglobalrootg3 -file $DATAFARI_HOME/ssl-keystore/rootCertificates/DigiCertGlobalRootG3.crt -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
   $JAVA_HOME/bin/keytool -importcert -noprompt -alias entrustg2ca -file $DATAFARI_HOME/ssl-keystore/rootCertificates/entrust_g2_ca.cer -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
-  $JAVA_HOME/bin/keytool -importcert -noprompt -alias openai -file $DATAFARI_HOME/ssl-keystore/rootCertificates/openai.pem -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
+  $JAVA_HOME/bin/keytool -importcert -noprompt -alias gtsrootr1 -file $DATAFARI_HOME/ssl-keystore/rootCertificates/GTS_Root_R1.crt -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
+  $JAVA_HOME/bin/keytool -importcert -noprompt -alias gtsrootr2 -file $DATAFARI_HOME/ssl-keystore/rootCertificates/GTS_Root_R2.crt -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
+  $JAVA_HOME/bin/keytool -importcert -noprompt -alias gtsrootr3 -file $DATAFARI_HOME/ssl-keystore/rootCertificates/GTS_Root_R3.crt -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
+  $JAVA_HOME/bin/keytool -importcert -noprompt -alias gtsrootr4 -file $DATAFARI_HOME/ssl-keystore/rootCertificates/GTS_Root_R4.crt -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
+  $JAVA_HOME/bin/keytool -importcert -noprompt -alias gts1p5 -file $DATAFARI_HOME/ssl-keystore/rootCertificates/gts1p5.pem -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
+  $JAVA_HOME/bin/keytool -importcert -noprompt -alias rootr1 -file $DATAFARI_HOME/ssl-keystore/rootCertificates/root-r1.pem -trustcacerts -keystore $DATAFARI_HOME/ssl-keystore/datafari-truststore.p12 -storepass DataFariAdmin
   
   mkdir -p $DATAFARI_HOME/ssl-keystore/apache/backup/
   cp $DATAFARI_HOME/ssl-keystore/apache/datafari.key $DATAFARI_HOME/ssl-keystore/apache/backup/
