@@ -296,7 +296,7 @@ public class SolrVectorSearchConfig {
     }
   }
 
-  // Utils HTTP (POST)
+
   private void postToSolr(String url, JSONObject payload) throws IOException {
     HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
     conn.setRequestMethod("POST");
@@ -309,7 +309,6 @@ public class SolrVectorSearchConfig {
     }
 
     try (InputStream is = conn.getInputStream()) {
-      // lecture réponse (même si ignorée)
       IOUtils.toString(is, StandardCharsets.UTF_8);
     }
   }
@@ -336,7 +335,7 @@ public class SolrVectorSearchConfig {
     }
 
     try (InputStream is = conn.getInputStream()) {
-      IOUtils.toString(is, StandardCharsets.UTF_8);  // Lecture même si ignorée
+      IOUtils.toString(is, StandardCharsets.UTF_8);
     }
   }
 
