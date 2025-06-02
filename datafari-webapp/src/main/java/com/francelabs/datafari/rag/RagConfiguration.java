@@ -31,7 +31,6 @@ public class RagConfiguration extends AbstractConfigClass {
     public static final String MAX_REQUEST_SIZE = "prompt.max.request.size";
 
     // BM25 SEARCH
-    public static final String ENABLE_CHUNKING = "chunking.enable";
     public static final String MAX_FILES = "chunking.maxFiles";
     public static final String CHUNK_SIZE = "chunking.chunk.size";
     public static final String SEARCH_OPERATOR = "rag.operator";

@@ -41,13 +41,13 @@
     <div id="thBox" class="box-content">
       <div class="documentation-style-no-margin">
         <p class="documentation-preview">
-          <span id="documentation-solrVectorSearch"></span>Datafari Enterprise v6.2 provides AI powered features<a
+          <span id="documentation-ragCong"></span>Datafari Enterprise v6.2 provides AI powered features<a
             class="documentation-link"
             href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/3931832326"
             target="_blank"> ...see more</a>
         </p>
       </div>
-      <form class="form-horizontal" id="solrVectorSearch-form" class="needs-validation" novalidate>
+      <form class="form-horizontal" id="ragCong-form" class="needs-validation" novalidate>
 
 
         <!-- Global AI Features -->
