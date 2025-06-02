@@ -37,14 +37,6 @@
     </tr>
 
     <tr>
-        <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('llm.EnableEmbeddings'))</nobr></td>
-        <td class="value"><input name="s${SEQNUM}_enableEmbeddings" type="checkbox"
-                                 #if($Encoder.attributeEscape($ENABLEEMBEDDINGS) == 'true') checked #end
-                                 value="true" />
-        </td>
-    </tr>
-
-    <tr>
         <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('llm.MaxTokens'))</nobr></td>
         <td class="value"><input name="s${SEQNUM}_maxTokens" type="number"
                                  value="$Encoder.attributeEscape($MAXTOKENS)"  min="20" max="10000"  />
@@ -119,7 +111,6 @@
 #else
 <input type="hidden" name="s${SEQNUM}_enableSummarize" value="$Encoder.bodyEscape($ENABLESUMMARIZE)"/>
 <input type="hidden" name="s${SEQNUM}_enableCategorize" value="$Encoder.bodyEscape($ENABLECATEGORIZE)"/>
-<input type="hidden" name="s${SEQNUM}_enableEmbeddings" value="$Encoder.bodyEscape($ENABLEEMBEDDINGS)"/>
 <input type="hidden" name="s${SEQNUM}_maxTokens" value="$Encoder.bodyEscape($MAXTOKENS)"/>
 <input type="hidden" name="s${SEQNUM}_summariesLanguage" value="$Encoder.bodyEscape($SUMMARIESLANGUAGE)"/>
 

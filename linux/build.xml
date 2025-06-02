@@ -468,6 +468,12 @@
 				<include name="*.jar" />
 			</fileset>
 		</copy>
+		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-common-lib" overwrite="true" force="true">
+			<fileset dir="${llm.connector.src.dir}">
+				<include name="dependencies/**" />
+			</fileset>
+		</copy>
+
 
 		<!-- Copy Jira Directory connector -->
 		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
