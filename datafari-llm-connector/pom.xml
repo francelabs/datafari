@@ -144,7 +144,7 @@
             <configuration>
               <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
               <includeScope>runtime</includeScope>
-              <stripVersion>true</stripVersion> <!-- facultatif pour des noms plus courts -->
+              <stripVersion>true</stripVersion>
             </configuration>
           </execution>
         </executions>

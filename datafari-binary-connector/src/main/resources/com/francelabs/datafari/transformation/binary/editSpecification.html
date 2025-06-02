@@ -1,0 +1,142 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+#set( $binaryTab = "$ResourceBundle.getString('binary.TabName') (${SEQNUM})" )
+#if($TABNAME == $binaryTab  && ${SEQNUM} == ${SELECTEDNUM})
+<table class="displaytable">
+    <tr><td class="separator" colspan="2"><hr/></td></tr>
+
+    <!-- ENABLE OR DISABLE -->
+    <tr>
+        <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('binary.enableBinaryConnector'))</nobr></td>
+        <td class="value"><input name="s${SEQNUM}_enableBinaryConnector" type="checkbox"
+                                 #if($Encoder.attributeEscape($enableBinaryConnector) == 'true') checked #end
+                                 value="true" />
+        </td>
+    </tr>
+
+    <!-- TYPE OF SERVICE -->
+    <tr>
+        <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('binary.typeOfService'))</nobr></td>
+        <td class="value">
+            <select name="s${SEQNUM}_typeOfService">
+                <option value="openai" #if($typeOfService == 'openai') selected="selected" #end >OpenAI</option>
+                <option value="datakeen" #if($typeOfService == 'datakeen') selected="selected" #end >Datakeen</option>
+            </select>
+        </td>
+    </tr>
+
+    <!-- SERVICE HOSTNAME -->
+    <tr>
+        <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('binary.serviceHostname'))</nobr></td>
+        <td class="value"><input name="s${SEQNUM}_serviceHostname" type="text"
+                                 placeholder="https://api.openai.com/v1/"
+                                 value="$Encoder.attributeEscape($serviceHostname)" />
+        </td>
+    </tr>
+
+    <!-- SERVICE ENDPOINT -->
+    <tr>
+        <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('binary.serviceEndpoint'))</nobr></td>
+        <td class="value"><input name="s${SEQNUM}_serviceEndpoint" type="text"
+                                 placeholder="chat/completions"
+                                 value="$Encoder.attributeEscape($serviceEndpoint)" />
+        </td>
+    </tr>
+
+    <!-- SERVICE SECURITY TOKEN -->
+    <tr>
+        <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('binary.serviceSecurityToken'))</nobr></td>
+        <td class="value"><input name="s${SEQNUM}_serviceSecurityToken" type="password"
+                                 value="$Encoder.attributeEscape($serviceSecurityToken)" />
+        </td>
+    </tr>
+
+    <!-- ADDITIONNAL PARAMETERS -->
+    #set ($joinedParams = "")
+    #foreach ($entry in $serviceAdditionalParameters.entrySet())
+    #set ($joinedParams = "${joinedParams}${entry.key}=${entry.value}
+")
+    #end
+    <tr>
+        <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('binary.serviceAdditionalParameters'))</nobr></td>
+        <td class="value">
+            <textarea name="s${SEQNUM}_serviceAdditionalParameters" placeholder="max_tokens=1000
+temperature=0
+model=gpt-4o-mini">$Encoder.bodyEscape($joinedParams.trim())</textarea>
+        </td>
+    </tr>
+
+    <!-- METADATA -->
+    #set ($joinedParams = "")
+    #foreach ($entry in $extractedMetadata.entrySet())
+    #set ($joinedParams = "${joinedParams}${entry.key}=${entry.value}
+")
+    #end
+    <tr>
+        <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('binary.extractedMetadata'))</nobr></td>
+        <td class="value">
+            <textarea name="s${SEQNUM}_extractedMetadata" placeholder="content=output.content.text
+type=output.content.type">$Encoder.bodyEscape($joinedParams.trim())</textarea>
+        </td>
+    </tr>
+
+    <!-- FILTERS -->
+    #set ($joinedParams = "")
+    #foreach ($entry in $filters.entrySet())
+    #set ($joinedParams = "${joinedParams}${entry.key}=${entry.value}
+")
+    #end
+    <tr>
+        <td class="description"><nobr>$Encoder.bodyEscape($ResourceBundle.getString('binary.filters'))</nobr></td>
+        <td class="value">
+            <textarea name="s${SEQNUM}_filters" placeholder="allowed_ext=jpg, jpeg, png
+max_size=500000">$Encoder.bodyEscape($joinedParams.trim())</textarea>
+        </td>
+    </tr>
+</table>
+
+#else
+<input type="hidden" name="s${SEQNUM}_enableBinaryConnector" value="$Encoder.bodyEscape($enableBinaryConnector)"/>
+<input type="hidden" name="s${SEQNUM}_typeOfService" value="$Encoder.bodyEscape($typeOfService)"/>
+<input type="hidden" name="s${SEQNUM}_serviceHostname" value="$Encoder.bodyEscape($serviceHostname)"/>
+<input type="hidden" name="s${SEQNUM}_serviceEndpoint" value="$Encoder.bodyEscape($serviceEndpoint)"/>
+<input type="hidden" name="s${SEQNUM}_serviceSecurityToken" value="$Encoder.bodyEscape($serviceSecurityToken)"/>
+
+#set ($joinedParams = "")
+#foreach ($entry in $serviceAdditionalParameters.entrySet())
+#set ($joinedParams = "${joinedParams}${entry.key}=${entry.value}
+")
+#end
+<textarea style="visibility:hidden;position:absolute;" name="s${SEQNUM}_serviceAdditionalParameters">$Encoder.bodyEscape($joinedParams.trim())</textarea>
+
+#set ($joinedParams = "")
+#foreach ($entry in $filters.entrySet())
+#set ($joinedParams = "${joinedParams}${entry.key}=${entry.value}
+")
+#end
+<textarea style="visibility:hidden;position:absolute;" name="s${SEQNUM}_filters">$Encoder.bodyEscape($joinedParams.trim())</textarea>
+
+#set ($joinedParams = "")
+#foreach ($entry in $extractedMetadata.entrySet())
+#set ($joinedParams = "${joinedParams}${entry.key}=${entry.value}
+")
+#end
+<textarea style="visibility:hidden;position:absolute;" name="s${SEQNUM}_extractedMetadata">$Encoder.bodyEscape($joinedParams.trim())</textarea>
+
+
+#end

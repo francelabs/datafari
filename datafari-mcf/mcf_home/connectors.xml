@@ -57,6 +57,7 @@
   <transformationconnector name="Datafari Spacy fastapi Connector" class="com.francelabs.datafari.transformation.spacy.fastapi.SpacyNER"/>
   <transformationconnector name="Regex Entity Connector" class="com.francelabs.datafari.transformation.regexentity.RegexEntity"/>
   <transformationconnector name="Datafari LLM Connector" class="com.francelabs.datafari.transformation.llm.Llm"/>
+  <transformationconnector name="Datafari Binary Connector" class="com.francelabs.datafari.transformation.binary.Binary"/>
 
     <!-- Add your mapping connectors here -->
   <mappingconnector name="Regular expression mapper" class="org.apache.manifoldcf.authorities.mappers.regexp.RegexpMapper"/>
