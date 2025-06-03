@@ -117,7 +117,7 @@ is_locale_available() {
 
 # Check locales
 ensure_valid_locales() {
-  default_locale="C.UTF-8"
+  default_locale="en_US.UTF-8"
 
   if [ -z "$LANG" ] || ! is_locale_available "$LANG"; then
     export LANG="$default_locale"
