@@ -475,6 +475,13 @@
 			</fileset>
 		</copy>
 
+		<!-- Copy Binary connector -->
+		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
+			<fileset dir="${binary.connector.src.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
 		<!-- Copy Jira Directory connector -->
 		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
 			<fileset dir="${jira.connector.src.dir}">
