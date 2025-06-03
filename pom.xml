@@ -38,8 +38,8 @@
     <postgres.version>42.7.2</postgres.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-   <solr.sha512>08888ea626b9fa617438b97f9f8d552acfbd087fc9fd248e7495627716decca5e2e8d55bedf0e1f2484c838295c2abd68debb002d1ae36965eb99753320459f4</solr.sha512>
-   <solr.version>9.8.1</solr.version>
+    <solr.sha512>e5db4fe32b5df45671c679d3ec5653bd5a969f43e28dad7e5f1b7633837c059250b610db7d593c13f674bf0edbaf4fe11ecb94c24fef6a22de952c6f2781800c</solr.sha512>
+    <solr.version>9.8.0</solr.version>
      <spring.boot.version>2.7.14</spring.boot.version>
     <spring.data.cassandra.version>3.4.15</spring.data.cassandra.version>
     <spring.security.version>5.8.5</spring.security.version>
@@ -47,10 +47,10 @@
     <spring.security.saml2.core.version>1.0.10.RELEASE</spring.security.saml2.core.version>
     <spring.version>5.3.29</spring.version>
     <spring.oauth2.version>2.5.2.RELEASE</spring.oauth2.version>
-    <tika.version>2.9.4</tika.version>
-    <tika-server.sha512>7498f6e87cc331fa14a994594f941d8935d6bf7b11407ea2ff893b1acd8f19c38dca45f1e651a736eb7ba963ab1801833e56e02096d82d26c8650c48ffe1c2ce</tika-server.sha512>
+    <tika.version>2.9.2</tika.version>
+    <tika-server.sha512>540b6a1ba20f2ce951a1928a609a00d4552dcc075bc204c3a4ba3697b4a86c8853d450d913a6bb165693dafc3c581a170769ff6a816cbc6a59ac3360904d40f9</tika-server.sha512>
     <tika-server-commit-number>5c0793e2c</tika-server-commit-number>
-    <tomcat.version>9.0.105</tomcat.version>
+    <tomcat.version>9.0.81</tomcat.version>
     <slf4j.version>1.7.36</slf4j.version>
     <xmlsec.version>2.3.0</xmlsec.version>
 <mcf.version>2.28</mcf.version>
