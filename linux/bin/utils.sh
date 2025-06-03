@@ -33,9 +33,9 @@ check_service() {
   local result
 
   if eval "$test_cmd"; then
-    result="✅ OK         "  # 10 caractères + 3 espaces = largeur visuelle correcte
+    result="✅ OK         "
   else
-    result="❌ KO         "  # ❌ est légèrement plus large → 4 espaces ici
+    result="❌ KO         "
     STATUS=1
   fi
 
@@ -50,13 +50,13 @@ check_service_pid() {
 if [[ -f "$pidfile" ]]; then
     pid=$(cat "$pidfile" 2>/dev/null)
     if [[ "$pid" =~ ^[0-9]+$ ]] && ps -p "$pid" > /dev/null 2>&1; then
-result="✅ OK         "  # 10 caractères + 3 espaces = largeur visuelle correcte
+result="✅ OK         "
   else
-    result="❌ KO         "  # ❌ est légèrement plus large → 4 espaces ici
+    result="❌ KO         "
     STATUS=1
   fi
 else
- result="❌ KO         "  # ❌ est légèrement plus large → 4 espaces ici
+ result="❌ KO         "
     STATUS=1
   fi
 
@@ -108,6 +108,26 @@ else
   exit 1
 fi
 
+}
+
+# helper function
+is_locale_available() {
+  locale -a | grep -qi "^$1$"
+}
+
+# Check locales
+ensure_valid_locales() {
+  default_locale="C.UTF-8"
+
+  if [ -z "$LANG" ] || ! is_locale_available "$LANG"; then
+    export LANG="$default_locale"
+    echo "INFO: LANG is unset or invalid, setting to $LANG"
+  fi
+
+  if [ -z "$LC_ALL" ] || ! is_locale_available "$LC_ALL"; then
+    export LC_ALL="$LANG"
+    echo "INFO: LC_ALL is unset or invalid, setting to $LC_ALL"
+  fi
 }
 check_java()
 {
