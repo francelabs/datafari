@@ -1284,7 +1284,7 @@
 	<updateRequestProcessorChain name="datafari_delete">
 
 		<processor class="com.francelabs.datafari.updateprocessor.VectorUpdateProcessorFactory">
-			<str name="host">${vector.host:localhost\:2181}</str>
+			<str name="host">${vector.host:localhost:2181}</str>
 			<str name="collection">${vector.collection:VectorMain}</str>
 			<bool name="enabled">${vector.enabled:false}</bool>
 			<int name="chunksize">${vector.chunksize:300}</int>

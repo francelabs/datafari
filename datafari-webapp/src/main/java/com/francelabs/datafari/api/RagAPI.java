@@ -93,14 +93,10 @@ public class RagAPI extends SearchAPI {
 
     // Chunking
     documentsList = initialDocumentsList;
-    if (config.getBooleanProperty(RagConfiguration.ENABLE_CHUNKING, true)) {
-      LOGGER.debug("RagAPI - Chunking starting...");
-      LOGGER.debug("RagAPI - Max size allowed for a single chunk in configuration is {} characters. ", config.getIntegerProperty(RagConfiguration.CHUNK_SIZE));
-      documentsList = ChunkUtils.chunkDocuments(initialDocumentsList, config);
-      LOGGER.debug("RagAPI - The chunking returned {} chunk(s).", documentsList.size());
-    } else {
-      LOGGER.debug("RagAPI - Chunking was ignored due to configuration");
-    }
+    LOGGER.debug("RagAPI - Chunking starting...");
+    LOGGER.debug("RagAPI - Max size allowed for a single chunk in configuration is {} characters. ", config.getIntegerProperty(RagConfiguration.CHUNK_SIZE, 3000));
+    documentsList = ChunkUtils.chunkDocuments(initialDocumentsList, config);
+    LOGGER.debug("RagAPI - The chunking returned {} chunk(s).", documentsList.size());
 
     // Prompting : Convert all documents chunks into prompt Messages
     List<Message> contents = PromptUtils.documentsListToMessages(documentsList);

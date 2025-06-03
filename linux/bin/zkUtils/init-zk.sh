@@ -31,4 +31,5 @@ echo "Uploading configuration to zookeeper"
 "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost @SOLRHOSTS@ -confdir "${DATAFARI_HOME}/solr/solrcloud/Monitoring/conf" -confname Monitoring
 "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost @SOLRHOSTS@ -confdir "${DATAFARI_HOME}/solr/solrcloud/Crawl/conf" -confname Crawl
 "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost @SOLRHOSTS@ -confdir "${DATAFARI_HOME}/solr/solrcloud/Logs/conf" -confname Logs
-"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost @SOLRHOSTS@ -confdir "${DATAFARI_HOME}/solr/solrcloud/Logs/conf" -confname GenericAnnotator
+"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost @SOLRHOSTS@ -confdir "${DATAFARI_HOME}/solr/solrcloud/GenericAnnotator/conf" -confname GenericAnnotator
+"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost @SOLRHOSTS@ -confdir "${DATAFARI_HOME}/solr/solrcloud/VectorMain/conf" -confname VectorMain

@@ -75,8 +75,8 @@ function updateRetrievalVisibility() {
 function submitRagConfig(event) {
   event.preventDefault();
 
-  if (!$('#solrVectorSearch-form')[0].checkValidity()) {
-    $('#solrVectorSearch-form').addClass('was-validated');
+  if (!$('#ragCong-form')[0].checkValidity()) {
+    $('#ragCong-form').addClass('was-validated');
     return;
   }
 
@@ -100,7 +100,8 @@ function submitRagConfig(event) {
     "chat.query.rewriting.enabled": $('#chatQueryRewritingEnabled').is(':checked'),
     "chat.memory.enabled": $('#chatMemoryEnabled').is(':checked'),
     "chat.memory.history.size": $('#chatMemoryHistorySize').val(),
-    "solr.topK": $('#solrTopK').val()
+    "solr.topK": $('#solrTopK').val(),
+    "solr.enable.vector.search": $('#solrEnableVectorSearch').val() === 'Vector Search'
   };
 
   $.ajax({
@@ -140,5 +141,5 @@ $(document).ready(function () {
   $('#chatQueryRewritingEnabled').bootstrapToggle();
   $('#solrEnableVectorSearch').on('change', updateRetrievalVisibility);
 
-  $('#solrVectorSearch-form').on('submit', submitRagConfig);
+  $('#ragCong-form').on('submit', submitRagConfig);
 });

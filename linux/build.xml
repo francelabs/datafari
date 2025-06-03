@@ -34,6 +34,7 @@
 	<property name="spacy.connector.src.dir" value="${project.dir}/datafari-spacy-fastapi-connector/target" />
   	<property name="regexentity.connector.src.dir" value="${project.dir}/datafari-regex-entity-connector/target" />
 	<property name="llm.connector.src.dir" value="${project.dir}/datafari-llm-connector/target" />
+	<property name="binary.connector.src.dir" value="${project.dir}/datafari-binary-connector/target" />
 	<property name="datafarihandler.src.dir" value="${project.dir}/datafari-handler/target" />
 	<property name="mcf-scripts.src.dir" value="${project.dir}/datafari-mcf-scripts/target" />
 	<property name="cassandra.src.dir" value="${project.dir}/datafari-cassandra/target/dist/cassandra" />
@@ -468,6 +469,11 @@
 				<include name="*.jar" />
 			</fileset>
 		</copy>
+		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-common-lib" overwrite="true" force="true">
+			<fileset dir="${llm.connector.src.dir}">
+				<include name="dependencies/**" />
+			</fileset>
+		</copy>
 
 		<!-- Copy Jira Directory connector -->
 		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
@@ -476,7 +482,6 @@
 				<include name="dependencies/**" />
 			</fileset>
 		</copy>
-
 
 		<!-- Copy Manifold CF to Tomcat auto-deploy directory -->
 		<move toDir="${linux.dist.dir}/tomcat-mcf/webapps" overwrite="true" force="true">

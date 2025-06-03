@@ -62,7 +62,7 @@ public class ChunkUtils {
      * @return A list of TextSegments, that contain metadata. Big documents are chunked into multiple documents.
      */
     public static List<TextSegment> chunkContent(Document doc, RagConfiguration config) {
-        DocumentSplitter splitter = DocumentSplitters.recursive(config.getIntegerProperty(RagConfiguration.CHUNK_SIZE), 0);
+        DocumentSplitter splitter = DocumentSplitters.recursive(config.getIntegerProperty(RagConfiguration.CHUNK_SIZE, 3000), 0);
         return splitter.split(doc);
     }
 }

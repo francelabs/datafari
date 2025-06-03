@@ -280,8 +280,7 @@ init_solr()
   
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.hash.fields": "content"}}' http://localhost:8983/solr/Duplicates/config
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.quant.rate": "0.1"}}' http://localhost:8983/solr/Duplicates/config 
-  
-#  curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"vector.enabled": "true"}}' http://localhost:8983/solr/FileShare/config
+
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"vector.collection": "VectorMain"}}' http://localhost:8983/solr/FileShare/config
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"vector.host": "localhost:2181"}}' http://localhost:8983/solr/FileShare/config
   curl -XPOST -H 'Content-type:application/json' -d '{"set-user-property": {"vector.chunksize": "300"}}' http://localhost:8983/solr/FileShare/config

@@ -35,6 +35,7 @@ import java.util.List;
  * @author France Labs
  *
  */
+@Deprecated(since = "v6.2")
 public class VectorUtils {
 
     private VectorUtils() {

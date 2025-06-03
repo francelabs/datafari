@@ -16,10 +16,13 @@ source $CONFIG_FILE
 secondary_collections=''
 
 ip_solr="@SOLRNODEIP@:443"
+ip_zk="@SOLRNODEIP@:2181"
 maxShardsPerNode=50
 lib_path="${SOLR_INSTALL_DIR}/solrcloud/FileShare/"
 lib_path_duplicates="${SOLR_INSTALL_DIR}/solrcloud/Duplicates/"
+lib_path_vectormain="${SOLR_INSTALL_DIR}/solrcloud/VectorMain/"
 lib_path_access="${SOLR_INSTALL_DIR}/solrcloud/Access/"
+lib_path_vectormain="${SOLR_INSTALL_DIR}/solrcloud/VectorMain/"
 mcf_ip="@NODEHOST@"
 mcf_port=""
 mcf_path="datafari-mcf-authority-service"
@@ -43,6 +46,7 @@ echo "--- NOTE --- Please be sure that all your Solr servers are up !!!"
 
 echo "Creation of Solr Collections Statistics, Promolinks and Entities"
 curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=Duplicates&collection.configName=Duplicates&numShards=1&replicationFactor=1&maxShardsPerNode=1&property.lib.path=${lib_path_duplicates}"
+curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=VectorMain&collection.configName=VectorMain&numShards=1&replicationFactor=1&maxShardsPerNode=1&property.lib.path=${lib_path_vectormain}&property.mcf.ip=$url_protocol://${mcf_ip}:${mcf_port}/${mcf_path}"
 curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=Statistics&collection.configName=Statistics&numShards=1&replicationFactor=1"
 curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=Promolink&collection.configName=Promolink&numShards=1&replicationFactor=1"
 curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=Entities&collection.configName=Entities&numShards=1&replicationFactor=1"
@@ -50,9 +54,15 @@ curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=
 curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=Monitoring&collection.configName=Monitoring&numShards=1&maxShardsPerNode=1&replicationFactor=1"
 curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=Crawl&collection.configName=Crawl&numShards=1&maxShardsPerNode=1&replicationFactor=1"
 curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=Logs&collection.configName=Logs&numShards=1&maxShardsPerNode=1&replicationFactor=1"
+curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=VectorMain&collection.configName=VectorMain&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${lib_path_vectormain}"
 
 curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.hash.fields": "content"}}' $url_protocol://${ip_solr}/solr/Duplicates/config
 curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"duplicates.quant.rate": "0.1"}}' $url_protocol://${ip_solr}/solr/Duplicates/config
+
+  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"vector.collection": "VectorMain"}}' $url_protocol://${ip_solr}/solr/FileShare/config
+  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"vector.host": "'"${ip_zk}"'"}}' $url_protocol://${ip_solr}/solr/FileShare/config
+  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"vector.chunksize": "300"}}' $url_protocol://${ip_solr}/solr/FileShare/config
+  curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"vector.maxoverlap": "0"}}' $url_protocol://${ip_solr}/solr/FileShare/config
 
   curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=OCR&collection.configName=GenericAnnotator&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/GenericAnnotator/"
   curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=Spacy&collection.configName=GenericAnnotator&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/GenericAnnotator/"
