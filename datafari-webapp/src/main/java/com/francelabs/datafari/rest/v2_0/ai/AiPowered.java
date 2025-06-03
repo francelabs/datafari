@@ -109,7 +109,7 @@ public class AiPowered {
 
         // Is RAG enabled ?
         if (!config.getBooleanProperty(RagConfiguration.ENABLE_RAG))
-            return generateErrorJson(422, "ragErrorNotEnabled ", "Sorry, it seems the feature is not enabled.", null);
+            return generateErrorJson(422, "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", null);
 
         // Retrieve query from JSON input
         if (jsonDoc.get(QUERY_FIELD) != null) {
