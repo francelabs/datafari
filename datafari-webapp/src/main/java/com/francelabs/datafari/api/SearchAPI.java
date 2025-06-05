@@ -2,15 +2,10 @@ package com.francelabs.datafari.api;
 
 import java.io.StringReader;
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
@@ -18,13 +13,16 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import com.francelabs.datafari.rag.RagConfiguration;
 import com.francelabs.datafari.utils.*;
+import com.francelabs.datafari.utils.Timer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
+
 
 import com.francelabs.datafari.service.indexer.IndexerQuery;
 import com.francelabs.datafari.service.indexer.IndexerQueryResponse;
@@ -42,6 +40,7 @@ public class SearchAPI {
     final Set<String> allowedHandlers = new HashSet<>();
     allowedHandlers.add("/select");
     allowedHandlers.add("/vector");
+    allowedHandlers.add("/rff");
     allowedHandlers.add("/");
 
     final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
@@ -56,6 +55,10 @@ public class SearchAPI {
   }
 
   public static JSONObject search(final String protocol, final String handler, final Principal principal, final Map<String, String[]> parameterMap) {
+    return search(protocol, handler, principal, parameterMap, Core.FILESHARE.toString());
+  }
+
+  public static JSONObject search(final String protocol, final String handler, final Principal principal, final Map<String, String[]> parameterMap, String collection) {
     Timer timer = new Timer(SearchAPI.class.getName(), "search");
 
     // This value was set arbitrarily
@@ -85,7 +88,7 @@ public class SearchAPI {
       return response;
     }
 
-    String collection;
+  //  Add missing vector search parameters if required
     if ("/vector".equals(handler)) {
       collection = "VectorMain";
 
@@ -109,7 +112,7 @@ public class SearchAPI {
         String[] vectorField = new String[] { ragConfiguration.getProperty(RagConfiguration.SOLR_VECTOR_FIELD, "vector_1536") };
         parameterMap.put("vectorField", vectorField);
       }
-    } else {
+    } else if (collection == null || collection.isEmpty()) {
       collection = Core.FILESHARE.toString();
     }
 
@@ -242,7 +245,7 @@ public class SearchAPI {
         params.setParam("facet.field", facetFields);
       }
 
-      if (!config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).equals("") && handler.equals("/select")) {
+      if (!"VectorMain".equals(collection) && !config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).equals("") && handler.equals("/select")) {
         params.setParam("collection", config.getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION) + "," + config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS));
       }
 
@@ -322,8 +325,93 @@ public class SearchAPI {
         parameterMap.put(name, value);
       }
     }
+
+    // TODO : Hybrid search
+    if ("/rrf".equals(handler)) {
+      return hybridSearch(protocol, request.getUserPrincipal(), parameterMap);
+    }
+
     return search(protocol, handler, request.getUserPrincipal(), parameterMap);
 
+  }
+
+  public static JSONObject hybridSearch(final String protocol, final Principal principal, final Map<String, String[]> parameterMap) {
+    // Perform BM25 and Vector searches in VectorMain collection
+    JSONObject bm25Result = search(protocol, "/select", principal, parameterMap, "VectorMain");
+    JSONObject vectorSearchResult = search(protocol, "/vector", principal, parameterMap, "VectorMain");
+
+    // Compute RRF fusion (returns sorted doc IDs)
+    List<String> fusedDocIds = HybridSearchUtils.fuseResultsWithRRF(bm25Result, vectorSearchResult, 60);
+
+    // Build a map of all documents from both results, keyed by ID
+    Map<String, JSONObject> allDocs = new HashMap<>();
+
+    // Extract documents from BM25 result
+    JSONObject bm25Response = (JSONObject) bm25Result.get("response");
+    JSONArray bm25Docs = (JSONArray) bm25Response.get("docs");
+    for (Object obj : bm25Docs) {
+      JSONObject doc = (JSONObject) obj;
+      String id = (String) doc.get("id");
+      allDocs.put(id, doc);
+    }
+
+    // Extract documents from Vector Search result
+    JSONObject vectorResponse = (JSONObject) vectorSearchResult.get("response");
+    JSONArray vectorDocs = (JSONArray) vectorResponse.get("docs");
+    for (Object obj : vectorDocs) {
+      JSONObject doc = (JSONObject) obj;
+      String id = (String) doc.get("id");
+      allDocs.putIfAbsent(id, doc); // If not already added from BM25
+    }
+
+    // Build the final fused docs array in the RRF order
+    JSONArray fusedDocs = new JSONArray();
+    for (String docId : fusedDocIds) {
+      JSONObject doc = allDocs.get(docId);
+      if (doc != null) {
+        fusedDocs.add(doc);
+      }
+    }
+
+    // Construct the final JSON response
+    JSONObject response = new JSONObject();
+    response.put("numFound", fusedDocs.size());
+    response.put("start", 0);
+    response.put("docs", fusedDocs);
+    response.put("numFoundExact", true);
+
+    JSONObject finalResult = new JSONObject();
+    finalResult.put("response", response);
+
+    // TODO: Copy additional metadata (highlighting, facet_counts, etc.) if needed
+    return finalResult;
+
+  }
+
+  public Map<String, Double> computeRRF(Map<String, Integer> bm25Ranks, Map<String, Integer> vectorRanks, int k) {
+    Map<String, Double> rrfScores = new HashMap<>();
+
+    // Get RRF score from eaach result position (BM25)
+    for (String docId : bm25Ranks.keySet()) {
+      int rank = bm25Ranks.get(docId);
+      rrfScores.put(docId, 1.0 / (k + rank));
+    }
+
+    // Get RRF score from eaach result position (vector search)
+    for (String docId : vectorRanks.keySet()) {
+      int rank = vectorRanks.get(docId);
+      rrfScores.merge(docId, 1.0 / (k + rank), Double::sum);
+    }
+
+    // Sort entries by RRF final score
+    return rrfScores.entrySet().stream()
+            .sorted(Map.Entry.<String, Double>comparingByValue().reversed())
+            .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    Map.Entry::getValue,
+                    (e1, e2) -> e1,
+                    LinkedHashMap::new
+            ));
   }
 
   static String getHandler(final HttpServletRequest servletRequest) {
