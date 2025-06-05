@@ -1,4 +1,4 @@
---------------------------- DATAFARI 6.2-DEV ------------------------
+--------------------------- DATAFARI 6.2 ------------------------
 
 Datafari is an open source enterprise search solution enriched with AI. It is the perfect product for anyone who needs to search and analyze its corporate data and documents, both within the content and the metadata. Plus, with its genAI modules, it allows to easily leverage mistral, openai, or local LLMs for your company data.
 

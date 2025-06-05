@@ -12,7 +12,7 @@ See https://wiki.datafari.com for more information.
 
 ================== 6.2 ==================
 
-May 26th, 2025
+June 5th, 2025
 
 * Version of major components :
 
@@ -23,61 +23,53 @@ May 26th, 2025
 - PostgreSQL 15.4
 - Zookeeper 3.9.2
 - Tika Server 2.9.4
-- DatafariUI-v2 1.0
+- DatafariUI-v2 1.1.2
 - AdminUI 1.0
 
-#213 Improve wildcards management
-#673 Store entites in dedicated fields
-#693 Change the domain archive.apache.org for dependencies download
-#740 web connector - Index by default meta description and meta keywords
-#787 Extend simplified job with 2 filtering possibilities
-#792 Don't transfer the current email admin password
-#881 Transfo Connector - Regex associated to Metadata
-#895 Transfo Connector - Add options to the regex connector
-#896 Admin - remove cat jdk warning message in install script
-#899 Improve Java check at startup of Datafari
-#900 Web connector - Follow redirection when receiving code 301
-#901 DatafariUI - Create yellow page widget
-#902 Regex connector - add possibility to have other types of values in the destination field
-#903 DatafariUI - Create quick links widget
-#907 Datafari must support Debian 12
-#911 Enable https for the logstash output to Solr
-#921 Change of constructor SolrZkClient between Solr 9.1 and 9.4 needs modification of Datafari code
-#922 Remove simplified Person Entity Extraction
-#924 Add processing logs to connectors
-#925 Changes needed for aggregator mode
-#928 Solr ingester connector evolution for Solr 9
-#934 Improve default exact match results
-#946 Datafari API - user specific search history
-#951 Create new Solr configuration for annotators collections
-#953 Develop an atomic service for Solr updates
+#1026 [RagAPI] Remove DatafariLlmServices from Datafari
+#1047 [AI] Optimise Solr Config and Schema for Vectormain
+#1048 [AI] Improve LLM error management
+#1050 [AI] Add an optional input query processing step for the RAG
+#1052 [RAG] Implement chat memory for RAG chatbot
+#1053 [AI] Take relevant internal documents into account for chat with memory enabled
+#1054 [AI] add a processing step to filter chunks that are not worth embedding
+#1060 Create a RAG functionality
+#1071 [RAG] Implement Solr Vector Search in RagAPI
 
-#861 Upgrade Solr from 8.11.2 to 9
-#875 Update dependencies required into control file for Debian
-#935 Update Solr to version 9.4.1
-#941 Update Cassandra from 4.0.9 to 4.1.3
-#947 Update Logstash to 8.12.1 version
-#948 Update Solr to version 9.5
-#949 Update Cassandra Java driver to 4.17
-#954 Update Tika to version 2.9.1
-#955 Update MCF to 2.26 version
-#956 Update PostgreSQL to 15.4 version
-#957 Update Zookeeper to 3.9.1 version
-#958 Update DatafariUI to 1.4 version
-#959 Update AdminUI to 1.0 version
+#817 DatafariUI - avoid empty display when preview_content field is absent
+#890 DatafariUI - Change the login icon
+#891 DatafariUI - Make mappingValues i18n
+#908 DatafariUI - update libraries
+#919 DatafariUI - links not clickable in favorites popup
+#938 Create an autosuggestion functionality
+#939 Simplify the opening of files from a browser
+#962 datafariui - facets label are not changed immediatly when changing language, when disconnected
+#1023 DatafariUI - Error management in RAG widget
+#1031 [DatafariUI] Add the option to link directly to the document by its title.
+#1063 Migrate Datafari frontend to Datafariui-v2
 
-#647 Broken Statistics and user sessions dashboards when using DatafariUI
-#744 DatafariUI - hierarchical facet displays duplicates html files
-#897 DatafariUI - Entity Autocomplete does not work with v2 Datafari search API
-#898 DatafariUI - Entity Autocomplete should work into v2 API
-#923 Web connector : issue with 301 redirect
-#926 Admin - Uppercase chars not handled for non imported users
-#927 Issue regarding the indexation of dates for some types of files
-#929 Error when indexing with Spacy transformation connector : Form with too many parts
-#932 Old UI URL provided in the console during installation
-#936 Postgresql logs have moved
-#937 Issue with scripts for automatic Tika server creation for OCR
-#950 Problem with CQLSH with Cassandra 4.1
+#475 [DATAFARI-482] DB Connector - Migrate to MS SQL Jdbc lib
+#968 Add RepositoryDocument logging to help debug
+#975 Remove not-allowed jdbc drivers
+#1017 Connectors - create a transformation connector to call an LLM
+#1020 Remove mcf-jdbc-connector embedded into Datafari code
+#1022 Confluence Connector: bad handling 404 error getPage method
+#1032 Update MCF to 2.28 version
+#1033 Regex Entity Connector: add a parameter to extract regex groups only.
+#1040 Regex Entity Connector: adding the connector to a job pipeline throws an exception.
+#1041 Regex EntityConnector: encoding bug
+#1044 Regex Entity Connector: trim extracted values
+#1057 Jira Connector:  Handling 404 error in Authority Connector
+
+#747 Restarting twice datafari sometimes not possible
+#814 Document briefly how BM25 works in Datafari
+#930 Multipart form with too many parts error with Solr Jetty
+#1027 Migrate from iptables to nftables
+#1037 Update Solr to version 9.8
+#1059 Check Datafari is running after restart
+#1064 Update Tomcat version to 9.0.105
+#1065 Update Tika server to 2.9.4 version
+
 
 ================== 6.0 ==================
 

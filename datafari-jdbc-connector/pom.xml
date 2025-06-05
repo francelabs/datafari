@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.francelabs.datafari</groupId>
     <artifactId>datafari-ce</artifactId>
-    <version>6.3-dev-Community</version>
+    <version>6.2-Community</version>
   </parent>
 
   <artifactId>datafari-jdbc-connector</artifactId>
@@ -17,7 +17,7 @@
     <dependency>
       <groupId>com.francelabs.datafari</groupId>
       <artifactId>datafari-mcf-connectors-dependencies</artifactId>
-      <version>6.3-dev-Community</version>
+      <version>6.2-Community</version>
       <type>pom</type>
       <scope>provided</scope>
 
