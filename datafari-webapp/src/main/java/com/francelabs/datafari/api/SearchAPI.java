@@ -40,7 +40,8 @@ public class SearchAPI {
     final Set<String> allowedHandlers = new HashSet<>();
     allowedHandlers.add("/select");
     allowedHandlers.add("/vector");
-    allowedHandlers.add("/rff");
+    allowedHandlers.add("/rrf");
+    allowedHandlers.add("/hybrid");
     allowedHandlers.add("/");
 
     final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
@@ -326,8 +327,7 @@ public class SearchAPI {
       }
     }
 
-    // TODO : Hybrid search
-    if ("/rrf".equals(handler)) {
+    if ("/rrf".equals(handler) || "/hybrid".equals(handler)) {
       return hybridSearch(protocol, request.getUserPrincipal(), parameterMap);
     }
 
@@ -335,13 +335,60 @@ public class SearchAPI {
 
   }
 
+  /**
+   * Executes a hybrid search combining BM25 and vector search results using Reciprocal Rank Fusion (RRF).
+   *
+   * This method runs two separate searches on the VectorMain collection using the standard Solr handlers:
+   * one for BM25 (/select) and another for vector similarity (/vector). The two sets of results are then
+   * merged using the RRF algorithm, ordered by their computed rank-based scores, and finally paginated.
+   *
+   * @param protocol       the HTTP protocol
+   * @param principal      the user principal executing the request
+   * @param parameterMap   the map of query parameters from the request
+   * @return search results
+   */
   public static JSONObject hybridSearch(final String protocol, final Principal principal, final Map<String, String[]> parameterMap) {
+
+    // Prepare RRF-specific params
+    RagConfiguration config = RagConfiguration.getInstance();
+
+    // Retrieve rows BEFORE overriding it
+    String defaultSolrTopK = config.getProperty(RagConfiguration.SOLR_TOPK, "10");
+    String defaultrrfTopK = config.getProperty(RagConfiguration.RRF_TOPK, "50");
+    String rows = parameterMap.getOrDefault("rows", new String[]{ defaultSolrTopK })[0]; // Number of results at the end of the search
+    String start = parameterMap.getOrDefault("start", new String[]{ "0" })[0];
+
+    if (!parameterMap.containsKey("q")) {
+      // Even if not useful, q must not be empty
+      parameterMap.put("q", new String[]{ "" });
+    }
+    if (!parameterMap.containsKey("queryrag")) {
+      // If q is present but queryrag is missing, we add it with q value
+      parameterMap.put("queryrag", parameterMap.get("q"));
+    }
+    String[] topKstr = parameterMap.get("topK");
+    if (topKstr == null || topKstr[0] == null || Integer.parseInt(topKstr[0]) < 0 ) {
+      topKstr = new String[] { defaultrrfTopK };
+    }
+    parameterMap.put("topK", topKstr);
+    parameterMap.put("rows", topKstr);
+
+    if (!parameterMap.containsKey("model")) {
+      String[] model = new String[] { config.getProperty(RagConfiguration.SOLR_EMBEDDINGS_MODEL, "default_model") };
+      parameterMap.put("model", model);
+    }
+    if (!parameterMap.containsKey("vectorField")) {
+      String[] vectorField = new String[] { config.getProperty(RagConfiguration.SOLR_VECTOR_FIELD, "vector_1536") };
+      parameterMap.put("vectorField", vectorField);
+    }
+
     // Perform BM25 and Vector searches in VectorMain collection
     JSONObject bm25Result = search(protocol, "/select", principal, parameterMap, "VectorMain");
     JSONObject vectorSearchResult = search(protocol, "/vector", principal, parameterMap, "VectorMain");
 
     // Compute RRF fusion (returns sorted doc IDs)
-    List<String> fusedDocIds = HybridSearchUtils.fuseResultsWithRRF(bm25Result, vectorSearchResult, 60);
+    int k = config.getIntegerProperty(RagConfiguration.RRF_RANK_CONSTANT, 60);
+    List<String> fusedDocIds = HybridSearchUtils.fuseResultsWithRRF(bm25Result, vectorSearchResult, k);
 
     // Build a map of all documents from both results, keyed by ID
     Map<String, JSONObject> allDocs = new HashMap<>();
@@ -349,19 +396,23 @@ public class SearchAPI {
     // Extract documents from BM25 result
     JSONObject bm25Response = (JSONObject) bm25Result.get("response");
     JSONArray bm25Docs = (JSONArray) bm25Response.get("docs");
-    for (Object obj : bm25Docs) {
-      JSONObject doc = (JSONObject) obj;
-      String id = (String) doc.get("id");
-      allDocs.put(id, doc);
+    if (bm25Docs != null) {
+      for (Object obj : bm25Docs) {
+        JSONObject doc = (JSONObject) obj;
+        String id = (String) doc.get("id");
+        allDocs.put(id, doc);
+      }
     }
 
     // Extract documents from Vector Search result
     JSONObject vectorResponse = (JSONObject) vectorSearchResult.get("response");
     JSONArray vectorDocs = (JSONArray) vectorResponse.get("docs");
-    for (Object obj : vectorDocs) {
-      JSONObject doc = (JSONObject) obj;
-      String id = (String) doc.get("id");
-      allDocs.putIfAbsent(id, doc); // If not already added from BM25
+    if (vectorDocs != null) {
+      for (Object obj : vectorDocs) {
+        JSONObject doc = (JSONObject) obj;
+        String id = (String) doc.get("id");
+        allDocs.putIfAbsent(id, doc); // If not already added from BM25
+      }
     }
 
     // Build the final fused docs array in the RRF order
@@ -373,19 +424,78 @@ public class SearchAPI {
       }
     }
 
+
+    // Compute pagination window
+    int startInt = 0;
+    int rowsInt = 10;
+    try {
+      startInt = Integer.parseInt(start);
+      rowsInt = Integer.parseInt(rows);
+    } catch (NumberFormatException e) {
+      // Keep default values
+    }
+    int endInt = Math.min(startInt + rowsInt, fusedDocs.size());
+
+    JSONArray paginatedDocs = new JSONArray();
+    for (int i = startInt; i < endInt; i++) {
+      paginatedDocs.add(fusedDocs.get(i));
+    }
+
     // Construct the final JSON response
     JSONObject response = new JSONObject();
     response.put("numFound", fusedDocs.size());
-    response.put("start", 0);
-    response.put("docs", fusedDocs);
+    response.put("start", startInt);
+    response.put("docs", paginatedDocs);
     response.put("numFoundExact", true);
 
     JSONObject finalResult = new JSONObject();
     finalResult.put("response", response);
 
-    // TODO: Copy additional metadata (highlighting, facet_counts, etc.) if needed
+    JSONObject bm25Highlighting = (JSONObject) bm25Result.get("highlighting");
+    JSONObject vectorHighlighting = (JSONObject) vectorSearchResult.get("highlighting");
+    JSONObject mergedHighlighting = mergeHighlighting(bm25Highlighting, vectorHighlighting, paginatedDocs);
+
+    if (!mergedHighlighting.isEmpty()) {
+      finalResult.put("highlighting", mergedHighlighting);
+    }
+
     return finalResult;
 
+  }
+
+  /**
+   * Merges highlighting blocks from multiple Solr responses, keeping only entries relevant to the given documents.
+   *
+   * @param bm25Highlighting    the "highlighting" section from the BM25 response
+   * @param vectorHighlighting  the "highlighting" section from the vector search response
+   * @param paginatedDocs       the list of documents to include in the highlighting
+   * @return a JSONObject containing the merged "highlighting" section
+   */
+  public static JSONObject mergeHighlighting(JSONObject bm25Highlighting, JSONObject vectorHighlighting, JSONArray paginatedDocs) {
+    JSONObject mergedHighlighting = new JSONObject();
+
+    for (Object obj : paginatedDocs) {
+      JSONObject doc = (JSONObject) obj;
+      String id = (String) doc.get("id");
+
+      JSONObject highlight = new JSONObject();
+
+      if (bm25Highlighting != null && bm25Highlighting.containsKey(id)) {
+        JSONObject bm25HL = (JSONObject) bm25Highlighting.get(id);
+        highlight.putAll(bm25HL);
+      }
+
+      if (vectorHighlighting != null && vectorHighlighting.containsKey(id)) {
+        JSONObject vectorHL = (JSONObject) vectorHighlighting.get(id);
+        highlight.putAll(vectorHL); // Overwrites duplicate keys if any
+      }
+
+      if (!highlight.isEmpty()) {
+        mergedHighlighting.put(id, highlight);
+      }
+    }
+
+    return mergedHighlighting;
   }
 
   public Map<String, Double> computeRRF(Map<String, Integer> bm25Ranks, Map<String, Integer> vectorRanks, int k) {

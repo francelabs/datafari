@@ -30,6 +30,14 @@ public class RagConfiguration extends AbstractConfigClass {
     public static final String PROMPT_CHUNKING_STRATEGY = "prompt.chunking.strategy"; // mapreduce or refine
     public static final String MAX_REQUEST_SIZE = "prompt.max.request.size";
 
+    // CHAT HISTORY
+    public static final String CHAT_QUERY_REWRITING_ENABLED = "chat.query.rewriting.enabled";
+    public static final String CHAT_MEMORY_ENABLED = "chat.memory.enabled";
+    public static final String CHAT_MEMORY_HISTORY_SIZE = "chat.memory.history.size";
+
+    // RETRIEVAL
+    public static final String RETRIEVAL_METHOD = "retrieval.method";
+
     // BM25 SEARCH
     public static final String MAX_FILES = "chunking.maxFiles";
     public static final String CHUNK_SIZE = "chunking.chunk.size";
@@ -39,13 +47,12 @@ public class RagConfiguration extends AbstractConfigClass {
     public static final String ENABLE_VECTOR_SEARCH = "inMemory.enable.vector.search"; // Deprecated, see SOLR_ENABLE_VECTOR_SEARCH
     public static final String IN_MEMORY_TOP_K = "inMemory.topK";
 
-    // CHAT HISTORY
-    public static final String CHAT_QUERY_REWRITING_ENABLED = "chat.query.rewriting.enabled";
-    public static final String CHAT_MEMORY_ENABLED = "chat.memory.enabled";
-    public static final String CHAT_MEMORY_HISTORY_SIZE = "chat.memory.history.size";
+    // BM25 SEARCH
+    public static final String RRF_TOPK = "rrf.topK";
+    public static final String RRF_RANK_CONSTANT = "rrf.rank.constant";
 
     // SOLR VECTOR SEARCH
-    public static final String SOLR_ENABLE_VECTOR_SEARCH = "solr.enable.vector.search";
+    public static final String SOLR_ENABLE_VECTOR_SEARCH = "solr.enable.vector.search"; // TODO : Deprecate
     public static final String SOLR_EMBEDDINGS_MODEL = "solr.embeddings.model";
     public static final String SOLR_VECTOR_FIELD = "solr.vector.field";
     public static final String SOLR_TOPK = "solr.topK";

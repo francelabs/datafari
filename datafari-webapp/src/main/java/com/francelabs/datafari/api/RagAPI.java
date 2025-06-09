@@ -59,6 +59,7 @@ public class RagAPI extends SearchAPI {
 
     // Search
     // If the search result has not been provided, process a search
+    // TODO : Remove this when RAG via search endpoint is removed
     if (searchResults == null) {
       try {
         LOGGER.debug("RagAPI - No search results provided in the method parameters. Processing a new search using request parameters.");
@@ -85,6 +86,7 @@ public class RagAPI extends SearchAPI {
     // Local vector search using a vector storage
     if (config.getBooleanProperty(RagConfiguration.ENABLE_VECTOR_SEARCH)) {
       LOGGER.debug("RagAPI - Local vector search is enabled.");
+      LOGGER.warn("RagAPI - InMemory Vector Search is deprecated. Use Solr Vector Search instead.");
       initialDocumentsList = VectorUtils.processVectorSearch(initialDocumentsList, request);
       LOGGER.debug("RagAPI - The 'FAISS' vector search returned {} chunk(s).", initialDocumentsList.size());
     } else {
@@ -437,7 +439,6 @@ public class RagAPI extends SearchAPI {
   public static JSONObject processSearch(RagConfiguration config, HttpServletRequest request) throws InvalidParameterException {
 
     final Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());
-    String handler = getHandler(request);
     final String protocol = request.getScheme() + ":";
 
     // Preparing query for Search process
@@ -463,20 +464,29 @@ public class RagAPI extends SearchAPI {
       }
     }
 
-    // Add Solr "/vector" handler is Solr Vector Search is enabled
-    if (config.getBooleanProperty(RagConfiguration.SOLR_ENABLE_VECTOR_SEARCH)) {
+    // TODO : get handler
+    String retrievalMethod = config.getProperty(RagConfiguration.RETRIEVAL_METHOD, "bm25").toLowerCase();
 
-      LOGGER.debug("RagAPI - Solr Vector Search is enabled.");
-      handler = "/vector";
-      String[] queryrag = { userQuery };
-      parameterMap.put("queryrag", queryrag);
-    } else {
-      // If search is BM25, set the result limit
-      String[] rows = { config.getProperty(RagConfiguration.MAX_FILES, "3") };
-      parameterMap.put("rows", rows);
+    String handler = getHandler(request);
+    String[] queryrag = { userQuery };
+    switch (retrievalMethod) {
+      case "rrf":
+        String[] topK = { config.getProperty(RagConfiguration.RRF_TOPK, "50") }; // TODO : What if already defined ?
+        parameterMap.put("queryrag", queryrag);
+        parameterMap.put("topK", topK);
+        parameterMap.put("rows", topK);
+        return hybridSearch(protocol, request.getUserPrincipal(), parameterMap);
+      case "vector":
+        handler = "/vector";
+        parameterMap.put("queryrag", queryrag);
+        return search(protocol, handler, request.getUserPrincipal(), parameterMap);
+      case "bm25":
+      default:
+        String[] rows = { config.getProperty(RagConfiguration.MAX_FILES, "3") };
+        parameterMap.put("rows", rows);
+        return search(protocol, handler, request.getUserPrincipal(), parameterMap);
     }
 
-    return search(protocol, handler, request.getUserPrincipal(), parameterMap);
   }
 
 

@@ -165,7 +165,7 @@ public class AiPowered {
             } else {
                 LOGGER.debug("AiPowered - RAG - Performing search.");
                 request.setAttribute("q.op", config.getProperty(RagConfiguration.SEARCH_OPERATOR));
-                searchResults = performSearch(request, searchQuery, config.getBooleanProperty(RagConfiguration.SOLR_ENABLE_VECTOR_SEARCH), null, config);
+                searchResults = performSearch(request, searchQuery, config.getProperty(RagConfiguration.RETRIEVAL_METHOD, "bm25"), config);
             }
         } catch (IOException|ServletException e) {
             LOGGER.error("AiPowered - RAG - ERROR. An error occurred while retrieving documents.", e);
@@ -269,26 +269,32 @@ public class AiPowered {
      * The updated request object is updated in order to process.
      * @param originalRequest : The HttpServletRequest
      * @param q The user query (or a rewritten one)
-     * @param id Optional ; the ID of a document to restrict the search.
      * @return a JSONObject containing search results, with the following fields:
      *      id, title, exactContent, url, llm_summary
      */
-    private static JSONObject performSearch(HttpServletRequest originalRequest, String q, boolean vectorSearch, String id, RagConfiguration config) throws ServletException, IOException {
+    private static JSONObject performSearch(HttpServletRequest originalRequest, String q, String retrievalMethod, RagConfiguration config) {
         EditableHttpServletRequest request = new EditableHttpServletRequest(originalRequest);
         request.addParameter("q", q);
         request.addParameter("hl", "false");
         request.addParameter("fl", "id,title,exactContent,embedded_content,url,llm_summary");
 
-        // If BM25, the number of results is limited to MAX_FILES
-        if (!vectorSearch) {
-            request.addParameter("rows", config.getProperty(RagConfiguration.MAX_FILES, "3"));
+        String handler;
+        switch(retrievalMethod) {
+            case "vector":
+                handler = "/vector";
+                break;
+            case "rrf":
+                handler = "/rrf";
+                break;
+            case "bm25":
+            default:
+                // If BM25, the number of results is limited to MAX_FILES
+                request.addParameter("rows", config.getProperty(RagConfiguration.MAX_FILES, "3"));
+                handler = "/select";
         }
-
-        String handler = vectorSearch ? "/vector" : "/select";
         request.setPathInfo(handler);
 
-        String fqField = vectorSearch ? "parent_doc" : "id";
-        if (id != null) request.addParameter("fq", fqField + ":\"" + id + "\"");
+        // Any additional RAG-related search options can be added here
 
         LOGGER.debug("AiPowered - Performing search using {} handler. q={}", handler, q);
         return RagAPI.processSearch(RagConfiguration.getInstance(), request);
