@@ -12,7 +12,7 @@
       <str name="dest">preview_content</str>
     </processor>
     
-    
+
     <processor class="solr.ParseDateFieldUpdateProcessorFactory">
       <arr name="format">
  		    <str>yyyy-MM-dd['T'[HH:mm[:ss[.SSS]][z</str>
@@ -53,14 +53,14 @@
       <str name="fieldRegex">preview_content</str>
       <int name="maxLength">1000</int>
     </processor>
-    
+
     <processor class="solr.CloneFieldUpdateProcessorFactory">
       <lst name="source">
         <str name="fieldRegex">title</str>
       </lst>
       <str name="dest">exactTitle</str>
     </processor>
-  
+
     <processor class="org.apache.solr.update.processor.LangDetectLanguageIdentifierUpdateProcessorFactory">
       <str name="langid.fl">content,title</str>
       <str name="langid.langField">language</str>
@@ -77,6 +77,17 @@
         <str name="signatureClass">solr.processor.MD5Signature</str>
       </processor>
 
+     <processor class="com.francelabs.datafari.updateprocessor.VectorUpdateProcessorFactory">
+         <str name="host">${vector.host:localhost:2181}</str>
+         <str name="collection">${vector.collection:VectorMain}</str>
+         <bool name="enabled">${vector.enabled:false}</bool>
+		 <int name="chunksize">${vector.chunksize:300}</int>
+		 <int name="maxoverlap">${vector.maxoverlap:0}</int>
+		 <str name="splitter">${vector.splitter:splitterByParagraph}</str>
+		 <str name="minchunklength">${vector.filter.minchunklength:1}</str>
+		 <str name="minalphanumratio">${vector.filter.minalphanumratio:0.0}</str>
+      </processor>
+
       <processor class="com.francelabs.datafari.updateprocessor.DatafariUpdateProcessorFactory">
         <bool name="entities.extract.simple">${entity.extract:false}</bool>
         <bool name="entities.extract.simple.name">${entity.name:false}</bool>
@@ -84,23 +95,14 @@
         <bool name="entities.extract.simple.special">${entity.special:false}</bool>
         <str name="entities.extract.simple.special.regex">.*resume*</str>
         <!-- <str name="entities.extract.simple.phone.regex"></str> -->
-        
+
         <bool name="hierarchical.path.processing">true</bool>
         <str name="hierarchical.field">urlHierarchy</str>
         <str name="hierarchical.path.separator">/</str>
       </processor>
 
-      <processor class="com.francelabs.datafari.updateprocessor.VectorUpdateProcessorFactory">
-          <str name="host">${vector.host:localhost:2181}</str>
-          <str name="collection">${vector.collection:VectorMain}</str>
-          <bool name="enabled">${vector.enabled:false}</bool>
-		  <int name="chunksize">${vector.chunksize:300}</int>
-	      <int name="maxoverlap">${vector.maxoverlap:0}</int>
-	      <str name="splitter">${vector.splitter:splitterByParagraph}</str>
-		  <str name="minchunklength">${vector.filter.minchunklength:1}</str>
-		  <str name="minalphanumratio">${vector.filter.minalphanumratio:0.0}</str>
-      </processor>
-
       <processor class="com.francelabs.datafari.updateprocessor.RegexEntityUpdateProcessorFactory">
         <str name="regexFile">regexSpecification.csv</str>
       </processor>
+
+
