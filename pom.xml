@@ -13,15 +13,15 @@
     <adminui.md5>ae9ca787e5067f3bedb1f2cdad4408b0</adminui.md5>
     <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
     <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
-    <cassandra.version>4.1.3</cassandra.version>
-    <cassandra.sha512>393443a5b9849645362df2f7536e734e1fc6d513aadf440fab8dda3063553394a138805098796d35f9d4d31e2899ecab630a2ec2a44d00d5e63bed549a2e844c</cassandra.sha512>
-    <cassandra.driver.version>4.17.0</cassandra.driver.version>
+    <cassandra.version>trunk</cassandra.version>
+    <cassandra.sha512>b94d22c231dfbe124db094ff784146016fabfe0da0ec5ebcce7302c6f2bd78d2c568769a0c134bb1d73370c208b04d1543dc7cc11a83e5e1b789731da85ac3bf</cassandra.sha512>
+    <cassandra.driver.version>4.19.0</cassandra.driver.version>
     <datafari.version>6.3-dev-Community</datafari.version>
     <datafariui.version>1.1.2</datafariui.version>
     <datafariui.md5>299361df83910b283b0699dbfd475853</datafariui.md5>
     <guava.version>26.0-jre</guava.version>
     <httpclient.version>4.5.13</httpclient.version>
-    <java.version>1.11</java.version>
+    <java.version>21</java.version>
     <jena-libs.version>4.4.0</jena-libs.version>
     <json.simple.version>1.1.1</json.simple.version>
     <jackson.version>2.13.3</jackson.version>
