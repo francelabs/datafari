@@ -739,17 +739,6 @@
 	<requestHandler class="org.apache.solr.handler.component.SearchHandler" name="/suggestAuthors">
 		<lst name="defaults">
 			<str name="suggest">true</str>
-			<str name="suggest.dictionary">suggesterAuthors</str>
-			<str name="suggest.count">10</str>
-		</lst>
-		<arr name="components">
-		  <str>suggestAuthors</str>
-		</arr>
-	</requestHandler>
-	
-	<requestHandler class="org.apache.solr.handler.component.SearchHandler" name="/suggestEntityAuthors">
-		<lst name="defaults">
-			<str name="suggest">true</str>
 			<str name="suggest.dictionary">suggesterEntityAuthors</str>
 			<str name="suggest.count">10</str>
 		</lst>
@@ -983,33 +972,22 @@
     
   </searchComponent> -->
 
-	<searchComponent class="solr.SuggestComponent" name="suggestAuthors">
+
+	<searchComponent class="solr.SuggestComponent" name="suggestEntityAuthors">
 		<lst name="suggester">
-			<str name="name">suggesterAuthors</str>
+			<str name="name">suggesterEntityAuthors</str>
 			<str name="suggestAnalyzerFieldType">text_general</str>
 			<str name="lookupImpl">AnalyzingInfixLookupFactory</str>
 			<str name="maxEdits">0</str>
-			<str name="field">author</str>
+			<str name="field">authorTokens</str>
 			<str name="highlight">false</str>
 			<str name="dictionaryImpl">HighFrequencyDictionaryFactory</str>
 			<str name="buildOnCommit">true</str>
 		</lst>
 	</searchComponent>
-  
-  <searchComponent class="solr.SuggestComponent" name="suggestEntityAuthors">
-    <lst name="suggester">
-      <str name="name">suggesterEntityAuthors</str>
-      <str name="suggestAnalyzerFieldType">text_general</str>
-      <str name="lookupImpl">AnalyzingInfixLookupFactory</str>
-      <str name="maxEdits">0</str>
-      <str name="field">entity_person</str>
-      <str name="highlight">false</str>
-      <str name="dictionaryImpl">HighFrequencyDictionaryFactory</str>
-      <str name="buildOnCommit">true</str>
-    </lst>
-  </searchComponent>
 
-  <searchComponent class="solr.SuggestComponent" name="suggestPhones">
+
+	<searchComponent class="solr.SuggestComponent" name="suggestPhones">
 		<lst name="suggester">
 			<str name="name">suggesterPhones</str>
 			<str name="suggestAnalyzerFieldType">text_general</str>
