@@ -871,6 +871,18 @@
 	  </lst>
   </requestHandler>
 
+  <requestHandler class="solr.UpdateRequestHandler" name="/update/atomic">
+		<lst name="defaults">
+			<str name="lowernames">true</str>
+			<str name="fmap.language">ignored_</str>
+			<str name="fmap.source">ignored_</str>
+			<str name="fmap.version">ignored_</str>
+			<str name="fmap._version_">ignored_</str>
+			<str name="uprefix">ignored_</str>
+			<str name="update.chain">atomic</str>
+		</lst>
+  </requestHandler>
+
   <requestHandler class="com.francelabs.datafari.handler.parsed.ParsedRequestHandler" name="/update/no-tika" startup="lazy">
     <lst name="defaults">
 			<str name="lowernames">true</str>
@@ -1285,6 +1297,12 @@
       	<processor class="solr.DistributedUpdateProcessorFactory"/>
       	<processor class="solr.RunUpdateProcessorFactory"/>
   
+	</updateRequestProcessorChain>
+
+	<updateRequestProcessorChain name="atomic">
+		<processor class="solr.LogUpdateProcessorFactory"/>
+		<processor class="solr.DistributedUpdateProcessorFactory"/>
+		<processor class="solr.RunUpdateProcessorFactory"/>
 	</updateRequestProcessorChain>
 	
 	

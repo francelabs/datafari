@@ -32,6 +32,9 @@ public class JobConfig {
   private Map<String, String> fieldsOperation;
   private Map<String, String> fieldsMapping;
   private int nbDocsPerBatch;
+  private String idField;
+
+  private String handler;
   @JsonIgnore
   private String jobName;
 
@@ -85,5 +88,21 @@ public class JobConfig {
 
   public void setJobName(String jobName) {
     this.jobName = jobName;
+  }
+
+  public String getIdField() {
+    return idField;
+  }
+
+  public void setIdField(String idField) {
+    this.idField = idField;
+  }
+
+  public String getHandler() {
+    return handler;
+  }
+
+  public void setHandler(String handler) {
+    this.handler = handler;
   }
 }
