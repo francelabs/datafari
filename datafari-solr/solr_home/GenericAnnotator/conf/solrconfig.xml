@@ -1219,12 +1219,6 @@
        by SearchHandler) or in LocalParams
     -->
 
-
-
-	<!-- ManifoldCF document security enforcement component -->
-	<queryParser class="org.apache.solr.mcf.ManifoldCFQParserPlugin" name="manifoldCFSecurity">
-		<str name="AuthorityServiceBaseURL">${mcf.ip:http://localhost:9080/datafari-mcf-authority-service}</str>
-	</queryParser>
   <!-- example of registering a query parser -->
   <!--
      <queryParser name="myparser" class="com.mycompany.MyQParserPlugin"/>
