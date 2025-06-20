@@ -7,10 +7,12 @@ function internationalize() {
   $("#enableRagLabel").text(window.i18n.msgStore['ragConf-enableRagLabel']);
   $("#enableSummarizationLabel").text(window.i18n.msgStore['ragConf-enableSummarizationLabel']);
   $("#solrTopKLabel").text(window.i18n.msgStore['ragConf-solrTopKLabel']);
+  $("#rrfTopKLabel").text(window.i18n.msgStore['ragConf-rrfTopKLabel']);
+  $("#rrfRankConstantLabel").text(window.i18n.msgStore['ragConf-rrfRankConstantLabel']);
   $("#solrEmbeddingsModelLabel").text(window.i18n.msgStore['ragConf-solrEmbeddingsModelLabel']);
   $("#ragOperatorLabel").text(window.i18n.msgStore['ragConf-ragOperatorLabel']);
   $("#chunkingMaxFilesLabel").text(window.i18n.msgStore['ragConf-chunkingMaxFilesLabel']);
-  $("#solrEnableVectorSearchLabel").text(window.i18n.msgStore['ragConf-solrEnableVectorSearchLabel']);
+  $("#retrievalMethodLabel").text(window.i18n.msgStore['ragConf-retrievalMethodLabel']);
   $("#chatMemoryHistorySizeLabel").text(window.i18n.msgStore['ragConf-chatMemoryHistorySizeLabel']);
   $("#chatMemoryEnabledLabel").text(window.i18n.msgStore['ragConf-chatMemoryEnabledLabel']);
   $("#chatQueryRewritingEnabledLabel").text(window.i18n.msgStore['ragConf-chatQueryRewritingEnabledLabel']);
@@ -50,25 +52,33 @@ function loadRagConfig() {
     $('#chatMemoryEnabled').prop('checked', data.chatMemoryEnabled === true).change();
     $('#chatMemoryHistorySize').val(data.chatMemoryHistorySize || 6);
 
-    $('#solrEnableVectorSearch').val(data.solrEnableVectorSearch === true ? 'Vector Search' : 'BM25');
+    $('#retrievalMethod').val(data.retrievalMethod || "bm25");
     updateRetrievalVisibility();
     $('#solrEmbeddingsModel').val(data.solrEmbeddingsModel || '');
     $('#solrVectorField').val(data.solrVectorField || '');
     $('#solrTopK').val(data.solrTopK || 10);
+    $('#rrfTopK').val(data.rrfTopK || 50);
+    $('#rrfRankConstant').val(data.rrfRankConstant || 60);
 
   }, "json");
 }
 
 
 function updateRetrievalVisibility() {
-  const value = $('#solrEnableVectorSearch').val();
+  const value = $('#retrievalMethod').val();
 
-  if (value === "Vector Search") {
+  if (value === "vector") {
     $('.bm25Only').hide();
+    $('.rrfOnly').hide();
     $('.vectorSearchOnly').show();
-  } else {
-    $('.bm25Only').show();
+  } else if (value === "rrf") {
+    $('.bm25Only').hide();
     $('.vectorSearchOnly').hide();
+    $('.rrfOnly').show();
+  } else {
+    $('.rrfOnly').hide();
+    $('.vectorSearchOnly').hide();
+    $('.bm25Only').show();
   }
 }
 
@@ -101,7 +111,9 @@ function submitRagConfig(event) {
     "chat.memory.enabled": $('#chatMemoryEnabled').is(':checked'),
     "chat.memory.history.size": $('#chatMemoryHistorySize').val(),
     "solr.topK": $('#solrTopK').val(),
-    "solr.enable.vector.search": $('#solrEnableVectorSearch').val() === 'Vector Search'
+    "rrf.topK": $('#rrfTopK').val(),
+    "rrf.rank.constant": $('#rrfRankConstant').val(),
+    "retrieval.method": $('#retrievalMethod').val(),
   };
 
   $.ajax({
@@ -139,7 +151,7 @@ $(document).ready(function () {
   $('#enableSummarization').bootstrapToggle();
   $('#chatMemoryEnabled').bootstrapToggle();
   $('#chatQueryRewritingEnabled').bootstrapToggle();
-  $('#solrEnableVectorSearch').on('change', updateRetrievalVisibility);
+  $('#retrievalMethod').on('change', updateRetrievalVisibility);
 
   $('#ragCong-form').on('submit', submitRagConfig);
 });
