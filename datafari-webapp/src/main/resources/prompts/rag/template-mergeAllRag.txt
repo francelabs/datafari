@@ -8,7 +8,6 @@ Do not provide any information that does not belong in documents or in chat hist
 If the context does not provide an answer, say that you can’t find the answer.
 {format}
 {history}
-You must mention the document names when it is possible and relevant.
 Answer the user query in {language}.
 
 Query: {userquery}
