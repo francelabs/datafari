@@ -174,34 +174,39 @@ check_ram()
     fi 
 }
 
-check_python()
-{
-if command -v python3 &> /dev/null
-then
-  echo "Compatible Python version detected : Python3"
-  python_version=3
-else
-  version=$(python -V 2>&1 | grep -Po '(?<=Python )(.+)')
-  if [[ -z "$version" ]]
-  then
-    echo "No Python detected! Please install Python 2.7.x"
-    exit 1
+check_python() {
+  python_cmd=""
+  python_version=""
+ 
+  if command -v python3 &> /dev/null; then
+    python_cmd="python3"
+  elif command -v python &> /dev/null; then
+    python_cmd="python"
   else
-    case "$(python --version 2>&1)" in
-    *" 2.7"*)
-      echo "Compatible Python version detected : Python > 2.7"
-      python_version=2
-      ;;
-    *)
-      echo "Wrong Python version! Please install Python 2.7.X"
-      exit 1
-      ;;
-    esac
+    echo "No Python interpreter found. Please install Python 3."
+    exit 1
   fi
- fi
- set_property "python_version" $python_version $CONFIG_FILE
-}
 
+  # Récupération de la version complète
+  version=$($python_cmd -V 2>&1 | grep -Po '(?<=Python )(.+)')
+  major=$(echo "$version" | cut -d. -f1)
+  minor=$(echo "$version" | cut -d. -f2)
+
+  if [[ "$major" -eq 3 ]]; then
+    if [[ "$minor" -eq 12 ]]; then
+      echo "Special notice: Python version 3.12.x detected! Version incompatible with Cassandra so Datafari will not be working correctly. See https://gitlab.datafari.com/datafari-community/datafari/-/issues/1007"
+      echo "The script will exit"
+      exit 1
+    fi
+    echo "Compatible Python version detected: Python $version"
+    python_version=3
+  else
+    echo "Unsupported Python version detected: Python $version. Only Python 3 is supported."
+    exit 1
+  fi
+
+  set_property "python_version" $python_version $CONFIG_FILE
+}
 run_as()
 {
   user=$1
