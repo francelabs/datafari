@@ -63,10 +63,10 @@ $(document).ready(function () {
     "baseUrl": "{baseUrl}",
     "apiKey": "{apiKey}",
     "modelName": "{modelName}",
-    "timeout": 60,
+    "timeout": 180,
     "logRequests": true,
     "logResponses": true,
-    "maxRetries": 5
+    "maxRetries": 1
   }
 }`,
     aiagent: `{
@@ -76,10 +76,10 @@ $(document).ready(function () {
     "baseUrl": "{baseUrl}",
     "apiKey": "{apiKey}",
     "modelName": "{modelName}",
-    "timeout": 60,
+    "timeout": 180,
     "logRequests": true,
     "logResponses": true,
-    "maxRetries": 5
+    "maxRetries": 1
   }
 }`,
     huggingface: `{
@@ -97,10 +97,10 @@ $(document).ready(function () {
     "baseUrl": "{baseUrl}",
     "apiKey": "{apiKey}",
     "modelName": "{modelName}",
-    "timeout": 60,
+    "timeout": 180,
     "logRequests": true,
     "logResponses": true,
-    "maxRetries": 5
+    "maxRetries": 1
   }
 }`,
     cohere: `{

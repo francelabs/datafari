@@ -1282,7 +1282,7 @@
 
 	<updateRequestProcessorChain name="datafari">
   
-    @DATAFARI-UP-CHAIN@
+<!--    @DATAFARI-UP-CHAIN@-->
       
 		<!-- ////////////////////////// -->
 		<!-- Includes additional updateProcessors -->
