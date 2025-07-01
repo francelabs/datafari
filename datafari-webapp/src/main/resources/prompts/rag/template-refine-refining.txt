@@ -13,7 +13,7 @@ Using only context and the previous response and not prior knowledge, answer the
 If the context and the previous response do not contain an answer, say that you can’t find the answer.
 {format}
 {history}
-Always answer in {language} and always mention the source document when it is relevant.
+Always answer in {language}.
 
 Query: {userquery}
 Answer:

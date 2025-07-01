@@ -103,16 +103,6 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
               // ExactContent should ony contain the chunk content:
               vectorDocument.addField("embedded_content", chunk.text());
 
-              // URL
-              String url;
-              if (parentDoc.containsKey("url")) {
-                url = (String) parentDoc.getFieldValue("url");
-                vectorDocument.addField("url", url);
-              } else {
-                url = (String) parentDoc.getFieldValue("id");
-                vectorDocument.addField("url", url);
-              }
-
               batchDocs.add(vectorDocument);
             }
           } else {
