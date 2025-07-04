@@ -34,7 +34,10 @@ public class JobConfig {
   private int nbDocsPerBatch;
   private String idField;
 
-  private String handler;
+  private String searchHandler;
+  private String updateHandler;
+
+  private boolean force;
   @JsonIgnore
   private String jobName;
 
@@ -98,11 +101,27 @@ public class JobConfig {
     this.idField = idField;
   }
 
-  public String getHandler() {
-    return handler;
+  public String getUpdateHandler() {
+    return updateHandler;
   }
 
-  public void setHandler(String handler) {
-    this.handler = handler;
+  public void setUpdateHandler(String updateHandler) {
+    this.updateHandler = updateHandler;
+  }
+
+  public String getSearchHandler() {
+    return searchHandler;
+  }
+
+  public void setSearchHandler(String searchHandler) {
+    this.searchHandler = searchHandler;
+  }
+
+  public boolean getForce() {
+    return force;
+  }
+
+  public void setForce(boolean force) {
+    this.force = force;
   }
 }
