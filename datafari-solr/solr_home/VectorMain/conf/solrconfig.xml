@@ -871,7 +871,7 @@
 	  </lst>
   </requestHandler>
 
-  <requestHandler class="solr.UpdateRequestHandler" name="/update/atomic">
+  <requestHandler class="solr.UpdateRequestHandler" name="/update/embed">
 		<lst name="defaults">
 			<str name="lowernames">true</str>
 			<str name="fmap.language">ignored_</str>
@@ -882,6 +882,18 @@
 			<str name="update.chain">atomic</str>
 		</lst>
   </requestHandler>
+
+	<requestHandler class="solr.UpdateRequestHandler" name="/update/embed">
+		<lst name="defaults">
+			<str name="lowernames">true</str>
+			<str name="fmap.language">ignored_</str>
+			<str name="fmap.source">ignored_</str>
+			<str name="fmap.version">ignored_</str>
+			<str name="fmap._version_">ignored_</str>
+			<str name="uprefix">ignored_</str>
+			<str name="update.chain">datafari-embed</str>
+		</lst>
+	</requestHandler>
 
   <requestHandler class="com.francelabs.datafari.handler.parsed.ParsedRequestHandler" name="/update/no-tika" startup="lazy">
     <lst name="defaults">
@@ -1286,18 +1298,29 @@
 		<!-- Includes additional updateProcessors -->
 		&custom_update_processors;
 
-		<processor class="solr.llm.texttovector.update.processor.TextToVectorUpdateProcessorFactory">
-			<str name="inputField">embedded_content</str>
-			<str name="outputField">${texttovector.outputfield:vector_1536}</str>
-			<str name="model">${texttovector.model:default_model}</str>
-		</processor>
       	<processor class="solr.LogUpdateProcessorFactory"/>
       	<processor class="solr.DistributedUpdateProcessorFactory"/>
       	<processor class="solr.RunUpdateProcessorFactory"/>
   
 	</updateRequestProcessorChain>
 
+	<updateRequestProcessorChain name="datafari-embed">
+		<processor class="com.francelabs.datafari.updateprocessor.SkipVectorIfExistsUpdateProcessorFactory">
+			<str name="enabled">true</str>
+			<str name="outputField">${texttovector.outputfield:vector_1536}</str>
+		</processor>
+		<processor class="solr.llm.texttovector.update.processor.TextToVectorUpdateProcessorFactory">
+			<str name="inputField">embedded_content</str>
+			<str name="outputField">${texttovector.outputfield:vector_1536}</str>
+			<str name="model">${texttovector.model:default_model}</str>
+		</processor>
+		<processor class="solr.LogUpdateProcessorFactory"/>
+		<processor class="solr.DistributedUpdateProcessorFactory"/>
+		<processor class="solr.RunUpdateProcessorFactory"/>
+	</updateRequestProcessorChain>
+
 	<updateRequestProcessorChain name="atomic">
+
 		<processor class="solr.LogUpdateProcessorFactory"/>
 		<processor class="solr.DistributedUpdateProcessorFactory"/>
 		<processor class="solr.RunUpdateProcessorFactory"/>

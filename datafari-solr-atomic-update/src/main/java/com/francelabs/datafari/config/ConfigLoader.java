@@ -21,10 +21,11 @@ public class ConfigLoader {
     if (config == null){
 
       try {
+        String filename = "atomicUpdate-cfg.json";
         configFileAbsolutePath = SolrAtomicUpdateLauncher.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         int lastDirectoryIndex = configFileAbsolutePath.lastIndexOf(File.separator);
         configFileAbsolutePath = configFileAbsolutePath.substring(0,lastDirectoryIndex);
-        config = new ObjectMapper().readValue(new File(configFileAbsolutePath + File.separator + "atomicUpdate-cfg.json"), AtomicUpdateConfig.class);
+        config = new ObjectMapper().readValue(new File(configFileAbsolutePath + File.separator + filename), AtomicUpdateConfig.class);
 
         String logConfigFile = config.getLogConfigFile();
         if (StringUtils.isBlank(logConfigFile)){

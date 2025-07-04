@@ -2,13 +2,11 @@ package com.francelabs.datafari.solraccessors;
 
 import com.francelabs.datafari.config.CollectionPathConfig;
 import com.francelabs.datafari.config.JobConfig;
-import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
-import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.CommonParams;
@@ -75,8 +73,8 @@ public class DocumentsUpdator extends AbstractDocuments {
     UpdateResponse updateResponse = null;
     if (!docsToUpdate.isEmpty()){
       UpdateRequest solrRequest;
-      if (jobConfig.getHandler() != null) {
-        solrRequest = new UpdateRequest("/update/atomic");
+      if (jobConfig.getUpdateHandler() != null) {
+        solrRequest = new UpdateRequest(jobConfig.getUpdateHandler());
       } else {
         solrRequest = new UpdateRequest();
       }

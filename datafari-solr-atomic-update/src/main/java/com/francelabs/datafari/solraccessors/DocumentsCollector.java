@@ -74,6 +74,11 @@ public class DocumentsCollector extends AbstractDocuments {
       cursorMark = CursorMarkParams.CURSOR_MARK_START;
     }
     queryParams.set(CursorMarkParams.CURSOR_MARK_PARAM, cursorMark);
+
+    // Search handler
+    if (jobConfig.getSearchHandler() != null && !jobConfig.getSearchHandler().isEmpty())
+      queryParams.set("qt", jobConfig.getSearchHandler());
+
     //Send the query
     QueryResponse response = null;
     try {
