@@ -53,10 +53,11 @@
     <tomcat.version>9.0.105</tomcat.version>
     <slf4j.version>1.7.36</slf4j.version>
     <xmlsec.version>2.3.0</xmlsec.version>
-<mcf.version>2.28</mcf.version>
-<mcf.sha512>780a7988ed0ddba8c5e0c97267f767f851e0c170799009b6f6f1e5f4e5c0895fe16a01e5aafd8866e2ca7c35317f7a15c6d93351d05500d123fc1f81c983ba51</mcf.sha512>
-<zookeeper.version>3.9.2</zookeeper.version>
- <zookeeper.sha512>2b5ae02d618a27ca8cd54924855d5344263b7d9dee760181f9d66bafa9230324d2ad31786895f0654c969dc38d4a3d0077f74cc376b58b5fa2fb94beb1ab445f</zookeeper.sha512>
+    <mcf.version>2.28</mcf.version>
+    <mcf.sha512>780a7988ed0ddba8c5e0c97267f767f851e0c170799009b6f6f1e5f4e5c0895fe16a01e5aafd8866e2ca7c35317f7a15c6d93351d05500d123fc1f81c983ba51</mcf.sha512>
+    <zookeeper.version>3.9.2</zookeeper.version>
+    <zookeeper.sha512>2b5ae02d618a27ca8cd54924855d5344263b7d9dee760181f9d66bafa9230324d2ad31786895f0654c969dc38d4a3d0077f74cc376b58b5fa2fb94beb1ab445f</zookeeper.sha512>
+    <langchain4j.version>0.35.0</langchain4j.version>
   </properties>
   
   <!-- The order of modules execution is important  -->

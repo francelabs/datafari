@@ -36,32 +36,42 @@
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j</artifactId>
-      <version>0.35.0</version>
+      <version>${langchain4j.version}</version>
     </dependency>
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-core</artifactId>
-      <version>0.35.0</version>
+      <version>${langchain4j.version}</version>
     </dependency>
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-open-ai</artifactId>
-      <version>0.35.0</version>
+      <version>${langchain4j.version}</version>
     </dependency>
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-hugging-face</artifactId>
-      <version>0.35.0</version>
+      <version>${langchain4j.version}</version>
     </dependency>
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-mistral-ai</artifactId>
-      <version>0.35.0</version>
+      <version>${langchain4j.version}</version>
     </dependency>
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-easy-rag</artifactId>
-      <version>0.35.0</version>
+      <version>${langchain4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j-azure-open-ai</artifactId>
+      <version>${langchain4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j-ollama</artifactId>
+      <version>${langchain4j.version}</version>
     </dependency>
 
 
@@ -483,6 +493,11 @@
       <artifactId>cassandra</artifactId>
       <version>1.16.3</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j-azure-open-ai</artifactId>
+      <version>0.35.0</version>
     </dependency>
   </dependencies>
   <build>

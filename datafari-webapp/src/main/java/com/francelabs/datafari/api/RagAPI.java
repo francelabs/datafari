@@ -15,6 +15,8 @@
  *******************************************************************************/
 package com.francelabs.datafari.api;
 
+import com.francelabs.datafari.ai.ChatLanguageModelFactory;
+import com.francelabs.datafari.ai.LLMModelConfigurationManager;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.rag.*;
 import com.francelabs.datafari.utils.rag.ChunkUtils;
@@ -23,6 +25,8 @@ import com.francelabs.datafari.utils.rag.VectorUtils;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.data.message.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +59,7 @@ public class RagAPI extends SearchAPI {
       return writeJsonError(422, "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", null);
 
     // Set LlmService
-    LlmService service = getLlmService(config);
+    ChatLanguageModel chatModel = getChatModel(config);
 
     // Search
     // If the search result has not been provided, process a search
@@ -248,20 +252,30 @@ public class RagAPI extends SearchAPI {
   }
 
   /**
-   * Select the proper LlmService class, based on RagConfiguration
-   * @param config RagConfiguration
-   * @return LlmService
+   * Returns the active chat language model as defined in the models.json configuration file.
+   *
+   * @param config The RAG configuration object (currently unused, included for future compatibility).
+   * @return A {@link ChatLanguageModel} instance corresponding to the active model.
+   * @throws IOException If an error occurs while reading or parsing the model configuration file.
    */
-  private static @NotNull LlmService getLlmService(RagConfiguration config) {
-    LlmService service;
-    String llmService = config.getProperty(RagConfiguration.LLM_SERVICE);
-    switch(llmService) {
-      case "datafari":
-      case "openai":
-      default:
-        service = new OpenAiLlmService(config);
-    }
-    return service;
+  private static @NotNull ChatLanguageModel getChatModel(RagConfiguration config) throws IOException {
+    LLMModelConfigurationManager configManager = new LLMModelConfigurationManager();
+    ChatLanguageModelFactory chatModelFactory = new ChatLanguageModelFactory(configManager);
+    return chatModelFactory.createChatModel(); // Return the activz model
+  }
+
+  /**
+   * Returns a specific chat language model by name, as defined in the models.json configuration file.
+   *
+   * @param modelName The name of the model to load (matching the "name" field in the configuration).
+   * @return A {@link ChatLanguageModel} instance corresponding to the specified model name.
+   * @throws IOException If an error occurs while reading or parsing the model configuration file.
+   * @throws IllegalArgumentException If no model is found with the given name.
+   */
+  private static @NotNull ChatLanguageModel getSpecificChatModel(String modelName) throws IOException {
+    LLMModelConfigurationManager configManager = new LLMModelConfigurationManager();
+    ChatLanguageModelFactory chatModelFactory = new ChatLanguageModelFactory(configManager);
+    return chatModelFactory.createChatModel(modelName); // Return a specific model
   }
 
 
@@ -281,16 +295,16 @@ public class RagAPI extends SearchAPI {
 
 
     // Select an LLM service
-    LlmService service = getLlmService(config);
+    ChatLanguageModel service = getChatModel(config);
 
     String template = PromptUtils.getRewriteQueryTemplate(request)
             .replace("{userquery}", userQuery)
             .replace("{conversation}", chatHistoryStr);
-    List<Message> prompts = new ArrayList<>();
-    prompts.add(new Message("user", template)) ;
+    List<ChatMessage> prompts = new ArrayList<>();
+    prompts.add(new UserMessage(template)) ;
 
     try {
-      String response = service.generate(prompts, request);
+      String response = service.generate(prompts).content().text();
       return (response != null && !response.isEmpty()) ? response : userQuery;
     } catch (Exception e) {
       LOGGER.error("Query rewriting failed. Using initial user query for the search.", e);
@@ -308,7 +322,7 @@ public class RagAPI extends SearchAPI {
     // Get RAG configuration
     RagConfiguration config = RagConfiguration.getInstance();
     // Select an LLM service
-    LlmService service = getLlmService(config);
+    ChatLanguageModel chatModel = getChatModel(config);
 
     // Check if summarization is enabled
     if (!config.getBooleanProperty(RagConfiguration.ENABLE_SUMMARIZATION)) {
@@ -329,7 +343,7 @@ public class RagAPI extends SearchAPI {
       prompts.add(initialPrompt);
       prompts.add(PromptUtils.textSegmentsToMessage(segment, "user"));
 
-      String response = service.generate(prompts, request);
+      String response = chatModel.generate(prompts, request);
       Message responseMessage = new Message("assistant", response);
       summaries.add(responseMessage);
     }
@@ -341,7 +355,7 @@ public class RagAPI extends SearchAPI {
       LOGGER.debug("RagAPI - Summarize - Merging summaries for document {}, with {} chunk(s).", doc.metadata().getString("id"), segments.size());
       Message mergeAllSummariesPrompt = PromptUtils.createPromptForMergeAllSummaries(request);
       summaries.add(mergeAllSummariesPrompt);
-      return service.generate(summaries, request);
+      return chatModel.generate(summaries);
 
     } else if (summaries.size() == 1) {
       LOGGER.debug("RagAPI - Summarize - One single summary have been generated for document {}.", doc.metadata().getString("id"));
