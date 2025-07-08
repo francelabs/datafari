@@ -918,18 +918,6 @@
     
   </searchComponent> -->
 
-	<searchComponent class="solr.SuggestComponent" name="suggestAuthors">
-		<lst name="suggester">
-			<str name="name">suggesterAuthors</str>
-			<str name="suggestAnalyzerFieldType">text_general</str>
-			<str name="lookupImpl">AnalyzingInfixLookupFactory</str>
-			<str name="maxEdits">0</str>
-			<str name="field">author</str>
-			<str name="highlight">false</str>
-			<str name="dictionaryImpl">HighFrequencyDictionaryFactory</str>
-			<str name="buildOnCommit">true</str>
-		</lst>
-	</searchComponent>
   
   <searchComponent class="solr.SuggestComponent" name="suggestEntityAuthors">
     <lst name="suggester">
@@ -937,7 +925,7 @@
       <str name="suggestAnalyzerFieldType">text_general</str>
       <str name="lookupImpl">AnalyzingInfixLookupFactory</str>
       <str name="maxEdits">0</str>
-      <str name="field">entity_person</str>
+			<str name="field">authorTokens</str>
       <str name="highlight">false</str>
       <str name="dictionaryImpl">HighFrequencyDictionaryFactory</str>
       <str name="buildOnCommit">true</str>
@@ -1231,12 +1219,6 @@
        by SearchHandler) or in LocalParams
     -->
 
-
-
-	<!-- ManifoldCF document security enforcement component -->
-	<queryParser class="org.apache.solr.mcf.ManifoldCFQParserPlugin" name="manifoldCFSecurity">
-		<str name="AuthorityServiceBaseURL">${mcf.ip:http://localhost:9080/datafari-mcf-authority-service}</str>
-	</queryParser>
   <!-- example of registering a query parser -->
   <!--
      <queryParser name="myparser" class="com.mycompany.MyQParserPlugin"/>

@@ -34,8 +34,10 @@ public class RagConfig {
           RagConfiguration.CHAT_QUERY_REWRITING_ENABLED,
           RagConfiguration.CHAT_MEMORY_ENABLED,
           RagConfiguration.CHAT_MEMORY_HISTORY_SIZE,
-          RagConfiguration.SOLR_ENABLE_VECTOR_SEARCH,
-          RagConfiguration.SOLR_TOPK
+          RagConfiguration.RETRIEVAL_METHOD,
+          RagConfiguration.SOLR_TOPK,
+          RagConfiguration.RRF_TOPK,
+          RagConfiguration.RRF_RANK_CONSTANT
   );
 
   @RequestMapping("/rest/v2.0/management/ragConfig")
@@ -80,10 +82,12 @@ public class RagConfig {
     response.put("chatMemoryEnabled", config.getBooleanProperty(RagConfiguration.CHAT_MEMORY_ENABLED));
     response.put("chatMemoryHistorySize", config.getProperty(RagConfiguration.CHAT_MEMORY_HISTORY_SIZE));
 
-    response.put("solrEnableVectorSearch", config.getBooleanProperty(RagConfiguration.SOLR_ENABLE_VECTOR_SEARCH));
+    response.put("retrievalMethod", config.getProperty(RagConfiguration.RETRIEVAL_METHOD));
     response.put("solrEmbeddingsModel", config.getProperty(RagConfiguration.SOLR_EMBEDDINGS_MODEL));
     response.put("solrVectorField", config.getProperty(RagConfiguration.SOLR_VECTOR_FIELD));
     response.put("solrTopK", config.getProperty(RagConfiguration.SOLR_TOPK));
+    response.put("rrfTopK", config.getProperty(RagConfiguration.RRF_TOPK));
+    response.put("rrfRankConstant", config.getProperty(RagConfiguration.RRF_RANK_CONSTANT));
 
     return response.toJSONString();
   }

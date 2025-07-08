@@ -32,6 +32,12 @@ public class JobConfig {
   private Map<String, String> fieldsOperation;
   private Map<String, String> fieldsMapping;
   private int nbDocsPerBatch;
+  private String idField;
+
+  private String searchHandler;
+  private String updateHandler;
+
+  private boolean force;
   @JsonIgnore
   private String jobName;
 
@@ -85,5 +91,37 @@ public class JobConfig {
 
   public void setJobName(String jobName) {
     this.jobName = jobName;
+  }
+
+  public String getIdField() {
+    return idField;
+  }
+
+  public void setIdField(String idField) {
+    this.idField = idField;
+  }
+
+  public String getUpdateHandler() {
+    return updateHandler;
+  }
+
+  public void setUpdateHandler(String updateHandler) {
+    this.updateHandler = updateHandler;
+  }
+
+  public String getSearchHandler() {
+    return searchHandler;
+  }
+
+  public void setSearchHandler(String searchHandler) {
+    this.searchHandler = searchHandler;
+  }
+
+  public boolean getForce() {
+    return force;
+  }
+
+  public void setForce(boolean force) {
+    this.force = force;
   }
 }

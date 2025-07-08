@@ -457,6 +457,7 @@ init_apache_ssl() {
   cp -r $DATAFARI_HOME/apache/html/* /var/www/html/
 
   if [ -d /etc/apache2 ]; then
+    apache_conf_file="/etc/apache2/conf-available/security.conf"
     cp $DATAFARI_HOME/ssl-keystore/apache/config/tomcat.conf /etc/apache2/sites-available/
     cp $DATAFARI_HOME/ssl-keystore/apache/config/envvars /etc/apache2/
     ln -s /etc/apache2/* $DATAFARI_HOME/apache/
@@ -464,6 +465,7 @@ init_apache_ssl() {
     mkdir /var/apache
     mkdir /var/apache/logs
     ln -s /var/apache/logs $DATAFARI_HOME/logs/apache
+    
     a2enmod proxy
     a2enmod proxy_ajp
     a2enmod proxy_http
@@ -474,14 +476,14 @@ init_apache_ssl() {
     a2enmod headers
     a2enmod proxy_wstunnel
     a2enmod http2
+    a2enconf security
     a2dissite 000-default
     a2dissite default-ssl
     a2ensite tomcat
-    /etc/init.d/apache2 start
-    /etc/init.d/apache2 stop
-    update-rc.d apache2 disable
+    
     
   elif [ -d /etc/httpd ]; then
+    apache_conf_file="/etc/httpd/conf.d/security.conf"
     cp $DATAFARI_HOME/ssl-keystore/apache/config/httpd.conf /etc/httpd/conf/
     sed -i "s|\(SSLCertificateFile *\).*|\1${DATAFARI_HOME}\/ssl-keystore\/apache\/datafari.crt|" /etc/httpd/conf.d/ssl.conf >>$installerLog 2>&1
     sed -i "s|\(SSLCertificateKeyFile *\).*|\1${DATAFARI_HOME}\/ssl-keystore\/apache\/datafari.key|" /etc/httpd/conf.d/ssl.conf >>$installerLog 2>&1
@@ -499,10 +501,37 @@ init_apache_ssl() {
     ln -s /etc/httpd/* $DATAFARI_HOME/apache/
     rm -f /var/www/html/index.jsp
     /usr/sbin/setsebool -P httpd_can_network_connect 1
-    apachectl start
-    apachectl stop
+   
     
   fi
+  
+  if [ ! -f "$apache_conf_file" ]; then
+    echo "Creation of the file $apache_conf_file"
+    touch "$apache_conf_file"
+  fi
+  
+  if grep -q '^ServerTokens' "$apache_conf_file"; then
+    sed -i 's/^ServerTokens .*/ServerTokens Prod/' "$apache_conf_file"
+  else
+    echo "ServerTokens Prod" | sudo tee -a "$apache_conf_file" > /dev/null
+  fi
+  
+  if grep -q '^ServerSignature' "$apache_conf_file"; then
+    sudo sed -i 's/^ServerSignature .*/ServerSignature Off/' "$apache_conf_file"
+  else
+    echo "ServerSignature Off" | sudo tee -a "$apache_conf_file" > /dev/null
+  fi
+  
+  if [ -d /etc/apache2 ]; then
+    /etc/init.d/apache2 start
+    /etc/init.d/apache2 stop
+    update-rc.d apache2 disable
+  elif [ -d /etc/httpd ]; then
+     apachectl start
+     apachectl stop
+  fi
+    
+  
   sed -i -e "s~\"@GET-MCF-IP@\"~${getMCFAdmin}~g" $TOMCAT_HOME/webapps/Datafari/admin/admin-sidebar.jsp >>$installerLog 2>&1
   sed -i -e "s~\"@GET-MCF-IP@\"~${getMCF}~g" $TOMCAT_HOME/webapps/Datafari/resources/js/header.js >>$installerLog 2>&1
   sed -i -e "s~\"@GET-MCF-IP@\"~${getMCFSimplified}~g" $TOMCAT_HOME/webapps/Datafari/resources/js/admin/ajax/mcfSimplified.js >>$installerLog 2>&1

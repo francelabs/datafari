@@ -5,9 +5,9 @@
     "baseUrl": "https://api.openai.com/v1",
     "apiKey": "xxx",
     "modelName": "text-embedding-3-small",
-    "timeout": 60,
+    "timeout": 180,
     "logRequests": true,
     "logResponses": true,
-    "maxRetries": 5
+    "maxRetries": 1
   }
 }

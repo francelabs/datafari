@@ -1,29 +1,6 @@
 Where to change the amount of RAM for the different services :
 
-- Solr	
-DATAFARI_HOME/solr/bin/solr.in.sh	
-SOLR_JAVA_MEM (-Xms and -Xmx) :	2GB
+You can check the default JVM RAM configuration of Datafari CE in monoserver_community_memory.properties , and in the equivalent file of the Datafari EE version main_enterprise_memory.properties.
+This file is located in : $DATAFARI_HOME/bin/deployUtils/$YOUR_VERSION_memory.properties
 
-- ManifoldCF	
-DATAFARI_HOME/mcf/mcf_home/option.env.unix	
--Xms and -Xmx	: 1GB (enterprise edition)
-
-- Tomcat (Main)
-DATAFARI_HOME/tomcat/bin/setenv.sh	
-CATALINA_OPTS (-Xms and -Xmx) :	1GB
-
-- Tomcat (MCF)	
-DATAFARI_HOME/tomcat-mcf/bin/setenv.sh	
-CATALINA_OPTS (-Xms and -Xmx) :	1GB
-
-- Cassandra	
-DATAFARI_HOME/cassandra/conf/jvm.options	
--Xms and -Xmx	: 1GB
-
-- Logstash	
-DATAFARI_HOME/analytic-stack/logstash/config/jvm.options	
--Xms and -Xmx	: 1 GB
-
-- Tika server (Enterprise Edition)	
-DATAFARI_HOME/tika-server/bin/set-tika-env.sh	
-TIKA_SPAWN_MEM (-JXms and -JXmx)	: 5 GB
+For more information see : https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/495353895/Adjust+components+RAM+consumption

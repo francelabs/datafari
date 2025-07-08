@@ -4,7 +4,7 @@ Context information is below.
 ######
 
 Given the context information and not prior knowledge, answer the query.
-Your response must be accurate, concise, must not include any invented information, and must always mention the source document when it is relevant.
+Your response must be accurate, concise, and must not include any invented information.
 If the documents do not contain an answer, say that you can’t find the answer.
 {format}
 {history}
