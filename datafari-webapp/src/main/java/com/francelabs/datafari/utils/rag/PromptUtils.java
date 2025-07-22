@@ -18,12 +18,16 @@ package com.francelabs.datafari.utils.rag;
 import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
-import com.francelabs.datafari.rag.Message;
+//import com.francelabs.datafari.rag.Message;
 import com.francelabs.datafari.rag.RagConfiguration;
 import com.francelabs.datafari.user.Lang;
 import com.francelabs.datafari.utils.AuthenticatedUserName;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
+import dev.langchain4j.data.message.AiMessage;
+import dev.langchain4j.data.message.ChatMessage;
+import dev.langchain4j.data.message.SystemMessage;
+import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.data.segment.TextSegment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,8 +50,10 @@ import java.util.*;
 public class PromptUtils {
 
     private static final Logger LOGGER = LogManager.getLogger(PromptUtils.class.getName());
-    public static final String SNIPPETS_TAG = "{snippets}";
     public static final String SYSTEM_ROLE = "system";
+    public static final String USER_ROLE = "user";
+    public static final String ASSISTANT_ROLE = "assistant";
+    public static final String SNIPPETS_TAG = "{snippets}";
     public static final String USER_QUERY_TAG = "{userquery}";
     public static final String FORMAT_TAG = "{format}";
     public static final String HISTORY_TAG = "{history}";
@@ -64,14 +70,14 @@ public class PromptUtils {
      * @param documentsList : A JSONArray list of documents
      * @return a prompt ready to be sent to the LLM service
      */
-    public static List<Message> documentsListToMessages(List<Document> documentsList) throws IOException {
+    public static List<ChatMessage> documentsListToMessages(List<Document> documentsList) throws IOException {
 
-        List<Message> prompts = new ArrayList<>();
+        List<ChatMessage> prompts = new ArrayList<>();
         for (Document document : documentsList) {
             // format document
             String content = formatDocument(document.metadata().getString("title"), document.text());
             // create prompt
-            Message message = new Message(SYSTEM_ROLE, content);
+            ChatMessage message = new SystemMessage(content);
             prompts.add(message);
         }
 
@@ -81,19 +87,19 @@ public class PromptUtils {
     /**
      * @return Retrieve the instructions used to summarize a document.
      */
-    public static Message createInitialPromptForSummarization(HttpServletRequest request) throws IOException {
+    public static ChatMessage createInitialPromptForSummarization(HttpServletRequest request) throws IOException {
         String prompt = getInstructions("summarization/template-initialPromptForSummarization.txt")
                 .replace("{language}", getUserLanguage(request));
-        return new Message("system", prompt);
+        return new SystemMessage(prompt);
     }
 
     /**
      * @return Retrieve the instructions used to merge multiple summaries into one.
      */
-    public static Message createPromptForMergeAllSummaries(HttpServletRequest request) throws IOException {
+    public static ChatMessage createPromptForMergeAllSummaries(HttpServletRequest request) throws IOException {
         String prompt =  getInstructions("summarization/template-summarization-mergeAll.txt")
                 .replace("{language}", getUserLanguage(request));
-        return new Message("user", prompt);
+        return new SystemMessage(prompt);
     }
 
 
@@ -144,7 +150,7 @@ public class PromptUtils {
      * @param chatHistory A list of Messages from chat history (user/assistant)
      * @return
      */
-    public static String getStringHistory(List<Message> chatHistory) throws IOException {
+    public static String getStringHistory(List<ChatMessage> chatHistory) throws IOException {
         if (chatHistory.isEmpty()) {
             return "";
         } else {
@@ -163,13 +169,13 @@ public class PromptUtils {
      * @param chatHistory A list of Messages from chat history (user/assistant)
      * @return The string conversation
      */
-    public static String getStringHistoryLines(List<Message> chatHistory) throws IOException {
+    public static String getStringHistoryLines(List<ChatMessage> chatHistory) throws IOException {
         if (chatHistory.isEmpty()) return "";
         StringBuilder conversation = new StringBuilder();
         String messageTemplate = getInstructions("rag/template-history-message.txt");
-        for (Message message : chatHistory) {
-            String line = messageTemplate.replace("{role}", message.getRole())
-                            .replace("{content}", message.getContent());
+        for (ChatMessage message : chatHistory) {
+            String line = messageTemplate.replace("{role}", message.type().name())
+                            .replace("{content}", message.text());
             conversation.append(line).append("\n");
         }
         return conversation.toString();
@@ -212,18 +218,18 @@ public class PromptUtils {
      * @return : The original template, filled with as many snippets as possible.
      * @throws DatafariServerException : The template is missing the  {snippets} tag.
      */
-    public static String stuffAsManySnippetsAsPossible(String template, List<Message> contents, RagConfiguration config) throws DatafariServerException {
+    public static String stuffAsManySnippetsAsPossible(String template, List<ChatMessage> contents, RagConfiguration config) throws DatafariServerException {
 
         if (!template.contains(SNIPPETS_TAG)) throw new DatafariServerException(CodesReturned.GENERALERROR, "Invalid prompt template: {snippets} tag is missing.");
 
         StringBuilder snippets = new StringBuilder();
         String prompt = template.replace(SNIPPETS_TAG, snippets.toString());
-        List<Message> processedSnippets = new ArrayList<>();
+        List<ChatMessage> processedSnippets = new ArrayList<>();
         int i = 0;
 
-        for (Message message : contents) {
+        for (ChatMessage message : contents) {
             // Adding a snippet to the list, and check if the length is not exceeding the limit
-            String snippet = message.getContent();
+            String snippet = message.text();
             snippets.append("\n").append(snippet);
             if (template.replace(SNIPPETS_TAG, snippets.toString()).length() < config.getIntegerProperty(RagConfiguration.MAX_REQUEST_SIZE, 40000)) {
                 prompt = template.replace(SNIPPETS_TAG, snippets.toString());
@@ -237,7 +243,7 @@ public class PromptUtils {
         // If the list is empty due to an excessive content size, the first chunk is stuffed in
         if (processedSnippets.isEmpty() && !contents.isEmpty()) {
             i = 0;
-            snippets = new StringBuilder(contents.get(0).getContent());
+            snippets = new StringBuilder(contents.get(0).text());
             prompt = template.replace(SNIPPETS_TAG, snippets.toString());
             processedSnippets.add(contents.get(0));
         }
@@ -319,7 +325,7 @@ public class PromptUtils {
      * @param role The role of the Message sender. Defaut is "user".
      * @return A list of TextSegments, that contain metadata. Big documents are chunked into multiple documents.
      */
-    public static Message textSegmentsToMessage(TextSegment segment, String role) throws IOException {
+    public static ChatMessage textSegmentsToMessage(TextSegment segment, String role) throws IOException {
         String template = getInstructions("rag/template-fromTextSegment.txt");
         Metadata metadata = segment.metadata();
         String content = cleanContext(segment.text());
@@ -327,7 +333,8 @@ public class PromptUtils {
         template = template.replace("{id}", metadata.getString("id"));
         template = template.replace("{title}", metadata.getString("title"));
         template = template.replace("{url}", metadata.getString("url"));
-        return new Message(role, template);
+
+        return createChatMessage(role, template);
     }
 
     /**
@@ -403,17 +410,17 @@ public class PromptUtils {
      * Returns the total size (in character) of a list of prompts (List<Message>)
      * @return The total size of the final prompt (int)
      */
-    public static int getTotalPromptSize(List<Message> messages) {
+    public static int getTotalPromptSize(List<ChatMessage> messages) {
         int size = 0;
-        for (Message message : messages) {
-            size = size + message.getContent().length();
+        for (ChatMessage message : messages) {
+            size = size + message.text().length();
         }
         return size;
     }
 
-    public static List<Message> getChatHistoryToList(HttpServletRequest request, RagConfiguration config) {
+    public static List<ChatMessage> getChatHistoryToList(HttpServletRequest request, RagConfiguration config) {
 
-        List<Message> history = new ArrayList<>();
+        List<ChatMessage> history = new ArrayList<>();
 
         if (!config.getBooleanProperty(RagConfiguration.CHAT_MEMORY_ENABLED)) return history;
 
@@ -430,7 +437,7 @@ public class PromptUtils {
                         @SuppressWarnings("unchecked")
                         Map<String, String> map = (LinkedHashMap<String, String>) obj;
                         if (map.containsKey("role") && map.containsKey("content")) {
-                            Message message = new Message(map.get("role"), map.get("content"));
+                            ChatMessage message = createChatMessage(map.get("role"), map.get("content"));
                             history.add(message);
                         } else {
                             LOGGER.warn("A message from the chat history in invalid, and will be ignored.");
@@ -454,11 +461,33 @@ public class PromptUtils {
         return history;
     }
 
-    public static int getHistorySize(List<Message> history, RagConfiguration config) {
+    public static int getHistorySize(List<ChatMessage> history, RagConfiguration config) {
         if (!config.getBooleanProperty(RagConfiguration.CHAT_MEMORY_ENABLED)) {
             return 0;
         } else {
             return getTotalPromptSize(history);
         }
+    }
+
+    public static ChatMessage createChatMessage(String role, String text) {
+        switch (role) {
+            case SYSTEM_ROLE:
+                return new SystemMessage(text);
+            case ASSISTANT_ROLE:
+                return new AiMessage(text);
+            case USER_ROLE:
+            default:
+                return new UserMessage(text);
+        }
+    }
+
+    // TODO : remove
+    public String getMessageRole(ChatMessage message) {
+        if (message instanceof SystemMessage)
+            return SYSTEM_ROLE;
+        else if (message instanceof AiMessage)
+            return ASSISTANT_ROLE;
+        else
+            return USER_ROLE;
     }
 }

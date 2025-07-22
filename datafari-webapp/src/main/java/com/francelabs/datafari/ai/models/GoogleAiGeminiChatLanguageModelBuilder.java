@@ -1,24 +1,24 @@
 package com.francelabs.datafari.ai.models;
 
-import dev.langchain4j.model.azure.AzureOpenAiChatModel;
 import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
 
 import java.time.Duration;
 import java.util.Map;
 
-public class AzureOpenAiChatLanguageModelBuilder implements ChatLanguageModelBuilder {
+public class GoogleAiGeminiChatLanguageModelBuilder implements ChatLanguageModelBuilder {
 
     @Override
     public ChatLanguageModel build(Map<String, Object> props) {
-        return AzureOpenAiChatModel.builder()
+        return GoogleAiGeminiChatModel.builder()
                 .apiKey(getString(props, "apiKey", null))
-                .endpoint(getString(props, "endpoint", null))
-                .deploymentName(getString(props, "deploymentName", null))
-                .serviceVersion(getString(props, "serviceVersion", "2023-05-15"))
+                .modelName(getString(props, "modelName", "gemini-pro"))
                 .temperature(getDouble(props, "temperature", 0))
-                .maxTokens(getInt(props, "maxTokens", 200))
+                .topP(getDouble(props, "topP", 1.0))
+                .topK(getInt(props, "topK", 40))
+                .maxOutputTokens(getInt(props, "maxOutputTokens", 200))
+                .maxRetries(getInt(props, "maxRetries", 1))
                 .timeout(Duration.ofSeconds(getInt(props, "timeout", 60)))
-                .maxRetries(getInt(props, "maxRetries", 3))
                 .logRequestsAndResponses(getBoolean(props, "logRequestsAndResponses", false))
                 .build();
     }

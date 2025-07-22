@@ -1,0 +1,45 @@
+{
+  "activeModel": "openai-default",
+  "models": [
+    {
+      "name": "openai-default",
+      "interfaceType": "OpenAI",
+      "properties": {
+        "baseUrl": "https://api.openai.com/v1",
+        "apiKey": "sk-your-openai-key",
+        "modelName": "gpt-4o-mini",
+        "temperature": 0.0,
+        "timeout": 60,
+        "logRequests": true,
+        "logResponses": true,
+        "maxRetries": 3
+      }
+    },
+    {
+      "name": "huggingface-prod",
+      "interfaceType": "HuggingFace",
+      "properties": {
+        "accessToken": "your-huggingface-key",
+        "modelId": "meta-llama/Llama-3.1-8B-Instruct",
+        "temperature": 0.1,
+        "timeout": 60,
+        "maxTokens": 200
+      }
+    },
+    {
+      "name": "gemini-test",
+      "interfaceType": "GoogleAiGemini",
+      "properties": {
+        "apiKey": "your-GoogleAiGemini-api-key",
+        "modelName": "gemini-2.5-pro",
+        "temperature": 0.6,
+        "topP": 1.0,
+        "topK": 40,
+        "maxOutputTokens": 200,
+        "maxRetries": 1,
+        "timeout": 45,
+        "logRequestsAndResponses": false
+      }
+    }
+  ]
+}
