@@ -65,8 +65,6 @@ echo "│ $(printf '%-20s' "$name") │ $result│"
 
 check_services() {
 
-
-echo
 echo "┌──────────────────────┬───────────────┐"
 echo "│ Component            │ State         │" 
 echo "├──────────────────────┼───────────────┤" 
@@ -102,10 +100,8 @@ echo "└──────────────────────┴�
 
 if [ "$STATUS" -eq 0 ]; then
   echo "[CHECK] ✅ All services are ready. Start OK." 
-  exit 0
 else
-  echo "[CHECK] ❌ Some services are missing or unfunctional"
-  exit 1
+  echo "[CHECK] ❌ Some services seem  to be missing or unfunctional, check them"
 fi
 
 }
