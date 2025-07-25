@@ -9,9 +9,9 @@ public class CassandraClientIdToAccessToken {
 
   public static final String TABLE = "oauth_client_id_to_access_token";
 
-  @PrimaryKeyColumn(name = "clientId", ordinal = 0, type = PrimaryKeyType.PARTITIONED)
+  @PrimaryKeyColumn(name = "clientid", ordinal = 0, type = PrimaryKeyType.PARTITIONED)
   private final String clientId;
-  @PrimaryKeyColumn(name = "accessToken", ordinal = 1, type = PrimaryKeyType.CLUSTERED)
+  @PrimaryKeyColumn(name = "accesstoken", ordinal = 1, type = PrimaryKeyType.CLUSTERED)
   private final String accessToken;
 
   public CassandraClientIdToAccessToken(final String clientId, final String accessToken) {

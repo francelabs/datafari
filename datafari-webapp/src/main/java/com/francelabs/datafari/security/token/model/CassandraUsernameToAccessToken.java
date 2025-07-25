@@ -9,9 +9,9 @@ public class CassandraUsernameToAccessToken {
 
   public static final String TABLE = "oauth_username_to_access_token";
 
-  @PrimaryKeyColumn(name = "approvalKey", ordinal = 0, type = PrimaryKeyType.PARTITIONED)
+  @PrimaryKeyColumn(name = "approvalkey", ordinal = 0, type = PrimaryKeyType.PARTITIONED)
   private final String approvalKey;
-  @PrimaryKeyColumn(name = "accessToken", ordinal = 1, type = PrimaryKeyType.CLUSTERED)
+  @PrimaryKeyColumn(name = "accesstoken", ordinal = 1, type = PrimaryKeyType.CLUSTERED)
   private final String accessToken;
 
   public CassandraUsernameToAccessToken(final String approvalKey, final String accessToken) {
