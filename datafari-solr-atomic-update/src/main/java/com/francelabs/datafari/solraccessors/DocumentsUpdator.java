@@ -112,9 +112,7 @@ public class DocumentsUpdator extends AbstractDocuments {
     // create the atomic document
     SolrInputDocument atomicDoc = new SolrInputDocument();
 
-    // If the ID field is specified (ie: "parent_doc" for VectorMain), it is used instead of "id".
-    String idField = jobConfig.getIdField() != null ? jobConfig.getIdField() : CommonParams.ID;
-    atomicDoc.addField(idField, doc.getFieldValue(CommonParams.ID));
+    atomicDoc.addField(CommonParams.ID, doc.getFieldValue(CommonParams.ID));
 
     // Retrieve fields to apply Atomic Update on and their operator
     for (Map.Entry<String, String> fieldConfig : jobConfig.getFieldsOperation().entrySet()) {
