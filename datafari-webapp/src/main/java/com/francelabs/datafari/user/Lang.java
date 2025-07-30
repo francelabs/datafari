@@ -16,7 +16,7 @@
 package com.francelabs.datafari.user;
 
 import com.francelabs.datafari.exception.DatafariServerException;
-import com.francelabs.datafari.service.db.LangDataService;
+import com.francelabs.datafari.service.db.LangDataServicePostgres;
 
 public class Lang {
 
@@ -29,7 +29,7 @@ public class Lang {
    * @throws DatafariServerException
    */
   public static String getLang(final String username) throws DatafariServerException {
-    return LangDataService.getInstance().getLang(username);
+    return LangDataServicePostgres.getInstance().getLang(username);
   }
 
   /**
@@ -41,7 +41,7 @@ public class Lang {
    * @throws DatafariServerException
    */
   public static int setLang(final String username, final String lang) throws DatafariServerException {
-    return LangDataService.getInstance().setLang(username, lang);
+    return LangDataServicePostgres.getInstance().setLang(username, lang);
   }
 
   /**
@@ -53,7 +53,7 @@ public class Lang {
    * @throws DatafariServerException
    */
   public static int updateLang(final String username, final String lang) throws DatafariServerException {
-    return LangDataService.getInstance().updateLang(username, lang);
+    return LangDataServicePostgres.getInstance().updateLang(username, lang);
   }
 
   /**
@@ -64,7 +64,7 @@ public class Lang {
    * @throws DatafariServerException
    */
   public static int deleteLang(final String username) throws DatafariServerException {
-    return LangDataService.getInstance().deleteLang(username);
+    return LangDataServicePostgres.getInstance().deleteLang(username);
   }
 
 }

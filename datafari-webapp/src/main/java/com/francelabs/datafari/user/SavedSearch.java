@@ -21,7 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.francelabs.datafari.exception.CodesReturned;
-import com.francelabs.datafari.service.db.SavedSearchDataService;
+import com.francelabs.datafari.service.db.SavedSearchDataServicePostgres;
 
 public class SavedSearch {
 
@@ -42,7 +42,7 @@ public class SavedSearch {
 	 */
 	public static int saveSearch(final String username, final String requestName, final String request) {
 		try {
-			return SavedSearchDataService.getInstance().saveSearch(username, requestName, request);
+			return SavedSearchDataServicePostgres.getInstance().saveSearch(username, requestName, request);
 		} catch (final Exception e) {
 			logger.error(e);
 			e.printStackTrace();
@@ -66,7 +66,7 @@ public class SavedSearch {
 	 */
 	public static int deleteSearch(final String username, final String requestName, final String request) {
 		try {
-			return SavedSearchDataService.getInstance().deleteSearch(username, requestName, request);
+			return SavedSearchDataServicePostgres.getInstance().deleteSearch(username, requestName, request);
 		} catch (final Exception e) {
 			logger.error(e);
 			e.printStackTrace();
@@ -84,7 +84,7 @@ public class SavedSearch {
 	 */
 	public static Map<String, String> getSearches(final String username) {
 		try {
-			return SavedSearchDataService.getInstance().getSearches(username);
+			return SavedSearchDataServicePostgres.getInstance().getSearches(username);
 		} catch (final Exception e) {
 			logger.error(e);
 			e.printStackTrace();
@@ -102,7 +102,7 @@ public class SavedSearch {
 	 */
 	public static int removeSearches(final String username) {
 		try {
-			return SavedSearchDataService.getInstance().removeSearches(username);
+			return SavedSearchDataServicePostgres.getInstance().removeSearches(username);
 		} catch (final Exception e) {
 			logger.error(e);
 			return CodesReturned.PROBLEMCONNECTIONDATABASE.getValue();

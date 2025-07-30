@@ -25,8 +25,8 @@ import java.util.concurrent.TimeUnit;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
-import com.francelabs.datafari.service.db.AccessTokenDataService.AccessToken;
-import com.francelabs.datafari.service.db.StatisticsDataService.UserActions;
+import com.francelabs.datafari.service.db.AccessTokenDataServicePostgres.AccessToken;
+import com.francelabs.datafari.service.db.StatisticsDataServicePostgres.UserActions;
 import com.francelabs.datafari.utils.Environment;
 import com.francelabs.datafari.utils.GDPRConfiguration;
 import com.francelabs.datafari.utils.UsageStatisticsConfiguration;
@@ -129,13 +129,13 @@ public class TestDataServices {
 
     /**********************************************************
      *
-     * Testing AccessTokenDataService
+     * Testing AccessTokenDataServicePostgres
      *
      **********************************************************/
     @Test
     public void testGetToken() throws IOException {
         try {
-            AccessToken retrieved = AccessTokenDataService.getInstance().getToken("john", "An api 1");
+            AccessToken retrieved = AccessTokenDataServicePostgres.getInstance().getToken("john", "An api 1");
             Assert.assertEquals("An api 1", retrieved.getApi());
             Assert.assertEquals("An identifier 1", retrieved.getIdentifier());
             Assert.assertEquals("A token 1", retrieved.getToken());
@@ -148,7 +148,7 @@ public class TestDataServices {
     @SuppressWarnings("unchecked")
     public void testGetTokens() throws IOException {
         try {
-            JSONArray retrievedTokens = AccessTokenDataService.getInstance().getTokens("john");
+            JSONArray retrievedTokens = AccessTokenDataServicePostgres.getInstance().getTokens("john");
             JSONArray expectedTokens = new JSONArray();
             List<JSONObject> expectedTokensList = new ArrayList<>();
             HashMap<String, String> token = new HashMap<String, String>();
@@ -175,8 +175,8 @@ public class TestDataServices {
     @Test
     public void testSetToken() {
         try {
-            int code = AccessTokenDataService.getInstance().setToken("alice", "api3", "identifier3", "token3");
-            AccessToken retrieved = AccessTokenDataService.getInstance().getToken("alice", "api3");
+            int code = AccessTokenDataServicePostgres.getInstance().setToken("alice", "api3", "identifier3", "token3");
+            AccessToken retrieved = AccessTokenDataServicePostgres.getInstance().getToken("alice", "api3");
             Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
             Assert.assertEquals("api3", retrieved.getApi());
             Assert.assertEquals("identifier3", retrieved.getIdentifier());
@@ -189,9 +189,9 @@ public class TestDataServices {
     @Test
     public void testUpdateToken() {
         try {
-            int code = AccessTokenDataService.getInstance().updateToken("john", "An api 1", "An identifier 1",
+            int code = AccessTokenDataServicePostgres.getInstance().updateToken("john", "An api 1", "An identifier 1",
                     "new token 1");
-            AccessToken retrieved = AccessTokenDataService.getInstance().getToken("john", "An api 1");
+            AccessToken retrieved = AccessTokenDataServicePostgres.getInstance().getToken("john", "An api 1");
             Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
             Assert.assertEquals("An api 1", retrieved.getApi());
             Assert.assertEquals("An identifier 1", retrieved.getIdentifier());
@@ -204,8 +204,8 @@ public class TestDataServices {
     @Test
     public void testDeleteToken() {
         try {
-            int code = AccessTokenDataService.getInstance().deleteToken("john", "An api 1", "An identifier 1");
-            AccessToken retrieved = AccessTokenDataService.getInstance().getToken("john", "An api 1");
+            int code = AccessTokenDataServicePostgres.getInstance().deleteToken("john", "An api 1", "An identifier 1");
+            AccessToken retrieved = AccessTokenDataServicePostgres.getInstance().getToken("john", "An api 1");
             Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
             Assert.assertNull(retrieved);
         } catch (Exception e) {
@@ -216,8 +216,8 @@ public class TestDataServices {
     @Test
     public void testRemoveTokens() {
         try {
-            int code = AccessTokenDataService.getInstance().removeTokens("john");
-            JSONArray retrieved = AccessTokenDataService.getInstance().getTokens("john");
+            int code = AccessTokenDataServicePostgres.getInstance().removeTokens("john");
+            JSONArray retrieved = AccessTokenDataServicePostgres.getInstance().getTokens("john");
             Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
             Assert.assertEquals(new JSONArray(), retrieved);
         } catch (Exception e) {
@@ -233,7 +233,7 @@ public class TestDataServices {
             TimeUnit.SECONDS.sleep(10);
             ResultSet originalResults = session
                     .execute("SELECT last_refresh, TTL(last_refresh) FROM access_tokens WHERE username='john'");
-            AccessTokenDataService.getInstance().refreshAccessTokens("john");
+            AccessTokenDataServicePostgres.getInstance().refreshAccessTokens("john");
             ResultSet postRefreshResults = session
                     .execute("SELECT last_refresh, TTL(last_refresh) FROM access_tokens WHERE username='john'");
             Iterator<Row> originalIt = originalResults.iterator();
@@ -265,7 +265,7 @@ public class TestDataServices {
     @Test
     public void testGetAlerts() throws IOException {
         try {
-            List<Properties> alerts = AlertDataService.getInstance().getAlerts();
+            List<Properties> alerts = AlertDataServicePostgres.getInstance().getAlerts();
             Assert.assertEquals(2, alerts.size());
             Properties alertProp1 = new Properties();
             alertProp1.put("keyword", "keyword 2");
@@ -300,7 +300,7 @@ public class TestDataServices {
     @Test
     public void testGetUserAlerts() throws IOException {
         try {
-            List<Properties> alerts = AlertDataService.getInstance().getUserAlerts("john");
+            List<Properties> alerts = AlertDataServicePostgres.getInstance().getUserAlerts("john");
             Assert.assertEquals(1, alerts.size());
             List<Properties> targetAlerts = new ArrayList<>();
             Properties alertProp = new Properties();
@@ -330,13 +330,13 @@ public class TestDataServices {
             alertProp.put("mail", "mail 3");
             alertProp.put("subject", "subject 3");
             alertProp.put("user", "alice");
-            String uuidString = AlertDataService.getInstance().addAlert(alertProp);
+            String uuidString = AlertDataServicePostgres.getInstance().addAlert(alertProp);
             try {
                 UUID.fromString(uuidString);
             } catch (IllegalArgumentException e) {
                 Assert.fail("Couldn't create UUID from string when adding alert");
             }
-            List<Properties> alerts = AlertDataService.getInstance().getUserAlerts("alice");
+            List<Properties> alerts = AlertDataServicePostgres.getInstance().getUserAlerts("alice");
             Assert.assertEquals(2, alerts.size());
             Properties alertProp1 = new Properties();
             alertProp1.put("_id", alerts.get(0).getProperty("_id"));
@@ -373,7 +373,7 @@ public class TestDataServices {
     @Test
     public void testUpdateAlert() {
         try {
-            List<Properties> alerts = AlertDataService.getInstance().getUserAlerts("alice");
+            List<Properties> alerts = AlertDataServicePostgres.getInstance().getUserAlerts("alice");
             Properties alertProp = alerts.get(0);
             alertProp.put("keyword", "keyword 2 modified");
             alertProp.put("filters", "filters 2 modified");
@@ -383,7 +383,7 @@ public class TestDataServices {
             alertProp.put("subject", "subject 2 modified");
             AlertDataService.getInstance().updateAlert(alertProp);
 
-            alerts = AlertDataService.getInstance().getUserAlerts("alice");
+            alerts = AlertDataServicePostgres.getInstance().getUserAlerts("alice");
             Assert.assertEquals(1, alerts.size());
             List<Properties> targetAlerts = new ArrayList<>();
             alertProp = new Properties();
@@ -405,8 +405,8 @@ public class TestDataServices {
     @Test
     public void testDeleteUserAlerts() {
         try {
-            AlertDataService.getInstance().deleteUserAlerts("john");
-            List<Properties> alerts = AlertDataService.getInstance().getUserAlerts("john");
+            AlertDataServicePostgres.getInstance().deleteUserAlerts("john");
+            List<Properties> alerts = AlertDataServicePostgres.getInstance().getUserAlerts("john");
             Assert.assertEquals(0, alerts.size());
         } catch (Exception e) {
             Assert.fail("An exception was raised while deleting user alerts: " + e.getMessage());
@@ -416,12 +416,12 @@ public class TestDataServices {
     @Test
     public void testDeleteAlert() {
         try {
-            List<Properties> alerts = AlertDataService.getInstance().getUserAlerts("john");
+            List<Properties> alerts = AlertDataServicePostgres.getInstance().getUserAlerts("john");
             int initialSize = alerts.size();
             Assert.assertTrue("There should be at least one alert for user john", initialSize >= 1);
             String removedId = alerts.get(0).getProperty("_id");
-            AlertDataService.getInstance().deleteAlert(removedId);
-            alerts = AlertDataService.getInstance().getUserAlerts("john");
+            AlertDataServicePostgres.getInstance().deleteAlert(removedId);
+            alerts = AlertDataServicePostgres.getInstance().getUserAlerts("john");
             Assert.assertEquals(initialSize - 1, alerts.size());
             for (Properties alert : alerts) {
                 Assert.assertNotEquals(removedId, alert.getProperty("_id"));
@@ -439,7 +439,7 @@ public class TestDataServices {
             TimeUnit.SECONDS.sleep(10);
             ResultSet originalResults = session
                     .execute("SELECT last_refresh, TTL(last_refresh) FROM alerts WHERE user='john'");
-            AlertDataService.getInstance().refreshUserAlerts("john");
+            AlertDataServicePostgres.getInstance().refreshUserAlerts("john");
             ResultSet postRefreshResults = session
                     .execute("SELECT last_refresh, TTL(last_refresh) FROM alerts WHERE user='john'");
             Iterator<Row> originalIt = originalResults.iterator();
@@ -466,13 +466,13 @@ public class TestDataServices {
 
     /**********************************************************
      *
-     * Testing DepartmentDataService
+     * Testing Postgres
      *
      **********************************************************/
     @Test
     public void testGetDepartment() throws IOException {
         try {
-            String department = DepartmentDataService.getInstance().getDepartment("john");
+            String department = DepartmentDataServicePostgres.getInstance().getDepartment("john");
             Assert.assertEquals("department 1", department);
         } catch (Exception e) {
             Assert.fail("An exception was raised while getting department: " + e.getMessage());
@@ -482,9 +482,9 @@ public class TestDataServices {
     @Test
     public void testSetDepartment() {
         try {
-            int code = DepartmentDataService.getInstance().setDepartment("alice", "department 3");
+            int code = DepartmentDataServicePostgres.getInstance().setDepartment("alice", "department 3");
             Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
-            String retrieved = DepartmentDataService.getInstance().getDepartment("alice");
+            String retrieved = DepartmentDataServicePostgres.getInstance().getDepartment("alice");
             Assert.assertEquals("department 3", retrieved);
         } catch (Exception e) {
             Assert.fail("An exception was raised while setting department: " + e.getMessage());
@@ -494,9 +494,9 @@ public class TestDataServices {
     @Test
     public void testUpdateDepartment() {
         try {
-            int code = DepartmentDataService.getInstance().updateDepartment("jack", "department 2 bis");
+            int code = DepartmentDataServicePostgres.getInstance().updateDepartment("jack", "department 2 bis");
             Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
-            String retrieved = DepartmentDataService.getInstance().getDepartment("jack");
+            String retrieved = DepartmentDataServicePostgres.getInstance().getDepartment("jack");
             Assert.assertEquals("department 2 bis", retrieved);
         } catch (Exception e) {
             Assert.fail("An exception was raised while updating department: " + e.getMessage());
@@ -506,9 +506,9 @@ public class TestDataServices {
     @Test
     public void testDeleteDepartment() {
         try {
-            int code = DepartmentDataService.getInstance().deleteDepartment("jack");
+            int code = DepartmentDataServicePostgres.getInstance().deleteDepartment("jack");
             Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
-            String retrieved = DepartmentDataService.getInstance().getDepartment("jack");
+            String retrieved = DepartmentDataServicePostgres.getInstance().getDepartment("jack");
             Assert.assertNull(retrieved);
         } catch (Exception e) {
             Assert.fail("An exception was raised while deleting user department: " + e.getMessage());
@@ -523,7 +523,7 @@ public class TestDataServices {
     @Test
     public void testGetLikes() throws IOException {
         try {
-            List<String> likes = DocumentDataService.getInstance().getLikes("john", null);
+            List<String> likes = DocumentDataServicePostgres.getInstance().getLikes("john", null);
             List<String> expectedList = Arrays.asList("document_id 3", "document_id 2");
             Assert.assertEquals("Should have the same size", expectedList.size(), likes.size());
             Assert.assertTrue("Should contain all expected document id", likes.containsAll(expectedList));
@@ -536,7 +536,7 @@ public class TestDataServices {
     public void testGetLikesWithList() throws IOException {
         try {
             String[] param = { "test", "truc", "bidule", "document_id 2" };
-            List<String> likes = DocumentDataService.getInstance().getLikes("john", param);
+            List<String> likes = DocumentDataServicePostgres.getInstance().getLikes("john", param);
             List<String> expectedList = Arrays.asList("document_id 2");
             Assert.assertEquals("Should have the same size", expectedList.size(), likes.size());
             Assert.assertTrue("Should contain all expected document id", likes.containsAll(expectedList));
@@ -548,8 +548,8 @@ public class TestDataServices {
     @Test
     public void testAddLike() {
         try {
-            DocumentDataService.getInstance().addLike("alice", "document id 4/with/specials'`weird/things");
-            List<String> retrieved = DocumentDataService.getInstance().getLikes("alice", null);
+            DocumentDataServicePostgres.getInstance().addLike("alice", "document id 4/with/specials'`weird/things");
+            List<String> retrieved = DocumentDataServicePostgres.getInstance().getLikes("alice", null);
             Assert.assertEquals(1, retrieved.size());
             Assert.assertEquals("document id 4/with/specials'`weird/things", retrieved.get(0));
         } catch (Exception e) {
@@ -560,9 +560,9 @@ public class TestDataServices {
     @Test
     public void testUnlike() {
         try {
-            DocumentDataService.getInstance().unlike("john", "document_id 2");
+            DocumentDataServicePostgres.getInstance().unlike("john", "document_id 2");
             String[] param = { "document_id 2" };
-            List<String> retrieved = DocumentDataService.getInstance().getLikes("john", param);
+            List<String> retrieved = DocumentDataServicePostgres.getInstance().getLikes("john", param);
             Assert.assertEquals(0, retrieved.size());
         } catch (Exception e) {
             Assert.fail("An exception was raised while using unlike: " + e.getMessage());
@@ -572,8 +572,8 @@ public class TestDataServices {
     @Test
     public void testRemoveLikes() {
         try {
-            DocumentDataService.getInstance().removeLikes("john");
-            List<String> retrieved = DocumentDataService.getInstance().getLikes("john", null);
+            DocumentDataServicePostgres.getInstance().removeLikes("john");
+            List<String> retrieved = DocumentDataServicePostgres.getInstance().getLikes("john", null);
             Assert.assertEquals(0, retrieved.size());
         } catch (Exception e) {
             Assert.fail("An exception was raised while removing likes: " + e.getMessage());
@@ -588,7 +588,7 @@ public class TestDataServices {
             TimeUnit.SECONDS.sleep(10);
             ResultSet originalResults = session
                     .execute("SELECT last_refresh, TTL(last_refresh) FROM like WHERE username='john'");
-            DocumentDataService.getInstance().refreshLikes("john");
+            DocumentDataServicePostgres.getInstance().refreshLikes("john");
             ResultSet postRefreshResults = session
                     .execute("SELECT last_refresh, TTL(last_refresh) FROM like WHERE username='john'");
             Iterator<Row> originalIt = originalResults.iterator();
@@ -615,7 +615,7 @@ public class TestDataServices {
     @Test
     public void testGetFavorites() throws IOException {
         try {
-            List<String> favorites = DocumentDataService.getInstance().getFavorites("john", null);
+            List<String> favorites = DocumentDataServicePostgres.getInstance().getFavorites("john", null);
             List<String> expectedList = new ArrayList<>();
             HashMap<String, Object> objContent = new HashMap<>();
             objContent.put("id", "document_id 1");
@@ -636,7 +636,7 @@ public class TestDataServices {
     public void testGetFavoritesWithList() throws IOException {
         try {
             String[] param = { "test", "truc", "bidule", "document_id 2" };
-            List<String> favorites = DocumentDataService.getInstance().getFavorites("john", param);
+            List<String> favorites = DocumentDataServicePostgres.getInstance().getFavorites("john", param);
             List<String> expectedList = new ArrayList<>();
             HashMap<String, Object> objContent = new HashMap<String, Object>();
             objContent.put("id", "document_id 2");
@@ -652,9 +652,9 @@ public class TestDataServices {
     @Test
     public void testAddFavorite() {
         try {
-            DocumentDataService.getInstance().addFavorite("alice", "idDocument4", "titleDocument4");
+            DocumentDataServicePostgres.getInstance().addFavorite("alice", "idDocument4", "titleDocument4");
             ;
-            List<String> favorites = DocumentDataService.getInstance().getFavorites("alice", null);
+            List<String> favorites = DocumentDataServicePostgres.getInstance().getFavorites("alice", null);
             List<String> expectedList = new ArrayList<>();
             HashMap<String, Object> objContent = new HashMap<String, Object>();
             objContent.put("id", "idDocument4");
@@ -670,10 +670,10 @@ public class TestDataServices {
     @Test
     public void testDeleteFavorite() {
         try {
-            DocumentDataService.getInstance().deleteFavorite("john", "document_id 1");
+            DocumentDataServicePostgres.getInstance().deleteFavorite("john", "document_id 1");
             ;
             String[] param = { "document_id 1" };
-            List<String> favorites = DocumentDataService.getInstance().getFavorites("john", param);
+            List<String> favorites = DocumentDataServicePostgres.getInstance().getFavorites("john", param);
             Assert.assertEquals("Should be empty", 0, favorites.size());
         } catch (Exception e) {
             Assert.fail("An exception was raised while deleting favorite: " + e.getMessage());
@@ -683,8 +683,8 @@ public class TestDataServices {
     @Test
     public void testRemoveFavorites() {
         try {
-            DocumentDataService.getInstance().removeFavorites("john");
-            List<String> favorites = DocumentDataService.getInstance().getFavorites("john", null);
+            DocumentDataServicePostgres.getInstance().removeFavorites("john");
+            List<String> favorites = DocumentDataServicePostgres.getInstance().getFavorites("john", null);
             Assert.assertEquals("Should be empty", 0, favorites.size());
         } catch (Exception e) {
             Assert.fail("An exception was raised while removing favorites: " + e.getMessage());
@@ -694,10 +694,10 @@ public class TestDataServices {
     @Test
     public void testRemoveFavoritesAndLikeDB() {
         try {
-            DocumentDataService.getInstance().removeFavoritesAndLikeDB("john");
-            List<String> favorites = DocumentDataService.getInstance().getFavorites("john", null);
+            DocumentDataServicePostgres.getInstance().removeFavoritesAndLikeDB("john");
+            List<String> favorites = DocumentDataServicePostgres.getInstance().getFavorites("john", null);
             Assert.assertEquals("Should be empty", 0, favorites.size());
-            List<String> likes = DocumentDataService.getInstance().getLikes("john", null);
+            List<String> likes = DocumentDataServicePostgres.getInstance().getLikes("john", null);
             Assert.assertEquals("Should be empty", 0, likes.size());
         } catch (Exception e) {
             Assert.fail("An exception was raised while performing removeFavoriteAndLikeDB: " + e.getMessage());
@@ -712,7 +712,7 @@ public class TestDataServices {
             TimeUnit.SECONDS.sleep(10);
             ResultSet originalResults = session
                     .execute("SELECT last_refresh, TTL(last_refresh) FROM favorite WHERE username='john'");
-            DocumentDataService.getInstance().refreshFavorites("john");
+            DocumentDataServicePostgres.getInstance().refreshFavorites("john");
             ResultSet postRefreshResults = session
                     .execute("SELECT last_refresh, TTL(last_refresh) FROM favorite WHERE username='john'");
             Iterator<Row> originalIt = originalResults.iterator();
@@ -744,23 +744,23 @@ public class TestDataServices {
 
     @Test
     public void testGetLang() throws DatafariServerException {
-        String lang = LangDataService.getInstance().getLang("john");
+        String lang = LangDataServicePostgres.getInstance().getLang("john");
         Assert.assertEquals("lang 1", lang);
     }
 
     @Test
     public void testSetLang() throws DatafariServerException {
-        int code = LangDataService.getInstance().setLang("alice", "fr");
+        int code = LangDataServicePostgres.getInstance().setLang("alice", "fr");
         Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
-        String lang = LangDataService.getInstance().getLang("alice");
+        String lang = LangDataServicePostgres.getInstance().getLang("alice");
         Assert.assertEquals("fr", lang);
     }
 
     @Test
     public void testDeleteLang() throws DatafariServerException {
-        int code = LangDataService.getInstance().deleteLang("john");
+        int code = LangDataServicePostgres.getInstance().deleteLang("john");
         Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
-        String lang = LangDataService.getInstance().getLang("john");
+        String lang = LangDataServicePostgres.getInstance().getLang("john");
         Assert.assertNull(lang);
     }
 
@@ -772,7 +772,7 @@ public class TestDataServices {
         Row originalRow = originalResults.one();
         Instant originalTimestamp = originalRow.get("last_refresh", new TimestampCodec());
         Integer originalTTL = originalRow.getInt("ttl(last_refresh)");
-        int code = LangDataService.getInstance().updateLang("john", "en");
+        int code = LangDataServicePostgres.getInstance().updateLang("john", "en");
         Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
         ResultSet postUpdateResults = session
                 .execute("SELECT last_refresh, TTL(last_refresh) FROM lang WHERE username='john'");
@@ -781,7 +781,7 @@ public class TestDataServices {
         Integer postUpdateTTL = postUpdateRow.getInt("ttl(last_refresh)");
         Assert.assertTrue("Has the timestamp been refreshed", postUpdateTimestamp.isAfter(originalTimestamp));
         Assert.assertTrue("Is refreshed TTL greater that original TTL", postUpdateTTL > originalTTL);
-        String lang = LangDataService.getInstance().getLang("john");
+        String lang = LangDataServicePostgres.getInstance().getLang("john");
         Assert.assertEquals("en", lang);
     }
 
@@ -794,7 +794,7 @@ public class TestDataServices {
         Row result = results.one();
         Instant originalTimestamp = result.get("last_refresh", new TimestampCodec());
         Integer originalTTL = result.getInt("ttl(last_refresh)");
-        LangDataService.getInstance().refreshLang("john");
+        LangDataServicePostgres.getInstance().refreshLang("john");
         results = session.execute("SELECT last_refresh, TTL(last_refresh) FROM lang WHERE username='john'");
         result = results.one();
         Instant refreshedTimestamp = result.get("last_refresh", new TimestampCodec());
@@ -813,7 +813,7 @@ public class TestDataServices {
     @Test
     public void testSetLicence() throws DatafariServerException, LicenceException {
         Licence licence = Licence.getDemoLicence();
-        int code = LicenceDataService.getInstance().saveLicence("testLicenceId", licence);
+        int code = LicenceDataServicePostgres.getInstance().saveLicence("testLicenceId", licence);
         Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
         Licence retrievedLicence = LicenceDataService.getInstance().getLicence("testLicenceId");
         Assert.assertTrue(licence.isIdentical(retrievedLicence));
@@ -822,13 +822,13 @@ public class TestDataServices {
     @Test
     public void testSavingNewLicenceLicence() throws DatafariServerException, LicenceException {
         Licence licence = Licence.getDemoLicence();
-        int code = LicenceDataService.getInstance().saveLicence("testLicenceId", licence);
+        int code = LicenceDataServicePostgres.getInstance().saveLicence("testLicenceId", licence);
         Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
-        code = LicenceDataService.getInstance().saveLicence("testLicenceId2", licence);
+        code = LicenceDataServicePostgres.getInstance().saveLicence("testLicenceId2", licence);
         Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
-        Licence retrievedLicence = LicenceDataService.getInstance().getLicence("testLicenceId");
+        Licence retrievedLicence = LicenceDataServicePostgres.getInstance().getLicence("testLicenceId");
         Assert.assertNull(retrievedLicence);
-        retrievedLicence = LicenceDataService.getInstance().getLicence("testLicenceId2");
+        retrievedLicence = LicenceDataServicePostgres.getInstance().getLicence("testLicenceId2");
         Assert.assertTrue(licence.isIdentical(retrievedLicence));
     }
 
@@ -840,7 +840,7 @@ public class TestDataServices {
 
     @Test
     public void testGetSearches() throws Exception {
-        Map<String, String> searches = SavedSearchDataService.getInstance().getSearches("john");
+        Map<String, String> searches = SavedSearchDataServicePostgres.getInstance().getSearches("john");
         Map<String, String> expected = new HashMap<>();
         expected.put("name 1", "request 1");
         expected.put("name 2", "request 2");
@@ -853,9 +853,9 @@ public class TestDataServices {
 
     @Test
     public void testSaveSearch() throws Exception {
-        int code = SavedSearchDataService.getInstance().saveSearch("alice", "name test", "request test");
+        int code = SavedSearchDataServicePostgres.getInstance().saveSearch("alice", "name test", "request test");
         Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
-        Map<String, String> searches = SavedSearchDataService.getInstance().getSearches("alice");
+        Map<String, String> searches = SavedSearchDataServicePostgres.getInstance().getSearches("alice");
         Map<String, String> expected = new HashMap<>();
         expected.put("name test", "request test");
         expected.put("name 3", "request 3");
@@ -868,9 +868,9 @@ public class TestDataServices {
 
     @Test
     public void testDeleteSearch() throws Exception {
-        int code = SavedSearchDataService.getInstance().deleteSearch("john", "name 1", "request 1");
+        int code = SavedSearchDataServicePostgres.getInstance().deleteSearch("john", "name 1", "request 1");
         Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
-        Map<String, String> searches = SavedSearchDataService.getInstance().getSearches("john");
+        Map<String, String> searches = SavedSearchDataServicePostgres.getInstance().getSearches("john");
         Map<String, String> expected = new HashMap<>();
         expected.put("name 2", "request 2");
         Assert.assertEquals(expected.size(), searches.size());
@@ -882,9 +882,9 @@ public class TestDataServices {
 
     @Test
     public void testRemoveSearches() throws Exception {
-        int code = SavedSearchDataService.getInstance().removeSearches("john");
+        int code = SavedSearchDataServicePostgres.getInstance().removeSearches("john");
         Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
-        Map<String, String> searches = SavedSearchDataService.getInstance().getSearches("john");
+        Map<String, String> searches = SavedSearchDataServicePostgres.getInstance().getSearches("john");
         Assert.assertEquals(0, searches.size());
     }
 
@@ -895,7 +895,7 @@ public class TestDataServices {
         TimeUnit.SECONDS.sleep(10);
         ResultSet originalResults = session
                 .execute("SELECT last_refresh, TTL(last_refresh) FROM search WHERE username='john'");
-        SavedSearchDataService.getInstance().refreshSavedSearches("john");
+        SavedSearchDataServicePostgres.getInstance().refreshSavedSearches("john");
         ResultSet postRefreshResults = session
                 .execute("SELECT last_refresh, TTL(last_refresh) FROM search WHERE username='john'");
         Iterator<Row> originalIt = originalResults.iterator();
@@ -927,7 +927,7 @@ public class TestDataServices {
     @SuppressWarnings("unchecked")
     @Test
     public void testGetUserStatistics() throws Exception {
-        final JSONArray statistics = StatisticsDataService.getInstance().getUserStatistics("alice");
+        final JSONArray statistics = StatisticsDataServicePostgres.getInstance().getUserStatistics("alice");
         HashMap<String, Object> stat = new HashMap<>();
         stat.put("query_id", "query 1");
         stat.put("user_id", "alice");
@@ -963,14 +963,14 @@ public class TestDataServices {
     public void testSaveQueryStatistics() throws Exception {
         UUID testId = UUID.randomUUID();
         Instant testInstant = Instant.parse("2022-04-01T12:34:56.123Z");
-        boolean success = StatisticsDataService.getInstance().saveQueryStatistics(
+        boolean success = StatisticsDataServicePostgres.getInstance().saveQueryStatistics(
                 testId.toString(),
                 "query test",
                 "john",
                 23,
                 testInstant);
         Assert.assertTrue(success);
-        final JSONArray statistics = StatisticsDataService.getInstance().getUserStatistics("john");
+        final JSONArray statistics = StatisticsDataServicePostgres.getInstance().getUserStatistics("john");
         Assert.assertEquals(1, statistics.size());
         HashMap<String, Object> props = new HashMap<>();
         props.put("query_id", testId.toString());
@@ -991,7 +991,7 @@ public class TestDataServices {
     public void testSaveClickStatistics() throws Exception {
         UUID testId = UUID.randomUUID();
         Instant testInstant = Instant.parse("2022-04-01T12:34:56.123Z");
-        boolean success = StatisticsDataService.getInstance().saveClickStatistics(
+        boolean success = StatisticsDataServicePostgres.getInstance().saveClickStatistics(
                 testId.toString(),
                 "query test",
                 "john",
@@ -999,7 +999,7 @@ public class TestDataServices {
                 5,
                 testInstant);
         Assert.assertTrue(success);
-        final JSONArray statistics = StatisticsDataService.getInstance().getUserStatistics("john");
+        final JSONArray statistics = StatisticsDataServicePostgres.getInstance().getUserStatistics("john");
         Assert.assertEquals(1, statistics.size());
         HashMap<String, Object> props = new HashMap<>();
         props.put("doc_id", "document test");
@@ -1019,9 +1019,9 @@ public class TestDataServices {
 
     @Test
     public void testDeleteUserStatistics() throws Exception {
-        int code = StatisticsDataService.getInstance().deleteUserStatistics("alice");
+        int code = StatisticsDataServicePostgres.getInstance().deleteUserStatistics("alice");
         Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
-        final JSONArray statistics = StatisticsDataService.getInstance().getUserStatistics("alice");
+        final JSONArray statistics = StatisticsDataServicePostgres.getInstance().getUserStatistics("alice");
         Assert.assertEquals(0, statistics.size());
     }
 
@@ -1033,23 +1033,23 @@ public class TestDataServices {
 
     @Test
     public void testGetUiConfig() throws DatafariServerException {
-        String uiConfig = UiConfigDataService.getInstance().getUiConfig("john");
+        String uiConfig = UiConfigDataServicePostgres.getInstance().getUiConfig("john");
         Assert.assertEquals("{\"left\": [],\"center\": [],\"right\": []}", uiConfig);
     }
 
     @Test
     public void testSetUiConfig() throws DatafariServerException {
-        int code = UiConfigDataService.getInstance().setUiConfig("alice", "{\"left\": [],\"center\": [],\"right\": []}");
+        int code = UiConfigDataServicePostgres.getInstance().setUiConfig("alice", "{\"left\": [],\"center\": [],\"right\": []}");
         Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
-        String uiConfig = UiConfigDataService.getInstance().getUiConfig("alice");
+        String uiConfig = UiConfigDataServicePostgres.getInstance().getUiConfig("alice");
         Assert.assertEquals("{\"left\": [],\"center\": [],\"right\": []}", uiConfig);
     }
 
     @Test
     public void testDeleteUiConfig() throws DatafariServerException {
-        int code = UiConfigDataService.getInstance().deleteUiConfig("john");
+        int code = UiConfigDataServicePostgres.getInstance().deleteUiConfig("john");
         Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
-        String uiConfig = UiConfigDataService.getInstance().getUiConfig("john");
+        String uiConfig = UiConfigDataServicePostgres.getInstance().getUiConfig("john");
         Assert.assertNull(uiConfig);
     }
 
@@ -1061,7 +1061,7 @@ public class TestDataServices {
         Row originalRow = originalResults.one();
         Instant originalTimestamp = originalRow.get("last_refresh", new TimestampCodec());
         Integer originalTTL = originalRow.getInt("ttl(last_refresh)");
-        int code = UiConfigDataService.getInstance().updateUiConfig("john", "{\"left\": [{\"test\":\"truc\"}],\"center\": [],\"right\": []}");
+        int code = UiConfigDataServicePostgres.getInstance().updateUiConfig("john", "{\"left\": [{\"test\":\"truc\"}],\"center\": [],\"right\": []}");
         Assert.assertEquals(CodesReturned.ALLOK.getValue(), code);
         ResultSet postUpdateResults = session
                 .execute("SELECT last_refresh, TTL(last_refresh) FROM ui_config WHERE username='john'");
@@ -1070,7 +1070,7 @@ public class TestDataServices {
         Integer postUpdateTTL = postUpdateRow.getInt("ttl(last_refresh)");
         Assert.assertTrue("Has the timestamp been refreshed", postUpdateTimestamp.isAfter(originalTimestamp));
         Assert.assertTrue("Is refreshed TTL greater that original TTL", postUpdateTTL > originalTTL);
-        String uiConfig = UiConfigDataService.getInstance().getUiConfig("john");
+        String uiConfig = UiConfigDataServicePostgres.getInstance().getUiConfig("john");
         Assert.assertEquals("{\"left\": [{\"test\":\"truc\"}],\"center\": [],\"right\": []}", uiConfig);
     }
 

@@ -16,7 +16,7 @@
 package com.francelabs.datafari.user;
 
 import com.francelabs.datafari.exception.DatafariServerException;
-import com.francelabs.datafari.service.db.DepartmentDataService;
+import com.francelabs.datafari.service.db.DepartmentDataServicePostgres;
 
 public class Department {
 
@@ -29,7 +29,7 @@ public class Department {
    * @throws DatafariServerException
    */
   public static String getDepartment(final String username) throws DatafariServerException {
-    return DepartmentDataService.getInstance().getDepartment(username);
+    return DepartmentDataServicePostgres.getInstance().getDepartment(username);
   }
 
   /**
@@ -41,7 +41,7 @@ public class Department {
    * @throws DatafariServerException
    */
   public static int setDepartment(final String username, final String department) throws DatafariServerException {
-    return DepartmentDataService.getInstance().setDepartment(username, department);
+    return DepartmentDataServicePostgres.getInstance().setDepartment(username, department);
   }
 
   /**
@@ -53,7 +53,7 @@ public class Department {
    * @throws DatafariServerException
    */
   public static int updateDepartment(final String username, final String department) throws DatafariServerException {
-    return DepartmentDataService.getInstance().updateDepartment(username, department);
+    return DepartmentDataServicePostgres.getInstance().updateDepartment(username, department);
   }
 
   /**
@@ -64,7 +64,7 @@ public class Department {
    * @throws DatafariServerException
    */
   public static int deleteDepartment(final String username) throws DatafariServerException {
-    return DepartmentDataService.getInstance().deleteDepartment(username);
+    return DepartmentDataServicePostgres.getInstance().deleteDepartment(username);
   }
 
 }

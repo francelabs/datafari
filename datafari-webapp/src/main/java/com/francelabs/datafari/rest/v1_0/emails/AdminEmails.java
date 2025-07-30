@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
 import com.francelabs.datafari.rest.v1_0.utils.RestAPIUtils;
-import com.francelabs.datafari.service.db.SavedSearchDataService;
+import com.francelabs.datafari.service.db.SavedSearchDataServicePostgres;
 import com.francelabs.datafari.utils.DatafariMainConfiguration;
 
 import org.json.simple.JSONObject;
@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AdminEmails {
 
-    final static Logger logger = LogManager.getLogger(SavedSearchDataService.class.getName());
+    final static Logger logger = LogManager.getLogger(SavedSearchDataServicePostgres.class.getName());
 
     @GetMapping(value = "/rest/v1.0/emails/admin", produces = "application/json;charset=UTF-8")
     protected String getCurrentUserSavedSearches(final HttpServletRequest request) {

@@ -23,7 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.francelabs.datafari.exception.DatafariServerException;
-import com.francelabs.datafari.service.db.AlertDataService;
+import com.francelabs.datafari.service.db.AlertDataServicePostgres;
 
 public class Alert {
 
@@ -39,7 +39,7 @@ public class Alert {
    * @throws IOException
    */
   public static String addAlert(final Properties alertProp) throws DatafariServerException, IOException {
-    return AlertDataService.getInstance().addAlert(alertProp);
+    return AlertDataServicePostgres.getInstance().addAlert(alertProp);
   }
 
   /**
@@ -51,7 +51,7 @@ public class Alert {
    * @throws DatafariServerException
    */
   public static void deleteAlert(final String alertID) throws DatafariServerException, IOException {
-    AlertDataService.getInstance().deleteAlert(alertID);
+    AlertDataServicePostgres.getInstance().deleteAlert(alertID);
   }
 
   /**
@@ -62,7 +62,7 @@ public class Alert {
    * @throws IOException
    */
   public static List<Properties> getAlerts() throws DatafariServerException, IOException {
-    return AlertDataService.getInstance().getAlerts();
+    return AlertDataServicePostgres.getInstance().getAlerts();
   }
 
   /**
@@ -74,7 +74,7 @@ public class Alert {
    * @throws DatafariServerException
    */
   public static void deleteAllAlerts(final String username) throws DatafariServerException {
-    AlertDataService.getInstance().deleteUserAlerts(username);
+    AlertDataServicePostgres.getInstance().deleteUserAlerts(username);
   }
 
 }

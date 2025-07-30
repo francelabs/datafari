@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.francelabs.datafari.exception.DatafariServerException;
-import com.francelabs.datafari.service.db.DocumentDataService;
+import com.francelabs.datafari.service.db.DocumentDataServicePostgres;
 
 public class Favorite {
 
@@ -37,7 +37,7 @@ public class Favorite {
    * @throws DatafariServerException
    */
   public static void addFavorite(final String username, final String idDocument, final String titleDocument) throws DatafariServerException {
-    DocumentDataService.getInstance().addFavorite(username, idDocument, titleDocument);
+    DocumentDataServicePostgres.getInstance().addFavorite(username, idDocument, titleDocument);
   }
 
   /**
@@ -51,7 +51,7 @@ public class Favorite {
    * @throws DatafariServerException
    */
   public static void deleteFavorite(final String username, final String idDocument) throws DatafariServerException {
-    DocumentDataService.getInstance().deleteFavorite(username, idDocument);
+    DocumentDataServicePostgres.getInstance().deleteFavorite(username, idDocument);
   }
 
   /**
@@ -66,7 +66,7 @@ public class Favorite {
    * @throws DatafariServerException
    */
   public static List<String> getFavorites(final String username, final String[] documentIDs) throws DatafariServerException {
-    return DocumentDataService.getInstance().getFavorites(username, documentIDs);
+    return DocumentDataServicePostgres.getInstance().getFavorites(username, documentIDs);
 
   }
 
@@ -78,7 +78,7 @@ public class Favorite {
    *         CodesReturned.PROBLEMCONNECTIONDATABASE if the db isn't running
    */
   public static void removeFavorites(final String username) throws DatafariServerException {
-    DocumentDataService.getInstance().removeFavorites(username);
+    DocumentDataServicePostgres.getInstance().removeFavorites(username);
 
   }
 
@@ -90,7 +90,7 @@ public class Favorite {
    * @return
    */
   public static void removeFavoritesAndLikesDB(final String username) throws DatafariServerException {
-    DocumentDataService.getInstance().removeFavoritesAndLikeDB(username);
+    DocumentDataServicePostgres.getInstance().removeFavoritesAndLikeDB(username);
 
   }
 }

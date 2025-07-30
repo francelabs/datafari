@@ -37,7 +37,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.francelabs.datafari.audit.AuditLogUtil;
-import com.francelabs.datafari.service.db.AlertDataService;
+import com.francelabs.datafari.service.db.AlertDataServicePostgres;
 import com.francelabs.datafari.user.Alert;
 import com.francelabs.datafari.utils.AuthenticatedUserName;
 
@@ -82,7 +82,7 @@ public class Alerts extends HttpServlet {
       final JSONObject superJson = new JSONObject();
       final JSONArray alertsArray = new JSONArray();
       try {
-        final List<Properties> alerts = AlertDataService.getInstance().getAlerts();
+        final List<Properties> alerts = AlertDataServicePostgres.getInstance().getAlerts();
         // Get all the existing Alerts
         for (final Properties alert : alerts) { // Get the next Alert
           if (!request.getParameter("keyword").equals("")) {

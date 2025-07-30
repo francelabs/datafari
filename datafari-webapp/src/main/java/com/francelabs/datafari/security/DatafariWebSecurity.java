@@ -2,16 +2,12 @@ package com.francelabs.datafari.security;
 
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.data.cassandra.core.CassandraOperations;
-import org.springframework.data.cassandra.core.CassandraTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -27,44 +23,28 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.datastax.oss.driver.api.core.CqlSession;
 import com.francelabs.datafari.ldap.LdapConfig;
 import com.francelabs.datafari.ldap.LdapRealm;
-import com.francelabs.datafari.security.auth.CassandraAuthenticationProvider;
 import com.francelabs.datafari.security.auth.DatafariAuthenticationSuccessHandler;
 import com.francelabs.datafari.security.auth.DatafariLdapAuthoritiesPopulator;
-import com.francelabs.datafari.service.db.CassandraManager;
+
+import com.francelabs.datafari.security.auth.PostgresAuthenticationProvider; 
+
 import com.francelabs.datafari.utils.DatafariMainConfiguration;
 import com.google.common.collect.ImmutableList;
 
 @EnableWebSecurity
 public class DatafariWebSecurity {
 
-  private static final Logger LOGGER = LogManager.getLogger(DatafariWebSecurity.class.getName());
-
-  private static final int maxConcurrentSessions = Integer.parseInt(DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.MAX_CONCURRENT_SESSIONS));
-
-  // Tell spring witch Cassandra session to use
-  public @Bean CqlSession session() {
-    return CassandraManager.getInstance().getSession();
-  }
-
-  @Bean
-  CassandraOperations cassandraTemplate() {
-    return new CassandraTemplate(session());
-  }
+  private static final int maxConcurrentSessions =
+      Integer.parseInt(DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.MAX_CONCURRENT_SESSIONS));
 
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     final CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOriginPatterns(ImmutableList.of("*"));
     configuration.setAllowedMethods(ImmutableList.of("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH"));
-    // setAllowCredentials(true) is important, otherwise:
-    // The value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard '*' when the request's credentials mode is
-    // 'include'.
     configuration.setAllowCredentials(true);
-    // setAllowedHeaders is important! Without it, OPTIONS preflight request
-    // will fail with 403 Invalid CORS request
     configuration.setAllowedHeaders(ImmutableList.of("Authorization", "Cache-Control", "Content-Type"));
     final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
@@ -100,7 +80,6 @@ public class DatafariWebSecurity {
       http.sessionManagement().sessionFixation().migrateSession().maximumSessions(maxConcurrentSessions);
       http.formLogin().loginPage("/login").defaultSuccessUrl("/index.jsp", false).successHandler(new DatafariAuthenticationSuccessHandler());
       http.logout().logoutSuccessUrl("/index.jsp").invalidateHttpSession(true);
-      // Only handles requests that does not contain any authorization header or containing basic auth header
       http.requestMatcher(request -> {
         final String auth = request.getHeader(HttpHeaders.AUTHORIZATION);
         boolean handles = false;
@@ -117,15 +96,19 @@ public class DatafariWebSecurity {
 
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-      auth.authenticationProvider(new CassandraAuthenticationProvider());
+      auth.authenticationProvider(new PostgresAuthenticationProvider());
       final List<LdapRealm> adList = LdapConfig.getActiveDirectoryRealms();
       for (final LdapRealm adr : adList) {
         for (final String userBase : adr.getUserBases()) {
-          auth.ldapAuthentication().ldapAuthoritiesPopulator(new DatafariLdapAuthoritiesPopulator()).userSearchBase(userBase).userSearchFilter("(" + adr.getUserSearchAttribute() + "={0})").contextSource().managerDn(adr.getConnectionName())
-              .managerPassword(adr.getDeobfuscatedConnectionPassword()).url(adr.getConnectionURL());
+          auth.ldapAuthentication().ldapAuthoritiesPopulator(new DatafariLdapAuthoritiesPopulator())
+              .userSearchBase(userBase)
+              .userSearchFilter("(" + adr.getUserSearchAttribute() + "={0})")
+              .contextSource()
+              .managerDn(adr.getConnectionName())
+              .managerPassword(adr.getDeobfuscatedConnectionPassword())
+              .url(adr.getConnectionURL());
         }
       }
     }
   }
-
 }

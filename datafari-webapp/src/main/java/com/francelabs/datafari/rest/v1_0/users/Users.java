@@ -20,7 +20,7 @@ import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.francelabs.datafari.service.db.StatisticsDataService;
+import com.francelabs.datafari.service.db.StatisticsDataServicePostgres;
 import com.francelabs.datafari.utils.userqueryconf.UserPrefQueryConf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -148,10 +148,10 @@ public class Users {
       JSONArray history;
       try {
         String query = request.getParameter("query");
-        history = StatisticsDataService.getInstance().getHistory(authenticatedUserName, query);
+        history = StatisticsDataServicePostgres.getInstance().getHistory(authenticatedUserName, query);
         responseContent.put("history", history);
         AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(), "User " + authenticatedUserName + " accessed his request history");
-      } catch (final DatafariServerException e) {
+      } catch (final Exception e) {
         logger.error("Error while retrieving the history for a user.");
         throw new InternalErrorException("Error while retrieving the history.");
       }

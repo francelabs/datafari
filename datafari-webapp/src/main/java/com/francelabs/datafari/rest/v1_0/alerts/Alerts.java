@@ -31,7 +31,7 @@ import com.francelabs.datafari.rest.v1_0.exceptions.DataNotFoundException;
 import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
 import com.francelabs.datafari.rest.v1_0.exceptions.NotAuthenticatedException;
 import com.francelabs.datafari.rest.v1_0.utils.RestAPIUtils;
-import com.francelabs.datafari.service.db.AlertDataService;
+import com.francelabs.datafari.service.db.AlertDataServicePostgres;
 import com.francelabs.datafari.user.Alert;
 import com.francelabs.datafari.utils.AuthenticatedUserName;
 
@@ -57,7 +57,7 @@ public class Alerts {
         if (authenticatedUserName != null) {
             final JSONObject jsonResponse = new JSONObject();
             try {
-                final List<Properties> alertsList = AlertDataService.getInstance().getUserAlerts(authenticatedUserName);
+                final List<Properties> alertsList = AlertDataServicePostgres.getInstance().getUserAlerts(authenticatedUserName);
                 List<JSONObject> alertsJSONList = new ArrayList<JSONObject>();
                 for (int i = 0; i < alertsList.size(); i++) {
                     // If no keyword is provided or if the keyword from the alert corresponds to the
@@ -117,7 +117,7 @@ public class Alerts {
             final String authenticatedUserName = AuthenticatedUserName.getName(request);
             // Check if this alert ID is in the currently authenticated list of alerts, if
             // not throw an exception.
-            final List<Properties> alertsList = AlertDataService.getInstance().getUserAlerts(authenticatedUserName);
+            final List<Properties> alertsList = AlertDataServicePostgres.getInstance().getUserAlerts(authenticatedUserName);
             JSONObject selectedAlert = getAlertFromIdForUser(alertID, authenticatedUserName);
             if (selectedAlert == null) {
                 throw new DataNotFoundException("This alert does not exist for the current user.");
@@ -175,7 +175,7 @@ public class Alerts {
      *                                 alerts data from the database
      */
     private JSONObject getAlertFromIdForUser(String id, String username) throws DatafariServerException {
-        final List<Properties> alertsList = AlertDataService.getInstance().getUserAlerts(username);
+        final List<Properties> alertsList = AlertDataServicePostgres.getInstance().getUserAlerts(username);
         Iterator<Properties> alertsListIt = alertsList.iterator();
         JSONObject selectedAlert = null;
         while (alertsListIt.hasNext() && selectedAlert == null) {
@@ -212,23 +212,23 @@ public class Alerts {
      */
     private Properties jsonToAlertProps(JSONObject alertJSON, String username) {
         final Properties alertProp = new Properties();
-        if (alertJSON.get(AlertDataService.CORE_COLUMN) == null
-                || alertJSON.get(AlertDataService.FREQUENCY_COLUMN) == null
-                || alertJSON.get(AlertDataService.MAIL_COLUMN) == null
-                || alertJSON.get(AlertDataService.SUBJECT_COLUMN) == null) {
+        if (alertJSON.get(AlertDataServicePostgres.CORE_COLUMN) == null
+                || alertJSON.get(AlertDataServicePostgres.FREQUENCY_COLUMN) == null
+                || alertJSON.get(AlertDataServicePostgres.MAIL_COLUMN) == null
+                || alertJSON.get(AlertDataServicePostgres.SUBJECT_COLUMN) == null) {
             throw new BadRequestException("Some parameters to create the alert were not provided.");
         }
-        if (alertJSON.get(AlertDataService.KEYWORD_COLUMN) == null
-                || ((String) alertJSON.get(AlertDataService.KEYWORD_COLUMN)).length() == 0) {
+        if (alertJSON.get(AlertDataServicePostgres.KEYWORD_COLUMN) == null
+                || ((String) alertJSON.get(AlertDataServicePostgres.KEYWORD_COLUMN)).length() == 0) {
             alertProp.put("keyword", "*:*");
         }
-        alertProp.put(AlertDataService.KEYWORD_COLUMN, alertJSON.get(AlertDataService.KEYWORD_COLUMN));
-        alertProp.put(AlertDataService.CORE_COLUMN, alertJSON.get(AlertDataService.CORE_COLUMN));
-        alertProp.put(AlertDataService.FREQUENCY_COLUMN, alertJSON.get(AlertDataService.FREQUENCY_COLUMN));
-        alertProp.put(AlertDataService.MAIL_COLUMN, alertJSON.get(AlertDataService.MAIL_COLUMN));
-        alertProp.put(AlertDataService.SUBJECT_COLUMN, alertJSON.get(AlertDataService.SUBJECT_COLUMN));
-        if (alertJSON.get(AlertDataService.FILTERS_COLUMN) != null) {
-            alertProp.put("filters", alertJSON.get(AlertDataService.FILTERS_COLUMN));
+        alertProp.put(AlertDataServicePostgres.KEYWORD_COLUMN, alertJSON.get(AlertDataServicePostgres.KEYWORD_COLUMN));
+        alertProp.put(AlertDataServicePostgres.CORE_COLUMN, alertJSON.get(AlertDataServicePostgres.CORE_COLUMN));
+        alertProp.put(AlertDataServicePostgres.FREQUENCY_COLUMN, alertJSON.get(AlertDataServicePostgres.FREQUENCY_COLUMN));
+        alertProp.put(AlertDataServicePostgres.MAIL_COLUMN, alertJSON.get(AlertDataServicePostgres.MAIL_COLUMN));
+        alertProp.put(AlertDataServicePostgres.SUBJECT_COLUMN, alertJSON.get(AlertDataServicePostgres.SUBJECT_COLUMN));
+        if (alertJSON.get(AlertDataServicePostgres.FILTERS_COLUMN) != null) {
+            alertProp.put("filters", alertJSON.get(AlertDataServicePostgres.FILTERS_COLUMN));
         }
         alertProp.put("user", username);
         return alertProp;

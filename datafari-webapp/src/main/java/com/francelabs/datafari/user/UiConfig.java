@@ -1,7 +1,7 @@
 package com.francelabs.datafari.user;
 
 import com.francelabs.datafari.exception.DatafariServerException;
-import com.francelabs.datafari.service.db.UiConfigDataService;
+import com.francelabs.datafari.service.db.UiConfigDataServicePostgres;
 
 public class UiConfig {
     /**
@@ -13,7 +13,7 @@ public class UiConfig {
      * @throws DatafariServerException
      */
     public static String getUiConfig(final String username) throws DatafariServerException {
-        return UiConfigDataService.getInstance().getUiConfig(username);
+        return UiConfigDataServicePostgres.getInstance().getUiConfig(username);
     }
 
     /**
@@ -25,7 +25,7 @@ public class UiConfig {
      * @throws DatafariServerException
      */
     public static int setUiConfig(final String username, final String uiConfig) throws DatafariServerException {
-        return UiConfigDataService.getInstance().setUiConfig(username, uiConfig);
+        return UiConfigDataServicePostgres.getInstance().setUiConfig(username, uiConfig);
     }
 
     /**
@@ -37,7 +37,7 @@ public class UiConfig {
      * @throws DatafariServerException
      */
     public static int updateUiConfig(final String username, final String uiConfig) throws DatafariServerException {
-        return UiConfigDataService.getInstance().updateUiConfig(username, uiConfig);
+        return UiConfigDataServicePostgres.getInstance().updateUiConfig(username, uiConfig);
     }
 
     /**
@@ -48,6 +48,6 @@ public class UiConfig {
      * @throws DatafariServerException
      */
     public static int deleteUiConfig(final String username) throws DatafariServerException {
-        return UiConfigDataService.getInstance().deleteUiConfig(username);
+        return UiConfigDataServicePostgres.getInstance().deleteUiConfig(username);
     }
 }

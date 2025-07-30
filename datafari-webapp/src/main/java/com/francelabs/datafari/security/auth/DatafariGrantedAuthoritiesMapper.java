@@ -46,7 +46,7 @@ public class DatafariGrantedAuthoritiesMapper implements GrantedAuthoritiesMappe
           return;
         }
         // Retrieve Datafari rights
-        mappedAuthorities.addAll(CassandraAuthenticationProvider.getGrantedAuthorities(username));
+        mappedAuthorities.addAll(PostgresAuthenticationProvider.getGrantedAuthorities(username));
 
       } else if (OAuth2UserAuthority.class.isInstance(authority)) {
         final OAuth2UserAuthority oauth2UserAuthority = (OAuth2UserAuthority) authority;
@@ -61,7 +61,7 @@ public class DatafariGrantedAuthoritiesMapper implements GrantedAuthoritiesMappe
           return;
         }
         // Retrieve Datafari rights
-        mappedAuthorities.addAll(CassandraAuthenticationProvider.getGrantedAuthorities(username));
+        mappedAuthorities.addAll(PostgresAuthenticationProvider.getGrantedAuthorities(username));
 
       }
     });

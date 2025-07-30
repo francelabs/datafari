@@ -21,7 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.francelabs.datafari.exception.DatafariServerException;
-import com.francelabs.datafari.service.db.DocumentDataService;
+import com.francelabs.datafari.service.db.DocumentDataServicePostgres;
 
 public class Like {
 
@@ -40,7 +40,7 @@ public class Like {
 	 * @throws DatafariServerException
 	 */
 	public static void addLike(String username, String idDocument) throws DatafariServerException {
-		DocumentDataService.getInstance().addLike(username, idDocument);
+		DocumentDataServicePostgres.getInstance().addLike(username, idDocument);
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class Like {
 	 * @throws DatafariServerException
 	 */
 	public static void unlike(String username, String idDocument) throws DatafariServerException {
-		DocumentDataService.getInstance().unlike(username, idDocument);
+		DocumentDataServicePostgres.getInstance().unlike(username, idDocument);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class Like {
 	 * @throws DatafariServerException
 	 */
 	public static List<String> getLikes(String username, String[] documentIDs) throws DatafariServerException {
-		return DocumentDataService.getInstance().getLikes(username, documentIDs);
+		return DocumentDataServicePostgres.getInstance().getLikes(username, documentIDs);
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class Like {
 	 *         running
 	 */
 	public static void removeLikes(String username) throws DatafariServerException {
-		DocumentDataService.getInstance().removeLikes(username);
+		DocumentDataServicePostgres.getInstance().removeLikes(username);
 	}
 
 }

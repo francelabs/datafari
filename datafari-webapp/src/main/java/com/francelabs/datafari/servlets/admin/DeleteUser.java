@@ -17,7 +17,7 @@ import com.francelabs.datafari.audit.AuditLogUtil;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.licence.LicenceManagement;
-import com.francelabs.datafari.service.db.AccessTokenDataService;
+import com.francelabs.datafari.service.db.AccessTokenDataServicePostgres;
 import com.francelabs.datafari.service.db.StatisticsDataService;
 import com.francelabs.datafari.service.db.UserDataService;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
@@ -68,7 +68,7 @@ public class DeleteUser extends HttpServlet {
         Favorite.removeFavoritesAndLikesDB(username);
         Lang.deleteLang(username);
         SavedSearch.removeSearches(username);
-        AccessTokenDataService.getInstance().removeTokens(username);
+        AccessTokenDataServicePostgres.getInstance().removeTokens(username);
         LicenceManagement.getInstance().removeUser(username);
         StatisticsDataService.getInstance().deleteUserStatistics(username);
       } catch (final DatafariServerException e) {
