@@ -2,7 +2,7 @@
   "logConfigFile": "",
   "jobs": {
     "VECTOR": {
-      "searchHandler": "/opensearch",
+      "searchHandler": "/select/not-embedded",
       "updateHandler": "/update/embed",
       "source": {
         "baseUrl": "localhost:2181",
@@ -29,15 +29,7 @@
         "solrCollection": "VectorMain"
       },
       "fieldsOperation": {
-        "vector_4": "remove",
-        "vector_256": "remove",
-        "vector_384": "remove",
-        "vector_512": "remove",
-        "vector_768": "remove",
-        "vector_1024": "remove",
-        "vector_1536": "remove",
-        "vector_3072": "remove",
-        "vector_4096": "remove"
+        "has_vector": "remove"
       },
       "nbDocsPerBatch": 1000,
       "fieldsMapping": {
