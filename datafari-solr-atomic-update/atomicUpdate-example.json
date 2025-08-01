@@ -17,6 +17,9 @@
         "field_3": "add-distinct",
         "field_4": "set"
       },
+      "filterQueries": [  // List of filterQueries (Solr fq) applied in the retrieval step
+        "repo_source:share"
+      ],
       "nbDocsPerBatch": 1000, // The documents are selected and updated per batches. Each batch is stored in RAM so this number depends on the documents size.
       "fieldsMapping": { // Optional: to specify a mapping between source and destination collections
         "field_3": "dest_field_1",

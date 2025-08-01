@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Solr Accessor to retrieve documents. Related to the <b>Source Collection</b> of an Atomic Update Job.
@@ -109,16 +110,28 @@ public class DocumentsCollector extends AbstractDocuments {
    * @param fieldsToUpdate set of Solr fields used to update the destination documents.
    * @return the Solr query created to be sent to Solr
    */
-  private SolrQuery getSolrQuery(String fromDate, Collection<String> fieldsToUpdate){
+  private SolrQuery getSolrQuery(String fromDate, Collection<String> fieldsToUpdate) {
     final SolrQuery query = new SolrQuery("*:*");
     query.addField(CommonParams.ID);
-    for (String field: fieldsToUpdate) {
+
+    for (String field : fieldsToUpdate) {
       query.addField(field);
     }
 
+    // Filtering by date
     if (fromDate != null) {
       query.addFilterQuery("last_modified:[" + fromDate + " TO NOW]");
     }
+
+    List<String> filters = jobConfig.getFilterQueries();
+    if (filters != null && !filters.isEmpty()) {
+      for (String fq : filters) {
+        if (fq != null && !fq.isBlank()) {
+          query.addFilterQuery(fq);
+        }
+      }
+    }
+
     query.setSort(CommonParams.ID, SolrQuery.ORDER.asc);
     query.setRows(maxDocsPerQuery);
     return query;
