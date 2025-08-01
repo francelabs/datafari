@@ -6,12 +6,12 @@ public class LLMModelConfig {
     private String name;
     private String interfaceType;
 
-    public Map<String, Object> getProperties() {
-        return properties;
+    public Map<String, Object> getParams() {
+        return params;
     }
 
-    public void setProperties(Map<String, Object> properties) {
-        this.properties = properties;
+    public void setParams(Map<String, Object> params) {
+        this.params = params;
     }
 
     public String getInterfaceType() {
@@ -30,5 +30,5 @@ public class LLMModelConfig {
         this.name = name;
     }
 
-    private Map<String, Object> properties;
+    private Map<String, Object> params;
 }

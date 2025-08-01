@@ -4,7 +4,7 @@
     {
       "name": "openai-default",
       "interfaceType": "OpenAI",
-      "properties": {
+      "params": {
         "baseUrl": "https://api.openai.com/v1",
         "apiKey": "sk-your-openai-key",
         "modelName": "gpt-4o-mini",
@@ -18,7 +18,7 @@
     {
       "name": "huggingface-prod",
       "interfaceType": "HuggingFace",
-      "properties": {
+      "params": {
         "accessToken": "your-huggingface-key",
         "modelId": "meta-llama/Llama-3.1-8B-Instruct",
         "temperature": 0.1,
@@ -29,7 +29,7 @@
     {
       "name": "gemini-test",
       "interfaceType": "GoogleAiGemini",
-      "properties": {
+      "params": {
         "apiKey": "your-GoogleAiGemini-api-key",
         "modelName": "gemini-2.5-pro",
         "temperature": 0.6,

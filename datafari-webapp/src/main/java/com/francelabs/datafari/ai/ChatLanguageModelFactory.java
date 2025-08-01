@@ -95,6 +95,6 @@ public class ChatLanguageModelFactory {
             throw new IllegalArgumentException("No builder found for interface: " + interfaceType);
         }
 
-        return builder.build(config.getProperties());
+        return builder.build(config.getParams());
     }
 }
