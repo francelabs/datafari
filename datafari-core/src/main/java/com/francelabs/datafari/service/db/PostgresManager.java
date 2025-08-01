@@ -8,8 +8,8 @@ public class PostgresManager {
 
     private static PostgresManager instance;
     private static final String URL = "jdbc:postgresql://localhost:5432/datafari";
-    private static final String USER = "datafari_user";
-    private static final String PASSWORD = "secret";
+    private static final String USER = "postgres";
+    private static final String PASSWORD = "admin";
 
     private PostgresManager() {
         try {

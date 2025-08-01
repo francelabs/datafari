@@ -118,7 +118,7 @@ $.get("../SearchAdministrator/getAllUsersAndRoles", {
     $.each(users, function(index, user) {
       var passwordCell = window.i18n.msgStore["userFromAD"];
       ;
-      if (user.isImported === false) {
+      if (user.is_imported === false) {
         passwordCell = '<input data-user="' + user.username + '" placeHolder="change password" type="password" class="password"/>';
       }
       html += '<tr class="root" data-user="' + user.username + '">' + "<th>" + user.username + "</th>" + '<th>' + passwordCell + '</th>' + '<th>';

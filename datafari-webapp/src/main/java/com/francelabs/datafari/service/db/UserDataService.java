@@ -17,12 +17,12 @@ public class UserDataService {
     private static UserDataService instance;
 
     public final static String SEARCHADMINISTRATOR = "SearchAdministrator";
-    public final static String USERCOLLECTION = "user";
-    public final static String ROLECOLLECTION = "role";
+    public final static String USERCOLLECTION = "users";
+    public final static String ROLECOLLECTION = "roles";
 
     public static final String USERNAMECOLUMN = "username";
     public final static String PASSWORDCOLUMN = "password";
-    public final static String ISIMPORTEDCOLUMN = "isImported";
+    public final static String ISIMPORTEDCOLUMN = "is_imported";
     public final static String LASTREFRESHCOLUMN = "last_refresh";
     public final static String IMPORTCOLUMN = "imported";
     public final static String ROLECOLUMN = "role";
