@@ -15,7 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.francelabs.datafari.exception.DatafariServerException;
-import com.francelabs.datafari.service.db.UserDataServicePostgres;
+import com.francelabs.datafari.service.db.UserDataService;
 import com.francelabs.datafari.service.db.UserDataTTLService;
 import com.francelabs.datafari.user.User;
 
@@ -51,7 +51,7 @@ public class PostgresAuthenticationProvider implements AuthenticationProvider {
   private String getPassword(final String username) {
     try {
       // Utilisation du UserDataServicePostgres
-      return UserDataServicePostgres.getInstance().getPassword(username);
+      return UserDataService.getInstance().getPassword(username);
     } catch (Exception e) {
       // Log à ajouter si besoin
       return null;
@@ -73,8 +73,8 @@ public class PostgresAuthenticationProvider implements AuthenticationProvider {
     final List<String> roles = new ArrayList<>();
 
     try {
-      if (UserDataServicePostgres.getInstance().isInBase(rawUsername)) {
-        roles.addAll(UserDataServicePostgres.getInstance().getRoles(rawUsername));
+      if (UserDataService.getInstance().isInBase(rawUsername)) {
+        roles.addAll(UserDataService.getInstance().getRoles(rawUsername));
         // Refresh the user data TTL
         if (!rawUsername.contentEquals("admin")) {
           UserDataTTLService.refreshUserDataTTL(rawUsername); // Peut être à ajuster pour Postgres !

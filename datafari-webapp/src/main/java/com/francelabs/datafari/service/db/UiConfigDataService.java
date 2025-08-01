@@ -1,31 +1,14 @@
-/*******************************************************************************
- *  * Copyright 2015 France Labs
- *  *
- *  * Licensed under the Apache License, Version 2.0 (the "License");
- *  * you may not use this file except in compliance with the License.
- *  * You may obtain a copy of the License at
- *  *
- *  *      http://www.apache.org/licenses/LICENSE-2.0
- *  *
- *  * Unless required by applicable law or agreed to in writing, software
- *  * distributed under the License is distributed on an "AS IS" BASIS,
- *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  * See the License for the specific language governing permissions and
- *  * limitations under the License.
- *******************************************************************************/
 package com.francelabs.datafari.service.db;
 
+import java.sql.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.datastax.oss.driver.api.core.DriverException;
-import com.datastax.oss.driver.api.core.cql.ResultSet;
-import com.datastax.oss.driver.api.core.cql.Row;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.utils.GDPRConfiguration;
 
-public class UiConfigDataService extends CassandraService {
+public class UiConfigDataService {
+
     final static Logger logger = LogManager.getLogger(UiConfigDataService.class.getName());
 
     public static final String USERNAMECOLUMN = "username";
@@ -34,25 +17,18 @@ public class UiConfigDataService extends CassandraService {
     public final static String LASTREFRESHCOLUMN = "last_refresh";
 
     private final String userDataTTL;
-
     private static UiConfigDataService instance;
 
-    public static synchronized UiConfigDataService getInstance() throws DatafariServerException {
-        try {
-            if (instance == null) {
-                instance = new UiConfigDataService();
-            }
-            instance.refreshSession();
-            return instance;
-        } catch (final DriverException e) {
-            logger.warn("Unable to get instance : " + e.getMessage());
-            // TODO catch specific exception
-            throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+    private final PostgresService pgService = new PostgresService();
+
+    public static synchronized UiConfigDataService getInstance() {
+        if (instance == null) {
+            instance = new UiConfigDataService();
         }
+        return instance;
     }
 
     private UiConfigDataService() {
-        refreshSession();
         userDataTTL = GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL);
     }
 
@@ -65,14 +41,12 @@ public class UiConfigDataService extends CassandraService {
     public synchronized String getUiConfig(final String username) {
         String uiConfig = null;
         try {
-            final String query = "SELECT " + UICONFIGCOLUMN 
-                    + " FROM " + UICONFIGCOLLECTION 
-                    + " where " + USERNAMECOLUMN + "='"
-                    + username + "'";
-            final ResultSet result = session.execute(query);
-            final Row row = result.one();
-            if (row != null && !row.isNull(UICONFIGCOLUMN) && !row.getString(UICONFIGCOLUMN).isEmpty()) {
-                uiConfig = row.getString(UICONFIGCOLUMN);
+            final String sql = "SELECT " + UICONFIGCOLUMN + " FROM " + UICONFIGCOLLECTION +
+                    " WHERE " + USERNAMECOLUMN + " = ?";
+            try (ResultSet result = pgService.executeSelect(sql, username)) {
+                if (result.next()) {
+                    uiConfig = result.getString(UICONFIGCOLUMN);
+                }
             }
         } catch (final Exception e) {
             logger.warn("Unable to get ui config for user " + username + " : " + e.getMessage());
@@ -90,22 +64,14 @@ public class UiConfigDataService extends CassandraService {
      */
     public int setUiConfig(final String username, final String uiConfig) throws DatafariServerException {
         try {
-            String ttlToUse = userDataTTL;
-            if (username.contentEquals("admin")) {
-                ttlToUse = "0";
-            }
-            final String query = "INSERT INTO " + UICONFIGCOLLECTION 
-                    + " (" + USERNAMECOLUMN + "," 
-                    + UICONFIGCOLUMN + ","
-                    + LASTREFRESHCOLUMN + ")" 
-                    + " values ('" + username + "',"
-                    + "'" + uiConfig + "',"
-                    + "toTimeStamp(NOW()))"
-                    + " USING TTL " + ttlToUse;
-            session.execute(query);
+            String sql = "INSERT INTO " + UICONFIGCOLLECTION + " (" + USERNAMECOLUMN + ", " + UICONFIGCOLUMN + ", " + LASTREFRESHCOLUMN + ") " +
+                    "VALUES (?, ?, ?) " +
+                    "ON CONFLICT (" + USERNAMECOLUMN + ") DO UPDATE SET " + UICONFIGCOLUMN + " = EXCLUDED." + UICONFIGCOLUMN + ", " +
+                    LASTREFRESHCOLUMN + " = EXCLUDED." + LASTREFRESHCOLUMN;
+            // TTL not native in PG, can be enforced by external script if needed
+            pgService.executeUpdate(sql, username, uiConfig, new Timestamp(System.currentTimeMillis()));
         } catch (final Exception e) {
             logger.warn("Unable to insert ui config for user " + username + " : " + e.getMessage());
-            // TODO catch specific exception
             throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
         }
         return CodesReturned.ALLOK.getValue();
@@ -121,19 +87,14 @@ public class UiConfigDataService extends CassandraService {
      */
     public int updateUiConfig(final String username, final String uiConfig) throws DatafariServerException {
         try {
-            String ttlToUse = userDataTTL;
-            if (username.contentEquals("admin")) {
-                ttlToUse = "0";
-            }
-            final String query = "UPDATE " + UICONFIGCOLLECTION 
-                    + " USING TTL " + ttlToUse
-                    + " SET " + UICONFIGCOLUMN + " = '" + uiConfig + "',"
-                    + " " + LASTREFRESHCOLUMN + " = toTimeStamp(NOW())"
-                    + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
-            session.execute(query);
+            String sql = "UPDATE " + UICONFIGCOLLECTION + " SET " +
+                    UICONFIGCOLUMN + " = ?, " +
+                    LASTREFRESHCOLUMN + " = ? " +
+                    "WHERE " + USERNAMECOLUMN + " = ?";
+            // TTL not native in PG, can be enforced by external script if needed
+            pgService.executeUpdate(sql, uiConfig, new Timestamp(System.currentTimeMillis()), username);
         } catch (final Exception e) {
             logger.warn("Unable to update ui config for user " + username + " : " + e.getMessage());
-            // TODO catch specific exception
             throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
         }
         return CodesReturned.ALLOK.getValue();
@@ -154,13 +115,11 @@ public class UiConfigDataService extends CassandraService {
      */
     public int deleteUiConfig(final String username) throws DatafariServerException {
         try {
-            final String query = "DELETE FROM " + UICONFIGCOLLECTION 
-                    + " WHERE " + USERNAMECOLUMN + " = '" + username + "'"
-                    + " IF EXISTS";
-            session.execute(query);
+            final String sql = "DELETE FROM " + UICONFIGCOLLECTION +
+                    " WHERE " + USERNAMECOLUMN + " = ?";
+            pgService.executeUpdate(sql, username);
         } catch (final Exception e) {
             logger.warn("Unable to delete ui config for user " + username + " : " + e.getMessage());
-            // TODO catch specific exception
             throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
         }
         return CodesReturned.ALLOK.getValue();

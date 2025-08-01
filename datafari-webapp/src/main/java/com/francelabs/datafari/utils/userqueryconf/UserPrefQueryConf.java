@@ -1,7 +1,7 @@
 package com.francelabs.datafari.utils.userqueryconf;
 
 import com.francelabs.datafari.exception.DatafariServerException;
-import com.francelabs.datafari.service.db.UiConfigDataServicePostgres;
+import com.francelabs.datafari.service.db.UiConfigDataService;
 import com.francelabs.datafari.utils.SolrAPI;
 import com.sun.istack.NotNull;
 import org.apache.commons.lang3.StringUtils;
@@ -112,7 +112,7 @@ public class UserPrefQueryConf extends AUserQueryConf {
    */
   //FIXME repasser en private
   public @NotNull String buildUserQueryByPreferences(String username) throws DatafariServerException {
-    String uiConfig = UiConfigDataServicePostgres.getInstance().getUiConfig(username);
+    String uiConfig = UiConfigDataService.getInstance().getUiConfig(username);
     if (org.apache.commons.lang.StringUtils.isBlank(uiConfig)){
       return "";
     }
