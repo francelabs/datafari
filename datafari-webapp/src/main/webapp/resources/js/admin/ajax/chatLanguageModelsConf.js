@@ -288,6 +288,9 @@ window.deleteModel = function (index) {
 
 // === Save all ===
 async function saveAll() {
+  if (activeModel === null && models.length > 0) {
+    activeModel = models[0].name;
+  }
   const body = JSON.stringify({ activeModel, models });
 
   const response = await fetch(API_URL, {

@@ -1340,7 +1340,7 @@
             <str name="outputField">${texttovector.outputfield:vector_1536}</str>
             <str name="model">${texttovector.model:default_model}</str>
         </processor>
-        <processor class="com.francelabs.datafari.updateprocessor.VectorTaggerUpdateProcessor">
+        <processor class="com.francelabs.datafari.updateprocessor.VectorTaggerUpdateProcessorFactory">
             <str name="enabled">true</str>
             <str name="outputField">${texttovector.outputfield:vector_1536}</str>
         </processor>

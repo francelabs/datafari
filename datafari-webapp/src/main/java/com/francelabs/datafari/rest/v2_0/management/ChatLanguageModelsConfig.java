@@ -122,10 +122,7 @@ public class ChatLanguageModelsConfig extends HttpServlet {
         try {
             LLMModelConfigurationManager configManager = new LLMModelConfigurationManager();
             ChatLanguageModelFactory factory = new ChatLanguageModelFactory(configManager);
-            LOGGER.info("EBE - Loading model");
             ChatLanguageModel model = factory.createChatModel(modelName);
-            LOGGER.info("EBE - model loaded");
-
             String result = model.generate(prompt);
             resp.setContentType("text/plain");
             resp.getWriter().write(result);
