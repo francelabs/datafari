@@ -12,6 +12,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+@Deprecated(forRemoval = true)
 public class GenericLlmService {
 
     private static final String CONFIG_FILE = "models.json"; // Next to prompt templates

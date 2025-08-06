@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated(forRemoval = true)
 public class OpenAiLlmService implements LlmService {
 
     private static final Logger LOGGER = LogManager.getLogger(OpenAiLlmService.class.getName());

@@ -499,11 +499,6 @@
       <version>1.16.3</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>dev.langchain4j</groupId>
-      <artifactId>langchain4j-azure-open-ai</artifactId>
-      <version>0.35.0</version>
-    </dependency>
   </dependencies>
   <build>
     <plugins>

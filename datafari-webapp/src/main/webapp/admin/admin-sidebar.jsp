@@ -191,14 +191,41 @@
       </ul>
     </li>
 <%-- Expert menu stop --%>
-      
+
+<%-- AI features menus start --%>
+      <li id="VectorSearch" class="collapse-effect">
+        <a href="#menu-vectorsearch" class="dropdown-toggle" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="menu-ai">
+          <i class="fas fa-microchip"></i><span id="vectorSearchMenu-AdminUI" class="hidden-xs">Semantic Search</span>
+        </a>
+        <ul id="menu-vectorsearch" class="list-unstyled collapse">
+          <%--li id="embeddingsModels"><a id="embeddingsModels-AdminUI"
+            class="ajax-link" href="?page=embeddingsModels">Vector Search</a></li--%> <%-- TODO --%>
+          <%--li id="chunkingConfiguration"><a id="chunkingConfiguration-AdminUI"
+            class="ajax-link" href="?page=chunkingConfiguration">Chunking Management</a></li--%> <%-- TODO --%>
+          <%--li id="vectorEmbeddings"><a id="vectorEmbeddings-AdminUI"
+            class="ajax-link" href="?page=vectorEmbeddings"></a></li--%> <%-- TODO --%>
+          <li id="solrVectorSearch"><a id="solrVectorSearch-AdminUI" class="ajax-link" href="?page=solrVectorSearch"></a></li> <%-- TO DELETE --%>
+        </ul>
+      </li>
+      <li id="AI" class="collapse-effect">
+        <a href="#menu-ai" class="dropdown-toggle" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="menu-ai">
+          <i class="fas fa-brain"></i><span id="aiMenu-AdminUI" class="hidden-xs">RAG & AI Powered Features</span>
+        </a>
+        <ul id="menu-ai" class="list-unstyled collapse">
+          <li id="ragConf"><a id="ragConf-AdminUI" class="ajax-link" href="?page=ragConf">RAG & AI Configuration</a></li> <%-- TO UPDATE --%>
+          <li id="chatLanguageModels"><a id="chatLanguageModels-AdminUI"
+            class="ajax-link" href="?page=chatLanguageModels">Chat Language Models Management</a></li>
+          <%--li id="AIPoweredAPI"><a id="AIPoweredAPI-AdminUI"
+            class="ajax-link" href="?page=AIPoweredAPI">AI Powered features</a></li --%> <%-- TODO --%>
+        </ul>
+      </li>
+<%-- AI features menu stop --%>
+
       <li id="Extra" class="collapse-effect">
         <a href="#menu-extra" class="dropdown-toggle" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="menu-extra">
           <i class="fas fa-desktop"></i><span id="extraFunctionalities-AdminUI" class="hidden-xs"></span>
         </a>
         <ul id="menu-extra" class="list-unstyled collapse">
-          <li id="solrVectorSearch"><a id="solrVectorSearch-AdminUI" class="ajax-link" href="?page=solrVectorSearch"></a></li>
-          <li id="ragConf"><a id="ragConf-AdminUI" class="ajax-link" href="?page=ragConf"></a></li>
           <li id="Duplicates"><a id="duplicates-AdminUI" class="ajax-link" href="?page=duplicates"></a></li>
           <li id="universalConnectorUploadConf"><a id="universalConnectorUploadConf-AdminUI" class="ajax-link" href="?page=universalConnectorUploadConf"></a></li>
         </ul>

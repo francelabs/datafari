@@ -87,6 +87,20 @@ $(function($) {
   elm.find('#MCFBackupRestore-AdminUI').html(window.i18n.msgStore['adminUI-Connectors-BackupRestore']);
   $("#tikaCreator-AdminUI").html(window.i18n.msgStore['adminUI-tikaCreator']);
   $("#solranalyticsmain-AdminUI").html(window.i18n.msgStore['adminUI-solrAnalyticsMain']);
+
+  // Vector Search menu
+  $("#vectorSearchMenu-AdminUI").html(window.i18n.msgStore['adminUI-vectorSearchMenu']);
+  $("#chunkingConfiguration-AdminUI").html(window.i18n.msgStore['adminUI-vectorSearchMenu-chunkingConfiguration']);
+  $("#embeddingsModels-AdminUI").html(window.i18n.msgStore['adminUI-vectorSearchMenu-embeddingsModels']);
+  $("#vectorEmbeddings-AdminUI").html(window.i18n.msgStore['adminUI-vectorSearchMenu-vectorEmbeddings']);
+  $("#solrVectorSearch-AdminUI").html(window.i18n.msgStore['adminUI-vectorSearchMenu-solrVectorSearch']);
+
+  // AI Related menu
+  $("#aiMenu-AdminUI").html(window.i18n.msgStore['adminUI-aiMenu']);
+  $("#chatLanguageModels-AdminUI").html(window.i18n.msgStore['adminUI-aiMenu-chatLanguageModels']);
+  $("#AIPoweredAPI-AdminUI").html(window.i18n.msgStore['adminUI-aiMenu-AIPoweredAPI']);
+
+
   //Extra Functionalities
   elm.find('#extraFunctionalities-AdminUI').html(window.i18n.msgStore['adminUI-extraFunctionalities']);
   elm.find('#deduplication-AdminUI').html(window.i18n.msgStore['adminUI-Deduplication']);

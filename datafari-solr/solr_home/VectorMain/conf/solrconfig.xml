@@ -726,9 +726,12 @@
         <lst name="defaults">
             <str name="echoParams">explicit</str>
             <str name="q">*:*</str>
-            <str name="fq">-has_vector:${texttovector.outputfield:vector_1536}</str>
             <str name="rows">10</str>
             <str name="fl">id,embedded_content,has_vector</str>
+        </lst>
+
+        <lst name="appends">
+            <str name="fq">-has_vector:${texttovector.outputfield:vector_1536}</str>
         </lst>
     </requestHandler>
 
@@ -1337,7 +1340,7 @@
             <str name="outputField">${texttovector.outputfield:vector_1536}</str>
             <str name="model">${texttovector.model:default_model}</str>
         </processor>
-        <processor class="com.francelabs.datafari.updateprocessor.TextToVectorUpdateProcessorFactory">
+        <processor class="com.francelabs.datafari.updateprocessor.VectorTaggerUpdateProcessor">
             <str name="enabled">true</str>
             <str name="outputField">${texttovector.outputfield:vector_1536}</str>
         </processor>

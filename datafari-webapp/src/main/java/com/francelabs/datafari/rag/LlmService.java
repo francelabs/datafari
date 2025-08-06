@@ -7,6 +7,7 @@ import java.util.List;
 /**
  * This interface can be used to create new services able to call any LLM API.
  */
+@Deprecated(forRemoval = true)
 public interface LlmService {
 
     /**

@@ -4,6 +4,7 @@ import com.francelabs.datafari.config.AbstractConfigClass;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+// TODO : Must be moved to com.francelabs.datafari.ai
 public class RagConfiguration extends AbstractConfigClass {
 
 
