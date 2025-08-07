@@ -1,6 +1,7 @@
 package com.francelabs.datafari.api;
 
 import java.io.StringReader;
+import java.security.InvalidParameterException;
 import java.security.Principal;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -353,26 +354,45 @@ public class SearchAPI {
     RagConfiguration config = RagConfiguration.getInstance();
 
     // Retrieve rows BEFORE overriding it
-    String defaultSolrTopK = config.getProperty(RagConfiguration.SOLR_TOPK, "10");
-    String defaultrrfTopK = config.getProperty(RagConfiguration.RRF_TOPK, "50");
-    String rows = parameterMap.getOrDefault("rows", new String[]{ defaultSolrTopK })[0]; // Number of results at the end of the search
-    String start = parameterMap.getOrDefault("start", new String[]{ "0" })[0];
+    String defaultRows = config.getProperty(RagConfiguration.SOLR_TOPK, "10"); // TODO : replace with SOLR_TOPK with a SOLR_ROWS parameter in config
+    String defaultTopK = config.getProperty(RagConfiguration.RRF_TOPK, "60");
+    String[] rows = parameterMap.getOrDefault("rows", new String[]{ defaultRows }); // Number of results at the end of the search
+    String[] start = parameterMap.getOrDefault("start", new String[]{ "0" });
+    String[] topK = parameterMap.getOrDefault("topK", new String[]{ defaultTopK });
 
-    if (!parameterMap.containsKey("q")) {
-      // Even if not useful, q must not be empty
-      parameterMap.put("q", new String[]{ "" });
+    // Compute pagination window
+    int startInt = 0;
+    int rowsInt = 10;
+    int topKInt = 60;
+    try {
+      startInt = Integer.parseInt(start[0]);
+      rowsInt = Integer.parseInt(rows[0]);
+      topKInt = Math.max(Integer.parseInt(topK[0]), startInt + rowsInt); // topK must be greater that start + rows
+    } catch (NumberFormatException e) {
+      // Keep default values
     }
-    if (!parameterMap.containsKey("queryrag")) {
+
+    parameterMap.put("rows", new String[]{Integer.toString(topKInt)}); // Both query must return at least rows + start results
+    parameterMap.put("start", new String[]{"0"}); // Initial searches must start at 0 position
+    parameterMap.put("topK", new String[]{Integer.toString(topKInt)});
+
+    // QUERY MANAGEMENT
+    if (!parameterMap.containsKey("q")) {
+      // If "q" is missing and "queryrag" is present, we use queryrag value
+      if (parameterMap.containsKey("queryrag")) {
+        parameterMap.put("q", parameterMap.get("queryrag"));
+      } else {
+        // queryrag & q are both missing
+        parameterMap.put("q", new String[]{ "" });
+        LOGGER.error("No 'q' or 'queryrag' param provided for hybrid search.");
+        throw new InvalidParameterException("No 'q' or 'queryrag' param provided for hybrid search.");
+      }
+    } else if (!parameterMap.containsKey("queryrag")) {
       // If q is present but queryrag is missing, we add it with q value
       parameterMap.put("queryrag", parameterMap.get("q"));
     }
-    String[] topKstr = parameterMap.get("topK");
-    if (topKstr == null || topKstr[0] == null || Integer.parseInt(topKstr[0]) < 0 ) {
-      topKstr = new String[] { defaultrrfTopK };
-    }
-    parameterMap.put("topK", topKstr);
-    parameterMap.put("rows", topKstr);
 
+    // MODEL MANAGEMENT
     if (!parameterMap.containsKey("model")) {
       String[] model = new String[] { config.getProperty(RagConfiguration.SOLR_EMBEDDINGS_MODEL, "default_model") };
       parameterMap.put("model", model);
@@ -426,14 +446,6 @@ public class SearchAPI {
 
 
     // Compute pagination window
-    int startInt = 0;
-    int rowsInt = 10;
-    try {
-      startInt = Integer.parseInt(start);
-      rowsInt = Integer.parseInt(rows);
-    } catch (NumberFormatException e) {
-      // Keep default values
-    }
     int endInt = Math.min(startInt + rowsInt, fusedDocs.size());
 
     JSONArray paginatedDocs = new JSONArray();

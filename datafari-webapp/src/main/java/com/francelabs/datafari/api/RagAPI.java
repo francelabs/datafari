@@ -443,11 +443,19 @@ public class RagAPI extends SearchAPI {
 
     // Preparing query for Search process
     String userQuery = request.getParameter("q");
+
     if (userQuery == null) {
       LOGGER.error("RagAPI - ERROR. No query provided.");
       throw new InvalidParameterException("No query provided.");
     } else {
       LOGGER.debug("RagAPI - Processing search for request : q={}", userQuery);
+    }
+
+    String queryrag = request.getParameter("queryrag");
+    // If queryrag is missing, set it to userQuery
+    if (queryrag == null || queryrag.isEmpty()) {
+      String[] queryragParam = { userQuery };
+      parameterMap.put("queryrag", queryragParam);
     }
 
     if (!config.getProperty(RagConfiguration.SEARCH_OPERATOR).isEmpty())
@@ -467,13 +475,11 @@ public class RagAPI extends SearchAPI {
     String retrievalMethod = config.getProperty(RagConfiguration.RETRIEVAL_METHOD, "bm25").toLowerCase();
 
     String handler;
-    String[] queryrag = { userQuery };
     switch (retrievalMethod) {
       case "rrf":
         return hybridSearch(protocol, request.getUserPrincipal(), parameterMap);
       case "vector":
         handler = "/vector";
-        parameterMap.put("queryrag", queryrag);
         return search(protocol, handler, request.getUserPrincipal(), parameterMap);
       case "bm25":
       default:
