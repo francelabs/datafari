@@ -21,6 +21,12 @@
       <version>${solr.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.solr</groupId>
+      <artifactId>solr-llm</artifactId>
+      <version>${solr.version}</version>
+      <scope>provided</scope>
+    </dependency>
     <!--dependency>
       <groupId>org.apache.solr</groupId>
       <artifactId>solr-llm</artifactId>

@@ -898,7 +898,7 @@
         </lst>
     </requestHandler>
 
-    <requestHandler class="solr.UpdateRequestHandler" name="/update/embed">
+    <requestHandler class="solr.UpdateRequestHandler" name="/update/atomic">
         <lst name="defaults">
             <str name="lowernames">true</str>
             <str name="fmap.language">ignored_</str>
@@ -1335,7 +1335,7 @@
     </updateRequestProcessorChain>
 
     <updateRequestProcessorChain name="datafari-embed">
-        <processor class="solr.llm.texttovector.update.processor.TextToVectorUpdateProcessorFactory">
+        <processor class="com.francelabs.datafari.updateprocessor.TextToVectorUpdateProcessorFactory">
             <str name="inputField">embedded_content</str>
             <str name="outputField">${texttovector.outputfield:vector_1536}</str>
             <str name="model">${texttovector.model:default_model}</str>

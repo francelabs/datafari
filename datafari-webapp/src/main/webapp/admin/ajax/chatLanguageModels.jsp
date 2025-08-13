@@ -94,10 +94,10 @@
                     <option value="">-- Select --</option>
                     <option value="OpenAI">OpenAI</option>
                     <option value="AIAgent">Datafari AI Agent</option>
-                    <option value="AzureOpenAI">Azure OpenAI</option>
-                    <option value="HuggingFace">Hugging Face</option>
-                    <option value="GoogleAiGemini">Google AI Gemini</option>
-                    <option value="Ollama">Ollama</option>
+                    <option value="AzureOpenAI">Azure OpenAI (not tested)</option>
+                    <option value="HuggingFace">Hugging Face (not tested)</option>
+                    <option value="GoogleAiGemini">Google AI Gemini (not tested)</option>
+                    <option value="Ollama">Ollama (not tested)</option>
                   </select>
                 </div>
               </div>
