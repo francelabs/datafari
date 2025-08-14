@@ -31,7 +31,8 @@ public class RagConfig {
           RagConfiguration.MAX_FILES,
           RagConfiguration.CHUNK_SIZE,
           RagConfiguration.SEARCH_OPERATOR,
-          RagConfiguration.CHAT_QUERY_REWRITING_ENABLED,
+          RagConfiguration.CHAT_QUERY_REWRITING_ENABLED_BM25,
+          RagConfiguration.CHAT_QUERY_REWRITING_ENABLED_VECTOR,
           RagConfiguration.CHAT_MEMORY_ENABLED,
           RagConfiguration.CHAT_MEMORY_HISTORY_SIZE,
           RagConfiguration.RETRIEVAL_METHOD,
@@ -78,7 +79,8 @@ public class RagConfig {
     response.put("inMemoryEnableVectorSearch", config.getBooleanProperty(RagConfiguration.ENABLE_VECTOR_SEARCH));
     response.put("inMemoryTopK", config.getProperty(RagConfiguration.IN_MEMORY_TOP_K));
 
-    response.put("chatQueryRewritingEnabled", config.getBooleanProperty(RagConfiguration.CHAT_QUERY_REWRITING_ENABLED));
+    response.put("chatQueryRewritingEnabledBM25", config.getBooleanProperty(RagConfiguration.CHAT_QUERY_REWRITING_ENABLED_BM25));
+    response.put("chatQueryRewritingEnabledVector", config.getBooleanProperty(RagConfiguration.CHAT_QUERY_REWRITING_ENABLED_VECTOR));
     response.put("chatMemoryEnabled", config.getBooleanProperty(RagConfiguration.CHAT_MEMORY_ENABLED));
     response.put("chatMemoryHistorySize", config.getProperty(RagConfiguration.CHAT_MEMORY_HISTORY_SIZE));
 

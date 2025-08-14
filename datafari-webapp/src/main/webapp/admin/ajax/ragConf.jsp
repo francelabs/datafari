@@ -151,9 +151,16 @@
         <!-- Chat Memory -->
 
         <div class="form-group row">
-          <label id="chatQueryRewritingEnabledLabel" class="col-sm-2 col-form-label" for="chatQueryRewritingEnabled">Enable Query Rewriting</label>
+          <label id="chatQueryRewritingEnabledLabel" class="col-sm-2 col-form-label">Enable Query Rewriting</label>
           <div class="col-sm-5">
-            <input type="checkbox" id="chatQueryRewritingEnabled" data-toggle="toggle" data-onstyle="success">
+            <label>
+                <input type="checkbox" id="chatQueryRewritingEnabledBM25" data-toggle="toggle" data-onstyle="success">
+                <span id="chatQueryRewritingEnabledBM25Label">For BM25</span>
+            </label>
+            <label>
+                <input type="checkbox" id="chatQueryRewritingEnabledVector" data-toggle="toggle" data-onstyle="success">
+                <span id="chatQueryRewritingEnabledVectorLabel">For Vector</span>
+            </label>
           </div>
         </div>
 

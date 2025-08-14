@@ -136,25 +136,39 @@ public class AiPowered {
         }
 
         //
-        // QUERY REWRITING
+        // QUERY REWRITING FOR VECTOR SEARCH
         // If enabled, we use a LLM to reformulate the user query into a search query
         // Only applies to vector or hybrid search
         //
-        String rewrittenQuery;
-        if (config.getBooleanProperty(RagConfiguration.CHAT_QUERY_REWRITING_ENABLED)
+        String vectorQuery = query;
+        if (config.getBooleanProperty(RagConfiguration.CHAT_QUERY_REWRITING_ENABLED_VECTOR)
                 && List.of("rrf", "vector").contains(config.getProperty(RagConfiguration.RETRIEVAL_METHOD))
-                && jsonDoc.get(ID_FIELD) != null
+                && jsonDoc.get(ID_FIELD) == null
         ) {
             try {
-                rewrittenQuery = RagAPI.rewriteSearchQuery(query, request, config);
+                vectorQuery = RagAPI.rewriteSearchQuery(query, "vector", request, config);
             } catch (IOException e) {
                 LOGGER.error("Query rewriting failed ! Initial user query will be use for the search.", e);
-                rewrittenQuery = query;
             }
-        } else {
-            rewrittenQuery = query;
         }
 
+        //
+        // QUERY REWRITING FOR BM25 SEARCH
+        // If enabled, we use a LLM to reformulate the user query into a search query
+        // Only applies to BM25 or hybrid search
+        //
+        String bm25Query = query;
+        if (config.getBooleanProperty(RagConfiguration.CHAT_QUERY_REWRITING_ENABLED_BM25)
+                && List.of("rrf", "bm25").contains(config.getProperty(RagConfiguration.RETRIEVAL_METHOD))
+                && jsonDoc.get(ID_FIELD) == null
+        ) {
+            try {
+                bm25Query = RagAPI.rewriteSearchQuery(query, "bm25", request, config);
+            } catch (IOException e) {
+                LOGGER.error("Query rewriting failed ! Initial user query will be use for the search.", e);
+                vectorQuery = query;
+            }
+        }
 
         //
         // RETRIEVAL
@@ -171,7 +185,7 @@ public class AiPowered {
                 LOGGER.debug("AiPowered - RAG - Performing search.");
                 request.setAttribute("q.op", config.getProperty(RagConfiguration.SEARCH_OPERATOR));
                 // rewritten query must not be used for BM25 search
-                searchResults = performSearch(request, query, rewrittenQuery, config.getProperty(RagConfiguration.RETRIEVAL_METHOD, "bm25"), config);
+                searchResults = performSearch(request, bm25Query, vectorQuery, config.getProperty(RagConfiguration.RETRIEVAL_METHOD, "bm25"), config);
             }
         } catch (IOException|ServletException e) {
             LOGGER.error("AiPowered - RAG - ERROR. An error occurred while retrieving documents.", e);

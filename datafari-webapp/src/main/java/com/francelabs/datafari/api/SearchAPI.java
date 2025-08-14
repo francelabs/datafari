@@ -103,7 +103,7 @@ public class SearchAPI {
         parameterMap.put("queryrag", parameterMap.get("q"));
       }
       if (!parameterMap.containsKey("topK")) {
-        String[] topK = new String[] { ragConfiguration.getProperty(RagConfiguration.SOLR_TOPK, "10") };
+        String[] topK = new String[] { ragConfiguration.getProperty(RagConfiguration.SOLR_TOPK, "50") };
         parameterMap.put("topK", topK);
       }
       if (!parameterMap.containsKey("model")) {

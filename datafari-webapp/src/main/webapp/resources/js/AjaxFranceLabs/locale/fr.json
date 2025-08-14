@@ -748,6 +748,8 @@
     "ragConf-chatMemoryHistorySizeLabel": "Taille de l’historique (nombre maximal de messages)",
     "ragConf-chatMemoryEnabledLabel": "Activer la mémoire de chat",
     "ragConf-chatQueryRewritingEnabledLabel": "Activer la réécriture des requêtes (recommandé avec la mémoire de chat)",
+    "ragConf-chatQueryRewritingEnabledBM25Label": "Recherche BM25",
+    "ragConf-chatQueryRewritingEnabledVectorLabel": "Recherche vectorielle",
     "ragConf-chunkingChunkSizeLabel": "Taille maximale (en caractères) des chunks",
     "ragConf-maxRequestSizeLabel": "Taille maximale (en caractères) des requêtes envoyées au LLM",
     "ragConf-chunkingStrategyLabel": "Stratégie de découpage des chunks",

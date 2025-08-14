@@ -32,7 +32,8 @@ public class RagConfiguration extends AbstractConfigClass {
     public static final String MAX_REQUEST_SIZE = "prompt.max.request.size";
 
     // CHAT HISTORY
-    public static final String CHAT_QUERY_REWRITING_ENABLED = "chat.query.rewriting.enabled";
+    public static final String CHAT_QUERY_REWRITING_ENABLED_BM25 = "chat.query.rewriting.enabled.bm25";
+    public static final String CHAT_QUERY_REWRITING_ENABLED_VECTOR = "chat.query.rewriting.enabled.vector";
     public static final String CHAT_MEMORY_ENABLED = "chat.memory.enabled";
     public static final String CHAT_MEMORY_HISTORY_SIZE = "chat.memory.history.size";
 

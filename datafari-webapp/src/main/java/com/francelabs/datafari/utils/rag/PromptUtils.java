@@ -139,8 +139,8 @@ public class PromptUtils {
     /**
      * @return Retrieve the instructions for query rewriting.
      */
-    public static String getRewriteQueryTemplate(HttpServletRequest request) throws IOException {
-        return getInstructions("rag/template-rewriteSearchQuery.txt")
+    public static String getRewriteQueryTemplate(HttpServletRequest request, String retrievalMethod) throws IOException {
+        return getInstructions("rag/template-rewriteSearchQuery-" + retrievalMethod + ".txt")
                 .replace("{language}", getUserLanguage(request));
     }
 

@@ -275,18 +275,16 @@ public class RagAPI extends SearchAPI {
    * @param config RagConfiguration
    * @return A ready-to-user search query
    */
-  public static String rewriteSearchQuery(String userQuery,  final HttpServletRequest request, RagConfiguration config) throws IOException {
+  public static String rewriteSearchQuery(String userQuery, String retrievalMethod, final HttpServletRequest request, RagConfiguration config) throws IOException {
 
-    LOGGER.debug("RagAPI - Rewriting user query into a search query.");
-
+    LOGGER.debug("RagAPI - Rewriting user query into a search query. Initial query: {}", userQuery);
     List<ChatMessage> chatHistory = PromptUtils.getChatHistoryToList(request, config);
     String chatHistoryStr = PromptUtils.getStringHistoryLines(chatHistory);
-
 
     // Get the LLM interface (ChatLanguageModel)
     ChatLanguageModel chatModel = getChatModel(config);
 
-    String template = PromptUtils.getRewriteQueryTemplate(request)
+    String template = PromptUtils.getRewriteQueryTemplate(request, retrievalMethod)
             .replace("{userquery}", userQuery)
             .replace("{conversation}", chatHistoryStr);
     List<ChatMessage> prompts = new ArrayList<>();
@@ -294,6 +292,7 @@ public class RagAPI extends SearchAPI {
 
     try {
       String response = chatModel.generate(prompts).content().text();
+      LOGGER.debug("RagAPI - Rewritten query: {}", response);
       return (response != null && !response.isEmpty()) && !"0".equals(response.trim()) ? response : userQuery;
     } catch (Exception e) {
       LOGGER.error("Query rewriting failed. Using initial user query for the search.", e);
