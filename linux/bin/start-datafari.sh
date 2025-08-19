@@ -209,6 +209,6 @@ if [ "$MONIT_STATE" == "active" ]; then
   sudo systemctl start monit
 fi
 
-echo "Check services state, wait 5 seconds that all services are started"
-sleep 5
+echo "Check services state, wait 60 seconds that all services are started"
+sleep 60
 check_services

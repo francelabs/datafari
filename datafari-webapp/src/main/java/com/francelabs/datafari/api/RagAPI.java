@@ -437,7 +437,6 @@ public class RagAPI extends SearchAPI {
   public static JSONObject processSearch(RagConfiguration config, HttpServletRequest request) throws InvalidParameterException {
 
     final Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());
-    String handler = getHandler(request);
     final String protocol = request.getScheme() + ":";
 
     // Preparing query for Search process
@@ -463,20 +462,24 @@ public class RagAPI extends SearchAPI {
       }
     }
 
-    // Add Solr "/vector" handler is Solr Vector Search is enabled
-    if (config.getBooleanProperty(RagConfiguration.SOLR_ENABLE_VECTOR_SEARCH)) {
+    String retrievalMethod = config.getProperty(RagConfiguration.RETRIEVAL_METHOD, "bm25").toLowerCase();
 
-      LOGGER.debug("RagAPI - Solr Vector Search is enabled.");
-      handler = "/vector";
-      String[] queryrag = { userQuery };
-      parameterMap.put("queryrag", queryrag);
-    } else {
-      // If search is BM25, set the result limit
-      String[] rows = { config.getProperty(RagConfiguration.MAX_FILES, "3") };
-      parameterMap.put("rows", rows);
+    String handler;
+    String[] queryrag = { userQuery };
+    switch (retrievalMethod) {
+      case "rrf":
+        return hybridSearch(protocol, request.getUserPrincipal(), parameterMap);
+      case "vector":
+        handler = "/vector";
+        parameterMap.put("queryrag", queryrag);
+        return search(protocol, handler, request.getUserPrincipal(), parameterMap);
+      case "bm25":
+      default:
+        handler = "/select";
+        String[] rows = { config.getProperty(RagConfiguration.MAX_FILES, "3") };
+        parameterMap.put("rows", rows);
+        return search(protocol, handler, request.getUserPrincipal(), parameterMap);
     }
-
-    return search(protocol, handler, request.getUserPrincipal(), parameterMap);
   }
 
 
@@ -546,20 +549,23 @@ public class RagAPI extends SearchAPI {
     // Removing Duplicates
     Map<String, Document> map = new HashMap<>();
     JSONArray displayedDocuments = new JSONArray();
+    RagConfiguration conf = RagConfiguration.getInstance();
     for (Document doc : documentList) {
       String url = doc.metadata().getString("url");
-      if (map.containsKey(url) ||
-              !response.toUpperCase().replaceAll("\\s+","").contains( doc.metadata().getString("title").toUpperCase().replaceAll("\\s+","") )) {
-        // Skip if the document has already been added
-        LOGGER.debug("RagAPI - RAG - Document {} is not contained in the LLM response, or is already in the list to return to the user.", doc.metadata().getString("id"));
+      String id = doc.metadata().getString("id");
+      if (map.containsKey(url) &&
+              "bm25".equals(conf.getProperty(RagConfiguration.RETRIEVAL_METHOD)) ) {
+        // Keep only one chunk from a single document if BM25 is selected
         continue;
       }
       LOGGER.debug("RagAPI - RAG - Document {} is mentioned in LLM response, and will returned to the user.", url);
       map.put(url, doc);
       // Add document to displayedDocuments if it isn't there yet and if it is mentioned by the LLM
       JSONObject jsonDoc = new JSONObject();
-      jsonDoc.put("id", url);
+      jsonDoc.put("id", id);
       jsonDoc.put("title", doc.metadata().getString("title"));
+      // if (!"id".equals("url")) jsonDoc.put("chunk_id", id);
+      if (!"id".equals("url")) jsonDoc.put("parent_id", url);
       jsonDoc.put("url", url);
       jsonDoc.put("content", doc.text());
       displayedDocuments.add(jsonDoc);

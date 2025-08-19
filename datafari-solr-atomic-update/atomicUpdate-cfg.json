@@ -1,6 +1,49 @@
 {
   "logConfigFile": "",
   "jobs": {
+    "VECTOR": {
+      "searchHandler": "/opensearch",
+      "updateHandler": "/update/embed",
+      "source": {
+        "baseUrl": "localhost:2181",
+        "solrCollection": "VectorMain"
+      },
+      "destination": {
+        "baseUrl": "localhost:2181",
+        "solrCollection": "VectorMain"
+      },
+      "fieldsOperation": {
+        "embedded_content": "set"
+      },
+      "nbDocsPerBatch": 100,
+      "fieldsMapping": {
+      }
+    },
+    "DELETE_VECTOR": {
+      "handler": "/update",
+      "source": {
+        "baseUrl": "localhost:2181",
+        "solrCollection": "VectorMain"
+      },
+      "destination": {
+        "baseUrl": "localhost:2181",
+        "solrCollection": "VectorMain"
+      },
+      "fieldsOperation": {
+        "vector_4": "remove",
+        "vector_256": "remove",
+        "vector_384": "remove",
+        "vector_512": "remove",
+        "vector_768": "remove",
+        "vector_1024": "remove",
+        "vector_1536": "remove",
+        "vector_3072": "remove",
+        "vector_4096": "remove"
+      },
+      "nbDocsPerBatch": 1000,
+      "fieldsMapping": {
+      }
+    },
     "OCR": {
       "source": {
         "baseUrl": "localhost:2181",

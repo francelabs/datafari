@@ -371,7 +371,7 @@
     <field name="llm_summary" type="string" indexed="true" stored="true"/>
 
     <!-- Vector fields for vector search -->
-    <field name="embedded_content" type="text_general" indexed="false" stored="true" multiValued="false"/>
+    <field name="embedded_content" type="text_general" indexed="true" stored="true" multiValued="false"/>
     <field name="vector_4" type="knn_vector_4" indexed="true" stored="true"/>
     <field name="vector_256" type="knn_vector_256" indexed="true" stored="true"/>
     <field name="vector_384" type="knn_vector_384" indexed="true" stored="true"/>

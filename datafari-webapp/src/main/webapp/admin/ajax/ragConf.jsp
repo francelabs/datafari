@@ -175,11 +175,12 @@
         <!-- Retrieval -->
 
         <div class="form-group row">
-          <label id="solrEnableVectorSearchLabel" class="col-sm-2 col-form-label" for="solrEnableVectorSearch">Retrieval Method</label>
+          <label id="retrievalMethodLabel" class="col-sm-2 col-form-label" for="retrievalMethod">Retrieval Method</label>
           <div class="col-sm-5">
-            <select id="solrEnableVectorSearch" class="form-control">
-              <option value="BM25">BM25</option>
-              <option value="Vector Search">Vector Search</option>
+            <select id="retrievalMethod" class="form-control">
+              <option value="bm25">BM25</option>
+              <option value="vector">Vector Search</option>
+              <option value="rrf">Hybrid (RRF)</option>
             </select>
           </div>
         </div>
@@ -217,10 +218,26 @@
           </div>
         </div>
 
-        <div class="form-group row vectorSearchOnly">
+        <!-- Common for Vector & Hybrid Search -->
+        <div class="form-group row vectorSearchOnly rrfOnly">
           <label id="solrTopKLabel" class="col-sm-2 col-form-label" for="solrTopK">Solr topK</label>
           <div class="col-sm-5">
             <input type="number" class="form-control" id="solrTopK" step="1" min="1" placeholder="10">
+          </div>
+        </div>
+
+        <!-- Solr Hybrid Search -->
+        <div class="form-group row rrfOnly">
+          <label id="rrfTopKLabel" class="col-sm-2 col-form-label" for="rrfTopK">RRF topK</label>
+          <div class="col-sm-5">
+            <input type="number" class="form-control" id="rrfTopK" step="1" min="1" placeholder="50">
+          </div>
+        </div>
+
+        <div class="form-group row rrfOnly">
+          <label id="rrfRankConstantLabel" class="col-sm-2 col-form-label" for="rrfRankConstant">RRF Rank Constant</label>
+          <div class="col-sm-5">
+            <input type="number" class="form-control" id="rrfRankConstant" step="1" min="1" placeholder="60">
           </div>
         </div>
 

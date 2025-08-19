@@ -671,8 +671,8 @@
 	<lst name="defaults">
 		<str name="echoParams">explicit</str>
 		<str name="defType">edismax</str>
-		<str name="qf">exactContent^500 exactTitle^500 title_en^50 content_fr^10 content_en^10 source^20 extension^30 id^3 url_search^3</str>
-		<str name="pf">exactContent^5000 exactTitle^5000 title_en^500 title_fr^500 content_fr^100 content_en^100 url_search^30</str>
+		<str name="qf">exactContent^500 embedded_content^500 exactTitle^500 title_en^50 content_fr^10 content_en^10 source^20 extension^30 id^3 url_search^3</str>
+		<str name="pf">exactContent^5000 embedded_content^5000 exactTitle^5000 title_en^500 title_fr^500 content_fr^100 content_en^100 url_search^30</str>
 		<int name="rows">10</int>
 		<str name="spellcheck">true</str>
 		<str name="spellcheck.onlyMorePopular">true</str>
@@ -685,7 +685,7 @@
 		<str name="hl.defaultSummary">false</str>
 		<str name="hl.tag.pre">&lt;span class="em"&gt;</str>
 		<str name="hl.tag.post">&lt;/span&gt;</str>
-		<str name="hl.fl">content_fr content_en content_de content_es exactContent</str>
+		<str name="hl.fl">embedded_content content_fr content_en content_de content_es exactContent</str>
 		<str name="hl.requireFieldMatch">true</str>
 		<str name="hl.bs.type">WORD</str>
 		<str name="hl.encoder">html</str>
@@ -736,8 +736,8 @@
 		<lst name="defaults">
 			<str name="echoParams">explicit</str>
 			<str name="defType">edismax</str>
-			<str name="qf">exactContent^500 exactTitle^500 title_en^50 content_fr^10 content_en^10 source^20 extension^30 id^3 url_search^3</str>
-			<str name="pf">exactContent^5000 exactTitle^5000 title_en^500 title_fr^500 content_fr^100 content_en^100 url_search^30</str>
+			<str name="qf">exactContent^500 embedded_content^500 exactTitle^500 title_en^50 content_fr^10 content_en^10 source^20 extension^30 id^3 url_search^3</str>
+			<str name="pf">exactContent^5000 embedded_content^5000 exactTitle^5000 title_en^500 title_fr^500 content_fr^100 content_en^100 url_search^30</str>
 			<int name="rows">5</int>
 			<str name="spellcheck">true</str>
 			<str name="spellcheck.onlyMorePopular">true</str>
@@ -755,17 +755,6 @@
 	</requestHandler>
 
 	<requestHandler class="org.apache.solr.handler.component.SearchHandler" name="/suggestAuthors">
-		<lst name="defaults">
-			<str name="suggest">true</str>
-			<str name="suggest.dictionary">suggesterAuthors</str>
-			<str name="suggest.count">10</str>
-		</lst>
-		<arr name="components">
-		  <str>suggestAuthors</str>
-		</arr>
-	</requestHandler>
-	
-	<requestHandler class="org.apache.solr.handler.component.SearchHandler" name="/suggestEntityAuthors">
 		<lst name="defaults">
 			<str name="suggest">true</str>
 			<str name="suggest.dictionary">suggesterEntityAuthors</str>
@@ -816,8 +805,8 @@
 		<lst name="defaults">
 			<str name="echoParams">explicit</str>
 			<str name="defType">edismax</str>
-			<str name="qf">exactContent^500 exactTitle^500 title_fr^50 title_en^50 content_fr^10 content_en^10 source^20 extension^500 id^3</str>
-			<str name="pf">exactContent^5000 exactTitle^5000 title_en^500 title_fr^500 content_fr^100 content_en^100</str>
+			<str name="qf">exactContent^500 embedded_content^500 exactTitle^500 title_fr^50 title_en^50 content_fr^10 content_en^10 source^20 extension^500 id^3</str>
+			<str name="pf">exactContent^5000 embedded_content^5000 exactTitle^5000 title_en^500 title_fr^500 content_fr^100 content_en^100</str>
 			<int name="rows">10</int>
 			<str name="spellcheck">true</str>
 			<str name="spellcheck.count">1</str>
@@ -829,7 +818,7 @@
       <str name="hl.defaultSummary">true</str>
       <str name="hl.tag.pre">&lt;span class="em"&gt;</str>
       <str name="hl.tag.post">&lt;/span&gt;</str>
-      <str name="hl.fl">content_fr content_en exactContent</str>
+      <str name="hl.fl">embedded_content content_fr content_en exactContent</str>
       <str name="hl.requireFieldMatch">true</str>
       <str name="hl.bs.type">CHARACTER</str>
       <str name="hl.encoder">html</str>
@@ -881,6 +870,30 @@
 		  <str name="update.chain">datafari</str>
 	  </lst>
   </requestHandler>
+
+  <requestHandler class="solr.UpdateRequestHandler" name="/update/embed">
+		<lst name="defaults">
+			<str name="lowernames">true</str>
+			<str name="fmap.language">ignored_</str>
+			<str name="fmap.source">ignored_</str>
+			<str name="fmap.version">ignored_</str>
+			<str name="fmap._version_">ignored_</str>
+			<str name="uprefix">ignored_</str>
+			<str name="update.chain">atomic</str>
+		</lst>
+  </requestHandler>
+
+	<requestHandler class="solr.UpdateRequestHandler" name="/update/embed">
+		<lst name="defaults">
+			<str name="lowernames">true</str>
+			<str name="fmap.language">ignored_</str>
+			<str name="fmap.source">ignored_</str>
+			<str name="fmap.version">ignored_</str>
+			<str name="fmap._version_">ignored_</str>
+			<str name="uprefix">ignored_</str>
+			<str name="update.chain">datafari-embed</str>
+		</lst>
+	</requestHandler>
 
   <requestHandler class="com.francelabs.datafari.handler.parsed.ParsedRequestHandler" name="/update/no-tika" startup="lazy">
     <lst name="defaults">
@@ -1007,18 +1020,6 @@
     
   </searchComponent> -->
 
-	<searchComponent class="solr.SuggestComponent" name="suggestAuthors">
-		<lst name="suggester">
-			<str name="name">suggesterAuthors</str>
-			<str name="suggestAnalyzerFieldType">text_general</str>
-			<str name="lookupImpl">AnalyzingInfixLookupFactory</str>
-			<str name="maxEdits">0</str>
-			<str name="field">author</str>
-			<str name="highlight">false</str>
-			<str name="dictionaryImpl">HighFrequencyDictionaryFactory</str>
-			<str name="buildOnCommit">true</str>
-		</lst>
-	</searchComponent>
   
   <searchComponent class="solr.SuggestComponent" name="suggestEntityAuthors">
     <lst name="suggester">
@@ -1026,7 +1027,7 @@
       <str name="suggestAnalyzerFieldType">text_general</str>
       <str name="lookupImpl">AnalyzingInfixLookupFactory</str>
       <str name="maxEdits">0</str>
-      <str name="field">entity_person</str>
+			<str name="field">authorTokens</str>
       <str name="highlight">false</str>
       <str name="dictionaryImpl">HighFrequencyDictionaryFactory</str>
       <str name="buildOnCommit">true</str>
@@ -1292,22 +1293,37 @@
     -->
 
 	<updateRequestProcessorChain name="datafari">
-  
-    @DATAFARI-UP-CHAIN@
       
 		<!-- ////////////////////////// -->
 		<!-- Includes additional updateProcessors -->
 		&custom_update_processors;
 
+      	<processor class="solr.LogUpdateProcessorFactory"/>
+      	<processor class="solr.DistributedUpdateProcessorFactory"/>
+      	<processor class="solr.RunUpdateProcessorFactory"/>
+  
+	</updateRequestProcessorChain>
+
+	<updateRequestProcessorChain name="datafari-embed">
+		<processor class="com.francelabs.datafari.updateprocessor.SkipVectorIfExistsUpdateProcessorFactory">
+			<str name="enabled">true</str>
+			<str name="outputField">${texttovector.outputfield:vector_1536}</str>
+		</processor>
 		<processor class="solr.llm.texttovector.update.processor.TextToVectorUpdateProcessorFactory">
 			<str name="inputField">embedded_content</str>
 			<str name="outputField">${texttovector.outputfield:vector_1536}</str>
 			<str name="model">${texttovector.model:default_model}</str>
 		</processor>
-      	<processor class="solr.LogUpdateProcessorFactory"/>
-      	<processor class="solr.DistributedUpdateProcessorFactory"/>
-      	<processor class="solr.RunUpdateProcessorFactory"/>
-  
+		<processor class="solr.LogUpdateProcessorFactory"/>
+		<processor class="solr.DistributedUpdateProcessorFactory"/>
+		<processor class="solr.RunUpdateProcessorFactory"/>
+	</updateRequestProcessorChain>
+
+	<updateRequestProcessorChain name="atomic">
+
+		<processor class="solr.LogUpdateProcessorFactory"/>
+		<processor class="solr.DistributedUpdateProcessorFactory"/>
+		<processor class="solr.RunUpdateProcessorFactory"/>
 	</updateRequestProcessorChain>
 	
 	

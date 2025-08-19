@@ -78,7 +78,7 @@ public class SolrAtomicUpdateLauncher {
       }
     }
 
-    LOGGER.info(args[0] + " Job: Select documents modified from: " + fromDate + " (null indicates a full crawl))");
+    LOGGER.info("{} Job: Select documents modified from: {} (null indicates a full crawl))", args[0], fromDate);
     return fromDate;
   }
 
@@ -106,7 +106,7 @@ public class SolrAtomicUpdateLauncher {
   public static void main(String[] args) throws ParseException {
     String jobName = args[0];
     JobConfig job = config.getJobs().get(jobName);
-    LOGGER.info(jobName + " Job started !");
+    LOGGER.info("{} Job started !", jobName);
 
     String fromDate = getStartDateForDocumentsSelection(args);
 
@@ -114,9 +114,11 @@ public class SolrAtomicUpdateLauncher {
     Status jobStatus = jobSaver.getJobLastStatus();
     if (Status.FAILED.equals(jobStatus)){
       fromDate = null;
-      LOGGER.info(jobName + " Job: Last state was " + Status.FAILED + ", so a full crawl is done for this run.");
+      LOGGER.info("{} Job: Last state was {}, so a full crawl is done for this run.", jobName, Status.FAILED);
+    } else if (Status.RUNNING.equals(jobStatus) && job.getForce()){
+      LOGGER.info("{} Job is already running, but 'force' parameter is enabled.", jobName);
     } else if (Status.RUNNING.equals(jobStatus)){
-      LOGGER.info(jobName + " Job is already running: exit process.");
+      LOGGER.info("{} Job is already running: exit process.", jobName);
       return;
     }
 
@@ -133,14 +135,14 @@ public class SolrAtomicUpdateLauncher {
           UpdateResponse updateResponse = docUpdator.updateDocuments(docsList);
           if (updateResponse.getStatus() == 0) {
             nbDocsProcessed = nbDocsProcessed + docsList.size();
-            LOGGER.info(jobName + " Docs processed : " + nbDocsProcessed);
+            LOGGER.info("{} Docs processed : {}", jobName, nbDocsProcessed);
           }
         }
       } while (!docsList.isEmpty());
 
       jobSaver.notifyJobDone();
     } catch (Exception e){
-      LOGGER.error(jobName + " Job: Total number of documents processed: " + nbDocsProcessed, e);
+      LOGGER.error("{} Job: Total number of documents processed: {}", jobName, nbDocsProcessed, e);
       jobSaver.notifyJobFailed();
     }
   }
