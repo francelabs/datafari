@@ -24,8 +24,9 @@ import org.apache.solr.update.AddUpdateCommand;
 import org.apache.solr.update.processor.UpdateRequestProcessor;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class VectorTaggerUpdateProcessor extends UpdateRequestProcessor {
   private static final Logger LOGGER = LogManager.getLogger(VectorTaggerUpdateProcessor.class.getName());
@@ -45,11 +46,18 @@ public class VectorTaggerUpdateProcessor extends UpdateRequestProcessor {
     SolrInputDocument doc = cmd.getSolrInputDocument();
 
     if (!vectorField.isEmpty()) {
-      Map<String, Object> addOperation = new HashMap<>();
-      addOperation.put("add-distinct", vectorField);
+      Object hasVectorValue = doc.getFieldValue("has_vector");
+      List<Object> hasVector = new ArrayList<>();
+      if (hasVectorValue instanceof Collection<?>) {
+        hasVector.addAll((Collection<?>) hasVectorValue);
+      } else if (hasVectorValue != null) {
+        hasVector.add(hasVectorValue);
+      }
 
-      // Use atomic update syntax
-      doc.addField("has_vector", addOperation);
+      // Only add vectorField in "has_vector" if it is not already there
+      if (!hasVector.contains(vectorField)) {
+        doc.addField("has_vector", vectorField);
+      }
     }
 
     super.processAdd(cmd);
