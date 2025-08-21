@@ -16,6 +16,8 @@
 package com.francelabs.datafari.rest.v2_0.search;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -28,6 +30,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.francelabs.datafari.utils.DatafariMainConfiguration;
 import com.francelabs.datafari.utils.Timer;
 import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
 import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;
@@ -100,8 +103,9 @@ public class Search2 extends HttpServlet {
    * @param searchResponse The search response to modify
    * @param request        The {@link HttpServletRequest} that performed the search request
    * @param searchEndpoint The search endpoint from which the provided searchResponse is issued from
+   * @throws URISyntaxException 
    */
-  private void switchDocURLToURLAPI(final JSONObject searchResponse, final HttpServletRequest request, final String searchEndpoint) {
+  private void switchDocURLToURLAPI(final JSONObject searchResponse, final HttpServletRequest request, final String searchEndpoint) throws URISyntaxException {
     Timer timer = new Timer(this.getClass().getName(), "switchDocURLToURLAPI");
 
     final JSONObject responseObj = (JSONObject) searchResponse.get("response");
@@ -113,7 +117,37 @@ public class Search2 extends HttpServlet {
         if (url != null && isUrlSafe(URLDecoder.decode(url, StandardCharsets.UTF_8))) {
           // temper with the URL to point on our URL endpoint
           // Also add a path array giving path information for display purposes
-          final StringBuffer currentURL = request.getRequestURL();
+          
+          
+          StringBuffer originalUrl = request.getRequestURL();
+          String queryUrl = request.getQueryString(); 
+          logger.debug("current url" + originalUrl);
+          logger.debug("current query url" + queryUrl);
+          URI orig = URI.create(originalUrl.toString());
+          String newHost;
+          StringBuffer chosenURL;
+          
+          if (DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.CUSTOM_PROXY_URL) != null) {
+           newHost = DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.CUSTOM_PROXY_URL);
+           URI rebuilt = new URI(
+               orig.getScheme(),  
+               null,
+               newHost,            
+               orig.getPort(),     
+               orig.getPath(),     
+               queryUrl,              
+               null               
+           );
+           String newBaseUrl = rebuilt.toString();
+           logger.debug("newbaseurl" + newBaseUrl);
+           
+           
+           chosenURL = new StringBuffer(newBaseUrl);
+          }
+          else {
+            chosenURL = request.getRequestURL();
+          }
+          logger.debug("url chosen : "+chosenURL);
 
           // Get query id if available
           String queryId = request.getParameter("id");
@@ -121,7 +155,7 @@ public class Search2 extends HttpServlet {
             queryId = (String) request.getAttribute("id");
           }
 
-          String newUrl = currentURL.substring(0, currentURL.indexOf(searchEndpoint));
+          String newUrl = chosenURL.substring(0, chosenURL.indexOf(searchEndpoint));
           String newUrlFolder = newUrl;
           newUrl += "/rest/v2.0/url?url=" + URLEncoder.encode(URLDecoder.decode(url, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
           if (url.contains("/")) {
@@ -168,7 +202,7 @@ public class Search2 extends HttpServlet {
       switchDocURLToURLAPI(jsonResponse, request, "/rest/v2.0/search/");
       timer.stop();
       return jsonResponse;
-    } catch (ServletException | IOException e) {
+    } catch (ServletException | IOException | URISyntaxException  e) {
       timer.stop();
       throw new InternalErrorException("Error while performing the search request.");
     }
@@ -186,7 +220,7 @@ public class Search2 extends HttpServlet {
       switchDocURLToURLAPI(jsonResponse, request, "/rest/v2.0/search/noaggregator/");
       timer.stop();
       return jsonResponse;
-    } catch (ServletException | IOException e) {
+    } catch (ServletException | IOException | URISyntaxException  e) {
       timer.stop();
       throw new InternalErrorException("Error while performing the search request.");
     }
