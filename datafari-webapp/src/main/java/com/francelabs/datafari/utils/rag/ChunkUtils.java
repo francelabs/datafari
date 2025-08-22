@@ -48,7 +48,7 @@ public class ChunkUtils {
 
             // Each chunk is added to "chunkedDocumentList" as a Document
             for (TextSegment chunk : chunks) {
-                Document docToAdd = new Document(chunk.text(), chunk.metadata());
+                Document docToAdd = Document.from(chunk.text(), chunk.metadata());
                 chunkedDocumentList.add(docToAdd);
             }
         }

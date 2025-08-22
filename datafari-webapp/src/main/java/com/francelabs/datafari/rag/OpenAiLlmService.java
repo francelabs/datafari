@@ -4,7 +4,7 @@ import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,7 +25,7 @@ public class OpenAiLlmService implements LlmService {
     int maxToken;
     static final String DEFAULT_MODEL = "gpt-4o-mini";
     static final String DEFAULT_URL = "https://api.openai.com/v1/";
-    ChatLanguageModel llm;
+    ChatModel llm;
 
     public OpenAiLlmService(RagConfiguration config) {
         this.url = config.getProperty(RagConfiguration.API_ENDPOINT);
@@ -55,7 +55,7 @@ public class OpenAiLlmService implements LlmService {
         for (Message prompt : prompts) {
             LOGGER.debug("{} :\r\n{}", prompt.getRole(), prompt.getContent());
         }
-        return llm.generate(convertMessageList(prompts)).content().text();
+        return llm.chat(convertMessageList(prompts)).aiMessage().text();
     }
 
     /**
@@ -66,10 +66,10 @@ public class OpenAiLlmService implements LlmService {
     public String generate(Message prompt) {
         LOGGER.debug("OpenAiLlmService is processing a request with a single message.\r\n" +
                     "{} :\r\n{}", prompt.getRole(), prompt.getContent());
-        return llm.generate(convertMessage(prompt)).content().text();
+        return llm.chat(convertMessage(prompt)).aiMessage().text();
     }
 
-    private ChatLanguageModel getChatLanguageModel() {
+    private ChatModel getChatLanguageModel() {
         return OpenAiChatModel.builder()
                 .apiKey(apiKey)
                 .temperature(temperature)

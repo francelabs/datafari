@@ -216,7 +216,7 @@ public class AiPowered {
             metadata.put(ID_FIELD, id);
             if (title != null) metadata.put(TITLE_FIELD, title);
             if (url != null) metadata.put(URL_FIELD, url);
-            Document doc = new Document(content, metadata);
+            Document doc = Document.from(content, metadata);
 
             LOGGER.debug("AiPowered - Summarize - Generating a summary for document {}.", id);
             try {

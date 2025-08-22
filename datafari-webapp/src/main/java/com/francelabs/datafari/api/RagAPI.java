@@ -19,13 +19,11 @@ import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.rag.*;
 import com.francelabs.datafari.utils.rag.ChunkUtils;
 import com.francelabs.datafari.utils.rag.PromptUtils;
-import com.francelabs.datafari.utils.rag.VectorUtils;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.segment.TextSegment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.security.authentication.DisabledException;
@@ -81,15 +79,6 @@ public class RagAPI extends SearchAPI {
       return writeJsonError(428, "ragNoFileFound", "Sorry, I couldn't find any relevant document to answer your request.", e);
     }
 
-
-    // Local vector search using a vector storage
-    if (config.getBooleanProperty(RagConfiguration.ENABLE_VECTOR_SEARCH)) {
-      LOGGER.debug("RagAPI - Local vector search is enabled.");
-      initialDocumentsList = VectorUtils.processVectorSearch(initialDocumentsList, request);
-      LOGGER.debug("RagAPI - The 'FAISS' vector search returned {} chunk(s).", initialDocumentsList.size());
-    } else {
-      LOGGER.debug("RagAPI - Vector search was ignored due to configuration");
-    }
 
     // Chunking
     documentsList = initialDocumentsList;
@@ -252,7 +241,7 @@ public class RagAPI extends SearchAPI {
    * @param config RagConfiguration
    * @return LlmService
    */
-  private static @NotNull LlmService getLlmService(RagConfiguration config) {
+  private static LlmService getLlmService(RagConfiguration config) {
     LlmService service;
     String llmService = config.getProperty(RagConfiguration.LLM_SERVICE);
     switch(llmService) {
@@ -353,7 +342,7 @@ public class RagAPI extends SearchAPI {
 
   }
 
-  private static @NotNull JSONObject writeJsonResponse(String message, List<Document> documentsList) {
+  private static JSONObject writeJsonResponse(String message, List<Document> documentsList) {
     final JSONObject response = new JSONObject();
     response.put("status", "OK");
     JSONObject content = new JSONObject();
@@ -507,7 +496,7 @@ public class RagAPI extends SearchAPI {
           // If the document has content, we generate a Document object with its content and metadata
           JSONArray contentArray = (JSONArray) jsonObject.get(EXACT_CONTENT);
           String content;
-          if (contentArray != null && contentArray.get(0) != null) {
+          if (contentArray != null && contentArray.getFirst() != null) {
             content = contentArray.get(0).toString();
           } else {
             // If exactContent is not provided, we try to retrieve embedded_content
@@ -515,7 +504,7 @@ public class RagAPI extends SearchAPI {
           }
 
           if (content != null && !content.isBlank()) {
-            String title = ((JSONArray) jsonObject.get("title")).get(0).toString();
+            String title = ((JSONArray) jsonObject.get("title")).getFirst().toString();
             String id = (String) jsonObject.get("id");
             String url = (String) jsonObject.get("url");
 
@@ -524,7 +513,7 @@ public class RagAPI extends SearchAPI {
             metadata.put("id", id);
             metadata.put("url", url);
 
-            Document document = new Document(content, metadata);
+            Document document = Document.from(content, metadata);
             documentsList.add(document);
           }
 
