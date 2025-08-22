@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+@Deprecated
 public class Message {
     // Role should be "user", "system" or "assistant"
     private static final List<String> ALLOWED_ROLES = Arrays.asList("user", "system", "assistant", "developer");

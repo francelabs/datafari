@@ -61,11 +61,11 @@ public class DocumentsUpdator extends AbstractDocuments {
     for (SolrDocument doc : solrDocuments){
       //Do not update documents that have all fields null except ID field.
       if(doc.size() > 1) {
-        if (jobConfig.getIdField() != null && jobConfig.getIdField().isEmpty() && !CommonParams.ID.equals(jobConfig.getIdField())) {
-          docsToUpdate.add(createSolrDocToUpdate(doc));
-        }else {
-          // If the idField is different than "id"
+        if (jobConfig.getIdField() != null && !jobConfig.getIdField().isEmpty() && !CommonParams.ID.equals(jobConfig.getIdField())) {
+          // If the idField exists and is different from "id"
           docsToUpdate.addAll(createChildDocsToUpdate(doc));
+        }else {
+          docsToUpdate.add(createSolrDocToUpdate(doc));
         }
       }
     }
@@ -86,12 +86,12 @@ public class DocumentsUpdator extends AbstractDocuments {
         updateResponse = solrRequest.process(solrClient, solrCollection);
 
       } catch (Exception e) {
-        LOGGER.error(jobConfig.getJobName() + " Job:", e);
-        LOGGER.error(jobConfig.getJobName() + " Job: was sending these documents : number = " + docsToUpdate.size());
+        LOGGER.error("{} Job: ", jobConfig.getJobName(), e);
+        LOGGER.error("{} Job: was sending these documents : number = {}", jobConfig.getJobName(), docsToUpdate.size());
         for (SolrInputDocument doc :docsToUpdate){
-          LOGGER.error(jobConfig.getJobName() + " Job: \t" + doc.toString());
+          LOGGER.error("{} Job: \t{}", jobConfig.getJobName(), doc);
         }
-        LOGGER.error(jobConfig.getJobName() + " Job: Solr response: " + updateResponse);
+        LOGGER.error("{} Job: Solr response: {}", jobConfig.getJobName(), updateResponse);
         throw e;
       }
 
@@ -112,9 +112,7 @@ public class DocumentsUpdator extends AbstractDocuments {
     // create the atomic document
     SolrInputDocument atomicDoc = new SolrInputDocument();
 
-    // If the ID field is specified (ie: "parent_doc" for VectorMain), it is used instead of "id".
-    String idField = jobConfig.getIdField() != null ? jobConfig.getIdField() : CommonParams.ID;
-    atomicDoc.addField(idField, doc.getFieldValue(CommonParams.ID));
+    atomicDoc.addField(CommonParams.ID, doc.getFieldValue(CommonParams.ID));
 
     // Retrieve fields to apply Atomic Update on and their operator
     for (Map.Entry<String, String> fieldConfig : jobConfig.getFieldsOperation().entrySet()) {

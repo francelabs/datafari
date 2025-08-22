@@ -382,6 +382,8 @@
     <field name="vector_3072" type="knn_vector_3072" indexed="true" stored="true"/>
     <field name="vector_4096" type="knn_vector_4096" indexed="true" stored="true"/>
 
+    <field name="has_vector" type="string" multiValued="true" indexed="true" stored="true"/>
+
     <dynamicField name="ignored_*" type="ignored" multiValued="true"/>
     <dynamicField name="ontology_*" type="string" multiValued="true"/>
 

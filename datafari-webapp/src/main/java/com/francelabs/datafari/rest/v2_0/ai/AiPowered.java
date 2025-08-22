@@ -18,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class AiPowered {
@@ -135,21 +136,39 @@ public class AiPowered {
         }
 
         //
-        // QUERY REWRITING
+        // QUERY REWRITING FOR VECTOR SEARCH
         // If enabled, we use a LLM to reformulate the user query into a search query
+        // Only applies to vector or hybrid search
         //
-        String searchQuery;
-        if (config.getBooleanProperty(RagConfiguration.CHAT_QUERY_REWRITING_ENABLED)) {
+        String vectorQuery = query;
+        if (config.getBooleanProperty(RagConfiguration.CHAT_QUERY_REWRITING_ENABLED_VECTOR)
+                && List.of("rrf", "vector").contains(config.getProperty(RagConfiguration.RETRIEVAL_METHOD))
+                && jsonDoc.get(ID_FIELD) == null
+        ) {
             try {
-                searchQuery = RagAPI.rewriteSearchQuery(query, request, config);
+                vectorQuery = RagAPI.rewriteSearchQuery(query, "vector", request, config);
             } catch (IOException e) {
                 LOGGER.error("Query rewriting failed ! Initial user query will be use for the search.", e);
-                searchQuery = query;
             }
-        } else {
-            searchQuery = query;
         }
 
+        //
+        // QUERY REWRITING FOR BM25 SEARCH
+        // If enabled, we use a LLM to reformulate the user query into a search query
+        // Only applies to BM25 or hybrid search
+        //
+        String bm25Query = query;
+        if (config.getBooleanProperty(RagConfiguration.CHAT_QUERY_REWRITING_ENABLED_BM25)
+                && List.of("rrf", "bm25").contains(config.getProperty(RagConfiguration.RETRIEVAL_METHOD))
+                && jsonDoc.get(ID_FIELD) == null
+        ) {
+            try {
+                bm25Query = RagAPI.rewriteSearchQuery(query, "bm25", request, config);
+            } catch (IOException e) {
+                LOGGER.error("Query rewriting failed ! Initial user query will be use for the search.", e);
+                vectorQuery = query;
+            }
+        }
 
         //
         // RETRIEVAL
@@ -165,7 +184,8 @@ public class AiPowered {
             } else {
                 LOGGER.debug("AiPowered - RAG - Performing search.");
                 request.setAttribute("q.op", config.getProperty(RagConfiguration.SEARCH_OPERATOR));
-                searchResults = performSearch(request, searchQuery, config.getProperty(RagConfiguration.RETRIEVAL_METHOD, "bm25"), config);
+                // rewritten query must not be used for BM25 search
+                searchResults = performSearch(request, bm25Query, vectorQuery, config.getProperty(RagConfiguration.RETRIEVAL_METHOD, "bm25"), config);
             }
         } catch (IOException|ServletException e) {
             LOGGER.error("AiPowered - RAG - ERROR. An error occurred while retrieving documents.", e);
@@ -272,9 +292,10 @@ public class AiPowered {
      * @return a JSONObject containing search results, with the following fields:
      *      id, title, exactContent, url, llm_summary
      */
-    private static JSONObject performSearch(HttpServletRequest originalRequest, String q, String retrievalMethod, RagConfiguration config) {
+    private static JSONObject performSearch(HttpServletRequest originalRequest, String q, String rewrittenQuery, String retrievalMethod, RagConfiguration config) {
         EditableHttpServletRequest request = new EditableHttpServletRequest(originalRequest);
         request.addParameter("q", q);
+        request.addParameter("queryrag", rewrittenQuery); // The rewritten query is used only for Vector Search
         request.addParameter("hl", "false");
         request.addParameter("fl", "id,title,exactContent,embedded_content,url,llm_summary");
 

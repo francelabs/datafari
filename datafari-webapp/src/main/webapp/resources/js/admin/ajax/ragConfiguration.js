@@ -16,6 +16,8 @@ function internationalize() {
   $("#chatMemoryHistorySizeLabel").text(window.i18n.msgStore['ragConf-chatMemoryHistorySizeLabel']);
   $("#chatMemoryEnabledLabel").text(window.i18n.msgStore['ragConf-chatMemoryEnabledLabel']);
   $("#chatQueryRewritingEnabledLabel").text(window.i18n.msgStore['ragConf-chatQueryRewritingEnabledLabel']);
+  $("#chatQueryRewritingEnabledBM25Label").text(window.i18n.msgStore['ragConf-chatQueryRewritingEnabledBM25Label']);
+  $("#chatQueryRewritingEnabledVectorLabel").text(window.i18n.msgStore['ragConf-chatQueryRewritingEnabledVectorLabel']);
   $("#chunkingChunkSizeLabel").text(window.i18n.msgStore['ragConf-chunkingChunkSizeLabel']);
   $("#maxRequestSizeLabel").text(window.i18n.msgStore['ragConf-maxRequestSizeLabel']);
   $("#chunkingStrategyLabel").text(window.i18n.msgStore['ragConf-chunkingStrategyLabel']);
@@ -48,7 +50,8 @@ function loadRagConfig() {
     $('#chunkingChunkSize').val(data.chunkingChunkSize || 3000);
     $('#ragOperator').val(data.ragOperator || 'OR');
 
-    $('#chatQueryRewritingEnabled').prop('checked', data.chatQueryRewritingEnabled === true).change();
+    $('#chatQueryRewritingEnabledBM25').prop('checked', data.chatQueryRewritingEnabledBM25 === true).change();
+    $('#chatQueryRewritingEnabledVector').prop('checked', data.chatQueryRewritingEnabledVector === true).change();
     $('#chatMemoryEnabled').prop('checked', data.chatMemoryEnabled === true).change();
     $('#chatMemoryHistorySize').val(data.chatMemoryHistorySize || 6);
 
@@ -107,7 +110,8 @@ function submitRagConfig(event) {
     "chunking.maxFiles": $('#chunkingMaxFiles').val(),
     "chunking.chunk.size": $('#chunkingChunkSize').val(),
     "rag.operator": $('#ragOperator').val(),
-    "chat.query.rewriting.enabled": $('#chatQueryRewritingEnabled').is(':checked'),
+    "chat.query.rewriting.enabled.bm25": $('#chatQueryRewritingEnabledBM25').is(':checked'),
+    "chat.query.rewriting.enabled.vector": $('#chatQueryRewritingEnabledVector').is(':checked'),
     "chat.memory.enabled": $('#chatMemoryEnabled').is(':checked'),
     "chat.memory.history.size": $('#chatMemoryHistorySize').val(),
     "solr.topK": $('#solrTopK').val(),
@@ -150,7 +154,8 @@ $(document).ready(function () {
   $('#enableRag').bootstrapToggle();
   $('#enableSummarization').bootstrapToggle();
   $('#chatMemoryEnabled').bootstrapToggle();
-  $('#chatQueryRewritingEnabled').bootstrapToggle();
+  $('#chatQueryRewritingEnabledBM25').bootstrapToggle();
+  $('#chatQueryRewritingEnabledVector').bootstrapToggle();
   $('#retrievalMethod').on('change', updateRetrievalVisibility);
 
   $('#ragCong-form').on('submit', submitRagConfig);

@@ -738,8 +738,8 @@
 		<lst name="defaults">
 			<str name="echoParams">explicit</str>
 			<str name="defType">edismax</str>
-			<str name="qf">exactContent^500 exactTitle^500 title_fr^50 title_en^50 content_fr^10 content_en^10 source^20 extension^500 id^3</str>
-			<str name="pf">exactContent^5000 exactTitle^5000 title_en^500 title_fr^500 content_fr^100 content_en^100</str>
+			<str name="qf">exactContent^500 embedded_content^500 exactTitle^500 title_fr^50 title_en^50 content_fr^10 content_en^10 source^20 extension^500 id^3</str>
+			<str name="pf">exactContent^5000 embedded_content^5000 exactTitle^5000 title_en^500 title_fr^500 content_fr^100 content_en^100</str>
 			<int name="rows">10</int>
 			<str name="spellcheck">true</str>
 			<str name="spellcheck.count">1</str>

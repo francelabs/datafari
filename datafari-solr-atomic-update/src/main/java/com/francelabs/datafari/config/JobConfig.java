@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,6 +41,8 @@ public class JobConfig {
   private boolean force;
   @JsonIgnore
   private String jobName;
+
+  private List<String> filterQueries;
 
   public CollectionPathConfig getSource() {
     return source;
@@ -123,5 +126,13 @@ public class JobConfig {
 
   public void setForce(boolean force) {
     this.force = force;
+  }
+
+  public List<String> getFilterQueries() {
+    return filterQueries;
+  }
+
+  public void setFilterQueries(List<String> filterQueries) {
+    this.filterQueries = filterQueries;
   }
 }
