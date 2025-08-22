@@ -121,8 +121,8 @@ public class Search2 extends HttpServlet {
           
           StringBuffer originalUrl = request.getRequestURL();
           String queryUrl = request.getQueryString(); 
-          logger.debug("current url" + originalUrl);
-          logger.debug("current query url" + queryUrl);
+          logger.debug("current url : {}", originalUrl);
+          logger.debug("current query url : {}", queryUrl);
           URI orig = URI.create(originalUrl.toString());
           String newHost;
           StringBuffer chosenURL;
@@ -139,7 +139,7 @@ public class Search2 extends HttpServlet {
                null               
            );
            String newBaseUrl = rebuilt.toString();
-           logger.debug("newbaseurl" + newBaseUrl);
+           logger.debug("new base url : {}", newBaseUrl);
            
            
            chosenURL = new StringBuffer(newBaseUrl);
@@ -147,7 +147,7 @@ public class Search2 extends HttpServlet {
           else {
             chosenURL = request.getRequestURL();
           }
-          logger.debug("url chosen : "+chosenURL);
+          logger.debug("url chosen : {}", chosenURL);
 
           // Get query id if available
           String queryId = request.getParameter("id");
