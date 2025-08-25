@@ -417,7 +417,18 @@ init_postgresql() {
   sed -i -e "s~@POSTGRESQLDATABASE@~${POSTGRESQL_DATABASE}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQLUSERNAME@~${POSTGRESQL_USERNAME}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
   
+  
 }
+
+init_postgresql_datafariwebapp() {
+  sed -i -e "s~@POSTGRESQL_DATABASE_DATAFARIWEBAPP@~${POSTGRESQL_DATABASE_DATAFARIWEBAPP}~g" $TOMCAT_HOME/webapps/Datafari/WEB-INF/classes/application.properties >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQL_PORT@~${POSTGRESQL_PORT}~g" $TOMCAT_HOME/webapps/Datafari/WEB-INF/classes/application.properties >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQL_HOSTNAME@~${POSTGRESQL_HOSTNAME}~g" $TOMCAT_HOME/webapps/Datafari/WEB-INF/classes/application.properties >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQL_USERNAME@~${POSTGRESQL_USERNAME}~g" $TOMCAT_HOME/webapps/Datafari/WEB-INF/classes/application.properties >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQL_PASSWORD@~${TEMPPGSQLPASSWORD}~g" $TOMCAT_HOME/webapps/Datafari/WEB-INF/classes/application.properties >>$installerLog 2>&1
+  
+}
+
 
 init_password_postgresql() {
   cd $MCF_HOME/obfuscation-utility
@@ -929,6 +940,7 @@ initialization_monoserver() {
   init_password $TEMPADMINPASSWORD
   init_password_postgresql $TEMPPGSQLPASSWORD
   init_postgresql
+  init_postgresql_datafariwebapp
   init_apache_ssl
   
   if [ $# -eq 0 ]

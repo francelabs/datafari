@@ -43,7 +43,7 @@ public class UserManagementInitializer implements IInitializer {
         // roleAdmin.add("manager-gui");
         user.signup(roleAdmin);
         LOGGER.info("Admin user created");
-        AuditLogUtil.log("Cassandra", "automated", "none", "Creation of the admin user");
+        AuditLogUtil.log("Postgresql", "automated", "none", "Creation of the admin user");
       }
     } catch (final Exception e) {
       LOGGER.error("Cannot create admin account", e);

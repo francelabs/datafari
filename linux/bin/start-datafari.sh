@@ -119,6 +119,8 @@ if  [[ "$NODETYPE" = *mono* ]]; then
     run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh init_postgres";
     if  [[ "$POSTGRESQL_EXTERNAL" = false ]]; then
     run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh start_postgres";
+    
+    run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh init_postgres_datafariwebapp";
     fi
   fi
 

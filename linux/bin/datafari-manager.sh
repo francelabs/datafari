@@ -77,7 +77,16 @@ init_postgres()
 {
   ${DATAFARI_HOME}/pgsql/bin/initdb -U postgres -A password --pwfile=${DATAFARI_HOME}/pgsql/pwd.conf -E utf8 -D ${DATAFARI_HOME}/pgsql/data
   cp ${DATAFARI_HOME}/pgsql/postgresql.conf.save ${DATAFARI_HOME}/pgsql/data/postgresql.conf
+  
+  
 }
+
+init_postgres_datafariwebapp() {
+  echo "wait for Postgresql server to be started"
+  PGPASSWORD="$TEMPPGSQLPASSWORD" ${DATAFARI_HOME}/pgsql/bin/createdb -h $POSTGRESQL_HOSTNAME -p $POSTGRESQL_PORT -U $POSTGRESQL_USERNAME $POSTGRESQL_DATABASE_DATAFARIWEBAPP
+  PGPASSWORD="$TEMPPGSQLPASSWORD"  ${DATAFARI_HOME}/pgsql/bin/psql -h $POSTGRESQL_HOSTNAME -p $POSTGRESQL_PORT -U $POSTGRESQL_USERNAME -d $POSTGRESQL_DATABASE_DATAFARIWEBAPP -f $DATAFARI_HOME/bin/common/config/datafari/tables.sql
+}
+
 
 start_postgres()
 {
@@ -351,6 +360,9 @@ case $COMMAND in
   ;;
   init_postgres)
     init_postgres
+  ;;
+  init_postgres_datafariwebapp)
+    init_postgres_datafariwebapp
   ;;
   start_postgres)
     start_postgres
