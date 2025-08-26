@@ -1,7 +1,7 @@
 package com.francelabs.datafari.ai.models;
 
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
-import dev.langchain4j.model.chat.ChatLanguageModel;
 
 import java.time.Duration;
 import java.util.Map;
@@ -9,7 +9,7 @@ import java.util.Map;
 public class OllamaChatLanguageModelBuilder implements ChatLanguageModelBuilder {
 
     @Override
-    public ChatLanguageModel build(Map<String, Object> props) {
+    public ChatModel build(Map<String, Object> props) {
         return OllamaChatModel.builder()
                 .baseUrl(getString(props, "baseUrl", "http://localhost:11434"))
                 .modelName(getString(props, "modelName", null))

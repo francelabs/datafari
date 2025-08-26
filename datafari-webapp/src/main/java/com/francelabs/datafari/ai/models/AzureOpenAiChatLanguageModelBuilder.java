@@ -1,7 +1,7 @@
 package com.francelabs.datafari.ai.models;
 
 import dev.langchain4j.model.azure.AzureOpenAiChatModel;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 
 import java.time.Duration;
 import java.util.Map;
@@ -9,7 +9,7 @@ import java.util.Map;
 public class AzureOpenAiChatLanguageModelBuilder implements ChatLanguageModelBuilder {
 
     @Override
-    public ChatLanguageModel build(Map<String, Object> props) {
+    public ChatModel build(Map<String, Object> props) {
         return AzureOpenAiChatModel.builder()
                 .apiKey(getString(props, "apiKey", null))
                 .endpoint(getString(props, "endpoint", null))

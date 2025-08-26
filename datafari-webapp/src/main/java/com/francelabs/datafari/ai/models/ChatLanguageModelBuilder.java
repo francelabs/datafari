@@ -1,6 +1,6 @@
 package com.francelabs.datafari.ai.models;
 
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 
 import java.util.Map;
 
@@ -10,7 +10,7 @@ public interface ChatLanguageModelBuilder {
      * @param params The properties map
      * @return ChatLanguageModel
      */
-    ChatLanguageModel build(Map<String, Object> params);
+    ChatModel build(Map<String, Object> params);
 
     /**
      * Get a Double property from "params" by its name, or return default value.

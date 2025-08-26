@@ -1,6 +1,6 @@
 package com.francelabs.datafari.ai.models;
 
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 
 import java.time.Duration;
@@ -9,7 +9,7 @@ import java.util.Map;
 public class OpenAiChatLanguageModelBuilder implements ChatLanguageModelBuilder {
 
     @Override
-    public ChatLanguageModel build(Map<String, Object> props) {
+    public ChatModel build(Map<String, Object> props) {
         return OpenAiChatModel.builder()
                 .apiKey((String) props.get("apiKey"))
                 .baseUrl((String) props.get("baseUrl"))

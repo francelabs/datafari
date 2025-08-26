@@ -1,7 +1,7 @@
 package com.francelabs.datafari.ai.models;
 
 import dev.langchain4j.model.huggingface.HuggingFaceChatModel;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import java.time.Duration;
 
 import java.util.Map;
@@ -9,7 +9,7 @@ import java.util.Map;
 public class HuggingFaceChatLanguageModelBuilder implements ChatLanguageModelBuilder {
 
     @Override
-    public ChatLanguageModel build(Map<String, Object> props) {
+    public ChatModel build(Map<String, Object> props) {
         return HuggingFaceChatModel.builder()
                 .accessToken(getString(props, "accessToken", null))
                 .modelId(getString(props, "modelId", null))

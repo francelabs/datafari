@@ -29,6 +29,8 @@ import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.model.input.PromptTemplate;
+import dev.langchain4j.spi.prompt.PromptTemplateFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -69,15 +71,13 @@ public class PromptUtils {
      * @param documentsList : A JSONArray list of documents
      * @return a prompt ready to be sent to the LLM service
      */
-    public static List<ChatMessage> documentsListToMessages(List<Document> documentsList) throws IOException {
+    public static List<String> documentsListToMessages(List<Document> documentsList) throws IOException {
 
-        List<ChatMessage> prompts = new ArrayList<>();
+        List<String> prompts = new ArrayList<>();
         for (Document document : documentsList) {
             // format document
             String content = formatDocument(document.metadata().getString("title"), document.text());
-            // create prompt
-            ChatMessage message = new SystemMessage(content);
-            prompts.add(message);
+            prompts.add(content);
         }
 
         return prompts;
@@ -86,8 +86,18 @@ public class PromptUtils {
     /**
      * @return Retrieve the instructions used to summarize a document.
      */
-    public static ChatMessage createInitialPromptForSummarization(HttpServletRequest request) throws IOException {
-        String prompt = getInstructions("summarization/template-initialPromptForSummarization.txt")
+    public static String createInitialPromptForSummarization(HttpServletRequest request) throws IOException {
+        // TODO : Use PromptTemplate instead
+        return getInstructions("summarization/template-initialPromptForSummarization.txt")
+                .replace("{language}", getUserLanguage(request));
+    }
+
+    /**
+     * @return Retrieve the instructions used to merge multiple summaries into one.
+     */
+    // TODO : DELETE
+    public static ChatMessage createPromptForMergeAllSummaries(HttpServletRequest request) throws IOException {
+        String prompt =  getInstructions("summarization/template-summarization-mergeAll.txt")
                 .replace("{language}", getUserLanguage(request));
         return new SystemMessage(prompt);
     }
@@ -95,10 +105,9 @@ public class PromptUtils {
     /**
      * @return Retrieve the instructions used to merge multiple summaries into one.
      */
-    public static ChatMessage createPromptForMergeAllSummaries(HttpServletRequest request) throws IOException {
-        String prompt =  getInstructions("summarization/template-summarization-mergeAll.txt")
+    public static String createPromptForIterateSummaries(HttpServletRequest request) throws IOException {
+        return  getInstructions("summarization/template-summarization-iterative.txt")
                 .replace("{language}", getUserLanguage(request));
-        return new SystemMessage(prompt);
     }
 
 
@@ -169,12 +178,23 @@ public class PromptUtils {
      * @return The string conversation
      */
     public static String getStringHistoryLines(List<ChatMessage> chatHistory) throws IOException {
+        // TODO : implement Langchain4J history
         if (chatHistory.isEmpty()) return "";
         StringBuilder conversation = new StringBuilder();
         String messageTemplate = getInstructions("rag/template-history-message.txt");
+
+        String text;
         for (ChatMessage message : chatHistory) {
+            if (message instanceof UserMessage) {
+                text = ((UserMessage) message).singleText();
+            } else if (message instanceof AiMessage) {
+                text = ((AiMessage) message).text();
+            } else {
+                break;
+            }
+
             String line = messageTemplate.replace("{role}", message.type().name())
-                            .replace("{content}", message.text());
+                            .replace("{content}", text);
             conversation.append(line).append("\n");
         }
         return conversation.toString();
@@ -217,22 +237,21 @@ public class PromptUtils {
      * @return : The original template, filled with as many snippets as possible.
      * @throws DatafariServerException : The template is missing the  {snippets} tag.
      */
-    public static String stuffAsManySnippetsAsPossible(String template, List<ChatMessage> contents, RagConfiguration config) throws DatafariServerException {
+    public static String stuffAsManySnippetsAsPossible(String template, List<String> contents, RagConfiguration config) throws DatafariServerException {
 
         if (!template.contains(SNIPPETS_TAG)) throw new DatafariServerException(CodesReturned.GENERALERROR, "Invalid prompt template: {snippets} tag is missing.");
 
         StringBuilder snippets = new StringBuilder();
         String prompt = template.replace(SNIPPETS_TAG, snippets.toString());
-        List<ChatMessage> processedSnippets = new ArrayList<>();
+        List<String> processedSnippets = new ArrayList<>();
         int i = 0;
 
-        for (ChatMessage message : contents) {
+        for (String snippet : contents) {
             // Adding a snippet to the list, and check if the length is not exceeding the limit
-            String snippet = message.text();
             snippets.append("\n").append(snippet);
             if (template.replace(SNIPPETS_TAG, snippets.toString()).length() < config.getIntegerProperty(RagConfiguration.MAX_REQUEST_SIZE, 40000)) {
                 prompt = template.replace(SNIPPETS_TAG, snippets.toString());
-                processedSnippets.add(message);
+                processedSnippets.add(snippet);
                 i++;
             } else {
                 break;
@@ -242,9 +261,9 @@ public class PromptUtils {
         // If the list is empty due to an excessive content size, the first chunk is stuffed in
         if (processedSnippets.isEmpty() && !contents.isEmpty()) {
             i = 0;
-            snippets = new StringBuilder(contents.get(0).text());
+            snippets = new StringBuilder(contents.getFirst());
             prompt = template.replace(SNIPPETS_TAG, snippets.toString());
-            processedSnippets.add(contents.get(0));
+            processedSnippets.add(contents.getFirst());
         }
 
         // Remove the processed snippets from contents
@@ -405,18 +424,6 @@ public class PromptUtils {
         }
     }
 
-    /**
-     * Returns the total size (in character) of a list of prompts (List<Message>)
-     * @return The total size of the final prompt (int)
-     */
-    public static int getTotalPromptSize(List<ChatMessage> messages) {
-        int size = 0;
-        for (ChatMessage message : messages) {
-            size = size + message.text().length();
-        }
-        return size;
-    }
-
     public static List<ChatMessage> getChatHistoryToList(HttpServletRequest request, RagConfiguration config) {
 
         List<ChatMessage> history = new ArrayList<>();
@@ -458,14 +465,6 @@ public class PromptUtils {
             LOGGER.debug("PromptUtils - RAG - No valid chat history found in request. ");
         }
         return history;
-    }
-
-    public static int getHistorySize(List<ChatMessage> history, RagConfiguration config) {
-        if (!config.getBooleanProperty(RagConfiguration.CHAT_MEMORY_ENABLED)) {
-            return 0;
-        } else {
-            return getTotalPromptSize(history);
-        }
     }
 
     public static ChatMessage createChatMessage(String role, String text) {

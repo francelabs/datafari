@@ -5,7 +5,7 @@ import com.francelabs.datafari.ai.ChatLanguageModelFactory;
 import com.francelabs.datafari.ai.LLMModelConfig;
 import com.francelabs.datafari.ai.LLMModelConfigurationManager;
 import com.francelabs.datafari.ai.LLMModelRegistry;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -122,8 +122,8 @@ public class ChatLanguageModelsConfig extends HttpServlet {
         try {
             LLMModelConfigurationManager configManager = new LLMModelConfigurationManager();
             ChatLanguageModelFactory factory = new ChatLanguageModelFactory(configManager);
-            ChatLanguageModel model = factory.createChatModel(modelName);
-            String result = model.generate(prompt);
+            ChatModel model = factory.createChatModel(modelName);
+            String result = model.chat(prompt);
             resp.setContentType("text/plain");
             resp.getWriter().write(result);
         } catch (Exception e) {

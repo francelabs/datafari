@@ -1,6 +1,6 @@
 package com.francelabs.datafari.ai.models;
 
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
 
 import java.time.Duration;
@@ -9,7 +9,7 @@ import java.util.Map;
 public class GoogleAiGeminiChatLanguageModelBuilder implements ChatLanguageModelBuilder {
 
     @Override
-    public ChatLanguageModel build(Map<String, Object> props) {
+    public ChatModel build(Map<String, Object> props) {
         return GoogleAiGeminiChatModel.builder()
                 .apiKey(getString(props, "apiKey", null))
                 .modelName(getString(props, "modelName", "gemini-pro"))

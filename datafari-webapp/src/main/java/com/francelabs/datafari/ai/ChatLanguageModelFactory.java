@@ -1,13 +1,13 @@
 package com.francelabs.datafari.ai;
 
 import com.francelabs.datafari.ai.models.*;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Factory responsible for creating {@link ChatLanguageModel} instances based on
+ * Factory responsible for creating {@link ChatModel} instances based on
  * model configurations defined in {@link LLMModelConfigurationManager}.
  * <p>
  * The factory uses a registry of {@link ChatLanguageModelBuilder} implementations
@@ -58,29 +58,29 @@ public class ChatLanguageModelFactory {
     }
 
     /**
-     * Creates a {@link ChatLanguageModel} using the active model configuration defined in
+     * Creates a {@link ChatModel} using the active model configuration defined in
      * {@link LLMModelConfigurationManager}.
      *
-     * @return A {@link ChatLanguageModel} instance corresponding to the active model.
+     * @return A {@link ChatModel} instance corresponding to the active model.
      * @throws IllegalStateException    If no active model configuration is available.
      * @throws IllegalArgumentException If no builder is registered for the model's interface type.
      */
-    public ChatLanguageModel createChatModel() {
+    public ChatModel createChatModel() {
         // TODO : Error management
         return createChatModel(null);
     }
 
 
     /**
-     * Creates a {@link ChatLanguageModel} using the configuration for the given model name.
+     * Creates a {@link ChatModel} using the configuration for the given model name.
      * If {@code modelName} is {@code null}, the active model is used.
      *
      * @param modelName The name of the model to use, or {@code null} to use the active model.
-     * @return A {@link ChatLanguageModel} instance configured accordingly.
+     * @return A {@link ChatModel} instance configured accordingly.
      * @throws IllegalStateException    If no model configuration is found.
      * @throws IllegalArgumentException If no builder is registered for the model's interface type.
      */
-    public ChatLanguageModel createChatModel(String modelName) {
+    public ChatModel createChatModel(String modelName) {
         LLMModelConfig config = (modelName != null)
                 ? configManager.getModelByName(modelName)
                 : configManager.getActiveModelConfig();

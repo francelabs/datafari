@@ -24,7 +24,7 @@ import com.francelabs.datafari.utils.rag.PromptUtils;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.segment.TextSegment;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.data.message.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,7 +57,7 @@ public class RagAPI extends SearchAPI {
       return writeJsonError(422, "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", null);
 
     // Set LlmService
-    ChatLanguageModel chatModel = getChatModel(config);
+      ChatModel chatModel = getChatModel(config);
 
     // Search
     // If the search result has not been provided, process a search
@@ -90,7 +90,7 @@ public class RagAPI extends SearchAPI {
     LOGGER.debug("RagAPI - The chunking returned {} chunk(s).", documentsList.size());
 
     // Prompting : Convert all documents chunks into prompt ChatMessages
-    List<ChatMessage> contents = PromptUtils.documentsListToMessages(documentsList);
+    List<String> contents = PromptUtils.documentsListToMessages(documentsList);
 
     // Process the RAG query using the selected service, the contents list and the user query
     String message;
@@ -124,7 +124,7 @@ public class RagAPI extends SearchAPI {
    * ragByDocument Does the query focus on one single document ?
    * @return The string LLM response
    */
-  public static String processRagQuery(List<ChatMessage> contents, ChatLanguageModel chatModel, RagConfiguration config,
+  public static String processRagQuery(List<String> contents, ChatModel chatModel, RagConfiguration config,
                                        HttpServletRequest request, boolean ragBydocument) throws IOException, DatafariServerException {
 
     LOGGER.debug("RagAPI - Processing RAG query. {} chunk(s) received.", contents.size());
@@ -146,7 +146,7 @@ public class RagAPI extends SearchAPI {
 
       // Send all chunks one by one
       List<ChatMessage> prompts;
-      List<ChatMessage> responseMessages = new ArrayList<>();
+      List<String> responseMessages = new ArrayList<>();
       String template = PromptUtils.getInitialRagTemplateMapReduce(request)
               .replace(PromptUtils.USER_QUERY_TAG, userquery)
               .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request))
@@ -163,11 +163,11 @@ public class RagAPI extends SearchAPI {
         ChatMessage prompt = new UserMessage(filledTemplate);
         prompts.add(prompt);
 
-        generatedResponse = chatModel.generate(prompts).content().text();
+        generatedResponse = chatModel.chat(prompts).aiMessage().text();
         LOGGER.debug("RagAPI - Map Reduce - Last response : {}", generatedResponse);
 
         // Add the new response to the list
-        ChatMessage responseMessage = new AiMessage("* " + generatedResponse + "\n");
+        String responseMessage = "* " + generatedResponse + "\n";
         responseMessages.add(responseMessage);
       }
 
@@ -187,7 +187,7 @@ public class RagAPI extends SearchAPI {
       ChatMessage prompt = new UserMessage(filledTemplate);
       prompts.add(prompt);
 
-      return chatModel.generate(prompts).content().text();
+      return chatModel.chat(prompts).aiMessage().text();
 
     } else {
 
@@ -215,7 +215,7 @@ public class RagAPI extends SearchAPI {
 
       ChatMessage prompt = new UserMessage(filledTemplate);
       prompts.add(prompt);
-      String lastresponse = chatModel.generate(prompts).content().text();
+      String lastresponse = chatModel.chat(prompts).aiMessage().text();
 
       // Refining response with each snippet pack
       template = PromptUtils.getRefineRagTemplateRefining(request);
@@ -229,7 +229,7 @@ public class RagAPI extends SearchAPI {
         prompts = new ArrayList<>();
         prompt = new UserMessage(filledTemplate);
         prompts.add(prompt);
-        lastresponse = chatModel.generate(prompts).content().text();
+        lastresponse = chatModel.chat(prompts).aiMessage().text();
         LOGGER.debug("RagAPI - Iterative Refining - Last generated response : {}", lastresponse);
       }
       return lastresponse;
@@ -242,24 +242,24 @@ public class RagAPI extends SearchAPI {
    * Returns the active chat language model as defined in the models.json configuration file.
    *
    * @param config The RAG configuration object (currently unused, included for future compatibility).
-   * @return A {@link ChatLanguageModel} instance corresponding to the active model.
+   * @return A {@link ChatModel} instance corresponding to the active model.
    * @throws IOException If an error occurs while reading or parsing the model configuration file.
    */
-  private static @NotNull ChatLanguageModel getChatModel(RagConfiguration config) throws IOException {
+  private static ChatModel getChatModel(RagConfiguration config) throws IOException {
     LLMModelConfigurationManager configManager = new LLMModelConfigurationManager();
     ChatLanguageModelFactory chatModelFactory = new ChatLanguageModelFactory(configManager);
-    return chatModelFactory.createChatModel(); // Return the activz model
+    return chatModelFactory.createChatModel(); // Return the active model
   }
 
   /**
    * Returns a specific chat language model by name, as defined in the models.json configuration file.
    *
    * @param modelName The name of the model to load (matching the "name" field in the configuration).
-   * @return A {@link ChatLanguageModel} instance corresponding to the specified model name.
+   * @return A {@link ChatModel} instance corresponding to the specified model name.
    * @throws IOException If an error occurs while reading or parsing the model configuration file.
    * @throws IllegalArgumentException If no model is found with the given name.
    */
-  private static @NotNull ChatLanguageModel getSpecificChatModel(String modelName) throws IOException {
+  private static ChatModel getSpecificChatModel(String modelName) throws IOException {
     LLMModelConfigurationManager configManager = new LLMModelConfigurationManager();
     ChatLanguageModelFactory chatModelFactory = new ChatLanguageModelFactory(configManager);
     return chatModelFactory.createChatModel(modelName); // Return a specific model
@@ -280,7 +280,7 @@ public class RagAPI extends SearchAPI {
     String chatHistoryStr = PromptUtils.getStringHistoryLines(chatHistory);
 
     // Get the LLM interface (ChatLanguageModel)
-    ChatLanguageModel chatModel = getChatModel(config);
+    ChatModel chatModel = getChatModel(config);
 
     String template = PromptUtils.getRewriteQueryTemplate(request, retrievalMethod)
             .replace("{userquery}", userQuery)
@@ -289,7 +289,7 @@ public class RagAPI extends SearchAPI {
     prompts.add(new UserMessage(template)) ;
 
     try {
-      String response = chatModel.generate(prompts).content().text();
+      String response = chatModel.chat(prompts).aiMessage().text();
       LOGGER.debug("RagAPI - Rewritten query: {}", response);
       return (response != null && !response.isEmpty()) && !"0".equals(response.trim()) ? response : userQuery;
     } catch (Exception e) {
@@ -303,50 +303,55 @@ public class RagAPI extends SearchAPI {
 
   public static String summarize(final HttpServletRequest request, Document doc) throws IOException {
 
+    // TODO : REFACTOR SUMMARIZATION TO USE ITERATIVE REFINING
+
     LOGGER.debug("RagAPI - Summary for document {} requested.", doc.metadata().getString("id"));
 
     // Get RAG configuration
     RagConfiguration config = RagConfiguration.getInstance();
-    // Select an LLM service
-    ChatLanguageModel chatModel = getChatModel(config);
+    ChatModel chatModel = getChatModel(config);
 
     // Check if summarization is enabled
     if (!config.getBooleanProperty(RagConfiguration.ENABLE_SUMMARIZATION)) {
-      LOGGER.debug("AiPowered - Summarize - Summarization is disabled");
-      throw new DisabledException("The summary generation feature is disabled.");
+        LOGGER.debug("AiPowered - Summarize - Summarization is disabled");
+        throw new DisabledException("The summary generation feature is disabled.");
     }
 
     // Chunk document
     List<TextSegment> segments = ChunkUtils.chunkContent(doc, config);
 
+    if (segments.isEmpty()) {
+        LOGGER.debug("RagAPI - Summarize - No text segments found for document {}.", doc.metadata().getString("id"));
+        throw new IOException("No content available for summarization.");
+    }
+
     // Setup prompt
-    ChatMessage initialPrompt = PromptUtils.createInitialPromptForSummarization(request);
+    String initialPromptTemplate = PromptUtils.createInitialPromptForSummarization(request);
+    String iterativePromptTemplate = PromptUtils.createPromptForIterateSummaries(request);
 
-    // Summarize all chunks
-    List<ChatMessage> summaries = new ArrayList<>();
+    // Summarize first chunk
+    TextSegment chunk = segments.getFirst();
+    initialPromptTemplate = initialPromptTemplate.replace("{chunk}", chunk.text());
+    AiMessage responseMessage =  chatModel.chat(UserMessage.from(initialPromptTemplate)).aiMessage();
+    String lastGeneratedSummary = responseMessage.text();
+
+    // Refine iteratively the summary with each chunk
     for (TextSegment segment: segments) {
-      List<ChatMessage> prompts = new ArrayList<>();
-      prompts.add(initialPrompt);
-      prompts.add(PromptUtils.textSegmentsToMessage(segment, "user"));
 
-      ChatMessage responseMessage =  chatModel.generate(prompts).content();
-      summaries.add(responseMessage);
+        // Refine the summary for each chunk
+        chunk = segments.getFirst();
+        String iterativePrompt = iterativePromptTemplate
+                .replace("{chunk}", chunk.text())
+                .replace("{summary}", lastGeneratedSummary);
+        responseMessage =  chatModel.chat(UserMessage.from(iterativePrompt)).aiMessage();
+        lastGeneratedSummary = responseMessage.text();
     }
 
     // Merge all summaries
-    if (summaries.size() > 1) {
-      // Merge All Summaries as prompts and add an extra instruction to generate a synthesis
-      LOGGER.debug("RagAPI - Summarize - Multiple chunk summaries have been generated.");
-      LOGGER.debug("RagAPI - Summarize - Merging summaries for document {}, with {} chunk(s).", doc.metadata().getString("id"), segments.size());
-      ChatMessage mergeAllSummariesPrompt = PromptUtils.createPromptForMergeAllSummaries(request);
-      summaries.add(mergeAllSummariesPrompt);
-      return chatModel.generate(summaries).content().text();
-
-    } else if (summaries.size() == 1) {
-      LOGGER.debug("RagAPI - Summarize - One single summary have been generated for document {}.", doc.metadata().getString("id"));
-      return summaries.get(0).text();
+    if (lastGeneratedSummary.length() > 1) {
+      return lastGeneratedSummary;
     } else {
-      LOGGER.debug("RagAPI - Summarize - Something happened while processing summarization for document {}. ", doc.metadata().getString("id"));
+      LOGGER.debug("RagAPI - Summarize - Could not generate a summary for document {}. ", doc.metadata().getString("id"));
       throw new IOException("Could not generate any summary for this document");
     }
 
