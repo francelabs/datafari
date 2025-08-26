@@ -40,7 +40,7 @@ public class DocumentDataService {
   public static final String DOCUMENTTITLECOLUMN = "document_title";
   public static final String LIKESCOLUMN = "like";
   public static final String FAVORITECOLLECTION = "favorite";
-  public static final String LIKECOLLECTION = "like";
+  public static final String LIKECOLLECTION = "liked";
   public final static String LASTREFRESHCOLUMN = "last_refresh";
 
   private final String userDataTTL;

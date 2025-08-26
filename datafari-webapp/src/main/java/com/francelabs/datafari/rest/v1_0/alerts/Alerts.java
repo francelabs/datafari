@@ -230,7 +230,7 @@ public class Alerts {
         if (alertJSON.get(AlertDataService.FILTERS_COLUMN) != null) {
             alertProp.put("filters", alertJSON.get(AlertDataService.FILTERS_COLUMN));
         }
-        alertProp.put("user", username);
+        alertProp.put(AlertDataService.USER_COLUMN, username);
         return alertProp;
     }
 }

@@ -69,7 +69,7 @@ CREATE TABLE alerts (
     frequency VARCHAR(255),
     mail VARCHAR(255),
     subject VARCHAR(255),
-    "user" VARCHAR(255),
+    username VARCHAR(255),
     last_refresh TIMESTAMP
 );
 

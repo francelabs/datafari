@@ -29,7 +29,7 @@ public class AlertDataService {
   public static final String FREQUENCY_COLUMN = "frequency";
   public static final String MAIL_COLUMN = "mail";
   public static final String SUBJECT_COLUMN = "subject";
-  public static final String USER_COLUMN = "user";
+  public static final String USER_COLUMN = "username";
   public final static String LASTREFRESHCOLUMN = "last_refresh";
 
   private final String userDataTTL;
@@ -49,8 +49,7 @@ public class AlertDataService {
   public String addAlert(final Properties alertProp) throws DatafariServerException {
     try {
       final UUID uuid = UUID.randomUUID();
-      String ttlToUse = alertProp.getProperty(USER_COLUMN).contentEquals("admin") ? "0" : userDataTTL;
-
+      
       String sql = "INSERT INTO " + ALERTCOLLECTION + " (" +
           ID_COLUMN + ", " + KEYWORD_COLUMN + ", " + FILTERS_COLUMN + ", " + CORE_COLUMN + ", " +
           FREQUENCY_COLUMN + ", " + MAIL_COLUMN + ", " + SUBJECT_COLUMN + ", " +
