@@ -43,23 +43,49 @@ public class LicenceDataService {
   public Licence getLicence(final String licenceID) {
     Licence licence = null;
     try {
-      String sql = "SELECT " + LICENCECOLUMN + " FROM " + LICENCECOLLECTION + " WHERE " + IDCOLUMN + " = ?";
-      try (ResultSet rs = pgService.executeSelect(sql, licenceID)) {
+      // 1) First attempt: search for the licence using the given licenceID
+      final String byIdSql = "SELECT " + LICENCECOLUMN + " FROM " + LICENCECOLLECTION + " WHERE " + IDCOLUMN + " = ?";
+      try (ResultSet rs = pgService.executeSelect(byIdSql, licenceID)) {
         if (rs.next()) {
-          Blob blob = rs.getBlob(LICENCECOLUMN);
-          if (blob != null) {
-            try (ObjectInputStream ois = new ObjectInputStream(blob.getBinaryStream())) {
+          byte[] data = rs.getBytes(LICENCECOLUMN); // Read BYTEA column as raw bytes
+          if (data != null && data.length > 0) {
+            // Deserialize the byte array back into a Licence object
+            try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data))) {
               licence = (Licence) ois.readObject();
+              return licence; // Return immediately if found and deserialization succeeded
             }
+          } else {
+            logger.warn("Licence found for id='{}' but column is empty (0 bytes).", licenceID);
           }
+        } else {
+          logger.warn("No licence found for id='{}'.", licenceID);
+        }
+      }
+
+      // 2) Fallback: if nothing found by ID, take the first licence available in the table
+      final String anySql = "SELECT " + LICENCECOLUMN + " FROM " + LICENCECOLLECTION + " LIMIT 1";
+      try (ResultSet rs2 = pgService.executeSelect(anySql)) {
+        if (rs2.next()) {
+          byte[] data = rs2.getBytes(LICENCECOLLECTION);
+          if (data != null && data.length > 0) {
+            // Deserialize the fallback licence
+            try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data))) {
+              licence = (Licence) ois.readObject();
+              logger.info("Licence successfully retrieved via fallback (first row of the table).");
+            }
+          } else {
+            logger.warn("Fallback found a row but licence column is empty (0 bytes).");
+          }
+        } else {
+          logger.warn("Fallback: licence table {} is empty.", LICENCECOLLECTION);
         }
       }
     } catch (final Exception e) {
-      logger.error("Unable to retrieve licence " + licenceID, e);
+      // Log any SQL or deserialization issue
+      logger.error("Error while retrieving/deserializing licence (id='{}')", licenceID, e);
     }
-    return licence;
+    return licence; // May return null if licence not found or deserialization failed
   }
-
   /**
    * Save the licence
    *
