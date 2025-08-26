@@ -72,7 +72,7 @@ public class Alerts {
                 if (keyword != null && keyword.length() != 0) {
                     auditString += "and corresponding to keyword: " + keyword;
                 }
-                AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(), auditString);
+                AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(), auditString);
                 return RestAPIUtils.buildOKResponse(jsonResponse);
             } catch (DatafariServerException e) {
                 throw new InternalErrorException("Unexpected error while retrieving alerts");

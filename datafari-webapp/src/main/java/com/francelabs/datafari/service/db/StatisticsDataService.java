@@ -21,7 +21,7 @@ import com.francelabs.datafari.utils.UsageStatisticsConfiguration;
 
 /**
  * PostgreSQL version of StatisticsDataService.
- * 100% API compatible with Cassandra version.
+ * 
  */
 public class StatisticsDataService {
 

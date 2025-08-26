@@ -76,10 +76,10 @@ public class DeleteRole extends HttpServlet {
     String role = request.getParameterValues(UserDataService.ROLECOLUMN) == null ? "null"
         : request.getParameterValues(UserDataService.ROLECOLUMN).toString();
     if (allOK) {
-      AuditLogUtil.log("Cassandra", authenticatedUserName, request.getRemoteAddr(),
+      AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
           "Removed role " + role + " from user " + affectedUser);
     } else {
-      AuditLogUtil.log("Cassandra", authenticatedUserName, request.getRemoteAddr(),
+      AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
           "Error trying to remove role " + role + " from user " + affectedUser);
     }
   }

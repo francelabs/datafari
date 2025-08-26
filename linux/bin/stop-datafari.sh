@@ -55,12 +55,6 @@ else
    echo "Warn : Zookeeper MCF does not seem to be running."
 fi
 
-if run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh is_running $CASSANDRA_PID_FILE"; then
-   run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh stop_cassandra";
-else
-   echo "Warn : Cassandra does not seem to be running."
-fi
-
 
 if run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh is_running $POSTGRES_PID_FILE"; then
   run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh stop_postgres"

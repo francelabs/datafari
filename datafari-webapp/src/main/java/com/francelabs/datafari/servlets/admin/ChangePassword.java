@@ -75,10 +75,10 @@ public class ChangePassword extends HttpServlet {
     String affectedUser = request.getParameter(UserDataService.USERNAMECOLUMN) == null ? "null"
         : request.getParameter(UserDataService.USERNAMECOLUMN).toString();
     if (allOk) {
-      AuditLogUtil.log("Cassandra", authenticatedUserName, request.getRemoteAddr(),
+      AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
           "Changed password for user " + affectedUser);
     } else {
-      AuditLogUtil.log("Cassandra", authenticatedUserName, request.getRemoteAddr(),
+      AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
           "Error trying to change password for user " + affectedUser);
     }
   }

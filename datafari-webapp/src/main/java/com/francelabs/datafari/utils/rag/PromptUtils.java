@@ -365,7 +365,7 @@ public class PromptUtils {
             if (lang.isEmpty() && request.getAttribute("lang") != null)
                 lang = getDisplayedName((String) request.getAttribute("lang"));
 
-            // If no language is provided in the GET parameters, retrieving user language from Cassandra lang database
+            // If no language is provided in the GET parameters, retrieving user language from Postgresql lang database
             if (lang.isEmpty()) lang = getDisplayedName(Lang.getLang(authenticatedUserName));
             if (lang.isEmpty()) throw new DatafariServerException(CodesReturned.ALLOK, "");
             return lang;

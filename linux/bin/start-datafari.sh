@@ -47,13 +47,6 @@ if run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh is_running $SOLR_PID
   exit 1
 fi
 
-
-if run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh is_running $CASSANDRA_PID_FILE"; then
-  PID=$(run_as ${DATAFARI_USER} "cat $CASSANDRA_PID_FILE");
-  echo "Error : Cassandra seems to be already running with PID $PID"
-  exit 1
-fi
-
 if run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh is_running $ZK_PID_FILE"; then
   PID=$(run_as ${DATAFARI_USER} "cat $ZK_PID_FILE");
   echo "Error : Zookeeper seems to be already running with PID $PID"
@@ -106,16 +99,11 @@ if  [[ "$NODETYPE" = *mono* ]]; then
      
     cd $DIR   
     
-    echo "Start postgres and cassandra and add ManifoldCF database"
+    echo "Start postgres and add ManifoldCF database"
     run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh init_postgres_repertories";
-    run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_cassandra_repertories";
     run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_zookeeper_repertory";
     run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_zookeeper_mcf_repertory";
     
-    run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh start_cassandra";
-    waitCassandra;
-    run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh init_cassandra";
-  
     run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh init_postgres";
     if  [[ "$POSTGRESQL_EXTERNAL" = false ]]; then
     run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh start_postgres";
@@ -139,8 +127,6 @@ if  [[ "$NODETYPE" = *mono* ]]; then
     if  [[ "$POSTGRESQL_EXTERNAL" = false ]]; then
     run_as ${POSTGRES_USER} "bash ${DIR}/datafari-manager.sh start_postgres";
     fi
-    run_as ${DATAFARI_USER} "bash ${DIR}/datafari-manager.sh start_cassandra";
-    waitCassandra;
   fi
 
 
