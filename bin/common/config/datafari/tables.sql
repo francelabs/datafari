@@ -170,7 +170,7 @@ CREATE TABLE licence (
 );
 
 -- Indexes
-CREATE INDEX alerts_user_idx ON alerts("user");
+CREATE INDEX alerts_user_idx ON alerts("username");
 CREATE INDEX users_is_imported_idx ON users(is_imported);
 CREATE INDEX user_search_actions_userid_idx ON user_search_actions(user_id);
 CREATE INDEX favorite_username_idx ON favorite(username);
