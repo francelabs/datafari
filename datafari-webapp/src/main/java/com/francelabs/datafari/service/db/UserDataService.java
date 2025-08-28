@@ -28,13 +28,13 @@ public class UserDataService {
     public final static String PASSWORDCOLUMN = "password";
     public final static String ISIMPORTEDCOLUMN = "is_imported";
     public final static String LASTREFRESHCOLUMN = "last_refresh";
-    public final static String IMPORTCOLUMN = "imported"; // not used but kept for compatibility 
+    public final static String IMPORTCOLUMN = "imported"; // non utilisé mais conservé
     public final static String ROLECOLUMN = "role";
 
-    private final String userDataTTL; // not used but kept for compatibility 
+    private final String userDataTTL; // conservé pour parité (TTL simulé via last_refresh)
     private final SqlService sql;
 
-    /** COmpatibility bridge for old code with getInstance() */
+    /** Pont de compat pour l’ancien code qui fait getInstance() */
     public static synchronized UserDataService getInstance() {
         return instance;
     }
@@ -42,7 +42,7 @@ public class UserDataService {
     public UserDataService(SqlService sql) {
         this.sql = sql;
         this.userDataTTL = GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL);
-        instance = this; // publishing of the Spring bean for the old code
+        instance = this; // publication du bean Spring pour l’ancien code
     }
 
     // =========================== Requêtes ===========================
