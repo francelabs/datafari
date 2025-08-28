@@ -1,29 +1,47 @@
+/*******************************************************************************
+ *  * Copyright 2015 France Labs
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *      http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *******************************************************************************/
 package com.francelabs.datafari.service.db;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 
 public class LangDataService {
 
-  final static Logger logger = LogManager.getLogger(LangDataService.class.getName());
+  private static final Logger logger = LogManager.getLogger(LangDataService.class);
 
   public static final String USERNAMECOLUMN = "username";
   public static final String LANGCOLLECTION = "lang";
   public static final String LANGCOLUMN = "lang";
-  public final static String LASTREFRESHCOLUMN = "last_refresh";
-
-  private final String userDataTTL;
+  public static final String LASTREFRESHCOLUMN = "last_refresh";
 
   private static LangDataService instance;
 
-  private final PostgresService pgService = new PostgresService();
+  private final JdbcTemplate jdbc;
+
+  private LangDataService() {
+    // Récupération du JdbcTemplate via SqlService
+    this.jdbc = SqlService.get().getJdbcTemplate();
+  }
 
   public static synchronized LangDataService getInstance() {
     if (instance == null) {
@@ -32,78 +50,61 @@ public class LangDataService {
     return instance;
   }
 
-  private LangDataService() {
-    // No TTL in PG, just keep for compat
-    this.userDataTTL = null;
-  }
-
   /**
-   * Get user preferred lang
-   *
-   * @param username
-   * @return the user preferred lang
+   * Get user preferred language
    */
-  public synchronized String getLang(final String username) {
-    String lang = null;
+  public String getLang(final String username) {
     try {
       String sql = "SELECT " + LANGCOLUMN + " FROM " + LANGCOLLECTION + " WHERE " + USERNAMECOLUMN + " = ?";
-      try (ResultSet rs = pgService.executeSelect(sql, username)) {
+      return jdbc.query(sql, rs -> {
         if (rs.next()) {
-          lang = rs.getString(LANGCOLUMN);
+          return rs.getString(LANGCOLUMN);
         }
-      }
+        return null;
+      }, username);
     } catch (final Exception e) {
-      logger.warn("Unable to get lang for user " + username + " : " + e.getMessage());
+      logger.warn("Unable to get lang for user {} : {}", username, e.getMessage());
+      return null;
     }
-    return lang;
   }
 
   /**
-   * Set user lang
-   *
-   * @param username
-   * @param lang
-   * @return CodesReturned.ALLOK if all was ok
-   * @throws DatafariServerException
+   * Insert or update user language
    */
   public int setLang(final String username, final String lang) throws DatafariServerException {
     try {
-      String sql = "INSERT INTO " + LANGCOLLECTION
-          + " (" + USERNAMECOLUMN + "," + LANGCOLUMN + "," + LASTREFRESHCOLUMN + ")"
-          + " VALUES (?, ?, ?)"
-          + " ON CONFLICT (" + USERNAMECOLUMN + ") DO UPDATE SET "
+      String sql = "INSERT INTO " + LANGCOLLECTION + " (" + USERNAMECOLUMN + "," + LANGCOLUMN + "," + LASTREFRESHCOLUMN + ") "
+          + "VALUES (?, ?, ?) "
+          + "ON CONFLICT (" + USERNAMECOLUMN + ") DO UPDATE SET "
           + LANGCOLUMN + " = EXCLUDED." + LANGCOLUMN + ", "
           + LASTREFRESHCOLUMN + " = EXCLUDED." + LASTREFRESHCOLUMN;
-      pgService.executeUpdate(sql, username, lang, new Timestamp(System.currentTimeMillis()));
+      jdbc.update(sql, username, lang, new Timestamp(System.currentTimeMillis()));
+      return CodesReturned.ALLOK.getValue();
     } catch (final Exception e) {
-      logger.warn("Unable to insert lang for user " + username + " : " + e.getMessage());
+      logger.warn("Unable to insert lang for user {} : {}", username, e.getMessage());
       throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
-    return CodesReturned.ALLOK.getValue();
   }
 
   /**
-   * Update user lang
-   *
-   * @param username
-   * @param lang
-   * @return CodesReturned.ALLOK if all was ok
-   * @throws DatafariServerException
+   * Update user language
    */
   public int updateLang(final String username, final String lang) throws DatafariServerException {
     try {
       String sql = "UPDATE " + LANGCOLLECTION
-          + " SET " + LANGCOLUMN + " = ?, "
-          + LASTREFRESHCOLUMN + " = ?"
-          + " WHERE " + USERNAMECOLUMN + " = ?";
-      pgService.executeUpdate(sql, lang, new Timestamp(System.currentTimeMillis()), username);
+          + " SET " + LANGCOLUMN + " = ?, " + LASTREFRESHCOLUMN + " = ? "
+          + "WHERE " + USERNAMECOLUMN + " = ?";
+      jdbc.update(sql, lang, new Timestamp(System.currentTimeMillis()), username);
+      return CodesReturned.ALLOK.getValue();
     } catch (final Exception e) {
-      logger.warn("Unable to update lang for user " + username + " : " + e.getMessage());
+      logger.warn("Unable to update lang for user {} : {}", username, e.getMessage());
       throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
-    return CodesReturned.ALLOK.getValue();
   }
 
+  /**
+   * Refresh user language by updating last_refresh
+   */
   public void refreshLang(final String username) throws DatafariServerException {
     String userLang = getLang(username);
     if (userLang != null) {
@@ -112,19 +113,16 @@ public class LangDataService {
   }
 
   /**
-   *
-   * @param username
-   * @return CodesReturned.ALLOK value if all was ok
-   * @throws DatafariServerException
+   * Delete user language
    */
   public int deleteLang(final String username) throws DatafariServerException {
     try {
       String sql = "DELETE FROM " + LANGCOLLECTION + " WHERE " + USERNAMECOLUMN + " = ?";
-      pgService.executeUpdate(sql, username);
+      jdbc.update(sql, username);
+      return CodesReturned.ALLOK.getValue();
     } catch (final Exception e) {
-      logger.warn("Unable to delete lang for user " + username + " : " + e.getMessage());
+      logger.warn("Unable to delete lang for user {} : {}", username, e.getMessage());
       throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
-    return CodesReturned.ALLOK.getValue();
   }
 }

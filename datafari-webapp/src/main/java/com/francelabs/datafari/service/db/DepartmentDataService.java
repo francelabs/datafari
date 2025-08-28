@@ -1,93 +1,105 @@
 package com.francelabs.datafari.service.db;
 
-import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.time.Instant;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.stereotype.Service;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 
+@Service
 public class DepartmentDataService {
 
   public static final String DEPARTMENTCOLLECTION = "department";
-  public static final String DEPARTMENTCOLUMN = "department";
-  public static final String USERNAMECOLUMN = "username";
-  public static final String LASTREFRESHCOLUMN = "last_refresh";
+  public static final String DEPARTMENTCOLUMN     = "department";
+  public static final String USERNAMECOLUMN       = "username";
+  public static final String LASTREFRESHCOLUMN    = "last_refresh";
 
-  private static DepartmentDataService instance = null;
-  private final PostgresService pgService = new PostgresService();
-  private static final Logger logger = LogManager.getLogger(DepartmentDataService.class.getName());
+  private static final Logger logger = LogManager.getLogger(DepartmentDataService.class);
 
-  private final String userDataTTL; // non utilisé mais conservé pour compatibilité
+  // Pont de compatibilité avec l’ancien code (getInstance())
+  private static volatile DepartmentDataService instance;
 
-  private DepartmentDataService() {
-    this.userDataTTL = null;
+  private final SqlService sql; // accès JDBC centralisé via JdbcTemplate
+
+  // ---- compat getInstance() pour le code existant ----
+  public static synchronized DepartmentDataService getInstance() {
+    return instance;
   }
 
-  public static synchronized DepartmentDataService getInstance() {
-    if (instance == null) {
-      instance = new DepartmentDataService();
-    }
-    return instance;
+  // Spring injecte SqlService ; on en profite pour initialiser 'instance'
+  public DepartmentDataService(final SqlService sql) {
+    this.sql = sql;
+    instance = this;
   }
 
   public String getDepartment(final String username) {
     try {
-      String sql = "SELECT " + DEPARTMENTCOLUMN + " FROM " + DEPARTMENTCOLLECTION + " WHERE " + USERNAMECOLUMN + " = ?";
-      try (ResultSet rs = pgService.executeSelect(sql, username)) {
-        if (rs.next()) {
-          return rs.getString(DEPARTMENTCOLUMN);
-        }
-      }
-    } catch (final Exception e) {
-      logger.warn("Unable to get department for user " + username + " : " + e.getMessage());
+      final String q = "SELECT " + DEPARTMENTCOLUMN +
+                       " FROM " + DEPARTMENTCOLLECTION +
+                       " WHERE " + USERNAMECOLUMN + " = ?";
+      return sql.getJdbcTemplate().queryForObject(q, String.class, username);
+    } catch (EmptyResultDataAccessException e) {
+      return null; // pas de ligne pour cet utilisateur
+    } catch (Exception e) {
+      logger.warn("Unable to get department for user {} : {}", username, e.getMessage());
+      return null;
     }
-    return null;
   }
 
   public int setDepartment(final String username, final String department) throws DatafariServerException {
     try {
-      String sql = "INSERT INTO " + DEPARTMENTCOLLECTION + " (" + USERNAMECOLUMN + ", " + DEPARTMENTCOLUMN + ", " + LASTREFRESHCOLUMN + ") VALUES (?, ?, ?) "
-          + "ON CONFLICT (" + USERNAMECOLUMN + ") DO UPDATE SET " + DEPARTMENTCOLUMN + " = EXCLUDED." + DEPARTMENTCOLUMN + ", "
-          + LASTREFRESHCOLUMN + " = EXCLUDED." + LASTREFRESHCOLUMN;
-      pgService.executeUpdate(sql, username, department, Timestamp.from(Instant.now()));
-    } catch (final Exception e) {
-      logger.error("Unable to insert department for user " + username + " : " + e.getMessage());
+      final String q =
+          "INSERT INTO " + DEPARTMENTCOLLECTION + " (" +
+              USERNAMECOLUMN + ", " + DEPARTMENTCOLUMN + ", " + LASTREFRESHCOLUMN + ") " +
+          "VALUES (?, ?, ?) " +
+          "ON CONFLICT (" + USERNAMECOLUMN + ") DO UPDATE SET " +
+              DEPARTMENTCOLUMN + " = EXCLUDED." + DEPARTMENTCOLUMN + ", " +
+              LASTREFRESHCOLUMN + " = EXCLUDED." + LASTREFRESHCOLUMN;
+
+      sql.getJdbcTemplate().update(q, username, department, Timestamp.from(Instant.now()));
+      return CodesReturned.ALLOK.getValue();
+    } catch (Exception e) {
+      logger.error("Unable to insert department for user {} : {}", username, e.getMessage());
       throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
-    return CodesReturned.ALLOK.getValue();
   }
 
   public int updateDepartment(final String username, final String department) throws DatafariServerException {
     try {
-      String sql = "UPDATE " + DEPARTMENTCOLLECTION + " SET " + DEPARTMENTCOLUMN + " = ?, " + LASTREFRESHCOLUMN + " = ? WHERE " + USERNAMECOLUMN + " = ?";
-      pgService.executeUpdate(sql, department, Timestamp.from(Instant.now()), username);
-    } catch (final Exception e) {
-      logger.warn("Unable to update department for user " + username + " : " + e.getMessage());
+      final String q =
+          "UPDATE " + DEPARTMENTCOLLECTION + " SET " +
+              DEPARTMENTCOLUMN + " = ?, " +
+              LASTREFRESHCOLUMN + " = ? " +
+          "WHERE " + USERNAMECOLUMN + " = ?";
+
+      sql.getJdbcTemplate().update(q, department, Timestamp.from(Instant.now()), username);
+      return CodesReturned.ALLOK.getValue();
+    } catch (Exception e) {
+      logger.warn("Unable to update department for user {} : {}", username, e.getMessage());
       throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
-    return CodesReturned.ALLOK.getValue();
   }
 
   public int deleteDepartment(final String username) throws DatafariServerException {
     try {
-      String sql = "DELETE FROM " + DEPARTMENTCOLLECTION + " WHERE " + USERNAMECOLUMN + " = ?";
-      pgService.executeUpdate(sql, username);
-    } catch (final Exception e) {
-      logger.warn("Unable to delete department for user " + username + " : " + e.getMessage());
+      final String q = "DELETE FROM " + DEPARTMENTCOLLECTION + " WHERE " + USERNAMECOLUMN + " = ?";
+      sql.getJdbcTemplate().update(q, username);
+      return CodesReturned.ALLOK.getValue();
+    } catch (Exception e) {
+      logger.warn("Unable to delete department for user {} : {}", username, e.getMessage());
       throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
-    return CodesReturned.ALLOK.getValue();
   }
 
   public void refreshDepartment(final String username) throws DatafariServerException {
-    final String department = getDepartment(username);
-    if (department != null && !department.isEmpty()) {
-      updateDepartment(username, department);
+    final String dept = getDepartment(username);
+    if (dept != null && !dept.isEmpty()) {
+      updateDepartment(username, dept);
     }
   }
-
 }

@@ -1,32 +1,40 @@
 package com.francelabs.datafari.service.db;
 
-import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 
 public class SavedSearchDataService {
 
-  final static Logger logger = LogManager.getLogger(SavedSearchDataService.class.getName());
+  private static final Logger logger = LogManager.getLogger(SavedSearchDataService.class);
 
   public static final String USERNAMECOLUMN = "username";
   public static final String SEARCHCOLLECTION = "search";
   public static final String REQUESTCOLUMN = "request";
   public static final String REQUESTNAMECOLUMN = "name";
-  public final static String LASTREFRESHCOLUMN = "last_refresh";
+  public static final String LASTREFRESHCOLUMN = "last_refresh";
 
-  // TTL variable kept for compatibility/documentation
-  // Note: PostgreSQL does not natively support TTL.
+  // TTL non supporté nativement par PG ; conservé à titre documentaire.
+  @SuppressWarnings("unused")
   private final String userDataTTL = null;
 
   private static SavedSearchDataService instance;
 
-  private final PostgresService pgService = new PostgresService();
+  // Helpers SQL via le pont statique
+  private final JdbcTemplate jdbc;
+  private final NamedParameterJdbcTemplate named;
+
+  private SavedSearchDataService() {
+    this.jdbc  = SqlService.get().getJdbcTemplate();
+    this.named = SqlService.get().getNamedJdbcTemplate();
+  }
 
   public static synchronized SavedSearchDataService getInstance() {
     if (instance == null) {
@@ -36,112 +44,92 @@ public class SavedSearchDataService {
   }
 
   /**
-   * Add a search to the list of searches saved by the user
+   * Ajoute (ou rafraîchit) une recherche sauvegardée pour l’utilisateur.
    */
   public int saveSearch(final String username, final String requestName, final String request) throws Exception {
     try {
-      // Emulation of TTL could be handled by a cleanup job if needed
-      String sql = "INSERT INTO " + SEARCHCOLLECTION + " (" +
-          USERNAMECOLUMN + ", " +
-          REQUESTNAMECOLUMN + ", " +
-          REQUESTCOLUMN + ", " +
-          LASTREFRESHCOLUMN + ") VALUES (?, ?, ?, now()) " +
-          "ON CONFLICT (" + USERNAMECOLUMN + ", " + REQUESTNAMECOLUMN + ", " + REQUESTCOLUMN + ") DO UPDATE SET " +
-          LASTREFRESHCOLUMN + " = now()";
-      pgService.executeUpdate(sql, username, requestName, request);
+      final String sql =
+          "INSERT INTO " + SEARCHCOLLECTION + " (" +
+              USERNAMECOLUMN + ", " +
+              REQUESTNAMECOLUMN + ", " +
+              REQUESTCOLUMN + ", " +
+              LASTREFRESHCOLUMN + ") " +
+          "VALUES (?, ?, ?, now()) " +
+          "ON CONFLICT (" + USERNAMECOLUMN + ", " + REQUESTNAMECOLUMN + ", " + REQUESTCOLUMN + ") " +
+          "DO UPDATE SET " + LASTREFRESHCOLUMN + " = EXCLUDED." + LASTREFRESHCOLUMN;
+
+      jdbc.update(sql, username, requestName, request);
+      return CodesReturned.ALLOK.getValue();
     } catch (final Exception e) {
-      logger.error("Unable to save search in database for user: " + username, e);
+      logger.error("Unable to save search in database for user: {}", username, e);
       return CodesReturned.ALREADYPERFORMED.getValue();
     }
-    return CodesReturned.ALLOK.getValue();
   }
 
   /**
-   * delete a search
+   * Supprime une recherche sauvegardée.
    */
   public int deleteSearch(final String username, final String requestName, final String request) throws Exception {
     try {
-      String sql = "DELETE FROM " + SEARCHCOLLECTION +
-          " WHERE " + USERNAMECOLUMN + " = ?" +
-          " AND " + REQUESTCOLUMN + " = ?" +
+      final String sql =
+          "DELETE FROM " + SEARCHCOLLECTION +
+          " WHERE " + USERNAMECOLUMN + " = ? " +
+          " AND " + REQUESTCOLUMN + " = ? " +
           " AND " + REQUESTNAMECOLUMN + " = ?";
-      pgService.executeUpdate(sql, username, request, requestName);
+
+      jdbc.update(sql, username, request, requestName);
+      return CodesReturned.ALLOK.getValue();
     } catch (final Exception e) {
-      logger.error("Unable to delete search in database for user: " + username, e);
+      logger.error("Unable to delete search in database for user: {}", username, e);
       return CodesReturned.ALREADYPERFORMED.getValue();
     }
-    return CodesReturned.ALLOK.getValue();
   }
 
   /**
-   * get all the saved searches of a user
+   * Récupère toutes les recherches sauvegardées d’un utilisateur.
+   * Map<name, request>
    */
   public Map<String, String> getSearches(final String username) throws Exception {
-    final Map<String, String> searches = new HashMap<>();
-    String sql = "SELECT " + REQUESTNAMECOLUMN + ", " + REQUESTCOLUMN +
+    final String sql =
+        "SELECT " + REQUESTNAMECOLUMN + ", " + REQUESTCOLUMN +
         " FROM " + SEARCHCOLLECTION +
         " WHERE " + USERNAMECOLUMN + " = ?";
-    try (ResultSet rs = pgService.executeSelect(sql, username)) {
+
+    return jdbc.query(sql, rs -> {
+      final Map<String, String> out = new HashMap<>();
       while (rs.next()) {
-        searches.put(rs.getString(REQUESTNAMECOLUMN), rs.getString(REQUESTCOLUMN));
+        out.put(rs.getString(REQUESTNAMECOLUMN), rs.getString(REQUESTCOLUMN));
       }
-    }
-    return searches;
+      return out;
+    }, username);
   }
 
   /**
-   * Delete all saved searches of a user
+   * Supprime toutes les recherches sauvegardées d’un utilisateur.
    */
   public int removeSearches(final String username) throws Exception {
-    final Map<String, String> searches = getSearches(username);
-    for (final String searchName : searches.keySet()) {
-      final String search = searches.get(searchName);
-      try {
-        String sql = "DELETE FROM " + SEARCHCOLLECTION +
-            " WHERE " + USERNAMECOLUMN + " = ?" +
-            " AND " + REQUESTNAMECOLUMN + " = ?" +
-            " AND " + REQUESTCOLUMN + " = ?";
-        pgService.executeUpdate(sql, username, searchName, search);
-      } catch (final Exception e) {
-        logger.error("Unable to delete saved search for user: " + username, e);
-        // Continue deleting remaining, but signal error
-        return CodesReturned.ALREADYPERFORMED.getValue();
-      }
+    try {
+      final String sql = "DELETE FROM " + SEARCHCOLLECTION + " WHERE " + USERNAMECOLUMN + " = ?";
+      jdbc.update(sql, username);
+      return CodesReturned.ALLOK.getValue();
+    } catch (final Exception e) {
+      logger.error("Unable to delete saved searches for user: {}", username, e);
+      return CodesReturned.ALREADYPERFORMED.getValue();
     }
-    return CodesReturned.ALLOK.getValue();
   }
 
   /**
-   * refresh a search
+   * Met à jour le last_refresh de toutes les recherches d’un utilisateur.
    */
-  private int refreshSearch(final String username, final String requestName, final String request) throws Exception {
-    try {
-      String sql = "UPDATE " + SEARCHCOLLECTION +
-          " SET " + LASTREFRESHCOLUMN + " = now()" +
-          " WHERE " + USERNAMECOLUMN + " = ?" +
-          " AND " + REQUESTCOLUMN + " = ?" +
-          " AND " + REQUESTNAMECOLUMN + " = ?";
-      pgService.executeUpdate(sql, username, request, requestName);
-    } catch (final Exception e) {
-      logger.warn("Unable to refresh search in database for user: " + username, e);
-      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
-    }
-    return CodesReturned.ALLOK.getValue();
-  }
-
   public void refreshSavedSearches(final String username) throws DatafariServerException {
     try {
-      final Map<String, String> userSearches = getSearches(username);
-      if (userSearches != null && !userSearches.isEmpty()) {
-        for (final Map.Entry<String, String> entry : userSearches.entrySet()) {
-          final String requestName = entry.getKey();
-          final String request = entry.getValue();
-          refreshSearch(username, requestName, request);
-        }
-      }
+      final String sql =
+          "UPDATE " + SEARCHCOLLECTION +
+          " SET " + LASTREFRESHCOLUMN + " = now()" +
+          " WHERE " + USERNAMECOLUMN + " = ?";
+      jdbc.update(sql, username);
     } catch (final Exception e) {
       throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
   }
-
 }

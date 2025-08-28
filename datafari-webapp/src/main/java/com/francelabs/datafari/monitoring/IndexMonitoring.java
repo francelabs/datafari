@@ -4,12 +4,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -27,18 +22,23 @@ import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;
 
 /**
- * Starts monitoring events which occurs at a fixed rate (once an hour by default, but can be set in the admin UI of datafari //TODO)
- *
+ * Starts monitoring events which occurs at a fixed rate (once an hour by default).
  */
 public class IndexMonitoring {
 
-  /** The instance. */
+  /** Singleton instance. */
   private static IndexMonitoring instance;
-  /** The scheduler. */
-  private ScheduledExecutorService scheduler;
-  /** The selected monitoring frequency unit. */
+
+  /** Scheduler for periodic task. */
+  private volatile ScheduledExecutorService scheduler;
+
+  /** Guard to make start/stop idempotent. */
+  private volatile boolean started = false;
+
+  /** Selected monitoring frequency unit. */
   private final MonitoringLogFrequencyUnit selectedMonitoringLogFrequencyUnit;
-  /** The frequency value. */
+
+  /** Frequency value. */
   private final int frequencyValue;
 
   /** Monitoring Log Frequency Enum. */
@@ -51,20 +51,14 @@ public class IndexMonitoring {
     MINUTELY, HOURLY, DAILY
   }
 
-  /**
-   * Constructor
-   */
   private IndexMonitoring() {
-    selectedMonitoringLogFrequencyUnit = MonitoringLogFrequencyUnit.HOUR;
-    frequencyValue = 1;
+    // Default: run every hour
+    this.selectedMonitoringLogFrequencyUnit = MonitoringLogFrequencyUnit.HOUR;
+    this.frequencyValue = 1;
   }
 
-  /**
-   * Singleton
-   *
-   * @return the instance
-   */
-  public static IndexMonitoring getInstance() {
+  /** Thread-safe singleton getter. */
+  public static synchronized IndexMonitoring getInstance() {
     if (instance == null) {
       instance = new IndexMonitoring();
     }
@@ -72,77 +66,86 @@ public class IndexMonitoring {
   }
 
   /**
-   * Starts the monitoring and periodically generates logs
+   * Start monitoring if not already running.
+   * Idempotent: calling it multiple times won’t schedule duplicates.
    */
-  public void startIndexMonitoring() {
+  public synchronized void startIndexMonitoring() {
+    if (started && scheduler != null && !scheduler.isShutdown() && !scheduler.isTerminated()) {
+      // Already running; do nothing
+      return;
+    }
+    // (Re)create scheduler
     scheduler = Executors.newScheduledThreadPool(1);
-    final FileShareMonitoringLog logger = new FileShareMonitoringLog();
-    scheduler.scheduleAtFixedRate(logger, millisecondsBetweenNextEvent(), getPeriod(), TimeUnit.MILLISECONDS);
+    final FileShareMonitoringLog task = new FileShareMonitoringLog();
+
+    long initialDelay = millisecondsBetweenNextEvent();
+    if (initialDelay < 0) {
+      // Safety: ensure non-negative initial delay
+      initialDelay = 0L;
+    }
+    scheduler.scheduleAtFixedRate(task, initialDelay, getPeriod(), TimeUnit.MILLISECONDS);
+    started = true;
   }
 
   /**
-   * Stops the monitoring process
+   * Stop monitoring if running.
+   * Idempotent and null-safe.
    */
-  public void stopIndexMonitoring() {
-    scheduler.shutdownNow();
+  public synchronized void stopIndexMonitoring() {
+    started = false; // mark as not started first
+    try {
+      if (scheduler != null && !scheduler.isShutdown()) {
+        scheduler.shutdownNow();
+      }
+    } catch (Exception e) {
+      // Log and swallow: shutdown must be robust
+      LogManager.getLogger(IndexMonitoring.class).warn("stopIndexMonitoring ignored error", e);
+    } finally {
+      scheduler = null; // ensure GC and future starts create a fresh scheduler
+    }
   }
 
   /**
-   * Calculates the period according to the selected monitoring frequency unit and value
-   *
-   * @return the calculated period in milliseconds
+   * Calculates the period according to the selected monitoring frequency unit and value.
+   * @return period in milliseconds
    */
   private long getPeriod() {
     long multiplicator;
     switch (selectedMonitoringLogFrequencyUnit) {
-    case HOUR:
-      multiplicator = 60 * 60;
-      break;
-    case MINUTE:
-      multiplicator = 60;
-      break;
-    case DAY:
-      multiplicator = 60 * 60 * 24;
-      break;
-    default:
-      multiplicator = 60 * 60;
-      break;
+      case HOUR:
+        multiplicator = 60 * 60;
+        break;
+      case MINUTE:
+        multiplicator = 60;
+        break;
+      case DAY:
+        multiplicator = 60 * 60 * 24;
+        break;
+      default:
+        multiplicator = 60 * 60;
+        break;
     }
-    return 1000 * multiplicator * frequencyValue;
+    return 1000L * multiplicator * frequencyValue;
   }
 
   /**
-   * Calculates the number of milliseconds between the current date time and the date time of the next monitoring event
-   *
-   * @return the number of milliseconds
+   * Calculates the number of milliseconds between now and the next monitoring tick.
+   * @return non-negative delay in milliseconds
    */
   private long millisecondsBetweenNextEvent() {
     final Calendar nextMinute = new GregorianCalendar();
     nextMinute.add(Calendar.MINUTE, frequencyValue);
     nextMinute.set(Calendar.SECOND, 0);
     nextMinute.set(Calendar.MILLISECOND, 0);
-    final long diffInMilliseconds = nextMinute.getTimeInMillis() - new GregorianCalendar().getTimeInMillis();
-    return diffInMilliseconds;
+    long diff = nextMinute.getTimeInMillis() - System.currentTimeMillis();
+    return Math.max(diff, 0L);
   }
 
   /**
-   * Thread that will log the state of the FileShare Solr Core
-   * <p>
-   * The goal is to have the number of documents indexed and how those documents are distributed. For this purpose, this thread will query the FileShare core with some facet fields like for example
-   * "extension", "language" or "source" The query response is then analyzed to extract the global number of docs and split the number of docs per facet. The results are then formated into logs (one
-   * log per facet value) like this:<br>
-   * [id]|[number_of_docs]|[facet_value]|[facet_type]
-   * <p>
-   * For example, if the FileShare core contains 28 documents, 14 of witch are in french, and 14 of witch are in english, and the "language" facet field is added to the query, the following logs will
-   * be generated:<br>
-   * Aefs646|28|no|no G5sfP|14|fr|language MtuL78|14|en|language
-   * <p>
-   * The log with the total number of documents is always generated. For this log, the facet value and the facet type are both set to "no" (like shown above)
-   *
+   * Periodic task that logs FileShare Solr Core stats.
    */
   private final class FileShareMonitoringLog implements Runnable {
 
-    /** The LOGGER. */
     private final Logger LOGGER = LogManager.getLogger(FileShareMonitoringLog.class);
 
     /** facet fields to add to the query. */
@@ -150,9 +153,6 @@ public class IndexMonitoring {
 
     private final MonitoringEventFrequency eventFrequency;
 
-    /**
-     * Constructor
-     */
     public FileShareMonitoringLog() {
       this.eventFrequency = MonitoringEventFrequency.DAILY;
     }
@@ -160,30 +160,33 @@ public class IndexMonitoring {
     @Override
     public void run() {
       try {
-        // Create an instance of SimpleDateFormat used for
-        // formatting
-        // the string representation of date
         final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         final String currentDate = df.format(new Date());
-        String log = "";
+
         final IndexerServer server = IndexerServerManager.getIndexerServer(Core.FILESHARE);
+        if (server == null) {
+          // Defensive: if not available yet, just skip this tick
+          LOGGER.debug("IndexerServer FILESHARE not available yet; skipping monitoring tick.");
+          return;
+        }
+
         final IndexerQuery query = IndexerServerManager.createQuery();
         query.setQuery("*:*");
         query.setRequestHandler("/opensearch");
-        // Add specified facet fields
         for (final String facetField : facetFields) {
           query.addFacetField(facetField);
         }
 
         final IndexerQueryResponse queryResponse = server.executeQuery(query);
-        // Generate the global num of docs log
-        log = generateID("no", "no") + "|" + currentDate + "|" + queryResponse.getNumFound() + "|no|no";
+
+        // Global num docs log
+        String log = generateID("no", "no") + "|" + currentDate + "|" + queryResponse.getNumFound() + "|no|no";
         LOGGER.log(MonitoringLevel.MONITORING, log);
 
-        // Then generate the logs for each facet
+        // Facet logs
         for (final IndexerFacetField facetField : queryResponse.getFacetFields().values()) {
           String facetType = facetField.getName();
-          if (facetType.equals("repo_source")) {
+          if ("repo_source".equals(facetType)) {
             facetType = "source";
           }
           for (final IndexerFacetFieldCount facet : facetField.getValues()) {
@@ -195,24 +198,15 @@ public class IndexMonitoring {
         }
 
       } catch (final Exception e) {
-        LOGGER.error("Unable to retrieve Index infos");
+        // Keep task resilient: never let an exception kill the scheduler thread
+        LOGGER.error("Unable to retrieve Index infos", e);
       }
     }
 
     /**
-     * Generates an ID for the log, which is needed to exploit the monitoring logs with ELK (Elasticsearch Logstash Kibana).
-     * <p>
-     * The ID must be UNIQUE per monitoring event, per facet value. This is the reason why the facet value and the facet type are required. The ID is a MD5 calculated on a string composed by the
-     * currentDate(midnight), the facet value and the facet type.
-     *
-     * @param facetValue the facet value
-     * @param facetType  facet type
-     * @return the generated ID
-     * @throws NoSuchAlgorithmException .
+     * Generates a unique ID per (event window, facet value).
      */
     private String generateID(final String facetValue, final String facetType) throws NoSuchAlgorithmException {
-      // Set the current date according to the selected monitoring event
-      // frequency
       final Calendar currentDate = new GregorianCalendar();
       if (eventFrequency != MonitoringEventFrequency.HOURLY && eventFrequency != MonitoringEventFrequency.MINUTELY) {
         currentDate.set(Calendar.HOUR, 0);
@@ -224,19 +218,16 @@ public class IndexMonitoring {
       currentDate.set(Calendar.MILLISECOND, 0);
       currentDate.set(Calendar.HOUR_OF_DAY, 0);
       currentDate.set(Calendar.AM_PM, Calendar.AM);
-      // Construct the String ID
+
       final String strID = String.valueOf(currentDate.getTimeInMillis()) + facetValue + facetType;
-      // Calculate the MD5 of the String
       final MessageDigest md = MessageDigest.getInstance("MD5");
       md.update(strID.getBytes());
       final byte[] digest = md.digest();
-      final StringBuffer sb = new StringBuffer();
+      final StringBuilder sb = new StringBuilder();
       for (final byte b : digest) {
         sb.append(String.format("%02x", b & 0xff));
       }
       return sb.toString();
     }
-
   }
-
 }

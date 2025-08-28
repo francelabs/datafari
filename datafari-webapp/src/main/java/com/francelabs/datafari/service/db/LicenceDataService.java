@@ -1,23 +1,35 @@
+/*******************************************************************************
+ *  * Copyright 2015 France Labs
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *      http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *******************************************************************************/
 package com.francelabs.datafari.service.db;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.sql.Blob;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.PreparedStatement;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.licence.Licence;
 
 public class LicenceDataService {
 
-  final static Logger logger = LogManager.getLogger(LicenceDataService.class.getName());
+  private static final Logger logger = LogManager.getLogger(LicenceDataService.class);
 
   public static final String IDCOLUMN = "licence_id";
   public static final String LICENCECOLLECTION = "licence";
@@ -25,7 +37,12 @@ public class LicenceDataService {
 
   private static LicenceDataService instance;
 
-  private final PostgresService pgService = new PostgresService();
+  // Helpers JDBC via le pont statique
+  private final JdbcTemplate jdbc;
+
+  private LicenceDataService() {
+    this.jdbc = SqlService.get().getJdbcTemplate();
+  }
 
   public static synchronized LicenceDataService getInstance() {
     if (instance == null) {
@@ -35,77 +52,60 @@ public class LicenceDataService {
   }
 
   /**
-   * Get the licence
-   *
-   * @param licenceID
-   * @return the licence corresponding to the licence id or null if not found
+   * Retrieve a licence by ID, or fallback to the first row if not found/empty.
    */
   public Licence getLicence(final String licenceID) {
     Licence licence = null;
     try {
-      // 1) First attempt: search for the licence using the given licenceID
+      // 1) Tentative par ID
       final String byIdSql = "SELECT " + LICENCECOLUMN + " FROM " + LICENCECOLLECTION + " WHERE " + IDCOLUMN + " = ?";
-      try (ResultSet rs = pgService.executeSelect(byIdSql, licenceID)) {
-        if (rs.next()) {
-          byte[] data = rs.getBytes(LICENCECOLUMN); // Read BYTEA column as raw bytes
-          if (data != null && data.length > 0) {
-            // Deserialize the byte array back into a Licence object
-            try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data))) {
-              licence = (Licence) ois.readObject();
-              return licence; // Return immediately if found and deserialization succeeded
-            }
-          } else {
-            logger.warn("Licence found for id='{}' but column is empty (0 bytes).", licenceID);
-          }
-        } else {
-          logger.warn("No licence found for id='{}'.", licenceID);
+      byte[] data = jdbc.query(byIdSql, rs -> rs.next() ? rs.getBytes(LICENCECOLUMN) : null, licenceID);
+
+      if (data != null && data.length > 0) {
+        try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data))) {
+          return (Licence) ois.readObject();
         }
+      } else {
+        logger.warn("Licence not found or empty for id='{}'. Trying fallback.", licenceID);
       }
 
-      // 2) Fallback: if nothing found by ID, take the first licence available in the table
+      // 2) Fallback : première ligne de la table
       final String anySql = "SELECT " + LICENCECOLUMN + " FROM " + LICENCECOLLECTION + " LIMIT 1";
-      try (ResultSet rs2 = pgService.executeSelect(anySql)) {
-        if (rs2.next()) {
-          byte[] data = rs2.getBytes(LICENCECOLLECTION);
-          if (data != null && data.length > 0) {
-            // Deserialize the fallback licence
-            try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data))) {
-              licence = (Licence) ois.readObject();
-              logger.info("Licence successfully retrieved via fallback (first row of the table).");
-            }
-          } else {
-            logger.warn("Fallback found a row but licence column is empty (0 bytes).");
-          }
-        } else {
-          logger.warn("Fallback: licence table {} is empty.", LICENCECOLLECTION);
+      byte[] anyData = jdbc.query(anySql, rs -> rs.next() ? rs.getBytes(LICENCECOLUMN) : null);
+
+      if (anyData != null && anyData.length > 0) {
+        try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(anyData))) {
+          licence = (Licence) ois.readObject();
+          logger.info("Licence retrieved via fallback (first row).");
         }
+      } else {
+        logger.warn("Fallback: licence table '{}' is empty or column is empty.", LICENCECOLLECTION);
       }
     } catch (final Exception e) {
-      // Log any SQL or deserialization issue
       logger.error("Error while retrieving/deserializing licence (id='{}')", licenceID, e);
     }
-    return licence; // May return null if licence not found or deserialization failed
+    return licence; // peut être null
   }
+
   /**
-   * Save the licence
-   *
-   * @param licenceId the licenceId
-   * @param licence   the licence
-   * @return CodesReturned.ALLOK if all was ok
+   * Save (upsert) a licence (BYTEA) under a given id. Deletes previous id if it differs.
    */
   public int saveLicence(final String licenceId, final Licence licence) {
     try {
       final String existingLicence = getLicenceId();
+
       final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      final ObjectOutputStream oos = new ObjectOutputStream(baos);
-      oos.writeObject(licence);
-      oos.flush();
+      try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+        oos.writeObject(licence);
+        oos.flush();
+      }
       byte[] licenceBytes = baos.toByteArray();
 
-      // Upsert
-      String sql = "INSERT INTO " + LICENCECOLLECTION + " (" + IDCOLUMN + ", " + LICENCECOLUMN + ") VALUES (?, ?) "
-                 + "ON CONFLICT (" + IDCOLUMN + ") DO UPDATE SET " + LICENCECOLUMN + " = EXCLUDED." + LICENCECOLUMN;
-      pgService.executeUpdate(sql, licenceId, licenceBytes);
+      final String sql =
+          "INSERT INTO " + LICENCECOLLECTION + " (" + IDCOLUMN + ", " + LICENCECOLUMN + ") VALUES (?, ?) " +
+          "ON CONFLICT (" + IDCOLUMN + ") DO UPDATE SET " + LICENCECOLUMN + " = EXCLUDED." + LICENCECOLUMN;
+
+      jdbc.update(sql, licenceId, licenceBytes);
 
       if (existingLicence != null && !existingLicence.isEmpty() && !existingLicence.equals(licenceId)) {
         deleteLicence(existingLicence);
@@ -116,34 +116,31 @@ public class LicenceDataService {
     return CodesReturned.ALLOK.getValue();
   }
 
-  // Helper to get the current licence id (if exists)
+  /** Return any existing licence_id (first row) or null. */
   private String getLicenceId() {
     try {
-      String sql = "SELECT " + IDCOLUMN + " FROM " + LICENCECOLLECTION + " LIMIT 1";
-      try (ResultSet rs = pgService.executeSelect(sql)) {
-        if (rs.next()) {
-          return rs.getString(IDCOLUMN);
-        }
-      }
+      final String sql = "SELECT " + IDCOLUMN + " FROM " + LICENCECOLLECTION + " LIMIT 1";
+      return jdbc.query(sql, rs -> rs.next() ? rs.getString(IDCOLUMN) : null);
     } catch (final Exception e) {
-      logger.warn("Unable to get the licence", e);
+      logger.warn("Unable to get the licence id", e);
+      return null;
     }
-    return null;
   }
 
   private void deleteLicence(final String licenceId) {
     try {
-      String sql = "DELETE FROM " + LICENCECOLLECTION + " WHERE " + IDCOLUMN + " = ?";
-      pgService.executeUpdate(sql, licenceId);
+      final String sql = "DELETE FROM " + LICENCECOLLECTION + " WHERE " + IDCOLUMN + " = ?";
+      jdbc.update(sql, licenceId);
     } catch (final Exception e) {
-      logger.warn("Unable to delete licence: " + licenceId, e);
+      logger.warn("Unable to delete licence: {}", licenceId, e);
     }
   }
 
+  @SuppressWarnings("unused")
   private void emptyLicence() {
     try {
-      String sql = "TRUNCATE TABLE " + LICENCECOLLECTION;
-      pgService.executeUpdate(sql);
+      final String sql = "TRUNCATE TABLE " + LICENCECOLLECTION;
+      jdbc.update(sql);
     } catch (final Exception e) {
       logger.warn("Unable to empty licence table", e);
     }
