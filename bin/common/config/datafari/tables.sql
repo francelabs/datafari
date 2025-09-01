@@ -103,8 +103,8 @@ CREATE TABLE liked (
 );
 
 CREATE TABLE users (
-    username VARCHAR PRIMARY KEY,
-    password VARCHAR NOT NULL,
+    username VARCHAR(255) PRIMARY KEY,
+    password CHAR(64), -- hash SHA-256 hex
     is_imported BOOLEAN NOT NULL DEFAULT false,
     last_refresh TIMESTAMP NOT NULL
 );
