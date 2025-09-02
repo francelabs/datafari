@@ -93,6 +93,7 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
               vectorDocument.removeField("id");
               vectorDocument.setField("id", id);
               vectorDocument.addField("parent_doc", parentId);
+              vectorDocument.addField("chunk_index", chunks.indexOf(chunk));
 
               // Remove all existing "content" fields:
               vectorDocument.removeField("content_en");

@@ -221,8 +221,10 @@
     <field name="vector_4096" type="knn_vector_4096" indexed="true" stored="true"/>
 
     <field name="has_vector" type="string" multiValued="true" indexed="true" stored="true"/>
+    <field name="vectorize" type="boolean" indexed="false" stored="true"/>
 
     <field name="parent_doc" type="string" indexed="true" stored="true"/>
+    <field name="chunk_index" type="int" indexed="true" stored="true"/>
 
    <field name="suggest" type="text_auto" indexed="true" stored="false" multiValued="true" />
    <field name="spell" type="text_auto" indexed="true" stored="false" multiValued="true" />

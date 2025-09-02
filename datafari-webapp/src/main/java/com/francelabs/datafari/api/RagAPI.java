@@ -57,7 +57,7 @@ public class RagAPI extends SearchAPI {
       return writeJsonError(422, "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", null);
 
     // Set LlmService
-      ChatModel chatModel = getChatModel(config);
+    ChatModel chatModel = getChatModel(config);
 
     // Search
     // If the search result has not been provided, process a search
@@ -245,7 +245,7 @@ public class RagAPI extends SearchAPI {
    * @return A {@link ChatModel} instance corresponding to the active model.
    * @throws IOException If an error occurs while reading or parsing the model configuration file.
    */
-  private static ChatModel getChatModel(RagConfiguration config) throws IOException {
+  public static ChatModel getChatModel(RagConfiguration config) throws IOException {
     LLMModelConfigurationManager configManager = new LLMModelConfigurationManager();
     ChatLanguageModelFactory chatModelFactory = new ChatLanguageModelFactory(configManager);
     return chatModelFactory.createChatModel(); // Return the active model

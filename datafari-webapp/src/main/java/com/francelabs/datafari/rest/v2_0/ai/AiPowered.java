@@ -1,6 +1,8 @@
 package com.francelabs.datafari.rest.v2_0.ai;
 
 import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
+import com.francelabs.datafari.ai.agentic.AgenticRag;
+import com.francelabs.datafari.ai.agentic.agent.DatafariAgent;
 import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.rag.RagConfiguration;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
@@ -10,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,8 +35,26 @@ public class AiPowered {
     private static final String QUERY_FIELD = "query";
     private static final String STATUS_FIELD = "status";
 
+
+    @GetMapping(value = "/rest/v2.0/ai/agent", produces = "application/json;charset=UTF-8")
+    public static String agentic(final HttpServletRequest request) {
+//        String result = AgenticRag.run();
+        DatafariAgent agent = new DatafariAgent(request);
+        String query = (request.getParameter("q") != null) ? request.getParameter("q") : "1999 electricity consumption north america";
+        String docId = request.getParameter("id");
+
+        String result = (docId == null) ? agent.ask(query) : agent.askForDocument(query, docId);
+
+        LOGGER.warn("EBE - result = {}", result);
+
+        JSONObject jsonContent = new JSONObject();
+        jsonContent.put("query", query);
+        jsonContent.put("message", result);
+        return jsonContent.toJSONString();
+    }
+
     @PostMapping(value = "/rest/v2.0/ai/summarize", produces = "application/json;charset=UTF-8")
-    public String summarizeDocument(final HttpServletRequest request, @RequestBody JSONObject jsonDoc) {
+    public static String summarizeDocument(final HttpServletRequest request, @RequestBody JSONObject jsonDoc) {
 
         String id;
         String lang;
@@ -95,7 +116,7 @@ public class AiPowered {
     }
 
     @PostMapping(value = "/rest/v2.0/ai/rag", produces = "application/json;charset=UTF-8")
-    public String rag(final HttpServletRequest request, @RequestBody JSONObject jsonDoc) {
+    public static String rag(final HttpServletRequest request, @RequestBody JSONObject jsonDoc) {
 
         LOGGER.debug("AiPowered - RAG - RAG request received.");
 
@@ -225,8 +246,8 @@ public class AiPowered {
      * @param jsonResponse String
      * @return a response JSONObject
      */
-    private String getDocumentSummary(HttpServletRequest request, String summary, String content, String id,
-                                      String title, String url, JSONObject jsonResponse) throws IOException {
+    private static String getDocumentSummary(HttpServletRequest request, String summary, String content, String id,
+                                             String title, String url, JSONObject jsonResponse) throws IOException {
         if ((summary == null || summary.isEmpty()) && (content != null && !content.isEmpty())) {
             // If there is no existing summary, but content is found, use RagAPI service to generate a summary
             LOGGER.debug("AiPowered - Summarize - No summary found for document {}.", id);
