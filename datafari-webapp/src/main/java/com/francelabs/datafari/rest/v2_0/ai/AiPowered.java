@@ -2,6 +2,7 @@ package com.francelabs.datafari.rest.v2_0.ai;
 
 import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
 import com.francelabs.datafari.ai.agentic.AgenticRag;
+import com.francelabs.datafari.ai.agentic.agent.CfPAgent;
 import com.francelabs.datafari.ai.agentic.agent.DatafariAgent;
 import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.rag.RagConfiguration;
@@ -44,6 +45,21 @@ public class AiPowered {
         String docId = request.getParameter("id");
 
         String result = (docId == null) ? agent.ask(query) : agent.askForDocument(query, docId);
+
+        LOGGER.warn("EBE - result = {}", result);
+
+        JSONObject jsonContent = new JSONObject();
+        jsonContent.put("query", query);
+        jsonContent.put("message", result);
+        return jsonContent.toJSONString();
+    }
+
+    @GetMapping(value = "/rest/v2.0/ai/cfp", produces = "application/json;charset=UTF-8")
+    public static String cfpAgent(final HttpServletRequest request) {
+        CfPAgent agent = new CfPAgent(request);
+        String query = (request.getParameter("q") != null) ? request.getParameter("q") : "Quelles sont les types de produits, les exigences de livraison, les durées de garantie, les montants mini/maxi des 5 derniers marchés alimentaire ?";
+
+        String result = agent.ask(query);
 
         LOGGER.warn("EBE - result = {}", result);
 

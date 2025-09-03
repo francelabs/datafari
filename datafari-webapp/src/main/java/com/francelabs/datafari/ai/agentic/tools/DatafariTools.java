@@ -20,7 +20,6 @@ public class DatafariTools {
     private static final Logger LOGGER = LogManager.getLogger(DatafariTools.class.getName());
     HttpServletRequest request;
     RagConfiguration config;
-    int index = 0;
 
     public DatafariTools(HttpServletRequest request) {
         this.request = request;
@@ -57,8 +56,7 @@ public class DatafariTools {
 
         try {
             results = AiPowered.rag(request, jsonBody);
-            RagAPI.rag(request, jsonBody, true);
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.error("AGENTIC TOOLS - RAG by document - ERROR: {}", e.getLocalizedMessage());
         }
         LOGGER.debug("AGENTIC TOOLS - RAG by document - {}", results);
@@ -83,28 +81,29 @@ public class DatafariTools {
     String retrieveDocumentsInformation(
             @P("The search query") String query
     ) {
-        EditableHttpServletRequest editableRequest = new EditableHttpServletRequest(request);
+        EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/select";
-        editableRequest.addParameter("q", query);
-        editableRequest.addParameter("fl", "title,id,url,click_url,creation_date,last_modified,crawl_date,extension,source,word_count,language,xmptpg_npages,original_file_size");
-        editableRequest.addParameter("q.op", "OR");
-        editableRequest.addParameter("start", "0");
-        editableRequest.addParameter("rows", "10");
-        JSONObject root = SearchUtils.processSearch(editableRequest, handler);
+        req.addParameter("q", query);
+        req.addParameter("fl", "title,id,url,click_url,creation_date,last_modified,crawl_date,extension,source,word_count,language,xmptpg_npages,original_file_size");
+        req.addParameter("q.op", "OR");
+        req.addParameter("start", "0");
+        req.addParameter("rows", "10");
+        req.addParameter("wt", "json");
+        JSONObject root = SearchUtils.processSearch(req, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
         LOGGER.debug("AGENTIC TOOLS - Retrieve documents information - {}", docs.toJSONString());
         return docs.toJSONString();
     }
 
-    @Tool("Read the content of a specified document, one chunk at a time. The document ID is required. Each time this tool is used, a new chunk is read. If there in no more content to read, returns 'No content'")
+    @Tool("Read N chunks of a document from VectorMain, ordered, starting at the given page (0-based). If there in no more content to read, returns 'No content'")
     String readNextChunks(
             @P("The ID of the document") String id,
-          //  @P("Page index (0-based)") int page
+            @P("Page index (0-based)") int page
     ) {
         // "rows" is the number of chunks (from VectorMain) to show to the LLM at once.
         // Warning, should not be too high
         int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
-        int start = index*rows;
+        int start = Math.max(0, page) * rows;
 
 
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
@@ -117,35 +116,36 @@ public class DatafariTools {
         req.addParameter("start", String.valueOf(start));
         req.addParameter("rows", String.valueOf(rows));
         req.addParameter("sort", "chunk_index asc");
+        req.addParameter("wt", "json");
 
         JSONObject root = SearchUtils.processSearch(req, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
         String mergedChunkContents = SearchUtils.mergeChunks(docs);
 
-        index = index + 1;
-        LOGGER.debug("AGENTIC TOOLS - Reading chunk {} from '{}'", index, id);
+        LOGGER.debug("AGENTIC TOOLS - Reading page {} of document  '{}'", page, id);
         if (mergedChunkContents.isEmpty()) return "No content";
-        return "========== CHUNK " + index + ": ==========\n\n" + mergedChunkContents + "\n\n========== END OF CHUNK " + index + " ==========\n\n";
+        return "========== PAGE " + page + ": ==========\n\n" + mergedChunkContents + "\n\n========== END OF PAGE " + page + " ==========\n\n";
     }
 
-    @Tool("Search content into a specific document. The document ID is required.")
+    @Tool("Search content from a specific document. The document ID is required.")
     String searchChunksFromADocument(
             @P("The ID of the document") String id,
             @P("The search query") String query
     ) {
-        int chunksPerLot = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
+        int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
 
-        EditableHttpServletRequest editableRequest = new EditableHttpServletRequest(request);
+        EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/rrf";
-        editableRequest.addParameter("q", query);
-        editableRequest.addParameter("queryrag", query);
-        editableRequest.addParameter("fl", "title,id,url,click_url,embedded_content");
-        editableRequest.addParameter("fq", "id:\""+id+"_"+index + "\"");
-        editableRequest.addParameter("q.op", "OR");
-        editableRequest.addParameter("topK", "50");
-        editableRequest.addParameter("start", "0");
-        editableRequest.addParameter("rows", String.valueOf(chunksPerLot));
-        JSONObject root = SearchUtils.processSearch(editableRequest, handler);
+        req.addParameter("q", query);
+        req.addParameter("queryrag", query);
+        req.addParameter("fl", "title,id,url,click_url,embedded_content");
+        req.addParameter("fq", "{!term f=parent_doc}" + id);
+        req.addParameter("q.op", "OR");
+        req.addParameter("wt", "json");
+        req.addParameter("topK", "50");
+        req.addParameter("start", "0");
+        req.addParameter("rows", String.valueOf(rows));
+        JSONObject root = SearchUtils.processSearch(req, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
         LOGGER.debug("AGENTIC TOOLS - Retrieve documents information - {}", docs.toJSONString());
         return docs.toJSONString();
@@ -167,14 +167,17 @@ public class DatafariTools {
     String bm25Search(
             @P("The search query") String query
     ) {
-        EditableHttpServletRequest editableRequest = new EditableHttpServletRequest(request);
+        int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
+
+        EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/select";
-        editableRequest.addParameter("q", query);
-        editableRequest.addParameter("fl", "title,id,author,click_url,creation_date,last_modified,crawl_date,extension,source,word_count,language,xmptpg_npages,original_file_size");
-        editableRequest.addParameter("q.op", "OR");
-        editableRequest.addParameter("start", "0");
-        editableRequest.addParameter("rows", "10");
-        JSONObject root = SearchUtils.processSearch(editableRequest, handler);
+        req.addParameter("q", query);
+        req.addParameter("fl", "title,id,author,click_url,creation_date,last_modified,crawl_date,extension,source,word_count,language,xmptpg_npages,original_file_size");
+        req.addParameter("q.op", "OR");
+        req.addParameter("start", "0");
+        req.addParameter("rows", String.valueOf(rows));
+        req.addParameter("wt", "json");
+        JSONObject root = SearchUtils.processSearch(req, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
         LOGGER.debug("AGENTIC TOOLS - BM25 Search - {}", docs.toJSONString());
         return docs.toJSONString();
@@ -184,17 +187,20 @@ public class DatafariTools {
     String vectorSearch(
             @P("The search query") String query
     ) {
-        EditableHttpServletRequest editableRequest = new EditableHttpServletRequest(request);
-        String handler = "/vector";
-        editableRequest.addParameter("q", query);
-        editableRequest.addParameter("queryrag", query);
-        editableRequest.addParameter("fl", "title,id,exactContent,embedded_content,click_url");
-        editableRequest.addParameter("topK", "50");
-        editableRequest.addParameter("start", "0");
-        editableRequest.addParameter("rows", "10");
-        editableRequest.addParameter("queryrag", query);
+        int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
+        int topK = config.getIntegerProperty(RagConfiguration.RRF_TOPK, 50);
 
-        JSONObject root = SearchUtils.processSearch(editableRequest, handler);
+        EditableHttpServletRequest req = new EditableHttpServletRequest(request);
+        String handler = "/vector";
+        req.addParameter("q", query);
+        req.addParameter("queryrag", query);
+        req.addParameter("fl", "title,id,exactContent,embedded_content,click_url");
+        req.addParameter("topK", String.valueOf(topK));
+        req.addParameter("start", "0");
+        req.addParameter("rows", String.valueOf(rows));
+        req.addParameter("wt", "json");
+
+        JSONObject root = SearchUtils.processSearch(req, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
         LOGGER.debug("AGENTIC TOOLS - Vector Search - {}", docs.toJSONString());
         return docs.toJSONString();
@@ -213,6 +219,7 @@ public class DatafariTools {
         editableRequest.addParameter("start", "0");
         editableRequest.addParameter("rows", "10");
         editableRequest.addParameter("queryrag", query);
+        editableRequest.addParameter("wt", "json");
         JSONObject root = SearchUtils.processSearch(editableRequest, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
         LOGGER.debug("AGENTIC TOOLS - Hybrid Search - {}", docs.toJSONString());
