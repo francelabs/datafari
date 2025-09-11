@@ -71,55 +71,55 @@
         <hr>
         <!-- Web Service Parameters -->
 
-        <div class="form-group row">
+        <!-- div class="form-group row">
           <label id="apiEndpointLabel" class="col-sm-2 col-form-label" for="apiEndpoint">API Endpoint</label>
           <div class="col-sm-5">
             <input type="text" class="form-control" id="apiEndpoint" name="apiEndpoint" placeholder="https://api.openai.com/v1/">
           </div>
-        </div>
+        </div -->
 
-        <div class="form-group row">
+        <!-- div class="form-group row">
           <label id="apiTokenLabel" class="col-sm-2 col-form-label" for="apiToken">API Token</label>
           <div class="col-sm-5">
             <input type="password" class="form-control" id="apiToken" name="apiToken">
           </div>
-        </div>
+        </div -->
 
-        <div class="form-group row">
+        <!-- div class="form-group row">
           <label id="llmServiceLabel" class="col-sm-2 col-form-label" for="llmService">LLM Service</label>
           <div class="col-sm-5">
             <select id="llmService" class="form-control">
               <option value="openai">OpenAI</option>
             </select>
           </div>
-        </div>
+        </div -->
 
-        <hr>
+        <!-- hr -->
         <!-- LLM Settings -->
 
-        <div class="form-group row">
+        <!-- div class="form-group row">
           <label id="llmModelLabel" class="col-sm-2 col-form-label" for="llmModel">LLM Model</label>
           <div class="col-sm-5">
             <input type="text" class="form-control" id="llmModel" name="llmModel" placeholder="gpt-4o-mini">
           </div>
-        </div>
+        </div -->
 
-        <div class="form-group row">
+        <!-- div class="form-group row">
           <label id="llmTemperatureLabel" class="col-sm-2 col-form-label" for="llmTemperature">Temperature</label>
           <div class="col-sm-5">
             <input type="number" class="form-control" id="llmTemperature" name="llmTemperature" min="0" max="1" step="0.01">
           </div>
-        </div>
+        </div -->
 
-        <div class="form-group row">
+        <!-- div class="form-group row">
           <label id="llmMaxTokensLabel" class="col-sm-2 col-form-label" for="llmMaxTokens">Max Tokens</label>
           <div class="col-sm-5">
             <input type="number" class="form-control" id="llmMaxTokens" name="llmMaxTokens">
           </div>
-        </div>
+        </div -->
 
 
-        <hr>
+        <!-- hr -->
         <!-- Prompting & Chunking -->
 
         <div class="form-group row">

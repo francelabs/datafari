@@ -62,12 +62,12 @@ public class RagConfig {
     response.put("enableRag", config.getBooleanProperty(RagConfiguration.ENABLE_RAG));
     response.put("enableSummarization", config.getBooleanProperty(RagConfiguration.ENABLE_SUMMARIZATION));
 
-    response.put("apiEndpoint", config.getProperty(RagConfiguration.API_ENDPOINT));
-    response.put("apiToken", config.getProperty(RagConfiguration.API_TOKEN));
-    response.put("llmService", config.getProperty(RagConfiguration.LLM_SERVICE));
-    response.put("llmModel", config.getProperty(RagConfiguration.LLM_MODEL));
-    response.put("llmTemperature", config.getProperty(RagConfiguration.LLM_TEMPERATURE));
-    response.put("llmMaxTokens", config.getProperty(RagConfiguration.LLM_MAX_TOKENS));
+//    response.put("apiEndpoint", config.getProperty(RagConfiguration.API_ENDPOINT));
+//    response.put("apiToken", config.getProperty(RagConfiguration.API_TOKEN));
+//    response.put("llmService", config.getProperty(RagConfiguration.LLM_SERVICE));
+//    response.put("llmModel", config.getProperty(RagConfiguration.LLM_MODEL));
+//    response.put("llmTemperature", config.getProperty(RagConfiguration.LLM_TEMPERATURE));
+//    response.put("llmMaxTokens", config.getProperty(RagConfiguration.LLM_MAX_TOKENS));
 
     response.put("chunkingStrategy", config.getProperty(RagConfiguration.PROMPT_CHUNKING_STRATEGY));
     response.put("maxRequestSize", config.getProperty(RagConfiguration.MAX_REQUEST_SIZE));
