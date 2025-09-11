@@ -23,6 +23,8 @@ import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.TokenCountEstimator;
+import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.model.openai.OpenAiChatModelName;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModelName;
 import dev.langchain4j.model.openai.OpenAiTokenCountEstimator;
 import org.apache.manifoldcf.agents.interfaces.RepositoryDocument;
@@ -43,8 +45,8 @@ public class ChunkUtils {
     }
 
 	public static List<TextSegment> chunkString(String text, LlmSpecification spec) {
-        String embeddingModelName = OpenAiEmbeddingModelName.TEXT_EMBEDDING_3_SMALL.name();
-        TokenCountEstimator tokenizer = new OpenAiTokenCountEstimator(embeddingModelName);
+        String chatModelName = "gpt-4o-mini";
+        TokenCountEstimator tokenizer = new OpenAiTokenCountEstimator(chatModelName);
         int maxChunkSizeInTokens = spec.getMaxChunkSizeInTokens();
         DocumentSplitter splitter = DocumentSplitters.recursive(maxChunkSizeInTokens, 10, tokenizer);
         Document document = Document.from(text);
@@ -52,8 +54,8 @@ public class ChunkUtils {
     }
 
     public static List<TextSegment> chunkRepositoryDocument(String content, RepositoryDocument repoDoc, LlmSpecification spec) {
-        String embeddingModelName = OpenAiEmbeddingModelName.TEXT_EMBEDDING_3_SMALL.name();
-        TokenCountEstimator tokenizer = new OpenAiTokenCountEstimator(embeddingModelName);
+        String chatModelName = "gpt-4o-mini";
+        TokenCountEstimator tokenizer = new OpenAiTokenCountEstimator(chatModelName);
         int maxChunkSizeInTokens = spec.getMaxChunkSizeInTokens();
         DocumentSplitter splitter = DocumentSplitters.recursive(maxChunkSizeInTokens, 10, tokenizer);
         Metadata metadata = new Metadata().put("filename", repoDoc.getFileName());

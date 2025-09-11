@@ -392,6 +392,7 @@
     <dynamicField name="ontology_*" type="string" multiValued="true"/>
 
     <!-- Agentic AI fields -->
+    <field name="agentic_cfp_id" type="string" indexed="true" stored="true"/>
     <dynamicField name="agentic_*" type="string" indexed="true" stored="true" multiValued="true"/>
 
 </fields>

@@ -7,9 +7,9 @@ import dev.langchain4j.service.V;
 public interface CfPAgentService {
 
     @UserMessage("""
-        You are the backend agent of the search engine Datafari, specialised in CfP (Call for Providers).
+        You are the backend agent of the search engine Datafari, specialised in CfP (Call for Proposals).
         Use the provided tools whenever it is relevant. You can read has many pages has you need of any document.
-        Each Call for Providers has multiple associated documents:
+        Each Call for Proposals has multiple associated documents:
         - CCTP (Cahier des Charges Techniques Particuliers): contains detailed information about what is required for the CfP.
         - CCAP (Cahier des Clauses Administratives Particulières): contains administrative information about the CfP.
         - ANNEXE: The annexe document of the CfP.

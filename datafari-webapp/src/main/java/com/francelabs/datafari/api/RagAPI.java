@@ -357,7 +357,7 @@ public class RagAPI extends SearchAPI {
 
   }
 
-  private static JSONObject writeJsonResponse(String message, List<Document> documentsList) {
+  public static JSONObject writeJsonResponse(String message, List<Document> documentsList) {
     final JSONObject response = new JSONObject();
     response.put("status", "OK");
     JSONObject content = new JSONObject();
@@ -563,6 +563,7 @@ public class RagAPI extends SearchAPI {
     for (Document doc : documentList) {
       String url = doc.metadata().getString("url");
       String id = doc.metadata().getString("id");
+      String parentId = doc.metadata().getString("parent_doc");
       if (map.containsKey(url) &&
               "bm25".equals(conf.getProperty(RagConfiguration.RETRIEVAL_METHOD)) ) {
         // Keep only one chunk from a single document if BM25 is selected
@@ -574,10 +575,10 @@ public class RagAPI extends SearchAPI {
       JSONObject jsonDoc = new JSONObject();
       jsonDoc.put("id", id);
       jsonDoc.put("title", doc.metadata().getString("title"));
-      // if (!"id".equals("url")) jsonDoc.put("chunk_id", id);
-      if (!"id".equals("url")) jsonDoc.put("parent_id", url);
+      if (parentId != null) jsonDoc.put("parent_id", parentId);
+      // TODO : What if url != parent_id ?
       jsonDoc.put("url", url);
-      jsonDoc.put("content", doc.text());
+      jsonDoc.put("content", doc.text()); // TODO : Is the content necessary ?
       displayedDocuments.add(jsonDoc);
     }
 

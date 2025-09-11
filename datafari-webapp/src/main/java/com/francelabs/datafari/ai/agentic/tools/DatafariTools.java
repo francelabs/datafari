@@ -1,6 +1,6 @@
 package com.francelabs.datafari.ai.agentic.tools;
 
-import com.francelabs.datafari.api.RagAPI;
+import com.francelabs.datafari.ai.agentic.agent.CfPAgent;
 import com.francelabs.datafari.rag.RagConfiguration;
 import com.francelabs.datafari.rest.v2_0.ai.AiPowered;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
@@ -13,7 +13,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 
 public class DatafariTools {
 
@@ -25,24 +24,6 @@ public class DatafariTools {
         this.request = request;
         config = RagConfiguration.getInstance();
     }
-
-//    @Tool("Process a simple RAG request in the search engine.")
-//    String rag(
-//            @P("The RAG query") String query
-//    ) {
-//        JSONObject jsonBody = new JSONObject();
-//        jsonBody.put("query", query);
-//        String results = "";
-//
-//        try {
-//            results = AiPowered.rag(request, jsonBody);
-//            RagAPI.rag(request, jsonBody, false);
-//        } catch (IOException e) {
-//            LOGGER.error("AGENTIC TOOLS - RAG - ERROR: {}", e.getLocalizedMessage());
-//        }
-//        LOGGER.debug("AGENTIC TOOLS - RAG - {}", results);
-//        return results;
-//    }
 
     @Tool("Process a simple RAG request in the search engine.")
     String ragByDocument(
@@ -59,22 +40,9 @@ public class DatafariTools {
         } catch (Exception e) {
             LOGGER.error("AGENTIC TOOLS - RAG by document - ERROR: {}", e.getLocalizedMessage());
         }
-        LOGGER.debug("AGENTIC TOOLS - RAG by document - {}", results);
+        LOGGER.info("AGENTIC TOOLS - RAG by document - ID: {} - Query: {}", id, query);
+        LOGGER.debug("AGENTIC TOOLS - RAG by document - Result {}", results);
         return results;
-    }
-
-    @Tool("Reformulate a search query")
-    String queryRewriting(
-            @P("The initial user query") String query
-    ) {
-        String vectorQuery = query;
-        try {
-            vectorQuery = RagAPI.rewriteSearchQuery(query, "vector", request, RagConfiguration.getInstance());
-        } catch (IOException e) {
-            LOGGER.error("Query rewriting failed ! Initial user query will be use for the search.", e);
-        }
-        LOGGER.debug("AGENTIC TOOLS - Query rewriting - {}", vectorQuery);
-        return vectorQuery;
     }
 
     @Tool("Retrieves the metadata (ID, titles, URL) of the retrieved documents for the provided query.")
@@ -91,6 +59,7 @@ public class DatafariTools {
         req.addParameter("wt", "json");
         JSONObject root = SearchUtils.processSearch(req, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
+        LOGGER.info("AGENTIC TOOLS - Retrieve documents information. Search query: {}", query);
         LOGGER.debug("AGENTIC TOOLS - Retrieve documents information - {}", docs.toJSONString());
         return docs.toJSONString();
     }
@@ -110,7 +79,6 @@ public class DatafariTools {
         String handler = "/select";
         req.addParameter("q", "*:*");
         req.addParameter("fl", "title,parent_doc,id,url,click_url,embedded_content");
-        // req.addParameter("fq", "parent_doc:\"" + id + "\"");
         req.addParameter("fq", "{!term f=parent_doc}" + id);
         req.addParameter("collection", "VectorMain");
         req.addParameter("start", String.valueOf(start));
@@ -122,7 +90,7 @@ public class DatafariTools {
         JSONArray docs = SearchUtils.extractDocs(root);
         String mergedChunkContents = SearchUtils.mergeChunks(docs);
 
-        LOGGER.debug("AGENTIC TOOLS - Reading page {} of document  '{}'", page, id);
+        LOGGER.info("AGENTIC TOOLS - Reading page {} of document  '{}'", page, id);
         if (mergedChunkContents.isEmpty()) return "No content";
         return "========== PAGE " + page + ": ==========\n\n" + mergedChunkContents + "\n\n========== END OF PAGE " + page + " ==========\n\n";
     }
@@ -147,7 +115,8 @@ public class DatafariTools {
         req.addParameter("rows", String.valueOf(rows));
         JSONObject root = SearchUtils.processSearch(req, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
-        LOGGER.debug("AGENTIC TOOLS - Retrieve documents information - {}", docs.toJSONString());
+        LOGGER.info("AGENTIC TOOLS - Search from document {}: {}", id, query);
+        LOGGER.debug("AGENTIC TOOLS - Retrieved content: {}", docs.toJSONString());
         return docs.toJSONString();
     }
 
@@ -224,6 +193,16 @@ public class DatafariTools {
         JSONArray docs = SearchUtils.extractDocs(root);
         LOGGER.debug("AGENTIC TOOLS - Hybrid Search - {}", docs.toJSONString());
         return docs.toJSONString();
+    }
+
+    // Experimental: Specific to CfP scenario
+    @Tool("Calls the agent specialised in CfP (Call for Proposals). Use it for queries about market, Call for Proposal...")
+    String callCFPAgent(
+            @P("The user query") String query
+    ) {
+        LOGGER.info("AGENTIC TOOLS - Calling subagent : CfPAgent");
+        CfPAgent agent = new CfPAgent(request);
+        return agent.ask(query);
     }
 
     @Tool("If you don't have the tools you need to answer the request, use this one to describe precisely the tools you need, for future improvement.")

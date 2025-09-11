@@ -41,32 +41,51 @@ public class AiPowered {
     public static String agentic(final HttpServletRequest request) {
 //        String result = AgenticRag.run();
         DatafariAgent agent = new DatafariAgent(request);
-        String query = (request.getParameter("q") != null) ? request.getParameter("q") : "1999 electricity consumption north america";
+
+        // Retrieve query from request
+        String query;
+        if (request.getParameter("q") != null) {
+            query = request.getParameter("q");
+            LOGGER.debug("AiPowered - CfP AGENT - Agent: {}", query);
+        } else {
+            LOGGER.warn("AiPowered - CfP AGENT - Missing 'q' parameter");
+            return generateErrorJson(422, "ragBadRequest", "Sorry, It appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.", null);
+        }
+
         String docId = request.getParameter("id");
 
         String result = (docId == null) ? agent.ask(query) : agent.askForDocument(query, docId);
 
-        LOGGER.warn("EBE - result = {}", result);
-
         JSONObject jsonContent = new JSONObject();
+        JSONObject jsonresponse = new JSONObject();
         jsonContent.put("query", query);
         jsonContent.put("message", result);
-        return jsonContent.toJSONString();
+        jsonresponse.put("content", jsonContent);
+        return jsonresponse.toJSONString();
     }
 
     @GetMapping(value = "/rest/v2.0/ai/cfp", produces = "application/json;charset=UTF-8")
     public static String cfpAgent(final HttpServletRequest request) {
         CfPAgent agent = new CfPAgent(request);
-        String query = (request.getParameter("q") != null) ? request.getParameter("q") : "Quelles sont les types de produits, les exigences de livraison, les durées de garantie, les montants mini/maxi des 5 derniers marchés alimentaire ?";
+
+        // Retrieve query from request
+        String query;
+        if (request.getParameter("q") != null) {
+            query = request.getParameter("q");
+            LOGGER.debug("AiPowered - CfP AGENT - Agent: {}", query);
+        } else {
+            LOGGER.warn("AiPowered - CfP AGENT - Missing 'q' parameter");
+            return generateErrorJson(422, "ragBadRequest", "Sorry, It appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.", null);
+        }
 
         String result = agent.ask(query);
 
-        LOGGER.warn("EBE - result = {}", result);
-
         JSONObject jsonContent = new JSONObject();
+        JSONObject jsonresponse = new JSONObject();
         jsonContent.put("query", query);
         jsonContent.put("message", result);
-        return jsonContent.toJSONString();
+        jsonresponse.put("content", jsonContent);
+        return jsonresponse.toJSONString();
     }
 
     @PostMapping(value = "/rest/v2.0/ai/summarize", produces = "application/json;charset=UTF-8")
@@ -134,7 +153,7 @@ public class AiPowered {
     @PostMapping(value = "/rest/v2.0/ai/rag", produces = "application/json;charset=UTF-8")
     public static String rag(final HttpServletRequest request, @RequestBody JSONObject jsonDoc) {
 
-        LOGGER.debug("AiPowered - RAG - RAG request received.");
+        LOGGER.info("AiPowered - RAG - RAG request received.");
 
         String query; // The user request
         String id;
@@ -156,6 +175,33 @@ public class AiPowered {
         } else {
             LOGGER.warn("AiPowered - RAG - Missing query parameter");
             return generateErrorJson(422, "ragBadRequest", "Sorry, It appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.", null);
+        }
+
+        // Is Agentic RAG enabled ?
+        if (config.getBooleanProperty(RagConfiguration.ENABLE_AGENTIC_RAG) && jsonDoc.get("agent") != null) {
+            String agent = (String) jsonDoc.get("agent");
+
+            try {
+                String response;
+                switch (agent) {
+                    case "cfpagent":
+                        LOGGER.info("AiPowered - RAG - Using CFP Agent");
+                        CfPAgent cfpagent = new CfPAgent(request);
+                        response = cfpagent.ask(query);
+                        return RagAPI.writeJsonResponse(response, new ArrayList<>()).toJSONString();
+                    case "ragagent":
+                    default:
+                        LOGGER.info("AiPowered - RAG - Using RAG Agent");
+                        DatafariAgent ragagent = new DatafariAgent(request);
+                        response = ragagent.ask(query);
+                        return RagAPI.writeJsonResponse(response, new ArrayList<>()).toJSONString();
+                }
+
+            } catch (Exception e) {
+                LOGGER.error("AiPowered - RAG - Agentic RAG failed.", e);
+                return generateErrorJson(422, "ragTechnicalError", "Sorry, the agent failed to find a response.", null);
+            }
+
         }
 
         //

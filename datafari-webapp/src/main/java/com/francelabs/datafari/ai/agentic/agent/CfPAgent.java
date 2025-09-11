@@ -1,7 +1,6 @@
 package com.francelabs.datafari.ai.agentic.agent;
 
-import com.francelabs.datafari.ai.agentic.tools.CustomTools;
-import com.francelabs.datafari.ai.agentic.tools.DatafariTools;
+import com.francelabs.datafari.ai.agentic.tools.CfPTools;
 import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.rag.RagConfiguration;
 import dev.langchain4j.agentic.AgenticServices;
@@ -21,7 +20,7 @@ public class CfPAgent {
             this.agent = AgenticServices
                     .agentBuilder(CfPAgentService.class)
                     .chatModel(chatModel)
-                    .tools(new CustomTools(request))
+                    .tools(new CfPTools(request))
 //                    .chatMemoryProvider(id -> MessageWindowChatMemory.withMaxMessages(10))
                     .build();
         } catch (Exception e) {

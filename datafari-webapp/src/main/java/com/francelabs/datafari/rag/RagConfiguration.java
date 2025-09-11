@@ -15,6 +15,7 @@ public class RagConfiguration extends AbstractConfigClass {
 
     // GLOBAL RAG PROPERTIES
     public static final String ENABLE_RAG = "ai.enable.rag";
+    public static final String ENABLE_AGENTIC_RAG = "ai.enable.agentic.rag";
     public static final String ENABLE_SUMMARIZATION = "ai.enable.summarization";
 
     // WEB SERVICES PARAMETERS
