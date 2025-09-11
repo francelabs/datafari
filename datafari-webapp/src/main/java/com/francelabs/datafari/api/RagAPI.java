@@ -37,7 +37,9 @@ import org.springframework.security.authentication.DisabledException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidParameterException;
+import java.security.MessageDigest;
 import java.util.*;
 
 public class RagAPI extends SearchAPI {
@@ -505,6 +507,10 @@ public class RagAPI extends SearchAPI {
       LOGGER.debug("RagAPI - Converting search results into a List of Documents.");
       if (response != null && response.get("docs") != null) {
         JSONArray docs = (JSONArray) response.get("docs");
+
+        // Deduplicate by embedded_content
+        if (docs.size() > 1) docs = dedupeByEmbeddedContent(docs);
+
         JSONObject jsonObject;
         int nbDocs = docs.size(); // MaxFiles must not exceed the number of provided documents
         for (int i = 0; i < nbDocs; i++) {
@@ -542,11 +548,72 @@ public class RagAPI extends SearchAPI {
       LOGGER.error("RagAPI - An error occurred while retrieving the list of documents.", e);
     }
     return new ArrayList<>();
-
   }
 
+    /**
+     * Deduplicating documents based on normalized embedded_content.
+     * */
+    @SuppressWarnings("unchecked")
+    public static JSONArray dedupeByEmbeddedContent(JSONArray docs) {
+        JSONArray out = new JSONArray();
+        if (docs == null || docs.isEmpty()) return out;
+        Set<String> seen = new HashSet<>();  // stocking hash to limit memory
 
-  /**
+        for (Object o : docs) {
+            if (!(o instanceof JSONObject)) {
+                continue;
+            }
+            JSONObject doc = (JSONObject) o;
+
+            String text = extractEmbeddedText(doc);
+            if (text == null || text.isEmpty()) {
+                // No basis for deduplicating, keeping the document
+                out.add(doc);
+            } else {
+                String norm = normalize(text);
+                String sig  = sha256(norm);  // stable sha256 signature
+                if (seen.add(sig)) {
+                    out.add(doc);  // First occurrence -> kept
+                }
+            }
+        }
+        return out;
+    }
+
+    /** Soft Normalisation: trim + compacting multiple spaces */
+    private static String normalize(String s) {
+        if (s == null) return "";
+        // Replace multiple spaces by one space
+        return s.replaceAll("[ \\t\\x0B\\f\\r]+", " ").trim();
+    }
+
+
+    /** Retrieve embedded_content  */
+    private static String extractEmbeddedText(JSONObject d) {
+        Object val = d.get("embedded_content");
+        if (val == null) return null;
+        String s = String.valueOf(val);
+        return s.isEmpty() ? null : s;
+    }
+
+    /** Hash SHA-256 en hex (pour éviter de stocker de gros textes dans le Set). */
+    private static String sha256(String s) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(s.getBytes(StandardCharsets.UTF_8));
+            StringBuilder hex = new StringBuilder(hash.length * 2);
+            for (byte b : hash) hex.append(String.format("%02x", b));
+            return hex.toString();
+        } catch (Exception e) {
+            return s;
+        }
+    }
+
+
+
+
+
+    /**
    * The "documentList" containing sources of the answer might contain duplicates.
    * Some document might not be used in the LLM response.
    * This methode merge thoses duplicated entries, and remove useless ones.
