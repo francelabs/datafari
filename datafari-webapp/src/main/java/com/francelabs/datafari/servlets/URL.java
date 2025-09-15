@@ -112,55 +112,8 @@ public class URL extends HttpServlet {
     // String surl = URLDecoder.decode(request.getParameter("url"),
     // "ISO-8859-1");
     final String surl = request.getParameter("url");
-
-    if (DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.ALLOW_LOCAL_FILE_READING)
-        .equals("true") && !surl.startsWith("file://///")) {
-
-      final int BUFSIZE = 4096;
-      String fileName = null;
-
-      /**
-       * File Display/Download --> <!-- Written by Rick Garcia -->
-       */
-      if (SystemUtils.IS_OS_LINUX) {
-        // try to open the file locally
-        final String fileNameA[] = surl.split(":");
-        fileName = URLDecoder.decode(fileNameA[1], "UTF-8");
-
-      } else if (SystemUtils.IS_OS_WINDOWS) {
-        fileName = URLDecoder.decode(surl, "UTF-8").replaceFirst("file:/", "");
-      }
-
-      final File file = new File(fileName);
-      int length = 0;
-      final ServletOutputStream outStream = response.getOutputStream();
-      String mimetype = URLConnection.guessContentTypeFromName(fileName);
-
-      // sets response content type
-      if (mimetype == null) {
-        mimetype = "application/octet-stream";
-
-      }
-      response.setContentType(mimetype);
-      response.setContentLength((int) file.length());
-
-      // sets HTTP header
-      response.setHeader("Content-Disposition", "inline; fileName=\"" + fileName + "\"");
-
-      final byte[] byteBuffer = new byte[BUFSIZE];
-      final DataInputStream in = new DataInputStream(new FileInputStream(file));
-
-      // reads the file's bytes and writes them to the response stream
-      while (in != null && (length = in.read(byteBuffer)) != -1) {
-        outStream.write(byteBuffer, 0, length);
-      }
-
-      in.close();
-      outStream.close();
-    } else {
-
-      final RequestDispatcher rd = request.getRequestDispatcher(redirectUrl);
-      rd.forward(request, response);
-    }
+    final RequestDispatcher rd = request.getRequestDispatcher(redirectUrl);
+    rd.forward(request, response);
+    
   }
 }

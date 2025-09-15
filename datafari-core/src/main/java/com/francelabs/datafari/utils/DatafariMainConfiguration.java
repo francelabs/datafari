@@ -43,7 +43,6 @@ public class DatafariMainConfiguration extends AbstractConfigClass {
   public static final String ONTOLOGY_LANGUAGE_SELECTION = "ontologyLanguageSelection";
   public static final String ONTOLOGY_PARENTS_LABELS = "ontologyParentsLabels";
   public static final String ONTOLOGY_CHILDREN_LABELS = "ontologyChildrenLabels";
-  public static final String ALLOW_LOCAL_FILE_READING = "ALLOWLOCALFILEREADING";
   public final static String LIKESANDFAVORTES = "IS_LIKES_AND_FAVORITES_ENABLED";
   public final static String TEMP_ADMIN_PASSWORD = "TEMPADMINPASSWORD";
   public static final String SOLR_MAIN_COLLECTION = "SOLRMAINCOLLECTION";
