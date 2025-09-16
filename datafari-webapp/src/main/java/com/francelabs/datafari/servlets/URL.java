@@ -43,6 +43,7 @@ import com.francelabs.datafari.service.indexer.IndexerServerManager;
 import com.francelabs.datafari.statistics.StatsPusher;
 import com.francelabs.datafari.utils.AuthenticatedUserName;
 import com.francelabs.datafari.utils.DatafariMainConfiguration;
+import com.francelabs.datafari.utils.UrlValidator;
 
 /**
  * Servlet implementation class URL
@@ -109,11 +110,18 @@ public class URL extends HttpServlet {
     } else {
       StatsPusher.pushDocument(query);
     }
-    // String surl = URLDecoder.decode(request.getParameter("url"),
-    // "ISO-8859-1");
-    final String surl = request.getParameter("url");
-    final RequestDispatcher rd = request.getRequestDispatcher(redirectUrl);
-    rd.forward(request, response);
+ // URL validation
+    final String rawUrl = request.getParameter("url");
     
+
+    if (rawUrl == null || rawUrl.isBlank() || !UrlValidator.isAllowed(rawUrl)) {
+      logger.warn("Blocked or missing 'url' param: {}", rawUrl);
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST); // 400 -> /WEB-INF/jsp/error400.jsp
+      return;
+    }
+
+    final RequestDispatcher rd = request.getRequestDispatcher(redirectUrl); // "/url.jsp"
+    rd.forward(request, response);
   }
+  
 }
