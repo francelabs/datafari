@@ -48,7 +48,18 @@ const paramTemplates = {
     apiKey: "xxx",
     modelName: "",
     temperature: 0,
-    maxTokens: 200,
+    maxTokens: 500,
+    timeout: 60,
+    maxRetries: 3,
+    logRequests: false,
+    logResponses: false
+  },
+  MistralAI: {
+    baseUrl: "https://api.mistral.com/v1/",
+    apiKey: "",
+    modelName: "ministral-8b-2410",
+    temperature: 0,
+    maxTokens: 500,
     timeout: 60,
     maxRetries: 3,
     logRequests: false,
@@ -60,7 +71,7 @@ const paramTemplates = {
     deploymentName: "",
     serviceVersion: "2023-05-15",
     temperature: 0,
-    maxTokens: 200,
+    maxTokens: 500,
     timeout: 60,
     maxRetries: 3,
     logRequestsAndResponses: false
@@ -69,7 +80,7 @@ const paramTemplates = {
     accessToken: "",
     modelId: "",
     temperature: 0,
-    maxTokens: 200,
+    maxTokens: 500,
     timeout: 60
   },
   GoogleAiGemini: {
@@ -78,7 +89,7 @@ const paramTemplates = {
     temperature: 0,
     topP: 1.0,
     topK: 40,
-    maxOutputTokens: 200,
+    maxOutputTokens: 500,
     maxRetries: 1,
     timeout: 60,
     logRequestsAndResponses: false

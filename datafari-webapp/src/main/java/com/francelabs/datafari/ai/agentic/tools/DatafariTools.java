@@ -30,6 +30,7 @@ public class DatafariTools {
             @P("The RAG query for a single document") String query,
             @P("The ID of the document") String id
     ) {
+        LOGGER.info("AGENTIC TOOLS - RAG by document - ID: {} - Query: {}", id, query);
         JSONObject jsonBody = new JSONObject();
         jsonBody.put("query", query);
         jsonBody.put("id", id);
@@ -40,35 +41,48 @@ public class DatafariTools {
         } catch (Exception e) {
             LOGGER.error("AGENTIC TOOLS - RAG by document - ERROR: {}", e.getLocalizedMessage());
         }
-        LOGGER.info("AGENTIC TOOLS - RAG by document - ID: {} - Query: {}", id, query);
         LOGGER.debug("AGENTIC TOOLS - RAG by document - Result {}", results);
         return results;
     }
 
-    @Tool("Retrieves the metadata (ID, titles, URL) of the retrieved documents for the provided query.")
-    String retrieveDocumentsInformation(
+    @Tool("""
+        Execute a search query and return information (metadata) from retrieved documents. (BM25 search)
+        The whole content of the retrieved document may be large, and therefor is not returned.
+        However, you can use this tool to retrieve the ID of a document, and read the document later with another tool.
+        The returned data returned for each retrieved document are:
+        title, id, author, click_url, creation_date, last_modified, crawl_date, extension, source, word_count,
+        language, xmptpg_npages, original_file_size
+    """)
+    String bm25Search(
             @P("The search query") String query
     ) {
+        LOGGER.info("AGENTIC TOOLS - BM25 Search - Query: {}", query);
+        int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
+
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/select";
         req.addParameter("q", query);
-        req.addParameter("fl", "title,id,url,click_url,creation_date,last_modified,crawl_date,extension,source,word_count,language,xmptpg_npages,original_file_size");
+        req.addParameter("fl", "title,id,author,click_url,creation_date,last_modified,crawl_date,extension,source,word_count,language,xmptpg_npages,original_file_size");
         req.addParameter("q.op", "OR");
         req.addParameter("start", "0");
-        req.addParameter("rows", "10");
+        req.addParameter("rows", String.valueOf(rows));
         req.addParameter("wt", "json");
         JSONObject root = SearchUtils.processSearch(req, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
-        LOGGER.info("AGENTIC TOOLS - Retrieve documents information. Search query: {}", query);
-        LOGGER.debug("AGENTIC TOOLS - Retrieve documents information - {}", docs.toJSONString());
+        LOGGER.debug("AGENTIC TOOLS - BM25 Search - {}", docs.toJSONString());
         return docs.toJSONString();
     }
 
-    @Tool("Read N chunks of a document from VectorMain, ordered, starting at the given page (0-based). If there in no more content to read, returns 'No content'")
+    @Tool("""
+            Read N chunks of a document from VectorMain, ordered, starting at the given page (0-based).
+            If there in no more content to read from the document, 'No content' is returned.
+            """)
     String readNextChunks(
-            @P("The ID of the document") String id,
+            @P("The exact ID of the document") String id,
             @P("Page index (0-based)") int page
     ) {
+        LOGGER.info("AGENTIC TOOLS - Reading page {} of document  '{}'", page, id);
+
         // "rows" is the number of chunks (from VectorMain) to show to the LLM at once.
         // Warning, should not be too high
         int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
@@ -90,17 +104,20 @@ public class DatafariTools {
         JSONArray docs = SearchUtils.extractDocs(root);
         String mergedChunkContents = SearchUtils.mergeChunks(docs);
 
-        LOGGER.info("AGENTIC TOOLS - Reading page {} of document  '{}'", page, id);
         if (mergedChunkContents.isEmpty()) return "No content";
         return "========== PAGE " + page + ": ==========\n\n" + mergedChunkContents + "\n\n========== END OF PAGE " + page + " ==========\n\n";
     }
 
-    @Tool("Search content from a specific document. The document ID is required.")
+    @Tool("""
+            Process a search query within a specific document, and retrieve the most relevant chunks.
+            You must provide the exact ID of the document.
+            """)
     String searchChunksFromADocument(
-            @P("The ID of the document") String id,
+            @P("The exact ID of the document") String id,
             @P("The search query") String query
     ) {
         int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
+        LOGGER.debug("AGENTIC TOOLS - Search from document - Query: {} - Document: {}", query, id);
 
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/rrf";
@@ -120,9 +137,9 @@ public class DatafariTools {
         return docs.toJSONString();
     }
 
-    @Tool("Write a summary of a document. The ID of the document is required.")
+    @Tool("Retrieve a summary of a document. You must provide the exact ID of the document.")
     String summarize(
-            @P("The ID of the document") String id
+            @P("The exact ID of the document") String id
     ) {
         JSONObject jsonBody = new JSONObject();
         jsonBody.put("id", id);
@@ -132,30 +149,12 @@ public class DatafariTools {
         return results;
     }
 
-    @Tool("Returns the BM25 search results for the given query using Datafari. The content of the documents is not returned.")
-    String bm25Search(
-            @P("The search query") String query
-    ) {
-        int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
-
-        EditableHttpServletRequest req = new EditableHttpServletRequest(request);
-        String handler = "/select";
-        req.addParameter("q", query);
-        req.addParameter("fl", "title,id,author,click_url,creation_date,last_modified,crawl_date,extension,source,word_count,language,xmptpg_npages,original_file_size");
-        req.addParameter("q.op", "OR");
-        req.addParameter("start", "0");
-        req.addParameter("rows", String.valueOf(rows));
-        req.addParameter("wt", "json");
-        JSONObject root = SearchUtils.processSearch(req, handler);
-        JSONArray docs = SearchUtils.extractDocs(root);
-        LOGGER.debug("AGENTIC TOOLS - BM25 Search - {}", docs.toJSONString());
-        return docs.toJSONString();
-    }
-
-    @Tool("Returns the vector search results for the given keyword-based query using Datafari (including content snippets).")
+    @Tool("Execute a search query and return information and chunks from retrieved documents. (vector search)")
     String vectorSearch(
             @P("The search query") String query
     ) {
+        LOGGER.debug("AGENTIC TOOLS - Vector Search - Query: {}", query);
+
         int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
         int topK = config.getIntegerProperty(RagConfiguration.RRF_TOPK, 50);
 
@@ -175,10 +174,11 @@ public class DatafariTools {
         return docs.toJSONString();
     }
 
-    @Tool("Returns the hybrid search results for the given query using Datafari (including content snippets).")
+    @Tool("Search and return information and chunks (hybrid search).")
     String hybridSearch(
             @P("The search query") String query
     ) {
+        LOGGER.debug("AGENTIC TOOLS - Hybrid Search - Query: {}", query);
         EditableHttpServletRequest editableRequest = new EditableHttpServletRequest(request);
         String handler = "/rrf";
         editableRequest.addParameter("q", query);
@@ -195,15 +195,15 @@ public class DatafariTools {
         return docs.toJSONString();
     }
 
-    // Experimental: Specific to CfP scenario
-    @Tool("Calls the agent specialised in CfP (Call for Proposals). Use it for queries about market, Call for Proposal...")
-    String callCFPAgent(
-            @P("The user query") String query
-    ) {
-        LOGGER.info("AGENTIC TOOLS - Calling subagent : CfPAgent");
-        CfPAgent agent = new CfPAgent(request);
-        return agent.ask(query);
-    }
+//    // Experimental: Specific to CfP scenario
+//    @Tool("Calls the agent specialised in CfP (Call for Proposals). Use it for queries about market, Call for Proposal...")
+//    String callCFPAgent(
+//            @P("The user query") String query
+//    ) {
+//        LOGGER.info("AGENTIC TOOLS - Calling subagent : CfPAgent");
+//        CfPAgent agent = new CfPAgent(request);
+//        return agent.ask(query);
+//    }
 
     @Tool("If you don't have the tools you need to answer the request, use this one to describe precisely the tools you need, for future improvement.")
     String requestNewTool(

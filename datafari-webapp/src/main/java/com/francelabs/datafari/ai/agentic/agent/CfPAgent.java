@@ -4,7 +4,9 @@ import com.francelabs.datafari.ai.agentic.tools.CfPTools;
 import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.rag.RagConfiguration;
 import dev.langchain4j.agentic.AgenticServices;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
+import org.apache.commons.lang.RandomStringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,7 +23,7 @@ public class CfPAgent {
                     .agentBuilder(CfPAgentService.class)
                     .chatModel(chatModel)
                     .tools(new CfPTools(request))
-//                    .chatMemoryProvider(id -> MessageWindowChatMemory.withMaxMessages(10))
+                    .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(10))
                     .build();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -29,6 +31,7 @@ public class CfPAgent {
     }
 
     public String ask(String question) {
-        return agent.ask(question);
+        String memoryId = RandomStringUtils.randomAlphanumeric(20).toUpperCase();
+        return agent.ask(memoryId, question);
     }
 }

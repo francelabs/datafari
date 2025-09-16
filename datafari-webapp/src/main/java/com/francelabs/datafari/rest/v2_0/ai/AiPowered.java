@@ -1,7 +1,6 @@
 package com.francelabs.datafari.rest.v2_0.ai;
 
 import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
-import com.francelabs.datafari.ai.agentic.AgenticRag;
 import com.francelabs.datafari.ai.agentic.agent.CfPAgent;
 import com.francelabs.datafari.ai.agentic.agent.DatafariAgent;
 import com.francelabs.datafari.api.RagAPI;
@@ -46,9 +45,9 @@ public class AiPowered {
         String query;
         if (request.getParameter("q") != null) {
             query = request.getParameter("q");
-            LOGGER.debug("AiPowered - CfP AGENT - Agent: {}", query);
+            LOGGER.debug("AiPowered - CFP AGENT - Agent: {}", query);
         } else {
-            LOGGER.warn("AiPowered - CfP AGENT - Missing 'q' parameter");
+            LOGGER.warn("AiPowered - CFP AGENT - Missing 'q' parameter");
             return generateErrorJson(422, "ragBadRequest", "Sorry, It appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.", null);
         }
 
@@ -72,9 +71,9 @@ public class AiPowered {
         String query;
         if (request.getParameter("q") != null) {
             query = request.getParameter("q");
-            LOGGER.debug("AiPowered - CfP AGENT - Agent: {}", query);
+            LOGGER.debug("AiPowered - CFP AGENT - Agent: {}", query);
         } else {
-            LOGGER.warn("AiPowered - CfP AGENT - Missing 'q' parameter");
+            LOGGER.warn("AiPowered - CFP AGENT - Missing 'q' parameter");
             return generateErrorJson(422, "ragBadRequest", "Sorry, It appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.", null);
         }
 
@@ -178,7 +177,8 @@ public class AiPowered {
         }
 
         // Is Agentic RAG enabled ?
-        if (config.getBooleanProperty(RagConfiguration.ENABLE_AGENTIC_RAG) && jsonDoc.get("agent") != null) {
+        Object agentObj = jsonDoc.get("agent");
+        if (config.getBooleanProperty(RagConfiguration.ENABLE_AGENTIC_RAG) && agentObj != null && !((String) agentObj).isBlank() ) {
             String agent = (String) jsonDoc.get("agent");
 
             try {
@@ -190,11 +190,12 @@ public class AiPowered {
                         response = cfpagent.ask(query);
                         return RagAPI.writeJsonResponse(response, new ArrayList<>()).toJSONString();
                     case "ragagent":
-                    default:
                         LOGGER.info("AiPowered - RAG - Using RAG Agent");
                         DatafariAgent ragagent = new DatafariAgent(request);
                         response = ragagent.ask(query);
                         return RagAPI.writeJsonResponse(response, new ArrayList<>()).toJSONString();
+                    default:
+                        break;
                 }
 
             } catch (Exception e) {

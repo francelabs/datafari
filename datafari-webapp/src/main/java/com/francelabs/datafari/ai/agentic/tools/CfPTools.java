@@ -1,12 +1,11 @@
 package com.francelabs.datafari.ai.agentic.tools;
 
-import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.rag.RagConfiguration;
+import com.francelabs.datafari.rest.v2_0.ai.AiPowered;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.agent.tool.P;
 import dev.langchain4j.agent.tool.Tool;
-import dev.langchain4j.model.chat.ChatModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -25,14 +24,19 @@ public class CfPTools {
         config = RagConfiguration.getInstance();
     }
 
-
-    @Tool("Retrieves Call for Proposals documents list by category.")
+/*
+    @Tool("""
+            Retrieve a list by CFP, filtered by category.
+            The returned data are:
+            title, parent_doc (the ID of the document),
+            """)
     JSONArray findDocumentsByCategory(
             @P("Number of documents to retrieve") int rows,
-            @P("The category. Allowed categories are: Catering, Furniture") String category
+            @P("The category to retrieve. Existing categories are: Catering, Furniture") String category
     ) {
         // "rows" is the number of chunks (from VectorMain) to show to the LLM at once.
         // Warning, should not be too high
+        LOGGER.info("AGENTIC TOOLS - Retrieving {} document from category '{}'", rows, category);
         if (rows < 1) rows = 30;
 
 
@@ -40,7 +44,7 @@ public class CfPTools {
         String handler = "/select";
         req.addParameter("q", "*:*");
         req.addParameter("fl", "title,parent_doc,id,url,click_url,creation_date,agentic_*,llm_categories");
-        req.addParameter("fq", "{!term f=llm_categories}" + category);
+        if(!category.isBlank()) req.addParameter("fq", "{!term f=llm_categories}" + category);
         req.addParameter("start", "0");
         req.addParameter("sort", "creation_date desc");
         req.addParameter("rows", String.valueOf(rows));
@@ -49,14 +53,13 @@ public class CfPTools {
         JSONObject root = SearchUtils.processSearch(req, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
 
-        LOGGER.info("AGENTIC TOOLS - Retrieving {} document from category '{}'", rows, category);
         return docs;
     }
-
-    @Tool("Retrieves a list of Call for Proposals, filtered by category, sorted by creation_date desc.")
-    JSONArray listCallsForProvidersByCategory(
-            @P("Number of calls to retrieve (distinct CfP ID)") int rows,
-            @P("Category filter (e.g., Catering, Furniture). Empty to ignore.") String category
+*/
+    @Tool("Retrieve a list of CFP IDs, filtered by category, sorted by creation_date desc.")
+    String listCallsForProvidersByCategory(
+            @P("Number of CFP to retrieve") int rows,
+            @P("Category filter (Catering, Furniture).") String category
     ) {
         if (rows < 1) rows = 30;
 
@@ -106,91 +109,103 @@ public class CfPTools {
         }
 
         LOGGER.info("AGENTIC TOOLS - CFP IDs via JSON Facet: rows={} category='{}' -> {}", rows, category, ids.size());
-        return ids;
+        if (ids.isEmpty()) {
+            return "No result found in category " + category + ". Available categories are Catering, Furniture.";
+        }
+
+        rows = Math.min(ids.size(), rows);
+        StringBuilder idsStr = new StringBuilder();
+        for (Object item : ids) {
+            String id = (String) item;
+            idsStr.append(" ").append(id);
+        }
+
+        // Prepare response
+        if (category != null && !category.isBlank()) {
+            String response = "The ID of the latest {{rows}} CFP from category '{{category}}' are: {{ids}}";
+            return response.replace("{{category}}", category)
+                    .replace("{{rows}}", String.valueOf(rows))
+                    .replace("{{ids}}", idsStr.toString());
+        } else {
+            // If category is blank
+            String response = "The ID of the latest {{rows}} CFP are: {{ids}}";
+            return response.replace("{{rows}}", String.valueOf(rows))
+                    .replace("{{ids}}", idsStr.toString());
+        }
     }
 
-    @Tool("For a given CfP, returns information from CCTP (product type, delivery date, delivery requirements, guarantees duration).")
+    @Tool("For a given CFP ID, returns information from CCTP (product type, delivery date, delivery requirements, guarantees duration).")
     String extractInfoFromCCTP(
-            @P("CfP ID. IDs generally use the following format (X being digits): DCEXX") String cfpId
+            @P("ID of the CFP. IDs use the format (X being digits): DCEXX") String cfpId
     ) {
-
+        LOGGER.info("AGENTIC TOOLS - Extracting data from CCTP: {}", cfpId);
         JSONArray docs = findCCTP(cfpId);
         if (docs.size() > 0) {
             try {
                 JSONObject doc = (JSONObject) docs.get(0);
                 String docId = (String) doc.get("id");
-                String content = readPageFromDocument(docId, 0);
 
-                // TODO : Use iterative refinement (Rag by document ?)
+                String query = "Extract the following information from the document : Product type, Delivery date, Delivery requirements, Guaranties duration";
+                JSONObject jsonBody = new JSONObject();
+                jsonBody.put("query", query);
+                jsonBody.put("id", docId);
+                String results = "";
 
-                ChatModel model = RagAPI.getChatModel(RagConfiguration.getInstance());
-                String prompt = """
-                        You are an assistant specialised in Call for Proposals (CfP).
-                        You are provided a page from a CfP document. Extract the following information from the document above:
-                        - Product type
-                        - Delivery date
-                        - Delivery requirements
-                        - Guaranties duration
-                        Document:
-                        
-                        
-                        """;
-                String response = model.chat(prompt + content);
-                LOGGER.info("AGENTIC TOOLS - Extracting data from CCTP for CfP {} ", cfpId);
-                LOGGER.debug("EBE - AGENTIC TOOLS - Extracted data: {}", response);
-                return response;
-            }catch (Exception e) {
-                LOGGER.warn("Failed to extract information from CCTP: {}", cfpId);
-                return "Failed to extract information from CCTP: '" + cfpId + "'";
+                try {
+                    results = AiPowered.rag(request, jsonBody);
+                } catch (Exception e) {
+                    LOGGER.error("AGENTIC TOOLS - Extracting from CCTP - ERROR: {}", e.getLocalizedMessage());
+                }
+                LOGGER.debug("AGENTIC TOOLS - Extracting from CCTP - Result {}", results);
+                return results;
+
+            } catch (Exception e) {
+                LOGGER.error("Cannot extract information from CCTP.");
             }
-
-        } else {
-            return "Can't find the CCTP document for Call for Proposals: '" + cfpId + "'";
         }
+        return "Cannot extract information from CCTP.";
     }
 
-    @Tool("For a given CfP, returns information from CCAP (min amount, max amount).")
+
+    @Tool("For a given CFP, returns information from CCAP (Minimum amount, Maximum amount).")
     String extractInfoFromCCAP(
-            @P("CfP ID . IDs generally use the following format (X being digits): DCEXX") String cfpId
+            @P("ID of the CFP. IDs use the format (X being digits): DCEXX") String cfpId
     ) {
-
+        LOGGER.info("AGENTIC TOOLS - Extracting data from CCAP: {}", cfpId);
         JSONArray docs = findCCAP(cfpId);
-        if (docs.size() > 0) {
+        if (!docs.isEmpty()) {
             try {
-                JSONObject doc = (JSONObject) docs.get(0);
+                JSONObject doc = (JSONObject) docs.getFirst();
                 String docId = (String) doc.get("id");
-                String content = readPageFromDocument(docId, 0);
 
-                ChatModel model = RagAPI.getChatModel(RagConfiguration.getInstance());
-                String prompt = """
-                        You are an assistant specialised in Call for Proposals (CfP).
-                        You are provided a page from a CfP document. Extract the following information from the document above:
-                        - Minimum amount
-                        - Maximum amount
-                        
-                        Document:
-                        
-                        """;
-                String response = model.chat(prompt + content);
-                LOGGER.info("AGENTIC TOOLS - Extracting data from CCAP for CfP {} ", cfpId);
-                LOGGER.debug("AGENTIC TOOLS - Extracted data: {}", response);
-                return response;
-            }catch (Exception e) {
-                LOGGER.warn("Failed to extract information from CCAP: {}", cfpId);
-                return "Failed to extract information from CCAP: '" + cfpId + "'";
+                String query = "Extract the following information from the document : Minimum amount, Maximum amount";
+                JSONObject jsonBody = new JSONObject();
+                jsonBody.put("query", query);
+                jsonBody.put("id", docId);
+                String results = "";
+
+                try {
+                    results = AiPowered.rag(request, jsonBody);
+                } catch (Exception e) {
+                    LOGGER.error("AGENTIC TOOLS - Extracting from CCAP - ERROR: {}", e.getLocalizedMessage());
+                }
+                LOGGER.debug("AGENTIC TOOLS - Extracting from CCAP - Result {}", results);
+                return results;
+
+            } catch (Exception e) {
+                LOGGER.error("Cannot extract information from CCAP.");
             }
-
-        } else {
-            return "Can't find the CCTP document for Call for Proposals: '" + cfpId + "'";
         }
+        return "Cannot extract information from CCAP.";
     }
 
 
 
-    @Tool("Retrieves the CCTP (Cahier des Charges Techniques Particuliers) for the specified CfP.")
+//    @Tool("Retrieves the CCTP (Cahier des Charges Techniques Particuliers) for the specified CFP.")
     JSONArray findCCTP(
-            @P("CfP ID (stored in documents' agentic_cfp_id metadata or at the beginning of files name). IDs generally use the following format (X being digits): DCEXX") String cfpId
+            @P("ID of the CFP. IDs use the format (X being digits): DCEXX") String cfpId
     ) {
+        LOGGER.info("AGENTIC TOOLS - Retrieving CCTP for CFP {} ", cfpId);
 
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/select";
@@ -204,15 +219,15 @@ public class CfPTools {
         JSONObject root = SearchUtils.processSearch(req, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
 
-        LOGGER.info("AGENTIC TOOLS - Retrieving CCTP for CfP {} ", cfpId);
         return docs;
     }
 
 
-    @Tool("Retrieves the CCAP (Cahier des Clauses Administratives Particulières) for the specified CfP.")
+//    @Tool("Retrieves the CCAP (Cahier des Clauses Administratives Particulières) for the specified CFP.")
     JSONArray findCCAP(
-            @P("CfP ID. IDs generally use the following format (X being digits): DCEXX") String cfpId
+            @P("CFP ID. IDs generally use the following format (X being digits): DCEXX") String cfpId
     ) {
+        LOGGER.info("AGENTIC TOOLS - Retrieving CCAP for CFP {} ", cfpId);
 
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/select";
@@ -226,11 +241,10 @@ public class CfPTools {
         JSONObject root = SearchUtils.processSearch(req, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
 
-        LOGGER.info("AGENTIC TOOLS - Retrieving CCAP for CfP {} ", cfpId);
         return docs;
     }
 
-    @Tool("Read one page of the specified document, starting at the given page (0-based). If there in no more content to read for this document, it returns 'No content'. You must provide the exact document ID (not the CfP ID).")
+    @Tool("Read one page of the specified document. If the requested page does not exist for this document, it returns 'No content'. You must provide the exact document ID (not the CFP ID).")
     String readPageFromDocument(
             @P("Document ID (found in id or parent_doc fields)") String id,
             @P("Page index (0-based)") int page

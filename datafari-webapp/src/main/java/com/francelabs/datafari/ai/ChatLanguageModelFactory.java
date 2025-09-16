@@ -11,7 +11,7 @@ import java.util.Map;
  * model configurations defined in {@link LLMModelConfigurationManager}.
  * <p>
  * The factory uses a registry of {@link ChatLanguageModelBuilder} implementations
- * to dynamically build models for different interface types (e.g. OpenAI, AzureOpenAI, HuggingFace, etc.).
+ * to dynamically build models for different interface types (e.g. OpenAI, MistralAI, AzureOpenAI, HuggingFace, etc.).
  * </p>
  *
  * <p>
@@ -36,10 +36,11 @@ public class ChatLanguageModelFactory {
 
     /**
      * Registers default {@link ChatLanguageModelBuilder} implementations for known interface types:
-     * OpenAI, AzureOpenAI, HuggingFace, Ollama, GoogleAiGemini.
+     * OpenAI, MistralAI, AzureOpenAI, HuggingFace, Ollama, GoogleAiGemini.
      */
     private void registerDefaults() {
         builderRegistry.put("OpenAI", new OpenAiChatLanguageModelBuilder());
+        builderRegistry.put("MistralAI", new MistralAiChatModelBuilder());
         builderRegistry.put("AzureOpenAI", new AzureOpenAiChatLanguageModelBuilder());
         builderRegistry.put("HuggingFace", new HuggingFaceChatLanguageModelBuilder());
         builderRegistry.put("Ollama", new OllamaChatLanguageModelBuilder());
