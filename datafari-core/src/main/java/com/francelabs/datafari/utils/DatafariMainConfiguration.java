@@ -62,6 +62,7 @@ public class DatafariMainConfiguration extends AbstractConfigClass {
   public static final String TIKASERVER_ANNOTATOR= "TIKASERVER_ANNOTATOR";
   public static final String TIKASERVER_OCR= "TIKASERVER_OCR";
   public static final String ENABLE_MONITORING_TIMER = "ENABLE_MONITORING_TIMER";
+  public static final String CUSTOM_PROXY_URL = "custom_proxy_url";
 
   private final static Logger LOGGER = LogManager.getLogger(DatafariMainConfiguration.class.getName());
 

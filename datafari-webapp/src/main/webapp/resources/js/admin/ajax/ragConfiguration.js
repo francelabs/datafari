@@ -21,13 +21,6 @@ function internationalize() {
   $("#chunkingChunkSizeLabel").text(window.i18n.msgStore['ragConf-chunkingChunkSizeLabel']);
   $("#maxRequestSizeLabel").text(window.i18n.msgStore['ragConf-maxRequestSizeLabel']);
   $("#chunkingStrategyLabel").text(window.i18n.msgStore['ragConf-chunkingStrategyLabel']);
-  $("#llmMaxTokensLabel").text(window.i18n.msgStore['ragConf-llmMaxTokensLabel']);
-  $("#llmTemperatureLabel").text(window.i18n.msgStore['ragConf-llmTemperatureLabel']);
-  $("#llmModelLabel").text(window.i18n.msgStore['ragConf-llmModelLabel']);
-  $("#llmServiceLabel").text(window.i18n.msgStore['ragConf-llmServiceLabel']);
-  $("#apiTokenLabel").text(window.i18n.msgStore['ragConf-apiTokenLabel']);
-  $("#apiEndpointLabel").text(window.i18n.msgStore['ragConf-apiEndpointLabel']);
-
 }
 
 function loadRagConfig() {
@@ -35,13 +28,13 @@ function loadRagConfig() {
     $('#enableRag').prop('checked', data.enableRag === true).change();
     $('#enableSummarization').prop('checked', data.enableSummarization === true).change();
 
-    $('#apiEndpoint').val(data.apiEndpoint || '');
-    $('#apiToken').val(data.apiToken || '');
-    $('#llmService').val(data.llmService || 'openai');
-
-    $('#llmModel').val(data.llmModel || '');
-    $('#llmTemperature').val(data.llmTemperature || 0);
-    $('#llmMaxTokens').val(data.llmMaxTokens || 200);
+//    $('#apiEndpoint').val(data.apiEndpoint || '');
+//    $('#apiToken').val(data.apiToken || '');
+//    $('#llmService').val(data.llmService || 'openai');
+//
+//    $('#llmModel').val(data.llmModel || '');
+//    $('#llmTemperature').val(data.llmTemperature || 0);
+//    $('#llmMaxTokens').val(data.llmMaxTokens || 200);
 
     $('#chunkingStrategy').val(data.chunkingStrategy || 'refine');
     $('#maxRequestSize').val(data.maxRequestSize || 40000);
@@ -99,12 +92,12 @@ function submitRagConfig(event) {
   const payload = {
     "ai.enable.rag": $('#enableRag').is(':checked'),
     "ai.enable.summarization": $('#enableSummarization').is(':checked'),
-    "ai.api.endpoint": $('#apiEndpoint').val(),
-    "ai.api.token": $('#apiToken').val(),
-    "ai.llm.service": $('#llmService').val(),
-    "llm.model": $('#llmModel').val(),
-    "llm.temperature": $('#llmTemperature').val(),
-    "llm.maxTokens": $('#llmMaxTokens').val(),
+//    "ai.api.endpoint": $('#apiEndpoint').val(),
+//    "ai.api.token": $('#apiToken').val(),
+//    "ai.llm.service": $('#llmService').val(),
+//    "llm.model": $('#llmModel').val(),
+//    "llm.temperature": $('#llmTemperature').val(),
+//    "llm.maxTokens": $('#llmMaxTokens').val(),
     "prompt.chunking.strategy": $('#chunkingStrategy').val(),
     "prompt.max.request.size": $('#maxRequestSize').val(),
     "chunking.maxFiles": $('#chunkingMaxFiles').val(),

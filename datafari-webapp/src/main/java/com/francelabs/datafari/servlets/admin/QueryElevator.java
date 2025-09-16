@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,163 +51,184 @@ import com.francelabs.datafari.utils.ExecutionEnvironment;
 
 @WebServlet("/SearchExpert/queryElevator")
 public class QueryElevator extends HttpServlet {
-  private final String env;
-  private final String server = Core.FILESHARE.toString();
-  private static final long serialVersionUID = 1L;
-  private final static Logger LOGGER = LogManager.getLogger(QueryElevator.class.getName());
-  private File elevatorFile;
 
-  /**
-   * @see HttpServlet#HttpServlet()
-   */
+  private static final long serialVersionUID = 1L;
+  private static final Logger LOGGER = LogManager.getLogger(QueryElevator.class.getName());
+
+  private final String server = Core.FILESHARE.toString();
+  private volatile File elevatorFile; 
+  private volatile String envBase;    
+
   public QueryElevator() {
     super();
-
-    String environnement = Environment.getEnvironmentVariable("DATAFARI_HOME");
-
-    if (environnement == null) { // If in development environment
-      environnement = ExecutionEnvironment.getDevExecutionEnvironment();
+    // "Best effort" initialization; final resolution is lazy in resolveElevatorFile()
+    String dfHome = Environment.getEnvironmentVariable("DATAFARI_HOME");
+    if (dfHome == null) {
+      dfHome = ExecutionEnvironment.getDevExecutionEnvironment();
     }
-    env = environnement + "/solr/solrcloud/FileShare/conf";
-
-    if (new File(env + "/elevate.xml").exists()) {
-      elevatorFile = new File(env + "/elevate.xml");
+    envBase = dfHome + "/solr/solrcloud/FileShare/conf";
+    File f = new File(envBase, "elevate.xml");
+    if (f.exists() && f.isFile()) {
+      elevatorFile = f;
+    } else {
+      elevatorFile = null; // let resolveElevatorFile() retry later
     }
   }
 
-  /**
-   * Try to find a query tag in the provided elevate, corresponding to the provided query text
-   *
-   * @param elevate   the elevate object (JAXB representation of the elevate.xml file)
-   * @param queryText the query text to search
-   * @return the {@link Elevate.Query} object if found in the elevate object, null otherwise
-   */
+  /** Re-resolve the file path if necessary, null if not found. */
+  private File resolveElevatorFile() {
+    File f = elevatorFile;
+    if (f != null && f.exists() && f.isFile()) return f;
+
+    // (re)compute envBase if needed
+    if (envBase == null) {
+      String dfHome = Environment.getEnvironmentVariable("DATAFARI_HOME");
+      if (dfHome == null) dfHome = ExecutionEnvironment.getDevExecutionEnvironment();
+      envBase = dfHome + "/solr/solrcloud/FileShare/conf";
+    }
+
+    File candidate = new File(envBase, "elevate.xml");
+    if (candidate.exists() && candidate.isFile()) {
+      elevatorFile = candidate;
+      return candidate;
+    }
+    LOGGER.warn("elevate.xml not found at {}", candidate.getAbsolutePath());
+    elevatorFile = null;
+    return null;
+  }
+
   private Elevate.Query findQuery(final Elevate elevate, final String queryText) {
     for (final Elevate.Query q : elevate.getQuery()) {
-      if (q.getText().equals(queryText)) {
+      if (q.getText() != null && q.getText().equals(queryText)) {
         return q;
       }
     }
     return null;
   }
 
-  /**
-   * Try to find the doc associated to the docId in the provided query
-   *
-   * @param query {@link Elevate.Query} the query object
-   * @param docId the docId to search
-   * @return the {@link Elevate.Query.Doc} object if found, null otherwise
-   */
   private Elevate.Query.Doc findDoc(final Elevate.Query query, final String docId) {
     for (final Elevate.Query.Doc doc : query.getDoc()) {
-      if (doc.getId().equals(docId)) {
+      if (doc.getId() != null && doc.getId().equals(docId)) {
         return doc;
       }
     }
     return null;
   }
 
-  /**
-   * @throws IOException
-   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-   */
+  private void writeJson(HttpServletResponse response, JSONObject json) throws IOException {
+    try (PrintWriter out = response.getWriter()) {
+      out.print(json.toJSONString());
+    }
+  }
+
   @Override
   protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-    final JSONObject jsonResponse = new JSONObject();
-    request.setCharacterEncoding("utf8");
+    request.setCharacterEncoding(StandardCharsets.UTF_8.name());
     response.setContentType("application/json");
+    final JSONObject jsonResponse = new JSONObject();
+
     final String getParam = request.getParameter("get");
+    if (getParam == null) {
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+      jsonResponse.put("message", "Missing 'get' parameter");
+      writeJson(response, jsonResponse);
+      return;
+    }
+
+    final File file = resolveElevatorFile();
+    if (file == null) {
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+      jsonResponse.put("message", "elevate.xml not found");
+      writeJson(response, jsonResponse);
+      return;
+    }
 
     try {
-      // Use JAXB on the elevate.xml file to create the corresponding
-      // Java object
       final JAXBContext jxbc = JAXBContext.newInstance(Elevate.class);
       final Unmarshaller unmarshal = jxbc.createUnmarshaller();
-      final Elevate elevate = (Elevate) unmarshal.unmarshal(elevatorFile);
+      final Elevate elevate = (Elevate) unmarshal.unmarshal(file);
 
-      if (getParam.equals("queries")) {
+      if ("queries".equals(getParam)) {
         final List<String> queriesList = new ArrayList<>();
         for (final Elevate.Query query : elevate.getQuery()) {
-          queriesList.add(query.getText());
+          if (query.getText() != null) queriesList.add(query.getText());
         }
         Collections.sort(queriesList);
         jsonResponse.put("queries", queriesList);
         jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-      } else if (getParam.equals("docs")) {
+
+      } else if ("docs".equals(getParam)) {
         final String queryParam = request.getParameter("query");
         final List<String> docsList = new ArrayList<>();
-        for (final Elevate.Query query : elevate.getQuery()) {
-          if (query.getText().equals(queryParam)) {
-            for (final Elevate.Query.Doc doc : query.getDoc()) {
-              docsList.add(doc.getId());
+        if (queryParam != null) {
+          for (final Elevate.Query query : elevate.getQuery()) {
+            if (queryParam.equals(query.getText())) {
+              for (final Elevate.Query.Doc doc : query.getDoc()) {
+                if (doc.getId() != null) docsList.add(doc.getId());
+              }
             }
           }
         }
         jsonResponse.put("docs", docsList);
         jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
+
+      } else {
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+        jsonResponse.put("message", "Unsupported 'get' value");
       }
     } catch (final Exception e) {
-      jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
       LOGGER.error("Error on marshal/unmarshal elevate.xml file ", e);
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+      jsonResponse.put("message", "Error parsing elevate.xml");
     }
-    final PrintWriter out = response.getWriter();
-    out.print(jsonResponse);
+
+    writeJson(response, jsonResponse);
   }
 
-  /**
-   * @throws IOException
-   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-   */
   @Override
   protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-    IndexerServer indexServer = null;
+    request.setCharacterEncoding(StandardCharsets.UTF_8.name());
+    response.setContentType("application/json");
+    final JSONObject jsonResponse = new JSONObject();
 
+    final File file = resolveElevatorFile();
+    if (file == null) {
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+      jsonResponse.put("message", "elevate.xml not found");
+      writeJson(response, jsonResponse);
+      return;
+    }
+
+    IndexerServer indexServer = null;
     try {
       indexServer = IndexerServerManager.getIndexerServer(Core.FILESHARE);
     } catch (final Exception e) {
-      final PrintWriter out = response.getWriter();
-      out.append("Error while getting the Solr core, please make sure the core has booted up. Error code : 69000");
-      out.close();
-      LOGGER.error("Error while getting the Solr core in doGet, admin servlet, make sure the core  has booted up and  that the code has been changed to match the changes. Error 69000 ", e);
+      LOGGER.error("Error while getting the Solr core", e);
+      jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+      jsonResponse.put("message", "Error while getting the Solr core (code 69000)");
+      writeJson(response, jsonResponse);
       return;
-
     }
-    request.setCharacterEncoding("utf8");
-    response.setContentType("application/json");
-    final JSONObject jsonResponse = new JSONObject();
-    if (request.getParameter("action") != null && !request.getParameter("action").equals("") && request.getParameter("query") != null && !request.getParameter("query").equals("")) {
+
+    final String action = request.getParameter("action");
+    final String queryReq = request.getParameter("query");
+
+    // Case 1: single actions up/down/remove
+    if (action != null && !action.isEmpty() && queryReq != null && !queryReq.isEmpty()) {
+      final String docId = request.getParameter("item");
+
       try {
-        // Retrieve the query used for the search
-        final String queryReq = request.getParameter("query");
-
-        // Retrieve the docId and the action to
-        // perform (elevate or remove from elevate)
-        final String docId = request.getParameter("item");
-        final String action = request.getParameter("action");
-
-        // Use JAXB on the elevate.xml file to create the corresponding
-        // Java object
         final JAXBContext jxbc = JAXBContext.newInstance(Elevate.class);
         final Unmarshaller unmarshal = jxbc.createUnmarshaller();
-        final Elevate elevate = (Elevate) unmarshal.unmarshal(elevatorFile);
+        final Elevate elevate = (Elevate) unmarshal.unmarshal(file);
 
-        if (action.equals("up")) { // Elevate the doc
-
-          // Retrieve the query entry if it already exists in the
-          // elevate.xml file
+        if ("up".equals(action)) {
           Elevate.Query query = findQuery(elevate, queryReq);
-
-          // If the entry does not exist, create it
           if (query == null) {
             query = new Elevate.Query();
             query.setText(queryReq);
             elevate.getQuery().add(query);
           }
-
-          // Try to find an existing entry for the doc, if it does not
-          // exists then create it and add it at the end of the list, otherwise
-          // move
-          // the doc one step up.
           Elevate.Query.Doc doc = findDoc(query, docId);
           if (doc == null) {
             doc = new Elevate.Query.Doc();
@@ -219,14 +241,9 @@ public class QueryElevator extends HttpServlet {
               query.getDoc().add(index - 1, doc);
             }
           }
-
-          // Set the response code
           jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 
-        } else if (action.equals("down")) { // Remove the doc
-
-          // Down the doc if it is found, otherwise there is nothing
-          // to do
+        } else if ("down".equals(action)) {
           final Elevate.Query q = findQuery(elevate, queryReq);
           if (q != null) {
             final Elevate.Query.Doc doc = findDoc(q, docId);
@@ -238,13 +255,9 @@ public class QueryElevator extends HttpServlet {
               }
             }
           }
-
-          // Set the response code
           jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-        } else if (action.equals("remove")) { // Remove the doc
 
-          // Remove the doc if it is found, otherwise there is nothing
-          // to do
+        } else if ("remove".equals(action)) {
           final Elevate.Query q = findQuery(elevate, queryReq);
           if (q != null) {
             final Elevate.Query.Doc doc = findDoc(q, docId);
@@ -252,88 +265,79 @@ public class QueryElevator extends HttpServlet {
               q.getDoc().remove(doc);
             }
           }
+          jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 
-          // Set the response code
-
+        } else {
+          jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+          jsonResponse.put("message", "Unsupported action");
+          writeJson(response, jsonResponse);
+          return;
         }
 
-        // Re-transform the Java object into the elevate.xml file thanks
-        // to JAXB
-        final Marshaller marshal = jxbc.createMarshaller();
-        marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, new Boolean(true));
-        final OutputStream os = new FileOutputStream(elevatorFile);
-        marshal.marshal(elevate, os);
-        indexServer.uploadFile(env, "elevate.xml", Core.FILESHARE.toString(), "");
+        // Marshal + upload + reload (synchronized on the file)
+        synchronized (QueryElevator.class) {
+          final Marshaller marshal = jxbc.createMarshaller();
+          marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+          try (OutputStream os = new FileOutputStream(file, false)) {
+            marshal.marshal(elevate, os);
+          }
+        }
+        indexServer.uploadFile(envBase, "elevate.xml", Core.FILESHARE.toString(), "");
         indexServer.reloadCollection(Core.FILESHARE.toString());
 
+        // Optional propagation to secondary collections
         List<String> collectionsList = null;
-
         final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
-        if (!config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).equals("")) {
-          collectionsList = Arrays.asList(config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).split(","));
+        final String secondary = config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS);
+        if (secondary != null && !secondary.isEmpty()) {
+          collectionsList = Arrays.asList(secondary.split(","));
         }
         if (collectionsList != null) {
           for (final String object : collectionsList) {
-            indexServer.uploadFile(env, "elevate.xml", object, "");
-            indexServer.reloadCollection(object);
+            indexServer.uploadFile(envBase, "elevate.xml", object.trim(), "");
+            indexServer.reloadCollection(object.trim());
           }
         }
-        jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
 
       } catch (final Exception e) {
-        jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
         LOGGER.error("Error on marshal/unmarshal elevate.xml file in solr/solrcloud/" + server + "/conf", e);
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+        jsonResponse.put("message", "Error updating elevate.xml");
       }
-    } else if (request.getParameter("query") != null && !request.getParameter("query").equals("") && request.getParameter("tool") != null && !request.getParameter("tool").equals("")) {
+
+      writeJson(response, jsonResponse);
+      return;
+    }
+
+    // Case 2: "tool" operations (modify/delete with docs[] list)
+    final String tool = request.getParameter("tool");
+    if (queryReq != null && !queryReq.isEmpty() && tool != null && !tool.isEmpty()) {
       try {
-        // Retrieve the query used for the search
-        final String queryReq = request.getParameter("query");
-
-        // Retrieve the docInfos, containing the docId and the action to
-        // perform (elevate or remove from elevate)
-        final String[] docs;
-        if (request.getParameter("docs[]") != null) {
-          docs = request.getParameterValues("docs[]");
-        } else {
-          docs = new String[0];
-        }
-
-        // Use JAXB on the elevate.xml file to create the corresponding
-        // Java object
         final JAXBContext jxbc = JAXBContext.newInstance(Elevate.class);
         final Unmarshaller unmarshal = jxbc.createUnmarshaller();
-        final Elevate elevate = (Elevate) unmarshal.unmarshal(elevatorFile);
+        final Elevate elevate = (Elevate) unmarshal.unmarshal(file);
 
-        // Retrieve the query entry if it already exists in the
-        // elevate.xml file
         Elevate.Query query = findQuery(elevate, queryReq);
 
-        if (request.getParameter("tool").equals("delete")) {
+        if ("delete".equals(tool)) {
           if (query != null) {
             elevate.getQuery().remove(query);
           }
         } else {
-
-          // If the entry does not exist, create it
           if (query == null) {
             query = new Elevate.Query();
             query.setText(queryReq);
             elevate.getQuery().add(query);
           }
-
-          if (request.getParameter("tool").equals("modify")) {
-            // Clear the docs because everything must be like the user
-            // did
-            // in the admin UI
+          if ("modify".equals(tool)) {
             query.getDoc().clear();
           }
 
-          for (int i = 0; i < docs.length; i++) {
-            final String docId = docs[i];
+          final String[] docs = request.getParameterValues("docs[]");
+          final String[] safeDocs = (docs != null) ? docs : new String[0];
 
-            // Try to find an existing entry for the doc, if it does not
-            // exists then create it on top of the list, otherwise move
-            // the doc in top of the list.
+          for (int i = 0; i < safeDocs.length; i++) {
+            final String docId = safeDocs[i];
             Elevate.Query.Doc doc = findDoc(query, docId);
             if (doc == null) {
               doc = new Elevate.Query.Doc();
@@ -347,40 +351,45 @@ public class QueryElevator extends HttpServlet {
               }
             }
           }
-
         }
 
-        // Re-transform the Java object into the elevate.xml file thanks
-        // to JAXB
-        final Marshaller marshal = jxbc.createMarshaller();
-        marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, new Boolean(true));
-        final OutputStream os = new FileOutputStream(elevatorFile);
-        marshal.marshal(elevate, os);
-        indexServer.uploadFile(env, "elevate.xml", Core.FILESHARE.toString(), "");
+        synchronized (QueryElevator.class) {
+          final Marshaller marshal = jxbc.createMarshaller();
+          marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+          try (OutputStream os = new FileOutputStream(file, false)) {
+            marshal.marshal(elevate, os);
+          }
+        }
+        indexServer.uploadFile(envBase, "elevate.xml", Core.FILESHARE.toString(), "");
         indexServer.reloadCollection(Core.FILESHARE.toString());
 
         List<String> collectionsList = null;
-
         final DatafariMainConfiguration config = DatafariMainConfiguration.getInstance();
-        if (!config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).equals("")) {
-          collectionsList = Arrays.asList(config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS).split(","));
+        final String secondary = config.getProperty(DatafariMainConfiguration.SOLR_SECONDARY_COLLECTIONS);
+        if (secondary != null && !secondary.isEmpty()) {
+          collectionsList = Arrays.asList(secondary.split(","));
         }
         if (collectionsList != null) {
           for (final String object : collectionsList) {
-            indexServer.uploadFile(env, "elevate.xml", object, "");
-            indexServer.reloadCollection(object);
+            indexServer.uploadFile(envBase, "elevate.xml", object.trim(), "");
+            indexServer.reloadCollection(object.trim());
           }
         }
 
-        // Set the response code
         jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-
       } catch (final Exception e) {
-        jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
         LOGGER.error("Error on marshal/unmarshal elevate.xml file in solr/solrcloud/" + server + "/conf", e);
+        jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+        jsonResponse.put("message", "Error updating elevate.xml");
       }
+
+      writeJson(response, jsonResponse);
+      return;
     }
-    final PrintWriter out = response.getWriter();
-    out.print(jsonResponse);
+
+    // Invalid parameters
+    jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
+    jsonResponse.put("message", "Invalid parameters");
+    writeJson(response, jsonResponse);
   }
 }
