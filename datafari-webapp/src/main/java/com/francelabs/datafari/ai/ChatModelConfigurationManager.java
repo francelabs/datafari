@@ -18,11 +18,11 @@ import java.util.List;
  * and modify the list of available configurations.
  * </p>
  */
-public class LLMModelConfigurationManager {
+public class ChatModelConfigurationManager {
 
     private static final Path CONFIG_PATH = Paths.get(System.getProperty("catalina.base"), "conf", "models.json");
     private static final ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-    private LLMModelRegistry registry;
+    private ChatModelRegistry registry;
 
     /**
      * Constructs a new configuration manager and immediately loads the model configurations
@@ -30,7 +30,7 @@ public class LLMModelConfigurationManager {
      *
      * @throws IOException if the file cannot be read or parsed.
      */
-    public LLMModelConfigurationManager() throws IOException {
+    public ChatModelConfigurationManager() throws IOException {
         load();
     }
 
@@ -42,9 +42,9 @@ public class LLMModelConfigurationManager {
      */
     public void load() throws IOException {
         if (Files.exists(CONFIG_PATH)) {
-            this.registry = mapper.readValue(CONFIG_PATH.toFile(), LLMModelRegistry.class);
+            this.registry = mapper.readValue(CONFIG_PATH.toFile(), ChatModelRegistry.class);
         } else {
-            this.registry = new LLMModelRegistry();
+            this.registry = new ChatModelRegistry();
             this.registry.setModels(new ArrayList<>());
         }
     }
@@ -61,9 +61,9 @@ public class LLMModelConfigurationManager {
     /**
      * Returns the configuration of the active model, as defined in the registry.
      *
-     * @return The {@link LLMModelConfig} of the active model, or {@code null} if none is set.
+     * @return The {@link ChatModelConfig} of the active model, or {@code null} if none is set.
      */
-    public LLMModelConfig getActiveModelConfig() {
+    public ChatModelConfig getActiveModelConfig() {
         return registry.getModels().stream()
                 .filter(m -> m.getName().equals(registry.getActiveModel()))
                 .findFirst()
@@ -88,7 +88,7 @@ public class LLMModelConfigurationManager {
      * @param config The new or updated model configuration.
      * @throws IOException if the registry cannot be saved.
      */
-    public void addOrUpdateModel(LLMModelConfig config) throws IOException {
+    public void addOrUpdateModel(ChatModelConfig config) throws IOException {
         registry.getModels().removeIf(m -> m.getName().equals(config.getName()));
         registry.getModels().add(config);
         save();
@@ -112,9 +112,9 @@ public class LLMModelConfigurationManager {
     /**
      * Returns the list of all registered model configurations.
      *
-     * @return A list of {@link LLMModelConfig} instances.
+     * @return A list of {@link ChatModelConfig} instances.
      */
-    public List<LLMModelConfig> listModels() {
+    public List<ChatModelConfig> listModels() {
         return registry.getModels();
     }
 
@@ -122,9 +122,9 @@ public class LLMModelConfigurationManager {
      * Retrieves a model configuration by its name.
      *
      * @param name The name of the model to retrieve.
-     * @return The corresponding {@link LLMModelConfig}, or {@code null} if not found.
+     * @return The corresponding {@link ChatModelConfig}, or {@code null} if not found.
      */
-    public LLMModelConfig getModelByName(String name) {
+    public ChatModelConfig getModelByName(String name) {
         return registry.getModels().stream()
                 .filter(m -> m.getName().equals(name))
                 .findFirst()

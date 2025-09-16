@@ -4,7 +4,7 @@ import dev.langchain4j.model.chat.ChatModel;
 
 import java.util.Map;
 
-public interface ChatLanguageModelBuilder {
+public interface ChatModelBuilder {
     /**
      * Must be overridden. Builds a ChatLanguageModel using the provided params.
      * @param params The properties map

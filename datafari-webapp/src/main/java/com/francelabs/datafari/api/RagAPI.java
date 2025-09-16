@@ -15,8 +15,8 @@
  *******************************************************************************/
 package com.francelabs.datafari.api;
 
-import com.francelabs.datafari.ai.ChatLanguageModelFactory;
-import com.francelabs.datafari.ai.LLMModelConfigurationManager;
+import com.francelabs.datafari.ai.ChatModelFactory;
+import com.francelabs.datafari.ai.ChatModelConfigurationManager;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.rag.*;
 import com.francelabs.datafari.utils.rag.ChunkUtils;
@@ -248,8 +248,8 @@ public class RagAPI extends SearchAPI {
    * @throws IOException If an error occurs while reading or parsing the model configuration file.
    */
   public static ChatModel getChatModel(RagConfiguration config) throws IOException {
-    LLMModelConfigurationManager configManager = new LLMModelConfigurationManager();
-    ChatLanguageModelFactory chatModelFactory = new ChatLanguageModelFactory(configManager);
+    ChatModelConfigurationManager configManager = new ChatModelConfigurationManager();
+    ChatModelFactory chatModelFactory = new ChatModelFactory(configManager);
     return chatModelFactory.createChatModel(); // Return the active model
   }
 
@@ -262,8 +262,8 @@ public class RagAPI extends SearchAPI {
    * @throws IllegalArgumentException If no model is found with the given name.
    */
   private static ChatModel getSpecificChatModel(String modelName) throws IOException {
-    LLMModelConfigurationManager configManager = new LLMModelConfigurationManager();
-    ChatLanguageModelFactory chatModelFactory = new ChatLanguageModelFactory(configManager);
+    ChatModelConfigurationManager configManager = new ChatModelConfigurationManager();
+    ChatModelFactory chatModelFactory = new ChatModelFactory(configManager);
     return chatModelFactory.createChatModel(modelName); // Return a specific model
   }
 

@@ -8,59 +8,59 @@ import java.util.Map;
 
 /**
  * Factory responsible for creating {@link ChatModel} instances based on
- * model configurations defined in {@link LLMModelConfigurationManager}.
+ * model configurations defined in {@link ChatModelConfigurationManager}.
  * <p>
- * The factory uses a registry of {@link ChatLanguageModelBuilder} implementations
+ * The factory uses a registry of {@link ChatModelBuilder} implementations
  * to dynamically build models for different interface types (e.g. OpenAI, MistralAI, AzureOpenAI, HuggingFace, etc.).
  * </p>
  *
  * <p>
- * New interface types can be added at runtime via the {@link #register(String, ChatLanguageModelBuilder)} method,
+ * New interface types can be added at runtime via the {@link #register(String, ChatModelBuilder)} method,
  * making the factory extensible without recompilation.
  * </p>
  */
-public class ChatLanguageModelFactory {
+public class ChatModelFactory {
 
-    private final LLMModelConfigurationManager configManager;
-    private final Map<String, ChatLanguageModelBuilder> builderRegistry = new HashMap<>();
+    private final ChatModelConfigurationManager configManager;
+    private final Map<String, ChatModelBuilder> builderRegistry = new HashMap<>();
 
     /**
-     * Creates a new {@code ChatLanguageModelFactory} using the provided configuration manager.
+     * Creates a new {@code ChatModelFactory} using the provided configuration manager.
      *
      * @param configManager The manager responsible for loading LLM model configurations.
      */
-    public ChatLanguageModelFactory(LLMModelConfigurationManager configManager) {
+    public ChatModelFactory(ChatModelConfigurationManager configManager) {
         this.configManager = configManager;
         registerDefaults();
     }
 
     /**
-     * Registers default {@link ChatLanguageModelBuilder} implementations for known interface types:
+     * Registers default {@link ChatModelBuilder} implementations for known interface types:
      * OpenAI, MistralAI, AzureOpenAI, HuggingFace, Ollama, GoogleAiGemini.
      */
     private void registerDefaults() {
-        builderRegistry.put("OpenAI", new OpenAiChatLanguageModelBuilder());
+        builderRegistry.put("OpenAI", new OpenAiChatModelBuilder());
         builderRegistry.put("MistralAI", new MistralAiChatModelBuilder());
-        builderRegistry.put("AzureOpenAI", new AzureOpenAiChatLanguageModelBuilder());
-        builderRegistry.put("HuggingFace", new HuggingFaceChatLanguageModelBuilder());
-        builderRegistry.put("Ollama", new OllamaChatLanguageModelBuilder());
-        builderRegistry.put("GoogleAiGemini", new GoogleAiGeminiChatLanguageModelBuilder());
+        builderRegistry.put("AzureOpenAI", new AzureOpenAiChatModelBuilder());
+        builderRegistry.put("HuggingFace", new HuggingFaceChatModelBuilder());
+        builderRegistry.put("Ollama", new OllamaChatModelBuilder());
+        builderRegistry.put("GoogleAiGemini", new GoogleAiGeminiChatModelBuilder());
     }
 
     /**
-     * Registers a new {@link ChatLanguageModelBuilder} for a given interface type.
+     * Registers a new {@link ChatModelBuilder} for a given interface type.
      * This allows the factory to support custom or third-party model types dynamically.
      *
      * @param interfaceType The name of the interface type (e.g. "MyCustomLLM").
      * @param builder       The builder responsible for constructing models of this type.
      */
-    public void register(String interfaceType, ChatLanguageModelBuilder builder) {
+    public void register(String interfaceType, ChatModelBuilder builder) {
         builderRegistry.put(interfaceType, builder);
     }
 
     /**
      * Creates a {@link ChatModel} using the active model configuration defined in
-     * {@link LLMModelConfigurationManager}.
+     * {@link ChatModelConfigurationManager}.
      *
      * @return A {@link ChatModel} instance corresponding to the active model.
      * @throws IllegalStateException    If no active model configuration is available.
@@ -82,7 +82,7 @@ public class ChatLanguageModelFactory {
      * @throws IllegalArgumentException If no builder is registered for the model's interface type.
      */
     public ChatModel createChatModel(String modelName) {
-        LLMModelConfig config = (modelName != null)
+        ChatModelConfig config = (modelName != null)
                 ? configManager.getModelByName(modelName)
                 : configManager.getActiveModelConfig();
 
@@ -91,7 +91,7 @@ public class ChatLanguageModelFactory {
         }
 
         String interfaceType = config.getInterfaceType();
-        ChatLanguageModelBuilder builder = builderRegistry.get(interfaceType);
+        ChatModelBuilder builder = builderRegistry.get(interfaceType);
         if (builder == null) {
             throw new IllegalArgumentException("No builder found for interface: " + interfaceType);
         }

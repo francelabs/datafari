@@ -2,14 +2,14 @@ package com.francelabs.datafari.ai;
 
 import java.util.List;
 
-public class LLMModelRegistry {
+public class ChatModelRegistry {
     private String activeModel;
 
-    public List<LLMModelConfig> getModels() {
+    public List<ChatModelConfig> getModels() {
         return models;
     }
 
-    public void setModels(List<LLMModelConfig> models) {
+    public void setModels(List<ChatModelConfig> models) {
         this.models = models;
     }
 
@@ -21,5 +21,5 @@ public class LLMModelRegistry {
         this.activeModel = activeModel;
     }
 
-    private List<LLMModelConfig> models;
+    private List<ChatModelConfig> models;
 }

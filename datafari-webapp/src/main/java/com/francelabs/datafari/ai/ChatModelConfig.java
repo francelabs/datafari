@@ -2,7 +2,7 @@ package com.francelabs.datafari.ai;
 
 import java.util.Map;
 
-public class LLMModelConfig {
+public class ChatModelConfig {
     private String name;
     private String interfaceType;
 

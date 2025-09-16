@@ -6,7 +6,7 @@ import java.time.Duration;
 
 import java.util.Map;
 
-public class HuggingFaceChatLanguageModelBuilder implements ChatLanguageModelBuilder {
+public class HuggingFaceChatModelBuilder implements ChatModelBuilder {
 
     @Override
     public ChatModel build(Map<String, Object> props) {

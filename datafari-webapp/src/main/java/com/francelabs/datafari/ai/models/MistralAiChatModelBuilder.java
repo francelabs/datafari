@@ -6,7 +6,7 @@ import dev.langchain4j.model.mistralai.MistralAiChatModel;
 import java.time.Duration;
 import java.util.Map;
 
-public class MistralAiChatModelBuilder implements ChatLanguageModelBuilder {
+public class MistralAiChatModelBuilder implements ChatModelBuilder {
 
     @Override
     public ChatModel build(Map<String, Object> props) {
