@@ -1,4 +1,4 @@
-FROM maven:3.6.3-jdk-11 AS BUILD
+FROM maven:3.8-jdk-11 AS BUILD
 
 ENV ANT_VERSION=1.10.9
 ENV ANT_HOME=/opt/ant
