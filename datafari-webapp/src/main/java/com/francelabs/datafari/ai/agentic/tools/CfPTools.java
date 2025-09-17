@@ -6,21 +6,26 @@ import com.francelabs.datafari.utils.EditableHttpServletRequest;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.agent.tool.P;
 import dev.langchain4j.agent.tool.Tool;
+import dev.langchain4j.data.document.Document;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public class CfPTools {
 
     private static final Logger LOGGER = LogManager.getLogger(CfPTools.class.getName());
     HttpServletRequest request;
     RagConfiguration config;
+    List<Document> sources;
 
-    public CfPTools(HttpServletRequest request) {
+    public CfPTools(HttpServletRequest request, List<Document> sources) {
         this.request = request;
+        this.sources = sources;
         config = RagConfiguration.getInstance();
     }
 
@@ -43,7 +48,7 @@ public class CfPTools {
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/select";
         req.addParameter("q", "*:*");
-        req.addParameter("fl", "title,parent_doc,id,url,click_url,creation_date,agentic_*,llm_categories");
+        req.addParameter("fl", "title,parent_doc,id,url,creation_date,agentic_*,llm_categories");
         if(!category.isBlank()) req.addParameter("fq", "{!term f=llm_categories}" + category);
         req.addParameter("start", "0");
         req.addParameter("sort", "creation_date desc");
@@ -153,9 +158,11 @@ public class CfPTools {
 
                 try {
                     results = AiPowered.rag(request, jsonBody);
+                    extractSourcesFromRagResponse(results);
                 } catch (Exception e) {
                     LOGGER.error("AGENTIC TOOLS - Extracting from CCTP - ERROR: {}", e.getLocalizedMessage());
                 }
+
                 LOGGER.debug("AGENTIC TOOLS - Extracting from CCTP - Result {}", results);
                 return results;
 
@@ -163,7 +170,7 @@ public class CfPTools {
                 LOGGER.error("Cannot extract information from CCTP.");
             }
         }
-        return "Cannot extract information from CCTP.";
+        return "Cannot retrieve CCTP for CFP " + cfpId + ".";
     }
 
 
@@ -186,9 +193,12 @@ public class CfPTools {
 
                 try {
                     results = AiPowered.rag(request, jsonBody);
+                    extractSourcesFromRagResponse(results);
                 } catch (Exception e) {
                     LOGGER.error("AGENTIC TOOLS - Extracting from CCAP - ERROR: {}", e.getLocalizedMessage());
                 }
+
+
                 LOGGER.debug("AGENTIC TOOLS - Extracting from CCAP - Result {}", results);
                 return results;
 
@@ -200,8 +210,7 @@ public class CfPTools {
     }
 
 
-
-//    @Tool("Retrieves the CCTP (Cahier des Charges Techniques Particuliers) for the specified CFP.")
+    //    @Tool("Retrieves the CCTP (Cahier des Charges Techniques Particuliers) for the specified CFP.")
     JSONArray findCCTP(
             @P("ID of the CFP. IDs use the format (X being digits): DCEXX") String cfpId
     ) {
@@ -210,7 +219,7 @@ public class CfPTools {
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/select";
         req.addParameter("q", "*:*");
-        req.addParameter("fl", "title,parent_doc,id,url,click_url,creation_date,agentic_*");
+        req.addParameter("fl", "title,parent_doc,id,url,creation_date,agentic_*");
         req.addParameter("fq", "({!term f=agentic_cfp_doc_type v='CCTP'} AND {!term f=agentic_cfp_id v='" + cfpId + "'})");
         req.addParameter("start", "0");
         req.addParameter("rows", "1");
@@ -219,11 +228,14 @@ public class CfPTools {
         JSONObject root = SearchUtils.processSearch(req, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
 
+        // TODO : add the doc to this.sources
+        addDocumentToSource((JSONObject) docs.getFirst());
+
         return docs;
     }
 
 
-//    @Tool("Retrieves the CCAP (Cahier des Clauses Administratives Particulières) for the specified CFP.")
+    //    @Tool("Retrieves the CCAP (Cahier des Clauses Administratives Particulières) for the specified CFP.")
     JSONArray findCCAP(
             @P("CFP ID. IDs generally use the following format (X being digits): DCEXX") String cfpId
     ) {
@@ -232,7 +244,7 @@ public class CfPTools {
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/select";
         req.addParameter("q", "*:*");
-        req.addParameter("fl", "title,parent_doc,id,url,click_url,creation_date,agentic_*");
+        req.addParameter("fl", "title,parent_doc,id,url,creation_date,agentic_*");
         req.addParameter("fq", "({!term f=agentic_cfp_doc_type v='CCAP'} AND {!term f=agentic_cfp_id v='" + cfpId + "'})");
         req.addParameter("start", "0");
         req.addParameter("rows", "1");
@@ -240,6 +252,8 @@ public class CfPTools {
 
         JSONObject root = SearchUtils.processSearch(req, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
+
+        addDocumentToSource((JSONObject) docs.getFirst());
 
         return docs;
     }
@@ -258,7 +272,7 @@ public class CfPTools {
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/select";
         req.addParameter("q", "*:*");
-        req.addParameter("fl", "title,parent_doc,id,url,click_url,embedded_content");
+        req.addParameter("fl", "title,parent_doc,id,url,embedded_content");
         req.addParameter("fq", "{!term f=parent_doc}" + id);
         req.addParameter("collection", "VectorMain");
         req.addParameter("start", String.valueOf(start));
@@ -269,6 +283,9 @@ public class CfPTools {
         JSONObject root = SearchUtils.processSearch(req, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
         String mergedChunkContents = SearchUtils.mergeChunks(docs);
+
+        // TODO : add document to sources
+        addDocumentToSource((JSONObject) docs.getFirst());
 
         LOGGER.info("AGENTIC TOOLS - Reading page {} of document  '{}'", page, id);
         if (mergedChunkContents.isEmpty()) {
@@ -285,5 +302,66 @@ public class CfPTools {
     ) {
         LOGGER.warn("AGENTIC TOOLS - Requesting tool - {}", description);
         return "Note taken.";
+    }
+
+    /**
+     * Extract the sources from the "RagByDocument" service and add them to the sources
+     * @param results: A String JSON response from the RAG service
+     */
+    private void extractSourcesFromRagResponse(String results) {
+        try {
+            // Sources extraction
+            JSONParser parser = new JSONParser();
+            JSONObject content = (JSONObject) parser.parse(results);
+            JSONArray documents = (JSONArray) content.get("documents");
+            if (!documents.isEmpty()) addDocumentsToSource(documents);
+        } catch (Exception e) {
+            LOGGER.error("AGENTIC TOOLS - Extracting from CCTP - ERROR: {}", e.getLocalizedMessage());
+        }
+    }
+
+    /**
+     * Add retrieved documents (JSONArray) to the sources
+     * @param docs: A JSONArray of documents (JSONObject, as returned by Datafari search)
+     */
+    private void addDocumentsToSource(JSONArray docs) {
+        try {
+            for (Object o : docs) {
+                JSONObject doc = (JSONObject) o;
+                addDocumentToSource(doc);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Could not add documents to sources.", e);
+        }
+    }
+
+
+    /**
+     * Add a retrieved document (JSONObject) to the sources
+     * @param doc: A JSONObject document (as returned by Datafari search)
+     */
+    private void addDocumentToSource(JSONObject doc) {
+        try {
+            String id = (doc.get("parent_doc") != null) ? (String) doc.get("parent_doc") : (String) doc.get("id");
+            String title = ((JSONArray) doc.get("title")).getFirst().toString();
+            String url = (doc.get("click_url") != null) ? (String) doc.get("click_url") : (String) doc.get("url");
+
+            String content;
+            if (doc.get("content") != null) {
+                content = (String) doc.get("content");
+            } else if (doc.get("embedded_content") != null) {
+                content = (String) doc.get("embedded_content");
+            } else {
+                content = "No content available.";
+            }
+            Document source = Document.document(content);
+            source.metadata().put("id", id)
+                    .put("title", title)
+                    .put("url", url);
+            this.sources.add(source);
+
+        } catch (Exception e) {
+            LOGGER.error("Could not add document to sources.", e);
+        }
     }
 }

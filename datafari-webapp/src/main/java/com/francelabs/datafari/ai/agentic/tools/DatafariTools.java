@@ -1,34 +1,38 @@
 package com.francelabs.datafari.ai.agentic.tools;
 
-import com.francelabs.datafari.ai.agentic.agent.CfPAgent;
 import com.francelabs.datafari.rag.RagConfiguration;
 import com.francelabs.datafari.rest.v2_0.ai.AiPowered;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.agent.tool.P;
 import dev.langchain4j.agent.tool.Tool;
+import dev.langchain4j.data.document.Document;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public class DatafariTools {
 
     private static final Logger LOGGER = LogManager.getLogger(DatafariTools.class.getName());
     HttpServletRequest request;
     RagConfiguration config;
+    List<Document> sources;
 
-    public DatafariTools(HttpServletRequest request) {
+    public DatafariTools(HttpServletRequest request, List<Document> sources) {
         this.request = request;
+        this.sources = sources;
         config = RagConfiguration.getInstance();
     }
 
-    @Tool("Process a simple RAG request in the search engine.")
+    @Tool("Process a RAG query in a single document.")
     String ragByDocument(
             @P("The RAG query for a single document") String query,
-            @P("The ID of the document") String id
+            @P("The exact ID of the document") String id
     ) {
         LOGGER.info("AGENTIC TOOLS - RAG by document - ID: {} - Query: {}", id, query);
         JSONObject jsonBody = new JSONObject();
@@ -38,6 +42,7 @@ public class DatafariTools {
 
         try {
             results = AiPowered.rag(request, jsonBody);
+            extractSourcesFromRagResponse(results);
         } catch (Exception e) {
             LOGGER.error("AGENTIC TOOLS - RAG by document - ERROR: {}", e.getLocalizedMessage());
         }
@@ -50,7 +55,7 @@ public class DatafariTools {
         The whole content of the retrieved document may be large, and therefor is not returned.
         However, you can use this tool to retrieve the ID of a document, and read the document later with another tool.
         The returned data returned for each retrieved document are:
-        title, id, author, click_url, creation_date, last_modified, crawl_date, extension, source, word_count,
+        title, id, author, url, creation_date, last_modified, crawl_date, extension, source, word_count,
         language, xmptpg_npages, original_file_size
     """)
     String bm25Search(
@@ -62,7 +67,7 @@ public class DatafariTools {
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/select";
         req.addParameter("q", query);
-        req.addParameter("fl", "title,id,author,click_url,creation_date,last_modified,crawl_date,extension,source,word_count,language,xmptpg_npages,original_file_size");
+        req.addParameter("fl", "title,id,author,url,creation_date,last_modified,crawl_date,extension,source,word_count,language,xmptpg_npages,original_file_size");
         req.addParameter("q.op", "OR");
         req.addParameter("start", "0");
         req.addParameter("rows", String.valueOf(rows));
@@ -92,7 +97,7 @@ public class DatafariTools {
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/select";
         req.addParameter("q", "*:*");
-        req.addParameter("fl", "title,parent_doc,id,url,click_url,embedded_content");
+        req.addParameter("fl", "title,parent_doc,id,url,embedded_content");
         req.addParameter("fq", "{!term f=parent_doc}" + id);
         req.addParameter("collection", "VectorMain");
         req.addParameter("start", String.valueOf(start));
@@ -103,6 +108,9 @@ public class DatafariTools {
         JSONObject root = SearchUtils.processSearch(req, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
         String mergedChunkContents = SearchUtils.mergeChunks(docs);
+
+        // Add document to sources
+        if (!docs.isEmpty()) addDocumentToSource((JSONObject) docs.getFirst());
 
         if (mergedChunkContents.isEmpty()) return "No content";
         return "========== PAGE " + page + ": ==========\n\n" + mergedChunkContents + "\n\n========== END OF PAGE " + page + " ==========\n\n";
@@ -123,7 +131,7 @@ public class DatafariTools {
         String handler = "/rrf";
         req.addParameter("q", query);
         req.addParameter("queryrag", query);
-        req.addParameter("fl", "title,id,url,click_url,embedded_content");
+        req.addParameter("fl", "title,id,url,embedded_content");
         req.addParameter("fq", "{!term f=parent_doc}" + id);
         req.addParameter("q.op", "OR");
         req.addParameter("wt", "json");
@@ -134,6 +142,10 @@ public class DatafariTools {
         JSONArray docs = SearchUtils.extractDocs(root);
         LOGGER.info("AGENTIC TOOLS - Search from document {}: {}", id, query);
         LOGGER.debug("AGENTIC TOOLS - Retrieved content: {}", docs.toJSONString());
+
+        // Add document to sources
+        if (!docs.isEmpty()) addDocumentToSource((JSONObject) docs.getFirst());
+
         return docs.toJSONString();
     }
 
@@ -162,7 +174,7 @@ public class DatafariTools {
         String handler = "/vector";
         req.addParameter("q", query);
         req.addParameter("queryrag", query);
-        req.addParameter("fl", "title,id,exactContent,embedded_content,click_url");
+        req.addParameter("fl", "title,id,parent_doc,exactContent,embedded_content,url");
         req.addParameter("topK", String.valueOf(topK));
         req.addParameter("start", "0");
         req.addParameter("rows", String.valueOf(rows));
@@ -171,6 +183,10 @@ public class DatafariTools {
         JSONObject root = SearchUtils.processSearch(req, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
         LOGGER.debug("AGENTIC TOOLS - Vector Search - {}", docs.toJSONString());
+
+        // Add document to sources
+        addDocumentsToSource(docs);
+
         return docs.toJSONString();
     }
 
@@ -183,7 +199,7 @@ public class DatafariTools {
         String handler = "/rrf";
         editableRequest.addParameter("q", query);
         editableRequest.addParameter("queryrag", query);
-        editableRequest.addParameter("fl", "title,id,exactContent,embedded_content,click_url");
+        editableRequest.addParameter("fl", "title,id,parent_doc,exactContent,embedded_content,url");
         editableRequest.addParameter("topK", "50");
         editableRequest.addParameter("start", "0");
         editableRequest.addParameter("rows", "10");
@@ -192,6 +208,10 @@ public class DatafariTools {
         JSONObject root = SearchUtils.processSearch(editableRequest, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
         LOGGER.debug("AGENTIC TOOLS - Hybrid Search - {}", docs.toJSONString());
+
+        // Add document to sources
+        addDocumentsToSource(docs);
+
         return docs.toJSONString();
     }
 
@@ -211,6 +231,67 @@ public class DatafariTools {
     ) {
         LOGGER.warn("AGENTIC TOOLS - Requesting tool - {}", description);
         return "Note taken.";
+    }
+
+    /**
+     * Extract the sources from the "RagByDocument" service and add them to the sources
+     * @param results: A String JSON response from the RAG service
+     */
+    private void extractSourcesFromRagResponse(String results) {
+        try {
+            // Sources extraction
+            JSONParser parser = new JSONParser();
+            JSONObject content = (JSONObject) parser.parse(results);
+            JSONArray documents = (JSONArray) content.get("documents");
+            if (!documents.isEmpty()) addDocumentsToSource(documents);
+        } catch (Exception e) {
+            LOGGER.error("AGENTIC TOOLS - Extracting from CCTP - ERROR: {}", e.getLocalizedMessage());
+        }
+    }
+
+    /**
+     * Add retrieved documents (JSONArray) to the sources
+     * @param docs: A JSONArray of documents (JSONObject, as returned by Datafari search)
+     */
+    private void addDocumentsToSource(JSONArray docs) {
+        try {
+            for (Object o : docs) {
+                JSONObject doc = (JSONObject) o;
+                addDocumentToSource(doc);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Could not add documents to sources.", e);
+        }
+    }
+
+
+    /**
+     * Add a retrieved document (JSONObject) to the sources
+     * @param doc: A JSONObject document (as returned by Datafari search)
+     */
+    private void addDocumentToSource(JSONObject doc) {
+        try {
+            String id = (doc.get("parent_doc") != null) ? (String) doc.get("parent_doc") : (String) doc.get("id");
+            String title = ((JSONArray) doc.get("title")).getFirst().toString();
+            String url = (doc.get("click_url") != null) ? (String) doc.get("click_url") : (String) doc.get("url");
+
+            String content;
+            if (doc.get("content") != null) {
+                content = (String) doc.get("content");
+            } else if (doc.get("embedded_content") != null) {
+                content = (String) doc.get("embedded_content");
+            } else {
+                content = "No content available.";
+            }
+            Document source = Document.document(content);
+            source.metadata().put("id", id)
+                    .put("title", title)
+                    .put("url", url);
+            this.sources.add(source);
+
+        } catch (Exception e) {
+            LOGGER.error("Could not add document to sources.", e);
+        }
     }
 
 }

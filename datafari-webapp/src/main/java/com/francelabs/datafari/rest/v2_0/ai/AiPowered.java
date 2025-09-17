@@ -12,7 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,57 +34,6 @@ public class AiPowered {
     private static final String QUERY_FIELD = "query";
     private static final String STATUS_FIELD = "status";
 
-
-    @GetMapping(value = "/rest/v2.0/ai/agent", produces = "application/json;charset=UTF-8")
-    public static String agentic(final HttpServletRequest request) {
-//        String result = AgenticRag.run();
-        DatafariAgent agent = new DatafariAgent(request);
-
-        // Retrieve query from request
-        String query;
-        if (request.getParameter("q") != null) {
-            query = request.getParameter("q");
-            LOGGER.debug("AiPowered - CFP AGENT - Agent: {}", query);
-        } else {
-            LOGGER.warn("AiPowered - CFP AGENT - Missing 'q' parameter");
-            return generateErrorJson(422, "ragBadRequest", "Sorry, It appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.", null);
-        }
-
-        String docId = request.getParameter("id");
-
-        String result = (docId == null) ? agent.ask(query) : agent.askForDocument(query, docId);
-
-        JSONObject jsonContent = new JSONObject();
-        JSONObject jsonresponse = new JSONObject();
-        jsonContent.put("query", query);
-        jsonContent.put("message", result);
-        jsonresponse.put("content", jsonContent);
-        return jsonresponse.toJSONString();
-    }
-
-    @GetMapping(value = "/rest/v2.0/ai/cfp", produces = "application/json;charset=UTF-8")
-    public static String cfpAgent(final HttpServletRequest request) {
-        CfPAgent agent = new CfPAgent(request);
-
-        // Retrieve query from request
-        String query;
-        if (request.getParameter("q") != null) {
-            query = request.getParameter("q");
-            LOGGER.debug("AiPowered - CFP AGENT - Agent: {}", query);
-        } else {
-            LOGGER.warn("AiPowered - CFP AGENT - Missing 'q' parameter");
-            return generateErrorJson(422, "ragBadRequest", "Sorry, It appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.", null);
-        }
-
-        String result = agent.ask(query);
-
-        JSONObject jsonContent = new JSONObject();
-        JSONObject jsonresponse = new JSONObject();
-        jsonContent.put("query", query);
-        jsonContent.put("message", result);
-        jsonresponse.put("content", jsonContent);
-        return jsonresponse.toJSONString();
-    }
 
     @PostMapping(value = "/rest/v2.0/ai/summarize", produces = "application/json;charset=UTF-8")
     public static String summarizeDocument(final HttpServletRequest request, @RequestBody JSONObject jsonDoc) {
@@ -183,17 +131,18 @@ public class AiPowered {
 
             try {
                 String response;
+                List<Document> sources = new ArrayList<>();
                 switch (agent) {
                     case "cfpagent":
                         LOGGER.info("AiPowered - RAG - Using CFP Agent");
-                        CfPAgent cfpagent = new CfPAgent(request);
+                        CfPAgent cfpagent = new CfPAgent(request, sources);
                         response = cfpagent.ask(query);
-                        return RagAPI.writeJsonResponse(response, new ArrayList<>()).toJSONString();
+                        return RagAPI.writeJsonResponse(response, sources).toJSONString();
                     case "ragagent":
                         LOGGER.info("AiPowered - RAG - Using RAG Agent");
-                        DatafariAgent ragagent = new DatafariAgent(request);
+                        DatafariAgent ragagent = new DatafariAgent(request, sources);
                         response = ragagent.ask(query);
-                        return RagAPI.writeJsonResponse(response, new ArrayList<>()).toJSONString();
+                        return RagAPI.writeJsonResponse(response, sources).toJSONString();
                     default:
                         break;
                 }

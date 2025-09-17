@@ -364,7 +364,7 @@ public class RagAPI extends SearchAPI {
     response.put("status", "OK");
     JSONObject content = new JSONObject();
     content.put("message", message);
-    content.put("documents", mergeSimilarDocuments(documentsList, message));
+    content.put("documents", mergeSimilarDocuments(documentsList));
     response.put("content", content);
 
     LOGGER.debug("");
@@ -533,7 +533,7 @@ public class RagAPI extends SearchAPI {
           if (content != null && !content.isBlank()) {
             String title = ((JSONArray) jsonObject.get("title")).getFirst().toString();
             String id = (String) jsonObject.get("id");
-            String url = (String) jsonObject.get("url");
+            String url = (jsonObject.get("click_url") != null) ? (String) jsonObject.get("click_url") : (String) jsonObject.get("url");
 
             Metadata metadata = new Metadata();
             metadata.put("title", title);
@@ -622,15 +622,15 @@ public class RagAPI extends SearchAPI {
    * This methode merge thoses duplicated entries, and remove useless ones.
    * @return List<Document> The final list
    */
-  private static JSONArray mergeSimilarDocuments(List<Document> documentList, String response) {
+  public static JSONArray mergeSimilarDocuments(List<Document> documentList) {
     // Removing Duplicates
     Map<String, Document> map = new HashMap<>();
     JSONArray displayedDocuments = new JSONArray();
     RagConfiguration conf = RagConfiguration.getInstance();
     for (Document doc : documentList) {
       String url = doc.metadata().getString("url");
-      String id = doc.metadata().getString("id");
       String parentId = doc.metadata().getString("parent_doc");
+      String id = (parentId != null) ? parentId : doc.metadata().getString("id");
       if (map.containsKey(url) &&
               "bm25".equals(conf.getProperty(RagConfiguration.RETRIEVAL_METHOD)) ) {
         // Keep only one chunk from a single document if BM25 is selected
@@ -642,8 +642,6 @@ public class RagAPI extends SearchAPI {
       JSONObject jsonDoc = new JSONObject();
       jsonDoc.put("id", id);
       jsonDoc.put("title", doc.metadata().getString("title"));
-      if (parentId != null) jsonDoc.put("parent_id", parentId);
-      // TODO : What if url != parent_id ?
       jsonDoc.put("url", url);
       jsonDoc.put("content", doc.text()); // TODO : Is the content necessary ?
       displayedDocuments.add(jsonDoc);
