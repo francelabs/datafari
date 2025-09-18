@@ -9,7 +9,9 @@
   <version>${revision}</version>
   <name>Datafari Enterprise Search CE - Parent POM</name>
   <properties>
-    <revision>7.0-dev-Community</revision>
+    <revision.base>7.0-dev</revision.base>
+    <edition>Community</edition>
+    <revision>${revision.base}-${edition}</revision>
     <adminui.version>1.0</adminui.version>
     <adminui.md5>ae9ca787e5067f3bedb1f2cdad4408b0</adminui.md5>
     <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
@@ -88,7 +90,7 @@
     <module>datafari-share-connector</module>
     <module>datafari-ui</module>
     <module>datafari-adminui</module>
-    <module>datafari-git-plugin</module>
+<!--    <module>datafari-git-plugin</module> -->
     <module>datafari-regex-entity-connector</module>
     <module>datafari-llm-connector</module>
     <module>datafari-binary-connector</module>
