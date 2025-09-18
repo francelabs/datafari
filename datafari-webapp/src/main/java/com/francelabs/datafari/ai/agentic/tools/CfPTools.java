@@ -64,7 +64,7 @@ public class CfPTools {
     @Tool("Retrieve a list of CFP IDs, filtered by category, sorted by creation_date desc.")
     String listCallsForProvidersByCategory(
             @P("Number of CFP to retrieve") int rows,
-            @P("Category filter (Catering, Furniture).") String category
+            @P("Category filter (Catering, Furniture, Carpentry or Maintenance).") String category
     ) {
         if (rows < 1) rows = 30;
 
@@ -115,7 +115,7 @@ public class CfPTools {
 
         LOGGER.info("AGENTIC TOOLS - CFP IDs via JSON Facet: rows={} category='{}' -> {}", rows, category, ids.size());
         if (ids.isEmpty()) {
-            return "No result found in category " + category + ". Available categories are Catering, Furniture.";
+            return "No result found in category " + category + ". Available categories are Catering, Furniture, Carpentry and Maintenance.";
         }
 
         rows = Math.min(ids.size(), rows);
