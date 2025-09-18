@@ -73,8 +73,6 @@
   <authorityconnector name="Jira" class="org.apache.manifoldcf.authorities.authorities.jira.JiraAuthorityConnector"/>
   <authorityconnector name="JDBC" class="org.apache.manifoldcf.authorities.authorities.jdbc.JDBCAuthority"/>
   <authorityconnector name="Generic" class="org.apache.manifoldcf.authorities.authorities.generic.GenericAuthority"/>
-  <authorityconnector name="Documentum" class="org.apache.manifoldcf.authorities.authorities.DCTM.AuthorityConnector"/>
-  <authorityconnector name="ContentServer Web Services" class="org.apache.manifoldcf.authorities.authorities.csws.CswsAuthority"/>
   <authorityconnector name="Confluence" class="org.apache.manifoldcf.authorities.authorities.confluence.ConfluenceAuthorityConnector"/>
   <authorityconnector name="Confluence v6+" class="org.apache.manifoldcf.authorities.authorities.confluence.v6.ConfluenceAuthorityConnector"/>
   <authorityconnector name="CMIS" class="org.apache.manifoldcf.authorities.authorities.cmis.CmisAuthorityConnector"/>
@@ -95,14 +93,10 @@
   <!--  <repositoryconnector name="Windows shares" class="com.francelabs.datafari.connectors.share.SharedDriveConnector"/> -->
   <repositoryconnector name="HDFS" class="org.apache.manifoldcf.crawler.connectors.hdfs.HDFSRepositoryConnector"/>
   <repositoryconnector name="GridFS" class="org.apache.manifoldcf.crawler.connectors.gridfs.GridFSRepositoryConnector"/>
-  <repositoryconnector name="GoogleDrive" class="org.apache.manifoldcf.crawler.connectors.googledrive.GoogleDriveRepositoryConnector"/>
   <repositoryconnector name="Generic" class="org.apache.manifoldcf.crawler.connectors.generic.GenericConnector"/>
   <repositoryconnector name="File system" class="org.apache.manifoldcf.crawler.connectors.filesystem.FileConnector"/>
-  <repositoryconnector name="FileNet" class="org.apache.manifoldcf.crawler.connectors.filenet.FilenetConnector"/>
   <repositoryconnector name="EMail" class="org.apache.manifoldcf.crawler.connectors.email.EmailConnector"/>
   <repositoryconnector name="DropBox" class="org.apache.manifoldcf.crawler.connectors.dropbox.DropboxRepositoryConnector"/>
-  <repositoryconnector name="Documentum" class="org.apache.manifoldcf.crawler.connectors.DCTM.DCTM"/>
-  <repositoryconnector name="ContentServer Web Services" class="org.apache.manifoldcf.crawler.connectors.csws.CswsConnector"/>
   <repositoryconnector name="Confluence" class="org.apache.manifoldcf.crawler.connectors.confluence.ConfluenceRepositoryConnector"/>
   <repositoryconnector name="Confluence v6+" class="org.apache.manifoldcf.crawler.connectors.confluence.v6.ConfluenceRepositoryConnector"/>
   <repositoryconnector name="CMIS" class="org.apache.manifoldcf.crawler.connectors.cmis.CmisRepositoryConnector"/>

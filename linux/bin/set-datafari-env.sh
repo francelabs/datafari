@@ -19,7 +19,7 @@ export SOLR_CONFIG_FILE=${DATAFARI_HOME}/tomcat/conf/solr.properties
 export LOG4J_VERSION=2.17.2
 export LD_LIBRARY_PATH=${DATAFARI_HOME}/pgsql/lib
 export TMP_DIR=/tmp
-
+export CASSANDRA_JDK_UNSUPPORTED=true
 
 # Home dirs
 export PID_DIR=$DATAFARI_HOME/pid
