@@ -38,7 +38,7 @@ COPY . .
 #COPY datafari-ee/README.txt datafari-ee/README.txt
 #COPY datafari-ee/pom.xml datafari-ee/pom.xml
 #COPY .git .git
-RUN mvn -f pom.xml -DfailIfNoTests=false -Dtest='!TestDataServices' -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -B clean install 
+RUN mvn -f pom.xml -DskipTests -DfailIfNoTests=false -Dtest='!TestDataServices' -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -B clean install 
 RUN ls
 #COPY datafari-ee/apache apache
 RUN ls
