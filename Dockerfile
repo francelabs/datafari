@@ -1,4 +1,4 @@
-FROM maven:3.8-jdk-11 AS BUILD
+FROM maven:3.9.9-eclipse-temurin-21-jammy AS BUILD
 
 ENV ANT_VERSION=1.10.9
 ENV ANT_HOME=/opt/ant
@@ -48,7 +48,7 @@ RUN ls
 #COPY datafari-ee/ssl-keystore ssl-keystore
 RUN ant clean-build -f ./linux/build.xml
 
-FROM eclipse-temurin:11-jdk-jammy
+FROM maven:3.9.9-eclipse-temurin-21-jammy
 MAINTAINER Olivier Tavard FRANCE LABS <olivier.tavard@francelabs.com>
 
 ENV DATAFARIUIDEV=false
