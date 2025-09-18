@@ -68,7 +68,7 @@ public class SavedSearches {
                 });
                 jsonResponse.put("savedsearches", savedSearchesJSONList);
                 String auditString = "Accessed saved searches data assigned to his user";
-                AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(), auditString);
+                AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(), auditString);
                 return RestAPIUtils.buildOKResponse(jsonResponse);
             } catch (Exception e) {
                 logger.debug("REST API encountered an exception while retrieving saved searches for a user", e);
@@ -93,7 +93,7 @@ public class SavedSearches {
                         (String) params.get("name"), (String) params.get("search"));
                 if (returnCode == CodesReturned.ALLOK.getValue()) {
                     String auditString = "created a saved search assigned to his user";
-                    AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(), auditString);
+                    AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(), auditString);
                     return RestAPIUtils.buildOKResponse(params);
                 } else {
                     throw new InternalErrorException(
@@ -166,7 +166,7 @@ public class SavedSearches {
             SavedSearchDataService.getInstance().deleteSearch(authenticatedUserName,
                     (String) selectedSavedSearch.get("name"), (String) selectedSavedSearch.get("search"));
             String auditString = "deleted a saved search assigned to his user";
-            AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(), auditString);
+            AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(), auditString);
             return RestAPIUtils.buildOKResponse(selectedSavedSearch);
         } catch (Exception e) {
             logger.debug("REST API encountered an exception while deleting a saved searche for a user", e);

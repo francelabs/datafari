@@ -16,9 +16,6 @@
     <adminui.md5>ae9ca787e5067f3bedb1f2cdad4408b0</adminui.md5>
     <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
     <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
-    <cassandra.version>trunk</cassandra.version>
-    <cassandra.sha512>b94d22c231dfbe124db094ff784146016fabfe0da0ec5ebcce7302c6f2bd78d2c568769a0c134bb1d73370c208b04d1543dc7cc11a83e5e1b789731da85ac3bf</cassandra.sha512>
-    <cassandra.driver.version>4.19.0</cassandra.driver.version>
     <datafari.version>${revision}</datafari.version>
     <datafariui.version>1.1.5</datafariui.version>
     <datafariui.md5>bbfb341dbcc8e92711c24c8bceebdbf3</datafariui.md5>
@@ -75,7 +72,6 @@
     <module>datafari-webapp</module>
     <module>datafari-zookeeper</module>
     <module>datafari-jena</module>
-    <module>datafari-cassandra</module>
     <module>datafari-tomcat</module>
     <module>datafari-analytic-stack</module>
     <module>datafari-updateprocessor</module>

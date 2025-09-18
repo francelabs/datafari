@@ -140,19 +140,19 @@ public class Alerts extends HttpServlet {
           : request.getParameter("keyword");
       if (allOK) {
         if (request.isUserInRole("SearchAdministrator")) {
-          AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
+          AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
               "As SearcHAdministrator accessed all alerts data corresponding to keyword: " + keyword);
         } else {
-          AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
+          AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
               "Accessed alerts data assigned to his user and corresponding to keyword: " + keyword);
         }
       } else {
         if (request.isUserInRole("SearchAdministrator")) {
-          AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
+          AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
               "As SearcHAdministrator, got an error trying to access all alerts data corresponding to keyword: "
                   + keyword);
         } else {
-          AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
+          AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
               "Got an error trying to access alerts data assigned to his user and corresponding to keyword: "
                   + keyword);
         }
@@ -237,20 +237,20 @@ public class Alerts extends HttpServlet {
           : request.getParameter("keyword");
       if (allOK) {
         if (request.getParameter("_id") != null) {
-          AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
+          AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
               "Deleted an alert from the alerts collection.");
         } 
         if (request.getParameter("keyword") != null) {
-          AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
+          AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
               "Added an alert to the alerts collection");
         }
       } else {
         if (request.getParameter("_id") != null) {
-          AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
+          AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
               "Error deleting an alert from the alerts collection.");
         } 
         if (request.getParameter("keyword") != null) {
-          AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
+          AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
               "Error adding an alert to the alerts collection");
         }
       }

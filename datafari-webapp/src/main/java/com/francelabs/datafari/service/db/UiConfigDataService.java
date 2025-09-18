@@ -1,168 +1,124 @@
-/*******************************************************************************
- *  * Copyright 2015 France Labs
- *  *
- *  * Licensed under the Apache License, Version 2.0 (the "License");
- *  * you may not use this file except in compliance with the License.
- *  * You may obtain a copy of the License at
- *  *
- *  *      http://www.apache.org/licenses/LICENSE-2.0
- *  *
- *  * Unless required by applicable law or agreed to in writing, software
- *  * distributed under the License is distributed on an "AS IS" BASIS,
- *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  * See the License for the specific language governing permissions and
- *  * limitations under the License.
- *******************************************************************************/
 package com.francelabs.datafari.service.db;
+
+import java.sql.Timestamp;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import com.datastax.oss.driver.api.core.DriverException;
-import com.datastax.oss.driver.api.core.cql.ResultSet;
-import com.datastax.oss.driver.api.core.cql.Row;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.utils.GDPRConfiguration;
 
-public class UiConfigDataService extends CassandraService {
-    final static Logger logger = LogManager.getLogger(UiConfigDataService.class.getName());
+public class UiConfigDataService {
 
-    public static final String USERNAMECOLUMN = "username";
-    public static final String UICONFIGCOLLECTION = "ui_config";
-    public static final String UICONFIGCOLUMN = "ui_config";
-    public final static String LASTREFRESHCOLUMN = "last_refresh";
+  private static final Logger logger = LogManager.getLogger(UiConfigDataService.class);
 
-    private final String userDataTTL;
+  public static final String USERNAMECOLUMN      = "username";
+  public static final String UICONFIGCOLLECTION  = "ui_config";
+  public static final String UICONFIGCOLUMN      = "ui_config";
+  public static final String LASTREFRESHCOLUMN   = "last_refresh";
 
-    private static UiConfigDataService instance;
+  private static UiConfigDataService instance;
 
-    public static synchronized UiConfigDataService getInstance() throws DatafariServerException {
-        try {
-            if (instance == null) {
-                instance = new UiConfigDataService();
-            }
-            instance.refreshSession();
-            return instance;
-        } catch (final DriverException e) {
-            logger.warn("Unable to get instance : " + e.getMessage());
-            // TODO catch specific exception
-            throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
-        }
+  // Helpers SQL via le pont statique
+  private final JdbcTemplate jdbc;
+  @SuppressWarnings("unused")
+  private final NamedParameterJdbcTemplate named;
+
+  // Conservé pour compat (pas de TTL natif en PG)
+  @SuppressWarnings("unused")
+  private final String userDataTTL;
+
+  private UiConfigDataService() {
+    this.jdbc  = SqlService.get().getJdbcTemplate();
+    this.named = SqlService.get().getNamedJdbcTemplate();
+    this.userDataTTL = GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL);
+  }
+
+  public static synchronized UiConfigDataService getInstance() {
+    if (instance == null) {
+      instance = new UiConfigDataService();
     }
+    return instance;
+  }
 
-    private UiConfigDataService() {
-        refreshSession();
-        userDataTTL = GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL);
+  /**
+   * Get user specific UI configuration.
+   */
+  public synchronized String getUiConfig(final String username) {
+    try {
+      final String sql = "SELECT " + UICONFIGCOLUMN +
+                         "  FROM " + UICONFIGCOLLECTION +
+                         " WHERE " + USERNAMECOLUMN + " = ?";
+      return jdbc.query(sql, rs -> rs.next() ? rs.getString(UICONFIGCOLUMN) : null, username);
+    } catch (Exception e) {
+      logger.warn("Unable to get ui config for user {} : {}", username, e.getMessage());
+      return null;
     }
+  }
 
-    /**
-     * Get user specific ui configuration
-     *
-     * @param username
-     * @return the user specific ui configuration
-     */
-    public synchronized String getUiConfig(final String username) {
-        String uiConfig = null;
-        try {
-            final String query = "SELECT " + UICONFIGCOLUMN 
-                    + " FROM " + UICONFIGCOLLECTION 
-                    + " where " + USERNAMECOLUMN + "='"
-                    + username + "'";
-            final ResultSet result = session.execute(query);
-            final Row row = result.one();
-            if (row != null && !row.isNull(UICONFIGCOLUMN) && !row.getString(UICONFIGCOLUMN).isEmpty()) {
-                uiConfig = row.getString(UICONFIGCOLUMN);
-            }
-        } catch (final Exception e) {
-            logger.warn("Unable to get ui config for user " + username + " : " + e.getMessage());
-        }
-        return uiConfig;
+  /**
+   * Set (upsert) user UI config.
+   */
+  public int setUiConfig(final String username, final String uiConfig) throws DatafariServerException {
+    try {
+      final String sql =
+          "INSERT INTO " + UICONFIGCOLLECTION + " (" +
+              USERNAMECOLUMN + ", " + UICONFIGCOLUMN + ", " + LASTREFRESHCOLUMN + ") " +
+          "VALUES (?, ?, ?) " +
+          "ON CONFLICT (" + USERNAMECOLUMN + ") DO UPDATE SET " +
+              UICONFIGCOLUMN + " = EXCLUDED." + UICONFIGCOLUMN + ", " +
+              LASTREFRESHCOLUMN + " = EXCLUDED." + LASTREFRESHCOLUMN;
+      jdbc.update(sql, username, uiConfig, new Timestamp(System.currentTimeMillis()));
+      return CodesReturned.ALLOK.getValue();
+    } catch (Exception e) {
+      logger.warn("Unable to insert ui config for user {} : {}", username, e.getMessage());
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
+  }
 
-    /**
-     * Set user ui config
-     *
-     * @param username
-     * @param uiConfig
-     * @return CodesReturned.ALLOK if all was ok
-     * @throws DatafariServerException
-     */
-    public int setUiConfig(final String username, final String uiConfig) throws DatafariServerException {
-        try {
-            String ttlToUse = userDataTTL;
-            if (username.contentEquals("admin")) {
-                ttlToUse = "0";
-            }
-            final String query = "INSERT INTO " + UICONFIGCOLLECTION 
-                    + " (" + USERNAMECOLUMN + "," 
-                    + UICONFIGCOLUMN + ","
-                    + LASTREFRESHCOLUMN + ")" 
-                    + " values ('" + username + "',"
-                    + "'" + uiConfig + "',"
-                    + "toTimeStamp(NOW()))"
-                    + " USING TTL " + ttlToUse;
-            session.execute(query);
-        } catch (final Exception e) {
-            logger.warn("Unable to insert ui config for user " + username + " : " + e.getMessage());
-            // TODO catch specific exception
-            throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
-        }
-        return CodesReturned.ALLOK.getValue();
+  /**
+   * Update user UI config.
+   */
+  public int updateUiConfig(final String username, final String uiConfig) throws DatafariServerException {
+    try {
+      final String sql =
+          "UPDATE " + UICONFIGCOLLECTION + " SET " +
+              UICONFIGCOLUMN + " = ?, " +
+              LASTREFRESHCOLUMN + " = ? " +
+          "WHERE " + USERNAMECOLUMN + " = ?";
+      jdbc.update(sql, uiConfig, new Timestamp(System.currentTimeMillis()), username);
+      return CodesReturned.ALLOK.getValue();
+    } catch (Exception e) {
+      logger.warn("Unable to update ui config for user {} : {}", username, e.getMessage());
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
+  }
 
-    /**
-     * Update user ui config
-     *
-     * @param username
-     * @param uiConfig
-     * @return CodesReturned.ALLOK if all was ok
-     * @throws DatafariServerException
-     */
-    public int updateUiConfig(final String username, final String uiConfig) throws DatafariServerException {
-        try {
-            String ttlToUse = userDataTTL;
-            if (username.contentEquals("admin")) {
-                ttlToUse = "0";
-            }
-            final String query = "UPDATE " + UICONFIGCOLLECTION 
-                    + " USING TTL " + ttlToUse
-                    + " SET " + UICONFIGCOLUMN + " = '" + uiConfig + "',"
-                    + " " + LASTREFRESHCOLUMN + " = toTimeStamp(NOW())"
-                    + " WHERE " + USERNAMECOLUMN + " = '" + username + "'";
-            session.execute(query);
-        } catch (final Exception e) {
-            logger.warn("Unable to update ui config for user " + username + " : " + e.getMessage());
-            // TODO catch specific exception
-            throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
-        }
-        return CodesReturned.ALLOK.getValue();
+  /**
+   * Refresh (touch) user UI config.
+   */
+  public void refreshUiConfig(final String username) throws DatafariServerException {
+    final String current = getUiConfig(username);
+    if (current != null) {
+      updateUiConfig(username, current);
     }
+  }
 
-    public void refreshUiConfig(final String username) throws DatafariServerException {
-        final String userUiConfig = getUiConfig(username);
-        if (userUiConfig != null) {
-            updateUiConfig(username, userUiConfig);
-        }
+  /**
+   * Delete user UI config.
+   */
+  public int deleteUiConfig(final String username) throws DatafariServerException {
+    try {
+      final String sql = "DELETE FROM " + UICONFIGCOLLECTION +
+                         " WHERE " + USERNAMECOLUMN + " = ?";
+      jdbc.update(sql, username);
+      return CodesReturned.ALLOK.getValue();
+    } catch (Exception e) {
+      logger.warn("Unable to delete ui config for user {} : {}", username, e.getMessage());
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
-
-    /**
-     *
-     * @param username
-     * @return CodesReturned.ALLOK value if all was ok
-     * @throws DatafariServerException
-     */
-    public int deleteUiConfig(final String username) throws DatafariServerException {
-        try {
-            final String query = "DELETE FROM " + UICONFIGCOLLECTION 
-                    + " WHERE " + USERNAMECOLUMN + " = '" + username + "'"
-                    + " IF EXISTS";
-            session.execute(query);
-        } catch (final Exception e) {
-            logger.warn("Unable to delete ui config for user " + username + " : " + e.getMessage());
-            // TODO catch specific exception
-            throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
-        }
-        return CodesReturned.ALLOK.getValue();
-    }
+  }
 }

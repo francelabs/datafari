@@ -1,256 +1,165 @@
-/*******************************************************************************
- *  * Copyright 2015 France Labs
- *  *
- *  * Licensed under the Apache License, Version 2.0 (the "License");
- *  * you may not use this file except in compliance with the License.
- *  * You may obtain a copy of the License at
- *  *
- *  *      http://www.apache.org/licenses/LICENSE-2.0
- *  *
- *  * Unless required by applicable law or agreed to in writing, software
- *  * distributed under the License is distributed on an "AS IS" BASIS,
- *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  * See the License for the specific language governing permissions and
- *  * limitations under the License.
- *******************************************************************************/
 package com.francelabs.datafari.service.db;
+
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.stereotype.Service;
 
-import com.datastax.oss.driver.api.core.DriverException;
-import com.datastax.oss.driver.api.core.cql.ResultSet;
-import com.datastax.oss.driver.api.core.cql.Row;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.utils.GDPRConfiguration;
 
-public class AccessTokenDataService extends CassandraService {
+@Service
+public class AccessTokenDataService {
 
-  final static Logger logger = LogManager.getLogger(AccessTokenDataService.class.getName());
+  private static final Logger logger = LogManager.getLogger(AccessTokenDataService.class.getName());
 
   public static final String ACCESS_TOKENS_COLLECTION = "access_tokens";
-  public static final String USERNAME_COLUMN = "username";
-  public static final String API_COLUMN = "api";
+  public static final String USERNAME_COLUMN   = "username";
+  public static final String API_COLUMN        = "api";
   public static final String IDENTIFIER_COLUMN = "identifier";
-  public static final String TOKEN_COLUMN = "a_token";
-  public final static String LASTREFRESHCOLUMN = "last_refresh";
+  public static final String TOKEN_COLUMN      = "a_token";
+  public static final String LASTREFRESHCOLUMN = "last_refresh";
 
+  // Pont de compatibilité pour l'ancien code qui appelle getInstance()
+  private static volatile AccessTokenDataService instance;
+
+  private final SqlService sql;
   private final String userDataTTL;
 
-  private static AccessTokenDataService instance;
-
   public static synchronized AccessTokenDataService getInstance() throws DatafariServerException {
-    try {
-      if (instance == null) {
-        instance = new AccessTokenDataService();
-      }
-      instance.refreshSession();
-      return instance;
-    } catch (final DriverException e) {
-      logger.warn("Unable to get instance : " + e.getMessage());
-      // TODO catch specific exception
-      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
-    }
+    return instance;
   }
 
-  private AccessTokenDataService() {
-    refreshSession();
-    userDataTTL = GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL);
+  public AccessTokenDataService(SqlService sql) {
+    this.sql = sql;
+    this.userDataTTL = GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL);
+    instance = this;
   }
 
-  /**
-   * Get user's API token
-   *
-   * @param username
-   * @param api
-   *          the API the token belongs to
-   * @return the user's API token
-   */
+  // ========= API =========
+
   public AccessToken getToken(final String username, final String api) {
-    AccessToken token = null;
     try {
-      final String query = "SELECT " 
-          + TOKEN_COLUMN + "," 
-          + IDENTIFIER_COLUMN 
-          + " FROM " + ACCESS_TOKENS_COLLECTION 
-          + " WHERE " + USERNAME_COLUMN + "='" + username + "'" 
-          + " AND " + API_COLUMN + "='" + api + "'";
-      final ResultSet result = session.execute(query);
-      final Row row = result.one();
-      if (row != null && !row.isNull(TOKEN_COLUMN) && !row.getString(TOKEN_COLUMN).isEmpty()) {
-        token = new AccessToken(api, row.getString(IDENTIFIER_COLUMN), row.getString(TOKEN_COLUMN));
-      }
-    } catch (final Exception e) {
-      logger.warn("Unable to get token for user " + username + " for API " + api, e);
+      List<AccessToken> list = sql.getJdbcTemplate().query(
+          "SELECT " + TOKEN_COLUMN + "," + IDENTIFIER_COLUMN +
+          " FROM " + ACCESS_TOKENS_COLLECTION +
+          " WHERE " + USERNAME_COLUMN + " = ? AND " + API_COLUMN + " = ?",
+          ps -> {
+            ps.setString(1, username);
+            ps.setString(2, api);
+          },
+          (rs, rn) -> new AccessToken(api, rs.getString(IDENTIFIER_COLUMN), rs.getString(TOKEN_COLUMN))
+      );
+      return list.isEmpty() ? null : list.get(0);
+    } catch (Exception e) {
+      logger.warn("Unable to get token for user {} for API {}", username, api, e);
+      return null;
     }
-    return token;
   }
 
-  /**
-   * Set user's API Token
-   *
-   * @param username
-   * @param api
-   *          the API the token belongs to
-   * @param identifier
-   *          identifier for the token
-   * @param token
-   * @return CodesReturned.ALLOK if all was ok
-   * @throws DatafariServerException
-   */
-  public int setToken(final String username, final String api, final String identifier, final String token) throws DatafariServerException {
+  public int setToken(final String username, final String api, final String identifier, final String token)
+      throws DatafariServerException {
     try {
-      String ttlToUse = userDataTTL;
-      if (username.contentEquals("admin")) {
-        ttlToUse = "0";
-      }
-      final String query = "INSERT INTO " + ACCESS_TOKENS_COLLECTION 
-          + " (" + USERNAME_COLUMN  + "," 
-          + API_COLUMN + "," 
-          + IDENTIFIER_COLUMN + "," 
-          + TOKEN_COLUMN + "," 
-          + LASTREFRESHCOLUMN + ")"
-          + " values ('" + username + "'," 
-          + "$$" + api + "$$," 
-          + "$$" + identifier + "$$," 
-          + "$$" + token + "$$," 
-          + "toTimeStamp(NOW()))"
-          + " USING TTL " + ttlToUse;
-      session.execute(query);
-    } catch (final Exception e) {
-      logger.warn("Unable to insert Token for user " + username + " for API " + api, e);
+      // (TTL géré applicativement via last_refresh)
+      sql.getJdbcTemplate().update(
+          "INSERT INTO " + ACCESS_TOKENS_COLLECTION + " (" +
+              USERNAME_COLUMN + "," + API_COLUMN + "," + IDENTIFIER_COLUMN + "," + TOKEN_COLUMN + "," + LASTREFRESHCOLUMN + ") " +
+              "VALUES (?, ?, ?, ?, ?) " +
+              "ON CONFLICT (" + USERNAME_COLUMN + "," + API_COLUMN + "," + IDENTIFIER_COLUMN + ") " +
+              "DO UPDATE SET " + TOKEN_COLUMN + " = EXCLUDED." + TOKEN_COLUMN + ", " +
+                                LASTREFRESHCOLUMN + " = EXCLUDED." + LASTREFRESHCOLUMN,
+          username, api, identifier, token, Timestamp.from(Instant.now())
+      );
+      return CodesReturned.ALLOK.getValue();
+    } catch (Exception e) {
+      logger.warn("Unable to insert Token for user {} for API {}", username, api, e);
       throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
-    return CodesReturned.ALLOK.getValue();
   }
 
-  /**
-   * Update user's API Token
-   *
-   * @param username
-   * @param api
-   * @param identifier
-   *          identifier for the token
-   * @param token
-   * @return CodesReturned.ALLOK if all was ok
-   * @throws DatafariServerException
-   */
-  public int updateToken(final String username, final String api, final String identifier, final String token) throws DatafariServerException {
+  public int updateToken(final String username, final String api, final String identifier, final String token)
+      throws DatafariServerException {
     try {
-      String ttlToUse = userDataTTL;
-      final String query = "UPDATE " + ACCESS_TOKENS_COLLECTION 
-          + " USING TTL " + ttlToUse 
-          + " SET " + TOKEN_COLUMN + " = '" + token + "'," 
-          + LASTREFRESHCOLUMN + " = toTimeStamp(NOW())"
-          + " WHERE " + USERNAME_COLUMN + " = '" + username 
-          + "' AND " + API_COLUMN + " = '" + api 
-          + "' AND " + IDENTIFIER_COLUMN + " = $$" + identifier + "$$";
-      session.execute(query);
-    } catch (final Exception e) {
-      logger.warn("Unable to update Token for user " + username + " for API " + api, e);
-      // TODO catch specific exception
+      sql.getJdbcTemplate().update(
+          "UPDATE " + ACCESS_TOKENS_COLLECTION +
+          " SET " + TOKEN_COLUMN + " = ?, " + LASTREFRESHCOLUMN + " = ? " +
+          "WHERE " + USERNAME_COLUMN + " = ? AND " + API_COLUMN + " = ? AND " + IDENTIFIER_COLUMN + " = ?",
+          token, Timestamp.from(Instant.now()), username, api, identifier
+      );
+      return CodesReturned.ALLOK.getValue();
+    } catch (Exception e) {
+      logger.warn("Unable to update Token for user {} for API {}", username, api, e);
       throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
-    return CodesReturned.ALLOK.getValue();
   }
 
-  /**
-   * Delete user's API Token
-   *
-   * @param username
-   * @param api
-   * @param identifier
-   *          identifier for the token
-   * @return CodesReturned.ALLOK if all was ok
-   * @throws DatafariServerException
-   */
-  public int deleteToken(final String username, final String api, final String identifier) throws DatafariServerException {
+  public int deleteToken(final String username, final String api, final String identifier)
+      throws DatafariServerException {
     try {
-      final String query = "DELETE FROM " + ACCESS_TOKENS_COLLECTION 
-          + " WHERE " + USERNAME_COLUMN + " = '" + username 
-          + "' AND " + API_COLUMN + " = '" + api 
-          + "' AND " + IDENTIFIER_COLUMN + " = $$" + identifier + "$$"
-          + " IF EXISTS";
-      session.execute(query);
-    } catch (final Exception e) {
-      logger.warn("Unable to delete Token for user " + username + " for API " + api, e);
-      // TODO catch specific exception
+      sql.getJdbcTemplate().update(
+          "DELETE FROM " + ACCESS_TOKENS_COLLECTION +
+          " WHERE " + USERNAME_COLUMN + " = ? AND " + API_COLUMN + " = ? AND " + IDENTIFIER_COLUMN + " = ?",
+          username, api, identifier
+      );
+      return CodesReturned.ALLOK.getValue();
+    } catch (Exception e) {
+      logger.warn("Unable to delete Token for user {} for API {}", username, api, e);
       throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
-    return CodesReturned.ALLOK.getValue();
   }
 
-  /**
-   * get all the API tokens of a user
-   *
-   * @param username
-   *          of the user
-   * @return an array list of all the API tokens of the user. Return null if there's an error.
-   */
   public JSONArray getTokens(final String username) throws Exception {
-    final JSONArray tokens = new JSONArray();
-    final ResultSet results = session
-        .execute("SELECT " + API_COLUMN + "," 
-            + IDENTIFIER_COLUMN + "," 
-            + TOKEN_COLUMN 
-            + " FROM " + ACCESS_TOKENS_COLLECTION 
-            + " WHERE " + USERNAME_COLUMN + "='" + username + "'");
-    for (final Row row : results) {
-      final JSONObject token = new JSONObject();
-      token.put(API_COLUMN, row.getString(API_COLUMN));
-      token.put(IDENTIFIER_COLUMN, row.getString(IDENTIFIER_COLUMN));
-      token.put(TOKEN_COLUMN, row.getString(TOKEN_COLUMN));
-      tokens.add(token);
-    }
+    JSONArray tokens = new JSONArray();
+    sql.getJdbcTemplate().query(
+        "SELECT " + API_COLUMN + "," + IDENTIFIER_COLUMN + "," + TOKEN_COLUMN +
+        " FROM " + ACCESS_TOKENS_COLLECTION +
+        " WHERE " + USERNAME_COLUMN + " = ?",
+        ps -> ps.setString(1, username),
+        rs -> {
+          JSONObject token = new JSONObject();
+          token.put(API_COLUMN, rs.getString(API_COLUMN));
+          token.put(IDENTIFIER_COLUMN, rs.getString(IDENTIFIER_COLUMN));
+          token.put(TOKEN_COLUMN, rs.getString(TOKEN_COLUMN));
+          tokens.add(token);
+        }
+    );
     return tokens;
   }
 
-  /**
-   * Delete all API Tokens of a user
-   *
-   * @param username
-   * @return CodesReturned.ALLOK if the operation was success and CodesReturned.PROBLEMCONNECTIONCASSANDRA
-   */
   public int removeTokens(final String username) throws DatafariServerException {
     try {
-      final JSONArray tokens = getTokens(username);
-      for (int i = 0; i < tokens.size(); i++) {
-        final JSONObject token = (JSONObject) tokens.get(i);
-        final String api = token.get(API_COLUMN).toString();
-        final String identifier = token.get(IDENTIFIER_COLUMN).toString();
-        final String query = "DELETE FROM " + ACCESS_TOKENS_COLLECTION 
-            + " WHERE " + USERNAME_COLUMN + " = '" + username + "'"
-            + " AND " + API_COLUMN + "='" + api + "'"
-            + " AND " + IDENTIFIER_COLUMN + "=$$" + identifier + "$$" 
-            + " IF EXISTS";
-        session.execute(query);
-      }
+      // suppression en masse
+      sql.getJdbcTemplate().update(
+          "DELETE FROM " + ACCESS_TOKENS_COLLECTION + " WHERE " + USERNAME_COLUMN + " = ?",
+          username
+      );
       return CodesReturned.ALLOK.getValue();
-    } catch (final Exception e) {
+    } catch (Exception e) {
       throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
   }
 
   public void refreshAccessTokens(final String username) throws DatafariServerException {
     try {
-      final JSONArray userTokens = getTokens(username);
-      if (userTokens != null && !userTokens.isEmpty()) {
-        for (final Object oToken : userTokens) {
-          final JSONObject userToken = (JSONObject) oToken;
-          final String api = userToken.get(API_COLUMN).toString();
-          final String identifier = userToken.get(IDENTIFIER_COLUMN).toString();
-          final String token = userToken.get(TOKEN_COLUMN).toString();
-          updateToken(username, api, identifier, token);
-        }
-      }
-    } catch (final Exception e) {
+      sql.getJdbcTemplate().update(
+          "UPDATE " + ACCESS_TOKENS_COLLECTION +
+          " SET " + LASTREFRESHCOLUMN + " = CURRENT_TIMESTAMP " +
+          "WHERE " + USERNAME_COLUMN + " = ?",
+          username
+      );
+    } catch (Exception e) {
       throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
   }
 
+  // ========= DTO =========
   public class AccessToken {
     private final String identifier;
     private final String token;
@@ -261,19 +170,8 @@ public class AccessTokenDataService extends CassandraService {
       this.identifier = identifier;
       this.token = token;
     }
-
-    public String getApi() {
-      return api;
-    }
-
-    public String getIdentifier() {
-      return identifier;
-    }
-
-    public String getToken() {
-      return token;
-    }
-
+    public String getApi() { return api; }
+    public String getIdentifier() { return identifier; }
+    public String getToken() { return token; }
   }
-
 }

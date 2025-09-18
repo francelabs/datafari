@@ -75,7 +75,7 @@ public class GetFavorites extends HttpServlet {
       try {
         jsonResponse.put(FAVORITESLIST, Favorite.getFavorites(username, documentIDs));
         jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-        AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
+        AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
             "Accessed the list of favorites of user " + username);
       } catch (final DatafariServerException e) {
         jsonResponse.put(OutputConstants.CODE, e.getErrorCode().getValue());

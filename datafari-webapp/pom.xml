@@ -171,6 +171,12 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <!-- Driver PostgreSQL -->
+<dependency>
+  <groupId>org.postgresql</groupId>
+  <artifactId>postgresql</artifactId>
+  <version>${postgres.version}</version>
+</dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
@@ -222,12 +228,20 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.springframework.data/spring-data-cassandra -->
+    <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa/3.5.3 -->
     <dependency>
-      <groupId>org.springframework.data</groupId>
-      <artifactId>spring-data-cassandra</artifactId>
-      <version>${spring.data.cassandra.version}</version>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+      <version>${spring.boot.version}</version>
     </dependency>
+    
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+      <version>${spring.boot.version}</version>
+    </dependency>
+    
+    
     <!-- https://mvnrepository.com/artifact/org.opensaml/opensaml -->
     <dependency>
       <groupId>org.opensaml</groupId>
@@ -301,6 +315,13 @@
       <artifactId>spring-core</artifactId>
       <version>${spring.version}</version>
     </dependency>
+    
+   
+<dependency>
+  <groupId>javax.persistence</groupId>
+  <artifactId>javax.persistence-api</artifactId>
+  <version>2.2</version>
+</dependency>
     <!-- https://mvnrepository.com/artifact/org.springframework/spring-beans -->
     <dependency>
       <groupId>org.springframework</groupId>
@@ -490,12 +511,6 @@
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>testcontainers</artifactId>
-      <version>1.16.3</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>cassandra</artifactId>
       <version>1.16.3</version>
       <scope>test</scope>
     </dependency>

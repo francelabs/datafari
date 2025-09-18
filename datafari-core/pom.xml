@@ -107,13 +107,6 @@
       <artifactId>commons-math3</artifactId>
       <version>3.6.1</version>
     </dependency>
-
-
-    <dependency>
-      <groupId>org.apache.cassandra</groupId>
-      <artifactId>java-driver-core</artifactId>
-      <version>${cassandra.driver.version}</version>
-    </dependency>
     <dependency>
       <groupId>com.googlecode.json-simple</groupId>
       <artifactId>json-simple</artifactId>
@@ -134,6 +127,18 @@
       <artifactId>httpmime</artifactId>
       <version>${httpclient.version}</version>
     </dependency>
+     <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa/3.5.3 -->
+    <dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-data-jpa</artifactId>
+  <version>${spring.boot.version}</version>
+  <exclusions>
+    <exclusion>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-logging</artifactId>
+    </exclusion>
+  </exclusions>
+</dependency>
   </dependencies>
   <build>
     <!-- defaultGoal defined in the parent POM -->

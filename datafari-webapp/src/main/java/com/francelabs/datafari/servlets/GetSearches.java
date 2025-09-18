@@ -86,7 +86,7 @@ public class GetSearches extends HttpServlet {
       } else {
         jsonResponse.put("code", CodesReturned.ALLOK);
         jsonResponse.put("searchesList", searchesList);
-        AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
+        AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
             "Accessed all saved searches of user " + username);
       }
     }

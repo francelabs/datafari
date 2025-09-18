@@ -53,13 +53,6 @@ init_postgres_repertories()
   mkdir -m 700 ${DATAFARI_HOME}/pgsql/data
 }
 
-init_cassandra_repertories()
-{
-  rm -rf ${DATAFARI_HOME}/cassandra/data
-  mkdir ${DATAFARI_HOME}/cassandra/data
-  mkdir ${DATAFARI_HOME}/cassandra/tmp
-  chmod -R 775 ${DATAFARI_HOME}/cassandra/tmp
-}
 
 init_zookeeper_repertory()
 {
@@ -77,7 +70,16 @@ init_postgres()
 {
   ${DATAFARI_HOME}/pgsql/bin/initdb -U postgres -A password --pwfile=${DATAFARI_HOME}/pgsql/pwd.conf -E utf8 -D ${DATAFARI_HOME}/pgsql/data
   cp ${DATAFARI_HOME}/pgsql/postgresql.conf.save ${DATAFARI_HOME}/pgsql/data/postgresql.conf
+  
+  
 }
+
+init_postgres_datafariwebapp() {
+  echo "wait for Postgresql server to be started"
+  PGPASSWORD="$TEMPPGSQLPASSWORD" ${DATAFARI_HOME}/pgsql/bin/createdb -h $POSTGRESQL_HOSTNAME -p $POSTGRESQL_PORT -U $POSTGRESQL_USERNAME $POSTGRESQL_DATABASE_DATAFARIWEBAPP
+  PGPASSWORD="$TEMPPGSQLPASSWORD"  ${DATAFARI_HOME}/pgsql/bin/psql -h $POSTGRESQL_HOSTNAME -p $POSTGRESQL_PORT -U $POSTGRESQL_USERNAME -d $POSTGRESQL_DATABASE_DATAFARIWEBAPP -f $DATAFARI_HOME/bin/common/config/datafari/tables.sql
+}
+
 
 start_postgres()
 {
@@ -113,36 +115,6 @@ stop_apache()
   forceStopIfNecessary $APACHE_PID_FILE Apache
 }
 
-
-start_cassandra()
-{
-  # Redirect stdout and stderr to log file to ease startup issues investigation
-  $CASSANDRA_HOME/bin/cassandra -p $CASSANDRA_PID_FILE &>$DATAFARI_LOGS/cassandra-startup.log
-  # Note: Cassandra start command returns 0 even if something goes wrong at startup.
-  # This is why hereafter we check pid and we see if the Cassandra ports are open.
-  # Get the process ID assigned to Cassandra
-  pid=$(head -n 1 $CASSANDRA_PID_FILE)
-
-  # Check if Cassandra process is running
-  if ps -p $pid > /dev/null
-  then
-    echo "Cassandra process running with PID ${pid} --- OK"
-  else
-    echo "/!\ ERROR: Cassandra process is not running."
-  fi
-}
-
-stop_cassandra()
-{
-  echo "Stopping Cassandra..."
-  forceStopIfNecessary $CASSANDRA_PID_FILE Cassandra
-}
-
-init_cassandra()
-{
-  $CASSANDRA_HOME/bin/cqlsh -f $DATAFARI_HOME/bin/common/config/cassandra/tables
-  $CASSANDRA_HOME/bin/cqlsh -f $DATAFARI_HOME/bin/common/config/cassandra/custom-tables
-}
 
 start_zookeeper()
 {
@@ -341,9 +313,6 @@ case $COMMAND in
   init_postgres_repertories)
     init_postgres_repertories
   ;;
-  init_cassandra_repertories)
-    init_cassandra_repertories
-  ;;
   init_zookeeper_repertory)
     init_zookeeper_repertory
   ;;
@@ -353,20 +322,14 @@ case $COMMAND in
   init_postgres)
     init_postgres
   ;;
+  init_postgres_datafariwebapp)
+    init_postgres_datafariwebapp
+  ;;
   start_postgres)
     start_postgres
   ;;
   stop_postgres)
     stop_postgres
-  ;;
-  start_cassandra)
-    start_cassandra
-  ;;
-  stop_cassandra)
-    stop_cassandra
-  ;;
-  init_cassandra)
-    init_cassandra
   ;;
   start_zookeeper)
     start_zookeeper

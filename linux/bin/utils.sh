@@ -78,7 +78,6 @@ if  [[ "$NODETYPE" != *solr* ]]; then
   fi
   check_service_tcp "Zookeeper"     localhost 2181
   check_service_tcp "Zookeeper-MCF" localhost 2182
-  check_service_tcp "Cassandra"     localhost 9042
   check_service_tcp "PostgreSQL"    localhost 5432
   check_service_tcp "Tika Server"   localhost 9998
   check_service_pid "MCF Agent"  $DATAFARI_HOME/pid/mcf_crawler_agent.pid
@@ -100,6 +99,10 @@ echo "└──────────────────────┴�
 
 if [ "$STATUS" -eq 0 ]; then
   echo "[CHECK] ✅ All services are ready. Start OK." 
+<<<<<<< HEAD
+=======
+  
+>>>>>>> refs/remotes/origin/cassandratopostgresqlmigration
 else
   echo "[CHECK] ❌ Some services seem  to be missing or unfunctional, check them"
 fi

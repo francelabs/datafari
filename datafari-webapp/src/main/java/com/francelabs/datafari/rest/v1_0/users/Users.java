@@ -58,10 +58,10 @@ public class Users {
         try {
           uiConfigObj = (JSONObject) parser.parse(uiConfig);
         } catch (final ParseException e) {
-          logger.warn("Couldn't parse the ui config extracted from Cassandra for a user.");
+          logger.warn("Couldn't parse the ui config extracted from Postgresql for a user.");
         }
       }
-      AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(), "Accessed saved ui config for user " + authenticatedUserName);
+      AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(), "Accessed saved ui config for user " + authenticatedUserName);
       return uiConfigObj;
     } catch (final DatafariServerException e) {
       logger.error("Database conenction error while retrieving user ui config.");
@@ -73,7 +73,7 @@ public class Users {
     final JSONObject bodyUiConfig = (JSONObject) body.get("uiConfig");
     if (bodyUiConfig != null) {
       UiConfig.setUiConfig(authenticatedUserName, bodyUiConfig.toJSONString().replaceAll("'","''"));
-      AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(), "Modified saved ui config for user " + authenticatedUserName);
+      AuditLogUtil.log("postgresql", "system", request.getRemoteAddr(), "Modified saved ui config for user " + authenticatedUserName);
       // this ui configuration may impact the user's query preferences.
       UserPrefQueryConf.triggerUpdateUserQueryPreferences(request);
     }
@@ -93,7 +93,7 @@ public class Users {
       responseContent.put("roles", roles);
       try {
         final String lang = Lang.getLang(authenticatedUserName);
-        AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(), "Accessed saved language for user " + authenticatedUserName);
+        AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(), "Accessed saved language for user " + authenticatedUserName);
         responseContent.put("lang", lang);
       } catch (final DatafariServerException e) {
         logger.error("Database conenction error while retrieving user language.");
@@ -124,7 +124,7 @@ public class Users {
         final String bodyLang = (String) body.get("lang");
         if (bodyLang != null) {
           Lang.setLang(authenticatedUserName, bodyLang);
-          AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(), "Initialized saved language for user " + authenticatedUserName);
+          AuditLogUtil.log("postgresql", "system", request.getRemoteAddr(), "Initialized saved language for user " + authenticatedUserName);
         }
         saveUiConfigToDB(authenticatedUserName, body, request);
         final JSONObject responseContent = getUserInfoFromDB(authenticatedUserName, request);
@@ -150,8 +150,8 @@ public class Users {
         String query = request.getParameter("query");
         history = StatisticsDataService.getInstance().getHistory(authenticatedUserName, query);
         responseContent.put("history", history);
-        AuditLogUtil.log("cassandra", "system", request.getRemoteAddr(), "User " + authenticatedUserName + " accessed his request history");
-      } catch (final DatafariServerException e) {
+        AuditLogUtil.log("postgresql", "system", request.getRemoteAddr(), "User " + authenticatedUserName + " accessed his request history");
+      } catch (final Exception e) {
         logger.error("Error while retrieving the history for a user.");
         throw new InternalErrorException("Error while retrieving the history.");
       }

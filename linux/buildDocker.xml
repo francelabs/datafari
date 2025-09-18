@@ -36,7 +36,6 @@
 	<property name="binary.connector.src.dir" value="${project.dir}/datafari-binary-connector/target" />
 	<property name="datafarihandler.src.dir" value="${project.dir}/datafari-handler/target" />
 	<property name="mcf-scripts.src.dir" value="${project.dir}/datafari-mcf-scripts/target" />
-	<property name="cassandra.src.dir" value="${project.dir}/datafari-cassandra/target/dist/cassandra" />
 	<property name="zookeeper.src.dir" value="${project.dir}/datafari-zookeeper/target/dist/zookeeper" />
 	<property name="zookeeper-mcf.src.dir" value="${project.dir}/datafari-zookeeper-mcf/target/dist/zookeeper" />
 	<property name="bin.src.dir" value="${project.dir}/bin" />
@@ -485,10 +484,6 @@
 			<fileset dir="${datafari.core.dir}">
 				<include name="*.jar" />
 			</fileset>
-		</copy>
-
-		<copy todir="${linux.dist.dir}/cassandra">
-			<fileset dir="${cassandra.src.dir}" />
 		</copy>
 
 		<copy todir="${linux.dist.dir}/bin">

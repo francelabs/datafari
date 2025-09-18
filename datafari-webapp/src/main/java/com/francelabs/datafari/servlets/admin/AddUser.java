@@ -68,7 +68,7 @@ public class AddUser extends HttpServlet {
       // Check if user exists
       try {
         String username = request.getParameter(UserConstants.USERNAMECOLUMN).toLowerCase();
-        // Remove domain from username if any, as it is not considered in Cassandra
+        // Remove domain from username if any, as it is not considered in Postgresql
         if (username.contains("@")) {
           username = username.substring(0, username.indexOf("@"));
         }
@@ -143,10 +143,10 @@ public class AddUser extends HttpServlet {
     final String createdUser = request.getParameter(UserDataService.USERNAMECOLUMN) == null ? "null" : request.getParameter(UserDataService.USERNAMECOLUMN).toString();
     final String userRoles = request.getParameterValues(UserDataService.ROLECOLUMN + "[]") == null ? "null" : request.getParameterValues(UserDataService.ROLECOLUMN + "[]").toString();
     if (allOK) {
-      AuditLogUtil.log("Cassandra", authenticatedUserName, request.getRemoteAddr(), "Created user " + createdUser + " with roles " + userRoles);
+      AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(), "Created user " + createdUser + " with roles " + userRoles);
     } else {
 
-      AuditLogUtil.log("Cassandra", authenticatedUserName, request.getRemoteAddr(), "Error trying to create user " + createdUser + " with roles " + userRoles);
+      AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(), "Error trying to create user " + createdUser + " with roles " + userRoles);
     }
   }
 
