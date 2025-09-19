@@ -6,10 +6,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 public final class UrlValidator {
 
   private UrlValidator() {}
+
+  private static final Pattern SCHEME_RX = Pattern.compile("^([A-Za-z][A-Za-z0-9+\\-.]*):");
 
   private static Set<String> getAllowedProtocols() {
     final Set<String> allowed = new HashSet<>();
@@ -31,21 +34,18 @@ public final class UrlValidator {
   }
 
   
-  public static boolean isAllowed(String raw) {
-    
-    final URI uri;
-    try {
-      uri = new URI(raw.strip());
-    } catch (Exception e) {
-      return false; 
-    }
-
-    final String scheme = (uri.getScheme() == null) ? "" : uri.getScheme().toLowerCase(Locale.ROOT);
-    if (!getAllowedProtocols().contains(scheme)) {
+  public static boolean isAllowed(final String raw) {
+    if (raw == null || raw.isBlank()) {
       return false;
     }
 
+    final var m = SCHEME_RX.matcher(raw);
+   
+    if (!m.find()) {
+      return false; 
+    }
 
-    return true;
+    final String scheme = m.group(1).toLowerCase(Locale.ROOT);
+    return getAllowedProtocols().contains(scheme);
   }
 }
