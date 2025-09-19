@@ -25,7 +25,7 @@ public class CfPAgent {
                     .agentBuilder(CfPAgentService.class)
                     .chatModel(chatModel)
                     .tools(new CfPTools(request, sources))
-                    .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(10))
+                    .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(20))
                     .build();
         } catch (Exception e) {
             throw new RuntimeException(e);
