@@ -99,10 +99,6 @@ echo "└──────────────────────┴�
 
 if [ "$STATUS" -eq 0 ]; then
   echo "[CHECK] ✅ All services are ready. Start OK." 
-<<<<<<< HEAD
-=======
-  
->>>>>>> refs/remotes/origin/cassandratopostgresqlmigration
 else
   echo "[CHECK] ❌ Some services seem  to be missing or unfunctional, check them"
 fi
@@ -304,39 +300,6 @@ waitTomcatMCF() {
     sleep 2
   fi
 }
-
-waitCassandra() {
-  echo "Waiting up until 180 seconds to see Cassandra running..."
-  spin &
-  SPIN_CASSANDRA_PID=$!
-  # Try to connect on Cassandra's JMX port 7199 and CQLSH port 9042
-  cassandra_status=1
-  retries=1
-
-  while (( retries < ${RETRIES_NUMBER} && cassandra_status != 0 )); do
-  cassandra_status=0
-  # Sleep for a while
-  sleep 5s
-  { exec 6<>/dev/tcp/localhost/9042; } > /dev/null 2>&1 || cassandra_status=1
-  exec 6>&- # close output connection
-  exec 6<&- # close input connection
-  { exec 6<>/dev/tcp/localhost/7199; } > /dev/null 2>&1 || cassandra_status=1
-  exec 6>&- # close output connection
-  exec 6<&- # close input connection
-    retries=$((retries+1))
-  done
-  kill -s PIPE "$SPIN_CASSANDRA_PID" &
-  
-  if [ $cassandra_status -ne 0 ]; then
-    echo "/!\ ERROR: Cassandra startup has ended with errors; please check log file ${DATAFARI_LOGS}/cassandra-startup.log"
-  else
-    echo "Cassandra startup completed successfully --- OK"
-    sleep 2
-  fi
-}
-
-
-
 
 setProperty(){
   awk -v pat="^$1=" -v value="$1=$2" '{ if ($0 ~ pat) print value; else print $0; }' $3 > $3.tmp
