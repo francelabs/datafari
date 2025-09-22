@@ -5,19 +5,13 @@ import dev.langchain4j.model.chat.StreamingChatModel;
 
 import java.util.Map;
 
-public interface ChatModelBuilder {
+public interface StreamingChatModelBuilder {
     /**
      * Must be overridden. Builds a ChatLanguageModel using the provided params.
      * @param params The properties map
      * @return ChatLanguageModel
      */
-    ChatModel build(Map<String, Object> params);
-    /**
-     * Must be overridden. Builds a ChatLanguageModel using the provided params.
-     * @param params The properties map
-     * @return ChatLanguageModel
-     */
-    StreamingChatModel buildSCM(Map<String, Object> params);
+    StreamingChatModel build(Map<String, Object> params);
 
     /**
      * Get a Double property from "params" by its name, or return default value.

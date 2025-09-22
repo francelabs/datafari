@@ -1,7 +1,8 @@
-package com.francelabs.datafari.ai;
+package com.francelabs.datafari.ai.models;
 
-import com.francelabs.datafari.ai.models.*;
+import com.francelabs.datafari.ai.models.chatmodelbuilder.*;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -70,6 +71,10 @@ public class ChatModelFactory {
         // TODO : Error management
         return createChatModel(null);
     }
+    public StreamingChatModel createStreamingChatModel() {
+        // TODO : Error management
+        return createStreamingChatModel(null);
+    }
 
 
     /**
@@ -97,5 +102,33 @@ public class ChatModelFactory {
         }
 
         return builder.build(config.getParams());
+    }
+
+
+    /**
+     * Creates a {@link ChatModel} using the configuration for the given model name.
+     * If {@code modelName} is {@code null}, the active model is used.
+     *
+     * @param modelName The name of the model to use, or {@code null} to use the active model.
+     * @return A {@link ChatModel} instance configured accordingly.
+     * @throws IllegalStateException    If no model configuration is found.
+     * @throws IllegalArgumentException If no builder is registered for the model's interface type.
+     */
+    public StreamingChatModel createStreamingChatModel(String modelName) {
+        ChatModelConfig config = (modelName != null)
+                ? configManager.getModelByName(modelName)
+                : configManager.getActiveModelConfig();
+
+        if (config == null) {
+            throw new IllegalStateException("No model configuration found.");
+        }
+
+        String interfaceType = config.getInterfaceType();
+        ChatModelBuilder builder = builderRegistry.get(interfaceType);
+        if (builder == null) {
+            throw new IllegalArgumentException("No builder found for interface: " + interfaceType);
+        }
+
+        return builder.buildSCM(config.getParams());
     }
 }

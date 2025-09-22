@@ -1,4 +1,4 @@
-package com.francelabs.datafari.ai;
+package com.francelabs.datafari.ai.models;
 
 import java.util.Map;
 

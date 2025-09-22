@@ -1,25 +1,26 @@
-package com.francelabs.datafari.ai.models;
+package com.francelabs.datafari.ai.models.chatmodelbuilder;
 
-import dev.langchain4j.model.chat.ChatModel;
-import dev.langchain4j.model.mistralai.MistralAiChatModel;
+import com.francelabs.datafari.ai.models.StreamingChatModelBuilder;
+import dev.langchain4j.model.chat.StreamingChatModel;
+import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 
 import java.time.Duration;
 import java.util.Map;
 
-public class MistralAiChatModelBuilder implements ChatModelBuilder {
+public class OpenAiStreamingChatModelBuilder implements StreamingChatModelBuilder {
 
     @Override
-    public ChatModel build(Map<String, Object> props) {
-        return MistralAiChatModel.builder()
+    public StreamingChatModel build(Map<String, Object> props) {
+        return OpenAiStreamingChatModel.builder()
                 .apiKey((String) props.get("apiKey"))
                 .baseUrl((String) props.get("baseUrl"))
                 .modelName((String) props.get("modelName"))
                 .temperature(getDouble(props, "temperature", 0))
-                .maxTokens(getInt(props, "maxTokens", 200))
+                .maxTokens(getInt(props, "maxTokens", 500))
                 .timeout(Duration.ofSeconds(getInt(props, "timeout", 60)))
-                .maxRetries(getInt(props, "maxRetries", 3))
                 .logRequests(getBoolean(props, "logRequests", false))
                 .logResponses(getBoolean(props, "logResponses", false))
+                .returnThinking(false)
                 .build();
     }
 }

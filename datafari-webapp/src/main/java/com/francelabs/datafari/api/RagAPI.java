@@ -15,8 +15,8 @@
  *******************************************************************************/
 package com.francelabs.datafari.api;
 
-import com.francelabs.datafari.ai.ChatModelFactory;
-import com.francelabs.datafari.ai.ChatModelConfigurationManager;
+import com.francelabs.datafari.ai.models.ChatModelFactory;
+import com.francelabs.datafari.ai.models.ChatModelConfigurationManager;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.rag.*;
 import com.francelabs.datafari.utils.rag.ChunkUtils;
@@ -26,6 +26,7 @@ import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.data.message.*;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -252,6 +253,11 @@ public class RagAPI extends SearchAPI {
     ChatModelFactory chatModelFactory = new ChatModelFactory(configManager);
     return chatModelFactory.createChatModel(); // Return the active model
   }
+    public static StreamingChatModel getStreamingChatModel(RagConfiguration config) throws IOException {
+        ChatModelConfigurationManager configManager = new ChatModelConfigurationManager();
+        ChatModelFactory chatModelFactory = new ChatModelFactory(configManager);
+        return chatModelFactory.createStreamingChatModel(); // Return the active model
+    }
 
   /**
    * Returns a specific chat language model by name, as defined in the models.json configuration file.

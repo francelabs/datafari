@@ -1,5 +1,6 @@
 package com.francelabs.datafari.ai.agentic.tools;
 
+import com.francelabs.datafari.ai.stream.SseBridge;
 import com.francelabs.datafari.rag.RagConfiguration;
 import com.francelabs.datafari.rest.v2_0.ai.AiPowered;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
@@ -22,10 +23,14 @@ public class DatafariTools {
     HttpServletRequest request;
     RagConfiguration config;
     List<Document> sources;
+    private final SourcesAccumulator sourcesAcc;
+    private final SseBridge sse;
 
-    public DatafariTools(HttpServletRequest request, List<Document> sources) {
+    public DatafariTools(HttpServletRequest request, List<Document> sources, SseBridge sse, SourcesAccumulator sourcesAcc) {
         this.request = request;
         this.sources = sources;
+        this.sse = sse;
+        this.sourcesAcc = sourcesAcc;
         config = RagConfiguration.getInstance();
     }
 
@@ -287,7 +292,9 @@ public class DatafariTools {
             source.metadata().put("id", id)
                     .put("title", title)
                     .put("url", url);
-            this.sources.add(source);
+            this.sources.add(source); // Add the source for JSON response
+            sourcesAcc.add(source); // Add the source for streaming response
+            sse.send("source", SourcesAccumulator.toJson(source).toJSONString()); // Stream the source
 
         } catch (Exception e) {
             LOGGER.error("Could not add document to sources.", e);

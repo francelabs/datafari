@@ -1,13 +1,19 @@
 package com.francelabs.datafari.rest.v2_0.ai;
 
 import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
+import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
+import com.francelabs.datafari.ai.stream.DatafariStreamingResponseHandler;
 import com.francelabs.datafari.ai.agentic.agent.CfPAgent;
 import com.francelabs.datafari.ai.agentic.agent.DatafariAgent;
+import com.francelabs.datafari.ai.stream.SseBridge;
+import com.francelabs.datafari.ai.stream.SseContext;
 import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.rag.RagConfiguration;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
+import dev.langchain4j.model.chat.StreamingChatModel;
+import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -18,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -97,6 +104,84 @@ public class AiPowered {
         }
     }
 
+
+    @PostMapping(value = "/rest/v2.0/ai/stream", produces = "text/event-stream;charset=UTF-8")
+    private void stream(final HttpServletRequest request, HttpServletResponse resp) throws IOException {
+        resp.setStatus(200);
+        resp.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+        resp.setHeader("Cache-Control", "no-cache, no-transform");
+        resp.setHeader("Connection", "keep-alive");
+        resp.setHeader("X-Accel-Buffering", "no"); // nginx: disable buffering
+
+        var async = request.startAsync();
+        async.setTimeout(0);
+
+        StreamingChatModel streamingModel = RagAPI.getStreamingChatModel(RagConfiguration.getInstance());
+
+        StreamingChatResponseHandler handler = new DatafariStreamingResponseHandler(async);
+        String userQ = request.getParameter("q");
+        if (userQ == null || userQ.isBlank()) {
+            userQ = "Hello there !";
+        }
+        streamingModel.chat(userQ, handler);
+    }
+
+    @PostMapping(value = "/rest/v2.0/ai/streamagent", produces = "text/event-stream;charset=UTF-8")
+    private void streamAgent(final HttpServletRequest request, HttpServletResponse resp) throws Exception {
+        try {
+            resp.setStatus(200);
+            resp.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+            resp.setHeader("Cache-Control", "no-cache, no-transform");
+            resp.setHeader("Connection", "keep-alive");
+            resp.setHeader("X-Accel-Buffering", "no"); // nginx: disable buffering
+
+            var async = request.startAsync();
+            async.setTimeout(0);
+
+            var sse = new SseBridge(async);
+            SseContext.bind(sse);
+
+            String query = request.getParameter("q");
+            if (query == null || query.isBlank()) {
+                sse.error("Empty query");
+                return;
+            }
+
+            LOGGER.info("AiPowered - RAG - Using RAG Agent");
+            List<Document> sources = new ArrayList<>();
+            SourcesAccumulator sourcesAcc = new SourcesAccumulator();
+            DatafariAgent ragagent = new DatafariAgent(request, sources, sse, sourcesAcc);
+
+            sse.send("phase", "agent:start");
+
+            String answer = ragagent.stream(query);
+
+            // réponse finale à l’écran (tokenisée ou en bloc)
+            sse.send("token", "\n\n");
+//            sse.send("token", answer);
+            sse.send("final", answer);        // Full response
+
+            JSONArray merged = sourcesAcc.toJsonArray();
+            sse.send("sources", merged.toJSONString());
+
+            sse.send("phase", "agent:done");
+
+            sse.done();
+
+        } catch (Exception e) {
+            try {
+                LOGGER.error("Streaming Agentic failed", e);
+                var async = request.getAsyncContext();
+                var sse = new SseBridge(async);
+                sse.error(e.getMessage());
+            } catch (Exception ignored) {
+                LOGGER.error("Could not stream error message", e);
+            }
+        } finally {
+            SseContext.unbind();
+        }
+    }
+
     @PostMapping(value = "/rest/v2.0/ai/rag", produces = "application/json;charset=UTF-8")
     public static String rag(final HttpServletRequest request, @RequestBody JSONObject jsonDoc) {
 
@@ -140,7 +225,7 @@ public class AiPowered {
                         return RagAPI.writeJsonResponse(response, sources).toJSONString();
                     case "ragagent":
                         LOGGER.info("AiPowered - RAG - Using RAG Agent");
-                        DatafariAgent ragagent = new DatafariAgent(request, sources);
+                        DatafariAgent ragagent = new DatafariAgent(request, sources, null, null);
                         response = ragagent.ask(query);
                         return RagAPI.writeJsonResponse(response, sources).toJSONString();
                     default:

@@ -1,5 +1,7 @@
-package com.francelabs.datafari.ai.models;
+package com.francelabs.datafari.ai.models.chatmodelbuilder;
 
+import com.francelabs.datafari.ai.models.ChatModelBuilder;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.huggingface.HuggingFaceChatModel;
 import dev.langchain4j.model.chat.ChatModel;
 import java.time.Duration;
@@ -17,5 +19,10 @@ public class HuggingFaceChatModelBuilder implements ChatModelBuilder {
                 .maxNewTokens(getInt(props, "maxTokens", 200))
                 .timeout(Duration.ofSeconds(getInt(props, "timeout", 60)))
                 .build();
+    }
+
+    @Override
+    public StreamingChatModel buildSCM(Map<String, Object> props) {
+        return null;
     }
 }

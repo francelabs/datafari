@@ -5,7 +5,7 @@ import dev.langchain4j.service.TokenStream;
 import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
 
-public interface DatafariAgentService {
+public interface DatafariStreamAgentService {
 
     @UserMessage("""
         You are the backend agent of the search engine Datafari.
@@ -14,5 +14,5 @@ public interface DatafariAgentService {
         Question: {{question}}
         """)
     @Agent(outputName = "answer", description = "Answer questions using Datafari's search and RAG tools.")
-    String ask(@V("question") String question);
+    TokenStream stream(@V("question") String question);
 }

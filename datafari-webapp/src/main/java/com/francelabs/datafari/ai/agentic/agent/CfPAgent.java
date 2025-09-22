@@ -1,12 +1,14 @@
 package com.francelabs.datafari.ai.agentic.agent;
 
 import com.francelabs.datafari.ai.agentic.tools.CfPTools;
+import com.francelabs.datafari.ai.stream.SseBridge;
 import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.rag.RagConfiguration;
 import dev.langchain4j.agentic.AgenticServices;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import org.apache.commons.lang.RandomStringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +22,8 @@ public class CfPAgent {
         RagConfiguration config = RagConfiguration.getInstance();
         try {
             ChatModel chatModel = RagAPI.getChatModel(config);
+            StreamingChatModel streamingChatModel = RagAPI.getStreamingChatModel(config);
+            //SseBridge sse = new SseBridge();
 
             this.agent = AgenticServices
                     .agentBuilder(CfPAgentService.class)
