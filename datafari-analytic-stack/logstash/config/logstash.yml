@@ -79,6 +79,9 @@
 # it here will set the default for _all_ pipelines, including new ones.
 #
 pipeline.ecs_compatibility: disabled
+
+pipeline.workers: 1
+pipeline.ordered: true
 #
 # ------------ Pipeline Configuration Settings --------------
 #

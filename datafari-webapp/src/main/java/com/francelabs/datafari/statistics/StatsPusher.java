@@ -53,14 +53,14 @@ public class StatsPusher {
       final Map<String, Integer> increment = new HashMap<>();
       increment.put("inc", 1);
 
-      final Map<String, Integer> incrementPosition = new HashMap<>();
-      incrementPosition.put("inc", Integer.parseInt(query.getParamValue("position")));
+     // final Map<String, Integer> incrementPosition = new HashMap<>();
+     // incrementPosition.put("inc", Integer.parseInt(query.getParamValue("position")));
 
       final HashMap<String, Object> doc = new HashMap<>();
 
       doc.put("click", "Clicked");
       doc.put("numClicks", increment);
-      doc.put("positionClickTot", incrementPosition);
+     doc.put("positionClickTot", 0);
       doc.put("history", "");
 
       final Map<String, String> paramsMap = new HashMap<>();
@@ -89,7 +89,7 @@ public class StatsPusher {
       // too).
       // TODO: Consider retrieving the user ID to store it in the logs
       StatisticsDataService.getInstance().saveClickStatistics(query.getParamValue("id"), query.getParamValue("q"), username, query.getParamValue("url"),
-          Integer.parseInt(query.getParamValue("position")), new Date().toInstant());
+          0, new Date().toInstant());
 
     } catch (final Exception e) {
       LOGGER.error("Cannot add doc for statistic component : {}", e.getMessage(), e);
