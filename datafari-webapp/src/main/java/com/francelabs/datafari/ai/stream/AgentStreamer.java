@@ -75,8 +75,4 @@ public final class AgentStreamer {
 
         return full.toString();
     }
-
-    private static String safe(String s) {
-        return s == null ? "" : s;
-    }
 }

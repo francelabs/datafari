@@ -16,13 +16,13 @@
 package com.francelabs.datafari.api;
 
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
+import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.models.ChatModelFactory;
 import com.francelabs.datafari.ai.models.ChatModelConfigurationManager;
 import com.francelabs.datafari.ai.services.AiService;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.exception.DatafariServerException;
-import com.francelabs.datafari.rag.*;
 import com.francelabs.datafari.utils.rag.ChunkUtils;
 import com.francelabs.datafari.utils.rag.PromptUtils;
 import dev.langchain4j.data.document.Document;
@@ -41,19 +41,18 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidParameterException;
 import java.security.MessageDigest;
 import java.util.*;
 
 public class RagAPI extends SearchAPI {
 
   private static final Logger LOGGER = LogManager.getLogger(RagAPI.class.getName());
-  public static final List<String> FORMAT_VALUES = List.of("bulletpoint", "text", "stepbystep");
   public static final String EXACT_CONTENT = "exactContent";
   public static final String EMBEDDED_CONTENT = "embedded_content";
 
 
-  public static ApiContent rag(final HttpServletRequest request, JSONObject searchResults, boolean ragBydocument, ChatStream stream, SourcesAccumulator sourcesAcc) throws IOException {
+  public static ApiContent rag(final HttpServletRequest request, JSONObject searchResults,
+                               boolean ragBydocument, ChatStream stream, SourcesAccumulator sourcesAcc) throws IOException {
 
 
     // Get RAG specific configuration
@@ -67,17 +66,19 @@ public class RagAPI extends SearchAPI {
     List<Document> documentsList;
     try {
       LOGGER.debug("RagAPI - Extracting documents list from search result...");
-      initialDocumentsList = extractDocumentsList(searchResults, config);
+      initialDocumentsList = extractDocumentsList(searchResults);
       LOGGER.debug("RagAPI - {} documents extracted.", initialDocumentsList.size());
     } catch (FileNotFoundException e) {
       LOGGER.warn("RagAPI -  WARNING. The query cannot be answered because no associated documents were found.");
       return AiService.error(stream, "428", "ragNoFileFound",
               "Sorry, I couldn't find any relevant document to answer your request.", e.getLocalizedMessage());
     }
+
+    // Add the sources to the accumulator
+    sourcesAcc.addAll(initialDocumentsList);
     
     // Chunking
     documentsList = ChunkUtils.chunkDocuments(initialDocumentsList, config);
-    sourcesAcc.addAll(documentsList);
     LOGGER.debug("RagAPI - The chunking returned {} chunk(s).", documentsList.size());
 
     // Prompting : Convert all documents chunks into prompt ChatMessages
@@ -102,7 +103,7 @@ public class RagAPI extends SearchAPI {
     // Return final message
     if (!message.isEmpty()) {
       message = cleanLlmFinalMessage(message);
-      return writeResponse(message, documentsList);
+      return writeResponse(message);
     } else {
       return AiService.error(stream, "428", "ragNoValidAnswer", "Sorry, I could not find an answer to your question.", "LLM returned empty response.");
     }
@@ -355,18 +356,9 @@ public class RagAPI extends SearchAPI {
 
   }
 
-  public static ApiContent writeResponse(String message, List<Document> documentsList) {
+  public static ApiContent writeResponse(String message) {
     final ApiContent content = new ApiContent();
     content.message = message;
-    content.sources = mergeSimilarDocuments(documentsList);
-
-    LOGGER.debug("");
-    LOGGER.debug("##### RAG final JSON response #####");
-    LOGGER.debug("# Message : {}", message);
-    LOGGER.debug("# Sources : {}", content.sources.toJSONString());
-    LOGGER.debug("###################################");
-    LOGGER.debug("");
-
     return content;
   }
 
@@ -389,11 +381,10 @@ public class RagAPI extends SearchAPI {
   /**
    *
    * @param result The raw Solr Search result
-   * @param config RagConfiguration
    * @return A List of Documents
    * @throws FileNotFoundException if the provided results doesn't contain any document
    */
-  private static List<Document> extractDocumentsList(JSONObject result, RagConfiguration config) throws FileNotFoundException {
+  private static List<Document> extractDocumentsList(JSONObject result) throws FileNotFoundException {
     // Handling search results
     // Retrieving list of documents: id, title, url
     List<Document> documentsList;
@@ -403,67 +394,6 @@ public class RagAPI extends SearchAPI {
       throw new FileNotFoundException("The query cannot be answered because no associated documents were found.");
     }
     return documentsList;
-  }
-
-  /**
-   * Process a classic search in Datafari using the user query
-   * @param config RAG configuration
-   * @param request the original user request
-   * @return A JSONObject containing the search results
-   */
-  // TODO : DELETE
-  public static JSONObject processSearch(RagConfiguration config, HttpServletRequest request) throws InvalidParameterException {
-
-    final Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());
-    final String protocol = request.getScheme() + ":";
-
-    // Preparing query for Search process
-    String userQuery = request.getParameter("q");
-
-    if (userQuery == null) {
-      LOGGER.error("RagAPI - ERROR. No query provided.");
-      throw new InvalidParameterException("No query provided.");
-    } else {
-      LOGGER.debug("RagAPI - Processing search for request : q={}", userQuery);
-    }
-
-    String queryrag = request.getParameter("queryrag");
-    // If queryrag is missing, set it to userQuery
-    if (queryrag == null || queryrag.isEmpty()) {
-      String[] queryragParam = { userQuery };
-      parameterMap.put("queryrag", queryragParam);
-    }
-
-    if (!config.getProperty(RagConfiguration.SEARCH_OPERATOR).isEmpty())
-      request.setAttribute("q.op", config.getProperty(RagConfiguration.SEARCH_OPERATOR));
-
-    // Override parameters with request attributes (set by the code and not from the client, so
-    // they prevail over what has been given as a parameter)
-    final Iterator<String> attributeNamesIt = request.getAttributeNames().asIterator();
-    while (attributeNamesIt.hasNext()) {
-      final String name = attributeNamesIt.next();
-      if (request.getAttribute(name) instanceof String) {
-        final String[] value = { (String) request.getAttribute(name) };
-        parameterMap.put(name, value);
-      }
-    }
-
-    String retrievalMethod = config.getProperty(RagConfiguration.RETRIEVAL_METHOD, "bm25").toLowerCase();
-
-    String handler;
-    switch (retrievalMethod) {
-      case "rrf":
-        return hybridSearch(protocol, request.getUserPrincipal(), parameterMap);
-      case "vector":
-        handler = "/vector";
-        return search(protocol, handler, request.getUserPrincipal(), parameterMap);
-      case "bm25":
-      default:
-        handler = "/select";
-        String[] rows = { config.getProperty(RagConfiguration.MAX_FILES, "3") };
-        parameterMap.put("rows", rows);
-        return search(protocol, handler, request.getUserPrincipal(), parameterMap);
-    }
   }
 
 
@@ -583,43 +513,5 @@ public class RagAPI extends SearchAPI {
             return s;
         }
     }
-
-
-
-
-
-    /**
-   * The "documentList" containing sources of the answer might contain duplicates.
-   * Some document might not be used in the LLM response.
-   * This methode merge thoses duplicated entries, and remove useless ones.
-   * @return List<Document> The final list
-   */
-  public static JSONArray mergeSimilarDocuments(List<Document> documentList) {
-    // Removing Duplicates
-    Map<String, Document> map = new HashMap<>();
-    JSONArray displayedDocuments = new JSONArray();
-    RagConfiguration conf = RagConfiguration.getInstance();
-    for (Document doc : documentList) {
-      String url = doc.metadata().getString("url");
-      String parentId = doc.metadata().getString("parent_doc");
-      String id = (parentId != null) ? parentId : doc.metadata().getString("id");
-      if (map.containsKey(url) &&
-              "bm25".equals(conf.getProperty(RagConfiguration.RETRIEVAL_METHOD)) ) {
-        // Keep only one chunk from a single document if BM25 is selected
-        continue;
-      }
-      LOGGER.debug("RagAPI - RAG - Document {} is mentioned in LLM response, and will returned to the user.", url);
-      map.put(url, doc);
-      // Add document to displayedDocuments if it isn't there yet and if it is mentioned by the LLM
-      JSONObject jsonDoc = new JSONObject();
-      jsonDoc.put("id", id);
-      jsonDoc.put("title", doc.metadata().getString("title"));
-      jsonDoc.put("url", url);
-      jsonDoc.put("content", doc.text()); // TODO : Is the content necessary ?
-      displayedDocuments.add(jsonDoc);
-    }
-
-    return displayedDocuments;
-  }
 
 }

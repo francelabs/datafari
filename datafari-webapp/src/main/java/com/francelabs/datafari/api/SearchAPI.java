@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import com.francelabs.datafari.rag.RagConfiguration;
+import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.utils.*;
 import com.francelabs.datafari.utils.Timer;
 import org.apache.logging.log4j.LogManager;

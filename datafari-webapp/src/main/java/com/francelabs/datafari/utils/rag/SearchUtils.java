@@ -1,9 +1,8 @@
 package com.francelabs.datafari.utils.rag;
 
 import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
-import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.api.SearchAPI;
-import com.francelabs.datafari.rag.RagConfiguration;
+import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

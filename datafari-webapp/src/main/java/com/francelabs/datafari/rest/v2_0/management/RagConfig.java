@@ -1,7 +1,7 @@
 package com.francelabs.datafari.rest.v2_0.management;
 
 import com.francelabs.datafari.exception.CodesReturned;
-import com.francelabs.datafari.rag.RagConfiguration;
+import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONObject;
@@ -19,6 +19,7 @@ public class RagConfig {
   // Set of editable properties
   Set<String> allowedKeys = Set.of(
           RagConfiguration.ENABLE_RAG,
+          RagConfiguration.ENABLE_AGENTIC,
           RagConfiguration.ENABLE_SUMMARIZATION,
           RagConfiguration.API_ENDPOINT,
           RagConfiguration.API_TOKEN,
@@ -60,6 +61,7 @@ public class RagConfig {
     RagConfiguration config = RagConfiguration.getInstance();
 
     response.put("enableRag", config.getBooleanProperty(RagConfiguration.ENABLE_RAG));
+    response.put("enableAgentic", config.getBooleanProperty(RagConfiguration.ENABLE_AGENTIC));
     response.put("enableSummarization", config.getBooleanProperty(RagConfiguration.ENABLE_SUMMARIZATION));
 
 //    response.put("apiEndpoint", config.getProperty(RagConfiguration.API_ENDPOINT));
@@ -75,9 +77,6 @@ public class RagConfig {
     response.put("chunkingMaxFiles", config.getProperty(RagConfiguration.MAX_FILES));
     response.put("chunkingChunkSize", config.getProperty(RagConfiguration.CHUNK_SIZE));
     response.put("ragOperator", config.getProperty(RagConfiguration.SEARCH_OPERATOR));
-
-    response.put("inMemoryEnableVectorSearch", config.getBooleanProperty(RagConfiguration.ENABLE_VECTOR_SEARCH));
-    response.put("inMemoryTopK", config.getProperty(RagConfiguration.IN_MEMORY_TOP_K));
 
     response.put("chatQueryRewritingEnabledBM25", config.getBooleanProperty(RagConfiguration.CHAT_QUERY_REWRITING_ENABLED_BM25));
     response.put("chatQueryRewritingEnabledVector", config.getBooleanProperty(RagConfiguration.CHAT_QUERY_REWRITING_ENABLED_VECTOR));

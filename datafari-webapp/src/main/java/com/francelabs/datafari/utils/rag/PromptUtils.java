@@ -19,7 +19,7 @@ import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 //import com.francelabs.datafari.rag.Message;
-import com.francelabs.datafari.rag.RagConfiguration;
+import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.user.Lang;
 import com.francelabs.datafari.utils.AuthenticatedUserName;
 import dev.langchain4j.data.document.Document;
@@ -29,8 +29,6 @@ import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.data.segment.TextSegment;
-import dev.langchain4j.model.input.PromptTemplate;
-import dev.langchain4j.spi.prompt.PromptTemplateFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

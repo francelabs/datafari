@@ -1,17 +1,13 @@
 package com.francelabs.datafari.ai.services;
 
-import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
-import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.dto.ApiError;
-import com.francelabs.datafari.ai.dto.ApiResponse;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.servlet.http.HttpServletRequest;
 
-public class AiService {
+public abstract class AiService {
 
     private static final Logger LOGGER = LogManager.getLogger(AiService.class.getName());
 
@@ -22,6 +18,10 @@ public class AiService {
     public static final String EXACT_CONTENT_FIELD = "exactContent";
     public static final String QUERY_FIELD = "query";
     public static final String STATUS_FIELD = "status";
+
+    protected AiService() {
+        // Constructor
+    }
 
     /**
      * Return an error from any AiService.

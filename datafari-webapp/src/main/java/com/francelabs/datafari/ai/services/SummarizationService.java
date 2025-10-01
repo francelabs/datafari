@@ -53,10 +53,10 @@ public class SummarizationService extends AiService {
             JSONObject jsonAiDocument = (JSONObject) ((JSONArray) ((JSONObject) searchresult.get("response")).get("docs")).get(0);
 
             if (jsonAiDocument.get("id") != null && id.equals(jsonAiDocument.get("id"))) {
-                title = (String) ((JSONArray) jsonAiDocument.get("title")).get(0);
-                url = (String) jsonAiDocument.get("url");
-                summary = (String) jsonAiDocument.get("llm_summary");
-                content = (String) ((JSONArray) jsonAiDocument.get("exactContent")).get(0);
+                title = (String) ((JSONArray) jsonAiDocument.get(AiService.TITLE_FIELD)).get(0);
+                url = (String) jsonAiDocument.get(AiService.URL_FIELD);
+                summary = (String) jsonAiDocument.get(AiService.LLM_SUMMARY_FIELD);
+                content = (String) ((JSONArray) jsonAiDocument.get(AiService.EXACT_CONTENT_FIELD)).get(0);
             } else {
                 return error(stream, "422", "summarizationNoFileFound",
                         "The document cannot be retrieved.",

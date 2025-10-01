@@ -1,10 +1,11 @@
 package com.francelabs.datafari.ai.agentic.tools;
 
 import com.francelabs.datafari.ai.dto.AiRequest;
+import com.francelabs.datafari.ai.dto.ApiContent;
+import com.francelabs.datafari.ai.services.AiService;
 import com.francelabs.datafari.ai.services.RagService;
 import com.francelabs.datafari.ai.stream.ChatStream;
-import com.francelabs.datafari.rag.RagConfiguration;
-import com.francelabs.datafari.rest.v2_0.ai.AiPowered;
+import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.agent.tool.P;
@@ -14,23 +15,19 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 public class CfPTools {
 
     private static final Logger LOGGER = LogManager.getLogger(CfPTools.class.getName());
     HttpServletRequest request;
     RagConfiguration config;
-    List<Document> sources;
     private final SourcesAccumulator sourcesAcc;
     private final ChatStream stream;
 
     public CfPTools(HttpServletRequest request, ChatStream stream, SourcesAccumulator sourcesAcc) {
         this.request = request;
-        this.sources = sources;
         this.stream = stream;
         this.sourcesAcc = sourcesAcc;
         config = RagConfiguration.getInstance();
@@ -165,10 +162,17 @@ public class CfPTools {
                 ragrequest.id = docId;
 
                 try {
-                    results = RagService.rag(request, ragrequest, stream, sourcesAcc).message;
-                    extractSourcesFromRagResponse(results);
+                    ApiContent resp = RagService.rag(request, ragrequest, stream, sourcesAcc);
+                    if (resp.message != null && !resp.message.isBlank()) {
+                        results = resp.message;
+                    } else if (resp.error != null) {
+                        results = "Extraction failed: " + resp.error.reason;
+                    } else {
+                        results = "Extraction failed.";
+                    }
                 } catch (Exception e) {
-                    LOGGER.error("AGENTIC TOOLS - Extracting from CCTP - ERROR: {}", e.getLocalizedMessage());
+                    LOGGER.error("AGENTIC TOOLS - Extracting from CCAP - ERROR: {}", e.getLocalizedMessage());
+                    results = "Extraction failed.";
                 }
 
                 LOGGER.debug("AGENTIC TOOLS - Extracting from CCTP - Result {}", results);
@@ -201,10 +205,17 @@ public class CfPTools {
                 ragrequest.id = docId;
 
                 try {
-                    results = RagService.rag(request, ragrequest, stream, sourcesAcc).message;
-                    extractSourcesFromRagResponse(results);
+                    ApiContent resp = RagService.rag(request, ragrequest, stream, sourcesAcc);
+                    if (resp.message != null && !resp.message.isBlank()) {
+                        results = resp.message;
+                    } else if (resp.error != null) {
+                        results = "Extraction failed: " + resp.error.reason;
+                    } else {
+                        results = "Extraction failed.";
+                    }
                 } catch (Exception e) {
                     LOGGER.error("AGENTIC TOOLS - Extracting from CCAP - ERROR: {}", e.getLocalizedMessage());
+                    results = "Extraction failed.";
                 }
 
 
@@ -237,7 +248,6 @@ public class CfPTools {
         JSONObject root = SearchUtils.processSearch(req, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
 
-        // TODO : add the doc to this.sources
         addDocumentToSource((JSONObject) docs.getFirst());
 
         return docs;
@@ -293,7 +303,6 @@ public class CfPTools {
         JSONArray docs = SearchUtils.extractDocs(root);
         String mergedChunkContents = SearchUtils.mergeChunks(docs);
 
-        // TODO : add document to sources
         addDocumentToSource((JSONObject) docs.getFirst());
 
         LOGGER.info("AGENTIC TOOLS - Reading page {} of document  '{}'", page, id);
@@ -311,22 +320,6 @@ public class CfPTools {
     ) {
         LOGGER.warn("AGENTIC TOOLS - Requesting tool - {}", description);
         return "Note taken.";
-    }
-
-    /**
-     * Extract the sources from the "RagByDocument" service and add them to the sources
-     * @param results: A String JSON response from the RAG service
-     */
-    private void extractSourcesFromRagResponse(String results) {
-        try {
-            // Sources extraction
-            JSONParser parser = new JSONParser();
-            JSONObject content = (JSONObject) parser.parse(results);
-            JSONArray documents = (JSONArray) content.get("documents");
-            if (!documents.isEmpty()) addDocumentsToSource(documents);
-        } catch (Exception e) {
-            LOGGER.error("AGENTIC TOOLS - Extracting from CCTP - ERROR: {}", e.getLocalizedMessage());
-        }
     }
 
     /**
@@ -351,23 +344,23 @@ public class CfPTools {
      */
     private void addDocumentToSource(JSONObject doc) {
         try {
-            String id = (doc.get("parent_doc") != null) ? (String) doc.get("parent_doc") : (String) doc.get("id");
-            String title = ((JSONArray) doc.get("title")).getFirst().toString();
-            String url = (doc.get("click_url") != null) ? (String) doc.get("click_url") : (String) doc.get("url");
+            String id = (doc.get("parent_doc") != null) ? (String) doc.get("parent_doc") : (String) doc.get(AiService.ID_FIELD);
+            String title = ((JSONArray) doc.get(AiService.TITLE_FIELD)).getFirst().toString();
+            String url = (String) doc.get(AiService.URL_FIELD);
 
             String content;
-            if (doc.get("content") != null) {
-                content = (String) doc.get("content");
+            if (doc.get(AiService.EXACT_CONTENT_FIELD) != null) {
+                content = (String) ((JSONArray) doc.get(AiService.EXACT_CONTENT_FIELD)).get(0);
             } else if (doc.get("embedded_content") != null) {
                 content = (String) doc.get("embedded_content");
             } else {
                 content = "No content available.";
             }
             Document source = Document.document(content);
-            source.metadata().put("id", id)
-                    .put("title", title)
-                    .put("url", url);
-            this.sources.add(source);
+            source.metadata().put(AiService.ID_FIELD, id)
+                    .put(AiService.TITLE_FIELD, title)
+                    .put(AiService.URL_FIELD, url);
+            sourcesAcc.add(source);
 
         } catch (Exception e) {
             LOGGER.error("Could not add document to sources.", e);

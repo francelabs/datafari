@@ -1,19 +1,17 @@
 package com.francelabs.datafari.ai.services;
 
 import com.francelabs.datafari.ai.agentic.agent.CfPAgent;
-import com.francelabs.datafari.ai.agentic.agent.DatafariAgent;
+import com.francelabs.datafari.ai.agentic.agent.IAgent;
+import com.francelabs.datafari.ai.agentic.agent.RagAgent;
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.stream.ChatStream;
-import com.francelabs.datafari.rag.RagConfiguration;
-import dev.langchain4j.data.document.Document;
+import com.francelabs.datafari.ai.config.RagConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.simple.JSONArray;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 public class AgenticService extends AiService {
 
@@ -26,7 +24,7 @@ public class AgenticService extends AiService {
         RagConfiguration config = RagConfiguration.getInstance();
 
         // Is AGENTIC RAG enabled ?
-        if (!config.getBooleanProperty(RagConfiguration.ENABLE_AGENTIC_RAG))
+        if (!config.getBooleanProperty(RagConfiguration.ENABLE_AGENTIC))
             return error(stream, "422", "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", null);
 
         ApiContent response = new ApiContent();
@@ -44,29 +42,29 @@ public class AgenticService extends AiService {
             stream.phase("agent:preparation");
 
 
-            DatafariAgent agent;
+            IAgent agent;
             if (params.agent == null) params.agent = "";
             switch (params.agent) {
                 case "cfp":
-                    agent = new DatafariAgent(request, stream, sourcesAcc);
+                    LOGGER.debug("AgenticService - Using CFP Agent");
+                    agent = new CfPAgent(request, stream, sourcesAcc);
                     break;
-                    // TODO : implement multi agent
                 case "rag":
                 default:
-                    LOGGER.info("AiPowered - RAG - Using RAG Agent");
-                    agent = new DatafariAgent(request, stream, sourcesAcc);
+                    LOGGER.debug("AgenticService - Using RAG Agent");
+                    agent = new RagAgent(request, stream, sourcesAcc);
 
             }
 
             stream.phase("agent:start");
-            String answer = agent.stream(query);
+            String answer = agent.ask(query);
 
             // Final & full response
             stream.finalMessage(answer);
             response.message = answer;
 
             // Final sources
-            JSONArray merged = sourcesAcc.toJsonArray();
+            response.sources = sourcesAcc.toJsonArray();
 
             stream.phase("agent:done");
 

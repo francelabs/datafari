@@ -1,7 +1,7 @@
 package com.francelabs.datafari.ai.agentic.tools;
 
+import com.francelabs.datafari.ai.services.AiService;
 import com.francelabs.datafari.ai.stream.ChatStream;
-import com.francelabs.datafari.api.RagAPI;
 import dev.langchain4j.data.document.Document;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -10,6 +10,14 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * The SourcesAccumulator is used during AI Powered processes.
+ * The added sources are:
+ * - deduplicated (based on document ID)
+ * - temporary stored in memory
+ * - streamed to the user (if streaming is enabled)
+ * - returned as sources in the final response (if streaming is disabled)
+ */
 public final class SourcesAccumulator {
 
     // Key -> Document
@@ -21,7 +29,7 @@ public final class SourcesAccumulator {
         this.stream = stream;
     }
 
-    /** Détermine la clé de dédup : parent_doc > id */
+    /** Return the deduplication key : parent_doc > id */
     private static String keyOf(Document d) {
         if (d == null) return "";
         String parent = str(meta(d, "parent_doc"));
@@ -34,7 +42,7 @@ public final class SourcesAccumulator {
     }
     private static String str(Object o) { return o == null ? "" : String.valueOf(o); }
 
-    /** Ajoute un doc, renvoie true si c’est une nouvelle source (non vue) */
+    /** Add one doc, return true it is new. */
     public synchronized boolean add(Document d) {
         String k = keyOf(d);
         if (k.isBlank() || seen.contains(k)) return false;
@@ -44,7 +52,7 @@ public final class SourcesAccumulator {
         return true;
     }
 
-    /** Ajoute plusieurs docs, renvoie la liste de ceux qui sont “nouveaux” */
+    /** Add multiple docs, return the list of the "new ones" */
     public synchronized List<Document> addAll(Collection<Document> docs) {
         List<Document> newly = new ArrayList<>();
         if (docs == null) return newly;
@@ -59,9 +67,9 @@ public final class SourcesAccumulator {
         JSONArray arr = new JSONArray();
         for (Document d : byKey.values()) {
             JSONObject o = new JSONObject();
-            o.put("id", str(meta(d, "id")));
-            o.put("title", str(meta(d, "title")));
-            o.put("url", str(meta(d, "url")));
+            o.put(AiService.ID_FIELD, str(meta(d, AiService.ID_FIELD)));
+            o.put(AiService.TITLE_FIELD, str(meta(d, AiService.TITLE_FIELD)));
+            o.put(AiService.URL_FIELD, str(meta(d, AiService.URL_FIELD)));
             // Truncate content
             String content = (d.text() == null) ? "" : d.text();
             if (content.length() > 200) content = content.substring(0, 200) + "…";
@@ -75,11 +83,11 @@ public final class SourcesAccumulator {
     /** Convert a single Document to JSON */
     public static JSONObject toJson(Document d) {
         JSONObject o = new JSONObject();
-        o.put("id", str(meta(d, "id")));
-        o.put("title", str(meta(d, "title")));
-        o.put("url", str(meta(d, "url")));
+        o.put(AiService.ID_FIELD, str(meta(d, AiService.ID_FIELD)));
+        o.put(AiService.TITLE_FIELD, str(meta(d, AiService.TITLE_FIELD)));
+        o.put(AiService.URL_FIELD, str(meta(d, AiService.URL_FIELD)));
         String content = d.text() == null ? "" : d.text();
-        if (content.length() > 400) content = content.substring(0, 400) + "…";
+        if (content.length() > 200) content = content.substring(0, 200) + "…";
         o.put("content", content);
         return o;
     }

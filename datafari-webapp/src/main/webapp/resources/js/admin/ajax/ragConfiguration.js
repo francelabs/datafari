@@ -5,6 +5,7 @@ function internationalize() {
   $("#topbar3").text(window.i18n.msgStore['adminUI-ragConf']);
 
   $("#enableRagLabel").text(window.i18n.msgStore['ragConf-enableRagLabel']);
+  $("#enableAgenticLabel").text(window.i18n.msgStore['ragConf-enableAgenticLabel']);
   $("#enableSummarizationLabel").text(window.i18n.msgStore['ragConf-enableSummarizationLabel']);
   $("#solrTopKLabel").text(window.i18n.msgStore['ragConf-solrTopKLabel']);
   $("#rrfTopKLabel").text(window.i18n.msgStore['ragConf-rrfTopKLabel']);
@@ -25,7 +26,7 @@ function internationalize() {
 
 function loadRagConfig() {
   $.get("../rest/v2.0/management/ragConfig", function (data) {
-    $('#enableRag').prop('checked', data.enableRag === true).change();
+    $('#enableAgentic').prop('checked', data.enableAgentic === true).change();
     $('#enableSummarization').prop('checked', data.enableSummarization === true).change();
 
 //    $('#apiEndpoint').val(data.apiEndpoint || '');
@@ -91,13 +92,8 @@ function submitRagConfig(event) {
 
   const payload = {
     "ai.enable.rag": $('#enableRag').is(':checked'),
+    "ai.enable.agentic": $('#enableAgentic').is(':checked'),
     "ai.enable.summarization": $('#enableSummarization').is(':checked'),
-//    "ai.api.endpoint": $('#apiEndpoint').val(),
-//    "ai.api.token": $('#apiToken').val(),
-//    "ai.llm.service": $('#llmService').val(),
-//    "llm.model": $('#llmModel').val(),
-//    "llm.temperature": $('#llmTemperature').val(),
-//    "llm.maxTokens": $('#llmMaxTokens').val(),
     "prompt.chunking.strategy": $('#chunkingStrategy').val(),
     "prompt.max.request.size": $('#maxRequestSize').val(),
     "chunking.maxFiles": $('#chunkingMaxFiles').val(),
@@ -145,6 +141,7 @@ $(document).ready(function () {
   loadRagConfig();
 
   $('#enableRag').bootstrapToggle();
+  $('#enableAgentic').bootstrapToggle();
   $('#enableSummarization').bootstrapToggle();
   $('#chatMemoryEnabled').bootstrapToggle();
   $('#chatQueryRewritingEnabledBM25').bootstrapToggle();

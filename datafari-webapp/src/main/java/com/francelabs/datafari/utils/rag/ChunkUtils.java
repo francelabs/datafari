@@ -15,8 +15,7 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils.rag;
 
-import com.francelabs.datafari.api.RagAPI;
-import com.francelabs.datafari.rag.RagConfiguration;
+import com.francelabs.datafari.ai.config.RagConfiguration;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.document.splitter.DocumentSplitters;

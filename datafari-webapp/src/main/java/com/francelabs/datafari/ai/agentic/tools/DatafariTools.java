@@ -1,12 +1,13 @@
 package com.francelabs.datafari.ai.agentic.tools;
 
 import com.francelabs.datafari.ai.dto.AiRequest;
+import com.francelabs.datafari.ai.dto.ApiContent;
+import com.francelabs.datafari.ai.services.AiService;
 import com.francelabs.datafari.ai.services.RagService;
 import com.francelabs.datafari.ai.services.SummarizationService;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.ai.stream.ToolMeta;
-import com.francelabs.datafari.rag.RagConfiguration;
-import com.francelabs.datafari.rest.v2_0.ai.AiPowered;
+import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.agent.tool.P;
@@ -16,7 +17,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -51,8 +51,12 @@ public class DatafariTools {
         ragrequest.id = id;
 
         try {
-            results = RagService.rag(request, ragrequest, stream, sourcesAcc).message;
-            extractSourcesFromRagResponse(results);
+            ApiContent resp = RagService.rag(request, ragrequest, stream, sourcesAcc);
+            if (resp.message != null) {
+                results = resp.message;
+            } else if (resp.error != null) {
+                results = "RAG query failed: " + resp.error.reason;
+            }
         } catch (Exception e) {
             LOGGER.error("AGENTIC TOOLS - RAG by document - ERROR: {}", e.getLocalizedMessage());
         }
@@ -65,9 +69,9 @@ public class DatafariTools {
             icon = "search")
     @Tool("""
         Execute a search query and return information (metadata) from retrieved documents. (BM25 search)
-        The whole content of the retrieved document may be large, and therefor is not returned.
-        However, you can use this tool to retrieve the ID of a document, and read the document later with another tool.
-        The returned data returned for each retrieved document are:
+        The content of the retrieved document is not returned.
+        However, the returned IDs can be used with another tool (document reading, entities extraction...).
+        The returned data for each retrieved document are:
         title, id, author, url, creation_date, last_modified, crawl_date, extension, source, word_count,
         language, xmptpg_npages, original_file_size
     """)
@@ -85,6 +89,7 @@ public class DatafariTools {
         req.addParameter("wt", "json");
         JSONObject root = SearchUtils.processSearch(req, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
+        addDocumentsToSource(docs);
         LOGGER.debug("AGENTIC TOOLS - BM25 Search - {}", docs.toJSONString());
         return docs.toJSONString();
     }
@@ -182,12 +187,46 @@ public class DatafariTools {
         return results;
     }
 
+    @ToolMeta(label = "Extracting entities...",
+            i18nKey = "tool.entityExtraction",
+            icon = "document")
+    @Tool("Extract entities from a given document.")
+    String entityExtraction(
+            @P("ID of the document") String docId,
+            @P("Entities to extract, separated by a comma (ex: cities, phone number, date)") String entities
+    ) {
+        LOGGER.info("AGENTIC TOOLS - Extracting entities from [{}] : {}", docId, entities);
+        String query = "Extract the following entities from the document: " + entities;
+
+        String results;
+        AiRequest ragrequest = new AiRequest();
+        ragrequest.query = query;
+        ragrequest.id = docId;
+
+        try {
+            ApiContent resp = RagService.rag(request, ragrequest, stream, sourcesAcc);
+            if (resp.message != null && !resp.message.isBlank()) {
+                results = resp.message;
+            } else if (resp.error != null) {
+                results = "Extraction failed: " + resp.error.reason;
+            } else {
+                results = "Extraction failed.";
+            }
+        } catch (Exception e) {
+            LOGGER.error("AGENTIC TOOLS - Entity extraction failed - ERROR: {}", e.getLocalizedMessage());
+            results = "Extraction failed.";
+        }
+
+        LOGGER.debug("AGENTIC TOOLS - Entity extraction failed - Result {}", results);
+        return results;
+    }
+
     @ToolMeta(
             label = "Searching documents...",
             i18nKey = "tool.vectorSearch",
             icon = "search"
     )
-    @Tool("Execute a search query and return information and chunks from retrieved documents. (vector search)")
+    @Tool("Execute a search query and return information and partial content from retrieved documents. (vector search)")
     String vectorSearch(
             @P("The search query") String query
     ) {
@@ -219,7 +258,7 @@ public class DatafariTools {
     @ToolMeta(label = "Searching documents...",
             i18nKey = "tool.hybridSearch",
             icon = "search")
-    @Tool("Search and return information and chunks (hybrid search).")
+    @Tool("Search and return information and partial content from documents (hybrid search).")
     String hybridSearch(
             @P("The search query") String query
     ) {
@@ -266,22 +305,6 @@ public class DatafariTools {
     }
 
     /**
-     * Extract the sources from the "RagByDocument" service and add them to the sources
-     * @param results: A String JSON response from the RAG service
-     */
-    private void extractSourcesFromRagResponse(String results) {
-        try {
-            // Sources extraction
-            JSONParser parser = new JSONParser();
-            JSONObject content = (JSONObject) parser.parse(results);
-            JSONArray documents = (JSONArray) content.get("documents");
-            if (!documents.isEmpty()) addDocumentsToSource(documents);
-        } catch (Exception e) {
-            LOGGER.error("AGENTIC TOOLS - Extracting from CCTP - ERROR: {}", e.getLocalizedMessage());
-        }
-    }
-
-    /**
      * Add retrieved documents (JSONArray) to the sources
      * @param docs: A JSONArray of documents (JSONObject, as returned by Datafari search)
      */
@@ -303,23 +326,23 @@ public class DatafariTools {
      */
     private void addDocumentToSource(JSONObject doc) {
         try {
-            String id = (doc.get("parent_doc") != null) ? (String) doc.get("parent_doc") : (String) doc.get("id");
-            String title = ((JSONArray) doc.get("title")).getFirst().toString();
-            String url = (doc.get("click_url") != null) ? (String) doc.get("click_url") : (String) doc.get("url");
+            String id = (doc.get("parent_doc") != null) ? (String) doc.get("parent_doc") : (String) doc.get(AiService.ID_FIELD);
+            String title = ((JSONArray) doc.get(AiService.TITLE_FIELD)).getFirst().toString();
+            String url = (String) doc.get(AiService.URL_FIELD);
 
             String content;
-            if (doc.get("content") != null) {
-                content = (String) doc.get("content");
+            if (doc.get(AiService.EXACT_CONTENT_FIELD) != null) {
+                content = (String) ((JSONArray) doc.get(AiService.EXACT_CONTENT_FIELD)).getFirst();
             } else if (doc.get("embedded_content") != null) {
                 content = (String) doc.get("embedded_content");
             } else {
                 content = "No content available.";
             }
             Document source = Document.document(content);
-            source.metadata().put("id", id)
-                    .put("title", title)
-                    .put("url", url);
-            sourcesAcc.add(source); // Add the source for streaming response
+            source.metadata().put(AiService.ID_FIELD, id)
+                    .put(AiService.TITLE_FIELD, title)
+                    .put(AiService.URL_FIELD, url);
+            sourcesAcc.add(source);
 
         } catch (Exception e) {
             LOGGER.error("Could not add document to sources.", e);

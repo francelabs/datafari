@@ -1,26 +1,20 @@
 package com.francelabs.datafari.ai.services;
 
-import com.francelabs.datafari.ai.agentic.agent.CfPAgent;
-import com.francelabs.datafari.ai.agentic.agent.DatafariAgent;
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.api.RagAPI;
-import com.francelabs.datafari.rag.RagConfiguration;
-import com.francelabs.datafari.rest.v2_0.ai.AiPowered;
+import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
 import com.francelabs.datafari.utils.rag.SearchUtils;
-import dev.langchain4j.data.document.Document;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class RagService extends AiService {

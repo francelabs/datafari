@@ -29,6 +29,8 @@ import java.util.Map;
 public class AiPowered {
 
     private static final Logger LOGGER = LogManager.getLogger(AiPowered.class.getName());
+    private static final String ERROR = "ERROR";
+    private static final String OK = "OK";
 
     // ========= CLASSIC MODE (JSON) =========
     @PostMapping(
@@ -38,28 +40,28 @@ public class AiPowered {
     )
     public ResponseEntity<ApiResponse> classic(@RequestBody AiRequest body, HttpServletRequest request) {
         ApiResponse response = new ApiResponse();
-        BufferingChatStream nostream = new BufferingChatStream();
+        NoopChatStream nostream = new NoopChatStream();
 
         try {
             List<String> errors = body.validate();
             if (!errors.isEmpty()) {
-                response.status = "ERROR";
+                response.status = ERROR;
                 response.content.error = new ApiError("400",
-                        "ragBadRequest",
-                        "Sorry, It appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.",
+                        ApiError.RAG_BAD_REQUEST.getKey(),
+                        ApiError.RAG_BAD_REQUEST.getValue(),
                         String.join("; ", errors));
                 return ResponseEntity.badRequest().body(response);
             }
 
             ApiContent content = handle(body, request, nostream); // Common action handling
 
-            response.status = (content.error == null) ? "OK" : "ERROR";
+            response.status = (content.error == null) ? OK : ERROR;
             response.content = content;
 
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            response.status = "ERROR";
+            response.status = ERROR;
             response.content.error = new ApiError("500",
                     "ragTechnicalError",
                     "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
@@ -75,7 +77,7 @@ public class AiPowered {
             produces = "application/x-ndjson;charset=UTF-8"
     )
     public void stream(
-            @RequestBody AiRequest body,
+            @RequestBody AiRequest params,
             HttpServletRequest request,
             HttpServletResponse resp
     ) {
@@ -91,37 +93,42 @@ public class AiPowered {
             async.setTimeout(0);
             NdjsonEmitter emitter = new NdjsonEmitter(async);
             ChatStream stream = new NdjsonChatStream(emitter);
+            stream.start();
 
             // Validation
-            List<String> errors = body.validate();
+            List<String> errors = params.validate();
             if (!errors.isEmpty()) {
                 stream.error("400",
-                        "ragBadRequest",
-                        "Sorry, It appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.",
+                        ApiError.RAG_BAD_REQUEST.getKey(),
+                        ApiError.RAG_BAD_REQUEST.getValue(),
                         String.join("; ", errors));
 
-                ApiResponse response = new ApiResponse();
-                response.status = "ERROR";
-                response.content.error = new ApiError("400",
-                        "ragBadRequest",
-                        "Sorry, It appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.",
-                        String.join("; ", errors));
 
-                emitter.send(Map.of("status", response.status, "content", response.content));
-                stream.completed();
+                // Optional : Send the JSON final response (Datafari API format)
+//                ApiResponse response = new ApiResponse();
+//                response.status = ERROR;
+//                response.content.error = new ApiError("400",
+//                        ApiError.RAG_BAD_REQUEST.getKey(),
+//                        ApiError.RAG_BAD_REQUEST.getValue(),
+//                        String.join("; ", errors));
+//                emitter.send(Map.of("status", response.status, "content", response.content));
+
+                stream.completed(ERROR);
                 emitter.close();
                 return;
             }
 
             // Common action handling
-            ApiContent response = handle(body, request, stream);
+            ApiContent response = handle(params, request, stream);
 
             ApiResponse finalApi = new ApiResponse();
-            finalApi.status = (response.error == null) ? "OK" : "ERROR";
+            finalApi.status = (response.error == null) ? OK : ERROR;
             finalApi.content = response;
 
-            // Send the JSON final response (Datafari API format)
-            emitter.send(Map.of("status", finalApi.status, "content", finalApi.content));
+            // Optional : Send the JSON final response (Datafari API format)
+            // emitter.send(Map.of("status", finalApi.status, "content", finalApi.content));
+
+            stream.completed(finalApi.status);
             emitter.close();
 
 
@@ -131,22 +138,24 @@ public class AiPowered {
                 NdjsonEmitter emitter = new NdjsonEmitter(async);
                 ChatStream stream = new NdjsonChatStream(emitter);
                 stream.error("500",
-                        "ragTechnicalError",
-                        "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
+                        ApiError.RAG_TECHNICAL_ERROR.getKey(),
+                        ApiError.RAG_TECHNICAL_ERROR.getValue(),
                         e.getMessage());
 
-                ApiResponse response = new ApiResponse();
-                response.status = "ERROR";
-                response.content.error = new ApiError("500",
-                        "ragTechnicalError",
-                        "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
-                        e.getMessage());
+//              Uncomment to stream a final NDJSON with the Datafari API formatted response.
+//                ApiResponse response = new ApiResponse();
+//                response.status = ERROR;
+//                response.content.error = new ApiError("500",
+//                        ApiError.RAG_TECHNICAL_ERROR.getKey(),
+//                        ApiError.RAG_TECHNICAL_ERROR.getValue(),
+//                        e.getMessage());
+//                emitter.send(Map.of("status", response.status, "content", response.content));
 
-                emitter.send(Map.of("status", response.status, "content", response.content));
-
-                stream.completed();
+                stream.completed(ERROR);
                 emitter.close();
-            } catch (Exception ignored) {}
+            } catch (Exception ex) {
+                LOGGER.error("Unexpected error in AiPowered API. Stream emitter could not be closed properly.", ex);
+            }
         }
     }
 
@@ -155,7 +164,7 @@ public class AiPowered {
         // If no action is provided, using "rag" by default
         AiRequest.Action action = params.action == null ? AiRequest.Action.rag : params.action;
 
-        stream.event("stream.started", Map.of("action", action));
+        stream.phase("service.started");
 
         SourcesAccumulator sourcesAcc = new SourcesAccumulator(stream);
 
@@ -181,7 +190,7 @@ public class AiPowered {
                     e.getMessage());
         }
 
-        stream.completed();
+        stream.phase("service:done");
 
         return result;
     }

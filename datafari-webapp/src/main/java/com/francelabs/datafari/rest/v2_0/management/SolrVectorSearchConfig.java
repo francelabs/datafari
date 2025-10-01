@@ -1,7 +1,7 @@
 package com.francelabs.datafari.rest.v2_0.management;
 
 import com.francelabs.datafari.exception.CodesReturned;
-import com.francelabs.datafari.rag.RagConfiguration;
+import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
 import com.francelabs.datafari.utils.DatafariMainConfiguration;
 import com.francelabs.datafari.utils.SolrConfiguration;
@@ -30,7 +30,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 
 @RestController
