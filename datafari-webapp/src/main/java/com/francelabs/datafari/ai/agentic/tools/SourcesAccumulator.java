@@ -1,10 +1,12 @@
 package com.francelabs.datafari.ai.agentic.tools;
 
+import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.api.RagAPI;
 import dev.langchain4j.data.document.Document;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -13,6 +15,11 @@ public final class SourcesAccumulator {
     // Key -> Document
     private final Map<String, Document> byKey = new LinkedHashMap<>();
     private final Set<String> seen = ConcurrentHashMap.newKeySet();
+    private static ChatStream stream = null;
+
+    public SourcesAccumulator(@Nullable ChatStream stream) {
+        this.stream = stream;
+    }
 
     /** Détermine la clé de dédup : parent_doc > id */
     private static String keyOf(Document d) {
@@ -33,6 +40,7 @@ public final class SourcesAccumulator {
         if (k.isBlank() || seen.contains(k)) return false;
         seen.add(k);
         byKey.put(k, d);
+        streamSource(toJson(d));
         return true;
     }
 
@@ -60,6 +68,7 @@ public final class SourcesAccumulator {
             o.put("content", content);
             arr.add(o);
         }
+        streamSources(arr);
         return arr;
     }
 
@@ -73,5 +82,19 @@ public final class SourcesAccumulator {
         if (content.length() > 400) content = content.substring(0, 400) + "…";
         o.put("content", content);
         return o;
+    }
+
+    /** Stream one source if streaming is available */
+    public static void streamSource(JSONObject source) {
+        if (stream != null) {
+            stream.addSource(source);
+        }
+    }
+
+    /** Stream all the sources if streaming is available */
+    public static void streamSources(JSONArray source) {
+        if (stream != null) {
+            stream.addSources(source);
+        }
     }
 }

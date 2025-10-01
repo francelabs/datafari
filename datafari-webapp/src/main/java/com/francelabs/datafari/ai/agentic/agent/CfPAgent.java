@@ -1,7 +1,8 @@
 package com.francelabs.datafari.ai.agentic.agent;
 
 import com.francelabs.datafari.ai.agentic.tools.CfPTools;
-import com.francelabs.datafari.ai.stream.SseBridge;
+import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
+import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.rag.RagConfiguration;
 import dev.langchain4j.agentic.AgenticServices;
@@ -17,18 +18,21 @@ import java.util.List;
 public class CfPAgent {
 
     private final CfPAgentService agent;
+    private final ChatStream stream;
+    private final SourcesAccumulator sourcesAcc;
 
-    public CfPAgent(HttpServletRequest request, List<Document> sources) {
+    public CfPAgent(HttpServletRequest request, ChatStream stream, SourcesAccumulator sourcesAcc) {
         RagConfiguration config = RagConfiguration.getInstance();
+        this.stream = stream;
+        this.sourcesAcc = sourcesAcc;
         try {
             ChatModel chatModel = RagAPI.getChatModel(config);
             StreamingChatModel streamingChatModel = RagAPI.getStreamingChatModel(config);
-            //SseBridge sse = new SseBridge();
 
             this.agent = AgenticServices
                     .agentBuilder(CfPAgentService.class)
                     .chatModel(chatModel)
-                    .tools(new CfPTools(request, sources))
+                    .tools(new CfPTools(request, stream, sourcesAcc))
                     .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(20))
                     .build();
         } catch (Exception e) {

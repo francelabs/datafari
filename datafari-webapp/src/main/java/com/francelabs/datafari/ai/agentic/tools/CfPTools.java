@@ -1,5 +1,8 @@
 package com.francelabs.datafari.ai.agentic.tools;
 
+import com.francelabs.datafari.ai.dto.AiRequest;
+import com.francelabs.datafari.ai.services.RagService;
+import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.rag.RagConfiguration;
 import com.francelabs.datafari.rest.v2_0.ai.AiPowered;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
@@ -22,10 +25,14 @@ public class CfPTools {
     HttpServletRequest request;
     RagConfiguration config;
     List<Document> sources;
+    private final SourcesAccumulator sourcesAcc;
+    private final ChatStream stream;
 
-    public CfPTools(HttpServletRequest request, List<Document> sources) {
+    public CfPTools(HttpServletRequest request, ChatStream stream, SourcesAccumulator sourcesAcc) {
         this.request = request;
         this.sources = sources;
+        this.stream = stream;
+        this.sourcesAcc = sourcesAcc;
         config = RagConfiguration.getInstance();
     }
 
@@ -151,13 +158,14 @@ public class CfPTools {
                 String docId = (String) doc.get("id");
 
                 String query = "Extract the following information from the document : Product type, Delivery date, Delivery requirements, Guaranties duration";
-                JSONObject jsonBody = new JSONObject();
-                jsonBody.put("query", query);
-                jsonBody.put("id", docId);
+
                 String results = "";
+                AiRequest ragrequest = new AiRequest();
+                ragrequest.query = query;
+                ragrequest.id = docId;
 
                 try {
-                    results = AiPowered.rag(request, jsonBody);
+                    results = RagService.rag(request, ragrequest, stream, sourcesAcc).message;
                     extractSourcesFromRagResponse(results);
                 } catch (Exception e) {
                     LOGGER.error("AGENTIC TOOLS - Extracting from CCTP - ERROR: {}", e.getLocalizedMessage());
@@ -186,13 +194,14 @@ public class CfPTools {
                 String docId = (String) doc.get("id");
 
                 String query = "Extract the following information from the document : Minimum amount, Maximum amount";
-                JSONObject jsonBody = new JSONObject();
-                jsonBody.put("query", query);
-                jsonBody.put("id", docId);
+
                 String results = "";
+                AiRequest ragrequest = new AiRequest();
+                ragrequest.query = query;
+                ragrequest.id = docId;
 
                 try {
-                    results = AiPowered.rag(request, jsonBody);
+                    results = RagService.rag(request, ragrequest, stream, sourcesAcc).message;
                     extractSourcesFromRagResponse(results);
                 } catch (Exception e) {
                     LOGGER.error("AGENTIC TOOLS - Extracting from CCAP - ERROR: {}", e.getLocalizedMessage());

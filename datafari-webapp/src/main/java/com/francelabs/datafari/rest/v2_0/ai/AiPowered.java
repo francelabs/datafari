@@ -1,471 +1,189 @@
 package com.francelabs.datafari.rest.v2_0.ai;
 
-import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
-import com.francelabs.datafari.ai.stream.DatafariStreamingResponseHandler;
-import com.francelabs.datafari.ai.agentic.agent.CfPAgent;
-import com.francelabs.datafari.ai.agentic.agent.DatafariAgent;
-import com.francelabs.datafari.ai.stream.SseBridge;
-import com.francelabs.datafari.ai.stream.SseContext;
-import com.francelabs.datafari.api.RagAPI;
-import com.francelabs.datafari.rag.RagConfiguration;
-import com.francelabs.datafari.utils.EditableHttpServletRequest;
-import dev.langchain4j.data.document.Document;
-import dev.langchain4j.data.document.Metadata;
-import dev.langchain4j.model.chat.StreamingChatModel;
-import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
+import com.francelabs.datafari.ai.dto.AiRequest;
+import com.francelabs.datafari.ai.dto.ApiContent;
+import com.francelabs.datafari.ai.dto.ApiError;
+import com.francelabs.datafari.ai.dto.ApiResponse;
+import com.francelabs.datafari.ai.services.AgenticService;
+import com.francelabs.datafari.ai.services.AiService;
+import com.francelabs.datafari.ai.services.RagService;
+import com.francelabs.datafari.ai.services.SummarizationService;
+import com.francelabs.datafari.ai.stream.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.ServletException;
+import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
+@RequestMapping("/rest/v2.0/ai")
 public class AiPowered {
 
     private static final Logger LOGGER = LogManager.getLogger(AiPowered.class.getName());
-    private static final String ID_FIELD = "id";
-    private static final String TITLE_FIELD = "title";
-    private static final String URL_FIELD = "url";
-    private static final String LLM_SUMMARY_FIELD = "llm_summary";
-    public static final String EXACT_CONTENT_FIELD = "exactContent";
-    private static final String QUERY_FIELD = "query";
-    private static final String STATUS_FIELD = "status";
 
+    // ========= CLASSIC MODE (JSON) =========
+    @PostMapping(
+            value = "",
+            consumes = "application/json",
+            produces = "application/json;charset=UTF-8"
+    )
+    public ResponseEntity<ApiResponse> classic(@RequestBody AiRequest body, HttpServletRequest request) {
+        ApiResponse response = new ApiResponse();
+        BufferingChatStream nostream = new BufferingChatStream();
 
-    @PostMapping(value = "/rest/v2.0/ai/summarize", produces = "application/json;charset=UTF-8")
-    public static String summarizeDocument(final HttpServletRequest request, @RequestBody JSONObject jsonDoc) {
-
-        String id;
-        String lang;
-        String title;
-        String content;
-        String summary;
-        String url;
-        final JSONObject jsonResponse = new JSONObject();
-
-
-        // Retrieve ID from JSON input
-        if (jsonDoc.get(ID_FIELD) != null) {
-            id = (String) jsonDoc.get(ID_FIELD);
-        } else {
-            return generateErrorJson(422, "summarizationBadRequest", "Sorry, It appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.", null);
-        }
-        // Retrieve language
-        if (jsonDoc.get("lang") != null) {
-            lang = (String) jsonDoc.get("lang");
-            request.setAttribute("lang", lang);
-        }
-
-        LOGGER.info("AiPowered - Summarize - Summary of the document {} requested.", id);
-
-        // Retrieve document from Solr using Datafari API methods
         try {
-
-            // Retrieve document
-            JSONObject searchresult = findDocumentById(request, id);
-            JSONObject jsonAiDocument = (JSONObject) ((JSONArray) ((JSONObject) searchresult.get("response")).get("docs")).get(0);
-
-            if (jsonAiDocument.get(ID_FIELD) != null && id.equals(jsonAiDocument.get(ID_FIELD))) {
-                title = (String) ((JSONArray) jsonAiDocument.get(TITLE_FIELD)).get(0);
-                url = (String) jsonAiDocument.get(URL_FIELD);
-                summary = (String) jsonAiDocument.get(LLM_SUMMARY_FIELD);
-                content = (String) ((JSONArray) jsonAiDocument.get(EXACT_CONTENT_FIELD)).get(0);
-            } else {
-                return generateErrorJson(422, "summarizationNoFileFound", "The document cannot be retrieved.", null);
+            List<String> errors = body.validate();
+            if (!errors.isEmpty()) {
+                response.status = "ERROR";
+                response.content.error = new ApiError("400",
+                        "ragBadRequest",
+                        "Sorry, It appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.",
+                        String.join("; ", errors));
+                return ResponseEntity.badRequest().body(response);
             }
 
-        } catch (final NullPointerException|IndexOutOfBoundsException e) {
-            return generateErrorJson(422, "summarizationNoFileFound", "The document cannot be retrieved.", null);
-        } catch (final Exception e) {
-            return generateErrorJson(500, "summarizationTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e);
-        }
+            ApiContent content = handle(body, request, nostream); // Common action handling
 
+            response.status = (content.error == null) ? "OK" : "ERROR";
+            response.content = content;
 
-        try {
-            // Process the document using RagAPI methods
-            return getDocumentSummary(request, summary, content, id, title, url, jsonResponse);
+            return ResponseEntity.ok(response);
 
-            //  TODO: This feature can be improved by implementing Atomic Update.
-            //   When a summary is generated in the method, the Solr Document from FILESHARE should be updated.
-
-
-        } catch (final Exception e) {
-            return generateErrorJson(500, "summarizationTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e);
+        } catch (Exception e) {
+            response.status = "ERROR";
+            response.content.error = new ApiError("500",
+                    "ragTechnicalError",
+                    "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
+                    e.getMessage());
+            return ResponseEntity.status(500).body(response);
         }
     }
 
-
-    @PostMapping(value = "/rest/v2.0/ai/stream", produces = "text/event-stream;charset=UTF-8")
-    private void stream(final HttpServletRequest request, HttpServletResponse resp) throws IOException {
-        resp.setStatus(200);
-        resp.setHeader("Content-Type", "text/event-stream; charset=utf-8");
-        resp.setHeader("Cache-Control", "no-cache, no-transform");
-        resp.setHeader("Connection", "keep-alive");
-        resp.setHeader("X-Accel-Buffering", "no"); // nginx: disable buffering
-
-        var async = request.startAsync();
-        async.setTimeout(0);
-
-        StreamingChatModel streamingModel = RagAPI.getStreamingChatModel(RagConfiguration.getInstance());
-
-        StreamingChatResponseHandler handler = new DatafariStreamingResponseHandler(async);
-        String userQ = request.getParameter("q");
-        if (userQ == null || userQ.isBlank()) {
-            userQ = "Hello there !";
-        }
-        streamingModel.chat(userQ, handler);
-    }
-
-    @PostMapping(value = "/rest/v2.0/ai/streamagent", produces = "text/event-stream;charset=UTF-8")
-    private void streamAgent(final HttpServletRequest request, HttpServletResponse resp) throws Exception {
+    // ========= MODE STREAM (NDJSON) =========
+    @PostMapping(
+            value = "/stream",
+            consumes = "application/json",
+            produces = "application/x-ndjson;charset=UTF-8"
+    )
+    public void stream(
+            @RequestBody AiRequest body,
+            HttpServletRequest request,
+            HttpServletResponse resp
+    ) {
         try {
+            // Headers NDJSON
             resp.setStatus(200);
-            resp.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+            resp.setHeader("Content-Type", "application/x-ndjson; charset=utf-8");
             resp.setHeader("Cache-Control", "no-cache, no-transform");
             resp.setHeader("Connection", "keep-alive");
-            resp.setHeader("X-Accel-Buffering", "no"); // nginx: disable buffering
+            resp.setHeader("X-Accel-Buffering", "no");
 
-            var async = request.startAsync();
+            AsyncContext async = request.startAsync();
             async.setTimeout(0);
+            NdjsonEmitter emitter = new NdjsonEmitter(async);
+            ChatStream stream = new NdjsonChatStream(emitter);
 
-            var sse = new SseBridge(async);
-            SseContext.bind(sse);
+            // Validation
+            List<String> errors = body.validate();
+            if (!errors.isEmpty()) {
+                stream.error("400",
+                        "ragBadRequest",
+                        "Sorry, It appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.",
+                        String.join("; ", errors));
 
-            String query = request.getParameter("q");
-            if (query == null || query.isBlank()) {
-                sse.error("Empty query");
+                ApiResponse response = new ApiResponse();
+                response.status = "ERROR";
+                response.content.error = new ApiError("400",
+                        "ragBadRequest",
+                        "Sorry, It appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.",
+                        String.join("; ", errors));
+
+                emitter.send(Map.of("status", response.status, "content", response.content));
+                stream.completed();
+                emitter.close();
                 return;
             }
 
-            LOGGER.info("AiPowered - RAG - Using RAG Agent");
-            List<Document> sources = new ArrayList<>();
-            SourcesAccumulator sourcesAcc = new SourcesAccumulator();
-            DatafariAgent ragagent = new DatafariAgent(request, sources, sse, sourcesAcc);
+            // Common action handling
+            ApiContent response = handle(body, request, stream);
 
-            sse.send("phase", "agent:start");
+            ApiResponse finalApi = new ApiResponse();
+            finalApi.status = (response.error == null) ? "OK" : "ERROR";
+            finalApi.content = response;
 
-            String answer = ragagent.stream(query);
+            // Send the JSON final response (Datafari API format)
+            emitter.send(Map.of("status", finalApi.status, "content", finalApi.content));
+            emitter.close();
 
-            // réponse finale à l’écran (tokenisée ou en bloc)
-            sse.send("token", "\n\n");
-//            sse.send("token", answer);
-            sse.send("final", answer);        // Full response
-
-            JSONArray merged = sourcesAcc.toJsonArray();
-            sse.send("sources", merged.toJSONString());
-
-            sse.send("phase", "agent:done");
-
-            sse.done();
 
         } catch (Exception e) {
             try {
-                LOGGER.error("Streaming Agentic failed", e);
-                var async = request.getAsyncContext();
-                var sse = new SseBridge(async);
-                sse.error(e.getMessage());
-            } catch (Exception ignored) {
-                LOGGER.error("Could not stream error message", e);
-            }
-        } finally {
-            SseContext.unbind();
+                AsyncContext async = request.getAsyncContext();
+                NdjsonEmitter emitter = new NdjsonEmitter(async);
+                ChatStream stream = new NdjsonChatStream(emitter);
+                stream.error("500",
+                        "ragTechnicalError",
+                        "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
+                        e.getMessage());
+
+                ApiResponse response = new ApiResponse();
+                response.status = "ERROR";
+                response.content.error = new ApiError("500",
+                        "ragTechnicalError",
+                        "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
+                        e.getMessage());
+
+                emitter.send(Map.of("status", response.status, "content", response.content));
+
+                stream.completed();
+                emitter.close();
+            } catch (Exception ignored) {}
         }
     }
 
-    @PostMapping(value = "/rest/v2.0/ai/rag", produces = "application/json;charset=UTF-8")
-    public static String rag(final HttpServletRequest request, @RequestBody JSONObject jsonDoc) {
+    private ApiContent handle(AiRequest params, HttpServletRequest request, ChatStream stream) {
 
-        LOGGER.info("AiPowered - RAG - RAG request received.");
+        // If no action is provided, using "rag" by default
+        AiRequest.Action action = params.action == null ? AiRequest.Action.rag : params.action;
 
-        String query; // The user request
-        String id;
-        String lang;
-        boolean ragBydocument = false;
-        JSONObject searchResults;
+        stream.event("stream.started", Map.of("action", action));
 
-        // Get RAG configuration
-        RagConfiguration config = RagConfiguration.getInstance();
+        SourcesAccumulator sourcesAcc = new SourcesAccumulator(stream);
 
-        // Is RAG enabled ?
-        if (!config.getBooleanProperty(RagConfiguration.ENABLE_RAG))
-            return generateErrorJson(422, "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", null);
-
-        // Retrieve query from JSON input
-        if (jsonDoc.get(QUERY_FIELD) != null) {
-            query = (String) jsonDoc.get(QUERY_FIELD);
-            LOGGER.debug("AiPowered - RAG - RAG query : {}", query);
-        } else {
-            LOGGER.warn("AiPowered - RAG - Missing query parameter");
-            return generateErrorJson(422, "ragBadRequest", "Sorry, It appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.", null);
-        }
-
-        // Is Agentic RAG enabled ?
-        Object agentObj = jsonDoc.get("agent");
-        if (config.getBooleanProperty(RagConfiguration.ENABLE_AGENTIC_RAG) && agentObj != null && !((String) agentObj).isBlank() ) {
-            String agent = (String) jsonDoc.get("agent");
-
-            try {
-                String response;
-                List<Document> sources = new ArrayList<>();
-                switch (agent) {
-                    case "cfpagent":
-                        LOGGER.info("AiPowered - RAG - Using CFP Agent");
-                        CfPAgent cfpagent = new CfPAgent(request, sources);
-                        response = cfpagent.ask(query);
-                        return RagAPI.writeJsonResponse(response, sources).toJSONString();
-                    case "ragagent":
-                        LOGGER.info("AiPowered - RAG - Using RAG Agent");
-                        DatafariAgent ragagent = new DatafariAgent(request, sources, null, null);
-                        response = ragagent.ask(query);
-                        return RagAPI.writeJsonResponse(response, sources).toJSONString();
-                    default:
-                        break;
-                }
-
-            } catch (Exception e) {
-                LOGGER.error("AiPowered - RAG - Agentic RAG failed.", e);
-                return generateErrorJson(422, "ragTechnicalError", "Sorry, the agent failed to find a response.", null);
-            }
-
-        }
-
-        //
-        // HISTORY
-        // Retrieve, if enabled, the chat history
-        //
-        if (jsonDoc.containsKey("history")) {
-            Object history = jsonDoc.get("history");
-            if (history != null) {
-                request.setAttribute("history", history);
-                LOGGER.debug("AiPowered - RAG - Conversation history retrieved for request: {}", query);
-            } else {
-                LOGGER.warn("AiPowered - RAG - History found but is not a valid JSONArray. Ignored.");
-            }
-        }
-
-        //
-        // QUERY REWRITING FOR VECTOR SEARCH
-        // If enabled, we use a LLM to reformulate the user query into a search query
-        // Only applies to vector or hybrid search
-        //
-        String vectorQuery = query;
-        if (config.getBooleanProperty(RagConfiguration.CHAT_QUERY_REWRITING_ENABLED_VECTOR)
-                && List.of("rrf", "vector").contains(config.getProperty(RagConfiguration.RETRIEVAL_METHOD))
-                && jsonDoc.get(ID_FIELD) == null
-        ) {
-            try {
-                vectorQuery = RagAPI.rewriteSearchQuery(query, "vector", request, config);
-            } catch (IOException e) {
-                LOGGER.error("Query rewriting failed ! Initial user query will be use for the search.", e);
-            }
-        }
-
-        //
-        // QUERY REWRITING FOR BM25 SEARCH
-        // If enabled, we use a LLM to reformulate the user query into a search query
-        // Only applies to BM25 or hybrid search
-        //
-        String bm25Query = query;
-        if (config.getBooleanProperty(RagConfiguration.CHAT_QUERY_REWRITING_ENABLED_BM25)
-                && List.of("rrf", "bm25").contains(config.getProperty(RagConfiguration.RETRIEVAL_METHOD))
-                && jsonDoc.get(ID_FIELD) == null
-        ) {
-            try {
-                bm25Query = RagAPI.rewriteSearchQuery(query, "bm25", request, config);
-            } catch (IOException e) {
-                LOGGER.error("Query rewriting failed ! Initial user query will be use for the search.", e);
-                vectorQuery = query;
-            }
-        }
-
-        //
-        // RETRIEVAL
-        // Retrieve documents or snippets using Datafari search API
-        //
+        ApiContent result = new ApiContent();
         try {
-            // Retrieve ID from JSON input
-            if (jsonDoc.get(ID_FIELD) != null && !((String) jsonDoc.get(ID_FIELD)).isEmpty()) {
-                id = (String) jsonDoc.get(ID_FIELD);
-                LOGGER.debug("AiPowered - RAG - Retrieving document {} for RAG by Document.", id);
-                searchResults = findDocumentById(request, id);
-                ragBydocument = true;
-            } else {
-                LOGGER.debug("AiPowered - RAG - Performing search.");
-                request.setAttribute("q.op", config.getProperty(RagConfiguration.SEARCH_OPERATOR));
-                // rewritten query must not be used for BM25 search
-                searchResults = performSearch(request, bm25Query, vectorQuery, config.getProperty(RagConfiguration.RETRIEVAL_METHOD, "bm25"), config);
-            }
-        } catch (IOException|ServletException e) {
-            LOGGER.error("AiPowered - RAG - ERROR. An error occurred while retrieving documents.", e);
-            return generateErrorJson(500, "ragTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e);
+            result = switch (action.name()) {
+                case "rag" -> RagService.rag(request, params, stream, sourcesAcc);
+                case "agentic" -> AgenticService.agentic(params, request, stream, sourcesAcc);
+                case "summarize" -> SummarizationService.summarize(request, params, stream, sourcesAcc);
+                default -> result;
+            };
+
+            // JSONize and stream the final sources
+            result.sources = sourcesAcc.toJsonArray();
+
+            if (result.message != null && !result.message.isBlank())
+                stream.finalMessage(result.message);
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error in AIService.", e);
+            return AiService.error(stream, "500",
+                    ApiError.RAG_TECHNICAL_ERROR.getKey(),
+                    ApiError.RAG_TECHNICAL_ERROR.getValue(),
+                    e.getMessage());
         }
 
-        // Retrieve language
-        if (jsonDoc.get("lang") != null) {
-            lang = (String) jsonDoc.get("lang");
-            request.setAttribute("lang", lang);
-        }
+        stream.completed();
 
-
-        //
-        // RAG RESPONSE GENERATION
-        // The request is processed using Datafari Rag API
-        //
-        try {
-            // Process the document(s) using RagAPI methods
-            EditableHttpServletRequest editablerequest = new EditableHttpServletRequest(request);
-            editablerequest.addParameter("q", query);
-            return RagAPI.rag(editablerequest, searchResults, ragBydocument).toJSONString();
-        } catch (final Exception e) {
-            LOGGER.error("AiPowered - RAG - ERROR", e);
-            return generateErrorJson(500, "ragTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e);
-        }
-    }
-
-    /**
-     * Generate a summary for a document, or returns it if it already exists
-     * @param request HttpServletRequest
-     * @param summary String The summary of the documents if it already exists
-     * @param content String The exactContent of the document
-     * @param id String
-     * @param title String
-     * @param url String
-     * @param jsonResponse String
-     * @return a response JSONObject
-     */
-    private static String getDocumentSummary(HttpServletRequest request, String summary, String content, String id,
-                                             String title, String url, JSONObject jsonResponse) throws IOException {
-        if ((summary == null || summary.isEmpty()) && (content != null && !content.isEmpty())) {
-            // If there is no existing summary, but content is found, use RagAPI service to generate a summary
-            LOGGER.debug("AiPowered - Summarize - No summary found for document {}.", id);
-
-            // Instantiate a Langchain4j Document
-            Metadata metadata = new Metadata();
-            metadata.put(ID_FIELD, id);
-            if (title != null) metadata.put(TITLE_FIELD, title);
-            if (url != null) metadata.put(URL_FIELD, url);
-            Document doc = Document.from(content, metadata);
-
-            LOGGER.debug("AiPowered - Summarize - Generating a summary for document {}.", id);
-            try {
-                summary = RagAPI.summarize(request, doc);
-            } catch (Exception e) {
-                LOGGER.error("Summarization failed !");
-                return generateErrorJson(500, "summarizationTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e);
-            }
-            JSONObject jsonContent = new JSONObject();
-            jsonContent.put("message", summary);
-            jsonResponse.put(STATUS_FIELD, "OK");
-            jsonResponse.put("content", jsonContent);
-            return jsonResponse.toJSONString();
-
-        } else if (content == null || content.isEmpty()) {
-            // Error : No content, no summary
-            LOGGER.warn("AiPowered - Summarize - Could not retrieve summary or content from file {}.", id);
-            return generateErrorJson(422, "summarizationEmptyFile", "Sorry, I am unable to generate a summary, since the file has no content.", null);
-
-        } else {
-            jsonResponse.put(STATUS_FIELD, "OK");
-            jsonResponse.put("content", summary);
-            return jsonResponse.toJSONString();
-        }
-    }
-
-    /**
-     * Find a documents by its ID from Solr, using Datafari API methods.
-     * This method uses an editable version of the original HttpServletRequest.
-     * The updated request object is updated in order to process.
-     * @param originalRequest : The HttpServletRequest
-     * @param id The ID of the document
-     * @return a JSONObject containing search resultats, with the following fields :
-     *      id, title, exactContent, url, llm_summary
-     */
-    private static JSONObject findDocumentById(HttpServletRequest originalRequest, String id) throws ServletException, IOException {
-        EditableHttpServletRequest request = new EditableHttpServletRequest(originalRequest);
-        request.addParameter("q", "id:" + id);
-        request.addParameter("hl", "false");
-        request.addParameter("fl", "id,title,exactContent,url,llm_summary");
-        request.setPathInfo("/select");
-
-        LOGGER.debug("AiPowered - Retrieving document {}.", id);
-        return SearchAggregator.doGetSearch(request, null);
-    }
-
-    /**
-     * Find a documents by its ID from Solr, using Datafari API methods.
-     * This method uses an editable version of the original HttpServletRequest.
-     * The updated request object is updated in order to process.
-     * @param originalRequest : The HttpServletRequest
-     * @param q The user query (or a rewritten one)
-     * @return a JSONObject containing search results, with the following fields:
-     *      id, title, exactContent, url, llm_summary
-     */
-    private static JSONObject performSearch(HttpServletRequest originalRequest, String q, String rewrittenQuery, String retrievalMethod, RagConfiguration config) {
-        EditableHttpServletRequest request = new EditableHttpServletRequest(originalRequest);
-        request.addParameter("q", q);
-        request.addParameter("queryrag", rewrittenQuery); // The rewritten query is used only for Vector Search
-        request.addParameter("hl", "false");
-        request.addParameter("fl", "id,title,exactContent,embedded_content,url,llm_summary");
-
-        String handler;
-        switch(retrievalMethod) {
-            case "vector":
-                handler = "/vector";
-                break;
-            case "rrf":
-                handler = "/rrf";
-                break;
-            case "bm25":
-            default:
-                // If BM25, the number of results is limited to MAX_FILES
-                request.addParameter("rows", config.getProperty(RagConfiguration.MAX_FILES, "3"));
-                handler = "/select";
-        }
-        request.setPathInfo(handler);
-
-        // Any additional RAG-related search options can be added here
-
-        LOGGER.debug("AiPowered - Performing search using {} handler. q={}", handler, q);
-        return RagAPI.processSearch(RagConfiguration.getInstance(), request);
-    }
-
-    /**
-     * @param code : the integer HTTP error code
-     * @param message : The message of the error, displayed in response
-     * @param ex : The Exception (if any), displayed in logs
-     * @return a JSON error response
-     */
-    private static String generateErrorJson(int code, String errorLabel, String message, Exception ex) {
-        final JSONObject response = new JSONObject();
-        final JSONObject error = new JSONObject();
-        final JSONObject content = new JSONObject();
-        response.put("status", "ERROR");
-        error.put("code", code);
-        error.put("label", errorLabel);
-        if (ex != null) error.put("reason", ex.getLocalizedMessage());
-        content.put("message", message);
-        content.put("documents", new ArrayList<>());
-        content.put("error", error);
-        response.put("content", content);
-
-        LOGGER.debug("RagAPI - ERROR. An error occurred while processing the query.");
-        LOGGER.debug("");
-        LOGGER.debug("##### RAG final JSON response #####");
-        LOGGER.debug(response.toJSONString());
-        LOGGER.debug("###################################");
-        LOGGER.debug("");
-
-        return response.toJSONString();
+        return result;
     }
 
 }

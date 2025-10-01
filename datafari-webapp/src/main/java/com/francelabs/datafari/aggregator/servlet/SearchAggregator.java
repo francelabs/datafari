@@ -298,12 +298,6 @@ public class SearchAggregator extends HttpServlet {
         JSONObject searchResponse;
         if (action != null) {
           switch (action) {
-          case "rag":
-            // TODO : Deprecated
-            LOGGER.debug("RagAPI - RAG request received from SearchAPI.");
-            LOGGER.warn("RagAPI - The use of SearchAPI for RAG is deprecated. Use the /rag endpoint instead.");
-            searchResponse = RagAPI.rag(request, null, false);
-            break;
           case "suggest":
             searchResponse = SuggesterAPI.suggest(request);
             break;

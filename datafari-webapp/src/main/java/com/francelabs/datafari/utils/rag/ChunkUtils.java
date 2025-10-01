@@ -15,11 +15,14 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils.rag;
 
+import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.rag.RagConfiguration;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.segment.TextSegment;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,8 @@ import java.util.List;
  */
 public class ChunkUtils {
 
+    private static final Logger LOGGER = LogManager.getLogger(ChunkUtils.class.getName());
+
     private ChunkUtils() {
         // Constructor
     }
@@ -42,6 +47,9 @@ public class ChunkUtils {
      * @return The document list. Big documents are chunked into multiple documents.
      */
     public static List<Document> chunkDocuments(List<Document> documentList, RagConfiguration config) {
+        LOGGER.debug("ChunkUtils - Chunking starting...");
+        LOGGER.debug("ChunkUtils - Max size allowed for a single chunk in configuration is {} characters. ",
+                config.getIntegerProperty(RagConfiguration.CHUNK_SIZE, 3000));
         List<Document> chunkedDocumentList = new ArrayList<>();
         for(Document document : documentList) {
             List<TextSegment> chunks = chunkContent(document, config);

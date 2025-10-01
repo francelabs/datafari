@@ -1,0 +1,125 @@
+package com.francelabs.datafari.ai.services;
+
+import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
+import com.francelabs.datafari.ai.dto.AiRequest;
+import com.francelabs.datafari.ai.dto.ApiContent;
+import com.francelabs.datafari.ai.stream.ChatStream;
+import com.francelabs.datafari.api.RagAPI;
+import com.francelabs.datafari.rest.v2_0.ai.AiPowered;
+import com.francelabs.datafari.utils.rag.SearchUtils;
+import dev.langchain4j.data.document.Document;
+import dev.langchain4j.data.document.Metadata;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.EmptyFileException;
+import org.jetbrains.annotations.NotNull;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.rmi.UnexpectedException;
+
+public class SummarizationService extends AiService {
+
+    private static final Logger LOGGER = LogManager.getLogger(SummarizationService.class.getName());
+
+    public static @NotNull ApiContent summarize(HttpServletRequest request, AiRequest params, ChatStream stream, SourcesAccumulator sourcesAcc) {
+        ApiContent response = new ApiContent();
+
+        String id = params.id;
+        String lang = params.lang;
+        String title;
+        String content;
+        String summary;
+        String url;
+
+        stream.phase("summarize:start");
+
+        // Retrieve language
+        if (lang != null) {
+            request.setAttribute("lang", lang);
+        }
+
+        LOGGER.info("AiPowered - Summarize - Summary of the document {} requested.", id);
+
+        // Retrieve document from Solr using Datafari API methods
+        try {
+
+            // Retrieve document
+            stream.phase("summarize:document retrieval");
+            JSONObject searchresult = SearchUtils.findDocumentById(request, id);
+            JSONObject jsonAiDocument = (JSONObject) ((JSONArray) ((JSONObject) searchresult.get("response")).get("docs")).get(0);
+
+            if (jsonAiDocument.get("id") != null && id.equals(jsonAiDocument.get("id"))) {
+                title = (String) ((JSONArray) jsonAiDocument.get("title")).get(0);
+                url = (String) jsonAiDocument.get("url");
+                summary = (String) jsonAiDocument.get("llm_summary");
+                content = (String) ((JSONArray) jsonAiDocument.get("exactContent")).get(0);
+            } else {
+                return error(stream, "422", "summarizationNoFileFound",
+                        "The document cannot be retrieved.",
+                        "No document found for the provided ID.");
+            }
+
+        } catch (final NullPointerException|IndexOutOfBoundsException e) {
+            return error(stream, "422", "summarizationNoFileFound",
+                    "The document cannot be retrieved.", e.getMessage());
+        } catch (final Exception e) {
+            return error(stream, "500", "summarizationTechnicalError",
+                    "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e.getLocalizedMessage());
+        }
+
+
+        try {
+            // Retrieve an existing summary or generate a new one
+            stream.phase("summarize:generation");
+            response.message = getDocumentSummary(request, summary, content, id, title, url);
+        } catch (EmptyFileException e) {
+            return error(stream, "422", "summarizationEmptyFile",
+                    "Sorry, I am unable to generate a summary, since the file has no content.", "File is empty and can not be summarized.");
+        } catch (Exception e) {
+            return error(stream, "500", "summarizationTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e.getLocalizedMessage());
+        }
+
+        return response;
+    }
+
+    /**
+     * Generate a summary for a document, or returns it if it already exists
+     * @param request HttpServletRequest
+     * @param summary String The summary of the documents if it already exists
+     * @param content String The exactContent of the document
+     * @param id String
+     * @param title String
+     * @param url String
+     * @return a response JSONObject
+     */
+    private static String getDocumentSummary(HttpServletRequest request, String summary, String content, String id,
+                                             String title, String url) throws IOException {
+        if (summary != null && !summary.isEmpty()) {
+            return summary;
+        } else if ((summary == null || summary.isEmpty()) && (content != null && !content.isEmpty())) {
+            // If there is no existing summary, but content is found, use RagAPI service to generate a summary
+            LOGGER.debug("AiPowered - Summarize - No summary found for document {}.", id);
+
+            // Instantiate a Langchain4j Document
+            Metadata metadata = new Metadata();
+            metadata.put(ID_FIELD, id);
+            if (title != null) metadata.put(TITLE_FIELD, title);
+            if (url != null) metadata.put(URL_FIELD, url);
+            Document doc = Document.from(content, metadata);
+
+            LOGGER.debug("AiPowered - Summarize - Generating a summary for document {}.", id);
+            return RagAPI.summarize(request, doc);
+        } else if (content == null || content.isEmpty()) {
+            LOGGER.warn("AiPowered - Summarize - Could not retrieve summary or content from file {}.", id);
+            // Error : No content, no summary
+            throw new EmptyFileException();
+
+        }
+
+        throw new UnexpectedException("Unexpected exception. Could not generate a summary.");
+    }
+}

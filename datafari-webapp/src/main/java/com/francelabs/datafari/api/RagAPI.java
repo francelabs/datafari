@@ -15,8 +15,12 @@
  *******************************************************************************/
 package com.francelabs.datafari.api;
 
+import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
+import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.models.ChatModelFactory;
 import com.francelabs.datafari.ai.models.ChatModelConfigurationManager;
+import com.francelabs.datafari.ai.services.AiService;
+import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.rag.*;
 import com.francelabs.datafari.utils.rag.ChunkUtils;
@@ -49,30 +53,14 @@ public class RagAPI extends SearchAPI {
   public static final String EMBEDDED_CONTENT = "embedded_content";
 
 
-  public static JSONObject rag(final HttpServletRequest request, JSONObject searchResults, boolean ragBydocument) throws IOException {
+  public static ApiContent rag(final HttpServletRequest request, JSONObject searchResults, boolean ragBydocument, ChatStream stream, SourcesAccumulator sourcesAcc) throws IOException {
 
 
     // Get RAG specific configuration
     RagConfiguration config = RagConfiguration.getInstance();
 
-    // Is RAG enabled ?
-    if (!config.getBooleanProperty(RagConfiguration.ENABLE_RAG))
-      return writeJsonError(422, "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", null);
-
     // Set LlmService
     ChatModel chatModel = getChatModel(config);
-
-    // Search
-    // If the search result has not been provided, process a search
-    if (searchResults == null) {
-      try {
-        LOGGER.debug("RagAPI - No search results provided in the method parameters. Processing a new search using request parameters.");
-        searchResults = processSearch(config, request);
-      } catch (Exception e) {
-        LOGGER.error("RagAPI - ERROR. An error occurred while retrieving data.", e);
-        return writeJsonError(500, "ragTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e);
-      }
-    }
 
     // Extract document content and data
     List<Document> initialDocumentsList;
@@ -83,13 +71,13 @@ public class RagAPI extends SearchAPI {
       LOGGER.debug("RagAPI - {} documents extracted.", initialDocumentsList.size());
     } catch (FileNotFoundException e) {
       LOGGER.warn("RagAPI -  WARNING. The query cannot be answered because no associated documents were found.");
-      return writeJsonError(428, "ragNoFileFound", "Sorry, I couldn't find any relevant document to answer your request.", e);
+      return AiService.error(stream, "428", "ragNoFileFound",
+              "Sorry, I couldn't find any relevant document to answer your request.", e.getLocalizedMessage());
     }
     
     // Chunking
-    LOGGER.debug("RagAPI - Chunking starting...");
-    LOGGER.debug("RagAPI - Max size allowed for a single chunk in configuration is {} characters. ", config.getIntegerProperty(RagConfiguration.CHUNK_SIZE, 3000));
     documentsList = ChunkUtils.chunkDocuments(initialDocumentsList, config);
+    sourcesAcc.addAll(documentsList);
     LOGGER.debug("RagAPI - The chunking returned {} chunk(s).", documentsList.size());
 
     // Prompting : Convert all documents chunks into prompt ChatMessages
@@ -101,10 +89,12 @@ public class RagAPI extends SearchAPI {
       message = processRagQuery(contents, chatModel, config, request, ragBydocument);
     } catch (DatafariServerException e) {
       LOGGER.error("An error occurred while calling external LLM service.", e);
-      return writeJsonError(500, "ragTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e);
+      return AiService.error(stream, "500", "ragTechnicalError",
+              "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e.getLocalizedMessage());
     }catch (Exception e) {
       LOGGER.error("An unexpected error occurred while processing RAG query.", e);
-      return writeJsonError(500, "ragTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e);
+      return AiService.error(stream, "500", "ragTechnicalError",
+              "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e.getLocalizedMessage());
     }
 
     LOGGER.debug("RagAPI - LLM response: {}", message);
@@ -112,9 +102,9 @@ public class RagAPI extends SearchAPI {
     // Return final message
     if (!message.isEmpty()) {
       message = cleanLlmFinalMessage(message);
-      return writeJsonResponse(message, documentsList);
+      return writeResponse(message, documentsList);
     } else {
-      return writeJsonError(428, "ragNoValidAnswer", "Sorry, I could not find an answer to your question.", null);
+      return AiService.error(stream, "428", "ragNoValidAnswer", "Sorry, I could not find an answer to your question.", "LLM returned empty response.");
     }
 
   }
@@ -365,44 +355,19 @@ public class RagAPI extends SearchAPI {
 
   }
 
-  public static JSONObject writeJsonResponse(String message, List<Document> documentsList) {
-    final JSONObject response = new JSONObject();
-    response.put("status", "OK");
-    JSONObject content = new JSONObject();
-    content.put("message", message);
-    content.put("documents", mergeSimilarDocuments(documentsList));
-    response.put("content", content);
+  public static ApiContent writeResponse(String message, List<Document> documentsList) {
+    final ApiContent content = new ApiContent();
+    content.message = message;
+    content.sources = mergeSimilarDocuments(documentsList);
 
     LOGGER.debug("");
     LOGGER.debug("##### RAG final JSON response #####");
-    LOGGER.debug(response.toJSONString());
+    LOGGER.debug("# Message : {}", message);
+    LOGGER.debug("# Sources : {}", content.sources.toJSONString());
     LOGGER.debug("###################################");
     LOGGER.debug("");
 
-    return response;
-  }
-
-  private static JSONObject writeJsonError(int code, String errorLabel, String message, Exception ex) {
-    final JSONObject response = new JSONObject();
-    final JSONObject error = new JSONObject();
-    final JSONObject content = new JSONObject();
-    response.put("status", "ERROR");
-    error.put("code", code);
-    error.put("label", errorLabel);
-    if (ex != null) error.put("reason", ex.getLocalizedMessage());
-    content.put("message", message);
-    content.put("documents", new ArrayList<>());
-    content.put("error", error);
-    response.put("content", content);
-
-    LOGGER.debug("RagAPI - ERROR. An error occurred while processing the query.");
-    LOGGER.debug("");
-    LOGGER.debug("##### RAG final JSON response #####");
-    LOGGER.debug(response.toJSONString());
-    LOGGER.debug("###################################");
-    LOGGER.debug("");
-
-    return response;
+    return content;
   }
 
   /**
@@ -446,6 +411,7 @@ public class RagAPI extends SearchAPI {
    * @param request the original user request
    * @return A JSONObject containing the search results
    */
+  // TODO : DELETE
   public static JSONObject processSearch(RagConfiguration config, HttpServletRequest request) throws InvalidParameterException {
 
     final Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());

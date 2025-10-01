@@ -1,13 +1,18 @@
 package com.francelabs.datafari.utils.rag;
 
+import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
+import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.api.SearchAPI;
 import com.francelabs.datafari.rag.RagConfiguration;
+import com.francelabs.datafari.utils.EditableHttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidParameterException;
 import java.security.MessageDigest;
@@ -127,6 +132,46 @@ public class SearchUtils {
         }
     }
 
+
+    /**
+     * Process a search in Datafari using the rewritten queries
+     * This method uses an editable version of the original HttpServletRequest.
+     * The request object is updated in order to process a custom search.
+     * @param originalRequest : The HttpServletRequest
+     * @param q The search query for BM25
+     * @param queryrag The search query for Vector Search
+     * @return a JSONObject containing search results, with the following fields:
+     *      id, title, exactContent, url, llm_summary
+     */
+    public static JSONObject performCustomSearch(HttpServletRequest originalRequest, String q, String queryrag, String retrievalMethod, RagConfiguration config) {
+        EditableHttpServletRequest request = new EditableHttpServletRequest(originalRequest);
+        request.addParameter("q", q);
+        request.addParameter("queryrag", queryrag); // The rewritten query is used only for Vector Search
+        request.addParameter("hl", "false");
+        request.addParameter("fl", "id,title,exactContent,embedded_content,url,llm_summary");
+
+        String handler;
+        switch(retrievalMethod) {
+            case "vector":
+                handler = "/vector";
+                break;
+            case "rrf":
+                handler = "/rrf";
+                break;
+            case "bm25":
+            default:
+                // If BM25, the number of results is limited to MAX_FILES
+                request.addParameter("rows", config.getProperty(RagConfiguration.MAX_FILES, "3"));
+                handler = "/select";
+        }
+        request.setPathInfo(handler);
+
+        // Any additional RAG-related search options can be added here
+
+        LOGGER.debug("AiPowered - Performing search using {} handler. q={}", handler, q);
+        return processSearch(request, handler);
+    }
+
     /** Retrieve embedded_content  */
     private static String extractEmbeddedText(JSONObject d) {
         Object val = d.get("embedded_content");
@@ -179,6 +224,26 @@ public class SearchUtils {
         } catch (Exception e) {
             return s;
         }
+    }
+
+    /**
+     * Find a documents by its ID from Solr, using Datafari API methods.
+     * This method uses an editable version of the original HttpServletRequest.
+     * The updated request object is updated in order to process.
+     * @param originalRequest : The HttpServletRequest
+     * @param id The ID of the document
+     * @return a JSONObject containing search resultats, with the following fields :
+     *      id, title, exactContent, url, llm_summary
+     */
+    public static JSONObject findDocumentById(HttpServletRequest originalRequest, String id) throws ServletException, IOException {
+        EditableHttpServletRequest request = new EditableHttpServletRequest(originalRequest);
+        request.addParameter("q", "id:" + id);
+        request.addParameter("hl", "false");
+        request.addParameter("fl", "id,title,exactContent,url,llm_summary");
+        request.setPathInfo("/select");
+
+        LOGGER.debug("AiPowered - Retrieving document {}.", id);
+        return SearchAggregator.doGetSearch(request, null);
     }
 
     // TODO : Move here common search request preparation

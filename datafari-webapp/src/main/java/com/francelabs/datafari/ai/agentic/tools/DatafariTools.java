@@ -1,6 +1,10 @@
 package com.francelabs.datafari.ai.agentic.tools;
 
-import com.francelabs.datafari.ai.stream.SseBridge;
+import com.francelabs.datafari.ai.dto.AiRequest;
+import com.francelabs.datafari.ai.services.RagService;
+import com.francelabs.datafari.ai.services.SummarizationService;
+import com.francelabs.datafari.ai.stream.ChatStream;
+import com.francelabs.datafari.ai.stream.ToolMeta;
 import com.francelabs.datafari.rag.RagConfiguration;
 import com.francelabs.datafari.rest.v2_0.ai.AiPowered;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
@@ -15,38 +19,39 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 public class DatafariTools {
 
     private static final Logger LOGGER = LogManager.getLogger(DatafariTools.class.getName());
     HttpServletRequest request;
     RagConfiguration config;
-    List<Document> sources;
     private final SourcesAccumulator sourcesAcc;
-    private final SseBridge sse;
+    private final ChatStream stream;
 
-    public DatafariTools(HttpServletRequest request, List<Document> sources, SseBridge sse, SourcesAccumulator sourcesAcc) {
+    public DatafariTools(HttpServletRequest request, ChatStream stream, SourcesAccumulator sourcesAcc) {
         this.request = request;
-        this.sources = sources;
-        this.sse = sse;
+        this.stream = stream;
         this.sourcesAcc = sourcesAcc;
         config = RagConfiguration.getInstance();
     }
 
+    @ToolMeta(label = "Exploring documents...",
+            i18nKey = "tool.ragByDocument",
+            icon = "search")
     @Tool("Process a RAG query in a single document.")
     String ragByDocument(
             @P("The RAG query for a single document") String query,
             @P("The exact ID of the document") String id
     ) {
         LOGGER.info("AGENTIC TOOLS - RAG by document - ID: {} - Query: {}", id, query);
-        JSONObject jsonBody = new JSONObject();
-        jsonBody.put("query", query);
-        jsonBody.put("id", id);
         String results = "";
 
+        AiRequest ragrequest = new AiRequest();
+        ragrequest.query = query;
+        ragrequest.id = id;
+
         try {
-            results = AiPowered.rag(request, jsonBody);
+            results = RagService.rag(request, ragrequest, stream, sourcesAcc).message;
             extractSourcesFromRagResponse(results);
         } catch (Exception e) {
             LOGGER.error("AGENTIC TOOLS - RAG by document - ERROR: {}", e.getLocalizedMessage());
@@ -55,6 +60,9 @@ public class DatafariTools {
         return results;
     }
 
+    @ToolMeta(label = "Searching documents...",
+            i18nKey = "tool.bm25Search",
+            icon = "search")
     @Tool("""
         Execute a search query and return information (metadata) from retrieved documents. (BM25 search)
         The whole content of the retrieved document may be large, and therefor is not returned.
@@ -63,9 +71,7 @@ public class DatafariTools {
         title, id, author, url, creation_date, last_modified, crawl_date, extension, source, word_count,
         language, xmptpg_npages, original_file_size
     """)
-    String bm25Search(
-            @P("The search query") String query
-    ) {
+    String bm25Search(@P("The search query") String query) {
         LOGGER.info("AGENTIC TOOLS - BM25 Search - Query: {}", query);
         int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
 
@@ -83,6 +89,10 @@ public class DatafariTools {
         return docs.toJSONString();
     }
 
+
+    @ToolMeta(label = "Reading a document...",
+            i18nKey = "tool.readNextChunks",
+            icon = "document")
     @Tool("""
             Read N chunks of a document from VectorMain, ordered, starting at the given page (0-based).
             If there in no more content to read from the document, 'No content' is returned.
@@ -121,6 +131,9 @@ public class DatafariTools {
         return "========== PAGE " + page + ": ==========\n\n" + mergedChunkContents + "\n\n========== END OF PAGE " + page + " ==========\n\n";
     }
 
+    @ToolMeta(label = "Searching content from a document...",
+            i18nKey = "tool.searchChunksFromADocument",
+            icon = "search")
     @Tool("""
             Process a search query within a specific document, and retrieve the most relevant chunks.
             You must provide the exact ID of the document.
@@ -154,18 +167,26 @@ public class DatafariTools {
         return docs.toJSONString();
     }
 
+    @ToolMeta(label = "Generating a document summary...",
+            i18nKey = "tool.summarize",
+            icon = "search")
     @Tool("Retrieve a summary of a document. You must provide the exact ID of the document.")
     String summarize(
             @P("The exact ID of the document") String id
     ) {
-        JSONObject jsonBody = new JSONObject();
-        jsonBody.put("id", id);
+        AiRequest summarizerequest = new AiRequest();
+        summarizerequest.id = id;
 
-        String results = AiPowered.summarizeDocument(request, jsonBody);
+        String results = SummarizationService.summarize(request, summarizerequest, stream, sourcesAcc).message;
         LOGGER.debug("AGENTIC TOOLS - Summarize - {}", results);
         return results;
     }
 
+    @ToolMeta(
+            label = "Searching documents...",
+            i18nKey = "tool.vectorSearch",
+            icon = "search"
+    )
     @Tool("Execute a search query and return information and chunks from retrieved documents. (vector search)")
     String vectorSearch(
             @P("The search query") String query
@@ -195,6 +216,9 @@ public class DatafariTools {
         return docs.toJSONString();
     }
 
+    @ToolMeta(label = "Searching documents...",
+            i18nKey = "tool.hybridSearch",
+            icon = "search")
     @Tool("Search and return information and chunks (hybrid search).")
     String hybridSearch(
             @P("The search query") String query
@@ -230,6 +254,9 @@ public class DatafariTools {
 //        return agent.ask(query);
 //    }
 
+    @ToolMeta(label = "",
+            i18nKey = "",
+            icon = "")
     @Tool("If you don't have the tools you need to answer the request, use this one to describe precisely the tools you need, for future improvement.")
     String requestNewTool(
             @P("The description of the tool you would need") String description
@@ -292,9 +319,7 @@ public class DatafariTools {
             source.metadata().put("id", id)
                     .put("title", title)
                     .put("url", url);
-            this.sources.add(source); // Add the source for JSON response
             sourcesAcc.add(source); // Add the source for streaming response
-            sse.send("source", SourcesAccumulator.toJson(source).toJSONString()); // Stream the source
 
         } catch (Exception e) {
             LOGGER.error("Could not add document to sources.", e);
