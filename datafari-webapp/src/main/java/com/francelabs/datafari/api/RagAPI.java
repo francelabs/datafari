@@ -43,150 +43,150 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class RagAPI extends SearchAPI {
 
-  private static final Logger LOGGER = LogManager.getLogger(RagAPI.class.getName());
-  public static final String EXACT_CONTENT = "exactContent";
-  public static final String EMBEDDED_CONTENT = "embedded_content";
+    public static final String EXACT_CONTENT = "exactContent";
+    public static final String EMBEDDED_CONTENT = "embedded_content";
+    private static final Logger LOGGER = LogManager.getLogger(RagAPI.class.getName());
+
+    public static ApiContent rag(final HttpServletRequest request, JSONObject searchResults,
+                                 boolean ragBydocument, ChatStream stream, SourcesAccumulator sourcesAcc) throws IOException {
 
 
-  public static ApiContent rag(final HttpServletRequest request, JSONObject searchResults,
-                               boolean ragBydocument, ChatStream stream, SourcesAccumulator sourcesAcc) throws IOException {
+        // Get RAG specific configuration
+        RagConfiguration config = RagConfiguration.getInstance();
 
+        // Set LlmService
+        ChatModel chatModel = getChatModel(config);
 
-    // Get RAG specific configuration
-    RagConfiguration config = RagConfiguration.getInstance();
+        // Extract document content and data
+        List<Document> initialDocumentsList;
+        List<Document> documentsList;
+        try {
+            LOGGER.debug("RagAPI - Extracting documents list from search result...");
+            initialDocumentsList = extractDocumentsList(searchResults);
+            LOGGER.debug("RagAPI - {} documents extracted.", initialDocumentsList.size());
+        } catch (FileNotFoundException e) {
+            LOGGER.warn("RagAPI -  WARNING. The query cannot be answered because no associated documents were found.");
+            return AiService.error(stream, "428", "ragNoFileFound",
+                    "Sorry, I couldn't find any relevant document to answer your request.", e.getLocalizedMessage());
+        }
 
-    // Set LlmService
-    ChatModel chatModel = getChatModel(config);
+        // Add the sources to the accumulator
+        sourcesAcc.addAll(initialDocumentsList);
 
-    // Extract document content and data
-    List<Document> initialDocumentsList;
-    List<Document> documentsList;
-    try {
-      LOGGER.debug("RagAPI - Extracting documents list from search result...");
-      initialDocumentsList = extractDocumentsList(searchResults);
-      LOGGER.debug("RagAPI - {} documents extracted.", initialDocumentsList.size());
-    } catch (FileNotFoundException e) {
-      LOGGER.warn("RagAPI -  WARNING. The query cannot be answered because no associated documents were found.");
-      return AiService.error(stream, "428", "ragNoFileFound",
-              "Sorry, I couldn't find any relevant document to answer your request.", e.getLocalizedMessage());
+        // Chunking
+        documentsList = ChunkUtils.chunkDocuments(initialDocumentsList, config);
+        LOGGER.debug("RagAPI - The chunking returned {} chunk(s).", documentsList.size());
+
+        // Prompting : Convert all documents chunks into prompt ChatMessages
+        List<String> contents = PromptUtils.documentsListToMessages(documentsList);
+
+        // Process the RAG query using the selected service, the contents list and the user query
+        String message;
+        try {
+            message = processRagQuery(contents, chatModel, config, request, ragBydocument);
+        } catch (DatafariServerException e) {
+            LOGGER.error("An error occurred while calling external LLM service.", e);
+            return AiService.error(stream, "500", "ragTechnicalError",
+                    "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e.getLocalizedMessage());
+        }catch (Exception e) {
+            LOGGER.error("An unexpected error occurred while processing RAG query.", e);
+            return AiService.error(stream, "500", "ragTechnicalError",
+                    "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e.getLocalizedMessage());
+        }
+
+        LOGGER.debug("RagAPI - LLM response: {}", message);
+
+        // Return final message
+        if (!message.isEmpty()) {
+            message = cleanLlmFinalMessage(message);
+            return writeResponse(message);
+        } else {
+            return AiService.error(stream, "428", "ragNoValidAnswer", "Sorry, I could not find an answer to your question.", "LLM returned empty response.");
+        }
+
     }
 
-    // Add the sources to the accumulator
-    sourcesAcc.addAll(initialDocumentsList);
-    
-    // Chunking
-    documentsList = ChunkUtils.chunkDocuments(initialDocumentsList, config);
-    LOGGER.debug("RagAPI - The chunking returned {} chunk(s).", documentsList.size());
 
-    // Prompting : Convert all documents chunks into prompt ChatMessages
-    List<String> contents = PromptUtils.documentsListToMessages(documentsList);
+    /**
+     * Start RAG process
+     * content List of prompt ChatMessages containing documents chunks
+     * chatModel the ChatLanguageModel
+     * ragByDocument Does the query focus on one single document ?
+     * @return The string LLM response
+     */
+    public static String processRagQuery(List<String> contents, ChatModel chatModel, RagConfiguration config,
+                                         HttpServletRequest request, boolean ragBydocument) throws IOException, DatafariServerException {
 
-    // Process the RAG query using the selected service, the contents list and the user query
-    String message;
-    try {
-      message = processRagQuery(contents, chatModel, config, request, ragBydocument);
-    } catch (DatafariServerException e) {
-      LOGGER.error("An error occurred while calling external LLM service.", e);
-      return AiService.error(stream, "500", "ragTechnicalError",
-              "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e.getLocalizedMessage());
-    }catch (Exception e) {
-      LOGGER.error("An unexpected error occurred while processing RAG query.", e);
-      return AiService.error(stream, "500", "ragTechnicalError",
-              "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e.getLocalizedMessage());
-    }
+        LOGGER.debug("RagAPI - Processing RAG query. {} chunk(s) received.", contents.size());
+        LOGGER.debug("RagAPI - Processing RAG query : q={}.", request.getParameter("q"));
+        if (ragBydocument) LOGGER.debug("RagAPI - RAG by Document ");
 
-    LOGGER.debug("RagAPI - LLM response: {}", message);
+        // Retrieve and sanitize user query
+        String userquery = PromptUtils.sanitizeInput(request.getParameter("q"));
 
-    // Return final message
-    if (!message.isEmpty()) {
-      message = cleanLlmFinalMessage(message);
-      return writeResponse(message);
-    } else {
-      return AiService.error(stream, "428", "ragNoValidAnswer", "Sorry, I could not find an answer to your question.", "LLM returned empty response.");
-    }
+        // Get history (if enabled)
+        List<ChatMessage> chatHistory = PromptUtils.getChatHistoryToList(request, config);
+        String chatHistoryStr = PromptUtils.getStringHistory(chatHistory);
+        String conversationStr = PromptUtils.getStringHistoryLines(chatHistory);
 
-  }
+        if ("mapreduce".equals(config.getProperty(RagConfiguration.PROMPT_CHUNKING_STRATEGY, "refine"))){
 
+            // Map Reduce method
+            LOGGER.debug("RagAPI - The sources associated to the RAG request will be processed using Map Reduce method.");
 
-  /**
-   * Start RAG process
-   * content List of prompt ChatMessages containing documents chunks
-   * chatModel the ChatLanguageModel
-   * ragByDocument Does the query focus on one single document ?
-   * @return The string LLM response
-   */
-  public static String processRagQuery(List<String> contents, ChatModel chatModel, RagConfiguration config,
-                                       HttpServletRequest request, boolean ragBydocument) throws IOException, DatafariServerException {
+            // Send all chunks one by one
+            List<ChatMessage> prompts;
+            List<String> responseMessages = new ArrayList<>();
+            String template = PromptUtils.getInitialRagTemplateMapReduce(request)
+                    .replace(PromptUtils.USER_QUERY_TAG, userquery)
+                    .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request))
+                    .replace(PromptUtils.HISTORY_TAG, chatHistoryStr)
+                    .replace(PromptUtils.CONVERSATION_TAG, conversationStr);
+            String filledTemplate;
+            String generatedResponse = "";
 
-    LOGGER.debug("RagAPI - Processing RAG query. {} chunk(s) received.", contents.size());
-    LOGGER.debug("RagAPI - Processing RAG query : q={}.", request.getParameter("q"));
-    if (ragBydocument) LOGGER.debug("RagAPI - RAG by Document ");
+            int rqCounter = 0;
+            while (!contents.isEmpty()) {
+                rqCounter++;
+                filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config);
+                prompts = new ArrayList<>();
+                ChatMessage prompt = new UserMessage(filledTemplate);
+                prompts.add(prompt);
 
-    // Retrieve and sanitize user query
-    String userquery = PromptUtils.sanitizeInput(request.getParameter("q"));
+                generatedResponse = chatModel.chat(prompts).aiMessage().text();
+                LOGGER.debug("RagAPI - Map Reduce - Last response : {}", generatedResponse);
 
-    // Get history (if enabled)
-    List<ChatMessage> chatHistory = PromptUtils.getChatHistoryToList(request, config);
-    String chatHistoryStr = PromptUtils.getStringHistory(chatHistory);
-    String conversationStr = PromptUtils.getStringHistoryLines(chatHistory);
+                // Add the new response to the list
+                String responseMessage = "* " + generatedResponse + "\n";
+                responseMessages.add(responseMessage);
+            }
 
-    if ("mapreduce".equals(config.getProperty(RagConfiguration.PROMPT_CHUNKING_STRATEGY, "refine"))){
+            // If the LLM was called only once, no need to call it again
+            if (rqCounter <= 1) return generatedResponse;
 
-      // Map Reduce method
-      LOGGER.debug("RagAPI - The sources associated to the RAG request will be processed using Map Reduce method.");
+            // Then, merge all responses into one
+            template = PromptUtils.getFinalRagTemplateMapReduce(request);
+            filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, responseMessages, config);
+            filledTemplate = filledTemplate.replace(PromptUtils.USER_QUERY_TAG, userquery)
+                    .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request))
+                    .replace(PromptUtils.HISTORY_TAG, chatHistoryStr)
+                    .replace(PromptUtils.CONVERSATION_TAG, conversationStr);
 
-      // Send all chunks one by one
-      List<ChatMessage> prompts;
-      List<String> responseMessages = new ArrayList<>();
-      String template = PromptUtils.getInitialRagTemplateMapReduce(request)
-              .replace(PromptUtils.USER_QUERY_TAG, userquery)
-              .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request))
-              .replace(PromptUtils.HISTORY_TAG, chatHistoryStr)
-              .replace(PromptUtils.CONVERSATION_TAG, conversationStr);
-      String filledTemplate;
-      String generatedResponse = "";
+            prompts = new ArrayList<>();
 
-      int rqCounter = 0;
-      while (!contents.isEmpty()) {
-        rqCounter++;
-        filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config);
-        prompts = new ArrayList<>();
-        ChatMessage prompt = new UserMessage(filledTemplate);
-        prompts.add(prompt);
+            ChatMessage prompt = new UserMessage(filledTemplate);
+            prompts.add(prompt);
 
-        generatedResponse = chatModel.chat(prompts).aiMessage().text();
-        LOGGER.debug("RagAPI - Map Reduce - Last response : {}", generatedResponse);
+            return chatModel.chat(prompts).aiMessage().text();
 
-        // Add the new response to the list
-        String responseMessage = "* " + generatedResponse + "\n";
-        responseMessages.add(responseMessage);
-      }
+        } else {
 
-      // If the LLM was called only once, no need to call it again
-      if (rqCounter <= 1) return generatedResponse;
-
-      // Then, merge all responses into one
-      template = PromptUtils.getFinalRagTemplateMapReduce(request);
-      filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, responseMessages, config);
-      filledTemplate = filledTemplate.replace(PromptUtils.USER_QUERY_TAG, userquery)
-              .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request))
-              .replace(PromptUtils.HISTORY_TAG, chatHistoryStr)
-              .replace(PromptUtils.CONVERSATION_TAG, conversationStr);
-
-      prompts = new ArrayList<>();
-
-      ChatMessage prompt = new UserMessage(filledTemplate);
-      prompts.add(prompt);
-
-      return chatModel.chat(prompts).aiMessage().text();
-
-    } else {
-
-      // Iterative Refining method
-      LOGGER.debug("RagAPI - The sources associated to the RAG request will be processed using Iterative Refining method.");
+            // Iterative Refining method
+            LOGGER.debug("RagAPI - The sources associated to the RAG request will be processed using Iterative Refining method.");
 
       /*
         Variables:
@@ -198,262 +198,271 @@ public class RagAPI extends SearchAPI {
         - conversation : String formatted lines (e.g. "- user: hello world\n- assistant: Hello user !"
        */
 
-      // Initial call with a fist set of snippets
-      List<ChatMessage> prompts = new ArrayList<>();
-      String template = PromptUtils.getInitialRagTemplateRefining(request);
-      String filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config);
-      filledTemplate = filledTemplate.replace(PromptUtils.USER_QUERY_TAG, PromptUtils.cleanContext(userquery))
-              .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request))
-              .replace(PromptUtils.HISTORY_TAG, chatHistoryStr)
-              .replace(PromptUtils.CONVERSATION_TAG, conversationStr);
+            // Initial call with a fist set of snippets
+            List<ChatMessage> prompts = new ArrayList<>();
+            String template = PromptUtils.getInitialRagTemplateRefining(request);
+            String filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config);
+            filledTemplate = filledTemplate.replace(PromptUtils.USER_QUERY_TAG, PromptUtils.cleanContext(userquery))
+                    .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request))
+                    .replace(PromptUtils.HISTORY_TAG, chatHistoryStr)
+                    .replace(PromptUtils.CONVERSATION_TAG, conversationStr);
 
-      ChatMessage prompt = new UserMessage(filledTemplate);
-      prompts.add(prompt);
-      String lastresponse = chatModel.chat(prompts).aiMessage().text();
+            ChatMessage prompt = new UserMessage(filledTemplate);
+            prompts.add(prompt);
+            String lastresponse = chatModel.chat(prompts).aiMessage().text();
 
-      // Refining response with each snippet pack
-      template = PromptUtils.getRefineRagTemplateRefining(request);
-      while (!contents.isEmpty()) {
-        filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config);
-        filledTemplate = filledTemplate.replace(PromptUtils.USER_QUERY_TAG, userquery)
-                .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request))
-                .replace(PromptUtils.LAST_RESPONSE_TAG, lastresponse)
-                .replace(PromptUtils.HISTORY_TAG, chatHistoryStr)
-                .replace(PromptUtils.CONVERSATION_TAG, conversationStr);
-        prompts = new ArrayList<>();
-        prompt = new UserMessage(filledTemplate);
-        prompts.add(prompt);
-        lastresponse = chatModel.chat(prompts).aiMessage().text();
-        LOGGER.debug("RagAPI - Iterative Refining - Last generated response : {}", lastresponse);
-      }
-      return lastresponse;
+            // Refining response with each snippet pack
+            template = PromptUtils.getRefineRagTemplateRefining(request);
+            while (!contents.isEmpty()) {
+                filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config);
+                filledTemplate = filledTemplate.replace(PromptUtils.USER_QUERY_TAG, userquery)
+                        .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request))
+                        .replace(PromptUtils.LAST_RESPONSE_TAG, lastresponse)
+                        .replace(PromptUtils.HISTORY_TAG, chatHistoryStr)
+                        .replace(PromptUtils.CONVERSATION_TAG, conversationStr);
+                prompts = new ArrayList<>();
+                prompt = new UserMessage(filledTemplate);
+                prompts.add(prompt);
+                lastresponse = chatModel.chat(prompts).aiMessage().text();
+                LOGGER.debug("RagAPI - Iterative Refining - Last generated response : {}", lastresponse);
+            }
+            return lastresponse;
+
+        }
 
     }
 
-  }
-
-  /**
-   * Returns the active chat language model as defined in the models.json configuration file.
-   *
-   * @param config The RAG configuration object (currently unused, included for future compatibility).
-   * @return A {@link ChatModel} instance corresponding to the active model.
-   * @throws IOException If an error occurs while reading or parsing the model configuration file.
-   */
-  public static ChatModel getChatModel(RagConfiguration config) throws IOException {
-    ChatModelConfigurationManager configManager = new ChatModelConfigurationManager();
-    ChatModelFactory chatModelFactory = new ChatModelFactory(configManager);
-    return chatModelFactory.createChatModel(); // Return the active model
-  }
+    /**
+     * Returns the active chat language model as defined in the models.json configuration file.
+     *
+     * @param config The RAG configuration object (currently unused, included for future compatibility).
+     * @return A {@link ChatModel} instance corresponding to the active model.
+     * @throws IOException If an error occurs while reading or parsing the model configuration file.
+     */
+    public static ChatModel getChatModel(RagConfiguration config) throws IOException {
+        ChatModelConfigurationManager configManager = new ChatModelConfigurationManager();
+        ChatModelFactory chatModelFactory = new ChatModelFactory(configManager);
+        return chatModelFactory.createChatModel(); // Return the active model
+    }
     public static StreamingChatModel getStreamingChatModel(RagConfiguration config) throws IOException {
         ChatModelConfigurationManager configManager = new ChatModelConfigurationManager();
         ChatModelFactory chatModelFactory = new ChatModelFactory(configManager);
         return chatModelFactory.createStreamingChatModel(); // Return the active model
     }
 
-  /**
-   * Returns a specific chat language model by name, as defined in the models.json configuration file.
-   *
-   * @param modelName The name of the model to load (matching the "name" field in the configuration).
-   * @return A {@link ChatModel} instance corresponding to the specified model name.
-   * @throws IOException If an error occurs while reading or parsing the model configuration file.
-   * @throws IllegalArgumentException If no model is found with the given name.
-   */
-  private static ChatModel getSpecificChatModel(String modelName) throws IOException {
-    ChatModelConfigurationManager configManager = new ChatModelConfigurationManager();
-    ChatModelFactory chatModelFactory = new ChatModelFactory(configManager);
-    return chatModelFactory.createChatModel(modelName); // Return a specific model
-  }
-
-
-  /**
-   * Convert a natural-language user query into a search query, using the LLM
-   * @param userQuery : The initial user query
-   * @param request HttpServletRequest
-   * @param config RagConfiguration
-   * @return A ready-to-user search query
-   */
-  public static String rewriteSearchQuery(String userQuery, String retrievalMethod, final HttpServletRequest request, RagConfiguration config) throws IOException {
-
-    LOGGER.debug("RagAPI - Rewriting user query into a search query. Initial query: {}", userQuery);
-    List<ChatMessage> chatHistory = PromptUtils.getChatHistoryToList(request, config);
-    String chatHistoryStr = PromptUtils.getStringHistoryLines(chatHistory);
-
-    // Get the LLM interface (ChatLanguageModel)
-    ChatModel chatModel = getChatModel(config);
-
-    String template = PromptUtils.getRewriteQueryTemplate(request, retrievalMethod)
-            .replace("{userquery}", userQuery)
-            .replace("{conversation}", chatHistoryStr);
-    List<ChatMessage> prompts = new ArrayList<>();
-    prompts.add(new UserMessage(template)) ;
-
-    try {
-      String response = chatModel.chat(prompts).aiMessage().text();
-      LOGGER.debug("RagAPI - Rewritten query: {}", response);
-      return (response != null && !response.isEmpty()) && !"0".equals(response.trim()) ? response : userQuery;
-    } catch (Exception e) {
-      LOGGER.error("Query rewriting failed. Using initial user query for the search.", e);
-      return userQuery;
+    /**
+     * Returns a specific chat language model by name, as defined in the models.json configuration file.
+     *
+     * @param modelName The name of the model to load (matching the "name" field in the configuration).
+     * @return A {@link ChatModel} instance corresponding to the specified model name.
+     * @throws IOException If an error occurs while reading or parsing the model configuration file.
+     * @throws IllegalArgumentException If no model is found with the given name.
+     */
+    private static ChatModel getSpecificChatModel(String modelName) throws IOException {
+        ChatModelConfigurationManager configManager = new ChatModelConfigurationManager();
+        ChatModelFactory chatModelFactory = new ChatModelFactory(configManager);
+        return chatModelFactory.createChatModel(modelName); // Return a specific model
     }
 
 
-  }
+    /**
+     * Convert a natural-language user query into a search query, using the LLM
+     * @param userQuery : The initial user query
+     * @param request HttpServletRequest
+     * @param config RagConfiguration
+     * @return A ready-to-user search query
+     */
+    public static String rewriteSearchQuery(String userQuery, String retrievalMethod, final HttpServletRequest request, RagConfiguration config) throws IOException {
+
+        LOGGER.debug("RagAPI - Rewriting user query into a search query. Initial query: {}", userQuery);
+        List<ChatMessage> chatHistory = PromptUtils.getChatHistoryToList(request, config);
+        String chatHistoryStr = PromptUtils.getStringHistoryLines(chatHistory);
+
+        // Get the LLM interface (ChatLanguageModel)
+        ChatModel chatModel = getChatModel(config);
+
+        String template = PromptUtils.getRewriteQueryTemplate(request, retrievalMethod)
+                .replace("{userquery}", userQuery)
+                .replace("{conversation}", chatHistoryStr);
+        List<ChatMessage> prompts = new ArrayList<>();
+        prompts.add(new UserMessage(template)) ;
+
+        try {
+            String response = chatModel.chat(prompts).aiMessage().text();
+            LOGGER.debug("RagAPI - Rewritten query: {}", response);
+            return (response != null && !response.isEmpty()) && !"0".equals(response.trim()) ? response : userQuery;
+        } catch (Exception e) {
+            LOGGER.error("Query rewriting failed. Using initial user query for the search.", e);
+            return userQuery;
+        }
 
 
-  public static String summarize(final HttpServletRequest request, Document doc) throws IOException {
-
-    // TODO : REFACTOR SUMMARIZATION TO USE ITERATIVE REFINING
-
-    LOGGER.debug("RagAPI - Summary for document {} requested.", doc.metadata().getString("id"));
-
-    // Get RAG configuration
-    RagConfiguration config = RagConfiguration.getInstance();
-    ChatModel chatModel = getChatModel(config);
-
-    // Check if summarization is enabled
-    if (!config.getBooleanProperty(RagConfiguration.ENABLE_SUMMARIZATION)) {
-        LOGGER.debug("AiPowered - Summarize - Summarization is disabled");
-        throw new DisabledException("The summary generation feature is disabled.");
     }
 
-    // Chunk document
-    List<TextSegment> segments = ChunkUtils.chunkContent(doc, config);
 
-    if (segments.isEmpty()) {
-        LOGGER.debug("RagAPI - Summarize - No text segments found for document {}.", doc.metadata().getString("id"));
-        throw new IOException("No content available for summarization.");
+    public static String summarize(final HttpServletRequest request, Document doc, ChatStream stream) throws IOException, DatafariServerException {
+
+        LOGGER.debug("RagAPI - Summary for document {} requested.", doc.metadata().getString("id"));
+
+        // Get RAG configuration
+        RagConfiguration config = RagConfiguration.getInstance();
+        ChatModel chatModel = getChatModel(config);
+
+        // Check if summarization is enabled
+        if (!config.getBooleanProperty(RagConfiguration.ENABLE_SUMMARIZATION)) {
+            LOGGER.debug("AiPowered - Summarize - Summarization is disabled");
+            throw new DisabledException("The summary generation feature is disabled.");
+        }
+
+        // Chunk document
+        stream.phase("summarize:chunking");
+        List<TextSegment> segments = ChunkUtils.chunkContent(doc, config);
+
+        if (segments.isEmpty()) {
+            LOGGER.debug("RagAPI - Summarize - No text segments found for document {}.", doc.metadata().getString("id"));
+            throw new IOException("No content available for summarization.");
+        }
+
+        ArrayList<String> chunks = segments
+                .stream()
+                .map(TextSegment::text)
+                .collect(Collectors.toCollection(ArrayList::new));
+        int chunksNb = segments.size();
+
+        // Setup prompt
+        String initialPromptTemplate = PromptUtils.createInitialPromptForSummarization(request);
+        String iterativePromptTemplate = PromptUtils.createPromptForIterateSummaries(request);
+
+
+        // Summarize first chunk
+        stream.phase("summarize:summarization");
+        initialPromptTemplate = PromptUtils.stuffAsManySnippetsAsPossible(initialPromptTemplate, chunks, config);
+        AiMessage responseMessage =  chatModel.chat(UserMessage.from(initialPromptTemplate)).aiMessage();
+        String lastGeneratedSummary = responseMessage.text();
+
+        // Refine iteratively the summary with each chunk
+        while (!chunks.isEmpty()) {
+            String progression = (chunksNb - chunks.size()) + "/" + chunksNb;
+            stream.phase("summarize:" + progression);
+
+            // Refine the summary for each chunk
+            String iterativePrompt = PromptUtils.stuffAsManySnippetsAsPossible(
+                    iterativePromptTemplate.replace("{summary}", lastGeneratedSummary),
+                    chunks, config);
+
+            responseMessage =  chatModel.chat(UserMessage.from(iterativePrompt)).aiMessage();
+            lastGeneratedSummary = responseMessage.text();
+        }
+        stream.phase("summarize:done");
+
+        // Return the last generated summary
+        if (lastGeneratedSummary.length() > 1) {
+            return lastGeneratedSummary;
+        } else {
+            LOGGER.debug("RagAPI - Summarize - Could not generate a summary for document {}. ", doc.metadata().getString("id"));
+            throw new IOException("Could not generate any summary for this document");
+        }
+
     }
 
-    // Setup prompt
-    String initialPromptTemplate = PromptUtils.createInitialPromptForSummarization(request);
-    String iterativePromptTemplate = PromptUtils.createPromptForIterateSummaries(request);
-
-    // Summarize first chunk
-    TextSegment chunk = segments.getFirst();
-    initialPromptTemplate = initialPromptTemplate.replace("{chunk}", chunk.text());
-    AiMessage responseMessage =  chatModel.chat(UserMessage.from(initialPromptTemplate)).aiMessage();
-    String lastGeneratedSummary = responseMessage.text();
-
-    // Refine iteratively the summary with each chunk
-    for (TextSegment segment: segments) {
-
-        // Refine the summary for each chunk
-        chunk = segments.getFirst();
-        String iterativePrompt = iterativePromptTemplate
-                .replace("{chunk}", chunk.text())
-                .replace("{summary}", lastGeneratedSummary);
-        responseMessage =  chatModel.chat(UserMessage.from(iterativePrompt)).aiMessage();
-        lastGeneratedSummary = responseMessage.text();
+    public static ApiContent writeResponse(String message) {
+        final ApiContent content = new ApiContent();
+        content.message = message;
+        return content;
     }
 
-    // Merge all summaries
-    if (lastGeneratedSummary.length() > 1) {
-      return lastGeneratedSummary;
-    } else {
-      LOGGER.debug("RagAPI - Summarize - Could not generate a summary for document {}. ", doc.metadata().getString("id"));
-      throw new IOException("Could not generate any summary for this document");
+    /**
+     *
+     * @param message : The LLM String response
+     * @return a cleaner String
+     */
+    private static String cleanLlmFinalMessage(String message) {
+        message = message.replace("\\n", "\n");
+        message = message.replace("/n", "\n");
+        message = message.replace("\n ", "\n");
+        message = message.replace("•", "\n•");
+        message = message.replace("\n+", "\n");
+        message = message.trim();
+
+        return message;
     }
 
-  }
+    /**
+     *
+     * @param result The raw Solr Search result
+     * @return A List of Documents
+     * @throws FileNotFoundException if the provided results doesn't contain any document
+     */
+    private static List<Document> extractDocumentsList(JSONObject result) throws FileNotFoundException {
+        // Handling search results
+        // Retrieving list of documents: id, title, url
+        List<Document> documentsList;
+        documentsList = getDocumentList(result);
 
-  public static ApiContent writeResponse(String message) {
-    final ApiContent content = new ApiContent();
-    content.message = message;
-    return content;
-  }
-
-  /**
-   *
-   * @param message : The LLM String response
-   * @return a cleaner String
-   */
-  private static String cleanLlmFinalMessage(String message) {
-    message = message.replace("\\n", "\n");
-    message = message.replace("/n", "\n");
-    message = message.replace("\n ", "\n");
-    message = message.replace("•", "\n•");
-    message = message.replace("\n+", "\n");
-    message = message.trim();
-
-    return message;
-  }
-
-  /**
-   *
-   * @param result The raw Solr Search result
-   * @return A List of Documents
-   * @throws FileNotFoundException if the provided results doesn't contain any document
-   */
-  private static List<Document> extractDocumentsList(JSONObject result) throws FileNotFoundException {
-    // Handling search results
-    // Retrieving list of documents: id, title, url
-    List<Document> documentsList;
-    documentsList = getDocumentList(result);
-
-    if (documentsList.isEmpty()) {
-      throw new FileNotFoundException("The query cannot be answered because no associated documents were found.");
-    }
-    return documentsList;
-  }
-
-
-  /**
-   * Get a JSONArray containing a list of documents (ID, url, title and content) returned by the Search
-   * @param result : The result of the search, containing Solr documents
-   * @return JSONArray
-   */
-  private static List<Document> getDocumentList(JSONObject result) {
-    try {
-
-      JSONObject response = (JSONObject) result.get("response");
-      List<Document> documentsList = new ArrayList<>();
-
-
-      LOGGER.debug("RagAPI - Converting search results into a List of Documents.");
-      if (response != null && response.get("docs") != null) {
-        JSONArray docs = (JSONArray) response.get("docs");
-
-        // Deduplicate by embedded_content
-        if (docs.size() > 1) docs = dedupeByEmbeddedContent(docs);
-
-        JSONObject jsonObject;
-        int nbDocs = docs.size(); // MaxFiles must not exceed the number of provided documents
-        for (int i = 0; i < nbDocs; i++) {
-
-          jsonObject = (JSONObject) docs.get(i);
-
-          // If the document has content, we generate a Document object with its content and metadata
-          JSONArray contentArray = (JSONArray) jsonObject.get(EXACT_CONTENT);
-          String content;
-          if (contentArray != null && contentArray.getFirst() != null) {
-            content = contentArray.get(0).toString();
-          } else {
-            // If exactContent is not provided, we try to retrieve embedded_content
-            content = (String) jsonObject.get(EMBEDDED_CONTENT);
-          }
-
-          if (content != null && !content.isBlank()) {
-            String title = ((JSONArray) jsonObject.get("title")).getFirst().toString();
-            String id = (String) jsonObject.get("id");
-            String url = (jsonObject.get("click_url") != null) ? (String) jsonObject.get("click_url") : (String) jsonObject.get("url");
-
-            Metadata metadata = new Metadata();
-            metadata.put("title", title);
-            metadata.put("id", id);
-            metadata.put("url", url);
-
-            Document document = Document.from(content, metadata);
-            documentsList.add(document);
-          }
-
+        if (documentsList.isEmpty()) {
+            throw new FileNotFoundException("The query cannot be answered because no associated documents were found.");
         }
         return documentsList;
-      }
-    } catch (Exception e) {
-      LOGGER.error("RagAPI - An error occurred while retrieving the list of documents.", e);
     }
-    return new ArrayList<>();
-  }
+
+
+    /**
+     * Get a JSONArray containing a list of documents (ID, url, title and content) returned by the Search
+     * @param result : The result of the search, containing Solr documents
+     * @return JSONArray
+     */
+    private static List<Document> getDocumentList(JSONObject result) {
+        try {
+
+            JSONObject response = (JSONObject) result.get("response");
+            List<Document> documentsList = new ArrayList<>();
+
+
+            LOGGER.debug("RagAPI - Converting search results into a List of Documents.");
+            if (response != null && response.get("docs") != null) {
+                JSONArray docs = (JSONArray) response.get("docs");
+
+                // Deduplicate by embedded_content
+                if (docs.size() > 1) docs = dedupeByEmbeddedContent(docs);
+
+                JSONObject jsonObject;
+                int nbDocs = docs.size(); // MaxFiles must not exceed the number of provided documents
+                for (int i = 0; i < nbDocs; i++) {
+
+                    jsonObject = (JSONObject) docs.get(i);
+
+                    // If the document has content, we generate a Document object with its content and metadata
+                    JSONArray contentArray = (JSONArray) jsonObject.get(EXACT_CONTENT);
+                    String content;
+                    if (contentArray != null && contentArray.getFirst() != null) {
+                        content = contentArray.get(0).toString();
+                    } else {
+                        // If exactContent is not provided, we try to retrieve embedded_content
+                        content = (String) jsonObject.get(EMBEDDED_CONTENT);
+                    }
+
+                    if (content != null && !content.isBlank()) {
+                        String title = ((JSONArray) jsonObject.get("title")).getFirst().toString();
+                        String id = (String) jsonObject.get("id");
+                        String url = (jsonObject.get("click_url") != null) ? (String) jsonObject.get("click_url") : (String) jsonObject.get("url");
+
+                        Metadata metadata = new Metadata();
+                        metadata.put("title", title);
+                        metadata.put("id", id);
+                        metadata.put("url", url);
+
+                        Document document = Document.from(content, metadata);
+                        documentsList.add(document);
+                    }
+
+                }
+                return documentsList;
+            }
+        } catch (Exception e) {
+            LOGGER.error("RagAPI - An error occurred while retrieving the list of documents.", e);
+        }
+        return new ArrayList<>();
+    }
 
     /**
      * Deduplicating documents based on normalized embedded_content.

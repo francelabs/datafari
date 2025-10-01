@@ -44,7 +44,7 @@ public class DatafariTools {
             @P("The exact ID of the document") String id
     ) {
         LOGGER.info("AGENTIC TOOLS - RAG by document - ID: {} - Query: {}", id, query);
-        String results = "";
+        String result = "";
 
         AiRequest ragrequest = new AiRequest();
         ragrequest.query = query;
@@ -52,16 +52,12 @@ public class DatafariTools {
 
         try {
             ApiContent resp = RagService.rag(request, ragrequest, stream, sourcesAcc);
-            if (resp.message != null) {
-                results = resp.message;
-            } else if (resp.error != null) {
-                results = "RAG query failed: " + resp.error.reason;
-            }
+            result = returnMessageOrReason(resp, "RAG query failed");
         } catch (Exception e) {
             LOGGER.error("AGENTIC TOOLS - RAG by document - ERROR: {}", e.getLocalizedMessage());
         }
-        LOGGER.debug("AGENTIC TOOLS - RAG by document - Result {}", results);
-        return results;
+        LOGGER.debug("AGENTIC TOOLS - RAG by document - Result {}", result);
+        return result;
     }
 
     @ToolMeta(label = "Searching documents...",
@@ -182,9 +178,10 @@ public class DatafariTools {
         AiRequest summarizerequest = new AiRequest();
         summarizerequest.id = id;
 
-        String results = SummarizationService.summarize(request, summarizerequest, stream, sourcesAcc).message;
-        LOGGER.debug("AGENTIC TOOLS - Summarize - {}", results);
-        return results;
+        ApiContent resp = SummarizationService.summarize(request, summarizerequest, stream, sourcesAcc);
+        String result = returnMessageOrReason(resp, "Unable to generate a summary for the document " + id);
+        LOGGER.debug("AGENTIC TOOLS - Summarize - {}", result);
+        return result;
     }
 
     @ToolMeta(label = "Extracting entities...",
@@ -198,27 +195,21 @@ public class DatafariTools {
         LOGGER.info("AGENTIC TOOLS - Extracting entities from [{}] : {}", docId, entities);
         String query = "Extract the following entities from the document: " + entities;
 
-        String results;
+        String result;
         AiRequest ragrequest = new AiRequest();
         ragrequest.query = query;
         ragrequest.id = docId;
 
         try {
             ApiContent resp = RagService.rag(request, ragrequest, stream, sourcesAcc);
-            if (resp.message != null && !resp.message.isBlank()) {
-                results = resp.message;
-            } else if (resp.error != null) {
-                results = "Extraction failed: " + resp.error.reason;
-            } else {
-                results = "Extraction failed.";
-            }
+            result = returnMessageOrReason(resp, "Extraction failed");
         } catch (Exception e) {
             LOGGER.error("AGENTIC TOOLS - Entity extraction failed - ERROR: {}", e.getLocalizedMessage());
-            results = "Extraction failed.";
+            result = "Extraction failed.";
         }
 
-        LOGGER.debug("AGENTIC TOOLS - Entity extraction failed - Result {}", results);
-        return results;
+        LOGGER.debug("AGENTIC TOOLS - Entity extraction failed - Result {}", result);
+        return result;
     }
 
     @ToolMeta(
@@ -346,6 +337,16 @@ public class DatafariTools {
 
         } catch (Exception e) {
             LOGGER.error("Could not add document to sources.", e);
+        }
+    }
+
+    String returnMessageOrReason(ApiContent content, String errorMessage) {
+        if (content.message != null && !content.message.isBlank()) {
+            return content.message;
+        } else if (content.error != null && content.error.reason != null) {
+            return errorMessage + ": " + content.error.reason;
+        } else {
+            return errorMessage;
         }
     }
 

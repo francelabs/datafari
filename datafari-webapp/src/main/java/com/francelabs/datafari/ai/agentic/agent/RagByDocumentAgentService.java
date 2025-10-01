@@ -6,6 +6,7 @@ import dev.langchain4j.service.V;
 
 public interface RagByDocumentAgentService {
 
+// TODO Delete when AgenticByDocument is ready
     @UserMessage("""
         You are the backend agent of the search engine Datafari.
         Use the provided tools (RAG, RAG by document, summarize, search) whenever it is relevant.

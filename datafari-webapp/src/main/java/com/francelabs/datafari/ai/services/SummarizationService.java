@@ -5,6 +5,7 @@ import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.api.RagAPI;
+import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.rest.v2_0.ai.AiPowered;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.data.document.Document;
@@ -75,7 +76,7 @@ public class SummarizationService extends AiService {
         try {
             // Retrieve an existing summary or generate a new one
             stream.phase("summarize:generation");
-            response.message = getDocumentSummary(request, summary, content, id, title, url);
+            response.message = getDocumentSummary(request, summary, content, id, title, url, stream);
         } catch (EmptyFileException e) {
             return error(stream, "422", "summarizationEmptyFile",
                     "Sorry, I am unable to generate a summary, since the file has no content.", "File is empty and can not be summarized.");
@@ -97,10 +98,10 @@ public class SummarizationService extends AiService {
      * @return a response JSONObject
      */
     private static String getDocumentSummary(HttpServletRequest request, String summary, String content, String id,
-                                             String title, String url) throws IOException {
+                                             String title, String url, ChatStream stream) throws IOException, DatafariServerException {
         if (summary != null && !summary.isEmpty()) {
             return summary;
-        } else if ((summary == null || summary.isEmpty()) && (content != null && !content.isEmpty())) {
+        } else if (content != null && !content.isEmpty()) {
             // If there is no existing summary, but content is found, use RagAPI service to generate a summary
             LOGGER.debug("AiPowered - Summarize - No summary found for document {}.", id);
 
@@ -112,14 +113,11 @@ public class SummarizationService extends AiService {
             Document doc = Document.from(content, metadata);
 
             LOGGER.debug("AiPowered - Summarize - Generating a summary for document {}.", id);
-            return RagAPI.summarize(request, doc);
-        } else if (content == null || content.isEmpty()) {
+            return RagAPI.summarize(request, doc, stream);
+        } else {
             LOGGER.warn("AiPowered - Summarize - Could not retrieve summary or content from file {}.", id);
             // Error : No content, no summary
             throw new EmptyFileException();
-
         }
-
-        throw new UnexpectedException("Unexpected exception. Could not generate a summary.");
     }
 }

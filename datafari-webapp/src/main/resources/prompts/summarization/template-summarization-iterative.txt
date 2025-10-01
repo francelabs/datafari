@@ -1,7 +1,7 @@
-Here is the summary of a partial document. Use the new chunk below to refine the summary if relevant. If not relevant, return the original summary.
+Here is the summary of a partial document. Use the new chunks below to refine the summary if relevant. If not relevant, return the original summary.
 
 Summary:
 {summary}
 
-New chunk:
-{chunk}
+Additional content:
+{snippets}
