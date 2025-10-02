@@ -1,6 +1,7 @@
 package com.francelabs.datafari.service.db;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,25 +17,24 @@ import com.francelabs.datafari.utils.GDPRConfiguration;
 @Service
 public class UserDataService {
 
-    final static Logger logger = LogManager.getLogger(UserDataService.class.getName());
+    private static final Logger logger = LogManager.getLogger(UserDataService.class.getName());
 
-    private static volatile UserDataService instance; // compat legacy
+    private static volatile UserDataService instance; 
 
-    public final static String SEARCHADMINISTRATOR = "SearchAdministrator";
-    public final static String USERCOLLECTION = "users";
-    public final static String ROLECOLLECTION = "roles";
+    public static final String SEARCHADMINISTRATOR = "SearchAdministrator";
+    public static final String USERCOLLECTION = "users";
+    public static final String ROLECOLLECTION = "roles";
 
-    public static final String USERNAMECOLUMN = "username";
-    public final static String PASSWORDCOLUMN = "password";
-    public final static String ISIMPORTEDCOLUMN = "is_imported";
-    public final static String LASTREFRESHCOLUMN = "last_refresh";
-    public final static String IMPORTCOLUMN = "imported"; // non utilisé mais conservé
-    public final static String ROLECOLUMN = "role";
+    public static final String USERNAMECOLUMN   = "username";
+    public static final String PASSWORDCOLUMN   = "password";      
+    public static final String ISIMPORTEDCOLUMN = "is_imported";
+    public static final String LASTREFRESHCOLUMN= "last_refresh";
+    public static final String IMPORTCOLUMN     = "imported";      
+    public static final String ROLECOLUMN       = "role";
 
-    private final String userDataTTL; // conservé pour parité (TTL simulé via last_refresh)
+    private final String userDataTTL;
     private final SqlService sql;
 
-    /** Pont de compat pour l’ancien code qui fait getInstance() */
     public static synchronized UserDataService getInstance() {
         return instance;
     }
@@ -45,7 +45,6 @@ public class UserDataService {
         instance = this; // publication du bean Spring pour l’ancien code
     }
 
-    // =========================== Requêtes ===========================
 
     public boolean isInBase(final String username) throws DatafariServerException {
         try {
@@ -135,7 +134,6 @@ public class UserDataService {
                 }
             );
 
-            // Roles
             sql.getJdbcTemplate().query(
                 "SELECT " + USERNAMECOLUMN + ", " + ROLECOLUMN + " FROM " + ROLECOLLECTION,
                 rs -> {
@@ -201,11 +199,12 @@ public class UserDataService {
         }
     }
 
-    public void changePassword(final String passwordHashed, final String username) throws DatafariServerException {
+    public void changePassword(final String bcryptHash, final String username) throws DatafariServerException {
         try {
             sql.getJdbcTemplate().update(
-                "UPDATE " + USERCOLLECTION + " SET " + PASSWORDCOLUMN + " = ? WHERE " + USERNAMECOLUMN + " = ?",
-                passwordHashed, username
+                "UPDATE " + USERCOLLECTION + " SET " + PASSWORDCOLUMN + " = ?, " + LASTREFRESHCOLUMN + " = CURRENT_TIMESTAMP " +
+                "WHERE " + USERNAMECOLUMN + " = ?",
+                bcryptHash, username
             );
         } catch (Exception e) {
             logger.warn("Unable to change password : {}", e.getMessage());
@@ -229,7 +228,7 @@ public class UserDataService {
     }
 
     @Transactional
-    public boolean addUser(final String username, final String password,
+    public boolean addUser(final String username, final String bcryptHash,
                            final List<String> roles, final boolean isImported) throws DatafariServerException {
         try {
             sql.getJdbcTemplate().update(
@@ -239,7 +238,7 @@ public class UserDataService {
                 PASSWORDCOLUMN + " = EXCLUDED." + PASSWORDCOLUMN + ", " +
                 ISIMPORTEDCOLUMN + " = EXCLUDED." + ISIMPORTEDCOLUMN + ", " +
                 LASTREFRESHCOLUMN + " = EXCLUDED." + LASTREFRESHCOLUMN,
-                username, password, isImported
+                username, bcryptHash, isImported
             );
             for (String role : roles) {
                 addRole(role, username);

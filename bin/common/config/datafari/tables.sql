@@ -104,7 +104,7 @@ CREATE TABLE liked (
 
 CREATE TABLE users (
     username VARCHAR(255) PRIMARY KEY,
-    password CHAR(64), -- hash SHA-256 hex
+    password    TEXT NOT NULL,  -- hash bcrypt ($2y$12$...)
     is_imported BOOLEAN NOT NULL DEFAULT false,
     last_refresh TIMESTAMP NOT NULL
 );
