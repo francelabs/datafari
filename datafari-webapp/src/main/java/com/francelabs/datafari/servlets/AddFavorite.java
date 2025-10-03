@@ -86,7 +86,7 @@ public class AddFavorite extends HttpServlet {
         try {
           Favorite.addFavorite(username, request.getParameter("idDocument"), request.getParameter("titleDocument"));
           jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-          AuditLogUtil.log("Cassandra", authenticatedUserName, request.getRemoteAddr(),
+          AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
               "Added a favorite for user " + username);
         } catch (final DatafariServerException e) {
           jsonResponse.put(OutputConstants.CODE, e.getErrorCode().getValue());

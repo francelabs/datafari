@@ -84,7 +84,7 @@ public class SaveSearch extends HttpServlet {
         final int code = SavedSearch.saveSearch(username, requestName, request.getParameter("query"));
         if (code == CodesReturned.ALLOK.getValue()) {
           jsonResponse.put("code", 0);
-          AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
+          AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
               "Saved a new search for user " + username);
         } else {
           jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE);

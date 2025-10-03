@@ -56,8 +56,8 @@ public class GetAllUsersAndRolesApache extends HttpServlet {
       jsonResponse.put(OutputConstants.STATUS, usersList);
     } else {
       jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE.getValue());
-      jsonResponse.put(OutputConstants.STATUS, "Datafari isn't connected to Cassandra");
-      logger.error("Datafari isn't connected to Cassandra");
+      jsonResponse.put(OutputConstants.STATUS, "Datafari isn't connected to Postgresql");
+      logger.error("Datafari isn't connected to Postgresql");
     }
     final PrintWriter out = response.getWriter();
     out.print(jsonResponse);

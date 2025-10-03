@@ -17,7 +17,7 @@ public class DatafariLdapAuthoritiesPopulator implements LdapAuthoritiesPopulato
    */
   @Override
   public Collection<? extends GrantedAuthority> getGrantedAuthorities(final DirContextOperations userData, final String username) {
-    return CassandraAuthenticationProvider.getGrantedAuthorities(username);
+    return PostgresAuthenticationProvider.getGrantedAuthorities(username);
   }
 
 }

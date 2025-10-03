@@ -15,27 +15,21 @@
  *******************************************************************************/
 package com.francelabs.datafari.service.db;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.nio.ByteBuffer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.zookeeper.server.ByteBufferInputStream;
+import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.datastax.oss.driver.api.core.DriverException;
-import com.datastax.oss.driver.api.core.cql.BoundStatement;
-import com.datastax.oss.driver.api.core.cql.PreparedStatement;
-import com.datastax.oss.driver.api.core.cql.ResultSet;
-import com.datastax.oss.driver.api.core.cql.Row;
 import com.francelabs.datafari.exception.CodesReturned;
-import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.licence.Licence;
 
-public class LicenceDataService extends CassandraService {
+public class LicenceDataService {
 
-  final static Logger logger = LogManager.getLogger(LicenceDataService.class.getName());
+  private static final Logger logger = LogManager.getLogger(LicenceDataService.class);
 
   public static final String IDCOLUMN = "licence_id";
   public static final String LICENCECOLLECTION = "licence";
@@ -43,70 +37,77 @@ public class LicenceDataService extends CassandraService {
 
   private static LicenceDataService instance;
 
-  public static synchronized LicenceDataService getInstance() throws DatafariServerException {
-    try {
-      if (instance == null) {
-        instance = new LicenceDataService();
-      }
-      instance.refreshSession();
-      return instance;
-    } catch (final DriverException e) {
-      logger.warn("Unable to get instance : " + e.getMessage());
-      // TODO catch specific exception
-      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+  // Helpers JDBC via le pont statique
+  private final JdbcTemplate jdbc;
+
+  private LicenceDataService() {
+    this.jdbc = SqlService.get().getJdbcTemplate();
+  }
+
+  public static synchronized LicenceDataService getInstance() {
+    if (instance == null) {
+      instance = new LicenceDataService();
     }
+    return instance;
   }
 
   /**
-   * Get the licence
-   *
-   * @param licenceID
-   * @return the licence corresponding to the licence id or null if not found
+   * Retrieve a licence by ID, or fallback to the first row if not found/empty.
    */
   public Licence getLicence(final String licenceID) {
     Licence licence = null;
     try {
-      final String query = "SELECT " + LICENCECOLUMN + " FROM " + LICENCECOLLECTION + " where " + IDCOLUMN + "='" + licenceID + "'";
-      final ResultSet result = session.execute(query);
-      final Row row = result.one();
-      if (row != null && !row.isNull(LICENCECOLUMN)) {
-        final ByteBuffer bb = row.getByteBuffer(LICENCECOLUMN);
-        final ByteBufferInputStream bbi = new ByteBufferInputStream(bb);
-        final ObjectInputStream ois = new ObjectInputStream(bbi);
-        licence = (Licence) ois.readObject();
+      // 1) Tentative par ID
+      final String byIdSql = "SELECT " + LICENCECOLUMN + " FROM " + LICENCECOLLECTION + " WHERE " + IDCOLUMN + " = ?";
+      byte[] data = jdbc.query(byIdSql, rs -> rs.next() ? rs.getBytes(LICENCECOLUMN) : null, licenceID);
+
+      if (data != null && data.length > 0) {
+        try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data))) {
+          return (Licence) ois.readObject();
+        }
+      } else {
+        logger.warn("Licence not found or empty for id='{}'. Trying fallback.", licenceID);
+      }
+
+      // 2) Fallback : première ligne de la table
+      final String anySql = "SELECT " + LICENCECOLUMN + " FROM " + LICENCECOLLECTION + " LIMIT 1";
+      byte[] anyData = jdbc.query(anySql, rs -> rs.next() ? rs.getBytes(LICENCECOLUMN) : null);
+
+      if (anyData != null && anyData.length > 0) {
+        try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(anyData))) {
+          licence = (Licence) ois.readObject();
+          logger.info("Licence retrieved via fallback (first row).");
+        }
+      } else {
+        logger.warn("Fallback: licence table '{}' is empty or column is empty.", LICENCECOLLECTION);
       }
     } catch (final Exception e) {
-      logger.error("Unable to retrieve licence " + licenceID, e);
+      logger.error("Error while retrieving/deserializing licence (id='{}')", licenceID, e);
     }
-    return licence;
+    return licence; // peut être null
   }
 
   /**
-   * Save the licence
-   *
-   * @param licenceId
-   *          the licenceId
-   * @param licence
-   *          the licence
-   * @return CodesReturned.ALLOK if all was ok
-   * @throws DatafariServerException
+   * Save (upsert) a licence (BYTEA) under a given id. Deletes previous id if it differs.
    */
   public int saveLicence(final String licenceId, final Licence licence) {
     try {
-      final String existingLicence = getLicence();
-      final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      final ObjectOutputStream oos = new ObjectOutputStream(baos);
-      oos.writeObject(licence);
-      baos.flush();
-      final ByteBuffer bb = ByteBuffer.wrap(baos.toByteArray());
-      final PreparedStatement ps = session.prepare("INSERT INTO " + LICENCECOLUMN 
-          + " (" + IDCOLUMN + "," 
-          + LICENCECOLUMN + ")" 
-          + " values (?,?)");
-      final BoundStatement bs = ps.bind(licenceId, bb);
-      session.execute(bs);
+      final String existingLicence = getLicenceId();
 
-      if (existingLicence != null && !existingLicence.isEmpty()) {
+      final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+        oos.writeObject(licence);
+        oos.flush();
+      }
+      byte[] licenceBytes = baos.toByteArray();
+
+      final String sql =
+          "INSERT INTO " + LICENCECOLLECTION + " (" + IDCOLUMN + ", " + LICENCECOLUMN + ") VALUES (?, ?) " +
+          "ON CONFLICT (" + IDCOLUMN + ") DO UPDATE SET " + LICENCECOLUMN + " = EXCLUDED." + LICENCECOLUMN;
+
+      jdbc.update(sql, licenceId, licenceBytes);
+
+      if (existingLicence != null && !existingLicence.isEmpty() && !existingLicence.equals(licenceId)) {
         deleteLicence(existingLicence);
       }
     } catch (final Exception e) {
@@ -115,39 +116,33 @@ public class LicenceDataService extends CassandraService {
     return CodesReturned.ALLOK.getValue();
   }
 
-  private String getLicence() {
+  /** Return any existing licence_id (first row) or null. */
+  private String getLicenceId() {
     try {
-      final String query = "SELECT " + IDCOLUMN + " FROM " + LICENCECOLLECTION + ";";
-      final ResultSet result = session.execute(query);
-      final Row row = result.one();
-      if (row != null && !row.isNull(IDCOLUMN)) {
-        final String licenceId = row.getString(IDCOLUMN);
-        return licenceId;
-      }
+      final String sql = "SELECT " + IDCOLUMN + " FROM " + LICENCECOLLECTION + " LIMIT 1";
+      return jdbc.query(sql, rs -> rs.next() ? rs.getString(IDCOLUMN) : null);
     } catch (final Exception e) {
-      logger.warn("Unable to get the licence", e);
+      logger.warn("Unable to get the licence id", e);
+      return null;
     }
-    return null;
   }
 
   private void deleteLicence(final String licenceId) {
     try {
-      final String query = "DELETE FROM " + LICENCECOLLECTION 
-          + " WHERE " + IDCOLUMN + " = '" + licenceId + "'"
-          + " IF EXISTS";
-      session.execute(query);
+      final String sql = "DELETE FROM " + LICENCECOLLECTION + " WHERE " + IDCOLUMN + " = ?";
+      jdbc.update(sql, licenceId);
     } catch (final Exception e) {
-      logger.warn("Unable to delete licence: " + licenceId, e);
+      logger.warn("Unable to delete licence: {}", licenceId, e);
     }
   }
 
+  @SuppressWarnings("unused")
   private void emptyLicence() {
     try {
-      final String query = "TRUNCATE " + LICENCECOLLECTION + ";";
-      session.execute(query);
+      final String sql = "TRUNCATE TABLE " + LICENCECOLLECTION;
+      jdbc.update(sql);
     } catch (final Exception e) {
       logger.warn("Unable to empty licence table", e);
     }
   }
-
 }

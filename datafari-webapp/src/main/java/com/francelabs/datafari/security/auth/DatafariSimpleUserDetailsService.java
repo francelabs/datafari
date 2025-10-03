@@ -14,7 +14,7 @@ public class DatafariSimpleUserDetailsService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-    final Collection<GrantedAuthority> authorities = CassandraAuthenticationProvider.getGrantedAuthorities(username);
+    final Collection<GrantedAuthority> authorities = PostgresAuthenticationProvider.getGrantedAuthorities(username);
     return new User(username, "notUsed", true, true, true, true, authorities);
   }
 

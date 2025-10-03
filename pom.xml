@@ -6,17 +6,17 @@
   <artifactId>datafari-ce</artifactId>
   <!-- Main POM of datafari -->
   <packaging>pom</packaging>
-  <version>6.3-dev-Community</version>
+  <version>${revision}</version>
   <name>Datafari Enterprise Search CE - Parent POM</name>
   <properties>
+    <revision.base>7.0-dev</revision.base>
+    <edition>Community</edition>
+    <revision>${revision.base}-${edition}</revision>
     <adminui.version>1.0</adminui.version>
     <adminui.md5>ae9ca787e5067f3bedb1f2cdad4408b0</adminui.md5>
     <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
     <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
-    <cassandra.version>trunk</cassandra.version>
-    <cassandra.sha512>b94d22c231dfbe124db094ff784146016fabfe0da0ec5ebcce7302c6f2bd78d2c568769a0c134bb1d73370c208b04d1543dc7cc11a83e5e1b789731da85ac3bf</cassandra.sha512>
-    <cassandra.driver.version>4.19.0</cassandra.driver.version>
-    <datafari.version>6.3-dev-Community</datafari.version>
+    <datafari.version>${revision}</datafari.version>
     <datafariui.version>1.1.5</datafariui.version>
     <datafariui.md5>bbfb341dbcc8e92711c24c8bceebdbf3</datafariui.md5>
     <guava.version>26.0-jre</guava.version>
@@ -28,8 +28,8 @@
     <jackson-databind.version>2.13.4.1</jackson-databind.version>
     <keycloak.version>22.0.1</keycloak.version>
     <log4j.version>2.17.2</log4j.version>
-    <logstash.version>8.12.1</logstash.version>
-    <logstash.sha512>df516962f9518a20809a92655605766607f2177287f7e296e2de40e4970680d3004e7e5cbad57b15add1271f5c7a0c166a950b0fd995eaf57417d8efb16f6ed8</logstash.sha512>
+    <logstash.version>8.19.4</logstash.version>
+    <logstash.sha512>2e1b77745e80a0e5101d7bcbee5bbfbe43373628a8c5e3ddbe1a55d91491b05186a084334b27dcfd52b37d74236d71e99d41b95600c44c51e54a4910284783e5</logstash.sha512>
     <mcf-solr-plugin.version>9.x-plugin-2.2</mcf-solr-plugin.version>
     <mcf-solr-plugin.sha512>38261a93265c1697db2742947ec72dfdfbb31f4dcab7a343484b06bb57416a668c750a98d5130fadf97464587a09677bb927e2623b862e618e45a3922b67d20b</mcf-solr-plugin.sha512>
     <mssql-jdbc.version>10.2.1.jre11</mssql-jdbc.version>
@@ -38,8 +38,8 @@
     <postgres.version>42.7.2</postgres.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-   <solr.sha512>08888ea626b9fa617438b97f9f8d552acfbd087fc9fd248e7495627716decca5e2e8d55bedf0e1f2484c838295c2abd68debb002d1ae36965eb99753320459f4</solr.sha512>
-   <solr.version>9.8.1</solr.version>
+   <solr.sha512>7b93dab3f0fd09c820a45574c4ef60dff0e8245b8b3a8913bc5874b6e12595ebbd3bb9c856a213ba1643673e461041e95e7e85031523dfb208686c41c366825d</solr.sha512>
+   <solr.version>9.9.0</solr.version>
      <spring.boot.version>2.7.14</spring.boot.version>
     <spring.data.cassandra.version>3.4.15</spring.data.cassandra.version>
     <spring.security.version>5.8.5</spring.security.version>
@@ -55,8 +55,8 @@
     <xmlsec.version>2.3.0</xmlsec.version>
     <mcf.version>2.28</mcf.version>
     <mcf.sha512>73b8053e333d63540113cc247e1ac7679b91eb07d68f4cb89ae8ffdfa6978fb24bd346bcb0cbc45ae823c8accd7bedd0994b3e7683442a614b839a7ab3616def</mcf.sha512>
-    <zookeeper.version>3.9.2</zookeeper.version>
-    <zookeeper.sha512>2b5ae02d618a27ca8cd54924855d5344263b7d9dee760181f9d66bafa9230324d2ad31786895f0654c969dc38d4a3d0077f74cc376b58b5fa2fb94beb1ab445f</zookeeper.sha512>
+    <zookeeper.version>3.9.3</zookeeper.version>
+    <zookeeper.sha512>d44d870c1691662efbf1a8baf1859c901b820dc5ff163b36e81beb27b6fbf3cd31b5f1f075697edaaf6d3e7a4cb0cc92f924dcff64b294ef13d535589bdaf143</zookeeper.sha512>
     <langchain4j.version>1.3.0</langchain4j.version>
   </properties>
   
@@ -72,7 +72,6 @@
     <module>datafari-webapp</module>
     <module>datafari-zookeeper</module>
     <module>datafari-jena</module>
-    <module>datafari-cassandra</module>
     <module>datafari-tomcat</module>
     <module>datafari-analytic-stack</module>
     <module>datafari-updateprocessor</module>

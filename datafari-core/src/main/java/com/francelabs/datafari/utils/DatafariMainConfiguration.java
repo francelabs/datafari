@@ -43,7 +43,6 @@ public class DatafariMainConfiguration extends AbstractConfigClass {
   public static final String ONTOLOGY_LANGUAGE_SELECTION = "ontologyLanguageSelection";
   public static final String ONTOLOGY_PARENTS_LABELS = "ontologyParentsLabels";
   public static final String ONTOLOGY_CHILDREN_LABELS = "ontologyChildrenLabels";
-  public static final String ALLOW_LOCAL_FILE_READING = "ALLOWLOCALFILEREADING";
   public final static String LIKESANDFAVORTES = "IS_LIKES_AND_FAVORITES_ENABLED";
   public final static String TEMP_ADMIN_PASSWORD = "TEMPADMINPASSWORD";
   public static final String SOLR_MAIN_COLLECTION = "SOLRMAINCOLLECTION";
@@ -63,6 +62,7 @@ public class DatafariMainConfiguration extends AbstractConfigClass {
   public static final String TIKASERVER_OCR= "TIKASERVER_OCR";
   public static final String ENABLE_MONITORING_TIMER = "ENABLE_MONITORING_TIMER";
   public static final String CUSTOM_PROXY_URL = "custom_proxy_url";
+  public static final String ALLOWED_PROTOCOLS_URL = "ALLOWED_PROTOCOLS_URL";
 
   private final static Logger LOGGER = LogManager.getLogger(DatafariMainConfiguration.class.getName());
 

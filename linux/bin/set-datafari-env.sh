@@ -29,11 +29,6 @@ export MCF_HOME=$DATAFARI_HOME/mcf/mcf_home
 export SOLR_INSTALL_DIR=$DATAFARI_HOME/solr
 export SOLR_ENV=$SOLR_INSTALL_DIR/bin/solr.in.sh
 export SOLR_INCLUDE=$SOLR_ENV
-export CASSANDRA_HOME=$DATAFARI_HOME/cassandra
-export CASSANDRA_ENV=$CASSANDRA_HOME/bin/cassandra.in.sh
-export CASSANDRA_INCLUDE=$CASSANDRA_ENV
-export CASSANDRA_HOST=127.0.0.1
-export CASSANDRA_PORT=9042
 export POSTGRES_HOME=$DATAFARI_HOME/pgsql
 export ZK_HOME=$DATAFARI_HOME/zookeeper
 export ZK_ENV=$ZK_HOME/bin/zkEnvh.sh
@@ -42,7 +37,6 @@ export ZK_ENV_MCF=$ZK_HOME_MCF/bin/zkEnvh.sh
 export AS_HOME=$DATAFARI_HOME/analytic-stack
 export TIKA_SERVER_HOME=$DATAFARI_HOME/tika-server
 
-# Logs directory: needed for Cassandra startup
 export DATAFARI_LOGS=$DATAFARI_HOME/logs
 
 # Configs
@@ -57,7 +51,6 @@ export MCF_PID_FILE=$PID_DIR/mcf_crawler_agent.pid
 export CATALINA_PID=$PID_DIR/tomcat.pid
 export CATALINA_MCF_PID=$PID_DIR/tomcat-mcf.pid
 export SOLR_PID_FILE=$PID_DIR/solr-8983.pid
-export CASSANDRA_PID_FILE=$PID_DIR/cassandra.pid
 export POSTGRES_PID_FILE=$PID_DIR/postmaster.pid
 export ZK_PID_FILE=$PID_DIR/zookeeper-solr.pid
 export ZK_MCF_PID_FILE=$PID_DIR/zookeeper-mcf.pid

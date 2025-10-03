@@ -93,9 +93,9 @@ public class DeleteUser extends HttpServlet {
     final String authenticatedUserName = AuthenticatedUserName.getName(request);
     final String affectedUser = request.getParameter(UserDataService.USERNAMECOLUMN) == null ? "null" : request.getParameter(UserDataService.USERNAMECOLUMN).toString();
     if (allOK) {
-      AuditLogUtil.log("Cassandra", authenticatedUserName, request.getRemoteAddr(), "Deleted user " + affectedUser + "as well as all associated data (alerts, favorites, ...).");
+      AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(), "Deleted user " + affectedUser + "as well as all associated data (alerts, favorites, ...).");
     } else {
-      AuditLogUtil.log("Cassandra", authenticatedUserName, request.getRemoteAddr(), "Error deleting user " + affectedUser);
+      AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(), "Error deleting user " + affectedUser);
     }
   }
 }

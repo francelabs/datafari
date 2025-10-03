@@ -1,2 +1,0 @@
-/* Put here the custom Cassandra table you want to create in addition to the existing ones in Datafari */
-/* You can also ALTER or DELETE tables but be really careful with that ! */ 

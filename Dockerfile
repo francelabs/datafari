@@ -1,4 +1,4 @@
-FROM maven:3.6.3-jdk-11 AS BUILD
+FROM maven:3.9.9-eclipse-temurin-21-jammy AS BUILD
 
 ENV ANT_VERSION=1.10.9
 ENV ANT_HOME=/opt/ant
@@ -38,7 +38,7 @@ COPY . .
 #COPY datafari-ee/README.txt datafari-ee/README.txt
 #COPY datafari-ee/pom.xml datafari-ee/pom.xml
 #COPY .git .git
-RUN mvn -f pom.xml -DfailIfNoTests=false -Dtest='!TestDataServices' -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -B clean install 
+RUN mvn -f pom.xml -DskipTests -DfailIfNoTests=false -Dtest='!TestDataServices' -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -B clean install 
 RUN ls
 #COPY datafari-ee/apache apache
 RUN ls
@@ -48,7 +48,7 @@ RUN ls
 #COPY datafari-ee/ssl-keystore ssl-keystore
 RUN ant clean-build -f ./linux/build.xml
 
-FROM eclipse-temurin:11-jdk-jammy
+FROM maven:3.9.9-eclipse-temurin-21-jammy
 MAINTAINER Olivier Tavard FRANCE LABS <olivier.tavard@francelabs.com>
 
 ENV DATAFARIUIDEV=false

@@ -59,8 +59,8 @@ public class GetAllUsersAndRoles extends HttpServlet {
       jsonResponse.put(OutputConstants.STATUS, usersList);
     } else {
       jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE.getValue());
-      jsonResponse.put(OutputConstants.STATUS, "Datafari isn't connected to Cassandra");
-      logger.error("Datafari isn't connected to Cassandra");
+      jsonResponse.put(OutputConstants.STATUS, "Datafari isn't connected to Postgresql");
+      logger.error("Datafari isn't connected to Postgresql");
       allOK = false;
     }
     final PrintWriter out = response.getWriter();
@@ -68,10 +68,10 @@ public class GetAllUsersAndRoles extends HttpServlet {
 
     String authenticatedUserName = AuthenticatedUserName.getName(request);
     if (allOK) {
-      AuditLogUtil.log("Cassandra", authenticatedUserName, request.getRemoteAddr(),
+      AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
           "Requested the list of all users and roles of type " + usersType);
     } else {
-      AuditLogUtil.log("Cassandra", authenticatedUserName, request.getRemoteAddr(),
+      AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
           "Error requesting the list of all users and roles of type " + usersType);
     }
   }

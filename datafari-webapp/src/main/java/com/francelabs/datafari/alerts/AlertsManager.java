@@ -277,7 +277,7 @@ public class AlertsManager {
           } // Creates an alert with the attributes of the element
             // found in the database.
           alert = new Alert(alertProp.get("subject").toString(), alertProp.get("mail").toString(), server, alertProp.get("keyword").toString(), alertProp.get("filters").toString(),
-              alertProp.get("frequency").toString(), mail, alertProp.get("user").toString());
+              alertProp.get("frequency").toString(), mail, alertProp.get("username").toString());
           alert.run(); // Makes the request and send the mail if they
           // are some results
         }

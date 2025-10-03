@@ -16,7 +16,7 @@ public class DatafariSAMLUserDetailsService implements SAMLUserDetailsService {
   public Object loadUserBySAML(final SAMLCredential credential) throws UsernameNotFoundException {
     final String username = credential.getNameID().getValue();
 
-    final Collection<GrantedAuthority> authorities = CassandraAuthenticationProvider.getGrantedAuthorities(username);
+    final Collection<GrantedAuthority> authorities = PostgresAuthenticationProvider.getGrantedAuthorities(username);
 
     // In a real scenario, this implementation has to locate user in a arbitrary
     // dataStore based on information present in the SAMLCredential and

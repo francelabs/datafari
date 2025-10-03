@@ -83,10 +83,10 @@ public class AddRole extends HttpServlet {
     String role = request.getParameterValues(UserDataService.ROLECOLUMN) == null ? "null"
         : request.getParameterValues(UserDataService.ROLECOLUMN).toString();
     if (allOK) {
-      AuditLogUtil.log("Cassandra", authenticatedUserName, request.getRemoteAddr(),
+      AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
           "Added role " + role + " to user " + affectedUser);
     } else {
-      AuditLogUtil.log("Cassandra", authenticatedUserName, request.getRemoteAddr(),
+      AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
           "Error trying to add role " + role + " to user " + affectedUser);
     }
   }

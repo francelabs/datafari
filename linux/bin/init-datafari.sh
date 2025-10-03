@@ -169,7 +169,6 @@ init_memory() {
   sed -i -e "s/@MCFAGENTMEMORY@/${MCFAGENTMEMORY}/g" $DATAFARI_HOME/mcf/mcf_home/options.env.unix >>$installerLog 2>&1
   sed -i -e "s/@TOMCATMEMORY@/${TOMCATMEMORY}/g" $DATAFARI_HOME/tomcat/bin/setenv.sh >>$installerLog 2>&1
   sed -i -e "s/@TOMCATMCFMEMORY@/${TOMCATMCFMEMORY}/g" $DATAFARI_HOME/tomcat-mcf/bin/setenv.sh >>$installerLog 2>&1
-  sed -i -e "s/@CASSANDRAMEMORY@/${CASSANDRAMEMORY}/g" $DATAFARI_HOME/cassandra/conf/jvm-server.options >>$installerLog 2>&1
   sed -i -e "s/@POSTGRESQLMEMORY@/${POSTGRESQLMEMORY}/g" $DATAFARI_HOME/pgsql/postgresql.conf.save >>$installerLog 2>&1
   sed -i -e "s/@ELASTICSEARCHMEMORY@/${ELASTICSEARCHMEMORY}/g" $AS_HOME/elasticsearch/config/jvm.options >>$installerLog 2>&1
   sed -i -e "s/@LOGSTASHMEMORY@/${LOGSTASHMEMORY}/g" $AS_HOME/logstash/config/jvm.options >>$installerLog 2>&1
@@ -187,7 +186,6 @@ init_temp_directory() {
   sed -i -e "s~@MCFTMPDIR@~${MCFTMPDIR}~g" $DATAFARI_HOME/mcf/mcf_home/options.env.unix >>$installerLog 2>&1
   sed -i -e "s~@SOLRTMPDIR@~${SOLRTMPDIR}~g" $DATAFARI_HOME/solr/bin/solr.in.sh >>$installerLog 2>&1
   sed -i -e "s~@TIKATMPDIR@~${TIKATMPDIR}~g" $DATAFARI_HOME/tika-server/conf/tika-config.xml >>$installerLog 2>&1
-  sed -i -e "s~@CASSANDRATMPDIR@~${CASSANDRATMPDIR}~g" $DATAFARI_HOME/cassandra/conf/jvm-server.options >>$installerLog 2>&1
 }
 
 init_webapp_name() {
@@ -367,7 +365,6 @@ init_folders() {
   mkdir -p $DATAFARI_HOME/logs/analytic-stack
   mkdir -p $DATAFARI_HOME/logs/tika-server
   mkdir -p $DATAFARI_HOME/bin/backup/
-  mkdir -p $DATAFARI_HOME/bin/backup/cassandra
   mkdir -p $DATAFARI_HOME/bin/backup/datafari_conf
   mkdir -p $DATAFARI_HOME/bin/backup/mcf-script
   mkdir -p $DATAFARI_HOME/bin/backup/mcf
@@ -417,7 +414,18 @@ init_postgresql() {
   sed -i -e "s~@POSTGRESQLDATABASE@~${POSTGRESQL_DATABASE}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQLUSERNAME@~${POSTGRESQL_USERNAME}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
   
+  
 }
+
+init_postgresql_datafariwebapp() {
+  sed -i -e "s~@POSTGRESQL_DATABASE_DATAFARIWEBAPP@~${POSTGRESQL_DATABASE_DATAFARIWEBAPP}~g" $TOMCAT_HOME/webapps/Datafari/WEB-INF/classes/application.properties >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQL_PORT@~${POSTGRESQL_PORT}~g" $TOMCAT_HOME/webapps/Datafari/WEB-INF/classes/application.properties >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQL_HOSTNAME@~${POSTGRESQL_HOSTNAME}~g" $TOMCAT_HOME/webapps/Datafari/WEB-INF/classes/application.properties >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQL_USERNAME@~${POSTGRESQL_USERNAME}~g" $TOMCAT_HOME/webapps/Datafari/WEB-INF/classes/application.properties >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQL_PASSWORD@~${TEMPPGSQLPASSWORD}~g" $TOMCAT_HOME/webapps/Datafari/WEB-INF/classes/application.properties >>$installerLog 2>&1
+  
+}
+
 
 init_password_postgresql() {
   cd $MCF_HOME/obfuscation-utility
@@ -929,6 +937,7 @@ initialization_monoserver() {
   init_password $TEMPADMINPASSWORD
   init_password_postgresql $TEMPPGSQLPASSWORD
   init_postgresql
+  init_postgresql_datafariwebapp
   init_apache_ssl
   
   if [ $# -eq 0 ]

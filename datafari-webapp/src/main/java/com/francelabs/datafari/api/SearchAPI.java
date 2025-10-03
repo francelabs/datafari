@@ -145,6 +145,8 @@ public class SearchAPI {
 
     // Remove potential AuthenticatedUserName param, as this param should only be set by the API
     params.removeParam("AuthenticatedUserName");
+    // Remove potential qt param, as this param should only be set by the API
+    params.removeParam("qt");
 
     timer.top("3");
     try {

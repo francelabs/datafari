@@ -84,7 +84,7 @@ public class DeleteFavorite extends HttpServlet {
         try {
           Favorite.deleteFavorite(username, request.getParameter("idDocument"));
           jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-          AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
+          AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
               "Removed a favorite document for user " + username);
         } catch (final DatafariServerException e) {
           jsonResponse.put(OutputConstants.CODE, e.getErrorCode().getValue());

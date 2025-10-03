@@ -72,7 +72,7 @@ public class Favorites {
                     favoritesJSONList.add((JSONObject) parser.parse(favoritesList.get(i)));
                 }
                 jsonResponse.put("favorites", favoritesJSONList);
-                AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
+                AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
                         "Accessed the list of Favorites of user " + authenticatedUserName);
                 return RestAPIUtils.buildOKResponse(jsonResponse);
             } catch (DatafariServerException e) {
@@ -107,7 +107,7 @@ public class Favorites {
                     throw new BadRequestException("id or title for the new favorite were not provided correctly.");
                 } else {
                     Favorite.addFavorite(authenticatedUserName, id, title);
-                    AuditLogUtil.log("Cassandra", authenticatedUserName, request.getRemoteAddr(),
+                    AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
                             "Added a favorite for user " + authenticatedUserName);
                     return RestAPIUtils.buildOKResponse(params);
                 }
@@ -145,7 +145,7 @@ public class Favorites {
                         try {
                             final JSONObject content = (JSONObject) parser.parse(favorites.get(0));
                             Favorite.deleteFavorite(authenticatedUserName, favoriteID);
-                            AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
+                            AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
                                     "Removed a favorite document for user " + authenticatedUserName);
                             return RestAPIUtils.buildOKResponse(content);
                         } catch (ParseException e) {

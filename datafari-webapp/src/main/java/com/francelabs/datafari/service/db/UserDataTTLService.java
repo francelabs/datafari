@@ -24,5 +24,4 @@ public class UserDataTTLService {
       logger.error("Unable to refresh user '" + username + "' data TTL", e);
     }
   }
-
 }

@@ -83,7 +83,7 @@ public class DeleteSearch extends HttpServlet {
         if (SavedSearch.deleteSearch(username, requestName, request.getParameter("request")) == CodesReturned.ALLOK
             .getValue()) {
           jsonResponse.put("code", CodesReturned.ALLOK);
-          AuditLogUtil.log("cassandra", authenticatedUserName, request.getRemoteAddr(),
+          AuditLogUtil.log("postgresql", authenticatedUserName, request.getRemoteAddr(),
               "Deleted a saved search from " + username);
         } else {
           jsonResponse.put("code", CodesReturned.PROBLEMCONNECTIONDATABASE);
