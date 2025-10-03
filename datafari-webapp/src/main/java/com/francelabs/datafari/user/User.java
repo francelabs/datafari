@@ -2,15 +2,19 @@
  *  Copyright 2015-2025 France Labs
  *  Licensed under the Apache License, Version 2.0
  *******************************************************************************/
+
 package com.francelabs.datafari.user;
 
-import java.time.Instant;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.tomcat.util.buf.HexUtils;
 import org.json.simple.JSONArray;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,23 +23,21 @@ import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.service.db.UserDataService;
 
-
 public class User {
 
   private static final Logger logger = LogManager.getLogger(User.class.getName());
 
+  // BCrypt encoder
+  private static final int BCRYPT_COST = 12;
+  private static final PasswordEncoder BCRYPT = new BCryptPasswordEncoder(BCRYPT_COST);
 
-  private static final int BCRYPT_STRENGTH = 12;
-  private static final PasswordEncoder BCRYPT = new BCryptPasswordEncoder(BCRYPT_STRENGTH);
-
+  private String algorithmHash = "SHA-256"; // still used for SHA-256 digest
   private final String username;
-
-  private final String passwordPlain;
+  private final String passwordPlain; // plain password (only kept in memory during operations)
 
   private boolean isSignedUp = false;
   private final boolean isSignedIn = false;
   private boolean isImported = false;
-
 
   public User(final String username, final String password) {
     this.username = Objects.requireNonNull(username, "username");
@@ -47,36 +49,49 @@ public class User {
     this.isImported = activeDirectoryUser;
   }
 
-
+  /** Signup with one role */
   public void signup(final String role) throws DatafariServerException {
     signup(Collections.singletonList(role));
   }
 
+  /** Signup with multiple roles → stores SHA-256 and bcrypt */
   public void signup(final List<String> roles) throws DatafariServerException {
+    final String sha256 = digest(passwordPlain);
     final String bcrypt = BCRYPT.encode(passwordPlain);
-    UserDataService.getInstance().addUser(this.username, bcrypt, roles, this.isImported);
-    this.isSignedUp = true;
+    try {
+      UserDataService.getInstance().addUserDualHash(this.username, sha256, bcrypt, roles, this.isImported);
+      this.isSignedUp = true;
+    } catch (final DatafariServerException e) {
+      this.isSignedUp = false;
+      throw e;
+    }
   }
 
-
+  /** Login using SHA-256 (legacy mode, unchanged) */
   public void signIn() throws DatafariServerException {
-    final String storedBcrypt = UserDataService.getInstance().getPassword(this.username); // <-x- lookup par username (fix)
-    if (storedBcrypt == null || storedBcrypt.isBlank()) {
+    final String passwordDatabaseHashed = UserDataService.getInstance().getPassword(this.username);
+    if (passwordDatabaseHashed == null) {
       throw new DatafariServerException(CodesReturned.FAILTOSIGNIN, "Credentials not set");
     }
-    if (!BCRYPT.matches(this.passwordPlain, storedBcrypt)) {
-      throw new DatafariServerException(CodesReturned.FAILTOSIGNIN, "Uncorrect password");
+    final String candidateSha = digest(this.passwordPlain);
+    if (!candidateSha.equalsIgnoreCase(passwordDatabaseHashed)) {
+      throw new DatafariServerException(CodesReturned.FAILTOSIGNIN, "Incorrect password");
     }
-   
   }
 
-
+  /** Change password → update SHA-256 and bcrypt columns */
   public void changePassword(final String newPassword) throws DatafariServerException {
-    final String bcrypt = BCRYPT.encode(Objects.requireNonNull(newPassword, "newPassword"));
-    UserDataService.getInstance().changePassword(bcrypt, this.username);
+    final String sha256 = digest(Objects.requireNonNull(newPassword, "newPassword"));
+    final String bcrypt = BCRYPT.encode(newPassword);
+    UserDataService.getInstance().changePasswordDualHash(this.username, sha256, bcrypt);
   }
 
+  /** Delete user */
+  public void deleteUser() throws DatafariServerException {
+    UserDataService.getInstance().deleteUser(this.username);
+  }
 
+  /** Roles */
   public List<String> getRoles() throws DatafariServerException {
     return UserDataService.getInstance().getRoles(this.username);
   }
@@ -89,44 +104,43 @@ public class User {
     UserDataService.getInstance().deleteRole(role, this.username);
   }
 
+  /** Check if user exists in DB */
   public boolean isInBase() throws DatafariServerException {
     return UserDataService.getInstance().isInBase(this.username);
   }
 
-  public void deleteUser() throws DatafariServerException {
-    UserDataService.getInstance().deleteUser(this.username);
-  }
-
-  public static JSONArray getAllUsers() {
+  /** Compute SHA-256 hex digest */
+  public String digest(final String password) {
     try {
-      return UserDataService.getInstance().getAllUsers();
-    } catch (final Exception e) {
-      logger.error(e.getMessage(), e);
+      final MessageDigest md = MessageDigest.getInstance(this.algorithmHash);
+      final byte[] digest = md.digest(password.getBytes("UTF-8"));
+      return HexUtils.toHexString(digest);
+    } catch (final UnsupportedEncodingException | NoSuchAlgorithmException ex) {
+      logger.error(ex);
       return null;
     }
   }
 
-  public static JSONArray getAllADUsers() {
-    try {
-      return UserDataService.getInstance().getAllADUsers();
-    } catch (final Exception e) {
-      logger.error(e.getMessage(), e);
-      return null;
-    }
-  }
+  // setters
+  public void setAlgorithmHash(final String algo) { this.algorithmHash = algo; }
 
-  public static JSONArray getAllDatafariUsers() {
-    try {
-      return UserDataService.getInstance().getAllDatafariUsers();
-    } catch (final Exception e) {
-      logger.error(e.getMessage(), e);
-      return null;
-    }
-  }
-
-
+  // getters
   public boolean isSignedUp() { return isSignedUp; }
   public boolean isSignedIn() { return isSignedIn; }
   public boolean isImported() { return isImported; }
   public String getUsername() { return username; }
+
+  // Static helper methods
+  public static JSONArray getAllUsers() {
+    try { return UserDataService.getInstance().getAllUsers(); }
+    catch (final Exception e) { logger.error(e.getMessage()); return null; }
+  }
+  public static JSONArray getAllADUsers() {
+    try { return UserDataService.getInstance().getAllADUsers(); }
+    catch (final Exception e) { logger.error(e.getMessage()); return null; }
+  }
+  public static JSONArray getAllDatafariUsers() {
+    try { return UserDataService.getInstance().getAllDatafariUsers(); }
+    catch (final Exception e) { logger.error(e.getMessage()); return null; }
+  }
 }
