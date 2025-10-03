@@ -1,22 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.francelabs.datafari</groupId>
   <artifactId>datafari-ce</artifactId>
   <!-- Main POM of datafari -->
   <packaging>pom</packaging>
-  <version>${revision}</version>
+  <version>7.0-dev-Community</version>
   <name>Datafari Enterprise Search CE - Parent POM</name>
   <properties>
-    <revision.base>7.0-dev</revision.base>
-    <edition>Community</edition>
-    <revision>${revision.base}-${edition}</revision>
     <adminui.version>1.0</adminui.version>
     <adminui.md5>ae9ca787e5067f3bedb1f2cdad4408b0</adminui.md5>
     <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
     <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
-    <datafari.version>${revision}</datafari.version>
+    <datafari.version>${project.version}</datafari.version>
     <datafariui.version>1.1.5</datafariui.version>
     <datafariui.md5>bbfb341dbcc8e92711c24c8bceebdbf3</datafariui.md5>
     <guava.version>26.0-jre</guava.version>
@@ -97,6 +95,17 @@
     <module>datafari-jdbc-connector</module>
     <module>datafari-jira-connector</module>
   </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.francelabs.datafari</groupId>
+        <artifactId>datafari-core</artifactId>
+        <version>7.0-dev-Community</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <build>
     <pluginManagement>
       <plugins>
