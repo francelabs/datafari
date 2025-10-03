@@ -5,6 +5,7 @@ import com.francelabs.datafari.ai.dto.ApiError;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 
 public abstract class AiService {
@@ -33,7 +34,7 @@ public abstract class AiService {
      * @param reason: A technical description of the error
      * @return an ApiContent containing an error
      */
-    public static ApiContent error(ChatStream stream, String code, String label, String message, String reason) {
+    public static ApiContent error(ChatStream stream, String code, String label, String message, @NotNull String reason) {
         LOGGER.error("Error {} in AiService: {}", label, reason);
 
         if (stream != null) stream.error(code, label, message, reason);

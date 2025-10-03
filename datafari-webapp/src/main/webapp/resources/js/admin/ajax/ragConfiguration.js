@@ -26,6 +26,7 @@ function internationalize() {
 
 function loadRagConfig() {
   $.get("../rest/v2.0/management/ragConfig", function (data) {
+    $('#enableRag').prop('checked', data.enableRag === true).change();
     $('#enableAgentic').prop('checked', data.enableAgentic === true).change();
     $('#enableSummarization').prop('checked', data.enableSummarization === true).change();
 

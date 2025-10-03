@@ -25,7 +25,7 @@ public class AgenticService extends AiService {
 
         // Is AGENTIC RAG enabled ?
         if (!config.getBooleanProperty(RagConfiguration.ENABLE_AGENTIC))
-            return error(stream, "422", "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", null);
+            return error(stream, "422", "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", "Agentic service is disabled in configuration.");
 
         ApiContent response = new ApiContent();
         try {
@@ -52,7 +52,7 @@ public class AgenticService extends AiService {
                 case "rag":
                 default:
                     LOGGER.debug("AgenticService - Using RAG Agent");
-                    agent = new RagAgent(request, stream, sourcesAcc);
+                    agent = new RagAgent(request, params, stream, sourcesAcc);
 
             }
 

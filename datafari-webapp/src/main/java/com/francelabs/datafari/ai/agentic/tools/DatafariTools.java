@@ -19,6 +19,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatafariTools {
 
@@ -27,11 +29,13 @@ public class DatafariTools {
     RagConfiguration config;
     private final SourcesAccumulator sourcesAcc;
     private final ChatStream stream;
+    private final AiRequest params;
 
-    public DatafariTools(HttpServletRequest request, ChatStream stream, SourcesAccumulator sourcesAcc) {
+    public DatafariTools(HttpServletRequest request,AiRequest params, ChatStream stream, SourcesAccumulator sourcesAcc) {
         this.request = request;
         this.stream = stream;
         this.sourcesAcc = sourcesAcc;
+        this.params = params;
         config = RagConfiguration.getInstance();
     }
 
@@ -58,6 +62,28 @@ public class DatafariTools {
         }
         LOGGER.debug("AGENTIC TOOLS - RAG by document - Result {}", result);
         return result;
+    }
+
+    @ToolMeta(label = "Checking chat history...",
+            i18nKey = "tool.readChatHistory",
+            icon = "brain")
+    @Tool("Read the conversation history, including user's messages and assistant's responses.")
+    String readChatHistory() {
+        LOGGER.debug("AGENTIC TOOLS - Reading chat history");
+
+        if (params.history == null) {
+            params.history = new ArrayList<>();
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (AiRequest.ChatMessage message : params.history) {
+            sb.append(message.role.name().toUpperCase())
+                    .append(": ")
+                    .append(message.message)
+                    .append("\n");
+        }
+        sb.append("USER: ").append(params.query);
+        return sb.toString();
     }
 
     @ToolMeta(label = "Searching documents...",
@@ -178,7 +204,7 @@ public class DatafariTools {
         AiRequest summarizerequest = new AiRequest();
         summarizerequest.id = id;
 
-        ApiContent resp = SummarizationService.summarize(request, summarizerequest, stream, sourcesAcc);
+        ApiContent resp = SummarizationService.summarize(summarizerequest, request, stream, sourcesAcc);
         String result = returnMessageOrReason(resp, "Unable to generate a summary for the document " + id);
         LOGGER.debug("AGENTIC TOOLS - Summarize - {}", result);
         return result;

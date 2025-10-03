@@ -22,7 +22,6 @@ import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/rest/v2.0/ai")
@@ -173,7 +172,7 @@ public class AiPowered {
             result = switch (action.name()) {
                 case "rag" -> RagService.rag(request, params, stream, sourcesAcc);
                 case "agentic" -> AgenticService.agentic(params, request, stream, sourcesAcc);
-                case "summarize" -> SummarizationService.summarize(request, params, stream, sourcesAcc);
+                case "summarize" -> SummarizationService.summarize(params, request, stream, sourcesAcc);
                 default -> result;
             };
 

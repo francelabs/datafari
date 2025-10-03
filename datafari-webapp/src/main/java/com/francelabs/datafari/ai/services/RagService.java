@@ -22,7 +22,6 @@ public class RagService extends AiService {
     private static final Logger LOGGER = LogManager.getLogger(RagService.class.getName());
 
     public static ApiContent rag(HttpServletRequest request, AiRequest params, ChatStream stream, SourcesAccumulator sourcesAcc) {
-        ApiContent response = new ApiContent();
 
         LOGGER.info("AiPowered - RAG - RAG request received.");
 
@@ -36,7 +35,7 @@ public class RagService extends AiService {
 
         // Is RAG enabled ?
         if (!config.getBooleanProperty(RagConfiguration.ENABLE_RAG))
-            return error(stream, "422", "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", null);
+            return error(stream, "422", "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", "RAG service is disabled in configuration.");
 
         // Retrieve query from request params
         if (params.query != null) {

@@ -6,7 +6,6 @@ import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.exception.DatafariServerException;
-import com.francelabs.datafari.rest.v2_0.ai.AiPowered;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
@@ -16,17 +15,15 @@ import org.apache.poi.EmptyFileException;
 import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.rmi.UnexpectedException;
 
 public class SummarizationService extends AiService {
 
     private static final Logger LOGGER = LogManager.getLogger(SummarizationService.class.getName());
 
-    public static @NotNull ApiContent summarize(HttpServletRequest request, AiRequest params, ChatStream stream, SourcesAccumulator sourcesAcc) {
+    public static @NotNull ApiContent summarize(AiRequest params, HttpServletRequest request, ChatStream stream, SourcesAccumulator sourcesAcc) {
         ApiContent response = new ApiContent();
 
         String id = params.id;
@@ -54,10 +51,10 @@ public class SummarizationService extends AiService {
             JSONObject jsonAiDocument = (JSONObject) ((JSONArray) ((JSONObject) searchresult.get("response")).get("docs")).get(0);
 
             if (jsonAiDocument.get("id") != null && id.equals(jsonAiDocument.get("id"))) {
-                title = (String) ((JSONArray) jsonAiDocument.get(AiService.TITLE_FIELD)).get(0);
+                title = (String) ((JSONArray) jsonAiDocument.get(AiService.TITLE_FIELD)).getFirst();
                 url = (String) jsonAiDocument.get(AiService.URL_FIELD);
                 summary = (String) jsonAiDocument.get(AiService.LLM_SUMMARY_FIELD);
-                content = (String) ((JSONArray) jsonAiDocument.get(AiService.EXACT_CONTENT_FIELD)).get(0);
+                content = (String) ((JSONArray) jsonAiDocument.get(AiService.EXACT_CONTENT_FIELD)).getFirst();
             } else {
                 return error(stream, "422", "summarizationNoFileFound",
                         "The document cannot be retrieved.",

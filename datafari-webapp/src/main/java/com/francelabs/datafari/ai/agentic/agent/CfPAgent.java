@@ -1,5 +1,6 @@
 package com.francelabs.datafari.ai.agentic.agent;
 
+import com.francelabs.datafari.ai.agentic.tools.CfPTools;
 import com.francelabs.datafari.ai.agentic.tools.DatafariTools;
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.stream.AgentStreamer;
@@ -34,7 +35,7 @@ public class CfPAgent implements IAgent {
             StreamingChatModel streamingChatModel = RagAPI.getStreamingChatModel(config);
 
             // Tools
-            Object datafariTools = new DatafariTools(request, stream, sourcesAcc);
+            Object datafariTools = new CfPTools(request, stream, sourcesAcc);
             Map<ToolSpecification, ToolExecutor> tools = ToolMaps.build(datafariTools, stream);
 
             // Memory
