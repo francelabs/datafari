@@ -414,10 +414,12 @@ init_postgresql() {
   sed -i -e "s~@POSTGRESQLDATABASE@~${POSTGRESQL_DATABASE}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQLUSERNAME@~${POSTGRESQL_USERNAME}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
   
-  sed -i -e "s~@POSTGRESQLHOSTNAME@~${POSTGRESQL_HOSTNAME}~g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf >>$installerLog 2>&1
-  sed -i -e "s~@POSTGRESQLPORT@~${POSTGRESQL_PORT}~g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQL_HOSTNAME@~${POSTGRESQL_HOSTNAME}~g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQL_PORT@~${POSTGRESQL_PORT}~g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQL_DATABASE_DATAFARIWEBAPP@~${POSTGRESQL_DATABASE_DATAFARIWEBAPP}~g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf >>$installerLog 2>&1
-  sed -i -e "s~@POSTGRESQLUSERNAME@~${POSTGRESQL_USERNAME}~g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQL_USERNAME@~${POSTGRESQL_USERNAME}~g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQL_USERNAME@~${TEMPPGSQLPASSWORD}~g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf >>$installerLog 2>&1
+  
   
   
 }
