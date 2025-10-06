@@ -26,8 +26,9 @@ import com.francelabs.datafari.security.client.repo.PgsqlClientDetailsRepository
 import com.francelabs.datafari.security.client.service.PgsqlClientDetailsService;
 import com.francelabs.datafari.security.token.store.PgsqlTokenStore;
 
-@Configuration
-@EnableAuthorizationServer
+// FIXME to migrate !!
+//@Configuration
+//@EnableAuthorizationServer
 public class DatafariAuthServer extends AuthorizationServerConfigurerAdapter {
 
   private static final Logger LOGGER = LogManager.getLogger(DatafariAuthServer.class);

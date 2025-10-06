@@ -6,8 +6,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 
-@Configuration
-@EnableResourceServer
+// FIXME to migrate !!
+//@Configuration
+//@EnableResourceServer
 /**
  * Declare that any /rest/** API is a oauth resource being able to handle oauth2 tokens
  *
