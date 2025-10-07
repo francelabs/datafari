@@ -7,14 +7,11 @@ import com.francelabs.datafari.security.auth.DatafariLdapAuthoritiesPopulator;
 import com.francelabs.datafari.security.auth.PostgresAuthenticationProvider;
 import com.francelabs.datafari.utils.DatafariMainConfiguration;
 import com.google.common.collect.ImmutableList;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpHeaders;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -113,9 +110,6 @@ public class DatafariWebSecurity {
 
     @Bean
     public SecurityFilterChain configure(final HttpSecurity http, final AuthenticationManager authenticationManager) throws Exception {
-      // POST/PUT/PATCH/DELETE requests are automatically protected by Spring.
-      //http.csrf(custom -> custom.ignoringRequestMatchers(new AntPathRequestMatcher("/rest/**")));
-
       http.cors(Customizer.withDefaults());
 
       http.sessionManagement(session -> session.sessionConcurrency( concurrency -> concurrency.maximumSessions(maxConcurrentSessions) ) );
@@ -131,11 +125,6 @@ public class DatafariWebSecurity {
           .invalidateHttpSession(true)
           .clearAuthentication(true)
           .deleteCookies("JSESSIONID"));
-
-      /*http.securityMatcher(request -> {
-        final String auth = request.getHeader(HttpHeaders.AUTHORIZATION);
-        return auth == null || auth.toLowerCase().startsWith("basic");
-      });*/
 
       // Silent Basic authentication for REST API
       http.httpBasic(httpBasic -> httpBasic.authenticationEntryPoint( (request, response, exception) -> {
