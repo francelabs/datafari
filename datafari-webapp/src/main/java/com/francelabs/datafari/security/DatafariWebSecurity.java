@@ -57,45 +57,45 @@ public class DatafariWebSecurity {
     return PasswordEncoderFactories.createDelegatingPasswordEncoder();
   }
 
+  @Bean
+  public AuthenticationProvider postgresAuthenticationProvider(){
+    return new PostgresAuthenticationProvider();
+  }
+
+  @Bean
+  public DatafariLdapAuthoritiesPopulator datafariLdapAuthoritiesPopulator(){
+    return new DatafariLdapAuthoritiesPopulator();
+  }
+
+  @Bean
+  public List<AuthenticationProvider> ldapAuthenticationProviders(DatafariLdapAuthoritiesPopulator authorities) {
+    List<AuthenticationProvider> providers = new ArrayList<>();
+
+    List<LdapRealm> adList = LdapConfig.getActiveDirectoryRealms();
+    for (LdapRealm adr : adList) {
+      LdapContextSource ctx = new LdapContextSource();
+      ctx.setUserDn(adr.getConnectionName());
+      ctx.setPassword(adr.getDeobfuscatedConnectionPassword());
+      ctx.setUrl(adr.getConnectionURL());
+      ctx.afterPropertiesSet(); // Check all previous properties set. If they are compatible, the context is initialized.
+
+      for (String userBase : adr.getUserBases()){
+        String filter = "(" + adr.getUserSearchAttribute() + "={0})";
+        FilterBasedLdapUserSearch userSearch = new FilterBasedLdapUserSearch(userBase, filter, ctx);
+        BindAuthenticator bindAuthenticator = new BindAuthenticator(ctx);
+        bindAuthenticator.setUserSearch(userSearch);
+
+        LdapAuthenticationProvider ldapProvider = new LdapAuthenticationProvider(bindAuthenticator, authorities);
+        providers.add(ldapProvider);
+      }
+    }
+    return providers;
+  }
+
   @Configuration
   @ConditionalOnExpression("${oidc.enabled:false}==false && ${saml.enabled:false}==false && ${keycloak.enabled:false}==false && ${kerberos.enabled:false}==false && ${cas.enabled:false}==false && ${header.enabled:false}==false")
   @Order(Ordered.LOWEST_PRECEDENCE)
   public static class StandardSecurity {
-
-    @Bean
-    public AuthenticationProvider postgresAuthenticationProvider(){
-      return new PostgresAuthenticationProvider();
-    }
-
-    @Bean
-    public DatafariLdapAuthoritiesPopulator datafariLdapAuthoritiesPopulator(){
-      return new DatafariLdapAuthoritiesPopulator();
-    }
-
-    @Bean
-    public List<AuthenticationProvider> ldapAuthenticationProviders(DatafariLdapAuthoritiesPopulator authorities) {
-      List<AuthenticationProvider> providers = new ArrayList<>();
-
-      List<LdapRealm> adList = LdapConfig.getActiveDirectoryRealms();
-      for (LdapRealm adr : adList) {
-        LdapContextSource ctx = new LdapContextSource();
-        ctx.setUserDn(adr.getConnectionName());
-        ctx.setPassword(adr.getDeobfuscatedConnectionPassword());
-        ctx.setUrl(adr.getConnectionURL());
-        ctx.afterPropertiesSet(); // Check all previous properties set. If they are compatible, the context is initialized.
-
-        for (String userBase : adr.getUserBases()){
-          String filter = "(" + adr.getUserSearchAttribute() + "={0})";
-          FilterBasedLdapUserSearch userSearch = new FilterBasedLdapUserSearch(userBase, filter, ctx);
-          BindAuthenticator bindAuthenticator = new BindAuthenticator(ctx);
-          bindAuthenticator.setUserSearch(userSearch);
-
-          LdapAuthenticationProvider ldapProvider = new LdapAuthenticationProvider(bindAuthenticator, authorities);
-          providers.add(ldapProvider);
-        }
-      }
-      return providers;
-    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationProvider postgresAuthenticationProvider,
