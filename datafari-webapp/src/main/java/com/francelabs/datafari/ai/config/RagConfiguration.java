@@ -50,6 +50,7 @@ public class RagConfiguration extends AbstractConfigClass {
     public static final String RRF_RANK_CONSTANT = "rrf.rank.constant";
 
     // SOLR VECTOR SEARCH
+    // TODO : Remove model & vector field
     public static final String SOLR_EMBEDDINGS_MODEL = "solr.embeddings.model";
     public static final String SOLR_VECTOR_FIELD = "solr.vector.field";
     public static final String SOLR_TOPK = "solr.topK";

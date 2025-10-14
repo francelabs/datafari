@@ -1,4 +1,4 @@
-package com.francelabs.datafari.ai.models;
+package com.francelabs.datafari.ai.models.chatmodels;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

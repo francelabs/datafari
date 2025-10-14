@@ -1,10 +1,10 @@
 package com.francelabs.datafari.rest.v2_0.management;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.francelabs.datafari.ai.models.ChatModelFactory;
-import com.francelabs.datafari.ai.models.ChatModelConfig;
-import com.francelabs.datafari.ai.models.ChatModelConfigurationManager;
-import com.francelabs.datafari.ai.models.ChatModelRegistry;
+import com.francelabs.datafari.ai.models.chatmodels.ChatModelConfig;
+import com.francelabs.datafari.ai.models.chatmodels.ChatModelFactory;
+import com.francelabs.datafari.ai.models.chatmodels.ChatModelConfigurationManager;
+import com.francelabs.datafari.ai.models.chatmodels.ChatModelRegistry;
 import dev.langchain4j.model.chat.ChatModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

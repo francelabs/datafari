@@ -1,371 +1,182 @@
 package com.francelabs.datafari.rest.v2_0.management;
 
-import com.francelabs.datafari.exception.CodesReturned;
-import com.francelabs.datafari.ai.config.RagConfiguration;
-import com.francelabs.datafari.servlets.constants.OutputConstants;
-import com.francelabs.datafari.utils.DatafariMainConfiguration;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.francelabs.datafari.ai.models.embeddingmodels.EbdModelConfig;
+import com.francelabs.datafari.ai.models.embeddingmodels.EbdModelConfigurationManager;
+import com.francelabs.datafari.atomicupdates.AtomicUpdatesJobService;
+import com.francelabs.datafari.atomicupdates.JobState;
 import com.francelabs.datafari.utils.SolrConfiguration;
-import org.apache.commons.io.IOUtils;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.apache.solr.client.solrj.response.QueryResponse;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import java.security.cert.X509Certificate;
+@WebServlet(name = "SolrVectorSearchConfig", urlPatterns = "/rest/v2.0/management/solr-vector-search")
+public class SolrVectorSearchConfig extends HttpServlet {
 
-@RestController
-public class SolrVectorSearchConfig {
+    private final ObjectMapper M = new ObjectMapper();
 
+    // Services
+    private EbdModelConfigurationManager modelMgr;
+    private final AtomicUpdatesJobService jobs = new AtomicUpdatesJobService();
 
-  private static final String CORE_NAME = getMainCollection();
-  private static final String SOLR_URL = getSolrUrl();
+    private final SolrClient solr = getSolrClient();
 
-  @RequestMapping("/rest/v2.0/management/solrvectorsearch")
-  public String solrVectorSearchConfigManagement(final HttpServletRequest request) {
-    if (request.getMethod().contentEquals("GET")) {
-      return doGet(request);
-    } else if (request.getMethod().contentEquals("POST")) {
-      return doPost(request);
-    } else if (request.getMethod().contentEquals("DELETE")) {
-      return doDelete(request);
-    } else {
-      final JSONObject jsonResponse = new JSONObject();
-      jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-      jsonResponse.put(OutputConstants.STATUS, "Unsupported request method");
-      return jsonResponse.toJSONString();
-    }
-  }
+    private static final String DEFAULT_COLLECTION = "VectorMain";
 
-  protected static String getSolrUrl() {
-    SolrConfiguration solrConf = SolrConfiguration.getInstance();
-    String solrserver = solrConf.getProperty(SolrConfiguration.SOLRHOST, "localhost");
-    String solrport = solrConf.getProperty(SolrConfiguration.SOLRPORT, "8983");
-    String protocol = solrConf.getProperty(SolrConfiguration.SOLRPROTOCOL, "http");
-    return protocol + "://" + solrserver + ":" + solrport + "/solr";
-  }
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-  protected static String getMainCollection() {
-    return DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.SOLR_MAIN_COLLECTION, "FileShare");
-  }
+        resp.setContentType("application/json;charset=UTF-8");
+        modelMgr = new EbdModelConfigurationManager();
+        String fn = Optional.ofNullable(req.getParameter("fn")).orElse("status");
 
-
-  protected String doGet(final HttpServletRequest request) {
-    JSONObject jsonResponse = new JSONObject();
-    try {
-      // Retrieve Solr config for FileShare collection
-      JSONObject solrConfig = getJsonFromSolr(SOLR_URL + "/" + CORE_NAME + "/config/overlay");
-      JSONObject overlay = (JSONObject) solrConfig.get("overlay");
-      JSONObject userProps = (JSONObject) overlay.get("userProps");
-
-      if (userProps != null) {
-        jsonResponse.put("enableVectorSearch", Boolean.parseBoolean((String) userProps.getOrDefault("vector.enabled", "false")));
-        jsonResponse.put("minChunkLength", Integer.parseInt((userProps.getOrDefault("vector.filter.minchunklength", 1)).toString()));
-        jsonResponse.put("minAlphaNumRatio", userProps.getOrDefault("vector.filter.minalphanumratio", 0.0));
-        jsonResponse.put("maxoverlap", Integer.parseInt((userProps.getOrDefault("vector.maxoverlap", 0L)).toString()));
-        jsonResponse.put("chunksize", Integer.parseInt((userProps.getOrDefault("vector.chunksize", 300L)).toString()));
-        jsonResponse.put("splitter", (String) userProps.getOrDefault("vector.splitter", "recursiveSplitter"));
-      }
-
-      // Retrieve Solr config for VectorMain collection
-      JSONObject solrConfigVectorMain = getJsonFromSolr(SOLR_URL + "/VectorMain/config/overlay");
-      overlay = (JSONObject) solrConfigVectorMain.get("overlay");
-      userProps = (JSONObject) overlay.get("userProps");
-      if (userProps != null) {
-        jsonResponse.put("vectorField", (String) userProps.getOrDefault("texttovector.outputfield", ""));
-        jsonResponse.put("model", (String) userProps.getOrDefault("texttovector.model", "default_model"));
-      } else {
-        jsonResponse.put("model", "default_model");
-      }
-
-      // Retrieve models from Solr
-      JSONObject modelStore = getJsonFromSolr(SOLR_URL + "/VectorMain/schema/text-to-vector-model-store");
-      JSONArray models = (JSONArray) modelStore.get("models");
-      JSONArray modelList = new JSONArray();
-
-      for (Object modelObj : models) {
-        JSONObject model = (JSONObject) modelObj;
-        modelList.add(model);
-
-        String activeModelName = (String) userProps.getOrDefault("texttovector.model", "default_model");
-        if (activeModelName.equals(model.get("name"))) {
-          jsonResponse.put("modelTemplate", model.get("class"));
-          jsonResponse.put("jsonModel", model.toJSONString());
-          jsonResponse.put("modelName", model.get("name")); // Active model name
-        }
-      }
-      jsonResponse.put("models", modelList);
-
-      // List of Solr fields
-      JSONObject fieldsResp = getJsonFromSolr(SOLR_URL + "/VectorMain/schema/fields");
-      JSONArray fields = (JSONArray) fieldsResp.get("fields");
-      JSONArray fieldNames = new JSONArray();
-
-      for (Object fObj : fields) {
-        JSONObject field = (JSONObject) fObj;
-        String fieldType = (String) field.get("type");
-        if (fieldType.contains("vector")) {
-          fieldNames.add(field.get("name"));
-        }
-      }
-      jsonResponse.put("availableFields", fieldNames);
-
-      jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-      jsonResponse.put(OutputConstants.STATUS, "OK");
-
-    } catch (Exception e) {
-      jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-      jsonResponse.put(OutputConstants.STATUS, "Error: " + e.getMessage());
-    }
-
-    return jsonResponse.toJSONString();
-  }
-
-  protected String doPost(final HttpServletRequest request) {
-    JSONObject jsonResponse = new JSONObject();
-    RagConfiguration config = RagConfiguration.getInstance();
-
-    try {
-      JSONParser parser = new JSONParser();
-      String requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
-      JSONObject input = (JSONObject) parser.parse(requestBody);
-
-      Map<String, Object> properties = new LinkedHashMap<>(); // FileShare properties
-      Map<String, Object> propertiesVectorMain = new LinkedHashMap<>(); // VectorMain properties
-
-      if (input.containsKey("enableVectorSearch")) {
-        properties.put("vector.enabled", input.get("enableVectorSearch").toString());
-      }
-      if (input.containsKey("minChunkLength")) {
-        properties.put("vector.filter.minchunklength", input.get("minChunkLength").toString());
-      }
-      if (input.containsKey("minAlphaNumRatio")) {
-        properties.put("vector.filter.minalphanumratio", input.get("minAlphaNumRatio").toString());
-      }
-      if (input.containsKey("vectorField")) {
-        propertiesVectorMain.put("texttovector.outputfield", input.get("vectorField").toString());
-        // Update the solr vector field in rag.properties
-        config.setProperty(RagConfiguration.SOLR_VECTOR_FIELD, input.get("vectorField").toString());
-        config.saveProperties();
-      }
-      if (input.containsKey("maxoverlap")) {
-        properties.put("vector.maxoverlap", input.get("maxoverlap").toString());
-      }
-      if (input.containsKey("chunksize")) {
-        properties.put("vector.chunksize", input.get("chunksize").toString());
-      }
-      if (input.containsKey("splitter")) {
-        properties.put("vector.splitter", input.get("splitter").toString());
-      }
-
-
-      // Update each updated property in FileShare
-      for (Map.Entry<String, Object> entry : properties.entrySet()) {
-        JSONObject inner = new JSONObject();
-        inner.put(entry.getKey(), entry.getValue());
-
-        JSONObject payload = new JSONObject();
-        payload.put("set-user-property", inner);
-
-        postToSolr(SOLR_URL + "/" + CORE_NAME + "/config", payload);
-      }
-
-      // Update model
-      if (input.containsKey("jsonModel")) {
-        String newModelJson = input.get("jsonModel").toString();
-
-        // Retrieve existing model
-        JSONObject currentModelStore = getJsonFromSolr(SOLR_URL + "/VectorMain/schema/text-to-vector-model-store");
-        JSONArray models = (JSONArray) currentModelStore.get("models");
-
-        String newModelName = null;
         try {
-          JSONObject newModelObj = (JSONObject) parser.parse(newModelJson);
-          newModelName = (String) newModelObj.get("name");
-        } catch (ParseException pe) {
-          throw new IOException("Failed to parse new model JSON", pe);
+            switch (fn) {
+                case "models":
+                    write(resp, modelsPayload());
+                    break;
+                case "status":
+                    write(resp, statusPayload(req));
+                    break;
+                default:
+                    error(resp, 400, "Unsupported fn=" + fn);
+            }
+        } catch (Exception e) {
+            error(resp, 500, e.getMessage());
         }
-        boolean modelExists = false;
-        String currentModelJson = null;
-        for (Object obj : models) {
-          JSONObject model = (JSONObject) obj;
-          if (newModelName != null && newModelName.equals(model.get("name"))) {
-            currentModelJson = model.toJSONString();
-            modelExists = true;
-            break;
-          }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.setContentType("application/json;charset=UTF-8");
+        modelMgr = new EbdModelConfigurationManager();
+        String fn = Optional.ofNullable(req.getParameter("fn")).orElse("");
+
+        try {
+            switch (fn) {
+                case "setActiveModel": {
+                    Map body = M.readValue(req.getInputStream(), Map.class);
+                    String name = Objects.toString(body.get("name"), null);
+                    if (name == null || name.isBlank()) { error(resp, 400, "Missing name"); return; }
+                    modelMgr.setActiveModel(name);
+                    write(resp, Map.of("ok", true));
+                    break;
+                }
+                case "startEmbeddings": {
+                    Map body = M.readValue(req.getInputStream(), Map.class);
+                    boolean force = Boolean.TRUE.equals(body.get("force"));
+                    if (jobs.isRunning()) { error(resp, 409, "A job is already running"); return; }
+                    JobState js = (force) ? jobs.startJob("VECTOR_FORCE") : jobs.startJob("VECTOR");
+                    write(resp, Map.of("ok", true));
+                    break;
+                }
+                default:
+                    error(resp, 400, "Unsupported fn=" + fn);
+            }
+        } catch (Exception e) {
+            error(resp, 500, e.getMessage());
         }
+    }
 
-        // Compare JSON String to check if the model changed
-        if (!newModelJson.equals(currentModelJson)) {
-          // Delete existing one
-          if (modelExists) {
-            deleteFromSolr(SOLR_URL + "/VectorMain/schema/text-to-vector-model-store/" + newModelName);
-          }
-          // Upload the new one
-          putToSolr(SOLR_URL + "/VectorMain/schema/text-to-vector-model-store", newModelJson);
+    // -------- Helpers --------
+
+    private Map<String, Object> modelsPayload() {
+        EbdModelConfig active = modelMgr.getActiveModelConfig();
+        String activeName = active != null ? active.getName() : null;
+        String vectorField = active != null ? safeVectorField(active) : null;
+
+        List<Map<String, Object>> models = modelMgr.listModels().stream()
+                .map(m -> {
+                    Map<String, Object> mm = new LinkedHashMap<>();
+                    mm.put("name", m.getName());
+                    // mm.put("provider", m.getProvider()); // si dispo
+                    return mm;
+                }).collect(Collectors.toList());
+
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("activeModel", activeName);
+        out.put("vectorField", vectorField);
+        out.put("models", models);
+        return out;
+    }
+
+    private Map<String, Object> statusPayload(HttpServletRequest req) throws Exception {
+        EbdModelConfig active = modelMgr.getActiveModelConfig();
+        String vectorField = active != null ? safeVectorField(active) : null;
+
+        long total = totalDocs();
+        long missingVect  = (vectorField == null) ? total : docsNotHavingVector();
+        long vect  = total - missingVect;
+
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("totalDocs", total);
+        out.put("vectorizedDocs", vect);
+        out.put("vectorField", vectorField);
+
+        return out;
+    }
+
+    private long totalDocs() throws SolrServerException, IOException {
+        if (solr == null) return 0L;
+        SolrQuery q = new SolrQuery("embedded_content:*");
+        q.setRows(0);
+        QueryResponse rsp = solr.query(DEFAULT_COLLECTION, q);
+        return rsp.getResults().getNumFound();
+    }
+
+    private long docsNotHavingVector() throws IOException, SolrServerException {
+        if (solr == null) return 0L;
+        SolrQuery q = new SolrQuery("embedded_content:*");
+        q.setRequestHandler("/select/not-embedded");
+        q.setRows(0);
+        QueryResponse rsp = solr.query(DEFAULT_COLLECTION, q);
+        return rsp.getResults().getNumFound();
+    }
+
+    private String safeVectorField(EbdModelConfig cfg) {
+        try {
+            return cfg.getVectorField();
+        } catch (Exception e) {
+            return null;
         }
-
-        if ("true".equalsIgnoreCase(String.valueOf(input.getOrDefault("useThisModel", "false")))) {
-          if (newModelName != null) {
-            propertiesVectorMain.put("texttovector.model", newModelName);
-            // Update the embeddings model in rag.properties
-            config.setProperty(RagConfiguration.SOLR_EMBEDDINGS_MODEL, newModelName);
-          }
-        }
-      }
-
-      // Update each updated property in VectorMain
-      for (Map.Entry<String, Object> entry : propertiesVectorMain.entrySet()) {
-        JSONObject inner = new JSONObject();
-        inner.put(entry.getKey(), entry.getValue());
-
-        JSONObject payload = new JSONObject();
-        payload.put("set-user-property", inner);
-
-        postToSolr(SOLR_URL + "/VectorMain/config", payload);
-      }
-
-      jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-      jsonResponse.put(OutputConstants.STATUS, "Configuration updated successfully");
-
-    } catch (Exception e) {
-      jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-      jsonResponse.put(OutputConstants.STATUS, "Error: " + e.getMessage());
     }
 
-    return jsonResponse.toJSONString();
-  }
-
-  protected String doDelete(final HttpServletRequest request) {
-    JSONObject jsonResponse = new JSONObject();
-    try {
-      String modelName = request.getParameter("modelName");
-      if (modelName == null || modelName.trim().isEmpty()) {
-        jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-        jsonResponse.put(OutputConstants.STATUS, "Missing modelName parameter");
-        return jsonResponse.toJSONString();
-      }
-
-      String deleteUrl = SOLR_URL + "/VectorMain/schema/text-to-vector-model-store/" + modelName;
-      deleteFromSolr(deleteUrl);
-
-      jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
-      jsonResponse.put(OutputConstants.STATUS, "Model deleted successfully");
-
-      // If the deleted model was the active one, unset texttovector.model
-      JSONObject config = getJsonFromSolr(SOLR_URL + "/VectorMain/config/overlay");
-      JSONObject overlay = (JSONObject) config.get("overlay");
-      JSONObject userProps = (JSONObject) overlay.get("userProps");
-      if (userProps != null) {
-        String currentModel = (String) userProps.getOrDefault("texttovector.model", "");
-
-        if (modelName.equals(currentModel)) {
-          JSONObject unsetPayload = new JSONObject();
-          unsetPayload.put("unset-user-property", "texttovector.model");
-          postToSolr(SOLR_URL + "/VectorMain/config", unsetPayload);
-        }
-      }
-    } catch (Exception e) {
-      jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
-      jsonResponse.put(OutputConstants.STATUS, "Error deleting model: " + e.getMessage());
+    private void write(HttpServletResponse resp, Object payload) throws IOException {
+        resp.getWriter().write(M.writeValueAsString(payload));
     }
 
-    return jsonResponse.toJSONString();
-  }
-
-
-  private void disableSSLCertificateChecking() throws Exception {
-    TrustManager[] trustAllCerts = new TrustManager[]{
-        new X509TrustManager() {
-            public X509Certificate[] getAcceptedIssuers() { return null; }
-            public void checkClientTrusted(X509Certificate[] certs, String authType) {}
-            public void checkServerTrusted(X509Certificate[] certs, String authType) {}
-        }
-    };
-
-    SSLContext sc = SSLContext.getInstance("SSL");
-    sc.init(null, trustAllCerts, new java.security.SecureRandom());
-    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-
-    HostnameVerifier allHostsValid = (hostname, session) -> true;
-    HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
-}
-
-  // Utils HTTP (GET)
-  private JSONObject getJsonFromSolr(String url) throws IOException, ParseException {
-    try {
-      disableSSLCertificateChecking();
-    } catch (Exception e) {
-      throw new IOException("Erreur lors de la désactivation de la vérification SSL", e);
-    }
-    URLConnection conn = new URL(url).openConnection();
-    try (InputStream is = conn.getInputStream();
-         InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-      JSONParser parser = new JSONParser();
-      return (JSONObject) parser.parse(reader);
-    }
-  }
-
-
-  private void postToSolr(String url, JSONObject payload) throws IOException {
-    HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-    conn.setRequestMethod("POST");
-    conn.setRequestProperty("Content-Type", "application/json; utf-8");
-    conn.setDoOutput(true);
-
-    try (OutputStream os = conn.getOutputStream()) {
-      byte[] input = payload.toString().getBytes(StandardCharsets.UTF_8);
-      os.write(input, 0, input.length);
+    private void error(HttpServletResponse resp, int code, String msg) throws IOException {
+        resp.setStatus(code);
+        write(resp, Map.of("code", code, "message", msg));
     }
 
-    try (InputStream is = conn.getInputStream()) {
-      IOUtils.toString(is, StandardCharsets.UTF_8);
+    // -----------------
+    // Solr Config
+    // -----------------
+
+
+    protected static String getSolrUrl() {
+        SolrConfiguration solrConf = SolrConfiguration.getInstance();
+        String solrserver = solrConf.getProperty(SolrConfiguration.SOLRHOST, "localhost");
+        String solrport = solrConf.getProperty(SolrConfiguration.SOLRPORT, "8983");
+        String protocol = solrConf.getProperty(SolrConfiguration.SOLRPROTOCOL, "http");
+        return protocol + "://" + solrserver + ":" + solrport + "/solr";
     }
-  }
-
-  private void deleteFromSolr(String url) throws IOException {
-    HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-    conn.setRequestMethod("DELETE");
-    conn.setRequestProperty("Accept", "application/json");
-    conn.connect();
-
-    try (InputStream is = conn.getInputStream()) {
-      IOUtils.toString(is, StandardCharsets.UTF_8);
+    protected SolrClient getSolrClient(){
+        String solrBaseUrls = getSolrUrl();
+        final List<String> cloudServers = new ArrayList<>();
+        cloudServers.add(solrBaseUrls);
+        return new CloudSolrClient.Builder(cloudServers).build();
     }
-  }
-
-  private void putToSolr(String url, String jsonPayload) throws IOException {
-    HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-    conn.setRequestMethod("PUT");
-    conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-    conn.setDoOutput(true);
-
-    try (OutputStream os = conn.getOutputStream()) {
-      os.write(jsonPayload.getBytes(StandardCharsets.UTF_8));
-    }
-
-    try (InputStream is = conn.getInputStream()) {
-      IOUtils.toString(is, StandardCharsets.UTF_8);
-    }
-  }
-
 }

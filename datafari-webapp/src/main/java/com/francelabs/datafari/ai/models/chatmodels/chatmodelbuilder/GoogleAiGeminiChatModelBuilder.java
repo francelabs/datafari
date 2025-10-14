@@ -1,6 +1,5 @@
-package com.francelabs.datafari.ai.models.chatmodelbuilder;
+package com.francelabs.datafari.ai.models.chatmodels.chatmodelbuilder;
 
-import com.francelabs.datafari.ai.models.ChatModelBuilder;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;

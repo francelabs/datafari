@@ -1,10 +1,12 @@
-package com.francelabs.datafari.ai.models;
+package com.francelabs.datafari.ai.models.chatmodels;
+
 
 import java.util.Map;
 
 public class ChatModelConfig {
     private String name;
     private String interfaceType;
+    private Map<String, Object> params;
 
     public Map<String, Object> getParams() {
         return params;
@@ -29,6 +31,4 @@ public class ChatModelConfig {
     public void setName(String name) {
         this.name = name;
     }
-
-    private Map<String, Object> params;
 }

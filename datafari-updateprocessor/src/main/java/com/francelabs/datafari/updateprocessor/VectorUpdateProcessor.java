@@ -103,6 +103,7 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
 
               // ExactContent should ony contain the chunk content:
               vectorDocument.addField("embedded_content", chunk.text());
+              vectorDocument.addField("vectorize", true);
 
               batchDocs.add(vectorDocument);
             }

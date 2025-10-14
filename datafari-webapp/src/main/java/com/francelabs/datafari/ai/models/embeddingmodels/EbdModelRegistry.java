@@ -1,15 +1,17 @@
-package com.francelabs.datafari.ai.models;
+package com.francelabs.datafari.ai.models.embeddingmodels;
 
 import java.util.List;
 
-public class ChatModelRegistry {
+public class EbdModelRegistry {
+
+    private List<EbdModelConfig> models;
     private String activeModel;
 
-    public List<ChatModelConfig> getModels() {
+    public List<EbdModelConfig> getModels() {
         return models;
     }
 
-    public void setModels(List<ChatModelConfig> models) {
+    public void setModels(List<EbdModelConfig> models) {
         this.models = models;
     }
 
@@ -20,6 +22,4 @@ public class ChatModelRegistry {
     public void setActiveModel(String activeModel) {
         this.activeModel = activeModel;
     }
-
-    private List<ChatModelConfig> models;
 }

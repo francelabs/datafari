@@ -84,6 +84,7 @@ public class RagConfig {
     response.put("chatMemoryHistorySize", config.getProperty(RagConfiguration.CHAT_MEMORY_HISTORY_SIZE));
 
     response.put("retrievalMethod", config.getProperty(RagConfiguration.RETRIEVAL_METHOD));
+    // TODO : revome model & vectorField
     response.put("solrEmbeddingsModel", config.getProperty(RagConfiguration.SOLR_EMBEDDINGS_MODEL));
     response.put("solrVectorField", config.getProperty(RagConfiguration.SOLR_VECTOR_FIELD));
     response.put("solrTopK", config.getProperty(RagConfiguration.SOLR_TOPK));
