@@ -38,13 +38,13 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
    <solr.sha512>7b93dab3f0fd09c820a45574c4ef60dff0e8245b8b3a8913bc5874b6e12595ebbd3bb9c856a213ba1643673e461041e95e7e85031523dfb208686c41c366825d</solr.sha512>
    <solr.version>9.9.0</solr.version>
-     <spring.boot.version>2.7.14</spring.boot.version>
-    <spring.data.cassandra.version>3.4.15</spring.data.cassandra.version>
+    <spring.boot.version>3.3.4</spring.boot.version>
+    <!--<spring.data.cassandra.version>3.4.15</spring.data.cassandra.version>
     <spring.security.version>5.8.5</spring.security.version>
-    <spring.security.kerberos.version>1.0.1.RELEASE</spring.security.kerberos.version>
-    <spring.security.saml2.core.version>1.0.10.RELEASE</spring.security.saml2.core.version>
     <spring.version>5.3.29</spring.version>
-    <spring.oauth2.version>2.5.2.RELEASE</spring.oauth2.version>
+    <spring.oauth2.version>2.5.2.RELEASE</spring.oauth2.version> -->
+    <spring.security.saml2.core.version>1.0.10.RELEASE</spring.security.saml2.core.version>
+    <spring.security.kerberos.version>1.0.1.RELEASE</spring.security.kerberos.version>
     <tika.version>2.9.4</tika.version>
     <tika-server.sha512>7498f6e87cc331fa14a994594f941d8935d6bf7b11407ea2ff893b1acd8f19c38dca45f1e651a736eb7ba963ab1801833e56e02096d82d26c8650c48ffe1c2ce</tika-server.sha512>
     <tika-server-commit-number>5c0793e2c</tika-server-commit-number>
@@ -96,12 +96,20 @@
     <module>datafari-jira-connector</module>
   </modules>
 
+
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>com.francelabs.datafari</groupId>
         <artifactId>datafari-core</artifactId>
         <version>7.0-dev-Community</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring.boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
