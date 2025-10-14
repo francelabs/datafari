@@ -61,4 +61,9 @@ public class DatafariSessionListener implements HttpSessionListener {
     }
   }
 
+  @Override
+  public void sessionDestroyed(HttpSessionEvent httpSessionEvent) {
+
+  }
+
 }

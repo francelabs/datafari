@@ -1,6 +1,7 @@
 package com.francelabs.datafari.config;
 
 import com.francelabs.datafari.alerts.AlertsManager;
+import jakarta.annotation.PreDestroy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -8,7 +9,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PreDestroy; // <-- use javax with Spring 5
 import java.io.IOException;
 
 @Component
