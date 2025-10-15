@@ -234,7 +234,6 @@ public class ModifiedHttp2SolrClient extends SolrClient {
     asyncTracker.waitForComplete();
     try {
       if (closeClient) {
-        httpClient.setStopTimeout(1000);
         httpClient.stop();
         httpClient.destroy();
       }
@@ -672,7 +671,7 @@ public class ModifiedHttp2SolrClient extends SolrClient {
           if (name == null) {
             name = "";
           }
-          final HttpFields fields = new HttpFields();
+          HttpFields.Mutable fields = HttpFields.build();
           fields.add(HttpHeader.CONTENT_TYPE, contentType);
           content.addFilePart(name, contentStream.getName(), new InputStreamContentProvider(contentStream.getStream()), fields);
         }
