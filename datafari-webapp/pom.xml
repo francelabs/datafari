@@ -66,6 +66,12 @@
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-easy-rag</artifactId>
       <version>${langchain4j.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>jcl-over-slf4j</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>dev.langchain4j</groupId>
@@ -98,13 +104,6 @@
     <dependency>
       <groupId>org.jxls</groupId>
       <artifactId>jxls-poi</artifactId>
-      <version>2.13.0</version>
-      <exclusions>
-        <exclusion>
-          <groupId>ch.qos.logback</groupId>
-          <artifactId>logback-core</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>joda-time</groupId>
@@ -230,12 +229,7 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
     </dependency>
-    
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
-    
+
     
     <!-- https://mvnrepository.com/artifact/org.opensaml/opensaml -->
     <dependency>
@@ -255,8 +249,12 @@
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.springframework.security.oauth/spring-security-oauth2 -->
     <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-oauth2-client</artifactId>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-oauth2-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
@@ -407,43 +405,31 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
-      <version>${log4j.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
-      <version>${log4j.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <version>${log4j.version}</version>
-      <scope>provided</scope>
+      <artifactId>log4j-web</artifactId>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-1.2-api</artifactId>
-      <version>${log4j.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-jul</artifactId>
-      <version>${log4j.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-jcl</artifactId>
-      <version>${log4j.version}</version>
       <scope>provided</scope>
     </dependency>
     <!-- Tests -->
@@ -519,6 +505,11 @@
                   <excludes>
                     <exclude>ch.qos.logback:logback-core:*:*:compile</exclude>
                     <exclude>ch.qos.logback:logback-classic:*:*:compile</exclude>
+                    <exclude>org.slf4j:slf4j-simple</exclude>
+                    <exclude>org.apache.logging.log4j:log4j-slf4j-impl</exclude>
+                    <exclude>org.slf4j:slf4j-log4j12</exclude>
+                    <exclude>org.apache.logging.log4j:log4j-to-slf4j</exclude>
+                    <exclude>org.slf4j:jcl-over-slf4j</exclude>
                   </excludes>
                 </bannedDependencies>
               </rules>

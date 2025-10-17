@@ -29,7 +29,7 @@
     <dependency>
       <groupId>org.apache.solr</groupId>
       <artifactId>solr-solrj-zookeeper</artifactId>
-      <version>${solr.version}</version>
+      <version>9.1.0</version>
     </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
@@ -55,12 +55,12 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>${slf4j.version}</version>
+      <version>${slf4j.mcf.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <version>${slf4j.version}</version>
+      <version>${slf4j.mcf.version}</version>
     </dependency>
   </dependencies>
 
