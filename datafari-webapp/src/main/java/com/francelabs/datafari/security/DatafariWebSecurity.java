@@ -30,10 +30,11 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+@Configuration
 @EnableWebSecurity
 public class DatafariWebSecurity {
 
@@ -98,19 +99,12 @@ public class DatafariWebSecurity {
   public static class StandardSecurity {
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationProvider postgresAuthenticationProvider,
-                                                       List<AuthenticationProvider> ldapAuthenticationProviders) {
-
-      List<AuthenticationProvider> all = new ArrayList<>();
-      all.add(postgresAuthenticationProvider);
-      all.addAll(ldapAuthenticationProviders);
-
-      return new ProviderManager(all);
-    }
-
-    @Bean
-    public SecurityFilterChain configure(final HttpSecurity http, final AuthenticationManager authenticationManager) throws Exception {
+    public SecurityFilterChain configure(HttpSecurity http, AuthenticationProvider postgresAuthenticationProvider,
+                                         List<AuthenticationProvider> ldapAuthenticationProviders) throws Exception {
       http.cors(Customizer.withDefaults());
+      http.csrf(csrf -> csrf
+          .ignoringRequestMatchers("/rest/**")
+      );
 
       http.sessionManagement(session -> session.sessionConcurrency( concurrency -> concurrency.maximumSessions(maxConcurrentSessions) ) );
 
@@ -133,23 +127,13 @@ public class DatafariWebSecurity {
       }));
       http.exceptionHandling(exception -> {/* let the "/login" entry point as form login if an exception occurs */});
 
-      http.authenticationManager(authenticationManager);
+      http.authenticationProvider(postgresAuthenticationProvider);
+      ldapAuthenticationProviders.forEach(http::authenticationProvider);
 
       http.authorizeHttpRequests(requests -> requests
-          .requestMatchers(
-              new AntPathRequestMatcher("/admin/**"),
-              new AntPathRequestMatcher("/SearchExpert/**")
-          ).hasAnyRole("SearchExpert", "SearchAdministrator")
-
-          .requestMatchers(
-              new AntPathRequestMatcher("/SearchAdministrator/**"),
-              new AntPathRequestMatcher("/rest/v2.0/files/**"),
-              new AntPathRequestMatcher("/rest/v2.0/management/**")
-          ).hasRole("SearchAdministrator")
-
-          .requestMatchers(new AntPathRequestMatcher("/rest/v1.0/auth*"))
-          .authenticated()
-
+          .requestMatchers("/admin/**","/SearchExpert/**").hasAnyRole("SearchExpert", "SearchAdministrator")
+          .requestMatchers("/SearchAdministrator/**", "/rest/v2.0/files/**", "/rest/v2.0/management/**").hasRole("SearchAdministrator")
+          .requestMatchers("/rest/v1.0/auth*").authenticated()
           .anyRequest().permitAll()
       );
 

@@ -18,7 +18,7 @@ package com.francelabs.datafari.rest.v1_0.users;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.francelabs.datafari.service.db.StatisticsDataService;
 import com.francelabs.datafari.utils.userqueryconf.UserPrefQueryConf;

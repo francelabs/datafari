@@ -3,10 +3,10 @@ package com.francelabs.datafari.security;
 import java.io.InputStream;
 import java.util.Properties;
 
-import javax.servlet.annotation.WebListener;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
+import jakarta.servlet.annotation.WebListener;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSessionEvent;
+import jakarta.servlet.http.HttpSessionListener;
 
 import com.francelabs.datafari.utils.DatafariMainConfiguration;
 

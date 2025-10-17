@@ -1,6 +1,6 @@
 package com.francelabs.datafari.rest.v1_0.aggregator;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.francelabs.datafari.aggregator.servlet.AggregatorList;
 import com.francelabs.datafari.rest.v1_0.exceptions.InternalErrorException;

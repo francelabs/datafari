@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.net.ssl.SSLContext;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.francelabs.datafari.rest.v1_0.utils.RestAPIUtils;
 import com.francelabs.datafari.service.indexer.IndexerServerManager.Core;

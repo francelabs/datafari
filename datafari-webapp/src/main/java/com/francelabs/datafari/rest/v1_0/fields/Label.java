@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.francelabs.datafari.rest.v1_0.fields;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.francelabs.datafari.rest.v1_0.utils.RestAPIUtils;
 import com.francelabs.datafari.utils.AdvancedSearchConfiguration;
