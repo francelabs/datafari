@@ -52,7 +52,7 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
   public VectorUpdateProcessor(CloudSolrClient client, final SolrParams params, final UpdateRequestProcessor next) {
     super(next);
     if (params != null) {
-      this.enabled = params.getBool("enabled", false);
+      this.enabled = params.getBool("enabled", true); // Todo : remove
       this.chunksize = params.getInt("chunksize", 300);
       this.maxoverlap = params.getInt("maxoverlap", 0);
       this.splitterType = params.get("splitter", "recursiveSplitter");
@@ -72,8 +72,15 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
       String content = extractContent(parentDoc);
 
       deleteExistingChildren(parentId);
+      boolean enableForThisDoc = false;
+      Object enabledObj = parentDoc.getFieldValue("vectorize");
+      if (enabledObj != null) {
+        enableForThisDoc = Boolean.parseBoolean(enabledObj.toString());
+      }
+      LOGGER.warn("EBE - enableForThisDoc : {}", enableForThisDoc);
 
-      if (content != null && !content.isEmpty()) {
+
+      if (content != null && !content.isEmpty() && enableForThisDoc) {
 
         // Chunking
         List<TextSegment> chunks = chunkDocument(content);
@@ -103,7 +110,7 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
 
               // ExactContent should ony contain the chunk content:
               vectorDocument.addField("embedded_content", chunk.text());
-              vectorDocument.addField("vectorize", true);
+//              vectorDocument.addField("embeddingsAtIndexing", ebdAtIndexing);
 
               batchDocs.add(vectorDocument);
             }

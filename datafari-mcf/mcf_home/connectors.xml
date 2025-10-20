@@ -58,6 +58,7 @@
   <transformationconnector name="Regex Entity Connector" class="com.francelabs.datafari.transformation.regexentity.RegexEntity"/>
   <transformationconnector name="Datafari LLM Connector" class="com.francelabs.datafari.transformation.llm.Llm"/>
   <transformationconnector name="Datafari Binary Connector" class="com.francelabs.datafari.transformation.binary.Binary"/>
+  <transformationconnector name="Datafari Vector Search Connector" class="com.francelabs.datafari.transformation.vectorsearch.VectorSearch"/>
 
     <!-- Add your mapping connectors here -->
   <mappingconnector name="Regular expression mapper" class="org.apache.manifoldcf.authorities.mappers.regexp.RegexpMapper"/>

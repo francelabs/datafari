@@ -18,6 +18,8 @@
 
 package com.francelabs.datafari.updateprocessor;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.solr.common.SolrException;
 import org.apache.solr.common.params.RequiredSolrParams;
 import org.apache.solr.common.params.SolrParams;
@@ -49,13 +51,18 @@ import org.apache.solr.update.processor.UpdateRequestProcessorFactory;
  * *
  */
 public class TextToVectorUpdateProcessorFactory extends UpdateRequestProcessorFactory {
+
+    private static final Logger LOGGER = LogManager.getLogger(TextToVectorUpdateProcessorFactory.class.getName());
+
     private static final String INPUT_FIELD_PARAM = "inputField";
     private static final String OUTPUT_FIELD_PARAM = "outputField";
     private static final String MODEL_NAME = "model";
+    private static final String FORCE_EMBEDDING = "forceEmbeddings";
 
     private String inputField;
     private String outputField;
     private String modelName;
+    private boolean forceEmbeddings;
     private SolrParams params;
 
     @Override
@@ -64,6 +71,7 @@ public class TextToVectorUpdateProcessorFactory extends UpdateRequestProcessorFa
         RequiredSolrParams required = params.required();
         inputField = required.get(INPUT_FIELD_PARAM);
         outputField = required.get(OUTPUT_FIELD_PARAM);
+        forceEmbeddings = params.getBool(FORCE_EMBEDDING, false);
         modelName = required.get(MODEL_NAME);
     }
 
@@ -88,15 +96,19 @@ public class TextToVectorUpdateProcessorFactory extends UpdateRequestProcessorFa
                 ManagedTextToVectorModelStore.getManagedModelStore(req.getCore());
         SolrTextToVectorModel textToVector = modelStore.getModel(modelName);
         if (textToVector == null) {
-            throw new SolrException(
+            // If "forceEmbeddings=true", throw an exception
+            if (forceEmbeddings) {
+                throw new SolrException(
                     SolrException.ErrorCode.SERVER_ERROR,
-                    "The model configured in the Update Request Processor '"
-                            + modelName
-                            + "' can't be found in the store: "
-                            + ManagedTextToVectorModelStore.REST_END_POINT);
+                    "Model '" + modelName + "' not found in store: " + ManagedTextToVectorModelStore.REST_END_POINT);
+            }
+
+            // Else we silently skip this processor
+            LOGGER.debug("TextToVectorUpdateProcessor: model '{}' not found. Skipping vectorization for this request.", modelName);
+        //    return next; // Skip
         }
 
-        return new TextToVectorUpdateProcessor(inputField, outputField, textToVector, req, next);
+        return new TextToVectorUpdateProcessor(inputField, outputField, forceEmbeddings, textToVector, req, next);
     }
 
     protected void assertIsDenseVectorField(SchemaField schemaField) {

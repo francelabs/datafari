@@ -6,6 +6,8 @@ public abstract class GenericJob {
   private String sourcename;
   private String timezone;
   private boolean security = false;
+  private boolean enableVectorSearch = false;
+  private boolean enableEmbeddingsAtIndexing = false;
   private boolean duplicatesDetection = false;
   private boolean createOCR = false;
   private String tikaOCRHost;
@@ -52,6 +54,22 @@ public abstract class GenericJob {
 
   public void setDuplicatesDetection(final boolean duplicatesDetection) {
     this.duplicatesDetection = duplicatesDetection;
+  }
+
+  public boolean isEnableEmbeddingsAtIndexing() {
+    return enableEmbeddingsAtIndexing;
+  }
+
+  public void setEnableEmbeddingsAtIndexing(boolean enableEmbeddingsAtIndexing) {
+    this.enableEmbeddingsAtIndexing = enableEmbeddingsAtIndexing;
+  }
+
+  public boolean isEnableVectorSearch() {
+    return enableVectorSearch;
+  }
+
+  public void setEnableVectorSearch(boolean enableVectorSearch) {
+    this.enableVectorSearch = enableVectorSearch;
   }
 
   public String getTikaOCRHost() {
