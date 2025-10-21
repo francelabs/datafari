@@ -2,8 +2,6 @@ package com.francelabs.datafari.utils;
 
 import com.francelabs.datafari.ldap.LdapUsers;
 import jakarta.servlet.http.HttpServletRequest;
-import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 
 import java.security.Principal;
@@ -17,13 +15,13 @@ public class AuthenticatedUserName {
     // Add AuthenticatedUserName param if user authenticated
     if (principal != null) {
       String authenticatedUserName = principal.getName().replaceAll("[^\\\\]*\\\\", "");
-      if (principal instanceof KeycloakAuthenticationToken) {
+      /*if (principal instanceof KeycloakAuthenticationToken) {
         final KeycloakAuthenticationToken keycloakToken = (KeycloakAuthenticationToken) principal;
         if (keycloakToken.getDetails() instanceof SimpleKeycloakAccount) {
           final SimpleKeycloakAccount keycloakAccount = (SimpleKeycloakAccount) keycloakToken.getDetails();
           authenticatedUserName = keycloakAccount.getKeycloakSecurityContext().getToken().getPreferredUsername();
         }
-      }
+      }*/
       if (principal instanceof OAuth2AuthenticationToken) {
         final OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) principal;
         final String usernameAttr = SpringSecurityConfiguration.getInstance().getProperty("oidc.username.attribute", "username");

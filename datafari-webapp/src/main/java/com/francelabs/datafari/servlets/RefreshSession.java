@@ -25,8 +25,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.json.simple.JSONObject;
-import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -89,7 +87,7 @@ public class RefreshSession extends HttpServlet {
       jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
       jsonResponse.put(OutputConstants.STATUS, "Logged");
       String AuthenticatedUserName = "";
-      if (userPrincipal instanceof KeycloakAuthenticationToken) {
+/*      if (userPrincipal instanceof KeycloakAuthenticationToken) {
         jsonResponse.put("keycloakUser", true);
         final KeycloakAuthenticationToken keycloakToken = (KeycloakAuthenticationToken) userPrincipal;
         if (keycloakToken.getDetails() instanceof SimpleKeycloakAccount) {
@@ -98,10 +96,10 @@ public class RefreshSession extends HttpServlet {
         } else {
           AuthenticatedUserName = userPrincipal.getName().replaceAll("[^\\\\]*\\\\", "");
         }
-      } else {
+      } else {*/
         jsonResponse.put("keycloakUser", false);
         AuthenticatedUserName = userPrincipal.getName();
-      }
+//      }
       jsonResponse.put("user", AuthenticatedUserName);
       if (request.isUserInRole("SearchAdministrator") || request.isUserInRole("SearchExpert")) {
         jsonResponse.put("isAdmin", true);

@@ -42,8 +42,6 @@ import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -440,7 +438,7 @@ public class SearchAggregator extends HttpServlet {
     String requestingUser = "";
     if (request.getUserPrincipal() != null) {
       // Get the username
-      if (request.getUserPrincipal() instanceof KeycloakAuthenticationToken) {
+      /*if (request.getUserPrincipal() instanceof KeycloakAuthenticationToken) {
         final KeycloakAuthenticationToken keycloakToken = (KeycloakAuthenticationToken) request.getUserPrincipal();
         if (keycloakToken.getDetails() instanceof SimpleKeycloakAccount) {
           final SimpleKeycloakAccount keycloakAccount = (SimpleKeycloakAccount) keycloakToken.getDetails();
@@ -448,9 +446,9 @@ public class SearchAggregator extends HttpServlet {
         } else {
           requestingUser = request.getUserPrincipal().getName().replaceAll("[^\\\\]*\\\\", "");
         }
-      } else {
+      } else {*/
         requestingUser = request.getUserPrincipal().getName().replaceAll("[^\\\\]*\\\\", "");
-      }
+      //}
       if (!requestingUser.contains("@")) {
         final String domain = LdapUsers.getInstance().getUserDomain(requestingUser);
         if (domain != null && !domain.isEmpty()) {
