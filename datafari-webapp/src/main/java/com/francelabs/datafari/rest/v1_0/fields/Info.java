@@ -64,7 +64,7 @@ public class Info {
     private static final Logger logger = LogManager.getLogger(Info.class.getName());
 
     @GetMapping(value = {"/rest/v1.0/fields/info", "/rest/v1.0/fields/info/{fieldName}"}, produces = "application/json;charset=UTF-8")
-    public String getFieldsInfo(final HttpServletRequest request, @PathVariable(required = false) String fieldName) {
+    public String getFieldsInfo(final HttpServletRequest request, @PathVariable(value = "fieldName", required = false) String fieldName) {
         try {
             // Retrieve the Solr hostname, port and protocol
             final String solrserver = SolrConfiguration.getInstance().getProperty(SolrConfiguration.SOLRHOST);

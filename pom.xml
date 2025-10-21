@@ -138,6 +138,31 @@
         <artifactId>jetty-client</artifactId>
         <version>10.0.22</version>
       </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-io</artifactId>
+        <version>10.0.22</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-http</artifactId>
+        <version>10.0.22</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-util</artifactId>
+        <version>10.0.22</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-alpn-client</artifactId>
+        <version>10.0.22</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-alpn-java-client</artifactId>
+        <version>10.0.22</version>
+      </dependency>
 
       <dependency>
         <groupId>org.apache.solr</groupId>
@@ -242,6 +267,7 @@
           <version>3.8.1</version>
           <configuration>
             <release>21</release>
+            <parameters>true</parameters>
           </configuration>
         </plugin>
         <plugin>

@@ -15,24 +15,22 @@
  *******************************************************************************/
 package com.francelabs.datafari.servlets;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.security.Principal;
-
+import com.francelabs.datafari.exception.CodesReturned;
+import com.francelabs.datafari.servlets.constants.OutputConstants;
+import com.francelabs.datafari.utils.SpringSecurityConfiguration;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
 import org.json.simple.JSONObject;
 import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 
-import com.francelabs.datafari.exception.CodesReturned;
-import com.francelabs.datafari.servlets.constants.OutputConstants;
-import com.francelabs.datafari.utils.SpringSecurityConfiguration;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.security.Principal;
 
 /**
  * Servlet implementation class GetFavorites

@@ -1,14 +1,12 @@
 package com.francelabs.datafari.utils;
 
-import java.security.Principal;
-
+import com.francelabs.datafari.ldap.LdapUsers;
 import jakarta.servlet.http.HttpServletRequest;
-
 import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 
-import com.francelabs.datafari.ldap.LdapUsers;
+import java.security.Principal;
 
 public class AuthenticatedUserName {
   public static String getName(final HttpServletRequest request) {
