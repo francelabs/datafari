@@ -17,6 +17,7 @@ package com.francelabs.datafari.servlets;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.servlets.constants.OutputConstants;
+import com.francelabs.datafari.utils.AuthenticatedUserName;
 import com.francelabs.datafari.utils.SpringSecurityConfiguration;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -25,6 +26,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.json.simple.JSONObject;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -37,11 +41,11 @@ import java.security.Principal;
 public class RefreshSession extends HttpServlet {
   private static final long serialVersionUID = 1L;
 
-  String keycloakEnabled = null;
-  String samlEnabled = null;
-  String casEnabled = null;
-  String kerberosEnabled = null;
-  String oidcEnabled = null;
+  private String keycloakEnabled = "false"; // legacy flag kept for frontend compat (always false now)
+  private String samlEnabled = "false";
+  private String casEnabled = "false";
+  private String kerberosEnabled = "false";
+  private String oidcEnabled = "false";
 
   /**
    * @see HttpServlet#HttpServlet()
@@ -56,10 +60,7 @@ public class RefreshSession extends HttpServlet {
       kerberosEnabled = appProps.getProperty("kerberos.enabled", "false");
       oidcEnabled = appProps.getProperty("oidc.enabled", "false");
     } catch (final Exception e) {
-      keycloakEnabled = "false";
-      samlEnabled = "false";
-      kerberosEnabled = "false";
-      oidcEnabled = "false";
+      // keep flags default value
     }
   }
 
@@ -72,7 +73,7 @@ public class RefreshSession extends HttpServlet {
     request.setCharacterEncoding("utf8");
     response.setContentType("application/json");
 
-    jsonResponse.put("keycloakEnabled", Boolean.valueOf(keycloakEnabled));
+    jsonResponse.put("keycloakEnabled", Boolean.valueOf(keycloakEnabled));  // Always false now
     jsonResponse.put("samlEnabled", Boolean.valueOf(samlEnabled));
     jsonResponse.put("casEnabled", Boolean.valueOf(casEnabled));
     jsonResponse.put("kerberosEnabled", Boolean.valueOf(kerberosEnabled));
@@ -86,21 +87,22 @@ public class RefreshSession extends HttpServlet {
     } else {
       jsonResponse.put(OutputConstants.CODE, CodesReturned.ALLOK.getValue());
       jsonResponse.put(OutputConstants.STATUS, "Logged");
-      String AuthenticatedUserName = "";
-/*      if (userPrincipal instanceof KeycloakAuthenticationToken) {
-        jsonResponse.put("keycloakUser", true);
-        final KeycloakAuthenticationToken keycloakToken = (KeycloakAuthenticationToken) userPrincipal;
-        if (keycloakToken.getDetails() instanceof SimpleKeycloakAccount) {
-          final SimpleKeycloakAccount keycloakAccount = (SimpleKeycloakAccount) keycloakToken.getDetails();
-          AuthenticatedUserName = keycloakAccount.getKeycloakSecurityContext().getToken().getPreferredUsername();
-        } else {
-          AuthenticatedUserName = userPrincipal.getName().replaceAll("[^\\\\]*\\\\", "");
-        }
-      } else {*/
-        jsonResponse.put("keycloakUser", false);
-        AuthenticatedUserName = userPrincipal.getName();
-//      }
-      jsonResponse.put("user", AuthenticatedUserName);
+
+
+      final String authenticatedUserName = AuthenticatedUserName.getName(request);
+      jsonResponse.put("user", authenticatedUserName);
+
+      // Additional information on the effective authentication type (informative, useful for debugging/UI)
+      boolean isJwt  = userPrincipal instanceof JwtAuthenticationToken;
+      boolean isOAuth2 = userPrincipal instanceof OAuth2AuthenticationToken;
+      boolean isOidc = (userPrincipal instanceof OAuth2AuthenticationToken o) && (o.getPrincipal() instanceof OidcUser);
+
+      jsonResponse.put("jwtUser", Boolean.valueOf(isJwt));
+      jsonResponse.put("oauth2User", Boolean.valueOf(isOAuth2));
+      jsonResponse.put("oidcUser", Boolean.valueOf(isOidc));
+      jsonResponse.put("keycloakUser", Boolean.FALSE); // Compatible with older models: no Keycloak adapter required
+
+
       if (request.isUserInRole("SearchAdministrator") || request.isUserInRole("SearchExpert")) {
         jsonResponse.put("isAdmin", true);
       } else {

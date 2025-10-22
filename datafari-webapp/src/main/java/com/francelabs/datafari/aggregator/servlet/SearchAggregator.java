@@ -437,18 +437,8 @@ public class SearchAggregator extends HttpServlet {
     // Retrieve username
     String requestingUser = "";
     if (request.getUserPrincipal() != null) {
-      // Get the username
-      /*if (request.getUserPrincipal() instanceof KeycloakAuthenticationToken) {
-        final KeycloakAuthenticationToken keycloakToken = (KeycloakAuthenticationToken) request.getUserPrincipal();
-        if (keycloakToken.getDetails() instanceof SimpleKeycloakAccount) {
-          final SimpleKeycloakAccount keycloakAccount = (SimpleKeycloakAccount) keycloakToken.getDetails();
-          requestingUser = keycloakAccount.getKeycloakSecurityContext().getToken().getPreferredUsername();
-        } else {
-          requestingUser = request.getUserPrincipal().getName().replaceAll("[^\\\\]*\\\\", "");
-        }
-      } else {*/
-        requestingUser = request.getUserPrincipal().getName().replaceAll("[^\\\\]*\\\\", "");
-      //}
+      requestingUser = AuthenticatedUserName.getName(request);
+
       if (!requestingUser.contains("@")) {
         final String domain = LdapUsers.getInstance().getUserDomain(requestingUser);
         if (domain != null && !domain.isEmpty()) {
