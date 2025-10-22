@@ -1327,7 +1327,7 @@
     <updateRequestProcessorChain name="datafari">
 
         <!-- ////////////////////////// -->
-
+        <!-- DistributedUpdateProcessorFactory must always come first in case of Atomic Update -->
         <processor class="solr.DistributedUpdateProcessorFactory"/>
         <processor class="com.francelabs.datafari.updateprocessor.TextToVectorUpdateProcessorFactory">
             <str name="inputField">embedded_content</str>

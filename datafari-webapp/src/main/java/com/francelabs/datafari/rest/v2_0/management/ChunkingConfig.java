@@ -68,7 +68,6 @@ public class ChunkingConfig {
       JSONObject userProps = (JSONObject) overlay.get("userProps");
 
       if (userProps != null) {
-        jsonResponse.put("enableVectorSearch", Boolean.parseBoolean((String) userProps.getOrDefault("vector.enabled", "true")));
         jsonResponse.put("minChunkLength", Integer.parseInt((userProps.getOrDefault("vector.filter.minchunklength", 1)).toString()));
         jsonResponse.put("minAlphaNumRatio", userProps.getOrDefault("vector.filter.minalphanumratio", 0.0));
         jsonResponse.put("maxoverlap", Integer.parseInt((userProps.getOrDefault("vector.maxoverlap", 0L)).toString()));
@@ -97,9 +96,6 @@ public class ChunkingConfig {
 
       Map<String, Object> properties = new LinkedHashMap<>(); // FileShare properties
 
-      if (input.containsKey("enableVectorSearch")) {
-        properties.put("vector.enabled", input.get("enableVectorSearch").toString());
-      }
       if (input.containsKey("minChunkLength")) {
         properties.put("vector.filter.minchunklength", input.get("minChunkLength").toString());
       }

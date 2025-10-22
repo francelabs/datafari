@@ -20,7 +20,7 @@
       }
     },
     "VECTOR_FORCE": {
-      "searchHandler": "/select",
+      "searchHandler": "/opensearch",
       "updateHandler": "/update/embed",
       "source": {
         "baseUrl": "localhost:2181",

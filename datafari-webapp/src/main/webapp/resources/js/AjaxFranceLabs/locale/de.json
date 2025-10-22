@@ -849,7 +849,6 @@
     "solr-interruption": "This action will reload the Solr core and so, may lead to an interruption of service of Datafari that can take several minutes. Do you want to proceed ?",
     "solrAdmin": "Solr Administration",
     "solrVectorSearch-AdminUI": "Solr Vector Search",
-    "solrVectorSearch-enableVectorSearchLabel": "Enable vector search",
     "solrVectorSearch-jsonModelLabel": "Model configuration",
     "solrVectorSearch-vectorFieldLabel": "Associated vector field (must be an existing field from VectorMain collection)",
     "solrVectorSearch-minChunkLengthLabel": "Minimum length for a chunk to be embedded (set to 0 to ignore)",

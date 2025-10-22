@@ -883,7 +883,6 @@
     "solr-interruption": "Cette action va recharger la configuration Solr et par conséquent, peut entrainer une interruption de service de Datafari pouvant prendre plusieurs minutes. Voulez vous procéder ?",
     "solrAdmin": "Administration de Solr",
     "solrVectorSearch-AdminUI": "Recherche vectorielle Solr",
-    "solrVectorSearch-enableVectorSearchLabel": "Activer la recherche vectorielle",
     "solrVectorSearch-jsonModelLabel": "Configuration JSON du modèle",
     "solrVectorSearch-vectorFieldLabel": "Champs Solr contenant le vecteur (doit être un champ vectoriel existant de la collection VectorMain, avec une dimension adapté au modèle sélectionné)",
     "solrVectorSearch-minChunkLengthLabel": "Taille minimum d'un chunk pour qu'il soit vectorisé (0 pour ignorer)",
