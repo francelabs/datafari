@@ -252,7 +252,7 @@ public class VectorSearch extends BaseTransformationConnector {
     try {
 
         document.addField("vectorize", enableVectorSearch.toString());
-        document.addField("embeddingsAtIndexing", enableEmbeddingsAtIndexing.toString());
+        document.addField("embeddings_at_indexing", enableEmbeddingsAtIndexing.toString());
 
     } catch (Exception e){
       LOGGER.error("An error occurred.", e);

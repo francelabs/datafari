@@ -19,24 +19,21 @@
 package com.francelabs.datafari.updateprocessor;
 
 import java.io.IOException;
-import java.lang.invoke.MethodHandles;
 import java.util.*;
 
-import org.apache.solr.common.SolrException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.SolrInputField;
 import org.apache.solr.llm.textvectorisation.model.SolrTextToVectorModel;
-import org.apache.solr.llm.textvectorisation.store.rest.ManagedTextToVectorModelStore;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.schema.IndexSchema;
 import org.apache.solr.schema.SchemaField;
 import org.apache.solr.update.AddUpdateCommand;
 import org.apache.solr.update.processor.UpdateRequestProcessor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class TextToVectorUpdateProcessor extends UpdateRequestProcessor {
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private static final Logger LOGGER = LogManager.getLogger(TextToVectorUpdateProcessor.class.getName());
 
     private IndexSchema schema;
     private final String inputField;
@@ -68,14 +65,15 @@ class TextToVectorUpdateProcessor extends UpdateRequestProcessor {
         SolrInputDocument doc = cmd.getSolrInputDocument();
         SolrInputField inputFieldContent = doc.getField(inputField);
 
-        Object vectorizeObj = doc.getFieldValue("embeddingsAtIndexing");
-        boolean vectorize = (vectorizeObj != null && vectorizeObj.toString().equals("true")) || forceEmbeddings;
+        Object vectorizeObj = doc.getFieldValue("embeddings_at_indexing");
+        boolean embeddingsAtIndexing = (vectorizeObj != null) && Boolean.parseBoolean(vectorizeObj.toString());
+
+        boolean vectorize = embeddingsAtIndexing || forceEmbeddings;
 
         // Only process embeddings if "vectorize" is true or if "/update/embed" handler is used
         if (!isNullOrEmpty(inputFieldContent) && vectorize) {
             if (textToVector == null) {
-                if (log.isErrorEnabled()) log.error(
-                        "Could not vectorise '{}': Model not found.",
+                LOGGER.error("Could not vectorise '{}': Model not found.",
                         doc.getFieldValue(schema.getUniqueKeyField().getName()));
                 super.processAdd(cmd);
                 return;
@@ -107,10 +105,10 @@ class TextToVectorUpdateProcessor extends UpdateRequestProcessor {
                 }
 
             } catch (Exception vectorisationFailure) {
-                if (log.isErrorEnabled()) {
+                if (LOGGER.isErrorEnabled()) {
                     SchemaField uniqueKeyField = schema.getUniqueKeyField();
                     String uniqueKeyFieldName = uniqueKeyField.getName();
-                    log.error(
+                    LOGGER.error(
                             "Could not vectorise: {} for the document with {}: {}",
                             inputField,
                             uniqueKeyFieldName,

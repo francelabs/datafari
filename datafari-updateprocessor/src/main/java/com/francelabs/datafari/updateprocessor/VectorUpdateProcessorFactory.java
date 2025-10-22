@@ -54,7 +54,7 @@ public class VectorUpdateProcessorFactory extends UpdateRequestProcessorFactory 
   @Override
   public UpdateRequestProcessor getInstance(final SolrQueryRequest req, final SolrQueryResponse rsp, final UpdateRequestProcessor next) {
     // Pass the parameters retrieved in the init (if any) to the update processor
-    if (params.getBool("enabled", false) && tryInitClient()) {
+    if (tryInitClient()) {
       return new VectorUpdateProcessor(client, params, next);
     } else {
       // Dummy request processor forwarding the processing to the rest of the pipe when text tagger is disabled.

@@ -104,7 +104,7 @@ public class TextToVectorUpdateProcessorFactory extends UpdateRequestProcessorFa
             }
 
             // Else we silently skip this processor
-            LOGGER.debug("TextToVectorUpdateProcessor: model '{}' not found. Skipping vectorization for this request.", modelName);
+            LOGGER.info("TextToVectorUpdateProcessor: model '{}' not found. Skipping vectorization for this request.", modelName);
         //    return next; // Skip
         }
 
