@@ -30,16 +30,17 @@
     <log4j.version>2.17.2</log4j.version>
     <logstash.version>8.19.4</logstash.version>
     <logstash.sha512>2e1b77745e80a0e5101d7bcbee5bbfbe43373628a8c5e3ddbe1a55d91491b05186a084334b27dcfd52b37d74236d71e99d41b95600c44c51e54a4910284783e5</logstash.sha512>
-    <mcf-solr-plugin.version>9.x-plugin-2.2</mcf-solr-plugin.version>
-    <mcf-solr-plugin.sha512>38261a93265c1697db2742947ec72dfdfbb31f4dcab7a343484b06bb57416a668c750a98d5130fadf97464587a09677bb927e2623b862e618e45a3922b67d20b</mcf-solr-plugin.sha512>
+    <mcf-solr-plugin.version>1.0</mcf-solr-plugin.version>
+    <mcf-solr-plugin.sha512>17dd7b03402ae2dde6f9ea610f8f79ac9bec5b3e9e2c94035d94ca3999827ec435ba02d1f0749116fc8b5bc000ce96ca8d696a8230cf6e2dee65d15393a57b15</mcf-solr-plugin.sha512>
     <mssql-jdbc.version>10.2.1.jre11</mssql-jdbc.version>
     <postgresql.version>42.7.2</postgresql.version>
     <ojdbc.version>19.15.0.0.1</ojdbc.version>
     <postgres.version>42.7.2</postgres.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-   <solr.sha512>7b93dab3f0fd09c820a45574c4ef60dff0e8245b8b3a8913bc5874b6e12595ebbd3bb9c856a213ba1643673e461041e95e7e85031523dfb208686c41c366825d</solr.sha512>
-   <solr.version>9.9.0</solr.version>
+   <solr.sha512>cad5ac923bb0c342d223741c661141731afd768d88de32e6aff75eef9aa8f6bb14b34981ce7602e3d99a906b68a01893c97a1d8cc262b62e91b11ee93aab8f3f</solr.sha512>
+   <solr.version>10.0.0-SNAPSHOT</solr.version>
+   <lucene.version>10.0.0-SNAPSHOT</lucene.version>
      <spring.boot.version>2.7.14</spring.boot.version>
     <spring.data.cassandra.version>3.4.15</spring.data.cassandra.version>
     <spring.security.version>5.8.5</spring.security.version>

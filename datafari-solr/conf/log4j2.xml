@@ -16,45 +16,45 @@
   limitations under the License.
   -->
 
+<!-- Default production configuration is asynchronous logging -->
 <Configuration>
   <Appenders>
 
-    <RollingFile
-        name="RollingFile"
-        fileName="${env:DATAFARI_LOGS}/solr.log"
-        filePattern="${env:DATAFARI_LOGS}/solr.log.%d{yyyy-MM-dd}.log" >
+    <RollingRandomAccessFile
+        name="MainLogFile"
+        fileName="${sys:solr.logs.dir}/solr.log"
+        filePattern="${sys:solr.logs.dir}/solr.log.%i" >
       <PatternLayout>
         <Pattern>
-          %5p %d{yyyy-MM-dd'T'HH:mm:ss'Z'} (%t) - Solr|Solr|%c|[%X{collection} %X{shard} %X{replica} %X{core}] %c{1.} %m%n
+          %maxLen{%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p (%t) [%notEmpty{c:%X{collection}}%notEmpty{ s:%X{shard}}%notEmpty{ r:%X{replica}}%notEmpty{ x:%X{core}}%notEmpty{ t:%X{trace_id}}] %c{1.} %m%notEmpty{ =>%ex{short}}}{10240}%n
         </Pattern>
       </PatternLayout>
-     <Policies>
-        <TimeBasedTriggeringPolicy interval="1"/>
-        <SizeBasedTriggeringPolicy size="10MB" />
+      <Policies>
+        <OnStartupTriggeringPolicy />
+        <SizeBasedTriggeringPolicy size="32 MB"/>
       </Policies>
-      <DefaultRolloverStrategy max="10" />
-    </RollingFile>
-    
-    <RollingFile
+      <DefaultRolloverStrategy max="10"/>
+    </RollingRandomAccessFile>
+
+    <RollingRandomAccessFile
         name="SlowLogFile"
-        fileName="${env:DATAFARI_LOGS}/solr_slow_requests.log"
-        filePattern="${env:DATAFARI_LOGS}/solr_slow_requests.log.%d{yyyy-MM-dd}.log" >
+        fileName="${sys:solr.logs.dir}/solr_slow_requests.log"
+        filePattern="${sys:solr.logs.dir}/solr_slow_requests.log.%i" >
       <PatternLayout>
         <Pattern>
-          %5p %d{yyyy-MM-dd'T'HH:mm:ss'Z'} (%t) - Solr|Solr|%c|[%X{collection} %X{shard} %X{replica} %X{core}] %c{1.} %m%n
+          %maxLen{%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p (%t) [%notEmpty{c:%X{collection}}%notEmpty{ s:%X{shard}}%notEmpty{ r:%X{replica}}%notEmpty{ x:%X{core}}%notEmpty{ t:%X{trace_id}}] %c{1.} %m%notEmpty{ =>%ex{short}}}{10240}%n
         </Pattern>
       </PatternLayout>
-     <Policies>
-        <TimeBasedTriggeringPolicy interval="1"/>
-        <SizeBasedTriggeringPolicy size="10MB" />
+      <Policies>
+        <OnStartupTriggeringPolicy />
+        <SizeBasedTriggeringPolicy size="32 MB"/>
       </Policies>
-      <DefaultRolloverStrategy max="10" />
-    </RollingFile>
+      <DefaultRolloverStrategy max="10"/>
+    </RollingRandomAccessFile>
 
   </Appenders>
   <Loggers>
-    <!-- Use <AsyncLogger/<AsyncRoot and <Logger/<Root for asynchronous logging or synchonous logging respectively -->
-    <AsyncLogger name="org.apache.hadoop" level="warn"/>
+    <!-- Use <AsyncLogger/<AsyncRoot and <Logger/<Root for asynchronous logging or synchronous logging respectively -->
     <AsyncLogger name="org.apache.solr.update.LoggingInfoStream" level="off"/>
     <AsyncLogger name="org.apache.zookeeper" level="warn"/>
     <!-- HttpSolrCall adds markers denoting the handler class to allow fine grained control, metrics are
@@ -66,11 +66,11 @@
       <AppenderRef ref="SlowLogFile"/>
     </AsyncLogger>
     <AsyncLogger name="org.eclipse.jetty.deploy" level="warn"/>
-    <AsyncLogger name="org.eclipse.jetty.webapp" level="warn"/>
-    <AsyncLogger name="org.eclipse.jetty.server.session" level="warn"/>
+    <AsyncLogger name="org.eclipse.jetty.ee" level="warn"/>
+    <AsyncLogger name="org.eclipse.jetty.session" level="warn"/>
 
-    <Root level="info">
-      <AppenderRef ref="RollingFile"/>
-    </Root>
+    <AsyncRoot level="info">
+      <AppenderRef ref="MainLogFile"/>
+    </AsyncRoot>
   </Loggers>
 </Configuration>

@@ -69,7 +69,6 @@
     <httpCaching never304="true"/>
   </requestDispatcher>
 
- <requestHandler class="org.apache.solr.search.function.FileFloatSource$ReloadCacheRequestHandler" name="/reloadCache"/>
       
   <requestHandler class="solr.SearchHandler" name="/select" useParams="mySearch">
   	<lst name="defaults">

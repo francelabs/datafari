@@ -657,7 +657,6 @@
     -->
 
 
- <requestHandler class="org.apache.solr.search.function.FileFloatSource$ReloadCacheRequestHandler" name="/reloadCache"/>
 
  <!-- ////////////////////////// -->
    <!-- Includes custom search handler. You will have to comment the configuration of the search handler /select below -->
