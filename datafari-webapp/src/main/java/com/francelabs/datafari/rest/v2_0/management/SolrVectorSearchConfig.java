@@ -7,7 +7,6 @@ import com.francelabs.datafari.atomicupdates.AtomicUpdatesJobService;
 import com.francelabs.datafari.atomicupdates.JobState;
 import com.francelabs.datafari.utils.SolrConfiguration;
 import com.francelabs.datafari.utils.DatafariMainConfiguration;
-
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -24,23 +23,15 @@ import java.util.stream.Collectors;
 
 /**
  * REST endpoint providing configuration and status management for Solr vector search.
- * <p>
- * Supports:
- * <ul>
- *   <li>Retrieving available embedding models</li>
- *   <li>Getting the current vectorization status</li>
- *   <li>Activating embedding models</li>
- *   <li>Starting embedding jobs</li>
- * </ul>
  *
- * <p>Endpoint: {@code /rest/v2.0/management/solr-vector-search}</p>
+ * Endpoint: /rest/v2.0/management/solr-vector-search
  */
 @WebServlet(name = "SolrVectorSearchConfig", urlPatterns = "/rest/v2.0/management/solr-vector-search")
 public class SolrVectorSearchConfig extends HttpServlet {
 
     private final ObjectMapper M = new ObjectMapper();
 
-    // Managers and services
+    // Services
     private EbdModelConfigurationManager modelMgr;
     private final AtomicUpdatesJobService jobs = new AtomicUpdatesJobService();
 
@@ -49,9 +40,7 @@ public class SolrVectorSearchConfig extends HttpServlet {
 
     private static final String DEFAULT_COLLECTION = "VectorMain";
 
-    // -------------------------------------------------------------------------
-    // GET endpoint
-    // -------------------------------------------------------------------------
+    // GET
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -75,9 +64,7 @@ public class SolrVectorSearchConfig extends HttpServlet {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // POST endpoint
-    // -------------------------------------------------------------------------
+    // POST
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -106,7 +93,7 @@ public class SolrVectorSearchConfig extends HttpServlet {
                         return;
                     }
                     JobState js = (force) ? jobs.startJob("VECTOR_FORCE") : jobs.startJob("VECTOR");
-                    write(resp, Map.of("ok", true, "jobState", js.name()));
+                    write(resp, Map.of("ok", true, "jobState", String.valueOf(js)));
                     break;
                 }
                 default:
@@ -117,9 +104,7 @@ public class SolrVectorSearchConfig extends HttpServlet {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Internal helper methods
-    // -------------------------------------------------------------------------
+    // Helpers
 
     /** Builds the JSON payload listing available models and the active one. */
     private Map<String, Object> modelsPayload() {
@@ -128,8 +113,12 @@ public class SolrVectorSearchConfig extends HttpServlet {
         String vectorField = active != null ? safeVectorField(active) : null;
 
         List<Map<String, Object>> models = modelMgr.listModels().stream()
-                .map(m -> Map.of("name", m.getName()))
-                .collect(Collectors.toList());
+            .map(m -> {
+                Map<String, Object> mm = new LinkedHashMap<>();
+                mm.put("name", m.getName());
+                return mm;
+            })
+            .collect(Collectors.toList());
 
         Map<String, Object> out = new LinkedHashMap<>();
         out.put("activeModel", activeName);
@@ -191,15 +180,9 @@ public class SolrVectorSearchConfig extends HttpServlet {
         write(resp, Map.of("code", code, "message", msg));
     }
 
-    // -------------------------------------------------------------------------
     // Solr client setup
-    // -------------------------------------------------------------------------
 
-    /**
-     * Legacy helper returning a Solr HTTP URL built from configuration.
-     * <p>
-     * This method is retained for backward compatibility with non-cloud clients.
-     */
+    /** Legacy helper returning a Solr HTTP URL built from configuration. */
     protected static String getSolrUrl() {
         SolrConfiguration solrConf = SolrConfiguration.getInstance();
         String solrserver = solrConf.getProperty(SolrConfiguration.SOLRHOST, "localhost");
@@ -208,18 +191,13 @@ public class SolrVectorSearchConfig extends HttpServlet {
         return protocol + "://" + solrserver + ":" + solrport + "/solr";
     }
 
-    /**
-     * Creates a SolrCloud HTTP/2 client using ZooKeeper hosts from the Datafari configuration.
-     * <p>
-     * This implementation is compatible with Solr 10 and higher.
-     */
+    /** Creates a SolrCloud HTTP/2 client using ZooKeeper hosts from the Datafari configuration. */
     protected SolrClient getSolrClient() {
         try {
             final List<String> zkHosts = DatafariMainConfiguration.getInstance().getZkHosts();
             CloudHttp2SolrClient.Builder builder = new CloudHttp2SolrClient.Builder(zkHosts);
             return builder.build();
         } catch (IOException e) {
-            // Prevent servlet initialization failure
             e.printStackTrace();
             return null;
         }
