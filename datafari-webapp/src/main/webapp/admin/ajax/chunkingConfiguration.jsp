@@ -46,14 +46,6 @@
       </div>
       <form class="form-horizontal" id="chunking-form" class="needs-validation" novalidate>
 
-        <!-- Enable Vector Search -->
-        <div class="form-group row">
-            <label id="enableVectorSearchLabel" class="col-sm-2 col-form-label" for="enableVectorSearch">Enable Vector Search</label>
-            <div class="col-sm-5">
-                <input type="checkbox" id="enableVectorSearch" name="enableVectorSearch" data-height="36" data-toggle="toggle" data-onstyle="success">
-            </div>
-		</div>
-
         <!-- Chunking options : chunk size -->
         <div class="form-group row">
           <label id="chunkSizeLabel" for="chunkSize" class="col-sm-2 col-form-label">Chunk Size (tokens)</label>

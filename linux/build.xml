@@ -35,6 +35,7 @@
   	<property name="regexentity.connector.src.dir" value="${project.dir}/datafari-regex-entity-connector/target" />
 	<property name="llm.connector.src.dir" value="${project.dir}/datafari-llm-connector/target" />
 	<property name="binary.connector.src.dir" value="${project.dir}/datafari-binary-connector/target" />
+	<property name="vectorsearch.connector.src.dir" value="${project.dir}/datafari-vector-search-connector/target" />
 	<property name="datafarihandler.src.dir" value="${project.dir}/datafari-handler/target" />
 	<property name="mcf-scripts.src.dir" value="${project.dir}/datafari-mcf-scripts/target" />
 	<property name="zookeeper.proj.dir" value="${project.dir}/datafari-zookeeper" />
@@ -477,6 +478,13 @@
 		<!-- Copy Binary connector -->
 		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
 			<fileset dir="${binary.connector.src.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<!-- Copy VectorSearch connector -->
+		<copy flatten="true" toDir="${linux.dist.dir}/mcf/mcf_home/connector-lib" overwrite="true" force="true">
+			<fileset dir="${vectorsearch.connector.src.dir}">
 				<include name="*.jar" />
 			</fileset>
 		</copy>

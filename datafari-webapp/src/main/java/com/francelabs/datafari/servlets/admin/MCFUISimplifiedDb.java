@@ -88,6 +88,14 @@ public class MCFUISimplifiedDb extends HttpServlet {
       final String startJob = request.getParameter("dbStartJob");
       final String timezone = request.getParameter("dbTimeZone");
       boolean duplicatesDetection = false;
+      boolean enableVectorSearch = false;
+      boolean enableEmbeddingsAtIndexing = false;
+      if (request.getParameter("dbEnableVectorSearch") != null) {
+        enableVectorSearch = true;
+      }
+      if (request.getParameter("dbEnableEmbeddingsAtIndexing") != null) {
+        enableEmbeddingsAtIndexing = true;
+      }
       if (request.getParameter("dbDuplicatesDetection") != null) {
         duplicatesDetection = true;
       }
@@ -110,7 +118,7 @@ public class MCFUISimplifiedDb extends HttpServlet {
           LOGGER.error("The repository name is not valid");
         } else {
           createDbRepo(jsonResponse, dbType, dbHost, dbName, dbConnStr, dbUsername, dbPassword, dbSeeding, dbVersion, dbAccessToken, dbData, reponame, sourcename, timezone, security,
-              duplicatesDetection, createOCR, tikaOCRHost, tikaOCRPort, tikaOCRName, startJob);
+              enableVectorSearch, enableEmbeddingsAtIndexing, duplicatesDetection, createOCR, tikaOCRHost, tikaOCRPort, tikaOCRName, startJob);
         }
       } else {
         jsonResponse.put("OK", "OK");
@@ -130,7 +138,7 @@ public class MCFUISimplifiedDb extends HttpServlet {
 
   private void createDbRepo(final JSONObject jsonResponse, final String dbType, final String dbHost, final String dbName, final String dbConnStr, final String dbUsername, final String dbPassword,
       final String dbSeeding, final String dbVersion, final String dbAccessToken, final String dbData, final String reponame, final String sourcename, final String timezone, final String security,
-      final boolean duplicatesDetection, final boolean createOCR, final String tikaOCRHost, final String tikaOCRPort, final String tikaOCRName, final String startJob) throws Exception {
+      final boolean enableVectorSearch, final boolean enableEmbeddingsAtIndexing, final boolean duplicatesDetection, final boolean createOCR, final String tikaOCRHost, final String tikaOCRPort, final String tikaOCRName, final String startJob) throws Exception {
     // Create dbRepository
     final DbRepository dbRepo = new DbRepository();
     dbRepo.setType(dbType);
@@ -158,6 +166,8 @@ public class MCFUISimplifiedDb extends HttpServlet {
       dbJob.setDataQ(dbData);
       dbJob.setSourcename(sourcename);
       dbJob.setTimezone(timezone);
+      dbJob.setEnableVectorSearch(enableVectorSearch);
+      dbJob.setEnableEmbeddingsAtIndexing(enableEmbeddingsAtIndexing);
       dbJob.setDuplicatesDetection(duplicatesDetection);
       if (security != null) {
         dbJob.setSecurity(true);

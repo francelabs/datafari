@@ -32,7 +32,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.request.UpdateRequest;
-import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.update.AddUpdateCommand;
@@ -41,7 +40,6 @@ import org.apache.solr.update.processor.UpdateRequestProcessor;
 
 public class VectorUpdateProcessor extends UpdateRequestProcessor {
   private static final Logger LOGGER = LogManager.getLogger(VectorUpdateProcessor.class.getName());
-  boolean enabled = false;
   String splitterType = "recursiveSplitter";
   int chunksize = 300;
   int maxoverlap = 0;
@@ -52,7 +50,6 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
   public VectorUpdateProcessor(CloudSolrClient client, final SolrParams params, final UpdateRequestProcessor next) {
     super(next);
     if (params != null) {
-      this.enabled = params.getBool("enabled", false);
       this.chunksize = params.getInt("chunksize", 300);
       this.maxoverlap = params.getInt("maxoverlap", 0);
       this.splitterType = params.get("splitter", "recursiveSplitter");
@@ -64,7 +61,6 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
 
   @Override
   public void processAdd(final AddUpdateCommand cmd) throws IOException {
-    if (enabled) {
       final SolrInputDocument parentDoc = cmd.getSolrInputDocument();
 
       String parentId = (String) parentDoc.get("id").getValue();
@@ -72,8 +68,13 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
       String content = extractContent(parentDoc);
 
       deleteExistingChildren(parentId);
+      boolean enableForThisDoc = false;
+      Object enabledObj = parentDoc.getFieldValue("vectorize");
+      if (enabledObj != null) {
+        enableForThisDoc = Boolean.parseBoolean(enabledObj.toString());
+      }
 
-      if (content != null && !content.isEmpty()) {
+      if (content != null && !content.isEmpty() && enableForThisDoc) {
 
         // Chunking
         List<TextSegment> chunks = chunkDocument(content);
@@ -103,7 +104,6 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
 
               // ExactContent should ony contain the chunk content:
               vectorDocument.addField("embedded_content", chunk.text());
-              vectorDocument.addField("vectorize", true);
 
               batchDocs.add(vectorDocument);
             }
@@ -134,7 +134,6 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
 
       // VERY IMPORTANT ! without this line of code any other Update Processor declared AFTER this one in the conf WILL NOT EXECUTE
       super.processAdd(cmd);
-    }
   }
 
   /**

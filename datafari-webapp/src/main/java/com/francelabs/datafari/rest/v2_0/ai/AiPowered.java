@@ -253,7 +253,6 @@ public class AiPowered {
         ApiContent result = new ApiContent();
 
         try {
-            result = new ApiContent();
 
             // 1) Starting phase
             stream.phase("service.started");
@@ -261,7 +260,7 @@ public class AiPowered {
             // 2) Showing action
             emit(stream, () -> stream.phase("action:" + action.name().toLowerCase()), TEST_DELAY_MS);
 
-            // 3) Simuluation of 3 tools (2 successful, one failure)
+            // 3) Simulate 3 tools (2 successful, one failure)
             emit(stream, () -> stream.phase("tool.calling"), TEST_DELAY_MS);
             emit(stream, () -> stream.event("tool.call", Map.of(
                     "id", "jobSuccess1",
@@ -297,14 +296,14 @@ public class AiPowered {
                     "error", "This job has failed. This message should not be displayed to the user."
             )), TEST_DELAY_MS);
 
-            // 4) Simule des sources au fil de l’eau
+            // 4) Sources
             emit(stream, () -> stream.phase("sources.retrieval"), TEST_DELAY_MS);
             Document source1 = Document.from(
-                    "This is an example of source (Google). This text should not be visible anywhere.",
+                    "This is an example of source (Nyan Cat). This text should not be visible anywhere.",
                     Metadata.from(Map.of(
                             "url", "https://fr.wikipedia.org/wiki/Nyan_Cat",
                             "id", "https://fr.wikipedia.org/wiki/Nyan_Cat",
-                            "title", "Rare space cat (source title to be displayed)"
+                            "title", "Rare space cat (I am a link !)"
                     )));
             Document source2 = Document.from(
                     "This is a source known as Wikipedia.",
@@ -316,7 +315,7 @@ public class AiPowered {
             emit(stream, () -> sourcesAcc.add(source1), TEST_DELAY_MS);
             emit(stream, () -> sourcesAcc.add(source2), TEST_DELAY_MS);
 
-            // 5) Progress / phases fines
+            // 5) Validation: summarization returns an error
             emit(stream, () -> stream.phase("validation.done"), TEST_DELAY_MS);
             if ("summarize".equals(action.name())) {
                 return AiService.error(stream, "402", "testLabelForError",
@@ -325,7 +324,7 @@ public class AiPowered {
             }
 
 
-            // 6) Tokens stream (ex. 25 tokens espacés)
+            // 6) Tokens stream
             emitTokens(stream, List.of(
                     "This ", "text ", "must ", "be ", "rendered ", "progressively, ",
                     "token ", "by ", "token. ", "It ", "will ",

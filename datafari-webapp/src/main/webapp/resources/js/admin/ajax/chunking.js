@@ -4,7 +4,6 @@ $(document).ready(function () {
   $("#topbar2").text(window.i18n.msgStore['adminUI-solrVectorSearch']);
   $("#topbar3").text(window.i18n.msgStore['adminUI-vectorSearchMenu-chunkingConfiguration']);
   $("#save-conf").text(window.i18n.msgStore['save']);
-  $("#enableVectorSearchLabel").html(window.i18n.msgStore['solrVectorSearch-enableVectorSearchLabel']);
   $("#minChunkLengthLabel").html(window.i18n.msgStore['solrVectorSearch-minChunkLengthLabel']);
   $("#minAlphaNumRatioLabel").html(window.i18n.msgStore['solrVectorSearch-minAlphaNumRatioLabel']);
   $("#maxOverlapLabel").html(window.i18n.msgStore['solrVectorSearch-maxOverlapLabel']);

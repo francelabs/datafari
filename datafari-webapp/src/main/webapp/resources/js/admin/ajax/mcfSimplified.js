@@ -184,6 +184,20 @@ $(document)
           setTimeZones($("#filerTimeZone"));
           setTimeZones($("#dbTimeZone"));
           setTimeZones($("#webTimeZone"));
+
+          // Vector Search
+          $("#enableVectorSearchLabel").html(window.i18n.msgStore['enableVectorSearch']);
+          $("#enableVectorSearch-tip").attr("title", window.i18n.msgStore['enableVectorSearch-tip']);
+          $("#enableEmbeddingsAtIndexingLabel").html(window.i18n.msgStore['enableEmbeddingsAtIndexing']);
+          $("#enableEmbeddingsAtIndexing-tip").attr("title", window.i18n.msgStore['enableEmbeddingsAtIndexing-tip']);
+          $("#dbEnableVectorSearchLabel").html(window.i18n.msgStore['enableVectorSearch']);
+          $("#dbEnableVectorSearch-tip").attr("title", window.i18n.msgStore['enableVectorSearch-tip']);
+          $("#dbEnableEmbeddingsAtIndexingLabel").html(window.i18n.msgStore['enableEmbeddingsAtIndexing']);
+          $("#dbEnableEmbeddingsAtIndexing-tip").attr("title", window.i18n.msgStore['enableEmbeddingsAtIndexing-tip']);
+          $("#webEnableVectorSearchLabel").html(window.i18n.msgStore['enableVectorSearch']);
+          $("#webEnableVectorSearch-tip").attr("title", window.i18n.msgStore['enableVectorSearch-tip']);
+          $("#webEnableEmbeddingsAtIndexingLabel").html(window.i18n.msgStore['enableEmbeddingsAtIndexing']);
+          $("#webEnableEmbeddingsAtIndexing-tip").attr("title", window.i18n.msgStore['enableEmbeddingsAtIndexing-tip']);
           
           // Spacy filer
           $("#filerCreateSpacyLabel").html(window.i18n.msgStore['createSpacy']);

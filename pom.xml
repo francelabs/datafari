@@ -6,7 +6,7 @@
   <artifactId>datafari-ce</artifactId>
   <!-- Main POM of datafari -->
   <packaging>pom</packaging>
-  <version>${revision}</version>
+  <version>7.0-dev-Community</version>
   <name>Datafari Enterprise Search CE - Parent POM</name>
   <properties>
     <revision.base>7.0-dev</revision.base>
@@ -16,7 +16,7 @@
     <adminui.md5>ae9ca787e5067f3bedb1f2cdad4408b0</adminui.md5>
     <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
     <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
-    <datafari.version>${revision}</datafari.version>
+    <datafari.version>7.0-dev-Community</datafari.version>
     <datafariui.version>1.1.5</datafariui.version>
     <datafariui.md5>bbfb341dbcc8e92711c24c8bceebdbf3</datafariui.md5>
     <guava.version>26.0-jre</guava.version>
@@ -91,6 +91,7 @@
     <module>datafari-regex-entity-connector</module>
     <module>datafari-llm-connector</module>
     <module>datafari-binary-connector</module>
+    <module>datafari-vector-search-connector</module>
     <module>datafari-active-directory-connector</module>
     <module>datafari-solr-atomic-update</module>
     <module>datafari-confluence-v6-connector</module>
