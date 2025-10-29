@@ -32,7 +32,6 @@
       <scope>provided</scope>
       <version>${solr.version}</version>
     </dependency>
-<<<<<<< HEAD
 
     <!-- Logging dependencies (required since Solr 9.4+/10, no longer exposed by default) -->
     <dependency>
@@ -48,9 +47,7 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- JSON and Tika libraries -->
-=======
->>>>>>> EE#626-Update-Spring-Framework-3-merge-master
+<!-- JSON and Tika libraries -->
     <dependency>
       <groupId>com.googlecode.json-simple</groupId>
       <artifactId>json-simple</artifactId>
@@ -59,10 +56,17 @@
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-1.2-api</artifactId>
+      <version>${tika.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Internal modules -->
