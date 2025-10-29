@@ -6,10 +6,7 @@ import com.francelabs.datafari.ai.models.embeddingmodels.EbdModelConfigurationMa
 import com.francelabs.datafari.atomicupdates.AtomicUpdatesJobService;
 import com.francelabs.datafari.atomicupdates.JobState;
 import com.francelabs.datafari.utils.SolrConfiguration;
-<<<<<<< HEAD
 import com.francelabs.datafari.utils.DatafariMainConfiguration;
-=======
-<<<<<<< HEAD
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -17,29 +14,25 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import jakarta.servlet.http.HttpServletResponse;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import jakarta.servlet.http.HttpServletRequest;
-=======
->>>>>>> EE#626-Update-Spring-Framework-3-merge-master
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudHttp2SolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
->>>>>>> master
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * REST endpoint providing configuration and status management for Solr vector search.
