@@ -12,7 +12,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import com.francelabs.datafari.rag.RagConfiguration;
+import com.francelabs.datafari.ai.config.RagConfiguration;
+import com.francelabs.datafari.ai.models.embeddingmodels.EbdModelConfig;
+import com.francelabs.datafari.ai.models.embeddingmodels.EbdModelConfigurationManager;
 import com.francelabs.datafari.utils.*;
 import com.francelabs.datafari.utils.Timer;
 import org.apache.logging.log4j.LogManager;
@@ -106,13 +108,27 @@ public class SearchAPI {
         String[] topK = new String[] { ragConfiguration.getProperty(RagConfiguration.SOLR_TOPK, "50") };
         parameterMap.put("topK", topK);
       }
+
+      EbdModelConfigurationManager manager = new EbdModelConfigurationManager();
       if (!parameterMap.containsKey("model")) {
-        String[] model = new String[] { ragConfiguration.getProperty(RagConfiguration.SOLR_EMBEDDINGS_MODEL, "default_model") };
+
+        // If the model is missing, we try to retrieve it from configuration.
+        EbdModelConfig modelConfig =  manager.getActiveModelConfig();
+        String[] model = new String[] { modelConfig.getName() };
         parameterMap.put("model", model);
-      }
-      if (!parameterMap.containsKey("vectorField")) {
-        String[] vectorField = new String[] { ragConfiguration.getProperty(RagConfiguration.SOLR_VECTOR_FIELD, "vector_1536") };
+
+        String[] vectorField = new String[] {  modelConfig.getVectorField() };
         parameterMap.put("vectorField", vectorField);
+
+      } else if (!parameterMap.containsKey("vectorField")) {
+
+          // If the model is provided but the vectorField is missing, we try to retrieve it.
+          String modelName = parameterMap.get("model")[0];
+          EbdModelConfig modelConfig =  manager.getModelByName(modelName);
+
+          String[] vectorField = new String[] {  modelConfig.getVectorField() };
+          parameterMap.put("vectorField", vectorField);
+
       }
     } else if (collection == null || collection.isEmpty()) {
       collection = Core.FILESHARE.toString();
@@ -395,14 +411,25 @@ public class SearchAPI {
     }
 
     // MODEL MANAGEMENT
-    if (!parameterMap.containsKey("model")) {
-      String[] model = new String[] { config.getProperty(RagConfiguration.SOLR_EMBEDDINGS_MODEL, "default_model") };
-      parameterMap.put("model", model);
-    }
-    if (!parameterMap.containsKey("vectorField")) {
-      String[] vectorField = new String[] { config.getProperty(RagConfiguration.SOLR_VECTOR_FIELD, "vector_1536") };
-      parameterMap.put("vectorField", vectorField);
-    }
+
+      EbdModelConfigurationManager manager = new EbdModelConfigurationManager();
+      if (!parameterMap.containsKey("model")) {
+
+          // If the model is missing, we try to retrieve it from configuration.
+          EbdModelConfig modelConfig =  manager.getActiveModelConfig();
+          String[] model = new String[] { modelConfig.getName() };
+          String[] vectorField = new String[] {  modelConfig.getVectorField() };
+          parameterMap.put("model", model);
+          parameterMap.put("vectorField", vectorField);
+
+      } else if (!parameterMap.containsKey("vectorField")) {
+
+          // If the model is provided but the vectorField is missing, we try to retrieve it.
+          String modelName = parameterMap.get("model")[0];
+          EbdModelConfig modelConfig =  manager.getModelByName(modelName);
+          String[] vectorField = new String[] {  modelConfig.getVectorField() };
+          parameterMap.put("vectorField", vectorField);
+      }
 
     // Perform BM25 and Vector searches in VectorMain collection
     JSONObject bm25Result = search(protocol, "/select", principal, parameterMap, "VectorMain");
@@ -510,32 +537,6 @@ public class SearchAPI {
     }
 
     return mergedHighlighting;
-  }
-
-  public Map<String, Double> computeRRF(Map<String, Integer> bm25Ranks, Map<String, Integer> vectorRanks, int k) {
-    Map<String, Double> rrfScores = new HashMap<>();
-
-    // Get RRF score from eaach result position (BM25)
-    for (String docId : bm25Ranks.keySet()) {
-      int rank = bm25Ranks.get(docId);
-      rrfScores.put(docId, 1.0 / (k + rank));
-    }
-
-    // Get RRF score from eaach result position (vector search)
-    for (String docId : vectorRanks.keySet()) {
-      int rank = vectorRanks.get(docId);
-      rrfScores.merge(docId, 1.0 / (k + rank), Double::sum);
-    }
-
-    // Sort entries by RRF final score
-    return rrfScores.entrySet().stream()
-            .sorted(Map.Entry.<String, Double>comparingByValue().reversed())
-            .collect(Collectors.toMap(
-                    Map.Entry::getKey,
-                    Map.Entry::getValue,
-                    (e1, e2) -> e1,
-                    LinkedHashMap::new
-            ));
   }
 
   static String getHandler(final HttpServletRequest servletRequest) {

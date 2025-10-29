@@ -1,0 +1,134 @@
+package com.francelabs.datafari.ai.models.chatmodels;
+
+import com.francelabs.datafari.ai.models.chatmodels.chatmodelbuilder.*;
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Factory responsible for creating {@link ChatModel} instances based on
+ * model configurations defined in {@link ChatModelConfigurationManager}.
+ * <p>
+ * The factory uses a registry of {@link ChatModelBuilder} implementations
+ * to dynamically build models for different interface types (e.g. OpenAI, MistralAI, AzureOpenAI, HuggingFace, etc.).
+ * </p>
+ *
+ * <p>
+ * New interface types can be added at runtime via the {@link #register(String, ChatModelBuilder)} method,
+ * making the factory extensible without recompilation.
+ * </p>
+ */
+public class ChatModelFactory {
+
+    private final ChatModelConfigurationManager configManager;
+    private final Map<String, ChatModelBuilder> builderRegistry = new HashMap<>();
+
+    /**
+     * Creates a new {@code ChatModelFactory} using the provided configuration manager.
+     *
+     * @param configManager The manager responsible for loading LLM model configurations.
+     */
+    public ChatModelFactory(ChatModelConfigurationManager configManager) {
+        this.configManager = configManager;
+        registerDefaults();
+    }
+
+    /**
+     * Registers default {@link ChatModelBuilder} implementations for known interface types:
+     * OpenAI, MistralAI, AzureOpenAI, HuggingFace, Ollama, GoogleAiGemini.
+     */
+    private void registerDefaults() {
+        builderRegistry.put("OpenAI", new OpenAiChatModelBuilder());
+        builderRegistry.put("MistralAI", new MistralAiChatModelBuilder());
+        builderRegistry.put("AzureOpenAI", new AzureOpenAiChatModelBuilder());
+        builderRegistry.put("HuggingFace", new HuggingFaceChatModelBuilder());
+        builderRegistry.put("Ollama", new OllamaChatModelBuilder());
+        builderRegistry.put("GoogleAiGemini", new GoogleAiGeminiChatModelBuilder());
+    }
+
+    /**
+     * Registers a new {@link ChatModelBuilder} for a given interface type.
+     * This allows the factory to support custom or third-party model types dynamically.
+     *
+     * @param interfaceType The name of the interface type (e.g. "MyCustomLLM").
+     * @param builder       The builder responsible for constructing models of this type.
+     */
+    public void register(String interfaceType, ChatModelBuilder builder) {
+        builderRegistry.put(interfaceType, builder);
+    }
+
+    /**
+     * Creates a {@link ChatModel} using the active model configuration defined in
+     * {@link ChatModelConfigurationManager}.
+     *
+     * @return A {@link ChatModel} instance corresponding to the active model.
+     * @throws IllegalStateException    If no active model configuration is available.
+     * @throws IllegalArgumentException If no builder is registered for the model's interface type.
+     */
+    public ChatModel createChatModel() {
+        // TODO : Error management
+        return createChatModel(null);
+    }
+    public StreamingChatModel createStreamingChatModel() {
+        // TODO : Error management
+        return createStreamingChatModel(null);
+    }
+
+
+    /**
+     * Creates a {@link ChatModel} using the configuration for the given model name.
+     * If {@code modelName} is {@code null}, the active model is used.
+     *
+     * @param modelName The name of the model to use, or {@code null} to use the active model.
+     * @return A {@link ChatModel} instance configured accordingly.
+     * @throws IllegalStateException    If no model configuration is found.
+     * @throws IllegalArgumentException If no builder is registered for the model's interface type.
+     */
+    public ChatModel createChatModel(String modelName) {
+        ChatModelConfig config = (modelName != null)
+                ? configManager.getModelByName(modelName)
+                : configManager.getActiveModelConfig();
+
+        if (config == null) {
+            throw new IllegalStateException("No model configuration found.");
+        }
+
+        String interfaceType = config.getInterfaceType();
+        ChatModelBuilder builder = builderRegistry.get(interfaceType);
+        if (builder == null) {
+            throw new IllegalArgumentException("No builder found for interface: " + interfaceType);
+        }
+
+        return builder.build(config.getParams());
+    }
+
+
+    /**
+     * Creates a {@link ChatModel} using the configuration for the given model name.
+     * If {@code modelName} is {@code null}, the active model is used.
+     *
+     * @param modelName The name of the model to use, or {@code null} to use the active model.
+     * @return A {@link ChatModel} instance configured accordingly.
+     * @throws IllegalStateException    If no model configuration is found.
+     * @throws IllegalArgumentException If no builder is registered for the model's interface type.
+     */
+    public StreamingChatModel createStreamingChatModel(String modelName) {
+        ChatModelConfig config = (modelName != null)
+                ? configManager.getModelByName(modelName)
+                : configManager.getActiveModelConfig();
+
+        if (config == null) {
+            throw new IllegalStateException("No model configuration found.");
+        }
+
+        String interfaceType = config.getInterfaceType();
+        ChatModelBuilder builder = builderRegistry.get(interfaceType);
+        if (builder == null) {
+            throw new IllegalArgumentException("No builder found for interface: " + interfaceType);
+        }
+
+        return builder.buildSCM(config.getParams());
+    }
+}

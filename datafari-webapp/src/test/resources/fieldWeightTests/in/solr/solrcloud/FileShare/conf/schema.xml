@@ -113,6 +113,9 @@
    
    <dynamicField name="ignored_*" type="ignored" multiValued="true"/>
    <dynamicField name="ontology_*" type="string" multiValued="true"/>
+
+     <!-- Agentic AI fields -->
+     <dynamicField name="agentic_*" type="string" indexed="true" stored="true" multiValued="true"/>
    
    <!-- ////////////////////////// -->
    <!-- Includes additional dynamicFields -->

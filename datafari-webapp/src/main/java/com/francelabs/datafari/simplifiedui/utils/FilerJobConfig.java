@@ -27,6 +27,8 @@ public class FilerJobConfig {
   private final static String stageConnectionNameElement = "stage_connectionname";
   private final static String stageSpecificationElement = "stage_specification";
   private final static String expressionElement = "expression";
+  private final static String enableVectorSearch = "enableVectorSearch";
+  private final static String enableEmbeddingsAtIndexing = "enableEmbeddingsAtIndexing";
   private final static String securityElement = "security";
   private final static String attributeValue = "_attribute_value";
   private final static String attributeParameter = "_attribute_parameter";
@@ -66,6 +68,8 @@ public class FilerJobConfig {
     final JSONArray jobChildrenEl = (JSONArray) filerJobEl.get(childrenElement);
     JSONArray documentSpec = new JSONArray();
     JSONObject repoSource = null;
+    JSONObject enableVectorSearchSpec = null;
+    JSONObject enableEmbeddingsAtIndexingSpec = null;
 
     // Stage id of the last transformation connector in the pipeline
     int lastTransfoPipelineStageId = 0;
@@ -95,14 +99,20 @@ public class FilerJobConfig {
       }
 
       boolean metadataAdjuster = false;
+      boolean vectorSearch = false;
       if (jobChild.get(type).equals(pipelinestageElement)) {
         isPipelineStage = true;
         final JSONArray children = (JSONArray) jobChild.get(childrenElement);
         for (int j = 0; j < children.size(); j++) {
           final JSONObject child = (JSONObject) children.get(j);
           if (child.get(type).equals(stageConnectionNameElement) && child.get(value).equals("MetadataAdjuster")) {
+            // MetadataAdjuster
             metadataAdjuster = true;
+          } else if (child.get(type).equals(stageConnectionNameElement) && child.get(value).equals("VectorSearch")) {
+            vectorSearch = true;
           } else if (child.get(type).equals(stageSpecificationElement) && metadataAdjuster) {
+
+            // MetadataAdjuster specifications
             final JSONArray metadataChildren = (JSONArray) child.get(childrenElement);
             for (int k = 0; k < metadataChildren.size(); k++) {
               final JSONObject metadataChild = (JSONObject) metadataChildren.get(k);
@@ -112,6 +122,21 @@ public class FilerJobConfig {
               }
             }
             metadataAdjuster = false;
+
+          } else if (child.get(type).equals(stageSpecificationElement) && vectorSearch) {
+
+            // VectorSearch specifications
+            final JSONArray metadataChildren = (JSONArray) child.get(childrenElement);
+            for (Object o : metadataChildren) {
+              final JSONObject metadataChild = (JSONObject) o;
+              if (metadataChild.get(type).equals(enableVectorSearch)) {
+                enableVectorSearchSpec = metadataChild;
+              } else if (metadataChild.get(type).equals(enableEmbeddingsAtIndexing)) {
+                enableEmbeddingsAtIndexingSpec = metadataChild;
+              }
+            }
+            vectorSearch = false;
+
           } else if (child.get(type).equals(stageIdElement)) {
             stageId = Integer.parseInt((String) child.get(value));
           } else if (child.get(type).equals(stageIsOutputElement)) {
@@ -142,6 +167,7 @@ public class FilerJobConfig {
 
       final JSONObject docFilterStage = JobStageCreator.getInstance().createDocFilterStage(docFilterStageId, docFilterStagePrereqId);
       final JSONObject duplicatesOutputStage = JobStageCreator.getInstance().createDuplicatesOutputStage(duplicatesOutputStageId, duplicatesOutputStagePrereqId);
+
 
       // Insertion in JSONARRAY at a specific index shifts the elements starting at the specified position to the right (add one to their indice)
       // Thus we need to first insert the last element which is the duplicate output, then we insert the docfFilter transfo as it is before the duplicate output in the pipeline
@@ -216,6 +242,16 @@ public class FilerJobConfig {
     // Set sourcename
     if (repoSource != null) {
       repoSource.replace(attributeValue, filerJob.getSourcename());
+    }
+
+    // Set enableVectorSearch
+    if (enableVectorSearchSpec != null) {
+      enableVectorSearchSpec.replace(attributeValue, filerJob.isEnableVectorSearch());
+    }
+
+    // Set enableEmbeddingsAtIndexing
+    if (enableEmbeddingsAtIndexingSpec != null) {
+      enableEmbeddingsAtIndexingSpec.replace(attributeValue, filerJob.isEnableEmbeddingsAtIndexing());
     }
 
     // Set schedule task

@@ -1,0 +1,25 @@
+package com.francelabs.datafari.ai.dto;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ApiContent {
+    public String message;           // Final response
+    public JSONArray sources;
+    public ApiError error;
+
+    @Override
+    public String toString() {
+        return toJson().toJSONString();
+    }
+
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("message", message);
+        json.put("sources", sources);
+        if (error != null) json.put("error", error.toJson());
+        return json;
+    }
+}

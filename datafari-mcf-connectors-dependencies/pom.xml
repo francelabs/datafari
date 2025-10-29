@@ -20,6 +20,7 @@
     <dependency>
       <groupId>com.francelabs.datafari</groupId>
       <artifactId>datafari-core</artifactId>
+      <version>7.0-dev-Community</version>
     </dependency>
     <dependency>
       <groupId>org.apache.manifoldcf</groupId>

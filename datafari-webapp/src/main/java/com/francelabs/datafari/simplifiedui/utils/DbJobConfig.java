@@ -25,6 +25,8 @@ public class DbJobConfig {
   private final static String stageConnectionNameElement = "stage_connectionname";
   private final static String stageSpecificationElement = "stage_specification";
   private final static String expressionElement = "expression";
+  private final static String enableVectorSearch = "enableVectorSearch";
+  private final static String enableEmbeddingsAtIndexing = "enableEmbeddingsAtIndexing";
   private final static String securityElement = "security";
   private final static String idQueryElement = "idquery";
   private final static String versionQueryElement = "versionquery";
@@ -69,6 +71,8 @@ public class DbJobConfig {
     final JSONArray jobChildrenEl = (JSONArray) dbJobEl.get(childrenElement);
     JSONArray documentSpec = new JSONArray();
     JSONObject repoSource = null;
+    JSONObject enableVectorSearchSpec = null;
+    JSONObject enableEmbeddingsAtIndexingSpec = null;
 
     // Stage id of the last transformation connector in the pipeline
     int lastTransfoPipelineStageId = 0;
@@ -95,14 +99,20 @@ public class DbJobConfig {
       }
 
       boolean metadataAdjuster = false;
+      boolean vectorSearch = false;
       if (jobChild.get(type).equals(pipelinestageElement)) {
         isPipelineStage = true;
         final JSONArray children = (JSONArray) jobChild.get(childrenElement);
         for (int j = 0; j < children.size(); j++) {
           final JSONObject child = (JSONObject) children.get(j);
           if (child.get(type).equals(stageConnectionNameElement) && child.get(value).equals("MetadataAdjuster")) {
+            // MetadataAdjuster
             metadataAdjuster = true;
+          } else if (child.get(type).equals(stageConnectionNameElement) && child.get(value).equals("VectorSearch")) {
+            vectorSearch = true;
           } else if (child.get(type).equals(stageSpecificationElement) && metadataAdjuster) {
+
+            // MetadataAdjuster specifications
             final JSONArray metadataChildren = (JSONArray) child.get(childrenElement);
             for (int k = 0; k < metadataChildren.size(); k++) {
               final JSONObject metadataChild = (JSONObject) metadataChildren.get(k);
@@ -112,6 +122,22 @@ public class DbJobConfig {
               }
             }
             metadataAdjuster = false;
+
+          } else if (child.get(type).equals(stageSpecificationElement) && vectorSearch) {
+
+            // VectorSearch specifications
+            final JSONArray metadataChildren = (JSONArray) child.get(childrenElement);
+            for (Object o : metadataChildren) {
+              final JSONObject metadataChild = (JSONObject) o;
+              if (metadataChild.get(type).equals(enableVectorSearch)) {
+                enableVectorSearchSpec = metadataChild;
+              } else if (metadataChild.get(type).equals(enableEmbeddingsAtIndexing)) {
+                enableEmbeddingsAtIndexingSpec = metadataChild;
+                metadataChild.replace(attributeValue, dbJob.isEnableEmbeddingsAtIndexing());
+              }
+            }
+            vectorSearch = false;
+
           } else if (child.get(type).equals(stageIdElement)) {
             stageId = Integer.parseInt((String) child.get(value));
           } else if (child.get(type).equals(stageIsOutputElement)) {
@@ -187,6 +213,16 @@ public class DbJobConfig {
     // Set sourcename
     if (repoSource != null) {
       repoSource.replace(attributeValue, dbJob.getSourcename());
+    }
+
+    // Set enableVectorSearch
+    if (enableVectorSearchSpec != null) {
+      enableVectorSearchSpec.replace(attributeValue, dbJob.isEnableVectorSearch());
+    }
+
+    // Set enableEmbeddingsAtIndexing
+    if (enableEmbeddingsAtIndexingSpec != null) {
+      enableEmbeddingsAtIndexingSpec.replace(attributeValue, dbJob.isEnableEmbeddingsAtIndexing());
     }
 
     // Set schedule task

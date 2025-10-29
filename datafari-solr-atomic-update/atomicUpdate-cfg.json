@@ -19,6 +19,24 @@
       "fieldsMapping": {
       }
     },
+    "VECTOR_FORCE": {
+      "searchHandler": "/opensearch",
+      "updateHandler": "/update/embed",
+      "source": {
+        "baseUrl": "localhost:2181",
+        "solrCollection": "VectorMain"
+      },
+      "destination": {
+        "baseUrl": "localhost:2181",
+        "solrCollection": "VectorMain"
+      },
+      "fieldsOperation": {
+        "embedded_content": "set"
+      },
+      "nbDocsPerBatch": 100,
+      "fieldsMapping": {
+      }
+    },
     "DELETE_VECTOR": {
       "source": {
         "baseUrl": "localhost:2181",

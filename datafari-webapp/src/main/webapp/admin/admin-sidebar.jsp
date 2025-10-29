@@ -198,13 +198,13 @@
           <i class="fas fa-microchip"></i><span id="vectorSearchMenu-AdminUI" class="hidden-xs">Semantic Search</span>
         </a>
         <ul id="menu-vectorsearch" class="list-unstyled collapse">
-          <%--li id="embeddingsModels"><a id="embeddingsModels-AdminUI"
-            class="ajax-link" href="?page=embeddingsModels">Vector Search</a></li--%> <%-- TODO --%>
-          <%--li id="chunkingConfiguration"><a id="chunkingConfiguration-AdminUI"
-            class="ajax-link" href="?page=chunkingConfiguration">Chunking Management</a></li--%> <%-- TODO --%>
+          <li id="solrVectorSearch"><a id="solrVectorSearch-AdminUI" class="ajax-link" href="?page=solrVectorSearch"></a></li>
+          <li id="embeddingsModels"><a id="embeddingsModels-AdminUI"
+            class="ajax-link" href="?page=embeddingsModels">Vector Search</a></li>
+          <li id="chunkingConfiguration"><a id="chunkingConfiguration-AdminUI"
+            class="ajax-link" href="?page=chunkingConfiguration">Chunking Management</a></li>
           <%--li id="vectorEmbeddings"><a id="vectorEmbeddings-AdminUI"
             class="ajax-link" href="?page=vectorEmbeddings"></a></li--%> <%-- TODO --%>
-          <li id="solrVectorSearch"><a id="solrVectorSearch-AdminUI" class="ajax-link" href="?page=solrVectorSearch"></a></li> <%-- TO DELETE --%>
         </ul>
       </li>
       <li id="AI" class="collapse-effect">

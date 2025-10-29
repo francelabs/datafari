@@ -81,6 +81,14 @@ public class MCFUISimplifiedWeb extends HttpServlet {
       final String mode = request.getParameter("webMode");
 
       boolean duplicatesDetection = false;
+      boolean enableVectorSearch = false;
+      boolean enableEmbeddingsAtIndexing = false;
+      if (request.getParameter("webEnableVectorSearch") != null) {
+        enableVectorSearch = true;
+      }
+      if (request.getParameter("webEnableEmbeddingsAtIndexing") != null) {
+        enableEmbeddingsAtIndexing = true;
+      }
       if (request.getParameter("webDuplicatesDetection") != null) {
         duplicatesDetection = true;
       }
@@ -120,6 +128,8 @@ public class MCFUISimplifiedWeb extends HttpServlet {
           webJob.setSourcename(sourcename);
           webJob.setTimezone(timezone);
           webJob.setMode(mode);
+          webJob.setEnableVectorSearch(enableVectorSearch);
+          webJob.setEnableEmbeddingsAtIndexing(enableEmbeddingsAtIndexing);
           webJob.setDuplicatesDetection(duplicatesDetection);
           webJob.setCreateOCR(createOCR);
           webJob.setTikaOCRHost(tikaOCRHost);

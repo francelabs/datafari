@@ -1,11 +1,11 @@
 package com.francelabs.datafari.rest.v2_0.management;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.francelabs.datafari.ai.ChatLanguageModelFactory;
-import com.francelabs.datafari.ai.LLMModelConfig;
-import com.francelabs.datafari.ai.LLMModelConfigurationManager;
-import com.francelabs.datafari.ai.LLMModelRegistry;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import com.francelabs.datafari.ai.models.chatmodels.ChatModelConfig;
+import com.francelabs.datafari.ai.models.chatmodels.ChatModelFactory;
+import com.francelabs.datafari.ai.models.chatmodels.ChatModelConfigurationManager;
+import com.francelabs.datafari.ai.models.chatmodels.ChatModelRegistry;
+import dev.langchain4j.model.chat.ChatModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,8 +32,8 @@ public class ChatLanguageModelsConfig extends HttpServlet {
             if (req.getParameter("test") != null && "true".equals(req.getParameter("test"))) {
                 handleTestModel(req, resp);
             } else {
-                LLMModelConfigurationManager manager = new LLMModelConfigurationManager();
-                LLMModelRegistry registry = new LLMModelRegistry();
+                ChatModelConfigurationManager manager = new ChatModelConfigurationManager();
+                ChatModelRegistry registry = new ChatModelRegistry();
                 registry.setActiveModel(manager.getActiveModelConfig() != null ? manager.getActiveModelConfig().getName() : null);
                 registry.setModels(manager.listModels());
 
@@ -60,7 +60,7 @@ public class ChatLanguageModelsConfig extends HttpServlet {
 
         try {
             // Read the JSON body of the request
-            LLMModelRegistry incomingRegistry = mapper.readValue(req.getInputStream(), LLMModelRegistry.class);
+            ChatModelRegistry incomingRegistry = mapper.readValue(req.getInputStream(), ChatModelRegistry.class);
 
             // Basic validation
             if (incomingRegistry.getModels() == null) {
@@ -69,12 +69,12 @@ public class ChatLanguageModelsConfig extends HttpServlet {
             }
 
             // Load current models configuration
-            LLMModelConfigurationManager manager = new LLMModelConfigurationManager();
+            ChatModelConfigurationManager manager = new ChatModelConfigurationManager();
 
             // Updated models list
-            List<LLMModelConfig> updatedModels = new ArrayList<>();
+            List<ChatModelConfig> updatedModels = new ArrayList<>();
 
-            for (LLMModelConfig config : incomingRegistry.getModels()) {
+            for (ChatModelConfig config : incomingRegistry.getModels()) {
                 if (config.getName() == null || config.getInterfaceType() == null) {
                     sendError(resp, HttpServletResponse.SC_BAD_REQUEST, "Model must have 'name' and 'interfaceType'");
                     return;
@@ -84,12 +84,12 @@ public class ChatLanguageModelsConfig extends HttpServlet {
 
             // If JSON request body is valid
             // 1. Delete all existing models
-            for (LLMModelConfig existing : new ArrayList<>(manager.listModels())) {
+            for (ChatModelConfig existing : new ArrayList<>(manager.listModels())) {
                 manager.removeModel(existing.getName());
             }
 
             // 2. Add new models
-            for (LLMModelConfig config : updatedModels) {
+            for (ChatModelConfig config : updatedModels) {
                 manager.addOrUpdateModel(config);
             }
 
@@ -120,10 +120,10 @@ public class ChatLanguageModelsConfig extends HttpServlet {
         }
 
         try {
-            LLMModelConfigurationManager configManager = new LLMModelConfigurationManager();
-            ChatLanguageModelFactory factory = new ChatLanguageModelFactory(configManager);
-            ChatLanguageModel model = factory.createChatModel(modelName);
-            String result = model.generate(prompt);
+            ChatModelConfigurationManager configManager = new ChatModelConfigurationManager();
+            ChatModelFactory factory = new ChatModelFactory(configManager);
+            ChatModel model = factory.createChatModel(modelName);
+            String result = model.chat(prompt);
             resp.setContentType("text/plain");
             resp.getWriter().write(result);
         } catch (Exception e) {

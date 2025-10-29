@@ -1,8 +1,7 @@
 package com.francelabs.datafari.transformation.llm.services;
 
 import com.francelabs.datafari.transformation.llm.model.LlmSpecification;
-import dev.ai4j.openai4j.OpenAiHttpException;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +32,7 @@ public class OpenAiLlmService extends LlmService implements ILlmService {
     @Override
     public String invoke(String prompt) throws ManifoldCFException {
 
-        ChatLanguageModel llm = OpenAiChatModel.builder()
+        ChatModel llm = OpenAiChatModel.builder()
                 .apiKey(spec.getApiKey())
                 .temperature(temperature)
                 .maxTokens(spec.getMaxTokens())
@@ -46,13 +45,13 @@ public class OpenAiLlmService extends LlmService implements ILlmService {
 
 
         try {
-            response = llm.generate(prompt);
+            response = llm.chat(prompt);
 
             // Wait for a few ms after the request to avoid exceeding rate limit
             Thread.sleep(200);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-        } catch (OpenAiHttpException e) {
+        } catch (Exception e) {
             Thread.currentThread().interrupt();
             LOGGER.error("An error occurred while calling LLM AI request.", e);
 
@@ -67,7 +66,7 @@ public class OpenAiLlmService extends LlmService implements ILlmService {
                 Thread.currentThread().interrupt();
             }
 
-            response = llm.generate(prompt);
+            response = llm.chat(prompt);
         }
         return response;
     }

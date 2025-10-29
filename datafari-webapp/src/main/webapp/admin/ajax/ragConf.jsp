@@ -60,6 +60,14 @@
           </div>
         </div>
 
+        <!-- Enable agentic -->
+        <div class="form-group row">
+          <label id="enableAgenticLabel" class="col-sm-2 col-form-label" for="enableAgentic">Enable RAG</label>
+          <div class="col-sm-5">
+            <input type="checkbox" id="enableAgentic" name="enableAgentic" data-toggle="toggle" data-onstyle="success">
+          </div>
+        </div>
+
         <!-- Enable summarization -->
         <div class="form-group row">
           <label id="enableSummarizationLabel" class="col-sm-2 col-form-label" for="enableSummarization">Enable summarization</label>

@@ -1327,11 +1327,15 @@
     <updateRequestProcessorChain name="datafari">
 
         <!-- ////////////////////////// -->
-        <!-- Includes additional updateProcessors -->
-        &custom_update_processors;
-
-        <processor class="solr.LogUpdateProcessorFactory"/>
+        <!-- DistributedUpdateProcessorFactory must always come first in case of Atomic Update -->
         <processor class="solr.DistributedUpdateProcessorFactory"/>
+        <processor class="com.francelabs.datafari.updateprocessor.TextToVectorUpdateProcessorFactory">
+            <str name="inputField">embedded_content</str>
+            <str name="outputField">${texttovector.outputfield:vector_1536}</str>
+            <str name="model">${texttovector.model:default_model}</str>
+            <str name="forceEmbeddings">false</str>
+        </processor>
+        <processor class="solr.LogUpdateProcessorFactory"/>
         <processor class="solr.RunUpdateProcessorFactory"/>
 
     </updateRequestProcessorChain>
@@ -1344,6 +1348,7 @@
             <str name="inputField">embedded_content</str>
             <str name="outputField">${texttovector.outputfield:vector_1536}</str>
             <str name="model">${texttovector.model:default_model}</str>
+            <str name="forceEmbeddings">true</str>
         </processor>
         <processor class="solr.LogUpdateProcessorFactory"/>
         <processor class="solr.RunUpdateProcessorFactory"/>
@@ -1382,7 +1387,7 @@
     </queryParser>
 
     <!-- Solr Vector embeddings component -->
-    <queryParser name="knn_text_to_vector" class="org.apache.solr.llm.texttovector.search.TextToVectorQParserPlugin"/>
+    <queryParser name="knn_text_to_vector" class="org.apache.solr.llm.textvectorisation.search.TextToVectorQParserPlugin"/>
 
     <!-- example of registering a query parser -->
     <!--
