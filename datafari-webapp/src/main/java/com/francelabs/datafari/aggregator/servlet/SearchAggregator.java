@@ -15,24 +15,21 @@
  *******************************************************************************/
 package com.francelabs.datafari.aggregator.servlet;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.francelabs.datafari.aggregator.utils.SearchAggregatorAccessTokenManager;
 import com.francelabs.datafari.api.RagAPI;
+import com.francelabs.datafari.api.SearchAPI;
+import com.francelabs.datafari.api.SuggesterAPI;
+import com.francelabs.datafari.ldap.LdapUsers;
 import com.francelabs.datafari.utils.Timer;
+import com.francelabs.datafari.utils.*;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Ordering;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
@@ -45,17 +42,13 @@ import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 
-import com.francelabs.datafari.aggregator.utils.SearchAggregatorAccessTokenManager;
-import com.francelabs.datafari.api.SearchAPI;
-import com.francelabs.datafari.api.SuggesterAPI;
-import com.francelabs.datafari.ldap.LdapUsers;
-import com.francelabs.datafari.utils.AuthenticatedUserName;
-import com.francelabs.datafari.utils.HttpClientProvider;
-import com.francelabs.datafari.utils.SearchAggregatorConfiguration;
-import com.francelabs.datafari.utils.SearchAggregatorUserConfig;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Servlet implementation class SearchProxy
@@ -438,18 +431,8 @@ public class SearchAggregator extends HttpServlet {
     // Retrieve username
     String requestingUser = "";
     if (request.getUserPrincipal() != null) {
-      // Get the username
-      if (request.getUserPrincipal() instanceof KeycloakAuthenticationToken) {
-        final KeycloakAuthenticationToken keycloakToken = (KeycloakAuthenticationToken) request.getUserPrincipal();
-        if (keycloakToken.getDetails() instanceof SimpleKeycloakAccount) {
-          final SimpleKeycloakAccount keycloakAccount = (SimpleKeycloakAccount) keycloakToken.getDetails();
-          requestingUser = keycloakAccount.getKeycloakSecurityContext().getToken().getPreferredUsername();
-        } else {
-          requestingUser = request.getUserPrincipal().getName().replaceAll("[^\\\\]*\\\\", "");
-        }
-      } else {
-        requestingUser = request.getUserPrincipal().getName().replaceAll("[^\\\\]*\\\\", "");
-      }
+      requestingUser = AuthenticatedUserName.getName(request);
+
       if (!requestingUser.contains("@")) {
         final String domain = LdapUsers.getInstance().getUserDomain(requestingUser);
         if (domain != null && !domain.isEmpty()) {

@@ -1,16 +1,15 @@
 package com.francelabs.datafari.security;
 
-import javax.annotation.PreDestroy;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-
+import jakarta.annotation.PreDestroy;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.context.annotation.ComponentScan;
+
 
 @SpringBootApplication(scanBasePackages = "com.francelabs.datafari")
 public class DatafariWebSecurityApplication extends SpringBootServletInitializer {

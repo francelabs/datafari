@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.ResponseParser;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrRequest;
@@ -54,7 +55,6 @@ import org.apache.solr.client.solrj.util.AsyncListener;
 import org.apache.solr.client.solrj.util.Cancellable;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrException;
-import org.apache.solr.common.StringUtils;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
@@ -234,7 +234,6 @@ public class ModifiedHttp2SolrClient extends SolrClient {
     asyncTracker.waitForComplete();
     try {
       if (closeClient) {
-        httpClient.setStopTimeout(1000);
         httpClient.stop();
         httpClient.destroy();
       }
@@ -672,7 +671,7 @@ public class ModifiedHttp2SolrClient extends SolrClient {
           if (name == null) {
             name = "";
           }
-          final HttpFields fields = new HttpFields();
+          HttpFields.Mutable fields = HttpFields.build();
           fields.add(HttpHeader.CONTENT_TYPE, contentType);
           content.addFilePart(name, contentStream.getName(), new InputStreamContentProvider(contentStream.getStream()), fields);
         }

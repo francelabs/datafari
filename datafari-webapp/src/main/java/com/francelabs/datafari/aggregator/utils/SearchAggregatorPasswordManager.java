@@ -1,32 +1,27 @@
 package com.francelabs.datafari.aggregator.utils;
 
-import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
-
+import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.francelabs.datafari.security.client.model.PgsqlClientDetails;
-import com.francelabs.datafari.security.client.repo.PgsqlClientDetailsRepository;
+import java.security.SecureRandom;
+import java.util.Random;
 
 public class SearchAggregatorPasswordManager {
 
   private static final String CLIENT_CREDENTIALS = "client_credentials";
   private static final String SCOPE_READ = "read";
 
-  @Autowired
-  PgsqlClientDetailsRepository clientDetailsRepo;
+//  @Autowired
+//  PgsqlClientDetailsRepository clientDetailsRepo;
 
   @Autowired
   PasswordEncoder passwordEncoder;
 
   public String renewPassword() {
+    throw new NotImplementedException("If this method is still useful, it needs to be completely revised in relation to Spring 6. You probably need to implement an Authorization Server with Spring Authorization Server library");
 
-    final Optional<PgsqlClientDetails> oClientDetails = clientDetailsRepo.findByClientId("search-aggregator");
+/*    final Optional<PgsqlClientDetails> oClientDetails = clientDetailsRepo.findByClientId("search-aggregator");
     if (oClientDetails.isPresent()) {
       final PgsqlClientDetails existingSAClient = oClientDetails.get();
       clientDetailsRepo.delete(existingSAClient);
@@ -38,7 +33,7 @@ public class SearchAggregatorPasswordManager {
     final PgsqlClientDetails searchAggClient = new PgsqlClientDetails("search-aggregator", encodedPassword, new HashSet<String>(), searchAggScopes, searchAggGrant, new HashSet<String>(),
         new HashSet<String>(), 60 * 15, 0);
     clientDetailsRepo.save(searchAggClient);
-    return randomPassword;
+    return randomPassword;*/
   }
 
   private String generateRandomPassword() {
