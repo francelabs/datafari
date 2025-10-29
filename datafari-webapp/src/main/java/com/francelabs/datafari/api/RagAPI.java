@@ -25,6 +25,7 @@ import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.utils.rag.ChunkUtils;
 import com.francelabs.datafari.utils.rag.PromptUtils;
+import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.segment.TextSegment;
@@ -426,33 +427,12 @@ public class RagAPI extends SearchAPI {
                 if (docs.size() > 1) docs = dedupeByEmbeddedContent(docs);
 
                 JSONObject jsonObject;
-                int nbDocs = docs.size(); // MaxFiles must not exceed the number of provided documents
-                for (int i = 0; i < nbDocs; i++) {
-
-                    jsonObject = (JSONObject) docs.get(i);
-
-                    // If the document has content, we generate a Document object with its content and metadata
-                    JSONArray contentArray = (JSONArray) jsonObject.get(EXACT_CONTENT);
-                    String content;
-                    if (contentArray != null && contentArray.getFirst() != null) {
-                        content = contentArray.get(0).toString();
-                    } else {
-                        // If exactContent is not provided, we try to retrieve embedded_content
-                        content = (String) jsonObject.get(EMBEDDED_CONTENT);
-                    }
-
-                    if (content != null && !content.isBlank()) {
-                        String title = ((JSONArray) jsonObject.get("title")).getFirst().toString();
-                        String id = (String) jsonObject.get("id");
-                        String url = (jsonObject.get("click_url") != null) ? (String) jsonObject.get("click_url") : (String) jsonObject.get("url");
-
-                        Metadata metadata = new Metadata();
-                        metadata.put("title", title);
-                        metadata.put("id", id);
-                        metadata.put("url", url);
-
-                        Document document = Document.from(content, metadata);
-                        documentsList.add(document);
+                for (Object doc : docs) {
+                    jsonObject = (JSONObject) doc;
+                    // Convert JSONObject to Langchain4j Document
+                    Document document = SearchUtils.jsonToDocument(jsonObject);
+                    if (document != null) {
+                      documentsList.add(document);
                     }
 
                 }
@@ -474,10 +454,9 @@ public class RagAPI extends SearchAPI {
         Set<String> seen = new HashSet<>();  // stocking hash to limit memory
 
         for (Object o : docs) {
-            if (!(o instanceof JSONObject)) {
+            if (!(o instanceof JSONObject doc)) {
                 continue;
             }
-            JSONObject doc = (JSONObject) o;
 
             String text = extractEmbeddedText(doc);
             if (text == null || text.isEmpty()) {

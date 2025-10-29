@@ -105,6 +105,7 @@ public class RagService extends AiService {
             // Retrieve ID from JSON input
             stream.phase("rag:retrieval");
             if (params.id != null && !params.id.isEmpty()) {
+                // If "id" is provided, we only need to retrieve one specific document
                 id = params.id;
                 LOGGER.debug("AiPowered - RAG - Retrieving document {} for RAG by Document.", id);
                 searchResults = SearchUtils.findDocumentById(request, id);

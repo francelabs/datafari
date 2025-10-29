@@ -1,5 +1,6 @@
-package com.francelabs.datafari.ai.agentic.tools;
+package com.francelabs.datafari.ai.agentic.tools.regular;
 
+import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.services.AiService;
@@ -344,22 +345,7 @@ public class CfPTools {
      */
     private void addDocumentToSource(JSONObject doc) {
         try {
-            String id = (doc.get("parent_doc") != null) ? (String) doc.get("parent_doc") : (String) doc.get(AiService.ID_FIELD);
-            String title = ((JSONArray) doc.get(AiService.TITLE_FIELD)).getFirst().toString();
-            String url = (String) doc.get(AiService.URL_FIELD);
-
-            String content;
-            if (doc.get(AiService.EXACT_CONTENT_FIELD) != null) {
-                content = (String) ((JSONArray) doc.get(AiService.EXACT_CONTENT_FIELD)).get(0);
-            } else if (doc.get("embedded_content") != null) {
-                content = (String) doc.get("embedded_content");
-            } else {
-                content = "No content available.";
-            }
-            Document source = Document.document(content);
-            source.metadata().put(AiService.ID_FIELD, id)
-                    .put(AiService.TITLE_FIELD, title)
-                    .put(AiService.URL_FIELD, url);
+            Document source = SearchUtils.jsonToDocument(doc);
             sourcesAcc.add(source);
 
         } catch (Exception e) {

@@ -1,5 +1,6 @@
-package com.francelabs.datafari.ai.agentic.tools;
+package com.francelabs.datafari.ai.agentic.tools.regular;
 
+import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.services.AiService;
@@ -20,7 +21,6 @@ import org.json.simple.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.List;
 
 public class DatafariTools {
 
@@ -238,44 +238,50 @@ public class DatafariTools {
         return result;
     }
 
-    @ToolMeta(
-            label = "Searching documents...",
-            i18nKey = "tool.vectorSearch",
-            icon = "search"
-    )
-    @Tool("Execute a search query and return information and partial content from retrieved documents. (vector search)")
-    String vectorSearch(
-            @P("The search query") String query
-    ) {
-        LOGGER.debug("AGENTIC TOOLS - Vector Search - Query: {}", query);
+//    @ToolMeta(
+//            label = "Searching documents...",
+//            i18nKey = "tool.vectorSearch",
+//            icon = "search"
+//    )
+//    @Tool("Execute a search query and return information and partial content from retrieved documents. (vector search)")
+//    String vectorSearch(
+//            @P("The search query") String query
+//    ) {
+//        LOGGER.debug("AGENTIC TOOLS - Vector Search - Query: {}", query);
+//
+//        int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
+//        int topK = config.getIntegerProperty(RagConfiguration.RRF_TOPK, 50);
+//
+//        EditableHttpServletRequest req = new EditableHttpServletRequest(request);
+//        String handler = "/vector";
+//        req.addParameter("q", query);
+//        req.addParameter("queryrag", query);
+//        req.addParameter("fl", "title,id,parent_doc,exactContent,embedded_content,url");
+//        req.addParameter("topK", String.valueOf(topK));
+//        req.addParameter("start", "0");
+//        req.addParameter("rows", String.valueOf(rows));
+//        req.addParameter("wt", "json");
+//
+//        JSONObject root = SearchUtils.processSearch(req, handler);
+//        JSONArray docs = SearchUtils.extractDocs(root);
+//        LOGGER.debug("AGENTIC TOOLS - Vector Search - {}", docs.toJSONString());
+//
+//        // Add document to sources
+//        addDocumentsToSource(docs);
+//
+//        return docs.toJSONString();
+//    }
 
-        int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
-        int topK = config.getIntegerProperty(RagConfiguration.RRF_TOPK, 50);
-
-        EditableHttpServletRequest req = new EditableHttpServletRequest(request);
-        String handler = "/vector";
-        req.addParameter("q", query);
-        req.addParameter("queryrag", query);
-        req.addParameter("fl", "title,id,parent_doc,exactContent,embedded_content,url");
-        req.addParameter("topK", String.valueOf(topK));
-        req.addParameter("start", "0");
-        req.addParameter("rows", String.valueOf(rows));
-        req.addParameter("wt", "json");
-
-        JSONObject root = SearchUtils.processSearch(req, handler);
-        JSONArray docs = SearchUtils.extractDocs(root);
-        LOGGER.debug("AGENTIC TOOLS - Vector Search - {}", docs.toJSONString());
-
-        // Add document to sources
-        addDocumentsToSource(docs);
-
-        return docs.toJSONString();
-    }
-
-    @ToolMeta(label = "Searching documents...",
+  /**
+   * Runs an hybrid search, and return the String JSON response.
+   * If the response returns nothing, runs a classic search (without the content)
+   * @param query: Search query
+   * @return a JSON String
+   */
+  @ToolMeta(label = "Searching documents...",
             i18nKey = "tool.hybridSearch",
             icon = "search")
-    @Tool("Search and return information and partial content from documents (hybrid search).")
+    @Tool("Search and return information and partial content from documents (if available).")
     String hybridSearch(
             @P("The search query") String query
     ) {
@@ -284,7 +290,7 @@ public class DatafariTools {
         String handler = "/rrf";
         editableRequest.addParameter("q", query);
         editableRequest.addParameter("queryrag", query);
-        editableRequest.addParameter("fl", "title,id,parent_doc,exactContent,embedded_content,url");
+        editableRequest.addParameter("fl", "title,id,parent_doc,embedded_content,url");
         editableRequest.addParameter("topK", "50");
         editableRequest.addParameter("start", "0");
         editableRequest.addParameter("rows", "10");
@@ -293,6 +299,11 @@ public class DatafariTools {
         JSONObject root = SearchUtils.processSearch(editableRequest, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
         LOGGER.debug("AGENTIC TOOLS - Hybrid Search - {}", docs.toJSONString());
+
+        if (docs.isEmpty()) {
+          LOGGER.debug("AGENTIC TOOLS - Hybrid Search - No result found with hydrid search. Running BM25 search instead.");
+          return bm25Search(query);
+        }
 
         // Add document to sources
         addDocumentsToSource(docs);
@@ -343,22 +354,7 @@ public class DatafariTools {
      */
     private void addDocumentToSource(JSONObject doc) {
         try {
-            String id = (doc.get("parent_doc") != null) ? (String) doc.get("parent_doc") : (String) doc.get(AiService.ID_FIELD);
-            String title = ((JSONArray) doc.get(AiService.TITLE_FIELD)).getFirst().toString();
-            String url = (String) doc.get(AiService.URL_FIELD);
-
-            String content;
-            if (doc.get(AiService.EXACT_CONTENT_FIELD) != null) {
-                content = (String) ((JSONArray) doc.get(AiService.EXACT_CONTENT_FIELD)).getFirst();
-            } else if (doc.get("embedded_content") != null) {
-                content = (String) doc.get("embedded_content");
-            } else {
-                content = "No content available.";
-            }
-            Document source = Document.document(content);
-            source.metadata().put(AiService.ID_FIELD, id)
-                    .put(AiService.TITLE_FIELD, title)
-                    .put(AiService.URL_FIELD, url);
+            Document source = SearchUtils.jsonToDocument(doc);
             sourcesAcc.add(source);
 
         } catch (Exception e) {

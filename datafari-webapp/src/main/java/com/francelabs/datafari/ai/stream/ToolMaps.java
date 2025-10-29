@@ -12,32 +12,6 @@ import java.util.*;
 public final class ToolMaps {
 
     private final Map<String, ToolDef> byName = new LinkedHashMap<>();
-//
-//    public ToolMaps register(Object toolInstance) {
-//        Class<?> clazz = toolInstance.getClass();
-//        for (Method m : clazz.getMethods()) {
-//            if (!isToolMethod(m)) continue; // ton critère (public, non-static ? signature ?)
-//
-//            ToolMeta meta = m.getAnnotation(ToolMeta.class);
-//
-//            String name = (meta != null && !meta.name().isBlank())
-//                    ? meta.name()
-//                    : m.getName();
-//
-//            // Validation d’unicité
-//            if (byName.containsKey(name)) {
-//                throw new IllegalStateException("Duplicate tool name: " + name + " for method " + m);
-//            }
-//
-//            String label = (meta != null && !meta.label().isBlank()) ? meta.label() : name;
-//            String desc  = (meta != null) ? meta.description() : "";
-//            String i18n  = (meta != null) ? meta.i18nKey() : "";
-//            String icon  = (meta != null) ? meta.icon() : "";
-//
-//            byName.put(name, new ToolDef(name, label, desc, i18n, icon, toolInstance, m));
-//        }
-//        return this;
-//    }
 
     public Optional<ToolDef> get(String name) {
         return Optional.ofNullable(byName.get(name));
@@ -47,12 +21,7 @@ public final class ToolMaps {
         return byName.values();
     }
 
-    private boolean isToolMethod(Method m) {
-        // Adapte selon tes règles : pas de bridge/synthetic, public, etc.
-        return !m.isSynthetic() && !m.isBridge();
-    }
-
-    public static Map<ToolSpecification, ToolExecutor> build(Object toolsInstance, ChatStream stream) {
+  public static Map<ToolSpecification, ToolExecutor> build(Object toolsInstance, ChatStream stream) {
         Map<ToolSpecification, ToolExecutor> map = new LinkedHashMap<>();
 
         // Retrieve specifications from anotated object
@@ -72,7 +41,7 @@ public final class ToolMaps {
             Method original = byName.get(name);
             if (original == null) continue;
 
-            // 🔍Extract label from ToolMeta  if any. Otherwise, the label is "Processing..."
+            // Extract label from ToolMeta  if any. Otherwise, the label is "Processing..."
             ToolMeta meta = original.getAnnotation(ToolMeta.class);
             String label = (meta != null && !meta.label().isBlank())
                     ? meta.label()

@@ -1,9 +1,11 @@
 package com.francelabs.datafari.utils.rag;
 
 import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
+import com.francelabs.datafari.ai.services.AiService;
 import com.francelabs.datafari.api.SearchAPI;
 import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
+import dev.langchain4j.data.document.Document;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -238,12 +240,44 @@ public class SearchUtils {
         EditableHttpServletRequest request = new EditableHttpServletRequest(originalRequest);
         request.addParameter("q", "id:" + id);
         request.addParameter("hl", "false");
+        request.addParameter("rows", "1");
         request.addParameter("fl", "id,title,exactContent,url,llm_summary");
         request.setPathInfo("/select");
 
+        // TODO : use fq to filter id if possible
         LOGGER.debug("AiPowered - Retrieving document {}.", id);
         return SearchAggregator.doGetSearch(request, null);
     }
+
+
+  /**
+   * Convert a JSONObject (from Datafari search) to a Langchain4j Document)
+   * @param doc JSONObject
+   * @return Document
+   */
+  public static Document jsonToDocument(JSONObject doc){
+    try {
+      String id = (String) (doc.get("parent_doc") != null ? doc.get("parent_doc") : doc.get(AiService.ID_FIELD));
+      String url = (String) doc.get(AiService.URL_FIELD);
+      String title;
+      Object t = doc.get(AiService.TITLE_FIELD);
+      if (t instanceof JSONArray ja) title = String.valueOf(ja.getFirst());
+      else title = String.valueOf(t);
+
+      String content;
+      if (doc.get(AiService.EXACT_CONTENT_FIELD) != null) {
+        content = String.valueOf(((JSONArray)doc.get(AiService.EXACT_CONTENT_FIELD)).getFirst());
+      } else if (doc.get("embedded_content") != null) {
+        content = String.valueOf(doc.get("embedded_content"));
+      } else content = "No content available.";
+
+      Document source = Document.document(content);
+      source.metadata().put(AiService.ID_FIELD, id)
+          .put(AiService.TITLE_FIELD, title)
+          .put(AiService.URL_FIELD, url);
+      return source;
+    } catch (Exception e) { return null; }
+  }
 
     // TODO : Move here common search request preparation
 }

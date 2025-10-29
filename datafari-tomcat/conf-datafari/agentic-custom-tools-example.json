@@ -1,0 +1,59 @@
+{
+  "tools": [
+    {
+      "description": "Search documents from the index. The search returns chunks of documents.",
+      "i18nKey": "tool.search.label",
+      "icon": "search",
+      "label": "Searching in Datafari…",
+      "name": "hybridSearch",
+      "type": "datafari-search",
+      "parameters": {
+        "repo_source": {
+          "description": "Source repository (optional)",
+          "type": "false",
+          "required": true
+        },
+        "q": {
+          "description": "The search query",
+          "type": "string",
+          "required": true
+        }
+      },
+      "properties": {
+        "collection": "VectorMain",
+        "fq": [],
+        "handler": "/rrf",
+        "defaults": {
+          "fl": "title,id,url,creation_date,last_modified,extension,repo_source,embedded_content",
+          "q.op": "OR",
+          "rows": 10,
+          "sort": "desc",
+          "start": 0
+        }
+      }
+    },
+    {
+      "type": "rag-by-document-template",
+      "description": "Extract entities from a given document.",
+      "i18nKey": "tool.extract.label",
+      "icon": "document",
+      "label": "Entity extraction…",
+      "name": "entityExtraction",
+      "parameters": {
+        "entities": {
+          "description": "A comma-seperated list of entities to extract (ex: Cities, Phone number, Email addresses)",
+          "type": "string",
+          "required": true
+        },
+        "id": {
+          "description": "Exact ID of the document",
+          "type": "string",
+          "required": true
+        }
+      },
+      "properties": {
+        "template": "Extract all the following entities from the document: {entities}"
+      }
+    }
+  ]
+}

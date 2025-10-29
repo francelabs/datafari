@@ -1,6 +1,7 @@
 package com.francelabs.datafari.ai.services;
 
 import com.francelabs.datafari.ai.agentic.agent.CfPAgent;
+import com.francelabs.datafari.ai.agentic.agent.CustomAgent;
 import com.francelabs.datafari.ai.agentic.agent.IAgent;
 import com.francelabs.datafari.ai.agentic.agent.RagAgent;
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
@@ -48,6 +49,10 @@ public class AgenticService extends AiService {
                 case "cfp":
                     LOGGER.debug("AgenticService - Using CFP Agent");
                     agent = new CfPAgent(request, stream, sourcesAcc);
+                    break;
+                case "custom":
+                    LOGGER.debug("AgenticService - Using custom Agent");
+                    agent = new CustomAgent(request, params, stream, sourcesAcc);
                     break;
                 case "rag":
                 default:

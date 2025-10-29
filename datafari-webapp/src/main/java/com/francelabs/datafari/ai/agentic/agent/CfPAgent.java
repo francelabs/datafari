@@ -1,7 +1,6 @@
 package com.francelabs.datafari.ai.agentic.agent;
 
-import com.francelabs.datafari.ai.agentic.tools.CfPTools;
-import com.francelabs.datafari.ai.agentic.tools.DatafariTools;
+import com.francelabs.datafari.ai.agentic.tools.regular.CfPTools;
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.stream.AgentStreamer;
 import com.francelabs.datafari.ai.stream.ChatStream;
@@ -26,6 +25,12 @@ public class CfPAgent implements IAgent {
     private final ChatStream stream;
     private final SourcesAccumulator sourcesAcc;
 
+  /**
+   * The CfpAgent is an experimental demo Agent, specialised in "Call for Proposals".
+   * @param request: The original HttpServletRequest
+   * @param stream: The ChatStream object, to stream events
+   * @param sourcesAcc: The SourcesAccumulator, to list & stream retrieve sources
+   */
     public CfPAgent(HttpServletRequest request, ChatStream stream, SourcesAccumulator sourcesAcc) {
         RagConfiguration config = RagConfiguration.getInstance();
         this.stream = stream;
