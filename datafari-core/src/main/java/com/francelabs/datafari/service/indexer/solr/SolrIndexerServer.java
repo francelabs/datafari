@@ -22,6 +22,8 @@ import org.apache.solr.client.solrj.request.schema.SchemaRequest.ReplaceFieldTyp
 import org.apache.solr.client.solrj.request.schema.SchemaRequest.Update;
 import org.apache.solr.client.solrj.response.schema.FieldTypeRepresentation;
 import org.apache.solr.client.solrj.response.schema.SchemaResponse.FieldTypesResponse;
+import org.apache.solr.client.solrj.impl.ZkClientClusterStateProvider;
+import org.apache.solr.client.solrj.impl.ClusterStateProvider;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
@@ -99,12 +101,14 @@ public class SolrIndexerServer implements IndexerServer {
   }
 
   /** Builds a Solr Cloud HTTP/2 client using the provided ZooKeeper hosts. */
-  private CloudHttp2SolrClient buildHttp2Client(List<String> zkHosts) {
-    CloudHttp2SolrClient.Builder builder = new CloudHttp2SolrClient.Builder(zkHosts);
-    builder.withResponseParser(new InputStreamResponseParser("json"));
-    return builder.build();
-  }
-
+private CloudHttp2SolrClient buildHttp2Client(List<String> zkHosts) {
+  // String de connexion ZK complète, chroot inclus si besoin
+  final String zkConnect = String.join(",", zkHosts); // ex: "zk1:2181,zk2:2181,zk3:2181/solr"
+  ClusterStateProvider csp = new ZkClientClusterStateProvider(zkConnect);
+  return new CloudHttp2SolrClient.Builder(csp)
+      .withResponseParser(new InputStreamResponseParser("json"))
+      .build();
+}
   /** Returns the total number of indexed documents. */
   @Override
   public long getNumberOfIndexedDocuments() {

@@ -402,6 +402,68 @@
       <version>1.16.3</version>
       <scope>test</scope>
     </dependency>
+
+  <dependency>
+    <groupId>org.eclipse.jetty</groupId>
+    <artifactId>jetty-client</artifactId>
+    <!-- version héritée du BOM -->
+  </dependency>
+  <dependency>
+    <groupId>org.eclipse.jetty</groupId>
+    <artifactId>jetty-http</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>org.eclipse.jetty</groupId>
+    <artifactId>jetty-io</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>org.eclipse.jetty</groupId>
+    <artifactId>jetty-util</artifactId>
+  </dependency>
+
+  <!-- HTTP/2 -->
+  <dependency>
+    <groupId>org.eclipse.jetty.http2</groupId>
+    <artifactId>jetty-http2-client</artifactId>
+  </dependency>
+<dependency>
+  <groupId>org.eclipse.jetty.http2</groupId>
+  <artifactId>jetty-http2-client-transport</artifactId>
+  <scope>runtime</scope>
+</dependency>
+  <dependency>
+    <groupId>org.eclipse.jetty.http2</groupId>
+    <artifactId>jetty-http2-common</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>org.eclipse.jetty.http2</groupId>
+    <artifactId>jetty-http2-hpack</artifactId>
+  </dependency>
+
+  <!-- ALPN client (nécessaire en HTTPS) -->
+  <dependency>
+    <groupId>org.eclipse.jetty</groupId>
+    <artifactId>jetty-alpn-client</artifactId>
+  </dependency>
+
+  <!-- SolrJ 10, on évite toute vieille lignée Jetty transitive -->
+  <dependency>
+    <groupId>org.apache.solr</groupId>
+    <artifactId>solr-solrj</artifactId>
+    <version>${solr.version}</version>
+    <exclusions>
+      <exclusion>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>*</artifactId>
+      </exclusion>
+      <exclusion>
+        <groupId>org.eclipse.jetty.http2</groupId>
+        <artifactId>*</artifactId>
+      </exclusion>
+    </exclusions>
+  </dependency>
+
+
   </dependencies>
   <build>
     <plugins>
