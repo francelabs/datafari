@@ -17,6 +17,8 @@
 	<property name="as.src.dir" value="${project.dir}/datafari-analytic-stack/target/dist/analytic-stack" />
 	<property name="tomcat.proj.dir" value="${project.dir}/datafari-tomcat" />
 	<property name="tomcat.src.dir" value="${tomcat.proj.dir}/target/dist/tomcat" />
+	<property name="tomcat-mcf.proj.dir" value="${project.dir}/datafari-tomcat-mcf" />
+        <property name="tomcat-mcf.src.dir" value="${tomcat-mcf.proj.dir}/target/dist/tomcat-mcf" />
 	<property name="solr.src.dir" value="${project.dir}/datafari-solr/target/dist/solr" />
 	<property name="datafari.webapp.dir" value="${project.dir}/datafari-webapp/target" />
 	<property name="datafari.core.dir" value="${project.dir}/datafari-core/target" />
@@ -215,17 +217,17 @@
 
 		<!-- Copy Tomcat-MCF  -->
 		<copy todir="${linux.dist.dir}/tomcat-mcf">
-			<fileset dir="${tomcat.src.dir}">
+			<fileset dir="${tomcat-mcf.src.dir}">
 			</fileset>
 		</copy>
 		<!-- Copy bin directory -->
 		<copy toDir="${linux.dist.dir}/tomcat-mcf/bin" overwrite="true" force="true">
-			<fileset dir="${tomcat.proj.dir}/bin-mcf">
+			<fileset dir="${tomcat-mcf.proj.dir}/bin-mcf">
 			</fileset>
 		</copy>
 		<!-- Copy conf directory -->
 		<copy toDir="${linux.dist.dir}/tomcat-mcf/conf" overwrite="true" force="true">
-			<fileset dir="${tomcat.proj.dir}/conf-mcf">
+			<fileset dir="${tomcat-mcf.proj.dir}/conf-mcf">
 			</fileset>
 		</copy>
 
