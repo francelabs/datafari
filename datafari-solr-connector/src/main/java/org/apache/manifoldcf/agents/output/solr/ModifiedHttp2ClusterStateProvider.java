@@ -5,14 +5,16 @@ import java.util.List;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.BaseHttpClusterStateProvider;
+import org.apache.solr.client.solrj.impl.Http2SolrClient;
 
 public class ModifiedHttp2ClusterStateProvider extends BaseHttpClusterStateProvider {
-  final ModifiedHttp2SolrClient httpClient;
+  final Http2SolrClient httpClient;
   final boolean closeClient;
 
-  public ModifiedHttp2ClusterStateProvider(final List<String> solrUrls, final ModifiedHttp2SolrClient httpClient) throws Exception {
-    this.httpClient = httpClient == null ? new ModifiedHttp2SolrClient.Builder().build() : httpClient;
-    this.closeClient = httpClient == null;
+  public ModifiedHttp2ClusterStateProvider(final List<String> solrUrls, final ModifiedHttp2SolrClient mc) throws Exception {
+    this.httpClient = (mc == null) ? new Http2SolrClient.Builder().build()
+                                   : new Http2SolrClient.Builder().build(); // on ne peut pas réutiliser l’instance mc comme Http2SolrClient
+    this.closeClient = true;
     init(solrUrls);
   }
 
@@ -25,6 +27,6 @@ public class ModifiedHttp2ClusterStateProvider extends BaseHttpClusterStateProvi
 
   @Override
   protected SolrClient getSolrClient(final String baseUrl) {
-    return new ModifiedHttp2SolrClient.Builder(baseUrl).withHttpClient(httpClient).build();
+    return new Http2SolrClient.Builder(baseUrl).build();
   }
 }

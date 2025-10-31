@@ -43,7 +43,7 @@ import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 import org.apache.manifoldcf.core.interfaces.Specification;
 import org.apache.manifoldcf.core.interfaces.VersionContext;
 import org.apache.manifoldcf.crawler.system.Logging;
-
+import org.apache.solr.client.solrj.SolrServerException;
 /**
  * This is the output connector for SOLR. Currently, no frills.
  */
@@ -421,17 +421,18 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
    *
    * @return the connection's status as a displayable string.
    */
-  @Override
-  public String check() throws ManifoldCFException {
-    try {
-      getSession();
-      poster.checkPost();
-      return super.check();
-    } catch (final ServiceInterruption e) {
-      return "Transient error: " + e.getMessage();
-    }
+@Override
+public String check() throws ManifoldCFException {
+  try {
+    getSession();
+    poster.checkPost();
+    return super.check();
+  } catch (org.apache.solr.client.solrj.SolrServerException e) {
+    return "Transient error: " + e.getMessage();
+  } catch (java.io.IOException e) {
+    return "Transient error: " + e.getMessage();
   }
-
+}
   /**
    * Get an output version string, given an output specification. The output version string is used to uniquely describe the pertinent details of the output specification and the configuration, to
    * allow the Connector Framework to determine whether a document will need to be output again. Note that the contents of the document cannot be considered by this method, and that a different
@@ -520,11 +521,19 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
     }
 
     // Now, go off and call the ingest API.
-    if (poster.indexPost(documentURI, document, sp.getArgs(), authorityNameString, activities))
-      return DOCUMENTSTATUS_ACCEPTED;
+try {
+  if (poster.indexPost(documentURI, document, sp.getArgs(), authorityNameString, activities)) {
+    return DOCUMENTSTATUS_ACCEPTED;
+  } else {
     return DOCUMENTSTATUS_REJECTED;
   }
-
+} catch (org.apache.solr.client.solrj.SolrServerException e) {
+  throw new ManifoldCFException("Error indexing into Solr: " + e.getMessage(), e);
+} catch (java.io.IOException e) {
+  // si la méthode déclare déjà IOException -> soit la relancer, soit la wrapper, au choix:
+  throw e; // ou: throw new ManifoldCFException("I/O error during Solr operation: " + e.getMessage(), e);
+}
+}
   /**
    * Remove a document using the connector. Note that the last outputDescription is included, since it may be necessary for the connector to use such information to know how to properly remove the
    * document.
@@ -537,13 +546,19 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
    * @param activities
    *          is the handle to an object that the implementer of an output connector may use to perform operations, such as logging processing activity.
    */
-  @Override
-  public void removeDocument(final String documentURI, final String outputDescription, final IOutputRemoveActivity activities) throws ManifoldCFException, ServiceInterruption {
-    // Establish a session
-    getSession();
+@Override
+public void removeDocument(final String documentURI, final String outputDescription,
+                           final IOutputRemoveActivity activities)
+    throws ManifoldCFException, ServiceInterruption {
+  // Establish a session
+  getSession();
+  try {
     poster.deletePost(documentURI, activities);
+  } catch (org.apache.solr.client.solrj.SolrServerException | java.io.IOException e) {
+    // La méthode ne déclare pas IOException -> on wrappe dans ManifoldCFException
+    throw new ManifoldCFException("Error deleting document in Solr: " + e.getMessage(), e);
   }
-
+}
   /**
    * Notify the connector of a completed job. This is meant to allow the connector to flush any internal data structures it has been keeping around, or to tell the output repository that this is a
    * good time to synchronize things. It is called whenever a job is either completed or aborted.
@@ -551,17 +566,22 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
    * @param activities
    *          is the handle to an object that the implementer of an output connector may use to perform operations, such as logging processing activity.
    */
-  @Override
-  public void noteJobComplete(final IOutputNotifyActivity activities) throws ManifoldCFException, ServiceInterruption {
-    // Establish a session
-    getSession();
+@Override
+public void noteJobComplete(final IOutputNotifyActivity activities)
+    throws ManifoldCFException, ServiceInterruption {
+  // Establish a session
+  getSession();
 
-    // Do a commit post
-    if (doCommits) {
+  // Do a commit post
+  if (doCommits) {
+    try {
       poster.commitPost();
+    } catch (org.apache.solr.client.solrj.SolrServerException | java.io.IOException e) {
+      // La méthode ne déclare pas IOException -> on wrappe
+      throw new ManifoldCFException("Error during commit to Solr: " + e.getMessage(), e);
     }
   }
-
+}
   // UI support methods.
   //
   // These support methods come in two varieties. The first bunch is involved in setting up connection configuration information. The second bunch

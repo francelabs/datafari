@@ -69,10 +69,9 @@ public class ModifiedLBHttp2SolrClient extends ModifiedLBSolrClient {
     final AtomicBoolean cancelled = new AtomicBoolean(false);
     final AtomicReference<Cancellable> currentCancellable = new AtomicReference<>();
     final RetryListener retryListener = new RetryListener() {
-
       @Override
-      public void onSuccess(final Rsp rsp) {
-        asyncListener.onSuccess(rsp);
+      public void onSuccess(final Rsp r) {
+        asyncListener.onSuccess(r);
       }
 
       @Override
@@ -91,8 +90,8 @@ public class ModifiedLBHttp2SolrClient extends ModifiedLBSolrClient {
               if (cancelled.get()) {
                 return;
               }
-              final Cancellable cancellable = doRequest(url, req, rsp, isNonRetryable, it.isServingZombieServer(), this);
-              currentCancellable.set(cancellable);
+              final Cancellable c = doRequest(url, req, rsp, isNonRetryable, it.isServingZombieServer(), this);
+              currentCancellable.set(c);
             }
           } finally {
             MDC.remove("ModifiedLBSolrClient.url");
@@ -103,24 +102,21 @@ public class ModifiedLBHttp2SolrClient extends ModifiedLBSolrClient {
       }
     };
     try {
-      final Cancellable cancellable = doRequest(it.nextOrError(), req, rsp, isNonRetryable, it.isServingZombieServer(), retryListener);
-      currentCancellable.set(cancellable);
+      final Cancellable c = doRequest(it.nextOrError(), req, rsp, isNonRetryable, it.isServingZombieServer(), retryListener);
+      currentCancellable.set(c);
     } catch (final SolrServerException e) {
       asyncListener.onFailure(e);
     }
     return () -> {
       synchronized (cancelled) {
         cancelled.set(true);
-        if (currentCancellable.get() != null) {
-          currentCancellable.get().cancel();
-        }
+        if (currentCancellable.get() != null) currentCancellable.get().cancel();
       }
     };
   }
 
   private interface RetryListener {
     void onSuccess(Rsp rsp);
-
     void onFailure(Exception e, boolean retryReq);
   }
 
@@ -131,9 +127,7 @@ public class ModifiedLBHttp2SolrClient extends ModifiedLBSolrClient {
       @Override
       public void onSuccess(final NamedList<Object> result) {
         rsp.rsp = result;
-        if (isZombie) {
-          zombieServers.remove(baseUrl);
-        }
+        if (isZombie) zombieServers.remove(baseUrl);
         listener.onSuccess(rsp);
       }
 
@@ -144,15 +138,10 @@ public class ModifiedLBHttp2SolrClient extends ModifiedLBSolrClient {
         } catch (final BaseHttpSolrClient.RemoteExecutionException e) {
           listener.onFailure(e, false);
         } catch (final SolrException e) {
-          // we retry on 404 or 403 or 503 or 500
-          // unless it's an update - then we only retry on connect exception
           if (!isNonRetryable && RETRY_CODES.contains(e.code())) {
             listener.onFailure((!isZombie) ? addZombie(baseUrl, e) : e, true);
           } else {
-            // Server is alive but the request was likely malformed or invalid
-            if (isZombie) {
-              zombieServers.remove(baseUrl);
-            }
+            if (isZombie) zombieServers.remove(baseUrl);
             listener.onFailure(e, false);
           }
         } catch (final SocketException e) {
@@ -182,5 +171,4 @@ public class ModifiedLBHttp2SolrClient extends ModifiedLBSolrClient {
       }
     });
   }
-
 }
