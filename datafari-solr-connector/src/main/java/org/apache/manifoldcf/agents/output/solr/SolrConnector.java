@@ -290,9 +290,11 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
         solrType = SolrConfig.SOLR_TYPE_STANDARD;
 
       if (solrType.equals(SolrConfig.SOLR_TYPE_STANDARD)) {
+        // --------- MODE STANDALONE (HTTP) ----------
         final String userID = params.getParameter(SolrConfig.PARAM_USERID);
         final String password = params.getObfuscatedParameter(SolrConfig.PARAM_PASSWORD);
         final String realm = params.getParameter(SolrConfig.PARAM_REALM);
+
         final String keystoreData = params.getParameter(SolrConfig.PARAM_KEYSTORE);
         IKeystoreManager keystoreManager;
         if (keystoreData != null)
@@ -301,15 +303,15 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
           keystoreManager = null;
 
         final String protocol = params.getParameter(SolrConfig.PARAM_PROTOCOL);
-        if (protocol == null || protocol.length() == 0)
+        if (protocol == null || protocol.isEmpty())
           throw new ManifoldCFException("Missing parameter: " + SolrConfig.PARAM_PROTOCOL);
 
         final String server = params.getParameter(SolrConfig.PARAM_SERVER);
-        if (server == null || server.length() == 0)
+        if (server == null || server.isEmpty())
           throw new ManifoldCFException("Missing parameter: " + SolrConfig.PARAM_SERVER);
 
         String port = params.getParameter(SolrConfig.PARAM_PORT);
-        if (port == null || port.length() == 0)
+        if (port == null || port.isEmpty())
           port = "80";
 
         String webapp = params.getParameter(SolrConfig.PARAM_WEBAPPNAME);
@@ -317,10 +319,10 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
           webapp = null;
 
         String core = params.getParameter(SolrConfig.PARAM_CORE);
-        if (core != null && core.length() == 0)
+        if (core == null || core.length() == 0)
           core = "collection1";
 
-        // Pick up timeouts
+        // timeouts
         String socketTimeoutString = params.getParameter(SolrConfig.PARAM_SOCKET_TIMEOUT);
         if (socketTimeoutString == null)
           socketTimeoutString = "900";
@@ -334,33 +336,67 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
           final int socketTimeout = Integer.parseInt(socketTimeoutString) * 1000;
           final int connectTimeout = Integer.parseInt(connectTimeoutString) * 1000;
 
-          poster = new HttpPoster(protocol, server, Integer.parseInt(port), webapp, core, connectTimeout, socketTimeout, updatePath, removePath, statusPath, realm, userID, password, allowAttributeName, denyAttributeName, idAttributeName,
-              originalSizeAttributeName, modifiedDateAttributeName, createdDateAttributeName, indexedDateAttributeName, fileNameAttributeName, mimeTypeAttributeName, contentAttributeName, keystoreManager, maxDocumentLength, commitWithin,
-              useExtractUpdateHandler, includedMimeTypes, excludedMimeTypes, allowCompression);
+          // En STANDARD : aucune info ZK ne doit être transmise
+          poster = new HttpPoster(
+              /* protocol           */ protocol,
+              /* server             */ server,
+              /* port               */ Integer.parseInt(port),
+              /* webapp             */ webapp,
+              /* core               */ core,
+              /* connectTimeoutMS   */ connectTimeout,
+              /* socketTimeoutMS    */ socketTimeout,
+              /* updatePath         */ updatePath,
+              /* removePath         */ removePath,
+              /* statusPath         */ statusPath,
+              /* realm              */ realm,
+              /* userID             */ userID,
+              /* password           */ password,
+              /* allowAttr          */ allowAttributeName,
+              /* denyAttr           */ denyAttributeName,
+              /* idAttr             */ idAttributeName,
+              /* origSizeAttr       */ originalSizeAttributeName,
+              /* modifiedDateAttr   */ modifiedDateAttributeName,
+              /* createdDateAttr    */ createdDateAttributeName,
+              /* indexedDateAttr    */ indexedDateAttributeName,
+              /* fileNameAttr       */ fileNameAttributeName,
+              /* mimeTypeAttr       */ mimeTypeAttributeName,
+              /* contentAttr        */ contentAttributeName,
+              /* keystore           */ keystoreManager,
+              /* maxDocLen          */ maxDocumentLength,
+              /* commitWithin       */ commitWithin,
+              /* useExtractUpdate   */ useExtractUpdateHandler,
+              /* includedMimeTypes  */ includedMimeTypes,
+              /* excludedMimeTypes  */ excludedMimeTypes,
+              /* allowCompression   */ allowCompression
+          );
 
         } catch (final NumberFormatException e) {
           throw new ManifoldCFException(e.getMessage());
         }
 
       } else if (solrType.equals(SolrConfig.SOLR_TYPE_SOLRCLOUD)) {
+        // --------- MODE SOLRCLOUD (ZK) ----------
         final List<String> zookeeperHosts = new ArrayList<>();
-        // Pull together the zookeeper string describing the zookeeper nodes
         for (int i = 0; i < params.getChildCount(); i++) {
           final ConfigurationNode cn = params.getChild(i);
           if (cn.getType().equals(SolrConfig.NODE_ZOOKEEPER)) {
-            zookeeperHosts.add(cn.getAttributeValue(SolrConfig.ATTR_HOST) + ":" + cn.getAttributeValue(SolrConfig.ATTR_PORT));
+            final String host = cn.getAttributeValue(SolrConfig.ATTR_HOST);
+            final String zkp  = cn.getAttributeValue(SolrConfig.ATTR_PORT);
+            if (host != null && !host.isEmpty() && zkp != null && !zkp.isEmpty()) {
+              zookeeperHosts.add(host + ":" + zkp);
+            }
           }
         }
+        if (zookeeperHosts.isEmpty())
+          throw new ManifoldCFException("SolrCloud selected but no ZooKeeper hosts configured.");
 
         String znodePath = params.getParameter(SolrConfig.PARAM_ZOOKEEPER_ZNODE_PATH);
 
-        // Get collection
         String collection = params.getParameter(SolrConfig.PARAM_COLLECTION);
-        if (collection == null)
+        if (collection == null || collection.isEmpty())
           collection = "collection1";
         collectionName = collection;
 
-        // Pick up timeouts
         String zkSocketTimeoutString = params.getParameter(SolrConfig.PARAM_ZOOKEEPER_SOCKET_TIMEOUT);
         if (zkSocketTimeoutString == null)
           zkSocketTimeoutString = "60";
@@ -368,26 +404,62 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
         if (zkConnectionTimeoutString == null)
           zkConnectionTimeoutString = "60";
 
-        // Create an httpposter
+        // Récupération protocol/keystore pour SSL éventuel en cloud (ignorés par le ctor “cloud simple”,
+        // mais pris en compte par le ctor “cloud long + protocol/keystore” si présent)
+        final String keystoreData = params.getParameter(SolrConfig.PARAM_KEYSTORE);
+        IKeystoreManager keystoreManager;
+        if (keystoreData != null)
+          keystoreManager = KeystoreManagerFactory.make("", keystoreData);
+        else
+          keystoreManager = null;
+
+        final String protocol = params.getParameter(SolrConfig.PARAM_PROTOCOL);
+
         try {
-          final int zkClientTimeout = Integer.parseInt(zkSocketTimeoutString) * 1000;
+          final int zkClientTimeout  = Integer.parseInt(zkSocketTimeoutString) * 1000;
           final int zkConnectTimeout = Integer.parseInt(zkConnectionTimeoutString) * 1000;
 
-          poster = new HttpPoster(zookeeperHosts, znodePath, collection, zkClientTimeout, zkConnectTimeout, updatePath, removePath, statusPath, allowAttributeName, denyAttributeName, idAttributeName, originalSizeAttributeName,
-              modifiedDateAttributeName, createdDateAttributeName, indexedDateAttributeName, fileNameAttributeName, mimeTypeAttributeName, contentAttributeName, maxDocumentLength, commitWithin, useExtractUpdateHandler, includedMimeTypes,
-              excludedMimeTypes, allowCompression);
+          // En CLOUD : aucune solrUrl ne doit être transmise
+          poster = new HttpPoster(
+              /* zkHosts            */ zookeeperHosts,
+              /* znodePath          */ znodePath,
+              /* collection         */ collection,
+              /* zkClientTimeoutMS  */ zkClientTimeout,
+              /* zkConnectTimeoutMS */ zkConnectTimeout,
+              /* updatePath         */ updatePath,
+              /* removePath         */ removePath,
+              /* statusPath         */ statusPath,
+              /* allowAttr          */ allowAttributeName,
+              /* denyAttr           */ denyAttributeName,
+              /* idAttr             */ idAttributeName,
+              /* origSizeAttr       */ originalSizeAttributeName,
+              /* modifiedDateAttr   */ modifiedDateAttributeName,
+              /* createdDateAttr    */ createdDateAttributeName,
+              /* indexedDateAttr    */ indexedDateAttributeName,
+              /* fileNameAttr       */ fileNameAttributeName,
+              /* mimeTypeAttr       */ mimeTypeAttributeName,
+              /* contentAttr        */ contentAttributeName,
+              /* maxDocLen          */ maxDocumentLength,
+              /* commitWithin       */ commitWithin,
+              /* useExtractUpdate   */ useExtractUpdateHandler,
+              /* includedMimeTypes  */ includedMimeTypes,
+              /* excludedMimeTypes  */ excludedMimeTypes,
+              /* allowCompression   */ allowCompression,
+              /* protocolForSSL     */ protocol,         // pour savoir si https
+              /* keystoreForSSL     */ keystoreManager   // pour SSLContext si https
+          );
 
         } catch (final NumberFormatException e) {
           throw new ManifoldCFException(e.getMessage());
         }
 
-      } else
+      } else {
         throw new ManifoldCFException("Illegal value for parameter '" + SolrConfig.PARAM_SOLR_TYPE + "': '" + solrType + "'");
+      }
 
+      expirationTime = System.currentTimeMillis() + EXPIRATION_INTERVAL;
     }
-    expirationTime = System.currentTimeMillis() + EXPIRATION_INTERVAL;
-  }
-
+}
   /** Parse a mime type field into individual mime types in a hash */
   protected static Set<String> parseMimeTypes(final String mimeTypes) throws ManifoldCFException {
     final Set<String> rval = new HashSet<>();

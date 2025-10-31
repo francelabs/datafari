@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.apache.solr.client.solrj.impl.CloudHttp2SolrClient;
 
+/** Wrapper léger Cloud, avec Builder minimal (sans SSL spécifique). */
 public class ModifiedCloudHttp2SolrClient extends CloudHttp2SolrClient {
 
   public static class Builder {
@@ -31,13 +32,9 @@ public class ModifiedCloudHttp2SolrClient extends CloudHttp2SolrClient {
     }
   }
 
-  private ModifiedCloudHttp2SolrClient(CloudHttp2SolrClient.Builder builder) {
-    super(builder);
-  }
+  private ModifiedCloudHttp2SolrClient(CloudHttp2SolrClient.Builder builder) { super(builder); }
 
-  @Override
-  protected boolean wasCommError(Throwable t) { return false; }
+  @Override protected boolean wasCommError(Throwable t) { return false; }
 
-  @Override
-  public void close() throws IOException { super.close(); }
+  @Override public void close() throws IOException { super.close(); }
 }
