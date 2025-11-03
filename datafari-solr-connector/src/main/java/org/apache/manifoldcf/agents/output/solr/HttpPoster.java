@@ -183,19 +183,57 @@ public class HttpPoster {
 
   // ---------- Initialisations clients ----------
 
-  private void initCloud(List<String> zookeeperHosts, String znodePath, String collection) {
-    try {
-      final Optional<String> chroot = (znodePath != null && !znodePath.isEmpty())
-          ? Optional.of(znodePath) : Optional.empty();
-      final ModifiedCloudHttp2SolrClient client =
-          new ModifiedCloudHttp2SolrClient.Builder(zookeeperHosts, chroot)
-              .withDefaultCollection(collection)
-              .build();
-      this.solrServer = client;
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to initialize Cloud client", e);
+
+private void initCloud(List<String> zookeeperHosts, String znodePath, String collection) {
+  try {
+    final Optional<String> chroot =
+        (znodePath != null && !znodePath.isEmpty()) ? Optional.of(znodePath) : Optional.empty();
+
+    if (Logging.ingest.isDebugEnabled()) {
+      Logging.ingest.debug("[Cloud init] zkHosts=" + zookeeperHosts
+          + " chroot=" + chroot.orElse("(none)")
+          + " collection=" + collection);
     }
+
+    // Construction du client Cloud "propre" (sans solrUrls)
+    org.apache.solr.client.solrj.impl.CloudHttp2SolrClient.Builder b =
+        new org.apache.solr.client.solrj.impl.CloudHttp2SolrClient.Builder(zookeeperHosts, chroot);
+
+    org.apache.solr.client.solrj.impl.CloudHttp2SolrClient client = b.build();
+
+    // ✅ Ici on définit la collection par défaut sur le client (pas sur le builder)
+    if (collection != null && !collection.isEmpty()) {
+      client.setDefaultCollection(collection);
+    }
+
+    this.solrServer = client;
+
+    if (Logging.ingest.isDebugEnabled()) {
+      Logging.ingest.debug("[Cloud init] CloudHttp2SolrClient initialisé sans solrUrl (OK)");
+    }
+  } catch (Exception e) {
+    throw new RuntimeException("Failed to initialize Cloud client", e);
   }
+}
+private static List<String> sanitizeZkHosts(List<String> hosts) {
+  if (hosts == null) return Collections.emptyList();
+  final List<String> out = new ArrayList<>(hosts.size());
+  for (String h : hosts) {
+    if (h == null) continue;
+    h = h.trim();
+    if (h.isEmpty()) continue;
+    // CloudHttp2SolrClient attend "host:port" (sans schéma)
+    h = stripHttpScheme(h);
+    out.add(h);
+  }
+  return out;
+}
+
+private static String stripHttpScheme(String s) {
+  if (s.startsWith("http://")) return s.substring("http://".length());
+  if (s.startsWith("https://")) return s.substring("https://".length());
+  return s;
+}
 
   private void initStandalone(String protocol, String server, int port, String webapp, String core,
                               int connectionTimeout, int socketTimeout, SSLContext sslContextOrNull) {
