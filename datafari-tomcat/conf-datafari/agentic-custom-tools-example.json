@@ -10,8 +10,8 @@
       "parameters": {
         "repo_source": {
           "description": "Source repository (optional)",
-          "type": "false",
-          "required": true
+          "type": "string",
+          "required": false
         },
         "q": {
           "description": "The search query",
