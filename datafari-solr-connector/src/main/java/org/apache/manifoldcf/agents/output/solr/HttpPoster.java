@@ -43,7 +43,8 @@ public class HttpPoster {
   private final Set<String> includedMimeTypes;
   private final Set<String> excludedMimeTypes;
   private final boolean allowCompression;
-
+  private final String allowAttributeName;
+  private final String denyAttributeName;
   private static final String LITERAL = "literal.";
 
   // ---------- Constructeurs principaux (actuels) ----------
@@ -58,7 +59,8 @@ public class HttpPoster {
                     final String contentAttributeName, final Long maxDocumentLength, final String commitWithin,
                     final boolean useExtractUpdateHandler, final Set<String> includedMimeTypes,
                     final Set<String> excludedMimeTypes, final boolean allowCompression) {
-
+    this.allowAttributeName = allowAttributeName;
+    this.denyAttributeName  = denyAttributeName;
     this.idAttributeName = (idAttributeName != null ? idAttributeName : "id");
     this.originalSizeAttributeName = originalSizeAttributeName;
     this.modifiedDateAttributeName = modifiedDateAttributeName;
@@ -96,7 +98,8 @@ public class HttpPoster {
                     final Long maxDocumentLength, final String commitWithin, final boolean useExtractUpdateHandler,
                     final Set<String> includedMimeTypes, final Set<String> excludedMimeTypes, final boolean allowCompression,
                     final String protocolForSSL, final IKeystoreManager keystoreForSSL) {
-
+    this.allowAttributeName = allowAttributeName;
+    this.denyAttributeName  = denyAttributeName;
     this.idAttributeName = (idAttributeName != null ? idAttributeName : "id");
     this.originalSizeAttributeName = originalSizeAttributeName;
     this.modifiedDateAttributeName = modifiedDateAttributeName;
@@ -321,7 +324,42 @@ private static String stripHttpScheme(String s) {
         }
       }
     }
+        // --- ACLs : collecte, qualification, validation types supportés, puis émission en literal.*
+    final Map<String,String[]> aclsMap     = new HashMap<>();
+    final Map<String,String[]> denyAclsMap = new HashMap<>();
 
+    final Iterator<String> aclTypes = document.securityTypesIterator();
+    while (aclTypes.hasNext()) {
+      final String aclType = aclTypes.next();
+
+      final String[] allow = convertACL(document.getSecurityACL(aclType),      authorityNameString, activities);
+      final String[] deny  = convertACL(document.getSecurityDenyACL(aclType),  authorityNameString, activities);
+
+      aclsMap.put(aclType, allow);
+      denyAclsMap.put(aclType, deny);
+
+      if (!isKnownAclType(aclType)) {
+        // même logique que l’ancien code : on rejette si type non géré
+        activities.recordActivity(
+            null,
+            SolrConnector.INGEST_ACTIVITY,
+            null,
+            documentURI,
+            activities.UNKNOWN_SECURITY,
+            "Solr connector rejected document that has security info which Solr does not recognize: '" + aclType + "'"
+        );
+        if (Logging.ingest.isDebugEnabled()) {
+          Logging.ingest.debug("Rejecting doc due to unknown ACL type: " + aclType + " for " + documentURI);
+        }
+        return false;
+      }
+    }
+
+    // Ecriture des ACLs en literal.allow_token_* / literal.deny_token_* etc.
+    for (Map.Entry<String,String[]> e : aclsMap.entrySet()) {
+      final String aclType = e.getKey();
+      writeACLs(out, aclType, e.getValue(), denyAclsMap.get(aclType));
+    }
     req.setParams(out);
 
     // Binaire éventuel
@@ -431,6 +469,83 @@ Logging.ingest.debug("debug entier olivier");
     if (includedMimeTypes != null && !includedMimeTypes.isEmpty() && !includedMimeTypes.contains(m)) return false;
     if (excludedMimeTypes != null && excludedMimeTypes.contains(m)) return false;
     return true;
+  }
+    /** Convertit une ACL non qualifiée en ACL qualifiée via l’autorité. */
+  protected static String[] convertACL(final String[] acl,
+                                       final String authorityNameString,
+                                       final IOutputAddActivity activities) {
+    if (acl == null) return new String[0];
+    final String[] out = new String[acl.length];
+    for (int i = 0; i < acl.length; i++) {
+      try {
+        out[i] = activities.qualifyAccessToken(authorityNameString, acl[i]);
+      } catch (Exception e) {
+        // On reste robuste : on remonte une RuntimeException avec contexte
+        throw new RuntimeException("ACL qualification failed for token '" + acl[i] + "': " + e.getMessage(), e);
+      }
+    }
+    return out;
+  }
+
+  /** Ecrit les ACL en paramètres literal.* pour un handler extract-like. */
+  protected void writeACLs(final ModifiableSolrParams out,
+                           final String aclType,
+                           final String[] allowAcl,
+                           final String[] denyAcl) {
+    final String allowParam = LITERAL + allowAttributeName + aclType;
+    final String denyParam  = LITERAL + denyAttributeName  + aclType;
+
+    if (allowAcl != null) {
+      for (String v : allowAcl) {
+        if (v != null) out.add(allowParam, v);
+      }
+    }
+    if (denyAcl != null) {
+      for (String v : denyAcl) {
+        if (v != null) out.add(denyParam, v);
+      }
+    }
+
+    if (Logging.ingest.isDebugEnabled()) {
+      Logging.ingest.debug("ACLs → " + allowParam + "=" + Arrays.toString(allowAcl)
+          + " ; " + denyParam + "=" + Arrays.toString(denyAcl));
+    }
+  }
+  /**
+   * Écrit les ACL dans un SolrInputDocument (mode non-extract).
+   * Exemple : allow_token_document, deny_token_share, etc.
+   */
+  protected void writeACLsInSolrDoc(final org.apache.solr.common.SolrInputDocument inputDoc,
+                                    final String aclType,
+                                    final String[] acl,
+                                    final String[] denyAcl) {
+    final String allowField = allowAttributeName + aclType;
+    final String denyField  = denyAttributeName  + aclType;
+
+    if (acl != null && acl.length > 0) {
+      for (String a : acl) {
+        if (a != null) inputDoc.addField(allowField, a);
+      }
+    }
+
+    if (denyAcl != null && denyAcl.length > 0) {
+      for (String d : denyAcl) {
+        if (d != null) inputDoc.addField(denyField, d);
+      }
+    }
+
+    if (org.apache.manifoldcf.agents.system.Logging.ingest.isDebugEnabled()) {
+      org.apache.manifoldcf.agents.system.Logging.ingest.debug(
+          "ACLs (doc mode) → " + allowField + "=" + java.util.Arrays.toString(acl)
+          + " ; " + denyField + "=" + java.util.Arrays.toString(denyAcl));
+    }
+  }
+
+  /** Renvoie true si le type d'ACL est géré côté Solr (document/share/parent*). */
+  private static boolean isKnownAclType(String t) {
+    return RepositoryDocument.SECURITY_TYPE_DOCUMENT.equals(t)
+        || RepositoryDocument.SECURITY_TYPE_SHARE.equals(t)
+        || (t != null && t.startsWith(RepositoryDocument.SECURITY_TYPE_PARENT));
   }
 
   // ---------- Helpers ----------
