@@ -324,42 +324,53 @@ private static String stripHttpScheme(String s) {
         }
       }
     }
-        // --- ACLs : collecte, qualification, validation types supportés, puis émission en literal.*
-    final Map<String,String[]> aclsMap     = new HashMap<>();
-    final Map<String,String[]> denyAclsMap = new HashMap<>();
+final Map<String, String[]> aclsMap = new HashMap<>();
+final Map<String, String[]> denyAclsMap = new HashMap<>();
 
-    final Iterator<String> aclTypes = document.securityTypesIterator();
-    while (aclTypes.hasNext()) {
-      final String aclType = aclTypes.next();
+final Iterator<String> aclTypes = document.securityTypesIterator();
+while (aclTypes.hasNext()) {
+  final String aclType = aclTypes.next();
+    aclsMap.put(
+        aclType,
+        convertACL(document.getSecurityACL(aclType), authorityNameString, activities)
+    );
+    denyAclsMap.put(
+        aclType,
+        convertACL(document.getSecurityDenyACL(aclType), authorityNameString, activities)
+    );
 
-      final String[] allow = convertACL(document.getSecurityACL(aclType),      authorityNameString, activities);
-      final String[] deny  = convertACL(document.getSecurityDenyACL(aclType),  authorityNameString, activities);
+  // sécurité : rejeter les types non pris en charge
+// Sécurité : rejeter les types non pris en charge
+if (!aclType.equals(RepositoryDocument.SECURITY_TYPE_DOCUMENT)
+    && !aclType.equals(RepositoryDocument.SECURITY_TYPE_SHARE)
+    && !aclType.startsWith(RepositoryDocument.SECURITY_TYPE_PARENT)) {
 
-      aclsMap.put(aclType, allow);
-      denyAclsMap.put(aclType, deny);
-
-      if (!isKnownAclType(aclType)) {
-        // même logique que l’ancien code : on rejette si type non géré
-        activities.recordActivity(
-            null,
-            SolrConnector.INGEST_ACTIVITY,
-            null,
-            documentURI,
-            activities.UNKNOWN_SECURITY,
-            "Solr connector rejected document that has security info which Solr does not recognize: '" + aclType + "'"
-        );
-        if (Logging.ingest.isDebugEnabled()) {
-          Logging.ingest.debug("Rejecting doc due to unknown ACL type: " + aclType + " for " + documentURI);
-        }
-        return false;
-      }
+  try {
+    activities.recordActivity(
+        null,
+        org.apache.manifoldcf.agents.output.solr.SolrConnector.INGEST_ACTIVITY,
+        null,
+        documentURI,
+        activities.UNKNOWN_SECURITY,
+        "Le connecteur Solr a rejeté le document car il contient un type de sécurité non reconnu : '" + aclType + "'"
+    );
+  } catch (org.apache.manifoldcf.core.interfaces.ManifoldCFException e) {
+    if (Logging.ingest.isDebugEnabled()) {
+      Logging.ingest.debug("Erreur lors de l’enregistrement de l’activité pour un type de sécurité inconnu : " + e.getMessage(), e);
     }
+  }
 
-    // Ecriture des ACLs en literal.allow_token_* / literal.deny_token_* etc.
-    for (Map.Entry<String,String[]> e : aclsMap.entrySet()) {
-      final String aclType = e.getKey();
-      writeACLs(out, aclType, e.getValue(), denyAclsMap.get(aclType));
-    }
+  // On arrête ici le traitement du document
+  return false;
+}
+}
+
+// … puis plus loin, quand tu renseignes la requête :
+for (String aclType : aclsMap.keySet()) {
+  // mode extract-handler
+  writeACLs(out, aclType, aclsMap.get(aclType), denyAclsMap.get(aclType));
+  // (et/ou plus tard en mode non-extract via writeACLsInSolrDoc(...))
+}
     req.setParams(out);
 
     // Binaire éventuel
@@ -470,23 +481,26 @@ Logging.ingest.debug("debug entier olivier");
     if (excludedMimeTypes != null && excludedMimeTypes.contains(m)) return false;
     return true;
   }
-    /** Convertit une ACL non qualifiée en ACL qualifiée via l’autorité. */
-  protected static String[] convertACL(final String[] acl,
-                                       final String authorityNameString,
-                                       final IOutputAddActivity activities) {
-    if (acl == null) return new String[0];
-    final String[] out = new String[acl.length];
-    for (int i = 0; i < acl.length; i++) {
-      try {
-        out[i] = activities.qualifyAccessToken(authorityNameString, acl[i]);
-      } catch (Exception e) {
-        // On reste robuste : on remonte une RuntimeException avec contexte
-        throw new RuntimeException("ACL qualification failed for token '" + acl[i] + "': " + e.getMessage(), e);
-      }
-    }
-    return out;
-  }
 
+// No checked exceptions; handles problems inside and logs.
+protected static String[] convertACL(final String[] acl,
+                                     final String authorityNameString,
+                                     final IOutputAddActivity activities) {
+  if (acl == null) return new String[0];
+  final String[] rval = new String[acl.length];
+  for (int i = 0; i < acl.length; i++) {
+    try {
+      rval[i] = activities.qualifyAccessToken(authorityNameString, acl[i]);
+    } catch (Exception e) {
+      // Fallback: keep the raw token, but log for diagnosis
+      if (Logging.ingest.isDebugEnabled()) {
+        Logging.ingest.debug("qualifyAccessToken failed for token '" + acl[i] + "': " + e.getMessage(), e);
+      }
+      rval[i] = acl[i];
+    }
+  }
+  return rval;
+}
   /** Ecrit les ACL en paramètres literal.* pour un handler extract-like. */
   protected void writeACLs(final ModifiableSolrParams out,
                            final String aclType,
