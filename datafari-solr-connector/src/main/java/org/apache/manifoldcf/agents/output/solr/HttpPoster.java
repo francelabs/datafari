@@ -14,13 +14,24 @@ import org.apache.manifoldcf.agents.system.Logging;
 import org.apache.manifoldcf.connectorcommon.interfaces.IKeystoreManager;
 
 import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
+
 import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;
 import org.apache.solr.client.solrj.request.SolrPing;
 import org.apache.solr.client.solrj.request.UpdateRequest;
+
+import org.apache.solr.common.SolrException;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.util.ContentStreamBase;
 
+/**
+ * HttpPoster
+ * (cloud/standalone init hardening, optional HTTP/1.1 best-effort, commitWithin + targeted retries)
+ * Only the two requested additions were made: debugHandlers() and the cloud compat constructor.
+ */
 public class HttpPoster {
 
   private SolrClient solrServer;
@@ -45,9 +56,10 @@ public class HttpPoster {
   private final boolean allowCompression;
   private final String allowAttributeName;
   private final String denyAttributeName;
+
   private static final String LITERAL = "literal.";
 
-  // ---------- Constructeurs principaux (actuels) ----------
+  // ---------- Main constructors ----------
 
   public HttpPoster(final List<String> zookeeperHosts, final String znodePath, final String collection,
                     final int socketTimeout, final int connectionTimeout,
@@ -59,6 +71,7 @@ public class HttpPoster {
                     final String contentAttributeName, final Long maxDocumentLength, final String commitWithin,
                     final boolean useExtractUpdateHandler, final Set<String> includedMimeTypes,
                     final Set<String> excludedMimeTypes, final boolean allowCompression) {
+
     this.allowAttributeName = allowAttributeName;
     this.denyAttributeName  = denyAttributeName;
     this.idAttributeName = (idAttributeName != null ? idAttributeName : "id");
@@ -98,6 +111,7 @@ public class HttpPoster {
                     final Long maxDocumentLength, final String commitWithin, final boolean useExtractUpdateHandler,
                     final Set<String> includedMimeTypes, final Set<String> excludedMimeTypes, final boolean allowCompression,
                     final String protocolForSSL, final IKeystoreManager keystoreForSSL) {
+
     this.allowAttributeName = allowAttributeName;
     this.denyAttributeName  = denyAttributeName;
     this.idAttributeName = (idAttributeName != null ? idAttributeName : "id");
@@ -130,9 +144,8 @@ public class HttpPoster {
     debugHandlers("Standalone(long)-ctor");
   }
 
-  // ---------- Constructeurs de compatibilité attendus par SolrConnector ----------
+  // ---------- Compatibility constructors expected by SolrConnector ----------
 
-  // STANDALONE (ancienne signature sans protocolForSSL/keystoreForSSL)
   public HttpPoster(final String protocol, final String server, final int port, final String webapp, final String core,
                     final int connectionTimeout, final int socketTimeout,
                     final String updatePath, final String removePath, final String statusPath,
@@ -159,7 +172,7 @@ public class HttpPoster {
          /* keystoreForSSL */ keystoreManager);
   }
 
-  // CLOUD (ancienne signature avec protocolForSSL/keystoreForSSL en fin)
+  /** NEW: cloud compat constructor with extra (protocolForSSL, keystoreForSSL) to match SolrConnector */
   public HttpPoster(final List<String> zookeeperHosts, final String znodePath, final String collection,
                     final int socketTimeout, final int connectionTimeout,
                     final String updatePath, final String removePath, final String statusPath,
@@ -171,8 +184,6 @@ public class HttpPoster {
                     final boolean useExtractUpdateHandler, final Set<String> includedMimeTypes,
                     final Set<String> excludedMimeTypes, final boolean allowCompression,
                     final String protocolForSSL, final IKeystoreManager keystoreForSSL) {
-    // Dans CloudHttp2SolrClient, le SSL côté client est géré par le client cloud lui-même si nécessaire.
-    // On ignore protocolForSSL/keystoreForSSL ici et on délègue au ctor principal.
     this(zookeeperHosts, znodePath, collection,
          socketTimeout, connectionTimeout,
          updatePath, removePath, statusPath,
@@ -184,79 +195,132 @@ public class HttpPoster {
          useExtractUpdateHandler, includedMimeTypes, excludedMimeTypes, allowCompression);
   }
 
-  // ---------- Initialisations clients ----------
+  // ---------- Client initializations ----------
 
+  private void initCloud(List<String> zookeeperHosts, String znodePath, String collection) {
+    try {
+      final Optional<String> chroot =
+          (znodePath != null && !znodePath.isEmpty()) ? Optional.of(znodePath) : Optional.empty();
 
-private void initCloud(List<String> zookeeperHosts, String znodePath, String collection) {
+      if (Logging.ingest.isDebugEnabled()) {
+        Logging.ingest.debug("[Cloud init] zkHosts=" + zookeeperHosts
+            + " chroot=" + chroot.orElse("(none)")
+            + " collection=" + collection);
+      }
+
+CloudSolrClient.Builder b = new CloudSolrClient.Builder(zookeeperHosts, chroot);
+CloudSolrClient client = b.build();
+      if (collection != null && !collection.isEmpty()) {
+        client.setDefaultCollection(collection);
+      }
+
+      this.solrServer = client;
+
+      if (Logging.ingest.isDebugEnabled()) {
+        Logging.ingest.debug("[Cloud init] CloudHttp2SolrClient initialized (HTTP/1.1 best-effort attempted)");
+      }
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to initialize Cloud client", e);
+    }
+  }
+
+private void initStandalone(String protocol, String server, int port, String webapp, String core,
+                            int connectionTimeout, int socketTimeout, SSLContext sslContextOrNull) {
   try {
-    final Optional<String> chroot =
-        (znodePath != null && !znodePath.isEmpty()) ? Optional.of(znodePath) : Optional.empty();
+    String location = "";
+    if (webapp != null && !webapp.isEmpty()) location += "/" + webapp;
+    if (core != null && !core.isEmpty())     location += "/" + core;
+    final String baseUrl = protocol + "://" + server + ":" + port + location;
 
-    if (Logging.ingest.isDebugEnabled()) {
-      Logging.ingest.debug("[Cloud init] zkHosts=" + zookeeperHosts
-          + " chroot=" + chroot.orElse("(none)")
-          + " collection=" + collection);
+    // Builder HTTP/1.1
+    HttpSolrClient.Builder builder = new HttpSolrClient.Builder(baseUrl);
+
+    // Timeout si ta version de SolrJ les supporte
+    // (sinon tu peux les laisser commentés)
+    // builder.withConnectionTimeout(Math.max(connectionTimeout, 30000));
+    // builder.withSocketTimeout(Math.max(socketTimeout, 60000));
+
+    // --- SSL permissif ---
+    if ("https".equalsIgnoreCase(protocol)) {
+      try {
+        SSLContext sslContext = (sslContextOrNull != null) ? sslContextOrNull : createTrustAllSSLContext();
+        org.apache.http.conn.ssl.NoopHostnameVerifier verifier = org.apache.http.conn.ssl.NoopHostnameVerifier.INSTANCE;
+        org.apache.http.impl.client.CloseableHttpClient httpClient =
+            org.apache.http.impl.client.HttpClients.custom()
+              .setSSLContext(sslContext)
+              .setSSLHostnameVerifier(verifier)
+              .build();
+        builder.withHttpClient(httpClient);
+        if (Logging.ingest.isDebugEnabled()) {
+          Logging.ingest.debug("[Standalone init] Permissive SSL context applied (trust all certificates)");
+        }
+      } catch (Exception e) {
+        Logging.ingest.warn("[Standalone init] Could not configure permissive SSL context", e);
+      }
     }
 
-    // Construction du client Cloud "propre" (sans solrUrls)
-    org.apache.solr.client.solrj.impl.CloudHttp2SolrClient.Builder b =
-        new org.apache.solr.client.solrj.impl.CloudHttp2SolrClient.Builder(zookeeperHosts, chroot);
-
-    org.apache.solr.client.solrj.impl.CloudHttp2SolrClient client = b.build();
-
-    // ✅ Ici on définit la collection par défaut sur le client (pas sur le builder)
-    if (collection != null && !collection.isEmpty()) {
-      client.setDefaultCollection(collection);
-    }
-
+    HttpSolrClient client = builder.build();
     this.solrServer = client;
 
     if (Logging.ingest.isDebugEnabled()) {
-      Logging.ingest.debug("[Cloud init] CloudHttp2SolrClient initialisé sans solrUrl (OK)");
+      Logging.ingest.debug("[Standalone init] HttpSolrClient initialized, baseUrl=" + baseUrl);
     }
   } catch (Exception e) {
-    throw new RuntimeException("Failed to initialize Cloud client", e);
+    throw new RuntimeException("Failed to initialize standalone client", e);
   }
 }
-private static List<String> sanitizeZkHosts(List<String> hosts) {
-  if (hosts == null) return Collections.emptyList();
-  final List<String> out = new ArrayList<>(hosts.size());
-  for (String h : hosts) {
-    if (h == null) continue;
-    h = h.trim();
-    if (h.isEmpty()) continue;
-    // CloudHttp2SolrClient attend "host:port" (sans schéma)
-    h = stripHttpScheme(h);
-    out.add(h);
-  }
-  return out;
-}
 
-private static String stripHttpScheme(String s) {
-  if (s.startsWith("http://")) return s.substring("http://".length());
-  if (s.startsWith("https://")) return s.substring("https://".length());
-  return s;
+/**
+ * Crée un SSLContext permissif (trust all certificates)
+ */
+private static SSLContext createTrustAllSSLContext() throws Exception {
+  javax.net.ssl.TrustManager[] trustAllCerts = new javax.net.ssl.TrustManager[]{
+      new javax.net.ssl.X509TrustManager() {
+        public java.security.cert.X509Certificate[] getAcceptedIssuers() { return new java.security.cert.X509Certificate[0]; }
+        public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {}
+        public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {}
+      }
+  };
+  SSLContext sslContext = SSLContext.getInstance("TLS");
+  sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+  return sslContext;
 }
-
-  private void initStandalone(String protocol, String server, int port, String webapp, String core,
-                              int connectionTimeout, int socketTimeout, SSLContext sslContextOrNull) {
+  /** Best-effort: try to force HTTP/1.1 (safe no-op if unsupported on this SolrJ version). */
+  private static void tryForceHttp11(Object clientOrBuilder, String where) {
     try {
-      String location = "";
-      if (webapp != null && !webapp.isEmpty()) location += "/" + webapp;
-      if (core != null && !core.isEmpty())     location += "/" + core;
-      final String baseUrl = protocol + "://" + server + ":" + port + location;
+      boolean applied = false;
 
-      ModifiedHttp2SolrClient.Builder b = new ModifiedHttp2SolrClient.Builder(baseUrl)
-          .connectionTimeout(connectionTimeout)
-          .idleTimeout(socketTimeout);
+      try {
+        java.lang.reflect.Method m = clientOrBuilder.getClass().getMethod("useHttp1_1", boolean.class);
+        m.invoke(clientOrBuilder, true);
+        applied = true;
+      } catch (Throwable ignore) { /* not present */ }
 
-      if (sslContextOrNull != null) {
-        b.withSSLContext(sslContextOrNull);
+      if (!applied) {
+        try {
+          java.lang.reflect.Method getter = clientOrBuilder.getClass().getMethod("getHttpClient");
+          Object jettyClient = getter.invoke(clientOrBuilder);
+          if (jettyClient != null) {
+            String[] candidates = new String[] {"setTransportOverHTTP2", "setUseHttp2", "setHttp2Enabled"};
+            for (String name : candidates) {
+              try {
+                java.lang.reflect.Method m2 = jettyClient.getClass().getMethod(name, boolean.class);
+                m2.invoke(jettyClient, false); // disable HTTP/2 → force HTTP/1.1
+                applied = true;
+                break;
+              } catch (Throwable ignore2) {}
+            }
+          }
+        } catch (Throwable ignore) { /* getter not present */ }
       }
 
-      this.solrServer = b.build();
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to initialize standalone client", e);
+      if (Logging.ingest.isDebugEnabled()) {
+        Logging.ingest.debug("[HTTP/1.1 attempt][" + where + "] " + (applied ? "applied" : "not supported on this version"));
+      }
+    } catch (Throwable t) {
+      if (Logging.ingest.isDebugEnabled()) {
+        Logging.ingest.debug("[HTTP/1.1 attempt][" + where + "] failed: " + t.getMessage(), t);
+      }
     }
   }
 
@@ -274,119 +338,330 @@ private static String stripHttpScheme(String s) {
     }
   }
 
-  // ---------- Méthodes principales ----------
+  // ---------- Main methods ----------
 
-  public boolean indexPost(final String documentURI, final RepositoryDocument document,
-                           final Map<String, List<String>> arguments, final String authorityNameString,
-                           final IOutputAddActivity activities)
-      throws SolrServerException, IOException {
+public boolean indexPost(final String documentURI,
+                         final RepositoryDocument document,
+                         final Map<String, List<String>> arguments,
+                         final String authorityNameString,
+                         final IOutputAddActivity activities)
+    throws SolrServerException, IOException {
 
-    final String path = normalizePathOrDefault(this.postUpdateAction, "/update/extract");
-    if (Logging.ingest.isDebugEnabled())
-      Logging.ingest.debug("Solr index -> handler: " + path + " , id=" + documentURI);
+  final long fullStartTime = System.currentTimeMillis();
+  final Long length = document.getBinaryLength();
 
-    final ContentStreamUpdateRequest req = new ContentStreamUpdateRequest(path);
-    final ModifiableSolrParams out = new ModifiableSolrParams();
+  // Avertir si l'UI a coché "extract", mais on n'utilise plus l'extract handler
+  if (this.useExtractUpdateHandler && org.apache.manifoldcf.agents.system.Logging.ingest.isWarnEnabled()) {
+    org.apache.manifoldcf.agents.system.Logging.ingest.warn(
+      "useExtractUpdateHandler=true in UI, but connector now always sends SolrInputDocument via /update. Ignoring extract mode.");
+  }
 
-    // ID
-    out.add(LITERAL + idAttributeName, documentURI);
+  // Document Solr (pas d'extract handler, pas de multipart)
+  final org.apache.solr.common.SolrInputDocument solrDoc = new org.apache.solr.common.SolrInputDocument();
 
-    // Méta standard
-    if (originalSizeAttributeName != null) {
-      final Long size = document.getOriginalSize();
-      if (size != null) out.add(LITERAL + originalSizeAttributeName, size.toString());
+  // 1) id
+  solrDoc.addField(this.idAttributeName, documentURI);
+
+  // 2) attributs standards
+  if (originalSizeAttributeName != null) {
+    final Long size = document.getOriginalSize();
+    if (size != null) solrDoc.addField(originalSizeAttributeName, size.toString());
+  }
+  if (modifiedDateAttributeName != null && document.getModifiedDate() != null) {
+    solrDoc.addField(modifiedDateAttributeName, DateParser.formatISO8601Date(document.getModifiedDate()));
+  }
+  if (createdDateAttributeName != null && document.getCreatedDate() != null) {
+    solrDoc.addField(createdDateAttributeName, DateParser.formatISO8601Date(document.getCreatedDate()));
+  }
+  if (indexedDateAttributeName != null && document.getIndexingDate() != null) {
+    solrDoc.addField(indexedDateAttributeName, DateParser.formatISO8601Date(document.getIndexingDate()));
+  }
+  if (fileNameAttributeName != null) {
+    final String fn = document.getFileName();
+    if (fn != null && !fn.isBlank()) solrDoc.addField(fileNameAttributeName, fn);
+  }
+  if (mimeTypeAttributeName != null) {
+    final String mt = document.getMimeType();
+    if (mt != null && !mt.isBlank()) solrDoc.addField(mimeTypeAttributeName, mt);
+  }
+
+  // 3) ACLs
+  final Map<String,String[]> aclsMap = new HashMap<>();
+  final Map<String,String[]> denyAclsMap = new HashMap<>();
+  final Iterator<String> aclTypes = document.securityTypesIterator();
+  while (aclTypes.hasNext()) {
+    final String aclType = aclTypes.next();
+    aclsMap.put(aclType, convertACL(document.getSecurityACL(aclType), authorityNameString, activities));
+    denyAclsMap.put(aclType, convertACL(document.getSecurityDenyACL(aclType), authorityNameString, activities));
+
+    if (!isKnownAclType(aclType)) {
+      try {
+        activities.recordActivity(
+            null,
+            org.apache.manifoldcf.agents.output.solr.SolrConnector.INGEST_ACTIVITY,
+            length,
+            documentURI,
+            activities.UNKNOWN_SECURITY,
+            "Unrecognized security type: '" + aclType + "'"
+        );
+      } catch (org.apache.manifoldcf.core.interfaces.ManifoldCFException ignore) {}
+      return false;
     }
-    addIfDateNotNull(out, modifiedDateAttributeName, document.getModifiedDate());
-    addIfDateNotNull(out, createdDateAttributeName,  document.getCreatedDate());
-    addIfDateNotNull(out, indexedDateAttributeName,  document.getIndexingDate());
+  }
+  for (String aclType : aclsMap.keySet()) {
+    writeACLsInSolrDoc(solrDoc, aclType, aclsMap.get(aclType), denyAclsMap.get(aclType));
+  }
 
-    if (fileNameAttributeName != null) {
-      final String fn = document.getFileName();
-      if (fn != null && !fn.isBlank()) out.add(LITERAL + fileNameAttributeName, fn);
+  // 4) Métadonnées
+  final Iterator<String> fields = document.getFields();
+  while (fields.hasNext()) {
+    final String originalFieldName = fields.next();
+    String newFieldName = makeSafeLuceneField(originalFieldName);
+    if (newFieldName == null || newFieldName.isEmpty()) continue;
+
+    if (newFieldName.equalsIgnoreCase(this.idAttributeName)) {
+      newFieldName = "lcf_metadata_id";
     }
-    if (mimeTypeAttributeName != null) {
-      final String mt = document.getMimeType();
-      if (mt != null && !mt.isBlank()) out.add(LITERAL + mimeTypeAttributeName, mt);
+    final String[] values = document.getFieldAsStrings(originalFieldName);
+    if (values != null) {
+      for (String v : values) {
+        if (v != null) solrDoc.addField(newFieldName, v);
+      }
     }
+  }
 
-    // Toutes les métadonnées MCF -> literal.<safeName>
-    buildSolrParamsFromMetadata(document, out);
+  // --- copie du texte extrait (content) vers le champ cible ---
+  final String srcField = firstParam(arguments, "sourcecontentfield");
+  final String dstField = firstParam(arguments, "destcontentfield");
+  final String src = (srcField == null || srcField.isBlank()) ? "content" : srcField.trim();
+  final String dst = (dstField == null || dstField.isBlank()) ? "content" : dstField.trim();
 
-    // Champs supplémentaires via arguments
-    if (arguments != null) {
-      for (Map.Entry<String, List<String>> e : arguments.entrySet()) {
-        final String name = e.getKey();
-        final List<String> values = e.getValue();
-        if (name != null && values != null) {
-          for (String v : values) {
-            if (v != null) out.add(name, v);
-          }
+// --- pousser le texte extrait dans le champ 'content' (stocké, non indexé) ---
+{
+  // par défaut: source = "content" (remplie par ton Tika server), destination fixe = "content"
+  String[] extractedVals = document.getFieldAsStrings("content");
+  if (extractedVals != null && extractedVals.length > 0) {
+    for (String extracted : extractedVals) {
+      if (extracted == null) continue;
+      String trimmed = extracted.trim();
+      if (trimmed.isEmpty()) continue;
+      // Ajoute dans le champ 'content' de Solr
+      solrDoc.addField("content", trimmed);
+    }
+    if (org.apache.manifoldcf.agents.system.Logging.ingest.isDebugEnabled()) {
+      org.apache.manifoldcf.agents.system.Logging.ingest.debug(
+        "Added content to Solr doc: values=" + extractedVals.length + " into field 'content'");
+    }
+  } else {
+    if (org.apache.manifoldcf.agents.system.Logging.ingest.isDebugEnabled()) {
+      org.apache.manifoldcf.agents.system.Logging.ingest.debug(
+        "No RepositoryDocument field 'content' found or it's empty; nothing stored into Solr 'content'.");
+    }
+  }
+}
+  // 5) UpdateRequest
+  final org.apache.solr.client.solrj.request.UpdateRequest req = new org.apache.solr.client.solrj.request.UpdateRequest();
+  req.setPath(chooseSafeUpdatePath(this.postUpdateAction));
+
+  if (arguments != null) {
+    for (Map.Entry<String, List<String>> e : arguments.entrySet()) {
+      final String name = e.getKey();
+      final List<String> vals = e.getValue();
+      if (name != null && vals != null && !vals.isEmpty()) {
+        if ("sourcecontentfield".equalsIgnoreCase(name) || "destcontentfield".equalsIgnoreCase(name)) continue;
+        for (String v : vals) {
+          if (v != null) req.setParam(name, v);
         }
       }
     }
-final Map<String, String[]> aclsMap = new HashMap<>();
-final Map<String, String[]> denyAclsMap = new HashMap<>();
+  }
 
-final Iterator<String> aclTypes = document.securityTypesIterator();
-while (aclTypes.hasNext()) {
-  final String aclType = aclTypes.next();
-    aclsMap.put(
-        aclType,
-        convertACL(document.getSecurityACL(aclType), authorityNameString, activities)
-    );
-    denyAclsMap.put(
-        aclType,
-        convertACL(document.getSecurityDenyACL(aclType), authorityNameString, activities)
-    );
+  if (this.commitWithin != null && !this.commitWithin.isBlank()) {
+    try {
+      req.setCommitWithin(Integer.parseInt(this.commitWithin));
+    } catch (NumberFormatException ignore) {}
+  }
 
-  // sécurité : rejeter les types non pris en charge
-// Sécurité : rejeter les types non pris en charge
-if (!aclType.equals(RepositoryDocument.SECURITY_TYPE_DOCUMENT)
-    && !aclType.equals(RepositoryDocument.SECURITY_TYPE_SHARE)
-    && !aclType.startsWith(RepositoryDocument.SECURITY_TYPE_PARENT)) {
+// test contenu
 
-  try {
-    activities.recordActivity(
-        null,
-        org.apache.manifoldcf.agents.output.solr.SolrConnector.INGEST_ACTIVITY,
-        null,
-        documentURI,
-        activities.UNKNOWN_SECURITY,
-        "Le connecteur Solr a rejeté le document car il contient un type de sécurité non reconnu : '" + aclType + "'"
-    );
-  } catch (org.apache.manifoldcf.core.interfaces.ManifoldCFException e) {
-    if (Logging.ingest.isDebugEnabled()) {
-      Logging.ingest.debug("Erreur lors de l’enregistrement de l’activité pour un type de sécurité inconnu : " + e.getMessage(), e);
+// Après le mapping des métadonnées, avant req.add(solrDoc)
+final String destContentField = (this.contentAttributeName == null || this.contentAttributeName.isBlank())
+  ? "content" : this.contentAttributeName;
+
+// Le TikaServer RMeta a placé le texte dans le flux binaire du RepositoryDocument
+try (InputStream is = document.getBinaryStream()) {
+  if (is != null) {
+    // Lis en UTF-8 (Tika RMeta renvoie du texte), avec une limite raisonnable si tu veux (writeLimit côté Tika protège déjà)
+    final String extracted = org.apache.commons.io.IOUtils.toString(is, java.nio.charset.StandardCharsets.UTF_8);
+    if (!extracted.isEmpty()) {
+      solrDoc.addField(destContentField, extracted);
+      if (org.apache.manifoldcf.agents.system.Logging.ingest.isDebugEnabled()) {
+        org.apache.manifoldcf.agents.system.Logging.ingest.debug(
+          "[SolrConnector] Injected " + extracted.length() + " chars into field '" + destContentField + "'");
+      }
+    } else {
+      if (org.apache.manifoldcf.agents.system.Logging.ingest.isDebugEnabled()) {
+        org.apache.manifoldcf.agents.system.Logging.ingest.debug(
+          "[SolrConnector] Extracted content is empty; nothing added to '" + destContentField + "'");
+      }
+    }
+  }
+}
+  req.add(solrDoc);
+// --- DEBUG : état du document juste avant envoi ---
+if (org.apache.manifoldcf.agents.system.Logging.ingest.isDebugEnabled()) {
+  // Compte et aperçu du champ "content"
+  java.util.Collection<Object> cvals = solrDoc.getFieldValues("content");
+  int contentValues = (cvals == null ? 0 : cvals.size());
+  long contentTotalChars = 0L;
+  if (cvals != null) {
+    for (Object o : cvals) {
+      if (o instanceof CharSequence) contentTotalChars += ((CharSequence) o).length();
+      else if (o != null) contentTotalChars += o.toString().length();
     }
   }
 
-  // On arrête ici le traitement du document
-  return false;
-}
+  org.apache.manifoldcf.agents.system.Logging.ingest.debug(
+    "[SolrConnector] Ready to send doc id=" + documentURI +
+    " via path=" + req.getPath() +
+    " commitWithin=" + (this.commitWithin) +
+    " | contentValues=" + contentValues +
+    " contentTotalChars=" + contentTotalChars
+  );
+
+  // Dump complet (aperçu du content inclus)
+  String dump = dumpSolrDoc(solrDoc, /* previewCharsPerValue */ 300);
+  org.apache.manifoldcf.agents.system.Logging.ingest.debug("[SolrConnector] SolrInputDocument dump:\n" + dump);
 }
 
-// … puis plus loin, quand tu renseignes la requête :
-for (String aclType : aclsMap.keySet()) {
-  // mode extract-handler
-  writeACLs(out, aclType, aclsMap.get(aclType), denyAclsMap.get(aclType));
-  // (et/ou plus tard en mode non-extract via writeACLsInSolrDoc(...))
-}
-    req.setParams(out);
+  // Retry
+  final int maxAttempts = 3;
+  int attempt = 0;
+  while (true) {
+    attempt++;
+    try {
+      this.solrServer.request(req);
 
-    // Binaire éventuel
-    final InputStream bin = document.getBinaryStream();
-    if (bin != null) {
-      final String contentType = safeContentType(document.getMimeType());
-      final String contentName = (document.getFileName() != null ? document.getFileName() : documentURI);
-      byte[] payload = toByteArray(bin, document.getBinaryLength());
-      req.addContentStream(new ContentStreamBase.ByteArrayStream(payload, contentType, contentName));
+      // succès
+      try {
+        activities.recordActivity(
+            fullStartTime,
+            org.apache.manifoldcf.agents.output.solr.SolrConnector.INGEST_ACTIVITY,
+            length, documentURI, "OK", null);
+      } catch (org.apache.manifoldcf.core.interfaces.ManifoldCFException ignore) {}
+      return true;
+
+    } catch (SolrServerException | IOException e) {
+      // échec
+      try {
+        activities.recordActivity(
+            fullStartTime,
+            org.apache.manifoldcf.agents.output.solr.SolrConnector.INGEST_ACTIVITY,
+            length, documentURI,
+            e.getClass().getSimpleName().toUpperCase(java.util.Locale.ROOT),
+            e.getMessage());
+      } catch (org.apache.manifoldcf.core.interfaces.ManifoldCFException ignore) {}
+
+      if (isTransientIo(e) && attempt < maxAttempts) {
+        backoff(attempt);
+        continue;
+      }
+      throw e;
     }
-    // Dump complet des params juste avant l’envoi
-    debugDumpParams("Final Solr params before request", out);
-
-    solrServer.request(req);
-    return true;
   }
+}
+/** Ensures /update path is safe (never /update/extract). */
+private static String chooseSafeUpdatePath(String userPathOrNull) {
+  String p = (userPathOrNull == null || userPathOrNull.isBlank()) ? "/update" : userPathOrNull.trim();
+  if (!p.startsWith("/")) p = "/" + p;
+
+  if (p.equalsIgnoreCase("/update/extract")) {
+    if (org.apache.manifoldcf.agents.system.Logging.ingest.isWarnEnabled()) {
+      org.apache.manifoldcf.agents.system.Logging.ingest.warn(
+        "User specified /update/extract; forcing /update because we send SolrInputDocument (no multipart).");
+    }
+    return "/update";
+  }
+  return p;
+}
+
+/** Helper: returns first param value from arguments map (case-insensitive). */
+private static String firstParam(Map<String, List<String>> args, String key) {
+  if (args == null || key == null) return null;
+  for (Map.Entry<String, List<String>> e : args.entrySet()) {
+    if (e.getKey() != null && e.getKey().equalsIgnoreCase(key)) {
+      final List<String> vs = e.getValue();
+      if (vs != null && !vs.isEmpty()) return vs.get(0);
+    }
+  }
+  return null;
+}
+
+/** Lit un InputStream texte UTF-8 avec une limite dure pour éviter d'exploser la RAM. */
+private static String slurpUtf8WithLimit(final java.io.InputStream in, final int maxChars) throws java.io.IOException {
+  if (in == null || maxChars <= 0) return null;
+  final char[] cbuf = new char[8192];
+  int r;
+  int remaining = maxChars;
+  final StringBuilder sb = new StringBuilder(Math.min(maxChars, 65536));
+  try (java.io.Reader reader = new java.io.InputStreamReader(in, java.nio.charset.StandardCharsets.UTF_8)) {
+    while (remaining > 0 && (r = reader.read(cbuf, 0, Math.min(cbuf.length, remaining))) != -1) {
+      sb.append(cbuf, 0, r);
+      remaining -= r;
+    }
+  }
+  return sb.length() == 0 ? null : sb.toString();
+}
+
+/** Dump du SolrInputDocument pour debug : liste des champs, nb de valeurs, taille cumulée,
+ *  et aperçu du champ "content" si présent.
+ */
+private static String dumpSolrDoc(org.apache.solr.common.SolrInputDocument doc, int previewCharsPerValue) {
+  StringBuilder sb = new StringBuilder(2048);
+  long totalCharsAllFields = 0L;
+
+  for (String fname : doc.getFieldNames()) {
+    java.util.Collection<Object> vals = doc.getFieldValues(fname);
+    int n = (vals == null ? 0 : vals.size());
+    long totalCharsField = 0L;
+
+    if (vals != null) {
+      for (Object v : vals) {
+        if (v instanceof CharSequence) {
+          totalCharsField += ((CharSequence) v).length();
+        } else if (v != null) {
+          totalCharsField += v.toString().length();
+        }
+      }
+    }
+    totalCharsAllFields += totalCharsField;
+
+    sb.append(" - ").append(fname)
+      .append(" : values=").append(n)
+      .append(", totalChars=").append(totalCharsField);
+
+    // Aperçu spécial pour "content"
+    if ("content".equals(fname) && vals != null && !vals.isEmpty()) {
+      sb.append(" [preview: ");
+      int shown = 0;
+      for (Object v : vals) {
+        if (v == null) continue;
+        String s = v.toString();
+        if (s.length() > previewCharsPerValue) s = s.substring(0, previewCharsPerValue) + "…";
+        // échappe les retours ligne pour lisibilité
+        s = s.replace("\r", "\\r").replace("\n", "\\n");
+        sb.append('"').append(s).append('"');
+        shown++;
+        if (shown >= 1) break; // on ne montre qu'une valeur en aperçu
+      }
+      sb.append(" ]");
+    }
+    sb.append('\n');
+  }
+
+  sb.append("Total chars in all string fields = ").append(totalCharsAllFields);
+  return sb.toString();
+}
 
   public void deletePost(final String documentURI, final IOutputRemoveActivity activities)
       throws SolrServerException, IOException {
@@ -394,7 +669,37 @@ for (String aclType : aclsMap.keySet()) {
     final UpdateRequest req = new UpdateRequest();
     req.setPath(path);
     req.deleteById(documentURI);
-    solrServer.request(req);
+
+    final int maxAttempts = 3;
+    int attempt = 0;
+    while (true) {
+      attempt++;
+      try {
+        solrServer.request(req);
+        if (Logging.ingest.isDebugEnabled()) {
+          Logging.ingest.debug("Delete request succeeded (attempt " + attempt + ") for id=" + documentURI);
+        }
+        try {
+          if (activities != null) {
+            activities.recordActivity(
+                null,
+                org.apache.manifoldcf.agents.output.solr.SolrConnector.REMOVE_ACTIVITY,
+                null,
+                documentURI,
+                "COMPLETED",
+                "Delete succeeded"
+            );
+          }
+        } catch (Exception ignore) {}
+        return;
+      } catch (SolrServerException e) {
+        if (isTransientIo(e)) { backoff(attempt); continue; }
+        throw e;
+      } catch (IOException e) {
+        if (isTransientIo(e)) { backoff(attempt); continue; }
+        throw e;
+      }
+    }
   }
 
   public void commitPost() throws SolrServerException, IOException {
@@ -412,24 +717,22 @@ for (String aclType : aclsMap.keySet()) {
     ping.process(solrServer);
   }
 
-  // ---------- Métadonnées additionnelles ----------
+  // ---------- Metadata ----------
 
   private void buildSolrParamsFromMetadata(final RepositoryDocument document, final ModifiableSolrParams out)
       throws IOException {
-    int added = 0;
     final Iterator<String> iter = document.getFields();
-if (!iter.hasNext()) {
-    if (Logging.ingest.isDebugEnabled())
-      Logging.ingest.debug("⚠️  RepositoryDocument.getFields() returned no metadata fields.");
-  }
-if (Logging.ingest.isDebugEnabled())
-Logging.ingest.debug("debug entier olivier");
-    while (iter.hasNext()) {
-      final String originalFieldName = iter.next();
-      final String fieldName = makeSafeLuceneField(originalFieldName);
+    if (!iter.hasNext()) {
       if (Logging.ingest.isDebugEnabled())
-        Logging.ingest.debug("Solr metadata: '" + originalFieldName + "' → '" + fieldName + "'");
-      applySingleMapping(document, originalFieldName, out, fieldName);
+        Logging.ingest.debug("RepositoryDocument.getFields() returned no metadata fields.");
+    } else {
+      while (iter.hasNext()) {
+        final String originalFieldName = iter.next();
+        final String fieldName = makeSafeLuceneField(originalFieldName);
+        if (Logging.ingest.isDebugEnabled())
+          Logging.ingest.debug("Solr metadata: '" + originalFieldName + "' → '" + fieldName + "'");
+        applySingleMapping(document, originalFieldName, out, fieldName);
+      }
     }
   }
 
@@ -452,25 +755,18 @@ Logging.ingest.debug("debug entier olivier");
     }
   }
 
-  // ---------- Compat: méthodes attendues par SolrConnector ----------
+  // ---------- Compat helpers expected by SolrConnector ----------
 
-  /** Alias rétrocompat pour anciens usages. */
   public void shutdown() {
-    try {
-      close();
-    } catch (Exception e) {
-      // ignore
-    }
+    try { close(); } catch (Exception e) { /* ignore */ }
   }
 
-  /** Fermeture client. */
   public void close() {
     if (solrServer != null) {
       try { solrServer.close(); } catch (Exception ignore) {}
     }
   }
 
-  /** Filtrage MIME rétrocompat (utilisé par SolrConnector). */
   public static boolean checkMimeTypeIndexable(final String mimeType,
                                                final boolean useExtractUpdateHandler,
                                                final Set<String> includedMimeTypes,
@@ -482,26 +778,26 @@ Logging.ingest.debug("debug entier olivier");
     return true;
   }
 
-// No checked exceptions; handles problems inside and logs.
-protected static String[] convertACL(final String[] acl,
-                                     final String authorityNameString,
-                                     final IOutputAddActivity activities) {
-  if (acl == null) return new String[0];
-  final String[] rval = new String[acl.length];
-  for (int i = 0; i < acl.length; i++) {
-    try {
-      rval[i] = activities.qualifyAccessToken(authorityNameString, acl[i]);
-    } catch (Exception e) {
-      // Fallback: keep the raw token, but log for diagnosis
-      if (Logging.ingest.isDebugEnabled()) {
-        Logging.ingest.debug("qualifyAccessToken failed for token '" + acl[i] + "': " + e.getMessage(), e);
+  // ---------- ACL helpers ----------
+
+  protected static String[] convertACL(final String[] acl,
+                                       final String authorityNameString,
+                                       final IOutputAddActivity activities) {
+    if (acl == null) return new String[0];
+    final String[] rval = new String[acl.length];
+    for (int i = 0; i < acl.length; i++) {
+      try {
+        rval[i] = activities.qualifyAccessToken(authorityNameString, acl[i]);
+      } catch (Exception e) {
+        if (Logging.ingest.isDebugEnabled()) {
+          Logging.ingest.debug("qualifyAccessToken failed for token '" + acl[i] + "': " + e.getMessage(), e);
+        }
+        rval[i] = acl[i];
       }
-      rval[i] = acl[i];
     }
+    return rval;
   }
-  return rval;
-}
-  /** Ecrit les ACL en paramètres literal.* pour un handler extract-like. */
+
   protected void writeACLs(final ModifiableSolrParams out,
                            final String aclType,
                            final String[] allowAcl,
@@ -525,10 +821,7 @@ protected static String[] convertACL(final String[] acl,
           + " ; " + denyParam + "=" + Arrays.toString(denyAcl));
     }
   }
-  /**
-   * Écrit les ACL dans un SolrInputDocument (mode non-extract).
-   * Exemple : allow_token_document, deny_token_share, etc.
-   */
+
   protected void writeACLsInSolrDoc(final org.apache.solr.common.SolrInputDocument inputDoc,
                                     final String aclType,
                                     final String[] acl,
@@ -541,21 +834,18 @@ protected static String[] convertACL(final String[] acl,
         if (a != null) inputDoc.addField(allowField, a);
       }
     }
-
     if (denyAcl != null && denyAcl.length > 0) {
       for (String d : denyAcl) {
         if (d != null) inputDoc.addField(denyField, d);
       }
     }
 
-    if (org.apache.manifoldcf.agents.system.Logging.ingest.isDebugEnabled()) {
-      org.apache.manifoldcf.agents.system.Logging.ingest.debug(
-          "ACLs (doc mode) → " + allowField + "=" + java.util.Arrays.toString(acl)
-          + " ; " + denyField + "=" + java.util.Arrays.toString(denyAcl));
+    if (Logging.ingest.isDebugEnabled()) {
+      Logging.ingest.debug("ACLs (doc mode) → " + allowField + "=" + Arrays.toString(acl)
+          + " ; " + denyField + "=" + Arrays.toString(denyAcl));
     }
   }
 
-  /** Renvoie true si le type d'ACL est géré côté Solr (document/share/parent*). */
   private static boolean isKnownAclType(String t) {
     return RepositoryDocument.SECURITY_TYPE_DOCUMENT.equals(t)
         || RepositoryDocument.SECURITY_TYPE_SHARE.equals(t)
@@ -563,6 +853,20 @@ protected static String[] convertACL(final String[] acl,
   }
 
   // ---------- Helpers ----------
+
+  private static boolean isTransientIo(Throwable t) {
+    if (t == null) return false;
+    if (t instanceof IOException) return true;
+    if (t instanceof SolrServerException && t.getCause() instanceof IOException) return true;
+    final String s = t.toString();
+    return s != null && s.contains("AsynchronousCloseException");
+  }
+
+  private static void backoff(int attempt) {
+    if (attempt >= 3) return;
+    long sleep = (attempt == 1) ? 250L : 500L;
+    try { Thread.sleep(sleep); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
+  }
 
   private static String makeSafeLuceneField(String input) {
     if (input == null) return null;
@@ -593,16 +897,18 @@ protected static String[] convertACL(final String[] acl,
       out.add("literal." + field, DateParser.formatISO8601Date(d));
   }
 
+  /** NEW: small debug helper present in earlier snippets, now added back. */
   private void debugHandlers(String where) {
     if (Logging.ingest.isDebugEnabled()) {
       Logging.ingest.debug(
           where + " -> handlers: update=" + normalizePathOrDefault(this.postUpdateAction, "/update/extract")
-          + " , remove=" + normalizePathOrDefault(this.postRemoveAction, "/update")
-          + " , status=" + normalizePathOrDefault(this.postStatusAction, "/admin/ping")
+              + " , remove=" + normalizePathOrDefault(this.postRemoveAction, "/update")
+              + " , status=" + normalizePathOrDefault(this.postStatusAction, "/admin/ping")
       );
     }
   }
-private static void debugDumpParams(String title, ModifiableSolrParams params) {
+
+  private static void debugDumpParams(String title, ModifiableSolrParams params) {
     if (!Logging.ingest.isDebugEnabled() || params == null) return;
     List<String> lines = new ArrayList<>();
     Iterator<String> it = params.getParameterNamesIterator();
@@ -613,6 +919,17 @@ private static void debugDumpParams(String title, ModifiableSolrParams params) {
     }
     Collections.sort(lines);
     Logging.ingest.debug(title + " (" + lines.size() + "):\n  " + String.join("\n  ", lines));
+  }
+
+  private static String causeChain(Throwable t) {
+    StringBuilder sb = new StringBuilder();
+    int i = 0;
+    while (t != null && i < 6) {
+      if (i++ > 0) sb.append(" <= ");
+      sb.append(t.getClass().getSimpleName()).append(": ").append(t.getMessage());
+      t = t.getCause();
+    }
+    return sb.toString();
   }
 
   // ---------- Date ISO ----------

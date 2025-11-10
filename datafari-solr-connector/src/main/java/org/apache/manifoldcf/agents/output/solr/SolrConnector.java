@@ -22,6 +22,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.InputStream;
+import java.io.BufferedInputStream;
 import java.util.*;
 
 import org.apache.manifoldcf.agents.interfaces.IOutputAddActivity;
@@ -591,8 +593,20 @@ public String check() throws ManifoldCFException {
     if (Logging.connectors.isDebugEnabled()) {
       logRepositoryDocument(document, documentURI);
     }
+// juste avant l’appel à poster.indexPost(...)
+InputStream binaryStream = document.getBinaryStream();
+if (binaryStream != null && !binaryStream.markSupported()) {
+  // Récupère la longueur éventuellement connue
+  final Long originalLenObj = document.getBinaryLength();
+  final long len = (originalLenObj != null) ? originalLenObj.longValue() : -1L; // -1L si inconnu
 
-    // Now, go off and call the ingest API.
+  binaryStream = new BufferedInputStream(binaryStream, 65536);
+  document.setBinary(binaryStream, len);  // signature: (InputStream, long)
+
+  if (Logging.ingest.isDebugEnabled()) {
+    Logging.ingest.debug("Wrapped document InputStream to support mark/reset (len=" + len + ")");
+  }
+}
 try {
   if (poster.indexPost(documentURI, document, sp.getArgs(), authorityNameString, activities)) {
     return DOCUMENTSTATUS_ACCEPTED;

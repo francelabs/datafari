@@ -409,6 +409,8 @@
     <!-- Agentic AI fields -->
     <dynamicField name="agentic_*" type="string" indexed="true" stored="true" multiValued="true"/>
 
+    <!-- ignore all fields non declared -->
+    <dynamicField name="*" type="ignored" multiValued="true" indexed="true" stored="true"/>
 </fields>
 
  <!-- Field to use to determine and enforce document uniqueness.
