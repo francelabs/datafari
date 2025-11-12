@@ -2,7 +2,7 @@
    "outputconnection":{
       "isnew":"true",
       "name":"DatafariSolr",
-/      "class_name":"org.apache.manifoldcf.agents.output.solr.SolrConnector",
+      "class_name":"org.apache.manifoldcf.agents.output.solr.SolrConnector",
       "max_connections":"10",
       "description":"",
       "configuration":{
