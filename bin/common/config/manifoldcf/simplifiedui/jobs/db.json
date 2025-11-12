@@ -322,7 +322,7 @@
             },
             {
               "_type_": "stage_connectionname",
-              "_value_": "DatafariSolrNoTika"
+              "_value_": "DatafariSolr"
             },
             {
               "_type_": "stage_specification"
