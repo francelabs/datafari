@@ -21,7 +21,15 @@ public class RagService extends AiService {
 
     private static final Logger LOGGER = LogManager.getLogger(RagService.class.getName());
 
-    public static ApiContent rag(HttpServletRequest request, AiRequest params, ChatStream stream, SourcesAccumulator sourcesAcc) {
+  /**
+   * Run a RAG pipeline
+   * @param request: Initial HttpServletRequest
+   * @param params: AiRequest containing the query and any other RAG parameters (history, id...)
+   * @param stream: ChatStream
+   * @param sourcesAcc: SourcesAccumulator
+   * @param isTool True if the method is called as an Agentic Tool. Error will not stop the agentic process.
+   */
+    public static ApiContent rag(HttpServletRequest request, AiRequest params, ChatStream stream, SourcesAccumulator sourcesAcc, boolean isTool) {
 
         LOGGER.info("AiPowered - RAG - RAG request received.");
 
@@ -35,7 +43,7 @@ public class RagService extends AiService {
 
         // Is RAG enabled ?
         if (!config.getBooleanProperty(RagConfiguration.ENABLE_RAG))
-            return error(stream, "422", "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", "RAG service is disabled in configuration.");
+            return error(stream, "422", "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", "RAG service is disabled in configuration.", isTool);
 
         // Retrieve query from request params
         if (params.query != null) {
@@ -45,7 +53,7 @@ public class RagService extends AiService {
             LOGGER.warn("RagService - RAG - Missing query parameter");
             return error(stream, "422", "ragBadRequest",
                     "Sorry, It appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.",
-                    "'id' must not be null");
+                    "'id' must not be null", isTool);
         }
 
         //
@@ -123,7 +131,7 @@ public class RagService extends AiService {
             return error(stream, "500",
                     "ragTechnicalError",
                     "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
-                    e.getLocalizedMessage());
+                    e.getLocalizedMessage(), isTool);
         }
 
         // Retrieve language
@@ -141,11 +149,11 @@ public class RagService extends AiService {
             stream.phase("rag:response generation");
             EditableHttpServletRequest editablerequest = new EditableHttpServletRequest(request);
             editablerequest.addParameter("q", query);
-            return RagAPI.rag(editablerequest, searchResults, ragBydocument, stream, sourcesAcc);
+            return RagAPI.rag(editablerequest, searchResults, ragBydocument, stream, sourcesAcc, isTool);
         } catch (final Exception e) {
             LOGGER.error("AiPowered - RAG - ERROR", e);
             return error(stream, "500", "ragTechnicalError",
-                    "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e.getLocalizedMessage());
+                    "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e.getLocalizedMessage(), isTool);
         }
     }
 }

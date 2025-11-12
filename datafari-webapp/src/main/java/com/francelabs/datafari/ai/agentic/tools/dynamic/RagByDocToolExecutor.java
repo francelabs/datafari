@@ -28,7 +28,7 @@ public class RagByDocToolExecutor {
         aiReq.query = prompt;
         aiReq.id = docId;
 
-        var resp = RagService.rag(request, aiReq, stream, sourcesAcc);
+        var resp = RagService.rag(request, aiReq, stream, sourcesAcc, true);
         String message = (resp != null && resp.message != null && !resp.message.isBlank()) ? resp.message : null;
         if (message == null) {
           message = (resp != null && resp.error != null && resp.error.message != null && !resp.error.message.isBlank()) ? resp.error.message : "No content";

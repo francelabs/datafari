@@ -23,7 +23,8 @@ public class SummarizationService extends AiService {
 
     private static final Logger LOGGER = LogManager.getLogger(SummarizationService.class.getName());
 
-    public static @NotNull ApiContent summarize(AiRequest params, HttpServletRequest request, ChatStream stream, SourcesAccumulator sourcesAcc) {
+    public static @NotNull ApiContent summarize(AiRequest params, HttpServletRequest request, ChatStream stream,
+                                                SourcesAccumulator sourcesAcc, boolean isTool) {
         ApiContent response = new ApiContent();
 
         String id = params.id;
@@ -58,15 +59,16 @@ public class SummarizationService extends AiService {
             } else {
                 return error(stream, "422", "summarizationNoFileFound",
                         "The document cannot be retrieved.",
-                        "No document found for the provided ID.");
+                        "No document found for the provided ID.", isTool);
             }
 
         } catch (final NullPointerException|IndexOutOfBoundsException e) {
             return error(stream, "422", "summarizationNoFileFound",
-                    "The document cannot be retrieved.", e.getMessage());
+                    "The document cannot be retrieved.", e.getMessage(), isTool);
         } catch (final Exception e) {
             return error(stream, "500", "summarizationTechnicalError",
-                    "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e.getLocalizedMessage());
+                    "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
+                e.getLocalizedMessage(), isTool);
         }
 
 
@@ -76,9 +78,12 @@ public class SummarizationService extends AiService {
             response.message = getDocumentSummary(request, summary, content, id, title, url, stream);
         } catch (EmptyFileException e) {
             return error(stream, "422", "summarizationEmptyFile",
-                    "Sorry, I am unable to generate a summary, since the file has no content.", "File is empty and can not be summarized.");
+                    "Sorry, I am unable to generate a summary, since the file has no content.",
+                "File is empty and can not be summarized.", isTool);
         } catch (Exception e) {
-            return error(stream, "500", "summarizationTechnicalError", "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e.getLocalizedMessage());
+            return error(stream, "500", "summarizationTechnicalError",
+                "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
+                e.getLocalizedMessage(), isTool);
         }
 
         return response;

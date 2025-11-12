@@ -219,9 +219,9 @@ public class AiPowered {
         ApiContent result = new ApiContent();
         try {
             result = switch (action.name()) {
-                case "rag" -> RagService.rag(request, params, stream, sourcesAcc);
-                case "agentic" -> AgenticService.agentic(params, request, stream, sourcesAcc);
-                case "summarize" -> SummarizationService.summarize(params, request, stream, sourcesAcc);
+                case "rag" -> RagService.rag(request, params, stream, sourcesAcc, false);
+                case "agentic" -> AgenticService.agentic(params, request, stream, sourcesAcc, false);
+                case "summarize" -> SummarizationService.summarize(params, request, stream, sourcesAcc, false);
                 default -> result;
             };
 
@@ -262,39 +262,18 @@ public class AiPowered {
 
             // 3) Simulate 3 tools (2 successful, one failure)
             emit(stream, () -> stream.phase("tool.calling"), TEST_DELAY_MS);
-            emit(stream, () -> stream.event("tool.call", Map.of(
-                    "id", "jobSuccess1",
-                    "name", "SuccessfulJob",
-                    "icon", "search",
-                    "label", "This label should not be displayed. Use i18n translation instead.",
-                    "i18nKey", "testLabelForToolCalling"
-            )), TEST_DELAY_MS);
-            emit(stream, () -> stream.event("tool.call", Map.of(
-                    "id", "jobSuccess2",
-                    "name", "AnotherSuccessfulJob",
-                    "icon", "brain",
-                    "label", "Label to display. No i18n key available."
-            )), TEST_DELAY_MS);
-            emit(stream, () -> stream.event("tool.call", Map.of(
-                    "id", "job3Failure",
-                    "name", "BrokenJob",
-                    "icon", "document",
-                    "label", "This label should not be displayed. Use i18n translation instead.",
-                    "i18nKey", "testLabelForToolCalling"
-            )), TEST_DELAY_MS);
-            emit(stream, () -> stream.event("tool.result", Map.of(
-                    "id", "jobSuccess1",
-                    "durationMs", "320"
-            )), TEST_DELAY_MS);
-            emit(stream, () -> stream.event("tool.result", Map.of(
-                    "id", "jobSuccess2",
-                    "durationMs", "441"
-            )), TEST_DELAY_MS);
-            emit(stream, () -> stream.event("tool.error", Map.of(
-                    "id", "job3Failure",
-                    "durationMs", "530",
-                    "error", "This job has failed. This message should not be displayed to the user."
-            )), TEST_DELAY_MS);
+            emit(stream, () -> stream.toolCall("jobSuccess1", "SuccessfulJob",
+                "This label should not be displayed. Use i18n translation instead.",
+                "search", "testLabelForToolCalling"), TEST_DELAY_MS);
+            emit(stream, () -> stream.toolCall("jobSuccess2", "AnotherSuccessfulJob",
+                "Label to display. No i18n key available",
+                "brain", null), TEST_DELAY_MS);
+            emit(stream, () -> stream.toolCall("job3Failure", "BrokenJob",
+                "This label should not be displayed. Use i18n translation instead.",
+                "document", "testLabelForToolCalling"), TEST_DELAY_MS);
+            emit(stream, () -> stream.toolResult("jobSuccess1", 320), TEST_DELAY_MS);
+            emit(stream, () -> stream.toolResult("jobSuccess2", 441), TEST_DELAY_MS);
+            emit(stream, () -> stream.toolError("job3Failure", 530, "This job has failed. This message should not be displayed to the user."), TEST_DELAY_MS);
 
             // 4) Sources
             emit(stream, () -> stream.phase("sources.retrieval"), TEST_DELAY_MS);

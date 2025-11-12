@@ -130,7 +130,7 @@
         <!-- hr -->
         <!-- Prompting & Chunking -->
 
-        <div class="form-group row">
+        <!-- <div class="form-group row">
           <label id="chunkingStrategyLabel" class="col-sm-2 col-form-label" for="chunkingStrategy">Chunking Strategy</label>
           <div class="col-sm-5">
             <select id="chunkingStrategy" class="form-control">
@@ -155,7 +155,7 @@
         </div>
 
 
-        <hr>
+        <hr> -->
         <!-- Chat Memory -->
 
         <div class="form-group row">

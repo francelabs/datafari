@@ -1,5 +1,6 @@
 package com.francelabs.datafari.ai.agentic.tools.regular;
 
+import com.francelabs.datafari.ai.agentic.tools.AgenticToolException;
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
@@ -21,6 +22,7 @@ import org.json.simple.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class DatafariTools {
 
@@ -55,14 +57,34 @@ public class DatafariTools {
         ragrequest.id = id;
 
         try {
-            ApiContent resp = RagService.rag(request, ragrequest, stream, sourcesAcc);
+            ApiContent resp = RagService.rag(request, ragrequest, stream, sourcesAcc, true);
             result = returnMessageOrReason(resp, "RAG query failed");
+        } catch (AgenticToolException ex) {
+          throw ex;
         } catch (Exception e) {
             LOGGER.error("AGENTIC TOOLS - RAG by document - ERROR: {}", e.getLocalizedMessage());
         }
         LOGGER.debug("AGENTIC TOOLS - RAG by document - Result {}", result);
         return result;
     }
+
+    // TODO
+//    @ToolMeta(label = "Asking for information...",
+//        i18nKey = "tool.askUser",
+//        icon = "search")
+//    @Tool("Ask a question to the user and wait for the response.")
+//    String askUser(
+//        @P("Message") String message,
+//        @P("schema") Map<String,Object> schema
+//    ) {
+//      LOGGER.info("AGENTIC TOOLS - Ask user - Message: {}", message);
+// //      stream.phase();
+//
+//      // 1) Emit "ask" event
+//      // 2) Throw an exception or return an "await" marker
+//      return "";
+// //      throw new AwaitUserInputException(message, schema);
+//    }
 
     @ToolMeta(label = "Checking chat history...",
             i18nKey = "tool.readChatHistory",
@@ -204,7 +226,7 @@ public class DatafariTools {
         AiRequest summarizerequest = new AiRequest();
         summarizerequest.id = id;
 
-        ApiContent resp = SummarizationService.summarize(summarizerequest, request, stream, sourcesAcc);
+        ApiContent resp = SummarizationService.summarize(summarizerequest, request, stream, sourcesAcc, true);
         String result = returnMessageOrReason(resp, "Unable to generate a summary for the document " + id);
         LOGGER.debug("AGENTIC TOOLS - Summarize - {}", result);
         return result;
@@ -227,8 +249,10 @@ public class DatafariTools {
         ragrequest.id = docId;
 
         try {
-            ApiContent resp = RagService.rag(request, ragrequest, stream, sourcesAcc);
+            ApiContent resp = RagService.rag(request, ragrequest, stream, sourcesAcc, true);
             result = returnMessageOrReason(resp, "Extraction failed");
+        } catch (AgenticToolException ex) {
+            throw ex; // If the Exception is a tool error, it must be thrown to the tool executor to stream the error
         } catch (Exception e) {
             LOGGER.error("AGENTIC TOOLS - Entity extraction failed - ERROR: {}", e.getLocalizedMessage());
             result = "Extraction failed.";

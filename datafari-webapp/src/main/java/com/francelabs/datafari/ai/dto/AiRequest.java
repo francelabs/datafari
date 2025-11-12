@@ -34,6 +34,10 @@ public class AiRequest {
     @JsonProperty("action")
     public Action action = Action.rag;  // "rag" | "agentic" | "summarize"
 
+    /** Existing conversation ID. Optional */
+    @JsonProperty("memoryId")
+    public String memoryId;
+
     /** Validate requests depending on action. */
     @JsonIgnore
     public List<String> validate() {

@@ -1,5 +1,6 @@
 package com.francelabs.datafari.ai.stream;
 
+import com.francelabs.datafari.ai.agentic.tools.AgenticToolException;
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.service.tool.ToolExecutor;
 
@@ -31,38 +32,23 @@ public final class StreamToolExecutor implements ToolExecutor {
         String id = java.util.UUID.randomUUID().toString();
         long t0 = System.nanoTime();
 
-        // Sending all available metadata
-        Map<String,String> event = new LinkedHashMap<>();
-        event.put("id", id);
-        event.put("name", toolName);
-        event.put("label", label);
-        if (icon != null) event.put("icon", icon);
-        if (i18nKey != null) event.put("i18nKey", i18nKey);
-        event.put("args", Optional.ofNullable(req.arguments()).orElse("{}"));
-
-        stream.event("tool.call", event);
+        // Sending the tool.call event
+        stream.toolCall(id, toolName, label, icon, i18nKey);
 
         try {
             String result = delegate.execute(req, memoryId);
             long ms = (System.nanoTime() - t0) / 1_000_000;
-            stream.event("tool.result", Map.of(
-                    "id", id,
-                    "durationMs", ms
-            ));
+            stream.toolResult(id, ms);
             return result;
+        } catch (AgenticToolException ex) {
+            // If the error is properly caught, the message is returned to the agent
+            long ms = (System.nanoTime() - t0) / 1_000_000;
+            stream.toolError(id, ms, String.valueOf(ex.getMessage()));
+            return String.valueOf(ex.getMessage());
         } catch (Throwable t) {
             long ms = (System.nanoTime() - t0) / 1_000_000;
-            stream.event("tool.error", Map.of(
-                    "id", id,
-                    "durationMs", ms,
-                    "error", String.valueOf(t.getMessage())
-            ));
-            throw t;
+            stream.toolError(id, ms, String.valueOf(t.getMessage()));
+            return "Uncaught exception: " + t.getMessage();
         }
-    }
-
-    private static String escape(String s) {
-        if (s == null) return "";
-        return s.replace("\\","\\\\").replace("\"","\\\"").replace("\n","\\n");
     }
 }

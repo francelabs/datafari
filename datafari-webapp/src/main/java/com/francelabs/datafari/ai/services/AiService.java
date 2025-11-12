@@ -1,5 +1,6 @@
 package com.francelabs.datafari.ai.services;
 
+import com.francelabs.datafari.ai.agentic.tools.AgenticToolException;
 import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.dto.ApiError;
 import com.francelabs.datafari.ai.stream.ChatStream;
@@ -34,13 +35,20 @@ public abstract class AiService {
      * @param reason: A technical description of the error
      * @return an ApiContent containing an error
      */
-    public static ApiContent error(ChatStream stream, String code, String label, String message, @NotNull String reason) {
+    public static ApiContent error(ChatStream stream, String code, String label, String message, @NotNull String reason, boolean isTool) {
         LOGGER.error("Error {} in AiService: {}", label, reason);
 
-        if (stream != null) stream.error(code, label, message, reason);
-        ApiContent content = new ApiContent();
-        content.error = new ApiError(code, label, message, reason);
-
-        return content;
+        if (isTool) {
+            // When thrown, a "tool.error" event is emitted (Agentic only)
+            throw new AgenticToolException(message);
+        } else {
+            if (stream != null) stream.error(code, label, message, reason);
+            ApiContent content = new ApiContent();
+            content.error = new ApiError(code, label, message, reason);
+            return content;
+        }
+    }
+    public static ApiContent error(ChatStream stream, String code, String label, String message, @NotNull String reason) {
+        return error(stream, code, label, message, reason, false);
     }
 }

@@ -163,7 +163,7 @@ public class CfPTools {
                 ragrequest.id = docId;
 
                 try {
-                    ApiContent resp = RagService.rag(request, ragrequest, stream, sourcesAcc);
+                    ApiContent resp = RagService.rag(request, ragrequest, stream, sourcesAcc, true);
                     if (resp.message != null && !resp.message.isBlank()) {
                         results = resp.message;
                     } else if (resp.error != null) {
@@ -206,7 +206,7 @@ public class CfPTools {
                 ragrequest.id = docId;
 
                 try {
-                    ApiContent resp = RagService.rag(request, ragrequest, stream, sourcesAcc);
+                    ApiContent resp = RagService.rag(request, ragrequest, stream, sourcesAcc, true);
                     if (resp.message != null && !resp.message.isBlank()) {
                         results = resp.message;
                     } else if (resp.error != null) {

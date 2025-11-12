@@ -1,9 +1,6 @@
 package com.francelabs.datafari.ai.services;
 
-import com.francelabs.datafari.ai.agentic.agent.CfPAgent;
-import com.francelabs.datafari.ai.agentic.agent.CustomAgent;
-import com.francelabs.datafari.ai.agentic.agent.IAgent;
-import com.francelabs.datafari.ai.agentic.agent.RagAgent;
+import com.francelabs.datafari.ai.agentic.agent.*;
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
@@ -19,14 +16,20 @@ public class AgenticService extends AiService {
     private static final Logger LOGGER = LogManager.getLogger(AgenticService.class.getName());
 
     public static ApiContent agentic(AiRequest params, HttpServletRequest request,
-                                     ChatStream stream, SourcesAccumulator sourcesAcc) {
+                                   ChatStream stream, SourcesAccumulator sourcesAcc) {
+        return agentic(params, request, stream, sourcesAcc, false);
+    }
+
+    public static ApiContent agentic(AiRequest params, HttpServletRequest request,
+                                     ChatStream stream, SourcesAccumulator sourcesAcc,
+                                     boolean isTool) {
 
         // Get RAG configuration
         RagConfiguration config = RagConfiguration.getInstance();
 
         // Is AGENTIC RAG enabled ?
         if (!config.getBooleanProperty(RagConfiguration.ENABLE_AGENTIC))
-            return error(stream, "422", "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", "Agentic service is disabled in configuration.");
+            return error(stream, "422", "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", "Agentic service is disabled in configuration.", isTool);
 
         ApiContent response = new ApiContent();
         try {
@@ -37,10 +40,11 @@ public class AgenticService extends AiService {
             if (query == null || query.isEmpty()) {
                 return error(stream, "422", "ragBadRequest",
                         "Sorry, it appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.",
-                        "'id' must not be null");
+                        "'id' must not be null", isTool);
             }
 
             stream.phase("agent:preparation");
+
 
 
             IAgent agent;
@@ -61,6 +65,18 @@ public class AgenticService extends AiService {
 
             }
 
+//            ChatModel chatModel = RagAPI.getChatModel(config);
+//            HumanInTheLoop AskUserAgent = AiServices.builder(HumanInTheLoop.class)
+//              .streamingChatModel(RagAPI.getStreamingChatModel(config))
+//              .chatMemoryProvider(memory)
+//              .build();
+//            SupervisorAgent supervisor = AgenticServices
+//                .supervisorBuilder()
+//                .chatModel(chatModel)
+//                .subAgents(agent, askAgent)
+//                .responseStrategy(SupervisorResponseStrategy.SUMMARY)
+//                .build();
+
             stream.phase("agent:start");
             String answer = agent.ask(query);
 
@@ -75,7 +91,8 @@ public class AgenticService extends AiService {
 
         } catch (Exception e) {
             return error(stream, "500", "ragTechnicalError",
-                    "Sorry, the agent met an unexpected error. Please try again later, and if the problem remains, contact an administrator.", e.getLocalizedMessage());
+                    "Sorry, the agent met an unexpected error. Please try again later, and if the problem remains, contact an administrator.",
+                    e.getLocalizedMessage(), isTool);
         }
         return response;
     }

@@ -53,7 +53,7 @@ public class RagAPI extends SearchAPI {
     private static final Logger LOGGER = LogManager.getLogger(RagAPI.class.getName());
 
     public static ApiContent rag(final HttpServletRequest request, JSONObject searchResults,
-                                 boolean ragBydocument, ChatStream stream, SourcesAccumulator sourcesAcc) throws IOException {
+                                 boolean ragBydocument, ChatStream stream, SourcesAccumulator sourcesAcc, boolean isTool) throws IOException {
 
 
         // Get RAG specific configuration
@@ -71,8 +71,15 @@ public class RagAPI extends SearchAPI {
             LOGGER.debug("RagAPI - {} documents extracted.", initialDocumentsList.size());
         } catch (FileNotFoundException e) {
             LOGGER.warn("RagAPI -  WARNING. The query cannot be answered because no associated documents were found.");
-            return AiService.error(stream, "428", "ragNoFileFound",
-                    "Sorry, I couldn't find any relevant document to answer your request.", e.getLocalizedMessage());
+            if (ragBydocument) {
+                return AiService.error(stream, "428", "ragNoFileFound",
+                    "Sorry, the requested file does not exist, or is not available.",
+                    e.getLocalizedMessage(), isTool);
+            } else {
+                return AiService.error(stream, "428", "ragNoFileFound",
+                    "Sorry, I couldn't find any relevant document to answer your request.",
+                    e.getLocalizedMessage(), isTool);
+            }
         }
 
         // Add the sources to the accumulator
@@ -92,11 +99,13 @@ public class RagAPI extends SearchAPI {
         } catch (DatafariServerException e) {
             LOGGER.error("An error occurred while calling external LLM service.", e);
             return AiService.error(stream, "500", "ragTechnicalError",
-                    "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e.getLocalizedMessage());
+                    "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
+                e.getLocalizedMessage(), isTool);
         }catch (Exception e) {
             LOGGER.error("An unexpected error occurred while processing RAG query.", e);
             return AiService.error(stream, "500", "ragTechnicalError",
-                    "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e.getLocalizedMessage());
+                    "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
+                e.getLocalizedMessage(), isTool);
         }
 
         LOGGER.debug("RagAPI - LLM response: {}", message);
@@ -106,7 +115,9 @@ public class RagAPI extends SearchAPI {
             message = cleanLlmFinalMessage(message);
             return writeResponse(message);
         } else {
-            return AiService.error(stream, "428", "ragNoValidAnswer", "Sorry, I could not find an answer to your question.", "LLM returned empty response.");
+            return AiService.error(stream, "428", "ragNoValidAnswer",
+                "Sorry, I could not find an answer to your question.", "LLM returned empty response.",
+                isTool);
         }
 
     }
