@@ -1,7 +1,7 @@
 {
    "outputconnection":{
       "isnew":"true",
-      "name":"DatafariSolrNoTika",
+      "name":"DatafariSolr",
       "class_name":"org.apache.manifoldcf.agents.output.solr.SolrConnector",
       "max_connections":"10",
       "description":"",
@@ -56,7 +56,7 @@
                "_attribute_name":"ZooKeeper connect timeout"
             },
             {
-               "_value_":"/update/no-tika",
+               "_value_":"/update/datafari-indexation",
                "_attribute_name":"Server update handler"
             },
             {
