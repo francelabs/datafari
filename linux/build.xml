@@ -38,7 +38,6 @@
 	<property name="llm.connector.src.dir" value="${project.dir}/datafari-llm-connector/target" />
 	<property name="binary.connector.src.dir" value="${project.dir}/datafari-binary-connector/target" />
 	<property name="vectorsearch.connector.src.dir" value="${project.dir}/datafari-vector-search-connector/target" />
-	<property name="datafarihandler.src.dir" value="${project.dir}/datafari-handler/target" />
 	<property name="mcf-scripts.src.dir" value="${project.dir}/datafari-mcf-scripts/target" />
 	<property name="zookeeper.proj.dir" value="${project.dir}/datafari-zookeeper" />
 	<property name="zookeeper.src.dir" value="${zookeeper.proj.dir}/target/dist/zookeeper" />
@@ -311,34 +310,6 @@
 			</fileset>
 		</copy>
 
-		<!-- Copy Datafari update handler + dependencies-->
-		<copy todir="${linux.dist.dir}/solr/solr_home/FileShare/lib/custom">
-			<fileset dir="${datafarihandler.src.dir}">
-				<include name="*.jar" />
-			</fileset>
-		</copy>
-
-                <!-- Copy Datafari update handler + dependencies to VectorMain -->
-                 <!-- Copy Datafari update handler + dependencies-->
-                <copy todir="${linux.dist.dir}/solr/solr_home/VectorMain/lib/custom">
-                        <fileset dir="${datafarihandler.src.dir}">
-                                <include name="*.jar" />
-                        </fileset>
-                </copy>
-		
-		<!-- Copy Datafari update handler + dependencies to GenericAnnotator -->
-				<copy todir="${linux.dist.dir}/solr/solr_home/GenericAnnotator/lib/custom">
-					<fileset dir="${datafarihandler.src.dir}">
-						<include name="*.jar" />
-					</fileset>
-				</copy>
-
-		<!-- Copy Datafari handler to Duplicates Solr core -->
-		<copy todir="${linux.dist.dir}/solr/solr_home/Duplicates/lib/custom">
-			<fileset dir="${datafarihandler.src.dir}">
-				<include name="*.jar" />
-			</fileset>
-		</copy>
 
 		<!-- Copy Tika Server JAR in tika-server folder -->
 		<copy todir="${linux.dist.dir}/tika-server">

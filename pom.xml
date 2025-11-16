@@ -78,7 +78,6 @@
     <module>datafari-metadatacleaner-connector</module>
     <module>datafari-spacy-fastapi-connector</module>
     <module>datafari-tika-server</module>
-    <module>datafari-handler</module>
     <module>datafari-mcf-scripts</module>
     <module>datafari-web-connector</module>
     <module>datafari-share-connector</module>
