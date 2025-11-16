@@ -46,7 +46,7 @@ else
 	delete /org.apache.manifoldcf/servicelock-AGENT
 	delete /org.apache.manifoldcf/servicelock-AGENT_org.apache.manifoldcf.crawler.system.CrawlerAgent
 	delete /org.apache.manifoldcf/serviceactive-AGENT-A
-	EOF
+EOF
 
 	/opt/datafari/zookeeper-mcf/bin/zkCli.sh -server localhost:2182 < /tmp/zk_cleanup.cmd
 	
