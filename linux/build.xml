@@ -144,7 +144,6 @@
 			<replacefilter token="@DATAFARI_HOME@" value="${datafari.home}" />
 		</replace>
 
-
 	</target>
 
 	<target name="factorydatafari">
@@ -597,6 +596,19 @@
 		<copy file="${project.dir}/LICENSE.txt" todir="${linux.dist.dir}/" />
 		<copy file="${project.dir}/README.txt" todir="${linux.dist.dir}/" />
 		<copy file="${project.dir}/CHANGES.txt" todir="${linux.dist.dir}/" />
+
+
+        <!-- Delete obsolete connector libs from MCF, because some connectors (like Langchain4j)  are using more recent version of those) -->
+        <delete>
+            <fileset dir="${linux.dist.dir}/mcf/mcf_home/connector-lib" includes="**/jackson-*"/>
+        </delete>
+        <delete>
+            <fileset dir="${linux.dist.dir}/mcf/mcf_home/connector-lib" includes="**/okhttp-*"/>
+        </delete>
+        <delete>
+            <fileset dir="${linux.dist.dir}/mcf/mcf_home/connector-lib" includes="**/okio-*"/>
+        </delete>
+
 	</target>
 
 </project>
