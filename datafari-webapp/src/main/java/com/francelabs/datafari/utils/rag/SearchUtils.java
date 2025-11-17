@@ -142,14 +142,14 @@ public class SearchUtils {
      * @param q The search query for BM25
      * @param queryrag The search query for Vector Search
      * @return a JSONObject containing search results, with the following fields:
-     *      id, title, exactContent, url, llm_summary
+     *      docId, title, exactContent, url, llm_summary
      */
     public static JSONObject performCustomSearch(HttpServletRequest originalRequest, String q, String queryrag, String retrievalMethod, RagConfiguration config) {
         EditableHttpServletRequest request = new EditableHttpServletRequest(originalRequest);
         request.addParameter("q", q);
         request.addParameter("queryrag", queryrag); // The rewritten query is used only for Vector Search
         request.addParameter("hl", "false");
-        request.addParameter("fl", "id,title,exactContent,embedded_content,url,llm_summary");
+        request.addParameter("fl", "docId,title,exactContent,embedded_content,url,llm_summary");
 
         String handler;
         switch(retrievalMethod) {
@@ -232,20 +232,21 @@ public class SearchUtils {
      * This method uses an editable version of the original HttpServletRequest.
      * The updated request object is updated in order to process.
      * @param originalRequest : The HttpServletRequest
-     * @param id The ID of the document
-     * @return a JSONObject containing search resultats, with the following fields :
-     *      id, title, exactContent, url, llm_summary
+     * @param docId The docId of the document
+     * @return a JSONObject containing search results, with the following fields :
+     *      docId, title, exactContent, url, llm_summary
      */
-    public static JSONObject findDocumentById(HttpServletRequest originalRequest, String id) throws ServletException, IOException {
+    public static JSONObject findDocumentById(HttpServletRequest originalRequest, String docId) throws ServletException, IOException {
         EditableHttpServletRequest request = new EditableHttpServletRequest(originalRequest);
-        request.addParameter("q", "id:" + id);
+        request.addParameter("q", "*:*");
+        request.addParameter("fq", "docId:" + docId); // TODO : accept id OR docId
         request.addParameter("hl", "false");
         request.addParameter("rows", "1");
-        request.addParameter("fl", "id,title,exactContent,url,llm_summary");
+        request.addParameter("fl", "docId,title,exactContent,url,llm_summary");
         request.setPathInfo("/select");
 
         // TODO : use fq to filter id if possible
-        LOGGER.debug("AiPowered - Retrieving document {}.", id);
+        LOGGER.debug("AiPowered - Retrieving document {}.", docId);
         return SearchAggregator.doGetSearch(request, null);
     }
 
@@ -257,7 +258,9 @@ public class SearchUtils {
    */
   public static Document jsonToDocument(JSONObject doc){
     try {
-      String id = (String) (doc.get("parent_doc") != null ? doc.get("parent_doc") : doc.get(AiService.ID_FIELD));
+      // TODO : docId
+//      String id = (String) (doc.get("parent_doc") != null ? doc.get("parent_doc") : doc.get(AiService.ID_FIELD));
+      String docId = (String) doc.get("docId");
       String url = (String) doc.get(AiService.URL_FIELD);
       String title;
       Object t = doc.get(AiService.TITLE_FIELD);
@@ -272,7 +275,7 @@ public class SearchUtils {
       } else content = "No content available.";
 
       Document source = Document.document(content);
-      source.metadata().put(AiService.ID_FIELD, id)
+      source.metadata().put(AiService.ID_FIELD, docId)
           .put(AiService.TITLE_FIELD, title)
           .put(AiService.URL_FIELD, url);
       return source;

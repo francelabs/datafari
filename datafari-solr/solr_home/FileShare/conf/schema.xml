@@ -68,6 +68,9 @@
 <fields>
     <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
 
+    <!-- Hashed ID -->
+    <field name="docId" type="string" indexed="true" stored="true" multiValued="false" />
+
     <!-- Tuleap connector fields -->
     <field name="artifact_id" type="int" indexed="true" stored="true" multiValued="false"/>
     <field name="artifact_title" type="string" indexed="false" stored="true" multiValued="false"/>

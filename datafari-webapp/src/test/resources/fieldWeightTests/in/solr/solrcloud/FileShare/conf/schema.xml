@@ -67,8 +67,10 @@
      -->
 
  <fields>
-   <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" /> 
-   
+   <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+
+   <!-- Hashed ID -->
+   <field name="docId" type="string" indexed="true" stored="true" multiValued="false" />
    
 
    <!-- Common metadata fields, named specifically to match up with

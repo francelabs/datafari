@@ -126,7 +126,7 @@ public class DatafariTools {
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/select";
         req.addParameter("q", query);
-        req.addParameter("fl", "title,id,author,url,creation_date,last_modified,crawl_date,extension,source,word_count,language,xmptpg_npages,original_file_size");
+        req.addParameter("fl", "title,docId,author,url,creation_date,last_modified,crawl_date,extension,source,word_count,language,xmptpg_npages,original_file_size");
         req.addParameter("q.op", "OR");
         req.addParameter("start", "0");
         req.addParameter("rows", String.valueOf(rows));
@@ -161,8 +161,8 @@ public class DatafariTools {
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/select";
         req.addParameter("q", "*:*");
-        req.addParameter("fl", "title,parent_doc,id,url,embedded_content");
-        req.addParameter("fq", "{!term f=parent_doc}" + id);
+        req.addParameter("fl", "title,parent_doc,docId,url,embedded_content");
+        req.addParameter("fq", "{!term f=docId}" + id);
         req.addParameter("collection", "VectorMain");
         req.addParameter("start", String.valueOf(start));
         req.addParameter("rows", String.valueOf(rows));
@@ -198,8 +198,8 @@ public class DatafariTools {
         String handler = "/rrf";
         req.addParameter("q", query);
         req.addParameter("queryrag", query);
-        req.addParameter("fl", "title,id,url,embedded_content");
-        req.addParameter("fq", "{!term f=parent_doc}" + id);
+        req.addParameter("fl", "title,docId,url,embedded_content");
+        req.addParameter("fq", "{!term f=docId}" + id);
         req.addParameter("q.op", "OR");
         req.addParameter("wt", "json");
         req.addParameter("topK", "50");
@@ -314,7 +314,7 @@ public class DatafariTools {
         String handler = "/rrf";
         editableRequest.addParameter("q", query);
         editableRequest.addParameter("queryrag", query);
-        editableRequest.addParameter("fl", "title,id,parent_doc,embedded_content,url");
+        editableRequest.addParameter("fl", "title,docId,parent_doc,embedded_content,url");
         editableRequest.addParameter("topK", "50");
         editableRequest.addParameter("start", "0");
         editableRequest.addParameter("rows", "10");

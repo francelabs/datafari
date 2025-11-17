@@ -22,11 +22,14 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.text.RandomStringGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.solr.common.SolrInputDocument;
@@ -169,7 +172,13 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
       doc.addField("id", id);
     }
 
-    // Try to retrieve at the ignored_filelastmodified field to set it's
+    // Create a "hashed" id that does not contain special characters (useful for RAG & AI features)
+    if (doc.getFieldValue("docId") == null) {
+      final String docId = hashId( (String) doc.getFieldValue("id") );
+      doc.setField("docId", docId);
+    }
+
+    // Try to retrieve at the ignored_filelastmodified field to set its
     // value in the last_modified field
     if (doc.getFieldValue("ignored_filelastmodified") != null) {
       final Object last_modified = doc.getFieldValue("ignored_filelastmodified");
@@ -469,6 +478,28 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
       return false;
     }
     return true;
+  }
+
+  /**
+   * Hash the ID to generate a special character free docId
+   * If the hash fails, returns a random string.
+   * @param input String
+   */
+  public static String hashId(String input) {
+    try {
+      MessageDigest md = MessageDigest.getInstance("SHA‑256");
+      byte[] digest = md.digest(input.getBytes(StandardCharsets.UTF_8));
+      StringBuilder sb = new StringBuilder();
+      for (byte b : digest) {
+        sb.append(String.format("%02x", b));
+      }
+      return sb.toString();
+    } catch (NoSuchAlgorithmException e) {
+          RandomStringGenerator generator = new RandomStringGenerator.Builder()
+          .withinRange('0', 'z')
+          .build();
+          return generator.generate(30);
+    }
   }
 
   /**

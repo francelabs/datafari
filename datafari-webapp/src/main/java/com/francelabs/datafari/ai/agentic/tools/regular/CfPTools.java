@@ -53,7 +53,7 @@ public class CfPTools {
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/select";
         req.addParameter("q", "*:*");
-        req.addParameter("fl", "title,parent_doc,id,url,creation_date,agentic_*,llm_categories");
+        req.addParameter("fl", "title,parent_doc,docId,url,creation_date,agentic_*,llm_categories");
         if(!category.isBlank()) req.addParameter("fq", "{!term f=llm_categories}" + category);
         req.addParameter("start", "0");
         req.addParameter("sort", "creation_date desc");
@@ -240,7 +240,7 @@ public class CfPTools {
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/select";
         req.addParameter("q", "*:*");
-        req.addParameter("fl", "title,parent_doc,id,url,creation_date,agentic_*");
+        req.addParameter("fl", "title,parent_doc,docId,url,creation_date,agentic_*");
         req.addParameter("fq", "({!term f=agentic_cfp_doc_type v='CCTP'} AND {!term f=agentic_cfp_id v='" + cfpId + "'})");
         req.addParameter("start", "0");
         req.addParameter("rows", "1");
@@ -264,7 +264,7 @@ public class CfPTools {
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/select";
         req.addParameter("q", "*:*");
-        req.addParameter("fl", "title,parent_doc,id,url,creation_date,agentic_*");
+        req.addParameter("fl", "title,parent_doc,docId,url,creation_date,agentic_*");
         req.addParameter("fq", "({!term f=agentic_cfp_doc_type v='CCAP'} AND {!term f=agentic_cfp_id v='" + cfpId + "'})");
         req.addParameter("start", "0");
         req.addParameter("rows", "1");
@@ -280,7 +280,7 @@ public class CfPTools {
 
     @Tool("Read one page of the specified document. If the requested page does not exist for this document, it returns 'No content'. You must provide the exact document ID (not the CFP ID).")
     String readPageFromDocument(
-            @P("Document ID (found in id or parent_doc fields)") String id,
+            @P("docId of the document") String id,
             @P("Page index (0-based)") int page
     ) {
         // "rows" is the number of chunks (from VectorMain) to show to the LLM at once.
@@ -292,8 +292,8 @@ public class CfPTools {
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/select";
         req.addParameter("q", "*:*");
-        req.addParameter("fl", "title,parent_doc,id,url,embedded_content");
-        req.addParameter("fq", "{!term f=parent_doc}" + id);
+        req.addParameter("fl", "title,parent_doc,docId,url,embedded_content");
+        req.addParameter("fq", "{!term f=docId}" + id);
         req.addParameter("collection", "VectorMain");
         req.addParameter("start", String.valueOf(start));
         req.addParameter("rows", String.valueOf(rows));

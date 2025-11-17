@@ -2,6 +2,7 @@ package com.francelabs.datafari.utils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +27,17 @@ public class EditableHttpServletRequest extends HttpServletRequestWrapper {
     }
 
     @Override
+    public String[] getParameterValues(String name) {
+        // if we added parameters in this field, return those
+        if ( params.get(name) != null) {
+            return params.get(name);
+        }
+        // otherwise return what's in the original request
+        HttpServletRequest req = (HttpServletRequest) super.getRequest();
+        return req.getParameterValues( name );
+    }
+
+    @Override
     public Map<String, String[]> getParameterMap() {
 
         Map<String, String[]> map = new HashMap<>();
@@ -35,7 +47,15 @@ public class EditableHttpServletRequest extends HttpServletRequestWrapper {
     }
 
     public void addParameter( String name, String value ) {
-        params.put( name, new String[]{value});
+        if (params.get(name) != null) {
+          // If the param is existing, we create a new array containing the old values and the new one
+          String[] values = params.get(name);
+          String[] newArray = Arrays.copyOf(values, values.length+1);
+          newArray[values.length] = value;
+          params.put( name, newArray);
+        } else {
+          params.put( name, new String[]{value});
+        }
     }
 
     @Override
