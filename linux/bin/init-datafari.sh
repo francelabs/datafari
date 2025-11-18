@@ -147,7 +147,7 @@ init_git() {
 
       if [[ $key == git.build.version ]]; then
 
-        version=6.2.2
+        version=6.2.3
         echo $version
       fi
     done <"$file"
