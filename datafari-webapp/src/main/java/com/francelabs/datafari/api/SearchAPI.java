@@ -448,7 +448,8 @@ public class SearchAPI {
     if (bm25Docs != null) {
       for (Object obj : bm25Docs) {
         JSONObject doc = (JSONObject) obj;
-        String id = (String) doc.get("id");
+        String id = (String) doc.get("docId"); // Using docId as ID if available.
+        if (id == null) id = (String) doc.get("id");
         allDocs.put(id, doc);
       }
     }
@@ -459,15 +460,16 @@ public class SearchAPI {
     if (vectorDocs != null) {
       for (Object obj : vectorDocs) {
         JSONObject doc = (JSONObject) obj;
-        String id = (String) doc.get("id");
+        String id = (String) doc.get("docId"); // Using docId as ID if available.
+        if (id == null) id = (String) doc.get("id");
         allDocs.putIfAbsent(id, doc); // If not already added from BM25
       }
     }
 
     // Build the final fused docs array in the RRF order
     JSONArray fusedDocs = new JSONArray();
-    for (String docId : fusedDocIds) {
-      JSONObject doc = allDocs.get(docId);
+    for (String id : fusedDocIds) {
+      JSONObject doc = allDocs.get(id);
       if (doc != null) {
         fusedDocs.add(doc);
       }

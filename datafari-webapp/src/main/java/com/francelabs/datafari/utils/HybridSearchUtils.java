@@ -53,7 +53,7 @@ public class HybridSearchUtils {
 
         for (int i = 0; i < docs.size(); i++) {
             JSONObject doc = (JSONObject) docs.get(i);
-            Object idObj = doc.get("id");
+            Object idObj = (doc.get("docId") != null) ? doc.get("docId") : doc.get("id");
             if (idObj instanceof String) {
                 ranks.put((String) idObj, i + 1); // Rank starts at 1
             }

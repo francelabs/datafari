@@ -239,13 +239,12 @@ public class SearchUtils {
     public static JSONObject findDocumentById(HttpServletRequest originalRequest, String docId) throws ServletException, IOException {
         EditableHttpServletRequest request = new EditableHttpServletRequest(originalRequest);
         request.addParameter("q", "*:*");
-        request.addParameter("fq", "docId:" + docId); // TODO : accept id OR docId
+        request.addParameter("fq", "(docId:\"" + docId + "\" OR id:\"" + docId + "\")"); // Filter by id OR docId
         request.addParameter("hl", "false");
         request.addParameter("rows", "1");
         request.addParameter("fl", "docId,title,exactContent,url,llm_summary");
         request.setPathInfo("/select");
 
-        // TODO : use fq to filter id if possible
         LOGGER.debug("AiPowered - Retrieving document {}.", docId);
         return SearchAggregator.doGetSearch(request, null);
     }

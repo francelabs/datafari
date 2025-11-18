@@ -41,6 +41,9 @@ import org.apache.tika.mime.MimeType;
 import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
 
+import static org.apache.commons.text.CharacterPredicates.DIGITS;
+import static org.apache.commons.text.CharacterPredicates.LETTERS;
+
 public class DatafariUpdateProcessor extends UpdateRequestProcessor {
 
   private static final Logger LOGGER = LogManager.getLogger(DatafariUpdateProcessor.class.getName());
@@ -487,7 +490,7 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
    */
   public static String hashId(String input) {
     try {
-      MessageDigest md = MessageDigest.getInstance("SHA‑256");
+      MessageDigest md = MessageDigest.getInstance("SHA-256");
       byte[] digest = md.digest(input.getBytes(StandardCharsets.UTF_8));
       StringBuilder sb = new StringBuilder();
       for (byte b : digest) {
@@ -497,6 +500,7 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     } catch (NoSuchAlgorithmException e) {
           RandomStringGenerator generator = new RandomStringGenerator.Builder()
           .withinRange('0', 'z')
+          .filteredBy(LETTERS, DIGITS)
           .build();
           return generator.generate(30);
     }

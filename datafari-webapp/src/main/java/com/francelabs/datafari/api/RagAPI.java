@@ -407,7 +407,7 @@ public class RagAPI extends SearchAPI {
      */
     private static List<Document> extractDocumentsList(JSONObject result) throws FileNotFoundException {
         // Handling search results
-        // Retrieving list of documents: id, title, url // TODO : docId
+        // Retrieving list of documents: id (docId), title, url
         List<Document> documentsList;
         documentsList = getDocumentList(result);
 
