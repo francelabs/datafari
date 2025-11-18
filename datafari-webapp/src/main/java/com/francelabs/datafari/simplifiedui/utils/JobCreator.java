@@ -100,7 +100,7 @@ public class JobCreator {
             stageId = Integer.parseInt((String) child.get(value));
           } else if (child.get(type).equals(stagePrerequisiteElement)) {
             stagePrereqId = Integer.parseInt((String) child.get(value));
-          } else if (child.get(type).equals(stageConnectionNameElement) && child.get(value).equals("DatafariSolrNoTika")) {
+          } else if (child.get(type).equals(stageConnectionNameElement) && child.get(value).equals("DatafariSolr")) {
             child.put(value,ocrOutputConnector);
           } else if (child.get(type).equals(stageConnectionNameElement) && child.get(value).equals(originalTikaServerConnector)) {
             // Replace the connector name by the new one
@@ -210,7 +210,7 @@ public class JobCreator {
           final JSONObject child = (JSONObject) children.get(j);
           if (child.get(type).equals(stageIdElement)) {
             stageId = Integer.parseInt((String) child.get(value));
-          } else if (child.get(type).equals(stageConnectionNameElement) && child.get(value).equals("DatafariSolrNoTika")) {
+          } else if (child.get(type).equals(stageConnectionNameElement) && child.get(value).equals("DatafariSolr")) {
             child.put(value,spacyOutputConnector);
           } else if (child.get(type).equals(stagePrerequisiteElement)) {
             stagePrereqId = Integer.parseInt((String) child.get(value));

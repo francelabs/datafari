@@ -661,7 +661,6 @@
     -->
 
 
- <requestHandler class="org.apache.solr.search.function.FileFloatSource$ReloadCacheRequestHandler" name="/reloadCache"/>
 
  <!-- ////////////////////////// -->
    <!-- Includes custom search handler. You will have to comment the configuration of the search handler /select below -->
@@ -843,20 +842,27 @@
     -->
   <requestHandler class="solr.UpdateRequestHandler" name="/update">
 	  <lst name="defaults">
-		  <str name="update.chain">datafari_delete</str>
 	  </lst>
   </requestHandler>
-
-  <requestHandler class="com.francelabs.datafari.handler.parsed.ParsedRequestHandler" name="/update/no-tika" startup="lazy">
-    <lst name="defaults">
-			<str name="lowernames">true</str>
-			<str name="fmap.language">ignored_</str>
-			<str name="fmap.source">ignored_</str>
-			<str name="fmap.version">ignored_</str>
-			<str name="fmap._version_">ignored_</str>
-			<str name="uprefix">ignored_</str>
-			<str name="update.chain">datafari</str>
+  
+  <requestHandler class="solr.UpdateRequestHandler" name="/update/datafari-indexation">
+	  <lst name="defaults">
+                        <str name="lowernames">true</str>
+                        <str name="fmap.language">ignored_</str>
+                        <str name="fmap.source">ignored_</str>
+                        <str name="fmap.version">ignored_</str>
+                        <str name="fmap._version_">ignored_</str>
+                        <str name="uprefix">ignored_</str>
+                        <str name="update.chain">datafari</str>
     </lst>
+
+  </requestHandler>
+
+  <requestHandler class="solr.UpdateRequestHandler" name="/update/datafari-deletion">
+          <lst name="defaults">
+                        <str name="update.chain">datafari_delete</str>
+    </lst>
+
   </requestHandler>
 
   <requestHandler class="solr.extraction.ExtractingRequestHandler" name="/update/extract" startup="lazy">

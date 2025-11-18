@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.francelabs.datafari.audit.AuditLogUtil;
 import com.francelabs.datafari.exception.DatafariServerException;

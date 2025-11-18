@@ -17,6 +17,8 @@
 	<property name="as.src.dir" value="${project.dir}/datafari-analytic-stack/target/dist/analytic-stack" />
 	<property name="tomcat.proj.dir" value="${project.dir}/datafari-tomcat" />
 	<property name="tomcat.src.dir" value="${tomcat.proj.dir}/target/dist/tomcat" />
+	<property name="tomcat-mcf.proj.dir" value="${project.dir}/datafari-tomcat-mcf" />
+        <property name="tomcat-mcf.src.dir" value="${tomcat-mcf.proj.dir}/target/dist/tomcat-mcf" />
 	<property name="solr.src.dir" value="${project.dir}/datafari-solr/target/dist/solr" />
 	<property name="datafari.webapp.dir" value="${project.dir}/datafari-webapp/target" />
 	<property name="datafari.core.dir" value="${project.dir}/datafari-core/target" />
@@ -36,7 +38,6 @@
 	<property name="llm.connector.src.dir" value="${project.dir}/datafari-llm-connector/target" />
 	<property name="binary.connector.src.dir" value="${project.dir}/datafari-binary-connector/target" />
 	<property name="vectorsearch.connector.src.dir" value="${project.dir}/datafari-vector-search-connector/target" />
-	<property name="datafarihandler.src.dir" value="${project.dir}/datafari-handler/target" />
 	<property name="mcf-scripts.src.dir" value="${project.dir}/datafari-mcf-scripts/target" />
 	<property name="zookeeper.proj.dir" value="${project.dir}/datafari-zookeeper" />
 	<property name="zookeeper.src.dir" value="${zookeeper.proj.dir}/target/dist/zookeeper" />
@@ -143,7 +144,6 @@
 			<replacefilter token="@DATAFARI_HOME@" value="${datafari.home}" />
 		</replace>
 
-
 	</target>
 
 	<target name="factorydatafari">
@@ -215,17 +215,17 @@
 
 		<!-- Copy Tomcat-MCF  -->
 		<copy todir="${linux.dist.dir}/tomcat-mcf">
-			<fileset dir="${tomcat.src.dir}">
+			<fileset dir="${tomcat-mcf.src.dir}">
 			</fileset>
 		</copy>
 		<!-- Copy bin directory -->
 		<copy toDir="${linux.dist.dir}/tomcat-mcf/bin" overwrite="true" force="true">
-			<fileset dir="${tomcat.proj.dir}/bin-mcf">
+			<fileset dir="${tomcat-mcf.proj.dir}/bin-mcf">
 			</fileset>
 		</copy>
 		<!-- Copy conf directory -->
 		<copy toDir="${linux.dist.dir}/tomcat-mcf/conf" overwrite="true" force="true">
-			<fileset dir="${tomcat.proj.dir}/conf-mcf">
+			<fileset dir="${tomcat-mcf.proj.dir}/conf-mcf">
 			</fileset>
 		</copy>
 
@@ -309,34 +309,6 @@
 			</fileset>
 		</copy>
 
-		<!-- Copy Datafari update handler + dependencies-->
-		<copy todir="${linux.dist.dir}/solr/solr_home/FileShare/lib/custom">
-			<fileset dir="${datafarihandler.src.dir}">
-				<include name="*.jar" />
-			</fileset>
-		</copy>
-
-                <!-- Copy Datafari update handler + dependencies to VectorMain -->
-                 <!-- Copy Datafari update handler + dependencies-->
-                <copy todir="${linux.dist.dir}/solr/solr_home/VectorMain/lib/custom">
-                        <fileset dir="${datafarihandler.src.dir}">
-                                <include name="*.jar" />
-                        </fileset>
-                </copy>
-		
-		<!-- Copy Datafari update handler + dependencies to GenericAnnotator -->
-				<copy todir="${linux.dist.dir}/solr/solr_home/GenericAnnotator/lib/custom">
-					<fileset dir="${datafarihandler.src.dir}">
-						<include name="*.jar" />
-					</fileset>
-				</copy>
-
-		<!-- Copy Datafari handler to Duplicates Solr core -->
-		<copy todir="${linux.dist.dir}/solr/solr_home/Duplicates/lib/custom">
-			<fileset dir="${datafarihandler.src.dir}">
-				<include name="*.jar" />
-			</fileset>
-		</copy>
 
 		<!-- Copy Tika Server JAR in tika-server folder -->
 		<copy todir="${linux.dist.dir}/tika-server">
@@ -624,6 +596,19 @@
 		<copy file="${project.dir}/LICENSE.txt" todir="${linux.dist.dir}/" />
 		<copy file="${project.dir}/README.txt" todir="${linux.dist.dir}/" />
 		<copy file="${project.dir}/CHANGES.txt" todir="${linux.dist.dir}/" />
+
+
+        <!-- Delete obsolete connector libs from MCF, because some connectors (like Langchain4j)  are using more recent version of those) -->
+        <delete>
+            <fileset dir="${linux.dist.dir}/mcf/mcf_home/connector-lib" includes="**/jackson-*"/>
+        </delete>
+        <delete>
+            <fileset dir="${linux.dist.dir}/mcf/mcf_home/connector-lib" includes="**/okhttp-*"/>
+        </delete>
+        <delete>
+            <fileset dir="${linux.dist.dir}/mcf/mcf_home/connector-lib" includes="**/okio-*"/>
+        </delete>
+
 	</target>
 
 </project>

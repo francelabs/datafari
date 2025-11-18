@@ -69,7 +69,6 @@
     <httpCaching never304="true"/>
   </requestDispatcher>
 
- <requestHandler class="org.apache.solr.search.function.FileFloatSource$ReloadCacheRequestHandler" name="/reloadCache"/>
       
   <requestHandler class="solr.SearchHandler" name="/select" useParams="mySearch">
   	<lst name="defaults">
@@ -119,7 +118,7 @@
     </lst>
   </requestHandler>
 
-  <requestHandler class="com.francelabs.datafari.handler.parsed.ParsedRequestHandler" name="/update/no-tika" startup="lazy">
+  <requestHandler class="solr.UpdateRequestHandler" name="/update/datafari-indexation" startup="lazy">
     <lst name="defaults">
 			<str name="lowernames">true</str>
 			<str name="fmap.language">ignored_</str>

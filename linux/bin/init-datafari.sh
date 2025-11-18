@@ -259,7 +259,7 @@ init_collection_name() {
   sed -i -e "s~@MAINCOLLECTION@~${1}~g" $SOLR_INSTALL_DIR/solr_home/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
   sed -i -e "s~@MAINCOLLECTION@~${1}~g" $DATAFARI_HOME/bin/datafari-manager.sh >>$installerLog 2>&1
   sed -i -e "s~@MAINCOLLECTION@~${1}~g" $TOMCAT_HOME/conf/datafari.properties >>$installerLog 2>&1
-  sed -i -e "s~@MAINCOLLECTION@~${1}~g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolrNoTika.json >>$installerLog 2>&1
+  sed -i -e "s~@MAINCOLLECTION@~${1}~g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolr.json >>$installerLog 2>&1
   sed -i -e "s~@MAINCOLLECTION@~${1}~g" $TOMCAT_HOME/webapps/Datafari/resources/js/admin/ajax/alerts.js >>$installerLog 2>&1
   sed -i -e "s~@MAINCOLLECTION@~${1}~g" $TOMCAT_HOME/webapps/Datafari/resources/js/parameters.js >>$installerLog 2>&1
   sed -i -e "s~@MAINCOLLECTION@~${1}~g" $TOMCAT_HOME/webapps/Datafari/resources/js/admin/ajax/queryElevator.js >>$installerLog 2>&1
@@ -309,9 +309,9 @@ init_solr_hosts() {
 
 init_zk() {
   #sed -i -e "s/@NODEHOST@/${1}/g" $TOMCAT_HOME/conf/datafari.properties >>$installerLog 2>&1
-  sed -i -e "s/@ZKHOST@/${1}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolrNoTika.json >>$installerLog 2>&1
-  sed -i -e "s/@PROTOCOL@/${2}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolrNoTika.json >>$installerLog 2>&1
-  sed -i -e "s/@PORT@/${3}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolrNoTika.json >>$installerLog 2>&1
+  sed -i -e "s/@ZKHOST@/${1}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolr.json >>$installerLog 2>&1
+  sed -i -e "s/@PROTOCOL@/${2}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolr.json >>$installerLog 2>&1
+  sed -i -e "s/@PORT@/${3}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolr.json >>$installerLog 2>&1
   sed -i -e "s/@ZKHOST@/${1}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolrVector.json >>$installerLog 2>&1
   sed -i -e "s/@PROTOCOL@/${2}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolrVector.json >>$installerLog 2>&1
   sed -i -e "s/@PORT@/${3}/g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolrVector.json >>$installerLog 2>&1

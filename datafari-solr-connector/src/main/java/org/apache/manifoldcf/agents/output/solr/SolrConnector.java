@@ -22,6 +22,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.InputStream;
+import java.io.BufferedInputStream;
 import java.util.*;
 
 import org.apache.manifoldcf.agents.interfaces.IOutputAddActivity;
@@ -43,7 +45,7 @@ import org.apache.manifoldcf.core.interfaces.ManifoldCFException;
 import org.apache.manifoldcf.core.interfaces.Specification;
 import org.apache.manifoldcf.core.interfaces.VersionContext;
 import org.apache.manifoldcf.crawler.system.Logging;
-
+import org.apache.solr.client.solrj.SolrServerException;
 /**
  * This is the output connector for SOLR. Currently, no frills.
  */
@@ -290,9 +292,11 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
         solrType = SolrConfig.SOLR_TYPE_STANDARD;
 
       if (solrType.equals(SolrConfig.SOLR_TYPE_STANDARD)) {
+        // --------- MODE STANDALONE (HTTP) ----------
         final String userID = params.getParameter(SolrConfig.PARAM_USERID);
         final String password = params.getObfuscatedParameter(SolrConfig.PARAM_PASSWORD);
         final String realm = params.getParameter(SolrConfig.PARAM_REALM);
+
         final String keystoreData = params.getParameter(SolrConfig.PARAM_KEYSTORE);
         IKeystoreManager keystoreManager;
         if (keystoreData != null)
@@ -301,15 +305,15 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
           keystoreManager = null;
 
         final String protocol = params.getParameter(SolrConfig.PARAM_PROTOCOL);
-        if (protocol == null || protocol.length() == 0)
+        if (protocol == null || protocol.isEmpty())
           throw new ManifoldCFException("Missing parameter: " + SolrConfig.PARAM_PROTOCOL);
 
         final String server = params.getParameter(SolrConfig.PARAM_SERVER);
-        if (server == null || server.length() == 0)
+        if (server == null || server.isEmpty())
           throw new ManifoldCFException("Missing parameter: " + SolrConfig.PARAM_SERVER);
 
         String port = params.getParameter(SolrConfig.PARAM_PORT);
-        if (port == null || port.length() == 0)
+        if (port == null || port.isEmpty())
           port = "80";
 
         String webapp = params.getParameter(SolrConfig.PARAM_WEBAPPNAME);
@@ -317,10 +321,10 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
           webapp = null;
 
         String core = params.getParameter(SolrConfig.PARAM_CORE);
-        if (core != null && core.length() == 0)
+        if (core == null || core.length() == 0)
           core = "collection1";
 
-        // Pick up timeouts
+        // timeouts
         String socketTimeoutString = params.getParameter(SolrConfig.PARAM_SOCKET_TIMEOUT);
         if (socketTimeoutString == null)
           socketTimeoutString = "900";
@@ -334,33 +338,67 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
           final int socketTimeout = Integer.parseInt(socketTimeoutString) * 1000;
           final int connectTimeout = Integer.parseInt(connectTimeoutString) * 1000;
 
-          poster = new HttpPoster(protocol, server, Integer.parseInt(port), webapp, core, connectTimeout, socketTimeout, updatePath, removePath, statusPath, realm, userID, password, allowAttributeName, denyAttributeName, idAttributeName,
-              originalSizeAttributeName, modifiedDateAttributeName, createdDateAttributeName, indexedDateAttributeName, fileNameAttributeName, mimeTypeAttributeName, contentAttributeName, keystoreManager, maxDocumentLength, commitWithin,
-              useExtractUpdateHandler, includedMimeTypes, excludedMimeTypes, allowCompression);
+          // En STANDARD : aucune info ZK ne doit être transmise
+          poster = new HttpPoster(
+              /* protocol           */ protocol,
+              /* server             */ server,
+              /* port               */ Integer.parseInt(port),
+              /* webapp             */ webapp,
+              /* core               */ core,
+              /* connectTimeoutMS   */ connectTimeout,
+              /* socketTimeoutMS    */ socketTimeout,
+              /* updatePath         */ updatePath,
+              /* removePath         */ removePath,
+              /* statusPath         */ statusPath,
+              /* realm              */ realm,
+              /* userID             */ userID,
+              /* password           */ password,
+              /* allowAttr          */ allowAttributeName,
+              /* denyAttr           */ denyAttributeName,
+              /* idAttr             */ idAttributeName,
+              /* origSizeAttr       */ originalSizeAttributeName,
+              /* modifiedDateAttr   */ modifiedDateAttributeName,
+              /* createdDateAttr    */ createdDateAttributeName,
+              /* indexedDateAttr    */ indexedDateAttributeName,
+              /* fileNameAttr       */ fileNameAttributeName,
+              /* mimeTypeAttr       */ mimeTypeAttributeName,
+              /* contentAttr        */ contentAttributeName,
+              /* keystore           */ keystoreManager,
+              /* maxDocLen          */ maxDocumentLength,
+              /* commitWithin       */ commitWithin,
+              /* useExtractUpdate   */ useExtractUpdateHandler,
+              /* includedMimeTypes  */ includedMimeTypes,
+              /* excludedMimeTypes  */ excludedMimeTypes,
+              /* allowCompression   */ allowCompression
+          );
 
         } catch (final NumberFormatException e) {
           throw new ManifoldCFException(e.getMessage());
         }
 
       } else if (solrType.equals(SolrConfig.SOLR_TYPE_SOLRCLOUD)) {
+        // --------- MODE SOLRCLOUD (ZK) ----------
         final List<String> zookeeperHosts = new ArrayList<>();
-        // Pull together the zookeeper string describing the zookeeper nodes
         for (int i = 0; i < params.getChildCount(); i++) {
           final ConfigurationNode cn = params.getChild(i);
           if (cn.getType().equals(SolrConfig.NODE_ZOOKEEPER)) {
-            zookeeperHosts.add(cn.getAttributeValue(SolrConfig.ATTR_HOST) + ":" + cn.getAttributeValue(SolrConfig.ATTR_PORT));
+            final String host = cn.getAttributeValue(SolrConfig.ATTR_HOST);
+            final String zkp  = cn.getAttributeValue(SolrConfig.ATTR_PORT);
+            if (host != null && !host.isEmpty() && zkp != null && !zkp.isEmpty()) {
+              zookeeperHosts.add(host + ":" + zkp);
+            }
           }
         }
+        if (zookeeperHosts.isEmpty())
+          throw new ManifoldCFException("SolrCloud selected but no ZooKeeper hosts configured.");
 
         String znodePath = params.getParameter(SolrConfig.PARAM_ZOOKEEPER_ZNODE_PATH);
 
-        // Get collection
         String collection = params.getParameter(SolrConfig.PARAM_COLLECTION);
-        if (collection == null)
+        if (collection == null || collection.isEmpty())
           collection = "collection1";
         collectionName = collection;
 
-        // Pick up timeouts
         String zkSocketTimeoutString = params.getParameter(SolrConfig.PARAM_ZOOKEEPER_SOCKET_TIMEOUT);
         if (zkSocketTimeoutString == null)
           zkSocketTimeoutString = "60";
@@ -368,26 +406,62 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
         if (zkConnectionTimeoutString == null)
           zkConnectionTimeoutString = "60";
 
-        // Create an httpposter
+        // Récupération protocol/keystore pour SSL éventuel en cloud (ignorés par le ctor “cloud simple”,
+        // mais pris en compte par le ctor “cloud long + protocol/keystore” si présent)
+        final String keystoreData = params.getParameter(SolrConfig.PARAM_KEYSTORE);
+        IKeystoreManager keystoreManager;
+        if (keystoreData != null)
+          keystoreManager = KeystoreManagerFactory.make("", keystoreData);
+        else
+          keystoreManager = null;
+
+        final String protocol = params.getParameter(SolrConfig.PARAM_PROTOCOL);
+
         try {
-          final int zkClientTimeout = Integer.parseInt(zkSocketTimeoutString) * 1000;
+          final int zkClientTimeout  = Integer.parseInt(zkSocketTimeoutString) * 1000;
           final int zkConnectTimeout = Integer.parseInt(zkConnectionTimeoutString) * 1000;
 
-          poster = new HttpPoster(zookeeperHosts, znodePath, collection, zkClientTimeout, zkConnectTimeout, updatePath, removePath, statusPath, allowAttributeName, denyAttributeName, idAttributeName, originalSizeAttributeName,
-              modifiedDateAttributeName, createdDateAttributeName, indexedDateAttributeName, fileNameAttributeName, mimeTypeAttributeName, contentAttributeName, maxDocumentLength, commitWithin, useExtractUpdateHandler, includedMimeTypes,
-              excludedMimeTypes, allowCompression);
+          // En CLOUD : aucune solrUrl ne doit être transmise
+          poster = new HttpPoster(
+              /* zkHosts            */ zookeeperHosts,
+              /* znodePath          */ znodePath,
+              /* collection         */ collection,
+              /* zkClientTimeoutMS  */ zkClientTimeout,
+              /* zkConnectTimeoutMS */ zkConnectTimeout,
+              /* updatePath         */ updatePath,
+              /* removePath         */ removePath,
+              /* statusPath         */ statusPath,
+              /* allowAttr          */ allowAttributeName,
+              /* denyAttr           */ denyAttributeName,
+              /* idAttr             */ idAttributeName,
+              /* origSizeAttr       */ originalSizeAttributeName,
+              /* modifiedDateAttr   */ modifiedDateAttributeName,
+              /* createdDateAttr    */ createdDateAttributeName,
+              /* indexedDateAttr    */ indexedDateAttributeName,
+              /* fileNameAttr       */ fileNameAttributeName,
+              /* mimeTypeAttr       */ mimeTypeAttributeName,
+              /* contentAttr        */ contentAttributeName,
+              /* maxDocLen          */ maxDocumentLength,
+              /* commitWithin       */ commitWithin,
+              /* useExtractUpdate   */ useExtractUpdateHandler,
+              /* includedMimeTypes  */ includedMimeTypes,
+              /* excludedMimeTypes  */ excludedMimeTypes,
+              /* allowCompression   */ allowCompression,
+              /* protocolForSSL     */ protocol,         // pour savoir si https
+              /* keystoreForSSL     */ keystoreManager   // pour SSLContext si https
+          );
 
         } catch (final NumberFormatException e) {
           throw new ManifoldCFException(e.getMessage());
         }
 
-      } else
+      } else {
         throw new ManifoldCFException("Illegal value for parameter '" + SolrConfig.PARAM_SOLR_TYPE + "': '" + solrType + "'");
+      }
 
+      expirationTime = System.currentTimeMillis() + EXPIRATION_INTERVAL;
     }
-    expirationTime = System.currentTimeMillis() + EXPIRATION_INTERVAL;
-  }
-
+}
   /** Parse a mime type field into individual mime types in a hash */
   protected static Set<String> parseMimeTypes(final String mimeTypes) throws ManifoldCFException {
     final Set<String> rval = new HashSet<>();
@@ -421,17 +495,18 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
    *
    * @return the connection's status as a displayable string.
    */
-  @Override
-  public String check() throws ManifoldCFException {
-    try {
-      getSession();
-      poster.checkPost();
-      return super.check();
-    } catch (final ServiceInterruption e) {
-      return "Transient error: " + e.getMessage();
-    }
+@Override
+public String check() throws ManifoldCFException {
+  try {
+    getSession();
+    poster.checkPost();
+    return super.check();
+  } catch (org.apache.solr.client.solrj.SolrServerException e) {
+    return "Transient error: " + e.getMessage();
+  } catch (java.io.IOException e) {
+    return "Transient error: " + e.getMessage();
   }
-
+}
   /**
    * Get an output version string, given an output specification. The output version string is used to uniquely describe the pertinent details of the output specification and the configuration, to
    * allow the Connector Framework to determine whether a document will need to be output again. Note that the contents of the document cannot be considered by this method, and that a different
@@ -518,13 +593,33 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
     if (Logging.connectors.isDebugEnabled()) {
       logRepositoryDocument(document, documentURI);
     }
+// juste avant l’appel à poster.indexPost(...)
+InputStream binaryStream = document.getBinaryStream();
+if (binaryStream != null && !binaryStream.markSupported()) {
+  // Récupère la longueur éventuellement connue
+  final Long originalLenObj = document.getBinaryLength();
+  final long len = (originalLenObj != null) ? originalLenObj.longValue() : -1L; // -1L si inconnu
 
-    // Now, go off and call the ingest API.
-    if (poster.indexPost(documentURI, document, sp.getArgs(), authorityNameString, activities))
-      return DOCUMENTSTATUS_ACCEPTED;
+  binaryStream = new BufferedInputStream(binaryStream, 65536);
+  document.setBinary(binaryStream, len);  // signature: (InputStream, long)
+
+  if (Logging.ingest.isDebugEnabled()) {
+    Logging.ingest.debug("Wrapped document InputStream to support mark/reset (len=" + len + ")");
+  }
+}
+try {
+  if (poster.indexPost(documentURI, document, sp.getArgs(), authorityNameString, activities)) {
+    return DOCUMENTSTATUS_ACCEPTED;
+  } else {
     return DOCUMENTSTATUS_REJECTED;
   }
-
+} catch (org.apache.solr.client.solrj.SolrServerException e) {
+  throw new ManifoldCFException("Error indexing into Solr: " + e.getMessage(), e);
+} catch (java.io.IOException e) {
+  // si la méthode déclare déjà IOException -> soit la relancer, soit la wrapper, au choix:
+  throw e; // ou: throw new ManifoldCFException("I/O error during Solr operation: " + e.getMessage(), e);
+}
+}
   /**
    * Remove a document using the connector. Note that the last outputDescription is included, since it may be necessary for the connector to use such information to know how to properly remove the
    * document.
@@ -537,13 +632,19 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
    * @param activities
    *          is the handle to an object that the implementer of an output connector may use to perform operations, such as logging processing activity.
    */
-  @Override
-  public void removeDocument(final String documentURI, final String outputDescription, final IOutputRemoveActivity activities) throws ManifoldCFException, ServiceInterruption {
-    // Establish a session
-    getSession();
+@Override
+public void removeDocument(final String documentURI, final String outputDescription,
+                           final IOutputRemoveActivity activities)
+    throws ManifoldCFException, ServiceInterruption {
+  // Establish a session
+  getSession();
+  try {
     poster.deletePost(documentURI, activities);
+  } catch (org.apache.solr.client.solrj.SolrServerException | java.io.IOException e) {
+    // La méthode ne déclare pas IOException -> on wrappe dans ManifoldCFException
+    throw new ManifoldCFException("Error deleting document in Solr: " + e.getMessage(), e);
   }
-
+}
   /**
    * Notify the connector of a completed job. This is meant to allow the connector to flush any internal data structures it has been keeping around, or to tell the output repository that this is a
    * good time to synchronize things. It is called whenever a job is either completed or aborted.
@@ -551,17 +652,22 @@ public class SolrConnector extends org.apache.manifoldcf.agents.output.BaseOutpu
    * @param activities
    *          is the handle to an object that the implementer of an output connector may use to perform operations, such as logging processing activity.
    */
-  @Override
-  public void noteJobComplete(final IOutputNotifyActivity activities) throws ManifoldCFException, ServiceInterruption {
-    // Establish a session
-    getSession();
+@Override
+public void noteJobComplete(final IOutputNotifyActivity activities)
+    throws ManifoldCFException, ServiceInterruption {
+  // Establish a session
+  getSession();
 
-    // Do a commit post
-    if (doCommits) {
+  // Do a commit post
+  if (doCommits) {
+    try {
       poster.commitPost();
+    } catch (org.apache.solr.client.solrj.SolrServerException | java.io.IOException e) {
+      // La méthode ne déclare pas IOException -> on wrappe
+      throw new ManifoldCFException("Error during commit to Solr: " + e.getMessage(), e);
     }
   }
-
+}
   // UI support methods.
   //
   // These support methods come in two varieties. The first bunch is involved in setting up connection configuration information. The second bunch

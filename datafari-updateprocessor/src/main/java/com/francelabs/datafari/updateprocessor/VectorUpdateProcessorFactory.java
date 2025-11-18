@@ -1,23 +1,8 @@
-/*******************************************************************************
- *  * Copyright 2020 France Labs
- *  *
- *  * Licensed under the Apache License, Version 2.0 (the "License");
- *  * you may not use this file except in compliance with the License.
- *  * You may obtain a copy of the License at
- *  *
- *  *      http://www.apache.org/licenses/LICENSE-2.0
- *  *
- *  * Unless required by applicable law or agreed to in writing, software
- *  * distributed under the License is distributed on an "AS IS" BASIS,
- *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  * See the License for the specific language governing permissions and
- *  * limitations under the License.
- *******************************************************************************/
 package com.francelabs.datafari.updateprocessor;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.apache.solr.client.solrj.impl.CloudHttp2SolrClient;
 import org.apache.solr.client.solrj.request.SolrPing;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.NamedList;
@@ -28,24 +13,28 @@ import org.apache.solr.update.processor.UpdateRequestProcessorFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Optional;
 
+/**
+ * A custom {@link UpdateRequestProcessorFactory} that initializes a {@link CloudHttp2SolrClient}
+ * and creates instances of {@link VectorUpdateProcessor}.
+ * <p>
+ * This factory allows processing updates that interact with a remote SolrCloud collection
+ * for vector data handling (e.g., embedding storage or synchronization).
+ */
 public class VectorUpdateProcessorFactory extends UpdateRequestProcessorFactory {
 
-
-  private static final Logger LOGGER = LogManager.getLogger(VectorUpdateProcessorFactory.class.getName());
+  private static final Logger LOGGER = LogManager.getLogger(VectorUpdateProcessorFactory.class);
 
   private static final String DEFAULT_COLLECTION = "VectorMain";
-  private static final String DEFAULT_HOST = "localhost:2181";
+  private static final String DEFAULT_HOST = "localhost:2181"; // ZooKeeper host (not an HTTP endpoint)
   private static final String COLLECTION = "collection";
   private static final String HOST = "host";
 
   private SolrParams params = null;
-  private CloudSolrClient client;
+  private CloudHttp2SolrClient client;
 
   @Override
   public void init(final NamedList args) {
-    // Retrieve the parameters if any
     if (args != null) {
       params = args.toSolrParams();
     }
@@ -53,31 +42,33 @@ public class VectorUpdateProcessorFactory extends UpdateRequestProcessorFactory 
 
   @Override
   public UpdateRequestProcessor getInstance(final SolrQueryRequest req, final SolrQueryResponse rsp, final UpdateRequestProcessor next) {
-    // Pass the parameters retrieved in the init (if any) to the update processor
-    if (tryInitClient()) {
+    if (params.getBool("enabled", false) && tryInitClient()) {
       return new VectorUpdateProcessor(client, params, next);
     } else {
-      // Dummy request processor forwarding the processing to the rest of the pipe when text tagger is disabled.
-      return new UpdateRequestProcessor(next) {
-      };
+      // No-op processor when disabled
+      return new UpdateRequestProcessor(next) {};
     }
   }
 
   /**
-   * Initiate the SolrClient if it does not exist yet
-   * @return true if the operation succeeded
+   * Initializes the Solr client if necessary using Solr 10's {@link CloudHttp2SolrClient}.
+   * 
+   * @return {@code true} if the client is successfully initialized, {@code false} otherwise.
    */
   private boolean tryInitClient() {
     if (client == null) {
       try {
-        client = new CloudSolrClient.Builder(new ArrayList<>(Collections.singletonList(getParam(HOST, DEFAULT_HOST))), Optional.empty())
-                .withDefaultCollection(getParam(COLLECTION, DEFAULT_COLLECTION))
-                .build();
-        final SolrPing ping = new SolrPing();
-        client.request(ping);
+        // Build SolrCloud HTTP/2 client using ZooKeeper hosts list
+        client = new CloudHttp2SolrClient.Builder(
+            new ArrayList<>(Collections.singletonList(getParam(HOST, DEFAULT_HOST)))
+        ).build();
+
+        // No defaultCollection in the builder: specify collection explicitly for requests
+        final String coll = getParam(COLLECTION, DEFAULT_COLLECTION);
+        client.request(new SolrPing(), coll);
         return true;
       } catch (final Exception e) {
-        LOGGER.warn("{} error initializing the solr client to get tags, disabling text tagger.", e.getMessage());
+        LOGGER.warn("{} Error initializing Solr client for vector processing. The processor will be disabled.", e.getMessage());
         client = null;
         return false;
       }
@@ -86,16 +77,14 @@ public class VectorUpdateProcessorFactory extends UpdateRequestProcessorFactory 
   }
 
   /**
-   * Extracts a String parameter from the SolrParams and return it if it exists.
-   * Sets it to its default value if it doesn't exist
+   * Retrieves a parameter value or returns the default if not defined.
    *
-   * @param paramName the name of the parameter to set
-   * @param def       the default value to use
-   * @return the new value for the parameter, the default value is returned when the parameter is malformed and the tagger is disabled.
+   * @param paramName The parameter name
+   * @param def The default value to return if the parameter is missing
+   * @return The resolved value, or the default if undefined
    */
   private String getParam(final String paramName, final String def) {
     String result = params.get(paramName);
     return (result != null && !result.isEmpty()) ? result : def;
   }
-
 }

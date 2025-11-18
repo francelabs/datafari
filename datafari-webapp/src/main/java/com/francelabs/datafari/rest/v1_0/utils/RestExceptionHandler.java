@@ -14,7 +14,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
-public class RestExceptionHandler extends ResponseEntityExceptionHandler {
+public class RestExceptionHandler {
 
     @ExceptionHandler(value = { NotAuthenticatedException.class })
     protected ResponseEntity<Object> handleNotAuthenticated(RuntimeException ex, WebRequest request) {
@@ -23,7 +23,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 null);
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8");
-        return handleExceptionInternal(ex, body, headers, HttpStatus.UNAUTHORIZED, request);
+        return new ResponseEntity<>(body, headers, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(value = { BadRequestException.class })
@@ -31,7 +31,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         String body = RestAPIUtils.buildErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getLocalizedMessage(), null);
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8");
-        return handleExceptionInternal(ex, body, headers, HttpStatus.BAD_REQUEST, request);
+        return new ResponseEntity<>(body, headers, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = { InternalErrorException.class })
@@ -39,7 +39,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         String body = RestAPIUtils.buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getLocalizedMessage(), null);
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8");
-        return handleExceptionInternal(ex, body, headers, HttpStatus.INTERNAL_SERVER_ERROR, request);
+        return new ResponseEntity<>(body, headers, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(value = {DataNotFoundException.class})
@@ -47,6 +47,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         String body = RestAPIUtils.buildErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getLocalizedMessage(), null);
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8");
-        return handleExceptionInternal(ex, body, headers, HttpStatus.NOT_FOUND, request);
+        return new ResponseEntity<>(body, headers, HttpStatus.NOT_FOUND);
     }
 }

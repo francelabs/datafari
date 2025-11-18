@@ -1,38 +1,40 @@
 package com.francelabs.datafari.security;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Value;
+import com.francelabs.datafari.ldap.LdapConfig;
+import com.francelabs.datafari.ldap.LdapRealm;
+import com.francelabs.datafari.security.auth.DatafariAuthenticationSuccessHandler;
+import com.francelabs.datafari.security.auth.DatafariLdapAuthoritiesPopulator;
+import com.francelabs.datafari.security.auth.PostgresAuthenticationProvider;
+import com.francelabs.datafari.utils.DatafariMainConfiguration;
+import com.google.common.collect.ImmutableList;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpHeaders;
+import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.ldap.authentication.BindAuthenticator;
+import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
+import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.OrRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.francelabs.datafari.ldap.LdapConfig;
-import com.francelabs.datafari.ldap.LdapRealm;
-import com.francelabs.datafari.security.auth.DatafariAuthenticationSuccessHandler;
-import com.francelabs.datafari.security.auth.DatafariLdapAuthoritiesPopulator;
+import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.francelabs.datafari.security.auth.PostgresAuthenticationProvider; 
-
-import com.francelabs.datafari.utils.DatafariMainConfiguration;
-import com.google.common.collect.ImmutableList;
-
+@Configuration
 @EnableWebSecurity
 public class DatafariWebSecurity {
 
@@ -56,59 +58,87 @@ public class DatafariWebSecurity {
     return PasswordEncoderFactories.createDelegatingPasswordEncoder();
   }
 
+  @Bean
+  public AuthenticationProvider postgresAuthenticationProvider(){
+    return new PostgresAuthenticationProvider();
+  }
+
+  @Bean
+  public DatafariLdapAuthoritiesPopulator datafariLdapAuthoritiesPopulator(){
+    return new DatafariLdapAuthoritiesPopulator();
+  }
+
+  @Bean
+  public List<AuthenticationProvider> ldapAuthenticationProviders(DatafariLdapAuthoritiesPopulator authorities) {
+    List<AuthenticationProvider> providers = new ArrayList<>();
+
+    List<LdapRealm> adList = LdapConfig.getActiveDirectoryRealms();
+    for (LdapRealm adr : adList) {
+      LdapContextSource ctx = new LdapContextSource();
+      ctx.setUserDn(adr.getConnectionName());
+      ctx.setPassword(adr.getDeobfuscatedConnectionPassword());
+      ctx.setUrl(adr.getConnectionURL());
+      ctx.afterPropertiesSet(); // Check all previous properties set. If they are compatible, the context is initialized.
+
+      for (String userBase : adr.getUserBases()){
+        String filter = "(" + adr.getUserSearchAttribute() + "={0})";
+        FilterBasedLdapUserSearch userSearch = new FilterBasedLdapUserSearch(userBase, filter, ctx);
+        BindAuthenticator bindAuthenticator = new BindAuthenticator(ctx);
+        bindAuthenticator.setUserSearch(userSearch);
+
+        LdapAuthenticationProvider ldapProvider = new LdapAuthenticationProvider(bindAuthenticator, authorities);
+        providers.add(ldapProvider);
+      }
+    }
+    return providers;
+  }
+
   @Configuration
   @ConditionalOnExpression("${oidc.enabled:false}==false && ${saml.enabled:false}==false && ${keycloak.enabled:false}==false && ${kerberos.enabled:false}==false && ${cas.enabled:false}==false && ${header.enabled:false}==false")
   @Order(Ordered.LOWEST_PRECEDENCE)
-  public static class StandardSecurity extends WebSecurityConfigurerAdapter {
+  public static class StandardSecurity {
 
     @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-      return super.authenticationManagerBean();
+    public SecurityFilterChain configure(HttpSecurity http, AuthenticationProvider postgresAuthenticationProvider,
+                                         List<AuthenticationProvider> ldapAuthenticationProviders) throws Exception {
+      http.cors(Customizer.withDefaults());
+      http.csrf(csrf -> csrf
+          .ignoringRequestMatchers("/rest/**")
+      );
+
+      http.sessionManagement(session -> session.sessionConcurrency( concurrency -> concurrency.maximumSessions(maxConcurrentSessions) ) );
+
+      http.formLogin(login -> login
+          .loginPage("/login")
+          .defaultSuccessUrl("/index.jsp", false)
+          .successHandler(new DatafariAuthenticationSuccessHandler()));
+
+      http.logout(logout -> logout
+          .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+          .logoutSuccessUrl("/index.jsp")
+          .invalidateHttpSession(true)
+          .clearAuthentication(true)
+          .deleteCookies("JSESSIONID"));
+
+      // Silent Basic authentication for REST API
+      http.httpBasic(httpBasic -> httpBasic.authenticationEntryPoint( (request, response, exception) -> {
+        // If an API client sends an invalid Basic -> 401 without WWW-Authenticate (to avoid browser pop-up)
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      }));
+      http.exceptionHandling(exception -> {/* let the "/login" entry point as form login if an exception occurs */});
+
+      http.authenticationProvider(postgresAuthenticationProvider);
+      ldapAuthenticationProviders.forEach(http::authenticationProvider);
+
+      http.authorizeHttpRequests(requests -> requests
+          .requestMatchers("/admin/**","/SearchExpert/**").hasAnyRole("SearchExpert", "SearchAdministrator")
+          .requestMatchers("/SearchAdministrator/**", "/rest/v2.0/files/**", "/rest/v2.0/management/**").hasRole("SearchAdministrator")
+          .requestMatchers("/rest/v1.0/auth*").authenticated()
+          .anyRequest().permitAll()
+      );
+
+      return http.build();
     }
 
-    @Override
-    public void configure(final HttpSecurity http) throws Exception {
-      final RequestMatcher loginRM = new AntPathRequestMatcher("/login", "POST");
-      final RequestMatcher logoutRM = new AntPathRequestMatcher("/logout", "POST");
-      final RequestMatcher adminRM = new AntPathRequestMatcher("/admin/**", "POST");
-      final RequestMatcher searchAdminRM = new AntPathRequestMatcher("/SearchAdministrator/**", "POST");
-      final RequestMatcher searchExpertRM = new AntPathRequestMatcher("/SearchExpert/**", "POST");
-      final RequestMatcher csrfRM = new OrRequestMatcher(loginRM, logoutRM, adminRM, searchAdminRM, searchExpertRM);
-      http.csrf().requireCsrfProtectionMatcher(csrfRM);
-      http.cors();
-      http.sessionManagement().sessionFixation().migrateSession().maximumSessions(maxConcurrentSessions);
-      http.formLogin().loginPage("/login").defaultSuccessUrl("/index.jsp", false).successHandler(new DatafariAuthenticationSuccessHandler());
-      http.logout().logoutSuccessUrl("/index.jsp").invalidateHttpSession(true);
-      http.requestMatcher(request -> {
-        final String auth = request.getHeader(HttpHeaders.AUTHORIZATION);
-        boolean handles = false;
-        if (auth == null || (auth != null && auth.toLowerCase().startsWith("basic"))) {
-          handles = true;
-        }
-        return handles;
-      }).authorizeRequests()
-      .antMatchers("/admin/*", "/SearchExpert/*").hasAnyRole("SearchExpert", "SearchAdministrator")
-      .antMatchers("/SearchAdministrator/*", "/rest/v2.0/files/**", "/rest/v2.0/management/**").hasRole("SearchAdministrator")
-      .antMatchers("/rest/v1.0/auth*").authenticated()
-      .anyRequest().permitAll();
-    }
-
-    @Override
-    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-      auth.authenticationProvider(new PostgresAuthenticationProvider());
-      final List<LdapRealm> adList = LdapConfig.getActiveDirectoryRealms();
-      for (final LdapRealm adr : adList) {
-        for (final String userBase : adr.getUserBases()) {
-          auth.ldapAuthentication().ldapAuthoritiesPopulator(new DatafariLdapAuthoritiesPopulator())
-              .userSearchBase(userBase)
-              .userSearchFilter("(" + adr.getUserSearchAttribute() + "={0})")
-              .contextSource()
-              .managerDn(adr.getConnectionName())
-              .managerPassword(adr.getDeobfuscatedConnectionPassword())
-              .url(adr.getConnectionURL());
-        }
-      }
-    }
   }
 }

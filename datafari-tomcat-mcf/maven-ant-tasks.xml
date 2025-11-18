@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-ant-tasks" default="setup-tomcat-mcf" basedir=".">
+	<property name="tomcat.dist" value="target/dist/tomcat-mcf" />
+
+	<target name="setup-tomcat-mcf">
+		<copy toDir="${tomcat.dist}" overwrite="true" force="true">
+			<fileset dir="target">
+				<include name="*tomcat*/**" />
+				<exclude name="*tomcat*/webapps/docs/" />
+				<exclude name="*tomcat*/webapps/examples/" />
+			</fileset>
+			<cutdirsmapper dirs="1" />
+		</copy>
+
+	</target>
+
+</project>

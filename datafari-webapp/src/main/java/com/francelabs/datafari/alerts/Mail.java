@@ -15,22 +15,16 @@
  *******************************************************************************/
 package com.francelabs.datafari.alerts;
 
-import java.io.IOException;
-import java.util.Properties;
-
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-
+import com.francelabs.datafari.utils.AlertsConfiguration;
+import jakarta.mail.*;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.eclipse.angus.mail.util.MailSSLSocketFactory;
 
-import com.francelabs.datafari.utils.AlertsConfiguration;
-import com.sun.mail.util.MailSSLSocketFactory;
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  * Javadoc

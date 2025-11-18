@@ -37,9 +37,10 @@
               <goal>wget</goal>
             </goals>
             <configuration>
-              <url>https://archive.apache.org/dist/manifoldcf/apache-manifoldcf-solr-${mcf-solr-plugin.version}/apache-manifoldcf-solr-${mcf-solr-plugin.version}-bin.zip</url>
+              <url>https://repo.datafari.com/apache-manifoldcf-solr-plugin/solr10/${mcf-solr-plugin.version}/apache-manifoldcf-solr-10.x-plugin-${mcf-solr-plugin.version}.jar</url>
               <sha512>${mcf-solr-plugin.sha512}</sha512>
-              <unpack>true</unpack>
+              <unpack>false</unpack>
+              <outputDirectory>${project.build.directory}</outputDirectory>
             </configuration>
           </execution>
         </executions>

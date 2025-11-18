@@ -133,15 +133,17 @@ init_zk()
 {
   echo "Uploading configuration to zookeeper"
   #"${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -zkhost localhost:2181 -cmd clusterprop -name urlScheme -val https
-  "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/FileShare/conf" -confname FileShare
-  "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Statistics/conf" -confname Statistics
-  "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Promolink/conf" -confname Promolink
-  "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Access/conf" -confname Access
-  "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Monitoring/conf" -confname Monitoring
-  "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/Duplicates/conf" -confname Duplicates
-  "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/GenericAnnotator/conf" -confname GenericAnnotator
-  "${DATAFARI_HOME}/solr/server/scripts/cloud-scripts/zkcli.sh" -cmd upconfig -zkhost localhost:2181 -confdir "${DATAFARI_HOME}/solr/solrcloud/VectorMain/conf" -confname VectorMain
-  
+"${DATAFARI_HOME}/solr/bin/solr" zk upconfig -z localhost:2181 -d "${DATAFARI_HOME}/solr/solrcloud/FileShare/conf" -n FileShare
+"${DATAFARI_HOME}/solr/bin/solr" zk upconfig -z localhost:2181 -d "${DATAFARI_HOME}/solr/solrcloud/Statistics/conf" -n Statistics
+"${DATAFARI_HOME}/solr/bin/solr" zk upconfig -z localhost:2181 -d "${DATAFARI_HOME}/solr/solrcloud/Promolink/conf" -n Promolink
+"${DATAFARI_HOME}/solr/bin/solr" zk upconfig -z localhost:2181 -d "${DATAFARI_HOME}/solr/solrcloud/Access/conf" -n Access
+"${DATAFARI_HOME}/solr/bin/solr" zk upconfig -z localhost:2181 -d "${DATAFARI_HOME}/solr/solrcloud/Monitoring/conf" -n Monitoring
+"${DATAFARI_HOME}/solr/bin/solr" zk upconfig -z localhost:2181 -d "${DATAFARI_HOME}/solr/solrcloud/Duplicates/conf" -n Duplicates
+"${DATAFARI_HOME}/solr/bin/solr" zk upconfig -z localhost:2181 -d "${DATAFARI_HOME}/solr/solrcloud/GenericAnnotator/conf" -n GenericAnnotator
+"${DATAFARI_HOME}/solr/bin/solr" zk upconfig -z localhost:2181 -d "${DATAFARI_HOME}/solr/solrcloud/VectorMain/conf" -n VectorMain
+"${DATAFARI_HOME}/solr/bin/solr" zk upconfig -z localhost:2181 -d "${DATAFARI_HOME}/solr/solrcloud/Entities/conf" -n Entities
+"${DATAFARI_HOME}/solr/bin/solr" zk upconfig -z localhost:2181 -d "${DATAFARI_HOME}/solr/solrcloud/Crawl/conf" -n Crawl
+"${DATAFARI_HOME}/solr/bin/solr" zk upconfig -z localhost:2181 -d "${DATAFARI_HOME}/solr/solrcloud/Logs/conf" -n Logs  
   @ZK-INIT@
 }
 

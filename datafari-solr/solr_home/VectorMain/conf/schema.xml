@@ -124,8 +124,6 @@
    <field name="title_de" type="text_de" indexed="true" stored="true" multiValued="true"/>
    <field name="title_es" type="text_es" indexed="true" stored="true" multiValued="true"/>
    <field name="jsoup_title" type="text_general" indexed="false" stored="true" multiValued="true"/>
-   <field name="nbLikes" type="likes" stored="true"/>
-
    <!-- Field filled by the Emptier connector -->
    <field name="emptied" type="boolean" indexed="true" stored="true" default="false" multiValued="false" />
 
@@ -480,7 +478,6 @@
 
   <types>
 
- 	 <fieldType name="likes" keyField="id" defVal="0" stored="false" indexed="false" class="solr.ExternalFileField"/>
       <fieldType name="textSpell" class="solr.TextField" positionIncrementGap="100" omitNorms="true">
 			<analyzer>
 				<tokenizer class="solr.WhitespaceTokenizerFactory"/>

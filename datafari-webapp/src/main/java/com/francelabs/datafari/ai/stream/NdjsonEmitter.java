@@ -2,7 +2,7 @@ package com.francelabs.datafari.ai.stream;
 
 import org.json.simple.JSONObject;
 
-import javax.servlet.AsyncContext;
+import jakarta.servlet.AsyncContext;
 import java.util.Map;
 
 public class NdjsonEmitter {
