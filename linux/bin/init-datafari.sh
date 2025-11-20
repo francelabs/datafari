@@ -256,7 +256,7 @@ generate_certificates_apache() {
 
 init_collection_name() {
   sed -i -e "s~@MAINCOLLECTION@~${1}~g" $SOLR_INSTALL_DIR/solr_home/FileShare/core.properties >>$installerLog 2>&1
-  sed -i -e "s~@MAINCOLLECTION@~${1}~g" $SOLR_INSTALL_DIR/solr_home/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
+  sed -i -e "s~@MAINCOLLECTION@~${1}~g" $DATAFARI_HOME/bin/zkUtils/addCustomSchemaInfo.sh >>$installerLog 2>&1
   sed -i -e "s~@MAINCOLLECTION@~${1}~g" $DATAFARI_HOME/bin/datafari-manager.sh >>$installerLog 2>&1
   sed -i -e "s~@MAINCOLLECTION@~${1}~g" $TOMCAT_HOME/conf/datafari.properties >>$installerLog 2>&1
   sed -i -e "s~@MAINCOLLECTION@~${1}~g" $DATAFARI_HOME/bin/common/config/manifoldcf/init/outputconnections/DatafariSolr.json >>$installerLog 2>&1
@@ -286,16 +286,13 @@ init_solr_node() {
 }
 
 init_solr_custom_conf() {
-   sed -i -e "s/@SOLRNODEIP@/${1}/g" $SOLR_INSTALL_DIR/solr_home/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
-   sed -i -e "s/@SOLRNODEIP@/${1}/g" $DATAFARI_HOME/solr/solrcloud/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
+   sed -i -e "s/@SOLRNODEIP@/${1}/g" $DATAFARI_HOME/bin/zkUtils/addCustomSchemaInfo.sh >>$installerLog 2>&1
    sed -i -e "s/@SOLRNODEIP@/${1}/g" $DATAFARI_HOME/bin/purgeUtils/analyticsPurge.sh >>$installerLog 2>&1
    
-   sed -i -e "s/@PROTOCOL@/${2}/g" $SOLR_INSTALL_DIR/solr_home/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
-   sed -i -e "s/@PROTOCOL@/${2}/g" $DATAFARI_HOME/solr/solrcloud/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
+   sed -i -e "s/@PROTOCOL@/${2}/g" $DATAFARI_HOME/bin/zkUtils/addCustomSchemaInfo.sh >>$installerLog 2>&1
    sed -i -e "s/@PROTOCOL@/${2}/g" $DATAFARI_HOME/bin/purgeUtils/analyticsPurge.sh >>$installerLog 2>&1
    
-   sed -i -e "s/@PORT@/${3}/g" $SOLR_INSTALL_DIR/solr_home/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
-   sed -i -e "s/@PORT@/${3}/g" $DATAFARI_HOME/solr/solrcloud/FileShare/conf/customs_schema/addCustomSchemaInfo.sh >>$installerLog 2>&1
+   sed -i -e "s/@PORT@/${3}/g" $DATAFARI_HOME/bin/zkUtils/addCustomSchemaInfo.sh >>$installerLog 2>&1
    sed -i -e "s/@PORT@/${3}/g" $DATAFARI_HOME/bin/purgeUtils/analyticsPurge.sh >>$installerLog 2>&1
    
      
