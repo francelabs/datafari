@@ -36,16 +36,24 @@ public class OpenAiChatModelBuilder implements ChatModelBuilder {
 
     @Override
     public StreamingChatModel buildSCM(Map<String, Object> props) {
-        return OpenAiStreamingChatModel.builder()
+        String modelName = (String) props.get("modelName");
+        OpenAiStreamingChatModel.OpenAiStreamingChatModelBuilder builder = OpenAiStreamingChatModel.builder()
                 .apiKey((String) props.get("apiKey"))
                 .baseUrl((String) props.get("baseUrl"))
                 .modelName((String) props.get("modelName"))
-                .temperature(getDouble(props, "temperature", 0))
-                .maxTokens(getInt(props, "maxTokens", 500))
                 .timeout(Duration.ofSeconds(getInt(props, "timeout", 60)))
                 .logRequests(getBoolean(props, "logRequests", false))
                 .logResponses(getBoolean(props, "logResponses", false))
-                .returnThinking(false)
-                .build();
+                .returnThinking(false);
+
+        // gpt-5 does not support customising topP and temperature (because it is a reasoning model)
+        if (!modelName.toLowerCase().startsWith("gpt-5")) {
+            builder.maxTokens(getInt(props, "maxTokens", 500))
+                .temperature(getDouble(props, "temperature", 0));
+        } else {
+            // if GPT-5
+            builder.maxCompletionTokens(getInt(props, "maxTokens", 500));
+        }
+        return builder.build();
     }
 }
