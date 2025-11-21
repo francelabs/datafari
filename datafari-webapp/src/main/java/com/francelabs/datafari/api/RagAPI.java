@@ -111,7 +111,7 @@ public class RagAPI extends SearchAPI {
         LOGGER.debug("RagAPI - LLM response: {}", message);
 
         // Return final message
-        if (!message.isEmpty()) {
+        if (message != null && !message.isEmpty()) {
             message = cleanLlmFinalMessage(message);
             return writeResponse(message);
         } else {

@@ -51,7 +51,7 @@ public class SummarizationService extends AiService {
             JSONObject searchresult = SearchUtils.findDocumentById(request, id);
             JSONObject jsonAiDocument = (JSONObject) ((JSONArray) ((JSONObject) searchresult.get("response")).get("docs")).get(0);
 
-            if (jsonAiDocument.get("docId") != null && id.equals(jsonAiDocument.get("docId"))) {
+            if (jsonAiDocument.get("docId") != null) {
                 title = (String) ((JSONArray) jsonAiDocument.get(AiService.TITLE_FIELD)).getFirst();
                 url = (String) jsonAiDocument.get(AiService.URL_FIELD);
                 summary = (String) jsonAiDocument.get(AiService.LLM_SUMMARY_FIELD);
