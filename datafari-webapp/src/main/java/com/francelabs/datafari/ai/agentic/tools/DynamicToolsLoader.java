@@ -11,7 +11,7 @@ import dev.langchain4j.service.tool.ToolExecutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.file.Files;

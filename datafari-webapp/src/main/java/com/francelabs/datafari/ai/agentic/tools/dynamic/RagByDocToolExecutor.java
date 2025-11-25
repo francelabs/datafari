@@ -8,7 +8,7 @@ import com.francelabs.datafari.ai.services.RagService;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import dev.langchain4j.service.tool.ToolExecutor;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 public class RagByDocToolExecutor {
