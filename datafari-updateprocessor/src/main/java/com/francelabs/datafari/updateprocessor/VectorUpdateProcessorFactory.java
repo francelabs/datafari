@@ -13,6 +13,7 @@ import org.apache.solr.update.processor.UpdateRequestProcessorFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Optional;
 
 /**
  * A custom {@link UpdateRequestProcessorFactory} that initializes a {@link CloudHttp2SolrClient}
@@ -55,27 +56,30 @@ public class VectorUpdateProcessorFactory extends UpdateRequestProcessorFactory 
    * 
    * @return {@code true} if the client is successfully initialized, {@code false} otherwise.
    */
-  private boolean tryInitClient() {
-    if (client == null) {
-      try {
-        // Build SolrCloud HTTP/2 client using ZooKeeper hosts list
-        client = new CloudHttp2SolrClient.Builder(
-            new ArrayList<>(Collections.singletonList(getParam(HOST, DEFAULT_HOST)))
-        ).build();
+private boolean tryInitClient() {
+  if (client == null) {
+    try {
+      // ZK host list (e.g. "localhost:2181", or "zk1:2181", "zk2:2181"...)
+      final String zkHost = getParam(HOST, DEFAULT_HOST);
 
-        // No defaultCollection in the builder: specify collection explicitly for requests
-        final String coll = getParam(COLLECTION, DEFAULT_COLLECTION);
-        client.request(new SolrPing(), coll);
-        return true;
-      } catch (final Exception e) {
-        LOGGER.warn("{} Error initializing Solr client for vector processing. The processor will be disabled.", e.getMessage());
-        client = null;
-        return false;
-      }
+      client = new CloudHttp2SolrClient.Builder(
+          new ArrayList<>(Collections.singletonList(zkHost)),
+          Optional.empty()       
+      ).build();
+
+      final String coll = getParam(COLLECTION, DEFAULT_COLLECTION);
+      client.request(new SolrPing(), coll);
+
+      return true;
+    } catch (final Exception e) {
+      LOGGER.warn("{} Error initializing Solr client for vector processing. The processor will be disabled.",
+          e.getMessage());
+      client = null;
+      return false;
     }
-    return true;
   }
-
+  return true;
+}
   /**
    * Retrieves a parameter value or returns the default if not defined.
    *
