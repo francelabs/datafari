@@ -90,6 +90,11 @@
         <str name="hierarchical.path.separator">/</str>
       </processor>
 
+      <processor class="com.francelabs.datafari.updateprocessor.RegexEntityUpdateProcessorFactory">
+        <str name="regexFile">regexSpecification.csv</str>
+      </processor>
+
+      <!-- The VectorUpdateProcessor must come at the end of the pipeline -->
       <processor class="com.francelabs.datafari.updateprocessor.VectorUpdateProcessorFactory">
          <str name="host">${vector.host:localhost:2181}</str>
          <str name="collection">${vector.collection:VectorMain}</str>
@@ -99,10 +104,6 @@
 		 <str name="splitter">${vector.splitter:splitterByParagraph}</str>
 		 <str name="minchunklength">${vector.filter.minchunklength:1}</str>
 		 <str name="minalphanumratio">${vector.filter.minalphanumratio:0.0}</str>
-      </processor>
-
-      <processor class="com.francelabs.datafari.updateprocessor.RegexEntityUpdateProcessorFactory">
-        <str name="regexFile">regexSpecification.csv</str>
       </processor>
 
 

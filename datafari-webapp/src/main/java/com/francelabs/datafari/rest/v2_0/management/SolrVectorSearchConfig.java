@@ -7,19 +7,6 @@ import com.francelabs.datafari.atomicupdates.AtomicUpdatesJobService;
 import com.francelabs.datafari.atomicupdates.JobState;
 import com.francelabs.datafari.utils.SolrConfiguration;
 import com.francelabs.datafari.utils.DatafariMainConfiguration;
-import org.apache.commons.io.IOUtils;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import jakarta.servlet.http.HttpServletResponse;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,6 +14,8 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudHttp2SolrClient;
+import org.apache.solr.client.solrj.impl.ClusterStateProvider;
+import org.apache.solr.client.solrj.impl.ZkClientClusterStateProvider;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -36,10 +25,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * REST endpoint providing configuration and status management for Solr vector search.
- *
  * Endpoint: /rest/v2.0/management/solr-vector-search
  */
-@WebServlet(name = "SolrVectorSearchConfig", urlPatterns = "/rest/v2.0/management/solr-vector-search")
+@WebServlet("/rest/v2.0/management/solr-vector-search")
 public class SolrVectorSearchConfig extends HttpServlet {
 
     private final ObjectMapper M = new ObjectMapper();
@@ -208,7 +196,13 @@ public class SolrVectorSearchConfig extends HttpServlet {
     protected SolrClient getSolrClient() {
         try {
             final List<String> zkHosts = DatafariMainConfiguration.getInstance().getZkHosts();
-            CloudHttp2SolrClient.Builder builder = new CloudHttp2SolrClient.Builder(zkHosts);
+
+//          new ArrayList<>(Collections.singletonList(getParam(HOST, DEFAULT_HOST)))
+            final String zkConnect = String.join(",", zkHosts); // ex: "zk1:2181,zk2:2181,zk3:2181/solr"
+            ClusterStateProvider csp = new ZkClientClusterStateProvider(zkConnect);
+            CloudHttp2SolrClient.Builder builder = new CloudHttp2SolrClient.Builder(csp);
+
+//            CloudHttp2SolrClient.Builder builder = new CloudHttp2SolrClient.Builder(zkHosts);
             return builder.build();
         } catch (IOException e) {
             e.printStackTrace();

@@ -3,12 +3,11 @@ package com.francelabs.datafari.solraccessors;
 import com.francelabs.datafari.config.CollectionPathConfig;
 import com.francelabs.datafari.config.JobConfig;
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.apache.solr.client.solrj.impl.CloudHttp2SolrClient;
+import org.apache.solr.client.solrj.impl.ClusterStateProvider;
+import org.apache.solr.client.solrj.impl.ZkClientClusterStateProvider;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Generic Accessor of Solr documents. Provide common functionalities like setting configuration parameters to select or
@@ -61,20 +60,16 @@ public abstract class AbstractDocuments implements AutoCloseable{
    *                     </ul>
    * @return The {@link SolrClient} created
    */
-  protected SolrClient getSolrClient(final String solrBaseUrls){
-    String[] tabBaseSolUrls = solrBaseUrls.split(",");
-    final List<String> cloudServers = new ArrayList<>();
-    for (String baseSolrUrl : tabBaseSolUrls){
-      cloudServers.add(baseSolrUrl.trim());
-    }
-    SolrClient client;
-    if (tabBaseSolUrls[0].startsWith("http")){ // Solr server(s)
-      client = new CloudSolrClient.Builder(cloudServers).build();
-    } else { // Zookeeper server(s)
-      client = new CloudSolrClient.Builder(cloudServers, Optional.empty()).build();
-    }
+  protected SolrClient getSolrClient(final String solrBaseUrls) {
+    try {
+      ClusterStateProvider csp = new ZkClientClusterStateProvider(solrBaseUrls);
+      CloudHttp2SolrClient.Builder builder = new CloudHttp2SolrClient.Builder(csp);
 
-    return client;
+      return builder.build();
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 
   /**
