@@ -7,6 +7,7 @@ import com.francelabs.datafari.ai.services.AiService;
 import com.francelabs.datafari.ai.services.RagService;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.ai.config.RagConfiguration;
+import com.francelabs.datafari.ai.stream.ToolMeta;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.agent.tool.P;
@@ -66,10 +67,13 @@ public class CfPTools {
         return docs;
     }
 */
+    @ToolMeta(label = "Retrieving Call for Proposals by category...",
+        i18nKey = "tool.listCallsForProvidersByCategory",
+        icon = "search")
     @Tool("Retrieve a list of CFP IDs, filtered by category, sorted by creation_date desc.")
     String listCallsForProvidersByCategory(
             @P("Number of CFP to retrieve") int rows,
-            @P("Category filter (Catering, Furniture, Carpentry or Maintenance).") String category
+            @P("Category filter (ex: Catering, Furniture, Carpentry or Maintenance). Use 'None' to ignore categories.") String category
     ) {
         if (rows < 1) rows = 30;
 
@@ -78,7 +82,7 @@ public class CfPTools {
         req.addParameter("wt", "json");
         req.addParameter("rows", "0"); // Only facets are needed
 
-        if (category != null && !category.isBlank()) {
+        if (category != null && !category.isBlank() && !"None".equals(category)) {
             req.addParameter("fq", "({!term f=llm_categories v='" + category + "'} AND agentic_cfp_id:[* TO *])");
         } else {
             req.addParameter("fq", "agentic_cfp_id:[* TO *]");
@@ -144,7 +148,10 @@ public class CfPTools {
         }
     }
 
-    @Tool("For a given CFP ID, returns information from CCTP (product type, delivery date, delivery requirements, guarantees duration).")
+    @ToolMeta(label = "Retrieving CFP's CCTP...",
+        i18nKey = "tool.extractInfoFromCCTP",
+        icon = "layout-list")
+    @Tool("For a given CFP ID (stored in agentic_cfp_id), returns information from CCTP (product type, delivery date, delivery requirements, guarantees duration).")
     String extractInfoFromCCTP(
             @P("ID of the CFP. IDs use the format (X being digits): DCEXX") String cfpId
     ) {
@@ -186,10 +193,12 @@ public class CfPTools {
         return "Cannot retrieve CCTP for CFP " + cfpId + ".";
     }
 
-
+    @ToolMeta(label = "Retrieving CFP's CCAP...",
+        i18nKey = "tool.extractInfoFromCCAP",
+        icon = "layout-list")
     @Tool("For a given CFP, returns information from CCAP (Minimum amount, Maximum amount).")
     String extractInfoFromCCAP(
-            @P("ID of the CFP. IDs use the format (X being digits): DCEXX") String cfpId
+            @P("ID of the CFP (from agentic_cfp_id). IDs use the format (X being digits): DCEXX") String cfpId
     ) {
         LOGGER.info("AGENTIC TOOLS - Extracting data from CCAP: {}", cfpId);
         JSONArray docs = findCCAP(cfpId);
@@ -278,6 +287,9 @@ public class CfPTools {
         return docs;
     }
 
+    @ToolMeta(label = "Reading document...",
+        i18nKey = "tool.readPageFromDocument",
+        icon = "eye")
     @Tool("Read one page of the specified document. If the requested page does not exist for this document, it returns 'No content'. You must provide the exact document ID (not the CFP ID).")
     String readPageFromDocument(
             @P("docId of the document") String id,

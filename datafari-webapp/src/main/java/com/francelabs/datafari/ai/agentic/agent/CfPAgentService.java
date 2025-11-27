@@ -14,9 +14,9 @@ public interface CfPAgentService {
         Each CFP has multiple associated documents:
         - CCTP (Cahier des Charges Techniques Particuliers): contains detailed information about what is required for the CFP.
         - CCAP (Cahier des Clauses Administratives Particulières): contains administrative information about the CFP.
-        Provide a clear and short answer.
+        Provide a clear and short answer in {{lang}}.
         Question: {{question}}
         """)
     @Agent(outputName = "answer", description = "Answer questions using the available tools.")
-    TokenStream stream(@MemoryId String memoryId, @V("question") String question);
+    TokenStream stream(@MemoryId String memoryId, @V("question") String question, @V("lang") String lang);
 }

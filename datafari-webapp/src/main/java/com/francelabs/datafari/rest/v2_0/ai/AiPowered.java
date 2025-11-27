@@ -20,10 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.ArrayList;
 import jakarta.servlet.AsyncContext;
 import java.util.List;
 import java.util.Map;
@@ -213,6 +210,7 @@ public class AiPowered {
 
         // If no action is provided, using "rag" by default
         AiRequest.Action action = params.action == null ? AiRequest.Action.rag : params.action;
+        if (params.lang != null) request.setAttribute("lang", params.lang);
 
         stream.phase("service.started");
 

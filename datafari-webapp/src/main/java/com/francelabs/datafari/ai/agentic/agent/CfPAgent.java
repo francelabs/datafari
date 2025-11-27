@@ -7,6 +7,7 @@ import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.ai.stream.ToolMaps;
 import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.ai.config.RagConfiguration;
+import com.francelabs.datafari.utils.rag.PromptUtils;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
@@ -24,6 +25,7 @@ public class CfPAgent implements IAgent {
     private final CfPAgentService agent;
     private final ChatStream stream;
     private final SourcesAccumulator sourcesAcc;
+    private final HttpServletRequest request;
 
   /**
    * The CfpAgent is an experimental demo Agent, specialised in "Call for Proposals".
@@ -35,6 +37,7 @@ public class CfPAgent implements IAgent {
         RagConfiguration config = RagConfiguration.getInstance();
         this.stream = stream;
         this.sourcesAcc = sourcesAcc;
+        this.request = request;
         try {
             // Models
             StreamingChatModel streamingChatModel = RagAPI.getStreamingChatModel(config);
@@ -60,7 +63,7 @@ public class CfPAgent implements IAgent {
     public String ask(String question) {
         String memoryId = RandomStringUtils.randomAlphanumeric(20).toUpperCase();
         AgentStreamer streamer = new AgentStreamer();
-        TokenStream ts = agent.stream(memoryId, question);
+        TokenStream ts = agent.stream(memoryId, question, PromptUtils.getUserLanguage(request));
         return streamer.stream(ts, stream::event);
     }
 }

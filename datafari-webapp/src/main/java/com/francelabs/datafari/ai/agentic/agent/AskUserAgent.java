@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class AskUserAgent implements IAgent {
 
-    private final CfPAgentService agent;
+    private final AskUserAgentService agent;
     private final ChatStream stream;
     private final SourcesAccumulator sourcesAcc;
 
@@ -48,7 +48,7 @@ public class AskUserAgent implements IAgent {
             // Memory
             ChatMemoryProvider memory = id -> MessageWindowChatMemory.withMaxMessages(20);
 
-            this.agent = AiServices.builder(CfPAgentService.class)
+            this.agent = AiServices.builder(AskUserAgentService.class)
                     .streamingChatModel(streamingChatModel)
                     .chatMemoryProvider(memory)
                     .tools(tools)
