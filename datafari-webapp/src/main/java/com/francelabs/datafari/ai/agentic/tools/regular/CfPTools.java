@@ -160,7 +160,7 @@ public class CfPTools {
         if (docs.size() > 0) {
             try {
                 JSONObject doc = (JSONObject) docs.get(0);
-                String docId = (String) doc.get("id");
+                String docId = (String) doc.get("docId");
 
                 String query = "Extract the following information from the document : Product type, Delivery date, Delivery requirements, Guaranties duration";
 
@@ -205,7 +205,7 @@ public class CfPTools {
         if (!docs.isEmpty()) {
             try {
                 JSONObject doc = (JSONObject) docs.getFirst();
-                String docId = (String) doc.get("id");
+                String docId = (String) doc.get("docId");
 
                 String query = "Extract the following information from the document : Minimum amount, Maximum amount";
 
