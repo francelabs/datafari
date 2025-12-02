@@ -511,6 +511,6 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
    * @return boolean
    */
   boolean isValidDate(Object str) {
-    return !String.valueOf(str).matches("[0-9]+"); // This value should not be a stringified timespamp
+    return !String.valueOf(str).matches("[0-9]+"); // This value should not be a stringified timestamp
   }
 }
