@@ -411,6 +411,13 @@ init_postgresql() {
   sed -i -e "s~@POSTGRESQLDATABASE@~${POSTGRESQL_DATABASE}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQLUSERNAME@~${POSTGRESQL_USERNAME}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
   
+  sed -i -e "s~@POSTGRESQL_HOSTNAME@~${POSTGRESQL_HOSTNAME}~g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQL_PORT@~${POSTGRESQL_PORT}~g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQL_DATABASE_DATAFARIWEBAPP@~${POSTGRESQL_DATABASE_DATAFARIWEBAPP}~g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQL_USERNAME@~${POSTGRESQL_USERNAME}~g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQL_PASSWORD@~${TEMPPGSQLPASSWORD}~g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf >>$installerLog 2>&1
+  
+  
   
 }
 
@@ -464,6 +471,7 @@ init_apache_ssl() {
   if [ -d /etc/apache2 ]; then
     apache_conf_file="/etc/apache2/conf-available/security.conf"
     cp $DATAFARI_HOME/ssl-keystore/apache/config/tomcat.conf /etc/apache2/sites-available/
+    cp $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf /etc/apache2/sites-available/
     cp $DATAFARI_HOME/ssl-keystore/apache/config/envvars /etc/apache2/
     ln -s /etc/apache2/* $DATAFARI_HOME/apache/
     rm -f /var/www/html/index.jsp
@@ -481,10 +489,14 @@ init_apache_ssl() {
     a2enmod headers
     a2enmod proxy_wstunnel
     a2enmod http2
+    a2enmod dbd
+    a2enmod authn_dbd
+    a2enmod authz_dbd
     a2enconf security
     a2dissite 000-default
     a2dissite default-ssl
     a2ensite tomcat
+    a2ensite datafari-pgsql
     
     
   elif [ -d /etc/httpd ]; then

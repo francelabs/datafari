@@ -79,6 +79,8 @@ RUN     apt-get update && apt-get install --allow-unauthenticated -y \
                 iputils-ping \
                 bc \
 				netcat-openbsd \
+				libaprutil1-dbd-pgsql \
+				libpq5 \
 	&& rm -rf /var/lib/apt/lists/*
 # For dev
 RUN echo "export LANG=C.UTF-8" >> /etc/profile

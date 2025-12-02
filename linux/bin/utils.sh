@@ -140,11 +140,11 @@ check_java()
   if [[ "$_java" ]]; then
       version=$("$_java" -version 2>&1 | awk -F '"' '/version/ {print $2}' | awk -F '.' '{print $1}')
       echo "Java version detected : $version"
-      if [[ "$version" -gt "11" ]]; then
+      if [[ "$version" -eq "21" ]]; then
           echo "Java version detected $version : OK"
 
       else
-          echo "Java version installed is not Java 11. Please install ONLY Java 11.See this page for more information : https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/110788634/Software+requirements. Program will exit"
+          echo "Java version installed is not Java 21. Please install ONLY Java 21.See this page for more information : https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/110788634/Software+requirements. Program will exit"
           exit
       fi
   fi

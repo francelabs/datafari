@@ -159,7 +159,6 @@
           <li id="forgetUser"><a id="forgetUser-AdminUI" class="ajax-link" href="?page=forgetUser"></a></li>
           <li id="addUser"><a id="addUser-AdminUI" class="ajax-link" href="?page=addUser"></a></li>
           <li id="modifyUser"><a id="modifyUsers-AdminUI" class="ajax-link" href="?page=modifyUsers"></a></li>
-          <li id="modifyServiceUsers"><a id="modifyServiceUsers-AdminUI" class="ajax-link" href="?page=modifyServiceUsers"></a></li>
           <li id="manageImportedUsers"><a id="manageImportedUsers-AdminUI" class="ajax-link" href="?page=manageImportedUsers"></a></li>
           <li id="modifyDepartment"><a id="modifyDepartment-AdminUI" class="ajax-link" href="?page=userDepartment"></a></li>
         </ul>
