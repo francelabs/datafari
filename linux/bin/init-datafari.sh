@@ -504,6 +504,7 @@ init_apache_ssl() {
     cp $DATAFARI_HOME/ssl-keystore/apache/config/httpd.conf /etc/httpd/conf/
     sed -i "s|\(SSLCertificateFile *\).*|\1${DATAFARI_HOME}\/ssl-keystore\/apache\/datafari.crt|" /etc/httpd/conf.d/ssl.conf >>$installerLog 2>&1
     sed -i "s|\(SSLCertificateKeyFile *\).*|\1${DATAFARI_HOME}\/ssl-keystore\/apache\/datafari.key|" /etc/httpd/conf.d/ssl.conf >>$installerLog 2>&1
+    sed -i '/<VirtualHost .*:443>/,/<\/VirtualHost>/d' /etc/httpd/conf.d/ssl.conf >>$installerLog 2>&1
     mkdir /etc/httpd/sites-available /etc/httpd/sites-enabled
     mkdir /var/apache
     mkdir /var/apache/pid
@@ -511,7 +512,9 @@ init_apache_ssl() {
     chmod -R 775 /var/apache
     chown -R $DATAFARI_USER /var/apache
     cp $DATAFARI_HOME/ssl-keystore/apache/config/tomcat.conf /etc/httpd/sites-available/
+    cp $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf /etc/httpd/sites-available/
     ln -s /etc/httpd/sites-available/tomcat.conf /etc/httpd/sites-enabled/tomcat.conf
+    ln -s /etc/httpd/sites-available/datafari-pgsql.conf /etc/httpd/sites-enabled/datafari-pgsql.conf
     ln -s /var/apache/pid $DATAFARI_HOME/pid/apache
     ln -s /var/apache/logs $DATAFARI_HOME/logs/apache
     cp $DATAFARI_HOME/ssl-keystore/apache/config/envvars /etc/httpd/
