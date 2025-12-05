@@ -5,6 +5,7 @@ import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.CustomTool;
+import com.francelabs.datafari.ai.services.AiService;
 import com.francelabs.datafari.ai.stream.AgentStreamer;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.ai.stream.StreamToolExecutor;
@@ -78,7 +79,7 @@ public class CustomAgent implements IAgent {
 
     @Override
     public String ask(String question) {
-        String memoryId = RandomStringUtils.randomAlphanumeric(20).toUpperCase();
+        String memoryId = AiService.getMemoryId(stream, params);
         AgentStreamer streamer = new AgentStreamer();
         TokenStream ts = agent.stream(memoryId, question, PromptUtils.getUserLanguage(request));
         return streamer.stream(ts, stream::event);

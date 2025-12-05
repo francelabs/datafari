@@ -12,6 +12,7 @@ import com.francelabs.datafari.ai.services.SummarizationService;
 import com.francelabs.datafari.ai.stream.*;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
@@ -212,11 +213,16 @@ public class AiPowered {
         AiRequest.Action action = params.action == null ? AiRequest.Action.rag : params.action;
         if (params.lang != null) request.setAttribute("lang", params.lang);
 
+        // Create a memory ID if not existing
+        params.memoryId = AiService.getMemoryId(stream, params);
+
         stream.phase("service.started");
 
         SourcesAccumulator sourcesAcc = new SourcesAccumulator(stream);
 
         ApiContent result = new ApiContent();
+        result.memoryId = params.memoryId;
+
         try {
             result = switch (action.name()) {
                 case "rag" -> RagService.rag(request, params, stream, sourcesAcc, false);

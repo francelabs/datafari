@@ -3,6 +3,7 @@ package com.francelabs.datafari.ai.agentic.agent;
 import com.francelabs.datafari.ai.agentic.tools.regular.DatafariTools;
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.dto.AiRequest;
+import com.francelabs.datafari.ai.services.AiService;
 import com.francelabs.datafari.ai.stream.AgentStreamer;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.ai.stream.ToolMaps;
@@ -16,7 +17,9 @@ import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.service.AiServices;
+import dev.langchain4j.service.MemoryId;
 import dev.langchain4j.service.TokenStream;
+import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.tool.ToolExecutor;
 import org.apache.commons.lang.RandomStringUtils;
 
@@ -55,7 +58,7 @@ public class RagAgent implements IAgent {
             Map<ToolSpecification, ToolExecutor> tools = ToolMaps.build(datafariTools, stream);
 
             // Memory
-            ChatMemoryProvider memory = id -> MessageWindowChatMemory.withMaxMessages(20);
+            ChatMemoryProvider memory = memoryId -> MessageWindowChatMemory.withMaxMessages(20);
 
             this.agent = AiServices.builder(RagAgentService.class)
                     .streamingChatModel(streamingChatModel)
@@ -69,7 +72,7 @@ public class RagAgent implements IAgent {
     }
 
     public String ask(String question) {
-        String memoryId = (params.memoryId != null) ? params.memoryId : RandomStringUtils.randomAlphanumeric(20).toUpperCase();
+        String memoryId = AiService.getMemoryId(stream, params);
         AgentStreamer streamer = new AgentStreamer();
         TokenStream ts = agent.stream(memoryId, question, PromptUtils.getUserLanguage(request));
         return streamer.stream(ts, stream::event);

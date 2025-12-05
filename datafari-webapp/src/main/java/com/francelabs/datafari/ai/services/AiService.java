@@ -1,9 +1,11 @@
 package com.francelabs.datafari.ai.services;
 
 import com.francelabs.datafari.ai.agentic.tools.AgenticToolException;
+import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.dto.ApiError;
 import com.francelabs.datafari.ai.stream.ChatStream;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -50,5 +52,13 @@ public abstract class AiService {
     }
     public static ApiContent error(ChatStream stream, String code, String label, String message, @NotNull String reason) {
         return error(stream, code, label, message, reason, false);
+    }
+
+    public static String getMemoryId(ChatStream stream, AiRequest params) {
+        if (params.memoryId == null || params.memoryId.isEmpty()) {
+            params.memoryId = RandomStringUtils.randomAlphanumeric(15).toUpperCase();
+            stream.memory(params.memoryId);
+        }
+        return params.memoryId;
     }
 }

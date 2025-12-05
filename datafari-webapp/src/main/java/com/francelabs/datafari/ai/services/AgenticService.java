@@ -52,7 +52,7 @@ public class AgenticService extends AiService {
             switch (params.agent) {
                 case "cfp":
                     LOGGER.debug("AgenticService - Using CFP Agent");
-                    agent = new CfPAgent(request, stream, sourcesAcc);
+                    agent = new CfPAgent(request, params, stream, sourcesAcc);
                     break;
                 case "custom":
                     LOGGER.debug("AgenticService - Using custom Agent");
@@ -78,6 +78,7 @@ public class AgenticService extends AiService {
 //                .build();
 
             stream.phase("agent:start");
+            // TODO : try/catch controlled error
             String answer = agent.ask(query);
 
             // Final & full response

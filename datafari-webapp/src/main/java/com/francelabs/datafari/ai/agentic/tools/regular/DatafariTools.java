@@ -10,11 +10,14 @@ import com.francelabs.datafari.ai.services.SummarizationService;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.ai.stream.ToolMeta;
 import com.francelabs.datafari.ai.config.RagConfiguration;
+import com.francelabs.datafari.exception.AwaitUserInputException;
+import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.agent.tool.P;
 import dev.langchain4j.agent.tool.Tool;
 import dev.langchain4j.data.document.Document;
+import jakarta.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -69,22 +72,31 @@ public class DatafariTools {
     }
 
     // TODO
-//    @ToolMeta(label = "Asking for information...",
-//        i18nKey = "tool.askUser",
-//        icon = "search")
-//    @Tool("Ask a question to the user and wait for the response.")
-//    String askUser(
-//        @P("Message") String message,
-//        @P("schema") Map<String,Object> schema
-//    ) {
-//      LOGGER.info("AGENTIC TOOLS - Ask user - Message: {}", message);
-// //      stream.phase();
-//
-//      // 1) Emit "ask" event
-//      // 2) Throw an exception or return an "await" marker
-//      return "";
-// //      throw new AwaitUserInputException(message, schema);
-//    }
+    @ToolMeta(label = "Asking for information...",
+        i18nKey = "tool.askUser",
+        icon = "search")
+    @Tool("Ask a question to the user and wait for the response.")
+    String askUser(
+        @P("Message") String message,
+        @P("schema") Map<String,Object> schema
+    ) throws AwaitUserInputException {
+        LOGGER.info("AGENTIC TOOLS - Ask user - Message: {}", message);
+
+        // 1) Emit "ask" event
+        stream.ask(message, AiService.getMemoryId(stream, params));
+        await;
+        HttpSession session = request.getSession();
+        session.setAttribute(params.memoryId, "");
+        String response = ???;
+        // TODO : récupérer réponse
+        return ...;
+
+        // 2) Throw an exception or return an "await" marker
+//        throw new AwaitUserInputException(CodesReturned.PROBLEMQUERY, message);
+
+        // Retrieve and return user response
+        // return ???
+    }
 
     @ToolMeta(label = "Checking chat history...",
             i18nKey = "tool.readChatHistory",

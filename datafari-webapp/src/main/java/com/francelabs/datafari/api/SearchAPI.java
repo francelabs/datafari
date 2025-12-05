@@ -502,6 +502,11 @@ public class SearchAPI {
       finalResult.put("highlighting", mergedHighlighting);
     }
 
+    JSONObject facets = (JSONObject) bm25Result.get("facet_counts");
+    if (facets != null && !facets.isEmpty()) {
+      finalResult.put("facet_counts", facets);
+    }
+
     return finalResult;
 
   }

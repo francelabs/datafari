@@ -12,6 +12,7 @@ public interface ChatStream {
     default void start() { event("stream.started", Map.of()); }
     default void token(String text) { event("message.delta", Map.of("text", text)); }
     default void phase(String phase) { event("phase", Map.of("name", phase)); }
+    default void memory(String memoryId) { event("memory", Map.of("memoryId", memoryId)); }
 
     // Sources
     default void addSource(JSONObject src) { event("sources.add", Map.of("source", src)); }
@@ -36,7 +37,7 @@ public interface ChatStream {
     default void thinking(String text) { event("thinking", Map.of("text", text)); }
 
     // Human in the loop
-    default void ask(String text, String askId) { event("ask", Map.of("text", text, "askId", askId)); }
+    default void ask(String text, String memoryId) { event("ask", Map.of("text", text, "memoryId", memoryId)); }
     default void error(String code, String label, String message, String reason) {
         event("error", Map.of("code", code, "label", label, "message", message, "reason", reason));
     }

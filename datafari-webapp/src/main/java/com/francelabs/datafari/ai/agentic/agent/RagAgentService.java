@@ -7,7 +7,7 @@ import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
 
 public interface RagAgentService {
-
+// TODO : add history
     @UserMessage("""
         You are the backend agent of the search engine Datafari.
         Use the provided tools (RAG, RAG by document, summarize, search) whenever it is relevant.
