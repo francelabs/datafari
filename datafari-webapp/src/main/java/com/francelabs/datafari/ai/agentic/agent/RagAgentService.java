@@ -12,8 +12,9 @@ public interface RagAgentService {
         You are the backend agent of the search engine Datafari.
         Use the provided tools (RAG, RAG by document, summarize, search) whenever it is relevant.
         Provide a clear and short answer in {{lang}}.
-        Question: {{question}}
+        {{history}}
+        USER: {{question}}
         """)
     @Agent(outputName = "answer", description = "Answer questions using Datafari's search and RAG tools.")
-    TokenStream stream(@MemoryId String memoryId, @V("question") String question, @V("lang") String lang);
+    TokenStream stream(@MemoryId String memoryId, @V("question") String question, @V("lang") String lang, @V("history") String history);
 }

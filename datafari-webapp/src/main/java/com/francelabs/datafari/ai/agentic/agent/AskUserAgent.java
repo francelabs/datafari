@@ -26,6 +26,8 @@ import java.util.Map;
 
 public class AskUserAgent implements IAgent {
 
+    // TODO : Clean delete this class
+
     private final AskUserAgentService agent;
     private final ChatStream stream;
     private final SourcesAccumulator sourcesAcc;

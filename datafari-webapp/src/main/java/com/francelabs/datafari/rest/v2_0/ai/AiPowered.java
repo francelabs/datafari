@@ -12,6 +12,7 @@ import com.francelabs.datafari.ai.services.SummarizationService;
 import com.francelabs.datafari.ai.stream.*;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
+import jakarta.servlet.http.HttpSession;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -91,6 +92,8 @@ public class AiPowered {
             resp.setHeader("Connection", "keep-alive");
             resp.setHeader("X-Accel-Buffering", "no");
 
+//            HttpSession session = request.getSession();
+
             AsyncContext async = request.startAsync();
             async.setTimeout(0);
             NdjsonEmitter emitter = new NdjsonEmitter(async);
@@ -109,6 +112,18 @@ public class AiPowered {
                 emitter.close();
                 return;
             }
+
+            // TODO : REMOVE IF NOT USED
+//            // If the "askUser" tool is currently listening to a provided memoryId, the connection is closed
+//            // and the session attribute is updated.
+//            String expectedUserInput = (String) session.getAttribute(params.memoryId);
+//            if (expectedUserInput != null && expectedUserInput.isEmpty()) {
+//              LOGGER.info("User is responding to an existing query. Process interrupted.");
+//              session.setAttribute(params.memoryId, params.query);
+//              stream.completed(OK);
+//              emitter.close();
+//              return;
+//            }
 
             // Common action handling
             ApiContent response = handle(params, request, stream);

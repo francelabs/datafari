@@ -24,6 +24,8 @@ import dev.langchain4j.service.tool.ToolExecutor;
 import org.apache.commons.lang.RandomStringUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.ArrayList;
 import java.util.Map;
 
 public class RagAgent implements IAgent {
@@ -74,8 +76,42 @@ public class RagAgent implements IAgent {
     public String ask(String question) {
         String memoryId = AiService.getMemoryId(stream, params);
         AgentStreamer streamer = new AgentStreamer();
-        TokenStream ts = agent.stream(memoryId, question, PromptUtils.getUserLanguage(request));
+        String history = readChatHistory();
+        TokenStream ts = agent.stream(memoryId, question, PromptUtils.getUserLanguage(request), history);
         return streamer.stream(ts, stream::event);
+    }
+
+
+  /**
+   *
+   * @return a String containing the chat history (if any), with assistant and user messages
+   */
+  String readChatHistory() {
+
+      RagConfiguration config = RagConfiguration.getInstance();
+      if (params.history == null || !config.getBooleanProperty(RagConfiguration.CHAT_MEMORY_ENABLED)) {
+          return "";
+      }
+
+      final int size = params.history.size();
+      final int maxSize = config.getIntegerProperty(RagConfiguration.CHAT_MEMORY_HISTORY_SIZE);
+      final int from = Math.max(0, size - maxSize);
+      StringBuilder sb = new StringBuilder();
+
+      for (int i = from; i < size; i++) {
+
+          AiRequest.ChatMessage message = params.history.get(i);
+          String role = (message != null && message.role != null) ? message.role.name().toUpperCase() : "USER";
+          String text = (message != null && message.message != null) ? message.message : "";
+
+          // Avoid multiline in compact history
+          text = text.replace("\r\n", "\n").replace('\r', '\n').replace('\t', ' ');
+          text = text.replace('\n', ' ').trim();
+
+          sb.append(role).append(": ").append(text).append("\n");
+      }
+
+      return sb.toString();
     }
 
 }
