@@ -55,7 +55,7 @@ const paramTemplates = {
     logResponses: false
   },
   MistralAI: {
-    baseUrl: "https://api.mistral.com/v1/",
+    baseUrl: "https://api.mistral.ai/v1/",
     apiKey: "",
     modelName: "ministral-8b-2410",
     temperature: 0,

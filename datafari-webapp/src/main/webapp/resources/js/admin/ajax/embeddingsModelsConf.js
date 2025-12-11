@@ -64,7 +64,7 @@ const paramTemplates = {
     logResponses: false
   },
   MistralAI: {
-    baseUrl: "https://api.mistral.com/v1/",
+    baseUrl: "https://api.mistral.ai/v1/",
     apiKey: "",
     modelName: "",
     timeout: 60,
