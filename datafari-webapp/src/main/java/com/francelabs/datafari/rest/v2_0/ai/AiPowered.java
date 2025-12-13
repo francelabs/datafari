@@ -16,6 +16,8 @@ import jakarta.servlet.http.HttpSession;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.AsyncContext;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +61,9 @@ public class AiPowered {
                 return ResponseEntity.badRequest().body(response);
             }
 
+            // **********************
+            // ** Call AI Services **
+            // **********************
             ApiContent content = handle(body, request, nostream); // Common action handling
 
             response.status = (content.error == null) ? OK : ERROR;
@@ -71,6 +79,66 @@ public class AiPowered {
                     e.getMessage());
             return ResponseEntity.status(500).body(response);
         }
+    }
+
+    // ========= CLASSIC MODE (JSON) =========
+    // TODO : Delete when the UI is up to date with the new endpoints
+    @PostMapping(
+        value = "/rag",
+        consumes = "application/json",
+        produces = "application/json;charset=UTF-8"
+    )
+    public ResponseEntity<ApiResponse> retrocompatibleClassicRag(@RequestBody JSONObject jsonDoc, HttpServletRequest request) {
+        return retrocompatibleCommon(jsonDoc,request, AiRequest.Action.rag);
+    }
+
+    @PostMapping(
+        value = "/agentic",
+        consumes = "application/json",
+        produces = "application/json;charset=UTF-8"
+    )
+    public ResponseEntity<ApiResponse> retrocompatibleClassicAgentic(@RequestBody JSONObject jsonDoc, HttpServletRequest request) {
+        return retrocompatibleCommon(jsonDoc,request, AiRequest.Action.agentic);
+    }
+
+    @PostMapping(
+        value = "/summarize",
+        consumes = "application/json",
+        produces = "application/json;charset=UTF-8"
+    )
+    public ResponseEntity<ApiResponse> retrocompatibleClassicSummarize(@RequestBody JSONObject jsonDoc, HttpServletRequest request) {
+        return retrocompatibleCommon(jsonDoc,request, AiRequest.Action.summarize);
+    }
+
+    public ResponseEntity<ApiResponse> retrocompatibleCommon(@RequestBody JSONObject jsonDoc, HttpServletRequest request, AiRequest.Action action) {
+        AiRequest params = new AiRequest();
+        if (jsonDoc.get("id") != null) {
+            params.id = (String) jsonDoc.get("id");
+        }
+        if (jsonDoc.get("query") != null) {
+            params.query = (String) jsonDoc.get("query");
+        }
+        if (jsonDoc.get("lang") != null) {
+            params.lang = (String) jsonDoc.get("lang");
+        }
+        if (jsonDoc.get("agent") != null) {
+            params.agent = (String) jsonDoc.get("agent");
+        }
+        if (jsonDoc.get("history") != null) {
+//            List<Object> hist = (ArrayList) jsonDoc.get("history");
+            List<AiRequest.ChatMessage> history = new ArrayList<>();
+            for (Object o : (ArrayList<Object>) jsonDoc.get("history")) {
+                LinkedHashMap jsonMsg = (LinkedHashMap) o;
+                AiRequest.ChatMessage cm = new AiRequest.ChatMessage();
+                cm.role = AiRequest.ChatMessage.Role.valueOf((String) jsonMsg.get("role"));
+                cm.message = (String) jsonMsg.get("content");
+                history.add(cm);
+
+            }
+            params.history = history;
+        }
+        params.action = action;
+        return classic(params, request);
     }
 
     // ========= MODE STREAM (NDJSON) =========
@@ -125,7 +193,10 @@ public class AiPowered {
 //              return;
 //            }
 
-            // Common action handling
+
+            // **********************
+            // ** Call AI Services **
+            // **********************
             ApiContent response = handle(params, request, stream);
 
             ApiResponse finalApi = new ApiResponse();
@@ -237,6 +308,8 @@ public class AiPowered {
 
         ApiContent result = new ApiContent();
         result.memoryId = params.memoryId;
+
+        request.setAttribute("params", params); // TODO : test
 
         try {
             result = switch (action.name()) {

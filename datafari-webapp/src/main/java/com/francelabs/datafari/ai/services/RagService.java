@@ -45,6 +45,11 @@ public class RagService extends AiService {
         if (!config.getBooleanProperty(RagConfiguration.ENABLE_RAG))
             return error(stream, "422", "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", "RAG service is disabled in configuration.", isTool);
 
+        // Apply filters
+        if (params.filters != null && !params.filters.isEmpty()) {
+            request = SearchUtils.filtersParamToFq(request, params);
+        }
+
         // Retrieve query from request params
         if (params.query != null) {
             query = params.query;

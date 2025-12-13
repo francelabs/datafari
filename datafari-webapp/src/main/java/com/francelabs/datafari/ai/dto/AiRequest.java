@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class AiRequest {
 
@@ -18,6 +19,11 @@ public class AiRequest {
     /** Required action=summarize ; optional otherwise. */
     @JsonProperty("id")
     public String id;
+
+    /** Required action=summarize ; optional otherwise. */
+    @JsonProperty("filters")
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public Map<String, List<String>> filters;
 
     /** Language ISO code (ex: "fr", "en"). Optional. */
     @JsonProperty("lang")

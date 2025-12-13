@@ -1,6 +1,7 @@
 package com.francelabs.datafari.utils.rag;
 
 import com.francelabs.datafari.aggregator.servlet.SearchAggregator;
+import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.services.AiService;
 import com.francelabs.datafari.api.SearchAPI;
 import com.francelabs.datafari.ai.config.RagConfiguration;
@@ -257,8 +258,6 @@ public class SearchUtils {
    */
   public static Document jsonToDocument(JSONObject doc){
     try {
-      // TODO : docId
-//      String id = (String) (doc.get("parent_doc") != null ? doc.get("parent_doc") : doc.get(AiService.ID_FIELD));
       String docId = (String) doc.get("docId");
       String url = (String) doc.get(AiService.URL_FIELD);
       String title;
@@ -279,6 +278,48 @@ public class SearchUtils {
           .put(AiService.URL_FIELD, url);
       return source;
     } catch (Exception e) { return null; }
+  }
+
+  /**
+   * When "filters" field is provided in AiPowered API, its content is converted in Solr parameter
+   * and stored in the "request" object. Filters will then apply to any search ran by AiServices.
+   * @param request : The original HttpServletRequest object to be updated
+   * @param params : The AiRequest object containing the filters
+   * @return a transformed EditableHttpServletRequest
+   */
+  public static EditableHttpServletRequest filtersParamToFq(HttpServletRequest request, AiRequest params) {
+      EditableHttpServletRequest editableRequest = new EditableHttpServletRequest(request);
+      Map<String, List<String>> filters = params.filters;
+      for (Map.Entry<String, List<String>> entry : filters.entrySet()) {
+          System.out.println(entry.getKey() + "/" + entry.getValue());
+
+          // If entry key is "id", we add a "fq" parameter
+          if ("id".equals(entry.getKey())) {
+              List<String> ids = entry.getValue();
+              StringBuilder sb = new StringBuilder(); // The generated String must look like "({{id3}} OR {{id3}} OR {{id3}})"
+              sb.append("(");
+
+              for (int i = 0; i < ids.size(); i++) {
+
+                  sb.append(ids.get(i));
+                  // Add "OR", unless it is last element
+                  if (i < ids.size() - 1) {
+                      sb.append(" OR ");
+                  }
+              }
+              sb.append(")");
+              String strIds = sb.toString();
+              String fq = "id:" + strIds + " OR docId:" + strIds;
+              editableRequest.addParameter("fq", fq);
+          } else {
+              List<String> param =  entry.getValue();
+              String[] array = param.toArray(new String[0]);
+              editableRequest.addParameters(entry.getKey(), array);
+          }
+
+      }
+
+      return editableRequest;
   }
 
     // TODO : Move here common search request preparation

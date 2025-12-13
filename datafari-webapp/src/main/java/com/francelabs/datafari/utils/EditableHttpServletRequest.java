@@ -2,6 +2,8 @@ package com.francelabs.datafari.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,6 +58,17 @@ public class EditableHttpServletRequest extends HttpServletRequestWrapper {
         } else {
           params.put( name, new String[]{value});
         }
+    }
+
+    public void addParameters(String name, String[] values) {
+      if (params.get(name) != null) {
+        // If the param is existing, we create a new array containing both old values and new values
+        String[] existingValues = params.get(name);
+        String[] newArray = ArrayUtils.addAll(existingValues, values);
+        params.put( name, newArray);
+      } else {
+        params.put( name, values);
+      }
     }
 
     @Override

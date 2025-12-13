@@ -440,8 +440,8 @@ public class PromptUtils {
                     if (obj instanceof Map) {
                         @SuppressWarnings("unchecked")
                         Map<String, String> map = (LinkedHashMap<String, String>) obj;
-                        if (map.containsKey("role") && map.containsKey("content")) {
-                            ChatMessage message = createChatMessage(map.get("role"), map.get("content"));
+                        if (map.containsKey("role") && map.containsKey("message")) {
+                            ChatMessage message = createChatMessage(map.get("role"), map.get("message"));
                             history.add(message);
                         } else {
                             LOGGER.warn("A message from the chat history in invalid, and will be ignored.");

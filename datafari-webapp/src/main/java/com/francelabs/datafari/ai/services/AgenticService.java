@@ -6,6 +6,7 @@ import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.ai.config.RagConfiguration;
+import com.francelabs.datafari.utils.rag.SearchUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,6 +31,11 @@ public class AgenticService extends AiService {
         // Is AGENTIC RAG enabled ?
         if (!config.getBooleanProperty(RagConfiguration.ENABLE_AGENTIC))
             return error(stream, "422", "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", "Agentic service is disabled in configuration.", isTool);
+
+        // Apply filters
+        if (params.filters != null && !params.filters.isEmpty()) {
+            request = SearchUtils.filtersParamToFq(request, params);
+        }
 
         ApiContent response = new ApiContent();
         try {
