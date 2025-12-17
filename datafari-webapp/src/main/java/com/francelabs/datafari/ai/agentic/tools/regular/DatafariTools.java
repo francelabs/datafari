@@ -240,7 +240,7 @@ public class DatafariTools {
             @P("The search query") String query
     ) {
         int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
-        LOGGER.debug("AGENTIC TOOLS - Search from document - Query: {} - Document: {}", query, id);
+        LOGGER.info("AGENTIC TOOLS - Search from document - Query: {} - Document: {}", query, id);
 
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/rrf";
