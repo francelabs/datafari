@@ -357,7 +357,7 @@ public class DatafariTools {
     String hybridSearch(
             @P("The search query") String query
     ) {
-        LOGGER.debug("AGENTIC TOOLS - Hybrid Search - Query: {}", query);
+        LOGGER.info("AGENTIC TOOLS - Hybrid Search - Query: {}", query);
         EditableHttpServletRequest editableRequest = new EditableHttpServletRequest(request);
         String handler = "/rrf";
         editableRequest.addParameter("q", query);

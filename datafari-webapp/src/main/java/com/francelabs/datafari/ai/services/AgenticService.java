@@ -25,6 +25,8 @@ public class AgenticService extends AiService {
                                      ChatStream stream, SourcesAccumulator sourcesAcc,
                                      boolean isTool) {
 
+        LOGGER.info("AiPowered - Agentic - Agentic request received.");
+
         // Get RAG configuration
         RagConfiguration config = RagConfiguration.getInstance();
 
@@ -42,7 +44,7 @@ public class AgenticService extends AiService {
 
             // Retrieve query from request params
             String query = params.query;
-            LOGGER.debug("RagService - RAG - RAG query : {}", query);
+            LOGGER.debug("RagService - Agentic - Agentic query : {}", query);
             if (query == null || query.isEmpty()) {
                 return error(stream, "422", "ragBadRequest",
                         "Sorry, it appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.",
