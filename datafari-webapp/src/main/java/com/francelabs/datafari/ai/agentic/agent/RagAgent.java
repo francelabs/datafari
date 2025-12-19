@@ -39,7 +39,7 @@ public class RagAgent implements IAgent {
 
   /**
    * The RAG Agent is an agent specialised in RAG request processing.
-   * The available tools are listed in RagTools.java (Search, RAG by document, summarization...)
+   * The available tools are listed in DatafariTools.java (Search, RAG by document, summarization...)
    * @param request: The original HttpServletRequest
    * @param params: The AiRequest containing the request params (ID, q, lang...)
    * @param stream: The ChatStream object, to stream events
