@@ -40,13 +40,13 @@ else
 
 	echo "[INFO] Attempting to clean up ZooKeeper locks for Agent A..."
 	
-	cat <<EOF > /tmp/zk_cleanup.cmd
+cat <<EOF > /tmp/zk_cleanup.cmd
 	delete /org.apache.manifoldcf/service-AGENT/child-A
 	delete /org.apache.manifoldcf/service-AGENT
 	delete /org.apache.manifoldcf/servicelock-AGENT
 	delete /org.apache.manifoldcf/servicelock-AGENT_org.apache.manifoldcf.crawler.system.CrawlerAgent
 	delete /org.apache.manifoldcf/serviceactive-AGENT-A
-	EOF
+EOF
 
 	/opt/datafari/zookeeper-mcf/bin/zkCli.sh -server localhost:2182 < /tmp/zk_cleanup.cmd
 	
@@ -61,4 +61,5 @@ fi
 cd /opt/datafari/bin && bash start-datafari.sh
 
 sleep infinity
+
 
