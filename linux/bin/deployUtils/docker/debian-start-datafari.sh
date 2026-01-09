@@ -10,10 +10,6 @@ source "${DIR}/../../utils.sh"
 
 source /opt/datafari/bin/common/init_state.properties
 
-
-echo "test remplacement datafari script docker"
-sleep 5
-
 cp /opt/datafari/bin/deployUtils/docker/datafari.properties /opt/datafari/tomcat/conf/datafari.properties
 
 
