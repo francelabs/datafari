@@ -11,7 +11,8 @@ source "${DIR}/../../utils.sh"
 source /opt/datafari/bin/common/init_state.properties
 
 
-
+echo "test remplacement datafari script docker"
+sleep 5
 
 cp /opt/datafari/bin/deployUtils/docker/datafari.properties /opt/datafari/tomcat/conf/datafari.properties
 
@@ -35,8 +36,8 @@ else
     echo "[INFO] Checking for stale PostgreSQL lock/socket files..."
     rm -f /tmp/.s.PGSQL.5432 /tmp/.s.PGSQL.5432.lock
 
-    cd /opt/datafari/bin/monitorUtils
-    bash monit-start-zk-mcf.sh
+    cd /opt/datafari/bin
+    run_as ${DATAFARI_USER} "bash datafari-manager.sh start_zookeeper_mcf";
 
 	echo "[INFO] Attempting to clean up ZooKeeper locks for Agent A..."
 	
@@ -52,8 +53,8 @@ EOF
 	
 	rm -f /tmp/zk_cleanup.cmd
 	
-	cd /opt/datafari/bin/monitorUtils
-	bash monit-stop-zk-mcf.sh
+	cd /opt/datafari/bin
+    run_as ${DATAFARI_USER} "bash datafari-manager.sh stop_zookeeper_mcf";
 
 
 fi
