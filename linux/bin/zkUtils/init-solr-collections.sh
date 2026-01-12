@@ -35,7 +35,7 @@ create_collection() {
 	curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"clustering.enabled": "false"}}' $url_protocol://${ip_solr}/solr/$1/config
   	curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"texttagger.enabled": "false"}}' $url_protocol://${ip_solr}/solr/$1/config
     curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"texttagger.host": "localhost:2181"}}' $url_protocol://${ip_solr}/solr/$1/config
-  	curl -XPOST --insecure $url_protocol://${ip_solr}/solr/$1/config/params -H 'Content-type:application/json'  -d '{"set":{"mySearch":{"qf":"exactContent^500 embedded_content^500 exactTitle^500 title_fr^50 title_en^50 title_de^50 title_es^50 content_fr^10 content_en^10 content_de^50 content_es^50 source^20 id^3 url_search^3","pf":"exactContent^500 embedded_content^500 exactTitle^500 title_en^500 title_fr^500 title_de^500 title_es^500 content_fr^100 content_en^100 content_de^100 content_es^100 url_search^30","hl.maxAnalyzedChars":51200}}}'
+  	curl -XPOST --insecure $url_protocol://${ip_solr}/solr/$1/config/params -H 'Content-type:application/json'  -d '{"set":{"mySearch":{"qf":"exactContent^500 exactTitle^500 title_fr^50 title_en^50 title_de^50 title_es^50 content_fr^10 content_en^10 content_de^50 content_es^50 source^20 id^3 url_search^3","pf":"exactContent^500 embedded_content^500 exactTitle^500 title_en^500 title_fr^500 title_de^500 title_es^500 content_fr^100 content_en^100 content_de^100 content_es^100 url_search^30","hl.maxAnalyzedChars":51200}}}'
 
     cd ${SOLR_INSTALL_DIR}/solrcloud/FileShare/conf/customs_schema && bash addCustomSchemaInfo.sh
 
@@ -63,7 +63,7 @@ curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-propert
   curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"vector.chunksize": "300"}}' $url_protocol://${ip_solr}/solr/FileShare/config
   curl -XPOST --insecure -H 'Content-type:application/json' -d '{"set-user-property": {"vector.maxoverlap": "0"}}' $url_protocol://${ip_solr}/solr/FileShare/config
 
-  curl -XPOST --insecure $url_protocol://${ip_solr}/solr/VectorMain/config/params -H 'Content-type:application/json'  -d '{"set":{"mySearch":{"qf":"exactContent^500 embedded_content^500 exactTitle^500 title_fr^50 title_en^50 title_de^50 title_es^50 content_fr^10 content_en^10 content_de^50 content_es^50 source^20 id^3 url_search^3","pf":"exactContent^500 embedded_content^500 exactTitle^500 title_en^500 title_fr^500 title_de^500 title_es^500 content_fr^100 content_en^100 content_de^100 content_es^100 url_search^30","hl.maxAnalyzedChars":51200}}}'
+  curl -XPOST --insecure $url_protocol://${ip_solr}/solr/VectorMain/config/params -H 'Content-type:application/json'  -d '{"set":{"mySearch":{"qf":"exactContent^500 exactTitle^500 title_fr^50 title_en^50 title_de^50 title_es^50 content_fr^10 content_en^10 content_de^50 content_es^50 source^20 id^3 url_search^3","pf":"exactContent^500 embedded_content^500 exactTitle^500 title_en^500 title_fr^500 title_de^500 title_es^500 content_fr^100 content_en^100 content_de^100 content_es^100 url_search^30","hl.maxAnalyzedChars":51200}}}'
 
 
   curl -XGET --insecure "$url_protocol://${ip_solr}/solr/admin/collections?action=CREATE&name=OCR&collection.configName=GenericAnnotator&numShards=1&maxShardsPerNode=1&replicationFactor=1&property.lib.path=${SOLR_INSTALL_DIR}/solrcloud/GenericAnnotator/"

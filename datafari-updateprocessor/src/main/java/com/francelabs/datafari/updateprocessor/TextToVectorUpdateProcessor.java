@@ -63,7 +63,7 @@ class TextToVectorUpdateProcessor extends UpdateRequestProcessor {
     @Override
     public void processAdd(AddUpdateCommand cmd) throws IOException {
         SolrInputDocument doc = cmd.getSolrInputDocument();
-        SolrInputField inputFieldContent = doc.getField(inputField);
+        SolrInputField inputFieldContent = getInputFieldContent(doc);
 
         Object vectorizeObj = doc.getFieldValue("embeddings_at_indexing");
         boolean embeddingsAtIndexing = (vectorizeObj != null) && Boolean.parseBoolean(vectorizeObj.toString());
@@ -120,7 +120,28 @@ class TextToVectorUpdateProcessor extends UpdateRequestProcessor {
         super.processAdd(cmd);
     }
 
-    protected boolean isNullOrEmpty(SolrInputField inputFieldContent) {
+  private SolrInputField getInputFieldContent(SolrInputDocument doc) {
+    if ("embedded_content".equals(inputField)) {
+        // Search for any content_* field
+        SolrInputField inputFieldContentEn = doc.getField("content_en");
+        SolrInputField inputFieldContentFr = doc.getField("content_fr");
+        SolrInputField inputFieldContentEs = doc.getField("content_es");
+        SolrInputField inputFieldContentDe = doc.getField("content_de");
+        if (inputFieldContentEn != null) {
+            return inputFieldContentEn;
+        } else if (inputFieldContentFr != null) {
+            return inputFieldContentFr;
+        } else if (inputFieldContentEs != null) {
+            return inputFieldContentEs;
+        }   else if (inputFieldContentDe != null) {
+            return inputFieldContentDe;
+        }
+    }
+
+    return doc.getField(inputField);
+  }
+
+  protected boolean isNullOrEmpty(SolrInputField inputFieldContent) {
         return (inputFieldContent == null
                 || inputFieldContent.getFirstValue() == null
                 || inputFieldContent.getFirstValue().toString().isEmpty());

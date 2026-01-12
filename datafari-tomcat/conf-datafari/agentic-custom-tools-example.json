@@ -24,7 +24,7 @@
         "fq": [],
         "handler": "/rrf",
         "defaults": {
-          "fl": "title,id,url,creation_date,last_modified,extension,repo_source,embedded_content",
+          "fl": "title,id,url,creation_date,last_modified,extension,repo_source,embedded_content:content_fr,embedded_content:content_en,embedded_content:content_es,embedded_content:content_de",
           "q.op": "OR",
           "rows": 10,
           "sort": "desc",

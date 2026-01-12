@@ -147,7 +147,7 @@ public class SolrVectorSearchConfig extends HttpServlet {
     /** Returns the total number of indexed documents containing embedded content. */
     private long totalDocs() throws SolrServerException, IOException {
         if (solr == null) return 0L;
-        SolrQuery q = new SolrQuery("embedded_content:*");
+        SolrQuery q = new SolrQuery("*:*");
         q.setRows(0);
         QueryResponse rsp = solr.query(DEFAULT_COLLECTION, q);
         return rsp.getResults().getNumFound();
@@ -156,7 +156,7 @@ public class SolrVectorSearchConfig extends HttpServlet {
     /** Returns the number of documents that have not yet been vectorized. */
     private long docsNotHavingVector() throws IOException, SolrServerException {
         if (solr == null) return 0L;
-        SolrQuery q = new SolrQuery("embedded_content:*");
+        SolrQuery q = new SolrQuery("*:*");
         q.setRequestHandler("/select/not-embedded");
         q.setRows(0);
         QueryResponse rsp = solr.query(DEFAULT_COLLECTION, q);

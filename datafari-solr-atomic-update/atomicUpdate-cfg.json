@@ -13,7 +13,7 @@
         "solrCollection": "VectorMain"
       },
       "fieldsOperation": {
-        "embedded_content": "set"
+        "vectorize": "set"
       },
       "nbDocsPerBatch": 100,
       "fieldsMapping": {
@@ -31,7 +31,7 @@
         "solrCollection": "VectorMain"
       },
       "fieldsOperation": {
-        "embedded_content": "set"
+        "vectorize": "set"
       },
       "nbDocsPerBatch": 100,
       "fieldsMapping": {

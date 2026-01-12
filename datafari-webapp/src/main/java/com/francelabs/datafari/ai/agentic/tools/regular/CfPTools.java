@@ -73,7 +73,7 @@ public class CfPTools {
     @Tool("Retrieve a list of CFP IDs, filtered by category, sorted by creation_date desc.")
     String listCallsForProvidersByCategory(
             @P("Number of CFP to retrieve") int rows,
-            @P("Category filter (ex: Catering, Furniture, Carpentry or Maintenance). Use 'None' to ignore categories.") String category
+            @P(value = "Category filter (ex: Catering, Furniture, Carpentry or Maintenance).", required = false) String category
     ) {
         if (rows < 1) rows = 30;
 
@@ -304,7 +304,8 @@ public class CfPTools {
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/select";
         req.addParameter("q", "*:*");
-        req.addParameter("fl", "title,parent_doc,docId,url,embedded_content");
+        // We want to retrieve the content as "embedded_content", whether it is stored in content_fr, content_en, content_es or content_de
+        req.addParameter("fl", "title,parent_doc,docId,url,embedded_content:content_fr,embedded_content:content_en,embedded_content:content_es,embedded_content:content_de");
         req.addParameter("fq", "{!term f=docId}" + id);
         req.addParameter("collection", "VectorMain");
         req.addParameter("start", String.valueOf(start));

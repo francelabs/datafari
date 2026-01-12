@@ -33,6 +33,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.SolrInputField;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.update.AddUpdateCommand;
 import org.apache.solr.update.DeleteUpdateCommand;
@@ -65,7 +66,25 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
 
       String parentId = (String) parentDoc.get("id").getValue();
       LOGGER.debug("Processing chunking for document {}", parentId);
-      String content = extractContent(parentDoc);
+      String content = "";
+      String contentField = null;
+      final SolrInputField contentFieldFr = parentDoc.get("content_fr");
+      final SolrInputField contentFieldEn = parentDoc.get("content_en");
+      final SolrInputField contentFieldDe = parentDoc.get("content_de");
+      final SolrInputField contentFieldEs = parentDoc.get("content_es");
+      if (contentFieldFr != null) {
+        content = (String) contentFieldFr.getFirstValue();
+        contentField = "content_fr";
+      } else if (contentFieldEn != null) {
+        content = (String) contentFieldEn.getFirstValue();
+        contentField = "content_en";
+      } else if (contentFieldEs != null) {
+        content = (String) contentFieldEs.getFirstValue();
+        contentField = "content_es";
+      } else if (contentFieldDe != null) {
+        content = (String) contentFieldDe.getFirstValue();
+        contentField = "content_de";
+      }
 
       deleteExistingChildren(parentId);
       boolean enableForThisDoc = false;
@@ -102,8 +121,8 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
               vectorDocument.removeField("preview_content");
               vectorDocument.removeField("exactContent");
 
-              // ExactContent should ony contain the chunk content:
-              vectorDocument.addField("embedded_content", chunk.text());
+              // The content field should only contain the chunk content:
+              vectorDocument.addField(contentField, chunk.text());
 
               batchDocs.add(vectorDocument);
             }
@@ -195,14 +214,6 @@ public class VectorUpdateProcessor extends UpdateRequestProcessor {
 
     Document document = Document.from(content);
     return splitter.split(document);
-  }
-
-  private static String extractContent(SolrInputDocument parentDoc) {
-    String content = "";
-    if (parentDoc.get("exactContent") != null) {
-      content = (String) parentDoc.get("exactContent").getFirstValue();
-    }
-    return content;
   }
 
   @Override
