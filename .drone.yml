@@ -3,7 +3,7 @@ clone:
         image: plugins/git
         tags: true
 pipeline:
-    build:
+    build-master:
         image: plugins/docker
         repo: datafari/ce_build
         tags:
@@ -16,13 +16,15 @@ pipeline:
           branch: master
     build-release:
         image: plugins/docker
-        repo: datafari/ce_build
-        auto_tag: true
+        repo: datafari/ce_build_release
+        tags:
+            - latest
+            - "${DRONE_COMMIT_SHA}"
         secrets: [ docker_username, docker_password ]
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
         when:
-          event: tag
+          branch: release-*-branch
     notify:
         image: drillster/drone-email
         from : noreply@datafari.com
@@ -30,6 +32,10 @@ pipeline:
         when:
             status: [ success, failure ]
         secrets: [ email_username, email_password, email_port, email_host, email_recipients ]
+        depends_on:
+        - build-master
+        - build-release
+
     ssh:
         image: appleboy/drone-ssh
         secrets: [ ssh_host, ssh_username, ssh_key, ssh_port ]

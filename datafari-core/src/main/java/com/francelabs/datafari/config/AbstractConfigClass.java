@@ -91,11 +91,12 @@ public abstract class AbstractConfigClass implements IConfigClass {
    */
   @Override
   public String getProperty(final String key, final String defaultValue) {
-    String prop = getProperty(key);
-    if (prop == null) {
-      prop = defaultValue;
-    }
-    return prop;
+ // Access properties directly to avoid WARN when missing
+    String prop = properties.getProperty(key);
+    
+    return prop != null ? prop : defaultValue;
+    
+
   }
 
   @Override

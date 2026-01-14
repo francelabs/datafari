@@ -125,9 +125,11 @@ public class Search2 extends HttpServlet {
           String newHost;
           StringBuffer chosenURL;
           
-           if (DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.CUSTOM_PROXY_URL) != null && !DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.CUSTOM_PROXY_URL).isEmpty()) {
-           newHost = DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.CUSTOM_PROXY_URL);
-           URI rebuilt = new URI(
+          String customProxyUrl = DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.CUSTOM_PROXY_URL, "");
+          
+          if (!customProxyUrl.isEmpty()) {  
+            newHost = customProxyUrl;
+            URI rebuilt = new URI(
                orig.getScheme(),  
                null,
                newHost,            
