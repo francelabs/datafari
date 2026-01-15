@@ -5,10 +5,7 @@ import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.dto.ApiError;
 import com.francelabs.datafari.ai.dto.ApiResponse;
-import com.francelabs.datafari.ai.services.AgenticService;
-import com.francelabs.datafari.ai.services.AiService;
-import com.francelabs.datafari.ai.services.RagService;
-import com.francelabs.datafari.ai.services.SummarizationService;
+import com.francelabs.datafari.ai.services.*;
 import com.francelabs.datafari.ai.stream.*;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
@@ -181,19 +178,6 @@ public class AiPowered {
                 return;
             }
 
-            // TODO : REMOVE IF NOT USED
-//            // If the "askUser" tool is currently listening to a provided memoryId, the connection is closed
-//            // and the session attribute is updated.
-//            String expectedUserInput = (String) session.getAttribute(params.memoryId);
-//            if (expectedUserInput != null && expectedUserInput.isEmpty()) {
-//              LOGGER.info("User is responding to an existing query. Process interrupted.");
-//              session.setAttribute(params.memoryId, params.query);
-//              stream.completed(OK);
-//              emitter.close();
-//              return;
-//            }
-
-
             // **********************
             // ** Call AI Services **
             // **********************
@@ -316,6 +300,7 @@ public class AiPowered {
                 case "rag" -> RagService.rag(request, params, stream, sourcesAcc, false);
                 case "agentic" -> AgenticService.agentic(params, request, stream, sourcesAcc, false);
                 case "summarize" -> SummarizationService.summarize(params, request, stream, sourcesAcc, false);
+                case "search" -> SearchService.search(params, request, stream);
                 default -> result;
             };
 

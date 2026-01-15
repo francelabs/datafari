@@ -44,6 +44,12 @@ public interface ChatStream {
         event("tool.error", Map.of("id", id, "durationMs", durationMs, "error", message));
     }
 
+    // Search from chatbot
+    /** Invoked by the search service to send a list of search results */
+    default void searchResults(JSONArray docs) {
+        event("search.results", Map.of("docs", docs));
+    }
+
 
     /** Invoked by StreamingChatModels, sends one single token of the response */
     default void token(String text) { event("message.delta", Map.of("text", text)); }

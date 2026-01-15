@@ -338,7 +338,7 @@ public class SearchAPI {
     // Override parameters with request attributes (set by the code and not from the client, so
     // they prevail over what has been given as a parameter)
     final Iterator<String> attributeNamesIt = request.getAttributeNames().asIterator();
-    while (attributeNamesIt.hasNext()) {
+    while (attributeNamesIt.hasNext()) { // TODO : Dynamically edit "fl" to replace "embedded_content" by the long version
       final String name = attributeNamesIt.next();
       if (request.getAttribute(name) != null && request.getAttribute(name) instanceof String) {
         final String value[] = { (String) request.getAttribute(name) };

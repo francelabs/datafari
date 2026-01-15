@@ -39,7 +39,7 @@ public class AiRequest {
 
     /** Action requested. "rag", "summarize", "agentic"... */
     @JsonProperty("action")
-    public Action action = Action.rag;  // "rag" | "agentic" | "summarize"
+    public Action action = Action.rag;  // "rag" | "agentic" | "summarize" | "search"
 
     /** Existing conversation ID. Optional */
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -53,13 +53,13 @@ public class AiRequest {
         String act = action == null ? "rag" : action.name();
         switch (act) {
             case "summarize" -> { if (id == null || id.isBlank()) errors.add("id is required for summarize"); }
-            case "rag", "agentic" -> { if (query == null || query.isBlank()) errors.add("query is required for " + act); }
+            case "rag", "agentic", "search" -> { if (query == null || query.isBlank()) errors.add("query is required for " + act); }
             default -> errors.add("unknown action: " + act);
         }
         return errors;
     }
 
-    public enum Action { rag, agentic, summarize }
+    public enum Action { rag, agentic, summarize, search }
 
     public static class ChatMessage {
         public Role role;
