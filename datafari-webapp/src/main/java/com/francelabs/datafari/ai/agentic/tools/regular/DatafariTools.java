@@ -126,7 +126,7 @@ public class DatafariTools {
         String handler = "/select";
         req.addParameter("q", "*:*");
         // We want to retrieve the content as "embedded_content", whether it is stored in content_fr, content_en, content_es or content_de
-        req.addParameter("fl", "title,parent_doc,docId,url,embedded_content:content_fr,embedded_content:content_en,embedded_content:content_es,embedded_content:content_de");
+        req.addParameter("fl", "title,parent_doc,docId,url,embedded_content");
         req.addParameter("fq", "{!term f=docId}" + id);
         req.addParameter("collection", "VectorMain");
         req.addParameter("start", String.valueOf(start));
@@ -164,7 +164,7 @@ public class DatafariTools {
         req.addParameter("q", query);
         req.addParameter("queryrag", query);
         // We want to retrieve the content as "embedded_content", whether it is stored in content_fr, content_en, content_es or content_de
-        req.addParameter("fl", "title,docId,url,embedded_content:content_fr,embedded_content:content_en,embedded_content:content_es,embedded_content:content_de");
+        req.addParameter("fl", "title,docId,url,embedded_content");
         req.addParameter("fq", "{!term f=docId}" + id);
         req.addParameter("q.op", "OR");
         req.addParameter("wt", "json");
@@ -247,7 +247,7 @@ public class DatafariTools {
 //        req.addParameter("q", query);
 //        req.addParameter("queryrag", query);
 //        // We want to retrieve the content as "embedded_content", whether it is stored in content_fr, content_en, content_es or content_de
-//        req.addParameter("fl", "title,id,parent_doc,exactContent,embedded_content:content_fr,embedded_content:content_en,embedded_content:content_es,embedded_content:content_de,url");
+//        req.addParameter("fl", "title,id,parent_doc,exactContent,embedded_content,url");
 //        req.addParameter("topK", String.valueOf(topK));
 //        req.addParameter("start", "0");
 //        req.addParameter("rows", String.valueOf(rows));
@@ -282,7 +282,7 @@ public class DatafariTools {
         editableRequest.addParameter("q", query);
         editableRequest.addParameter("queryrag", query);
         // We want to retrieve the content as "embedded_content", whether it is stored in content_fr, content_en, content_es or content_de
-        editableRequest.addParameter("fl", "title,docId,parent_doc,embedded_content:content_fr,embedded_content:content_en,embedded_content:content_es,embedded_content:content_de,url");
+        editableRequest.addParameter("fl", "title,docId,parent_doc,embedded_content,url");
         editableRequest.addParameter("topK", "50");
         editableRequest.addParameter("start", "0");
         editableRequest.addParameter("rows", "10");

@@ -151,7 +151,7 @@ public class SearchUtils {
         request.addParameter("queryrag", queryrag); // The rewritten query is used only for Vector Search
         request.addParameter("hl", "false");
         // We want to retrieve the content as "embedded_content", whether it is stored in content_fr, content_en, content_es or content_de
-        request.addParameter("fl", "docId,title,exactContent,embedded_content:content_fr,embedded_content:content_en,embedded_content:content_es,embedded_content:content_de,url,llm_summary");
+        request.addParameter("fl", "docId,title,exactContent,embedded_content,url,llm_summary");
 
         String handler;
         switch(retrievalMethod) {

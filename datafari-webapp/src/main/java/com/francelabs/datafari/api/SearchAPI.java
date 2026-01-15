@@ -70,6 +70,12 @@ public class SearchAPI {
 
     final JSONObject response = new JSONObject();
 
+    // If the "fl" contains "embedded_content", it must be edited
+    String[] fl = parameterMap.get("fl");
+    if (fl != null && fl[0] != null && fl[0].contains("embedded_content")) {
+      fl[0] = fl[0].replace("embedded_content", "embedded_content:content_fr,embedded_content:content_en,embedded_content:content_es,embedded_content:content_de");
+    }
+
     // Check the handler
     final Set<String> allowedHandlers = getAllowedHandlers();
     if (!allowedHandlers.contains(handler)) {
@@ -338,7 +344,7 @@ public class SearchAPI {
     // Override parameters with request attributes (set by the code and not from the client, so
     // they prevail over what has been given as a parameter)
     final Iterator<String> attributeNamesIt = request.getAttributeNames().asIterator();
-    while (attributeNamesIt.hasNext()) { // TODO : Dynamically edit "fl" to replace "embedded_content" by the long version
+    while (attributeNamesIt.hasNext()) {
       final String name = attributeNamesIt.next();
       if (request.getAttribute(name) != null && request.getAttribute(name) instanceof String) {
         final String value[] = { (String) request.getAttribute(name) };

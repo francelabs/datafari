@@ -293,7 +293,7 @@ public class AiPowered {
         ApiContent result = new ApiContent();
         result.memoryId = params.memoryId;
 
-        request.setAttribute("params", params); // TODO : test
+        request.setAttribute("params", params);
 
         try {
             result = switch (action.name()) {

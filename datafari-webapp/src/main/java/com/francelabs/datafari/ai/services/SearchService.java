@@ -103,7 +103,7 @@ public class SearchService extends AiService {
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/select";
         req.addParameter("q", query);
-        req.addParameter("fl", "title,docId,url,embedded_content:content_fr,embedded_content:content_en,embedded_content:content_es,embedded_content:content_de");
+        req.addParameter("fl", "title,docId,url,embedded_content");
         req.addParameter("q.op", "OR");
         req.addParameter("start", "0");
         req.addParameter("rows", String.valueOf(rows));
