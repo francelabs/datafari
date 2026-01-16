@@ -300,7 +300,7 @@ public class AiPowered {
                 case "rag" -> RagService.rag(request, params, stream, sourcesAcc, false);
                 case "agentic" -> AgenticService.agentic(params, request, stream, sourcesAcc, false);
                 case "summarize" -> SummarizationService.summarize(params, request, stream, sourcesAcc, false);
-                case "search" -> SearchService.search(params, request, stream);
+                case "search" -> SearchService.search(params, request, stream, sourcesAcc);
                 default -> result;
             };
 

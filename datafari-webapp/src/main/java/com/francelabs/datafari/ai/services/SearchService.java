@@ -30,7 +30,7 @@ public class SearchService extends AiService {
 
     private static final Logger LOGGER = LogManager.getLogger(SearchService.class.getName());
 
-    public static @NotNull ApiContent search(AiRequest params, HttpServletRequest request, ChatStream stream) {
+    public static @NotNull ApiContent search(AiRequest params, HttpServletRequest request, ChatStream stream, SourcesAccumulator sources) {
         ApiContent response = new ApiContent();
 
         String query = params.query;
@@ -40,14 +40,16 @@ public class SearchService extends AiService {
         // Run a search in Datafari
         JSONArray docs = runSearch(request, query, stream);
 
+
         // Format response
         JSONArray formattedDocs = new JSONArray();
         for (Object d : docs) {
+            sources.add( SearchUtils.jsonToDocument((JSONObject) d) ); // Stream documents as sources
             JSONObject doc = simplifyJsonDocs((JSONObject) d);
             formattedDocs.add(doc);
         }
 
-        // Stream the results
+        // Stream the documents as search results
         stream.searchResults(formattedDocs);
 
         return response;
