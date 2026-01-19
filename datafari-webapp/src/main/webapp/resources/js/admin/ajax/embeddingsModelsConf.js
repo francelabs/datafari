@@ -277,6 +277,31 @@ function normalizeModel(m) {
   return { ...m, class: clazz };
 }
 
+// Form validation
+function checkFormValidity() {
+  const form = document.getElementById("embeddingsModels-form");
+
+  if (!form) {
+    console.warn("Form embeddingsModels-form not found");
+    return false;
+  }
+
+  if (!form.checkValidity()) {
+    // Enable Bootstrap validation style
+    form.classList.add("was-validated");
+
+    // Focus on the first invalid field
+    const firstInvalid = form.querySelector(":invalid");
+    if (firstInvalid) {
+      firstInvalid.focus();
+    }
+
+    return false;
+  }
+
+  return true;
+}
+
 // === Delete ===
 window.deleteModel = function (index) {
   if (confirm("Are you sure you want to delete this model?")) {
@@ -321,13 +346,10 @@ window.deleteModel = function (index) {
 // === Save all ===
 async function saveAll() {
 
-/*
-    if (!this.checkValidity()) {
-      event.stopPropagation();
-      $(this).addClass('was-validated');
-      return;
+    if (!checkFormValidity()) {
+        return;
     }
-*/
+
     // Build JSON payload
     if (activeModel === null && models.length > 0) {
         activeModel = models[0].name;
@@ -349,23 +371,31 @@ async function saveAll() {
 
           const resp = response && typeof response === 'string' ? JSON.parse(response) : response;
 
+
           $('#saveModelButton').prop('disabled', false);
           $('#loadingIndicator').hide();
-          showToast("✅ Saved successfully");
 
-          console.log("resp", resp);
-          console.log("resp.models", resp.models);
+          if (resp.code !== 0) {
+            // In case of error
+            console.log("error", resp.status);
+            showToast("❌ Save failed");
+          } else {
+              showToast("✅ Saved successfully");
 
-//          models = resp.models || [];
-          models = (resp.models || []).map(normalizeModel);
-          activeModel = resp.activeModel;
-          console.log("models", models);
-          console.log("activeModel", activeModel);
+              console.log("resp", resp);
+              console.log("resp.models", resp.models);
 
-          // Reload form data
-          renderModelTable();
-          renderActiveModelSelect();
-          cancelEdit();
+              models = (resp.models || []).map(normalizeModel);
+              activeModel = resp.activeModel;
+              console.log("models", models);
+              console.log("activeModel", activeModel);
+
+              // Reload form data
+              renderModelTable();
+              renderActiveModelSelect();
+              cancelEdit();
+          }
+
         },
         error: function (xhr) {
           console.log("error", xhr);

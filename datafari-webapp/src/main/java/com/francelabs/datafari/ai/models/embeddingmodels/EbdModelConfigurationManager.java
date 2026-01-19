@@ -159,7 +159,7 @@ public class EbdModelConfigurationManager {
      * @param config The new or updated model configuration.
      * @throws IOException if the registry cannot be saved.
      */
-    public void addOrUpdateModel(EbdModelConfig config) throws IOException, ParseException {
+    public boolean addOrUpdateModel(EbdModelConfig config) throws IOException, ParseException {
 
         // Update model
         try {
@@ -200,7 +200,9 @@ public class EbdModelConfigurationManager {
 
         } catch (Exception e) {
             LOGGER.error("Failed to add or update embeddings model:", e);
+            return false;
         }
+        return true;
     }
 
     /**
@@ -213,9 +215,12 @@ public class EbdModelConfigurationManager {
     public void addOrUpdateModels(List<EbdModelConfig> configs) throws IOException, ParseException {
 
         // Update models
+        boolean success = true;
         for (EbdModelConfig model : configs) {
-            addOrUpdateModel(model);
+            // If at least one model fails to be added or updated, success is set to false
+            success = success && addOrUpdateModel(model);
         }
+        if (!success) throw new IOException("Could not add or update models");
     }
 
     /**
