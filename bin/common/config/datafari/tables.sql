@@ -170,6 +170,42 @@ CREATE TABLE licence (
     licence BYTEA
 );
 
+-- Datafari Assistant
+CREATE TABLE conversation (
+    id UUID PRIMARY KEY,
+    title TEXT,
+    username VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_refresh TIMESTAMP,
+
+    CONSTRAINT conversation_user_fk
+      FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE
+);
+
+CREATE TABLE messages (
+    id UUID PRIMARY KEY,
+    conversation_id UUID NOT NULL,
+    role VARCHAR(32) NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT messages_conversation_fk
+      FOREIGN KEY (conversation_id) REFERENCES conversation(id) ON DELETE CASCADE,
+
+    CONSTRAINT messages_role_chk
+      CHECK (role IN ('user', 'assistant', 'system', 'tool'))
+);
+CREATE TABLE docsbasket (
+    id UUID PRIMARY KEY,
+    conversation_id UUID NOT NULL,
+    document_id TEXT NOT NULL,
+    document_title TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT docsbasket_conversation_fk
+      FOREIGN KEY (conversation_id) REFERENCES conversation(id) ON DELETE CASCADE
+);
+
 -- Indexes
 CREATE INDEX alerts_user_idx ON alerts("username");
 CREATE INDEX users_is_imported_idx ON users(is_imported);
@@ -192,3 +228,10 @@ CREATE INDEX query_document_features_query_idx ON query_document_features(query)
 CREATE INDEX document_features_rights_idx ON document_features USING GIN(document_rights);
 CREATE INDEX document_features_clicks_idx ON document_features USING GIN(clicks);
 CREATE INDEX document_features_ttc_idx ON document_features USING GIN(time_to_click);
+
+CREATE INDEX conversation_username_idx ON conversation(username);
+CREATE INDEX conversation_username_created_idx ON conversation(username, created_at DESC);
+CREATE INDEX messages_conversation_created_idx ON messages(conversation_id, created_at DESC);
+CREATE INDEX docsbasket_conversation_idx ON docsbasket(conversation_id);
+CREATE INDEX docsbasket_document_id_idx ON docsbasket(document_id);
+CREATE UNIQUE INDEX docsbasket_unique_doc_per_conv ON docsbasket(conversation_id, document_id);
