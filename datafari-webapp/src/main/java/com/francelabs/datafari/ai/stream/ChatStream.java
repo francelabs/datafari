@@ -17,6 +17,12 @@ public interface ChatStream {
     /** Sends the agent memory ID to the UI */
     default void memory(String memoryId) { event("memory", Map.of("memoryId", memoryId)); }
 
+    /** Sends information about the current conversation */
+    // TODO : retrieve conversation title
+    default void conversation(String conversationId, String title) {
+        event("conversation", Map.of("conversationId", conversationId, "title", title));
+    }
+
     // Sources
     /** Invoked by source accumulator when a source is added */
     default void addSource(JSONObject src) { event("sources.add", Map.of("source", src)); }

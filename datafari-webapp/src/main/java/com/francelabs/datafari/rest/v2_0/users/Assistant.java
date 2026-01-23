@@ -246,7 +246,7 @@ public class Assistant {
    * @return the conversationId
    * @throws DatafariServerException if the save fails
    */
-  protected String saveMessage(final HttpServletRequest request, String role, String content, String conversationId) throws DatafariServerException {
+  public String saveMessage(final HttpServletRequest request, String role, String content, String conversationId, String searchResults) throws DatafariServerException {
 
       final ConversationDataService service = ConversationDataService.getInstance();
       final String authenticatedUserName = AuthenticatedUserName.getName(request);
@@ -256,7 +256,7 @@ public class Assistant {
       }
 
 
-      if (content == null || role == null || content.isEmpty() || role.isBlank()) {
+      if (role == null || role.isBlank() || ((content == null || content.isEmpty()) && (searchResults == null) )) {
           throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Invalid request. Missing role or content.");
       }
 
@@ -271,14 +271,19 @@ public class Assistant {
           conversationId = service.createConversation(convProperties);
       }
 
-      // Add document to basket
+      // Add message to DB
       Properties document = new Properties();
       document.put("role", role);
       document.put("content", content);
       document.put("conversationId", conversationId);
+      if (searchResults != null && !searchResults.isBlank()) document.put("searchResults", searchResults);
       service.addMessage(document);
 
       return conversationId;
+  }
+
+  public String saveMessage(final HttpServletRequest request, String role, String content, String conversationId) throws DatafariServerException {
+      return saveMessage( request, role, content, conversationId, null);
   }
 
   /**

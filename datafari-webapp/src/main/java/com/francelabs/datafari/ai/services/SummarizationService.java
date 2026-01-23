@@ -41,6 +41,12 @@ public class SummarizationService extends AiService {
             request.setAttribute("lang", lang);
         }
 
+        if (!isTool) {
+            // Save message in Postgresql DB
+            if (params.query == null || params.query.isBlank()) params.query = "Summarize this document"; // TODO : translate label if possible
+            params.conversationId = saveUserMessage(request, params);
+        }
+
         LOGGER.info("AiPowered - Summarize - Summary of the document {} requested.", id);
 
         // Retrieve document from Solr using Datafari API methods
@@ -59,16 +65,16 @@ public class SummarizationService extends AiService {
             } else {
                 return error(stream, "422", "summarizationNoFileFound",
                         "The document cannot be retrieved.",
-                        "No document found for the provided ID.", isTool);
+                        "No document found for the provided ID.", params.conversationId, isTool);
             }
 
         } catch (final NullPointerException|IndexOutOfBoundsException e) {
             return error(stream, "422", "summarizationNoFileFound",
-                    "The document cannot be retrieved.", e.getMessage(), isTool);
+                    "The document cannot be retrieved.", e.getMessage(), params.conversationId, isTool);
         } catch (final Exception e) {
             return error(stream, "500", "summarizationTechnicalError",
                     "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
-                e.getLocalizedMessage(), isTool);
+                e.getLocalizedMessage(), params.conversationId, isTool);
         }
 
 
@@ -79,11 +85,17 @@ public class SummarizationService extends AiService {
         } catch (EmptyFileException e) {
             return error(stream, "422", "summarizationEmptyFile",
                     "Sorry, I am unable to generate a summary, since the file has no content.",
-                "File is empty and can not be summarized.", isTool);
+                "File is empty and can not be summarized.", params.conversationId, isTool);
         } catch (Exception e) {
             return error(stream, "500", "summarizationTechnicalError",
                 "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
-                e.getLocalizedMessage(), isTool);
+                e.getLocalizedMessage(), params.conversationId, isTool);
+        }
+
+        if (!isTool) {
+            // Save message in Postgresql DB
+            response.conversationId = params.conversationId;
+            saveAssistantMessage(request, response);
         }
 
         return response;

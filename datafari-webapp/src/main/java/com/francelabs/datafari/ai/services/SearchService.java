@@ -1,20 +1,14 @@
 package com.francelabs.datafari.ai.services;
 
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
-import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.stream.ChatStream;
-import com.francelabs.datafari.api.RagAPI;
-import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
 import com.francelabs.datafari.utils.rag.SearchUtils;
-import dev.langchain4j.data.document.Document;
-import dev.langchain4j.data.document.Metadata;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.EmptyFileException;
 import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -33,12 +27,13 @@ public class SearchService extends AiService {
     public static @NotNull ApiContent search(AiRequest params, HttpServletRequest request, ChatStream stream, SourcesAccumulator sources) {
         ApiContent response = new ApiContent();
 
-        String query = params.query;
+        // Save user message in Database
+        params.conversationId = saveUserMessage(request, params);
 
         stream.phase("search:start");
 
         // Run a search in Datafari
-        JSONArray docs = runSearch(request, query, stream);
+        JSONArray docs = runSearch(request, params.query, stream);
 
 
         // Format response
@@ -51,6 +46,12 @@ public class SearchService extends AiService {
 
         // Stream the documents as search results
         stream.searchResults(formattedDocs);
+
+        // Save message in Database
+        response.conversationId = params.conversationId;
+        response.docs = formattedDocs;
+        response.message = "";
+        saveSearchResults(request, response);
 
         return response;
     }

@@ -6,6 +6,8 @@ import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.ai.config.RagConfiguration;
+import com.francelabs.datafari.exception.DatafariServerException;
+import com.francelabs.datafari.rest.v2_0.users.Assistant;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,7 +34,12 @@ public class AgenticService extends AiService {
 
         // Is AGENTIC RAG enabled ?
         if (!config.getBooleanProperty(RagConfiguration.ENABLE_AGENTIC))
-            return error(stream, "422", "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", "Agentic service is disabled in configuration.", isTool);
+            return error(stream, "422", "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", "Agentic service is disabled in configuration.", null, isTool);
+
+        if (!isTool) {
+            // Save message in Postgresql DB
+            params.conversationId = saveUserMessage(request, params);
+        }
 
         // Apply filters
         if (params.filters != null && !params.filters.isEmpty()) {
@@ -48,7 +55,7 @@ public class AgenticService extends AiService {
             if (query == null || query.isEmpty()) {
                 return error(stream, "422", "ragBadRequest",
                         "Sorry, it appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.",
-                        "'id' must not be null", isTool);
+                        "'id' must not be null", params.conversationId, isTool);
             }
 
             stream.phase("agent:preparation");
@@ -90,7 +97,7 @@ public class AgenticService extends AiService {
             String answer = agent.ask(query);
 
             // Final & full response
-            stream.finalMessage(answer);
+//            stream.finalMessage(answer);
             response.message = answer;
 
             // Final sources
@@ -101,8 +108,15 @@ public class AgenticService extends AiService {
         } catch (Exception e) {
             return error(stream, "500", "ragTechnicalError",
                     "Sorry, the agent met an unexpected error. Please try again later, and if the problem remains, contact an administrator.",
-                    e.getLocalizedMessage(), isTool);
+                    e.getLocalizedMessage(), params.conversationId, isTool);
         }
+
+        // Save message in Postgresql DB
+        if (!isTool) {
+            response.conversationId = params.conversationId;
+            saveAssistantMessage(request, response);
+        }
+
         return response;
     }
 

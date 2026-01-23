@@ -5,6 +5,9 @@ import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.dto.ApiError;
 import com.francelabs.datafari.ai.stream.ChatStream;
+import com.francelabs.datafari.exception.DatafariServerException;
+import com.francelabs.datafari.rest.v2_0.users.Assistant;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,7 +40,7 @@ public abstract class AiService {
      * @param reason: A technical description of the error
      * @return an ApiContent containing an error
      */
-    public static ApiContent error(ChatStream stream, String code, String label, String message, @NotNull String reason, boolean isTool) {
+    public static ApiContent error(ChatStream stream, String code, String label, String message, @NotNull String reason, String conversationId, boolean isTool) {
         LOGGER.error("Error {} in AiService: {}", label, reason);
 
         if (isTool) {
@@ -50,8 +53,8 @@ public abstract class AiService {
             return content;
         }
     }
-    public static ApiContent error(ChatStream stream, String code, String label, String message, @NotNull String reason) {
-        return error(stream, code, label, message, reason, false);
+    public static ApiContent error(ChatStream stream, String code, String label, String message, @NotNull String reason, String conversationId) {
+        return error(stream, code, label, message, reason, conversationId, false);
     }
 
     public static String getMemoryId(ChatStream stream, AiRequest params) {
@@ -60,5 +63,50 @@ public abstract class AiService {
             stream.memory(params.memoryId);
         }
         return params.memoryId;
+    }
+
+    /**
+     * Saves a user message in postgresql Database
+     * @param params AiRequest containing the message content and the conversation ID
+     */
+    public static String saveUserMessage(HttpServletRequest request, AiRequest params) {
+        // TODO : if conversation storage is disabled, return null
+        // Save message in Postresql DB
+        Assistant assistant = new Assistant();
+        try {
+            return assistant.saveMessage(request, "user", params.query, params.conversationId); // TODO
+        } catch (DatafariServerException e) {
+            LOGGER.warn("Could not save message for request: \n{}", params);
+            return null;
+        }
+    }
+
+    /**
+     * Saves an assistant message in postgresql Database
+     * @param response The service response containing the conversationId and the message
+     */
+    public static void saveAssistantMessage(HttpServletRequest request, ApiContent response) {
+        // TODO : if conversationId is null or if conversation storage is disabled, return null
+        // Save message in Postresql DB
+        Assistant assistant = new Assistant();
+        try {
+            assistant.saveMessage(request, "assistant", response.message, response.conversationId);
+        } catch (DatafariServerException e) {
+            LOGGER.warn("Could not save assistant message in conversation: {}", response.conversationId);
+        }
+    }
+
+    /**
+     * @param response The service response containing the conversationId, the search results (docs) and the message
+     */
+    public static void saveSearchResults(HttpServletRequest request, ApiContent response) {
+        // TODO : if conversationId is null or if conversation storage is disabled, return null
+        // Save message in Postresql DB
+        Assistant assistant = new Assistant();
+        try {
+            assistant.saveMessage(request, "assistant", response.message, response.conversationId, response.docs.toJSONString());
+        } catch (DatafariServerException e) {
+            LOGGER.warn("Could not save search results message in conversation: {}", response.conversationId);
+        }
     }
 }

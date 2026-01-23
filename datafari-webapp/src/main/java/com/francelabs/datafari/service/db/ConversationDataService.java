@@ -17,6 +17,7 @@ package com.francelabs.datafari.service.db;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
+import org.json.simple.parser.JSONParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
@@ -50,8 +51,9 @@ public class ConversationDataService {
   public static final String ROLE_COLUMN = "role";
   public static final String USER_COLUMN = "username";
   public static final String CREATED_AT = "created_at";
-  public static final String DOC_ID = "document_id";
-  public static final String DOC_TITLE = "document_title";
+  public static final String DOC_ID_COLUMN = "document_id";
+  public static final String DOC_TITLE_COLUMN = "document_title";
+  public static final String SEARCH_RESULTS_COLUMN = "search_results";
 
   private static final Logger logger = LogManager.getLogger(ConversationDataService.class);
 
@@ -101,25 +103,39 @@ public class ConversationDataService {
 
   public String addMessage(final Properties messageProp) throws DatafariServerException {
     try {
-      final UUID uuid = UUID.randomUUID();
-      final UUID conversationId = UUID.fromString(messageProp.getProperty("conversationId"));
+        final UUID uuid = UUID.randomUUID();
+        final UUID conversationId = UUID.fromString(messageProp.getProperty("conversationId"));
 
-      sql.getJdbcTemplate().update(
-          "INSERT INTO public." + MESSAGES_COLLECTION + " (" +
-              ID_COLUMN + ", " + CONVERSATION_ID_COLUMN + ", " + ROLE_COLUMN + ", " + CONTENT_COLUMN + ", " +
-              CREATED_AT +") " +
-              "VALUES (?, ?, ?, ?, ?)",
-          uuid,
-          conversationId,
-          messageProp.getProperty("role", "user"),
-          messageProp.getProperty("content"),
-          Timestamp.from(Instant.now())
-      );
+        final String role = messageProp.getProperty("role", "user");
+        final String content = messageProp.getProperty("content", "");
+        final String searchResults = messageProp.getProperty("searchResults"); // Can be null
 
-      return uuid.toString();
+        // If the message contains search results
+        if (searchResults != null && !searchResults.isBlank()) {
+            try {
+                // JSON validation
+                new JSONParser().parse(searchResults);
+            } catch (Exception ex) {
+                throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Invalid search_results JSON");
+            }
+
+            sql.getJdbcTemplate().update(
+                "INSERT INTO public.messages (id, conversation_id, role, content, created_at, search_results) " +
+                    "VALUES (?, ?, ?, ?, ?, ?::jsonb)",
+                uuid, conversationId, role, content, Timestamp.from(Instant.now()), searchResults
+            );
+        } else {
+            sql.getJdbcTemplate().update(
+                "INSERT INTO public.messages (id, conversation_id, role, content, created_at, search_results) " +
+                    "VALUES (?, ?, ?, ?, ?, NULL)",
+                uuid, conversationId, role, content, Timestamp.from(Instant.now())
+            );
+        }
+
+        return uuid.toString();
     } catch (Exception e) {
-      logger.error("Unable to save message", e);
-      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+        logger.error("Unable to save message", e);
+        throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
   }
 
@@ -131,7 +147,7 @@ public class ConversationDataService {
 
       sql.getJdbcTemplate().update(
           "INSERT INTO public." + DOCS_BASKET_COLLECTION + " (" +
-              ID_COLUMN + ", " + CONVERSATION_ID_COLUMN + ", " + DOC_ID + ", " + DOC_TITLE + ") " +
+              ID_COLUMN + ", " + CONVERSATION_ID_COLUMN + ", " + DOC_ID_COLUMN + ", " + DOC_TITLE_COLUMN + ") " +
               "VALUES (?, ?, ?, ?)",
           uuid,
           conversationId,
@@ -173,6 +189,32 @@ public class ConversationDataService {
       logger.error("Unable to list conversations for the user: {}", username, e);
       throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
+  }
+
+  public String getConversationTitle(final String conversationId) throws DatafariServerException {
+      if (conversationId == null || conversationId.isBlank()) {
+        return null;
+      }
+
+      try {
+          final List<String> res = sql.getJdbcTemplate().query(
+              "SELECT " + TITLE_COLUMN + " " +
+                  "FROM public." + CONVERSATION_COLLECTION + " " +
+                  "WHERE " + ID_COLUMN + " = ? " +
+                  "LIMIT 1",
+              new Object[] { UUID.fromString(conversationId) },
+              (rs, rowNum) -> rs.getString(1)
+          );
+
+          return res.isEmpty() ? null : res.getFirst();
+
+      } catch (Exception e) {
+          logger.error("Unable to retrieve conversation title for id {}", conversationId, e);
+          throw new DatafariServerException(
+              CodesReturned.PROBLEMCONNECTIONDATABASE,
+              e.getMessage()
+          );
+      }
   }
 
   public Properties getLatestConversation(final String username) throws DatafariServerException {

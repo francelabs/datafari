@@ -41,10 +41,15 @@ public class AiRequest {
     @JsonProperty("action")
     public Action action = Action.rag;  // "rag" | "agentic" | "summarize" | "search"
 
-    /** Existing conversation ID. Optional */
+    /** Existing memory ID. */
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonProperty("memoryId")
     public String memoryId;
+
+    /** Existing conversation ID. If missing, a new conversation is created. */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonProperty("conversationId")
+    public String conversationId;
 
     /** Validate requests depending on action. */
     @JsonIgnore
@@ -57,6 +62,19 @@ public class AiRequest {
             default -> errors.add("unknown action: " + act);
         }
         return errors;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("query:").append(query)
+            .append("\naction:").append(action)
+            .append("\nconversationId:").append(conversationId)
+            .append("\nlang:").append(lang)
+            .append("\nhistory:").append(history.size()).append(" mmessages")
+            .append("\nagent:").append(agent)
+            .append("\nfilters:").append(filters);
+        return super.toString();
     }
 
     public enum Action { rag, agentic, summarize, search }

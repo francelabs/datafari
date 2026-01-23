@@ -57,11 +57,12 @@ public final class AgentStreamer {
                     ));
                     done.countDown();
                 })
+            // TODO : handle tool results
                 .onCompleteResponse(resp -> {
                     // End of stream
-                    emit.event("stream.completed", Map.of(
-                            "finishReason", String.valueOf(resp.finishReason())
-                    ));
+//                    emit.event("stream.completed", Map.of(
+//                            "finishReason", String.valueOf(resp.finishReason())
+//                    ));
                     done.countDown();
                 })
                 .start();

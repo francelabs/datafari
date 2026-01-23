@@ -188,6 +188,7 @@ CREATE TABLE messages (
     role VARCHAR(32) NOT NULL,
     content TEXT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    search_results JSONB,
 
     CONSTRAINT messages_conversation_fk
       FOREIGN KEY (conversation_id) REFERENCES conversation(id) ON DELETE CASCADE,
@@ -195,6 +196,7 @@ CREATE TABLE messages (
     CONSTRAINT messages_role_chk
       CHECK (role IN ('user', 'assistant', 'system', 'tool'))
 );
+
 CREATE TABLE docsbasket (
     id UUID PRIMARY KEY,
     conversation_id UUID NOT NULL,
