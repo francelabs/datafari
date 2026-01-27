@@ -118,6 +118,7 @@ public class EmbeddingsModelsConfig {
     } catch (Exception e) {
       jsonResponse.put(OutputConstants.CODE, CodesReturned.GENERALERROR.getValue());
       jsonResponse.put(OutputConstants.STATUS, "Error deleting model: " + e.getMessage());
+      return jsonResponse.toJSONString();
     }
 
     return doGet(request);

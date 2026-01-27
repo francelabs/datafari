@@ -72,90 +72,6 @@ public class DatafariTools {
         return result;
     }
 
-    // TODO : Fix or delete
-//    @ToolMeta(label = "Asking for information...",
-//        i18nKey = "tool.askUser",
-//        icon = "search")
-//    @Tool("Ask a question to the user and wait for the response.")
-//    String askUser(
-//        @P("Message") String message,
-//        @P("schema") Map<String,Object> schema
-//    ) throws AwaitUserInputException {
-//        LOGGER.info("AGENTIC TOOLS - Ask user - Message: {}", message);
-//
-//        // If streaming is used, we send the question to the user.
-//        // Then, we watch the session to catch a response.
-//        String response = null;
-//        if (stream instanceof NdjsonChatStream) {
-//            // 1) Emit "ask" event
-//            stream.ask(message, AiService.getMemoryId(stream, params));
-//            stream.phase("agentic:information needed");
-//
-//            // Create an empty entry in the HTTP Session, using the memory ID as key.
-//            HttpSession session = request.getSession();
-//            session.setAttribute(params.memoryId, "");
-//
-//            // Each 200ms, check if the entry has been updated.
-//            long delay = 300; // Delay in ms between each attempt
-//            long timeout = 1000 * 60 * 3; // Max duration in ms (1000*60*3 = 3 minutes)
-//            long timer = 0;
-//            try {
-//                while (timeout > timer) {
-//                    Thread.sleep(delay); // Wait 300ms
-//                    timer = timer + delay;
-//
-//                    if ( !((String) session.getAttribute(params.memoryId)).isEmpty() ) {
-//                        // If the entry is no longer empty
-//                        response = (String) session.getAttribute(params.memoryId);
-//                        stream.phase("agentic:response received");
-//                        LOGGER.info("User response detected !");
-//                        break;
-//                    }
-//                }
-//
-//                if (response != null && !response.isEmpty()) {
-//                    LOGGER.info("EBE - Response : {}", response);
-//                    return response;
-//                }
-//
-//            } catch (InterruptedException e) {
-//                LOGGER.error(e);
-//            } finally {
-//                session.removeAttribute(params.memoryId);
-//            }
-//
-//        }
-//
-//        if (config.getBooleanProperty(RagConfiguration.CHAT_MEMORY_ENABLED))  {
-//            throw new AwaitUserInputException(CodesReturned.PROBLEMQUERY, message);
-//        } else {
-//            // If memory is disabled, return default message to llm
-//            return "Sorry, the 'ask user' feature is disabled.";
-//        }
-//    }
-
-//    @ToolMeta(label = "Checking chat history...",
-//            i18nKey = "tool.readChatHistory",
-//            icon = "brain")
-//    @Tool("Read the conversation history, including user's messages and assistant's responses.")
-//    String readChatHistory() {
-//        LOGGER.debug("AGENTIC TOOLS - Reading chat history");
-//
-//        if (params.history == null) {
-//            params.history = new ArrayList<>();
-//        }
-//
-//        StringBuilder sb = new StringBuilder();
-//        for (AiRequest.ChatMessage message : params.history) {
-//            sb.append(message.role.name().toUpperCase())
-//                    .append(": ")
-//                    .append(message.message)
-//                    .append("\n");
-//        }
-//        sb.append("USER: ").append(params.query);
-//        return sb.toString();
-//    }
-
     @ToolMeta(label = "Searching documents...",
             i18nKey = "tool.bm25Search",
             icon = "search")
@@ -210,7 +126,7 @@ public class DatafariTools {
         String handler = "/select";
         req.addParameter("q", "*:*");
         // We want to retrieve the content as "embedded_content", whether it is stored in content_fr, content_en, content_es or content_de
-        req.addParameter("fl", "title,parent_doc,docId,url,embedded_content:content_fr,embedded_content:content_en,embedded_content:content_es,embedded_content:content_de");
+        req.addParameter("fl", "title,parent_doc,docId,url,embedded_content");
         req.addParameter("fq", "{!term f=docId}" + id);
         req.addParameter("collection", "VectorMain");
         req.addParameter("start", String.valueOf(start));
@@ -248,7 +164,7 @@ public class DatafariTools {
         req.addParameter("q", query);
         req.addParameter("queryrag", query);
         // We want to retrieve the content as "embedded_content", whether it is stored in content_fr, content_en, content_es or content_de
-        req.addParameter("fl", "title,docId,url,embedded_content:content_fr,embedded_content:content_en,embedded_content:content_es,embedded_content:content_de");
+        req.addParameter("fl", "title,docId,url,embedded_content");
         req.addParameter("fq", "{!term f=docId}" + id);
         req.addParameter("q.op", "OR");
         req.addParameter("wt", "json");
@@ -331,7 +247,7 @@ public class DatafariTools {
 //        req.addParameter("q", query);
 //        req.addParameter("queryrag", query);
 //        // We want to retrieve the content as "embedded_content", whether it is stored in content_fr, content_en, content_es or content_de
-//        req.addParameter("fl", "title,id,parent_doc,exactContent,embedded_content:content_fr,embedded_content:content_en,embedded_content:content_es,embedded_content:content_de,url");
+//        req.addParameter("fl", "title,id,parent_doc,exactContent,embedded_content,url");
 //        req.addParameter("topK", String.valueOf(topK));
 //        req.addParameter("start", "0");
 //        req.addParameter("rows", String.valueOf(rows));
@@ -366,7 +282,7 @@ public class DatafariTools {
         editableRequest.addParameter("q", query);
         editableRequest.addParameter("queryrag", query);
         // We want to retrieve the content as "embedded_content", whether it is stored in content_fr, content_en, content_es or content_de
-        editableRequest.addParameter("fl", "title,docId,parent_doc,embedded_content:content_fr,embedded_content:content_en,embedded_content:content_es,embedded_content:content_de,url");
+        editableRequest.addParameter("fl", "title,docId,parent_doc,embedded_content,url");
         editableRequest.addParameter("topK", "50");
         editableRequest.addParameter("start", "0");
         editableRequest.addParameter("rows", "10");

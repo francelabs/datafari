@@ -5,11 +5,11 @@ import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.dto.ApiError;
 import com.francelabs.datafari.ai.dto.ApiResponse;
-import com.francelabs.datafari.ai.services.AgenticService;
-import com.francelabs.datafari.ai.services.AiService;
-import com.francelabs.datafari.ai.services.RagService;
-import com.francelabs.datafari.ai.services.SummarizationService;
+import com.francelabs.datafari.ai.services.*;
 import com.francelabs.datafari.ai.stream.*;
+import com.francelabs.datafari.exception.DatafariServerException;
+import com.francelabs.datafari.rest.v2_0.users.Assistant;
+import com.francelabs.datafari.service.db.ConversationDataService;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
 import jakarta.servlet.http.HttpSession;
@@ -181,19 +181,6 @@ public class AiPowered {
                 return;
             }
 
-            // TODO : REMOVE IF NOT USED
-//            // If the "askUser" tool is currently listening to a provided memoryId, the connection is closed
-//            // and the session attribute is updated.
-//            String expectedUserInput = (String) session.getAttribute(params.memoryId);
-//            if (expectedUserInput != null && expectedUserInput.isEmpty()) {
-//              LOGGER.info("User is responding to an existing query. Process interrupted.");
-//              session.setAttribute(params.memoryId, params.query);
-//              stream.completed(OK);
-//              emitter.close();
-//              return;
-//            }
-
-
             // **********************
             // ** Call AI Services **
             // **********************
@@ -307,15 +294,15 @@ public class AiPowered {
         SourcesAccumulator sourcesAcc = new SourcesAccumulator(stream);
 
         ApiContent result = new ApiContent();
-        result.memoryId = params.memoryId;
 
-        request.setAttribute("params", params); // TODO : test
+        request.setAttribute("params", params);
 
-        try {
+      try {
             result = switch (action.name()) {
                 case "rag" -> RagService.rag(request, params, stream, sourcesAcc, false);
                 case "agentic" -> AgenticService.agentic(params, request, stream, sourcesAcc, false);
                 case "summarize" -> SummarizationService.summarize(params, request, stream, sourcesAcc, false);
+                case "search" -> SearchService.search(params, request, stream, sourcesAcc);
                 default -> result;
             };
 
@@ -329,7 +316,21 @@ public class AiPowered {
             return AiService.error(stream, "500",
                     ApiError.RAG_TECHNICAL_ERROR.getKey(),
                     ApiError.RAG_TECHNICAL_ERROR.getValue(),
-                    e.getMessage());
+                    e.getMessage(),
+                    params.conversationId
+                );
+        }
+
+
+        if (params.conversationId != null) {
+            try {
+                String conversationTitle = ConversationDataService.getInstance().getConversationTitle(params.conversationId);
+                result.conversationId = params.conversationId;
+                stream.conversation(result.conversationId, conversationTitle);
+
+            } catch (DatafariServerException e) {
+                  LOGGER.warn("Unable to retrieve conversationId");
+            }
         }
 
         stream.phase("service:done");
@@ -345,6 +346,8 @@ public class AiPowered {
         stream.phase("service.started");
         SourcesAccumulator sourcesAcc = new SourcesAccumulator(stream);
         ApiContent result = new ApiContent();
+
+        params.conversationId = AiService.saveUserMessage(request, params);
 
         try {
 
@@ -393,7 +396,7 @@ public class AiPowered {
             if ("summarize".equals(action.name())) {
                 return AiService.error(stream, "402", "testLabelForError",
                         "This test endpoint returns an error if 'summarize' action is called",
-                        "Technical error that should not be displayed to the user");
+                        "Technical error that should not be displayed to the user", params.conversationId);
             }
 
 
@@ -424,10 +427,14 @@ public class AiPowered {
             return AiService.error(stream, "500",
                     ApiError.RAG_TECHNICAL_ERROR.getKey(),
                     ApiError.RAG_TECHNICAL_ERROR.getValue(),
-                    e.getMessage());
+                    e.getMessage(), params.conversationId);
         }
 
         stream.phase("service:done");
+
+        result.conversationId = params.conversationId;
+        AiService.saveAssistantMessage(request, result);
+        stream.conversation(result.conversationId, "Title of the conversation"); // TODO : retrieve conversation title
 
         return result;
     }

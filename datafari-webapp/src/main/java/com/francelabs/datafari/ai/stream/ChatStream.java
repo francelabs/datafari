@@ -17,6 +17,12 @@ public interface ChatStream {
     /** Sends the agent memory ID to the UI */
     default void memory(String memoryId) { event("memory", Map.of("memoryId", memoryId)); }
 
+    /** Sends information about the current conversation */
+    // TODO : retrieve conversation title
+    default void conversation(String conversationId, String title) {
+        event("conversation", Map.of("conversationId", conversationId, "title", title));
+    }
+
     // Sources
     /** Invoked by source accumulator when a source is added */
     default void addSource(JSONObject src) { event("sources.add", Map.of("source", src)); }
@@ -42,6 +48,12 @@ public interface ChatStream {
     /** Invoked by the tool loader if an exception is thrown by a tool */
     default void toolError(String id, long durationMs, String message) {
         event("tool.error", Map.of("id", id, "durationMs", durationMs, "error", message));
+    }
+
+    // Search from chatbot
+    /** Invoked by the search service to send a list of search results */
+    default void searchResults(JSONArray docs) {
+        event("search.results", Map.of("docs", docs));
     }
 
 

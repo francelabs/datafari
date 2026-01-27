@@ -5,7 +5,10 @@ import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.services.AiService;
 import com.francelabs.datafari.api.SearchAPI;
 import com.francelabs.datafari.ai.config.RagConfiguration;
+import com.francelabs.datafari.rest.v2_0.search.Search2;
+import com.francelabs.datafari.utils.DatafariMainConfiguration;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
+import com.francelabs.datafari.utils.Timer;
 import dev.langchain4j.data.document.Document;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,10 +18,16 @@ import org.json.simple.JSONObject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidParameterException;
 import java.security.MessageDigest;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SearchUtils {
 
@@ -122,16 +131,39 @@ public class SearchUtils {
             }
         }
 
+        JSONObject results = new JSONObject();
         switch (handler) {
             case "/rrf":
-                return SearchAPI.hybridSearch(protocol, request.getUserPrincipal(), parameterMap);
+                results = SearchAPI.hybridSearch(protocol, request.getUserPrincipal(), parameterMap);
+                break;
             case "/vector":
-                return SearchAPI.search(protocol, handler, request.getUserPrincipal(), parameterMap);
+                results = SearchAPI.search(protocol, handler, request.getUserPrincipal(), parameterMap);
+                break;
             case "/select":
             default:
                 handler = "/select";
-                return SearchAPI.search(protocol, handler, request.getUserPrincipal(), parameterMap);
+                results = SearchAPI.search(protocol, handler, request.getUserPrincipal(), parameterMap);
+                break;
         }
+        try {
+            switchDocURLToURLAPI(results, request, "/rest/");
+        } catch (URISyntaxException e) {
+            LOGGER.warn("Unable to switch to click_url.", e);
+        }
+      return results;
+    }
+
+
+    /**
+     * Check if a String (url) contains characters out of the whitelist :
+     * ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=ÀÁÂàáâãäåÃÄÅ?ÈÉÊËèéêëÌÍÎÏìíîïÒÓÔòóôõöÕÖÙÚÛÜùúûüÇçÑñÆæŒœ
+     * @param url A String url
+     */
+    private static boolean isUrlSafe(String url) {
+        String blacklist = "[^A-Za-z0-9-._~:/?#\\[\\]@!$%&'()*+,;={}^¨€£\"`<>|ÀÁÂàáâãäåÃÄÅÈÉÊËèéêëÌÍÎÏìíîïÒÓÔòóôõöÕÖÙÚÛÜùúûüÇçÑñÆæ ]";
+        Pattern p = Pattern.compile(blacklist);
+        Matcher m = p.matcher(url);
+        return !m.find();
     }
 
 
@@ -151,7 +183,7 @@ public class SearchUtils {
         request.addParameter("queryrag", queryrag); // The rewritten query is used only for Vector Search
         request.addParameter("hl", "false");
         // We want to retrieve the content as "embedded_content", whether it is stored in content_fr, content_en, content_es or content_de
-        request.addParameter("fl", "docId,title,exactContent,embedded_content:content_fr,embedded_content:content_en,embedded_content:content_es,embedded_content:content_de,url,llm_summary");
+        request.addParameter("fl", "docId,title,exactContent,embedded_content,url,llm_summary");
 
         String handler;
         switch(retrievalMethod) {
@@ -260,7 +292,7 @@ public class SearchUtils {
   public static Document jsonToDocument(JSONObject doc){
     try {
       String docId = (String) doc.get("docId");
-      String url = (String) doc.get(AiService.URL_FIELD);
+      String url = (doc.get(AiService.CLICK_URL_FIELD) != null) ? (String) doc.get(AiService.CLICK_URL_FIELD) : (String) doc.get(AiService.URL_FIELD);
       String title;
       Object t = doc.get(AiService.TITLE_FIELD);
       if (t instanceof JSONArray ja) title = String.valueOf(ja.getFirst());
@@ -323,5 +355,89 @@ public class SearchUtils {
       return editableRequest;
   }
 
-    // TODO : Move here common search request preparation
+
+
+    /**
+     * Replace the 'url' by the 'click_url' field to result docs of the provided search response to point to the URL REST API. The URL REST API allows to keep track of clicked documents even if
+     * clicked from an external UI
+     *
+     * @param searchResponse The search response to modify
+     * @param request        The {@link HttpServletRequest} that performed the search request
+     * @param searchEndpoint The search endpoint from which the provided searchResponse is issued from
+     * @throws URISyntaxException Invalid URL
+     */
+    private static void switchDocURLToURLAPI(final JSONObject searchResponse, final HttpServletRequest request, final String searchEndpoint) throws URISyntaxException {
+
+        final JSONObject responseObj = (JSONObject) searchResponse.get("response");
+        if (responseObj != null) {
+            final JSONArray docsArray = (JSONArray) responseObj.get("docs");
+            for (final Object docObj : docsArray) {
+                final JSONObject jsonDoc = (JSONObject) docObj;
+                final String url = (String) jsonDoc.get("url");
+                if (url != null && isUrlSafe(URLDecoder.decode(url, StandardCharsets.UTF_8))) {
+                    // temper with the URL to point on our URL endpoint
+                    // Also add a path array giving path information for display purposes
+
+
+                    StringBuffer originalUrl = request.getRequestURL();
+                    String queryUrl = request.getQueryString();
+                    LOGGER.debug("current url : {}", originalUrl);
+                    LOGGER.debug("current query url : {}", queryUrl);
+                    URI orig = URI.create(originalUrl.toString());
+                    String newHost;
+                    StringBuffer chosenURL;
+
+                    String customProxyUrl = DatafariMainConfiguration.getInstance().getProperty(DatafariMainConfiguration.CUSTOM_PROXY_URL, "");
+
+                    if (!customProxyUrl.isEmpty()) {
+                        newHost = customProxyUrl;
+                        URI rebuilt = new URI(
+                            orig.getScheme(),
+                            null,
+                            newHost,
+                            orig.getPort(),
+                            orig.getPath(),
+                            queryUrl,
+                            null
+                        );
+                        String newBaseUrl = rebuilt.toString();
+                        LOGGER.debug("new base url : {}", newBaseUrl);
+
+
+                        chosenURL = new StringBuffer(newBaseUrl);
+                    }
+                    else {
+                        chosenURL = request.getRequestURL();
+                    }
+                    LOGGER.debug("url chosen : {}", chosenURL);
+
+                    // Get query id if available
+                    String queryId = request.getParameter("id");
+                    if (request.getAttribute("id") != null) {
+                        queryId = (String) request.getAttribute("id");
+                    }
+
+                    String newUrl = chosenURL.substring(0, chosenURL.indexOf(searchEndpoint));
+                    String newUrlFolder = newUrl;
+                    newUrl += "/rest/v2.0/url?url=" + URLEncoder.encode(URLDecoder.decode(url, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+                    if (url.contains("/")) {
+                        newUrlFolder += "/rest/v2.0/url?url=" + URLEncoder.encode(URLDecoder.decode(url.substring(0,url.lastIndexOf('/')), StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+                    } else {
+                        newUrlFolder = newUrl;
+                    }
+                    jsonDoc.put("folder_url", newUrlFolder);
+
+                    newUrl += "&id=" + queryId;
+                    jsonDoc.put("url", newUrl);
+
+                } else if (url != null) {
+//                    jsonDoc.put("click_url", url);
+                    jsonDoc.put("url", url);
+                    jsonDoc.put("folder_url", url);
+                }
+            }
+        }
+    }
+
+    // Move here common search request preparation
 }

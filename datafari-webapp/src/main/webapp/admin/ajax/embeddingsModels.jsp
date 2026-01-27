@@ -97,7 +97,7 @@
               <div class="form-group row">
                 <label for="interface-type" class="col-sm-2 col-form-label" id="interfaceTypeLabel"></label>
                 <div class="col-sm-5">
-                  <select id="interface-type" class="form-control">
+                  <select id="interface-type" class="form-control" required>
                     <option value="">-- Select --</option>
                     <option value="OpenAI">OpenAI</option>
                     <option value="AIAgent">Datafari AI Agent</option>

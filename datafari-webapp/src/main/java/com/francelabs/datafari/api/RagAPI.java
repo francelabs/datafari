@@ -53,7 +53,8 @@ public class RagAPI extends SearchAPI {
     private static final Logger LOGGER = LogManager.getLogger(RagAPI.class.getName());
 
     public static ApiContent rag(final HttpServletRequest request, JSONObject searchResults,
-                                 boolean ragBydocument, ChatStream stream, SourcesAccumulator sourcesAcc, boolean isTool) throws IOException {
+                                 boolean ragBydocument, ChatStream stream, SourcesAccumulator sourcesAcc,
+                                 boolean isTool) throws IOException {
 
 
         // Get RAG specific configuration
@@ -74,11 +75,11 @@ public class RagAPI extends SearchAPI {
             if (ragBydocument) {
                 return AiService.error(stream, "428", "ragNoFileFound",
                     "Sorry, the requested file does not exist, or is not available.",
-                    e.getLocalizedMessage(), isTool);
+                    e.getLocalizedMessage(), null, isTool); // TODO : retrieve conversation ID to save error messages
             } else {
                 return AiService.error(stream, "428", "ragNoFileFound",
                     "Sorry, I couldn't find any relevant document to answer your request.",
-                    e.getLocalizedMessage(), isTool);
+                    e.getLocalizedMessage(), null, isTool);
             }
         }
 
@@ -100,12 +101,12 @@ public class RagAPI extends SearchAPI {
             LOGGER.error("An error occurred while calling external LLM service.", e);
             return AiService.error(stream, "500", "ragTechnicalError",
                     "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
-                e.getLocalizedMessage(), isTool);
+                e.getLocalizedMessage(), null, isTool);
         }catch (Exception e) {
             LOGGER.error("An unexpected error occurred while processing RAG query.", e);
             return AiService.error(stream, "500", "ragTechnicalError",
                     "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
-                e.getLocalizedMessage(), isTool);
+                e.getLocalizedMessage(), null, isTool);
         }
 
         LOGGER.debug("RagAPI - LLM response: {}", message);
@@ -117,7 +118,7 @@ public class RagAPI extends SearchAPI {
         } else {
             return AiService.error(stream, "428", "ragNoValidAnswer",
                 "Sorry, I could not find an answer to your question.", "LLM returned empty response.",
-                isTool);
+                null, isTool);
         }
 
     }

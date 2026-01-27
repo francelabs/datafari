@@ -39,12 +39,17 @@ public class AiRequest {
 
     /** Action requested. "rag", "summarize", "agentic"... */
     @JsonProperty("action")
-    public Action action = Action.rag;  // "rag" | "agentic" | "summarize"
+    public Action action = Action.rag;  // "rag" | "agentic" | "summarize" | "search"
 
-    /** Existing conversation ID. Optional */
+    /** Existing memory ID. */
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonProperty("memoryId")
     public String memoryId;
+
+    /** Existing conversation ID. If missing, a new conversation is created. */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonProperty("conversationId")
+    public String conversationId;
 
     /** Validate requests depending on action. */
     @JsonIgnore
@@ -53,13 +58,26 @@ public class AiRequest {
         String act = action == null ? "rag" : action.name();
         switch (act) {
             case "summarize" -> { if (id == null || id.isBlank()) errors.add("id is required for summarize"); }
-            case "rag", "agentic" -> { if (query == null || query.isBlank()) errors.add("query is required for " + act); }
+            case "rag", "agentic", "search" -> { if (query == null || query.isBlank()) errors.add("query is required for " + act); }
             default -> errors.add("unknown action: " + act);
         }
         return errors;
     }
 
-    public enum Action { rag, agentic, summarize }
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("query:").append(query)
+            .append("\naction:").append(action)
+            .append("\nconversationId:").append(conversationId)
+            .append("\nlang:").append(lang)
+            .append("\nhistory:").append(history.size()).append(" mmessages")
+            .append("\nagent:").append(agent)
+            .append("\nfilters:").append(filters);
+        return super.toString();
+    }
+
+    public enum Action { rag, agentic, summarize, search }
 
     public static class ChatMessage {
         public Role role;

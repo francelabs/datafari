@@ -305,7 +305,7 @@ public class CfPTools {
         String handler = "/select";
         req.addParameter("q", "*:*");
         // We want to retrieve the content as "embedded_content", whether it is stored in content_fr, content_en, content_es or content_de
-        req.addParameter("fl", "title,parent_doc,docId,url,embedded_content:content_fr,embedded_content:content_en,embedded_content:content_es,embedded_content:content_de");
+        req.addParameter("fl", "title,parent_doc,docId,url,embedded_content");
         req.addParameter("fq", "{!term f=docId}" + id);
         req.addParameter("collection", "VectorMain");
         req.addParameter("start", String.valueOf(start));
