@@ -21,6 +21,7 @@ public abstract class AiService {
     public static final String ID_FIELD = "id";
     public static final String TITLE_FIELD = "title";
     public static final String URL_FIELD = "url";
+    public static final String CLICK_URL_FIELD = "click_url";
     public static final String LLM_SUMMARY_FIELD = "llm_summary";
     public static final String EXACT_CONTENT_FIELD = "exactContent";
     public static final String QUERY_FIELD = "query";
