@@ -274,6 +274,10 @@ public class ConversationDataService {
       throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing username");
     }
 
+    if (conversationId == null) {
+      throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing conversationId");
+    }
+
     try {
       return sql.getJdbcTemplate().query(
           "SELECT db.* " +

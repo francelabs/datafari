@@ -113,7 +113,39 @@ public class Assistant {
       } catch (DatafariServerException e) {
         return RestAPIUtils.buildErrorResponse(500, e.getMessage(), null);
       }
-      return RestAPIUtils.buildOKResponse(new JSONObject());
+
+      return getUserDocsBasket(request);
+  }
+
+  /**
+   * Delete an entry from docs_basket, as long as it belongs to the user.
+   */
+  @GetMapping(value = "rest/v2.0/users/docsbasket", produces = "application/json;charset=UTF-8")
+  protected String getUserDocsBasket(final HttpServletRequest request) {
+
+    final String authenticatedUserName = AuthenticatedUserName.getName(request);
+    JSONObject responseContent = new JSONObject();
+    JSONArray docsbasket = new JSONArray();
+
+    if (authenticatedUserName == null) {
+      return RestAPIUtils.buildErrorResponse(407, "Authentication required", null);
+    }
+    final ConversationDataService service = ConversationDataService.getInstance();
+
+
+    try {
+      Properties lastConversation = service.getLatestConversation(authenticatedUserName);
+      if (lastConversation != null && lastConversation.getProperty("id") != null) {
+        String conversationId = lastConversation.getProperty("id");
+        List<Properties> docsbasketList = service.getDocsBasketByConversation(conversationId, authenticatedUserName);
+        docsbasket = listToJson(docsbasketList);
+      }
+    } catch (DatafariServerException e) {
+      return RestAPIUtils.buildErrorResponse(500, e.getMessage(), null);
+    }
+
+    responseContent.put("docsbasket", docsbasket);
+    return RestAPIUtils.buildOKResponse(responseContent);
   }
 
   /**
@@ -148,6 +180,7 @@ public class Assistant {
 
     final ConversationDataService service = ConversationDataService.getInstance();
     final String authenticatedUserName = AuthenticatedUserName.getName(request);
+    String id; // The ID of the created entry
 
     if (authenticatedUserName == null) {
       return RestAPIUtils.buildErrorResponse(407, "Authentication required", null);
@@ -184,14 +217,16 @@ public class Assistant {
         document.put("docId", docId);
         document.put("docTitle", docTitle);
         document.put("conversationId", conversationId);
-        service.addDocToBasket(document);
+        id = service.addDocToBasket(document);
     } catch (DatafariServerException e) {
         return RestAPIUtils.buildErrorResponse(500, e.getMessage(), null);
     } catch (ParseException e) {
         return RestAPIUtils.buildErrorResponse(400, "Invalid JSON.", null);
     }
 
-    return RestAPIUtils.buildOKResponse(new JSONObject());
+    JSONObject response = new JSONObject();
+    response.put("id", id);
+    return RestAPIUtils.buildOKResponse(response);
   }
 
   /**
