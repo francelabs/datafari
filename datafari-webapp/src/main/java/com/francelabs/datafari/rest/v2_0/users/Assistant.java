@@ -352,7 +352,21 @@ public class Assistant {
   private JSONObject propertiesToJson (Properties properties) {
     JSONObject jsonMap = new JSONObject();
     for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-      jsonMap.put(entry.getKey(), entry.getValue());
+
+      // Handle search_results entries
+      if (ConversationDataService.SEARCH_RESULTS_COLUMN.equals(entry.getKey())) {
+        // Convert search results to JSONArray
+        try {
+          JSONParser parser = new JSONParser();
+          jsonMap.put("docs", (JSONArray)parser.parse(entry.getValue().toString()));
+        } catch (ParseException e) {
+            logger.error("Unable to convert retrieved search_results to JSONArray");
+        }
+
+      } else {
+        // All other fields are converted to Strings
+        jsonMap.put(entry.getKey(), entry.getValue());
+      }
     }
     return jsonMap;
   }

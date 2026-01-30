@@ -39,21 +39,21 @@ import java.util.UUID;
 public class ConversationDataService {
 
   // DB table names
-  public static final String CONVERSATION_COLLECTION = "conversation";
-  public static final String DOCS_BASKET_COLLECTION = "docsbasket";
-  public static final String MESSAGES_COLLECTION = "messages";
+  public static final String CONVERSATION_COLLECTION  = "conversation";
+  public static final String DOCS_BASKET_COLLECTION   = "docsbasket";
+  public static final String MESSAGES_COLLECTION      = "messages";
 
   // DB column names
-  public static final String ID_COLUMN = "id";
-  public static final String TITLE_COLUMN = "title";
-  public static final String CONVERSATION_ID_COLUMN = "conversation_id";
-  public static final String CONTENT_COLUMN = "content";
-  public static final String ROLE_COLUMN = "role";
-  public static final String USER_COLUMN = "username";
-  public static final String CREATED_AT = "created_at";
-  public static final String DOC_ID_COLUMN = "document_id";
-  public static final String DOC_TITLE_COLUMN = "document_title";
-  public static final String SEARCH_RESULTS_COLUMN = "search_results";
+  public static final String ID_COLUMN                = "id";
+  public static final String TITLE_COLUMN             = "title";
+  public static final String CONVERSATION_ID_COLUMN   = "conversation_id";
+  public static final String CONTENT_COLUMN           = "content";
+  public static final String ROLE_COLUMN              = "role";
+  public static final String USER_COLUMN              = "username";
+  public static final String CREATED_AT               = "created_at";
+  public static final String DOC_ID_COLUMN            = "document_id";
+  public static final String DOC_TITLE_COLUMN         = "document_title";
+  public static final String SEARCH_RESULTS_COLUMN    = "search_results";
 
   private static final Logger logger = LogManager.getLogger(ConversationDataService.class);
 
