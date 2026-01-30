@@ -9,7 +9,45 @@ export DATAFARI_USER="datafari"
 export POSTGRES_USER="postgres"
 
 export DATAFARI_HOME=$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )
-export PATH=${PATH}:$JAVA_HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# ---------------------------------------------------------------------------
+# Datafari Java environment resolution
+# - Optional admin override: datafari-env.sh
+# - Ffallback for non-interactive contexts (Monit, sudo, Docker)
+# ---------------------------------------------------------------------------
+
+DATAFARI_ENV_OVERRIDE="${DATAFARI_HOME}/tomcat/conf/datafari-env.sh"
+
+# Load admin override if present (installer-managed)
+if [ -f "$DATAFARI_ENV_OVERRIDE" ]; then
+  # shellcheck disable=SC1090
+  source "$DATAFARI_ENV_OVERRIDE"
+fi
+
+# If DATAFARI_JAVA_HOME is defined and valid, use it
+if [ -n "${DATAFARI_JAVA_HOME:-}" ] && [ -x "$DATAFARI_JAVA_HOME/bin/java" ]; then
+  export JAVA_HOME="$DATAFARI_JAVA_HOME"
+fi
+
+# If JAVA_HOME is still not set, try to derive it from java in PATH
+if [ -z "${JAVA_HOME:-}" ]; then
+  java_bin="$(command -v java 2>/dev/null || true)"
+  if [ -n "$java_bin" ]; then
+    if command -v readlink >/dev/null 2>&1; then
+      java_bin="$(readlink -f "$java_bin" 2>/dev/null || echo "$java_bin")"
+    fi
+    export JAVA_HOME="$(dirname "$(dirname "$java_bin")")"
+  fi
+fi
+
+# Build a sane PATH (put JAVA_HOME/bin first if known)
+if [ -n "${JAVA_HOME:-}" ] && [ -d "$JAVA_HOME/bin" ]; then
+  export PATH="$JAVA_HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${PATH}"
+else
+  export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${PATH}"
+fi
+
+
 export TRUSTSTORE_PATH=${DATAFARI_HOME}/ssl-keystore/datafari-truststore.p12
 export TRUSTSTORE_PASSWORD=DataFariAdmin
 export JAVA_OPTS="${JAVA_OPTS} -Djavax.net.ssl.trustStore=${TRUSTSTORE_PATH} -Djavax.net.ssl.trustStorePassword=${TRUSTSTORE_PASSWORD} -Duser.timezone=UTC"

@@ -155,7 +155,7 @@ init_git() {
   sed -i -e "s/@VERSION@/$version/g" $TOMCAT_HOME/webapps/Datafari/footer.jsp >>$installerLog 2>&1
   sed -i -e "s/@VERSION@/$version/g" $TOMCAT_HOME/webapps/Datafari/admin/admin-footer.jsp >>$installerLog 2>&1
   sed -i -e "s/@COMMIT@/$commit/g" $TOMCAT_HOME/webapps/Datafari/admin/admin-footer.jsp >>$installerLog 2>&1
-
+  echo "$version" > ${DATAFARI_HOME}/VERSION
 }
 
 init_logstash() {
