@@ -169,6 +169,44 @@ public class Assistant {
       return RestAPIUtils.buildOKResponse(new JSONObject());
   }
 
+
+  /**
+   * Rename a conversation, as long as it belongs to the user.
+   */
+  @PutMapping(value = "rest/v2.0/users/conversations", produces = "application/json;charset=UTF-8")
+  protected String updateConversationTitle(final HttpServletRequest request,
+                                           @RequestBody final String jsonParam) {
+      final String authenticatedUserName = AuthenticatedUserName.getName(request);
+
+      try {
+          final JSONParser parser = new JSONParser();
+          final JSONObject body = (JSONObject) parser.parse(jsonParam);
+
+          final String conversationId = body.get("conversationId") != null ? body.get("conversationId").toString() : null;
+          final String title = body.get("title") != null ? body.get("title").toString() : null;
+
+          if (conversationId == null || conversationId.isBlank() || title == null || title.isBlank()) {
+              return RestAPIUtils.buildErrorResponse(400, "Invalid request. Missing conversationId or title.", null);
+          }
+
+          final ConversationDataService service = ConversationDataService.getInstance();
+          service.updateConversationTitle(conversationId, authenticatedUserName, title);
+
+          final JSONObject response = new JSONObject();
+          response.put("conversationId", conversationId);
+          response.put("title", title);
+
+          return RestAPIUtils.buildOKResponse(response);
+
+      } catch (ParseException e) {
+          return RestAPIUtils.buildErrorResponse(400, "Invalid JSON.", null);
+      } catch (DatafariServerException e) {
+          return RestAPIUtils.buildErrorResponse(400, e.getMessage(), null);
+      } catch (Exception e) {
+          return RestAPIUtils.buildErrorResponse(500, e.getMessage(), null);
+      }
+  }
+
   /**
    * Add a document to docs_basket, associated to the specified conversation.
    * If no conversation is provided, we try to use the default one, or create a new one if needed.

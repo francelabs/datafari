@@ -391,4 +391,41 @@ public class ConversationDataService {
     }
     return p;
   }
+
+  /**
+   * Rename a conversation that belongs to user
+   */
+  public void updateConversationTitle(final String conversationId, final String username, final String newTitle)
+          throws DatafariServerException {
+      if (username == null || username.isBlank()) {
+          throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing username");
+      } else if (conversationId == null || conversationId.isBlank() || newTitle == null || newTitle.isBlank()) {
+          throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Invalid request. Missing conversationId or title.");
+      }
+
+      try {
+        final UUID convId = UUID.fromString(conversationId);
+
+        final int updated = sql.getJdbcTemplate().update(
+            "UPDATE public." + CONVERSATION_COLLECTION + " " +
+                "SET " + TITLE_COLUMN + " = ? " +
+                "WHERE " + ID_COLUMN + " = ? " +
+                "AND " + USER_COLUMN + " = ?",
+            newTitle,
+            convId,
+            username
+        );
+
+        if (updated == 0) {
+          // Missing conversation or wrong username
+          throw new DatafariServerException(CodesReturned.PROBLEMQUERY, "Conversation not found or forbidden.");
+        }
+
+      } catch (IllegalArgumentException badUuid) {
+          throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Invalid conversationId UUID.");
+      } catch (Exception e) {
+        logger.error("Unable to update conversation title for id {} user {}", conversationId, username, e);
+        throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+      }
+  }
 }
