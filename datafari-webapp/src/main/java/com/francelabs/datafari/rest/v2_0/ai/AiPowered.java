@@ -414,7 +414,8 @@ public class AiPowered {
 
 
             // 8) Ending
-            emit(stream, () -> stream.phase("service.done"), TEST_DELAY_MS);
+//            emit(stream, () -> stream.phase("service.done"), TEST_DELAY_MS);
+//            emit(stream, () -> stream.completed(OK), TEST_DELAY_MS);
 
 
             // JSONize and stream the final sources
@@ -433,8 +434,10 @@ public class AiPowered {
         stream.phase("service:done");
 
         result.conversationId = params.conversationId;
-        AiService.saveAssistantMessage(request, result);
-        stream.conversation(result.conversationId, "Title of the conversation"); // TODO : retrieve conversation title
+        if (result.conversationId != null) {
+            AiService.saveAssistantMessage(request, result);
+            stream.conversation(result.conversationId, "Title of the conversation"); // TODO : retrieve conversation title
+        }
 
         return result;
     }
