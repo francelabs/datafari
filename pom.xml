@@ -12,6 +12,8 @@
   <properties>
     <adminui.version>1.0</adminui.version>
     <adminui.md5>ae9ca787e5067f3bedb1f2cdad4408b0</adminui.md5>
+    <assistant.version>main</assistant.version>
+    <assistant.md5>d2ab95f0537004702745bfb6b9dfcedc</assistant.md5>
     <bcpkix-jdk15on.version>1.70</bcpkix-jdk15on.version>
     <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
     <datafari.version>7.0-dev-Community</datafari.version>
@@ -84,6 +86,7 @@
     <module>datafari-share-connector</module>
     <module>datafari-ui</module>
     <module>datafari-adminui</module>
+    <module>datafari-assistant</module>
     <module>datafari-git-plugin</module>
     <module>datafari-regex-entity-connector</module>
     <module>datafari-llm-connector</module>
