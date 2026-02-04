@@ -18,6 +18,9 @@ public class RagConfig {
 
   // Set of editable properties
   Set<String> allowedKeys = Set.of(
+          RagConfiguration.ENABLE_ASSISTANT,
+          RagConfiguration.ENABLE_CONVERSATION_STORAGE,
+          RagConfiguration.ASSISTANT_RETRIEVAL_METHOD,
           RagConfiguration.ENABLE_RAG,
           RagConfiguration.ENABLE_AGENTIC,
           RagConfiguration.ENABLE_SUMMARIZATION,
@@ -59,17 +62,17 @@ public class RagConfig {
   protected String doGet(final HttpServletRequest request) {
     JSONObject response = new JSONObject();
     RagConfiguration config = RagConfiguration.getInstance();
+    RagConfiguration.ENABLE_ASSISTANT,
+        RagConfiguration.ENABLE_CONVERSATION_STORAGE,
+        RagConfiguration.ASSISTANT_RETRIEVAL_METHOD,
+
+    response.put("enableAssistant", config.getBooleanProperty(RagConfiguration.ENABLE_ASSISTANT));
+    response.put("enableConversationStorage", config.getBooleanProperty(RagConfiguration.ENABLE_CONVERSATION_STORAGE));
+    response.put("assistantRetrievalMethod", config.getProperty(RagConfiguration.ASSISTANT_RETRIEVAL_METHOD));
 
     response.put("enableRag", config.getBooleanProperty(RagConfiguration.ENABLE_RAG));
     response.put("enableAgentic", config.getBooleanProperty(RagConfiguration.ENABLE_AGENTIC));
     response.put("enableSummarization", config.getBooleanProperty(RagConfiguration.ENABLE_SUMMARIZATION));
-
-//    response.put("apiEndpoint", config.getProperty(RagConfiguration.API_ENDPOINT));
-//    response.put("apiToken", config.getProperty(RagConfiguration.API_TOKEN));
-//    response.put("llmService", config.getProperty(RagConfiguration.LLM_SERVICE));
-//    response.put("llmModel", config.getProperty(RagConfiguration.LLM_MODEL));
-//    response.put("llmTemperature", config.getProperty(RagConfiguration.LLM_TEMPERATURE));
-//    response.put("llmMaxTokens", config.getProperty(RagConfiguration.LLM_MAX_TOKENS));
 
     response.put("chunkingStrategy", config.getProperty(RagConfiguration.PROMPT_CHUNKING_STRATEGY));
     response.put("maxRequestSize", config.getProperty(RagConfiguration.MAX_REQUEST_SIZE));

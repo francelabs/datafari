@@ -1,7 +1,7 @@
 function internationalize() {
   // Internationalize content
   $("#topbar1").text(window.i18n.msgStore['home']);
-  $("#topbar2").text(window.i18n.msgStore['adminUI-extraFunctionalities']);
+  $("#topbar2").text(window.i18n.msgStore['adminUI-aiMenu']);
   $("#topbar3").text(window.i18n.msgStore['adminUI-ragConf']);
 
   $("#enableRagLabel").text(window.i18n.msgStore['ragConf-enableRagLabel']);
@@ -83,8 +83,8 @@ function updateRetrievalVisibility() {
 function submitRagConfig(event) {
   event.preventDefault();
 
-  if (!$('#ragCong-form')[0].checkValidity()) {
-    $('#ragCong-form').addClass('was-validated');
+  if (!$('#ragConf-form')[0].checkValidity()) {
+    $('#ragConf-form').addClass('was-validated');
     return;
   }
 
@@ -149,5 +149,5 @@ $(document).ready(function () {
   $('#chatQueryRewritingEnabledVector').bootstrapToggle();
   $('#retrievalMethod').on('change', updateRetrievalVisibility);
 
-  $('#ragCong-form').on('submit', submitRagConfig);
+  $('#ragConf-form').on('submit', submitRagConfig);
 });
