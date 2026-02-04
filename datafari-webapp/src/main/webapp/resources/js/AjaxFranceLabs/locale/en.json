@@ -30,6 +30,7 @@
     "adminUI-AlertAdmin": "Alerts Administration",
     "adminUI-Alerts": "Create Alerts",
     "adminUI-AnnotatorConf": "Annotator Configuration",
+    "adminUI-assistantConf": "Datafari Assistant Configuration",
     "adminUI-atomicUpdate": "Atomic Update Management",
     "adminUI-AutocompleteConfig": "Autocomplete Configuration",
     "adminUI-chatLanguageModels-AdminUI": "Chat Language Models",

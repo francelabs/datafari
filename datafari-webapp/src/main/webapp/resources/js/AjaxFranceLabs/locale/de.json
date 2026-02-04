@@ -30,6 +30,7 @@
     "adminUI-AlertAdmin": "Benachrichtigungsverwaltung",
     "adminUI-Alerts": "Erstelle eine Benachrichtigung",
     "adminUI-AnnotatorConf": "Annotator Configuration",
+    "adminUI-assistantConf": "Datafari Assistant Configuration",
     "adminUI-AutocompleteConfig": "Autovervollständigung",
     "adminUI-chatLanguageModels-AdminUI": "Chat Language Models",
     "adminUI-chatLanguageModels-addModelButton": "Add New Model",

@@ -321,7 +321,7 @@ public class Assistant {
    */
   public String saveMessage(final HttpServletRequest request, String role, String content, String conversationId, String searchResults) throws DatafariServerException {
 
-      final ConversationDataService service = ConversationDataService.getInstance();
+     final ConversationDataService service = ConversationDataService.getInstance();
       final String authenticatedUserName = AuthenticatedUserName.getName(request);
 
       if (authenticatedUserName == null) {

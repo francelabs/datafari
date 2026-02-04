@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.francelabs.datafari.service.db;
 
+import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 import org.json.simple.parser.JSONParser;
@@ -55,6 +56,8 @@ public class ConversationDataService {
   public static final String DOC_TITLE_COLUMN         = "document_title";
   public static final String SEARCH_RESULTS_COLUMN    = "search_results";
 
+  public static boolean enabled;
+
   private static final Logger logger = LogManager.getLogger(ConversationDataService.class);
 
   private static volatile ConversationDataService instance; // legacy bridge for existing static calls
@@ -73,12 +76,23 @@ public class ConversationDataService {
   public ConversationDataService(final SqlService sql) {
     this.sql = sql;
     instance = this; // publish legacy singleton reference when Spring creates the bean
+
+    // Is conversation storage enabled ?
+    RagConfiguration config = RagConfiguration.getInstance();
+    enabled = config.getBooleanProperty(RagConfiguration.ENABLE_CONVERSATION_STORAGE);
+  }
+
+  private void checkIdEnabled() throws DatafariServerException {
+      if (enabled) {
+          throw new DatafariServerException(CodesReturned.FALSE, "Conversation storage is disabled.");
+      }
   }
 
   // -------------------------------------------------------------------------------------
   // Create
   // -------------------------------------------------------------------------------------
   public String createConversation(final Properties conversationProp) throws DatafariServerException {
+    checkIdEnabled();
     try {
       final UUID uuid = UUID.randomUUID();
       SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -102,6 +116,7 @@ public class ConversationDataService {
   }
 
   public String addMessage(final Properties messageProp) throws DatafariServerException {
+    checkIdEnabled();
     try {
         final UUID uuid = UUID.randomUUID();
         final UUID conversationId = UUID.fromString(messageProp.getProperty("conversationId"));
@@ -141,6 +156,7 @@ public class ConversationDataService {
 
   public String addDocToBasket(final Properties messageProp) throws DatafariServerException {
     try {
+      checkIdEnabled();
       final UUID uuid = UUID.randomUUID();
       final UUID conversationId = UUID.fromString(messageProp.getProperty("conversationId"));
 
@@ -166,6 +182,7 @@ public class ConversationDataService {
   // Read
   // -------------------------------------------------------------------------------------
   public List<Properties> getUserConversations(final String username) throws DatafariServerException {
+    checkIdEnabled();
     if (username == null || username.isBlank()) {
       throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing username");
     }
@@ -192,6 +209,7 @@ public class ConversationDataService {
   }
 
   public String getConversationTitle(final String conversationId) throws DatafariServerException {
+      checkIdEnabled();
       if (conversationId == null || conversationId.isBlank()) {
         return null;
       }
@@ -218,6 +236,7 @@ public class ConversationDataService {
   }
 
   public Properties getLatestConversation(final String username) throws DatafariServerException {
+    checkIdEnabled();
     if (username == null || username.isBlank()) {
       throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing username");
     }
@@ -244,7 +263,7 @@ public class ConversationDataService {
   }
 
   public List<Properties> getMessagesByConversation(final String conversationId, final String username) throws DatafariServerException {
-
+    checkIdEnabled();
     if (username == null || username.isBlank()) {
       throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing username");
     }
@@ -270,6 +289,7 @@ public class ConversationDataService {
   }
 
   public List<Properties> getDocsBasketByConversation(final String conversationId, final String username) throws DatafariServerException {
+    checkIdEnabled();
     if (username == null || username.isBlank()) {
       throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing username");
     }
@@ -345,7 +365,7 @@ public class ConversationDataService {
   }
 
   public void removeDocFromBasketById(final String basketId, final String username) throws DatafariServerException {
-
+    checkIdEnabled();
     if (username == null || username.isBlank()) {
       throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing username");
     }
@@ -397,6 +417,7 @@ public class ConversationDataService {
    */
   public void updateConversationTitle(final String conversationId, final String username, final String newTitle)
           throws DatafariServerException {
+      checkIdEnabled();
       if (username == null || username.isBlank()) {
           throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing username");
       } else if (conversationId == null || conversationId.isBlank() || newTitle == null || newTitle.isBlank()) {

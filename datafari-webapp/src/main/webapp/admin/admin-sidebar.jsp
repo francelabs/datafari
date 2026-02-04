@@ -211,9 +211,11 @@
           <i class="fas fa-brain"></i><span id="aiMenu-AdminUI" class="hidden-xs">RAG & AI Powered Features</span>
         </a>
         <ul id="menu-ai" class="list-unstyled collapse">
+          <li id="assistantConf"><a id="assistantConf-AdminUI"
+                class="ajax-link" href="?page=assistantConf">Datafari Assistant Configuration</a></li>
           <li id="ragConf"><a id="ragConf-AdminUI" class="ajax-link" href="?page=ragConf">RAG & AI Configuration</a></li> <%-- TO UPDATE --%>
           <li id="chatLanguageModels"><a id="chatLanguageModels-AdminUI"
-            class="ajax-link" href="?page=chatLanguageModels">Chat Language Models Management</a></li>
+                class="ajax-link" href="?page=chatLanguageModels">Chat Language Models Management</a></li>
           <%--li id="AIPoweredAPI"><a id="AIPoweredAPI-AdminUI"
             class="ajax-link" href="?page=AIPoweredAPI">AI Powered features</a></li --%> <%-- TODO --%>
         </ul>

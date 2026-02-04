@@ -4,7 +4,7 @@ function internationalize() {
   $("#topbar2").text(window.i18n.msgStore['adminUI-aiMenu']);
   $("#topbar3").text(window.i18n.msgStore['adminUI-assistantConf']);
 
-  $("#enableAssistantLabel").text(window.i18n.msgStore['assistantConf-enableRagLabel']);
+  $("#enableAssistantLabel").text(window.i18n.msgStore['assistantConf-enableAssistantLabel']);
   $("#enableRagLabel").text(window.i18n.msgStore['assistantConf-enableRagLabel']);
   $("#enableAgenticLabel").text(window.i18n.msgStore['assistantConf-enableAgenticLabel']);
   $("#enableSummarizationLabel").text(window.i18n.msgStore['assistantConf-enableSummarizationLabel']);
@@ -37,7 +37,7 @@ function submitAssistantConfig(event) {
   $('#loadingIndicator').show();
 
   const payload = {
-    "ai.enable.assistant": $('#enableAssistant').is(':checked'),
+    "assistant.enable.assistant": $('#enableAssistant').is(':checked'),
     "ai.enable.rag": $('#enableRag').is(':checked'),
     "ai.enable.agentic": $('#enableAgentic').is(':checked'),
     "ai.enable.summarization": $('#enableSummarization').is(':checked'),
@@ -74,7 +74,7 @@ function submitAssistantConfig(event) {
 
 $(document).ready(function () {
   internationalize();
-  loadRagConfig();
+  loadAssistantConfig();
 
   $('#enableAssistant').bootstrapToggle();
   $('#enableRag').bootstrapToggle();
@@ -82,6 +82,6 @@ $(document).ready(function () {
   $('#enableSummarization').bootstrapToggle();
   $('#enableConversationStorage').bootstrapToggle();
 
-  $('#assistantConf-form').on('submit', submit*assistantConfig);
+  $('#assistantConf-form').on('submit', submitAssistantConfig);
 });
 

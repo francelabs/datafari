@@ -29,6 +29,7 @@
     "adminUI-aiMenu-AIPoweredAPI": "AI Powered API",
     "adminUI-AlertAdmin": "Alerts Administration",
     "adminUI-Alerts": "Create Alerts",
+    "adminUI-assistantConf": "Datafari Assistant Configuration",
     "adminUI-AutocompleteConfig": "Autocomplete Configuration",
     "adminUI-chatLanguageModels-AdminUI": "Chat Language Models",
     "adminUI-chatLanguageModels-addModelButton": "Add New Model",

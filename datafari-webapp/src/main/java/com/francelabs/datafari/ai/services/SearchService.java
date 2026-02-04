@@ -1,6 +1,7 @@
 package com.francelabs.datafari.ai.services;
 
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
+import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.stream.ChatStream;
@@ -103,8 +104,15 @@ public class SearchService extends AiService {
         LOGGER.info("AGENTIC TOOLS - BM25 Search - Query: {}", query);
         int rows = 5;
 
-        EditableHttpServletRequest req = new EditableHttpServletRequest(request);
-        String handler = "/select";
+        String retrievalMethod = RagConfiguration.getInstance()
+                .getProperty(RagConfiguration.ASSISTANT_RETRIEVAL_METHOD, "bm25");
+        String handler = switch (retrievalMethod) {
+          case "vector" -> "/vector";
+          case "rrf" -> "/rrf";
+          default -> "/select";
+        };
+
+      EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         req.addParameter("q", query);
         req.addParameter("fl", "title,docId,url,embedded_content");
         req.addParameter("q.op", "OR");

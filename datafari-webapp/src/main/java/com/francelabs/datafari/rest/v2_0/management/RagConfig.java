@@ -62,9 +62,6 @@ public class RagConfig {
   protected String doGet(final HttpServletRequest request) {
     JSONObject response = new JSONObject();
     RagConfiguration config = RagConfiguration.getInstance();
-    RagConfiguration.ENABLE_ASSISTANT,
-        RagConfiguration.ENABLE_CONVERSATION_STORAGE,
-        RagConfiguration.ASSISTANT_RETRIEVAL_METHOD,
 
     response.put("enableAssistant", config.getBooleanProperty(RagConfiguration.ENABLE_ASSISTANT));
     response.put("enableConversationStorage", config.getBooleanProperty(RagConfiguration.ENABLE_CONVERSATION_STORAGE));

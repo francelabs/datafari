@@ -96,7 +96,7 @@
         <!-- Retrieval -->
 
         <div class="form-group row">
-          <label id="assistantRetrievalMethodLabel" class="col-sm-2 col-form-label" for="assistantRetrievalMethod">Retrieval Method for search via assistant</label>
+          <label id="assistantRetrievalMethodLabel" class="col-sm-4 col-form-label" for="assistantRetrievalMethod">Retrieval Method for search via assistant</label>
           <div class="col-sm-5">
             <select id="assistantRetrievalMethod" class="form-control">
               <option value="bm25">BM25</option>
