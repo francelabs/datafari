@@ -113,7 +113,39 @@ public class Assistant {
       } catch (DatafariServerException e) {
         return RestAPIUtils.buildErrorResponse(500, e.getMessage(), null);
       }
-      return RestAPIUtils.buildOKResponse(new JSONObject());
+
+      return getUserDocsBasket(request);
+  }
+
+  /**
+   * Delete an entry from docs_basket, as long as it belongs to the user.
+   */
+  @GetMapping(value = "rest/v2.0/users/docsbasket", produces = "application/json;charset=UTF-8")
+  protected String getUserDocsBasket(final HttpServletRequest request) {
+
+    final String authenticatedUserName = AuthenticatedUserName.getName(request);
+    JSONObject responseContent = new JSONObject();
+    JSONArray docsbasket = new JSONArray();
+
+    if (authenticatedUserName == null) {
+      return RestAPIUtils.buildErrorResponse(407, "Authentication required", null);
+    }
+    final ConversationDataService service = ConversationDataService.getInstance();
+
+
+    try {
+      Properties lastConversation = service.getLatestConversation(authenticatedUserName);
+      if (lastConversation != null && lastConversation.getProperty("id") != null) {
+        String conversationId = lastConversation.getProperty("id");
+        List<Properties> docsbasketList = service.getDocsBasketByConversation(conversationId, authenticatedUserName);
+        docsbasket = listToJson(docsbasketList);
+      }
+    } catch (DatafariServerException e) {
+      return RestAPIUtils.buildErrorResponse(500, e.getMessage(), null);
+    }
+
+    responseContent.put("docsbasket", docsbasket);
+    return RestAPIUtils.buildOKResponse(responseContent);
   }
 
   /**
@@ -137,6 +169,44 @@ public class Assistant {
       return RestAPIUtils.buildOKResponse(new JSONObject());
   }
 
+
+  /**
+   * Rename a conversation, as long as it belongs to the user.
+   */
+  @PutMapping(value = "rest/v2.0/users/conversations", produces = "application/json;charset=UTF-8")
+  protected String updateConversationTitle(final HttpServletRequest request,
+                                           @RequestBody final String jsonParam) {
+      final String authenticatedUserName = AuthenticatedUserName.getName(request);
+
+      try {
+          final JSONParser parser = new JSONParser();
+          final JSONObject body = (JSONObject) parser.parse(jsonParam);
+
+          final String conversationId = body.get("conversationId") != null ? body.get("conversationId").toString() : null;
+          final String title = body.get("title") != null ? body.get("title").toString() : null;
+
+          if (conversationId == null || conversationId.isBlank() || title == null || title.isBlank()) {
+              return RestAPIUtils.buildErrorResponse(400, "Invalid request. Missing conversationId or title.", null);
+          }
+
+          final ConversationDataService service = ConversationDataService.getInstance();
+          service.updateConversationTitle(conversationId, authenticatedUserName, title);
+
+          final JSONObject response = new JSONObject();
+          response.put("conversationId", conversationId);
+          response.put("title", title);
+
+          return RestAPIUtils.buildOKResponse(response);
+
+      } catch (ParseException e) {
+          return RestAPIUtils.buildErrorResponse(400, "Invalid JSON.", null);
+      } catch (DatafariServerException e) {
+          return RestAPIUtils.buildErrorResponse(400, e.getMessage(), null);
+      } catch (Exception e) {
+          return RestAPIUtils.buildErrorResponse(500, e.getMessage(), null);
+      }
+  }
+
   /**
    * Add a document to docs_basket, associated to the specified conversation.
    * If no conversation is provided, we try to use the default one, or create a new one if needed.
@@ -148,6 +218,7 @@ public class Assistant {
 
     final ConversationDataService service = ConversationDataService.getInstance();
     final String authenticatedUserName = AuthenticatedUserName.getName(request);
+    String id; // The ID of the created entry
 
     if (authenticatedUserName == null) {
       return RestAPIUtils.buildErrorResponse(407, "Authentication required", null);
@@ -184,14 +255,16 @@ public class Assistant {
         document.put("docId", docId);
         document.put("docTitle", docTitle);
         document.put("conversationId", conversationId);
-        service.addDocToBasket(document);
+        id = service.addDocToBasket(document);
     } catch (DatafariServerException e) {
         return RestAPIUtils.buildErrorResponse(500, e.getMessage(), null);
     } catch (ParseException e) {
         return RestAPIUtils.buildErrorResponse(400, "Invalid JSON.", null);
     }
 
-    return RestAPIUtils.buildOKResponse(new JSONObject());
+    JSONObject response = new JSONObject();
+    response.put("id", id);
+    return RestAPIUtils.buildOKResponse(response);
   }
 
   /**
@@ -248,7 +321,7 @@ public class Assistant {
    */
   public String saveMessage(final HttpServletRequest request, String role, String content, String conversationId, String searchResults) throws DatafariServerException {
 
-      final ConversationDataService service = ConversationDataService.getInstance();
+     final ConversationDataService service = ConversationDataService.getInstance();
       final String authenticatedUserName = AuthenticatedUserName.getName(request);
 
       if (authenticatedUserName == null) {
@@ -317,7 +390,21 @@ public class Assistant {
   private JSONObject propertiesToJson (Properties properties) {
     JSONObject jsonMap = new JSONObject();
     for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-      jsonMap.put(entry.getKey(), entry.getValue());
+
+      // Handle search_results entries
+      if (ConversationDataService.SEARCH_RESULTS_COLUMN.equals(entry.getKey())) {
+        // Convert search results to JSONArray
+        try {
+          JSONParser parser = new JSONParser();
+          jsonMap.put("docs", (JSONArray)parser.parse(entry.getValue().toString()));
+        } catch (ParseException e) {
+            logger.error("Unable to convert retrieved search_results to JSONArray");
+        }
+
+      } else {
+        // All other fields are converted to Strings
+        jsonMap.put(entry.getKey(), entry.getValue());
+      }
     }
     return jsonMap;
   }

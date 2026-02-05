@@ -106,6 +106,7 @@ $(function($) {
   elm.find('#deduplication-AdminUI').html(window.i18n.msgStore['adminUI-Deduplication']);
   $("#universalConnectorUploadConf-AdminUI").html(window.i18n.msgStore['universalConnectorUploadConf-AdminUI']);
   elm.find("#ragConf-AdminUI").html(window.i18n.msgStore['ragConf-AdminUI']);
+  elm.find("#assistantConf-AdminUI").html(window.i18n.msgStore['assistantConf-AdminUI']);
   elm.find('#solrVectorSearch-AdminUI').html(window.i18n.msgStore['solrVectorSearch-adminUI']);
   elm.find('#adminUI-atomicUpdate').html(window.i18n.msgStore['adminUI-atomicUpdate']);
 

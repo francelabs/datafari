@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.francelabs.datafari.service.db;
 
+import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 import org.json.simple.parser.JSONParser;
@@ -39,21 +40,23 @@ import java.util.UUID;
 public class ConversationDataService {
 
   // DB table names
-  public static final String CONVERSATION_COLLECTION = "conversation";
-  public static final String DOCS_BASKET_COLLECTION = "docsbasket";
-  public static final String MESSAGES_COLLECTION = "messages";
+  public static final String CONVERSATION_COLLECTION  = "conversation";
+  public static final String DOCS_BASKET_COLLECTION   = "docsbasket";
+  public static final String MESSAGES_COLLECTION      = "messages";
 
   // DB column names
-  public static final String ID_COLUMN = "id";
-  public static final String TITLE_COLUMN = "title";
-  public static final String CONVERSATION_ID_COLUMN = "conversation_id";
-  public static final String CONTENT_COLUMN = "content";
-  public static final String ROLE_COLUMN = "role";
-  public static final String USER_COLUMN = "username";
-  public static final String CREATED_AT = "created_at";
-  public static final String DOC_ID_COLUMN = "document_id";
-  public static final String DOC_TITLE_COLUMN = "document_title";
-  public static final String SEARCH_RESULTS_COLUMN = "search_results";
+  public static final String ID_COLUMN                = "id";
+  public static final String TITLE_COLUMN             = "title";
+  public static final String CONVERSATION_ID_COLUMN   = "conversation_id";
+  public static final String CONTENT_COLUMN           = "content";
+  public static final String ROLE_COLUMN              = "role";
+  public static final String USER_COLUMN              = "username";
+  public static final String CREATED_AT               = "created_at";
+  public static final String DOC_ID_COLUMN            = "document_id";
+  public static final String DOC_TITLE_COLUMN         = "document_title";
+  public static final String SEARCH_RESULTS_COLUMN    = "search_results";
+
+  public static boolean enabled;
 
   private static final Logger logger = LogManager.getLogger(ConversationDataService.class);
 
@@ -73,12 +76,23 @@ public class ConversationDataService {
   public ConversationDataService(final SqlService sql) {
     this.sql = sql;
     instance = this; // publish legacy singleton reference when Spring creates the bean
+
+    // Is conversation storage enabled ?
+    RagConfiguration config = RagConfiguration.getInstance();
+    enabled = config.getBooleanProperty(RagConfiguration.ENABLE_CONVERSATION_STORAGE);
+  }
+
+  private void checkIdEnabled() throws DatafariServerException {
+      if (enabled) {
+          throw new DatafariServerException(CodesReturned.FALSE, "Conversation storage is disabled.");
+      }
   }
 
   // -------------------------------------------------------------------------------------
   // Create
   // -------------------------------------------------------------------------------------
   public String createConversation(final Properties conversationProp) throws DatafariServerException {
+    checkIdEnabled();
     try {
       final UUID uuid = UUID.randomUUID();
       SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -102,6 +116,7 @@ public class ConversationDataService {
   }
 
   public String addMessage(final Properties messageProp) throws DatafariServerException {
+    checkIdEnabled();
     try {
         final UUID uuid = UUID.randomUUID();
         final UUID conversationId = UUID.fromString(messageProp.getProperty("conversationId"));
@@ -141,6 +156,7 @@ public class ConversationDataService {
 
   public String addDocToBasket(final Properties messageProp) throws DatafariServerException {
     try {
+      checkIdEnabled();
       final UUID uuid = UUID.randomUUID();
       final UUID conversationId = UUID.fromString(messageProp.getProperty("conversationId"));
 
@@ -166,6 +182,7 @@ public class ConversationDataService {
   // Read
   // -------------------------------------------------------------------------------------
   public List<Properties> getUserConversations(final String username) throws DatafariServerException {
+    checkIdEnabled();
     if (username == null || username.isBlank()) {
       throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing username");
     }
@@ -192,6 +209,7 @@ public class ConversationDataService {
   }
 
   public String getConversationTitle(final String conversationId) throws DatafariServerException {
+      checkIdEnabled();
       if (conversationId == null || conversationId.isBlank()) {
         return null;
       }
@@ -218,6 +236,7 @@ public class ConversationDataService {
   }
 
   public Properties getLatestConversation(final String username) throws DatafariServerException {
+    checkIdEnabled();
     if (username == null || username.isBlank()) {
       throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing username");
     }
@@ -244,7 +263,7 @@ public class ConversationDataService {
   }
 
   public List<Properties> getMessagesByConversation(final String conversationId, final String username) throws DatafariServerException {
-
+    checkIdEnabled();
     if (username == null || username.isBlank()) {
       throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing username");
     }
@@ -270,8 +289,13 @@ public class ConversationDataService {
   }
 
   public List<Properties> getDocsBasketByConversation(final String conversationId, final String username) throws DatafariServerException {
+    checkIdEnabled();
     if (username == null || username.isBlank()) {
       throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing username");
+    }
+
+    if (conversationId == null) {
+      throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing conversationId");
     }
 
     try {
@@ -341,7 +365,7 @@ public class ConversationDataService {
   }
 
   public void removeDocFromBasketById(final String basketId, final String username) throws DatafariServerException {
-
+    checkIdEnabled();
     if (username == null || username.isBlank()) {
       throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing username");
     }
@@ -386,5 +410,43 @@ public class ConversationDataService {
       }
     }
     return p;
+  }
+
+  /**
+   * Rename a conversation that belongs to user
+   */
+  public void updateConversationTitle(final String conversationId, final String username, final String newTitle)
+          throws DatafariServerException {
+      checkIdEnabled();
+      if (username == null || username.isBlank()) {
+          throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing username");
+      } else if (conversationId == null || conversationId.isBlank() || newTitle == null || newTitle.isBlank()) {
+          throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Invalid request. Missing conversationId or title.");
+      }
+
+      try {
+        final UUID convId = UUID.fromString(conversationId);
+
+        final int updated = sql.getJdbcTemplate().update(
+            "UPDATE public." + CONVERSATION_COLLECTION + " " +
+                "SET " + TITLE_COLUMN + " = ? " +
+                "WHERE " + ID_COLUMN + " = ? " +
+                "AND " + USER_COLUMN + " = ?",
+            newTitle,
+            convId,
+            username
+        );
+
+        if (updated == 0) {
+          // Missing conversation or wrong username
+          throw new DatafariServerException(CodesReturned.PROBLEMQUERY, "Conversation not found or forbidden.");
+        }
+
+      } catch (IllegalArgumentException badUuid) {
+          throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Invalid conversationId UUID.");
+      } catch (Exception e) {
+        logger.error("Unable to update conversation title for id {} user {}", conversationId, username, e);
+        throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+      }
   }
 }
