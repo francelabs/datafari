@@ -6,6 +6,7 @@ import com.francelabs.datafari.rest.v1_0.utils.RestAPIUtils;
 import com.francelabs.datafari.service.db.ConversationDataService;
 import com.francelabs.datafari.utils.AuthenticatedUserName;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -341,6 +342,7 @@ public class Assistant {
           // No conversationId specified: create a new conversation
           Properties convProperties = new Properties();
           convProperties.put("username", authenticatedUserName);
+          convProperties.put("title", StringUtils.abbreviate(content, 30));
           conversationId = service.createConversation(convProperties);
       }
 
