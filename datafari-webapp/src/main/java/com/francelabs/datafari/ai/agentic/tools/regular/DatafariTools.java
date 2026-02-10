@@ -17,7 +17,9 @@ import com.francelabs.datafari.utils.EditableHttpServletRequest;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.agent.tool.P;
 import dev.langchain4j.agent.tool.Tool;
+import dev.langchain4j.agent.tool.ToolMemoryId;
 import dev.langchain4j.data.document.Document;
+import dev.langchain4j.invocation.InvocationContext;
 import jakarta.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,7 +53,8 @@ public class DatafariTools {
     @Tool("Process a RAG query in a single document.")
     String ragByDocument(
             @P("The RAG query for a single document") String query,
-            @P("The exact ID of the document") String id
+            @P("The exact ID of the document") String id,
+            InvocationContext context
     ) {
         LOGGER.info("AGENTIC TOOLS - RAG by document - ID: {} - Query: {}", id, query);
         String result = "";
@@ -83,7 +86,8 @@ public class DatafariTools {
         title, id, author, url, creation_date, last_modified, crawl_date, extension, source, word_count,
         language, xmptpg_npages, original_file_size
     """)
-    String bm25Search(@P("The search query") String query) {
+    String bm25Search(@P("The search query") String query,
+                      InvocationContext context) {
         LOGGER.info("AGENTIC TOOLS - BM25 Search - Query: {}", query);
         int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
 
@@ -112,7 +116,8 @@ public class DatafariTools {
             """)
     String readNextChunks(
             @P("The exact ID of the document") String id,
-            @P("Page index (0-based)") int page
+            @P("Page index (0-based)") int page,
+            InvocationContext context
     ) {
         LOGGER.info("AGENTIC TOOLS - Reading page {} of document  '{}'", page, id);
 
@@ -154,7 +159,9 @@ public class DatafariTools {
             """)
     String searchChunksFromADocument(
             @P("The exact ID of the document") String id,
-            @P("The search query") String query
+            @P("The search query") String query,
+            @ToolMemoryId String toolCallId,
+            InvocationContext context
     ) {
         int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
         LOGGER.info("AGENTIC TOOLS - Search from document - Query: {} - Document: {}", query, id);
@@ -187,7 +194,9 @@ public class DatafariTools {
             icon = "search")
     @Tool("Retrieve a summary of a document. You must provide the exact ID of the document.")
     String summarize(
-            @P("The exact ID of the document") String id
+            @P("The exact ID of the document") String id,
+            @ToolMemoryId String toolCallId,
+            InvocationContext context
     ) {
         AiRequest summarizerequest = new AiRequest();
         summarizerequest.id = id;
@@ -204,7 +213,9 @@ public class DatafariTools {
     @Tool("Extract entities from a given document.")
     String entityExtraction(
             @P("ID of the document") String docId,
-            @P("Entities to extract, separated by a comma (ex: cities, phone number, date)") String entities
+            @P("Entities to extract, separated by a comma (ex: cities, phone number, date)") String entities,
+            @ToolMemoryId String toolCallId,
+            InvocationContext context
     ) {
         LOGGER.info("AGENTIC TOOLS - Extracting entities from [{}] : {}", docId, entities);
         String query = "Extract the following entities from the document: " + entities;
@@ -269,14 +280,16 @@ public class DatafariTools {
    * @param query: Search query
    * @return a JSON String
    */
-  @ToolMeta(label = "Searching documents...",
+    @ToolMeta(label = "Searching documents...",
             i18nKey = "tool.hybridSearch",
             icon = "search")
     @Tool("Search and return information and partial content from documents (if available).")
     String hybridSearch(
-            @P("The search query") String query
+            @P("The search query") String query,
+            InvocationContext context
     ) {
         LOGGER.info("AGENTIC TOOLS - Hybrid Search - Query: {}", query);
+        String toolCallId = context.invocationId().toString();
         EditableHttpServletRequest editableRequest = new EditableHttpServletRequest(request);
         String handler = "/rrf";
         editableRequest.addParameter("q", query);
@@ -294,7 +307,7 @@ public class DatafariTools {
 
         if (docs.isEmpty()) {
           LOGGER.debug("AGENTIC TOOLS - Hybrid Search - No result found with hydrid search. Running BM25 search instead.");
-          return bm25Search(query);
+          return bm25Search(query, context);
         }
 
         // Add document to sources

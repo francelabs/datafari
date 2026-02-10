@@ -56,7 +56,7 @@
     <mcf.sha512>73b8053e333d63540113cc247e1ac7679b91eb07d68f4cb89ae8ffdfa6978fb24bd346bcb0cbc45ae823c8accd7bedd0994b3e7683442a614b839a7ab3616def</mcf.sha512>
     <zookeeper.version>3.9.3</zookeeper.version>
     <zookeeper.sha512>d44d870c1691662efbf1a8baf1859c901b820dc5ff163b36e81beb27b6fbf3cd31b5f1f075697edaaf6d3e7a4cb0cc92f924dcff64b294ef13d535589bdaf143</zookeeper.sha512>
-    <langchain4j.version>1.8.0</langchain4j.version>
+    <langchain4j.version>1.11.0</langchain4j.version>
     <jetty.version>12.0.27</jetty.version>
   </properties>
   

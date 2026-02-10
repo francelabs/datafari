@@ -70,6 +70,10 @@ public class ConversationDataService {
 
   // --- Legacy bridge: keep getInstance() so older code keeps working --------------------
   public static synchronized ConversationDataService getInstance() {
+    // Is conversation storage enabled ?
+    RagConfiguration config = RagConfiguration.getInstance();
+    enabled = config.getBooleanProperty(RagConfiguration.ENABLE_CONVERSATION_STORAGE);
+
     return instance;
   }
 
@@ -83,7 +87,7 @@ public class ConversationDataService {
   }
 
   private void checkIdEnabled() throws DatafariServerException {
-      if (enabled) {
+      if (!enabled) {
           throw new DatafariServerException(CodesReturned.FALSE, "Conversation storage is disabled.");
       }
   }
