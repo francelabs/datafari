@@ -4,15 +4,11 @@ import com.francelabs.datafari.ai.agentic.tools.AgenticToolException;
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
-import com.francelabs.datafari.ai.services.AiService;
 import com.francelabs.datafari.ai.services.RagService;
 import com.francelabs.datafari.ai.services.SummarizationService;
 import com.francelabs.datafari.ai.stream.ChatStream;
-import com.francelabs.datafari.ai.stream.NdjsonChatStream;
 import com.francelabs.datafari.ai.stream.ToolMeta;
 import com.francelabs.datafari.ai.config.RagConfiguration;
-import com.francelabs.datafari.exception.AwaitUserInputException;
-import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.agent.tool.P;
@@ -20,15 +16,12 @@ import dev.langchain4j.agent.tool.Tool;
 import dev.langchain4j.agent.tool.ToolMemoryId;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.invocation.InvocationContext;
-import jakarta.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Map;
 
 public class DatafariTools {
 
@@ -102,6 +95,7 @@ public class DatafariTools {
         JSONObject root = SearchUtils.processSearch(req, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
         addDocumentsToSource(docs);
+        // TODO : stream tools results
         LOGGER.debug("AGENTIC TOOLS - BM25 Search - {}", docs.toJSONString());
         return docs.toJSONString();
     }

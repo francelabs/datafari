@@ -38,13 +38,11 @@ public final class StreamToolExecutor implements ToolExecutor {
         stream.toolCall(id, toolName, label, icon, i18nKey);
 
         try {
-            // TODO : delegate.executeWithContext
+            // The InvocationContext is use to provide the tool call ID to the tool method
             InvocationContext.Builder invocationContext = InvocationContext.builder();
             invocationContext.chatMemoryId(memoryId);
             invocationContext.invocationId(UUID.fromString(id));
             invocationContext.invocationParameters(InvocationParameters.from("toolCallId", id));
-
-
 
             ToolExecutionResult toolExecResult = delegate.executeWithContext(req, invocationContext.build());
             String result = toolExecResult.resultText();

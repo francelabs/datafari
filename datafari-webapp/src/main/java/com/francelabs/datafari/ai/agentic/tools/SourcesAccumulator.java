@@ -23,7 +23,7 @@ public final class SourcesAccumulator {
     // Key -> Document
     private final Map<String, Document> byKey = new LinkedHashMap<>();
     private final Set<String> seen = ConcurrentHashMap.newKeySet();
-    private static ChatStream stream = null;
+    private final ChatStream stream;
 
     public SourcesAccumulator(@Nullable ChatStream stream) {
         this.stream = stream;
@@ -93,14 +93,14 @@ public final class SourcesAccumulator {
     }
 
     /** Stream one source if streaming is available */
-    public static void streamSource(JSONObject source) {
+    public void streamSource(JSONObject source) {
         if (stream != null) {
             stream.addSource(source);
         }
     }
 
     /** Stream all the sources if streaming is available */
-    public static void streamSources(JSONArray source) {
+    public void streamSources(JSONArray source) {
         if (stream != null) {
             stream.addSources(source);
         }
