@@ -115,7 +115,7 @@ public class SearchService extends AiService {
       EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         req.addParameter("q", query);
         req.addParameter("fl", "title,docId,url,embedded_content");
-        req.addParameter("q.op", "OR");
+        req.addParameter("q.op", "AND");
         req.addParameter("start", "0");
         req.addParameter("rows", String.valueOf(rows));
         req.addParameter("wt", "json");
