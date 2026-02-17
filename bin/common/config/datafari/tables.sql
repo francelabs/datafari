@@ -176,6 +176,7 @@ CREATE TABLE conversation (
     title TEXT,
     username VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_refresh TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT conversation_user_fk
       FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE

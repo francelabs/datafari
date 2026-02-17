@@ -18,11 +18,13 @@ package com.francelabs.datafari.service.db;
 import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
+import org.apache.commons.lang3.StringUtils;
 import org.json.simple.parser.JSONParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -50,6 +52,7 @@ public class ConversationDataService {
   public static final String CONVERSATION_ID_COLUMN   = "conversation_id";
   public static final String CONTENT_COLUMN           = "content";
   public static final String ROLE_COLUMN              = "role";
+  public static final String LAST_REFRESH_COLUMN      = "last_refresh";
   public static final String USER_COLUMN              = "username";
   public static final String CREATED_AT               = "created_at";
   public static final String DOC_ID_COLUMN            = "document_id";
@@ -86,7 +89,7 @@ public class ConversationDataService {
     enabled = config.getBooleanProperty(RagConfiguration.ENABLE_CONVERSATION_STORAGE);
   }
 
-  private void checkIdEnabled() throws DatafariServerException {
+  private void checkIfEnabled() throws DatafariServerException {
       if (!enabled) {
           throw new DatafariServerException(CodesReturned.FALSE, "Conversation storage is disabled.");
       }
@@ -96,7 +99,7 @@ public class ConversationDataService {
   // Create
   // -------------------------------------------------------------------------------------
   public String createConversation(final Properties conversationProp) throws DatafariServerException {
-    checkIdEnabled();
+    checkIfEnabled();
     try {
       final UUID uuid = UUID.randomUUID();
       SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -107,7 +110,7 @@ public class ConversationDataService {
               ID_COLUMN + ", " + TITLE_COLUMN + ", " + USER_COLUMN + ", " + CREATED_AT +") " +
               "VALUES (?, ?, ?, ?)",
           uuid,
-          conversationProp.getProperty("title", defaultTitle),
+          StringUtils.abbreviate(conversationProp.getProperty("title", defaultTitle), 50), // Title, truncated to 50 characters
           conversationProp.getProperty("username"),
           Timestamp.from(Instant.now())
       );
@@ -120,7 +123,7 @@ public class ConversationDataService {
   }
 
   public String addMessage(final Properties messageProp) throws DatafariServerException {
-    checkIdEnabled();
+    checkIfEnabled();
     try {
         final UUID uuid = UUID.randomUUID();
         final UUID conversationId = UUID.fromString(messageProp.getProperty("conversationId"));
@@ -160,7 +163,7 @@ public class ConversationDataService {
 
   public String addDocToBasket(final Properties messageProp) throws DatafariServerException {
     try {
-      checkIdEnabled();
+      checkIfEnabled();
       final UUID uuid = UUID.randomUUID();
       final UUID conversationId = UUID.fromString(messageProp.getProperty("conversationId"));
 
@@ -186,7 +189,7 @@ public class ConversationDataService {
   // Read
   // -------------------------------------------------------------------------------------
   public List<Properties> getUserConversations(final String username) throws DatafariServerException {
-    checkIdEnabled();
+    checkIfEnabled();
     if (username == null || username.isBlank()) {
       throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing username");
     }
@@ -196,12 +199,12 @@ public class ConversationDataService {
       return sql.getJdbcTemplate().query(
           "SELECT " +
               "c.*, " +
-              "COALESCE(MAX(m." + CREATED_AT + "), c." + CREATED_AT + ") AS last_message_at, " +
+              "GREATEST(MAX(m." + CREATED_AT + "), c." + LAST_REFRESH_COLUMN + ") AS last_message_at, " +
               "COUNT(m." + ID_COLUMN + ") AS message_count " +
               "FROM public." + CONVERSATION_COLLECTION + " c " +
               "LEFT JOIN public." + MESSAGES_COLLECTION + " m ON m." + CONVERSATION_ID_COLUMN + " = c." + ID_COLUMN + " " +
               "WHERE c." + USER_COLUMN + " = ? " +
-              "GROUP BY c." + ID_COLUMN + ", c." + TITLE_COLUMN + ", c." + USER_COLUMN + ", c." + CREATED_AT + " " +
+              "GROUP BY c." + ID_COLUMN + ", c." + TITLE_COLUMN + ", c." + USER_COLUMN + ", c." + LAST_REFRESH_COLUMN + " " +
               "ORDER BY last_message_at DESC",
           ps -> ps.setString(1, username),
           CONVERSATION_MAPPER
@@ -213,7 +216,7 @@ public class ConversationDataService {
   }
 
   public String getConversationTitle(final String conversationId) throws DatafariServerException {
-      checkIdEnabled();
+      checkIfEnabled();
       if (conversationId == null || conversationId.isBlank()) {
         return null;
       }
@@ -240,7 +243,7 @@ public class ConversationDataService {
   }
 
   public Properties getLatestConversation(final String username) throws DatafariServerException {
-    checkIdEnabled();
+    checkIfEnabled();
     if (username == null || username.isBlank()) {
       throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing username");
     }
@@ -249,11 +252,11 @@ public class ConversationDataService {
       final List<Properties> res = sql.getJdbcTemplate().query(
           "SELECT " +
                 "c.*, " +
-                "COALESCE(MAX(m." + CREATED_AT + "), c." + CREATED_AT + ") AS last_message_at " +
+                "GREATEST(MAX(m." + CREATED_AT + "), c." + LAST_REFRESH_COLUMN + ") AS last_message_at " +
               "FROM public." + CONVERSATION_COLLECTION + " c " +
               "LEFT JOIN public." + MESSAGES_COLLECTION + " m ON m." + CONVERSATION_ID_COLUMN + " = c." + ID_COLUMN + " " +
               "WHERE c." + USER_COLUMN + " = ? " +
-              "GROUP BY c." + ID_COLUMN + ", c." + TITLE_COLUMN + ", c." + USER_COLUMN + ", c." + CREATED_AT + " " +
+              "GROUP BY c." + ID_COLUMN + ", c." + TITLE_COLUMN + ", c." + USER_COLUMN + ", c." + LAST_REFRESH_COLUMN + " " +
               "ORDER BY last_message_at DESC " +
               "LIMIT 1",
           new Object[] { username },
@@ -267,7 +270,7 @@ public class ConversationDataService {
   }
 
   public List<Properties> getMessagesByConversation(final String conversationId, final String username) throws DatafariServerException {
-    checkIdEnabled();
+    checkIfEnabled();
     if (username == null || username.isBlank()) {
       throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing username");
     }
@@ -293,7 +296,7 @@ public class ConversationDataService {
   }
 
   public List<Properties> getDocsBasketByConversation(final String conversationId, final String username) throws DatafariServerException {
-    checkIdEnabled();
+    checkIfEnabled();
     if (username == null || username.isBlank()) {
       throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing username");
     }
@@ -369,7 +372,7 @@ public class ConversationDataService {
   }
 
   public void removeDocFromBasketById(final String basketId, final String username) throws DatafariServerException {
-    checkIdEnabled();
+    checkIfEnabled();
     if (username == null || username.isBlank()) {
       throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing username");
     }
@@ -421,7 +424,7 @@ public class ConversationDataService {
    */
   public void updateConversationTitle(final String conversationId, final String username, final String newTitle)
           throws DatafariServerException {
-      checkIdEnabled();
+      checkIfEnabled();
       if (username == null || username.isBlank()) {
           throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing username");
       } else if (conversationId == null || conversationId.isBlank() || newTitle == null || newTitle.isBlank()) {
@@ -436,7 +439,7 @@ public class ConversationDataService {
                 "SET " + TITLE_COLUMN + " = ? " +
                 "WHERE " + ID_COLUMN + " = ? " +
                 "AND " + USER_COLUMN + " = ?",
-            newTitle,
+            StringUtils.abbreviate(newTitle, 50),
             convId,
             username
         );
@@ -452,5 +455,126 @@ public class ConversationDataService {
         logger.error("Unable to update conversation title for id {} user {}", conversationId, username, e);
         throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
       }
+  }
+
+  /**
+   * Update a conversation last_refresh date as long as it belongs to user
+   */
+  public void refreshConversation(final String conversationId, final String username)
+      throws DatafariServerException {
+    checkIfEnabled();
+    if (username == null || username.isBlank()) {
+      throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing username");
+    } else if (conversationId == null || conversationId.isBlank()) {
+      throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Invalid request. Missing conversationId.");
+    }
+
+    try {
+      final UUID convId = UUID.fromString(conversationId);
+
+      final int updated = sql.getJdbcTemplate().update(
+          "UPDATE public." + CONVERSATION_COLLECTION + " " +
+              "SET " + LAST_REFRESH_COLUMN + " = ? " +
+              "WHERE " + ID_COLUMN + " = ? " +
+              "AND " + USER_COLUMN + " = ?",
+          Timestamp.from(Instant.now()),
+          convId,
+          username
+      );
+
+      if (updated == 0) {
+        // Missing conversation or wrong username
+        throw new DatafariServerException(CodesReturned.PROBLEMQUERY, "Conversation not found or forbidden.");
+      }
+
+    } catch (IllegalArgumentException badUuid) {
+      throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Invalid conversationId UUID.");
+    } catch (Exception e) {
+      logger.error("Unable to update conversation title for id {} user {}", conversationId, username, e);
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+    }
+  }
+
+  /**
+   * Migrate all docsbasket entries from one conversation to another.
+   * Both conversations must belong to the provided username.
+   *
+   * Strategy (conflict-safe with unique(conversation_id, document_id)):
+   * 1) Insert into target all source rows whose document_id doesn't exist yet in target
+   * 2) Delete all source rows (optional)
+   *
+   * @return number of documents migrated (inserted into target). Duplicates already present in target are not counted.
+   */
+  @Transactional(rollbackFor = Exception.class)
+  public int migrateDocsBasket(final String sourceConversationId,
+                               final String targetConversationId,
+                               final String username) throws DatafariServerException {
+
+    if (sourceConversationId == null || sourceConversationId.isBlank()
+        || targetConversationId == null || targetConversationId.isBlank()
+        || username == null || username.isBlank()) {
+      throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Missing sourceConversationId, targetConversationId or username.");
+    }
+
+    if (sourceConversationId.equals(targetConversationId)) {
+      return 0; // nothing to do
+    }
+
+    final UUID srcId;
+    final UUID dstId;
+    try {
+      srcId = UUID.fromString(sourceConversationId);
+      dstId = UUID.fromString(targetConversationId);
+    } catch (IllegalArgumentException e) {
+      throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Invalid UUID for conversationId.");
+    }
+
+    try {
+      // Ownership check for BOTH conversations (must be owned by username)
+      final int ownedCount = sql.getJdbcTemplate().query(
+          "SELECT COUNT(1) " +
+              "FROM public." + CONVERSATION_COLLECTION + " " +
+              "WHERE " + ID_COLUMN + " IN (?, ?) " +
+              "AND " + USER_COLUMN + " = ?",
+          new Object[] { srcId, dstId, username },
+          (rs, rowNum) -> rs.getInt(1)
+      ).stream().findFirst().orElse(0);
+
+      if (ownedCount != 2) {
+        throw new DatafariServerException(CodesReturned.NOTCONNECTED, "Forbidden: conversations do not belong to the user.");
+      }
+
+      // Insert missing docs into target (deduplicate against existing target docs)
+      final int inserted = sql.getJdbcTemplate().update(
+          "INSERT INTO public." + DOCS_BASKET_COLLECTION + " (" +
+              ID_COLUMN + ", " + CONVERSATION_ID_COLUMN + ", " + DOC_ID_COLUMN + ", " + DOC_TITLE_COLUMN + ", " + CREATED_AT + ") " +
+              "SELECT gen_random_uuid(), ?, s." + DOC_ID_COLUMN + ", s." + DOC_TITLE_COLUMN + ", s." + CREATED_AT + " " +
+              "FROM public." + DOCS_BASKET_COLLECTION + " s " +
+              "WHERE s." + CONVERSATION_ID_COLUMN + " = ? " +
+              "AND NOT EXISTS (" +
+              "SELECT 1 FROM public." + DOCS_BASKET_COLLECTION + " t " +
+              "WHERE t." + CONVERSATION_ID_COLUMN + " = ? " +
+              "AND t." + DOC_ID_COLUMN + " = s." + DOC_ID_COLUMN +
+              ")",
+          dstId,
+          srcId,
+          dstId
+      );
+
+      // Delete all docs from source (even those duplicated and not inserted) -> Currently disabled
+//      sql.getJdbcTemplate().update(
+//          "DELETE FROM public." + DOCS_BASKET_COLLECTION + " " +
+//              "WHERE " + CONVERSATION_ID_COLUMN + " = ?",
+//          srcId
+//      );
+
+      return inserted;
+
+    } catch (DatafariServerException e) {
+      throw e;
+    } catch (Exception e) {
+      logger.error("Unable to migrate docsbasket from {} to {} for user {}", sourceConversationId, targetConversationId, username, e);
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+    }
   }
 }

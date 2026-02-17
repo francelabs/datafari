@@ -5,6 +5,7 @@ import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.rest.v1_0.utils.RestAPIUtils;
 import com.francelabs.datafari.service.db.ConversationDataService;
 import com.francelabs.datafari.utils.AuthenticatedUserName;
+import com.francelabs.datafari.utils.EditableHttpServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -49,13 +50,13 @@ public class Assistant {
         return RestAPIUtils.buildErrorResponse(407, "Authentication required", null);
     }
 
-    // Optional: If a conversationId is provided, we retrieve docsBasket/messages from the specified conversation,
+    // If a conversationId is provided, we retrieve docsBasket/messages from the specified conversation,
     // instead of the latest one.
     String conversationId = request.getParameter("conversationId");
 
     JSONArray messages = new JSONArray();
     JSONArray docsBasket = new JSONArray();
-    JSONArray conversations = new JSONArray();
+    JSONArray conversations;
 
     try {
         // List all conversations
@@ -69,9 +70,15 @@ public class Assistant {
             if (conversation != null) {
               conversationId = conversation.getProperty("id"); // Use the latest conversation
             } else conversationId = null; // No existing conversation
+
+        } else {
+            // Valid conversationId provided
+            // update specified conversation's last_refresh
+            service.refreshConversation(conversationId, authenticatedUserName);
         }
 
         if (conversationId != null) {
+
             // get messages from latest conversation
             List<Properties> messagesSet = service.getMessagesByConversation(conversationId, authenticatedUserName);
             messages = listToJson(messagesSet);
@@ -79,6 +86,7 @@ public class Assistant {
             // get docsBasket from latest conversation
             List<Properties> docsBasketSet = service.getDocsBasketByConversation(conversationId, authenticatedUserName);
             docsBasket = listToJson(docsBasketSet);
+
         }
 
     } catch (DatafariServerException e) {
@@ -168,6 +176,62 @@ public class Assistant {
         return RestAPIUtils.buildErrorResponse(500, e.getMessage(), null);
       }
       return RestAPIUtils.buildOKResponse(new JSONObject());
+  }
+
+
+  /**
+   * Create an empty conversation.
+   */
+  @PostMapping(value = "rest/v2.0/users/conversations", produces = "application/json;charset=UTF-8")
+  protected String createConversation(final HttpServletRequest request,
+                                           @RequestBody final String jsonParam) {
+    final String authenticatedUserName = AuthenticatedUserName.getName(request);
+
+    try {
+//      final JSONParser parser = new JSONParser();
+//      final JSONObject body = (JSONObject) parser.parse(jsonParam);
+//
+//      final String conversationId = body.get("conversationId") != null ? body.get("conversationId").toString() : null;
+//      final String title = body.get("title") != null ? body.get("title").toString() : null;
+
+        if (authenticatedUserName == null) {
+          return RestAPIUtils.buildErrorResponse(407, "Authentication required", null);
+        }
+
+        final ConversationDataService service = ConversationDataService.getInstance();
+
+        // Create a new conversation in DB
+        Properties convProperties = new Properties();
+        convProperties.put("username", authenticatedUserName);
+        convProperties.put("title", "New conversation");
+        String conversationId = service.createConversation(convProperties);
+
+        // If the option is enabled, migrate docsbasket from previous conversation
+        // Parameters
+        if (jsonParam != null) {
+            final JSONParser parser = new JSONParser();
+            JSONObject body = (JSONObject) parser.parse(jsonParam);
+            final String sourceConversationId = (body.get("sourceConversationId") != null) ? (String) body.get("sourceConversationId") : null;
+            try {
+                if (sourceConversationId != null && !sourceConversationId.isBlank()) {
+                    service.migrateDocsBasket(sourceConversationId, conversationId, authenticatedUserName);
+                }
+            } catch (DatafariServerException e) {
+                logger.warn("Failed to migrate docsbasket from conversation '{}' to conversation '{}':", sourceConversationId, conversationId, e);
+            }
+
+        }
+
+        // Return full conversation
+        EditableHttpServletRequest req = new EditableHttpServletRequest(request);
+        req.addParameter("conversationId", conversationId);
+        return getUserConversations(req);
+
+    } catch (DatafariServerException e) {
+        return RestAPIUtils.buildErrorResponse(400, e.getMessage(), null);
+    } catch (Exception e) {
+        return RestAPIUtils.buildErrorResponse(500, e.getMessage(), null);
+    }
   }
 
 
@@ -339,12 +403,17 @@ public class Assistant {
           // Invalid conversationId specified
           throw new DatafariServerException(CodesReturned.PARAMETERNOTWELLSET, "Invalid conversationId.");
       } else if (conversationId == null) {
+
           // No conversationId specified: create a new conversation
           Properties convProperties = new Properties();
           convProperties.put("username", authenticatedUserName);
-          convProperties.put("title", StringUtils.abbreviate(content, 30));
+          convProperties.put("title", StringUtils.abbreviate(content, 50));
           conversationId = service.createConversation(convProperties);
       }
+
+    // TODO : check if the conversation needs to be renamed
+    //        final ConversationDataService service = ConversationDataService.getInstance();
+    //        service.updateConversationTitle(conversationId, authenticatedUserName, title);
 
       // Add message to DB
       Properties document = new Properties();

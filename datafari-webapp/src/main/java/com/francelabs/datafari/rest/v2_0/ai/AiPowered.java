@@ -10,6 +10,7 @@ import com.francelabs.datafari.ai.stream.*;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.rest.v2_0.users.Assistant;
 import com.francelabs.datafari.service.db.ConversationDataService;
+import com.francelabs.datafari.utils.AuthenticatedUserName;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
 import jakarta.servlet.http.HttpSession;
@@ -324,8 +325,18 @@ public class AiPowered {
 
         if (params.conversationId != null) {
             try {
-                String conversationTitle = ConversationDataService.getInstance().getConversationTitle(params.conversationId);
+                ConversationDataService service = ConversationDataService.getInstance();
+                String conversationTitle = service.getConversationTitle(params.conversationId);
                 result.conversationId = params.conversationId;
+
+                // If needed, the conversation is renamed
+                String username = AuthenticatedUserName.getName(request);
+                if (params.query != null && !params.query.isBlank()
+                        && "New conversation".equals(conversationTitle)
+                        && username != null) {
+                    service.updateConversationTitle(result.conversationId, AuthenticatedUserName.getName(request), params.query);
+                }
+
                 stream.conversation(result.conversationId, conversationTitle);
 
             } catch (DatafariServerException e) {
