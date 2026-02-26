@@ -53,6 +53,7 @@ public class Assistant {
     // If a conversationId is provided, we retrieve docsBasket/messages from the specified conversation,
     // instead of the latest one.
     String conversationId = request.getParameter("conversationId");
+    String title = null;
 
     JSONArray messages = new JSONArray();
     JSONArray docsBasket = new JSONArray();
@@ -69,6 +70,7 @@ public class Assistant {
             Properties conversation = service.getLatestConversation(authenticatedUserName);
             if (conversation != null) {
               conversationId = conversation.getProperty("id"); // Use the latest conversation
+              title = conversation.getProperty("title"); // Use the latest conversation
             } else conversationId = null; // No existing conversation
 
         } else {
@@ -78,6 +80,11 @@ public class Assistant {
         }
 
         if (conversationId != null) {
+
+            // Get conversation title
+            if (title == null) {
+                title = service.getConversationTitle(conversationId);
+            }
 
             // get messages from latest conversation
             List<Properties> messagesSet = service.getMessagesByConversation(conversationId, authenticatedUserName);
@@ -98,6 +105,7 @@ public class Assistant {
     responseContent.put("conversations", conversations);
     responseContent.put("docsBasket", docsBasket);
     responseContent.put("messages", messages);
+    responseContent.put("title", title);
     return RestAPIUtils.buildOKResponse(responseContent);
   }
 
@@ -175,7 +183,7 @@ public class Assistant {
       } catch (DatafariServerException e) {
         return RestAPIUtils.buildErrorResponse(500, e.getMessage(), null);
       }
-      return RestAPIUtils.buildOKResponse(new JSONObject());
+      return getUserConversations(request);
   }
 
 
