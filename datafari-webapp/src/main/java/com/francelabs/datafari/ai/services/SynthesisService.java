@@ -1,5 +1,6 @@
 package com.francelabs.datafari.ai.services;
 
+import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.stream.ChatStream;
@@ -27,6 +28,8 @@ public class SynthesisService extends AiService {
 
     public static @NotNull ApiContent synthesize(AiRequest params, HttpServletRequest request, ChatStream stream,
                                                            boolean isTool) {
+        RagConfiguration config = RagConfiguration.getInstance();
+
         stream.phase("synthesis:start");
         // Retrieve language
         if (params.lang != null) {
@@ -34,7 +37,11 @@ public class SynthesisService extends AiService {
         }
         ApiContent response = new ApiContent();
 
+        // Retrieve the IDs list and truncate it if needed
         List<String> ids = params.filters.get("id");
+        if (ids.size() > config.getIntegerProperty(RagConfiguration.SYNTHESIS_MAX_FILES, 5)) {
+            ids = ids.subList(0, config.getIntegerProperty(RagConfiguration.SYNTHESIS_MAX_FILES, 5));
+        }
         int basketSize = ids.size();
         List<Properties> documents = new ArrayList<>();
 
@@ -100,16 +107,10 @@ public class SynthesisService extends AiService {
                 getDocumentSummary(request, document, stream);
 
             } catch (EmptyFileException e) {
-                    // TODO : non-blocking error
-//                return error(stream, "422", "summarizationEmptyFile",
-//                        "Sorry, I am unable to generate a summary, since the file has no content.",
-//                        "File is empty and can not be summarized.", params.conversationId, isTool);
+                // non-blocking error
                 LOGGER.warn("The document {} is empty and can not be summarized.", document.get("id"), e);
             } catch (Exception e) {
                 LOGGER.warn("The document {} summarization failed. Ignoring it in the synthesis.", document.get("id"), e);
-//                return error(stream, "500", "summarizationTechnicalError",
-//                        "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
-//                        e.getLocalizedMessage(), params.conversationId, isTool);
             }
         }
 
@@ -131,7 +132,6 @@ public class SynthesisService extends AiService {
                 "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
                 e.getLocalizedMessage(), params.conversationId, isTool);
         }
-
 
         if (!isTool) {
             // Save message in Postgresql DB

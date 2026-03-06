@@ -336,10 +336,15 @@ public class RagAPI extends SearchAPI {
             throw new IOException("No content available for summarization.");
         }
 
-        ArrayList<String> chunks = segments
+        List<String> chunks = segments
                 .stream()
                 .map(TextSegment::text)
                 .collect(Collectors.toCollection(ArrayList::new));
+
+        // Limit the number of chunks used for the summarization
+        if (segments.size() > config.getIntegerProperty(RagConfiguration.SUMMARIZATION_CHUNKS_NUMBER)) {
+            chunks = chunks.subList(0, config.getIntegerProperty(RagConfiguration.SUMMARIZATION_CHUNKS_NUMBER));
+        }
         int chunksNb = segments.size();
 
         // Setup prompt
@@ -393,8 +398,8 @@ public class RagAPI extends SearchAPI {
         RagConfiguration config = RagConfiguration.getInstance();
         ChatModel chatModel = getChatModel(config);
 
-        // Check if summarization is enabled
-        if (!config.getBooleanProperty(RagConfiguration.ENABLE_SUMMARIZATION)) {
+        // Check if summarization AND synthesis are enabled
+        if (!config.getBooleanProperty(RagConfiguration.ENABLE_SUMMARIZATION) || !config.getBooleanProperty(RagConfiguration.ENABLE_SYNTHESIS)) {
             LOGGER.debug("AiPowered - Synthesize - Summarization is disabled");
             throw new DisabledException("The summary generation feature is disabled.");
         }
