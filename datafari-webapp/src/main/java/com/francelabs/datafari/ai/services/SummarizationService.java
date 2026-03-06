@@ -24,7 +24,7 @@ public class SummarizationService extends AiService {
     private static final Logger LOGGER = LogManager.getLogger(SummarizationService.class.getName());
 
     public static @NotNull ApiContent summarize(AiRequest params, HttpServletRequest request, ChatStream stream,
-                                                SourcesAccumulator sourcesAcc, boolean isTool) {
+                                                boolean isTool) {
         ApiContent response = new ApiContent();
 
         String id = params.id;

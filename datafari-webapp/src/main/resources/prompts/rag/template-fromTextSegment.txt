@@ -1,5 +1,6 @@
 
-# Title: {title}
-# Content: '''
+**title:** {title}
+**content:**
+'''
 {content}
 '''
