@@ -1384,7 +1384,7 @@
     </queryParser>
 
     <!-- Solr Vector embeddings component -->
-    <queryParser name="knn_text_to_vector" class="org.apache.solr.llm.textvectorisation.search.TextToVectorQParserPlugin"/>
+    <queryParser name="knn_text_to_vector" class="org.apache.solr.languagemodels.textvectorisation.search.TextToVectorQParserPlugin"/>
 
     <!-- example of registering a query parser -->
     <!--
