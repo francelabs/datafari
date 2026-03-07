@@ -3,7 +3,7 @@ package com.francelabs.datafari.service.indexer.solr;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.request.SolrQuery;
 import org.apache.solr.common.params.ModifiableSolrParams;
 
 import com.francelabs.datafari.service.indexer.IndexerQuery;

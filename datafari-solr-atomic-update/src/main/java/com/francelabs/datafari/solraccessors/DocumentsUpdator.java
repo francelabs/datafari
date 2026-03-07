@@ -2,7 +2,7 @@ package com.francelabs.datafari.solraccessors;
 
 import com.francelabs.datafari.config.CollectionPathConfig;
 import com.francelabs.datafari.config.JobConfig;
-import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.request.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
