@@ -35,18 +35,18 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
    <solr.sha512>cad5ac923bb0c342d223741c661141731afd768d88de32e6aff75eef9aa8f6bb14b34981ce7602e3d99a906b68a01893c97a1d8cc262b62e91b11ee93aab8f3f</solr.sha512>
-   <solr.version>10.0.0-SNAPSHOT</solr.version>
+   <solr.version>10.0.0</solr.version>
    <lucene.version>10.0.0-SNAPSHOT</lucene.version>
      <spring.boot.version>2.7.14</spring.boot.version>
     <spring.data.cassandra.version>3.4.15</spring.data.cassandra.version>
-    <spring.security.version>5.8.5</spring.security.version>
+    <spring.security.version>6.3.8</spring.security.version>
     <spring.security.kerberos.version>1.0.1.RELEASE</spring.security.kerberos.version>
     <spring.security.saml2.core.version>1.0.10.RELEASE</spring.security.saml2.core.version>
     <spring.security.kerberos.version>1.0.1.RELEASE</spring.security.kerberos.version>
     <tika.version>3.2.3</tika.version>
     <tika-server.sha512>3099b58451a74e940f8a4f76933e0de86bd4dba70efd1b645df1926988b31dac7f1196efda43281aa8d88b1e29ef73adf11f069b7a27d6baf753a83bf95f5f86</tika-server.sha512>
     <tika-server-commit-number>5c0793e2c</tika-server-commit-number>
-    <tomcat.version>10.1.48</tomcat.version>
+    <tomcat.version>11.0.18</tomcat.version>
     <tomcat-mcf.version>9.0.81</tomcat-mcf.version>
     <slf4j.mcf.version>1.7.36</slf4j.mcf.version>
     <xmlsec.version>2.3.0</xmlsec.version>
