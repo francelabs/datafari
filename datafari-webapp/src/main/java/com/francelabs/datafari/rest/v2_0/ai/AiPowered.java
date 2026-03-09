@@ -52,8 +52,8 @@ public class AiPowered {
             if (!errors.isEmpty()) {
                 response.status = ERROR;
                 response.content.error = new ApiError("400",
-                        ApiError.RAG_BAD_REQUEST.getKey(),
-                        ApiError.RAG_BAD_REQUEST.getValue(),
+                        ApiError.AI_BAD_REQUEST.getKey(),
+                        ApiError.AI_BAD_REQUEST.getValue(),
                         String.join("; ", errors));
                 return ResponseEntity.badRequest().body(response);
             }
@@ -71,8 +71,8 @@ public class AiPowered {
         } catch (Exception e) {
             response.status = ERROR;
             response.content.error = new ApiError("500",
-                    "ragTechnicalError",
-                    "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
+                    ApiError.RAG_TECHNICAL_ERROR.getKey(),
+                    ApiError.RAG_TECHNICAL_ERROR.getValue(),
                     e.getMessage());
             return ResponseEntity.status(500).body(response);
         }
@@ -169,8 +169,8 @@ public class AiPowered {
             List<String> errors = params.validate();
             if (!errors.isEmpty()) {
                 stream.error("400",
-                        ApiError.RAG_BAD_REQUEST.getKey(),
-                        ApiError.RAG_BAD_REQUEST.getValue(),
+                        ApiError.AI_BAD_REQUEST.getKey(),
+                        ApiError.AI_BAD_REQUEST.getValue(),
                         String.join("; ", errors));
 
                 stream.completed(ERROR);
@@ -239,8 +239,8 @@ public class AiPowered {
             List<String> errors = params.validate();
             if (!errors.isEmpty()) {
                 stream.error("400",
-                        ApiError.RAG_BAD_REQUEST.getKey(),
-                        ApiError.RAG_BAD_REQUEST.getValue(),
+                        ApiError.AI_BAD_REQUEST.getKey(),
+                        ApiError.AI_BAD_REQUEST.getValue(),
                         String.join("; ", errors));
 
                 stream.completed(ERROR);
@@ -402,11 +402,11 @@ public class AiPowered {
             // 5) Validation: summarization returns an error
             emit(stream, () -> stream.phase("validation.done"), TEST_DELAY_MS);
             if ("summarize".equals(action.name())) {
-                return AiService.error(stream, "402", "testLabelForError",
-                        "This test endpoint returns an error if 'summarize' action is called",
-                        "Technical error that should not be displayed to the user", params.conversationId);
+                return AiService.error(stream, "402",
+                    ApiError.TEST_ERROR.getKey(),
+                    ApiError.TEST_ERROR.getValue(),
+                    "Technical error that should not be displayed to the user", params.conversationId);
             }
-
 
             // 6) Tokens stream
             emitTokens(stream, List.of(
@@ -419,12 +419,6 @@ public class AiPowered {
             // 7) Final message and sources
             result.message = "✅ This text is the final message. It must override the existing token-by-token text. \nIt must be displayed as the chatbot response.";
             result.sources = sourcesAcc.toJsonArray();
-
-
-            // 8) Ending
-//            emit(stream, () -> stream.phase("service.done"), TEST_DELAY_MS);
-//            emit(stream, () -> stream.completed(OK), TEST_DELAY_MS);
-
 
             // JSONize and stream the final sources
             result.sources = sourcesAcc.toJsonArray();

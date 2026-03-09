@@ -3,6 +3,7 @@ package com.francelabs.datafari.ai.services;
 import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
+import com.francelabs.datafari.ai.dto.ApiError;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.exception.DatafariServerException;
@@ -90,8 +91,9 @@ public class SynthesisService extends AiService {
 
         // If no doc retrieved
         if (documents.isEmpty() || !hasContentToSynthesize) {
-            return error(stream, "422", "synthesisNoFileContent",
-                "Sorry, I am unable to generate a synthesis of those file, since the files are missing or have no content.",
+            return error(stream, "422",
+                ApiError.SYNTHESIS_NO_FILE_CONTENT.getKey(),
+                ApiError.SYNTHESIS_NO_FILE_CONTENT.getValue(),
                 "Files is empty or not found.", params.conversationId, isTool);
         }
 
@@ -124,12 +126,14 @@ public class SynthesisService extends AiService {
             }
 
         } catch (DatafariServerException e) {
-            return error(stream, "500", "summarizationTechnicalError",
-                "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
+            return error(stream, "500",
+                ApiError.SYNTHESIS_TECHNICAL_ERROR.getKey(),
+                ApiError.SYNTHESIS_TECHNICAL_ERROR.getValue(),
                 e.getLocalizedMessage(), params.conversationId, isTool);
         } catch (IOException e) {
-            return error(stream, "500", "summarizationTechnicalError",
-                "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
+            return error(stream, "500",
+                ApiError.SYNTHESIS_TECHNICAL_ERROR.getKey(),
+                ApiError.SYNTHESIS_TECHNICAL_ERROR.getValue(),
                 e.getLocalizedMessage(), params.conversationId, isTool);
         }
 

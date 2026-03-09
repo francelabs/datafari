@@ -3,6 +3,7 @@ package com.francelabs.datafari.ai.services;
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
+import com.francelabs.datafari.ai.dto.ApiError;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.ai.config.RagConfiguration;
@@ -43,7 +44,8 @@ public class RagService extends AiService {
 
         // Is RAG enabled ?
         if (!config.getBooleanProperty(RagConfiguration.ENABLE_RAG))
-            return error(stream, "422", "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", "RAG service is disabled in configuration.", null, isTool);
+            return error(stream, "422", ApiError.RAG_ERROR_NOT_ENABLED.getKey(), ApiError.RAG_ERROR_NOT_ENABLED.getValue(),
+                "RAG service is disabled in configuration.", null, isTool);
 
 
         if (!isTool) {
@@ -62,9 +64,10 @@ public class RagService extends AiService {
             LOGGER.debug("RagService - RAG - RAG query : {}", query);
         } else {
             LOGGER.warn("RagService - RAG - Missing query parameter");
-            return error(stream, "422", "ragBadRequest",
-                    "Sorry, It appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.",
-                    "'id' must not be null", params.conversationId, isTool);
+            return error(stream, "422",
+                ApiError.RAG_BAD_REQUEST.getKey(),
+                ApiError.RAG_BAD_REQUEST.getValue(),
+                "'id' must not be null", params.conversationId, isTool);
         }
 
         //
@@ -140,8 +143,8 @@ public class RagService extends AiService {
         } catch (IOException | ServletException e) {
             LOGGER.error("AiPowered - RAG - ERROR. An error occurred while retrieving documents.", e);
             return error(stream, "500",
-                    "ragTechnicalError",
-                    "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
+                    ApiError.RAG_TECHNICAL_ERROR.getKey(),
+                    ApiError.RAG_TECHNICAL_ERROR.getValue(),
                     e.getLocalizedMessage(), params.conversationId, isTool);
         }
 
@@ -171,8 +174,10 @@ public class RagService extends AiService {
             return response;
         } catch (final Exception e) {
             LOGGER.error("AiPowered - RAG - ERROR", e);
-            return error(stream, "500", "ragTechnicalError",
-                    "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.", e.getLocalizedMessage(), params.conversationId, isTool);
+            return error(stream, "500",
+                ApiError.RAG_TECHNICAL_ERROR.getKey(),
+                ApiError.RAG_TECHNICAL_ERROR.getValue(),
+                e.getLocalizedMessage(), params.conversationId, isTool);
         }
     }
 }

@@ -229,6 +229,7 @@
     "assistantConf-enableRagLabel": "Enable RAG service",
     "assistantConf-enableAgenticLabel": "Enable agentic service",
     "assistantConf-enableSummarizationLabel": "Enable summarization service",
+    "assistantConf-enableSynthesisLabel": "Enable synthesis service",
     "assistantConf-assistantRetrievalMethodLabel": "Retrieval method for search via Assistant",
     "assistantConf-enableConversationStorage": "Enable conversation persistence (required for some Assistant features)",
     "atLeastOneWord": "كلمة واحدة على الاقل ",

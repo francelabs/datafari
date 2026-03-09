@@ -195,7 +195,7 @@ public class DatafariTools {
         AiRequest summarizerequest = new AiRequest();
         summarizerequest.id = id;
 
-        ApiContent resp = SummarizationService.summarize(summarizerequest, request, stream, sourcesAcc, true);
+        ApiContent resp = SummarizationService.summarize(summarizerequest, request, stream, true);
         String result = returnMessageOrReason(resp, "Unable to generate a summary for the document " + id);
         LOGGER.debug("AGENTIC TOOLS - Summarize - {}", result);
         return result;
@@ -370,5 +370,4 @@ public class DatafariTools {
             return errorMessage;
         }
     }
-
 }
