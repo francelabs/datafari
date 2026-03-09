@@ -28,16 +28,16 @@
     <log4j.version>2.17.2</log4j.version>
     <logstash.version>8.19.4</logstash.version>
     <logstash.sha512>2e1b77745e80a0e5101d7bcbee5bbfbe43373628a8c5e3ddbe1a55d91491b05186a084334b27dcfd52b37d74236d71e99d41b95600c44c51e54a4910284783e5</logstash.sha512>
-    <mcf-solr-plugin.version>1.0</mcf-solr-plugin.version>
-    <mcf-solr-plugin.sha512>17dd7b03402ae2dde6f9ea610f8f79ac9bec5b3e9e2c94035d94ca3999827ec435ba02d1f0749116fc8b5bc000ce96ca8d696a8230cf6e2dee65d15393a57b15</mcf-solr-plugin.sha512>
+    <mcf-solr-plugin.version>1.1</mcf-solr-plugin.version>
+    <mcf-solr-plugin.sha512>258b69237dc1297b92b471c3797a2bd5986b08306979a49508144ff896e7079b1c5244bacddd878f4d4bc856cc467f47cf149d858281b59e5b2df6aab1984578</mcf-solr-plugin.sha512>
     <mssql-jdbc.version>10.2.1.jre11</mssql-jdbc.version>
     <postgresql.version>42.7.2</postgresql.version>
     <ojdbc.version>19.15.0.0.1</ojdbc.version>
     <postgres.version>42.7.2</postgres.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-   <solr.sha512>cad5ac923bb0c342d223741c661141731afd768d88de32e6aff75eef9aa8f6bb14b34981ce7602e3d99a906b68a01893c97a1d8cc262b62e91b11ee93aab8f3f</solr.sha512>
-   <solr.version>10.0.0-SNAPSHOT</solr.version>
+   <solr.sha512>825ab4e92a839802d9f5d570600b622881ddfe4f700cab569afb7d8220590a59d11088f4e10d4dcf9395073c35d73a420cc275a9ed7b18e2f84178bfcb49ae82</solr.sha512>
+   <solr.version>10.0.0</solr.version>
    <lucene.version>10.0.0-SNAPSHOT</lucene.version>
      <spring.boot.version>2.7.14</spring.boot.version>
     <spring.data.cassandra.version>3.4.15</spring.data.cassandra.version>
@@ -66,6 +66,7 @@
       repo -->
 
     <module>datafari-solr</module>
+<module>datafari-updateprocessor</module>
     <module>datafari-mcf</module>
     <module>datafari-mcf-connectors-dependencies</module>
     <module>datafari-core</module>
@@ -75,7 +76,6 @@
     <module>datafari-tomcat</module>
     <module>datafari-tomcat-mcf</module>
     <module>datafari-analytic-stack</module>
-    <module>datafari-updateprocessor</module>
     <module>datafari-docfilter-connector</module>
     <module>datafari-emptier-connector</module>
     <module>datafari-metadatacleaner-connector</module>

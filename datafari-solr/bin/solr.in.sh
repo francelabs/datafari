@@ -75,7 +75,7 @@ ZK_CLIENT_TIMEOUT="30000"
 
 # By default the start script uses "localhost"; override the hostname here
 # for production SolrCloud environments to control the hostname exposed to cluster state
-SOLR_HOST=@NODEHOST@
+SOLR_HOST_ADVERTISE=@NODEHOST@
 
 # By default Solr will try to connect to Zookeeper with 30 seconds in timeout; override the timeout if needed
 #SOLR_CLOUD_WAIT_FOR_ZK_SECONDS="30"
@@ -158,7 +158,7 @@ SOLR_PORT=8983
 # set this value as narrowly as required before going to production. In
 # environments where security is not a concern, 0.0.0.0 can be used to allow
 # Solr to accept connections on all network interfaces.
-SOLR_JETTY_HOST="0.0.0.0"
+SOLR_HOST_BIND="0.0.0.0"
 # Sets the network interface the Embedded ZK binds to.
 #SOLR_ZOOKEEPER_EMBEDDED_HOST="127.0.0.1"
 
@@ -291,7 +291,7 @@ SOLR_SECURITY_MANAGER_ENABLED=false
 # SOLR_OPTS="$SOLR_OPTS -Dlog4j2.formatMsgNoLookups=true"
 
 # The bundled plugins in the "modules" folder can easily be enabled as a comma-separated list in SOLR_MODULES variable
-SOLR_MODULES=llm,langid
+SOLR_MODULES=language-models,langid
 
 # Configure the default replica placement plugin to use if one is not configured in cluster properties
 # See https://solr.apache.org/guide/solr/latest/configuration-guide/replica-placement-plugins.html for details

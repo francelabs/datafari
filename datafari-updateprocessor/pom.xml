@@ -26,13 +26,13 @@
       <artifactId>solr-core</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.solr</groupId>
-      <artifactId>solr-llm</artifactId>
-      <scope>provided</scope>
-      <version>${solr.version}</version>
-    </dependency>
 
+<dependency>
+  <groupId>org.apache.solr</groupId>
+  <artifactId>solr-language-models</artifactId>
+<version>${solr.version}</version>
+  <scope>provided</scope>
+</dependency>
     <!-- Logging dependencies (required since Solr 9.4+/10, no longer exposed by default) -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
