@@ -53,6 +53,13 @@
       </fileset>
     </copy>
 
+		<!-- Copy additional runtime libraries needed by MCF agents -->
+                <copy toDir="${mcf.dist}/mcf_home/lib" overwrite="true" force="true">
+                <fileset dir="target/dependencies">
+                <include name="log4j-slf4j2-impl-*.jar" />
+                </fileset>
+                </copy>
+
 		<!-- Copy original multiprocess zk scripts -->
 		<copy toDir="${mcf.dist}/mcf_home" overwrite="true" force="true">
 			<fileset dir="target">
