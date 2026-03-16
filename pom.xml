@@ -54,8 +54,8 @@
     <xmlsec.version>2.3.0</xmlsec.version>
     <mcf.version>2.28</mcf.version>
     <mcf.sha512>73b8053e333d63540113cc247e1ac7679b91eb07d68f4cb89ae8ffdfa6978fb24bd346bcb0cbc45ae823c8accd7bedd0994b3e7683442a614b839a7ab3616def</mcf.sha512>
-    <zookeeper.version>3.9.3</zookeeper.version>
-    <zookeeper.sha512>d44d870c1691662efbf1a8baf1859c901b820dc5ff163b36e81beb27b6fbf3cd31b5f1f075697edaaf6d3e7a4cb0cc92f924dcff64b294ef13d535589bdaf143</zookeeper.sha512>
+    <zookeeper.version>3.9.4</zookeeper.version>
+    <zookeeper.sha512>36bffae6440ed0d71ed83a621b8c52c583860b414812197373237f0c148bd16e6b599977c90e5eb81c0fce6b82ef44aa782621535417cffc4c2a0a51a56f2cdf</zookeeper.sha512>
     <langchain4j.version>1.11.0</langchain4j.version>
     <jetty.version>12.0.27</jetty.version>
   </properties>
@@ -254,7 +254,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.1.1</version>
+          <version>3.6.1</version>
         </plugin>
         <plugin>
           <groupId>com.googlecode.maven-download-plugin</groupId>
