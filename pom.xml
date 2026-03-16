@@ -41,7 +41,7 @@
    <lucene.version>10.0.0-SNAPSHOT</lucene.version>
      <spring.boot.version>2.7.14</spring.boot.version>
     <spring.data.cassandra.version>3.4.15</spring.data.cassandra.version>
-    <spring.security.version>5.8.5</spring.security.version>
+    <spring.security.version>6.3.8</spring.security.version>
     <spring.security.kerberos.version>1.0.1.RELEASE</spring.security.kerberos.version>
     <spring.security.saml2.core.version>1.0.10.RELEASE</spring.security.saml2.core.version>
     <spring.security.kerberos.version>1.0.1.RELEASE</spring.security.kerberos.version>
