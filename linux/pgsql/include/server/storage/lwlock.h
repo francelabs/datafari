@@ -4,7 +4,7 @@
  *	  Lightweight lock manager
  *
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/storage/lwlock.h
@@ -19,9 +19,19 @@
 #endif
 
 #include "port/atomics.h"
+#include "storage/lwlocknames.h"
 #include "storage/proclist_types.h"
 
 struct PGPROC;
+
+/* what state of the wait process is a backend in */
+typedef enum LWLockWaitState
+{
+	LW_WS_NOT_WAITING,			/* not currently waiting / woken up */
+	LW_WS_WAITING,				/* currently waiting */
+	LW_WS_PENDING_WAKEUP,		/* removed from waitlist, but not yet
+								 * signalled */
+}			LWLockWaitState;
 
 /*
  * Code outside of lwlock.c should not manipulate the contents of this
@@ -51,6 +61,9 @@ typedef struct LWLock
  */
 #define LWLOCK_PADDED_SIZE	PG_CACHE_LINE_SIZE
 
+StaticAssertDecl(sizeof(LWLock) <= LWLOCK_PADDED_SIZE,
+				 "Miscalculated LWLock padding");
+
 /* LWLock, padded to a full cache line size */
 typedef union LWLockPadded
 {
@@ -69,9 +82,6 @@ typedef struct NamedLWLockTranche
 
 extern PGDLLIMPORT NamedLWLockTranche *NamedLWLockTrancheArray;
 extern PGDLLIMPORT int NamedLWLockTrancheRequests;
-
-/* Names for fixed lwlocks */
-#include "storage/lwlocknames.h"
 
 /*
  * It's a bit odd to declare NUM_BUFFER_PARTITIONS and NUM_LOCK_PARTITIONS
@@ -103,7 +113,7 @@ typedef enum LWLockMode
 {
 	LW_EXCLUSIVE,
 	LW_SHARED,
-	LW_WAIT_UNTIL_FREE			/* A special mode used in PGPROC->lwWaitMode,
+	LW_WAIT_UNTIL_FREE,			/* A special mode used in PGPROC->lwWaitMode,
 								 * when waiting for lock to become free. Not
 								 * to be used as LWLockAcquire argument */
 } LWLockMode;
@@ -117,14 +127,18 @@ extern bool LWLockAcquire(LWLock *lock, LWLockMode mode);
 extern bool LWLockConditionalAcquire(LWLock *lock, LWLockMode mode);
 extern bool LWLockAcquireOrWait(LWLock *lock, LWLockMode mode);
 extern void LWLockRelease(LWLock *lock);
-extern void LWLockReleaseClearVar(LWLock *lock, uint64 *valptr, uint64 val);
+extern void LWLockReleaseClearVar(LWLock *lock, pg_atomic_uint64 *valptr, uint64 val);
 extern void LWLockReleaseAll(void);
+extern void LWLockDisown(LWLock *lock);
+extern void LWLockReleaseDisowned(LWLock *lock, LWLockMode mode);
+extern void ForEachLWLockHeldByMe(void (*callback) (LWLock *, LWLockMode, void *),
+								  void *context);
 extern bool LWLockHeldByMe(LWLock *lock);
 extern bool LWLockAnyHeldByMe(LWLock *lock, int nlocks, size_t stride);
 extern bool LWLockHeldByMeInMode(LWLock *lock, LWLockMode mode);
 
-extern bool LWLockWaitForVar(LWLock *lock, uint64 *valptr, uint64 oldval, uint64 *newval);
-extern void LWLockUpdateVar(LWLock *lock, uint64 *valptr, uint64 value);
+extern bool LWLockWaitForVar(LWLock *lock, pg_atomic_uint64 *valptr, uint64 oldval, uint64 *newval);
+extern void LWLockUpdateVar(LWLock *lock, pg_atomic_uint64 *valptr, uint64 val);
 
 extern Size LWLockShmemSize(void);
 extern void CreateLWLocks(void);
@@ -182,6 +196,7 @@ typedef enum BuiltinTrancheIds
 	LWTRANCHE_LOCK_MANAGER,
 	LWTRANCHE_PREDICATE_LOCK_MANAGER,
 	LWTRANCHE_PARALLEL_HASH_JOIN,
+	LWTRANCHE_PARALLEL_BTREE_SCAN,
 	LWTRANCHE_PARALLEL_QUERY_DSA,
 	LWTRANCHE_PER_SESSION_DSA,
 	LWTRANCHE_PER_SESSION_RECORD_TYPE,
@@ -193,7 +208,20 @@ typedef enum BuiltinTrancheIds
 	LWTRANCHE_PGSTATS_DSA,
 	LWTRANCHE_PGSTATS_HASH,
 	LWTRANCHE_PGSTATS_DATA,
-	LWTRANCHE_FIRST_USER_DEFINED
+	LWTRANCHE_LAUNCHER_DSA,
+	LWTRANCHE_LAUNCHER_HASH,
+	LWTRANCHE_DSM_REGISTRY_DSA,
+	LWTRANCHE_DSM_REGISTRY_HASH,
+	LWTRANCHE_COMMITTS_SLRU,
+	LWTRANCHE_MULTIXACTMEMBER_SLRU,
+	LWTRANCHE_MULTIXACTOFFSET_SLRU,
+	LWTRANCHE_NOTIFY_SLRU,
+	LWTRANCHE_SERIAL_SLRU,
+	LWTRANCHE_SUBTRANS_SLRU,
+	LWTRANCHE_XACT_SLRU,
+	LWTRANCHE_PARALLEL_VACUUM_DSA,
+	LWTRANCHE_AIO_URING_COMPLETION,
+	LWTRANCHE_FIRST_USER_DEFINED,
 }			BuiltinTrancheIds;
 
 /*

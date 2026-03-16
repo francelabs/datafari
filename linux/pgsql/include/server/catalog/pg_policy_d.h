@@ -3,7 +3,7 @@
  * pg_policy_d.h
  *    Macro definitions for pg_policy
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -17,6 +17,8 @@
  */
 #ifndef PG_POLICY_D_H
 #define PG_POLICY_D_H
+
+/* Macros related to the structure of pg_policy */
 
 #define PolicyRelationId 3256
 #define PolicyOidIndexId 3257
@@ -32,6 +34,11 @@
 #define Anum_pg_policy_polwithcheck 8
 
 #define Natts_pg_policy 8
+
+/* Definitions copied from pg_policy.h */
+
+
+/* OID symbols for objects defined in pg_policy.dat */
 
 
 #endif							/* PG_POLICY_D_H */

@@ -3,7 +3,7 @@
  * pg_database_d.h
  *    Macro definitions for pg_database
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -17,6 +17,8 @@
  */
 #ifndef PG_DATABASE_D_H
 #define PG_DATABASE_D_H
+
+/* Macros related to the structure of pg_database */
 
 #define DatabaseRelationId 1262
 #define DatabaseRelation_Rowtype_Id 1248
@@ -34,17 +36,24 @@
 #define Anum_pg_database_datlocprovider 5
 #define Anum_pg_database_datistemplate 6
 #define Anum_pg_database_datallowconn 7
-#define Anum_pg_database_datconnlimit 8
-#define Anum_pg_database_datfrozenxid 9
-#define Anum_pg_database_datminmxid 10
-#define Anum_pg_database_dattablespace 11
-#define Anum_pg_database_datcollate 12
-#define Anum_pg_database_datctype 13
-#define Anum_pg_database_daticulocale 14
-#define Anum_pg_database_datcollversion 15
-#define Anum_pg_database_datacl 16
+#define Anum_pg_database_dathasloginevt 8
+#define Anum_pg_database_datconnlimit 9
+#define Anum_pg_database_datfrozenxid 10
+#define Anum_pg_database_datminmxid 11
+#define Anum_pg_database_dattablespace 12
+#define Anum_pg_database_datcollate 13
+#define Anum_pg_database_datctype 14
+#define Anum_pg_database_datlocale 15
+#define Anum_pg_database_daticurules 16
+#define Anum_pg_database_datcollversion 17
+#define Anum_pg_database_datacl 18
 
-#define Natts_pg_database 16
+#define Natts_pg_database 18
+
+/* Definitions copied from pg_database.h */
+
+
+/* OID symbols for objects defined in pg_database.dat */
 
 #define Template1DbOid 1
 

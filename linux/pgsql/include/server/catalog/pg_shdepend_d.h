@@ -3,7 +3,7 @@
  * pg_shdepend_d.h
  *    Macro definitions for pg_shdepend
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -18,6 +18,8 @@
 #ifndef PG_SHDEPEND_D_H
 #define PG_SHDEPEND_D_H
 
+/* Macros related to the structure of pg_shdepend */
+
 #define SharedDependRelationId 1214
 #define SharedDependDependerIndexId 1232
 #define SharedDependReferenceIndexId 1233
@@ -31,6 +33,11 @@
 #define Anum_pg_shdepend_deptype 7
 
 #define Natts_pg_shdepend 7
+
+/* Definitions copied from pg_shdepend.h */
+
+
+/* OID symbols for objects defined in pg_shdepend.dat */
 
 
 #endif							/* PG_SHDEPEND_D_H */

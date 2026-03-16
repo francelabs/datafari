@@ -3,7 +3,7 @@
  * parallel.h
  *	  Infrastructure for launching parallel workers
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/access/parallel.h
@@ -26,7 +26,6 @@ typedef struct ParallelWorkerInfo
 {
 	BackgroundWorkerHandle *bgwhandle;
 	shm_mq_handle *error_mqh;
-	int32		pid;
 } ParallelWorkerInfo;
 
 typedef struct ParallelContext
@@ -54,7 +53,7 @@ typedef struct ParallelWorkerContext
 	shm_toc    *toc;
 } ParallelWorkerContext;
 
-extern PGDLLIMPORT volatile bool ParallelMessagePending;
+extern PGDLLIMPORT volatile sig_atomic_t ParallelMessagePending;
 extern PGDLLIMPORT int ParallelWorkerNumber;
 extern PGDLLIMPORT bool InitializingParallelWorker;
 
@@ -72,7 +71,7 @@ extern void DestroyParallelContext(ParallelContext *pcxt);
 extern bool ParallelContextActive(void);
 
 extern void HandleParallelMessageInterrupt(void);
-extern void HandleParallelMessages(void);
+extern void ProcessParallelMessages(void);
 extern void AtEOXact_Parallel(bool isCommit);
 extern void AtEOSubXact_Parallel(bool isCommit, SubTransactionId mySubId);
 extern void ParallelWorkerReportLastRecEnd(XLogRecPtr last_xlog_end);

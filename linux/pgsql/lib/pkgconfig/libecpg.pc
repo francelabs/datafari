@@ -5,10 +5,10 @@ includedir=${prefix}/include
 
 Name: libecpg
 Description: PostgreSQL libecpg library
-Url: https://www.postgresql.org/
-Version: 15.4
+URL: https://www.postgresql.org/
+Version: 18.3
 Requires: 
-Requires.private: libpq libpgtypes
+Requires.private: libpq, libpgtypes
 Cflags: -I${includedir}
 Libs: -L${libdir} -lecpg
-Libs.private:  -lpgcommon -lpgport -lm
+Libs.private:  -lpgcommon -lpgport -lpq -lm

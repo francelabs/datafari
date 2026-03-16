@@ -3,7 +3,7 @@
  * pg_inherits_d.h
  *    Macro definitions for pg_inherits
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -18,6 +18,8 @@
 #ifndef PG_INHERITS_D_H
 #define PG_INHERITS_D_H
 
+/* Macros related to the structure of pg_inherits */
+
 #define InheritsRelationId 2611
 #define InheritsRelidSeqnoIndexId 2680
 #define InheritsParentIndexId 2187
@@ -28,6 +30,11 @@
 #define Anum_pg_inherits_inhdetachpending 4
 
 #define Natts_pg_inherits 4
+
+/* Definitions copied from pg_inherits.h */
+
+
+/* OID symbols for objects defined in pg_inherits.dat */
 
 
 #endif							/* PG_INHERITS_D_H */

@@ -3,7 +3,7 @@
  * pg_foreign_server_d.h
  *    Macro definitions for pg_foreign_server
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -17,6 +17,8 @@
  */
 #ifndef PG_FOREIGN_SERVER_D_H
 #define PG_FOREIGN_SERVER_D_H
+
+/* Macros related to the structure of pg_foreign_server */
 
 #define ForeignServerRelationId 1417
 #define ForeignServerOidIndexId 113
@@ -32,6 +34,11 @@
 #define Anum_pg_foreign_server_srvoptions 8
 
 #define Natts_pg_foreign_server 8
+
+/* Definitions copied from pg_foreign_server.h */
+
+
+/* OID symbols for objects defined in pg_foreign_server.dat */
 
 
 #endif							/* PG_FOREIGN_SERVER_D_H */

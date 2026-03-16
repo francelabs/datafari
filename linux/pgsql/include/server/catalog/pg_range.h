@@ -4,7 +4,7 @@
  *	  definition of the "range type" system catalog (pg_range)
  *
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/catalog/pg_range.h
@@ -19,7 +19,7 @@
 #define PG_RANGE_H
 
 #include "catalog/genbki.h"
-#include "catalog/pg_range_d.h"
+#include "catalog/pg_range_d.h" /* IWYU pragma: export */
 
 /* ----------------
  *		pg_range definition.  cpp turns this into
@@ -57,8 +57,11 @@ CATALOG(pg_range,3541,RangeRelationId)
  */
 typedef FormData_pg_range *Form_pg_range;
 
-DECLARE_UNIQUE_INDEX_PKEY(pg_range_rngtypid_index, 3542, RangeTypidIndexId, on pg_range using btree(rngtypid oid_ops));
-DECLARE_UNIQUE_INDEX(pg_range_rngmultitypid_index, 2228, RangeMultirangeTypidIndexId, on pg_range using btree(rngmultitypid oid_ops));
+DECLARE_UNIQUE_INDEX_PKEY(pg_range_rngtypid_index, 3542, RangeTypidIndexId, pg_range, btree(rngtypid oid_ops));
+DECLARE_UNIQUE_INDEX(pg_range_rngmultitypid_index, 2228, RangeMultirangeTypidIndexId, pg_range, btree(rngmultitypid oid_ops));
+
+MAKE_SYSCACHE(RANGETYPE, pg_range_rngtypid_index, 4);
+MAKE_SYSCACHE(RANGEMULTIRANGE, pg_range_rngmultitypid_index, 4);
 
 /*
  * prototypes for functions in pg_range.c

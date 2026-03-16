@@ -3,7 +3,7 @@
  * xlogreader.h
  *		Definitions for the generic XLog reading facility
  *
- * Portions Copyright (c) 2013-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 2013-2025, PostgreSQL Global Development Group
  *
  * IDENTIFICATION
  *		src/include/access/xlogreader.h
@@ -122,7 +122,7 @@ typedef struct
 	bool		in_use;
 
 	/* Identify the block this refers to */
-	RelFileNode rnode;
+	RelFileLocator rlocator;
 	ForkNumber	forknum;
 	BlockNumber blkno;
 
@@ -224,9 +224,9 @@ struct XLogReaderState
 	 * should not be accessed directly.
 	 * ----------------------------------------
 	 * Start and end point of the last record read and decoded by
-	 * XLogReadRecordInternal().  NextRecPtr is also used as the position to
-	 * decode next.  Calling XLogBeginRead() sets NextRecPtr and EndRecPtr to
-	 * the requested starting position.
+	 * XLogReadRecord().  NextRecPtr is also used as the position to decode
+	 * next.  Calling XLogBeginRead() sets NextRecPtr and EndRecPtr to the
+	 * requested starting position.
 	 */
 	XLogRecPtr	DecodeRecPtr;	/* start of last record decoded */
 	XLogRecPtr	NextRecPtr;		/* end+1 of last record decoded */
@@ -332,7 +332,6 @@ extern XLogReaderState *XLogReaderAllocate(int wal_segment_size,
 										   const char *waldir,
 										   XLogReaderRoutine *routine,
 										   void *private_data);
-extern XLogReaderRoutine *LocalXLogReaderRoutine(void);
 
 /* Free an XLogReader */
 extern void XLogReaderFree(XLogReaderState *state);
@@ -351,7 +350,7 @@ typedef enum XLogPageReadResult
 {
 	XLREAD_SUCCESS = 0,			/* record is successfully read */
 	XLREAD_FAIL = -1,			/* failed during reading a record */
-	XLREAD_WOULDBLOCK = -2		/* nonblocking mode only, no data */
+	XLREAD_WOULDBLOCK = -2,		/* nonblocking mode only, no data */
 } XLogPageReadResult;
 
 /* Read the next XLog record. Returns NULL on end-of-WAL or failure */
@@ -400,7 +399,7 @@ extern bool DecodeXLogRecord(XLogReaderState *state,
 							 DecodedXLogRecord *decoded,
 							 XLogRecord *record,
 							 XLogRecPtr lsn,
-							 char **errmsg);
+							 char **errormsg);
 
 /*
  * Macros that provide access to parts of the record most recently returned by
@@ -425,6 +424,8 @@ extern bool DecodeXLogRecord(XLogReaderState *state,
 	((decoder)->record->blocks[block_id].has_image)
 #define XLogRecBlockImageApply(decoder, block_id)		\
 	((decoder)->record->blocks[block_id].apply_image)
+#define XLogRecHasBlockData(decoder, block_id)		\
+	((decoder)->record->blocks[block_id].has_data)
 
 #ifndef FRONTEND
 extern FullTransactionId XLogRecGetFullXid(XLogReaderState *record);
@@ -433,10 +434,10 @@ extern FullTransactionId XLogRecGetFullXid(XLogReaderState *record);
 extern bool RestoreBlockImage(XLogReaderState *record, uint8 block_id, char *page);
 extern char *XLogRecGetBlockData(XLogReaderState *record, uint8 block_id, Size *len);
 extern void XLogRecGetBlockTag(XLogReaderState *record, uint8 block_id,
-							   RelFileNode *rnode, ForkNumber *forknum,
+							   RelFileLocator *rlocator, ForkNumber *forknum,
 							   BlockNumber *blknum);
 extern bool XLogRecGetBlockTagExtended(XLogReaderState *record, uint8 block_id,
-									   RelFileNode *rnode, ForkNumber *forknum,
+									   RelFileLocator *rlocator, ForkNumber *forknum,
 									   BlockNumber *blknum,
 									   Buffer *prefetch_buffer);
 

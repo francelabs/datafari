@@ -3,7 +3,7 @@
  * pg_range_d.h
  *    Macro definitions for pg_range
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -18,6 +18,8 @@
 #ifndef PG_RANGE_D_H
 #define PG_RANGE_D_H
 
+/* Macros related to the structure of pg_range */
+
 #define RangeRelationId 3541
 #define RangeTypidIndexId 3542
 #define RangeMultirangeTypidIndexId 2228
@@ -31,6 +33,11 @@
 #define Anum_pg_range_rngsubdiff 7
 
 #define Natts_pg_range 7
+
+/* Definitions copied from pg_range.h */
+
+
+/* OID symbols for objects defined in pg_range.dat */
 
 
 #endif							/* PG_RANGE_D_H */

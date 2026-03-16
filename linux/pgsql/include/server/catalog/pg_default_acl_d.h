@@ -3,7 +3,7 @@
  * pg_default_acl_d.h
  *    Macro definitions for pg_default_acl
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -18,6 +18,8 @@
 #ifndef PG_DEFAULT_ACL_D_H
 #define PG_DEFAULT_ACL_D_H
 
+/* Macros related to the structure of pg_default_acl */
+
 #define DefaultAclRelationId 826
 #define DefaultAclRoleNspObjIndexId 827
 #define DefaultAclOidIndexId 828
@@ -30,6 +32,8 @@
 
 #define Natts_pg_default_acl 5
 
+/* Definitions copied from pg_default_acl.h */
+
 
 /*
  * Types of objects for which the user is allowed to specify default
@@ -41,6 +45,10 @@
 #define DEFACLOBJ_FUNCTION		'f' /* function */
 #define DEFACLOBJ_TYPE			'T' /* type */
 #define DEFACLOBJ_NAMESPACE		'n' /* namespace */
+#define DEFACLOBJ_LARGEOBJECT	'L' /* large object */
+
+
+/* OID symbols for objects defined in pg_default_acl.dat */
 
 
 #endif							/* PG_DEFAULT_ACL_D_H */
