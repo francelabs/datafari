@@ -59,7 +59,7 @@ public class DatafariWebSecurity {
   }
 
   @Bean
-  public AuthenticationProvider postgresAuthenticationProvider(){
+  public PostgresAuthenticationProvider postgresAuthenticationProvider(){
     return new PostgresAuthenticationProvider();
   }
 
