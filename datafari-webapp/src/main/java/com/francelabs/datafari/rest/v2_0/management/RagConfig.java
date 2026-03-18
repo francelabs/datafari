@@ -70,6 +70,7 @@ public class RagConfig {
     response.put("enableRag", config.getBooleanProperty(RagConfiguration.ENABLE_RAG));
     response.put("enableAgentic", config.getBooleanProperty(RagConfiguration.ENABLE_AGENTIC));
     response.put("enableSummarization", config.getBooleanProperty(RagConfiguration.ENABLE_SUMMARIZATION));
+    response.put("enableSynthesis", config.getBooleanProperty(RagConfiguration.ENABLE_SYNTHESIS));
 
     response.put("chunkingStrategy", config.getProperty(RagConfiguration.PROMPT_CHUNKING_STRATEGY));
     response.put("maxRequestSize", config.getProperty(RagConfiguration.MAX_REQUEST_SIZE));

@@ -18,6 +18,7 @@ package com.francelabs.datafari.api;
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.ai.dto.ApiContent;
+import com.francelabs.datafari.ai.dto.ApiError;
 import com.francelabs.datafari.ai.models.chatmodels.ChatModelFactory;
 import com.francelabs.datafari.ai.models.chatmodels.ChatModelConfigurationManager;
 import com.francelabs.datafari.ai.services.AiService;
@@ -73,12 +74,12 @@ public class RagAPI extends SearchAPI {
         } catch (FileNotFoundException e) {
             LOGGER.warn("RagAPI -  WARNING. The query cannot be answered because no associated documents were found.");
             if (ragBydocument) {
-                return AiService.error(stream, "428", "ragNoFileFound",
-                    "Sorry, the requested file does not exist, or is not available.",
+                return AiService.error(stream, "428", ApiError.RAG_FILE_NOT_FOUND.getKey(),
+                    ApiError.RAG_FILE_NOT_FOUND.getValue(),
                     e.getLocalizedMessage(), null, isTool); // TODO : retrieve conversation ID to save error messages
             } else {
-                return AiService.error(stream, "428", "ragNoFileFound",
-                    "Sorry, I couldn't find any relevant document to answer your request.",
+                return AiService.error(stream, "428", ApiError.RAG_NO_FILE_FOUND.getKey(),
+                    ApiError.RAG_NO_FILE_FOUND.getValue(),
                     e.getLocalizedMessage(), null, isTool);
             }
         }
@@ -99,13 +100,15 @@ public class RagAPI extends SearchAPI {
             message = processRagQuery(contents, chatModel, config, request, ragBydocument);
         } catch (DatafariServerException e) {
             LOGGER.error("An error occurred while calling external LLM service.", e);
-            return AiService.error(stream, "500", "ragTechnicalError",
-                    "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
+            return AiService.error(stream, "500",
+                ApiError.RAG_TECHNICAL_ERROR.getKey(),
+                ApiError.RAG_TECHNICAL_ERROR.getValue(),
                 e.getLocalizedMessage(), null, isTool);
         }catch (Exception e) {
             LOGGER.error("An unexpected error occurred while processing RAG query.", e);
-            return AiService.error(stream, "500", "ragTechnicalError",
-                    "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
+            return AiService.error(stream, "500",
+                ApiError.RAG_TECHNICAL_ERROR.getKey(),
+                ApiError.RAG_TECHNICAL_ERROR.getValue(),
                 e.getLocalizedMessage(), null, isTool);
         }
 
@@ -116,8 +119,10 @@ public class RagAPI extends SearchAPI {
             message = cleanLlmFinalMessage(message);
             return writeResponse(message);
         } else {
-            return AiService.error(stream, "428", "ragNoValidAnswer",
-                "Sorry, I could not find an answer to your question.", "LLM returned empty response.",
+            return AiService.error(stream, "428",
+                ApiError.RAG_NO_VALID_ANSWER.getKey(),
+                ApiError.RAG_NO_VALID_ANSWER.getKey(),
+                "LLM returned empty response.",
                 null, isTool);
         }
 
@@ -336,10 +341,15 @@ public class RagAPI extends SearchAPI {
             throw new IOException("No content available for summarization.");
         }
 
-        ArrayList<String> chunks = segments
+        List<String> chunks = segments
                 .stream()
                 .map(TextSegment::text)
                 .collect(Collectors.toCollection(ArrayList::new));
+
+        // Limit the number of chunks used for the summarization
+        if (segments.size() > config.getIntegerProperty(RagConfiguration.SUMMARIZATION_CHUNKS_NUMBER)) {
+            chunks = chunks.subList(0, config.getIntegerProperty(RagConfiguration.SUMMARIZATION_CHUNKS_NUMBER));
+        }
         int chunksNb = segments.size();
 
         // Setup prompt
@@ -374,6 +384,82 @@ public class RagAPI extends SearchAPI {
         } else {
             LOGGER.debug("RagAPI - Summarize - Could not generate a summary for document {}. ", doc.metadata().getString("id"));
             throw new IOException("Could not generate any summary for this document");
+        }
+
+    }
+
+    /**
+     * Create a synthesis of multiple document, based on individual pre-generated summaries
+     * @param request
+     * @param documents List<Properties> - The list of documents
+     * @param stream
+     * @return A String synthesis
+     */
+    public static String synthesize(final HttpServletRequest request, List<Properties> documents, ChatStream stream) throws IOException, DatafariServerException {
+
+        LOGGER.debug("RagAPI - Summary for document {} requested.", documents.size());
+
+        // Get RAG configuration
+        RagConfiguration config = RagConfiguration.getInstance();
+        ChatModel chatModel = getChatModel(config);
+
+        // Check if summarization AND synthesis are enabled
+        if (!config.getBooleanProperty(RagConfiguration.ENABLE_SUMMARIZATION) || !config.getBooleanProperty(RagConfiguration.ENABLE_SYNTHESIS)) {
+            LOGGER.debug("AiPowered - Synthesize - Summarization is disabled");
+            throw new DisabledException("The summary generation feature is disabled.");
+        }
+
+        // Convert Properties to formatted prompt
+        List<String> snippets = new ArrayList<>();
+        for (Properties document : documents) {
+            String title = document.getProperty("title", "-");
+            String url = document.getProperty("url", "-");
+            String id = document.getProperty("id");
+            String summary = document.getProperty("summary", "-");
+            String snippet = PromptUtils.synthesisSnippet(title, summary, id, url);
+
+            snippets.add(snippet);
+        }
+
+        if (snippets.isEmpty()) {
+            LOGGER.debug("RagAPI - Synthesize - No content available for synthesis.");
+            throw new IOException("No content available for synthesis.");
+        }
+
+        int chunksNb = snippets.size();
+
+        // Setup prompt
+        String initialPromptTemplate = PromptUtils.createInitialPromptForSynthesis(request);
+        String iterativePromptTemplate = PromptUtils.createPromptForIterateSynthesis(request);
+
+
+        // First synthesis iteration
+        stream.phase("synthesize:generation");
+        initialPromptTemplate = PromptUtils.stuffAsManySnippetsAsPossible(initialPromptTemplate, snippets, config);
+        AiMessage responseMessage =  chatModel.chat(UserMessage.from(initialPromptTemplate)).aiMessage();
+        String lastGeneratedSynthesis = responseMessage.text();
+
+        // Refine iteratively the summary with each chunk
+        while (!snippets.isEmpty()) {
+            String progression = (chunksNb - snippets.size()) + "/" + chunksNb;
+            stream.phase("synthesize: generation (" + progression + ")");
+
+            // Refine the summary for each chunk
+            String iterativePrompt = PromptUtils.stuffAsManySnippetsAsPossible(
+                iterativePromptTemplate.replace("{synthesis}", lastGeneratedSynthesis),
+                snippets, config);
+
+            responseMessage =  chatModel.chat(UserMessage.from(iterativePrompt)).aiMessage();
+            lastGeneratedSynthesis = responseMessage.text();
+        }
+        stream.phase("synthesize:done");
+
+        // Return the last generated summary
+        if (lastGeneratedSynthesis.length() > 1) {
+            return lastGeneratedSynthesis;
+        } else {
+            LOGGER.debug("RagAPI - synthesize - Could not generate a synthesis for {} documents.", documents.size());
+            throw new IOException("Could not generate synthesis");
         }
 
     }

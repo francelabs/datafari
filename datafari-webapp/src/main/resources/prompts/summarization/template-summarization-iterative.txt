@@ -1,7 +1,8 @@
+## Instructions
 Here is the summary of a partial document. Use the new chunks below to refine the summary if relevant. If not relevant, return the original summary.
 
-Summary:
+## Summary
 {summary}
 
-Additional content:
+## Additional content
 {snippets}

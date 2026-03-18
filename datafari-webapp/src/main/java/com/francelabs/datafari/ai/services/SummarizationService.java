@@ -3,6 +3,7 @@ package com.francelabs.datafari.ai.services;
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
+import com.francelabs.datafari.ai.dto.ApiError;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.exception.DatafariServerException;
@@ -24,7 +25,7 @@ public class SummarizationService extends AiService {
     private static final Logger LOGGER = LogManager.getLogger(SummarizationService.class.getName());
 
     public static @NotNull ApiContent summarize(AiRequest params, HttpServletRequest request, ChatStream stream,
-                                                SourcesAccumulator sourcesAcc, boolean isTool) {
+                                                boolean isTool) {
         ApiContent response = new ApiContent();
 
         String id = params.id;
@@ -63,17 +64,21 @@ public class SummarizationService extends AiService {
                 summary = (String) jsonAiDocument.get(AiService.LLM_SUMMARY_FIELD);
                 content = (String) ((JSONArray) jsonAiDocument.get(AiService.EXACT_CONTENT_FIELD)).getFirst();
             } else {
-                return error(stream, "422", "summarizationNoFileFound",
-                        "The document cannot be retrieved.",
+                return error(stream, "422",
+                        ApiError.SUMMARIZATION_NO_FILE_FOUND.getKey(),
+                        ApiError.SUMMARIZATION_NO_FILE_FOUND.getValue(),
                         "No document found for the provided ID.", params.conversationId, isTool);
             }
 
         } catch (final NullPointerException|IndexOutOfBoundsException e) {
-            return error(stream, "422", "summarizationNoFileFound",
-                    "The document cannot be retrieved.", e.getMessage(), params.conversationId, isTool);
+            return error(stream, "422",
+                ApiError.SUMMARIZATION_NO_FILE_FOUND.getKey(),
+                ApiError.SUMMARIZATION_NO_FILE_FOUND.getValue(),
+                e.getMessage(), params.conversationId, isTool);
         } catch (final Exception e) {
-            return error(stream, "500", "summarizationTechnicalError",
-                    "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
+            return error(stream, "500",
+                ApiError.SUMMARIZATION_TECHNICAL_ERROR.getKey(),
+                ApiError.SUMMARIZATION_TECHNICAL_ERROR.getValue(),
                 e.getLocalizedMessage(), params.conversationId, isTool);
         }
 
@@ -83,12 +88,14 @@ public class SummarizationService extends AiService {
             stream.phase("summarize:generation");
             response.message = getDocumentSummary(request, summary, content, id, title, url, stream);
         } catch (EmptyFileException e) {
-            return error(stream, "422", "summarizationEmptyFile",
-                    "Sorry, I am unable to generate a summary, since the file has no content.",
+            return error(stream, "422",
+                ApiError.SUMMARIZATION_EMPTY_FILE.getKey(),
+                ApiError.SUMMARIZATION_EMPTY_FILE.getValue(),
                 "File is empty and can not be summarized.", params.conversationId, isTool);
         } catch (Exception e) {
-            return error(stream, "500", "summarizationTechnicalError",
-                "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
+            return error(stream, "500",
+                ApiError.SUMMARIZATION_TECHNICAL_ERROR.getKey(),
+                ApiError.SUMMARIZATION_TECHNICAL_ERROR.getValue(),
                 e.getLocalizedMessage(), params.conversationId, isTool);
         }
 

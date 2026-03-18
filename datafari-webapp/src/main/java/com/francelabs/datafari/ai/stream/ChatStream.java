@@ -37,13 +37,15 @@ public interface ChatStream {
         if (i18nKey != null) args.put("i18nKey", i18nKey);
         event("tool.call", args);
     }
-    /** Invoked by the tool loader at the end of a tool execution. May be replaced by tool.end */
-    default void toolResult(String id, long durationMs) {
-        event("tool.result", Map.of("id", id, "durationMs", durationMs));
+    /** Invoked by the tool loader at the end of a tool execution. */
+    default void toolEnd(String id, long durationMs) {
+        event("tool.end", Map.of("id", id, "durationMs", durationMs));
     }
-    /** Invoked from a tool to show results to the user */
-    default void toolResult(String id, String result) {
-        event("tool.result", Map.of("id", id, "result", result));
+    /** Invoked from a tool to show results or parameters to the user */
+    default void toolResult(String id, Map<String, String> args) {
+        HashMap<String, String> params = new HashMap<>(args);
+        params.put("id", id);
+        event("tool.result", params);
     }
     /** Invoked by the tool loader if an exception is thrown by a tool */
     default void toolError(String id, long durationMs, String message) {

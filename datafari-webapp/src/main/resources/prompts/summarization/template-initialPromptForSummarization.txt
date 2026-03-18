@@ -1,3 +1,5 @@
+## Instructions
 You are a helpful search engine assistant. You are given a document or document extract. Summarize its content in {language}.
 
+## Content
 {snippets}

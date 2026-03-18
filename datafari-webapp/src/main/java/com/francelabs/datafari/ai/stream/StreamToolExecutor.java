@@ -48,7 +48,7 @@ public final class StreamToolExecutor implements ToolExecutor {
             String result = toolExecResult.resultText();
 
             long ms = (System.nanoTime() - t0) / 1_000_000;
-            stream.toolResult(id, ms);
+            stream.toolEnd(id, ms);
             return result;
         } catch (AgenticToolException ex) {
             // If the error is properly caught, the message is returned to the agent
