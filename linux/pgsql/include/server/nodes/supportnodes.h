@@ -6,10 +6,10 @@
  * This file defines the API for "planner support functions", which
  * are SQL functions (normally written in C) that can be attached to
  * another "target" function to give the system additional knowledge
- * about the target function.  All the current capabilities have to do
- * with planning queries that use the target function, though it is
- * possible that future extensions will add functionality to be invoked
- * by the parser or executor.
+ * about the target function.  The name is now something of a misnomer,
+ * since some of the call sites are in the executor not the planner,
+ * but "function support function" would be a confusing name so we
+ * stick with "planner support function".
  *
  * A support function must have the SQL signature
  *		supportfn(internal) returns internal
@@ -23,7 +23,7 @@
  * allows for future extensions of the set of request cases.
  *
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/nodes/supportnodes.h
@@ -298,5 +298,96 @@ typedef struct SupportRequestWFuncMonotonic
 	/* Output fields: */
 	MonotonicFunction monotonic;
 } SupportRequestWFuncMonotonic;
+
+/*
+ * Some WindowFunc behavior might not be affected by certain variations in
+ * the WindowClause's frameOptions.  For example, row_number() is coded in
+ * such a way that the frame options don't change the returned row number.
+ * nodeWindowAgg.c will have less work to do if the ROWS option is used
+ * instead of the RANGE option as no check needs to be done for peer rows.
+ * Since RANGE is included in the default frame options, window functions
+ * such as row_number() might want to change that to ROW.
+ *
+ * Here we allow a WindowFunc's support function to determine which, if
+ * anything, can be changed about the WindowClause which the WindowFunc
+ * belongs to.  Currently only the frameOptions can be modified.  However,
+ * we may want to allow more optimizations in the future.
+ *
+ * The support function is responsible for ensuring the optimized version of
+ * the frameOptions doesn't affect the result of the window function.  The
+ * planner is responsible for only changing the frame options when all
+ * WindowFuncs using this particular WindowClause agree on what the optimized
+ * version of the frameOptions are.  If a particular WindowFunc being used
+ * does not have a support function then the planner will not make any changes
+ * to the WindowClause's frameOptions.
+ *
+ * 'window_func' and 'window_clause' are set by the planner before calling the
+ * support function so that the support function has these fields available.
+ * These may be required in order to determine which optimizations are
+ * possible.
+ *
+ * 'frameOptions' is set by the planner to WindowClause.frameOptions.  The
+ * support function must only adjust this if optimizations are possible for
+ * the given WindowFunc.
+ */
+typedef struct SupportRequestOptimizeWindowClause
+{
+	NodeTag		type;
+
+	/* Input fields: */
+	WindowFunc *window_func;	/* Pointer to the window function data */
+	struct WindowClause *window_clause; /* Pointer to the window clause data */
+
+	/* Input/Output fields: */
+	int			frameOptions;	/* New frameOptions, or left untouched if no
+								 * optimizations are possible. */
+} SupportRequestOptimizeWindowClause;
+
+/*
+ * The ModifyInPlace request allows the support function to detect whether
+ * a call to its target function can be allowed to modify a read/write
+ * expanded object in-place.  The context is that we are considering a
+ * PL/pgSQL (or similar PL) assignment of the form "x := f(x, ...)" where
+ * the variable x is of a type that can be represented as an expanded object
+ * (see utils/expandeddatum.h).  If f() can usefully optimize by modifying
+ * the passed-in object in-place, then this request can be implemented to
+ * instruct PL/pgSQL to pass a read-write expanded pointer to the variable's
+ * value.  (Note that there is no guarantee that later calls to f() will
+ * actually do so.  If f() receives a read-only pointer, or a pointer to a
+ * non-expanded object, it must follow the usual convention of not modifying
+ * the pointed-to object.)  There are two requirements that must be met
+ * to make this safe:
+ * 1. f() must guarantee that it will not have modified the object if it
+ * fails.  Otherwise the variable's value might change unexpectedly.
+ * 2. If the other arguments to f() ("..." in the above example) contain
+ * references to x, f() must be able to cope with that; or if that's not
+ * safe, the support function must scan the other arguments to verify that
+ * there are no other references to x.  An example of the concern here is
+ * that in "arr := array_append(arr, arr[1])", if the array element type
+ * is pass-by-reference then array_append would receive a second argument
+ * that points into the array object it intends to modify.  array_append is
+ * coded to make that safe, but other functions might not be able to cope.
+ *
+ * "args" is a node tree list representing the function's arguments.
+ * One or more nodes within the node tree will be PARAM_EXTERN Params
+ * with ID "paramid", which represent the assignment target variable.
+ * (Note that such references are not necessarily at top level in the list,
+ * for example we might have "x := f(x, g(x))".  Generally it's only safe
+ * to optimize a reference that is at top level, else we're making promises
+ * about the behavior of g() as well as f().)
+ *
+ * If modify-in-place is safe, the support function should return the
+ * address of the Param node that is to return a read-write pointer.
+ * (At most one of the references is allowed to do so.)  Otherwise,
+ * return NULL.
+ */
+typedef struct SupportRequestModifyInPlace
+{
+	NodeTag		type;
+
+	Oid			funcid;			/* PG_PROC OID of the target function */
+	List	   *args;			/* Arguments to the function */
+	int			paramid;		/* ID of Param(s) representing variable */
+} SupportRequestModifyInPlace;
 
 #endif							/* SUPPORTNODES_H */

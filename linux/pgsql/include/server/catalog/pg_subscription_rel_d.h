@@ -3,7 +3,7 @@
  * pg_subscription_rel_d.h
  *    Macro definitions for pg_subscription_rel
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -18,6 +18,8 @@
 #ifndef PG_SUBSCRIPTION_REL_D_H
 #define PG_SUBSCRIPTION_REL_D_H
 
+/* Macros related to the structure of pg_subscription_rel */
+
 #define SubscriptionRelRelationId 6102
 #define SubscriptionRelSrrelidSrsubidIndexId 6117
 
@@ -27,6 +29,8 @@
 #define Anum_pg_subscription_rel_srsublsn 4
 
 #define Natts_pg_subscription_rel 4
+
+/* Definitions copied from pg_subscription_rel.h */
 
 
 /* ----------------
@@ -46,6 +50,9 @@
 #define SUBREL_STATE_UNKNOWN	'\0'	/* unknown state */
 #define SUBREL_STATE_SYNCWAIT	'w' /* waiting for sync */
 #define SUBREL_STATE_CATCHUP	'c' /* catching up with apply */
+
+
+/* OID symbols for objects defined in pg_subscription_rel.dat */
 
 
 #endif							/* PG_SUBSCRIPTION_REL_D_H */

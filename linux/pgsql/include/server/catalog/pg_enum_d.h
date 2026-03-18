@@ -3,7 +3,7 @@
  * pg_enum_d.h
  *    Macro definitions for pg_enum
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -18,6 +18,8 @@
 #ifndef PG_ENUM_D_H
 #define PG_ENUM_D_H
 
+/* Macros related to the structure of pg_enum */
+
 #define EnumRelationId 3501
 #define EnumOidIndexId 3502
 #define EnumTypIdLabelIndexId 3503
@@ -29,6 +31,11 @@
 #define Anum_pg_enum_enumlabel 4
 
 #define Natts_pg_enum 4
+
+/* Definitions copied from pg_enum.h */
+
+
+/* OID symbols for objects defined in pg_enum.dat */
 
 
 #endif							/* PG_ENUM_D_H */

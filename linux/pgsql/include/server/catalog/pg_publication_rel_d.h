@@ -3,7 +3,7 @@
  * pg_publication_rel_d.h
  *    Macro definitions for pg_publication_rel
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -18,6 +18,8 @@
 #ifndef PG_PUBLICATION_REL_D_H
 #define PG_PUBLICATION_REL_D_H
 
+/* Macros related to the structure of pg_publication_rel */
+
 #define PublicationRelRelationId 6106
 #define PublicationRelObjectIndexId 6112
 #define PublicationRelPrrelidPrpubidIndexId 6113
@@ -30,6 +32,11 @@
 #define Anum_pg_publication_rel_prattrs 5
 
 #define Natts_pg_publication_rel 5
+
+/* Definitions copied from pg_publication_rel.h */
+
+
+/* OID symbols for objects defined in pg_publication_rel.dat */
 
 
 #endif							/* PG_PUBLICATION_REL_D_H */

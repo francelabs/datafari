@@ -6,7 +6,7 @@
  * The type cache exists to speed lookup of certain information about data
  * types that is not directly available from a type's pg_type row.
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/utils/typcache.h
@@ -44,6 +44,7 @@ typedef struct TypeCacheEntry
 	Oid			typrelid;
 	Oid			typsubscript;
 	Oid			typelem;
+	Oid			typarray;
 	Oid			typcollation;
 
 	/*
@@ -96,6 +97,7 @@ typedef struct TypeCacheEntry
 	 * btree comparison function.
 	 */
 	struct TypeCacheEntry *rngelemtype; /* range's element type */
+	Oid			rng_opfamily;	/* opfamily to use for range comparisons */
 	Oid			rng_collation;	/* collation for comparisons, if any */
 	FmgrInfo	rng_cmp_proc_finfo; /* comparison function */
 	FmgrInfo	rng_canonical_finfo;	/* canonicalization function, if any */
@@ -205,5 +207,9 @@ extern void SharedRecordTypmodRegistryInit(SharedRecordTypmodRegistry *,
 										   dsm_segment *segment, dsa_area *area);
 
 extern void SharedRecordTypmodRegistryAttach(SharedRecordTypmodRegistry *);
+
+extern void AtEOXact_TypeCache(void);
+
+extern void AtEOSubXact_TypeCache(void);
 
 #endif							/* TYPCACHE_H */

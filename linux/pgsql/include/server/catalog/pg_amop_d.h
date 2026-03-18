@@ -3,7 +3,7 @@
  * pg_amop_d.h
  *    Macro definitions for pg_amop
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -17,6 +17,8 @@
  */
 #ifndef PG_AMOP_D_H
 #define PG_AMOP_D_H
+
+/* Macros related to the structure of pg_amop */
 
 #define AccessMethodOperatorRelationId 2602
 #define AccessMethodStrategyIndexId 2653
@@ -35,10 +37,15 @@
 
 #define Natts_pg_amop 9
 
+/* Definitions copied from pg_amop.h */
+
 
 /* allowed values of amoppurpose: */
 #define AMOP_SEARCH		's'		/* operator is for search */
 #define AMOP_ORDER		'o'		/* operator is for ordering */
+
+
+/* OID symbols for objects defined in pg_amop.dat */
 
 
 #endif							/* PG_AMOP_D_H */

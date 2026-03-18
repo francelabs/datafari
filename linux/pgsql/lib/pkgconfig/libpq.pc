@@ -5,8 +5,8 @@ includedir=${prefix}/include
 
 Name: libpq
 Description: PostgreSQL libpq library
-Url: https://www.postgresql.org/
-Version: 15.4
+URL: https://www.postgresql.org/
+Version: 18.3
 Requires: 
 Requires.private: 
 Cflags: -I${includedir}

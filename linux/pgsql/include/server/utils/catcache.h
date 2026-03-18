@@ -10,7 +10,7 @@
  * guarantee that there can only be one matching row for a key combination.
  *
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/utils/catcache.h
@@ -51,9 +51,11 @@ typedef struct catcache
 	CCFastEqualFN cc_fastequal[CATCACHE_MAXKEYS];	/* fast equal function for
 													 * each key */
 	int			cc_keyno[CATCACHE_MAXKEYS]; /* AttrNumber of each key */
-	dlist_head	cc_lists;		/* list of CatCList structs */
-	int			cc_ntup;		/* # of tuples currently in this cache */
 	int			cc_nkeys;		/* # of keys (1..CATCACHE_MAXKEYS) */
+	int			cc_ntup;		/* # of tuples currently in this cache */
+	int			cc_nlist;		/* # of CatCLists currently in this cache */
+	int			cc_nlbuckets;	/* # of CatCList hash buckets in this cache */
+	dlist_head *cc_lbucket;		/* hash buckets for CatCLists */
 	const char *cc_relname;		/* name of relation the tuples come from */
 	Oid			cc_reloid;		/* OID of relation the tuples come from */
 	Oid			cc_indexoid;	/* OID of index matching cache keys */
@@ -218,14 +220,13 @@ extern CatCList *SearchCatCacheList(CatCache *cache, int nkeys,
 extern void ReleaseCatCacheList(CatCList *list);
 
 extern void ResetCatalogCaches(void);
+extern void ResetCatalogCachesExt(bool debug_discard);
 extern void CatalogCacheFlushCatalog(Oid catId);
 extern void CatCacheInvalidate(CatCache *cache, uint32 hashValue);
 extern void PrepareToInvalidateCacheTuple(Relation relation,
 										  HeapTuple tuple,
 										  HeapTuple newtuple,
-										  void (*function) (int, uint32, Oid));
-
-extern void PrintCatCacheLeakWarning(HeapTuple tuple);
-extern void PrintCatCacheListLeakWarning(CatCList *list);
+										  void (*function) (int, uint32, Oid, void *),
+										  void *context);
 
 #endif							/* CATCACHE_H */

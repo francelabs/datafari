@@ -3,7 +3,7 @@
  * generic-sunpro.h
  *	  Atomic operations for solaris' CC
  *
- * Portions Copyright (c) 2013-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 2013-2025, PostgreSQL Global Development Group
  *
  * NOTES:
  *
@@ -16,8 +16,6 @@
  *
  * -------------------------------------------------------------------------
  */
-
-#if defined(HAVE_ATOMICS)
 
 #ifdef HAVE_MBARRIER_H
 #include <mbarrier.h>
@@ -66,10 +64,6 @@ typedef struct pg_atomic_uint64
 
 #endif /* HAVE_ATOMIC_H */
 
-#endif /* defined(HAVE_ATOMICS) */
-
-
-#if defined(HAVE_ATOMICS)
 
 #ifdef HAVE_ATOMIC_H
 
@@ -87,6 +81,13 @@ pg_atomic_compare_exchange_u32_impl(volatile pg_atomic_uint32 *ptr,
 	return ret;
 }
 
+#define PG_HAVE_ATOMIC_EXCHANGE_U32
+static inline uint32
+pg_atomic_exchange_u32_impl(volatile pg_atomic_uint32 *ptr, uint32 newval)
+{
+	return atomic_swap_32(&ptr->value, newval);
+}
+
 #define PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U64
 static inline bool
 pg_atomic_compare_exchange_u64_impl(volatile pg_atomic_uint64 *ptr,
@@ -95,12 +96,18 @@ pg_atomic_compare_exchange_u64_impl(volatile pg_atomic_uint64 *ptr,
 	bool	ret;
 	uint64	current;
 
+	AssertPointerAlignment(expected, 8);
 	current = atomic_cas_64(&ptr->value, *expected, newval);
 	ret = current == *expected;
 	*expected = current;
 	return ret;
 }
 
-#endif /* HAVE_ATOMIC_H */
+#define PG_HAVE_ATOMIC_EXCHANGE_U64
+static inline uint64
+pg_atomic_exchange_u64_impl(volatile pg_atomic_uint64 *ptr, uint64 newval)
+{
+	return atomic_swap_64(&ptr->value, newval);
+}
 
-#endif /* defined(HAVE_ATOMICS) */
+#endif /* HAVE_ATOMIC_H */

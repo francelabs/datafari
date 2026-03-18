@@ -3,7 +3,7 @@
  * pg_largeobject_metadata_d.h
  *    Macro definitions for pg_largeobject_metadata
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -18,6 +18,8 @@
 #ifndef PG_LARGEOBJECT_METADATA_D_H
 #define PG_LARGEOBJECT_METADATA_D_H
 
+/* Macros related to the structure of pg_largeobject_metadata */
+
 #define LargeObjectMetadataRelationId 2995
 #define LargeObjectMetadataOidIndexId 2996
 
@@ -26,6 +28,11 @@
 #define Anum_pg_largeobject_metadata_lomacl 3
 
 #define Natts_pg_largeobject_metadata 3
+
+/* Definitions copied from pg_largeobject_metadata.h */
+
+
+/* OID symbols for objects defined in pg_largeobject_metadata.dat */
 
 
 #endif							/* PG_LARGEOBJECT_METADATA_D_H */

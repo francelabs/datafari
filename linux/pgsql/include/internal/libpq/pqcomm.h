@@ -6,7 +6,7 @@
  * NOTE: for historical reasons, this does not correspond to pqcomm.c.
  * pqcomm.c's routines are declared in libpq.h.
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/libpq/pqcomm.h
@@ -17,53 +17,27 @@
 #define PQCOMM_H
 
 #include <sys/socket.h>
-#include <netdb.h>
-#ifdef HAVE_SYS_UN_H
 #include <sys/un.h>
-#endif
+#include <netdb.h>
 #include <netinet/in.h>
 
-#ifdef HAVE_STRUCT_SOCKADDR_STORAGE
-
-#ifndef HAVE_STRUCT_SOCKADDR_STORAGE_SS_FAMILY
-#ifdef HAVE_STRUCT_SOCKADDR_STORAGE___SS_FAMILY
-#define ss_family __ss_family
-#else
-#error struct sockaddr_storage does not provide an ss_family member
-#endif
-#endif
-
-#ifdef HAVE_STRUCT_SOCKADDR_STORAGE___SS_LEN
-#define ss_len __ss_len
-#define HAVE_STRUCT_SOCKADDR_STORAGE_SS_LEN 1
-#endif
-#else							/* !HAVE_STRUCT_SOCKADDR_STORAGE */
-
-/* Define a struct sockaddr_storage if we don't have one. */
-
-struct sockaddr_storage
-{
-	union
-	{
-		struct sockaddr sa;		/* get the system-dependent fields */
-		int64		ss_align;	/* ensures struct is properly aligned */
-		char		ss_pad[128];	/* ensures struct has desired size */
-	}			ss_stuff;
-};
-
-#define ss_family	ss_stuff.sa.sa_family
-/* It should have an ss_len field if sockaddr has sa_len. */
-#ifdef HAVE_STRUCT_SOCKADDR_SA_LEN
-#define ss_len		ss_stuff.sa.sa_len
-#define HAVE_STRUCT_SOCKADDR_STORAGE_SS_LEN 1
-#endif
-#endif							/* HAVE_STRUCT_SOCKADDR_STORAGE */
+/*
+ * The definitions for the request/response codes are kept in a separate file
+ * for ease of use in third party programs.
+ */
+#include "libpq/protocol.h"
 
 typedef struct
 {
 	struct sockaddr_storage addr;
 	socklen_t	salen;
 } SockAddr;
+
+typedef struct
+{
+	int			family;
+	SockAddr	addr;
+} AddrInfo;
 
 /* Configure the UNIX socket location for the well known port. */
 
@@ -112,15 +86,15 @@ is_unixsock_path(const char *path)
 
 #define PG_PROTOCOL_MAJOR(v)	((v) >> 16)
 #define PG_PROTOCOL_MINOR(v)	((v) & 0x0000ffff)
+#define PG_PROTOCOL_FULL(v)	(PG_PROTOCOL_MAJOR(v) * 10000 + PG_PROTOCOL_MINOR(v))
 #define PG_PROTOCOL(m,n)	(((m) << 16) | (n))
 
 /*
  * The earliest and latest frontend/backend protocol version supported.
- * (Only protocol version 3 is currently supported)
  */
 
 #define PG_PROTOCOL_EARLIEST	PG_PROTOCOL(3,0)
-#define PG_PROTOCOL_LATEST		PG_PROTOCOL(3,0)
+#define PG_PROTOCOL_LATEST		PG_PROTOCOL(3,2)
 
 typedef uint32 ProtocolVersion; /* FE/BE protocol version number */
 
@@ -135,8 +109,6 @@ typedef ProtocolVersion MsgType;
 
 typedef uint32 PacketLen;
 
-extern PGDLLIMPORT bool Db_user_namespace;
-
 /*
  * In protocol 3.0 and later, the startup packet length is not fixed, but
  * we set an arbitrary limit on it anyway.  This is just to prevent simple
@@ -145,22 +117,6 @@ extern PGDLLIMPORT bool Db_user_namespace;
  */
 #define MAX_STARTUP_PACKET_LENGTH 10000
 
-
-/* These are the authentication request codes sent by the backend. */
-
-#define AUTH_REQ_OK			0	/* User is authenticated  */
-#define AUTH_REQ_KRB4		1	/* Kerberos V4. Not supported any more. */
-#define AUTH_REQ_KRB5		2	/* Kerberos V5. Not supported any more. */
-#define AUTH_REQ_PASSWORD	3	/* Password */
-#define AUTH_REQ_CRYPT		4	/* crypt password. Not supported any more. */
-#define AUTH_REQ_MD5		5	/* md5 password */
-#define AUTH_REQ_SCM_CREDS	6	/* transfer SCM credentials */
-#define AUTH_REQ_GSS		7	/* GSSAPI without wrap() */
-#define AUTH_REQ_GSS_CONT	8	/* Continue GSS exchanges */
-#define AUTH_REQ_SSPI		9	/* SSPI negotiate without wrap() */
-#define AUTH_REQ_SASL	   10	/* Begin SASL authentication */
-#define AUTH_REQ_SASL_CONT 11	/* Continue SASL authentication */
-#define AUTH_REQ_SASL_FIN  12	/* Final SASL message */
 
 typedef uint32 AuthRequest;
 
@@ -172,7 +128,12 @@ typedef uint32 AuthRequest;
  *
  * The cancel request code must not match any protocol version number
  * we're ever likely to use.  This random choice should do.
+ *
+ * Before PostgreSQL v18 and the protocol version bump from 3.0 to 3.2, the
+ * cancel key was always 4 bytes.  With protocol version 3.2, it's variable
+ * length.
  */
+
 #define CANCEL_REQUEST_CODE PG_PROTOCOL(1234,5678)
 
 typedef struct CancelRequestPacket
@@ -180,9 +141,29 @@ typedef struct CancelRequestPacket
 	/* Note that each field is stored in network byte order! */
 	MsgType		cancelRequestCode;	/* code to identify a cancel request */
 	uint32		backendPID;		/* PID of client's backend */
-	uint32		cancelAuthCode; /* secret key to authorize cancel */
+	uint8		cancelAuthCode[FLEXIBLE_ARRAY_MEMBER];	/* secret key to
+														 * authorize cancel */
 } CancelRequestPacket;
 
+/* Application-Layer Protocol Negotiation is required for direct connections
+ * to avoid protocol confusion attacks (e.g https://alpaca-attack.com/).
+ *
+ * ALPN is specified in RFC 7301
+ *
+ * This string should be registered at:
+ * https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml#alpn-protocol-ids
+ *
+ * OpenSSL uses this wire-format for the list of alpn protocols even in the
+ * API. Both server and client take the same format parameter but the client
+ * actually sends it to the server as-is and the server it specifies the
+ * preference order to use to choose the one selected to send back.
+ *
+ * c.f. https://www.openssl.org/docs/manmaster/man3/SSL_CTX_set_alpn_select_cb.html
+ *
+ * The #define can be used to initialize a char[] vector to use directly in the API
+ */
+#define PG_ALPN_PROTOCOL "postgresql"
+#define PG_ALPN_PROTOCOL_VECTOR { 10, 'p','o','s','t','g','r','e','s','q','l' }
 
 /*
  * A client can also start by sending a SSL or GSSAPI negotiation request to

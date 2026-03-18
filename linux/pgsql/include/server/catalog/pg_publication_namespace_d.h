@@ -3,7 +3,7 @@
  * pg_publication_namespace_d.h
  *    Macro definitions for pg_publication_namespace
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -18,6 +18,8 @@
 #ifndef PG_PUBLICATION_NAMESPACE_D_H
 #define PG_PUBLICATION_NAMESPACE_D_H
 
+/* Macros related to the structure of pg_publication_namespace */
+
 #define PublicationNamespaceRelationId 6237
 #define PublicationNamespaceObjectIndexId 6238
 #define PublicationNamespacePnnspidPnpubidIndexId 6239
@@ -27,6 +29,11 @@
 #define Anum_pg_publication_namespace_pnnspid 3
 
 #define Natts_pg_publication_namespace 3
+
+/* Definitions copied from pg_publication_namespace.h */
+
+
+/* OID symbols for objects defined in pg_publication_namespace.dat */
 
 
 #endif							/* PG_PUBLICATION_NAMESPACE_D_H */

@@ -3,7 +3,7 @@
  * pg_statistic_d.h
  *    Macro definitions for pg_statistic
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -17,6 +17,8 @@
  */
 #ifndef PG_STATISTIC_D_H
 #define PG_STATISTIC_D_H
+
+/* Macros related to the structure of pg_statistic */
 
 #define StatisticRelationId 2619
 #define StatisticRelidAttnumInhIndexId 2696
@@ -55,6 +57,8 @@
 
 #define Natts_pg_statistic 31
 
+/* Definitions copied from pg_statistic.h */
+
 
 /*
  * Several statistical slot "kinds" are defined by core PostgreSQL, as
@@ -66,6 +70,9 @@
  * data "kind" will appear in any particular slot.  Instead, search the
  * stakind fields to see if the desired data is available.  (The standard
  * function get_attstatsslot() may be used for this.)
+ *
+ * Note: The pg_stats view needs to be modified whenever a new slot kind is
+ * added to core.
  */
 
 /*
@@ -92,9 +99,9 @@
  * the K most common non-null values appearing in the column, and stanumbers
  * contains their frequencies (fractions of total row count).  The values
  * shall be ordered in decreasing frequency.  Note that since the arrays are
- * variable-size, K may be chosen by the statistics collector.  Values should
- * not appear in MCV unless they have been observed to occur more than once;
- * a unique column will have no MCV slot.
+ * variable-size, K may be chosen at ANALYZE time.  Values should not appear
+ * in MCV unless they have been observed to occur more than once; a unique
+ * column will have no MCV slot.
  */
 #define STATISTIC_KIND_MCV	1
 
@@ -176,7 +183,8 @@
  * a format similar to STATISTIC_KIND_HISTOGRAM: it contains M (>=2) range
  * values that divide the column data values into M-1 bins of approximately
  * equal population. The lengths are stored as float8s, as measured by the
- * range type's subdiff function. Only non-null rows are considered.
+ * range type's subdiff function. Only non-null, non-empty rows are
+ * considered.
  */
 #define STATISTIC_KIND_RANGE_LENGTH_HISTOGRAM  6
 
@@ -190,6 +198,9 @@
  * bounds.  Only non-NULL, non-empty ranges are included.
  */
 #define STATISTIC_KIND_BOUNDS_HISTOGRAM  7
+
+
+/* OID symbols for objects defined in pg_statistic.dat */
 
 
 #endif							/* PG_STATISTIC_D_H */

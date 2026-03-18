@@ -3,7 +3,7 @@
  * pg_parameter_acl_d.h
  *    Macro definitions for pg_parameter_acl
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -18,6 +18,8 @@
 #ifndef PG_PARAMETER_ACL_D_H
 #define PG_PARAMETER_ACL_D_H
 
+/* Macros related to the structure of pg_parameter_acl */
+
 #define ParameterAclRelationId 6243
 #define PgParameterAclToastTable 6244
 #define PgParameterAclToastIndex 6245
@@ -29,6 +31,11 @@
 #define Anum_pg_parameter_acl_paracl 3
 
 #define Natts_pg_parameter_acl 3
+
+/* Definitions copied from pg_parameter_acl.h */
+
+
+/* OID symbols for objects defined in pg_parameter_acl.dat */
 
 
 #endif							/* PG_PARAMETER_ACL_D_H */
