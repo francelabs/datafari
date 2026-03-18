@@ -23,6 +23,8 @@ import org.json.simple.JSONObject;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.Map;
+
 public class DatafariTools {
 
     private static final Logger LOGGER = LogManager.getLogger(DatafariTools.class.getName());
@@ -56,6 +58,9 @@ public class DatafariTools {
         ragrequest.query = query;
         ragrequest.id = id;
 
+        // Stream document ID and query
+        stream.toolResult(context.invocationId().toString(), Map.of("document", id, "query", query));
+
         try {
             ApiContent resp = RagService.rag(request, ragrequest, stream, sourcesAcc, true);
             result = returnMessageOrReason(resp, "RAG query failed");
@@ -84,6 +89,9 @@ public class DatafariTools {
         LOGGER.info("AGENTIC TOOLS - BM25 Search - Query: {}", query);
         int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
 
+        // Stream document ID instead of title, and query
+        stream.toolResult(context.invocationId().toString(), Map.of("searchQuery", query));
+
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/select";
         req.addParameter("q", query);
@@ -95,8 +103,11 @@ public class DatafariTools {
         JSONObject root = SearchUtils.processSearch(req, handler);
         JSONArray docs = SearchUtils.extractDocs(root);
         addDocumentsToSource(docs);
-        // TODO : stream tools results
         LOGGER.debug("AGENTIC TOOLS - BM25 Search - {}", docs.toJSONString());
+
+        // Stream search query + results number
+        stream.toolResult(context.invocationId().toString(), Map.of("searchQuery", query, "resultsNb", String.valueOf(docs.size())));
+
         return docs.toJSONString();
     }
 
@@ -106,7 +117,7 @@ public class DatafariTools {
             icon = "document")
     @Tool("""
             Read N chunks of a document from VectorMain, ordered, starting at the given page (0-based).
-            If there in no more content to read from the document, 'No content' is returned.
+            Make sure to provide a valid document ID before calling the tool. Run a search if needed to retrieve document ID.
             """)
     String readNextChunks(
             @P("The exact ID of the document") String id,
@@ -120,6 +131,8 @@ public class DatafariTools {
         int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
         int start = Math.max(0, page) * rows;
 
+        // Stream document ID instead of title, and query
+        stream.toolResult(context.invocationId().toString(), Map.of("document", id, "page", String.valueOf(start + 1)));
 
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/select";
@@ -140,7 +153,13 @@ public class DatafariTools {
         // Add document to sources
         if (!docs.isEmpty()) addDocumentToSource((JSONObject) docs.getFirst());
 
-        if (mergedChunkContents.isEmpty()) return "No content";
+        if (mergedChunkContents.isEmpty()) {
+            if (start == 0) {
+                return "This document does not exist or has no content. Make sure to provide a valid document ID.";
+            } else {
+                return "No more content to read for this document.";
+            }
+        }
         return "========== PAGE " + page + ": ==========\n\n" + mergedChunkContents + "\n\n========== END OF PAGE " + page + " ==========\n\n";
     }
 
@@ -154,11 +173,13 @@ public class DatafariTools {
     String searchChunksFromADocument(
             @P("The exact ID of the document") String id,
             @P("The search query") String query,
-            @ToolMemoryId String toolCallId,
             InvocationContext context
     ) {
         int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
         LOGGER.info("AGENTIC TOOLS - Search from document - Query: {} - Document: {}", query, id);
+
+        // Stream document ID, search query
+        stream.toolResult(context.invocationId().toString(), Map.of("document", id, "searchQuery", query));
 
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         String handler = "/rrf";
@@ -177,6 +198,9 @@ public class DatafariTools {
         LOGGER.info("AGENTIC TOOLS - Search from document {}: {}", id, query);
         LOGGER.debug("AGENTIC TOOLS - Retrieved content: {}", docs.toJSONString());
 
+        // Stream document ID, search query and results
+        stream.toolResult(context.invocationId().toString(), Map.of("document", id, "resultsNb", String.valueOf(docs.size()), "searchQuery", query));
+
         // Add document to sources
         if (!docs.isEmpty()) addDocumentToSource((JSONObject) docs.getFirst());
 
@@ -189,11 +213,14 @@ public class DatafariTools {
     @Tool("Retrieve a summary of a document. You must provide the exact ID of the document.")
     String summarize(
             @P("The exact ID of the document") String id,
-            @ToolMemoryId String toolCallId,
             InvocationContext context
     ) {
         AiRequest summarizerequest = new AiRequest();
         summarizerequest.id = id;
+
+        // Todo : retrieve document title
+        // Stream document ID instead of title
+        stream.toolResult(context.invocationId().toString(), Map.of("document", id));
 
         ApiContent resp = SummarizationService.summarize(summarizerequest, request, stream, true);
         String result = returnMessageOrReason(resp, "Unable to generate a summary for the document " + id);
@@ -208,7 +235,6 @@ public class DatafariTools {
     String entityExtraction(
             @P("ID of the document") String docId,
             @P("Entities to extract, separated by a comma (ex: cities, phone number, date)") String entities,
-            @ToolMemoryId String toolCallId,
             InvocationContext context
     ) {
         LOGGER.info("AGENTIC TOOLS - Extracting entities from [{}] : {}", docId, entities);
@@ -218,6 +244,10 @@ public class DatafariTools {
         AiRequest ragrequest = new AiRequest();
         ragrequest.query = query;
         ragrequest.id = docId;
+
+
+        // Stream document ID and entities
+        stream.toolResult(context.invocationId().toString(), Map.of("document", docId, "entities", entities));
 
         try {
             ApiContent resp = RagService.rag(request, ragrequest, stream, sourcesAcc, true);
@@ -284,6 +314,10 @@ public class DatafariTools {
     ) {
         LOGGER.info("AGENTIC TOOLS - Hybrid Search - Query: {}", query);
         String toolCallId = context.invocationId().toString();
+
+        // Stream search query
+        stream.toolResult(toolCallId, Map.of("query", query));
+
         EditableHttpServletRequest editableRequest = new EditableHttpServletRequest(request);
         String handler = "/rrf";
         editableRequest.addParameter("q", query);
@@ -299,6 +333,9 @@ public class DatafariTools {
         JSONArray docs = SearchUtils.extractDocs(root);
         LOGGER.debug("AGENTIC TOOLS - Hybrid Search - {}", docs.toJSONString());
 
+        // Stream search query + results number
+        stream.toolResult(toolCallId, Map.of("searchQuery", query, "resultsNb", String.valueOf(docs.size())));
+
         if (docs.isEmpty()) {
           LOGGER.debug("AGENTIC TOOLS - Hybrid Search - No result found with hydrid search. Running BM25 search instead.");
           return bm25Search(query, context);
@@ -306,6 +343,8 @@ public class DatafariTools {
 
         // Add document to sources
         addDocumentsToSource(docs);
+
+
 
         return docs.toJSONString();
     }

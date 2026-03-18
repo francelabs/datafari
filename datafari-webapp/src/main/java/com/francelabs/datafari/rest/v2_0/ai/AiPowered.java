@@ -376,8 +376,8 @@ public class AiPowered {
             emit(stream, () -> stream.toolCall("job3Failure", "BrokenJob",
                 "This label should not be displayed. Use i18n translation instead.",
                 "document", "testLabelForToolCalling"), TEST_DELAY_MS);
-            emit(stream, () -> stream.toolResult("jobSuccess1", 320), TEST_DELAY_MS);
-            emit(stream, () -> stream.toolResult("jobSuccess2", 441), TEST_DELAY_MS);
+            emit(stream, () -> stream.toolEnd("jobSuccess1", 320), TEST_DELAY_MS);
+            emit(stream, () -> stream.toolEnd("jobSuccess2", 441), TEST_DELAY_MS);
             emit(stream, () -> stream.toolError("job3Failure", 530, "This job has failed. This message should not be displayed to the user."), TEST_DELAY_MS);
 
             // 4) Sources
