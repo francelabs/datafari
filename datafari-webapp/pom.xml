@@ -214,7 +214,6 @@
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-crypto</artifactId>
-      <version>${spring.security.version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -279,6 +278,11 @@
     <dependency>
       <groupId>org.springframework.security.kerberos</groupId>
       <artifactId>spring-security-kerberos-client</artifactId>
+      <version>${spring.security.kerberos.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security.kerberos</groupId>
+      <artifactId>spring-security-kerberos-core</artifactId>
       <version>${spring.security.kerberos.version}</version>
     </dependency>
     <dependency>
