@@ -42,6 +42,7 @@ public class User {
   public User(final String username, final String password) {
     this.username = Objects.requireNonNull(username, "username");
     this.passwordPlain = Objects.requireNonNull(password, "password");
+    logger.debug("username: {} - passwordPlain: {}", username, passwordPlain);
   }
 
   public User(final String username, final String password, final boolean activeDirectoryUser) {

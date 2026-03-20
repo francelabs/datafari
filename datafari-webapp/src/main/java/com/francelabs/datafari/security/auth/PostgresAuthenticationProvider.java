@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,7 +22,7 @@ import com.francelabs.datafari.service.db.UserDataTTLService;
 import com.francelabs.datafari.user.User;
 
 public class PostgresAuthenticationProvider implements AuthenticationProvider {
-
+  private static final Logger LOGGER = LogManager.getLogger(PostgresAuthenticationProvider.class);
   private static final String USERNAMECOLUMN = "username";
   private static final String PASSWORDCOLUMN = "password";
 
@@ -32,9 +34,12 @@ public class PostgresAuthenticationProvider implements AuthenticationProvider {
     final String username = authentication.getName();
     final String password = authentication.getCredentials().toString();
 
+
     final String dbPassword = getPassword(username);
+    LOGGER.debug("DB password: {}", dbPassword);
     if (dbPassword != null && !dbPassword.isEmpty()) {
       final String digestPassword = digest(password);
+      LOGGER.debug("username: {}, password: {}, digestPassword: {}", username, password, digestPassword);
       if (digestPassword.contentEquals(dbPassword)) {
         final List<String> roles = getRoles(username);
         final List<GrantedAuthority> grantedAuthorities = new ArrayList<>();

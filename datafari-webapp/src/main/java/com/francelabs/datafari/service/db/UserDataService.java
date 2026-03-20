@@ -309,6 +309,7 @@ public class UserDataService {
     @Transactional
     public boolean addUser(final String username, final String passwordSha256,
                            final List<String> roles, final boolean isImported) throws DatafariServerException {
+        logger.debug("passwordSha256: {}", passwordSha256);
         try {
             sql.getJdbcTemplate().update(
                 "INSERT INTO " + USERCOLLECTION + " (" +
@@ -337,6 +338,8 @@ public class UserDataService {
     @Transactional
     public boolean addUserDualHash(final String username, final String passwordSha256, final String passwordBcrypt,
                                    final List<String> roles, final boolean isImported) throws DatafariServerException {
+        logger.debug("passwordSha256: {}", passwordSha256);
+
         try {
             sql.getJdbcTemplate().update(
                 "INSERT INTO " + USERCOLLECTION + " (" +
