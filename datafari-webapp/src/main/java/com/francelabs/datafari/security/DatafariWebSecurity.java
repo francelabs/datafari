@@ -93,24 +93,14 @@ public class DatafariWebSecurity {
     return providers;
   }
 
-  @Bean
-  protected AuthenticationManager authenticationManager(
-      PostgresAuthenticationProvider postgresAuthenticationProvider,
-      List<AuthenticationProvider> ldapAuthenticationProviders
-  ) {
-    List<AuthenticationProvider> all = new ArrayList<>();
-    all.add(postgresAuthenticationProvider);
-    all.addAll(ldapAuthenticationProviders);
-    return new ProviderManager(all);
-  }
-
   @Configuration
   @ConditionalOnExpression("${oidc.enabled:false}==false && ${saml.enabled:false}==false && ${keycloak.enabled:false}==false && ${kerberos.enabled:false}==false && ${cas.enabled:false}==false && ${header.enabled:false}==false")
   @Order(Ordered.LOWEST_PRECEDENCE)
   public static class StandardSecurity {
 
     @Bean
-    public SecurityFilterChain configure(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+    public SecurityFilterChain configure(HttpSecurity http, AuthenticationProvider postgresAuthenticationProvider,
+                                         List<AuthenticationProvider> ldapAuthenticationProviders) throws Exception {
       http.cors(Customizer.withDefaults());
       http.csrf(csrf -> csrf
           .ignoringRequestMatchers("/rest/**")
@@ -137,9 +127,8 @@ public class DatafariWebSecurity {
       }));
       http.exceptionHandling(exception -> {/* let the "/login" entry point as form login if an exception occurs */});
 
-      /*http.authenticationProvider(postgresAuthenticationProvider);
-      ldapAuthenticationProviders.forEach(http::authenticationProvider);*/
-      http.authenticationManager(authenticationManager);
+      http.authenticationProvider(postgresAuthenticationProvider);
+      ldapAuthenticationProviders.forEach(http::authenticationProvider);
 
       http.authorizeHttpRequests(requests -> requests
           .requestMatchers("/admin/**","/SearchExpert/**").hasAnyRole("SearchExpert", "SearchAdministrator")
