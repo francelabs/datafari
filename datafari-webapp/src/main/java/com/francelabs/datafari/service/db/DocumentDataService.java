@@ -15,7 +15,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
-import com.francelabs.datafari.utils.GDPRConfiguration;
 
 public class DocumentDataService {
 
@@ -43,14 +42,10 @@ public class DocumentDataService {
   private final JdbcTemplate jdbc;
   private final NamedParameterJdbcTemplate named;
 
-  // ==== Divers ==================================================================
-  private final String userDataTTL; // conservé pour compatibilité (pas utilisé en SQL)
-
   private DocumentDataService() {
     // Récupération des helpers SQL (cf. SqlService fourni précédemment)
     this.jdbc = SqlService.get().jdbc();
     this.named = SqlService.get().named();
-    this.userDataTTL = GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL);
   }
 
   // ==== Mappers =================================================================
