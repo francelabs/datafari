@@ -291,6 +291,10 @@
       <version>${spring.security.kerberos.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-saml2-service-provider</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.eclipse.angus</groupId>
       <artifactId>angus-mail</artifactId>
     </dependency>
@@ -471,8 +475,18 @@
     </exclusions>
   </dependency>
 
-
   </dependencies>
+
+  <repositories>
+    <!-- Additionnal repository for SAML specific need -->
+    <repository>
+      <id>shibboleth-releases</id>
+      <name>Shibboleth Releases</name>
+      <url>https://build.shibboleth.net/maven/releases/</url>
+    </repository>
+  </repositories>
+
+
   <build>
     <plugins>
       <!-- Mandatory for EE -->
