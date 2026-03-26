@@ -39,7 +39,6 @@
    <solr.sha512>825ab4e92a839802d9f5d570600b622881ddfe4f700cab569afb7d8220590a59d11088f4e10d4dcf9395073c35d73a420cc275a9ed7b18e2f84178bfcb49ae82</solr.sha512>
    <solr.version>10.0.0</solr.version>
    <lucene.version>10.0.0-SNAPSHOT</lucene.version>
-     <spring.boot.version>2.7.14</spring.boot.version>
     <spring.data.cassandra.version>3.4.15</spring.data.cassandra.version>
     <spring.security.kerberos.version>2.1.1</spring.security.kerberos.version>
     <tika.version>3.2.3</tika.version>
@@ -109,7 +108,7 @@
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-        <version>3.3.4</version>
+        <version>3.3.12</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
