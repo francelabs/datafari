@@ -93,6 +93,7 @@
                   <select id="interface-type" class="form-control">
                     <option value="">-- Select --</option>
                     <option value="OpenAI">OpenAI</option>
+                    <option value="LocalAI">LocalAI</option>
                     <option value="AIAgent">Datafari AI Agent</option>
                     <option value="MistralAI">Mistral AI</option>
                     <option value="AzureOpenAI">Azure OpenAI</option>

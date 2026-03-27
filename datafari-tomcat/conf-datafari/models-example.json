@@ -23,7 +23,7 @@
         "modelId": "meta-llama/Llama-3.1-8B-Instruct",
         "temperature": 0.1,
         "timeout": 60,
-        "maxTokens": 200
+        "maxTokens": 800
       }
     },
     {
@@ -35,7 +35,7 @@
         "temperature": 0.6,
         "topP": 1.0,
         "topK": 40,
-        "maxOutputTokens": 200,
+        "maxOutputTokens": 800,
         "maxRetries": 1,
         "timeout": 45,
         "logRequestsAndResponses": false

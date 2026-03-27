@@ -43,6 +43,16 @@ const paramTemplates = {
     logRequests: false,
     logResponses: false
   },
+  LocalAI: {
+    baseUrl: "http://localhost:8082/",
+    modelName: "",
+    temperature: 0,
+    maxTokens: 800,
+    timeout: 60,
+    maxRetries: 3,
+    logRequests: false,
+    logResponses: false
+  },
   AIAgent: {
     baseUrl: "http://localhost:8888/",
     apiKey: "xxx",

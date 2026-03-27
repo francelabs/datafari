@@ -179,6 +179,16 @@
           </div>
         </div>
 
+        <hr>
+        <!-- Agentic -->
+
+        <div class="form-group row">
+          <label id="enableLoopControlLabel" class="col-sm-2 col-form-label" for="enableLoopControl">Enable Loop Control for Agentic</label>
+          <div class="col-sm-5">
+            <input type="checkbox" id="enableLoopControl" data-toggle="toggle" data-onstyle="success">
+          </div>
+        </div>
+
 
         <div class="form-group row">
           <label id="submitLabel" for="submit" class="col-sm-2 col-form-label"></label>
