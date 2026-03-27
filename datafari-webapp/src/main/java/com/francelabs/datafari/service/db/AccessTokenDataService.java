@@ -31,7 +31,6 @@ public class AccessTokenDataService {
   private static volatile AccessTokenDataService instance;
 
   private final SqlService sql;
-  private final String userDataTTL;
 
   public static synchronized AccessTokenDataService getInstance() throws DatafariServerException {
     return instance;
@@ -39,7 +38,6 @@ public class AccessTokenDataService {
 
   public AccessTokenDataService(SqlService sql) {
     this.sql = sql;
-    this.userDataTTL = GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL);
     instance = this;
   }
 

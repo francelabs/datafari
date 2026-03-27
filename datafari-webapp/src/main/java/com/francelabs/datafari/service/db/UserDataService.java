@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
-import com.francelabs.datafari.utils.GDPRConfiguration;
 
 /**
  * UserDataService
@@ -44,7 +43,6 @@ public class UserDataService {
     public static final String IMPORTCOLUMN        = "imported"; // kept for compatibility (not used)
 
     // ===== Config / SQL handle =====
-    private final String userDataTTL;
     private final SqlService sql;
 
     /** Legacy accessor for code paths still using a static singleton. */
@@ -54,7 +52,6 @@ public class UserDataService {
 
     public UserDataService(SqlService sql) {
         this.sql = sql;
-        this.userDataTTL = GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL);
         instance = this; // expose Spring bean to legacy static accessor
     }
 
