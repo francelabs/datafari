@@ -5,8 +5,11 @@ import com.francelabs.datafari.ldap.LdapRealm;
 import com.francelabs.datafari.security.auth.DatafariAuthenticationSuccessHandler;
 import com.francelabs.datafari.security.auth.DatafariLdapAuthoritiesPopulator;
 import com.francelabs.datafari.security.auth.PostgresAuthenticationProvider;
+import com.francelabs.datafari.security.token.DatafariBearerTokenFilter;
+import com.francelabs.datafari.security.token.DatafariTokenService;
 import com.francelabs.datafari.utils.DatafariMainConfiguration;
 import com.google.common.collect.ImmutableList;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,12 +28,12 @@ import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,18 +96,43 @@ public class DatafariWebSecurity {
     return providers;
   }
 
+  @Bean
+  public AuthenticationManager datafariAuthenticationManager(PostgresAuthenticationProvider postgresAuthenticationProvider,
+                                                     List<AuthenticationProvider> ldapAuthenticationProviders) {
+    List<AuthenticationProvider> providers = new ArrayList<>();
+    providers.add(postgresAuthenticationProvider);
+    providers.addAll(ldapAuthenticationProviders);
+    return new ProviderManager(providers);
+  }
+
   @Configuration
   @ConditionalOnExpression("${oidc.enabled:false}==false && ${saml.enabled:false}==false && ${keycloak.enabled:false}==false && ${kerberos.enabled:false}==false && ${cas.enabled:false}==false && ${header.enabled:false}==false")
   @Order(Ordered.LOWEST_PRECEDENCE)
   public static class StandardSecurity {
 
     @Bean
-    public SecurityFilterChain configure(HttpSecurity http, AuthenticationProvider postgresAuthenticationProvider,
-                                         List<AuthenticationProvider> ldapAuthenticationProviders) throws Exception {
+    public DatafariBearerTokenFilter datafariBearerTokenFilter(DatafariTokenService tokenService) {
+      return new DatafariBearerTokenFilter(tokenService);
+    }
+
+    @Bean
+    @Order(1)
+    public SecurityFilterChain tokenSecurityFilterChain(HttpSecurity http) throws Exception {
+      http
+          .securityMatcher("/oauth/token")
+          .cors(Customizer.withDefaults())
+          .csrf(csrf -> csrf.ignoringRequestMatchers("/oauth/token"))
+          .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+
+      return http.build();
+    }
+
+    @Bean
+    @Order(2)
+    public SecurityFilterChain standardSecurityFilterChain (HttpSecurity http, AuthenticationManager datafariAuthenticationManager,
+                                         DatafariBearerTokenFilter datafariBearerTokenFilter) throws Exception {
       http.cors(Customizer.withDefaults());
-      http.csrf(csrf -> csrf
-          .ignoringRequestMatchers("/rest/**")
-      );
+      http.csrf(csrf -> csrf.ignoringRequestMatchers("/rest/**"));
 
       http.sessionManagement(session -> session.sessionConcurrency( concurrency -> concurrency.maximumSessions(maxConcurrentSessions) ) );
 
@@ -127,10 +155,12 @@ public class DatafariWebSecurity {
       }));
       http.exceptionHandling(exception -> {/* let the "/login" entry point as form login if an exception occurs */});
 
-      http.authenticationProvider(postgresAuthenticationProvider);
-      ldapAuthenticationProviders.forEach(http::authenticationProvider);
+      http.authenticationManager(datafariAuthenticationManager);
+
+      http.addFilterBefore(datafariBearerTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
       http.authorizeHttpRequests(requests -> requests
+          .requestMatchers("/oauth/token").permitAll()
           .requestMatchers("/admin/**","/SearchExpert/**").hasAnyRole("SearchExpert", "SearchAdministrator")
           .requestMatchers("/SearchAdministrator/**", "/rest/v2.0/files/**", "/rest/v2.0/management/**").hasRole("SearchAdministrator")
           .requestMatchers("/rest/v1.0/auth*").authenticated()

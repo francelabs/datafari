@@ -12,48 +12,66 @@ CREATE TABLE access_tokens (
     PRIMARY KEY (username, api, identifier)
 );
 
+CREATE TABLE datafari_access_token (
+    token_value VARCHAR(128) PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    client_id VARCHAR(255) NOT NULL,
+    authorities TEXT NOT NULL,
+    issued_at TIMESTAMP NOT NULL,
+    expires_at TIMESTAMP NOT NULL
+);
+
+-- FIXME to remove (legacy oauth Authorization Server of Datafari)
 CREATE TABLE oauth_access_tokens (
     access_token_id VARCHAR(255) PRIMARY KEY,
     access_token VARCHAR(255)
 );
 
+-- FIXME to remove (legacy oauth Authorization Server of Datafari)
 CREATE TABLE oauth_authentications (
     access_token_id VARCHAR(255) PRIMARY KEY,
     authentication VARCHAR(255)
 );
 
+-- FIXME to remove (legacy oauth Authorization Server of Datafari)
 CREATE TABLE oauth_auth_to_access_token (
     auth_key VARCHAR(255) PRIMARY KEY,
     access_token VARCHAR(255)
 );
 
+-- FIXME to remove (legacy oauth Authorization Server of Datafari)
 CREATE TABLE oauth_client_id_to_access_token (
     client_id VARCHAR(255) NOT NULL,
     access_token VARCHAR(255) NOT NULL,
     PRIMARY KEY (client_id, access_token)
 );
 
+-- FIXME to remove (legacy oauth Authorization Server of Datafari)
 CREATE TABLE oauth_refresh_tokens (
     refresh_token_id VARCHAR(255) PRIMARY KEY,
     refresh_token VARCHAR(255)
 );
 
+-- FIXME to remove (legacy oauth Authorization Server of Datafari)
 CREATE TABLE oauth_refresh_token_auth (
     refresh_token_id TEXT PRIMARY KEY,
     authentication TEXT
 );
 
+-- FIXME to remove (legacy oauth Authorization Server of Datafari)
 CREATE TABLE oauth_refresh_token_to_access_token (
     refresh_token_id VARCHAR(255) PRIMARY KEY,
     access_token_id VARCHAR(255)
 );
 
+-- FIXME to remove (legacy oauth Authorization Server of Datafari)
 CREATE TABLE oauth_username_to_access_token (
     approval_key VARCHAR(255) NOT NULL,
     access_token VARCHAR(255) NOT NULL,
     PRIMARY KEY (approval_key, access_token)
 );
 
+-- FIXME to remove (legacy oauth Authorization Server of Datafari)
 CREATE TABLE oauth_clients (
     client_id TEXT PRIMARY KEY,
     client_secret TEXT,
