@@ -766,6 +766,7 @@
     "ragConf-chatQueryRewritingEnabledBM25Label": "For BM25 search",
     "ragConf-chatQueryRewritingEnabledVectorLabel": "For vector search",
     "ragConf-chunkingChunkSizeLabel": "Maximum size (in characters) of the chunks",
+    "ragConf-enableLoopControlLabel": "Enable loop control for Agentic Service",
     "ragConf-maxRequestSizeLabel": "Maximum size in characters of the requests sent to the LLM.",
     "ragConf-chunkingStrategyLabel": "Chunk management strategy",
     "refresh": "Refresh",

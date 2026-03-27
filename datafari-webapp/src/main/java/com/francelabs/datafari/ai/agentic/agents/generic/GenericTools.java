@@ -1,4 +1,4 @@
-package com.francelabs.datafari.ai.agentic.tools.regular;
+package com.francelabs.datafari.ai.agentic.agents.generic;
 
 import com.francelabs.datafari.ai.agentic.tools.AgenticToolException;
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
@@ -13,7 +13,6 @@ import com.francelabs.datafari.utils.EditableHttpServletRequest;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.agent.tool.P;
 import dev.langchain4j.agent.tool.Tool;
-import dev.langchain4j.agent.tool.ToolMemoryId;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.invocation.InvocationContext;
 import org.apache.logging.log4j.LogManager;
@@ -25,16 +24,16 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Map;
 
-public class DatafariTools {
+public class GenericTools {
 
-    private static final Logger LOGGER = LogManager.getLogger(DatafariTools.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(GenericTools.class.getName());
     HttpServletRequest request;
     RagConfiguration config;
     private final SourcesAccumulator sourcesAcc;
     private final ChatStream stream;
     private final AiRequest params;
 
-    public DatafariTools(HttpServletRequest request,AiRequest params, ChatStream stream, SourcesAccumulator sourcesAcc) {
+    public GenericTools(HttpServletRequest request, AiRequest params, ChatStream stream, SourcesAccumulator sourcesAcc) {
         this.request = request;
         this.stream = stream;
         this.sourcesAcc = sourcesAcc;
@@ -354,8 +353,8 @@ public class DatafariTools {
 //    String callCFPAgent(
 //            @P("The user query") String query
 //    ) {
-//        LOGGER.info("AGENTIC TOOLS - Calling subagent : CfPAgent");
-//        CfPAgent agent = new CfPAgent(request);
+//        LOGGER.info("AGENTIC TOOLS - Calling subagent : CfPAgentBuilder");
+//        CfPAgentBuilder agent = new CfPAgentBuilder(request);
 //        return agent.ask(query);
 //    }
 

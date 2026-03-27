@@ -1,4 +1,4 @@
-package com.francelabs.datafari.ai.agentic.tools.dynamic;
+package com.francelabs.datafari.ai.agentic.agents.custom.tools;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;

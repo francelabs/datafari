@@ -23,15 +23,8 @@ public class RagConfiguration extends AbstractConfigClass {
     public static final String ENABLE_CONVERSATION_STORAGE = "assistant.enable.conversation.storage";
     public static final String ASSISTANT_RETRIEVAL_METHOD = "assistant.retrieval.method";
 
-    // WEB SERVICES PARAMETERS
-    public static final String API_ENDPOINT = "ai.api.endpoint";
-    public static final String API_TOKEN = "ai.api.token";
-    public static final String LLM_SERVICE = "ai.llm.service";
-
-    // LLM PARAMETERS
-    public static final String LLM_TEMPERATURE = "llm.temperature";
-    public static final String LLM_MAX_TOKENS = "llm.maxTokens";
-    public static final String LLM_MODEL = "llm.model";
+    // AGENTIC
+    public static final String AGENTIC_ENABLE_LOOP_CONTROL = "agentic.enable.loop.control";
 
     // PROMPTING
     public static final String PROMPT_CHUNKING_STRATEGY = "prompt.chunking.strategy"; // mapreduce or refine

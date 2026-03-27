@@ -1,9 +1,8 @@
-package com.francelabs.datafari.ai.agentic.tools.regular;
+package com.francelabs.datafari.ai.agentic.agents.cfp;
 
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
-import com.francelabs.datafari.ai.services.AiService;
 import com.francelabs.datafari.ai.services.RagService;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.ai.config.RagConfiguration;

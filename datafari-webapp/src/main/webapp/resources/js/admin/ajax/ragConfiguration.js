@@ -23,6 +23,7 @@ function internationalize() {
   $("#chunkingChunkSizeLabel").text(window.i18n.msgStore['ragConf-chunkingChunkSizeLabel']);
   $("#maxRequestSizeLabel").text(window.i18n.msgStore['ragConf-maxRequestSizeLabel']);
   $("#chunkingStrategyLabel").text(window.i18n.msgStore['ragConf-chunkingStrategyLabel']);
+  $("#enableLoopControlLabel").text(window.i18n.msgStore['ragConf-enableLoopControlLabel']);
 }
 
 function loadRagConfig() {
@@ -50,6 +51,7 @@ function loadRagConfig() {
     $('#chatQueryRewritingEnabledBM25').prop('checked', data.chatQueryRewritingEnabledBM25 === true).change();
     $('#chatQueryRewritingEnabledVector').prop('checked', data.chatQueryRewritingEnabledVector === true).change();
     $('#chatMemoryEnabled').prop('checked', data.chatMemoryEnabled === true).change();
+    $('#enableLoopControl').prop('checked', data.enableLoopControl === true).change();
     $('#chatMemoryHistorySize').val(data.chatMemoryHistorySize || 6);
 
     $('#retrievalMethod').val(data.retrievalMethod || "bm25");
@@ -111,6 +113,7 @@ function submitRagConfig(event) {
     "rrf.topK": $('#rrfTopK').val(),
     "rrf.rank.constant": $('#rrfRankConstant').val(),
     "retrieval.method": $('#retrievalMethod').val(),
+    "agentic.enable.loop.control": $('#enableLoopControl').is(':checked'),
   };
 
   $.ajax({
@@ -151,6 +154,7 @@ $(document).ready(function () {
   $('#chatMemoryEnabled').bootstrapToggle();
   $('#chatQueryRewritingEnabledBM25').bootstrapToggle();
   $('#chatQueryRewritingEnabledVector').bootstrapToggle();
+  $('#enableLoopControl').bootstrapToggle();
   $('#retrievalMethod').on('change', updateRetrievalVisibility);
 
   $('#ragConf-form').on('submit', submitRagConfig);

@@ -24,12 +24,6 @@ public class RagConfig {
           RagConfiguration.ENABLE_RAG,
           RagConfiguration.ENABLE_AGENTIC,
           RagConfiguration.ENABLE_SUMMARIZATION,
-          RagConfiguration.API_ENDPOINT,
-          RagConfiguration.API_TOKEN,
-          RagConfiguration.LLM_SERVICE,
-          RagConfiguration.LLM_TEMPERATURE,
-          RagConfiguration.LLM_MAX_TOKENS,
-          RagConfiguration.LLM_MODEL,
           RagConfiguration.PROMPT_CHUNKING_STRATEGY,
           RagConfiguration.MAX_REQUEST_SIZE,
           RagConfiguration.MAX_FILES,
@@ -42,7 +36,8 @@ public class RagConfig {
           RagConfiguration.RETRIEVAL_METHOD,
           RagConfiguration.SOLR_TOPK,
           RagConfiguration.RRF_TOPK,
-          RagConfiguration.RRF_RANK_CONSTANT
+          RagConfiguration.RRF_RANK_CONSTANT,
+          RagConfiguration.AGENTIC_ENABLE_LOOP_CONTROL
   );
 
   @RequestMapping("/rest/v2.0/management/ragConfig")
@@ -71,6 +66,7 @@ public class RagConfig {
     response.put("enableAgentic", config.getBooleanProperty(RagConfiguration.ENABLE_AGENTIC));
     response.put("enableSummarization", config.getBooleanProperty(RagConfiguration.ENABLE_SUMMARIZATION));
     response.put("enableSynthesis", config.getBooleanProperty(RagConfiguration.ENABLE_SYNTHESIS));
+    response.put("enableLoopControl", config.getBooleanProperty(RagConfiguration.AGENTIC_ENABLE_LOOP_CONTROL));
 
     response.put("chunkingStrategy", config.getProperty(RagConfiguration.PROMPT_CHUNKING_STRATEGY));
     response.put("maxRequestSize", config.getProperty(RagConfiguration.MAX_REQUEST_SIZE));
