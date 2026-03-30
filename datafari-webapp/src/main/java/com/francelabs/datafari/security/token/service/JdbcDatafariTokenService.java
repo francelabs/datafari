@@ -1,4 +1,4 @@
-package com.francelabs.datafari.security.token;
+package com.francelabs.datafari.security.token.service;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
