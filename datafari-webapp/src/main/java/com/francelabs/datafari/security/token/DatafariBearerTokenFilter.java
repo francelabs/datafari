@@ -74,16 +74,21 @@ public class DatafariBearerTokenFilter extends OncePerRequestFilter {
                                   FilterChain filterChain)
       throws ServletException, IOException {
 
-    String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-    LOGGER.debug("header: {}", header);
+    if (SecurityContextHolder.getContext().getAuthentication() == null) {
+      String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+      LOGGER.debug("header: {}", header);
 
-    if (header != null && header.toLowerCase().startsWith("bearer ")) {
-      String tokenValue = header.substring(7);
-      LOGGER.debug("tokenValue: {}", tokenValue);
-      Authentication authentication = tokenService.authenticate(tokenValue);
-      if (authentication != null) {
-        LOGGER.debug("getPrincipal: {} - getAuthorities: {}", authentication.getPrincipal(), authentication.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+      // If header start with "Bearer " we can try to authenticate the user (regionMatches is more performant than toLowerCase().startsWith())
+      if (header != null && header.regionMatches(true, 0, "Bearer ", 0, 7)) {
+        String tokenValue = header.substring(7);
+        LOGGER.debug("tokenValue: {}", tokenValue);
+        if (!tokenValue.isEmpty()) {
+          Authentication authentication = tokenService.authenticate(tokenValue);
+          if (authentication != null) {
+            LOGGER.debug("getPrincipal: {} - getAuthorities: {}", authentication.getPrincipal(), authentication.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+          }
+        }
       }
     }
 

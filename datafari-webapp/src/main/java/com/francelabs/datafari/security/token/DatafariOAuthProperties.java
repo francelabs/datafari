@@ -29,6 +29,7 @@ import org.springframework.context.annotation.Configuration;
  * <ul>
  *   <li>{@code datafari.oauth.client-id}</li>
  *   <li>{@code datafari.oauth.client-secret}</li>
+ *   <li>{@code datafari.oauth.token-ttl}</li>
  * </ul>
  *
  * <p>If no client identifier is configured, the default value
@@ -60,6 +61,11 @@ public class DatafariOAuthProperties {
   private String clientSecret = "";
 
   /**
+   * Expiration time of the access token obtained from the token endpoint
+   */
+  private long tokenTtl = 900L;
+
+  /**
    * Returns the configured OAuth client identifier.
    *
    * @return the configured client identifier, or {@link #INVALID_CLIENT_ID}
@@ -82,5 +88,16 @@ public class DatafariOAuthProperties {
   }
   public void setClientSecret(String clientSecret) {
     this.clientSecret = clientSecret;
+  }
+
+  /**
+   * Returns the configured Expiration time of the access token obtained from the token endpoint.
+   * @return
+   */
+  public long getTokenTtl() {
+    return tokenTtl;
+  }
+  public void setTokenTtl(long tokenTtl) {
+    this.tokenTtl = tokenTtl;
   }
 }

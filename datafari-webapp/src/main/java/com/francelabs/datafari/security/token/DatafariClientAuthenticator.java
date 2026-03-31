@@ -57,8 +57,14 @@ public class DatafariClientAuthenticator {
       throw new BadCredentialsException("Missing client credentials");
     }
 
-    String base64 = authorizationHeader.substring("Basic ".length());
-    String decoded = new String(Base64.getDecoder().decode(base64), StandardCharsets.UTF_8);
+    final String decoded;
+    try {
+      String base64 = authorizationHeader.substring("Basic ".length());
+      decoded = new String(Base64.getDecoder().decode(base64), StandardCharsets.UTF_8);
+    } catch (IllegalArgumentException e) {
+      throw new BadCredentialsException("Invalid Basic authentication header", e);
+    }
+
     String[] parts = decoded.split(":", 2);
 
     String clientId = parts.length > 0 ? parts[0] : "";

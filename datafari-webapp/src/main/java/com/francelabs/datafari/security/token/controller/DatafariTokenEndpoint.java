@@ -6,10 +6,13 @@ import com.francelabs.datafari.security.token.service.DatafariTokenService;
 import com.francelabs.datafari.security.token.service.LegacyAccessToken;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,6 +50,7 @@ import java.util.Map;
  * on {@code /oauth/token}.</p>
  */
 @RestController
+@ConditionalOnExpression("${oidc.enabled:false}==false && ${saml.enabled:false}==false && ${keycloak.enabled:false}==false && ${kerberos.enabled:false}==false && ${cas.enabled:false}==false && ${header.enabled:false}==false")
 public class DatafariTokenEndpoint {
   private static final Logger LOGGER = LogManager.getLogger(DatafariTokenEndpoint.class);
   private final AuthenticationManager authenticationManager;
@@ -108,26 +112,34 @@ public class DatafariTokenEndpoint {
       @RequestParam("password") String password) {
 
     LOGGER.debug("'/oauth/token' request reached");
-    clientAuthenticator.checkBasicClientCredentials(authorization);
-    LOGGER.debug("Good credential found");
+    try {
+      clientAuthenticator.checkBasicClientCredentials(authorization);
+      LOGGER.debug("Good credential found");
 
-    if (!"password".equals(grantType)) {
-      return ResponseEntity.badRequest().body(Map.of(
-          "error", "unsupported_grant_type"
+      if (!"password".equals(grantType)) {
+        return ResponseEntity.badRequest().body(Map.of(
+              "error", "unsupported_grant_type",
+              "error_description", "Only grant_type=password is supported"
+        ));
+      }
+
+      Authentication authRequest =
+          UsernamePasswordAuthenticationToken.unauthenticated(username, password);
+
+      Authentication authentication = authenticationManager.authenticate(authRequest);
+
+      LegacyAccessToken token = tokenService.issueToken(authentication, tokenClientId);
+
+      return ResponseEntity.ok(Map.of(
+          "access_token", token.value(),
+          "token_type", "bearer",
+          "expires_in", token.expiresIn()
+      ));
+    } catch (BadCredentialsException e) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+          "error", "invalid_client_or_user",
+          "error_description", e.getMessage()
       ));
     }
-
-    Authentication authRequest =
-        UsernamePasswordAuthenticationToken.unauthenticated(username, password);
-
-    Authentication authentication = authenticationManager.authenticate(authRequest);
-
-    LegacyAccessToken token = tokenService.issueToken(authentication, tokenClientId);
-
-    return ResponseEntity.ok(Map.of(
-        "access_token", token.value(),
-        "token_type", "bearer",
-        "expires_in", token.expiresIn()
-    ));
   }
 }

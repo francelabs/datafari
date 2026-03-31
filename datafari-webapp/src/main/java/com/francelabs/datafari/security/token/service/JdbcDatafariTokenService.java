@@ -1,5 +1,6 @@
 package com.francelabs.datafari.security.token.service;
 
+import com.francelabs.datafari.security.token.DatafariOAuthProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -9,36 +10,36 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class JdbcDatafariTokenService implements DatafariTokenService {
   private static final Logger LOGGER = LogManager.getLogger(JdbcDatafariTokenService.class);
-
-  private static final long TOKEN_TTL_SECONDS = 900L; // 15 minutes
-
+  private final long tokenTtl;
   private final JdbcTemplate jdbcTemplate;
 
-  public JdbcDatafariTokenService(JdbcTemplate jdbcTemplate) {
+  public JdbcDatafariTokenService(JdbcTemplate jdbcTemplate, DatafariOAuthProperties oAuthProperties) {
     this.jdbcTemplate = jdbcTemplate;
+    this.tokenTtl = oAuthProperties.getTokenTtl();
   }
 
-  // FIXME use JPA to access DB and do CRUD operations
+  // TODO use JPA to access DB and do CRUD operations
   @Override
   public LegacyAccessToken issueToken(Authentication authentication, String clientId) {
     LOGGER.debug("Start issuing Tolen");
 
-    String tokenValue = UUID.randomUUID().toString();
+    String rawToken = UUID.randomUUID().toString();
+    String tokenId = hashToken(rawToken);
     Instant now = Instant.now();
-    Instant expiresAt = now.plusSeconds(TOKEN_TTL_SECONDS);
+    Instant expiresAt = now.plusSeconds(tokenTtl);
 
-    LOGGER.debug("token created: {} - expiresAt: {}", tokenValue, expiresAt);
+    LOGGER.debug("token created: {} - expiresAt: {}", tokenId, expiresAt);
 
     String username = authentication.getName();
     String authorities = serializeAuthorities(authentication.getAuthorities());
@@ -46,8 +47,8 @@ public class JdbcDatafariTokenService implements DatafariTokenService {
     LOGGER.debug("Prepare to update table with username: {} - authorities: {}", username, authorities);
 
     jdbcTemplate.update(
-        "INSERT INTO datafari_access_token (token_value, username, client_id, authorities, issued_at, expires_at) VALUES (?, ?, ?, ?, ?, ?)",
-        tokenValue,
+        "INSERT INTO datafari_access_token (token_id, username, client_id, authorities, issued_at, expires_at) VALUES (?, ?, ?, ?, ?, ?)",
+        tokenId,
         username,
         clientId,
         authorities,
@@ -55,21 +56,22 @@ public class JdbcDatafariTokenService implements DatafariTokenService {
         Timestamp.from(expiresAt)
     );
 
-    return new LegacyAccessToken(tokenValue, TOKEN_TTL_SECONDS);
+    return new LegacyAccessToken(rawToken, tokenTtl);
   }
 
   @Override
   public Authentication authenticate(String tokenValue) {
     LOGGER.debug("Start authenticate");
+    String tokenId = hashToken(tokenValue);
     List<TokenRecord> results = jdbcTemplate.query(
-        "SELECT username, client_id, authorities, expires_at FROM datafari_access_token WHERE token_value = ?",
+        "SELECT username, client_id, authorities, expires_at FROM datafari_access_token WHERE token_id = ?",
         (rs, rowNum) -> new TokenRecord(
             rs.getString("username"),
             rs.getString("client_id"),
             rs.getString("authorities"),
             rs.getTimestamp("expires_at").toInstant()
         ),
-        tokenValue
+        tokenId
     );
 
     if (results.isEmpty()) {
@@ -80,7 +82,7 @@ public class JdbcDatafariTokenService implements DatafariTokenService {
 
     if (record.expiresAt().isBefore(Instant.now())) {
       LOGGER.debug("Token expired");
-      jdbcTemplate.update("DELETE FROM datafari_access_token WHERE token_value = ?", tokenValue);
+      jdbcTemplate.update("DELETE FROM datafari_access_token WHERE token_id = ?", tokenId);
       return null;
     }
 
@@ -94,6 +96,20 @@ public class JdbcDatafariTokenService implements DatafariTokenService {
         record.username(),
         tokenValue,
         authorities
+    );
+  }
+
+  @Override
+  public void revoke(String tokenValue) {
+    String tokenId = hashToken(tokenValue);
+    jdbcTemplate.update("DELETE FROM datafari_access_token WHERE token_id = ?", tokenId);
+  }
+
+  @Override
+  public int deleteExpiredTokens() {
+    return jdbcTemplate.update(
+        "DELETE FROM datafari_access_token WHERE expires_at < ?",
+        Timestamp.from(Instant.now())
     );
   }
 
@@ -113,6 +129,16 @@ public class JdbcDatafariTokenService implements DatafariTokenService {
         .filter(s -> !s.isEmpty())
         .map(SimpleGrantedAuthority::new)
         .collect(Collectors.toList());
+  }
+
+  private String hashToken(String tokenValue) {
+    try {
+      MessageDigest digest = MessageDigest.getInstance("SHA-256");
+      byte[] hash = digest.digest(tokenValue.getBytes(StandardCharsets.UTF_8));
+      return HexFormat.of().formatHex(hash);
+    } catch (NoSuchAlgorithmException e) {
+      throw new IllegalStateException("SHA-256 algorithm not available", e);
+    }
   }
 
   private record TokenRecord(String username, String clientId, String authorities, Instant expiresAt) {

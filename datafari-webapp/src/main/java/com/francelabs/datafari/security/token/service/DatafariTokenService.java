@@ -50,4 +50,31 @@ public interface DatafariTokenService {
    *         not valid
    */
   Authentication authenticate(String tokenValue);
+
+  /**
+   * Revokes a Datafari access token so it can no longer be used to authenticate
+   * protected requests.
+   *
+   * <p>This method is intended to invalidate a token before its natural
+   * expiration time, for example when explicit logout or token invalidation is
+   * required.</p>
+   *
+   * <p>If the supplied token is unknown, the method may return silently without
+   * performing any action.</p>
+   *
+   * @param tokenValue raw access token value to revoke
+   */
+  void revoke(String tokenValue);
+
+  /**
+   * Removes all expired Datafari access tokens from the persistence store.
+   *
+   * <p>This maintenance operation is typically invoked by a scheduled cleanup
+   * task in order to keep the token store compact and to remove entries that
+   * are no longer usable.</p>
+   *
+   * @return the number of expired tokens removed
+   */
+  int deleteExpiredTokens();
+
 }

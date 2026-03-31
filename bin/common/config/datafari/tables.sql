@@ -13,7 +13,7 @@ CREATE TABLE access_tokens (
 );
 
 CREATE TABLE datafari_access_token (
-    token_value VARCHAR(128) PRIMARY KEY,
+    token_id VARCHAR(64) PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     client_id VARCHAR(255) NOT NULL,
     authorities TEXT NOT NULL,
