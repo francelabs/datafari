@@ -16,7 +16,6 @@
 package com.francelabs.datafari.aggregator.servlet;
 
 import com.francelabs.datafari.aggregator.utils.SearchAggregatorAccessTokenManager;
-import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.api.SearchAPI;
 import com.francelabs.datafari.api.SuggesterAPI;
 import com.francelabs.datafari.ldap.LdapUsers;

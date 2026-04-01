@@ -4,8 +4,8 @@ import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.dto.ApiError;
+import com.francelabs.datafari.ai.services.rag.Rag;
 import com.francelabs.datafari.ai.stream.ChatStream;
-import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.utils.EditableHttpServletRequest;
 import com.francelabs.datafari.utils.rag.SearchUtils;
@@ -75,7 +75,7 @@ public class RagService extends AiService {
         // Retrieve, if enabled, the chat history
         //
         if (params.history != null && !params.history.isEmpty()) {
-            stream.phase("rag:retrieving chat history");
+            stream.phase("Rag:retrieving chat history");
             List<AiRequest.ChatMessage> history = params.history;
             request.setAttribute("history", history);
             // TODO : check the integrity of history
@@ -92,9 +92,9 @@ public class RagService extends AiService {
                 && List.of("rrf", "vector").contains(config.getProperty(RagConfiguration.RETRIEVAL_METHOD))
                 && params.id == null
         ) {
-            stream.phase("rag:query rewriting");
+            stream.phase("Rag:query rewriting");
             try {
-                vectorQuery = RagAPI.rewriteSearchQuery(query, "vector", request, config);
+                vectorQuery = Rag.rewriteSearchQuery(query, "vector", request, config);
             } catch (IOException e) {
                 LOGGER.error("Query rewriting failed ! Initial user query will be use for the search.", e);
             }
@@ -110,9 +110,9 @@ public class RagService extends AiService {
                 && List.of("rrf", "bm25").contains(config.getProperty(RagConfiguration.RETRIEVAL_METHOD))
                 && params.id == null
         ) {
-            stream.phase("rag:query rewriting");
+            stream.phase("Rag:query rewriting");
             try {
-                bm25Query = RagAPI.rewriteSearchQuery(query, "bm25", request, config);
+                bm25Query = Rag.rewriteSearchQuery(query, "bm25", request, config);
             } catch (IOException e) {
                 LOGGER.error("Query rewriting failed ! Initial user query will be use for the search.", e);
                 vectorQuery = query;
@@ -125,7 +125,7 @@ public class RagService extends AiService {
         //
         try {
             // Retrieve ID from JSON input
-            stream.phase("rag:retrieval");
+            stream.phase("Rag:retrieval");
             if (params.id != null && !params.id.isEmpty()) {
                 // If "id" is provided, we only need to retrieve one specific document
                 id = params.id;
@@ -159,11 +159,11 @@ public class RagService extends AiService {
         // The request is processed using Datafari Rag API
         //
         try {
-            // Process the document(s) using RagAPI methods
-            stream.phase("rag:response generation");
+            // Process the document(s) using Rag.java methods
+            stream.phase("Rag:response generation");
             EditableHttpServletRequest editablerequest = new EditableHttpServletRequest(request);
             editablerequest.addParameter("q", query);
-            ApiContent response = RagAPI.rag(editablerequest, searchResults, ragBydocument, stream, sourcesAcc, isTool);
+            ApiContent response = Rag.rag(editablerequest, searchResults, ragBydocument, stream, sourcesAcc, isTool);
 
             if (!isTool) {
                 // Save message in Postgresql DB

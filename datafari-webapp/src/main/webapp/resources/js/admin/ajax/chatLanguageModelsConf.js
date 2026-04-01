@@ -44,7 +44,7 @@ const paramTemplates = {
     logResponses: false
   },
   LocalAI: {
-    baseUrl: "http://localhost:8082/",
+    baseUrl: "http://localhost:8888/",
     modelName: "",
     temperature: 0,
     maxTokens: 800,

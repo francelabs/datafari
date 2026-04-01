@@ -6,8 +6,8 @@ import com.francelabs.datafari.ai.agentic.agents.interfaces.IStreamingAgentServi
 import com.francelabs.datafari.ai.agentic.tools.DynamicToolsLoader;
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.config.RagConfiguration;
+import com.francelabs.datafari.ai.services.AiService;
 import com.francelabs.datafari.ai.stream.ChatStream;
-import com.francelabs.datafari.api.RagAPI;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.agentic.AgenticServices;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
@@ -40,8 +40,8 @@ public class CustomAgentBuilder implements IAgentBuilder {
         RagConfiguration config = RagConfiguration.getInstance();
         try {
             // Models
-            StreamingChatModel streamingChatModel = RagAPI.getStreamingChatModel(config);
-            ChatModel chatModel = RagAPI.getChatModel(config);
+            StreamingChatModel streamingChatModel = AiService.getStreamingChatModel(config);
+            ChatModel chatModel = AiService.getChatModel(config);
 
             // Tools
             Map<ToolSpecification, ToolExecutor> tools = new HashMap<>();

@@ -14,7 +14,6 @@ import com.francelabs.datafari.ai.dto.ApiError;
 import com.francelabs.datafari.ai.stream.AgentStreamer;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.ai.config.RagConfiguration;
-import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.utils.rag.PromptUtils;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.agentic.AgenticServices;
@@ -98,7 +97,7 @@ public class AgenticService extends AiService {
             stream.phase("agent:start");
 
             // Models
-            ChatModel chatModel = RagAPI.getChatModel(config);
+            ChatModel chatModel = AiService.getChatModel(config);
 
             IStreamingAgentService streamingAgent = builder.buildStreamAgent();
             IAgentService agent = builder.buildAgent();

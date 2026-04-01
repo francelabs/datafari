@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils.rag;
 
-import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 //import com.francelabs.datafari.rag.Message;
@@ -355,7 +354,7 @@ public class PromptUtils {
      * @return The instructions prompts stored in resources/prompts folder
      */
     private static String getInstructions(String filename) throws IOException {
-        return readFromInputStream(RagAPI.class.getClassLoader().getResourceAsStream("prompts/" + filename));
+        return readFromInputStream(PromptUtils.class.getClassLoader().getResourceAsStream("prompts/" + filename));
     }
 
     /**

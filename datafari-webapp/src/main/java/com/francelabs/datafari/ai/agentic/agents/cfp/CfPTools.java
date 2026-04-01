@@ -151,16 +151,14 @@ public class CfPTools {
         rows = Math.min(ids.size(), rows);
         StringBuilder categoryList = new StringBuilder();
         for (Map.Entry<String, String> entry : categories.entrySet()) {
-            categoryList.append(" ").append(entry.getKey()).append(" (").append(entry.getValue()).append(" documents)\n ");
+            categoryList.append(" ").append(entry.getKey()).append("\n ");
         }
 
         LOGGER.info("AGENTIC TOOLS - CFP IDs via JSON Facet: rows={} category='{}' -> {}", rows, category, ids.size());
         if (ids.isEmpty() && !categories.isEmpty()) {
             return "No result found in category " + category + ". Available categories are: \n" + categoryList;
-            // TODO : return a list of existing caterogies
         } else if (ids.isEmpty()) {
             return "No result found in category " + category + ". It appears that there is no existing categorized CFP.";
-            // TODO : return a list of existing caterogies
         }
 
         // Building CfP IDs list

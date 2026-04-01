@@ -4,9 +4,9 @@ import com.francelabs.datafari.ai.agentic.agents.interfaces.IAgentBuilder;
 import com.francelabs.datafari.ai.agentic.agents.interfaces.IAgentService;
 import com.francelabs.datafari.ai.agentic.agents.interfaces.IStreamingAgentService;
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
+import com.francelabs.datafari.ai.services.AiService;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.ai.stream.ToolMaps;
-import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.ai.config.RagConfiguration;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.agentic.AgenticServices;
@@ -35,8 +35,8 @@ public class CfPAgentBuilder implements IAgentBuilder {
         RagConfiguration config = RagConfiguration.getInstance();
         try {
             // Models
-            StreamingChatModel streamingChatModel = RagAPI.getStreamingChatModel(config);
-            ChatModel chatModel = RagAPI.getChatModel(config);
+            StreamingChatModel streamingChatModel = AiService.getStreamingChatModel(config);
+            ChatModel chatModel = AiService.getChatModel(config);
 
             // Tools
             Object cfpTools = new CfPTools(request, stream, sourcesAcc);
