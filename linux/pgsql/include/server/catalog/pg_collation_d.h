@@ -3,7 +3,7 @@
  * pg_collation_d.h
  *    Macro definitions for pg_collation
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -18,6 +18,8 @@
 #ifndef PG_COLLATION_D_H
 #define PG_COLLATION_D_H
 
+/* Macros related to the structure of pg_collation */
+
 #define CollationRelationId 3456
 #define CollationNameEncNspIndexId 3164
 #define CollationOidIndexId 3085
@@ -31,13 +33,17 @@
 #define Anum_pg_collation_collencoding 7
 #define Anum_pg_collation_collcollate 8
 #define Anum_pg_collation_collctype 9
-#define Anum_pg_collation_colliculocale 10
-#define Anum_pg_collation_collversion 11
+#define Anum_pg_collation_colllocale 10
+#define Anum_pg_collation_collicurules 11
+#define Anum_pg_collation_collversion 12
 
-#define Natts_pg_collation 11
+#define Natts_pg_collation 12
+
+/* Definitions copied from pg_collation.h */
 
 
 #define COLLPROVIDER_DEFAULT	'd'
+#define COLLPROVIDER_BUILTIN	'b'
 #define COLLPROVIDER_ICU		'i'
 #define COLLPROVIDER_LIBC		'c'
 
@@ -46,6 +52,8 @@ collprovider_name(char c)
 {
 	switch (c)
 	{
+		case COLLPROVIDER_BUILTIN:
+			return "builtin";
 		case COLLPROVIDER_ICU:
 			return "icu";
 		case COLLPROVIDER_LIBC:
@@ -55,8 +63,10 @@ collprovider_name(char c)
 	}
 }
 
+
+/* OID symbols for objects defined in pg_collation.dat */
+
 #define DEFAULT_COLLATION_OID 100
 #define C_COLLATION_OID 950
-#define POSIX_COLLATION_OID 951
 
 #endif							/* PG_COLLATION_D_H */

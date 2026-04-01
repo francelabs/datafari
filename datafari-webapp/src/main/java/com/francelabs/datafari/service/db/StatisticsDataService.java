@@ -18,7 +18,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
-import com.francelabs.datafari.utils.GDPRConfiguration;
 import com.francelabs.datafari.utils.UsageStatisticsConfiguration;
 
 /**
@@ -37,10 +36,6 @@ public class StatisticsDataService {
 
   private static StatisticsDataService instance;
 
-  // Kept for documentation (no native TTL in PG)
-  @SuppressWarnings("unused")
-  private final int userActionsTTL;
-
   // SQL helpers via the static bridge
   private final JdbcTemplate jdbc;
   private final NamedParameterJdbcTemplate named;
@@ -51,8 +46,6 @@ public class StatisticsDataService {
   private StatisticsDataService() {
     this.jdbc  = SqlService.get().getJdbcTemplate();
     this.named = SqlService.get().getNamedJdbcTemplate();
-    this.userActionsTTL = Integer.parseInt(
-        GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_ACTIONS_TTL, "0"));
   }
 
   public static synchronized StatisticsDataService getInstance() {

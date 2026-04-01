@@ -3,7 +3,7 @@
  * pg_sequence_d.h
  *    Macro definitions for pg_sequence
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -18,6 +18,8 @@
 #ifndef PG_SEQUENCE_D_H
 #define PG_SEQUENCE_D_H
 
+/* Macros related to the structure of pg_sequence */
+
 #define SequenceRelationId 2224
 #define SequenceRelidIndexId 5002
 
@@ -31,6 +33,11 @@
 #define Anum_pg_sequence_seqcycle 8
 
 #define Natts_pg_sequence 8
+
+/* Definitions copied from pg_sequence.h */
+
+
+/* OID symbols for objects defined in pg_sequence.dat */
 
 
 #endif							/* PG_SEQUENCE_D_H */

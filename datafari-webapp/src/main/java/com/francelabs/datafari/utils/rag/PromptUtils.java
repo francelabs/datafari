@@ -93,19 +93,26 @@ public class PromptUtils {
     /**
      * @return Retrieve the instructions used to merge multiple summaries into one.
      */
-    // TODO : DELETE
-    public static ChatMessage createPromptForMergeAllSummaries(HttpServletRequest request) throws IOException {
-        String prompt =  getInstructions("summarization/template-summarization-mergeAll.txt")
+    public static String createPromptForIterateSummaries(HttpServletRequest request) throws IOException {
+        return  getInstructions("summarization/template-summarization-iterative.txt")
                 .replace("{language}", getUserLanguage(request));
-        return new SystemMessage(prompt);
+    }
+
+    /**
+     * @return Retrieve the instructions used to summarize a document.
+     */
+    public static String createInitialPromptForSynthesis(HttpServletRequest request) throws IOException {
+        // TODO : Use PromptTemplate instead
+        return getInstructions("synthesis/template-initialPromptForSynthesis.txt")
+            .replace("{language}", getUserLanguage(request));
     }
 
     /**
      * @return Retrieve the instructions used to merge multiple summaries into one.
      */
-    public static String createPromptForIterateSummaries(HttpServletRequest request) throws IOException {
-        return  getInstructions("summarization/template-summarization-iterative.txt")
-                .replace("{language}", getUserLanguage(request));
+    public static String createPromptForIterateSynthesis(HttpServletRequest request) throws IOException {
+        return  getInstructions("synthesis/template-synthesis-iterative.txt")
+            .replace("{language}", getUserLanguage(request));
     }
 
 
@@ -196,6 +203,22 @@ public class PromptUtils {
             conversation.append(line).append("\n");
         }
         return conversation.toString();
+    }
+
+    /**
+     * Generate a string prompt containing a chunk of document and the document title
+     * @param title Title of the document
+     * @param summary Summary of the document
+     * @param id ID of document
+     * @return String prompt for the LLM
+     * @throws IOException
+     */
+    public static String synthesisSnippet(String title, String summary, String id, String url) throws IOException {
+        String template =  getInstructions("synthesis/template-snippet.txt");
+        return template.replace("{title}", title)
+            .replace("{summary}", summary)
+            .replace("{id}", id)
+            .replace("{url}", url);
     }
 
     /**

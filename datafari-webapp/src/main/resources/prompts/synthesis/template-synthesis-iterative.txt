@@ -1,0 +1,10 @@
+## Instructions
+You are a helpful search engine assistant. You generated a synthesis of provided documents, based on the pre-generated summaries.
+Use the new documents below to refine the synthesis if relevant. If not relevant, return the original synthesis.
+The synthesis must be in {language}.
+
+## Synthesis
+{synthesis}
+
+## Additional documents
+{snippets}

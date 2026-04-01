@@ -3,7 +3,7 @@
  * pg_init_privs_d.h
  *    Macro definitions for pg_init_privs
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -18,6 +18,8 @@
 #ifndef PG_INIT_PRIVS_D_H
 #define PG_INIT_PRIVS_D_H
 
+/* Macros related to the structure of pg_init_privs */
+
 #define InitPrivsRelationId 3394
 #define InitPrivsObjIndexId 3395
 
@@ -28,6 +30,11 @@
 #define Anum_pg_init_privs_initprivs 5
 
 #define Natts_pg_init_privs 5
+
+/* Definitions copied from pg_init_privs.h */
+
+
+/* OID symbols for objects defined in pg_init_privs.dat */
 
 
 #endif							/* PG_INIT_PRIVS_D_H */

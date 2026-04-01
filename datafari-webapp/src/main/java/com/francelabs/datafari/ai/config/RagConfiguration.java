@@ -16,6 +16,7 @@ public class RagConfiguration extends AbstractConfigClass {
     public static final String ENABLE_RAG = "ai.enable.rag";
     public static final String ENABLE_AGENTIC = "ai.enable.agentic";
     public static final String ENABLE_SUMMARIZATION = "ai.enable.summarization";
+    public static final String ENABLE_SYNTHESIS = "ai.enable.synthesis";
 
     // DATAFARI ASSISTANT PROPERTIES
     public static final String ENABLE_ASSISTANT = "assistant.enable.assistant";
@@ -41,6 +42,10 @@ public class RagConfiguration extends AbstractConfigClass {
     public static final String CHAT_QUERY_REWRITING_ENABLED_VECTOR = "chat.query.rewriting.enabled.vector";
     public static final String CHAT_MEMORY_ENABLED = "chat.memory.enabled";
     public static final String CHAT_MEMORY_HISTORY_SIZE = "chat.memory.history.size";
+
+    // SUMMARIZATION & SYNTHESIS
+    public static final String SYNTHESIS_MAX_FILES = "synthesis.maxFiles";
+    public static final String SUMMARIZATION_CHUNKS_NUMBER = "summarization.chunks.number";
 
     // RETRIEVAL
     public static final String RETRIEVAL_METHOD = "retrieval.method";

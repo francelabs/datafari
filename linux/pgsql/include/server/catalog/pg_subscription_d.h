@@ -3,7 +3,7 @@
  * pg_subscription_d.h
  *    Macro definitions for pg_subscription
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -17,6 +17,8 @@
  */
 #ifndef PG_SUBSCRIPTION_D_H
 #define PG_SUBSCRIPTION_D_H
+
+/* Macros related to the structure of pg_subscription */
 
 #define SubscriptionRelationId 6100
 #define SubscriptionRelation_Rowtype_Id 6101
@@ -35,12 +37,57 @@
 #define Anum_pg_subscription_substream 8
 #define Anum_pg_subscription_subtwophasestate 9
 #define Anum_pg_subscription_subdisableonerr 10
-#define Anum_pg_subscription_subconninfo 11
-#define Anum_pg_subscription_subslotname 12
-#define Anum_pg_subscription_subsynccommit 13
-#define Anum_pg_subscription_subpublications 14
+#define Anum_pg_subscription_subpasswordrequired 11
+#define Anum_pg_subscription_subrunasowner 12
+#define Anum_pg_subscription_subfailover 13
+#define Anum_pg_subscription_subconninfo 14
+#define Anum_pg_subscription_subslotname 15
+#define Anum_pg_subscription_subsynccommit 16
+#define Anum_pg_subscription_subpublications 17
+#define Anum_pg_subscription_suborigin 18
 
-#define Natts_pg_subscription 14
+#define Natts_pg_subscription 18
+
+/* Definitions copied from pg_subscription.h */
+
+
+/*
+ * two_phase tri-state values. See comments atop worker.c to know more about
+ * these states.
+ */
+#define LOGICALREP_TWOPHASE_STATE_DISABLED 'd'
+#define LOGICALREP_TWOPHASE_STATE_PENDING 'p'
+#define LOGICALREP_TWOPHASE_STATE_ENABLED 'e'
+
+/*
+ * The subscription will request the publisher to only send changes that do not
+ * have any origin.
+ */
+#define LOGICALREP_ORIGIN_NONE "none"
+
+/*
+ * The subscription will request the publisher to send changes regardless
+ * of their origin.
+ */
+#define LOGICALREP_ORIGIN_ANY "any"
+
+/* Disallow streaming in-progress transactions. */
+#define LOGICALREP_STREAM_OFF 'f'
+
+/*
+ * Streaming in-progress transactions are written to a temporary file and
+ * applied only after the transaction is committed on upstream.
+ */
+#define LOGICALREP_STREAM_ON 't'
+
+/*
+ * Streaming in-progress transactions are applied immediately via a parallel
+ * apply worker.
+ */
+#define LOGICALREP_STREAM_PARALLEL 'p'
+
+
+/* OID symbols for objects defined in pg_subscription.dat */
 
 
 #endif							/* PG_SUBSCRIPTION_D_H */

@@ -3,6 +3,7 @@ package com.francelabs.datafari.servlets.admin;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import com.francelabs.datafari.service.db.ConversationDataService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -71,6 +72,7 @@ public class DeleteUser extends HttpServlet {
         AccessTokenDataService.getInstance().removeTokens(username);
         LicenceManagement.getInstance().removeUser(username);
         StatisticsDataService.getInstance().deleteUserStatistics(username);
+        ConversationDataService.getInstance().deleteUserConversations(username);
       } catch (final DatafariServerException e) {
         jsonResponse.put(OutputConstants.CODE, CodesReturned.PROBLEMCONNECTIONDATABASE.getValue());
         jsonResponse.put(OutputConstants.STATUS, "Problem with database");

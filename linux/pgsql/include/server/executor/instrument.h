@@ -4,7 +4,7 @@
  *	  definitions for run-time statistics collection
  *
  *
- * Copyright (c) 2001-2022, PostgreSQL Global Development Group
+ * Copyright (c) 2001-2025, PostgreSQL Global Development Group
  *
  * src/include/executor/instrument.h
  *
@@ -33,8 +33,10 @@ typedef struct BufferUsage
 	int64		local_blks_written; /* # of local disk blocks written */
 	int64		temp_blks_read; /* # of temp blocks read */
 	int64		temp_blks_written;	/* # of temp blocks written */
-	instr_time	blk_read_time;	/* time spent reading blocks */
-	instr_time	blk_write_time; /* time spent writing blocks */
+	instr_time	shared_blk_read_time;	/* time spent reading shared blocks */
+	instr_time	shared_blk_write_time;	/* time spent writing shared blocks */
+	instr_time	local_blk_read_time;	/* time spent reading local blocks */
+	instr_time	local_blk_write_time;	/* time spent writing local blocks */
 	instr_time	temp_blk_read_time; /* time spent reading temp blocks */
 	instr_time	temp_blk_write_time;	/* time spent writing temp blocks */
 } BufferUsage;
@@ -51,6 +53,7 @@ typedef struct WalUsage
 	int64		wal_records;	/* # of WAL records produced */
 	int64		wal_fpi;		/* # of WAL full page images produced */
 	uint64		wal_bytes;		/* size of WAL records produced */
+	int64		wal_buffers_full;	/* # of times the WAL buffers became full */
 } WalUsage;
 
 /* Flag bits included in InstrAlloc's instrument_options bitmask */

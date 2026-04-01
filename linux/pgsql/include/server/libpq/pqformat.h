@@ -3,7 +3,7 @@
  * pqformat.h
  *		Definitions for formatting and parsing frontend/backend messages
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/libpq/pqformat.h
@@ -22,9 +22,8 @@ extern void pq_beginmessage_reuse(StringInfo buf, char msgtype);
 extern void pq_endmessage(StringInfo buf);
 extern void pq_endmessage_reuse(StringInfo buf);
 
-extern void pq_sendbytes(StringInfo buf, const char *data, int datalen);
-extern void pq_sendcountedtext(StringInfo buf, const char *str, int slen,
-							   bool countincludesself);
+extern void pq_sendbytes(StringInfo buf, const void *data, int datalen);
+extern void pq_sendcountedtext(StringInfo buf, const char *str, int slen);
 extern void pq_sendtext(StringInfo buf, const char *str, int slen);
 extern void pq_sendstring(StringInfo buf, const char *str);
 extern void pq_send_ascii_string(StringInfo buf, const char *str);
@@ -201,7 +200,7 @@ extern int64 pq_getmsgint64(StringInfo msg);
 extern float4 pq_getmsgfloat4(StringInfo msg);
 extern float8 pq_getmsgfloat8(StringInfo msg);
 extern const char *pq_getmsgbytes(StringInfo msg, int datalen);
-extern void pq_copymsgbytes(StringInfo msg, char *buf, int datalen);
+extern void pq_copymsgbytes(StringInfo msg, void *buf, int datalen);
 extern char *pq_getmsgtext(StringInfo msg, int rawbytes, int *nbytes);
 extern const char *pq_getmsgstring(StringInfo msg);
 extern const char *pq_getmsgrawstring(StringInfo msg);

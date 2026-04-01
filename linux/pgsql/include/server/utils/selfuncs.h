@@ -5,7 +5,7 @@
  *	  infrastructure for selectivity and cost estimation.
  *
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/utils/selfuncs.h
@@ -94,8 +94,10 @@ typedef struct VariableStatData
 	Oid			vartype;		/* exposed type of expression */
 	Oid			atttype;		/* actual type (after stripping relabel) */
 	int32		atttypmod;		/* actual typmod (after stripping relabel) */
-	bool		isunique;		/* matches unique index or DISTINCT clause */
-	bool		acl_ok;			/* result of ACL check on table or column */
+	bool		isunique;		/* matches unique index, DISTINCT or GROUP-BY
+								 * clause */
+	bool		acl_ok;			/* true if user has SELECT privilege on all
+								 * rows from the table or column */
 } VariableStatData;
 
 #define ReleaseVariableStats(vardata)  \
@@ -117,6 +119,9 @@ typedef struct VariableStatData
  * Callers should initialize all fields of GenericCosts to zero.  In addition,
  * they can set numIndexTuples to some positive value if they have a better
  * than default way of estimating the number of leaf index tuples visited.
+ * Similarly, they can set num_sa_scans to some value >= 1 for an index AM
+ * that doesn't necessarily perform exactly one primitive index scan per
+ * distinct combination of ScalarArrayOp array elements.
  */
 typedef struct
 {
@@ -149,6 +154,7 @@ extern PGDLLIMPORT get_index_stats_hook_type get_index_stats_hook;
 
 extern void examine_variable(PlannerInfo *root, Node *node, int varRelid,
 							 VariableStatData *vardata);
+extern bool all_rows_selectable(PlannerInfo *root, Index varno, Bitmapset *varattnos);
 extern bool statistic_proc_security_check(VariableStatData *vardata, Oid func_oid);
 extern bool get_restriction_variable(PlannerInfo *root, List *args,
 									 int varRelid,
@@ -200,13 +206,13 @@ extern Selectivity scalararraysel(PlannerInfo *root,
 								  ScalarArrayOpExpr *clause,
 								  bool is_join_clause,
 								  int varRelid, JoinType jointype, SpecialJoinInfo *sjinfo);
-extern int	estimate_array_length(Node *arrayexpr);
+extern double estimate_array_length(PlannerInfo *root, Node *arrayexpr);
 extern Selectivity rowcomparesel(PlannerInfo *root,
 								 RowCompareExpr *clause,
 								 int varRelid, JoinType jointype, SpecialJoinInfo *sjinfo);
 
 extern void mergejoinscansel(PlannerInfo *root, Node *clause,
-							 Oid opfamily, int strategy, bool nulls_first,
+							 Oid opfamily, CompareType cmptype, bool nulls_first,
 							 Selectivity *leftstart, Selectivity *leftend,
 							 Selectivity *rightstart, Selectivity *rightend);
 
@@ -214,6 +220,10 @@ extern double estimate_num_groups(PlannerInfo *root, List *groupExprs,
 								  double input_rows, List **pgset,
 								  EstimationInfo *estinfo);
 
+extern List *estimate_multivariate_bucketsize(PlannerInfo *root,
+											  RelOptInfo *inner,
+											  List *hashclauses,
+											  Selectivity *innerbucketsize);
 extern void estimate_hash_bucket_stats(PlannerInfo *root,
 									   Node *hashkey, double nbuckets,
 									   Selectivity *mcv_freq,

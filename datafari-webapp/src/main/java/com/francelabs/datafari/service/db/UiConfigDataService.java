@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
-import com.francelabs.datafari.utils.GDPRConfiguration;
 
 public class UiConfigDataService {
 
@@ -27,14 +26,10 @@ public class UiConfigDataService {
   @SuppressWarnings("unused")
   private final NamedParameterJdbcTemplate named;
 
-  // Conservé pour compat (pas de TTL natif en PG)
-  @SuppressWarnings("unused")
-  private final String userDataTTL;
 
   private UiConfigDataService() {
     this.jdbc  = SqlService.get().getJdbcTemplate();
     this.named = SqlService.get().getNamedJdbcTemplate();
-    this.userDataTTL = GDPRConfiguration.getInstance().getProperty(GDPRConfiguration.USER_DATA_TTL);
   }
 
   public static synchronized UiConfigDataService getInstance() {

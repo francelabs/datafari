@@ -25,11 +25,11 @@ public class OpenAiChatModelBuilder implements ChatModelBuilder {
 
         // gpt-5 does not support customising topP and temperature (because it is a reasoning model)
         if (!modelName.toLowerCase().startsWith("gpt-5")) {
-            builder.maxTokens(getInt(props, "maxTokens", 500))
+            builder.maxTokens(getInt(props, "maxTokens", 800))
                 .temperature(getDouble(props, "temperature", 0));
         } else {
             // if GPT-5
-            builder.maxCompletionTokens(getInt(props, "maxTokens", 500));
+            builder.maxCompletionTokens(getInt(props, "maxTokens", 800));
         }
         return builder.build();
     }
@@ -48,7 +48,7 @@ public class OpenAiChatModelBuilder implements ChatModelBuilder {
 
         // gpt-5 does not support customising topP and temperature (because it is a reasoning model)
         if (!modelName.toLowerCase().startsWith("gpt-5")) {
-            builder.maxTokens(getInt(props, "maxTokens", 500))
+            builder.maxTokens(getInt(props, "maxTokens", 800))
                 .temperature(getDouble(props, "temperature", 0));
         } else {
             // if GPT-5

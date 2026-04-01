@@ -4,6 +4,7 @@ import com.francelabs.datafari.ai.agentic.agent.*;
 import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
+import com.francelabs.datafari.ai.dto.ApiError;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.exception.DatafariServerException;
@@ -34,7 +35,10 @@ public class AgenticService extends AiService {
 
         // Is AGENTIC RAG enabled ?
         if (!config.getBooleanProperty(RagConfiguration.ENABLE_AGENTIC))
-            return error(stream, "422", "ragErrorNotEnabled", "Sorry, it seems the feature is not enabled.", "Agentic service is disabled in configuration.", null, isTool);
+            return error(stream, "422",
+                ApiError.AGENTIC_ERROR_NOT_ENABLED.getKey(),
+                ApiError.AGENTIC_ERROR_NOT_ENABLED.getValue(),
+                "Agentic service is disabled in configuration.", null, isTool);
 
         if (!isTool) {
             // Save message in Postgresql DB
@@ -53,9 +57,10 @@ public class AgenticService extends AiService {
             String query = params.query;
             LOGGER.debug("RagService - Agentic - Agentic query : {}", query);
             if (query == null || query.isEmpty()) {
-                return error(stream, "422", "ragBadRequest",
-                        "Sorry, it appears there is an issue with the request. Please try again later, and if the problem remains, contact an administrator.",
-                        "'id' must not be null", params.conversationId, isTool);
+                return error(stream, "422",
+                    ApiError.AGENTIC_BAD_REQUEST.getKey(),
+                    ApiError.AGENTIC_BAD_REQUEST.getValue(),
+                    "'id' must not be null", params.conversationId, isTool);
             }
 
             stream.phase("agent:preparation");
@@ -106,8 +111,9 @@ public class AgenticService extends AiService {
             stream.phase("agent:done");
 
         } catch (Exception e) {
-            return error(stream, "500", "ragTechnicalError",
-                    "Sorry, the agent met an unexpected error. Please try again later, and if the problem remains, contact an administrator.",
+            return error(stream, "500",
+                    ApiError.AGENTIC_TECHNICAL_ERROR.getKey(),
+                    ApiError.AGENTIC_TECHNICAL_ERROR.getValue(),
                     e.getLocalizedMessage(), params.conversationId, isTool);
         }
 

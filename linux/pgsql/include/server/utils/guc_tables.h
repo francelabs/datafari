@@ -5,7 +5,7 @@
  *
  * See src/backend/utils/misc/README for design notes.
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  *
  *	  src/include/utils/guc_tables.h
  *
@@ -14,6 +14,7 @@
 #ifndef GUC_TABLES_H
 #define GUC_TABLES_H 1
 
+#include "lib/ilist.h"
 #include "utils/guc.h"
 
 /*
@@ -25,7 +26,7 @@ enum config_type
 	PGC_INT,
 	PGC_REAL,
 	PGC_STRING,
-	PGC_ENUM
+	PGC_ENUM,
 };
 
 union config_var_val
@@ -56,20 +57,22 @@ enum config_group
 	UNGROUPED,					/* use for options not shown in pg_settings */
 	FILE_LOCATIONS,
 	CONN_AUTH_SETTINGS,
+	CONN_AUTH_TCP,
 	CONN_AUTH_AUTH,
 	CONN_AUTH_SSL,
 	RESOURCES_MEM,
 	RESOURCES_DISK,
 	RESOURCES_KERNEL,
-	RESOURCES_VACUUM_DELAY,
 	RESOURCES_BGWRITER,
-	RESOURCES_ASYNCHRONOUS,
+	RESOURCES_IO,
+	RESOURCES_WORKER_PROCESSES,
 	WAL_SETTINGS,
 	WAL_CHECKPOINTS,
 	WAL_ARCHIVING,
 	WAL_RECOVERY,
 	WAL_ARCHIVE_RECOVERY,
 	WAL_RECOVERY_TARGET,
+	WAL_SUMMARIZATION,
 	REPLICATION_SENDING,
 	REPLICATION_PRIMARY,
 	REPLICATION_STANDBY,
@@ -84,18 +87,21 @@ enum config_group
 	PROCESS_TITLE,
 	STATS_MONITORING,
 	STATS_CUMULATIVE,
-	AUTOVACUUM,
+	VACUUM_AUTOVACUUM,
+	VACUUM_COST_DELAY,
+	VACUUM_DEFAULT,
+	VACUUM_FREEZING,
 	CLIENT_CONN_STATEMENT,
 	CLIENT_CONN_LOCALE,
 	CLIENT_CONN_PRELOAD,
 	CLIENT_CONN_OTHER,
 	LOCK_MANAGEMENT,
 	COMPAT_OPTIONS_PREVIOUS,
-	COMPAT_OPTIONS_CLIENT,
+	COMPAT_OPTIONS_OTHER,
 	ERROR_HANDLING_OPTIONS,
 	PRESET_OPTIONS,
 	CUSTOM_OPTIONS,
-	DEVELOPER_OPTIONS
+	DEVELOPER_OPTIONS,
 };
 
 /*
@@ -108,7 +114,7 @@ typedef enum
 	GUC_SAVE,					/* entry caused by function SET option */
 	GUC_SET,					/* entry caused by plain SET command */
 	GUC_LOCAL,					/* entry caused by SET LOCAL command */
-	GUC_SET_LOCAL				/* entry caused by SET then SET LOCAL */
+	GUC_SET_LOCAL,				/* entry caused by SET then SET LOCAL */
 } GucStackState;
 
 typedef struct guc_stack
@@ -133,9 +139,29 @@ typedef struct guc_stack
  * applications may use the long description as well, and will append
  * it to the short description. (separated by a newline or '. ')
  *
+ * If the GUC accepts a special value like -1 to disable the feature, use a
+ * system default, etc., it should be mentioned in the long description with
+ * the following style:
+ *
+ *  - Special values should be listed at the end of the long description.
+ *  - Descriptions should use numerals (e.g., "0") instead of words (e.g.,
+ *    "zero").
+ *  - Special value mentions should be concise and direct (e.g., "0 disables
+ *    the timeout.", "An empty string means use the operating system
+ *    setting.").
+ *  - Multiple special values should be listed in ascending order.
+ *
+ * As an exception, special values should _not_ be mentioned if the description
+ * would be too complex or if the meaning is sufficiently obvious.
+ *
  * srole is the role that set the current value, or BOOTSTRAP_SUPERUSERID
  * if the value came from an internal source or the config file.  Similarly
  * for reset_srole (which is usually BOOTSTRAP_SUPERUSERID, but not always).
+ *
+ * Variables that are currently of active interest for maintenance
+ * operations are linked into various lists using the xxx_link fields.
+ * The link fields are unused/garbage in variables not currently having
+ * the specified properties.
  *
  * Note that sourcefile/sourceline are kept here, and not pushed into stacked
  * values, although in principle they belong with some stacked value if the
@@ -162,6 +188,12 @@ struct config_generic
 	Oid			reset_srole;	/* role that set the reset value */
 	GucStack   *stack;			/* stacked prior values */
 	void	   *extra;			/* "extra" pointer for current actual value */
+	dlist_node	nondef_link;	/* list link for variables that have source
+								 * different from PGC_S_DEFAULT */
+	slist_node	stack_link;		/* list link for variables that have non-NULL
+								 * stack */
+	slist_node	report_link;	/* list link for variables that have the
+								 * GUC_NEEDS_REPORT bit set in status */
 	char	   *last_reported;	/* if variable is GUC_REPORT, value last sent
 								 * to client (NULL if not yet sent) */
 	char	   *sourcefile;		/* file current setting is from (NULL if not
@@ -227,6 +259,16 @@ struct config_real
 	void	   *reset_extra;
 };
 
+/*
+ * A note about string GUCs: the boot_val is allowed to be NULL, which leads
+ * to the reset_val and the actual variable value (*variable) also being NULL.
+ * However, there is no way to set a NULL value subsequently using
+ * set_config_option or any other GUC API.  Also, GUC APIs such as SHOW will
+ * display a NULL value as an empty string.  Callers that choose to use a NULL
+ * boot_val should overwrite the setting later in startup, or else be careful
+ * that NULL doesn't have semantics that are visibly different from an empty
+ * string.
+ */
 struct config_string
 {
 	struct config_generic gen;
@@ -262,8 +304,28 @@ extern PGDLLIMPORT const char *const config_type_names[];
 extern PGDLLIMPORT const char *const GucContext_Names[];
 extern PGDLLIMPORT const char *const GucSource_Names[];
 
+/* data arrays defining all the built-in GUC variables */
+extern PGDLLIMPORT struct config_bool ConfigureNamesBool[];
+extern PGDLLIMPORT struct config_int ConfigureNamesInt[];
+extern PGDLLIMPORT struct config_real ConfigureNamesReal[];
+extern PGDLLIMPORT struct config_string ConfigureNamesString[];
+extern PGDLLIMPORT struct config_enum ConfigureNamesEnum[];
+
+/* lookup GUC variables, returning config_generic pointers */
+extern struct config_generic *find_option(const char *name,
+										  bool create_placeholders,
+										  bool skip_errors,
+										  int elevel);
+extern struct config_generic **get_explain_guc_options(int *num);
+
+/* get string value of variable */
+extern char *ShowGUCOption(struct config_generic *record, bool use_units);
+
+/* get whether or not the GUC variable is visible to current user */
+extern bool ConfigOptionIsVisible(struct config_generic *conf);
+
 /* get the current set of variables */
-extern struct config_generic **get_guc_variables(void);
+extern struct config_generic **get_guc_variables(int *num_vars);
 
 extern void build_guc_variables(void);
 
@@ -271,6 +333,9 @@ extern void build_guc_variables(void);
 extern const char *config_enum_lookup_by_value(struct config_enum *record, int val);
 extern bool config_enum_lookup_by_name(struct config_enum *record,
 									   const char *value, int *retval);
-extern struct config_generic **get_explain_guc_options(int *num);
+extern char *config_enum_get_options(struct config_enum *record,
+									 const char *prefix,
+									 const char *suffix,
+									 const char *separator);
 
 #endif							/* GUC_TABLES_H */

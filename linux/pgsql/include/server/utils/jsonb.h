@@ -3,7 +3,7 @@
  * jsonb.h
  *	  Declarations for jsonb data type support.
  *
- * Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Copyright (c) 1996-2025, PostgreSQL Global Development Group
  *
  * src/include/utils/jsonb.h
  *
@@ -26,7 +26,7 @@ typedef enum
 	WJB_BEGIN_ARRAY,
 	WJB_END_ARRAY,
 	WJB_BEGIN_OBJECT,
-	WJB_END_OBJECT
+	WJB_END_OBJECT,
 } JsonbIteratorToken;
 
 /* Strategy numbers for GIN index opclasses */
@@ -66,14 +66,6 @@ typedef enum
 #define JGINFLAG_STR	0x05	/* string value (if not an array element) */
 #define JGINFLAG_HASHED 0x10	/* OR'd into flag if value was hashed */
 #define JGIN_MAXLENGTH	125		/* max length of text part before hashing */
-
-/* Convenience macros */
-#define DatumGetJsonbP(d)	((Jsonb *) PG_DETOAST_DATUM(d))
-#define DatumGetJsonbPCopy(d)	((Jsonb *) PG_DETOAST_DATUM_COPY(d))
-#define JsonbPGetDatum(p)	PointerGetDatum(p)
-#define PG_GETARG_JSONB_P(x)	DatumGetJsonbP(PG_GETARG_DATUM(x))
-#define PG_GETARG_JSONB_P_COPY(x)	DatumGetJsonbPCopy(PG_GETARG_DATUM(x))
-#define PG_RETURN_JSONB_P(x)	PG_RETURN_POINTER(x)
 
 typedef struct JsonbPair JsonbPair;
 typedef struct JsonbValue JsonbValue;
@@ -329,6 +321,8 @@ typedef struct JsonbParseState
 	JsonbValue	contVal;
 	Size		size;
 	struct JsonbParseState *next;
+	bool		unique_keys;	/* Check object key uniqueness */
+	bool		skip_nulls;		/* Skip null object fields */
 } JsonbParseState;
 
 /*
@@ -341,7 +335,7 @@ typedef enum
 	JBI_ARRAY_ELEM,
 	JBI_OBJECT_START,
 	JBI_OBJECT_KEY,
-	JBI_OBJECT_VALUE
+	JBI_OBJECT_VALUE,
 } JsonbIterState;
 
 typedef struct JsonbIterator
@@ -375,17 +369,40 @@ typedef struct JsonbIterator
 } JsonbIterator;
 
 
+/* Convenience macros */
+static inline Jsonb *
+DatumGetJsonbP(Datum d)
+{
+	return (Jsonb *) PG_DETOAST_DATUM(d);
+}
+
+static inline Jsonb *
+DatumGetJsonbPCopy(Datum d)
+{
+	return (Jsonb *) PG_DETOAST_DATUM_COPY(d);
+}
+
+static inline Datum
+JsonbPGetDatum(const Jsonb *p)
+{
+	return PointerGetDatum(p);
+}
+
+#define PG_GETARG_JSONB_P(x)	DatumGetJsonbP(PG_GETARG_DATUM(x))
+#define PG_GETARG_JSONB_P_COPY(x)	DatumGetJsonbPCopy(PG_GETARG_DATUM(x))
+#define PG_RETURN_JSONB_P(x)	PG_RETURN_POINTER(x)
+
 /* Support functions */
 extern uint32 getJsonbOffset(const JsonbContainer *jc, int index);
 extern uint32 getJsonbLength(const JsonbContainer *jc, int index);
 extern int	compareJsonbContainers(JsonbContainer *a, JsonbContainer *b);
-extern JsonbValue *findJsonbValueFromContainer(JsonbContainer *sheader,
+extern JsonbValue *findJsonbValueFromContainer(JsonbContainer *container,
 											   uint32 flags,
 											   JsonbValue *key);
 extern JsonbValue *getKeyJsonValueFromContainer(JsonbContainer *container,
 												const char *keyVal, int keyLen,
 												JsonbValue *res);
-extern JsonbValue *getIthJsonbValueFromContainer(JsonbContainer *sheader,
+extern JsonbValue *getIthJsonbValueFromContainer(JsonbContainer *container,
 												 uint32 i);
 extern JsonbValue *pushJsonbValue(JsonbParseState **pstate,
 								  JsonbIteratorToken seq, JsonbValue *jbval);
@@ -405,11 +422,19 @@ extern char *JsonbToCString(StringInfo out, JsonbContainer *in,
 							int estimated_len);
 extern char *JsonbToCStringIndent(StringInfo out, JsonbContainer *in,
 								  int estimated_len);
+extern char *JsonbUnquote(Jsonb *jb);
 extern bool JsonbExtractScalar(JsonbContainer *jbc, JsonbValue *res);
-extern const char *JsonbTypeName(JsonbValue *jb);
+extern const char *JsonbTypeName(JsonbValue *val);
 
 extern Datum jsonb_set_element(Jsonb *jb, Datum *path, int path_len,
 							   JsonbValue *newval);
 extern Datum jsonb_get_element(Jsonb *jb, Datum *path, int npath,
 							   bool *isnull, bool as_text);
+extern bool to_jsonb_is_immutable(Oid typoid);
+extern Datum jsonb_build_object_worker(int nargs, const Datum *args, const bool *nulls,
+									   const Oid *types, bool absent_on_null,
+									   bool unique_keys);
+extern Datum jsonb_build_array_worker(int nargs, const Datum *args, const bool *nulls,
+									  const Oid *types, bool absent_on_null);
+
 #endif							/* __JSONB_H__ */

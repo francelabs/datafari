@@ -577,4 +577,20 @@ public class ConversationDataService {
       throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
     }
   }
+
+
+
+  /**
+   * Delete all conversations, messages and docsbasket owned by a user
+   */
+  public int deleteUserConversations(final String username) throws DatafariServerException {
+    try {
+      final String request =
+          "DELETE FROM " + CONVERSATION_COLLECTION + " WHERE " + USER_COLUMN + " = ?";
+      sql.getJdbcTemplate().update(request, username);
+      return CodesReturned.ALLOK.getValue();
+    } catch (Exception e) {
+      throw new DatafariServerException(CodesReturned.PROBLEMCONNECTIONDATABASE, e.getMessage());
+    }
+  }
 }

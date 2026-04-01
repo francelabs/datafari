@@ -5,7 +5,7 @@
  *	  However, we define it here so that the format is documented.
  *
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/catalog/pg_control.h
@@ -22,7 +22,7 @@
 
 
 /* Version identifier for this pg_control format */
-#define PG_CONTROL_VERSION	1300
+#define PG_CONTROL_VERSION	1800
 
 /* Nonce key length, see below */
 #define MOCK_AUTH_NONCE_LEN		32
@@ -40,6 +40,7 @@ typedef struct CheckPoint
 	TimeLineID	PrevTimeLineID; /* previous TLI, if this record begins a new
 								 * timeline (equals ThisTimeLineID otherwise) */
 	bool		fullPageWrites; /* current full_page_writes */
+	int			wal_level;		/* current wal_level */
 	FullTransactionId nextXid;	/* next free transaction ID */
 	Oid			nextOid;		/* next free OID */
 	MultiXactId nextMulti;		/* next free MultiXactId */
@@ -78,6 +79,7 @@ typedef struct CheckPoint
 #define XLOG_FPI						0xB0
 /* 0xC0 is used in Postgres 9.5-11 */
 #define XLOG_OVERWRITE_CONTRECORD		0xD0
+#define XLOG_CHECKPOINT_REDO			0xE0
 
 
 /*
@@ -92,7 +94,7 @@ typedef enum DBState
 	DB_SHUTDOWNING,
 	DB_IN_CRASH_RECOVERY,
 	DB_IN_ARCHIVE_RECOVERY,
-	DB_IN_PRODUCTION
+	DB_IN_PRODUCTION,
 } DBState;
 
 /*
@@ -220,6 +222,12 @@ typedef struct ControlFileData
 	uint32		data_checksum_version;
 
 	/*
+	 * True if the default signedness of char is "signed" on a platform where
+	 * the cluster is initialized.
+	 */
+	bool		default_char_signedness;
+
+	/*
 	 * Random nonce, used in authentication requests that need to proceed
 	 * based on values that are cluster-unique, like a SASL exchange that
 	 * failed at an early stage.
@@ -246,5 +254,13 @@ typedef struct ControlFileData
  * message instead of a read error if it's looking at an incompatible file.
  */
 #define PG_CONTROL_FILE_SIZE		8192
+
+/*
+ * Ensure that the size of the pg_control data structure is sane.
+ */
+StaticAssertDecl(sizeof(ControlFileData) <= PG_CONTROL_MAX_SAFE_SIZE,
+				 "pg_control is too large for atomic disk writes");
+StaticAssertDecl(sizeof(ControlFileData) <= PG_CONTROL_FILE_SIZE,
+				 "sizeof(ControlFileData) exceeds PG_CONTROL_FILE_SIZE");
 
 #endif							/* PG_CONTROL_H */

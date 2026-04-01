@@ -4,9 +4,10 @@ function internationalize() {
   $("#topbar2").text(window.i18n.msgStore['adminUI-aiMenu']);
   $("#topbar3").text(window.i18n.msgStore['adminUI-ragConf']);
 
-  $("#enableRagLabel").text(window.i18n.msgStore['ragConf-enableRagLabel']);
-  $("#enableAgenticLabel").text(window.i18n.msgStore['ragConf-enableAgenticLabel']);
-  $("#enableSummarizationLabel").text(window.i18n.msgStore['ragConf-enableSummarizationLabel']);
+//  $("#enableRagLabel").text(window.i18n.msgStore['ragConf-enableRagLabel']);
+//  $("#enableAgenticLabel").text(window.i18n.msgStore['ragConf-enableAgenticLabel']);
+//  $("#enableSummarizationLabel").text(window.i18n.msgStore['ragConf-enableSummarizationLabel']);
+//  $("#enableSynthesisLabel").text(window.i18n.msgStore['ragConf-enableSynthesisLabel']);
   $("#solrTopKLabel").text(window.i18n.msgStore['ragConf-solrTopKLabel']);
   $("#rrfTopKLabel").text(window.i18n.msgStore['ragConf-rrfTopKLabel']);
   $("#rrfRankConstantLabel").text(window.i18n.msgStore['ragConf-rrfRankConstantLabel']);
@@ -26,9 +27,10 @@ function internationalize() {
 
 function loadRagConfig() {
   $.get("../rest/v2.0/management/ragConfig", function (data) {
-    $('#enableRag').prop('checked', data.enableRag === true).change();
-    $('#enableAgentic').prop('checked', data.enableAgentic === true).change();
-    $('#enableSummarization').prop('checked', data.enableSummarization === true).change();
+//    $('#enableRag').prop('checked', data.enableRag === true).change();
+//    $('#enableAgentic').prop('checked', data.enableAgentic === true).change();
+//    $('#enableSummarization').prop('checked', data.enableSummarization === true).change();
+//    $('#enableSynthesis').prop('checked', data.enableSynthesis === true).change();
 
 //    $('#apiEndpoint').val(data.apiEndpoint || '');
 //    $('#apiToken').val(data.apiToken || '');
@@ -92,9 +94,10 @@ function submitRagConfig(event) {
   $('#loadingIndicator').show();
 
   const payload = {
-    "ai.enable.rag": $('#enableRag').is(':checked'),
-    "ai.enable.agentic": $('#enableAgentic').is(':checked'),
-    "ai.enable.summarization": $('#enableSummarization').is(':checked'),
+//    "ai.enable.rag": $('#enableRag').is(':checked'),
+//    "ai.enable.agentic": $('#enableAgentic').is(':checked'),
+//    "ai.enable.summarization": $('#enableSummarization').is(':checked'),
+//    "ai.enable.synthesis": $('#enableSynthesis').is(':checked'),
     "prompt.chunking.strategy": $('#chunkingStrategy').val(),
     "prompt.max.request.size": $('#maxRequestSize').val(),
     "chunking.maxFiles": $('#chunkingMaxFiles').val(),
@@ -141,9 +144,10 @@ $(document).ready(function () {
   internationalize();
   loadRagConfig();
 
-  $('#enableRag').bootstrapToggle();
-  $('#enableAgentic').bootstrapToggle();
-  $('#enableSummarization').bootstrapToggle();
+//  $('#enableRag').bootstrapToggle();
+//  $('#enableAgentic').bootstrapToggle();
+//  $('#enableSummarization').bootstrapToggle();
+//  $('#enableSynthesis').bootstrapToggle();
   $('#chatMemoryEnabled').bootstrapToggle();
   $('#chatQueryRewritingEnabledBM25').bootstrapToggle();
   $('#chatQueryRewritingEnabledVector').bootstrapToggle();

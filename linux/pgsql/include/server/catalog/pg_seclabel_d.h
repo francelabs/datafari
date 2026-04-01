@@ -3,7 +3,7 @@
  * pg_seclabel_d.h
  *    Macro definitions for pg_seclabel
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -18,6 +18,8 @@
 #ifndef PG_SECLABEL_D_H
 #define PG_SECLABEL_D_H
 
+/* Macros related to the structure of pg_seclabel */
+
 #define SecLabelRelationId 3596
 #define SecLabelObjectIndexId 3597
 
@@ -28,6 +30,11 @@
 #define Anum_pg_seclabel_label 5
 
 #define Natts_pg_seclabel 5
+
+/* Definitions copied from pg_seclabel.h */
+
+
+/* OID symbols for objects defined in pg_seclabel.dat */
 
 
 #endif							/* PG_SECLABEL_D_H */

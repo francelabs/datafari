@@ -3,7 +3,7 @@
  * pg_shseclabel_d.h
  *    Macro definitions for pg_shseclabel
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -18,6 +18,8 @@
 #ifndef PG_SHSECLABEL_D_H
 #define PG_SHSECLABEL_D_H
 
+/* Macros related to the structure of pg_shseclabel */
+
 #define SharedSecLabelRelationId 3592
 #define SharedSecLabelRelation_Rowtype_Id 4066
 #define PgShseclabelToastTable 4060
@@ -30,6 +32,11 @@
 #define Anum_pg_shseclabel_label 4
 
 #define Natts_pg_shseclabel 4
+
+/* Definitions copied from pg_shseclabel.h */
+
+
+/* OID symbols for objects defined in pg_shseclabel.dat */
 
 
 #endif							/* PG_SHSECLABEL_D_H */

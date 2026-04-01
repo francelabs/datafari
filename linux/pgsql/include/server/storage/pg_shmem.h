@@ -14,7 +14,7 @@
  * only one ID number.
  *
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/storage/pg_shmem.h
@@ -45,13 +45,15 @@ typedef struct PGShmemHeader	/* standard header for all Postgres shmem */
 extern PGDLLIMPORT int shared_memory_type;
 extern PGDLLIMPORT int huge_pages;
 extern PGDLLIMPORT int huge_page_size;
+extern PGDLLIMPORT int huge_pages_status;
 
-/* Possible values for huge_pages */
+/* Possible values for huge_pages and huge_pages_status */
 typedef enum
 {
 	HUGE_PAGES_OFF,
 	HUGE_PAGES_ON,
-	HUGE_PAGES_TRY
+	HUGE_PAGES_TRY,				/* only for huge_pages */
+	HUGE_PAGES_UNKNOWN,			/* only for huge_pages_status */
 }			HugePagesType;
 
 /* Possible values for shared_memory_type */
@@ -59,7 +61,7 @@ typedef enum
 {
 	SHMEM_TYPE_WINDOWS,
 	SHMEM_TYPE_SYSV,
-	SHMEM_TYPE_MMAP
+	SHMEM_TYPE_MMAP,
 }			PGShmemType;
 
 #ifndef WIN32

@@ -8,16 +8,12 @@ import com.francelabs.datafari.ai.dto.ApiResponse;
 import com.francelabs.datafari.ai.services.*;
 import com.francelabs.datafari.ai.stream.*;
 import com.francelabs.datafari.exception.DatafariServerException;
-import com.francelabs.datafari.rest.v2_0.users.Assistant;
 import com.francelabs.datafari.service.db.ConversationDataService;
 import com.francelabs.datafari.utils.AuthenticatedUserName;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
-import jakarta.servlet.http.HttpSession;
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,8 +52,8 @@ public class AiPowered {
             if (!errors.isEmpty()) {
                 response.status = ERROR;
                 response.content.error = new ApiError("400",
-                        ApiError.RAG_BAD_REQUEST.getKey(),
-                        ApiError.RAG_BAD_REQUEST.getValue(),
+                        ApiError.AI_BAD_REQUEST.getKey(),
+                        ApiError.AI_BAD_REQUEST.getValue(),
                         String.join("; ", errors));
                 return ResponseEntity.badRequest().body(response);
             }
@@ -75,8 +71,8 @@ public class AiPowered {
         } catch (Exception e) {
             response.status = ERROR;
             response.content.error = new ApiError("500",
-                    "ragTechnicalError",
-                    "Sorry, I met a technical issue. Please try again later, and if the problem remains, contact an administrator.",
+                    ApiError.RAG_TECHNICAL_ERROR.getKey(),
+                    ApiError.RAG_TECHNICAL_ERROR.getValue(),
                     e.getMessage());
             return ResponseEntity.status(500).body(response);
         }
@@ -173,8 +169,8 @@ public class AiPowered {
             List<String> errors = params.validate();
             if (!errors.isEmpty()) {
                 stream.error("400",
-                        ApiError.RAG_BAD_REQUEST.getKey(),
-                        ApiError.RAG_BAD_REQUEST.getValue(),
+                        ApiError.AI_BAD_REQUEST.getKey(),
+                        ApiError.AI_BAD_REQUEST.getValue(),
                         String.join("; ", errors));
 
                 stream.completed(ERROR);
@@ -243,8 +239,8 @@ public class AiPowered {
             List<String> errors = params.validate();
             if (!errors.isEmpty()) {
                 stream.error("400",
-                        ApiError.RAG_BAD_REQUEST.getKey(),
-                        ApiError.RAG_BAD_REQUEST.getValue(),
+                        ApiError.AI_BAD_REQUEST.getKey(),
+                        ApiError.AI_BAD_REQUEST.getValue(),
                         String.join("; ", errors));
 
                 stream.completed(ERROR);
@@ -284,7 +280,7 @@ public class AiPowered {
     private ApiContent handle(AiRequest params, HttpServletRequest request, ChatStream stream) {
 
         // If no action is provided, using "rag" by default
-        AiRequest.Action action = params.action == null ? AiRequest.Action.rag : params.action;
+        AiRequest.Action action = params.action == null ? AiRequest.Action.agentic : params.action;
         if (params.lang != null) request.setAttribute("lang", params.lang);
 
         // Create a memory ID if not existing
@@ -302,7 +298,8 @@ public class AiPowered {
             result = switch (action.name()) {
                 case "rag" -> RagService.rag(request, params, stream, sourcesAcc, false);
                 case "agentic" -> AgenticService.agentic(params, request, stream, sourcesAcc, false);
-                case "summarize" -> SummarizationService.summarize(params, request, stream, sourcesAcc, false);
+                case "summarize" -> SummarizationService.summarize(params, request, stream, false);
+                case "synthesize" -> SynthesisService.synthesize(params, request, stream, false);
                 case "search" -> SearchService.search(params, request, stream, sourcesAcc);
                 default -> result;
             };
@@ -352,7 +349,7 @@ public class AiPowered {
     private ApiContent testStream(AiRequest params, HttpServletRequest request, ChatStream stream) {
         final long TEST_DELAY_MS = 250L;
 
-        AiRequest.Action action = params.action == null ? AiRequest.Action.rag : params.action;
+        AiRequest.Action action = params.action == null ? AiRequest.Action.agentic : params.action;
 
         stream.phase("service.started");
         SourcesAccumulator sourcesAcc = new SourcesAccumulator(stream);
@@ -379,8 +376,8 @@ public class AiPowered {
             emit(stream, () -> stream.toolCall("job3Failure", "BrokenJob",
                 "This label should not be displayed. Use i18n translation instead.",
                 "document", "testLabelForToolCalling"), TEST_DELAY_MS);
-            emit(stream, () -> stream.toolResult("jobSuccess1", 320), TEST_DELAY_MS);
-            emit(stream, () -> stream.toolResult("jobSuccess2", 441), TEST_DELAY_MS);
+            emit(stream, () -> stream.toolEnd("jobSuccess1", 320), TEST_DELAY_MS);
+            emit(stream, () -> stream.toolEnd("jobSuccess2", 441), TEST_DELAY_MS);
             emit(stream, () -> stream.toolError("job3Failure", 530, "This job has failed. This message should not be displayed to the user."), TEST_DELAY_MS);
 
             // 4) Sources
@@ -405,11 +402,11 @@ public class AiPowered {
             // 5) Validation: summarization returns an error
             emit(stream, () -> stream.phase("validation.done"), TEST_DELAY_MS);
             if ("summarize".equals(action.name())) {
-                return AiService.error(stream, "402", "testLabelForError",
-                        "This test endpoint returns an error if 'summarize' action is called",
-                        "Technical error that should not be displayed to the user", params.conversationId);
+                return AiService.error(stream, "402",
+                    ApiError.TEST_ERROR.getKey(),
+                    ApiError.TEST_ERROR.getValue(),
+                    "Technical error that should not be displayed to the user", params.conversationId);
             }
-
 
             // 6) Tokens stream
             emitTokens(stream, List.of(
@@ -422,12 +419,6 @@ public class AiPowered {
             // 7) Final message and sources
             result.message = "✅ This text is the final message. It must override the existing token-by-token text. \nIt must be displayed as the chatbot response.";
             result.sources = sourcesAcc.toJsonArray();
-
-
-            // 8) Ending
-//            emit(stream, () -> stream.phase("service.done"), TEST_DELAY_MS);
-//            emit(stream, () -> stream.completed(OK), TEST_DELAY_MS);
-
 
             // JSONize and stream the final sources
             result.sources = sourcesAcc.toJsonArray();

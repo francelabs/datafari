@@ -3,7 +3,7 @@
  * pg_shdescription_d.h
  *    Macro definitions for pg_shdescription
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -18,6 +18,8 @@
 #ifndef PG_SHDESCRIPTION_D_H
 #define PG_SHDESCRIPTION_D_H
 
+/* Macros related to the structure of pg_shdescription */
+
 #define SharedDescriptionRelationId 2396
 #define PgShdescriptionToastTable 2846
 #define PgShdescriptionToastIndex 2847
@@ -28,6 +30,11 @@
 #define Anum_pg_shdescription_description 3
 
 #define Natts_pg_shdescription 3
+
+/* Definitions copied from pg_shdescription.h */
+
+
+/* OID symbols for objects defined in pg_shdescription.dat */
 
 
 #endif							/* PG_SHDESCRIPTION_D_H */

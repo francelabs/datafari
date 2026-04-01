@@ -3,7 +3,7 @@
  * pg_rewrite_d.h
  *    Macro definitions for pg_rewrite
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -17,6 +17,8 @@
  */
 #ifndef PG_REWRITE_D_H
 #define PG_REWRITE_D_H
+
+/* Macros related to the structure of pg_rewrite */
 
 #define RewriteRelationId 2618
 #define RewriteOidIndexId 2692
@@ -32,6 +34,11 @@
 #define Anum_pg_rewrite_ev_action 8
 
 #define Natts_pg_rewrite 8
+
+/* Definitions copied from pg_rewrite.h */
+
+
+/* OID symbols for objects defined in pg_rewrite.dat */
 
 
 #endif							/* PG_REWRITE_D_H */

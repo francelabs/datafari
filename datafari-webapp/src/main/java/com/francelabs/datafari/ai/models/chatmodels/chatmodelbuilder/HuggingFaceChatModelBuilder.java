@@ -15,7 +15,7 @@ public class HuggingFaceChatModelBuilder implements ChatModelBuilder {
                 .accessToken(getString(props, "accessToken", null))
                 .modelId(getString(props, "modelId", null))
                 .temperature(getDouble(props, "temperature", 0))
-                .maxNewTokens(getInt(props, "maxTokens", 200))
+                .maxNewTokens(getInt(props, "maxTokens", 800))
                 .timeout(Duration.ofSeconds(getInt(props, "timeout", 60)))
                 .build();
     }

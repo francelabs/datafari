@@ -3,7 +3,7 @@
  * pg_cast_d.h
  *    Macro definitions for pg_cast
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -18,6 +18,8 @@
 #ifndef PG_CAST_D_H
 #define PG_CAST_D_H
 
+/* Macros related to the structure of pg_cast */
+
 #define CastRelationId 2605
 #define CastOidIndexId 2660
 #define CastSourceTargetIndexId 2661
@@ -30,6 +32,8 @@
 #define Anum_pg_cast_castmethod 6
 
 #define Natts_pg_cast 6
+
+/* Definitions copied from pg_cast.h */
 
 
 /*
@@ -45,8 +49,8 @@ typedef enum CoercionCodes
 {
 	COERCION_CODE_IMPLICIT = 'i',	/* coercion in context of expression */
 	COERCION_CODE_ASSIGNMENT = 'a', /* coercion in context of assignment */
-	COERCION_CODE_EXPLICIT = 'e'	/* explicit cast operation */
-} CoercionCodes;
+	COERCION_CODE_EXPLICIT = 'e',	/* explicit cast operation */
+}			CoercionCodes;
 
 /*
  * The allowable values for pg_cast.castmethod are specified by this enum.
@@ -57,8 +61,11 @@ typedef enum CoercionMethod
 {
 	COERCION_METHOD_FUNCTION = 'f', /* use a function */
 	COERCION_METHOD_BINARY = 'b',	/* types are binary-compatible */
-	COERCION_METHOD_INOUT = 'i' /* use input/output functions */
-} CoercionMethod;
+	COERCION_METHOD_INOUT = 'i',	/* use input/output functions */
+}			CoercionMethod;
+
+
+/* OID symbols for objects defined in pg_cast.dat */
 
 
 #endif							/* PG_CAST_D_H */

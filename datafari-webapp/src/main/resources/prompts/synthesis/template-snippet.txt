@@ -1,0 +1,7 @@
+
+**title:** {title}
+**id:** {id}
+**summary:**
+'''
+{summary}
+'''

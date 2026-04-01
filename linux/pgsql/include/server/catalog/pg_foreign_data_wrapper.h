@@ -4,7 +4,7 @@
  *	  definition of the "foreign-data wrapper" system catalog (pg_foreign_data_wrapper)
  *
  *
- * Portions Copyright (c) 1996-2022, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2025, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/catalog/pg_foreign_data_wrapper.h
@@ -19,7 +19,7 @@
 #define PG_FOREIGN_DATA_WRAPPER_H
 
 #include "catalog/genbki.h"
-#include "catalog/pg_foreign_data_wrapper_d.h"
+#include "catalog/pg_foreign_data_wrapper_d.h"	/* IWYU pragma: export */
 
 /* ----------------
  *		pg_foreign_data_wrapper definition.  cpp turns this into
@@ -52,7 +52,10 @@ typedef FormData_pg_foreign_data_wrapper *Form_pg_foreign_data_wrapper;
 
 DECLARE_TOAST(pg_foreign_data_wrapper, 4149, 4150);
 
-DECLARE_UNIQUE_INDEX_PKEY(pg_foreign_data_wrapper_oid_index, 112, ForeignDataWrapperOidIndexId, on pg_foreign_data_wrapper using btree(oid oid_ops));
-DECLARE_UNIQUE_INDEX(pg_foreign_data_wrapper_name_index, 548, ForeignDataWrapperNameIndexId, on pg_foreign_data_wrapper using btree(fdwname name_ops));
+DECLARE_UNIQUE_INDEX_PKEY(pg_foreign_data_wrapper_oid_index, 112, ForeignDataWrapperOidIndexId, pg_foreign_data_wrapper, btree(oid oid_ops));
+DECLARE_UNIQUE_INDEX(pg_foreign_data_wrapper_name_index, 548, ForeignDataWrapperNameIndexId, pg_foreign_data_wrapper, btree(fdwname name_ops));
+
+MAKE_SYSCACHE(FOREIGNDATAWRAPPEROID, pg_foreign_data_wrapper_oid_index, 2);
+MAKE_SYSCACHE(FOREIGNDATAWRAPPERNAME, pg_foreign_data_wrapper_name_index, 2);
 
 #endif							/* PG_FOREIGN_DATA_WRAPPER_H */

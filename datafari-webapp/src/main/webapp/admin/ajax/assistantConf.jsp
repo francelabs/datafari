@@ -84,6 +84,14 @@
           </div>
         </div>
 
+        <!-- Enable synthesis -->
+        <div class="form-group row">
+          <label id="enableSynthesisLabel" class="col-sm-4 col-form-label" for="enableSynthesis">Enable synthesis service</label>
+          <div class="col-sm-5">
+            <input type="checkbox" id="enableSynthesis" name="enableSynthesis" data-toggle="toggle" data-onstyle="success">
+          </div>
+        </div>
+
         <!-- Enable conversation storage -->
         <div class="form-group row">
           <label id="enableConversationStorageLabel" class="col-sm-4 col-form-label" for="enableConversationStorage">Enable conversation storage</label>
