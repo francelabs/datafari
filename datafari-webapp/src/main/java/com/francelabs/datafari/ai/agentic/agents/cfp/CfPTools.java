@@ -19,6 +19,9 @@ import org.json.simple.JSONObject;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class CfPTools {
 
     private static final Logger LOGGER = LogManager.getLogger(CfPTools.class.getName());
@@ -72,7 +75,7 @@ public class CfPTools {
     @Tool("Retrieve a list of CFP IDs, filtered by category, sorted by creation_date desc.")
     String listCallsForProvidersByCategory(
             @P("Number of CFP to retrieve") int rows,
-            @P(value = "Category filter (ex: Catering, Furniture, Carpentry or Maintenance).", required = false) String category
+            @P(value = "Category filter (eg: Catering, Furniture, Carpentry or Maintenance).", required = false) String category
     ) {
         if (rows < 1) rows = 30;
 
@@ -95,6 +98,13 @@ public class CfPTools {
         "limit":%d,
         "sort":"maxDate desc",
         "facet":{"maxDate":"max(creation_date)"}
+    },
+    "categories": {
+        "type": "terms",
+        "field": "llm_categories",
+        "domain": {
+            "query": "*:*"
+        }
     }}""".formatted(rows);
         req.addParameter("json.facet", jsonFacet);
 
@@ -102,9 +112,11 @@ public class CfPTools {
 
         // Extraction: facets.cfp.buckets[].val -> JSONArray containing IDs ----
         JSONArray ids = new JSONArray();
+        HashMap<String, String> categories = new HashMap<>();
         try {
             JSONObject facets = (JSONObject) root.get("facets");
             if (facets != null) {
+                // Extracting IDs
                 JSONObject cfp = (JSONObject) facets.get("cfp");
                 if (cfp != null) {
                     JSONArray buckets = (JSONArray) cfp.get("buckets");
@@ -116,16 +128,42 @@ public class CfPTools {
                         }
                     }
                 }
+
+                // Extracting categories
+                JSONObject categoriesFacet = (JSONObject) facets.get("categories");
+                if (categoriesFacet != null) {
+                    JSONArray buckets = (JSONArray) categoriesFacet.get("buckets");
+                    if (buckets != null) {
+                        for (Object b : buckets) {
+                            JSONObject bucket = (JSONObject) b;
+                            Object val = bucket.get("val");
+                            Object count = bucket.get("count");
+                            if (val != null) categories.put(String.valueOf(val), String.valueOf(count));
+                        }
+                    }
+                }
             }
         } catch (Exception e) {
             LOGGER.warn("CFP facet parsing error", e);
         }
 
-        LOGGER.info("AGENTIC TOOLS - CFP IDs via JSON Facet: rows={} category='{}' -> {}", rows, category, ids.size());
-        if (ids.isEmpty()) {
-            return "No result found in category " + category + ". Available categories are Catering, Furniture, Carpentry and Maintenance.";
+        // Building categories list
+        rows = Math.min(ids.size(), rows);
+        StringBuilder categoryList = new StringBuilder();
+        for (Map.Entry<String, String> entry : categories.entrySet()) {
+            categoryList.append(" ").append(entry.getKey()).append(" (").append(entry.getValue()).append(" documents)\n ");
         }
 
+        LOGGER.info("AGENTIC TOOLS - CFP IDs via JSON Facet: rows={} category='{}' -> {}", rows, category, ids.size());
+        if (ids.isEmpty() && !categories.isEmpty()) {
+            return "No result found in category " + category + ". Available categories are: \n" + categoryList;
+            // TODO : return a list of existing caterogies
+        } else if (ids.isEmpty()) {
+            return "No result found in category " + category + ". It appears that there is no existing categorized CFP.";
+            // TODO : return a list of existing caterogies
+        }
+
+        // Building CfP IDs list
         rows = Math.min(ids.size(), rows);
         StringBuilder idsStr = new StringBuilder();
         for (Object item : ids) {
@@ -135,10 +173,14 @@ public class CfPTools {
 
         // Prepare response
         if (category != null && !category.isBlank()) {
-            String response = "The ID of the latest {{rows}} CFP from category '{{category}}' are: {{ids}}";
+            String response = """
+                The ID of the latest {{rows}} CFP from category '{{category}}' are: {{ids}}. 
+                Available categories are: 
+                {{categoryList}}""";
             return response.replace("{{category}}", category)
                     .replace("{{rows}}", String.valueOf(rows))
-                    .replace("{{ids}}", idsStr.toString());
+                    .replace("{{ids}}", idsStr.toString())
+                    .replace("{{categoryList}}", categoryList.toString());
         } else {
             // If category is blank
             String response = "The ID of the latest {{rows}} CFP are: {{ids}}";
