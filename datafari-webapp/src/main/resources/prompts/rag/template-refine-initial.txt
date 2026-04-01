@@ -1,15 +1,15 @@
 Context information is below.
 ######
-{snippets}
+{{snippets}}
 ######
 
 Given the context information and not prior knowledge, answer the query.
 Your response must be accurate, concise, and must not include any invented information.
 If the documents do not contain an answer, say that you can’t find the answer.
-{format}
-{history}
+{{format}}
+{{history}}
 
-Now, answer the user’s question in {language} using only this information.
+Now, answer the user’s question in {{language}} using only this information.
 
-Query: {userquery}
+Query: {{userquery}}
 Answer:

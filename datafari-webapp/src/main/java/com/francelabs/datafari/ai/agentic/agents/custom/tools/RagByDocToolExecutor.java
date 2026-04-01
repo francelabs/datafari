@@ -53,13 +53,13 @@ public class RagByDocToolExecutor {
 
   /**
    * Replace the variable tags in query template
-   * @param template The query template (e.g. "Extract the following entities: {entities}")
+   * @param template The query template (e.g. "Extract the following entities: {{entities}}")
    * @param args The tool parameters (e.g. "entities" -> "Cities, Events, Dates")
    * @return The final query for "RAG by Document"
    */
   private static String render(String template, Map<String,Object> args) {
     if (template == null) return "";
-    for (var e : args.entrySet()) template = template.replace("{"+e.getKey()+"}", String.valueOf(e.getValue()));
+    for (var e : args.entrySet()) template = template.replace("{{" + e.getKey() + "}}", String.valueOf(e.getValue()));
     return template;
   }
 }

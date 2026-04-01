@@ -47,7 +47,7 @@ public class PromptUtils {
             Locale loc = new Locale(spec.getSummariesLanguage());
             if (!loc.getDisplayLanguage(new Locale("en")).isEmpty()) language = " in " +loc.getDisplayLanguage(Locale.ENGLISH);
         }
-        prompt = "Summarize this document titled `{fileName}`{language}: \n\n\"\"\"{content}\"\"\""
+        prompt = "Summarize this document titled `{fileName}` in {language}: \n\n\"\"\"{content}\"\"\""
                 .replace("{fileName}", chunk.metadata().getString("filename"))
                 .replace("{content}", chunk.text())
                 .replace("{language}", language);

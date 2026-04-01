@@ -5,9 +5,14 @@ import com.francelabs.datafari.ai.services.AiService;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.utils.rag.PromptUtils;
+import dev.langchain4j.agentic.AgenticServices;
+import dev.langchain4j.agentic.UntypedAgent;
+import dev.langchain4j.agentic.scope.AgenticScope;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.UserMessage;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.service.AiServices;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Function;
 
 public class Synthesis {
 
@@ -62,29 +68,27 @@ public class Synthesis {
 
     int chunksNb = snippets.size();
 
-    // Setup prompt
-    String initialPromptTemplate = PromptUtils.createInitialPromptForSynthesis(request);
-    String iterativePromptTemplate = PromptUtils.createPromptForIterateSynthesis(request);
-
-
     // First synthesis iteration
     stream.phase("synthesize:generation");
-    initialPromptTemplate = PromptUtils.stuffAsManySnippetsAsPossible(initialPromptTemplate, snippets, config);
-    AiMessage responseMessage =  chatModel.chat(UserMessage.from(initialPromptTemplate)).aiMessage();
-    String lastGeneratedSynthesis = responseMessage.text();
+    String renderedSnippets = PromptUtils.stuffAsManySnippetsAsPossible("{{snippets}}", snippets, config);
+    String lang = PromptUtils.getUserLanguage(request);
+    InitialSynthesizer service = AiServices.builder(InitialSynthesizer.class)
+            .chatModel(chatModel)
+            .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(10))
+            .build();
+    String lastGeneratedSynthesis = service.writeSynthesis(renderedSnippets, lang);
+
+    IterativeSynthesizer refiner = AiServices.builder(IterativeSynthesizer.class)
+            .chatModel(chatModel)
+            .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(10))
+            .build();
 
     // Refine iteratively the summary with each chunk
     while (!snippets.isEmpty()) {
       String progression = (chunksNb - snippets.size()) + "/" + chunksNb;
       stream.phase("synthesize: generation (" + progression + ")");
-
-      // Refine the summary for each chunk
-      String iterativePrompt = PromptUtils.stuffAsManySnippetsAsPossible(
-          iterativePromptTemplate.replace("{synthesis}", lastGeneratedSynthesis),
-          snippets, config);
-
-      responseMessage =  chatModel.chat(UserMessage.from(iterativePrompt)).aiMessage();
-      lastGeneratedSynthesis = responseMessage.text();
+      renderedSnippets = PromptUtils.stuffAsManySnippetsAsPossible("{{snippets}}", snippets, config);
+      lastGeneratedSynthesis = refiner.refineSynthesis(lastGeneratedSynthesis, renderedSnippets, lang);
     }
     stream.phase("synthesize:done");
 

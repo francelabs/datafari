@@ -63,7 +63,7 @@ public final class SearchToolExecutor {
   private static String render(String tpl, Map<String,Object> args) {
     if (tpl == null) return "";
     for (var e : args.entrySet()) {
-      tpl = tpl.replace("{"+e.getKey()+"}", String.valueOf(e.getValue()));
+      tpl = tpl.replace("{{" + e.getKey() + "}}", String.valueOf(e.getValue()));
     }
     return tpl;
   }

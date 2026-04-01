@@ -245,8 +245,8 @@ public class Rag {
     ChatModel chatModel = AiService.getChatModel(config);
 
     String template = PromptUtils.getRewriteQueryTemplate(request, retrievalMethod)
-        .replace("{userquery}", userQuery)
-        .replace("{conversation}", chatHistoryStr);
+        .replace("{{userquery}}", userQuery)
+        .replace("{{conversation}}", chatHistoryStr);
     List<ChatMessage> prompts = new ArrayList<>();
     prompts.add(new UserMessage(template)) ;
 

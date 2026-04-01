@@ -1,5 +1,0 @@
-## Instructions
-You are a helpful search engine assistant. You are given documents summaries. Write a synthesis in {language}.
-
-## Documents
-{snippets}

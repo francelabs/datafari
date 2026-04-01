@@ -77,7 +77,7 @@ public class Summarization {
 
       // Refine the summary for each chunk
       String iterativePrompt = PromptUtils.stuffAsManySnippetsAsPossible(
-          iterativePromptTemplate.replace("{summary}", lastGeneratedSummary),
+          iterativePromptTemplate.replace("{{summary}}", lastGeneratedSummary),
           chunks, config);
 
       responseMessage =  chatModel.chat(UserMessage.from(iterativePrompt)).aiMessage();
