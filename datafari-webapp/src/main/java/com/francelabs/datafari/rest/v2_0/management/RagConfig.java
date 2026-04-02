@@ -85,6 +85,7 @@ public class RagConfig {
     response.put("solrEmbeddingsModel", config.getProperty(RagConfiguration.SOLR_EMBEDDINGS_MODEL));
     response.put("solrVectorField", config.getProperty(RagConfiguration.SOLR_VECTOR_FIELD));
     response.put("solrTopK", config.getProperty(RagConfiguration.SOLR_TOPK));
+    response.put("solrFilteredSearchThreshold", config.getProperty(RagConfiguration.SOLR_FILTERED_SEARCH_THRESHOLD));
     response.put("rrfTopK", config.getProperty(RagConfiguration.RRF_TOPK));
     response.put("rrfRankConstant", config.getProperty(RagConfiguration.RRF_RANK_CONSTANT));
 

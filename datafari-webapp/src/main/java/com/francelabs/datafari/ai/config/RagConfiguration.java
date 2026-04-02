@@ -57,6 +57,8 @@ public class RagConfiguration extends AbstractConfigClass {
     public static final String SOLR_EMBEDDINGS_MODEL = "solr.embeddings.model";
     public static final String SOLR_VECTOR_FIELD = "solr.vector.field";
     public static final String SOLR_TOPK = "solr.topK";
+    public static final String SOLR_ENABLE_LADR = "solr.enable.ladr";
+    public static final String SOLR_FILTERED_SEARCH_THRESHOLD = "solr.filtered.search.threshold";
 
 
     /**

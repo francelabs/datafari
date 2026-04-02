@@ -114,6 +114,10 @@ public class SearchAPI {
         String[] topK = new String[] { ragConfiguration.getProperty(RagConfiguration.SOLR_TOPK, "50") };
         parameterMap.put("topK", topK);
       }
+      if (!parameterMap.containsKey("filteredSearchThreshold")) {
+        String[] filteredSearchThreshold = new String[] { ragConfiguration.getProperty(RagConfiguration.SOLR_FILTERED_SEARCH_THRESHOLD, "60") };
+        parameterMap.put("filteredSearchThreshold", filteredSearchThreshold);
+      }
 
       EbdModelConfigurationManager manager = new EbdModelConfigurationManager();
       if (!parameterMap.containsKey("model")) {
