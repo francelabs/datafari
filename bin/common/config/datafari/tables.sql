@@ -197,3 +197,6 @@ CREATE INDEX messages_conversation_created_idx ON messages(conversation_id, crea
 CREATE INDEX docsbasket_conversation_idx ON docsbasket(conversation_id);
 CREATE INDEX docsbasket_document_id_idx ON docsbasket(document_id);
 CREATE UNIQUE INDEX docsbasket_unique_doc_per_conv ON docsbasket(conversation_id, document_id);
+
+CREATE INDEX datafari_access_token_username_idx ON datafari_access_token(username);
+CREATE INDEX datafari_access_token_expires_at_idx ON datafari_access_token(expires_at);
