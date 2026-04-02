@@ -1,4 +1,4 @@
-package com.francelabs.datafari.security.token;
+package com.francelabs.datafari.security.standard.token;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;

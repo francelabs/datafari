@@ -1,6 +1,6 @@
-package com.francelabs.datafari.security.token;
+package com.francelabs.datafari.security.standard.token;
 
-import com.francelabs.datafari.security.token.service.DatafariTokenService;
+import com.francelabs.datafari.security.standard.token.service.DatafariTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +20,7 @@ import java.io.IOException;
  *
  * <p>This filter inspects the {@code Authorization} HTTP header and looks for
  * a value starting with {@code Bearer }. When such a token is found, it is
- * delegated to {@link com.francelabs.datafari.security.token.service.DatafariTokenService}
+ * delegated to {@link DatafariTokenService}
  * in order to validate it and rebuild the corresponding
  * {@link org.springframework.security.core.Authentication} object.</p>
  *
