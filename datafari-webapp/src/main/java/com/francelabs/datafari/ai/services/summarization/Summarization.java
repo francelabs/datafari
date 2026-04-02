@@ -2,6 +2,8 @@ package com.francelabs.datafari.ai.services.summarization;
 
 import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.ai.services.AiService;
+import com.francelabs.datafari.ai.services.synthesis.InitialSynthesizer;
+import com.francelabs.datafari.ai.services.synthesis.IterativeSynthesizer;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.utils.rag.ChunkUtils;
@@ -10,7 +12,9 @@ import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.service.AiServices;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,40 +52,38 @@ public class Summarization {
       throw new IOException("No content available for summarization.");
     }
 
-    List<String> chunks = segments
+    List<String> snippets = segments
         .stream()
         .map(TextSegment::text)
         .collect(Collectors.toCollection(ArrayList::new));
 
     // Limit the number of chunks used for the summarization
     if (segments.size() > config.getIntegerProperty(RagConfiguration.SUMMARIZATION_CHUNKS_NUMBER)) {
-      chunks = chunks.subList(0, config.getIntegerProperty(RagConfiguration.SUMMARIZATION_CHUNKS_NUMBER));
+      snippets = snippets.subList(0, config.getIntegerProperty(RagConfiguration.SUMMARIZATION_CHUNKS_NUMBER));
     }
     int chunksNb = segments.size();
 
-    // Setup prompt
-    String initialPromptTemplate = PromptUtils.createInitialPromptForSummarization(request);
-    String iterativePromptTemplate = PromptUtils.createPromptForIterateSummaries(request);
+    // First synthesis iteration
+    stream.phase("synthesize:generation");
+    String renderedSnippets = PromptUtils.stuffAsManySnippetsAsPossible("{{snippets}}", snippets, config);
+    String lang = PromptUtils.getUserLanguage(request);
+    InitialSummarizer service = AiServices.builder(InitialSummarizer.class)
+        .chatModel(chatModel)
+        .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(10))
+        .build();
+    String lastGeneratedSummary = service.writeSummary(renderedSnippets, lang);
 
-
-    // Summarize first chunk
-    stream.phase("summarize:summarization");
-    initialPromptTemplate = PromptUtils.stuffAsManySnippetsAsPossible(initialPromptTemplate, chunks, config);
-    AiMessage responseMessage =  chatModel.chat(UserMessage.from(initialPromptTemplate)).aiMessage();
-    String lastGeneratedSummary = responseMessage.text();
+    IterativeSummarizer refiner = AiServices.builder(IterativeSummarizer.class)
+        .chatModel(chatModel)
+        .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(10))
+        .build();
 
     // Refine iteratively the summary with each chunk
-    while (!chunks.isEmpty()) {
-      String progression = (chunksNb - chunks.size()) + "/" + chunksNb;
-      stream.phase("summarize:" + progression);
-
-      // Refine the summary for each chunk
-      String iterativePrompt = PromptUtils.stuffAsManySnippetsAsPossible(
-          iterativePromptTemplate.replace("{{summary}}", lastGeneratedSummary),
-          chunks, config);
-
-      responseMessage =  chatModel.chat(UserMessage.from(iterativePrompt)).aiMessage();
-      lastGeneratedSummary = responseMessage.text();
+    while (!snippets.isEmpty()) {
+      String progression = (chunksNb - snippets.size()) + "/" + chunksNb;
+      stream.phase("synthesize: generation (" + progression + ")");
+      renderedSnippets = PromptUtils.stuffAsManySnippetsAsPossible("{{snippets}}", snippets, config);
+      lastGeneratedSummary = refiner.refineSynthesis(lastGeneratedSummary, renderedSnippets, lang);
     }
     stream.phase("summarize:done");
 

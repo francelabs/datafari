@@ -12,8 +12,9 @@ import com.francelabs.datafari.utils.rag.PromptUtils;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.message.ChatMessage;
-import dev.langchain4j.data.message.UserMessage;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.service.AiServices;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -128,7 +129,7 @@ public class Rag {
     // Get history (if enabled)
     List<ChatMessage> chatHistory = PromptUtils.getChatHistoryToList(request, config);
     String chatHistoryStr = PromptUtils.getStringHistory(chatHistory);
-    String conversationStr = PromptUtils.getStringHistoryLines(chatHistory);
+    String lang = PromptUtils.getUserLanguage(request);
 
     if ("mapreduce".equals(config.getProperty(RagConfiguration.PROMPT_CHUNKING_STRATEGY, "refine"))){
 
@@ -136,25 +137,25 @@ public class Rag {
       LOGGER.debug("Rag - The sources associated to the RAG request will be processed using Map Reduce method.");
 
       // Send all chunks one by one
-      List<ChatMessage> prompts;
       List<String> responseMessages = new ArrayList<>();
-      String template = PromptUtils.getInitialRagTemplateMapReduce(request)
-          .replace(PromptUtils.USER_QUERY_TAG, userquery)
-          .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request))
-          .replace(PromptUtils.HISTORY_TAG, chatHistoryStr)
-          .replace(PromptUtils.CONVERSATION_TAG, conversationStr);
-      String filledTemplate;
       String generatedResponse = "";
 
+      MapReduceInitialRag service = AiServices.builder(MapReduceInitialRag.class) // TODO: use chatMemory here
+              .chatModel(chatModel)
+              .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(10))
+              .build();
+
+      MapReduceMergeAllRag mergeService = AiServices.builder(MapReduceMergeAllRag.class) // TODO: use chatMemory here
+              .chatModel(chatModel)
+              .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(10))
+              .build();
+
       int rqCounter = 0;
+      String snippets; // A String containing as many chunks as a request can hold.
       while (!contents.isEmpty()) {
         rqCounter++;
-        filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config);
-        prompts = new ArrayList<>();
-        ChatMessage prompt = new UserMessage(filledTemplate);
-        prompts.add(prompt);
-
-        generatedResponse = chatModel.chat(prompts).aiMessage().text();
+        snippets = PromptUtils.stuffAsManySnippetsAsPossible("{{snippets}}", contents, config);
+        generatedResponse = service.rag(userquery, snippets, chatHistoryStr, lang);
         LOGGER.debug("Rag - Map Reduce - Last response : {}", generatedResponse);
 
         // Add the new response to the list
@@ -166,19 +167,9 @@ public class Rag {
       if (rqCounter <= 1) return generatedResponse;
 
       // Then, merge all responses into one
-      template = PromptUtils.getFinalRagTemplateMapReduce(request);
-      filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, responseMessages, config);
-      filledTemplate = filledTemplate.replace(PromptUtils.USER_QUERY_TAG, userquery)
-          .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request))
-          .replace(PromptUtils.HISTORY_TAG, chatHistoryStr)
-          .replace(PromptUtils.CONVERSATION_TAG, conversationStr);
+      snippets = PromptUtils.stuffAsManySnippetsAsPossible("{{snippets}}", responseMessages, config);
 
-      prompts = new ArrayList<>();
-
-      ChatMessage prompt = new UserMessage(filledTemplate);
-      prompts.add(prompt);
-
-      return chatModel.chat(prompts).aiMessage().text();
+      return mergeService.rag(userquery, snippets, chatHistoryStr, lang);
 
     } else {
 
@@ -190,37 +181,27 @@ public class Rag {
         - snippets (formatted list of TextSegments)
         - userquery (userquery)
         - lastresponse (the last generated response)
-        - format (Sentence enforcing the response format : bulletpoint, stepbystep, text, default... optional)
         - history (chat history, including prompt and conversation lines)
         - conversation : String formatted lines (e.g. "- user: hello world\n- assistant: Hello user !"
        */
 
-      // Initial call with a fist set of snippets
-      List<ChatMessage> prompts = new ArrayList<>();
-      String template = PromptUtils.getInitialRagTemplateRefining(request);
-      String filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config);
-      filledTemplate = filledTemplate.replace(PromptUtils.USER_QUERY_TAG, PromptUtils.cleanContext(userquery))
-          .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request))
-          .replace(PromptUtils.HISTORY_TAG, chatHistoryStr)
-          .replace(PromptUtils.CONVERSATION_TAG, conversationStr);
+      IterativeInitialRag service = AiServices.builder(IterativeInitialRag.class) // TODO: use chatMemory here
+              .chatModel(chatModel)
+              .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(10))
+              .build();
 
-      ChatMessage prompt = new UserMessage(filledTemplate);
-      prompts.add(prompt);
-      String lastresponse = chatModel.chat(prompts).aiMessage().text();
+      IterativeRefineRag refiner = AiServices.builder(IterativeRefineRag.class) // TODO: use chatMemory here
+              .chatModel(chatModel)
+              .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(10))
+              .build();
+
+      String snippets = PromptUtils.stuffAsManySnippetsAsPossible("{{snippets}}", contents, config);
+      String lastresponse = service.rag(userquery, snippets, chatHistoryStr, lang);
 
       // Refining response with each snippet pack
-      template = PromptUtils.getRefineRagTemplateRefining(request);
       while (!contents.isEmpty()) {
-        filledTemplate = PromptUtils.stuffAsManySnippetsAsPossible(template, contents, config);
-        filledTemplate = filledTemplate.replace(PromptUtils.USER_QUERY_TAG, userquery)
-            .replace(PromptUtils.FORMAT_TAG, PromptUtils.getResponseFormat(request))
-            .replace(PromptUtils.LAST_RESPONSE_TAG, lastresponse)
-            .replace(PromptUtils.HISTORY_TAG, chatHistoryStr)
-            .replace(PromptUtils.CONVERSATION_TAG, conversationStr);
-        prompts = new ArrayList<>();
-        prompt = new UserMessage(filledTemplate);
-        prompts.add(prompt);
-        lastresponse = chatModel.chat(prompts).aiMessage().text();
+        snippets = PromptUtils.stuffAsManySnippetsAsPossible("{{snippets}}", contents, config);
+        lastresponse = refiner.refine(userquery, lastresponse, snippets, chatHistoryStr, lang);
         LOGGER.debug("Rag - Iterative Refining - Last generated response : {}", lastresponse);
       }
       return lastresponse;
@@ -244,14 +225,20 @@ public class Rag {
     // Get the LLM interface (ChatLanguageModel)
     ChatModel chatModel = AiService.getChatModel(config);
 
-    String template = PromptUtils.getRewriteQueryTemplate(request, retrievalMethod)
-        .replace("{{userquery}}", userQuery)
-        .replace("{{conversation}}", chatHistoryStr);
-    List<ChatMessage> prompts = new ArrayList<>();
-    prompts.add(new UserMessage(template)) ;
+    String prompt = switch (retrievalMethod) {
+        case "bm25" -> "/rag/rewriteSearchQuery-bm25.txt";
+        case "vector" -> "prompts/rag/rewriteSearchQuery-vector.txt";
+        default -> "prompts/rag/rewriteSearchQuery.txt";
+    };
+
+      QueryRewriter queryRewriter = AiServices.builder(QueryRewriter.class)
+            .chatModel(chatModel)
+            .userMessage(prompt)
+            .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(10))
+            .build();
 
     try {
-      String response = chatModel.chat(prompts).aiMessage().text();
+      String response = queryRewriter.rewriteQuery(userQuery, chatHistoryStr);
       LOGGER.debug("Rag - Rewritten query: {}", response);
       return (response != null && !response.isEmpty()) && !"0".equals(response.trim()) ? response : userQuery;
     } catch (Exception e) {
@@ -272,6 +259,7 @@ public class Rag {
    * @return a cleaner String
    */
   private static String cleanLlmFinalMessage(String message) {
+    // TODO : replace with a guardrail
     message = message.replace("\\n", "\n");
     message = message.replace("/n", "\n");
     message = message.replace("\n ", "\n");

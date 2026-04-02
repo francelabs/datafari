@@ -52,11 +52,6 @@ public class PromptUtils {
     public static final String USER_ROLE = "user";
     public static final String ASSISTANT_ROLE = "assistant";
     public static final String SNIPPETS_TAG = "{{snippets}}";
-    public static final String USER_QUERY_TAG = "{{userquery}}";
-    public static final String FORMAT_TAG = "{{format}}";
-    public static final String HISTORY_TAG = "{{history}}";
-    public static final String CONVERSATION_TAG = "{{conversation}}";
-    public static final String LAST_RESPONSE_TAG = "{{lastresponse}}";
 
     private PromptUtils() {
         // Constructor
@@ -78,82 +73,6 @@ public class PromptUtils {
         }
 
         return prompts;
-    }
-
-    /**
-     * @return Retrieve the instructions used to summarize a document.
-     */
-    public static String createInitialPromptForSummarization(HttpServletRequest request) throws IOException {
-        // TODO : Use PromptTemplate instead
-        return getInstructions("summarization/template-initialPromptForSummarization.txt")
-                .replace("{{language}}", getUserLanguage(request));
-    }
-
-    /**
-     * @return Retrieve the instructions used to merge multiple summaries into one.
-     */
-    public static String createPromptForIterateSummaries(HttpServletRequest request) throws IOException {
-        return  getInstructions("summarization/template-summarization-iterative.txt")
-                .replace("{{language}}", getUserLanguage(request));
-    }
-
-    /**
-     * @return Retrieve the instructions used to summarize a document.
-     */
-    public static String createInitialPromptForSynthesis(HttpServletRequest request) throws IOException {
-        // TODO : Use PromptTemplate instead
-        return getInstructions("synthesis/template-synthesis-initial.txt")
-            .replace("{{language}}", getUserLanguage(request));
-    }
-
-    /**
-     * @return Retrieve the instructions used to merge multiple summaries into one.
-     */
-    public static String createPromptForIterateSynthesis(HttpServletRequest request) throws IOException {
-        return  getInstructions("synthesis/template-synthesis-iterative.txt")
-            .replace("{{language}}", getUserLanguage(request));
-    }
-
-
-    /**
-     * @return Retrieve the instructions for the initial request of Refining method.
-     */
-    public static String getInitialRagTemplateRefining(HttpServletRequest request) throws IOException {
-        return getInstructions("rag/template-refine-initial.txt")
-                .replace("{{language}}", getUserLanguage(request));
-    }
-
-
-    /**
-     * @return Retrieve the instructions for the initial request of Refining method.
-     */
-    public static String getRefineRagTemplateRefining(HttpServletRequest request) throws IOException {
-        return getInstructions("rag/template-refine-refining.txt")
-                .replace("{{language}}", getUserLanguage(request));
-    }
-
-    /**
-     * @return Retrieve the instructions for the initial request of Map Reduce method.
-     */
-    public static String getInitialRagTemplateMapReduce(HttpServletRequest request) throws IOException {
-        return getInstructions("rag/template-rag.txt")
-                .replace("{{language}}", getUserLanguage(request));
-    }
-
-    /**
-     * @return Retrieve the instructions for the initial request of Map Reduce method.
-     */
-    public static String getFinalRagTemplateMapReduce(HttpServletRequest request) throws IOException {
-        return getInstructions("rag/template-mergeAllRag.txt")
-                .replace("{{language}}", getUserLanguage(request));
-    }
-
-    /**
-     * @return Retrieve the instructions for query rewriting.
-     */
-    public static String getRewriteQueryTemplate(HttpServletRequest request, String retrievalMethod) throws IOException {
-        return getInstructions("rag/template-rewriteSearchQuery-" + retrievalMethod + ".txt")
-                .replace("{{language}}", getUserLanguage(request));
     }
 
 
@@ -230,22 +149,6 @@ public class PromptUtils {
     public static String formatDocument(String title, String content) throws IOException {
         String template =  getInstructions("rag/template-fromTextSegment.txt");
         return template.replace("{{title}}", title).replace("{{content}}", content);
-    }
-
-    public static String getResponseFormat(HttpServletRequest request) {
-
-        String format = request.getParameter("format");
-        if (format == null) return "";
-        switch (format) {
-            case "stepbystep":
-                return " If relevant, your response should take the form step-by-step instructions.\n";
-            case "bulletpoint":
-                return " If relevant, your response should take the form of a bullet-point list.\n";
-            case "text":
-                return " If relevant, your response should take the form of a text.\n";
-            default:
-                return "";
-        }
     }
 
     /**
@@ -497,15 +400,5 @@ public class PromptUtils {
             default:
                 return new UserMessage(text);
         }
-    }
-
-    // TODO : remove
-    public String getMessageRole(ChatMessage message) {
-        if (message instanceof SystemMessage)
-            return SYSTEM_ROLE;
-        else if (message instanceof AiMessage)
-            return ASSISTANT_ROLE;
-        else
-            return USER_ROLE;
     }
 }
