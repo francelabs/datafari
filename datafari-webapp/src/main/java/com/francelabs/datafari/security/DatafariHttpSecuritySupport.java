@@ -41,27 +41,6 @@ public abstract class DatafariHttpSecuritySupport {
       antAny("/SearchAdministrator/**", "/rest/v2.0/files/**", "/rest/v2.0/management/**");
 
   /**
-   * Public URLs that must remain reachable without authentication.
-   *
-   * <p>These routes mainly correspond to public application features, technical
-   * entry points and static resources. The default authorization model of
-   * Datafari remains permissive: unmatched requests are also permitted unless a
-   * dedicated rule requires authentication or roles.</p>
-   */
-  protected static final RequestMatcher PERMIT_ALL =
-      antAny(
-          "/RefreshSession",
-          "/rest/**",
-          "/applyLang",
-          "/resources/**",
-          "/error",
-          "/oauth/**",
-          "/login",
-          "/login*",
-          "/logout",
-          "/index.jsp", "/WEB-INF/view/login.jsp");
-
-  /**
    * Applies the standard Datafari authorization rules with a permissive
    * fallback policy.
    *
