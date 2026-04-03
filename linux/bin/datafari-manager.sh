@@ -66,20 +66,200 @@ init_zookeeper_mcf_repertory()
   mkdir -m 700 ${DATAFARI_HOME}/zookeeper-mcf/data
 }
 
-init_postgres()
-{
-  ${DATAFARI_HOME}/pgsql/bin/initdb -U postgres -A password --pwfile=${DATAFARI_HOME}/pgsql/pwd.conf -E utf8 -D ${DATAFARI_HOME}/pgsql/data
-  cp ${DATAFARI_HOME}/pgsql/postgresql.conf.save ${DATAFARI_HOME}/pgsql/data/postgresql.conf
-  
-  
+init_postgres() {
+  local pg_admin_secret_file="/opt/datafari/secrets/pg_admin_password"
+
+  if [ ! -s "$pg_admin_secret_file" ]; then
+    echo "ERROR: PostgreSQL admin password file is missing or empty: $pg_admin_secret_file"
+    return 1
+  fi
+
+  "${DATAFARI_HOME}/pgsql/bin/initdb" \
+    -U postgres \
+    -A scram-sha-256 \
+    --pwfile="$pg_admin_secret_file" \
+    -E utf8 \
+    -D "${DATAFARI_HOME}/pgsql/data"
+
+  cp "${DATAFARI_HOME}/pgsql/postgresql.conf.save" "${DATAFARI_HOME}/pgsql/data/postgresql.conf"
 }
+
+
 
 init_postgres_datafariwebapp() {
-  echo "wait for Postgresql server to be started"
-  PGPASSWORD="$TEMPPGSQLPASSWORD" ${DATAFARI_HOME}/pgsql/bin/createdb -h $POSTGRESQL_HOSTNAME -p $POSTGRESQL_PORT -U $POSTGRESQL_USERNAME $POSTGRESQL_DATABASE_DATAFARIWEBAPP
-  PGPASSWORD="$TEMPPGSQLPASSWORD"  ${DATAFARI_HOME}/pgsql/bin/psql -h $POSTGRESQL_HOSTNAME -p $POSTGRESQL_PORT -U $POSTGRESQL_USERNAME -d $POSTGRESQL_DATABASE_DATAFARIWEBAPP -f $DATAFARI_HOME/bin/common/config/datafari/tables.sql
+  local pg_admin_user="${1:-postgres}"
+  local pg_admin_db="${2:-postgres}"
+  local pg_admin_password_file="${3:-/opt/datafari/secrets/pg_admin_password}"
+  local datafari_user="${4:-datafari}"
+  local datafari_database="${5:-datafari}"
+  local datafari_password_file="${6:-/opt/datafari/secrets/pg_datafari_password}"
+
+  if [ ! -s "${pg_admin_password_file}" ]; then
+    echo "ERROR: PostgreSQL admin password file not found or empty: ${pg_admin_password_file}"
+    return 1
+  fi
+
+  if [ ! -s "${datafari_password_file}" ]; then
+    echo "ERROR: Datafari password file not found or empty: ${datafari_password_file}"
+    return 1
+  fi
+
+  local pg_admin_password
+  local datafari_password
+  local escaped_datafari_password
+
+  pg_admin_password="$(cat "${pg_admin_password_file}")"
+  datafari_password="$(cat "${datafari_password_file}")"
+  escaped_datafari_password=$(printf "%s" "$datafari_password" | sed "s/'/''/g")
+
+  export PGPASSWORD="${pg_admin_password}"
+
+  "${DATAFARI_HOME}/pgsql/bin/psql" -v ON_ERROR_STOP=1 \
+    -h "${POSTGRESQL_HOSTNAME}" \
+    -p "${POSTGRESQL_PORT}" \
+    -U "${pg_admin_user}" \
+    -d "${pg_admin_db}" <<SQL
+DO \$\$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_roles WHERE rolname = '${datafari_user}'
+  ) THEN
+    CREATE ROLE ${datafari_user} LOGIN PASSWORD '${escaped_datafari_password}';
+  ELSE
+    ALTER ROLE ${datafari_user} WITH PASSWORD '${escaped_datafari_password}';
+  END IF;
+END
+\$\$;
+SQL
+
+ # Check whether database exists
+  db_exists=$("${DATAFARI_HOME}/pgsql/bin/psql" -tA \
+    -h "${POSTGRESQL_HOSTNAME}" \
+    -p "${POSTGRESQL_PORT}" \
+    -U "${pg_admin_user}" \
+    -d "${pg_admin_db}" \
+    -c "SELECT 1 FROM pg_database WHERE datname='${datafari_database}';")
+
+  if [ "${db_exists}" != "1" ]; then
+    "${DATAFARI_HOME}/pgsql/bin/psql" -v ON_ERROR_STOP=1 \
+      -h "${POSTGRESQL_HOSTNAME}" \
+      -p "${POSTGRESQL_PORT}" \
+      -U "${pg_admin_user}" \
+      -d "${pg_admin_db}" \
+      -c "CREATE DATABASE ${datafari_database} OWNER ${datafari_user};"
+  fi
+
+  unset PGPASSWORD
+
+  echo "OK: PostgreSQL user ${datafari_user} ready with database ${datafari_database}"
 }
 
+init_postgres_datafari_tables() {
+  local datafari_user="${1:-datafari}"
+  local datafari_database="${2:-datafari}"
+  local datafari_password_file="${3:-/opt/datafari/secrets/pg_datafari_password}"
+  local datafari_tables_sql="${4:-$DATAFARI_HOME/bin/common/config/datafari/tables.sql}"
+
+  if [ ! -s "${datafari_password_file}" ]; then
+    echo "ERROR: Datafari DB password file not found or empty: ${datafari_password_file}"
+    return 1
+  fi
+
+  if [ ! -f "${datafari_tables_sql}" ]; then
+    echo "ERROR: Datafari SQL file not found: ${datafari_tables_sql}"
+    return 1
+  fi
+
+  local datafari_password
+  local tables_exist
+
+  datafari_password="$(cat "${datafari_password_file}")"
+  export PGPASSWORD="${datafari_password}"
+
+  tables_exist=$("${DATAFARI_HOME}/pgsql/bin/psql" -tA \
+    -h "${POSTGRESQL_HOSTNAME}" \
+    -p "${POSTGRESQL_PORT}" \
+    -U "${datafari_user}" \
+    -d "${datafari_database}" \
+    -c "SELECT 1 FROM information_schema.tables WHERE table_schema='public' LIMIT 1;")
+
+  if [ "${tables_exist}" != "1" ]; then
+    "${DATAFARI_HOME}/pgsql/bin/psql" -v ON_ERROR_STOP=1 \
+      -h "${POSTGRESQL_HOSTNAME}" \
+      -p "${POSTGRESQL_PORT}" \
+      -U "${datafari_user}" \
+      -d "${datafari_database}" \
+      -f "${datafari_tables_sql}"
+  else
+    echo "INFO: Datafari tables already exist in database ${datafari_database}, skipping tables.sql"
+  fi
+
+  unset PGPASSWORD
+
+  echo "OK: Datafari tables initialized in database ${datafari_database}"
+}
+
+
+
+init_postgres_manifoldcf() {
+  local pg_admin_user="${1:-postgres}"
+  local pg_admin_db="${2:-postgres}"
+  local pg_admin_password_file="${3:-/opt/datafari/secrets/pg_admin_password}"
+  local mcf_user="${4:-manifoldcf}"
+  local mcf_database="${5:-manifoldcf}"
+  local mcf_password_file="${6:-/opt/datafari/secrets/pg_mcf_password}"
+
+  if [ ! -s "${pg_admin_password_file}" ]; then
+    echo "ERROR: PostgreSQL admin password file not found or empty: ${pg_admin_password_file}"
+    return 1
+  fi
+
+  if [ ! -s "${mcf_password_file}" ]; then
+    echo "ERROR: MCF password file not found or empty: ${mcf_password_file}"
+    return 1
+  fi
+
+  local pg_admin_password
+  local mcf_password
+  local escaped_mcf_password
+  local db_exists
+
+  pg_admin_password="$(cat "${pg_admin_password_file}")"
+  mcf_password="$(cat "${mcf_password_file}")"
+
+  # Escape single quotes for SQL string literal safety
+  escaped_mcf_password=$(printf "%s" "$mcf_password" | sed "s/'/''/g")
+
+  export PGPASSWORD="${pg_admin_password}"
+
+  # Create or update role
+  "${DATAFARI_HOME}/pgsql/bin/psql" -v ON_ERROR_STOP=1 -U "${pg_admin_user}" -d "${pg_admin_db}" <<SQL
+DO \$\$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_roles WHERE rolname = '${mcf_user}'
+  ) THEN
+    CREATE ROLE ${mcf_user} LOGIN PASSWORD '${escaped_mcf_password}';
+  ELSE
+    ALTER ROLE ${mcf_user} WITH PASSWORD '${escaped_mcf_password}';
+  END IF;
+END
+\$\$;
+SQL
+
+  # Check whether database exists
+  db_exists=$("${DATAFARI_HOME}/pgsql/bin/psql" -tA -U "${pg_admin_user}" -d "${pg_admin_db}" \
+    -c "SELECT 1 FROM pg_database WHERE datname='${mcf_database}';")
+
+  if [ "${db_exists}" != "1" ]; then
+    "${DATAFARI_HOME}/pgsql/bin/psql" -v ON_ERROR_STOP=1 -U "${pg_admin_user}" -d "${pg_admin_db}" \
+      -c "CREATE DATABASE ${mcf_database} OWNER ${mcf_user};"
+  fi
+
+  unset PGPASSWORD
+
+  echo "OK: PostgreSQL user ${mcf_user} ready with database ${mcf_database}"
+}
 
 start_postgres()
 {
@@ -326,6 +506,12 @@ case $COMMAND in
   ;;
   init_postgres_datafariwebapp)
     init_postgres_datafariwebapp
+  ;;
+  init_postgres_datafari_tables)
+    init_postgres_datafari_tables
+  ;;
+  init_postgres_manifoldcf)
+    init_postgres_manifoldcf
   ;;
   start_postgres)
     start_postgres

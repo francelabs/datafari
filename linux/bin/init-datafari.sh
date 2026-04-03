@@ -20,7 +20,7 @@ question_ip_node() {
 }
 
 question_disk_type() {
-	read -p  "Specify if hour hard drive is SSD type [yes] " disk_type
+	read -p  "Specify if hour hard drive is SSD type [yes] " ssd_disk
     ssd_disk=${ssd_disk:-true}
     if [[ "$ssd_disk" = "yes" ]] || [[ "$ssd_disk" = "y" ]] || [[ "$ssd_disk" = "true" ]]; then
       ssd_disk=true
@@ -405,11 +405,12 @@ init_postgresql() {
   sed -i -e "s~@POSTGRESQLPORT@~${POSTGRESQL_PORT}~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQLDATABASE@~${POSTGRESQL_DATABASE}~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQLUSERNAME@~${POSTGRESQL_USERNAME}~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQLMCFUSERNAME@~${POSTGRESQL_MANIFOLDCF_USERNAME}~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
   
   sed -i -e "s~@POSTGRESQLHOSTNAME@~${POSTGRESQL_HOSTNAME}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQLPORT@~${POSTGRESQL_PORT}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQLDATABASE@~${POSTGRESQL_DATABASE}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
-  sed -i -e "s~@POSTGRESQLUSERNAME@~${POSTGRESQL_USERNAME}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESQLMCFUSERNAME@~${POSTGRESQL_USERNAME}~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
   
   sed -i -e "s~@POSTGRESQL_HOSTNAME@~${POSTGRESQL_HOSTNAME}~g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESQL_PORT@~${POSTGRESQL_PORT}~g" $DATAFARI_HOME/ssl-keystore/apache/config/datafari-pgsql.conf >>$installerLog 2>&1
@@ -430,13 +431,112 @@ init_postgresql_datafariwebapp() {
   
 }
 
+generate_pg_admin_password() {
+  local secret_file="/opt/datafari/secrets/pg_admin_password"
 
-init_password_postgresql() {
+  # If file exists AND is not empty → do nothing
+  if [ -s "$secret_file" ]; then
+    echo "INFO: PostgreSQL admin password already initialized"
+    return 0
+  fi
+
+  echo "INFO: Generating PostgreSQL admin password..."
+
+  local password
+  password="$(generate_strong_password 20)"
+
+  # Write password (no newline)
+  printf "%s" "$password" > "$secret_file"
+
+  # Secure permissions
+  chmod 600 "$secret_file"
+
+  echo "INFO: PostgreSQL admin password generated and stored in $secret_file"
+}
+
+generate_pg_manifoldcf_password() {
+  local secret_file="/opt/datafari/secrets/pg_mcf_password"
+
+  # If file exists AND is not empty → do nothing
+  if [ -s "$secret_file" ]; then
+    echo "INFO: PostgreSQL MCF DB  password already initialized"
+    return 0
+  fi
+
+  echo "INFO: Generating PostgreSQL MCF password..."
+
+  local password
+  password="$(generate_strong_password 20)"
+
+  # Write password (no newline)
+  printf "%s" "$password" > "$secret_file"
+
+  # Secure permissions
+  chmod 600 "$secret_file"
+
+  echo "INFO: PostgreSQL MCF password generated and stored in $secret_file"
+}
+
+generate_pg_datafari_password() {
+  local secret_file="/opt/datafari/secrets/pg_datafari_password"
+
+  # If file exists AND is not empty → do nothing
+  if [ -s "$secret_file" ]; then
+    echo "INFO: PostgreSQL Datafari DB  password already initialized"
+    return 0
+  fi
+
+  echo "INFO: Generating PostgreSQL Datafari password..."
+
+  local password
+  password="$(generate_strong_password 20)"
+
+  # Write password (no newline)
+  printf "%s" "$password" > "$secret_file"
+
+  # Secure permissions
+  chmod 600 "$secret_file"
+
+  echo "INFO: PostgreSQL Datafari password generated and stored in $secret_file"
+}
+
+generate_strong_password() {
+  local length="${1:-20}"
+
+  # Generate a strong password:
+  # - base64 random
+  # - remove problematic characters if needed
+  openssl rand -base64 48 | tr -d '\n' | head -c "$length"
+}
+
+
+
+init_password_postgresql_manifoldcf() {
   cd $MCF_HOME/obfuscation-utility
   chmod -R 777 $MCF_HOME/obfuscation-utility/obfuscate.sh
-  sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${1})~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
+  PG_PASSWORD=$(cat /opt/datafari/secrets/pg_mcf_password)
+  OBFUSCATED=$(./obfuscate.sh "$PG_PASSWORD")
+
+  ESCAPED_PASSWORD=$(printf '%s\n' "$OBFUSCATED" | sed 's/[&/\~]/\\&/g')
+
+  sed -i -e "s~@POSTGRESQLMCFPASSWORD@~${ESCAPED_PASSWORD}~g" "$MCF_HOME/properties-global.xml" >>"$installerLog" 2>&1
+  #sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${1})~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
   sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${1})~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
-  sed -i -e "s~@POSTGRESPASSWORD@~${1}~g" $DATAFARI_HOME/pgsql/pwd.conf >>$installerLog 2>&1
+  #sed -i -e "s~@POSTGRESPASSWORD@~${1}~g" $DATAFARI_HOME/pgsql/pwd.conf >>$installerLog 2>&1
+}
+
+init_password_postgresql_admin_manifoldcf() {
+  cd $MCF_HOME/obfuscation-utility
+  chmod -R 777 $MCF_HOME/obfuscation-utility/obfuscate.sh
+  PG_PASSWORD=$(cat /opt/datafari/secrets/pg_admin_password)
+  OBFUSCATED=$(./obfuscate.sh "$PG_PASSWORD")
+
+  ESCAPED_PASSWORD=$(printf '%s\n' "$OBFUSCATED" | sed 's/[&/\~]/\\&/g')
+
+  sed -i -e "s~@POSTGRESPASSWORD@~${ESCAPED_PASSWORD}~g" "$MCF_HOME/properties-global.xml" >>"$installerLog" 2>&1
+  #sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${1})~g" $MCF_HOME/properties-global.xml >>$installerLog 2>&1
+  sed -i -e "s~@POSTGRESPASSWORD@~$(./obfuscate.sh ${1})~g" $TOMCAT_HOME/conf/mcf-postgres.properties >>$installerLog 2>&1
+  #sed -i -e "s~@POSTGRESPASSWORD@~${1}~g" $DATAFARI_HOME/pgsql/pwd.conf >>$installerLog 2>&1
 }
 
 optimize_postgresql_ssd() {
@@ -947,7 +1047,11 @@ initialization_monoserver() {
   init_webapp_name "Datafari"
   clean_monoserver_node
   init_password $TEMPADMINPASSWORD
-  init_password_postgresql $TEMPPGSQLPASSWORD
+  generate_pg_admin_password
+  generate_pg_datafari_password
+  generate_pg_manifoldcf_password
+  init_password_postgresql_admin_manifoldcf
+  init_password_postgresql_manifoldcf
   init_postgresql
   init_postgresql_datafariwebapp
   init_apache_ssl
