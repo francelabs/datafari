@@ -423,7 +423,7 @@
   <dependency>
     <groupId>org.eclipse.jetty</groupId>
     <artifactId>jetty-client</artifactId>
-    <!-- version héritée du BOM -->
+    <!-- version h??rit??e du BOM -->
   </dependency>
   <dependency>
     <groupId>org.eclipse.jetty</groupId>
@@ -457,13 +457,13 @@
     <artifactId>jetty-http2-hpack</artifactId>
   </dependency>
 
-  <!-- ALPN client (nécessaire en HTTPS) -->
+  <!-- ALPN client (n??cessaire en HTTPS) -->
   <dependency>
     <groupId>org.eclipse.jetty</groupId>
     <artifactId>jetty-alpn-client</artifactId>
   </dependency>
 
-  <!-- SolrJ 10, on évite toute vieille lignée Jetty transitive -->
+  <!-- SolrJ 10, on ??vite toute vieille lign??e Jetty transitive -->
   <dependency>
     <groupId>org.apache.solr</groupId>
     <artifactId>solr-solrj</artifactId>
@@ -482,14 +482,6 @@
 
   </dependencies>
 
-  <repositories>
-    <!-- Additionnal repository for SAML specific need -->
-    <repository>
-      <id>shibboleth-releases</id>
-      <name>Shibboleth Releases</name>
-      <url>https://build.shibboleth.net/maven/releases/</url>
-    </repository>
-  </repositories>
 
 
   <build>
