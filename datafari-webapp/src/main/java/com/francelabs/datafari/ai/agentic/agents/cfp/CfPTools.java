@@ -12,6 +12,7 @@ import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.agent.tool.P;
 import dev.langchain4j.agent.tool.Tool;
 import dev.langchain4j.data.document.Document;
+import dev.langchain4j.invocation.InvocationContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -75,9 +76,11 @@ public class CfPTools {
     @Tool("Retrieve a list of CFP IDs, filtered by category, sorted by creation_date desc.")
     String listCallsForProvidersByCategory(
             @P("Number of CFP to retrieve") int rows,
-            @P(value = "Category filter (eg: Catering, Furniture, Carpentry or Maintenance).", required = false) String category
+            @P(value = "Category filter (eg: Catering, Furniture, Carpentry or Maintenance).", required = false) String category,
+            InvocationContext context
     ) {
         if (rows < 1) rows = 30;
+
 
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
         req.addParameter("q", "*:*");
@@ -85,6 +88,7 @@ public class CfPTools {
         req.addParameter("rows", "0"); // Only facets are needed
 
         if (category != null && !category.isBlank() && !"None".equals(category)) {
+            stream.toolResult(context.invocationId().toString(), Map.of("category", category));
             req.addParameter("fq", "({!term f=llm_categories v='" + category + "'} AND agentic_cfp_id:[* TO *])");
         } else {
             req.addParameter("fq", "agentic_cfp_id:[* TO *]");
@@ -169,11 +173,13 @@ public class CfPTools {
             idsStr.append(" ").append(id);
         }
 
+
         // Prepare response
         if (category != null && !category.isBlank()) {
+            stream.toolResult(context.invocationId().toString(), Map.of("category", category, "resultsNb", String.valueOf(rows)));
             String response = """
-                The ID of the latest {{rows}} CFP from category '{{category}}' are: {{ids}}. 
-                Available categories are: 
+                The ID of the latest {{rows}} CFP from category '{{category}}' are: {{ids}}.
+                Available categories are:
                 {{categoryList}}""";
             return response.replace("{{category}}", category)
                     .replace("{{rows}}", String.valueOf(rows))
@@ -181,6 +187,7 @@ public class CfPTools {
                     .replace("{{categoryList}}", categoryList.toString());
         } else {
             // If category is blank
+            stream.toolResult(context.invocationId().toString(), Map.of("resultsNb", String.valueOf(rows)));
             String response = "The ID of the latest {{rows}} CFP are: {{ids}}";
             return response.replace("{{rows}}", String.valueOf(rows))
                     .replace("{{ids}}", idsStr.toString());
@@ -192,10 +199,12 @@ public class CfPTools {
         icon = "layout-list")
     @Tool("For a given CFP ID (stored in agentic_cfp_id), returns information from CCTP (product type, delivery date, delivery requirements, guarantees duration).")
     String extractInfoFromCCTP(
-            @P("ID of the CFP. IDs use the format (X being digits): DCEXX") String cfpId
+            @P("ID of the CFP. IDs use the format (X being digits): DCEXX") String cfpId,
+            InvocationContext context
     ) {
         LOGGER.info("AGENTIC TOOLS - Extracting data from CCTP: {}", cfpId);
-        JSONArray docs = findCCTP(cfpId);
+        stream.toolResult(context.invocationId().toString(), Map.of("document", cfpId));
+        JSONArray docs = findCCTP(cfpId, context);
         if (docs.size() > 0) {
             try {
                 JSONObject doc = (JSONObject) docs.get(0);
@@ -237,10 +246,12 @@ public class CfPTools {
         icon = "layout-list")
     @Tool("For a given CFP, returns information from CCAP (Minimum amount, Maximum amount).")
     String extractInfoFromCCAP(
-            @P("ID of the CFP (from agentic_cfp_id). IDs use the format (X being digits): DCEXX") String cfpId
+            @P("ID of the CFP (from agentic_cfp_id). IDs use the format (X being digits): DCEXX") String cfpId,
+            InvocationContext context
     ) {
         LOGGER.info("AGENTIC TOOLS - Extracting data from CCAP: {}", cfpId);
-        JSONArray docs = findCCAP(cfpId);
+        stream.toolResult(context.invocationId().toString(), Map.of("document", cfpId));
+        JSONArray docs = findCCAP(cfpId, context);
         if (!docs.isEmpty()) {
             try {
                 JSONObject doc = (JSONObject) docs.getFirst();
@@ -281,7 +292,8 @@ public class CfPTools {
 
     //    @Tool("Retrieves the CCTP (Cahier des Charges Techniques Particuliers) for the specified CFP.")
     JSONArray findCCTP(
-            @P("ID of the CFP. IDs use the format (X being digits): DCEXX") String cfpId
+            @P("ID of the CFP. IDs use the format (X being digits): DCEXX") String cfpId,
+            InvocationContext context
     ) {
         LOGGER.info("AGENTIC TOOLS - Retrieving CCTP for CFP {} ", cfpId);
 
@@ -305,7 +317,8 @@ public class CfPTools {
 
     //    @Tool("Retrieves the CCAP (Cahier des Clauses Administratives Particulières) for the specified CFP.")
     JSONArray findCCAP(
-            @P("CFP ID. IDs generally use the following format (X being digits): DCEXX") String cfpId
+            @P("CFP ID. IDs generally use the following format (X being digits): DCEXX") String cfpId,
+            InvocationContext context
     ) {
         LOGGER.info("AGENTIC TOOLS - Retrieving CCAP for CFP {} ", cfpId);
 
@@ -332,12 +345,15 @@ public class CfPTools {
     @Tool("Read one page of the specified document. If the requested page does not exist for this document, it returns 'No content'. You must provide the exact document ID (not the CFP ID).")
     String readPageFromDocument(
             @P("docId of the document") String id,
-            @P("Page index (0-based)") int page
+            @P("Page index (0-based)") int page,
+            InvocationContext context
     ) {
         // "rows" is the number of chunks (from VectorMain) to show to the LLM at once.
         // Warning, should not be too high
         int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
         int start = Math.max(0, page) * rows;
+        
+        stream.toolResult(context.invocationId().toString(), Map.of("document", id));
 
 
         EditableHttpServletRequest req = new EditableHttpServletRequest(request);
