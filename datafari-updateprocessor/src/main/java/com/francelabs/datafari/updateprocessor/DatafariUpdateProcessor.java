@@ -167,22 +167,20 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
       });
     }
 
-    // Sometimes Tika put several ids so we keep the first one which is
-    // always the right one
+    // Sometimes Tika puts several ids, keep the first one which is always the right one
     if (doc.getFieldValues("id").size() > 1) {
       final Object id = doc.getFieldValue("id");
       doc.remove("id");
       doc.addField("id", id);
     }
 
-    // Create a "hashed" id that does not contain special characters (useful for RAG & AI features)
+    // Create a hashed id that does not contain special characters
     if (doc.getFieldValue("docId") == null) {
-      final String docId = hashId( (String) doc.getFieldValue("id") );
+      final String docId = hashId((String) doc.getFieldValue("id"));
       doc.setField("docId", docId);
     }
 
-    // Try to retrieve at the ignored_filelastmodified field to set its
-    // value in the last_modified field
+    // Try to retrieve ignored_filelastmodified field to set its value in last_modified
     if (doc.getFieldValue("ignored_filelastmodified") != null) {
       final Object last_modified = doc.getFieldValue("ignored_filelastmodified");
       doc.addField("last_modified", last_modified);
@@ -200,7 +198,6 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
           content = (String) contentFieldFr.getFirstValue();
         } else if (contentFieldEn != null) {
           content = (String) contentFieldEn.getFirstValue();
-
         }
 
         if (simplePhoneExtraction) {
@@ -235,16 +232,14 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
           }
         }
       }
-
     }
-
 
     String url;
     if (doc.containsKey("url")) {
       url = (String) doc.getFieldValue("url");
       doc.remove("url");
       doc.addField("url", url);
-    } else {    
+    } else {
       url = (String) doc.getFieldValue("id");
       doc.addField("url", url);
     }
@@ -253,12 +248,12 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
       final String decodedUrl = URLDecoder.decode(url, StandardCharsets.UTF_8.name());
       doc.addField("url_search", decodedUrl);
     } catch (final Exception e) {
-      // The url is malformed, keep it like it is although the stemming will not be good, it is better than nothing
+      // The URL is malformed, keep it as-is
       doc.addField("url_search", url);
     }
 
     if (hierarchicalPathProcessing) {
-      // Create path hierarchy for facet
+      // Create path hierarchy for faceting
       final List<String> urlHierarchy = new ArrayList<>();
       final Matcher regexMatcher = hierarchicalRegexPattern.matcher(url);
       String cleanUrl = url;
@@ -267,11 +262,11 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
         cleanUrl = url.substring(endIndex - 2);
       }
 
-      // Create path hierarchy for facet
       final long separatorCount = cleanUrl.chars().filter(ch -> ch == hierarchicalPathSeparator).count();
       int previousIndex = 0;
       int depth = 0;
-      // Tokenize the path and add the depth as first character for each token // (like: 0/home,1/home/project ...)
+
+      // Tokenize the path and add the depth as first character for each token
       for (int i = 0; i < separatorCount; i++) {
         final int endIndex = cleanUrl.indexOf(hierarchicalPathSeparator, previousIndex);
         if (endIndex == -1) {
@@ -297,7 +292,9 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     }
 
     final SolrInputField streamNameField = doc.get("ignored_stream_name");
-    if (streamNameField != null && !streamNameField.getFirstValue().toString().isEmpty() && !streamNameField.getFirstValue().toString().toLowerCase().contentEquals("docname")) {
+    if (streamNameField != null
+        && !streamNameField.getFirstValue().toString().isEmpty()
+        && !streamNameField.getFirstValue().toString().toLowerCase().contentEquals("docname")) {
       filename = (String) streamNameField.getFirstValue();
     } else {
       final Pattern pattern = Pattern.compile("[^/]*$");
@@ -326,36 +323,33 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
       }
     }
 
-    // keep the jsoup or filename as the first title for the searchView of Datafari
-
-    // Source WEB
+    // Keep the jsoup title or filename as the first title for the searchView
     if (!jsouptitle.isEmpty()) {
       Collection<Object> tempTitles = doc.getFieldValues("title");
       doc.remove("title");
       doc.addField("title", jsouptitle);
-      doc.addField("title",tempTitles);
-      if (!filename.isEmpty())
-        doc.addField("title", filename);
-    }
-    else {
+      doc.addField("title", tempTitles);
       if (!filename.isEmpty()) {
-
+        doc.addField("title", filename);
+      }
+    } else {
+      if (!filename.isEmpty()) {
         Collection<Object> tempTitles = doc.getFieldValues("title");
         doc.remove("title");
         doc.addField("title", filename);
-        doc.addField("title",tempTitles);
+        doc.addField("title", tempTitles);
       }
     }
 
-    // The title field has lost its original value(s) after the LangDetectLanguageIdentifierUpdateProcessorFactory
-    // Need to set it back from the exactTitle field
+    // The title field has lost its original value(s) after language detection
+    // Need to set it back from exactTitle
     if (doc.get("exactTitle") != null) {
       for (final Object value : doc.getFieldValues("exactTitle")) {
         doc.addField("title", value);
       }
     }
 
-    // Clean authors (remove duplicates)
+    // Clean authors and remove duplicates
     if (doc.containsKey("author")) {
       final Set<String> authors = new HashSet<>();
       for (final Object authorObj : doc.getFieldValues("author")) {
@@ -365,7 +359,7 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
       doc.addField("author", authors.toArray(new String[0]));
     }
 
-    // Ensure a search-able title
+    // Ensure a searchable title
     String language = (String) doc.getFieldValue("language");
     if (language == null) {
       language = "en";
@@ -382,6 +376,7 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     String extension = "";
     String mime = "";
     String nameExtension = "";
+
     try {
       final URL urlObject = new URL(url);
       final String path = urlObject.getPath();
@@ -389,44 +384,61 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     } catch (final MalformedURLException e) {
       // Do nothing
     }
-    final SolrInputField mimeTypeField = doc.get("ignored_content_type");
+
+    final SolrInputField mimeTypeField = getMimeTypeField(doc);
     final String tikaExtension = mimeTypeField == null ? "" : extensionFromMimeTypeField(mimeTypeField);
+    final String contentTypeFallbackExtension = extensionFromContentType(mimeTypeField);
 
-    mime = tikaExtension.length() > 1 && tikaExtension.length() < 5 ? tikaExtension : nameExtension;
-    if (url.startsWith("http") && !mime.isEmpty()) {
-      extension = mime;
-    } else {
-      extension = nameExtension.length() > 1 && nameExtension.length() < 5 ? nameExtension : tikaExtension;
+    // Determine the extension using the following priority:
+    // 1. URL path extension
+    // 2. Tika-derived extension
+    // 3. Explicit Content-Type fallback
+    if (!nameExtension.isEmpty()) {
+      extension = nameExtension;
+    } else if (!tikaExtension.isEmpty()) {
+      extension = tikaExtension;
+    } else if (!contentTypeFallbackExtension.isEmpty()) {
+      extension = contentTypeFallbackExtension;
     }
 
-    /*
-     * if (extensionFromName || mimeTypeField == null) { if (path.contains(".")){ extension = FilenameUtils.getExtension(path); if (extension.length() > 4 || extension.length() < 1) { // If length is
-     * too long, try extracting from tika information if available String tryExtension = mimeTypeField==null ? null : extensionFromMimeTypeField(mimeTypeField); if (tryExtension != null) { extension =
-     * tryExtension; } else { // Else default to bin for anything else extension = "bin"; } } } else if (urlObject.getProtocol().equals("http") || urlObject.getProtocol().equals("https")) { extension
-     * = null; if (mimeTypeField != null) { extension = extensionFromMimeTypeField(mimeTypeField); } if (extension == null) { extension = "html"; } } } else { extension =
-     * extensionFromMimeTypeField(mimeTypeField); if (extension == null) { extension = FilenameUtils.getExtension(path); } }
-     */
+    // Determine the mime-like value used by the existing field
+    if (!tikaExtension.isEmpty()) {
+      mime = tikaExtension;
+    } else if (!contentTypeFallbackExtension.isEmpty()) {
+      mime = contentTypeFallbackExtension;
+    } else if (!nameExtension.isEmpty()) {
+      mime = nameExtension;
+    }
+
     if (!doc.containsKey("extension")) {
-      doc.addField("extension", extension.toLowerCase());
+      doc.addField("extension", extension.toLowerCase(Locale.ROOT));
     }
-    doc.addField("mime", mime.toLowerCase());
+    doc.addField("mime", mime.toLowerCase(Locale.ROOT));
 
-    // remove useless dates to only keep one for last_modified and creation_date fields
+    // Remove useless dates to only keep one value for last_modified and creation_date
     final String lastmodifiedField = "last_modified";
     final String creationdateField = "creation_date";
 
-    if (doc.containsKey(lastmodifiedField) && doc.getFieldValue(lastmodifiedField) != null && !doc.getFieldValue(lastmodifiedField).toString().isEmpty()) {
+    if (doc.containsKey(lastmodifiedField)
+        && doc.getFieldValue(lastmodifiedField) != null
+        && !doc.getFieldValue(lastmodifiedField).toString().isEmpty()) {
       final Collection<Object> lastmodifiedCollection = doc.getFieldValues("last_modified");
-      final Object firsLastModified = lastmodifiedCollection.iterator().next();
+      final Object firstLastModified = lastmodifiedCollection.iterator().next();
       doc.remove(lastmodifiedField);
-      if (isValidDate(firsLastModified)) doc.addField(lastmodifiedField, firsLastModified);
+      if (isValidDate(firstLastModified)) {
+        doc.addField(lastmodifiedField, firstLastModified);
+      }
     }
 
-    if (doc.containsKey(creationdateField) && doc.getFieldValue(creationdateField) != null && !doc.getFieldValue(creationdateField).toString().isEmpty()) {
+    if (doc.containsKey(creationdateField)
+        && doc.getFieldValue(creationdateField) != null
+        && !doc.getFieldValue(creationdateField).toString().isEmpty()) {
       final Collection<Object> creationDateCollection = doc.getFieldValues("creation_date");
       final Object firstCreationDate = creationDateCollection.iterator().next();
       doc.remove(creationdateField);
-      if (isValidDate(firstCreationDate)) doc.addField(creationdateField, firstCreationDate);
+      if (isValidDate(firstCreationDate)) {
+        doc.addField(creationdateField, firstCreationDate);
+      }
     }
 
     super.processAdd(cmd);
@@ -442,6 +454,27 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
     } else {
       return url;
     }
+  }
+  
+  /**
+   * Retrieve the most reliable MIME type field from the document.
+   * Priority order:
+   * 1. ignored_content_type (Datafari/Tika normalized field)
+   * 2. Content_Type (Tika or parser canonical field)
+   * 3. content_type (raw HTTP header fallback)
+   */
+  private SolrInputField getMimeTypeField(final SolrInputDocument doc) {
+    SolrInputField mimeTypeField = doc.get("ignored_content_type");
+
+    if (mimeTypeField == null) {
+      mimeTypeField = doc.get("Content_Type");
+    }
+
+    if (mimeTypeField == null) {
+      mimeTypeField = doc.get("content_type");
+    }
+
+    return mimeTypeField;
   }
 
   private String extensionFromMimeTypeField(final SolrInputField mimeTypeField) {
@@ -465,9 +498,58 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
           extension = currentExtension;
         }
       } catch (final MimeTypeException e) {
+        // Ignore unsupported mime types
       }
     }
     return extension;
+  }
+
+  private String extensionFromContentType(final SolrInputField mimeTypeField) {
+    if (mimeTypeField == null || mimeTypeField.getValues() == null) {
+      return "";
+    }
+
+    for (final Object value : mimeTypeField.getValues()) {
+      if (value == null) {
+        continue;
+      }
+
+      String mime = value.toString().toLowerCase(Locale.ROOT);
+      if (mime.contains(";")) {
+        mime = mime.substring(0, mime.indexOf(';')).trim();
+      }
+
+      switch (mime) {
+        case "text/html":
+        case "application/xhtml+xml":
+          return "html";
+        case "application/pdf":
+          return "pdf";
+        case "text/plain":
+          return "txt";
+        case "application/msword":
+          return "doc";
+        case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+          return "docx";
+        case "application/vnd.ms-excel":
+          return "xls";
+        case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+          return "xlsx";
+        case "application/vnd.ms-powerpoint":
+          return "ppt";
+        case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+          return "pptx";
+        case "application/json":
+          return "json";
+        case "application/xml":
+        case "text/xml":
+          return "xml";
+        default:
+          break;
+      }
+    }
+
+    return "";
   }
 
   /**
@@ -477,7 +559,7 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
   boolean isValidLong(Object str) {
     try {
       Long.parseLong(String.valueOf(str));
-    } catch(Exception e) {
+    } catch (Exception e) {
       return false;
     }
     return true;
@@ -498,11 +580,11 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
       }
       return sb.toString();
     } catch (NoSuchAlgorithmException e) {
-          RandomStringGenerator generator = new RandomStringGenerator.Builder()
+      RandomStringGenerator generator = new RandomStringGenerator.Builder()
           .withinRange('0', 'z')
           .filteredBy(LETTERS, DIGITS)
           .build();
-          return generator.generate(30);
+      return generator.generate(30);
     }
   }
 
@@ -511,6 +593,6 @@ public class DatafariUpdateProcessor extends UpdateRequestProcessor {
    * @return boolean
    */
   boolean isValidDate(Object str) {
-    return !String.valueOf(str).matches("[0-9]+"); // This value should not be a stringified timestamp
+    return !String.valueOf(str).matches("[0-9]+");
   }
 }

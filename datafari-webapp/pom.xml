@@ -219,7 +219,6 @@
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-crypto</artifactId>
-      <version>${spring.security.version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -288,8 +287,17 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.security.kerberos</groupId>
+      <artifactId>spring-security-kerberos-core</artifactId>
+      <version>${spring.security.kerberos.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security.kerberos</groupId>
       <artifactId>spring-security-kerberos-web</artifactId>
       <version>${spring.security.kerberos.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-saml2-service-provider</artifactId>
     </dependency>
     <dependency>
       <groupId>org.eclipse.angus</groupId>
@@ -472,8 +480,18 @@
     </exclusions>
   </dependency>
 
-
   </dependencies>
+
+  <repositories>
+    <!-- Additionnal repository for SAML specific need -->
+    <repository>
+      <id>shibboleth-releases</id>
+      <name>Shibboleth Releases</name>
+      <url>https://build.shibboleth.net/maven/releases/</url>
+    </repository>
+  </repositories>
+
+
   <build>
     <plugins>
       <!-- Mandatory for EE -->

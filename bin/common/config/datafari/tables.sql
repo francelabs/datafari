@@ -12,53 +12,13 @@ CREATE TABLE access_tokens (
     PRIMARY KEY (username, api, identifier)
 );
 
-CREATE TABLE oauth_access_tokens (
-    access_token_id VARCHAR(255) PRIMARY KEY,
-    access_token VARCHAR(255)
-);
-
-CREATE TABLE oauth_authentications (
-    access_token_id VARCHAR(255) PRIMARY KEY,
-    authentication VARCHAR(255)
-);
-
-CREATE TABLE oauth_auth_to_access_token (
-    auth_key VARCHAR(255) PRIMARY KEY,
-    access_token VARCHAR(255)
-);
-
-CREATE TABLE oauth_client_id_to_access_token (
+CREATE TABLE datafari_access_token (
+    token_id VARCHAR(64) PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
     client_id VARCHAR(255) NOT NULL,
-    access_token VARCHAR(255) NOT NULL,
-    PRIMARY KEY (client_id, access_token)
-);
-
-CREATE TABLE oauth_refresh_tokens (
-    refresh_token_id VARCHAR(255) PRIMARY KEY,
-    refresh_token VARCHAR(255)
-);
-
-CREATE TABLE oauth_refresh_token_auth (
-    refresh_token_id TEXT PRIMARY KEY,
-    authentication TEXT
-);
-
-CREATE TABLE oauth_refresh_token_to_access_token (
-    refresh_token_id VARCHAR(255) PRIMARY KEY,
-    access_token_id VARCHAR(255)
-);
-
-CREATE TABLE oauth_username_to_access_token (
-    approval_key VARCHAR(255) NOT NULL,
-    access_token VARCHAR(255) NOT NULL,
-    PRIMARY KEY (approval_key, access_token)
-);
-
-CREATE TABLE oauth_clients (
-    client_id TEXT PRIMARY KEY,
-    client_secret TEXT,
-    access_token_validity_seconds INTEGER,
-    refresh_token_validity_seconds INTEGER
+    authorities TEXT NOT NULL,
+    issued_at TIMESTAMP NOT NULL,
+    expires_at TIMESTAMP NOT NULL
 );
 
 CREATE TABLE alerts (
@@ -237,3 +197,6 @@ CREATE INDEX messages_conversation_created_idx ON messages(conversation_id, crea
 CREATE INDEX docsbasket_conversation_idx ON docsbasket(conversation_id);
 CREATE INDEX docsbasket_document_id_idx ON docsbasket(document_id);
 CREATE UNIQUE INDEX docsbasket_unique_doc_per_conv ON docsbasket(conversation_id, document_id);
+
+CREATE INDEX datafari_access_token_username_idx ON datafari_access_token(username);
+CREATE INDEX datafari_access_token_expires_at_idx ON datafari_access_token(expires_at);

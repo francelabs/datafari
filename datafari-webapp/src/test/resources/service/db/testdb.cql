@@ -12,60 +12,6 @@ CREATE TABLE access_tokens (
   PRIMARY KEY (username, api, identifier)
 );
 
-CREATE TABLE oauth_access_tokens (
-  accesstokenid text PRIMARY KEY,
-  accesstoken text
-);
-
-CREATE TABLE oauth_authentications (
-  accesstokenid text PRIMARY KEY,
-  authentication text
-);
-
-CREATE TABLE oauth_auth_to_access_token (
-  authkey text PRIMARY KEY,
-  accesstoken text
-);
-
-CREATE TABLE oauth_client_id_to_access_token (
-  clientid text,
-  accesstoken text,
-  PRIMARY KEY (clientid, accesstoken )
-);
-
-CREATE TABLE oauth_refresh_tokens (
-  refreshtokenid text PRIMARY KEY,
-  refreshtoken text
-);
-
-CREATE TABLE oauth_refresh_token_auth (
-  refreshtokenid text PRIMARY KEY,
-  authentication text
-);
-
-CREATE TABLE oauth_refresh_token_to_access_token (
-  refreshtokenid text PRIMARY KEY,
-  accesstokenid text
-);
-
-CREATE TABLE oauth_username_to_access_token (
-  approvalkey text,
-  accesstoken text,
-  PRIMARY KEY (approvalkey, accesstoken )
-);
-
-CREATE TABLE oauth_clients (
-  clientid text PRIMARY KEY,
-  clientsecret text,
-  resourceids set<text>,
-  scope set<text>,
-  authorizedgranttypes set<text>,
-  registeredredirecturi set<text>,
-  authorities set<text>,
-  accesstokenvalidityseconds int,
-  refreshtokenvalidityseconds int
-);
-
 CREATE TABLE alerts (
   id uuid PRIMARY KEY,
   keyword varchar,

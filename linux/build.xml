@@ -68,6 +68,8 @@
 	<property name="installer.dist.dir" value="${installer.dir}/dist" />
 
 
+	<target name="clean-build-test" depends="clean,package,copyBinaries" />
+
 	<target name="clean-build" depends="clean,package,installer-debian" />
 
 	<target name="clean-build-prod" depends="clean,package,factorydatafari,installer-debian" />

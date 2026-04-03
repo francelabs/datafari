@@ -9,13 +9,13 @@
   
   <body>
     <div class="header">
-      <a href="/@WEBAPPNAME@"><img src="<c:url value="/resources/images/datafari_small_text_logo.png" />"></a>
+      <a href="/datafariui"><img src="<c:url value="/resources/images/datafari_small_text_logo.png" />"></a>
     </div>
     <img class="sammy" src="<c:url value="/resources/images/errors/Datafari_503_Backrground_Picture.jpg" />"></img> 
     <div class="waves"></div>
     <div class="oops-copy">
       <h1>Service unavailable ! Please try later</h1>
-      <p class="sub-copy">Head back to the <a href="/Datafari">search page</a>.</p>
+      <p class="sub-copy">Head back to the <a href="/datafariui">search page</a>.</p>
     </div>
   
   </body>
