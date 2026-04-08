@@ -8,7 +8,7 @@ function internationalize() {
 //  $("#enableAgenticLabel").text(window.i18n.msgStore['ragConf-enableAgenticLabel']);
 //  $("#enableSummarizationLabel").text(window.i18n.msgStore['ragConf-enableSummarizationLabel']);
 //  $("#enableSynthesisLabel").text(window.i18n.msgStore['ragConf-enableSynthesisLabel']);
-  $("#solrTopKLabel").text(window.i18n.msgStore['ragConf-solrTopKLabel']);
+  $("#ragTopKLabel").text(window.i18n.msgStore['ragConf-ragTopKLabel']);
   $("#rrfTopKLabel").text(window.i18n.msgStore['ragConf-rrfTopKLabel']);
   $("#rrfRankConstantLabel").text(window.i18n.msgStore['ragConf-rrfRankConstantLabel']);
   $("#solrEmbeddingsModelLabel").text(window.i18n.msgStore['ragConf-solrEmbeddingsModelLabel']);
@@ -58,7 +58,7 @@ function loadRagConfig() {
     updateRetrievalVisibility();
     $('#solrEmbeddingsModel').val(data.solrEmbeddingsModel || '');
     $('#solrVectorField').val(data.solrVectorField || '');
-    $('#solrTopK').val(data.solrTopK || 10);
+    $('#ragTopK').val(data.ragTopK || 10);
     $('#rrfTopK').val(data.rrfTopK || 50);
     $('#rrfRankConstant').val(data.rrfRankConstant || 60);
 
@@ -109,7 +109,7 @@ function submitRagConfig(event) {
     "chat.query.rewriting.enabled.vector": $('#chatQueryRewritingEnabledVector').is(':checked'),
     "chat.memory.enabled": $('#chatMemoryEnabled').is(':checked'),
     "chat.memory.history.size": $('#chatMemoryHistorySize').val(),
-    "solr.topK": $('#solrTopK').val(),
+    "rag.topK": $('#ragTopK').val(),
     "rrf.topK": $('#rrfTopK').val(),
     "rrf.rank.constant": $('#rrfRankConstant').val(),
     "retrieval.method": $('#retrievalMethod').val(),

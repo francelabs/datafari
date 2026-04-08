@@ -114,9 +114,15 @@ public class SearchAPI {
         String[] topK = new String[] { ragConfiguration.getProperty(RagConfiguration.SOLR_TOPK, "50") };
         parameterMap.put("topK", topK);
       }
-      if (!parameterMap.containsKey("filteredSearchThreshold")) {
+      if (!parameterMap.containsKey("filteredSearchThreshold") && ragConfiguration.getBooleanProperty(RagConfiguration.SOLR_ENABLE_ACORN, false)) {
         String[] filteredSearchThreshold = new String[] { ragConfiguration.getProperty(RagConfiguration.SOLR_FILTERED_SEARCH_THRESHOLD, "60") };
         parameterMap.put("filteredSearchThreshold", filteredSearchThreshold);
+      }
+
+      // If LADR is DISABLED, we override the seedQuery so it returns no result
+      if (!ragConfiguration.getBooleanProperty(RagConfiguration.SOLR_ENABLE_LADR)) {
+        String[] seedQuery = new String[] { "id:__no_such_doc__" };
+        parameterMap.put("seedQuery", seedQuery);
       }
 
       EbdModelConfigurationManager manager = new EbdModelConfigurationManager();

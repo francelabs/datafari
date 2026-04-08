@@ -86,7 +86,7 @@ public class GenericTools {
     String bm25Search(@P("The search query") String query,
                       InvocationContext context) {
         LOGGER.info("AGENTIC TOOLS - BM25 Search - Query: {}", query);
-        int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
+        int rows = config.getIntegerProperty(RagConfiguration.RAG_TOPK, 10);
 
         // Stream document ID instead of title, and query
         stream.toolResult(context.invocationId().toString(), Map.of("searchQuery", query));
@@ -127,7 +127,7 @@ public class GenericTools {
 
         // "rows" is the number of chunks (from VectorMain) to show to the LLM at once.
         // Warning, should not be too high
-        int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
+        int rows = config.getIntegerProperty(RagConfiguration.RAG_TOPK, 10);
         int start = Math.max(0, page) * rows;
 
         // Stream document ID instead of title, and query
@@ -174,7 +174,7 @@ public class GenericTools {
             @P("The search query") String query,
             InvocationContext context
     ) {
-        int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
+        int rows = config.getIntegerProperty(RagConfiguration.RAG_TOPK, 10);
         LOGGER.info("AGENTIC TOOLS - Search from document - Query: {} - Document: {}", query, id);
 
         // Stream document ID, search query
@@ -273,7 +273,7 @@ public class GenericTools {
 //    ) {
 //        LOGGER.debug("AGENTIC TOOLS - Vector Search - Query: {}", query);
 //
-//        int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
+//        int rows = config.getIntegerProperty(RagConfiguration.RAG_TOPK, 10);
 //        int topK = config.getIntegerProperty(RagConfiguration.RRF_TOPK, 50);
 //
 //        EditableHttpServletRequest req = new EditableHttpServletRequest(request);

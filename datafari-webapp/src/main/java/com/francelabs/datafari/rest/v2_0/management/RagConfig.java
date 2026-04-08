@@ -35,9 +35,13 @@ public class RagConfig {
           RagConfiguration.CHAT_MEMORY_HISTORY_SIZE,
           RagConfiguration.RETRIEVAL_METHOD,
           RagConfiguration.SOLR_TOPK,
+          RagConfiguration.RAG_TOPK,
           RagConfiguration.RRF_TOPK,
           RagConfiguration.RRF_RANK_CONSTANT,
-          RagConfiguration.AGENTIC_ENABLE_LOOP_CONTROL
+          RagConfiguration.AGENTIC_ENABLE_LOOP_CONTROL,
+          RagConfiguration.SOLR_ENABLE_ACORN,
+          RagConfiguration.SOLR_ENABLE_LADR,
+          RagConfiguration.SOLR_FILTERED_SEARCH_THRESHOLD
   );
 
   @RequestMapping("/rest/v2.0/management/ragConfig")
@@ -85,6 +89,9 @@ public class RagConfig {
     response.put("solrEmbeddingsModel", config.getProperty(RagConfiguration.SOLR_EMBEDDINGS_MODEL));
     response.put("solrVectorField", config.getProperty(RagConfiguration.SOLR_VECTOR_FIELD));
     response.put("solrTopK", config.getProperty(RagConfiguration.SOLR_TOPK));
+    response.put("ragTopK", config.getProperty(RagConfiguration.RAG_TOPK));
+    response.put("enableAcorn", config.getBooleanProperty(RagConfiguration.SOLR_ENABLE_ACORN));
+    response.put("enableLadr", config.getBooleanProperty(RagConfiguration.SOLR_ENABLE_LADR));
     response.put("solrFilteredSearchThreshold", config.getProperty(RagConfiguration.SOLR_FILTERED_SEARCH_THRESHOLD));
     response.put("rrfTopK", config.getProperty(RagConfiguration.RRF_TOPK));
     response.put("rrfRankConstant", config.getProperty(RagConfiguration.RRF_RANK_CONSTANT));

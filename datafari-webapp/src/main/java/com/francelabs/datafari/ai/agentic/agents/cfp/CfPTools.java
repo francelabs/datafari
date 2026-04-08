@@ -350,9 +350,9 @@ public class CfPTools {
     ) {
         // "rows" is the number of chunks (from VectorMain) to show to the LLM at once.
         // Warning, should not be too high
-        int rows = config.getIntegerProperty(RagConfiguration.SOLR_TOPK, 10);
+        int rows = config.getIntegerProperty(RagConfiguration.RAG_TOPK, 10);
         int start = Math.max(0, page) * rows;
-        
+
         stream.toolResult(context.invocationId().toString(), Map.of("document", id));
 
 
