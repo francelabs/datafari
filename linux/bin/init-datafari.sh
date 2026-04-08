@@ -500,6 +500,68 @@ generate_pg_datafari_password() {
   echo "INFO: PostgreSQL Datafari password generated and stored in $secret_file"
 }
 
+generate_pg_apache_password() {
+  local secret_file="/opt/datafari/secrets/pg_apache_password"
+
+  # If file exists AND is not empty → do nothing
+  if [ -s "$secret_file" ]; then
+    echo "INFO: PostgreSQL  Apache password already initialized"
+    return 0
+  fi
+
+  echo "INFO: Generating PostgreSQL Apache password..."
+
+  local password
+  password="$(generate_strong_password 20)"
+
+  # Write password (no newline)
+  printf "%s" "$password" > "$secret_file"
+
+  # Secure permissions
+  chmod 600 "$secret_file"
+
+  echo "INFO: PostgreSQL Apache password generated and stored in $secret_file"
+}
+
+generate_pg_apache_pgpass_file() {
+  local pgpass_file="${1:-/opt/datafari/secrets/apache.pgpass}"
+  local apache_user="${2:-apache}"
+  local datafari_database="${3:-datafari}"
+  local apache_password_file="${4:-/opt/datafari/secrets/pg_apache_password}"
+  local pg_host="${5:-localhost}"
+  local pg_port="${6:-5432}"
+
+  if [ ! -s "${apache_password_file}" ]; then
+    echo "ERROR: Apache PostgreSQL password file not found or empty: ${apache_password_file}"
+    return 1
+  fi
+
+  local apache_password
+  apache_password="$(cat "${apache_password_file}")"
+
+  # Escape ':' and '\' for pgpass format
+  local escaped_password
+  escaped_password=$(printf "%s" "${apache_password}" | sed 's/\\/\\\\/g; s/:/\\:/g')
+
+  # Write pgpass file
+  printf "%s:%s:%s:%s:%s" \
+    "${pg_host}" \
+    "${pg_port}" \
+    "${datafari_database}" \
+    "${apache_user}" \
+    "${escaped_password}" > "${pgpass_file}"
+
+  chmod 600 "${pgpass_file}"
+
+  if [ ! -s "${pgpass_file}" ]; then
+    echo "ERROR: Failed to create pgpass file: ${pgpass_file}"
+    return 1
+  fi
+
+  echo "OK: Apache pgpass file created at ${pgpass_file}"
+}
+
+
 generate_strong_password() {
   local length="${1:-20}"
 
@@ -701,6 +763,7 @@ init_permissions() {
   echo "Init permissions 5/6"
   chmod -R 777 $DATAFARI_HOME/pid
   chmod -R 777 $DATAFARI_HOME/logs
+  chmod -R 600 $DATAFARI_HOME/secrets/apache.pgpass
   echo "Init permissions 6/6"
   if [ -d /etc/apache2 ]; then
     chown -R ${DATAFARI_USER} /etc/apache2
@@ -1050,6 +1113,8 @@ initialization_monoserver() {
   generate_pg_admin_password
   generate_pg_datafari_password
   generate_pg_manifoldcf_password
+  generate_pg_apache_password
+  generate_pg_apache_pgpass_file
   init_password_postgresql_admin_manifoldcf
   init_password_postgresql_manifoldcf
   init_postgresql

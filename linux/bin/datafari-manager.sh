@@ -199,7 +199,78 @@ init_postgres_datafari_tables() {
   echo "OK: Datafari tables initialized in database ${datafari_database}"
 }
 
+init_postgres_apache_user() {
+  local pg_admin_user="${1:-postgres}"
+  local pg_admin_db="${2:-postgres}"
+  local pg_admin_password_file="${3:-/opt/datafari/secrets/pg_admin_password}"
+  local apache_user="${4:-apache}"
+  local datafari_database="${5:-datafari}"
+  local apache_password_file="${6:-/opt/datafari/secrets/pg_apache_password}"
 
+  if [ ! -s "${pg_admin_password_file}" ]; then
+    echo "ERROR: PostgreSQL admin password file not found or empty: ${pg_admin_password_file}"
+    return 1
+  fi
+
+  if [ ! -s "${apache_password_file}" ]; then
+    echo "ERROR: Apache PostgreSQL password file not found or empty: ${apache_password_file}"
+    return 1
+  fi
+
+  local pg_admin_password
+  local apache_password
+  local escaped_apache_password
+  local role_check
+  local db_check
+  local grant_check
+
+  pg_admin_password="$(cat "${pg_admin_password_file}")"
+  apache_password="$(cat "${apache_password_file}")"
+  escaped_apache_password=$(printf "%s" "$apache_password" | sed "s/'/''/g")
+
+  export PGPASSWORD="${pg_admin_password}"
+
+  # Create or update role
+  "${DATAFARI_HOME}/pgsql/bin/psql" -v ON_ERROR_STOP=1 \
+    -h "${POSTGRESQL_HOSTNAME}" \
+    -p "${POSTGRESQL_PORT}" \
+    -U "${pg_admin_user}" \
+    -d "${pg_admin_db}" <<SQL
+DO \$\$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_roles WHERE rolname = '${apache_user}'
+  ) THEN
+    CREATE ROLE ${apache_user} LOGIN PASSWORD '${escaped_apache_password}';
+  ELSE
+    ALTER ROLE ${apache_user} WITH PASSWORD '${escaped_apache_password}';
+  END IF;
+END
+\$\$;
+SQL
+
+  # Grant minimum rights on Datafari DB
+  "${DATAFARI_HOME}/pgsql/bin/psql" -v ON_ERROR_STOP=1 \
+    -h "${POSTGRESQL_HOSTNAME}" \
+    -p "${POSTGRESQL_PORT}" \
+    -U "${pg_admin_user}" \
+    -d "${pg_admin_db}" \
+    -c "GRANT CONNECT ON DATABASE ${datafari_database} TO ${apache_user};"
+
+  "${DATAFARI_HOME}/pgsql/bin/psql" -v ON_ERROR_STOP=1 \
+    -h "${POSTGRESQL_HOSTNAME}" \
+    -p "${POSTGRESQL_PORT}" \
+    -U "${pg_admin_user}" \
+    -d "${datafari_database}" <<SQL
+GRANT USAGE ON SCHEMA public TO ${apache_user};
+GRANT SELECT ON TABLE public.users TO ${apache_user};
+GRANT SELECT ON TABLE public.roles TO ${apache_user};
+SQL
+
+  unset PGPASSWORD
+
+  echo "OK: PostgreSQL user ${apache_user} ready with read access on ${datafari_database}.public.users"
+}
 
 init_postgres_manifoldcf() {
   local pg_admin_user="${1:-postgres}"
@@ -506,6 +577,9 @@ case $COMMAND in
   ;;
   init_postgres_datafariwebapp)
     init_postgres_datafariwebapp
+  ;;
+  init_postgres_apache_user)
+    init_postgres_apache_user
   ;;
   init_postgres_datafari_tables)
     init_postgres_datafari_tables
