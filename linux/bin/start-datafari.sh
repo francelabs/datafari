@@ -83,7 +83,6 @@ fi
 
 check_java;
 
-
 @VERSION-START@
 
 # Monoserver
@@ -203,3 +202,6 @@ fi
 echo "Check services state, wait 60 seconds that all services are started"
 sleep 60
 check_services
+if [ "$DATAFARI_DEV_MODE" = "true" ]; then
+  echo "WARNING: Datafari is running in DEV MODE (insecure configuration)"
+fi

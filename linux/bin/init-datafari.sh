@@ -61,12 +61,6 @@ question_solr_shards_number() {
     set_property "SOLRNUMSHARDS" $solr_shards_number $CONFIG_FILE
 }
 
-question_datafari_password() {
-    read -p "Enter the Datafari password [admin]: " datafari_password
-    datafari_password=${datafari_password:-admin}
-    set_property "TEMPADMINPASSWORD" $datafari_password $CONFIG_FILE
-  set_property "MCFPASSWORD" $datafari_password $CONFIG_FILE
-}
 
 
 
@@ -528,7 +522,7 @@ generate_pg_apache_pgpass_file() {
   echo "OK: Apache pgpass file created at ${pgpass_file}"
 }
 generate_datafari_admin_password() {
-local secret_file="/opt/datafari/secrets/datafari_admin_password"
+  local secret_file="/opt/datafari/secrets/datafari_admin_password"
 
   # If file exists AND is not empty → do nothing
   if [ -s "$secret_file" ]; then
@@ -539,7 +533,13 @@ local secret_file="/opt/datafari/secrets/datafari_admin_password"
   echo "INFO: Generating Datafari admin password..."
 
   local password
-  password="$(generate_strong_password 20)"
+
+  if [ "$DATAFARI_DEV_MODE" = "true" ]; then
+    echo "WARNING: DATAFARI_DEV_MODE enabled → using default password 'admin'"
+    password="admin"
+  else
+    password="$(generate_strong_password 20)"
+  fi
 
   # Write password (no newline)
   printf "%s" "$password" > "$secret_file"
@@ -547,11 +547,10 @@ local secret_file="/opt/datafari/secrets/datafari_admin_password"
   # Secure permissions
   chmod 600 "$secret_file"
 
-  echo "INFO: Datafari admin password generated and stored in $secret_file"
+  echo "INFO: Datafari admin password stored in $secret_file"
 }
-
 generate_mcf_admin_password() {
-local secret_file="/opt/datafari/secrets/mcf_admin_password"
+  local secret_file="/opt/datafari/secrets/mcf_admin_password"
 
   # If file exists AND is not empty → do nothing
   if [ -s "$secret_file" ]; then
@@ -562,7 +561,13 @@ local secret_file="/opt/datafari/secrets/mcf_admin_password"
   echo "INFO: Generating MCF admin password..."
 
   local password
-  password="$(generate_strong_password 20)"
+
+  if [ "$DATAFARI_DEV_MODE" = "true" ]; then
+    echo "WARNING: DATAFARI_DEV_MODE enabled → using default password 'admin'"
+    password="admin"
+  else
+    password="$(generate_strong_password 20)"
+  fi
 
   # Write password (no newline)
   printf "%s" "$password" > "$secret_file"
@@ -570,7 +575,7 @@ local secret_file="/opt/datafari/secrets/mcf_admin_password"
   # Secure permissions
   chmod 600 "$secret_file"
 
-  echo "INFO: MCF admin password generated and stored in $secret_file"
+  echo "INFO: MCF admin password stored in $secret_file"
 }
 
 set_mcf_admin_password() {
@@ -1190,7 +1195,18 @@ then
   echo "The script will now exit"
   exit 0
 fi    
-    
+if [ "$DATAFARI_DEV_MODE" = "true" ]; then
+  echo "############################################################"
+  echo "# WARNING: DATAFARI DEV MODE ENABLED"
+  echo "#"
+  echo "# - Default passwords will be used (admin/admin)"
+  echo "# - This setup is NOT SECURE"
+  echo "# - DO NOT USE IN PRODUCTION"
+  echo "# - Wait for 3 seconds"
+  echo "#"
+  echo "############################################################"
+  sleep 3
+fi    
 check_java;
 check_ram;
 check_python;
@@ -1213,8 +1229,6 @@ if [ "$NODETYPE" == "monoserver" ]; then
   is_variable_set $SOLRHOSTS
   echo "maincollection check"
   is_variable_set $SOLRMAINCOLLECTION
-  echo "datafari password check"
-  is_variable_set $TEMPADMINPASSWORD
   is_variable_set $AnalyticsActivation
   echo "Check complete."
 
