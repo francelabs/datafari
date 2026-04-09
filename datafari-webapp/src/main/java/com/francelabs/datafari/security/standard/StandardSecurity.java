@@ -29,7 +29,7 @@ import java.util.List;
  */
 @Configuration
 @ConditionalOnExpression("${oidc.enabled:false}==false && ${saml.enabled:false}==false && ${keycloak.enabled:false}==false && ${kerberos.enabled:false}==false && ${cas.enabled:false}==false && ${header.enabled:false}==false")
-public class StandardSecurityConfiguration extends DatafariHttpSecuritySupport {
+public class StandardSecurity extends DatafariHttpSecuritySupport {
 
   /**
    * Creates the custom bearer token filter used to authenticate REST requests
@@ -88,22 +88,23 @@ public class StandardSecurityConfiguration extends DatafariHttpSecuritySupport {
     http.csrf(DatafariHttpSecuritySupport::applyCsrfSecurity);
     http.sessionManagement(DatafariHttpSecuritySupport::applyStandardSessionManagement);
 
-    http.formLogin(DatafariHttpSecuritySupport::applyLoginConfig);
-    http.logout(DatafariHttpSecuritySupport::applyLogoutConfig);
+    http.authenticationManager(authenticationManager);
+    http.addFilterBefore(datafariBearerTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
     // Silent Basic authentication for REST API clients
     http.httpBasic(httpBasic -> httpBasic.authenticationEntryPoint((request, response, exception) -> {
-        // If an API client sends an invalid Basic -> 401 without WWW-Authenticate (to avoid browser pop-up)
+      // If an API client sends an invalid Basic -> 401 without WWW-Authenticate (to avoid browser pop-up)
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }));
+
 
     // Keep the form login entry point for interactive requests
     http.exceptionHandling(exception -> {
       // no custom override here on purpose
     });
 
-    http.authenticationManager(authenticationManager);
-    http.addFilterBefore(datafariBearerTokenFilter, UsernamePasswordAuthenticationFilter.class);
+    http.formLogin(DatafariHttpSecuritySupport::applyLoginConfig);
+    http.logout(DatafariHttpSecuritySupport::applyLogoutConfig);
 
     http.authorizeHttpRequests(DatafariHttpSecuritySupport::applyStandardRequestMatchers);
 

@@ -59,7 +59,7 @@ public abstract class DatafariHttpSecuritySupport {
   }
 
   /**
-   * Applies the standard Datafari logout configuration.
+   * Applies the standard Datafari logout configuration. Local logout.
    *
    * @param logoutConfigurer the logout configurer to customize
    */
@@ -103,6 +103,7 @@ public abstract class DatafariHttpSecuritySupport {
   protected static void applyStandardSessionManagement(
       SessionManagementConfigurer<HttpSecurity> sessionConfigurer) {
 
+    sessionConfigurer.sessionFixation(sessionFixationConfigurer -> sessionFixationConfigurer.migrateSession());
     sessionConfigurer.sessionConcurrency(
         concurrency -> concurrency.maximumSessions(MAX_CONCURRENT_SESSIONS)
     );

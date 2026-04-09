@@ -18,7 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
  */
 @Configuration
 @ConditionalOnExpression("${oidc.enabled:false}==false && ${saml.enabled:false}==false && ${keycloak.enabled:false}==false && ${kerberos.enabled:false}==false && ${cas.enabled:false}==false && ${header.enabled:false}==false")
-public class DatafariBearerTokenSecurityConfiguration {
+public class DatafariBearerTokenSecurity {
 
   /**
    * <p>Its scope is restricted through {@link HttpSecurity#securityMatcher(String...)}
@@ -50,7 +50,7 @@ public class DatafariBearerTokenSecurityConfiguration {
 
   @Bean
   @Order(1)
-  public SecurityFilterChain tokenSecurityFilterChain(HttpSecurity http) throws Exception {
+  public SecurityFilterChain datafariBearertokenSecurityFilterChain(HttpSecurity http) throws Exception {
     http
         .securityMatcher("/oauth/token")
         .cors(Customizer.withDefaults())
