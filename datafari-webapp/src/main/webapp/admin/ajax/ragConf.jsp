@@ -41,7 +41,7 @@
     <div id="thBox" class="box-content">
       <div class="documentation-style-no-margin">
         <p class="documentation-preview">
-          <span id="documentation-ragConf"></span>Datafari Enterprise v6.2 provides AI powered features<a
+          <span id="documentation-ragConf"></span>Datafari Enterprise v7.0 provides AI powered features<a
             class="documentation-link"
             href="https://datafari.atlassian.net/wiki/spaces/DATAFARI/pages/3931832326"
             target="_blank"> ...see more</a>
@@ -49,27 +49,18 @@
       </div>
       <form class="form-horizontal" id="ragConf-form" class="needs-validation" novalidate>
 
+        <!-- Global -->
+        <legend id="aiServicesLegend">AI services</legend>
 
-
-        <!-- Prompting & Chunking -->
-
+        <!-- Max prompt size in characters (global) -->
         <div class="form-group row">
-          <label id="chunkingStrategyLabel" class="col-sm-2 col-form-label" for="chunkingStrategy">Chunking Strategy</label>
-          <div class="col-sm-5">
-            <select id="chunkingStrategy" class="form-control">
-              <option value="refine">Iterative Refining (recommended)</option>
-              <option value="mapreduce">Map-Reduce</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-group row">
-          <label id="maxRequestSizeLabel" class="col-sm-2 col-form-label" for="maxRequestSize">Max Request Size</label>
+          <label id="maxRequestSizeLabel" class="col-sm-2 col-form-label" for="maxRequestSize">Max Request Size (in characters)</label>
           <div class="col-sm-5">
             <input type="number" class="form-control" id="maxRequestSize" name="maxRequestSize" step="1" min="1000" placeholder="40000">
           </div>
         </div>
 
+        <!-- Max chunk size in characters (global) -->
         <div class="form-group row">
           <label id="chunkingChunkSizeLabel" class="col-sm-2 col-form-label" for="chunkingChunkSize">Chunk Size</label>
           <div class="col-sm-5">
@@ -77,10 +68,26 @@
           </div>
         </div>
 
+        <!-- Enable Chat Memory (global) -->
+        <div class="form-group row">
+          <label id="chatMemoryEnabledLabel" class="col-sm-2 col-form-label" for="chatMemoryEnabled">Enable Memory</label>
+          <div class="col-sm-5">
+            <input type="checkbox" id="chatMemoryEnabled" data-toggle="toggle" data-onstyle="success">
+          </div>
+        </div>
 
-        <hr>
-        <!-- Chat Memory -->
+        <!-- Chat Memory size (global) -->
+        <div class="form-group row">
+          <label id="chatMemoryHistorySizeLabel" class="col-sm-2 col-form-label" for="chatMemoryHistorySize">History Size</label>
+          <div class="col-sm-5">
+            <input type="number" class="form-control" id="chatMemoryHistorySize" min="0" step="1" placeholder="6">
+          </div>
+        </div>
 
+
+        <legend id="ragServiceLegend">Retrieval-Augmented Generation (RAG) service</legend>
+
+        <!-- Enable query rewriting (RAG) -->
         <div class="form-group row">
           <label id="chatQueryRewritingEnabledLabel" class="col-sm-2 col-form-label">Enable Query Rewriting</label>
           <div class="col-sm-5">
@@ -95,23 +102,19 @@
           </div>
         </div>
 
+
+        <!-- Chunking strategy for RAG-->
         <div class="form-group row">
-          <label id="chatMemoryEnabledLabel" class="col-sm-2 col-form-label" for="chatMemoryEnabled">Enable Memory</label>
+          <label id="chunkingStrategyLabel" class="col-sm-2 col-form-label" for="chunkingStrategy">Chunking Strategy</label>
           <div class="col-sm-5">
-            <input type="checkbox" id="chatMemoryEnabled" data-toggle="toggle" data-onstyle="success">
+            <select id="chunkingStrategy" class="form-control">
+              <option value="refine">Iterative Refining (recommended)</option>
+              <option value="mapreduce">Map-Reduce</option>
+            </select>
           </div>
         </div>
 
-        <div class="form-group row">
-          <label id="chatMemoryHistorySizeLabel" class="col-sm-2 col-form-label" for="chatMemoryHistorySize">History Size</label>
-          <div class="col-sm-5">
-            <input type="number" class="form-control" id="chatMemoryHistorySize" min="0" step="1" placeholder="6">
-          </div>
-        </div>
-
-        <hr>
-        <!-- Retrieval -->
-
+        <!-- Retrieval method for RAG -->
         <div class="form-group row">
           <label id="retrievalMethodLabel" class="col-sm-2 col-form-label" for="retrievalMethod">Retrieval Method</label>
           <div class="col-sm-5">
@@ -123,7 +126,7 @@
           </div>
         </div>
 
-        <!-- BM25 -->
+        <!-- Max number of files for BM25 (RAG) -->
         <div class="form-group row bm25Only">
           <label id="chunkingMaxFilesLabel" class="col-sm-2 col-form-label" for="chunkingMaxFiles">Max Files (BM25)</label>
           <div class="col-sm-5">
@@ -131,6 +134,7 @@
           </div>
         </div>
 
+        <!-- Search operator for BM25 (RAG) -->
         <div class="form-group row bm25Only">
           <label id="ragOperatorLabel" class="col-sm-2 col-form-label" for="ragOperator">Search Operator</label>
           <div class="col-sm-5">
@@ -141,30 +145,17 @@
           </div>
         </div>
 
-        <!-- Solr Vector Search -->
-        <div class="form-group row vectorSearchOnly">
-          <label id="solrEmbeddingsModelLabel" class="col-sm-2 col-form-label" for="solrEmbeddingsModel">Embeddings Model</label>
-          <div class="col-sm-5">
-            <input type="text" class="form-control" id="solrEmbeddingsModel" readonly placeholder="Vector Search must be enabled and configured to be used with RAG">
-          </div>
-        </div>
-
-        <div class="form-group row vectorSearchOnly">
-          <label id="solrVectorFieldLabel" class="col-sm-2 col-form-label" for="solrVectorField">Vector Field</label>
-          <div class="col-sm-5">
-            <input type="text" class="form-control" id="solrVectorField" readonly placeholder="Vector Search must be enabled and configured to be used with RAG">
-          </div>
-        </div>
-
         <!-- Common for Vector & Hybrid Search -->
+        <!-- topK for vector (RAG) -->
         <div class="form-group row vectorSearchOnly rrfOnly">
-          <label id="solrTopKLabel" class="col-sm-2 col-form-label" for="solrTopK">Solr topK</label>
+          <label id="ragTopKLabel" class="col-sm-2 col-form-label" for="ragTopK">Solr topK</label>
           <div class="col-sm-5">
-            <input type="number" class="form-control" id="solrTopK" step="1" min="1" placeholder="10">
+            <input type="number" class="form-control" id="ragTopK" step="1" min="1" placeholder="10">
           </div>
         </div>
 
         <!-- Solr Hybrid Search -->
+        <!-- topK for hybrid (RAG) -->
         <div class="form-group row rrfOnly">
           <label id="rrfTopKLabel" class="col-sm-2 col-form-label" for="rrfTopK">RRF topK</label>
           <div class="col-sm-5">
@@ -172,12 +163,26 @@
           </div>
         </div>
 
+        <!-- RRF constant for hybrid (RAG) -->
         <div class="form-group row rrfOnly">
           <label id="rrfRankConstantLabel" class="col-sm-2 col-form-label" for="rrfRankConstant">RRF Rank Constant</label>
           <div class="col-sm-5">
             <input type="number" class="form-control" id="rrfRankConstant" step="1" min="1" placeholder="60">
           </div>
         </div>
+
+
+        <!-- ### Agentic service ### -->
+        <legend id="agenticServiceLegend">Agentic service</legend>
+
+        <div class="form-group row">
+          <label id="enableLoopControlLabel" class="col-sm-2 col-form-label" for="enableLoopControl">Enable Loop Control for Agentic</label>
+          <div class="col-sm-5">
+            <input type="checkbox" id="enableLoopControl" data-toggle="toggle" data-onstyle="success">
+          </div>
+        </div>
+
+        <!-- TODO : add loop control options -->
 
 
         <div class="form-group row">

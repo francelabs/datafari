@@ -1,8 +1,7 @@
 package com.francelabs.datafari.ai.agentic.tools;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.francelabs.datafari.ai.agentic.tools.dynamic.RagByDocToolExecutor;
-import com.francelabs.datafari.ai.agentic.tools.dynamic.SearchToolExecutor;
+import com.francelabs.datafari.ai.agentic.agents.custom.tools.RagByDocToolExecutor;
+import com.francelabs.datafari.ai.agentic.agents.custom.tools.SearchToolExecutor;
 import com.francelabs.datafari.ai.dto.CustomTool;
 import com.francelabs.datafari.ai.stream.ChatStream;
 import com.francelabs.datafari.ai.stream.StreamToolExecutor;

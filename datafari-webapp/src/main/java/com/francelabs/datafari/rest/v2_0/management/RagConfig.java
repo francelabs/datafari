@@ -24,12 +24,6 @@ public class RagConfig {
           RagConfiguration.ENABLE_RAG,
           RagConfiguration.ENABLE_AGENTIC,
           RagConfiguration.ENABLE_SUMMARIZATION,
-          RagConfiguration.API_ENDPOINT,
-          RagConfiguration.API_TOKEN,
-          RagConfiguration.LLM_SERVICE,
-          RagConfiguration.LLM_TEMPERATURE,
-          RagConfiguration.LLM_MAX_TOKENS,
-          RagConfiguration.LLM_MODEL,
           RagConfiguration.PROMPT_CHUNKING_STRATEGY,
           RagConfiguration.MAX_REQUEST_SIZE,
           RagConfiguration.MAX_FILES,
@@ -41,8 +35,17 @@ public class RagConfig {
           RagConfiguration.CHAT_MEMORY_HISTORY_SIZE,
           RagConfiguration.RETRIEVAL_METHOD,
           RagConfiguration.SOLR_TOPK,
+          RagConfiguration.RAG_TOPK,
           RagConfiguration.RRF_TOPK,
-          RagConfiguration.RRF_RANK_CONSTANT
+          RagConfiguration.RRF_RANK_CONSTANT,
+          RagConfiguration.AGENTIC_ENABLE_LOOP_CONTROL,
+          RagConfiguration.AGENTIC_LOOP_CONTROL_MAX_ITERATON,
+          RagConfiguration.AGENTIC_LOOP_CONTROL_MIN_SCORE,
+          RagConfiguration.AGENTIC_LOOP_CONTROL_MAX_ITERATON_SECONDARY,
+          RagConfiguration.AGENTIC_LOOP_CONTROL_MIN_SCORE_SECONDARY,
+          RagConfiguration.SOLR_ENABLE_ACORN,
+          RagConfiguration.SOLR_ENABLE_LADR,
+          RagConfiguration.SOLR_FILTERED_SEARCH_THRESHOLD
   );
 
   @RequestMapping("/rest/v2.0/management/ragConfig")
@@ -72,6 +75,12 @@ public class RagConfig {
     response.put("enableSummarization", config.getBooleanProperty(RagConfiguration.ENABLE_SUMMARIZATION));
     response.put("enableSynthesis", config.getBooleanProperty(RagConfiguration.ENABLE_SYNTHESIS));
 
+    response.put("enableLoopControl", config.getBooleanProperty(RagConfiguration.AGENTIC_ENABLE_LOOP_CONTROL));
+    response.put("loopControlMaxIterations", config.getBooleanProperty(RagConfiguration.AGENTIC_LOOP_CONTROL_MAX_ITERATON));
+    response.put("loopControlMinScore", config.getBooleanProperty(RagConfiguration.AGENTIC_LOOP_CONTROL_MIN_SCORE));
+    response.put("loopControlMaxIterationsBeforeSecondary", config.getBooleanProperty(RagConfiguration.AGENTIC_LOOP_CONTROL_MAX_ITERATON_SECONDARY));
+    response.put("loopControlMinScoreSecondary", config.getBooleanProperty(RagConfiguration.AGENTIC_LOOP_CONTROL_MIN_SCORE_SECONDARY));
+
     response.put("chunkingStrategy", config.getProperty(RagConfiguration.PROMPT_CHUNKING_STRATEGY));
     response.put("maxRequestSize", config.getProperty(RagConfiguration.MAX_REQUEST_SIZE));
 
@@ -85,10 +94,11 @@ public class RagConfig {
     response.put("chatMemoryHistorySize", config.getProperty(RagConfiguration.CHAT_MEMORY_HISTORY_SIZE));
 
     response.put("retrievalMethod", config.getProperty(RagConfiguration.RETRIEVAL_METHOD));
-    // TODO : revome model & vectorField
-    response.put("solrEmbeddingsModel", config.getProperty(RagConfiguration.SOLR_EMBEDDINGS_MODEL));
-    response.put("solrVectorField", config.getProperty(RagConfiguration.SOLR_VECTOR_FIELD));
     response.put("solrTopK", config.getProperty(RagConfiguration.SOLR_TOPK));
+    response.put("ragTopK", config.getProperty(RagConfiguration.RAG_TOPK));
+    response.put("enableAcorn", config.getBooleanProperty(RagConfiguration.SOLR_ENABLE_ACORN));
+    response.put("enableLadr", config.getBooleanProperty(RagConfiguration.SOLR_ENABLE_LADR));
+    response.put("solrFilteredSearchThreshold", config.getProperty(RagConfiguration.SOLR_FILTERED_SEARCH_THRESHOLD));
     response.put("rrfTopK", config.getProperty(RagConfiguration.RRF_TOPK));
     response.put("rrfRankConstant", config.getProperty(RagConfiguration.RRF_RANK_CONSTANT));
 

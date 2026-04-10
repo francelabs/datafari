@@ -1,0 +1,423 @@
+package com.francelabs.datafari.ai.agentic.agents.cfp;
+
+import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
+import com.francelabs.datafari.ai.dto.AiRequest;
+import com.francelabs.datafari.ai.dto.ApiContent;
+import com.francelabs.datafari.ai.services.RagService;
+import com.francelabs.datafari.ai.stream.ChatStream;
+import com.francelabs.datafari.ai.config.RagConfiguration;
+import com.francelabs.datafari.ai.stream.ToolMeta;
+import com.francelabs.datafari.utils.EditableHttpServletRequest;
+import com.francelabs.datafari.utils.rag.SearchUtils;
+import dev.langchain4j.agent.tool.P;
+import dev.langchain4j.agent.tool.Tool;
+import dev.langchain4j.data.document.Document;
+import dev.langchain4j.invocation.InvocationContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class CfPTools {
+
+    private static final Logger LOGGER = LogManager.getLogger(CfPTools.class.getName());
+    HttpServletRequest request;
+    RagConfiguration config;
+    private final SourcesAccumulator sourcesAcc;
+    private final ChatStream stream;
+
+    public CfPTools(HttpServletRequest request, ChatStream stream, SourcesAccumulator sourcesAcc) {
+        this.request = request;
+        this.stream = stream;
+        this.sourcesAcc = sourcesAcc;
+        config = RagConfiguration.getInstance();
+    }
+
+/*
+    @Tool("""
+            Retrieve a list by CFP, filtered by category.
+            The returned data are:
+            title, parent_doc (the ID of the document),
+            """)
+    JSONArray findDocumentsByCategory(
+            @P("Number of documents to retrieve") int rows,
+            @P("The category to retrieve. Existing categories are: Catering, Furniture") String category
+    ) {
+        // "rows" is the number of chunks (from VectorMain) to show to the LLM at once.
+        // Warning, should not be too high
+        LOGGER.info("AGENTIC TOOLS - Retrieving {} document from category '{}'", rows, category);
+        if (rows < 1) rows = 30;
+
+
+        EditableHttpServletRequest req = new EditableHttpServletRequest(request);
+        String handler = "/select";
+        req.addParameter("q", "*:*");
+        req.addParameter("fl", "title,parent_doc,docId,url,creation_date,agentic_*,llm_categories");
+        if(!category.isBlank()) req.addParameter("fq", "{!term f=llm_categories}" + category);
+        req.addParameter("start", "0");
+        req.addParameter("sort", "creation_date desc");
+        req.addParameter("rows", String.valueOf(rows));
+        req.addParameter("wt", "json");
+
+        JSONObject root = SearchUtils.processSearch(req, handler);
+        JSONArray docs = SearchUtils.extractDocs(root);
+
+        return docs;
+    }
+*/
+    @ToolMeta(label = "Retrieving Call for Proposals by category...",
+        i18nKey = "tool.listCallsForProvidersByCategory",
+        icon = "search")
+    @Tool("Retrieve a list of CFP IDs, filtered by category, sorted by creation_date desc.")
+    String listCallsForProvidersByCategory(
+            @P("Number of CFP to retrieve") int rows,
+            @P(value = "Category filter (eg: Catering, Furniture, Carpentry or Maintenance).", required = false) String category,
+            InvocationContext context
+    ) {
+        if (rows < 1) rows = 30;
+
+
+        EditableHttpServletRequest req = new EditableHttpServletRequest(request);
+        req.addParameter("q", "*:*");
+        req.addParameter("wt", "json");
+        req.addParameter("rows", "0"); // Only facets are needed
+
+        if (category != null && !category.isBlank() && !"None".equals(category)) {
+            stream.toolResult(context.invocationId().toString(), Map.of("category", category));
+            req.addParameter("fq", "({!term f=llm_categories v='" + category + "'} AND agentic_cfp_id:[* TO *])");
+        } else {
+            req.addParameter("fq", "agentic_cfp_id:[* TO *]");
+        }
+
+        // JSON Facet: buckets of IDs sorted by date desc
+        String jsonFacet = """
+    {"cfp":{
+        "type":"terms",
+        "field":"agentic_cfp_id",
+        "limit":%d,
+        "sort":"maxDate desc",
+        "facet":{"maxDate":"max(creation_date)"}
+    },
+    "categories": {
+        "type": "terms",
+        "field": "llm_categories",
+        "domain": {
+            "query": "*:*"
+        }
+    }}""".formatted(rows);
+        req.addParameter("json.facet", jsonFacet);
+
+        JSONObject root = SearchUtils.processSearch(req, "/select");
+
+        // Extraction: facets.cfp.buckets[].val -> JSONArray containing IDs ----
+        JSONArray ids = new JSONArray();
+        HashMap<String, String> categories = new HashMap<>();
+        try {
+            JSONObject facets = (JSONObject) root.get("facets");
+            if (facets != null) {
+                // Extracting IDs
+                JSONObject cfp = (JSONObject) facets.get("cfp");
+                if (cfp != null) {
+                    JSONArray buckets = (JSONArray) cfp.get("buckets");
+                    if (buckets != null) {
+                        for (Object b : buckets) {
+                            JSONObject bucket = (JSONObject) b;
+                            Object val = bucket.get("val");
+                            if (val != null) ids.add(String.valueOf(val));
+                        }
+                    }
+                }
+
+                // Extracting categories
+                JSONObject categoriesFacet = (JSONObject) facets.get("categories");
+                if (categoriesFacet != null) {
+                    JSONArray buckets = (JSONArray) categoriesFacet.get("buckets");
+                    if (buckets != null) {
+                        for (Object b : buckets) {
+                            JSONObject bucket = (JSONObject) b;
+                            Object val = bucket.get("val");
+                            Object count = bucket.get("count");
+                            if (val != null) categories.put(String.valueOf(val), String.valueOf(count));
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.warn("CFP facet parsing error", e);
+        }
+
+        // Building categories list
+        rows = Math.min(ids.size(), rows);
+        StringBuilder categoryList = new StringBuilder();
+        for (Map.Entry<String, String> entry : categories.entrySet()) {
+            categoryList.append(" ").append(entry.getKey()).append("\n ");
+        }
+
+        LOGGER.info("AGENTIC TOOLS - CFP IDs via JSON Facet: rows={} category='{}' -> {}", rows, category, ids.size());
+        if (ids.isEmpty() && !categories.isEmpty()) {
+            return "No result found in category " + category + ". Available categories are: \n" + categoryList;
+        } else if (ids.isEmpty()) {
+            return "No result found in category " + category + ". It appears that there is no existing categorized CFP.";
+        }
+
+        // Building CfP IDs list
+        rows = Math.min(ids.size(), rows);
+        StringBuilder idsStr = new StringBuilder();
+        for (Object item : ids) {
+            String id = (String) item;
+            idsStr.append(" ").append(id);
+        }
+
+
+        // Prepare response
+        if (category != null && !category.isBlank()) {
+            stream.toolResult(context.invocationId().toString(), Map.of("category", category, "resultsNb", String.valueOf(rows)));
+            String response = """
+                The ID of the latest {{rows}} CFP from category '{{category}}' are: {{ids}}.
+                Available categories are:
+                {{categoryList}}""";
+            return response.replace("{{category}}", category)
+                    .replace("{{rows}}", String.valueOf(rows))
+                    .replace("{{ids}}", idsStr.toString())
+                    .replace("{{categoryList}}", categoryList.toString());
+        } else {
+            // If category is blank
+            stream.toolResult(context.invocationId().toString(), Map.of("resultsNb", String.valueOf(rows)));
+            String response = "The ID of the latest {{rows}} CFP are: {{ids}}";
+            return response.replace("{{rows}}", String.valueOf(rows))
+                    .replace("{{ids}}", idsStr.toString());
+        }
+    }
+
+    @ToolMeta(label = "Retrieving CFP's CCTP...",
+        i18nKey = "tool.extractInfoFromCCTP",
+        icon = "layout-list")
+    @Tool("For a given CFP ID (stored in agentic_cfp_id), returns information from CCTP (product type, delivery date, delivery requirements, guarantees duration).")
+    String extractInfoFromCCTP(
+            @P("ID of the CFP. IDs use the format (X being digits): DCEXX") String cfpId,
+            InvocationContext context
+    ) {
+        LOGGER.info("AGENTIC TOOLS - Extracting data from CCTP: {}", cfpId);
+        stream.toolResult(context.invocationId().toString(), Map.of("document", cfpId));
+        JSONArray docs = findCCTP(cfpId, context);
+        if (docs.size() > 0) {
+            try {
+                JSONObject doc = (JSONObject) docs.get(0);
+                String docId = (String) doc.get("docId");
+
+                String query = "Extract the following information from the document : Product type, Delivery date, Delivery requirements, Guaranties duration";
+
+                String results = "";
+                AiRequest ragrequest = new AiRequest();
+                ragrequest.query = query;
+                ragrequest.id = docId;
+
+                try {
+                    ApiContent resp = RagService.rag(request, ragrequest, stream, sourcesAcc, true);
+                    if (resp.message != null && !resp.message.isBlank()) {
+                        results = resp.message;
+                    } else if (resp.error != null) {
+                        results = "Extraction failed: " + resp.error.reason;
+                    } else {
+                        results = "Extraction failed.";
+                    }
+                } catch (Exception e) {
+                    LOGGER.error("AGENTIC TOOLS - Extracting from CCAP - ERROR: {}", e.getLocalizedMessage());
+                    results = "Extraction failed.";
+                }
+
+                LOGGER.debug("AGENTIC TOOLS - Extracting from CCTP - Result {}", results);
+                return results;
+
+            } catch (Exception e) {
+                LOGGER.error("Cannot extract information from CCTP.");
+            }
+        }
+        return "Cannot retrieve CCTP for CFP " + cfpId + ".";
+    }
+
+    @ToolMeta(label = "Retrieving CFP's CCAP...",
+        i18nKey = "tool.extractInfoFromCCAP",
+        icon = "layout-list")
+    @Tool("For a given CFP, returns information from CCAP (Minimum amount, Maximum amount).")
+    String extractInfoFromCCAP(
+            @P("ID of the CFP (from agentic_cfp_id). IDs use the format (X being digits): DCEXX") String cfpId,
+            InvocationContext context
+    ) {
+        LOGGER.info("AGENTIC TOOLS - Extracting data from CCAP: {}", cfpId);
+        stream.toolResult(context.invocationId().toString(), Map.of("document", cfpId));
+        JSONArray docs = findCCAP(cfpId, context);
+        if (!docs.isEmpty()) {
+            try {
+                JSONObject doc = (JSONObject) docs.getFirst();
+                String docId = (String) doc.get("docId");
+
+                String query = "Extract the following information from the document : Minimum amount, Maximum amount";
+
+                String results = "";
+                AiRequest ragrequest = new AiRequest();
+                ragrequest.query = query;
+                ragrequest.id = docId;
+
+                try {
+                    ApiContent resp = RagService.rag(request, ragrequest, stream, sourcesAcc, true);
+                    if (resp.message != null && !resp.message.isBlank()) {
+                        results = resp.message;
+                    } else if (resp.error != null) {
+                        results = "Extraction failed: " + resp.error.reason;
+                    } else {
+                        results = "Extraction failed.";
+                    }
+                } catch (Exception e) {
+                    LOGGER.error("AGENTIC TOOLS - Extracting from CCAP - ERROR: {}", e.getLocalizedMessage());
+                    results = "Extraction failed.";
+                }
+
+
+                LOGGER.debug("AGENTIC TOOLS - Extracting from CCAP - Result {}", results);
+                return results;
+
+            } catch (Exception e) {
+                LOGGER.error("Cannot extract information from CCAP.");
+            }
+        }
+        return "Cannot extract information from CCAP.";
+    }
+
+
+    //    @Tool("Retrieves the CCTP (Cahier des Charges Techniques Particuliers) for the specified CFP.")
+    JSONArray findCCTP(
+            @P("ID of the CFP. IDs use the format (X being digits): DCEXX") String cfpId,
+            InvocationContext context
+    ) {
+        LOGGER.info("AGENTIC TOOLS - Retrieving CCTP for CFP {} ", cfpId);
+
+        EditableHttpServletRequest req = new EditableHttpServletRequest(request);
+        String handler = "/select";
+        req.addParameter("q", "*:*");
+        req.addParameter("fl", "title,parent_doc,docId,url,creation_date,agentic_*");
+        req.addParameter("fq", "({!term f=agentic_cfp_doc_type v='CCTP'} AND {!term f=agentic_cfp_id v='" + cfpId + "'})");
+        req.addParameter("start", "0");
+        req.addParameter("rows", "1");
+        req.addParameter("wt", "json");
+
+        JSONObject root = SearchUtils.processSearch(req, handler);
+        JSONArray docs = SearchUtils.extractDocs(root);
+
+        addDocumentToSource((JSONObject) docs.getFirst());
+
+        return docs;
+    }
+
+
+    //    @Tool("Retrieves the CCAP (Cahier des Clauses Administratives Particulières) for the specified CFP.")
+    JSONArray findCCAP(
+            @P("CFP ID. IDs generally use the following format (X being digits): DCEXX") String cfpId,
+            InvocationContext context
+    ) {
+        LOGGER.info("AGENTIC TOOLS - Retrieving CCAP for CFP {} ", cfpId);
+
+        EditableHttpServletRequest req = new EditableHttpServletRequest(request);
+        String handler = "/select";
+        req.addParameter("q", "*:*");
+        req.addParameter("fl", "title,parent_doc,docId,url,creation_date,agentic_*");
+        req.addParameter("fq", "({!term f=agentic_cfp_doc_type v='CCAP'} AND {!term f=agentic_cfp_id v='" + cfpId + "'})");
+        req.addParameter("start", "0");
+        req.addParameter("rows", "1");
+        req.addParameter("wt", "json");
+
+        JSONObject root = SearchUtils.processSearch(req, handler);
+        JSONArray docs = SearchUtils.extractDocs(root);
+
+        addDocumentToSource((JSONObject) docs.getFirst());
+
+        return docs;
+    }
+
+    @ToolMeta(label = "Reading document...",
+        i18nKey = "tool.readPageFromDocument",
+        icon = "eye")
+    @Tool("Read one page of the specified document. If the requested page does not exist for this document, it returns 'No content'. You must provide the exact document ID (not the CFP ID).")
+    String readPageFromDocument(
+            @P("docId of the document") String id,
+            @P("Page index (0-based)") int page,
+            InvocationContext context
+    ) {
+        // "rows" is the number of chunks (from VectorMain) to show to the LLM at once.
+        // Warning, should not be too high
+        int rows = config.getIntegerProperty(RagConfiguration.RAG_TOPK, 10);
+        int start = Math.max(0, page) * rows;
+
+        stream.toolResult(context.invocationId().toString(), Map.of("document", id));
+
+
+        EditableHttpServletRequest req = new EditableHttpServletRequest(request);
+        String handler = "/select";
+        req.addParameter("q", "*:*");
+        // We want to retrieve the content as "embedded_content", whether it is stored in content_fr, content_en, content_es or content_de
+        req.addParameter("fl", "title,parent_doc,docId,url,embedded_content");
+        req.addParameter("fq", "{!term f=docId}" + id);
+        req.addParameter("collection", "VectorMain");
+        req.addParameter("start", String.valueOf(start));
+        req.addParameter("rows", String.valueOf(rows));
+        req.addParameter("sort", "chunk_index asc");
+        req.addParameter("wt", "json");
+
+        JSONObject root = SearchUtils.processSearch(req, handler);
+        JSONArray docs = SearchUtils.extractDocs(root);
+        String mergedChunkContents = SearchUtils.mergeChunks(docs);
+
+        addDocumentToSource((JSONObject) docs.getFirst());
+
+        LOGGER.info("AGENTIC TOOLS - Reading page {} of document  '{}'", page, id);
+        if (mergedChunkContents.isEmpty()) {
+            LOGGER.info("AGENTIC TOOLS - No content found in page {} of document  '{}'", page, id);
+            return "No content";
+        }
+        LOGGER.info("AGENTIC TOOLS - Content found in page {} of document  '{}'. Length: {}", page, id, mergedChunkContents.length());
+        return "========== PAGE " + page + ": ==========\n\n" + mergedChunkContents + "\n\n========== END OF PAGE " + page + " ==========\n\n";
+    }
+
+    @Tool("If you do not have the tools you need to answer the request, use this one to describe precisely the tools you need, for future improvement.")
+    String requestNewTool(
+            @P("The description of the tool you would need") String description
+    ) {
+        LOGGER.warn("AGENTIC TOOLS - Requesting tool - {}", description);
+        return "Note taken.";
+    }
+
+    /**
+     * Add retrieved documents (JSONArray) to the sources
+     * @param docs: A JSONArray of documents (JSONObject, as returned by Datafari search)
+     */
+    private void addDocumentsToSource(JSONArray docs) {
+        try {
+            for (Object o : docs) {
+                JSONObject doc = (JSONObject) o;
+                addDocumentToSource(doc);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Could not add documents to sources.", e);
+        }
+    }
+
+
+    /**
+     * Add a retrieved document (JSONObject) to the sources
+     * @param doc: A JSONObject document (as returned by Datafari search)
+     */
+    private void addDocumentToSource(JSONObject doc) {
+        try {
+            Document source = SearchUtils.jsonToDocument(doc);
+            sourcesAcc.add(source);
+
+        } catch (Exception e) {
+            LOGGER.error("Could not add document to sources.", e);
+        }
+    }
+}

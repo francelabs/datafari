@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.francelabs.datafari.utils.rag;
 
-import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.exception.CodesReturned;
 import com.francelabs.datafari.exception.DatafariServerException;
 //import com.francelabs.datafari.rag.Message;
@@ -52,12 +51,7 @@ public class PromptUtils {
     public static final String SYSTEM_ROLE = "system";
     public static final String USER_ROLE = "user";
     public static final String ASSISTANT_ROLE = "assistant";
-    public static final String SNIPPETS_TAG = "{snippets}";
-    public static final String USER_QUERY_TAG = "{userquery}";
-    public static final String FORMAT_TAG = "{format}";
-    public static final String HISTORY_TAG = "{history}";
-    public static final String CONVERSATION_TAG = "{conversation}";
-    public static final String LAST_RESPONSE_TAG = "{lastresponse}";
+    public static final String SNIPPETS_TAG = "{{snippets}}";
 
     private PromptUtils() {
         // Constructor
@@ -81,82 +75,6 @@ public class PromptUtils {
         return prompts;
     }
 
-    /**
-     * @return Retrieve the instructions used to summarize a document.
-     */
-    public static String createInitialPromptForSummarization(HttpServletRequest request) throws IOException {
-        // TODO : Use PromptTemplate instead
-        return getInstructions("summarization/template-initialPromptForSummarization.txt")
-                .replace("{language}", getUserLanguage(request));
-    }
-
-    /**
-     * @return Retrieve the instructions used to merge multiple summaries into one.
-     */
-    public static String createPromptForIterateSummaries(HttpServletRequest request) throws IOException {
-        return  getInstructions("summarization/template-summarization-iterative.txt")
-                .replace("{language}", getUserLanguage(request));
-    }
-
-    /**
-     * @return Retrieve the instructions used to summarize a document.
-     */
-    public static String createInitialPromptForSynthesis(HttpServletRequest request) throws IOException {
-        // TODO : Use PromptTemplate instead
-        return getInstructions("synthesis/template-initialPromptForSynthesis.txt")
-            .replace("{language}", getUserLanguage(request));
-    }
-
-    /**
-     * @return Retrieve the instructions used to merge multiple summaries into one.
-     */
-    public static String createPromptForIterateSynthesis(HttpServletRequest request) throws IOException {
-        return  getInstructions("synthesis/template-synthesis-iterative.txt")
-            .replace("{language}", getUserLanguage(request));
-    }
-
-
-    /**
-     * @return Retrieve the instructions for the initial request of Refining method.
-     */
-    public static String getInitialRagTemplateRefining(HttpServletRequest request) throws IOException {
-        return getInstructions("rag/template-refine-initial.txt")
-                .replace("{language}", getUserLanguage(request));
-    }
-
-
-    /**
-     * @return Retrieve the instructions for the initial request of Refining method.
-     */
-    public static String getRefineRagTemplateRefining(HttpServletRequest request) throws IOException {
-        return getInstructions("rag/template-refine-refining.txt")
-                .replace("{language}", getUserLanguage(request));
-    }
-
-    /**
-     * @return Retrieve the instructions for the initial request of Map Reduce method.
-     */
-    public static String getInitialRagTemplateMapReduce(HttpServletRequest request) throws IOException {
-        return getInstructions("rag/template-rag.txt")
-                .replace("{language}", getUserLanguage(request));
-    }
-
-    /**
-     * @return Retrieve the instructions for the initial request of Map Reduce method.
-     */
-    public static String getFinalRagTemplateMapReduce(HttpServletRequest request) throws IOException {
-        return getInstructions("rag/template-mergeAllRag.txt")
-                .replace("{language}", getUserLanguage(request));
-    }
-
-    /**
-     * @return Retrieve the instructions for query rewriting.
-     */
-    public static String getRewriteQueryTemplate(HttpServletRequest request, String retrievalMethod) throws IOException {
-        return getInstructions("rag/template-rewriteSearchQuery-" + retrievalMethod + ".txt")
-                .replace("{language}", getUserLanguage(request));
-    }
-
 
     /**
      * Generate the part of the prompt containing the user history (including instructions and chat messages)
@@ -170,7 +88,7 @@ public class PromptUtils {
             String conversation = getStringHistoryLines(chatHistory);
 
             return getInstructions("rag/template-history.txt")
-                    .replace("{conversation}", conversation);
+                    .replace("{{conversation}}", conversation);
         }
 
     }
@@ -198,8 +116,8 @@ public class PromptUtils {
                 break;
             }
 
-            String line = messageTemplate.replace("{role}", message.type().name())
-                            .replace("{content}", text);
+            String line = messageTemplate.replace("{{role}}", message.type().name())
+                            .replace("{{content}}", text);
             conversation.append(line).append("\n");
         }
         return conversation.toString();
@@ -215,10 +133,10 @@ public class PromptUtils {
      */
     public static String synthesisSnippet(String title, String summary, String id, String url) throws IOException {
         String template =  getInstructions("synthesis/template-snippet.txt");
-        return template.replace("{title}", title)
-            .replace("{summary}", summary)
-            .replace("{id}", id)
-            .replace("{url}", url);
+        return template.replace("{{title}}", title)
+            .replace("{{summary}}", summary)
+            .replace("{{id}}", id)
+            .replace("{{url}}", url);
     }
 
     /**
@@ -230,37 +148,21 @@ public class PromptUtils {
      */
     public static String formatDocument(String title, String content) throws IOException {
         String template =  getInstructions("rag/template-fromTextSegment.txt");
-        return template.replace("{title}", title).replace("{content}", content);
-    }
-
-    public static String getResponseFormat(HttpServletRequest request) {
-
-        String format = request.getParameter("format");
-        if (format == null) return "";
-        switch (format) {
-            case "stepbystep":
-                return " If relevant, your response should take the form step-by-step instructions.\n";
-            case "bulletpoint":
-                return " If relevant, your response should take the form of a bullet-point list.\n";
-            case "text":
-                return " If relevant, your response should take the form of a text.\n";
-            default:
-                return "";
-        }
+        return template.replace("{{title}}", title).replace("{{content}}", content);
     }
 
     /**
      * Fill a provided prompt template with as many snippets as possible, without exceeding the limit set in
-     * prompt.max.request.size (rag.properties). The snippet list replaces the require {snippets} tag.
-     * @param template : A String prompt template, containing the {snippets} tag
+     * prompt.max.request.size (rag.properties). The snippet list replaces the required {{snippets}} tag.
+     * @param template : A String prompt template, containing the {{snippets}} tag
      * @param contents : A list of formatted message, each containing one chunk/snippet
      * @param config : The RagConfiguration
      * @return : The original template, filled with as many snippets as possible.
-     * @throws DatafariServerException : The template is missing the  {snippets} tag.
+     * @throws DatafariServerException : The template is missing the  {{snippets}} tag.
      */
     public static String stuffAsManySnippetsAsPossible(String template, List<String> contents, RagConfiguration config) throws DatafariServerException {
 
-        if (!template.contains(SNIPPETS_TAG)) throw new DatafariServerException(CodesReturned.GENERALERROR, "Invalid prompt template: {snippets} tag is missing.");
+        if (!template.contains(SNIPPETS_TAG)) throw new DatafariServerException(CodesReturned.GENERALERROR, "Invalid prompt template: {{snippets}} tag is missing.");
 
         StringBuilder snippets = new StringBuilder();
         String prompt = template.replace(SNIPPETS_TAG, snippets.toString());
@@ -355,7 +257,7 @@ public class PromptUtils {
      * @return The instructions prompts stored in resources/prompts folder
      */
     private static String getInstructions(String filename) throws IOException {
-        return readFromInputStream(RagAPI.class.getClassLoader().getResourceAsStream("prompts/" + filename));
+        return readFromInputStream(PromptUtils.class.getClassLoader().getResourceAsStream("prompts/" + filename));
     }
 
     /**
@@ -368,10 +270,10 @@ public class PromptUtils {
         String template = getInstructions("rag/template-fromTextSegment.txt");
         Metadata metadata = segment.metadata();
         String content = cleanContext(segment.text());
-        template = template.replace("{content}", content);
-        template = template.replace("{id}", metadata.getString("id"));
-        template = template.replace("{title}", metadata.getString("title"));
-        template = template.replace("{url}", metadata.getString("url"));
+        template = template.replace("{{content}}", content);
+        template = template.replace("{{id}}", metadata.getString("id"));
+        template = template.replace("{{title}}", metadata.getString("title"));
+        template = template.replace("{{url}}", metadata.getString("url"));
 
         return createChatMessage(role, template);
     }
@@ -498,15 +400,5 @@ public class PromptUtils {
             default:
                 return new UserMessage(text);
         }
-    }
-
-    // TODO : remove
-    public String getMessageRole(ChatMessage message) {
-        if (message instanceof SystemMessage)
-            return SYSTEM_ROLE;
-        else if (message instanceof AiMessage)
-            return ASSISTANT_ROLE;
-        else
-            return USER_ROLE;
     }
 }

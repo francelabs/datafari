@@ -202,8 +202,7 @@
             class="ajax-link" href="?page=embeddingsModels">Vector Search</a></li>
           <li id="chunkingConfiguration"><a id="chunkingConfiguration-AdminUI"
             class="ajax-link" href="?page=chunkingConfiguration">Chunking Management</a></li>
-          <%--li id="vectorEmbeddings"><a id="vectorEmbeddings-AdminUI"
-            class="ajax-link" href="?page=vectorEmbeddings"></a></li--%> <%-- TODO --%>
+          <li id="vectorSearchConf"><a id="vectorSearchConf-AdminUI" class="ajax-link" href="?page=vectorSearchConf">Vector Search Configuration</a></li>
         </ul>
       </li>
       <li id="AI" class="collapse-effect">

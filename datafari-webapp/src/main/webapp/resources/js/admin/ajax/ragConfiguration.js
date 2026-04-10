@@ -8,7 +8,7 @@ function internationalize() {
 //  $("#enableAgenticLabel").text(window.i18n.msgStore['ragConf-enableAgenticLabel']);
 //  $("#enableSummarizationLabel").text(window.i18n.msgStore['ragConf-enableSummarizationLabel']);
 //  $("#enableSynthesisLabel").text(window.i18n.msgStore['ragConf-enableSynthesisLabel']);
-  $("#solrTopKLabel").text(window.i18n.msgStore['ragConf-solrTopKLabel']);
+  $("#ragTopKLabel").text(window.i18n.msgStore['ragConf-ragTopKLabel']);
   $("#rrfTopKLabel").text(window.i18n.msgStore['ragConf-rrfTopKLabel']);
   $("#rrfRankConstantLabel").text(window.i18n.msgStore['ragConf-rrfRankConstantLabel']);
   $("#solrEmbeddingsModelLabel").text(window.i18n.msgStore['ragConf-solrEmbeddingsModelLabel']);
@@ -23,6 +23,10 @@ function internationalize() {
   $("#chunkingChunkSizeLabel").text(window.i18n.msgStore['ragConf-chunkingChunkSizeLabel']);
   $("#maxRequestSizeLabel").text(window.i18n.msgStore['ragConf-maxRequestSizeLabel']);
   $("#chunkingStrategyLabel").text(window.i18n.msgStore['ragConf-chunkingStrategyLabel']);
+  $("#enableLoopControlLabel").text(window.i18n.msgStore['ragConf-enableLoopControlLabel']);
+  $("#ragServiceLegend").text(window.i18n.msgStore['ragConf-ragServiceLegend']);
+  $("#agenticServiceLegend").text(window.i18n.msgStore['ragConf-agenticServiceLegend']);
+  $("#aiServicesLegend").text(window.i18n.msgStore['ragConf-aiServicesLegend']);
 }
 
 function loadRagConfig() {
@@ -50,13 +54,12 @@ function loadRagConfig() {
     $('#chatQueryRewritingEnabledBM25').prop('checked', data.chatQueryRewritingEnabledBM25 === true).change();
     $('#chatQueryRewritingEnabledVector').prop('checked', data.chatQueryRewritingEnabledVector === true).change();
     $('#chatMemoryEnabled').prop('checked', data.chatMemoryEnabled === true).change();
+    $('#enableLoopControl').prop('checked', data.enableLoopControl === true).change();
     $('#chatMemoryHistorySize').val(data.chatMemoryHistorySize || 6);
 
     $('#retrievalMethod').val(data.retrievalMethod || "bm25");
     updateRetrievalVisibility();
-    $('#solrEmbeddingsModel').val(data.solrEmbeddingsModel || '');
-    $('#solrVectorField').val(data.solrVectorField || '');
-    $('#solrTopK').val(data.solrTopK || 10);
+    $('#ragTopK').val(data.ragTopK || 10);
     $('#rrfTopK').val(data.rrfTopK || 50);
     $('#rrfRankConstant').val(data.rrfRankConstant || 60);
 
@@ -107,10 +110,11 @@ function submitRagConfig(event) {
     "chat.query.rewriting.enabled.vector": $('#chatQueryRewritingEnabledVector').is(':checked'),
     "chat.memory.enabled": $('#chatMemoryEnabled').is(':checked'),
     "chat.memory.history.size": $('#chatMemoryHistorySize').val(),
-    "solr.topK": $('#solrTopK').val(),
+    "rag.topK": $('#ragTopK').val(),
     "rrf.topK": $('#rrfTopK').val(),
     "rrf.rank.constant": $('#rrfRankConstant').val(),
     "retrieval.method": $('#retrievalMethod').val(),
+    "agentic.enable.loop.control": $('#enableLoopControl').is(':checked'),
   };
 
   $.ajax({
@@ -151,6 +155,7 @@ $(document).ready(function () {
   $('#chatMemoryEnabled').bootstrapToggle();
   $('#chatQueryRewritingEnabledBM25').bootstrapToggle();
   $('#chatQueryRewritingEnabledVector').bootstrapToggle();
+  $('#enableLoopControl').bootstrapToggle();
   $('#retrievalMethod').on('change', updateRetrievalVisibility);
 
   $('#ragConf-form').on('submit', submitRagConfig);
