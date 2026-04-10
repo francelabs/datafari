@@ -2,7 +2,7 @@
 Here is the summary of a partial document. Use the new chunks below to refine the summary if relevant. If not relevant, return the original summary.
 
 ## Summary
-{summary}
+{{summary}}
 
 ## Additional content
-{snippets}
+{{snippets}}

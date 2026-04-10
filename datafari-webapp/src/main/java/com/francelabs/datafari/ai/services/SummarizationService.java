@@ -4,8 +4,8 @@ import com.francelabs.datafari.ai.agentic.tools.SourcesAccumulator;
 import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.dto.ApiError;
+import com.francelabs.datafari.ai.services.summarization.Summarization;
 import com.francelabs.datafari.ai.stream.ChatStream;
-import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.data.document.Document;
@@ -123,7 +123,7 @@ public class SummarizationService extends AiService {
         if (summary != null && !summary.isEmpty()) {
             return summary;
         } else if (content != null && !content.isEmpty()) {
-            // If there is no existing summary, but content is found, use RagAPI service to generate a summary
+            // If there is no existing summary, but content is found, use Summarization class to generate a summary
             LOGGER.debug("AiPowered - Summarize - No summary found for document {}.", id);
 
             // Instantiate a Langchain4j Document
@@ -134,7 +134,7 @@ public class SummarizationService extends AiService {
             Document doc = Document.from(content, metadata);
 
             LOGGER.debug("AiPowered - Summarize - Generating a summary for document {}.", id);
-            return RagAPI.summarize(request, doc, stream);
+            return Summarization.summarize(request, doc, stream);
         } else {
             LOGGER.warn("AiPowered - Summarize - Could not retrieve summary or content from file {}.", id);
             // Error : No content, no summary

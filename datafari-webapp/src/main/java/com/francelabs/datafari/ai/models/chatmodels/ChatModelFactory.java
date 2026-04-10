@@ -41,6 +41,7 @@ public class ChatModelFactory {
      */
     private void registerDefaults() {
         builderRegistry.put("OpenAI", new OpenAiChatModelBuilder());
+        builderRegistry.put("LocalAI", new LocalAiChatModelBuilder());
         builderRegistry.put("MistralAI", new MistralAiChatModelBuilder());
         builderRegistry.put("AzureOpenAI", new AzureOpenAiChatModelBuilder());
         builderRegistry.put("HuggingFace", new HuggingFaceChatModelBuilder());

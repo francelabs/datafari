@@ -4,8 +4,9 @@ import com.francelabs.datafari.ai.config.RagConfiguration;
 import com.francelabs.datafari.ai.dto.AiRequest;
 import com.francelabs.datafari.ai.dto.ApiContent;
 import com.francelabs.datafari.ai.dto.ApiError;
+import com.francelabs.datafari.ai.services.summarization.Summarization;
+import com.francelabs.datafari.ai.services.synthesis.Synthesis;
 import com.francelabs.datafari.ai.stream.ChatStream;
-import com.francelabs.datafari.api.RagAPI;
 import com.francelabs.datafari.exception.DatafariServerException;
 import com.francelabs.datafari.utils.rag.SearchUtils;
 import dev.langchain4j.data.document.Document;
@@ -119,7 +120,7 @@ public class SynthesisService extends AiService {
 
         // Generate a synthesis based on all summaries
         try {
-            String synthesis = RagAPI.synthesize(request, documents, stream);
+            String synthesis = Synthesis.synthesize(request, documents, stream);
 
             if (synthesis != null && !synthesis.isBlank()) {
                 response.message = synthesis;
@@ -159,7 +160,7 @@ public class SynthesisService extends AiService {
         if (document.get("summary") != null && !((String) document.get("summary")).isEmpty()) {
             return;
         } else if (document.get("content") != null && !((String) document.get("content")).isEmpty()) {
-            // If there is no existing summary, but content is found, use RagAPI service to generate a summary
+            // If there is no existing summary, but content is found, use Summarization service to generate a summary
             LOGGER.debug("AiPowered - Synthesize - No summary found for document {}.", id);
 
             // Instantiate a Langchain4j Document
@@ -172,7 +173,7 @@ public class SynthesisService extends AiService {
             LOGGER.debug("AiPowered - Synthesize - Generating a summary for document {}.", id);
 
             // Run the summarization
-            document.setProperty("summary", RagAPI.summarize(request, doc, stream));
+            document.setProperty("summary", Summarization.summarize(request, doc, stream));
 
         } else {
             LOGGER.warn("AiPowered - Synthesize - Could not retrieve summary or content from file {}.", id);

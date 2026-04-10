@@ -158,9 +158,9 @@
 
         <!-- Common for Vector & Hybrid Search -->
         <div class="form-group row vectorSearchOnly rrfOnly">
-          <label id="solrTopKLabel" class="col-sm-2 col-form-label" for="solrTopK">Solr topK</label>
+          <label id="ragTopKLabel" class="col-sm-2 col-form-label" for="ragTopK">Solr topK</label>
           <div class="col-sm-5">
-            <input type="number" class="form-control" id="solrTopK" step="1" min="1" placeholder="10">
+            <input type="number" class="form-control" id="ragTopK" step="1" min="1" placeholder="10">
           </div>
         </div>
 
@@ -176,6 +176,16 @@
           <label id="rrfRankConstantLabel" class="col-sm-2 col-form-label" for="rrfRankConstant">RRF Rank Constant</label>
           <div class="col-sm-5">
             <input type="number" class="form-control" id="rrfRankConstant" step="1" min="1" placeholder="60">
+          </div>
+        </div>
+
+        <hr>
+        <!-- Agentic -->
+
+        <div class="form-group row">
+          <label id="enableLoopControlLabel" class="col-sm-2 col-form-label" for="enableLoopControl">Enable Loop Control for Agentic</label>
+          <div class="col-sm-5">
+            <input type="checkbox" id="enableLoopControl" data-toggle="toggle" data-onstyle="success">
           </div>
         </div>
 
