@@ -1,4 +1,4 @@
-package com.francelabs.datafari.security.token.service;
+package com.francelabs.datafari.security.standard.token.service;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;

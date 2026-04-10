@@ -1,6 +1,6 @@
-package com.francelabs.datafari.security.token.service;
+package com.francelabs.datafari.security.standard.token.service;
 
-import com.francelabs.datafari.security.token.DatafariOAuthProperties;
+import com.francelabs.datafari.security.standard.token.DatafariOAuthProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;

@@ -1,9 +1,9 @@
-package com.francelabs.datafari.security.token.controller;
+package com.francelabs.datafari.security.standard.token.controller;
 
-import com.francelabs.datafari.security.token.DatafariClientAuthenticator;
-import com.francelabs.datafari.security.token.DatafariOAuthProperties;
-import com.francelabs.datafari.security.token.service.DatafariTokenService;
-import com.francelabs.datafari.security.token.service.LegacyAccessToken;
+import com.francelabs.datafari.security.standard.token.DatafariClientAuthenticator;
+import com.francelabs.datafari.security.standard.token.DatafariOAuthProperties;
+import com.francelabs.datafari.security.standard.token.service.DatafariTokenService;
+import com.francelabs.datafari.security.standard.token.service.LegacyAccessToken;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -41,7 +41,7 @@ import java.util.Map;
  *   <li>authenticate the end user through the shared
  *   {@link org.springframework.security.authentication.AuthenticationManager},</li>
  *   <li>issue and persist a new access token through
- *   {@link com.francelabs.datafari.security.token.service.DatafariTokenService}.</li>
+ *   {@link DatafariTokenService}.</li>
  * </ol>
  *
  * <p>This endpoint is intentionally legacy-oriented and should not be confused

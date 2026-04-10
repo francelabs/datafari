@@ -104,9 +104,9 @@ public class AgenticService extends AiService {
 
             String answer;
             if (config.getBooleanProperty(RagConfiguration.AGENTIC_ENABLE_LOOP_CONTROL)) {
-                // No stream, with control loop
+                // No streaming with control loop
 
-                // Evaluator instanciation
+                // Evaluator instantiation
                 ResponseScorer evaluator = AgenticServices
                     .agentBuilder(ResponseScorer.class)
                     .chatModel(chatModel)
@@ -114,16 +114,25 @@ public class AgenticService extends AiService {
                     .build();
 
                 // loop control
-                // The response must get a score of 0.8/1
+                // The response must get a score of 0.8/1, and can only attempt 3 iterations
+                int maxIterations = config.getIntegerProperty(RagConfiguration.AGENTIC_LOOP_CONTROL_MAX_ITERATON, 3);
+                double minScore = config.getDoubleProperty(RagConfiguration.AGENTIC_LOOP_CONTROL_MIN_SCORE, 0.8);
+
+                // Secondary iterations : starting on the 3rd iteration, the minScore is lowered to the secondary threshold (0.6).
+                // If maxIterationsBeforeSecondary is set to 0, we don't want to apply secondary iteration
+                int maxIterationsBeforeSecondary = config.getIntegerProperty(RagConfiguration.AGENTIC_LOOP_CONTROL_MAX_ITERATON_SECONDARY, 3) == 0 ?
+                    config.getIntegerProperty(RagConfiguration.AGENTIC_LOOP_CONTROL_MAX_ITERATON_SECONDARY, 3) : maxIterations + 1;
+                double minScoreSecondary = config.getDoubleProperty(RagConfiguration.AGENTIC_LOOP_CONTROL_MIN_SCORE_SECONDARY, 0.6);
+
                 UntypedAgent responseReviewLoop = AgenticServices
                     .loopBuilder()
                     .subAgents(agent, evaluator)
-                    .maxIterations(3)
+                    .maxIterations(maxIterations)
                     .testExitAtLoopEnd(true)
                     .exitCondition( (agenticScope, loopCounter) -> {
                         double score = agenticScope.readState("score", 0.0);
                         LOGGER.info("Loop Control: Attempt {} - score {}", loopCounter, score);
-                        return loopCounter <= 3 ? score >= 0.8 : score >= 0.6;
+                        return loopCounter <= maxIterationsBeforeSecondary ? score >= minScore : score >= minScoreSecondary;
                     })
                     .build();
 

@@ -1,4 +1,4 @@
-package com.francelabs.datafari.security.token.service;
+package com.francelabs.datafari.security.standard.token.service;
 
 /**
  * Simple value object representing an issued Datafari access token.

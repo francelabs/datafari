@@ -1,4 +1,4 @@
-package com.francelabs.datafari.security.token.service;
+package com.francelabs.datafari.security.standard.token.service;
 
 import org.springframework.security.core.Authentication;
 
