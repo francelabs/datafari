@@ -105,11 +105,9 @@ public class RagConfiguration extends AbstractConfigClass {
     public Double getDoubleProperty(final String key) {
         return Double.valueOf(getProperty(key));
     }
-    public Double getDoubleProperty(final String key, Double defaultValue) {
+    public double getDoubleProperty(final String key, Double defaultValue) {
         try {
-            Double value = Double.parseDouble(getProperty(key));
-            if (value < 1) return defaultValue;
-            return value;
+          return Double.parseDouble(getProperty(key));
         } catch (NumberFormatException e) {
             return defaultValue;
         }

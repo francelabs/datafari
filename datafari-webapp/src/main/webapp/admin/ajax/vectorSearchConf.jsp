@@ -80,7 +80,6 @@
         <div class="form-group row">
           <div class="col-sm-3" >
               <label id="enableAcornLabel" for="enableAcorn" class="col-form-label">Enable ACORN algorithm optimization</label>
-              <legend id="enableAcornTooltip"></legend> <!-- TODO manage tooltip -->
           </div>
           <div class="col-sm-5">
              <input type="checkbox" id="enableAcorn" data-toggle="toggle" data-onstyle="success">
@@ -92,7 +91,6 @@
         <div class="form-group row acornOnly">
           <div class="col-sm-3" >
               <label id="filteredSearchThresholdLabel" class="col-form-label" for="filteredSearchThreshold">Filtered search threshold for ACORN optimization (recommended value is 60)</label>
-              <span id="filteredSearchThresholdTooltip"></span> <!-- TODO manage tooltip -->
           </div>
           <div class="col-sm-5">
             <input type="number" class="form-control" id="filteredSearchThreshold" name="filteredSearchThreshold" step="1" placeholder="60" min="0" max="100">
@@ -104,7 +102,6 @@
         <div class="form-group row">
           <div class="col-sm-3" >
               <label id="enableLadrLabel" class="col-form-label" for="enableLadr">Enable Lexically-Accelerated Dense Retrieval (LADR) optimization</label>
-              <legend id="enableLadrTooltip"></legend> <!-- TODO manage tooltip -->
           </div>
           <div class="col-sm-5">
             <input type="checkbox" id="enableLadr" data-toggle="toggle" data-onstyle="success">
