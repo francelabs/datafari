@@ -24,6 +24,9 @@ function internationalize() {
   $("#maxRequestSizeLabel").text(window.i18n.msgStore['ragConf-maxRequestSizeLabel']);
   $("#chunkingStrategyLabel").text(window.i18n.msgStore['ragConf-chunkingStrategyLabel']);
   $("#enableLoopControlLabel").text(window.i18n.msgStore['ragConf-enableLoopControlLabel']);
+  $("#ragServiceLegend").text(window.i18n.msgStore['ragConf-ragServiceLegend']);
+  $("#agenticServiceLegend").text(window.i18n.msgStore['ragConf-agenticServiceLegend']);
+  $("#aiServicesLegend").text(window.i18n.msgStore['ragConf-aiServicesLegend']);
 }
 
 function loadRagConfig() {
@@ -56,8 +59,6 @@ function loadRagConfig() {
 
     $('#retrievalMethod').val(data.retrievalMethod || "bm25");
     updateRetrievalVisibility();
-    $('#solrEmbeddingsModel').val(data.solrEmbeddingsModel || '');
-    $('#solrVectorField').val(data.solrVectorField || '');
     $('#ragTopK').val(data.ragTopK || 10);
     $('#rrfTopK').val(data.rrfTopK || 50);
     $('#rrfRankConstant').val(data.rrfRankConstant || 60);

@@ -25,6 +25,10 @@ public class RagConfiguration extends AbstractConfigClass {
 
     // AGENTIC
     public static final String AGENTIC_ENABLE_LOOP_CONTROL = "agentic.enable.loop.control";
+    public static final String AGENTIC_LOOP_CONTROL_MAX_ITERATON = "agentic.loop.control.max.iterations";
+    public static final String AGENTIC_LOOP_CONTROL_MIN_SCORE = "agentic.loop.control.min.score";
+    public static final String AGENTIC_LOOP_CONTROL_MAX_ITERATON_SECONDARY = "agentic.loop.control.max.iterations.secondary";
+    public static final String AGENTIC_LOOP_CONTROL_MIN_SCORE_SECONDARY = "agentic.loop.control.min.score.secondary";
 
     // PROMPTING
     public static final String PROMPT_CHUNKING_STRATEGY = "prompt.chunking.strategy"; // mapreduce or refine
@@ -53,9 +57,6 @@ public class RagConfiguration extends AbstractConfigClass {
     public static final String RRF_RANK_CONSTANT = "rrf.rank.constant";
 
     // SOLR VECTOR SEARCH
-    // TODO : Remove model & vector field
-    public static final String SOLR_EMBEDDINGS_MODEL = "solr.embeddings.model";
-    public static final String SOLR_VECTOR_FIELD = "solr.vector.field";
     public static final String SOLR_TOPK = "solr.topK";
     public static final String RAG_TOPK = "rag.topK";
     public static final String SOLR_ENABLE_LADR = "solr.enable.ladr";
@@ -94,6 +95,19 @@ public class RagConfiguration extends AbstractConfigClass {
     public Integer getIntegerProperty(final String key, int defaultValue) {
         try {
             int value = Integer.parseInt(getProperty(key));
+            if (value < 1) return defaultValue;
+            return value;
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+    public Double getDoubleProperty(final String key) {
+        return Double.valueOf(getProperty(key));
+    }
+    public Double getDoubleProperty(final String key, Double defaultValue) {
+        try {
+            Double value = Double.parseDouble(getProperty(key));
             if (value < 1) return defaultValue;
             return value;
         } catch (NumberFormatException e) {
