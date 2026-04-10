@@ -11,13 +11,13 @@ function internationalize() {
   $("#rrfTopKLabel").text(window.i18n.msgStore['vectorSearchConf-rrfTopKLabel']);
   $("#rrfRankConstantLabel").text(window.i18n.msgStore['vectorSearchConf-rrfRankConstantLabel']);
 
-  $('#enableAcornTooltip')
+  $('#enableAcornLabel')
       .append(
           "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='ACORN is an algorithm designed to make hybrid searches consisting of a filter and a vector search more efficient. This approach tackles both the performance limitations of pre- and post- filtering. It modifies the construction of the HNSW graph and the search on it.'>i</button></span>");
-  $('#filteredSearchThresholdTooltip')
+  $('#filteredSearchThresholdLabel')
       .append(
           "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='If the percentage of documents that satisfies the filter is less than the threshold ACORN will be used. From 0 (never use ACORN) to 100 (always use ACORN)'>i</button></span>");
-  $('#enableLadrTooltip')
+  $('#enableLadrLabel')
       .append(
           "<span><button type='button' class='btn btn-secondary tooltips' data-toggle='tooltip' data-placement='right' title='Use SeededKnnVectorQuery to initiate the entry points in the HNSW graph with a seedQuery, in order to improve the relevancy of the results.'>i</button></span>");
 

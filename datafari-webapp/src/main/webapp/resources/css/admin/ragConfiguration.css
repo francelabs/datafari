@@ -78,3 +78,8 @@ th{
 .default-datafari-label {
 	padding-right: 8px;
 }
+
+legend {
+	font-weight: bold;
+	margin-top: 30px;
+}
