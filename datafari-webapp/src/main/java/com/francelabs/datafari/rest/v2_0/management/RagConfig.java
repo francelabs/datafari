@@ -76,10 +76,10 @@ public class RagConfig {
     response.put("enableSynthesis", config.getBooleanProperty(RagConfiguration.ENABLE_SYNTHESIS));
 
     response.put("enableLoopControl", config.getBooleanProperty(RagConfiguration.AGENTIC_ENABLE_LOOP_CONTROL));
-    response.put("loopControlMaxIterations", config.getBooleanProperty(RagConfiguration.AGENTIC_LOOP_CONTROL_MAX_ITERATON));
-    response.put("loopControlMinScore", config.getBooleanProperty(RagConfiguration.AGENTIC_LOOP_CONTROL_MIN_SCORE));
-    response.put("loopControlMaxIterationsBeforeSecondary", config.getBooleanProperty(RagConfiguration.AGENTIC_LOOP_CONTROL_MAX_ITERATON_SECONDARY));
-    response.put("loopControlMinScoreSecondary", config.getBooleanProperty(RagConfiguration.AGENTIC_LOOP_CONTROL_MIN_SCORE_SECONDARY));
+    response.put("loopControlMaxIterations", config.getIntegerProperty(RagConfiguration.AGENTIC_LOOP_CONTROL_MAX_ITERATON));
+    response.put("loopControlMinScore", config.getDoubleProperty(RagConfiguration.AGENTIC_LOOP_CONTROL_MIN_SCORE));
+    response.put("loopControlMaxIterationsBeforeSecondary", config.getIntegerProperty(RagConfiguration.AGENTIC_LOOP_CONTROL_MAX_ITERATON_SECONDARY));
+    response.put("loopControlMinScoreSecondary", config.getDoubleProperty(RagConfiguration.AGENTIC_LOOP_CONTROL_MIN_SCORE_SECONDARY));
 
     response.put("chunkingStrategy", config.getProperty(RagConfiguration.PROMPT_CHUNKING_STRATEGY));
     response.put("maxRequestSize", config.getProperty(RagConfiguration.MAX_REQUEST_SIZE));
