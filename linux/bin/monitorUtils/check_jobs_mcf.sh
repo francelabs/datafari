@@ -12,7 +12,8 @@ source $CONFIG_FILE
 
 JOB_IDS_TO_MONITOR="ALL"
 IP_MCF=http://localhost:9080
-
+MCF_ADMIN_PASSWORD_FILE="${DATAFARI_HOME}/secrets/mcf_admin_password"
+MCF_ADMIN_PASSWORD="$(cat "$MCF_ADMIN_PASSWORD_FILE")"
 
 echo "Check the MCF job(s) status"
 
@@ -22,7 +23,7 @@ then
 	
 fi
 
-curl -c "cookie_mcfscript" -XPOST ${IP_MCF}/datafari-mcf-api-service/json/LOGIN -d '{ "userID":"","password":"'"${MCFPASSWORD}"'" }'
+curl -c "cookie_mcfscript" -XPOST ${IP_MCF}/datafari-mcf-api-service/json/LOGIN -d '{ "userID":"","password":"'"${MCF_ADMIN_PASSWORD}"'" }'
 
 JOBS_EXIST=$(curl -b "cookie_mcfscript" -s $IP_MCF'/datafari-mcf-api-service/json/jobstatuses')
 
